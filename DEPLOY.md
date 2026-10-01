@@ -17,7 +17,7 @@ The deployed site reads the latest test results at runtime from this repo's `res
    - **Build command:** `npm ci --ignore-scripts && npm run site:release`
    - **Deploy command:** `npx wrangler deploy`
    - **Root directory:** leave empty (the repo root)
-   - **Builds for non-production branches:** off. If you turn them on, also set **Non-production branch deploy command** to `npx wrangler versions upload`. Cloudflare's default for those branches is `npx wrangler preview`, and only `versions upload` creates a Version URL for a Worker with static assets; it never touches production (https://developers.cloudflare.com/workers/ci-cd/builds/configuration/).
+   - **Builds for non-production branches:** off (set 2026-10-01). Only `main` builds and deploys, so the Workers Builds check does not appear on pull requests; CI runs the tests (`.github/workflows/ci.yml`). If preview builds are ever turned on, set **Non-production branch deploy command** to `npx wrangler versions upload` (Cloudflare's default for those branches is `npx wrangler preview`; https://developers.cloudflare.com/workers/ci-cd/builds/configuration/).
 5. Choose **Create and deploy**. The first build installs, writes the site data, builds the site and deploys it to `capsomer.<account>.workers.dev`. Node comes from `.node-version`.
 
 ### 2. Add the custom domain
