@@ -152,6 +152,11 @@
     }
   }
 
+  /* On the current entry the count sits on the active tint, where --dim is 3.93:1 in dark; --muted clears 4.5. */
+  .cap-shell-rail a[aria-current="page"] .cap-shell-count:not([data-tone]) {
+    color: var(--muted);
+  }
+
   .cap-shell-foot {
     margin-top: auto;
     display: grid;
