@@ -1,0 +1,111 @@
+/* Element defaults every component assumes. Layered, so an app that keeps its own body
+   or link styles wins without a fight. */
+@layer cap.reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer cap.base {
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font: 400 var(--text-size) / var(--leading) var(--face);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* The reading context sets its own face and size where it is declared, not only on body. */
+  [data-context] {
+    font-family: var(--face);
+    font-size: var(--text-size);
+    line-height: var(--leading);
+  }
+  a {
+    color: var(--accent);
+    text-underline-offset: 2px;
+  }
+  button {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: var(--focus-width) solid var(--focus-color);
+    outline-offset: var(--focus-offset);
+  }
+  kbd {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 1px 5px;
+    border-radius: var(--radius-s);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--muted);
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  /* A touch screen gets 16 px inputs, so iOS does not zoom into the field (decision 5). */
+  @media (pointer: coarse) {
+    input,
+    select,
+    textarea {
+      font-size: max(var(--fs-input-coarse), 1em);
+    }
+  }
+  /* Still by default (design 4.1): a component's motion is written inside
+     prefers-reduced-motion: no-preference, and this catches anything that is not. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer cap.utilities {
+  /* Text a screen reader announces and the eye does not see. */
+  .cap-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* Identifiers only: ids, shas, commands, paths. Times and counts are .cap-num. */
+  .cap-mono {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: -0.01em;
+  }
+  .cap-num {
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-muted {
+    color: var(--muted);
+  }
+  .cap-label {
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+}
