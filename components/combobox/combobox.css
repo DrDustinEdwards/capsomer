@@ -180,12 +180,14 @@
     cursor: default;
     user-select: none;
 
-    /* The highlighted option: --accent-soft with --text. Base UI keeps DOM focus in the
+    /* The highlighted option: --accent-soft with --text and the 3 px accent edge the
+       command menu draws, so the cue is not the tint alone. Base UI keeps DOM focus in the
        input and marks the option with data-highlighted and aria-activedescendant. */
     &[data-highlighted],
     &[data-force="highlighted"] {
       background: var(--accent-soft);
       color: var(--text);
+      box-shadow: inset 3px 0 0 var(--accent);
     }
     &[data-selected] {
       font-weight: 600;
