@@ -11,10 +11,12 @@ export interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
   onCheckedChange?: (checked: boolean) => void;
   onWord?: string;
   offWord?: string;
+  // A request for the change is running: drawn as a dashed outline, and not disabled.
+  busy?: boolean;
 }
 
 export function Switch(props: SwitchProps) {
-  const { label, checked, defaultChecked = false, onCheckedChange, onWord, offWord, className, ...rest } = props;
+  const { label, checked, defaultChecked = false, onCheckedChange, onWord, offWord, busy, className, ...rest } = props;
   const [own, setOwn] = useState(defaultChecked);
   const on = checked ?? own;
   return (
@@ -23,6 +25,7 @@ export function Switch(props: SwitchProps) {
         {...rest}
         type="checkbox"
         role="switch"
+        aria-busy={busy || undefined}
         checked={on}
         onChange={(e) => {
           setOwn(e.target.checked);

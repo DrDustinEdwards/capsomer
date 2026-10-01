@@ -14,6 +14,8 @@ replaces:
 
 # Banner and alert
 
+**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01), `styles.css` (`.banner`, `.callout`) and `app/App.tsx` (the stale-feed banner). The banner's box is EXTRACTED: border in `--warn`, `--warn-soft` ground and `10px 12px` padding are the Portal's `.banner` (unchanged since the extraction base `366b902`), with tokens in place of literals and the radius from the scale. The glyph, the critical tone, the flex layout, `.cap-alert`, Dismiss and its focus rule are REWRITTEN from the audit (status is shape, word and colour together; the Portal's banner has colour alone). Nothing in the Portal's banner changed after the base (its #221 persistent warnings live in the message region, see Message). One difference is kept on purpose: the Portal marks its failed-refresh banner `role="alert"` though it retries every minute; here a warning banner is polite (`role="status"`) and only a critical one interrupts, so a banner that stays does not re-announce.
+
 Two ways to say something went wrong or needs attention, by where it belongs.
 
 - `.cap-banner`: about the whole page. "Could not refresh. Showing data from 4 minutes ago." with Try again. The data below it stays.
@@ -26,7 +28,7 @@ Two ways to say something went wrong or needs attention, by where it belongs.
 
 ## When not to
 
-- The result of an action that worked is a message (`.cap-message`).
+- The result of an action that worked is a message (`.cap-message`), and so is a failure with no control beside it to say so (a failed copy): the message region keeps it until dismissed.
 - A form field's own error is the field's `.cap-field-error`, tied to the input with `aria-describedby`.
 - An empty or failed panel with nothing to show is `.cap-empty` with `data-kind="failed"`.
 - Never replace the data with an error: a failed refresh keeps what was there.

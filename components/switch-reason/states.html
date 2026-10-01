@@ -9,44 +9,53 @@
   <body class="cap-specimens">
     <main>
       <h1>Automation switch</h1>
-      <p>A switch that starts or stops automation. Flipping it asks for a one-line reason; it moves only when the reason is applied, and the change can be undone. The first two are live; the rest are shown still. Sample data.</p>
+      <p>A switch that starts or stops automation. Flipping it asks for a one-line reason beside it; it moves only when the reason is applied, and the change can be undone. The first two are live; the rest are shown still. Sample data.</p>
 
       <section class="cap-specimen" aria-labelledby="s-on">
         <h2 id="s-on">On (live, with Undo)</h2>
         <div class="cap-switch-reason" data-cap="switch-reason" data-name="the improve loop" id="sr-loop">
           <label class="cap-switch"><input type="checkbox" role="switch" checked /> Improve loop <span class="cap-switch-state" aria-hidden="true">On</span></label>
+          <span class="cap-switch-reason-note" id="sr-loop-note">Runs on the subscription.</span>
           <form class="cap-switch-reason-form" hidden>
             <div class="cap-field">
-              <label class="cap-field-label" for="sr-loop-why">Why turn the improve loop off?</label>
-              <input class="cap-input" id="sr-loop-why" autocomplete="off" required aria-describedby="sr-loop-err" placeholder="For example: pausing during the migration" />
+              <label class="cap-switch-reason-label" for="sr-loop-why">Turning the improve loop off. Reason:</label>
+              <input class="cap-input" id="sr-loop-why" autocomplete="off" required aria-describedby="sr-loop-keys" />
               <p class="cap-field-error" id="sr-loop-err" hidden></p>
             </div>
             <div class="cap-switch-reason-actions">
               <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
               <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
-              <span class="cap-switch-reason-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels</span>
             </div>
+            <span class="cap-switch-reason-keys" id="sr-loop-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels. The reason is recorded with the change.</span>
           </form>
           <p role="status" id="sr-loop-said"></p>
         </div>
       </section>
 
       <section class="cap-specimen" aria-labelledby="s-off">
-        <h2 id="s-off">Off (live)</h2>
-        <div class="cap-switch-reason" data-cap="switch-reason" data-name="nightly backups" id="sr-backups">
+        <h2 id="s-off">Off (live, with its own verb)</h2>
+        <div class="cap-switch-reason" data-cap="switch-reason" data-name="nightly backups" data-verb-on="Enabling nightly backups" data-verb-off="Pausing nightly backups" id="sr-backups">
           <label class="cap-switch"><input type="checkbox" role="switch" /> Nightly backups <span class="cap-switch-state" aria-hidden="true">Off</span></label>
           <form class="cap-switch-reason-form" hidden>
             <div class="cap-field">
-              <label class="cap-field-label" for="sr-backups-why">Why turn nightly backups on?</label>
-              <input class="cap-input" id="sr-backups-why" autocomplete="off" required aria-describedby="sr-backups-err" />
+              <label class="cap-switch-reason-label" for="sr-backups-why">Enabling nightly backups. Reason:</label>
+              <input class="cap-input" id="sr-backups-why" autocomplete="off" required aria-describedby="sr-backups-keys" />
               <p class="cap-field-error" id="sr-backups-err" hidden></p>
             </div>
             <div class="cap-switch-reason-actions">
               <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
               <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
-              <span class="cap-switch-reason-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels</span>
             </div>
+            <span class="cap-switch-reason-keys" id="sr-backups-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels. The reason is recorded with the change.</span>
           </form>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-note">
+        <h2 id="s-note">Off, with what it is doing beside it</h2>
+        <div class="cap-switch-reason">
+          <label class="cap-switch"><input type="checkbox" role="switch" /> Namespace foxhound.app <span class="cap-switch-state" aria-hidden="true">Off</span></label>
+          <span class="cap-switch-reason-note" id="sr-note-text">Paused: looking at a regression.</span>
         </div>
       </section>
 
@@ -56,14 +65,14 @@
           <label class="cap-switch"><input type="checkbox" role="switch" checked /> Deploy on push <span class="cap-switch-state" aria-hidden="true">On</span></label>
           <form class="cap-switch-reason-form">
             <div class="cap-field">
-              <label class="cap-field-label" for="sr-ask-why">Why turn deploy on push off?</label>
-              <input class="cap-input" id="sr-ask-why" autocomplete="off" required value="Holding releases until the DNS move is done" />
+              <label class="cap-switch-reason-label" for="sr-ask-why">Turning deploy on push off. Reason:</label>
+              <input class="cap-input" id="sr-ask-why" autocomplete="off" required aria-describedby="sr-ask-keys" value="Holding releases until the DNS move is done" />
             </div>
             <div class="cap-switch-reason-actions">
               <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
               <button type="button" class="cap-btn">Cancel</button>
-              <span class="cap-switch-reason-keys" id="sr-ask-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels</span>
             </div>
+            <span class="cap-switch-reason-keys" id="sr-ask-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels. The reason is recorded with the change.</span>
           </form>
         </div>
       </section>
@@ -74,14 +83,15 @@
           <label class="cap-switch"><input type="checkbox" role="switch" /> Mention sync <span class="cap-switch-state" aria-hidden="true">Off</span></label>
           <form class="cap-switch-reason-form">
             <div class="cap-field">
-              <label class="cap-field-label" for="sr-miss-why">Why turn mention sync on?</label>
-              <input class="cap-input" id="sr-miss-why" autocomplete="off" required aria-invalid="true" aria-describedby="sr-miss-err" />
-              <p class="cap-field-error" id="sr-miss-err">Write a reason in a few words. It goes in the audit log.</p>
+              <label class="cap-switch-reason-label" for="sr-miss-why">Turning mention sync on. Reason:</label>
+              <input class="cap-input" id="sr-miss-why" autocomplete="off" required aria-invalid="true" aria-describedby="sr-miss-err sr-miss-keys" />
+              <p class="cap-field-error" id="sr-miss-err">Type a reason. It is recorded with the change.</p>
             </div>
             <div class="cap-switch-reason-actions">
               <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
               <button type="button" class="cap-btn">Cancel</button>
             </div>
+            <span class="cap-switch-reason-keys" id="sr-miss-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels. The reason is recorded with the change.</span>
           </form>
         </div>
       </section>
@@ -89,16 +99,17 @@
       <section class="cap-specimen" aria-labelledby="s-pending">
         <h2 id="s-pending">Applying</h2>
         <div class="cap-switch-reason">
-          <label class="cap-switch"><input type="checkbox" role="switch" checked /> Agent access for foxhound-driver <span class="cap-switch-state" aria-hidden="true">On</span></label>
-          <form class="cap-switch-reason-form">
+          <label class="cap-switch"><input type="checkbox" role="switch" aria-busy="true" checked /> Agent access for foxhound-driver <span class="cap-switch-state" aria-hidden="true">On</span></label>
+          <form class="cap-switch-reason-form" aria-busy="true">
             <div class="cap-field">
-              <label class="cap-field-label" for="sr-pend-why">Why turn agent access for foxhound-driver off?</label>
-              <input class="cap-input" id="sr-pend-why" autocomplete="off" required readonly value="It pushed to the wrong branch twice" />
+              <label class="cap-switch-reason-label" for="sr-pend-why">Turning agent access for foxhound-driver off. Reason:</label>
+              <input class="cap-input" id="sr-pend-why" autocomplete="off" required readonly aria-describedby="sr-pend-keys" value="It pushed to the wrong branch twice" />
             </div>
             <div class="cap-switch-reason-actions">
               <button type="submit" class="cap-btn" data-variant="primary" aria-busy="true" id="sr-pend-apply"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
               <button type="button" class="cap-btn">Cancel</button>
             </div>
+            <span class="cap-switch-reason-keys" id="sr-pend-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels. The reason is recorded with the change.</span>
           </form>
         </div>
       </section>
@@ -109,14 +120,15 @@
           <label class="cap-switch"><input type="checkbox" role="switch" checked /> Weekly digest <span class="cap-switch-state" aria-hidden="true">On</span></label>
           <form class="cap-switch-reason-form">
             <div class="cap-field">
-              <label class="cap-field-label" for="sr-fail-why">Why turn the weekly digest off?</label>
-              <input class="cap-input" id="sr-fail-why" autocomplete="off" required aria-invalid="true" aria-describedby="sr-fail-err" value="Nobody reads it in August" />
+              <label class="cap-switch-reason-label" for="sr-fail-why">Turning the weekly digest off. Reason:</label>
+              <input class="cap-input" id="sr-fail-why" autocomplete="off" required aria-invalid="true" aria-describedby="sr-fail-err sr-fail-keys" value="Nobody reads it in August" />
               <p class="cap-field-error" id="sr-fail-err">Could not turn the weekly digest off. The Portal did not answer. Try again, or press Esc to cancel.</p>
             </div>
             <div class="cap-switch-reason-actions">
               <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
               <button type="button" class="cap-btn">Cancel</button>
             </div>
+            <span class="cap-switch-reason-keys" id="sr-fail-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels. The reason is recorded with the change.</span>
           </form>
         </div>
       </section>

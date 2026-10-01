@@ -63,6 +63,15 @@
         border-style: dashed;
       }
     }
+
+    /* Pending: a request runs and the switch has not moved yet (the Portal's
+       .switch[aria-busy="true"] .track). A dashed outline, so it is a shape and not only a
+       colour, and the switch is not disabled, so focus stays where it is. The accent, not the
+       Portal's --accent-line, which is 2.9:1 on the page in the light theme. */
+    &:has(input[aria-busy="true"]:not(:focus-visible)) input[role="switch"] {
+      outline: 2px dashed var(--accent);
+      outline-offset: 2px;
+    }
   }
 
   /* On or Off. aria-hidden in the markup: the switch's own state already says it, and the

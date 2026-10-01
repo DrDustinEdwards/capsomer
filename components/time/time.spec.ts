@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
-import { DAY, HOUR, MIN, exact, parse, relative, utc } from "./time.ts";
+import { DAY, HOUR, MIN, UNREADABLE, exact, exactParts, parse, relative, serverNow, text, utc } from "./time.ts";
 
 // Times depend on the viewer's zone: check them in one, with summer time in force.
 test.use({ timezoneId: "Europe/London", locale: "en-GB" });
@@ -39,6 +39,24 @@ test("behaviour: the Portal's UTC form and its zoneless server timestamps are ke
   expect(parse("2026-09-28T11:00:00+01:00")).toBe(Date.parse("2026-09-28T10:00:00Z"));
 });
 
+test("behaviour: the UTC part of an exact time is its own part, absent for a viewer in UTC", () => {
+  const t = Date.parse("2026-09-30T13:02:00Z");
+  expect(exactParts(t, LONDON)).toEqual({ local: "30 September 2026, 14:02 BST", utc: "(13:02 UTC)" });
+  expect(exactParts(t, "UTC")).toEqual({ local: "30 September 2026, 13:02 UTC", utc: null });
+});
+
+test("behaviour: a time that cannot be read says so in words, not blank or NaN", () => {
+  expect(text(Number.NaN, "exact")).toBe(UNREADABLE);
+  expect(text(Number.NaN, "relative")).toBe(UNREADABLE);
+  expect(exact(parse("garbage"), LONDON)).toBe("an unreadable time");
+});
+
+test("behaviour: the server's now is the browser's moved by the skew, and never before the newest server read", () => {
+  expect(serverNow(1_000_000, 5_000, 0)).toBe(1_005_000);
+  // A row written after the page's last tick, on a server clock ahead of the browser's.
+  expect(serverNow(1_000_000, 0, 1_016_000)).toBe(1_016_000);
+});
+
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
     await visitStates(page, "time", theme);
@@ -73,6 +91,14 @@ eachTheme((theme) => {
     await expect(t).toHaveText("30 September 2026, 14:02 BST (13:02 UTC)");
     await expect(page.locator(".cap-time[title]")).toHaveCount(0);
     for (const el of await page.locator(".cap-time").all()) await expect(el).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}T/);
+  });
+
+  test("behaviour: the UTC part of an exact time stays whole on a line, and an unreadable time is words", async ({ page }) => {
+    await visitStates(page, "time", theme);
+    await expect(page.locator("#sample-exact .cap-time-utc")).toHaveText("(13:02 UTC)");
+    await expect(page.locator("#sample-exact .cap-time-utc")).toHaveCSS("white-space", "nowrap");
+    await expect(page.locator("#sample-unreadable")).toHaveText("an unreadable time");
+    await expect(page.locator("#sample-unreadable")).not.toHaveAttribute("datetime", /.*/);
   });
 
   test("behaviour: relative times redraw every 30 seconds", async ({ page }) => {
