@@ -1,7 +1,8 @@
 // Times in words. Relative in rows ("5 minutes ago", never "5m"), exact in the viewer's
 // zone with UTC beside it. Ported from the Capsid Portal's dashboard/src/lib/format.ts
-// (`ms`, `ago`, `utc`), spelled out. The pure functions take the zone so they can be
-// checked anywhere; in a page the zone is the viewer's.
+// (`ms`, `portalNow`, `utc`, `exactTime`); `ago` is rewritten, spelled out (the audit rules
+// out "5m"). The pure functions take the zone so they can be checked anywhere; in a page
+// the zone is the viewer's.
 
 export const SEC = 1000;
 export const MIN = 60 * SEC;
@@ -91,40 +92,88 @@ function isUtc(zone?: string): boolean {
   return z === "UTC" || z === "Etc/UTC" || z === "Etc/GMT" || z === "GMT";
 }
 
-// Exact, in the viewer's zone with UTC beside it: "30 September 2026, 14:02 BST (13:02 UTC)".
-// UTC's date is added when it differs from the local one; a viewer in UTC sees one time.
-export function exact(t: number, zone?: string): string {
-  if (!Number.isFinite(t)) return "";
+// What a time that cannot be read says, in place of a blank or "NaN" (the Portal's
+// exactTime does the same): a row never shows nothing where a time belongs.
+export const UNREADABLE = "an unreadable time";
+
+// Exact, in the viewer's zone with UTC beside it, in two parts so the UTC part can be kept
+// whole on a line (the Portal's `.when .faint { white-space: nowrap }`): the local time, and
+// "(13:02 UTC)". UTC's date is added when it differs from the local one; a viewer in UTC sees
+// one time and no second part.
+export function exactParts(t: number, zone?: string): { local: string; utc: string | null } {
+  if (!Number.isFinite(t)) return { local: UNREADABLE, utc: null };
   const u = parts(t, "UTC", false);
   const uDate = `${u.day} ${u.month} ${u.year}`;
   const uTime = `${u.hour}:${u.minute} UTC`;
-  if (isUtc(zone)) return `${uDate}, ${uTime}`;
+  if (isUtc(zone)) return { local: `${uDate}, ${uTime}`, utc: null };
   const l = parts(t, zone, true);
   const lDate = `${l.day} ${l.month} ${l.year}`;
-  return `${lDate}, ${l.hour}:${l.minute} ${l.timeZoneName} (${lDate === uDate ? uTime : `${uDate}, ${uTime}`})`;
+  return { local: `${lDate}, ${l.hour}:${l.minute} ${l.timeZoneName}`, utc: `(${lDate === uDate ? uTime : `${uDate}, ${uTime}`})` };
+}
+
+// "30 September 2026, 14:02 BST (13:02 UTC)".
+export function exact(t: number, zone?: string): string {
+  const p = exactParts(t, zone);
+  return p.utc ? `${p.local} ${p.utc}` : p.local;
 }
 
 export type TimeFormat = "relative" | "exact";
 
 // The text a <time class="cap-time"> shows.
 export function text(t: number, format: TimeFormat, now: number = Date.now(), zone?: string): string {
+  if (!Number.isFinite(t)) return UNREADABLE;
   return format === "exact" ? exact(t, zone) : relative(t, now, zone);
+}
+
+// The page's "now" for relative times when the browser's clock and the server's disagree:
+// the browser's clock moved onto the server's by the skew measured when the data arrived,
+// and never earlier than the newest time a server read reported. Otherwise a row written
+// after the page's last tick, or on a server whose clock runs ahead of the browser's, reads
+// "in less than a minute" for something that has just happened. From the Portal's
+// lib/format.ts (portalNow). Pass it as a React `now`, or give setClock a function that
+// returns it.
+export function serverNow(clientNow: number, skew: number, newestServerRead: number): number {
+  return Math.max(clientNow + skew, newestServerRead);
+}
+
+let clock: () => number = () => Date.now();
+
+// Replaces the clock the plain behaviour module reads (the default is Date.now), and
+// redraws. setClock(null) puts it back.
+export function setClock(fn: (() => number) | null): void {
+  clock = fn ?? (() => Date.now());
+  for (const el of live) if (el.isConnected) draw(el);
 }
 
 // "now" for an element: a frozen data-cap-now on it or an ancestor (specimens, tests,
 // printed reports), else the clock.
 function nowFor(el: Element): { now: number; frozen: boolean } {
   const fixed = el.closest<HTMLElement>("[data-cap-now]")?.dataset.capNow;
-  return fixed ? { now: parse(fixed), frozen: true } : { now: Date.now(), frozen: false };
+  return fixed ? { now: parse(fixed), frozen: true } : { now: clock(), frozen: false };
+}
+
+// Writes an exact time as its local part, then its UTC part in a span of its own.
+function drawExact(el: HTMLElement, t: number): void {
+  const p = exactParts(t);
+  const whole = p.utc ? `${p.local} ${p.utc}` : p.local;
+  const hasSpan = el.querySelector(".cap-time-utc") !== null;
+  if (el.textContent === whole && hasSpan === (p.utc !== null)) return;
+  el.textContent = p.utc ? `${p.local} ` : p.local;
+  if (!p.utc) return;
+  const span = document.createElement("span");
+  span.className = "cap-time-utc";
+  span.textContent = p.utc;
+  el.append(span);
 }
 
 export function draw(el: HTMLElement): void {
   const iso = el.getAttribute("datetime");
   if (!iso) return;
   const { now } = nowFor(el);
-  const format: TimeFormat = el.dataset.format === "exact" ? "exact" : "relative";
-  const next = text(parse(iso), format, now);
-  if (next && el.textContent !== next) el.textContent = next;
+  const t = parse(iso);
+  if (el.dataset.format === "exact") return drawExact(el, t);
+  const next = text(t, "relative", now);
+  if (el.textContent !== next) el.textContent = next;
 }
 
 const live = new Set<HTMLElement>();

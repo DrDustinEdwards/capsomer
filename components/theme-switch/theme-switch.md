@@ -6,7 +6,7 @@ parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [system selected, light selected, dark selected]
 added: 0.1.0
-source: Capsid Portal, dashboard/src/lib/prefs.ts (applySavedTheme, toggleTheme); the approved mockup's theme control
+source: Capsid Portal, dashboard/src/lib/prefs.ts (applySavedTheme, toggleTheme, setThemeChoice, themeChoice) and the Display setting in views/Settings.tsx; the approved mockup's theme control
 replaces:
   - 'wf-theme'
   - 'applySavedTheme'
@@ -16,6 +16,8 @@ replaces:
 # Theme switch
 
 Three choices, System, Light and Dark, as a segmented control on radio inputs. Light and Dark set `data-theme` on `<html>`; System removes it, so the operating system's setting applies. It sits in the top bar after the actions, before Settings.
+
+**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01), `lib/prefs.ts` and `views/Settings.tsx` (Display). The logic is EXTRACTED with renames: `applySavedTheme` is `applyStoredTheme`, `toggleTheme` is `toggleTheme`, `currentTheme` is `effectiveTheme`, `setThemeChoice` is `applyTheme` (set or remove `data-theme`, remember, tell every switch on the page, as the Portal's listeners do), and `themeChoice` is `themeChoice` (read the choice from `data-theme`, so it is right when storage cannot be read). The Portal's key `wf-theme` is `cap-theme`. The markup is REWRITTEN: a segmented control on radio inputs, in one place, where the Portal has two (a top-bar button that says whether dark is in effect, `aria-pressed`, and Display radios in Settings). The Portal's Display radios are this control's three choices, and its single-key shortcuts switch lives in `shortcuts`, not here. Where they differ: the Portal removes the saved value when System is chosen; here System is saved as `system`, so a server-rendered or markup default other than System cannot win back on reload. Either way, nothing saved means follow the system. The two-state top-bar button is not carried: "off" would not say whether it means light or the system's choice (patterns.md "Choose one of 2 to 5").
 
 ## When to use it
 
@@ -59,13 +61,15 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ```html
 <fieldset class="cap-seg cap-theme" data-cap="theme-switch">
   <legend class="cap-sr-only">Theme</legend>
-  <label><input type="radio" name="cap-theme" value="system" checked>System</label>
-  <label><input type="radio" name="cap-theme" value="light">Light</label>
-  <label><input type="radio" name="cap-theme" value="dark">Dark</label>
+  <div class="cap-seg-options">
+    <label><input type="radio" name="cap-theme" value="system" checked>System</label>
+    <label><input type="radio" name="cap-theme" value="light">Light</label>
+    <label><input type="radio" name="cap-theme" value="dark">Dark</label>
+  </div>
 </fieldset>
 ```
 
-`enhance()` checks and applies the remembered choice (or, with none, the one checked in the markup) and applies each change. `applyTheme(choice)`, `readTheme()`, `effectiveTheme()` and `toggleTheme()` are exported. In React, `<ThemeSwitch />`, with `initial` set from the cookie where the server reads one.
+`enhance()` checks and applies the remembered choice (or, with none, the one checked in the markup) and applies each change. `applyTheme(choice)`, `readTheme()`, `themeChoice()`, `effectiveTheme()` and `toggleTheme()` are exported. 0.1.1 added the `cap-seg-options` wrapper the segmented control's rules need (the 0.1.0 markup lacked it, so the radios were not drawn as a control). In React, `<ThemeSwitch />`, with `initial` set from the cookie where the server reads one.
 
 ## Exceptions in production
 
