@@ -10,9 +10,6 @@
    the Portal's script-placed tip. */
 @layer cap.components {
   .cap-shell {
-    /* The Portal's top bar is 44 px (#215). tokens/scale.css still says 56 px: remove
-       this line when --top-h is 44 there. */
-    --top-h: 44px;
     display: grid;
     grid-template-columns: var(--rail-w) minmax(0, 1fr);
     grid-template-rows: var(--top-h) minmax(0, 1fr);

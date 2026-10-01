@@ -72,7 +72,7 @@ export const SCALE = {
     ["measure", "66ch", "a reading line (Bringhurst's 66 characters)"],
     ["rail-w", "208px", "the shell's left menu, expanded"],
     ["rail-w-collapsed", "56px", "the shell's left menu, collapsed to icons"],
-    ["top-h", "56px", "the shell's top bar"],
+    ["top-h", "44px", "the shell's top bar (the Portal's, #215)"],
   ],
 };
 
