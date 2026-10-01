@@ -24,7 +24,11 @@ export function FilterChips<V extends string>({ label, options, value, onChange,
   const first = useRef<HTMLButtonElement>(null);
   if (options.length > 6) console.warn("FilterChips: chips hold at most six values; use a select or a combobox for more.");
   const pressed = new Set(value);
-  const set = (next: Set<V>) => onChange(options.map((o) => o.value).filter((v) => next.has(v)));
+  // A pressed value that no option carries (from a shared address) still shows, pressed,
+  // after the options, so a filter is never active without a chip to say so and release it.
+  const known = new Set(options.map((o) => o.value));
+  const extra = value.filter((v) => !known.has(v));
+  const set = (next: Set<V>) => onChange([...options.map((o) => o.value), ...extra].filter((v) => next.has(v)));
   const toggle = (v: V) => {
     const next = new Set(pressed);
     if (next.has(v)) next.delete(v);
@@ -45,6 +49,11 @@ export function FilterChips<V extends string>({ label, options, value, onChange,
       {options.map((o, i) => (
         <button key={o.value} ref={i === 0 ? first : undefined} type="button" className="cap-chip" aria-pressed={pressed.has(o.value)} data-value={o.value} onClick={() => toggle(o.value)}>
           {o.label}
+        </button>
+      ))}
+      {extra.map((v) => (
+        <button key={v} type="button" className="cap-chip" aria-pressed="true" data-value={v} onClick={() => toggle(v)}>
+          {v}
         </button>
       ))}
       <button type="button" className="cap-link-btn" data-cap-part="clear" hidden={pressed.size === 0} onClick={clear}>

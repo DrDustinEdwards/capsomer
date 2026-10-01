@@ -17,6 +17,8 @@ replaces:
 
 One row per agent session: a state pill, the agent's name, how long it has been in that state, what it is doing now in plain words, and, when it is waiting on you, the exact question with its answer buttons. You answer without leaving the list.
 
+**Provenance.** REWROTE, as of Capsid master (88bf402), with one rule carried over. The Portal draws a live session as a `.qrow` grid row (state word, job title, last event; `LiveSessions` in `views/Queue.tsx`) that opens a drawer, and it has no in-place question, no collapsed steps and no sampling note; this component is a stacked block built from the approved mockup, sharing none of the `.qrow` rules. Carried over from the Portal's current code: the red left edge on a failed session (`.qrow.sev-crit`, `data-tone="crit"` here). The Portal's selected-row look (`main [data-row]:focus-visible`) belongs to its j and k row navigation and is the row-list's, not this component's.
+
 ## When to use it
 
 For live agent sessions in an operations console: who is waiting on you, who failed, who is working, who is idle or stopped.
@@ -29,6 +31,7 @@ A queue of jobs that wait for approval as a batch uses the approval sheet (`appr
 
 - **Waiting on you first, the longest wait at the top; then failed, working, idle, stopped.** What needs a person comes before what does not (patterns.md, "Status"). `order()` does the sort.
 - **State is a pill: shape, word and colour.** Needs you (warning triangle), Working (info, a turning arc), Failed (critical octagon), Idle (no data, dashed circle), Stopped (no data tone, a filled square, so it differs from Idle by shape and word, not colour).
+- **A failed session carries the red left edge** (`data-tone="crit"` on the row, which the React wrapper sets), as a critical row does in every list; the pill still says Failed. From the Portal's `.qrow.sev-crit`, which its Live sessions list gained in #215. Only failed rows have it: needing you is warning, not critical.
 - **The agent's name is mono**, because it is an identifier.
 - **The age is in words**: "waiting 3 minutes", "started 18 minutes ago", never "3m".
 - **Repeated steps collapse with a count.** The eye reads "read file ×12"; a screen reader hears "read file 12 times" (the "×12" is hidden from it and a `.cap-sr-only` "12 times" stands in).
@@ -48,7 +51,7 @@ A queue of jobs that wait for approval as a batch uses the approval sheet (`appr
 
 - The ask block is a group named by its question, so each answer button is heard in context.
 - A collapsed count is spoken in words.
-- The ask block's warning edge is a border, so it survives forced colours; the pill keeps its glyph and word when its tint is removed.
+- The ask block's warning edge is a border, so it survives forced colours; the pill keeps its glyph and word when its tint is removed. A failed row's red edge is drawn in CanvasText there, and is never the only sign: the pill's octagon and the word Failed say it.
 - The list is named by its panel heading.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.

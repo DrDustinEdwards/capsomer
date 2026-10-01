@@ -17,6 +17,8 @@ replaces:
 
 A timeline of what happened, newest first: deploys, merges, releases. Each day is a heading over its own list. A run of routine events (dependency updates, a nightly rebuild) is one quiet row. When an incident began soon after a deploy, a marker row says so directly above that deploy and links to the incident.
 
+**Provenance.** MIXED, as of Capsid master (88bf402). EXTRACTED: the row's geometry and values from `dashboard/src/styles.css` (`.frow`: a 14 px glyph column, the title, the time at the end; 6 px by 16 px padding; the 3 px red edge on a critical row; the 12 px muted detail and time), and, from the Portal's current file, the rule that an identifier's monospace face does not stretch the row (`.frow .sub .ns`). REWROTE: the markup and everything else, from the approved mockup's "What shipped": lists per day under headings, the condensed run, the incident marker, the container query. The Portal's feed rows open a drawer (`data-open`, selected and focus look) and its list is `IncidentFeed` in `views/shared.tsx`; those are tied to the Portal's drawer and router, so the rows here carry only their own links. The Portal's feed rules are unchanged since 366b902 apart from the rule above.
+
 ## When to use it
 
 For "what changed, and when": the Portal's deploy history, a site's release notes in the admin, a draft's history in the writing hub.
