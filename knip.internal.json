@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "components/*/states.html",
+    "components/*/states.tsx",
+    "components/*/*.spec.ts",
+    "site/main.tsx",
+    "site/specimen.ts",
+    "site/*.spec.ts",
+    "tokens/*.mjs",
+    "test/**/*.{ts,mjs}"
+  ],
+  "project": ["**/*.{ts,tsx,mjs}"],
+  "ignoreBinaries": ["playwright", "playwright.review.config.ts"]
+}

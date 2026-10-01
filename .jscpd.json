@@ -1,0 +1,23 @@
+{
+  "path": ["components", "site", "bin", "tokens", "css", "test"],
+  "format": ["typescript", "tsx", "javascript", "css", "markup"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/site-dist/**",
+    "**/test-results/**",
+    "**/site/data/**",
+    "tokens/colour.css",
+    "tokens/scale.css",
+    "tokens/themes.css",
+    "tokens/tokens.json",
+    "test/fixtures/**",
+    "**/*.md"
+  ],
+  "minLines": 8,
+  "minTokens": 70,
+  "reporters": ["console", "json"],
+  "output": "test-results/jscpd",
+  "gitignore": true,
+  "silent": false
+}
