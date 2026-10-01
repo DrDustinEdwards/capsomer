@@ -3,9 +3,11 @@
 
 /* The confirm dialog: a native <dialog> opened with showModal(), for an action that cannot
    be undone. Title names the action and the object, the body lists what changes, the
-   perform button is named for the action and set apart from Cancel. From the Capsid
-   Portal's ConfirmDialog (dashboard/src/app/ConfirmDialog.tsx, styles.css ".help") and
-   the approved mockup. */
+   perform button is named for the action and set apart from Cancel. The look is written
+   for Capsomer's tokens (the Portal's ".help" wraps a ".card" in a bare dialog; here the
+   dialog is the card); the rules come from the Portal's ConfirmDialog (dashboard/src/app/
+   ConfirmDialog.tsx) and the approved mockup: no light dismiss, Cancel first and the
+   action at the far end, a reason that is marked invalid when empty. */
 @layer cap.components {
   .cap-dialog {
     width: min(480px, calc(100% - 2 * var(--space-5)));
@@ -79,6 +81,36 @@
     border-radius: var(--radius-m);
     background: var(--surface);
     color: var(--text);
+  }
+
+  /* The reason for an action that asks for one. A plain look until the field component's
+     .cap-input styles it (:where() keeps this at zero specificity). Empty and pressed, the
+     field is marked aria-invalid and the error box beside it says why; the border turns
+     to the critical tone as well, but never alone. */
+  .cap-dialog-reason {
+    display: grid;
+    gap: var(--space-2);
+
+    & label {
+      font-weight: 600;
+    }
+  }
+  :where(.cap-dialog-reason textarea) {
+    width: 100%;
+    padding: var(--space-3) 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+    resize: vertical;
+  }
+  .cap-dialog-reason textarea[aria-invalid="true"] {
+    border-color: var(--crit);
+  }
+  .cap-dialog-note {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
   }
 
   /* A failure stays inside the dialog, beside the action: shape, word and colour. */

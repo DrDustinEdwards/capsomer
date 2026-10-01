@@ -34,7 +34,7 @@
           <div class="cap-keys-body" data-cap-part="keys-list"></div>
           <div class="cap-keys-foot">
             <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="keys-note" checked /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">On</span></label>
-            <p class="cap-keys-note" id="keys-note">Turn these off if they clash with a screen reader or speech input. Shortcuts with Ctrl or ⌘ keep working.</p>
+            <p class="cap-keys-note" id="keys-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
           </div>
         </dialog>
       </template>
@@ -52,7 +52,7 @@
           <div class="cap-keys-body" data-cap-part="keys-list"></div>
           <div class="cap-keys-foot">
             <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="off-note" /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">Off</span></label>
-            <p class="cap-keys-note" id="off-note">Turn these off if they clash with a screen reader or speech input. Shortcuts with Ctrl or ⌘ keep working.</p>
+            <p class="cap-keys-note" id="off-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
           </div>
         </dialog>
       </template>
@@ -66,9 +66,9 @@
           if (said) said.textContent = text;
         };
         register({ key: "Mod+k", label: "Open the command menu", group: "General", run: say("The command menu opens here.") });
-        register({ key: "g o", label: "Go to Overview", group: "Go to", run: say("Went to Overview.") });
-        register({ key: "g s", label: "Go to Sites", group: "Go to", run: say("Went to Sites.") });
-        register({ key: "g q", label: "Go to Queue", group: "Go to", run: say("Went to Queue.") });
+        register({ key: "g o", label: "Go to Overview", about: "Problems first, worst first; then the sites.", group: "Go to", run: say("Went to Overview.") });
+        register({ key: "g s", label: "Go to Sites", about: "Health comes from each site's own route.", group: "Go to", run: say("Went to Sites.") });
+        register({ key: "g q", label: "Go to Queue", about: "A blocked job shows what it waits on.", group: "Go to", run: say("Went to Queue.") });
         register({ key: "r", label: "Refresh now", group: "Actions", run: say("Refreshed.") });
         register({ key: "t", label: "Switch light and dark", group: "Actions", run: say("Switched the theme.") });
         register({ key: "[", label: "Collapse or expand the side menu", group: "Actions", run: say("Collapsed the side menu.") });
