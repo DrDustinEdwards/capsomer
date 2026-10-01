@@ -55,9 +55,22 @@ test("family: themes() carries the twelve steps and accent-text", () => {
   assert.equal(t.light.tokens.accent, "#8c5fd2");
 });
 
-test("family: report() covers both families and both themes, failures first", () => {
+test("family: report() covers every family in both themes, its default theme first", () => {
   const rows = report();
-  assert.deepEqual([...new Set(rows.map((r) => r.family))].sort(), ["fox", "purple"]);
-  const firstPass = rows.findIndex((r) => r.pass);
-  assert.ok(rows.slice(firstPass).every((r) => r.pass));
+  assert.deepEqual([...new Set(rows.map((r) => r.family))].sort(), ["fox", "purple", "teal"]);
+  for (const [name, f] of Object.entries(FAMILIES)) {
+    const mine = rows.filter((r) => r.family === name);
+    assert.equal(mine[0].scheme, f.defaultTheme, `${name} checks ${f.defaultTheme} first`);
+    for (const scheme of ["light", "dark"]) {
+      const s = mine.filter((r) => r.scheme === scheme);
+      const firstPass = s.findIndex((r) => r.pass);
+      if (firstPass >= 0) assert.ok(s.slice(firstPass).every((r) => r.pass), `${name} ${scheme}: failures first`);
+    }
+  }
+  assert.equal(FAMILIES.teal.defaultTheme, "dark");
+  assert.equal(FAMILIES.fox.defaultTheme, "light");
+});
+
+test("family: the teal scale keeps its seed at step 9", () => {
+  for (const scheme of ["light", "dark"]) assert.equal(scale(FAMILIES.teal.seed, null, scheme)[8], "#008489");
 });
