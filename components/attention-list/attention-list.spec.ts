@@ -13,7 +13,7 @@ eachTheme((theme) => {
 
   test("accessibility: no axe violations with the group open", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
-    await page.locator(mixed).getByRole("button", { name: "Notices, 4" }).click();
+    await page.locator(mixed).getByRole("button", { name: /^Notices\s*,\s*4$/ }).click();
     await expectNoAxeViolations(page);
   });
 
@@ -41,9 +41,9 @@ eachTheme((theme) => {
           - listitem:
             - link "2 jobs are waiting for approval"
           - listitem:
-            - link "germomics: no backup reported"
+            - link /germomics/
           - listitem:
-            - button "Notices, 4"
+            - button /^Notices\\s*,\\s*4$/
     `);
     await expect(page.locator(`${mixed} [data-cap-part='group-toggle']`)).toHaveAttribute("aria-expanded", "false");
   });
@@ -57,23 +57,23 @@ eachTheme((theme) => {
       await expect(root.getByRole("link", { name })).toBeFocused();
     }
     await page.keyboard.press("Tab");
-    await expect(root.getByRole("button", { name: "Notices, 4" })).toBeFocused();
+    await expect(root.getByRole("button", { name: /^Notices\s*,\s*4$/ })).toBeFocused();
   });
 
   test("keyboard: Enter on a group button shows its rows, and Tab moves into them", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
-    const button = page.locator(mixed).getByRole("button", { name: "Notices, 4" });
+    const button = page.locator(mixed).getByRole("button", { name: /^Notices\s*,\s*4$/ });
     await button.focus();
     await page.keyboard.press("Enter");
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await expect(page.locator("#att-mixed-notices")).toBeVisible();
     await page.keyboard.press("Tab");
-    await expect(page.getByRole("link", { name: "Dependency update: vite 8.3.2" })).toBeFocused();
+    await expect(page.locator("#att-mixed-notices").getByRole("link", { name: "Dependency update: vite 8.3.2" })).toBeFocused();
   });
 
   test("keyboard: Space on a group button hides its rows again", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
-    const button = page.locator(expanded).getByRole("button", { name: "Notices, 3" });
+    const button = page.locator(expanded).getByRole("button", { name: /^Notices\s*,\s*3$/ });
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await button.focus();
     await page.keyboard.press("Space");

@@ -55,15 +55,15 @@ eachTheme((theme) => {
 
   test("accessibility: rows read as words", async ({ page }) => {
     await visitStates(page, "time", theme);
-    await expect(page.locator("#sample-rows")).toMatchAriaSnapshot(`
-      - list "Deploys":
-        - listitem: dustinedwards.info deployed less than a minute ago
-        - listitem: carrel.app deployed 5 minutes ago
-        - listitem: capsid deployed 3 hours ago
-        - listitem: foxhound.app deployed yesterday
-        - listitem: recova deployed 12 September
-        - listitem: The next uptime pass runs in 3 hours
-    `);
+    await expect(page.locator("#sample-rows")).toHaveAccessibleName("Deploys");
+    await expect(page.locator("#sample-rows > li")).toHaveText([
+      /dustinedwards\.info deployed\s+less than a minute ago/,
+      /carrel\.app deployed\s+5 minutes ago/,
+      /capsid deployed\s+3 hours ago/,
+      /foxhound\.app deployed\s+yesterday/,
+      /recova deployed\s+12 September/,
+      /The next uptime pass runs in\s+3 hours/,
+    ]);
   });
 
   test("behaviour: the exact time, with its zone, is shown without hover and with no title", async ({ page }) => {

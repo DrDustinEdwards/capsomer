@@ -60,11 +60,11 @@ eachTheme((theme) => {
         - combobox "Search commands" [expanded]
         - listbox "Commands":
           - group "Go to":
-            - option /Overview, shortcut g o/ [selected]
+            - option /Overview\\s*,\\s*shortcut g o/ [selected]
             - option /Sites/
             - option /Queue/
           - group "Actions":
-            - option /Refresh now, shortcut r/
+            - option /Refresh now\\s*,\\s*shortcut r/
           - group "Copy":
             - option "Copy the command for the blocked capsomer job"
           - group "Help":

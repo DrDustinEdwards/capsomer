@@ -81,13 +81,16 @@ export function enhance(root: ParentNode = document): () => void {
         else apply.removeAttribute("aria-busy");
       }
     };
-    const open = () => {
+    // `next` is where the switch would move. A checkbox flips before its click handlers run
+    // and is put back when one cancels the click, so inside the handler sw.checked already
+    // holds the next state.
+    const open = (next: boolean) => {
       if (busy) return;
       if (form.hidden) {
         reason.value = "";
         clearError(reason);
       }
-      ask.textContent = question(name, !sw.checked);
+      ask.textContent = question(name, next);
       form.hidden = false;
       reason.focus();
     };
@@ -100,8 +103,9 @@ export function enhance(root: ParentNode = document): () => void {
 
     // A click (and Space, which clicks) would move the switch: stop it and ask instead.
     const onSwitchClick = (e: MouseEvent) => {
+      const next = sw.checked;
       e.preventDefault();
-      open();
+      open(next);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape" || busy) return;

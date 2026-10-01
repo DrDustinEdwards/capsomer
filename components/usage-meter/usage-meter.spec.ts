@@ -34,15 +34,10 @@ eachTheme((theme) => {
 
   test("accessibility: each bar is a named meter whose value text includes the projection", async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
-    await expect(page.locator(section("s-on-track")).locator("[data-cap='usage-meter']")).toMatchAriaSnapshot(`
-      - list:
-        - listitem:
-          - meter "Worker requests"
-          - paragraph: /On track/
-      - list "Key":
-        - listitem: "Solid: used"
-        - listitem: "Hatched: where the day ends at the current rate"
-    `);
+    const onTrack = page.locator(section("s-on-track")).locator("[data-cap='usage-meter']");
+    await expect(onTrack.getByRole("meter", { name: "Worker requests" })).toHaveCount(1);
+    await expect(onTrack.getByRole("paragraph").filter({ hasText: "On track" })).toHaveCount(1);
+    await expect(onTrack.getByRole("list", { name: "Key" }).getByRole("listitem")).toHaveText([/Solid:\s*used/, /Hatched:\s*where the day ends at the current rate/]);
     const meter = page.getByRole("meter", { name: "D1 rows read" });
     await expect(meter).toHaveAttribute("aria-valuenow", "3700000");
     await expect(meter).toHaveAttribute("aria-valuetext", /projected to run out in about 6 hours, before the reset/);

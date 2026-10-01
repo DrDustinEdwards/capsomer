@@ -66,7 +66,7 @@ eachTheme((theme) => {
     await visitStates(page, "table", theme, "reflow");
     // The column name is a ::before, which the shared helper cannot select: measured here,
     // its colour against the first opaque background behind its cell.
-    const label = await page.locator("#t-reflow td[data-label='Status']").evaluate((el) => {
+    const label = await page.locator("#t-reflow td[data-label='Status']").first().evaluate((el) => {
       const rgb = (v: string) => (v.match(/[\d.]+/g) ?? []).map(Number);
       const lum = (c: number[]) => {
         const f = (x: number) => {
@@ -179,7 +179,8 @@ eachTheme((theme) => {
 
   test("behaviour: a click anywhere on a row follows its link", async ({ page }) => {
     await visitStates(page, "table", theme);
-    await page.locator("#t1 tbody tr").nth(2).locator("td[data-num]").first().click();
+    // The stretched link covers the row, so a click on the row lands on the link.
+    await page.locator("#t1 tbody tr").nth(2).click();
     await expect(page).toHaveURL(/#app-site$/);
   });
 

@@ -106,7 +106,7 @@ export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each co
           </h2>
           <p className="cap-approval-lead">{lead}</p>
         </div>
-        <div className="cap-approval-gates">
+        <div className="cap-approval-gates" role="group" aria-label="Gates waiting for approval" tabIndex={0}>
           {gates.map((g, i) => (
             <fieldset className="cap-approval-gate" key={g.id} disabled={pending}>
               <legend className="cap-approval-job">{g.title}</legend>
