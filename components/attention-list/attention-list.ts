@@ -173,9 +173,15 @@ export function viewLinkText(g: AttentionGroupEntry): string {
 }
 
 // Shows or hides what one button controls (a group's rows, the warnings past the cap, the
-// notices) and keeps the button's state true.
+// notices) and keeps the button's state true. A button with data-open-label says that while
+// open ("Fewer warnings") and its own text again when closed, as the Portal's does.
 export function setGroup(button: HTMLElement, open: boolean): void {
   button.setAttribute("aria-expanded", String(open));
+  const openLabel = button.dataset.openLabel;
+  if (openLabel) {
+    if (button.dataset.closedLabel === undefined) button.dataset.closedLabel = button.textContent ?? "";
+    button.textContent = open ? openLabel : button.dataset.closedLabel;
+  }
   const id = button.getAttribute("aria-controls");
   const members = id ? button.ownerDocument.getElementById(id) : null;
   if (members) members.hidden = !open;

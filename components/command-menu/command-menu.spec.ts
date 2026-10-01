@@ -153,7 +153,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("option", { name: /Stop|Pause|Revoke/ })).toHaveCount(0);
     await box(page).fill("pause");
     await expect(shownOptions(page)).toHaveCount(2);
-    await box(page).fill("pause cap");
+    await box(page).fill("pause everything");
     await expect(shownOptions(page)).toHaveCount(0);
     await box(page).fill("revoke");
     expect(await activeName(page)).toBe("Revoke foxhound-driver");

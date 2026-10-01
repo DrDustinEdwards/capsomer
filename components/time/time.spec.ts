@@ -86,11 +86,12 @@ eachTheme((theme) => {
 
   test("behaviour: the exact time, with its zone, is shown without hover and with no title", async ({ page }) => {
     await visitStates(page, "time", theme);
-    const t = page.locator("#sample-exact .cap-time");
+    const t = page.locator("#sample-exact time.cap-time");
     await expect(t).toBeVisible();
     await expect(t).toHaveText("30 September 2026, 14:02 BST (13:02 UTC)");
     await expect(page.locator(".cap-time[title]")).toHaveCount(0);
-    for (const el of await page.locator(".cap-time").all()) await expect(el).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}T/);
+    // Every real time carries its machine value; the unreadable one is a plain span.
+    for (const el of await page.locator("time.cap-time").all()) await expect(el).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}T/);
   });
 
   test("behaviour: the UTC part of an exact time stays whole on a line, and an unreadable time is words", async ({ page }) => {

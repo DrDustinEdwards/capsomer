@@ -57,7 +57,7 @@ eachTheme((theme) => {
     await visitStates(page, "status", theme);
     await expectContrast(page, [{ sel: "#sample-brief .cap-status", what: "the brief no data word" }]);
     await expect(page.locator("#sample-brief")).toMatchAriaSnapshot(`
-      - paragraph: /No data\\s*: no Cloudflare token for this site/
+      - paragraph: /No data\\s*:\\s*no Cloudflare token for this site/
     `);
     await expect(page.locator("#sample-brief .cap-status")).toHaveAttribute("title", "No Cloudflare token for this site");
     const shown = await page.locator("#sample-brief .cap-status").evaluate((el) => (el as HTMLElement).innerText.trim());

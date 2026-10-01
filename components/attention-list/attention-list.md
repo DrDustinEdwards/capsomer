@@ -94,7 +94,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     </li>
 
     <!-- past the cap -->
-    <li class="cap-attention-link"><button type="button" aria-expanded="false" aria-controls="att-more">2 more warnings</button></li>
+    <li class="cap-attention-link"><button type="button" aria-expanded="false" aria-controls="att-more" data-open-label="Fewer warnings">2 more warnings</button></li>
     <li class="cap-attention-region" id="att-more" hidden><ul role="list" aria-label="More warnings">[rows]</ul></li>
 
     <!-- the notices: one closed row at the foot -->
