@@ -7,7 +7,7 @@
     display: grid;
     grid-template-columns: var(--rail-w) minmax(0, 1fr);
     grid-template-rows: var(--top-h) minmax(0, 1fr);
-    height: 100dvh;
+    min-height: 100dvh;
     background: var(--ground);
     color: var(--text);
 
@@ -85,6 +85,10 @@
   }
 
   .cap-shell-rail {
+    position: sticky;
+    top: calc(var(--top-h) + env(safe-area-inset-top, 0px));
+    align-self: start;
+    height: calc(100dvh - var(--top-h) - env(safe-area-inset-top, 0px));
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -173,11 +177,14 @@
     }
   }
 
+  /* The document scrolls, not the main region: a long page with nothing focusable in it
+     still scrolls by keyboard, and a phone's address bar can collapse. */
+  :root:has(.cap-shell) {
+    scroll-padding-top: calc(var(--top-h) + var(--space-4));
+  }
   .cap-shell-main {
     position: relative;
     min-width: 0;
-    overflow-y: auto;
-    scroll-padding-top: var(--space-6);
 
     &:focus {
       outline: none;
@@ -270,6 +277,8 @@
       display: none;
     }
     .cap-shell-tabs {
+      position: sticky;
+      bottom: 0;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
       z-index: var(--z-tabbar);
