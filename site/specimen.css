@@ -1,0 +1,71 @@
+/* The layout of a states page: a title, then one labelled specimen per state. This is the
+   site's own CSS, not part of the package. */
+.cap-specimens {
+  padding: var(--space-6) var(--space-5) var(--space-9);
+}
+.cap-specimens > main {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 1100px;
+  margin-inline: auto;
+}
+.cap-specimens h1 {
+  margin: 0;
+  font-size: var(--fs-h2);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+.cap-specimens > main > p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 70ch;
+}
+.cap-specimen {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  min-width: 0;
+}
+.cap-specimen > h2 {
+  margin: 0;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cap-specimen-frame {
+  display: block;
+  width: min(100%, var(--frame-w, 100%));
+  height: var(--frame-h, 360px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: var(--ground);
+}
+/* A specimen rendered as the whole page (?only=<id>). A page-level component such as the
+   shell fills the frame. */
+.cap-specimen-only {
+  min-height: 100dvh;
+}
+.specimen-page {
+  padding: var(--space-5) var(--space-6);
+  & h1 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+  & p {
+    margin: 0;
+    color: var(--muted);
+  }
+}
+.cap-specimen > .cap-specimen-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}

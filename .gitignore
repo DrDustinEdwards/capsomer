@@ -1,1 +1,8 @@
 .mcp.json
+node_modules/
+dist/
+site-dist/
+test-results/
+playwright-report/
+site/data/
+

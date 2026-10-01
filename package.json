@@ -1,0 +1,93 @@
+﻿{
+  "name": "capsomer",
+  "version": "0.1.0",
+  "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behaviour modules and React wrappers.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrDustinEdwards/capsomer.git"
+  },
+  "engines": {
+    "node": ">=24.14.1"
+  },
+  "files": [
+    "css",
+    "tokens/*.css",
+    "tokens/tokens.json",
+    "tokens/palette.mjs",
+    "tokens/scale.mjs",
+    "components/*/*.css",
+    "components/*/*.md",
+    "dist",
+    "bin",
+    "DEFAULTS.md"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    "./layers.css": "./css/layers.css",
+    "./tokens.css": "./css/tokens.css",
+    "./base.css": "./css/base.css",
+    "./prose.css": "./css/prose.css",
+    "./themes.css": "./tokens/themes.css",
+    "./tokens.json": "./tokens/tokens.json",
+    "./palette": "./tokens/palette.mjs",
+    "./*.css": "./components/*/*.css",
+    "./behaviour/*": {
+      "types": "./dist/components/*/*.d.ts",
+      "default": "./dist/components/*/*.js"
+    },
+    "./react/*": {
+      "types": "./dist/components/*/*.react.d.ts",
+      "default": "./dist/components/*/*.react.js"
+    }
+  },
+  "bin": {
+    "capsomer": "./bin/capsomer.mjs"
+  },
+  "scripts": {
+    "tokens": "node tokens/palette.mjs && node tokens/scale.mjs",
+    "check": "node tokens/palette.mjs --check && node tokens/scale.mjs --check && node --test test/unit/*.test.mjs && tsc --noEmit -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "site": "vite build --config site/vite.config.ts",
+    "e2e": "playwright test",
+    "size": "node bin/capsomer.mjs size",
+    "token-check": "node bin/capsomer.mjs token-check"
+  },
+  "peerDependencies": {
+    "@base-ui/react": "^1.8.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@base-ui/react": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@base-ui/react": "^1.8.0",
+    "@fontsource-variable/source-serif-4": "^5.3.0",
+    "@fontsource/martian-mono": "^5.3.0",
+    "@fontsource/schibsted-grotesk": "^5.3.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "^24.19.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.1"
+  }
+}
