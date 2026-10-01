@@ -81,6 +81,16 @@
           </ul>
         </div>
       </section>
+      <section class="cap-specimen" aria-labelledby="s-heading">
+        <h2 id="s-heading">Group row in a heading</h2>
+        <div class="cap-group" data-cap="disclosure">
+          <h3 class="cap-group-heading"><button type="button" class="cap-group-toggle" aria-expanded="false" aria-controls="queue-done-rows"><span class="cap-group-label">Finished jobs</span><span class="cap-sr-only">, </span><span class="cap-group-count">12</span></button></h3>
+          <ul class="cap-group-rows" id="queue-done-rows" hidden>
+            <li>Run the browser tests for capsomer</li>
+            <li>Refresh the uptime strip fixtures</li>
+          </ul>
+        </div>
+      </section>
     </main>
     <script type="module">
       import { enhance } from "./disclosure.ts";

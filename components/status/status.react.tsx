@@ -59,13 +59,26 @@ export interface StatusProps {
   children: ReactNode;
   // No data says why: "the counter has not reported since 09:00".
   reason?: ReactNode;
+  // For a table cell, where a sentence does not fit: the cell says the word and nothing
+  // more, the reason is read out by a screen reader (and shown on hover, when it is text),
+  // and the full sentence is in the row's detail. The Portal's NoData brief (design D18).
+  brief?: boolean;
 }
 
 function glyphFor(tone: Tone, running?: boolean): GlyphName {
   return running ? "running" : tone;
 }
 
-export function Status({ tone, running, children, reason }: StatusProps) {
+export function Status({ tone, running, children, reason, brief }: StatusProps) {
+  if (brief && reason) {
+    return (
+      <span className="cap-status" data-tone={tone} title={typeof reason === "string" ? reason : undefined}>
+        <Glyph name={glyphFor(tone, running)} />
+        {children}
+        <span className="cap-sr-only">: {reason}</span>
+      </span>
+    );
+  }
   const word = (
     <span className="cap-status" data-tone={tone}>
       <Glyph name={glyphFor(tone, running)} />
@@ -82,7 +95,7 @@ export function Status({ tone, running, children, reason }: StatusProps) {
   );
 }
 
-export function Pill({ tone, running, children }: Omit<StatusProps, "reason">) {
+export function Pill({ tone, running, children }: Omit<StatusProps, "reason" | "brief">) {
   return (
     <span className="cap-pill" data-tone={tone}>
       <Glyph name={glyphFor(tone, running)} />

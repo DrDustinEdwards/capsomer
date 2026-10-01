@@ -3,8 +3,9 @@ import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from ".
 
 const grid = "section[aria-labelledby='s-grid']";
 
-function columns(page: Page, sel: string): Promise<number> {
-  return page.locator(sel).evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").filter(Boolean).length);
+// The distinct vertical positions of the tiles in a list: how many rows they sit on.
+function rowTops(page: Page, sel: string): Promise<number[]> {
+  return page.locator(sel).evaluate((list) => Array.from(list.querySelectorAll(".cap-tile")).map((t) => Math.round(t.getBoundingClientRect().top)));
 }
 
 eachTheme((theme) => {
@@ -49,17 +50,17 @@ eachTheme((theme) => {
     await expect(page.locator(`${grid} .cap-tiles`)).toMatchAriaSnapshot(`
       - list "Overview figures":
         - listitem:
-          - link /^Sites up 6 of 6 All up/
+          - link /^6 of 6 Sites up All up/
         - listitem:
-          - button /^Blocked on you 2 jobs Waiting on you/
+          - button /^2 jobs Blocked on you Waiting on you/
         - listitem:
-          - link /^Actions minutes 2,140 of 2,000 Over limit/
+          - link /^2,140 of 2,000 Actions minutes Over limit/
         - listitem:
-          - link /^Primary backup No data The health route has not been read yet/
+          - link /^No data Primary backup The health route has not been read yet/
         - listitem:
-          - button /^D1 rows read 78% of today's limit Near limit/
+          - button /^78% of today's limit D1 rows read Near limit/
         - listitem:
-          - link /^Open findings 0 None open/
+          - link /^0 Open findings None open/
     `);
     await expect(page.locator(grid).getByRole("link", { name: /Actions minutes/ })).toHaveAccessibleDescription("Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.");
   });
@@ -91,18 +92,27 @@ eachTheme((theme) => {
     await expect(button).toHaveAttribute("data-clicked", "yes");
   });
 
-  test("behaviour: six across when wide, two across on a phone", async ({ page }) => {
-    await visitStates(page, "stat-tile", theme);
-    expect(await columns(page, `${grid} .cap-tiles-list`)).toBe(6);
+  test("behaviour: the row wraps onto more rows at phone width, and no tile runs out of its row", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "stat-tile", theme, "phone");
-    expect(await columns(page, ".cap-tiles-list")).toBe(2);
+    const rows = await rowTops(page, ".cap-tiles-list");
+    expect(new Set(rows).size, "tiles on more than one row").toBeGreaterThan(1);
+    const spill = await page.locator(".cap-tiles-list").evaluate((list) => {
+      const edge = list.getBoundingClientRect().right + 1;
+      return Array.from(list.querySelectorAll(".cap-tile")).filter((t) => t.getBoundingClientRect().right > edge).length;
+    });
+    expect(spill).toBe(0);
   });
 
-  test("behaviour: three across in a middling space", async ({ page }) => {
-    await page.setViewportSize({ width: 760, height: 900 });
-    await visitStates(page, "stat-tile", theme);
-    expect(await columns(page, `${grid} .cap-tiles-list`)).toBe(3);
+  test("behaviour: a tile is never narrower than its text, at any width", async ({ page }) => {
+    for (const width of [390, 760, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      await visitStates(page, "stat-tile", theme);
+      const cut = await page.locator(`${grid} .cap-tile`).evaluateAll((tiles) =>
+        tiles.filter((t) => Array.from(t.querySelectorAll<HTMLElement>(".cap-tile-line, .cap-tile-detail")).some((el) => el.scrollWidth > el.clientWidth + 1)).length,
+      );
+      expect(cut, `tiles with cut text at ${width} px`).toBe(0);
+    }
   });
 
   test("behaviour: no data says so with its reason, never a zero", async ({ page }) => {

@@ -4,7 +4,7 @@ title: Disclosure
 summary: Show and hide, a section that opens in place and a group row in a list.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels]
+states: [section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
 added: 0.1.0
 source: the approved mockup ("4 notices", collapsed); patterns.md "Show or hide"
 replaces:
@@ -29,6 +29,7 @@ Two ways to show and hide. A section that opens in place is a native `<details c
 
 - **A section is native `details` and `summary`**: it works before JavaScript, with none, and with find-in-page. The chevron turns; the content fades in under `prefers-reduced-motion: no-preference` only (`::details-content`, opacity alone).
 - **A group row is a `button` with `aria-expanded` and `aria-controls`**, and the rows it controls get `hidden`. Its name says what and how many: "Notices, 4" (a visually hidden comma keeps the count its own word to a screen reader).
+- **A group's button may sit in a heading** (`.cap-group-heading`, an `h3` or `h4`), so a person moving by heading finds the groups. The heading adds no look of its own (Portal: the queue's group headers are an `h3` holding the button).
 - **Two levels at most.** The second sits in by one step.
 - Both rows are at least `var(--target)` tall and as wide as their list.
 
@@ -67,7 +68,11 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </div>
 ```
 
-`enhance()` wires every group; `setGroup(button, expanded)` and `toggleGroup(button)` are exported. In React, `<Disclosure summary name defaultOpen>` and `<Group label count defaultExpanded holdsCritical>` with `<li>` children.
+In a heading: `<h3 class="cap-group-heading"><button type="button" class="cap-group-toggle" ...>...</button></h3>` in place of the bare button.
+
+`enhance()` wires every group; `setGroup(button, expanded)` and `toggleGroup(button)` are exported. In React, `<Disclosure summary name defaultOpen>` and `<Group label count defaultExpanded holdsCritical headingLevel>` with `<li>` children.
+
+**Provenance.** REWROTE, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.chev`, `.rowlink`, `.disclose`, `.qgroup`; `dashboard/src/views/Overview.tsx` `GroupRow`, `Notices`). The Portal has no disclosure component: its group and notice rows are one-off `button.rowlink` and `button.disclose` with a `.chev` (`useState` per row, no `details`, no group count, no two levels). Capsomer's `details` section, `.cap-group` button with count, nesting rule and the open-a-group-that-holds-a-critical-row guard are written from the pattern (patterns.md, "Show or hide") and the approved mockup. Evidence: no rule or identifier of the Portal's carries over by rename. The chevron's geometry (7 px square, 1.5 px borders, rotated -45 degrees closed and 45 open, `margin: 0 3px 2px 6px`) is identical to the Portal's `.chev`, and the Portal's `.chev` was added after the extraction base (it is not in `366b902`), so the match is the same drawing reached twice, not a copy in either direction. Ported in v0.1.1: the button-in-a-heading form (`.qgroup > h3 .disclose`). Not ported: the Portal's group-row layouts, which are the attention list's and the row list's (see those pages).
 
 ## Exceptions in production
 

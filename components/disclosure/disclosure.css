@@ -66,6 +66,14 @@
   .cap-group {
     display: grid;
   }
+  /* The button may sit in a heading, so a person moving by heading finds the groups (the
+     Portal's queue groups are an h3 holding the button). The heading adds nothing of its
+     own: the button is the band. */
+  .cap-group-heading {
+    margin: 0;
+    font: inherit;
+    letter-spacing: inherit;
+  }
   .cap-group-toggle {
     display: flex;
     align-items: center;
