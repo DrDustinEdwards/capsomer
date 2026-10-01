@@ -42,8 +42,14 @@ eachTheme((theme) => {
     await expect(summary).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(outage.locator("details")).toHaveAttribute("open", "");
+    // The table is drawn once the details are open; Tab only reaches it after that.
+    await expect(page.getByRole("region", { name: "Uptime by day, foxhound.app" })).toBeVisible();
     await page.keyboard.press("Tab");
-    await expect(page.getByRole("region", { name: "Uptime by day, foxhound.app" })).toBeFocused();
+    const active = await page.evaluate(() => {
+      const el = document.activeElement as HTMLElement | null;
+      return el ? `${el.tagName.toLowerCase()}${el.id ? "#" + el.id : ""}.${el.className} [${el.getAttribute("aria-label") ?? el.textContent?.trim().slice(0, 30)}]` : "nothing";
+    });
+    await expect(page.getByRole("region", { name: "Uptime by day, foxhound.app" }), `focus is on ${active}`).toBeFocused();
     await expect(page.getByRole("row", { name: /Tue 29 Sep 72.9%/ })).toBeVisible();
   });
 
