@@ -95,3 +95,5 @@ It renders, in `.cap-combobox`: `label.cap-combobox-label`, `p.cap-combobox-help
 ## Exceptions in production
 
 None yet.
+
+**Test note.** The accessibility scan leaves out Base UI's focus guards ([data-base-ui-focus-guard]): visually hidden sentinels it places around an open popup so focus can wrap. They are ria-hidden and focusable on purpose, which axe's ria-hidden-focus rule reports; nothing else is excluded.

@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The page's one status region (role="status"). It sits in the page, at the bottom of the
    view's scroll area, so a result shows where the person is working; it never floats over
    other content and never takes focus. Empty, it is present and takes no space. */

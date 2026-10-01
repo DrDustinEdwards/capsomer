@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* A list of rows, each opening a detail. The row's title is its one link or button,
    stretched over the whole row, so the row is one tab stop with a real role. Extracted from
    the Capsid Portal (dashboard/src/styles.css: .att-row, .qrow, .frow), which drew three

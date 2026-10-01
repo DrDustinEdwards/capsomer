@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Agent session rows: who is working, who failed, and who is waiting on you, with the
    question answered in place. From the Capsid Portal's agent sessions (dashboard/src/views/
    Agents.tsx) as drawn in the approved mockup. The pill is .cap-pill and the answer

@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Show and hide: a native <details> section (.cap-disclosure), and a group row in a list
    (.cap-group) whose button shows or hides the rows it groups. Two levels at most. */
 @layer cap.components {

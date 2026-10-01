@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* A combobox: a text box that filters a list of allowed values, built on Base UI's
    Combobox (decision 7). Base UI gives the roles, the keys and the positioning; this file
    gives the look. The box reproduces .cap-input's values from the tokens (it does not

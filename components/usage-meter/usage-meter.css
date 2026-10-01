@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The usage meter: a list of usage figures against free limits. Each row has its name and
    amount, a bar with what is used (solid) and where the period ends at the current rate
    (hatched), and a line that says why, in words. From the Capsid Portal's meter and the

@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Status: a word with a glyph, coloured by its tone. The glyph's shape differs per tone
    (octagon critical, triangle warning, square notice, filled circle ok, dashed circle no
    data, an arc running), so shape and word carry the meaning and colour only repeats it.

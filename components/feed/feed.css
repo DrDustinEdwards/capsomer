@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* What shipped: a timeline of deploys and merges, newest first, broken by day. Routine
    runs condense to one row; a marker row says where an incident began after a deploy.
    Extracted from the Capsid Portal (dashboard/src/styles.css "feed", views/Deploys.tsx)

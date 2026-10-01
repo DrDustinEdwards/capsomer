@@ -23,14 +23,14 @@ eachTheme((theme) => {
   test("accessibility: no axe violations, closed", async ({ page }) => {
     await visitStates(page, "menu", theme);
     await expect(trigger(page)).toBeVisible();
-    await expectNoAxeViolations(page);
+    await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
   for (const state of ["open", "highlighted", "disabled", "danger"]) {
     test(`accessibility: no axe violations, ${state}`, async ({ page }) => {
       await visitStates(page, "menu", theme, state);
       await expect(page.getByRole("menu")).toBeVisible();
-      await expectNoAxeViolations(page);
+      await expectNoAxeViolations(page, undefined, { baseUi: true });
     });
   }
 

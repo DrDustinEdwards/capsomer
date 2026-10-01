@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The app shell: a top bar, a left menu (the rail) that collapses to icons, the main
    region, and a tab bar on a phone. Extracted from the Capsid Portal (dashboard/src/
    styles.css, "shell" and "rail"), with Settings moved into the top bar (capsid

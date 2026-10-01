@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The approval sheet: several waiting gates in one modal dialog, each with its exact
    command, a checkbox to include it and an optional comment. Approve's count follows the
    checkboxes. The buttons are .cap-btn, the checkbox .cap-check, the comment .cap-field and

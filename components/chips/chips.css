@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Filter chips: a labelled group of toggle buttons (aria-pressed), a Clear button while
    any is pressed, and the result count in a live region. From the Capsid Portal's .chip
    (dashboard/src/styles.css). */

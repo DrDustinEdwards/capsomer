@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The detail panel: a record opened from its row, in a native <dialog> on the right. Title
    in plain words with the identifier beneath; then what to do first, the controls, the
    record and the source. From the Capsid Portal's drawer (dashboard/src/app/Drawer.tsx,

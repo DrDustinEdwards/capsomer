@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Who can do what: agents against permissions. A table where there is room, one card per
    agent listing only what it holds where there is not (a container query), and an
    inverse view listing who holds each permission. Drawn from the Capsid Portal's agents

@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* A tooltip on a popover="manual" element. Below its trigger by CSS anchor positioning
    where the browser has it; otherwise at the position the behaviour module sets
    (--cap-tip-top, --cap-tip-left, through the CSSOM). */

@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* A value against a limit: the label and the number in text, then a bar. The bar only
    repeats the number; the number is always there. The fill's length is set through the
    CSSOM (--cap-meter-ratio, 0 to 1) by the behaviour module or the React wrapper, never a
