@@ -28,7 +28,7 @@ export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const group of root.querySelectorAll<HTMLElement>(".cap-group[data-cap='disclosure']:not([data-cap-ready])")) {
     group.dataset.capReady = "";
-    const button = group.querySelector<HTMLElement>(":scope > .cap-group-toggle");
+    const button = group.querySelector<HTMLElement>(":scope > .cap-group-toggle, :scope > .cap-group-heading > .cap-group-toggle");
     if (!button) continue;
     if (groupDepth(group) > 2) console.warn("Capsomer disclosure: groups go two levels deep at most.", group);
     const rows = document.getElementById(button.getAttribute("aria-controls") ?? "");

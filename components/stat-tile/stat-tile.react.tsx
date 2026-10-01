@@ -65,29 +65,35 @@ export function StatTile(props: StatTileProps) {
   const nodata = props.tone === "nodata";
   const describedBy = chart && chartSummary && !nodata ? `${id}-chart` : undefined;
 
+  // The figure, its label and its word on one line, the detail beneath (the Portal's compact
+  // tile). The figure comes first in the DOM, so the name reads "6 of 6 Sites up All up".
   const body =
     props.tone === "nodata" ? (
       <>
-        <span className="cap-tile-label">{label}</span>
-        <span className="cap-tile-figure">
-          <Glyph tone="nodata" />
-          No data
+        <span className="cap-tile-line">
+          <span className="cap-tile-figure">
+            <Glyph tone="nodata" />
+            No data
+          </span>
+          <span className="cap-tile-label">{label}</span>
         </span>
         <span className="cap-tile-detail">{props.reason}</span>
       </>
     ) : (
       <>
-        <span className="cap-tile-label">{label}</span>
-        <span className="cap-tile-figure">
-          {props.figure}
-          {props.unit ? <> <small>{props.unit}</small></> : null}
-        </span>
-        {word ? (
-          <span className="cap-tile-word">
-            {props.tone === "warn" || props.tone === "crit" ? <Glyph tone={props.tone} /> : null}
-            {word}
+        <span className="cap-tile-line">
+          <span className="cap-tile-figure">
+            {props.figure}
+            {props.unit ? <> <small>{props.unit}</small></> : null}
           </span>
-        ) : null}
+          <span className="cap-tile-label">{label}</span>
+          {word ? (
+            <span className="cap-tile-word">
+              {props.tone === "warn" || props.tone === "crit" ? <Glyph tone={props.tone} /> : null}
+              {word}
+            </span>
+          ) : null}
+        </span>
         {props.detail ? <span className="cap-tile-detail">{props.detail}</span> : null}
         {chart ? <span className="cap-tile-chart" aria-hidden="true" dangerouslySetInnerHTML={{ __html: chart }} /> : null}
       </>
@@ -117,7 +123,8 @@ export interface StatTilesProps {
   children: ReactNode;
 }
 
-// The grid: six across, three, then two on a phone, by the space it has.
+// The row of tiles: each as wide as its text, wrapping onto more rows instead of cutting a
+// word, so a phone gets two or one across without a breakpoint.
 export function StatTiles({ label, children }: StatTilesProps) {
   return (
     <div className="cap-tiles">

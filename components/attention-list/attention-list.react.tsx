@@ -1,13 +1,11 @@
-import { useId, useState, type ReactNode } from "react";
-import { TONE_WORD, arrange, type AttentionItem, type AttentionTone } from "./attention-list.ts";
+import { Fragment, useId, useState, type ReactNode } from "react";
+import { Row, RowList, type RowLinkProps } from "../row-list/row-list.react.tsx";
+import { Status } from "../status/status.react.tsx";
+import { TONE_WORD, arrange, problemCount, viewLinkText, type AttentionEntry, type AttentionGroupEntry, type AttentionGroupInfo, type AttentionItem } from "./attention-list.ts";
 
-export type { AttentionItem, AttentionTone } from "./attention-list.ts";
+export type { AttentionGroupInfo, AttentionItem, AttentionTone } from "./attention-list.ts";
 
-export interface AttentionLinkProps {
-  href: string;
-  className: string;
-  children: ReactNode;
-}
+export type AttentionLinkProps = RowLinkProps;
 
 export interface AttentionListProps {
   items: AttentionItem[];
@@ -15,80 +13,35 @@ export interface AttentionListProps {
   // How fresh the reading is, after "Worst first.": "Read 40 seconds ago".
   read?: ReactNode;
   headingLevel?: 2 | 3;
-  // Said beside the ok status when nothing needs attention.
+  // Said beside the ok status when no problem needs attention.
   clearText?: string;
+  // Said under the notices row's count: what a notice is here.
+  noticesDetail?: string;
+  // What a folded group is called, what its rows have in common and where all of them are.
+  groups?: Record<string, AttentionGroupInfo>;
+  // Problem rows shown at once before "N more warnings" (critical rows always show), and the
+  // rows a group shows before its link to the view. The Portal's 8 and 5.
+  problemRows?: number;
+  groupRows?: number;
+  // The page's main list: j and k work on it before focus is inside it. One per page.
+  primary?: boolean;
   // A router's link component; a plain <a> by default.
-  renderLink?: (props: AttentionLinkProps) => ReactNode;
+  renderLink?: (props: RowLinkProps) => ReactNode;
 }
 
-// The status glyphs: shape, beside the word and the colour. Decorative; the word is the name.
-const GLYPH: Record<AttentionTone | "ok", ReactNode> = {
-  crit: (
-    <>
-      <path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" />
-      <path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" />
-    </>
-  ),
-  warn: (
-    <>
-      <path fill="currentColor" d="M8 1.2 15.4 14H.6z" />
-      <path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" />
-    </>
-  ),
-  info: (
-    <>
-      <rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" />
-    </>
-  ),
-  nodata: <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeDasharray="2.6 2.2" />,
-  ok: (
-    <>
-      <circle cx="8" cy="8" r="7" fill="currentColor" />
-      <path fill="none" stroke="var(--surface)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="m4.6 8.3 2.3 2.3 4.5-4.9" />
-    </>
-  ),
-};
+const plainLink = ({ children, ...props }: RowLinkProps) => <a {...props}>{children}</a>;
 
-function Glyph({ tone }: { tone: AttentionTone | "ok" }) {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-      {GLYPH[tone]}
-    </svg>
-  );
+function whenOf(when: AttentionItem["when"]): ReactNode {
+  return typeof when === "string" ? when : when ? <time className="cap-time" dateTime={when.datetime}>{when.text}</time> : null;
 }
 
-function Status({ tone }: { tone: AttentionTone }) {
-  return (
-    <span className="cap-status" data-tone={tone}>
-      <Glyph tone={tone} />
-      {TONE_WORD[tone]}
-    </span>
-  );
-}
-
-const plainLink = ({ children, ...props }: AttentionLinkProps) => <a {...props}>{children}</a>;
-
-function Row({ item, renderLink }: { item: AttentionItem; renderLink: (p: AttentionLinkProps) => ReactNode }) {
-  const when = typeof item.when === "string" ? item.when : item.when ? <time className="cap-time" dateTime={item.when.datetime}>{item.when.text}</time> : null;
-  return (
-    <li className="cap-row" data-tone={item.tone === "crit" ? "crit" : undefined}>
-      <Status tone={item.tone} />
-      <div className="cap-row-main">
-        {renderLink({ href: item.href, className: "cap-row-title", children: item.title })}
-        {item.detail ? <div className="cap-row-detail">{item.detail}</div> : null}
-      </div>
-      <div className="cap-row-meta">{when}</div>
-    </li>
-  );
-}
-
-// No data-cap here: React owns the group state, so the behaviour module must not attach.
+// No data-cap here: React owns the open and closed state, so the behaviour module must not
+// attach (it would toggle twice).
 export function AttentionList(props: AttentionListProps) {
-  const { items, title = "Needs attention", read, headingLevel = 2, clearText = "Nothing needs you.", renderLink = plainLink } = props;
+  const { items, title = "Needs attention", read, headingLevel = 2, clearText = "Nothing needs you.", noticesDetail = "Nothing to act on now", groups, problemRows, groupRows, primary = true, renderLink = plainLink } = props;
   const id = useId();
   const [open, setOpen] = useState<ReadonlySet<string>>(() => new Set());
-  const entries = arrange(items);
+  const arranged = arrange(items, { rows: problemRows, children: groupRows, groups });
   const Heading = headingLevel === 3 ? "h3" : "h2";
   const toggle = (key: string) =>
     setOpen((prev) => {
@@ -97,6 +50,45 @@ export function AttentionList(props: AttentionListProps) {
       else next.add(key);
       return next;
     });
+  const regionId = (key: string) => `${id}-r-${key.replace(/\W+/g, "-")}`;
+
+  const entry = (e: AttentionEntry) => {
+    if (e.kind === "row") {
+      const { item } = e;
+      return <Row key={item.id} tone={item.tone === "crit" ? "crit" : undefined} status={<Status tone={item.tone}>{TONE_WORD[item.tone]}</Status>} title={item.title} href={item.href} detail={item.detail} meta={whenOf(item.when)} renderLink={renderLink} />;
+    }
+    return group(e);
+  };
+
+  // A function, not a component: its identity must not change between renders, or a group
+  // would remount (and lose focus) each time one opens.
+  const group = (g: AttentionGroupEntry) => {
+    const rid = regionId(`group-${g.key}`);
+    const isOpen = open.has(`group-${g.key}`);
+    const link = viewLinkText(g);
+    return (
+      <Fragment key={`group-${g.key}`}>
+        <Row status={<Status tone={g.tone}>{TONE_WORD[g.tone]}</Status>} title={g.label} onOpen={() => toggle(`group-${g.key}`)} expanded={isOpen} controls={rid} detail={g.detail} meta={whenOf(g.when)} />
+        <li className="cap-attention-region" id={rid} hidden={!isOpen}>
+          <ul role="list" aria-label={g.label}>
+            {g.items.map((item) => (
+              <Row key={item.id} className="cap-attention-child" title={item.title} href={item.href} detail={item.detail} meta={whenOf(item.when)} renderLink={renderLink} />
+            ))}
+            {g.view && link ? (
+              <li className="cap-attention-link">
+                {renderLink({ href: g.view.href, children: link })}
+              </li>
+            ) : null}
+          </ul>
+        </li>
+      </Fragment>
+    );
+  };
+
+  const moreOpen = open.has("more");
+  const noticesOpen = open.has("notices");
+  const n = arranged.noticeCount;
+  const empty = arranged.problems.length === 0 && arranged.more.length === 0;
 
   return (
     <section className="cap-attention" aria-labelledby={`${id}-h`}>
@@ -104,46 +96,56 @@ export function AttentionList(props: AttentionListProps) {
         <Heading id={`${id}-h`} className="cap-attention-title">
           {title}
         </Heading>
+        <span className="cap-attention-count">{problemCount(arranged)}</span>
         <span className="cap-attention-src">
           Worst first.{read ? <> {read}</> : null}
         </span>
       </header>
-      {entries.length ? (
-        <ul className="cap-rows">
-          {entries.map((e) => {
-            if (e.kind === "row") return <Row key={e.item.id} item={e.item} renderLink={renderLink} />;
-            const membersId = `${id}-g-${e.key.replace(/\W+/g, "-")}`;
-            const isOpen = open.has(e.key);
-            return (
-              <li className="cap-attention-group" key={`group-${e.key}`}>
-                <div className="cap-attention-group-head">
-                  <Status tone={e.tone} />
-                  <div className="cap-group">
-                    <button type="button" aria-expanded={isOpen} aria-controls={membersId} data-cap-part="group-toggle" onClick={() => toggle(e.key)}>
-                      {e.label}
-                    </button>
-                  </div>
-                </div>
-                <div className="cap-attention-members" id={membersId} hidden={!isOpen}>
-                  <ul className="cap-rows">
-                    {e.items.map((item) => (
-                      <Row key={item.id} item={item} renderLink={renderLink} />
-                    ))}
-                  </ul>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
+      {empty ? (
         <p className="cap-attention-clear">
-          <span className="cap-status" data-tone="ok">
-            <Glyph tone="ok" />
-            All clear
-          </span>
+          <Status tone="ok">All clear</Status>
           <span className="cap-attention-clear-text">{clearText}</span>
         </p>
-      )}
+      ) : null}
+      {!empty || arranged.notices.length ? (
+        <RowList labelledBy={`${id}-h`} primary={primary}>
+          {arranged.problems.map(entry)}
+          {arranged.more.length ? (
+            <>
+              <li className="cap-attention-link">
+                <button type="button" aria-expanded={moreOpen} aria-controls={regionId("more")} onClick={() => toggle("more")}>
+                  {moreOpen ? "Fewer warnings" : `${arranged.more.length} more ${arranged.more.length === 1 ? "warning" : "warnings"}`}
+                </button>
+              </li>
+              <li className="cap-attention-region" id={regionId("more")} hidden={!moreOpen}>
+                <ul role="list" aria-label="More warnings">
+                  {arranged.more.map(entry)}
+                </ul>
+              </li>
+            </>
+          ) : null}
+          {arranged.notices.length ? (
+            <>
+              <Row
+                className="cap-attention-notices"
+                status={<Status tone="info">{TONE_WORD.info}</Status>}
+                title={`${n} ${n === 1 ? "notice" : "notices"}`}
+                onOpen={() => toggle("notices")}
+                expanded={noticesOpen}
+                controls={regionId("notices")}
+                detail={noticesDetail}
+              />
+              <li className="cap-attention-region" id={regionId("notices")} hidden={!noticesOpen}>
+                <ul role="list" aria-label="Notices">
+                  {arranged.notices.map((item) => (
+                    <Row key={item.id} className="cap-attention-child" title={item.title} href={item.href} detail={[TONE_WORD[item.tone], item.detail].filter(Boolean).join(" · ")} meta={whenOf(item.when)} renderLink={renderLink} />
+                  ))}
+                </ul>
+              </li>
+            </>
+          ) : null}
+        </RowList>
+      ) : null}
     </section>
   );
 }
