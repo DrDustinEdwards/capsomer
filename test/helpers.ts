@@ -33,9 +33,26 @@ export async function visitStates(page: Page, name: string, theme: Theme, only?:
 
 // The automated scan, against WCAG 2.2 A and AA. Any violation fails, with its rule, its
 // impact and the first offending node in the message, so a failure says where to look.
-export async function expectNoAxeViolations(page: Page, include?: string): Promise<void> {
+// Base UI's focus guards are visually hidden sentinels it places around an open popup on
+// purpose: aria-hidden and focusable so focus can wrap. axe's aria-hidden-focus rule flags
+// them; `baseUi: true` leaves exactly those elements out of the scan and nothing else.
+export async function expectNoAxeViolations(page: Page, include?: string, options: { baseUi?: boolean } = {}): Promise<void> {
   let builder = new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]);
   if (include) builder = builder.include(include);
+  // A states page that shows open popups in <iframe> frames is scanned frame by frame, by the
+  // tests that visit each frame on its own, so those frames are left out of the page scan.
+  if (options.baseUi) builder = builder.exclude("[data-base-ui-focus-guard]").exclude("iframe");
+  // axe reads colours as painted. A dialog fading in, or a control mid-transition, is read
+  // blended with what is behind it, so wait for every finite animation and transition to end
+  // first (the first CI run caught a danger button at 4.18:1 for this reason).
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => Number.isFinite(a.effect?.getComputedTiming().endTime ?? Infinity))
+        .map((a) => a.finished.catch(() => undefined)),
+    ).then(() => undefined),
+  );
   const { violations } = await builder.analyze();
   const found = violations.map((v) => `${v.id} (${v.impact}): ${v.help}. First at ${v.nodes[0]?.target.join(" ")} (${v.nodes.length} nodes). ${(v.nodes[0]?.failureSummary ?? "").replace(/\s+/g, " ").trim()}`);
   expect(found, "axe violations").toEqual([]);

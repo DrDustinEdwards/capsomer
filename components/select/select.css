@@ -1,0 +1,90 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A native select, styled as a field by .cap-input (field.css). Where the browser has a
+   customisable select (appearance: base-select), its button and picker take the family's
+   look; everywhere else the browser's own list opens, and works the same. */
+@layer cap.components {
+  select.cap-input {
+    padding-inline-end: 6px;
+    text-overflow: ellipsis;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  @supports (appearance: base-select) {
+    select.cap-input,
+    select.cap-input::picker(select) {
+      appearance: base-select;
+    }
+
+    select.cap-input {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding-inline: 10px 8px;
+
+      &::picker-icon {
+        color: var(--muted);
+      }
+    }
+
+    select.cap-input::picker(select) {
+      margin-block: var(--space-2);
+      padding: var(--space-2);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-m);
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow);
+    }
+
+    select.cap-input option {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      min-height: max(var(--target), 28px);
+      padding: 0 var(--space-3);
+      border-radius: var(--radius-s);
+      color: var(--text);
+
+      &:hover {
+        background: var(--raised);
+      }
+      &:focus-visible {
+        outline: var(--focus-width) solid var(--focus-color);
+        outline-offset: -2px;
+        background: var(--sel);
+      }
+      &:checked {
+        font-weight: 600;
+      }
+      &::checkmark {
+        color: var(--accent);
+      }
+      &:disabled {
+        color: var(--dim);
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      select.cap-input::picker-icon {
+        transition: rotate var(--dur-fast) var(--ease-out);
+      }
+    }
+    select.cap-input:open::picker-icon {
+      rotate: 180deg;
+    }
+  }
+
+  @media (forced-colors: active) {
+    select.cap-input option:checked {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}

@@ -1,0 +1,162 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* What shipped: a timeline of deploys and merges, newest first, broken by day. Routine
+   runs condense to one row; a marker row says where an incident began after a deploy.
+   Extracted from the Capsid Portal (dashboard/src/styles.css "feed", views/Deploys.tsx)
+   and the approved mockup's "What shipped". */
+@layer cap.components {
+  .cap-feed {
+    container: cap-feed / inline-size;
+    display: grid;
+    min-width: 0;
+  }
+
+  .cap-feed-day {
+    display: grid;
+  }
+
+  /* The day break: a heading that names the list under it. */
+  .cap-feed-day-title {
+    margin: 0;
+    padding: var(--space-2) var(--space-5);
+    background: var(--raised);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .cap-feed-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .cap-feed-row {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    align-items: start;
+    padding: 6px var(--space-5);
+
+    /* A critical row carries the red edge, as in every list. */
+    &[data-tone="crit"] {
+      box-shadow: inset 3px 0 var(--crit);
+    }
+  }
+
+  .cap-feed-glyph {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+
+    [data-tone="ok"] > & {
+      color: var(--ok);
+    }
+    [data-tone="warn"] > & {
+      color: var(--warn);
+    }
+    [data-tone="crit"] > & {
+      color: var(--crit);
+    }
+    [data-tone="info"] > & {
+      color: var(--info);
+    }
+    [data-tone="nodata"] > & {
+      color: var(--nodata);
+    }
+  }
+
+  .cap-feed-what {
+    min-width: 0;
+    color: var(--text);
+    overflow-wrap: anywhere;
+
+    & b {
+      font-weight: 600;
+    }
+  }
+
+  .cap-feed-who {
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
+  .cap-feed-when {
+    font-size: var(--fs-detail);
+    color: var(--muted);
+    white-space: nowrap;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A routine run in one row: smaller and quieter, still 4.5:1. */
+  .cap-feed-row[data-kind="condensed"] {
+    padding-block: var(--space-1);
+
+    & .cap-feed-what {
+      font-size: var(--fs-detail);
+      color: var(--muted);
+    }
+  }
+
+  /* The marker: where an incident began, set on its tone's tint, directly above the
+     deploy it names. Its words, not its tint, carry the link: the link says "this
+     deploy" and is described by the deploy row's text. */
+  .cap-feed-row[data-kind="marker"] {
+    border-inline-start: 3px solid var(--crit);
+    background: var(--crit-soft);
+    box-shadow: none;
+
+    &[data-tone="warn"] {
+      border-inline-start-color: var(--warn);
+      background: var(--warn-soft);
+    }
+    & .cap-feed-who,
+    & .cap-feed-when {
+      color: var(--text);
+    }
+  }
+
+  .cap-feed-marker-link {
+    font-weight: 600;
+    color: var(--crit);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    [data-tone="warn"] & {
+      color: var(--warn);
+    }
+  }
+
+  /* Narrow: the time drops under the words. */
+  @container cap-feed (max-width: 27.99rem) {
+    .cap-feed-row {
+      grid-template-columns: 14px minmax(0, 1fr);
+      gap: var(--space-1) var(--space-3);
+      padding-inline: var(--space-4);
+    }
+    .cap-feed-when {
+      grid-column: 2;
+      text-align: left;
+    }
+    .cap-feed-day-title {
+      padding-inline: var(--space-4);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-feed-row[data-tone="crit"] {
+      border-inline-start: 3px solid CanvasText;
+    }
+    .cap-feed-row[data-kind="marker"] {
+      border-inline-start-color: CanvasText;
+    }
+    .cap-feed-day-title {
+      border-bottom: 1px solid CanvasText;
+    }
+  }
+}

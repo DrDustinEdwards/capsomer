@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Automation switch: states</title>
+    <script type="module" src="../../site/specimen.ts"></script>
+  </head>
+  <body class="cap-specimens">
+    <main>
+      <h1>Automation switch</h1>
+      <p>A switch that starts or stops automation. Flipping it asks for a one-line reason; it moves only when the reason is applied, and the change can be undone. The first two are live; the rest are shown still. Sample data.</p>
+
+      <section class="cap-specimen" aria-labelledby="s-on">
+        <h2 id="s-on">On (live, with Undo)</h2>
+        <div class="cap-switch-reason" data-cap="switch-reason" data-name="the improve loop" id="sr-loop">
+          <label class="cap-switch"><input type="checkbox" role="switch" checked /> Improve loop <span class="cap-switch-state" aria-hidden="true">On</span></label>
+          <form class="cap-switch-reason-form" hidden>
+            <div class="cap-field">
+              <label class="cap-field-label" for="sr-loop-why">Why turn the improve loop off?</label>
+              <input class="cap-input" id="sr-loop-why" autocomplete="off" required aria-describedby="sr-loop-err" placeholder="For example: pausing during the migration" />
+              <p class="cap-field-error" id="sr-loop-err" hidden></p>
+            </div>
+            <div class="cap-switch-reason-actions">
+              <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
+              <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+              <span class="cap-switch-reason-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels</span>
+            </div>
+          </form>
+          <p role="status" id="sr-loop-said"></p>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-off">
+        <h2 id="s-off">Off (live)</h2>
+        <div class="cap-switch-reason" data-cap="switch-reason" data-name="nightly backups" id="sr-backups">
+          <label class="cap-switch"><input type="checkbox" role="switch" /> Nightly backups <span class="cap-switch-state" aria-hidden="true">Off</span></label>
+          <form class="cap-switch-reason-form" hidden>
+            <div class="cap-field">
+              <label class="cap-field-label" for="sr-backups-why">Why turn nightly backups on?</label>
+              <input class="cap-input" id="sr-backups-why" autocomplete="off" required aria-describedby="sr-backups-err" />
+              <p class="cap-field-error" id="sr-backups-err" hidden></p>
+            </div>
+            <div class="cap-switch-reason-actions">
+              <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
+              <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+              <span class="cap-switch-reason-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels</span>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-asking">
+        <h2 id="s-asking">Asking for a reason</h2>
+        <div class="cap-switch-reason">
+          <label class="cap-switch"><input type="checkbox" role="switch" checked /> Deploy on push <span class="cap-switch-state" aria-hidden="true">On</span></label>
+          <form class="cap-switch-reason-form">
+            <div class="cap-field">
+              <label class="cap-field-label" for="sr-ask-why">Why turn deploy on push off?</label>
+              <input class="cap-input" id="sr-ask-why" autocomplete="off" required value="Holding releases until the DNS move is done" />
+            </div>
+            <div class="cap-switch-reason-actions">
+              <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
+              <button type="button" class="cap-btn">Cancel</button>
+              <span class="cap-switch-reason-keys" id="sr-ask-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels</span>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-missing">
+        <h2 id="s-missing">Reason missing</h2>
+        <div class="cap-switch-reason">
+          <label class="cap-switch"><input type="checkbox" role="switch" /> Mention sync <span class="cap-switch-state" aria-hidden="true">Off</span></label>
+          <form class="cap-switch-reason-form">
+            <div class="cap-field">
+              <label class="cap-field-label" for="sr-miss-why">Why turn mention sync on?</label>
+              <input class="cap-input" id="sr-miss-why" autocomplete="off" required aria-invalid="true" aria-describedby="sr-miss-err" />
+              <p class="cap-field-error" id="sr-miss-err">Write a reason in a few words. It goes in the audit log.</p>
+            </div>
+            <div class="cap-switch-reason-actions">
+              <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
+              <button type="button" class="cap-btn">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-pending">
+        <h2 id="s-pending">Applying</h2>
+        <div class="cap-switch-reason">
+          <label class="cap-switch"><input type="checkbox" role="switch" checked /> Agent access for foxhound-driver <span class="cap-switch-state" aria-hidden="true">On</span></label>
+          <form class="cap-switch-reason-form">
+            <div class="cap-field">
+              <label class="cap-field-label" for="sr-pend-why">Why turn agent access for foxhound-driver off?</label>
+              <input class="cap-input" id="sr-pend-why" autocomplete="off" required readonly value="It pushed to the wrong branch twice" />
+            </div>
+            <div class="cap-switch-reason-actions">
+              <button type="submit" class="cap-btn" data-variant="primary" aria-busy="true" id="sr-pend-apply"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
+              <button type="button" class="cap-btn">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-failed">
+        <h2 id="s-failed">Could not apply</h2>
+        <div class="cap-switch-reason">
+          <label class="cap-switch"><input type="checkbox" role="switch" checked /> Weekly digest <span class="cap-switch-state" aria-hidden="true">On</span></label>
+          <form class="cap-switch-reason-form">
+            <div class="cap-field">
+              <label class="cap-field-label" for="sr-fail-why">Why turn the weekly digest off?</label>
+              <input class="cap-input" id="sr-fail-why" autocomplete="off" required aria-invalid="true" aria-describedby="sr-fail-err" value="Nobody reads it in August" />
+              <p class="cap-field-error" id="sr-fail-err">Could not turn the weekly digest off. The Portal did not answer. Try again, or press Esc to cancel.</p>
+            </div>
+            <div class="cap-switch-reason-actions">
+              <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
+              <button type="button" class="cap-btn">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+    <script type="module">
+      import { enhance, setSwitch } from "./switch-reason.ts";
+      enhance();
+      // The app's part, for the first specimen: say what changed, with Undo. In an app this
+      // goes through the message region.
+      const loop = document.querySelector("#sr-loop");
+      const said = document.querySelector("#sr-loop-said");
+      loop?.addEventListener("cap:switch-applied", (e) => {
+        const { checked, reason } = e.detail;
+        said.textContent = `Improve loop turned ${checked ? "on" : "off"}: "${reason}". `;
+        const undo = document.createElement("button");
+        undo.type = "button";
+        undo.className = "cap-link-btn";
+        undo.textContent = "Undo";
+        undo.addEventListener("click", () => {
+          setSwitch(loop.querySelector(".cap-switch"), !checked);
+          said.textContent = `Undone. The improve loop is ${checked ? "off" : "on"} again.`;
+          loop.querySelector("input[role='switch']")?.focus();
+        });
+        said.append(undo);
+      });
+    </script>
+  </body>
+</html>
