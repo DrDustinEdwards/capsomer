@@ -87,6 +87,30 @@
 .btn.is-hover { border-color: var(--muted); } .btn.is-active { background: var(--sunken); }
 .btn.is-focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 .list td.wrap { white-space: normal; min-width: 180px; }
+/* the app shell, shared with the Portal: top bar, rail, phone tab bar */
+.shell { display: grid; grid-template-columns: 208px minmax(0, 1fr); border: 1px solid var(--line); border-radius: var(--radius-l); overflow: hidden; background: var(--ground); }
+.shell-top { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.shell-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; letter-spacing: -0.02em; margin-right: auto; }
+.shell-brand small { font-weight: 400; font-size: 11px; letter-spacing: 0; }
+.shell-fresh { font-size: var(--fs-small); white-space: nowrap; }
+.shell-fresh b { color: var(--text); font-weight: 500; }
+.shell-rail { background: var(--surface); border-right: 1px solid var(--line); padding: 14px 10px; display: flex; flex-direction: column; gap: 2px; }
+.shell-rail a { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 7px 10px; border-radius: var(--radius-m); color: var(--muted); font-weight: 500; text-decoration: none; }
+.shell-rail a:hover { background: var(--raised); color: var(--text); }
+.shell-rail a[aria-current="page"] { background: var(--accent-soft); color: var(--text); }
+.shell-rail .count { font-size: var(--fs-label); color: var(--dim); }
+.shell-rail .count.hot { color: var(--crit); font-weight: 600; }
+.shell-rail .hint { margin-top: 14px; padding: 10px; font-size: var(--fs-small); color: var(--dim); border-top: 1px solid var(--line); }
+.shell-main { padding: 16px; display: grid; gap: 16px; min-width: 0; align-content: start; }
+.shell-tabs { display: none; }
+@media (max-width: 760px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .shell-rail, .shell-fresh { display: none; }
+  .shell-main { padding: 12px; }
+  .shell-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--surface); border-top: 1px solid var(--line); padding: 6px; }
+  .shell-tabs a { text-align: center; font-size: var(--fs-label); font-weight: 600; color: var(--muted); text-decoration: none; padding: 8px 0; }
+  .shell-tabs a[aria-current="page"] { color: var(--accent); }
+}
 .ver { font-family: var(--mono); font-size: 12px; }
 @media (pointer: coarse) { :root { --control-h: 44px; --target: 44px; } }
 
@@ -632,7 +656,27 @@ del::before { content: "\2212"; font: 700 12px var(--mono); color: var(--crit); 
 
   <!-- ============ SYSTEM SITE ============ -->
   <section class="group" id="site">
-    <header><h2>Capsomer’s own site</h2><p>A dashboard of the system itself: every component in every state, with the result of its keyboard and accessibility tests from the last run on main. The token panels below this one are part of the same site.</p></header>
+    <header><h2>Capsomer’s own site</h2><p>A dashboard of the system itself, inside the same shell as the Capsid Portal: the same left menu and the same top bar, so the two visibly belong together. The shell is the first component extracted, and this site is its first user. The token panels below are pages of the same site.</p></header>
+    <div class="shell">
+      <div class="shell-top">
+        <span class="shell-brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path fill="var(--accent)" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/><path fill="var(--surface)" d="M10 5.4 14 7.7v4.6L10 14.6 6 12.3V7.7z"/></svg>Capsomer <small class="mono muted">0.3.0</small></span>
+        <span class="shell-fresh muted">Tests ran <b>53 minutes ago</b></span>
+        <button class="btn" type="button">Commands <kbd>Ctrl K</kbd></button>
+        <button class="btn" type="button">Theme</button>
+        <button class="btn" type="button">Settings</button>
+      </div>
+      <nav class="shell-rail" aria-label="Capsomer site">
+        <a href="#site">Overview</a>
+        <a href="#site" aria-current="page">Components <span class="count num">31</span></a>
+        <a href="#site">Colour and contrast</a>
+        <a href="#site">Type and space</a>
+        <a href="#site">Motion</a>
+        <a href="#site">Tests <span class="count hot num">1</span></a>
+        <a href="#site">Defaults</a>
+        <a href="#site">Changes</a>
+        <span class="hint">Settings sits in the top bar after the theme switch, as in the Portal. The Portal adds Sign out after it; this public site has no sign-in.</span>
+      </nav>
+      <div class="shell-main">
     <div class="panel">
       <header><h3>Components and their tests</h3><span class="src">From CI run 412 on main, 30 Sep 2026 at 13:20</span></header>
       <div class="scroll-x" role="region" aria-label="Components and their test results" tabindex="0">
@@ -674,6 +718,11 @@ del::before { content: "\2212"; font: 700 12px var(--mono); color: var(--crit); 
           <div><button class="btn danger" type="button" tabindex="-1">Revoke</button><span class="note">Danger</span></div>
         </div></div>
       </div>
+    </div>
+      </div>
+      <nav class="shell-tabs" aria-label="Capsomer site, phone">
+        <a href="#site">Overview</a><a href="#site" aria-current="page">Components</a><a href="#site">Tokens</a><a href="#site">Tests</a><a href="#site">More</a>
+      </nav>
     </div>
   </section>
 
