@@ -16,5 +16,5 @@
     "noEmit": true,
     "types": ["node", "vite/client"]
   },
-  "include": ["components", "site", "test", "playwright.config.ts"]
+  "include": ["components", "site", "test", "playwright.config.ts", "playwright.review.config.ts"]
 }

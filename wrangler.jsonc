@@ -1,0 +1,18 @@
+// Capsomer's site at https://capsomer.dustinedwards.info (rulings.md, rule 16): a static
+// Cloudflare Worker serving the built site from Workers static assets. No Worker script
+// runs; every request is a file from site-dist. Cloudflare's Git integration builds and
+// deploys it from this public repo on every push to main (see DEPLOY.md).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "capsomer",
+  "compatibility_date": "2026-09-30",
+  "assets": {
+    "directory": "./site-dist",
+    // A missing file is a plain 404: the site routes with #, so there is no client route
+    // to fall back to.
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
