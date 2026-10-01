@@ -1,0 +1,168 @@
+/* Stat tiles: one figure each, with a word for where it stands against its threshold, a
+   detail line, and a slot for Enarratio's sparkline. A tile is a link or a button that
+   goes to the view behind the figure. Extracted from the Capsid Portal
+   (dashboard/src/styles.css, "stat tiles", and views/Overview.tsx). */
+@layer cap.components {
+  /* The grid sizes by the space it has: six across, three, then two on a phone. */
+  .cap-tiles {
+    container-type: inline-size;
+    min-width: 0;
+  }
+
+  .cap-tiles-list {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & > li {
+      display: grid;
+      min-width: 0;
+    }
+  }
+
+  @container (max-width: 879px) {
+    .cap-tiles-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @container (max-width: 519px) {
+    .cap-tiles-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .cap-tile {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    width: 100%;
+    min-width: 0;
+    min-height: var(--target);
+    margin: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover,
+    &[data-force="hover"] {
+      border-color: var(--muted);
+      background: var(--raised);
+    }
+    &:active,
+    &[data-force="pressed"] {
+      background: var(--sunken);
+    }
+  }
+
+  .cap-tile-label {
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .cap-tile-figure {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 var(--space-2);
+    font-size: var(--fs-h2);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+
+    & small {
+      font-size: var(--fs-detail);
+      font-weight: 400;
+      letter-spacing: 0;
+      color: var(--muted);
+    }
+  }
+
+  /* The word for the threshold: "Over limit", "Near limit", "All up". */
+  .cap-tile-word {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    color: var(--ok);
+
+    & svg {
+      flex: none;
+    }
+  }
+
+  .cap-tile-detail {
+    font-size: var(--fs-detail);
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  /* Enarratio's sparkline() goes here as it comes. Decorative: the tile's description
+     carries the same numbers as a sentence. */
+  .cap-tile-chart {
+    display: block;
+    height: 22px;
+    margin-top: var(--space-1);
+    color: var(--accent);
+
+    & svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+  }
+
+  .cap-tile[data-tone="warn"] {
+    & .cap-tile-figure,
+    & .cap-tile-word,
+    & .cap-tile-chart {
+      color: var(--warn);
+    }
+  }
+  .cap-tile[data-tone="crit"] {
+    & .cap-tile-figure,
+    & .cap-tile-word,
+    & .cap-tile-chart {
+      color: var(--crit);
+    }
+  }
+  /* No data: the figure says so in words, with the dashed glyph, and the detail says why. */
+  .cap-tile[data-tone="nodata"] .cap-tile-figure {
+    align-items: center;
+    font-size: var(--fs-lead);
+    color: var(--nodata);
+    letter-spacing: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-tile {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-tile {
+      border-color: ButtonText;
+    }
+    .cap-tile:hover {
+      border-color: Highlight;
+    }
+  }
+}

@@ -1,0 +1,125 @@
+/* The keyboard shortcut sheet: a native <dialog> listing every registered shortcut by group,
+   with the switch that turns single-key shortcuts off. From the Capsid Portal's HelpSheet
+   (dashboard/src/app/HelpSheet.tsx, styles.css ".help"). */
+@layer cap.components {
+  .cap-keys {
+    width: min(560px, calc(100% - 2 * var(--space-5)));
+    max-width: none;
+    max-height: calc(100dvh - 2 * var(--space-5));
+    margin: auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+
+    &[open] {
+      display: flex;
+      flex-direction: column;
+    }
+    &::backdrop {
+      background: var(--scrim);
+    }
+  }
+
+  .cap-keys-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--line);
+  }
+  .cap-keys-title {
+    flex: 1;
+    margin: 0;
+    font-size: var(--fs-lead);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .cap-keys-body {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-4) var(--space-5);
+    overflow-y: auto;
+    container-type: inline-size;
+  }
+  .cap-keys-group {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .cap-keys-group-title {
+    margin: 0;
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cap-keys-list {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+
+    & > div {
+      display: grid;
+      grid-template-columns: 8.5em minmax(0, 1fr);
+      gap: var(--space-4);
+      align-items: baseline;
+    }
+    & dt {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--space-1);
+      color: var(--muted);
+      font-size: var(--fs-detail);
+    }
+    & dd {
+      margin: 0;
+      min-width: 0;
+    }
+  }
+  @container (max-width: 320px) {
+    .cap-keys-list > div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-1);
+    }
+  }
+
+  .cap-keys-foot {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--line);
+    background: var(--raised);
+  }
+  .cap-keys-note {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+    max-width: 60ch;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-keys {
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+    }
+    @starting-style {
+      .cap-keys[open] {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-keys {
+      border-color: CanvasText;
+    }
+  }
+}

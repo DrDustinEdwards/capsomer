@@ -1,0 +1,89 @@
+/* The "On this page" bar: links to a long view's sections, sticky at the top, the current
+   one marked. From the approved mockup's .onpage bar. */
+@layer cap.components {
+  .cap-anchors {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: var(--z-sticky);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    min-width: 0;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+  }
+  .cap-anchors-label {
+    flex: none;
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  /* On a phone the links scroll sideways rather than wrap. */
+  .cap-anchors-list {
+    display: flex;
+    gap: var(--space-1);
+    min-width: 0;
+    margin: 0;
+    padding: var(--space-1);
+    list-style: none;
+    overflow-x: auto;
+    scrollbar-width: thin;
+
+    & a {
+      display: flex;
+      align-items: center;
+      min-height: max(var(--target), 30px);
+      padding: 0 10px;
+      border-radius: var(--radius-m);
+      color: var(--muted);
+      font-weight: 500;
+      text-decoration: none;
+      white-space: nowrap;
+
+      &:hover,
+      &[data-force="hover"] {
+        background: var(--raised);
+        color: var(--text);
+      }
+      /* Inside the ring's own box, so the scrolling list does not clip it. */
+      &:focus-visible {
+        outline-offset: -2px;
+      }
+      /* The current section: tint, the text's own colour, and an underline, so it is
+         not told by colour alone. */
+      &[aria-current="location"] {
+        background: var(--accent-soft);
+        color: var(--text);
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 5px;
+        text-decoration-color: var(--accent);
+      }
+    }
+  }
+
+  /* A heading the bar links to stops below the bar, never under it. The module measures
+     the bar into --cap-anchors-h. */
+  [data-cap-anchor] {
+    scroll-margin-top: calc(var(--cap-anchors-h, 48px) + env(safe-area-inset-top, 0px) + var(--space-4));
+  }
+
+  @media (max-width: 560px) {
+    .cap-anchors {
+      padding-inline: var(--space-2);
+    }
+    .cap-anchors-label {
+      display: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-anchors-list a[aria-current="location"] {
+      text-decoration-color: LinkText;
+    }
+  }
+}

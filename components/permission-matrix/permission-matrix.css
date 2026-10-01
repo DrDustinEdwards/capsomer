@@ -1,0 +1,127 @@
+/* Who can do what: agents against permissions. A table where there is room, one card per
+   agent listing only what it holds where there is not (a container query), and an
+   inverse view listing who holds each permission. Drawn from the Capsid Portal's agents
+   page (dashboard/src/views/Agents.tsx) and the approved mockup's "Who can do what". */
+@layer cap.components {
+  .cap-perms {
+    container: cap-perms / inline-size;
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  /* The view switch, and a short note beside it. */
+  .cap-perms-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+  }
+
+  .cap-perms-note {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
+  /* Wide: the table. The row header is an identifier, so it reads as one. */
+  .cap-perms-agent {
+    text-align: left;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .cap-perms-col,
+  .cap-perms-cell {
+    text-align: center;
+  }
+
+  /* A tick or a dash: shape first, colour second, the word for a screen reader. */
+  .cap-perms-cell {
+    & svg {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    &[data-held="yes"] {
+      color: var(--ok);
+    }
+    &[data-held="no"] {
+      color: var(--dim);
+    }
+  }
+
+  /* Narrow, and the By permission view: a list of cards. */
+  .cap-perms-narrow {
+    display: none;
+  }
+
+  .cap-perms-cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .cap-perms-card {
+    display: grid;
+    gap: var(--space-1);
+    min-width: 0;
+    padding-block: var(--space-3);
+    border-top: 1px solid var(--line);
+
+    &:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+
+  .cap-perms-name {
+    font-weight: 600;
+    color: var(--text);
+    overflow-wrap: anywhere;
+
+    &.cap-mono {
+      font-weight: 400;
+    }
+  }
+
+  .cap-perms-holds {
+    color: var(--text);
+    font-size: var(--fs-detail);
+    overflow-wrap: anywhere;
+
+    &[data-empty] {
+      color: var(--muted);
+    }
+  }
+
+  .cap-perms-key {
+    color: var(--muted);
+  }
+
+  /* The table needs about 560 px with five permissions; below that, cards. */
+  @container cap-perms (max-width: 559px) {
+    .cap-perms-wide {
+      display: none;
+    }
+    .cap-perms-narrow {
+      display: block;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-perms-card {
+      border-top-color: CanvasText;
+
+      &:first-child {
+        border-top: 0;
+      }
+    }
+  }
+}

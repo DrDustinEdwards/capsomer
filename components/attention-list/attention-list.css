@@ -1,0 +1,91 @@
+/* The attention list: the overview's one worst-first list of what is wrong. Built on
+   row-list (.cap-rows, .cap-row) and the disclosure group row (.cap-group); this file
+   styles only the frame around them, the group row's layout and the all-clear state.
+   Extracted from the Capsid Portal (dashboard/src/styles.css, "attention strip"). */
+@layer cap.components {
+  .cap-attention {
+    container-type: inline-size;
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+  }
+
+  .cap-attention-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--raised);
+    border-radius: var(--radius-l) var(--radius-l) 0 0;
+  }
+
+  .cap-attention-title {
+    margin: 0;
+    font-size: var(--fs-body);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  /* "Worst first. Read 40 seconds ago": the order and how fresh the reading is. */
+  .cap-attention-src {
+    margin-left: auto;
+    font-size: var(--fs-label);
+    color: var(--dim);
+  }
+
+  /* A group: its row (a status, then the group button) and, below it, its members. */
+  .cap-attention-group {
+    list-style: none;
+  }
+
+  .cap-attention-group-head {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-4);
+    min-height: var(--target);
+    padding: var(--space-1) var(--space-5);
+  }
+
+  /* The members sit one step in, under a rule, so they read as belonging to the group. */
+  .cap-attention-members {
+    margin-inline-start: var(--space-5);
+    border-inline-start: 2px solid var(--line);
+  }
+
+  .cap-attention-clear {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    padding: var(--space-5);
+  }
+
+  .cap-attention-clear-text {
+    color: var(--muted);
+  }
+
+  @container (max-width: 480px) {
+    .cap-attention-group-head {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-1);
+      padding-block: var(--space-2);
+    }
+    .cap-attention-src {
+      margin-left: 0;
+      flex-basis: 100%;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-attention-head {
+      border-bottom: 1px solid CanvasText;
+    }
+    .cap-attention-members {
+      border-inline-start-color: CanvasText;
+    }
+  }
+}

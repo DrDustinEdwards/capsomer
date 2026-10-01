@@ -1,0 +1,13 @@
+/* The theme switch: System, Light, Dark. Its look is the segmented control's (.cap-seg);
+   this file only fits it into a top bar. */
+@layer cap.components {
+  .cap-theme {
+    flex: none;
+    min-inline-size: 0;
+    margin: 0;
+
+    & label {
+      white-space: nowrap;
+    }
+  }
+}

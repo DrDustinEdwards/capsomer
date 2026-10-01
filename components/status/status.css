@@ -1,0 +1,79 @@
+/* Status: a word with a glyph, coloured by its tone. The glyph's shape differs per tone
+   (octagon critical, triangle warning, square notice, filled circle ok, dashed circle no
+   data, an arc running), so shape and word carry the meaning and colour only repeats it.
+   From the approved mockup's status symbols. */
+@layer cap.components {
+  .cap-status,
+  .cap-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: nowrap;
+    color: var(--muted);
+
+    &[data-tone="crit"] {
+      color: var(--crit);
+    }
+    &[data-tone="warn"] {
+      color: var(--warn);
+    }
+    &[data-tone="ok"] {
+      color: var(--ok);
+    }
+    &[data-tone="info"] {
+      color: var(--info);
+    }
+    &[data-tone="nodata"] {
+      color: var(--nodata);
+    }
+  }
+
+  /* The glyph: drawn in currentColor, with any mark inside it cut out (evenodd), so it
+     reads on any background the word sits on. */
+  .cap-status-glyph {
+    flex: none;
+    width: 14px;
+    height: 14px;
+  }
+
+  /* No data says why, after the word, in plain muted text. */
+  .cap-status-reason {
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
+  /* A pill: the same word and glyph on the tone's own tint. */
+  .cap-pill {
+    padding: 2px 8px 2px 6px;
+    border-radius: var(--radius-full);
+    background: var(--nodata-soft);
+
+    &[data-tone="crit"] {
+      background: var(--crit-soft);
+    }
+    &[data-tone="warn"] {
+      background: var(--warn-soft);
+    }
+    &[data-tone="ok"] {
+      background: var(--ok-soft);
+    }
+    &[data-tone="info"] {
+      background: var(--info-soft);
+    }
+    /* The no-data grey is lighter than muted on its own tint; muted keeps 4.5:1. */
+    &[data-tone="nodata"] {
+      background: var(--nodata-soft);
+      color: var(--muted);
+    }
+  }
+
+  /* Forced colours remove the tint: a pill keeps its outline so it still reads as one. */
+  @media (forced-colors: active) {
+    .cap-pill {
+      border: 1px solid CanvasText;
+    }
+  }
+}

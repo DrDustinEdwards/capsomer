@@ -1,0 +1,117 @@
+/* A switch: a real checkbox with role="switch", a fixed noun label, and the state word
+   beside it. Takes effect at once. Drawn from the approved mockup's .switch. */
+@layer cap.components {
+  .cap-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: var(--target);
+    color: var(--text);
+    cursor: pointer;
+
+    & input[role="switch"] {
+      appearance: none;
+      position: relative;
+      flex: none;
+      width: 36px;
+      height: 20px;
+      margin: 0;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-full);
+      background: var(--sunken);
+      cursor: inherit;
+
+      /* The thumb. */
+      &::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--muted);
+      }
+      &:checked {
+        border-color: var(--accent);
+        background: var(--accent);
+
+        &::before {
+          translate: 16px 0;
+          background: var(--surface);
+        }
+      }
+    }
+
+    &:is(:hover, [data-force="hover"]) input[role="switch"]:not(:disabled) {
+      border-color: var(--muted);
+
+      &:checked {
+        border-color: var(--accent-hover);
+        background: var(--accent-hover);
+      }
+    }
+
+    &:has(input:disabled) {
+      color: var(--muted);
+      cursor: not-allowed;
+
+      & input[role="switch"] {
+        border-style: dashed;
+      }
+    }
+  }
+
+  /* On or Off. aria-hidden in the markup: the switch's own state already says it, and the
+     label stays a fixed noun. */
+  .cap-switch-state {
+    min-width: 2.2em;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .cap-switch:has(input:checked) .cap-switch-state {
+    color: var(--text);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-switch input[role="switch"] {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+
+      &::before {
+        transition:
+          translate var(--dur-fast) var(--ease-out),
+          background-color var(--dur-fast) var(--ease-out);
+      }
+    }
+  }
+
+  /* Forced colours remove backgrounds, which would take the thumb with them. */
+  @media (forced-colors: active) {
+    .cap-switch input[role="switch"] {
+      forced-color-adjust: none;
+      border-color: CanvasText;
+      background: Canvas;
+
+      &::before {
+        background: CanvasText;
+      }
+      &:checked {
+        border-color: Highlight;
+        background: Highlight;
+
+        &::before {
+          background: HighlightText;
+        }
+      }
+      &:disabled {
+        border-color: GrayText;
+
+        &::before {
+          background: GrayText;
+        }
+      }
+    }
+  }
+}

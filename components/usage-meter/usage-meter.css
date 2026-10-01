@@ -1,0 +1,161 @@
+/* The usage meter: a list of usage figures against free limits. Each row has its name and
+   amount, a bar with what is used (solid) and where the period ends at the current rate
+   (hatched), and a line that says why, in words. From the Capsid Portal's meter and the
+   approved mockup's "Usage against free limits". */
+@layer cap.components {
+  .cap-usage {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  .cap-usage-list {
+    display: grid;
+    gap: var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-usage-item {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .cap-usage-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .cap-usage-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .cap-usage-value {
+    margin-left: auto;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The bar. Its border marks the limit at 3:1 against the panel; the track inside is
+     sunken. Widths come from --used and --projected, set by the behaviour module or the
+     React wrapper through the CSSOM. */
+  .cap-usage-bar {
+    position: relative;
+    height: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: var(--sunken);
+    overflow: hidden;
+  }
+
+  .cap-usage-used,
+  .cap-usage-projected {
+    position: absolute;
+    inset: 0 auto 0 0;
+  }
+
+  .cap-usage-used {
+    width: var(--used, 0%);
+    background: var(--accent);
+  }
+
+  /* Hatched in the muted text colour, which keeps 3:1 against the sunken track in both
+     themes. */
+  .cap-usage-projected {
+    width: var(--projected, 0%);
+    background: repeating-linear-gradient(135deg, var(--muted) 0 2px, transparent 2px 5px);
+  }
+
+  .cap-usage-item[data-tone="warn"] .cap-usage-used {
+    background: var(--warn);
+  }
+  .cap-usage-item[data-tone="crit"] .cap-usage-used {
+    background: var(--crit);
+  }
+
+  .cap-usage-why {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
+  .cap-usage-lead {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .cap-usage-item[data-tone="warn"] .cap-usage-lead {
+    color: var(--warn);
+  }
+  .cap-usage-item[data-tone="crit"] .cap-usage-lead {
+    color: var(--crit);
+  }
+
+  /* The text legend: the hatching is never the only way to read the projection. */
+  .cap-usage-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+
+    & li {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+  }
+
+  .cap-usage-key {
+    flex: none;
+    width: 22px;
+    height: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: var(--accent);
+
+    &[data-key="projected"] {
+      background: repeating-linear-gradient(135deg, var(--muted) 0 2px, var(--sunken) 2px 5px);
+    }
+  }
+
+  /* How fresh the reading is. A stale reading carries a warning status word. */
+  .cap-usage-fresh {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+
+    &[data-stale] {
+      color: var(--text);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-usage-bar,
+    .cap-usage-key {
+      forced-color-adjust: none;
+      border-color: CanvasText;
+      background: Canvas;
+    }
+    .cap-usage-used,
+    .cap-usage-item[data-tone] .cap-usage-used,
+    .cap-usage-key[data-key="used"] {
+      background: CanvasText;
+    }
+    .cap-usage-projected,
+    .cap-usage-key[data-key="projected"] {
+      background: repeating-linear-gradient(135deg, CanvasText 0 2px, Canvas 2px 5px);
+    }
+  }
+}

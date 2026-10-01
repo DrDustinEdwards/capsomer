@@ -1,0 +1,283 @@
+/* A data table: a native table in a labelled, focusable region that scrolls sideways when
+   the table is wider than its space. Rules between rows, numbers right-aligned in tabular
+   figures, sortable columns with a button in the header. Extracted from the Capsid Portal
+   (dashboard/src/styles.css: table.list, table.fleet, .scroll-x, .reflow). */
+@layer cap.components {
+  /* The region: named by the table's caption or its panel's heading, focusable so a
+     keyboard can scroll it (WCAG 2.1.1). The ring is inset, so a panel's clip keeps it. */
+  .cap-table-wrap {
+    position: relative;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--focus-color);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+  }
+
+  .cap-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text);
+
+    & caption {
+      padding: var(--space-3) var(--space-4);
+      text-align: start;
+      font-weight: 600;
+    }
+
+    & thead th {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-align: start;
+      text-transform: uppercase;
+      white-space: nowrap;
+      vertical-align: bottom;
+
+      /* The column the rows are sorted by reads in --text. */
+      &[aria-sort="ascending"],
+      &[aria-sort="descending"] {
+        color: var(--text);
+      }
+    }
+
+    & tbody :is(td, th) {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--line);
+      text-align: start;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    /* A row header reads as an ordinary first cell, in the body's weight. */
+    & tbody th {
+      font-weight: 500;
+    }
+
+    & tbody tr:last-child > :is(td, th) {
+      border-bottom: 0;
+    }
+
+    /* Long text wraps instead of widening the table. */
+    & :is(td, th)[data-wrap] {
+      min-width: 18ch;
+      max-width: 36ch;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    /* Numbers: right-aligned, in tabular figures, so digits line up down the column. */
+    & :is(td, th)[data-num] {
+      font-variant-numeric: tabular-nums;
+      text-align: end;
+    }
+  }
+
+  /* A sortable column: a real button in the header cell; the cell carries aria-sort. */
+  .cap-table-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--target);
+    margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1);
+    padding: 0 var(--space-2);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--raised);
+      color: var(--text);
+    }
+
+    & svg {
+      flex: none;
+    }
+  }
+
+  /* The sort glyph: both arrows when unsorted, one when sorted. */
+  .cap-table-sort-up,
+  .cap-table-sort-down {
+    fill: currentColor;
+  }
+  [aria-sort="ascending"] .cap-table-sort-down,
+  [aria-sort="descending"] .cap-table-sort-up {
+    display: none;
+  }
+
+  /* A row that opens a detail: the link in its first cell is stretched over the row, the
+     same pattern as the row list. The row is one tab stop; other links and buttons in it
+     sit above the stretched area. */
+  .cap-table tbody tr:has(.cap-table-open) {
+    position: relative;
+
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--raised);
+    }
+
+    &:has(.cap-table-open:focus-visible),
+    &[data-force="focus"] {
+      background: var(--sel);
+      outline: var(--focus-width) solid var(--accent-line);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+
+    & :is(a, button):not(.cap-table-open) {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  .cap-table-open {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    text-align: start;
+    text-decoration: none;
+    outline: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+  }
+  .cap-table tbody tr:hover .cap-table-open {
+    text-decoration: underline;
+  }
+
+  /* Opt-in: below a container width each row becomes a card, the first cell across the
+     top and every other cell under it with its column name above its value (data-label).
+     Ported from the Portal's .reflow rules. Use it only once the table has been checked
+     with a screen reader (decision 17): a table drawn as blocks can lose its table
+     semantics. The default on a phone is the scroll region above. */
+  .cap-table-wrap[data-reflow] {
+    container: cap-table / inline-size;
+  }
+
+  @container cap-table (max-width: 639px) {
+    .cap-table-wrap:is([data-reflow=""], [data-reflow="narrow"]) > .cap-table {
+      display: block;
+
+      & > tbody {
+        display: block;
+      }
+      & > thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+      & > tbody > tr {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
+        gap: var(--space-3) var(--space-5);
+        align-items: start;
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--line);
+
+        &:last-child {
+          border-bottom: 0;
+        }
+        & > :is(td, th) {
+          display: block;
+          min-width: 0;
+          padding: 0;
+          border: 0;
+          text-align: start;
+          white-space: normal;
+          overflow-wrap: anywhere;
+        }
+        & > :first-child {
+          grid-column: 1 / -1;
+        }
+        & > [data-label]::before {
+          content: attr(data-label);
+          display: block;
+          margin-bottom: var(--space-1);
+          color: var(--dim);
+          font-size: var(--fs-label);
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+      }
+    }
+  }
+
+  @container cap-table (max-width: 1099px) {
+    .cap-table-wrap[data-reflow="wide"] > .cap-table {
+      display: block;
+
+      & > tbody {
+        display: block;
+      }
+      & > thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+      & > tbody > tr {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
+        gap: var(--space-3) var(--space-5);
+        align-items: start;
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--line);
+
+        &:last-child {
+          border-bottom: 0;
+        }
+        & > :is(td, th) {
+          display: block;
+          min-width: 0;
+          padding: 0;
+          border: 0;
+          text-align: start;
+          white-space: normal;
+          overflow-wrap: anywhere;
+        }
+        & > :first-child {
+          grid-column: 1 / -1;
+        }
+        & > [data-label]::before {
+          content: attr(data-label);
+          display: block;
+          margin-bottom: var(--space-1);
+          color: var(--dim);
+          font-size: var(--fs-label);
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-table-sort-up,
+    .cap-table-sort-down {
+      fill: CanvasText;
+    }
+  }
+}

@@ -1,0 +1,13 @@
+/* A time in words, on a <time datetime>. Relative in rows; exact (the viewer's zone, then
+   UTC) where the detail of a thing is shown. It takes the colour and size of the text
+   around it. */
+@layer cap.components {
+  .cap-time {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+
+    &[data-format="exact"] {
+      white-space: normal;
+    }
+  }
+}
