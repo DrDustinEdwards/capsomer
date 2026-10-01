@@ -60,7 +60,12 @@ eachTheme((theme) => {
       - paragraph: /No data\\s*:\\s*no Cloudflare token for this site/
     `);
     await expect(page.locator("#sample-brief .cap-status")).toHaveAttribute("title", "No Cloudflare token for this site");
-    const shown = await page.locator("#sample-brief .cap-status").evaluate((el) => (el as HTMLElement).innerText.trim());
+    // What the eye reads: the text with the screen-reader-only reason left out.
+    const shown = await page.locator("#sample-brief .cap-status").evaluate((el) => {
+      const copy = el.cloneNode(true) as HTMLElement;
+      copy.querySelectorAll(".cap-sr-only").forEach((n) => n.remove());
+      return (copy.textContent ?? "").trim();
+    });
     expect(shown).toBe("No data");
   });
 

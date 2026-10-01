@@ -58,7 +58,9 @@ eachTheme((theme) => {
         - region "What changed":
           - heading "What changed" [level=3]
           - term: Status
-          - definition: /before:\\s*queued\\s*after:\\s*blocked/
+          - definition:
+            - deletion: "before: queued"
+            - insertion: "after: blocked"
     `);
   });
 

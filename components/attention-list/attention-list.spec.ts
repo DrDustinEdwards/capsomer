@@ -120,7 +120,9 @@ eachTheme((theme) => {
 
   test("keyboard: Enter on the more-warnings button shows the warnings past the cap", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
-    const button = page.locator(more).getByRole("button", { name: "2 more warnings" });
+    // Found by what it controls: its name changes when it opens.
+    const button = page.locator(more).locator("button[aria-controls='att-more-rows']");
+    await expect(button).toHaveText("2 more warnings");
     await expect(page.locator("#att-more-rows")).toBeHidden();
     await button.focus();
     await page.keyboard.press("Enter");

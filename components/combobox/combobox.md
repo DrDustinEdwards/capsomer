@@ -30,7 +30,7 @@ Two to five values: a radio group or the segmented control. Up to about fifteen:
 - **Base UI's Combobox does the hard part** (decision 7): the `combobox` and `listbox` roles, `aria-activedescendant`, the keys, positioning and collision handling. Capsomer adds the look, the label, help, error and empty and loading messages.
 - **A visible label above the box**, help outside the box, and the placeholder as an example only (patterns.md, "Form"). Required is written in the label.
 - **Only a listed value can be chosen.** Text that matches nothing is not kept: when the list closes, the box shows the chosen value's label again, or nothing. The wrapper holds the box's text to make this certain.
-- **The highlighted option is `--accent-soft` with `--text`.** DOM focus stays in the box; the option is marked `data-highlighted` and pointed to by `aria-activedescendant`.
+- **The highlighted option is `--accent-soft` with `--text` and a 3 px accent edge on its inline start**, the same as the command menu's, so the cue is not the tint alone. DOM focus stays in the box; the option is marked `data-highlighted` and pointed to by `aria-activedescendant`.
 - **An empty result names the typed text**: "No match for “foxhund”. Check the spelling, or clear the box to see every option." Pass `emptyText` to say more.
 - **Loading says so, and never says no match.** The message sits in Base UI's status region, so it is announced.
 - **Disabled says why** in its help text. Invalid marks the box `aria-invalid`, draws its border in `--crit`, and describes it by the message beside it.

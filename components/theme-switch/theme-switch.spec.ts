@@ -10,25 +10,25 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["system", "light", "dark"]) {
-    test(`accessibility: no axe violations, ${id} selected`, async ({ page }) => {
+  for (const id of ["first", "light", "dark"]) {
+    test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "theme-switch", theme, id);
       await expectNoAxeViolations(page);
     });
   }
 
-  test("accessibility: the switch's roles and names", async ({ page }) => {
-    await visitStates(page, "theme-switch", theme, "system");
+  test("accessibility: the switch's roles and names, two choices and no System", async ({ page }) => {
+    await visitStates(page, "theme-switch", theme, "light");
     await expect(page.locator(".cap-theme")).toMatchAriaSnapshot(`
       - group "Theme":
-        - radio "System" [checked]
-        - radio "Light"
+        - radio "Light" [checked]
         - radio "Dark"
     `);
+    await expect(radio(page, "System")).toHaveCount(0);
   });
 
   test("accessibility: the choices are drawn as one control, and the chosen one reaches its contrast", async ({ page }) => {
-    await visitStates(page, "theme-switch", theme, "system");
+    await visitStates(page, "theme-switch", theme, "light");
     await expect(page.locator(".cap-theme .cap-seg-options")).toBeVisible();
     await expectContrast(page, [
       { sel: ".cap-theme label:has(input:checked)", what: "the chosen choice's word" },
@@ -38,31 +38,33 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behaviour: each specimen applies its choice to the page", async ({ page }) => {
-    await visitStates(page, "theme-switch", theme, "system");
+  test("behaviour: the first visit follows the system and remembers nothing", async ({ page }) => {
+    await visitStates(page, "theme-switch", theme, "first");
+    // The system's theme is what the emulated colour scheme says; the control shows it and
+    // the page has no data-theme of its own.
     await expect(html(page)).not.toHaveAttribute("data-theme", /.+/);
+    await expect(radio(page, theme === "dark" ? "Dark" : "Light")).toBeChecked();
+    expect(await page.evaluate(() => localStorage.getItem("cap-theme-specimen-first"))).toBeNull();
+  });
+
+  test("behaviour: the light and dark specimens apply their choice to the page", async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "light");
     await expect(html(page)).toHaveAttribute("data-theme", "light");
     await visitStates(page, "theme-switch", theme, "dark");
     await expect(html(page)).toHaveAttribute("data-theme", "dark");
   });
 
-  test("keyboard: arrow keys change the theme, and the choice persists across a reload", async ({ page }) => {
-    await visitStates(page, "theme-switch", theme, "system");
-    await radio(page, "System").focus();
+  test("keyboard: an arrow key chooses the other theme, and the choice persists across a reload", async ({ page }) => {
+    await visitStates(page, "theme-switch", theme, "first");
+    const start = theme === "dark" ? "Dark" : "Light";
+    const other = theme === "dark" ? "Light" : "Dark";
+    await radio(page, start).focus();
     await page.keyboard.press("ArrowRight");
-    await expect(radio(page, "Light")).toBeChecked();
-    await expect(html(page)).toHaveAttribute("data-theme", "light");
-    await page.keyboard.press("ArrowRight");
-    await expect(radio(page, "Dark")).toBeChecked();
-    await expect(html(page)).toHaveAttribute("data-theme", "dark");
+    await expect(radio(page, other)).toBeChecked();
+    await expect(html(page)).toHaveAttribute("data-theme", other.toLowerCase());
     await page.reload();
-    await expect(radio(page, "Dark")).toBeChecked();
-    await expect(html(page)).toHaveAttribute("data-theme", "dark");
-    await radio(page, "Dark").focus();
-    await page.keyboard.press("ArrowRight");
-    await expect(radio(page, "System")).toBeChecked();
-    await expect(html(page)).not.toHaveAttribute("data-theme", /.+/);
+    await expect(radio(page, other)).toBeChecked();
+    await expect(html(page)).toHaveAttribute("data-theme", other.toLowerCase());
   });
 
   test("keyboard: t switches light and dark, and the switch follows", async ({ page }) => {
