@@ -80,6 +80,12 @@
     }
   }
 
+  /* An identifier in a row (a sha, a namespace): its monospace face would otherwise stretch
+     the line it sits in. From the Portal's `.frow .sub .ns`, which keeps rows one line tall. */
+  .cap-feed-row .cap-mono {
+    line-height: 1;
+  }
+
   .cap-feed-who {
     font-size: var(--fs-detail);
     color: var(--muted);
