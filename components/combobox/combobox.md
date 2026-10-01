@@ -97,3 +97,5 @@ It renders, in `.cap-combobox`: `label.cap-combobox-label`, `p.cap-combobox-help
 None yet.
 
 **Test note.** The accessibility scan leaves out Base UI's focus guards ([data-base-ui-focus-guard]): visually hidden sentinels it places around an open popup so focus can wrap. They are ria-hidden and focusable on purpose, which axe's ria-hidden-focus rule reports; nothing else is excluded.
+
+**Size.** Measured 2026-10-01 with capsomer size: 55.4 KB gzip for this wrapper bundled on its own with Base UI's parts it uses (React excluded). The combobox and the menu share Base UI's positioning code, so a page that uses both ships less than the two figures added together. Base UI publishes no per-component figures of its own.
