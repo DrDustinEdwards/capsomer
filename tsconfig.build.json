@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "allowImportingTsExtensions": true,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": ".",
+    "types": []
+  },
+  "include": ["components/**/*.ts", "components/**/*.tsx"],
+  "exclude": ["components/**/*.spec.ts", "components/**/states.ts"]
+}

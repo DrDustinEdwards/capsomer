@@ -1,0 +1,8 @@
+/* The one layer order. Every Capsomer rule sits in one of these layers, and an app's own
+   CSS stays unlayered, so an app's rule always wins without !important (design 1.4).
+
+   An app still on Tailwind v4 declares its own order before importing anything, so its
+   utilities keep winning while screens move over:
+     @layer cap, theme, base, components, utilities;
+   Nested names (cap.tokens and the rest) then sort inside "cap". */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
