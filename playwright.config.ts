@@ -14,13 +14,13 @@ export default defineConfig({
   retries: 0,
   reporter: [["list"], ["json", { outputFile: "test-results/results.json" }]],
   use: {
-    baseURL: `http://localhost:${PORT}/capsomer/`,
+    baseURL: `http://localhost:${PORT}/`,
     trace: "retain-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command: `npx vite preview --config site/vite.config.ts --port ${PORT} --strictPort`,
-    url: `http://localhost:${PORT}/capsomer/`,
+    url: `http://localhost:${PORT}/`,
     reuseExistingServer: false,
     timeout: 60_000,
   },

@@ -54,6 +54,8 @@
     "build": "tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "site": "vite build --config site/vite.config.ts",
+    "site:release": "node bin/capsomer.mjs site-data && vite build --config site/vite.config.ts",
+    "deploy": "wrangler deploy",
     "e2e": "playwright test",
     "palette-report": "node tokens/palette.mjs --report",
     "size": "node bin/capsomer.mjs size",
@@ -89,6 +91,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1"
+    "vite": "^8.3.1",
+    "wrangler": "^4.142.0"
   }
 }

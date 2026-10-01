@@ -323,7 +323,8 @@ async function siteData() {
   // The committed colours (legacy until rule 14's failing pairs are settled), and every
   // family's pairs for the contrast report.
   writeFileSync(join(dataDir, "palette.json"), JSON.stringify(pal.legacyThemes(), null, 2));
-  writeFileSync(join(dataDir, "families.json"), JSON.stringify({ families: pal.FAMILIES, pairs: pal.report() }, null, 2));
+  const scales = Object.fromEntries(Object.entries(pal.FAMILIES).map(([n, f]) => [n, { light: pal.scale(f.seed, f.anchor, "light"), dark: pal.scale(f.seed, f.anchor, "dark") }]));
+  writeFileSync(join(dataDir, "families.json"), JSON.stringify({ families: pal.FAMILIES, pairs: pal.report(), scales }, null, 2));
   const pj = JSON.parse(readFileSync(join(PKG, "package.json"), "utf8"));
   const runUrl = process.env.GITHUB_RUN_ID ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}` : null;
   writeFileSync(join(dataDir, "meta.json"), JSON.stringify({ version: pj.version, commit: git(["rev-parse", "--short", "HEAD"], PKG), branch: git(["branch", "--show-current"], PKG), built: new Date().toISOString(), runUrl }, null, 2));
@@ -355,6 +356,8 @@ async function siteData() {
     for (const s of r.suites ?? []) visit(s, s.file, null);
   }
   writeFileSync(join(dataDir, "results.json"), JSON.stringify(results, null, 2));
+  const resultsOut = flag("results-out");
+  if (resultsOut) writeFileSync(resultsOut, JSON.stringify({ ...results, commit: git(["rev-parse", "--short", "HEAD"], PKG), runUrl }, null, 2));
   console.log(`site-data: wrote site/data (palette, meta, results${results.available ? `: ${results.totals.passed} passed, ${results.totals.failed} failed` : ": no test run found"})`);
 }
 

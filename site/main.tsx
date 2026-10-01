@@ -1,7 +1,8 @@
 // Capsomer's own site: a dashboard of the design system, inside the same shell as the
-// Capsid Portal (decided 2026-09-30, design.md section 11). Hash routes, so GitHub Pages
-// serves every view from one file.
-import { StrictMode, useEffect, useMemo, useState, type ReactNode } from "react";
+// Capsid Portal (decided 2026-09-30, design.md section 11), served at
+// https://capsomer.dustinedwards.info by a static Cloudflare Worker (rule 16). Hash routes,
+// so every view is one file.
+import { StrictMode, createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import "@fontsource/schibsted-grotesk/400.css";
 import "@fontsource/schibsted-grotesk/500.css";
@@ -15,7 +16,12 @@ import "../css/prose.css";
 import "../tokens/themes.css";
 import "./site.css";
 import { Shell, type ShellEntry } from "../components/shell/shell.react.tsx";
-import { BASE, CHANGELOG_MD, COMPONENTS, DEFAULTS_MD, META, PALETTE, RESULTS, SCALES, type ComponentDoc, type ComponentResults, type Pair } from "./data.ts";
+import { BASE, CHANGELOG_MD, COMPONENTS, DEFAULTS_MD, FAMILIES, META, PALETTE, RESULTS_BUILD, SCALES, fetchResults, type ComponentDoc, type ComponentResults, type Pair, type Results } from "./data.ts";
+
+// The test results every view reads: the build's own, replaced by the last run on main
+// once that has been read.
+const ResultsContext = createContext<Results>(RESULTS_BUILD);
+const useResults = () => useContext(ResultsContext);
 import { renderMarkdown } from "./markdown.ts";
 
 import.meta.glob("../components/*/*.css", { eager: true });
@@ -97,7 +103,7 @@ const paint = (prop: string, value: string) => (el: HTMLElement | null) => {
 // ---- views ---------------------------------------------------------------------------------
 
 function Overview() {
-  const res = RESULTS;
+  const res = useResults();
   const failing = Object.entries(res.components).filter(([, r]) => r.keyboard.failed + r.accessibility.failed + r.behaviour.failed > 0);
   return (
     <div className="site-page">
@@ -159,6 +165,7 @@ import { Shell } from "capsomer/react/shell";`}</code>
 }
 
 function ComponentsView() {
+  const RESULTS = useResults();
   return (
     <div className="site-page">
       <div className="site-head">
@@ -229,6 +236,7 @@ function TestList({ rows }: { rows: ComponentResults["tests"] }) {
 }
 
 function ComponentPage({ name }: { name: string }) {
+  const RESULTS = useResults();
   const c = COMPONENTS.find((x) => x.name === name);
   if (!c)
     return (
@@ -380,6 +388,95 @@ function ThemeColumn({ scheme }: { scheme: "light" | "dark" }) {
   );
 }
 
+// The three colour families of rules 14 and 15: each one's 12 steps in both themes, and
+// every pair it is checked on, its default theme first.
+function FamilyScales() {
+  const fams = FAMILIES;
+  if (!fams?.scales) return null;
+  const names = Object.keys(fams.families);
+  return (
+    <Panel title="The colour families" id="families" src="Rules 14 and 15, locked 2026-10-01">
+      <p className="cap-muted">
+        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first. Until the failing pairs below are settled, the site and the components use the palette the Capsid Portal runs today.
+      </p>
+      {names.map((n) => {
+        const f = fams.families[n];
+        const s = fams.scales?.[n];
+        if (!f || !s) return null;
+        const mine = fams.pairs.filter((p) => p.family === n);
+        const failing = mine.filter((p) => !p.pass);
+        const order: Array<"light" | "dark"> = f.defaultTheme === "dark" ? ["dark", "light"] : ["light", "dark"];
+        return (
+          <section key={n} className="site-family" aria-labelledby={`fam-${n}`}>
+            <h3 id={`fam-${n}`}>
+              {n === "purple" ? "Purple" : n === "fox" ? "Fox" : n === "teal" ? "Teal" : n} <span className="cap-mono cap-muted">{f.seed}</span>
+            </h3>
+            <p className="cap-muted">
+              {f.note}. Default theme: {f.defaultTheme}.
+            </p>
+            {order.map((scheme) => (
+              <div key={scheme} className="site-steps-row" data-cap-theme={scheme}>
+                <span className="cap-label">{scheme === "light" ? "Light" : "Dark"}{scheme === f.defaultTheme ? ", default" : ""}</span>
+                <ol className="site-steps">
+                  {s[scheme].map((hex, i) => (
+                    <li key={i}>
+                      <i ref={paint("background", hex)} />
+                      <span className="cap-num">{i + 1}</span>
+                      <span className="cap-mono">{hex}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))}
+            <p>
+              {failing.length === 0 ? (
+                <span className="cap-status" data-tone="ok">
+                  Every one of its {mine.length} pairs passes
+                </span>
+              ) : (
+                <span className="cap-status" data-tone="crit">
+                  {failing.length} of {mine.length} pairs fail
+                </span>
+              )}
+            </p>
+            {failing.length > 0 && (
+              <div className="cap-table-wrap" role="region" tabIndex={0} aria-label={`${n} failing pairs`}>
+                <table className="cap-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Theme</th>
+                      <th scope="col">What</th>
+                      <th scope="col">Pair</th>
+                      <th scope="col">Ratio</th>
+                      <th scope="col">Needs</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {failing.map((p, i) => (
+                      <tr key={i}>
+                        <td>
+                          {p.scheme}
+                          {p.isDefault ? " (default)" : ""}
+                        </td>
+                        <td>{p.what}</td>
+                        <td className="cap-mono">
+                          --{p.fg} {p.fgHex} on --{p.bg} {p.bgHex}
+                        </td>
+                        <td data-num="">{p.ratio.toFixed(2)}</td>
+                        <td data-num="">{p.min}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        );
+      })}
+    </Panel>
+  );
+}
+
 function ColourView() {
   if (!PALETTE)
     return (
@@ -399,6 +496,7 @@ function ColourView() {
           One seed, <span className="cap-mono">{PALETTE.seed}</span>, makes every colour in both themes. Status colours keep their own hues and are tuned for contrast. A pair the generator asserts shows Pass or Fail against WCAG 2.2 (4.5:1 for text, 3:1 for a boundary); a pair no component puts together says “not used”.
         </p>
       </div>
+      <FamilyScales />
       <div className="site-pair">
         <ThemeColumn scheme="light" />
         <ThemeColumn scheme="dark" />
@@ -530,6 +628,7 @@ function MotionView() {
 }
 
 function TestsView() {
+  const RESULTS = useResults();
   const entries = Object.entries(RESULTS.components).sort(([, a], [, b]) => b.keyboard.failed + b.accessibility.failed + b.behaviour.failed - (a.keyboard.failed + a.accessibility.failed + a.behaviour.failed));
   return (
     <div className="site-page">
@@ -609,6 +708,16 @@ function ThemeButton() {
 
 function App() {
   const { view, detail } = useRoute();
+  const [RESULTS, setResults] = useState<Results>(RESULTS_BUILD);
+  useEffect(() => {
+    let live = true;
+    void fetchResults().then((r) => {
+      if (live && r) setResults(r);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
   const failed = RESULTS.totals.failed;
   const nav: ShellEntry[] = useMemo(
     () =>
@@ -642,6 +751,7 @@ function App() {
   else page = <Overview />;
 
   return (
+    <ResultsContext.Provider value={RESULTS}>
     <Shell
       brand={
         <>
@@ -678,6 +788,7 @@ function App() {
     >
       {page}
     </Shell>
+    </ResultsContext.Provider>
   );
 }
 
