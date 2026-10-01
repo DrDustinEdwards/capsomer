@@ -37,6 +37,21 @@ export function toggleRail(shell: HTMLElement): void {
   setRail(shell, shell.dataset.rail !== "collapsed");
 }
 
+// The phone tab bar's More sheet: a native modal dialog the More button opens. Esc closes it
+// natively; closing by any route puts focus back on More and keeps aria-expanded true.
+export function openMore(shell: HTMLElement): void {
+  const button = shell.querySelector<HTMLButtonElement>("[data-cap-part='more']");
+  const dialog = shell.querySelector<HTMLDialogElement>("dialog.cap-shell-more");
+  if (!dialog || dialog.open) return;
+  dialog.showModal();
+  button?.setAttribute("aria-expanded", "true");
+}
+
+export function closeMore(shell: HTMLElement): void {
+  const dialog = shell.querySelector<HTMLDialogElement>("dialog.cap-shell-more");
+  if (dialog?.open) dialog.close();
+}
+
 // Attaches to every [data-cap="shell"] under root that is not attached yet. Returns a
 // function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
@@ -46,9 +61,21 @@ export function enhance(root: ParentNode = document): () => void {
     const pref = readPref(shell.dataset.capPref ?? DEFAULT_PREF);
     if (pref) setRail(shell, pref === "collapsed", false);
 
+    const more = shell.querySelector<HTMLDialogElement>("dialog.cap-shell-more");
+    const moreButton = shell.querySelector<HTMLButtonElement>("[data-cap-part='more']");
     const onClick = (e: MouseEvent) => {
-      if ((e.target as Element).closest("[data-cap-part='rail-toggle']")) toggleRail(shell);
+      const target = e.target as Element;
+      if (target.closest("[data-cap-part='rail-toggle']")) toggleRail(shell);
+      if (target.closest("[data-cap-part='more']")) openMore(shell);
+      // A click on the backdrop lands on the dialog itself; a link or Close inside closes it.
+      if (more?.open && (target === more || target.closest("a, [data-cap-part='more-close']"))) more.close();
     };
+    // Closed by Esc, Close, a link or the backdrop: focus goes back to More.
+    const onMoreClose = () => {
+      moreButton?.setAttribute("aria-expanded", "false");
+      moreButton?.focus();
+    };
+    more?.addEventListener("close", onMoreClose);
     // Esc hides the label a collapsed rail is showing, until the pointer or focus moves on.
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape" || shell.dataset.rail !== "collapsed") return;
@@ -66,6 +93,7 @@ export function enhance(root: ParentNode = document): () => void {
     shell.addEventListener("focusout", reset);
     undo.push(() => {
       shell.removeEventListener("click", onClick);
+      more?.removeEventListener("close", onMoreClose);
       document.removeEventListener("keydown", onKey);
       shell.removeEventListener("mouseout", reset);
       shell.removeEventListener("focusout", reset);
