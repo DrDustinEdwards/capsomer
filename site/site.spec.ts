@@ -30,6 +30,14 @@ eachTheme((theme) => {
     await expect(page.locator("#cap-main h1")).toHaveText("Colour and contrast");
   });
 
+  test("behaviour: the overview counts every family's contrast pairs, not just the committed palette's", async ({ page }) => {
+    await page.goto("./#/overview");
+    const fig = page.locator(".site-figure").filter({ hasText: "Contrast pairs" });
+    await expect(fig.locator("b")).toHaveText("300");
+    await expect(fig).toContainText("0 failing");
+    await expect(fig).toContainText("3 families, both themes");
+  });
+
   test("behaviour: the colour view shows all three families, each default theme first", async ({ page }) => {
     await page.goto("./#/colour");
     for (const [name, first] of [["Purple", "Light"], ["Fox", "Light"], ["Teal", "Dark"]] as const) {

@@ -1,0 +1,98 @@
+# Capsomer's CI. The repo is public, so these minutes are free (rulings.md, rule 11).
+#
+# Blocking: the palette and scale checks (correctness, and contrast in both themes), the
+# unit tests, the type check, the build, and every component's keyboard and accessibility
+# tests in a real browser. Never blocking: the token check and the size report (rule 1,
+# decision 12), and the forced-colours screenshots, which are for review.
+#
+# The site itself is deployed by Cloudflare's Git integration (DEPLOY.md, rule 16). On main,
+# this workflow writes the run's test results to the `results` branch, even when a test
+# failed, and the deployed site reads them from there, so it shows the last run on main.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install
+        run: npm ci --ignore-scripts
+      - name: Palette, scales, unit tests, types
+        run: npm run check
+      - name: Every family's contrast pairs, both themes (blocking, rule 18)
+        run: npm run palette-report -- --summary
+      - name: Build the behaviour modules and wrappers
+        run: npm run build
+      - name: Build the site and every states page
+        run: npm run site
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Keyboard and accessibility tests, both themes
+        run: npx playwright test
+      - name: Forced-colours screenshots (for review, never blocks)
+        if: always()
+        run: npx playwright test -c playwright.review.config.ts
+        continue-on-error: true
+      - name: Size (warns only)
+        if: always()
+        run: npm run size
+      - name: Token check (warns only)
+        if: always()
+        run: npm run token-check
+      - name: Summarise the results for the site
+        if: always()
+        run: node bin/capsomer.mjs site-data --results-out test-results/summary.json
+      - name: Keep the results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 30
+
+  # The site reads https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json.
+  # One file on an orphan branch, replaced on every run on main.
+  results:
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
+      - name: Write results.json to the results branch
+        env:
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.sha }}
+        run: |
+          test -f test-results/summary.json || { echo "no summary was written"; exit 1; }
+          mkdir publish && cp test-results/summary.json publish/results.json
+          cd publish
+          git init -q -b results
+          git config user.name "capsomer-ci"
+          git config user.email "capsomer-ci@users.noreply.github.com"
+          git add results.json
+          git commit -q -m "Test results for ${SHA}"
+          git push -q --force "https://x-access-token:${TOKEN}@github.com/${REPO}.git" results

@@ -124,8 +124,15 @@ function Overview() {
         </a>
         <a className="site-figure" href={href("colour")}>
           <span className="cap-label">Contrast pairs</span>
-          <b className="cap-num">{PALETTE ? PALETTE.light.pairs.length + PALETTE.dark.pairs.length : "No data"}</b>
-          <span className="cap-muted">checked in both themes</span>
+          <b className="cap-num">{FAMILIES ? FAMILIES.pairs.length : "No data"}</b>
+          <span>
+            {FAMILIES ? (
+              <span className="cap-status" data-tone={FAMILIES.pairs.some((p) => !p.pass) ? "crit" : "ok"}>
+                {FAMILIES.pairs.some((p) => !p.pass) ? `${FAMILIES.pairs.filter((p) => !p.pass).length} failing` : "0 failing"}
+              </span>
+            ) : null}{" "}
+            <span className="cap-muted">{FAMILIES ? `${Object.keys(FAMILIES.families).length} families, both themes` : "No palette data in this build"}</span>
+          </span>
         </a>
       </div>
       {failing.length > 0 && (
@@ -501,7 +508,7 @@ function ColourView() {
         <ThemeColumn scheme="light" />
         <ThemeColumn scheme="dark" />
       </div>
-      <Panel title="Every asserted pair" id="pairs" src={`${all.length} pairs, both themes`} flush>
+      <Panel title="Every asserted pair of the committed palette" id="pairs" src={`${all.length} pairs, both themes. The families above have ${FAMILIES?.pairs.length ?? 0} in all`} flush>
         <div className="cap-table-wrap" role="region" tabIndex={0} aria-labelledby="pairs-h">
           <table className="cap-table">
             <thead>
