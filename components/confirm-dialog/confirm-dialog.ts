@@ -244,6 +244,11 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
     }
   };
   const onInput = () => syncGuard(dialog);
+  // A click on the backdrop does not close the dialog (it is not light-dismiss), and it must not
+  // take focus off the control that had it either: the browser would move it to the dialog.
+  const onBackdropDown = (e: MouseEvent) => {
+    if (e.target === dialog) e.preventDefault();
+  };
   const onClose = () => {
     if (input) input.value = "";
     clearError(dialog);
@@ -254,6 +259,7 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
   cancel?.addEventListener("click", onCancelClick);
   dialog.addEventListener("cancel", onCancelEvent);
   dialog.addEventListener("keydown", onKey);
+  dialog.addEventListener("mousedown", onBackdropDown);
   input?.addEventListener("input", onInput);
   dialog.addEventListener("close", onClose);
   return () => {
@@ -261,6 +267,7 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
     cancel?.removeEventListener("click", onCancelClick);
     dialog.removeEventListener("cancel", onCancelEvent);
     dialog.removeEventListener("keydown", onKey);
+    dialog.removeEventListener("mousedown", onBackdropDown);
     input?.removeEventListener("input", onInput);
     dialog.removeEventListener("close", onClose);
     delete dialog.dataset.capReady;

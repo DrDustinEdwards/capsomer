@@ -68,7 +68,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
       <h2 class="cap-approval-title" id="ap-title">2 gates are waiting</h2>
       <p class="cap-approval-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
     </div>
-    <div class="cap-approval-gates">
+    <div class="cap-approval-gates" role="group" aria-label="Gates waiting for approval" tabindex="0">
       <fieldset class="cap-approval-gate">
         <legend class="cap-approval-job">Deploy foxhound to production</legend>
         <p class="cap-approval-meta">job_8c21 in foxhound, waiting 26 minutes</p>

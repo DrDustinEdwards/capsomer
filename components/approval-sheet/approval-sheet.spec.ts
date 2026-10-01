@@ -31,12 +31,13 @@ eachTheme((theme) => {
     await expect(sheet(page)).toMatchAriaSnapshot(`
       - dialog "2 gates are waiting":
         - heading "2 gates are waiting" [level=2]
-        - group "Deploy foxhound to production":
-          - checkbox "Include this gate" [checked]
-          - textbox "Comment (optional)"
-        - group "Run the Carrel migration 0008":
-          - checkbox "Include this gate" [checked]
-          - textbox "Comment (optional)"
+        - group "Gates waiting for approval":
+          - group "Deploy foxhound to production":
+            - checkbox "Include this gate" [checked]
+            - textbox "Comment (optional)"
+          - group "Run the Carrel migration 0008":
+            - checkbox "Include this gate" [checked]
+            - textbox "Comment (optional)"
         - button "Cancel"
         - button "Approve 2 gates"
     `);

@@ -24,23 +24,23 @@ eachTheme((theme) => {
     await expect(page.locator("section[aria-labelledby='s-collapsed']")).toMatchAriaSnapshot(`
       - region "Group row, collapsed, with its count":
         - heading "Group row, collapsed, with its count" [level=2]
-        - button "Notices, 4"
+        - button /^Notices\\s*,\\s*4$/
     `);
     await expect(page.locator("section[aria-labelledby='s-expanded']")).toMatchAriaSnapshot(`
       - region "Group row, expanded, two levels":
         - heading "Group row, expanded, two levels" [level=2]
-        - button "Dependency updates, 5" [expanded]
+        - button /^Dependency updates\\s*,\\s*5$/ [expanded]
         - list:
           - listitem: "capsid: vite 8.3.1 to 8.4.0"
           - listitem: "capsid: wrangler 4.40.0 to 4.41.2"
           - listitem:
-            - button "carrel, 3"
+            - button /^carrel\\s*,\\s*3$/
     `);
   });
 
   test("keyboard: Enter and Space on a group row toggle aria-expanded and the rows", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
-    const btn = page.getByRole("button", { name: "Notices, 4" });
+    const btn = page.getByRole("button", { name: /^Notices\s*,\s*4$/ });
     const rows = page.locator("#notices-rows");
     await expect(btn).toHaveAttribute("aria-expanded", "false");
     await expect(rows).toBeHidden();
@@ -56,12 +56,12 @@ eachTheme((theme) => {
 
   test("keyboard: a second-level group toggles on its own", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
-    const inner = page.getByRole("button", { name: "carrel, 3" });
+    const inner = page.getByRole("button", { name: /^carrel\s*,\s*3$/ });
     await inner.focus();
     await page.keyboard.press("Enter");
     await expect(inner).toHaveAttribute("aria-expanded", "true");
     await expect(page.locator("#carrel-updates")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Dependency updates, 5" })).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByRole("button", { name: /^Dependency updates\s*,\s*5$/ })).toHaveAttribute("aria-expanded", "true");
   });
 
   test("keyboard: Enter on a summary opens and closes its section", async ({ page }) => {

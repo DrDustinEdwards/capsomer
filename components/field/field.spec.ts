@@ -72,7 +72,7 @@ eachTheme((theme) => {
 
   test("keyboard: arrow keys move between radios and select", async ({ page }) => {
     await visitStates(page, "field", theme);
-    const five = page.getByRole("radio", { name: "5 minutes" });
+    const five = page.getByRole("radio", { name: "5 minutes", exact: true });
     await five.focus();
     await page.keyboard.press("ArrowDown");
     const fifteen = page.getByRole("radio", { name: "15 minutes" });
