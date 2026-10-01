@@ -31,8 +31,11 @@ import { fileURLToPath } from "node:url";
 export const LEGACY_SEED = "#4F2D7F";
 export const SEED = LEGACY_SEED; // kept for importers of the moved file
 export const FAMILIES = {
-  purple: { seed: "#8c5fd2", anchor: "#4F2D7F", note: "Capsid Portal, Carrel, dustinedwards.info, Germomics" },
-  fox: { seed: "#cc4f0c", anchor: null, note: "Foxing" },
+  // defaultTheme is the theme checked first (rule 15). Purple follows the viewer's system
+  // setting, so its light theme is checked first as the default with no preference.
+  purple: { seed: "#8c5fd2", anchor: "#4F2D7F", defaultTheme: "light", note: "Capsid Portal, Carrel, dustinedwards.info, Germomics (rule 14)" },
+  fox: { seed: "#cc4f0c", anchor: null, defaultTheme: "light", note: "Foxing, light by default (rules 14 and 15)" },
+  teal: { seed: "#008489", anchor: null, defaultTheme: "dark", note: "Foxhound, dark by default (rule 15)" },
 };
 const OUT = fileURLToPath(new URL("./colour.css", import.meta.url));
 const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -444,9 +447,11 @@ export function report() {
   const rows = [];
   for (const [name, f] of Object.entries(FAMILIES)) {
     const t = themes(f);
-    for (const scheme of ["light", "dark"]) for (const p of t[scheme].pairs) rows.push({ family: name, scheme, ...p, fgHex: t[scheme].tokens[p.fg], bgHex: t[scheme].tokens[p.bg] });
+    const schemes = f.defaultTheme === "dark" ? ["dark", "light"] : ["light", "dark"];
+    for (const scheme of schemes) for (const p of t[scheme].pairs) rows.push({ family: name, scheme, isDefault: scheme === f.defaultTheme, ...p, fgHex: t[scheme].tokens[p.fg], bgHex: t[scheme].tokens[p.bg] });
   }
-  return rows.sort((a, b) => Number(a.pass) - Number(b.pass));
+  // Each family in turn, its default theme first, failures first within each theme.
+  return rows.map((r, i) => ({ r, i })).sort((a, b) => (a.r.family === b.r.family && a.r.scheme === b.r.scheme ? Number(a.r.pass) - Number(b.r.pass) || a.i - b.i : a.i - b.i)).map((x) => x.r);
 }
 
 const invoked = process.argv[1] && fileURLToPath(import.meta.url).replace(/\\/g, "/").toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase();
@@ -461,7 +466,8 @@ if (invoked) {
   } else if (process.argv.includes("--report")) {
     const rows = report();
     const failed = rows.filter((r) => !r.pass);
-    for (const r of rows) console.log(`${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${r.scheme.padEnd(5)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 (needs ${r.min})`);
+    for (const r of rows) console.log(`${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${(r.scheme + (r.isDefault ? "*" : "")).padEnd(6)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 (needs ${r.min})`);
+    console.log("(* the family's default theme, checked first)");
     console.log(`palette: ${rows.length} pairs across ${Object.keys(FAMILIES).length} families and both themes; ${failed.length} fail`);
   } else if (process.argv.includes("--table")) {
     for (const [name, t] of Object.entries(themes())) if (name === "light" || name === "dark") {
