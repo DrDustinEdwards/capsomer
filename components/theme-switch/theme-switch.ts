@@ -33,6 +33,14 @@ export function applyStoredTheme(key = THEME_PREF): ThemeChoice | null {
   return t;
 }
 
+// The choice in effect, read from the page itself: light or dark when data-theme says so,
+// else system. It is right even when storage cannot be read or written, because the
+// attribute is what applyTheme sets first (the Portal's themeChoice).
+export function themeChoice(): ThemeChoice {
+  const t = document.documentElement.getAttribute("data-theme");
+  return t === "light" || t === "dark" ? t : "system";
+}
+
 // The theme the page is painting now.
 export function effectiveTheme(): "light" | "dark" {
   const t = document.documentElement.getAttribute("data-theme");

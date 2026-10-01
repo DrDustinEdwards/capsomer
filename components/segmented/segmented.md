@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [default with nothing chosen, one selected, hover, keyboard focus, a disabled option, legend hidden]
 added: 0.1.0
-source: The approved mockup (design/mockup.html, .seg)
+source: The approved mockup (design/mockup.html, .seg); the Capsid Portal's .seg rules (0.1.1) agree with it
 replaces:
   - 'class="[^"]*\bseg\b'
   - 'className="[^"]*\bseg\b'
@@ -16,6 +16,8 @@ replaces:
 # Segmented control
 
 A `<fieldset class="cap-seg">` with a `<legend>` and a row of radio inputs in `.cap-seg-options`, drawn as one control. Each radio sits, unseen, over its segment, so the browser does the work: one tab stop, arrow keys move and choose, a form submits the value.
+
+**Provenance.** REWROTE, against the Capsid Portal at master (as of 2026-10-01). The Portal had no segmented control at the extraction base (`366b902`); its `.seg` rules (#216, for Runs on and the theme choices) and Capsomer's both come from the approved mockup. Compared line by line, the Portal's current rules are all here: a bordered inline group on `--surface`, muted segments, the chosen one on `--accent-soft` with `--text`, a focus ring on the segment in `--accent`, and the real radio kept (the Portal hides it and clicks its label; here the radio covers the segment, so a click anywhere is the radio's own). Nothing from the Portal's current code is missing, so nothing is carried over. Where Capsomer goes further, by the audit: the chosen segment also has an accent edge and a heavier weight (the tint alone is below 3:1 against the surface), a disabled option is struck through and explained, and every segment is at least `var(--target)` tall. The Portal's `.radios` list in Settings is the same choice drawn as plain radios; use this control for it.
 
 ## When to use it
 

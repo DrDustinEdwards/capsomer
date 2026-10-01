@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const html = (page: Page) => page.locator("html");
 const radio = (page: Page, name: string) => page.getByRole("radio", { name });
@@ -25,6 +25,17 @@ eachTheme((theme) => {
         - radio "Light"
         - radio "Dark"
     `);
+  });
+
+  test("accessibility: the choices are drawn as one control, and the chosen one reaches its contrast", async ({ page }) => {
+    await visitStates(page, "theme-switch", theme, "system");
+    await expect(page.locator(".cap-theme .cap-seg-options")).toBeVisible();
+    await expectContrast(page, [
+      { sel: ".cap-theme label:has(input:checked)", what: "the chosen choice's word" },
+      { sel: ".cap-theme label:has(input:not(:checked))", what: "an unchosen choice's word" },
+      { sel: ".cap-theme .cap-seg-options", what: "the control's edge", part: "border" },
+      { sel: ".cap-theme label:has(input:checked)", what: "the chosen choice's edge", part: "border" },
+    ]);
   });
 
   test("behaviour: each specimen applies its choice to the page", async ({ page }) => {

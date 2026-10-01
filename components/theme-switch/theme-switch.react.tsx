@@ -1,5 +1,5 @@
 import { useEffect, useId, useState } from "react";
-import { applyTheme, readTheme, THEME_PREF, type ThemeChoice } from "./theme-switch.ts";
+import { applyTheme, readTheme, themeChoice, THEME_PREF, type ThemeChoice } from "./theme-switch.ts";
 
 export interface ThemeSwitchProps {
   // The localStorage key; "cap-theme" by default.
@@ -21,8 +21,8 @@ export function ThemeSwitch({ prefKey = THEME_PREF, legend = "Theme", initial = 
   const [choice, setChoice] = useState<ThemeChoice>(initial);
 
   useEffect(() => {
-    const stored = readTheme(prefKey);
-    if (stored) setChoice(stored);
+    // Remembered, else what the page shows (right when storage cannot be read).
+    setChoice(readTheme(prefKey) ?? themeChoice());
     const onTheme = (e: Event) => {
       const c = (e as CustomEvent<{ choice: ThemeChoice }>).detail?.choice;
       if (c) setChoice(c);
@@ -34,21 +34,23 @@ export function ThemeSwitch({ prefKey = THEME_PREF, legend = "Theme", initial = 
   return (
     <fieldset className="cap-seg cap-theme" data-cap="theme-switch">
       <legend className="cap-sr-only">{legend}</legend>
-      {CHOICES.map((c) => (
-        <label key={c.value}>
-          <input
-            type="radio"
-            name={name}
-            value={c.value}
-            checked={choice === c.value}
-            onChange={() => {
-              setChoice(c.value);
-              applyTheme(c.value, { key: prefKey });
-            }}
-          />
-          {c.label}
-        </label>
-      ))}
+      <div className="cap-seg-options">
+        {CHOICES.map((c) => (
+          <label key={c.value}>
+            <input
+              type="radio"
+              name={name}
+              value={c.value}
+              checked={choice === c.value}
+              onChange={() => {
+                setChoice(c.value);
+                applyTheme(c.value, { key: prefKey });
+              }}
+            />
+            {c.label}
+          </label>
+        ))}
+      </div>
     </fieldset>
   );
 }

@@ -6,7 +6,7 @@ parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, checkbox checked and unchecked, radio checked and unchecked]
 added: 0.1.0
-source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check)
+source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
 replaces:
   - 'class="[^"]*\bfield\b'
   - 'className="[^"]*\bfield\b'
@@ -16,6 +16,8 @@ replaces:
 # Field
 
 `.cap-field` wraps one control with its label, its help and its error. `.cap-input` styles an input, a textarea or a select (see Select). `.cap-check` is a checkbox or radio with its label. The behaviour module checks fields with the platform's own constraint validation (`required`, `type`, `pattern`, `min`, `max`, `minlength`) and writes the message beside the field.
+
+**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01), `styles.css` (`.field`, `.siteform`, `.err`) and `ui/Switch.tsx` (the reason field). `.cap-input` is EXTRACTED: its box (32px, `--line-strong` edge, 6px radius, `--surface`, `0 10px` padding), its `--dim` placeholder and its sunken read-only ground are the Portal's `.field` rules, unchanged since the extraction base (`366b902`), with the scale's tokens in their place. The Portal's invalid edge (`.field[aria-invalid="true"]`, #216) is carried and made firmer, and its `.err` (`--crit`, 12px, weight 500) is `.cap-field-error` with an icon added so the message is not colour alone and `overflow-wrap` for a long refusal. REWRITTEN from the audit: `.cap-field`, the label, help and required marker (the Portal's `.siteform .f` and `.section-title` are page layout), the dashed, muted disabled state (the Portal's `opacity: 0.5` does not reach 4.5:1), and the behaviour module (the Portal checks only in its own handlers). Two Portal behaviours are used by the automation switch, not here: an empty reason is an error on the field that sends nothing, and the value is read from the field itself, not from an input event. The Portal's compact 30px field in a reason row is `switch-reason`'s own layout.
 
 ## When to use it
 
