@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Empty, loading and could-not-load. An empty area always says which kind of empty it is
    (nothing yet, no match, all clear, failed); loading is a skeleton for a page or a spinner
    for one panel, and over 10 seconds it says how long. */

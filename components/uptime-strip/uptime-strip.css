@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The uptime strip's wrapper: a caption with the uptime and its window, a slot for
    Enarratio's uptimeStrip() output, a legend, and a one-sentence summary, with the numbers
    by day a disclosure away. Enarratio draws the strip; this styles everything around it.

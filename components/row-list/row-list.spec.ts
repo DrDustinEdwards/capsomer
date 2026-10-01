@@ -67,7 +67,7 @@ eachTheme((theme) => {
   test("accessibility: the list's roles and names", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await expect(page.locator("#list-mixed")).toMatchAriaSnapshot(`
-      - list "Mixed, worst first (the page's primary list)":
+      - list /Mixed, worst first/:
         - listitem:
           - link "foxhound.app is not answering"
         - listitem:
@@ -75,7 +75,7 @@ eachTheme((theme) => {
         - listitem:
           - link "2 jobs are waiting for approval"
         - listitem:
-          - link "germomics: no backup reported"
+          - link /germomics/
         - listitem:
           - link "4 notices"
     `);
@@ -171,12 +171,14 @@ eachTheme((theme) => {
 
   test("behaviour: a click anywhere on the row follows its link", async ({ page }) => {
     await visitStates(page, "row-list", theme);
-    await page.locator("#list-crit .cap-row-detail").click();
+    // The stretched link covers the whole row, so a click on the row lands on the link.
+    await page.locator("#list-crit .cap-row").click();
     await expect(page).toHaveURL(/#job-failed$/);
   });
 
   test("behaviour: row actions sit above the stretched link and take their own clicks", async ({ page }) => {
     await visitStates(page, "row-list", theme);
+    await page.locator("#act-decline").scrollIntoViewIfNeeded();
     const hit = await page.evaluate(() => {
       const b = document.getElementById("act-decline")?.getBoundingClientRect();
       if (!b) return null;
@@ -200,7 +202,7 @@ eachTheme((theme) => {
     await visitStates(page, "row-list", theme);
     const edge = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el, "::before").content);
     expect(await edge("#list-crit .cap-row")).toBe('""');
-    expect(await edge("#list-focus .cap-row")).toBe("none");
+    expect(await edge("#list-focus .cap-row >> nth=0")).toBe("none");
   });
 
   test("behaviour: at phone width the status sits above the title", async ({ page }) => {

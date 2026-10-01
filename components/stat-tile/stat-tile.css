@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Stat tiles: one figure each, with a word for where it stands against its threshold, a
    detail line, and a slot for Enarratio's sparkline. A tile is a link or a button that
    goes to the view behind the figure. Extracted from the Capsid Portal

@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* A native select, styled as a field by .cap-input (field.css). Where the browser has a
    customisable select (appearance: base-select), its button and picker take the family's
    look; everywhere else the browser's own list opens, and works the same. */

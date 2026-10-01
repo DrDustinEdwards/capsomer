@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The confirm dialog: a native <dialog> opened with showModal(), for an action that cannot
    be undone. Title names the action and the object, the body lists what changes, the
    perform button is named for the action and set apart from Cancel. From the Capsid

@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* A segmented control: a fieldset of radio inputs drawn as one control. The radios stay
    real (and focusable) over each segment, so arrow keys, Space and forms are the
    browser's. From the approved mockup's .seg. */

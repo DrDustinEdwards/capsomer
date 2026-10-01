@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The command menu: a native <dialog> near the top of the window, holding a labelled
    combobox and a grouped listbox. From the Capsid Portal's palette (dashboard/src/app/
    CommandMenu.tsx, styles.css ".palette"). */

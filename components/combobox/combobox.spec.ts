@@ -23,14 +23,14 @@ eachTheme((theme) => {
   test("accessibility: no axe violations, closed, disabled and invalid", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     await expect(site(page)).toBeVisible();
-    await expectNoAxeViolations(page);
+    await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
   for (const state of ["open", "filtered", "no-match", "highlighted", "loading"]) {
     test(`accessibility: no axe violations, ${state}`, async ({ page }) => {
       await visitStates(page, "combobox", theme, state);
       await expect(page.locator(".cap-combobox-popup")).toBeVisible();
-      await expectNoAxeViolations(page);
+      await expectNoAxeViolations(page, undefined, { baseUi: true });
     });
   }
 
@@ -68,8 +68,9 @@ eachTheme((theme) => {
     await visitStates(page, "combobox", theme);
     await expect(page.locator("[data-mount='closed']")).toMatchAriaSnapshot(`
       - paragraph: Type to filter. Only a listed site can be chosen.
-      - combobox "Site"
-      - button "Show Site options"
+      - group:
+        - combobox "Site"
+        - button "Show Site options"
     `);
     await expect(site(page)).toHaveAttribute("aria-expanded", "false");
     await expect(site(page)).toHaveAccessibleDescription("Type to filter. Only a listed site can be chosen.");

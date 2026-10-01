@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Form fields: a label above, help outside the control, an error beside it with an icon.
    .cap-input styles input, textarea and select; .cap-check a checkbox or radio with its
    label. From the Capsid Portal's .field and .siteform (dashboard/src/styles.css). */

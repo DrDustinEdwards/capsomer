@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Buttons. Extracted from the Capsid Portal's .btn, .iconbtn and .linkbtn (dashboard/src/
    styles.css), with quiet, pending and disabled-with-a-reason added. Each variant sets the
    three local properties; the states below read them, so a state works on every variant. */

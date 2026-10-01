@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* A menu of actions behind a button, built on Base UI's Menu (decision 7). Base UI gives the
    roles, focus, arrow keys and typeahead; this file gives the look. The trigger reproduces
    .cap-btn's values from the tokens (it does not import the button's CSS). The popup is

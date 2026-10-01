@@ -69,6 +69,7 @@ export function Combobox(props: ComboboxProps) {
   const autoId = useId();
   const inputId = props.id ?? `${autoId}-input`;
   const helpId = `${autoId}-help`;
+  const labelId = `${autoId}-label`;
   const errorId = `${autoId}-error`;
 
   const [own, setOwn] = useState<string | null>(props.defaultValue ?? null);
@@ -97,7 +98,7 @@ export function Combobox(props: ComboboxProps) {
 
   return (
     <div className="cap-combobox" data-cap="combobox">
-      <label className="cap-combobox-label" htmlFor={inputId}>
+      <label className="cap-combobox-label" id={labelId} htmlFor={inputId}>
         {label}
         {required && " (required)"}
       </label>
@@ -130,7 +131,7 @@ export function Combobox(props: ComboboxProps) {
         defaultOpen={defaultOpen}
       >
         <Base.InputGroup className="cap-combobox-group">
-          <Base.Input id={inputId} className="cap-combobox-input" placeholder={placeholder} aria-invalid={error != null ? true : undefined} aria-describedby={describedBy} autoComplete="off" />
+          <Base.Input id={inputId} className="cap-combobox-input" aria-labelledby={labelId} placeholder={placeholder} aria-invalid={error != null ? true : undefined} aria-describedby={describedBy} autoComplete="off" />
           <Base.Trigger className="cap-combobox-trigger" aria-label={`Show ${label} options`}>
             <Chevron />
           </Base.Trigger>

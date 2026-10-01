@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The automation switch: a switch that does not move when flipped. It opens a one-line
    reason, and moves only when the reason is applied. From the approved mockup's .reason.
    The switch is .cap-switch (switch.css); the field inside is .cap-field (field.css). */

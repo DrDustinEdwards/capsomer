@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* A data table: a native table in a labelled, focusable region that scrolls sideways when
    the table is wider than its space. Rules between rows, numbers right-aligned in tabular
    figures, sortable columns with a button in the header. Extracted from the Capsid Portal
