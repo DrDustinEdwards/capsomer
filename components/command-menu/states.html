@@ -33,6 +33,13 @@
         </main>
       </template>
 
+      <template data-specimen="stops" data-title="Typing stop lists every stop, each saying what it asks" data-height="440">
+        <main class="specimen-page" tabindex="-1">
+          <h1>Overview</h1>
+          <p role="status" data-specimen-part="said"></p>
+        </main>
+      </template>
+
       <template data-specimen="nomatch" data-title="No match" data-height="360">
         <main class="specimen-page" tabindex="-1">
           <h1>Overview</h1>
@@ -48,7 +55,7 @@
       </template>
     </main>
     <script type="module">
-      import { createCommandMenu, enhance, openCommandMenu } from "./command-menu.ts";
+      import { createCommandMenu, enhance, openCommandMenu, stopCommand } from "./command-menu.ts";
       const only = new URLSearchParams(location.search).get("only");
       if (only) {
         const said = document.querySelector("[data-specimen-part='said']");
@@ -60,6 +67,9 @@
           c("go-overview", "Overview", "Go to", "g o", ["home", "dashboard"]),
           c("go-sites", "Sites", "Go to", "g s", ["uptime", "checks"]),
           c("go-queue", "Queue", "Go to", "g q", ["jobs", "blocked"]),
+          // A stop opens its control (a reason field, the confirm dialog); it never performs.
+          stopCommand({ id: "stop-ns", label: "Pause capsomer", ask: "reason", run: ran("Pause capsomer opens its reason field") }),
+          stopCommand({ id: "stop-agent", label: "Revoke foxhound-driver", ask: "preview", keywords: ["revoke"], run: ran("Revoke foxhound-driver opens its preview") }),
           c("refresh", "Refresh now", "Actions", "r", ["reload"]),
           c("theme", "Switch light and dark", "Actions", "t", ["theme", "dark mode"]),
           c("copy-cmd", "Copy the command for the blocked capsomer job", "Copy", undefined, ["git push"]),
@@ -68,6 +78,7 @@
         enhance();
         if (only === "open") openCommandMenu();
         if (only === "filtered") openCommandMenu("ck");
+        if (only === "stops") openCommandMenu("stop");
         if (only === "nomatch") openCommandMenu("deploy to vercel");
         if (only === "active") {
           openCommandMenu();

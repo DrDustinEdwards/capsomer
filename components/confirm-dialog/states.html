@@ -18,6 +18,7 @@
           <ul class="specimen-agents">
             <li><span class="cap-mono">foxhound-driver</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="revoke">Revoke foxhound-driver…</button></li>
             <li><span class="cap-mono">germomics.org</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="delete">Delete the germomics.org record…</button></li>
+            <li><span class="cap-mono">job_0cdf2803f0ba</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="fail">Mark job_0cdf2803f0ba failed…</button></li>
           </ul>
           <p role="status" data-specimen-part="said"></p>
         </main>
@@ -88,6 +89,33 @@
           <div class="cap-dialog-actions">
             <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
             <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform" data-cap-label="Revoke agent">Try again</button>
+          </div>
+        </dialog>
+      </template>
+
+      <template data-specimen="reason-missing" data-title="Reason required, pressed while empty" data-height="520">
+        <main class="specimen-page" tabindex="-1">
+          <h1>Queue</h1>
+          <p>The page behind the dialog.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="confirm-dialog" data-specimen-open aria-labelledby="rm-title" aria-describedby="rm-body">
+          <h2 class="cap-dialog-title" id="rm-title">Mark job failed: Rotate the watcher's Cloudflare token</h2>
+          <div class="cap-dialog-body" id="rm-body">
+            <p>This ends the job. It cannot be resumed.</p>
+            <ul>
+              <li>The job's status becomes failed.</li>
+              <li>An audit row records the change and your reason.</li>
+            </ul>
+          </div>
+          <div class="cap-dialog-reason">
+            <label for="rm-reason">Reason (required)</label>
+            <textarea class="cap-input" id="rm-reason" rows="3" aria-required="true" aria-invalid="true" aria-describedby="rm-error rm-note" data-cap-part="reason"></textarea>
+            <p class="cap-dialog-note" id="rm-note" data-cap-part="reason-note">Recorded with the change.</p>
+          </div>
+          <div class="cap-dialog-error" role="alert" id="rm-error" data-cap-part="error"><p class="cap-dialog-error-lead"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4v5h1.6V4zM7.2 10.4V12h1.6v-1.6z" /></svg>A reason is required.</p><p>Type what you are doing and why, then try again. Nothing was changed.</p></div>
+          <div class="cap-dialog-actions">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform">Mark failed</button>
           </div>
         </dialog>
       </template>
@@ -172,6 +200,18 @@
           perform: () => wait(() => row?.remove()),
         });
         if (said) said.textContent = done ? "Revoked foxhound-driver." : "Nothing changed.";
+      });
+      document.querySelector("[data-specimen-action='fail']")?.addEventListener("click", async () => {
+        let given = "";
+        const done = await confirm({
+          title: "Mark job failed: Rotate the watcher's Cloudflare token",
+          lead: "This ends the job. It cannot be resumed.",
+          body: ["The job's status becomes failed.", "An audit row records the change and your reason."],
+          action: "Mark failed",
+          reason: {},
+          perform: (why) => wait(() => (given = why)),
+        });
+        if (said) said.textContent = done ? `Marked failed: ${given}` : "Nothing changed.";
       });
       document.querySelector("[data-specimen-action='delete']")?.addEventListener("click", async () => {
         const done = await confirm({
