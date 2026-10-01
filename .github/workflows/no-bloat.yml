@@ -1,0 +1,42 @@
+# The routine no-bloat checks (no-bloat/README.md). WARN ONLY: every step has
+# continue-on-error and nothing here can fail a pull request (rulings.md, rule 1). The repo is
+# public, so the minutes are free; the job takes about two minutes.
+name: No bloat
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: no-bloat-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install
+        run: npm ci --ignore-scripts
+      - name: Build the site, for the page-weight report
+        run: npm run site
+        continue-on-error: true
+      - name: Knip (unused files, exports and dependencies)
+        run: npx knip --reporter json > test-results-knip.json || true
+        continue-on-error: true
+      - name: jscpd (duplicated blocks)
+        run: npm run jscpd
+        continue-on-error: true
+      - name: Summary against the baseline
+        run: |
+          mkdir -p test-results
+          mv test-results-knip.json test-results/knip.json 2>/dev/null || true
+          npm run bloat >> "$GITHUB_STEP_SUMMARY"
+        continue-on-error: true
