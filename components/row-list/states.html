@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Row list: states</title>
+    <script type="module" src="../../site/specimen.ts"></script>
+  </head>
+  <body class="cap-specimens">
+    <main>
+      <h1>Row list</h1>
+      <p>Rows that each open a detail. The title is the row's one link, stretched over the row. Press j and k to move between the first list's rows. Sample data.</p>
+
+      <section class="cap-specimen" aria-labelledby="s-mixed">
+        <h2 id="s-mixed">Mixed, worst first (the page's primary list)</h2>
+        <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="s-mixed" data-cap-primary id="list-mixed">
+          <li class="cap-row" data-tone="crit">
+            <span class="cap-row-status" id="m1-s"><span class="cap-status" data-tone="crit"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Critical</span></span>
+            <div class="cap-row-title"><a href="#site-foxhound" aria-describedby="m1-s m1-d">foxhound.app is not answering</a></div>
+            <p class="cap-row-detail" id="m1-d">3 failed checks in a row, first at 14:02</p>
+            <span class="cap-row-meta"><time datetime="2026-09-30T14:02Z">11 minutes ago</time></span>
+          </li>
+          <li class="cap-row">
+            <span class="cap-row-status" id="m2-s"><span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Warning</span></span>
+            <div class="cap-row-title"><a href="#usage-d1" aria-describedby="m2-s m2-d">D1 rows read will run out before the reset</a></div>
+            <p class="cap-row-detail" id="m2-d">78% used, full in about 3 hours</p>
+            <span class="cap-row-meta">projected</span>
+          </li>
+          <li class="cap-row">
+            <span class="cap-row-status" id="m3-s"><span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Warning</span></span>
+            <div class="cap-row-title"><a href="#queue-blocked" aria-describedby="m3-s m3-d">2 jobs are waiting for approval</a></div>
+            <p class="cap-row-detail" id="m3-d">Oldest has waited 26 minutes</p>
+            <span class="cap-row-meta"><time datetime="2026-09-30T13:47Z">26 minutes ago</time></span>
+          </li>
+          <li class="cap-row">
+            <span class="cap-row-status" id="m4-s"><span class="cap-status" data-tone="nodata"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2" /></svg>No data</span></span>
+            <div class="cap-row-title"><a href="#site-germomics" aria-describedby="m4-s m4-d">germomics: no backup reported</a></div>
+            <p class="cap-row-detail" id="m4-d">Its health route does not report one yet</p>
+            <span class="cap-row-meta">since setup</span>
+          </li>
+          <li class="cap-row">
+            <span class="cap-row-status" id="m5-s"><span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span></span>
+            <div class="cap-row-title"><a href="#notices" aria-describedby="m5-s m5-d">4 notices</a></div>
+            <p class="cap-row-detail" id="m5-d">Dependency updates, none urgent</p>
+            <span class="cap-row-meta"><time datetime="2026-09-30T09:10Z">5 hours ago</time></span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-crit">
+        <h2 id="s-crit">A critical row</h2>
+        <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="s-crit" id="list-crit">
+          <li class="cap-row" data-tone="crit">
+            <span class="cap-row-status" id="c1-s"><span class="cap-status" data-tone="crit"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Critical</span></span>
+            <div class="cap-row-title"><a href="#job-failed" aria-describedby="c1-s c1-d">foxhound-driver stopped</a></div>
+            <p class="cap-row-detail" id="c1-d">The type check failed twice on the same file</p>
+            <span class="cap-row-meta"><time datetime="2026-09-30T13:32Z">41 minutes ago</time></span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-focus">
+        <h2 id="s-focus">A focused row</h2>
+        <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="s-focus" id="list-focus">
+          <li class="cap-row" data-force="focus">
+            <span class="cap-row-status" id="f1-s"><span class="cap-status" data-tone="ok"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="currentColor" /><path fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m4.6 8.3 2.3 2.3 4.5-4.9" /></svg>Running</span></span>
+            <div class="cap-row-title"><a href="#job-running" aria-describedby="f1-s f1-d">Run the browser tests for capsomer</a></div>
+            <p class="cap-row-detail" id="f1-d">Held by capsid-driver, file 3 of 5</p>
+            <span class="cap-row-meta"><time datetime="2026-09-30T13:55Z">18 minutes ago</time></span>
+          </li>
+          <li class="cap-row">
+            <span class="cap-row-status" id="f2-s"><span class="cap-status" data-tone="nodata"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2" /></svg>Queued</span></span>
+            <div class="cap-row-title"><a href="#job-queued" aria-describedby="f2-s f2-d">Refresh the uptime strip fixtures</a></div>
+            <p class="cap-row-detail" id="f2-d">Priority 2</p>
+            <span class="cap-row-meta"><time datetime="2026-09-30T12:40Z">1 hour ago</time></span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-actions">
+        <h2 id="s-actions">A row with actions</h2>
+        <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="s-actions" id="list-actions">
+          <li class="cap-row">
+            <span class="cap-row-status" id="a1-s"><span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Blocked</span></span>
+            <div class="cap-row-title"><a href="#job-push" aria-describedby="a1-s a1-d">Push design/capsomer and open a pull request</a></div>
+            <p class="cap-row-detail" id="a1-d">capsomer-driver asks; it cannot reach main</p>
+            <span class="cap-row-meta"><time datetime="2026-09-30T14:10Z">3 minutes ago</time></span>
+            <div class="cap-row-actions">
+              <button type="button" class="cap-btn" data-variant="primary" id="act-approve">Approve</button>
+              <button type="button" class="cap-btn" id="act-decline">Decline</button>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-long">
+        <h2 id="s-long">A long title, cut with an ellipsis</h2>
+        <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="s-long" id="list-long">
+          <li class="cap-row">
+            <span class="cap-row-status" id="l1-s"><span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span></span>
+            <div class="cap-row-title"><a href="#mention" aria-describedby="l1-s l1-d" id="long-title">A mention on a reading list about phage lambda, its lysis and lysogeny decision, the 2019 burst size paper, and why the measured numbers in that paper disagree with the model by a factor of two</a></div>
+            <p class="cap-row-detail" id="l1-d">From a blog that has linked here three times this year, each time with a long excerpt and a request to reply</p>
+            <span class="cap-row-meta"><time datetime="2026-09-30T08:00Z">6 hours ago</time></span>
+          </li>
+        </ul>
+      </section>
+
+      <template data-specimen="phone" data-title="Phone width: the status above the title" data-width="390" data-height="300">
+        <main class="specimen-page">
+          <h1 id="phone-h">Queue</h1>
+          <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="phone-h" id="list-phone">
+            <li class="cap-row">
+              <span class="cap-row-status" id="p1-s"><span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Blocked</span></span>
+              <div class="cap-row-title"><a href="#job-push" aria-describedby="p1-s p1-d">Push design/capsomer</a></div>
+              <p class="cap-row-detail" id="p1-d">Waits on: your approval</p>
+              <span class="cap-row-meta"><time datetime="2026-09-30T14:10Z">3 minutes ago</time></span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status" id="p2-s"><span class="cap-status" data-tone="ok"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="currentColor" /><path fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m4.6 8.3 2.3 2.3 4.5-4.9" /></svg>Running</span></span>
+              <div class="cap-row-title"><a href="#job-running" aria-describedby="p2-s p2-d">Run the browser tests</a></div>
+              <p class="cap-row-detail" id="p2-d">Held by capsid-driver</p>
+              <span class="cap-row-meta"><time datetime="2026-09-30T13:55Z">18 minutes ago</time></span>
+            </li>
+          </ul>
+        </main>
+      </template>
+    </main>
+    <script type="module">
+      import { enhance } from "./row-list.ts";
+      enhance();
+    </script>
+  </body>
+</html>

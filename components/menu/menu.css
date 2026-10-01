@@ -1,0 +1,166 @@
+/* A menu of actions behind a button, built on Base UI's Menu (decision 7). Base UI gives the
+   roles, focus, arrow keys and typeahead; this file gives the look. The trigger reproduces
+   .cap-btn's values from the tokens (it does not import the button's CSS). The popup is
+   portalled, so its parts are styled on their own. */
+@layer cap.components {
+  .cap-menu-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--control-h);
+    padding: 0 var(--space-4);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--raised);
+    color: var(--text);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    white-space: nowrap;
+
+    &:hover:not([data-disabled]),
+    &[data-force="hover"] {
+      border-color: var(--muted);
+    }
+    &:active:not([data-disabled]),
+    &[data-pressed],
+    &[data-popup-open] {
+      background: var(--sunken);
+    }
+    &[data-disabled] {
+      color: var(--muted);
+      border-color: var(--line);
+      cursor: not-allowed;
+    }
+    & svg {
+      flex: none;
+      color: var(--muted);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-menu-trigger svg {
+      transition: transform var(--dur-fast) var(--ease-out);
+    }
+  }
+  .cap-menu-trigger[data-popup-open] svg {
+    transform: rotate(180deg);
+  }
+
+  .cap-menu-positioner {
+    z-index: var(--z-overlay);
+    outline: 0;
+  }
+
+  .cap-menu {
+    box-sizing: border-box;
+    min-width: max(var(--anchor-width), 12rem);
+    max-width: var(--available-width);
+    max-height: var(--available-height);
+    overflow-y: auto;
+    padding: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+    outline: 0;
+    transform-origin: var(--transform-origin);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-menu {
+      transition:
+        opacity var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out);
+
+      &[data-starting-style],
+      &[data-ending-style] {
+        opacity: 0;
+        transform: translateY(calc(var(--space-2) * -1));
+      }
+      &[data-instant] {
+        transition: none;
+      }
+    }
+  }
+
+  .cap-menu-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--space-5);
+    min-height: var(--target);
+    padding: calc(var(--space-2) + var(--space-1)) var(--space-3);
+    border-radius: var(--radius-s);
+    color: var(--text);
+    cursor: default;
+    outline: 0;
+    user-select: none;
+
+    /* The highlighted item: --accent-soft with --text. Focus is on the item itself. */
+    &[data-highlighted] {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
+    /* Danger items: at the end, after a separator, in --crit; highlighted on --crit-soft. */
+    &[data-tone="crit"] {
+      color: var(--crit);
+      font-weight: 600;
+
+      &[data-highlighted] {
+        background: var(--crit-soft);
+        color: var(--crit);
+      }
+    }
+
+    /* A disabled item stays reachable so its reason can be read. */
+    &[data-disabled] {
+      color: var(--dim);
+
+      &[data-highlighted] {
+        background: var(--raised);
+        color: var(--dim);
+      }
+    }
+  }
+
+  .cap-menu-label {
+    grid-column: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cap-menu-kbd {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .cap-menu-reason {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+  }
+
+  .cap-menu-separator {
+    height: 1px;
+    margin: var(--space-2) calc(var(--space-2) * -1);
+    background: var(--line);
+  }
+
+  /* Forced colours remove the tints: the highlighted item gets an outline, the popup keeps
+     its border, the separator becomes a rule. */
+  @media (forced-colors: active) {
+    .cap-menu-item[data-highlighted] {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+    .cap-menu {
+      border-color: CanvasText;
+    }
+    .cap-menu-separator {
+      background: CanvasText;
+    }
+  }
+}

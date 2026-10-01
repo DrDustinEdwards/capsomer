@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Message: states</title>
+    <script type="module" src="../../site/specimen.ts"></script>
+    <link rel="stylesheet" href="./specimen/page.css" />
+  </head>
+  <body class="cap-specimens">
+    <main>
+      <h1>Message</h1>
+      <p>The page's one status region: the result of an action, said in the page, never taking focus. A message with Undo stays until dismissed, and <kbd>z</kbd> runs its Undo. Each specimen is a whole page in its own frame. Sample data.</p>
+
+      <template data-specimen="empty" data-title="Empty: the region is present and shows nothing" data-height="170">
+        <main>
+          <div class="specimen-page">
+            <h1>Mentions</h1>
+            <p>4 waiting. Nothing has happened yet, so the region below is empty.</p>
+          </div>
+          <div class="message-sample">
+            <div class="cap-message" data-cap="message" role="status">
+              <p class="cap-message-text" data-cap-part="text"></p>
+              <button type="button" class="cap-link-btn cap-message-undo" data-cap-part="undo" hidden>Undo <kbd aria-hidden="true">z</kbd></button>
+              <button type="button" class="cap-btn cap-message-dismiss" data-cap-part="dismiss" hidden>Dismiss</button>
+            </div>
+          </div>
+        </main>
+      </template>
+
+      <template data-specimen="plain" data-title="A plain message" data-height="200">
+        <main>
+          <div class="specimen-page">
+            <h1>Publish</h1>
+            <p>Ready. Uses the short summary.</p>
+          </div>
+          <div class="message-sample">
+            <div class="cap-message" data-cap="message" role="status">
+              <p class="cap-message-text" data-cap-part="text">Published to TXASM newsletter.</p>
+              <button type="button" class="cap-link-btn cap-message-undo" data-cap-part="undo" hidden>Undo <kbd aria-hidden="true">z</kbd></button>
+              <button type="button" class="cap-btn cap-message-dismiss" data-cap-part="dismiss">Dismiss</button>
+            </div>
+          </div>
+        </main>
+      </template>
+
+      <template data-specimen="undo" data-title="A message with Undo" data-height="200">
+        <main>
+          <div class="specimen-page">
+            <h1>Mentions</h1>
+            <p>3 waiting.</p>
+          </div>
+          <div class="message-sample">
+            <div class="cap-message" data-cap="message" role="status">
+              <p class="cap-message-text" data-cap-part="text">Moved the mention from fieldnotes.example to the bin.</p>
+              <button type="button" class="cap-link-btn cap-message-undo" data-cap-part="undo">Undo <kbd aria-hidden="true">z</kbd></button>
+              <button type="button" class="cap-btn cap-message-dismiss" data-cap-part="dismiss">Dismiss</button>
+            </div>
+          </div>
+        </main>
+      </template>
+
+      <template data-specimen="undone" data-title="After Undo" data-height="200">
+        <main>
+          <div class="specimen-page">
+            <h1>Mentions</h1>
+            <p>4 waiting.</p>
+          </div>
+          <div class="message-sample">
+            <div class="cap-message" data-cap="message" role="status">
+              <p class="cap-message-text" data-cap-part="text">Undone. The mention from fieldnotes.example is waiting again.</p>
+              <button type="button" class="cap-link-btn cap-message-undo" data-cap-part="undo" hidden>Undo <kbd aria-hidden="true">z</kbd></button>
+              <button type="button" class="cap-btn cap-message-dismiss" data-cap-part="dismiss">Dismiss</button>
+            </div>
+          </div>
+        </main>
+      </template>
+
+      <template data-specimen="try" data-title="Try it: act, then Undo with z or the button" data-height="360">
+        <main>
+          <div class="specimen-page">
+            <h1>Mentions</h1>
+            <p>Bin a mention, then press z or Undo. Copy the link to see a message that clears itself.</p>
+          </div>
+          <div class="message-sample">
+            <div class="message-sample-row" id="sample-row" data-undos="0">
+              <b>fieldnotes.example</b>
+              <span id="sample-state">Waiting</span>
+              <button type="button" class="cap-btn" id="sample-bin">Bin</button>
+              <button type="button" class="cap-btn" id="sample-copy">Copy link</button>
+            </div>
+            <label>Note to self <input class="cap-input" id="sample-note" type="text" /></label>
+            <div class="cap-message" data-cap="message" role="status">
+              <p class="cap-message-text" data-cap-part="text"></p>
+              <button type="button" class="cap-link-btn cap-message-undo" data-cap-part="undo" hidden>Undo <kbd aria-hidden="true">z</kbd></button>
+              <button type="button" class="cap-btn cap-message-dismiss" data-cap-part="dismiss" hidden>Dismiss</button>
+            </div>
+          </div>
+        </main>
+      </template>
+
+      <section class="cap-specimen" aria-labelledby="s-errors">
+        <h2 id="s-errors">An error is not a message</h2>
+        <p>Something that failed belongs beside its source as an alert, or at the top of the page as a banner that keeps the last good data. See <a href="../banner/states.html">Banner and alert</a>.</p>
+      </section>
+    </main>
+    <script type="module">
+      import { enhance, say } from "./message.ts";
+      enhance();
+
+      const row = document.querySelector("#sample-row");
+      const state = document.querySelector("#sample-state");
+      const bin = document.querySelector("#sample-bin");
+      const copy = document.querySelector("#sample-copy");
+      bin?.addEventListener("click", () => {
+        if (bin.getAttribute("aria-disabled") === "true") return;
+        state.textContent = "In the bin";
+        bin.setAttribute("aria-disabled", "true");
+        say("Moved the mention from fieldnotes.example to the bin.", {
+          undo: () => {
+            row.dataset.undos = String(Number(row.dataset.undos) + 1);
+            state.textContent = "Waiting";
+            bin.removeAttribute("aria-disabled");
+          },
+          undone: "The mention from fieldnotes.example is waiting again.",
+        });
+      });
+      // A confirmation the control also shows, so it may clear itself.
+      copy?.addEventListener("click", () => {
+        copy.textContent = "Copied";
+        setTimeout(() => (copy.textContent = "Copy link"), 4000);
+        say("Copied the link to the mention.", { clears: true });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+/* Show and hide: a native <details> section (.cap-disclosure), and a group row in a list
+   (.cap-group) whose button shows or hides the rows it groups. Two levels at most. */
+@layer cap.components {
+  .cap-disclosure {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+
+    & > summary {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      min-height: max(var(--target), var(--control));
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-m);
+      font-weight: 600;
+      list-style: none;
+      cursor: pointer;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+      &::before {
+        content: "";
+        flex: none;
+        width: 7px;
+        height: 7px;
+        margin-inline: 2px 3px;
+        border-right: 1.5px solid currentColor;
+        border-bottom: 1.5px solid currentColor;
+        transform: rotate(-45deg);
+      }
+      &:hover,
+      &[data-force="hover"] {
+        background: var(--raised);
+      }
+      &:focus-visible {
+        outline-offset: -2px;
+      }
+    }
+    &[open] > summary {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+      border-bottom: 1px solid var(--line);
+
+      &::before {
+        transform: rotate(45deg);
+      }
+    }
+  }
+  .cap-disclosure-body {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+
+    & > * {
+      margin: 0;
+    }
+  }
+
+  /* A group row: the button names what it holds and how many ("Notices, 4"). */
+  .cap-group {
+    display: grid;
+  }
+  .cap-group-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: max(var(--target), var(--control));
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-top: 1px solid var(--line);
+    background: var(--raised);
+    color: var(--text);
+    font-weight: 600;
+    text-align: start;
+
+    &::before {
+      content: "";
+      flex: none;
+      width: 7px;
+      height: 7px;
+      margin-inline: 2px 3px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(-45deg);
+    }
+    &[aria-expanded="true"]::before {
+      transform: rotate(45deg);
+    }
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--sel);
+    }
+    &:focus-visible {
+      outline-offset: -2px;
+    }
+  }
+  .cap-group-count {
+    min-width: 2.2em;
+    padding: 0 var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+  .cap-group-rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    /* Plain rows until the row-list component styles them. */
+    & > li:where(:not([class])) {
+      padding: var(--space-2) var(--space-4) var(--space-2) calc(var(--space-4) + 18px);
+      border-top: 1px solid var(--line);
+    }
+  }
+  /* The row that holds a second-level group. */
+  .cap-group-nest {
+    padding: 0;
+  }
+  /* The second level sits in from the first. */
+  .cap-group .cap-group .cap-group-toggle {
+    padding-inline-start: calc(var(--space-4) + 18px);
+  }
+  .cap-group .cap-group .cap-group-rows > li:where(:not([class])) {
+    padding-inline-start: calc(var(--space-4) + 36px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-disclosure > summary::before,
+    .cap-group-toggle::before {
+      transition: transform var(--dur-fast) var(--ease-out);
+    }
+    .cap-disclosure::details-content {
+      opacity: 0;
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        content-visibility var(--dur-base) allow-discrete;
+    }
+    .cap-disclosure[open]::details-content {
+      opacity: 1;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-disclosure > summary::before,
+    .cap-group-toggle::before {
+      border-color: CanvasText;
+    }
+  }
+}

@@ -1,0 +1,166 @@
+/* Form fields: a label above, help outside the control, an error beside it with an icon.
+   .cap-input styles input, textarea and select; .cap-check a checkbox or radio with its
+   label. From the Capsid Portal's .field and .siteform (dashboard/src/styles.css). */
+@layer cap.components {
+  .cap-field {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  /* A label, or the legend of a fieldset.cap-field that groups radios or checkboxes. */
+  .cap-field-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: 0;
+    color: var(--text);
+    font-weight: 600;
+  }
+  fieldset.cap-field > legend.cap-field-label {
+    margin-bottom: var(--space-2);
+  }
+
+  /* The word "Required" beside the label. aria-hidden: the control's required attribute
+     already says it to a screen reader. */
+  .cap-field-required {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+  }
+
+  .cap-field-help {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* The error: an icon, then what is wrong and what to do. */
+  .cap-field-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin: 0;
+    color: var(--crit);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+
+    &::before {
+      content: "!";
+      content: "!" / "";
+      flex: none;
+      display: inline-grid;
+      place-items: center;
+      width: 14px;
+      height: 14px;
+      margin-top: 1px;
+      border: 1px solid var(--crit);
+      border-radius: 50%;
+      background: var(--crit);
+      color: var(--surface);
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    &:empty {
+      display: none;
+    }
+  }
+
+  .cap-input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--control);
+    margin: 0;
+    padding: 0 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--ui);
+    font-size: var(--fs-body);
+    line-height: 1.4;
+
+    &::placeholder {
+      color: var(--dim);
+      opacity: 1;
+    }
+    &:hover,
+    &[data-force="hover"] {
+      border-color: var(--muted);
+    }
+    &:focus-visible {
+      border-color: var(--accent);
+    }
+    /* Invalid: the edge thickens as well as turning red, and the message beside it says
+       what is wrong. Only aria-invalid, which the behaviour module sets with the message:
+       :user-invalid alone would mark a field red with no words. */
+    &[aria-invalid="true"] {
+      border-color: var(--crit);
+      box-shadow: inset 0 0 0 1px var(--crit);
+    }
+    &[readonly] {
+      background: var(--sunken);
+    }
+    &:disabled {
+      background: var(--sunken);
+      color: var(--muted);
+      border-style: dashed;
+      cursor: not-allowed;
+    }
+  }
+
+  textarea.cap-input {
+    min-height: calc(var(--control) * 2.5);
+    padding-block: 6px;
+    line-height: var(--leading);
+    resize: vertical;
+  }
+
+  /* A checkbox or radio with its label. The whole label is the hit area. */
+  .cap-check {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--target);
+    color: var(--text);
+    cursor: pointer;
+
+    & input {
+      flex: none;
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: inherit;
+    }
+    &:has(input:disabled) {
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+  }
+
+  /* Radios or checkboxes in a fieldset.cap-field: one per line. */
+  .cap-field-options {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-1);
+  }
+
+  @media (forced-colors: active) {
+    .cap-input[aria-invalid="true"] {
+      border-width: 2px;
+    }
+    .cap-field-error::before {
+      forced-color-adjust: none;
+      background: CanvasText;
+      border-color: CanvasText;
+      color: Canvas;
+    }
+  }
+}

@@ -1,0 +1,58 @@
+/* A panel: a bordered surface with a header on the raised tone and a padded body.
+   Extracted from the Capsid Portal (dashboard/src/styles.css, "panels"). */
+@layer cap.components {
+  .cap-panel {
+    min-width: 0;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    /* A list's hover tint stays inside the rounded corners. Rings inside a panel are
+       drawn inset (row-list, table) so nothing focusable is clipped. */
+    overflow: clip;
+  }
+
+  /* The header sits on the raised tone instead of a rule under it. */
+  .cap-panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: var(--raised);
+
+    & :is(h2, h3) {
+      margin: 0;
+      font-size: var(--fs-body);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: var(--leading);
+    }
+  }
+
+  /* Where the panel's data comes from and how fresh it is, pushed to the right. */
+  .cap-panel-src {
+    margin-left: auto;
+    font-size: var(--fs-label);
+    color: var(--dim);
+  }
+
+  .cap-panel-body {
+    display: grid;
+    gap: var(--gap);
+    padding: var(--space-4) var(--space-5);
+
+    /* A panel holding a list or a table: the rows run to the panel's edges. */
+    &[data-flush] {
+      display: block;
+      padding: 0;
+    }
+  }
+
+  /* Forced colours remove the header's tint: a rule keeps the header apart. */
+  @media (forced-colors: active) {
+    .cap-panel-head {
+      border-bottom: 1px solid CanvasText;
+    }
+  }
+}

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Field: states</title>
+    <script type="module" src="../../site/specimen.ts"></script>
+  </head>
+  <body class="cap-specimens">
+    <main>
+      <h1>Field</h1>
+      <p>A label above, help outside the control, an error beside it. The last specimen is a live form: leave a field you changed, or submit, to see it checked. Sample data.</p>
+
+      <section class="cap-specimen" aria-labelledby="s-default">
+        <h2 id="s-default">Default</h2>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-default">Site name</label>
+          <input class="cap-input" id="f-default" autocomplete="off" />
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-focus">
+        <h2 id="s-focus">Keyboard focus and hover</h2>
+        <p class="cap-muted">Tab into the first field to see focus. The second is shown hovered.</p>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-focus">Branch</label>
+          <input class="cap-input" id="f-focus" autocomplete="off" />
+        </div>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-hover">Tag</label>
+          <input class="cap-input" id="f-hover" data-force="hover" autocomplete="off" />
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-filled">
+        <h2 id="s-filled">Filled, with a placeholder example</h2>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-filled">Site name</label>
+          <input class="cap-input" id="f-filled" value="Foxhound" autocomplete="off" />
+        </div>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-placeholder">Owner</label>
+          <input class="cap-input" id="f-placeholder" placeholder="For example: capsid-driver" autocomplete="off" />
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-help">
+        <h2 id="s-help">Help text and required</h2>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-help">Site address <span class="cap-field-required" aria-hidden="true">Required</span></label>
+          <p class="cap-field-help" id="f-help-h">Starts with https:// and has no path.</p>
+          <input class="cap-input" id="f-help" type="url" required aria-describedby="f-help-h" autocomplete="off" />
+        </div>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-notes">Notes</label>
+          <p class="cap-field-help" id="f-notes-h">Shown to anyone who opens the site's page.</p>
+          <textarea class="cap-input" id="f-notes" aria-describedby="f-notes-h">Moved to Cloudflare on 12 September.</textarea>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-invalid">
+        <h2 id="s-invalid">Invalid, with its message</h2>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-invalid">Site address</label>
+          <p class="cap-field-help" id="f-invalid-h">Starts with https:// and has no path.</p>
+          <input class="cap-input" id="f-invalid" type="url" value="http://foxhound.app/health" aria-invalid="true" aria-describedby="f-invalid-e f-invalid-h" autocomplete="off" />
+          <p class="cap-field-error" id="f-invalid-e">Use https:// and remove "/health". The health route has its own field.</p>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-disabled">
+        <h2 id="s-disabled">Disabled and read-only</h2>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-disabled">Platform</label>
+          <p class="cap-field-help" id="f-disabled-h">Set by the deploy. Change it in the repository.</p>
+          <input class="cap-input" id="f-disabled" value="Cloudflare" disabled aria-describedby="f-disabled-h" />
+        </div>
+        <div class="cap-field">
+          <label class="cap-field-label" for="f-readonly">Site id</label>
+          <input class="cap-input cap-mono" id="f-readonly" value="site_7f3a91c2" readonly />
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-checks">
+        <h2 id="s-checks">Checkbox and radio, checked and unchecked</h2>
+        <div class="cap-field-options">
+          <label class="cap-check"><input type="checkbox" id="c-on" checked /> Watch this site</label>
+          <label class="cap-check"><input type="checkbox" id="c-off" /> Email me when it goes down</label>
+          <label class="cap-check"><input type="checkbox" disabled /> Post to the status page (not set up)</label>
+        </div>
+        <fieldset class="cap-field">
+          <legend class="cap-field-label">Check every</legend>
+          <div class="cap-field-options">
+            <label class="cap-check"><input type="radio" name="every" value="1" /> 1 minute</label>
+            <label class="cap-check"><input type="radio" name="every" value="5" checked /> 5 minutes</label>
+            <label class="cap-check"><input type="radio" name="every" value="15" /> 15 minutes</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-live">
+        <h2 id="s-live">A live form</h2>
+        <form class="cap-field-options" id="add-site" data-cap="field" action="#added" aria-labelledby="s-live">
+          <div class="cap-field">
+            <label class="cap-field-label" for="site-name">Site name <span class="cap-field-required" aria-hidden="true">Required</span></label>
+            <input class="cap-input" id="site-name" name="name" required autocomplete="off" aria-describedby="site-name-e" data-error-value-missing="Give the site a name, such as Foxhound." />
+            <p class="cap-field-error" id="site-name-e" hidden></p>
+          </div>
+          <div class="cap-field">
+            <label class="cap-field-label" for="site-url">Site address <span class="cap-field-required" aria-hidden="true">Required</span></label>
+            <p class="cap-field-help" id="site-url-h">Starts with https:// and has no path.</p>
+            <input
+              class="cap-input"
+              id="site-url"
+              name="url"
+              type="url"
+              required
+              pattern="https://[^\/\s]+\/?"
+              autocomplete="off"
+              aria-describedby="site-url-e site-url-h"
+              data-error-value-missing="Enter the site's address."
+              data-error-type-mismatch="Enter a full address, starting with https://."
+              data-error-pattern-mismatch="Use https:// and leave off any path, such as /health."
+            />
+            <p class="cap-field-error" id="site-url-e" hidden></p>
+          </div>
+          <fieldset class="cap-field">
+            <legend class="cap-field-label">Platform <span class="cap-field-required" aria-hidden="true">Required</span></legend>
+            <div class="cap-field-options">
+              <label class="cap-check"><input type="radio" name="platform" value="cloudflare" required aria-describedby="platform-e" data-error-value-missing="Choose where the site runs." /> Cloudflare</label>
+              <label class="cap-check"><input type="radio" name="platform" value="vercel" aria-describedby="platform-e" /> Vercel</label>
+            </div>
+            <p class="cap-field-error" id="platform-e" hidden></p>
+          </fieldset>
+          <label class="cap-check"><input type="checkbox" name="watch" id="live-watch" /> Start checks on the next pass</label>
+          <div><button type="submit" class="cap-btn" data-variant="primary">Add site</button></div>
+          <p class="cap-muted" id="add-result" role="status"></p>
+        </form>
+      </section>
+    </main>
+    <script type="module">
+      import { enhance } from "./field.ts";
+      enhance();
+      // The app's part: runs only for a valid form.
+      const form = document.querySelector("#add-site");
+      form?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = form.querySelector("#site-name")?.value ?? "";
+        document.querySelector("#add-result").textContent = `Added ${name}. Its checks start on the next pass.`;
+      });
+    </script>
+  </body>
+</html>

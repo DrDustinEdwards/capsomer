@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Confirm dialog: states</title>
+    <script type="module" src="../../site/specimen.ts"></script>
+  </head>
+  <body class="cap-specimens">
+    <main>
+      <h1>Confirm dialog</h1>
+      <p>Preview, then perform, for an action that cannot be undone. Each specimen is a page of its own, because a modal dialog takes the whole page. Sample data.</p>
+
+      <template data-specimen="live" data-title="Working: open it from a button" data-height="420">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Agents</h1>
+          <p>Revoke opens the dialog. Cancel, Esc and Revoke agent all work here; the action waits until the page says so.</p>
+          <ul class="specimen-agents">
+            <li><span class="cap-mono">foxhound-driver</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="revoke">Revoke foxhound-driver…</button></li>
+            <li><span class="cap-mono">germomics.org</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="delete">Delete the germomics.org record…</button></li>
+          </ul>
+          <p role="status" data-specimen-part="said"></p>
+        </main>
+      </template>
+
+      <template data-specimen="open" data-title="Open, focus on Cancel" data-height="420">
+        <main class="specimen-page" tabindex="-1">
+          <h1>Agents</h1>
+          <p>The page behind the dialog.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="confirm-dialog" data-specimen-open aria-labelledby="open-title" aria-describedby="open-body">
+          <h2 class="cap-dialog-title" id="open-title">Revoke foxhound-driver?</h2>
+          <div class="cap-dialog-body" id="open-body">
+            <p>This cannot be undone. The agent stops working at once.</p>
+            <ul>
+              <li>Its key stops being accepted.</li>
+              <li>Its 1 claimed job goes back to the queue.</li>
+              <li>An audit row records the revocation under your name.</li>
+            </ul>
+          </div>
+          <div class="cap-dialog-error" role="alert" data-cap-part="error"></div>
+          <div class="cap-dialog-actions">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform">Revoke agent</button>
+          </div>
+        </dialog>
+      </template>
+
+      <template data-specimen="busy" data-title="Busy: the action is running, Esc is held" data-height="420">
+        <main class="specimen-page" tabindex="-1">
+          <h1>Agents</h1>
+          <p>The page behind the dialog.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="confirm-dialog" data-specimen-open aria-labelledby="busy-title" aria-describedby="busy-body" aria-busy="true">
+          <h2 class="cap-dialog-title" id="busy-title">Revoke foxhound-driver?</h2>
+          <div class="cap-dialog-body" id="busy-body">
+            <p>This cannot be undone. The agent stops working at once.</p>
+            <ul>
+              <li>Its key stops being accepted.</li>
+              <li>Its 1 claimed job goes back to the queue.</li>
+              <li>An audit row records the revocation under your name.</li>
+            </ul>
+          </div>
+          <div class="cap-dialog-error" role="alert" data-cap-part="error"></div>
+          <div class="cap-dialog-actions">
+            <button type="button" class="cap-btn" data-cap-part="cancel" aria-disabled="true">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform" aria-busy="true" aria-disabled="true">Revoke agent</button>
+          </div>
+        </dialog>
+      </template>
+
+      <template data-specimen="error" data-title="Failed: the reason, with Try again" data-height="460">
+        <main class="specimen-page" tabindex="-1">
+          <h1>Agents</h1>
+          <p>The page behind the dialog.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="confirm-dialog" data-specimen-open aria-labelledby="error-title" aria-describedby="error-body">
+          <h2 class="cap-dialog-title" id="error-title">Revoke foxhound-driver?</h2>
+          <div class="cap-dialog-body" id="error-body">
+            <p>This cannot be undone. The agent stops working at once.</p>
+            <ul>
+              <li>Its key stops being accepted.</li>
+              <li>Its 1 claimed job goes back to the queue.</li>
+              <li>An audit row records the revocation under your name.</li>
+            </ul>
+          </div>
+          <div class="cap-dialog-error" role="alert" data-cap-part="error"><p class="cap-dialog-error-lead"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4v5h1.6V4zM7.2 10.4V12h1.6v-1.6z" /></svg>Not done. Nothing was changed.</p><p>The server did not answer in 10 seconds. Check Activity, then try again.</p></div>
+          <div class="cap-dialog-actions">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform" data-cap-label="Revoke agent">Try again</button>
+          </div>
+        </dialog>
+      </template>
+
+      <template data-specimen="typed-empty" data-title="Typed-word guard, not yet typed" data-height="480">
+        <main class="specimen-page" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="confirm-dialog" data-specimen-open aria-labelledby="te-title" aria-describedby="te-body">
+          <h2 class="cap-dialog-title" id="te-title">Delete the germomics.org record?</h2>
+          <div class="cap-dialog-body" id="te-body">
+            <p>This cannot be recovered. There is no backup of a site record.</p>
+            <ul>
+              <li>Its 7 days of uptime history are deleted.</li>
+              <li>The watcher stops checking germomics.org on its next pass.</li>
+              <li>An audit row records the deletion under your name.</li>
+            </ul>
+          </div>
+          <div class="cap-dialog-typed">
+            <label id="te-typed-label" for="te-typed">Type <b>delete</b> to confirm</label>
+            <input class="cap-input" id="te-typed" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-cap-part="typed" data-cap-word="delete" />
+          </div>
+          <div class="cap-dialog-error" role="alert" data-cap-part="error"></div>
+          <div class="cap-dialog-actions">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform" aria-disabled="true" aria-describedby="te-typed-label">Delete record</button>
+          </div>
+        </dialog>
+      </template>
+
+      <template data-specimen="typed-matched" data-title="Typed-word guard, matched (case does not matter)" data-height="480">
+        <main class="specimen-page" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="confirm-dialog" data-specimen-open aria-labelledby="tm-title" aria-describedby="tm-body">
+          <h2 class="cap-dialog-title" id="tm-title">Delete the germomics.org record?</h2>
+          <div class="cap-dialog-body" id="tm-body">
+            <p>This cannot be recovered. There is no backup of a site record.</p>
+            <ul>
+              <li>Its 7 days of uptime history are deleted.</li>
+              <li>The watcher stops checking germomics.org on its next pass.</li>
+              <li>An audit row records the deletion under your name.</li>
+            </ul>
+          </div>
+          <div class="cap-dialog-typed">
+            <label id="tm-typed-label" for="tm-typed">Type <b>delete</b> to confirm</label>
+            <input class="cap-input" id="tm-typed" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-cap-part="typed" data-cap-word="delete" value="Delete" />
+          </div>
+          <div class="cap-dialog-error" role="alert" data-cap-part="error"></div>
+          <div class="cap-dialog-actions">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform">Delete record</button>
+          </div>
+        </dialog>
+      </template>
+    </main>
+    <script type="module">
+      import { confirm, enhance, openConfirm } from "./confirm-dialog.ts";
+      enhance();
+      for (const d of document.querySelectorAll("dialog[data-specimen-open]")) openConfirm(d, null);
+
+      // The working specimen. The action waits until the page (or a test) says how it ends:
+      // window.capRelease() finishes it, window.capFail() fails it.
+      const said = document.querySelector("[data-specimen-part='said']");
+      const wait = (onDone) =>
+        new Promise((resolve, reject) => {
+          window.capRelease = () => {
+            onDone();
+            resolve();
+          };
+          window.capFail = () => reject(new Error("The server did not answer in 10 seconds. Check Activity, then try again."));
+        });
+      document.querySelector("[data-specimen-action='revoke']")?.addEventListener("click", async (e) => {
+        const row = e.currentTarget.closest("li");
+        const done = await confirm({
+          title: "Revoke foxhound-driver?",
+          lead: "This cannot be undone. The agent stops working at once.",
+          body: ["Its key stops being accepted.", "Its 1 claimed job goes back to the queue.", "An audit row records the revocation under your name."],
+          action: "Revoke agent",
+          perform: () => wait(() => row?.remove()),
+        });
+        if (said) said.textContent = done ? "Revoked foxhound-driver." : "Nothing changed.";
+      });
+      document.querySelector("[data-specimen-action='delete']")?.addEventListener("click", async () => {
+        const done = await confirm({
+          title: "Delete the germomics.org record?",
+          lead: "This cannot be recovered. There is no backup of a site record.",
+          body: ["Its 7 days of uptime history are deleted.", "The watcher stops checking germomics.org on its next pass.", "An audit row records the deletion under your name."],
+          action: "Delete record",
+          typeToConfirm: "delete",
+          perform: () => wait(() => undefined),
+        });
+        if (said) said.textContent = done ? "Deleted the germomics.org record." : "Nothing changed.";
+      });
+    </script>
+  </body>
+</html>

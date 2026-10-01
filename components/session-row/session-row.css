@@ -1,0 +1,139 @@
+/* Agent session rows: who is working, who failed, and who is waiting on you, with the
+   question answered in place. From the Capsid Portal's agent sessions (dashboard/src/views/
+   Agents.tsx) as drawn in the approved mockup. The pill is .cap-pill and the answer
+   buttons are .cap-btn; this file lays them out and styles only its own parts. */
+@layer cap.components {
+  .cap-session-list {
+    container: cap-session / inline-size;
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-width: 0;
+  }
+
+  .cap-session {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--line);
+    min-width: 0;
+
+    &:first-child {
+      border-top: 0;
+    }
+  }
+
+  .cap-session-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    min-width: 0;
+  }
+
+  /* An identifier, so mono. */
+  .cap-session-agent {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+
+  .cap-session-age {
+    margin-inline-start: auto;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* What the agent is doing now, in plain words. */
+  .cap-session-now {
+    margin: 0;
+    color: var(--text);
+  }
+
+  /* Repeated steps collapsed with a count, and the sampling note. */
+  .cap-session-steps,
+  .cap-session-sample {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+  .cap-session-sample {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    & svg {
+      flex: none;
+    }
+  }
+  .cap-session-count {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The question waiting on you, answered here without leaving the list. */
+  .cap-session-ask {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--warn);
+    border-radius: var(--radius-m);
+    background: var(--warn-soft);
+    min-width: 0;
+  }
+  .cap-session-question {
+    margin: 0;
+    color: var(--text);
+    font-weight: 500;
+  }
+  /* The exact command or question, as the agent sent it: mono, sunken, wrapping. */
+  .cap-session-cmd {
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+
+    & code {
+      font: inherit;
+    }
+  }
+  .cap-session-answers {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .cap-session-note {
+    font-size: var(--fs-detail);
+    color: var(--text);
+  }
+
+  /* A narrow column: the age drops under the pill and the name. */
+  @container cap-session (max-width: 420px) {
+    .cap-session {
+      padding-inline: var(--space-4);
+    }
+    .cap-session-age {
+      margin-inline-start: 0;
+      flex-basis: 100%;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-session-ask,
+    .cap-session-cmd {
+      border-color: CanvasText;
+    }
+  }
+}
