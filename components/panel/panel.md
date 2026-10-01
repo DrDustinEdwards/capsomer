@@ -1,10 +1,10 @@
 ---
 name: panel
 title: Panel
-summary: A bordered surface with a header on the raised tone, an optional source line, and a padded body.
+summary: A bordered surface with a header on the raised tone, an optional count, source line and link to the full view, and a padded body.
 parts: [css, react]
 tool: native
-states: [with a header and a source, body only, holding a list with no body padding]
+states: [with a header and a source, with a count and a link to the full view, body only, holding a list with no body padding]
 added: 0.1.0
 source: Capsid Portal, dashboard/src/styles.css ("panels") and dashboard/src/views/shared.tsx (Panel)
 replaces:
@@ -29,6 +29,9 @@ A page with one subject needs no box around it; the page heading is enough. A me
 
 - **The header sits on the raised tone, not over a rule.** The tone groups the heading with its source without adding a line to a page that already has row rules (Portal, "A panel's header sits on the raised tone").
 - **The source line says where the data came from and how fresh it is**, pushed to the right, in `--dim`: "Cloudflare. Read 6 minutes ago" (patterns.md, "Data that updates itself").
+- **The header is compact: 9 px above and below** (the Portal's, down from 12 px), so an overview's panels and its list fit one screen at 1080 p.
+- **A count** (`.cap-panel-count`, "6") sits beside the heading in `--dim`. **A link to the full view** (`.cap-panel-more`, "All columns in Sites") sits at the right of the header, after the source line, so a panel that shows the top of something says where the rest is (patterns.md, "The top few of anything longer, with a link to the full view"). The link's box is at least the target size.
+- **A panel the anchor bar links to** takes `id` and `data-section="Sites"` on the `section`; the bar names the link from `data-section`.
 - **A panel is a plain `section` with a heading, not a named region.** A console page holds eight panels; eight extra landmarks make the landmark list useless. Headings carry the structure.
 - **The heading level follows the page**: `h2` under the page's `h1`, `h3` inside a grouped section.
 - **`data-flush` on the body removes its padding**, so a list's or table's rows run to the panel's edges and the hover tint fills the row.
@@ -62,7 +65,23 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <div class="cap-panel-body" data-flush>[a .cap-rows list or a .cap-table-wrap]</div>
 ```
 
-In React, `import { Panel } from "capsomer/react/panel"`: `<Panel title="Needs attention" src="Worst first. Read 40 seconds ago" flush>...</Panel>`.
+With a count and a link to the full view:
+
+```html
+<section class="cap-panel" id="sites" data-section="Sites">
+  <header class="cap-panel-head">
+    <h2>Sites</h2>
+    <span class="cap-panel-count">6</span>
+    <span class="cap-panel-src">Watcher pass 40 seconds ago</span>
+    <span class="cap-panel-more"><a href="/sites">All columns in Sites</a></span>
+  </header>
+  ...
+</section>
+```
+
+In React, `import { Panel } from "capsomer/react/panel"`: `<Panel title="Needs attention" src="Worst first. Read 40 seconds ago" flush>...</Panel>`; `count`, `more` (the link) and `section` (for the anchor bar, with `id`) are optional.
+
+**Provenance.** EXTRACTED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.panel`, `.panel > header`, `.panel .body`, `.src`, `.more`; `dashboard/src/views/shared.tsx` `Panel`). Evidence: the border, the 10 px radius, the raised header with no rule, the 13 px 600 heading with -0.01em, the right-pushed `--dim` source line and the 16 px body padding are the Portal's rules with token names (`.src { font-size: 11px }` is `--fs-label`; the body's 14 px vertical padding is 12 px here, the nearest space token, and its grid gap is Capsomer's, from `--gap`). Brought up to date in v0.1.1: the header's 9 px padding (12 px at `366b902`), the count (`num faint`), and the link to the full view (`.more`, with `.src + .more`). Adapted: the Portal's `Panel` takes `section` and `id` for its anchor bar (`data-section`); this one does too. Not carried: the Portal's `.body` is the markup's own div and has no flush variant (its lists sit directly in the panel); `data-flush` is Capsomer's, and `overflow: clip` for the rounded corners, which the Portal gets from `.attention { overflow: hidden }` on one panel only.
 
 ## Exceptions in production
 

@@ -21,7 +21,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3);
-    padding: var(--space-4) var(--space-5);
+    padding: calc(var(--space-3) + 1px) var(--space-5);
     background: var(--raised);
 
     & :is(h2, h3) {
@@ -33,11 +33,36 @@
     }
   }
 
+  /* How many the panel holds, beside its heading. */
+  .cap-panel-count {
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+    color: var(--dim);
+  }
+
   /* Where the panel's data comes from and how fresh it is, pushed to the right. */
   .cap-panel-src {
     margin-left: auto;
     font-size: var(--fs-label);
     color: var(--dim);
+  }
+
+  /* A link to the full view ("All columns in Sites"), at the right of the header, after the
+     source line when there is one. */
+  .cap-panel-more {
+    margin: calc(var(--space-1) * -1) 0 calc(var(--space-1) * -1) auto;
+    font-size: var(--fs-detail);
+    font-weight: 500;
+
+    /* The link's own box is at least the target size. */
+    & a {
+      display: inline-flex;
+      align-items: center;
+      min-height: var(--target);
+    }
+  }
+  .cap-panel-src + .cap-panel-more {
+    margin-left: 0;
   }
 
   .cap-panel-body {

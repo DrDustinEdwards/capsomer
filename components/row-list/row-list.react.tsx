@@ -41,19 +41,25 @@ export interface RowProps {
   // Real buttons, raised above the stretched link.
   actions?: ReactNode;
   tone?: "crit";
+  // A row that opens in place (a group of like rows): its button reports aria-expanded and
+  // names what it controls, and a chevron after the time turns when it is open.
+  expanded?: boolean;
+  controls?: string;
+  // A class a composing component adds to the row (the attention list's cap-attention-child).
+  className?: string;
   // A router's link component; a plain <a> by default.
   renderLink?: (props: RowLinkProps) => ReactNode;
 }
 
 const plainLink = ({ children, ...props }: RowLinkProps) => <a {...props}>{children}</a>;
 
-export function Row({ title, href, onOpen, status, detail, meta, actions, tone, renderLink = plainLink }: RowProps) {
+export function Row({ title, href, onOpen, status, detail, meta, actions, tone, expanded, controls, className, renderLink = plainLink }: RowProps) {
   const id = useId();
   // The link's name is the title; the status and the detail are its description, so a
   // screen reader moving by link still hears "Critical" and why.
   const described = [status != null ? `${id}-status` : "", detail != null ? `${id}-detail` : ""].filter(Boolean).join(" ") || undefined;
   return (
-    <li className="cap-row" data-tone={tone}>
+    <li className={className ? `cap-row ${className}` : "cap-row"} data-tone={tone}>
       {status != null && (
         <span className="cap-row-status" id={`${id}-status`}>
           {status}
@@ -63,7 +69,7 @@ export function Row({ title, href, onOpen, status, detail, meta, actions, tone, 
         {href != null ? (
           renderLink({ href, "aria-describedby": described, children: title })
         ) : (
-          <button type="button" aria-describedby={described} onClick={onOpen}>
+          <button type="button" aria-describedby={described} aria-expanded={expanded} aria-controls={expanded === undefined ? undefined : controls} onClick={onOpen}>
             {title}
           </button>
         )}
@@ -73,7 +79,12 @@ export function Row({ title, href, onOpen, status, detail, meta, actions, tone, 
           {detail}
         </p>
       )}
-      {meta != null && <span className="cap-row-meta">{meta}</span>}
+      {(meta != null || expanded !== undefined) && (
+        <span className="cap-row-meta">
+          {meta}
+          {expanded !== undefined ? <span className="cap-row-chevron" aria-hidden="true" /> : null}
+        </span>
+      )}
       {actions != null && <div className="cap-row-actions">{actions}</div>}
     </li>
   );

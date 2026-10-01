@@ -4,7 +4,7 @@ title: Table
 summary: A native data table in a labelled, focusable scroll region, with rules between rows, tabular numbers, sortable columns and an opt-in card reflow.
 parts: [css, behaviour]
 tool: native + own JavaScript
-states: [default, sorted ascending, sorted descending, sort button hover, row hover, row focused, region focused, narrow and scrolling, reflowed to cards]
+states: [default, sorted ascending, sorted descending, sort button hover, row hover, row focused, region focused, narrow and scrolling, reflowed to cards, columns that drop as the region narrows]
 added: 0.1.0
 source: Capsid Portal, dashboard/src/styles.css (table.list, table.fleet, .scroll-x, .reflow) and dashboard/src/views/shared.tsx (FleetTable)
 replaces:
@@ -35,6 +35,9 @@ Items a person scans and opens one at a time, with one title and one time each, 
 - **A sortable column is a `button` in its `th`, and the `th` carries `aria-sort`.** Ascending first, then toggling; one header carries `aria-sort` at a time. Screen readers announce the change of `aria-sort`, so nothing else is announced. A cell sorts by its `data-sort` when it has one (a timestamp, a raw count, a place for "not counted"), else by its text, numbers as numbers.
 - **The sorted column's header reads in `--text`, and its glyph shows one arrow.** Unsorted columns show both arrows.
 - **A row that opens a detail uses the row list's stretched link**: the link in the row's first cell is stretched over the row, one tab stop, `--sel` with an inset `--accent-line` ring when focused.
+- **Columns that can drop are opt-in** (`data-drop`): as the region narrows below 820 px the cells marked `data-drop="1"` go, below 620 px those marked `"2"`, so a table of one-line rows fits a half-width panel without scrolling (Portal: the Overview's Sites table, "the host goes, then the deploy and error columns, all of which are in Sites"). Only for columns whose values are also in the row's detail, since a dropped value is gone from the page. The header row stays: the Portal hides it at 620 px, but a table whose header row is `display: none` loses its column names to a screen reader.
+- **A column's note** (`.cap-table-note`, "last 24 hours") sits under its name in `--dim`, in the cell and not in the button's name; **small print** beside a cell's text (a site's host) is `.cap-table-aside`; **a link to the rest** ("All 12 sites in Sites") is `.cap-table-foot`, under the table in its panel.
+- **A cell with no data says "No data" and nothing more**, with its reason read out by a screen reader (`.cap-sr-only`) and shown on hover (`title`); the sentence is in the row's detail (Portal design D18). See the status page.
 - **Card reflow is opt-in** (`data-reflow` on the region: below 640 px, or `data-reflow="wide"`: below 1100 px). Each row becomes a card, its first cell across the top and every other cell under its column name (`data-label`). Use it only once the table has been tested with a screen reader (decision 17): drawing a table's rows as grids can drop its table semantics in some browsers.
 
 ## Keyboard
@@ -79,7 +82,21 @@ Last checked by hand: not yet. Reflow with a screen reader: not yet, so no app u
 </div>
 ```
 
+Dropping columns, a note and a foot link:
+
+```html
+<th scope="col" data-drop="2" data-num>Errors<span class="cap-table-note">last 24 hours</span></th>
+...
+<th scope="row"><a class="cap-table-open" href="/sites/foxhound">foxhound</a><span class="cap-table-aside" data-drop="1">foxhound.app</span></th>
+<td data-drop="2" data-num>418 of 12.3k</td>
+...
+</div>
+<div class="cap-table-foot"><a href="/sites">All 12 sites in Sites</a></div>
+```
+
 `import { enhance, sortByHeader } from "capsomer/behaviour/table"` wires the sort buttons. A table whose rows are rendered by React sorts its data in React instead and sets `aria-sort` itself; there is no React wrapper in 0.1.
+
+**Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `table.list`, `table.fleet`, `table.brief`, `.sites-brief`, `.cards-below-*`, `.reflow`, `.th-note`; `dashboard/src/views/Overview.tsx` `SitesTable`). EXTRACTED: the header (11 px, 600, 0.06em, upper case, muted, nowrap), the cell padding (7 by 12 px in the Portal, 8 by 12 px from the space tokens), the rules between rows and none after the last, the card reflow (a grid of auto-fill 150 px columns, the first cell across the top, each value under its `data-label`, in `--dim`; thresholds and gaps adapted to tokens and to Capsomer's 640 and 1100 px), and, new in v0.1.1, the compact Sites table's responsive columns (container-query thresholds of 820 and 620 px, reduced cell padding), the header note (`.th-note`) and the foot link (`.grouplink`). Adapted: the Portal's dropped columns are named in the markup (`data-drop`) rather than by a class on the table, and its hidden header row is kept. REWROTE: everything that makes the table keyboard and screen reader operable, none of which the Portal's tables have (it has no sorting, no `aria-sort`, no labelled scroll region; its rows are `tr` with `tabIndex` and `data-row`): the region, the sort buttons, `table.ts`, the stretched row link. The default on a phone differs from the Portal's: its wide tables reflow to cards (`.reflow`), and Capsomer scrolls (DEFAULTS.md: "Tables scroll on a phone by default"; the audit wins).
 
 ## Exceptions in production
 

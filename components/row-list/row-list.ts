@@ -10,18 +10,22 @@ export function rowTargets(list: ParentNode): HTMLElement[] {
   );
 }
 
-// Moves focus to the next (1) or previous (-1) row's title. From outside the list, either
-// key starts at the first row. At either end focus stays where it is. Returns the element
-// focused, or null when nothing moved.
+// Moves focus to the next (1) or previous (-1) row's title. From outside the list, j starts
+// at the first row and k at the last (the Portal's rule, App.tsx "step"). At either end
+// focus stays where it is. Focus moves without the browser's own scroll, then the row is
+// scrolled the least distance that shows it ("nearest"), as the Portal does: a row already
+// in view does not jump, and the scroller's scroll-padding keeps it clear of a sticky bar.
+// Returns the element focused, or null when nothing moved.
 export function moveRowFocus(list: ParentNode, step: 1 | -1): HTMLElement | null {
   const targets = rowTargets(list);
   if (targets.length === 0) return null;
   const active = document.activeElement;
   const current = targets.findIndex((el) => el === active || el.closest(".cap-row")?.contains(active));
-  const next = current === -1 ? 0 : current + step;
+  const next = current === -1 ? (step === 1 ? 0 : targets.length - 1) : current + step;
   const el = targets[next];
   if (!el || next === current) return null;
-  el.focus();
+  el.focus({ preventScroll: true });
+  el.scrollIntoView({ block: "nearest" });
   return el;
 }
 
