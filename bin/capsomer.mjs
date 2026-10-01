@@ -361,6 +361,103 @@ async function siteData() {
   console.log(`site-data: wrote site/data (palette, meta, results${results.available ? `: ${results.totals.passed} passed, ${results.totals.failed} failed` : ": no test run found"})`);
 }
 
+// ---- weight and loc (the no-bloat baseline) ------------------------------------------------
+
+// JavaScript and CSS weight per route: for every .html page in a built site, the gzip size of
+// the scripts and stylesheets it loads (script src, stylesheet link, modulepreload). Fonts and
+// images are counted apart, raw. Reports only; it never fails a build.
+function weight(root) {
+  const dist = resolve(root, flag("dist", "site-dist"));
+  if (!existsSync(dist)) {
+    console.error(`weight: no ${relative(root, dist)}; run npm run site first`);
+    return { routes: [], error: "no build" };
+  }
+  const pages = walk(dist, [".html"]);
+  const routes = [];
+  for (const page of pages) {
+    const html = readFileSync(page, "utf8");
+    const refs = new Set();
+    for (const m of html.matchAll(/<(?:script|link)\b[^>]*?(?:src|href)="([^"]+)"[^>]*>/g)) {
+      const tag = m[0];
+      if (/<script/.test(tag) || /rel="(?:stylesheet|modulepreload)"/.test(tag)) refs.add(m[1]);
+    }
+    let js = 0;
+    let css = 0;
+    const files = [];
+    for (const ref of refs) {
+      if (/^https?:/.test(ref)) continue;
+      const file = resolve(dist, ref.replace(/^\//, ""));
+      if (!existsSync(file)) continue;
+      const n = gz(readFileSync(file));
+      if (/\.css$/.test(file)) css += n;
+      else if (/\.m?js$/.test(file)) js += n;
+      else continue;
+      files.push(relative(dist, file).replace(/\\/g, "/"));
+    }
+    routes.push({ route: "/" + relative(dist, page).replace(/\\/g, "/"), js, css, total: js + css, files: files.length });
+  }
+  routes.sort((a, b) => b.total - a.total);
+  const fonts = walk(dist, [".woff2", ".woff"]).reduce((n, f) => n + statSync(f).size, 0);
+  return { routes, fontsRaw: fonts };
+}
+
+// Lines of code by language, over tracked files (so generated and vendored files are out).
+function loc(root) {
+  const files = (git(["ls-files"], root) ?? "").split("\n").filter(Boolean);
+  const lang = { ".ts": "TypeScript", ".tsx": "TypeScript (React)", ".mjs": "JavaScript", ".js": "JavaScript", ".css": "CSS", ".html": "HTML", ".md": "Markdown", ".json": "JSON", ".yml": "YAML", ".jsonc": "JSON" };
+  const out = {};
+  for (const f of files) {
+    if (/(^|\/)(package-lock\.json|tokens\/(colour|scale|themes)\.css|tokens\/tokens\.json)$/.test(f)) continue;
+    const l = lang[extname(f)];
+    if (!l) continue;
+    const text = readFileSync(join(root, f), "utf8");
+    const row = (out[l] ??= { files: 0, lines: 0 });
+    row.files++;
+    row.lines += text.split("\n").length;
+  }
+  return out;
+}
+
+function deps(root) {
+  const p = readJson(join(root, "package.json"));
+  const lock = existsSync(join(root, "package-lock.json")) ? readJson(join(root, "package-lock.json")) : null;
+  return {
+    dependencies: Object.keys(p.dependencies ?? {}).length,
+    devDependencies: Object.keys(p.devDependencies ?? {}).length,
+    peerDependencies: Object.keys(p.peerDependencies ?? {}).length,
+    installedPackages: lock ? Object.keys(lock.packages ?? {}).filter((k) => k.startsWith("node_modules/")).length : null,
+  };
+}
+// The no-bloat summary for a pull request: Knip's findings, jscpd's duplication and the page
+// weight, each against the baseline in no-bloat/baseline.json. Markdown on stdout, for the job
+// summary. Warn-only: it reports and always exits 0 (defaults, not laws).
+function bloat(root) {
+  const base = existsSync(resolve(root, "no-bloat/baseline.json")) ? readJson(resolve(root, "no-bloat/baseline.json")) : null;
+  const out = ["## No-bloat report (warn only)", ""];
+  const delta = (now, then, unit = "") => (then == null ? `${now}${unit}` : `${now}${unit} (baseline ${then}${unit}, ${now - then >= 0 ? "+" : ""}${Math.round((now - then) * 100) / 100}${unit})`);
+  const knipFile = flag("knip");
+  if (knipFile && existsSync(knipFile)) {
+    const j = readJson(knipFile);
+    const c = {};
+    for (const i of j.issues ?? []) for (const [k, v] of Object.entries(i)) if (Array.isArray(v) && v.length) c[k] = (c[k] ?? 0) + v.length;
+    const total = Object.values(c).reduce((n, x) => n + x, 0);
+    out.push(`**Knip** (public API as entry points): ${delta(total, base?.knip?.total)} findings`, `- ${Object.entries(c).map(([k, v]) => `${k} ${v}`).join(", ") || "none"}`, "");
+  } else out.push("**Knip:** no report found.", "");
+  const jf = flag("jscpd");
+  if (jf && existsSync(jf)) {
+    const t = readJson(jf).statistics.total;
+    out.push(`**jscpd:** ${delta(Math.round(t.percentage * 100) / 100, base?.jscpd?.percentage, "%")} duplicated lines, ${delta(t.clones, base?.jscpd?.clones)} clones over ${t.sources} files`, "");
+  } else out.push("**jscpd:** no report found.", "");
+  const w = weight(root);
+  if (w.routes?.length) {
+    const top = w.routes.slice(0, 5);
+    const bw = base?.weight?.largestRouteTotal;
+    out.push(`**Page weight (gzip JS + CSS):** largest route ${top[0].route} ${(top[0].total / KB).toFixed(1)} KB${bw ? ` (baseline ${(bw / KB).toFixed(1)} KB)` : ""}`, "", "| route | js | css | total |", "| --- | ---: | ---: | ---: |", ...top.map((r) => `| ${r.route} | ${(r.js / KB).toFixed(1)} KB | ${(r.css / KB).toFixed(1)} KB | ${(r.total / KB).toFixed(1)} KB |`), "");
+  }
+  const l = loc(root);
+  out.push(`**Lines:** ${delta(Object.values(l).reduce((n, r) => n + r.lines, 0), base?.loc?.total)} across ${Object.keys(l).length} languages`, "");
+  console.log(out.join("\n"));
+}
 // ---- main ----------------------------------------------------------------------------------
 
 if (cmd === "report") {
@@ -374,9 +471,27 @@ if (cmd === "report") {
   console.log(r.count ? `token-check: ${r.count} warning(s). Warnings never fail a build; adding a token is the normal fix.` : "token-check: no raw colours or off-scale spacing found");
 } else if (cmd === "size") {
   await size();
+} else if (cmd === "weight") {
+  const w = weight(process.cwd());
+  const k = (n) => `${(n / KB).toFixed(1)} KB`;
+  console.log(`${"route".padEnd(44)} ${"js".padStart(10)} ${"css".padStart(10)} ${"total".padStart(10)}`);
+  for (const r of w.routes) console.log(`${r.route.padEnd(44)} ${k(r.js).padStart(10)} ${k(r.css).padStart(10)} ${k(r.total).padStart(10)}`);
+  if (w.fontsRaw !== undefined) console.log(`fonts (raw, not budgeted): ${k(w.fontsRaw)}`);
+  if (flag("json")) writeFileSync(flag("json"), JSON.stringify(w, null, 2));
+  console.log("weight: reported, never a failure");
+} else if (cmd === "loc") {
+  const l = loc(process.cwd());
+  const total = Object.values(l).reduce((n, r) => n + r.lines, 0);
+  for (const [name, r] of Object.entries(l).sort((a, b) => b[1].lines - a[1].lines)) console.log(`${name.padEnd(22)} ${String(r.files).padStart(5)} files ${String(r.lines).padStart(8)} lines`);
+  console.log(`${"Total".padEnd(22)} ${"".padStart(11)} ${String(total).padStart(8)} lines`);
+  const d = deps(process.cwd());
+  console.log(`dependencies ${d.dependencies}, dev ${d.devDependencies}, peer ${d.peerDependencies}, installed packages in the lockfile ${d.installedPackages}`);
+  if (flag("json")) writeFileSync(flag("json"), JSON.stringify({ loc: l, total, deps: d }, null, 2));
+} else if (cmd === "bloat") {
+  bloat(process.cwd());
 } else if (cmd === "site-data") {
   await siteData();
 } else {
-  console.log("usage: capsomer report | token-check [paths] | size [--dist dir] [--json out] | site-data");
+  console.log("usage: capsomer report | token-check [paths] | size [--dist dir] [--json out] | weight [--dist dir] [--json out] | loc [--json out] | bloat --knip f --jscpd f | site-data");
   process.exit(cmd ? 1 : 0);
 }
