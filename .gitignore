@@ -6,3 +6,4 @@ test-results/
 playwright-report/
 site/data/
 
+test-results-knip.json
