@@ -1,32 +1,90 @@
 import { strict as assert } from "node:assert";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { SEED, render, themes } from "../../tokens/palette.mjs";
+import { FAMILIES, LEGACY_SEED, legacyThemes, renderLegacy, report, scale, themes } from "../../tokens/palette.mjs";
 
 const capsid = readFileSync(new URL("../fixtures/capsid-tokens.css", import.meta.url), "utf8");
 
-test("the default seed writes capsid's tokens.css byte for byte", () => {
-  assert.equal(render(SEED), capsid);
+test("legacy: the moved generator writes capsid's tokens.css byte for byte", () => {
+  assert.equal(renderLegacy(LEGACY_SEED), capsid);
 });
 
-test("the committed colour.css is capsid's tokens.css", () => {
+test("legacy: the committed colour.css is capsid's tokens.css", () => {
   assert.equal(readFileSync(new URL("../../tokens/colour.css", import.meta.url), "utf8"), capsid);
 });
 
-test("themes() lists every asserted pair with a ratio, and every one passes", () => {
-  const t = themes(SEED);
+test("legacy: every asserted pair passes in both themes", () => {
+  const t = legacyThemes();
   for (const scheme of ["light", "dark"]) {
-    assert.ok(t[scheme].pairs.length > 40, `${scheme} has its pairs`);
-    for (const p of t[scheme].pairs) {
-      assert.equal(typeof p.ratio, "number");
-      assert.ok(p.pass, `${scheme}: ${p.what} --${p.fg} on --${p.bg} is ${p.ratio.toFixed(2)}`);
-    }
+    assert.ok(t[scheme].pairs.length > 40);
+    for (const p of t[scheme].pairs) assert.ok(p.pass, `${scheme}: ${p.what} --${p.fg} on --${p.bg} is ${p.ratio.toFixed(2)}`);
   }
 });
 
-test("another seed changes the accent and keeps the token set", () => {
-  const t = themes("#2965f0");
-  assert.equal(t.light.tokens.accent, "#2965f0");
-  assert.deepEqual(Object.keys(t.light.tokens).sort(), Object.keys(themes(SEED).light.tokens).sort());
-  assert.notEqual(render("#2965f0"), capsid);
+test("family: step 9 is the seed in both themes, and the purple step 11 is the anchor in light", () => {
+  for (const scheme of ["light", "dark"]) {
+    assert.equal(scale(FAMILIES.purple.seed, FAMILIES.purple.anchor, scheme)[8], "#8c5fd2");
+    assert.equal(scale(FAMILIES.fox.seed, null, scheme)[8], "#cc4f0c");
+  }
+  assert.equal(scale(FAMILIES.purple.seed, FAMILIES.purple.anchor, "light")[10], "#4f2d7f");
+});
+
+test("family: twelve steps, the same lightness roles for purple and fox", () => {
+  const lum = (hex) => {
+    const c = [1, 3, 5].map((i) => {
+      const v = parseInt(hex.slice(i, i + 2), 16) / 255;
+      return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  };
+  for (const scheme of ["light", "dark"]) {
+    const p = scale(FAMILIES.purple.seed, null, scheme);
+    const f = scale(FAMILIES.fox.seed, null, scheme);
+    assert.equal(p.length, 12);
+    assert.equal(f.length, 12);
+    // Light steps darken towards 12, dark steps lighten towards 12 (step 9 aside).
+    const order = (s) => s.filter((_, i) => i !== 8).map(lum);
+    for (const s of [order(p), order(f)]) for (let i = 1; i < s.length; i++) assert.ok(scheme === "light" ? s[i] < s[i - 1] : s[i] > s[i - 1], `${scheme} step order at ${i}`);
+  }
+});
+
+test("family: themes() carries the twelve steps and accent-text", () => {
+  const t = themes(FAMILIES.purple);
+  assert.equal(t.light.tokens["accent-11"], "#4f2d7f");
+  assert.equal(t.light.tokens["accent-text"], "#4f2d7f");
+  assert.equal(t.light.tokens.accent, "#8c5fd2");
+});
+
+test("family: report() covers every family in both themes, its default theme first", () => {
+  const rows = report();
+  assert.deepEqual([...new Set(rows.map((r) => r.family))].sort(), ["fox", "purple", "teal"]);
+  for (const [name, f] of Object.entries(FAMILIES)) {
+    const mine = rows.filter((r) => r.family === name);
+    assert.equal(mine[0].scheme, f.defaultTheme, `${name} checks ${f.defaultTheme} first`);
+    for (const scheme of ["light", "dark"]) {
+      const s = mine.filter((r) => r.scheme === scheme);
+      const firstPass = s.findIndex((r) => r.pass);
+      if (firstPass >= 0) assert.ok(s.slice(firstPass).every((r) => r.pass), `${name} ${scheme}: failures first`);
+    }
+  }
+  assert.equal(FAMILIES.teal.defaultTheme, "dark");
+  assert.equal(FAMILIES.fox.defaultTheme, "light");
+});
+
+test("family: the teal scale keeps its seed at step 9", () => {
+  for (const scheme of ["light", "dark"]) assert.equal(scale(FAMILIES.teal.seed, null, scheme)[8], "#008489");
+});
+
+test("family: option 1 (rule 18), every pair of every family passes in both themes", () => {
+  const failing = report().filter((r) => !r.pass);
+  assert.deepEqual(failing.map((r) => `${r.family} ${r.scheme} ${r.what} --${r.fg} on --${r.bg} ${r.ratio.toFixed(2)}`), []);
+});
+
+test("family: step 9 keeps the brand colour, step 10 is the button fill, step 11 is the accent text", () => {
+  for (const [name, brand, step10, step11] of [["purple", "#8c5fd2", "#7d50c1", "#4f2d7f"], ["fox", "#cc4f0c", "#b64404", "#822e02"], ["teal", "#008489", "#077478", "#01585c"]]) {
+    const t = themes(FAMILIES[name]).light.tokens;
+    assert.equal(t.accent, brand, `${name} step 9`);
+    assert.equal(t["accent-hover"], step10, `${name} step 10`);
+    assert.equal(t["accent-text"], step11, `${name} step 11`);
+  }
 });
