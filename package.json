@@ -59,6 +59,12 @@
     "e2e": "playwright test",
     "palette-report": "node tokens/palette.mjs --report",
     "size": "node bin/capsomer.mjs size",
+    "knip": "knip",
+    "knip:internal": "knip --config knip.internal.json",
+    "jscpd": "jscpd --config .jscpd.json",
+    "weight": "node bin/capsomer.mjs weight",
+    "loc": "node bin/capsomer.mjs loc",
+    "bloat": "node bin/capsomer.mjs bloat --knip test-results/knip.json --jscpd test-results/jscpd/jscpd-report.json",
     "token-check": "node bin/capsomer.mjs token-check"
   },
   "peerDependencies": {
@@ -88,6 +94,8 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "jscpd": "^5.3.2",
+    "knip": "^6.38.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "typescript": "^6.0.3",

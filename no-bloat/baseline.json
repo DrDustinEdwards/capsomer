@@ -1,0 +1,29 @@
+{
+    "measuredAt":  "d8c51c7d7b1c8aa40f3d5b95f1fd22ced9f386c7",
+    "branch":  "build/components-all (the components PR, not yet on main)",
+    "date":  "2026-10-01",
+    "knip":  {
+                 "total":  4,
+                 "mode":  "public API as entry points"
+             },
+    "jscpd":  {
+                  "percentage":  2.33,
+                  "clones":  38,
+                  "duplicatedLines":  535,
+                  "lines":  22923,
+                  "sources":  185
+              },
+    "weight":  {
+                   "largestRoute":  "/index.html",
+                   "largestRouteTotal":  160205
+               },
+    "loc":  {
+                "total":  27604
+            },
+    "deps":  {
+                 "dependencies":  0,
+                 "devDependencies":  15,
+                 "peerDependencies":  3,
+                 "installedPackages":  156
+             }
+}
