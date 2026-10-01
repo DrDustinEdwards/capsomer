@@ -63,7 +63,8 @@ export function Shell(props: ShellProps) {
     },
     [prefKey, props.onCollapsedChange],
   );
-  if (tabs && tabs.length > 5 && import.meta.env?.DEV) console.warn("Shell: a phone tab bar holds at most five entries; make the last one More.");
+  // A phone tab bar holds at most five entries (rule 9); the caller makes the last one More.
+  const phoneTabs = tabs?.slice(0, 5);
 
   const entry = (e: ShellEntry, phone: boolean) => {
     const named = e.count ? `${e.label}, ${e.count}${e.countNote ? ` ${e.countNote}` : ""}` : undefined;
@@ -118,9 +119,9 @@ export function Shell(props: ShellProps) {
       <main className="cap-shell-main" id="cap-main" tabIndex={-1}>
         {children}
       </main>
-      {tabs && tabs.length > 0 && (
+      {phoneTabs && phoneTabs.length > 0 && (
         <nav className="cap-shell-tabs" aria-label={navLabel}>
-          {tabs.map((e) => entry(e, true))}
+          {phoneTabs.map((e) => entry(e, true))}
         </nav>
       )}
     </div>
