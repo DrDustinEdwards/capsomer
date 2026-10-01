@@ -1,0 +1,43 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The automation switch: a switch that does not move when flipped. It opens a one-line
+   reason, and moves only when the reason is applied. From the approved mockup's .reason.
+   The switch is .cap-switch (switch.css); the field inside is .cap-field (field.css). */
+@layer cap.components {
+  .cap-switch-reason {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .cap-switch-reason-form {
+    display: grid;
+    gap: var(--space-3);
+    width: min(100%, 480px);
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+  }
+
+  .cap-switch-reason-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .cap-switch-reason-keys {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  @media (forced-colors: active) {
+    .cap-switch-reason-form {
+      border-color: CanvasText;
+    }
+  }
+}

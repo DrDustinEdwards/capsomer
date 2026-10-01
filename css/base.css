@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* Element defaults every component assumes. Layered, so an app that keeps its own body
    or link styles wins without a fight. */
 @layer cap.reset {

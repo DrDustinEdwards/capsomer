@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The reading context: <article data-context="prose">. A 66-character measure, a serif
    that carries Greek, headings that scale with the window while the body stays steady
    (design 2.4). The public-page components of release 0.3 build on this. */

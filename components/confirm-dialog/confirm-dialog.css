@@ -1,0 +1,144 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The confirm dialog: a native <dialog> opened with showModal(), for an action that cannot
+   be undone. Title names the action and the object, the body lists what changes, the
+   perform button is named for the action and set apart from Cancel. From the Capsid
+   Portal's ConfirmDialog (dashboard/src/app/ConfirmDialog.tsx, styles.css ".help") and
+   the approved mockup. */
+@layer cap.components {
+  .cap-dialog {
+    width: min(480px, calc(100% - 2 * var(--space-5)));
+    max-width: none;
+    max-height: calc(100dvh - 2 * var(--space-5));
+    margin: auto;
+    padding: var(--space-5) var(--space-6);
+    overflow-y: auto;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+
+    /* Only when open: a display value on a closed dialog would show it. */
+    &[open] {
+      display: grid;
+      gap: var(--space-4);
+    }
+    &::backdrop {
+      background: var(--scrim);
+    }
+  }
+
+  .cap-dialog-title {
+    margin: 0;
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-dialog-body {
+    display: grid;
+    gap: var(--space-3);
+
+    & p {
+      margin: 0;
+    }
+    & ul {
+      display: grid;
+      gap: var(--space-2);
+      margin: 0;
+      padding-left: 18px;
+      list-style: disc;
+    }
+  }
+
+  /* The guard for what cannot be recovered: type a short word. */
+  .cap-dialog-typed {
+    display: grid;
+    gap: var(--space-2);
+
+    & label {
+      font-weight: 600;
+    }
+    & b {
+      font-family: var(--mono);
+      font-size: 0.95em;
+      font-weight: 600;
+    }
+  }
+  /* A plain look for the field until the field component's .cap-input styles it; :where()
+     keeps this at zero specificity so .cap-input wins. */
+  :where(.cap-dialog-typed input) {
+    width: 100%;
+    min-height: var(--control);
+    padding: 0 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  /* A failure stays inside the dialog, beside the action: shape, word and colour. */
+  .cap-dialog-error {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--crit);
+    border-radius: var(--radius-m);
+    background: var(--crit-soft);
+    color: var(--text);
+
+    &:empty {
+      display: none;
+    }
+    & p {
+      margin: 0;
+    }
+  }
+  .cap-dialog-error-lead {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--crit);
+    font-weight: 600;
+
+    & svg {
+      flex: none;
+    }
+  }
+
+  /* Cancel first, the action at the far end, so a slip does not land on it. */
+  .cap-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-dialog {
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+    }
+    @starting-style {
+      .cap-dialog[open] {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-dialog {
+      border-color: CanvasText;
+    }
+    .cap-dialog-error {
+      border-color: CanvasText;
+    }
+  }
+}

@@ -1,0 +1,181 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A list of rows, each opening a detail. The row's title is its one link or button,
+   stretched over the whole row, so the row is one tab stop with a real role. Extracted from
+   the Capsid Portal (dashboard/src/styles.css: .att-row, .qrow, .frow), which drew three
+   copies of this row; here they are one. */
+@layer cap.components {
+  /* The list is the size container (the phone layout follows the space the list has) and
+     the column grid: every row is a subgrid of it, so status, title, time and actions line
+     up from row to row whatever their content. */
+  .cap-rows {
+    container: cap-rows / inline-size;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    column-gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-row {
+    position: relative;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: center;
+    min-height: var(--target);
+    padding: calc(var(--space-2) + var(--space-1)) var(--space-5);
+    color: var(--text);
+
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--raised);
+
+      & .cap-row-title :is(a, button) {
+        text-decoration: underline;
+      }
+    }
+
+    /* The focused row: the selection tint and an inset ring in --accent-line, which is
+       3:1 against --sel in both themes. The link itself draws no ring of its own. */
+    &:has(.cap-row-title :focus-visible),
+    &[data-force="focus"] {
+      background: var(--sel);
+      outline: var(--focus-width) solid var(--accent-line);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+
+    /* Critical rows only: a red left edge, beside the status word and its glyph. */
+    &[data-tone="crit"]::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: 3px;
+      background: var(--crit);
+    }
+  }
+
+  .cap-row-status {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .cap-row-title {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    margin: 0;
+    font: inherit;
+
+    & :is(a, button) {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--text);
+      font: inherit;
+      font-weight: 600;
+      text-align: start;
+      text-decoration: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      outline: none;
+
+      /* The stretched hit area: the whole row opens the detail. */
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+      }
+    }
+  }
+
+  .cap-row-detail {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cap-row-meta {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  /* Row actions are real buttons, raised above the stretched link so they take their own
+     clicks. */
+  .cap-row-actions {
+    grid-column: 4;
+    grid-row: 1 / span 2;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /* A link inside the detail or the time also sits above the stretched link. */
+  .cap-row :is(.cap-row-detail, .cap-row-meta) :is(a, button) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* A phone, or any narrow column: the status moves above the title, the time stays
+     beside it, and actions go underneath. */
+  @container cap-rows (max-width: 30rem) {
+    .cap-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      column-gap: var(--space-4);
+      row-gap: var(--space-1);
+    }
+    .cap-row-status {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      justify-self: start;
+    }
+    .cap-row-title {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .cap-row-detail {
+      grid-column: 1;
+      grid-row: 3;
+    }
+    .cap-row-meta {
+      grid-column: 2;
+      grid-row: 2 / span 2;
+    }
+    .cap-row-actions {
+      grid-column: 1 / -1;
+      grid-row: 4;
+      justify-self: start;
+    }
+  }
+
+  /* Forced colours remove tints: the critical edge is drawn in CanvasText, and the focus
+     ring (an outline) stays. */
+  @media (forced-colors: active) {
+    .cap-row[data-tone="crit"]::before {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+  }
+}

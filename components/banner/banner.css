@@ -1,0 +1,91 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A banner: a page-level notice, warning or critical, that keeps the last good data on
+   screen below it. An alert: an error beside its source, saying what to do next. Both
+   carry the status glyph (.cap-status-glyph, sized here too so this file stands alone) so
+   shape and word carry the tone. */
+@layer cap.components {
+  .cap-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    padding: 10px var(--space-4);
+    border: 1px solid var(--warn);
+    border-radius: var(--radius-m);
+    background: var(--warn-soft);
+    color: var(--text);
+
+    & > .cap-status-glyph {
+      flex: none;
+      width: 14px;
+      height: 14px;
+      color: var(--warn);
+    }
+
+    &[data-tone="crit"] {
+      border-color: var(--crit);
+      background: var(--crit-soft);
+
+      & > .cap-status-glyph {
+        color: var(--crit);
+      }
+    }
+  }
+
+  .cap-banner-text {
+    flex: 1 1 28ch;
+    min-width: 0;
+    margin: 0;
+
+    & b {
+      font-weight: 600;
+    }
+  }
+
+  .cap-banner-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-inline-start: auto;
+
+    & > :is(button, a) {
+      min-block-size: var(--target);
+    }
+  }
+
+  /* An alert sits beside the thing that failed: plain words in the critical tone, the
+     glyph first, an action after. */
+  .cap-alert {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-2) var(--space-3);
+    margin: 0;
+    color: var(--crit);
+    font-size: var(--text-size);
+
+    & > .cap-status-glyph {
+      flex: none;
+      width: 14px;
+      height: 14px;
+      margin-block-start: 0.2em;
+    }
+
+    & > :is(button, a) {
+      min-block-size: var(--target);
+    }
+  }
+
+  .cap-alert-text {
+    flex: 1 1 24ch;
+    min-width: 0;
+  }
+
+  @media (forced-colors: active) {
+    .cap-banner {
+      border-color: CanvasText;
+    }
+  }
+}

@@ -1,0 +1,70 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The page's one status region (role="status"). It sits in the page, at the bottom of the
+   view's scroll area, so a result shows where the person is working; it never floats over
+   other content and never takes focus. Empty, it is present and takes no space. */
+@layer cap.components {
+  .cap-message {
+    position: sticky;
+    inset-block-end: var(--space-4);
+    z-index: var(--z-message);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    /* --dim, not --line-strong: the region sits on the page ground, where --line-strong is
+     2.91:1 and a boundary needs 3:1; --dim is above 4.5 on every surface. */
+  border: 1px solid var(--dim);
+    border-radius: var(--radius-m);
+    background: var(--raised);
+    color: var(--text);
+    font-size: var(--text-size);
+
+    /* Nothing to say: the region stays in the page for the next message, with no box. */
+    &:has(> .cap-message-text:empty) {
+      padding: 0;
+      border-color: transparent;
+      background: none;
+    }
+  }
+
+  .cap-message-text {
+    flex: 1 1 24ch;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .cap-message-undo,
+  .cap-message-dismiss {
+    min-block-size: var(--target);
+    min-inline-size: var(--target);
+  }
+
+  .cap-message-undo kbd {
+    margin-inline-start: var(--space-2);
+  }
+
+  .cap-message-dismiss {
+    margin-inline-start: auto;
+  }
+
+  /* A new message fades in; text being read never moves. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-message-text:not(:empty) {
+      animation: cap-message-in var(--dur-base) var(--ease-out);
+    }
+    @keyframes cap-message-in {
+      from {
+        opacity: 0;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-message:not(:has(> .cap-message-text:empty)) {
+      border-color: CanvasText;
+    }
+  }
+}

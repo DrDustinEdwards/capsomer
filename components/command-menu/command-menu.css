@@ -1,0 +1,165 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The command menu: a native <dialog> near the top of the window, holding a labelled
+   combobox and a grouped listbox. From the Capsid Portal's palette (dashboard/src/app/
+   CommandMenu.tsx, styles.css ".palette"). */
+@layer cap.components {
+  .cap-cmd {
+    width: min(620px, calc(100% - 2 * var(--space-5)));
+    max-width: none;
+    max-height: calc(100dvh - 12vh - var(--space-5));
+    margin: 12vh auto auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+
+    &[open] {
+      display: flex;
+      flex-direction: column;
+    }
+    &::backdrop {
+      background: var(--scrim);
+    }
+  }
+
+  .cap-cmd-search {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-5) var(--space-3);
+    border-bottom: 1px solid var(--line);
+
+    /* The input is the only thing that takes focus here; its ring is the line under it. */
+    &:has(.cap-cmd-input:focus-visible) {
+      border-bottom-color: var(--accent);
+      box-shadow: inset 0 -1px 0 var(--accent);
+    }
+  }
+  .cap-cmd-label {
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cap-cmd-input {
+    width: 100%;
+    min-height: var(--target);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font-size: var(--fs-lead);
+
+    &:focus-visible {
+      outline: none;
+    }
+    &::placeholder {
+      color: var(--dim);
+    }
+  }
+
+  .cap-cmd-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: min(60vh, 480px);
+    padding: var(--space-2) var(--space-3);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .cap-cmd-group + .cap-cmd-group {
+    margin-top: var(--space-2);
+  }
+  .cap-cmd-group-title {
+    padding: var(--space-3) var(--space-3) var(--space-2);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cap-cmd-option {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: max(var(--target), 34px);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-m);
+    color: var(--text);
+    cursor: pointer;
+
+    &[aria-selected="true"] {
+      background: var(--accent-soft);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+  }
+  .cap-cmd-option-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cap-cmd-keys {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    align-items: baseline;
+    gap: var(--space-1);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    white-space: nowrap;
+  }
+
+  .cap-cmd-empty {
+    margin: 0;
+    padding: var(--space-5);
+    color: var(--muted);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .cap-cmd-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    border-top: 1px solid var(--line);
+    background: var(--raised);
+    font-size: var(--fs-label);
+    color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-cmd {
+      transition:
+        opacity var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out);
+    }
+    @starting-style {
+      .cap-cmd[open] {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-cmd {
+      border-color: CanvasText;
+    }
+    .cap-cmd-option[aria-selected="true"] {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+    .cap-cmd-search:has(.cap-cmd-input:focus-visible) {
+      border-bottom: 2px solid Highlight;
+    }
+  }
+}

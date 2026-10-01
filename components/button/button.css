@@ -1,0 +1,195 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Buttons. Extracted from the Capsid Portal's .btn, .iconbtn and .linkbtn (dashboard/src/
+   styles.css), with quiet, pending and disabled-with-a-reason added. Each variant sets the
+   three local properties; the states below read them, so a state works on every variant. */
+@layer cap.components {
+  .cap-btn {
+    --cap-btn-fg: var(--text);
+    --cap-btn-bg: var(--raised);
+    --cap-btn-line: var(--line-strong);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: var(--control);
+    min-width: var(--target);
+    margin: 0;
+    padding: 0 11px;
+    border: 1px solid var(--cap-btn-line);
+    border-radius: var(--radius-m);
+    background: var(--cap-btn-bg);
+    color: var(--cap-btn-fg);
+    font-family: var(--ui);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+
+    & > svg {
+      flex: none;
+    }
+    & kbd {
+      margin-inline-start: 2px;
+    }
+
+    &:hover,
+    &[data-force="hover"] {
+      --cap-btn-line: var(--muted);
+    }
+    &:active,
+    &[data-force="pressed"] {
+      --cap-btn-bg: var(--sunken);
+    }
+
+    /* The main action of a view: one per view. */
+    &[data-variant="primary"] {
+      --cap-btn-fg: var(--surface);
+      --cap-btn-bg: var(--accent);
+      --cap-btn-line: var(--accent);
+      font-weight: 600;
+
+      &:where(:hover, [data-force="hover"], :active, [data-force="pressed"]) {
+        --cap-btn-bg: var(--accent-hover);
+        --cap-btn-line: var(--accent-hover);
+      }
+    }
+
+    /* Starts something that cannot be undone: it opens the confirm dialog, it does not act. */
+    &[data-variant="danger"] {
+      --cap-btn-fg: var(--crit);
+      --cap-btn-bg: var(--crit-soft);
+      --cap-btn-line: var(--crit);
+      font-weight: 600;
+
+      &:where(:hover, [data-force="hover"]) {
+        box-shadow: inset 0 0 0 1px var(--crit);
+      }
+      &:where(:active, [data-force="pressed"]) {
+        --cap-btn-bg: var(--sunken);
+      }
+    }
+
+    /* A secondary action in a toolbar or a row: no border until the pointer is on it. */
+    &[data-variant="quiet"] {
+      --cap-btn-bg: transparent;
+      --cap-btn-line: transparent;
+
+      &:where(:hover, [data-force="hover"]) {
+        --cap-btn-bg: var(--raised);
+        --cap-btn-line: var(--line);
+      }
+      &:where(:active, [data-force="pressed"]) {
+        --cap-btn-bg: var(--sunken);
+      }
+    }
+
+    /* An icon button: square, and it needs an accessible name (aria-label). */
+    &[data-icon-only] {
+      width: var(--control);
+      padding: 0;
+    }
+
+    /* Disabled, with its reason beside it (aria-describedby). It stays focusable so the
+       reason can be found by keyboard; a dashed edge says "not now" without colour alone. */
+    &:is(:disabled, [aria-disabled="true"]) {
+      --cap-btn-fg: var(--muted);
+      --cap-btn-bg: var(--surface);
+      --cap-btn-line: var(--line-strong);
+      border-style: dashed;
+      box-shadow: none;
+      font-weight: 500;
+      cursor: not-allowed;
+    }
+
+    /* Pending: the label stays (so the width and the accessible name stay) but is not
+       painted; the spinner sits over it. */
+    & .cap-btn-spinner {
+      display: none;
+    }
+    &[aria-busy="true"] {
+      cursor: progress;
+
+      & > :not(.cap-btn-spinner) {
+        opacity: 0;
+      }
+      & > .cap-btn-spinner {
+        display: block;
+        position: absolute;
+        inset: 0;
+        width: 14px;
+        height: 14px;
+        margin: auto;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  /* The reason a button is disabled, written beside it. */
+  .cap-btn-reason {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* A button that looks like a link: Undo in a message, Clear beside a filter. */
+  .cap-link-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--accent);
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+
+    &:hover,
+    &[data-force="hover"] {
+      color: var(--accent-hover);
+      text-decoration-thickness: 2px;
+    }
+    &:is(:disabled, [aria-disabled="true"]) {
+      color: var(--dim);
+      text-decoration: none;
+      cursor: not-allowed;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-btn {
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out);
+    }
+    .cap-btn[aria-busy="true"] > .cap-btn-spinner {
+      animation: cap-btn-spin 0.8s linear infinite;
+    }
+  }
+
+  @keyframes cap-btn-spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-btn:is(:disabled, [aria-disabled="true"]),
+    .cap-link-btn:is(:disabled, [aria-disabled="true"]) {
+      color: GrayText;
+      border-color: GrayText;
+    }
+    .cap-btn[data-variant="quiet"] {
+      border-color: ButtonBorder;
+    }
+  }
+}

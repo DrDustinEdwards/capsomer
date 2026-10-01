@@ -1,0 +1,90 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Filter chips: a labelled group of toggle buttons (aria-pressed), a Clear button while
+   any is pressed, and the result count in a live region. From the Capsid Portal's .chip
+   (dashboard/src/styles.css). */
+@layer cap.components {
+  .cap-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .cap-chips-label {
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .cap-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: max(var(--target), 26px);
+    margin: 0;
+    padding: 0 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover,
+    &[data-force="hover"] {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    /* Pressed: a tick as well as the accent edge, the tint and the darker word. */
+    &[aria-pressed="true"] {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--text);
+
+      &::before {
+        content: "";
+        flex: none;
+        width: 4px;
+        height: 8px;
+        margin: -2px 1px 0 1px;
+        border: solid currentColor;
+        border-width: 0 2px 2px 0;
+        rotate: 45deg;
+      }
+    }
+  }
+
+  /* How many results the filter leaves: "3 of 14 jobs". */
+  .cap-chips-count {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-chip {
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-chip[aria-pressed="true"] {
+      forced-color-adjust: none;
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}

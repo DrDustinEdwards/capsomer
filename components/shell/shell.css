@@ -1,3 +1,6 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
 /* The app shell: a top bar, a left menu (the rail) that collapses to icons, the main
    region, and a tab bar on a phone. Extracted from the Capsid Portal (dashboard/src/
    styles.css, "shell" and "rail"), with Settings moved into the top bar (capsid
@@ -147,6 +150,11 @@
       color: var(--warn);
       font-weight: 600;
     }
+  }
+
+  /* On the current entry the count sits on the active tint, where --dim is 3.93:1 in dark; --muted clears 4.5. */
+  .cap-shell-rail a[aria-current="page"] .cap-shell-count:not([data-tone]) {
+    color: var(--muted);
   }
 
   .cap-shell-foot {
