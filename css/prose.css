@@ -1,0 +1,50 @@
+/* The reading context: <article data-context="prose">. A 66-character measure, a serif
+   that carries Greek, headings that scale with the window while the body stays steady
+   (design 2.4). The public-page components of release 0.3 build on this. */
+@layer cap.base {
+  [data-context="prose"] {
+    & :where(p, ul, ol, blockquote, figure, pre, table) {
+      max-inline-size: var(--measure);
+      margin-block: 0 1em;
+    }
+    & :where(p, li) {
+      text-wrap: pretty;
+      font-variant-numeric: oldstyle-nums;
+    }
+    & :where(h1, h2, h3) {
+      font-family: var(--prose);
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      margin-block: 1.4em 0.5em;
+      max-inline-size: 30ch;
+    }
+    & :where(h2) {
+      font-size: var(--fs-prose-h2);
+    }
+    & :where(h3) {
+      font-size: calc(var(--fs-prose) * 1.2);
+    }
+    & :where(figcaption) {
+      font-size: 0.85em;
+      color: var(--muted);
+    }
+    & :where(code, kbd, samp) {
+      font-family: var(--mono);
+      font-size: 0.85em;
+    }
+  }
+
+  @media print {
+    [data-context="prose"] {
+      font-size: 11pt;
+      color: #000;
+      background: #fff;
+      & a {
+        color: inherit;
+      }
+      & :where(h2, h3, figure, table) {
+        break-inside: avoid;
+      }
+    }
+  }
+}
