@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Capsomer Mockup</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one column of labelled specimens, grouped by the app that needs them, under a
+   sticky "On this page" bar. Colour tokens below are capsid's generated tokens.css, verbatim. */
+:root {
+  --ground: #f4f2fb; --surface: #fdfdfe; --raised: #f7f6fc; --sunken: #e9e6ef;
+  --line: #dfdce5; --line-strong: #918e96;
+  --text: #1c1727; --muted: #64606d; --dim: #696571;
+  --accent: #4F2D7F; --accent-hover: #3f1b6d; --accent-soft: #ebe3ff; --accent-line: #967fc1; --sel: #f2edff;
+  --ok: #027634; --ok-soft: #d6f7dc; --warn: #885f04; --warn-soft: #ffeaca;
+  --crit: #ad443e; --crit-soft: #fee7e4; --info: #2567b5; --info-soft: #e2eeff;
+  --nodata: #696571; --nodata-soft: #ebeaef;
+  --shadow: 0 1px 0 rgba(28, 23, 39, 0.04), 0 10px 28px -12px rgba(28, 23, 39, 0.22);
+  --scrim: rgba(28, 23, 39, 0.28);
+  --ui: "Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Martian Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  /* proposed additions */
+  --prose: "Source Serif 4", "Iowan Old Style", Charter, Georgia, serif;
+  --space-1: 2px; --space-2: 4px; --space-3: 8px; --space-4: 12px; --space-5: 16px; --space-6: 24px; --space-7: 32px; --space-8: 48px; --space-9: 64px;
+  --radius-s: 3px; --radius-m: 6px; --radius-l: 10px; --radius-full: 999px;
+  --fs-label: 11px; --fs-small: 12px; --fs-body: 13px; --fs-lead: 15px; --fs-h3: 18px; --fs-h2: 22px;
+  --control-h: 32px; --target: 24px;
+  --dur-fast: 100ms; --dur-base: 200ms; --dur-slow: 400ms;
+  --ease-out: cubic-bezier(0, 0, 0.38, 0.9); --ease-in-out: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --measure: 66ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0e0c12; --surface: #18161c; --raised: #211f25; --sunken: #09070c;
+    --line: #343238; --line-strong: #6b6970;
+    --text: #efedf3; --muted: #96949e; --dim: #898790;
+    --accent: #a386d7; --accent-hover: #c7aefb; --accent-soft: #322648; --accent-line: #7963a3; --sel: #292139;
+    --ok: #4ca664; --ok-soft: #15301b; --warn: #c18b22; --warn-soft: #362508;
+    --crit: #de776e; --crit-soft: #3e1e1c; --info: #5a97e2; --info-soft: #172a41;
+    --nodata: #898790; --nodata-soft: #272629;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 12px 32px -14px rgba(0, 0, 0, 0.7);
+    --scrim: rgba(0, 0, 0, 0.55);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #0e0c12; --surface: #18161c; --raised: #211f25; --sunken: #09070c;
+  --line: #343238; --line-strong: #6b6970;
+  --text: #efedf3; --muted: #96949e; --dim: #898790;
+  --accent: #a386d7; --accent-hover: #c7aefb; --accent-soft: #322648; --accent-line: #7963a3; --sel: #292139;
+  --ok: #4ca664; --ok-soft: #15301b; --warn: #c18b22; --warn-soft: #362508;
+  --crit: #de776e; --crit-soft: #3e1e1c; --info: #5a97e2; --info-soft: #172a41;
+  --nodata: #898790; --nodata-soft: #272629;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 12px 32px -14px rgba(0, 0, 0, 0.7);
+  --scrim: rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+:root[data-theme="light"] { color-scheme: light; }
+/* The system site shows both themes at once: these two classes pin a region to one theme. */
+.t-light {
+  --ground: #f4f2fb; --surface: #fdfdfe; --raised: #f7f6fc; --sunken: #e9e6ef; --line: #dfdce5; --line-strong: #918e96;
+  --text: #1c1727; --muted: #64606d; --dim: #696571;
+  --accent: #4F2D7F; --accent-hover: #3f1b6d; --accent-soft: #ebe3ff; --accent-line: #967fc1; --sel: #f2edff;
+  --ok: #027634; --ok-soft: #d6f7dc; --warn: #885f04; --warn-soft: #ffeaca; --crit: #ad443e; --crit-soft: #fee7e4; --info: #2567b5; --info-soft: #e2eeff;
+  --nodata: #696571; --nodata-soft: #ebeaef; color-scheme: light;
+}
+.t-dark {
+  --ground: #0e0c12; --surface: #18161c; --raised: #211f25; --sunken: #09070c; --line: #343238; --line-strong: #6b6970;
+  --text: #efedf3; --muted: #96949e; --dim: #898790;
+  --accent: #a386d7; --accent-hover: #c7aefb; --accent-soft: #322648; --accent-line: #7963a3; --sel: #292139;
+  --ok: #4ca664; --ok-soft: #15301b; --warn: #c18b22; --warn-soft: #362508; --crit: #de776e; --crit-soft: #3e1e1c; --info: #5a97e2; --info-soft: #172a41;
+  --nodata: #898790; --nodata-soft: #272629; color-scheme: dark;
+}
+.themed { background: var(--ground); color: var(--text); border: 1px solid var(--line); border-radius: var(--radius-l); padding: 14px; display: grid; gap: 12px; min-width: 0; }
+.themed h4 { font-size: var(--fs-body); font-weight: 600; }
+.cgrid { border-collapse: collapse; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); }
+.cgrid th { font: 400 11px var(--mono); color: var(--muted); padding: 5px 8px; text-align: left; white-space: nowrap; }
+.cgrid td { padding: 5px 8px; border-top: 1px solid var(--line); font-size: var(--fs-small); white-space: nowrap; }
+.cgrid td.pass { color: var(--ok); font-weight: 600; } .cgrid td.fail { color: var(--crit); font-weight: 600; } .cgrid td.unused { color: var(--dim); }
+.cgrid .chipc { display: inline-block; padding: 1px 6px; border-radius: var(--radius-s); border: 1px solid var(--line); font-weight: 600; }
+.states { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+.states div { display: grid; gap: 6px; justify-items: start; }
+.btn.is-hover { border-color: var(--muted); } .btn.is-active { background: var(--sunken); }
+.btn.is-focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+.list td.wrap { white-space: normal; min-width: 180px; }
+/* the app shell, shared with the Portal: top bar, rail, phone tab bar */
+.shell { display: grid; grid-template-columns: 208px minmax(0, 1fr); border: 1px solid var(--line); border-radius: var(--radius-l); overflow: hidden; background: var(--ground); }
+.shell-top { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.shell-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; letter-spacing: -0.02em; margin-right: auto; }
+.shell-brand small { font-weight: 400; font-size: 11px; letter-spacing: 0; }
+.shell-fresh { font-size: var(--fs-small); white-space: nowrap; }
+.shell-fresh b { color: var(--text); font-weight: 500; }
+.shell-rail { background: var(--surface); border-right: 1px solid var(--line); padding: 14px 10px; display: flex; flex-direction: column; gap: 2px; }
+.shell-rail a { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 7px 10px; border-radius: var(--radius-m); color: var(--muted); font-weight: 500; text-decoration: none; }
+.shell-rail a:hover { background: var(--raised); color: var(--text); }
+.shell-rail a[aria-current="page"] { background: var(--accent-soft); color: var(--text); }
+.shell-rail .count { font-size: var(--fs-label); color: var(--dim); }
+.shell-rail .count.hot { color: var(--crit); font-weight: 600; }
+.shell-rail .hint { margin-top: 14px; padding: 10px; font-size: var(--fs-small); color: var(--dim); border-top: 1px solid var(--line); }
+.shell-main { padding: 16px; display: grid; gap: 16px; min-width: 0; align-content: start; }
+.shell-tabs { display: none; }
+@media (max-width: 760px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .shell-rail, .shell-fresh { display: none; }
+  .shell-main { padding: 12px; }
+  .shell-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--surface); border-top: 1px solid var(--line); padding: 6px; }
+  .shell-tabs a { text-align: center; font-size: var(--fs-label); font-weight: 600; color: var(--muted); text-decoration: none; padding: 8px 0; }
+  .shell-tabs a[aria-current="page"] { color: var(--accent); }
+}
+.ver { font-family: var(--mono); font-size: 12px; }
+@media (pointer: coarse) { :root { --control-h: 44px; --target: 44px; } }
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
+body { background: var(--ground); color: var(--text); font: 400 var(--fs-body)/1.45 var(--ui); -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--radius-s); }
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.mono { font-family: var(--mono); font-size: 12px; letter-spacing: -0.01em; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.label { font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+kbd { font-family: var(--mono); font-size: 11px; padding: 1px 5px; border-radius: var(--radius-s); border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted); }
+
+.wrap { max-width: 1160px; margin-inline: auto; padding-inline: 20px; padding-block: 0 80px; display: grid; gap: var(--space-7); }
+.mast { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-5); padding-top: var(--space-6); }
+.mast h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+.mast p { color: var(--muted); max-width: 62ch; margin-top: 6px; font-size: var(--fs-lead); }
+.mast .grow { flex: 1; min-width: min(100%, 320px); }
+.sample { font-family: var(--mono); font-size: 11px; padding: 3px 7px; border-radius: var(--radius-s); border: 1px dashed var(--warn); color: var(--warn); white-space: nowrap; }
+
+/* in-page anchors */
+.onpage { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-l); padding: 8px 12px; display: flex; align-items: center; gap: 12px; overflow-x: auto; }
+.onpage ul { display: flex; gap: 2px; }
+.onpage a { display: block; padding: 5px 10px; border-radius: var(--radius-m); color: var(--muted); text-decoration: none; font-weight: 500; white-space: nowrap; }
+.onpage a:hover { background: var(--raised); color: var(--text); }
+.onpage a[aria-current="location"] { background: var(--accent-soft); color: var(--text); }
+
+section.group { display: grid; gap: var(--space-5); }
+section.group > header h2 { font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.025em; text-wrap: balance; }
+section.group > header p { color: var(--muted); max-width: 70ch; margin-top: 2px; }
+.cols { display: grid; gap: var(--space-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); align-items: start; }
+.cols.wide { grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-l); min-width: 0; }
+.panel > header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--raised); border-radius: var(--radius-l) var(--radius-l) 0 0; flex-wrap: wrap; }
+.panel > header h3 { font-size: var(--fs-body); font-weight: 600; }
+.panel > header .src { margin-left: auto; font-size: var(--fs-label); color: var(--dim); }
+.panel .body { padding: 14px 16px; display: grid; gap: var(--space-4); }
+.note { font-size: var(--fs-small); color: var(--muted); }
+.row-wrap { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+
+/* buttons and fields */
+.btn { display: inline-flex; align-items: center; gap: 6px; min-height: var(--control-h); padding: 0 11px; border: 1px solid var(--line-strong); border-radius: var(--radius-m); background: var(--raised); color: var(--text); font-size: var(--fs-body); font-weight: 500; white-space: nowrap; }
+.btn:hover { border-color: var(--muted); }
+.btn:active { background: var(--sunken); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 600; }
+.btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn.danger { background: var(--crit-soft); border-color: var(--crit); color: var(--crit); font-weight: 600; }
+.btn[aria-disabled="true"] { opacity: 0.5; cursor: default; }
+.btn.pending svg { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.linkbtn { border: 0; padding: 0; background: none; color: var(--accent); text-decoration: underline; min-height: var(--target); }
+.field { min-height: var(--control-h); width: 100%; min-width: 0; border: 1px solid var(--line-strong); border-radius: var(--radius-m); background: var(--surface); padding: 0 10px; }
+.field[aria-invalid="true"] { border-color: var(--crit); }
+.f { display: grid; gap: 4px; min-width: 0; }
+.f label { font-weight: 600; }
+.f .err { color: var(--crit); font-size: var(--fs-small); display: flex; gap: 6px; align-items: center; }
+.f .help { color: var(--muted); font-size: var(--fs-small); }
+
+/* switch: a real checkbox with role=switch; the state word sits beside it */
+.switch { display: inline-flex; align-items: center; gap: 10px; min-height: var(--target); }
+.switch input { appearance: none; width: 36px; height: 20px; border-radius: var(--radius-full); border: 1px solid var(--line-strong); background: var(--sunken); position: relative; margin: 0; cursor: pointer; transition: background var(--dur-fast) var(--ease-out); flex: none; }
+.switch input::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--line-strong); transition: transform var(--dur-fast) var(--ease-out); }
+.switch input:checked { background: var(--accent); border-color: var(--accent); }
+.switch input:checked::after { transform: translateX(16px); background: var(--surface); }
+.switch .state { font-weight: 600; min-width: 2.2em; }
+.reason { display: grid; gap: 6px; padding: 10px 12px; border: 1px solid var(--accent-line); background: var(--sel); border-radius: var(--radius-m); }
+
+/* segmented control: radio inputs */
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--radius-m); overflow: hidden; background: var(--surface); }
+.seg label { display: inline-flex; align-items: center; min-height: calc(var(--control-h) - 2px); padding: 0 12px; font-weight: 500; color: var(--muted); cursor: pointer; border-right: 1px solid var(--line); }
+.seg label:last-child { border-right: 0; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label:has(input:checked) { background: var(--accent-soft); color: var(--text); }
+.seg label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+.chip { display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 0 10px; border-radius: var(--radius-full); border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted); font-size: var(--fs-small); font-weight: 500; }
+.chip[aria-pressed="true"] { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
+
+/* status: shape, word and colour together */
+.st { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: var(--fs-small); white-space: nowrap; }
+.st svg, .pill svg { flex: none; }
+.st.crit { color: var(--crit); } .st.warn { color: var(--warn); } .st.ok { color: var(--ok); } .st.info { color: var(--info); } .st.nodata { color: var(--nodata); }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px 2px 6px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: 600; white-space: nowrap; }
+.pill.crit { background: var(--crit-soft); color: var(--crit); } .pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.info { background: var(--info-soft); color: var(--info); }
+.pill.nodata { background: var(--nodata-soft); color: var(--muted); }
+
+/* rows: the title is the one link, stretched over the row */
+.rows { display: grid; }
+.row { position: relative; display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 7px 16px; }
+.row:hover { background: var(--raised); }
+.row.crit { box-shadow: inset 3px 0 var(--crit); }
+.row:has(a:focus-visible) { background: var(--sel); box-shadow: inset 0 0 0 1px var(--accent-line); }
+.row.crit:has(a:focus-visible) { box-shadow: inset 3px 0 var(--crit), inset 0 0 0 1px var(--accent-line); }
+.row .t { min-width: 0; }
+.row .t a { color: var(--text); font-weight: 600; text-decoration: none; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; outline: none; }
+.row .t a::after { content: ""; position: absolute; inset: 0; }
+.row .t div { color: var(--muted); font-size: var(--fs-small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .m { font-size: var(--fs-small); color: var(--muted); white-space: nowrap; text-align: right; }
+.row .act { position: relative; z-index: 1; display: flex; gap: 6px; }
+@media (max-width: 560px) { .row { grid-template-columns: minmax(0, 1fr) auto; } .row > .st, .row > .pill { grid-column: 1 / -1; justify-self: start; } }
+
+/* usage meter with a projection */
+.usage { display: grid; gap: 14px; }
+.use { display: grid; gap: 4px; }
+.use .top { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.use .top b { font-weight: 600; }
+.use .top .v { margin-left: auto; }
+.bar { height: 8px; border-radius: 4px; background: var(--sunken); position: relative; overflow: hidden; }
+.bar i { position: absolute; inset: 0 auto 0 0; width: var(--v, 0%); background: var(--accent); }
+.bar i.proj { width: var(--p, 0%); background: repeating-linear-gradient(135deg, var(--line-strong) 0 2px, transparent 2px 5px); }
+.use.warn .bar i:not(.proj) { background: var(--warn); } .use.crit .bar i:not(.proj) { background: var(--crit); }
+.use .why { font-size: var(--fs-small); color: var(--muted); }
+.use.warn .why b { color: var(--warn); } .use.crit .why b { color: var(--crit); }
+
+/* sessions */
+.sess { display: grid; gap: 0; }
+.sess li { display: grid; gap: 6px; padding: 10px 16px; border-top: 1px solid var(--line); }
+.sess li:first-child { border-top: 0; }
+.sess .head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.sess .head .age { margin-left: auto; color: var(--muted); font-size: var(--fs-small); }
+.sess .now { color: var(--muted); }
+.ask { border: 1px solid var(--warn); background: var(--warn-soft); border-radius: var(--radius-m); padding: 8px 10px; display: grid; gap: 8px; }
+.cmd { font-family: var(--mono); font-size: 12px; background: var(--sunken); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 8px 10px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
+
+/* tables */
+.scroll-x { overflow-x: auto; }
+table.list { width: 100%; border-collapse: collapse; }
+.list th { text-align: left; font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 7px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.list td { padding: 7px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
+.list tr:last-child td { border-bottom: 0; }
+.list td.c, .list th.c { text-align: center; }
+.yes { color: var(--ok); } .no { color: var(--dim); }
+
+/* timeline */
+.tl { display: grid; }
+.tl li { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 10px; padding: 6px 16px; align-items: start; }
+.tl li svg { margin-top: 2px; }
+.tl .day { grid-template-columns: 1fr; padding: 6px 16px; background: var(--raised); font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.tl .who { color: var(--muted); font-size: var(--fs-small); }
+.tl .when { color: var(--muted); font-size: var(--fs-small); white-space: nowrap; }
+.delta.plus { color: var(--ok); } .delta.minus { color: var(--crit); }
+
+/* message with undo: stays until dismissed */
+.msg { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-m); background: var(--raised); }
+.msg .x { margin-left: auto; }
+.banner { border: 1px solid var(--warn); background: var(--warn-soft); border-radius: var(--radius-m); padding: 10px 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.banner.crit { border-color: var(--crit); background: var(--crit-soft); }
+
+/* dialog */
+dialog.confirm { border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); color: var(--text); box-shadow: var(--shadow); padding: 18px 20px; width: min(480px, calc(100% - 32px)); transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
+dialog.confirm::backdrop { background: var(--scrim); }
+@starting-style { dialog.confirm[open] { opacity: 0; transform: translateY(6px); } }
+dialog.confirm h3 { font-size: var(--fs-h3); font-weight: 800; letter-spacing: -0.02em; }
+dialog.confirm form { display: grid; gap: 12px; }
+dialog.confirm ul { list-style: disc; padding-left: 18px; display: grid; gap: 4px; }
+dialog.confirm .acts { display: flex; justify-content: space-between; gap: 12px; margin-top: 4px; }
+
+/* draft compare */
+.compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.draft { padding: 14px 16px; min-width: 0; border-top: 1px solid var(--line); }
+.draft + .draft { border-left: 1px solid var(--line); }
+.draft h4 { display: flex; gap: 8px; align-items: center; font-size: var(--fs-small); font-weight: 600; margin-bottom: 8px; flex-wrap: wrap; }
+.draft p { font: 400 16px/1.6 var(--prose); max-width: var(--measure); }
+.draft p + p { margin-top: 10px; }
+.by { padding-left: 10px; border-left: 3px solid var(--line-strong); }
+.by.ai { border-left-style: double; border-left-width: 5px; border-left-color: var(--info); }
+.by-tag { font: 600 var(--fs-label)/1 var(--ui); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 3px; }
+ins { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; background: var(--ok-soft); color: var(--text); }
+ins::before { content: "+"; font: 700 12px var(--mono); color: var(--ok); margin-right: 2px; }
+del { text-decoration: line-through; background: var(--crit-soft); color: var(--muted); }
+del::before { content: "\2212"; font: 700 12px var(--mono); color: var(--crit); margin-right: 2px; text-decoration: none; display: inline-block; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: var(--fs-small); color: var(--muted); }
+
+/* publish box */
+.gate li { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 8px 16px; border-top: 1px solid var(--line); }
+.gate li svg { margin-top: 2px; }
+.gate li b { font-weight: 600; display: block; }
+.gate li span { color: var(--muted); font-size: var(--fs-small); }
+.dest { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px 16px; border-top: 1px solid var(--line); }
+.dest .grow { flex: 1; min-width: 160px; }
+
+/* reading sample */
+.read { padding: 22px clamp(16px, 4vw, 40px) 26px; display: grid; gap: 14px; }
+.read h3 { font: 800 clamp(22px, 1.2rem + 1.2vw, 30px)/1.15 var(--ui); letter-spacing: -0.025em; text-wrap: balance; max-width: 24ch; }
+.read .meta { color: var(--muted); font-size: var(--fs-small); }
+.read p { font: 400 clamp(17px, 1rem + 0.25vw, 19px)/1.6 var(--prose); max-width: var(--measure); text-wrap: pretty; font-variant-numeric: oldstyle-nums; }
+.read figure { max-width: var(--measure); display: grid; gap: 8px; }
+.read figcaption { font: 400 14px/1.45 var(--prose); color: var(--muted); }
+.read figcaption b { font-family: var(--ui); font-weight: 600; color: var(--text); }
+.fig { border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--raised); }
+.fig svg { display: block; width: 100%; height: auto; }
+.pub { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; max-width: 74ch; padding-top: 12px; border-top: 1px solid var(--line); }
+.pub .yr { font-weight: 700; color: var(--muted); }
+.pub cite { font-style: normal; font-weight: 600; }
+.pub .links { display: flex; gap: 12px; margin-top: 4px; font-size: var(--fs-small); }
+
+/* foundations */
+.sw { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.sw div { border: 1px solid var(--line); border-radius: var(--radius-m); overflow: hidden; background: var(--surface); }
+.sw i { display: block; height: 34px; background: var(--c); border-bottom: 1px solid var(--line); }
+.sw span { display: block; padding: 4px 8px; font: 400 11px var(--mono); color: var(--muted); }
+.scale { display: grid; gap: 6px; }
+.scale div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.sp { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
+.sp div { display: grid; gap: 4px; justify-items: center; font: 400 11px var(--mono); color: var(--muted); }
+.sp i { display: block; width: var(--w); height: var(--w); background: var(--accent-line); border-radius: 2px; }
+.rad { display: flex; gap: 12px; flex-wrap: wrap; }
+.rad div { width: 64px; height: 40px; border: 1px solid var(--line-strong); background: var(--raised); display: grid; place-items: center; font: 400 11px var(--mono); color: var(--muted); }
+.track { height: 18px; position: relative; background: var(--sunken); border-radius: var(--radius-full); }
+.track i { position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+.play .track i { left: calc(100% - 15px); }
+.mot { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 12px; align-items: center; }
+
+/* states */
+.empty { padding: 18px 16px; display: grid; gap: 6px; justify-items: start; }
+.empty b { font-weight: 600; }
+.skel { display: grid; gap: 10px; padding: 14px 16px; }
+.skel i { display: block; height: 12px; border-radius: 4px; background: var(--sunken); }
+.skel i:nth-child(1) { width: 62%; } .skel i:nth-child(2) { width: 88%; } .skel i:nth-child(3) { width: 74%; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .track i { transition: left var(--d, 200ms) var(--ease-out); }
+  .skel i { animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: 0.55; } }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+@media (forced-colors: active) { .bar i, .switch input::after, .sw i { forced-color-adjust: none; } .row.crit { border-left: 3px solid CanvasText; } }
+</style>
+
+<svg width="0" height="0" class="sr" aria-hidden="true" focusable="false">
+  <symbol id="i-crit" viewBox="0 0 16 16"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z"/><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1.2 15.4 14H.6z"/><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="currentColor"/><path fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m4.6 8.3 2.3 2.3 4.5-4.9"/></symbol>
+  <symbol id="i-none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></symbol>
+  <symbol id="i-run" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2"/></symbol>
+  <symbol id="i-yes" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7"/></symbol>
+  <symbol id="i-no" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7"/></symbol>
+  <symbol id="i-dot" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.2" fill="currentColor"/></symbol>
+</svg>
+
+<div class="wrap">
+  <div class="mast">
+    <div class="grow">
+      <h1>Capsomer</h1>
+      <p>The key components of the shared design system, drawn on the approved #4F2D7F palette. Every control on this page works; every record is invented.</p>
+    </div>
+    <span class="sample">Sample data</span>
+    <fieldset class="seg" style="margin:0;padding:0" aria-label="Theme">
+      <label><input type="radio" name="theme" id="theme-system" value="" checked>System</label>
+      <label><input type="radio" name="theme" id="theme-light" value="light">Light</label>
+      <label><input type="radio" name="theme" id="theme-dark" value="dark">Dark</label>
+    </fieldset>
+  </div>
+
+  <nav class="onpage" aria-label="On this page">
+    <span class="label">On this page</span>
+    <ul>
+      <li><a href="#console">Console</a></li>
+      <li><a href="#controls">Controls</a></li>
+      <li><a href="#writing">Writing hub</a></li>
+      <li><a href="#admin">Site admin</a></li>
+      <li><a href="#reading">Public pages</a></li>
+      <li><a href="#states">States</a></li>
+      <li><a href="#site">System site</a></li>
+      <li><a href="#tokens">Tokens</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============ CONSOLE ============ -->
+  <section class="group" id="console">
+    <header><h2>Operations console</h2><p>For the Capsid Portal: what is wrong, what is waiting on you, and what is about to run out.</p></header>
+    <div class="cols wide">
+      <div class="panel">
+        <header><h3>Needs attention</h3><span class="src">Worst first. Read 40 seconds ago</span></header>
+        <div class="rows">
+          <div class="row crit"><span class="st crit"><svg width="14" height="14"><use href="#i-crit"/></svg>Critical</span><div class="t"><a href="#console">foxhound.app is not answering</a><div>3 failed checks in a row, first at 14:02</div></div><div class="m"><time datetime="2026-09-30T14:02Z">11 minutes ago</time></div></div>
+          <div class="row"><span class="st warn"><svg width="14" height="14"><use href="#i-warn"/></svg>Warning</span><div class="t"><a href="#console">D1 rows read will run out before the reset</a><div>78% used, full in about 3 hours</div></div><div class="m">projected</div></div>
+          <div class="row"><span class="st warn"><svg width="14" height="14"><use href="#i-warn"/></svg>Warning</span><div class="t"><a href="#console">2 jobs are waiting for approval</a><div>Oldest has waited 26 minutes</div></div><div class="m">26 minutes</div></div>
+          <div class="row"><span class="st nodata"><svg width="14" height="14"><use href="#i-none"/></svg>No data</span><div class="t"><a href="#console">germomics: no backup reported</a><div>Its health route does not report one yet</div></div><div class="m">since setup</div></div>
+          <div class="row"><span class="st info"><svg width="14" height="14"><use href="#i-info"/></svg>Notice</span><div class="t"><a href="#console">4 notices</a><div>Dependency updates, none urgent</div></div><div class="m">collapsed</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <header><h3>Usage against free limits</h3><span class="src">Cloudflare. Read 6 minutes ago</span></header>
+        <div class="body usage">
+          <div class="use" data-v="61" data-p="84">
+            <div class="top"><b>Worker requests</b><span class="v num">61,400 of 100,000 today</span></div>
+            <div class="bar" role="meter" aria-label="Worker requests" aria-valuemin="0" aria-valuemax="100000" aria-valuenow="61400" aria-valuetext="61,400 of 100,000 requests today, projected 84 percent by the reset"><i class="proj"></i><i></i></div>
+            <div class="why">On track: about 84% by the reset at 00:00 UTC, in 7 hours.</div>
+          </div>
+          <div class="use warn" data-v="78" data-p="100">
+            <div class="top"><b>D1 rows read</b><span class="v num">3.9 million of 5 million today</span></div>
+            <div class="bar" role="meter" aria-label="D1 rows read" aria-valuemin="0" aria-valuemax="5000000" aria-valuenow="3900000" aria-valuetext="3.9 million of 5 million rows today, projected to run out in about 3 hours"><i class="proj"></i><i></i></div>
+            <div class="why"><b>Full in about 3 hours</b>, 4 hours before the reset. At the limit, reads fail until 00:00 UTC.</div>
+          </div>
+          <div class="use crit" data-v="96" data-p="100">
+            <div class="top"><b>KV writes</b><span class="v num">962 of 1,000 today</span></div>
+            <div class="bar" role="meter" aria-label="KV writes" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="962" aria-valuetext="962 of 1,000 writes today"><i class="proj"></i><i></i></div>
+            <div class="why"><b>38 writes left.</b> At the limit, the watcher cannot save its pass until 00:00 UTC.</div>
+          </div>
+          <div class="use" data-v="12" data-p="12">
+            <div class="top"><b>R2 storage</b><span class="v num">1.2 GB of 10 GB</span></div>
+            <div class="bar" role="meter" aria-label="R2 storage" aria-valuemin="0" aria-valuemax="10" aria-valuenow="1.2" aria-valuetext="1.2 of 10 gigabytes stored"><i class="proj"></i><i></i></div>
+            <div class="why">No projection: 2 days of history, 7 needed. This total does not reset.</div>
+          </div>
+          <p class="note">Solid is used. Hatched is where the day ends at the current rate.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cols wide">
+      <div class="panel">
+        <header><h3>Agent sessions</h3><span class="src">Waiting on you first. Updates every 15 seconds</span></header>
+        <ul class="sess">
+          <li>
+            <div class="head"><span class="pill warn"><svg width="14" height="14"><use href="#i-warn"/></svg>Needs you</span><span class="mono">capsomer-driver</span><span class="age">waiting 3 minutes</span></div>
+            <div class="ask">
+              <div>Asks to push a branch and open a pull request:</div>
+              <div class="cmd">git -C C:\dev\capsomer push -u origin design/capsomer</div>
+              <div class="row-wrap"><button class="btn primary" type="button" data-say="Approved the push for capsomer-driver.">Approve push</button><button class="btn" type="button" data-say="Declined the push for capsomer-driver.">Decline</button><span class="note">A branch push. It cannot reach main.</span></div>
+            </div>
+          </li>
+          <li>
+            <div class="head"><span class="pill info"><svg width="14" height="14"><use href="#i-run"/></svg>Working</span><span class="mono">capsid-driver</span><span class="age">started 18 minutes ago</span></div>
+            <div class="now">Running the browser tests, file 3 of 5. <span class="muted">Read file ×12, ran command ×4.</span></div>
+          </li>
+          <li>
+            <div class="head"><span class="pill crit"><svg width="14" height="14"><use href="#i-crit"/></svg>Failed</span><span class="mono">foxhound-driver</span><span class="age">41 minutes ago</span></div>
+            <div class="now">Stopped: the type check failed twice on the same file. <a href="#console">Open the job</a></div>
+          </li>
+          <li>
+            <div class="head"><span class="st nodata"><svg width="14" height="14"><use href="#i-none"/></svg>Idle</span><span class="mono">txasm-driver</span><span class="age">last seen yesterday</span></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <header><h3>Who can do what</h3><span class="src">4 agents, 5 permissions</span></header>
+        <div class="scroll-x" role="region" aria-label="Permissions by agent" tabindex="0">
+          <table class="list">
+            <thead><tr><th scope="col">Agent</th><th scope="col" class="c">Merge</th><th scope="col" class="c">Write to main</th><th scope="col" class="c">Start CI</th><th scope="col" class="c">Edit workflows</th><th scope="col" class="c">Money paths</th></tr></thead>
+            <tbody>
+              <tr><th scope="row" class="mono" style="text-transform:none;letter-spacing:0;color:var(--text);font-weight:400;border-bottom:1px solid var(--line)">seat</th><td class="c yes"><svg width="14" height="14"><use href="#i-yes"/></svg><span class="sr">Yes</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c yes"><svg width="14" height="14"><use href="#i-yes"/></svg><span class="sr">Yes</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td></tr>
+              <tr><th scope="row" class="mono" style="text-transform:none;letter-spacing:0;color:var(--text);font-weight:400;border-bottom:1px solid var(--line)">capsid-driver</th><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c yes"><svg width="14" height="14"><use href="#i-yes"/></svg><span class="sr">Yes</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td></tr>
+              <tr><th scope="row" class="mono" style="text-transform:none;letter-spacing:0;color:var(--text);font-weight:400;border-bottom:1px solid var(--line)">capsomer-driver</th><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td></tr>
+              <tr><th scope="row" class="mono" style="text-transform:none;letter-spacing:0;color:var(--text);font-weight:400;border-bottom:0">foxhound-driver</th><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c yes"><svg width="14" height="14"><use href="#i-yes"/></svg><span class="sr">Yes</span></td><td class="c no"><svg width="14" height="14"><use href="#i-no"/></svg><span class="sr">No</span></td><td class="c yes"><svg width="14" height="14"><use href="#i-yes"/></svg><span class="sr">Yes</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="body"><p class="note">A tick and a dash, never colour alone. On a phone this becomes one card per agent listing only what it holds.</p></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <header><h3>What shipped</h3><span class="src">Deploys and merges, newest first</span></header>
+      <ul class="tl">
+        <li class="day">Today</li>
+        <li><svg width="14" height="14" class="st ok"><use href="#i-ok"/></svg><div><b>capsid</b> deployed <span class="mono">366b902</span><div class="who">Resume notes are signed. Merged by you.</div></div><time class="when" datetime="2026-09-30T13:20Z">53 minutes ago</time></li>
+        <li><svg width="14" height="14" class="st crit"><use href="#i-crit"/></svg><div><b>foxhound</b> deployed <span class="mono">a91c4e0</span><div class="who">The outage above began 4 minutes after this deploy. <a href="#console">Roll back</a></div></div><time class="when" datetime="2026-09-30T13:58Z">15 minutes ago</time></li>
+        <li class="day">Yesterday</li>
+        <li><svg width="14" height="14" class="st ok"><use href="#i-ok"/></svg><div><b>dustinedwards.info</b> deployed <span class="mono">5e2b7aa</span><div class="who">Two posts published.</div></div><time class="when" datetime="2026-09-29T21:14Z">29 Sep, 16:14</time></li>
+      </ul>
+    </div>
+
+    <div class="panel" id="adoption">
+      <header><h3>Capsomer across the apps</h3><span class="src">Latest release 0.3.0. Each row is from that app’s last CI run on its main branch</span></header>
+      <div class="scroll-x" role="region" aria-label="Capsomer adoption by app" tabindex="0">
+        <table class="list">
+          <thead><tr><th scope="col">App</th><th scope="col">Version</th><th scope="col">Components used</th><th scope="col">Own copies left</th><th scope="col">Token warnings</th><th scope="col">Accessibility tests</th><th scope="col">Reported</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#adoption">Capsid Portal</a></td><td><span class="ver">0.3.0</span> <span class="muted">current</span></td><td class="num">14</td><td class="num">0</td><td class="num">0</td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>62 passed</span></td><td class="muted">53 minutes ago</td></tr>
+            <tr><td><a href="#adoption">Carrel</a></td><td><span class="ver">0.3.0</span> <span class="muted">current</span></td><td class="num">9</td><td class="wrap"><span class="num">2:</span> its own toast and its own dialog</td><td class="num">3</td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>31 passed</span></td><td class="muted">2 hours ago</td></tr>
+            <tr><td><a href="#adoption">dustinedwards.info</a></td><td><span class="ver">0.2.1</span> <span class="st warn"><svg width="14" height="14"><use href="#i-warn"/></svg>1 behind</span></td><td class="num">6</td><td class="wrap"><span class="num">4:</span> button, table, form field, status pill</td><td class="num">11</td><td><span class="st crit"><svg width="14" height="14"><use href="#i-crit"/></svg>1 of 18 failed</span></td><td class="muted">yesterday</td></tr>
+            <tr><td><a href="#adoption">Foxhound</a></td><td class="muted">Tokens only</td><td class="num">0</td><td class="muted">Not counted before adoption</td><td class="num">0</td><td><span class="st nodata"><svg width="14" height="14"><use href="#i-none"/></svg>No data</span></td><td class="muted">3 days ago</td></tr>
+            <tr><td><a href="#adoption">Germomics</a></td><td><span class="st nodata"><svg width="14" height="14"><use href="#i-none"/></svg>Not installed</span></td><td class="muted" colspan="5">No report: this app’s CI does not run the Capsomer report yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="body"><p class="note">Opening a row shows which components the app uses, each remaining copy with its file, and each token warning with its line. Warnings never fail a build.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ CONTROLS ============ -->
+  <section class="group" id="controls">
+    <header><h2>Controls</h2><p>The same controls in every app. Reversible actions happen at once and offer Undo; one-way actions preview first in a dialog.</p></header>
+    <div class="cols">
+      <div class="panel">
+        <header><h3>Buttons and choices</h3></header>
+        <div class="body">
+          <div class="row-wrap"><button class="btn" type="button">Refresh</button><button class="btn primary" type="button">Save changes</button><button class="btn danger" type="button" id="open-confirm">Revoke agent…</button></div>
+          <div class="row-wrap"><button class="btn pending" type="button" aria-disabled="true"><svg width="14" height="14"><use href="#i-run"/></svg>Saving</button><button class="btn" type="button" aria-disabled="true" aria-describedby="why-dis">Publish</button><span class="note" id="why-dis">Disabled, with its reason beside it.</span></div>
+          <fieldset class="seg" style="margin:0;padding:0;justify-self:start" aria-label="Window">
+            <label><input type="radio" name="win" id="win-24" checked>24 hours</label><label><input type="radio" name="win" id="win-7">7 days</label><label><input type="radio" name="win" id="win-30">30 days</label>
+          </fieldset>
+          <div class="row-wrap" role="group" aria-label="Filter by status"><span class="label">Status</span><button class="chip" type="button" aria-pressed="true">Blocked</button><button class="chip" type="button" aria-pressed="false">Running</button><button class="chip" type="button" aria-pressed="false">Queued</button><span class="note num">3 of 14 jobs</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <header><h3>Switches</h3></header>
+        <div class="body">
+          <label class="switch"><input type="checkbox" role="switch" id="sw-keys" checked><span>Single-key shortcuts</span><span class="state" data-for="sw-keys">On</span></label>
+          <p class="note">A display preference takes effect at once.</p>
+          <label class="switch"><input type="checkbox" role="switch" id="sw-loop" checked><span>Improve loop</span><span class="state" data-for="sw-loop">On</span></label>
+          <form class="reason" id="reason" hidden>
+            <label for="reason-in"><b id="reason-q">Why turn the improve loop off?</b></label>
+            <input class="field" id="reason-in" autocomplete="off" placeholder="For example: pausing during the migration">
+            <div class="row-wrap"><button class="btn primary" type="submit">Apply</button><button class="btn" type="button" id="reason-cancel">Cancel</button><span class="note"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels</span></div>
+          </form>
+          <p class="note">An automation switch asks for a one-line reason and moves only when it is applied.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <header><h3>Form field</h3></header>
+        <div class="body">
+          <div class="f"><label for="origin">Site address</label><span class="help" id="origin-h">Starts with https:// and has no path.</span><input class="field" id="origin" value="http://foxhound.app/health" aria-invalid="true" aria-describedby="origin-h origin-e"><span class="err" id="origin-e"><svg width="14" height="14"><use href="#i-crit"/></svg>Use https:// and remove “/health”. The health route has its own field.</span></div>
+          <div class="f"><label for="plat">Platform</label><select class="field" id="plat"><option>Cloudflare</option><option>Vercel</option></select></div>
+        </div>
+      </div>
+    </div>
+    <div id="status" role="status" aria-live="polite" class="msg" hidden><span id="status-text"></span><button class="linkbtn" type="button" id="status-undo">Undo</button><button class="btn x" type="button" id="status-x">Dismiss</button></div>
+
+    <dialog class="confirm" id="confirm" aria-labelledby="confirm-h">
+      <form method="dialog">
+        <h3 id="confirm-h">Revoke foxhound-driver?</h3>
+        <p>This cannot be undone. The agent stops working at once.</p>
+        <ul><li>Its key stops being accepted.</li><li>Its 1 claimed job goes back to the queue.</li><li>An audit row records the revocation under your name.</li></ul>
+        <div class="acts"><button class="btn" value="cancel" autofocus>Cancel</button><button class="btn danger" value="revoke">Revoke agent</button></div>
+      </form>
+    </dialog>
+  </section>
+
+  <!-- ============ WRITING ============ -->
+  <section class="group" id="writing">
+    <header><h2>Writing hub</h2><p>For Carrel: an AI draft sits beside yours and never replaces it, checks flag and never decide, and the page says why a post cannot publish yet.</p></header>
+    <div class="panel">
+      <header><h3>Compare drafts</h3>
+        <fieldset class="seg" style="margin:0;padding:0" aria-label="Layout"><label><input type="radio" name="cmp" id="cmp-side" checked>Side by side</label><label><input type="radio" name="cmp" id="cmp-inline">Inline</label></fieldset>
+        <div class="legend" style="margin-left:auto"><span><ins>added</ins></span><span><del>removed</del></span><span>12 changes</span></div>
+      </header>
+      <div class="compare">
+        <div class="draft"><h4>Your draft <span class="muted num">saved 2 minutes ago, 412 words</span></h4>
+          <div class="by"><span class="by-tag">You</span><p>When phage λ infects <i>Escherichia coli</i> it has two options. It can copy itself and burst the cell, or it can sit quietly in the host genome.</p></div>
+        </div>
+        <div class="draft"><h4>AI draft <span class="pill info">Beside yours, not applied</span></h4>
+          <div class="by ai"><span class="by-tag">AI session 14</span><p>When phage λ infects <i>Escherichia coli</i> it <del>has two options</del><ins>faces a choice</ins>. It can copy itself and burst the cell, or it can <del>sit quietly in</del><ins>join</ins> the host genome<ins> and wait</ins>.</p></div>
+          <div class="row-wrap" style="margin-top:10px"><button class="btn" type="button" data-say="Applied 1 suggestion to your draft. History records it as proposed by AI session 14 and applied by you.">Apply this change</button><button class="btn" type="button">Next change</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cols wide">
+      <div class="panel">
+        <header><h3>Publish</h3><span class="pill crit"><svg width="14" height="14"><use href="#i-crit"/></svg>2 things block one site</span></header>
+        <ul class="gate">
+          <li><svg width="14" height="14" class="st crit"><use href="#i-crit"/></svg><div><b>Figure 2 has no description</b><span>Blocks dustinedwards.info. Add alt text, or mark the figure decorative.</span></div><a href="#writing">Fix</a></li>
+          <li><svg width="14" height="14" class="st crit"><use href="#i-crit"/></svg><div><b>A reviewer’s flag is open</b><span>Blocks dustinedwards.info. “Check the burst size against the 2019 paper.”</span></div><a href="#writing">Open</a></li>
+          <li><svg width="14" height="14" class="st info"><use href="#i-info"/></svg><div><b>3 style suggestions</b><span>Advice only. These never block.</span></div><a href="#writing">Review</a></li>
+          <li><svg width="14" height="14" class="st ok"><use href="#i-ok"/></svg><div><b>5 checks passed</b><span>Links resolve, title set, summary set, date set, licence set.</span></div><span></span></li>
+        </ul>
+        <div class="dest"><div class="grow"><b>dustinedwards.info</b><div class="note">Cannot publish yet: 2 things to fix above.</div></div><button class="btn" type="button" aria-disabled="true">Publish to dustinedwards.info</button></div>
+        <div class="dest"><div class="grow"><b>TXASM newsletter</b><div class="note">Ready. Uses the short summary.</div></div><button class="btn primary" type="button" data-say="Published to TXASM newsletter.">Publish to TXASM newsletter</button></div>
+      </div>
+
+      <div class="panel">
+        <header><h3>History</h3><span class="src">Who changed what</span></header>
+        <ul class="tl">
+          <li><svg width="14" height="14" class="muted"><use href="#i-dot"/></svg><div><b>You</b> rewrote the opening <span class="delta plus num">+38 words</span><div class="who">Applied 1 suggestion proposed by AI session 14</div></div><time class="when" datetime="2026-09-30T14:02Z">2 minutes ago</time></li>
+          <li><svg width="14" height="14" class="st info"><use href="#i-info"/></svg><div><b>Reviewer</b> flagged a problem<div class="who">“Check the burst size against the 2019 paper.”</div></div><time class="when" datetime="2026-09-30T13:31Z">33 minutes ago</time></li>
+          <li><svg width="14" height="14" class="muted"><use href="#i-dot"/></svg><div><b>AI session 14</b> wrote a draft beside yours <span class="delta plus num">+1,048 words</span><div class="who">Not applied. Your draft did not change.</div></div><time class="when" datetime="2026-09-30T13:10Z">54 minutes ago</time></li>
+          <li><svg width="14" height="14" class="muted"><use href="#i-dot"/></svg><div><b>You</b> cut the methods aside <span class="delta minus num">−96 words</span><div class="who">Named version: “Sent to reviewer”</div></div><time class="when" datetime="2026-09-29T22:40Z">29 Sep, 17:40</time></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ADMIN ============ -->
+  <section class="group" id="admin">
+    <header><h2>Site admin</h2><p>For dustinedwards.info: moderate incoming mentions with one key each. Nothing asks “are you sure”; everything can be undone.</p></header>
+    <div class="panel">
+      <header><h3>Mentions waiting</h3><span class="src num" id="mod-count">4 waiting</span><span class="note"><kbd>a</kbd> approve <kbd>s</kbd> spam <kbd>d</kbd> bin <kbd>z</kbd> undo</span></header>
+      <div class="rows" id="mod">
+        <div class="row" data-id="1"><span class="pill info">Reply</span><div class="t"><a href="#admin">microbe-notes.example</a><div>“A clear account of the lysis decision. One question about figure 2…”</div></div><div class="act"><button class="btn" type="button" data-act="Approved">Approve</button><button class="btn" type="button" data-act="Marked as spam">Spam</button><button class="btn" type="button" data-act="Moved to the bin">Bin</button></div></div>
+        <div class="row" data-id="2"><span class="pill nodata">Link</span><div class="t"><a href="#admin">phage-directory.example</a><div>Links to “How a temperate phage decides” from a reading list</div></div><div class="act"><button class="btn" type="button" data-act="Approved">Approve</button><button class="btn" type="button" data-act="Marked as spam">Spam</button><button class="btn" type="button" data-act="Moved to the bin">Bin</button></div></div>
+        <div class="row" data-id="3"><span class="pill nodata">Like</span><div class="t"><a href="#admin">fieldnotes.example</a><div>Liked “Chronic wasting disease: what the surveillance data can say”</div></div><div class="act"><button class="btn" type="button" data-act="Approved">Approve</button><button class="btn" type="button" data-act="Marked as spam">Spam</button><button class="btn" type="button" data-act="Moved to the bin">Bin</button></div></div>
+        <div class="row" data-id="4"><span class="pill warn"><svg width="14" height="14"><use href="#i-warn"/></svg>Source gone</span><div class="t"><a href="#admin">cheap-pills.example</a><div>The page no longer links here</div></div><div class="act"><button class="btn" type="button" data-act="Approved">Approve</button><button class="btn" type="button" data-act="Marked as spam">Spam</button><button class="btn" type="button" data-act="Moved to the bin">Bin</button></div></div>
+      </div>
+      <div class="empty" id="mod-empty" hidden><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>All clear</span><span class="muted">No mentions are waiting. Approved, spam and the bin are one tab away.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ READING ============ -->
+  <section class="group" id="reading">
+    <header><h2>Public pages</h2><p>For dustinedwards.info: the same tokens in a reading context. Larger type, a 66-character measure, a serif that carries Greek, and nothing that moves while you read.</p></header>
+    <div class="panel">
+      <article class="read">
+        <span class="label">Writing</span>
+        <h3>How a temperate phage decides</h3>
+        <div class="meta">Updated 28 September 2026. Sample text.</div>
+        <p>A temperate phage such as λ does not always kill the cell it enters. In <i>Escherichia coli</i> the outcome turns on two proteins, CI and Cro, each of which shuts off the gene for the other. Small lytic phages such as φX174 have no such switch.</p>
+        <figure>
+          <div class="fig" role="img" aria-label="Line chart. Free phage stays near 1 per cell for 25 minutes, then rises to about 100 per cell by 40 minutes and levels off.">
+            <svg viewBox="0 0 560 220" aria-hidden="true">
+              <g stroke="var(--line)" stroke-width="1"><path d="M56 30H540M56 85H540M56 140H540" fill="none"/></g>
+              <path d="M56 20V195H540" fill="none" stroke="var(--line-strong)" stroke-width="1"/>
+              <path d="M56 140 L298 140 C340 140 350 34 420 31 L540 30" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+              <circle cx="540" cy="30" r="4" fill="var(--accent)"/>
+              <g fill="var(--muted)" font-family="Schibsted Grotesk, sans-serif" font-size="11">
+                <text x="48" y="34" text-anchor="end">100</text><text x="48" y="89" text-anchor="end">10</text><text x="48" y="144" text-anchor="end">1</text>
+                <text x="56" y="211" text-anchor="middle">0</text><text x="298" y="211" text-anchor="middle">25</text><text x="540" y="211" text-anchor="middle">50 min</text>
+                <text x="64" y="16">Free phage per infected cell (log scale)</text>
+              </g>
+              <path d="M298 195v-5M177 195v-5M419 195v-5" stroke="var(--line-strong)" fill="none"/>
+            </svg>
+          </div>
+          <figcaption><b>Figure 1.</b> A one-step growth curve. Nothing is released for about 25 minutes, then each cell bursts and releases roughly 100 phage. Drawn here by hand as a placeholder; real charts come from Enarratio.</figcaption>
+        </figure>
+        <div class="pub"><span class="yr num">2025</span><div><cite>Sample entry: Lysogeny in the field, a reading list</cite><div class="muted">Edwards D. A placeholder citation, not a real paper.</div><div class="links"><a href="#reading">PDF</a><a href="#reading">DOI</a><a href="#reading">Cite</a></div></div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ STATES ============ -->
+  <section class="group" id="states">
+    <header><h2>Empty, loading and error</h2><p>An empty area always says which kind of empty it is.</p></header>
+    <div class="cols">
+      <div class="panel"><header><h3>Nothing yet</h3></header><div class="empty"><b>No sites are watched yet</b><span class="muted">Add the first one and its checks start on the next pass.</span><button class="btn primary" type="button">Add a site</button></div></div>
+      <div class="panel"><header><h3>No match</h3></header><div class="empty"><b>No jobs match “Blocked”</b><span class="muted">14 jobs are hidden by this filter.</span><button class="btn" type="button">Clear filter</button></div></div>
+      <div class="panel"><header><h3>Loading, 1 to 10 seconds</h3></header><div class="skel" aria-busy="true" aria-label="Loading"><i></i><i></i><i></i></div></div>
+      <div class="panel"><header><h3>Could not load</h3></header><div class="body"><div class="banner" role="alert"><svg width="14" height="14" class="st warn"><use href="#i-warn"/></svg><span>Could not refresh. Showing data from 4 minutes ago.</span><button class="btn" type="button">Try again</button></div></div></div>
+    </div>
+  </section>
+
+  <!-- ============ SYSTEM SITE ============ -->
+  <section class="group" id="site">
+    <header><h2>Capsomer’s own site</h2><p>A dashboard of the system itself, inside the same shell as the Capsid Portal: the same left menu and the same top bar, so the two visibly belong together. The shell is the first component extracted, and this site is its first user. The token panels below are pages of the same site.</p></header>
+    <div class="shell">
+      <div class="shell-top">
+        <span class="shell-brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path fill="var(--accent)" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/><path fill="var(--surface)" d="M10 5.4 14 7.7v4.6L10 14.6 6 12.3V7.7z"/></svg>Capsomer <small class="mono muted">0.3.0</small></span>
+        <span class="shell-fresh muted">Tests ran <b>53 minutes ago</b></span>
+        <button class="btn" type="button">Commands <kbd>Ctrl K</kbd></button>
+        <button class="btn" type="button">Theme</button>
+        <button class="btn" type="button">Settings</button>
+      </div>
+      <nav class="shell-rail" aria-label="Capsomer site">
+        <a href="#site">Overview</a>
+        <a href="#site" aria-current="page">Components <span class="count num">31</span></a>
+        <a href="#site">Colour and contrast</a>
+        <a href="#site">Type and space</a>
+        <a href="#site">Motion</a>
+        <a href="#site">Tests <span class="count hot num">1</span></a>
+        <a href="#site">Defaults</a>
+        <a href="#site">Changes</a>
+        <span class="hint">Settings sits in the top bar after the theme switch, as in the Portal. The Portal adds Sign out after it; this public site has no sign-in.</span>
+      </nav>
+      <div class="shell-main">
+    <div class="panel">
+      <header><h3>Components and their tests</h3><span class="src">From CI run 412 on main, 30 Sep 2026 at 13:20</span></header>
+      <div class="scroll-x" role="region" aria-label="Components and their test results" tabindex="0">
+        <table class="list">
+          <thead><tr><th scope="col">Component</th><th scope="col">Built with</th><th scope="col">States shown</th><th scope="col">Keyboard</th><th scope="col">Accessibility</th><th scope="col">Since</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#site">Button</a></td><td>Native</td><td class="num">8 of 8</td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>4 passed</span></td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>No violations</span></td><td class="ver">0.1.0</td></tr>
+            <tr><td><a href="#site">Confirm dialog</a></td><td>Native dialog</td><td class="num">6 of 6</td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>7 passed</span></td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>No violations</span></td><td class="ver">0.1.0</td></tr>
+            <tr><td><a href="#site">Switch with reason</a></td><td>Own JavaScript</td><td class="num">7 of 7</td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>6 passed</span></td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>No violations</span></td><td class="ver">0.2.0</td></tr>
+            <tr><td><a href="#site">Combobox</a></td><td>Base UI</td><td class="num">7 of 8</td><td><span class="st crit"><svg width="14" height="14"><use href="#i-crit"/></svg>1 of 9 failed</span></td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>No violations</span></td><td class="ver">0.2.0</td></tr>
+            <tr><td><a href="#site">Draft compare</a></td><td>Own JavaScript</td><td class="num">5 of 5</td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>5 passed</span></td><td><span class="st warn"><svg width="14" height="14"><use href="#i-warn"/></svg>1 to review by hand</span></td><td class="ver">0.2.0</td></tr>
+            <tr><td><a href="#site">Usage meter</a></td><td>Native</td><td class="num">5 of 5</td><td><span class="st nodata"><svg width="14" height="14"><use href="#i-none"/></svg>Not interactive</span></td><td><span class="st ok"><svg width="14" height="14"><use href="#i-ok"/></svg>No violations</span></td><td class="ver">0.2.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="body"><div class="banner crit" role="note"><svg width="14" height="14" class="st crit"><use href="#i-crit"/></svg><span><b>Combobox:</b> “Escape closes the list and keeps the typed text” failed in Firefox. The pending state has no specimen yet.</span><a href="#site">Open the run</a></div></div>
+    </div>
+    <div class="panel">
+      <header><h3>Button, every state</h3><span class="src">Each component page opens with this row, in both themes</span></header>
+      <div class="body cols">
+        <div class="themed t-light"><div class="states">
+          <div><button class="btn" type="button" tabindex="-1">Refresh</button><span class="note">Default</span></div>
+          <div><button class="btn is-hover" type="button" tabindex="-1">Refresh</button><span class="note">Hover</span></div>
+          <div><button class="btn is-focus" type="button" tabindex="-1">Refresh</button><span class="note">Focus</span></div>
+          <div><button class="btn is-active" type="button" tabindex="-1">Refresh</button><span class="note">Pressed</span></div>
+          <div><button class="btn" type="button" tabindex="-1" aria-disabled="true">Refresh</button><span class="note">Disabled</span></div>
+          <div><button class="btn pending" type="button" tabindex="-1" aria-disabled="true"><svg width="14" height="14"><use href="#i-run"/></svg>Refreshing</button><span class="note">Pending</span></div>
+          <div><button class="btn primary" type="button" tabindex="-1">Save</button><span class="note">Primary</span></div>
+          <div><button class="btn danger" type="button" tabindex="-1">Revoke</button><span class="note">Danger</span></div>
+        </div></div>
+        <div class="themed t-dark"><div class="states">
+          <div><button class="btn" type="button" tabindex="-1">Refresh</button><span class="note">Default</span></div>
+          <div><button class="btn is-hover" type="button" tabindex="-1">Refresh</button><span class="note">Hover</span></div>
+          <div><button class="btn is-focus" type="button" tabindex="-1">Refresh</button><span class="note">Focus</span></div>
+          <div><button class="btn is-active" type="button" tabindex="-1">Refresh</button><span class="note">Pressed</span></div>
+          <div><button class="btn" type="button" tabindex="-1" aria-disabled="true">Refresh</button><span class="note">Disabled</span></div>
+          <div><button class="btn pending" type="button" tabindex="-1" aria-disabled="true"><svg width="14" height="14"><use href="#i-run"/></svg>Refreshing</button><span class="note">Pending</span></div>
+          <div><button class="btn primary" type="button" tabindex="-1">Save</button><span class="note">Primary</span></div>
+          <div><button class="btn danger" type="button" tabindex="-1">Revoke</button><span class="note">Danger</span></div>
+        </div></div>
+      </div>
+    </div>
+      </div>
+      <nav class="shell-tabs" aria-label="Capsomer site, phone">
+        <a href="#site">Overview</a><a href="#site" aria-current="page">Components</a><a href="#site">Tokens</a><a href="#site">Tests</a><a href="#site">More</a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ============ TOKENS ============ -->
+  <section class="group" id="tokens">
+    <header><h2>Tokens</h2><p>Colour is the generated palette, unchanged. Space, radius, type and motion are the proposed additions.</p></header>
+    <div class="panel"><header><h3>Colour and contrast</h3><span class="src">Both themes at once. Ratios are computed in your browser from the tokens</span></header>
+      <div class="body">
+        <div class="cols wide">
+          <div class="themed t-light" data-theme-name="Light"></div>
+          <div class="themed t-dark" data-theme-name="Dark"></div>
+        </div>
+        <p class="note">A tick means the pair reaches 4.5 to 1, the bar for text. “Not used” marks a pair no component puts together, so nothing checks it.</p>
+      </div>
+    </div>
+    <div class="cols">
+      <div class="panel"><header><h3>Type, app context</h3></header><div class="body scale">
+        <div><span class="mono muted">22 / 800</span><span style="font-size:22px;font-weight:800;letter-spacing:-0.025em">Page title</span></div>
+        <div><span class="mono muted">18 / 800</span><span style="font-size:18px;font-weight:800;letter-spacing:-0.02em">Panel title</span></div>
+        <div><span class="mono muted">15 / 400</span><span style="font-size:15px">Lead text</span></div>
+        <div><span class="mono muted">13 / 400</span><span>Body and rows</span></div>
+        <div><span class="mono muted">12 / 400</span><span style="font-size:12px" class="muted">Detail under a row title</span></div>
+        <div><span class="mono muted">11 / 600</span><span class="label">Column label</span></div>
+        <div><span class="mono muted">12 mono</span><span class="mono">job_f3a1ab7f8038</span></div>
+      </div></div>
+      <div class="panel"><header><h3>Space and radius</h3></header><div class="body">
+        <div class="sp"><div><i style="--w:2px"></i>2</div><div><i style="--w:4px"></i>4</div><div><i style="--w:8px"></i>8</div><div><i style="--w:12px"></i>12</div><div><i style="--w:16px"></i>16</div><div><i style="--w:24px"></i>24</div><div><i style="--w:32px"></i>32</div><div><i style="--w:48px"></i>48</div><div><i style="--w:64px"></i>64</div></div>
+        <div class="rad"><div style="border-radius:3px">3</div><div style="border-radius:6px">6</div><div style="border-radius:10px">10</div><div style="border-radius:999px">full</div></div>
+      </div></div>
+      <div class="panel"><header><h3>Motion</h3><button class="btn" type="button" id="play" style="margin-left:auto">Play</button></header><div class="body mot" id="mot">
+        <span class="mono muted">fast 100ms</span><div class="track"><i style="--d:100ms"></i></div>
+        <span class="mono muted">base 200ms</span><div class="track"><i style="--d:200ms"></i></div>
+        <span class="mono muted">slow 400ms</span><div class="track"><i style="--d:400ms"></i></div>
+        <p class="note" style="grid-column:1/-1">Feedback, a panel opening, a page-level change. With reduced motion on, the dots jump.</p>
+      </div></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var $ = function (s, el) { return (el || document).querySelector(s); };
+  var $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+
+  // theme
+  $$('input[name="theme"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      if (r.value) root.setAttribute('data-theme', r.value); else root.removeAttribute('data-theme');
+    });
+  });
+
+  // meters: widths are set through the CSSOM, as the apps' CSP (style-src 'self') requires
+  $$('.use').forEach(function (u) {
+    var bars = $$('.bar i', u);
+    bars[0].style.setProperty('--p', u.dataset.p + '%');
+    bars[1].style.setProperty('--v', u.dataset.v + '%');
+  });
+
+  // swatches and the contrast grid, once per theme, computed from the tokens themselves
+  var names = ['ground','surface','raised','sunken','line','line-strong','text','muted','dim','accent','accent-hover','accent-soft','accent-line','sel','ok','ok-soft','warn','warn-soft','crit','crit-soft','info','info-soft','nodata-soft'];
+  var fgs = ['text','muted','dim','accent','ok','warn','crit','info'], bgs = ['surface','ground','raised','sel'];
+  var unused = { 'dim/sel': 1, 'accent/sel': 1 }; // pairs the generator does not assert
+  function lum(hex) {
+    var c = [1, 3, 5].map(function (i) { var v = parseInt(hex.slice(i, i + 2), 16) / 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  }
+  function ratio(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  $$('.themed').forEach(function (box) {
+    var cs = getComputedStyle(box), tok = function (n) { return cs.getPropertyValue('--' + n).trim(); };
+    box.appendChild(el('h4', '', box.dataset.themeName));
+    var sw = el('div', 'sw');
+    names.forEach(function (n) {
+      var d = el('div'), i = el('i'), s = el('span', '', '--' + n);
+      i.style.setProperty('--c', 'var(--' + n + ')'); d.appendChild(i); d.appendChild(s); sw.appendChild(d);
+    });
+    box.appendChild(sw);
+    var scroller = el('div', 'scroll-x'); scroller.setAttribute('role', 'region'); scroller.setAttribute('tabindex', '0');
+    scroller.setAttribute('aria-label', box.dataset.themeName + ' theme contrast grid');
+    var t = el('table', 'cgrid'), hr = el('tr'); hr.appendChild(el('th', '', 'text on'));
+    bgs.forEach(function (b) { var th = el('th', '', '--' + b); th.scope = 'col'; hr.appendChild(th); });
+    var thead = el('thead'); thead.appendChild(hr); t.appendChild(thead);
+    var tb = el('tbody');
+    fgs.forEach(function (f) {
+      var tr = el('tr'), th = el('th'); th.scope = 'row';
+      var chip = el('span', 'chipc', '--' + f); chip.style.color = 'var(--' + f + ')'; th.appendChild(chip); tr.appendChild(th);
+      bgs.forEach(function (b) {
+        var r = ratio(tok(f), tok(b)), td;
+        if (unused[f + '/' + b]) td = el('td', 'unused num', r.toFixed(1) + '  not used');
+        else td = el('td', (r >= 4.5 ? 'pass' : 'fail') + ' num', (r >= 4.5 ? '✓ ' : '✗ ') + r.toFixed(1));
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); scroller.appendChild(t); box.appendChild(scroller);
+  });
+
+  // one status region; a message with an action stays until dismissed
+  var status = $('#status'), statusText = $('#status-text'), undoBtn = $('#status-undo'), undoFn = null;
+  function say(text, undo) {
+    statusText.textContent = text; undoFn = undo || null; undoBtn.hidden = !undo; status.hidden = false;
+  }
+  $('#status-x').addEventListener('click', function () { status.hidden = true; });
+  undoBtn.addEventListener('click', function () { if (undoFn) { var f = undoFn; undoFn = null; f(); } });
+  $$('[data-say]').forEach(function (b) { b.addEventListener('click', function () { say(b.dataset.say); status.scrollIntoView({ block: 'nearest' }); }); });
+
+  // chips
+  $$('.chip').forEach(function (c) { c.addEventListener('click', function () { c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); }); });
+
+  // switches
+  function word(id) { var el = $('#' + id); $('[data-for="' + id + '"]').textContent = el.checked ? 'On' : 'Off'; }
+  $('#sw-keys').addEventListener('change', function () { word('sw-keys'); });
+  var loop = $('#sw-loop'), reason = $('#reason'), reasonIn = $('#reason-in');
+  loop.addEventListener('click', function (e) {
+    e.preventDefault(); // the switch moves only when the reason is applied
+    $('#reason-q').textContent = 'Why turn the improve loop ' + (loop.checked ? 'on' : 'off') + '?';
+    reason.hidden = false; reasonIn.value = ''; reasonIn.focus();
+  });
+  function closeReason() { reason.hidden = true; loop.focus(); }
+  $('#reason-cancel').addEventListener('click', closeReason);
+  reason.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeReason(); });
+  reason.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!reasonIn.value.trim()) { reasonIn.setAttribute('aria-invalid', 'true'); reasonIn.focus(); return; }
+    reasonIn.removeAttribute('aria-invalid');
+    loop.checked = !loop.checked; word('sw-loop'); closeReason();
+    say('Improve loop turned ' + (loop.checked ? 'on' : 'off') + ': “' + reasonIn.value.trim() + '”.', function () {
+      loop.checked = !loop.checked; word('sw-loop'); say('Undone. The improve loop is ' + (loop.checked ? 'on' : 'off') + ' again.');
+    });
+  });
+
+  // confirm dialog: focus starts on Cancel; a click outside does not close it
+  var dlg = $('#confirm'), opener = $('#open-confirm');
+  opener.addEventListener('click', function () { if (dlg.showModal) dlg.showModal(); });
+  dlg.addEventListener('close', function () {
+    if (dlg.returnValue === 'revoke') say('Revoked foxhound-driver. Its job went back to the queue.');
+    opener.focus();
+  });
+
+  // moderation: act at once, then offer Undo
+  var mod = $('#mod'), last = null;
+  function count() {
+    var n = $$('.row', mod).filter(function (r) { return !r.hidden; }).length;
+    $('#mod-count').textContent = n + ' waiting'; $('#mod-empty').hidden = n !== 0;
+  }
+  function act(row, verb) {
+    var next = row.nextElementSibling || row.previousElementSibling;
+    row.hidden = true; last = row; count();
+    var who = $('.t a', row).textContent;
+    say(verb + ' the mention from ' + who + '.', function () { row.hidden = false; count(); $('.t a', row).focus(); say('Undone. The mention from ' + who + ' is waiting again.'); });
+    while (next && next.hidden) next = next.nextElementSibling;
+    if (next) $('.t a', next).focus();
+  }
+  mod.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]'); if (b) act(b.closest('.row'), b.dataset.act);
+  });
+  // sample rows and links go nowhere
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href^="#"]');
+    if (a && !a.closest('.onpage')) e.preventDefault();
+  });
+  mod.addEventListener('keydown', function (e) {
+    var row = e.target.closest('.row'); if (!row || e.target.tagName === 'BUTTON' || e.metaKey || e.ctrlKey || e.altKey) return;
+    var map = { a: 'Approved', s: 'Marked as spam', d: 'Moved to the bin' };
+    if (map[e.key]) { e.preventDefault(); act(row, map[e.key]); }
+    if (e.key === 'j' || e.key === 'k') {
+      var n = row; do { n = e.key === 'j' ? n.nextElementSibling : n.previousElementSibling; } while (n && n.hidden);
+      if (n) { e.preventDefault(); $('.t a', n).focus(); }
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'z' && !e.metaKey && !e.ctrlKey && undoFn && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) undoBtn.click();
+  });
+
+  // motion demo
+  $('#play').addEventListener('click', function () { $('#mot').classList.toggle('play'); });
+
+  // current section in the anchor bar
+  var links = $$('.onpage a');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (en) {
+        if (en.isIntersecting) links.forEach(function (a) {
+          if (a.getAttribute('href') === '#' + en.target.id) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+        });
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    $$('section.group').forEach(function (s) { io.observe(s); });
+  }
+})();
+</script>
+
+</body>
+</html>
