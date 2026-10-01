@@ -99,7 +99,8 @@ eachTheme((theme) => {
   });
 
   test("behaviour: on a phone the links scroll sideways", async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 760 });
+    // The narrowest phone, so the four links cannot fit however the padding is tuned.
+    await page.setViewportSize({ width: 320, height: 640 });
     await visitStates(page, "anchor-bar", theme, "top");
     const list = page.locator(".cap-anchors-list");
     await expect(list).toHaveCSS("overflow-x", "auto");

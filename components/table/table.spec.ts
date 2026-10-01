@@ -47,7 +47,7 @@ eachTheme((theme) => {
     await expectContrast(page, [
       { sel: "#t5 thead .cap-table-note", what: "a note under a column's name" },
       { sel: "#t5 .cap-table-aside", what: "small print beside a cell's text" },
-      { sel: "#s-drop .cap-table-foot a", what: "the link under the table" },
+      { sel: "[aria-labelledby='s-drop'] .cap-table-foot a", what: "the link under the table" },
     ]);
   });
 

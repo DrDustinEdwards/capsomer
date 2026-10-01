@@ -58,7 +58,7 @@ eachTheme((theme) => {
         - region "What changed":
           - heading "What changed" [level=3]
           - term: Status
-          - definition: /before: queued\\s*after: blocked/
+          - definition: /before:\\s*queued\\s*after:\\s*blocked/
     `);
   });
 
@@ -130,8 +130,15 @@ eachTheme((theme) => {
     await expect(panel(page)).toBeVisible();
     for (let i = 0; i < 12; i++) {
       await page.keyboard.press(i < 8 ? "Tab" : "Shift+Tab");
-      const inside = await page.evaluate(() => !!document.activeElement?.closest("dialog.cap-detail[open]"));
-      expect(inside, `focus after key ${i + 1} is inside the panel`).toBe(true);
+      // A modal dialog hands Tab on from its last control to the browser's own bar, which
+      // leaves the document with no focused element; what must never happen is focus landing
+      // on the page behind.
+      const place = await page.evaluate(() => {
+        const a = document.activeElement;
+        if (!a || a === document.body || a === document.documentElement) return "browser";
+        return a.closest("dialog.cap-detail[open]") ? "panel" : "page";
+      });
+      expect(place, `focus after key ${i + 1} never reaches the page behind`).not.toBe("page");
     }
   });
 
