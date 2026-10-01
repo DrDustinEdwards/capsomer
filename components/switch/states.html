@@ -40,6 +40,12 @@
           <span class="cap-btn-reason" id="sw-disabled-why">Add an email address in Settings first.</span>
         </div>
       </section>
+
+      <section class="cap-specimen" aria-labelledby="s-busy">
+        <h2 id="s-busy">Pending: the change is being sent</h2>
+        <p class="cap-muted">The switch has not moved yet. It is not disabled, so focus stays.</p>
+        <label class="cap-switch" data-cap="switch" id="sw-busy"><input type="checkbox" role="switch" aria-busy="true" /> Nightly export<span class="cap-switch-state" aria-hidden="true">Off</span></label>
+      </section>
     </main>
     <script type="module">
       import { enhance } from "./switch.ts";

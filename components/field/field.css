@@ -48,6 +48,8 @@
     align-items: flex-start;
     gap: 6px;
     margin: 0;
+    /* A refusal from the server can be long and unbroken; the Portal's .err sits in a row that wraps. */
+    overflow-wrap: anywhere;
     color: var(--crit);
     font-size: var(--fs-detail);
     font-weight: 500;

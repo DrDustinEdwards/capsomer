@@ -13,4 +13,10 @@
       white-space: normal;
     }
   }
+
+  /* The UTC part of an exact time stays whole on a line: "(13:02 UTC)" is not broken in
+     two. The Portal's `.when .faint { white-space: nowrap }`. */
+  .cap-time-utc {
+    white-space: nowrap;
+  }
 }

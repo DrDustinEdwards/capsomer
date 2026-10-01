@@ -18,6 +18,7 @@ eachTheme((theme) => {
       { sel: "#sw-hover-off input", what: "a hovered track's edge, off", part: "border" },
       { sel: "#sw-hover-on input", what: "a hovered track's edge, on", part: "border" },
       { sel: "#sw-disabled-why", what: "the reason beside a disabled switch" },
+      { sel: "#sw-busy input", what: "the pending switch's outline", part: "outline" },
     ]);
   });
 
@@ -59,6 +60,16 @@ eachTheme((theme) => {
     await expect(sw).toBeChecked();
     await expect(page.locator("#sw-off .cap-switch-state")).toHaveText("On");
     await expect(sw).toHaveAccessibleName("Compact rows");
+  });
+
+  test("behaviour: a pending switch says so, is not disabled, and keeps its name", async ({ page }) => {
+    await visitStates(page, "switch", theme);
+    const sw = page.getByRole("switch", { name: "Nightly export" });
+    await expect(sw).toHaveAttribute("aria-busy", "true");
+    await expect(sw).toBeEnabled();
+    await sw.focus();
+    await expect(sw).toBeFocused();
+    await expect(sw).toHaveAccessibleName("Nightly export");
   });
 
   test("behaviour: a disabled switch does not move", async ({ page }) => {
