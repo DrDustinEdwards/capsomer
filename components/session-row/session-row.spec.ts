@@ -81,6 +81,15 @@ eachTheme((theme) => {
       await expect(page.locator(".cap-pill", { hasText: word }).first()).toBeVisible();
     }
   });
+
+  test("behaviour: only a failed session is marked critical, and it still says Failed in words", async ({ page }) => {
+    await visitStates(page, "session-row", theme);
+    const critical = page.locator(".cap-session[data-tone='crit']");
+    const failed = page.locator(".cap-session", { has: page.locator(".cap-pill", { hasText: "Failed" }) });
+    await expect(critical).not.toHaveCount(0);
+    await expect(critical).toHaveCount(await failed.count());
+    await expect(critical.first().locator(".cap-pill")).toContainText("Failed");
+  });
 });
 
 test("behaviour: order puts waiting on you first, the longest wait at the top", () => {
