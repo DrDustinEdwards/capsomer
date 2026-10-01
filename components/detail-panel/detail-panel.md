@@ -4,9 +4,9 @@ title: Detail panel
 summary: A record opened from its row, in a panel from the right.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [closed with its row links, open with a command to copy]
+states: [closed with its row links, open with a command to copy and a before and after list]
 added: 0.1.0
-source: Capsid Portal, dashboard/src/app/Drawer.tsx and styles.css (.drawer, .kv, .cmd)
+source: Capsid Portal, dashboard/src/app/Drawer.tsx and styles.css (.drawer, .kv, .kv.diff, .cmd), as of capsid master 2026-10-01
 replaces:
   - 'className=\{?`?"?drawer'
   - 'class="drawer'
@@ -14,6 +14,8 @@ replaces:
 ---
 
 # Detail panel
+
+**Provenance.** MIXED, against the Portal's `app/Drawer.tsx` and `styles.css` (`.drawer`, `.kv`, `.kv.diff`, `.cmd`) as of capsid master on 2026-10-01. Extracted: the CSS (width, the slide in and out with the fading backdrop, the record's columns, the command block, the before and after list) and the focus rules (Close first, back to the row, or to the page when the row has gone). Rewritten: the markup and behaviour are framework-free and generic. The Portal's panel is driven by its router (an address `/<view>/<type>/<id>` opens it, its feed supplies the content, a row inside it opens another record in its place); here `data-cap-history` is the opt-in and the app fills the content. The Portal's Close is an icon with an aria-label; here it is the word, so the name contains the visible text.
 
 The whole of one record (a job, a site, an agent, a mention) opened from its row without leaving the list. A native `dialog`, opened with `showModal()`, that sits on the right of the window.
 
@@ -33,8 +35,10 @@ When the record is a place someone links to or works in for a while (a draft, a 
 - **Controls sit together; the destructive one stands apart** at the far end, and opens the confirm dialog.
 - **Esc closes it, and so do Close and a click on the backdrop.** Focus returns to the row's link.
 - **Back closes it when the app asked for a history entry** (`data-cap-history`, or `history: true`), which puts `#detail-<id>` in the address; closing it any other way takes that entry back, so Back then goes where it went before.
-- **620 px wide, full width on a phone.** The record's two columns stack when the panel is narrower than 380 px (a container query).
-- Slides in from the right under `prefers-reduced-motion: no-preference` only.
+- **A before and after list for a change** (`cap-detail-diff` in a record's `dd`): the old value struck through above the new, each led by the words "before" and "after" for a screen reader, so the tint is never the only cue. Where the person typed a reason, show it above, under its own heading.
+- **560 px wide, full width on a phone.** The record's two columns stack when the panel is narrower than 380 px (a container query).
+- Slides in from the right on open and out on close, with its backdrop fading, under `prefers-reduced-motion: no-preference` only; under reduced motion it appears and goes.
+- **A record linked from inside the panel** is a real link or button in the panel, reachable by Tab and Enter. The Portal replaces the open panel with the linked record through its router; here the app does that by closing this panel and opening the other, with `data-cap-return` on the panel naming where focus goes if the first row is gone.
 
 ## Keyboard
 

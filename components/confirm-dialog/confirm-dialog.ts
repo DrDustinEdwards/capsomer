@@ -1,9 +1,10 @@
 // The confirm dialog: preview, then perform, for an action that cannot be undone. A native
-// <dialog> opened with showModal(). Focus starts on Cancel; a click outside does nothing;
-// Esc closes unless the action is running; a failure stays inside the dialog with Try
-// again; focus goes back to the control that opened it, or to a fallback when that
-// control is gone. No framework; the React wrapper and the other overlays reuse the
-// focus helpers exported here.
+// <dialog> opened with showModal(). Focus starts on Cancel; a click outside does nothing
+// (so a typed reason is never lost that way); Esc closes unless the action is running; a
+// failure stays inside the dialog with Try again; an action that needs a reason asks for
+// it in the dialog and says so when it is empty; focus goes back to the control that
+// opened it, or to a fallback when that control is gone. No framework; the React wrapper
+// and the other overlays reuse the focus helpers exported here.
 
 // ---------------------------------------------------------------------------------------
 // Focus helpers shared by every Capsomer overlay (detail panel, command menu, shortcut sheet).
@@ -15,12 +16,14 @@ export function rememberOpener(dialog: HTMLDialogElement, opener: Element | null
   openers.set(dialog, opener);
 }
 
-// Where focus goes when the opener has gone: the dialog's data-cap-return selector, the
-// given fallback, then the page's main region.
+// Where focus goes when the opener has gone (a revoked agent loses its Revoke button): the
+// dialog's data-cap-return selector, the given fallback, the Close button of a detail panel
+// that is still open behind this dialog, then the page's main region.
 function fallbackFor(dialog: HTMLDialogElement, fallback?: HTMLElement | null): HTMLElement[] {
   const sel = dialog.dataset.capReturn;
   const named = sel ? document.querySelector<HTMLElement>(sel) : null;
-  return [named, fallback ?? null, document.querySelector<HTMLElement>("main")].filter((x): x is HTMLElement => !!x);
+  const panel = document.querySelector<HTMLElement>("dialog.cap-detail[open] [data-cap-part='close']");
+  return [named, fallback ?? null, panel, document.querySelector<HTMLElement>("main")].filter((x): x is HTMLElement => !!x);
 }
 
 // Hands focus back after a dialog closes. After the next frame, so whatever the action
@@ -73,7 +76,8 @@ export function uid(prefix: string): string {
 // ---------------------------------------------------------------------------------------
 // The confirm dialog itself.
 
-type Perform = () => Promise<void>;
+// Gets the reason the person typed, "" when the dialog asks for none.
+type Perform = (reason: string) => Promise<void>;
 const performs = new WeakMap<HTMLDialogElement, Perform>();
 const performedFlags = new WeakSet<HTMLDialogElement>();
 
@@ -81,6 +85,30 @@ const part = <T extends HTMLElement = HTMLElement>(dialog: HTMLDialogElement, na
 
 export function isBusy(dialog: HTMLDialogElement): boolean {
   return dialog.getAttribute("aria-busy") === "true";
+}
+
+// The reason is read from the field itself, not from a copy of its value, so text the
+// browser filled in without an input event still counts.
+export function reasonOf(dialog: HTMLDialogElement): string {
+  return part<HTMLTextAreaElement>(dialog, "reason")?.value.trim() ?? "";
+}
+
+// Marks the reason field as the thing in error, described by the error box beside it, or
+// clears the mark.
+function markReason(dialog: HTMLDialogElement, invalid: boolean): void {
+  const field = part<HTMLTextAreaElement>(dialog, "reason");
+  if (!field) return;
+  const note = part(dialog, "reason-note")?.id;
+  const errorId = part(dialog, "error")?.id;
+  if (invalid) {
+    field.setAttribute("aria-invalid", "true");
+    const ids = [errorId, note].filter(Boolean).join(" ");
+    if (ids) field.setAttribute("aria-describedby", ids);
+  } else {
+    field.removeAttribute("aria-invalid");
+    if (note) field.setAttribute("aria-describedby", note);
+    else field.removeAttribute("aria-describedby");
+  }
 }
 
 // The perform button stays named for the action. While the guard word is not typed it is
@@ -110,18 +138,21 @@ export function setBusy(dialog: HTMLDialogElement, on: boolean): void {
   const perform = part<HTMLButtonElement>(dialog, "perform");
   const cancel = part<HTMLButtonElement>(dialog, "cancel");
   const input = part<HTMLInputElement>(dialog, "typed");
+  const reason = part<HTMLTextAreaElement>(dialog, "reason");
   if (on) {
     dialog.setAttribute("aria-busy", "true");
     perform?.setAttribute("aria-busy", "true");
     perform?.setAttribute("aria-disabled", "true");
     cancel?.setAttribute("aria-disabled", "true");
     if (input) input.readOnly = true;
+    if (reason) reason.readOnly = true;
   } else {
     dialog.removeAttribute("aria-busy");
     perform?.removeAttribute("aria-busy");
     perform?.removeAttribute("aria-disabled");
     cancel?.removeAttribute("aria-disabled");
     if (input) input.readOnly = false;
+    if (reason) reason.readOnly = false;
     syncGuard(dialog);
   }
 }
@@ -144,8 +175,25 @@ export function showError(dialog: HTMLDialogElement, message: string): void {
   }
 }
 
+// The reason is empty: say so beside the field, mark the field invalid, and put focus in it.
+// Nothing was tried, so the perform button keeps its name and no "Not done" is shown.
+export function showReasonError(dialog: HTMLDialogElement): void {
+  const box = part(dialog, "error");
+  if (box) {
+    const lead = document.createElement("p");
+    lead.className = "cap-dialog-error-lead";
+    lead.append(glyph(), document.createTextNode("A reason is required."));
+    const why = document.createElement("p");
+    why.textContent = "Type what you are doing and why, then try again. Nothing was changed.";
+    box.replaceChildren(lead, why);
+  }
+  markReason(dialog, true);
+  part<HTMLTextAreaElement>(dialog, "reason")?.focus();
+}
+
 export function clearError(dialog: HTMLDialogElement): void {
   part(dialog, "error")?.replaceChildren();
+  markReason(dialog, false);
   const perform = part<HTMLButtonElement>(dialog, "perform");
   if (perform?.dataset.capLabel) {
     perform.textContent = perform.dataset.capLabel;
@@ -197,6 +245,7 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
   const cancel = part<HTMLButtonElement>(dialog, "cancel");
   const perform = part<HTMLButtonElement>(dialog, "perform");
   const input = part<HTMLInputElement>(dialog, "typed");
+  const reason = part<HTMLTextAreaElement>(dialog, "reason");
   syncGuard(dialog);
 
   const run = async (e: Event) => {
@@ -204,6 +253,13 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
     if (perform?.getAttribute("aria-disabled") === "true") {
       e.preventDefault();
       input?.focus();
+      return;
+    }
+    // A required reason is never a silently disabled button: the press says what is missing.
+    if (reason && !reasonOf(dialog)) {
+      e.preventDefault();
+      clearError(dialog);
+      showReasonError(dialog);
       return;
     }
     const fn = performs.get(dialog);
@@ -216,7 +272,7 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
     clearError(dialog);
     setBusy(dialog, true);
     try {
-      await fn();
+      await fn(reasonOf(dialog));
       performedFlags.add(dialog);
       setBusy(dialog, false);
       dialog.close("performed");
@@ -242,6 +298,11 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
       e.preventDefault();
       if (input && wordMatches(input.value, input.dataset.capWord)) perform?.click();
     }
+    // Ctrl or Cmd with Enter performs from the reason field; a plain Enter is a new line.
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && e.target === reason) {
+      e.preventDefault();
+      perform?.click();
+    }
   };
   const onInput = () => syncGuard(dialog);
   // A click on the backdrop does not close the dialog (it is not light-dismiss), and it must not
@@ -251,6 +312,7 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
   };
   const onClose = () => {
     if (input) input.value = "";
+    if (reason) reason.value = "";
     clearError(dialog);
     returnFocus(dialog, fallback);
   };
@@ -285,10 +347,13 @@ export interface ConfirmOptions {
   action: string;
   // For what cannot be recovered: the short word to type ("revoke").
   typeToConfirm?: string;
-  perform: () => Promise<void>;
+  // Gets the reason when the dialog asks for one.
+  perform: (reason: string) => Promise<void>;
   cancelLabel?: string;
   // Where focus goes when the opener has gone. The page's main region by default.
   returnTo?: HTMLElement | null;
+  // Asks for a reason, required, before the action: the audit row carries it with the change.
+  reason?: { label?: string; note?: string };
 }
 
 // Builds the dialog's markup, exactly the contract on the doc page.
@@ -324,6 +389,28 @@ export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
   }
   dialog.append(h, body);
 
+  if (o.reason) {
+    const wrap = document.createElement("div");
+    wrap.className = "cap-dialog-reason";
+    const label = document.createElement("label");
+    label.htmlFor = `${id}-reason`;
+    label.textContent = o.reason.label ?? "Reason (required)";
+    const area = document.createElement("textarea");
+    area.className = "cap-input";
+    area.id = `${id}-reason`;
+    area.rows = 3;
+    area.setAttribute("aria-required", "true");
+    area.setAttribute("aria-describedby", `${id}-reason-note`);
+    area.dataset.capPart = "reason";
+    const note = document.createElement("p");
+    note.className = "cap-dialog-note";
+    note.id = `${id}-reason-note`;
+    note.dataset.capPart = "reason-note";
+    note.textContent = o.reason.note ?? "Recorded with the change.";
+    wrap.append(label, area, note);
+    dialog.append(wrap);
+  }
+
   if (o.typeToConfirm) {
     const wrap = document.createElement("div");
     wrap.className = "cap-dialog-typed";
@@ -349,6 +436,7 @@ export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
   const error = document.createElement("div");
   error.className = "cap-dialog-error";
   error.setAttribute("role", "alert");
+  error.id = `${id}-error`;
   error.dataset.capPart = "error";
 
   const actions = document.createElement("div");

@@ -28,7 +28,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["closed", "open", "filtered", "nomatch", "active"]) {
+  for (const id of ["closed", "open", "filtered", "stops", "nomatch", "active"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "command-menu", theme, id);
       await expectNoAxeViolations(page);
@@ -49,6 +49,8 @@ eachTheme((theme) => {
       { sel: ".cap-cmd-input", what: "typed text" },
       { sel: ".cap-cmd-foot", what: "the key hints" },
     ]);
+    await visitStates(page, "command-menu", theme, "stops");
+    await expectContrast(page, [{ sel: ".cap-cmd-hint", what: "a stop's hint" }]);
     await visitStates(page, "command-menu", theme, "nomatch");
     await expectContrast(page, [{ sel: ".cap-cmd-empty", what: "the no-match line" }]);
   });
@@ -63,6 +65,9 @@ eachTheme((theme) => {
             - option /Overview\\s*,\\s*shortcut g o/ [selected]
             - option /Sites/
             - option /Queue/
+          - group "Stop":
+            - option /Pause capsomer\\s*,\\s*asks a reason/
+            - option /Revoke foxhound-driver\\s*,\\s*preview first/
           - group "Actions":
             - option /Refresh now\\s*,\\s*shortcut r/
           - group "Copy":
@@ -134,6 +139,33 @@ eachTheme((theme) => {
     await expect(menu(page).getByRole("status")).toHaveText("No commands match “zebra”");
     await expect(box(page)).toHaveAttribute("aria-expanded", "false");
     await expect(box(page)).not.toHaveAttribute("aria-activedescendant", /.+/);
+  });
+
+  test("keyboard: typing stop, or pause, lists the stops, each saying what it asks, and running one only opens its control", async ({ page }) => {
+    await openFromButton(page, theme);
+    await page.keyboard.type("stop");
+    await expect(shownOptions(page)).toHaveCount(2);
+    await expect(page.getByRole("group", { name: "Stop" })).toBeVisible();
+    await expect(page.getByRole("option", { name: /Pause capsomer\s*,\s*asks a reason/ })).toBeVisible();
+    await expect(page.getByRole("option", { name: /Revoke foxhound-driver\s*,\s*preview first/ })).toBeVisible();
+    // No command stops everything.
+    await box(page).fill("all");
+    await expect(page.getByRole("option", { name: /Stop|Pause|Revoke/ })).toHaveCount(0);
+    await box(page).fill("pause");
+    await expect(shownOptions(page)).toHaveCount(2);
+    await box(page).fill("pause cap");
+    await expect(shownOptions(page)).toHaveCount(0);
+    await box(page).fill("revoke");
+    expect(await activeName(page)).toBe("Revoke foxhound-driver");
+    await page.keyboard.press("Enter");
+    await expect(menu(page)).toBeHidden();
+    await expect(page.getByRole("status")).toHaveText("Ran: Revoke foxhound-driver opens its preview");
+  });
+
+  test("behaviour: the stops specimen shows what typing stop finds", async ({ page }) => {
+    await visitStates(page, "command-menu", theme, "stops");
+    await expect(box(page)).toHaveValue("stop");
+    await expect(shownOptions(page)).toHaveCount(2);
   });
 
   test("behaviour: a click on an option runs it", async ({ page }) => {
