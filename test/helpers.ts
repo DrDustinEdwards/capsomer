@@ -37,7 +37,7 @@ export async function expectNoAxeViolations(page: Page, include?: string): Promi
   let builder = new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]);
   if (include) builder = builder.include(include);
   const { violations } = await builder.analyze();
-  const found = violations.map((v) => `${v.id} (${v.impact}): ${v.help}. First at ${v.nodes[0]?.target.join(" ")}`);
+  const found = violations.map((v) => `${v.id} (${v.impact}): ${v.help}. First at ${v.nodes[0]?.target.join(" ")} (${v.nodes.length} nodes). ${(v.nodes[0]?.failureSummary ?? "").replace(/\s+/g, " ").trim()}`);
   expect(found, "axe violations").toEqual([]);
 }
 
