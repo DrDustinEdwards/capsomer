@@ -1,0 +1,3 @@
+# LF everywhere: tokens/colour.css must stay byte-identical to capsid's tokens.css on every checkout.
+* text=auto eol=lf
+*.woff2 binary
