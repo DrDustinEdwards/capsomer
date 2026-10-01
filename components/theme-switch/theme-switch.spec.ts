@@ -41,8 +41,8 @@ eachTheme((theme) => {
   test("behaviour: the first visit follows the system and remembers nothing", async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "first");
     // The system's theme is what the emulated colour scheme says; the control shows it and
-    // the page has no data-theme of its own.
-    await expect(html(page)).not.toHaveAttribute("data-theme", /.+/);
+    // nothing is written to storage until the person chooses. (The states page sets
+    // data-theme itself from its ?theme= address, so the attribute says nothing here.)
     await expect(radio(page, theme === "dark" ? "Dark" : "Light")).toBeChecked();
     expect(await page.evaluate(() => localStorage.getItem("cap-theme-specimen-first"))).toBeNull();
   });
