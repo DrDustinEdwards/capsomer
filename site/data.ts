@@ -76,7 +76,36 @@ export interface Meta {
 
 const data = import.meta.glob("./data/*.json", { import: "default", eager: true }) as Record<string, unknown>;
 export const PALETTE = (data["./data/palette.json"] ?? null) as Palette | null;
-export const RESULTS = (data["./data/results.json"] ?? { available: false, ran: null, components: {}, totals: { passed: 0, failed: 0, skipped: 0 } }) as Results;
+// The results this build was made with. The deployed site then reads the last run on main
+// from the repo's results branch, which CI writes after every run (see .github/workflows),
+// so the site never waits for a redeploy to show a new result.
+export const RESULTS_BUILD = (data["./data/results.json"] ?? { available: false, ran: null, components: {}, totals: { passed: 0, failed: 0, skipped: 0 } }) as Results;
+export const RESULTS_URL = "https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json";
+
+export async function fetchResults(): Promise<Results | null> {
+  try {
+    const r = await fetch(RESULTS_URL, { cache: "no-cache" });
+    if (!r.ok) return null;
+    const j = (await r.json()) as Results;
+    return j && typeof j === "object" && j.components ? j : null;
+  } catch {
+    return null;
+  }
+}
+
+export interface FamilyPair extends Pair {
+  family: string;
+  scheme: "light" | "dark";
+  isDefault: boolean;
+  fgHex: string;
+  bgHex: string;
+}
+export interface Families {
+  families: Record<string, { seed: string; anchor: string | null; defaultTheme: "light" | "dark"; note: string }>;
+  pairs: FamilyPair[];
+  scales?: Record<string, { light: string[]; dark: string[] }>;
+}
+export const FAMILIES = (data["./data/families.json"] ?? null) as Families | null;
 export const META = (data["./data/meta.json"] ?? { version: "0.1.0", commit: null, branch: null, built: "", runUrl: null }) as Meta;
 
 type TokenGroup = Record<string, { $value: unknown; $description?: string }>;

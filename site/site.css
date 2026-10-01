@@ -294,3 +294,168 @@
 .site-theme .cap-table-wrap {
   overflow-x: auto;
 }
+
+/* The colour families. */
+.site-family {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+
+  & h3 {
+    margin: 0;
+    font-size: var(--fs-body);
+  }
+  & p {
+    margin: 0;
+  }
+}
+.site-steps-row {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-m);
+  min-width: 0;
+}
+.site-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(56px, 1fr));
+  gap: var(--space-2);
+  overflow-x: auto;
+
+  & li {
+    display: grid;
+    gap: 2px;
+    font-size: 11px;
+  }
+  & i {
+    display: block;
+    height: 32px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+  }
+}
+
+/* Plain fallbacks for the component classes the site uses, so the site reads well before
+   those components land. They sit in cap.base, below cap.components, so the real
+   components win as soon as they are part of the build. */
+@layer cap.base {
+  .cap-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    min-width: 0;
+  }
+  .cap-panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: var(--raised);
+    border-radius: var(--radius-l) var(--radius-l) 0 0;
+
+    & h2 {
+      margin: 0;
+      font-size: var(--fs-body);
+      font-weight: 600;
+    }
+  }
+  .cap-panel-src {
+    margin-left: auto;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+  .cap-panel-body {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    min-width: 0;
+  }
+  .cap-table-wrap {
+    overflow-x: auto;
+    min-width: 0;
+  }
+  .cap-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    & th {
+      text-align: left;
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    & tbody th {
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: var(--fs-body);
+      color: var(--text);
+    }
+    & th,
+    & td {
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    & tr:last-child > * {
+      border-bottom: 0;
+    }
+    & td[data-num] {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+  .cap-status {
+    font-weight: 600;
+    font-size: var(--fs-detail);
+    white-space: nowrap;
+
+    &[data-tone="ok"] {
+      color: var(--ok);
+    }
+    &[data-tone="ok"]::before {
+      content: "\2713\00a0";
+    }
+    &[data-tone="crit"] {
+      color: var(--crit);
+    }
+    &[data-tone="crit"]::before {
+      content: "\2717\00a0";
+    }
+    &[data-tone="nodata"] {
+      color: var(--muted);
+    }
+  }
+  .cap-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: var(--control-h);
+    padding: 0 11px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--raised);
+    color: var(--text);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cap-banner {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--crit);
+    border-radius: var(--radius-m);
+    background: var(--crit-soft);
+  }
+  .cap-empty {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+    padding: var(--space-4) 0;
+  }
+}

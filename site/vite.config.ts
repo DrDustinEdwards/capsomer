@@ -5,8 +5,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 // One build for the site and every component's states page. The root is the repo, so a
-// states page sits at /components/<name>/states.html beside its component. GitHub Pages
-// serves the project at /capsomer/; CAPSOMER_BASE overrides that for another host.
+// states page sits at /components/<name>/states.html beside its component. The site is
+// served at the root of https://capsomer.dustinedwards.info (rulings.md, rule 16), by a
+// static Cloudflare Worker; CAPSOMER_BASE overrides the base for another host.
 const root = fileURLToPath(new URL("..", import.meta.url));
 const states = Object.fromEntries(
   readdirSync(resolve(root, "components"), { withFileTypes: true })
@@ -16,7 +17,8 @@ const states = Object.fromEntries(
 
 export default defineConfig({
   root,
-  base: process.env.CAPSOMER_BASE ?? "/capsomer/",
+  base: process.env.CAPSOMER_BASE ?? "/",
+  publicDir: resolve(root, "site/public"),
   plugins: [
     react(),
     // The site's page is site/index.html in the repo and the root of the published site.
@@ -31,6 +33,9 @@ export default defineConfig({
   ],
   build: {
     outDir: resolve(root, "site-dist"),
+    // Every asset a file, never a data: URL: the site's CSP allows fonts and images from
+    // its own origin only.
+    assetsInlineLimit: 0,
     emptyOutDir: true,
     rollupOptions: { input: { site: resolve(root, "site/index.html"), ...states } },
   },
