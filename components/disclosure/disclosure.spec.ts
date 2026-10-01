@@ -64,6 +64,16 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: /^Dependency updates\s*,\s*5$/ })).toHaveAttribute("aria-expanded", "true");
   });
 
+  test("accessibility: a group row in a heading is found by heading and still toggles by key", async ({ page }) => {
+    await visitStates(page, "disclosure", theme);
+    await expect(page.getByRole("heading", { name: /^Finished jobs\s*,\s*12$/, level: 3 })).toBeVisible();
+    const btn = page.getByRole("button", { name: /^Finished jobs\s*,\s*12$/ });
+    await btn.focus();
+    await page.keyboard.press("Enter");
+    await expect(btn).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator("#queue-done-rows")).toBeVisible();
+  });
+
   test("keyboard: Enter on a summary opens and closes its section", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
     const details = page.locator("details", { hasText: "Why is foxhound.app marked degraded?" });

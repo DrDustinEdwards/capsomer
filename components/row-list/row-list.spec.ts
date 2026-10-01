@@ -106,6 +106,13 @@ eachTheme((theme) => {
     await expect(page.getByRole("link", { name: "foxhound.app is not answering" })).toBeFocused();
   });
 
+  test("keyboard: k from outside the list starts at its last row", async ({ page }) => {
+    await visitStates(page, "row-list", theme);
+    await page.locator("h1").click();
+    await page.keyboard.press("k");
+    await expect(page.getByRole("link", { name: "4 notices" })).toBeFocused();
+  });
+
   test("keyboard: j stops at the last row", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await page.getByRole("link", { name: "germomics: no backup reported" }).focus();
@@ -203,6 +210,33 @@ eachTheme((theme) => {
     const edge = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el, "::before").content);
     expect(await edge("#list-crit .cap-row")).toBe('""');
     expect(await edge("#list-focus .cap-row >> nth=0")).toBe("none");
+  });
+
+  test("accessibility: a row that opens in place is a button with aria-expanded and what it controls", async ({ page }) => {
+    await visitStates(page, "row-list", theme);
+    const button = page.getByRole("button", { name: "3 pull requests await the seat" });
+    await expect(button).toHaveAttribute("aria-expanded", "false");
+    await expect(button).toHaveAttribute("aria-controls", "g1-kids");
+    await expect(button).toHaveAccessibleDescription(/Warning/);
+    // The chevron is decoration: it is not in the button's name.
+    await expect(page.locator("#list-group .cap-row-chevron")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  test("keyboard: j and k reach a group row's button like any row's link", async ({ page }) => {
+    await visitStates(page, "row-list", theme);
+    await page.getByRole("button", { name: "3 pull requests await the seat" }).focus();
+    await expect(page.locator("#list-group .cap-row")).toHaveCSS("outline-style", "solid");
+    await page.keyboard.press("j");
+    await expect(page.getByRole("button", { name: "3 pull requests await the seat" })).toBeFocused();
+  });
+
+  test("behaviour: at phone width a long title wraps instead of being cut", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 640 });
+    await visitStates(page, "row-list", theme, "phone");
+    const link = page.locator("#phone-long-title");
+    const cut = await link.evaluate((el) => el.scrollWidth > el.clientWidth);
+    expect(cut).toBe(false);
+    await expect(link).toHaveCSS("white-space", "normal");
   });
 
   test("behaviour: at phone width the status sits above the title", async ({ page }) => {

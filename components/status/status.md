@@ -4,7 +4,7 @@ title: Status
 summary: A status as a shape, a word and a colour together, as a word or as a pill.
 parts: [css, react]
 tool: native
-states: [critical, warning, notice, ok, running, no data, as a word, as a pill, on a selected row, no data with its reason]
+states: [critical, warning, notice, ok, running, no data, as a word, as a pill, on a selected row, no data with its reason, no data in a table cell]
 added: 0.1.0
 source: Capsomer mockup (design/mockup.html, the status symbols); the Capsid Portal's state chips
 replaces:
@@ -32,6 +32,7 @@ How a thing is: critical, warning, notice, ok, running, or no data. Always a gly
 - **Shape, word and colour together; never colour alone** (WCAG 1.4.1). Octagon critical, triangle warning, square notice, filled circle with a tick ok, dashed circle no data, an arc running. Glyphs are `aria-hidden`: the word is the accessible text.
 - **Four levels: critical, warning, notice, ok** (patterns.md). Running uses the notice tone with the arc glyph; it is a state, not a level.
 - **No data is a state with a reason, never a zero.** Put the reason after the word, as `.cap-status-reason`.
+- **In a table cell, no data says two words** (`.cap-status` with the reason in a `.cap-sr-only` span after a colon, and the same text in `title` for the pointer): a sentence does not fit a 34 px row, and the full reason is in the row's detail (Portal design D18). The word and the glyph are still there, so the cell is never a blank or a zero.
 - **A pill keeps its own tint on a selected row**, so its word keeps its contrast on `--sel`.
 - **The no data pill's word is `--muted`, not `--nodata`**: on its own tint the lighter grey would fall under 4.5:1.
 - Marks inside a filled glyph are cut out (evenodd) rather than painted in `--surface`, so the glyph reads on a tint.
@@ -74,7 +75,11 @@ The six glyphs, each `viewBox="0 0 16 16"`, `aria-hidden="true"`:
 | No data | `<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/>` |
 | Running | `<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2"/>` |
 
-In React, `import { Status, Pill, Glyph } from "capsomer/react/status"`: `<Status tone="nodata" reason="The uptime checker has not reported since 09:00.">No data</Status>`, `<Pill tone="info" running>Working</Pill>`.
+In a table cell: `<span class="cap-status" data-tone="nodata" title="No Cloudflare token for this site">[no data glyph]No data<span class="cap-sr-only">: no Cloudflare token for this site</span></span>`.
+
+In React, `import { Status, Pill, Glyph } from "capsomer/react/status"`: `<Status tone="nodata" reason="The uptime checker has not reported since 09:00.">No data</Status>`, `<Status tone="nodata" reason="No Cloudflare token for this site" brief>No data</Status>` for a table cell, `<Pill tone="info" running>Working</Pill>`.
+
+**Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.st`, `.pill`, `.nodata-cell`; `dashboard/src/ui/icons.tsx` `St`, `Pill`, `NoData`, `SHAPES`). EXTRACTED: the word's and the pill's rules (inline flex, 6 px gap, 12 px, weight 600, no wrap; the pill's 2 by 8 by 2 by 6 px padding, full radius and tone tints) and their tone colours (`ok`, `warn`, `crit`, `nodata`, `run` as `info`). REWROTE: the glyphs. The Portal's `SHAPES` are 14 px drawings with marks painted in `--surface` (a cross in the octagon, a bar in the pill) and opacity tints; Capsomer's six are the mockup's, 16 px, one `currentColor` path with the marks cut out (evenodd), so they read on any tint; the Portal has no notice shape (its "notice" is the no-data circle), where Capsomer has four levels (patterns.md) and a square for notice. The no-data pill's word is `--muted` on its tint in both (EXTRACTED). Brought up to date in v0.1.1: the brief no-data cell (`NoData brief`, "No data" with the reason for a screen reader and on hover, D18). The Portal's `queued`, `blocked` and `done` kinds are not statuses here: they are words a row chooses (patterns.md: four levels, running is a state). Where the Portal and the audit differ, the audit wins: the Portal's hover tooltip (`data-tip`) is a `title` here, since the status takes no focus and Capsomer's tooltip needs a trigger that does.
 
 ## Exceptions in production
 

@@ -53,6 +53,17 @@ eachTheme((theme) => {
     expect(hidden).toBe(true);
   });
 
+  test("accessibility: a brief no data says two words to the eye and its reason to a screen reader", async ({ page }) => {
+    await visitStates(page, "status", theme);
+    await expectContrast(page, [{ sel: "#sample-brief .cap-status", what: "the brief no data word" }]);
+    await expect(page.locator("#sample-brief")).toMatchAriaSnapshot(`
+      - paragraph: /No data\\s*: no Cloudflare token for this site/
+    `);
+    await expect(page.locator("#sample-brief .cap-status")).toHaveAttribute("title", "No Cloudflare token for this site");
+    const shown = await page.locator("#sample-brief .cap-status").evaluate((el) => (el as HTMLElement).innerText.trim());
+    expect(shown).toBe("No data");
+  });
+
   test("behaviour: a pill keeps its own tint on a selected row", async ({ page }) => {
     await visitStates(page, "status", theme);
     const [pillBg, rowBg] = await page.evaluate(() => [

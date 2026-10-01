@@ -28,20 +28,26 @@ export interface GroupProps {
   defaultExpanded?: boolean;
   // Critical rows are never collapsed: true keeps the group open.
   holdsCritical?: boolean;
+  // Puts the button in a heading of this level, so a person moving by heading finds the group.
+  headingLevel?: 2 | 3 | 4;
 }
 
 // A group row in a list: a button that shows or hides the rows it groups.
-export function Group({ label, count, children, defaultExpanded = false, holdsCritical = false }: GroupProps) {
+export function Group({ label, count, children, defaultExpanded = false, holdsCritical = false, headingLevel }: GroupProps) {
   const id = useId();
   const [open, setOpen] = useState(defaultExpanded || holdsCritical);
   const expanded = open || holdsCritical;
+  const Heading = headingLevel === 2 ? "h2" : headingLevel === 3 ? "h3" : "h4";
+  const toggle = (
+    <button type="button" className="cap-group-toggle" aria-expanded={expanded} aria-controls={id} onClick={() => setOpen(!expanded)}>
+      <span className="cap-group-label">{label}</span>
+      <span className="cap-sr-only">, </span>
+      <span className="cap-group-count">{count}</span>
+    </button>
+  );
   return (
     <div className="cap-group" data-cap="disclosure">
-      <button type="button" className="cap-group-toggle" aria-expanded={expanded} aria-controls={id} onClick={() => setOpen(!expanded)}>
-        <span className="cap-group-label">{label}</span>
-        <span className="cap-sr-only">, </span>
-        <span className="cap-group-count">{count}</span>
-      </button>
+      {headingLevel ? <Heading className="cap-group-heading">{toggle}</Heading> : toggle}
       <ul className="cap-group-rows" id={id} hidden={!expanded}>
         {children}
       </ul>

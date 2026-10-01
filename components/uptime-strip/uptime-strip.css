@@ -52,6 +52,29 @@
     }
   }
 
+  /* The strip in a table cell, with its percent after it on one line (the Portal's
+     .upline: a strip of 18 px that takes the room it is given, never less than 84 px). */
+  .cap-uptime-line {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+
+    & .cap-uptime-strip {
+      flex: 1;
+      min-width: 84px;
+      min-height: 18px;
+
+      & > svg {
+        height: 18px;
+      }
+    }
+    & .cap-uptime-pct {
+      font-size: inherit;
+      font-weight: 400;
+    }
+  }
+
   .cap-uptime-legend {
     display: flex;
     flex-wrap: wrap;

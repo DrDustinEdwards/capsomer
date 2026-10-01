@@ -37,6 +37,18 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
     await visitStates(page, "table", theme, "reflow");
     await expectNoAxeViolations(page);
+    await page.setViewportSize({ width: 600, height: 400 });
+    await visitStates(page, "table", theme, "drop");
+    await expectNoAxeViolations(page);
+  });
+
+  test("accessibility: a column note, small print and the foot link reach their contrast", async ({ page }) => {
+    await visitStates(page, "table", theme);
+    await expectContrast(page, [
+      { sel: "#t5 thead .cap-table-note", what: "a note under a column's name" },
+      { sel: "#t5 .cap-table-aside", what: "small print beside a cell's text" },
+      { sel: "#s-drop .cap-table-foot a", what: "the link under the table" },
+    ]);
   });
 
   test("accessibility: headers, cells, links and the sort glyph reach their contrast", async ({ page }) => {
@@ -191,6 +203,32 @@ eachTheme((theme) => {
     await expect(page.locator("#t-reflow thead")).toHaveCSS("position", "absolute");
     const overflows = await page.locator("#t-reflow").evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(overflows).toBe(false);
+  });
+
+  test("behaviour: columns marked to drop are shown in a wide region and go, in order, as it narrows", async ({ page }) => {
+    await page.setViewportSize({ width: 1400, height: 900 });
+    await visitStates(page, "table", theme);
+    const width = await page.locator("#t5").evaluate((el) => el.clientWidth);
+    expect(width, "the specimen's region is wide").toBeGreaterThan(820);
+    await expect(page.locator("#t5 .cap-table-aside").first()).toBeVisible();
+    await expect(page.locator("#t5 thead th[data-drop='2']").first()).toBeVisible();
+    await page.setViewportSize({ width: 600, height: 400 });
+    await visitStates(page, "table", theme, "drop");
+    await expect(page.locator("#t-drop .cap-table-aside").first()).toBeHidden();
+    await expect(page.locator("#t-drop thead th[data-drop='2']").first()).toBeHidden();
+    await expect(page.getByRole("columnheader", { name: /^Site/ })).toBeVisible();
+    await expect(page.getByRole("columnheader", { name: /^Status/ })).toBeVisible();
+    await expect(page.getByRole("columnheader", { name: /^Uptime/ })).toBeVisible();
+    // Dropped, so the table fits its region and does not scroll.
+    const scrolls = await page.locator("#t-drop").evaluate((el) => el.scrollWidth > el.clientWidth);
+    expect(scrolls).toBe(false);
+  });
+
+  test("behaviour: no data in a cell says its reason to a screen reader, in two words to the eye", async ({ page }) => {
+    await visitStates(page, "table", theme);
+    const cell = page.locator("#t5 tbody tr").nth(2).locator("td").nth(2);
+    await expect(cell).toContainText("No data");
+    await expect(cell.locator(".cap-sr-only")).toHaveText(": no Cloudflare token for this site");
   });
 
   test("behaviour: without data-reflow a narrow table keeps its rows and scrolls", async ({ page }) => {

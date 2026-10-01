@@ -105,7 +105,20 @@
         </ul>
       </section>
 
-      <template data-specimen="phone" data-title="Phone width: the status above the title" data-width="390" data-height="300">
+      <section class="cap-specimen" aria-labelledby="s-group">
+        <h2 id="s-group">A row that opens in place (a group)</h2>
+        <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="s-group" id="list-group">
+          <li class="cap-row">
+            <span class="cap-row-status" id="g1-s"><span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Warning</span></span>
+            <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="g1-kids" aria-describedby="g1-s g1-d" id="group-toggle">3 pull requests await the seat</button></div>
+            <p class="cap-row-detail" id="g1-d">capsid, carrel, foxhound</p>
+            <span class="cap-row-meta"><time datetime="2026-09-30T13:47Z">26 minutes ago</time><span class="cap-row-chevron" aria-hidden="true"></span></span>
+          </li>
+        </ul>
+        <p id="g1-kids" hidden>The rows it holds are shown here.</p>
+      </section>
+
+      <template data-specimen="phone" data-title="Phone width: the status above the title" data-width="390" data-height="380">
         <main class="specimen-page">
           <h1 id="phone-h">Queue</h1>
           <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="phone-h" id="list-phone">
@@ -120,6 +133,12 @@
               <div class="cap-row-title"><a href="#job-running" aria-describedby="p2-s p2-d">Run the browser tests</a></div>
               <p class="cap-row-detail" id="p2-d">Held by capsid-driver</p>
               <span class="cap-row-meta"><time datetime="2026-09-30T13:55Z">18 minutes ago</time></span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status" id="p3-s"><span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span></span>
+              <div class="cap-row-title"><a href="#job-long" aria-describedby="p3-s p3-d" id="phone-long-title">Certificate for txasm.org renews in 21 days and the renewal has to be approved by hand</a></div>
+              <p class="cap-row-detail" id="p3-d">Renewal is not automatic here</p>
+              <span class="cap-row-meta">yesterday</span>
             </li>
           </ul>
         </main>
