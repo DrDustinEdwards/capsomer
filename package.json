@@ -50,7 +50,7 @@
   },
   "scripts": {
     "tokens": "node tokens/palette.mjs --legacy && node tokens/scale.mjs",
-    "check": "node tokens/palette.mjs --legacy --check && node tokens/scale.mjs --check && node --test test/unit/*.test.mjs && tsc --noEmit -p tsconfig.json",
+    "check": "node tokens/palette.mjs --legacy --check && node tokens/palette.mjs --report --summary && node tokens/scale.mjs --check && node --test test/unit/*.test.mjs && tsc --noEmit -p tsconfig.json",
     "build": "tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "site": "vite build --config site/vite.config.ts",

@@ -204,8 +204,13 @@ export function pairs(t) {
     const ratio = contrast(t[fg], t[bg]);
     out.push({ fg, bg, min, what, ratio, pass: ratio >= min });
   };
+  // Option 1 (rulings.md rule 18): in the family scale, accent text is step 11, the primary
+  // button fill is step 10, and step 9 (the brand colour) is held to 3:1 for focus rings and
+  // large fills. The legacy generator (no accent-text) keeps the accent as text and fill.
+  const family = Boolean(t["accent-text"]);
+  const accentText = family ? "accent-text" : "accent";
   for (const bg of ["surface", "ground", "raised"]) {
-    for (const fg of ["text", "muted", "dim", "accent"]) need(fg, bg, 4.5, "text");
+    for (const fg of ["text", "muted", "dim", accentText]) need(fg, bg, 4.5, "text");
     for (const s of Object.keys(STATUS)) need(s, bg, 4.5, "status word");
   }
   need("text", "sel", 4.5, "selected row title");
@@ -220,12 +225,16 @@ export function pairs(t) {
     need(s, "accent-soft", 4.5, "count on the active menu item");
     need(s, "sel", 4.5, "status word on a selected row");
   }
-  need("accent", "accent-soft", 4.5, "active item");
-  need("surface", "accent", 4.5, "primary button label");
+  need(accentText, "accent-soft", 4.5, "active item");
+  need("surface", family ? "accent-hover" : "accent", 4.5, "primary button label");
+  if (family) {
+    need("accent", "ground", 3, "brand colour as a large fill or icon");
+    need("accent", "raised", 3, "brand colour as a large fill or icon");
+  }
   need("surface", "crit", 4.5, "badge label");
-  // The family scale's deep accent (step 11): purple text, headings, deep accents.
-  if (t["accent-text"]) {
-    for (const bg of ["surface", "ground", "raised", "sel", "accent-soft"]) need("accent-text", bg, 4.5, "deep accent text");
+  // The deep accent (step 11) on every surface it sits on: text, headings, the active item.
+  if (family) {
+    for (const bg of ["sel"]) need("accent-text", bg, 4.5, "deep accent text");
   }
   return out;
 }
@@ -466,9 +475,10 @@ if (invoked) {
   } else if (process.argv.includes("--report")) {
     const rows = report();
     const failed = rows.filter((r) => !r.pass);
-    for (const r of rows) console.log(`${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${(r.scheme + (r.isDefault ? "*" : "")).padEnd(6)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 (needs ${r.min})`);
+    for (const r of process.argv.includes("--summary") ? failed : rows) console.log(`${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${(r.scheme + (r.isDefault ? "*" : "")).padEnd(6)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 (needs ${r.min})`);
     console.log("(* the family's default theme, checked first)");
     console.log(`palette: ${rows.length} pairs across ${Object.keys(FAMILIES).length} families and both themes; ${failed.length} fail`);
+    if (failed.length) process.exit(1);
   } else if (process.argv.includes("--table")) {
     for (const [name, t] of Object.entries(themes())) if (name === "light" || name === "dark") {
       console.log(`\n${name}`);

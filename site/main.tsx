@@ -397,7 +397,7 @@ function FamilyScales() {
   return (
     <Panel title="The colour families" id="families" src="Rules 14 and 15, locked 2026-10-01">
       <p className="cap-muted">
-        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first. Until the failing pairs below are settled, the site and the components use the palette the Capsid Portal runs today.
+        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first, and every pair passes (rulings.md, rule 18): the brand colour is step 9 for focus rings and large fills, accent text and links use step 11, and the primary button fills with step 10. Until the family palette is adopted app by app, this site and the components use the palette the Capsid Portal runs today.
       </p>
       {names.map((n) => {
         const f = fams.families[n];
