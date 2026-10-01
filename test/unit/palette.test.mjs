@@ -74,3 +74,17 @@ test("family: report() covers every family in both themes, its default theme fir
 test("family: the teal scale keeps its seed at step 9", () => {
   for (const scheme of ["light", "dark"]) assert.equal(scale(FAMILIES.teal.seed, null, scheme)[8], "#008489");
 });
+
+test("family: option 1 (rule 18), every pair of every family passes in both themes", () => {
+  const failing = report().filter((r) => !r.pass);
+  assert.deepEqual(failing.map((r) => `${r.family} ${r.scheme} ${r.what} --${r.fg} on --${r.bg} ${r.ratio.toFixed(2)}`), []);
+});
+
+test("family: step 9 keeps the brand colour, step 10 is the button fill, step 11 is the accent text", () => {
+  for (const [name, brand, step10, step11] of [["purple", "#8c5fd2", "#7d50c1", "#4f2d7f"], ["fox", "#cc4f0c", "#b64404", "#822e02"], ["teal", "#008489", "#077478", "#01585c"]]) {
+    const t = themes(FAMILIES[name]).light.tokens;
+    assert.equal(t.accent, brand, `${name} step 9`);
+    assert.equal(t["accent-hover"], step10, `${name} step 10`);
+    assert.equal(t["accent-text"], step11, `${name} step 11`);
+  }
+});

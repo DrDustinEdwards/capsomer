@@ -11,7 +11,8 @@ One page. Every line is a default with its reason, not a law: a better design ov
 - **Messages with Undo stay until dismissed**, in an in-page status region; `z` is Undo. No floating toast.
 - **Every control is reachable and operable by keyboard**, with a visible focus ring at 3:1. Single-key shortcuts can be turned off.
 - **Motion explains a change.** 100, 200 or 400 ms; nothing moves under reduced motion; text being read never moves.
-- **Text 4.5:1, boundaries 3:1, in both themes**, checked by the palette generator and again as painted.
+- **Text 4.5:1, boundaries 3:1, in both themes**, checked by the palette generator and again as painted. Why: WCAG 2.2.
+- **Which step does which job.** The brand colour is step 9 and only goes where 3:1 is enough (focus ring, large fills, icons, the logo). Links, headings, the active menu item and accent text use step 11. The primary button fill uses step 10 so its label reaches 5.5:1. Why: step 9 sits at the white-text bar and cannot also be text on a tinted surface (rulings.md, rule 18).
 - **Hit areas at least 24 px; 44 px on a touch screen.** Inputs 16 px on a touch screen.
 - **Tables scroll on a phone by default**, in a labelled region; cards per table once tested.
 - **Size budgets warn.**
