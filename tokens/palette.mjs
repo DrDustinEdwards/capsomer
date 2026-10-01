@@ -1,34 +1,52 @@
-// The design tokens, generated from one seed colour. `node scripts/palette.mjs` writes
-// src/tokens.css; `node scripts/palette.mjs --check` regenerates it in memory, refuses any
-// difference from the committed file, and checks every text and control pair against
-// WCAG 2.2 (4.5:1 for text, 3:1 for a control's boundary), in both themes. `npm run check`
-// runs the check, so CI refuses a hand-edited hex and a pair that fell below the bar.
+// The design tokens, generated from one seed colour per family. `node tokens/palette.mjs`
+// writes tokens/colour.css; `--check` regenerates it in memory, refuses any difference from
+// the committed file, and checks every text and control pair against WCAG 2.2 (4.5:1 for
+// text, 3:1 for a control's boundary), in both themes. `npm run check` runs the check, so CI
+// refuses a hand-edited hex and a pair that fell below the bar.
 //
-// Method (capsid/research/design-portal-linear.md, "Palette"): a 12-step scale in OKLCH,
-// with the step roles the Radix Colors convention uses (1 and 2 the surface and ground,
-// 3 raised, 4 sunken, 6 to 8 lines, 9 the accent, 11 and 12 text). Neutrals carry a small
-// chroma at the seed's hue, so surfaces and text lean toward it. The accent in light is the
-// seed itself; in dark it lightens until it meets the bar on its own tint. Status hues are
-// fixed, never derived from the seed, and each is tuned by bisection against the hardest
-// surface it sits on. The OKLab conversion follows Bjorn Ottosson's reference (2020).
+// The family scale (rulings.md, rule 14, locked 2026-10-01): every brand colour is a
+// 12-step OKLCH scale with the same lightness roles, the Radix Colors step roles (1 and 2
+// backgrounds, 3 to 5 element backgrounds, 6 to 8 borders, 9 the solid accent, 10 its hover,
+// 11 low-contrast text, 12 high-contrast text). Step 9 is the seed exactly, in both themes.
+// Step 11 in the light theme may be a fixed anchor: the purple family keeps #4F2D7F there.
+// Every other step takes the seed's hue at a fixed lightness and a fixed share of the
+// seed's chroma, so two families with the same seed lightness and chroma (purple #8c5fd2
+// and Foxing's #cc4f0c, both L 0.586, C 0.172) differ only in hue. Neutrals carry a small
+// chroma at the seed's hue; status hues are fixed and tuned by bisection against the
+// hardest surface each sits on. The OKLab conversion follows Bjorn Ottosson's reference.
 //
-// The file it writes is plain CSS custom properties and nothing else, so it can move
-// unchanged into the shared design package (capsid/decisions.md 2026-09-30).
+//   node tokens/palette.mjs                       the purple family into tokens/colour.css
+//   node tokens/palette.mjs --family=fox --out=f  Foxing's family into f
+//   node tokens/palette.mjs --seed=#RRGGBB [--anchor=#RRGGBB] --out=f
+//   node tokens/palette.mjs --report              every pair, both families, both themes
+//   node tokens/palette.mjs --legacy --out=f      the Portal's 2026-09-30 tokens, unchanged
 //
-// Moved into Capsomer from capsid's dashboard with three changes, as ruled 2026-09-30
-// (capsomer/research/design.md, section 11, decision 3): the output path; `themes()`,
-// which exports both themes' tokens and every asserted pair with its ratio (the site's
-// contrast grid reads it); and `--seed=#RRGGBB`, so a product app with its own brand runs
-// the same scale. With the default seed the output is byte-identical to capsid's
-// dashboard/src/tokens.css, which test/palette.test.mjs checks.
+// The legacy mode is the generator exactly as it moved from capsid (one seed #4F2D7F, the
+// accent the seed itself); with it the output is byte-identical to capsid's
+// dashboard/src/tokens.css, which test/unit/palette.test.mjs checks, so the move stays
+// proven while the Portal still runs those tokens.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-export const SEED = "#4F2D7F";
+export const LEGACY_SEED = "#4F2D7F";
+export const SEED = LEGACY_SEED; // kept for importers of the moved file
+export const FAMILIES = {
+  purple: { seed: "#8c5fd2", anchor: "#4F2D7F", note: "Capsid Portal, Carrel, dustinedwards.info, Germomics" },
+  fox: { seed: "#cc4f0c", anchor: null, note: "Foxing" },
+};
 const OUT = fileURLToPath(new URL("./colour.css", import.meta.url));
-const seedArg = process.argv.find((a) => a.startsWith("--seed="))?.slice("--seed=".length);
-const outArg = process.argv.find((a) => a.startsWith("--out="))?.slice("--out=".length);
-if (seedArg !== undefined && !/^#[0-9a-f]{6}$/i.test(seedArg)) throw new Error(`--seed must be #RRGGBB, got ${seedArg}`);
+const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
+const hexArg = (name) => {
+  const v = arg(name);
+  if (v !== undefined && !/^#[0-9a-f]{6}$/i.test(v)) throw new Error(`--${name} must be #RRGGBB, got ${v}`);
+  return v;
+};
+const familyArg = arg("family");
+if (familyArg !== undefined && !FAMILIES[familyArg]) throw new Error(`--family must be one of ${Object.keys(FAMILIES).join(", ")}`);
+const seedArg = hexArg("seed");
+const anchorArg = hexArg("anchor");
+const outArg = arg("out");
+const LEGACY = process.argv.includes("--legacy");
 
 // ---- colour math ---------------------------------------------------------------------
 
@@ -97,10 +115,11 @@ function tune(C, H, bg, target, from, to) {
   return oklch(hi, C, H);
 }
 
+
 // ---- the scales ----------------------------------------------------------------------
 
-// The seed in use: the default, or --seed on the command line.
-const ACTIVE = seedArg ?? SEED;
+// ---- the legacy generator, as moved from capsid (one seed; the accent is the seed) ---------
+const ACTIVE = LEGACY_SEED;
 function basis(seed) {
   const [L, a, b] = rgbToOklab(hexToRgb(seed));
   return { seed, seedL: L, HUE: ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360, SEED_CHROMA: Math.hypot(a, b) };
@@ -201,6 +220,10 @@ export function pairs(t) {
   need("accent", "accent-soft", 4.5, "active item");
   need("surface", "accent", 4.5, "primary button label");
   need("surface", "crit", 4.5, "badge label");
+  // The family scale's deep accent (step 11): purple text, headings, deep accents.
+  if (t["accent-text"]) {
+    for (const bg of ["surface", "ground", "raised", "sel", "accent-soft"]) need("accent-text", bg, 4.5, "deep accent text");
+  }
   return out;
 }
 
@@ -210,14 +233,7 @@ export function failures(t) {
     .map((p) => `${p.what}: --${p.fg} ${t[p.fg]} on --${p.bg} ${t[p.bg]} is ${p.ratio.toFixed(2)}:1, needs ${p.min}:1`);
 }
 
-// Both themes' tokens and asserted pairs, for the site's contrast grid.
-export function themes(seed = ACTIVE) {
-  const l = light(seed);
-  const d = dark(seed);
-  return { seed, order: ORDER, light: { tokens: l, pairs: pairs(l) }, dark: { tokens: d, pairs: pairs(d) } };
-}
-
-// ---- the file --------------------------------------------------------------------------
+// The legacy file layout; the family layout adds accent-text and the 12 steps.
 
 const ORDER = ["ground", "surface", "raised", "sunken", "line", "line-strong", "text", "muted", "dim", "accent", "accent-hover", "accent-soft", "accent-line", "sel", "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft", "nodata", "nodata-soft"];
 
@@ -234,7 +250,7 @@ function block(t, indent, scheme) {
   return lines.join("\n");
 }
 
-export function render(seed = ACTIVE) {
+export function renderLegacy(seed = LEGACY_SEED) {
   const l = light(seed);
   const d = dark(seed);
   const hue = basis(seed).HUE.toFixed(1);
@@ -259,33 +275,182 @@ ${block(d, "  ", "dark")}
 `;
 }
 
-// The file this run reads or writes: tokens/colour.css, or --out=<path>.
+
+// The legacy generator's tokens and pairs, in the shape themes() returns.
+export function legacyThemes(seed = LEGACY_SEED) {
+  const l = light(seed);
+  const d = dark(seed);
+  return { seed, anchor: null, order: ORDER, light: { tokens: l, pairs: pairs(l) }, dark: { tokens: d, pairs: pairs(d) } };
+}
+// ---- the family scale (rule 14) ----------------------------------------------------------
+
+// The same lightness roles for every family: [L, share of the seed's chroma]. Step 9 is the
+// seed; step 10 is the seed darkened in light and lightened in dark; step 11 in light may be
+// the family's anchor.
+const ROLES = {
+  light: [
+    [0.993, 0.02], [0.982, 0.06], [0.96, 0.14], [0.935, 0.22], [0.905, 0.3], [0.865, 0.36],
+    [0.81, 0.46], [0.735, 0.62], null, [-0.05, 1], [0.42, 0.75], [0.22, 0.25],
+  ],
+  dark: [
+    [0.16, 0.06], [0.19, 0.08], [0.24, 0.18], [0.28, 0.26], [0.32, 0.32], [0.37, 0.36],
+    [0.44, 0.44], [0.53, 0.6], null, [0.05, 1], [0.8, 0.55], [0.94, 0.12],
+  ],
+};
+
+function seedLch(hex) {
+  const [L, a, b] = rgbToOklab(hexToRgb(hex));
+  return { L, C: Math.hypot(a, b), H: ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360 };
+}
+
+// The 12 steps of one family in one theme, as hex, index 0 being step 1.
+export function scale(seed, anchor = null, scheme = "light") {
+  const { L, C, H } = seedLch(seed);
+  return ROLES[scheme].map((role, i) => {
+    const step = i + 1;
+    if (step === 9) return seed.toLowerCase();
+    if (step === 11 && scheme === "light" && anchor) return anchor.toLowerCase();
+    const [l, share] = role;
+    const lightness = step === 10 ? L + l : l;
+    return oklch(lightness, C * share, H);
+  });
+}
+
+function familyTheme(seed, anchor, scheme) {
+  const { H } = seedLch(seed);
+  const s = scale(seed, anchor, scheme);
+  const t = {};
+  const dark = scheme === "dark";
+  // Neutrals: as the moved generator made them, at the seed's hue.
+  t.ground = oklch(dark ? 0.16 : 0.965, NEUTRAL_CHROMA, H);
+  t.surface = oklch(dark ? 0.205 : 0.995, dark ? NEUTRAL_CHROMA : 0.003, H);
+  t.raised = oklch(dark ? 0.245 : 0.975, dark ? NEUTRAL_CHROMA : 0.008, H);
+  t.sunken = oklch(dark ? 0.135 : 0.93, NEUTRAL_CHROMA, H);
+  t.line = oklch(dark ? 0.32 : 0.9, NEUTRAL_CHROMA, H);
+  t["line-strong"] = tune(NEUTRAL_CHROMA, H, t.raised, CONTROL, dark ? 0.2 : 0.9, dark ? 0.9 : 0.3);
+  t.text = oklch(dark ? 0.95 : 0.22, dark ? 0.008 : 0.03, H);
+  t.muted = dark ? tune(0.015, H, t.surface, 6.0, 0.2, 0.95) : tune(0.02, H, t.ground, 5.5, 0.9, 0.2);
+  t.dim = dark ? tune(0.015, H, t.raised, TEXT, 0.2, 0.95) : tune(0.02, H, t.sunken, TEXT, 0.9, 0.2);
+  // The accent family, from the scale's roles.
+  t.accent = s[8];
+  t["accent-hover"] = s[9];
+  t["accent-text"] = s[10];
+  t["accent-soft"] = s[3];
+  t.sel = s[2];
+  t["accent-line"] = tune(0.1, H, t.sel, CONTROL, dark ? 0.2 : 0.9, dark ? 0.9 : 0.3);
+  for (const [k, hue] of Object.entries(STATUS)) {
+    t[`${k}-soft`] = oklch(dark ? 0.28 : 0.945, 0.05, hue);
+    t[k] = dark
+      ? tune(0.13, hue, lightest(t[`${k}-soft`], t["accent-soft"], t.sel), TEXT, 0.3, 0.95)
+      : tune(0.14, hue, darkest(t[`${k}-soft`], t["accent-soft"], t.sel), TEXT, 0.9, 0.2);
+  }
+  t.nodata = t.dim;
+  t["nodata-soft"] = oklch(dark ? 0.27 : 0.94, 0.006, H);
+  s.forEach((hex, i) => (t[`accent-${i + 1}`] = hex));
+  return t;
+}
+
+export const FAMILY_ORDER = [...ORDER.slice(0, 11), "accent-text", ...ORDER.slice(11), ...Array.from({ length: 12 }, (_, i) => `accent-${i + 1}`)];
+
+function familyBlock(t, indent, scheme) {
+  const lines = FAMILY_ORDER.map((k) => `${indent}--${k}: ${t[k]};`);
+  const ink = scheme === "dark" ? "0, 0, 0" : hexToRgb(t.text).map((v) => Math.round(v * 255)).join(", ");
+  lines.push(
+    scheme === "dark"
+      ? `${indent}--shadow: 0 1px 0 rgba(${ink}, 0.3), 0 12px 32px -14px rgba(${ink}, 0.7);`
+      : `${indent}--shadow: 0 1px 0 rgba(${ink}, 0.04), 0 10px 28px -12px rgba(${ink}, 0.22);`,
+  );
+  lines.push(`${indent}--scrim: rgba(${ink}, ${scheme === "dark" ? "0.55" : "0.28"});`);
+  lines.push(`${indent}color-scheme: ${scheme};`);
+  return lines.join("\n");
+}
+
+export function renderFamily(seed, anchor = null) {
+  const l = familyTheme(seed, anchor, "light");
+  const d = familyTheme(seed, anchor, "dark");
+  const { L, C, H } = seedLch(seed);
+  return `/* Generated by tokens/palette.mjs: step 9 ${seed.toLowerCase()} (oklch ${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})${anchor ? `, step 11 anchored at ${anchor.toLowerCase()}` : ""}.
+   Do not edit: change the script and run \`npm run tokens\`. \`npm run check\` refuses a file
+   that differs from what the script writes, and any pair below WCAG 2.2's bar. */
+:root {
+${familyBlock(l, "  ", "light")}
+  --ui: "Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Martian Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+${familyBlock(d, "    ", "dark")}
+  }
+}
+:root[data-theme="dark"] {
+${familyBlock(d, "  ", "dark")}
+}
+`;
+}
+
+// The family this run uses: --seed and --anchor, else --family, else purple.
+function active() {
+  if (seedArg) return { seed: seedArg, anchor: anchorArg ?? null };
+  const f = FAMILIES[familyArg ?? "purple"];
+  return { seed: f.seed, anchor: anchorArg ?? f.anchor };
+}
+
+// Both themes' tokens and every asserted pair with its ratio, for the site's contrast grid.
+export function themes({ seed, anchor } = active()) {
+  const l = familyTheme(seed, anchor, "light");
+  const d = familyTheme(seed, anchor, "dark");
+  return { seed, anchor, order: FAMILY_ORDER, light: { tokens: l, pairs: pairs(l) }, dark: { tokens: d, pairs: pairs(d) } };
+}
+
+export function render() {
+  if (LEGACY) return renderLegacy(seedArg ?? LEGACY_SEED);
+  const a = active();
+  return renderFamily(a.seed, a.anchor);
+}
+
+// ---- the file ----------------------------------------------------------------------------
+
 const TARGET = outArg ?? OUT;
 const SHOWN = outArg ?? "tokens/colour.css";
 
 export function check() {
   const problems = [];
-  const l = light();
-  const d = dark();
-  problems.push(...failures(l).map((p) => `light: ${p}`));
-  problems.push(...failures(d).map((p) => `dark: ${p}`));
+  if (!LEGACY) {
+    const t = themes();
+    problems.push(...failures(t.light.tokens).map((p) => `light: ${p}`));
+    problems.push(...failures(t.dark.tokens).map((p) => `dark: ${p}`));
+  } else {
+    problems.push(...failures(light(seedArg ?? LEGACY_SEED)).map((p) => `light: ${p}`));
+    problems.push(...failures(dark(seedArg ?? LEGACY_SEED)).map((p) => `dark: ${p}`));
+  }
   let committed = null;
   try {
     committed = readFileSync(TARGET, "utf8");
   } catch (e) {
     problems.push(`${SHOWN} cannot be read (${e instanceof Error ? e.message : String(e)}); run npm run tokens`);
   }
-  if (committed !== null && committed !== render()) {
+  const want = render();
+  if (committed !== null && committed !== want) {
     const a = committed.split("\n");
-    const b = render().split("\n");
+    const b = want.split("\n");
     const i = a.findIndex((line, n) => line !== b[n]);
     problems.push(`${SHOWN} differs from what the script writes at line ${i + 1}: "${a[i] ?? ""}" (committed) vs "${b[i] ?? ""}" (script); run npm run tokens`);
   }
   return problems;
 }
 
-const invoked = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1].replace(/\\/g, "/").replace(/^([a-z]):/i, (m) => m.toUpperCase());
-if (invoked || (process.argv[1] && process.argv[1].endsWith("palette.mjs"))) {
+// Every asserted pair for every family in both themes, failures first.
+export function report() {
+  const rows = [];
+  for (const [name, f] of Object.entries(FAMILIES)) {
+    const t = themes(f);
+    for (const scheme of ["light", "dark"]) for (const p of t[scheme].pairs) rows.push({ family: name, scheme, ...p, fgHex: t[scheme].tokens[p.fg], bgHex: t[scheme].tokens[p.bg] });
+  }
+  return rows.sort((a, b) => Number(a.pass) - Number(b.pass));
+}
+
+const invoked = process.argv[1] && fileURLToPath(import.meta.url).replace(/\\/g, "/").toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase();
+if (invoked) {
   if (process.argv.includes("--check")) {
     const problems = check();
     if (problems.length) {
@@ -293,15 +458,20 @@ if (invoked || (process.argv[1] && process.argv[1].endsWith("palette.mjs"))) {
       process.exit(1);
     }
     console.log(`palette: ${SHOWN} matches the script and every pair meets WCAG 2.2 in both themes`);
+  } else if (process.argv.includes("--report")) {
+    const rows = report();
+    const failed = rows.filter((r) => !r.pass);
+    for (const r of rows) console.log(`${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${r.scheme.padEnd(5)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 (needs ${r.min})`);
+    console.log(`palette: ${rows.length} pairs across ${Object.keys(FAMILIES).length} families and both themes; ${failed.length} fail`);
   } else if (process.argv.includes("--table")) {
-    for (const [name, t] of [["light", light()], ["dark", dark()]]) {
+    for (const [name, t] of Object.entries(themes())) if (name === "light" || name === "dark") {
       console.log(`\n${name}`);
-      for (const k of ORDER) console.log(`  --${k}: ${t[k]}`);
+      for (const k of FAMILY_ORDER) console.log(`  --${k}: ${t.tokens[k]}`);
     }
   } else if (process.argv.includes("--pairs")) {
     console.log(JSON.stringify(themes(), null, 2));
   } else {
     writeFileSync(TARGET, render());
-    console.log(`palette: wrote ${SHOWN} from ${ACTIVE}`);
+    console.log(`palette: wrote ${SHOWN}${LEGACY ? " (legacy)" : ""}`);
   }
 }

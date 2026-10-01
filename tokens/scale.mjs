@@ -7,7 +7,7 @@
 // on 2026-09-30. Each is a default: change it here, run `npm run tokens`, and record why.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { SEED, themes } from "./palette.mjs";
+import { LEGACY_SEED as SEED, legacyThemes as themes } from "./palette.mjs";
 
 const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 
@@ -122,6 +122,8 @@ ${alias(CONTEXTS.prose, "  ")}
 `;
 }
 
+// Until the family scale's failing pairs are settled (rulings.md rule 14), the committed
+// colours are the legacy generator's, and these files follow them.
 // The two themes pinned to an element, for the site's side-by-side specimens:
 // <div data-cap-theme="dark"> shows the dark theme whatever the page's theme is.
 export function renderThemes(seed = SEED) {
