@@ -13,6 +13,9 @@ Final: package.json 0.3.0, CHANGELOG 0.3.0, delete this file, CI green, merge PR
 - Part 2 palette: tokens/chart.mjs (series + ramp + CVD/ΔE checks), wired into tokens/palette.mjs (series-1..8, series-text-N, ramp-1..5, ramp-text-N in every colour file; chart checks in `--check`, `--chart` prints closest pairs); tokens/enarratio-theme.mjs (+ .d.mts) generated; css/enarratio.css maps --enarratio-* onto tokens (imported by css/tokens.css); tests test/unit/enarratio-theme.test.mjs; enarratio devDependency (git+https, pinned sha 1de8bee).
 - avatar (batch 1): css, behaviour, react, md, examples, spec. Passes locally (see "Local browser tests" below).
 
+- Merged D (draft-compare, authorship). Chart frame done (components/chart-frame; stat tile takes chartTable, uptime strip rebuilt on the frame: its disclosure label is now "Show data"; DEFAULTS.md has two new lines). Agent hand-back notes are in the scratchpad file changelog-notes.md (copy into CHANGELOG at the end).
+- Playwright note: local config needs testIgnore for .claude/** (nested worktrees).
+
 ## Agents in flight (each in its own worktree branch worktree-agent-*; I merge them)
 B drop-zone/bulk-bar/media; D draft-compare/authorship; E flag-list/publish-gate; F history-list/moderation-queue; G markdown-editor (adds CodeMirror deps: merge package.json/lock by hand, regenerate the enarratio lock entry: resolved must be git+https and no integrity).
 

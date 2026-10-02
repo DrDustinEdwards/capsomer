@@ -4,12 +4,18 @@
   <div class="cap-tiles">
     <ul class="cap-tiles-list" aria-label="Overview figures">
       <li>
-        <a class="cap-tile" href="#sites" data-tone="ok" aria-describedby="grid-sites-chart">
+        <div class="cap-chart" data-variant="tile" data-summary="hidden" id="grid-sites-chart-frame">
+          <a class="cap-tile" href="#sites" data-tone="ok" aria-describedby="grid-sites-chart">
           <span class="cap-tile-line"><span class="cap-tile-figure">6 <small>of 6</small></span><span class="cap-tile-label">Sites up</span><span class="cap-tile-word">All up</span></span>
           <span class="cap-tile-detail">Watcher pass 40 seconds ago</span>
           <span class="cap-tile-chart" aria-hidden="true"><svg viewBox="0 0 86 22" preserveAspectRatio="none" focusable="false"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="1,11 15,11 29,11 43,11 57,11 71,11 85,11" /></svg></span>
         </a>
-        <span class="cap-sr-only" id="grid-sites-chart">Sites up, last 7 days: 6 of 6 every day.</span>
+          <p class="cap-chart-summary" id="grid-sites-chart">Sites up, last 7 days: 6 of 6 every day.</p>
+          <details class="cap-disclosure cap-chart-data" data-variant="accordion">
+            <summary><span class="cap-chart-show">Show data</span><span class="cap-chart-hide">Hide data</span></summary>
+            <div class="cap-table-wrap" role="region" aria-label="Sites up by day" tabindex="0"><table class="cap-table"><thead><tr><th scope="col">Day</th><th scope="col" data-num>Sites up</th></tr></thead><tbody><tr><th scope="row">Thu 24 Sep</th><td data-num>6</td></tr><tr><th scope="row">Fri 25 Sep</th><td data-num>6</td></tr><tr><th scope="row">Sat 26 Sep</th><td data-num>6</td></tr><tr><th scope="row">Sun 27 Sep</th><td data-num>6</td></tr><tr><th scope="row">Mon 28 Sep</th><td data-num>6</td></tr><tr><th scope="row">Tue 29 Sep</th><td data-num>6</td></tr><tr><th scope="row">Wed 30 Sep</th><td data-num>6</td></tr></tbody></table></div>
+          </details>
+        </div>
       </li>
       <li>
         <button type="button" class="cap-tile" data-tone="warn">
@@ -18,12 +24,18 @@
         </button>
       </li>
       <li>
-        <a class="cap-tile" href="#budget" data-tone="crit" aria-describedby="grid-budget-chart">
+        <div class="cap-chart" data-variant="tile" data-summary="hidden" id="grid-budget-chart-frame">
+          <a class="cap-tile" href="#budget" data-tone="crit" aria-describedby="grid-budget-chart">
           <span class="cap-tile-line"><span class="cap-tile-figure">2,140 <small>of 2,000</small></span><span class="cap-tile-label">Actions minutes</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Over limit</span></span>
           <span class="cap-tile-detail">$4.10 of $10 model spend this month</span>
           <span class="cap-tile-chart" aria-hidden="true"><svg viewBox="0 0 86 22" preserveAspectRatio="none" focusable="false"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="1,20 15,16 29,10 43,12 57,6 71,8 85,4" /></svg></span>
         </a>
-        <span class="cap-sr-only" id="grid-budget-chart">Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.</span>
+          <p class="cap-chart-summary" id="grid-budget-chart">Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.</p>
+          <details class="cap-disclosure cap-chart-data" data-variant="accordion">
+            <summary><span class="cap-chart-show">Show data</span><span class="cap-chart-hide">Hide data</span></summary>
+            <div class="cap-table-wrap" role="region" aria-label="Actions minutes by day" tabindex="0"><table class="cap-table"><thead><tr><th scope="col">Day</th><th scope="col" data-num>Minutes</th></tr></thead><tbody><tr><th scope="row">Thu 24 Sep</th><td data-num>260</td></tr><tr><th scope="row">Fri 25 Sep</th><td data-num>280</td></tr><tr><th scope="row">Sat 26 Sep</th><td data-num>310</td></tr><tr><th scope="row">Sun 27 Sep</th><td data-num>300</td></tr><tr><th scope="row">Mon 28 Sep</th><td data-num>330</td></tr><tr><th scope="row">Tue 29 Sep</th><td data-num>320</td></tr><tr><th scope="row">Wed 30 Sep</th><td data-num>340</td></tr></tbody></table></div>
+          </details>
+        </div>
       </li>
       <li>
         <a class="cap-tile" href="#backups" data-tone="nodata">
