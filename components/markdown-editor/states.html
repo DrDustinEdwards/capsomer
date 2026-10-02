@@ -166,7 +166,14 @@ The monitors now run from three regions.</textarea>
         <p>Posted: <output id="posted" class="cap-mono">nothing yet</output></p>
         <p>Saved with Ctrl or Cmd + S: <output id="saved" class="cap-mono">no</output></p>
       </section>
+
+      <section class="cap-specimen" id="sp-react" aria-labelledby="s-react">
+        <h2 id="s-react">In React</h2>
+        <p class="cap-muted">The MarkdownEditor wrapper, controlled, in StrictMode. It renders the same label and textarea, then loads CodeMirror in an effect.</p>
+        <div id="react-root"></div>
+      </section>
     </main>
+    <script type="module" src="./states.tsx"></script>
     <script type="module">
       import { enhance, getMarkdownEditor } from "./markdown-editor.ts";
 
