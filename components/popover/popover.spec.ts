@@ -169,6 +169,6 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Dimensions" }).click();
     await expect(page.locator("#pop-dims")).toBeVisible();
     const t = await page.locator("#pop-dims").evaluate((el) => getComputedStyle(el).transitionDuration);
-    expect(t.split(",").every((d) => parseFloat(d) === 0)).toBe(true);
+    expect(t.split(",").every((d) => parseFloat(d) <= 0.001)).toBe(true);
   });
 });

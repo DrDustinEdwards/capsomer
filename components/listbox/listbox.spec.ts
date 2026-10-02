@@ -151,7 +151,7 @@ eachTheme((theme) => {
 
   test("behaviour: typing filters by label and keyword, announces the count, and says when nothing matches", async ({ page }) => {
     const input = page.getByRole("combobox", { name: "Find a site" });
-    const status = page.locator("[data-cap-part='count']");
+    const status = page.locator("section:has(#f-a) [data-cap-part='count']");
     await input.fill("blog");
     await expect(page.locator("#f-a")).toBeVisible();
     await expect(page.locator("#f-b")).toBeHidden();

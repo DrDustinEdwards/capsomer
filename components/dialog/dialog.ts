@@ -212,6 +212,21 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
   };
   const onKey = (e: KeyboardEvent) => {
     if (e.key === "Escape" && isBusy(dialog)) e.preventDefault();
+    if (e.key !== "Tab" || e.altKey || e.ctrlKey || e.metaKey) return;
+    // Tab past the last control comes back to the first (and the reverse), so focus never
+    // leaves for the browser's own controls: the page behind is inert.
+    const stops = [...dialog.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(canFocus);
+    const first = stops[0];
+    const last = stops[stops.length - 1];
+    if (!first || !last) return;
+    const at = document.activeElement;
+    if (e.shiftKey && (at === first || at === dialog)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && at === last) {
+      e.preventDefault();
+      first.focus();
+    }
   };
   // A <form method="dialog"> closes natively; while busy it must not.
   const onSubmit = (e: SubmitEvent) => {
