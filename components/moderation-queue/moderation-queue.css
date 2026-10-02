@@ -1,0 +1,273 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The moderation queue: mentions and comments from strangers, waiting for a decision. Built
+   on the row list (.cap-rows, .cap-row): each mention is a row whose title opens it in place.
+   This file adds the columns the queue needs (a select box, the status, the sender, the
+   time, the decisions), the selected row, the open row, the filter line, the bulk bar's
+   fallback layout and the retention line. Extracted from the site admin's mentions page
+   (app/routes/admin.mentions.tsx and its mention-* rules); the shadcn Item rows, Checkbox
+   and Kbd are the craft target, and the columns are Capsomer's own. */
+@layer cap.components {
+  .cap-mq {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  /* The filter, the live count, and the key hint, on one line. */
+  .cap-mq-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+  }
+  .cap-mq-summary {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-mq-head .cap-btn[data-cap-keys-open] {
+    margin-inline-start: auto;
+  }
+  .cap-mq-count {
+    margin-inline-start: var(--space-2);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Without script the filter is a form: the radios choose, this button sends. With script
+     the rows are filtered where they are and the button is not needed. */
+  .cap-mq[data-cap-ready] .cap-mq-show {
+    display: none;
+  }
+
+  /* The tools above the list: select all and the bulk bar. */
+  .cap-mq-tools {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  /* The bulk bar is the bulk-bar component's (data-cap="bulk-bar"). Until its stylesheet is
+     loaded this lays the same markup out, at no specificity, so the component's own rules
+     win. Empty, it stays in the page for a screen reader (its count is a live region) and is
+     not seen. */
+  :where(.cap-mq) .cap-bulk {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--pad-card);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-l);
+    background: var(--sunken);
+  }
+  :where(.cap-mq) .cap-bulk-count {
+    margin: 0;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  :where(.cap-mq) .cap-bulk-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .cap-mq .cap-bulk[data-empty] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* The columns: select, status, the sender and the excerpt, the time, the decisions. */
+  .cap-rows.cap-mq-list {
+    grid-template-columns: auto auto minmax(0, 1fr) auto auto;
+    column-gap: var(--space-4);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+  .cap-mq-list .cap-mq-row {
+    grid-template-columns: subgrid;
+    align-items: center;
+    padding-inline: var(--pad-x);
+
+    &[hidden] {
+      display: none;
+    }
+    &[data-selected],
+    &[data-selected]:hover {
+      background: var(--sel);
+    }
+  }
+  .cap-mq-list .cap-mq-check {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    display: flex;
+    align-items: center;
+    min-width: var(--target);
+    position: relative;
+    z-index: 1;
+  }
+  .cap-mq-list .cap-row-status {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    flex-wrap: wrap;
+    row-gap: var(--space-1);
+    max-width: 9rem;
+  }
+  .cap-mq-list .cap-row-title {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .cap-mq-list .cap-row-detail {
+    grid-column: 3;
+    grid-row: 2;
+  }
+  .cap-mq-list .cap-row-meta {
+    grid-column: 4;
+    grid-row: 1 / span 2;
+  }
+  .cap-mq-list .cap-row-actions {
+    grid-column: 5;
+    grid-row: 1 / span 2;
+    justify-content: flex-end;
+  }
+
+  /* The sender: an avatar, the name, and the host as text, in one line. The host is the
+     source's own, so it is never a link here. */
+  .cap-mq-name {
+    margin-inline-start: var(--space-2);
+  }
+  .cap-mq-host {
+    margin-inline-start: var(--space-2);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+  }
+
+  /* The open row: what only a click shows. */
+  .cap-mq-list .cap-mq-more {
+    grid-column: 3 / -1;
+    display: grid;
+    gap: var(--space-3);
+    padding-block: var(--space-3) var(--space-2);
+    position: relative;
+    z-index: 1;
+    cursor: text;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+  .cap-mq-quote {
+    margin: 0;
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid var(--line-strong);
+    color: var(--text);
+    line-height: var(--leading);
+    max-width: 70ch;
+    overflow-wrap: anywhere;
+  }
+  .cap-mq-facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+    font-size: var(--fs-detail);
+
+    & dt {
+      color: var(--muted);
+    }
+    & dd {
+      margin: 0;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+  .cap-mq-why {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--text);
+  }
+
+  .cap-mq-empty[hidden] {
+    display: none;
+  }
+
+  /* Retention: how long what is not wanted is kept, and the sweep. */
+  .cap-mq-retention {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--line);
+  }
+  .cap-mq-retention p {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    max-width: 60ch;
+  }
+
+  /* The key hints say nothing when single keys are off: the buttons still work. */
+  :root[data-cap-single-keys="off"] .cap-mq .cap-kbd {
+    display: none;
+  }
+
+  /* A narrow list: the status sits above the sender, the time beside it, the decisions
+     underneath. */
+  @container cap-rows (max-width: 44rem) {
+    .cap-rows.cap-mq-list {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+    .cap-mq-list .cap-mq-check {
+      grid-column: 1;
+      grid-row: 1 / span 4;
+      align-self: start;
+    }
+    .cap-mq-list .cap-row-status {
+      grid-column: 2 / -1;
+      grid-row: 1;
+      max-width: none;
+    }
+    .cap-mq-list .cap-row-title {
+      grid-column: 2;
+      grid-row: 2;
+    }
+    .cap-mq-list .cap-row-detail {
+      grid-column: 2;
+      grid-row: 3;
+    }
+    .cap-mq-list .cap-row-meta {
+      grid-column: 3;
+      grid-row: 2 / span 2;
+    }
+    .cap-mq-list .cap-row-actions {
+      grid-column: 2 / -1;
+      grid-row: 4;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+    .cap-mq-list .cap-mq-more {
+      grid-column: 2 / -1;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-mq-quote {
+      border-color: CanvasText;
+    }
+    .cap-mq-list .cap-mq-row[data-selected] {
+      outline: 1px solid Highlight;
+      outline-offset: -1px;
+    }
+  }
+}
