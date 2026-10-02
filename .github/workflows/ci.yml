@@ -25,7 +25,8 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # 0.3 has about 1,700 browser tests; they are independent pages, so they run on four workers.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -47,7 +48,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Keyboard and accessibility tests, both themes
-        run: npx playwright test
+        run: npx playwright test --workers=4
       - name: Forced-colours screenshots (for review, never blocks)
         if: always()
         run: npx playwright test -c playwright.review.config.ts
