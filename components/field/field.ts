@@ -38,6 +38,13 @@ export function groupOf(control: Control): Control[] {
   return [control];
 }
 
+// The control a check is about: the select behind an enhanced select's button.
+export function controlOf(el: unknown): Control | null {
+  if (isControl(el)) return el;
+  if (el instanceof HTMLElement && el.classList.contains("cap-select-trigger")) return el.closest(".cap-select-wrap")?.querySelector<HTMLSelectElement>("select.cap-select") ?? null;
+  return null;
+}
+
 export function errorFor(control: Control): HTMLElement | null {
   return control.closest(".cap-field")?.querySelector<HTMLElement>(".cap-field-error") ?? null;
 }
@@ -137,8 +144,8 @@ export function enhance(root: ParentNode = document): () => void {
       if (c.getAttribute("aria-invalid") === "true") validate(c);
     };
     const onLeave = (e: FocusEvent) => {
-      const c = e.target;
-      if (isControl(c) && c.dataset.capDirty !== undefined && c.willValidate) validate(c);
+      const c = controlOf(e.target);
+      if (c && c.dataset.capDirty !== undefined && c.willValidate) validate(c);
     };
     // Capture, and stopped there, so an app's own submit handler runs only for a valid form.
     const onSubmit = (e: SubmitEvent) => {
