@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const revoke = (page: Page) => page.getByRole("button", { name: "Revoke foxhound-driver…" });
-const dialog = (page: Page, name = "Revoke foxhound-driver?") => page.getByRole("dialog", { name });
+const dialog = (page: Page, name = "Revoke foxhound-driver?") => page.getByRole("alertdialog", { name });
 
 async function openLive(page: Page, theme: "light" | "dark") {
   await visitStates(page, "confirm-dialog", theme, "live");
@@ -17,7 +17,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["open", "busy", "error", "typed-empty", "typed-matched", "reason-missing"]) {
+  for (const id of ["open", "comfortable", "busy", "error", "typed-empty", "typed-matched", "reason-missing"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "confirm-dialog", theme, id);
       await expect(page.locator("dialog.cap-dialog")).toBeVisible();
@@ -30,31 +30,31 @@ eachTheme((theme) => {
     await expectContrast(page, [
       { sel: ".cap-dialog-title", what: "the dialog title" },
       { sel: ".cap-dialog-body li", what: "a line of what changes" },
-      { sel: ".cap-dialog-body p", what: "the lead sentence" },
-      { sel: ".cap-dialog-error-lead", what: "the error's lead" },
-      { sel: ".cap-dialog-error p:not(.cap-dialog-error-lead)", what: "the error's reason" },
-      { sel: ".cap-dialog-error", what: "the error's boundary", part: "border" },
+      { sel: ".cap-dialog-description", what: "the lead sentence" },
+      { sel: ".cap-confirm-error-lead", what: "the error's lead" },
+      { sel: ".cap-confirm-error p:not(.cap-confirm-error-lead)", what: "the error's reason" },
+      { sel: ".cap-confirm-error", what: "the error's boundary", part: "border" },
     ]);
     await visitStates(page, "confirm-dialog", theme, "typed-empty");
     await expectContrast(page, [
-      { sel: ".cap-dialog-typed label", what: "the guard's label" },
-      { sel: ".cap-dialog-typed input", what: "the guard field's boundary", part: "border" },
+      { sel: ".cap-confirm-typed label", what: "the guard's label" },
+      { sel: ".cap-confirm-typed input", what: "the guard field's boundary", part: "border" },
     ]);
   });
 
   test("accessibility: the reason's label, note and boundary reach their contrast", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "reason-missing");
     await expectContrast(page, [
-      { sel: ".cap-dialog-reason label", what: "the reason's label" },
-      { sel: ".cap-dialog-note", what: "the note under the reason" },
-      { sel: ".cap-dialog-reason textarea", what: "the invalid reason field's boundary", part: "border" },
+      { sel: ".cap-confirm-reason label", what: "the reason's label" },
+      { sel: ".cap-confirm-note", what: "the note under the reason" },
+      { sel: ".cap-confirm-reason textarea", what: "the invalid reason field's boundary", part: "border" },
     ]);
   });
 
   test("accessibility: the dialog's roles and names", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "open");
     await expect(page.locator("dialog.cap-dialog")).toMatchAriaSnapshot(`
-      - dialog "Revoke foxhound-driver?":
+      - alertdialog "Revoke foxhound-driver?":
         - heading "Revoke foxhound-driver?" [level=2]
         - paragraph: This cannot be undone. The agent stops working at once.
         - list:
@@ -64,10 +64,25 @@ eachTheme((theme) => {
         - button "Cancel"
         - button "Revoke agent"
     `);
+    await expect(page.locator("dialog.cap-dialog")).toHaveAccessibleDescription(/This cannot be undone\..*Its key stops being accepted\./);
   });
 
   test("keyboard: focus starts on Cancel when the dialog opens", async ({ page }) => {
     await openLive(page, theme);
+    await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
+  });
+
+  test("accessibility: it is an alert dialog with no corner Close button", async ({ page }) => {
+    await openLive(page, theme);
+    await expect(dialog(page)).toHaveAttribute("role", "alertdialog");
+    await expect(dialog(page).getByRole("button", { name: "Close" })).toHaveCount(0);
+  });
+
+  test("keyboard: Tab moves from Cancel to the action and Shift Tab back", async ({ page }) => {
+    await openLive(page, theme);
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Revoke agent" })).toBeFocused();
+    await page.keyboard.press("Shift+Tab");
     await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
   });
 

@@ -6,6 +6,7 @@ parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [on, off, off with a note, asking for a reason, reason missing, applying, could not apply]
 added: 0.1.0
+updated: 0.2.0
 source: The approved mockup (design/mockup.html, the improve loop switch and .reason); the Capsid Portal's ui/Switch.tsx (AutomationSwitch, ReasonForm) and its .autoctl, .reason, .err and .state-note rules (0.1.1)
 replaces:
   - 'class="[^"]*\breason\b'
@@ -17,6 +18,8 @@ replaces:
 A `.cap-switch` inside `.cap-switch-reason`. Clicking it, or Space on it, does not move it: it opens a one-line reason beside it, labelled "Turning the improve loop off. Reason:". Enter applies, Esc cancels. The switch moves only when the reason is applied, and the app records who, when and why, then offers Undo through the message region.
 
 **Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01). The Portal had no automation switch at the extraction base (`366b902`); Capsomer's 0.1.0 was drawn from the approved mockup (a boxed form under the switch). 0.1.1 EXTRACTS the Portal's current flow and rules from `ui/Switch.tsx` and `styles.css` (#216): the inline layout (`.autoctl`, `.reason`: switch, label, field and buttons in one wrapping row, the field `flex: 1 1 180px` to 420px), the label "<verb>. Reason:", the required-reason error "Type a reason. It is recorded with the change.", the state asked for fixed when the field opens, Esc held while the request runs and stopped so it does not reach a panel around the switch, the value read from the field itself, the field and Apply and the switch marked busy, a refusal shown with its line breaks and kept until the next try or Cancel, and the note shown beside the switch while no reason is open (`.state-note`). It is ADAPTED to be generic: the Portal's `useApplySwitch` (preview, perform, signOut, its `PortalActionRequest`) is the app's own listener on `cap:switch-applied`, with `waitUntil` carrying the request; the Portal's `verb` function is `data-verb-on` and `data-verb-off`; the markup is the field component's (`.cap-input`, `.cap-field-error`). What stays Capsomer's, and why: the field is read-only and not disabled while the request runs (a disabled field drops focus), and Apply keeps its name and shows the spinner where the Portal's reads "Applying..." (the button component's pending state). The Portal's `.auto-row` (its Namespaces page's row layout) is a page layout, not part of the control, and is not carried.
+
+**Composed, not drawn.** From 0.2 the switch is the rebuilt `.cap-switch` (sizes, ring, invalid), the reason field is `.cap-input` with its 3 px ring, and Apply and Cancel are `.cap-btn`; this component only lays them out in one wrapping row. It has no counterpart in shadcn/ui (its Switch is the plain switch); the nearest craft is Switch + Field + Button.
 
 ## When to use it
 

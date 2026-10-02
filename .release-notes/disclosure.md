@@ -1,0 +1,4 @@
+- Summary and group-row padding and text size now follow `--pad-x`, `--gap` and `--fs-body` (the row heights are unchanged in compact density).
+- Consecutive `.cap-disclosure` sections now share their edges (the second's top border overlaps the first's bottom), as one accordion. A page that spaced them with its own margin should check the result.
+- Under `prefers-reduced-motion: no-preference` in browsers with `interpolate-size`, a section's panel now animates its height as well as fading.
+- New, optional: `data-variant="accordion"` on `.cap-disclosure` (React: `<Disclosure variant="accordion">`), a pressed tint, and a disabled style for `.cap-group-toggle`.

@@ -6,6 +6,7 @@ parts: [css]
 tool: native
 states: [all up, an outage, slots with no data, inline in a table cell]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/ui/charts.tsx (UptimeTicks, UptimeFoot) and styles.css (ticks, upct)
 replaces:
   - 'class="(ticks|upct)"'
@@ -32,6 +33,10 @@ A single current state is a `.cap-status`. A trend in a number (requests, errors
 - **No data is a state, hatched, with its reason.** It is never counted as up or as zero.
 - **Each kind of slot differs in shape as well as colour** in the legend: up and down solid, partly down split, no data hatched.
 - **In a table row the strip and its percent share one line** (`.cap-uptime-line`): an 18 px strip that takes the room it is given and never less than 84 px, then the percent. A site with no probe in the window says "No data" with its reason (a status, brief) instead of a percent; never a blank and never 0% (Portal: the Sites table, "Uptime, 7 days").
+
+## Matches
+
+shadcn/ui's Chart legend (a rounded swatch beside its word) and Card-style caption rhythm; shadcn has no uptime strip. Deliberately different: the strip's cells are Enarratio's SVG marks, not HTML, so there is no cell here to attach the shared popover tooltip to and no cell takes a tab stop. A mark's detail reaches a keyboard user through "The numbers, by day" (a disclosure and a table, each with its own component), never through hover alone. If Enarratio ever draws focusable HTML cells, the tooltip (`data-variant="tooltip"` popover) is the way to reveal a day's detail on focus and hover. The strip's height follows `--control`, and the inline form's `--row-h`, so comfortable density makes it taller.
 
 ## Keyboard
 

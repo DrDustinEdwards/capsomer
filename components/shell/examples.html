@@ -1,4 +1,4 @@
-<template data-specimen="expanded" data-title="Expanded, with counts" data-height="460">
+<template data-specimen="expanded" data-title="Expanded, with groups, counts, hover and pressed" data-height="520">
   <div class="cap-shell" data-cap="shell" data-cap-pref="cap-rail-specimen-expanded">
     <a class="cap-shell-skip" href="#cap-main">Skip to content</a>
     <header class="cap-shell-top">
@@ -10,16 +10,30 @@
       <span class="cap-muted" data-hide="phone">Updated 40 seconds ago</span>
       <div class="cap-shell-actions">
         <button type="button" class="cap-btn" data-hide="phone">Commands <kbd>Ctrl K</kbd></button>
-        <button type="button" class="cap-btn">Theme</button>
-        <a class="cap-btn cap-shell-settings" data-icon-only data-hide="phone" href="#cap-main" aria-label="Settings"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" /></svg></a>
+        <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-expanded">
+          <legend class="cap-sr-only">Theme</legend>
+          <div class="cap-theme-options">
+            <label><input type="radio" name="theme-expanded" value="light" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+            <label><input type="radio" name="theme-expanded" value="dark" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+          </div>
+        </fieldset>
+        <a class="cap-btn cap-shell-settings" data-icon-only data-hide="phone" href="#cap-main" aria-label="Settings"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" /></svg></a>
         <button type="button" class="cap-btn">Sign out</button>
       </div>
     </header>
     <nav class="cap-shell-rail" id="cap-rail" aria-label="Sections">
-      <a href="#cap-main" aria-current="page"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" /></svg><span class="cap-shell-label">Overview</span><span class="cap-shell-count"></span></a>
-      <a href="#cap-main" aria-label="Sites, 2 down or degraded"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-label">Sites</span><span class="cap-shell-count" data-tone="crit">2</span></a>
-      <a href="#cap-main" aria-label="Queue, 3 blocked"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z" /></svg><span class="cap-shell-label">Queue</span><span class="cap-shell-count" data-tone="warn">3</span></a>
-      <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M3 2h10v12H3z" opacity=".35" /><path fill="currentColor" d="M5 5h6v1.5H5zM5 8h6v1.5H5z" /></svg><span class="cap-shell-label">Activity</span><span class="cap-shell-count"></span></a>
+      <div class="cap-shell-group" role="group" aria-labelledby="g-watch">
+        <div class="cap-shell-group-label" id="g-watch">Watch</div>
+        <a href="#cap-main" aria-current="page"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" /></svg><span class="cap-shell-label">Overview</span><span class="cap-shell-count"></span></a>
+        <a href="#cap-main" aria-label="Sites, 2 down or degraded"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-label">Sites</span><span class="cap-shell-count" data-tone="crit">2</span></a>
+        <a href="#cap-main" aria-label="Queue, 3 blocked"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z" /></svg><span class="cap-shell-label">Queue</span><span class="cap-shell-count" data-tone="warn">3</span></a>
+      </div>
+      <div class="cap-shell-group" role="group" aria-labelledby="g-record">
+        <div class="cap-shell-group-label" id="g-record">Record</div>
+        <a href="#cap-main" data-force="hover"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M3 2h10v12H3z" opacity=".35" /><path fill="currentColor" d="M5 5h6v1.5H5zM5 8h6v1.5H5z" /></svg><span class="cap-shell-label">Activity</span><span class="cap-shell-count"></span></a>
+        <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-shell-label">Reports</span><span class="cap-shell-count"></span></a>
+        <a href="#cap-main" data-force="pressed"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-label">Backups</span><span class="cap-shell-count"></span></a>
+      </div>
       <div class="cap-shell-foot">
         <div class="cap-shell-hint">
           <button type="button" class="cap-shell-linkish"><span>Command menu</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span></button>
@@ -31,7 +45,7 @@
     <main class="cap-shell-main" id="cap-main" tabindex="-1">
       <div class="cap-shell-page">
         <h1>Overview</h1>
-        <p>The page's own content sits here, and the document scrolls.</p>
+        <p>The page's own content sits here, and the document scrolls. Activity shows hover and Backups shows pressed; keyboard focus is the 2 px ring.</p>
       </div>
     </main>
     <nav class="cap-shell-tabs" aria-label="Sections">
@@ -46,12 +60,18 @@
     <header class="cap-shell-top">
       <a class="cap-shell-brand" href="#cap-main">
         <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path fill="var(--accent)" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" /><path fill="var(--surface)" d="M10 5.4 14 7.7v4.6L10 14.6 6 12.3V7.7z" /></svg>
-        Capsomer <small>0.1.0</small>
+        Capsomer <small>0.2.0</small>
       </a>
       <div class="cap-shell-spacer"></div>
       <div class="cap-shell-actions">
-        <button type="button" class="cap-btn">Theme</button>
-        <a class="cap-btn cap-shell-settings" data-icon-only href="#cap-main" aria-label="Settings" aria-current="page"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" /></svg></a>
+        <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-collapsed">
+          <legend class="cap-sr-only">Theme</legend>
+          <div class="cap-theme-options">
+            <label><input type="radio" name="theme-collapsed" value="light" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+            <label><input type="radio" name="theme-collapsed" value="dark" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+          </div>
+        </fieldset>
+        <a class="cap-btn cap-shell-settings" data-icon-only href="#cap-main" aria-label="Settings" aria-current="page"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" /></svg></a>
       </div>
     </header>
     <nav class="cap-shell-rail" id="cap-rail" aria-label="Sections">
@@ -75,6 +95,92 @@
   </div>
 </template>
 
+<template data-specimen="collapsed-tip" data-title="Collapsed, a name shown" data-height="260">
+  <div class="cap-shell" data-cap="shell" data-rail="collapsed" data-cap-pref="cap-rail-specimen-collapsed-tip">
+    <a class="cap-shell-skip" href="#cap-main">Skip to content</a>
+    <header class="cap-shell-top">
+      <a class="cap-shell-brand" href="#cap-main">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path fill="var(--accent)" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" /><path fill="var(--surface)" d="M10 5.4 14 7.7v4.6L10 14.6 6 12.3V7.7z" /></svg>
+        Capsomer
+      </a>
+      <div class="cap-shell-spacer"></div>
+      <div class="cap-shell-actions">
+        <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-collapsed-tip">
+          <legend class="cap-sr-only">Theme</legend>
+          <div class="cap-theme-options">
+            <label><input type="radio" name="theme-collapsed-tip" value="light" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+            <label><input type="radio" name="theme-collapsed-tip" value="dark" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+          </div>
+        </fieldset>
+        <a class="cap-btn cap-shell-settings" data-icon-only data-hide="phone" href="#cap-main" aria-label="Settings"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" /></svg></a>
+      </div>
+    </header>
+    <nav class="cap-shell-rail" id="cap-rail" aria-label="Sections">
+      <a href="#cap-main" aria-current="page"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" /></svg><span class="cap-shell-label">Components</span><span class="cap-shell-count"></span></a>
+      <a href="#cap-main" aria-label="Tests, 1 failing" data-force="hover"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-shell-label">Tests</span><span class="cap-shell-count" data-tone="crit">1</span></a>
+      <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z" /></svg><span class="cap-shell-label">Queue</span><span class="cap-shell-count"></span></a>
+      <div class="cap-shell-foot">
+        <div class="cap-shell-hint">
+          <button type="button" class="cap-shell-railbtn"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg><span class="cap-shell-label">Command menu</span></button>
+          <button type="button" class="cap-shell-railbtn"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M1.5 4.5h13v7h-13zM4 8h8" /></svg><span class="cap-shell-label">Shortcuts</span></button>
+        </div>
+        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="false" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Expand menu</span><kbd aria-hidden="true">[</kbd></button>
+      </div>
+    </nav>
+    <main class="cap-shell-main" id="cap-main" tabindex="-1">
+      <div class="cap-shell-page">
+        <h1>Components</h1>
+        <p>Tests is hovered: its name shows in a tooltip beside its icon.</p>
+      </div>
+    </main>
+  </div>
+</template>
+
+<template data-specimen="comfortable" data-title="Comfortable density" data-height="460">
+  <div class="cap-shell" data-cap="shell" data-density="comfortable" data-cap-pref="cap-rail-specimen-comfortable">
+    <a class="cap-shell-skip" href="#cap-main">Skip to content</a>
+    <header class="cap-shell-top">
+      <a class="cap-shell-brand" href="#cap-main">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path fill="var(--accent)" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" /><path fill="var(--surface)" d="M10 5.4 14 7.7v4.6L10 14.6 6 12.3V7.7z" /></svg>
+        Portal
+      </a>
+      <div class="cap-shell-spacer"></div>
+      <div class="cap-shell-actions">
+        <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-comfortable">
+          <legend class="cap-sr-only">Theme</legend>
+          <div class="cap-theme-options">
+            <label><input type="radio" name="theme-comfortable" value="light" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+            <label><input type="radio" name="theme-comfortable" value="dark" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+          </div>
+        </fieldset>
+        <a class="cap-btn cap-shell-settings" data-icon-only data-hide="phone" href="#cap-main" aria-label="Settings"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" /></svg></a>
+        <button type="button" class="cap-btn">Sign out</button>
+      </div>
+    </header>
+    <nav class="cap-shell-rail" id="cap-rail" aria-label="Sections">
+      <div class="cap-shell-group" role="group" aria-labelledby="g-comfy">
+        <div class="cap-shell-group-label" id="g-comfy">Watch</div>
+        <a href="#cap-main" aria-current="page"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" /></svg><span class="cap-shell-label">Overview</span><span class="cap-shell-count"></span></a>
+        <a href="#cap-main" aria-label="Sites, 2 down or degraded"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-label">Sites</span><span class="cap-shell-count" data-tone="crit">2</span></a>
+        <a href="#cap-main" aria-label="Queue, 3 blocked"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z" /></svg><span class="cap-shell-label">Queue</span><span class="cap-shell-count" data-tone="warn">3</span></a>
+      </div>
+      <div class="cap-shell-foot">
+        <div class="cap-shell-hint">
+          <button type="button" class="cap-shell-linkish"><span>Command menu</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span></button>
+          <button type="button" class="cap-shell-linkish"><span>Shortcuts</span><kbd>?</kbd></button>
+        </div>
+        <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="true" aria-controls="cap-rail"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" /></svg><span class="cap-shell-label">Collapse menu</span><kbd aria-hidden="true">[</kbd></button>
+      </div>
+    </nav>
+    <main class="cap-shell-main" id="cap-main" tabindex="-1">
+      <div class="cap-shell-page">
+        <h1>Overview</h1>
+        <p>data-density=comfortable on the shell makes the items, the counts and the page padding roomier.</p>
+      </div>
+    </main>
+  </div>
+</template>
+
 <template data-specimen="phone" data-title="Phone width, with the tab bar" data-height="560" data-width="390">
   <div class="cap-shell" data-cap="shell" data-cap-pref="cap-rail-specimen-phone">
     <a class="cap-shell-skip" href="#cap-main">Skip to content</a>
@@ -85,8 +191,14 @@
       </a>
       <div class="cap-shell-spacer"></div>
       <div class="cap-shell-actions">
-        <button type="button" class="cap-btn">Theme</button>
-        <a class="cap-btn cap-shell-settings" data-icon-only data-hide="phone" href="#cap-main" aria-label="Settings"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg></a>
+        <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-phone">
+          <legend class="cap-sr-only">Theme</legend>
+          <div class="cap-theme-options">
+            <label><input type="radio" name="theme-phone" value="light" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+            <label><input type="radio" name="theme-phone" value="dark" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+          </div>
+        </fieldset>
+        <a class="cap-btn cap-shell-settings" data-icon-only data-hide="phone" href="#cap-main" aria-label="Settings"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" /></svg></a>
       </div>
     </header>
     <nav class="cap-shell-rail" id="cap-rail" aria-label="Sections">
@@ -105,9 +217,11 @@
       <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M3 2h10v12H3z" opacity=".35" /><path fill="currentColor" d="M5 5h6v1.5H5zM5 8h6v1.5H5z" /></svg>Activity</a>
       <button type="button" data-cap-part="more" aria-haspopup="dialog" aria-expanded="false" aria-controls="cap-more"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="3" cy="8" r="1.4" fill="currentColor" /><circle cx="8" cy="8" r="1.4" fill="currentColor" /><circle cx="13" cy="8" r="1.4" fill="currentColor" /></svg>More</button>
     </nav>
-    <dialog class="cap-shell-more" id="cap-more" aria-labelledby="cap-more-title">
-      <div class="cap-shell-more-card">
-        <h2 class="cap-shell-more-title" id="cap-more-title">More views</h2>
+    <dialog class="cap-dialog cap-shell-more" data-cap="dialog" data-placement="bottom" id="cap-more" aria-labelledby="cap-more-title">
+      <div class="cap-dialog-header">
+        <h2 class="cap-dialog-title" id="cap-more-title">More views</h2>
+      </div>
+      <div class="cap-dialog-body">
         <nav aria-labelledby="cap-more-title">
           <ul class="cap-shell-more-list">
             <li><a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z" /></svg><span class="cap-shell-more-name">Namespaces</span><span class="cap-shell-count">1 paused</span></a></li>
@@ -115,8 +229,8 @@
             <li><a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-more-name">Settings</span></a></li>
           </ul>
         </nav>
-        <div class="cap-shell-more-foot"><button type="button" class="cap-btn" data-cap-part="more-close">Close</button></div>
       </div>
+      <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
     </dialog>
   </div>
 </template>
@@ -144,21 +258,25 @@
       <a href="#cap-main"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 3h12v2H2zM2 7h12v2H2zM2 11h12v2H2z" /></svg>Queue</a>
       <button type="button" data-cap-part="more" aria-haspopup="dialog" aria-expanded="false" aria-controls="cap-more" aria-current="true"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="3" cy="8" r="1.4" fill="currentColor" /><circle cx="8" cy="8" r="1.4" fill="currentColor" /><circle cx="13" cy="8" r="1.4" fill="currentColor" /></svg>More</button>
     </nav>
-    <dialog class="cap-shell-more" id="cap-more" aria-labelledby="cap-more-title">
-      <div class="cap-shell-more-card">
-        <h2 class="cap-shell-more-title" id="cap-more-title">More views</h2>
+    <dialog class="cap-dialog cap-shell-more" data-cap="dialog" data-placement="bottom" id="cap-more" aria-labelledby="cap-more-title">
+      <div class="cap-dialog-header">
+        <h2 class="cap-dialog-title" id="cap-more-title">More views</h2>
+      </div>
+      <div class="cap-dialog-body">
         <nav aria-labelledby="cap-more-title">
           <ul class="cap-shell-more-list">
-            <li><a href="#cap-main" aria-current="page"><span class="cap-shell-more-name">Settings</span></a></li>
+            <li><a href="#cap-main" aria-current="page"><svg class="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg><span class="cap-shell-more-name">Settings</span></a></li>
           </ul>
         </nav>
-        <div class="cap-shell-more-foot"><button type="button" class="cap-btn" data-cap-part="more-close">Close</button></div>
       </div>
+      <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
     </dialog>
   </div>
 </template>
 
 <script type="module">
   import { enhance } from "./shell.ts";
+  import { enhance as enhanceTheme } from "../theme-switch/theme-switch.ts";
   enhance();
+  enhanceTheme();
 </script>

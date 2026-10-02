@@ -15,6 +15,11 @@ eachTheme((theme) => {
       { sel: "#b-hover", what: "a hovered button's edge", part: "border" },
       { sel: "#b-pressed", what: "a pressed label" },
       { sel: "#b-primary", what: "a primary label on the accent" },
+      { sel: "#b-secondary", what: "a secondary label on its tint" },
+      { sel: "#b-secondary", what: "a secondary button's edge", part: "border" },
+      { sel: "#b-secondary-hover", what: "a hovered secondary label" },
+      { sel: "#b-variant-link", what: "a link variant's label" },
+      { sel: "#b-invalid", what: "an invalid button's edge", part: "border" },
       { sel: "#b-danger", what: "a danger label on its soft tint" },
       { sel: "#b-danger", what: "a danger button's edge", part: "border" },
       { sel: "#b-danger-pressed", what: "a pressed danger label" },
@@ -34,8 +39,10 @@ eachTheme((theme) => {
     await expect(page.locator("#variants")).toMatchAriaSnapshot(`
       - button "Refresh"
       - button "Save changes"
+      - button "Preview"
       - button "Revoke agent"
       - button "Show more"
+      - button "View logs"
     `);
     await expect(page.locator("#b-icon")).toHaveAccessibleName("Refresh sites");
     await expect(page.locator("#b-disabled")).toHaveAccessibleDescription("Fix the 2 problems above first.");
@@ -45,7 +52,6 @@ eachTheme((theme) => {
   test("keyboard: Tab reaches every button, including one disabled with its reason", async ({ page }) => {
     await visitStates(page, "button", theme);
     await page.locator("#b-pressed").focus();
-    await page.keyboard.press("Tab");
     await page.keyboard.press("Tab");
     await page.keyboard.press("Tab");
     await expect(page.locator("#b-disabled")).toBeFocused();
@@ -83,13 +89,27 @@ eachTheme((theme) => {
     await expect(page.locator("#b-pending .cap-btn-label")).toHaveCSS("opacity", "0");
   });
 
-  test("behaviour: a button is at least the control height and an icon button is square", async ({ page }) => {
+  test("accessibility: every size keeps a 24 px hit area", async ({ page }) => {
     await visitStates(page, "button", theme);
-    const b = await page.locator("#b-default").boundingBox();
-    expect(b?.height).toBeGreaterThanOrEqual(32);
-    const icon = await page.locator("#b-icon").boundingBox();
-    expect(icon?.width).toBe(icon?.height);
+    for (const id of ["#b-xs", "#b-sm", "#b-size-default", "#b-lg", "#b-icon"]) {
+      const b = await page.locator(id).boundingBox();
+      expect(b?.height, id).toBeGreaterThanOrEqual(24);
+      expect(b?.width, id).toBeGreaterThanOrEqual(24);
+    }
     const link = await page.locator("#b-linkbtn").boundingBox();
     expect(link?.height).toBeGreaterThanOrEqual(24);
+  });
+
+  test("accessibility: a button group is a named group and its buttons are reachable", async ({ page }) => {
+    await visitStates(page, "button", theme);
+    await expect(page.getByRole("group", { name: "Page navigation" })).toBeVisible();
+    await page.getByRole("button", { name: "Previous" }).focus();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Next" })).toBeFocused();
+  });
+
+  test("accessibility: an open popup button reports aria-expanded", async ({ page }) => {
+    await visitStates(page, "button", theme);
+    await expect(page.locator("#b-expanded")).toHaveAttribute("aria-expanded", "true");
   });
 });

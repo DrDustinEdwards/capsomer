@@ -1,0 +1,1 @@
+- New `data-size="sm"` on `.cap-switch`; `aria-invalid="true"` on the input draws the invalid edge and ring. The focus ring is a 3 px outline. The thumb travel is now computed from `--cap-sw-w`, `--cap-sw-thumb` (apps that overrode the 36 by 20 geometry set those instead of widths).

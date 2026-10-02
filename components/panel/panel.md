@@ -4,8 +4,9 @@ title: Panel
 summary: A bordered surface with a header on the raised tone, an optional count, source line and link to the full view, and a padded body.
 parts: [css, react]
 tool: native
-states: [with a header and a source, with a count and a link to the full view, body only, holding a list with no body padding]
+states: [card parts (description, action, footer), flush body with a padded block, small size, comfortable density, with a header and a source, with a count and a link to the full view, body only, holding a list with no body padding]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css ("panels") and dashboard/src/views/shared.tsx (Panel)
 replaces:
   - 'class="panel"'
@@ -35,7 +36,17 @@ A page with one subject needs no box around it; the page heading is enough. A me
 - **A panel is a plain `section` with a heading, not a named region.** A console page holds eight panels; eight extra landmarks make the landmark list useless. Headings carry the structure.
 - **The heading level follows the page**: `h2` under the page's `h1`, `h3` inside a grouped section.
 - **`data-flush` on the body removes its padding**, so a list's or table's rows run to the panel's edges and the hover tint fills the row.
+- **A flush body with a padded block** (`.cap-panel-pad`, from the Capsid Portal): the body can be `data-flush` so a table or a list touches the panel's edges, and a block of text, a form or a note sits inside it in `.cap-panel-pad`, which has the body's own padding. Use it for an intro line above a list, or a note under a table.
+- **A panel can be named by its title** (React: `headingId`; HTML: `id` on the heading and `aria-labelledby` on the section). That makes the section a named region, a landmark: give it to the panels a person should be able to jump to, not to every panel on the page. The React `Panel` also takes a `ref` (to the `<section>`), for focus, scrolling or measuring.
+- **Card parts, as shadcn's Card has them**: a description under the heading (`.cap-panel-desc`, muted), an action at the header's right (`.cap-panel-action`, the shadcn CardAction), a footer band under the body (`.cap-panel-foot`, tinted, under a rule, for the panel's own buttons or a link), `data-size="sm"` for tighter spacing, a picture as the first child running to the edges. In comfortable density the panel takes a faint `--shadow-xs`.
+- **Spacing follows density**: the header and body padding come from `--pad-y`, `--pad-card` and `--gap` (compact values are the Portal's 9 and 16 px, 12 px body).
 - **The panel clips its content to its rounded corners.** Focus rings inside a panel (row-list, table) are drawn inset so clipping never hides one.
+
+## The shadcn component it matches
+
+Card (`card.tsx`): Card, CardHeader, CardTitle, CardDescription, CardAction, CardContent, CardFooter. Mapping: `.cap-panel`, `.cap-panel-head` with its heading, `.cap-panel-desc`, `.cap-panel-action`, `.cap-panel-body`, `.cap-panel-foot`; size `sm`; the footer tint and rule; the first-child image.
+
+Different on purpose: the header sits on the raised tone (a band) rather than shadcn's header with no tint, as in the Portal; the heading is a real `h2` or `h3`, not a `div`; a plain section, not a landmark, unless given a heading id; the source line, count and link to the full view have no shadcn counterpart.
 
 ## Keyboard
 
@@ -79,7 +90,24 @@ With a count and a link to the full view:
 </section>
 ```
 
-In React, `import { Panel } from "capsomer/react/panel"`: `<Panel title="Needs attention" src="Worst first. Read 40 seconds ago" flush>...</Panel>`; `count`, `more` (the link) and `section` (for the anchor bar, with `id`) are optional.
+In React, `import { Panel } from "capsomer/react/panel"`: `<Panel title="Needs attention" src="Worst first. Read 40 seconds ago" flush>...</Panel>`; `count`, `more` (the link), `description`, `actions`, `footer`, `size="sm"`, `section` (for the anchor bar, with `id`), `headingId` (names the section by its title with `aria-labelledby`) and `ref` (to the `<section>`) are optional.
+
+A flush panel with a padded block, a description and a footer:
+
+```html
+<section class="cap-panel" aria-labelledby="queue-h">
+  <header class="cap-panel-head">
+    <h2 id="queue-h">Queue</h2>
+    <span class="cap-panel-action"><button type="button" class="cap-btn">Edit</button></span>
+    <p class="cap-panel-desc">Jobs wait here until a driver takes them.</p>
+  </header>
+  <div class="cap-panel-body" data-flush>
+    <div class="cap-panel-pad"><p>Two jobs are waiting.</p></div>
+    [a .cap-rows list or a .cap-table-wrap, edge to edge]
+  </div>
+  <footer class="cap-panel-foot">[buttons or a link]</footer>
+</section>
+```
 
 **Provenance.** EXTRACTED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.panel`, `.panel > header`, `.panel .body`, `.src`, `.more`; `dashboard/src/views/shared.tsx` `Panel`). Evidence: the border, the 10 px radius, the raised header with no rule, the 13 px 600 heading with -0.01em, the right-pushed `--dim` source line and the 16 px body padding are the Portal's rules with token names (`.src { font-size: 11px }` is `--fs-label`; the body's 14 px vertical padding is 12 px here, the nearest space token, and its grid gap is Capsomer's, from `--gap`). Brought up to date in v0.1.1: the header's 9 px padding (12 px at `366b902`), the count (`num faint`), and the link to the full view (`.more`, with `.src + .more`). Adapted: the Portal's `Panel` takes `section` and `id` for its anchor bar (`data-section`); this one does too. Not carried: the Portal's `.body` is the markup's own div and has no flush variant (its lists sit directly in the panel); `data-flush` is Capsomer's, and `overflow: clip` for the rounded corners, which the Portal gets from `.attention { overflow: hidden }` on one panel only.
 

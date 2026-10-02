@@ -134,9 +134,23 @@ export function enhance(root: ParentNode = document): () => void {
       const clear = target.closest<HTMLElement>("[data-cap-part='clear']");
       if (clear && group.contains(clear)) clearAll(group);
     };
+    // Arrow keys, Home and End move focus between the chips without pressing one; every chip
+    // stays a tab stop, so Tab works as it does for any run of buttons.
+    const onKey = (e: KeyboardEvent) => {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      const all = chips(group).filter((c) => !c.matches(":disabled, [aria-disabled='true']"));
+      const at = all.indexOf(document.activeElement as HTMLButtonElement);
+      if (at < 0) return;
+      const next = e.key === "ArrowRight" || e.key === "ArrowDown" ? all[(at + 1) % all.length] : e.key === "ArrowLeft" || e.key === "ArrowUp" ? all[(at - 1 + all.length) % all.length] : e.key === "Home" ? all[0] : e.key === "End" ? all.at(-1) : undefined;
+      if (!next) return;
+      e.preventDefault();
+      next.focus();
+    };
     group.addEventListener("click", onClick);
+    group.addEventListener("keydown", onKey);
     undo.push(() => {
       group.removeEventListener("click", onClick);
+      group.removeEventListener("keydown", onKey);
       delete group.dataset.capReady;
     });
   }

@@ -22,6 +22,14 @@ eachTheme((theme) => {
       { sel: "#f-notes", what: "a textarea's edge", part: "border" },
       { sel: "#f-readonly", what: "a read-only input's edge", part: "border" },
       { sel: "label.cap-check:has(#c-on)", what: "a checkbox label" },
+      { sel: "#c-off", what: "an unchecked checkbox's edge", part: "border" },
+      { sel: "#c-on", what: "a checked checkbox's fill against the page", part: "border" },
+      { sel: "#c-invalid", what: "an invalid checkbox's edge", part: "border" },
+      { sel: "#c-mixed", what: "a mixed checkbox's fill against the page", part: "border" },
+      { sel: "#f-file", what: "a file input's edge", part: "border" },
+      { sel: "#g-url", what: "an input group's text" },
+      { sel: "[aria-label='Site address with scheme']", what: "an input group's edge", part: "border" },
+      { sel: ".cap-input-group-text", what: "an addon's text" },
     ]);
   });
 
@@ -115,5 +123,59 @@ eachTheme((theme) => {
     await url.fill("https://foxhound.app/");
     await expect(page.locator("#site-url-e")).toBeHidden();
     await expect(url).not.toHaveAttribute("aria-invalid", "true");
+  });
+
+  test("accessibility: a checkbox can be mixed and reports it", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    await expect(page.getByRole("checkbox", { name: "Select all sites (some chosen)" })).toBeChecked({ indeterminate: true });
+  });
+
+  test("accessibility: an invalid checkbox and radio expose aria-invalid and their message", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    await expect(page.locator("#c-invalid")).toHaveAttribute("aria-invalid", "true");
+    await expect(page.locator("#c-invalid")).toHaveAccessibleDescription("Accept the terms to continue.");
+    await expect(page.locator("#r-invalid")).toHaveAttribute("aria-invalid", "true");
+  });
+
+  test("accessibility: the group and the focus ring on a field", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    await expect(page.getByRole("group", { name: "Site address with scheme" })).toBeVisible();
+    await page.locator("#g-url").focus();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expect(page.locator("#g-url")).toBeFocused();
+    await expectContrast(page, [{ sel: "[aria-label='Site address with scheme']", what: "the group's focus ring", part: "outline", min: 3 }]);
+    await page.locator("#f-focus").focus();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expectContrast(page, [{ sel: "#f-focus", what: "a field's focus ring", part: "outline", min: 3 }]);
+  });
+
+  test("keyboard: a checkbox's ring shows on keyboard focus", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    await page.locator("#c-off").focus();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expect(page.locator("#c-off")).toBeFocused();
+    await expect(page.locator("#c-off")).toHaveCSS("outline-style", "solid");
+    await expectContrast(page, [{ sel: "#c-off", what: "a checkbox's focus ring", part: "outline", min: 3 }]);
+  });
+
+  test("behaviour: clicking an addon's text puts the cursor in its field; its button keeps its own click", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    await page.locator(".cap-input-group-text").first().click();
+    await expect(page.locator("#g-url")).toBeFocused();
+    await page.getByRole("button", { name: "Paste an address" }).click();
+    await expect(page.locator("#g-url")).not.toBeFocused();
+  });
+
+  test("behaviour: a message sets data-invalid on its field and clears it when fixed", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    const url = page.locator("#site-url");
+    await url.fill("foxhound.app");
+    await url.blur();
+    await expect(page.locator("#site-url").locator("xpath=ancestor::div[contains(@class,'cap-field')][1]")).toHaveAttribute("data-invalid", "true");
+    await url.fill("https://foxhound.app");
+    await expect(page.locator("#site-url").locator("xpath=ancestor::div[contains(@class,'cap-field')][1]")).not.toHaveAttribute("data-invalid", "true");
   });
 });

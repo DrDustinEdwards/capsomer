@@ -1,14 +1,14 @@
-// The confirm dialog: preview, then perform, for an action that cannot be undone. A native
-// <dialog> opened with showModal(). Focus starts on Cancel; a click outside does nothing
-// (so a typed reason is never lost that way); Esc closes unless the action is running; a
-// failure stays inside the dialog with Try again; an action that needs a reason asks for
-// it in the dialog and says so when it is empty; focus goes back to the control that
-// opened it, or to a fallback when that control is gone. No framework; the React wrapper
-// and the other overlays reuse the focus helpers exported here.
+// The confirm dialog: preview, then perform, for an action that cannot be undone. The shared
+// dialog (components/dialog) as an alert dialog: focus starts on Cancel; a click outside does
+// nothing (so a typed reason is never lost that way); Esc closes unless the action is running;
+// focus goes back to the control that opened it, or to a fallback when that control is gone.
+// The shared dialog does all of that. This module adds what a confirm is: the perform button,
+// the typed-word guard, the reason, and the failure that stays inside with Try again. No
+// framework; the React wrapper reuses the pure functions exported here.
 
 // The generic overlay helpers moved to the shared dialog (components/dialog/dialog.ts). They
 // are re-exported here, so what imported them from this module keeps working.
-import { errorText, isBusy, rememberOpener, returnFocus, uid } from "../dialog/dialog.ts";
+import { errorText, isBusy, openDialog, setDialogBusy, uid, wireDialog } from "../dialog/dialog.ts";
 export { errorText, isBackdropClick, isBusy, rememberOpener, returnFocus, uid } from "../dialog/dialog.ts";
 
 // The typed-word guard: case-insensitive, surrounding spaces ignored. No word, no guard.
@@ -72,25 +72,22 @@ function syncGuard(dialog: HTMLDialogElement): void {
   }
 }
 
-// Busy: the dialog and the perform button say so, both buttons refuse, and Esc is held.
-// aria-disabled rather than disabled, so focus stays on the button that was pressed.
+// Busy: the shared dialog holds Esc, Close, Cancel and the backdrop; the perform button says
+// so too, and the fields stop taking input. aria-disabled rather than disabled, so focus stays
+// on the button that was pressed.
 export function setBusy(dialog: HTMLDialogElement, on: boolean): void {
   const perform = part<HTMLButtonElement>(dialog, "perform");
-  const cancel = part<HTMLButtonElement>(dialog, "cancel");
   const input = part<HTMLInputElement>(dialog, "typed");
   const reason = part<HTMLTextAreaElement>(dialog, "reason");
+  setDialogBusy(dialog, on);
   if (on) {
-    dialog.setAttribute("aria-busy", "true");
     perform?.setAttribute("aria-busy", "true");
     perform?.setAttribute("aria-disabled", "true");
-    cancel?.setAttribute("aria-disabled", "true");
     if (input) input.readOnly = true;
     if (reason) reason.readOnly = true;
   } else {
-    dialog.removeAttribute("aria-busy");
     perform?.removeAttribute("aria-busy");
     perform?.removeAttribute("aria-disabled");
-    cancel?.removeAttribute("aria-disabled");
     if (input) input.readOnly = false;
     if (reason) reason.readOnly = false;
     syncGuard(dialog);
@@ -103,7 +100,7 @@ export function showError(dialog: HTMLDialogElement, message: string): void {
   const perform = part<HTMLButtonElement>(dialog, "perform");
   if (box) {
     const lead = document.createElement("p");
-    lead.className = "cap-dialog-error-lead";
+    lead.className = "cap-confirm-error-lead";
     lead.append(glyph(), document.createTextNode("Not done. Nothing was changed."));
     const why = document.createElement("p");
     why.textContent = message;
@@ -121,7 +118,7 @@ export function showReasonError(dialog: HTMLDialogElement): void {
   const box = part(dialog, "error");
   if (box) {
     const lead = document.createElement("p");
-    lead.className = "cap-dialog-error-lead";
+    lead.className = "cap-confirm-error-lead";
     lead.append(glyph(), document.createTextNode("A reason is required."));
     const why = document.createElement("p");
     why.textContent = "Type what you are doing and why, then try again. Nothing was changed.";
@@ -141,21 +138,8 @@ export function clearError(dialog: HTMLDialogElement): void {
   }
 }
 
-function glyph(): SVGSVGElement {
-  const ns = "http://www.w3.org/2000/svg";
-  const svg = document.createElementNS(ns, "svg");
-  svg.setAttribute("viewBox", "0 0 16 16");
-  svg.setAttribute("width", "14");
-  svg.setAttribute("height", "14");
-  svg.setAttribute("aria-hidden", "true");
-  svg.setAttribute("focusable", "false");
-  const p = document.createElementNS(ns, "path");
-  p.setAttribute("fill", "currentColor");
-  p.setAttribute("d", "M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4v5h1.6V4zM7.2 10.4V12h1.6v-1.6z");
-  p.setAttribute("fill-rule", "evenodd");
-  svg.append(p);
-  return svg;
-}
+const ERROR_GLYPH = "M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4v5h1.6V4zM7.2 10.4V12h1.6v-1.6z";
+const glyph = () => svgGlyph(ERROR_GLYPH, 14);
 
 // Binds what the perform button does for a dialog written in markup.
 export function bindPerform(dialog: HTMLDialogElement, perform: Perform): void {
@@ -165,12 +149,10 @@ export function bindPerform(dialog: HTMLDialogElement, perform: Perform): void {
 // Opens a confirm dialog, remembering the opener. Focus starts on Cancel.
 export function openConfirm(dialog: HTMLDialogElement, opener: Element | null = document.activeElement): void {
   if (dialog.open) return;
-  if (!dialog.dataset.capReady) wire(dialog);
-  rememberOpener(dialog, opener);
+  if (!wired.has(dialog)) wire(dialog);
   performedFlags.delete(dialog);
   syncGuard(dialog);
-  dialog.showModal();
-  part<HTMLButtonElement>(dialog, "cancel")?.focus();
+  openDialog(dialog, opener, { focus: part<HTMLButtonElement>(dialog, "cancel") });
 }
 
 // True when the last close of this dialog followed a successful perform.
@@ -178,11 +160,16 @@ export function wasPerformed(dialog: HTMLDialogElement): boolean {
   return performedFlags.has(dialog);
 }
 
-// Wires one dialog: Cancel, the perform button, the guard, Esc held while busy, and focus
-// returned on close. Returns a function that unwires it.
+const wired = new WeakMap<HTMLDialogElement, () => void>();
+
+// Wires one dialog: the shared dialog's rules (Cancel, the backdrop that does nothing, Esc held
+// while busy, focus returned on close), then the perform button, the guard and the reason.
+// Returns a function that unwires it. Idempotent for a dialog that is already wired.
 export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): () => void {
-  dialog.dataset.capReady = "";
-  const cancel = part<HTMLButtonElement>(dialog, "cancel");
+  const had = wired.get(dialog);
+  if (had) return had;
+  if (!dialog.hasAttribute("role")) dialog.setAttribute("role", "alertdialog");
+  const unwireBase = wireDialog(dialog, { returnTo: fallback ?? null });
   const perform = part<HTMLButtonElement>(dialog, "perform");
   const input = part<HTMLInputElement>(dialog, "typed");
   const reason = part<HTMLTextAreaElement>(dialog, "reason");
@@ -223,16 +210,7 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
     }
   };
   const onPerform = (e: Event) => void run(e);
-  const onCancelClick = () => {
-    if (!isBusy(dialog)) dialog.close("cancel");
-  };
-  // Esc while a request is in flight would hide its answer. The keydown is held as well as
-  // the cancel event, because a browser may skip a cancel event that the page refused once.
-  const onCancelEvent = (e: Event) => {
-    if (isBusy(dialog)) e.preventDefault();
-  };
   const onKey = (e: KeyboardEvent) => {
-    if (e.key === "Escape" && isBusy(dialog)) e.preventDefault();
     // Enter in the guard field performs once the word matches, and never submits a form.
     if (e.key === "Enter" && e.target === input) {
       e.preventDefault();
@@ -245,35 +223,27 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
     }
   };
   const onInput = () => syncGuard(dialog);
-  // A click on the backdrop does not close the dialog (it is not light-dismiss), and it must not
-  // take focus off the control that had it either: the browser would move it to the dialog.
-  const onBackdropDown = (e: MouseEvent) => {
-    if (e.target === dialog) e.preventDefault();
-  };
   const onClose = () => {
     if (input) input.value = "";
     if (reason) reason.value = "";
     clearError(dialog);
-    returnFocus(dialog, fallback);
+    syncGuard(dialog);
   };
 
   perform?.addEventListener("click", onPerform);
-  cancel?.addEventListener("click", onCancelClick);
-  dialog.addEventListener("cancel", onCancelEvent);
   dialog.addEventListener("keydown", onKey);
-  dialog.addEventListener("mousedown", onBackdropDown);
   input?.addEventListener("input", onInput);
   dialog.addEventListener("close", onClose);
-  return () => {
+  const off = () => {
     perform?.removeEventListener("click", onPerform);
-    cancel?.removeEventListener("click", onCancelClick);
-    dialog.removeEventListener("cancel", onCancelEvent);
     dialog.removeEventListener("keydown", onKey);
-    dialog.removeEventListener("mousedown", onBackdropDown);
     input?.removeEventListener("input", onInput);
     dialog.removeEventListener("close", onClose);
-    delete dialog.dataset.capReady;
+    unwireBase();
+    wired.delete(dialog);
   };
+  wired.set(dialog, off);
+  return off;
 }
 
 export interface ConfirmOptions {
@@ -294,44 +264,84 @@ export interface ConfirmOptions {
   returnTo?: HTMLElement | null;
   // Asks for a reason, required, before the action: the audit row carries it with the change.
   reason?: { label?: string; note?: string };
+  // The icon tile beside the title (shadcn's Alert Dialog media). Default: shown.
+  media?: boolean;
 }
 
-// Builds the dialog's markup, exactly the contract on the doc page.
+const MEDIA_GLYPH = "M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z";
+
+function svgGlyph(d: string, size: number): SVGSVGElement {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("width", String(size));
+  svg.setAttribute("height", String(size));
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  const p = document.createElementNS(ns, "path");
+  p.setAttribute("fill", "currentColor");
+  p.setAttribute("fill-rule", "evenodd");
+  p.setAttribute("d", d);
+  svg.append(p);
+  return svg;
+}
+
+// Builds the dialog's markup, exactly the contract on the doc page: an alert dialog of the
+// shared dialog, header (a crit icon tile, the title, the lead as its description), a body
+// (what changes, the reason, the typed word), the error box, and the footer.
 export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
-  const id = uid("cap-dialog");
+  const id = uid("cap-confirm");
   const dialog = document.createElement("dialog");
   dialog.className = "cap-dialog";
   dialog.dataset.cap = "confirm-dialog";
+  dialog.dataset.placement = "center";
+  dialog.dataset.size = "md";
+  dialog.setAttribute("role", "alertdialog");
   dialog.setAttribute("aria-labelledby", `${id}-title`);
-  dialog.setAttribute("aria-describedby", `${id}-body`);
+  const described: string[] = [];
 
+  const header = document.createElement("div");
+  header.className = "cap-dialog-header";
+  if (o.media !== false) {
+    const media = document.createElement("div");
+    media.className = "cap-dialog-media";
+    media.dataset.tone = "crit";
+    media.setAttribute("aria-hidden", "true");
+    media.append(svgGlyph(MEDIA_GLYPH, 16));
+    header.append(media);
+  }
   const h = document.createElement("h2");
   h.className = "cap-dialog-title";
   h.id = `${id}-title`;
   h.textContent = o.title;
+  header.append(h);
+  if (o.lead) {
+    const p = document.createElement("p");
+    p.className = "cap-dialog-description";
+    p.id = `${id}-desc`;
+    p.textContent = o.lead;
+    header.append(p);
+    described.push(p.id);
+  }
+  dialog.append(header);
 
   const body = document.createElement("div");
   body.className = "cap-dialog-body";
-  body.id = `${id}-body`;
-  if (o.lead) {
-    const p = document.createElement("p");
-    p.textContent = o.lead;
-    body.append(p);
-  }
   if (o.body.length) {
     const ul = document.createElement("ul");
+    ul.id = `${id}-list`;
     for (const line of o.body) {
       const li = document.createElement("li");
       li.textContent = line;
       ul.append(li);
     }
     body.append(ul);
+    described.push(ul.id);
   }
-  dialog.append(h, body);
 
   if (o.reason) {
     const wrap = document.createElement("div");
-    wrap.className = "cap-dialog-reason";
+    wrap.className = "cap-confirm-reason";
     const label = document.createElement("label");
     label.htmlFor = `${id}-reason`;
     label.textContent = o.reason.label ?? "Reason (required)";
@@ -343,17 +353,17 @@ export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
     area.setAttribute("aria-describedby", `${id}-reason-note`);
     area.dataset.capPart = "reason";
     const note = document.createElement("p");
-    note.className = "cap-dialog-note";
+    note.className = "cap-confirm-note";
     note.id = `${id}-reason-note`;
     note.dataset.capPart = "reason-note";
     note.textContent = o.reason.note ?? "Recorded with the change.";
     wrap.append(label, area, note);
-    dialog.append(wrap);
+    body.append(wrap);
   }
 
   if (o.typeToConfirm) {
     const wrap = document.createElement("div");
-    wrap.className = "cap-dialog-typed";
+    wrap.className = "cap-confirm-typed";
     const label = document.createElement("label");
     label.id = `${id}-typed-label`;
     label.htmlFor = `${id}-typed`;
@@ -370,17 +380,20 @@ export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
     input.dataset.capPart = "typed";
     input.dataset.capWord = o.typeToConfirm;
     wrap.append(label, input);
-    dialog.append(wrap);
+    body.append(wrap);
   }
+  if (body.childElementCount) dialog.append(body);
+  if (described.length) dialog.setAttribute("aria-describedby", described.join(" "));
 
   const error = document.createElement("div");
-  error.className = "cap-dialog-error";
+  error.className = "cap-confirm-error";
   error.setAttribute("role", "alert");
   error.id = `${id}-error`;
   error.dataset.capPart = "error";
 
-  const actions = document.createElement("div");
-  actions.className = "cap-dialog-actions";
+  const footer = document.createElement("div");
+  footer.className = "cap-dialog-footer";
+  footer.dataset.align = "between";
   const cancel = document.createElement("button");
   cancel.type = "button";
   cancel.className = "cap-btn";
@@ -392,8 +405,8 @@ export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
   perform.dataset.variant = "danger";
   perform.dataset.capPart = "perform";
   perform.textContent = o.action;
-  actions.append(cancel, perform);
-  dialog.append(error, actions);
+  footer.append(cancel, perform);
+  dialog.append(error, footer);
   return dialog;
 }
 

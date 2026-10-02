@@ -6,6 +6,7 @@ parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [by agent wide, by agent narrow, by permission, nobody holds a permission, an agent holds none]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/views/Agents.tsx; the approved mockup's "Who can do what"
 replaces:
   - 'aria-label="Permissions by agent"'
@@ -26,11 +27,15 @@ For more than about eight permissions, or for actors that come and go by the hun
 
 ## The default and its reason
 
-- **A tick or a dash, plus a hidden word "Yes" or "No".** Shape and word, never colour alone (DEFAULTS.md). The tick is the ok tone, the dash the dim tone.
-- **Narrow cards list only what is held.** A row of five dashes says less than "Holds no permissions"; a phone has no room for five columns (DEFAULTS.md: cards per table once tested).
+- **A checked box or an empty box, plus a hidden word "Yes" or "No".** Shape and word, never colour alone (DEFAULTS.md). A held permission is shadcn's Checkbox in its checked state (16 px, 4 px corner, the primary fill and a tick); one not held is the empty box with its 3:1 edge. They are read-only marks, `aria-hidden`, not controls.
+- **Narrow cards list only what is held.** A row of five empty boxes says less than "Holds no permissions"; a phone has no room for five columns (DEFAULTS.md: cards per table once tested).
 - **The switch between table and cards is a container query**, at 560 px, so the matrix changes with the space it has, in a side panel as well as on a phone. Both forms are in the page; the one not shown is `display: none`, so a screen reader meets one.
 - **The two views are a segmented control on radio inputs** (patterns.md, choose one of 2 to 5). The view not shown carries `hidden`.
 - **The table sits in a labelled, focusable scroll region** (`.cap-table-wrap`), so it scrolls by keyboard where it overflows.
+
+## Matches
+
+shadcn/ui `Checkbox` (the held mark), `Table` (the grid, from `table`) and `Item` in an item group (the cards, outline variant), with the view switch from `segmented`. Deliberately different: shadcn's checkbox is an interactive control; here the marks are read-only (granting is a switch with a reason on the agent's page), so they take no focus and the table is the keyboard stop, as a labelled scroll region.
 
 ## Keyboard
 
@@ -44,8 +49,8 @@ For more than about eight permissions, or for actors that come and go by the hun
 - The view switch is a fieldset of native radios named "View"; arrow keys are the browser's own.
 - Each cell's word ("Yes", "No") is in the accessibility tree; the glyph is hidden from it.
 - Row headers (`th scope="row"`) name the agent, column headers the permission, so a screen reader reads "foxhound-driver, Money paths, Yes".
-- The tick and the dash reach 3:1 as graphics; every word reaches 4.5:1 in both themes.
-- Forced colours: the glyphs follow the text colour; card rules become CanvasText.
+- The filled box and the empty box's edge reach 3:1 as graphics; every word reaches 4.5:1 in both themes.
+- Forced colours: the boxes are drawn in CanvasText (filled when held); card edges become CanvasText.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -59,7 +64,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
       <label><input type="radio" name="perms-view" value="agent" checked>By agent</label>
       <label><input type="radio" name="perms-view" value="permission">By permission</label>
     </fieldset>
-    <p class="cap-perms-note">A tick holds the permission; a dash does not.</p>
+    <p class="cap-perms-note">A filled box holds the permission; an empty box does not.</p>
   </div>
   <div class="cap-perms-view" data-view="agent">
     <div class="cap-perms-wide">
@@ -69,8 +74,8 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
           <tbody>
             <tr>
               <th scope="row" class="cap-perms-agent cap-mono">seat</th>
-              <td class="cap-perms-cell" data-held="yes">[tick]<span class="cap-sr-only">Yes</span></td>
-              <td class="cap-perms-cell" data-held="no">[dash]<span class="cap-sr-only">No</span></td>
+              <td class="cap-perms-cell" data-held="yes">[checked box]<span class="cap-sr-only">Yes</span></td>
+              <td class="cap-perms-cell" data-held="no">[empty box]<span class="cap-sr-only">No</span></td>
             </tr>
           </tbody>
         </table>

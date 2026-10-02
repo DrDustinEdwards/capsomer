@@ -4,9 +4,15 @@
 /* The uptime strip's wrapper: a caption with the uptime and its window, a slot for
    Enarratio's uptimeStrip() output, a legend, and a one-sentence summary, with the numbers
    by day a disclosure away. Enarratio draws the strip; this styles everything around it.
-   From the Capsid Portal (dashboard/src/styles.css, "ticks" and "upct"). */
+   From the Capsid Portal (dashboard/src/styles.css, "ticks" and "upct"). The legend takes
+   shadcn's Chart legend look (a small rounded swatch beside its word); the numbers under it
+   are a disclosure and a table, which have their own components. The strip's height follows
+   the density tokens. */
 @layer cap.components {
   .cap-uptime {
+    /* The strip's height: 24 px compact, 28 comfortable; inline in a row, half a row. */
+    --cap-uptime-h: calc(var(--control) - var(--space-3));
+    --cap-uptime-line-h: calc(var(--row-h) / 2);
     display: grid;
     gap: var(--space-3);
     margin: 0;
@@ -21,7 +27,9 @@
   }
 
   .cap-uptime-title {
+    font-size: var(--fs-body);
     font-weight: 600;
+    line-height: 1.375;
     color: var(--text);
   }
 
@@ -42,12 +50,12 @@
      colours and per-slot titles. */
   .cap-uptime-strip {
     min-width: 0;
-    min-height: 24px;
+    min-height: var(--cap-uptime-h);
 
     & > svg {
       display: block;
       width: 100%;
-      height: 24px;
+      height: var(--cap-uptime-h);
       overflow: visible;
     }
   }
@@ -63,10 +71,10 @@
     & .cap-uptime-strip {
       flex: 1;
       min-width: 84px;
-      min-height: 18px;
+      min-height: var(--cap-uptime-line-h);
 
       & > svg {
-        height: 18px;
+        height: var(--cap-uptime-line-h);
       }
     }
     & .cap-uptime-pct {
@@ -98,7 +106,7 @@
     flex: none;
     width: 10px;
     height: 14px;
-    border-radius: 1px;
+    border-radius: var(--radius-s);
     background: var(--ok);
 
     &[data-key="down"] {

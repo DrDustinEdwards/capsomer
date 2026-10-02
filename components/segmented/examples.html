@@ -46,3 +46,71 @@
   </fieldset>
   <span class="cap-btn-reason" id="seg-view-why">Board needs at least one column. Add one in Settings.</span>
 </section>
+
+<section class="cap-specimen" aria-labelledby="s-sizes">
+  <h2 id="s-sizes">Small, large, with icons, vertical and filling the row</h2>
+  <div class="cap-specimen-row">
+    <fieldset class="cap-seg" id="seg-sm">
+      <legend>Density</legend>
+      <div class="cap-seg-options" data-size="sm">
+        <label><input type="radio" name="dens" value="compact" checked /> Compact</label>
+        <label><input type="radio" name="dens" value="comfortable" /> Comfortable</label>
+      </div>
+    </fieldset>
+    <fieldset class="cap-seg" id="seg-lg">
+      <legend>Chart</legend>
+      <div class="cap-seg-options" data-size="lg">
+        <label><input type="radio" name="chart" value="line" checked /> Line</label>
+        <label><input type="radio" name="chart" value="bar" /> Bar</label>
+      </div>
+    </fieldset>
+    <fieldset class="cap-seg" id="seg-icons">
+      <legend>List layout</legend>
+      <div class="cap-seg-options">
+        <label><input type="radio" name="lay" value="rows" checked /><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" /></svg> Rows</label>
+        <label><input type="radio" name="lay" value="grid" /><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" fill="currentColor" /></svg> Grid</label>
+      </div>
+    </fieldset>
+  </div>
+  <div class="cap-specimen-row">
+    <fieldset class="cap-seg" id="seg-vertical">
+      <legend>Sort</legend>
+      <div class="cap-seg-options" data-orientation="vertical">
+        <label><input type="radio" name="sort" value="new" checked /> Newest</label>
+        <label><input type="radio" name="sort" value="old" /> Oldest</label>
+        <label><input type="radio" name="sort" value="az" /> A to Z</label>
+      </div>
+    </fieldset>
+    <fieldset class="cap-seg" id="seg-fill">
+      <legend>Range</legend>
+      <div class="cap-seg-options" data-fill>
+        <label><input type="radio" name="range" value="d" checked /> Day</label>
+        <label><input type="radio" name="range" value="w" /> Week</label>
+        <label><input type="radio" name="range" value="m" /> Month</label>
+      </div>
+    </fieldset>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-invalid">
+  <h2 id="s-invalid">Invalid</h2>
+  <fieldset class="cap-seg" id="seg-invalid" aria-describedby="seg-invalid-e">
+    <legend>Check every</legend>
+    <div class="cap-seg-options">
+      <label><input type="radio" name="every" value="1" aria-invalid="true" /> 1 minute</label>
+      <label><input type="radio" name="every" value="5" aria-invalid="true" /> 5 minutes</label>
+    </div>
+  </fieldset>
+  <p class="cap-field-error" id="seg-invalid-e">Choose how often to check.</p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <fieldset class="cap-seg" data-density="comfortable" id="seg-comf">
+    <legend>Window</legend>
+    <div class="cap-seg-options">
+      <label><input type="radio" name="windowc" value="24h" checked /> 24 hours</label>
+      <label><input type="radio" name="windowc" value="7d" /> 7 days</label>
+    </div>
+  </fieldset>
+</section>

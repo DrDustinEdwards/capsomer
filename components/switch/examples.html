@@ -34,6 +34,23 @@
   <label class="cap-switch" data-cap="switch" id="sw-busy"><input type="checkbox" role="switch" aria-busy="true" /> Nightly export<span class="cap-switch-state" aria-hidden="true">Off</span></label>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-size">
+  <h2 id="s-size">Small, and invalid</h2>
+  <div class="cap-field-options">
+    <label class="cap-switch" data-cap="switch" data-size="sm" id="sw-sm"><input type="checkbox" role="switch" checked /> Dense mode <span class="cap-switch-state" aria-hidden="true">On</span></label>
+    <label class="cap-switch" data-cap="switch" id="sw-invalid"><input type="checkbox" role="switch" aria-invalid="true" aria-describedby="sw-invalid-why" /> Public status page <span class="cap-switch-state" aria-hidden="true">Off</span></label>
+    <span class="cap-field-error" id="sw-invalid-why">Verify the domain before publishing.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div class="cap-specimen-row" data-density="comfortable">
+    <label class="cap-switch" data-cap="switch"><input type="checkbox" role="switch" checked /> Weekly digest <span class="cap-switch-state" aria-hidden="true">On</span></label>
+    <label class="cap-switch" data-cap="switch" data-size="sm"><input type="checkbox" role="switch" /> Dense mode <span class="cap-switch-state" aria-hidden="true">Off</span></label>
+  </div>
+</section>
+
 <script type="module">
   import { enhance } from "./switch.ts";
   enhance();

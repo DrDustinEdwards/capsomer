@@ -4,13 +4,13 @@
     <p>2 gates are waiting for approval.</p>
     <p><button type="button" class="cap-btn" data-cap-opens="ap-two">Review 2 gates</button></p>
   </main>
-  <dialog class="cap-approval" data-cap="approval-sheet" id="ap-two" aria-labelledby="ap-two-title" data-specimen-open>
+  <dialog class="cap-dialog cap-approval" data-cap="approval-sheet" data-size="lg" data-cap-modal-lock data-cap-destructive id="ap-two" aria-labelledby="ap-two-title" aria-describedby="ap-two-lead" data-specimen-open>
     <form class="cap-approval-form">
-      <div class="cap-approval-head">
-        <h2 class="cap-approval-title" id="ap-two-title">2 gates are waiting</h2>
-        <p class="cap-approval-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
+      <div class="cap-dialog-header">
+        <h2 class="cap-dialog-title" id="ap-two-title">2 gates are waiting</h2>
+        <p class="cap-dialog-description" id="ap-two-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
       </div>
-      <div class="cap-approval-gates" role="group" aria-label="Gates waiting for approval" tabindex="0">
+      <div class="cap-dialog-body cap-approval-gates" data-flush role="group" aria-label="Gates waiting for approval">
         <fieldset class="cap-approval-gate">
           <legend class="cap-approval-job">Deploy foxhound to production</legend>
           <p class="cap-approval-meta">job_8c21 in foxhound, waiting 26 minutes</p>
@@ -29,7 +29,7 @@
       <div class="cap-approval-error" data-cap-part="error" hidden>
         <div class="cap-alert" data-tone="crit" role="alert"><span data-cap-part="error-text"></span></div>
       </div>
-      <div class="cap-approval-foot">
+      <div class="cap-dialog-footer" data-align="between">
         <button type="button" class="cap-btn" data-cap-part="cancel" autofocus>Cancel</button>
         <p class="cap-approval-none" id="ap-two-none" data-cap-part="none" hidden>Choose at least one gate.</p>
         <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="approve"><span data-cap-part="approve-label">Approve 2 gates</span></button>
@@ -44,13 +44,13 @@
     <p>2 gates are waiting for approval.</p>
     <p><button type="button" class="cap-btn" data-cap-opens="ap-one">Review 2 gates</button></p>
   </main>
-  <dialog class="cap-approval" data-cap="approval-sheet" id="ap-one" aria-labelledby="ap-one-title" data-specimen-open>
+  <dialog class="cap-dialog cap-approval" data-cap="approval-sheet" data-size="lg" data-cap-modal-lock data-cap-destructive id="ap-one" aria-labelledby="ap-one-title" aria-describedby="ap-one-lead" data-specimen-open>
     <form class="cap-approval-form">
-      <div class="cap-approval-head">
-        <h2 class="cap-approval-title" id="ap-one-title">2 gates are waiting</h2>
-        <p class="cap-approval-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
+      <div class="cap-dialog-header">
+        <h2 class="cap-dialog-title" id="ap-one-title">2 gates are waiting</h2>
+        <p class="cap-dialog-description" id="ap-one-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
       </div>
-      <div class="cap-approval-gates" role="group" aria-label="Gates waiting for approval" tabindex="0">
+      <div class="cap-dialog-body cap-approval-gates" data-flush role="group" aria-label="Gates waiting for approval">
         <fieldset class="cap-approval-gate">
           <legend class="cap-approval-job">Deploy foxhound to production</legend>
           <p class="cap-approval-meta">job_8c21 in foxhound, waiting 26 minutes</p>
@@ -69,7 +69,7 @@
       <div class="cap-approval-error" data-cap-part="error" hidden>
         <div class="cap-alert" data-tone="crit" role="alert"><span data-cap-part="error-text"></span></div>
       </div>
-      <div class="cap-approval-foot">
+      <div class="cap-dialog-footer" data-align="between">
         <button type="button" class="cap-btn" data-cap-part="cancel" autofocus>Cancel</button>
         <p class="cap-approval-none" id="ap-one-none" data-cap-part="none" hidden>Choose at least one gate.</p>
         <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="approve"><span data-cap-part="approve-label">Approve 1 gate</span></button>
@@ -84,13 +84,13 @@
     <p>2 gates are waiting for approval.</p>
     <p><button type="button" class="cap-btn" data-cap-opens="ap-pend">Review 2 gates</button></p>
   </main>
-  <dialog class="cap-approval" data-cap="approval-sheet" id="ap-pend" aria-labelledby="ap-pend-title" data-specimen-open>
+  <dialog class="cap-dialog cap-approval" data-cap="approval-sheet" data-size="lg" data-cap-modal-lock data-cap-destructive id="ap-pend" aria-labelledby="ap-pend-title" aria-describedby="ap-pend-lead" aria-busy="true" data-specimen-open>
     <form class="cap-approval-form">
-      <div class="cap-approval-head">
-        <h2 class="cap-approval-title" id="ap-pend-title">2 gates are waiting</h2>
-        <p class="cap-approval-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
+      <div class="cap-dialog-header">
+        <h2 class="cap-dialog-title" id="ap-pend-title">2 gates are waiting</h2>
+        <p class="cap-dialog-description" id="ap-pend-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
       </div>
-      <div class="cap-approval-gates" role="group" aria-label="Gates waiting for approval" tabindex="0">
+      <div class="cap-dialog-body cap-approval-gates" data-flush role="group" aria-label="Gates waiting for approval">
         <fieldset class="cap-approval-gate" disabled>
           <legend class="cap-approval-job">Deploy foxhound to production</legend>
           <p class="cap-approval-meta">job_8c21 in foxhound, waiting 26 minutes</p>
@@ -109,7 +109,7 @@
       <div class="cap-approval-error" data-cap-part="error" hidden>
         <div class="cap-alert" data-tone="crit" role="alert"><span data-cap-part="error-text"></span></div>
       </div>
-      <div class="cap-approval-foot">
+      <div class="cap-dialog-footer" data-align="between">
         <button type="button" class="cap-btn" data-cap-part="cancel" aria-disabled="true" autofocus>Cancel</button>
         <p class="cap-approval-none" id="ap-pend-none" data-cap-part="none" hidden>Choose at least one gate.</p>
         <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="approve" aria-busy="true"><span class="cap-btn-spinner" aria-hidden="true"></span><span data-cap-part="approve-label">Approving 2 gates</span></button>
@@ -124,13 +124,13 @@
     <p>2 gates are waiting for approval.</p>
     <p><button type="button" class="cap-btn" data-cap-opens="ap-err">Review 2 gates</button></p>
   </main>
-  <dialog class="cap-approval" data-cap="approval-sheet" id="ap-err" aria-labelledby="ap-err-title" data-specimen-open>
+  <dialog class="cap-dialog cap-approval" data-cap="approval-sheet" data-size="lg" data-cap-modal-lock data-cap-destructive id="ap-err" aria-labelledby="ap-err-title" aria-describedby="ap-err-lead" data-specimen-open>
     <form class="cap-approval-form">
-      <div class="cap-approval-head">
-        <h2 class="cap-approval-title" id="ap-err-title">2 gates are waiting</h2>
-        <p class="cap-approval-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
+      <div class="cap-dialog-header">
+        <h2 class="cap-dialog-title" id="ap-err-title">2 gates are waiting</h2>
+        <p class="cap-dialog-description" id="ap-err-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
       </div>
-      <div class="cap-approval-gates" role="group" aria-label="Gates waiting for approval" tabindex="0">
+      <div class="cap-dialog-body cap-approval-gates" data-flush role="group" aria-label="Gates waiting for approval">
         <fieldset class="cap-approval-gate">
           <legend class="cap-approval-job">Deploy foxhound to production</legend>
           <p class="cap-approval-meta">job_8c21 in foxhound, waiting 27 minutes</p>
@@ -149,10 +149,43 @@
       <div class="cap-approval-error" data-cap-part="error">
         <div class="cap-alert" data-tone="crit" role="alert"><span data-cap-part="error-text">Could not approve: the queue did not answer in 10 seconds. Nothing was approved. Try again.</span></div>
       </div>
-      <div class="cap-approval-foot">
+      <div class="cap-dialog-footer" data-align="between">
         <button type="button" class="cap-btn" data-cap-part="cancel" autofocus>Cancel</button>
         <p class="cap-approval-none" id="ap-err-none" data-cap-part="none" hidden>Choose at least one gate.</p>
         <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="approve"><span data-cap-part="approve-label">Approve 2 gates</span></button>
+      </div>
+    </form>
+  </dialog>
+</template>
+
+<template data-specimen="comfortable" data-title="Comfortable density, one gate" data-height="560">
+  <main class="specimen-page">
+    <h1>Queue</h1>
+    <p>1 gate is waiting for approval.</p>
+    <p><button type="button" class="cap-btn" data-cap-opens="ap-comfy">Review 1 gate</button></p>
+  </main>
+  <dialog class="cap-dialog cap-approval" data-cap="approval-sheet" data-size="lg" data-density="comfortable" data-cap-modal-lock data-cap-destructive id="ap-comfy" aria-labelledby="ap-comfy-title" aria-describedby="ap-comfy-lead" data-specimen-open>
+    <form class="cap-approval-form">
+      <div class="cap-dialog-header">
+        <h2 class="cap-dialog-title" id="ap-comfy-title">1 gate is waiting</h2>
+        <p class="cap-dialog-description" id="ap-comfy-lead">Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.</p>
+      </div>
+      <div class="cap-dialog-body cap-approval-gates" data-flush role="group" aria-label="Gates waiting for approval">
+        <fieldset class="cap-approval-gate">
+          <legend class="cap-approval-job">Deploy foxhound to production</legend>
+          <p class="cap-approval-meta">job_8c21 in foxhound, waiting 26 minutes</p>
+          <pre class="cap-approval-cmd"><code>npx wrangler deploy --env production --var RELEASE:a91c4e0</code></pre>
+          <label class="cap-check"><input type="checkbox" data-cap-part="include" name="gate" value="job_8c21" checked /> Include this gate</label>
+          <div class="cap-field"><label class="cap-field-label" for="ap-comfy-c1">Comment (optional)</label><textarea class="cap-input" id="ap-comfy-c1" data-cap-part="comment" rows="2"></textarea></div>
+        </fieldset>
+      </div>
+      <div class="cap-approval-error" data-cap-part="error" hidden>
+        <div class="cap-alert" data-tone="crit" role="alert"><span data-cap-part="error-text"></span></div>
+      </div>
+      <div class="cap-dialog-footer" data-align="between">
+        <button type="button" class="cap-btn" data-cap-part="cancel" autofocus>Cancel</button>
+        <p class="cap-approval-none" id="ap-comfy-none" data-cap-part="none" hidden>Choose at least one gate.</p>
+        <button type="submit" class="cap-btn" data-variant="primary" data-cap-part="approve"><span data-cap-part="approve-label">Approve 1 gate</span></button>
       </div>
     </form>
   </dialog>

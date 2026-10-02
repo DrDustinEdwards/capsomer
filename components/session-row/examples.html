@@ -158,6 +158,41 @@
   </section>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-pending">
+  <h2 id="s-pending">An answer in flight</h2>
+  <ul class="cap-session-list" aria-label="Agent sessions, answer in flight">
+    <li class="cap-session" data-session="sess_pending">
+      <div class="cap-session-head">
+        <span class="cap-pill" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Needs you</span>
+        <span class="cap-session-agent">capsid-driver</span>
+        <span class="cap-session-age">waiting <time class="cap-time" datetime="2026-09-30T14:11Z">2 minutes</time></span>
+      </div>
+      <div class="cap-session-ask" role="group" aria-labelledby="q-pending">
+        <p class="cap-session-question" id="q-pending">Asks to delete the branch tmp/probe:</p>
+        <pre class="cap-session-cmd"><code>git push origin --delete tmp/probe</code></pre>
+        <div class="cap-session-answers">
+          <button type="button" class="cap-btn" data-variant="primary" aria-busy="true">Approve delete</button>
+          <button type="button" class="cap-btn" aria-disabled="true">Decline</button>
+        </div>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfy">
+  <h2 id="s-comfy">Comfortable density</h2>
+  <ul class="cap-session-list" data-density="comfortable" aria-label="Agent sessions, comfortable">
+    <li class="cap-session" data-session="sess_comfy" data-tone="crit">
+      <div class="cap-session-head">
+        <span class="cap-pill" data-tone="crit"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Failed</span>
+        <span class="cap-session-agent">foxhound-driver</span>
+        <span class="cap-session-age">failed <time class="cap-time" datetime="2026-09-30T13:30Z">43 minutes ago</time></span>
+      </div>
+      <p class="cap-session-now">The type check failed twice and the session stopped.</p>
+    </li>
+  </ul>
+</section>
+
 <script type="module">
   import { enhance } from "./session-row.ts";
   enhance();

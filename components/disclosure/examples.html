@@ -79,6 +79,48 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-states">
+  <h2 id="s-states">Summary hover and pressed</h2>
+  <details class="cap-disclosure">
+    <summary data-force="hover">A summary under the pointer</summary>
+    <div class="cap-disclosure-body"><p>The row takes the raised tint.</p></div>
+  </details>
+  <details class="cap-disclosure">
+    <summary data-force="pressed">A summary being pressed</summary>
+    <div class="cap-disclosure-body"><p>The row takes the sunken tint.</p></div>
+  </details>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-accordion">
+  <h2 id="s-accordion">Accordion variant (shadcn's flat look), comfortable density</h2>
+  <div data-density="comfortable" id="accordion-specimen">
+    <details class="cap-disclosure" data-variant="accordion" name="faq" open>
+      <summary>Is it accessible?</summary>
+      <div class="cap-disclosure-body"><p>Yes. It is a native details element, so it works with a keyboard and a screen reader.</p></div>
+    </details>
+    <details class="cap-disclosure" data-variant="accordion" name="faq">
+      <summary data-force="hover">Is it animated?</summary>
+      <div class="cap-disclosure-body"><p>The panel grows and shrinks where the browser can animate to auto height, and only when motion is allowed.</p></div>
+    </details>
+    <details class="cap-disclosure" data-variant="accordion" name="faq">
+      <summary>Can it be styled?</summary>
+      <div class="cap-disclosure-body"><p>It takes its sizes from the density tokens.</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-disabled">
+  <h2 id="s-disabled">Group row, pressed and disabled</h2>
+  <div class="cap-group" data-cap="disclosure">
+    <button type="button" class="cap-group-toggle" data-force="pressed" aria-expanded="false" aria-controls="pressed-rows"><span class="cap-group-label">Pressed</span><span class="cap-sr-only">, </span><span class="cap-group-count">2</span></button>
+    <ul class="cap-group-rows" id="pressed-rows" hidden><li>One</li><li>Two</li></ul>
+  </div>
+  <div class="cap-group" data-cap="disclosure">
+    <button type="button" class="cap-group-toggle" disabled aria-expanded="false" aria-controls="disabled-rows"><span class="cap-group-label">Archived</span><span class="cap-sr-only">, </span><span class="cap-group-count">0</span></button>
+    <ul class="cap-group-rows" id="disabled-rows" hidden></ul>
+  </div>
+</section>
+
 <script type="module">
   import { enhance } from "./disclosure.ts";
   enhance();

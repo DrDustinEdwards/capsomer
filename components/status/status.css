@@ -1,16 +1,21 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Status: a word with a glyph, coloured by its tone. The glyph's shape differs per tone
-   (octagon critical, triangle warning, square notice, filled circle ok, dashed circle no
-   data, an arc running), so shape and word carry the meaning and colour only repeats it.
-   From the approved mockup's status symbols. */
+/* Status: a word with a glyph, coloured by its tone, and the same word as a badge. The
+   glyph's shape differs per tone (octagon critical, triangle warning, square notice, filled
+   circle ok, dashed circle no data, an arc running), so shape and word carry the meaning and
+   colour only repeats it.
+
+   The badge (.cap-pill, also written .cap-badge) is shadcn's Badge: a 20 px pill, 12 px
+   text, one pixel edge, six variants (default, secondary, outline, destructive, ghost, link).
+   With a data-tone and no variant it is a status badge: the word and glyph on the tone's
+   tint. A variant and a tone together keep the tone's colour (outline, ghost) or the
+   variant's own fill (default, secondary, destructive, link). */
 @layer cap.components {
-  .cap-status,
-  .cap-pill {
+  .cap-status {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
     font-size: var(--fs-detail);
     font-weight: 600;
     line-height: 1.35;
@@ -35,11 +40,11 @@
   }
 
   /* The glyph: drawn in currentColor, with any mark inside it cut out (evenodd), so it
-     reads on any background the word sits on. */
+     reads on any background the word sits on. It follows the text size. */
   .cap-status-glyph {
     flex: none;
-    width: 14px;
-    height: 14px;
+    inline-size: 1.15em;
+    block-size: 1.15em;
   }
 
   /* No data says why, after the word, in plain muted text. */
@@ -48,35 +53,173 @@
     color: var(--muted);
   }
 
-  /* A pill: the same word and glyph on the tone's own tint. */
-  .cap-pill {
-    padding: 2px 8px 2px 6px;
+  /* The badge. --_bg, --_fg and --_line are the three things a variant or a tone changes. */
+  .cap-pill,
+  .cap-badge {
+    --_bg: var(--nodata-soft);
+    --_fg: var(--muted);
+    --_line: transparent;
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    inline-size: fit-content;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    box-sizing: border-box;
+    min-block-size: calc(var(--control) * 0.625);
+    padding: var(--space-1) var(--space-3) var(--space-1) calc(var(--space-3) - 2px);
+    overflow: hidden;
+    border: 1px solid var(--_line);
     border-radius: var(--radius-full);
-    background: var(--nodata-soft);
+    background: var(--_bg);
+    color: var(--_fg);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
 
+    & > svg {
+      pointer-events: none;
+    }
+    & > svg:not(.cap-status-glyph) {
+      flex: none;
+      inline-size: 1em;
+      block-size: 1em;
+    }
+    & > .cap-status-glyph {
+      inline-size: 1em;
+      block-size: 1em;
+    }
+    /* A badge with no glyph (a count, a label) is even on both sides. */
+    &:not(:has(> svg)) {
+      padding-inline: var(--space-3);
+    }
+
+    /* The status tones: the word and glyph on the tone's own tint. */
     &[data-tone="crit"] {
-      background: var(--crit-soft);
+      --_bg: var(--crit-soft);
+      --_fg: var(--crit);
     }
     &[data-tone="warn"] {
-      background: var(--warn-soft);
+      --_bg: var(--warn-soft);
+      --_fg: var(--warn);
     }
     &[data-tone="ok"] {
-      background: var(--ok-soft);
+      --_bg: var(--ok-soft);
+      --_fg: var(--ok);
     }
     &[data-tone="info"] {
-      background: var(--info-soft);
+      --_bg: var(--info-soft);
+      --_fg: var(--info);
     }
     /* The no-data grey is lighter than muted on its own tint; muted keeps 4.5:1. */
     &[data-tone="nodata"] {
-      background: var(--nodata-soft);
-      color: var(--muted);
+      --_bg: var(--nodata-soft);
+      --_fg: var(--muted);
+    }
+
+    /* The variants, after the tones so a variant's fill wins. */
+    &[data-variant="default"] {
+      --_bg: var(--primary);
+      --_fg: var(--primary-fg);
+    }
+    &[data-variant="secondary"] {
+      --_bg: var(--sunken);
+      --_fg: var(--text);
+    }
+    &[data-variant="destructive"] {
+      --_bg: var(--crit-soft);
+      --_fg: var(--crit);
+    }
+    /* Outline and ghost keep a tone's colour for the word and drop its tint. The edge is a
+       control edge once the badge is a link or a button, so it is the strong line. */
+    &[data-variant="outline"] {
+      --_bg: transparent;
+      --_line: var(--line-strong);
+      &:not([data-tone]) {
+        --_fg: var(--text);
+      }
+    }
+    &[data-variant="ghost"] {
+      --_bg: transparent;
+      &:not([data-tone]) {
+        --_fg: var(--muted);
+      }
+    }
+    &[data-variant="link"] {
+      --_bg: transparent;
+      --_fg: var(--accent-text);
+    }
+
+    /* Interactive: a link or a button. The hit area grows past the pill to --target. */
+    &:is(a, button) {
+      cursor: pointer;
+      font-family: inherit;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset-block: min(0px, calc((100% - var(--target)) / 2));
+        inset-inline: -2px;
+      }
+      &:focus-visible {
+        overflow: visible;
+        outline: var(--ring-width) solid var(--ring);
+        outline-offset: 1px;
+      }
+      &:is(:hover, [data-force="hover"]) {
+        background: color-mix(in srgb, var(--_bg), var(--text) 8%);
+      }
+      &[data-variant="ghost"]:is(:hover, [data-force="hover"]) {
+        background: var(--sunken);
+        color: var(--text);
+      }
+      &[data-variant="link"]:is(:hover, [data-force="hover"]) {
+        color: var(--accent-hover);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      &[data-variant="default"]:is(:hover, [data-force="hover"]) {
+        background: var(--primary-hover);
+      }
+      &:is(:disabled, [aria-disabled="true"]) {
+        --_fg: var(--muted);
+        --_bg: var(--surface);
+        --_line: var(--line-strong);
+        border-style: dashed;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
     }
   }
 
-  /* Forced colours remove the tint: a pill keeps its outline so it still reads as one. */
+  /* Hover and focus change colour only where the platform says so; no motion is needed
+     beyond a short colour change. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-pill,
+    .cap-badge {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  /* Forced colours remove the tint: a badge keeps its outline so it still reads as one. */
   @media (forced-colors: active) {
-    .cap-pill {
+    .cap-pill,
+    .cap-badge {
       border: 1px solid CanvasText;
+      &[data-variant="link"],
+      &[data-variant="ghost"] {
+        border-color: transparent;
+      }
+      &:is(a, button) {
+        border-color: LinkText;
+      }
     }
   }
 }

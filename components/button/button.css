@@ -1,98 +1,179 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Buttons. Extracted from the Capsid Portal's .btn, .iconbtn and .linkbtn (dashboard/src/
-   styles.css), with quiet, pending and disabled-with-a-reason added. Each variant sets the
-   three local properties; the states below read them, so a state works on every variant. */
+/* Buttons. Matches shadcn/ui Button (variants default, outline, secondary, ghost, destructive,
+   link; sizes xs, sm, default, lg and the icon sizes) and ButtonGroup, in Capsomer's tokens.
+   Variants map: default = shadcn outline, primary = shadcn default, secondary, quiet = ghost,
+   danger = destructive, link. Each variant sets local properties; the states below read them,
+   so a state works on every variant. */
 @layer cap.components {
   .cap-btn {
     --cap-btn-fg: var(--text);
     --cap-btn-bg: var(--raised);
     --cap-btn-line: var(--line-strong);
+    --cap-btn-hover: color-mix(in srgb, var(--raised), var(--text) 7%);
+    --cap-btn-press: color-mix(in srgb, var(--raised), var(--text) 12%);
+    --cap-btn-h: var(--control);
+    --cap-btn-fs: var(--fs-body);
+    --cap-btn-icon: 16px;
+    --cap-btn-gap: 6px;
     position: relative;
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    min-height: var(--control);
+    gap: var(--cap-btn-gap);
+    box-sizing: border-box;
+    min-height: var(--cap-btn-h);
     min-width: var(--target);
     margin: 0;
-    padding: 0 11px;
+    padding: 0 var(--pad-x);
     border: 1px solid var(--cap-btn-line);
     border-radius: var(--radius-m);
     background: var(--cap-btn-bg);
+    background-clip: padding-box;
     color: var(--cap-btn-fg);
     font-family: var(--ui);
-    font-size: var(--fs-body);
+    font-size: var(--cap-btn-fs);
     font-weight: 500;
     line-height: 1.2;
     text-decoration: none;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 
     & > svg {
       flex: none;
+      width: var(--cap-btn-icon);
+      height: var(--cap-btn-icon);
+      pointer-events: none;
     }
     & kbd {
       margin-inline-start: 2px;
     }
+    /* An icon beside the label pulls the padding in on its side, as shadcn's data-icon does. */
+    &:has(> svg[data-icon="start"]) {
+      padding-inline-start: calc(var(--pad-x) - 3px);
+    }
+    &:has(> svg[data-icon="end"]) {
+      padding-inline-end: calc(var(--pad-x) - 3px);
+    }
+
+    /* Sizes. xs and sm never go under the target; on a touch screen --control and --target are 44. */
+    &[data-size="xs"] {
+      --cap-btn-h: max(var(--target), calc(var(--control) - 8px));
+      --cap-btn-fs: var(--fs-detail);
+      --cap-btn-icon: 12px;
+      --cap-btn-gap: 4px;
+      padding-inline: calc(var(--pad-x) - 3px);
+    }
+    &[data-size="sm"] {
+      --cap-btn-h: max(var(--target), calc(var(--control) - 4px));
+      --cap-btn-icon: 14px;
+      --cap-btn-gap: 4px;
+      padding-inline: calc(var(--pad-x) - 1px);
+    }
+    &[data-size="lg"] {
+      --cap-btn-h: calc(var(--control) + 4px);
+      --cap-btn-fs: var(--fs-lead);
+    }
 
     &:hover,
     &[data-force="hover"] {
-      --cap-btn-line: var(--muted);
+      --cap-btn-bg: var(--cap-btn-hover);
     }
     &:active,
     &[data-force="pressed"] {
-      --cap-btn-bg: var(--sunken);
+      --cap-btn-bg: var(--cap-btn-press);
+    }
+    /* A button that owns a popup shows it is open, as shadcn's aria-expanded does. */
+    &[aria-expanded="true"] {
+      --cap-btn-bg: var(--cap-btn-press);
     }
 
-    /* The main action of a view: one per view. */
+    /* The main action of a view: one per view. shadcn "default". */
     &[data-variant="primary"] {
       --cap-btn-fg: var(--primary-fg);
       --cap-btn-bg: var(--primary);
       --cap-btn-line: var(--primary);
+      --cap-btn-hover: var(--primary-hover);
+      --cap-btn-press: var(--primary-hover);
       font-weight: 600;
-
-      &:where(:hover, [data-force="hover"], :active, [data-force="pressed"]) {
-        --cap-btn-bg: var(--primary-hover);
-        --cap-btn-line: var(--primary-hover);
-      }
     }
 
-    /* Starts something that cannot be undone: it opens the confirm dialog, it does not act. */
+    /* A tinted fill in the accent, for the second action beside a primary. shadcn "secondary".
+       Its edge is the accent line (3:1), since a soft fill alone is not an edge. */
+    &[data-variant="secondary"] {
+      --cap-btn-fg: var(--accent-text);
+      --cap-btn-bg: var(--accent-soft);
+      --cap-btn-line: var(--accent-line);
+      --cap-btn-hover: var(--accent-5);
+      --cap-btn-press: var(--accent-6);
+    }
+
+    /* Starts something that cannot be undone: it opens the confirm dialog, it does not act.
+       shadcn "destructive". The hover is a thicker edge, not a deeper fill: a deeper tint
+       would take the label under 4.5:1. */
     &[data-variant="danger"] {
       --cap-btn-fg: var(--crit);
       --cap-btn-bg: var(--crit-soft);
       --cap-btn-line: var(--crit);
+      --cap-btn-hover: var(--crit-soft);
+      --cap-btn-press: var(--sunken);
       font-weight: 600;
 
       &:where(:hover, [data-force="hover"]) {
         box-shadow: inset 0 0 0 1px var(--crit);
       }
-      &:where(:active, [data-force="pressed"]) {
-        --cap-btn-bg: var(--sunken);
-      }
     }
 
-    /* A secondary action in a toolbar or a row: no border until the pointer is on it. */
+    /* A secondary action in a toolbar or a row: no border until the pointer is on it. shadcn "ghost". */
     &[data-variant="quiet"] {
       --cap-btn-bg: transparent;
       --cap-btn-line: transparent;
+      --cap-btn-hover: var(--raised);
+      --cap-btn-press: var(--sunken);
 
       &:where(:hover, [data-force="hover"]) {
-        --cap-btn-bg: var(--raised);
         --cap-btn-line: var(--line);
       }
-      &:where(:active, [data-force="pressed"]) {
-        --cap-btn-bg: var(--sunken);
+    }
+
+    /* Reads as a link, still a button. shadcn "link". The underline carries the hover. */
+    &[data-variant="link"] {
+      --cap-btn-fg: var(--accent-text);
+      --cap-btn-bg: transparent;
+      --cap-btn-line: transparent;
+      --cap-btn-hover: transparent;
+      --cap-btn-press: transparent;
+      text-underline-offset: 4px;
+
+      &:where(:hover, [data-force="hover"]) {
+        --cap-btn-fg: var(--accent-hover);
+        text-decoration: underline;
       }
     }
 
     /* An icon button: square, and it needs an accessible name (aria-label). */
     &[data-icon-only] {
-      width: var(--control);
+      width: var(--cap-btn-h);
       padding: 0;
+    }
+
+    /* An invalid state set by the app (a button that submits an invalid form). */
+    &[aria-invalid="true"] {
+      --cap-btn-line: var(--crit);
+    }
+
+    /* The shared ring: an opaque 3 px in the accent (a 50% ring could not reach 3:1). */
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+    &[data-variant="primary"]:focus-visible {
+      outline-offset: 2px;
     }
 
     /* Disabled, with its reason beside it (aria-describedby). It stays focusable so the
@@ -104,7 +185,13 @@
       border-style: dashed;
       box-shadow: none;
       font-weight: 500;
+      text-decoration: none;
       cursor: not-allowed;
+    }
+    &[data-variant="link"]:is(:disabled, [aria-disabled="true"]) {
+      --cap-btn-bg: transparent;
+      --cap-btn-line: transparent;
+      --cap-btn-fg: var(--dim);
     }
 
     /* Pending: the label stays (so the width and the accessible name stay) but is not
@@ -132,13 +219,18 @@
     }
   }
 
+  /* The default look has the quiet shadow shadcn's outline button has in its roomy style. */
+  .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(:disabled, [aria-disabled="true"]) {
+    box-shadow: var(--shadow-xs);
+  }
+
   /* The reason a button is disabled, written beside it. */
   .cap-btn-reason {
     color: var(--muted);
     font-size: var(--fs-detail);
   }
 
-  /* A button that looks like a link: Undo in a message, Clear beside a filter. */
+  /* A button that looks like a link inside a sentence: Undo in a message, Clear beside a filter. */
   .cap-link-btn {
     display: inline-flex;
     align-items: center;
@@ -158,6 +250,10 @@
       color: var(--accent-hover);
       text-decoration-thickness: 2px;
     }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 1px;
+    }
     &:is(:disabled, [aria-disabled="true"]) {
       color: var(--dim);
       text-decoration: none;
@@ -165,11 +261,82 @@
     }
   }
 
+  /* Button group: buttons sharing one edge. shadcn ButtonGroup. */
+  .cap-btn-group {
+    display: flex;
+    width: fit-content;
+    align-items: stretch;
+
+    & > .cap-btn:focus-visible,
+    & > .cap-btn:hover {
+      z-index: 1;
+    }
+    & > .cap-btn:not(:first-child) {
+      margin-inline-start: -1px;
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+    }
+    & > .cap-btn:not(:last-child) {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
+    & > .cap-btn-group-text {
+      margin-inline-start: -1px;
+    }
+    &[data-orientation="vertical"] {
+      flex-direction: column;
+
+      & > .cap-btn:not(:first-child) {
+        margin-inline-start: 0;
+        margin-block-start: -1px;
+        border-start-start-radius: 0;
+        border-start-end-radius: 0;
+      }
+      & > .cap-btn:not(:last-child) {
+        border-end-start-radius: 0;
+        border-end-end-radius: 0;
+      }
+    }
+  }
+  /* A label that sits in a group beside the buttons: ButtonGroupText. */
+  .cap-btn-group-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-sizing: border-box;
+    min-height: var(--control);
+    padding: 0 var(--pad-x);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+    color: var(--text);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .cap-btn-group > .cap-btn-group-text:not(:first-child) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+  .cap-btn-group > .cap-btn-group-text:not(:last-child) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .cap-btn {
       transition:
         border-color var(--dur-fast) var(--ease-out),
-        background-color var(--dur-fast) var(--ease-out);
+        background-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out);
+    }
+    /* The press nudge, as shadcn's translate-y-px; not on a button that owns a popup. */
+    .cap-btn:is(:active, [data-force="pressed"]):not([aria-haspopup]):not([aria-disabled="true"]):not(:disabled) {
+      transform: translateY(1px);
+    }
+    .cap-link-btn {
+      transition: color var(--dur-fast) var(--ease-out);
     }
     .cap-btn[aria-busy="true"] > .cap-btn-spinner {
       animation: cap-btn-spin 0.8s linear infinite;
@@ -183,13 +350,17 @@
   }
 
   @media (forced-colors: active) {
+    .cap-btn {
+      border-color: ButtonBorder;
+    }
     .cap-btn:is(:disabled, [aria-disabled="true"]),
     .cap-link-btn:is(:disabled, [aria-disabled="true"]) {
       color: GrayText;
       border-color: GrayText;
     }
-    .cap-btn[data-variant="quiet"] {
-      border-color: ButtonBorder;
+    .cap-btn:focus-visible,
+    .cap-link-btn:focus-visible {
+      outline-color: Highlight;
     }
   }
 }

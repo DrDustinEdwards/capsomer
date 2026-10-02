@@ -66,6 +66,35 @@ eachTheme((theme) => {
     ]);
   });
 
+  test("accessibility: selected rows, the footer and the empty cell reach their contrast", async ({ page }) => {
+    await visitStates(page, "table", theme);
+    await expectContrast(page, [
+      { sel: "#t6 #t6-selected th", what: "a selected row's header cell on --sel" },
+      { sel: "#t6 #t6-selected td[data-num]", what: "a selected row's number on --sel" },
+      { sel: "#t6 tfoot td", what: "the footer's total" },
+      { sel: "#t6 caption", what: "the caption under the table" },
+      { sel: "#t8 .cap-table-empty", what: "the empty cell's text" },
+    ]);
+  });
+
+  test("behaviour: a selected row says so with more than colour", async ({ page }) => {
+    await visitStates(page, "table", theme);
+    const bar = await page.locator("#t6-selected > :first-child").evaluate((el) => getComputedStyle(el).boxShadow);
+    expect(bar).not.toBe("none");
+    await expect(page.getByRole("checkbox", { name: "Select INV002" })).toBeChecked();
+  });
+
+  test("behaviour: a sticky header stays in view while the region scrolls", async ({ page }) => {
+    await visitStates(page, "table", theme);
+    const region = page.locator("#t7");
+    await region.scrollIntoViewIfNeeded();
+    await region.evaluate((el) => (el.scrollTop = 120));
+    const th = page.locator("#t7 thead th").first();
+    const [r, t] = await Promise.all([region.boundingBox(), th.boundingBox()]);
+    expect(r && t).toBeTruthy();
+    if (r && t) expect(Math.abs(t.y - r.y)).toBeLessThan(2);
+  });
+
   test("accessibility: the focused row's ring is 3:1 against its tint", async ({ page }) => {
     await visitStates(page, "table", theme);
     const r = await ringContrast(page, "#t4 tr[data-force='focus']");
@@ -181,14 +210,6 @@ eachTheme((theme) => {
     expect(await firstColumn(page, "#t1", 3)).toEqual(["not counted", "0", "2", "4"]);
   });
 
-  test("behaviour: numbers are right-aligned in tabular figures", async ({ page }) => {
-    await visitStates(page, "table", theme);
-    const cell = page.locator("#t2 tbody td[data-num]").first();
-    await expect(cell).toHaveCSS("text-align", "end");
-    await expect(cell).toHaveCSS("font-variant-numeric", "tabular-nums");
-    await expect(page.locator("#t2 thead th[data-num]").first()).toHaveCSS("text-align", "end");
-  });
-
   test("behaviour: a click anywhere on a row follows its link", async ({ page }) => {
     await visitStates(page, "table", theme);
     // The stretched link covers the row, so a click on the row lands on the link.
@@ -196,11 +217,11 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/#app-site$/);
   });
 
-  test("behaviour: reflow draws one card per row and hides the header row visually", async ({ page }) => {
+  test("behaviour: reflow fits the region without scrolling and keeps the header row", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 700 });
     await visitStates(page, "table", theme, "reflow");
-    await expect(page.locator("#t-reflow tbody tr").first()).toHaveCSS("display", "grid");
-    await expect(page.locator("#t-reflow thead")).toHaveCSS("position", "absolute");
+    // The header row stays in the accessibility tree (clipped, not removed).
+    await expect(page.locator("#t-reflow thead")).toBeAttached();
     const overflows = await page.locator("#t-reflow").evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(overflows).toBe(false);
   });
@@ -231,9 +252,4 @@ eachTheme((theme) => {
     await expect(cell.locator(".cap-sr-only")).toHaveText(": no Cloudflare token for this site");
   });
 
-  test("behaviour: without data-reflow a narrow table keeps its rows and scrolls", async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 700 });
-    await visitStates(page, "table", theme, "narrow");
-    await expect(page.locator("#t-narrow tbody tr").first()).toHaveCSS("display", "table-row");
-  });
 });

@@ -10,7 +10,7 @@
             <label><input type="radio" name="perms-view-wide" value="agent" checked />By agent</label>
             <label><input type="radio" name="perms-view-wide" value="permission" />By permission</label>
           </fieldset>
-          <p class="cap-perms-note">A tick holds the permission; a dash does not.</p>
+          <p class="cap-perms-note">A filled box holds the permission; an empty box does not.</p>
         </div>
         <div class="cap-perms-view" data-view="agent">
           <div class="cap-perms-wide">
@@ -22,35 +22,35 @@
                 <tbody>
                   <tr>
                     <th scope="row" class="cap-perms-agent cap-mono">seat</th>
-                    <td class="cap-perms-cell" data-held="yes"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-sr-only">Yes</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="yes"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-sr-only">Yes</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
                   </tr>
                   <tr>
                     <th scope="row" class="cap-perms-agent cap-mono">capsid-driver</th>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="yes"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-sr-only">Yes</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
                   </tr>
                   <tr>
                     <th scope="row" class="cap-perms-agent cap-mono">capsomer-driver</th>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
                   </tr>
                   <tr>
                     <th scope="row" class="cap-perms-agent cap-mono">foxhound-driver</th>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="yes"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-sr-only">Yes</span></td>
-                    <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                    <td class="cap-perms-cell" data-held="yes"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-sr-only">Yes</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
+                    <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                    <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -99,13 +99,13 @@
             <tbody>
               <tr>
                 <th scope="row" class="cap-perms-agent cap-mono">seat</th>
-                <td class="cap-perms-cell" data-held="yes"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-sr-only">Yes</span></td>
-                <td class="cap-perms-cell" data-held="yes"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg><span class="cap-sr-only">Yes</span></td>
+                <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
+                <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
               </tr>
               <tr>
                 <th scope="row" class="cap-perms-agent cap-mono">carrel-reviewer</th>
-                <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
-                <td class="cap-perms-cell" data-held="no"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4.5 8h7" /></svg><span class="cap-sr-only">No</span></td>
+                <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+                <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
               </tr>
             </tbody>
           </table>
@@ -123,6 +123,47 @@
         <li class="cap-perms-card"><span class="cap-perms-name">Merge</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span></div></li>
         <li class="cap-perms-card"><span class="cap-perms-name">Start CI</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span></div></li>
         <li class="cap-perms-card"><span class="cap-perms-name">Write to main</span><div class="cap-perms-holds" data-empty="">Nobody holds this</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfy">
+  <h2 id="s-comfy">Comfortable density</h2>
+  <div class="cap-perms" data-cap="permission-matrix" data-density="comfortable" id="perms-comfy">
+    <div class="cap-perms-bar">
+      <fieldset class="cap-seg">
+        <legend class="cap-sr-only">View</legend>
+        <label><input type="radio" name="perms-view-comfy" value="agent" checked />By agent</label>
+        <label><input type="radio" name="perms-view-comfy" value="permission" />By permission</label>
+      </fieldset>
+    </div>
+    <div class="cap-perms-view" data-view="agent">
+      <div class="cap-perms-wide">
+        <div class="cap-table-wrap" role="region" aria-label="Permissions by agent, comfortable" tabindex="0">
+          <table class="cap-table">
+            <thead>
+              <tr><th scope="col">Agent</th><th scope="col" class="cap-perms-col">Merge</th><th scope="col" class="cap-perms-col">Start CI</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row" class="cap-perms-agent cap-mono">seat</th>
+                <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
+                <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="cap-perms-narrow">
+        <ul class="cap-perms-cards" aria-label="Permissions by agent, comfortable">
+          <li class="cap-perms-card"><span class="cap-perms-name cap-mono">seat</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Merge</div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cap-perms-view" data-view="permission" hidden>
+      <ul class="cap-perms-cards" aria-label="Agents by permission, comfortable">
+        <li class="cap-perms-card"><span class="cap-perms-name">Merge</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span></div></li>
       </ul>
     </div>
   </div>

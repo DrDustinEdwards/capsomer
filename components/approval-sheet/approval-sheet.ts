@@ -1,7 +1,10 @@
-// The approval sheet: several waiting gates approved together in one modal dialog. The
-// Approve button's count follows the checkboxes; Esc and Cancel close, except while a
-// request is in flight; focus returns to the button that opened the sheet. No framework;
-// the React wrapper uses the same pure functions.
+// The approval sheet: several waiting gates approved together in one modal dialog. The sheet
+// is the shared dialog (../dialog/dialog.ts does the opening, focus, Cancel, Esc while busy
+// and the return of focus); this module adds the Approve count that follows the checkboxes,
+// the pending and error states and the approval event. No framework; the React wrapper uses
+// the same pure functions.
+
+import { isBusy, openDialog, setDialogBusy, wireDialog } from "../dialog/dialog.ts";
 
 // "Approve 2 gates", "Approve 1 gate"; while in flight, "Approving 2 gates".
 export function approveLabel(n: number, pending = false): string {
@@ -31,7 +34,7 @@ export function selection(dialog: Element): GateChoice[] {
 }
 
 export function isPending(dialog: Element): boolean {
-  return part(dialog, "approve")?.getAttribute("aria-busy") === "true";
+  return dialog.getAttribute("aria-busy") === "true" || part(dialog, "approve")?.getAttribute("aria-busy") === "true";
 }
 
 // Brings the Approve button's label, its disabled-with-reason state and the reason in
@@ -55,10 +58,10 @@ export function update(dialog: Element): void {
 }
 
 // While a request is in flight: Approve shows its spinner and "Approving", Cancel and the
-// gates are held, and Esc does nothing.
+// gates are held, and Esc and the backdrop do nothing (the dialog is busy).
 export function setPending(dialog: Element, on: boolean): void {
   const approve = part(dialog, "approve");
-  const cancel = part(dialog, "cancel");
+  if (dialog instanceof HTMLDialogElement) setDialogBusy(dialog, on);
   if (approve) {
     if (on) {
       approve.setAttribute("aria-busy", "true");
@@ -72,10 +75,6 @@ export function setPending(dialog: Element, on: boolean): void {
       approve.removeAttribute("aria-busy");
       approve.querySelector(".cap-btn-spinner")?.remove();
     }
-  }
-  if (cancel) {
-    if (on) cancel.setAttribute("aria-disabled", "true");
-    else cancel.removeAttribute("aria-disabled");
   }
   for (const gate of dialog.querySelectorAll<HTMLFieldSetElement>("fieldset.cap-approval-gate")) gate.disabled = on;
   if (on) setError(dialog, null);
@@ -95,24 +94,50 @@ export function setError(dialog: Element, message: string | null): void {
   box.hidden = false;
 }
 
-const openers = new WeakMap<HTMLDialogElement, HTMLElement>();
+export interface ApproveDetail {
+  gates: GateChoice[];
+}
 
-// Opens the sheet as a modal dialog. Focus starts on Cancel (its autofocus); `opener`
-// gets focus back when the sheet closes.
-export function open(dialog: HTMLDialogElement, opener?: HTMLElement | null): void {
-  if (opener) openers.set(dialog, opener);
+const attached = new WeakMap<HTMLDialogElement, () => void>();
+
+// Wires one sheet: the shared dialog's rules, then the count, the submit and the approval
+// event. Idempotent. Returns a function that detaches it.
+function attach(dialog: HTMLDialogElement): () => void {
+  const had = attached.get(dialog);
+  if (had) return had;
+  const unwire = wireDialog(dialog);
   update(dialog);
-  if (!dialog.open) dialog.showModal();
-  part(dialog, "cancel")?.focus();
+  const onChange = () => update(dialog);
+  const onSubmit = (e: SubmitEvent) => {
+    e.preventDefault();
+    const gates = selection(dialog);
+    if (gates.length === 0 || isPending(dialog) || isBusy(dialog)) return;
+    dialog.dispatchEvent(new CustomEvent<ApproveDetail>("cap-approve", { bubbles: true, detail: { gates } }));
+  };
+  const form = dialog.querySelector("form");
+  dialog.addEventListener("change", onChange);
+  form?.addEventListener("submit", onSubmit);
+  const detach = () => {
+    dialog.removeEventListener("change", onChange);
+    form?.removeEventListener("submit", onSubmit);
+    unwire();
+    attached.delete(dialog);
+  };
+  attached.set(dialog, detach);
+  return detach;
+}
+
+// Opens the sheet as a modal dialog. Focus starts on Cancel (its autofocus, and the
+// destructive rule); `opener` gets focus back when the sheet closes.
+export function open(dialog: HTMLDialogElement, opener?: HTMLElement | null): void {
+  attach(dialog);
+  update(dialog);
+  openDialog(dialog, opener ?? document.activeElement);
 }
 
 // Closes the sheet unless a request is in flight.
 export function close(dialog: HTMLDialogElement): void {
   if (!isPending(dialog)) dialog.close();
-}
-
-export interface ApproveDetail {
-  gates: GateChoice[];
 }
 
 // Attaches to every <dialog data-cap="approval-sheet"> under root, and to any button with
@@ -121,52 +146,8 @@ export interface ApproveDetail {
 // or calls setError(dialog, "...") and setPending(dialog, false).
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const dialog of root.querySelectorAll<HTMLDialogElement>("dialog[data-cap='approval-sheet']:not([data-cap-ready])")) {
-    dialog.dataset.capReady = "";
-    update(dialog);
-
-    const onChange = () => update(dialog);
-    const onClick = (e: MouseEvent) => {
-      const cancel = (e.target as Element).closest("[data-cap-part='cancel']");
-      if (cancel && cancel.getAttribute("aria-disabled") !== "true") close(dialog);
-    };
-    const onSubmit = (e: SubmitEvent) => {
-      e.preventDefault();
-      const gates = selection(dialog);
-      if (gates.length === 0 || isPending(dialog)) return;
-      dialog.dispatchEvent(new CustomEvent<ApproveDetail>("cap-approve", { bubbles: true, detail: { gates } }));
-    };
-    // Esc is held while a request is in flight. The keydown is stopped too: Chrome skips the
-    // cancel event when the page has had no user activation since the last close request.
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isPending(dialog)) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-    const onCancel = (e: Event) => {
-      if (isPending(dialog)) e.preventDefault();
-    };
-    const onClose = () => {
-      const opener = openers.get(dialog);
-      if (opener?.isConnected) opener.focus();
-    };
-    const form = dialog.querySelector("form");
-    dialog.addEventListener("change", onChange);
-    dialog.addEventListener("click", onClick);
-    dialog.addEventListener("keydown", onKey, true);
-    dialog.addEventListener("cancel", onCancel);
-    dialog.addEventListener("close", onClose);
-    form?.addEventListener("submit", onSubmit);
-    undo.push(() => {
-      dialog.removeEventListener("change", onChange);
-      dialog.removeEventListener("click", onClick);
-      dialog.removeEventListener("keydown", onKey, true);
-      dialog.removeEventListener("cancel", onCancel);
-      dialog.removeEventListener("close", onClose);
-      form?.removeEventListener("submit", onSubmit);
-      delete dialog.dataset.capReady;
-    });
+  for (const dialog of root.querySelectorAll<HTMLDialogElement>("dialog[data-cap='approval-sheet']")) {
+    if (!attached.has(dialog)) undo.push(attach(dialog));
   }
 
   const onOpen = (e: MouseEvent) => {
