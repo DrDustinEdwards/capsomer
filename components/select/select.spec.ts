@@ -188,9 +188,8 @@ eachTheme((theme) => {
     const list = page.getByRole("listbox", { name: "Platform" });
     await expect(list.getByRole("option", { name: "Cloudflare" }).locator(".cap-option-indicator")).toBeVisible();
     await expect(list.getByRole("option", { name: "Vercel" }).locator(".cap-option-indicator")).toBeHidden();
-    const t = await platform.boundingBox();
-    const p = await list.boundingBox();
-    expect(p?.width).toBeGreaterThanOrEqual((t?.width ?? 0) - 3);
+    const [t, p] = await page.evaluate(() => [document.querySelector("#sel-platform")?.getBoundingClientRect().width ?? 0, document.querySelector(".cap-select-popup:popover-open")?.getBoundingClientRect().width ?? 0]);
+    expect(p).toBeGreaterThanOrEqual((t ?? 0) - 2);
   });
 
   test("behaviour: the native select stays in the page with its options and is out of the tab order", async ({ page }) => {
