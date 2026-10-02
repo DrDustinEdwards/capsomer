@@ -1,0 +1,154 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Skeleton and spinner: what a page or a panel shows while it loads. The skeleton is grey
+   shapes standing in for content (shadcn's Skeleton: a muted block that pulses); the spinner
+   is a small turning arc and a word (shadcn's Spinner), inline, inside a button, or centred
+   on a page. The pulse and the turn are the only loops, and only when motion is welcome. */
+@layer cap.components {
+  /* A stack of lines standing in for a page's content, 1 to 10 seconds. */
+  .cap-skeleton {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--pad-card);
+  }
+
+  .cap-skeleton-line,
+  .cap-skeleton-block {
+    display: block;
+    background: var(--sunken);
+  }
+
+  .cap-skeleton-line {
+    block-size: calc(var(--fs-body) * 0.9);
+    border-radius: var(--radius-m);
+    inline-size: 74%;
+
+    &:nth-child(3n + 1) {
+      inline-size: 62%;
+    }
+    &:nth-child(3n + 2) {
+      inline-size: 88%;
+    }
+  }
+
+  /* One shape on its own, as shadcn's Skeleton is: a block the height of a control, a circle
+     (an avatar), or a card. An app sizes it further with its own layout. */
+  .cap-skeleton-block {
+    inline-size: 100%;
+    block-size: var(--control);
+    border-radius: var(--radius-m);
+
+    &[data-shape="circle"] {
+      inline-size: var(--control);
+      border-radius: var(--radius-full);
+    }
+    &[data-shape="card"] {
+      block-size: calc(var(--control) * 4);
+      border-radius: var(--radius-l);
+    }
+  }
+
+  /* The spinner: an arc and a word. It follows the text around it. */
+  .cap-spinner {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--muted);
+    font-size: var(--text-size);
+  }
+
+  /* Inside a button the spinner takes the button's colours. */
+  :is(button, a) .cap-spinner {
+    color: inherit;
+    font-size: inherit;
+  }
+
+  .cap-spinner-arc {
+    flex: none;
+    inline-size: 1.15em;
+    block-size: 1.15em;
+    color: var(--accent);
+
+    .cap-spinner[data-size="sm"] > & {
+      inline-size: 0.9em;
+      block-size: 0.9em;
+    }
+    .cap-spinner[data-size="lg"] > & {
+      inline-size: 1.8em;
+      block-size: 1.8em;
+    }
+  }
+
+  /* The page's centred spinner: in the middle of the space it is given, with its word under
+     it. The app's main region is aria-busy while it shows. */
+  .cap-spinner[data-layout="page"] {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-4);
+    inline-size: 100%;
+    min-block-size: min(60dvh, 28rem);
+    text-align: center;
+    font-size: var(--fs-lead);
+
+    & > .cap-spinner-arc {
+      inline-size: calc(var(--control) * 1.1);
+      block-size: calc(var(--control) * 1.1);
+    }
+  }
+
+  /* data-label="hidden": the word is for screen readers while the arc turns. */
+  .cap-spinner[data-label="hidden"] .cap-spinner-label {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* The pulse and the turn are the only loops, and only when motion is welcome. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-skeleton-line,
+    .cap-skeleton-block {
+      animation: cap-skeleton-pulse 1.6s ease-in-out infinite;
+    }
+    .cap-spinner-arc {
+      animation: cap-spinner-turn 0.9s linear infinite;
+    }
+    @keyframes cap-skeleton-pulse {
+      50% {
+        opacity: 0.55;
+      }
+    }
+    @keyframes cap-spinner-turn {
+      to {
+        transform: rotate(1turn);
+      }
+    }
+  }
+
+  /* Still: no arc, and the word Loading shows on its own. */
+  @media (prefers-reduced-motion: reduce) {
+    .cap-spinner-arc {
+      display: none;
+    }
+    .cap-spinner[data-label="hidden"] .cap-spinner-label {
+      position: static;
+      inline-size: auto;
+      block-size: auto;
+      overflow: visible;
+      clip-path: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-skeleton-line,
+    .cap-skeleton-block {
+      forced-color-adjust: none;
+      background: GrayText;
+    }
+  }
+}

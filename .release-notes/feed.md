@@ -1,0 +1,2 @@
+- Markup and class names are unchanged.
+- Rows pad with `--pad-y` and `--pad-card` (were 6 and 16 px), the day heading has rules above and below, and a 1 px connector (`.cap-feed-row::after`) is drawn between one day's rows. An app that overrode `.cap-feed-row` padding should re-check the connector's position, which follows `--pad-card`.

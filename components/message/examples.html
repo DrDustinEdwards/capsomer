@@ -96,6 +96,18 @@
   </main>
 </template>
 
+<template data-specimen="comfortable" data-title="Comfortable density: a result with Undo" data-height="220">
+  <main>
+    <div class="specimen-page">
+      <h1>Mentions</h1>
+      <p>3 waiting.</p>
+    </div>
+    <div class="message-sample" data-density="comfortable">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
 <template data-specimen="try" data-title="Try it: act, then Undo with z or the button" data-height="420">
   <main>
     <div class="specimen-page">
@@ -135,6 +147,7 @@
     say(binned, { undo: () => {}, undone: "The mention from fieldnotes.example is waiting again." });
     await runUndo();
   }
+  if (only === "comfortable") say(binned, { undo: () => {} });
   if (only === "warning") say("Seat start is on.", { undo: () => {}, warning: AUDIT });
   if (only === "stack") {
     say("Seat start is on.", { undo: () => {}, warning: AUDIT });

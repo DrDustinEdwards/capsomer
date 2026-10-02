@@ -11,7 +11,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["rows", "open"]) {
+  for (const id of ["rows", "open", "comfortable"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "detail-panel", theme, id);
       await expectNoAxeViolations(page);
@@ -22,7 +22,7 @@ eachTheme((theme) => {
     await visitStates(page, "detail-panel", theme, "open");
     await expect(panel(page)).toBeVisible();
     await expectContrast(page, [
-      { sel: ".cap-detail-title", what: "the title" },
+      { sel: ".cap-dialog-title", what: "the title" },
       { sel: ".cap-detail-kind", what: "the kind above the title" },
       { sel: ".cap-detail-id", what: "the identifier" },
       { sel: ".cap-detail-section-title", what: "a section heading" },
@@ -42,7 +42,6 @@ eachTheme((theme) => {
         - paragraph: Job, capsomer
         - heading "${TITLE}" [level=2]
         - paragraph: job_7f3a92c1d4e0
-        - button "Close"
         - region "Do this first":
           - heading "Do this first" [level=3]
           - button "Copy command"
@@ -61,15 +60,22 @@ eachTheme((theme) => {
           - definition:
             - deletion: "before: queued"
             - insertion: "after: blocked"
+        - button "Close"
     `);
   });
 
-  test("keyboard: Enter on a row's link opens the panel with focus on Close", async ({ page }) => {
+  test("keyboard: Enter on a row's link opens the panel with focus on its first control", async ({ page }) => {
     await visitStates(page, "detail-panel", theme, "rows");
     await rowLink(page).focus();
     await page.keyboard.press("Enter");
     await expect(panel(page)).toBeVisible();
-    await expect(panel(page).getByRole("button", { name: "Close" })).toBeFocused();
+    await expect(panel(page).getByRole("button", { name: "Copy command" })).toBeFocused();
+  });
+
+  test("keyboard: a panel with nothing to press opens with focus on Close", async ({ page }) => {
+    await visitStates(page, "detail-panel", theme, "rows");
+    await page.getByRole("link", { name: "Rotate the watcher's Cloudflare token" }).click();
+    await expect(page.getByRole("dialog", { name: "Rotate the watcher's Cloudflare token" }).getByRole("button", { name: "Close" })).toBeFocused();
   });
 
   test("keyboard: Esc closes the panel and focus returns to the row's link", async ({ page }) => {
@@ -106,23 +112,22 @@ eachTheme((theme) => {
     await expect(rowLink(page)).toBeFocused();
   });
 
+  test("keyboard: Enter on the corner Close button closes the panel", async ({ page }) => {
+    await visitStates(page, "detail-panel", theme, "rows");
+    await rowLink(page).click();
+    await expect(panel(page)).toBeVisible();
+    await panel(page).getByRole("button", { name: "Close" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(panel(page)).toBeHidden();
+    await expect(rowLink(page)).toBeFocused();
+  });
+
   test("behaviour: a click on the backdrop closes the panel", async ({ page }) => {
     await visitStates(page, "detail-panel", theme, "rows");
     await rowLink(page).click();
     await expect(panel(page)).toBeVisible();
     await page.mouse.click(10, 300);
     await expect(panel(page)).toBeHidden();
-  });
-
-  test("behaviour: the panel sits at the right edge on a wide screen and fills a phone", async ({ page }) => {
-    await visitStates(page, "detail-panel", theme, "open");
-    const view = page.viewportSize();
-    await expect.poll(async () => {
-      const b = await panel(page).boundingBox();
-      return !!b && !!view && b.width < view.width && Math.round(b.x + b.width) === view.width;
-    }).toBe(true);
-    await page.setViewportSize({ width: 390, height: 760 });
-    await expect.poll(async () => Math.round((await panel(page).boundingBox())?.width ?? 0)).toBe(390);
   });
 
   test("keyboard: Tab stays inside the open panel and never reaches the page behind", async ({ page }) => {

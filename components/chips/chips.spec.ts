@@ -37,6 +37,11 @@ eachTheme((theme) => {
       { sel: "#chip-unpressed", what: "a chip's edge", part: "border" },
       { sel: "#chip-pressed", what: "a pressed chip's edge", part: "border" },
       { sel: "#chip-hover", what: "a hovered chip's edge", part: "border" },
+      { sel: "#chip-pressed-hover", what: "a pressed, hovered chip's word on its tint" },
+      { sel: "#chip-pressed-hover", what: "a pressed, hovered chip's edge", part: "border" },
+      { sel: "#chip-disabled", what: "a disabled chip's word" },
+      { sel: "#chip-disabled", what: "a disabled chip's edge", part: "border" },
+      { sel: "#chip-count", what: "a chip with a count" },
     ]);
   });
 
@@ -162,5 +167,40 @@ eachTheme((theme) => {
     await expect(page.locator("#live-empty")).toBeHidden();
     await expect(live.locator(".cap-chips-count")).toHaveText("14 jobs");
     await expect(live.getByRole("button", { name: "Blocked" })).toBeFocused();
+  });
+
+  test("keyboard: arrow keys, Home and End move focus between chips without pressing one", async ({ page }) => {
+    await visitStates(page, "chips", theme);
+    const blocked = page.locator("#chips-live").getByRole("button", { name: "Blocked" });
+    await blocked.focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.locator("#chips-live").getByRole("button", { name: "Running" })).toBeFocused();
+    await expect(page.locator("#chips-live").getByRole("button", { name: "Running" })).toHaveAttribute("aria-pressed", "false");
+    await page.keyboard.press("End");
+    await expect(page.locator("#chips-live").getByRole("button", { name: "Done" })).toBeFocused();
+    await page.keyboard.press("ArrowRight");
+    await expect(blocked).toBeFocused();
+    await page.keyboard.press("ArrowLeft");
+    await expect(page.locator("#chips-live").getByRole("button", { name: "Done" })).toBeFocused();
+    await page.keyboard.press("Home");
+    await expect(blocked).toBeFocused();
+  });
+
+  test("accessibility: a chip's ring on keyboard focus reaches 3:1", async ({ page }) => {
+    await visitStates(page, "chips", theme);
+    await page.locator("#chip-unpressed").focus();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expect(page.locator("#chip-unpressed")).toBeFocused();
+    await expectContrast(page, [{ sel: "#chip-unpressed", what: "the focus ring", part: "outline", min: 3 }]);
+  });
+
+  test("accessibility: a disabled chip keeps its name and says so", async ({ page }) => {
+    await visitStates(page, "chips", theme);
+    await expect(page.locator("#chip-disabled")).toHaveAttribute("aria-disabled", "true");
+    await expect(page.getByRole("button", { name: "Archived" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Failed 3" })).toBeVisible();
+    const box = await page.locator("#chip-sm").boundingBox();
+    expect(box?.height).toBeGreaterThanOrEqual(24);
   });
 });

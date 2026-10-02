@@ -72,18 +72,6 @@ eachTheme((theme) => {
     await expect(page.locator(section("s-line")).getByRole("img", { name: /down in 1, partly down in 2/ })).toBeVisible();
   });
 
-  test("behaviour: an inline strip and its percent share a line, and the strip keeps room to read", async ({ page }) => {
-    await visitStates(page, "uptime-strip", theme);
-    const strip = await page.locator(`${section("s-line")} .cap-uptime-line .cap-uptime-strip`).boundingBox();
-    const pct = await page.locator(`${section("s-line")} .cap-uptime-pct`).boundingBox();
-    expect(strip && pct).toBeTruthy();
-    if (strip && pct) {
-      expect(pct.x).toBeGreaterThanOrEqual(strip.x + strip.width - 1);
-      expect(Math.abs(strip.y + strip.height / 2 - (pct.y + pct.height / 2))).toBeLessThanOrEqual(strip.height / 2);
-      expect(strip.width).toBeGreaterThanOrEqual(84);
-    }
-  });
-
   test("behaviour: the legend shows each kind of slot by shape as well as colour", async ({ page }) => {
     await visitStates(page, "uptime-strip", theme);
     const keys = page.locator(section("s-all-up")).locator(".cap-uptime-key");

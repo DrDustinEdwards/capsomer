@@ -6,6 +6,7 @@ parts: [css, react]
 tool: native
 states: [a day with deploys, a failed deploy, a condensed run, the incident marker (critical), the incident marker (warning), phone width]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css ("feed") and views/Deploys.tsx; the approved mockup's "What shipped"
 replaces:
   - 'class="(feed|tl)"'
@@ -34,9 +35,14 @@ For things that need you now, use the `attention-list`. For records you sort and
 - **Times are relative in rows, exact in `time`** (patterns.md, time), with the `time` component's class.
 - **A routine run condenses to one row**, smaller and in the muted tone, still 4.5:1, with its time range and a link to the full list. Nothing routine pushes a deploy off the screen.
 - **The incident marker sits directly above the deploy it follows**, on its tone's tint with a left edge. Its link names the incident ("Incident began 4 minutes after this deploy") and is described by the deploy row's text, so "this deploy" is never ambiguous to a screen reader. Critical or warning tone.
+- **A hairline connector joins the glyphs of one day's rows**, so the list reads as a timeline. It is decoration; the order is the list's. Row padding follows `--pad-y` and `--pad-card`, so comfortable density roomies it.
 - **Critical rows carry the red edge**, as in every list (patterns.md, status).
 - **Narrow (under 448 px of its own width): the time drops under the words**, a container query.
 - **Place the feed directly in a panel, after its header**, not inside `.cap-panel-body`: the day breaks run edge to edge. Day headings are `h4` under a panel's `h3`; the React wrapper takes `headingLevel`.
+
+## Matches
+
+shadcn/ui `Item` (a title line, a muted description, the item rhythm) in an item group; shadcn has no timeline, so the connector, the day headings, the condensed run and the incident marker are Capsomer's. Rows are not links as a whole (shadcn's `Item` as an anchor is), because a row holds its own links (Open the job, Roll back); a row-list row is the one to use when the whole row opens something.
 
 ## Keyboard
 

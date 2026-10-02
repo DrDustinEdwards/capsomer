@@ -2,9 +2,13 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A switch: a real checkbox with role="switch", a fixed noun label, and the state word
-   beside it. Takes effect at once. Drawn from the approved mockup's .switch. */
+   beside it. Takes effect at once. Drawn from the approved mockup's .switch; matches
+   shadcn/ui Switch (default and sm sizes, ring, invalid, disabled). */
 @layer cap.components {
   .cap-switch {
+    --cap-sw-w: 36px;
+    --cap-sw-h: 20px;
+    --cap-sw-thumb: 14px;
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -12,12 +16,19 @@
     color: var(--text);
     cursor: pointer;
 
+    &[data-size="sm"] {
+      --cap-sw-w: 28px;
+      --cap-sw-h: 16px;
+      --cap-sw-thumb: 10px;
+    }
+
     & input[role="switch"] {
       appearance: none;
       position: relative;
       flex: none;
-      width: 36px;
-      height: 20px;
+      box-sizing: border-box;
+      width: var(--cap-sw-w);
+      height: var(--cap-sw-h);
       margin: 0;
       border: 1px solid var(--line-strong);
       border-radius: var(--radius-full);
@@ -30,17 +41,26 @@
         position: absolute;
         top: 2px;
         left: 2px;
-        width: 14px;
-        height: 14px;
+        width: var(--cap-sw-thumb);
+        height: var(--cap-sw-thumb);
         border-radius: 50%;
         background: var(--muted);
+      }
+      &:focus-visible {
+        outline: var(--ring-width) solid var(--ring);
+        outline-offset: 1px;
+      }
+      /* Wrong: set by the app when a switch's value is refused (aria-invalid). */
+      &[aria-invalid="true"] {
+        border-color: var(--crit);
+        box-shadow: 0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
       }
       &:checked {
         border-color: var(--primary);
         background: var(--primary);
 
         &::before {
-          translate: 16px 0;
+          translate: calc(var(--cap-sw-w) - 2px - var(--cap-sw-thumb) - 4px) 0;
           background: var(--surface);
         }
       }

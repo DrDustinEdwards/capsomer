@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent, type SyntheticEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { Dialog, DialogBody, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 import { approveLabel, titleText, type GateChoice } from "./approval-sheet.ts";
 
 export type { GateChoice } from "./approval-sheet.ts";
@@ -29,8 +30,6 @@ export interface ApprovalSheetProps {
 export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting." }: ApprovalSheetProps) {
   const id = useId();
   const ref = useRef<HTMLDialogElement>(null);
-  const cancelRef = useRef<HTMLButtonElement>(null);
-  const opener = useRef<HTMLElement | null>(null);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
   const [pending, setPending] = useState(false);
@@ -43,20 +42,6 @@ export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each co
     setComments({});
     setError(null);
     setPending(false);
-  }, [open]);
-
-  // showModal() and close() follow `open`. Focus starts on Cancel and returns to the
-  // element that had it before.
-  useEffect(() => {
-    const d = ref.current;
-    if (!d) return;
-    if (open && !d.open) {
-      opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      d.showModal();
-      cancelRef.current?.focus();
-    } else if (!open && d.open) {
-      d.close();
-    }
   }, [open]);
 
   const chosen: GateChoice[] = gates.filter((g) => checked[g.id] ?? g.include ?? true).map((g) => ({ id: g.id, comment: (comments[g.id] ?? "").trim() }));
@@ -81,32 +66,16 @@ export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each co
     }
   };
 
-  // Esc is held while a request is in flight (the keydown too: Chrome skips the cancel
-  // event when the page has had no user activation since the last close request).
-  const onKeyDown = (e: KeyboardEvent<HTMLDialogElement>) => {
-    if (e.key === "Escape" && pending) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  };
-  const onCancel = (e: SyntheticEvent<HTMLDialogElement>) => {
-    if (pending) e.preventDefault();
-  };
-  const onDialogClose = () => {
-    if (opener.current?.isConnected) opener.current.focus();
-    onClose();
-  };
-
+  // The shared Dialog does the opening, focus (on Cancel, as the sheet is destructive), the
+  // return of focus, Esc and Cancel being held while busy, and the locked backdrop.
   return (
-    <dialog className="cap-approval" data-cap="approval-sheet" ref={ref} aria-labelledby={`${id}-title`} onKeyDownCapture={onKeyDown} onCancel={onCancel} onClose={onDialogClose}>
+    <Dialog ref={ref} className="cap-approval" size="lg" open={open} onOpenChange={(o) => !o && onClose()} modalLock destructive busy={pending} closeButton={false} described>
       <form className="cap-approval-form" onSubmit={submit}>
-        <div className="cap-approval-head">
-          <h2 className="cap-approval-title" id={`${id}-title`}>
-            {titleText(gates.length)}
-          </h2>
-          <p className="cap-approval-lead">{lead}</p>
-        </div>
-        <div className="cap-approval-gates" role="group" aria-label="Gates waiting for approval" tabIndex={0}>
+        <DialogHeader>
+          <DialogTitle>{titleText(gates.length)}</DialogTitle>
+          <DialogDescription>{lead}</DialogDescription>
+        </DialogHeader>
+        <DialogBody className="cap-approval-gates" flush role="group" aria-label="Gates waiting for approval">
           {gates.map((g, i) => (
             <fieldset className="cap-approval-gate" key={g.id} disabled={pending}>
               <legend className="cap-approval-job">{g.title}</legend>
@@ -133,7 +102,7 @@ export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each co
               </div>
             </fieldset>
           ))}
-        </div>
+        </DialogBody>
         {error && (
           <div className="cap-approval-error" data-cap-part="error">
             <div className="cap-alert" data-tone="crit" role="alert">
@@ -141,19 +110,8 @@ export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each co
             </div>
           </div>
         )}
-        <div className="cap-approval-foot">
-          <button
-            type="button"
-            className="cap-btn"
-            data-cap-part="cancel"
-            ref={cancelRef}
-            aria-disabled={pending ? "true" : undefined}
-            onClick={() => {
-              if (!pending) ref.current?.close();
-            }}
-          >
-            Cancel
-          </button>
+        <DialogFooter align="between">
+          <DialogClose part="cancel">Cancel</DialogClose>
           <p className="cap-approval-none" id={noneId} data-cap-part="none" hidden={n !== 0}>
             Choose at least one gate.
           </p>
@@ -161,8 +119,8 @@ export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each co
             {pending && <span className="cap-btn-spinner" aria-hidden="true" />}
             <span data-cap-part="approve-label">{approveLabel(n, pending)}</span>
           </button>
-        </div>
+        </DialogFooter>
       </form>
-    </dialog>
+    </Dialog>
   );
 }

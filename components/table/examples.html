@@ -168,6 +168,90 @@
   <div class="cap-table-foot"><a href="#sites">All 6 sites in Sites</a></div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-rowstates">
+  <h2 id="s-rowstates">Row hover and selected, a footer, a caption underneath</h2>
+  <div class="cap-table-wrap" data-cap="table" role="region" aria-labelledby="t6-cap" tabindex="0" id="t6">
+    <table class="cap-table" data-caption="bottom">
+      <caption id="t6-cap">Invoices this month, one selected</caption>
+      <thead>
+        <tr>
+          <th scope="col"><span class="cap-sr-only">Select</span></th>
+          <th scope="col">Invoice</th>
+          <th scope="col">Status</th>
+          <th scope="col" data-num>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-force="hover">
+          <td><input type="checkbox" aria-label="Select INV001" /></td>
+          <th scope="row">INV001</th>
+          <td>Paid</td>
+          <td data-num>$250.00</td>
+        </tr>
+        <tr data-state="selected" id="t6-selected">
+          <td><input type="checkbox" checked aria-label="Select INV002" /></td>
+          <th scope="row">INV002</th>
+          <td>Pending</td>
+          <td data-num>$150.00</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" aria-label="Select INV003" /></td>
+          <th scope="row">INV003</th>
+          <td>Unpaid</td>
+          <td data-num>$350.00</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row" colspan="3">Total</th>
+          <td data-num>$750.00</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-sticky">
+  <h2 id="s-sticky">Sticky header, scrolling inside its region</h2>
+  <div class="cap-table-wrap" data-cap="table" data-sticky role="region" aria-labelledby="t7-cap" tabindex="0" id="t7">
+    <table class="cap-table">
+      <caption id="t7-cap">Deploy log</caption>
+      <thead>
+        <tr><th scope="col">Deploy</th><th scope="col">Site</th><th scope="col" data-num>Duration</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row" class="cap-mono">366b902</th><td>capsid portal</td><td data-num>41 s</td></tr>
+        <tr><th scope="row" class="cap-mono">a91c4e0</th><td>foxhound.app</td><td data-num>38 s</td></tr>
+        <tr><th scope="row" class="cap-mono">7d02be1</th><td>germomics.org</td><td data-num>52 s</td></tr>
+        <tr><th scope="row" class="cap-mono">5be9a10</th><td>dustinedwards.info</td><td data-num>33 s</td></tr>
+        <tr><th scope="row" class="cap-mono">0c41f77</th><td>capsid portal</td><td data-num>44 s</td></tr>
+        <tr><th scope="row" class="cap-mono">e8830d2</th><td>foxhound.app</td><td data-num>36 s</td></tr>
+        <tr><th scope="row" class="cap-mono">12ab9c3</th><td>germomics.org</td><td data-num>49 s</td></tr>
+        <tr><th scope="row" class="cap-mono">9f6e4d8</th><td>dustinedwards.info</td><td data-num>31 s</td></tr>
+        <tr><th scope="row" class="cap-mono">b3d1705</th><td>capsid portal</td><td data-num>43 s</td></tr>
+        <tr><th scope="row" class="cap-mono">44c7a29</th><td>foxhound.app</td><td data-num>40 s</td></tr>
+        <tr><th scope="row" class="cap-mono">6a05e1f</th><td>germomics.org</td><td data-num>51 s</td></tr>
+        <tr><th scope="row" class="cap-mono">d92b3c6</th><td>dustinedwards.info</td><td data-num>35 s</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-empty">
+  <h2 id="s-empty">Nothing to show, and comfortable density</h2>
+  <div class="cap-table-wrap" data-cap="table" role="region" aria-labelledby="t8-cap" tabindex="0" data-density="comfortable" id="t8">
+    <table class="cap-table">
+      <caption id="t8-cap">Open incidents</caption>
+      <thead>
+        <tr><th scope="col">Incident</th><th scope="col">Site</th><th scope="col" data-num>Age</th></tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="3" class="cap-table-empty">No open incidents.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <template data-specimen="drop" data-title="Region 560 px wide: the host, the deploy and the errors have gone" data-width="560" data-height="300">
   <main class="specimen-page">
     <div class="cap-table-wrap" data-cap="table" role="region" aria-labelledby="drop-cap" tabindex="0" id="t-drop">

@@ -18,6 +18,9 @@ eachTheme((theme) => {
       { sel: "#seg-view-why", what: "the reason for a disabled segment" },
       { sel: "#seg-window .cap-seg-options", what: "the control's edge", part: "border" },
       { sel: "#seg-window label:has(input:checked)", what: "the chosen segment's edge", part: "border" },
+      { sel: "#seg-sm label:has(input:checked)", what: "a small segment's word" },
+      { sel: "#seg-invalid .cap-seg-options", what: "an invalid control's edge", part: "border" },
+      { sel: "#seg-invalid-e", what: "the message for an invalid control" },
     ]);
   });
 
@@ -80,5 +83,36 @@ eachTheme((theme) => {
     await expect(page.getByRole("radio", { name: "30 days" })).toBeChecked();
     const box = await label.boundingBox();
     expect(box?.height).toBeGreaterThanOrEqual(24);
+  });
+
+  test("accessibility: every size keeps a 24 px hit area", async ({ page }) => {
+    await visitStates(page, "segmented", theme);
+    for (const id of ["#seg-sm", "#seg-lg", "#seg-icons", "#seg-comf"]) {
+      const box = await page.locator(`${id} label`).first().boundingBox();
+      expect(box?.height, id).toBeGreaterThanOrEqual(24);
+    }
+  });
+
+  test("accessibility: an invalid control is described by its message and its radios say so", async ({ page }) => {
+    await visitStates(page, "segmented", theme);
+    await expect(page.getByRole("group", { name: "Check every" })).toHaveAccessibleDescription("Choose how often to check.");
+    await expect(page.getByRole("radio", { name: "1 minute" })).toHaveAttribute("aria-invalid", "true");
+  });
+
+  test("keyboard: arrow keys move through a vertical group", async ({ page }) => {
+    await visitStates(page, "segmented", theme);
+    await page.getByRole("radio", { name: "Newest" }).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByRole("radio", { name: "Oldest" })).toBeChecked();
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByRole("radio", { name: "A to Z" })).toBeFocused();
+  });
+
+  test("keyboard: icon segments keep their word as the name", async ({ page }) => {
+    await visitStates(page, "segmented", theme);
+    await expect(page.getByRole("radio", { name: "Grid" })).toBeVisible();
+    await page.getByRole("radio", { name: "Rows" }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("radio", { name: "Grid" })).toBeChecked();
   });
 });

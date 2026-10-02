@@ -61,3 +61,58 @@
     </div>
   </section>
 </section>
+
+<section class="cap-specimen" aria-labelledby="s-card">
+  <h2 id="s-card">Card parts: description, action, footer (a named panel)</h2>
+  <section class="cap-panel" id="p-card" aria-labelledby="p-card-h">
+    <header class="cap-panel-head">
+      <h3 id="p-card-h">Deploy settings</h3>
+      <span class="cap-panel-action"><button type="button" class="cap-btn">Edit</button></span>
+      <p class="cap-panel-desc">Where and how foxhound.app is published.</p>
+    </header>
+    <div class="cap-panel-body">
+      <p>Production deploys from <span class="cap-mono">main</span> after the browser tests pass.</p>
+    </div>
+    <footer class="cap-panel-foot">
+      <button type="button" class="cap-btn" data-variant="primary">Deploy now</button>
+      <span class="cap-muted">Last deploy 15 minutes ago</span>
+    </footer>
+  </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-pad">
+  <h2 id="s-pad">A flush body with a padded block (cap-panel-pad)</h2>
+  <section class="cap-panel" id="p-pad" aria-labelledby="p-pad-h">
+    <header class="cap-panel-head">
+      <h3 id="p-pad-h">Queue</h3>
+      <span class="cap-panel-count">2</span>
+    </header>
+    <div class="cap-panel-body" data-flush>
+      <div class="cap-panel-pad"><p>Jobs wait here until a driver takes them. The rows below touch the panel's edges.</p></div>
+      <ul class="cap-rows" data-cap="row-list" aria-labelledby="p-pad-h">
+        <li class="cap-row">
+          <div class="cap-row-title"><a href="#p-pad">Refresh the uptime strip fixtures</a></div>
+          <p class="cap-row-detail">Priority 2</p>
+          <span class="cap-row-meta">1 hour ago</span>
+        </li>
+        <li class="cap-row">
+          <div class="cap-row-title"><a href="#p-pad">Run the browser tests for capsomer</a></div>
+          <p class="cap-row-detail">Held by capsid-driver</p>
+          <span class="cap-row-meta">18 minutes ago</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-sm">
+  <h2 id="s-sm">Small size and comfortable density</h2>
+  <section class="cap-panel" id="p-sm" data-size="sm">
+    <header class="cap-panel-head"><h3>Small panel</h3></header>
+    <div class="cap-panel-body"><p>data-size="sm" tightens the spacing.</p></div>
+  </section>
+  <section class="cap-panel" id="p-comfortable" data-density="comfortable">
+    <header class="cap-panel-head"><h3>Comfortable panel</h3><span class="cap-panel-src">Roomier, with a faint shadow</span></header>
+    <div class="cap-panel-body"><p>Spacing from the comfortable density tokens.</p></div>
+  </section>
+</section>

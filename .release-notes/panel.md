@@ -1,0 +1,3 @@
+- Header and body padding now come from `--pad-y`, `--pad-card` and `--gap`: identical to 0.1 in compact density, roomier in `data-density="comfortable"`.
+- React `Panel`: `actions` is now wrapped in `<span class="cap-panel-action">` (it was bare in the header); controls styled by a direct-child selector of `.cap-panel-head` need updating.
+- New, optional: `.cap-panel-pad` (padded block inside a `data-flush` body), `.cap-panel-desc`, `.cap-panel-action`, `.cap-panel-foot`, `data-size="sm"`. React `Panel` props `headingId` (wires `aria-labelledby` to the heading, making the section a named region), `ref`, `description`, `footer`, `size`.

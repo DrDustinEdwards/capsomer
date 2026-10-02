@@ -1,5 +1,5 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { closeDetail, openDetail, wireDetail } from "./detail-panel.ts";
+import { useCallback, useId, useState, type ReactNode } from "react";
+import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 
 export interface DetailPanelProps {
   open: boolean;
@@ -23,45 +23,24 @@ export interface DetailPanelProps {
 }
 
 export function DetailPanel({ open, onClose, id, title, identifier, kind, badge, history = false, closeLabel = "Close", children }: DetailPanelProps) {
-  const dlg = useRef<HTMLDialogElement>(null);
-  const titleId = useId();
-
-  useEffect(() => {
-    const d = dlg.current;
-    if (!d) return;
-    const unwire = wireDetail(d);
-    const onEnd = () => onClose();
-    d.addEventListener("close", onEnd);
-    return () => {
-      d.removeEventListener("close", onEnd);
-      unwire();
-    };
-  }, [onClose]);
-
-  useEffect(() => {
-    const d = dlg.current;
-    if (!d) return;
-    if (open && !d.open) openDetail(d, document.activeElement, { history });
-    else if (!open && d.open) closeDetail(d);
-  }, [open, history]);
-
+  // The panel's address is "#detail-<id>"; the shared dialog reads the prefix from the attribute.
+  const mark = useCallback((el: HTMLDialogElement | null) => {
+    if (el && el.hasAttribute("data-cap-history")) el.dataset.capHistory = "detail";
+  }, []);
   return (
-    <dialog ref={dlg} className="cap-detail" data-cap="detail-panel" id={id} data-cap-detail-id={id} aria-labelledby={titleId}>
-      <div className="cap-detail-head">
+    <Dialog ref={mark} open={open} onOpenChange={() => onClose()} placement="right" size="md" className="cap-detail" id={id} history={history} historyId={id} closeLabel={closeLabel}>
+      <DialogHeader divider>
         <div className="cap-detail-heading">
           {kind ? <p className="cap-detail-kind">{kind}</p> : null}
-          <h2 className="cap-detail-title" id={titleId}>
-            {title}
-          </h2>
+          <div className="cap-detail-titlerow">
+            <DialogTitle>{title}</DialogTitle>
+            {badge}
+          </div>
           {identifier ? <p className="cap-detail-id">{identifier}</p> : null}
         </div>
-        {badge}
-        <button type="button" className="cap-btn" data-cap-part="close">
-          {closeLabel}
-        </button>
-      </div>
-      <div className="cap-detail-body">{children}</div>
-    </dialog>
+      </DialogHeader>
+      <DialogBody className="cap-detail-body">{children}</DialogBody>
+    </Dialog>
   );
 }
 

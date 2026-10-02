@@ -120,6 +120,25 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div data-density="comfortable">
+    <div class="cap-switch-reason">
+      <label class="cap-switch"><input type="checkbox" role="switch" checked /> Deploy on push <span class="cap-switch-state" aria-hidden="true">On</span></label>
+      <form class="cap-switch-reason-form">
+        <div class="cap-field">
+          <label class="cap-switch-reason-label" for="sr-comf-why">Turning deploy on push off. Reason:</label>
+          <input class="cap-input" id="sr-comf-why" autocomplete="off" required />
+        </div>
+        <div class="cap-switch-reason-actions">
+          <button type="submit" class="cap-btn" data-variant="primary">Apply</button>
+          <button type="button" class="cap-btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
 <script type="module">
   import { enhance, setSwitch } from "./switch-reason.ts";
   enhance();

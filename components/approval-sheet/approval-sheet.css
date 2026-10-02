@@ -3,73 +3,40 @@
 
 /* The approval sheet: several waiting gates in one modal dialog, each with its exact
    command, a checkbox to include it and an optional comment. Approve's count follows the
-   checkboxes. The buttons are .cap-btn, the checkbox .cap-check, the comment .cap-field and
-   .cap-input, the error .cap-alert; this file styles the sheet and its own parts. */
+   checkboxes. The sheet is the shared dialog (components/dialog: .cap-dialog with its
+   header, title, description, scrolling body and footer band, its backdrop, motion and
+   focus rules); this file adds only the form around those parts and the gates inside the
+   body. The buttons are .cap-btn, the checkbox .cap-check, the comment .cap-field and
+   .cap-input, the error .cap-alert. A gate is shadcn's Item (a title, a muted description,
+   hairlines between items) holding a code block. */
 @layer cap.components {
-  .cap-approval {
-    width: min(560px, calc(100% - 2 * var(--space-5)));
-    max-height: calc(100dvh - 2 * var(--space-6));
-    padding: 0;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-l);
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-
-    &[open] {
-      display: flex;
-      flex-direction: column;
-    }
-    &::backdrop {
-      background: var(--scrim);
-    }
-  }
-
-  /* Head, the gates (which scroll when there are many), then the footer, always in view. */
+  /* The form holds the header, the body and the footer, so it is the dialog's flex column. */
   .cap-approval-form {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    display: flex;
+    flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
     margin: 0;
   }
 
-  .cap-approval-head {
-    display: grid;
-    gap: var(--space-2);
-    padding: var(--space-5) var(--space-6) var(--space-4);
-  }
-  .cap-approval-title {
-    margin: 0;
-    font-size: var(--fs-h3);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-  }
-  .cap-approval-lead {
-    margin: 0;
-    color: var(--muted);
-  }
-
   .cap-approval-gates {
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding-inline: var(--space-6);
-    border-block: 1px solid var(--line);
+    padding: 0;
+    gap: 0;
+    margin-block-start: var(--pad-card);
+    border-block-start: 1px solid var(--line);
   }
 
-  /* One gate. Gates are separated by a rule, not boxed. */
+  /* One gate. Gates are separated by a hairline, not boxed. */
   .cap-approval-gate {
     display: grid;
     gap: var(--space-3);
     min-width: 0;
     margin: 0;
-    padding: var(--space-4) 0;
+    padding: var(--pad-card);
     border: 0;
 
     & + & {
-      border-top: 1px solid var(--line);
+      border-block-start: 1px solid var(--line);
     }
   }
   /* Floated so it leaves the fieldset's border area and becomes the gate's first grid item
@@ -78,7 +45,9 @@
     float: left;
     width: 100%;
     padding: 0;
+    font-size: var(--fs-body);
     font-weight: 600;
+    line-height: 1.375;
     color: var(--text);
   }
   .cap-approval-meta {
@@ -89,13 +58,13 @@
   /* The exact command that will run: mono, sunken, wrapping, never cut off. */
   .cap-approval-cmd {
     margin: 0;
-    padding: var(--space-3) var(--space-4);
+    padding: var(--pad-y) var(--pad-x);
     border: 1px solid var(--line);
     border-radius: var(--radius-m);
     background: var(--sunken);
     color: var(--text);
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: var(--fs-detail);
     line-height: 1.55;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
@@ -106,54 +75,19 @@
   }
 
   .cap-approval-error {
-    padding: var(--space-4) var(--space-6) 0;
+    flex: none;
+    padding: var(--pad-card);
+    border-block-start: 1px solid var(--line);
   }
 
-  /* Cancel and Approve set apart, Cancel first. */
-  .cap-approval-foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3) var(--space-4);
-    padding: var(--space-4) var(--space-6) var(--space-5);
-  }
   .cap-approval-none {
-    margin: 0 0 0 auto;
+    margin: 0;
     font-size: var(--fs-detail);
     color: var(--muted);
-  }
-
-  /* A phone: tighter gutters. The sheet is a page-level overlay, so this is a media query. */
-  @media (max-width: 480px) {
-    .cap-approval-head,
-    .cap-approval-foot,
-    .cap-approval-error {
-      padding-inline: var(--space-5);
-    }
-    .cap-approval-gates {
-      padding-inline: var(--space-5);
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-approval {
-      transition:
-        opacity var(--dur-base) var(--ease-out),
-        transform var(--dur-base) var(--ease-out);
-    }
-    @starting-style {
-      .cap-approval[open] {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-    }
+    text-align: center;
   }
 
   @media (forced-colors: active) {
-    .cap-approval {
-      border-color: CanvasText;
-    }
     .cap-approval-cmd {
       border-color: CanvasText;
     }

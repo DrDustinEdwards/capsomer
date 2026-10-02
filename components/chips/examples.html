@@ -57,6 +57,27 @@
   <p class="cap-muted">In an app this is the empty component's no-match kind, which names the filter and offers Clear.</p>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-more">
+  <h2 id="s-more">Pressed and hovered, small and large, disabled, with a count and an icon</h2>
+  <div class="cap-chips" role="group" aria-labelledby="chips-more-l" id="chips-more">
+    <span class="cap-chips-label" id="chips-more-l">States</span>
+    <button type="button" class="cap-chip" aria-pressed="true" data-force="hover" id="chip-pressed-hover">Blocked</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-size="sm" id="chip-sm">Small</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-size="lg" id="chip-lg">Large</button>
+    <button type="button" class="cap-chip" aria-pressed="false" aria-disabled="true" id="chip-disabled">Archived</button>
+    <button type="button" class="cap-chip" aria-pressed="false" id="chip-count">Failed <span class="cap-chip-count">3</span></button>
+    <button type="button" class="cap-chip" aria-pressed="true" id="chip-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5" fill="currentColor" /></svg>Live</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div class="cap-chips" role="group" aria-label="Kind" data-density="comfortable" id="chips-comf">
+    <button type="button" class="cap-chip" aria-pressed="true">Reply</button>
+    <button type="button" class="cap-chip" aria-pressed="false">Link</button>
+  </div>
+</section>
+
 <script type="module">
   import { clearAll, enhance, pressedValues, setCount } from "./chips.ts";
   // The app's part: filter the sample queue and say what is left.

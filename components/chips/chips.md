@@ -4,8 +4,9 @@ title: Filter chips
 summary: Filter a list by up to six values with toggle chips; the filter lives in the address and a live count says what is left.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [none pressed, some pressed with the count, hover, keyboard focus, an empty result]
+states: [none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.chip)
 replaces:
   - 'class="[^"]*\bchip\b'
@@ -47,6 +48,8 @@ Filtering a list or table by up to six values of one property: a queue by status
 | Tab | Moves through the chips, then Clear while any is pressed |
 | Enter or Space | Presses or releases a chip; the count and the address follow |
 | Enter on Clear | Releases every chip and moves focus to the first |
+| Arrow keys | Move focus to the next or previous chip without pressing it (wraps) |
+| Home or End | Move focus to the first or last chip |
 
 ## Accessibility
 
@@ -84,6 +87,17 @@ In React, `import { FilterChips } from "capsomer/react/chips"` (controlled):
 ```tsx
 <FilterChips label="Status" options={statuses} value={status} onChange={setStatus} count={`${shown.length} of ${jobs.length} jobs`} />
 ```
+
+## Matches
+
+shadcn/ui `Badge` (outline variant: the pill, its `h-5`-style compactness, icon at 12 px) with `Toggle`'s pressed and hover states, as a labelled group of toggles. Sizes `data-size="sm|lg"`, an inline `.cap-chip-count`, an icon, and `aria-disabled` are supported. The pressed chip keeps the accent edge, tint and tick.
+
+## Deliberate differences
+
+- **Every chip stays a tab stop** (a run of toggle buttons), with arrow keys as a convenience that only moves focus. shadcn's ToggleGroup uses a roving tab index; for a filter the person often passes through quickly, extra Tab stops are cheaper than a hidden arrow-only path.
+- **Pressed has a tick, an accent edge and a tint**, not only `bg-muted`: the choice must not rest on a pale fill (3:1) or on colour.
+- **Disabled is dashed and muted**, with the word kept legible, not half opacity.
+- **The filter lives in the address**, which shadcn has no concept of.
 
 ## Exceptions in production
 

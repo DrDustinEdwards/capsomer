@@ -1,0 +1,4 @@
+- New variants `data-variant="secondary"` and `data-variant="link"`; new sizes `data-size="xs|sm|lg"`; `.cap-btn-group`, `.cap-btn-group-text` for grouped buttons. React: `size` prop, `variant` gains secondary and link, new `ButtonGroup` and `ButtonGroupText`.
+- Focus ring is now 3 px opaque outline (was 2 px with 2 px offset); icon beside a label can carry `data-icon="start|end"`.
+- Default button gains `--shadow-xs`; hover and pressed fills are mixed from the surface (the hover edge colour change is gone); pressed moves 1 px under motion.
+- `.cap-link-btn` is unchanged.

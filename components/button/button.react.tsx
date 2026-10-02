@@ -1,7 +1,8 @@
 import { useId, type ButtonHTMLAttributes, type MouseEvent, type ReactNode } from "react";
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "style"> {
-  variant?: "default" | "primary" | "danger" | "quiet";
+  variant?: "default" | "primary" | "secondary" | "danger" | "quiet" | "link";
+  size?: "xs" | "sm" | "default" | "lg";
   // In flight: the label stays (so the width and the name stay) and a spinner covers it.
   // Clicks are ignored until it settles.
   pending?: boolean;
@@ -15,7 +16,7 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
 }
 
 export function Button(props: ButtonProps) {
-  const { variant = "default", pending = false, disabledReason, iconOnly = false, label, children, type = "button", onClick, className, ...rest } = props;
+  const { variant = "default", size = "default", pending = false, disabledReason, iconOnly = false, label, children, type = "button", onClick, className, ...rest } = props;
   const reasonId = useId();
   const disabled = disabledReason != null && disabledReason !== false;
   const describedBy = [rest["aria-describedby"], disabled ? reasonId : null].filter(Boolean).join(" ") || undefined;
@@ -35,6 +36,7 @@ export function Button(props: ButtonProps) {
       type={type}
       className={className ? `cap-btn ${className}` : "cap-btn"}
       data-variant={variant === "default" ? undefined : variant}
+      data-size={size === "default" ? undefined : size}
       data-icon-only={iconOnly ? "" : undefined}
       aria-label={iconOnly ? (label ?? rest["aria-label"]) : rest["aria-label"]}
       aria-disabled={disabled ? true : undefined}
@@ -56,4 +58,19 @@ export function Button(props: ButtonProps) {
       </span>
     </>
   );
+}
+
+// Buttons sharing one edge. `orientation` is horizontal unless set.
+export function ButtonGroup(props: { label?: string; orientation?: "horizontal" | "vertical"; children?: ReactNode; className?: string }) {
+  const { label, orientation = "horizontal", children, className } = props;
+  return (
+    <div role="group" aria-label={label} className={className ? `cap-btn-group ${className}` : "cap-btn-group"} data-orientation={orientation === "vertical" ? "vertical" : undefined}>
+      {children}
+    </div>
+  );
+}
+
+// Static text that sits in a group beside the buttons.
+export function ButtonGroupText(props: { children?: ReactNode }) {
+  return <span className="cap-btn-group-text">{props.children}</span>;
 }

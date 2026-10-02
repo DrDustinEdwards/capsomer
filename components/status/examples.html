@@ -42,3 +42,51 @@
   <h2 id="s-brief">No data in a table cell</h2>
   <p id="sample-brief"><span class="cap-status" data-tone="nodata" title="No Cloudflare token for this site"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>No data<span class="cap-sr-only">: no Cloudflare token for this site</span></span></p>
 </section>
+
+<section class="cap-specimen" aria-labelledby="s-variants">
+  <h2 id="s-variants">Badge variants</h2>
+  <div class="cap-specimen-row" id="sample-variants">
+    <span class="cap-pill" data-variant="default">Default</span>
+    <span class="cap-pill" data-variant="secondary">Secondary</span>
+    <span class="cap-pill" data-variant="outline">Outline</span>
+    <span class="cap-pill" data-variant="destructive"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Destructive</span>
+    <span class="cap-pill" data-variant="ghost">Ghost</span>
+    <a class="cap-pill" data-variant="link" href="#s-variants">Link</a>
+  </div>
+  <p>An outline or ghost badge with a tone keeps the tone's colour.</p>
+  <div class="cap-specimen-row" id="sample-variant-tones">
+    <span class="cap-pill" data-variant="outline" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Healthy</span>
+    <span class="cap-pill" data-variant="outline" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span>
+    <span class="cap-pill" data-variant="ghost" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Critical</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-interactive">
+  <h2 id="s-interactive">A badge that is a link or a button: hover, disabled</h2>
+  <div class="cap-specimen-row" id="sample-interactive">
+    <a class="cap-pill" data-variant="default" href="#s-interactive" data-force="hover">Hover</a>
+    <a class="cap-pill" data-variant="secondary" href="#s-interactive">Mentions 4</a>
+    <button type="button" class="cap-pill" data-variant="outline">Filter: blocked</button>
+    <button type="button" class="cap-pill" data-variant="ghost" data-force="hover">Ghost hover</button>
+    <a class="cap-pill" data-variant="link" href="#s-interactive" data-force="hover">Link hover</a>
+    <button type="button" class="cap-pill" data-variant="secondary" disabled>Disabled</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-count">
+  <h2 id="s-count">A count, with no glyph</h2>
+  <div class="cap-specimen-row">
+    <span class="cap-pill" data-variant="default">3<span class="cap-sr-only"> waiting</span></span>
+    <span class="cap-pill" data-variant="secondary">128<span class="cap-sr-only"> sites</span></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div class="cap-specimen-row" data-density="comfortable" id="sample-comfortable">
+    <span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Healthy</span>
+    <span class="cap-pill" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span>
+    <span class="cap-pill" data-variant="default">Default</span>
+    <span class="cap-pill" data-variant="outline">Outline</span>
+  </div>
+</section>

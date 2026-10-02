@@ -1,0 +1,4 @@
+- Cell markup changed: the bare tick and dash SVGs are now `<span class="cap-perms-check" aria-hidden="true">` (a held cell puts the tick SVG inside it with `viewBox="0 0 16 16"` and no width or height; a cell not held leaves it empty). Keep `data-held="yes|no"` on the `td` and the `cap-sr-only` word.
+- The ok and dim colours on the cell are gone; the held mark is the primary fill, the other an empty box.
+- The agent and permission cards are bordered items with a gap (were rows with a rule between); class names unchanged.
+- React: props unchanged.

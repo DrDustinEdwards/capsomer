@@ -7,7 +7,7 @@ const approveBtn = (page: Page) => page.locator("[data-cap-part='approve']");
 const cancelBtn = (page: Page) => page.getByRole("button", { name: "Cancel" });
 
 eachTheme((theme) => {
-  for (const id of ["two", "one-unchecked", "pending", "error"]) {
+  for (const id of ["two", "one-unchecked", "pending", "error", "comfortable"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "approval-sheet", theme, id);
       await expect(sheet(page)).toBeVisible();
@@ -18,8 +18,8 @@ eachTheme((theme) => {
   test("accessibility: the sheet's text reaches its contrast", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "two");
     await expectContrast(page, [
-      { sel: ".cap-approval-title", what: "the title" },
-      { sel: ".cap-approval-lead", what: "the lead line" },
+      { sel: ".cap-dialog-title", what: "the title" },
+      { sel: ".cap-dialog-description", what: "the lead line" },
       { sel: ".cap-approval-job", what: "a gate's job title" },
       { sel: ".cap-approval-meta", what: "a gate's meta line" },
       { sel: ".cap-approval-cmd", what: "the command on its sunken box" },
@@ -81,6 +81,28 @@ eachTheme((theme) => {
     await expect(approveBtn(page)).toHaveAttribute("aria-busy", "true");
     await expect(approveBtn(page)).toHaveAccessibleName("Approving 2 gates");
     await expect(cancelBtn(page)).toHaveAttribute("aria-disabled", "true");
+  });
+
+  test("keyboard: Tab and Shift+Tab stay inside the sheet", async ({ page }) => {
+    await visitStates(page, "approval-sheet", theme, "two");
+    for (let i = 0; i < 9; i++) {
+      await page.keyboard.press("Tab");
+      expect(await page.evaluate(() => !!document.activeElement?.closest("dialog"))).toBe(true);
+    }
+    for (let i = 0; i < 9; i++) {
+      await page.keyboard.press("Shift+Tab");
+      expect(await page.evaluate(() => !!document.activeElement?.closest("dialog"))).toBe(true);
+    }
+  });
+
+  test("accessibility: the controls show a focus ring", async ({ page }) => {
+    await visitStates(page, "approval-sheet", theme, "two");
+    await approveBtn(page).focus();
+    await page.keyboard.press("Shift+Tab");
+    await page.keyboard.press("Tab");
+    await expect(approveBtn(page)).toBeFocused();
+    const width = await approveBtn(page).evaluate((el) => getComputedStyle(el).outlineWidth);
+    expect(parseFloat(width)).toBeGreaterThanOrEqual(2);
   });
 
   test("keyboard: Esc closes the sheet and focus returns to its button", async ({ page }) => {
