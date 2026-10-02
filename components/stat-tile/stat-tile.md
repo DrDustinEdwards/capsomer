@@ -6,6 +6,7 @@ parts: [css, react]
 tool: native
 states: [ok, warning, critical, no data, hover, pressed, keyboard focus, a row of every tone, phone width wrapping onto more rows]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx (tiles) and styles.css ("stat tiles")
 replaces:
   - 'class="tiles?( |")'
@@ -34,7 +35,7 @@ A value against a hard limit with a projection is a usage meter. A list of what 
 - **No data is a state with a reason, never a zero.** The figure says "No data" beside the dashed glyph, and the detail line says why ("The health route has not been read yet").
 - **The sparkline comes from Enarratio.** Render it with `sparkline()` and put its SVG in `.cap-tile-chart`, which is `aria-hidden`; the slot sets its size and `color`, so draw with `currentColor`. Give every chart a one-sentence summary with its numbers, in a `.cap-sr-only` element the tile names with `aria-describedby`, so the numbers are text and the tile's name stays short.
 - **A tile is never narrower than its text** (`flex: 1 0 auto`), so the row wraps to more rows instead of cutting a word: no breakpoints, and a phone gets one or two across by what fits. Only a tile wider than the whole row wraps its detail, and its line wraps whole.
-- **Hover** darkens the border to `--line-strong` and tints the tile `--raised`; pressed tints it `--sunken`.
+- **Hover** darkens the border to `--line-strong` and tints the tile `--raised`; pressed tints it `--sunken`; keyboard focus draws the shared 2 px `--ring` outline; the colour changes ease over 100 ms (not under reduced motion). The tile is shadcn's Item look: hairline edge, `--radius-l`, padding from `--pad-y` and `--pad-x` so comfortable density roomies it.
 
 ## Keyboard
 
@@ -50,6 +51,10 @@ A value against a hard limit with a projection is a usage meter. A list of what 
 - The tiles sit in a list; name it (`aria-label="Overview figures"`) when the page has more than one.
 - The tile's border is decoration: the tile is identified by its text and shows a focus ring at 3:1. Hover and pressed change the background and the border; in forced colours the border is the button colour and hover uses Highlight.
 - Text reaches 4.5:1 in every tone on the tile's surface, its hover tint and its pressed tint.
+
+## Matches
+
+shadcn/ui `Item` (outline variant rendered as a link) and `Card`. Deliberately different: shadcn has no stat tile; the figure-first single line, the status word and glyph, the no-data state and the sparkline slot are Capsomer's. The sparkline stays Enarratio's SVG, not a meter bar, because it shows a trend, not a value against a maximum (the shared meter is not used).
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 

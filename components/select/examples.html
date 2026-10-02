@@ -1,0 +1,133 @@
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">Default (the select popup)</h2>
+  <div class="cap-field" id="default">
+    <label class="cap-field-label" for="sel-platform">Platform</label>
+    <div class="cap-select-wrap" data-cap="select">
+      <select class="cap-select" id="sel-platform" name="platform">
+        <option value="cloudflare" selected>Cloudflare</option>
+        <option value="vercel">Vercel</option>
+        <option value="netlify">Netlify</option>
+        <option value="pages">GitHub Pages</option>
+        <option value="fly">Fly.io</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-groups">
+  <h2 id="s-groups">Groups, a disabled option and a placeholder</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="sel-owner">Owner <span class="cap-field-required" aria-hidden="true">Required</span></label>
+    <div class="cap-select-wrap" data-cap="select">
+      <select class="cap-select" id="sel-owner" name="owner" required>
+        <option value="" selected>Choose an agent</option>
+        <optgroup label="Agents">
+          <option value="driver">capsid-driver</option>
+          <option value="improve">improve-loop</option>
+          <option value="seat" disabled>seat-start (paused)</option>
+        </optgroup>
+        <optgroup label="People">
+          <option value="dustin">Dustin</option>
+        </optgroup>
+      </select>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-focus">
+  <h2 id="s-focus">Keyboard focus and hover</h2>
+  <p class="cap-muted">Tab to the select to see focus; Space, Enter or the arrow keys open its list. The second is shown hovered.</p>
+  <div class="cap-field">
+    <label class="cap-field-label" for="sel-every">Check every</label>
+    <div class="cap-select-wrap" data-cap="select">
+      <select class="cap-select" id="sel-every">
+        <option value="1">1 minute</option>
+        <option value="5" selected>5 minutes</option>
+        <option value="15">15 minutes</option>
+        <option value="60">1 hour</option>
+      </select>
+    </div>
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="sel-hover">Region</label>
+    <div class="cap-select-wrap" data-cap="select">
+      <select class="cap-select" id="sel-hover" data-force="hover">
+        <option>Europe (London)</option>
+        <option>United States (Ohio)</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-invalid">
+  <h2 id="s-invalid">Invalid, with its message</h2>
+  <div class="cap-field" data-invalid="true">
+    <label class="cap-field-label" for="sel-invalid">Job owner <span class="cap-field-required" aria-hidden="true">Required</span></label>
+    <div class="cap-select-wrap" data-cap="select">
+      <select class="cap-select" id="sel-invalid" required aria-invalid="true" aria-describedby="sel-invalid-e">
+        <option value="" selected>Choose an agent</option>
+        <option value="driver">capsid-driver</option>
+        <option value="improve">improve-loop</option>
+      </select>
+    </div>
+    <p class="cap-field-error" id="sel-invalid-e">Choose who owns this job. It cannot run without an owner.</p>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-disabled">
+  <h2 id="s-disabled">Disabled, with its reason</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="sel-disabled">Branch</label>
+    <p class="cap-field-help" id="sel-disabled-h">Locked while a deploy is running.</p>
+    <div class="cap-select-wrap" data-cap="select">
+      <select class="cap-select" id="sel-disabled" disabled aria-describedby="sel-disabled-h">
+        <option>main</option>
+        <option>build/shell</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-native">
+  <h2 id="s-native">The native select (no enhancement), small</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="sel-native">Sort by</label>
+    <select class="cap-select" id="sel-native" data-size="sm">
+      <option value="new">Newest</option>
+      <option value="old">Oldest</option>
+      <option value="az">A to Z</option>
+    </select>
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="sel-native-bad">Sort by (invalid)</label>
+    <select class="cap-select" id="sel-native-bad" aria-invalid="true">
+      <option>Newest</option>
+    </select>
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="sel-native-off">Sort by (disabled)</label>
+    <select class="cap-select" id="sel-native-off" disabled>
+      <option>Newest</option>
+    </select>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div data-density="comfortable" id="sel-comfortable">
+    <div class="cap-field">
+      <label class="cap-field-label" for="sel-comf">Window</label>
+      <div class="cap-select-wrap" data-cap="select">
+        <select class="cap-select" id="sel-comf">
+          <option value="24h">24 hours</option>
+          <option value="7d">7 days</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./select.ts";
+  enhance();
+</script>

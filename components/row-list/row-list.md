@@ -4,8 +4,9 @@ title: Row list
 summary: Rows that each open a detail, the title stretched over the row as its one link, with j and k to move between rows.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [mixed worst first, critical row, hover, keyboard focus, row with actions, long title cut with an ellipsis, a row that opens in place, phone width with a wrapping title]
+states: [mixed worst first, outline and muted variants, sizes, media, comfortable density, critical row, hover, keyboard focus, row with actions, long title cut with an ellipsis, a row that opens in place, phone width with a wrapping title]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.att-row, .qrow, .frow) and dashboard/src/views/shared.tsx (QueueRows, IncidentFeed)
 replaces:
   - 'class="(att-row|qrow|frow)'
@@ -29,7 +30,10 @@ Data compared across columns (versions, counts, several numbers per item) is a t
 
 - **The title is the row's one link or button, stretched over the whole row with a `::after`.** The row is one tab stop with a real role: a link when the detail has its own address, a button when it opens in place. A clickable `div` with `tabindex` (the Portal's first version) has no role and no name a screen reader can trust (patterns.md, "Row that opens a detail").
 - **`j` and `k` move keyboard focus itself, not a second selection.** Enter then follows the link, the row is scrolled the least distance that shows it, and a screen reader reads the row it lands on. They work when focus is in the list, or on the page's primary list (`data-cap-primary`, one per page) when focus is on nothing else; from nothing, `j` lands on the first row and `k` on the last (the Portal's rule). They never act in a text field, with a modifier, or when single-key shortcuts are off (`data-cap-single-keys="off"` on `<html>`, set by the shortcuts registry).
-- **The focused row shows `--sel` with an inset 2 px ring in `--accent-line`**, which is 3:1 against `--sel` in both themes. The link draws no ring of its own, so there is one indicator, on the row.
+- **The focused row shows `--sel` with an inset 2 px ring in `--ring`** (the shared focus colour), which is 3:1 against `--sel` in both themes. The link draws no ring of its own, so there is one indicator, on the row.
+- **The row is rounded and its spacing follows density** (`--pad-y`, `--pad-card`, `--row-h`), so `data-density="comfortable"` on the list or any ancestor makes it roomier. Colour changes ease in over 100 ms (only when motion is allowed).
+- **Variants and sizes, as shadcn's Item has them**: `data-variant="outline"` draws the row's own edge, `data-variant="muted"` tints it, on the `li`; `data-size="sm"` and `"xs"` tighten it. A list of such rows takes `data-gap` (default, `sm`, `xs`) on the `ul` to separate them like shadcn's ItemGroup. The default stays flush with no rules between rows.
+- **Media**: `<span class="cap-row-media" data-variant="icon|image">` takes the first column instead of a status, for an icon or a picture.
 - **Critical rows only get the red left edge**, always beside the status word and its glyph: shape, word and colour.
 - **No rules between rows.** Hover and focus carry the structure (Portal: "Lists carry no rules between rows").
 - **Row actions are real buttons, raised above the stretched link** (`z-index`), so they take their own clicks and their own tab stops.
@@ -38,6 +42,12 @@ Data compared across columns (versions, counts, several numbers per item) is a t
 - **On a narrow column the status moves above the title** (a container query on the list, below 30rem), and actions go underneath.
 - **Long titles and details are cut with an ellipsis on one line**, and the full text stays in the link's name. **In a narrow column the title wraps instead**: on a phone there is no hover and no wider view to read the rest in (Portal: "titles wrap instead of being cut"). The detail line stays cut.
 - **A row that opens in place** (a group of like rows) uses a `button` title with `aria-expanded` and `aria-controls`, and a `.cap-row-chevron` after the time, which turns when it is open. The attention list's group rows are these.
+
+## The shadcn component it matches
+
+Item (`item.tsx`): Item, ItemGroup, ItemMedia, ItemContent (the title and detail), ItemActions. Matched: the rounded row, outline and muted variants, three sizes, media, actions, the group gap, the 100 ms colour transition, the stretched hit area (shadcn renders the Item itself as the link; Capsomer stretches the title's link instead, so the row has one named link and its actions stay real buttons).
+
+Different on purpose: the default is flush with a `--raised` hover and no border, the Portal's list look; the status and time have their own columns (a subgrid) so they line up between rows, which Item's flex row does not do; `j` and `k` move between rows.
 
 ## Keyboard
 

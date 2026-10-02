@@ -1,9 +1,9 @@
-// The keyboard shortcut registry and the "?" sheet that lists it. One document keydown
-// listener for the whole app. Single-key shortcuts (a letter, "?", a sequence like "g o")
+// The keyboard shortcut registry and the "?" sheet that lists it (the shared dialog,
+// components/dialog). One document keydown listener for the whole app. Single-key shortcuts (a letter, "?", a sequence like "g o")
 // can be switched off and the choice is remembered (WCAG 2.1.4); shortcuts with Ctrl, Cmd
 // or Alt always work. No framework; the React wrapper uses the same registry.
 import { readPref, writePref } from "../shell/shell.ts";
-import { isBackdropClick, rememberOpener, returnFocus, uid } from "../confirm-dialog/confirm-dialog.ts";
+import { openDialog, uid, wireDialog } from "../dialog/dialog.ts";
 
 export interface Shortcut {
   // "r", "?", "g o" (a sequence: g, then o within 1200 ms), "Mod+k" (Ctrl, or Cmd on a
@@ -305,31 +305,33 @@ function syncSwitch(sheet: HTMLElement): void {
   if (word) word.textContent = on ? "On" : "Off";
 }
 
-// Builds the sheet's markup, exactly the contract on the doc page.
+// Builds the sheet's markup, exactly the contract on the doc page: the shared dialog with a
+// header, the list as its body, the switch in its footer, and the corner Close button.
 export function buildSheet(): HTMLDialogElement {
   const id = uid("cap-keys");
   const d = document.createElement("dialog");
-  d.className = "cap-keys";
+  d.className = "cap-dialog cap-keys";
   d.dataset.cap = "shortcuts";
+  d.dataset.placement = "center";
+  d.dataset.size = "md";
   d.setAttribute("aria-labelledby", `${id}-title`);
 
   const head = document.createElement("div");
-  head.className = "cap-keys-head";
+  head.className = "cap-dialog-header";
+  head.dataset.divider = "";
   const h = document.createElement("h2");
-  h.className = "cap-keys-title";
+  h.className = "cap-dialog-title";
   h.id = `${id}-title`;
   h.textContent = "Keyboard shortcuts";
-  const close = document.createElement("button");
-  close.type = "button";
-  close.className = "cap-btn";
-  close.dataset.capPart = "close";
-  close.textContent = "Close";
-  head.append(h, close);
+  head.append(h);
 
   const body = document.createElement("div");
-  body.className = "cap-keys-body";
+  body.className = "cap-dialog-body cap-keys-body";
   body.dataset.capPart = "keys-list";
 
+  const footer = document.createElement("div");
+  footer.className = "cap-dialog-footer";
+  footer.dataset.align = "start";
   const foot = document.createElement("div");
   foot.className = "cap-keys-foot";
   const label = document.createElement("label");
@@ -350,23 +352,45 @@ export function buildSheet(): HTMLDialogElement {
   note.id = `${id}-note`;
   note.textContent = SINGLE_KEYS_NOTE;
   foot.append(label, note);
+  footer.append(foot);
 
-  d.append(head, body, foot);
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "cap-btn cap-dialog-close";
+  close.dataset.variant = "quiet";
+  close.dataset.iconOnly = "";
+  close.dataset.capPart = "close";
+  close.setAttribute("aria-label", "Close");
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("width", "16");
+  svg.setAttribute("height", "16");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  const path = document.createElementNS(ns, "path");
+  path.setAttribute("d", "M4 4l8 8M12 4l-8 8");
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-width", "1.5");
+  path.setAttribute("stroke-linecap", "round");
+  svg.append(path);
+  close.append(svg);
+
+  d.append(head, body, footer, close);
   return d;
 }
 
-// Wires one sheet: its list, the switch, Close, a click on the backdrop, and focus returned
-// on close. Returns a function that unwires it.
+// Wires one sheet: the shared dialog's rules (Close, the backdrop, Esc, focus returned on
+// close), its list, the switch, and the Ctrl or Cmd shortcuts that still work over it. Returns
+// a function that unwires it.
 export function wireSheet(sheet: HTMLDialogElement): () => void {
-  sheet.dataset.capReady = "";
+  const unwireBase = wireDialog(sheet);
   const box = sheet.querySelector<HTMLInputElement>("[data-cap-part='single-keys']");
   const onChange = () => {
     if (box) setSingleKeys(box.checked);
   };
   const onSingle = () => syncSwitch(sheet);
-  const onClick = (e: MouseEvent) => {
-    if ((e.target as Element).closest("[data-cap-part='close']") || isBackdropClick(sheet, e)) sheet.close();
-  };
   // A shortcut with Ctrl or Cmd still works over the sheet: the sheet closes, then it runs.
   const onKey = (e: KeyboardEvent) => {
     if (e.defaultPrevented || e.isComposing) return;
@@ -375,20 +399,15 @@ export function wireSheet(sheet: HTMLDialogElement): () => void {
     sheet.close();
     fire(hit, e);
   };
-  const onClose = () => returnFocus(sheet);
   box?.addEventListener("change", onChange);
   document.addEventListener("cap-single-keys", onSingle);
-  sheet.addEventListener("click", onClick);
   sheet.addEventListener("keydown", onKey);
-  sheet.addEventListener("close", onClose);
   syncSwitch(sheet);
   return () => {
     box?.removeEventListener("change", onChange);
     document.removeEventListener("cap-single-keys", onSingle);
-    sheet.removeEventListener("click", onClick);
     sheet.removeEventListener("keydown", onKey);
-    sheet.removeEventListener("close", onClose);
-    delete sheet.dataset.capReady;
+    unwireBase();
   };
 }
 
@@ -403,11 +422,9 @@ export function openShortcutSheet(opener: Element | null = document.activeElemen
   const list = sheet.querySelector<HTMLElement>("[data-cap-part='keys-list']");
   if (list) renderSheetList(list);
   syncSwitch(sheet);
-  if (!sheet.open) {
-    rememberOpener(sheet, opener);
-    sheet.showModal();
-    sheet.querySelector<HTMLElement>("[data-cap-part='close']")?.focus();
-  }
+  // Focus starts on Close, so Esc and Enter are one key from leaving and nothing is changed by
+  // arriving.
+  if (!sheet.open) openDialog(sheet, opener, { focus: sheet.querySelector<HTMLElement>("[data-cap-part='close']") });
   return sheet;
 }
 

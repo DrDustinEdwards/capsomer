@@ -1,0 +1,105 @@
+<section class="cap-specimen" aria-labelledby="s-kbd">
+  <h2 id="s-kbd">Key caps</h2>
+  <div class="cap-specimen-row">
+    <span><kbd>Esc</kbd></span>
+    <span><kbd>Ctrl K</kbd></span>
+    <span><kbd>g</kbd> <kbd>o</kbd></span>
+    <span><kbd>⌘</kbd> <kbd>K</kbd></span>
+    <span><kbd class="cap-kbd">?</kbd></span>
+  </div>
+  <div class="cap-specimen-row" data-density="comfortable">
+    <span><kbd>Ctrl K</kbd></span>
+    <span><kbd>g</kbd> <kbd>o</kbd></span>
+  </div>
+</section>
+
+<template data-specimen="page" data-title="Working: press ? or g then o" data-height="360">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Overview</h1>
+    <p>Press <kbd>?</kbd> for the sheet, <kbd>g</kbd> then <kbd>o</kbd> to go to Overview, <kbd>r</kbd> to refresh. Keys typed into the field below are left alone.</p>
+    <p><button type="button" class="cap-btn" data-cap-keys-open>Keyboard shortcuts</button></p>
+    <p><label for="note">A note</label> <input id="note" class="cap-input" type="text" autocomplete="off" /></p>
+    <p role="status" data-specimen-part="said"></p>
+  </main>
+</template>
+
+<template data-specimen="open" data-title="The sheet, open" data-height="560">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Overview</h1>
+    <p>The page behind the sheet.</p>
+  </main>
+  <dialog class="cap-dialog cap-keys" data-cap="shortcuts" data-placement="center" data-size="md" aria-labelledby="keys-title">
+    <div class="cap-dialog-header" data-divider>
+      <h2 class="cap-dialog-title" id="keys-title">Keyboard shortcuts</h2>
+    </div>
+    <div class="cap-dialog-body cap-keys-body" data-cap-part="keys-list"></div>
+    <div class="cap-dialog-footer" data-align="start">
+      <div class="cap-keys-foot">
+        <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="keys-note" checked /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">On</span></label>
+        <p class="cap-keys-note" id="keys-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
+      </div>
+    </div>
+    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+  </dialog>
+</template>
+
+<template data-specimen="off" data-title="The sheet, single-key shortcuts off" data-height="560">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Overview</h1>
+    <p>The page behind the sheet.</p>
+  </main>
+  <dialog class="cap-dialog cap-keys" data-cap="shortcuts" data-placement="center" data-size="md" aria-labelledby="off-title">
+    <div class="cap-dialog-header" data-divider>
+      <h2 class="cap-dialog-title" id="off-title">Keyboard shortcuts</h2>
+    </div>
+    <div class="cap-dialog-body cap-keys-body" data-cap-part="keys-list"></div>
+    <div class="cap-dialog-footer" data-align="start">
+      <div class="cap-keys-foot">
+        <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="off-note" /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">Off</span></label>
+        <p class="cap-keys-note" id="off-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
+      </div>
+    </div>
+    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+  </dialog>
+</template>
+
+<template data-specimen="comfortable" data-title="The sheet, comfortable density" data-height="620">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Overview</h1>
+    <p>The page behind the sheet.</p>
+  </main>
+  <dialog class="cap-dialog cap-keys" data-cap="shortcuts" data-placement="center" data-size="md" data-density="comfortable" aria-labelledby="comf-title">
+    <div class="cap-dialog-header" data-divider>
+      <h2 class="cap-dialog-title" id="comf-title">Keyboard shortcuts</h2>
+    </div>
+    <div class="cap-dialog-body cap-keys-body" data-cap-part="keys-list"></div>
+    <div class="cap-dialog-footer" data-align="start">
+      <div class="cap-keys-foot">
+        <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="comf-note" checked /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">On</span></label>
+        <p class="cap-keys-note" id="comf-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
+      </div>
+    </div>
+    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+  </dialog>
+</template>
+
+<script type="module">
+  import { enhance, openShortcutSheet, register, setSingleKeys } from "./shortcuts.ts";
+  const only = new URLSearchParams(location.search).get("only");
+  if (only) {
+    const said = document.querySelector("[data-specimen-part='said']");
+    const say = (text) => () => {
+      if (said) said.textContent = text;
+    };
+    register({ key: "Mod+k", label: "Open the command menu", group: "General", run: say("The command menu opens here.") });
+    register({ key: "g o", label: "Go to Overview", about: "Problems first, worst first; then the sites.", group: "Go to", run: say("Went to Overview.") });
+    register({ key: "g s", label: "Go to Sites", about: "Health comes from each site's own route.", group: "Go to", run: say("Went to Sites.") });
+    register({ key: "g q", label: "Go to Queue", about: "A blocked job shows what it waits on.", group: "Go to", run: say("Went to Queue.") });
+    register({ key: "r", label: "Refresh now", group: "Actions", run: say("Refreshed.") });
+    register({ key: "t", label: "Switch light and dark", group: "Actions", run: say("Switched the theme.") });
+    register({ key: "[", label: "Collapse or expand the side menu", group: "Actions", run: say("Collapsed the side menu.") });
+    if (only === "off") setSingleKeys(false, { remember: false });
+    enhance();
+    if (only === "open" || only === "off" || only === "comfortable") openShortcutSheet(null);
+  }
+</script>

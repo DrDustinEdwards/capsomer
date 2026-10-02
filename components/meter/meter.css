@@ -1,19 +1,33 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A value against a limit: the label and the number in text, then a bar. The bar only
-   repeats the number; the number is always there. The fill's length is set through the
-   CSSOM (--cap-meter-ratio, 0 to 1) by the behaviour module or the React wrapper, never a
-   style attribute. */
+/* The one meter bar. Every bar Capsomer draws (the meter, the usage meter, a stat tile's)
+   is this one: a label and a value in text, a track with a fill, and optionally a
+   threshold tick and a projection. The number is always in text; the bar repeats it.
+   Matches shadcn's Progress: a rounded track, a primary fill, the label and a tabular
+   value on one row. Positions come from three custom properties on the bar (0 to 1):
+   --cap-meter-ratio, --cap-meter-projected and --cap-meter-threshold, set through the
+   CSSOM by the behaviour module or the React wrapper, never a style attribute. */
 @layer cap.components {
   .cap-meter {
     --cap-meter-colour: var(--accent);
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    --cap-meter-h: var(--space-3);
+    display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     gap: var(--space-2) var(--space-3);
+    min-width: 0;
     color: var(--text);
 
+    &[data-size="sm"] {
+      --cap-meter-h: var(--space-2);
+    }
+    &[data-size="lg"] {
+      --cap-meter-h: var(--space-4);
+    }
+    &[data-tone="info"] {
+      --cap-meter-colour: var(--info);
+    }
     &[data-tone="warn"] {
       --cap-meter-colour: var(--warn);
     }
@@ -23,24 +37,52 @@
   }
 
   .cap-meter-label {
-    font-weight: 600;
     min-width: 0;
+    font-size: var(--fs-body);
+    font-weight: 600;
   }
 
   .cap-meter-value {
+    margin-inline-start: auto;
     color: var(--muted);
+    font-size: var(--fs-body);
     font-variant-numeric: tabular-nums;
     text-align: end;
   }
 
+  /* The track. The role="meter" element, so its status word and note stay readable text. */
   .cap-meter-bar {
-    grid-column: 1 / -1;
     position: relative;
     display: block;
-    block-size: 8px;
-    border-radius: 4px;
+    flex: 0 0 100%;
+    block-size: var(--cap-meter-h);
+    border-radius: var(--radius-full);
     background: var(--sunken);
     overflow: hidden;
+
+    /* The projection: where the period ends at the current rate, hatched, with an end
+       mark. Under the fill, so the used part reads solid. */
+    &[data-projected]::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      inline-size: calc(var(--cap-meter-projected, 0) * 100%);
+      border-inline-end: 2px solid var(--muted);
+      background: repeating-linear-gradient(135deg, var(--muted) 0 2px, transparent 2px 5px);
+    }
+
+    /* The threshold tick: a line in the text colour, edged in the surface colour so it
+       shows over the fill and over the track. Its meaning is always said in words. */
+    &[data-threshold]::after {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: calc(var(--cap-meter-threshold, 0) * (100% - 4px));
+      inline-size: 4px;
+      border-inline: 1px solid var(--surface);
+      background: var(--text);
+    }
   }
 
   .cap-meter-fill {
@@ -55,15 +97,30 @@
     }
   }
 
-  /* No data: no fill, a hatched bar, and the status word with its reason. */
+  /* No data: no fill, a hatched track, and the status word with its reason. Never a bar
+     at zero. */
   .cap-meter[data-tone="nodata"] .cap-meter-bar {
     background:
       repeating-linear-gradient(135deg, var(--line-strong) 0 1px, transparent 1px 5px),
       var(--sunken);
   }
 
+  /* Indeterminate: a value is being measured. A hatched segment, still under reduced
+     motion; it slides only where motion is allowed. */
+  .cap-meter[data-state="indeterminate"] {
+    & .cap-meter-bar {
+      background:
+        repeating-linear-gradient(135deg, var(--line-strong) 0 1px, transparent 1px 5px),
+        var(--sunken);
+    }
+    & .cap-meter-fill {
+      --cap-meter-ratio: 0.4;
+      background: repeating-linear-gradient(135deg, var(--nodata) 0 2px, transparent 2px 5px);
+    }
+  }
+
   .cap-meter-note {
-    grid-column: 1 / -1;
+    flex: 0 0 100%;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -82,23 +139,34 @@
     .cap-meter-fill {
       transition: transform var(--dur-slow) var(--ease-out);
     }
+    .cap-meter[data-state="indeterminate"] .cap-meter-fill {
+      animation: cap-meter-sweep 1.6s var(--ease-in-out) infinite;
+    }
+    @keyframes cap-meter-sweep {
+      from {
+        transform: scaleX(var(--cap-meter-ratio)) translateX(-100%);
+      }
+      to {
+        transform: scaleX(var(--cap-meter-ratio)) translateX(250%);
+      }
+    }
   }
 
-  /* A native <meter class="cap-meter">: the same bar, coloured by the element's own
+  /* A native <meter class="cap-meter">: the same track, coloured by the element's own
      low, high and optimum. */
   meter.cap-meter {
     display: block;
     appearance: none;
     inline-size: 100%;
-    block-size: 8px;
+    block-size: var(--cap-meter-h);
     border: 0;
-    border-radius: 4px;
+    border-radius: var(--radius-full);
     background: var(--sunken);
 
     &::-webkit-meter-bar {
-      block-size: 8px;
+      block-size: var(--cap-meter-h);
       border: 0;
-      border-radius: 4px;
+      border-radius: var(--radius-full);
       background: var(--sunken);
     }
     &::-webkit-meter-optimum-value {
@@ -123,11 +191,25 @@
 
   @media (forced-colors: active) {
     .cap-meter-bar {
+      forced-color-adjust: none;
       border: 1px solid CanvasText;
+      background: Canvas;
+
+      &[data-projected]::before {
+        background: repeating-linear-gradient(135deg, CanvasText 0 2px, Canvas 2px 5px);
+        border-inline-end-color: CanvasText;
+      }
+      &[data-threshold]::after {
+        background: CanvasText;
+        border-color: Canvas;
+      }
     }
     .cap-meter-fill {
-      forced-color-adjust: none;
       background: CanvasText;
+    }
+    .cap-meter[data-tone="nodata"] .cap-meter-bar,
+    .cap-meter[data-state="indeterminate"] .cap-meter-bar {
+      background: repeating-linear-gradient(135deg, CanvasText 0 1px, Canvas 1px 5px);
     }
   }
 }

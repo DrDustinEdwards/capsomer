@@ -1,0 +1,64 @@
+<link rel="stylesheet" href="./specimen/shapes.css" />
+
+<section class="cap-specimen" aria-labelledby="s-skeleton">
+  <h2 id="s-skeleton">Skeleton, for a page, 1 to 10 seconds</h2>
+  <div class="cap-skeleton" aria-busy="true" id="sample-skeleton">
+    <span class="cap-sr-only">Loading</span>
+    <span class="cap-skeleton-line" aria-hidden="true"></span>
+    <span class="cap-skeleton-line" aria-hidden="true"></span>
+    <span class="cap-skeleton-line" aria-hidden="true"></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-shapes">
+  <h2 id="s-shapes">Shapes: a block, a circle, a card</h2>
+  <div class="skeleton-sample-shapes" aria-busy="true" id="sample-shapes">
+    <span class="cap-sr-only">Loading the mention</span>
+    <span class="cap-skeleton-block" data-shape="circle" aria-hidden="true"></span>
+    <span class="skeleton-sample-stack" aria-hidden="true">
+      <span class="cap-skeleton-block"></span>
+      <span class="cap-skeleton-line"></span>
+    </span>
+    <span class="cap-skeleton-block" data-shape="card" aria-hidden="true"></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-spinner">
+  <h2 id="s-spinner">Spinner, for one panel or inside a button</h2>
+  <div class="cap-specimen-row">
+    <span class="cap-spinner" id="sample-spinner"><svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg><span class="cap-spinner-label">Loading</span></span>
+    <button type="button" class="cap-btn" id="sample-busy"><span class="cap-spinner"><svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg><span class="cap-spinner-label">Saving</span></span></button>
+    <button type="button" class="cap-btn" data-variant="primary"><span class="cap-spinner" data-label="hidden"><svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg><span class="cap-spinner-label">Saving</span></span></button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-sizes">
+  <h2 id="s-sizes">Sizes</h2>
+  <div class="cap-specimen-row" id="sample-sizes">
+    <span class="cap-spinner" data-size="sm"><svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg><span class="cap-spinner-label">Small</span></span>
+    <span class="cap-spinner"><svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg><span class="cap-spinner-label">Default</span></span>
+    <span class="cap-spinner" data-size="lg"><svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg><span class="cap-spinner-label">Large</span></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-label-hidden">
+  <h2 id="s-label-hidden">The word for screen readers only</h2>
+  <div class="cap-specimen-row">
+    <span class="cap-spinner" data-label="hidden" id="sample-hidden-label"><svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg><span class="cap-spinner-label">Refreshing the queue</span></span>
+  </div>
+</section>
+
+<template data-specimen="page" data-title="Centred page spinner" data-height="320">
+  <main aria-busy="true">
+    <h1 class="cap-sr-only">Portal</h1>
+    <span class="cap-spinner" data-layout="page" role="status" id="sample-page"><svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg><span class="cap-spinner-label">Loading the Portal</span></span>
+  </main>
+</template>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div class="cap-specimen-row" data-density="comfortable" id="sample-comfortable">
+    <span class="cap-spinner"><svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg><span class="cap-spinner-label">Loading</span></span>
+    <span class="skeleton-sample-line"><span class="cap-skeleton-block" aria-hidden="true"></span></span>
+  </div>
+</section>

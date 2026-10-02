@@ -1,0 +1,195 @@
+<link rel="stylesheet" href="./specimen/page.css" />
+
+<template data-specimen="empty" data-title="Empty: the region is present and shows nothing" data-height="170">
+  <main>
+    <div class="specimen-page">
+      <h1>Mentions</h1>
+      <p>4 waiting. Nothing has happened yet, so the region below is empty.</p>
+    </div>
+    <div class="message-sample">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<template data-specimen="plain" data-title="A plain message" data-height="200">
+  <main>
+    <div class="specimen-page">
+      <h1>Publish</h1>
+      <p>Ready. Uses the short summary.</p>
+    </div>
+    <div class="message-sample">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<template data-specimen="undo" data-title="A message with Undo" data-height="200">
+  <main>
+    <div class="specimen-page">
+      <h1>Mentions</h1>
+      <p>3 waiting.</p>
+    </div>
+    <div class="message-sample">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<template data-specimen="undone" data-title="After Undo" data-height="200">
+  <main>
+    <div class="specimen-page">
+      <h1>Mentions</h1>
+      <p>4 waiting.</p>
+    </div>
+    <div class="message-sample">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<template data-specimen="warning" data-title="A result with a warning: it stays" data-height="240">
+  <main>
+    <div class="specimen-page">
+      <h1>Namespaces</h1>
+      <p>Seat start is on.</p>
+    </div>
+    <div class="message-sample">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<template data-specimen="stack" data-title="A warning stays through the next result" data-height="320">
+  <main>
+    <div class="specimen-page">
+      <h1>Namespaces</h1>
+      <p>Seat start is off again.</p>
+    </div>
+    <div class="message-sample">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<template data-specimen="failure" data-title="A failure with no control beside it" data-height="200">
+  <main>
+    <div class="specimen-page">
+      <h1>Overview</h1>
+      <p>Showing data from 4 minutes ago.</p>
+    </div>
+    <div class="message-sample">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<template data-specimen="undo-failed" data-title="Undo could not run: it stays, with the reason" data-height="240">
+  <main>
+    <div class="specimen-page">
+      <h1>Mentions</h1>
+      <p>3 waiting.</p>
+    </div>
+    <div class="message-sample">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<template data-specimen="comfortable" data-title="Comfortable density: a result with Undo" data-height="220">
+  <main>
+    <div class="specimen-page">
+      <h1>Mentions</h1>
+      <p>3 waiting.</p>
+    </div>
+    <div class="message-sample" data-density="comfortable">
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<template data-specimen="try" data-title="Try it: act, then Undo with z or the button" data-height="420">
+  <main>
+    <div class="specimen-page">
+      <h1>Mentions</h1>
+      <p>Bin a mention, then press z or Undo. Copy the link to see a message that clears itself.</p>
+    </div>
+    <div class="message-sample">
+      <div class="message-sample-row" id="sample-row" data-undos="0">
+        <b>fieldnotes.example</b>
+        <span id="sample-state">Waiting</span>
+        <button type="button" class="cap-btn" id="sample-bin">Bin</button>
+        <button type="button" class="cap-btn" id="sample-bin-warned">Bin, audit row missing</button>
+        <button type="button" class="cap-btn" id="sample-copy">Copy link</button>
+        <button type="button" class="cap-btn" id="sample-refresh">Refresh, fails</button>
+      </div>
+      <label>Note to self <input class="cap-input" id="sample-note" type="text" /></label>
+      <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+    </div>
+  </main>
+</template>
+
+<section class="cap-specimen" aria-labelledby="s-errors">
+  <h2 id="s-errors">An error beside its source is not a message</h2>
+  <p>Something that failed, with a control it belongs beside, goes beside that control as an alert, or at the top of the page as a banner that keeps the last good data. See <a href="../banner/states.html">Banner and alert</a>. Only a failure with no place of its own (a failed copy, a failed refresh) goes in this region.</p>
+</section>
+
+<script type="module">
+  import { enhance, fail, runUndo, say } from "./message.ts";
+  enhance();
+
+  const AUDIT = "the audit row naming access:dustin@example.com was not written: D1 is unavailable";
+  const binned = "Moved the mention from fieldnotes.example to the bin.";
+  const only = new URLSearchParams(location.search).get("only");
+  if (only === "plain") say("Published to TXASM newsletter.");
+  if (only === "undo") say(binned, { undo: () => {} });
+  if (only === "undone") {
+    say(binned, { undo: () => {}, undone: "The mention from fieldnotes.example is waiting again." });
+    await runUndo();
+  }
+  if (only === "comfortable") say(binned, { undo: () => {} });
+  if (only === "warning") say("Seat start is on.", { undo: () => {}, warning: AUDIT });
+  if (only === "stack") {
+    say("Seat start is on.", { undo: () => {}, warning: AUDIT });
+    say("Seat start is off.", { undo: () => {} });
+  }
+  if (only === "failure") fail("Refresh failed: the watcher pass failed: GitHub answered 502 (HTTP 500).");
+  if (only === "undo-failed") {
+    say(binned, {
+      undo: () => {
+        throw new Error("The server did not answer.");
+      },
+    });
+    await runUndo();
+  }
+
+  const row = document.querySelector("#sample-row");
+  const state = document.querySelector("#sample-state");
+  const bin = document.querySelector("#sample-bin");
+  const binWarned = document.querySelector("#sample-bin-warned");
+  const copy = document.querySelector("#sample-copy");
+  const refresh = document.querySelector("#sample-refresh");
+  function binIt(extra) {
+    if (bin.getAttribute("aria-disabled") === "true") return;
+    state.textContent = "In the bin";
+    bin.setAttribute("aria-disabled", "true");
+    say(binned, {
+      undo: () => {
+        row.dataset.undos = String(Number(row.dataset.undos) + 1);
+        state.textContent = "Waiting";
+        bin.removeAttribute("aria-disabled");
+      },
+      undone: "The mention from fieldnotes.example is waiting again.",
+      ...extra,
+    });
+  }
+  bin?.addEventListener("click", () => binIt({}));
+  binWarned?.addEventListener("click", () => binIt({ warning: AUDIT, returnFocus: bin }));
+  // A confirmation the control also shows, so it may clear itself.
+  copy?.addEventListener("click", () => {
+    copy.textContent = "Copied";
+    setTimeout(() => (copy.textContent = "Copy link"), 4000);
+    say("Copied the link to the mention.", { clears: true });
+  });
+  refresh?.addEventListener("click", () => fail("Refresh failed: the watcher pass failed: GitHub answered 502 (HTTP 500)."));
+</script>

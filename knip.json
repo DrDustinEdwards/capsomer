@@ -3,8 +3,8 @@
   "entry": [
     "components/*/*.ts",
     "components/*/*.react.tsx",
-    "components/*/states.html",
-    "components/*/states.tsx",
+    "components/*/examples.html",
+    "components/*/examples.tsx",
     "components/*/*.spec.ts",
     "site/main.tsx",
     "site/specimen.ts",

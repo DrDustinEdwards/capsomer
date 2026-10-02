@@ -6,6 +6,7 @@ parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [empty, plain message, message with Undo, after Undo, warning that stays, warning through the next result, failure, Undo that could not run, clears itself]
 added: 0.1.0
+updated: 0.2.0
 source: Capsomer mockup (design/mockup.html, the status region and its say function); the Capsid Portal's lib/messages.ts and App.tsx message region (0.1.1)
 replaces:
   - 'role="status"[^>]*class="(msg|toast|flash|notice)'
@@ -44,7 +45,8 @@ The result of an action, said in the page: "Moved the mention to the bin", with 
 - **Focus goes to the control that was undone** when the app says which (`returnFocus`, as the Portal returns focus to the switch it undid). Otherwise, if Undo had focus, it moves to that message's Dismiss; if Dismiss had focus, it returns to the control that caused the message, else the main region. Focus is never left on nothing.
 - **A plain confirmation may clear itself after 4 seconds** (`clears: true`) only when the control that caused it shows it too ("Copy link" turns to "Copied"). Such a message has no buttons. A message with Undo, a warning or a failure never clears itself.
 - **It sits at the bottom of the view's scroll area** (`position: sticky`), in the page's flow, so a result shows near the action even in a long view. This is where the Portal and the audit differ: the Portal draws it fixed over the page at the bottom right; the audit's rule (patterns.md "Result of an action", DEFAULTS.md) is a status region in the page, so Capsomer follows the audit.
-- **A lasting message wears the warning tone's edge, and says so in words** ("Warning:", or the failure's own words), never by colour alone.
+- **A lasting message wears the warning tone's edge, and says so in words** ("Warning:", or the failure's own words), never by colour alone. A failure wears the critical edge. Each item also starts with a glyph (a tick for a result, a triangle for a warning or an Undo that failed, an octagon for a failure), `aria-hidden`, so the kind is a shape, a word and a colour.
+- **The item wears the popover's surface** (raised, rounded `--radius-l`, `--shadow-m`), as shadcn's Sonner toast wears the popover's, but it stays in the page.
 
 ## Keyboard
 
@@ -75,7 +77,8 @@ The region is empty; messages are added to it.
 Each message `say()` adds:
 
 ```html
-<div class="cap-message-item" data-cap-part="item" data-id="1" data-lasting>
+<div class="cap-message-item" data-cap-part="item" data-id="1" data-lasting data-kind="warning">
+  <svg class="cap-message-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false">[glyph]</svg>
   <p class="cap-message-text" data-cap-part="text">
     <span data-cap-part="said">Seat start is on.</span>
     <span class="cap-message-warning"> <b>Warning:</b> the audit row naming you was not written.</span>
@@ -100,6 +103,15 @@ fail("Refresh failed: the watcher pass failed: GitHub answered 502.");
 ```
 
 An Undo that rejects keeps its message and shows the error's message under it. 0.1.0's region held one text and two buttons directly; `enhance()` removes those, and the messages replace them. In React, wrap the app in `<MessageProvider>` and call `const { say, fail } = useMessage()`; the provider renders the region after its children, or pass `region={false}` and place `<MessageRegion />` yourself.
+
+## The shadcn component it matches
+
+Sonner (`sonner.tsx` and the `.cn-toast` rule): the toast's surface, its icon per kind (success, info, warning, error, loading), the Undo action and the close button. Not matched, on purpose:
+
+- **Stacking.** Sonner collapses a pile of toasts into a deck and expands it on hover. Here a warning or a failure stays until dismissed, and a collapsed deck would hide the one fact the person must not miss. The region lists them, newest first, and a plain result replaces the plain result before it, so the list stays short.
+- **Auto-dismiss.** Sonner closes every toast after 4 seconds by default. WCAG 2.2.1 asks for time to read, and a message with Undo is an action the person may want later. Only a plain confirmation that the control also shows clears itself.
+- **Floating and swipe.** Sonner floats over the page at a corner and is dismissed by a swipe. Dustin's default is a status region in the page (DEFAULTS.md), and Dismiss is a button.
+- **Motion.** Sonner slides each toast in and out. Here a new item fades in (`--dur-base`) and nothing slides, because text being read never moves.
 
 ## Exceptions in production
 

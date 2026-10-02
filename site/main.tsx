@@ -321,7 +321,7 @@ function ComponentPage({ name }: { name: string }) {
   );
 }
 
-const FGS = ["text", "muted", "dim", "accent", "ok", "warn", "crit", "info"];
+const FGS = ["text", "muted", "dim", "accent-text", "ok", "warn", "crit", "info"];
 const BGS = ["ground", "surface", "raised", "sunken", "sel", "accent-soft"];
 
 function lum(hex: string): number {
@@ -406,7 +406,7 @@ function FamilyScales() {
   return (
     <Panel title="The colour families" id="families" src="Rules 14 and 15, locked 2026-10-01">
       <p className="cap-muted">
-        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first, and every pair passes (rulings.md, rule 18): the brand colour is step 9 for focus rings and large fills, accent text and links use step 11, and the primary button fills with step 10. Until the family palette is adopted app by app, this site and the components use the palette the Capsid Portal runs today.
+        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first, and every pair passes (rulings.md, rule 18): the brand colour is step 9 for focus rings and large fills, accent text and links use step 11, and the primary button fills with step 10. Purple is the default; fox and teal switch on with data-family on the root or on any element (capsomer/families.css).
       </p>
       {names.map((n) => {
         const f = fams.families[n];
@@ -597,6 +597,10 @@ function TypeView() {
       </Panel>
       <Panel title="Space" id="space">
         <ScaleTable group="space" render={(name) => <i className="site-space" ref={paint("--w", `var(--${name})`)} />} />
+      </Panel>
+      <Panel title="Density" id="density" src="data-density on the root or any element; compact is the default">
+        <ScaleTable group="density-compact" />
+        <ScaleTable group="density-comfortable" />
       </Panel>
       <Panel title="Radius, control size, layers, focus, layout" id="other">
         <ScaleTable group="radius" render={(name) => <i className="site-radius" ref={paint("border-radius", `var(--${name})`)} />} />

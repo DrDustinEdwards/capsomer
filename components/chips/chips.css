@@ -3,7 +3,8 @@
 
 /* Filter chips: a labelled group of toggle buttons (aria-pressed), a Clear button while
    any is pressed, and the result count in a live region. From the Capsid Portal's .chip
-   (dashboard/src/styles.css). */
+   (dashboard/src/styles.css); the pill and its states match shadcn/ui Badge (outline) and
+   Toggle (pressed), and the group is a labelled run of toggles. */
 @layer cap.components {
   .cap-chips {
     display: flex;
@@ -27,7 +28,7 @@
     gap: 6px;
     min-height: max(var(--target), 26px);
     margin: 0;
-    padding: 0 10px;
+    padding: 0 calc(var(--pad-x) - 1px);
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-full);
     background: var(--surface);
@@ -38,10 +39,43 @@
     white-space: nowrap;
     cursor: pointer;
 
+    & > svg {
+      flex: none;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+    }
+    /* A count inside the chip: "Blocked 3". */
+    & > .cap-chip-count {
+      color: var(--dim);
+      font-variant-numeric: tabular-nums;
+    }
+
+    &[data-size="sm"] {
+      min-height: var(--target);
+      padding: 0 8px;
+      font-size: var(--fs-label);
+    }
+    &[data-size="lg"] {
+      min-height: var(--control);
+      font-size: var(--fs-body);
+    }
+
     &:hover,
     &[data-force="hover"] {
       border-color: var(--muted);
+      background: var(--raised);
       color: var(--text);
+    }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+    &:is(:disabled, [aria-disabled="true"]) {
+      border-style: dashed;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: not-allowed;
     }
 
     /* Pressed: a tick as well as the accent edge, the tint and the darker word. */
@@ -50,6 +84,10 @@
       background: var(--accent-soft);
       color: var(--text);
 
+      &:where(:hover, [data-force="hover"]) {
+        border-color: var(--accent);
+        background: var(--accent-5);
+      }
       &::before {
         content: "";
         flex: none;

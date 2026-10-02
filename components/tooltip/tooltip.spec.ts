@@ -8,10 +8,13 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: tip text reaches its contrast", async ({ page }) => {
+  test("accessibility: tip text and the key cap in a tip reach their contrast", async ({ page }) => {
     await visitStates(page, "tooltip", theme);
     await expect(page.locator("#tip-copy")).toBeVisible();
-    await expectContrast(page, [{ sel: "#tip-copy", what: "tooltip text" }]);
+    await expectContrast(page, [
+      { sel: "#tip-copy", what: "tooltip text" },
+      { sel: "#tip-refresh kbd", what: "a key cap in a tooltip" },
+    ]);
   });
 
   test("accessibility: the trigger keeps its own name, and the tip is its description", async ({ page }) => {
@@ -51,13 +54,33 @@ eachTheme((theme) => {
     await expect(page.locator("#tip-retry")).toBeHidden();
   });
 
-  test("behaviour: hover shows the tip after a short delay, below its trigger", async ({ page }) => {
+  test("behaviour: hover shows the tip after a short delay, without covering its trigger", async ({ page }) => {
     await visitStates(page, "tooltip", theme);
     await page.locator("#sample-retry").hover();
     const tip = page.locator("#tip-retry");
     await expect(tip).toBeVisible();
     const [t, b] = await Promise.all([tip.boundingBox(), page.locator("#sample-retry").boundingBox()]);
-    expect(t && b && t.y >= b.y + b.height).toBe(true);
+    const apart = !!t && !!b && (t.y + t.height <= b.y || t.y >= b.y + b.height || t.x + t.width <= b.x || t.x >= b.x + b.width);
+    expect(apart).toBe(true);
+  });
+
+  test("behaviour: the tip is the shared popover's tooltip variant, a manual popover with role tooltip", async ({ page }) => {
+    await visitStates(page, "tooltip", theme);
+    const tip = page.locator("#tip-retry");
+    await expect(tip).toHaveAttribute("popover", "manual");
+    await expect(tip).toHaveAttribute("role", "tooltip");
+    await expect(tip).toHaveClass(/cap-popover/);
+  });
+
+  test("keyboard: Esc hides the tip while the pointer is still over the trigger, until the pointer leaves", async ({ page }) => {
+    await visitStates(page, "tooltip", theme);
+    await page.locator("#sample-retry").hover();
+    const tip = page.locator("#tip-retry");
+    await expect(tip).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    await page.waitForTimeout(450);
+    await expect(tip).toBeHidden();
   });
 
   test("behaviour: the pointer can move onto the tip without it closing, and leaving hides it", async ({ page }) => {

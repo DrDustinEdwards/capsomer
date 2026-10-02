@@ -1,8 +1,10 @@
 // The usage meter's behaviour: a pure assessment of one usage figure against its free
 // limit (tone, projection by the reset, when it runs out, and the sentence that says so),
-// and `enhance`, which sizes each bar from its ARIA values through the CSSOM. No framework;
-// the React wrapper uses the same functions.
+// and `enhance`, which draws each row's bar through the shared meter (components/meter) from
+// its ARIA values through the CSSOM. No framework; the React wrapper uses the same functions.
 //
+import { enhance as enhanceMeter, update as drawBar } from "../meter/meter.ts";
+
 // The rules (approved for 0.1): warning at 75% used, or when the projection runs out before
 // the reset; critical at 90%; no projection until 7 days of history.
 
@@ -145,31 +147,25 @@ export function assess(input: UsageInput): UsageAssessment {
   return out("ok", "On track", "On track", `On track: ${by}`);
 }
 
-// The bar's widths, as percentages of the limit, clamped to the bar.
+// The bar's widths, as percentages of the limit, clamped to the bar. The meter draws the
+// same shares as 0 to 1 ratios; these stay for apps that size their own marks.
 export function widths(used: number, limit: number, projected: number | null): { used: number; projected: number } {
   const pct = (v: number) => (limit > 0 ? Math.min(100, Math.max(0, (v * 100) / limit)) : 100);
   const u = pct(used);
   return { used: u, projected: projected == null ? u : Math.max(u, pct(projected)) };
 }
 
-// Sizes one bar from its aria-valuenow and aria-valuemax and its data-projected (the
+// Draws one row's bar from its aria-valuenow and aria-valuemax and its data-projected (the
 // projected total at the reset, in the same unit; absent with no projection).
-export function sizeBar(bar: HTMLElement): void {
-  const used = Number(bar.getAttribute("aria-valuenow") ?? 0);
-  const limit = Number(bar.getAttribute("aria-valuemax") ?? 0);
-  const raw = bar.dataset.projected;
-  const w = widths(used, limit, raw == null || raw === "" ? null : Number(raw));
-  bar.style.setProperty("--used", `${w.used}%`);
-  bar.style.setProperty("--projected", `${w.projected}%`);
-}
+export const sizeBar: (bar: HTMLElement) => void = drawBar;
 
-// Attaches to every [data-cap="usage-meter"] under root that is not attached yet, and sizes
-// its bars. Returns a function that detaches them all.
+// Attaches to every [data-cap="usage-meter"] under root that is not attached yet, and draws
+// its rows' bars (each row is a [data-cap="meter"]). Returns a function that detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const meter of root.querySelectorAll<HTMLElement>("[data-cap='usage-meter']:not([data-cap-ready])")) {
     meter.dataset.capReady = "";
-    for (const bar of meter.querySelectorAll<HTMLElement>(".cap-usage-bar")) sizeBar(bar);
+    undo.push(enhanceMeter(meter));
     undo.push(() => {
       delete meter.dataset.capReady;
     });

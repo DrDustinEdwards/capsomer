@@ -12,6 +12,12 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
+  test("accessibility: no axe violations, collapsed with a name shown", async ({ page }) => {
+    await visitStates(page, "shell", theme, "collapsed-tip");
+    await expectNoAxeViolations(page);
+    await expectContrast(page, [{ sel: ".cap-shell-rail a[data-force='hover'] .cap-shell-label", what: "the shown name" }]);
+  });
+
   test("accessibility: no axe violations at phone width", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "shell", theme, "phone");
@@ -42,16 +48,24 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: ".cap-shell-tabs button[aria-current]", what: "the current More tab" }]);
   });
 
-  test("accessibility: the top bar's Settings link is named, current on its view, after Theme and before Sign out", async ({ page }) => {
+  test("accessibility: the top bar's Settings link is named, current on its view, after the theme switch and before Sign out", async ({ page }) => {
     await visitStates(page, "shell", theme, "collapsed");
     const top = page.locator(".cap-shell-top");
     await expect(top.getByRole("link", { name: "Settings" })).toHaveAttribute("aria-current", "page");
     await expectContrast(page, [{ sel: ".cap-shell-settings[aria-current='page']", what: "the current Settings button's edge", part: "border" }]);
     await visitStates(page, "shell", theme, "expanded");
-    const names = await top.locator("a, button").evaluateAll((els) => els.map((el) => el.getAttribute("aria-label") ?? el.textContent?.trim() ?? ""));
-    const at = names.indexOf("Theme");
-    expect(names[at + 1]).toBe("Settings");
-    expect(names[at + 2]).toBe("Sign out");
+    // Document order: the theme switch, then Settings, then Sign out.
+    const order = await top.evaluate((el) => {
+      const at = (sel: string) => {
+        const n = el.querySelector(sel);
+        return n ? [...el.querySelectorAll("*")].indexOf(n) : -1;
+      };
+      return [at(".cap-theme"), at(".cap-shell-settings"), at("button.cap-btn:last-child")];
+    });
+    expect(order[0]).toBeGreaterThan(-1);
+    expect(order[1]).toBeGreaterThan(order[0]!);
+    expect(order[2]).toBeGreaterThan(order[1]!);
+    await expect(top.getByRole("button", { name: "Sign out" })).toBeVisible();
     await expect(top.getByRole("link", { name: "Settings" })).not.toHaveAttribute("aria-current", "page");
   });
 
@@ -63,22 +77,49 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     const sheet = page.getByRole("dialog", { name: "More views" });
     await expect(sheet).toBeVisible();
+    await expect(sheet).toHaveAttribute("data-placement", "bottom");
     await expect(more).toHaveAttribute("aria-expanded", "true");
     await expect(sheet.getByRole("link", { name: /^Namespaces/ })).toBeVisible();
     await expectNoAxeViolations(page);
-    await expectContrast(page, [{ sel: ".cap-shell-more-list .cap-shell-count", what: "a count in the sheet" }]);
+    await expectContrast(page, [
+      { sel: ".cap-shell-more-list .cap-shell-count", what: "a count in the sheet" },
+      { sel: ".cap-shell-more-list a:not([aria-current])", what: "a view in the sheet" },
+    ]);
     await page.keyboard.press("Escape");
     await expect(sheet).toBeHidden();
     await expect(more).toBeFocused();
     await expect(more).toHaveAttribute("aria-expanded", "false");
   });
 
-  test("behaviour: a link in the More sheet closes it", async ({ page }) => {
+  test("keyboard: Tab stays inside the More sheet, and Close closes it", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "shell", theme, "phone");
-    await page.getByRole("button", { name: "More" }).click();
+    const more = page.getByRole("button", { name: "More" });
+    await more.focus();
+    await page.keyboard.press("Enter");
+    const sheet = page.getByRole("dialog", { name: "More views" });
+    await expect(sheet).toBeVisible();
+    for (let i = 0; i < 6; i++) {
+      await page.keyboard.press("Tab");
+      expect(await sheet.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+    }
+    await sheet.getByRole("button", { name: "Close" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(sheet).toBeHidden();
+    await expect(more).toBeFocused();
+  });
+
+  test("behaviour: a link in the More sheet closes it, and so does a press on the backdrop", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 760 });
+    await visitStates(page, "shell", theme, "phone");
+    const more = page.getByRole("button", { name: "More" });
+    await more.click();
     const sheet = page.getByRole("dialog", { name: "More views" });
     await sheet.getByRole("link", { name: "Backups" }).click();
+    await expect(sheet).toBeHidden();
+    await more.click();
+    await expect(sheet).toBeVisible();
+    await page.mouse.click(195, 40);
     await expect(sheet).toBeHidden();
   });
 
@@ -98,12 +139,44 @@ eachTheme((theme) => {
     await visitStates(page, "shell", theme, "expanded");
     await expect(page.locator(".cap-shell-rail")).toMatchAriaSnapshot(`
       - navigation "Sections":
-        - link "Overview"
-        - link "Sites, 2 down or degraded"
-        - link "Queue, 3 blocked"
-        - link "Activity"
+        - group "Watch":
+          - link "Overview"
+          - link "Sites, 2 down or degraded"
+          - link "Queue, 3 blocked"
+        - group "Record":
+          - link "Activity"
+          - link "Reports"
+          - link "Backups"
         - button "Collapse menu" [expanded]
     `);
+  });
+
+  test("accessibility: the current entry is told by more than colour, and a hovered one has contrast", async ({ page }) => {
+    await visitStates(page, "shell", theme, "expanded");
+    await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
+    await expectContrast(page, [
+      { sel: ".cap-shell-rail a[data-force='hover'] .cap-shell-label", what: "a hovered entry" },
+      { sel: ".cap-shell-group-label", what: "a group label" },
+    ]);
+  });
+
+  test("keyboard: Tab reaches every entry of the menu in order, with a visible focus", async ({ page }) => {
+    await visitStates(page, "shell", theme, "expanded");
+    const link = page.getByRole("link", { name: "Sites, 2 down or degraded" });
+    await link.focus();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("link", { name: "Queue, 3 blocked" })).toBeFocused();
+    await expect(page.locator(".cap-shell-rail a:focus-visible")).toHaveCount(1);
+  });
+
+  test("behaviour: comfortable density makes the menu items taller", async ({ page }) => {
+    await visitStates(page, "shell", theme, "expanded");
+    const compact = (await page.getByRole("link", { name: "Overview" }).boundingBox())?.height ?? 0;
+    await visitStates(page, "shell", theme, "comfortable");
+    await expect(page.locator(".cap-shell")).toHaveAttribute("data-density", "comfortable");
+    const roomy = (await page.getByRole("link", { name: "Overview" }).boundingBox())?.height ?? 0;
+    expect(roomy).toBeGreaterThanOrEqual(compact);
+    await expectNoAxeViolations(page);
   });
 
   test("keyboard: the skip link comes first and moves focus to the content", async ({ page }) => {
