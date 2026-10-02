@@ -153,7 +153,7 @@ eachTheme((theme) => {
   // ---- accessibility ---------------------------------------------------------------------
   test("accessibility: no axe violations, the states page", async ({ page }) => {
     await visitStates(page, NAME, theme);
-    await expect(page.locator(".cm-content")).toHaveCount(8);
+    await expect(page.locator(".cm-content")).toHaveCount(9);
     await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
@@ -170,7 +170,7 @@ eachTheme((theme) => {
 
   test("accessibility: text, placeholder, gutter, syntax tones and the footer reach their contrast", async ({ page }) => {
     await visitStates(page, NAME, theme);
-    await expect(page.locator(".cm-content")).toHaveCount(8);
+    await expect(page.locator(".cm-content")).toHaveCount(9);
     const d = "#sp-default";
     await expectContrast(page, [
       { sel: `${d} .cm-line`, what: "body text" },
@@ -660,6 +660,34 @@ eachTheme((theme) => {
     await expect(s.locator(".cap-md-toolbar-hint")).toHaveCount(0);
   });
 
+  // ---- React -----------------------------------------------------------------------------
+  test("behaviour: React: StrictMode leaves exactly one editor, and what is typed reaches React state", async ({ page }) => {
+    await visitStates(page, NAME, theme);
+    const s = section(page, "sp-react");
+    await expect(s.locator(".cm-content")).toHaveCount(1);
+    await expect(toolbarOf(s)).toHaveCount(1);
+    await expect(s.locator("textarea")).toBeHidden();
+    const surface = surfaceOf(s);
+    await type(page, surface, "Typed in React");
+    await expect(page.locator("#react-count")).toHaveText("14");
+    await expect(s.locator(".cap-md-stats")).toContainText("14 of 400 characters");
+  });
+
+  test("behaviour: React: a controlled value set by the app replaces the text and does not echo back as a change", async ({ page }) => {
+    await visitStates(page, NAME, theme);
+    const s = section(page, "sp-react");
+    await expect(s.locator(".cm-content")).toHaveCount(1);
+    await page.getByRole("button", { name: "Replace the text" }).click();
+    await expect(surfaceOf(s)).toContainText("Replaced by the app.");
+    await expect(s.locator("textarea")).toHaveValue("Replaced by the app.");
+    await expect(page.locator("#react-count")).toHaveText("20");
+    // Typing continues from the replaced text.
+    await surfaceOf(s).click();
+    await page.keyboard.press("Control+End");
+    await page.keyboard.type("!");
+    await expect(page.locator("#react-count")).toHaveText("21");
+  });
+
   // ---- behaviour -------------------------------------------------------------------------
   test("behaviour: the textarea the page loaded with holds the text, is labelled, and is hidden once upgraded", async ({ page }) => {
     await visitStates(page, NAME, theme);
@@ -868,13 +896,35 @@ test("behaviour: the HTML the server sends already contains the text, label and 
   expect(html).not.toContain('role="toolbar"');
 });
 
-test("behaviour: CodeMirror is its own chunk: the behaviour module's bundle does not hold it", async ({ request }) => {
-  const res = await request.get(`components/${NAME}/states.html`);
-  const html = await res.text();
-  const scripts = [...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map((m) => m[1] ?? "");
-  expect(scripts.length).toBeGreaterThan(0);
-  for (const src of scripts) {
-    const js = await (await request.get(new URL(src, `http://localhost/components/${NAME}/`).pathname.replace(/^\//, ""))).text();
-    expect(js, `${src} must not contain CodeMirror's EditorView`).not.toMatch(/class\s+\w+\s*\{[^}]*coordsAtPos/);
+test("accessibility: React: a server render is the labelled textarea holding the text, with no style attribute", async ({ page }) => {
+  await visitStates(page, NAME, "light");
+  // states.tsx renders the wrapper with react-dom/server and keeps the HTML it produced.
+  const html = await page.evaluate(() => (window as unknown as { capReactSsr: string }).capReactSsr);
+  expect(html).toMatch(/<label[^>]*for="[^"]+"[^>]*>Body/);
+  expect(html).toMatch(/<textarea[^>]*name="body"[^>]*>## Server text<\/textarea>/);
+  expect(html).toContain('aria-invalid="true"');
+  expect(html).toMatch(/aria-describedby="[^"]+ [^"]+"/);
+  expect(html).toContain("Say what is wrong.");
+  expect(html).not.toContain("style=");
+  expect(html).not.toContain('role="toolbar"');
+});
+
+test("behaviour: CodeMirror is its own chunk: no script the page loads first holds it, and it loads only when an editor mounts", async ({ page }) => {
+  const loaded: string[] = [];
+  page.on("response", (r) => {
+    if (r.url().endsWith(".js")) loaded.push(r.url());
+  });
+  await visitStates(page, NAME, "light");
+  await expect(page.locator(".cm-content").first()).toBeVisible();
+  const cm = loaded.filter((u) => /markdown-editor\.view/.test(u));
+  expect(new Set(cm).size, "the CodeMirror chunk loaded, once").toBe(1);
+  for (const url of loaded.filter((u) => !cm.includes(u))) {
+    const js = await (await page.request.get(url)).text();
+    expect(js, `${url} must not hold CodeMirror's view`).not.toContain("coordsAtPos");
   }
+  // A page that mounts no editor never requests it.
+  loaded.length = 0;
+  await page.goto("components/field/states.html");
+  await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  expect(loaded.filter((u) => /markdown-editor\.view/.test(u))).toEqual([]);
 });

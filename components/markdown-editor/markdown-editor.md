@@ -4,7 +4,7 @@ title: Markdown editor
 summary: A labelled textarea, in the page's HTML, upgraded in place to a markdown editor with a toolbar, a link palette, a slash menu, an image step that insists on alt text, and a word count.
 parts: [css, behaviour, react]
 tool: own JavaScript (CodeMirror)
-states: [default, empty with a placeholder, line numbers, link palette open, block menu open, image uploading, image waiting for alt text, image upload failed, read-only, disabled with its reason, invalid with its message, over a character limit, without script, in a form]
+states: [default, empty with a placeholder, line numbers, link palette open, block menu open, image uploading, image waiting for alt text, image upload failed, read-only, disabled with its reason, invalid with its message, over a character limit, without script, in a form, in React]
 added: 0.3.0
 source: dustinedwards.info site admin, app/components/admin/markdown-editor.tsx, md-editor-commands.ts, md-editor-toolbar.tsx, use-link-palette.ts, use-image-upload.ts, roving-focus.ts, app/styles/admin-editor.css (.md-*) and app/lib/content/reading-time.mjs
 replaces:
@@ -80,6 +80,7 @@ shadcn/ui (Base UI flavour, nova style, shadcn-ui/ui main at d75a96ab787f) has n
 - The surface is a `textbox` that is multiline, named "Label, markdown", described by the field's help and error, and carries `aria-required`, `aria-invalid`, `aria-readonly` and `aria-disabled` from the textarea.
 - The toolbar is a `toolbar` named "Markdown formatting"; the link palette is a `group` holding a `combobox` named "Link to" with `aria-activedescendant` over a `listbox`; the block menu is a named list of buttons.
 - The upload step is a `group` named "Describe the image", `aria-busy` while uploading; its progress and result are said in a status region, a failure in an alert.
+- Single-key shortcuts of other components (`j`, `k`, `/`, `z`) never act inside the editor: the surface is editable text, which the shortcuts registry treats as typing. The slash menu is typed text, not a shortcut, so `data-cap-single-keys="off"` does not change it; Ctrl or Cmd keys are modifiers, not single keys.
 - Hit areas are at least `--target`; the toolbar's buttons grow with the density.
 - Forced colours: the focus ring, the active option and the focused block keep an outline; an invalid frame gets a thicker edge.
 - Under a strict `style-src`, pass the CSP nonce (`nonce`), or the page's first `<script nonce>` is read; without it CodeMirror's injected styles are dropped.
