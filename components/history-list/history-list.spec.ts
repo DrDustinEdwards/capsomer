@@ -322,8 +322,8 @@ eachTheme((theme) => {
     await expect(m.locator("[data-id='v-31'] [data-cap-part='restore']")).toBeVisible();
     await expect(m.locator(".cap-hist-list > .cap-hist-row[data-id]")).toHaveCount(before + 1);
     await expect(m.locator("[data-id='v-16']")).toHaveCount(1);
-    await expect(page.getByRole("status", { name: "Results and failures" })).toContainText("Restored version from 1 Oct as a new version.");
-    await expect(page.getByRole("button", { name: /^Undo/ })).toBeVisible();
+    await expect(page.locator("#hist-results")).toContainText("Restored version from 1 Oct as a new version.");
+    await expect(page.locator("#hist-results").getByRole("button", { name: /^Undo/ })).toBeVisible();
     await expect(restore).toBeFocused();
   });
 
@@ -339,7 +339,7 @@ eachTheme((theme) => {
     await expect(m.locator("[data-id='v-31']")).toHaveAttribute("data-current", "");
     await expect(m.locator("[data-id='v-31'] .cap-status")).toHaveText("Current");
     await expect(restore).toBeFocused();
-    await expect(page.getByRole("status", { name: "Results and failures" })).toContainText("Undone.");
+    await expect(page.locator("#hist-results")).toContainText("Undone.");
   });
 
   test("behaviour: the restored line's size change is the difference from the version it replaced", async ({ page }) => {
@@ -358,7 +358,7 @@ eachTheme((theme) => {
       for (const name of ["cap:history-restored", "cap:history-unrestored"]) document.addEventListener(name, (e) => w.__events.push(`${name}:${(e as CustomEvent).detail.source.id}`));
     });
     await main(page).locator("[data-id='v-16'] [data-cap-part='restore']").click();
-    await page.getByRole("button", { name: /^Undo/ }).click();
+    await page.locator("#hist-results").getByRole("button", { name: /^Undo/ }).click();
     expect(await page.evaluate(() => (window as unknown as { __events: string[] }).__events)).toEqual(["cap:history-restored:v-16", "cap:history-unrestored:v-16"]);
   });
 
@@ -395,5 +395,39 @@ eachTheme((theme) => {
     await visitStates(page, "history-list", theme);
     await expect(page.locator("#hist-empty")).toContainText("No versions yet");
     await expect(page.locator("#hist-empty")).toContainText("The first save of this post makes the first version.");
+  });
+
+  test("behaviour: the React wrapper renders the same contract: lines, a run that opens, and the pick bar", async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    const r = page.locator("#react-history");
+    await expect(r.getByRole("checkbox", { name: /^Compare this version/ })).toHaveCount(3);
+    await expect(r.getByRole("link", { name: "Added the 2019 burst size paper and its caveat" })).toBeVisible();
+    await expect(r.getByText("+42 words")).toBeVisible();
+    const run = r.getByRole("button", { name: "2 autosaves" });
+    await expect(run).toHaveAttribute("aria-expanded", "false");
+    await run.click();
+    await expect(run).toHaveAttribute("aria-expanded", "true");
+    await expect(r.getByRole("checkbox", { name: /^Compare this version/ })).toHaveCount(5);
+    const box = (id: string) => r.locator(`li[data-id='${id}'] input[type=checkbox]`);
+    await box("r-5").check();
+    await box("r-1").check();
+    await expect(r.getByRole("link", { name: "Compare 2 versions" })).toHaveAttribute("href", "/posts/phage-lambda/compare?from=r-1&to=r-5");
+    await box("r-4").click({ force: true });
+    await expect(r.locator("[data-cap-part='picked']")).toHaveText("Two versions are picked; untick one first.");
+    await expect(box("r-4")).not.toBeChecked();
+  });
+
+  test("behaviour: the React wrapper restores as a new line with Undo, and z takes it back", async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    const r = page.locator("#react-history");
+    await r.locator("li[data-id='r-1'] [data-cap-part='restore']").click();
+    const top = r.locator(".cap-hist-list > li.cap-hist-row").first();
+    await expect(top).toHaveAttribute("data-kind", "restore");
+    await expect(top).toContainText("Restored the version from 1 Oct, 16:10 UTC");
+    await expect(r.locator("li[data-id='r-5']")).not.toHaveAttribute("data-current", "");
+    await expect(r.locator(".cap-message")).toContainText("Restored version from 1 Oct as a new version.");
+    await page.keyboard.press("z");
+    await expect(r.locator("li[data-kind='restore']")).toHaveCount(0);
+    await expect(r.locator("li[data-id='r-5']")).toHaveAttribute("data-current", "");
   });
 });
