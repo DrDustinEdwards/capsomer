@@ -221,6 +221,66 @@
   </section>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-forced">
+  <h2 id="s-forced">Hover and focus on a row, a child, the foot link and the notices row</h2>
+  <section class="cap-attention" aria-labelledby="att-forced-h">
+    <header class="cap-attention-head">
+      <h3 id="att-forced-h" class="cap-attention-title">Needs attention</h3>
+      <span class="cap-attention-count">2 problems</span>
+    </header>
+    <ul class="cap-rows" role="list" aria-labelledby="att-forced-h">
+      <li class="cap-row" data-force="hover">
+        <span class="cap-row-status" id="f1-s"><span class="cap-status" data-tone="warn">Warning</span></span>
+        <div class="cap-row-title"><a href="#att-forced" aria-describedby="f1-s">Hovered row</a></div>
+        <p class="cap-row-detail">Forced hover</p>
+        <span class="cap-row-meta">now</span>
+      </li>
+      <li class="cap-row" data-force="focus">
+        <span class="cap-row-status" id="f2-s"><span class="cap-status" data-tone="warn">Warning</span></span>
+        <div class="cap-row-title"><a href="#att-forced" aria-describedby="f2-s">Focused row</a></div>
+        <p class="cap-row-detail">Forced focus</p>
+        <span class="cap-row-meta">now</span>
+      </li>
+      <li class="cap-attention-region" id="att-forced-r">
+        <ul role="list" aria-label="Rows a group holds">
+          <li class="cap-row cap-attention-child" data-force="hover">
+            <div class="cap-row-title"><a href="#att-forced">A child row, hovered</a></div>
+            <p class="cap-row-detail">On the raised tone, sunken on hover</p>
+            <span class="cap-row-meta">now</span>
+          </li>
+          <li class="cap-attention-link"><a href="#att-forced" data-force="hover">Open CI and merges</a></li>
+          <li class="cap-attention-link"><a href="#att-forced" data-force="focus">Open CI and merges, focused</a></li>
+        </ul>
+      </li>
+      <li class="cap-row cap-attention-notices" data-force="hover">
+        <span class="cap-row-status" id="f3-s"><span class="cap-status" data-tone="info">Notice</span></span>
+        <div class="cap-row-title"><a href="#att-forced" aria-describedby="f3-s">4 notices, hovered</a></div>
+        <p class="cap-row-detail">Nothing to act on now</p>
+        <span class="cap-row-meta">now</span>
+      </li>
+    </ul>
+  </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfy">
+  <h2 id="s-comfy">Comfortable density</h2>
+  <section class="cap-attention" data-density="comfortable" aria-labelledby="att-comfy-h">
+    <header class="cap-attention-head">
+      <h3 id="att-comfy-h" class="cap-attention-title">Needs attention</h3>
+      <span class="cap-attention-count">1 problem</span>
+      <span class="cap-attention-src">Worst first. Read 40 seconds ago</span>
+    </header>
+    <ul class="cap-rows" role="list" aria-labelledby="att-comfy-h">
+      <li class="cap-row" data-tone="crit">
+        <span class="cap-row-status" id="c1-s"><span class="cap-status" data-tone="crit">Critical</span></span>
+        <div class="cap-row-title"><a href="#att-comfy" aria-describedby="c1-s c1-d">foxhound.app is not answering</a></div>
+        <p class="cap-row-detail" id="c1-d">3 failed checks in a row</p>
+        <span class="cap-row-meta">11 minutes ago</span>
+      </li>
+    </ul>
+  </section>
+</section>
+
 <template data-specimen="phone" data-title="Phone width: status over title, titles wrap" data-width="390" data-height="520">
   <main class="specimen-page">
     <h1>Overview</h1>

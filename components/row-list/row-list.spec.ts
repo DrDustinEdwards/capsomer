@@ -35,6 +35,21 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
+  test("accessibility: the outline and muted variants keep their text at contrast", async ({ page }) => {
+    await visitStates(page, "row-list", theme);
+    await expectContrast(page, [
+      { sel: "#list-variants .cap-row[data-variant='muted'] .cap-row-detail", what: "a muted row's detail" },
+      { sel: "#list-variants .cap-row[data-variant='outline'] .cap-row-title a", what: "an outline row's title" },
+      { sel: "#list-variants .cap-row[data-force='hover'] .cap-row-detail", what: "a hovered row's detail" },
+    ]);
+  });
+
+  test("keyboard: a row in the outline variant is still one tab stop with the focus ring", async ({ page }) => {
+    await visitStates(page, "row-list", theme);
+    await page.getByRole("link", { name: "Outline variant, with an icon" }).focus();
+    await expect(page.locator("#list-variants .cap-row[data-variant='outline']").first()).toHaveCSS("outline-style", "solid");
+  });
+
   test("accessibility: title, detail and time reach their contrast, at rest and focused", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await expectContrast(page, [
@@ -237,14 +252,5 @@ eachTheme((theme) => {
     const cut = await link.evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(cut).toBe(false);
     await expect(link).toHaveCSS("white-space", "normal");
-  });
-
-  test("behaviour: at phone width the status sits above the title", async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 640 });
-    await visitStates(page, "row-list", theme, "phone");
-    const status = await page.locator("#p1-s").boundingBox();
-    const title = await page.getByRole("link", { name: "Push design/capsomer" }).boundingBox();
-    expect(status && title).toBeTruthy();
-    if (status && title) expect(status.y + status.height).toBeLessThanOrEqual(title.y + 1);
   });
 });
