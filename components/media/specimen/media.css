@@ -1,0 +1,11 @@
+/* Sample layout for the media states page only. */
+.media-save-rows {
+  display: grid;
+  gap: var(--space-3);
+}
+.media-save-row {
+  padding: var(--space-3) var(--pad-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: var(--sunken);
+}

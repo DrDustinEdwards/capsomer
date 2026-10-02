@@ -1,0 +1,573 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The media library's parts: a grid of tiles, and an inspector beside it. The grid is a list
+   whose tiles are one tab stop each (roving), moved between by the arrow keys. The inspector
+   is the shared dialog: a pane beside the grid when the container is wide, a side sheet when
+   it is narrow (a container query decides; the behaviour reads the same answer). Extracted
+   from the site admin's admin-media.css and admin-media-later.css (the tile, the thumbnail
+   frame that reserves its space, the facts list, the tag chips), rebuilt on Capsomer's
+   tokens. Craft matched to shadcn/ui's Card (the tile), Checkbox, Badge, Sheet (the sheet
+   mode) and Input / Textarea (the inspector's fields). */
+@layer cap.components {
+  /* The container: its width, not the window's, decides pane or sheet. */
+  .cap-media {
+    --cap-media-tile: 11rem;
+    container: cap-media / inline-size;
+    min-inline-size: 0;
+
+    &[data-size="s"] {
+      --cap-media-tile: 8rem;
+    }
+    &[data-size="l"] {
+      --cap-media-tile: 16rem;
+    }
+  }
+
+  /* --cap-media-mode is how the inspector sits: "sheet" (a modal side sheet) or "pane" (beside
+     the grid). The behaviour reads it, so the container query below is the one place the
+     breakpoint is written. */
+  .cap-media-layout {
+    --cap-media-mode: sheet;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gap);
+    align-items: start;
+  }
+  .cap-media-main {
+    display: grid;
+    gap: var(--space-4);
+    min-inline-size: 0;
+  }
+
+  /* Wide: the grid and the inspector side by side, the inspector sticking as the grid scrolls. */
+  @container cap-media (min-width: 56rem) {
+    .cap-media-layout {
+      --cap-media-mode: pane;
+    }
+    .cap-media-layout:has(> .cap-media-inspector[open]:not(:modal)) {
+      grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+    }
+  }
+
+  /* The search, the filters and the view, composed from the field, chips and segmented. */
+  .cap-media-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+
+    & .cap-media-search {
+      flex: 1 1 14rem;
+      max-inline-size: 24rem;
+    }
+  }
+
+  .cap-media-count {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A group of tiles under a heading (a folder, a month). The count is for this page. */
+  .cap-media-group {
+    display: grid;
+    gap: var(--space-3);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+  .cap-media-group-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+    font-size: var(--fs-lead);
+    font-weight: 800;
+  }
+  .cap-media-group-count {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+  }
+
+  /* The grid: as many columns as fit. A browser-made layout, which is why the arrow keys read
+     the rendered boxes and not a column count. */
+  .cap-media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--cap-media-tile), 1fr));
+    gap: var(--gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-media-tile {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    box-sizing: border-box;
+    min-inline-size: 0;
+    padding: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--text);
+
+    &[hidden] {
+      display: none;
+    }
+    /* The tile the inspector shows: a thicker accent edge, and the open link says aria-current. */
+    &[data-active] {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+    &[data-selected] {
+      background: var(--sel);
+    }
+    /* The focus ring is drawn on the tile, around the link that has focus. */
+    &:has(.cap-media-open:focus-visible) {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+
+  /* The one tab stop of a tile: the thumbnail, the name and the size, as one link. */
+  .cap-media-open {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: none;
+    }
+    &[aria-disabled="true"] {
+      cursor: default;
+    }
+  }
+
+  /* The thumbnail frame reserves its space with an aspect ratio, so a tile that loads late
+     cannot move the rows below it. */
+  .cap-media-thumb {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+
+    & > img {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+  }
+  /* A file with no picture: its type, large, in the mono face. */
+  .cap-media-doc {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--fs-lead);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .cap-media-tile[data-state="binned"] .cap-media-thumb > img {
+    opacity: 0.5;
+  }
+
+  .cap-media-name {
+    overflow: hidden;
+    font-size: var(--fs-body);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cap-media-meta {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* What is true of the file that a person should not miss: no alt text, decorative, not used
+     anywhere, in the bin. Each is a shape, a word and a colour (the status component). */
+  .cap-media-flags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    min-block-size: calc(var(--fs-label) * 1.6);
+    font-size: var(--fs-label);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  /* The checkbox: a chip on the picture, on its own surface so its edge reads over any photo.
+     It shows on hover, on focus and while anything is selected, and always on a touch screen.
+     When it is checked it says "Selected" in words as well as the tick. */
+  .cap-media-check {
+    position: absolute;
+    inset-block-start: calc(var(--space-2) + var(--space-2));
+    inset-inline-start: calc(var(--space-2) + var(--space-2));
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--target);
+    padding: 3px var(--space-3) 3px 3px;
+    border-radius: var(--radius-m);
+    background: var(--raised);
+    box-shadow:
+      var(--shadow-s),
+      0 0 0 1px var(--line-strong);
+    color: var(--text);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    opacity: 0;
+    cursor: pointer;
+
+    & > input {
+      position: absolute;
+      inset: 0;
+      inline-size: 100%;
+      block-size: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    &:has(> input:checked) {
+      padding-inline-end: var(--space-4);
+    }
+    &:has(> input:focus-visible) {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+  .cap-media-check-box {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: calc(var(--target) - 6px);
+    block-size: calc(var(--target) - 6px);
+    border: 1.5px solid var(--muted);
+    border-radius: var(--radius-s);
+    background: var(--surface);
+    color: var(--primary-fg);
+
+    & > svg {
+      inline-size: 80%;
+      block-size: 80%;
+      opacity: 0;
+    }
+  }
+  .cap-media-check > input:checked ~ .cap-media-check-box {
+    border-color: var(--primary);
+    background: var(--primary);
+
+    & > svg {
+      opacity: 1;
+    }
+  }
+  .cap-media-check-word {
+    display: none;
+  }
+  .cap-media-check:has(> input:checked) .cap-media-check-word {
+    display: inline;
+  }
+  .cap-media-tile:hover .cap-media-check,
+  .cap-media-tile:focus-within .cap-media-check,
+  .cap-media-tile[data-selected] .cap-media-check,
+  .cap-media-grid:has(input:checked) .cap-media-check {
+    opacity: 1;
+  }
+  @media (pointer: coarse) {
+    .cap-media-check {
+      opacity: 1;
+    }
+  }
+
+  /* Uploading and failed: a block over the picture. Its controls are the tile's siblings of the
+     link, never inside it. */
+  .cap-media-state {
+    position: absolute;
+    inset-block-start: var(--space-2);
+    inset-inline: var(--space-2);
+    z-index: 1;
+    display: grid;
+    align-content: center;
+    gap: var(--space-2);
+    aspect-ratio: 1;
+    box-sizing: border-box;
+    padding: var(--space-3);
+    overflow: hidden;
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+    font-size: var(--fs-detail);
+
+    & p {
+      margin: 0;
+    }
+    &[data-tone="crit"] {
+      background: var(--crit-soft);
+      box-shadow: inset 0 0 0 1px var(--crit);
+    }
+  }
+  .cap-media-state-lead {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+
+    .cap-media-state[data-tone="crit"] > & {
+      color: var(--crit);
+    }
+  }
+  .cap-media-reason {
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+  /* The shared meter, drawn small, in the tile. */
+  .cap-media-state .cap-meter {
+    row-gap: var(--space-2);
+  }
+
+  /* The inspector. The shared dialog's surface; this file only decides how it sits. */
+  .cap-media-inspector {
+    /* Open but not modal: a pane in the flow of the page, the whole width when it is below the
+       grid (narrow, no script), sticking beside it when wide. */
+    &:not(:modal)[data-placement] {
+      position: static;
+      inline-size: auto;
+      block-size: auto;
+      max-block-size: none;
+      margin: 0;
+      border-width: 1px;
+      border-radius: var(--radius-l);
+      box-shadow: none;
+      padding-block: 0;
+    }
+    &:not([open]) {
+      display: none;
+    }
+  }
+  @container cap-media (min-width: 56rem) {
+    .cap-media-inspector:not(:modal)[data-placement] {
+      position: sticky;
+      inset-block-start: var(--space-4);
+      max-block-size: calc(100dvh - var(--space-5) * 2);
+    }
+  }
+
+  .cap-media-title {
+    overflow-wrap: anywhere;
+  }
+  .cap-media-form {
+    display: grid;
+    align-content: start;
+    gap: var(--space-5);
+  }
+  .cap-media-preview {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+
+    & > img {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: contain;
+    }
+  }
+  .cap-media-section {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    & > h3 {
+      margin: 0;
+      font-size: var(--fs-body);
+      font-weight: 600;
+    }
+  }
+
+  /* Tags: removable chips, then the field that adds one, then the suggestions. */
+  .cap-media-inspector .cap-media-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  /* The facts the system assigns: read, not edited. */
+  .cap-media-facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    margin: 0;
+    font-size: var(--fs-detail);
+
+    & dt {
+      color: var(--muted);
+    }
+    & dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .cap-media-copy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .cap-media-copied {
+    min-block-size: 1.2em;
+    margin: 0;
+    color: var(--text);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  /* Where the file is used: real links, or the plain statement that it is not. */
+  .cap-media-inspector .cap-media-used {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-body);
+
+    & li {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1) var(--space-3);
+    }
+  }
+  .cap-media-used-how,
+  .cap-media-note {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-media-note {
+    margin: 0;
+  }
+  .cap-media-used-empty {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  /* The save status: idle, unsaved, saving, saved, failed. A word and a shape each. */
+  .cap-media-save {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    min-inline-size: 0;
+    margin-inline-end: auto;
+
+    & p {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin: 0;
+      font-size: var(--fs-detail);
+
+      &:empty {
+        display: none;
+      }
+    }
+    &[data-state="idle"] [role="status"] {
+      color: var(--muted);
+    }
+    &[data-state="saved"] [role="status"] .cap-status-glyph {
+      color: var(--ok);
+    }
+    &[data-state="failed"] [role="alert"] {
+      color: var(--crit);
+      font-weight: 600;
+    }
+  }
+
+  /* The empty states: nothing yet, nothing matches, nothing in this view, the bin is empty. */
+  /* With script the pane saves itself; the form's own Save button is for a page without it. */
+  .cap-media[data-cap-ready] [data-cap-part="save-fallback"] {
+    display: none;
+  }
+
+  .cap-media-empty {
+    &[hidden] {
+      display: none;
+    }
+    & > [hidden] {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-media-tile {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        box-shadow var(--dur-fast) var(--ease-out);
+    }
+    .cap-media-check {
+      transition: opacity var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-media-tile {
+      border-color: CanvasText;
+
+      &[data-active] {
+        border-color: Highlight;
+        box-shadow: none;
+        outline: 2px solid Highlight;
+      }
+    }
+    .cap-media-check {
+      box-shadow: none;
+      border: 1px solid CanvasText;
+    }
+    .cap-media-check-box {
+      border-color: CanvasText;
+    }
+    .cap-media-check > input:checked ~ .cap-media-check-box {
+      background: Highlight;
+      color: HighlightText;
+    }
+    .cap-media-state[data-tone="crit"] {
+      box-shadow: none;
+      border: 1px solid CanvasText;
+    }
+  }
+}
