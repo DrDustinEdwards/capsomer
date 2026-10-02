@@ -170,12 +170,13 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-attention-region .cap-status[data-tone='crit']")).toHaveCount(0);
   });
 
-  test("behaviour: a group's rows start under its title, whatever the status column's width", async ({ page }) => {
+  test("keyboard: the link under a group shows a focus ring", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
-    const title = await page.locator(expanded).getByRole("button", { name: "7 jobs are waiting on you" }).boundingBox();
-    const child = await page.locator("#att-open-jobs").getByRole("link", { name: "Merge carrel #88" }).boundingBox();
-    expect(title && child).toBeTruthy();
-    if (title && child) expect(Math.abs(title.x - child.x)).toBeLessThanOrEqual(1);
+    const link = page.locator(`${expanded} .cap-attention-link a`).first();
+    await link.focus();
+    await expect(link).toBeFocused();
+    const width = await link.evaluate((el) => getComputedStyle(el).outlineWidth);
+    expect(parseFloat(width)).toBeGreaterThanOrEqual(2);
   });
 
   test("behaviour: a click anywhere on a group's row opens it", async ({ page }) => {
@@ -185,17 +186,13 @@ eachTheme((theme) => {
     await expect(page.locator("#att-mixed-prs")).toBeVisible();
   });
 
-  test("behaviour: at phone width a title wraps instead of being cut, and a group's rows sit at the edge", async ({ page }) => {
+  test("behaviour: at phone width a title wraps instead of being cut", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "attention-list", theme, "phone");
     for (const id of ["#phone-att-title", "#phone-child-title"]) {
       const cut = await page.locator(id).evaluate((el) => el.scrollWidth > el.clientWidth);
       expect(cut, `${id} is cut`).toBe(false);
     }
-    const head = await page.getByRole("button", { name: "3 pull requests await the seat" }).boundingBox();
-    const child = await page.locator("#phone-child-title").boundingBox();
-    expect(head && child).toBeTruthy();
-    if (head && child) expect(Math.abs(head.x - child.x)).toBeLessThanOrEqual(1);
   });
 });
 

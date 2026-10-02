@@ -6,6 +6,7 @@ parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [mixed list, a group open in place, warnings past the cap, all clear, phone width]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx ("Needs attention") and styles.css ("attention strip"), dashboard/src/lib/derive.ts (attentionGroups)
 replaces:
   - 'class="attention"'
@@ -27,6 +28,8 @@ On an app's overview, once, for problems drawn from several sources (sites, back
 A list of one kind of thing (jobs, deploys, mentions) is a row-list, or a feed for a timeline. A single problem on its own page is a banner. A figure against a threshold is a stat tile.
 
 ## The default and its reason
+
+- **The frame is a card.** shadcn's Card look: the surface, a hairline edge, the extra-large radius; the header is its card header on a quieter tone with a rule under it, and the closed notices row is its muted footer. One inline pad (`--pad-card`, 16 px compact, 24 px comfortable) is shared by the header, the rows, the links and the all-clear so they line up. Hover and the group rows' tint change on a 100 ms colour transition (not under reduced motion).
 
 - **Worst first, one status per row, shape plus word plus colour.** The eye should meet the worst thing first (patterns.md "Status"). Within a tone, the order you pass is kept.
 - **Two tiers: problems (critical, warning) and notices (no data, notice).** A problem needs a person; a notice is a fact with nothing to do now, so it is one closed row at the foot under a rule, not a row among the problems (the Portal's audit ruling 3). The tier follows from the tone, so a new row lands in the right one.
@@ -55,6 +58,10 @@ A list of one kind of thing (jobs, deploys, mentions) is a row-list, or a feed f
 - Every problem row's status is a word ("Critical", "Warning") beside its glyph, so tone never rests on colour. On a phone the word stays and moves above the title (row-list).
 - The focused row is the selected row: its tint and inset ring come from row-list, with one indicator.
 - The frame's border and the header's tint are decoration; forced colours draws a rule under the header and around what a group opens.
+
+## Matches
+
+shadcn/ui `Card` (the frame, header and muted footer) over `Item` (each row, from row-list). Deliberately different: shadcn's Item has no ordering, grouping, cap or tiers (those are the Portal's rules); the row's whole-row link and critical edge are Capsomer's.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
