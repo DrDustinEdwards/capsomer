@@ -49,6 +49,25 @@ const danger = (log: (s: string) => void): MenuEntry[] => [
   { label: "Delete site", danger: true, onSelect: () => log("Delete site") },
 ];
 
+// Everything the menu can hold: an icon, a heading over a group, checkbox items, a radio
+// group with its heading, a submenu, a shortcut and a danger item.
+const Dot = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <circle cx="8" cy="8" r="3" fill="currentColor" />
+  </svg>
+);
+const rich = (log: (s: string) => void): MenuEntry[] => [
+  { type: "group", label: "Site", items: [{ label: "Open site", icon: <Dot />, shortcut: "O", onSelect: () => log("Open site") }, { label: "Copy address", onSelect: () => log("Copy address") }] },
+  "separator",
+  { type: "checkbox", label: "Check every minute", defaultChecked: true, onCheckedChange: (on) => log(`Check every minute ${on ? "on" : "off"}`) },
+  { type: "checkbox", label: "Email on failure", onCheckedChange: (on) => log(`Email on failure ${on ? "on" : "off"}`) },
+  "separator",
+  { type: "radio-group", label: "Region", defaultValue: "pdx", onValueChange: (v) => log(`Region ${v}`), items: [{ value: "fra", label: "Frankfurt" }, { value: "pdx", label: "Oregon" }, { value: "sin", label: "Singapore", disabled: true }] },
+  "separator",
+  { type: "submenu", label: "Move to", items: [{ label: "Live sites", onSelect: () => log("Move to Live sites") }, { label: "Previews", onSelect: () => log("Move to Previews") }] },
+  { label: "Delete site", danger: true, onSelect: () => log("Delete site") },
+];
+
 // Highlights the first item the way a keyboard does, for the static picture. The spec
 // checks the real keys.
 function Highlighted() {
@@ -73,7 +92,12 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   highlighted: () => <Highlighted />,
   disabled: () => <Logged entries={disabled} defaultOpen />,
   danger: () => <Logged entries={danger} defaultOpen />,
+  rich: () => <Logged entries={rich} defaultOpen />,
+  comfortable: () => <Logged entries={plain} defaultOpen />,
 };
+
+// The popup is portalled to the body, so the comfortable specimen sets the density there.
+if (new URLSearchParams(location.search).get("only") === "comfortable") document.documentElement.dataset.density = "comfortable";
 
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {
   const render = SPECIMENS[el.dataset.mount ?? ""];

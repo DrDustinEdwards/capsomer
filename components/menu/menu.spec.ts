@@ -26,7 +26,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
-  for (const state of ["open", "highlighted", "disabled", "danger"]) {
+  for (const state of ["open", "highlighted", "disabled", "danger", "rich", "comfortable"]) {
     test(`accessibility: no axe violations, ${state}`, async ({ page }) => {
       await visitStates(page, "menu", theme, state);
       await expect(page.getByRole("menu")).toBeVisible();
@@ -48,26 +48,26 @@ eachTheme((theme) => {
     await visitStates(page, "menu", theme, "open");
     await expect(page.getByRole("menu")).toBeVisible();
     await expectContrast(page, [
-      { sel: ".cap-menu-item:not([data-highlighted]) .cap-menu-label", what: "an item" },
+      { sel: ".cap-option:not([data-highlighted]) .cap-option-label", what: "an item" },
       { sel: ".cap-menu-kbd", what: "a shortcut" },
     ]);
     await page.keyboard.press("ArrowDown");
-    await expect(page.locator(".cap-menu-item[data-highlighted]")).toHaveCount(1);
-    await expectContrast(page, [{ sel: ".cap-menu-item[data-highlighted] .cap-menu-label", what: "the highlighted item on --accent-soft" }]);
+    await expect(page.locator(".cap-option[data-highlighted]")).toHaveCount(1);
+    await expectContrast(page, [{ sel: ".cap-option[data-highlighted] .cap-option-label", what: "the highlighted item on --accent-soft" }]);
 
     await visitStates(page, "menu", theme, "disabled");
     await expect(page.getByRole("menu")).toBeVisible();
     await expectContrast(page, [
-      { sel: ".cap-menu-item[data-disabled] .cap-menu-label", what: "a disabled item's label" },
+      { sel: ".cap-option[data-disabled] .cap-option-label", what: "a disabled item's label" },
       { sel: ".cap-menu-reason", what: "a disabled item's reason" },
     ]);
 
     await visitStates(page, "menu", theme, "danger");
     await expect(page.getByRole("menu")).toBeVisible();
-    await expectContrast(page, [{ sel: ".cap-menu-item[data-tone='crit']:not([data-highlighted]) .cap-menu-label", what: "a danger item" }]);
+    await expectContrast(page, [{ sel: ".cap-option[data-tone='crit']:not([data-highlighted]) .cap-option-label", what: "a danger item" }]);
     await page.keyboard.press("ArrowUp");
     await expect(page.getByRole("menuitem", { name: "Delete site" })).toHaveAttribute("data-highlighted", "");
-    await expectContrast(page, [{ sel: ".cap-menu-item[data-tone='crit'][data-highlighted] .cap-menu-label", what: "a highlighted danger item on --crit-soft" }]);
+    await expectContrast(page, [{ sel: ".cap-option[data-tone='crit'][data-highlighted] .cap-option-label", what: "a highlighted danger item on --crit-soft" }]);
   });
 
   test("accessibility: the menu's roles and names", async ({ page }) => {
@@ -160,7 +160,7 @@ eachTheme((theme) => {
     await visitStates(page, "menu", theme);
     await trigger(page).click();
     await expect(page.getByRole("menu")).toBeVisible();
-    const order = await page.locator(".cap-menu > :is([role='menuitem'], [role='separator'])").evaluateAll((els) => els.map((e) => (e.getAttribute("role") === "separator" ? "|" : (e.querySelector(".cap-menu-label")?.textContent ?? ""))));
+    const order = await page.locator(".cap-menu > :is([role='menuitem'], [role='separator'])").evaluateAll((els) => els.map((e) => (e.getAttribute("role") === "separator" ? "|" : (e.querySelector(".cap-option-label")?.textContent ?? ""))));
     expect(order).toEqual(["Open site", "Duplicate settings", "|", "Archive", "Run checks now", "|", "Delete site"]);
     await expect(page.getByRole("menuitem", { name: "Delete site" })).toHaveAttribute("data-tone", "crit");
   });
@@ -168,9 +168,54 @@ eachTheme((theme) => {
   test("behaviour: danger items keep their order at the end", async ({ page }) => {
     await visitStates(page, "menu", theme, "danger");
     await expect(page.getByRole("menu")).toBeVisible();
-    const labels = await page.locator(".cap-menu-item .cap-menu-label").allTextContents();
+    const labels = await page.locator(".cap-option .cap-option-label").allTextContents();
     expect(labels).toEqual(["Open site", "Copy address", "Remove from the watcher", "Delete site"]);
     await expect(page.getByRole("separator")).toHaveCount(1);
+  });
+
+  test("accessibility: the rich menu's roles, checks and group names", async ({ page }) => {
+    await visitStates(page, "menu", theme, "rich");
+    await expect(page.getByRole("menu")).toBeVisible();
+    await expect(page.getByRole("group", { name: "Site" })).toBeVisible();
+    await expect(page.getByRole("menuitemcheckbox", { name: "Check every minute" })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("menuitemcheckbox", { name: "Email on failure" })).toHaveAttribute("aria-checked", "false");
+    await expect(page.getByRole("group", { name: "Region" })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: "Oregon" })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("menuitemradio", { name: "Frankfurt" })).toHaveAttribute("aria-checked", "false");
+    await expect(page.getByRole("menuitem", { name: "Move to" })).toHaveAttribute("aria-haspopup", "menu");
+    await expectContrast(page, [{ sel: ".cap-listbox-label", what: "a group heading" }]);
+  });
+
+  test("keyboard: Space on a checkbox item toggles it and the menu stays open", async ({ page }) => {
+    await visitStates(page, "menu", theme, "rich");
+    const item = page.getByRole("menuitemcheckbox", { name: "Email on failure" });
+    await item.focus();
+    await page.keyboard.press("Space");
+    await expect(item).toHaveAttribute("aria-checked", "true");
+    await expect(chosen(page)).toHaveAttribute("data-chosen", "Email on failure on");
+    await expect(page.getByRole("menu")).toBeVisible();
+  });
+
+  test("keyboard: Enter on a radio item chooses it, and only one is chosen", async ({ page }) => {
+    await visitStates(page, "menu", theme, "rich");
+    const item = page.getByRole("menuitemradio", { name: "Frankfurt" });
+    await item.focus();
+    await page.keyboard.press("Enter");
+    await expect(chosen(page)).toHaveAttribute("data-chosen", "Region fra");
+    await expect(page.getByRole("menuitemradio", { name: "Frankfurt" })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("menuitemradio", { name: "Oregon" })).toHaveAttribute("aria-checked", "false");
+  });
+
+  test("keyboard: ArrowRight opens a submenu, Esc closes only the submenu, and ArrowLeft returns", async ({ page }) => {
+    await visitStates(page, "menu", theme, "rich");
+    const sub = page.getByRole("menuitem", { name: "Move to" });
+    await sub.focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("menuitem", { name: "Live sites" })).toBeFocused();
+    await expect(page.getByRole("menu")).toHaveCount(2);
+    await page.keyboard.press("ArrowLeft");
+    await expect(page.getByRole("menu")).toHaveCount(1);
+    await expect(sub).toBeFocused();
   });
 
   test("behaviour: a click outside closes the menu", async ({ page }) => {

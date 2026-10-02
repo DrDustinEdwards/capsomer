@@ -141,7 +141,7 @@
 
     & del,
     & ins {
-      padding: 1px 5px;
+      padding: var(--space-1) var(--space-2);
       border-radius: var(--radius-m);
       overflow-wrap: anywhere;
       text-decoration-thickness: 1px;
