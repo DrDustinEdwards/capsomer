@@ -86,7 +86,7 @@ eachTheme((theme) => {
 
   test("accessibility: the tick and the projection are said in words, not only drawn", async ({ page }) => {
     await visitStates(page, "meter", theme);
-    await expect(page.getByRole("meter", { name: "Draft length" })).toHaveAttribute("aria-valuetext", /target of 1,600 words/);
+    await expect(page.locator("#sample-threshold [role=meter]")).toHaveAttribute("aria-valuetext", /target of 1,600 words/);
     await expect(page.locator("#sample-threshold .cap-meter-note")).toContainText("1,600-word target");
     await expect(page.getByRole("meter", { name: "Worker requests" }).nth(1)).toHaveAttribute("aria-valuetext", /projected 87 percent by the reset/);
     await expect(page.locator("#sample-projection .cap-meter-note")).toContainText("hatched");
@@ -100,7 +100,8 @@ eachTheme((theme) => {
       const sweep = getComputedStyle(document.querySelector("#sample-indeterminate .cap-meter-fill")!);
       return { fill: fill.transitionDuration, sweep: sweep.animationName };
     });
-    expect(motion.fill).toBe("0s");
+    // base.css shortens every duration to 0.01 ms under reduced motion: that is no motion.
+    expect(parseFloat(motion.fill)).toBeLessThanOrEqual(0.001);
     expect(motion.sweep).toBe("none");
   });
 

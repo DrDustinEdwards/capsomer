@@ -41,6 +41,13 @@
   </main>
 </template>
 
+<template data-specimen="comfortable" data-title="Comfortable density" data-height="760">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Overview</h1>
+    <p role="status" data-specimen-part="said"></p>
+  </main>
+</template>
+
 <script type="module">
   import { createCommandMenu, enhance, openCommandMenu, stopCommand } from "./command-menu.ts";
   const only = new URLSearchParams(location.search).get("only");
@@ -67,6 +74,10 @@
     if (only === "filtered") openCommandMenu("ck");
     if (only === "stops") openCommandMenu("stop");
     if (only === "nomatch") openCommandMenu("deploy to vercel");
+    if (only === "comfortable") {
+      menu.dialog.dataset.density = "comfortable";
+      openCommandMenu();
+    }
     if (only === "active") {
       openCommandMenu();
       menu.setActive(2);

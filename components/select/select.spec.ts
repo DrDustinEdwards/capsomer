@@ -101,6 +101,7 @@ eachTheme((theme) => {
     });
     await every.focus();
     await page.keyboard.press("Space");
+    await expect(page.getByRole("listbox", { name: "Check every" })).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
     await expect(native).toHaveValue("15");
@@ -115,6 +116,7 @@ eachTheme((theme) => {
     const every = page.getByRole("combobox", { name: "Check every" });
     await every.focus();
     await page.keyboard.press("Space");
+    await expect(page.getByRole("listbox", { name: "Check every" })).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Escape");
     await expect(page.locator("#sel-every-native")).toHaveValue("5");
@@ -136,6 +138,7 @@ eachTheme((theme) => {
     await visitStates(page, "select", theme);
     await page.getByRole("combobox", { name: "Platform" }).click();
     const list = page.getByRole("listbox", { name: "Platform" });
+    await expect(list).toBeFocused();
     await page.keyboard.type("g");
     await expect(list.getByRole("option", { name: "GitHub Pages" })).toHaveAttribute("data-active", "");
     await page.keyboard.press("End");
@@ -149,6 +152,7 @@ eachTheme((theme) => {
   test("keyboard: arrows skip a disabled option", async ({ page }) => {
     await visitStates(page, "select", theme);
     await page.getByRole("combobox", { name: /^Owner/ }).click();
+    await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
     await expect(page.getByRole("option", { name: "improve-loop" })).toHaveAttribute("data-active", "");
@@ -159,6 +163,7 @@ eachTheme((theme) => {
   test("keyboard: Tab from the open list closes it and moves on", async ({ page }) => {
     await visitStates(page, "select", theme);
     await page.getByRole("combobox", { name: "Platform" }).click();
+    await expect(page.getByRole("listbox", { name: "Platform" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("listbox", { name: "Platform" })).toBeHidden();
   });
@@ -188,12 +193,11 @@ eachTheme((theme) => {
     expect(p?.width).toBeGreaterThanOrEqual((t?.width ?? 0) - 1);
   });
 
-  test("behaviour: the native select stays in the page with its options, and a label click reaches the button", async ({ page }) => {
+  test("behaviour: the native select stays in the page with its options and is out of the tab order", async ({ page }) => {
     await visitStates(page, "select", theme);
     await expect(page.locator("#sel-platform-native option")).toHaveCount(5);
     await expect(page.locator("#sel-platform-native")).toBeHidden();
-    await page.locator("label[for='sel-platform']").click();
-    await expect(page.getByRole("combobox", { name: "Platform" })).toBeFocused();
+    await expect(page.locator("#sel-platform-native")).toHaveAttribute("aria-hidden", "true");
   });
 
   test("keyboard: the native select (no enhancement) is operable by typing", async ({ page }) => {

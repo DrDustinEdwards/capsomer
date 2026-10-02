@@ -331,4 +331,24 @@
       border-color: CanvasText;
     }
   }
+
+  /* A list of links in a sheet (the More sheet): each link is a full-width row, a target. */
+  .cap-dialog-body nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-dialog-body nav a {
+    display: flex;
+    align-items: center;
+    min-block-size: max(var(--target), var(--row-h));
+    padding-inline: var(--pad-x);
+    border-radius: var(--radius-m);
+    color: var(--text);
+    text-decoration: none;
+
+    &:hover {
+      background: var(--sunken);
+    }
+  }
 }
