@@ -257,6 +257,20 @@ eachTheme((theme) => {
     expect(seen[3]).toContain("Side by side, Compare Draft 1 with Draft 2");
   });
 
+  test("keyboard: the arrow keys and Page Down scroll the focused region", async ({ page }) => {
+    await page.setViewportSize({ width: 340, height: 600 });
+    await visitStates(page, "draft-compare", theme, "narrow");
+    const region = page.getByRole("region", { name: /^Side by side,/ });
+    const room = await region.evaluate((el) => el.scrollHeight - el.clientHeight);
+    expect(room).toBeGreaterThan(50);
+    await region.focus();
+    await page.keyboard.press("ArrowDown");
+    await expect.poll(() => region.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    const after = await region.evaluate((el) => el.scrollTop);
+    await page.keyboard.press("PageDown");
+    await expect.poll(() => region.evaluate((el) => el.scrollTop)).toBeGreaterThan(after);
+  });
+
   test("behaviour: all three views carry the same changes from the same data", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const count = (v: string, tag: string) => page.locator(`${view("cmp-default", v)} ${tag}`).count();
