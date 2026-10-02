@@ -39,7 +39,7 @@ export function groupOf(control: Control): Control[] {
 }
 
 // The control a check is about: the select behind an enhanced select's button.
-export function controlOf(el: unknown): Control | null {
+function controlOf(el: unknown): Control | null {
   if (isControl(el)) return el;
   if (el instanceof HTMLElement && el.classList.contains("cap-select-trigger")) return el.closest(".cap-select-wrap")?.querySelector<HTMLSelectElement>("select.cap-select") ?? null;
   return null;

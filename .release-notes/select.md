@@ -1,0 +1,5 @@
+- The class is now `select.cap-select` inside `<div class="cap-select-wrap">`; `select.cap-input` still draws the same native form, so existing markup keeps working.
+- To get the popup: add `data-cap="select"` to the wrapper and call `enhance()` from `capsomer/behaviour/select`. The native select is hidden and gets the id `<id>-native`; a button (`role="combobox"`) takes the original id, so labels still point at it. Anything that reads or focuses the select by id (tests, scripts) should use the button for focus and the `-native` select for the value; `select.focus()` is forwarded to the button.
+- Apps that set `select.value` from code call `selectControlFor(select).sync()` (or dispatch `change`).
+- New React `Select` (renders the native select, then enhances). `data-size="sm"`, `data-native` to keep the browser's picker.
+- The enhanced popup needs the popover and listbox CSS (`capsomer/css/components/popover`, `listbox`) loaded.
