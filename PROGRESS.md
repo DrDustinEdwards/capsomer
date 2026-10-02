@@ -9,9 +9,16 @@ Batch 3 (Part 2): series palette + ramp in tokens/palette.mjs (+ check), Enarrat
 Final: package.json 0.3.0, CHANGELOG 0.3.0, delete this file, CI green, merge PR (merge commit), check site deploy. No tag.
 
 ## Done
+- Batch 1 merged: tabs, breadcrumb, pagination (agent A, 112 browser tests passed locally).
+- Part 2 palette: tokens/chart.mjs (series + ramp + CVD/ΔE checks), wired into tokens/palette.mjs (series-1..8, series-text-N, ramp-1..5, ramp-text-N in every colour file; chart checks in `--check`, `--chart` prints closest pairs); tokens/enarratio-theme.mjs (+ .d.mts) generated; css/enarratio.css maps --enarratio-* onto tokens (imported by css/tokens.css); tests test/unit/enarratio-theme.test.mjs; enarratio devDependency (git+https, pinned sha 1de8bee).
 - avatar (batch 1): css, behaviour, react, md, examples, spec. Passes locally (see "Local browser tests" below).
 
+## Agents in flight (each in its own worktree branch worktree-agent-*; I merge them)
+B drop-zone/bulk-bar/media; D draft-compare/authorship; E flag-list/publish-gate; F history-list/moderation-queue; G markdown-editor (adds CodeMirror deps: merge package.json/lock by hand, regenerate the enarratio lock entry: resolved must be git+https and no integrity).
+
 ## Decisions
+- Chart palette floors (documented): every series >= 3:1 on surface, ground, raised; every pair >= 8 CIEDE2000 under typical vision, protanopia, deuteranopia, tritanopia (Enarratio's checkTheme default is 10: the pairs between 8 and 10 are its warnings, ok stays true; reaching 10 for eight colours at matched weight is not possible without dull or near-status colours, I searched); companions >= 6 from every status colour. Series are family-independent (purple, fox, teal first); the ramp follows the family hue.
+- CI keeps `npm ci --ignore-scripts`: npm builds the git dependency's dist itself (verified in a scratch dir).
 - Branch is release/0.3 (the task's explicit instruction), not the session's default branch name.
 - Reference clones live outside the repo (scratchpad): dustinedwards-info, enarratio.
 

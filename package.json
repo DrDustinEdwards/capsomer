@@ -16,7 +16,10 @@
     "tokens/*.css",
     "tokens/tokens.json",
     "tokens/palette.mjs",
+    "tokens/chart.mjs",
     "tokens/scale.mjs",
+    "tokens/enarratio-theme.mjs",
+    "tokens/enarratio-theme.d.mts",
     "components/*/*.css",
     "components/*/*.md",
     "dist",
@@ -38,6 +41,11 @@
     "./family-teal.css": "./tokens/family-teal.css",
     "./tokens.json": "./tokens/tokens.json",
     "./palette": "./tokens/palette.mjs",
+    "./enarratio.css": "./css/enarratio.css",
+    "./enarratio-theme": {
+      "types": "./tokens/enarratio-theme.d.mts",
+      "default": "./tokens/enarratio-theme.mjs"
+    },
     "./*.css": "./components/*/*.css",
     "./behaviour/*": {
       "types": "./dist/components/*/*.d.ts",
@@ -98,6 +106,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "enarratio": "git+https://github.com/DrDustinEdwards/enarratio.git#1de8bee8b5028ee7c35bfe5503afbe2b3850f86e",
     "jscpd": "^5.3.2",
     "knip": "^6.38.0",
     "react": "^19.3.0",
