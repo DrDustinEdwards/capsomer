@@ -1,8 +1,11 @@
-// The command menu: a modal dialog holding a combobox and a grouped listbox
-// (aria-activedescendant). Typing filters, arrows move the active option, Enter runs it,
-// Esc closes. Ctrl K, Cmd K and "/" open it, through the shortcut registry. Every command
-// shows its shortcut. No framework; the React wrapper uses the same pure functions.
-import { isBackdropClick, rememberOpener, returnFocus, uid } from "../confirm-dialog/confirm-dialog.ts";
+// The command menu: the shared dialog (components/dialog) as a palette near the top, holding a
+// combobox input and the shared listbox (components/listbox) in its "input" mode: the input
+// keeps focus and names the active option (aria-activedescendant). Typing filters, arrows move
+// the active option, Enter runs it, Esc closes. Ctrl K, Cmd K and "/" open it, through the
+// shortcut registry. Every command shows its shortcut. No framework; the React wrapper uses
+// the same pure functions.
+import { closeDialog, openDialog, uid, wireDialog } from "../dialog/dialog.ts";
+import { createListbox, filterCommands as filterItems, groupBy, matchesQuery as matches, step as stepIndex, type Listbox } from "../listbox/listbox.ts";
 import { keysFragment, register } from "../shortcuts/shortcuts.ts";
 
 export interface Command {
@@ -32,61 +35,57 @@ export function stopCommand(o: { id: string; label: string; ask: keyof typeof ST
   return { id: o.id, label: o.label, group: STOP_GROUP, keywords: ["stop", "pause", ...(o.keywords ?? [])], hint: STOP_HINTS[o.ask], run: o.run };
 }
 
-// Case-insensitive substring over the group, the label and the keywords, so the name of a
-// group finds all of it. An empty query matches all.
-export function matchesQuery(c: { label: string; group?: string; keywords?: string[] }, query: string): boolean {
-  const needle = query.trim().toLowerCase();
-  if (!needle) return true;
-  return [c.group ?? "", c.label, ...(c.keywords ?? [])].some((t) => t.toLowerCase().includes(needle));
-}
-
-export function filterCommands<T extends { label: string; group?: string; keywords?: string[] }>(commands: T[], query: string): T[] {
-  return commands.filter((c) => matchesQuery(c, query));
-}
+// The listbox's own filtering, grouping and stepping, under the names this module has always
+// exported: a case-insensitive substring over the group, the label and the keywords (so the
+// name of a group finds all of it; an empty query matches all).
+export const matchesQuery = matches;
+export const filterCommands = filterItems;
+export const step = stepIndex;
 
 // Commands by group, in the order each group first appears.
 export function groupCommands<T extends { group: string }>(commands: T[]): Array<{ group: string; items: T[] }> {
-  const out: Array<{ group: string; items: T[] }> = [];
-  for (const c of commands) {
-    let g = out.find((x) => x.group === c.group);
-    if (!g) {
-      g = { group: c.group, items: [] };
-      out.push(g);
-    }
-    g.items.push(c);
-  }
-  return out;
+  return groupBy(commands, (c) => c.group);
 }
 
 export function emptyText(query: string): string {
   return `No commands match “${query.trim()}”`;
 }
 
-// Moves an index by one, stopping at the ends.
-export function step(index: number, by: 1 | -1, count: number): number {
-  if (count === 0) return -1;
-  if (index < 0) return by === 1 ? 0 : count - 1;
-  return Math.min(count - 1, Math.max(0, index + by));
-}
-
 export interface MenuOptions {
-  // The input's visible label.
+  // The input's accessible name (a visually hidden label).
   label?: string;
+  // Shown in the empty input; "Search commands" by default.
   placeholder?: string;
 }
+
+const SEARCH_ICON = "M7 2.5a4.5 4.5 0 1 0 2.7 8.1l3 3 1.1-1.1-3-3A4.5 4.5 0 0 0 7 2.5zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z";
 
 // Builds the dialog's markup, exactly the contract on the doc page.
 export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDialogElement {
   const id = uid("cap-cmd");
   const d = document.createElement("dialog");
-  d.className = "cap-cmd";
+  d.className = "cap-dialog cap-cmd";
   d.dataset.cap = "command-menu";
+  d.dataset.placement = "top";
+  d.dataset.size = "lg";
   d.setAttribute("aria-label", "Command menu");
 
   const search = document.createElement("div");
   search.className = "cap-cmd-search";
+  const ns = "http://www.w3.org/2000/svg";
+  const icon = document.createElementNS(ns, "svg");
+  icon.setAttribute("viewBox", "0 0 16 16");
+  icon.setAttribute("width", "16");
+  icon.setAttribute("height", "16");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  const path = document.createElementNS(ns, "path");
+  path.setAttribute("fill", "currentColor");
+  path.setAttribute("fill-rule", "evenodd");
+  path.setAttribute("d", SEARCH_ICON);
+  icon.append(path);
   const label = document.createElement("label");
-  label.className = "cap-cmd-label";
+  label.className = "cap-sr-only";
   label.htmlFor = `${id}-input`;
   label.textContent = opts.label ?? "Search commands";
   const input = document.createElement("input");
@@ -99,47 +98,48 @@ export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDial
   input.setAttribute("aria-expanded", "true");
   input.setAttribute("aria-controls", `${id}-list`);
   input.setAttribute("aria-autocomplete", "list");
-  if (opts.placeholder) input.placeholder = opts.placeholder;
-  search.append(label, input);
+  input.placeholder = opts.placeholder ?? "Search commands";
+  search.append(icon, label, input);
 
   const list = document.createElement("div");
-  list.className = "cap-cmd-list";
+  list.className = "cap-listbox cap-cmd-list";
   list.id = `${id}-list`;
+  list.dataset.controlled = "";
   list.setAttribute("role", "listbox");
   list.setAttribute("aria-label", "Commands");
   groupCommands(commands).forEach((g, gi) => {
     const group = document.createElement("div");
-    group.className = "cap-cmd-group";
+    group.className = "cap-listbox-group";
     group.setAttribute("role", "group");
     group.setAttribute("aria-labelledby", `${id}-g${gi}`);
     const title = document.createElement("div");
-    title.className = "cap-cmd-group-title";
+    title.className = "cap-listbox-label";
     title.id = `${id}-g${gi}`;
     title.setAttribute("role", "presentation");
     title.textContent = g.group;
     group.append(title);
     for (const c of g.items) {
       const o = document.createElement("div");
-      o.className = "cap-cmd-option";
+      o.className = "cap-option";
       o.id = `${id}-o-${c.id}`;
       o.setAttribute("role", "option");
-      o.setAttribute("aria-selected", "false");
       o.dataset.capCommand = c.id;
-      o.dataset.capGroup = c.group;
-      if (c.keywords?.length) o.dataset.capKeywords = c.keywords.join(",");
+      o.dataset.value = c.id;
+      o.dataset.group = c.group;
+      if (c.keywords?.length) o.dataset.keywords = c.keywords.join(",");
       const text = document.createElement("span");
-      text.className = "cap-cmd-option-label";
+      text.className = "cap-option-label";
       text.textContent = c.label;
       o.append(text);
       if (c.shortcut || c.hint) {
         const keys = document.createElement("span");
-        keys.className = "cap-cmd-keys";
+        keys.className = "cap-option-keys";
         if (c.hint) {
           const sr = document.createElement("span");
           sr.className = "cap-sr-only";
           sr.textContent = ", ";
           const hint = document.createElement("span");
-          hint.className = "cap-cmd-hint";
+          hint.className = "cap-option-hint";
           hint.textContent = c.hint;
           keys.append(sr, hint);
         }
@@ -157,7 +157,7 @@ export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDial
   });
 
   const empty = document.createElement("p");
-  empty.className = "cap-cmd-empty";
+  empty.className = "cap-listbox-empty";
   empty.setAttribute("role", "status");
   empty.dataset.capPart = "empty";
 
@@ -189,103 +189,74 @@ export interface Attached {
   detach: () => void;
 }
 
-// Wires one menu dialog: filtering, the active option, Enter, a click on an option or the
-// backdrop, and focus returned on close. `run` is called with the chosen option after the
-// dialog has closed.
+// Wires one menu dialog: the shared dialog's rules (Esc, the backdrop, focus handed back), the
+// shared listbox over the commands (filtering, the active option, Enter, a click), and Ctrl K to
+// close. `run` is called with the chosen option after the dialog has closed.
 export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => void): Attached {
-  dialog.dataset.capReady = "";
+  const unwireBase = wireDialog(dialog);
   const input = dialog.querySelector<HTMLInputElement>("[role='combobox']");
-  const listbox = dialog.querySelector<HTMLElement>("[role='listbox']");
+  const list = dialog.querySelector<HTMLElement>("[role='listbox']");
   const empty = dialog.querySelector<HTMLElement>("[data-cap-part='empty']");
-  const options = () => (listbox ? [...listbox.querySelectorAll<HTMLElement>("[role='option']")] : []);
-  const shown = () => options().filter((o) => !o.hidden);
-  const labelOf = (o: HTMLElement) => o.querySelector(".cap-cmd-option-label")?.textContent ?? o.textContent ?? "";
-  // The group an option sits in: named on it, or by the heading of the group around it.
-  const groupOf = (o: HTMLElement) => o.dataset.capGroup ?? o.closest("[role='group']")?.querySelector(".cap-cmd-group-title")?.textContent ?? "";
+  if (!input || !list) return { open() {}, close() {}, setActive() {}, detach: unwireBase };
+  list.dataset.controlled = "";
+  // A menu written for 0.1 named keywords, group and the active option another way.
+  for (const o of list.querySelectorAll<HTMLElement>("[role='option']")) {
+    if (o.dataset.capKeywords && !o.dataset.keywords) o.dataset.keywords = o.dataset.capKeywords;
+    if (o.dataset.capGroup && !o.dataset.group) o.dataset.group = o.dataset.capGroup;
+    if (o.getAttribute("aria-selected") === "true") {
+      o.removeAttribute("aria-selected");
+      o.dataset.active = "";
+    } else if (o.getAttribute("aria-selected") === "false") o.removeAttribute("aria-selected");
+  }
 
-  const activeIndex = () => shown().findIndex((o) => o.getAttribute("aria-selected") === "true");
-  const setActive = (index: number, scroll = true) => {
-    const list = shown();
-    const target = list[index] ?? null;
-    for (const o of options()) o.setAttribute("aria-selected", String(o === target));
-    if (target) {
-      input?.setAttribute("aria-activedescendant", target.id);
-      if (scroll) target.scrollIntoView({ block: "nearest" });
-    } else input?.removeAttribute("aria-activedescendant");
-  };
+  const lb: Listbox = createListbox(list, {
+    input,
+    empty,
+    homeEnd: true,
+    filterInput: true,
+    onFilter(count, query) {
+      input.setAttribute("aria-expanded", String(count > 0));
+      if (empty) empty.textContent = count === 0 && query.trim() ? emptyText(query) : "";
+    },
+  });
+  list.dataset.capReady = "";
 
-  const filter = () => {
-    const q = input?.value ?? "";
-    for (const o of options()) o.hidden = !matchesQuery({ label: labelOf(o), group: groupOf(o), keywords: (o.dataset.capKeywords ?? "").split(",").filter(Boolean) }, q);
-    for (const g of listbox?.querySelectorAll<HTMLElement>("[role='group']") ?? []) g.hidden = !g.querySelector("[role='option']:not([hidden])");
-    const any = shown().length > 0;
-    input?.setAttribute("aria-expanded", String(any));
-    if (listbox) listbox.hidden = !any;
-    if (empty) empty.textContent = any ? "" : emptyText(q);
-    setActive(any ? 0 : -1, false);
-  };
-
-  const choose = (o: HTMLElement | undefined) => {
+  const choose = (o: HTMLElement | null | undefined) => {
     if (!o) return;
     dialog.close();
     run(o);
   };
-
+  const onSelect = (e: Event) => choose((e as CustomEvent<{ option: HTMLElement }>).detail.option);
   const onKey = (e: KeyboardEvent) => {
-    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-      e.preventDefault();
-      setActive(step(activeIndex(), e.key === "ArrowDown" ? 1 : -1, shown().length));
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      choose(shown()[activeIndex()]);
-    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-      // The key that opened it closes it.
+    // The key that opened it closes it.
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
       e.preventDefault();
       dialog.close();
     }
   };
-  const optionAt = (e: Event) => (e.target as Element).closest<HTMLElement>("[role='option']");
-  const onMove = (e: PointerEvent) => {
-    const o = optionAt(e);
-    if (o && o.getAttribute("aria-selected") !== "true") setActive(shown().indexOf(o), false);
-  };
-  const onClick = (e: MouseEvent) => {
-    const o = optionAt(e);
-    if (o) return choose(o);
-    if (isBackdropClick(dialog, e)) dialog.close();
-  };
-  const onClose = () => returnFocus(dialog);
-
-  input?.addEventListener("input", filter);
-  input?.addEventListener("keydown", onKey);
-  listbox?.addEventListener("pointermove", onMove);
-  dialog.addEventListener("click", onClick);
-  dialog.addEventListener("close", onClose);
+  list.addEventListener("cap:option-select", onSelect);
+  input.addEventListener("keydown", onKey);
   // A menu written with a query or an active option in its markup keeps them.
-  const preset = activeIndex();
-  filter();
-  if (preset > 0) setActive(preset, false);
+  const preset = lb.active();
+  lb.filter(input.value);
+  if (preset && !preset.hidden) lb.setActive(preset, { scroll: false });
 
   return {
     open(query = "", opener: Element | null = document.activeElement) {
       if (dialog.open) return;
-      rememberOpener(dialog, opener);
-      if (input) input.value = query;
-      filter();
-      dialog.showModal();
-      input?.focus();
+      input.value = query;
+      lb.filter(query);
+      openDialog(dialog, opener, { focus: input });
     },
     close() {
-      if (dialog.open) dialog.close();
+      closeDialog(dialog);
     },
-    setActive: (i) => setActive(i),
+    setActive: (i) => lb.setActive(i),
     detach() {
-      input?.removeEventListener("input", filter);
-      input?.removeEventListener("keydown", onKey);
-      listbox?.removeEventListener("pointermove", onMove);
-      dialog.removeEventListener("click", onClick);
-      dialog.removeEventListener("close", onClose);
-      delete dialog.dataset.capReady;
+      list.removeEventListener("cap:option-select", onSelect);
+      input.removeEventListener("keydown", onKey);
+      lb.detach();
+      unwireBase();
     },
   };
 }
