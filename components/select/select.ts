@@ -244,7 +244,7 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
   // Open: the popup is as wide as the trigger at least, the chosen option is current and in view.
   const onBefore = (e: Event) => {
     if ((e as ToggleEvent).newState !== "open") return;
-    popup.style.setProperty("--cap-select-min", `${trigger.offsetWidth}px`);
+    popup.style.setProperty("--cap-select-min", `${Math.ceil(trigger.getBoundingClientRect().width)}px`);
   };
   const onToggle = (e: Event) => {
     if ((e as ToggleEvent).newState !== "open") return;

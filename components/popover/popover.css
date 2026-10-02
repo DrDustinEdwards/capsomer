@@ -18,6 +18,9 @@
   .cap-popover:where(:not([popover]), :popover-open) {
     display: flex;
   }
+  .cap-popover[data-variant="tooltip"]:where(:not([popover]), :popover-open) {
+    display: inline-flex;
+  }
   .cap-popover {
     --_side: bottom;
     --_tx: 0px;
@@ -152,7 +155,6 @@
   /* The tooltip form: shadcn's small inverted surface. No ring, no padding of a card. */
   .cap-popover[data-variant="tooltip"] {
     --_line: transparent;
-    display: inline-flex;
     flex-direction: row;
     align-items: center;
     gap: var(--space-3);

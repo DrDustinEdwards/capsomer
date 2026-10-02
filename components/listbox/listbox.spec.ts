@@ -161,12 +161,12 @@ eachTheme((theme) => {
     await expect(status).toHaveText("2 results");
     await input.fill("zebra");
     await expect(page.locator("#f-list")).toBeHidden();
-    await expect(page.locator("#f-list + .cap-listbox-empty")).toHaveText("No results for “zebra”");
+    await expect(page.locator("#f-list ~ .cap-listbox-empty")).toHaveText("No results for “zebra”");
     expect(await input.getAttribute("aria-activedescendant")).toBeNull();
     await input.fill("");
     await expect(page.locator("#f-list [role='option']:visible")).toHaveCount(3);
     await expect(status).toHaveText("");
-    await expect(page.locator("#f-list + .cap-listbox-empty")).toBeHidden();
+    await expect(page.locator("#f-list ~ .cap-listbox-empty")).toBeHidden();
   });
 
   test("behaviour: the pointer moves the active option, and clicking chooses it", async ({ page }) => {

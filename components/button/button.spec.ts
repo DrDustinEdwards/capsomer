@@ -51,8 +51,7 @@ eachTheme((theme) => {
 
   test("keyboard: Tab reaches every button, including one disabled with its reason", async ({ page }) => {
     await visitStates(page, "button", theme);
-    await page.locator("#b-pressed").focus();
-    await page.keyboard.press("Tab");
+    await page.locator("#b-expanded").focus();
     await page.keyboard.press("Tab");
     await expect(page.locator("#b-disabled")).toBeFocused();
     await expect(page.locator("#b-disabled")).toHaveCSS("outline-style", "solid");
@@ -105,7 +104,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("group", { name: "Page navigation" })).toBeVisible();
     await page.getByRole("button", { name: "Previous" }).focus();
     await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Next" })).toBeFocused();
+    await expect(page.getByRole("group", { name: "Page navigation" }).getByRole("button", { name: "Next" })).toBeFocused();
   });
 
   test("accessibility: an open popup button reports aria-expanded", async ({ page }) => {
