@@ -130,7 +130,7 @@ Sidebar (Base UI flavour, nova): the menu button (one control tall, a 16 px icon
 - **The More sheet slides up from the bottom** (a phone's thumb), where Sidebar's mobile sheet is a left side sheet; and it has the dialog's corner Close button instead of a footer Close.
 - **The top bar and the rail are on the ground tone** (Sidebar's `bg-sidebar` has no counterpart), and the top bar is 44 px.
 
-Needs from shared code: `--top-h` in tokens/scale.css is 56 px and the shell sets 44 px itself until it is changed there.
+`--top-h` in tokens/scale.css is 44 px (the Portal's top bar), and the shell reads it.
 
 ## Exceptions in production
 
