@@ -2,37 +2,20 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A menu of actions behind a button, built on Base UI's Menu (decision 7). Base UI gives the
-   roles, focus, arrow keys and typeahead; this file gives the look. The trigger reproduces
-   .cap-btn's values from the tokens (it does not import the button's CSS). The popup is
-   portalled, so its parts are styled on their own. */
+   roles, focus, arrow keys, typeahead, checkbox and radio items and submenus; this file gives
+   the look. The popup wears the shared blocks: `.cap-popover` (the surface, ring, shadow and
+   the fade and zoom motion, components/popover) and the listbox's option look
+   (`.cap-option`, `.cap-listbox-label`, `.cap-listbox-separator`, `.cap-option-indicator`,
+   `.cap-option-keys`, components/listbox): the highlighted item has the tint and the 3 px
+   accent edge, a destructive item is --crit, a chosen item has a check at its end.
+   Reference: shadcn/ui Dropdown Menu (nova): items, checkbox and radio items, a submenu with
+   its chevron, group labels, separators, shortcuts at the end, a destructive variant. The
+   popup is portalled, so its parts are styled on their own. */
 @layer cap.components {
+  /* The trigger is a .cap-btn with a chevron; only what a menu adds is here. */
   .cap-menu-trigger {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: var(--control-h);
-    padding: 0 var(--space-4);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-m);
-    background: var(--raised);
-    color: var(--text);
-    font-size: var(--fs-body);
-    font-weight: 500;
-    white-space: nowrap;
-
-    &:hover:not([data-disabled]),
-    &[data-force="hover"] {
-      border-color: var(--muted);
-    }
-    &:active:not([data-disabled]),
-    &[data-pressed],
     &[data-popup-open] {
       background: var(--sunken);
-    }
-    &[data-disabled] {
-      color: var(--muted);
-      border-color: var(--line);
-      cursor: not-allowed;
     }
     & svg {
       flex: none;
@@ -53,92 +36,87 @@
     outline: 0;
   }
 
-  .cap-menu {
+  /* The popup: the popover surface with the listbox's padding, kept to the room Base UI
+     measures. */
+  .cap-popover.cap-menu {
     box-sizing: border-box;
-    min-width: max(var(--anchor-width), 12rem);
-    max-width: var(--available-width);
-    max-height: var(--available-height);
-    overflow-y: auto;
+    gap: 0;
+    min-inline-size: max(var(--anchor-width, 0px), 12rem);
+    max-inline-size: var(--available-width);
+    max-block-size: var(--available-height);
     padding: var(--space-2);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-m);
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: var(--shadow);
+    overflow-y: auto;
+    overscroll-behavior: contain;
     outline: 0;
-    transform-origin: var(--transform-origin);
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-menu {
-      transition:
-        opacity var(--dur-fast) var(--ease-out),
-        transform var(--dur-fast) var(--ease-out);
 
-      &[data-starting-style],
-      &[data-ending-style] {
-        opacity: 0;
-        transform: translateY(calc(var(--space-2) * -1));
-      }
-      &[data-instant] {
-        transition: none;
-      }
+    /* A submenu is as wide as its content. */
+    &[data-submenu] {
+      min-inline-size: 8rem;
+    }
+    &[data-instant] {
+      transition: none;
     }
   }
 
-  .cap-menu-item {
+  /* An item: the listbox option's look, in a grid so a disabled item's reason sits under its
+     label and the shortcut at its end. */
+  .cap-option.cap-menu-item {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
     column-gap: var(--space-5);
-    min-height: var(--target);
-    padding: calc(var(--space-2) + var(--space-1)) var(--space-3);
-    border-radius: var(--radius-s);
-    color: var(--text);
-    cursor: default;
-    outline: 0;
-    user-select: none;
+    align-items: center;
 
-    /* The highlighted item: --accent-soft with --text. Focus is on the item itself. */
-    &[data-highlighted] {
+    & > .cap-option-label {
+      grid-column: 1;
+    }
+    & > .cap-option-keys {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    & > .cap-menu-chevron {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    /* An item with an icon: the icon, the label, the shortcut. */
+    &:has(> .cap-option-icon) {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+
+      & > .cap-option-icon {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      & > .cap-option-label {
+        grid-column: 2;
+      }
+      & > .cap-option-keys,
+      & > .cap-menu-chevron {
+        grid-column: 3;
+      }
+      & > .cap-menu-reason {
+        grid-column: 2 / -1;
+      }
+    }
+
+    /* A submenu's trigger while its submenu is open keeps the current look. */
+    &[data-popup-open] {
       background: var(--accent-soft);
-      color: var(--text);
-    }
-
-    /* Danger items: at the end, after a separator, in --crit; highlighted on --crit-soft. */
-    &[data-tone="crit"] {
-      color: var(--crit);
-      font-weight: 600;
-
-      &[data-highlighted] {
-        background: var(--crit-soft);
-        color: var(--crit);
-      }
-    }
-
-    /* A disabled item stays reachable so its reason can be read. */
-    &[data-disabled] {
-      color: var(--dim);
-
-      &[data-highlighted] {
-        background: var(--raised);
-        color: var(--dim);
-      }
+      box-shadow: inset 3px 0 0 var(--accent);
     }
   }
 
-  .cap-menu-label {
-    grid-column: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  /* The submenu's chevron, at the end. */
+  .cap-menu-chevron {
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+
+    &:dir(rtl) {
+      transform: scaleX(-1);
+    }
   }
 
-  .cap-menu-kbd {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
+  /* Why an item is off, under it. Read as its description (the element is aria-hidden and
+     named by aria-describedby), so it is not part of the item's name. */
   .cap-menu-reason {
     grid-column: 1 / -1;
     color: var(--muted);
@@ -146,24 +124,10 @@
     font-weight: 400;
   }
 
-  .cap-menu-separator {
-    height: 1px;
-    margin: var(--space-2) calc(var(--space-2) * -1);
-    background: var(--line);
-  }
-
-  /* Forced colours remove the tints: the highlighted item gets an outline, the popup keeps
-     its border, the separator becomes a rule. */
   @media (forced-colors: active) {
-    .cap-menu-item[data-highlighted] {
+    .cap-menu-item[data-popup-open] {
       outline: 2px solid Highlight;
       outline-offset: -2px;
-    }
-    .cap-menu {
-      border-color: CanvasText;
-    }
-    .cap-menu-separator {
-      background: CanvasText;
     }
   }
 }
