@@ -48,7 +48,7 @@ Rebuild every in-scope component to the craft of its shadcn/ui counterpart (Base
 
 ## Status
 - [x] Phase 0, Phase 1 (tokens, dialog, listbox, popover, meter, states template) committed.
-- [ ] Phase 2 batches: B1 controls (button, field, switch, switch-reason, segmented, chips, select); B2 feedback (status/badge, message, banner, empty/skeleton/spinner, time); B3 overlays (confirm-dialog, detail-panel, command-menu, shortcuts, tooltip, combobox, menu); B4 data (row-list, table, disclosure, anchor-bar, panel); B5 shell + theme-switch; B6 console (attention-list, stat-tile, session-row, approval-sheet, permission-matrix, feed, uptime-strip).
+- [x] Phase 2 batches B1-B6 all written and committed (CI round 2 pending):  B1 controls (button, field, switch, switch-reason, segmented, chips, select); B2 feedback (status/badge, message, banner, empty/skeleton/spinner, time); B3 overlays (confirm-dialog, detail-panel, command-menu, shortcuts, tooltip, combobox, menu); B4 data (row-list, table, disclosure, anchor-bar, panel); B5 shell + theme-switch; B6 console (attention-list, stat-tile, session-row, approval-sheet, permission-matrix, feed, uptime-strip).
 - [ ] Final: CHANGELOG 0.2.0 from .release-notes, version 0.2.0, remove PROGRESS.md and .release-notes, CI green, merge, verify deploy.
 
 ## Decisions and why
