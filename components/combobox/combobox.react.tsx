@@ -297,7 +297,7 @@ export function ComboboxMultiple(props: ComboboxMultipleProps) {
             {(value: ComboboxOption[]) => (
               <Fragment>
                 {value.map((item) => (
-                  <Base.Chip key={item.value} className="cap-combobox-chip" aria-label={item.label}>
+                  <Base.Chip key={item.value} className="cap-combobox-chip">
                     {item.label}
                     <Base.ChipRemove className="cap-combobox-chip-remove" aria-label={`Remove ${item.label}`}>
                       <Cross size={12} />
