@@ -1,2 +1,0 @@
-- Markup, class names and React props are unchanged.
-- The tile radius is now `--radius-l` (was `--radius-m`) and its padding and inner gap come from `--pad-y`, `--pad-x` and `--space-1`; an app that overrode them should re-check. Focus now draws the shared ring at the tile (it did before through the global rule; `data-force="focus"` is a specimen hook only).

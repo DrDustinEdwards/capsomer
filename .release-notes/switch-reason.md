@@ -1,1 +1,0 @@
-- none (the markup is unchanged). It inherits the rebuilt switch, field and button: focus rings are 3 px outlines; the Apply and Cancel buttons use the new button hover and pressed fills.

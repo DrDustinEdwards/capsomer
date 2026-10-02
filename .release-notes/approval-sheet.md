@@ -1,5 +1,0 @@
-- The sheet is now the shared dialog. Change the dialog to `class="cap-dialog cap-approval"` with `data-size="lg" data-cap-modal-lock data-cap-destructive` (keep `data-cap="approval-sheet"`).
-- Renamed parts: `cap-approval-head` is `cap-dialog-header`, `cap-approval-title` is `cap-dialog-title`, `cap-approval-lead` is `cap-dialog-description` (give it an id and `aria-describedby` on the dialog), `cap-approval-foot` is `cap-dialog-footer` with `data-align="between"`. The gates container is now `class="cap-dialog-body cap-approval-gates" data-flush` and no longer carries `tabindex="0"` (the dialog adds it only while the body scrolls).
-- Gate, job, meta, command, error and none classes are unchanged. `cap-approval`'s own width, border, shadow and radius are gone (the dialog supplies them).
-- A pending sheet should carry `aria-busy="true"` on the dialog; `setPending()` sets it. Behaviour exports are unchanged (`enhance`, `open`, `close`, `setPending`, `setError`, `selection`, `update`).
-- React: props unchanged; it now renders the shared `Dialog` (`data-cap="dialog"`, not `approval-sheet`).

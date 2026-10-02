@@ -1,6 +1,0 @@
-# Shortcuts (the sheet is the shared dialog; the key cap is shadcn's)
-
-- Markup: the sheet is `class="cap-dialog cap-keys" data-placement="center" data-size="md"`. `.cap-keys-head` and `.cap-keys-title` become `<div class="cap-dialog-header" data-divider>` with `<h2 class="cap-dialog-title">`; the body is `class="cap-dialog-body cap-keys-body"`; the switch and its note sit in `<div class="cap-dialog-footer" data-align="start"><div class="cap-keys-foot">...</div></div>`. The text Close button in the header becomes the shared corner icon button at the end of the dialog (`class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"`).
-- `.cap-keys-group`, `-group-title`, `-list`, `-about` and `-note` are unchanged. The registry API (`register`, `list`, `grouped`, `setSingleKeys`, `singleKeysOn`, `keyCaps`, `keysFragment`, `openShortcutSheet`, `enhance`, `useShortcut`, `ShortcutSheet`) is unchanged.
-- Key caps: every `<kbd>` is now a small rounded cap on `--sunken` in the interface face, with no outline (it was mono with a `--line-strong` outline). New: `.cap-kbd` and `.cap-kbd-group` for a cap outside a `<kbd>`.
-- Load `dialog.css`. React: `ShortcutSheet` renders the shared `Dialog`.

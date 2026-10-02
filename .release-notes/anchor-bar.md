@@ -1,2 +1,0 @@
-- The current link is now accent text (`--accent-text`) with a 2 px `--accent` bar (`::after`) instead of `--text` with an underline. Apps that styled `.cap-anchors-list a[aria-current]`'s `text-decoration` should style the bar instead.
-- Links are rounded and padded with `--pad-x`; the bar's vertical padding is `--space-3`.

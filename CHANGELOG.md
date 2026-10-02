@@ -2,7 +2,7 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## 0.2.0 (unreleased)
+## 0.2.0 (2026-10-02)
 
 Every in-scope component is rebuilt to the craft of shadcn/ui's Base UI flavour: its sizes, padding, radii, edges, rings, shadows, every state and its open and close motion. The reference is pinned: shadcn-ui/ui `main` at d75a96ab787f (2026-10-01, `shadcn` 4.21.1), the nova style, with comfortable density taken from vega. Nothing is copied: no shadcn code, no Tailwind, no CSS-in-JS. Each component is plain CSS in `cap.components`, tokens only, state from the platform, with the behaviour and the React wrapper rendering the same HTML contract. Where an accessibility rule needs more than shadcn gives (an opaque focus ring, a dashed disabled edge instead of half opacity, a word beside every status), the component's doc page says so under "Deliberately different". Class names, markup and React props stay as they were wherever that cost no quality; every exception is listed under Breaking changes.
 

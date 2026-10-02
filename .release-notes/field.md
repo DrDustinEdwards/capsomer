@@ -1,7 +1,0 @@
-- Checkbox and radio inside `.cap-check` are now drawn by CSS (`appearance: none`), not the browser: any app styling `.cap-check input` with `accent-color` or a size should remove that. A mixed checkbox is `input.indeterminate = true`.
-- Focus ring on fields is a 3 px outline (was a border colour change only).
-- The invalid look adds a soft ring; the field's `.cap-field` gets `data-invalid="true"` (set by `showError`/`clearError`), which turns its label red.
-- New: `.cap-input-group` / `.cap-input-addon` / `.cap-input-group-text`, `.cap-label`, `.cap-field-group`, `.cap-field-content`, `.cap-field-title`, `.cap-field-description`, `.cap-field-separator`, `.cap-field[data-orientation]`, `.cap-check[data-variant="card"]`, file input styling. React: `Field` gains `orientation`; new `Check`, `InputGroup`, `InputGroupAddon`.
-- Textarea `.cap-input` grows with its text (field-sizing) and its minimum is 2 controls tall (was 2.5).
-- `.cap-input` on a `<select>` is replaced by `.cap-select` (see select).
-- `enhance()` also attaches to every `.cap-input-group` (click on the addon focuses the field).

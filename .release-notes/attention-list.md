@@ -1,3 +1,0 @@
-- Markup and class names are unchanged.
-- The frame's radius is now `--radius-xl` and the header has a rule under it; the header, rows, links and all-clear share one inline pad, `--cap-attention-pad` (`--pad-card`), instead of 16 px. An app that overrode `.cap-attention-head` padding should set `--cap-attention-pad` instead.
-- Added a hover tint on the closed notices row.

@@ -1,3 +1,0 @@
-- Rows are now rounded (`--radius-l`) with a transparent 1 px border and padding from density tokens (`--pad-y`, `--pad-card`, `--row-h`): a list that relied on square edge-to-edge rows looks slightly roomier. Compact density keeps the same padding.
-- The focused row's ring is `--ring` (was `--accent-line`).
-- New, optional: `data-variant="outline|muted"` and `data-size="sm|xs"` on `.cap-row`, `data-gap` on `.cap-rows`, `.cap-row-media`. React: `RowList gap`, `Row variant/size/media/mediaVariant`.
