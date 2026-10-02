@@ -242,10 +242,14 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
   trigger.setAttribute("aria-haspopup", "listbox");
 
   // Open: the popup is as wide as the trigger at least, the chosen option is current and in view.
+  const fit = () => popup.style.setProperty("--cap-select-min", `${Math.ceil(trigger.getBoundingClientRect().width)}px`);
   const onBefore = (e: Event) => {
-    if ((e as ToggleEvent).newState !== "open") return;
-    popup.style.setProperty("--cap-select-min", `${Math.ceil(trigger.getBoundingClientRect().width)}px`);
+    if ((e as ToggleEvent).newState === "open") fit();
   };
+  const onResize = () => {
+    if (popup.matches(":popover-open")) fit();
+  };
+  window.addEventListener("resize", onResize);
   const onToggle = (e: Event) => {
     if ((e as ToggleEvent).newState !== "open") return;
     const selected = list.querySelector<HTMLElement>("[role='option'][aria-selected='true']:not([aria-disabled='true'])");
@@ -304,6 +308,7 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
       lb?.detach();
       detachPopover();
       list.removeEventListener("cap:option-select", onSelect);
+      window.removeEventListener("resize", onResize);
       popup.removeEventListener("beforetoggle", onBefore);
       popup.removeEventListener("toggle", onToggle);
       trigger.removeEventListener("keydown", onKey);

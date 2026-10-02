@@ -111,7 +111,7 @@ eachTheme((theme) => {
     await page.locator("#site-name").focus();
     await page.keyboard.press("Enter");
     await expect(page.locator("#add-result")).toHaveText("Added Foxhound. Its checks start on the next pass.");
-    await expect(page.locator("#add-site .cap-field-error:visible")).toHaveCount(1);
+    await expect(page.locator("#add-site .cap-field-error:visible")).toHaveCount(0);
   });
 
   test("behaviour: a message goes as soon as the field is fixed", async ({ page }) => {
