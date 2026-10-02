@@ -1,0 +1,87 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The bulk action bar: the count of what is selected, what can be done to it, and Clear. It
+   is a region of the page that sticks to the bottom of its scroll container (or the top, with
+   data-position="top") while there is a selection, and is hidden when there is none. It wears
+   the popover surface, as shadcn's floating bars do (Sonner, the data table's selection bar):
+   raised, rounded, a hairline edge, a shadow. Extracted from the site admin's .posts-bulk. */
+@layer cap.components {
+  .cap-bulk {
+    position: sticky;
+    inset-block-end: var(--space-4);
+    z-index: var(--z-sticky);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    box-sizing: border-box;
+    min-inline-size: 0;
+    padding: var(--space-3) var(--pad-x);
+    /* --dim, not --line-strong: the bar floats over the page ground and its boundary needs 3:1. */
+    border: 1px solid var(--dim);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+    color: var(--text);
+    box-shadow: var(--shadow-m);
+    font-size: var(--fs-body);
+
+    &[data-position="top"] {
+      inset-block: var(--space-3) auto;
+    }
+    /* hidden is the contract: with nothing selected there is no bar. */
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  /* "3 selected": the live status. The number is the first thing read, the size or any other
+     detail follows it in muted text. */
+  .cap-bulk-count {
+    margin: 0;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .cap-bulk-detail {
+    margin-inline-start: var(--space-3);
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .cap-bulk-actions {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    min-inline-size: 0;
+  }
+
+  /* A value beside an action, such as the tag to add: a compact labelled field. */
+  .cap-bulk-field {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    & > label {
+      color: var(--muted);
+      font-size: var(--fs-detail);
+      font-weight: 600;
+    }
+    & > .cap-input {
+      inline-size: 9rem;
+    }
+  }
+
+  /* Clear sits at the end, apart from the actions. */
+  .cap-bulk-clear {
+    margin-inline-start: auto;
+  }
+
+  @media (forced-colors: active) {
+    .cap-bulk {
+      border-color: CanvasText;
+    }
+  }
+}
