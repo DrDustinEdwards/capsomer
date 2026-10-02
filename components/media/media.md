@@ -4,7 +4,7 @@ title: Media library
 summary: A grid of file tiles with roving focus, and an inspector, a pane or a side sheet, that saves alt text, caption and tags by itself.
 parts: [css, behaviour, react]
 tool: native + own JavaScript (the shared dialog, meter, chips, bulk bar, drop zone and message region)
-states: [alt text written, selected, no alt text, decorative, unattached, document, uploading, failed with Retry, in the bin with Restore, inspector as a pane, inspector as a sheet, saving, saved, could not save with Retry, not used anywhere, empty library, nothing matches, empty bin]
+states: [alt text written, selected, list layout and sort, no alt text, decorative, unattached, document, uploading, failed with Retry, in the bin with Restore, inspector as a pane, inspector as a sheet, saving, saved, could not save with Retry, not used anywhere, empty library, nothing matches, empty bin]
 added: 0.3.0
 source: dustinedwards.info, app/components/admin/media-grid.tsx, media-tile.tsx, media-inspector.tsx, media-inspector-sections.tsx, media-drawer.tsx, media-keyboard.tsx, media-facets.tsx, media-trash-controls.tsx, media-empty-state.tsx, copy-button.tsx, use-media-search.ts, lib/media/tile-nav.mjs, lib/media/usage.mjs, app/styles/admin-media*.css; shadcn/ui Card, Checkbox, Badge, Sheet, Input, Textarea (Base UI flavour, nova style, commit d75a96ab787f)
 replaces:
@@ -39,6 +39,10 @@ Anywhere a person browses files they own and edits what describes them: a site's
 - **Focus.** Enter on a tile opens the inspector and puts focus in the alt text (or the first field). With the inspector open, the arrow keys move between tiles with focus staying in the grid and the inspector following; Alt and an arrow does the same from inside a field, so a person can describe a run of images without leaving the field. Esc in a field goes back to the tile; a sheet closes on Esc and returns focus to its tile.
 - **Used in is real links.** When a file is used nowhere the pane says "Not used anywhere." and why that is not proof, and a button turns the Unattached filter on.
 - **A reversible action runs at once and offers Undo.** Move to the bin (from the inspector or the bulk bar) and Restore run at once and say so in the message region with Undo (`z`). Only a permanent delete (Delete for good, in the bulk bar) previews first, in the shared confirm dialog, with every file listed.
+- **Search, filters, view, sort, layout and size are composed from the family's parts**, not drawn here: the field for search, the chips for Unattached, No alt text and Over 1 MB (a pressed chip narrows the grid; several chips all apply), segmented controls for Library or Bin, Newest, A to Z or Largest, Grid or List, and tile size. The count is a live region ("3 of 24 files"). A file that a filter or the bin hides is never selected, so a bulk action cannot reach what the person cannot see. When nothing is shown, the page says why (nothing matches, nothing in this view, nothing here yet, the bin is empty) and offers the way out.
+- **Sort orders each group, and keeps uploads first.** An upload in progress or a failed one stays at the head of its group while it is news. Sorting moves nodes and puts focus back where it was.
+- **The list layout is the same markup** (`data-view="list"`): a small picture, the name and the type and size on a line, the flags at the end, the checkbox first. The arrow keys follow the rendered rows.
+- **A file dropped anywhere becomes an uploading tile.** The drop zone in its page mode sits above the toolbar; `cap-drop-accepted` is the app's cue to start the uploads and to call `media.add`.
 - **Uploading is the shared meter, drawn as a progress bar** (`role="progressbar"`, the meter's look: the fill's position is the same custom property). A failed upload says why on the tile and offers Retry.
 - **Copy says what it did.** The button writes "Copied the address." into a live region; if the clipboard refuses, it says so and leaves the address selected.
 
@@ -122,7 +126,9 @@ The library: a container, a layout, the main column and the inspector.
         <div class="cap-chips" data-cap="chips" data-cap-part="filters" role="group" aria-labelledby="f-l">…
           <button class="cap-chip" aria-pressed="false" data-value="unattached">Unattached <span class="cap-chip-count">3</span></button> <!-- unattached, no-alt, large --></div>
         <fieldset class="cap-seg" data-cap-part="view">…radios "library" and "bin", with <span data-cap-count="library"> and "bin"…</fieldset>
-        <fieldset class="cap-seg" data-cap-part="size">…radios s, m, l…</fieldset>
+        <fieldset class="cap-seg" data-cap-part="sort">…radios "added" (Newest), "name" (A to Z), "size" (Largest)…</fieldset>
+        <fieldset class="cap-seg" data-cap-part="layout">…radios "grid" and "list" (sets data-view on the container)…</fieldset>
+        <fieldset class="cap-seg" data-cap-part="size">…radios s, m, l (sets data-size on the container)…</fieldset>
       </div>
       <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="tiles" role="region" aria-label="Bulk actions" hidden>…</div>
       <p class="cap-media-count" role="status">24 files</p>
