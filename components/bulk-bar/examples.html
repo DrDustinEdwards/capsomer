@@ -1,0 +1,184 @@
+<link rel="stylesheet" href="./specimen/bulk.css" />
+
+<section class="cap-specimen" aria-labelledby="s-selected">
+  <h2 id="s-selected">Three selected, in the HTML</h2>
+  <div class="cap-bulk" data-cap="bulk-bar" role="region" aria-label="Bulk actions" id="bulk-static">
+    <p class="cap-bulk-count" role="status">3 selected <span class="cap-bulk-detail">2.4 MB</span></p>
+    <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="select-all">Select all 24 in view</button>
+    <div class="cap-bulk-actions">
+      <button type="button" class="cap-btn" data-cap-bulk-action="archive">Archive</button>
+      <span class="cap-bulk-field"><label for="bulk-static-tag">Tag</label><input class="cap-input" id="bulk-static-tag" list="bulk-static-tags" autocomplete="off" placeholder="tag name" /></span>
+      <datalist id="bulk-static-tags"><option value="release"></option><option value="field notes"></option></datalist>
+      <button type="button" class="cap-btn" data-cap-bulk-action="add-tag">Add tag</button>
+      <button type="button" class="cap-btn" data-variant="danger" data-cap-bulk-action="bin" data-destructive>Bin</button>
+    </div>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-none">
+  <h2 id="s-none">Nothing selected: the bar is hidden</h2>
+  <p>The bar below is in the HTML with the <code>hidden</code> attribute, so it takes no room and is not read. It appears when the first item is chosen.</p>
+  <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="none-list" /> Select all drafts</label></div>
+  <ul class="bulk-list" id="none-list">
+      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="n-1" data-cap-select /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="n-2" data-cap-select /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
+      <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="n-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
+  </ul>
+  <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="none-list" role="region" aria-label="Bulk actions" id="bulk-none" hidden>
+    <p class="cap-bulk-count" role="status"></p>
+    <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="select-all" data-cap-label="Select all {n} in view">Select all in view</button>
+    <div class="cap-bulk-actions">
+      <button type="button" class="cap-btn" data-cap-bulk-action="archive" data-cap-label="Archive" data-cap-said="Archived {n} draft{s}." data-cap-undone="Brought {n} draft{s} back.">Archive</button>
+      <button type="button" class="cap-btn" data-variant="danger" data-cap-bulk-action="bin" data-destructive data-cap-label="Bin" data-cap-confirm-title="Bin {n} item{s}?" data-cap-confirm-lead="Binned drafts cannot be brought back." data-cap-confirm-action="Bin {n} item{s}" data-cap-said="Binned {n} draft{s}.">Bin</button>
+    </div>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-live">
+  <h2 id="s-live">Choose, then act: archive runs at once with Undo, bin previews first</h2>
+  <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="live-list" /> Select all drafts</label></div>
+  <ul class="bulk-list" id="live-list">
+      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="d-1" data-cap-select /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="d-2" data-cap-select /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
+      <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="d-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
+      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="d-4" data-cap-select /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
+      <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="d-5" data-cap-select /> Search without a server</label><span class="bulk-meta">Draft, edited 5 days ago</span></li>
+  </ul>
+  <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="live-list" role="region" aria-label="Bulk actions" id="bulk-live" hidden>
+    <p class="cap-bulk-count" role="status"></p>
+    <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="select-all" data-cap-label="Select all {n} in view">Select all in view</button>
+    <div class="cap-bulk-actions">
+      <button type="button" class="cap-btn" data-cap-bulk-action="archive" data-cap-label="Archive" data-cap-said="Archived {n} draft{s}." data-cap-undone="Brought {n} draft{s} back.">Archive</button>
+      <button type="button" class="cap-btn" data-variant="danger" data-cap-bulk-action="bin" data-destructive data-cap-label="Bin" data-cap-confirm-title="Bin {n} item{s}?" data-cap-confirm-lead="Binned drafts cannot be brought back." data-cap-confirm-action="Bin {n} item{s}" data-cap-said="Binned {n} draft{s}.">Bin</button>
+    </div>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-twelve">
+  <h2 id="s-twelve">Twelve selected: the preview lists every one</h2>
+  <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="twelve-list" /> Select all drafts</label></div>
+  <ul class="bulk-list" id="twelve-list">
+      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="t-1" data-cap-select checked /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="t-2" data-cap-select checked /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
+      <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="t-3" data-cap-select checked /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
+      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="t-4" data-cap-select checked /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
+      <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="t-5" data-cap-select checked /> Search without a server</label><span class="bulk-meta">Draft, edited 5 days ago</span></li>
+      <li data-label="A weekend with the media library"><label class="cap-check"><input type="checkbox" value="t-6" data-cap-select checked /> A weekend with the media library</label><span class="bulk-meta">Draft, edited 6 days ago</span></li>
+      <li data-label="Tokens, not hex codes"><label class="cap-check"><input type="checkbox" value="t-7" data-cap-select checked /> Tokens, not hex codes</label><span class="bulk-meta">Draft, edited 7 days ago</span></li>
+      <li data-label="Undo is cheaper than are-you-sure"><label class="cap-check"><input type="checkbox" value="t-8" data-cap-select checked /> Undo is cheaper than are-you-sure</label><span class="bulk-meta">Draft, edited 8 days ago</span></li>
+      <li data-label="Draft: the agent claims table"><label class="cap-check"><input type="checkbox" value="t-9" data-cap-select checked /> Draft: the agent claims table</label><span class="bulk-meta">Draft, edited 9 days ago</span></li>
+      <li data-label="Draft: a quieter status page"><label class="cap-check"><input type="checkbox" value="t-10" data-cap-select checked /> Draft: a quieter status page</label><span class="bulk-meta">Draft, edited 10 days ago</span></li>
+      <li data-label="Field notes from the migration"><label class="cap-check"><input type="checkbox" value="t-11" data-cap-select checked /> Field notes from the migration</label><span class="bulk-meta">Draft, edited 11 days ago</span></li>
+      <li data-label="Reading the CI logs aloud"><label class="cap-check"><input type="checkbox" value="t-12" data-cap-select checked /> Reading the CI logs aloud</label><span class="bulk-meta">Draft, edited 12 days ago</span></li>
+  </ul>
+  <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="twelve-list" role="region" aria-label="Bulk actions" id="bulk-twelve">
+    <p class="cap-bulk-count" role="status">12 selected</p>
+    <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="select-all" data-cap-label="Select all {n} in view">Select all in view</button>
+    <div class="cap-bulk-actions">
+      <button type="button" class="cap-btn" data-cap-bulk-action="archive" data-cap-label="Archive" data-cap-said="Archived {n} draft{s}." data-cap-undone="Brought {n} draft{s} back.">Archive</button>
+      <button type="button" class="cap-btn" data-variant="danger" data-cap-bulk-action="bin" data-destructive data-cap-label="Bin" data-cap-confirm-title="Bin {n} item{s}?" data-cap-confirm-lead="Binned drafts cannot be brought back." data-cap-confirm-action="Bin {n} item{s}" data-cap-said="Binned {n} draft{s}.">Bin</button>
+    </div>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-fail">
+  <h2 id="s-fail">An action that fails</h2>
+  <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="fail-list" /> Select all drafts</label></div>
+  <ul class="bulk-list" id="fail-list">
+      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="f-1" data-cap-select checked /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="f-2" data-cap-select checked /> Search without a server</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
+      <li data-label="A weekend with the media library"><label class="cap-check"><input type="checkbox" value="f-3" data-cap-select /> A weekend with the media library</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
+  </ul>
+  <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="fail-list" role="region" aria-label="Bulk actions" id="bulk-fail">
+    <p class="cap-bulk-count" role="status">2 selected</p>
+    <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="select-all" data-cap-label="Select all {n} in view">Select all in view</button>
+    <div class="cap-bulk-actions">
+      <button type="button" class="cap-btn" data-cap-bulk-action="publish" data-cap-label="Publish" data-cap-said="Published {n} draft{s}.">Publish</button>
+      <button type="button" class="cap-btn" data-variant="danger" data-cap-bulk-action="bin-fail" data-destructive data-cap-label="Bin" data-cap-confirm-title="Bin {n} item{s}?" data-cap-confirm-lead="Binned drafts cannot be brought back." data-cap-confirm-action="Bin {n} item{s}" data-cap-said="Binned {n} draft{s}.">Bin</button>
+    </div>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-sticky">
+  <h2 id="s-sticky">Sticks to the bottom of its scroll area, or the top</h2>
+  <div class="bulk-scroll" id="bulk-scroll" tabindex="0" role="group" aria-label="Drafts, scrolling">
+  <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="sticky-list" /> Select all drafts</label></div>
+    <ul class="bulk-list" id="sticky-list">
+      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="s-1" data-cap-select checked /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="s-2" data-cap-select checked /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
+      <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="s-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
+      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="s-4" data-cap-select /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
+      <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="s-5" data-cap-select /> Search without a server</label><span class="bulk-meta">Draft, edited 5 days ago</span></li>
+      <li data-label="A weekend with the media library"><label class="cap-check"><input type="checkbox" value="s-6" data-cap-select /> A weekend with the media library</label><span class="bulk-meta">Draft, edited 6 days ago</span></li>
+      <li data-label="Tokens, not hex codes"><label class="cap-check"><input type="checkbox" value="s-7" data-cap-select /> Tokens, not hex codes</label><span class="bulk-meta">Draft, edited 7 days ago</span></li>
+      <li data-label="Undo is cheaper than are-you-sure"><label class="cap-check"><input type="checkbox" value="s-8" data-cap-select /> Undo is cheaper than are-you-sure</label><span class="bulk-meta">Draft, edited 8 days ago</span></li>
+      <li data-label="Draft: the agent claims table"><label class="cap-check"><input type="checkbox" value="s-9" data-cap-select /> Draft: the agent claims table</label><span class="bulk-meta">Draft, edited 9 days ago</span></li>
+      <li data-label="Draft: a quieter status page"><label class="cap-check"><input type="checkbox" value="s-10" data-cap-select /> Draft: a quieter status page</label><span class="bulk-meta">Draft, edited 10 days ago</span></li>
+      <li data-label="Field notes from the migration"><label class="cap-check"><input type="checkbox" value="s-11" data-cap-select /> Field notes from the migration</label><span class="bulk-meta">Draft, edited 11 days ago</span></li>
+      <li data-label="Reading the CI logs aloud"><label class="cap-check"><input type="checkbox" value="s-12" data-cap-select /> Reading the CI logs aloud</label><span class="bulk-meta">Draft, edited 12 days ago</span></li>
+    </ul>
+  <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="sticky-list" role="region" aria-label="Bulk actions" id="bulk-sticky">
+    <p class="cap-bulk-count" role="status">2 selected</p>
+    <div class="cap-bulk-actions">
+      <button type="button" class="cap-btn" data-cap-bulk-action="archive" data-cap-label="Archive" data-cap-said="Archived {n} draft{s}." data-cap-undone="Brought {n} draft{s} back.">Archive</button>
+    </div>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+  </div>
+  </div>
+  <div class="bulk-scroll" id="bulk-scroll-top" tabindex="0" role="group" aria-label="Drafts, bar on top">
+  <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="top-list" role="region" data-position="top" aria-label="Bulk actions" id="bulk-top">
+    <p class="cap-bulk-count" role="status">2 selected</p>
+    <div class="cap-bulk-actions">
+      <button type="button" class="cap-btn" data-cap-bulk-action="archive" data-cap-label="Archive" data-cap-said="Archived {n} draft{s}." data-cap-undone="Brought {n} draft{s} back.">Archive</button>
+    </div>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+  </div>
+    <ul class="bulk-list" id="top-list">
+      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="u-1" data-cap-select checked /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="u-2" data-cap-select checked /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
+      <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="u-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
+      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="u-4" data-cap-select /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
+      <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="u-5" data-cap-select /> Search without a server</label><span class="bulk-meta">Draft, edited 5 days ago</span></li>
+      <li data-label="A weekend with the media library"><label class="cap-check"><input type="checkbox" value="u-6" data-cap-select /> A weekend with the media library</label><span class="bulk-meta">Draft, edited 6 days ago</span></li>
+      <li data-label="Tokens, not hex codes"><label class="cap-check"><input type="checkbox" value="u-7" data-cap-select /> Tokens, not hex codes</label><span class="bulk-meta">Draft, edited 7 days ago</span></li>
+      <li data-label="Undo is cheaper than are-you-sure"><label class="cap-check"><input type="checkbox" value="u-8" data-cap-select /> Undo is cheaper than are-you-sure</label><span class="bulk-meta">Draft, edited 8 days ago</span></li>
+      <li data-label="Draft: the agent claims table"><label class="cap-check"><input type="checkbox" value="u-9" data-cap-select /> Draft: the agent claims table</label><span class="bulk-meta">Draft, edited 9 days ago</span></li>
+      <li data-label="Draft: a quieter status page"><label class="cap-check"><input type="checkbox" value="u-10" data-cap-select /> Draft: a quieter status page</label><span class="bulk-meta">Draft, edited 10 days ago</span></li>
+      <li data-label="Field notes from the migration"><label class="cap-check"><input type="checkbox" value="u-11" data-cap-select /> Field notes from the migration</label><span class="bulk-meta">Draft, edited 11 days ago</span></li>
+      <li data-label="Reading the CI logs aloud"><label class="cap-check"><input type="checkbox" value="u-12" data-cap-select /> Reading the CI logs aloud</label><span class="bulk-meta">Draft, edited 12 days ago</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-results">
+  <h2 id="s-results">Results, where Undo lives</h2>
+  <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+</section>
+
+<script type="module">
+  import { enhance, bindBulk } from "./bulk-bar.ts";
+  import { enhance as messages } from "../message/message.ts";
+  messages();
+  enhance();
+  const rows = (items) => items.map((i) => document.querySelector(`#live-list input[value="${i.id}"]`)?.closest("li")).filter(Boolean);
+  bindBulk(document.getElementById("bulk-live"), {
+    archive: {
+      run: (items) => rows(items).forEach((li) => (li.hidden = true)),
+      undo: (items) => rows(items).forEach((li) => (li.hidden = false)),
+    },
+    bin: { run: (items) => rows(items).forEach((li) => li.remove()) },
+  });
+  bindBulk(document.getElementById("bulk-twelve"), {
+    archive: { run: () => {}, undo: () => {} },
+    bin: { run: () => new Promise((r) => setTimeout(r, 30)) },
+  });
+  bindBulk(document.getElementById("bulk-fail"), {
+    publish: { run: () => Promise.reject(new Error("the drafts index did not answer (502)")) },
+    "bin-fail": { run: () => Promise.reject(new Error("the drafts index did not answer (502)")) },
+  });
+</script>

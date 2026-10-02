@@ -1,0 +1,237 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The drop zone: a real file input that looks like the zone. The label wraps the input, so a
+   click, and Enter or Space on the focused input, open the picker with no script. A drag of
+   files over it (or over the whole window, for "drop anywhere") says "Drop to upload" in
+   words and thickens the edge; a refused file is named in a box of its own with the reason.
+   Craft matched to shadcn/ui's Input (file) and Empty (the dashed, centred drop surface),
+   in Capsomer's tokens. */
+@layer cap.components {
+  .cap-drop {
+    position: relative;
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+    font-size: var(--fs-body);
+  }
+
+  /* The input is the control; it is hidden from the eye, not from the keyboard or a screen
+     reader, and the label around it is what is drawn. */
+  .cap-drop-input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    opacity: 0;
+  }
+
+  .cap-drop-label {
+    --cap-drop-edge: var(--line-strong);
+    position: relative;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--space-2);
+    box-sizing: border-box;
+    min-block-size: calc(var(--control) * 3.5);
+    padding: var(--pad-card);
+    border: 1px dashed var(--cap-drop-edge);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--text);
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--sunken);
+    }
+    &:has(.cap-drop-input:focus-visible) {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+
+  .cap-drop-icon {
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+
+    & svg {
+      inline-size: 1.75rem;
+      block-size: 1.75rem;
+    }
+  }
+
+  .cap-drop-title {
+    font-weight: 600;
+  }
+  /* "browse" reads as the link it is; the whole label is the target. */
+  .cap-drop-browse {
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .cap-drop-hint {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* The two titles: the idle one, and the one said while files are over. */
+  .cap-drop-over {
+    display: none;
+  }
+
+  /* Over: a solid, thicker accent edge and a tint, and the words say what releasing does. */
+  .cap-drop[data-state="over"] {
+    & .cap-drop-label {
+      --cap-drop-edge: var(--accent);
+      border-style: solid;
+      border-width: 2px;
+      background: var(--accent-soft);
+    }
+    & .cap-drop-idle {
+      display: none;
+    }
+    & .cap-drop-over {
+      display: inline;
+      color: var(--text);
+    }
+    & .cap-drop-hint {
+      color: var(--text);
+    }
+    & .cap-drop-icon {
+      color: var(--accent-text);
+    }
+  }
+
+  /* Rejected: the edge turns critical and solid; the box below names each file and why. */
+  .cap-drop[data-state="rejected"] .cap-drop-label {
+    --cap-drop-edge: var(--crit);
+    border-style: solid;
+  }
+
+  .cap-drop:has(.cap-drop-input:disabled) .cap-drop-label {
+    --cap-drop-edge: var(--line-strong);
+    background: var(--sunken);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  /* Drop anywhere: while files are over the window, a full-window panel says so. It does not
+     take the pointer, so the drop lands on the window and is handled once. */
+  .cap-drop-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    display: none;
+    padding: var(--space-5);
+    background: var(--scrim);
+    pointer-events: none;
+
+    & > div {
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      gap: var(--space-3);
+      border: 3px dashed var(--accent);
+      border-radius: var(--radius-xl);
+      background: var(--raised);
+      color: var(--text);
+      text-align: center;
+    }
+  }
+  .cap-drop[data-state="over"][data-scope="page"] > .cap-drop-overlay {
+    display: grid;
+
+    & > div {
+      grid-row: 1;
+    }
+  }
+  .cap-drop-overlay-title {
+    margin: 0;
+    font-size: var(--fs-h3);
+    font-weight: 800;
+  }
+  .cap-drop-overlay-text {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  /* What was taken, and what was not. Both regions are in the page before anything is
+     chosen, empty, so each result is announced when it is filled. */
+  .cap-drop-status,
+  .cap-drop-rejections {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+
+    &:empty {
+      display: none;
+    }
+    & p {
+      margin: 0;
+    }
+  }
+  .cap-drop-rejections {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--crit);
+    border-radius: var(--radius-m);
+    background: var(--crit-soft);
+  }
+  .cap-drop-lead {
+    font-weight: 600;
+
+    &[data-tone="crit"] {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      color: var(--crit);
+    }
+  }
+  .cap-drop-files {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-detail);
+
+    & li {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1) var(--space-4);
+      overflow-wrap: anywhere;
+    }
+  }
+  .cap-drop-file-size {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-drop-label {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-drop-label {
+      border-color: CanvasText;
+    }
+    .cap-drop[data-state="over"] .cap-drop-label {
+      border-color: Highlight;
+    }
+    .cap-drop-rejections {
+      border-color: CanvasText;
+    }
+    .cap-drop-overlay > div {
+      border-color: Highlight;
+    }
+  }
+}
