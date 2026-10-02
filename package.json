@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behaviour modules and React wrappers.",
   "license": "MIT",
   "type": "module",
@@ -16,7 +16,10 @@
     "tokens/*.css",
     "tokens/tokens.json",
     "tokens/palette.mjs",
+    "tokens/chart.mjs",
     "tokens/scale.mjs",
+    "tokens/enarratio-theme.mjs",
+    "tokens/enarratio-theme.d.mts",
     "components/*/*.css",
     "components/*/*.md",
     "dist",
@@ -38,6 +41,11 @@
     "./family-teal.css": "./tokens/family-teal.css",
     "./tokens.json": "./tokens/tokens.json",
     "./palette": "./tokens/palette.mjs",
+    "./enarratio.css": "./css/enarratio.css",
+    "./enarratio-theme": {
+      "types": "./tokens/enarratio-theme.d.mts",
+      "default": "./tokens/enarratio-theme.mjs"
+    },
     "./*.css": "./components/*/*.css",
     "./behaviour/*": {
       "types": "./dist/components/*/*.d.ts",
@@ -73,11 +81,35 @@
   },
   "peerDependencies": {
     "@base-ui/react": "^1.8.0",
+    "@codemirror/commands": "^6.10.4",
+    "@codemirror/lang-markdown": "^6.5.1",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.1",
+    "@codemirror/view": "^6.43.7",
+    "@lezer/highlight": "^1.2.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "peerDependenciesMeta": {
     "@base-ui/react": {
+      "optional": true
+    },
+    "@codemirror/commands": {
+      "optional": true
+    },
+    "@codemirror/lang-markdown": {
+      "optional": true
+    },
+    "@codemirror/language": {
+      "optional": true
+    },
+    "@codemirror/state": {
+      "optional": true
+    },
+    "@codemirror/view": {
+      "optional": true
+    },
+    "@lezer/highlight": {
       "optional": true
     },
     "react": {
@@ -90,14 +122,21 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@base-ui/react": "^1.8.0",
+    "@codemirror/commands": "^6.10.4",
+    "@codemirror/lang-markdown": "^6.5.1",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.1",
+    "@codemirror/view": "^6.43.7",
     "@fontsource-variable/source-serif-4": "^5.3.0",
     "@fontsource/martian-mono": "^5.3.0",
     "@fontsource/schibsted-grotesk": "^5.3.0",
+    "@lezer/highlight": "^1.2.3",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.19.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "enarratio": "git+https://github.com/DrDustinEdwards/enarratio.git#1de8bee8b5028ee7c35bfe5503afbe2b3850f86e",
     "jscpd": "^5.3.2",
     "knip": "^6.38.0",
     "react": "^19.3.0",

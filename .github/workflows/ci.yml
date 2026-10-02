@@ -25,7 +25,8 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # 0.3 has about 1,700 browser tests; they are independent pages, so they run on four workers.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,7 +34,9 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - name: Install
-        run: npm ci --ignore-scripts
+        # Scripts run (no --ignore-scripts) so npm builds Enarratio's dist, which comes from GitHub
+        # (not yet on npm) and is a dev dependency for test/unit/enarratio-theme.test.mjs only.
+        run: npm ci
       - name: Palette, scales, unit tests, types
         run: npm run check
       - name: Every family's contrast pairs, both themes (blocking, rule 18)
@@ -45,7 +48,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Keyboard and accessibility tests, both themes
-        run: npx playwright test
+        run: npx playwright test --workers=4
       - name: Forced-colours screenshots (for review, never blocks)
         if: always()
         run: npx playwright test -c playwright.review.config.ts

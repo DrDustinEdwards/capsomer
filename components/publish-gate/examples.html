@@ -1,0 +1,1081 @@
+<section class="cap-specimen" aria-labelledby="s-blocked">
+  <h2 id="s-blocked">Blocked: the publish button stays focusable and says why</h2>
+  <p class="cap-muted">The region sits beside the publish button. The button is aria-disabled, not disabled, and its description is the region's summary.</p>
+  <div class="cap-gate-bar">
+    <div data-cap-actions data-gate="pg-blocked" data-site="dustinedwards" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-blocked-sum">Publish blocked</button></div>
+  <section class="cap-gate" data-cap="publish-gate" id="pg-blocked" data-state="blocked" aria-labelledby="pg-blocked-h">
+    <header class="cap-gate-head">
+      <h2 class="cap-gate-title" id="pg-blocked-h">Publish checks</h2>
+      <p class="cap-gate-summary" id="pg-blocked-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span>: 2 required checks failing on dustinedwards.info</p>
+    </header>
+    <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-blocked-h">
+      <li class="cap-gate-section" data-section="sites">
+        <h3 class="cap-gate-group-title" id="pg-blocked-g-sites">Destination</h3>
+        <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-blocked-g-sites">
+            <li class="cap-row cap-gate-site" id="pg-blocked-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="blocked" data-first data-tone="crit">
+              <span class="cap-row-status" id="pg-blocked-s-dustinedwards-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
+              <p class="cap-row-detail" id="pg-blocked-s-dustinedwards-d">2 required checks failing: The cover image has no alt text; The title is empty</p>
+              <span class="cap-row-meta"></span>
+            </li>
+        </ul>
+      </li>
+        <li class="cap-gate-section" data-section="required">
+          <h3 class="cap-gate-group-title" id="pg-blocked-g-req">Required, 2 failing</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-blocked-g-req">
+            <li class="cap-row cap-check" id="pg-blocked-c-alt" data-check="alt" data-name="Alt text" data-required data-ok="false" data-cause="The cover image has no alt text" data-pass="Every image has alt text" data-href="#field-alt" data-fix="Describe what the image shows, in a sentence." data-order="0" data-tone="crit">
+              <span class="cap-row-status" id="pg-blocked-c-alt-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Failing</span></span>
+              <div class="cap-row-title"><a href="#field-alt" aria-describedby="pg-blocked-c-alt-s pg-blocked-c-alt-d">The cover image has no alt text</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-alt-d"><span class="cap-check-name">Alt text</span>. <span class="cap-check-fix">Fix: Describe what the image shows, in a sentence.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-title" data-check="title" data-name="Title" data-required data-ok="false" data-cause="The title is empty" data-pass="The post has a title" data-href="#field-title" data-fix="Give the post a title." data-order="1" data-tone="crit">
+              <span class="cap-row-status" id="pg-blocked-c-title-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Failing</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-blocked-c-title-s pg-blocked-c-title-d">The title is empty</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-title-d"><span class="cap-check-name">Title</span>. <span class="cap-check-fix">Fix: Give the post a title.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+          </ul>
+        </li>
+        <li class="cap-gate-section" data-section="advisory">
+          <h3 class="cap-gate-group-title" id="pg-blocked-g-adv">Advisory, 3</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-blocked-g-adv">
+            <li class="cap-row cap-check" id="pg-blocked-c-length" data-check="length" data-name="Title length" data-ok="false" data-cause="The title is 78 characters; the feed cuts it at 60" data-pass="The title fits the feed" data-href="#field-title" data-fix="Shorten the title or add a short one for the feed." data-order="6">
+              <span class="cap-row-status" id="pg-blocked-c-length-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-blocked-c-length-s pg-blocked-c-length-d">The title is 78 characters; the feed cuts it at 60</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-length-d"><span class="cap-check-name">Title length</span>. <span class="cap-check-fix">Fix: Shorten the title or add a short one for the feed.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-links" data-check="links" data-name="Moved links" data-ok="false" data-cause="Two links point at a page that has moved" data-pass="No link points at a moved page" data-href="#field-body" data-fix="Update the two links to the new address." data-order="7">
+              <span class="cap-row-status" id="pg-blocked-c-links-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-blocked-c-links-s pg-blocked-c-links-d">Two links point at a page that has moved</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-links-d"><span class="cap-check-name">Moved links</span>. <span class="cap-check-fix">Fix: Update the two links to the new address.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-sentences" data-check="sentences" data-name="Long sentences" data-ok="false" data-cause="Two sentences run past 40 words" data-pass="No sentence runs past 40 words" data-href="#field-body" data-fix="Split them where the thought turns." data-order="8">
+              <span class="cap-row-status" id="pg-blocked-c-sentences-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-blocked-c-sentences-s pg-blocked-c-sentences-d">Two sentences run past 40 words</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-sentences-d"><span class="cap-check-name">Long sentences</span>. <span class="cap-check-fix">Fix: Split them where the thought turns.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+          </ul>
+        </li>
+      <li class="cap-gate-section" data-section="passed">
+        <details class="cap-disclosure">
+          <summary>9 checks passed</summary>
+          <div class="cap-disclosure-body">
+            <ul class="cap-gate-section-rows" role="list" aria-label="Passing checks">
+            <li class="cap-row cap-check" id="pg-blocked-c-header" data-check="header" data-name="Header fields" data-required data-ok="true" data-cause="A required header field is missing" data-pass="Every required header field is filled in" data-href="#field-header" data-order="2">
+              <span class="cap-row-status" id="pg-blocked-c-header-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-blocked-c-header-s pg-blocked-c-header-d">Every required header field is filled in</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-header-d"><span class="cap-check-name">Header fields</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-slug" data-check="slug" data-name="Slug" data-required data-ok="true" data-cause="The slug is already used" data-pass="The slug is unique" data-href="#field-slug" data-order="3">
+              <span class="cap-row-status" id="pg-blocked-c-slug-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-slug" aria-describedby="pg-blocked-c-slug-s pg-blocked-c-slug-d">The slug is unique</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-slug-d"><span class="cap-check-name">Slug</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-draft" data-check="draft" data-name="Draft markers" data-required data-ok="true" data-cause="A draft marker is left in the text" data-pass="No draft markers are left in the text" data-href="#field-body" data-order="4">
+              <span class="cap-row-status" id="pg-blocked-c-draft-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-blocked-c-draft-s pg-blocked-c-draft-d">No draft markers are left in the text</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-draft-d"><span class="cap-check-name">Draft markers</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-dates" data-check="dates" data-name="Dates" data-required data-ok="true" data-cause="A date is out of order" data-pass="Dates are in order" data-href="#field-dates" data-order="5">
+              <span class="cap-row-status" id="pg-blocked-c-dates-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-dates" aria-describedby="pg-blocked-c-dates-s pg-blocked-c-dates-d">Dates are in order</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-dates-d"><span class="cap-check-name">Dates</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-resolve" data-check="resolve" data-name="Links resolve" data-ok="true" data-cause="A link does not resolve" data-pass="Every link resolves" data-href="#field-body" data-order="9">
+              <span class="cap-row-status" id="pg-blocked-c-resolve-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-blocked-c-resolve-s pg-blocked-c-resolve-d">Every link resolves</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-resolve-d"><span class="cap-check-name">Links resolve</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-images" data-check="images" data-name="Images load" data-ok="true" data-cause="An image does not load" data-pass="Every image loads" data-href="#field-body" data-order="10">
+              <span class="cap-row-status" id="pg-blocked-c-images-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-blocked-c-images-s pg-blocked-c-images-d">Every image loads</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-images-d"><span class="cap-check-name">Images load</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-sources" data-check="sources" data-name="Sources named" data-ok="true" data-cause="A source is not named" data-pass="Every source is named" data-href="#field-body" data-order="11">
+              <span class="cap-row-status" id="pg-blocked-c-sources-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-blocked-c-sources-s pg-blocked-c-sources-d">Every source is named</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-sources-d"><span class="cap-check-name">Sources named</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-spell" data-check="spell" data-name="Spelling" data-ok="true" data-cause="A word is misspelt" data-pass="No word is misspelt" data-href="#field-body" data-order="12">
+              <span class="cap-row-status" id="pg-blocked-c-spell-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-blocked-c-spell-s pg-blocked-c-spell-d">No word is misspelt</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-spell-d"><span class="cap-check-name">Spelling</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-blocked-c-front" data-check="front" data-name="Front matter" data-ok="true" data-cause="The front matter does not parse" data-pass="The front matter parses" data-href="#field-header" data-order="13">
+              <span class="cap-row-status" id="pg-blocked-c-front-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-blocked-c-front-s pg-blocked-c-front-d">The front matter parses</a></div>
+              <p class="cap-row-detail" id="pg-blocked-c-front-d"><span class="cap-check-name">Front matter</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ul>
+    <p class="cap-gate-clear" data-cap-part="clear" hidden>No checks are failing.</p>
+  </section>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-ready">
+  <h2 id="s-ready">Ready: a first publication is previewed before it happens</h2>
+  <p class="cap-muted">Publish opens the confirm dialog with the destination listed and focus on Cancel. The checks can change while you watch: <button type="button" class="cap-btn" data-size="sm" id="pg-ready-break">Break the alt text check</button></p>
+  <div class="cap-gate-bar">
+    <div data-cap-actions data-gate="pg-ready" data-site="dustinedwards" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="primary">Publish</button></div>
+  <section class="cap-gate" data-cap="publish-gate" id="pg-ready" data-state="ready" aria-labelledby="pg-ready-h">
+    <header class="cap-gate-head">
+      <h2 class="cap-gate-title" id="pg-ready-h">Publish checks</h2>
+      <p class="cap-gate-summary" id="pg-ready-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on dustinedwards.info, 3 advisory checks failing</p>
+    </header>
+    <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-ready-h">
+      <li class="cap-gate-section" data-section="sites">
+        <h3 class="cap-gate-group-title" id="pg-ready-g-sites">Destination</h3>
+        <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-ready-g-sites">
+            <li class="cap-row cap-gate-site" id="pg-ready-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="ready" data-first data-live-url="https://dustinedwards.info/blog/why-foxhound-waits">
+              <span class="cap-row-status" id="pg-ready-s-dustinedwards-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
+              <p class="cap-row-detail" id="pg-ready-s-dustinedwards-d">Nothing required is failing. 3 advisory checks failing.</p>
+              <span class="cap-row-meta"></span>
+            </li>
+        </ul>
+      </li>
+        <li class="cap-gate-section" data-section="required" hidden>
+          <h3 class="cap-gate-group-title" id="pg-ready-g-req">Required, 0 failing</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-ready-g-req">
+
+          </ul>
+        </li>
+        <li class="cap-gate-section" data-section="advisory">
+          <h3 class="cap-gate-group-title" id="pg-ready-g-adv">Advisory, 3</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-ready-g-adv">
+            <li class="cap-row cap-check" id="pg-ready-c-length" data-check="length" data-name="Title length" data-ok="false" data-cause="The title is 78 characters; the feed cuts it at 60" data-pass="The title fits the feed" data-href="#field-title" data-fix="Shorten the title or add a short one for the feed." data-order="6">
+              <span class="cap-row-status" id="pg-ready-c-length-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-ready-c-length-s pg-ready-c-length-d">The title is 78 characters; the feed cuts it at 60</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-length-d"><span class="cap-check-name">Title length</span>. <span class="cap-check-fix">Fix: Shorten the title or add a short one for the feed.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-links" data-check="links" data-name="Moved links" data-ok="false" data-cause="Two links point at a page that has moved" data-pass="No link points at a moved page" data-href="#field-body" data-fix="Update the two links to the new address." data-order="7">
+              <span class="cap-row-status" id="pg-ready-c-links-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-ready-c-links-s pg-ready-c-links-d">Two links point at a page that has moved</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-links-d"><span class="cap-check-name">Moved links</span>. <span class="cap-check-fix">Fix: Update the two links to the new address.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-sentences" data-check="sentences" data-name="Long sentences" data-ok="false" data-cause="Two sentences run past 40 words" data-pass="No sentence runs past 40 words" data-href="#field-body" data-fix="Split them where the thought turns." data-order="8">
+              <span class="cap-row-status" id="pg-ready-c-sentences-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-ready-c-sentences-s pg-ready-c-sentences-d">Two sentences run past 40 words</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-sentences-d"><span class="cap-check-name">Long sentences</span>. <span class="cap-check-fix">Fix: Split them where the thought turns.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+          </ul>
+        </li>
+      <li class="cap-gate-section" data-section="passed">
+        <details class="cap-disclosure">
+          <summary>11 checks passed</summary>
+          <div class="cap-disclosure-body">
+            <ul class="cap-gate-section-rows" role="list" aria-label="Passing checks">
+            <li class="cap-row cap-check" id="pg-ready-c-alt" data-check="alt" data-name="Alt text" data-required data-ok="true" data-cause="The cover image has no alt text" data-pass="Every image has alt text" data-href="#field-alt" data-fix="Describe what the image shows, in a sentence." data-order="0">
+              <span class="cap-row-status" id="pg-ready-c-alt-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-alt" aria-describedby="pg-ready-c-alt-s pg-ready-c-alt-d">Every image has alt text</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-alt-d"><span class="cap-check-name">Alt text</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-title" data-check="title" data-name="Title" data-required data-ok="true" data-cause="The title is empty" data-pass="The post has a title" data-href="#field-title" data-fix="Give the post a title." data-order="1">
+              <span class="cap-row-status" id="pg-ready-c-title-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-ready-c-title-s pg-ready-c-title-d">The post has a title</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-title-d"><span class="cap-check-name">Title</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-header" data-check="header" data-name="Header fields" data-required data-ok="true" data-cause="A required header field is missing" data-pass="Every required header field is filled in" data-href="#field-header" data-order="2">
+              <span class="cap-row-status" id="pg-ready-c-header-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-ready-c-header-s pg-ready-c-header-d">Every required header field is filled in</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-header-d"><span class="cap-check-name">Header fields</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-slug" data-check="slug" data-name="Slug" data-required data-ok="true" data-cause="The slug is already used" data-pass="The slug is unique" data-href="#field-slug" data-order="3">
+              <span class="cap-row-status" id="pg-ready-c-slug-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-slug" aria-describedby="pg-ready-c-slug-s pg-ready-c-slug-d">The slug is unique</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-slug-d"><span class="cap-check-name">Slug</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-draft" data-check="draft" data-name="Draft markers" data-required data-ok="true" data-cause="A draft marker is left in the text" data-pass="No draft markers are left in the text" data-href="#field-body" data-order="4">
+              <span class="cap-row-status" id="pg-ready-c-draft-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-ready-c-draft-s pg-ready-c-draft-d">No draft markers are left in the text</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-draft-d"><span class="cap-check-name">Draft markers</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-dates" data-check="dates" data-name="Dates" data-required data-ok="true" data-cause="A date is out of order" data-pass="Dates are in order" data-href="#field-dates" data-order="5">
+              <span class="cap-row-status" id="pg-ready-c-dates-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-dates" aria-describedby="pg-ready-c-dates-s pg-ready-c-dates-d">Dates are in order</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-dates-d"><span class="cap-check-name">Dates</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-resolve" data-check="resolve" data-name="Links resolve" data-ok="true" data-cause="A link does not resolve" data-pass="Every link resolves" data-href="#field-body" data-order="9">
+              <span class="cap-row-status" id="pg-ready-c-resolve-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-ready-c-resolve-s pg-ready-c-resolve-d">Every link resolves</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-resolve-d"><span class="cap-check-name">Links resolve</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-images" data-check="images" data-name="Images load" data-ok="true" data-cause="An image does not load" data-pass="Every image loads" data-href="#field-body" data-order="10">
+              <span class="cap-row-status" id="pg-ready-c-images-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-ready-c-images-s pg-ready-c-images-d">Every image loads</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-images-d"><span class="cap-check-name">Images load</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-sources" data-check="sources" data-name="Sources named" data-ok="true" data-cause="A source is not named" data-pass="Every source is named" data-href="#field-body" data-order="11">
+              <span class="cap-row-status" id="pg-ready-c-sources-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-ready-c-sources-s pg-ready-c-sources-d">Every source is named</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-sources-d"><span class="cap-check-name">Sources named</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-spell" data-check="spell" data-name="Spelling" data-ok="true" data-cause="A word is misspelt" data-pass="No word is misspelt" data-href="#field-body" data-order="12">
+              <span class="cap-row-status" id="pg-ready-c-spell-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-ready-c-spell-s pg-ready-c-spell-d">No word is misspelt</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-spell-d"><span class="cap-check-name">Spelling</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-ready-c-front" data-check="front" data-name="Front matter" data-ok="true" data-cause="The front matter does not parse" data-pass="The front matter parses" data-href="#field-header" data-order="13">
+              <span class="cap-row-status" id="pg-ready-c-front-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-ready-c-front-s pg-ready-c-front-d">The front matter parses</a></div>
+              <p class="cap-row-detail" id="pg-ready-c-front-d"><span class="cap-check-name">Front matter</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ul>
+    <p class="cap-gate-clear" data-cap-part="clear" hidden>No checks are failing.</p>
+  </section>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-held">
+  <h2 id="s-held">Held: a person or a schedule holds it, and the reason is in words</h2>
+  <div class="cap-gate-bar">
+    <div data-cap-actions data-gate="pg-held" data-site="dustinedwards" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-held-sum">Publish held</button></div>
+  <section class="cap-gate" data-cap="publish-gate" id="pg-held" data-state="held" aria-labelledby="pg-held-h">
+    <header class="cap-gate-head">
+      <h2 class="cap-gate-title" id="pg-held-h">Publish checks</h2>
+      <p class="cap-gate-summary" id="pg-held-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="info"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/></svg>Held</span> for review by Rosa until Fri 09:00</p>
+    </header>
+    <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-held-h">
+      <li class="cap-gate-section" data-section="sites">
+        <h3 class="cap-gate-group-title" id="pg-held-g-sites">Destination</h3>
+        <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-held-g-sites">
+            <li class="cap-row cap-gate-site" id="pg-held-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="held" data-first data-hold-text="Held for review by Rosa until Fri 09:00" data-hold-note="Waiting on the legal check for the quoted figures.">
+              <span class="cap-row-status" id="pg-held-s-dustinedwards-s"><span class="cap-status" data-tone="info"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/></svg>Held</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
+              <p class="cap-row-detail" id="pg-held-s-dustinedwards-d">Held for review by Rosa until Fri 09:00. Waiting on the legal check for the quoted figures.</p>
+              <span class="cap-row-meta"></span>
+            </li>
+        </ul>
+      </li>
+        <li class="cap-gate-section" data-section="required" hidden>
+          <h3 class="cap-gate-group-title" id="pg-held-g-req">Required, 0 failing</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-held-g-req">
+
+          </ul>
+        </li>
+        <li class="cap-gate-section" data-section="advisory">
+          <h3 class="cap-gate-group-title" id="pg-held-g-adv">Advisory, 3</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-held-g-adv">
+            <li class="cap-row cap-check" id="pg-held-c-length" data-check="length" data-name="Title length" data-ok="false" data-cause="The title is 78 characters; the feed cuts it at 60" data-pass="The title fits the feed" data-href="#field-title" data-fix="Shorten the title or add a short one for the feed." data-order="6">
+              <span class="cap-row-status" id="pg-held-c-length-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-held-c-length-s pg-held-c-length-d">The title is 78 characters; the feed cuts it at 60</a></div>
+              <p class="cap-row-detail" id="pg-held-c-length-d"><span class="cap-check-name">Title length</span>. <span class="cap-check-fix">Fix: Shorten the title or add a short one for the feed.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-links" data-check="links" data-name="Moved links" data-ok="false" data-cause="Two links point at a page that has moved" data-pass="No link points at a moved page" data-href="#field-body" data-fix="Update the two links to the new address." data-order="7">
+              <span class="cap-row-status" id="pg-held-c-links-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-held-c-links-s pg-held-c-links-d">Two links point at a page that has moved</a></div>
+              <p class="cap-row-detail" id="pg-held-c-links-d"><span class="cap-check-name">Moved links</span>. <span class="cap-check-fix">Fix: Update the two links to the new address.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-sentences" data-check="sentences" data-name="Long sentences" data-ok="false" data-cause="Two sentences run past 40 words" data-pass="No sentence runs past 40 words" data-href="#field-body" data-fix="Split them where the thought turns." data-order="8">
+              <span class="cap-row-status" id="pg-held-c-sentences-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-held-c-sentences-s pg-held-c-sentences-d">Two sentences run past 40 words</a></div>
+              <p class="cap-row-detail" id="pg-held-c-sentences-d"><span class="cap-check-name">Long sentences</span>. <span class="cap-check-fix">Fix: Split them where the thought turns.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+          </ul>
+        </li>
+      <li class="cap-gate-section" data-section="passed">
+        <details class="cap-disclosure">
+          <summary>11 checks passed</summary>
+          <div class="cap-disclosure-body">
+            <ul class="cap-gate-section-rows" role="list" aria-label="Passing checks">
+            <li class="cap-row cap-check" id="pg-held-c-alt" data-check="alt" data-name="Alt text" data-required data-ok="true" data-cause="The cover image has no alt text" data-pass="Every image has alt text" data-href="#field-alt" data-fix="Describe what the image shows, in a sentence." data-order="0">
+              <span class="cap-row-status" id="pg-held-c-alt-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-alt" aria-describedby="pg-held-c-alt-s pg-held-c-alt-d">Every image has alt text</a></div>
+              <p class="cap-row-detail" id="pg-held-c-alt-d"><span class="cap-check-name">Alt text</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-title" data-check="title" data-name="Title" data-required data-ok="true" data-cause="The title is empty" data-pass="The post has a title" data-href="#field-title" data-fix="Give the post a title." data-order="1">
+              <span class="cap-row-status" id="pg-held-c-title-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-held-c-title-s pg-held-c-title-d">The post has a title</a></div>
+              <p class="cap-row-detail" id="pg-held-c-title-d"><span class="cap-check-name">Title</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-header" data-check="header" data-name="Header fields" data-required data-ok="true" data-cause="A required header field is missing" data-pass="Every required header field is filled in" data-href="#field-header" data-order="2">
+              <span class="cap-row-status" id="pg-held-c-header-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-held-c-header-s pg-held-c-header-d">Every required header field is filled in</a></div>
+              <p class="cap-row-detail" id="pg-held-c-header-d"><span class="cap-check-name">Header fields</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-slug" data-check="slug" data-name="Slug" data-required data-ok="true" data-cause="The slug is already used" data-pass="The slug is unique" data-href="#field-slug" data-order="3">
+              <span class="cap-row-status" id="pg-held-c-slug-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-slug" aria-describedby="pg-held-c-slug-s pg-held-c-slug-d">The slug is unique</a></div>
+              <p class="cap-row-detail" id="pg-held-c-slug-d"><span class="cap-check-name">Slug</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-draft" data-check="draft" data-name="Draft markers" data-required data-ok="true" data-cause="A draft marker is left in the text" data-pass="No draft markers are left in the text" data-href="#field-body" data-order="4">
+              <span class="cap-row-status" id="pg-held-c-draft-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-held-c-draft-s pg-held-c-draft-d">No draft markers are left in the text</a></div>
+              <p class="cap-row-detail" id="pg-held-c-draft-d"><span class="cap-check-name">Draft markers</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-dates" data-check="dates" data-name="Dates" data-required data-ok="true" data-cause="A date is out of order" data-pass="Dates are in order" data-href="#field-dates" data-order="5">
+              <span class="cap-row-status" id="pg-held-c-dates-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-dates" aria-describedby="pg-held-c-dates-s pg-held-c-dates-d">Dates are in order</a></div>
+              <p class="cap-row-detail" id="pg-held-c-dates-d"><span class="cap-check-name">Dates</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-resolve" data-check="resolve" data-name="Links resolve" data-ok="true" data-cause="A link does not resolve" data-pass="Every link resolves" data-href="#field-body" data-order="9">
+              <span class="cap-row-status" id="pg-held-c-resolve-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-held-c-resolve-s pg-held-c-resolve-d">Every link resolves</a></div>
+              <p class="cap-row-detail" id="pg-held-c-resolve-d"><span class="cap-check-name">Links resolve</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-images" data-check="images" data-name="Images load" data-ok="true" data-cause="An image does not load" data-pass="Every image loads" data-href="#field-body" data-order="10">
+              <span class="cap-row-status" id="pg-held-c-images-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-held-c-images-s pg-held-c-images-d">Every image loads</a></div>
+              <p class="cap-row-detail" id="pg-held-c-images-d"><span class="cap-check-name">Images load</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-sources" data-check="sources" data-name="Sources named" data-ok="true" data-cause="A source is not named" data-pass="Every source is named" data-href="#field-body" data-order="11">
+              <span class="cap-row-status" id="pg-held-c-sources-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-held-c-sources-s pg-held-c-sources-d">Every source is named</a></div>
+              <p class="cap-row-detail" id="pg-held-c-sources-d"><span class="cap-check-name">Sources named</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-spell" data-check="spell" data-name="Spelling" data-ok="true" data-cause="A word is misspelt" data-pass="No word is misspelt" data-href="#field-body" data-order="12">
+              <span class="cap-row-status" id="pg-held-c-spell-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-held-c-spell-s pg-held-c-spell-d">No word is misspelt</a></div>
+              <p class="cap-row-detail" id="pg-held-c-spell-d"><span class="cap-check-name">Spelling</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-held-c-front" data-check="front" data-name="Front matter" data-ok="true" data-cause="The front matter does not parse" data-pass="The front matter parses" data-href="#field-header" data-order="13">
+              <span class="cap-row-status" id="pg-held-c-front-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-held-c-front-s pg-held-c-front-d">The front matter parses</a></div>
+              <p class="cap-row-detail" id="pg-held-c-front-d"><span class="cap-check-name">Front matter</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ul>
+    <p class="cap-gate-clear" data-cap-part="clear" hidden>No checks are failing.</p>
+  </section>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-pub">
+  <h2 id="s-pub">Published: when, and a link to the live page; the button becomes View and Unpublish</h2>
+  <div class="cap-gate-bar">
+    <div data-cap-actions data-gate="pg-pub" data-site="dustinedwards" data-btn-size="default"><a class="cap-btn" data-cap-part="view" href="https://dustinedwards.info/blog/why-foxhound-waits">View</a><button type="button" class="cap-btn" data-cap-part="unpublish" data-variant="quiet" data-site="dustinedwards">Unpublish</button></div>
+  <section class="cap-gate" data-cap="publish-gate" id="pg-pub" data-state="published" aria-labelledby="pg-pub-h">
+    <header class="cap-gate-head">
+      <h2 class="cap-gate-title" id="pg-pub-h">Publish checks</h2>
+      <p class="cap-gate-summary" id="pg-pub-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Published</span>: live on dustinedwards.info</p>
+    </header>
+    <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-pub-h">
+      <li class="cap-gate-section" data-section="sites">
+        <h3 class="cap-gate-group-title" id="pg-pub-g-sites">Destination</h3>
+        <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-pub-g-sites">
+            <li class="cap-row cap-gate-site" id="pg-pub-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="published" data-published-at="2026-10-02T09:12:00Z" data-published-url="https://dustinedwards.info/blog/why-foxhound-waits">
+              <span class="cap-row-status" id="pg-pub-s-dustinedwards-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Published</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
+              <p class="cap-row-detail" id="pg-pub-s-dustinedwards-d">Live.</p>
+              <span class="cap-row-meta"><time class="cap-time" data-cap="time" data-format="exact" datetime="2026-10-02T09:12:00Z">2 Oct 2026, 09:12 UTC</time></span>
+            </li>
+        </ul>
+      </li>
+        <li class="cap-gate-section" data-section="required" hidden>
+          <h3 class="cap-gate-group-title" id="pg-pub-g-req">Required, 0 failing</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-pub-g-req">
+
+          </ul>
+        </li>
+        <li class="cap-gate-section" data-section="advisory">
+          <h3 class="cap-gate-group-title" id="pg-pub-g-adv">Advisory, 3</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-pub-g-adv">
+            <li class="cap-row cap-check" id="pg-pub-c-length" data-check="length" data-name="Title length" data-ok="false" data-cause="The title is 78 characters; the feed cuts it at 60" data-pass="The title fits the feed" data-href="#field-title" data-fix="Shorten the title or add a short one for the feed." data-order="6">
+              <span class="cap-row-status" id="pg-pub-c-length-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-pub-c-length-s pg-pub-c-length-d">The title is 78 characters; the feed cuts it at 60</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-length-d"><span class="cap-check-name">Title length</span>. <span class="cap-check-fix">Fix: Shorten the title or add a short one for the feed.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-links" data-check="links" data-name="Moved links" data-ok="false" data-cause="Two links point at a page that has moved" data-pass="No link points at a moved page" data-href="#field-body" data-fix="Update the two links to the new address." data-order="7">
+              <span class="cap-row-status" id="pg-pub-c-links-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-pub-c-links-s pg-pub-c-links-d">Two links point at a page that has moved</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-links-d"><span class="cap-check-name">Moved links</span>. <span class="cap-check-fix">Fix: Update the two links to the new address.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-sentences" data-check="sentences" data-name="Long sentences" data-ok="false" data-cause="Two sentences run past 40 words" data-pass="No sentence runs past 40 words" data-href="#field-body" data-fix="Split them where the thought turns." data-order="8">
+              <span class="cap-row-status" id="pg-pub-c-sentences-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-pub-c-sentences-s pg-pub-c-sentences-d">Two sentences run past 40 words</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-sentences-d"><span class="cap-check-name">Long sentences</span>. <span class="cap-check-fix">Fix: Split them where the thought turns.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+          </ul>
+        </li>
+      <li class="cap-gate-section" data-section="passed">
+        <details class="cap-disclosure">
+          <summary>11 checks passed</summary>
+          <div class="cap-disclosure-body">
+            <ul class="cap-gate-section-rows" role="list" aria-label="Passing checks">
+            <li class="cap-row cap-check" id="pg-pub-c-alt" data-check="alt" data-name="Alt text" data-required data-ok="true" data-cause="The cover image has no alt text" data-pass="Every image has alt text" data-href="#field-alt" data-fix="Describe what the image shows, in a sentence." data-order="0">
+              <span class="cap-row-status" id="pg-pub-c-alt-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-alt" aria-describedby="pg-pub-c-alt-s pg-pub-c-alt-d">Every image has alt text</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-alt-d"><span class="cap-check-name">Alt text</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-title" data-check="title" data-name="Title" data-required data-ok="true" data-cause="The title is empty" data-pass="The post has a title" data-href="#field-title" data-fix="Give the post a title." data-order="1">
+              <span class="cap-row-status" id="pg-pub-c-title-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-pub-c-title-s pg-pub-c-title-d">The post has a title</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-title-d"><span class="cap-check-name">Title</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-header" data-check="header" data-name="Header fields" data-required data-ok="true" data-cause="A required header field is missing" data-pass="Every required header field is filled in" data-href="#field-header" data-order="2">
+              <span class="cap-row-status" id="pg-pub-c-header-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-pub-c-header-s pg-pub-c-header-d">Every required header field is filled in</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-header-d"><span class="cap-check-name">Header fields</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-slug" data-check="slug" data-name="Slug" data-required data-ok="true" data-cause="The slug is already used" data-pass="The slug is unique" data-href="#field-slug" data-order="3">
+              <span class="cap-row-status" id="pg-pub-c-slug-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-slug" aria-describedby="pg-pub-c-slug-s pg-pub-c-slug-d">The slug is unique</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-slug-d"><span class="cap-check-name">Slug</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-draft" data-check="draft" data-name="Draft markers" data-required data-ok="true" data-cause="A draft marker is left in the text" data-pass="No draft markers are left in the text" data-href="#field-body" data-order="4">
+              <span class="cap-row-status" id="pg-pub-c-draft-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-pub-c-draft-s pg-pub-c-draft-d">No draft markers are left in the text</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-draft-d"><span class="cap-check-name">Draft markers</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-dates" data-check="dates" data-name="Dates" data-required data-ok="true" data-cause="A date is out of order" data-pass="Dates are in order" data-href="#field-dates" data-order="5">
+              <span class="cap-row-status" id="pg-pub-c-dates-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-dates" aria-describedby="pg-pub-c-dates-s pg-pub-c-dates-d">Dates are in order</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-dates-d"><span class="cap-check-name">Dates</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-resolve" data-check="resolve" data-name="Links resolve" data-ok="true" data-cause="A link does not resolve" data-pass="Every link resolves" data-href="#field-body" data-order="9">
+              <span class="cap-row-status" id="pg-pub-c-resolve-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-pub-c-resolve-s pg-pub-c-resolve-d">Every link resolves</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-resolve-d"><span class="cap-check-name">Links resolve</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-images" data-check="images" data-name="Images load" data-ok="true" data-cause="An image does not load" data-pass="Every image loads" data-href="#field-body" data-order="10">
+              <span class="cap-row-status" id="pg-pub-c-images-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-pub-c-images-s pg-pub-c-images-d">Every image loads</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-images-d"><span class="cap-check-name">Images load</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-sources" data-check="sources" data-name="Sources named" data-ok="true" data-cause="A source is not named" data-pass="Every source is named" data-href="#field-body" data-order="11">
+              <span class="cap-row-status" id="pg-pub-c-sources-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-pub-c-sources-s pg-pub-c-sources-d">Every source is named</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-sources-d"><span class="cap-check-name">Sources named</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-spell" data-check="spell" data-name="Spelling" data-ok="true" data-cause="A word is misspelt" data-pass="No word is misspelt" data-href="#field-body" data-order="12">
+              <span class="cap-row-status" id="pg-pub-c-spell-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-pub-c-spell-s pg-pub-c-spell-d">No word is misspelt</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-spell-d"><span class="cap-check-name">Spelling</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-pub-c-front" data-check="front" data-name="Front matter" data-ok="true" data-cause="The front matter does not parse" data-pass="The front matter parses" data-href="#field-header" data-order="13">
+              <span class="cap-row-status" id="pg-pub-c-front-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-pub-c-front-s pg-pub-c-front-d">The front matter parses</a></div>
+              <p class="cap-row-detail" id="pg-pub-c-front-d"><span class="cap-check-name">Front matter</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ul>
+    <p class="cap-gate-clear" data-cap-part="clear" hidden>No checks are failing.</p>
+  </section>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-multi">
+  <h2 id="s-multi">One row per destination: the overall state is the worst of them, and each is published on its own</h2>
+  <section class="cap-gate" data-cap="publish-gate" id="pg-multi" data-state="blocked" aria-labelledby="pg-multi-h">
+    <header class="cap-gate-head">
+      <h2 class="cap-gate-title" id="pg-multi-h">Publish checks for three sites</h2>
+      <p class="cap-gate-summary" id="pg-multi-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span>: 1 required check failing on dustinedwards.info</p>
+    </header>
+    <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-multi-h">
+      <li class="cap-gate-section" data-section="sites">
+        <h3 class="cap-gate-group-title" id="pg-multi-g-sites">Destinations</h3>
+        <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-multi-g-sites">
+            <li class="cap-row cap-gate-site" id="pg-multi-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="blocked" data-first data-live-url="https://foxhound.app/notes/why-foxhound-waits" data-tone="crit">
+              <span class="cap-row-status" id="pg-multi-s-dustinedwards-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
+              <p class="cap-row-detail" id="pg-multi-s-dustinedwards-d">1 required check failing: The canonical address is missing on dustinedwards.info</p>
+              <span class="cap-row-meta"></span>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-multi" data-site="dustinedwards" data-site-label="dustinedwards.info"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-multi-sum" aria-label="Publish blocked, dustinedwards.info">Publish blocked</button></div>
+            </li>
+            <li class="cap-row cap-gate-site" id="pg-multi-s-foxhound" data-site="foxhound" data-name="foxhound.app" data-state="ready" data-live-url="https://foxhound.app/notes/why-foxhound-waits">
+              <span class="cap-row-status" id="pg-multi-s-foxhound-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">foxhound.app</span></div>
+              <p class="cap-row-detail" id="pg-multi-s-foxhound-d">Nothing required is failing. 3 advisory checks failing.</p>
+              <span class="cap-row-meta"></span>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-multi" data-site="foxhound" data-site-label="foxhound.app"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="foxhound" data-variant="primary" aria-label="Publish, foxhound.app">Publish</button></div>
+            </li>
+            <li class="cap-row cap-gate-site" id="pg-multi-s-carrel" data-site="carrel" data-name="carrel.app" data-state="published" data-published-at="2026-10-01T15:40:00Z" data-published-url="https://carrel.app/p/why-foxhound-waits" data-live-url="https://foxhound.app/notes/why-foxhound-waits">
+              <span class="cap-row-status" id="pg-multi-s-carrel-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Published</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">carrel.app</span></div>
+              <p class="cap-row-detail" id="pg-multi-s-carrel-d">Live.</p>
+              <span class="cap-row-meta"><time class="cap-time" data-cap="time" data-format="exact" datetime="2026-10-01T15:40:00Z">1 Oct 2026, 15:40 UTC</time></span>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-multi" data-site="carrel" data-site-label="carrel.app"><a class="cap-btn" data-cap-part="view" data-size="sm" aria-label="View live page, carrel.app" href="https://carrel.app/p/why-foxhound-waits">View</a><button type="button" class="cap-btn" data-cap-part="unpublish" data-size="sm" aria-label="Unpublish, carrel.app" data-variant="quiet" data-site="carrel">Unpublish</button></div>
+            </li>
+        </ul>
+      </li>
+        <li class="cap-gate-section" data-section="required">
+          <h3 class="cap-gate-group-title" id="pg-multi-g-req">Required, 1 failing</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-multi-g-req">
+            <li class="cap-row cap-check" id="pg-multi-c-canon" data-check="canon" data-name="Canonical address" data-required data-ok="false" data-cause="The canonical address is missing on dustinedwards.info" data-pass="The canonical address is set" data-href="#setting-canonical" data-fix="Set it in the site's settings." data-site="dustinedwards" data-order="12" data-tone="crit">
+              <span class="cap-row-status" id="pg-multi-c-canon-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Failing</span></span>
+              <div class="cap-row-title"><a href="#setting-canonical" aria-describedby="pg-multi-c-canon-s pg-multi-c-canon-d">The canonical address is missing on dustinedwards.info</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-canon-d"><span class="cap-check-name">Canonical address</span>. <span class="cap-check-fix">Fix: Set it in the site's settings.</span></p>
+              <span class="cap-row-meta">on dustinedwards.info</span>
+            </li>
+          </ul>
+        </li>
+        <li class="cap-gate-section" data-section="advisory">
+          <h3 class="cap-gate-group-title" id="pg-multi-g-adv">Advisory, 3</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-multi-g-adv">
+            <li class="cap-row cap-check" id="pg-multi-c-length" data-check="length" data-name="Title length" data-ok="false" data-cause="The title is 78 characters; the feed cuts it at 60" data-pass="The title fits the feed" data-href="#field-title" data-fix="Shorten the title or add a short one for the feed." data-order="4">
+              <span class="cap-row-status" id="pg-multi-c-length-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-multi-c-length-s pg-multi-c-length-d">The title is 78 characters; the feed cuts it at 60</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-length-d"><span class="cap-check-name">Title length</span>. <span class="cap-check-fix">Fix: Shorten the title or add a short one for the feed.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-links" data-check="links" data-name="Moved links" data-ok="false" data-cause="Two links point at a page that has moved" data-pass="No link points at a moved page" data-href="#field-body" data-fix="Update the two links to the new address." data-order="5">
+              <span class="cap-row-status" id="pg-multi-c-links-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-multi-c-links-s pg-multi-c-links-d">Two links point at a page that has moved</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-links-d"><span class="cap-check-name">Moved links</span>. <span class="cap-check-fix">Fix: Update the two links to the new address.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-sentences" data-check="sentences" data-name="Long sentences" data-ok="false" data-cause="Two sentences run past 40 words" data-pass="No sentence runs past 40 words" data-href="#field-body" data-fix="Split them where the thought turns." data-order="6">
+              <span class="cap-row-status" id="pg-multi-c-sentences-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-multi-c-sentences-s pg-multi-c-sentences-d">Two sentences run past 40 words</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-sentences-d"><span class="cap-check-name">Long sentences</span>. <span class="cap-check-fix">Fix: Split them where the thought turns.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+          </ul>
+        </li>
+      <li class="cap-gate-section" data-section="passed">
+        <details class="cap-disclosure">
+          <summary>9 checks passed</summary>
+          <div class="cap-disclosure-body">
+            <ul class="cap-gate-section-rows" role="list" aria-label="Passing checks">
+            <li class="cap-row cap-check" id="pg-multi-c-header" data-check="header" data-name="Header fields" data-required data-ok="true" data-cause="A required header field is missing" data-pass="Every required header field is filled in" data-href="#field-header" data-order="0">
+              <span class="cap-row-status" id="pg-multi-c-header-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-multi-c-header-s pg-multi-c-header-d">Every required header field is filled in</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-header-d"><span class="cap-check-name">Header fields</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-slug" data-check="slug" data-name="Slug" data-required data-ok="true" data-cause="The slug is already used" data-pass="The slug is unique" data-href="#field-slug" data-order="1">
+              <span class="cap-row-status" id="pg-multi-c-slug-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-slug" aria-describedby="pg-multi-c-slug-s pg-multi-c-slug-d">The slug is unique</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-slug-d"><span class="cap-check-name">Slug</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-draft" data-check="draft" data-name="Draft markers" data-required data-ok="true" data-cause="A draft marker is left in the text" data-pass="No draft markers are left in the text" data-href="#field-body" data-order="2">
+              <span class="cap-row-status" id="pg-multi-c-draft-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-multi-c-draft-s pg-multi-c-draft-d">No draft markers are left in the text</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-draft-d"><span class="cap-check-name">Draft markers</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-dates" data-check="dates" data-name="Dates" data-required data-ok="true" data-cause="A date is out of order" data-pass="Dates are in order" data-href="#field-dates" data-order="3">
+              <span class="cap-row-status" id="pg-multi-c-dates-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-dates" aria-describedby="pg-multi-c-dates-s pg-multi-c-dates-d">Dates are in order</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-dates-d"><span class="cap-check-name">Dates</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-resolve" data-check="resolve" data-name="Links resolve" data-ok="true" data-cause="A link does not resolve" data-pass="Every link resolves" data-href="#field-body" data-order="7">
+              <span class="cap-row-status" id="pg-multi-c-resolve-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-multi-c-resolve-s pg-multi-c-resolve-d">Every link resolves</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-resolve-d"><span class="cap-check-name">Links resolve</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-images" data-check="images" data-name="Images load" data-ok="true" data-cause="An image does not load" data-pass="Every image loads" data-href="#field-body" data-order="8">
+              <span class="cap-row-status" id="pg-multi-c-images-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-multi-c-images-s pg-multi-c-images-d">Every image loads</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-images-d"><span class="cap-check-name">Images load</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-sources" data-check="sources" data-name="Sources named" data-ok="true" data-cause="A source is not named" data-pass="Every source is named" data-href="#field-body" data-order="9">
+              <span class="cap-row-status" id="pg-multi-c-sources-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-multi-c-sources-s pg-multi-c-sources-d">Every source is named</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-sources-d"><span class="cap-check-name">Sources named</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-spell" data-check="spell" data-name="Spelling" data-ok="true" data-cause="A word is misspelt" data-pass="No word is misspelt" data-href="#field-body" data-order="10">
+              <span class="cap-row-status" id="pg-multi-c-spell-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-multi-c-spell-s pg-multi-c-spell-d">No word is misspelt</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-spell-d"><span class="cap-check-name">Spelling</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-multi-c-front" data-check="front" data-name="Front matter" data-ok="true" data-cause="The front matter does not parse" data-pass="The front matter parses" data-href="#field-header" data-order="11">
+              <span class="cap-row-status" id="pg-multi-c-front-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-multi-c-front-s pg-multi-c-front-d">The front matter parses</a></div>
+              <p class="cap-row-detail" id="pg-multi-c-front-d"><span class="cap-check-name">Front matter</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ul>
+    <p class="cap-gate-clear" data-cap-part="clear" hidden>No checks are failing.</p>
+  </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-form">
+  <h2 id="s-form">Without a script hook the button belongs to a form and posts it</h2>
+  <p class="cap-muted">A real submit, as the site admin's is: the first publication still goes through the preview, then the form is sent with the intent publish-confirmed. The server must refuse an unconfirmed first publication too.</p>
+  <form class="cap-gate-bar" method="get" action="#form-posted" id="pg-form-el">
+    <div data-cap-actions data-gate="pg-form" data-site="dustinedwards" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="primary">Publish</button></div>
+  <section class="cap-gate" data-cap="publish-gate" id="pg-form" data-state="ready" aria-labelledby="pg-form-h">
+    <header class="cap-gate-head">
+      <h2 class="cap-gate-title" id="pg-form-h">Publish checks</h2>
+      <p class="cap-gate-summary" id="pg-form-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on dustinedwards.info, 3 advisory checks failing</p>
+    </header>
+    <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-form-h">
+      <li class="cap-gate-section" data-section="sites">
+        <h3 class="cap-gate-group-title" id="pg-form-g-sites">Destination</h3>
+        <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-form-g-sites">
+            <li class="cap-row cap-gate-site" id="pg-form-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="ready" data-first>
+              <span class="cap-row-status" id="pg-form-s-dustinedwards-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
+              <p class="cap-row-detail" id="pg-form-s-dustinedwards-d">Nothing required is failing. 3 advisory checks failing.</p>
+              <span class="cap-row-meta"></span>
+            </li>
+        </ul>
+      </li>
+        <li class="cap-gate-section" data-section="required" hidden>
+          <h3 class="cap-gate-group-title" id="pg-form-g-req">Required, 0 failing</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-form-g-req">
+
+          </ul>
+        </li>
+        <li class="cap-gate-section" data-section="advisory">
+          <h3 class="cap-gate-group-title" id="pg-form-g-adv">Advisory, 3</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-form-g-adv">
+            <li class="cap-row cap-check" id="pg-form-c-length" data-check="length" data-name="Title length" data-ok="false" data-cause="The title is 78 characters; the feed cuts it at 60" data-pass="The title fits the feed" data-href="#field-title" data-fix="Shorten the title or add a short one for the feed." data-order="6">
+              <span class="cap-row-status" id="pg-form-c-length-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-form-c-length-s pg-form-c-length-d">The title is 78 characters; the feed cuts it at 60</a></div>
+              <p class="cap-row-detail" id="pg-form-c-length-d"><span class="cap-check-name">Title length</span>. <span class="cap-check-fix">Fix: Shorten the title or add a short one for the feed.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-links" data-check="links" data-name="Moved links" data-ok="false" data-cause="Two links point at a page that has moved" data-pass="No link points at a moved page" data-href="#field-body" data-fix="Update the two links to the new address." data-order="7">
+              <span class="cap-row-status" id="pg-form-c-links-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-form-c-links-s pg-form-c-links-d">Two links point at a page that has moved</a></div>
+              <p class="cap-row-detail" id="pg-form-c-links-d"><span class="cap-check-name">Moved links</span>. <span class="cap-check-fix">Fix: Update the two links to the new address.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-sentences" data-check="sentences" data-name="Long sentences" data-ok="false" data-cause="Two sentences run past 40 words" data-pass="No sentence runs past 40 words" data-href="#field-body" data-fix="Split them where the thought turns." data-order="8">
+              <span class="cap-row-status" id="pg-form-c-sentences-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-form-c-sentences-s pg-form-c-sentences-d">Two sentences run past 40 words</a></div>
+              <p class="cap-row-detail" id="pg-form-c-sentences-d"><span class="cap-check-name">Long sentences</span>. <span class="cap-check-fix">Fix: Split them where the thought turns.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+          </ul>
+        </li>
+      <li class="cap-gate-section" data-section="passed">
+        <details class="cap-disclosure">
+          <summary>11 checks passed</summary>
+          <div class="cap-disclosure-body">
+            <ul class="cap-gate-section-rows" role="list" aria-label="Passing checks">
+            <li class="cap-row cap-check" id="pg-form-c-alt" data-check="alt" data-name="Alt text" data-required data-ok="true" data-cause="The cover image has no alt text" data-pass="Every image has alt text" data-href="#field-alt" data-fix="Describe what the image shows, in a sentence." data-order="0">
+              <span class="cap-row-status" id="pg-form-c-alt-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-alt" aria-describedby="pg-form-c-alt-s pg-form-c-alt-d">Every image has alt text</a></div>
+              <p class="cap-row-detail" id="pg-form-c-alt-d"><span class="cap-check-name">Alt text</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-title" data-check="title" data-name="Title" data-required data-ok="true" data-cause="The title is empty" data-pass="The post has a title" data-href="#field-title" data-fix="Give the post a title." data-order="1">
+              <span class="cap-row-status" id="pg-form-c-title-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-form-c-title-s pg-form-c-title-d">The post has a title</a></div>
+              <p class="cap-row-detail" id="pg-form-c-title-d"><span class="cap-check-name">Title</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-header" data-check="header" data-name="Header fields" data-required data-ok="true" data-cause="A required header field is missing" data-pass="Every required header field is filled in" data-href="#field-header" data-order="2">
+              <span class="cap-row-status" id="pg-form-c-header-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-form-c-header-s pg-form-c-header-d">Every required header field is filled in</a></div>
+              <p class="cap-row-detail" id="pg-form-c-header-d"><span class="cap-check-name">Header fields</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-slug" data-check="slug" data-name="Slug" data-required data-ok="true" data-cause="The slug is already used" data-pass="The slug is unique" data-href="#field-slug" data-order="3">
+              <span class="cap-row-status" id="pg-form-c-slug-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-slug" aria-describedby="pg-form-c-slug-s pg-form-c-slug-d">The slug is unique</a></div>
+              <p class="cap-row-detail" id="pg-form-c-slug-d"><span class="cap-check-name">Slug</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-draft" data-check="draft" data-name="Draft markers" data-required data-ok="true" data-cause="A draft marker is left in the text" data-pass="No draft markers are left in the text" data-href="#field-body" data-order="4">
+              <span class="cap-row-status" id="pg-form-c-draft-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-form-c-draft-s pg-form-c-draft-d">No draft markers are left in the text</a></div>
+              <p class="cap-row-detail" id="pg-form-c-draft-d"><span class="cap-check-name">Draft markers</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-dates" data-check="dates" data-name="Dates" data-required data-ok="true" data-cause="A date is out of order" data-pass="Dates are in order" data-href="#field-dates" data-order="5">
+              <span class="cap-row-status" id="pg-form-c-dates-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-dates" aria-describedby="pg-form-c-dates-s pg-form-c-dates-d">Dates are in order</a></div>
+              <p class="cap-row-detail" id="pg-form-c-dates-d"><span class="cap-check-name">Dates</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-resolve" data-check="resolve" data-name="Links resolve" data-ok="true" data-cause="A link does not resolve" data-pass="Every link resolves" data-href="#field-body" data-order="9">
+              <span class="cap-row-status" id="pg-form-c-resolve-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-form-c-resolve-s pg-form-c-resolve-d">Every link resolves</a></div>
+              <p class="cap-row-detail" id="pg-form-c-resolve-d"><span class="cap-check-name">Links resolve</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-images" data-check="images" data-name="Images load" data-ok="true" data-cause="An image does not load" data-pass="Every image loads" data-href="#field-body" data-order="10">
+              <span class="cap-row-status" id="pg-form-c-images-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-form-c-images-s pg-form-c-images-d">Every image loads</a></div>
+              <p class="cap-row-detail" id="pg-form-c-images-d"><span class="cap-check-name">Images load</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-sources" data-check="sources" data-name="Sources named" data-ok="true" data-cause="A source is not named" data-pass="Every source is named" data-href="#field-body" data-order="11">
+              <span class="cap-row-status" id="pg-form-c-sources-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-form-c-sources-s pg-form-c-sources-d">Every source is named</a></div>
+              <p class="cap-row-detail" id="pg-form-c-sources-d"><span class="cap-check-name">Sources named</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-spell" data-check="spell" data-name="Spelling" data-ok="true" data-cause="A word is misspelt" data-pass="No word is misspelt" data-href="#field-body" data-order="12">
+              <span class="cap-row-status" id="pg-form-c-spell-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-form-c-spell-s pg-form-c-spell-d">No word is misspelt</a></div>
+              <p class="cap-row-detail" id="pg-form-c-spell-d"><span class="cap-check-name">Spelling</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-form-c-front" data-check="front" data-name="Front matter" data-ok="true" data-cause="The front matter does not parse" data-pass="The front matter parses" data-href="#field-header" data-order="13">
+              <span class="cap-row-status" id="pg-form-c-front-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-form-c-front-s pg-form-c-front-d">The front matter parses</a></div>
+              <p class="cap-row-detail" id="pg-form-c-front-d"><span class="cap-check-name">Front matter</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ul>
+    <p class="cap-gate-clear" data-cap-part="clear" hidden>No checks are failing.</p>
+  </section>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-fail">
+  <h2 id="s-fail">A publish that fails says so and leaves the destination as it was</h2>
+  <div class="cap-gate-bar">
+    <div data-cap-actions data-gate="pg-fail" data-site="foxhound" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="foxhound" data-variant="primary">Publish</button></div>
+  <section class="cap-gate" data-cap="publish-gate" id="pg-fail" data-state="ready" aria-labelledby="pg-fail-h">
+    <header class="cap-gate-head">
+      <h2 class="cap-gate-title" id="pg-fail-h">Publish checks</h2>
+      <p class="cap-gate-summary" id="pg-fail-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on foxhound.app</p>
+    </header>
+    <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-fail-h">
+      <li class="cap-gate-section" data-section="sites">
+        <h3 class="cap-gate-group-title" id="pg-fail-g-sites">Destination</h3>
+        <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-fail-g-sites">
+            <li class="cap-row cap-gate-site" id="pg-fail-s-foxhound" data-site="foxhound" data-name="foxhound.app" data-state="ready">
+              <span class="cap-row-status" id="pg-fail-s-foxhound-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">foxhound.app</span></div>
+              <p class="cap-row-detail" id="pg-fail-s-foxhound-d">Nothing required is failing.</p>
+              <span class="cap-row-meta"></span>
+            </li>
+        </ul>
+      </li>
+        <li class="cap-gate-section" data-section="required" hidden>
+          <h3 class="cap-gate-group-title" id="pg-fail-g-req">Required, 0 failing</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-fail-g-req">
+
+          </ul>
+        </li>
+        <li class="cap-gate-section" data-section="advisory" hidden>
+          <h3 class="cap-gate-group-title" id="pg-fail-g-adv">Advisory, 0</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-fail-g-adv">
+
+          </ul>
+        </li>
+      <li class="cap-gate-section" data-section="passed">
+        <details class="cap-disclosure">
+          <summary>5 checks passed</summary>
+          <div class="cap-disclosure-body">
+            <ul class="cap-gate-section-rows" role="list" aria-label="Passing checks">
+            <li class="cap-row cap-check" id="pg-fail-c-alt" data-check="alt" data-name="Alt text" data-required data-ok="true" data-cause="The cover image has no alt text" data-pass="Every image has alt text" data-href="#field-alt" data-fix="Describe what the image shows, in a sentence." data-order="0">
+              <span class="cap-row-status" id="pg-fail-c-alt-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-alt" aria-describedby="pg-fail-c-alt-s pg-fail-c-alt-d">Every image has alt text</a></div>
+              <p class="cap-row-detail" id="pg-fail-c-alt-d"><span class="cap-check-name">Alt text</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-fail-c-title" data-check="title" data-name="Title" data-required data-ok="true" data-cause="The title is empty" data-pass="The post has a title" data-href="#field-title" data-fix="Give the post a title." data-order="1">
+              <span class="cap-row-status" id="pg-fail-c-title-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-fail-c-title-s pg-fail-c-title-d">The post has a title</a></div>
+              <p class="cap-row-detail" id="pg-fail-c-title-d"><span class="cap-check-name">Title</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-fail-c-header" data-check="header" data-name="Header fields" data-required data-ok="true" data-cause="A required header field is missing" data-pass="Every required header field is filled in" data-href="#field-header" data-order="2">
+              <span class="cap-row-status" id="pg-fail-c-header-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-fail-c-header-s pg-fail-c-header-d">Every required header field is filled in</a></div>
+              <p class="cap-row-detail" id="pg-fail-c-header-d"><span class="cap-check-name">Header fields</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-fail-c-slug" data-check="slug" data-name="Slug" data-required data-ok="true" data-cause="The slug is already used" data-pass="The slug is unique" data-href="#field-slug" data-order="3">
+              <span class="cap-row-status" id="pg-fail-c-slug-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-slug" aria-describedby="pg-fail-c-slug-s pg-fail-c-slug-d">The slug is unique</a></div>
+              <p class="cap-row-detail" id="pg-fail-c-slug-d"><span class="cap-check-name">Slug</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-fail-c-draft" data-check="draft" data-name="Draft markers" data-required data-ok="true" data-cause="A draft marker is left in the text" data-pass="No draft markers are left in the text" data-href="#field-body" data-order="4">
+              <span class="cap-row-status" id="pg-fail-c-draft-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-fail-c-draft-s pg-fail-c-draft-d">No draft markers are left in the text</a></div>
+              <p class="cap-row-detail" id="pg-fail-c-draft-d"><span class="cap-check-name">Draft markers</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ul>
+    <p class="cap-gate-clear" data-cap-part="clear">No checks are failing.</p>
+  </section>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-react">
+  <h2 id="s-react">The React component, with the page's own publish control beside it</h2>
+  <div data-mount="react"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-buttons">
+  <h2 id="s-buttons">The paired publish button, in each state</h2>
+  <div class="cap-specimen-row" id="pg-buttons">
+    <div class="pg-sample-cell"><p class="cap-muted">Ready</p><div data-cap-actions><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="primary">Publish</button></div></div>
+    <div class="pg-sample-cell"><p class="cap-muted">Publishing</p><div data-cap-actions><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="primary" aria-disabled="true" aria-describedby="pg-blocked-sum" aria-busy="true">Publishing...</button></div></div>
+    <div class="pg-sample-cell"><p class="cap-muted">Blocked</p><div data-cap-actions><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-blocked-sum">Publish blocked</button></div></div>
+    <div class="pg-sample-cell"><p class="cap-muted">Published</p><div data-cap-actions><a class="cap-btn" data-cap-part="view" href="https://dustinedwards.info/blog/why-foxhound-waits">View</a><button type="button" class="cap-btn" data-cap-part="unpublish" data-variant="quiet" data-site="dustinedwards">Unpublish</button></div></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-narrow">
+  <h2 id="s-narrow">A narrow column</h2>
+  <div class="pg-sample-narrow">
+  <section class="cap-gate" data-cap="publish-gate" id="pg-narrow" data-state="blocked" aria-labelledby="pg-narrow-h">
+    <header class="cap-gate-head">
+      <h2 class="cap-gate-title" id="pg-narrow-h">Publish checks</h2>
+      <p class="cap-gate-summary" id="pg-narrow-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span>: 2 required checks failing on dustinedwards.info</p>
+    </header>
+    <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-narrow-h">
+      <li class="cap-gate-section" data-section="sites">
+        <h3 class="cap-gate-group-title" id="pg-narrow-g-sites">Destination</h3>
+        <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-narrow-g-sites">
+            <li class="cap-row cap-gate-site" id="pg-narrow-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="blocked" data-first data-tone="crit">
+              <span class="cap-row-status" id="pg-narrow-s-dustinedwards-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
+              <p class="cap-row-detail" id="pg-narrow-s-dustinedwards-d">2 required checks failing: The cover image has no alt text; The title is empty</p>
+              <span class="cap-row-meta"></span>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-narrow" data-site="dustinedwards" data-site-label="dustinedwards.info"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-narrow-sum" aria-label="Publish blocked, dustinedwards.info">Publish blocked</button></div>
+            </li>
+        </ul>
+      </li>
+        <li class="cap-gate-section" data-section="required">
+          <h3 class="cap-gate-group-title" id="pg-narrow-g-req">Required, 2 failing</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-narrow-g-req">
+            <li class="cap-row cap-check" id="pg-narrow-c-alt" data-check="alt" data-name="Alt text" data-required data-ok="false" data-cause="The cover image has no alt text" data-pass="Every image has alt text" data-href="#field-alt" data-fix="Describe what the image shows, in a sentence." data-order="0" data-tone="crit">
+              <span class="cap-row-status" id="pg-narrow-c-alt-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Failing</span></span>
+              <div class="cap-row-title"><a href="#field-alt" aria-describedby="pg-narrow-c-alt-s pg-narrow-c-alt-d">The cover image has no alt text</a></div>
+              <p class="cap-row-detail" id="pg-narrow-c-alt-d"><span class="cap-check-name">Alt text</span>. <span class="cap-check-fix">Fix: Describe what the image shows, in a sentence.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-narrow-c-title" data-check="title" data-name="Title" data-required data-ok="false" data-cause="The title is empty" data-pass="The post has a title" data-href="#field-title" data-fix="Give the post a title." data-order="1" data-tone="crit">
+              <span class="cap-row-status" id="pg-narrow-c-title-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Failing</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-narrow-c-title-s pg-narrow-c-title-d">The title is empty</a></div>
+              <p class="cap-row-detail" id="pg-narrow-c-title-d"><span class="cap-check-name">Title</span>. <span class="cap-check-fix">Fix: Give the post a title.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+          </ul>
+        </li>
+        <li class="cap-gate-section" data-section="advisory">
+          <h3 class="cap-gate-group-title" id="pg-narrow-g-adv">Advisory, 2</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-narrow-g-adv">
+            <li class="cap-row cap-check" id="pg-narrow-c-length" data-check="length" data-name="Title length" data-ok="false" data-cause="The title is 78 characters; the feed cuts it at 60" data-pass="The title fits the feed" data-href="#field-title" data-fix="Shorten the title or add a short one for the feed." data-order="6">
+              <span class="cap-row-status" id="pg-narrow-c-length-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-narrow-c-length-s pg-narrow-c-length-d">The title is 78 characters; the feed cuts it at 60</a></div>
+              <p class="cap-row-detail" id="pg-narrow-c-length-d"><span class="cap-check-name">Title length</span>. <span class="cap-check-fix">Fix: Shorten the title or add a short one for the feed.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-narrow-c-links" data-check="links" data-name="Moved links" data-ok="false" data-cause="Two links point at a page that has moved" data-pass="No link points at a moved page" data-href="#field-body" data-fix="Update the two links to the new address." data-order="7">
+              <span class="cap-row-status" id="pg-narrow-c-links-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-narrow-c-links-s pg-narrow-c-links-d">Two links point at a page that has moved</a></div>
+              <p class="cap-row-detail" id="pg-narrow-c-links-d"><span class="cap-check-name">Moved links</span>. <span class="cap-check-fix">Fix: Update the two links to the new address.</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+          </ul>
+        </li>
+      <li class="cap-gate-section" data-section="passed">
+        <details class="cap-disclosure">
+          <summary>4 checks passed</summary>
+          <div class="cap-disclosure-body">
+            <ul class="cap-gate-section-rows" role="list" aria-label="Passing checks">
+            <li class="cap-row cap-check" id="pg-narrow-c-header" data-check="header" data-name="Header fields" data-required data-ok="true" data-cause="A required header field is missing" data-pass="Every required header field is filled in" data-href="#field-header" data-order="2">
+              <span class="cap-row-status" id="pg-narrow-c-header-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-narrow-c-header-s pg-narrow-c-header-d">Every required header field is filled in</a></div>
+              <p class="cap-row-detail" id="pg-narrow-c-header-d"><span class="cap-check-name">Header fields</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-narrow-c-slug" data-check="slug" data-name="Slug" data-required data-ok="true" data-cause="The slug is already used" data-pass="The slug is unique" data-href="#field-slug" data-order="3">
+              <span class="cap-row-status" id="pg-narrow-c-slug-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-slug" aria-describedby="pg-narrow-c-slug-s pg-narrow-c-slug-d">The slug is unique</a></div>
+              <p class="cap-row-detail" id="pg-narrow-c-slug-d"><span class="cap-check-name">Slug</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-narrow-c-draft" data-check="draft" data-name="Draft markers" data-required data-ok="true" data-cause="A draft marker is left in the text" data-pass="No draft markers are left in the text" data-href="#field-body" data-order="4">
+              <span class="cap-row-status" id="pg-narrow-c-draft-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-narrow-c-draft-s pg-narrow-c-draft-d">No draft markers are left in the text</a></div>
+              <p class="cap-row-detail" id="pg-narrow-c-draft-d"><span class="cap-check-name">Draft markers</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-narrow-c-dates" data-check="dates" data-name="Dates" data-required data-ok="true" data-cause="A date is out of order" data-pass="Dates are in order" data-href="#field-dates" data-order="5">
+              <span class="cap-row-status" id="pg-narrow-c-dates-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-dates" aria-describedby="pg-narrow-c-dates-s pg-narrow-c-dates-d">Dates are in order</a></div>
+              <p class="cap-row-detail" id="pg-narrow-c-dates-d"><span class="cap-check-name">Dates</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ul>
+    <p class="cap-gate-clear" data-cap-part="clear" hidden>No checks are failing.</p>
+  </section>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfy">
+  <h2 id="s-comfy">Comfortable density</h2>
+  <div data-density="comfortable">
+  <section class="cap-gate" data-cap="publish-gate" id="pg-comfy" data-state="ready" aria-labelledby="pg-comfy-h">
+    <header class="cap-gate-head">
+      <h2 class="cap-gate-title" id="pg-comfy-h">Publish checks</h2>
+      <p class="cap-gate-summary" id="pg-comfy-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on dustinedwards.info</p>
+    </header>
+    <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-comfy-h">
+      <li class="cap-gate-section" data-section="sites">
+        <h3 class="cap-gate-group-title" id="pg-comfy-g-sites">Destination</h3>
+        <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-comfy-g-sites">
+            <li class="cap-row cap-gate-site" id="pg-comfy-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="ready" data-first>
+              <span class="cap-row-status" id="pg-comfy-s-dustinedwards-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
+              <p class="cap-row-detail" id="pg-comfy-s-dustinedwards-d">Nothing required is failing.</p>
+              <span class="cap-row-meta"></span>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-comfy" data-site="dustinedwards" data-site-label="dustinedwards.info"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="dustinedwards" data-variant="primary" aria-label="Publish, dustinedwards.info">Publish</button></div>
+            </li>
+        </ul>
+      </li>
+        <li class="cap-gate-section" data-section="required" hidden>
+          <h3 class="cap-gate-group-title" id="pg-comfy-g-req">Required, 0 failing</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-comfy-g-req">
+
+          </ul>
+        </li>
+        <li class="cap-gate-section" data-section="advisory" hidden>
+          <h3 class="cap-gate-group-title" id="pg-comfy-g-adv">Advisory, 0</h3>
+          <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-comfy-g-adv">
+
+          </ul>
+        </li>
+      <li class="cap-gate-section" data-section="passed">
+        <details class="cap-disclosure">
+          <summary>5 checks passed</summary>
+          <div class="cap-disclosure-body">
+            <ul class="cap-gate-section-rows" role="list" aria-label="Passing checks">
+            <li class="cap-row cap-check" id="pg-comfy-c-alt" data-check="alt" data-name="Alt text" data-required data-ok="true" data-cause="The cover image has no alt text" data-pass="Every image has alt text" data-href="#field-alt" data-fix="Describe what the image shows, in a sentence." data-order="0">
+              <span class="cap-row-status" id="pg-comfy-c-alt-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-alt" aria-describedby="pg-comfy-c-alt-s pg-comfy-c-alt-d">Every image has alt text</a></div>
+              <p class="cap-row-detail" id="pg-comfy-c-alt-d"><span class="cap-check-name">Alt text</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-comfy-c-title" data-check="title" data-name="Title" data-required data-ok="true" data-cause="The title is empty" data-pass="The post has a title" data-href="#field-title" data-fix="Give the post a title." data-order="1">
+              <span class="cap-row-status" id="pg-comfy-c-title-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-title" aria-describedby="pg-comfy-c-title-s pg-comfy-c-title-d">The post has a title</a></div>
+              <p class="cap-row-detail" id="pg-comfy-c-title-d"><span class="cap-check-name">Title</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-comfy-c-header" data-check="header" data-name="Header fields" data-required data-ok="true" data-cause="A required header field is missing" data-pass="Every required header field is filled in" data-href="#field-header" data-order="2">
+              <span class="cap-row-status" id="pg-comfy-c-header-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-header" aria-describedby="pg-comfy-c-header-s pg-comfy-c-header-d">Every required header field is filled in</a></div>
+              <p class="cap-row-detail" id="pg-comfy-c-header-d"><span class="cap-check-name">Header fields</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-comfy-c-slug" data-check="slug" data-name="Slug" data-required data-ok="true" data-cause="The slug is already used" data-pass="The slug is unique" data-href="#field-slug" data-order="3">
+              <span class="cap-row-status" id="pg-comfy-c-slug-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-slug" aria-describedby="pg-comfy-c-slug-s pg-comfy-c-slug-d">The slug is unique</a></div>
+              <p class="cap-row-detail" id="pg-comfy-c-slug-d"><span class="cap-check-name">Slug</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            <li class="cap-row cap-check" id="pg-comfy-c-draft" data-check="draft" data-name="Draft markers" data-required data-ok="true" data-cause="A draft marker is left in the text" data-pass="No draft markers are left in the text" data-href="#field-body" data-order="4">
+              <span class="cap-row-status" id="pg-comfy-c-draft-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Passed</span></span>
+              <div class="cap-row-title"><a href="#field-body" aria-describedby="pg-comfy-c-draft-s pg-comfy-c-draft-d">No draft markers are left in the text</a></div>
+              <p class="cap-row-detail" id="pg-comfy-c-draft-d"><span class="cap-check-name">Draft markers</span></p>
+              <span class="cap-row-meta"></span>
+            </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ul>
+    <p class="cap-gate-clear" data-cap-part="clear">No checks are failing.</p>
+  </section>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-msg">
+  <h2 id="s-msg">The page's message region, where results and Undo appear</h2>
+  <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+</section>
+
+<link rel="stylesheet" href="./specimen/sample.css" />
+<script type="module">
+  import { attachPublishGate } from "./publish-gate.ts";
+  import { enhance as message } from "../message/message.ts";
+  import { enhance as time } from "../time/time.ts";
+  message();
+  time();
+  // What publish and unpublish do is the app's: here each takes a moment and succeeds.
+  const later = () => new Promise((resolve) => setTimeout(resolve, 250));
+  const handles = {};
+  for (const el of document.querySelectorAll("[data-cap='publish-gate']")) {
+    // The form specimen has no hook, so its button posts the form.
+    const refuse = () => later().then(() => Promise.reject(new Error("The site did not answer.")));
+    handles[el.id] = attachPublishGate(el, el.id === "pg-form" ? {} : el.id === "pg-fail" ? { publish: refuse, unpublish: later } : { publish: later, unpublish: later });
+  }
+  window.gates = handles;
+  document.getElementById("pg-ready-break")?.addEventListener("click", () => handles["pg-ready"].setCheck("alt", { ok: false }));
+</script>

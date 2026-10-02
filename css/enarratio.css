@@ -1,0 +1,98 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Enarratio's charts in the family's look. Enarratio (https://github.com/DrDustinEdwards/enarratio)
+   reads every colour, font, size and timing from --enarratio-* custom properties and never
+   imports Capsomer; this section maps each onto a Capsomer token, so an app that loads
+   Capsomer's tokens gets charts in the family's look, a change to a token reaches every chart,
+   and both themes, every family and both densities follow with no chart code. Load it with
+   `capsomer/tokens.css` (which imports it) and Enarratio's `enarratio/base.css`, or draw the
+   charts with `stylesheet(capsomerTheme)` from `capsomer/enarratio-theme` instead; the two give
+   the same look (the theme's values are generated from the same tokens, tokens/palette.mjs).
+   The selector list re-resolves the chain on a wrapper that sets data-family or data-density,
+   because a custom property that names another is substituted where it is declared. */
+@layer cap.tokens {
+  :root,
+  [data-family],
+  [data-density] {
+    /* colours */
+    --enarratio-background: var(--surface);
+    --enarratio-text: var(--text);
+    --enarratio-text-muted: var(--muted);
+    --enarratio-grid: var(--line);
+    --enarratio-focus: var(--ring);
+
+    /* the eight series, then the label that reads best on each */
+    --enarratio-series-1: var(--series-1);
+    --enarratio-series-2: var(--series-2);
+    --enarratio-series-3: var(--series-3);
+    --enarratio-series-4: var(--series-4);
+    --enarratio-series-5: var(--series-5);
+    --enarratio-series-6: var(--series-6);
+    --enarratio-series-7: var(--series-7);
+    --enarratio-series-8: var(--series-8);
+    --enarratio-series-text-1: var(--series-text-1);
+    --enarratio-series-text-2: var(--series-text-2);
+    --enarratio-series-text-3: var(--series-text-3);
+    --enarratio-series-text-4: var(--series-text-4);
+    --enarratio-series-text-5: var(--series-text-5);
+    --enarratio-series-text-6: var(--series-text-6);
+    --enarratio-series-text-7: var(--series-text-7);
+    --enarratio-series-text-8: var(--series-text-8);
+
+    /* the five-step ramp, least to most, in the family's hue */
+    --enarratio-sequential-1: var(--ramp-1);
+    --enarratio-sequential-2: var(--ramp-2);
+    --enarratio-sequential-3: var(--ramp-3);
+    --enarratio-sequential-4: var(--ramp-4);
+    --enarratio-sequential-5: var(--ramp-5);
+    --enarratio-sequential-text-1: var(--ramp-text-1);
+    --enarratio-sequential-text-2: var(--ramp-text-2);
+    --enarratio-sequential-text-3: var(--ramp-text-3);
+    --enarratio-sequential-text-4: var(--ramp-text-4);
+    --enarratio-sequential-text-5: var(--ramp-text-5);
+
+    /* status: the same colours as the status component, never the series */
+    --enarratio-status-good: var(--ok);
+    --enarratio-status-warning: var(--warn);
+    --enarratio-status-bad: var(--crit);
+    --enarratio-status-unknown: var(--nodata);
+
+    /* fonts: figures are tabular in the interface face */
+    --enarratio-font: var(--ui);
+    --enarratio-font-numeric: var(--ui);
+
+    /* sizes follow density */
+    --enarratio-font-size: var(--text-size);
+    --enarratio-font-size-mark: var(--fs-detail);
+    --enarratio-font-size-small: var(--fs-detail);
+    --enarratio-font-size-tooltip: var(--fs-body);
+    --enarratio-line-height-tooltip: var(--leading);
+
+    /* spacing and shape */
+    --enarratio-space: var(--space-3);
+    --enarratio-gap: var(--space-5);
+    --enarratio-gap-row: var(--space-2);
+    --enarratio-gap-inline: calc(var(--space-2) + var(--space-1));
+    --enarratio-padding-button: var(--space-1) var(--space-2);
+    --enarratio-cell-padding: var(--space-2) var(--space-4) var(--space-2) 0;
+    --enarratio-radius: var(--radius-s);
+    --enarratio-radius-swatch: var(--radius-s);
+    --enarratio-radius-tooltip: var(--radius-m);
+    --enarratio-swatch-size: var(--space-4);
+    --enarratio-tooltip-padding: var(--space-2) var(--space-3);
+    --enarratio-tooltip-shadow: var(--shadow-m);
+    --enarratio-z-tooltip: var(--z-tip);
+
+    /* focus: the shared ring's width and offset on a focused chart or legend button */
+    --enarratio-focus-outline-width: var(--ring-width);
+    --enarratio-focus-outline-offset: var(--focus-offset);
+
+    /* timings: 100 and 400 ms, the family's motion; Enarratio stops them under reduced motion */
+    --enarratio-duration-hover: var(--dur-fast);
+    --enarratio-duration-grow: var(--dur-slow);
+    --enarratio-duration-fade: var(--dur-slow);
+    --enarratio-duration-draw: var(--dur-slow);
+    --enarratio-ease-grow: var(--ease-out);
+    --enarratio-ease-out: var(--ease-out);
+  }
+}

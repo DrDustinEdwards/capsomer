@@ -1,0 +1,4 @@
+/* Sample layout for the states page only: the narrow specimen sits in its own frame. */
+.specimen-page {
+  padding: var(--space-4);
+}

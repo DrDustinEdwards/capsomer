@@ -1,0 +1,299 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The markdown editor: a labelled textarea that markdown-editor.ts upgrades in place to a
+   CodeMirror surface with a toolbar, a link palette, a slash menu, an image prompt and a
+   word count. Extracted from the site admin's .md-* styles (app/styles/admin-editor.css),
+   rebuilt on Capsomer's tokens. The surface's own parts (CodeMirror's lines, gutter and
+   selection) are themed in markdown-editor.view.ts, because CodeMirror injects unlayered
+   styles that a layered rule cannot beat; everything else is here. */
+@layer cap.components {
+  .cap-md {
+    position: relative;
+    min-width: 0;
+  }
+
+  /* What a page without script, or before CodeMirror has loaded, shows: the real textarea. */
+  .cap-md-source {
+    min-height: var(--cap-md-min, 16rem);
+    font-family: var(--mono);
+    line-height: 1.65;
+    resize: vertical;
+  }
+
+  .cap-md-frame {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+
+    &:hover {
+      border-color: var(--muted);
+    }
+    /* Focus: the edge takes the ring colour, as a field's does; the ring itself is drawn
+       inside the surface (markdown-editor.view.ts), since the frame clips overflow. */
+    &:has(.cm-editor.cm-focused) {
+      border-color: var(--ring);
+    }
+    /* Invalid: the edge thickens and a soft ring appears as well as turning red, and the
+       message below says what is wrong. */
+    &:has(.cm-content[aria-invalid="true"]) {
+      border-color: var(--crit);
+      box-shadow:
+        inset 0 0 0 1px var(--crit),
+        0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
+    }
+    /* Read-only keeps its text readable and selectable, on the sunken ground the field uses. */
+    &:has(.cm-content[aria-readonly="true"]) {
+      background: var(--sunken);
+    }
+    &:has(.cm-content[aria-disabled="true"]) {
+      border-style: dashed;
+      background: var(--sunken);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+  }
+
+  /* The surface grows with its text up to --cap-md-max, then scrolls. */
+  .cap-md-surface {
+    min-width: 0;
+    background: transparent;
+  }
+
+  /* An APG toolbar: one tab stop, arrows between the buttons. It wraps rather than scrolling. */
+  .cap-md-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--pad-x);
+    border-bottom: 1px solid var(--line);
+    background: var(--raised);
+  }
+  .cap-md-tool {
+    display: inline-grid;
+    place-items: center;
+    min-width: max(var(--target), calc(var(--control) - var(--space-3)));
+    min-height: max(var(--target), calc(var(--control) - var(--space-3)));
+    padding: 0 var(--pad-x);
+    border: 1px solid transparent;
+    border-radius: var(--radius-m);
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    line-height: 1;
+
+    &:hover {
+      border-color: var(--line-strong);
+      background: var(--surface);
+      color: var(--text);
+    }
+    &:active {
+      background: var(--sunken);
+    }
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+  }
+  .cap-md-sep {
+    align-self: stretch;
+    width: 1px;
+    margin: var(--space-2) var(--space-2);
+    background: var(--line);
+  }
+  .cap-md-toolbar-hint {
+    margin-inline-start: auto;
+    padding-inline-end: var(--space-2);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  .cap-md-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    padding: var(--space-2) var(--pad-x);
+    border-top: 1px solid var(--line);
+    background: var(--raised);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-md-hint {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+  }
+  /* Not a live region: it changes with every keystroke, and announcing each change would make the editor unusable with a screen reader. */
+  .cap-md-stats {
+    margin: 0;
+    margin-inline-start: auto;
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-md-limit[data-over] {
+    color: var(--crit);
+    font-weight: 600;
+  }
+
+  /* The link palette and the slash menu are the shared popover (.cap-popover, popover.css) in
+     the top layer, placed at the cursor by popover.ts; the palette's list is the shared
+     listbox (.cap-listbox, .cap-option, listbox.css). Only what is the editor's own is here. */
+  .cap-md-palette {
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+  .cap-md-palette-label {
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .cap-md-palette-note {
+    margin: 0;
+    padding: 0 var(--space-3);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    &:empty {
+      display: none;
+    }
+  }
+  .cap-md-palette .cap-listbox {
+    padding: 0;
+  }
+  /* The address beside a page's title, and the words that say a page is not live. On the
+     current option (accent-soft) it steps up to body text: --muted is not measured there. */
+  .cap-md-option-hint {
+    flex: none;
+    max-inline-size: 45%;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .cap-option[data-active] & {
+      color: var(--text);
+    }
+  }
+  .cap-md-option-note {
+    font-style: italic;
+  }
+
+  .cap-md-slash {
+    margin: 0;
+    list-style: none;
+    padding: var(--space-2);
+  }
+  .cap-md-slash-item {
+    display: grid;
+    gap: var(--space-1);
+    width: 100%;
+    min-height: max(var(--target), calc(var(--control) - var(--space-2)));
+    padding: var(--space-2) var(--pad-x);
+    border: 0;
+    border-radius: var(--radius-m);
+    background: transparent;
+    color: var(--text);
+    font-family: var(--ui);
+    font-size: var(--fs-body);
+    text-align: start;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--accent-soft);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+  }
+  .cap-md-slash-hint {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    .cap-md-slash-item:is(:hover, :focus-visible) & {
+      color: var(--text);
+    }
+  }
+
+  /* The alt step: an image is uploaded but is not in the text until it is described. */
+  .cap-md-upload {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+    padding: var(--space-4);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--raised);
+  }
+  .cap-md-upload-wait {
+    margin: 0;
+    color: var(--muted);
+  }
+  .cap-md-upload-thumb {
+    width: 5rem;
+    height: 3.25rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    object-fit: cover;
+  }
+  .cap-md-upload-fields {
+    display: grid;
+    flex: 1 1 14rem;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .cap-md-upload-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .cap-md-upload-error {
+    margin-top: var(--space-3);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-md-tool,
+    .cap-md-frame {
+      transition:
+        color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-md-frame,
+    .cap-md-upload {
+      border-color: CanvasText;
+    }
+    .cap-md-frame:has(.cm-content[aria-invalid="true"]) {
+      border-width: 3px;
+    }
+    .cap-md-tool:disabled {
+      opacity: 1;
+      color: GrayText;
+    }
+    .cap-md-slash-item:is(:hover, :focus-visible) {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+    .cap-md-limit[data-over] {
+      text-decoration: underline;
+    }
+  }
+}

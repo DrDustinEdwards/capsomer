@@ -1,0 +1,186 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Breadcrumb: where this page sits, as links back up the trail and the current page as text.
+   Matches shadcn/ui Breadcrumb (list, item, link, page, separator, ellipsis) in Capsomer's
+   tokens. The separator is CSS, not an element, so it is not in the accessibility tree; long
+   names are cut with an ellipsis; the trail wraps on a phone; and a long trail folds its
+   middle levels into a popover that holds real links. The site's `.page-breadcrumb` (a wrapped
+   ordered list, links in the brand colour, " / " between) is the shape this keeps. */
+@layer cap.components {
+  .cap-breadcrumb {
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-body);
+    line-height: 1.2;
+  }
+
+  .cap-breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    max-inline-size: 100%;
+
+    /* The separator: a small chevron drawn with two borders, turned to point the way the
+       trail reads. It is generated content with no text, so no reader announces it. */
+    &:not(:first-child)::before {
+      content: "";
+      flex: none;
+      inline-size: 5px;
+      block-size: 5px;
+      margin-inline-end: 1px;
+      border-block-start: 1.5px solid var(--dim);
+      border-inline-end: 1.5px solid var(--dim);
+      transform: rotate(45deg);
+    }
+    &:not(:first-child):dir(rtl)::before {
+      transform: rotate(-135deg);
+    }
+  }
+
+  /* A link up the trail. The hit area is the target height; the name is cut, never wrapped,
+     past 24 characters (the full name is in the page and in a reader's list). */
+  .cap-breadcrumb-link {
+    display: block;
+    box-sizing: border-box;
+    min-inline-size: var(--target);
+    max-inline-size: min(24ch, 100%);
+    padding-inline: var(--space-2);
+    overflow: hidden;
+    border-radius: var(--radius-s);
+    color: var(--accent-text);
+    line-height: var(--target);
+    text-align: center;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:visited {
+      color: var(--accent-text);
+    }
+    &:hover,
+    &[data-force="hover"] {
+      color: var(--accent-hover);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 0;
+    }
+  }
+
+  /* The current page: text, not a link, heavier and in the full text colour. */
+  .cap-breadcrumb-page {
+    display: block;
+    box-sizing: border-box;
+    max-inline-size: min(36ch, 100%);
+    padding-inline: var(--space-2);
+    overflow: hidden;
+    color: var(--text);
+    font-weight: 600;
+    line-height: var(--target);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* The folded levels: a button of three dots that opens a popover holding the links. */
+  .cap-breadcrumb-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: max(var(--target), calc(var(--control) - 4px));
+    block-size: max(var(--target), calc(var(--control) - 4px));
+    margin: 0;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius-s);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+
+    & > svg {
+      inline-size: 16px;
+      block-size: 16px;
+      pointer-events: none;
+    }
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--raised);
+      border-color: var(--line);
+      color: var(--text);
+    }
+    &[aria-expanded="true"] {
+      background: var(--sunken);
+      border-color: var(--line-strong);
+      color: var(--text);
+    }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+  }
+
+  .cap-breadcrumb-more {
+    display: grid;
+    margin: 0;
+    padding: var(--space-2);
+    list-style: none;
+  }
+  .cap-breadcrumb-more-link {
+    display: block;
+    box-sizing: border-box;
+    min-block-size: var(--target);
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-s);
+    color: var(--accent-text);
+    line-height: var(--target);
+    overflow-wrap: anywhere;
+    text-decoration: none;
+
+    &:visited {
+      color: var(--accent-text);
+    }
+    &:hover {
+      background: var(--raised);
+      color: var(--accent-hover);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: -2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-breadcrumb-link,
+    .cap-breadcrumb-ellipsis,
+    .cap-breadcrumb-more-link {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-breadcrumb-item:not(:first-child)::before {
+      border-color: CanvasText;
+    }
+    .cap-breadcrumb-ellipsis[aria-expanded="true"] {
+      border-color: Highlight;
+    }
+  }
+}

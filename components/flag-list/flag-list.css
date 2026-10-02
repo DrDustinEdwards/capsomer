@@ -1,0 +1,328 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Flags raised against a draft by a check, a reviewer or an AI. Built on the row list (a flag is
+   a row; the row's grid, hover, focus ring and critical edge are the row list's) and adds what a
+   flag has that a row does not: a quoted passage, a suggestion shown as a before and after pair,
+   the line that says who closed it and when, and a filter over open and resolved. The filter is
+   CSS over the real radios, so the whole record is in the delivered HTML and the filter works
+   before any script runs. Requires row-list.css, status.css, button.css, segmented.css. */
+@layer cap.components {
+  .cap-flags {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  .cap-flags-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+  }
+  .cap-flags-title {
+    grid-column: 1;
+    margin: 0;
+    font-size: var(--fs-lead);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .cap-flags-summary {
+    grid-column: 1;
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-flags-filter {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: end;
+  }
+  .cap-flags-count {
+    margin-inline-start: var(--space-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-flags-batch {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+
+    &:not(:has(*:not([hidden]))) {
+      display: none;
+    }
+  }
+  .cap-flags-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  @container (max-width: 30rem) {
+    .cap-flags-head {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .cap-flags-filter {
+      grid-column: 1;
+      grid-row: auto;
+      justify-self: start;
+    }
+  }
+
+  /* The filter: the checked radio decides which rows show. Rows are always in the HTML. */
+  .cap-flags:has(.cap-flags-filter input[value="open"]:checked) .cap-flag[data-state="resolved"],
+  .cap-flags:has(.cap-flags-filter input[value="resolved"]:checked) .cap-flag[data-state="open"] {
+    display: none;
+  }
+  .cap-flags:has(.cap-flags-filter input[value="open"]:checked) .cap-flag-group:not(:has(.cap-flag[data-state="open"])),
+  .cap-flags:has(.cap-flags-filter input[value="resolved"]:checked) .cap-flag-group:not(:has(.cap-flag[data-state="resolved"])) {
+    display: none;
+  }
+
+  /* A group is a list item of the one list, holding its heading and its own rows. The columns
+     are the row list's, passed down as subgrids, so every row still lines up with every other. */
+  .cap-flag-group {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+  }
+  .cap-flag-group-head {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    padding: var(--space-4) var(--pad-card) var(--space-2);
+  }
+  .cap-flag-group-rows {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-flag-group-title {
+    margin: 0;
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cap-flag-group-count {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cap-flags-empty {
+    grid-column: 1 / -1;
+    display: none;
+    margin: 0;
+    padding: var(--space-4) var(--pad-card);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-flags:has(.cap-flags-filter input[value="open"]:checked):not(:has(.cap-flag[data-state="open"])) .cap-flags-empty[data-for="open"],
+  .cap-flags:has(.cap-flags-filter input[value="resolved"]:checked):not(:has(.cap-flag[data-state="resolved"])) .cap-flags-empty[data-for="resolved"],
+  .cap-flags:has(.cap-flags-filter input[value="all"]:checked):not(:has(.cap-flag)) .cap-flags-empty[data-for="all"] {
+    display: block;
+  }
+
+  /* A flag is a row. Its title may wrap, since the message is the whole point of the row, and
+     the cause under it may wrap too. */
+  .cap-flag {
+    & .cap-row-title :is(a, button),
+    & .cap-row-detail {
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+    }
+    & .cap-row-title > .cap-flag-title {
+      display: block;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+    & .cap-row-status {
+      align-self: start;
+      padding-block-start: var(--space-1);
+    }
+    /* The tint is the open edge's only extra; a resolved flag is quieter. */
+    &[data-state="resolved"] .cap-row-title :is(a, .cap-flag-title) {
+      color: var(--muted);
+      font-weight: 500;
+    }
+  }
+
+  /* "Go to passage": the link's own words, after the message, in the accent text colour. */
+  .cap-flag-goto {
+    margin-inline-start: var(--space-3);
+    color: var(--accent-text);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    white-space: nowrap;
+
+    &::after {
+      content: " \203A" / "";
+    }
+  }
+  .cap-flag .cap-row-title a:hover .cap-flag-goto {
+    text-decoration: underline;
+  }
+  .cap-flag-title .cap-status {
+    margin-inline-start: var(--space-3);
+    font-size: var(--fs-detail);
+  }
+
+  /* Below the row's own line: the quoted passage, the suggestion, who closed it. Raised above
+     the stretched link, so the text can be selected and the buttons take their own clicks. */
+  .cap-flag-body {
+    grid-column: 2 / -1;
+    grid-row: 3;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+    margin-block-start: var(--space-3);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .cap-flag-quote {
+    margin: 0;
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid var(--line-strong);
+    display: grid;
+    gap: var(--space-1);
+
+    & p {
+      margin: 0;
+    }
+  }
+  .cap-flag-quote-text {
+    font-family: var(--prose);
+    font-size: var(--fs-body);
+    quotes: "\201C" "\201D";
+    overflow-wrap: anywhere;
+  }
+  .cap-flag-anchor-note {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-flag[data-anchor="lost"] .cap-flag-quote {
+    border-inline-start-style: dashed;
+  }
+  .cap-flag[data-anchor="lost"] .cap-flag-quote-text {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* The suggestion: inert text until the owner applies it. before and after as the draft
+     compare marks them: a minus and a plus, the struck old words and the new, and the hidden
+     words "Before" and "After", so the tint is never the only cue. */
+  .cap-flag-suggestion {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+    justify-items: start;
+
+    &[data-state="applied"] {
+      border-style: dashed;
+    }
+  }
+  .cap-flag-suggestion-head {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+  }
+  .cap-flag-diff {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-width: 100%;
+
+    & :is(del, ins) {
+      display: block;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-m);
+      overflow-wrap: anywhere;
+      text-decoration-thickness: 1px;
+    }
+    & del {
+      background: var(--crit-soft);
+      text-decoration-line: line-through;
+    }
+    & ins {
+      background: var(--ok-soft);
+      text-decoration: none;
+    }
+  }
+  .cap-flag-mark {
+    display: inline-block;
+    inline-size: 1.2em;
+    font-family: var(--mono);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .cap-flag-suggestion-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+
+    &:empty {
+      display: none;
+    }
+  }
+  .cap-flag-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-flag-resolution {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* On a narrow column the body takes the row's full width, under everything. */
+  @container cap-rows (max-width: 30rem) {
+    .cap-flag-body {
+      grid-column: 1 / -1;
+      grid-row: 5;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-flag-suggestion {
+      border-color: CanvasText;
+    }
+    .cap-flag-quote {
+      border-inline-start-color: CanvasText;
+    }
+    .cap-flag-diff del {
+      forced-color-adjust: none;
+      background: Canvas;
+      color: CanvasText;
+    }
+    .cap-flag-diff ins {
+      forced-color-adjust: none;
+      background: Canvas;
+      color: CanvasText;
+      outline: 1px solid CanvasText;
+    }
+  }
+}

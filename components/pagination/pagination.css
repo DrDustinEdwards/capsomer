@@ -1,0 +1,207 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Pagination: move between pages of a long list, with a "Showing 21 to 40 of 312" line.
+   Matches shadcn/ui Pagination (content, item, link, previous, next, ellipsis) in Capsomer's
+   tokens: ghost page numbers, the current page outlined, Previous and Next with a chevron and
+   a word. The site's `.pager` (Newer, "Page 3 of 16", Older, as links) is the compact form,
+   which a narrow container switches to. Works as links (server-rendered) and as buttons
+   (client-side). */
+@layer cap.components {
+  .cap-pagination {
+    container-type: inline-size;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--gap);
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-body);
+  }
+
+  .cap-pagination-status {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cap-pagination-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    margin: 0 0 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* One page, one Previous or Next: a link or a button. */
+  .cap-page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    box-sizing: border-box;
+    min-height: var(--control);
+    min-width: var(--control);
+    margin: 0;
+    padding: 0 var(--space-3);
+    border: 1px solid transparent;
+    border-radius: var(--radius-m);
+    background: none;
+    color: var(--accent-text);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+
+    &:visited {
+      color: var(--accent-text);
+    }
+    &:hover,
+    &[data-force="hover"] {
+      border-color: var(--line);
+      background: var(--raised);
+      color: var(--accent-hover);
+    }
+    &:active {
+      background: var(--sunken);
+    }
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+
+    /* The page a person is on: outlined in the accent (3:1), tinted, heavier, and named so
+       by aria-current. It is not a link to itself in look. */
+    &[aria-current="page"] {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: var(--shadow-xs);
+      cursor: default;
+    }
+
+    /* Previous and Next carry the action, so they have an edge as an outline button does. */
+    &:is([data-kind="prev"], [data-kind="next"]) {
+      padding-inline: var(--pad-x);
+      border-color: var(--line-strong);
+      background: var(--raised);
+      color: var(--text);
+      box-shadow: var(--shadow-xs);
+
+      &:hover,
+      &[data-force="hover"] {
+        background: color-mix(in srgb, var(--raised), var(--text) 7%);
+        color: var(--text);
+      }
+      &:active {
+        background: color-mix(in srgb, var(--raised), var(--text) 12%);
+      }
+
+      /* The chevron: two borders turned, the way the word points. Generated, so a reader
+         hears only "Previous". */
+      &::before,
+      &::after {
+        flex: none;
+        inline-size: 6px;
+        block-size: 6px;
+        border-block-start: 1.5px solid currentColor;
+        border-inline-end: 1.5px solid currentColor;
+      }
+    }
+    &[data-kind="prev"]::before {
+      content: "";
+      transform: rotate(-135deg);
+      margin-inline-start: 2px;
+    }
+    &[data-kind="next"]::after {
+      content: "";
+      transform: rotate(45deg);
+      margin-inline-end: 2px;
+    }
+    &[data-kind="prev"]:dir(rtl)::before {
+      transform: rotate(45deg);
+    }
+    &[data-kind="next"]:dir(rtl)::after {
+      transform: rotate(-135deg);
+    }
+
+    /* An end with nowhere to go: dashed, muted, still readable, takes no clicks. */
+    &[aria-disabled="true"] {
+      border-style: dashed;
+      border-color: var(--line-strong);
+      background: var(--surface);
+      color: var(--muted);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  }
+
+  /* The skipped pages: a gap, said in words to a reader. */
+  .cap-page-gap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--control);
+    min-width: var(--control);
+    color: var(--muted);
+  }
+
+  /* "Page 3 of 16": shown in place of the numbers when the container is narrow. */
+  .cap-pagination-where {
+    display: none;
+    padding-inline: var(--space-3);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+
+  /* A narrow container: the numbers give way to "Page 3 of 16" between Previous and Next. */
+  @container (max-width: 34rem) {
+    .cap-pagination-status {
+      inline-size: 100%;
+    }
+    .cap-pagination-list {
+      inline-size: 100%;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      margin: 0;
+    }
+    .cap-pagination-num {
+      display: none;
+    }
+    .cap-pagination-where {
+      display: block;
+      flex: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-page {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-page[aria-current="page"] {
+      forced-color-adjust: none;
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .cap-page[aria-disabled="true"] {
+      color: GrayText;
+      border-color: GrayText;
+    }
+  }
+}

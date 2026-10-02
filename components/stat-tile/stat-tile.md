@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [ok, warning, critical, no data, hover, pressed, keyboard focus, a row of every tone, phone width wrapping onto more rows]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.3.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx (tiles) and styles.css ("stat tiles")
 replaces:
   - 'class="tiles?( |")'
@@ -33,7 +33,7 @@ A value against a hard limit with a projection is a usage meter. A list of what 
 - **The figure is tabular**, with its unit or denominator small beside it ("2,140 of 2,000"), so figures line up across tiles. It comes before its label in the markup, so the tile's name reads "6 of 6 Sites up All up".
 - **When it is not ok, a status glyph and a word say so** ("Over limit", "Near limit"), and the figure, the word and the sparkline take the tone's colour. Shape, word and colour together (patterns.md "Status"). An ok tile may carry a word ("All up") without a glyph.
 - **No data is a state with a reason, never a zero.** The figure says "No data" beside the dashed glyph, and the detail line says why ("The health route has not been read yet").
-- **The sparkline comes from Enarratio.** Render it with `sparkline()` and put its SVG in `.cap-tile-chart`, which is `aria-hidden`; the slot sets its size and `color`, so draw with `currentColor`. Give every chart a one-sentence summary with its numbers, in a `.cap-sr-only` element the tile names with `aria-describedby`, so the numbers are text and the tile's name stays short.
+- **The sparkline comes from Enarratio.** Render it with `sparkline()` and put its SVG in `.cap-tile-chart`, which is `aria-hidden`; the slot sets its size and `color`, so draw with `currentColor`. Give every chart a one-sentence summary with its numbers, in a `.cap-sr-only` element the tile names with `aria-describedby`, so the numbers are text and the tile's name stays short. **With the numbers too**, the tile joins a chart frame: wrap the tile and its summary in `<div class="cap-chart" data-variant="tile" data-summary="hidden">`, make the summary a `<p class="cap-chart-summary">`, and add the frame's "Show data" disclosure under the tile, outside the link (a disclosure inside a link is nested interactive content). Enarratio's `sparklineTable()` returns the sentence and the table; React `StatTile` takes `chartTable` and `chartTableLabel`. Without `chartTable` nothing changes.
 - **A tile is never narrower than its text** (`flex: 1 0 auto`), so the row wraps to more rows instead of cutting a word: no breakpoints, and a phone gets one or two across by what fits. Only a tile wider than the whole row wraps its detail, and its line wraps whole.
 - **Hover** darkens the border to `--line-strong` and tints the tile `--raised`; pressed tints it `--sunken`; keyboard focus draws the shared 2 px `--ring` outline; the colour changes ease over 100 ms (not under reduced motion). The tile is shadcn's Item look: hairline edge, `--radius-l`, padding from `--pad-y` and `--pad-x` so comfortable density roomies it.
 
