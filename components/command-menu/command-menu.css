@@ -1,172 +1,94 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The command menu: a native <dialog> near the top of the window, holding a labelled
-   combobox and a grouped listbox. Written for Capsomer's tokens from the Capsid Portal's
-   palette (dashboard/src/app/CommandMenu.tsx, styles.css ".palette"): the Portal's rows are
-   a flat list with a group letter and a hint column, here the groups have headings and the
-   hint is a words-first note ("asks a reason") beside any shortcut. The backdrop dims the
-   page, where the Portal's is clear, because the menu is modal. */
+/* The command menu: the shared dialog as a palette (data-placement="top"), holding a search
+   field and the shared listbox. The surface, backdrop and motion are the dialog's; the
+   options, group labels, the active option and "no results" are the listbox's. This file
+   adds only the search field (shadcn's Command input: a search icon and a field in a rounded
+   group) and the key hints under the list. Reference: shadcn/ui Command (nova). Extracted
+   from the Capsid Portal's palette (dashboard/src/app/CommandMenu.tsx). */
 @layer cap.components {
-  .cap-cmd {
-    width: min(620px, calc(100% - 2 * var(--space-5)));
-    max-width: none;
-    max-height: calc(100dvh - 12vh - var(--space-5));
-    margin: 12vh auto auto;
-    padding: 0;
-    overflow: hidden;
+  .cap-cmd-search {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-3);
+    margin: var(--space-3) var(--space-3) 0;
+    padding-inline: var(--pad-x);
+    min-block-size: var(--control);
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-l);
     background: var(--surface);
-    color: var(--text);
-    box-shadow: var(--shadow);
-
-    &[open] {
-      display: flex;
-      flex-direction: column;
-    }
-    &::backdrop {
-      background: var(--scrim);
-    }
-  }
-
-  .cap-cmd-search {
-    display: grid;
-    gap: var(--space-1);
-    padding: var(--space-4) var(--space-5) var(--space-3);
-    border-bottom: 1px solid var(--line);
-
-    /* The input is the only thing that takes focus here; its ring is the line under it. */
-    &:has(.cap-cmd-input:focus-visible) {
-      border-bottom-color: var(--accent);
-      box-shadow: inset 0 -1px 0 var(--accent);
-    }
-  }
-  .cap-cmd-label {
-    font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
     color: var(--muted);
+
+    /* The input is the only thing that takes focus here, and it draws no ring of its own:
+       the whole group does. */
+    &:has(.cap-cmd-input:focus-visible) {
+      border-color: var(--accent);
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+    & > svg {
+      flex: none;
+      inline-size: var(--space-5);
+      block-size: var(--space-5);
+    }
   }
+
   .cap-cmd-input {
-    width: 100%;
-    min-height: var(--target);
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    min-block-size: calc(var(--control) - 2px);
     padding: 0;
     border: 0;
+    border-radius: 0;
     background: transparent;
     color: var(--text);
-    font-size: var(--fs-lead);
+    font: inherit;
+    font-size: var(--fs-body);
 
     &:focus-visible {
       outline: none;
     }
     &::placeholder {
       color: var(--dim);
+      opacity: 1;
+    }
+    /* A touch screen gets a 16 px field, so iOS does not zoom into it. */
+    @media (pointer: coarse) {
+      font-size: var(--fs-input-coarse);
     }
   }
 
+  /* The list scrolls inside the dialog; the search above and the hints below stay. */
   .cap-cmd-list {
     flex: 1 1 auto;
-    min-height: 0;
-    max-height: min(60vh, 480px);
-    padding: var(--space-2) var(--space-3);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-  .cap-cmd-group + .cap-cmd-group {
-    margin-top: var(--space-2);
-  }
-  .cap-cmd-group-title {
-    padding: var(--space-3) var(--space-3) var(--space-2);
-    font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .cap-cmd-option {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: var(--space-4);
-    min-height: max(var(--target), 34px);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-m);
-    color: var(--text);
-    cursor: pointer;
-
-    &[aria-selected="true"] {
-      background: var(--accent-soft);
-      box-shadow: inset 3px 0 0 var(--accent);
-    }
-  }
-  .cap-cmd-option-label {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .cap-cmd-keys {
-    display: inline-flex;
-    flex-wrap: wrap;
-    justify-content: end;
-    align-items: baseline;
-    gap: var(--space-1);
-    color: var(--muted);
-    font-size: var(--fs-detail);
-    white-space: nowrap;
-  }
-  /* What the command will do or ask, in words ("asks a reason"), before any shortcut. */
-  .cap-cmd-hint {
-    margin-inline-end: var(--space-3);
+    min-block-size: 0;
+    margin-block-start: var(--space-2);
   }
 
-  .cap-cmd-empty {
-    margin: 0;
-    padding: var(--space-5);
-    color: var(--muted);
-
-    &:empty {
-      display: none;
-    }
+  /* "No commands match ..." takes the room of a short list. */
+  .cap-cmd > .cap-listbox-empty {
+    padding-block: var(--space-6);
   }
 
+  /* The keys that work in the menu, under the list: decoration (aria-hidden), the keyboard
+     table and the option names carry the same words. */
   .cap-cmd-foot {
     display: flex;
+    flex: none;
     flex-wrap: wrap;
     gap: var(--space-4);
-    padding: var(--space-3) var(--space-5);
-    border-top: 1px solid var(--line);
-    background: var(--raised);
-    font-size: var(--fs-label);
+    padding: var(--space-3) var(--pad-card);
+    border-block-start: 1px solid var(--line);
+    background: var(--sunken);
     color: var(--muted);
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-cmd {
-      transition:
-        opacity var(--dur-fast) var(--ease-out),
-        transform var(--dur-fast) var(--ease-out);
-    }
-    @starting-style {
-      .cap-cmd[open] {
-        opacity: 0;
-        transform: translateY(-6px);
-      }
-    }
+    font-size: var(--fs-label);
   }
 
   @media (forced-colors: active) {
-    .cap-cmd {
+    .cap-cmd-search {
       border-color: CanvasText;
-    }
-    .cap-cmd-option[aria-selected="true"] {
-      outline: 2px solid Highlight;
-      outline-offset: -2px;
-    }
-    .cap-cmd-search:has(.cap-cmd-input:focus-visible) {
-      border-bottom: 2px solid Highlight;
     }
   }
 }
