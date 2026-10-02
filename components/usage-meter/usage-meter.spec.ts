@@ -16,18 +16,17 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: text in every tone and the bar's edge reach their contrast", async ({ page }) => {
+  test("accessibility: text in every tone and the legend keys reach their contrast", async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
     await expectContrast(page, [
-      { sel: ".cap-usage-name", what: "a usage name" },
-      { sel: ".cap-usage-value", what: "an amount" },
+      { sel: ".cap-usage-item .cap-meter-label", what: "a usage name" },
+      { sel: ".cap-usage-item .cap-meter-value", what: "an amount" },
       { sel: ".cap-usage-why", what: "the why line" },
       { sel: ".cap-usage-item[data-tone='ok'] .cap-usage-lead", what: "an on-track lead" },
       { sel: ".cap-usage-item[data-tone='warn'] .cap-usage-lead", what: "a warning lead" },
       { sel: ".cap-usage-item[data-tone='crit'] .cap-usage-lead", what: "a critical lead" },
       { sel: ".cap-usage-legend li", what: "the legend" },
       { sel: ".cap-usage-fresh[data-stale] > span:last-child", what: "a stale reading's line" },
-      { sel: ".cap-usage-bar", what: "the bar's edge, which marks the limit", part: "border" },
       { sel: ".cap-usage-key", what: "a legend key's edge", part: "border" },
     ]);
   });
@@ -60,21 +59,50 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: the bars are sized from their values, the projection never shorter than the use", async ({ page }) => {
+  test("behaviour: the bars are drawn by the shared meter from their values, the projection never shorter than the use", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await visitStates(page, "usage-meter", theme);
     const read = (id: string) =>
-      page.locator(section(id)).locator(".cap-usage-bar").first().evaluate((el) => {
+      page.locator(section(id)).locator(".cap-meter-bar").first().evaluate((el) => {
         const cs = getComputedStyle(el);
-        return { used: cs.getPropertyValue("--used").trim(), projected: cs.getPropertyValue("--projected").trim() };
+        const fill = getComputedStyle(el.querySelector(".cap-meter-fill")!);
+        return {
+          used: Number(cs.getPropertyValue("--cap-meter-ratio")),
+          projected: cs.getPropertyValue("--cap-meter-projected").trim(),
+          drawn: new DOMMatrixReadOnly(fill.transform).a,
+        };
       });
-    expect(await read("s-on-track")).toEqual({ used: "61.4%", projected: "86.682%" });
-    expect(await read("s-nearly-out")).toEqual({ used: "96.2%", projected: "100%" });
-    expect(await read("s-no-projection")).toEqual({ used: "18.2%", projected: "18.2%" });
-    const bar = page.locator(section("s-on-track")).locator(".cap-usage-bar");
-    const used = page.locator(section("s-on-track")).locator(".cap-usage-used");
-    const [barW, usedW] = [(await bar.boundingBox())?.width ?? 0, (await used.boundingBox())?.width ?? 0];
-    expect(usedW / (barW - 2)).toBeGreaterThan(0.6);
-    expect(usedW / (barW - 2)).toBeLessThan(0.63);
+    const onTrack = await read("s-on-track");
+    expect(onTrack.used).toBeCloseTo(0.614, 3);
+    expect(Number(onTrack.projected)).toBeCloseTo(0.86682, 4);
+    expect(onTrack.drawn).toBeCloseTo(0.614, 3);
+    const nearly = await read("s-nearly-out");
+    expect(nearly.used).toBeCloseTo(0.962, 3);
+    expect(Number(nearly.projected)).toBe(1);
+    const none = await read("s-no-projection");
+    expect(none.used).toBeCloseTo(0.182, 3);
+    expect(none.projected).toBe("");
+  });
+
+  test("behaviour: every row is the shared meter and draws no bar of its own", async ({ page }) => {
+    await visitStates(page, "usage-meter", theme);
+    const rows = page.locator(".cap-usage-item");
+    expect(await rows.count()).toBeGreaterThan(3);
+    for (const row of await rows.all()) {
+      await expect(row).toHaveClass(/\bcap-meter\b/);
+      await expect(row.locator(".cap-meter-bar[role='meter']")).toHaveCount(1);
+    }
+    await expect(page.locator(".cap-usage-bar, .cap-usage-used, .cap-usage-projected")).toHaveCount(0);
+  });
+
+  test("accessibility: the rows' roles and names, the why line outside the meter role", async ({ page }) => {
+    await visitStates(page, "usage-meter", theme);
+    await expect(page.locator(section("s-runs-out"))).toMatchAriaSnapshot(`
+      - meter "D1 rows read"
+    `);
+    // The why line is read as text beside the meter, not swallowed by its role.
+    const why = page.locator(section("s-runs-out")).locator(".cap-usage-why");
+    expect(await why.evaluate((el) => !el.closest("[role='meter']"))).toBe(true);
   });
 
   test("behaviour: each specimen's why line is the one assess() writes", async ({ page }) => {
