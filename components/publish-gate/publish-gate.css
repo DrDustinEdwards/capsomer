@@ -1,0 +1,191 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The publish gate: one region that says whether this can go out and, if not, why. Built on the
+   row list (every destination and every check is a row), the status component (shape, word and
+   colour for Blocked, Held, Ready, Published, Failing, Advisory, Passed), the disclosure (the
+   passing checks fold into one) and the button (the paired publish button, whose blocked state is
+   aria-disabled and described by the summary). Requires row-list.css, status.css, button.css and
+   disclosure.css. */
+@layer cap.components {
+  .cap-gate {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+    padding: var(--pad-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .cap-gate-head {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .cap-gate-title {
+    margin: 0;
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  /* The live summary: the status word, then the sentence. */
+  .cap-gate-summary {
+    margin: 0;
+    font-size: var(--fs-lead);
+    font-weight: 600;
+    line-height: 1.35;
+
+    /* The word and its glyph run inline with the sentence, so the sentence reads as one line of
+       text, to the eye and to a screen reader that describes a button with it. */
+    & > .cap-status {
+      display: inline;
+      font-size: inherit;
+      white-space: normal;
+
+      & .cap-status-glyph {
+        display: inline-block;
+        margin-inline-end: var(--space-2);
+        vertical-align: -0.15em;
+      }
+    }
+  }
+
+  /* A section is a list item of the one list, holding its heading and its own rows, whose columns
+     are the row list's passed down as subgrids. */
+  .cap-gate-section {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+  .cap-gate-group-title {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: var(--space-4) var(--pad-card) var(--space-2);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cap-gate-section-rows {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-gate-clear {
+    margin: 0;
+    padding: var(--space-3) var(--pad-card);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  /* The passing checks, folded away: the disclosure, and a grid of their own for its rows. */
+  .cap-gate-section[data-section="passed"] {
+    & .cap-disclosure {
+      grid-column: 1 / -1;
+    }
+    & .cap-gate-section-rows {
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      column-gap: var(--space-4);
+    }
+  }
+
+  /* A destination and a check are rows; the title may wrap, since the cause is the point. */
+  :is(.cap-gate-site, .cap-check) {
+    & .cap-row-title :is(a, button, .cap-gate-site-name, .cap-gate-title-text),
+    & .cap-row-detail {
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    & .cap-row-title :is(.cap-gate-site-name, .cap-gate-title-text) {
+      display: block;
+      font-weight: 600;
+    }
+    & .cap-row-status {
+      align-self: start;
+      padding-block-start: var(--space-1);
+    }
+  }
+  .cap-check-name {
+    color: var(--muted);
+  }
+  .cap-check-fix {
+    color: var(--text);
+  }
+  .cap-check .cap-row-meta {
+    color: var(--muted);
+    white-space: normal;
+  }
+  .cap-gate-site .cap-row-meta {
+    white-space: normal;
+  }
+  .cap-check[data-ok="true"] .cap-row-title :is(a, .cap-gate-title-text) {
+    font-weight: 500;
+  }
+
+  /* A destination's buttons sit with its row, or beside the page's own publish control. */
+  .cap-gate-site .cap-row-actions,
+  [data-cap-actions] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  [data-cap-actions] {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* On a narrow column the rows stack as the row list does (status above, actions below), and the
+     metadata (the site a check concerns, the time it went live) falls under the detail so the
+     title keeps the width. */
+  @container cap-rows (max-width: 30rem) {
+    :is(.cap-gate-site, .cap-check) .cap-row-meta {
+      grid-column: 1;
+      grid-row: 4;
+      justify-content: flex-start;
+      white-space: normal;
+      text-align: start;
+    }
+    .cap-gate-site .cap-row-actions {
+      grid-row: 5;
+    }
+  }
+
+  /* The editor bar pairing: the region and the button it describes, side by side. */
+  .cap-gate-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-4);
+
+    & > .cap-gate {
+      flex: 1 1 22rem;
+    }
+    & > [data-cap-actions] {
+      flex: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-gate {
+      border-color: CanvasText;
+    }
+  }
+}
