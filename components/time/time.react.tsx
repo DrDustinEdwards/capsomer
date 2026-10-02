@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { REFRESH_MS, parse, text, type TimeFormat } from "./time.ts";
+import { REFRESH_MS, exactParts, parse, text, type TimeFormat } from "./time.ts";
 
 export interface TimeProps {
   // Milliseconds, a Date, or a server timestamp (a zoneless one is read as UTC).
   at: number | Date | string;
   // Relative in rows; exact (viewer's zone and UTC) in a detail.
   format?: TimeFormat;
-  // A fixed "now", for a report or a test. Without it the text refreshes every 30 s.
+  // A fixed "now", for a report or a test, or the server's now when its clock and the
+  // browser's disagree (serverNow). Without it the text refreshes every 30 s.
   now?: number;
 }
 
@@ -30,11 +31,21 @@ export function Time({ at, format = "relative", now }: TimeProps) {
   const t = toMs(at);
   const clock = useClock(format === "relative" && now === undefined);
   const iso = Number.isFinite(t) ? new Date(t).toISOString() : undefined;
+  // A time that cannot be read is said in words and is not a <time> (it has no datetime).
+  if (!iso) return <span className="cap-time">{text(t, format)}</span>;
   // The server's words can differ from the browser's (its clock, its zone); the browser's
   // win without a warning.
+  const p = format === "exact" ? exactParts(t) : null;
   return (
     <time className="cap-time" dateTime={iso} data-format={format === "exact" ? "exact" : undefined} suppressHydrationWarning>
-      {text(t, format, now ?? clock)}
+      {p ? (
+        <>
+          {p.utc ? `${p.local} ` : p.local}
+          {p.utc ? <span className="cap-time-utc">{p.utc}</span> : null}
+        </>
+      ) : (
+        text(t, format, now ?? clock)
+      )}
     </time>
   );
 }

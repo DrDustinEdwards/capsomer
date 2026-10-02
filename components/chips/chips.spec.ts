@@ -140,6 +140,18 @@ eachTheme((theme) => {
     await expect(live.locator(".cap-chips-count")).toHaveText("11 of 14 jobs");
   });
 
+  test("behaviour: a value from the address that no chip carries still shows, pressed, and can be released", async ({ page }) => {
+    await page.goto(`components/chips/states.html?theme=${theme}&status=archived`);
+    await expect(page.locator("h1").first()).toBeVisible();
+    const live = page.locator("#chips-live");
+    const extra = live.getByRole("button", { name: "archived" });
+    await expect(extra).toHaveAttribute("aria-pressed", "true");
+    await expect(live.getByRole("button", { name: "Clear" })).toBeVisible();
+    await extra.click();
+    await expect(extra).toHaveAttribute("aria-pressed", "false");
+    await expect(page).not.toHaveURL(/status=/);
+  });
+
   test("behaviour: an empty result names the filter and Clear filter brings the list back", async ({ page }) => {
     await visitStates(page, "chips", theme);
     const live = page.locator("#chips-live");

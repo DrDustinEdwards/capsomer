@@ -4,6 +4,7 @@ import { keyCaps, register } from "../shortcuts/shortcuts.ts";
 import { emptyText, filterCommands, groupCommands, step, type Command } from "./command-menu.ts";
 
 export type { Command } from "./command-menu.ts";
+export { STOP_GROUP, STOP_HINTS, stopCommand } from "./command-menu.ts";
 
 export interface CommandMenuProps {
   open: boolean;
@@ -16,11 +17,17 @@ export interface CommandMenuProps {
   bindKeys?: boolean;
 }
 
-function Keys({ spec }: { spec: string | string[] }) {
-  const specs = Array.isArray(spec) ? spec : [spec];
+function Keys({ spec, hint }: { spec?: string | string[]; hint?: string }) {
+  const specs = spec === undefined ? [] : Array.isArray(spec) ? spec : [spec];
   return (
     <span className="cap-cmd-keys">
-      <span className="cap-sr-only">, shortcut </span>
+      {hint ? (
+        <>
+          <span className="cap-sr-only">, </span>
+          <span className="cap-cmd-hint">{hint}</span>
+        </>
+      ) : null}
+      {specs.length ? <span className="cap-sr-only">, shortcut </span> : null}
       {specs.map((s, i) => (
         <Fragment key={s}>
           {i > 0 ? " or " : null}
@@ -147,7 +154,7 @@ export function CommandMenu({ open, onOpenChange, commands, label = "Search comm
                 onClick={() => choose(c)}
               >
                 <span className="cap-cmd-option-label">{c.label}</span>
-                {c.shortcut ? <Keys spec={c.shortcut} /> : null}
+                {c.shortcut || c.hint ? <Keys spec={c.shortcut} hint={c.hint} /> : null}
               </div>
             ))}
           </div>

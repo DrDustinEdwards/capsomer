@@ -9,70 +9,211 @@
   <body class="cap-specimens">
     <main>
       <h1>Attention list</h1>
-      <p>The overview's one list of what is wrong, worst first. Similar rows fold under one group row; critical rows never do. Sample data.</p>
+      <p>The overview's one list of what is wrong, worst first. Problems first, then one closed row of notices. Like rows fold under one row that opens in place; critical rows never do. Press j and k to move between the first list's rows. Sample data.</p>
 
       <section class="cap-specimen" aria-labelledby="s-mixed">
-        <h2 id="s-mixed">Mixed list, notices collapsed</h2>
+        <h2 id="s-mixed">Mixed list, a group and the notices closed</h2>
         <section class="cap-attention" data-cap="attention-list" aria-labelledby="att-mixed-h">
           <header class="cap-attention-head">
             <h3 id="att-mixed-h" class="cap-attention-title">Needs attention</h3>
+            <span class="cap-attention-count">5 problems</span>
             <span class="cap-attention-src">Worst first. Read <time datetime="2026-09-30T14:12:20Z">40 seconds ago</time></span>
           </header>
-          <ul class="cap-rows">
+          <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="att-mixed-h" data-cap-primary>
             <li class="cap-row" data-tone="crit">
-              <span class="cap-status" data-tone="crit"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Critical</span>
-              <div class="cap-row-main"><a class="cap-row-title" href="#att-foxhound">foxhound.app is not answering</a><div class="cap-row-detail">3 failed checks in a row, first at 14:02</div></div>
-              <div class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T14:02Z">11 minutes ago</time></div>
+              <span class="cap-row-status" id="m1-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Critical</span></span>
+              <div class="cap-row-title"><a href="#att-foxhound" aria-describedby="m1-s m1-d">foxhound.app is not answering</a></div>
+              <p class="cap-row-detail" id="m1-d">3 failed checks in a row, first at 14:02</p>
+              <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T14:02Z">11 minutes ago</time></span>
             </li>
             <li class="cap-row" data-tone="crit">
-              <span class="cap-status" data-tone="crit"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Critical</span>
-              <div class="cap-row-main"><a class="cap-row-title" href="#att-backup">Nightly backup for capsid failed</a><div class="cap-row-detail">The dump stopped at 412 MB: the disk is full</div></div>
-              <div class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T12:10Z">2 hours ago</time></div>
+              <span class="cap-row-status" id="m2-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Critical</span></span>
+              <div class="cap-row-title"><a href="#att-backup" aria-describedby="m2-s m2-d">Nightly backup for capsid failed</a></div>
+              <p class="cap-row-detail" id="m2-d">The dump stopped at 412 MB: the disk is full</p>
+              <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T12:10Z">2 hours ago</time></span>
             </li>
             <li class="cap-row">
-              <span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Warning</span>
-              <div class="cap-row-main"><a class="cap-row-title" href="#att-d1">D1 rows read will run out before the reset</a><div class="cap-row-detail">78% used, full in about 3 hours</div></div>
-              <div class="cap-row-meta">Projected</div>
+              <span class="cap-row-status" id="m3-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#att-d1" aria-describedby="m3-s m3-d">D1 rows read will run out before the reset</a></div>
+              <p class="cap-row-detail" id="m3-d">78% used, full in about 3 hours</p>
+              <span class="cap-row-meta">Projected</span>
             </li>
             <li class="cap-row">
-              <span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Warning</span>
-              <div class="cap-row-main"><a class="cap-row-title" href="#att-gates">2 jobs are waiting for approval</a><div class="cap-row-detail">The oldest has waited 26 minutes</div></div>
-              <div class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T13:47Z">26 minutes ago</time></div>
+              <span class="cap-row-status" id="m4-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#att-gates" aria-describedby="m4-s m4-d">2 jobs are waiting for approval</a></div>
+              <p class="cap-row-detail" id="m4-d">The oldest has waited 26 minutes</p>
+              <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T13:47Z">26 minutes ago</time></span>
             </li>
             <li class="cap-row">
-              <span class="cap-status" data-tone="nodata"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2" /></svg>No data</span>
-              <div class="cap-row-main"><a class="cap-row-title" href="#att-germomics">germomics: no backup reported</a><div class="cap-row-detail">Its health route does not report one yet</div></div>
-              <div class="cap-row-meta">Since setup</div>
+              <span class="cap-row-status" id="m5-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="att-mixed-prs" aria-describedby="m5-s m5-d">3 pull requests await the seat</button></div>
+              <p class="cap-row-detail" id="m5-d">capsid, carrel, foxhound</p>
+              <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T13:40Z">32 minutes ago</time><span class="cap-row-chevron" aria-hidden="true"></span></span>
             </li>
-            <li class="cap-attention-group">
-              <div class="cap-attention-group-head">
-                <span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span>
-                <div class="cap-group"><button type="button" aria-expanded="false" aria-controls="att-mixed-notices" data-cap-part="group-toggle">Notices, 4</button></div>
-              </div>
-              <div class="cap-attention-members" id="att-mixed-notices" hidden>
-                <ul class="cap-rows">
-                  <li class="cap-row">
-                    <span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span>
-                    <div class="cap-row-main"><a class="cap-row-title" href="#att-vite">Dependency update: vite 8.3.2</a><div class="cap-row-detail">capsid dashboard, a patch release</div></div>
-                    <div class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T09:00Z">5 hours ago</time></div>
-                  </li>
-                  <li class="cap-row">
-                    <span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span>
-                    <div class="cap-row-main"><a class="cap-row-title" href="#att-types">Dependency update: @types/react 19.3.1</a><div class="cap-row-detail">Carrel, a patch release</div></div>
-                    <div class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T09:00Z">5 hours ago</time></div>
-                  </li>
-                  <li class="cap-row">
-                    <span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span>
-                    <div class="cap-row-main"><a class="cap-row-title" href="#att-cert">Certificate for txasm.org renews in 21 days</a><div class="cap-row-detail">Renewal is automatic</div></div>
-                    <div class="cap-row-meta">Yesterday</div>
-                  </li>
-                  <li class="cap-row">
-                    <span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span>
-                    <div class="cap-row-main"><a class="cap-row-title" href="#att-drafts">Carrel: 3 drafts untouched for 30 days</a><div class="cap-row-detail">Oldest: "How a temperate phage decides"</div></div>
-                    <div class="cap-row-meta">3 days ago</div>
-                  </li>
-                </ul>
-              </div>
+            <li class="cap-attention-region" id="att-mixed-prs" hidden>
+              <ul role="list" aria-label="3 pull requests await the seat">
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-pr-capsid">capsid #212 awaits the seat</a></div>
+                  <p class="cap-row-detail">Type check failed: 2 errors in states.html</p>
+                  <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T13:40Z">32 minutes ago</time></span>
+                </li>
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-pr-carrel">carrel #88 awaits the seat</a></div>
+                  <p class="cap-row-detail">A reviewer asked for changes</p>
+                  <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T12:55Z">1 hour ago</time></span>
+                </li>
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-pr-foxhound">foxhound #31 awaits the seat</a></div>
+                  <p class="cap-row-detail">The branch is behind main</p>
+                  <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T10:20Z">4 hours ago</time></span>
+                </li>
+                <li class="cap-attention-link"><a href="#att-ci">Open CI and merges</a></li>
+              </ul>
+            </li>
+            <li class="cap-row cap-attention-notices">
+              <span class="cap-row-status" id="m6-s"><span class="cap-status" data-tone="info"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/></svg>Notice</span></span>
+              <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="att-mixed-notices" aria-describedby="m6-s m6-d">4 notices</button></div>
+              <p class="cap-row-detail" id="m6-d">Nothing to act on now</p>
+              <span class="cap-row-meta"><span class="cap-row-chevron" aria-hidden="true"></span></span>
+            </li>
+            <li class="cap-attention-region" id="att-mixed-notices" hidden>
+              <ul role="list" aria-label="Notices">
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-germomics">germomics: no backup reported</a></div>
+                  <p class="cap-row-detail">No data · Its health route does not report one yet</p>
+                  <span class="cap-row-meta">Since setup</span>
+                </li>
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-vite">Dependency update: vite 8.3.2</a></div>
+                  <p class="cap-row-detail">Notice · capsid dashboard, a patch release</p>
+                  <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T09:00Z">5 hours ago</time></span>
+                </li>
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-cert">Certificate for txasm.org renews in 21 days</a></div>
+                  <p class="cap-row-detail">Notice · Renewal is automatic</p>
+                  <span class="cap-row-meta">Yesterday</span>
+                </li>
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-drafts">Carrel: 3 drafts untouched for 30 days</a></div>
+                  <p class="cap-row-detail">Notice · Oldest: "How a temperate phage decides"</p>
+                  <span class="cap-row-meta">3 days ago</span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-expanded">
+        <h2 id="s-expanded">A group open in place, with the link to its view</h2>
+        <section class="cap-attention" data-cap="attention-list" aria-labelledby="att-open-h">
+          <header class="cap-attention-head">
+            <h3 id="att-open-h" class="cap-attention-title">Needs attention</h3>
+            <span class="cap-attention-count">2 problems</span>
+            <span class="cap-attention-src">Worst first. Read <time datetime="2026-09-30T14:12:20Z">40 seconds ago</time></span>
+          </header>
+          <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="att-open-h">
+            <li class="cap-row">
+              <span class="cap-row-status" id="o1-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#att-kv" aria-describedby="o1-s o1-d">KV writes are at 96% of today's limit</a></div>
+              <p class="cap-row-detail" id="o1-d">38 writes left until 00:00 UTC</p>
+              <span class="cap-row-meta">Projected</span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status" id="o2-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><button type="button" aria-expanded="true" aria-controls="att-open-jobs" aria-describedby="o2-s o2-d" id="open-group">7 jobs are waiting on you</button></div>
+              <p class="cap-row-detail" id="o2-d">capsid, carrel, foxhound</p>
+              <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T13:47Z">26 minutes ago</time><span class="cap-row-chevron" aria-hidden="true"></span></span>
+            </li>
+            <li class="cap-attention-region" id="att-open-jobs">
+              <ul role="list" aria-label="7 jobs are waiting on you">
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-job-1">Push design/capsomer and open a pull request</a></div>
+                  <p class="cap-row-detail">capsomer · waits on: your approval</p>
+                  <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T14:10Z">3 minutes ago</time></span>
+                </li>
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-job-2">Rotate the deploy token for foxhound</a></div>
+                  <p class="cap-row-detail">foxhound · waits on: a one-way action, shown in a dialog first</p>
+                  <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T13:47Z">26 minutes ago</time></span>
+                </li>
+                <li class="cap-row cap-attention-child">
+                  <div class="cap-row-title"><a href="#att-job-3">Merge carrel #88</a></div>
+                  <p class="cap-row-detail">carrel · waits on: a reviewer's flag</p>
+                  <span class="cap-row-meta">Yesterday</span>
+                </li>
+                <li class="cap-attention-link"><a href="#att-queue">All 7 in Queue</a></li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-more">
+        <h2 id="s-more">Warnings past the cap, behind a button</h2>
+        <section class="cap-attention" data-cap="attention-list" aria-labelledby="att-more-h">
+          <header class="cap-attention-head">
+            <h3 id="att-more-h" class="cap-attention-title">Needs attention</h3>
+            <span class="cap-attention-count">10 problems</span>
+            <span class="cap-attention-src">Worst first. Read <time datetime="2026-09-30T14:12:20Z">40 seconds ago</time></span>
+          </header>
+          <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="att-more-h">
+            <li class="cap-row" data-tone="crit">
+              <span class="cap-row-status"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Critical</span></span>
+              <div class="cap-row-title"><a href="#more-c1">foxhound.app is not answering</a></div>
+              <span class="cap-row-meta">11 minutes ago</span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#more-w1">capsid default branch is failing</a></div>
+              <span class="cap-row-meta">1 hour ago</span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#more-w2">The last watcher pass is 14 minutes old</a></div>
+              <span class="cap-row-meta">14 minutes ago</span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#more-w3">D1 rows read will run out before the reset</a></div>
+              <span class="cap-row-meta">Projected</span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#more-w4">KV writes are at 96% of today's limit</a></div>
+              <span class="cap-row-meta">Projected</span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#more-w5">Scheduled task "mirror" has not run for 3 days</a></div>
+              <span class="cap-row-meta">3 days ago</span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#more-w6">Session for "Merge carrel #88" is waiting on input</a></div>
+              <span class="cap-row-meta">12 minutes ago</span>
+            </li>
+            <li class="cap-row">
+              <span class="cap-row-status"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+              <div class="cap-row-title"><a href="#more-w7">The July budget is exceeded</a></div>
+              <span class="cap-row-meta">Today</span>
+            </li>
+            <li class="cap-attention-link">
+              <button type="button" aria-expanded="false" aria-controls="att-more-rows" data-open-label="Fewer warnings">2 more warnings</button>
+            </li>
+            <li class="cap-attention-region" id="att-more-rows" hidden>
+              <ul role="list" aria-label="More warnings">
+                <li class="cap-row">
+                  <span class="cap-row-status"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+                  <div class="cap-row-title"><a href="#more-w8">Capsid reports degraded health</a></div>
+                  <span class="cap-row-meta">1 hour ago</span>
+                </li>
+                <li class="cap-row">
+                  <span class="cap-row-status"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+                  <div class="cap-row-title"><a href="#more-w9">The off-account mirror was not read on the last pass</a></div>
+                  <span class="cap-row-meta">14 minutes ago</span>
+                </li>
+              </ul>
             </li>
           </ul>
         </section>
@@ -83,56 +224,52 @@
         <section class="cap-attention" data-cap="attention-list" aria-labelledby="att-clear-h">
           <header class="cap-attention-head">
             <h3 id="att-clear-h" class="cap-attention-title">Needs attention</h3>
+            <span class="cap-attention-count">No problems</span>
             <span class="cap-attention-src">Worst first. Read <time datetime="2026-09-30T14:12:50Z">10 seconds ago</time></span>
           </header>
           <p class="cap-attention-clear">
-            <span class="cap-status" data-tone="ok"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="7" fill="currentColor" /><path fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m4.6 8.3 2.3 2.3 4.5-4.9" /></svg>All clear</span>
+            <span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>All clear</span>
             <span class="cap-attention-clear-text">Nothing needs you.</span>
           </p>
         </section>
       </section>
 
-      <section class="cap-specimen" aria-labelledby="s-expanded">
-        <h2 id="s-expanded">A group expanded</h2>
-        <section class="cap-attention" data-cap="attention-list" aria-labelledby="att-open-h">
-          <header class="cap-attention-head">
-            <h3 id="att-open-h" class="cap-attention-title">Needs attention</h3>
-            <span class="cap-attention-src">Worst first. Read <time datetime="2026-09-30T14:12:20Z">40 seconds ago</time></span>
-          </header>
-          <ul class="cap-rows">
-            <li class="cap-row">
-              <span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Warning</span>
-              <div class="cap-row-main"><a class="cap-row-title" href="#att-kv">KV writes are at 96% of today's limit</a><div class="cap-row-detail">38 writes left until 00:00 UTC</div></div>
-              <div class="cap-row-meta">Projected</div>
-            </li>
-            <li class="cap-attention-group">
-              <div class="cap-attention-group-head">
-                <span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span>
-                <div class="cap-group"><button type="button" aria-expanded="true" aria-controls="att-open-notices" data-cap-part="group-toggle">Notices, 3</button></div>
-              </div>
-              <div class="cap-attention-members" id="att-open-notices">
-                <ul class="cap-rows">
-                  <li class="cap-row">
-                    <span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span>
-                    <div class="cap-row-main"><a class="cap-row-title" href="#att-open-vite">Dependency update: vite 8.3.2</a><div class="cap-row-detail">capsid dashboard, a patch release</div></div>
-                    <div class="cap-row-meta">5 hours ago</div>
+      <template data-specimen="phone" data-title="Phone width: status over title, titles wrap" data-width="390" data-height="520">
+        <main class="specimen-page">
+          <h1>Overview</h1>
+          <section class="cap-attention" data-cap="attention-list" aria-labelledby="att-phone-h">
+            <header class="cap-attention-head">
+              <h2 id="att-phone-h" class="cap-attention-title">Needs attention</h2>
+              <span class="cap-attention-count">2 problems</span>
+              <span class="cap-attention-src">Worst first. Read 40 seconds ago</span>
+            </header>
+            <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="att-phone-h">
+              <li class="cap-row" data-tone="crit">
+                <span class="cap-row-status" id="ph1-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Critical</span></span>
+                <div class="cap-row-title"><a href="#ph-foxhound" aria-describedby="ph1-s ph1-d" id="phone-att-title">foxhound.app is not answering and has not for 11 minutes</a></div>
+                <p class="cap-row-detail" id="ph1-d">3 failed checks in a row</p>
+                <span class="cap-row-meta">11 minutes ago</span>
+              </li>
+              <li class="cap-row">
+                <span class="cap-row-status" id="ph2-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Warning</span></span>
+                <div class="cap-row-title"><button type="button" aria-expanded="true" aria-controls="att-phone-kids" aria-describedby="ph2-s ph2-d">3 pull requests await the seat</button></div>
+                <p class="cap-row-detail" id="ph2-d">capsid, carrel, foxhound</p>
+                <span class="cap-row-meta">32 minutes ago<span class="cap-row-chevron" aria-hidden="true"></span></span>
+              </li>
+              <li class="cap-attention-region" id="att-phone-kids">
+                <ul role="list" aria-label="3 pull requests await the seat">
+                  <li class="cap-row cap-attention-child">
+                    <div class="cap-row-title"><a href="#ph-pr-1" id="phone-child-title">capsid #212 awaits the seat while its type check is failing</a></div>
+                    <p class="cap-row-detail">Type check failed</p>
+                    <span class="cap-row-meta">32 minutes ago</span>
                   </li>
-                  <li class="cap-row">
-                    <span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span>
-                    <div class="cap-row-main"><a class="cap-row-title" href="#att-open-cert">Certificate for txasm.org renews in 21 days</a><div class="cap-row-detail">Renewal is automatic</div></div>
-                    <div class="cap-row-meta">Yesterday</div>
-                  </li>
-                  <li class="cap-row">
-                    <span class="cap-status" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" /><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" /></svg>Notice</span>
-                    <div class="cap-row-main"><a class="cap-row-title" href="#att-open-drafts">Carrel: 3 drafts untouched for 30 days</a><div class="cap-row-detail">Oldest: "How a temperate phage decides"</div></div>
-                    <div class="cap-row-meta">3 days ago</div>
-                  </li>
+                  <li class="cap-attention-link"><a href="#ph-ci">Open CI and merges</a></li>
                 </ul>
-              </div>
-            </li>
-          </ul>
-        </section>
-      </section>
+              </li>
+            </ul>
+          </section>
+        </main>
+      </template>
     </main>
     <script type="module">
       import { enhance } from "./attention-list.ts";

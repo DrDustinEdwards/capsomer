@@ -22,6 +22,16 @@ export function setSwitch(label: Element, checked: boolean): void {
   syncWord(label);
 }
 
+// Marks a switch pending while a request for its change runs (aria-busy, drawn as a dashed
+// outline), and clears it when the request has answered. The switch is not disabled, so
+// focus stays where it is.
+export function setBusy(label: Element, busy: boolean): void {
+  const input = label.querySelector<HTMLInputElement>("input[role='switch']");
+  if (!input) return;
+  if (busy) input.setAttribute("aria-busy", "true");
+  else input.removeAttribute("aria-busy");
+}
+
 // Attaches to every [data-cap="switch"] under root that is not attached yet. Returns a
 // function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {

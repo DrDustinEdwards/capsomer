@@ -30,6 +30,8 @@ eachTheme((theme) => {
       { sel: ".cap-detail-record dt", what: "a record label" },
       { sel: ".cap-detail-record dd", what: "a record value" },
       { sel: ".cap-detail-source", what: "the source line" },
+      { sel: ".cap-detail-diff del", what: "the old value on its tint" },
+      { sel: ".cap-detail-diff ins", what: "the new value on its tint" },
     ]);
   });
 
@@ -53,6 +55,12 @@ eachTheme((theme) => {
           - heading "Record" [level=3]
           - term: Status
           - definition: Blocked, waiting on you
+        - region "What changed":
+          - heading "What changed" [level=3]
+          - term: Status
+          - definition:
+            - deletion: "before: queued"
+            - insertion: "after: blocked"
     `);
   });
 
@@ -106,12 +114,34 @@ eachTheme((theme) => {
     await expect(panel(page)).toBeHidden();
   });
 
-  test("behaviour: the panel is 620 px wide on a wide screen and full width on a phone", async ({ page }) => {
+  test("behaviour: the panel sits at the right edge on a wide screen and fills a phone", async ({ page }) => {
     await visitStates(page, "detail-panel", theme, "open");
-    const wide = await panel(page).boundingBox();
-    expect(Math.round(wide?.width ?? 0)).toBe(620);
+    const view = page.viewportSize();
+    await expect.poll(async () => {
+      const b = await panel(page).boundingBox();
+      return !!b && !!view && b.width < view.width && Math.round(b.x + b.width) === view.width;
+    }).toBe(true);
     await page.setViewportSize({ width: 390, height: 760 });
     await expect.poll(async () => Math.round((await panel(page).boundingBox())?.width ?? 0)).toBe(390);
+  });
+
+  test("keyboard: Tab stays inside the open panel and never reaches the page behind", async ({ page }) => {
+    await visitStates(page, "detail-panel", theme, "rows");
+    await rowLink(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(panel(page)).toBeVisible();
+    for (let i = 0; i < 12; i++) {
+      await page.keyboard.press(i < 8 ? "Tab" : "Shift+Tab");
+      // A modal dialog hands Tab on from its last control to the browser's own bar, which
+      // leaves the document with no focused element; what must never happen is focus landing
+      // on the page behind.
+      const place = await page.evaluate(() => {
+        const a = document.activeElement;
+        if (!a || a === document.body || a === document.documentElement) return "browser";
+        return a.closest("dialog.cap-detail[open]") ? "panel" : "page";
+      });
+      expect(place, `focus after key ${i + 1} never reaches the page behind`).not.toBe("page");
+    }
   });
 
   test("behaviour: Copy says what happened", async ({ page }) => {

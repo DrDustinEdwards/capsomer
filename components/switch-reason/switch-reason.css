@@ -2,25 +2,65 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The automation switch: a switch that does not move when flipped. It opens a one-line
-   reason, and moves only when the reason is applied. From the approved mockup's .reason.
-   The switch is .cap-switch (switch.css); the field inside is .cap-field (field.css). */
+   reason beside it, and moves only when the reason is applied. The layout is the Portal's
+   .autoctl and .reason (#216): the switch, then the label, the field and the buttons in one
+   row that wraps on a narrow space. The switch is .cap-switch (switch.css); the field's
+   error is .cap-field-error (field.css). */
 @layer cap.components {
   .cap-switch-reason {
-    display: grid;
-    justify-items: start;
-    gap: var(--space-3);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
     min-width: 0;
   }
 
+  /* What the switch is doing, beside it while no reason is being asked for: "Paused: looking
+     at a regression". It goes while the reason is open, so the two never crowd the row. */
+  .cap-switch-reason-note {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-switch-reason:has(> .cap-switch-reason-form:not([hidden])) > .cap-switch-reason-note {
+    display: none;
+  }
+
   .cap-switch-reason-form {
-    display: grid;
+    display: flex;
+    flex: 1 1 260px;
+    flex-wrap: wrap;
+    align-items: center;
     gap: var(--space-3);
-    width: min(100%, 480px);
+    min-width: 0;
     margin: 0;
-    padding: 10px 12px;
-    border: 1px solid var(--accent-line);
-    border-radius: var(--radius-m);
-    background: var(--surface);
+    padding: 0;
+    border: 0;
+
+    /* The field's wrapper takes no box of its own, so its label, input and error sit in this
+       row. The error goes under the row, whole width. */
+    & > .cap-field {
+      display: contents;
+    }
+
+    & .cap-input {
+      flex: 1 1 180px;
+      width: auto;
+      max-width: 420px;
+    }
+
+    & .cap-field-error {
+      order: 2;
+      flex-basis: 100%;
+      /* A refusal from the server keeps its line breaks. */
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* "Turning seat start on. Reason:" is the field's label. */
+  .cap-switch-reason-label {
+    color: var(--muted);
+    font-size: var(--fs-detail);
   }
 
   .cap-switch-reason-actions {
@@ -28,16 +68,13 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3);
+    order: 1;
   }
 
   .cap-switch-reason-keys {
+    order: 3;
+    flex-basis: 100%;
     color: var(--muted);
     font-size: var(--fs-detail);
-  }
-
-  @media (forced-colors: active) {
-    .cap-switch-reason-form {
-      border-color: CanvasText;
-    }
   }
 }

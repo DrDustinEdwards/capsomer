@@ -2,9 +2,12 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The app shell: a top bar, a left menu (the rail) that collapses to icons, the main
-   region, and a tab bar on a phone. Extracted from the Capsid Portal (dashboard/src/
-   styles.css, "shell" and "rail"), with Settings moved into the top bar (capsid
-   job_28cc5d296fdb). */
+   region, and a tab bar with a More sheet on a phone. Extracted from the Capsid Portal
+   (dashboard/src/styles.css "shell" and "rail", as of capsid master after #214 to #226),
+   with Settings in the top bar (capsid job_28cc5d296fdb). The top bar and the rail sit on
+   the ground tone with no rule between them and the page; the page's panels are the lit
+   surface (Portal design D4, D5). The collapsed rail's names are our own CSS label, not
+   the Portal's script-placed tip. */
 @layer cap.components {
   .cap-shell {
     display: grid;
@@ -46,8 +49,7 @@
     align-items: center;
     gap: var(--space-4);
     padding-inline: var(--space-5);
-    background: var(--surface);
-    border-bottom: 1px solid var(--line);
+    background: var(--ground);
     min-width: 0;
   }
 
@@ -87,6 +89,25 @@
     gap: var(--space-3);
   }
 
+  /* The top bar's Settings link: a button to look at, current on the Settings view. On a
+     phone it is under More instead (data-hide="phone"). */
+  .cap-shell-settings {
+    color: var(--text);
+    text-decoration: none;
+
+    &[aria-current="page"] {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+
+      & svg {
+        color: var(--accent);
+      }
+    }
+  }
+
+  /* Items 30 px (the touch target on a touch screen) with 14 px icons, centred in a 16 px
+     column under the brand's mark. The current item is on the lit surface; the red and
+     amber counts keep full strength, since they are the alert channel. */
   .cap-shell-rail {
     position: sticky;
     top: calc(var(--top-h) + env(safe-area-inset-top, 0px));
@@ -94,20 +115,19 @@
     height: calc(100dvh - var(--top-h) - env(safe-area-inset-top, 0px));
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 14px 10px;
+    gap: 1px;
+    padding: 10px;
     overflow-y: auto;
-    background: var(--surface);
-    border-right: 1px solid var(--line);
+    background: var(--ground);
 
     & a {
       position: relative;
       display: grid;
-      grid-template-columns: 18px minmax(0, 1fr) auto;
+      grid-template-columns: 16px minmax(0, 1fr) auto;
       align-items: center;
       gap: 10px;
-      min-height: var(--target);
-      padding: 7px 10px;
+      min-height: max(30px, var(--target));
+      padding: 0 10px;
       border-radius: var(--radius-m);
       color: var(--muted);
       font-weight: 500;
@@ -115,12 +135,13 @@
 
       &:hover,
       &[data-force="hover"] {
-        background: var(--raised);
+        background: var(--sunken);
         color: var(--text);
       }
       &[aria-current="page"] {
-        background: var(--accent-soft);
+        background: var(--surface);
         color: var(--text);
+        box-shadow: 0 0 0 1px var(--line);
 
         & .cap-shell-icon {
           color: var(--accent);
@@ -130,8 +151,8 @@
   }
 
   .cap-shell-icon {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     justify-self: center;
     flex: none;
   }
@@ -152,11 +173,7 @@
     }
   }
 
-  /* On the current entry the count sits on the active tint, where --dim is 3.93:1 in dark; --muted clears 4.5. */
-  .cap-shell-rail a[aria-current="page"] .cap-shell-count:not([data-tone]) {
-    color: var(--muted);
-  }
-
+  /* Below the entries: the shortcut hints, then the collapse button. */
   .cap-shell-foot {
     margin-top: auto;
     display: grid;
@@ -164,14 +181,43 @@
     padding-top: var(--space-3);
   }
 
-  .cap-shell-toggle {
+  /* Command menu and Shortcuts, as quiet rows with their keys. Collapsed, they are
+     .cap-shell-railbtn icon buttons instead. */
+  .cap-shell-hint {
     display: grid;
-    grid-template-columns: 18px minmax(0, 1fr) auto;
+    gap: 6px;
+    padding: var(--space-4) 10px;
+    font-size: var(--fs-detail);
+    color: var(--dim);
+  }
+  .cap-shell-linkish {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--target);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font-size: var(--fs-detail);
+    text-align: left;
+
+    &:hover {
+      color: var(--text);
+    }
+  }
+
+  /* Buttons laid out like the rail links, so their icons sit in the same column. */
+  .cap-shell-toggle,
+  .cap-shell-railbtn {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr) auto;
     align-items: center;
     gap: 10px;
     width: 100%;
-    min-height: var(--target);
-    padding: 7px 10px;
+    min-height: max(30px, var(--target));
+    padding: 0 10px;
     border: 0;
     border-radius: var(--radius-m);
     background: none;
@@ -180,9 +226,21 @@
     text-align: left;
 
     &:hover {
-      background: var(--raised);
+      background: var(--sunken);
       color: var(--text);
     }
+    & .cap-shell-icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  /* The page frame: the padding, rhythm and measure every view shares. */
+  .cap-shell-page {
+    display: grid;
+    gap: 14px;
+    max-width: 1480px;
+    padding: 16px 24px 48px;
   }
 
   /* The document scrolls, not the main region: a long page with nothing focusable in it
@@ -208,8 +266,11 @@
      becomes a dot. */
   .cap-shell[data-rail="collapsed"] {
     & .cap-shell-rail a,
-    & .cap-shell-toggle {
-      grid-template-columns: 18px;
+    & .cap-shell-toggle,
+    & .cap-shell-railbtn {
+      position: relative;
+      grid-template-columns: 16px;
+      padding-right: 0;
     }
     & .cap-shell-label {
       position: absolute;
@@ -227,15 +288,16 @@
       opacity: 0;
       clip-path: inset(50%);
     }
-    & :is(a, .cap-shell-toggle):is(:hover, :focus-visible):not([data-tip="hidden"]) .cap-shell-label {
+    & :is(a, .cap-shell-toggle, .cap-shell-railbtn):is(:hover, :focus-visible):not([data-tip="hidden"]) .cap-shell-label {
       opacity: 1;
       clip-path: none;
     }
-    & .cap-shell-toggle {
-      position: relative;
-    }
     & .cap-shell-toggle .cap-shell-icon {
       transform: scaleX(-1);
+    }
+    & .cap-shell-hint {
+      padding: var(--space-4) 0 0;
+      gap: 2px;
     }
     & .cap-shell-count {
       position: absolute;
@@ -252,16 +314,92 @@
       }
       &[data-tone="crit"] {
         background: var(--crit);
-        box-shadow: 0 0 0 2px var(--surface);
+        box-shadow: 0 0 0 2px var(--ground);
       }
       &[data-tone="warn"] {
         background: var(--warn);
-        box-shadow: 0 0 0 2px var(--surface);
+        box-shadow: 0 0 0 2px var(--ground);
       }
     }
-    & .cap-shell-toggle kbd {
+    & kbd {
       display: none;
     }
+  }
+
+  /* The phone's More sheet: every view the tab bar has no room for, as links with their
+     counts. A native modal dialog, so Esc closes it. */
+  .cap-shell-more {
+    width: min(420px, calc(100% - 2 * var(--space-5)));
+    max-width: none;
+    max-height: calc(100dvh - 2 * var(--space-5));
+    margin: auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+
+    &[open] {
+      display: flex;
+      flex-direction: column;
+    }
+    &::backdrop {
+      background: var(--scrim);
+    }
+  }
+  .cap-shell-more-card {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    overflow-y: auto;
+  }
+  .cap-shell-more-title {
+    margin: 0;
+    font-size: var(--fs-lead);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .cap-shell-more-list {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: var(--target);
+      padding: 10px;
+      border-radius: var(--radius-m);
+      color: var(--text);
+      text-decoration: none;
+
+      &:hover,
+      &[data-force="hover"],
+      &[aria-current="page"] {
+        background: var(--accent-soft);
+      }
+    }
+    & .cap-shell-icon {
+      width: 18px;
+      height: 18px;
+    }
+    /* On the tint --dim is 3.8:1 in dark, so the count is --muted. */
+    & .cap-shell-count {
+      color: var(--muted);
+    }
+  }
+  .cap-shell-more-name {
+    flex: 1;
+    min-width: 0;
+  }
+  .cap-shell-more-foot {
+    display: flex;
+    justify-content: flex-end;
   }
 
   /* A phone: the rail goes, and a tab bar of at most five entries (the last one More)
@@ -284,29 +422,40 @@
     .cap-shell-top [data-hide="phone"] {
       display: none;
     }
+    .cap-shell-page {
+      padding: 16px 16px 24px;
+      gap: 16px;
+    }
     .cap-shell-tabs {
       position: sticky;
       bottom: 0;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
       z-index: var(--z-tabbar);
       padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
       background: var(--surface);
       border-top: 1px solid var(--line);
 
-      & a {
+      & :is(a, button) {
         position: relative;
         display: grid;
         justify-items: center;
         gap: 2px;
         min-height: var(--target);
+        margin: 0;
         padding: 4px 0;
+        border: 0;
+        background: none;
+        font: inherit;
         font-size: var(--fs-label);
         font-weight: 600;
         color: var(--muted);
         text-decoration: none;
 
-        &[aria-current="page"] {
+        /* The current view, or More when the current view is one of its list. */
+        &[aria-current="page"],
+        &[aria-current="true"] {
           color: var(--accent);
         }
       }
@@ -327,9 +476,31 @@
     }
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-shell-more {
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+    }
+    @starting-style {
+      .cap-shell-more[open] {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+    }
+  }
+
   @media (forced-colors: active) {
-    .cap-shell-rail a[aria-current="page"] {
+    .cap-shell-rail a[aria-current="page"],
+    .cap-shell-settings[aria-current="page"],
+    .cap-shell-more-list a[aria-current="page"] {
       outline: 2px solid CanvasText;
+    }
+    .cap-shell-tabs :is(a, button)[aria-current] {
+      text-decoration: underline;
+    }
+    .cap-shell-more {
+      border-color: CanvasText;
     }
     .cap-shell[data-rail="collapsed"] .cap-shell-count:not(:empty) {
       forced-color-adjust: none;

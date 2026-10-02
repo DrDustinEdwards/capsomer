@@ -21,9 +21,22 @@
     padding: var(--space-4) var(--space-5);
     border-top: 1px solid var(--line);
     min-width: 0;
+    position: relative;
 
     &:first-child {
       border-top: 0;
+    }
+
+    /* A failed session carries the red left edge, as a critical row does in every list
+       (the Portal's .qrow.sev-crit). The pill beside the name still says Failed in shape
+       and word; the edge only adds to it. */
+    &[data-tone="crit"]::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: 3px;
+      background: var(--crit);
     }
   }
 
@@ -134,6 +147,10 @@
   }
 
   @media (forced-colors: active) {
+    .cap-session[data-tone="crit"]::before {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
     .cap-session-ask,
     .cap-session-cmd {
       border-color: CanvasText;

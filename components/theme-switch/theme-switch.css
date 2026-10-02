@@ -9,6 +9,12 @@
     min-inline-size: 0;
     margin: 0;
 
+    /* The top bar is on the ground tone (the Portal's, #215), where --line-strong is 2.9:1;
+       the control's edge takes --dim, which is above 3:1 on it in both themes. */
+    & .cap-seg-options {
+      border-color: var(--dim);
+    }
+
     & label {
       white-space: nowrap;
     }

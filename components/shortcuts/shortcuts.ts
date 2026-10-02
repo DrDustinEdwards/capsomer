@@ -10,6 +10,9 @@ export interface Shortcut {
   // Mac), "Ctrl+Enter", "Alt+n". An array gives one command several keys.
   key: string | string[];
   label: string;
+  // One line under the label in the sheet, saying what the command is for: what a view is
+  // for lives here, not in an intro sentence under every heading.
+  about?: string;
   group: string;
   run: (e: KeyboardEvent) => void;
   // Runs only while this returns true.
@@ -17,6 +20,8 @@ export interface Shortcut {
 }
 
 export const SINGLE_KEYS_PREF = "cap-single-keys";
+// The line under the switch, shared by the built sheet and the React one.
+export const SINGLE_KEYS_NOTE = "Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.";
 export const SEQUENCE_MS = 1200;
 
 const entries: Shortcut[] = [];
@@ -168,6 +173,20 @@ export function start(): void {
   entries.unshift({ key: "?", label: "Show keyboard shortcuts", group: "General", run: () => sheetOpener() });
 }
 
+// The registered shortcut with Ctrl, Cmd or Alt that this key event matches, if any, and
+// whether its `when` allows it now. For a surface open over the page (the sheet) that lets
+// such a key through: the Portal's Ctrl K pressed in the help sheet closes the sheet and
+// opens the command menu. Keys that match nothing (Ctrl C) are left alone.
+export function modifiedShortcutFor(e: KeyboardEvent): Shortcut | undefined {
+  for (const s of entries) {
+    if (s.when && !s.when()) continue;
+    for (const spec of specsOf(s)) {
+      if (stepsOf(spec).length === 1 && !isSingleKey(spec) && matchesStep(spec, e)) return s;
+    }
+  }
+  return undefined;
+}
+
 // Removes the listener and every shortcut.
 export function stop(): void {
   if (typeof document !== "undefined") document.removeEventListener("keydown", onKeyDown);
@@ -263,6 +282,12 @@ export function renderSheetList(container: HTMLElement): void {
       dt.append(keysFragment(s.key));
       const dd = document.createElement("dd");
       dd.textContent = s.label;
+      if (s.about) {
+        const about = document.createElement("span");
+        about.className = "cap-keys-about";
+        about.textContent = s.about;
+        dd.append(about);
+      }
       row.append(dt, dd);
       dl.append(row);
     }
@@ -323,7 +348,7 @@ export function buildSheet(): HTMLDialogElement {
   const note = document.createElement("p");
   note.className = "cap-keys-note";
   note.id = `${id}-note`;
-  note.textContent = "Turn these off if they clash with a screen reader or speech input. Shortcuts with Ctrl or ⌘ keep working.";
+  note.textContent = SINGLE_KEYS_NOTE;
   foot.append(label, note);
 
   d.append(head, body, foot);
@@ -342,16 +367,26 @@ export function wireSheet(sheet: HTMLDialogElement): () => void {
   const onClick = (e: MouseEvent) => {
     if ((e.target as Element).closest("[data-cap-part='close']") || isBackdropClick(sheet, e)) sheet.close();
   };
+  // A shortcut with Ctrl or Cmd still works over the sheet: the sheet closes, then it runs.
+  const onKey = (e: KeyboardEvent) => {
+    if (e.defaultPrevented || e.isComposing) return;
+    const hit = modifiedShortcutFor(e);
+    if (!hit) return;
+    sheet.close();
+    fire(hit, e);
+  };
   const onClose = () => returnFocus(sheet);
   box?.addEventListener("change", onChange);
   document.addEventListener("cap-single-keys", onSingle);
   sheet.addEventListener("click", onClick);
+  sheet.addEventListener("keydown", onKey);
   sheet.addEventListener("close", onClose);
   syncSwitch(sheet);
   return () => {
     box?.removeEventListener("change", onChange);
     document.removeEventListener("cap-single-keys", onSingle);
     sheet.removeEventListener("click", onClick);
+    sheet.removeEventListener("keydown", onKey);
     sheet.removeEventListener("close", onClose);
     delete sheet.dataset.capReady;
   };

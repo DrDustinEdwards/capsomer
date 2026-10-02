@@ -17,7 +17,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["open", "busy", "error", "typed-empty", "typed-matched"]) {
+  for (const id of ["open", "busy", "error", "typed-empty", "typed-matched", "reason-missing"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "confirm-dialog", theme, id);
       await expect(page.locator("dialog.cap-dialog")).toBeVisible();
@@ -39,6 +39,15 @@ eachTheme((theme) => {
     await expectContrast(page, [
       { sel: ".cap-dialog-typed label", what: "the guard's label" },
       { sel: ".cap-dialog-typed input", what: "the guard field's boundary", part: "border" },
+    ]);
+  });
+
+  test("accessibility: the reason's label, note and boundary reach their contrast", async ({ page }) => {
+    await visitStates(page, "confirm-dialog", theme, "reason-missing");
+    await expectContrast(page, [
+      { sel: ".cap-dialog-reason label", what: "the reason's label" },
+      { sel: ".cap-dialog-note", what: "the note under the reason" },
+      { sel: ".cap-dialog-reason textarea", what: "the invalid reason field's boundary", part: "border" },
     ]);
   });
 
@@ -145,6 +154,44 @@ eachTheme((theme) => {
     await expect(perform).not.toHaveAttribute("aria-disabled", "true");
     await page.keyboard.press("Enter");
     await expect(d).toHaveAttribute("aria-busy", "true");
+  });
+
+  test("keyboard: a required reason is asked for, pressing with it empty says so and sends nothing", async ({ page }) => {
+    await visitStates(page, "confirm-dialog", theme, "live");
+    await page.getByRole("button", { name: "Mark job_0cdf2803f0ba failed…" }).click();
+    const d = dialog(page, "Mark job failed: Rotate the watcher's Cloudflare token");
+    await expect(d).toBeVisible();
+    await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
+    const field = page.getByRole("textbox", { name: "Reason (required)" });
+    await expect(field).not.toHaveAttribute("aria-invalid", "true");
+    const perform = page.getByRole("button", { name: "Mark failed" });
+    // Never a silently disabled button: pressing it says what is missing.
+    await expect(perform).not.toHaveAttribute("aria-disabled", "true");
+    await perform.click();
+    await expect(d).not.toHaveAttribute("aria-busy", "true");
+    await expect(d.getByRole("alert")).toContainText("A reason is required.");
+    await expect(field).toHaveAttribute("aria-invalid", "true");
+    await expect(field).toBeFocused();
+    await expect(field).toHaveAccessibleDescription(/A reason is required\./);
+    // A plain Enter is a new line; Ctrl or Cmd with Enter performs.
+    await page.keyboard.type("rotated by hand");
+    await page.keyboard.press("Enter");
+    await expect(d).not.toHaveAttribute("aria-busy", "true");
+    await page.keyboard.press("ControlOrMeta+Enter");
+    await expect(d).toHaveAttribute("aria-busy", "true");
+    await page.evaluate(() => (window as unknown as { capRelease: () => void }).capRelease());
+    await expect(d).toBeHidden();
+    await expect(page.getByRole("status")).toContainText("Marked failed: rotated by hand");
+  });
+
+  test("behaviour: a reason the browser filled in without an input event still counts", async ({ page }) => {
+    await visitStates(page, "confirm-dialog", theme, "live");
+    await page.getByRole("button", { name: "Mark job_0cdf2803f0ba failed…" }).click();
+    await page.getByRole("textbox", { name: "Reason (required)" }).evaluate((el: HTMLTextAreaElement) => {
+      el.value = "filled by the browser";
+    });
+    await page.getByRole("button", { name: "Mark failed" }).click();
+    await expect(dialog(page, "Mark job failed: Rotate the watcher's Cloudflare token")).toHaveAttribute("aria-busy", "true");
   });
 
   test("behaviour: the matched specimen's action is on", async ({ page }) => {

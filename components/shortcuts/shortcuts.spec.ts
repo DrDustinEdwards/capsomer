@@ -26,6 +26,7 @@ eachTheme((theme) => {
       { sel: ".cap-keys-list kbd", what: "a key cap" },
       { sel: ".cap-keys-list kbd", what: "a key cap's boundary", part: "border", min: 3 },
       { sel: ".cap-keys-list dd", what: "a shortcut's label" },
+      { sel: ".cap-keys-about", what: "what a command is for, under its name" },
       { sel: ".cap-keys-note", what: "the note under the switch" },
     ]);
   });
@@ -51,6 +52,22 @@ eachTheme((theme) => {
     await expect(sheet(page).getByText("Go to Overview")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(sheet(page)).toBeHidden();
+  });
+
+  test("behaviour: the sheet says what a command is for, under its name", async ({ page }) => {
+    await visitStates(page, "shortcuts", theme, "open");
+    await expect(sheet(page).getByText("Go to Overview")).toContainText("Problems first, worst first; then the sites.");
+  });
+
+  test("keyboard: Ctrl K (Cmd K on a Mac) in the open sheet closes it and runs its shortcut; keys that match nothing leave it open", async ({ page }) => {
+    await visitStates(page, "shortcuts", theme, "page");
+    await page.keyboard.press("?");
+    await expect(sheet(page)).toBeVisible();
+    await page.keyboard.press("ControlOrMeta+c");
+    await expect(sheet(page)).toBeVisible();
+    await page.keyboard.press("ControlOrMeta+k");
+    await expect(sheet(page)).toBeHidden();
+    await expect(said(page)).toHaveText("The command menu opens here.");
   });
 
   test("keyboard: Esc closes the sheet and focus returns to the button that opened it", async ({ page }) => {
