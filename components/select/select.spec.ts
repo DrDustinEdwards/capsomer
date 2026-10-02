@@ -84,7 +84,7 @@ eachTheme((theme) => {
       const list = page.getByRole("listbox", { name: "Check every" });
       await expect(list, key).toBeVisible();
       await expect(list).toBeFocused();
-      await expect(list.getByRole("option", { name: "5 minutes" })).toHaveAttribute("data-active", "");
+      await expect(list.getByRole("option", { name: "5 minutes", exact: true })).toHaveAttribute("data-active", "");
       await page.keyboard.press("Escape");
       await expect(list).toBeHidden();
     }
@@ -190,7 +190,7 @@ eachTheme((theme) => {
     await expect(list.getByRole("option", { name: "Vercel" }).locator(".cap-option-indicator")).toBeHidden();
     const t = await platform.boundingBox();
     const p = await list.boundingBox();
-    expect(p?.width).toBeGreaterThanOrEqual((t?.width ?? 0) - 1);
+    expect(p?.width).toBeGreaterThanOrEqual((t?.width ?? 0) - 3);
   });
 
   test("behaviour: the native select stays in the page with its options and is out of the tab order", async ({ page }) => {

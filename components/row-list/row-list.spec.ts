@@ -73,6 +73,8 @@ eachTheme((theme) => {
   test("accessibility: the ring a real keyboard focus draws matches the specimen's", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await page.getByRole("link", { name: "4 notices" }).focus();
+    // The row's tint eases in over 100 ms: read it once the transition has finished.
+    await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(() => undefined));
     const real = await ringContrast(page, "#list-mixed .cap-row:has(a:focus-visible)");
     const forced = await ringContrast(page, "#list-focus .cap-row[data-force='focus']");
     expect(real?.ring).toBe(forced?.ring);
@@ -139,11 +141,12 @@ eachTheme((theme) => {
 
   test("keyboard: j and k work in any list once focus is in it, and only there", async ({ page }) => {
     await visitStates(page, "row-list", theme);
-    await page.getByRole("link", { name: "Run the browser tests for capsomer" }).focus();
+    const list = page.locator("#list-focus");
+    await list.getByRole("link", { name: "Run the browser tests for capsomer" }).focus();
     await page.keyboard.press("j");
-    await expect(page.getByRole("link", { name: "Refresh the uptime strip fixtures" })).toBeFocused();
+    await expect(list.getByRole("link", { name: "Refresh the uptime strip fixtures" })).toBeFocused();
     await page.keyboard.press("k");
-    await expect(page.getByRole("link", { name: "Run the browser tests for capsomer" })).toBeFocused();
+    await expect(list.getByRole("link", { name: "Run the browser tests for capsomer" })).toBeFocused();
   });
 
   test("keyboard: Tab moves from row to row, one stop each", async ({ page }) => {

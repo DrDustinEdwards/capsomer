@@ -191,10 +191,13 @@ eachTheme((theme) => {
   test("accessibility: several values, open and closed, have no axe violations and name each remove button", async ({ page }) => {
     await visitStates(page, "combobox", theme, "open-chips");
     await expect(page.getByRole("listbox")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Remove Capsid Portal" })).toBeVisible();
+    // While the list is open Base UI hides the rest of the page from assistive technology, so the
+    // remove buttons are checked closed, below.
+    await expect(page.locator(".cap-combobox-chip-remove")).toHaveCount(2);
     await expectNoAxeViolations(page, undefined, { baseUi: true });
     await expect(page.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true");
     await visitStates(page, "combobox", theme);
+    await expect(page.locator("[data-mount='chips']").getByRole("button", { name: "Remove Capsid Portal" })).toBeVisible();
     await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 

@@ -40,8 +40,8 @@ eachTheme((theme) => {
 
   test("accessibility: the states page's hover, disabled and comfortable rows have no violations", async ({ page }) => {
     await visitStates(page, "theme-switch", theme);
-    await expectNoAxeViolations(page, "#s-states");
-    await expect(page.locator("#s-states [data-density='comfortable'] .cap-theme-options")).toBeVisible();
+    await expectNoAxeViolations(page, "section[aria-labelledby='s-states']");
+    await expect(page.locator("section[aria-labelledby='s-states'] [data-density='comfortable'] .cap-theme-options")).toBeVisible();
   });
 
   test("keyboard: the chosen choice shows a focus ring", async ({ page }) => {
