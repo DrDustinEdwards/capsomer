@@ -17,8 +17,7 @@
     gap: var(--space-2);
     box-sizing: border-box;
     min-inline-size: calc(var(--fs-detail) + 8px);
-    block-size: calc(var(--fs-detail) + 8px);
-    padding: 0 var(--space-2);
+    padding: var(--space-2);
     border: 0;
     border-radius: var(--radius-s);
     background: var(--sunken);
