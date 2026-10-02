@@ -54,7 +54,7 @@
       border-color: var(--muted);
     }
     &:has(.cap-combobox-input:focus-visible) {
-      outline: var(--focus-width) solid var(--focus-color);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: var(--focus-offset);
     }
     &:has(.cap-combobox-input[aria-invalid="true"]) {

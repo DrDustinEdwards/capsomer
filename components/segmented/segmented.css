@@ -58,7 +58,7 @@
         font-weight: 600;
       }
       &:has(input:focus-visible) {
-        outline: var(--focus-width) solid var(--focus-color);
+        outline: var(--focus-width) solid var(--ring);
         outline-offset: 1px;
       }
       &:has(input:disabled) {

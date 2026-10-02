@@ -30,20 +30,30 @@
     -webkit-font-smoothing: antialiased;
   }
   /* The reading context sets its own face and size where it is declared, not only on body. */
+  /* A density wrapper sets its own reading size (the root keeps rem sizing). */
+  [data-density]:where(:not(:root)) {
+    font-size: var(--text-size);
+    line-height: var(--leading);
+  }
   [data-context] {
     font-family: var(--face);
     font-size: var(--text-size);
     line-height: var(--leading);
   }
   a {
-    color: var(--accent);
+    color: var(--accent-text);
     text-underline-offset: 2px;
+    &:hover {
+      color: var(--accent-hover);
+    }
   }
   button {
     cursor: pointer;
   }
   :focus-visible {
-    outline: var(--focus-width) solid var(--focus-color);
+    /* The shared focus indicator: a 2 px solid --ring outline, 3:1 against every surface
+       (palette.mjs checks it). A field may add --shadow-ring, the soft 3 px glow, beside it. */
+    outline: var(--focus-width) solid var(--ring);
     outline-offset: var(--focus-offset);
   }
   kbd {

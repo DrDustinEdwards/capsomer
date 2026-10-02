@@ -55,7 +55,7 @@
         background: var(--raised);
       }
       &:focus-visible {
-        outline: var(--focus-width) solid var(--focus-color);
+        outline: var(--focus-width) solid var(--ring);
         outline-offset: -2px;
         background: var(--sel);
       }
