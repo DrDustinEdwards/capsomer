@@ -1,0 +1,101 @@
+      <section class="cap-specimen" aria-labelledby="s-single">
+        <h2 id="s-single">One chosen value</h2>
+        <p>Oregon is chosen: a check at the end. Sydney is not available.</p>
+        <div class="cap-listbox" data-cap="listbox" data-variant="surface" data-selection="single" role="listbox" aria-label="Region" tabindex="0">
+          <div class="cap-option" id="r-fra" role="option" aria-selected="false"><span class="cap-option-label">Frankfurt</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+          <div class="cap-option" id="r-pdx" role="option" aria-selected="true"><span class="cap-option-label">Oregon</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+          <div class="cap-option" id="r-sin" role="option" aria-selected="false"><span class="cap-option-label">Singapore</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+          <div class="cap-option" id="r-syd" role="option" aria-selected="false" aria-disabled="true"><span class="cap-option-label">Sydney (retired)</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-active">
+        <h2 id="s-active">The current option</h2>
+        <p>The option Enter would act on carries a tint and a 3 px edge. Set from the page, not from the pointer.</p>
+        <div class="cap-listbox" data-variant="surface" role="listbox" aria-label="Views" aria-activedescendant="v-jobs">
+          <div class="cap-option" id="v-over" role="option"><span class="cap-option-label">Overview</span></div>
+          <div class="cap-option" id="v-jobs" role="option" data-active="" data-force="active"><span class="cap-option-label">Jobs</span></div>
+          <div class="cap-option" id="v-agents" role="option"><span class="cap-option-label">Agents</span></div>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-hover">
+        <h2 id="s-hover">Under the pointer</h2>
+        <div class="cap-listbox" data-variant="surface" role="listbox" aria-label="Views, pointer">
+          <div class="cap-option" id="h-over" role="option"><span class="cap-option-label">Overview</span></div>
+          <div class="cap-option" id="h-jobs" role="option" data-force="hover"><span class="cap-option-label">Jobs</span></div>
+          <div class="cap-option" id="h-agents" role="option"><span class="cap-option-label">Agents</span></div>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-groups">
+        <h2 id="s-groups">Groups and a separator</h2>
+        <p>Each group is named by its label. Shortcuts and a note in words sit at the end of the row.</p>
+        <div class="cap-listbox" data-cap="listbox" data-variant="surface" role="listbox" aria-label="Commands, grouped" tabindex="0">
+          <div class="cap-listbox-group" role="group" aria-labelledby="g-go">
+            <div class="cap-listbox-label" id="g-go" role="presentation">Go to</div>
+            <div class="cap-option" id="g-over" role="option" data-keywords="home,dashboard"><span class="cap-option-label">Overview</span><span class="cap-option-keys"><span class="cap-sr-only">, shortcut </span><kbd>g</kbd> <kbd>o</kbd></span></div>
+            <div class="cap-option" id="g-jobs" role="option"><span class="cap-option-label">Jobs</span><span class="cap-option-keys"><span class="cap-sr-only">, shortcut </span><kbd>g</kbd> <kbd>j</kbd></span></div>
+          </div>
+          <div class="cap-listbox-separator" aria-hidden="true"></div>
+          <div class="cap-listbox-group" role="group" aria-labelledby="g-act">
+            <div class="cap-listbox-label" id="g-act" role="presentation">Actions</div>
+            <div class="cap-option" id="g-refresh" role="option"><span class="cap-option-label">Refresh now</span><span class="cap-option-keys"><span class="cap-sr-only">, shortcut </span><kbd>r</kbd></span></div>
+            <div class="cap-option" id="g-stop" role="option"><span class="cap-option-label">Pause capsomer</span><span class="cap-option-keys"><span class="cap-sr-only">, </span><span class="cap-option-hint">asks a reason</span></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-multi">
+        <h2 id="s-multi">Several chosen values</h2>
+        <div class="cap-listbox" data-cap="listbox" data-variant="surface" data-selection="multi" role="listbox" aria-multiselectable="true" aria-label="Notify me about" tabindex="0">
+          <div class="cap-option" id="n-fail" role="option" aria-selected="true"><span class="cap-option-label">Failed jobs</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+          <div class="cap-option" id="n-pause" role="option" aria-selected="false"><span class="cap-option-label">Paused namespaces</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+          <div class="cap-option" id="n-done" role="option" aria-selected="true"><span class="cap-option-label">Finished jobs</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-crit">
+        <h2 id="s-crit">A destructive choice</h2>
+        <div class="cap-listbox" data-variant="surface" role="listbox" aria-label="Agent actions">
+          <div class="cap-option" id="c-rename" role="option"><span class="cap-option-label">Rename</span></div>
+          <div class="cap-option" id="c-revoke" role="option" data-tone="crit" data-force="active" data-active=""><span class="cap-option-label">Revoke access</span></div>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-filter">
+        <h2 id="s-filter">Filtered by typing</h2>
+        <p>The result count is announced politely; no match says so.</p>
+        <div class="cap-field">
+          <label for="f-input">Find a site</label>
+          <input class="cap-input" id="f-input" type="text" role="combobox" autocomplete="off" aria-expanded="true" aria-controls="f-list" aria-autocomplete="list" aria-activedescendant="f-a">
+        </div>
+        <div class="cap-listbox" id="f-list" data-cap="listbox" data-filter data-variant="surface" role="listbox" aria-label="Sites">
+          <div class="cap-listbox-group" role="group" aria-labelledby="f-g1">
+            <div class="cap-listbox-label" id="f-g1" role="presentation">Writing</div>
+            <div class="cap-option" id="f-a" role="option" data-keywords="blog,writing"><span class="cap-option-label">dustinedwards.info</span></div>
+          </div>
+          <div class="cap-listbox-separator" aria-hidden="true"></div>
+          <div class="cap-listbox-group" role="group" aria-labelledby="f-g2">
+            <div class="cap-listbox-label" id="f-g2" role="presentation">Tools</div>
+            <div class="cap-option" id="f-b" role="option" data-keywords="design"><span class="cap-option-label">capsomer.dev</span></div>
+            <div class="cap-option" id="f-c" role="option" data-keywords="tracker"><span class="cap-option-label">foxing.app</span></div>
+          </div>
+        </div>
+        <p class="cap-listbox-empty" role="status"></p>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-roving">
+        <h2 id="s-roving">Focus on the options</h2>
+        <p>Tab enters on the chosen option; the arrows move focus.</p>
+        <div class="cap-listbox" data-cap="listbox" data-mode="roving" data-selection="single" data-variant="surface" role="listbox" aria-label="Interval">
+          <div class="cap-option" id="i-1" role="option" aria-selected="false" tabindex="-1"><span class="cap-option-label">Every minute</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+          <div class="cap-option" id="i-5" role="option" aria-selected="true" tabindex="0"><span class="cap-option-label">Every 5 minutes</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+          <div class="cap-option" id="i-15" role="option" aria-selected="false" tabindex="-1"><span class="cap-option-label">Every 15 minutes</span><span class="cap-option-indicator" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5 6.5 11.5 12.5 4.5"/></svg></span></div>
+        </div>
+      </section>
+
+      <section class="cap-specimen" aria-labelledby="s-empty">
+        <h2 id="s-empty">Nothing matches</h2>
+        <p class="cap-listbox-empty" role="status">No results for “zebra”</p>
+      </section>

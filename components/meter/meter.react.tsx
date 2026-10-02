@@ -14,7 +14,7 @@ export interface MeterProps {
   // The number shown beside the label. Defaults to "value of max".
   display?: ReactNode;
   // Overrides the tone from the thresholds.
-  tone?: "warn" | "crit";
+  tone?: MeterTone;
   // Tone by threshold, as a share of the span: warning from warnAt, critical from critAt.
   // Without either, the tone is the `tone` prop or none.
   warnAt?: number;
@@ -31,13 +31,16 @@ export interface MeterProps {
   measuring?: boolean;
   // A line under the bar: what happens next, or why there is no data.
   note?: ReactNode;
-  // A hook for the usage meter: extra class names on the root.
+  // For compositions (the usage meter's row): extra class names, the root element, and
+  // content after the bar, inside the meter's row.
   className?: string;
+  as?: "div" | "li";
+  after?: ReactNode;
 }
 
 const WORDS = { warn: "Near the limit", crit: "Limit reached" };
 
-export function Meter({ label, value, max, min = 0, valueText, display, tone, warnAt, critAt, words, threshold, projected, size, measuring = false, note, className }: MeterProps) {
+export function Meter({ label, value, max, min = 0, valueText, display, tone, warnAt, critAt, words, threshold, projected, size, measuring = false, note, className, as: Root = "div", after }: MeterProps) {
   const bar = useRef<HTMLSpanElement>(null);
   const labelId = useId();
   const root = ["cap-meter", className].filter(Boolean).join(" ");
@@ -49,7 +52,7 @@ export function Meter({ label, value, max, min = 0, valueText, display, tone, wa
   if (value === null || measuring) {
     const what = measuring ? "Measuring" : "No data";
     return (
-      <div className={root} data-size={size} data-tone={measuring ? undefined : "nodata"} data-state={measuring ? "indeterminate" : undefined} aria-busy={measuring || undefined}>
+      <Root className={root} data-size={size} data-tone={measuring ? undefined : "nodata"} data-state={measuring ? "indeterminate" : undefined} aria-busy={measuring || undefined}>
         <span className="cap-meter-label">{label}</span>
         <span className="cap-meter-value">
           <span className="cap-status" data-tone="nodata">
@@ -61,7 +64,8 @@ export function Meter({ label, value, max, min = 0, valueText, display, tone, wa
           <span className="cap-meter-fill" />
         </span>
         {note ? <span className="cap-meter-note">{note}</span> : null}
-      </div>
+        {after}
+      </Root>
     );
   }
 
@@ -69,7 +73,7 @@ export function Meter({ label, value, max, min = 0, valueText, display, tone, wa
   const shown = earned === "warn" || earned === "crit" ? earned : undefined;
   const word = shown && (words !== undefined || tone === undefined) ? (words ?? WORDS)[shown] : null;
   return (
-    <div className={root} data-size={size} data-tone={shown}>
+    <Root className={root} data-size={size} data-tone={earned}>
       <span className="cap-meter-label" id={labelId}>
         {label}
       </span>
@@ -95,6 +99,7 @@ export function Meter({ label, value, max, min = 0, valueText, display, tone, wa
         <span className="cap-meter-fill" />
       </span>
       {note ? <span className="cap-meter-note">{note}</span> : null}
-    </div>
+      {after}
+    </Root>
   );
 }
