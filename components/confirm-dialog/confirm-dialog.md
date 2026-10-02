@@ -3,9 +3,10 @@ name: confirm-dialog
 title: Confirm dialog
 summary: Preview, then perform, for an action that cannot be undone.
 parts: [css, behaviour, react]
-tool: native + own JavaScript
+tool: native + own JavaScript (the shared dialog)
 states: [open, busy, failed with Try again, reason required and empty, typed-word guard not typed, typed-word guard matched]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/ConfirmDialog.tsx and styles.css (.help), as of capsid master 2026-10-01; dustinedwards.info app/components/admin/confirm-dialog.tsx for the typed word
 replaces:
   - 'className="(help )?confirm'
@@ -17,7 +18,7 @@ replaces:
 
 **Provenance.** MIXED, against the Portal's `app/ConfirmDialog.tsx` and `styles.css` (`.help`, `.confirm`) as of capsid master on 2026-10-01. The rules and their reasoning are extracted: no light dismiss, focus on Cancel for a one-way action, the perform button named for the action and set at the far end, Esc held while busy, a required reason that says so when empty (`aria-invalid`, described by the error), focus handed back after the next frame to the opener, then the open panel, then `main`. The CSS and the markup are written for Capsomer's tokens (the Portal wraps a `.card` in a bare dialog), and the behaviour is framework-free and generic: the Portal's preview call, its `ConfirmRequest` and its router are not carried over; the app passes `perform`.
 
-A modal dialog that shows what a one-way action will change before it is done: revoking an agent's key, deleting a site record, failing a job. The person reads the list, then performs or cancels.
+A modal alert dialog, built on the shared dialog (`components/dialog`), that shows what a one-way action will change before it is done: revoking an agent's key, deleting a site record, failing a job. The person reads the list, then performs or cancels.
 
 ## When to use it
 
@@ -55,36 +56,43 @@ A reversible action happens at once and offers Undo through the message region (
 
 ## Accessibility
 
-- A native `dialog` opened with `showModal()`: the page behind is inert, and the dialog is named by its title (`aria-labelledby`) and described by its body (`aria-describedby`).
+- A native `dialog` opened with `showModal()` with `role="alertdialog"`: the page behind is inert, and the dialog is named by its title (`aria-labelledby`) and described by its lead and its list of changes (`aria-describedby`).
 - The error is `role="alert"`, present and empty until it is needed, so it is announced when filled.
 - The guard's reason is the perform button's description, so a screen reader hears why it is off.
 - An empty reason is `aria-invalid="true"` and described by the error box; the border also turns critical, never alone.
 - Forced colours: the dialog and the error keep their borders.
+- Focus is on Cancel on open, so Enter on arrival cannot do the damage.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ## Markup
 
+The shared dialog as an alert dialog: `role="alertdialog"` (so a click on the backdrop does nothing and focus starts on Cancel), no corner Close button, the footer on its muted band with Cancel at one end and the action at the other.
+
 ```html
-<dialog class="cap-dialog" data-cap="confirm-dialog" id="revoke" aria-labelledby="revoke-title" aria-describedby="revoke-body">
-  <h2 class="cap-dialog-title" id="revoke-title">Revoke foxhound-driver?</h2>
-  <div class="cap-dialog-body" id="revoke-body">
-    <p>This cannot be undone. The agent stops working at once.</p>
-    <ul><li>Its key stops being accepted.</li><li>Its 1 claimed job goes back to the queue.</li></ul>
+<dialog class="cap-dialog" data-cap="confirm-dialog" data-placement="center" data-size="md" role="alertdialog"
+        id="revoke" aria-labelledby="revoke-title" aria-describedby="revoke-desc revoke-list">
+  <div class="cap-dialog-header">
+    <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg>…</svg></div>
+    <h2 class="cap-dialog-title" id="revoke-title">Revoke foxhound-driver?</h2>
+    <p class="cap-dialog-description" id="revoke-desc">This cannot be undone. The agent stops working at once.</p>
   </div>
-  <!-- Only where the audit row carries a reason: -->
-  <div class="cap-dialog-reason">
-    <label for="revoke-reason">Reason (required)</label>
-    <textarea class="cap-input" id="revoke-reason" rows="3" aria-required="true" aria-describedby="revoke-reason-note" data-cap-part="reason"></textarea>
-    <p class="cap-dialog-note" id="revoke-reason-note" data-cap-part="reason-note">Recorded with the change.</p>
+  <div class="cap-dialog-body">
+    <ul id="revoke-list"><li>Its key stops being accepted.</li><li>Its 1 claimed job goes back to the queue.</li></ul>
+    <!-- Only where the audit row carries a reason: -->
+    <div class="cap-confirm-reason">
+      <label for="revoke-reason">Reason (required)</label>
+      <textarea class="cap-input" id="revoke-reason" rows="3" aria-required="true" aria-describedby="revoke-reason-note" data-cap-part="reason"></textarea>
+      <p class="cap-confirm-note" id="revoke-reason-note" data-cap-part="reason-note">Recorded with the change.</p>
+    </div>
+    <!-- Only for what cannot be recovered: -->
+    <div class="cap-confirm-typed">
+      <label id="revoke-typed-label" for="revoke-typed">Type <b>revoke</b> to confirm</label>
+      <input class="cap-input" id="revoke-typed" autocomplete="off" spellcheck="false" data-cap-part="typed" data-cap-word="revoke">
+    </div>
   </div>
-  <!-- Only for what cannot be recovered: -->
-  <div class="cap-dialog-typed">
-    <label id="revoke-typed-label" for="revoke-typed">Type <b>revoke</b> to confirm</label>
-    <input class="cap-input" id="revoke-typed" autocomplete="off" spellcheck="false" data-cap-part="typed" data-cap-word="revoke">
-  </div>
-  <div class="cap-dialog-error" role="alert" id="revoke-error" data-cap-part="error"></div>
-  <div class="cap-dialog-actions">
+  <div class="cap-confirm-error" role="alert" id="revoke-error" data-cap-part="error"></div>
+  <div class="cap-dialog-footer" data-align="between">
     <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
     <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform">Revoke agent</button>
   </div>
@@ -92,7 +100,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <button type="button" class="cap-btn" data-variant="danger" data-cap-confirm-open="revoke">Revoke foxhound-driver…</button>
 ```
 
-Keep `.cap-dialog-error` empty with no whitespace; it hides while `:empty`.
+Keep `.cap-confirm-error` empty with no whitespace; it hides while `:empty`. The body is left out when there is nothing to list and no field. The header, title, description, body and footer are the shared dialog's parts; only `.cap-confirm-*` belongs to this component.
 
 ```js
 import { confirm } from "capsomer/behaviour/confirm-dialog";
@@ -108,6 +116,19 @@ const done = await confirm({
 ```
 
 For a dialog written in markup, `enhance()` wires it and its `[data-cap-confirm-open]` triggers, and `bindPerform(dialog, fn)` says what the action does; without it, a `type="submit"` perform button posts its form and the dialog shows busy meanwhile. In React, `import { ConfirmDialog } from "capsomer/react/confirm-dialog"` with `open`, `perform` and `onClose(performed)`. The Portal's two-step flow (type a reason, press Preview, read what changes, then perform) is the app's: show the preview's lines as `body` and call `confirm()` when it arrives.
+
+## Matches shadcn
+
+Alert Dialog (Base UI flavour, nova): the centred alert dialog with the blurred backdrop, the header with an optional media tile, title and description, the footer on a muted band with Cancel and the action, zoom-in-95 at 100 ms, no closing by the backdrop. Everything that is the surface comes from the shared dialog; the reason, the typed word and the error are this component's.
+
+## Deliberately different
+
+- **The action sits at the far end from Cancel** (`data-align="between"` on the footer), where shadcn puts both at the end. A slip must not land on a one-way action (decision for 0.1, kept).
+- **Medium width (30rem), not shadcn's small.** The list of changes, a reason field and a guard need the room; `sm` stays available through `data-size`.
+- **A reason, a typed word and a failure box** with Try again: shadcn's Alert Dialog has no such parts.
+- **The error box sits outside the scrolling body**, between it and the footer, so a failure is never scrolled out of view.
+- **A crit media tile is on by default**; `media: false` (or leaving the element out) removes it.
+- **Own classes are `cap-confirm-*`**; the `cap-dialog-*` parts are the shared dialog's.
 
 ## Exceptions in production
 

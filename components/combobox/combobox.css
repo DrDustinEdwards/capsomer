@@ -1,11 +1,16 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A combobox: a text box that filters a list of allowed values, built on Base UI's
-   Combobox (decision 7). Base UI gives the roles, the keys and the positioning; this file
-   gives the look. The box reproduces .cap-input's values from the tokens (it does not
-   import the field's CSS). The popup is portalled, so its parts are styled on their own,
-   not under .cap-combobox. */
+/* A combobox: a text box that filters a list of allowed values, built on Base UI's Combobox
+   (decision 7). Base UI gives the roles, the keys and the positioning; this file gives the
+   box, and the popup wears the shared blocks: `.cap-popover` (the surface and its motion,
+   components/popover) and `.cap-listbox` / `.cap-option` (the list, its group labels, the
+   highlighted option with its 3 px accent edge, the check, the empty message,
+   components/listbox). Reference: shadcn/ui Combobox (nova): an input group with a clear
+   button and an open button, chips for several values, a popup with groups, a check at the
+   end of a chosen item and an empty state. The box reproduces .cap-input's values from the
+   tokens (it does not import the field's CSS). The popup is portalled, so its parts are
+   styled on their own, not under .cap-combobox. */
 @layer cap.components {
   .cap-combobox {
     display: grid;
@@ -37,13 +42,15 @@
     }
   }
 
-  /* The box: the input and the open button inside one bordered control. */
-  .cap-combobox-group {
+  /* The box: the input, the clear button and the open button inside one bordered control.
+     With several values (`.cap-combobox-chips`) the chips and the input wrap inside it. */
+  .cap-combobox-group,
+  .cap-combobox-chips {
     position: relative;
     display: flex;
     align-items: center;
     min-width: 0;
-    min-height: var(--control-h);
+    min-height: var(--control);
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-m);
     background: var(--surface);
@@ -54,15 +61,20 @@
       border-color: var(--muted);
     }
     &:has(.cap-combobox-input:focus-visible) {
-      outline: var(--focus-width) solid var(--focus-color);
+      border-color: var(--accent);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: var(--focus-offset);
     }
+    /* Invalid: the edge thickens as well as turning red; the message beside it says why. */
     &:has(.cap-combobox-input[aria-invalid="true"]) {
       border-color: var(--crit);
+      box-shadow: inset 0 0 0 1px var(--crit);
     }
-    &[data-disabled] {
+    &[data-disabled],
+    &:has(.cap-combobox-input:disabled) {
       border-color: var(--line);
-      background: var(--raised);
+      border-style: dashed;
+      background: var(--sunken);
       color: var(--muted);
       cursor: not-allowed;
     }
@@ -90,23 +102,34 @@
     }
   }
 
-  /* The open button: out of the tab order (Base UI sets tabindex -1), a pointer target. */
-  .cap-combobox-trigger {
+  /* The buttons at the end of the box: the clear button (a value is chosen) and the open
+     button. Out of the tab order (Base UI sets tabindex -1 on the open button), pointer and
+     voice targets with names. */
+  .cap-combobox-trigger,
+  .cap-combobox-clear {
     display: grid;
     place-items: center;
     flex: none;
-    align-self: stretch;
+    align-self: center;
     min-width: var(--target);
-    padding: 0 var(--space-3);
+    min-height: var(--target);
+    margin: 0 var(--space-1) 0 0;
+    padding: 0;
     border: 0;
-    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    border-radius: var(--radius-s);
     background: none;
     color: var(--muted);
 
-    &:hover:not([data-disabled]) {
+    &:hover:not([data-disabled], :disabled) {
+      background: var(--sunken);
       color: var(--text);
     }
-    &[data-disabled] {
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+    &[data-disabled],
+    &:disabled {
       cursor: not-allowed;
     }
     & svg {
@@ -122,98 +145,92 @@
     transform: rotate(180deg);
   }
 
-  /* The popup: a surface with a shadow, as wide as the box, never taller than the room
-     Base UI measures (--available-height). */
+  /* Several values: each is a chip, with its own remove button, and the input follows. */
+  .cap-combobox-chips {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+
+    & > .cap-combobox-input,
+    & .cap-combobox-input {
+      flex: 1 1 4rem;
+      min-width: 4rem;
+      min-height: var(--target);
+      padding: 0 var(--space-2);
+    }
+  }
+  .cap-combobox-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--target);
+    padding: 0 0 0 var(--space-3);
+    border-radius: var(--radius-s);
+    background: var(--sunken);
+    color: var(--text);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+    white-space: nowrap;
+
+    &[data-highlighted],
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+  }
+  .cap-combobox-chip:not(:has(.cap-combobox-chip-remove)) {
+    padding-inline-end: var(--space-3);
+  }
+  .cap-combobox-chip-remove {
+    display: grid;
+    place-items: center;
+    min-width: var(--target);
+    min-height: var(--target);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-s);
+    background: none;
+    color: var(--muted);
+
+    &:hover {
+      background: var(--line);
+      color: var(--text);
+    }
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+    & svg {
+      display: block;
+    }
+  }
+
+  /* The popup. Its surface is .cap-popover (with data-flush: the list pads itself); here it
+     is made as wide as the box and kept to the room Base UI measures. */
   .cap-combobox-positioner {
     z-index: var(--z-overlay);
     outline: 0;
   }
-
   .cap-combobox-popup {
     box-sizing: border-box;
-    width: var(--anchor-width);
-    max-width: var(--available-width);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-m);
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: var(--shadow);
-    transform-origin: var(--transform-origin);
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-combobox-popup {
-      transition:
-        opacity var(--dur-fast) var(--ease-out),
-        transform var(--dur-fast) var(--ease-out);
-
-      &[data-starting-style],
-      &[data-ending-style] {
-        opacity: 0;
-        transform: translateY(calc(var(--space-2) * -1));
-      }
-    }
+    inline-size: var(--anchor-width);
+    max-inline-size: var(--available-width);
+    overflow: hidden;
   }
 
   .cap-combobox-list {
-    box-sizing: border-box;
-    max-height: min(22rem, var(--available-height));
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding: var(--space-2);
-    scroll-padding-block: var(--space-2);
-    outline: 0;
+    --listbox-max: min(22rem, var(--available-height));
 
     &[data-empty] {
       padding: 0;
     }
   }
 
-  .cap-combobox-item {
-    display: grid;
-    grid-template-columns: var(--space-5) minmax(0, 1fr);
-    align-items: center;
-    gap: var(--space-3);
-    min-height: var(--target);
-    padding: calc(var(--space-2) + var(--space-1)) var(--space-3);
-    border-radius: var(--radius-s);
-    color: var(--text);
-    cursor: default;
-    user-select: none;
-
-    /* The highlighted option: --accent-soft with --text and the 3 px accent edge the
-       command menu draws, so the cue is not the tint alone. Base UI keeps DOM focus in the
-       input and marks the option with data-highlighted and aria-activedescendant. */
-    &[data-highlighted],
-    &[data-force="highlighted"] {
-      background: var(--accent-soft);
-      color: var(--text);
-      box-shadow: inset 3px 0 0 var(--accent);
-    }
-    &[data-selected] {
-      font-weight: 600;
-    }
-    &[data-disabled] {
-      color: var(--dim);
-    }
+  /* The empty message: the shared "no results" look; Base UI keeps the element mounted so a
+     change is announced, and it takes room only when it has something to say. */
+  .cap-combobox-empty {
+    padding-block: var(--space-3);
   }
-
-  .cap-combobox-check {
-    grid-column: 1;
-    display: grid;
-    place-items: center;
-    color: var(--accent);
-  }
-  .cap-combobox-item-label {
-    grid-column: 2;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Empty and loading messages. Base UI keeps both elements mounted so changes are
-     announced; they take room only when they have something to say. */
-  .cap-combobox-empty,
   .cap-combobox-status {
     color: var(--muted);
     font-size: var(--fs-detail);
@@ -245,16 +262,13 @@
     }
   }
 
-  /* Forced colours remove the tints: the highlighted option gets an outline, the popup
-     keeps its border. */
   @media (forced-colors: active) {
-    .cap-combobox-item[data-highlighted],
-    .cap-combobox-item[data-force="highlighted"] {
-      outline: 2px solid Highlight;
-      outline-offset: -2px;
-    }
-    .cap-combobox-popup {
+    .cap-combobox-group,
+    .cap-combobox-chips {
       border-color: CanvasText;
+    }
+    .cap-combobox-chip {
+      border: 1px solid CanvasText;
     }
   }
 }

@@ -4,8 +4,9 @@ title: Switch
 summary: An on or off setting that takes effect at once, with its state in a word beside it.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [off, on, hover, keyboard focus, disabled with its reason, pending]
+states: [off, on, hover, keyboard focus, disabled with its reason, pending, invalid, small]
 added: 0.1.0
+updated: 0.2.0
 source: The approved mockup (design/mockup.html, .switch); the Capsid Portal's ui/Switch.tsx and its .switch rules (0.1.1)
 replaces:
   - 'role="switch"'
@@ -70,6 +71,18 @@ In React, `import { Switch } from "capsomer/react/switch"`:
 ```tsx
 <Switch label="Single-key shortcuts" checked={keys} onCheckedChange={setKeys} />
 ```
+
+## Matches
+
+shadcn/ui `Switch` (Base UI flavour, style nova): the `default` and `sm` sizes are the default and `data-size="sm"` on `.cap-switch` (36 by 20 and 28 by 16, the label is the hit area), the focus ring, `aria-invalid`, disabled and the thumb slide.
+
+## Deliberate differences
+
+- A native checkbox with `role="switch"` inside a `<label>`, not a `role` button: forms, labels and Space come from the platform.
+- The off track keeps a `--line-strong` edge (3:1); shadcn's transparent edge on a pale track would fail.
+- The focus ring is an opaque 3 px, which reaches 3:1; the soft ring does not.
+- The state word beside the switch and the dashed pending outline are Capsomer's own.
+- Disabled is dashed and muted, not half opacity.
 
 ## Exceptions in production
 

@@ -95,11 +95,38 @@ export function Status({ tone, running, children, reason, brief }: StatusProps) 
   );
 }
 
-export function Pill({ tone, running, children }: Omit<StatusProps, "reason" | "brief">) {
-  return (
-    <span className="cap-pill" data-tone={tone}>
-      <Glyph name={glyphFor(tone, running)} />
-      {children}
-    </span>
-  );
+export type BadgeVariant = "default" | "secondary" | "outline" | "destructive" | "ghost" | "link";
+
+export interface PillProps {
+  // A status tone: the word and glyph on the tone's tint. Without a variant it is a status
+  // badge; with one, outline and ghost keep the tone's colour.
+  tone?: Tone;
+  // shadcn's badge variants. Leave out for the tinted status badge (or a quiet grey one).
+  variant?: BadgeVariant;
+  // Running is an info tone drawn with an arc.
+  running?: boolean;
+  // The word. A badge with a tone also draws that tone's glyph, so shape and word carry it.
+  children: ReactNode;
+  // A link badge: a real <a>. Its hit area grows to the target size.
+  href?: string;
+  // A button badge. Give href or onClick, not both.
+  onClick?: () => void;
 }
+
+// The badge: a status on its tint (tone), or one of the six variants. A tone always draws
+// its glyph; a variant with no tone is just the word (or a count).
+export function Pill({ tone, variant, running, children, href, onClick }: PillProps) {
+  const inner = (
+    <>
+      {tone ? <Glyph name={glyphFor(tone, running)} /> : null}
+      {children}
+    </>
+  );
+  const common = { className: "cap-pill", "data-tone": tone, "data-variant": variant } as const;
+  if (href) return <a {...common} href={href}>{inner}</a>;
+  if (onClick) return <button type="button" {...common} onClick={onClick}>{inner}</button>;
+  return <span {...common}>{inner}</span>;
+}
+
+// The same component under shadcn's name.
+export const Badge = Pill;

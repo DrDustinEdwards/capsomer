@@ -4,7 +4,9 @@
 /* A data table: a native table in a labelled, focusable region that scrolls sideways when
    the table is wider than its space. Rules between rows, numbers right-aligned in tabular
    figures, sortable columns with a button in the header. Extracted from the Capsid Portal
-   (dashboard/src/styles.css: table.list, table.fleet, .scroll-x, .reflow). */
+   (dashboard/src/styles.css: table.list, table.fleet, .scroll-x, .reflow). Rebuilt in 0.2 to
+   the craft of shadcn's Table: row hover and selected states, a tinted footer, a bottom
+   caption option, cell padding from the density tokens, and a sticky header. */
 @layer cap.components {
   /* The region: named by the table's caption or its panel's heading, focusable so a
      keyboard can scroll it (WCAG 2.1.1). The ring is inset, so a panel's clip keeps it. */
@@ -15,7 +17,7 @@
     overscroll-behavior-x: contain;
 
     &:focus-visible {
-      outline: var(--focus-width) solid var(--focus-color);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: calc(var(--focus-width) * -1);
     }
   }
@@ -24,15 +26,23 @@
     width: 100%;
     border-collapse: collapse;
     color: var(--text);
+    font-size: var(--fs-body);
 
     & caption {
-      padding: var(--space-3) var(--space-4);
+      padding: var(--space-3) var(--pad-x);
       text-align: start;
       font-weight: 600;
     }
 
+    /* shadcn puts the caption under the table, in muted type: opt in with data-caption. */
+    &[data-caption="bottom"] caption {
+      caption-side: bottom;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
     & thead th {
-      padding: var(--space-3) var(--space-4);
+      padding: calc(var(--pad-y) + var(--space-1)) var(--pad-x);
       border-bottom: 1px solid var(--line);
       color: var(--muted);
       font-size: var(--fs-label);
@@ -50,12 +60,50 @@
       }
     }
 
-    & tbody :is(td, th) {
-      padding: var(--space-3) var(--space-4);
+    & :is(tbody, tfoot) :is(td, th) {
+      padding: calc(var(--pad-y) + var(--space-1)) var(--pad-x);
       border-bottom: 1px solid var(--line);
       text-align: start;
       vertical-align: middle;
       white-space: nowrap;
+    }
+
+    /* A checkbox cell hugs its column (shadcn drops its right padding). */
+    & :is(td, th):has(> input[type="checkbox"]:only-child) {
+      inline-size: 1%;
+      padding-inline-end: 0;
+    }
+
+    /* shadcn's TableFooter: a tinted band under a rule, medium weight, for totals. */
+    & tfoot {
+      background: color-mix(in srgb, var(--sunken) 50%, transparent);
+      font-weight: 500;
+
+      & :is(td, th) {
+        border-top: 1px solid var(--line);
+        border-bottom: 0;
+        font-weight: inherit;
+      }
+    }
+
+    /* Row states, as shadcn's TableRow has them: hover, selected, and a row whose button
+       reports it is expanded. Selected is never colour alone: a bar on the row's start
+       edge says it too. */
+    & tbody tr {
+      &:hover,
+      &[data-force="hover"] {
+        background: var(--raised);
+      }
+      &:has([aria-expanded="true"]) {
+        background: color-mix(in srgb, var(--sunken) 50%, transparent);
+      }
+      &:is([data-state="selected"], [aria-selected="true"], [data-force="selected"]) {
+        background: var(--sel);
+
+        & > :first-child {
+          box-shadow: inset 3px 0 0 var(--accent);
+        }
+      }
     }
 
     /* A row header reads as an ordinary first cell, in the body's weight. */
@@ -88,7 +136,7 @@
     align-items: center;
     gap: var(--space-2);
     min-height: var(--target);
-    margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1);
+    margin: calc(var(--space-2) * -1);
     padding: 0 var(--space-2);
     border: 0;
     border-radius: var(--radius-s);
@@ -103,10 +151,39 @@
       background: var(--raised);
       color: var(--text);
     }
+    &:active,
+    &[data-force="pressed"] {
+      background: var(--sunken);
+      color: var(--text);
+    }
 
     & svg {
       flex: none;
     }
+  }
+
+  /* A sticky header: the region gets a height to scroll inside, and the header row stays
+     put. Borders do not travel with a sticky cell in a collapsed table, so the rule under
+     the header is drawn as a shadow. */
+  .cap-table-wrap[data-sticky] {
+    max-height: var(--cap-table-max-h, 24rem);
+    overflow-y: auto;
+
+    & .cap-table thead th {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 1;
+      border-bottom: 0;
+      background: var(--surface);
+      box-shadow: inset 0 -1px 0 var(--line);
+    }
+  }
+
+  /* A table with nothing to show: one cell across, brief and muted. */
+  .cap-table-empty {
+    padding: var(--space-6) var(--pad-x);
+    color: var(--muted);
+    text-align: center;
   }
 
   /* The sort glyph: both arrows when unsorted, one when sorted. */
@@ -125,21 +202,27 @@
   .cap-table tbody tr:has(.cap-table-open) {
     position: relative;
 
-    &:hover,
-    &[data-force="hover"] {
-      background: var(--raised);
-    }
-
     &:has(.cap-table-open:focus-visible),
     &[data-force="focus"] {
       background: var(--sel);
-      outline: var(--focus-width) solid var(--accent-line);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: calc(var(--focus-width) * -1);
     }
 
     & :is(a, button):not(.cap-table-open) {
       position: relative;
       z-index: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-table tbody tr {
+      transition: background-color var(--dur-fast) var(--ease-out);
+    }
+    .cap-table-sort {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
     }
   }
 

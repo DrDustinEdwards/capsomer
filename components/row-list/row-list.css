@@ -6,7 +6,9 @@
    the Capsid Portal (dashboard/src/styles.css: .att-row, .qrow, .frow), which drew three
    copies of this row; here they are one. The row's spacing, tones, hover, selection and
    critical edge are the Portal's values; the stretched-link markup, the subgrid columns and
-   the container query are Capsomer's own (v0.1.1 provenance in row-list.md). */
+   the container query are Capsomer's own (v0.1.1 provenance in row-list.md). Rebuilt in 0.2
+   to the craft of shadcn's Item (rounded row, outline and muted variants, sizes, media,
+   a 100 ms colour transition, a gap between rows in a group). */
 @layer cap.components {
   /* The list is the size container (the phone layout follows the space the list has) and
      the column grid: every row is a subgrid of it, so status, title, time and actions line
@@ -19,6 +21,17 @@
     margin: 0;
     padding: 0;
     list-style: none;
+
+    /* shadcn's ItemGroup: rows as separate cards get a gap between them. */
+    &[data-gap] {
+      row-gap: var(--gap);
+    }
+    &[data-gap="sm"] {
+      row-gap: var(--space-3);
+    }
+    &[data-gap="xs"] {
+      row-gap: var(--space-2);
+    }
   }
 
   .cap-row {
@@ -27,9 +40,33 @@
     display: grid;
     grid-template-columns: subgrid;
     align-items: center;
-    min-height: var(--target);
-    padding: calc(var(--space-2) + var(--space-1)) var(--space-5);
+    min-height: max(var(--target), var(--row-h));
+    padding: var(--pad-y) var(--pad-card);
+    border: 1px solid transparent;
+    border-radius: var(--radius-l);
     color: var(--text);
+
+    /* shadcn's Item variants: outline draws the row's own edge, muted tints it. */
+    &[data-variant="outline"] {
+      border-color: var(--line);
+    }
+    &[data-variant="muted"] {
+      background: color-mix(in srgb, var(--sunken) 50%, transparent);
+    }
+    &[data-size="sm"] {
+      padding-block: var(--space-3);
+      padding-inline: var(--pad-x);
+    }
+    &[data-size="xs"] {
+      min-height: var(--target);
+      padding-block: var(--space-2);
+      padding-inline: var(--pad-x);
+      row-gap: 0;
+
+      & .cap-row-detail {
+        font-size: var(--fs-label);
+      }
+    }
 
     &:hover,
     &[data-force="hover"] {
@@ -40,12 +77,13 @@
       }
     }
 
-    /* The focused row: the selection tint and an inset ring in --accent-line, which is
-       3:1 against --sel in both themes. The link itself draws no ring of its own. */
+    /* The focused row: the selection tint and an inset ring in --ring, 3:1 against --sel
+       in both themes. The link itself draws no ring of its own. An outline, so it follows
+       the row's radius and survives forced colours. */
     &:has(.cap-row-title :focus-visible),
     &[data-force="focus"] {
       background: var(--sel);
-      outline: var(--focus-width) solid var(--accent-line);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: calc(var(--focus-width) * -1);
     }
 
@@ -58,14 +96,48 @@
       width: 3px;
       background: var(--crit);
     }
+    &[data-tone="crit"][data-variant]::before {
+      inset-block: var(--space-3);
+      inset-inline-start: var(--space-2);
+      border-radius: var(--radius-full);
+    }
   }
 
-  .cap-row-status {
+  /* The status (glyph, word, colour) or, in shadcn's ItemMedia, an icon or a picture: the
+     row's first column. */
+  :is(.cap-row-status, .cap-row-media) {
     grid-column: 1;
     grid-row: 1 / span 2;
     display: flex;
     align-items: center;
+    gap: var(--space-3);
     min-width: 0;
+  }
+  .cap-row-media[data-variant="icon"] svg {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    pointer-events: none;
+  }
+  .cap-row-media[data-variant="image"] {
+    inline-size: 40px;
+    block-size: 40px;
+    overflow: hidden;
+    border-radius: var(--radius-s);
+
+    & :is(img, svg) {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+  }
+  .cap-row[data-size="sm"] .cap-row-media[data-variant="image"] {
+    inline-size: 32px;
+    block-size: 32px;
+  }
+  .cap-row[data-size="xs"] .cap-row-media[data-variant="image"] {
+    inline-size: 24px;
+    block-size: 24px;
   }
 
   .cap-row-title {
@@ -174,7 +246,7 @@
       column-gap: var(--space-4);
       row-gap: var(--space-1);
     }
-    .cap-row-status {
+    :is(.cap-row-status, .cap-row-media) {
       grid-column: 1 / -1;
       grid-row: 1;
       justify-self: start;
@@ -199,6 +271,9 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .cap-row {
+      transition: background-color var(--dur-fast) var(--ease-out);
+    }
     .cap-row-chevron {
       transition: transform var(--dur-fast) var(--ease-out);
     }

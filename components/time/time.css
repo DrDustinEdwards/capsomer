@@ -2,21 +2,30 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A time in words, on a <time datetime>. Relative in rows; exact (the viewer's zone, then
-   UTC) where the detail of a thing is shown. It takes the colour and size of the text
-   around it. */
+   UTC) where the detail of a thing is shown. A time is a quiet value, so it is muted and
+   tabular: digits line up in a column, and it does not compete with the words beside it.
+   An exact time in a detail is the value itself, so it takes the text colour; its UTC part
+   stays muted. Both are 4.5:1 on every surface. data-tone="text" gives a relative time the
+   text colour where it is the point of the row. */
 @layer cap.components {
   .cap-time {
+    color: var(--muted);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 
     &[data-format="exact"] {
+      color: var(--text);
       white-space: normal;
+    }
+    &[data-tone="text"] {
+      color: var(--text);
     }
   }
 
   /* The UTC part of an exact time stays whole on a line: "(13:02 UTC)" is not broken in
      two. The Portal's `.when .faint { white-space: nowrap }`. */
   .cap-time-utc {
+    color: var(--muted);
     white-space: nowrap;
   }
 }

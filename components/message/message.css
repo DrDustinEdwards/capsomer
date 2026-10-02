@@ -19,23 +19,49 @@
     font-size: var(--text-size);
   }
 
+  /* The item wears the same surface as a popover (shadcn's Sonner toast wears the popover's):
+     raised, rounded, lifted by a shadow. The edge is a 3:1 line of its own, since the region sits
+     on the page ground and a message must be found where it lands. */
   .cap-message-item {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3) var(--space-4);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--pad-x);
     /* --dim, not --line-strong: the region sits on the page ground, where --line-strong is
        2.91:1 and a boundary needs 3:1; --dim is above 4.5 on every surface. */
     border: 1px solid var(--dim);
-    border-radius: var(--radius-m);
+    border-radius: var(--radius-l);
     background: var(--raised);
     color: var(--text);
+    box-shadow: var(--shadow-m);
+    line-height: var(--leading);
 
     /* A message that stays (a warning, a failure, a failed Undo) wears the warning tone's
-       edge. The word "Warning:" or the failure's own words carry it too, never colour alone. */
+       edge; a failure wears the critical one. The word "Warning:" or the failure's own words
+       and the glyph's shape carry it too, never colour alone. */
     &[data-lasting] {
       border-color: var(--warn);
+    }
+    &[data-kind="failure"] {
+      border-color: var(--crit);
+    }
+  }
+
+  /* The leading glyph: a tick for a result, a triangle for a warning or an Undo that
+     failed, an octagon for a failure. It repeats what the words say; it is hidden from
+     screen readers. */
+  .cap-message-glyph {
+    flex: none;
+    inline-size: 1.15em;
+    block-size: 1.15em;
+    color: var(--ok);
+
+    .cap-message-item[data-kind="warning"] > & {
+      color: var(--warn);
+    }
+    .cap-message-item[data-kind="failure"] > & {
+      color: var(--crit);
     }
   }
 
@@ -76,7 +102,9 @@
     }
   }
 
-  /* A new message fades in; text being read never moves. */
+  /* A new message fades in; text being read never moves. (Sonner's slide and stacking are
+     left out: a message that stays must not be hidden behind another, and a slide moves text
+     the person may be reading.) */
   @media (prefers-reduced-motion: no-preference) {
     .cap-message-item {
       animation: cap-message-in var(--dur-base) var(--ease-out);

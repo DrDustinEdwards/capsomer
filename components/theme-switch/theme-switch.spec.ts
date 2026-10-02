@@ -27,15 +27,28 @@ eachTheme((theme) => {
     await expect(radio(page, "System")).toHaveCount(0);
   });
 
-  test("accessibility: the choices are drawn as one control, and the chosen one reaches its contrast", async ({ page }) => {
+  test("accessibility: the choices are drawn as one control with an icon each, and reach their contrast", async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "light");
-    await expect(page.locator(".cap-theme .cap-seg-options")).toBeVisible();
+    await expect(page.locator(".cap-theme-options")).toBeVisible();
+    await expect(page.locator(".cap-theme-options svg[aria-hidden='true']")).toHaveCount(2);
     await expectContrast(page, [
       { sel: ".cap-theme label:has(input:checked)", what: "the chosen choice's word" },
       { sel: ".cap-theme label:has(input:not(:checked))", what: "an unchosen choice's word" },
-      { sel: ".cap-theme .cap-seg-options", what: "the control's edge", part: "border" },
-      { sel: ".cap-theme label:has(input:checked)", what: "the chosen choice's edge", part: "border" },
+      { sel: ".cap-theme-options", what: "the control's edge", part: "border" },
     ]);
+  });
+
+  test("accessibility: the states page's hover, disabled and comfortable rows have no violations", async ({ page }) => {
+    await visitStates(page, "theme-switch", theme);
+    await expectNoAxeViolations(page, "section[aria-labelledby='s-states']");
+    await expect(page.locator("section[aria-labelledby='s-states'] [data-density='comfortable'] .cap-theme-options")).toBeVisible();
+  });
+
+  test("keyboard: the chosen choice shows a focus ring", async ({ page }) => {
+    await visitStates(page, "theme-switch", theme, "light");
+    await page.keyboard.press("Tab");
+    await expect(radio(page, "Light")).toBeFocused();
+    await expect(page.locator(".cap-theme label:has(input:focus-visible)")).toHaveCount(1);
   });
 
   test("behaviour: the first visit follows the system and remembers nothing", async ({ page }) => {

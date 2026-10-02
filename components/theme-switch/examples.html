@@ -1,0 +1,80 @@
+<section class="cap-specimen" aria-labelledby="s-states">
+  <h2 id="s-states">Hover, disabled, and comfortable density</h2>
+  <div class="cap-specimen-row">
+    <fieldset class="cap-theme">
+      <legend class="cap-sr-only">Theme</legend>
+      <div class="cap-theme-options">
+        <label><input type="radio" name="t-hover" value="light" checked /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+        <label data-force="hover"><input type="radio" name="t-hover" value="dark" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+      </div>
+    </fieldset>
+    <fieldset class="cap-theme">
+      <legend class="cap-sr-only">Theme</legend>
+      <div class="cap-theme-options">
+        <label><input type="radio" name="t-disabled" value="light" checked /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+        <label><input type="radio" name="t-disabled" value="dark" disabled /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+      </div>
+    </fieldset>
+  </div>
+  <div class="cap-specimen-row" data-density="comfortable">
+    <fieldset class="cap-theme">
+      <legend class="cap-sr-only">Theme</legend>
+      <div class="cap-theme-options">
+        <label><input type="radio" name="t-comfortable" value="light" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+        <label><input type="radio" name="t-comfortable" value="dark" checked /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+      </div>
+    </fieldset>
+  </div>
+</section>
+
+<template data-specimen="first" data-title="First visit: follows the system, nothing remembered" data-height="200">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Settings</h1>
+    <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-first">
+      <legend class="cap-sr-only">Theme</legend>
+      <div class="cap-theme-options">
+        <label><input type="radio" name="theme" value="light" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+        <label><input type="radio" name="theme" value="dark" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+      </div>
+    </fieldset>
+    <p>No choice made yet: the page follows the operating system's setting, and the control shows which theme that is.</p>
+  </main>
+</template>
+
+<template data-specimen="light" data-title="Light selected" data-height="200">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Settings</h1>
+    <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-light">
+      <legend class="cap-sr-only">Theme</legend>
+      <div class="cap-theme-options">
+        <label><input type="radio" name="theme" value="light" checked /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+        <label><input type="radio" name="theme" value="dark" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+      </div>
+    </fieldset>
+    <p>Light, whatever the operating system says.</p>
+  </main>
+</template>
+
+<template data-specimen="dark" data-title="Dark selected" data-height="200">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Settings</h1>
+    <fieldset class="cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-dark">
+      <legend class="cap-sr-only">Theme</legend>
+      <div class="cap-theme-options">
+        <label><input type="radio" name="theme" value="light" /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" /></svg><span class="cap-theme-text">Light</span></label>
+        <label><input type="radio" name="theme" value="dark" checked /><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.3A5.5 5.5 0 0 1 6.7 2.5a5.5 5.5 0 1 0 6.8 6.8z" /></svg><span class="cap-theme-text">Dark</span></label>
+      </div>
+    </fieldset>
+    <p>Dark, whatever the operating system says.</p>
+  </main>
+</template>
+
+<script type="module">
+  import { enhance, toggleTheme } from "./theme-switch.ts";
+  import { register } from "../shortcuts/shortcuts.ts";
+  if (new URLSearchParams(location.search).get("only")) {
+    enhance();
+    const key = document.querySelector("[data-cap='theme-switch']")?.dataset.capPref;
+    register({ key: "t", label: "Switch light and dark", group: "Actions", run: () => toggleTheme(key) });
+  }
+</script>

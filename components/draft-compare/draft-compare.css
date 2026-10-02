@@ -1,0 +1,407 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Two versions of a text, compared by word. Built from the segmented control (the view
+   switch), the disclosure (folded unchanged passages), the button and the key cap; the diff
+   marks, the rows and the jump list are this file's. The marks never rely on colour: an
+   insertion is underlined, tinted and opens with a plus (and says "insertion start" and
+   "insertion end" to a screen reader); a deletion is struck through, tinted and opens with a
+   minus. The three views are all in the HTML and the radios choose which shows, in CSS, so
+   the component works before any script runs. A site's DiffBlock (a unified patch in a
+   focusable region) became these rows; the line tints and literal + and - prefixes became
+   the marks. */
+@layer cap.components {
+  .cap-compare {
+    container: cap-compare / inline-size;
+    display: grid;
+    gap: var(--gap);
+    min-width: 0;
+    color: var(--text);
+    font-size: var(--fs-body);
+  }
+
+  /* Both sides, named: which one is "left" is never a guess. */
+  .cap-compare-head {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+  .cap-compare-side {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--pad-x);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    min-width: 0;
+  }
+  .cap-compare-side-role {
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .cap-compare-side-title {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  .cap-compare-side-meta {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* The switch and the legend. Always shown: nothing here is behind a popover or a fold. */
+  .cap-compare-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-3) var(--space-6);
+  }
+  .cap-compare-legend {
+    display: grid;
+    gap: var(--space-2);
+    flex: 1 1 18rem;
+    min-width: 0;
+  }
+  .cap-compare-key {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-compare-counts {
+    margin: 0;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-compare-views-help {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-5);
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    & > div {
+      display: block;
+      min-width: 0;
+    }
+    & dt {
+      display: inline;
+      color: var(--text);
+      font-weight: 600;
+    }
+    & dt::after {
+      content: " ";
+    }
+    & dd {
+      display: inline;
+      margin: 0;
+    }
+  }
+
+  /* The marks. An insertion and a deletion differ by line (under, through), by the glyph that
+     opens them and by tint; the words for a screen reader are in the markup. */
+  .cap-ins,
+  .cap-del,
+  .cap-compare-key-mark {
+    padding-inline: 0.2em;
+    border-radius: var(--radius-s);
+    box-decoration-break: clone;
+    color: var(--text);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+
+    &::before {
+      margin-inline-end: 0.25em;
+      font-family: var(--ui);
+      font-size: 0.85em;
+      font-weight: 700;
+    }
+  }
+  .cap-ins,
+  .cap-compare-key-mark[data-kind="ins"] {
+    background: var(--ok-soft);
+    text-decoration-line: underline;
+    text-decoration-color: var(--ok);
+
+    &::before {
+      content: "+" / "";
+    }
+  }
+  .cap-del,
+  .cap-compare-key-mark[data-kind="del"] {
+    background: var(--crit-soft);
+    text-decoration-line: line-through;
+    text-decoration-color: var(--crit);
+
+    &::before {
+      content: "\2212" / "";
+    }
+  }
+  .cap-compare-key-mark {
+    font-weight: 600;
+  }
+
+  /* The jump list and the tools beside it. */
+  .cap-compare-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .cap-compare-jump {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+  }
+  .cap-compare-jump-title {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-compare-jump-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-compare-jump-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: var(--target);
+    min-height: var(--target);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--accent-text);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--raised);
+      text-decoration: underline;
+    }
+    &[aria-current="true"] {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+  }
+
+  /* One view shows; the others are in the HTML and out of the page. */
+  .cap-compare-view {
+    box-sizing: border-box;
+    max-block-size: min(70vh, 40rem);
+    padding: var(--pad-card);
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    font-family: var(--prose);
+    scroll-padding-block: var(--space-6);
+  }
+  .cap-compare:has(.cap-compare-bar input[value="side"]:checked) > .cap-compare-views > .cap-compare-view:not([data-view="side"]),
+  .cap-compare:has(.cap-compare-bar input[value="inline"]:checked) > .cap-compare-views > .cap-compare-view:not([data-view="inline"]),
+  .cap-compare:has(.cap-compare-bar input[value="changes"]:checked) > .cap-compare-views > .cap-compare-view:not([data-view="changes"]) {
+    display: none;
+  }
+  .cap-compare > .cap-compare-view {
+    max-block-size: none;
+  }
+
+  /* Side by side: one grid of rows, so a row's two cells always line up and one scroll moves
+     both sides. */
+  .cap-compare-rows {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-compare-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-5);
+    border-radius: var(--radius-s);
+
+    &[data-para] {
+      margin-block-start: var(--space-3);
+    }
+    &[data-op]:not([data-op="same"]) {
+      border-inline-start: 3px solid var(--accent-line);
+      padding-inline-start: var(--space-3);
+    }
+    &[data-current] {
+      background: var(--accent-soft);
+      border-inline-start-color: var(--accent);
+    }
+    & > .cap-compare-change-label {
+      grid-column: 1 / -1;
+    }
+  }
+  .cap-compare-cell {
+    min-width: 0;
+    padding-block: var(--space-1);
+
+    &[data-empty] {
+      background: repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 6px);
+      border-radius: var(--radius-s);
+    }
+  }
+  .cap-compare-cell-label {
+    display: none;
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .cap-compare-text {
+    margin: 0;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-compare-change-label {
+    justify-self: start;
+    margin-block-end: var(--space-1);
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-s);
+    background: var(--accent-soft);
+    color: var(--accent-text);
+    font-family: var(--ui);
+    font-size: var(--fs-label);
+    font-weight: 600;
+  }
+
+  /* Folded unchanged sentences. */
+  .cap-compare-gapitem {
+    margin-block: var(--space-2);
+    list-style: none;
+  }
+  .cap-compare-gap {
+    font-family: var(--ui);
+
+    & > summary {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    & > .cap-compare-gap-rows {
+      padding: var(--space-3);
+      font-family: var(--prose);
+    }
+  }
+
+  /* Inline and changes only. */
+  .cap-compare-flow {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .cap-compare-hunk {
+    border-radius: var(--radius-s);
+    box-decoration-break: clone;
+
+    &[data-current] {
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+  }
+  .cap-compare-card {
+    padding: var(--space-3) var(--pad-x);
+    border: 1px solid var(--line);
+    border-inline-start: 3px solid var(--accent-line);
+    border-radius: var(--radius-m);
+
+    &:has([data-current]) {
+      border-inline-start-color: var(--accent);
+    }
+  }
+  .cap-compare-skip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-detail);
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      border-block-start: 1px dashed var(--line-strong);
+    }
+  }
+
+  /* Nothing differs. */
+  .cap-compare-none {
+    margin: 0;
+    padding: var(--space-3) var(--pad-x);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+  }
+
+  /* A narrow container stacks the two sides: before above after in each row, each labelled. */
+  @container cap-compare (max-width: 40rem) {
+    .cap-compare-head {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .cap-compare-row {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--space-2);
+    }
+    .cap-compare-cell-label {
+      display: block;
+    }
+    .cap-compare-cell[data-empty] {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-compare-jump-link,
+    .cap-compare-row {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-ins,
+    .cap-del,
+    .cap-compare-key-mark {
+      border: 1px solid transparent;
+      text-decoration-color: currentColor;
+    }
+    .cap-compare-row[data-op]:not([data-op="same"]),
+    .cap-compare-card {
+      border-inline-start-color: CanvasText;
+    }
+    .cap-compare-row[data-current],
+    .cap-compare-card:has([data-current]) {
+      border-inline-start-color: Highlight;
+      border-inline-start-width: 6px;
+    }
+    .cap-compare-hunk[data-current] {
+      outline: 2px solid Highlight;
+    }
+    .cap-compare-jump-link[aria-current="true"] {
+      border-color: Highlight;
+      border-width: 3px;
+    }
+  }
+}

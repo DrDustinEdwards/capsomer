@@ -4,8 +4,9 @@ title: Disclosure
 summary: Show and hide, a section that opens in place and a group row in a list.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
+states: [summary hover, summary pressed, accordion variant, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
 added: 0.1.0
+updated: 0.2.0
 source: the approved mockup ("4 notices", collapsed); patterns.md "Show or hide"
 replaces:
   - '<details(?![^>]*cap-disclosure)'
@@ -27,11 +28,21 @@ Two ways to show and hide. A section that opens in place is a native `<details c
 
 ## The default and its reason
 
-- **A section is native `details` and `summary`**: it works before JavaScript, with none, and with find-in-page. The chevron turns; the content fades in under `prefers-reduced-motion: no-preference` only (`::details-content`, opacity alone).
+- **A section is native `details` and `summary`**: it works before JavaScript, with none, and with find-in-page. The chevron turns, and under `prefers-reduced-motion: no-preference` the panel fades in and, where the browser supports `interpolate-size` and `::details-content`, grows and shrinks to its height (Chromium 131 and later); elsewhere it opens at once. Stacked sections share their edges as one accordion.
+- **Accordion variant** (`data-variant="accordion"`): shadcn's flat look. No box, a rule between items, the title underlined on hover, the chevron at the end pointing down closed and up open. Same `details`, same keyboard.
+- **Pressed and disabled**: a summary or group row has a pressed tint; a group button that is `disabled` or `aria-disabled="true"` dims and takes no clicks (disabled controls are exempt from contrast).
+- **Spacing follows the density tokens** (`--pad-x`, `--gap`, `--fs-body`).
+- **Group rows do not animate their height**: their rows use `hidden`, which removes them from the accessibility tree at once, so only the chevron turns.
 - **A group row is a `button` with `aria-expanded` and `aria-controls`**, and the rows it controls get `hidden`. Its name says what and how many: "Notices, 4" (a visually hidden comma keeps the count its own word to a screen reader).
 - **A group's button may sit in a heading** (`.cap-group-heading`, an `h3` or `h4`), so a person moving by heading finds the groups. The heading adds no look of its own (Portal: the queue's group headers are an `h3` holding the button).
 - **Two levels at most.** The second sits in by one step.
 - Both rows are at least `var(--target)` tall and as wide as their list.
+
+## The shadcn component it matches
+
+Accordion (`accordion.tsx`: Accordion, AccordionItem, AccordionTrigger, AccordionContent) and Collapsible (`collapsible.tsx`). A native `details` is both: with a shared `name` it is an accordion that opens one at a time, without it a collapsible. Matched: the item rules, trigger with hover underline and end chevron (accordion variant), focus ring, the height animation of the panel.
+
+Different on purpose: the default is a boxed section with the chevron at the start, which reads better for "why is this degraded?" notes than a list of questions; it uses native `details`, so there is no JavaScript and find-in-page opens a closed section. The group row (a count and nested rows) has no shadcn counterpart.
 
 ## Keyboard
 

@@ -71,12 +71,10 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/#incident-foxhound-412$/);
   });
 
-  test("behaviour: at phone width the time drops under the words", async ({ page }) => {
+  test("accessibility: at phone width nothing runs out of the viewport", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "feed", theme, "narrow");
-    const row = page.locator(".cap-feed-row").nth(1);
-    const what = await row.locator(".cap-feed-what").boundingBox();
-    const when = await row.locator(".cap-feed-when").boundingBox();
-    expect(what && when && when.y >= what.y + what.height - 1).toBe(true);
+    const over = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+    expect(over).toBe(false);
   });
 });

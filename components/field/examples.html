@@ -1,0 +1,224 @@
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">Default</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-default">Site name</label>
+    <input class="cap-input" id="f-default" autocomplete="off" />
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-focus">
+  <h2 id="s-focus">Keyboard focus and hover</h2>
+  <p class="cap-muted">Tab into the first field to see focus. The second is shown hovered.</p>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-focus">Branch</label>
+    <input class="cap-input" id="f-focus" autocomplete="off" />
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-hover">Tag</label>
+    <input class="cap-input" id="f-hover" data-force="hover" autocomplete="off" />
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-filled">
+  <h2 id="s-filled">Filled, with a placeholder example</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-filled">Site name</label>
+    <input class="cap-input" id="f-filled" value="Foxhound" autocomplete="off" />
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-placeholder">Owner</label>
+    <input class="cap-input" id="f-placeholder" placeholder="For example: capsid-driver" autocomplete="off" />
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-help">
+  <h2 id="s-help">Help text and required</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-help">Site address <span class="cap-field-required" aria-hidden="true">Required</span></label>
+    <p class="cap-field-help" id="f-help-h">Starts with https:// and has no path.</p>
+    <input class="cap-input" id="f-help" type="url" required aria-describedby="f-help-h" autocomplete="off" />
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-notes">Notes</label>
+    <p class="cap-field-help" id="f-notes-h">Shown to anyone who opens the site's page.</p>
+    <textarea class="cap-input" id="f-notes" aria-describedby="f-notes-h">Moved to Cloudflare on 12 September.</textarea>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-invalid">
+  <h2 id="s-invalid">Invalid, with its message</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-invalid">Site address</label>
+    <p class="cap-field-help" id="f-invalid-h">Starts with https:// and has no path.</p>
+    <input class="cap-input" id="f-invalid" type="url" value="http://foxhound.app/health" aria-invalid="true" aria-describedby="f-invalid-e f-invalid-h" autocomplete="off" />
+    <p class="cap-field-error" id="f-invalid-e">Use https:// and remove "/health". The health route has its own field.</p>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-disabled">
+  <h2 id="s-disabled">Disabled and read-only</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-disabled">Platform</label>
+    <p class="cap-field-help" id="f-disabled-h">Set by the deploy. Change it in the repository.</p>
+    <input class="cap-input" id="f-disabled" value="Cloudflare" disabled aria-describedby="f-disabled-h" />
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-readonly">Site id</label>
+    <input class="cap-input cap-mono" id="f-readonly" value="site_7f3a91c2" readonly />
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-checks">
+  <h2 id="s-checks">Checkbox and radio, checked and unchecked</h2>
+  <div class="cap-field-options">
+    <label class="cap-check"><input type="checkbox" id="c-on" checked /> Watch this site</label>
+    <label class="cap-check"><input type="checkbox" id="c-off" /> Email me when it goes down</label>
+    <label class="cap-check"><input type="checkbox" disabled /> Post to the status page (not set up)</label>
+  </div>
+  <fieldset class="cap-field">
+    <legend class="cap-field-label">Check every</legend>
+    <div class="cap-field-options">
+      <label class="cap-check"><input type="radio" name="every" value="1" /> 1 minute</label>
+      <label class="cap-check"><input type="radio" name="every" value="5" checked /> 5 minutes</label>
+      <label class="cap-check"><input type="radio" name="every" value="15" /> 15 minutes</label>
+    </div>
+  </fieldset>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-checkstates">
+  <h2 id="s-checkstates">Checkbox and radio, every state</h2>
+  <div class="cap-specimen-row">
+    <label class="cap-check"><input type="checkbox" id="c-mixed" data-indeterminate /> Select all sites (some chosen)</label>
+    <label class="cap-check"><input type="checkbox" id="c-hover" data-force="hover" /> Hovered</label>
+    <label class="cap-check"><input type="checkbox" id="c-invalid" aria-invalid="true" aria-describedby="c-invalid-e" /> Accept the terms</label>
+    <label class="cap-check"><input type="checkbox" id="c-disabled-on" checked disabled /> Disabled and checked</label>
+    <label class="cap-check"><input type="radio" name="r-state" id="r-invalid" aria-invalid="true" /> A radio in error</label>
+    <label class="cap-check"><input type="radio" name="r-state2" id="r-on" checked /> A radio chosen</label>
+    <label class="cap-check"><input type="radio" name="r-state3" disabled /> A radio disabled</label>
+  </div>
+  <p class="cap-field-error" id="c-invalid-e">Accept the terms to continue.</p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-file">
+  <h2 id="s-file">Text, file and textarea in error</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="f-file">Import sites</label>
+    <input class="cap-input" id="f-file" type="file" />
+  </div>
+  <div class="cap-field" data-invalid="true">
+    <label class="cap-field-label" for="f-tarea-bad">Notes</label>
+    <textarea class="cap-input" id="f-tarea-bad" aria-invalid="true" aria-describedby="f-tarea-bad-e">x</textarea>
+    <p class="cap-field-error" id="f-tarea-bad-e">Write at least 20 characters, for example what changed.</p>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-group">
+  <h2 id="s-group">Input group</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="g-url">Site address</label>
+    <div class="cap-input-group" role="group" aria-label="Site address with scheme">
+      <div class="cap-input-addon" data-align="inline-start"><span class="cap-input-group-text">https://</span></div>
+      <input class="cap-input" id="g-url" autocomplete="off" />
+      <div class="cap-input-addon" data-align="inline-end">
+        <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" aria-label="Paste an address">Paste</button>
+      </div>
+    </div>
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="g-bad">Search sites</label>
+    <div class="cap-input-group" role="group" aria-label="Search sites">
+      <div class="cap-input-addon" data-align="inline-start">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+      </div>
+      <input class="cap-input" id="g-bad" aria-invalid="true" aria-describedby="g-bad-e" value="***" />
+    </div>
+    <p class="cap-field-error" id="g-bad-e">Use letters and numbers.</p>
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="g-off">Owner</label>
+    <div class="cap-input-group" role="group" aria-label="Owner">
+      <input class="cap-input" id="g-off" value="capsid-driver" disabled />
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-cards">
+  <h2 id="s-cards">Choice cards and a horizontal field</h2>
+  <fieldset class="cap-field">
+    <legend class="cap-field-label">Plan</legend>
+    <label class="cap-check" data-variant="card" id="card-on"><input type="radio" name="plan" value="free" checked /> <span>Free<br /><span class="cap-field-description">Five sites, daily checks.</span></span></label>
+    <label class="cap-check" data-variant="card"><input type="radio" name="plan" value="team" /> <span>Team<br /><span class="cap-field-description">Unlimited sites, one-minute checks.</span></span></label>
+  </fieldset>
+  <div class="cap-field" data-orientation="horizontal">
+    <div class="cap-field-content">
+      <label class="cap-check" for="h-watch"><input type="checkbox" id="h-watch" aria-describedby="h-watch-d" /> Watch this site</label>
+      <p class="cap-field-description" id="h-watch-d">Get an email when it goes down.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div class="cap-specimen-row" data-density="comfortable" id="f-comfortable">
+    <div class="cap-field">
+      <label class="cap-field-label" for="f-comf">Site name</label>
+      <input class="cap-input" id="f-comf" value="Foxhound" autocomplete="off" />
+    </div>
+    <label class="cap-check"><input type="checkbox" checked /> Watch this site</label>
+    <label class="cap-check"><input type="radio" name="comf" checked /> Daily</label>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-live">
+  <h2 id="s-live">A live form</h2>
+  <form class="cap-field-options" id="add-site" data-cap="field" action="#added" aria-labelledby="s-live">
+    <div class="cap-field">
+      <label class="cap-field-label" for="site-name">Site name <span class="cap-field-required" aria-hidden="true">Required</span></label>
+      <input class="cap-input" id="site-name" name="name" required autocomplete="off" aria-describedby="site-name-e" data-error-value-missing="Give the site a name, such as Foxhound." />
+      <p class="cap-field-error" id="site-name-e" hidden></p>
+    </div>
+    <div class="cap-field">
+      <label class="cap-field-label" for="site-url">Site address <span class="cap-field-required" aria-hidden="true">Required</span></label>
+      <p class="cap-field-help" id="site-url-h">Starts with https:// and has no path.</p>
+      <input
+        class="cap-input"
+        id="site-url"
+        name="url"
+        type="url"
+        required
+        pattern="https://[^\/\s]+\/?"
+        autocomplete="off"
+        aria-describedby="site-url-e site-url-h"
+        data-error-value-missing="Enter the site's address."
+        data-error-type-mismatch="Enter a full address, starting with https://."
+        data-error-pattern-mismatch="Use https:// and leave off any path, such as /health."
+      />
+      <p class="cap-field-error" id="site-url-e" hidden></p>
+    </div>
+    <fieldset class="cap-field">
+      <legend class="cap-field-label">Platform <span class="cap-field-required" aria-hidden="true">Required</span></legend>
+      <div class="cap-field-options">
+        <label class="cap-check"><input type="radio" name="platform" value="cloudflare" required aria-describedby="platform-e" data-error-value-missing="Choose where the site runs." /> Cloudflare</label>
+        <label class="cap-check"><input type="radio" name="platform" value="vercel" aria-describedby="platform-e" /> Vercel</label>
+      </div>
+      <p class="cap-field-error" id="platform-e" hidden></p>
+    </fieldset>
+    <label class="cap-check"><input type="checkbox" name="watch" id="live-watch" /> Start checks on the next pass</label>
+    <div><button type="submit" class="cap-btn" data-variant="primary">Add site</button></div>
+    <p class="cap-muted" id="add-result" role="status"></p>
+  </form>
+</section>
+
+<script type="module">
+  import { enhance } from "./field.ts";
+  enhance();
+  // Mixed has no attribute: it is set on the element.
+  for (const box of document.querySelectorAll("[data-indeterminate]")) box.indeterminate = true;
+  // The app's part: runs only for a valid form.
+  const form = document.querySelector("#add-site");
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = form.querySelector("#site-name")?.value ?? "";
+    document.querySelector("#add-result").textContent = `Added ${name}. Its checks start on the next pass.`;
+  });
+</script>

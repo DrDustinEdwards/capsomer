@@ -1,0 +1,295 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The one floating surface. `.cap-popover` is the look (background, ring, shadow, radius,
+   padding, open and close motion, arrow, the inverted tooltip form). It depends on no
+   behaviour, so Base UI's combobox, menu and select popups wear it too: they position
+   themselves and set data-side, data-starting-style and data-ending-style, which this file
+   reads. On a native popover (`popover` attribute) it also places itself, by CSS anchor
+   positioning where the browser has it, otherwise at the numbers popover.ts sets through the
+   CSSOM (--cap-popover-x, --cap-popover-y). Reference: shadcn Popover, Tooltip, Hover Card. */
+@layer cap.components {
+  [data-cap="popover"] {
+    display: contents;
+  }
+
+  /* Shown as a flex column only while open: a display on a closed native popover would
+     show it (Base UI's popups have no popover attribute and are always laid out). */
+  .cap-popover:where(:not([popover]), :popover-open) {
+    display: flex;
+  }
+  .cap-popover[data-variant="tooltip"]:where(:not([popover]), :popover-open) {
+    display: inline-flex;
+  }
+  .cap-popover {
+    --_side: bottom;
+    --_tx: 0px;
+    --_ty: 0px;
+    --_arrow: 0px;
+    --_line: var(--line);
+    box-sizing: border-box;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-inline-size: calc(100vw - 16px);
+    margin: 0;
+    padding: var(--pad-card);
+    border: 0;
+    border-radius: var(--radius-l);
+    background: var(--raised);
+    color: var(--text);
+    /* The ring is a hairline (decorative); the shadow lifts it. */
+    box-shadow:
+      0 0 0 1px var(--line),
+      var(--shadow-m);
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    text-align: start;
+    overflow: visible;
+    transform-origin: var(--transform-origin, var(--_origin, center));
+
+    /* Focus moves onto the surface itself when it holds nothing to focus; it is not a
+       control, so it takes no ring (shadcn does the same). */
+    &:focus {
+      outline: none;
+    }
+
+    /* Width: a native popover or an explicit size gets shadcn's w-72; a Base UI popup that
+       sets no size keeps the width its own CSS gives it. */
+    &:where([popover], [data-size]) {
+      inline-size: 18rem;
+    }
+    &[data-size="sm"] {
+      inline-size: 14rem;
+    }
+    &[data-size="lg"] {
+      inline-size: 24rem;
+    }
+    &[data-size="auto"] {
+      inline-size: fit-content;
+    }
+
+    /* A list popup (menu, select, combobox) pads its own items. */
+    &[data-flush] {
+      padding: 0;
+      gap: 0;
+    }
+  }
+
+  /* The side the surface really sits on: Base UI writes it as data-side; our module writes
+     data-placed (after any flip), which wins over the side an author asked for. It only
+     steers the motion (slide in from the trigger's side) and the arrow. */
+  .cap-popover:is([data-side="bottom"]:not([data-placed]), [data-placed="bottom"]) {
+    --_ty: -2px;
+    --_origin: top;
+  }
+  .cap-popover:is([data-side="top"]:not([data-placed]), [data-placed="top"]) {
+    --_ty: 2px;
+    --_origin: bottom;
+  }
+  .cap-popover:is([data-side="left"]:not([data-placed]), [data-side="inline-start"]:not([data-placed]), [data-placed="left"]) {
+    --_tx: 2px;
+    --_origin: right;
+  }
+  .cap-popover:is([data-side="right"]:not([data-placed]), [data-side="inline-end"]:not([data-placed]), [data-placed="right"]) {
+    --_tx: -2px;
+    --_origin: left;
+  }
+
+  .cap-popover-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .cap-popover-title {
+    margin: 0;
+    font-size: inherit;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .cap-popover-description {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  /* The arrow: a square turned 45 degrees, half hidden behind the surface. Its two outer
+     edges carry the ring. popover.ts sets --cap-arrow-x / --cap-arrow-y so it points at
+     the trigger's centre; Base UI's Arrow sets left/top itself. */
+  .cap-popover-arrow {
+    position: absolute;
+    inline-size: 8px;
+    block-size: 8px;
+    background: inherit;
+    border: 1px solid transparent;
+    border-radius: 1px;
+    rotate: 45deg;
+    pointer-events: none;
+  }
+  .cap-popover:is([data-side="bottom"]:not([data-placed]), [data-placed="bottom"]) > .cap-popover-arrow {
+    top: -5px;
+    left: var(--cap-arrow-x, 50%);
+    translate: -50% 0;
+    border-color: var(--_line) transparent transparent var(--_line);
+  }
+  .cap-popover:is([data-side="top"]:not([data-placed]), [data-placed="top"]) > .cap-popover-arrow {
+    bottom: -5px;
+    left: var(--cap-arrow-x, 50%);
+    translate: -50% 0;
+    border-color: transparent var(--_line) var(--_line) transparent;
+  }
+  .cap-popover:is([data-side="left"]:not([data-placed]), [data-side="inline-start"]:not([data-placed]), [data-placed="left"]) > .cap-popover-arrow {
+    right: -5px;
+    top: var(--cap-arrow-y, 50%);
+    translate: 0 -50%;
+    border-color: var(--_line) var(--_line) transparent transparent;
+  }
+  .cap-popover:is([data-side="right"]:not([data-placed]), [data-side="inline-end"]:not([data-placed]), [data-placed="right"]) > .cap-popover-arrow {
+    left: -5px;
+    top: var(--cap-arrow-y, 50%);
+    translate: 0 -50%;
+    border-color: transparent transparent var(--_line) var(--_line);
+  }
+  .cap-popover:has(> .cap-popover-arrow) {
+    --_arrow: 4px;
+  }
+
+  /* The tooltip form: shadcn's small inverted surface. No ring, no padding of a card. */
+  .cap-popover[data-variant="tooltip"] {
+    --_line: transparent;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    inline-size: fit-content;
+    max-inline-size: min(20rem, calc(100vw - 16px));
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-m);
+    background: var(--text);
+    color: var(--ground);
+    box-shadow: none;
+    font-size: var(--fs-detail);
+
+    &:has(kbd) {
+      padding-inline-end: var(--space-2);
+    }
+    & kbd {
+      display: inline-block;
+      padding: 0 var(--space-2);
+      border-radius: var(--radius-s);
+      background: color-mix(in srgb, var(--ground) 22%, transparent);
+      color: inherit;
+      font: 500 var(--fs-label) / 1.5 var(--ui);
+    }
+    & > .cap-popover-arrow {
+      background: var(--text);
+    }
+  }
+
+  /* A native popover places itself. The default: below its trigger, centred. */
+  .cap-popover[popover] {
+    position: fixed;
+    inset: auto;
+    top: var(--cap-popover-y, 0px);
+    left: var(--cap-popover-x, 0px);
+    max-block-size: calc(100dvh - 16px);
+
+    &[data-placed-by="pending"] {
+      visibility: hidden;
+    }
+  }
+
+  /* Anchor positioning: popover.ts names the trigger and the popup (CSSOM). The side and
+     the alignment pick the position-area; flip-block and flip-inline do the collision
+     flip; the offset is a margin on the side facing the trigger. */
+  @supports (position-area: bottom) {
+    .cap-popover[popover]:not([data-placed-by="js"], [data-placed-by="pending"]) {
+      --_ax: ;
+      --_ay: ;
+      --_al: ;
+      --_off: calc(var(--cap-offset, 4px) + var(--_arrow));
+      top: auto;
+      left: auto;
+      position-area: block-end var(--_ax);
+      position-try-fallbacks: flip-block, flip-inline;
+      margin-block-start: var(--_off);
+
+      &[data-align="start"] {
+        --_ax: span-inline-end;
+        --_ay: span-bottom;
+        --_al: span-block-end;
+      }
+      &[data-align="end"] {
+        --_ax: span-inline-start;
+        --_ay: span-top;
+        --_al: span-block-start;
+      }
+      &[data-variant="tooltip"]:not([data-side]),
+      &[data-side="top"] {
+        position-area: block-start var(--_ax);
+        margin-block: 0 var(--_off);
+      }
+      &[data-side="left"] {
+        position-area: left var(--_ay);
+        margin-block: 0;
+        margin-inline: 0 var(--_off);
+      }
+      &[data-side="right"] {
+        position-area: right var(--_ay);
+        margin-block: 0;
+        margin-inline: var(--_off) 0;
+      }
+      &[data-side="inline-start"] {
+        position-area: inline-start var(--_al);
+        margin-block: 0;
+        margin-inline: 0 var(--_off);
+      }
+      &[data-side="inline-end"] {
+        position-area: inline-end var(--_al);
+        margin-block: 0;
+        margin-inline: var(--_off) 0;
+      }
+    }
+  }
+
+  /* Open and close: fade, zoom from 95%, slide 2px in from the trigger's side, 100 ms.
+     A native popover animates through @starting-style and allow-discrete (display and
+     overlay); Base UI's popups through its data-starting-style / data-ending-style. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-popover {
+      transition:
+        opacity var(--dur-fast) var(--ease-out),
+        scale var(--dur-fast) var(--ease-out),
+        translate var(--dur-fast) var(--ease-out),
+        display var(--dur-fast) allow-discrete,
+        overlay var(--dur-fast) allow-discrete;
+
+      &[popover]:not(:popover-open),
+      &:is([data-starting-style], [data-ending-style]) {
+        opacity: 0;
+        scale: 0.95;
+        translate: var(--_tx) var(--_ty);
+      }
+      &[popover]:popover-open {
+        opacity: 1;
+        scale: 1;
+        translate: 0 0;
+
+        @starting-style {
+          opacity: 0;
+          scale: 0.95;
+          translate: var(--_tx) var(--_ty);
+        }
+      }
+    }
+  }
+
+  /* Forced colours drop shadows and fills: the surface keeps an edge, the arrow its lines. */
+  @media (forced-colors: active) {
+    .cap-popover {
+      border: 1px solid CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+    .cap-popover-arrow {
+      display: none;
+    }
+  }
+}

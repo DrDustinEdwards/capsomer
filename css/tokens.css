@@ -4,3 +4,5 @@
 @import "./layers.css";
 @import "../tokens/colour.css" layer(cap.tokens);
 @import "../tokens/scale.css" layer(cap.tokens);
+/* Enarratio's custom properties, mapped onto the tokens above (css/enarratio.css). */
+@import "./enarratio.css";

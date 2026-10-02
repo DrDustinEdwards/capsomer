@@ -1,0 +1,100 @@
+<section class="cap-specimen" aria-labelledby="s-live">
+  <h2 id="s-live">None pressed (live)</h2>
+  <div class="cap-chips" data-cap="chips" data-param="status" role="group" aria-labelledby="chips-live-l" id="chips-live">
+    <span class="cap-chips-label" id="chips-live-l">Status</span>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="blocked">Blocked</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="running">Running</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="queued">Queued</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="done">Done</button>
+    <button type="button" class="cap-link-btn" data-cap-part="clear" hidden>Clear</button>
+    <span class="cap-chips-count" role="status">14 jobs</span>
+  </div>
+  <div id="live-empty" hidden>
+    <p id="live-empty-text">No jobs match "Done".</p>
+    <button type="button" class="cap-btn" id="live-empty-clear">Clear filter</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-some">
+  <h2 id="s-some">Some pressed, with the count</h2>
+  <div class="cap-chips" role="group" aria-labelledby="chips-some-l" id="chips-some">
+    <span class="cap-chips-label" id="chips-some-l">Status</span>
+    <button type="button" class="cap-chip" aria-pressed="true" data-value="blocked" id="chip-pressed">Blocked</button>
+    <button type="button" class="cap-chip" aria-pressed="true" data-value="running">Running</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="queued" id="chip-unpressed">Queued</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="done">Done</button>
+    <button type="button" class="cap-link-btn" id="chips-some-clear">Clear</button>
+    <span class="cap-chips-count" role="status" id="chips-some-count">5 of 14 jobs</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-focus">
+  <h2 id="s-focus">Keyboard focus and hover</h2>
+  <p class="cap-muted">Tab to a chip to see focus. The second chip is shown hovered.</p>
+  <div class="cap-chips" role="group" aria-labelledby="chips-focus-l">
+    <span class="cap-chips-label" id="chips-focus-l">Kind</span>
+    <button type="button" class="cap-chip" aria-pressed="false">Reply</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-force="hover" id="chip-hover">Link</button>
+    <button type="button" class="cap-chip" aria-pressed="false">Like</button>
+    <span class="cap-chips-count" role="status">23 mentions</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-empty">
+  <h2 id="s-empty">An empty result</h2>
+  <div class="cap-chips" role="group" aria-labelledby="chips-empty-l">
+    <span class="cap-chips-label" id="chips-empty-l">Status</span>
+    <button type="button" class="cap-chip" aria-pressed="true">Blocked</button>
+    <button type="button" class="cap-chip" aria-pressed="false">Running</button>
+    <button type="button" class="cap-chip" aria-pressed="false">Queued</button>
+    <button type="button" class="cap-link-btn">Clear</button>
+    <span class="cap-chips-count" role="status">0 of 14 jobs</span>
+  </div>
+  <div>
+    <p id="empty-text">No jobs match "Blocked". 14 jobs are hidden by this filter.</p>
+    <button type="button" class="cap-btn">Clear filter</button>
+  </div>
+  <p class="cap-muted">In an app this is the empty component's no-match kind, which names the filter and offers Clear.</p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-more">
+  <h2 id="s-more">Pressed and hovered, small and large, disabled, with a count and an icon</h2>
+  <div class="cap-chips" role="group" aria-labelledby="chips-more-l" id="chips-more">
+    <span class="cap-chips-label" id="chips-more-l">States</span>
+    <button type="button" class="cap-chip" aria-pressed="true" data-force="hover" id="chip-pressed-hover">Blocked</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-size="sm" id="chip-sm">Small</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-size="lg" id="chip-lg">Large</button>
+    <button type="button" class="cap-chip" aria-pressed="false" aria-disabled="true" id="chip-disabled">Archived</button>
+    <button type="button" class="cap-chip" aria-pressed="false" id="chip-count">Failed <span class="cap-chip-count">3</span></button>
+    <button type="button" class="cap-chip" aria-pressed="true" id="chip-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5" fill="currentColor" /></svg>Live</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div class="cap-chips" role="group" aria-label="Kind" data-density="comfortable" id="chips-comf">
+    <button type="button" class="cap-chip" aria-pressed="true">Reply</button>
+    <button type="button" class="cap-chip" aria-pressed="false">Link</button>
+  </div>
+</section>
+
+<script type="module">
+  import { clearAll, enhance, pressedValues, setCount } from "./chips.ts";
+  // The app's part: filter the sample queue and say what is left.
+  const jobs = { blocked: 3, running: 2, queued: 9, done: 0 };
+  const names = { blocked: "Blocked", running: "Running", queued: "Queued", done: "Done" };
+  const total = 14;
+  const live = document.querySelector("#chips-live");
+  const empty = document.querySelector("#live-empty");
+  const render = () => {
+    const values = pressedValues(live);
+    const n = values.length ? values.reduce((sum, v) => sum + (jobs[v] ?? 0), 0) : total;
+    setCount(live, values.length ? `${n} of ${total} jobs` : `${total} jobs`);
+    empty.hidden = !(values.length && n === 0);
+    document.querySelector("#live-empty-text").textContent = `No jobs match ${values.map((v) => `"${names[v]}"`).join(" or ")}.`;
+  };
+  enhance();
+  render();
+  live.addEventListener("cap:filter-change", render);
+  document.querySelector("#live-empty-clear").addEventListener("click", () => clearAll(live));
+</script>

@@ -52,11 +52,11 @@ eachTheme((theme) => {
   test("accessibility: options, the highlighted option, empty and loading text reach their contrast", async ({ page }) => {
     await visitStates(page, "combobox", theme, "open");
     await expect(page.getByRole("listbox")).toBeVisible();
-    await expectContrast(page, [{ sel: ".cap-combobox-item:not([data-highlighted]) .cap-combobox-item-label", what: "an option" }]);
+    await expectContrast(page, [{ sel: ".cap-option:not([data-highlighted]) .cap-option-label", what: "an option" }]);
     await page.locator(".cap-combobox-input").focus();
     await page.keyboard.press("ArrowDown");
-    await expect(page.locator(".cap-combobox-item[data-highlighted]")).toHaveCount(1);
-    await expectContrast(page, [{ sel: ".cap-combobox-item[data-highlighted] .cap-combobox-item-label", what: "the highlighted option on --accent-soft" }]);
+    await expect(page.locator(".cap-option[data-highlighted]")).toHaveCount(1);
+    await expectContrast(page, [{ sel: ".cap-option[data-highlighted] .cap-option-label", what: "the highlighted option on --accent-soft" }]);
 
     await visitStates(page, "combobox", theme, "no-match");
     await expectContrast(page, [{ sel: ".cap-combobox-empty", what: "the no-match message" }]);
@@ -94,7 +94,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("listbox")).toBeVisible();
     await expect(input).toHaveAttribute("aria-expanded", "true");
     await page.keyboard.press("ArrowDown");
-    const highlighted = page.locator(".cap-combobox-item[data-highlighted]");
+    const highlighted = page.locator(".cap-option[data-highlighted]");
     await expect(highlighted).toHaveCount(1);
     const first = await highlighted.textContent();
     await expect(input).toHaveAttribute("aria-activedescendant", (await highlighted.getAttribute("id")) ?? "missing");
@@ -110,7 +110,7 @@ eachTheme((theme) => {
     await input.focus();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
-    const label = (await page.locator(".cap-combobox-item[data-highlighted]").textContent())?.trim() ?? "";
+    const label = (await page.locator(".cap-option[data-highlighted]").textContent())?.trim() ?? "";
     await page.keyboard.press("Enter");
     await expect(page.getByRole("listbox")).toBeHidden();
     await expect(input).toHaveValue(label);
@@ -179,15 +179,59 @@ eachTheme((theme) => {
     await expect(input).toHaveAccessibleDescription("Choose a site from the list. The watcher only checks sites it knows.");
   });
 
-  test("behaviour: the popup is as wide as the box and below it", async ({ page }) => {
-    await visitStates(page, "combobox", theme, "open");
-    const box = await page.locator(".cap-combobox-group").boundingBox();
-    const popup = await page.locator(".cap-combobox-popup").boundingBox();
-    expect(box && popup).toBeTruthy();
-    if (box && popup) {
-      expect(Math.abs(popup.width - box.width)).toBeLessThan(1.5);
-      expect(popup.y).toBeGreaterThanOrEqual(box.y + box.height);
-    }
+  test("accessibility: the grouped list's roles and names", async ({ page }) => {
+    await visitStates(page, "combobox", theme, "grouped");
+    await expect(page.getByRole("listbox")).toBeVisible();
+    await expect(page.getByRole("group", { name: "Live sites" })).toBeVisible();
+    await expect(page.getByRole("group", { name: "Previews and tools" })).toBeVisible();
+    await expectNoAxeViolations(page, undefined, { baseUi: true });
+    await expectContrast(page, [{ sel: ".cap-listbox-label", what: "a group label" }]);
+  });
+
+  test("accessibility: several values, open and closed, have no axe violations and name each remove button", async ({ page }) => {
+    await visitStates(page, "combobox", theme, "open-chips");
+    await expect(page.getByRole("listbox")).toBeVisible();
+    // While the list is open Base UI hides the rest of the page from assistive technology, so the
+    // remove buttons are checked closed, below.
+    await expect(page.locator(".cap-combobox-chip-remove")).toHaveCount(2);
+    await expectNoAxeViolations(page, undefined, { baseUi: true });
+    await expect(page.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true");
+    await visitStates(page, "combobox", theme);
+    await expect(page.locator("[data-mount='chips']").getByRole("button", { name: "Remove Capsid Portal" })).toBeVisible();
+    await expectNoAxeViolations(page, undefined, { baseUi: true });
+  });
+
+  test("behaviour: several values show as chips, and a chip's remove button takes that value away", async ({ page }) => {
+    await visitStates(page, "combobox", theme);
+    const chips = page.locator("[data-mount='chips']");
+    await expect(chips.locator(".cap-combobox-chip")).toHaveCount(3);
+    await chips.getByRole("button", { name: "Remove foxhound.app" }).click();
+    await expect(chips.locator(".cap-combobox-chip")).toHaveCount(2);
+    await expect(chips.getByText("foxhound.app", { exact: true })).toHaveCount(0);
+  });
+
+  test("keyboard: with several values, Enter adds the highlighted option as a chip and the list stays open", async ({ page }) => {
+    await visitStates(page, "combobox", theme);
+    const chips = page.locator("[data-mount='chips']");
+    const input = chips.getByRole("combobox", { name: "Sites to back up" });
+    await input.focus();
+    await page.keyboard.type("carrel");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await expect(chips.locator(".cap-combobox-chip")).toHaveCount(4);
+    await expect(chips.getByText("Carrel", { exact: true })).toBeVisible();
+    await expect(input).toBeFocused();
+  });
+
+  test("behaviour: the clear button empties the chosen value and keeps focus in the box", async ({ page }) => {
+    await visitStates(page, "combobox", theme);
+    const area = page.locator("[data-mount='clearable']");
+    const input = area.getByRole("combobox", { name: "Primary site" });
+    await expect(input).toHaveValue("germomics.org");
+    await area.getByRole("button", { name: "Clear Primary site" }).click();
+    await expect(input).toHaveValue("");
+    await expect(area.locator("[data-chosen]")).toHaveAttribute("data-chosen", "");
+    await expect(area.getByRole("button", { name: "Clear Primary site" })).toHaveCount(0);
   });
 
   test("behaviour: works under style-src 'self' with no violation", async ({ page }) => {

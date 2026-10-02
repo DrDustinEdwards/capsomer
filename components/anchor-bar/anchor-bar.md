@@ -4,8 +4,9 @@ title: Anchor bar
 summary: '"On this page": sticky links to a long view''s sections, the current one marked.'
 parts: [css, behaviour, react]
 tool: own JavaScript
-states: [top of page, scrolled into the third section, blocks marked data-section, short page with no bar]
+states: [link states (rest, current, hover, pressed), top of page, scrolled into the third section, blocks marked data-section, short page with no bar]
 added: 0.1.0
+updated: 0.2.0
 source: the approved mockup's .onpage bar; Capsid Portal, dashboard/src/ui/anchors.tsx and styles.css (".anchors")
 replaces:
   - 'class="onpage"'
@@ -28,11 +29,17 @@ On a short view the bar is one more thing to read, and the headings are already 
 
 - **Sticky at the top** (`top: env(safe-area-inset-top, 0px)`), so it is there wherever the reader is. **Quiet**: on the ground tone with no frame, so it does not read as a second header (Portal: "on the ground tone").
 - **The bar's own height does not count toward "taller than two screens"**, or showing the bar could tip the rule that showed it (the Portal's finding).
-- **The current section's link has `aria-current="location"`**, set by a small IntersectionObserver: the current section is the last section above a line 35% down the view, and the last one once the view is scrolled to its end. It is shown by the text's own colour and a 2 px accent underline, not colour alone.
+- **The current section's link has `aria-current="location"`**, set by a small IntersectionObserver: the current section is the last section above a line 35% down the view, and the last one once the view is scrolled to its end. It is shown by accent text (`--accent-text`, step 11, 4.5:1) and a 2 px `--accent` bar under the link that fades in, not colour alone. In forced colours the bar is drawn in LinkText.
 - **Following a link moves focus to the section** (given `tabindex="-1"`), so a keyboard or screen reader user continues from there, and **replaces** the address's hash with its `#id`: a click on an in-page link is not a place to go Back to (Portal: "replaces the address's hash").
 - **A heading scrolled to stops below the bar, never under it** (WCAG 2.4.11): the module measures the bar into `--cap-anchors-h`, and each linked heading gets a matching `scroll-margin-top`.
 - **On a phone the links scroll sideways** rather than wrap, and the "On this page" label hides; the bar keeps its name.
 - With an empty list, the module fills it from the `[data-section][id]` blocks in its `main` (or `data-cap-scope`), named by their `data-section`; with none of those, from the `h2[id]` headings. It keeps the list in step as sections come and go.
+
+## The shadcn component it matches
+
+Tabs, line variant (`tabs.tsx`: TabsList `variant="line"`, TabsTrigger). Matched: transparent triggers in muted text that go to full text on hover, rounded focus ring, the 2 px bar under the active trigger with its opacity transition, 100 ms colour transition.
+
+Different on purpose: it is a `nav` of links with `aria-current="location"`, not a `tablist`, because the links move around one page and switch nothing; there is no arrow-key roving (Tab moves between links). The current link is `--accent-text` rather than foreground, the Capsomer rule for the active item. Spacing follows density tokens.
 
 ## Keyboard
 

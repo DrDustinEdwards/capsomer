@@ -1,90 +1,231 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A native select, styled as a field by .cap-input (field.css). Where the browser has a
-   customisable select (appearance: base-select), its button and picker take the family's
-   look; everywhere else the browser's own list opens, and works the same. */
+/* Select. Two forms of one control, matching shadcn/ui's NativeSelect and Select:
+   - `select.cap-select` is the native select drawn like a field, with a chevron (NativeSelect).
+     It is the HTML contract: the options are in the page and it works with no script.
+   - With data-cap="select" on its wrapper, select.ts hides it and draws a button
+     (.cap-select-trigger, role="combobox") and a popup (.cap-select-popup: the shared popover
+     surface around the shared listbox) in its place (Select). The native select keeps the value
+     and submits with the form.
+   `select.cap-input` (0.1's class) is drawn the same as `select.cap-select`. */
 @layer cap.components {
-  select.cap-input {
-    padding-inline-end: 6px;
-    text-overflow: ellipsis;
-    cursor: pointer;
+  .cap-select-wrap {
+    position: relative;
+    display: block;
+    min-width: 0;
+  }
 
+  /* The field look both forms share. */
+  :is(select.cap-select, select.cap-input, .cap-select-trigger) {
+    --cap-input-edge: var(--line-strong);
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--control);
+    margin: 0;
+    border: 1px solid var(--cap-input-edge);
+    border-radius: var(--radius-m);
+    background-color: var(--surface);
+    color: var(--text);
+    font-family: var(--ui);
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    cursor: pointer;
+    user-select: none;
+
+    &[data-size="sm"] {
+      min-height: max(var(--target), calc(var(--control) - 4px));
+    }
+    &:hover:not(:disabled),
+    &[data-force="hover"] {
+      --cap-input-edge: var(--muted);
+    }
+    &:focus-visible {
+      --cap-input-edge: var(--ring);
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 0;
+    }
+    &[aria-invalid="true"] {
+      --cap-input-edge: var(--crit);
+      box-shadow:
+        inset 0 0 0 1px var(--crit),
+        0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
+    }
     &:disabled {
+      --cap-input-edge: var(--line-strong);
+      background-color: var(--sunken);
+      color: var(--muted);
+      border-style: dashed;
       cursor: not-allowed;
     }
   }
 
+  /* The native form: appearance none and a chevron drawn from two gradients (no image). */
+  select:is(.cap-select, .cap-input) {
+    appearance: none;
+    padding-block: 0;
+    padding-inline: calc(var(--pad-x) - 1px) 2.25rem;
+    text-overflow: ellipsis;
+    background-image:
+      linear-gradient(to top right, transparent calc(50% - 0.8px), var(--muted) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px)),
+      linear-gradient(to top left, transparent calc(50% - 0.8px), var(--muted) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+    background-repeat: no-repeat;
+    background-size: 6px 6px;
+    background-position:
+      right 1.15rem top 50%,
+      right 0.8rem top 50%;
+
+    &:dir(rtl) {
+      background-position:
+        left 0.8rem top 50%,
+        left 1.15rem top 50%;
+      padding-inline: 2.25rem calc(var(--pad-x) - 1px);
+    }
+    & :is(option, optgroup) {
+      background: var(--surface);
+      color: var(--text);
+    }
+    &:disabled {
+      background-image:
+        linear-gradient(to top right, transparent calc(50% - 0.8px), var(--dim) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px)),
+        linear-gradient(to top left, transparent calc(50% - 0.8px), var(--dim) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+    }
+  }
+
+  /* Where the browser has a customisable select, the native form's own picker takes the
+     family's look too (so the no-script form is not left with the platform's list). */
   @supports (appearance: base-select) {
-    select.cap-input,
-    select.cap-input::picker(select) {
+    select:is(.cap-select, .cap-input),
+    select:is(.cap-select, .cap-input)::picker(select) {
       appearance: base-select;
     }
-
-    select.cap-input {
+    select:is(.cap-select, .cap-input) {
       display: flex;
       align-items: center;
       gap: var(--space-3);
-      padding-inline: 10px 8px;
+      padding-inline: calc(var(--pad-x) - 1px) var(--space-3);
+      background-image: none;
 
       &::picker-icon {
         color: var(--muted);
       }
     }
-
-    select.cap-input::picker(select) {
+    select:is(.cap-select, .cap-input)::picker(select) {
       margin-block: var(--space-2);
       padding: var(--space-2);
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius-m);
-      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-l);
+      background: var(--raised);
       color: var(--text);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-m);
     }
-
-    select.cap-input option {
+    select:is(.cap-select, .cap-input) option {
       display: flex;
       align-items: center;
       gap: var(--space-3);
-      min-height: max(var(--target), 28px);
-      padding: 0 var(--space-3);
-      border-radius: var(--radius-s);
+      min-height: max(var(--target), calc(var(--control) - var(--space-2)));
+      padding: 0 var(--pad-x);
+      border-radius: var(--radius-m);
       color: var(--text);
 
       &:hover {
-        background: var(--raised);
+        background: var(--accent-soft);
       }
       &:focus-visible {
-        outline: var(--focus-width) solid var(--focus-color);
+        outline: var(--focus-width) solid var(--ring);
         outline-offset: -2px;
-        background: var(--sel);
+        background: var(--accent-soft);
       }
       &:checked {
         font-weight: 600;
       }
       &::checkmark {
-        color: var(--accent);
+        color: var(--accent-text);
       }
       &:disabled {
         color: var(--dim);
       }
     }
-
+    select:is(.cap-select, .cap-input):open::picker-icon {
+      rotate: 180deg;
+    }
     @media (prefers-reduced-motion: no-preference) {
-      select.cap-input::picker-icon {
+      select:is(.cap-select, .cap-input)::picker-icon {
         transition: rotate var(--dur-fast) var(--ease-out);
       }
     }
-    select.cap-input:open::picker-icon {
-      rotate: 180deg;
+  }
+
+  /* The enhanced form: the button. */
+  .cap-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 0 calc(var(--pad-x) - 3px) 0 calc(var(--pad-x) - 1px);
+    text-align: start;
+    white-space: nowrap;
+
+    &[aria-expanded="true"] {
+      --cap-input-edge: var(--muted);
     }
+    &[data-placeholder] > .cap-select-value {
+      color: var(--dim);
+    }
+    &:disabled > .cap-select-icon {
+      color: var(--dim);
+    }
+  }
+  .cap-select-value {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cap-select-icon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  /* The popup: the shared popover surface, as wide as the button at least. */
+  .cap-popover.cap-select-popup[data-size] {
+    /* Exactly the button's width (select.ts measures it at open and on resize), as shadcn's min-w-(--anchor-width); the anchor box cannot shrink it. */
+    inline-size: var(--cap-select-min, 9rem);
+    min-inline-size: var(--cap-select-min, 9rem);
+    /* Never narrower than its button, even where the button is wider than the window's margin. */
+    max-inline-size: max(min(28rem, calc(100vw - 16px)), var(--cap-select-min, 0px));
+  }
+  .cap-select-popup > .cap-listbox {
+    outline: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-select-trigger {
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out);
+    }
+    .cap-select-icon {
+      transition: rotate var(--dur-fast) var(--ease-out);
+    }
+  }
+  .cap-select-trigger[aria-expanded="true"] > .cap-select-icon {
+    rotate: 180deg;
   }
 
   @media (forced-colors: active) {
-    select.cap-input option:checked {
-      forced-color-adjust: none;
-      background: Highlight;
-      color: HighlightText;
+    :is(select.cap-select, select.cap-input, .cap-select-trigger)[aria-invalid="true"] {
+      border-width: 2px;
+    }
+    select:is(.cap-select, .cap-input) {
+      forced-color-adjust: auto;
+    }
+    .cap-select-icon {
+      color: ButtonText;
     }
   }
 }

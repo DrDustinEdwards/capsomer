@@ -33,7 +33,9 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - name: Install
-        run: npm ci --ignore-scripts
+        # Scripts run (no --ignore-scripts) so npm builds Enarratio's dist, which comes from GitHub
+        # (not yet on npm) and is a dev dependency for test/unit/enarratio-theme.test.mjs only.
+        run: npm ci
       - name: Palette, scales, unit tests, types
         run: npm run check
       - name: Every family's contrast pairs, both themes (blocking, rule 18)

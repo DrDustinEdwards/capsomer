@@ -2,6 +2,187 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## 0.2.0 (2026-10-02)
+
+Every in-scope component is rebuilt to the craft of shadcn/ui's Base UI flavour: its sizes, padding, radii, edges, rings, shadows, every state and its open and close motion. The reference is pinned: shadcn-ui/ui `main` at d75a96ab787f (2026-10-01, `shadcn` 4.21.1), the nova style, with comfortable density taken from vega. Nothing is copied: no shadcn code, no Tailwind, no CSS-in-JS. Each component is plain CSS in `cap.components`, tokens only, state from the platform, with the behaviour and the React wrapper rendering the same HTML contract. Where an accessibility rule needs more than shadcn gives (an opaque focus ring, a dashed disabled edge instead of half opacity, a word beside every status), the component's doc page says so under "Deliberately different". Class names, markup and React props stay as they were wherever that cost no quality; every exception is listed under Breaking changes.
+
+**New**
+- **Shared building blocks.** `dialog` (native `<dialog>`: modal, backdrop, centred, side sheet, bottom sheet and top palette placements, enter and exit motion, focus return, backdrop click, busy, history entry), `listbox` (options, groups, active descendant, filter, typeahead, selection), `popover` (Popover API with anchor positioning, flip and shift, arrow, delay groups; the tooltip variant) and `meter` (one bar with value, max, tone, threshold and projection). Each has CSS at `capsomer/<name>.css`, a behaviour module and a React wrapper. The confirm dialog, detail panel, command menu, shortcuts sheet, shell More sheet and approval sheet stand on the dialog; the command menu, select, combobox and menu on the listbox; the tooltip, select popup, combobox, menu and message on the popover surface; the meter, usage meter and permission matrix bars on the meter. The dialog locks page scroll while any `.cap-dialog` is modal.
+- **Density.** `data-density="compact"` (the default, the Portal's values) or `"comfortable"` (vega's spacing) on the root or any wrapper. The shell remembers the choice (`readDensity`, `applyDensity`, `applyStoredDensity`, `DENSITY_PREF`, `data-density` on `<html>` under `cap-density`).
+- **Families fox and teal.** `data-family="fox"` (#cc4f0c) or `"teal"` (#008489) on the root or any element; import `capsomer/families.css`, or `capsomer/family-fox.css` or `capsomer/family-teal.css` after `tokens.css`. Both themes. Purple stays the default.
+- **Generated states pages.** A component supplies `examples.html` (and `examples.tsx` when React renders it); `node bin/capsomer.mjs states` builds `states.html` from `site/states-template.html` and the doc page's `title` and `summary`. The files are gitignored and the URLs are unchanged. `capsomer size` also writes `test-results/size.json`.
+- **Skeleton folder.** `components/skeleton` (`capsomer/skeleton.css`, `capsomer/react/skeleton`) holds the skeleton and spinner moved out of Empty, plus `.cap-skeleton-block` (`data-shape="circle|card"`), spinner `data-size="sm|lg"` and the page spinner (`data-layout="page"`, React `<Spinner layout="page" />`, `role="status"`).
+- **Panel.** `.cap-panel-pad` (a padded block inside a flush body), `.cap-panel-desc`, `.cap-panel-action`, `.cap-panel-foot`, `data-size="sm"`; React `Panel` takes `ref`, `headingId` (wires `aria-labelledby`, making the section a named region), `description`, `footer`, `size`.
+- **Badge.** `.cap-badge` (alias of `.cap-pill`) with `data-variant="default|secondary|outline|destructive|ghost|link"`; a badge may be a link or a button. React `Pill` takes `tone`, `variant`, `href`, `onClick`; `Badge` is the same.
+- **Button.** `data-variant="secondary|link"`, `data-size="xs|sm|lg"`, `.cap-btn-group` and `.cap-btn-group-text`, `data-icon="start|end"`; React `size`, `ButtonGroup`, `ButtonGroupText`.
+- **Field.** `.cap-input-group` with `.cap-input-addon` and `.cap-input-group-text`, `.cap-label`, `.cap-field-group`, `-content`, `-title`, `-description`, `-separator`, `data-orientation`, `.cap-check[data-variant="card"]`, file input styling, a textarea that grows with its text. React `Field` `orientation`; `Check`, `InputGroup`, `InputGroupAddon`.
+- **Select.** An enhanced popup (`data-cap="select"`, `enhance()` from `capsomer/behaviour/select`), `data-size="sm"`, `data-native`, a React `Select`.
+- **Combobox.** `clearable`, `ComboboxOption.group`, `ComboboxMultiple` (values as chips).
+- **Menu.** `MenuAction.type` and `icon`; entries `checkbox`, `radio-group`, `group` and `submenu`.
+- **Banner and alert.** `data-tone="neutral|info|ok"`, a body with an optional title, `.cap-alert-action`; React `tone` (five) and `title`.
+- **Others.** Segmented `data-size`, `data-orientation="vertical"`, `data-fill`, `invalid`; chips `data-size`, `.cap-chip-count`, per-option `disabled`, arrow, Home and End between chips; switch `data-size="sm"` and `aria-invalid`; disclosure `data-variant="accordion"` and a height animation; row-list `data-variant="outline|muted"`, `data-size="sm|xs"`, `data-gap`, `.cap-row-media`; table `tfoot`, selected rows, `data-caption="bottom"`, `data-sticky`, `.cap-table-empty`; empty `.cap-empty-header`, `-media`, `-content`, `icon` and `flush`; shell `.cap-shell-group` and `group` on `ShellEntry`; command menu Home, End, Page Up and Page Down and a spoken result count; meter `threshold`, `projected`, `size`, `measuring`, `data-state="indeterminate"`; listbox helpers `filterCommands` ranking hook and a wrapping `step`; shortcuts `.cap-kbd` and `.cap-kbd-group`; `--radius-xl`, shadows, ring tokens (below).
+
+**Changed tokens**
+- `--accent` is step 9 of the family scale (purple #8c5fd2 in both themes), not the Portal's #4F2D7F and #a386d7. It is for fills, the focus ring, large shapes and icons at 3:1. New `--accent-text` (step 11, 4.5:1 on every surface) carries text. New `--accent-1` to `--accent-12`; `--accent-soft`, `--accent-line` and `--sel` keep their names.
+- New `--primary` (step 10), `--primary-hover` (step 11), `--primary-fg` (`--surface` in light, `--ground` in dark). `--accent-hover` is now step 12, the hover of accent text.
+- New `--ring` (= `--accent`). `--focus-color` is removed. New `--ring-width` (3 px), `--ring-soft`, `--shadow-ring`.
+- Every neutral, status and soft colour is regenerated from the purple family's hue (299.1): values move a few hex steps, names stay.
+- New density tokens `--control` (32 / 36 px, 44 on touch), `--target` (24 / 28), `--pad-x` (11 / 12), `--pad-y` (6 / 8), `--pad-card` (16 / 24), `--gap` (12 / 16), `--row-h` (36 / 44). `--fs-label`, `--fs-detail`, `--fs-body`, `--fs-lead` follow density (11, 12, 13, 15 compact; 12, 13, 14, 16 comfortable), as do `--text-size` and `--leading`. `--control-h` stays as an alias of `--control`; `--control-h-coarse` stays.
+- New `--radius-xl` (14 px) and `--shadow-xs`, `--shadow-s`, `--shadow-m`, `--shadow-l`; `--shadow` is kept as an alias of `--shadow-l` and looks slightly different.
+- Links are `--accent-text`, hovering to `--accent-hover`. `tokens/themes.css` pins the primary, ring and elevation tokens too.
+- The `--legacy` mode of `tokens/palette.mjs` and its byte-for-byte fixture are removed; `npm run tokens` writes `colour.css`, `family-fox.css` and `family-teal.css`. `npm run check` also asserts the primary label at 4.5:1, the primary fill and ring at 3:1 and accent-hover text at 4.5:1, in all three families and both themes.
+
+**Breaking changes** (what an app on 0.1.1 must change, by component)
+
+*Tokens*
+- Text that used `--accent` as a colour: use `--accent-text`. Never set text on an `--accent` fill.
+- A button fill that used `--accent-hover`: use `--primary` and `--primary-hover`. The primary button label is `--primary-fg`, not `--surface`.
+- `var(--focus-color)` becomes `var(--ring)`.
+- Anything running `tokens/palette.mjs --legacy` or reading its fixture: gone.
+
+*Anchor bar*
+- The current link is `--accent-text` with a 2 px `--accent` bar on `::after`. Styles on `.cap-anchors-list a[aria-current]` `text-decoration` should style the bar.
+
+*Approval sheet*
+- The dialog is `class="cap-dialog cap-approval" data-cap="approval-sheet" data-size="lg" data-cap-modal-lock data-cap-destructive`, with an `id` on the description and `aria-describedby` on the dialog.
+- Parts renamed: `cap-approval-head` to `cap-dialog-header`, `-title` to `cap-dialog-title`, `-lead` to `cap-dialog-description`, `-foot` to `cap-dialog-footer` with `data-align="between"`.
+- The gates container is `class="cap-dialog-body cap-approval-gates" data-flush` and drops `tabindex="0"`.
+- A pending sheet carries `aria-busy="true"` (`setPending()` sets it). React renders the shared `Dialog` (`data-cap="dialog"`).
+
+*Banner and alert*
+- `.cap-alert` is a bordered box on the tone's tint (was bare critical text); check the layout around an alert beside a field.
+
+*Combobox*
+- `.cap-combobox-item` to `.cap-option`, `.cap-combobox-item-label` to `.cap-option-label`, `.cap-combobox-check` to `.cap-option-indicator`. Popup `class="cap-popover cap-combobox-popup" data-flush`, list `class="cap-listbox cap-combobox-list"`, empty `class="cap-listbox-empty cap-combobox-empty"`. Tests and overrides on the old classes change.
+- Load `popover.css` and `listbox.css`. The popup and list draw no border, fill or padding of their own; the selected option is no longer bold (it has a check).
+
+*Command menu*
+- Markup: `class="cap-dialog cap-cmd" data-placement="top" data-size="lg"`; search `.cap-cmd-search` holding an icon svg, the label (now `cap-sr-only`) and the input; list `class="cap-listbox cap-cmd-list" data-controlled`.
+- Renamed: `.cap-cmd-group` to `.cap-listbox-group`, `.cap-cmd-group-title` to `.cap-listbox-label`, `.cap-cmd-option` to `.cap-option`, `-option-label` to `.cap-option-label`, `.cap-cmd-keys` to `.cap-option-keys`, `.cap-cmd-hint` to `.cap-option-hint`, `.cap-cmd-empty` to `.cap-listbox-empty`; `.cap-cmd-label` is gone.
+- The active command is `data-active`, not `aria-selected="true"`; read `data-active` or `aria-activedescendant`. Option data attributes are `data-keywords` and `data-group` (the `data-cap-` forms are still read).
+- Load `dialog.css` and `listbox.css`. React `CommandMenu` renders the shared `Dialog` and `Listbox`; its `label` is the hidden label and `placeholder` defaults to "Search commands".
+
+*Confirm dialog*
+- The dialog is `role="alertdialog" data-placement="center" data-size="md"`; tests that find it by `role=dialog` use `alertdialog`.
+- Add `<div class="cap-dialog-header">` (optional `.cap-dialog-media`, `.cap-dialog-title`, lead as `<p class="cap-dialog-description">`) and put the change list, reason and typed-word fields in `<div class="cap-dialog-body">`.
+- `.cap-dialog-actions` to `.cap-dialog-footer` (with `data-align="between"`); `.cap-dialog-reason` to `.cap-confirm-reason`; `.cap-dialog-typed` to `.cap-confirm-typed`; `.cap-dialog-note` to `.cap-confirm-note`; `.cap-dialog-error` to `.cap-confirm-error`; `.cap-dialog-error-lead` to `.cap-confirm-error-lead`. The error box sits after the body.
+- `aria-describedby` names the description and the list (`id-desc id-list`). Load `dialog.css`; the 0.1 light panel look (480 px, `--surface`, `--line-strong`) is gone. React renders the shared `Dialog`.
+
+*Detail panel*
+- `<dialog class="cap-dialog cap-detail" data-placement="right" data-size="md">`; `.cap-detail-head` becomes `<div class="cap-dialog-header" data-divider>` holding `.cap-detail-heading`; the title is `.cap-dialog-title` inside a new `.cap-detail-titlerow` (status pill beside it); the body is `class="cap-dialog-body cap-detail-body"`.
+- Close moves to the end as `<button class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close">`; the header's word "Close" is gone.
+- `data-cap-history="detail"` keeps `#detail-<id>` (an empty value still works for a panel).
+- Focus on open is the first control (Close only if none). Width 35rem, at most 85% of the window (was 560 px, full width on a phone). The `.cap-detail`, `-head`, `-title` rules are gone; load `dialog.css`. React renders the shared `Dialog`.
+
+*Dialog and listbox (shared)*
+- Load the dialog's CSS before the confirm dialog's only if the 0.1 look must stay; the confirm dialog no longer defines `.cap-dialog*`. Imports of `rememberOpener`, `returnFocus`, `isBackdropClick`, `errorText`, `uid`, `isBusy` from `confirm-dialog.ts` still work.
+- A hand-written command menu uses the listbox classes above; `aria-selected` means chosen only.
+
+*Empty, skeleton and spinner*
+- The skeleton and spinner CSS moved: load `skeleton.css` wherever `empty.css` is loaded (every spinner and the long wait need it). Names and markup are unchanged; `capsomer/react/empty` still exports `Skeleton` and `Spinner`.
+- `.cap-empty` is centred with a dashed edge and `--pad-card` padding: add `data-flush` where it sits inside a panel or table that already has an edge. React `Empty` renders the header and content parts.
+
+*Field*
+- A checkbox or radio in `.cap-check` is drawn by CSS (`appearance: none`): remove `accent-color` or size overrides on `.cap-check input`. A mixed checkbox is `input.indeterminate = true`.
+- `.cap-input` on a `<select>` becomes `.cap-select` (see Select). `.cap-field` takes `data-invalid="true"` (set by `showError` and `clearError`), which turns its label red.
+
+*Menu*
+- `.cap-menu-item` becomes `.cap-option.cap-menu-item`, `.cap-menu-label` becomes `.cap-option-label`, `.cap-menu-separator` becomes `.cap-listbox-separator.cap-menu-separator`; the popup is `class="cap-popover cap-menu"`; a shortcut is `.cap-option-keys` holding `kbd.cap-menu-kbd`. The trigger is `class="cap-btn cap-menu-trigger"`. Load `popover.css`, `listbox.css`, `button.css`.
+
+*Message*
+- Each `.cap-message-item` gets `data-kind="ok|warning|failure"` and a leading `<svg class="cap-message-glyph" aria-hidden="true">` (`say()`, `fail()` and the React provider write them; hand-rendered items add them). A failure's edge is critical, not warning.
+
+*Meter*
+- `role="meter"` and the `aria-value*` attributes move from `.cap-meter` to `.cap-meter-bar`, labelled by `aria-labelledby`. `data-value` and `data-max` on the root are gone (the module reads the bar's `aria-valuenow`, `-valuemin`, `-valuemax`).
+- The status word sits between the label and the value (a `.cap-status`), not in the note. React `warnAt` and `critAt` derive tone and word; `words` sets it; a bare `tone` leaves the word to the note.
+- No data is `data-tone="nodata"` with an `aria-hidden` bar and no role. `setFill` is replaced by `setBar` (`toneFor` and `update` are new; `ratio`, `enhance` stay). The default bar is 8 px (`data-size="sm|lg"` is 4 or 12 px).
+
+*Usage meter*
+- Each row is `.cap-usage-item.cap-meter[data-cap="meter"]`. `.cap-usage-top` is gone; `.cap-usage-name` becomes `.cap-meter-label`, `-value` becomes `.cap-meter-value`, `-bar` becomes `.cap-meter-bar`, `-used` becomes `.cap-meter-fill`, `-projected` becomes the bar's `data-projected`. `--used` and `--projected` become `--cap-meter-ratio` and `--cap-meter-projected` (0 to 1). Load `meter.css` with `usage-meter.css`. The bar's 1 px edge is gone.
+
+*Panel*
+- React `Panel`: `actions` is wrapped in `<span class="cap-panel-action">`; a direct-child selector on `.cap-panel-head` needs updating.
+
+*Permission matrix*
+- Cell marks are `<span class="cap-perms-check" aria-hidden="true">` (held: the tick SVG inside, `viewBox="0 0 16 16"`, no width or height; not held: empty). Keep `data-held` and the `cap-sr-only` word. The ok and dim colours on the cell are gone.
+
+*Select*
+- `select.cap-select` inside `<div class="cap-select-wrap">` (`select.cap-input` still draws the native form). For the popup add `data-cap="select"` and call `enhance()`; load popover and listbox CSS.
+- The native select is hidden with id `<id>-native`; a `role="combobox"` button takes the original id. Focus the button, read the value from the native select (`select.focus()` is forwarded). After setting `select.value` in code call `selectControlFor(select).sync()` or dispatch `change`.
+
+*Shell*
+- More sheet: `<dialog class="cap-dialog cap-shell-more" data-cap="dialog" data-placement="bottom" id="cap-more" aria-labelledby="cap-more-title">`, a `.cap-dialog-header` with `<h2 class="cap-dialog-title" id="cap-more-title">`, a `.cap-dialog-body` with the nav and list, and a corner `<button class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close">`. `.cap-shell-more-card`, `-title`, `-foot` and the footer Close (`data-cap-part="more-close"`) are gone. React `<Shell>` does this itself; its props are unchanged.
+- Rail items are `--control` tall with a 16 px icon (was 30 and 14); the current item is the accent tint; a count is a pill; the collapsed rail is `overflow: visible`. Overrides on `.cap-shell-rail a` sizes need a recheck.
+
+*Shortcuts*
+- The sheet is `class="cap-dialog cap-keys" data-placement="center" data-size="md"`; `.cap-keys-head` and `-title` become `<div class="cap-dialog-header" data-divider>` with `<h2 class="cap-dialog-title">`; the body is `cap-dialog-body cap-keys-body`; the switch and note sit in `<div class="cap-dialog-footer" data-align="start"><div class="cap-keys-foot">`. The header Close becomes the corner icon button (as the detail panel's). Load `dialog.css`.
+- Every `<kbd>` is a small rounded cap on `--sunken` in the interface face with no outline (was mono with an outline).
+
+*Switch*
+- Thumb travel is computed from `--cap-sw-w` and `--cap-sw-thumb`: an app that overrode the 36 by 20 geometry sets those instead of widths.
+
+*Theme switch*
+- `<fieldset class="cap-theme"><div class="cap-theme-options">` replaces `cap-seg` and `cap-seg-options`; each label is `<label><input ...><svg class="cap-theme-icon" aria-hidden="true">...</svg><span class="cap-theme-text">Light</span></label>`. The 0.1 markup still works but is unstyled. Words are hidden under 820 px (still in the accessibility tree).
+
+*Time*
+- A relative time is `--muted` and an exact time `--text` (its `.cap-time-utc` part `--muted`). Add `data-tone="text"` to keep a relative time in the text colour.
+
+*Tooltip*
+- The tip is `class="cap-popover" data-variant="tooltip" popover="manual" role="tooltip"` with `data-cap="tooltip"`, optional `data-side` and `<span class="cap-popover-arrow" aria-hidden="true">`; triggers (`data-cap-tip`) are unchanged. `enhance()` upgrades a 0.1 `.cap-tip`, but load `popover.css`: the `.cap-tip` rules and `--cap-tip-top` and `--cap-tip-left` are gone and `tooltip.css` is empty.
+- The default side is above the trigger (was below): `data-side="bottom"` keeps the old place.
+
+*Uptime strip*
+- An app that set the SVG's height sets `--cap-uptime-h` instead.
+
+**Look changes to check** (no markup change; tokens now drive them, compact density keeps 0.1's padding)
+- Focus rings on the rebuilt controls (button, field, switch, segmented, chips) are a 3 px opaque outline; the invalid look adds a soft ring.
+- Button: default gains `--shadow-xs`; hover and pressed fills are mixed from the surface; pressed moves 1 px under motion. `.cap-link-btn` is unchanged.
+- Row list: rounded rows (`--radius-l`) with a transparent 1 px border; the focus ring is `--ring` (was `--accent-line`), as in the table.
+- Table: padding from `--pad-y` and `--pad-x` (8 by 11 compact), every body row tints on hover, text follows `--fs-body`.
+- Disclosure: consecutive sections share their edges; spaced with your own margin, recheck.
+- Feed, session row, stat tile, attention list: padding and radius follow `--pad-*` and `--radius-l` or `-xl`; an app that overrode `.cap-feed-row` padding, the tile's padding, or `.cap-attention-head` padding sets the matching variable (`--cap-attention-pad`) instead. The feed draws a connector between a day's rows.
+- Listbox group labels are plain muted mixed-case text (were uppercase letter-spaced). The highlighted menu and combobox option gains a 3 px accent edge; a danger item is no longer bold.
+- Status: the pill is 20 px and follows density; the glyph is 1.15em.
+- Maintainers: `components/<name>/states.html` is generated and gitignored; `states.tsx` is now `examples.tsx`.
+
+**Defaults changed**
+- **Tooltip delay is 300 ms, not shadcn's 0, and a tip opens on keyboard focus (`:focus-visible`) only.** A pointer crossing a toolbar must not flash tips; a click must not leave one over a button; the next tip opens at once. Esc hides only the tip (WCAG 1.4.13).
+- **Meter bar is 8 px, not shadcn's progress 4 px (now `data-size="sm"`).** The fill needs 3:1 and the hatched projection needs height. `role="meter"` sits on the bar, since a meter is a value in a range, not a task.
+- **Disabled is dashed and muted, never half opacity** (button, field, switch, chips, combobox, select): half opacity cannot reach 4.5:1 text or 3:1 edge, and a disabled control keeps focus and says why.
+- **Focus ring is opaque**, not shadcn's 50%: it must reach 3:1.
+- **Chosen and highlighted states carry more than a tint**: segmented, chips, theme switch, listbox options (accent edge, tick or bar), since a pale fill fails 3:1.
+- **Native inputs, not ARIA buttons**, for checkbox, radio, switch and segmented: forms, labels and keys come from the platform.
+- **Dialog title keeps weight 800; sheets are at most 85% wide** (shadcn 75%), so a record's columns fit with the backdrop left to press. `top` is a palette, not a full-width sheet.
+- **Confirm dialog is 30rem and keeps the action at the far end from Cancel**, with focus on Cancel.
+- **Select has no scroll buttons or item-aligned popup**, and keeps the real `<select>` as the source of truth, so the content is in the HTML.
+- **The message region stays in the page** (a status region) and a lasting message waits to be dismissed, instead of floating, stacking, swiping and auto-closing as a Sonner toast does (WCAG 2.2.1; the one fact the person must not miss must not be hidden).
+- **Command matching stays a substring, not cmdk's fuzzy score**, so what matches is predictable; Home and End move the active command.
+- **Shell tooltips are CSS labels with no delay**, and the rail changes width at once (no width animation: only transform, opacity and colour move).
+- **Comfortable density is vega's spacing; compact stays the Portal's.** Nova is the reference style.
+- **Skeleton pulse is 1.6 s to 55 percent opacity and stops under reduced motion;** the spinner shows a word.
+- **Hover Card is not built:** it is not in scope and a hover-opened popover with interactive content cannot be made keyboard-equal.
+
+**Tests**
+- Deleted, because each pinned only a design value: the button control height and squareness; the tooltip "below its trigger" placement; the combobox popup width; the detail panel's edge and phone fill; the key cap boundary contrast (a key cap is not a control); the command menu label contrast (its class is gone); the usage meter's bar edge colour and bar widths as layout; the legacy palette byte-for-byte fixture tests (they pinned the Portal's old colours). The contrast-pair count is no longer pinned to 300.
+- Added: keyboard, accessibility and behaviour specs for each shared block (dialog, listbox, popover, meter, skeleton) and for each rebuilt interactive component, in `<name>.spec.ts` with test names starting `keyboard:`, `accessibility:` or `behaviour:`, using axe, `expectContrast` (3:1 and 4.5:1, never exact values) and aria snapshots. Reduced-motion specs treat a 0.01 ms duration (base.css's rule) as no motion. `test/unit/states.test.mjs` checks that every `examples.html` makes a valid generated page.
+
+**Not matched** (on purpose; each is on the component's page)
+- Sonner's stacked deck, 4 second auto-dismiss, floating corner placement, swipe to dismiss and slide motion (message).
+- Select's scroll buttons and item-aligned popup; Combobox hides its open button once a value is chosen (here both stay); Select separators and labels outside optgroups.
+- A Hover Card; shadcn's three dialog components (here one `<dialog>`); shadcn's full-width top sheet; Floating UI and portals (the top layer and CSS anchor positioning replace them).
+- Sidebar's animated rail width and its portalled tooltips; its left mobile sheet (the More sheet rises from the bottom).
+- Skeleton's 2 s pulse that keeps going under reduced motion; the 16 px icon spinner with only an aria-label.
+- Radius varied by button size (here `--radius-m`); the Toggle Group's roving tab index for chips and its `aria-pressed` buttons for segmented and the theme switch; an outline segmented variant and a spacing prop; Mode Toggle's System choice (two states, PR #13).
+- A checkbox hit area bigger than its box (the label is the hit area); the half-opacity disabled look; the 8 px slide distance of popups (2 px here).
+- The Progress bar's task role (a meter has a known range); cmdk's fuzzy scoring and `aria-selected` for the active command; the permission matrix's interactive checkbox (marks are read-only).
+- No stat tile, uptime strip or status glyph counterpart exists in shadcn; they are Capsomer's own.
+
+**Install.** `"capsomer": "github:DrDustinEdwards/capsomer#v0.2.0"`.
+
+### Size (gzip, for information; nothing fails on it)
+
+Component CSS: anchor-bar 1.5 KB; approval-sheet 1.1 KB; attention-list 2.0 KB; banner 1.5 KB; button 3.0 KB; chips 1.2 KB; combobox 2.2 KB; command-menu 1.2 KB; confirm-dialog 1.0 KB; detail-panel 1.5 KB; dialog 3.0 KB; disclosure 2.1 KB; empty 1.4 KB; feed 1.8 KB; field 3.5 KB; listbox 2.3 KB; menu 1.5 KB; message 1.6 KB; meter 1.9 KB; panel 1.6 KB; permission-matrix 1.3 KB; popover 2.8 KB; row-list 2.6 KB; segmented 1.5 KB; select 2.1 KB; session-row 1.4 KB; shell 4.2 KB; shortcuts 1.1 KB; skeleton 1.4 KB; stat-tile 1.6 KB; status 2.1 KB; switch 1.5 KB; switch-reason 0.9 KB; table 3.4 KB; theme-switch 1.4 KB; time 0.6 KB; tooltip 0.4 KB; uptime-strip 1.4 KB; usage-meter 1.0 KB. Every component's CSS together is 73.3 KB gzip and every behaviour module together 72.8 KB (`npm run size`, and `test-results/size.json` in CI). Nothing was removed to save bytes; only dead code left.
+
 ## 0.1.1 (2026-10-01)
 
 Brings every component that came from the Capsid Portal up to date with the Portal's approved redesign (capsid #214 native dialog and the eight defects, #215 attention list and tiles, #216 switches with reason and Undo, result messages, phone tab bar, Display, exact times, #221 persistent warnings, #222 stops in the command menu). The Portal's current code was read from capsid master (88bf402); each component's doc page now carries a Provenance line saying whether it was extracted from the Portal, rewritten, or both. Components the Portal does not have, or has not changed since 0.1.0 was cut, are untouched. Where the Portal and the audit disagree the audit wins.

@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useId, useRef, useState } from "react";
-import { isBackdropClick, rememberOpener, returnFocus } from "../confirm-dialog/confirm-dialog.ts";
+import { Fragment, useCallback, useEffect, useId, useRef, useState } from "react";
+import { Dialog, DialogBody, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 import { SINGLE_KEYS_NOTE, grouped, keyCaps, modifiedShortcutFor, register, setSheetOpener, setSingleKeys, singleKeysOn, type Shortcut } from "./shortcuts.ts";
 
 // Registers a shortcut while the component is mounted. The latest `run` is always the one
@@ -52,8 +52,8 @@ export interface ShortcutSheetProps {
 // mounted it is the sheet "?" opens.
 export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
   const id = useId();
-  const dlg = useRef<HTMLDialogElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
+  const dlg = useRef<HTMLDialogElement | null>(null);
+  const closeButton = useRef<HTMLElement | null>(null);
   const [single, setSingle] = useState(true);
   const [groups, setGroups] = useState<ReturnType<typeof grouped>>([]);
 
@@ -70,31 +70,25 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
   }, []);
 
   useEffect(() => {
-    const d = dlg.current;
-    if (!d) return;
-    if (open && !d.open) {
-      setGroups(grouped());
-      rememberOpener(d, document.activeElement);
-      d.showModal();
-      closeRef.current?.focus();
-    } else if (!open && d.open) d.close();
+    if (open) setGroups(grouped());
   }, [open]);
 
+  // Focus starts on Close: the dialog's own Close button, found once the markup is there.
+  const setRef = useCallback((el: HTMLDialogElement | null) => {
+    dlg.current = el;
+    closeButton.current = el?.querySelector<HTMLElement>("[data-cap-part='close']") ?? null;
+  }, []);
+
   return (
-    <dialog
-      ref={dlg}
+    <Dialog
+      ref={setRef}
       className="cap-keys"
-      data-cap="shortcuts"
+      open={open}
+      onOpenChange={onOpenChange}
+      placement="center"
+      size="md"
+      initialFocus={closeButton}
       aria-labelledby={`${id}-title`}
-      onClose={() => {
-        const d = dlg.current;
-        if (d) returnFocus(d);
-        onOpenChange(false);
-      }}
-      onClick={(e) => {
-        const d = dlg.current;
-        if (d && isBackdropClick(d, e.nativeEvent)) d.close();
-      }}
       // A shortcut with Ctrl or Cmd still works over the sheet: the sheet closes, then it runs.
       onKeyDown={(e) => {
         const hit = modifiedShortcutFor(e.nativeEvent);
@@ -104,15 +98,10 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
         hit.run(e.nativeEvent);
       }}
     >
-      <div className="cap-keys-head">
-        <h2 className="cap-keys-title" id={`${id}-title`}>
-          Keyboard shortcuts
-        </h2>
-        <button ref={closeRef} type="button" className="cap-btn" data-cap-part="close" onClick={() => dlg.current?.close()}>
-          Close
-        </button>
-      </div>
-      <div className="cap-keys-body" data-cap-part="keys-list">
+      <DialogHeader divider>
+        <DialogTitle id={`${id}-title`}>Keyboard shortcuts</DialogTitle>
+      </DialogHeader>
+      <DialogBody className="cap-keys-body" data-cap-part="keys-list">
         {groups.map((g) => (
           <div className="cap-keys-group" key={g.group}>
             <h3 className="cap-keys-group-title">{g.group}</h3>
@@ -131,26 +120,21 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
             </dl>
           </div>
         ))}
-      </div>
-      <div className="cap-keys-foot">
-        <label className="cap-switch">
-          <input
-            type="checkbox"
-            role="switch"
-            data-cap-part="single-keys"
-            aria-describedby={`${id}-note`}
-            checked={single}
-            onChange={(e) => setSingleKeys(e.target.checked)}
-          />
-          <span>Single-key shortcuts</span>
-          <span className="cap-switch-state" aria-hidden="true">
-            {single ? "On" : "Off"}
-          </span>
-        </label>
-        <p className="cap-keys-note" id={`${id}-note`}>
-          {SINGLE_KEYS_NOTE}
-        </p>
-      </div>
-    </dialog>
+      </DialogBody>
+      <DialogFooter align="start">
+        <div className="cap-keys-foot">
+          <label className="cap-switch">
+            <input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby={`${id}-note`} checked={single} onChange={(e) => setSingleKeys(e.target.checked)} />
+            <span>Single-key shortcuts</span>
+            <span className="cap-switch-state" aria-hidden="true">
+              {single ? "On" : "Off"}
+            </span>
+          </label>
+          <p className="cap-keys-note" id={`${id}-note`}>
+            {SINGLE_KEYS_NOTE}
+          </p>
+        </div>
+      </DialogFooter>
+    </Dialog>
   );
 }

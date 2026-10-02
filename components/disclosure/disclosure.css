@@ -2,21 +2,37 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Show and hide: a native <details> section (.cap-disclosure), and a group row in a list
-   (.cap-group) whose button shows or hides the rows it groups. Two levels at most. */
+   (.cap-group) whose button shows or hides the rows it groups. Two levels at most.
+   Rebuilt in 0.2 to the craft of shadcn's Accordion and Collapsible: a smooth height
+   animation where the browser supports it, a flat accordion variant (rules between items,
+   the chevron at the end), a pressed state and a disabled one. */
 @layer cap.components {
   .cap-disclosure {
     border: 1px solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
     color: var(--text);
+    interpolate-size: allow-keywords;
+
+    /* Sections stacked together share their edges, as one accordion. */
+    &:has(+ .cap-disclosure) {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+    & + .cap-disclosure {
+      margin-block-start: -1px;
+      border-start-start-radius: 0;
+      border-start-end-radius: 0;
+    }
 
     & > summary {
       display: flex;
       align-items: center;
       gap: var(--space-3);
       min-height: max(var(--target), var(--control));
-      padding: var(--space-2) var(--space-4);
-      border-radius: var(--radius-m);
+      padding: var(--space-2) var(--pad-x);
+      border-radius: inherit;
+      font-size: var(--fs-body);
       font-weight: 600;
       list-style: none;
       cursor: pointer;
@@ -38,6 +54,10 @@
       &[data-force="hover"] {
         background: var(--raised);
       }
+      &:active,
+      &[data-force="pressed"] {
+        background: var(--sunken);
+      }
       &:focus-visible {
         outline-offset: -2px;
       }
@@ -55,10 +75,51 @@
   .cap-disclosure-body {
     display: grid;
     gap: var(--space-3);
-    padding: var(--space-4);
+    padding: var(--gap);
+    font-size: var(--fs-body);
 
     & > * {
       margin: 0;
+    }
+  }
+
+  /* shadcn's Accordion look: no box, a rule between items, the title underlined on hover and
+     the chevron at the end, pointing down when closed and up when open. */
+  .cap-disclosure[data-variant="accordion"] {
+    border-width: 0 0 1px;
+    border-radius: 0;
+    background: transparent;
+
+    &:last-of-type {
+      border-bottom-width: 0;
+    }
+    & + .cap-disclosure[data-variant="accordion"] {
+      margin-block-start: 0;
+    }
+    & > summary {
+      border-radius: var(--radius-m);
+      font-weight: 500;
+
+      &::before {
+        order: 2;
+        margin-inline: auto 2px;
+        color: var(--muted);
+        transform: rotate(45deg);
+      }
+      &:hover,
+      &[data-force="hover"] {
+        background: transparent;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+    }
+    &[open] > summary {
+      border-bottom: 0;
+      border-radius: var(--radius-m);
+
+      &::before {
+        transform: rotate(225deg);
+      }
     }
   }
 
@@ -80,7 +141,7 @@
     gap: var(--space-3);
     width: 100%;
     min-height: max(var(--target), var(--control));
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-2) var(--pad-x);
     border: 0;
     border-top: 1px solid var(--line);
     background: var(--raised);
@@ -105,8 +166,16 @@
     &[data-force="hover"] {
       background: var(--sel);
     }
+    &:active,
+    &[data-force="pressed"] {
+      background: var(--accent-soft);
+    }
     &:focus-visible {
       outline-offset: -2px;
+    }
+    &:is(:disabled, [aria-disabled="true"]) {
+      opacity: 0.5;
+      pointer-events: none;
     }
   }
   .cap-group-count {
@@ -157,6 +226,22 @@
     }
     .cap-disclosure[open]::details-content {
       opacity: 1;
+    }
+    /* Smooth height, where the browser can animate to auto (interpolate-size) and styles
+       ::details-content: the panel grows and shrinks instead of jumping. Elsewhere it
+       opens at once, with the fade. */
+    @supports (interpolate-size: allow-keywords) and (selector(::details-content)) {
+      .cap-disclosure::details-content {
+        block-size: 0;
+        overflow: clip;
+        transition:
+          opacity var(--dur-base) var(--ease-out),
+          block-size var(--dur-base) var(--ease-out),
+          content-visibility var(--dur-base) allow-discrete;
+      }
+      .cap-disclosure[open]::details-content {
+        block-size: auto;
+      }
     }
   }
 

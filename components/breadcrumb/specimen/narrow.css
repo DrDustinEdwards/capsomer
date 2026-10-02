@@ -1,0 +1,4 @@
+/* Layout for the states page only. */
+.breadcrumb-narrow-box {
+  max-inline-size: 14rem;
+}

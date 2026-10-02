@@ -36,11 +36,11 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: ticks, dashes and card text reach their contrast", async ({ page }) => {
+  test("accessibility: ticks, empty boxes and card text reach their contrast", async ({ page }) => {
     await visitStates(page, "permission-matrix", theme);
     await expectContrast(page, [
-      { sel: "#perms-wide .cap-perms-cell[data-held='yes']", what: "a tick", min: 3 },
-      { sel: "#perms-wide .cap-perms-cell[data-held='no']", what: "a dash", min: 3 },
+      { sel: "#perms-wide .cap-perms-cell[data-held='yes'] .cap-perms-check", what: "a tick on its filled box", min: 3 },
+      { sel: "#perms-wide .cap-perms-cell[data-held='no'] .cap-perms-check", what: "an empty box's edge", part: "border" },
       { sel: "#perms-wide .cap-perms-agent", what: "an agent's name" },
       { sel: "#perms-wide .cap-perms-note", what: "the note" },
       { sel: "#perms-by-permission .cap-perms-name", what: "a permission's name" },
