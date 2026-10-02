@@ -20,17 +20,17 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the figure is named by its caption and holds a named chart, a key and a summary", async ({ page }) => {
+  test("accessibility: the figure is named by its title and window, described by its summary, and holds a named chart and a key", async ({ page }) => {
     await visitStates(page, "uptime-strip", theme);
     await expect(page.locator(section("s-outage")).locator(".cap-uptime")).toMatchAriaSnapshot(`
       - figure "foxhound.app 96.1% up over 7 days":
+        - paragraph: /except one outage on Tuesday 29 September/
         - img /down in 1, partly down in 2/
         - list "Key":
           - listitem: Up
           - listitem: Down
           - listitem: Partly down
           - listitem: No data
-        - paragraph: /except one outage on Tuesday 29 September/
     `);
   });
 
@@ -51,6 +51,16 @@ eachTheme((theme) => {
     });
     await expect(page.getByRole("region", { name: "Uptime by day, foxhound.app" }), `focus is on ${active}`).toBeFocused();
     await expect(page.getByRole("row", { name: /Tue 29 Sep 72.9%/ })).toBeVisible();
+  });
+
+  test("behaviour: the numbers are the chart frame's Show data, closed, with the table in the HTML", async ({ page }) => {
+    await visitStates(page, "uptime-strip", theme);
+    const outage = page.locator(section("s-outage"));
+    await expect(outage.locator("details.cap-chart-data")).not.toHaveAttribute("open", "");
+    await expect(outage.getByText("Show data")).toBeVisible();
+    await expect(outage.locator(".cap-table")).toBeAttached();
+    await outage.locator("summary").click();
+    await expect(outage.getByText("Hide data")).toBeVisible();
   });
 
   test("behaviour: no data is a state with a reason, never a zero", async ({ page }) => {

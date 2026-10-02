@@ -1,0 +1,4 @@
+/* Specimen only, not part of the package: a narrow column to show the frame in. */
+.cf-narrow {
+  max-width: 18rem;
+}

@@ -72,6 +72,8 @@ eachTheme((theme) => {
     const count = await tiles.count();
     for (let i = 1; i < count; i++) {
       await page.keyboard.press("Tab");
+      // A tile with its numbers has one more stop after it: the chart frame's "Show data".
+      if (await page.locator(".cap-chart-data > summary:focus").count()) await page.keyboard.press("Tab");
       await expect(tiles.nth(i)).toBeFocused();
     }
   });
@@ -121,5 +123,20 @@ eachTheme((theme) => {
       await expect(tile.locator(".cap-tile-figure")).toHaveText("No data");
       await expect(tile.locator(".cap-tile-detail")).not.toBeEmpty();
     }
+  });
+
+  test("behaviour: a tile with its numbers sits in a chart frame, Show data outside the link", async ({ page }) => {
+    await visitStates(page, "stat-tile", theme);
+    const frame = page.locator("#grid-sites-chart-frame");
+    await expect(frame.locator("a.cap-tile")).toHaveCount(1);
+    await expect(frame.locator("a.cap-tile details, a.cap-tile summary")).toHaveCount(0);
+    await expect(frame.getByText("Show data")).toBeVisible();
+    // The sentence is text in the page, still hidden from the eye, and the tile is described by it.
+    await expect(frame.locator(".cap-chart-summary")).toContainText("Sites up, last 7 days");
+    await expect(frame.locator("a.cap-tile")).toHaveAttribute("aria-describedby", "grid-sites-chart");
+    await frame.locator("summary").focus();
+    await page.keyboard.press("Enter");
+    await expect(frame.getByRole("table")).toBeVisible();
+    await expect(frame.getByRole("row", { name: /Tue 29 Sep/ })).toBeVisible();
   });
 });
