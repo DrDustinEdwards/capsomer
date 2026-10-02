@@ -4,7 +4,10 @@
 /* Agent session rows: who is working, who failed, and who is waiting on you, with the
    question answered in place. From the Capsid Portal's agent sessions (dashboard/src/views/
    Agents.tsx) as drawn in the approved mockup. The pill is .cap-pill and the answer
-   buttons are .cap-btn; this file lays them out and styles only its own parts. */
+   buttons are .cap-btn; this file lays them out and styles only its own parts. Each row is
+   shadcn's Item (a roomy block, a hairline between rows, a title line and a description)
+   and the question is its Alert (the large radius, a tinted surface, a hairline edge in
+   the tone). */
 @layer cap.components {
   .cap-session-list {
     container: cap-session / inline-size;
@@ -18,7 +21,7 @@
   .cap-session {
     display: grid;
     gap: var(--space-3);
-    padding: var(--space-4) var(--space-5);
+    padding: var(--gap) var(--pad-card);
     border-top: 1px solid var(--line);
     min-width: 0;
     position: relative;
@@ -51,8 +54,8 @@
   /* An identifier, so mono. */
   .cap-session-agent {
     font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: -0.01em;
+    font-size: var(--fs-detail);
+    font-weight: 500;
     color: var(--text);
     overflow-wrap: anywhere;
   }
@@ -95,9 +98,9 @@
   .cap-session-ask {
     display: grid;
     gap: var(--space-3);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--pad-y) var(--pad-x);
     border: 1px solid var(--warn);
-    border-radius: var(--radius-m);
+    border-radius: var(--radius-l);
     background: var(--warn-soft);
     min-width: 0;
   }
@@ -115,7 +118,7 @@
     background: var(--sunken);
     color: var(--text);
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: var(--fs-detail);
     line-height: 1.55;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
@@ -138,7 +141,7 @@
   /* A narrow column: the age drops under the pill and the name. */
   @container cap-session (max-width: 420px) {
     .cap-session {
-      padding-inline: var(--space-4);
+      padding-inline: var(--pad-x);
     }
     .cap-session-age {
       margin-inline-start: 0;

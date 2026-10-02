@@ -1,0 +1,421 @@
+<!-- The dialog's specimens. A modal dialog takes the whole page, so each state is a page of its own. Sample data. -->
+      <template data-specimen="live" data-title="Working: open each placement from a button" data-height="460">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>Each button opens one of the dialogs. Esc, the backdrop and the close buttons all work here.</p>
+          <p class="cap-specimen-row">
+            <button type="button" class="cap-btn" id="open-centre" data-cap-dialog-open="live-centre">Rename…</button>
+            <button type="button" class="cap-btn" data-variant="danger" id="open-alert" data-cap-dialog-open="live-alert">Revoke foxhound-driver…</button>
+            <button type="button" class="cap-btn" id="open-sheet" data-cap-dialog-open="live-sheet">Open the job</button>
+            <button type="button" class="cap-btn" id="open-bottom" data-cap-dialog-open="live-bottom">More…</button>
+            <button type="button" class="cap-btn" id="open-top" data-cap-dialog-open="live-top">Commands…</button>
+            <button type="button" class="cap-btn" id="open-scroll" data-cap-dialog-open="live-scroll">Audit log…</button>
+            <button type="button" class="cap-btn" id="open-busy" data-cap-dialog-open="live-busy">Publish…</button>
+            <button type="button" class="cap-btn" id="open-locked" data-cap-dialog-open="live-locked">Locked…</button>
+            <button type="button" class="cap-btn" id="open-focus" data-cap-dialog-open="live-focus">Autofocus…</button>
+          </p>
+          <p role="status" data-specimen-part="said"></p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="md" id="live-centre" aria-labelledby="live-centre-title" aria-describedby="live-centre-desc">
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="live-centre-title">Rename the site</h2>
+            <p class="cap-dialog-description" id="live-centre-desc">Visitors keep the old address; the new name shows in the dashboard.</p>
+          </div>
+          <div class="cap-dialog-body">
+            <label for="live-centre-name">Site name</label>
+            <input class="cap-input" id="live-centre-name" value="germomics.org" autocomplete="off" />
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="primary" data-specimen-action="save">Save name</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="sm" role="alertdialog" id="live-alert" aria-labelledby="live-alert-title" aria-describedby="live-alert-desc">
+          <div class="cap-dialog-header">
+            <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
+            <h2 class="cap-dialog-title" id="live-alert-title">Revoke foxhound-driver?</h2>
+            <p class="cap-dialog-description" id="live-alert-desc">This cannot be undone. The agent stops working at once and its 1 claimed job goes back to the queue.</p>
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="save">Revoke agent</button>
+          </div>
+        </dialog>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="right" data-size="md" id="live-sheet" aria-labelledby="live-sheet-title" aria-describedby="live-sheet-desc" data-cap-history>
+          <div class="cap-dialog-header" data-divider>
+            <h2 class="cap-dialog-title" id="live-sheet-title">Push the capsomer branch</h2>
+            <p class="cap-dialog-description" id="live-sheet-desc">job_7f3a92c1d4e0 on the capsomer site</p>
+          </div>
+          <div class="cap-dialog-body">
+            <p>Waiting on you: the branch needs a pull request before the job can continue.</p>
+            <p>Claimed by foxhound-driver, 14 minutes ago. Last heartbeat 40 seconds ago.</p>
+            <p>Release it to put it back in the queue, or mark it failed to stop retries.</p>
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Close</button>
+            <button type="button" class="cap-btn" data-variant="primary">Resume</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="bottom" data-size="md" id="live-bottom" aria-labelledby="live-bottom-title">
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="live-bottom-title">More views</h2>
+          </div>
+          <div class="cap-dialog-body">
+            <nav aria-labelledby="live-bottom-title">
+              <ul>
+                <li><a href="#main">Namespaces</a></li>
+                <li><a href="#main">Backups</a></li>
+                <li><a href="#main">Settings</a></li>
+              </ul>
+            </nav>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="top" data-size="lg" id="live-top" aria-label="Command menu">
+          <div class="cap-dialog-body">
+            <input class="cap-input" type="search" aria-label="Search commands" placeholder="Search commands" autocomplete="off" />
+            <ul>
+              <li>Go to Jobs</li>
+              <li>Pause the germomics.org namespace</li>
+              <li>Open the audit log</li>
+            </ul>
+          </div>
+        </dialog>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="md" id="live-scroll" aria-labelledby="live-scroll-title" aria-describedby="live-scroll-desc">
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="live-scroll-title">Audit log</h2>
+            <p class="cap-dialog-description" id="live-scroll-desc">Thirty entries. The header and the footer stay; the list scrolls.</p>
+          </div>
+          <div class="cap-dialog-body">
+            <p>Audit entry 1: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 2: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 3: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 4: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 5: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 6: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 7: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 8: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 9: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 10: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 11: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 12: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 13: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 14: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 15: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 16: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 17: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 18: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 19: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 20: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 21: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 22: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 23: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 24: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 25: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 26: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 27: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 28: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 29: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 30: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Close</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="md" id="live-busy" aria-labelledby="live-busy-title" aria-describedby="live-busy-desc">
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="live-busy-title">Publish the draft</h2>
+            <p class="cap-dialog-description" id="live-busy-desc">The request is running. Esc, Close, Cancel and the backdrop wait until it answers.</p>
+          </div>
+          <div class="cap-dialog-body">
+            <p>Pushing 3 files to germomics.org.</p>
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="primary" data-specimen-action="start">Publish</button>
+            <button type="button" class="cap-btn" data-specimen-action="finish">Finish the request</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="md" id="live-locked" aria-labelledby="live-locked-title" aria-describedby="live-locked-desc" data-cap-modal-lock>
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="live-locked-title">Locked, a click outside does nothing</h2>
+            <p class="cap-dialog-description" id="live-locked-desc">Visitors keep the old address; the new name shows in the dashboard.</p>
+          </div>
+          <div class="cap-dialog-body">
+            <label for="live-locked-name">Site name</label>
+            <input class="cap-input" id="live-locked-name" value="germomics.org" autocomplete="off" />
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="primary" data-specimen-action="save">Save name</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="md" id="live-focus" aria-labelledby="live-focus-title">
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="live-focus-title">Two fields</h2>
+          </div>
+          <div class="cap-dialog-body">
+            <label for="live-focus-a">First</label>
+            <input class="cap-input" id="live-focus-a" autocomplete="off" />
+            <label for="live-focus-b">Second, where focus starts</label>
+            <input class="cap-input" id="live-focus-b" autocomplete="off" autofocus />
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+      </template>
+
+      <template data-specimen="centre" data-title="Centre, medium: title, description, body, footer, close button" data-height="420">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog. It is inert while the dialog is open.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="md" id="centre" aria-labelledby="centre-title" aria-describedby="centre-desc" data-specimen-open>
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="centre-title">Rename the site</h2>
+            <p class="cap-dialog-description" id="centre-desc">Visitors keep the old address; the new name shows in the dashboard.</p>
+          </div>
+          <div class="cap-dialog-body">
+            <label for="centre-name">Site name</label>
+            <input class="cap-input" id="centre-name" value="germomics.org" autocomplete="off" />
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="primary" data-specimen-action="save">Save name</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+      </template>
+
+      <template data-specimen="alert" data-title="Alert dialog, small: role alertdialog, focus on Cancel" data-height="420">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog. It is inert while the dialog is open.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="sm" role="alertdialog" id="alert" aria-labelledby="alert-title" aria-describedby="alert-desc" data-specimen-open>
+          <div class="cap-dialog-header">
+            <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
+            <h2 class="cap-dialog-title" id="alert-title">Revoke foxhound-driver?</h2>
+            <p class="cap-dialog-description" id="alert-desc">This cannot be undone. The agent stops working at once and its 1 claimed job goes back to the queue.</p>
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="save">Revoke agent</button>
+          </div>
+        </dialog>
+      </template>
+
+      <template data-specimen="large" data-title="Large: the widest centred dialog" data-height="420">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog. It is inert while the dialog is open.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="lg" id="large" aria-labelledby="large-title" aria-describedby="large-desc" data-specimen-open>
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="large-title">Rename the site</h2>
+            <p class="cap-dialog-description" id="large-desc">Visitors keep the old address; the new name shows in the dashboard.</p>
+          </div>
+          <div class="cap-dialog-body">
+            <label for="large-name">Site name</label>
+            <input class="cap-input" id="large-name" value="germomics.org" autocomplete="off" />
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="primary" data-specimen-action="save">Save name</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+      </template>
+
+      <template data-specimen="right" data-title="Side sheet from the right" data-height="420">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog. It is inert while the dialog is open.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="right" data-size="md" id="right" aria-labelledby="right-title" aria-describedby="right-desc" data-specimen-open>
+          <div class="cap-dialog-header" data-divider>
+            <h2 class="cap-dialog-title" id="right-title">Push the capsomer branch</h2>
+            <p class="cap-dialog-description" id="right-desc">job_7f3a92c1d4e0 on the capsomer site</p>
+          </div>
+          <div class="cap-dialog-body">
+            <p>Waiting on you: the branch needs a pull request before the job can continue.</p>
+            <p>Claimed by foxhound-driver, 14 minutes ago. Last heartbeat 40 seconds ago.</p>
+            <p>Release it to put it back in the queue, or mark it failed to stop retries.</p>
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Close</button>
+            <button type="button" class="cap-btn" data-variant="primary">Resume</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+      </template>
+
+      <template data-specimen="left" data-title="Side sheet from the left" data-height="420">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog. It is inert while the dialog is open.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="left" data-size="md" id="left" aria-labelledby="left-title" aria-describedby="left-desc" data-specimen-open>
+          <div class="cap-dialog-header" data-divider>
+            <h2 class="cap-dialog-title" id="left-title">Push the capsomer branch</h2>
+            <p class="cap-dialog-description" id="left-desc">job_7f3a92c1d4e0 on the capsomer site</p>
+          </div>
+          <div class="cap-dialog-body">
+            <p>Waiting on you: the branch needs a pull request before the job can continue.</p>
+            <p>Claimed by foxhound-driver, 14 minutes ago. Last heartbeat 40 seconds ago.</p>
+            <p>Release it to put it back in the queue, or mark it failed to stop retries.</p>
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Close</button>
+            <button type="button" class="cap-btn" data-variant="primary">Resume</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+      </template>
+
+      <template data-specimen="bottom" data-title="Bottom sheet" data-height="420">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog. It is inert while the dialog is open.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="bottom" data-size="md" id="bottom" aria-labelledby="bottom-title" data-specimen-open>
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="bottom-title">More views</h2>
+          </div>
+          <div class="cap-dialog-body">
+            <nav aria-labelledby="bottom-title">
+              <ul>
+                <li><a href="#main">Namespaces</a></li>
+                <li><a href="#main">Backups</a></li>
+                <li><a href="#main">Settings</a></li>
+              </ul>
+            </nav>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+      </template>
+
+      <template data-specimen="top" data-title="Top palette" data-height="420">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog. It is inert while the dialog is open.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="top" data-size="lg" id="top" aria-label="Command menu" data-specimen-open>
+          <div class="cap-dialog-body">
+            <input class="cap-input" type="search" aria-label="Search commands" placeholder="Search commands" autocomplete="off" />
+            <ul>
+              <li>Go to Jobs</li>
+              <li>Pause the germomics.org namespace</li>
+              <li>Open the audit log</li>
+            </ul>
+          </div>
+        </dialog>
+      </template>
+
+      <template data-specimen="scroll" data-title="Tall content: the body scrolls, header and footer stay" data-height="360">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog. It is inert while the dialog is open.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="md" id="scroll" aria-labelledby="scroll-title" aria-describedby="scroll-desc" data-specimen-open>
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="scroll-title">Audit log</h2>
+            <p class="cap-dialog-description" id="scroll-desc">Thirty entries. The header and the footer stay; the list scrolls.</p>
+          </div>
+          <div class="cap-dialog-body">
+            <p>Audit entry 1: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 2: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 3: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 4: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 5: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 6: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 7: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 8: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 9: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 10: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 11: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 12: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 13: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 14: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 15: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 16: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 17: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 18: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 19: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 20: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 21: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 22: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 23: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 24: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 25: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 26: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 27: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 28: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 29: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 30: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel">Close</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+      </template>
+
+      <template data-specimen="busy" data-title="Busy: Esc, Close, Cancel and the backdrop are held" data-height="420">
+        <main class="specimen-page" id="main" tabindex="-1">
+          <h1>Sites</h1>
+          <p>The page behind the dialog. It is inert while the dialog is open.</p>
+        </main>
+        <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="md" id="busy" aria-labelledby="busy-title" aria-describedby="busy-desc" data-specimen-open aria-busy="true">
+          <div class="cap-dialog-header">
+            <h2 class="cap-dialog-title" id="busy-title">Publish the draft</h2>
+            <p class="cap-dialog-description" id="busy-desc">The request is running. Esc, Close, Cancel and the backdrop wait until it answers.</p>
+          </div>
+          <div class="cap-dialog-body">
+            <p>Pushing 3 files to germomics.org.</p>
+          </div>
+          <div class="cap-dialog-footer">
+            <button type="button" class="cap-btn" data-cap-part="cancel" aria-disabled="true">Cancel</button>
+            <button type="button" class="cap-btn" data-variant="primary" data-specimen-action="start" aria-busy="true" aria-disabled="true">Publish</button>
+            <button type="button" class="cap-btn" data-specimen-action="finish">Finish the request</button>
+          </div>
+          <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-disabled="true" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </dialog>
+      </template>
+
+<script type="module">
+  import { closeDialog, enhance, setDialogBusy } from "./dialog.ts";
+
+  enhance(document);
+
+  // The specimens' own buttons: Save closes with a line said on the page; Publish starts a
+  // request that runs until Finish answers it.
+  document.addEventListener("click", (e) => {
+    const b = e.target instanceof Element ? e.target.closest("[data-specimen-action]") : null;
+    const d = b?.closest("dialog");
+    if (!b || !d || b.getAttribute("aria-disabled") === "true") return;
+    const act = b.dataset.specimenAction;
+    if (act === "start") {
+      setDialogBusy(d, true);
+      b.setAttribute("aria-busy", "true");
+      b.setAttribute("aria-disabled", "true");
+    } else if (act === "finish") {
+      setDialogBusy(d, false);
+      const go = d.querySelector("[data-specimen-action='start']");
+      go?.removeAttribute("aria-busy");
+      go?.removeAttribute("aria-disabled");
+      closeDialog(d, "done");
+    } else if (act === "save") {
+      const said = document.querySelector("[data-specimen-part='said']");
+      if (said) said.textContent = "Done.";
+      closeDialog(d, "save");
+    }
+  });
+</script>

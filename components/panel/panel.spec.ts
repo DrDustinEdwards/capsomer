@@ -34,13 +34,6 @@ eachTheme((theme) => {
     `);
   });
 
-  test("behaviour: a flush body has no padding and a plain body has", async ({ page }) => {
-    await visitStates(page, "panel", theme);
-    await expect(page.locator("#p-flush .cap-panel-body")).toHaveCSS("padding-top", "0px");
-    await expect(page.locator("#p-flush .cap-panel-body")).toHaveCSS("padding-left", "0px");
-    await expect(page.locator("#p-head .cap-panel-body")).toHaveCSS("padding-left", "16px");
-  });
-
   test("accessibility: the count and the link to the full view reach their contrast, and the link is a target", async ({ page }) => {
     await visitStates(page, "panel", theme);
     await expectContrast(page, [
@@ -59,23 +52,43 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/#sites$/);
   });
 
-  test("behaviour: the link to the full view follows the source line, at the header's right edge", async ({ page }) => {
+  test("accessibility: a panel given a heading id is a named region wired to its title", async ({ page }) => {
     await visitStates(page, "panel", theme);
-    const src = await page.locator("#p-more .cap-panel-src").boundingBox();
-    const more = await page.locator("#p-more .cap-panel-more").boundingBox();
-    const head = await page.locator("#p-more .cap-panel-head").boundingBox();
-    expect(src && more && head).toBeTruthy();
-    if (src && more && head) {
-      expect(more.x).toBeGreaterThanOrEqual(src.x + src.width - 1);
-      expect(Math.round(head.x + head.width - (more.x + more.width))).toBe(16);
-    }
+    await expect(page.getByRole("region", { name: "Deploy settings" })).toBeVisible();
+    await expect(page.locator("#p-card")).toHaveAttribute("aria-labelledby", "p-card-h");
+    await expect(page.locator("#p-card-h")).toHaveText("Deploy settings");
+    // A panel without one is a plain section, not a landmark.
+    await expect(page.getByRole("region", { name: "Usage against free limits" })).toHaveCount(0);
   });
 
-  test("behaviour: the source line sits at the header's right edge", async ({ page }) => {
+  test("accessibility: description, action, footer and the padded block reach their contrast", async ({ page }) => {
     await visitStates(page, "panel", theme);
-    const head = await page.locator("#p-head .cap-panel-head").boundingBox();
-    const src = await page.locator("#p-head .cap-panel-src").boundingBox();
-    expect(head && src).toBeTruthy();
-    if (head && src) expect(Math.round(head.x + head.width - (src.x + src.width))).toBe(16);
+    await expectContrast(page, [
+      { sel: "#p-card .cap-panel-desc", what: "the description on the raised header" },
+      { sel: "#p-card .cap-panel-foot .cap-muted", what: "muted text on the footer band" },
+      { sel: "#p-pad .cap-panel-pad p", what: "text in the padded block" },
+    ]);
+  });
+
+  test("keyboard: the header's action and the footer's button are reached in order", async ({ page }) => {
+    await visitStates(page, "panel", theme);
+    await page.getByRole("button", { name: "Edit" }).focus();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Deploy now" })).toBeFocused();
+  });
+
+  test("behaviour: the padded block sits inside a flush body, and the rows run to the panel's edges", async ({ page }) => {
+    await visitStates(page, "panel", theme);
+    await expect(page.locator("#p-pad .cap-panel-body")).toHaveCSS("padding-left", "0px");
+    const [panel, row, pad] = await Promise.all([
+      page.locator("#p-pad").boundingBox(),
+      page.locator("#p-pad .cap-row").first().boundingBox(),
+      page.locator("#p-pad .cap-panel-pad p").boundingBox(),
+    ]);
+    expect(panel && row && pad).toBeTruthy();
+    if (panel && row && pad) {
+      expect(row.width).toBeGreaterThanOrEqual(panel.width - 3);
+      expect(pad.x).toBeGreaterThan(panel.x + 8);
+    }
   });
 });

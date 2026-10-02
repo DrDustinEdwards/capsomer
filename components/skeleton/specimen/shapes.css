@@ -1,0 +1,22 @@
+/* Specimen only, not part of the package: lays out the skeleton shapes as a mention row. */
+.skeleton-sample-shapes {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-4);
+  align-items: center;
+  max-inline-size: 32rem;
+}
+.skeleton-sample-shapes > [data-shape="card"] {
+  grid-column: 1 / -1;
+}
+.skeleton-sample-stack {
+  display: grid;
+  gap: var(--space-3);
+}
+.skeleton-sample-stack > .cap-skeleton-block {
+  block-size: calc(var(--control) * 0.5);
+}
+.skeleton-sample-line {
+  display: block;
+  inline-size: 12rem;
+}

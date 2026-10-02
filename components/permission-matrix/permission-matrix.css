@@ -4,7 +4,11 @@
 /* Who can do what: agents against permissions. A table where there is room, one card per
    agent listing only what it holds where there is not (a container query), and an
    inverse view listing who holds each permission. Drawn from the Capsid Portal's agents
-   page (dashboard/src/views/Agents.tsx) and the approved mockup's "Who can do what". */
+   page (dashboard/src/views/Agents.tsx) and the approved mockup's "Who can do what".
+   In 0.2 a held permission is drawn as shadcn's Checkbox in its checked state (a filled
+   box with a tick), a permission not held as the empty box; the matrix only reads, so
+   they are not controls. The cards are shadcn's Item (outline variant) in an item group,
+   and the table is table's. */
 @layer cap.components {
   .cap-perms {
     container: cap-perms / inline-size;
@@ -42,18 +46,27 @@
     text-align: center;
   }
 
-  /* A tick or a dash: shape first, colour second, the word for a screen reader. */
-  .cap-perms-cell {
+  /* A checked box or an empty one: shape first (filled with a tick, or empty), colour
+     second, the word for a screen reader. Sized as a Checkbox, 16 px with a 4 px corner. */
+  .cap-perms-check {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 16px;
+    block-size: 16px;
+    vertical-align: middle;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--primary-fg);
+
     & svg {
-      display: inline-block;
-      vertical-align: middle;
+      inline-size: 14px;
+      block-size: 14px;
     }
-    &[data-held="yes"] {
-      color: var(--ok);
-    }
-    &[data-held="no"] {
-      color: var(--dim);
-    }
+  }
+  .cap-perms-cell[data-held="yes"] .cap-perms-check {
+    border-color: var(--primary);
+    background: var(--primary);
   }
 
   /* Narrow, and the By permission view: a list of cards. */
@@ -66,26 +79,22 @@
     margin: 0;
     padding: 0;
     display: grid;
+    gap: var(--space-3);
   }
 
   .cap-perms-card {
     display: grid;
     gap: var(--space-1);
     min-width: 0;
-    padding-block: var(--space-3);
-    border-top: 1px solid var(--line);
-
-    &:first-child {
-      border-top: 0;
-      padding-top: 0;
-    }
-    &:last-child {
-      padding-bottom: 0;
-    }
+    padding: var(--pad-y) var(--pad-x);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
   }
 
   .cap-perms-name {
+    font-size: var(--fs-body);
     font-weight: 600;
+    line-height: 1.375;
     color: var(--text);
     overflow-wrap: anywhere;
 
@@ -120,11 +129,15 @@
 
   @media (forced-colors: active) {
     .cap-perms-card {
-      border-top-color: CanvasText;
-
-      &:first-child {
-        border-top: 0;
-      }
+      border-color: CanvasText;
+    }
+    .cap-perms-check {
+      forced-color-adjust: none;
+      border-color: CanvasText;
+      color: Canvas;
+    }
+    .cap-perms-cell[data-held="yes"] .cap-perms-check {
+      background: CanvasText;
     }
   }
 }

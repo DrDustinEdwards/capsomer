@@ -6,12 +6,14 @@ export interface DisclosureProps {
   // Sections that share a name open one at a time.
   name?: string;
   defaultOpen?: boolean;
+  // "accordion": shadcn's flat look, a rule between items and the chevron at the end.
+  variant?: "accordion";
 }
 
 // A show/hide section: native <details>, so it works before JavaScript and with none.
-export function Disclosure({ summary, children, name, defaultOpen = false }: DisclosureProps) {
+export function Disclosure({ summary, children, name, defaultOpen = false, variant }: DisclosureProps) {
   return (
-    <details className="cap-disclosure" name={name} open={defaultOpen || undefined}>
+    <details className="cap-disclosure" data-variant={variant} name={name} open={defaultOpen || undefined}>
       <summary>{summary}</summary>
       <div className="cap-disclosure-body">{children}</div>
     </details>

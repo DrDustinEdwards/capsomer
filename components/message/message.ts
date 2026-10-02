@@ -118,8 +118,25 @@ export function currentUndo(all: Message[]): Message | undefined {
   return all.find((m) => m.undo && !m.busy);
 }
 
+// The leading glyph per kind, drawn in currentColor with the mark cut out (the same shapes
+// as Status: a tick in a circle, a triangle, an octagon). Hidden from screen readers.
+export type MessageKind = "ok" | "warning" | "failure";
+
+export const GLYPHS: Record<MessageKind, string> = {
+  ok: '<path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/>',
+  warning: '<path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/>',
+  failure: '<path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/>',
+};
+
+// What a message is, for its glyph and its edge: a failure; a warning or an Undo that
+// failed; otherwise a plain result.
+export function kindOf(m: Pick<Message, "warning" | "error" | "failure">): MessageKind {
+  return m.failure ? "failure" : m.warning !== null || m.error !== null ? "warning" : "ok";
+}
+
 interface Item {
   el: HTMLElement;
+  glyph: SVGElement;
   said: HTMLElement;
   warn: HTMLElement;
   warnText: HTMLElement;
@@ -160,6 +177,11 @@ function make(tag: string, className?: string, part?: string): HTMLElement {
 
 function buildItem(): Item {
   const el = make("div", "cap-message-item", "item");
+  const glyph = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  glyph.setAttribute("class", "cap-message-glyph");
+  glyph.setAttribute("viewBox", "0 0 16 16");
+  glyph.setAttribute("aria-hidden", "true");
+  glyph.setAttribute("focusable", "false");
   const text = make("p", "cap-message-text", "text");
   const said = make("span", undefined, "said");
   const warn = make("span", "cap-message-warning");
@@ -186,14 +208,19 @@ function buildItem(): Item {
   dismissBtn.type = "button";
   dismissBtn.textContent = "Dismiss";
 
-  el.append(text, undoBtn, dismissBtn);
-  return { el, said, warn, warnText, error, undoBtn, undoLabel, dismissBtn };
+  el.append(glyph, text, undoBtn, dismissBtn);
+  return { el, glyph, said, warn, warnText, error, undoBtn, undoLabel, dismissBtn };
 }
 
 function paint(it: Item, m: Message): void {
   it.el.dataset.id = String(m.id);
   if (lasting(m)) it.el.dataset.lasting = "";
   else delete it.el.dataset.lasting;
+  const kind = kindOf(m);
+  if (it.el.dataset.kind !== kind) {
+    it.el.dataset.kind = kind;
+    it.glyph.innerHTML = GLYPHS[kind];
+  }
   if (it.said.textContent !== m.text) it.said.textContent = m.text;
   if (m.failure) it.said.setAttribute("role", "alert");
   else it.said.removeAttribute("role");

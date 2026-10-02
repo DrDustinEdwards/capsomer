@@ -1,26 +1,12 @@
-// The detail panel: a record opened from its row, in a native <dialog> that slides in from
-// the right. Esc closes it; Back closes it when it pushed a history entry; focus returns to
-// the row's link. No framework; the React wrapper calls the same functions.
-import { isBackdropClick, rememberOpener, returnFocus } from "../confirm-dialog/confirm-dialog.ts";
+// The detail panel: a record opened from its row, in the shared dialog (components/dialog) as
+// a side sheet on the right. The shared dialog does the opening, Esc, the backdrop, focus
+// placed and handed back, and the history entry that Back takes away; this module adds the
+// Copy buttons and the status line. No framework; the React wrapper calls the same functions.
+import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 
 export interface DetailOptions {
   // Pushes "#detail-<id>" so Back closes the panel. Default: the dialog's data-cap-history.
   history?: boolean;
-}
-
-interface State {
-  pushed: boolean;
-  onPop: (() => void) | null;
-}
-const states = new WeakMap<HTMLDialogElement, State>();
-
-function stateOf(dialog: HTMLDialogElement): State {
-  let s = states.get(dialog);
-  if (!s) {
-    s = { pushed: false, onPop: null };
-    states.set(dialog, s);
-  }
-  return s;
 }
 
 // The identifier used in the address: data-cap-detail-id, or the dialog's id.
@@ -28,61 +14,47 @@ export function detailHash(dialog: HTMLDialogElement): string {
   return `#detail-${dialog.dataset.capDetailId ?? dialog.id}`;
 }
 
-// Wires Close buttons, a click on the backdrop, Copy buttons, and what happens on close.
-// Returns a function that unwires it.
+const wired = new WeakMap<HTMLDialogElement, () => void>();
+
+// Wires the shared dialog's rules (Close, the backdrop, focus back to the row, the history
+// entry) and the Copy buttons. Returns a function that unwires it. Idempotent.
 export function wireDetail(dialog: HTMLDialogElement): () => void {
-  dialog.dataset.capReady = "";
+  const had = wired.get(dialog);
+  if (had) return had;
+  // The panel's address is "#detail-<id>"; the shared dialog reads its prefix from the attribute.
+  if (dialog.hasAttribute("data-cap-history") && !dialog.dataset.capHistory) dialog.dataset.capHistory = "detail";
+  const unwireBase = wireDialog(dialog);
   const onClick = (e: MouseEvent) => {
-    const t = e.target as Element;
-    if (t.closest("[data-cap-part='close']") || isBackdropClick(dialog, e)) return dialog.close();
-    const copy = t.closest<HTMLElement>("[data-cap-copy]");
-    if (copy) void copyFrom(copy, dialog);
+    const copy = (e.target as Element).closest<HTMLElement>("[data-cap-copy]");
+    if (copy && dialog.contains(copy)) void copyFrom(copy, dialog);
   };
   const onClose = () => {
-    const s = stateOf(dialog);
-    if (s.onPop) window.removeEventListener("popstate", s.onPop);
-    s.onPop = null;
-    // Closed by Esc or Close: take back the entry the panel pushed, so Back goes where it
-    // went before.
-    if (s.pushed) {
-      s.pushed = false;
-      history.back();
-    }
     const status = dialog.querySelector("[data-cap-part='status']");
     if (status) status.textContent = "";
-    returnFocus(dialog);
   };
   dialog.addEventListener("click", onClick);
   dialog.addEventListener("close", onClose);
-  return () => {
+  const off = () => {
     dialog.removeEventListener("click", onClick);
     dialog.removeEventListener("close", onClose);
-    delete dialog.dataset.capReady;
+    unwireBase();
+    wired.delete(dialog);
   };
+  wired.set(dialog, off);
+  return off;
 }
 
-// Opens a panel from the control that asked for it (the row's link).
+// Opens a panel from the control that asked for it (the row's link). Focus goes to the first
+// control inside, or to Close when there is none.
 export function openDetail(dialog: HTMLDialogElement, opener: Element | null = document.activeElement, opts: DetailOptions = {}): void {
   if (dialog.open) return;
-  if (!dialog.dataset.capReady) wireDetail(dialog);
-  rememberOpener(dialog, opener);
-  dialog.showModal();
-  dialog.querySelector<HTMLElement>("[autofocus], [data-cap-part='close']")?.focus();
-  const useHistory = opts.history ?? dialog.hasAttribute("data-cap-history");
-  if (!useHistory) return;
-  const s = stateOf(dialog);
-  history.pushState({ capDetail: dialog.dataset.capDetailId ?? dialog.id }, "", detailHash(dialog));
-  s.pushed = true;
-  s.onPop = () => {
-    // Back: the entry is already gone, so closing must not go back again.
-    s.pushed = false;
-    if (dialog.open) dialog.close();
-  };
-  window.addEventListener("popstate", s.onPop);
+  if (opts.history && !dialog.hasAttribute("data-cap-history")) dialog.dataset.capHistory = "detail";
+  if (!wired.has(dialog)) wireDetail(dialog);
+  openDialog(dialog, opener, opts.history === undefined ? {} : { history: opts.history });
 }
 
 export function closeDetail(dialog: HTMLDialogElement): void {
-  if (dialog.open) dialog.close();
+  closeDialog(dialog);
 }
 
 // Copies the text of the element a Copy button names (data-cap-copy="<id>"), and says what
@@ -118,6 +90,7 @@ export function enhance(root: ParentNode = document): () => void {
   }
   for (const trigger of root.querySelectorAll<HTMLElement>("[data-cap-detail-open]:not([data-cap-ready])")) {
     trigger.dataset.capReady = "";
+    if (!trigger.hasAttribute("aria-haspopup")) trigger.setAttribute("aria-haspopup", "dialog");
     const onClick = (e: MouseEvent) => {
       if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
       const dialog = document.getElementById(trigger.dataset.capDetailOpen ?? "");

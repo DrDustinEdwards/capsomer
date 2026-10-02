@@ -1,0 +1,163 @@
+<section class="cap-specimen" aria-labelledby="s-variants">
+  <h2 id="s-variants">Default, primary, secondary, danger, quiet, link</h2>
+  <div class="cap-specimen-row" id="variants">
+    <button type="button" class="cap-btn" id="b-default">Refresh</button>
+    <button type="button" class="cap-btn" data-variant="primary" id="b-primary">Save changes</button>
+    <button type="button" class="cap-btn" data-variant="secondary" id="b-secondary">Preview</button>
+    <button type="button" class="cap-btn" data-variant="danger" id="b-danger">Revoke agent</button>
+    <button type="button" class="cap-btn" data-variant="quiet" id="b-quiet">Show more</button>
+    <button type="button" class="cap-btn" data-variant="link" id="b-variant-link">View logs</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-sizes">
+  <h2 id="s-sizes">Sizes</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-size="xs" id="b-xs">Extra small</button>
+    <button type="button" class="cap-btn" data-size="sm" id="b-sm">Small</button>
+    <button type="button" class="cap-btn" id="b-size-default">Default</button>
+    <button type="button" class="cap-btn" data-size="lg" id="b-lg">Large</button>
+  </div>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-icon-only data-size="xs" aria-label="Add a site, extra small">
+      <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 3v10M3 8h10" /></svg>
+    </button>
+    <button type="button" class="cap-btn" data-icon-only data-size="sm" aria-label="Add a site, small">
+      <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 3v10M3 8h10" /></svg>
+    </button>
+    <button type="button" class="cap-btn" data-icon-only aria-label="Add a site">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 3v10M3 8h10" /></svg>
+    </button>
+    <button type="button" class="cap-btn" data-icon-only data-size="lg" aria-label="Add a site, large">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 3v10M3 8h10" /></svg>
+    </button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-hover">
+  <h2 id="s-hover">Hover</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-force="hover" id="b-hover">Refresh</button>
+    <button type="button" class="cap-btn" data-variant="primary" data-force="hover">Save changes</button>
+    <button type="button" class="cap-btn" data-variant="secondary" data-force="hover" id="b-secondary-hover">Preview</button>
+    <button type="button" class="cap-btn" data-variant="danger" data-force="hover">Revoke agent</button>
+    <button type="button" class="cap-btn" data-variant="quiet" data-force="hover" id="b-quiet-hover">Show more</button>
+    <button type="button" class="cap-btn" data-variant="link" data-force="hover">View logs</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-focus">
+  <h2 id="s-focus">Keyboard focus</h2>
+  <p class="cap-muted">Press Tab to reach a button: the ring is 3 px in the accent.</p>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" id="b-focus">Refresh</button>
+    <button type="button" class="cap-btn" data-variant="primary">Save changes</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-pressed">
+  <h2 id="s-pressed">Pressed, and open</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-force="pressed" id="b-pressed">Refresh</button>
+    <button type="button" class="cap-btn" data-variant="primary" data-force="pressed">Save changes</button>
+    <button type="button" class="cap-btn" data-variant="secondary" data-force="pressed">Preview</button>
+    <button type="button" class="cap-btn" data-variant="danger" data-force="pressed" id="b-danger-pressed">Revoke agent</button>
+    <button type="button" class="cap-btn" aria-haspopup="menu" aria-expanded="true" id="b-expanded">Sort by</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-disabled">
+  <h2 id="s-disabled">Disabled, with its reason</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" aria-disabled="true" aria-describedby="why-publish" id="b-disabled">Publish</button>
+    <span class="cap-btn-reason" id="why-publish">Fix the 2 problems above first.</span>
+  </div>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-variant="primary" aria-disabled="true" aria-describedby="why-deploy">Deploy</button>
+    <span class="cap-btn-reason" id="why-deploy">A deploy is already running for foxhound.app.</span>
+  </div>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-variant="secondary" aria-disabled="true" aria-label="Preview, unavailable">Preview</button>
+    <button type="button" class="cap-btn" data-variant="quiet" aria-disabled="true" aria-label="Show more, unavailable">Show more</button>
+    <button type="button" class="cap-btn" data-variant="link" aria-disabled="true" aria-label="View logs, unavailable">View logs</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-invalid">
+  <h2 id="s-invalid">Invalid</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" aria-invalid="true" id="b-invalid">Submit form</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-pending">
+  <h2 id="s-pending">Pending</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" aria-busy="true" id="b-pending"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Refresh</span></button>
+    <button type="button" class="cap-btn" data-variant="primary" aria-busy="true"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Save changes</span></button>
+    <button type="button" class="cap-btn" id="b-pending-twin"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Refresh</span></button>
+  </div>
+  <p class="cap-muted">The last button is the same one at rest: a pending button keeps its width.</p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-icon">
+  <h2 id="s-icon">Icons</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-icon-only aria-label="Refresh sites" id="b-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M13 8a5 5 0 1 1-1.5-3.6M13 2.5V5h-2.5" /></svg>
+    </button>
+    <button type="button" class="cap-btn" data-icon-only data-variant="quiet" aria-label="More actions for foxhound.app">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 7h2v2H3zM7 7h2v2H7zM11 7h2v2h-2z" /></svg>
+    </button>
+    <button type="button" class="cap-btn">
+      <svg data-icon="start" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M8 3v10M3 8h10" /></svg>
+      Add a site
+    </button>
+    <button type="button" class="cap-btn" data-variant="primary">
+      Next
+      <svg data-icon="end" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M6 3l5 5-5 5" /></svg>
+    </button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-links">
+  <h2 id="s-links">A link styled as a button, and a button styled as a link</h2>
+  <div class="cap-specimen-row">
+    <a class="cap-btn" href="#jobs" id="b-link">Open the queue</a>
+    <a class="cap-btn" data-variant="primary" href="#jobs">Write a post</a>
+    <span>Pushed to capsomer-driver. <button type="button" class="cap-link-btn" id="b-linkbtn">Undo</button></span>
+    <button type="button" class="cap-link-btn" data-force="hover">Clear filter</button>
+  </div>
+  <p id="jobs" class="cap-muted">The queue would open here.</p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-group">
+  <h2 id="s-group">Button group</h2>
+  <div class="cap-specimen-row">
+    <div class="cap-btn-group" role="group" aria-label="Page navigation" id="b-group">
+      <button type="button" class="cap-btn">Previous</button>
+      <button type="button" class="cap-btn">Next</button>
+    </div>
+    <div class="cap-btn-group" role="group" aria-label="Post actions">
+      <span class="cap-btn-group-text">12 drafts</span>
+      <button type="button" class="cap-btn">Archive</button>
+      <button type="button" class="cap-btn">Snooze</button>
+    </div>
+    <div class="cap-btn-group" role="group" aria-label="Sort" data-orientation="vertical">
+      <button type="button" class="cap-btn">Newest</button>
+      <button type="button" class="cap-btn">Oldest</button>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div class="cap-specimen-row" data-density="comfortable" id="b-comfortable">
+    <button type="button" class="cap-btn">Refresh</button>
+    <button type="button" class="cap-btn" data-variant="primary">Save changes</button>
+    <button type="button" class="cap-btn" data-variant="secondary">Preview</button>
+    <button type="button" class="cap-btn" data-variant="quiet">Show more</button>
+    <button type="button" class="cap-btn" data-size="xs">Extra small</button>
+    <button type="button" class="cap-btn" data-size="lg">Large</button>
+  </div>
+</section>

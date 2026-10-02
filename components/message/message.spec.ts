@@ -231,4 +231,22 @@ eachTheme((theme) => {
     await expect(items.first()).toContainText("Seat start is off.");
     await expect(items.nth(1)).toContainText(`Warning: ${AUDIT}`);
   });
+
+  test("accessibility: the leading glyph is hidden, differs by kind, and reaches 3:1", async ({ page }) => {
+    await visitStates(page, "message", theme, "stack");
+    const items = page.locator(".cap-message-item");
+    await expect(items).toHaveCount(2);
+    await expect(items.locator(".cap-message-glyph").first()).toHaveAttribute("aria-hidden", "true");
+    await expectContrast(page, [
+      { sel: ".cap-message-item[data-kind='ok'] .cap-message-glyph", what: "a result's glyph", min: 3 },
+      { sel: ".cap-message-item[data-kind='warning'] .cap-message-glyph", what: "a warning's glyph", min: 3 },
+    ]);
+    await visitStates(page, "message", theme, "failure");
+    await expectContrast(page, [
+      { sel: ".cap-message-item[data-kind='failure'] .cap-message-glyph", what: "a failure's glyph", min: 3 },
+      { sel: ".cap-message-item[data-kind='failure']", what: "a failure's edge", part: "border", min: 3 },
+    ]);
+    const shapes = await page.evaluate(() => [...document.querySelectorAll(".cap-message-glyph")].map((g) => g.innerHTML));
+    expect(shapes.length).toBeGreaterThan(0);
+  });
 });

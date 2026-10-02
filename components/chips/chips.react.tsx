@@ -3,6 +3,7 @@ import { useId, useRef, type ReactNode } from "react";
 export interface ChipOption<V extends string> {
   value: V;
   label: ReactNode;
+  disabled?: boolean;
 }
 
 export interface FilterChipsProps<V extends string> {
@@ -17,9 +18,10 @@ export interface FilterChipsProps<V extends string> {
   onChange: (value: V[]) => void;
   // What the filter leaves, in words: "3 of 14 jobs". Announced politely as it changes.
   count: ReactNode;
+  size?: "sm" | "default" | "lg";
 }
 
-export function FilterChips<V extends string>({ label, options, value, onChange, count }: FilterChipsProps<V>) {
+export function FilterChips<V extends string>({ label, options, value, onChange, count, size = "default" }: FilterChipsProps<V>) {
   const labelId = useId();
   const first = useRef<HTMLButtonElement>(null);
   if (options.length > 6) console.warn("FilterChips: chips hold at most six values; use a select or a combobox for more.");
@@ -47,7 +49,7 @@ export function FilterChips<V extends string>({ label, options, value, onChange,
         {label}
       </span>
       {options.map((o, i) => (
-        <button key={o.value} ref={i === 0 ? first : undefined} type="button" className="cap-chip" aria-pressed={pressed.has(o.value)} data-value={o.value} onClick={() => toggle(o.value)}>
+        <button key={o.value} ref={i === 0 ? first : undefined} type="button" className="cap-chip" data-size={size === "default" ? undefined : size} aria-pressed={pressed.has(o.value)} aria-disabled={o.disabled || undefined} data-value={o.value} onClick={() => (o.disabled ? undefined : toggle(o.value))}>
           {o.label}
         </button>
       ))}

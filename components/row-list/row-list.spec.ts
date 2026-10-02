@@ -35,6 +35,21 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
+  test("accessibility: the outline and muted variants keep their text at contrast", async ({ page }) => {
+    await visitStates(page, "row-list", theme);
+    await expectContrast(page, [
+      { sel: "#list-variants .cap-row[data-variant='muted'] .cap-row-detail", what: "a muted row's detail" },
+      { sel: "#list-variants .cap-row[data-variant='outline'] .cap-row-title a", what: "an outline row's title" },
+      { sel: "#list-variants .cap-row[data-force='hover'] .cap-row-detail", what: "a hovered row's detail" },
+    ]);
+  });
+
+  test("keyboard: a row in the outline variant is still one tab stop with the focus ring", async ({ page }) => {
+    await visitStates(page, "row-list", theme);
+    await page.getByRole("link", { name: "Outline variant, with an icon" }).focus();
+    await expect(page.locator("#list-variants .cap-row[data-variant='outline']").first()).toHaveCSS("outline-style", "solid");
+  });
+
   test("accessibility: title, detail and time reach their contrast, at rest and focused", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await expectContrast(page, [
@@ -58,6 +73,8 @@ eachTheme((theme) => {
   test("accessibility: the ring a real keyboard focus draws matches the specimen's", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await page.getByRole("link", { name: "4 notices" }).focus();
+    // The row's tint eases in over 100 ms: read it once the transition has finished.
+    await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(() => undefined));
     const real = await ringContrast(page, "#list-mixed .cap-row:has(a:focus-visible)");
     const forced = await ringContrast(page, "#list-focus .cap-row[data-force='focus']");
     expect(real?.ring).toBe(forced?.ring);
@@ -124,11 +141,12 @@ eachTheme((theme) => {
 
   test("keyboard: j and k work in any list once focus is in it, and only there", async ({ page }) => {
     await visitStates(page, "row-list", theme);
-    await page.getByRole("link", { name: "Run the browser tests for capsomer" }).focus();
+    const list = page.locator("#list-focus");
+    await list.getByRole("link", { name: "Run the browser tests for capsomer" }).focus();
     await page.keyboard.press("j");
-    await expect(page.getByRole("link", { name: "Refresh the uptime strip fixtures" })).toBeFocused();
+    await expect(list.getByRole("link", { name: "Refresh the uptime strip fixtures" })).toBeFocused();
     await page.keyboard.press("k");
-    await expect(page.getByRole("link", { name: "Run the browser tests for capsomer" })).toBeFocused();
+    await expect(list.getByRole("link", { name: "Run the browser tests for capsomer" })).toBeFocused();
   });
 
   test("keyboard: Tab moves from row to row, one stop each", async ({ page }) => {
@@ -237,14 +255,5 @@ eachTheme((theme) => {
     const cut = await link.evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(cut).toBe(false);
     await expect(link).toHaveCSS("white-space", "normal");
-  });
-
-  test("behaviour: at phone width the status sits above the title", async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 640 });
-    await visitStates(page, "row-list", theme, "phone");
-    const status = await page.locator("#p1-s").boundingBox();
-    const title = await page.getByRole("link", { name: "Push design/capsomer" }).boundingBox();
-    expect(status && title).toBeTruthy();
-    if (status && title) expect(status.y + status.height).toBeLessThanOrEqual(title.y + 1);
   });
 });

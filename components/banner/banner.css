@@ -2,41 +2,87 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A banner: a page-level notice, warning or critical, that keeps the last good data on
-   screen below it. An alert: an error beside its source, saying what to do next. Both
-   carry the status glyph (.cap-status-glyph, sized here too so this file stands alone) so
-   shape and word carry the tone. */
+   screen below it. An alert: an error beside its source, saying what to do next. Both are
+   shadcn's Alert: a glyph, a title, a description and an action, in a bordered box. Both carry
+   the status glyph (.cap-status-glyph, sized here too so this file stands alone) so shape and
+   word carry the tone, and colour only repeats it. Tones: neutral, info, ok, warn, crit.
+   A banner with no tone is a warning (0.1's default); an alert with no tone is critical. */
 @layer cap.components {
-  .cap-banner {
+  .cap-banner,
+  .cap-alert {
+    --_tone: var(--warn);
+    --_soft: var(--warn-soft);
+    box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3) var(--space-4);
-    padding: 10px var(--space-4);
-    border: 1px solid var(--warn);
-    border-radius: var(--radius-m);
-    background: var(--warn-soft);
+    align-items: flex-start;
+    gap: var(--space-2) var(--space-4);
+    inline-size: 100%;
+    margin: 0;
+    padding: var(--space-3) var(--pad-x);
+    border: 1px solid var(--_tone);
+    border-radius: var(--radius-l);
+    background: var(--_soft);
     color: var(--text);
+    font-size: var(--text-size);
+    line-height: var(--leading);
+    text-align: start;
 
-    & > .cap-status-glyph {
-      flex: none;
-      width: 14px;
-      height: 14px;
-      color: var(--warn);
+    &[data-tone="neutral"] {
+      --_tone: var(--dim);
+      --_soft: var(--raised);
+    }
+    &[data-tone="info"] {
+      --_tone: var(--info);
+      --_soft: var(--info-soft);
+    }
+    &[data-tone="ok"] {
+      --_tone: var(--ok);
+      --_soft: var(--ok-soft);
+    }
+    &[data-tone="warn"] {
+      --_tone: var(--warn);
+      --_soft: var(--warn-soft);
+    }
+    &[data-tone="crit"] {
+      --_tone: var(--crit);
+      --_soft: var(--crit-soft);
     }
 
-    &[data-tone="crit"] {
-      border-color: var(--crit);
-      background: var(--crit-soft);
+    /* The glyph sits on the first line of the title or text, whatever the text's size. */
+    & > .cap-status-glyph {
+      flex: none;
+      inline-size: 1.15em;
+      block-size: 1.15em;
+      margin-block-start: calc((var(--leading) - 1.15) * 0.5em);
+      color: var(--_tone);
+    }
 
-      & > .cap-status-glyph {
-        color: var(--crit);
+    /* Links in the words are underlined, as shadcn's are, and keep their own colour. */
+    & a:not(.cap-btn) {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      &:hover {
+        text-decoration-thickness: 2px;
       }
     }
   }
 
-  .cap-banner-text {
+  /* The words: one block (title above description) or the plain text of 0.1. */
+  .cap-banner-body,
+  .cap-alert-body {
+    display: grid;
     flex: 1 1 28ch;
-    min-width: 0;
+    gap: var(--space-1);
+    min-inline-size: 0;
+  }
+
+  .cap-banner-text,
+  .cap-alert-text {
+    flex: 1 1 28ch;
+    min-inline-size: 0;
     margin: 0;
 
     & b {
@@ -44,9 +90,24 @@
     }
   }
 
-  .cap-banner-actions {
+  /* Inside a body the description does not claim width of its own. */
+  :is(.cap-banner-body, .cap-alert-body) > :is(.cap-banner-text, .cap-alert-text) {
+    flex: none;
+  }
+
+  .cap-banner-title,
+  .cap-alert-title {
+    margin: 0;
+    font-weight: 600;
+    min-inline-size: 0;
+  }
+
+  .cap-banner-actions,
+  .cap-alert-action {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    align-self: center;
     gap: var(--space-3);
     margin-inline-start: auto;
 
@@ -55,36 +116,41 @@
     }
   }
 
-  /* An alert sits beside the thing that failed: plain words in the critical tone, the
-     glyph first, an action after. */
-  .cap-alert {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: var(--space-2) var(--space-3);
-    margin: 0;
-    color: var(--crit);
-    font-size: var(--text-size);
-
-    & > .cap-status-glyph {
-      flex: none;
-      width: 14px;
-      height: 14px;
-      margin-block-start: 0.2em;
-    }
-
-    & > :is(button, a) {
-      min-block-size: var(--target);
-    }
+  /* An action given as a direct child (0.1's alert) sits at the end, like the action part. */
+  .cap-alert > :is(button, a):not(.cap-alert-action) {
+    align-self: center;
+    margin-inline-start: auto;
+    min-block-size: var(--target);
   }
 
-  .cap-alert-text {
-    flex: 1 1 24ch;
-    min-width: 0;
+  /* A banner is about the page: it sits flush with the content's edge. An alert is about
+     one thing, beside it, and sits close to it. */
+  .cap-alert {
+    margin-block-start: var(--space-3);
+  }
+
+  /* An alert's plain text (0.1's single line) is in the tone's own colour: critical words on
+     the critical tint keep 4.5:1; the title takes the tone's colour too. */
+  .cap-alert[data-tone="crit"],
+  .cap-alert:not([data-tone]) {
+    & .cap-alert-title,
+    & .cap-alert-text {
+      color: var(--crit);
+    }
+  }
+  .cap-alert:is([data-tone="warn"], [data-tone="info"], [data-tone="ok"]) .cap-alert-title {
+    color: var(--_tone);
+  }
+
+  /* Alert default is the critical tone, as in 0.1. */
+  .cap-alert:not([data-tone]) {
+    --_tone: var(--crit);
+    --_soft: var(--crit-soft);
   }
 
   @media (forced-colors: active) {
-    .cap-banner {
+    .cap-banner,
+    .cap-alert {
       border-color: CanvasText;
     }
   }

@@ -2,8 +2,10 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Form fields: a label above, help outside the control, an error beside it with an icon.
-   .cap-input styles input, textarea and select; .cap-check a checkbox or radio with its
-   label. From the Capsid Portal's .field and .siteform (dashboard/src/styles.css). */
+   .cap-input styles input and textarea; .cap-check a checkbox or radio with its label (the
+   box and the tick are drawn here, not by the browser); .cap-input-group an input with
+   addons. Matches shadcn Input, Textarea, Checkbox, RadioGroup, Label, Field and InputGroup.
+   From the Capsid Portal's .field and .siteform (dashboard/src/styles.css). */
 @layer cap.components {
   .cap-field {
     display: grid;
@@ -36,7 +38,8 @@
     font-weight: 500;
   }
 
-  .cap-field-help {
+  .cap-field-help,
+  .cap-field-description {
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-detail);
@@ -76,14 +79,110 @@
     }
   }
 
+  /* A label on its own, outside a .cap-field. */
+  .cap-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    line-height: 1.3;
+    user-select: none;
+  }
+
+  /* A field whose value is wrong: its label takes the error colour too (shadcn's data-invalid). */
+  .cap-field[data-invalid="true"] > .cap-field-label {
+    color: var(--crit);
+  }
+
+  /* Fields side by side: a checkbox or switch beside its words. data-orientation="responsive"
+     stacks until its group is wide enough. */
+  .cap-field[data-orientation="horizontal"] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    &:has(> .cap-field-content) {
+      align-items: flex-start;
+    }
+    & > .cap-field-label {
+      flex: auto;
+    }
+  }
+  .cap-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    width: 100%;
+    container: cap-field-group / inline-size;
+  }
+  .cap-field[data-orientation="responsive"] {
+    @container cap-field-group (min-width: 28rem) {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+
+      &:has(> .cap-field-content) {
+        align-items: flex-start;
+      }
+      & > .cap-field-label {
+        flex: auto;
+      }
+    }
+  }
+  .cap-field-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.35;
+  }
+  .cap-field-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-weight: 500;
+  }
+  /* A line between groups of fields, with an optional word in it. */
+  .cap-field-separator {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+    &:empty::after {
+      display: none;
+    }
+  }
+  fieldset.cap-field > legend.cap-field-label[data-variant="legend"] {
+    font-size: var(--fs-lead);
+  }
+
+  /* The shared ring for a field: the edge in the accent and an opaque 3 px ring. */
+  .cap-input,
+  .cap-input-group {
+    --cap-input-edge: var(--line-strong);
+  }
+
   .cap-input {
     display: block;
+    box-sizing: border-box;
     width: 100%;
     min-width: 0;
     min-height: var(--control);
     margin: 0;
-    padding: 0 10px;
-    border: 1px solid var(--line-strong);
+    padding: 0 calc(var(--pad-x) - 1px);
+    border: 1px solid var(--cap-input-edge);
     border-radius: var(--radius-m);
     background: var(--surface);
     color: var(--text);
@@ -97,37 +196,67 @@
     }
     &:hover,
     &[data-force="hover"] {
-      border-color: var(--muted);
+      --cap-input-edge: var(--muted);
     }
     &:focus-visible {
-      border-color: var(--accent);
+      --cap-input-edge: var(--ring);
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 0;
     }
-    /* Invalid: the edge thickens as well as turning red, and the message beside it says
-       what is wrong. Only aria-invalid, which the behaviour module sets with the message:
-       :user-invalid alone would mark a field red with no words. */
+    /* Invalid: the edge thickens and a soft ring appears as well as turning red, and the
+       message beside it says what is wrong. Only aria-invalid, which the behaviour module
+       sets with the message: :user-invalid alone would mark a field red with no words. */
     &[aria-invalid="true"] {
-      border-color: var(--crit);
-      box-shadow: inset 0 0 0 1px var(--crit);
+      --cap-input-edge: var(--crit);
+      box-shadow:
+        inset 0 0 0 1px var(--crit),
+        0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
     }
     &[readonly] {
       background: var(--sunken);
     }
     &:disabled {
+      --cap-input-edge: var(--line-strong);
       background: var(--sunken);
       color: var(--muted);
       border-style: dashed;
       cursor: not-allowed;
     }
+    /* A file input: the button part reads as a quiet button. */
+    &[type="file"] {
+      padding-inline-start: 4px;
+      line-height: calc(var(--control) - 2px);
+      cursor: pointer;
+    }
+    &::file-selector-button {
+      margin: 0 var(--space-3) 0 0;
+      padding: 2px 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-s);
+      background: var(--raised);
+      color: var(--text);
+      font: inherit;
+      font-size: var(--fs-detail);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    &:disabled::file-selector-button {
+      color: var(--muted);
+      cursor: not-allowed;
+    }
   }
 
   textarea.cap-input {
-    min-height: calc(var(--control) * 2.5);
-    padding-block: 6px;
+    min-height: calc(var(--control) * 2);
+    padding-block: var(--pad-y);
     line-height: var(--leading);
     resize: vertical;
+    /* Grows with its text where the browser can (field-sizing); otherwise the user drags it. */
+    field-sizing: content;
   }
 
-  /* A checkbox or radio with its label. The whole label is the hit area. */
+  /* A checkbox or radio with its label. The whole label is the hit area. The box and the
+     mark are drawn here so the edge, the fill and the tick are the same in every browser. */
   .cap-check {
     display: inline-flex;
     align-items: center;
@@ -137,16 +266,121 @@
     cursor: pointer;
 
     & input {
+      --cap-check-edge: var(--line-strong);
+      appearance: none;
+      position: relative;
       flex: none;
+      box-sizing: border-box;
       width: 16px;
       height: 16px;
       margin: 0;
-      accent-color: var(--accent);
+      border: 1px solid var(--cap-check-edge);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--primary-fg);
       cursor: inherit;
+
+      /* The tick (checkbox) and the dot (radio): drawn with borders and a circle, no image. */
+      &::after {
+        content: "";
+        position: absolute;
+        box-sizing: border-box;
+        opacity: 0;
+      }
+      &[type="checkbox"]::after {
+        left: 4.5px;
+        top: 1px;
+        width: 5px;
+        height: 9px;
+        border: solid currentColor;
+        border-width: 0 2px 2px 0;
+        rotate: 45deg;
+      }
+      &[type="radio"] {
+        border-radius: 50%;
+      }
+      &[type="radio"]::after {
+        inset: 3px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      &:hover:not(:disabled),
+      &[data-force="hover"] {
+        --cap-check-edge: var(--muted);
+      }
+      &:checked,
+      &:indeterminate {
+        --cap-check-edge: var(--primary);
+        background: var(--primary);
+      }
+      &:checked::after {
+        opacity: 1;
+      }
+      /* Mixed: a bar instead of a tick. */
+      &[type="checkbox"]:indeterminate::after {
+        opacity: 1;
+        left: 3px;
+        top: 6px;
+        width: 8px;
+        height: 2px;
+        border-width: 0 0 2px;
+        rotate: none;
+      }
+      &:focus-visible {
+        outline: var(--ring-width) solid var(--ring);
+        outline-offset: 1px;
+      }
+      &[aria-invalid="true"] {
+        --cap-check-edge: var(--crit);
+        box-shadow: 0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
+      }
+      &[aria-invalid="true"]:checked {
+        --cap-check-edge: var(--primary);
+      }
+      &:disabled {
+        --cap-check-edge: var(--line-strong);
+        border-style: dashed;
+        background: var(--sunken);
+        color: var(--muted);
+      }
+      &:disabled:checked,
+      &:disabled:indeterminate {
+        background: var(--sunken);
+        color: var(--muted);
+      }
     }
     &:has(input:disabled) {
       color: var(--muted);
       cursor: not-allowed;
+    }
+
+    /* A choice card: the whole box is the label and the chosen one takes the accent tint
+       (shadcn's field-label with a field inside). */
+    &[data-variant="card"] {
+      align-items: flex-start;
+      box-sizing: border-box;
+      width: 100%;
+      padding: var(--pad-x);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-m);
+
+      & input {
+        margin-top: 1px;
+      }
+      &:hover:not(:has(input:disabled)) {
+        background: var(--raised);
+      }
+      &:has(input:checked) {
+        border-color: var(--accent-line);
+        background: var(--sel);
+      }
+      &:has(input:focus-visible) {
+        outline: var(--ring-width) solid var(--ring);
+        outline-offset: 1px;
+        & input:focus-visible {
+          outline: none;
+        }
+      }
     }
   }
 
@@ -157,9 +391,155 @@
     gap: var(--space-1);
   }
 
+  /* Input group: an input with addons (text, an icon, a button) inside one edge.
+     shadcn InputGroup. The edge, the ring and the invalid state belong to the group. */
+  .cap-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--control);
+    border: 1px solid var(--cap-input-edge);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+
+    &:hover:not(:has(:disabled)) {
+      --cap-input-edge: var(--muted);
+    }
+    &:has(.cap-input:focus-visible) {
+      --cap-input-edge: var(--ring);
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 0;
+    }
+    &:has([aria-invalid="true"]) {
+      --cap-input-edge: var(--crit);
+      box-shadow:
+        inset 0 0 0 1px var(--crit),
+        0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
+    }
+    &:has(.cap-input:disabled) {
+      background: var(--sunken);
+      border-style: dashed;
+    }
+    &:has(> [data-align="block-start"], > [data-align="block-end"]) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    /* The control inside has no edge of its own. */
+    & > .cap-input {
+      flex: 1;
+      min-height: calc(var(--control) - 2px);
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      outline: none;
+    }
+    & > textarea.cap-input {
+      resize: none;
+      padding-block: var(--pad-y);
+    }
+  }
+  .cap-input-addon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding-block: 4px;
+    color: var(--muted);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    cursor: text;
+    user-select: none;
+
+    & > svg {
+      width: 16px;
+      height: 16px;
+      pointer-events: none;
+    }
+    & > kbd {
+      margin: 0;
+    }
+    &[data-align="inline-start"] {
+      order: -1;
+      padding-inline: var(--space-3) 0;
+    }
+    &[data-align="inline-end"] {
+      order: 1;
+      padding-inline: 0 var(--space-3);
+    }
+    &[data-align="block-start"] {
+      order: -1;
+      justify-content: flex-start;
+      padding-inline: calc(var(--pad-x) - 1px);
+      padding-block: var(--space-3) 0;
+    }
+    &[data-align="block-end"] {
+      order: 1;
+      justify-content: flex-start;
+      padding-inline: calc(var(--pad-x) - 1px);
+      padding-block: 0 var(--space-3);
+    }
+    &:has(> .cap-btn) {
+      cursor: default;
+    }
+    /* A button in an addon is small and borderless, as shadcn's InputGroupButton. */
+    & > .cap-btn {
+      box-shadow: none;
+    }
+  }
+  .cap-input-group-text {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-input,
+    .cap-input-group {
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out);
+    }
+    .cap-check input {
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out);
+
+      &::after {
+        transition:
+          opacity var(--dur-fast) var(--ease-out),
+          scale var(--dur-fast) var(--ease-out);
+      }
+      &:not(:checked):not(:indeterminate)::after {
+        scale: 0.6;
+      }
+    }
+  }
+
   @media (forced-colors: active) {
     .cap-input[aria-invalid="true"] {
       border-width: 2px;
+    }
+    .cap-check input {
+      forced-color-adjust: none;
+      border-color: ButtonText;
+      background: Field;
+      color: HighlightText;
+
+      &:checked,
+      &:indeterminate {
+        border-color: Highlight;
+        background: Highlight;
+      }
+      &:disabled {
+        border-color: GrayText;
+      }
     }
     .cap-field-error::before {
       forced-color-adjust: none;

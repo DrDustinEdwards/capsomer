@@ -95,4 +95,31 @@ eachTheme((theme) => {
     await expect(second).toHaveAttribute("open", "");
     await expect(first).not.toHaveAttribute("open", "");
   });
+
+  test("keyboard: an accordion-variant section opens and closes with Enter, one at a time", async ({ page }) => {
+    await visitStates(page, "disclosure", theme);
+    const items = page.locator("#accordion-specimen details");
+    await expect(items.nth(0)).toHaveAttribute("open", "");
+    await items.nth(2).locator("summary").focus();
+    await page.keyboard.press("Enter");
+    await expect(items.nth(2)).toHaveAttribute("open", "");
+    await expect(items.nth(0)).not.toHaveAttribute("open", "");
+  });
+
+  test("accessibility: a summary in the accordion variant and a pressed one keep their contrast", async ({ page }) => {
+    await visitStates(page, "disclosure", theme);
+    await expectContrast(page, [
+      { sel: "#accordion-specimen summary", what: "an accordion summary" },
+      { sel: "#accordion-specimen details[open] .cap-disclosure-body p", what: "an accordion panel's text" },
+      { sel: "summary[data-force='pressed']", what: "a pressed summary" },
+      { sel: ".cap-group-toggle[data-force='pressed']", what: "a pressed group row" },
+    ]);
+  });
+
+  test("accessibility: a disabled group row is not operable and keeps its state", async ({ page }) => {
+    await visitStates(page, "disclosure", theme);
+    const btn = page.getByRole("button", { name: /^Archived/ });
+    await expect(btn).toBeDisabled();
+    await expect(btn).toHaveAttribute("aria-expanded", "false");
+  });
 });

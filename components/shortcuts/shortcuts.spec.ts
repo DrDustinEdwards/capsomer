@@ -10,7 +10,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["page", "open", "off"]) {
+  for (const id of ["page", "open", "off", "comfortable"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "shortcuts", theme, id);
       await expectNoAxeViolations(page);
@@ -21,10 +21,9 @@ eachTheme((theme) => {
     await visitStates(page, "shortcuts", theme, "open");
     await expect(sheet(page)).toBeVisible();
     await expectContrast(page, [
-      { sel: ".cap-keys-title", what: "the sheet's title" },
+      { sel: ".cap-dialog-title", what: "the sheet's title" },
       { sel: ".cap-keys-group-title", what: "a group heading" },
       { sel: ".cap-keys-list kbd", what: "a key cap" },
-      { sel: ".cap-keys-list kbd", what: "a key cap's boundary", part: "border", min: 3 },
       { sel: ".cap-keys-list dd", what: "a shortcut's label" },
       { sel: ".cap-keys-about", what: "what a command is for, under its name" },
       { sel: ".cap-keys-note", what: "the note under the switch" },
@@ -36,11 +35,11 @@ eachTheme((theme) => {
     await expect(sheet(page)).toMatchAriaSnapshot(`
       - dialog "Keyboard shortcuts":
         - heading "Keyboard shortcuts" [level=2]
-        - button "Close"
         - heading "General" [level=3]
         - heading "Go to" [level=3]
         - heading "Actions" [level=3]
         - switch "Single-key shortcuts" [checked]
+        - button "Close"
     `);
   });
 

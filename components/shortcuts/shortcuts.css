@@ -1,54 +1,42 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The keyboard shortcut sheet: a native <dialog> listing every registered shortcut by group,
-   with the switch that turns single-key shortcuts off. Written for Capsomer's tokens from
-   the Capsid Portal's HelpSheet (dashboard/src/app/HelpSheet.tsx, styles.css ".help"): the
-   Portal's sheet is one fixed list, here it is grouped from the registry; the "about" line
-   under a name is the Portal's ".help .about". */
+/* The key cap, and the keyboard shortcut sheet. The key cap is every <kbd> and .cap-kbd: a
+   small rounded cap on the sunken surface, in the interface face (shadcn/ui Kbd, nova: h-5,
+   rounded-sm, muted on muted, text-xs, medium weight; the 3 px key edge is not needed, a
+   key is not a control). The sheet is the shared dialog (components/dialog) listing every
+   registered shortcut by group, with the switch that turns single-key shortcuts off; the
+   surface, header, Close, body and footer are the dialog's. Extracted from the Capsid
+   Portal's HelpSheet (dashboard/src/app/HelpSheet.tsx, ".help .about"). */
 @layer cap.components {
-  .cap-keys {
-    width: min(560px, calc(100% - 2 * var(--space-5)));
-    max-width: none;
-    max-height: calc(100dvh - 2 * var(--space-5));
-    margin: auto;
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-l);
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: var(--shadow);
-
-    &[open] {
-      display: flex;
-      flex-direction: column;
-    }
-    &::backdrop {
-      background: var(--scrim);
-    }
-  }
-
-  .cap-keys-head {
-    display: flex;
+  kbd,
+  .cap-kbd {
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-4) var(--space-5);
-    border-bottom: 1px solid var(--line);
+    justify-content: center;
+    gap: var(--space-2);
+    box-sizing: border-box;
+    min-inline-size: calc(var(--fs-detail) + 8px);
+    padding: var(--space-2);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: var(--sunken);
+    color: var(--muted);
+    font: 500 var(--fs-detail) / 1 var(--ui);
+    white-space: nowrap;
+    user-select: none;
   }
-  .cap-keys-title {
-    flex: 1;
-    margin: 0;
-    font-size: var(--fs-lead);
-    font-weight: 800;
-    letter-spacing: -0.02em;
+  /* Caps that belong together: "g" then "o". */
+  .cap-kbd-group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
   }
 
+  /* The body is the shared dialog's scrolling part; the groups are laid out in it, and it is the
+     container the list's columns answer to. */
   .cap-keys-body {
-    display: grid;
     gap: var(--space-5);
-    padding: var(--space-4) var(--space-5);
-    overflow-y: auto;
     container-type: inline-size;
   }
   .cap-keys-group {
@@ -77,8 +65,8 @@
     & dt {
       display: flex;
       flex-wrap: wrap;
-      align-items: baseline;
-      gap: var(--space-1);
+      align-items: center;
+      gap: var(--space-2);
       color: var(--muted);
       font-size: var(--fs-detail);
     }
@@ -103,34 +91,11 @@
   .cap-keys-foot {
     display: grid;
     gap: var(--space-2);
-    padding: var(--space-4) var(--space-5);
-    border-top: 1px solid var(--line);
-    background: var(--raised);
   }
   .cap-keys-note {
     margin: 0;
     font-size: var(--fs-detail);
     color: var(--muted);
     max-width: 60ch;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-keys {
-      transition:
-        opacity var(--dur-base) var(--ease-out),
-        transform var(--dur-base) var(--ease-out);
-    }
-    @starting-style {
-      .cap-keys[open] {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-    }
-  }
-
-  @media (forced-colors: active) {
-    .cap-keys {
-      border-color: CanvasText;
-    }
   }
 }

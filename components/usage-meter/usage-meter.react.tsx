@@ -1,5 +1,7 @@
-import { useLayoutEffect, useRef, type ReactNode } from "react";
-import { assess, widths, type UsageAssessment } from "./usage-meter.ts";
+import type { ReactNode } from "react";
+import { Meter } from "../meter/meter.react.tsx";
+import { Glyph } from "../status/status.react.tsx";
+import { assess, type UsageAssessment } from "./usage-meter.ts";
 
 export interface UsageItem {
   id: string;
@@ -28,63 +30,29 @@ export interface UsageMeterProps {
   legend?: boolean;
 }
 
-const WarnGlyph = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path fill="currentColor" d="M8 1.2 15.4 14H.6z" />
-    <path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" />
-  </svg>
-);
-
-const CritGlyph = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" />
-    <path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" />
-  </svg>
-);
-
 function UsageRow({ item, a, stale }: { item: UsageItem; a: UsageAssessment; stale: boolean }) {
-  const bar = useRef<HTMLDivElement>(null);
-  const w = widths(item.used, item.limit, a.projectedAtReset);
-  // Widths through the CSSOM: no style prop, so a server render keeps style-src 'self'.
-  useLayoutEffect(() => {
-    bar.current?.style.setProperty("--used", `${w.used}%`);
-    bar.current?.style.setProperty("--projected", `${w.projected}%`);
-  }, [w.used, w.projected]);
-  const nameId = `cap-usage-${item.id}`;
   const spoken = `${item.amountSpoken ?? item.amount}, ${a.projection}${stale ? ", reading is stale" : ""}`;
+  // The row is the shared meter (components/meter): its bar, tone word and amount; the why
+  // line goes after the bar.
   return (
-    <li className="cap-usage-item" data-tone={a.tone}>
-      <div className="cap-usage-top">
-        <span className="cap-usage-name" id={nameId}>
-          {item.name}
-        </span>
-        {a.tone !== "ok" && (
-          <span className="cap-status" data-tone={a.tone}>
-            {a.tone === "crit" ? <CritGlyph /> : <WarnGlyph />}
-            {a.label}
-          </span>
-        )}
-        <span className="cap-usage-value">{item.amount}</span>
-      </div>
-      <div
-        ref={bar}
-        className="cap-usage-bar"
-        role="meter"
-        aria-labelledby={nameId}
-        aria-valuemin={0}
-        aria-valuemax={item.limit}
-        aria-valuenow={item.used}
-        aria-valuetext={spoken}
-        data-projected={a.projectedAtReset == null ? undefined : Math.round(a.projectedAtReset)}
-      >
-        <span className="cap-usage-projected" />
-        <span className="cap-usage-used" />
-      </div>
-      <p className="cap-usage-why">
-        <strong className="cap-usage-lead">{a.lead}</strong>
-        {a.text.slice(a.lead.length)}
-      </p>
-    </li>
+    <Meter
+      as="li"
+      className="cap-usage-item"
+      label={item.name}
+      value={item.used}
+      max={item.limit}
+      display={item.amount}
+      valueText={spoken}
+      tone={a.tone}
+      words={{ warn: a.label, crit: a.label }}
+      projected={a.projectedAtReset == null ? undefined : Math.round(a.projectedAtReset)}
+      after={
+        <p className="cap-usage-why">
+          <strong className="cap-usage-lead">{a.lead}</strong>
+          {a.text.slice(a.lead.length)}
+        </p>
+      }
+    />
   );
 }
 
@@ -95,7 +63,7 @@ export function UsageMeter({ items, now = Date.now(), freshness, stale = false, 
         <p className="cap-usage-fresh" data-stale={stale ? "" : undefined}>
           {stale && (
             <span className="cap-status" data-tone="warn">
-              <WarnGlyph />
+              <Glyph name="warn" />
               Stale
             </span>
           )}

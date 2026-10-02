@@ -27,6 +27,22 @@ eachTheme((theme) => {
     ]);
   });
 
+  test("accessibility: the current link is accent text, and the states reach their contrast", async ({ page }) => {
+    await visitStates(page, "anchor-bar", theme);
+    await expectContrast(page, [
+      { sel: "#anchor-states a[aria-current='location']", what: "the current link in accent text" },
+      { sel: "#anchor-states a[data-force='hover']", what: "a hovered link" },
+      { sel: "#anchor-states a[data-force='pressed']", what: "a pressed link" },
+    ]);
+  });
+
+  test("behaviour: the current link shows a bar, not colour alone", async ({ page }) => {
+    await visitStates(page, "anchor-bar", theme);
+    const bar = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el, "::after").opacity);
+    expect(await bar("#anchor-states a[aria-current='location']")).toBe("1");
+    expect(await bar("#anchor-states li:first-child a")).toBe("0");
+  });
+
   test("accessibility: the bar's roles and names", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "top");
     await expect(bar(page)).toMatchAriaSnapshot(`

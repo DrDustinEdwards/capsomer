@@ -4,7 +4,9 @@
 /* The "On this page" bar: links to a long view's sections, sticky at the top, the current
    one marked. Quiet: on the ground tone with no frame, and the current link told by a text
    colour and an underline, not a tinted pill (the Portal's .anchors, dashboard/src/styles.css:
-   "pinned to the top of main on a long view, on the ground tone"). */
+   "pinned to the top of main on a long view, on the ground tone"). Rebuilt in 0.2 to the
+   look of shadcn's Tabs, line variant: transparent triggers in muted text, the hovered one
+   in full text, the current one with a 2 px bar under it that fades in. */
 @layer cap.components {
   .cap-anchors {
     position: sticky;
@@ -14,7 +16,7 @@
     align-items: center;
     gap: var(--space-3);
     min-width: 0;
-    padding-block: calc(var(--space-2) + var(--space-1));
+    padding-block: var(--space-3);
     background: var(--ground);
   }
   .cap-anchors-label {
@@ -38,33 +40,50 @@
     scrollbar-width: thin;
 
     & a {
+      position: relative;
       display: flex;
       align-items: center;
-      min-height: var(--target);
-      padding: 0 var(--space-3);
+      min-height: max(var(--target), calc(var(--control) - var(--space-3)));
+      padding: 0 var(--pad-x);
+      border-radius: var(--radius-m);
       color: var(--muted);
       font-size: var(--fs-detail);
       font-weight: 500;
       text-decoration: none;
       white-space: nowrap;
 
+      /* The line variant's bar: 2 px under the link, shown on the current one. A bar, not a
+         text decoration, so it can fade in and still tells the current section by more
+         than colour. */
+      &::after {
+        content: "";
+        position: absolute;
+        inset-inline: var(--pad-x);
+        inset-block-end: 0;
+        block-size: 2px;
+        border-radius: var(--radius-full);
+        background: var(--accent);
+        opacity: 0;
+      }
+
       &:hover,
-      &[data-force="hover"] {
+      &[data-force="hover"],
+      &:active,
+      &[data-force="pressed"] {
         color: var(--text);
       }
       /* Inside the ring's own box, so the scrolling list does not clip it. */
       &:focus-visible {
         outline-offset: -2px;
       }
-      /* The current section: the text's own colour and a 2 px accent underline, so it is not
-         told by colour alone. An underline, not a border, so forced colours keep the
-         difference between it and the others. */
+      /* The current section: accent text (step 11, 4.5:1) and the bar. */
       &[aria-current="location"] {
-        color: var(--text);
-        text-decoration: underline;
-        text-decoration-thickness: 2px;
-        text-underline-offset: 6px;
-        text-decoration-color: var(--accent);
+        color: var(--accent-text);
+        font-weight: 600;
+
+        &::after {
+          opacity: 1;
+        }
       }
     }
   }
@@ -77,6 +96,16 @@
     scroll-margin-top: calc(var(--cap-anchors-h, 48px) + env(safe-area-inset-top, 0px) + var(--space-4));
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-anchors-list a {
+      transition: color var(--dur-fast) var(--ease-out);
+
+      &::after {
+        transition: opacity var(--dur-base) var(--ease-out);
+      }
+    }
+  }
+
   @media (max-width: 560px) {
     .cap-anchors-label {
       display: none;
@@ -84,8 +113,9 @@
   }
 
   @media (forced-colors: active) {
-    .cap-anchors-list a[aria-current="location"] {
-      text-decoration-color: LinkText;
+    .cap-anchors-list a[aria-current="location"]::after {
+      forced-color-adjust: none;
+      background: LinkText;
     }
   }
 }

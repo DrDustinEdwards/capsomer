@@ -9,7 +9,7 @@ async function activeName(page: Page): Promise<string> {
   return page.evaluate(() => {
     const input = document.querySelector("[role='combobox']");
     const id = input?.getAttribute("aria-activedescendant");
-    return (id && document.getElementById(id)?.querySelector(".cap-cmd-option-label")?.textContent) || "";
+    return (id && document.getElementById(id)?.querySelector(".cap-option-label")?.textContent) || "";
   });
 }
 
@@ -28,7 +28,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["closed", "open", "filtered", "stops", "nomatch", "active"]) {
+  for (const id of ["closed", "open", "comfortable", "filtered", "stops", "nomatch", "active"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "command-menu", theme, id);
       await expectNoAxeViolations(page);
@@ -39,20 +39,19 @@ eachTheme((theme) => {
     await visitStates(page, "command-menu", theme, "active");
     await expect(menu(page)).toBeVisible();
     await expectContrast(page, [
-      { sel: ".cap-cmd-option[aria-selected='true'] .cap-cmd-option-label", what: "the active option on accent-soft" },
-      { sel: ".cap-cmd-option[aria-selected='false'] .cap-cmd-option-label", what: "an option" },
-      { sel: ".cap-cmd-option[aria-selected='true'] kbd", what: "a key cap in the active option" },
-      { sel: ".cap-cmd-option[aria-selected='false'] kbd", what: "a key cap" },
-      { sel: ".cap-cmd-option kbd", what: "a key cap's boundary", part: "border" },
-      { sel: ".cap-cmd-group-title", what: "a group heading" },
-      { sel: ".cap-cmd-label", what: "the input's label" },
+      { sel: ".cap-option[data-active] .cap-option-label", what: "the active option on accent-soft" },
+      { sel: ".cap-option:not([data-active]) .cap-option-label", what: "an option" },
+      { sel: ".cap-option[data-active] kbd", what: "a key cap in the active option" },
+      { sel: ".cap-option:not([data-active]) kbd", what: "a key cap" },
+      { sel: ".cap-listbox-label", what: "a group heading" },
       { sel: ".cap-cmd-input", what: "typed text" },
+      { sel: ".cap-cmd-search", what: "the search field's boundary", part: "border" },
       { sel: ".cap-cmd-foot", what: "the key hints" },
     ]);
     await visitStates(page, "command-menu", theme, "stops");
-    await expectContrast(page, [{ sel: ".cap-cmd-hint", what: "a stop's hint" }]);
+    await expectContrast(page, [{ sel: ".cap-option-hint", what: "a stop's hint" }]);
     await visitStates(page, "command-menu", theme, "nomatch");
-    await expectContrast(page, [{ sel: ".cap-cmd-empty", what: "the no-match line" }]);
+    await expectContrast(page, [{ sel: ".cap-listbox-empty", what: "the no-match line" }]);
   });
 
   test("accessibility: the menu's roles and names", async ({ page }) => {
@@ -62,7 +61,7 @@ eachTheme((theme) => {
         - combobox "Search commands" [expanded]
         - listbox "Commands":
           - group "Go to":
-            - option /Overview\\s*,\\s*shortcut g o/ [selected]
+            - option /Overview\\s*,\\s*shortcut g o/
             - option /Sites/
             - option /Queue/
           - group "Stop":
@@ -99,7 +98,9 @@ eachTheme((theme) => {
     expect(await activeName(page)).toBe("Overview");
     await page.keyboard.press("ArrowDown");
     expect(await activeName(page)).toBe("Sites");
-    await expect(page.getByRole("option", { name: /Sites/ })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("option", { name: /Sites/ })).toHaveAttribute("data-active", "");
+    // The active option is not a chosen one: nothing here is aria-selected.
+    await expect(page.locator("[role='option'][aria-selected]")).toHaveCount(0);
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowUp");
     expect(await activeName(page)).toBe("Sites");
@@ -136,7 +137,7 @@ eachTheme((theme) => {
     expect(await activeName(page)).toBe("Overview");
     await box(page).fill("zebra");
     await expect(shownOptions(page)).toHaveCount(0);
-    await expect(menu(page).getByRole("status")).toHaveText("No commands match “zebra”");
+    await expect(menu(page).locator(".cap-listbox-empty")).toHaveText("No commands match “zebra”");
     await expect(box(page)).toHaveAttribute("aria-expanded", "false");
     await expect(box(page)).not.toHaveAttribute("aria-activedescendant", /.+/);
   });
@@ -180,6 +181,6 @@ eachTheme((theme) => {
     await expect(box(page)).toHaveValue("ck");
     await expect(shownOptions(page)).toHaveCount(3);
     await visitStates(page, "command-menu", theme, "nomatch");
-    await expect(menu(page).getByRole("status")).toHaveText("No commands match “deploy to vercel”");
+    await expect(menu(page).locator(".cap-listbox-empty")).toHaveText("No commands match “deploy to vercel”");
   });
 });

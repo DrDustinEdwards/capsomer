@@ -38,6 +38,13 @@ export function groupOf(control: Control): Control[] {
   return [control];
 }
 
+// The control a check is about: the select behind an enhanced select's button.
+function controlOf(el: unknown): Control | null {
+  if (isControl(el)) return el;
+  if (el instanceof HTMLElement && el.classList.contains("cap-select-trigger")) return el.closest(".cap-select-wrap")?.querySelector<HTMLSelectElement>("select.cap-select") ?? null;
+  return null;
+}
+
 export function errorFor(control: Control): HTMLElement | null {
   return control.closest(".cap-field")?.querySelector<HTMLElement>(".cap-field-error") ?? null;
 }
@@ -53,6 +60,7 @@ function describe(control: Control, id: string): void {
 export function showError(control: Control, text: string, announce = false): void {
   const el = errorFor(control);
   for (const c of groupOf(control)) c.setAttribute("aria-invalid", "true");
+  control.closest(".cap-field")?.setAttribute("data-invalid", "true");
   if (!el) return;
   if (!el.id) el.id = `cap-field-error-${++serial}`;
   for (const c of groupOf(control)) describe(c, el.id);
@@ -64,6 +72,7 @@ export function showError(control: Control, text: string, announce = false): voi
 
 export function clearError(control: Control): void {
   for (const c of groupOf(control)) c.removeAttribute("aria-invalid");
+  control.closest(".cap-field")?.removeAttribute("data-invalid");
   const el = errorFor(control);
   if (!el) return;
   el.removeAttribute("role");
@@ -98,11 +107,28 @@ export function validateForm(form: HTMLFormElement): boolean {
   return first === null;
 }
 
+// A click on an input group's text or icon addon puts the cursor in its field, as a click
+// on the field itself would (a button in the addon keeps its own click).
+function groupClick(e: MouseEvent): void {
+  const target = e.target as HTMLElement | null;
+  const addon = target?.closest<HTMLElement>(".cap-input-addon");
+  if (!addon || target?.closest("button, a, input, select, textarea")) return;
+  addon.parentElement?.querySelector<HTMLElement>("input, textarea")?.focus();
+}
+
 // Attaches to every form[data-cap="field"] under root that is not attached yet. The form
 // gets novalidate, so the browser's own bubbles give way to the messages beside the
 // fields. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
+  for (const group of root.querySelectorAll<HTMLElement>(".cap-input-group:not([data-cap-ready])")) {
+    group.dataset.capReady = "";
+    group.addEventListener("click", groupClick);
+    undo.push(() => {
+      group.removeEventListener("click", groupClick);
+      delete group.dataset.capReady;
+    });
+  }
   for (const form of root.querySelectorAll<HTMLFormElement>("form[data-cap='field']:not([data-cap-ready])")) {
     form.dataset.capReady = "";
     const hadNoValidate = form.noValidate;
@@ -118,8 +144,8 @@ export function enhance(root: ParentNode = document): () => void {
       if (c.getAttribute("aria-invalid") === "true") validate(c);
     };
     const onLeave = (e: FocusEvent) => {
-      const c = e.target;
-      if (isControl(c) && c.dataset.capDirty !== undefined && c.willValidate) validate(c);
+      const c = controlOf(e.target);
+      if (c && c.dataset.capDirty !== undefined && c.willValidate) validate(c);
     };
     // Capture, and stopped there, so an app's own submit handler runs only for a valid form.
     const onSubmit = (e: SubmitEvent) => {
