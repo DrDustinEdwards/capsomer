@@ -1,0 +1,37 @@
+<section class="cap-specimen" aria-labelledby="s-hidden">
+  <h2 id="s-hidden">Hidden: hover or focus the button</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-cap-tip="tip-retry" id="sample-retry">Retry job</button>
+    <div class="cap-tip" id="tip-retry" popover="manual" role="tooltip">Runs job_7c21 again with the same inputs. Its last run failed at 14:02.</div>
+    <button type="button" class="cap-btn" id="sample-next">Cancel job</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-hover">
+  <h2 id="s-hover">Shown on hover</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-cap-tip="tip-copy" data-specimen-open>Copy commit</button>
+    <div class="cap-tip" id="tip-copy" popover="manual" role="tooltip">Copies 366b902 to the clipboard.</div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-focus">
+  <h2 id="s-focus">Shown on focus</h2>
+  <div class="cap-specimen-row">
+    <a href="#s-focus" data-cap-tip="tip-site" data-specimen-open>foxhound.app</a>
+    <div class="cap-tip" id="tip-site" popover="manual" role="tooltip">3 failed checks since 13:40. It last answered at 14:02.</div>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance, place } from "./tooltip.ts";
+  enhance();
+  // Specimen only: open the tips whose state is "shown", without the module's
+  // one-at-a-time rule, so both can be seen together.
+  for (const trigger of document.querySelectorAll("[data-specimen-open]")) {
+    const tip = document.getElementById(trigger.dataset.capTip);
+    if (!tip) continue;
+    tip.showPopover();
+    place(trigger, tip);
+  }
+</script>

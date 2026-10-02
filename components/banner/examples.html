@@ -1,0 +1,47 @@
+<section class="cap-specimen" aria-labelledby="s-warn">
+  <h2 id="s-warn">Warning banner with an action, over the last good data</h2>
+  <div class="cap-banner" data-tone="warn" role="status" id="sample-warn">
+    <svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>
+    <p class="cap-banner-text">Could not refresh. Showing data from 4 minutes ago.</p>
+    <div class="cap-banner-actions"><button type="button" class="cap-btn">Try again</button></div>
+  </div>
+  <ul aria-label="Sites, as of 4 minutes ago">
+    <li>dustinedwards.info: up, 212 ms</li>
+    <li>carrel.app: up, 340 ms</li>
+    <li>foxhound.app: 3 failed checks</li>
+  </ul>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-crit">
+  <h2 id="s-crit">Critical banner</h2>
+  <div class="cap-banner" data-tone="crit" role="alert" id="sample-crit">
+    <svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>
+    <p class="cap-banner-text"><b>Signed out.</b> Your session ended at 14:02. Sign in again to keep working; nothing you typed is lost.</p>
+    <div class="cap-banner-actions"><a class="cap-btn" href="#s-crit">Sign in</a></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-alert">
+  <h2 id="s-alert">Inline alert beside its source</h2>
+  <div>
+    <button type="button" class="cap-btn" aria-describedby="sample-alert">Save schedule</button>
+  </div>
+  <div class="cap-alert" role="alert" id="sample-alert">
+    <svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>
+    <span class="cap-alert-text">Could not save the schedule: the server did not answer. Your changes are kept here; save again in a minute.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-dismiss">
+  <h2 id="s-dismiss">Banner with Dismiss</h2>
+  <div class="cap-banner" data-tone="warn" role="status" data-cap="banner" id="sample-dismiss">
+    <svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>
+    <p class="cap-banner-text">The usage numbers for D1 are a day behind while Cloudflare's analytics catch up.</p>
+    <div class="cap-banner-actions"><button type="button" class="cap-btn" data-variant="quiet" data-cap-part="dismiss">Dismiss</button></div>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./banner.ts";
+  enhance();
+</script>

@@ -1,0 +1,134 @@
+<section class="cap-specimen" aria-labelledby="s-on-track">
+  <h2 id="s-on-track">On track</h2>
+  <div class="cap-usage" data-cap="usage-meter">
+    <ul class="cap-usage-list">
+      <li class="cap-usage-item" data-tone="ok">
+        <div class="cap-usage-top">
+          <span class="cap-usage-name" id="u-requests">Worker requests</span>
+          <span class="cap-usage-value">61,400 of 100,000 today</span>
+        </div>
+        <div class="cap-usage-bar" role="meter" aria-labelledby="u-requests" aria-valuemin="0" aria-valuemax="100000" aria-valuenow="61400" aria-valuetext="61,400 of 100,000 requests today, projected 87 percent by the reset" data-projected="86682">
+          <span class="cap-usage-projected"></span><span class="cap-usage-used"></span>
+        </div>
+        <p class="cap-usage-why"><strong class="cap-usage-lead">On track</strong>: about 87% by the reset at 00:00 UTC, in 7 hours.</p>
+      </li>
+    </ul>
+    <ul class="cap-usage-legend" aria-label="Key">
+      <li><span class="cap-usage-key" data-key="used" aria-hidden="true"></span>Solid: used</li>
+      <li><span class="cap-usage-key" data-key="projected" aria-hidden="true"></span>Hatched: where the day ends at the current rate</li>
+    </ul>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-runs-out">
+  <h2 id="s-runs-out">Will run out before the reset</h2>
+  <div class="cap-usage" data-cap="usage-meter">
+    <ul class="cap-usage-list">
+      <li class="cap-usage-item" data-tone="warn">
+        <div class="cap-usage-top">
+          <span class="cap-usage-name" id="u-d1-read">D1 rows read</span>
+          <span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Runs out before the reset</span>
+          <span class="cap-usage-value">3.7 million of 5 million today</span>
+        </div>
+        <div class="cap-usage-bar" role="meter" aria-labelledby="u-d1-read" aria-valuemin="0" aria-valuemax="5000000" aria-valuenow="3700000" aria-valuetext="3.7 million of 5 million rows read today, projected to run out in about 6 hours, before the reset" data-projected="5223529">
+          <span class="cap-usage-projected"></span><span class="cap-usage-used"></span>
+        </div>
+        <p class="cap-usage-why"><strong class="cap-usage-lead">Full in about 6 hours</strong>, 1 hour before the reset. At the limit, reads fail until 00:00 UTC.</p>
+      </li>
+    </ul>
+    <ul class="cap-usage-legend" aria-label="Key">
+      <li><span class="cap-usage-key" data-key="used" aria-hidden="true"></span>Solid: used</li>
+      <li><span class="cap-usage-key" data-key="projected" aria-hidden="true"></span>Hatched: where the day ends at the current rate</li>
+    </ul>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-nearly-out">
+  <h2 id="s-nearly-out">Nearly out</h2>
+  <div class="cap-usage" data-cap="usage-meter">
+    <ul class="cap-usage-list">
+      <li class="cap-usage-item" data-tone="crit">
+        <div class="cap-usage-top">
+          <span class="cap-usage-name" id="u-kv">KV writes</span>
+          <span class="cap-status" data-tone="crit"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Nearly out</span>
+          <span class="cap-usage-value">962 of 1,000 today</span>
+        </div>
+        <div class="cap-usage-bar" role="meter" aria-labelledby="u-kv" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="962" aria-valuetext="962 of 1,000 writes today, projected to run out in about 40 minutes, before the reset" data-projected="1358">
+          <span class="cap-usage-projected"></span><span class="cap-usage-used"></span>
+        </div>
+        <p class="cap-usage-why"><strong class="cap-usage-lead">38 writes left.</strong> Full in about 40 minutes. At the limit, the watcher cannot save its pass until 00:00 UTC.</p>
+      </li>
+    </ul>
+    <ul class="cap-usage-legend" aria-label="Key">
+      <li><span class="cap-usage-key" data-key="used" aria-hidden="true"></span>Solid: used</li>
+      <li><span class="cap-usage-key" data-key="projected" aria-hidden="true"></span>Hatched: where the day ends at the current rate</li>
+    </ul>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-no-projection">
+  <h2 id="s-no-projection">No projection yet</h2>
+  <div class="cap-usage" data-cap="usage-meter">
+    <ul class="cap-usage-list">
+      <li class="cap-usage-item" data-tone="ok">
+        <div class="cap-usage-top">
+          <span class="cap-usage-name" id="u-d1-written">D1 rows written</span>
+          <span class="cap-usage-value">18,200 of 100,000 today</span>
+        </div>
+        <div class="cap-usage-bar" role="meter" aria-labelledby="u-d1-written" aria-valuemin="0" aria-valuemax="100000" aria-valuenow="18200" aria-valuetext="18,200 of 100,000 rows written today, no projection yet">
+          <span class="cap-usage-projected"></span><span class="cap-usage-used"></span>
+        </div>
+        <p class="cap-usage-why"><strong class="cap-usage-lead">No projection</strong>: 2 days of history, 7 needed.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-stale">
+  <h2 id="s-stale">Stale reading, in a panel</h2>
+  <section class="cap-panel" aria-labelledby="p-usage">
+    <header class="cap-panel-head">
+      <h3 id="p-usage">Usage against free limits</h3>
+      <span class="cap-panel-src">Cloudflare</span>
+    </header>
+    <div class="cap-panel-body">
+      <div class="cap-usage" data-cap="usage-meter">
+        <p class="cap-usage-fresh" data-stale>
+          <span class="cap-status" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Stale</span>
+          <span>Read <time class="cap-time" datetime="2026-09-30T14:00Z">3 hours ago</time>. Usage has likely grown since.</span>
+        </p>
+        <ul class="cap-usage-list">
+          <li class="cap-usage-item" data-tone="ok">
+            <div class="cap-usage-top">
+              <span class="cap-usage-name" id="u-stale-requests">Worker requests</span>
+              <span class="cap-usage-value">44,100 of 100,000 today</span>
+            </div>
+            <div class="cap-usage-bar" role="meter" aria-labelledby="u-stale-requests" aria-valuemin="0" aria-valuemax="100000" aria-valuenow="44100" aria-valuetext="44,100 of 100,000 requests today, projected 76 percent by the reset, read 3 hours ago" data-projected="75600">
+              <span class="cap-usage-projected"></span><span class="cap-usage-used"></span>
+            </div>
+            <p class="cap-usage-why"><strong class="cap-usage-lead">On track</strong>: about 76% by the reset at 00:00 UTC, in 10 hours.</p>
+          </li>
+          <li class="cap-usage-item" data-tone="ok">
+            <div class="cap-usage-top">
+              <span class="cap-usage-name" id="u-stale-r2">R2 storage</span>
+              <span class="cap-usage-value">1.2 GB of 10 GB</span>
+            </div>
+            <div class="cap-usage-bar" role="meter" aria-labelledby="u-stale-r2" aria-valuemin="0" aria-valuemax="10" aria-valuenow="1.2" aria-valuetext="1.2 of 10 gigabytes stored, no projection yet, read 3 hours ago">
+              <span class="cap-usage-projected"></span><span class="cap-usage-used"></span>
+            </div>
+            <p class="cap-usage-why"><strong class="cap-usage-lead">No projection</strong>: 2 days of history, 7 needed. This total does not reset.</p>
+          </li>
+        </ul>
+        <ul class="cap-usage-legend" aria-label="Key">
+          <li><span class="cap-usage-key" data-key="used" aria-hidden="true"></span>Solid: used</li>
+          <li><span class="cap-usage-key" data-key="projected" aria-hidden="true"></span>Hatched: where the day ends at the current rate</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</section>
+
+<script type="module">
+  import { enhance } from "./usage-meter.ts";
+  enhance();
+</script>

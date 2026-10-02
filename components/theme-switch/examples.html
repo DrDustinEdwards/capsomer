@@ -1,0 +1,51 @@
+<template data-specimen="first" data-title="First visit: follows the system, nothing remembered" data-height="200">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Settings</h1>
+    <fieldset class="cap-seg cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-first">
+      <legend class="cap-sr-only">Theme</legend>
+      <div class="cap-seg-options">
+        <label><input type="radio" name="theme" value="light" />Light</label>
+        <label><input type="radio" name="theme" value="dark" />Dark</label>
+      </div>
+    </fieldset>
+    <p>No choice made yet: the page follows the operating system's setting, and the control shows which theme that is.</p>
+  </main>
+</template>
+
+<template data-specimen="light" data-title="Light selected" data-height="200">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Settings</h1>
+    <fieldset class="cap-seg cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-light">
+      <legend class="cap-sr-only">Theme</legend>
+      <div class="cap-seg-options">
+        <label><input type="radio" name="theme" value="light" checked />Light</label>
+        <label><input type="radio" name="theme" value="dark" />Dark</label>
+      </div>
+    </fieldset>
+    <p>Light, whatever the operating system says.</p>
+  </main>
+</template>
+
+<template data-specimen="dark" data-title="Dark selected" data-height="200">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Settings</h1>
+    <fieldset class="cap-seg cap-theme" data-cap="theme-switch" data-cap-pref="cap-theme-specimen-dark">
+      <legend class="cap-sr-only">Theme</legend>
+      <div class="cap-seg-options">
+        <label><input type="radio" name="theme" value="light" />Light</label>
+        <label><input type="radio" name="theme" value="dark" checked />Dark</label>
+      </div>
+    </fieldset>
+    <p>Dark, whatever the operating system says.</p>
+  </main>
+</template>
+
+<script type="module">
+  import { enhance, toggleTheme } from "./theme-switch.ts";
+  import { register } from "../shortcuts/shortcuts.ts";
+  if (new URLSearchParams(location.search).get("only")) {
+    enhance();
+    const key = document.querySelector("[data-cap='theme-switch']")?.dataset.capPref;
+    register({ key: "t", label: "Switch light and dark", group: "Actions", run: () => toggleTheme(key) });
+  }
+</script>
