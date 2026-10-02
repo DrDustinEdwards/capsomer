@@ -81,11 +81,35 @@
   },
   "peerDependencies": {
     "@base-ui/react": "^1.8.0",
+    "@codemirror/commands": "^6.10.4",
+    "@codemirror/lang-markdown": "^6.5.1",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.1",
+    "@codemirror/view": "^6.43.7",
+    "@lezer/highlight": "^1.2.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "peerDependenciesMeta": {
     "@base-ui/react": {
+      "optional": true
+    },
+    "@codemirror/commands": {
+      "optional": true
+    },
+    "@codemirror/lang-markdown": {
+      "optional": true
+    },
+    "@codemirror/language": {
+      "optional": true
+    },
+    "@codemirror/state": {
+      "optional": true
+    },
+    "@codemirror/view": {
+      "optional": true
+    },
+    "@lezer/highlight": {
       "optional": true
     },
     "react": {
@@ -98,9 +122,15 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@base-ui/react": "^1.8.0",
+    "@codemirror/commands": "^6.10.4",
+    "@codemirror/lang-markdown": "^6.5.1",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.1",
+    "@codemirror/view": "^6.43.7",
     "@fontsource-variable/source-serif-4": "^5.3.0",
     "@fontsource/martian-mono": "^5.3.0",
     "@fontsource/schibsted-grotesk": "^5.3.0",
+    "@lezer/highlight": "^1.2.3",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.19.0",
     "@types/react": "^19.3.0",
