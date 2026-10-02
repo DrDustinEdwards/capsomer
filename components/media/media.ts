@@ -1132,6 +1132,17 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   };
   const haystack = (t: HTMLElement) => [t.dataset.label, t.dataset.altText, t.dataset.title, t.dataset.caption, t.dataset.tags, t.dataset.key].join(" ").toLowerCase();
 
+  // Where the active tile goes when it leaves the view (binned, filtered out): the next file that can be
+  // opened, else the one before it. An upload in progress is not a file to look at yet.
+  const settled = (t: HTMLElement) => t.dataset.state === "ready" || t.dataset.state === "binned";
+  const successor = (from: HTMLElement): HTMLElement | null => {
+    const list = shown();
+    const after = list.find((t) => settled(t) && from.compareDocumentPosition(t) & Node.DOCUMENT_POSITION_FOLLOWING);
+    if (after) return after;
+    const before = [...list].reverse().find((t) => settled(t) && from.compareDocumentPosition(t) & Node.DOCUMENT_POSITION_PRECEDING);
+    return before ?? list.find(settled) ?? list[0] ?? null;
+  };
+
   const countEl = () => root.querySelector<HTMLElement>(".cap-media-count");
   const applyFilters = (announce = true) => {
     const v = view();
@@ -1178,7 +1189,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       count.textContent = v === "bin" ? `${matchable} in the bin` : matchable === total ? `${matchable} ${matchable === 1 ? "file" : "files"}` : `${matchable} of ${total} files`;
     }
     if (active && (active.hidden || active.closest("[hidden]"))) {
-      const first = shown()[0] ?? null;
+      const first = successor(active);
       setActive(first);
       if (inspector?.open) {
         if (first) {
@@ -1203,6 +1214,30 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     const nBin = tiles().filter((t) => t.dataset.state === "binned").length;
     for (const el of root.querySelectorAll<HTMLElement>("[data-cap-count='library']")) el.textContent = String(nLib);
     for (const el of root.querySelectorAll<HTMLElement>("[data-cap-count='bin']")) el.textContent = String(nBin);
+  };
+
+  // ---- order: within each group, as the sort says. An upload in progress or a failed one stays first.
+  const sortBy = () => root.querySelector<HTMLInputElement>("[data-cap-part='sort'] input:checked")?.value ?? "";
+  const applySort = () => {
+    const by = sortBy();
+    if (!by) return;
+    const focused = document.activeElement;
+    const settledFirst = (t: HTMLElement) => (t.dataset.state === "uploading" || t.dataset.state === "failed" ? 0 : 1);
+    const cmp = (a: HTMLElement, b: HTMLElement): number => {
+      const pending = settledFirst(a) - settledFirst(b);
+      if (pending !== 0) return pending;
+      if (by === "name") return (a.dataset.label ?? "").localeCompare(b.dataset.label ?? "", undefined, { numeric: true, sensitivity: "base" });
+      if (by === "size") return Number(b.dataset.bytes ?? 0) - Number(a.dataset.bytes ?? 0);
+      return (b.dataset.uploaded ?? "").localeCompare(a.dataset.uploaded ?? "");
+    };
+    for (const grid of root.querySelectorAll<HTMLElement>(".cap-media-grid")) {
+      const list = Array.from(grid.children).filter((c): c is HTMLElement => c instanceof HTMLElement && c.classList.contains("cap-media-tile"));
+      const sorted = list.slice().sort(cmp);
+      if (sorted.every((t, i) => t === list[i])) continue;
+      grid.append(...sorted);
+    }
+    // Moving a node can drop focus; put it back.
+    if (focused instanceof HTMLElement && focused.isConnected && document.activeElement !== focused) focused.focus({ preventScroll: true });
   };
 
   // ---- the bin.
@@ -1286,6 +1321,11 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       return;
     }
     if (t.closest("[data-cap-part='size']")) root.dataset.size = t.value;
+    else if (t.closest("[data-cap-part='layout']")) root.dataset.view = t.value;
+    else if (t.closest("[data-cap-part='sort']")) {
+      applySort();
+      syncRoving();
+    }
   });
 
   listen(root, "input", (e: Event) => {
@@ -1504,6 +1544,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
 
   // ---- start.
   for (const t of tiles()) syncSelected(t);
+  applySort();
   if (inspector) {
     if (inspector.open) {
       if (modeOf() === "sheet") inspector.close();
@@ -1539,6 +1580,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
         (root.querySelector(".cap-media-empty") ?? root.querySelector(".cap-media-main"))?.before(grid);
       }
       grid.prepend(t);
+      applySort();
       applyFilters();
       updateCounts();
       return t;
@@ -1553,6 +1595,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
         const fresh = buildTile(recordOf(t));
         t.replaceWith(fresh);
         if (active === t) active = fresh;
+        applySort();
         applyFilters();
         updateCounts();
         return;

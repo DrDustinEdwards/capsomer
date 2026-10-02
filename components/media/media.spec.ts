@@ -302,6 +302,8 @@ eachTheme((theme) => {
     await page.keyboard.press("ArrowLeft");
     await expect(link(page, FOX)).toBeFocused();
     await page.keyboard.press("ArrowLeft");
+    await expect(link(page, "scan-0042.png")).toBeFocused();
+    await page.keyboard.press("ArrowRight");
     await expect(link(page, FOX)).toBeFocused();
     // Down: a tile in the next row, near the same column.
     const here = await link(page, FOX).boundingBox();
@@ -316,19 +318,19 @@ eachTheme((theme) => {
     await page.keyboard.press("End");
     await expect(link(page, "mention-queue.png")).toBeFocused();
     await page.keyboard.press("Home");
-    await expect(link(page, FOX)).toBeFocused();
+    await expect(link(page, "capsid-walkthrough.png")).toBeFocused();
   });
 
   test("keyboard: arrow keys reach the uploading and failed tiles, and Enter on them opens nothing", async ({ page }) => {
     await library(page, theme);
-    await link(page, "uptime-report-september.pdf").focus();
-    await page.keyboard.press("ArrowRight");
+    await link(page, FOX).focus();
+    await page.keyboard.press("ArrowLeft");
+    await expect(link(page, "scan-0042.png")).toBeFocused();
+    await page.keyboard.press("ArrowLeft");
     await expect(link(page, "capsid-walkthrough.png")).toBeFocused();
     await page.keyboard.press("Enter");
-    await expect(inspector(page).getByRole("heading", { name: "uptime-report-september.pdf" })).toBeVisible();
-    await page.keyboard.press("ArrowRight");
-    await expect(link(page, "scan-0042.png")).toBeFocused();
-    await expect(inspector(page).getByRole("heading", { name: "uptime-report-september.pdf" })).toBeVisible();
+    await expect(inspector(page).getByRole("heading", { name: FOX })).toBeVisible();
+    await expect(inspector(page).getByLabel("Alt text")).not.toBeFocused();
   });
 
   test("keyboard: focus roves, so the tile with focus is the only tab stop", async ({ page }) => {
@@ -503,7 +505,7 @@ eachTheme((theme) => {
   // -------------------------------------------------------------------------------------
   // behaviour
 
-  test("behaviour: wide, the inspector is a pane beside the grid; narrow, a closed sheet; no script, it is in the page", async ({ page }) => {
+  test("behaviour: wide, the inspector is a pane beside the grid; narrow, a closed sheet", async ({ page }) => {
     await library(page, theme);
     const grid = await page.locator("#library-tiles").boundingBox();
     const pane = await inspector(page).boundingBox();
@@ -512,11 +514,16 @@ eachTheme((theme) => {
     await page.setViewportSize({ width: 420, height: 800 });
     await library(page, theme, "sheet");
     expect(await inspector(page).evaluate((el: HTMLDialogElement) => el.open)).toBe(false);
+  });
+
+  test("behaviour: with no script the inspector is in the page, open, with its form and a Save button", async ({ page }) => {
     await page.route("**/*.js", (r) => r.abort());
-    await page.goto("components/media/states.html?only=sheet");
-    await expect(page.locator("#narrow-ins")).toBeHidden(); // a template is not rendered without script: the HTML itself holds it
-    const html = await (await page.request.get("components/media/states.html")).text();
-    expect(html).toMatch(/<dialog class="cap-dialog cap-media-inspector"[^>]* open>/);
+    await page.goto("components/media/states.html");
+    const ins = page.locator("#ins-static-ins");
+    await expect(ins).toBeVisible();
+    await expect(ins.getByLabel("Alt text")).toBeVisible();
+    await expect(ins.getByRole("button", { name: "Save" })).toBeVisible();
+    await expect(ins.getByRole("link", { name: "Why the uptime strip counts gaps" })).toBeVisible();
   });
 
   test("behaviour: typing alt text saves after 800 ms of quiet, with Saving then Saved, and the tile updates", async ({ page }) => {
@@ -712,7 +719,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("alertdialog")).toHaveCount(0);
     await expect(tile(page, UPTIME)).toBeHidden();
     await expect(page.locator(".cap-message-item")).toContainText("Moved uptime-strip.png to the bin.");
-    await expect(inspector(page).getByRole("heading", { name: FOX })).toBeVisible();
+    await expect(inspector(page).getByRole("heading", { name: "germomics-tree.svg" })).toBeVisible();
     await page.getByRole("button", { name: "Undo" }).click();
     await expect(tile(page, UPTIME)).toBeVisible();
     await expect(page.locator("[data-cap-count=bin]")).toHaveText("1");
@@ -833,6 +840,7 @@ eachTheme((theme) => {
     await library(page, theme, "react");
     await link(page, UPTIME).focus();
     await page.keyboard.press("Enter");
+    await expect(alt(page)).toBeFocused();
     await page.keyboard.type("Thirty days of checks");
     await page.keyboard.press("Tab");
     await expect(saveStatus(page)).toHaveText("Saved");
@@ -852,6 +860,7 @@ eachTheme((theme) => {
     await library(page, theme, "react");
     await link(page, UPTIME).focus();
     await page.keyboard.press("Enter");
+    await expect(alt(page)).toBeFocused();
     await page.keyboard.type("Temporary");
     await inspector(page).getByRole("checkbox", { name: "Decorative image" }).check();
     await expect(alt(page)).toBeDisabled();
@@ -866,9 +875,52 @@ eachTheme((theme) => {
     await expect(page.getByRole("heading", { name: /September 2026/ })).toBeVisible();
     await expect(page.getByRole("heading", { name: /August 2026/ })).toBeVisible();
     await link(page, "uptime-report-september.pdf").focus();
-    await page.keyboard.press("ArrowRight");
-    const label = await page.evaluate(() => document.activeElement?.closest(".cap-media-tile")?.getAttribute("data-label"));
-    expect(["mention-queue.png", "capsid-walkthrough.png", "scan-0042.png"]).toContain(label);
+    let label = "";
+    for (let i = 0; i < 8 && label !== "mention-queue.png"; i += 1) {
+      await page.keyboard.press("ArrowRight");
+      label = (await page.evaluate(() => document.activeElement?.closest(".cap-media-tile")?.getAttribute("data-label"))) ?? "";
+    }
+    expect(label).toBe("mention-queue.png");
+  });
+
+  test("behaviour: sort orders each group, keeps uploads first, and keeps focus", async ({ page }) => {
+    await library(page, theme);
+    const order = () => page.locator("section[aria-labelledby=library-g-september] .cap-media-tile").evaluateAll((els) => els.map((e) => e.getAttribute("data-label")));
+    expect((await order()).slice(0, 3)).toEqual(["capsid-walkthrough.png", "scan-0042.png", FOX]);
+    await page.getByRole("radio", { name: "A to Z" }).check({ force: true });
+    expect(await order()).toEqual(["capsid-walkthrough.png", "scan-0042.png", "fieldnotes-migration.jpg", FOX, "germomics-tree.svg", "uptime-report-september.pdf", UPTIME]);
+    await page.getByRole("radio", { name: "Largest" }).check({ force: true });
+    expect((await order()).slice(2, 4)).toEqual(["fieldnotes-migration.jpg", "uptime-report-september.pdf"]);
+    await link(page, "germomics-tree.svg").focus();
+    await page.getByRole("radio", { name: "Newest" }).check({ force: true });
+    expect((await order()).slice(2, 4)).toEqual([FOX, UPTIME]);
+  });
+
+  test("behaviour: the list layout puts one file on each row, with the same tiles", async ({ page }) => {
+    await library(page, theme);
+    await page.getByRole("radio", { name: "List" }).check({ force: true });
+    await expect(page.locator(".cap-media[data-cap=media]")).toHaveAttribute("data-view", "list");
+    const a = await tile(page, FOX).boundingBox();
+    const b = await tile(page, UPTIME).boundingBox();
+    expect(a && b && b.y > a.y && Math.abs(a.x - b.x) < 2).toBe(true);
+    await link(page, FOX).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(link(page, UPTIME)).toBeFocused();
+    await expectNoAxeViolations(page);
+  });
+
+  test("behaviour: a file dropped anywhere on the library page becomes an uploading tile", async ({ page }) => {
+    await library(page, theme);
+    const dt = await page.evaluateHandle(() => {
+      const t = new DataTransfer();
+      t.items.add(new File([new Uint8Array(40)], "dropped-anywhere.png", { type: "image/png" }));
+      return t;
+    });
+    await page.dispatchEvent("body", "dragenter", { dataTransfer: dt });
+    await expect(page.locator("#library-drop .cap-drop-overlay")).toBeVisible();
+    await page.dispatchEvent("body", "drop", { dataTransfer: dt });
+    await expect(tile(page, "dropped-anywhere.png")).toHaveAttribute("data-state", "uploading");
+    await expect(page.locator("#library-drop .cap-drop-overlay")).toBeHidden();
   });
 
   test("behaviour: tile size changes the columns", async ({ page }) => {

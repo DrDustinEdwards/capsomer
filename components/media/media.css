@@ -345,6 +345,44 @@
     row-gap: var(--space-2);
   }
 
+  /* The list layout (data-view="list"): one file to a row, a small picture, the name and the type
+     and size on one line, the flags at the end. The markup is the same; only the layout changes. */
+  .cap-media[data-view="list"] {
+    & .cap-media-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2);
+    }
+    & .cap-media-tile {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--space-2) var(--space-4);
+    }
+    & .cap-media-open {
+      grid-column: 2;
+      grid-row: 1;
+      grid-template-columns: calc(var(--target) * 1.75) minmax(0, 1fr) max-content;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    & .cap-media-check {
+      position: static;
+      grid-column: 1;
+      grid-row: 1;
+      opacity: 1;
+    }
+    & .cap-media-flags {
+      grid-column: 3;
+      grid-row: 1;
+      justify-content: flex-end;
+    }
+    & .cap-media-state {
+      position: static;
+      grid-column: 1 / -1;
+      grid-row: 2;
+      aspect-ratio: auto;
+    }
+  }
+
   /* The inspector. The shared dialog's surface; this file only decides how it sits. */
   .cap-media-inspector {
     /* Open but not modal: a pane in the flow of the page, the whole width when it is below the
