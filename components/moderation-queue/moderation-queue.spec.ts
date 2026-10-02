@@ -88,7 +88,7 @@ test("behaviour: the page is delivered with every mention, its state in words, a
 const queue = (page: Page) => page.locator("#mq-main");
 const row = (q: Locator, id: string) => q.locator(`li.cap-mq-row[data-id='${id}']`);
 const title = (q: Locator, id: string) => row(q, id).locator(".cap-row-title button");
-const region = (page: Page) => page.getByRole("status", { name: "Results and failures" });
+const region = (page: Page) => page.locator("#mq-results");
 const showView = async (q: Locator, label: string) => {
   await q.getByRole("radio", { name: new RegExp(`^${label}`) }).check();
 };
@@ -208,7 +208,7 @@ eachTheme((theme) => {
   test("accessibility: the live count and the result are polite status regions", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     await expect(queue(page).locator("[data-cap-part='summary']")).toHaveAttribute("role", "status");
-    await expect(region(page)).toHaveAttribute("aria-atomic", "false");
+    await expect(page.locator("#mq-results")).toHaveAttribute("aria-atomic", "false");
   });
 
   test("keyboard: Tab goes from a row's select box to its title and its decisions, in order", async ({ page }) => {
@@ -587,5 +587,37 @@ eachTheme((theme) => {
     await expect(empty).toContainText("All clear");
     await expect(empty).toContainText("No mentions are waiting");
     await expect(page.locator("#mq-empty .cap-mq-list")).toBeHidden();
+  });
+
+  test("behaviour: the React wrapper decides at once, moves focus, counts, and z undoes", async ({ page }) => {
+    await visitStates(page, "moderation-queue", theme);
+    const r = page.locator("#react-queue");
+    await expect(r.getByRole("radio", { name: "Waiting 2 mentions" })).toBeChecked();
+    await expect(r.locator(".cap-mq-summary")).toHaveText("2 waiting, 1 with a source gone");
+    const title = (id: string) => r.locator(`li[data-id='${id}'] .cap-row-title button`);
+    await title("r-1").focus();
+    await page.keyboard.press("s");
+    await expect(r.locator("li[data-id='r-1']")).toBeHidden();
+    await expect(title("r-2")).toBeFocused();
+    await expect(r.getByRole("radio", { name: "Spam 1 mentions" })).toBeVisible();
+    await expect(r.locator(".cap-message")).toContainText("Marked the mention from Rosa Park as spam.");
+    await page.keyboard.press("z");
+    await expect(r.locator("li[data-id='r-1']")).toBeVisible();
+    await expect(r.locator("li[data-id='r-1']")).toHaveAttribute("data-state", "waiting");
+    await expect(title("r-1")).toBeFocused();
+  });
+
+  test("behaviour: the React wrapper asks before approving a gone source, and selects with x", async ({ page }) => {
+    await visitStates(page, "moderation-queue", theme);
+    const r = page.locator("#react-queue");
+    await r.getByRole("radio", { name: /^Source gone/ }).check();
+    await r.locator("li[data-id='r-3'] [data-cap-action='approve']").click();
+    const dialog = page.getByRole("alertdialog");
+    await expect(dialog.getByRole("button", { name: "Cancel" })).toBeFocused();
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+    await expect(r.locator("li[data-id='r-3']")).toHaveAttribute("data-state", "waiting");
+    await r.locator("li[data-id='r-3'] .cap-row-title button").focus();
+    await page.keyboard.press("x");
+    await expect(r.getByRole("region", { name: "Bulk actions" }).getByRole("status")).toHaveText("1 selected");
   });
 });

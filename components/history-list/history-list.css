@@ -189,7 +189,9 @@
   /* A narrow list: the title and its line take the width, the size change and the time sit
      at the end, and the action goes underneath. */
   @container cap-rows (max-width: 44rem) {
-    .cap-rows.cap-hist-list {
+    /* The lines stop being subgrids of the list's six columns and lay out three of their own:
+       a container query cannot restyle the container it asks, so each line takes its own. */
+    .cap-hist-list .cap-hist-row {
       grid-template-columns: auto minmax(0, 1fr) auto;
     }
     .cap-hist-list .cap-hist-pick {

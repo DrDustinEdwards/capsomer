@@ -48,6 +48,7 @@ The history of one document that changes over time and where people go back: a p
 ## Deliberately different
 
 - **Autosave groups are a button with `aria-expanded`, not a native `<details>`.** The row list's `j` and `k` move between titles that are links or buttons; a `<summary>` is neither, so `j` would skip every group. The lines inside are still in the HTML.
+- **`j` and `k` are the history list's own,** using the row list's `moveRowFocus`. The row list's own handler stops at any `input`, so `j` would die on a pick box a person has just ticked; here a checkbox, a radio or a button is not typing. The list does not carry `data-cap="row-list"`, so the two handlers never both act.
 - **The size change has no tone.** shadcn's and most diff views colour added and removed text; a history line says how much, and a shorter text is as often a good edit as a bad one.
 
 ## The shadcn component it matches

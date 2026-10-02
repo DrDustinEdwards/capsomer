@@ -51,6 +51,7 @@ Anything strangers send that a person must accept before it shows: webmentions, 
 
 - **The filter is a segmented control, not tabs.** The tabs component is not used (it may not exist in an app's version, and the choice here filters a list rather than switching panels). The contract is one choice of five with counts, so tabs can replace it.
 - **Approving a gone source asks first although approving is reversible,** for the reason above. Everything else reversible acts at once.
+- **`j` and `k` are the queue's own,** using the row list's `moveRowFocus`, because the row list's handler stops at any `input` and the queue is full of select boxes. The list does not carry `data-cap="row-list"`, so the two handlers never both act.
 - **Select-all and the bulk bar sit above the list, not in a footer,** because a queue is used from the top and the keys act on the focused row.
 - **The empty bulk bar stays in the page, unseen.** A live region that appears with its text is often not announced; one that is already there is.
 - **Pagination is not used.** The queue holds the rows the app sends; an app with thousands pages them itself and sends the next page with the same markup.
