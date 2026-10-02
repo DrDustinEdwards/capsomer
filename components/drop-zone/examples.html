@@ -1,0 +1,123 @@
+<section class="cap-specimen" aria-labelledby="s-idle">
+  <h2 id="s-idle">Idle</h2>
+  <div class="cap-drop" data-cap="drop-zone" data-max-bytes="5242880" data-max-files="4" data-paste id="dz-idle">
+    <label class="cap-drop-label">
+      <input class="cap-drop-input" type="file" multiple accept="image/*,.pdf" data-cap-part="input" aria-labelledby="dz-idle-title" aria-describedby="dz-idle-hint" />
+      <span class="cap-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg></span>
+      <span class="cap-drop-title" id="dz-idle-title"><span class="cap-drop-idle">Drop files here, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
+      <span class="cap-drop-hint" id="dz-idle-hint">Images and PDF, up to 5 MB each, up to 4 at a time.</span>
+    </label>
+    <div class="cap-drop-status" role="status" data-cap-part="status"></div>
+    <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-over">
+  <h2 id="s-over">File over</h2>
+  <div class="cap-drop" data-state="over" id="dz-over">
+    <label class="cap-drop-label">
+      <input class="cap-drop-input" type="file" multiple accept="image/*,.pdf" data-cap-part="input" aria-labelledby="dz-over-title" aria-describedby="dz-over-hint" />
+      <span class="cap-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg></span>
+      <span class="cap-drop-title" id="dz-over-title"><span class="cap-drop-idle">Drop files here, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
+      <span class="cap-drop-hint" id="dz-over-hint">Images and PDF, up to 5 MB each, up to 4 at a time.</span>
+    </label>
+    <div class="cap-drop-status" role="status" data-cap-part="status"></div>
+    <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-rejected">
+  <h2 id="s-rejected">Files refused, each with its reason</h2>
+  <div class="cap-drop" data-state="rejected" id="dz-rejected">
+    <label class="cap-drop-label">
+      <input class="cap-drop-input" type="file" multiple accept="image/*,.pdf" data-cap-part="input" aria-labelledby="dz-rejected-title" aria-describedby="dz-rejected-hint" />
+      <span class="cap-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg></span>
+      <span class="cap-drop-title" id="dz-rejected-title"><span class="cap-drop-idle">Drop files here, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
+      <span class="cap-drop-hint" id="dz-rejected-hint">Images and PDF, up to 5 MB each, up to 4 at a time.</span>
+    </label>
+    <div class="cap-drop-status" role="status" data-cap-part="status"></div>
+    <div class="cap-drop-rejections" role="alert" data-cap-part="rejections">
+      <p class="cap-drop-lead" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>3 files were not added</p>
+      <ul class="cap-drop-files">
+        <li>fieldnotes-scan.heic: type not allowed. This takes images and PDF.</li>
+        <li>site-recording.pdf: too big at 8.4 MB. The limit is 5 MB.</li>
+        <li>logo-variant-5.png: too many files. The limit is 4 files at a time, so this one was left out.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-accepted">
+  <h2 id="s-accepted">Several files taken</h2>
+  <div class="cap-drop" id="dz-accepted">
+    <label class="cap-drop-label">
+      <input class="cap-drop-input" type="file" multiple accept="image/*,.pdf" data-cap-part="input" aria-labelledby="dz-accepted-title" aria-describedby="dz-accepted-hint" />
+      <span class="cap-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg></span>
+      <span class="cap-drop-title" id="dz-accepted-title"><span class="cap-drop-idle">Drop files here, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
+      <span class="cap-drop-hint" id="dz-accepted-hint">Images and PDF, up to 5 MB each, up to 4 at a time.</span>
+    </label>
+    <div class="cap-drop-status" role="status" data-cap-part="status">
+      <p class="cap-drop-lead">3 files are ready to upload.</p>
+      <ul class="cap-drop-files">
+        <li><span class="cap-drop-file-name">foxhound-hero.jpg</span><span class="cap-drop-file-size">412 kB</span></li>
+        <li><span class="cap-drop-file-name">uptime-report-september.pdf</span><span class="cap-drop-file-size">1.8 MB</span></li>
+        <li><span class="cap-drop-file-name">germomics-diagram.png</span><span class="cap-drop-file-size">96 kB</span></li>
+      </ul>
+    </div>
+    <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-single">
+  <h2 id="s-single">One file only</h2>
+  <div class="cap-drop" data-cap="drop-zone" data-max-bytes="1048576" id="dz-single">
+    <label class="cap-drop-label">
+      <input class="cap-drop-input" type="file" accept=".png,.jpg,.jpeg" data-cap-part="input" aria-labelledby="dz-single-title" aria-describedby="dz-single-hint" />
+      <span class="cap-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg></span>
+      <span class="cap-drop-title" id="dz-single-title"><span class="cap-drop-idle">Drop a profile picture, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
+      <span class="cap-drop-hint" id="dz-single-hint">PNG or JPG, up to 1 MB. One file.</span>
+    </label>
+    <div class="cap-drop-status" role="status" data-cap-part="status"></div>
+    <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-disabled">
+  <h2 id="s-disabled">Disabled</h2>
+  <div class="cap-drop" id="dz-disabled">
+    <label class="cap-drop-label">
+      <input class="cap-drop-input" type="file" disabled data-cap-part="input" aria-labelledby="dz-disabled-title" aria-describedby="dz-disabled-hint" />
+      <span class="cap-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg></span>
+      <span class="cap-drop-title" id="dz-disabled-title"><span class="cap-drop-idle">Uploads are paused</span><span class="cap-drop-over">Drop to upload</span></span>
+      <span class="cap-drop-hint" id="dz-disabled-hint">The media bucket is read-only until the migration finishes.</span>
+    </label>
+  </div>
+</section>
+
+<template data-specimen="page" data-title="Drop anywhere on the page, files over the window" data-height="320">
+  <main>
+    <h1>Media library</h1>
+    <p>Drag a file anywhere on this page. A panel covers the window and says what releasing does.</p>
+    <div class="cap-drop" data-cap="drop-zone" data-scope="page" data-state="over" data-max-bytes="5242880" id="dz-page">
+      <label class="cap-drop-label">
+        <input class="cap-drop-input" type="file" multiple accept="image/*" data-cap-part="input" aria-labelledby="dz-page-title" aria-describedby="dz-page-hint" />
+        <span class="cap-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg></span>
+        <span class="cap-drop-title" id="dz-page-title"><span class="cap-drop-idle">Drop files anywhere, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
+        <span class="cap-drop-hint" id="dz-page-hint">Images up to 5 MB each.</span>
+      </label>
+      <div class="cap-drop-status" role="status" data-cap-part="status"></div>
+      <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
+      <div class="cap-drop-overlay" aria-hidden="true">
+        <div>
+          <p class="cap-drop-overlay-title">Drop to upload</p>
+          <p class="cap-drop-overlay-text">Release anywhere on this page to add the files.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</template>
+
+<script type="module">
+  import { enhance } from "./drop-zone.ts";
+  enhance();
+</script>
