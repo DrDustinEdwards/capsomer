@@ -179,6 +179,10 @@ Every in-scope component is rebuilt to the craft of shadcn/ui's Base UI flavour:
 
 **Install.** `"capsomer": "github:DrDustinEdwards/capsomer#v0.2.0"`.
 
+### Size (gzip, for information; nothing fails on it)
+
+Component CSS: anchor-bar 1.5 KB; approval-sheet 1.1 KB; attention-list 2.0 KB; banner 1.5 KB; button 3.0 KB; chips 1.2 KB; combobox 2.2 KB; command-menu 1.2 KB; confirm-dialog 1.0 KB; detail-panel 1.5 KB; dialog 3.0 KB; disclosure 2.1 KB; empty 1.4 KB; feed 1.8 KB; field 3.5 KB; listbox 2.3 KB; menu 1.5 KB; message 1.6 KB; meter 1.9 KB; panel 1.6 KB; permission-matrix 1.3 KB; popover 2.8 KB; row-list 2.6 KB; segmented 1.5 KB; select 2.1 KB; session-row 1.4 KB; shell 4.2 KB; shortcuts 1.1 KB; skeleton 1.4 KB; stat-tile 1.6 KB; status 2.1 KB; switch 1.5 KB; switch-reason 0.9 KB; table 3.4 KB; theme-switch 1.4 KB; time 0.6 KB; tooltip 0.4 KB; uptime-strip 1.4 KB; usage-meter 1.0 KB. Every component's CSS together is 73.3 KB gzip and every behaviour module together 72.8 KB (`npm run size`, and `test-results/size.json` in CI). Nothing was removed to save bytes; only dead code left.
+
 ## 0.1.1 (2026-10-01)
 
 Brings every component that came from the Capsid Portal up to date with the Portal's approved redesign (capsid #214 native dialog and the eight defects, #215 attention list and tiles, #216 switches with reason and Undo, result messages, phone tab bar, Display, exact times, #221 persistent warnings, #222 stops in the command menu). The Portal's current code was read from capsid master (88bf402); each component's doc page now carries a Provenance line saying whether it was extracted from the Portal, rewritten, or both. Components the Portal does not have, or has not changed since 0.1.0 was cut, are untouched. Where the Portal and the audit disagree the audit wins.
