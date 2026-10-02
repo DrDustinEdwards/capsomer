@@ -1,0 +1,147 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A person, an agent or a source as a round picture or its initials. Rebuilt to the craft of
+   shadcn/ui's Avatar (Base UI flavour, nova style): 32 px round, sizes sm 24 and lg 40, a
+   fallback on the muted fill, a badge in the corner, a group that overlaps with a ring of
+   the page colour and a "+3" count. Capsomer's own values: the fallback word and fill are
+   --muted on --sunken (4.5:1 in both themes), and the image's edge is drawn so a pale
+   picture on a pale page still has a boundary. */
+@layer cap.components {
+  .cap-avatar {
+    --cap-avatar-size: 32px;
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--cap-avatar-size);
+    height: var(--cap-avatar-size);
+    border-radius: var(--radius-full);
+    background: var(--sunken);
+    color: var(--muted);
+    font-family: var(--face);
+    font-size: calc(var(--cap-avatar-size) * 0.4);
+    font-weight: 600;
+    line-height: 1;
+    user-select: none;
+    vertical-align: middle;
+
+    &[data-size="sm"] {
+      --cap-avatar-size: 24px;
+    }
+    &[data-size="lg"] {
+      --cap-avatar-size: 40px;
+    }
+    /* A square avatar, for a site or a project rather than a person. */
+    &[data-shape="square"] {
+      border-radius: var(--radius-m);
+    }
+    /* The one hint of the kind of author: the agent's initials are set in the mono face. */
+    &[data-kind="ai"] {
+      font-family: var(--mono);
+      font-size: calc(var(--cap-avatar-size) * 0.34);
+    }
+  }
+
+  /* shadcn draws the image over the fallback and a darkening after:border; here a 1 px inset
+     edge in the line colour does the same job in both themes. */
+  .cap-avatar-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .cap-avatar[data-state="error"] .cap-avatar-image {
+    display: none;
+  }
+
+  .cap-avatar-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    text-transform: uppercase;
+  }
+
+  /* A badge in the bottom corner (presence, a kind). It carries a shape or a word, never
+     colour alone: the content is a glyph or a letter, and the dot has an accessible name. */
+  .cap-avatar-badge {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-end: 0;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: max(10px, calc(var(--cap-avatar-size) * 0.35));
+    height: max(10px, calc(var(--cap-avatar-size) * 0.35));
+    border-radius: var(--radius-full);
+    background: var(--primary);
+    color: var(--primary-fg);
+    box-shadow: 0 0 0 2px var(--surface);
+    font-size: calc(var(--cap-avatar-size) * 0.22);
+
+    & > svg {
+      width: 70%;
+      height: 70%;
+    }
+    &[data-tone="ok"] {
+      background: var(--ok);
+      color: var(--surface);
+    }
+    &[data-tone="crit"] {
+      background: var(--crit);
+      color: var(--surface);
+    }
+    &[data-tone="nodata"] {
+      background: var(--nodata);
+      color: var(--surface);
+    }
+  }
+
+  /* A group: avatars overlap, each ringed in the page colour so the overlap reads. */
+  .cap-avatar-group {
+    display: inline-flex;
+    align-items: center;
+    isolation: isolate;
+
+    & > .cap-avatar {
+      box-shadow: 0 0 0 2px var(--surface);
+    }
+    & > .cap-avatar + .cap-avatar {
+      margin-inline-start: -8px;
+    }
+  }
+
+  /* "+3": the people not shown. */
+  .cap-avatar-count {
+    --cap-avatar-size: 32px;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--cap-avatar-size);
+    height: var(--cap-avatar-size);
+    margin-inline-start: -8px;
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-full);
+    background: var(--sunken);
+    box-shadow: 0 0 0 2px var(--surface);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+  }
+
+  @media (forced-colors: active) {
+    .cap-avatar,
+    .cap-avatar-count {
+      border: 1px solid CanvasText;
+    }
+  }
+}
