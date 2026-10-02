@@ -198,6 +198,20 @@ eachTheme((theme) => {
     ]);
   });
 
+  test("accessibility: the empty states are in the HTML and their words reach their contrast", async ({ page }) => {
+    await visitStates(page, "media", theme);
+    await expect(page.locator("#empty-search")).toContainText("No files match “fieldnotes”");
+    await expect(page.locator("#empty-filter")).toContainText("Nothing in this view");
+    await expect(page.locator("#empty-bin")).toContainText("The bin is empty");
+    await expect(page.locator("#empty-library")).toContainText("Nothing here yet");
+    await expectContrast(page, [
+      { sel: "#empty-search .cap-empty-title", what: "the nothing matches title" },
+      { sel: "#empty-search .cap-empty-text", what: "the nothing matches text" },
+      { sel: "#empty-bin .cap-empty-text", what: "the empty bin text" },
+      { sel: "#empty-library .cap-empty-text", what: "the empty library text" },
+    ]);
+  });
+
   test("accessibility: each tile is one named link, a named checkbox and its states in words", async ({ page }) => {
     await visitStates(page, "media", theme);
     await expect(page.locator("#t-foxhound-hero")).toMatchAriaSnapshot(`
@@ -233,14 +247,17 @@ eachTheme((theme) => {
     await expect(page.locator("#t-old-logo").getByRole("button", { name: "Restore old-logo.png" })).toBeVisible();
   });
 
-  test("accessibility: thumbnails reserve their space and load lazily", async ({ page }) => {
+  test("accessibility: thumbnails load lazily with a size, and the frame keeps its space without the picture", async ({ page }) => {
     await visitStates(page, "media", theme);
     const img = page.locator("#t-foxhound-hero img");
     await expect(img).toHaveAttribute("loading", "lazy");
     await expect(img).toHaveAttribute("width", "320");
     await expect(img).toHaveAttribute("height", "320");
-    const box = await page.locator("#t-foxhound-hero .cap-media-thumb").boundingBox();
-    expect(Math.abs((box?.width ?? 0) - (box?.height ?? 1))).toBeLessThan(1);
+    const frame = page.locator("#t-foxhound-hero .cap-media-thumb");
+    const before = await frame.boundingBox();
+    await img.evaluate((el) => el.removeAttribute("src"));
+    const after = await frame.boundingBox();
+    expect(before && after && Math.abs(before.height - after.height) < 1 && after.height > 50).toBe(true);
   });
 
   test("accessibility: the inspector is a named dialog with labelled fields and a live save status", async ({ page }) => {
