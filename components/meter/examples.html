@@ -1,0 +1,61 @@
+<section class="cap-specimen" aria-labelledby="s-low">
+  <h2 id="s-low">Low</h2>
+  <div class="cap-meter" data-cap="meter" id="sample-low" role="meter" aria-labelledby="m-low-l" aria-valuemin="0" aria-valuemax="10" aria-valuenow="1.2" aria-valuetext="1.2 of 10 gigabytes stored" data-value="1.2" data-max="10">
+    <span class="cap-meter-label" id="m-low-l">R2 storage</span>
+    <span class="cap-meter-value">1.2 of 10 GB</span>
+    <span class="cap-meter-bar"><span class="cap-meter-fill"></span></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-warn">
+  <h2 id="s-warn">Warning</h2>
+  <div class="cap-meter" data-cap="meter" data-tone="warn" id="sample-warn" role="meter" aria-labelledby="m-warn-l" aria-valuemin="0" aria-valuemax="100000" aria-valuenow="78000" aria-valuetext="78,000 of 100,000 requests today. Warning: near the limit. Resets at midnight UTC." data-value="78000" data-max="100000">
+    <span class="cap-meter-label" id="m-warn-l">Worker requests</span>
+    <span class="cap-meter-value">78,000 of 100,000</span>
+    <span class="cap-meter-bar"><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Near the limit</span> Resets at midnight UTC.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-crit">
+  <h2 id="s-crit">Critical</h2>
+  <div class="cap-meter" data-cap="meter" data-tone="crit" id="sample-crit" role="meter" aria-labelledby="m-crit-l" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="962" aria-valuetext="962 of 1,000 writes today. Critical: writes stop at 1,000." data-value="962" data-max="1000">
+    <span class="cap-meter-label" id="m-crit-l">KV writes</span>
+    <span class="cap-meter-value">962 of 1,000</span>
+    <span class="cap-meter-bar"><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Almost out</span> Writes stop at 1,000 until midnight UTC.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-full">
+  <h2 id="s-full">Full</h2>
+  <div class="cap-meter" data-cap="meter" data-tone="crit" id="sample-full" role="meter" aria-labelledby="m-full-l" aria-valuemin="0" aria-valuemax="5000000" aria-valuenow="5000000" aria-valuetext="5 million of 5 million rows read today. Limit reached: reads fail until midnight UTC." data-value="5000000" data-max="5000000">
+    <span class="cap-meter-label" id="m-full-l">D1 rows read</span>
+    <span class="cap-meter-value">5,000,000 of 5,000,000</span>
+    <span class="cap-meter-bar"><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Limit reached</span> Reads fail until midnight UTC.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-nodata">
+  <h2 id="s-nodata">No data</h2>
+  <div class="cap-meter" data-tone="nodata" id="sample-nodata">
+    <span class="cap-meter-label">Queue minutes</span>
+    <span class="cap-meter-value"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>No data</span></span>
+    <span class="cap-meter-bar"></span>
+    <span class="cap-meter-note">Cloudflare's analytics have not reported since 09:00.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-native">
+  <h2 id="s-native">A native meter, where its plain look is enough</h2>
+  <div>
+    <label for="sample-native">Draft length</label> <span class="cap-muted cap-num">1,460 of 2,000 words</span>
+    <meter class="cap-meter" id="sample-native" min="0" max="2000" low="1600" high="1900" optimum="1000" value="1460">1,460 of 2,000 words</meter>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./meter.ts";
+  enhance();
+</script>

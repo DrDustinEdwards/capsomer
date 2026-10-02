@@ -6,12 +6,14 @@
 //   capsomer report [--out capsomer-report.json] [--a11y <playwright json>] [--app <name>]
 //   capsomer token-check [paths...]        warns, always exits 0 (rulings.md, rule 1)
 //   capsomer size [--dist <dir>]           reports and warns, always exits 0 (decision 12)
+//   capsomer states                        writes components/<name>/states.html from examples.html (capsomer repo only)
 //   capsomer site-data                     the site's data files (capsomer repo only)
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { gzipSync } from "node:zlib";
+import { generateStates } from "./states.mjs";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -281,6 +283,24 @@ async function size() {
   for (const m of warn) console.warn(`size: warning: ${m}`);
   console.log(warn.length ? `size: ${warn.length} warning(s); size never fails a build` : "size: within every budget");
   if (flag("json")) writeFileSync(flag("json"), JSON.stringify({ rows: rows.map(([kind, part, gzip]) => ({ kind, part, gzip })), warnings: warn }, null, 2));
+  if (!distDir) writeComponentSizes();
+}
+
+// Each component's gzipped CSS and JS in test-results/size.json. Information only: it never
+// warns and never fails. JS is the built module in dist when there is one, else the source.
+function writeComponentSizes() {
+  const out = {};
+  for (const c of components(PKG)) {
+    const css = join(c.dir, `${c.name}.css`);
+    const built = join(PKG, "dist", "components", c.name, `${c.name}.js`);
+    const src = join(c.dir, `${c.name}.ts`);
+    const js = existsSync(built) ? built : existsSync(src) ? src : null;
+    const entry = { css: existsSync(css) ? gz(readFileSync(css)) : 0, js: js ? gz(readFileSync(js)) : 0, jsFrom: js ? (js === built ? "dist" : "source") : null };
+    out[c.name] = { ...entry, total: entry.css + entry.js };
+  }
+  mkdirSync(join(PKG, "test-results"), { recursive: true });
+  writeFileSync(join(PKG, "test-results", "size.json"), JSON.stringify({ unit: "bytes, gzip level 9", components: out }, null, 2));
+  console.log("size: wrote test-results/size.json (per component, information only)");
 }
 
 // Each Base UI-backed wrapper bundled on its own with React left out, as an app would ship
@@ -489,9 +509,12 @@ if (cmd === "report") {
   if (flag("json")) writeFileSync(flag("json"), JSON.stringify({ loc: l, total, deps: d }, null, 2));
 } else if (cmd === "bloat") {
   bloat(process.cwd());
+} else if (cmd === "states") {
+  const written = generateStates(PKG);
+  console.log(`states: wrote ${written.length} states pages (components/<name>/states.html, generated, gitignored)`);
 } else if (cmd === "site-data") {
   await siteData();
 } else {
-  console.log("usage: capsomer report | token-check [paths] | size [--dist dir] [--json out] | weight [--dist dir] [--json out] | loc [--json out] | bloat --knip f --jscpd f | site-data");
+  console.log("usage: capsomer report | token-check [paths] | size [--dist dir] [--json out] | weight [--dist dir] [--json out] | loc [--json out] | bloat --knip f --jscpd f | states | site-data");
   process.exit(cmd ? 1 : 0);
 }

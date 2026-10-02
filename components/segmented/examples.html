@@ -1,0 +1,48 @@
+<section class="cap-specimen" aria-labelledby="s-selected">
+  <h2 id="s-selected">One selected</h2>
+  <fieldset class="cap-seg" id="seg-window">
+    <legend>Window</legend>
+    <div class="cap-seg-options">
+      <label><input type="radio" name="window" value="24h" checked /> 24 hours</label>
+      <label><input type="radio" name="window" value="7d" /> 7 days</label>
+      <label><input type="radio" name="window" value="30d" /> 30 days</label>
+    </div>
+  </fieldset>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">Default, nothing chosen yet</h2>
+  <fieldset class="cap-seg" id="seg-layout">
+    <legend>Compare drafts</legend>
+    <div class="cap-seg-options">
+      <label><input type="radio" name="layout" value="side" /> Side by side</label>
+      <label><input type="radio" name="layout" value="inline" /> Inline</label>
+    </div>
+  </fieldset>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-focus">
+  <h2 id="s-focus">Keyboard focus and hover</h2>
+  <p class="cap-muted">Tab into the control to see focus. Its second segment is shown hovered.</p>
+  <fieldset class="cap-seg" id="seg-theme">
+    <legend class="cap-sr-only">Theme</legend>
+    <div class="cap-seg-options">
+      <label><input type="radio" name="theme" value="system" checked /> System</label>
+      <label data-force="hover" id="seg-hovered"><input type="radio" name="theme" value="light" /> Light</label>
+      <label><input type="radio" name="theme" value="dark" /> Dark</label>
+    </div>
+  </fieldset>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-disabled">
+  <h2 id="s-disabled">A disabled option</h2>
+  <fieldset class="cap-seg" id="seg-view" aria-describedby="seg-view-why">
+    <legend>View</legend>
+    <div class="cap-seg-options">
+      <label><input type="radio" name="view" value="list" checked /> List</label>
+      <label><input type="radio" name="view" value="board" disabled /> Board</label>
+      <label><input type="radio" name="view" value="calendar" /> Calendar</label>
+    </div>
+  </fieldset>
+  <span class="cap-btn-reason" id="seg-view-why">Board needs at least one column. Add one in Settings.</span>
+</section>

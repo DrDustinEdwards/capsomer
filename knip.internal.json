@@ -1,8 +1,8 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
-    "components/*/states.html",
-    "components/*/states.tsx",
+    "components/*/examples.html",
+    "components/*/examples.tsx",
     "components/*/*.spec.ts",
     "site/main.tsx",
     "site/specimen.ts",

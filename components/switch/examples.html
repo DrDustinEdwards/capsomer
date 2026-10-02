@@ -1,0 +1,40 @@
+<section class="cap-specimen" aria-labelledby="s-main">
+  <h2 id="s-main">On and off</h2>
+  <div class="cap-field-options" id="main">
+    <label class="cap-switch" data-cap="switch" id="sw-on"><input type="checkbox" role="switch" checked /> Single-key shortcuts <span class="cap-switch-state" aria-hidden="true">On</span></label>
+    <label class="cap-switch" data-cap="switch" id="sw-off"><input type="checkbox" role="switch" /> Compact rows <span class="cap-switch-state" aria-hidden="true">Off</span></label>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-focus">
+  <h2 id="s-focus">Keyboard focus</h2>
+  <p class="cap-muted">Tab to the switch to see focus; Space turns it on or off.</p>
+  <label class="cap-switch" data-cap="switch" id="sw-focus"><input type="checkbox" role="switch" /> Show times in UTC <span class="cap-switch-state" aria-hidden="true">Off</span></label>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-hover">
+  <h2 id="s-hover">Hover</h2>
+  <div class="cap-field-options">
+    <label class="cap-switch" data-cap="switch" data-force="hover" id="sw-hover-off"><input type="checkbox" role="switch" /> Sound on new mentions <span class="cap-switch-state" aria-hidden="true">Off</span></label>
+    <label class="cap-switch" data-cap="switch" data-force="hover" id="sw-hover-on"><input type="checkbox" role="switch" checked /> Weekly digest <span class="cap-switch-state" aria-hidden="true">On</span></label>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-disabled">
+  <h2 id="s-disabled">Disabled, with its reason</h2>
+  <div class="cap-field-options">
+    <label class="cap-switch" data-cap="switch" id="sw-disabled"><input type="checkbox" role="switch" disabled aria-describedby="sw-disabled-why" /> Email alerts <span class="cap-switch-state" aria-hidden="true">Off</span></label>
+    <span class="cap-btn-reason" id="sw-disabled-why">Add an email address in Settings first.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-busy">
+  <h2 id="s-busy">Pending: the change is being sent</h2>
+  <p class="cap-muted">The switch has not moved yet. It is not disabled, so focus stays.</p>
+  <label class="cap-switch" data-cap="switch" id="sw-busy"><input type="checkbox" role="switch" aria-busy="true" /> Nightly export<span class="cap-switch-state" aria-hidden="true">Off</span></label>
+</section>
+
+<script type="module">
+  import { enhance } from "./switch.ts";
+  enhance();
+</script>
