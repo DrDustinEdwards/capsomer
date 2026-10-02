@@ -1,0 +1,187 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Who wrote each passage, marked in the margin. Three kinds, each with a rule of its own
+   pattern and a word: you (a solid rule), AI (dashed), quoted (dotted). A pattern, a colour
+   and the word "You", "AI" or "Quoted" say it together, so colour is never alone. One switch,
+   "Show authorship", shows or hides every rule, label and the summary; hidden, what is left
+   is the plain prose with no extra words read. The summary is the meter's row (label, line,
+   bar, note) with a bar of three patterned segments, and it states the words and the
+   percentages in text. A run is a span inside a paragraph, or a block (a div around
+   paragraphs); on a wide container the label sits in the margin, on a narrow one above. */
+@layer cap.components {
+  .cap-authorship {
+    container: cap-authorship / inline-size;
+    --cap-auth-gutter: 5.5rem;
+    --cap-auth-rule: 4px;
+    --cap-auth-pad: var(--space-3);
+    --cap-auth-pad-block: var(--space-4);
+    display: grid;
+    gap: var(--gap);
+    min-width: 0;
+    color: var(--text);
+
+    /* Hidden: by the container's own attribute, or, before any script, by the switch itself. */
+    &:is([data-authorship="off"], :has(> .cap-authorship-bar input[role="switch"]:not(:checked))) {
+      --cap-auth-gutter: 0px;
+      --cap-auth-rule: 0px;
+      --cap-auth-pad: 0px;
+      --cap-auth-pad-block: 0px;
+
+      & .cap-run-label,
+      & .cap-authorship-summary {
+        display: none;
+      }
+    }
+  }
+
+  .cap-authorship-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-3) var(--space-6);
+  }
+  .cap-authorship-summary {
+    flex: 1 1 20rem;
+  }
+
+  /* The text the runs sit in: prose. */
+  .cap-authorship-text {
+    font-family: var(--prose);
+    font-size: var(--fs-prose);
+    line-height: 1.6;
+    max-inline-size: var(--measure);
+
+    & > :first-child {
+      margin-block-start: 0;
+    }
+    & > :last-child {
+      margin-block-end: 0;
+    }
+  }
+
+  /* A run. Colour and pattern per kind; the rule is the identifying mark, so it reaches 3:1
+     on the page. */
+  .cap-run {
+    --cap-run-colour: var(--accent);
+    --cap-run-pattern: solid;
+    border: 0 var(--cap-run-pattern) var(--cap-run-colour);
+    border-inline-start-width: var(--cap-auth-rule, 4px);
+    padding-inline-start: var(--cap-auth-pad, var(--space-3));
+    box-decoration-break: clone;
+
+    &[data-kind="ai"] {
+      --cap-run-colour: var(--info);
+      --cap-run-pattern: dashed;
+    }
+    &[data-kind="quoted"] {
+      --cap-run-colour: var(--muted);
+      --cap-run-pattern: dotted;
+    }
+  }
+
+  /* A block run: a paragraph or several, with its label above (narrow) or in the margin (wide). */
+  .cap-run:is(div, p, blockquote, section, li) {
+    position: relative;
+    display: block;
+    margin-block: var(--space-3);
+    padding-inline-start: var(--cap-auth-pad-block, var(--space-4));
+
+    & > p {
+      margin-block: 0 var(--space-3);
+    }
+    & > p:last-child {
+      margin-block-end: 0;
+    }
+  }
+
+  .cap-run-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-inline-end: var(--space-2);
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-s);
+    background: var(--sunken);
+    color: var(--text);
+    font-family: var(--ui);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    line-height: 1.5;
+    vertical-align: baseline;
+    white-space: nowrap;
+
+    & > .cap-avatar {
+      --cap-avatar-size: 16px;
+      box-shadow: none;
+    }
+  }
+  .cap-run:is(div, p, blockquote, section, li) > .cap-run-label {
+    display: flex;
+    width: max-content;
+    margin-block-end: var(--space-1);
+  }
+
+  /* Wide: the labels move into a margin the text leaves for them. */
+  @container cap-authorship (min-width: 36rem) {
+    .cap-authorship-text {
+      padding-inline-start: var(--cap-auth-gutter);
+    }
+    .cap-run:is(div, p, blockquote, section, li) > .cap-run-label {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-end: calc(100% + var(--space-4) + var(--cap-auth-rule, 4px) - var(--space-2));
+      margin: 0;
+    }
+  }
+
+  /* The summary's bar: three segments in the meter's track, each its own pattern, so the
+     shares read without colour. Widths come from --cap-share, set through the CSSOM. */
+  .cap-authorship-summary .cap-meter-bar {
+    display: flex;
+    gap: 2px;
+    background: var(--sunken);
+  }
+  .cap-authorship-seg {
+    --cap-run-colour: var(--accent);
+    flex: var(--cap-share, 0) 1 0;
+    min-width: 0;
+    background: var(--cap-run-colour);
+
+    &[data-kind="ai"] {
+      --cap-run-colour: var(--info);
+      background: repeating-linear-gradient(135deg, var(--cap-run-colour) 0 2px, var(--surface) 2px 5px);
+    }
+    &[data-kind="quoted"] {
+      --cap-run-colour: var(--muted);
+      background: radial-gradient(circle, var(--cap-run-colour) 0 1px, transparent 1.5px) 0 0 / 4px 4px;
+    }
+    &[data-share="0"] {
+      display: none;
+    }
+  }
+  .cap-authorship-summary .cap-meter-note {
+    gap: var(--space-1) var(--space-4);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (forced-colors: active) {
+    .cap-run {
+      border-color: CanvasText;
+    }
+    .cap-run-label {
+      border: 1px solid CanvasText;
+    }
+    .cap-authorship-seg {
+      forced-color-adjust: none;
+      background: CanvasText;
+
+      &[data-kind="ai"] {
+        background: repeating-linear-gradient(135deg, CanvasText 0 2px, Canvas 2px 5px);
+      }
+      &[data-kind="quoted"] {
+        background: radial-gradient(circle, CanvasText 0 1px, transparent 1.5px) 0 0 / 4px 4px;
+      }
+    }
+  }
+}
