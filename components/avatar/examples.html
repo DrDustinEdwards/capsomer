@@ -1,0 +1,48 @@
+<section class="cap-specimen" aria-labelledby="s-initials">
+  <h2 id="s-initials">Initials, picture and a picture that fails</h2>
+  <div class="cap-specimen-row">
+    <span class="cap-avatar" data-cap="avatar" role="img" aria-label="Dustin Edwards" id="av-initials"><span class="cap-avatar-fallback" aria-hidden="true">DE</span></span>
+    <span class="cap-avatar" data-cap="avatar" role="img" aria-label="Rosa Park" id="av-picture"><span class="cap-avatar-fallback" aria-hidden="true">RP</span><img class="cap-avatar-image" alt="" width="64" height="64" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' fill='%23b29ae3'/%3E%3Ccircle cx='4' cy='3' r='1.6' fill='%234f2d7f'/%3E%3Cpath d='M1 8a3 3 0 0 1 6 0z' fill='%234f2d7f'/%3E%3C/svg%3E" /></span>
+    <span class="cap-avatar" data-cap="avatar" role="img" aria-label="Sam Okafor" id="av-broken"><span class="cap-avatar-fallback" aria-hidden="true">SO</span><img class="cap-avatar-image" alt="" width="64" height="64" src="/missing-avatar.png" /></span>
+    <span class="cap-avatar" data-kind="ai" role="img" aria-label="AI"><span class="cap-avatar-fallback" aria-hidden="true">AI</span></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-sizes">
+  <h2 id="s-sizes">Sizes and square</h2>
+  <div class="cap-specimen-row">
+    <span class="cap-avatar" data-size="sm" role="img" aria-label="Small"><span class="cap-avatar-fallback" aria-hidden="true">S</span></span>
+    <span class="cap-avatar" role="img" aria-label="Default"><span class="cap-avatar-fallback" aria-hidden="true">D</span></span>
+    <span class="cap-avatar" data-size="lg" role="img" aria-label="Large"><span class="cap-avatar-fallback" aria-hidden="true">L</span></span>
+    <span class="cap-avatar" data-shape="square" role="img" aria-label="foxhound.app"><span class="cap-avatar-fallback" aria-hidden="true">FH</span></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-badge">
+  <h2 id="s-badge">With a badge</h2>
+  <div class="cap-specimen-row">
+    <span class="cap-avatar" data-size="lg" role="img" aria-label="Dustin Edwards, online" id="av-badge"><span class="cap-avatar-fallback" aria-hidden="true">DE</span><span class="cap-avatar-badge" data-tone="ok" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-group">
+  <h2 id="s-group">Group with a count</h2>
+  <span class="cap-avatar-group" role="group" aria-label="Contributors" id="av-group">
+    <span class="cap-avatar" role="img" aria-label="Dustin Edwards"><span class="cap-avatar-fallback" aria-hidden="true">DE</span></span>
+    <span class="cap-avatar" role="img" aria-label="Rosa Park"><span class="cap-avatar-fallback" aria-hidden="true">RP</span></span>
+    <span class="cap-avatar" role="img" aria-label="Sam Okafor"><span class="cap-avatar-fallback" aria-hidden="true">SO</span></span>
+    <span class="cap-avatar-count" role="img" aria-label="and 3 more">+3</span>
+  </span>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div class="cap-specimen-row" data-density="comfortable">
+    <span class="cap-avatar" role="img" aria-label="Dustin Edwards"><span class="cap-avatar-fallback" aria-hidden="true">DE</span></span>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./avatar.ts";
+  enhance();
+</script>
