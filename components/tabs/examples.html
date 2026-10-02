@@ -1,0 +1,152 @@
+<link rel="stylesheet" href="./specimen/narrow.css" />
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">Default: the tray, automatic activation, a count, a disabled tab</h2>
+  <div class="cap-tabs" data-cap="tabs" id="tabs-default">
+    <div class="cap-tabs-list" role="tablist" aria-label="Site sections">
+      <button type="button" class="cap-tab" role="tab" id="td-overview" aria-selected="true" aria-controls="tdp-overview" tabindex="0">Overview</button>
+      <button type="button" class="cap-tab" role="tab" id="td-runs" aria-selected="false" aria-controls="tdp-runs" tabindex="-1">Runs<span class="cap-tab-count">24</span></button>
+      <button type="button" class="cap-tab" role="tab" id="td-alerts" aria-selected="false" aria-controls="tdp-alerts" aria-disabled="true" tabindex="-1">Alerts</button>
+      <button type="button" class="cap-tab" role="tab" id="td-settings" aria-selected="false" aria-controls="tdp-settings" tabindex="-1">Settings</button>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tdp-overview" aria-labelledby="td-overview" tabindex="0">
+      <p>foxhound.app is up. The last check ran at 14:02 and took 212 ms.</p>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tdp-runs" aria-labelledby="td-runs" tabindex="0" hidden>
+      <p>24 runs in the last day. The most recent, job_7c21, finished at 14:02.</p>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tdp-alerts" aria-labelledby="td-alerts" tabindex="0" hidden>
+      <p>Alerts are off for this site.</p>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tdp-settings" aria-labelledby="td-settings" tabindex="0" hidden>
+      <p>Check every 5 minutes from two regions.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-line">
+  <h2 id="s-line">Line variant</h2>
+  <div class="cap-tabs" data-cap="tabs" id="tabs-line">
+    <div class="cap-tabs-list" role="tablist" aria-label="Post views" data-variant="line">
+      <button type="button" class="cap-tab" role="tab" id="tl-draft" aria-selected="true" aria-controls="tlp-draft" tabindex="0">Draft</button>
+      <button type="button" class="cap-tab" role="tab" id="tl-preview" aria-selected="false" aria-controls="tlp-preview" tabindex="-1">Preview</button>
+      <button type="button" class="cap-tab" role="tab" id="tl-history" aria-selected="false" aria-controls="tlp-history" tabindex="-1">History<span class="cap-tab-count">7</span></button>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tlp-draft" aria-labelledby="tl-draft" tabindex="0">
+      <p>Why phage therapy keeps coming back. Last saved 13:58.</p>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tlp-preview" aria-labelledby="tl-preview" tabindex="0" hidden>
+      <p>The post as readers will see it, at the width of the blog column.</p>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tlp-history" aria-labelledby="tl-history" tabindex="0" hidden>
+      <p>Seven saved versions, the newest from 13:58 today.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-vertical">
+  <h2 id="s-vertical">Vertical, the tray and the line</h2>
+  <div class="cap-specimen-row">
+    <div class="cap-tabs" data-cap="tabs" data-orientation="vertical" id="tabs-vertical">
+      <div class="cap-tabs-list" role="tablist" aria-label="Settings sections" aria-orientation="vertical">
+        <button type="button" class="cap-tab" role="tab" id="tv-general" aria-selected="true" aria-controls="tvp-general" tabindex="0">General</button>
+        <button type="button" class="cap-tab" role="tab" id="tv-agents" aria-selected="false" aria-controls="tvp-agents" tabindex="-1">Agents</button>
+        <button type="button" class="cap-tab" role="tab" id="tv-keys" aria-selected="false" aria-controls="tvp-keys" tabindex="-1">Access keys</button>
+      </div>
+      <div class="cap-tabs-panel" role="tabpanel" id="tvp-general" aria-labelledby="tv-general" tabindex="0"><p>Name, region and time zone.</p></div>
+      <div class="cap-tabs-panel" role="tabpanel" id="tvp-agents" aria-labelledby="tv-agents" tabindex="0" hidden><p>Three agents may write drafts.</p></div>
+      <div class="cap-tabs-panel" role="tabpanel" id="tvp-keys" aria-labelledby="tv-keys" tabindex="0" hidden><p>Two keys, last used yesterday.</p></div>
+    </div>
+    <div class="cap-tabs" data-cap="tabs" data-orientation="vertical" id="tabs-vertical-line">
+      <div class="cap-tabs-list" role="tablist" aria-label="Report sections" aria-orientation="vertical" data-variant="line">
+        <button type="button" class="cap-tab" role="tab" id="tw-uptime" aria-selected="true" aria-controls="twp-uptime" tabindex="0">Uptime</button>
+        <button type="button" class="cap-tab" role="tab" id="tw-latency" aria-selected="false" aria-controls="twp-latency" tabindex="-1">Latency</button>
+        <button type="button" class="cap-tab" role="tab" id="tw-errors" aria-selected="false" aria-controls="twp-errors" tabindex="-1">Errors</button>
+      </div>
+      <div class="cap-tabs-panel" role="tabpanel" id="twp-uptime" aria-labelledby="tw-uptime" tabindex="0"><p>99.94 percent over 30 days.</p></div>
+      <div class="cap-tabs-panel" role="tabpanel" id="twp-latency" aria-labelledby="tw-latency" tabindex="0" hidden><p>Median 212 ms, slowest 1.4 s.</p></div>
+      <div class="cap-tabs-panel" role="tabpanel" id="twp-errors" aria-labelledby="tw-errors" tabindex="0" hidden><p>Eleven failed checks, all on 28 September.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-manual">
+  <h2 id="s-manual">Manual activation: arrows move focus, Enter or Space chooses</h2>
+  <div class="cap-tabs" data-cap="tabs" data-activation="manual" id="tabs-manual">
+    <div class="cap-tabs-list" role="tablist" aria-label="Exports">
+      <button type="button" class="cap-tab" role="tab" id="tm-posts" aria-selected="true" aria-controls="tmp-posts" tabindex="0">Posts</button>
+      <button type="button" class="cap-tab" role="tab" id="tm-media" aria-selected="false" aria-controls="tmp-media" tabindex="-1">Media</button>
+      <button type="button" class="cap-tab" role="tab" id="tm-mentions" aria-selected="false" aria-controls="tmp-mentions" tabindex="-1">Mentions</button>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tmp-posts" aria-labelledby="tm-posts" tabindex="0"><p>Export 312 posts as Markdown.</p></div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tmp-media" aria-labelledby="tm-media" tabindex="0" hidden><p>Export 1,204 images and documents, about 3.1 GB.</p></div>
+    <div class="cap-tabs-panel" role="tabpanel" id="tmp-mentions" aria-labelledby="tm-mentions" tabindex="0" hidden><p>Export 86 mentions as CSV.</p></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-hash">
+  <h2 id="s-hash">The address follows the tab (data-sync="hash")</h2>
+  <div class="cap-tabs" data-cap="tabs" data-sync="hash" id="tabs-hash">
+    <div class="cap-tabs-list" role="tablist" aria-label="Help topics" data-variant="line">
+      <button type="button" class="cap-tab" role="tab" id="th-start" aria-selected="true" aria-controls="thp-start" tabindex="0">Getting started</button>
+      <button type="button" class="cap-tab" role="tab" id="th-keys" aria-selected="false" aria-controls="thp-keys" tabindex="-1">Keyboard</button>
+    </div>
+    <div class="cap-tabs-panel" role="tabpanel" id="thp-start" aria-labelledby="th-start" tabindex="0"><p>Add a site, then a check.</p></div>
+    <div class="cap-tabs-panel" role="tabpanel" id="thp-keys" aria-labelledby="th-keys" tabindex="0" hidden><p>Press ? for every shortcut.</p></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-links">
+  <h2 id="s-links">Links: tabs that are pages, the current one marked</h2>
+  <div class="cap-specimen-row">
+    <nav class="cap-tabs-list" aria-label="Filter mentions by status" id="tabs-links">
+      <a class="cap-tab" href="#open" aria-current="page">Open<span class="cap-tab-count">12</span></a>
+      <a class="cap-tab" href="#resolved">Resolved<span class="cap-tab-count">48</span></a>
+      <a class="cap-tab" href="#all">All<span class="cap-tab-count">60</span></a>
+    </nav>
+  </div>
+  <div class="cap-specimen-row">
+    <nav class="cap-tabs-list" data-variant="line" aria-label="Filter posts by status" id="tabs-links-line">
+      <a class="cap-tab" href="#all-posts">All<span class="cap-tab-count">312</span></a>
+      <a class="cap-tab" href="#published" aria-current="page">Published<span class="cap-tab-count">287</span></a>
+      <a class="cap-tab" href="#drafts">Drafts<span class="cap-tab-count">21</span></a>
+      <a class="cap-tab" href="#scheduled">Scheduled<span class="cap-tab-count">4</span></a>
+    </nav>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-narrow">
+  <h2 id="s-narrow">In a narrow space the list scrolls, nothing is clipped</h2>
+  <div class="tabs-narrow-box" id="tabs-narrow-box">
+    <div class="cap-tabs" data-cap="tabs" id="tabs-narrow">
+      <div class="cap-tabs-list" role="tablist" aria-label="Collections">
+        <button type="button" class="cap-tab" role="tab" id="tn-posts" aria-selected="true" aria-controls="tnp-posts" tabindex="0">Posts</button>
+        <button type="button" class="cap-tab" role="tab" id="tn-procedures" aria-selected="false" aria-controls="tnp-procedures" tabindex="-1">Procedures</button>
+        <button type="button" class="cap-tab" role="tab" id="tn-mentions" aria-selected="false" aria-controls="tnp-mentions" tabindex="-1">Mentions</button>
+        <button type="button" class="cap-tab" role="tab" id="tn-media" aria-selected="false" aria-controls="tnp-media" tabindex="-1">Media library</button>
+      </div>
+      <div class="cap-tabs-panel" role="tabpanel" id="tnp-posts" aria-labelledby="tn-posts" tabindex="0"><p>312 posts.</p></div>
+      <div class="cap-tabs-panel" role="tabpanel" id="tnp-procedures" aria-labelledby="tn-procedures" tabindex="0" hidden><p>18 procedures.</p></div>
+      <div class="cap-tabs-panel" role="tabpanel" id="tnp-mentions" aria-labelledby="tn-mentions" tabindex="0" hidden><p>86 mentions.</p></div>
+      <div class="cap-tabs-panel" role="tabpanel" id="tnp-media" aria-labelledby="tn-media" tabindex="0" hidden><p>1,204 files.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div data-density="comfortable">
+    <div class="cap-tabs" data-cap="tabs" id="tabs-comfortable">
+      <div class="cap-tabs-list" role="tablist" aria-label="Density sample">
+        <button type="button" class="cap-tab" role="tab" id="tc-a" aria-selected="true" aria-controls="tcp-a" tabindex="0">Overview</button>
+        <button type="button" class="cap-tab" role="tab" id="tc-b" aria-selected="false" aria-controls="tcp-b" tabindex="-1">Runs</button>
+      </div>
+      <div class="cap-tabs-panel" role="tabpanel" id="tcp-a" aria-labelledby="tc-a" tabindex="0"><p>Roomier tabs.</p></div>
+      <div class="cap-tabs-panel" role="tabpanel" id="tcp-b" aria-labelledby="tc-b" tabindex="0" hidden><p>Runs.</p></div>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./tabs.ts";
+  enhance();
+</script>
