@@ -214,10 +214,10 @@ eachTheme((theme) => {
   test("accessibility: the selection keeps the text readable and shows where it is", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-default");
-    const text = await pairRatio(page, "var(--text)", "color-mix(in srgb, var(--accent) 28%, var(--surface))");
+    const text = await pairRatio(page, "var(--text)", "color-mix(in srgb, var(--accent) 36%, var(--surface))");
     expect(text).toBeGreaterThanOrEqual(4.5);
     // And it is distinguishable from the unselected surface: 1.4:1 or more.
-    const shows = await pairRatio(page, "color-mix(in srgb, var(--accent) 28%, var(--surface))", "var(--surface)");
+    const shows = await pairRatio(page, "color-mix(in srgb, var(--accent) 36%, var(--surface))", "var(--surface)");
     expect(shows).toBeGreaterThanOrEqual(1.4);
   });
 
@@ -225,12 +225,12 @@ eachTheme((theme) => {
     await visitOnly(page, theme, "palette");
     await expect(page.getByRole("option").first()).toBeVisible();
     await expectContrast(page, [
-      { sel: ".cap-md-option[aria-selected='true'] .cap-md-option-title", what: "the active option's title on accent-soft" },
-      { sel: ".cap-md-option[aria-selected='true'] .cap-md-option-hint", what: "the active option's address on accent-soft" },
-      { sel: ".cap-md-option[aria-selected='false'] .cap-md-option-title", what: "an option's title" },
-      { sel: ".cap-md-option[aria-selected='false'] .cap-md-option-hint", what: "an option's address" },
+      { sel: ".cap-option[data-active] .cap-option-label", what: "the active option's title on accent-soft" },
+      { sel: ".cap-option[data-active] .cap-md-option-hint", what: "the active option's address on accent-soft" },
+      { sel: ".cap-option:not([data-active]) .cap-option-label", what: "an option's title" },
+      { sel: ".cap-option:not([data-active]) .cap-md-option-hint", what: "an option's address" },
       { sel: ".cap-md-palette-label", what: "the palette's label" },
-      { sel: ".cap-md-palette-input", what: "the palette's input edge", part: "border" },
+      { sel: ".cap-md-palette .cap-input", what: "the palette's input edge", part: "border" },
     ]);
     await visitOnly(page, theme, "slash");
     await expect(page.getByRole("button", { name: /Chart/ }).first()).toBeVisible();
@@ -286,7 +286,7 @@ eachTheme((theme) => {
     const input = page.getByRole("combobox", { name: "Link to" });
     await expect(input).toHaveAttribute("aria-expanded", "true");
     await expect(page.getByRole("listbox", { name: "Pages" }).getByRole("option")).toHaveCount(3);
-    await expect(page.getByRole("option").first()).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("option").first()).toHaveAttribute("data-active", "");
     await expect(page.getByRole("option", { name: /Quiet hours, explained.*not live yet \(draft\)/ })).toBeVisible();
     await visitOnly(page, theme, "slash");
     await expect(page.getByRole("list", { name: "Insert a block" }).getByRole("button")).toHaveCount(3);
@@ -411,15 +411,19 @@ eachTheme((theme) => {
   test("keyboard: in the link palette arrows choose, Enter links, and the cursor lands after the link", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await expect(page.getByRole("combobox", { name: "Link to" })).toBeFocused();
-    await expect(page.getByRole("option").first()).toHaveAttribute("aria-selected", "true");
+    const active = async (i: number) => {
+      await expect(page.getByRole("option").nth(i)).toHaveAttribute("data-active", "");
+      const id = await page.getByRole("option").nth(i).getAttribute("id");
+      await expect(page.getByRole("combobox")).toHaveAttribute("aria-activedescendant", id ?? "none");
+    };
+    await active(0);
     await page.keyboard.press("ArrowDown");
-    await expect(page.getByRole("option").nth(1)).toHaveAttribute("aria-selected", "true");
-    await expect(page.getByRole("combobox")).toHaveAttribute("aria-activedescendant", /opt-1$/);
+    await active(1);
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
-    await expect(page.getByRole("option").first()).toHaveAttribute("aria-selected", "true");
+    await active(0);
     await page.keyboard.press("ArrowUp");
-    await expect(page.getByRole("option").nth(2)).toHaveAttribute("aria-selected", "true");
+    await active(2);
     await page.keyboard.press("ArrowUp");
     await page.keyboard.press("Enter");
     await expect(page.getByRole("combobox")).toHaveCount(0);

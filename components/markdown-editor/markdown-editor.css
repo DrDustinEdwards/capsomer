@@ -34,10 +34,18 @@
     &:hover {
       border-color: var(--muted);
     }
-    /* Invalid: the edge thickens as well as turning red, and the message below says what is wrong. */
+    /* Focus: the edge takes the ring colour, as a field's does; the ring itself is drawn
+       inside the surface (markdown-editor.view.ts), since the frame clips overflow. */
+    &:has(.cm-editor.cm-focused) {
+      border-color: var(--ring);
+    }
+    /* Invalid: the edge thickens and a soft ring appears as well as turning red, and the
+       message below says what is wrong. */
     &:has(.cm-content[aria-invalid="true"]) {
       border-color: var(--crit);
-      box-shadow: inset 0 0 0 1px var(--crit);
+      box-shadow:
+        inset 0 0 0 1px var(--crit),
+        0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
     }
     /* Read-only keeps its text readable and selectable, on the sunken ground the field uses. */
     &:has(.cm-content[aria-readonly="true"]) {
@@ -63,7 +71,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2) var(--pad-x);
     border-bottom: 1px solid var(--line);
     background: var(--raised);
   }
@@ -72,7 +80,7 @@
     place-items: center;
     min-width: max(var(--target), calc(var(--control) - var(--space-3)));
     min-height: max(var(--target), calc(var(--control) - var(--space-3)));
-    padding: 0 var(--space-3);
+    padding: 0 var(--pad-x);
     border: 1px solid transparent;
     border-radius: var(--radius-m);
     background: transparent;
@@ -113,7 +121,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2) var(--space-4);
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2) var(--pad-x);
     border-top: 1px solid var(--line);
     background: var(--raised);
     color: var(--muted);
@@ -136,25 +144,11 @@
     font-weight: 600;
   }
 
-  /* The link palette and the slash menu sit over the text at the cursor, inside the editor's box. */
-  .cap-md-palette,
-  .cap-md-slash {
-    position: absolute;
-    top: var(--cap-md-top, 0);
-    left: var(--cap-md-left, 0);
-    z-index: var(--z-overlay);
-    margin: 0;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-l);
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: var(--shadow);
-  }
-
+  /* The link palette and the slash menu are the shared popover (.cap-popover, popover.css) in
+     the top layer, placed at the cursor by popover.ts; the palette's list is the shared
+     listbox (.cap-listbox, .cap-option, listbox.css). Only what is the editor's own is here. */
   .cap-md-palette {
-    display: grid;
     gap: var(--space-2);
-    width: min(26rem, 100%);
     padding: var(--space-3);
   }
   .cap-md-palette-label {
@@ -174,34 +168,21 @@
       display: none;
     }
   }
-  .cap-md-list {
-    max-height: 15rem;
-    margin: 0;
+  .cap-md-palette .cap-listbox {
     padding: 0;
-    overflow-y: auto;
-    list-style: none;
-    overscroll-behavior: contain;
   }
-  .cap-md-option {
-    display: grid;
-    gap: var(--space-1);
-    min-height: max(var(--target), 34px);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-m);
-    cursor: pointer;
-
-    /* The active option: a tint and a bar at its start edge, so it is not the tint alone. DOM focus stays in the box. */
-    &[aria-selected="true"] {
-      background: var(--accent-soft);
-      box-shadow: inset 3px 0 0 var(--accent);
-    }
-  }
+  /* The address beside a page's title, and the words that say a page is not live. On the
+     current option (accent-soft) it steps up to body text: --muted is not measured there. */
   .cap-md-option-hint {
+    flex: none;
+    max-inline-size: 45%;
+    overflow: hidden;
     color: var(--muted);
     font-size: var(--fs-detail);
-    overflow-wrap: anywhere;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
-    .cap-md-option[aria-selected="true"] & {
+    .cap-option[data-active] & {
       color: var(--text);
     }
   }
@@ -210,16 +191,16 @@
   }
 
   .cap-md-slash {
-    min-width: 15rem;
-    padding: var(--space-2);
+    margin: 0;
     list-style: none;
+    padding: var(--space-2);
   }
   .cap-md-slash-item {
     display: grid;
     gap: var(--space-1);
     width: 100%;
-    min-height: max(var(--target), 34px);
-    padding: var(--space-2) var(--space-3);
+    min-height: max(var(--target), calc(var(--control) - var(--space-2)));
+    padding: var(--space-2) var(--pad-x);
     border: 0;
     border-radius: var(--radius-m);
     background: transparent;
@@ -234,7 +215,8 @@
       box-shadow: inset 3px 0 0 var(--accent);
     }
     &:focus-visible {
-      outline-offset: -2px;
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: calc(var(--focus-width) * -1);
     }
   }
   .cap-md-slash-hint {
@@ -296,8 +278,6 @@
 
   @media (forced-colors: active) {
     .cap-md-frame,
-    .cap-md-palette,
-    .cap-md-slash,
     .cap-md-upload {
       border-color: CanvasText;
     }
@@ -308,7 +288,6 @@
       opacity: 1;
       color: GrayText;
     }
-    .cap-md-option[aria-selected="true"],
     .cap-md-slash-item:is(:hover, :focus-visible) {
       outline: 2px solid Highlight;
       outline-offset: -2px;
