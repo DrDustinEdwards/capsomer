@@ -451,6 +451,43 @@ eachTheme((theme) => {
     await expect(react.locator("li[data-state='open']").getByText("Anchor lost").first()).toBeVisible();
   });
 
+  for (const width of [1280, 375]) {
+    test(`behaviour: at ${width}px nothing in a row overflows it and every title has room to be read`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await visitStates(page, "flag-list", theme);
+      const bad = await page.evaluate(() => {
+        const out: string[] = [];
+        for (const row of document.querySelectorAll<HTMLElement>("li.cap-row")) {
+          const r = row.getBoundingClientRect();
+          if (r.width === 0) continue;
+          for (const el of row.querySelectorAll<HTMLElement>("*")) {
+            const b = el.getBoundingClientRect();
+            if (b.width === 0 || b.height === 0 || el.closest("[hidden], .cap-sr-only")) continue;
+            if (b.right > r.right + 1 || b.left < r.left - 1) out.push(`${row.id} ${el.className || el.tagName} sticks out of its row`);
+          }
+          const t = row.querySelector<HTMLElement>(".cap-row-title");
+          if (t && t.getBoundingClientRect().width < 100) out.push(`${row.id} title is ${Math.round(t.getBoundingClientRect().width)}px wide`);
+        }
+        return out;
+      });
+      expect(bad).toEqual([]);
+    });
+  }
+
+  test("behaviour: at phone width the page does not scroll sideways, and the flag's controls are still reachable", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 800 });
+    await visitStates(page, "flag-list", theme);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await expect(page.locator("#fl-phone-mf1").getByRole("button", { name: /^Resolve/ })).toBeVisible();
+    await expect(page.locator("#fl-phone-mf3").getByRole("button", { name: /^Apply suggestion/ })).toBeVisible();
+  });
+
+  test("behaviour: comfortable density makes a row roomier than the compact default", async ({ page }) => {
+    await visitStates(page, "flag-list", theme);
+    const pad = (sel: string) => page.locator(sel).evaluate((e) => parseFloat(getComputedStyle(e).paddingTop));
+    expect(await pad("#fl-comfy-c5")).toBeGreaterThan(await pad("#fl-main-f5"));
+  });
+
   test("behaviour: the filter defaults per its markup and the record is complete under All", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await expect(page.locator("#fl-guest").getByRole("radio", { name: /^All/ })).toBeChecked();
