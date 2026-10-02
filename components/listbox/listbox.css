@@ -23,7 +23,7 @@
 
     /* A listbox that holds focus itself: the ring sits inside, so a clipping parent cannot hide it. */
     &:focus-visible {
-      outline: var(--focus-width) solid var(--focus-color);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: calc(var(--focus-width) * -1);
     }
 
@@ -108,7 +108,7 @@
       }
     }
     &:focus-visible {
-      outline: var(--focus-width) solid var(--focus-color);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: calc(var(--focus-width) * -1);
     }
 
