@@ -13,16 +13,18 @@
     <h1>Overview</h1>
     <p>The page behind the sheet.</p>
   </main>
-  <dialog class="cap-keys" data-cap="shortcuts" aria-labelledby="keys-title">
-    <div class="cap-keys-head">
-      <h2 class="cap-keys-title" id="keys-title">Keyboard shortcuts</h2>
-      <button type="button" class="cap-btn" data-cap-part="close">Close</button>
+  <dialog class="cap-dialog cap-keys" data-cap="shortcuts" data-placement="center" data-size="md" aria-labelledby="keys-title">
+    <div class="cap-dialog-header" data-divider>
+      <h2 class="cap-dialog-title" id="keys-title">Keyboard shortcuts</h2>
     </div>
-    <div class="cap-keys-body" data-cap-part="keys-list"></div>
-    <div class="cap-keys-foot">
-      <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="keys-note" checked /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">On</span></label>
-      <p class="cap-keys-note" id="keys-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
+    <div class="cap-dialog-body cap-keys-body" data-cap-part="keys-list"></div>
+    <div class="cap-dialog-footer" data-align="start">
+      <div class="cap-keys-foot">
+        <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="keys-note" checked /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">On</span></label>
+        <p class="cap-keys-note" id="keys-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
+      </div>
     </div>
+    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
   </dialog>
 </template>
 
@@ -31,16 +33,38 @@
     <h1>Overview</h1>
     <p>The page behind the sheet.</p>
   </main>
-  <dialog class="cap-keys" data-cap="shortcuts" aria-labelledby="off-title">
-    <div class="cap-keys-head">
-      <h2 class="cap-keys-title" id="off-title">Keyboard shortcuts</h2>
-      <button type="button" class="cap-btn" data-cap-part="close">Close</button>
+  <dialog class="cap-dialog cap-keys" data-cap="shortcuts" data-placement="center" data-size="md" aria-labelledby="off-title">
+    <div class="cap-dialog-header" data-divider>
+      <h2 class="cap-dialog-title" id="off-title">Keyboard shortcuts</h2>
     </div>
-    <div class="cap-keys-body" data-cap-part="keys-list"></div>
-    <div class="cap-keys-foot">
-      <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="off-note" /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">Off</span></label>
-      <p class="cap-keys-note" id="off-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
+    <div class="cap-dialog-body cap-keys-body" data-cap-part="keys-list"></div>
+    <div class="cap-dialog-footer" data-align="start">
+      <div class="cap-keys-foot">
+        <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="off-note" /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">Off</span></label>
+        <p class="cap-keys-note" id="off-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
+      </div>
     </div>
+    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+  </dialog>
+</template>
+
+<template data-specimen="comfortable" data-title="The sheet, comfortable density" data-height="620">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Overview</h1>
+    <p>The page behind the sheet.</p>
+  </main>
+  <dialog class="cap-dialog cap-keys" data-cap="shortcuts" data-placement="center" data-size="md" data-density="comfortable" aria-labelledby="comf-title">
+    <div class="cap-dialog-header" data-divider>
+      <h2 class="cap-dialog-title" id="comf-title">Keyboard shortcuts</h2>
+    </div>
+    <div class="cap-dialog-body cap-keys-body" data-cap-part="keys-list"></div>
+    <div class="cap-dialog-footer" data-align="start">
+      <div class="cap-keys-foot">
+        <label class="cap-switch"><input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby="comf-note" checked /><span>Single-key shortcuts</span><span class="cap-switch-state" aria-hidden="true">On</span></label>
+        <p class="cap-keys-note" id="comf-note">Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.</p>
+      </div>
+    </div>
+    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
   </dialog>
 </template>
 
@@ -61,6 +85,6 @@
     register({ key: "[", label: "Collapse or expand the side menu", group: "Actions", run: say("Collapsed the side menu.") });
     if (only === "off") setSingleKeys(false, { remember: false });
     enhance();
-    if (only === "open" || only === "off") openShortcutSheet(null);
+    if (only === "open" || only === "off" || only === "comfortable") openShortcutSheet(null);
   }
 </script>

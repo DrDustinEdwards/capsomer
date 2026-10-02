@@ -66,8 +66,8 @@
     & dt {
       display: flex;
       flex-wrap: wrap;
-      align-items: baseline;
-      gap: var(--space-1);
+      align-items: center;
+      gap: var(--space-2);
       color: var(--muted);
       font-size: var(--fs-detail);
     }

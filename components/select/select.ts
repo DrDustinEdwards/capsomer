@@ -31,7 +31,7 @@ export interface SelectGroup {
 
 // The native select's options and groups as plain data (the popup is built from it).
 export function readOptions(select: HTMLSelectElement): Array<SelectItem | SelectGroup> {
-  const item = (o: HTMLOptionElement): SelectItem => ({ kind: "option", value: o.value, label: (o.label || o.textContent || "").trim(), disabled: o.disabled, selected: o.selected });
+  const item = (o: HTMLOptionElement): SelectItem => ({ kind: "option", value: o.value, label: (o.label || o.textContent || "").trim(), disabled: o.matches(":disabled"), selected: o.selected });
   const out: Array<SelectItem | SelectGroup> = [];
   for (const child of Array.from(select.children)) {
     if (child instanceof HTMLOptGroupElement) {
@@ -123,6 +123,8 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
   trigger.setAttribute("aria-controls", listId);
   trigger.id = triggerId;
   if (select.dataset.size) trigger.dataset.size = select.dataset.size;
+  // The specimen hook for a forced hover carries over.
+  if (select.dataset.force) trigger.dataset.force = select.dataset.force;
   if (label) {
     if (!label.id) label.id = `${triggerId}-label`;
     trigger.setAttribute("aria-labelledby", label.id);
