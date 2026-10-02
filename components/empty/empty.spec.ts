@@ -12,12 +12,15 @@ eachTheme((theme) => {
     await expectContrast(page, [
       { sel: "#sample-nothing .cap-empty-title", what: "nothing yet title" },
       { sel: "#sample-nothing .cap-empty-text", what: "nothing yet text" },
+      { sel: "#sample-nothing .cap-empty-media", what: "the icon tile's icon", min: 3 },
       { sel: "#sample-nomatch .cap-empty-text", what: "no match text" },
       { sel: "#sample-clear .cap-status", what: "all clear status" },
       { sel: "#sample-clear .cap-empty-text", what: "all clear text" },
       { sel: "#sample-failed .cap-empty-title", what: "failed title" },
       { sel: "#sample-failed .cap-empty-text", what: "failed text" },
-      { sel: "#sample-spinner .cap-spinner-label", what: "spinner word" },
+      { sel: "#sample-flush .cap-empty-text a", what: "a link in the text" },
+      { sel: "#sample-direct .cap-empty-title", what: "0.1 markup title" },
+      { sel: "#sample-comfortable .cap-empty-text", what: "comfortable text" },
       { sel: "#sample-wait .cap-empty-text", what: "how long it takes" },
     ]);
   });
@@ -37,18 +40,25 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: a skeleton is busy and says Loading to a screen reader", async ({ page }) => {
+  test("accessibility: the icon tile is decorative and hidden from assistive technology", async ({ page }) => {
     await visitStates(page, "empty", theme);
-    const skel = page.locator("#sample-skeleton");
-    await expect(skel).toHaveAttribute("aria-busy", "true");
-    await expect(skel.locator(".cap-sr-only")).toHaveText("Loading");
-    const hidden = await skel.locator(".cap-skeleton-line").evaluateAll((ls) => ls.every((l) => l.getAttribute("aria-hidden") === "true"));
-    expect(hidden).toBe(true);
+    await expect(page.locator("#sample-nothing .cap-empty-media")).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator("#sample-nothing")).toMatchAriaSnapshot(`
+      - paragraph: No sites are watched yet
+      - paragraph: Add the first one and its checks start on the next pass.
+      - button "Add a site"
+    `);
+  });
+
+  test("accessibility: a long wait is busy and names what it waits for", async ({ page }) => {
+    await visitStates(page, "empty", theme);
+    await expect(page.locator("#sample-wait")).toHaveAttribute("aria-busy", "true");
+    await expect(page.locator("#sample-wait .cap-spinner-label")).toHaveText("Building the site");
   });
 
   test("keyboard: each kind's one action is reachable with Tab", async ({ page }) => {
     await visitStates(page, "empty", theme);
-    await page.getByRole("button", { name: "Add a site" }).focus();
+    await page.getByRole("button", { name: "Add a site" }).first().focus();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("button", { name: "Clear filter" })).toBeFocused();
     await page.keyboard.press("Tab");
@@ -56,20 +66,8 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-clear").getByRole("button")).toHaveCount(0);
   });
 
-  test("behaviour: the skeleton pulses and the spinner turns when motion is welcome", async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: "no-preference" });
+  test("behaviour: the markup of 0.1, with the action as a direct child, still works", async ({ page }) => {
     await visitStates(page, "empty", theme);
-    await expect(page.locator("#sample-skeleton .cap-skeleton-line").first()).toHaveCSS("animation-name", "cap-skeleton-pulse");
-    await expect(page.locator("#sample-spinner .cap-spinner-arc")).toHaveCSS("animation-name", "cap-spinner-turn");
-    await expect(page.locator("#sample-spinner .cap-spinner-arc")).toBeVisible();
-  });
-
-  test("behaviour: under reduced motion nothing moves, and the word Loading shows alone", async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await visitStates(page, "empty", theme);
-    await expect(page.locator("#sample-skeleton .cap-skeleton-line").first()).toHaveCSS("animation-name", "none");
-    await expect(page.locator("#sample-spinner .cap-spinner-arc")).toBeHidden();
-    await expect(page.locator("#sample-spinner .cap-spinner-label")).toBeVisible();
-    await expect(page.locator("#sample-spinner")).toHaveText("Loading");
+    await expect(page.locator("#sample-direct").getByRole("button", { name: "New draft" })).toBeVisible();
   });
 });

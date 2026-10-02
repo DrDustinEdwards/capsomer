@@ -1,36 +1,23 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The uptime strip's wrapper: a caption with the uptime and its window, a slot for
-   Enarratio's uptimeStrip() output, a legend, and a one-sentence summary, with the numbers
-   by day a disclosure away. Enarratio draws the strip; this styles everything around it.
-   From the Capsid Portal (dashboard/src/styles.css, "ticks" and "upct"). */
+/* The uptime strip: a chart frame (chart-frame.css: the title, the uptime and its window,
+   the one-sentence summary, the data table behind "Show data") around Enarratio's
+   uptimeStrip() output, with a legend of the slots. Enarratio draws the strip; this styles everything around it.
+   From the Capsid Portal (dashboard/src/styles.css, "ticks" and "upct"). The legend takes
+   shadcn's Chart legend look (a small rounded swatch beside its word); the numbers under it
+   are a disclosure and a table, which have their own components. The strip's height follows
+   the density tokens. */
 @layer cap.components {
   .cap-uptime {
-    display: grid;
-    gap: var(--space-3);
-    margin: 0;
-    min-width: 0;
+    /* The strip's height: 24 px compact, 28 comfortable; inline in a row, half a row. */
+    --cap-uptime-h: calc(var(--control) - var(--space-3));
+    --cap-uptime-line-h: calc(var(--row-h) / 2);
   }
 
-  .cap-uptime-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-2) var(--space-4);
-  }
-
-  .cap-uptime-title {
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .cap-uptime-figure {
-    margin-left: auto;
-    font-size: var(--fs-detail);
-    color: var(--muted);
-  }
-
+  /* The head, the summary, the data disclosure and the title's type are the chart frame's
+     (chart-frame.css, loaded with this file); .cap-uptime-title, -figure and -summary stay as
+     the 0.2 names on the same elements. */
   .cap-uptime-pct {
     font-size: var(--fs-body);
     font-weight: 600;
@@ -42,12 +29,12 @@
      colours and per-slot titles. */
   .cap-uptime-strip {
     min-width: 0;
-    min-height: 24px;
+    min-height: var(--cap-uptime-h);
 
     & > svg {
       display: block;
       width: 100%;
-      height: 24px;
+      height: var(--cap-uptime-h);
       overflow: visible;
     }
   }
@@ -63,10 +50,10 @@
     & .cap-uptime-strip {
       flex: 1;
       min-width: 84px;
-      min-height: 18px;
+      min-height: var(--cap-uptime-line-h);
 
       & > svg {
-        height: 18px;
+        height: var(--cap-uptime-line-h);
       }
     }
     & .cap-uptime-pct {
@@ -98,7 +85,7 @@
     flex: none;
     width: 10px;
     height: 14px;
-    border-radius: 1px;
+    border-radius: var(--radius-s);
     background: var(--ok);
 
     &[data-key="down"] {
@@ -111,12 +98,6 @@
       background: repeating-linear-gradient(135deg, var(--nodata) 0 2px, transparent 2px 4px);
       box-shadow: inset 0 0 0 1px var(--nodata);
     }
-  }
-
-  .cap-uptime-summary {
-    margin: 0;
-    color: var(--text);
-    max-width: var(--measure);
   }
 
   @media (forced-colors: active) {

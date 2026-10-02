@@ -1,0 +1,264 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Tabs: a list of tabs and the panels they show, or the same list as links that go to
+   another page. Matches shadcn/ui Tabs (Base UI flavour, nova style): the default tray with
+   the chosen tab raised in it, the line variant, horizontal and vertical. Capsomer's own
+   values: the chosen tab has an accent edge (3:1) and a heavier weight, a tab list scrolls
+   instead of clipping on a phone, and the same `.cap-tab` is a link (`aria-current="page"`)
+   for tabs that are pages. The site admin's `.posts-tab` (a status filter with counts) is
+   the line variant on links. */
+@layer cap.components {
+  .cap-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+
+    &[data-orientation="vertical"] {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--space-5);
+    }
+  }
+
+  /* The list. A tablist element for panels, a nav for links: the look is the same. */
+  .cap-tabs-list {
+    --cap-tab-h: max(var(--target), calc(var(--control) - 6px));
+    --cap-tab-fs: var(--fs-body);
+    display: inline-flex;
+    flex: none;
+    align-items: stretch;
+    gap: 2px;
+    box-sizing: border-box;
+    max-inline-size: 100%;
+    margin: 0;
+    padding: 4px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+
+    &[data-size="sm"] {
+      --cap-tab-h: max(var(--target), calc(var(--control) - 10px));
+      --cap-tab-fs: var(--fs-detail);
+    }
+    &[data-size="lg"] {
+      --cap-tab-h: var(--control);
+      --cap-tab-fs: var(--fs-lead);
+    }
+    /* A list that fills its row, the tabs sharing it equally. */
+    &[data-fill] {
+      display: flex;
+
+      & > .cap-tab {
+        flex: 1;
+      }
+    }
+  }
+  .cap-tabs[data-orientation="vertical"] > .cap-tabs-list {
+    flex-direction: column;
+    align-items: stretch;
+    overflow-x: visible;
+    overflow-y: auto;
+
+    & > .cap-tab {
+      justify-content: flex-start;
+      text-align: start;
+    }
+  }
+
+  .cap-tab {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    box-sizing: border-box;
+    min-height: var(--cap-tab-h, var(--control));
+    min-width: var(--target);
+    margin: 0;
+    padding: 0 var(--pad-x);
+    border: 1px solid transparent;
+    border-radius: var(--radius-s);
+    background: none;
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--cap-tab-fs, var(--fs-body));
+    font-weight: 500;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+
+    &:visited {
+      color: var(--muted);
+    }
+    & > svg {
+      flex: none;
+      width: 16px;
+      height: 16px;
+      pointer-events: none;
+    }
+
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--raised);
+      color: var(--text);
+    }
+
+    /* The chosen tab: raised, an accent edge (3:1 on the tray), a heavier weight. */
+    &[aria-selected="true"],
+    &[aria-current="page"] {
+      border-color: var(--accent);
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: var(--shadow-xs);
+    }
+
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 1px;
+    }
+
+    /* Not now: struck through, still readable. An arrow key passes over it. */
+    &[aria-disabled="true"],
+    &:disabled {
+      background: none;
+      color: var(--dim);
+      text-decoration: line-through;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  }
+
+  /* A count beside the label: "Open 12". The accessible name carries it after a comma. */
+  .cap-tab-count {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+  .cap-tab:is([aria-selected="true"], [aria-current="page"], :hover) .cap-tab-count {
+    color: var(--text);
+  }
+
+  /* The line variant (shadcn "line"): no tray, a hairline under the list, the chosen tab
+     marked by a 2 px accent rule on it. The rule sits over the hairline. */
+  .cap-tabs-list[data-variant="line"] {
+    display: flex;
+    gap: var(--space-4);
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: none;
+
+    & > .cap-tab {
+      min-height: var(--control);
+      margin-bottom: -1px;
+      padding-inline: 2px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+
+      &:hover,
+      &[data-force="hover"] {
+        background: none;
+        border-bottom-color: var(--line-strong);
+      }
+      &[aria-selected="true"],
+      &[aria-current="page"] {
+        border-bottom-color: var(--accent);
+        background: none;
+        box-shadow: none;
+      }
+      /* The ring sits inside, clear of the rule, so a scrolling list never clips it. */
+      &:focus-visible {
+        outline-offset: -5px;
+        border-radius: var(--radius-s);
+      }
+    }
+  }
+  .cap-tabs[data-orientation="vertical"] > .cap-tabs-list[data-variant="line"] {
+    gap: 0;
+    border-bottom: 0;
+    border-inline-start: 1px solid var(--line);
+
+    & > .cap-tab {
+      min-height: var(--control);
+      margin-bottom: 0;
+      margin-inline-start: -1px;
+      padding-inline: var(--pad-x);
+      border-bottom: 0;
+      border-inline-start: 2px solid transparent;
+
+      &:hover,
+      &[data-force="hover"] {
+        border-inline-start-color: var(--line-strong);
+      }
+      &[aria-selected="true"],
+      &[aria-current="page"] {
+        border-inline-start-color: var(--accent);
+      }
+    }
+  }
+
+  .cap-tabs-panel {
+    min-width: 0;
+    flex: 1;
+    border-radius: var(--radius-s);
+
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 2px;
+    }
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-tab {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-tab:is([aria-selected="true"], [aria-current="page"]) {
+      forced-color-adjust: none;
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .cap-tab:is([aria-selected="true"], [aria-current="page"]) .cap-tab-count {
+      color: HighlightText;
+    }
+    .cap-tabs-list[data-variant="line"] > .cap-tab:is([aria-selected="true"], [aria-current="page"]) {
+      background: none;
+      color: CanvasText;
+      border-bottom-color: Highlight;
+    }
+    .cap-tabs[data-orientation="vertical"] > .cap-tabs-list[data-variant="line"] > .cap-tab:is([aria-selected="true"], [aria-current="page"]) {
+      border-bottom-color: transparent;
+      border-inline-start-color: Highlight;
+    }
+    .cap-tabs-list[data-variant="line"] > .cap-tab:is([aria-selected="true"], [aria-current="page"]) .cap-tab-count {
+      color: CanvasText;
+    }
+    .cap-tab:is([aria-disabled="true"], :disabled) {
+      color: GrayText;
+    }
+  }
+}

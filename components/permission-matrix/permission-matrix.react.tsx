@@ -12,16 +12,14 @@ export interface PermissionMatrixProps {
   note?: string;
 }
 
-const Yes = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="m3.5 8.5 3 3 6-7" />
-  </svg>
-);
-
-const No = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" d="M4.5 8h7" />
-  </svg>
+const Check = ({ held }: { held: boolean }) => (
+  <span className="cap-perms-check" aria-hidden="true">
+    {held ? (
+      <svg viewBox="0 0 16 16" focusable="false">
+        <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="m3.5 8.5 3 3 6-7" />
+      </svg>
+    ) : null}
+  </span>
 );
 
 function Names({ names }: { names: string[] }) {
@@ -88,7 +86,7 @@ export function PermissionMatrix(props: PermissionMatrixProps) {
                       const held = a.holds.includes(p);
                       return (
                         <td className="cap-perms-cell" data-held={held ? "yes" : "no"} key={p}>
-                          {held ? <Yes /> : <No />}
+                          <Check held={held} />
                           <span className="cap-sr-only">{held ? "Yes" : "No"}</span>
                         </td>
                       );

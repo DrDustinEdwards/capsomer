@@ -1,0 +1,113 @@
+<section class="cap-specimen" aria-labelledby="s-low">
+  <h2 id="s-low">Low</h2>
+  <div class="cap-meter" data-cap="meter" id="sample-low">
+    <span class="cap-meter-label" id="sample-low-l">R2 storage</span>
+    <span class="cap-meter-value">1.2 of 10 GB</span>
+    <span class="cap-meter-bar" role="meter" aria-labelledby="sample-low-l" aria-valuemin="0" aria-valuemax="10" aria-valuenow="1.2" aria-valuetext="1.2 of 10 gigabytes stored"><span class="cap-meter-fill"></span></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-warn">
+  <h2 id="s-warn">Warning</h2>
+  <div class="cap-meter" data-cap="meter" data-tone="warn" id="sample-warn">
+    <span class="cap-meter-label" id="sample-warn-l">Worker requests</span>
+    <span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Near the limit</span>
+    <span class="cap-meter-value">78,000 of 100,000</span>
+    <span class="cap-meter-bar" role="meter" aria-labelledby="sample-warn-l" aria-valuemin="0" aria-valuemax="100000" aria-valuenow="78000" aria-valuetext="78,000 of 100,000 requests today. Warning: near the limit. Resets at midnight UTC."><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note">Resets at midnight UTC.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-crit">
+  <h2 id="s-crit">Critical</h2>
+  <div class="cap-meter" data-cap="meter" data-tone="crit" id="sample-crit">
+    <span class="cap-meter-label" id="sample-crit-l">KV writes</span>
+    <span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Almost out</span>
+    <span class="cap-meter-value">962 of 1,000</span>
+    <span class="cap-meter-bar" role="meter" aria-labelledby="sample-crit-l" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="962" aria-valuetext="962 of 1,000 writes today. Critical: writes stop at 1,000."><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note">Writes stop at 1,000 until midnight UTC.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-full">
+  <h2 id="s-full">Full</h2>
+  <div class="cap-meter" data-cap="meter" data-tone="crit" id="sample-full">
+    <span class="cap-meter-label" id="sample-full-l">D1 rows read</span>
+    <span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Limit reached</span>
+    <span class="cap-meter-value">5,000,000 of 5,000,000</span>
+    <span class="cap-meter-bar" role="meter" aria-labelledby="sample-full-l" aria-valuemin="0" aria-valuemax="5000000" aria-valuenow="5000000" aria-valuetext="5 million of 5 million rows read today. Limit reached: reads fail until midnight UTC."><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note">Reads fail until midnight UTC.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-threshold">
+  <h2 id="s-threshold">A threshold tick</h2>
+  <div class="cap-meter" data-cap="meter" id="sample-threshold">
+    <span class="cap-meter-label" id="sample-threshold-l">Draft length</span>
+    <span class="cap-meter-value">1,460 of 2,000 words</span>
+    <span class="cap-meter-bar" role="meter" aria-labelledby="sample-threshold-l" aria-valuemin="0" aria-valuemax="2000" aria-valuenow="1460" aria-valuetext="1,460 of 2,000 words. The target of 1,600 words is marked on the bar." data-threshold="1600"><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note">The tick marks the 1,600-word target.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-projection">
+  <h2 id="s-projection">A projection</h2>
+  <div class="cap-meter" data-cap="meter" id="sample-projection">
+    <span class="cap-meter-label" id="sample-projection-l">Worker requests</span>
+    <span class="cap-meter-value">61,400 of 100,000</span>
+    <span class="cap-meter-bar" role="meter" aria-labelledby="sample-projection-l" aria-valuemin="0" aria-valuemax="100000" aria-valuenow="61400" aria-valuetext="61,400 of 100,000 requests today, projected 87 percent by the reset" data-projected="86682"><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note">Solid is used; hatched, with its end marked, is where the day ends at the current rate.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-sizes">
+  <h2 id="s-sizes">Sizes</h2>
+  <div class="cap-meter" data-cap="meter" data-size="sm" id="sample-sm">
+    <span class="cap-meter-label" id="sample-sm-l">Small bar</span>
+    <span class="cap-meter-value">30 of 100</span>
+    <span class="cap-meter-bar" role="meter" aria-labelledby="sample-sm-l" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30" aria-valuetext="30 of 100"><span class="cap-meter-fill"></span></span>
+  </div>
+  <div class="cap-meter" data-cap="meter" id="sample-md">
+    <span class="cap-meter-label" id="sample-md-l">Default bar</span>
+    <span class="cap-meter-value">50 of 100</span>
+    <span class="cap-meter-bar" role="meter" aria-labelledby="sample-md-l" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50 of 100"><span class="cap-meter-fill"></span></span>
+  </div>
+  <div class="cap-meter" data-cap="meter" data-size="lg" id="sample-lg">
+    <span class="cap-meter-label" id="sample-lg-l">Large bar</span>
+    <span class="cap-meter-value">70 of 100</span>
+    <span class="cap-meter-bar" role="meter" aria-labelledby="sample-lg-l" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70" aria-valuetext="70 of 100"><span class="cap-meter-fill"></span></span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-nodata">
+  <h2 id="s-nodata">No data</h2>
+  <div class="cap-meter" data-tone="nodata" id="sample-nodata">
+    <span class="cap-meter-label">Queue minutes</span>
+    <span class="cap-meter-value"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>No data</span></span>
+    <span class="cap-meter-bar" aria-hidden="true"><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note">Cloudflare's analytics have not reported since 09:00.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-indeterminate">
+  <h2 id="s-indeterminate">Measuring</h2>
+  <div class="cap-meter" data-state="indeterminate" aria-busy="true" id="sample-indeterminate">
+    <span class="cap-meter-label">Storage used</span>
+    <span class="cap-meter-value"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>Measuring</span></span>
+    <span class="cap-meter-bar" aria-hidden="true"><span class="cap-meter-fill"></span></span>
+    <span class="cap-meter-note">Counting objects in the bucket. This takes a few seconds.</span>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-native">
+  <h2 id="s-native">A native meter, where its plain look is enough</h2>
+  <div>
+    <label for="sample-native">Draft length</label> <span class="cap-muted cap-num">1,460 of 2,000 words</span>
+    <meter class="cap-meter" id="sample-native" min="0" max="2000" low="1600" high="1900" optimum="1000" value="1460">1,460 of 2,000 words</meter>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./meter.ts";
+  enhance();
+</script>

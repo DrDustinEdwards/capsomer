@@ -6,6 +6,7 @@ parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [needs you, working, failed, idle, stopped, sampled]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/views/Agents.tsx and Queue.tsx, as drawn in design/mockup.html
 replaces:
   - 'class="sess"'
@@ -39,6 +40,10 @@ A queue of jobs that wait for approval as a batch uses the approval sheet (`appr
 - **Answer buttons name the action**: "Approve push", "Decline", "Keep 0007". Never "Yes" or "OK".
 - **A sampled stream says so**: "Showing 1 in 10 steps".
 - **Freshness is stated in words** in the panel's source line: "Waiting on you first. Updates every 15 seconds".
+
+## Matches
+
+shadcn/ui `Item` (each row: a title line, a description, actions) with `Alert` for the question (the large radius, a tinted surface, a toned edge). Deliberately different: the state is a pill with a glyph and a word (shadcn's Badge is colour-led), a failed row carries the critical edge, and the ask block is a labelled group with answers that name the action. A row is not itself a link, so it has no hover tint; the answer buttons are the shared `cap-btn` with its own hover, focus, pressed and busy states. Padding follows `--pad-card` and `--gap`, so comfortable density roomies the rows.
 
 ## Keyboard
 

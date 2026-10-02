@@ -1,149 +1,149 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Empty, loading and could-not-load. An empty area always says which kind of empty it is
-   (nothing yet, no match, all clear, failed); loading is a skeleton for a page or a spinner
-   for one panel, and over 10 seconds it says how long. */
+/* Empty and could-not-load. An empty area always says which kind of empty it is (nothing
+   yet, no match, all clear, failed). It is shadcn's Empty: centred, a dashed edge, an optional
+   icon in a tile, a title, a description, then the one action. Loading is the skeleton and
+   the spinner (components/skeleton); over 10 seconds, `.cap-empty-wait` says how long. */
 @layer cap.components {
   .cap-empty {
-    display: grid;
-    gap: 6px;
-    justify-items: start;
-    padding: 18px var(--space-5);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding: var(--pad-card);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-l);
     color: var(--text);
+    font-size: var(--text-size);
+    line-height: var(--leading);
+    text-align: center;
+    text-wrap: balance;
+
+    /* Inside a panel or a table that already has an edge: no second one. */
+    &[data-flush] {
+      border: 0;
+      border-radius: 0;
+    }
+    /* With a header part, the parts are spaced as shadcn spaces them: roomier between the
+       header, the action, and the media. */
+    &:has(> .cap-empty-header) {
+      gap: var(--gap);
+    }
+
+    /* Failed: the error in the critical tone, with Try again. */
+    &[data-kind="failed"] {
+      border-color: var(--crit);
+    }
+    &[data-kind="failed"] .cap-empty-title {
+      color: var(--crit);
+    }
+
+    /* The kind's action sits a little apart from the words. */
+    & > :is(button, a):last-child {
+      min-block-size: var(--target);
+    }
+  }
+
+  .cap-empty-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    max-inline-size: 24rem;
+  }
+
+  /* The optional icon tile: a muted square with the glyph or an icon in it. Decorative, so
+     hidden from screen readers; the title says it. */
+  .cap-empty-media {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    margin-block-end: var(--space-3);
+
+    & svg {
+      flex: none;
+      pointer-events: none;
+    }
+
+    &[data-variant="icon"] {
+      inline-size: calc(var(--control) * 1.15);
+      block-size: calc(var(--control) * 1.15);
+      border-radius: var(--radius-l);
+      background: var(--sunken);
+      color: var(--text);
+
+      & svg {
+        inline-size: 1.25em;
+        block-size: 1.25em;
+      }
+    }
   }
 
   .cap-empty-title {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
     margin: 0;
     font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   .cap-empty-text {
     margin: 0;
+    max-inline-size: var(--measure);
     color: var(--muted);
-    max-width: var(--measure);
+    line-height: 1.5;
+
+    & a {
+      color: var(--accent-text);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      &:hover {
+        color: var(--accent-hover);
+      }
+    }
   }
 
-  /* The kind's action sits a little apart from the words. */
-  .cap-empty > :is(button, a):last-child {
-    margin-block-start: var(--space-2);
-    min-block-size: var(--target);
-  }
-
-  /* Failed: the error in the critical tone, with Try again. */
-  .cap-empty[data-kind="failed"] .cap-empty-title {
-    display: inline-flex;
+  /* The actions, when there is more than one. */
+  .cap-empty-content {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 6px;
-    color: var(--crit);
+    inline-size: 100%;
+    max-inline-size: 24rem;
+    min-inline-size: 0;
+    gap: var(--space-3);
   }
 
   .cap-empty .cap-status-glyph {
     flex: none;
-    width: 14px;
-    height: 14px;
-  }
-
-  /* Skeleton: grey rows standing in for a page's content, 1 to 10 seconds. */
-  .cap-skeleton {
-    display: grid;
-    gap: 10px;
-    padding: 14px var(--space-5);
-  }
-
-  .cap-skeleton-line {
-    display: block;
-    height: 12px;
-    border-radius: 4px;
-    background: var(--sunken);
-    inline-size: 74%;
-
-    &:nth-child(3n + 1) {
-      inline-size: 62%;
-    }
-    &:nth-child(3n + 2) {
-      inline-size: 88%;
-    }
-  }
-
-  /* Spinner: a small arc for one panel or inside a button. */
-  .cap-spinner {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-3);
-    color: var(--muted);
-    font-size: var(--text-size);
-  }
-
-  /* Inside a button the spinner takes the button's colours. */
-  :is(button, a) .cap-spinner {
-    color: inherit;
-    font-size: inherit;
-  }
-
-  .cap-spinner-arc {
-    flex: none;
-    width: 16px;
-    height: 16px;
-    color: var(--accent);
-  }
-
-  /* data-label="hidden": the word is for screen readers while the arc turns. */
-  .cap-spinner[data-label="hidden"] .cap-spinner-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    inline-size: 1.15em;
+    block-size: 1.15em;
   }
 
   /* Over 10 seconds: the spinner and how long it usually takes. */
   .cap-empty-wait {
     display: grid;
-    gap: 6px;
+    gap: var(--space-3);
     justify-items: start;
-    padding: 18px var(--space-5);
-  }
-
-  /* The pulse and the turn are the only loops, and only when motion is welcome. */
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-skeleton-line {
-      animation: cap-skeleton-pulse 1.6s ease-in-out infinite;
-    }
-    .cap-spinner-arc {
-      animation: cap-spinner-turn 0.9s linear infinite;
-    }
-    @keyframes cap-skeleton-pulse {
-      50% {
-        opacity: 0.55;
-      }
-    }
-    @keyframes cap-spinner-turn {
-      to {
-        transform: rotate(1turn);
-      }
-    }
-  }
-
-  /* Still: no arc, and the word Loading shows on its own. */
-  @media (prefers-reduced-motion: reduce) {
-    .cap-spinner-arc {
-      display: none;
-    }
-    .cap-spinner[data-label="hidden"] .cap-spinner-label {
-      position: static;
-      width: auto;
-      height: auto;
-      overflow: visible;
-      clip-path: none;
-    }
+    padding: var(--space-4) var(--pad-card);
   }
 
   @media (forced-colors: active) {
-    .cap-skeleton-line {
-      forced-color-adjust: none;
-      background: GrayText;
+    .cap-empty,
+    .cap-empty[data-kind="failed"] {
+      border-color: CanvasText;
+    }
+    .cap-empty-media[data-variant="icon"] {
+      border: 1px solid CanvasText;
     }
   }
 }

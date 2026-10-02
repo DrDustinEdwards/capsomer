@@ -68,6 +68,9 @@ eachTheme((theme) => {
     await expectContrast(page, [
       { sel: "#sample-rows .cap-time", what: "a relative time" },
       { sel: "#sample-exact .cap-time", what: "an exact time" },
+      { sel: "#sample-exact .cap-time-utc", what: "the UTC part of an exact time" },
+      { sel: "#sample-text-tone", what: "a relative time in the text colour" },
+      { sel: "#sample-live .cap-time", what: "a live relative time" },
     ]);
   });
 
@@ -81,6 +84,7 @@ eachTheme((theme) => {
       /foxhound\.app deployed\s+yesterday/,
       /recova deployed\s+12 September/,
       /The next uptime pass runs in\s+3 hours/,
+      /Last edited\s+5 minutes ago/,
     ]);
   });
 

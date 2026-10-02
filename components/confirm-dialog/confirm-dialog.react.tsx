@@ -1,7 +1,9 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { errorText, rememberOpener, returnFocus, wordMatches } from "./confirm-dialog.ts";
+import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogMedia, DialogTitle, DialogBody } from "../dialog/dialog.react.tsx";
+import { errorText, wordMatches } from "./confirm-dialog.ts";
 
 const ERROR_GLYPH = <path fill="currentColor" fillRule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4v5h1.6V4zM7.2 10.4V12h1.6v-1.6z" />;
+const MEDIA_GLYPH = <path fill="currentColor" fillRule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" />;
 
 export interface ConfirmDialogProps {
   open: boolean;
@@ -23,12 +25,14 @@ export interface ConfirmDialogProps {
   cancelLabel?: string;
   // Where focus goes when the opener has gone; the page's main region by default.
   returnTo?: HTMLElement | null;
+  // The icon tile beside the title. Default: shown.
+  media?: boolean;
 }
 
 type Failure = { text: string; field: boolean };
 
 export function ConfirmDialog(props: ConfirmDialogProps) {
-  const { open, title, lead, body, action, typeToConfirm, reason: reasonOpt, perform, onClose, cancelLabel = "Cancel", returnTo } = props;
+  const { open, title, lead, body, action, typeToConfirm, reason: reasonOpt, perform, onClose, cancelLabel = "Cancel", returnTo, media = true } = props;
   const id = useId();
   const dlg = useRef<HTMLDialogElement>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
@@ -43,18 +47,13 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
   const [reason, setReason] = useState("");
   const matched = wordMatches(typed, typeToConfirm);
 
+  // A fresh dialog each time it opens.
   useEffect(() => {
-    const d = dlg.current;
-    if (!d) return;
-    if (open && !d.open) {
-      performed.current = false;
-      setError(null);
-      setTyped("");
-      setReason("");
-      rememberOpener(d, document.activeElement);
-      d.showModal();
-      cancelRef.current?.focus();
-    } else if (!open && d.open) d.close();
+    if (!open) return;
+    performed.current = false;
+    setError(null);
+    setTyped("");
+    setReason("");
   }, [open]);
 
   const run = async () => {
@@ -87,107 +86,106 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
 
   const guardOff = !!typeToConfirm && !matched;
   const failed = error != null && !error.field;
+  const hasBody = body.length > 0 || !!reasonOpt || !!typeToConfirm;
+  const described = [lead ? `${id}-desc` : null, body.length > 0 ? `${id}-list` : null].filter(Boolean).join(" ") || undefined;
 
   return (
-    <dialog
+    <Dialog
       ref={dlg}
-      className="cap-dialog"
-      data-cap="confirm-dialog"
-      aria-labelledby={`${id}-title`}
-      aria-describedby={`${id}-body`}
-      aria-busy={busy || undefined}
-      onCancel={(e) => {
-        // Esc while a request is in flight would hide its answer.
-        if (busy) e.preventDefault();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Escape" && busy) e.preventDefault();
-      }}
-      // A click on the backdrop must not take focus off the control that had it either:
-      // the browser would move it to the dialog. It does not close the dialog.
-      onMouseDown={(e) => {
-        if (e.target === dlg.current) e.preventDefault();
-      }}
-      onClose={() => {
-        const d = dlg.current;
-        if (d) returnFocus(d, returnTo);
+      open={open}
+      onOpenChange={() => {
         setTyped("");
         setReason("");
         setError(null);
         onClose(performed.current);
       }}
+      alert
+      size="md"
+      busy={busy}
+      returnTo={returnTo}
+      initialFocus={cancelRef}
+      aria-describedby={described}
     >
-      <h2 className="cap-dialog-title" id={`${id}-title`}>
-        {title}
-      </h2>
-      <div className="cap-dialog-body" id={`${id}-body`}>
-        {lead ? <p>{lead}</p> : null}
-        {body.length > 0 && (
-          <ul>
-            {body.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
+      <DialogHeader>
+        {media && (
+          <DialogMedia tone="crit">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+              {MEDIA_GLYPH}
+            </svg>
+          </DialogMedia>
         )}
-      </div>
-      {reasonOpt && (
-        <div className="cap-dialog-reason">
-          <label htmlFor={`${id}-reason`}>{reasonOpt.label ?? "Reason (required)"}</label>
-          <textarea
-            ref={reasonRef}
-            className="cap-input"
-            id={`${id}-reason`}
-            rows={3}
-            aria-required="true"
-            aria-invalid={error?.field || undefined}
-            aria-describedby={error?.field ? `${id}-error ${id}-reason-note` : `${id}-reason-note`}
-            readOnly={busy}
-            data-cap-part="reason"
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            onKeyDown={(e) => {
-              // Ctrl or Cmd with Enter performs; a plain Enter is a new line.
-              if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                void run();
-              }
-            }}
-          />
-          <p className="cap-dialog-note" id={`${id}-reason-note`} data-cap-part="reason-note">
-            {reasonOpt.note ?? "Recorded with the change."}
-          </p>
-        </div>
+        <DialogTitle>{title}</DialogTitle>
+        {lead ? <DialogDescription id={`${id}-desc`}>{lead}</DialogDescription> : null}
+      </DialogHeader>
+      {hasBody && (
+        <DialogBody>
+          {body.length > 0 && (
+            <ul id={`${id}-list`}>
+              {body.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          )}
+          {reasonOpt && (
+            <div className="cap-confirm-reason">
+              <label htmlFor={`${id}-reason`}>{reasonOpt.label ?? "Reason (required)"}</label>
+              <textarea
+                ref={reasonRef}
+                className="cap-input"
+                id={`${id}-reason`}
+                rows={3}
+                aria-required="true"
+                aria-invalid={error?.field || undefined}
+                aria-describedby={error?.field ? `${id}-error ${id}-reason-note` : `${id}-reason-note`}
+                readOnly={busy}
+                data-cap-part="reason"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                onKeyDown={(e) => {
+                  // Ctrl or Cmd with Enter performs; a plain Enter is a new line.
+                  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    void run();
+                  }
+                }}
+              />
+              <p className="cap-confirm-note" id={`${id}-reason-note`} data-cap-part="reason-note">
+                {reasonOpt.note ?? "Recorded with the change."}
+              </p>
+            </div>
+          )}
+          {typeToConfirm && (
+            <div className="cap-confirm-typed">
+              <label id={`${id}-typed-label`} htmlFor={`${id}-typed`}>
+                Type <b>{typeToConfirm}</b> to confirm
+              </label>
+              <input
+                ref={typedRef}
+                className="cap-input"
+                id={`${id}-typed`}
+                type="text"
+                autoComplete="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                readOnly={busy}
+                data-cap-part="typed"
+                data-cap-word={typeToConfirm}
+                value={typed}
+                onChange={(e) => setTyped(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key !== "Enter") return;
+                  e.preventDefault();
+                  if (matched) void run();
+                }}
+              />
+            </div>
+          )}
+        </DialogBody>
       )}
-      {typeToConfirm && (
-        <div className="cap-dialog-typed">
-          <label id={`${id}-typed-label`} htmlFor={`${id}-typed`}>
-            Type <b>{typeToConfirm}</b> to confirm
-          </label>
-          <input
-            ref={typedRef}
-            className="cap-input"
-            id={`${id}-typed`}
-            type="text"
-            autoComplete="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            readOnly={busy}
-            data-cap-part="typed"
-            data-cap-word={typeToConfirm}
-            value={typed}
-            onChange={(e) => setTyped(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key !== "Enter") return;
-              e.preventDefault();
-              if (matched) void run();
-            }}
-          />
-        </div>
-      )}
-      <div className="cap-dialog-error" role="alert" id={`${id}-error`} data-cap-part="error">
+      <div className="cap-confirm-error" role="alert" id={`${id}-error`} data-cap-part="error">
         {error && (
           <>
-            <p className="cap-dialog-error-lead">
+            <p className="cap-confirm-error-lead">
               <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
                 {ERROR_GLYPH}
               </svg>
@@ -197,17 +195,8 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
           </>
         )}
       </div>
-      <div className="cap-dialog-actions">
-        <button
-          ref={cancelRef}
-          type="button"
-          className="cap-btn"
-          data-cap-part="cancel"
-          aria-disabled={busy || undefined}
-          onClick={() => {
-            if (!busy) dlg.current?.close("cancel");
-          }}
-        >
+      <DialogFooter align="between">
+        <button ref={cancelRef} type="button" className="cap-btn" data-cap-part="cancel" aria-disabled={busy || undefined}>
           {cancelLabel}
         </button>
         <button
@@ -223,7 +212,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         >
           {failed ? "Try again" : action}
         </button>
-      </div>
-    </dialog>
+      </DialogFooter>
+    </Dialog>
   );
 }

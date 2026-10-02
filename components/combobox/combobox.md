@@ -4,8 +4,9 @@ title: Combobox
 summary: A labelled text box that filters a list, where only a listed value can be chosen. Base UI underneath, React only.
 parts: [css, react]
 tool: Base UI
-states: [closed, closed with a value, open, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]
+states: [closed, closed with a value, with a clear button, several values as chips, comfortable density, open, open with chips, open with group labels, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]
 added: 0.1.0
+updated: 0.2.0
 source: none (new in Capsomer; the Portal's command palette is the command menu, not this)
 replaces:
   - "<datalist"
@@ -15,7 +16,7 @@ replaces:
 
 # Combobox
 
-Choose one value from a long list by typing part of it: a site among sixteen, an agent, a namespace, a post to link.
+Choose one value (or several, as chips) from a long list by typing part of it: a site among sixteen, an agent, a namespace, a post to link.
 
 ## When to use it
 
@@ -30,7 +31,8 @@ Two to five values: a radio group or the segmented control. Up to about fifteen:
 - **Base UI's Combobox does the hard part** (decision 7): the `combobox` and `listbox` roles, `aria-activedescendant`, the keys, positioning and collision handling. Capsomer adds the look, the label, help, error and empty and loading messages.
 - **A visible label above the box**, help outside the box, and the placeholder as an example only (patterns.md, "Form"). Required is written in the label.
 - **Only a listed value can be chosen.** Text that matches nothing is not kept: when the list closes, the box shows the chosen value's label again, or nothing. The wrapper holds the box's text to make this certain.
-- **The highlighted option is `--accent-soft` with `--text` and a 3 px accent edge on its inline start**, the same as the command menu's, so the cue is not the tint alone. DOM focus stays in the box; the option is marked `data-highlighted` and pointed to by `aria-activedescendant`.
+- **The popup wears the shared blocks**: `cap-popover` (the raised surface, hairline ring, shadow and the fade and zoom motion, with `data-flush`) around a `cap-listbox` of `cap-option`s. The highlighted option is `--accent-soft` with `--text` and a 3 px accent edge on its inline start, the same as the command menu's, so the cue is not the tint alone. DOM focus stays in the box; the option is marked `data-highlighted` and pointed to by `aria-activedescendant`. A chosen option has a check at its end.
+- **Groups, a clear button and chips are optional.** Options with a `group` are listed under a muted label; `clearable` adds a clear button that shows while a value is chosen; `ComboboxMultiple` shows each chosen value as a chip with its own named remove button and keeps the list open for more.
 - **An empty result names the typed text**: "No match for “foxhund”. Check the spelling, or clear the box to see every option." Pass `emptyText` to say more.
 - **Loading says so, and never says no match.** The message sits in Base UI's status region, so it is announced.
 - **Disabled says why** in its help text. Invalid marks the box `aria-invalid`, draws its border in `--crit`, and describes it by the message beside it.
@@ -51,7 +53,7 @@ Two to five values: a radio group or the segmented control. Up to about fifteen:
 ## Accessibility
 
 - The input is the `combobox`; it is named by its `label` and described by help and error.
-- The open button is out of the tab order (Base UI, `tabindex="-1"`) and has a name for pointer and voice users.
+- The open button is out of the tab order (Base UI, `tabindex="-1"`) and has a name for pointer and voice users. So does the clear button ("Clear Site"), and each chip's remove button ("Remove Carrel"), at least `--target` square.
 - Forced colours: the highlighted option gets a Highlight outline, since its tint is removed.
 - Inside a modal `dialog`, pass the dialog as `container`, or the popup renders under the top layer, out of sight.
 
@@ -90,7 +92,29 @@ import { Combobox } from "capsomer/react/combobox";
 />
 ```
 
-It renders, in `.cap-combobox`: `label.cap-combobox-label`, `p.cap-combobox-help`, `.cap-combobox-group` (holding `input.cap-combobox-input` and `button.cap-combobox-trigger`), `p.cap-combobox-error`; portalled: `.cap-combobox-positioner` > `.cap-combobox-popup` > `.cap-combobox-status`, `.cap-combobox-empty`, `.cap-combobox-list` > `.cap-combobox-item` (`.cap-combobox-check`, `.cap-combobox-item-label`).
+Several values:
+
+```tsx
+import { ComboboxMultiple } from "capsomer/react/combobox";
+<ComboboxMultiple label="Sites to back up" items={sites} values={ids} onValuesChange={setIds} />
+```
+
+`ComboboxProps` adds `clearable`; an option may carry `group`.
+
+It renders, in `.cap-combobox`: `label.cap-combobox-label`, `p.cap-combobox-help`, `.cap-combobox-group` (holding `input.cap-combobox-input`, an optional `button.cap-combobox-clear` and `button.cap-combobox-trigger`; for several values `.cap-combobox-chips` holding `.cap-combobox-chip` with `button.cap-combobox-chip-remove`, then the input), `p.cap-combobox-error`; portalled: `.cap-combobox-positioner` > `.cap-popover.cap-combobox-popup` > `.cap-combobox-status`, `.cap-listbox-empty.cap-combobox-empty`, `.cap-listbox.cap-combobox-list` > (`.cap-listbox-group` > `.cap-listbox-label`,) `.cap-option` (`.cap-option-label`, `.cap-option-indicator`).
+
+## Matches shadcn
+
+Combobox (Base UI flavour, nova): the input group with an open button and a clear button, the popup with a hairline ring, shadow, rounded corners and the fade and zoom motion, a list with group labels, items with a check at the end, the empty message, and chips with a remove button for several values.
+
+## Deliberately different
+
+- **The visible label, help and error are the component's** (patterns.md, "Form"); shadcn leaves them to its Field.
+- **The clear and open buttons both stay** while a value is chosen; shadcn hides the open button then. Both are small, and the open button is how a pointer user sees there is a list.
+- **The highlighted option has a 3 px accent edge** as well as the tint (a listbox rule).
+- **Only a listed value can be chosen**, and unlisted text is dropped when the list closes.
+- **Loading and no-match are distinct**, each in a live region.
+- **A dashed, sunken box when disabled and a thickened red edge when invalid**, as `.cap-input`; shadcn dims it and rings it.
 
 ## Exceptions in production
 

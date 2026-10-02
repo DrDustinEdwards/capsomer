@@ -1,5 +1,10 @@
 import type { ReactNode } from "react";
 import { Glyph } from "../status/status.react.tsx";
+import { Spinner } from "../skeleton/skeleton.react.tsx";
+
+// Spinner and Skeleton moved to components/skeleton in 0.2; still exported here so
+// "capsomer/react/empty" imports keep working.
+export { Skeleton, Spinner, SkeletonBlock } from "../skeleton/skeleton.react.tsx";
 
 export type EmptyKind = "nothing-yet" | "no-match" | "all-clear" | "failed";
 
@@ -12,9 +17,13 @@ export interface EmptyProps {
   children?: ReactNode;
   // nothing-yet: the one way to add the first. no-match: Clear filter. failed: Try again.
   action?: ReactNode;
+  // An icon in a muted tile above the title (an svg). Decorative: the title says it.
+  icon?: ReactNode;
+  // No edge, for inside a panel or a table that already has one.
+  flush?: boolean;
 }
 
-export function Empty({ kind, title, children, action }: EmptyProps) {
+export function Empty({ kind, title, children, action, icon, flush }: EmptyProps) {
   let head: ReactNode;
   if (kind === "all-clear") {
     head = (
@@ -34,50 +43,17 @@ export function Empty({ kind, title, children, action }: EmptyProps) {
     head = title;
   }
   return (
-    <div className="cap-empty" data-kind={kind} role={kind === "failed" ? "alert" : undefined}>
-      <p className="cap-empty-title">{head}</p>
-      {children ? <p className="cap-empty-text">{children}</p> : null}
-      {kind === "all-clear" ? null : action}
-    </div>
-  );
-}
-
-const Arc = () => (
-  <svg className="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.25" />
-    <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M8 2a6 6 0 0 1 6 6" />
-  </svg>
-);
-
-export interface SpinnerProps {
-  // What is loading, in a word or two: "Loading", "Saving".
-  label?: string;
-  // The word is for screen readers only while the arc turns (inside a button that
-  // already says what it does). Under reduced motion the word always shows.
-  hideLabel?: boolean;
-}
-
-export function Spinner({ label = "Loading", hideLabel }: SpinnerProps) {
-  return (
-    <span className="cap-spinner" data-label={hideLabel ? "hidden" : undefined}>
-      <Arc />
-      <span className="cap-spinner-label">{label}</span>
-    </span>
-  );
-}
-
-export interface SkeletonProps {
-  lines?: number;
-  label?: string;
-}
-
-export function Skeleton({ lines = 3, label = "Loading" }: SkeletonProps) {
-  return (
-    <div className="cap-skeleton" aria-busy="true">
-      <span className="cap-sr-only">{label}</span>
-      {Array.from({ length: lines }, (_, i) => (
-        <span className="cap-skeleton-line" aria-hidden="true" key={i} />
-      ))}
+    <div className="cap-empty" data-kind={kind} data-flush={flush ? "" : undefined} role={kind === "failed" ? "alert" : undefined}>
+      {icon ? (
+        <div className="cap-empty-media" data-variant="icon" aria-hidden="true">
+          {icon}
+        </div>
+      ) : null}
+      <div className="cap-empty-header">
+        <p className="cap-empty-title">{head}</p>
+        {children ? <p className="cap-empty-text">{children}</p> : null}
+      </div>
+      {kind !== "all-clear" && action ? <div className="cap-empty-content">{action}</div> : null}
     </div>
   );
 }

@@ -2,7 +2,9 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A panel: a bordered surface with a header on the raised tone and a padded body.
-   Extracted from the Capsid Portal (dashboard/src/styles.css, "panels"). */
+   Extracted from the Capsid Portal (dashboard/src/styles.css, "panels"). Rebuilt in 0.2 to
+   the craft of shadcn's Card: header, title, description, action, content, footer, a small
+   size, a first-child picture, and the Portal's padded block inside a flush body. */
 @layer cap.components {
   .cap-panel {
     min-width: 0;
@@ -13,6 +15,21 @@
     /* A list's hover tint stays inside the rounded corners. Rings inside a panel are
        drawn inset (row-list, table) so nothing focusable is clipped. */
     overflow: clip;
+
+    /* shadcn's Card size="sm", and its comfortable (vega) shadow. */
+    &[data-size="sm"] {
+      --pad-card: 12px;
+    }
+    &[data-density="comfortable"],
+    [data-density="comfortable"] & {
+      box-shadow: var(--shadow-xs);
+    }
+
+    /* A picture first in the panel runs to its edges. */
+    & > img:first-child {
+      display: block;
+      inline-size: 100%;
+    }
   }
 
   /* The header sits on the raised tone instead of a rule under it. */
@@ -21,7 +38,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3);
-    padding: calc(var(--space-3) + 1px) var(--space-5);
+    padding: calc(var(--pad-y) + 3px) var(--pad-card);
     background: var(--raised);
 
     & :is(h2, h3) {
@@ -31,6 +48,29 @@
       letter-spacing: -0.01em;
       line-height: var(--leading);
     }
+  }
+
+  /* shadcn's CardDescription: a muted line under the heading, across the header's width. */
+  .cap-panel-desc {
+    flex: 1 0 100%;
+    order: 10;
+    margin: calc(var(--space-2) * -1) 0 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* shadcn's CardAction: a control for the whole panel, at the header's right. */
+  .cap-panel-action {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-inline-start: auto;
+    margin-block: calc(var(--space-2) * -1);
+  }
+  .cap-panel-src + .cap-panel-action,
+  .cap-panel-action + .cap-panel-more,
+  .cap-panel-action + .cap-panel-src {
+    margin-inline-start: 0;
   }
 
   /* How many the panel holds, beside its heading. */
@@ -68,7 +108,7 @@
   .cap-panel-body {
     display: grid;
     gap: var(--gap);
-    padding: var(--space-4) var(--space-5);
+    padding: var(--gap) var(--pad-card);
 
     /* A panel holding a list or a table: the rows run to the panel's edges. */
     &[data-flush] {
@@ -77,10 +117,37 @@
     }
   }
 
+  /* The Portal's padded block inside a flush body: the rows or the table touch the panel's
+     edges and a paragraph, a form or a note sits in its own padding. */
+  .cap-panel-pad {
+    display: grid;
+    gap: var(--gap);
+    padding: var(--gap) var(--pad-card);
+
+    & > * {
+      margin: 0;
+    }
+  }
+
+  /* shadcn's CardFooter: a tinted band under a rule, for the panel's actions or a link. */
+  .cap-panel-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--pad-y) var(--pad-card);
+    border-top: 1px solid var(--line);
+    background: color-mix(in srgb, var(--sunken) 50%, transparent);
+    font-size: var(--fs-detail);
+  }
+
   /* Forced colours remove the header's tint: a rule keeps the header apart. */
   @media (forced-colors: active) {
     .cap-panel-head {
       border-bottom: 1px solid CanvasText;
+    }
+    .cap-panel-foot {
+      border-top-color: CanvasText;
     }
   }
 }

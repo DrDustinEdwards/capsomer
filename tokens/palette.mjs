@@ -15,21 +15,21 @@
 // chroma at the seed's hue; status hues are fixed and tuned by bisection against the
 // hardest surface each sits on. The OKLab conversion follows Bjorn Ottosson's reference.
 //
-//   node tokens/palette.mjs                       the purple family into tokens/colour.css
-//   node tokens/palette.mjs --family=fox --out=f  Foxing's family into f
+//   node tokens/palette.mjs                       colour.css (purple), family-fox.css, family-teal.css
+//   node tokens/palette.mjs --family=fox --out=f  Foxing's family as a root theme into f
 //   node tokens/palette.mjs --seed=#RRGGBB [--anchor=#RRGGBB] --out=f
-//   node tokens/palette.mjs --report              every pair, both families, both themes
-//   node tokens/palette.mjs --legacy --out=f      the Portal's 2026-09-30 tokens, unchanged
+//   node tokens/palette.mjs --report              every pair, every family, both themes
 //
-// The legacy mode is the generator exactly as it moved from capsid (one seed #4F2D7F, the
-// accent the seed itself); with it the output is byte-identical to capsid's
-// dashboard/src/tokens.css, which test/unit/palette.test.mjs checks, so the move stays
-// proven while the Portal still runs those tokens.
+// tokens/colour.css is the purple family on :root (the default). tokens/family-fox.css and
+// tokens/family-teal.css carry the same tokens scoped to [data-family="fox"] and
+// [data-family="teal"], so one element (the root, or a wrapper) can switch family for its
+// subtree. Both themes follow the same pattern as colour.css (prefers-color-scheme, then
+// [data-theme]). Everything inside a family block is a literal value, never a var() chain,
+// so a family on a wrapper does not inherit the root family's already-resolved values.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { chartChecks, companionColours, labelOn, rampColours } from "./chart.mjs";
 
-export const LEGACY_SEED = "#4F2D7F";
-export const SEED = LEGACY_SEED; // kept for importers of the moved file
 export const FAMILIES = {
   // defaultTheme is the theme checked first (rule 15). Purple follows the viewer's system
   // setting, so its light theme is checked first as the default with no preference.
@@ -49,7 +49,6 @@ if (familyArg !== undefined && !FAMILIES[familyArg]) throw new Error(`--family m
 const seedArg = hexArg("seed");
 const anchorArg = hexArg("anchor");
 const outArg = arg("out");
-const LEGACY = process.argv.includes("--legacy");
 
 // ---- colour math ---------------------------------------------------------------------
 
@@ -121,179 +120,14 @@ function tune(C, H, bg, target, from, to) {
 
 // ---- the scales ----------------------------------------------------------------------
 
-// ---- the legacy generator, as moved from capsid (one seed; the accent is the seed) ---------
-const ACTIVE = LEGACY_SEED;
-function basis(seed) {
-  const [L, a, b] = rgbToOklab(hexToRgb(seed));
-  return { seed, seedL: L, HUE: ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360, SEED_CHROMA: Math.hypot(a, b) };
-}
 const NEUTRAL_CHROMA = 0.012;
 // Status hues are kept; only lightness is tuned. info also colours a running job.
 const STATUS = { ok: 150, warn: 78, crit: 26, info: 255 };
 const TEXT = 4.6; // a little above 4.5, so rounding to hex cannot fall under it
 const CONTROL = 3.0;
-
-function light(seed = ACTIVE) {
-  const { seedL, HUE, SEED_CHROMA } = basis(seed);
-  const t = {};
-  t.ground = oklch(0.965, NEUTRAL_CHROMA, HUE);
-  t.surface = oklch(0.995, 0.003, HUE);
-  t.raised = oklch(0.975, 0.008, HUE);
-  t.sunken = oklch(0.93, NEUTRAL_CHROMA, HUE);
-  t.line = oklch(0.9, NEUTRAL_CHROMA, HUE);
-  // A control's border sits on the raised tone as well as the surface; raised is darker.
-  t["line-strong"] = tune(NEUTRAL_CHROMA, HUE, t.raised, CONTROL, 0.9, 0.3);
-  t.text = oklch(0.22, 0.03, HUE);
-  t.muted = tune(0.02, HUE, t.ground, 5.5, 0.9, 0.2);
-  // dim also sits on the sunken tone (a read-only field's placeholder), the darkest surface.
-  t.dim = tune(0.02, HUE, t.sunken, TEXT, 0.9, 0.2);
-  t.accent = seed;
-  t["accent-hover"] = oklch(seedL - 0.06, SEED_CHROMA, HUE);
-  t["accent-soft"] = oklch(0.93, 0.045, HUE);
-  t.sel = oklch(0.955, 0.03, HUE);
-  // The selection's ring, at a control's bar against the selected row itself.
-  t["accent-line"] = tune(0.1, HUE, t.sel, CONTROL, 0.9, 0.3);
-  for (const [k, H] of Object.entries(STATUS)) {
-    // A status word sits on the surface, the raised tone, the ground, its own tint, the
-    // active menu item (a count on accent-soft) and a selected row; tuned against the
-    // darkest of those, it passes on all of them.
-    t[`${k}-soft`] = oklch(0.945, 0.05, H);
-    t[k] = tune(0.14, H, darkest(t[`${k}-soft`], t["accent-soft"], t.sel), TEXT, 0.9, 0.2);
-  }
-  t.nodata = t.dim;
-  t["nodata-soft"] = oklch(0.94, 0.006, HUE);
-  return t;
-}
-
 const darkest = (...hexes) => hexes.reduce((a, b) => (luminance(b) < luminance(a) ? b : a));
 const lightest = (...hexes) => hexes.reduce((a, b) => (luminance(b) > luminance(a) ? b : a));
 
-function dark(seed = ACTIVE) {
-  const { HUE } = basis(seed);
-  const t = {};
-  t.ground = oklch(0.16, NEUTRAL_CHROMA, HUE);
-  t.surface = oklch(0.205, NEUTRAL_CHROMA, HUE);
-  t.raised = oklch(0.245, NEUTRAL_CHROMA, HUE);
-  t.sunken = oklch(0.135, NEUTRAL_CHROMA, HUE);
-  t.line = oklch(0.32, NEUTRAL_CHROMA, HUE);
-  t["line-strong"] = tune(NEUTRAL_CHROMA, HUE, t.raised, CONTROL, 0.2, 0.9);
-  t.text = oklch(0.95, 0.008, HUE);
-  t.muted = tune(0.015, HUE, t.surface, 6.0, 0.2, 0.95);
-  t.dim = tune(0.015, HUE, t.raised, TEXT, 0.2, 0.95);
-  t["accent-soft"] = oklch(0.3, 0.06, HUE);
-  t.sel = oklch(0.27, 0.045, HUE);
-  t["accent-line"] = tune(0.1, HUE, t.sel, CONTROL, 0.2, 0.9);
-  t.accent = tune(0.12, HUE, t["accent-soft"], TEXT, 0.3, 0.95);
-  t["accent-hover"] = oklch(0.8, 0.11, HUE);
-  for (const [k, H] of Object.entries(STATUS)) {
-    // In dark the lightest of the tint, the active menu item and a selected row is the hardest.
-    t[`${k}-soft`] = oklch(0.28, 0.05, H);
-    t[k] = tune(0.13, H, lightest(t[`${k}-soft`], t["accent-soft"], t.sel), TEXT, 0.3, 0.95);
-  }
-  t.nodata = t.dim;
-  t["nodata-soft"] = oklch(0.27, 0.006, HUE);
-  return t;
-}
-
-// ---- the pairs every theme must pass ---------------------------------------------------
-
-// Every pair a theme must pass, with its ratio: { fg, bg, min, what, ratio, pass }.
-export function pairs(t) {
-  const out = [];
-  const need = (fg, bg, min, what) => {
-    const ratio = contrast(t[fg], t[bg]);
-    out.push({ fg, bg, min, what, ratio, pass: ratio >= min });
-  };
-  // Option 1 (rulings.md rule 18): in the family scale, accent text is step 11, the primary
-  // button fill is step 10, and step 9 (the brand colour) is held to 3:1 for focus rings and
-  // large fills. The legacy generator (no accent-text) keeps the accent as text and fill.
-  const family = Boolean(t["accent-text"]);
-  const accentText = family ? "accent-text" : "accent";
-  for (const bg of ["surface", "ground", "raised"]) {
-    for (const fg of ["text", "muted", "dim", accentText]) need(fg, bg, 4.5, "text");
-    for (const s of Object.keys(STATUS)) need(s, bg, 4.5, "status word");
-  }
-  need("text", "sel", 4.5, "selected row title");
-  need("muted", "sel", 4.5, "selected row detail");
-  need("text", "sunken", 4.5, "command block");
-  need("dim", "sunken", 4.5, "command block note");
-  for (const bg of ["surface", "raised"]) need("line-strong", bg, 3, "control border");
-  need("accent-line", "sel", 3, "selection ring");
-  need("accent", "surface", 3, "focus ring");
-  for (const s of Object.keys(STATUS)) {
-    need(s, `${s}-soft`, 4.5, "pill");
-    need(s, "accent-soft", 4.5, "count on the active menu item");
-    need(s, "sel", 4.5, "status word on a selected row");
-  }
-  need(accentText, "accent-soft", 4.5, "active item");
-  need("surface", family ? "accent-hover" : "accent", 4.5, "primary button label");
-  if (family) {
-    need("accent", "ground", 3, "brand colour as a large fill or icon");
-    need("accent", "raised", 3, "brand colour as a large fill or icon");
-  }
-  need("surface", "crit", 4.5, "badge label");
-  // The deep accent (step 11) on every surface it sits on: text, headings, the active item.
-  if (family) {
-    for (const bg of ["sel"]) need("accent-text", bg, 4.5, "deep accent text");
-  }
-  return out;
-}
-
-export function failures(t) {
-  return pairs(t)
-    .filter((p) => !p.pass)
-    .map((p) => `${p.what}: --${p.fg} ${t[p.fg]} on --${p.bg} ${t[p.bg]} is ${p.ratio.toFixed(2)}:1, needs ${p.min}:1`);
-}
-
-// The legacy file layout; the family layout adds accent-text and the 12 steps.
-
-const ORDER = ["ground", "surface", "raised", "sunken", "line", "line-strong", "text", "muted", "dim", "accent", "accent-hover", "accent-soft", "accent-line", "sel", "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft", "nodata", "nodata-soft"];
-
-function block(t, indent, scheme) {
-  const lines = ORDER.map((k) => `${indent}--${k}: ${t[k]};`);
-  const shadowInk = scheme === "dark" ? "0, 0, 0" : hexToRgb(t.text).map((v) => Math.round(v * 255)).join(", ");
-  lines.push(
-    scheme === "dark"
-      ? `${indent}--shadow: 0 1px 0 rgba(${shadowInk}, 0.3), 0 12px 32px -14px rgba(${shadowInk}, 0.7);`
-      : `${indent}--shadow: 0 1px 0 rgba(${shadowInk}, 0.04), 0 10px 28px -12px rgba(${shadowInk}, 0.22);`,
-  );
-  lines.push(`${indent}--scrim: rgba(${shadowInk}, ${scheme === "dark" ? "0.55" : "0.28"});`);
-  lines.push(`${indent}color-scheme: ${scheme};`);
-  return lines.join("\n");
-}
-
-export function renderLegacy(seed = LEGACY_SEED) {
-  const l = light(seed);
-  const d = dark(seed);
-  const hue = basis(seed).HUE.toFixed(1);
-  return `/* Generated by scripts/palette.mjs from the seed ${seed} (oklch hue ${hue}). Do not edit:
-   run \`npm run tokens\` after changing the script. \`npm run check\` refuses a file that
-   differs from what the script writes, and any pair below WCAG 2.2's bar.
-   Design tokens only, no selectors beyond the theme roots, so this file can move unchanged
-   into the shared design package (capsid/decisions.md 2026-09-30). */
-:root {
-${block(l, "  ", "light")}
-  --ui: "Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --mono: "Martian Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-${block(d, "    ", "dark")}
-  }
-}
-:root[data-theme="dark"] {
-${block(d, "  ", "dark")}
-}
-`;
-}
-
-
-// The legacy generator's tokens and pairs, in the shape themes() returns.
-export function legacyThemes(seed = LEGACY_SEED) {
-  const l = light(seed);
-  const d = dark(seed);
-  return { seed, anchor: null, order: ORDER, light: { tokens: l, pairs: pairs(l) }, dark: { tokens: d, pairs: pairs(d) } };
-}
 // ---- the family scale (rule 14) ----------------------------------------------------------
 
 // The same lightness roles for every family: [L, share of the seed's chroma]. Step 9 is the
@@ -328,12 +162,61 @@ export function scale(seed, anchor = null, scheme = "light") {
   });
 }
 
+const rgbList = (hex) => hexToRgb(hex).map((v) => Math.round(v * 255)).join(", ");
+
+// Elevation in the theme's own ink: Tailwind's xs, sm, md and lg shadows (the shadow scale
+// shadcn uses), tinted from --text in light and heavier on a dark ground, where a shadow
+// reads less. `ring` is the translucent focus glow (shadcn's ring-3 at 50%).
+function elevation(t, scheme) {
+  const dark = scheme === "dark";
+  const ink = dark ? "0, 0, 0" : rgbList(t.text);
+  const a = dark ? [0.3, 0.4, 0.45, 0.55] : [0.05, 0.1, 0.1, 0.1];
+  const c = (n) => `rgba(${ink}, ${a[n]})`;
+  return {
+    "shadow-xs": `0 1px 2px 0 ${c(0)}`,
+    "shadow-s": `0 1px 3px 0 ${c(1)}, 0 1px 2px -1px ${c(1)}`,
+    "shadow-m": `0 4px 6px -1px ${c(2)}, 0 2px 4px -2px ${c(2)}`,
+    "shadow-l": `0 10px 15px -3px ${c(3)}, 0 4px 6px -4px ${c(3)}`,
+    "ring-soft": `rgba(${rgbList(t.ring)}, 0.5)`,
+    "shadow-ring": `0 0 0 var(--ring-width) rgba(${rgbList(t.ring)}, 0.5)`,
+    shadow: "var(--shadow-l)",
+    scrim: `rgba(${ink}, ${dark ? "0.55" : "0.28"})`,
+  };
+}
+
+export const CHART_ORDER = [
+  ...Array.from({ length: 8 }, (_, i) => `series-${i + 1}`),
+  ...Array.from({ length: 8 }, (_, i) => `series-text-${i + 1}`),
+  ...Array.from({ length: 5 }, (_, i) => `ramp-${i + 1}`),
+  ...Array.from({ length: 5 }, (_, i) => `ramp-text-${i + 1}`),
+];
+
+export const ELEVATION_ORDER = ["shadow-xs", "shadow-s", "shadow-m", "shadow-l", "ring-soft", "shadow-ring", "shadow", "scrim"];
+
+// The chart palette (tokens/chart.mjs): eight series colours, the family's five-step ramp, and
+// the label colour that reads best on each. The three seeds are step 9 of the three families,
+// so a series colour is the family colour itself.
+function chartTokens(t, scheme, { C, H }) {
+  const out = {};
+  const series = [FAMILIES.purple.seed, FAMILIES.fox.seed, FAMILIES.teal.seed, ...companionColours(scheme)].map((h) => h.toLowerCase());
+  const ramp = rampColours(H, C, scheme);
+  series.forEach((hex, i) => {
+    out[`series-${i + 1}`] = hex;
+    out[`series-text-${i + 1}`] = labelOn(hex, t.text, t.surface);
+  });
+  ramp.forEach((hex, i) => {
+    out[`ramp-${i + 1}`] = hex;
+    out[`ramp-text-${i + 1}`] = labelOn(hex, t.text, t.surface);
+  });
+  return out;
+}
+
 function familyTheme(seed, anchor, scheme) {
   const { H } = seedLch(seed);
   const s = scale(seed, anchor, scheme);
   const t = {};
   const dark = scheme === "dark";
-  // Neutrals: as the moved generator made them, at the seed's hue.
+  // Neutrals at the seed's hue.
   t.ground = oklch(dark ? 0.16 : 0.965, NEUTRAL_CHROMA, H);
   t.surface = oklch(dark ? 0.205 : 0.995, dark ? NEUTRAL_CHROMA : 0.003, H);
   t.raised = oklch(dark ? 0.245 : 0.975, dark ? NEUTRAL_CHROMA : 0.008, H);
@@ -343,13 +226,20 @@ function familyTheme(seed, anchor, scheme) {
   t.text = oklch(dark ? 0.95 : 0.22, dark ? 0.008 : 0.03, H);
   t.muted = dark ? tune(0.015, H, t.surface, 6.0, 0.2, 0.95) : tune(0.02, H, t.ground, 5.5, 0.9, 0.2);
   t.dim = dark ? tune(0.015, H, t.raised, TEXT, 0.2, 0.95) : tune(0.02, H, t.sunken, TEXT, 0.9, 0.2);
-  // The accent family, from the scale's roles.
+  // The accent family, from the scale's roles. Step 9 is the brand colour (fills, the focus
+  // ring, large shapes and icons, held to 3:1); step 11 is accent text (4.5:1); the primary
+  // button fills with step 10, hovers to step 11, and carries --primary-fg: the surface tone
+  // in light, the ground tone in dark (a lighter fill takes a dark label).
   t.accent = s[8];
-  t["accent-hover"] = s[9];
+  t["accent-hover"] = s[11]; // accent text on hover: step 12
   t["accent-text"] = s[10];
   t["accent-soft"] = s[3];
   t.sel = s[2];
   t["accent-line"] = tune(0.1, H, t.sel, CONTROL, dark ? 0.2 : 0.9, dark ? 0.9 : 0.3);
+  t.primary = s[9];
+  t["primary-hover"] = s[10];
+  t["primary-fg"] = dark ? t.ground : t.surface;
+  t.ring = t.accent;
   for (const [k, hue] of Object.entries(STATUS)) {
     t[`${k}-soft`] = oklch(dark ? 0.28 : 0.945, 0.05, hue);
     t[k] = dark
@@ -359,44 +249,158 @@ function familyTheme(seed, anchor, scheme) {
   t.nodata = t.dim;
   t["nodata-soft"] = oklch(dark ? 0.27 : 0.94, 0.006, H);
   s.forEach((hex, i) => (t[`accent-${i + 1}`] = hex));
+  Object.assign(t, elevation(t, scheme));
+  Object.assign(t, chartTokens(t, scheme, seedLch(seed)));
   return t;
 }
 
-export const FAMILY_ORDER = [...ORDER.slice(0, 11), "accent-text", ...ORDER.slice(11), ...Array.from({ length: 12 }, (_, i) => `accent-${i + 1}`)];
+export const FAMILY_ORDER = [
+  "ground", "surface", "raised", "sunken", "line", "line-strong", "text", "muted", "dim",
+  "accent", "accent-hover", "accent-text", "accent-soft", "accent-line", "sel",
+  "primary", "primary-hover", "primary-fg", "ring",
+  "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft", "nodata", "nodata-soft",
+  ...Array.from({ length: 12 }, (_, i) => `accent-${i + 1}`),
+];
 
-function familyBlock(t, indent, scheme) {
-  const lines = FAMILY_ORDER.map((k) => `${indent}--${k}: ${t[k]};`);
-  const ink = scheme === "dark" ? "0, 0, 0" : hexToRgb(t.text).map((v) => Math.round(v * 255)).join(", ");
-  lines.push(
-    scheme === "dark"
-      ? `${indent}--shadow: 0 1px 0 rgba(${ink}, 0.3), 0 12px 32px -14px rgba(${ink}, 0.7);`
-      : `${indent}--shadow: 0 1px 0 rgba(${ink}, 0.04), 0 10px 28px -12px rgba(${ink}, 0.22);`,
-  );
-  lines.push(`${indent}--scrim: rgba(${ink}, ${scheme === "dark" ? "0.55" : "0.28"});`);
-  lines.push(`${indent}color-scheme: ${scheme};`);
-  return lines.join("\n");
+// ---- the pairs every theme must pass ---------------------------------------------------
+
+// Every pair a theme must pass, with its ratio: { fg, bg, min, what, ratio, pass }.
+export function pairs(t) {
+  const out = [];
+  const need = (fg, bg, min, what) => {
+    const ratio = contrast(t[fg], t[bg]);
+    out.push({ fg, bg, min, what, ratio, pass: ratio >= min });
+  };
+  // Rulings rule 18: accent text is step 11 (--accent-text) and its hover step 12; the
+  // primary button fill is step 10 with its label --primary-fg; step 9 (--accent, the brand
+  // colour) is held to 3:1 for the focus ring and large fills and never carries text.
+  for (const bg of ["surface", "ground", "raised"]) {
+    for (const fg of ["text", "muted", "dim", "accent-text", "accent-hover"]) need(fg, bg, 4.5, "text");
+    for (const s of Object.keys(STATUS)) need(s, bg, 4.5, "status word");
+  }
+  need("text", "sel", 4.5, "selected row title");
+  need("muted", "sel", 4.5, "selected row detail");
+  need("text", "sunken", 4.5, "command block");
+  need("dim", "sunken", 4.5, "command block note");
+  for (const bg of ["surface", "raised"]) need("line-strong", bg, 3, "control border");
+  need("accent-line", "sel", 3, "selection ring");
+  for (const bg of ["surface", "ground", "raised"]) {
+    need("ring", bg, 3, "focus ring");
+    need("accent", bg, 3, "brand colour as a large fill or icon");
+    need("primary", bg, 3, "primary button fill against its surroundings");
+  }
+  need("primary-hover", "surface", 3, "primary button fill (hover) against its surroundings");
+  for (const s of Object.keys(STATUS)) {
+    need(s, `${s}-soft`, 4.5, "pill");
+    need(s, "accent-soft", 4.5, "count on the active menu item");
+    need(s, "sel", 4.5, "status word on a selected row");
+  }
+  need("accent-text", "accent-soft", 4.5, "active item");
+  need("accent-text", "sel", 4.5, "deep accent text");
+  need("primary-fg", "primary", 4.5, "primary button label");
+  need("primary-fg", "primary-hover", 4.5, "primary button label (hover)");
+  need("surface", "crit", 4.5, "badge label");
+  return out;
 }
 
+export function failures(t) {
+  return pairs(t)
+    .filter((p) => !p.pass)
+    .map((p) => `${p.what}: --${p.fg} ${t[p.fg]} on --${p.bg} ${t[p.bg]} is ${p.ratio.toFixed(2)}:1, needs ${p.min}:1`);
+}
+
+// ---- the files ---------------------------------------------------------------------------
+
+function lines(t, indent, scheme, withScheme) {
+  const out = [...FAMILY_ORDER, ...CHART_ORDER, ...ELEVATION_ORDER].map((k) => `${indent}--${k}: ${t[k]};`);
+  if (withScheme) out.push(`${indent}color-scheme: ${scheme};`);
+  return out.join("\n");
+}
+
+const note = (seed, anchor) => {
+  const { L, C, H } = seedLch(seed);
+  return `step 9 ${seed.toLowerCase()} (oklch ${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})${anchor ? `, step 11 anchored at ${anchor.toLowerCase()}` : ""}`;
+};
+
+// The default family on the document root: colour.css.
 export function renderFamily(seed, anchor = null) {
   const l = familyTheme(seed, anchor, "light");
   const d = familyTheme(seed, anchor, "dark");
-  const { L, C, H } = seedLch(seed);
-  return `/* Generated by tokens/palette.mjs: step 9 ${seed.toLowerCase()} (oklch ${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})${anchor ? `, step 11 anchored at ${anchor.toLowerCase()}` : ""}.
+  return `/* Generated by tokens/palette.mjs: ${note(seed, anchor)}.
    Do not edit: change the script and run \`npm run tokens\`. \`npm run check\` refuses a file
    that differs from what the script writes, and any pair below WCAG 2.2's bar. */
 :root {
-${familyBlock(l, "  ", "light")}
+${lines(l, "  ", "light", true)}
   --ui: "Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --mono: "Martian Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-${familyBlock(d, "    ", "dark")}
+${lines(d, "    ", "dark", true)}
   }
 }
 :root[data-theme="dark"] {
-${familyBlock(d, "  ", "dark")}
+${lines(d, "  ", "dark", true)}
 }
+`;
+}
+
+// A family scoped to [data-family="name"], on the root or on any wrapper, in both themes.
+export function renderScoped(name, seed, anchor = null) {
+  const l = familyTheme(seed, anchor, "light");
+  const d = familyTheme(seed, anchor, "dark");
+  const f = `[data-family="${name}"]`;
+  return `/* Generated by tokens/palette.mjs: the ${name} family, ${note(seed, anchor)}.
+   Put data-family="${name}" on the root or on any element to switch its subtree.
+   Import after tokens.css. Do not edit: change the script and run \`npm run tokens\`. */
+${f} {
+${lines(l, "  ", "light", false)}
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) ${f},
+  :root:not([data-theme="light"])${f} {
+${lines(d, "    ", "dark", false)}
+  }
+}
+:root[data-theme="dark"] ${f},
+:root[data-theme="dark"]${f},
+[data-cap-theme="dark"] ${f},
+[data-cap-theme="dark"]${f} {
+${lines(d, "  ", "dark", false)}
+}
+`;
+}
+
+// The Enarratio theme (0.3): the purple family's tokens, as the hex values Enarratio's
+// checkTheme measures, written as a plain module so an app can `import { capsomerTheme } from
+// "capsomer/enarratio-theme"` and hand it to Enarratio's stylesheet(), with no dependency of
+// Capsomer on Enarratio (and none of Enarratio on Capsomer). The same tokens feed
+// css/enarratio.css, which maps the custom properties for an app that loads Capsomer's CSS.
+const FONT_STACK = '"Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif';
+export function enarratioTheme(family = FAMILIES.purple) {
+  const scheme = (t) => ({
+    background: t.surface,
+    text: t.text,
+    mutedText: t.muted,
+    grid: t.line,
+    focus: t.ring,
+    series: Array.from({ length: 8 }, (_, i) => t[`series-${i + 1}`]),
+    sequential: Array.from({ length: 5 }, (_, i) => t[`ramp-${i + 1}`]),
+    status: { good: t.ok, warning: t.warn, bad: t.crit, unknown: t.nodata },
+  });
+  const l = familyTheme(family.seed, family.anchor, "light");
+  const d = familyTheme(family.seed, family.anchor, "dark");
+  return { name: "capsomer", fonts: { body: FONT_STACK, numeric: FONT_STACK }, gridlines: "y", light: scheme(l), dark: scheme(d) };
+}
+
+export function renderEnarratioTheme() {
+  const theme = enarratioTheme();
+  return `// Generated by tokens/palette.mjs from Capsomer's tokens (the purple family, both themes).
+// Do not edit: change the script and run \`npm run tokens\`. \`npm run check\` refuses a file that
+// differs, and CI runs Enarratio's own checkTheme on it (test/unit/enarratio-theme.test.mjs).
+// Hand it to Enarratio: \`stylesheet(capsomerTheme)\`, or \`baseStylesheet()\` with css/enarratio.css.
+/** @type {import("./enarratio-theme.d.mts").EnarratioTheme} */
+export const capsomerTheme = ${JSON.stringify(theme, null, 2)};
 `;
 }
 
@@ -411,42 +415,53 @@ function active() {
 export function themes({ seed, anchor } = active()) {
   const l = familyTheme(seed, anchor, "light");
   const d = familyTheme(seed, anchor, "dark");
-  return { seed, anchor, order: FAMILY_ORDER, light: { tokens: l, pairs: pairs(l) }, dark: { tokens: d, pairs: pairs(d) } };
+  return { seed, anchor, order: FAMILY_ORDER, elevation: ELEVATION_ORDER, light: { tokens: l, pairs: pairs(l) }, dark: { tokens: d, pairs: pairs(d) } };
 }
 
-export function render() {
-  if (LEGACY) return renderLegacy(seedArg ?? LEGACY_SEED);
-  const a = active();
-  return renderFamily(a.seed, a.anchor);
+// The files this script owns: [path relative to tokens/, text].
+export function files() {
+  if (outArg || seedArg || familyArg) {
+    const a = active();
+    return [[outArg ?? "colour.css", renderFamily(a.seed, a.anchor)]];
+  }
+  const p = FAMILIES.purple;
+  return [
+    ["colour.css", renderFamily(p.seed, p.anchor)],
+    ["family-fox.css", renderScoped("fox", FAMILIES.fox.seed, FAMILIES.fox.anchor)],
+    ["family-teal.css", renderScoped("teal", FAMILIES.teal.seed, FAMILIES.teal.anchor)],
+    ["enarratio-theme.mjs", renderEnarratioTheme()],
+  ];
 }
 
-// ---- the file ----------------------------------------------------------------------------
-
-const TARGET = outArg ?? OUT;
-const SHOWN = outArg ?? "tokens/colour.css";
+const target = (rel) => (outArg ? outArg : fileURLToPath(new URL(`./${rel}`, import.meta.url)));
 
 export function check() {
   const problems = [];
-  if (!LEGACY) {
-    const t = themes();
-    problems.push(...failures(t.light.tokens).map((p) => `light: ${p}`));
-    problems.push(...failures(t.dark.tokens).map((p) => `dark: ${p}`));
-  } else {
-    problems.push(...failures(light(seedArg ?? LEGACY_SEED)).map((p) => `light: ${p}`));
-    problems.push(...failures(dark(seedArg ?? LEGACY_SEED)).map((p) => `dark: ${p}`));
+  const t = themes();
+  problems.push(...failures(t.light.tokens).map((p) => `light: ${p}`));
+  problems.push(...failures(t.dark.tokens).map((p) => `dark: ${p}`));
+  // The chart palette, for every family and both themes (tokens/chart.mjs): contrast against
+  // the chart's background, every pair apart under the colour-vision deficiencies, clear of
+  // the status colours, the ramp ordered.
+  for (const [name, f] of Object.entries(FAMILIES)) {
+    const ft = themes(f);
+    for (const scheme of ["light", "dark"]) {
+      for (const c of chartChecks(ft[scheme].tokens).filter((x) => !x.pass)) problems.push(`${name} ${scheme} chart: ${c.what} is ${c.value.toFixed(2)}, needs ${c.min} (${c.detail})`);
+    }
   }
-  let committed = null;
-  try {
-    committed = readFileSync(TARGET, "utf8");
-  } catch (e) {
-    problems.push(`${SHOWN} cannot be read (${e instanceof Error ? e.message : String(e)}); run npm run tokens`);
-  }
-  const want = render();
-  if (committed !== null && committed !== want) {
-    const a = committed.split("\n");
-    const b = want.split("\n");
-    const i = a.findIndex((line, n) => line !== b[n]);
-    problems.push(`${SHOWN} differs from what the script writes at line ${i + 1}: "${a[i] ?? ""}" (committed) vs "${b[i] ?? ""}" (script); run npm run tokens`);
+  for (const [rel, want] of files()) {
+    let committed = null;
+    try {
+      committed = readFileSync(target(rel), "utf8");
+    } catch (e) {
+      problems.push(`tokens/${rel} cannot be read (${e instanceof Error ? e.message : String(e)}); run npm run tokens`);
+    }
+    if (committed !== null && committed !== want) {
+      const a = committed.split("\n");
+      const b = want.split("\n");
+      const i = a.findIndex((line, n) => line !== b[n]);
+      problems.push(`tokens/${rel} differs from what the script writes at line ${i + 1}: "${a[i] ?? ""}" (committed) vs "${b[i] ?? ""}" (script); run npm run tokens`);
+    }
   }
   return problems;
 }
@@ -471,7 +486,7 @@ if (invoked) {
       console.error(`palette: ${problems.length} problem(s)\n  ${problems.join("\n  ")}`);
       process.exit(1);
     }
-    console.log(`palette: ${SHOWN} matches the script and every pair meets WCAG 2.2 in both themes`);
+    console.log(`palette: ${files().map(([r]) => `tokens/${r}`).join(", ")} match the script and every pair meets WCAG 2.2 in both themes`);
   } else if (process.argv.includes("--report")) {
     const rows = report();
     const failed = rows.filter((r) => !r.pass);
@@ -482,12 +497,21 @@ if (invoked) {
   } else if (process.argv.includes("--table")) {
     for (const [name, t] of Object.entries(themes())) if (name === "light" || name === "dark") {
       console.log(`\n${name}`);
-      for (const k of FAMILY_ORDER) console.log(`  --${k}: ${t.tokens[k]}`);
+      for (const k of [...FAMILY_ORDER, ...ELEVATION_ORDER]) console.log(`  --${k}: ${t.tokens[k]}`);
+    }
+  } else if (process.argv.includes("--chart")) {
+    for (const [name, f] of Object.entries(FAMILIES)) {
+      const ft = themes(f);
+      for (const scheme of ["light", "dark"]) {
+        const rows = chartChecks(ft[scheme].tokens);
+        const worst = rows.filter((r) => r.what.includes("differ")).sort((a, b) => a.value - b.value)[0];
+        console.log(`${name} ${scheme}: ${rows.length} checks, ${rows.filter((r) => !r.pass).length} fail; closest pair ${worst?.value.toFixed(1)} (${worst?.what})`);
+      }
     }
   } else if (process.argv.includes("--pairs")) {
     console.log(JSON.stringify(themes(), null, 2));
   } else {
-    writeFileSync(TARGET, render());
-    console.log(`palette: wrote ${SHOWN}${LEGACY ? " (legacy)" : ""}`);
+    for (const [rel, text] of files()) writeFileSync(target(rel), text);
+    console.log(`palette: wrote ${files().map(([r]) => `tokens/${r}`).join(", ")}`);
   }
 }

@@ -1,0 +1,95 @@
+<section class="cap-specimen" aria-labelledby="s-click">
+  <h2 id="s-click">Click popover: press the button, then Esc, click outside, or Tab away</h2>
+  <div class="cap-specimen-row">
+    <span data-cap="popover" id="sample-click">
+      <button type="button" class="cap-btn" id="sample-click-trigger" popovertarget="pop-dims" aria-haspopup="dialog" aria-expanded="false">Dimensions</button>
+      <div class="cap-popover" id="pop-dims" popover="auto" role="dialog" aria-labelledby="pop-dims-title" data-side="bottom" data-align="start">
+        <div class="cap-popover-header">
+          <h2 class="cap-popover-title" id="pop-dims-title">Dimensions</h2>
+          <p class="cap-popover-description">Set the size of the status badge for foxhound.app.</p>
+        </div>
+        <label for="pop-dims-width">Width in pixels</label>
+        <input class="cap-input" id="pop-dims-width" type="number" value="120" />
+        <button type="button" class="cap-btn" data-popover-close>Done</button>
+      </div>
+    </span>
+    <button type="button" class="cap-btn" id="sample-after">Next control</button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-tip">
+  <h2 id="s-tip">Tooltip: hover or focus; the second opens at once</h2>
+  <div class="cap-specimen-row">
+    <span data-cap="popover" id="sample-tip-a">
+      <button type="button" class="cap-btn" id="sample-retry">Retry job</button>
+      <div class="cap-popover" id="tip-retry" popover="manual" role="tooltip" data-variant="tooltip" data-side="top">Runs job_7c21 again with the same inputs. <kbd>R</kbd></div>
+    </span>
+    <span data-cap="popover" id="sample-tip-b">
+      <button type="button" class="cap-btn" id="sample-cancel">Cancel job</button>
+      <div class="cap-popover" id="tip-cancel" popover="manual" role="tooltip" data-variant="tooltip" data-side="top">Stops job_7c21 after its current step.</div>
+    </span>
+    <span data-cap="popover" id="sample-tip-c">
+      <a href="#s-tip" id="sample-link">foxhound.app</a>
+      <div class="cap-popover" id="tip-link" popover="manual" role="tooltip" data-variant="tooltip" data-side="bottom">3 failed checks since 13:40.</div>
+    </span>
+  </div>
+</section>
+
+<template data-specimen="open" data-title="Open, below the trigger, with an arrow" data-height="320">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Site settings</h1>
+    <span data-cap="popover" data-specimen-open>
+      <button type="button" class="cap-btn" aria-haspopup="dialog" aria-expanded="true" popovertarget="pop-open">Badge size</button>
+      <div class="cap-popover" id="pop-open" popover="manual" role="dialog" aria-labelledby="pop-open-title" data-side="bottom" data-align="start">
+        <div class="cap-popover-header">
+          <h2 class="cap-popover-title" id="pop-open-title">Badge size</h2>
+          <p class="cap-popover-description">Shown on the public status page of foxhound.app.</p>
+        </div>
+        <span class="cap-popover-arrow" aria-hidden="true"></span>
+      </div>
+    </span>
+  </main>
+</template>
+
+<template data-specimen="tip-open" data-title="Tooltip, open, with a key" data-height="240">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Jobs</h1>
+    <p>Job_7c21 failed at 14:02.</p>
+    <span data-cap="popover" data-specimen-open>
+      <button type="button" class="cap-btn" id="open-tip-trigger">Retry job</button>
+      <div class="cap-popover" id="open-tip" popover="manual" role="tooltip" data-variant="tooltip" data-side="top">Runs job_7c21 again <kbd>R</kbd><span class="cap-popover-arrow" aria-hidden="true"></span></div>
+    </span>
+  </main>
+</template>
+
+<template data-specimen="flip" data-title="Little room below: it flips above, and stays inside the window" data-height="220">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Collisions</h1>
+    <span data-cap="popover">
+      <button type="button" class="cap-btn" id="flip-css" popovertarget="pop-flip-css" aria-haspopup="dialog" aria-expanded="false">Anchored</button>
+      <div class="cap-popover" id="pop-flip-css" popover="auto" role="dialog" aria-labelledby="pop-flip-css-t" data-side="bottom" data-size="lg">
+        <h2 class="cap-popover-title" id="pop-flip-css-t">Placed by CSS</h2>
+        <p class="cap-popover-description">Anchor positioning flips this above the button when there is no room below. Three lines of text give it some height to flip.</p>
+        <button type="button" class="cap-btn" data-popover-close>Close</button>
+      </div>
+    </span>
+    <span data-cap="popover">
+      <button type="button" class="cap-btn" id="flip-js" popovertarget="pop-flip-js" aria-haspopup="dialog" aria-expanded="false">Computed</button>
+      <div class="cap-popover" id="pop-flip-js" popover="auto" role="dialog" aria-labelledby="pop-flip-js-t" data-side="bottom" data-size="lg" data-engine="js">
+        <h2 class="cap-popover-title" id="pop-flip-js-t">Placed by script</h2>
+        <p class="cap-popover-description">The fallback for browsers without anchor positioning computes the same flip and shift from the trigger's box.</p>
+        <button type="button" class="cap-btn" data-popover-close>Close</button>
+      </div>
+    </span>
+  </main>
+</template>
+
+<script type="module">
+  import { enhance, open } from "./popover.ts";
+  enhance();
+  // Specimen only: show the popups whose state is "open", without the one-tooltip-at-a-time rule.
+  for (const root of document.querySelectorAll("[data-specimen-open]")) {
+    const popup = root.querySelector(".cap-popover");
+    if (popup) open(popup);
+  }
+</script>

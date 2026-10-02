@@ -1,4 +1,5 @@
-import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 import { DEFAULT_PREF, readPref, writePref } from "./shell.ts";
 
 export interface ShellEntry {
@@ -11,6 +12,10 @@ export interface ShellEntry {
   count?: number;
   countNote?: string;
   tone?: "crit" | "warn";
+  // A group label over the entries that share it (Sidebar's group). Consecutive entries with
+  // the same `group` form one group; entries with none sit ungrouped. The label is hidden
+  // when the rail is collapsed.
+  group?: string;
 }
 
 export interface LinkProps {
@@ -62,19 +67,26 @@ const MoreIcon = () => (
   </svg>
 );
 
-const plainLink =({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
+const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
+
+// Consecutive entries with the same `group` are one group.
+function groups(nav: ShellEntry[]): Array<{ label?: string; entries: ShellEntry[] }> {
+  const out: Array<{ label?: string; entries: ShellEntry[] }> = [];
+  for (const e of nav) {
+    const last = out[out.length - 1];
+    if (last && last.label === e.group) last.entries.push(e);
+    else out.push({ label: e.group, entries: [e] });
+  }
+  return out;
+}
 
 export function Shell(props: ShellProps) {
   const { brand, brandHref = "./", nav, tabs, more, moreLabel = "More", moreIcon, navLabel = "Sections", status, actions, railFoot, prefKey = DEFAULT_PREF, renderLink = plainLink, children } = props;
-  const dialog = useRef<HTMLDialogElement>(null);
   const moreButton = useRef<HTMLButtonElement>(null);
+  const groupId = useId();
   const [moreOpen, setMoreOpen] = useState(false);
-  useEffect(() => {
-    const d = dialog.current;
-    if (!d) return;
-    if (moreOpen && !d.open) d.showModal();
-    else if (!moreOpen && d.open) d.close();
-  }, [moreOpen]);
+  // The shared dialog closes by Esc, Close, the backdrop and Back; a link in the list closes it
+  // too. Focus goes back to More, which a browser that does not focus a pressed button needs.
   const closeMore = useCallback(() => {
     setMoreOpen(false);
     requestAnimationFrame(() => moreButton.current?.focus());
@@ -133,7 +145,18 @@ export function Shell(props: ShellProps) {
         <div className="cap-shell-actions">{actions}</div>
       </header>
       <nav className="cap-shell-rail" id="cap-rail" aria-label={navLabel}>
-        {nav.map((e) => entry(e, false))}
+        {groups(nav).map((g, i) =>
+          g.label ? (
+            <div key={`g${i}`} className="cap-shell-group" role="group" aria-labelledby={`${groupId}-${i}`}>
+              <div className="cap-shell-group-label" id={`${groupId}-${i}`}>
+                {g.label}
+              </div>
+              {g.entries.map((e) => entry(e, false))}
+            </div>
+          ) : (
+            g.entries.map((e) => entry(e, false))
+          ),
+        )}
         <div className="cap-shell-foot">
           {railFoot}
           <button type="button" className="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded={!collapsed} aria-controls="cap-rail" onClick={() => setCollapsed(!collapsed)}>
@@ -167,11 +190,11 @@ export function Shell(props: ShellProps) {
         </nav>
       )}
       {more && (
-        <dialog ref={dialog} id="cap-more" className="cap-shell-more" aria-labelledby="cap-more-title" onClose={closeMore} onClick={(e) => e.target === dialog.current && closeMore()}>
-          <div className="cap-shell-more-card">
-            <h2 className="cap-shell-more-title" id="cap-more-title">
-              More views
-            </h2>
+        <Dialog open={moreOpen} onOpenChange={(o) => !o && closeMore()} placement="bottom" id="cap-more" className="cap-shell-more" aria-labelledby="cap-more-title">
+          <DialogHeader>
+            <DialogTitle id="cap-more-title">More views</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
             <nav aria-labelledby="cap-more-title">
               <ul className="cap-shell-more-list">
                 {more.map((e) => (
@@ -192,13 +215,8 @@ export function Shell(props: ShellProps) {
                 ))}
               </ul>
             </nav>
-            <div className="cap-shell-more-foot">
-              <button type="button" className="cap-btn" onClick={closeMore}>
-                Close
-              </button>
-            </div>
-          </div>
-        </dialog>
+          </DialogBody>
+        </Dialog>
       )}
     </div>
   );

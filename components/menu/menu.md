@@ -4,8 +4,9 @@ title: Menu
 summary: A button that opens a list of actions, with danger items last after a separator. Base UI underneath, React only.
 parts: [css, react]
 tool: Base UI
-states: [closed, trigger hover, trigger keyboard focus, open, item highlighted, disabled item with its reason, danger item, shortcut shown]
+states: [closed, trigger hover, trigger keyboard focus, open, item highlighted, disabled item with its reason, danger item, shortcut shown, checkbox and radio items, submenu, group labels, comfortable density]
 added: 0.1.0
+updated: 0.2.0
 source: none (new in Capsomer)
 replaces:
   - "role=\"menu\""
@@ -14,7 +15,7 @@ replaces:
 
 # Menu
 
-A button that opens a short list of actions on one thing: a site's actions in its row, a draft's actions in its header.
+A button that opens a short list of actions (and, where it helps, toggles, a choice of one and a submenu) on one thing: a site's actions in its row, a draft's actions in its header.
 
 ## When to use it
 
@@ -27,11 +28,12 @@ One or two actions: show them as buttons (`.cap-btn`). Moving between pages: lin
 ## The default and its reason
 
 - **Base UI's Menu does the hard part** (decision 7): the `menu` and `menuitem` roles, focus moving into the menu and back to the trigger, arrow keys, typeahead and positioning.
-- **The trigger looks like a `.cap-btn`** with a chevron, and is named by what the menu acts on ("Actions for foxhound.app").
+- **The trigger is a `.cap-btn`** with a chevron, and is named by what the menu acts on ("Actions for foxhound.app").
 - **Danger items come last, after a separator, in `--crit`** (Primer's rule). The menu moves them there whatever order the app passes, so a destructive action is never between two routine ones. A danger item opens the confirm dialog; it never acts at once.
 - **A disabled item stays in the menu and reachable by the arrow keys**, with its reason under it and read as its description. A hidden action leaves a person wondering where it went.
 - **A shortcut is shown at the item's end and set as `aria-keyshortcuts`**; the visible key is hidden from the item's name so the name stays the action.
-- **The highlighted item is `--accent-soft` with `--text`; a highlighted danger item is `--crit-soft` with `--crit`.**
+- **The popup wears the shared blocks**: `cap-popover` (the raised surface, hairline ring, shadow, and the fade and zoom motion) and the listbox's option look. The highlighted item is `--accent-soft` with `--text` and a 3 px accent edge; a highlighted danger item is `--crit-soft` with `--crit` and a `--crit` edge, so neither cue is the tint alone.
+- **Checkbox and radio items** show a check at their end while on or chosen, and stay open when pressed (a toggle is often followed by another). **Group labels** are muted headings over a group; **a submenu** opens to the side from an item with a chevron, with ArrowRight, and ArrowLeft or Esc closes only it.
 - **Not modal.** The page keeps scrolling and there is no invisible backdrop; Esc, Tab or a click outside closes the menu, and focus returns to the trigger.
 
 ## Keyboard
@@ -40,6 +42,9 @@ One or two actions: show them as buttons (`.cap-btn`). Moving between pages: lin
 | --- | --- |
 | Enter, Space or ArrowDown on the trigger | Opens the menu with its first item focused |
 | ArrowDown, ArrowUp | Move between items, skipping separators, wrapping at the ends |
+| ArrowRight on a submenu item | Opens the submenu on its first item |
+| ArrowLeft, or Esc, in a submenu | Closes the submenu; focus returns to its item |
+| Space or Enter on a checkbox or radio item | Toggles or chooses it |
 | A letter | Moves to the next item that starts with it |
 | Enter or Space on an item | Runs it and closes the menu; focus returns to the trigger |
 | Esc | Closes the menu; focus returns to the trigger |
@@ -47,7 +52,7 @@ One or two actions: show them as buttons (`.cap-btn`). Moving between pages: lin
 
 ## Accessibility
 
-- The menu is named by its trigger (`aria-labelledby`, from Base UI).
+- The menu is named by its trigger (`aria-labelledby`, from Base UI). Checkbox and radio items are `menuitemcheckbox` and `menuitemradio` with `aria-checked`; a submenu item has `aria-haspopup="menu"`; a group is named by its label.
 - Disabled items carry `aria-disabled="true"` and stay focusable (Base UI's `focusableWhenDisabled`), so the reason is heard.
 - Forced colours: the highlighted item gets a Highlight outline, the separator a CanvasText rule.
 - Inside a modal `dialog`, pass the dialog as `container`, or the popup renders under the top layer, out of sight.
@@ -88,7 +93,31 @@ import { Menu } from "capsomer/react/menu";
 />
 ```
 
-It renders `button.cap-menu-trigger`; portalled: `.cap-menu-positioner` > `.cap-menu` (role `menu`) > `.cap-menu-item` (`.cap-menu-label`, `kbd.cap-menu-kbd`, `.cap-menu-reason`; `data-tone="crit"` on a danger item) and `.cap-menu-separator`.
+More than actions:
+
+```tsx
+<Menu label="Site options" items={[
+  { type: "group", label: "Site", items: [{ label: "Open site", icon: <OpenIcon />, shortcut: "O" }] },
+  { type: "checkbox", label: "Check every minute", checked, onCheckedChange },
+  { type: "radio-group", label: "Region", value, onValueChange, items: [{ value: "fra", label: "Frankfurt" }, { value: "pdx", label: "Oregon" }] },
+  { type: "submenu", label: "Move to", items: [{ label: "Live sites" }, { label: "Previews" }] },
+  { label: "Delete site", danger: true },
+]} />
+```
+
+It renders `button.cap-btn.cap-menu-trigger`; portalled: `.cap-menu-positioner` > `.cap-popover.cap-menu` (role `menu`) > `.cap-option.cap-menu-item` (`.cap-option-icon`, `.cap-option-label`, `.cap-option-keys` with `kbd.cap-menu-kbd`, `.cap-option-indicator`, `.cap-menu-chevron`, `.cap-menu-reason`; `data-tone="crit"` on a danger item), `.cap-listbox-label` and `.cap-listbox-separator`. Danger items are moved to the end of the top-level menu.
+
+## Matches shadcn
+
+Dropdown Menu (Base UI flavour, nova): the popover surface with a ring and shadow, items with an optional icon and a shortcut at the end, checkbox and radio items with a check at the end, group labels, separators, a submenu with a chevron, a destructive variant, and the fade and zoom motion.
+
+## Deliberately different
+
+- **Danger items are moved last, after a separator,** whatever order the app passes (Primer's rule); shadcn leaves the order to the author.
+- **A disabled item stays reachable with its reason under it**; shadcn dims it and skips it.
+- **The highlighted item has a 3 px accent edge** as well as the tint (a listbox rule).
+- **The shortcut is shown as key caps and set as `aria-keyshortcuts`**, hidden from the item's name; shadcn shows plain tracked text.
+- **Not modal**: no backdrop, no scroll lock.
 
 ## Exceptions in production
 

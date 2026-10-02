@@ -1,22 +1,130 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The theme switch: System, Light, Dark. Its look is the segmented control's (.cap-seg);
-   this file only fits it into a top bar. */
+/* The theme switch: Light and Dark as a segmented pair with a sun and a moon, rebuilt from
+   shadcn/ui's Toggle Group (outline variant, spacing 0: items flush in one rounded box, the
+   chosen one filled) and its Mode Toggle's sun and moon. The inputs are real radios laid over
+   each segment, so arrows, Space and forms are the browser's. It sits in the top bar, on the
+   ground tone, where --line-strong is 2.9:1, so the control's edge is --dim (5:1 on it in
+   both themes). The chosen segment takes the accent tint, --accent-text and an accent bar
+   (3:1), so it is not told by colour alone: weight and the bar say it as well. */
 @layer cap.components {
   .cap-theme {
     flex: none;
     min-inline-size: 0;
     margin: 0;
+    padding: 0;
+    border: 0;
+  }
 
-    /* The top bar is on the ground tone (the Portal's, #215), where --line-strong is 2.9:1;
-       the control's edge takes --dim, which is above 3:1 on it in both themes. */
-    & .cap-seg-options {
-      border-color: var(--dim);
+  .cap-theme-options {
+    display: inline-flex;
+    overflow: hidden;
+    border: 1px solid var(--dim);
+    border-radius: var(--radius-m);
+    background: transparent;
+
+    & > label {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+      min-height: max(var(--target), calc(var(--control) - 2px));
+      min-width: max(var(--target), calc(var(--control) - 2px));
+      padding-inline: var(--pad-x);
+      color: var(--muted);
+      font-size: var(--fs-body);
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+
+      /* Items are flush; a hairline sets the second apart from the first. */
+      & + label {
+        border-inline-start: 1px solid var(--line);
+      }
+      &:hover,
+      &[data-force="hover"] {
+        background: var(--sunken);
+        color: var(--text);
+      }
+      &:has(input:checked) {
+        background: var(--accent-soft);
+        box-shadow: inset 0 -2px 0 var(--accent);
+        color: var(--accent-text);
+        font-weight: 600;
+      }
+      /* Inside the box, so the box's edge does not clip it. */
+      &:has(input:focus-visible) {
+        outline: var(--focus-width) solid var(--ring);
+        outline-offset: -2px;
+      }
+      &:has(input:disabled) {
+        background: none;
+        color: var(--dim);
+        cursor: not-allowed;
+      }
     }
 
-    & label {
+    /* The radio covers its segment, unseen, so a click anywhere on it chooses it. */
+    & input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: inherit;
+    }
+  }
+
+  .cap-theme-icon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* On a phone the top bar has no room for the words: the icons stay, and the words stay for a
+     screen reader. */
+  @media (max-width: 820px) {
+    .cap-theme-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
       white-space: nowrap;
+    }
+    .cap-theme-options > label {
+      min-width: var(--target);
+      padding-inline: var(--space-3);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-theme-options > label {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-theme-options {
+      border-color: CanvasText;
+    }
+    .cap-theme-options > label:has(input:checked) {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .cap-theme-options > label:has(input:disabled) {
+      color: GrayText;
     }
   }
 }

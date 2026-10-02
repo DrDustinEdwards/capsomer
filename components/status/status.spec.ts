@@ -69,12 +69,57 @@ eachTheme((theme) => {
     expect(shown).toBe("No data");
   });
 
-  test("behaviour: a pill keeps its own tint on a selected row", async ({ page }) => {
+  test("accessibility: every badge variant reaches its contrast", async ({ page }) => {
     await visitStates(page, "status", theme);
-    const [pillBg, rowBg] = await page.evaluate(() => [
-      getComputedStyle(document.querySelector("#sample-selected .cap-pill")!).backgroundColor,
-      getComputedStyle(document.querySelector("#sample-selected")!).backgroundColor,
+    await expectContrast(page, [
+      { sel: "#sample-variants [data-variant='default']", what: "default badge" },
+      { sel: "#sample-variants [data-variant='secondary']", what: "secondary badge" },
+      { sel: "#sample-variants [data-variant='outline']", what: "outline badge" },
+      { sel: "#sample-variants [data-variant='outline']", what: "outline badge edge", part: "border", min: 3 },
+      { sel: "#sample-variants [data-variant='destructive']", what: "destructive badge" },
+      { sel: "#sample-variants [data-variant='ghost']", what: "ghost badge" },
+      { sel: "#sample-variants [data-variant='link']", what: "link badge" },
+      { sel: "#sample-variant-tones [data-tone='ok']", what: "outline ok badge" },
+      { sel: "#sample-variant-tones [data-tone='warn']", what: "outline warning badge" },
+      { sel: "#sample-variant-tones [data-tone='crit']", what: "ghost critical badge" },
+      { sel: "#sample-interactive [data-force='hover'][data-variant='default']", what: "hovered default badge" },
+      { sel: "#sample-interactive [data-force='hover'][data-variant='ghost']", what: "hovered ghost badge" },
+      { sel: "#sample-interactive [data-force='hover'][data-variant='link']", what: "hovered link badge" },
+      { sel: "#sample-comfortable .cap-pill[data-tone='warn']", what: "comfortable warning badge" },
     ]);
-    expect(pillBg).not.toBe(rowBg);
+  });
+
+  test("keyboard: a link badge and a button badge take Tab in reading order and show a focus ring", async ({ page }) => {
+    await visitStates(page, "status", theme);
+    const link = page.locator("#sample-interactive").getByRole("link", { name: "Mentions 4" });
+    const button = page.locator("#sample-interactive").getByRole("button", { name: "Filter: blocked" });
+    await link.focus();
+    await expect(link).toBeFocused();
+    await expect(link).toHaveCSS("outline-style", "solid");
+    await page.keyboard.press("Tab");
+    await expect(button).toBeFocused();
+    await expect(button).toHaveCSS("outline-style", "solid");
+  });
+
+  test("keyboard: a disabled badge button is skipped", async ({ page }) => {
+    await visitStates(page, "status", theme);
+    const disabled = page.locator("#sample-interactive").getByRole("button", { name: "Disabled" });
+    await expect(disabled).toBeDisabled();
+  });
+
+  test("accessibility: a badge's hit area reaches the target size", async ({ page }) => {
+    await visitStates(page, "status", theme);
+    const box = await page.locator("#sample-interactive").getByRole("link", { name: "Mentions 4" }).evaluate((el) => {
+      const after = getComputedStyle(el, "::after");
+      const r = el.getBoundingClientRect();
+      return { h: Math.max(r.height, r.height + Math.abs(parseFloat(after.top)) * 2), pos: after.position };
+    });
+    expect(box.pos).toBe("absolute");
+    expect(box.h).toBeGreaterThanOrEqual(24);
+  });
+
+  test("accessibility: a count badge says what it counts", async ({ page }) => {
+    await visitStates(page, "status", theme);
+    await expect(page.getByText("3 waiting")).toHaveCount(1);
   });
 });

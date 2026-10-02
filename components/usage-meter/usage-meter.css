@@ -1,10 +1,12 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The usage meter: a list of usage figures against free limits. Each row has its name and
-   amount, a bar with what is used (solid) and where the period ends at the current rate
-   (hatched), and a line that says why, in words. From the Capsid Portal's meter and the
-   approved mockup's "Usage against free limits". */
+/* The usage meter: a list of usage figures against free limits. Each row is a meter
+   (components/meter: the name, the amount, and the bar with what is used solid and where
+   the period ends at the current rate hatched) and a line under it that says why, in
+   words. This file adds only what the meter does not have: the list, the why line, the
+   legend and the freshness line. From the Capsid Portal's meter and the approved
+   mockup's "Usage against free limits". */
 @layer cap.components {
   .cap-usage {
     display: grid;
@@ -21,67 +23,11 @@
   }
 
   .cap-usage-item {
-    display: grid;
-    gap: var(--space-2);
     min-width: 0;
   }
 
-  .cap-usage-top {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-2) var(--space-3);
-  }
-
-  .cap-usage-name {
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .cap-usage-value {
-    margin-left: auto;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* The bar. Its border marks the limit at 3:1 against the panel; the track inside is
-     sunken. Widths come from --used and --projected, set by the behaviour module or the
-     React wrapper through the CSSOM. */
-  .cap-usage-bar {
-    position: relative;
-    height: 10px;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-full);
-    background: var(--sunken);
-    overflow: hidden;
-  }
-
-  .cap-usage-used,
-  .cap-usage-projected {
-    position: absolute;
-    inset: 0 auto 0 0;
-  }
-
-  .cap-usage-used {
-    width: var(--used, 0%);
-    background: var(--accent);
-  }
-
-  /* Hatched in the muted text colour, which keeps 3:1 against the sunken track in both
-     themes. */
-  .cap-usage-projected {
-    width: var(--projected, 0%);
-    background: repeating-linear-gradient(135deg, var(--muted) 0 2px, transparent 2px 5px);
-  }
-
-  .cap-usage-item[data-tone="warn"] .cap-usage-used {
-    background: var(--warn);
-  }
-  .cap-usage-item[data-tone="crit"] .cap-usage-used {
-    background: var(--crit);
-  }
-
   .cap-usage-why {
+    flex: 0 0 100%;
     margin: 0;
     font-size: var(--fs-detail);
     color: var(--muted);
@@ -145,18 +91,14 @@
   }
 
   @media (forced-colors: active) {
-    .cap-usage-bar,
     .cap-usage-key {
       forced-color-adjust: none;
       border-color: CanvasText;
       background: Canvas;
     }
-    .cap-usage-used,
-    .cap-usage-item[data-tone] .cap-usage-used,
     .cap-usage-key[data-key="used"] {
       background: CanvasText;
     }
-    .cap-usage-projected,
     .cap-usage-key[data-key="projected"] {
       background: repeating-linear-gradient(135deg, CanvasText 0 2px, Canvas 2px 5px);
     }

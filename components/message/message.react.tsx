@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
-import { CLEARS_AFTER_MS, currentUndo, isUndoKey, lasting, newMessage, resolveFocus, undoErrorText, undoneText, withMessage, type Message, type SayOptions } from "./message.ts";
+import { CLEARS_AFTER_MS, GLYPHS, currentUndo, isUndoKey, kindOf, lasting, newMessage, resolveFocus, undoErrorText, undoneText, withMessage, type Message, type SayOptions } from "./message.ts";
 
 export type { Message, SayOptions };
 
@@ -193,7 +193,8 @@ export function MessageRegion() {
     <div className="cap-message" role="status" aria-label="Results and failures" aria-atomic="false" ref={regionRef}>
       {/* A new id per message is a new element, so the same words are announced again. */}
       {messages.map((m) => (
-        <div key={m.id} className="cap-message-item" data-cap-part="item" data-id={m.id} data-lasting={lasting(m) ? "" : undefined}>
+        <div key={m.id} className="cap-message-item" data-cap-part="item" data-id={m.id} data-lasting={lasting(m) ? "" : undefined} data-kind={kindOf(m)}>
+          <svg className="cap-message-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false" dangerouslySetInnerHTML={{ __html: GLYPHS[kindOf(m)] }} />
           <p className="cap-message-text" data-cap-part="text">
             <span data-cap-part="said" role={m.failure ? "alert" : undefined}>
               {m.text}

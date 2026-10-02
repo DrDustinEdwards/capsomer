@@ -4,7 +4,10 @@
 /* What shipped: a timeline of deploys and merges, newest first, broken by day. Routine
    runs condense to one row; a marker row says where an incident began after a deploy.
    Extracted from the Capsid Portal (dashboard/src/styles.css "feed", views/Deploys.tsx)
-   and the approved mockup's "What shipped". */
+   and the approved mockup's "What shipped". In 0.2 each row takes shadcn's Item rhythm (a
+   medium-weight title line, a muted description line, padding from the density tokens) and
+   a hairline connector runs down the glyph column from one row to the next, so the list
+   reads as a timeline. The connector is decoration: the order is the list's. */
 @layer cap.components {
   .cap-feed {
     container: cap-feed / inline-size;
@@ -19,8 +22,9 @@
   /* The day break: a heading that names the list under it. */
   .cap-feed-day-title {
     margin: 0;
-    padding: var(--space-2) var(--space-5);
+    padding: var(--space-2) var(--pad-card);
     background: var(--raised);
+    border-block: 1px solid var(--line);
     font-size: var(--fs-label);
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -40,12 +44,28 @@
     grid-template-columns: 14px minmax(0, 1fr) auto;
     gap: var(--space-4);
     align-items: start;
-    padding: 6px var(--space-5);
+    position: relative;
+    padding: var(--pad-y) var(--pad-card);
 
     /* A critical row carries the red edge, as in every list. */
     &[data-tone="crit"] {
       box-shadow: inset 3px 0 var(--crit);
     }
+  }
+
+  /* The connector: from under this row's glyph to the next row's. Drawn only between rows
+     of one day, in the glyph column's centre. */
+  .cap-feed-row:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    inset-block: calc(var(--pad-y) + 3px + 14px + var(--space-1)) calc(-1 * (var(--pad-y) + 3px - var(--space-1)));
+    inset-inline-start: calc(var(--pad-card) + 6.5px);
+    inline-size: 1px;
+    background: var(--line);
+    pointer-events: none;
+  }
+  .cap-feed-row[data-kind="condensed"]:not(:last-child)::after {
+    inset-block-start: calc(var(--space-1) + 3px + 14px + var(--space-1));
   }
 
   .cap-feed-glyph {
@@ -78,6 +98,7 @@
     & b {
       font-weight: 600;
     }
+
   }
 
   /* An identifier in a row (a sha, a namespace): its monospace face would otherwise stretch
@@ -137,20 +158,26 @@
       color: var(--warn);
     }
   }
+  .cap-feed-marker-link:hover {
+    text-decoration-thickness: 2px;
+  }
 
   /* Narrow: the time drops under the words. */
   @container cap-feed (max-width: 27.99rem) {
     .cap-feed-row {
       grid-template-columns: 14px minmax(0, 1fr);
       gap: var(--space-1) var(--space-3);
-      padding-inline: var(--space-4);
+      padding-inline: var(--pad-x);
+    }
+    .cap-feed-row:not(:last-child)::after {
+      inset-inline-start: calc(var(--pad-x) + 6.5px);
     }
     .cap-feed-when {
       grid-column: 2;
       text-align: left;
     }
     .cap-feed-day-title {
-      padding-inline: var(--space-4);
+      padding-inline: var(--pad-x);
     }
   }
 
@@ -163,6 +190,9 @@
     }
     .cap-feed-day-title {
       border-bottom: 1px solid CanvasText;
+    }
+    .cap-feed-row::after {
+      background: CanvasText;
     }
   }
 }

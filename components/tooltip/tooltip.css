@@ -1,60 +1,11 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A tooltip on a popover="manual" element. Below its trigger by CSS anchor positioning
-   where the browser has it; otherwise at the position the behaviour module sets
-   (--cap-tip-top, --cap-tip-left, through the CSSOM). */
+/* The tooltip has no rules of its own. It is the shared popover's tooltip variant
+   (components/popover/popover.css): `.cap-popover[data-variant="tooltip"]`, the inverted
+   surface at the detail size with a key cap and an optional arrow, placed by CSS anchor
+   positioning with a script fallback, fading and zooming in 100 ms. Load popover.css with it.
+   0.1's `.cap-tip` class is still accepted as a hook on the same element. */
 @layer cap.components {
-  .cap-tip {
-    position: fixed;
-    inset: auto;
-    top: var(--cap-tip-top, 0px);
-    left: var(--cap-tip-left, 0px);
-    margin: 0;
-    max-inline-size: min(36ch, calc(100vw - 16px));
-    padding: 6px 8px;
-    border: 1px solid transparent;
-    border-radius: var(--radius-m);
-    background: var(--text);
-    color: var(--ground);
-    box-shadow: var(--shadow);
-    font: 400 var(--fs-detail) / 1.4 var(--ui);
-    text-align: start;
-    overflow: visible;
-  }
-
-  @supports (anchor-name: --x) {
-    .cap-tip {
-      top: anchor(bottom, var(--cap-tip-top, 0px));
-      left: anchor(left, var(--cap-tip-left, 0px));
-      margin-block-start: 6px;
-      position-try-fallbacks: flip-block, flip-inline;
-    }
-  }
-
-  /* It fades in; nothing moves. */
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-tip {
-      opacity: 0;
-      transition:
-        opacity var(--dur-fast) var(--ease-out),
-        display var(--dur-fast) allow-discrete,
-        overlay var(--dur-fast) allow-discrete;
-
-      &:popover-open {
-        opacity: 1;
-
-        @starting-style {
-          opacity: 0;
-        }
-      }
-    }
-  }
-
-  /* Forced colours remove the dark fill: the tip keeps an edge. */
-  @media (forced-colors: active) {
-    .cap-tip {
-      border-color: CanvasText;
-    }
-  }
+  /* Nothing here: see the note above. */
 }

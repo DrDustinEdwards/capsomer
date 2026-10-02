@@ -2,12 +2,14 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The app shell: a top bar, a left menu (the rail) that collapses to icons, the main
-   region, and a tab bar with a More sheet on a phone. Extracted from the Capsid Portal
-   (dashboard/src/styles.css "shell" and "rail", as of capsid master after #214 to #226),
-   with Settings in the top bar (capsid job_28cc5d296fdb). The top bar and the rail sit on
-   the ground tone with no rule between them and the page; the page's panels are the lit
-   surface (Portal design D4, D5). The collapsed rail's names are our own CSS label, not
-   the Portal's script-placed tip. */
+   region, and a tab bar with a More sheet on a phone. The menu's look is rebuilt from
+   shadcn/ui's Sidebar (nova): 8 px padding, groups with a quiet label, menu buttons one
+   control tall with a 16 px icon and an 8 px gap, a current item tinted and set in medium
+   weight, a count as a small badge, the collapsed rail as icon buttons whose names show in a
+   tooltip beside them, and the phone's sheet. The top bar and the rail sit on the ground tone
+   with no rule between them and the page; the page's panels are the lit surface (Portal design
+   D4, D5). The current item takes --accent-text on the accent tint, not the Sidebar's grey.
+   Density moves every size here: --control, --target, --pad-card, --fs-*. */
 @layer cap.components {
   .cap-shell {
     display: grid;
@@ -30,9 +32,11 @@
     z-index: var(--z-tip);
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-m);
-    background: var(--accent);
-    color: var(--surface);
+    background: var(--primary);
+    color: var(--primary-fg);
+    box-shadow: var(--shadow-m);
     font-weight: 600;
+    text-decoration: none;
     transform: translateY(-200%);
 
     &:focus-visible {
@@ -56,22 +60,26 @@
   .cap-shell-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-3);
     min-width: calc(var(--rail-w) - var(--space-5));
+    min-height: var(--target);
     color: var(--text);
     font-weight: 800;
-    font-size: 15px;
+    font-size: var(--fs-lead);
     letter-spacing: -0.02em;
     text-decoration: none;
     white-space: nowrap;
 
+    &:hover {
+      color: var(--text);
+    }
     & svg {
       flex: none;
     }
     & small {
       font-family: var(--mono);
       font-weight: 400;
-      font-size: 11px;
+      font-size: var(--fs-label);
       letter-spacing: 0;
       color: var(--muted);
     }
@@ -90,7 +98,8 @@
   }
 
   /* The top bar's Settings link: a button to look at, current on the Settings view. On a
-     phone it is under More instead (data-hide="phone"). */
+     phone it is under More instead (data-hide="phone"). The current one keeps an accent edge
+     (3:1 on the ground) as well as the tint, so it is not told by colour alone. */
   .cap-shell-settings {
     color: var(--text);
     text-decoration: none;
@@ -98,16 +107,16 @@
     &[aria-current="page"] {
       background: var(--accent-soft);
       border-color: var(--accent);
+      color: var(--accent-text);
 
       & svg {
-        color: var(--accent);
+        color: var(--accent-text);
       }
     }
   }
 
-  /* Items 30 px (the touch target on a touch screen) with 14 px icons, centred in a 16 px
-     column under the brand's mark. The current item is on the lit surface; the red and
-     amber counts keep full strength, since they are the alert channel. */
+  /* The rail (Sidebar, Sidebar Content): a column of menu items on the ground tone. The
+     scroll bar is thin; the content is what scrolls, the foot stays at the bottom. */
   .cap-shell-rail {
     position: sticky;
     top: calc(var(--top-h) + env(safe-area-inset-top, 0px));
@@ -115,69 +124,115 @@
     height: calc(100dvh - var(--top-h) - env(safe-area-inset-top, 0px));
     display: flex;
     flex-direction: column;
-    gap: 1px;
-    padding: 10px;
+    gap: var(--space-1);
+    padding: var(--space-3);
     overflow-y: auto;
+    scrollbar-width: thin;
     background: var(--ground);
 
-    & a {
+    /* Menu button: Sidebar's, one control tall, a 16 px icon column and an 8 px gap. */
+    & a,
+    & .cap-shell-toggle,
+    & .cap-shell-railbtn {
       position: relative;
       display: grid;
       grid-template-columns: 16px minmax(0, 1fr) auto;
       align-items: center;
-      gap: 10px;
-      min-height: max(30px, var(--target));
-      padding: 0 10px;
+      gap: var(--space-3);
+      width: 100%;
+      min-height: max(var(--control), var(--target));
+      padding: 0 var(--space-3);
+      border: 0;
       border-radius: var(--radius-m);
-      color: var(--muted);
-      font-weight: 500;
+      background: none;
+      color: var(--text);
+      font-size: var(--fs-body);
+      text-align: left;
       text-decoration: none;
+      /* The hover and focus outline sit inside the rail's padding, never clipped. */
+      outline-offset: 0;
 
       &:hover,
       &[data-force="hover"] {
         background: var(--sunken);
         color: var(--text);
       }
-      &[aria-current="page"] {
-        background: var(--surface);
-        color: var(--text);
-        box-shadow: 0 0 0 1px var(--line);
-
-        & .cap-shell-icon {
-          color: var(--accent);
-        }
+      &:active,
+      &[data-force="pressed"] {
+        background: var(--sunken);
       }
+    }
+    /* The current entry: tinted, medium weight, in the accent text colour (4.5:1 on the tint). */
+    & a[aria-current="page"] {
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      font-weight: 500;
     }
   }
 
   .cap-shell-icon {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     justify-self: center;
     flex: none;
   }
 
-  /* A count beside a menu entry: what it counts is in the entry's accessible name. */
+  /* A count beside a menu entry (Sidebar's menu badge): a small pill; what it counts is in the
+     entry's accessible name. Red and amber keep their colour on their own soft tint, since they
+     are the alert channel. */
   .cap-shell-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding-inline: var(--space-2);
+    border-radius: var(--radius-m);
     font-size: var(--fs-label);
-    color: var(--dim);
+    font-weight: 500;
+    color: var(--muted);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 
+    &:empty {
+      display: none;
+    }
     &[data-tone="crit"] {
+      background: var(--crit-soft);
       color: var(--crit);
       font-weight: 600;
     }
     &[data-tone="warn"] {
+      background: var(--warn-soft);
       color: var(--warn);
       font-weight: 600;
     }
+  }
+
+  /* A group (Sidebar Group): a quiet label over its entries, a little air above the next. */
+  .cap-shell-group {
+    display: grid;
+    gap: var(--space-1);
+
+    & + & {
+      margin-block-start: var(--space-3);
+    }
+  }
+  .cap-shell-group-label {
+    display: flex;
+    align-items: center;
+    min-height: var(--control);
+    padding-inline: var(--space-3);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 500;
   }
 
   /* Below the entries: the shortcut hints, then the collapse button. */
   .cap-shell-foot {
     margin-top: auto;
     display: grid;
-    gap: 2px;
+    gap: var(--space-1);
     padding-top: var(--space-3);
   }
 
@@ -185,10 +240,10 @@
      .cap-shell-railbtn icon buttons instead. */
   .cap-shell-hint {
     display: grid;
-    gap: 6px;
-    padding: var(--space-4) 10px;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-3) var(--space-4);
     font-size: var(--fs-detail);
-    color: var(--dim);
+    color: var(--muted);
   }
   .cap-shell-linkish {
     display: flex;
@@ -198,6 +253,7 @@
     min-height: var(--target);
     padding: 0;
     border: 0;
+    border-radius: var(--radius-s);
     background: none;
     color: inherit;
     font-size: var(--fs-detail);
@@ -208,39 +264,24 @@
     }
   }
 
-  /* Buttons laid out like the rail links, so their icons sit in the same column. */
-  .cap-shell-toggle,
-  .cap-shell-railbtn {
-    display: grid;
-    grid-template-columns: 16px minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    min-height: max(30px, var(--target));
-    padding: 0 10px;
-    border: 0;
-    border-radius: var(--radius-m);
-    background: none;
+  /* The collapse button and the collapsed hints sit quieter than the views. */
+  .cap-shell-rail .cap-shell-toggle,
+  .cap-shell-rail .cap-shell-railbtn {
     color: var(--muted);
     font-size: var(--fs-detail);
-    text-align: left;
 
-    &:hover {
-      background: var(--sunken);
+    &:hover,
+    &[data-force="hover"] {
       color: var(--text);
-    }
-    & .cap-shell-icon {
-      width: 16px;
-      height: 16px;
     }
   }
 
   /* The page frame: the padding, rhythm and measure every view shares. */
   .cap-shell-page {
     display: grid;
-    gap: 14px;
+    gap: var(--gap);
     max-width: 1480px;
-    padding: 16px 24px 48px;
+    padding: var(--pad-card) calc(var(--pad-card) + var(--space-3)) var(--space-8);
   }
 
   /* The document scrolls, not the main region: a long page with nothing focusable in it
@@ -261,57 +302,85 @@
     display: none;
   }
 
-  /* Collapsed: icons only, in the column they hold when expanded. Each label stays in the
-     accessibility tree and shows beside its icon on hover and on keyboard focus; a count
-     becomes a dot. */
+  /* Collapsed (Sidebar's icon rail): icon buttons one control wide, in a column that keeps the
+     icons where they were. Each name stays in the accessibility tree and shows in a tooltip
+     beside its icon on hover and on keyboard focus; a count becomes a dot. The rail no longer
+     scrolls, because a scrolling box would clip the tooltips; its few icons fit the height. */
   .cap-shell[data-rail="collapsed"] {
-    & .cap-shell-rail a,
-    & .cap-shell-toggle,
-    & .cap-shell-railbtn {
-      position: relative;
-      grid-template-columns: 16px;
-      padding-right: 0;
+    & .cap-shell-rail {
+      overflow: visible;
     }
+    & .cap-shell-rail a,
+    & .cap-shell-rail .cap-shell-toggle,
+    & .cap-shell-rail .cap-shell-railbtn {
+      grid-template-columns: 16px;
+      justify-content: center;
+      padding: 0;
+    }
+    /* The tooltip: Tooltip's look (the inverted surface, 6 px radius, 12 px by 6 px padding,
+       an arrow), shown at once on hover or focus. It is a child of the link, so hovering it
+       keeps it open (WCAG 1.4.13); Esc hides it. */
     & .cap-shell-label {
       position: absolute;
       left: calc(100% + var(--space-3));
       top: 50%;
       translate: 0 -50%;
       z-index: var(--z-tip);
-      padding: 6px 8px;
-      border-radius: 5px;
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-m);
       background: var(--text);
       color: var(--ground);
       font-size: var(--fs-detail);
+      font-weight: 400;
+      line-height: 1.4;
       white-space: nowrap;
-      pointer-events: none;
       opacity: 0;
       clip-path: inset(50%);
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: -3px;
+        width: 8px;
+        height: 8px;
+        translate: 0 -50%;
+        rotate: 45deg;
+        border-radius: 2px;
+        background: var(--text);
+      }
     }
-    & :is(a, .cap-shell-toggle, .cap-shell-railbtn):is(:hover, :focus-visible):not([data-tip="hidden"]) .cap-shell-label {
+    & :is(a, .cap-shell-toggle, .cap-shell-railbtn):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) .cap-shell-label {
       opacity: 1;
-      clip-path: none;
+      clip-path: inset(-8px);
     }
     & .cap-shell-toggle .cap-shell-icon {
       transform: scaleX(-1);
     }
     & .cap-shell-hint {
       padding: var(--space-4) 0 0;
-      gap: 2px;
+      gap: var(--space-1);
+    }
+    & .cap-shell-group-label {
+      display: none;
+    }
+    & .cap-shell-group + .cap-shell-group {
+      margin-block-start: var(--space-3);
+      padding-block-start: var(--space-3);
+      border-block-start: 1px solid var(--line);
     }
     & .cap-shell-count {
       position: absolute;
-      top: 4px;
-      left: 25px;
-      width: 7px;
-      height: 7px;
+      top: var(--space-3);
+      right: var(--space-3);
+      min-width: 0;
+      width: 8px;
+      height: 8px;
+      padding: 0;
       border-radius: 50%;
       overflow: hidden;
       font-size: 0;
 
-      &:empty {
-        display: none;
-      }
       &[data-tone="crit"] {
         background: var(--crit);
         box-shadow: 0 0 0 2px var(--ground);
@@ -321,49 +390,27 @@
         box-shadow: 0 0 0 2px var(--ground);
       }
     }
+    /* A current entry's dot sits on the tint, so its ring takes the tint. */
+    & .cap-shell-rail a[aria-current="page"] .cap-shell-count {
+      &[data-tone="crit"],
+      &[data-tone="warn"] {
+        box-shadow: 0 0 0 2px var(--accent-soft);
+      }
+    }
     & kbd {
       display: none;
     }
   }
 
-  /* The phone's More sheet: every view the tab bar has no room for, as links with their
-     counts. A native modal dialog, so Esc closes it. */
-  .cap-shell-more {
-    width: min(420px, calc(100% - 2 * var(--space-5)));
-    max-width: none;
-    max-height: calc(100dvh - 2 * var(--space-5));
-    margin: auto;
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-l);
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: var(--shadow);
-
-    &[open] {
-      display: flex;
-      flex-direction: column;
-    }
-    &::backdrop {
-      background: var(--scrim);
-    }
-  }
-  .cap-shell-more-card {
-    display: grid;
-    gap: var(--space-4);
-    padding: var(--space-5);
-    overflow-y: auto;
-  }
-  .cap-shell-more-title {
-    margin: 0;
-    font-size: var(--fs-lead);
-    font-weight: 800;
-    letter-spacing: -0.02em;
+  /* The phone's More sheet: the shared dialog as a bottom sheet (components/dialog). This adds
+     only the list of views: each a link one target tall with its icon, name and count. */
+  .cap-shell-more > .cap-dialog-body {
+    padding: var(--space-3);
+    padding-block-end: var(--space-5);
   }
   .cap-shell-more-list {
     display: grid;
-    gap: 2px;
+    gap: var(--space-1);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -371,35 +418,32 @@
     & a {
       display: flex;
       align-items: center;
-      gap: 10px;
-      min-height: var(--target);
-      padding: 10px;
+      gap: var(--space-4);
+      min-height: max(var(--control), var(--target));
+      padding: 0 var(--space-4);
       border-radius: var(--radius-m);
       color: var(--text);
+      font-size: var(--fs-body);
       text-decoration: none;
 
       &:hover,
-      &[data-force="hover"],
+      &[data-force="hover"] {
+        background: var(--sunken);
+        color: var(--text);
+      }
       &[aria-current="page"] {
         background: var(--accent-soft);
+        color: var(--accent-text);
+        font-weight: 500;
       }
     }
     & .cap-shell-icon {
-      width: 18px;
-      height: 18px;
-    }
-    /* On the tint --dim is 3.8:1 in dark, so the count is --muted. */
-    & .cap-shell-count {
-      color: var(--muted);
+      justify-self: auto;
     }
   }
   .cap-shell-more-name {
     flex: 1;
     min-width: 0;
-  }
-  .cap-shell-more-foot {
-    display: flex;
-    justify-content: flex-end;
   }
 
   /* A phone: the rail goes, and a tab bar of at most five entries (the last one More)
@@ -423,8 +467,8 @@
       display: none;
     }
     .cap-shell-page {
-      padding: 16px 16px 24px;
-      gap: 16px;
+      padding: var(--space-5) var(--space-5) var(--space-6);
+      gap: var(--space-5);
     }
     .cap-shell-tabs {
       position: sticky;
@@ -433,7 +477,7 @@
       grid-auto-flow: column;
       grid-auto-columns: minmax(0, 1fr);
       z-index: var(--z-tabbar);
-      padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+      padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
       background: var(--surface);
       border-top: 1px solid var(--line);
 
@@ -441,22 +485,32 @@
         position: relative;
         display: grid;
         justify-items: center;
-        gap: 2px;
+        gap: var(--space-1);
         min-height: var(--target);
         margin: 0;
-        padding: 4px 0;
+        padding: var(--space-2) 0;
         border: 0;
+        border-radius: var(--radius-m);
         background: none;
         font: inherit;
         font-size: var(--fs-label);
         font-weight: 600;
         color: var(--muted);
         text-decoration: none;
+        outline-offset: -2px;
 
+        &:hover,
+        &[data-force="hover"] {
+          background: var(--sunken);
+          color: var(--text);
+        }
+        &:active {
+          background: var(--sunken);
+        }
         /* The current view, or More when the current view is one of its list. */
         &[aria-current="page"],
         &[aria-current="true"] {
-          color: var(--accent);
+          color: var(--accent-text);
         }
       }
       & .cap-shell-icon {
@@ -467,26 +521,39 @@
     .cap-shell-badge {
       position: absolute;
       top: 0;
-      left: calc(50% + 6px);
-      padding: 0 4px;
-      border-radius: 8px;
+      left: calc(50% + var(--space-3));
+      min-width: 16px;
+      padding: 0 var(--space-2);
+      border-radius: var(--radius-full);
       background: var(--crit);
       color: var(--surface);
       font-size: var(--fs-label);
+      line-height: 16px;
+      text-align: center;
     }
   }
 
+  /* Colour only: the menu's hover and the tab bar's. Nothing moves here. */
   @media (prefers-reduced-motion: no-preference) {
-    .cap-shell-more {
+    .cap-shell-rail :is(a, .cap-shell-toggle, .cap-shell-railbtn),
+    .cap-shell-more-list a,
+    .cap-shell-tabs :is(a, button) {
       transition:
-        opacity var(--dur-base) var(--ease-out),
-        transform var(--dur-base) var(--ease-out);
+        background-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
     }
-    @starting-style {
-      .cap-shell-more[open] {
-        opacity: 0;
-        transform: translateY(6px);
-      }
+    /* The tooltip fades in and slides 8 px from the rail (Tooltip's slide-in-from-left-2) in
+       100 ms; it fades out the same, and is clipped only once it has faded. */
+    .cap-shell[data-rail="collapsed"] .cap-shell-label {
+      transform: translateX(-8px);
+      transition:
+        opacity var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out),
+        clip-path 0s linear var(--dur-fast);
+    }
+    .cap-shell[data-rail="collapsed"] :is(a, .cap-shell-toggle, .cap-shell-railbtn):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) .cap-shell-label {
+      transform: none;
+      transition-delay: 0s;
     }
   }
 
@@ -499,8 +566,8 @@
     .cap-shell-tabs :is(a, button)[aria-current] {
       text-decoration: underline;
     }
-    .cap-shell-more {
-      border-color: CanvasText;
+    .cap-shell[data-rail="collapsed"] .cap-shell-label {
+      border: 1px solid CanvasText;
     }
     .cap-shell[data-rail="collapsed"] .cap-shell-count:not(:empty) {
       forced-color-adjust: none;

@@ -19,6 +19,9 @@ eachTheme((theme) => {
       { sel: "#sw-hover-on input", what: "a hovered track's edge, on", part: "border" },
       { sel: "#sw-disabled-why", what: "the reason beside a disabled switch" },
       { sel: "#sw-busy input", what: "the pending switch's outline", part: "outline" },
+      { sel: "#sw-sm input", what: "a small switch's edge, on", part: "border" },
+      { sel: "#sw-invalid input", what: "an invalid switch's edge", part: "border" },
+      { sel: "#sw-invalid-why", what: "an invalid switch's message" },
     ]);
   });
 
@@ -76,5 +79,28 @@ eachTheme((theme) => {
     await visitStates(page, "switch", theme);
     await page.getByText("Email alerts").click({ force: true });
     await expect(page.getByRole("switch", { name: "Email alerts" })).not.toBeChecked();
+  });
+
+  test("accessibility: an invalid switch exposes aria-invalid and its message", async ({ page }) => {
+    await visitStates(page, "switch", theme);
+    const sw = page.getByRole("switch", { name: "Public status page" });
+    await expect(sw).toHaveAttribute("aria-invalid", "true");
+    await expect(sw).toHaveAccessibleDescription("Verify the domain before publishing.");
+  });
+
+  test("accessibility: a small switch keeps a 24 px hit area", async ({ page }) => {
+    await visitStates(page, "switch", theme);
+    const box = await page.locator("#sw-sm").boundingBox();
+    expect(box?.height).toBeGreaterThanOrEqual(24);
+  });
+
+  test("keyboard: Space toggles a small switch", async ({ page }) => {
+    await visitStates(page, "switch", theme);
+    const sw = page.getByRole("switch", { name: "Dense mode" }).first();
+    await sw.focus();
+    await page.keyboard.press("Space");
+    await expect(sw).not.toBeChecked();
+    await page.keyboard.press("Space");
+    await expect(sw).toBeChecked();
   });
 });

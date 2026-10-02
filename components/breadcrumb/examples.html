@@ -1,0 +1,140 @@
+<link rel="stylesheet" href="./specimen/narrow.css" />
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">Default: links up the trail, the current page as text</h2>
+  <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-default">
+    <ol class="cap-breadcrumb-list">
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#posts">Posts</a></li>
+      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Why phage therapy keeps coming back</span></li>
+    </ol>
+  </nav>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-two">
+  <h2 id="s-two">Two levels, and hover on a link</h2>
+  <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-two">
+    <ol class="cap-breadcrumb-list">
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" data-force="hover" href="#sites">Sites</a></li>
+      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">foxhound.app</span></li>
+    </ol>
+  </nav>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-long">
+  <h2 id="s-long">Long names are cut with an ellipsis</h2>
+  <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-long">
+    <ol class="cap-breadcrumb-list">
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#media">Media library</a></li>
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#campaign" id="bc-long-link">Autumn 2026 phage therapy field survey photographs</a></li>
+      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page" id="bc-long-page">IMG_4821 plaque assay on Pseudomonas lawn, plate 3 of 12, after 18 hours</span></li>
+    </ol>
+  </nav>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-folded">
+  <h2 id="s-folded">A long trail folded in the HTML: the middle levels are links in a popover</h2>
+  <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-folded" data-cap="breadcrumb">
+    <ol class="cap-breadcrumb-list">
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
+      <li class="cap-breadcrumb-item" data-collapsed>
+        <span data-cap="popover">
+          <button type="button" class="cap-breadcrumb-ellipsis" popovertarget="bc-folded-more" aria-haspopup="dialog" aria-expanded="false" aria-label="Show 2 more levels"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="3" cy="8" r="1.4" fill="currentColor" /><circle cx="8" cy="8" r="1.4" fill="currentColor" /><circle cx="13" cy="8" r="1.4" fill="currentColor" /></svg></button>
+          <div class="cap-popover" id="bc-folded-more" popover="auto" role="dialog" aria-label="More levels" data-side="bottom" data-align="start" data-size="auto" data-flush>
+            <ul class="cap-breadcrumb-more">
+              <li><a class="cap-breadcrumb-more-link" href="#sites">Sites</a></li>
+              <li><a class="cap-breadcrumb-more-link" href="#foxhound">foxhound.app</a></li>
+            </ul>
+          </div>
+        </span>
+      </li>
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#runs">Runs</a></li>
+      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">job_7c21</span></li>
+    </ol>
+  </nav>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-auto">
+  <h2 id="s-auto">The whole trail in the HTML; script folds it (data-max-items="4")</h2>
+  <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-auto" data-cap="breadcrumb" data-max-items="4">
+    <ol class="cap-breadcrumb-list">
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#media">Media library</a></li>
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#2026">2026</a></li>
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#september">September</a></li>
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#field-survey">Field survey</a></li>
+      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Plate 3</span></li>
+    </ol>
+  </nav>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-short">
+  <h2 id="s-short">A trail that is not longer than the limit stays whole</h2>
+  <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-short" data-cap="breadcrumb" data-max-items="4">
+    <ol class="cap-breadcrumb-list">
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
+      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#mentions">Mentions</a></li>
+      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Unverified</span></li>
+    </ol>
+  </nav>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-narrow">
+  <h2 id="s-narrow">In a narrow space the trail wraps</h2>
+  <div class="breadcrumb-narrow-box">
+    <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-narrow">
+      <ol class="cap-breadcrumb-list">
+        <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
+        <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#procedures">Procedures</a></li>
+        <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#cultures">Cultures</a></li>
+        <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Plaque assay</span></li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfortable">
+  <h2 id="s-comfortable">Comfortable density</h2>
+  <div data-density="comfortable">
+    <nav class="cap-breadcrumb" aria-label="Density sample" id="bc-comfortable">
+      <ol class="cap-breadcrumb-list">
+        <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
+        <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Posts</span></li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<template data-specimen="open" data-title="The folded levels, open" data-height="260">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Job run</h1>
+    <nav class="cap-breadcrumb" aria-label="Breadcrumb" data-cap="breadcrumb">
+      <ol class="cap-breadcrumb-list">
+        <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
+        <li class="cap-breadcrumb-item" data-collapsed>
+          <span data-cap="popover" data-specimen-open>
+            <button type="button" class="cap-breadcrumb-ellipsis" popovertarget="bc-open-more" aria-haspopup="dialog" aria-expanded="false" aria-label="Show 2 more levels"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="3" cy="8" r="1.4" fill="currentColor" /><circle cx="8" cy="8" r="1.4" fill="currentColor" /><circle cx="13" cy="8" r="1.4" fill="currentColor" /></svg></button>
+            <div class="cap-popover" id="bc-open-more" popover="manual" role="dialog" aria-label="More levels" data-side="bottom" data-align="start" data-size="auto" data-flush>
+              <ul class="cap-breadcrumb-more">
+                <li><a class="cap-breadcrumb-more-link" href="#sites">Sites</a></li>
+                <li><a class="cap-breadcrumb-more-link" href="#foxhound">foxhound.app</a></li>
+              </ul>
+            </div>
+          </span>
+        </li>
+        <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#runs">Runs</a></li>
+        <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">job_7c21</span></li>
+      </ol>
+    </nav>
+  </main>
+</template>
+
+<script type="module">
+  import { enhance } from "./breadcrumb.ts";
+  import { open } from "../popover/popover.ts";
+  enhance();
+  // Specimen only: show the popup whose state is "open".
+  for (const root of document.querySelectorAll("[data-cap='popover'][data-specimen-open]")) {
+    const popup = root.querySelector(".cap-popover");
+    if (popup) open(popup);
+  }
+</script>
