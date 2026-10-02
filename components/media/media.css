@@ -228,7 +228,7 @@
     align-items: center;
     gap: var(--space-2);
     min-block-size: var(--target);
-    padding: 3px var(--space-3) 3px 3px;
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
     border-radius: var(--radius-m);
     background: var(--raised);
     box-shadow:
