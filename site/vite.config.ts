@@ -3,12 +3,16 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { generateStates } from "../bin/states.mjs";
 
 // One build for the site and every component's states page. The root is the repo, so a
 // states page sits at /components/<name>/states.html beside its component. The site is
 // served at the root of https://capsomer.dustinedwards.info (rulings.md, rule 16), by a
 // static Cloudflare Worker; CAPSOMER_BASE overrides the base for another host.
 const root = fileURLToPath(new URL("..", import.meta.url));
+// The states pages are generated from each component's examples.html, so they are written
+// first: Vite finds its inputs by the file existing (build and preview both load this).
+generateStates(root);
 const states = Object.fromEntries(
   readdirSync(resolve(root, "components"), { withFileTypes: true })
     .filter((d) => d.isDirectory() && existsSync(resolve(root, "components", d.name, "states.html")))

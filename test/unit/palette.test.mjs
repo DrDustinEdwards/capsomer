@@ -1,24 +1,60 @@
 import { strict as assert } from "node:assert";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { FAMILIES, LEGACY_SEED, legacyThemes, renderLegacy, report, scale, themes } from "../../tokens/palette.mjs";
+import { FAMILIES, contrast, report, scale, themes } from "../../tokens/palette.mjs";
 
-const capsid = readFileSync(new URL("../fixtures/capsid-tokens.css", import.meta.url), "utf8");
+const css = (f) => readFileSync(new URL(`../../tokens/${f}`, import.meta.url), "utf8");
 
-test("legacy: the moved generator writes capsid's tokens.css byte for byte", () => {
-  assert.equal(renderLegacy(LEGACY_SEED), capsid);
+test("colour.css is the purple family: step 9 accent, step 11 accent text, the twelve steps", () => {
+  const c = css("colour.css");
+  for (const token of ["--accent: #8c5fd2", "--accent-text: #4f2d7f", "--primary:", "--primary-hover:", "--primary-fg:", "--ring:", "--accent-1:", "--accent-12:", "--shadow-xs:", "--shadow-l:"]) assert.ok(c.includes(token), token);
+  assert.ok(!/--legacy/.test(c));
 });
 
-test("legacy: the committed colour.css is capsid's tokens.css", () => {
-  assert.equal(readFileSync(new URL("../../tokens/colour.css", import.meta.url), "utf8"), capsid);
+test("families: fox and teal are scoped to [data-family], in both themes, with literal values", () => {
+  for (const [name, seed] of [["fox", "#cc4f0c"], ["teal", "#008489"]]) {
+    const c = css(`family-${name}.css`);
+    assert.ok(c.includes(`[data-family="${name}"] {`), `${name} light block`);
+    assert.ok(c.includes(`:root[data-theme="dark"]${`[data-family="${name}"]`}`), `${name} pinned dark`);
+    assert.ok(c.includes("prefers-color-scheme: dark"), `${name} system dark`);
+    assert.ok(c.includes(`--accent: ${seed}`), `${name} step 9`);
+    // A family on a wrapper must not inherit the root's resolved values: no var() chains but the shadow helpers.
+    const chains = c.split("\n").filter((l) => /var\(/.test(l) && !/--shadow(-ring)?:/.test(l));
+    assert.deepEqual(chains, []);
+  }
 });
 
-test("legacy: every asserted pair passes in both themes", () => {
-  const t = legacyThemes();
+test("primary: the label passes 4.5:1 on the fill and its hover, in both themes, for every family", () => {
+  for (const f of Object.values(FAMILIES)) {
+    const t = themes(f);
+    for (const scheme of ["light", "dark"]) {
+      const tk = t[scheme].tokens;
+      assert.ok(contrast(tk["primary-fg"], tk.primary) >= 4.5, `${scheme} ${f.seed} primary`);
+      assert.ok(contrast(tk["primary-fg"], tk["primary-hover"]) >= 4.5, `${scheme} ${f.seed} primary hover`);
+      assert.ok(contrast(tk.ring, tk.surface) >= 3, `${scheme} ${f.seed} ring`);
+      assert.equal(tk.ring, tk.accent);
+    }
+  }
+});
+
+test("every asserted pair passes in both themes for the default family", () => {
+  const t = themes(FAMILIES.purple);
   for (const scheme of ["light", "dark"]) {
     assert.ok(t[scheme].pairs.length > 40);
     for (const p of t[scheme].pairs) assert.ok(p.pass, `${scheme}: ${p.what} --${p.fg} on --${p.bg} is ${p.ratio.toFixed(2)}`);
   }
+});
+
+test("density: compact is the default, comfortable is a variant, both write literal values and touch stays 44px", () => {
+  const c = css("scale.css");
+  assert.ok(/:root,\n\[data-density="compact"\] \{/.test(c));
+  assert.ok(c.includes('[data-density="comfortable"] {'));
+  for (const token of ["control", "target", "pad-x", "pad-y", "pad-card", "fs-label", "fs-detail", "fs-body", "fs-lead", "gap", "row-h"]) {
+    const n = c.split(`  --${token}:`).length - 1;
+    assert.ok(n >= (["control", "target", "row-h"].includes(token) ? 3 : 2), `--${token} is set for every density (and touch, where it matters)`);
+  }
+  assert.ok(c.includes('[data-context="prose"] {'));
+  assert.ok(c.includes("--target: 44px"));
 });
 
 test("family: step 9 is the seed in both themes, and the purple step 11 is the anchor in light", () => {
@@ -80,11 +116,12 @@ test("family: option 1 (rule 18), every pair of every family passes in both them
   assert.deepEqual(failing.map((r) => `${r.family} ${r.scheme} ${r.what} --${r.fg} on --${r.bg} ${r.ratio.toFixed(2)}`), []);
 });
 
-test("family: step 9 keeps the brand colour, step 10 is the button fill, step 11 is the accent text", () => {
+test("family: step 9 keeps the brand colour, step 10 is the button fill, step 11 is the accent text and the button's hover", () => {
   for (const [name, brand, step10, step11] of [["purple", "#8c5fd2", "#7d50c1", "#4f2d7f"], ["fox", "#cc4f0c", "#b64404", "#822e02"], ["teal", "#008489", "#077478", "#01585c"]]) {
     const t = themes(FAMILIES[name]).light.tokens;
     assert.equal(t.accent, brand, `${name} step 9`);
-    assert.equal(t["accent-hover"], step10, `${name} step 10`);
+    assert.equal(t.primary, step10, `${name} step 10`);
     assert.equal(t["accent-text"], step11, `${name} step 11`);
+    assert.equal(t["primary-hover"], step11, `${name} hover`);
   }
 });

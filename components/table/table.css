@@ -15,7 +15,7 @@
     overscroll-behavior-x: contain;
 
     &:focus-visible {
-      outline: var(--focus-width) solid var(--focus-color);
+      outline: var(--focus-width) solid var(--ring);
       outline-offset: calc(var(--focus-width) * -1);
     }
   }

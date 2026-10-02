@@ -19,7 +19,7 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: `npx vite preview --config site/vite.config.ts --port ${PORT} --strictPort`,
+    command: `node bin/capsomer.mjs states && npx vite preview --config site/vite.config.ts --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}/`,
     reuseExistingServer: false,
     timeout: 60_000,

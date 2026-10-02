@@ -340,9 +340,8 @@ async function siteData() {
   const dataDir = join(PKG, "site", "data");
   mkdirSync(dataDir, { recursive: true });
   const pal = await import(pathToFileURL(join(PKG, "tokens", "palette.mjs")).href);
-  // The committed colours (legacy until rule 14's failing pairs are settled), and every
-  // family's pairs for the contrast report.
-  writeFileSync(join(dataDir, "palette.json"), JSON.stringify(pal.legacyThemes(), null, 2));
+  // The committed colours (the purple family), and every family's pairs for the contrast report.
+  writeFileSync(join(dataDir, "palette.json"), JSON.stringify(pal.themes(pal.FAMILIES.purple), null, 2));
   const scales = Object.fromEntries(Object.entries(pal.FAMILIES).map(([n, f]) => [n, { light: pal.scale(f.seed, f.anchor, "light"), dark: pal.scale(f.seed, f.anchor, "dark") }]));
   writeFileSync(join(dataDir, "families.json"), JSON.stringify({ families: pal.FAMILIES, pairs: pal.report(), scales }, null, 2));
   const pj = JSON.parse(readFileSync(join(PKG, "package.json"), "utf8"));
