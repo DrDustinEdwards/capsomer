@@ -141,12 +141,13 @@ export function labelOf(box: HTMLInputElement): string {
   return text || box.value;
 }
 
-// The items now selected, in document order.
+// The items now selected, in document order. An item that is out of sight (a filter hid it) is
+// not acted on, so an action never reaches what the person cannot see.
 export function selectedItems(bar: HTMLElement): BulkItem[] {
   const list = listOf(bar);
   if (!list) return [];
   return boxesOf(list)
-    .filter((b) => b.checked && !b.disabled)
+    .filter((b) => b.checked && !b.disabled && visible(b.closest<HTMLElement>("[data-label], li, tr, label") ?? b))
     .map((b) => ({ id: b.value, label: labelOf(b) }));
 }
 
