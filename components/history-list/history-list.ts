@@ -8,7 +8,7 @@
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { initials } from "../avatar/avatar.ts";
 import { GLYPHS, enhance as enhanceMessage, say } from "../message/message.ts";
-import { attachRowList } from "../row-list/row-list.ts";
+import { listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
 import { enhance as enhanceTime, parse, relative } from "../time/time.ts";
 
 // ---------------------------------------------------------------------------------------
@@ -379,7 +379,36 @@ function nowOf(root: Element): number {
   return fixed ? parse(fixed) : Date.now();
 }
 
-const rowsOf = (root: HTMLElement) => root.querySelector<HTMLElement>(":scope > [data-cap='row-list']");
+const rowsOf = (root: HTMLElement) => root.querySelector<HTMLElement>(":scope > .cap-hist-list");
+
+// A key typed into a text field, or with a modifier, is never a list shortcut. Unlike the row
+// list's own check, a checkbox, a radio or a button is not typing: j and k must work from a
+// pick box a person has just ticked.
+const TEXT_INPUT = /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
+export function isTypingKey(e: KeyboardEvent): boolean {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return true;
+  const t = e.target as HTMLElement | null;
+  if (!t) return false;
+  if (t instanceof HTMLInputElement) return TEXT_INPUT.test(t.type || "text");
+  return t.isContentEditable || /^(TEXTAREA|SELECT)$/.test(t.tagName) || t.closest("[role='combobox'], [role='textbox']") !== null;
+}
+
+// j and k between the lines' titles, row-list's movement (moveRowFocus) with the check above.
+// Attached once per list.
+export function attachListKeys(list: HTMLElement): () => void {
+  if (list.dataset.capKeys !== undefined) return () => {};
+  list.dataset.capKeys = "";
+  const onKey = (e: KeyboardEvent) => {
+    if (e.defaultPrevented || (e.key !== "j" && e.key !== "k")) return;
+    if (isTypingKey(e) || singleKeysOff() || !listOwnsKeys(list)) return;
+    if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement)) e.preventDefault();
+  };
+  document.addEventListener("keydown", onKey);
+  return () => {
+    document.removeEventListener("keydown", onKey);
+    delete list.dataset.capKeys;
+  };
+}
 const lineRows = (root: HTMLElement) => Array.from(root.querySelectorAll<HTMLLIElement>(".cap-hist-row[data-id]"));
 const rowById = (root: HTMLElement, id: string) => lineRows(root).find((r) => r.dataset.id === id) ?? null;
 
@@ -527,7 +556,7 @@ export function enhance(root: ParentNode = document): () => void {
     if (el.hasAttribute(READY)) continue;
     el.setAttribute(READY, "");
     const list = rowsOf(el);
-    if (list) undo.push(attachRowList(list));
+    if (list) undo.push(attachListKeys(list));
     enhanceTime(el);
 
     const onClick = (e: MouseEvent) => {

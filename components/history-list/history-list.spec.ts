@@ -210,6 +210,17 @@ eachTheme((theme) => {
     await expect(links.nth(1)).toBeFocused();
   });
 
+  test("keyboard: j and k work from a pick box that was just ticked", async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    const box = page.locator("#hist-main [data-id='v-31'] [data-cap-part='pick']");
+    await box.check();
+    await expect(box).toBeFocused();
+    await page.keyboard.press("j");
+    await expect(page.locator("#hist-main [data-id='v-30'] .cap-row-title a")).toBeFocused();
+    await page.keyboard.press("k");
+    await expect(page.locator("#hist-main [data-id='v-31'] .cap-row-title a")).toBeFocused();
+  });
+
   test("keyboard: j and k stay quiet when single-key shortcuts are off", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     await page.evaluate(() => (document.documentElement.dataset.capSingleKeys = "off"));

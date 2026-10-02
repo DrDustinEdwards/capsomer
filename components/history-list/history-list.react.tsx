@@ -1,12 +1,12 @@
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { GLYPHS } from "../message/message.ts";
 import { useMessage } from "../message/message.react.tsx";
-import { attachRowList } from "../row-list/row-list.ts";
 import { Time } from "../time/time.react.tsx";
 import { initials } from "../avatar/avatar.ts";
 import { parse } from "../time/time.ts";
 import {
   PICK_BLOCKED,
+  attachListKeys,
   SIGN_GLYPH,
   compareHref,
   condense,
@@ -222,7 +222,7 @@ export function HistoryList({ entries, labelledBy, label, user, compareBase = ""
   const [note, setNote] = useState<string | null>(null);
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const { say } = useMessage();
-  useEffect(() => (listRef.current ? attachRowList(listRef.current) : undefined), [entries.length === 0]);
+  useEffect(() => (listRef.current ? attachListKeys(listRef.current) : undefined), [entries.length === 0]);
   // A pick that is no longer in the list (an Undo removed it) is dropped.
   useEffect(() => setPicked((p) => p.filter((id) => entries.some((e) => e.id === id))), [entries]);
 

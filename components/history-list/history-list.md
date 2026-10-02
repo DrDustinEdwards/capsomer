@@ -92,7 +92,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     <p class="cap-hist-picked" role="status" data-cap-part="picked">Pick two versions to compare.</p>
     <a class="cap-btn" data-variant="primary" data-cap-part="compare" role="link" aria-disabled="true" tabindex="0">Compare 2 versions</a>
   </div>
-  <ul class="cap-rows cap-hist-list" data-cap="row-list" role="list" aria-labelledby="history-h" data-cap-primary>
+  <ul class="cap-rows cap-hist-list" role="list" aria-labelledby="history-h" data-cap-primary>
     <li class="cap-row cap-hist-row" data-kind="edit" data-id="v-31" data-at="2026-10-02T14:52:00Z" data-words="1954" data-who="Dustin Edwards" data-current>
       <span class="cap-hist-pick"><label class="cap-check"><input type="checkbox" name="compare" value="v-31" data-cap-part="pick"><span class="cap-sr-only">Compare this version, 2 Oct, 14:52 UTC, by Dustin Edwards</span></label></span>
       <span class="cap-hist-who" id="h-v-31-who"><span class="cap-avatar" data-size="sm" aria-hidden="true"><span class="cap-avatar-fallback">DE</span></span><span class="cap-hist-name">Dustin Edwards</span></span>
