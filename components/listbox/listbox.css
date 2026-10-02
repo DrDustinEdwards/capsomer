@@ -1,0 +1,244 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The shared listbox: the look every list a person picks from has. The command menu, the
+   select popup, and the popups Base UI draws for the combobox and the menu all use these
+   classes, so the look keys off the platform's own state (role, aria-selected, aria-disabled)
+   and off Base UI's data-highlighted, never off the listbox controller. Rebuilt after
+   shadcn's command, select, combobox and dropdown-menu items (nova): a compact row, a
+   rounded item, a muted group label, a check at the end for the chosen value, a shortcut
+   at the end. The 3 px accent edge on the current option is Capsomer's own: the tint alone
+   would be only a faint cue. */
+@layer cap.components {
+  .cap-listbox {
+    box-sizing: border-box;
+    max-height: var(--listbox-max, min(18rem, var(--available-height, 60dvh)));
+    padding: var(--space-2);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block: var(--space-2);
+    color: var(--text);
+    font-size: var(--fs-body);
+    line-height: var(--leading);
+
+    /* A listbox that holds focus itself: the ring sits inside, so a clipping parent cannot hide it. */
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--focus-color);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+
+    /* On its own (not inside a popup that already is a surface). */
+    &[data-variant="surface"] {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-l);
+      background: var(--surface);
+      box-shadow: var(--shadow-s);
+    }
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .cap-listbox-group {
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  /* The muted heading of a group, or of a whole list. */
+  .cap-listbox-label {
+    padding: calc(var(--space-2) + var(--space-1)) var(--pad-x);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+  }
+
+  .cap-listbox-separator {
+    height: 1px;
+    margin: var(--space-2) calc(var(--space-2) * -1);
+    background: var(--line);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .cap-listbox-empty {
+    margin: 0;
+    padding: var(--space-4) var(--pad-x);
+    color: var(--muted);
+    font-size: var(--fs-body);
+    text-align: center;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .cap-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--pad-x);
+    min-height: max(var(--target), calc(var(--control) - var(--space-2)));
+    padding: var(--space-2) var(--pad-x);
+    border-radius: var(--radius-m);
+    color: var(--text);
+    cursor: default;
+    outline: 0;
+    user-select: none;
+
+    &[hidden] {
+      display: none;
+    }
+
+    /* The current option: the one a key press acts on. The controller marks it data-active;
+       Base UI marks it data-highlighted; a roving option is also :focus-visible. */
+    &[data-active],
+    &[data-highlighted],
+    &[data-force="active"] {
+      background: var(--accent-soft);
+      color: var(--text);
+      box-shadow: inset 3px 0 0 var(--accent);
+
+      & > svg,
+      & .cap-option-icon {
+        color: var(--text);
+      }
+    }
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--focus-color);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+
+    /* A destructive choice: --crit text, --crit-soft when current, a --crit edge. */
+    &[data-tone="crit"] {
+      color: var(--crit);
+
+      &[data-active],
+      &[data-highlighted],
+      &[data-force="active"] {
+        background: var(--crit-soft);
+        color: var(--crit);
+        box-shadow: inset 3px 0 0 var(--crit);
+      }
+    }
+
+    /* Not available. It stays in the list, so its reason can be read where it has one; the
+       controller never makes it active, Base UI may. */
+    &[aria-disabled="true"],
+    &[data-disabled] {
+      color: var(--dim);
+      cursor: not-allowed;
+
+      &[data-highlighted] {
+        background: var(--raised);
+        box-shadow: none;
+        color: var(--dim);
+      }
+    }
+  }
+
+  /* A list with something chosen keeps room for the check at its end. */
+  .cap-listbox:is([data-selection="single"], [data-selection="multi"]) .cap-option,
+  .cap-option:has(> .cap-option-indicator) {
+    padding-inline-end: calc(var(--pad-x) + var(--space-5) + var(--space-2));
+  }
+
+  /* No pointer-driven highlight of its own once the controller (or Base UI) owns the
+     current option: the mouse then moves it, and two rows would look current at once. */
+  .cap-listbox:not([data-cap-ready], [data-controlled]) .cap-option:not([aria-disabled="true"], [data-disabled]):hover,
+  .cap-option[data-force="hover"] {
+    background: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+
+  /* A list that takes focus as a whole shows its current option only while it has focus. */
+  .cap-listbox:is([data-mode="roving"], [data-mode="descendant"]):not(:focus-within) .cap-option[data-active]:not([data-force]):not(:hover) {
+    background: none;
+    box-shadow: none;
+  }
+
+  .cap-option > svg,
+  .cap-option-icon {
+    flex: none;
+    inline-size: var(--space-5);
+    block-size: var(--space-5);
+    color: var(--muted);
+  }
+
+  .cap-option-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* A note in words beside the label, and the shortcut at the end. */
+  .cap-option-keys {
+    display: inline-flex;
+    flex: none;
+    flex-wrap: wrap;
+    justify-content: end;
+    align-items: baseline;
+    gap: var(--space-1);
+    margin-inline-start: auto;
+    padding-inline-start: var(--pad-x);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    white-space: nowrap;
+  }
+  .cap-option-hint {
+    margin-inline-end: var(--space-3);
+  }
+
+  /* The check that marks the chosen value, at the end. Base UI's popups mount it only on a
+     chosen item; the controller's markup always has it and it shows when aria-selected is true. */
+  .cap-option-indicator {
+    position: absolute;
+    inset-inline-end: var(--pad-x);
+    display: grid;
+    place-items: center;
+    inline-size: var(--space-5);
+    block-size: var(--space-5);
+    color: var(--accent-text);
+    pointer-events: none;
+
+    & svg {
+      display: block;
+    }
+  }
+  .cap-option:is([aria-selected="false"], [aria-checked="false"], [data-unchecked]) > .cap-option-indicator {
+    display: none;
+  }
+
+  /* Forced colours remove tints and shadows: the current option gets an outline, the chosen
+     one keeps its check, the separator becomes a rule. */
+  @media (forced-colors: active) {
+    .cap-listbox[data-variant="surface"] {
+      border-color: CanvasText;
+    }
+    .cap-option {
+      &[data-active],
+      &[data-highlighted],
+      &[data-force="active"],
+      &[data-force="hover"] {
+        outline: 2px solid Highlight;
+        outline-offset: -2px;
+      }
+      &[aria-disabled="true"],
+      &[data-disabled] {
+        color: GrayText;
+      }
+    }
+    .cap-option-indicator {
+      forced-color-adjust: none;
+      color: Highlight;
+    }
+    .cap-listbox-separator {
+      background: CanvasText;
+    }
+  }
+}

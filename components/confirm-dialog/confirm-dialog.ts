@@ -6,71 +6,15 @@
 // opened it, or to a fallback when that control is gone. No framework; the React wrapper
 // and the other overlays reuse the focus helpers exported here.
 
-// ---------------------------------------------------------------------------------------
-// Focus helpers shared by every Capsomer overlay (detail panel, command menu, shortcut sheet).
-
-const openers = new WeakMap<HTMLDialogElement, Element | null>();
-
-// Remembers what had focus before the dialog opened, to hand focus back on close.
-export function rememberOpener(dialog: HTMLDialogElement, opener: Element | null = document.activeElement): void {
-  openers.set(dialog, opener);
-}
-
-// Where focus goes when the opener has gone (a revoked agent loses its Revoke button): the
-// dialog's data-cap-return selector, the given fallback, the Close button of a detail panel
-// that is still open behind this dialog, then the page's main region.
-function fallbackFor(dialog: HTMLDialogElement, fallback?: HTMLElement | null): HTMLElement[] {
-  const sel = dialog.dataset.capReturn;
-  const named = sel ? document.querySelector<HTMLElement>(sel) : null;
-  const panel = document.querySelector<HTMLElement>("dialog.cap-detail[open] [data-cap-part='close']");
-  return [named, fallback ?? null, panel, document.querySelector<HTMLElement>("main")].filter((x): x is HTMLElement => !!x);
-}
-
-// Hands focus back after a dialog closes. After the next frame, so whatever the action
-// changed has rendered first (a revoked agent's row, and its button, may be gone). Only when
-// focus is lost: if the browser already restored it, or a command opened another dialog,
-// that focus stands.
-export function returnFocus(dialog: HTMLDialogElement, fallback?: HTMLElement | null): void {
-  const from = openers.get(dialog);
-  openers.delete(dialog);
-  requestAnimationFrame(() => {
-    const now = document.activeElement;
-    const lost = !now || now === document.body || !now.isConnected || dialog.contains(now);
-    if (!lost) return;
-    const candidates: HTMLElement[] = [];
-    if (from instanceof HTMLElement && from.isConnected && from !== document.body) candidates.push(from);
-    candidates.push(...fallbackFor(dialog, fallback));
-    for (const el of candidates) {
-      el.focus();
-      if (document.activeElement === el) return;
-    }
-  });
-}
-
-// True when a click landed on the dialog's backdrop rather than its content.
-export function isBackdropClick(dialog: HTMLDialogElement, e: MouseEvent): boolean {
-  if (e.target !== dialog) return false;
-  const r = dialog.getBoundingClientRect();
-  return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
-}
-
-// The text of a thrown value, for the error shown inside a dialog.
-export function errorText(e: unknown): string {
-  if (e instanceof Error && e.message) return e.message;
-  if (typeof e === "string" && e) return e;
-  return "Something went wrong and nothing says what.";
-}
+// The generic overlay helpers moved to the shared dialog (components/dialog/dialog.ts). They
+// are re-exported here, so what imported them from this module keeps working.
+import { errorText, isBusy, rememberOpener, returnFocus, uid } from "../dialog/dialog.ts";
+export { errorText, isBackdropClick, isBusy, rememberOpener, returnFocus, uid } from "../dialog/dialog.ts";
 
 // The typed-word guard: case-insensitive, surrounding spaces ignored. No word, no guard.
 export function wordMatches(typed: string, word: string | undefined): boolean {
   if (!word) return true;
   return typed.trim().toLowerCase() === word.trim().toLowerCase();
-}
-
-let seq = 0;
-export function uid(prefix: string): string {
-  seq += 1;
-  return `${prefix}-${seq}`;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -82,10 +26,6 @@ const performs = new WeakMap<HTMLDialogElement, Perform>();
 const performedFlags = new WeakSet<HTMLDialogElement>();
 
 const part = <T extends HTMLElement = HTMLElement>(dialog: HTMLDialogElement, name: string) => dialog.querySelector<T>(`[data-cap-part='${name}']`);
-
-export function isBusy(dialog: HTMLDialogElement): boolean {
-  return dialog.getAttribute("aria-busy") === "true";
-}
 
 // The reason is read from the field itself, not from a copy of its value, so text the
 // browser filled in without an input event still counts.

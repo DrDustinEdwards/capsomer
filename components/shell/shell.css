@@ -30,8 +30,8 @@
     z-index: var(--z-tip);
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-m);
-    background: var(--accent);
-    color: var(--surface);
+    background: var(--primary);
+    color: var(--primary-fg);
     font-weight: 600;
     transform: translateY(-200%);
 
@@ -456,7 +456,7 @@
         /* The current view, or More when the current view is one of its list. */
         &[aria-current="page"],
         &[aria-current="true"] {
-          color: var(--accent);
+          color: var(--accent-text);
         }
       }
       & .cap-shell-icon {

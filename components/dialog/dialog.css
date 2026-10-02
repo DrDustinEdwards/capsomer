@@ -1,0 +1,334 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The dialog: a native <dialog> opened with showModal(), shared by every Capsomer overlay.
+   One modal base (backdrop, surface, header, body, footer, close button) and five
+   placements: centre (a dialog), right and left (a side sheet), bottom (a sheet on a phone)
+   and top (a palette). The look is rebuilt from shadcn/ui's Dialog, Alert Dialog and Sheet
+   (nova): the black-ish scrim with a light blur, the popover surface with a hairline ring and
+   the large shadow, the muted band under the footer, zoom-in-95 with a fade at 100 ms for a
+   dialog and a short slide with a fade at 200 ms for a sheet. In Capsomer's tokens, so
+   density moves the padding. */
+@layer cap.components {
+  .cap-dialog {
+    --cap-dialog-w: 30rem;
+    --cap-dialog-gap: max(var(--space-5), env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px));
+    --cap-dialog-top: max(var(--space-5), 10dvh);
+    --cap-dialog-from: scale(0.95);
+
+    /* Centred by default; the placements below move it. */
+    box-sizing: border-box;
+    width: min(var(--cap-dialog-w), calc(100% - 2 * var(--cap-dialog-gap)));
+    max-width: none;
+    height: auto;
+    max-height: calc(100dvh - 2 * var(--cap-dialog-gap));
+    margin: auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+    color: var(--text);
+    box-shadow: var(--shadow-l);
+    font-size: var(--fs-body);
+    overscroll-behavior: contain;
+
+    /* Only when open: a display value on a closed dialog would show it. */
+    &[open] {
+      display: flex;
+      flex-direction: column;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: -2px;
+    }
+
+    /* The backdrop: the scrim with a light blur, where the browser can. */
+    &::backdrop {
+      background: var(--scrim);
+      @supports (backdrop-filter: blur(1px)) {
+        backdrop-filter: blur(4px);
+      }
+    }
+
+    &[data-size="sm"] {
+      --cap-dialog-w: 24rem;
+    }
+    &[data-size="lg"] {
+      --cap-dialog-w: 42rem;
+    }
+
+    /* A side sheet: full height, on the edge, the rounded corner on the inside only. */
+    &:is([data-placement="right"], [data-placement="left"]) {
+      --cap-dialog-w: 35rem;
+      inset-block: 0;
+      width: min(var(--cap-dialog-w), 85%);
+      height: 100%;
+      max-height: 100%;
+      margin: 0;
+      padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px);
+      border-radius: 0;
+
+      &[data-size="sm"] {
+        --cap-dialog-w: 24rem;
+      }
+      &[data-size="lg"] {
+        --cap-dialog-w: 48rem;
+      }
+    }
+    &[data-placement="right"] {
+      inset-inline: auto 0;
+      border-width: 0 0 0 1px;
+      --cap-dialog-from: translateX(2.5rem);
+    }
+    &[data-placement="left"] {
+      inset-inline: 0 auto;
+      border-width: 0 1px 0 0;
+      --cap-dialog-from: translateX(-2.5rem);
+    }
+
+    /* A bottom sheet: the full width, as tall as its content up to the safe margin. */
+    &[data-placement="bottom"] {
+      inset-block: auto 0;
+      inset-inline: 0;
+      width: 100%;
+      margin: 0;
+      padding-block-end: env(safe-area-inset-bottom, 0px);
+      border-width: 1px 0 0;
+      border-radius: var(--radius-l) var(--radius-l) 0 0;
+      --cap-dialog-from: translateY(2.5rem);
+    }
+
+    /* A palette: centred across, near the top, so what it filters stays in view below. */
+    &[data-placement="top"] {
+      inset-block: 0;
+      margin-block: var(--cap-dialog-top) auto;
+      max-height: calc(100dvh - var(--cap-dialog-top) - var(--cap-dialog-gap));
+    }
+  }
+
+  /* The page behind does not scroll while a dialog is open. */
+  :root:has(.cap-dialog:modal) {
+    overflow: hidden;
+  }
+
+  /* The header: the title, and the description under it. */
+  .cap-dialog-header {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    gap: var(--space-3);
+    padding: var(--pad-card) var(--pad-card) 0;
+
+    /* With nothing between it and the footer, the header carries the space. */
+    &:not(:has(~ .cap-dialog-body)) {
+      padding-block-end: var(--pad-card);
+    }
+    &[data-divider] {
+      padding-block-end: var(--pad-card);
+      border-block-end: 1px solid var(--line);
+    }
+    /* The Close button sits in the corner; the title keeps clear of it. */
+    .cap-dialog:has(> .cap-dialog-close) > & {
+      padding-inline-end: calc(var(--pad-card) + var(--target));
+    }
+    /* A media tile (an icon) to the left of the title and description. */
+    &:has(> .cap-dialog-media) {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: var(--space-4);
+      align-items: start;
+
+      & > :not(.cap-dialog-media) {
+        grid-column: 2;
+      }
+      & > .cap-dialog-media {
+        grid-row: 1 / span 2;
+      }
+    }
+  }
+
+  .cap-dialog-media {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--target);
+    height: var(--target);
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+    color: var(--text);
+
+    &[data-tone="crit"] {
+      background: var(--crit-soft);
+      color: var(--crit);
+    }
+    &[data-tone="warn"] {
+      background: var(--warn-soft);
+      color: var(--text);
+    }
+    & > svg {
+      width: 1.5em;
+      height: 1.5em;
+    }
+  }
+
+  .cap-dialog-title {
+    margin: 0;
+    font-size: var(--fs-lead);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-dialog-description {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-body);
+    text-wrap: pretty;
+
+    & a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+
+      &:hover {
+        color: var(--text);
+      }
+    }
+  }
+
+  /* The body is the part that scrolls: header and footer stay. */
+  .cap-dialog-body {
+    display: grid;
+    align-content: start;
+    flex: 1 1 auto;
+    gap: var(--space-3);
+    min-height: 0;
+    padding: var(--pad-card);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    &[data-flush] {
+      padding: 0;
+    }
+    & p {
+      margin: 0;
+    }
+    & ul {
+      display: grid;
+      gap: var(--space-2);
+      margin: 0;
+      padding-inline-start: 1.15em;
+      list-style: disc;
+    }
+    /* A scrolling body is a keyboard stop (dialog.ts gives it tabindex); it shows where it is. */
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: -2px;
+    }
+  }
+
+  /* The footer: a muted band under a dialog (as Alert Dialog's), a plain row under a sheet.
+     Actions stack on a phone with the main one first (column-reverse), and sit in a row
+     at the end from there up. data-align="between" sets Cancel apart at the far end. */
+  .cap-dialog-footer {
+    display: flex;
+    flex: none;
+    flex-direction: column-reverse;
+    gap: var(--space-3);
+    padding: var(--pad-card);
+    border-block-start: 1px solid var(--line);
+    background: var(--sunken);
+
+    .cap-dialog:is([data-placement="right"], [data-placement="left"], [data-placement="bottom"]) > & {
+      background: transparent;
+    }
+    .cap-dialog[data-size="sm"] > & {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+    }
+  }
+  @media (min-width: 40rem) {
+    .cap-dialog-footer {
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+
+      &[data-align="between"] {
+        justify-content: space-between;
+      }
+      &[data-align="start"] {
+        justify-content: flex-start;
+      }
+      .cap-dialog[data-size="sm"] > & {
+        display: flex;
+      }
+    }
+  }
+
+  /* The Close button: in the corner, half a padding in, as Dialog and Sheet place it. */
+  .cap-dialog > .cap-dialog-close {
+    position: absolute;
+    inset-block-start: calc(var(--pad-card) / 2);
+    inset-inline-end: calc(var(--pad-card) / 2);
+    z-index: 1;
+  }
+
+  /* Open and close. A dialog fades and zooms from 95% in 100 ms; a sheet fades and slides in
+     from its edge in 200 ms; the backdrop fades with it. @starting-style gives the open
+     frame, display and overlay with allow-discrete keep it on screen through the close.
+     Under reduced motion none of this applies: it appears and goes at once. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-dialog {
+      --cap-dialog-dur: var(--dur-fast);
+      --cap-dialog-ease: var(--ease-out);
+      opacity: 0;
+      transform: var(--cap-dialog-from);
+      transition-property: opacity, transform, overlay, display;
+      transition-duration: var(--cap-dialog-dur);
+      transition-timing-function: var(--cap-dialog-ease);
+      transition-behavior: allow-discrete;
+
+      &:is([data-placement="right"], [data-placement="left"], [data-placement="bottom"]) {
+        --cap-dialog-dur: var(--dur-base);
+        --cap-dialog-ease: var(--ease-in-out);
+      }
+      &[open] {
+        opacity: 1;
+        transform: none;
+      }
+      &::backdrop {
+        opacity: 0;
+        transition-property: opacity, overlay, display;
+        transition-duration: var(--cap-dialog-dur);
+        transition-timing-function: var(--cap-dialog-ease);
+        transition-behavior: allow-discrete;
+      }
+      &[open]::backdrop {
+        opacity: 1;
+      }
+    }
+    @starting-style {
+      .cap-dialog[open] {
+        opacity: 0;
+        transform: var(--cap-dialog-from);
+      }
+      .cap-dialog[open]::backdrop {
+        opacity: 0;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-dialog {
+      border-color: CanvasText;
+    }
+    .cap-dialog-footer,
+    .cap-dialog-header[data-divider] {
+      border-color: CanvasText;
+    }
+  }
+}

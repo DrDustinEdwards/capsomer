@@ -49,14 +49,14 @@
 
     /* The main action of a view: one per view. */
     &[data-variant="primary"] {
-      --cap-btn-fg: var(--surface);
-      --cap-btn-bg: var(--accent);
-      --cap-btn-line: var(--accent);
+      --cap-btn-fg: var(--primary-fg);
+      --cap-btn-bg: var(--primary);
+      --cap-btn-line: var(--primary);
       font-weight: 600;
 
       &:where(:hover, [data-force="hover"], :active, [data-force="pressed"]) {
-        --cap-btn-bg: var(--accent-hover);
-        --cap-btn-line: var(--accent-hover);
+        --cap-btn-bg: var(--primary-hover);
+        --cap-btn-line: var(--primary-hover);
       }
     }
 
@@ -147,7 +147,7 @@
     padding: 0;
     border: 0;
     background: none;
-    color: var(--accent);
+    color: var(--accent-text);
     font: inherit;
     text-decoration: underline;
     text-underline-offset: 2px;
