@@ -1,0 +1,11 @@
+/* Specimen only, not part of the package: a narrow column and the cells of the button states. */
+.pg-sample-narrow {
+  max-width: 22rem;
+}
+.pg-sample-cell {
+  display: grid;
+  gap: var(--space-2);
+}
+.pg-sample-cell p {
+  margin: 0;
+}

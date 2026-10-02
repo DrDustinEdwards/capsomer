@@ -1,0 +1,4 @@
+/* Specimen only, not part of the package: a narrow column for the phone layout. */
+.flag-sample-narrow {
+  max-width: 22rem;
+}
