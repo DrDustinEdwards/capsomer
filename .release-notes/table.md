@@ -1,4 +1,0 @@
-- Cell and header padding now comes from `--pad-y` and `--pad-x` (compact: 8 by 11 px; comfortable: 10 by 12 px); it was a fixed 8 by 12 px.
-- Every body row now takes a hover tint (before, only rows with a `.cap-table-open` link did). The focused row's ring is `--ring` (was `--accent-line`).
-- The table's font size follows `--fs-body` (13 px compact, 14 px comfortable).
-- New, optional: `tfoot` styling, `data-state="selected"` / `aria-selected="true"` rows, `data-caption="bottom"`, `data-sticky` on the region (and `--cap-table-max-h`), `.cap-table-empty`. Nothing to change in existing markup.

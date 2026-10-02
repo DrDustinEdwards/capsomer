@@ -1,2 +1,0 @@
-- Markup, class names and React props are unchanged.
-- Row padding is now `--gap` by `--pad-card` (was 12 by 16 px), the ask block uses `--radius-l`, `--pad-y` and `--pad-x`, and mono text uses `--fs-detail`; an app that overrode these should re-check.

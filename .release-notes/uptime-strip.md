@@ -1,2 +1,0 @@
-- Markup and class names are unchanged.
-- The strip's height is now `calc(var(--control) - 8px)` (24 px compact, 28 comfortable) and the inline form's is half `--row-h` (18 px compact, 22 comfortable); an app that set the SVG's height itself should set `--cap-uptime-h` instead. Legend keys use `--radius-s`.

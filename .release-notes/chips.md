@@ -1,1 +1,0 @@
-- New: `data-size="sm|lg"` on `.cap-chip`, `.cap-chip-count`, an svg icon inside a chip, `aria-disabled` styling, arrow, Home and End keys move focus between chips (`enhance()`). React `FilterChips` gains `size` and per-option `disabled`. Hover now also tints the chip; focus ring is a 3 px outline. Markup unchanged.

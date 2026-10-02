@@ -1,2 +1,0 @@
-- New: `data-size="sm|lg"`, `data-orientation="vertical"`, `data-fill` on `.cap-seg-options`; icons inside a segment label. React `Segmented` gains `size`, `orientation`, `fill`, `invalid`.
-- The chosen segment gets a `--shadow-xs`; the focus ring is a 3 px outline (was 2 px). Markup unchanged.

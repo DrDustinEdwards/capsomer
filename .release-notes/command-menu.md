@@ -1,9 +1,0 @@
-# Command menu (rebuilt on the shared dialog and listbox)
-
-- Markup: the dialog is `class="cap-dialog cap-cmd" data-placement="top" data-size="lg"`. The search is `.cap-cmd-search` holding an icon svg, the label and the input; the label is now `class="cap-sr-only"` (visually hidden; the placeholder carries the words). The list is `class="cap-listbox cap-cmd-list" data-controlled`.
-- Classes renamed to the listbox's: `.cap-cmd-group` is `.cap-listbox-group`, `.cap-cmd-group-title` is `.cap-listbox-label`, `.cap-cmd-option` is `.cap-option`, `.cap-cmd-option-label` is `.cap-option-label`, `.cap-cmd-keys` is `.cap-option-keys`, `.cap-cmd-hint` is `.cap-option-hint`, `.cap-cmd-empty` is `.cap-listbox-empty`. `.cap-cmd-search`, `.cap-cmd-input`, `.cap-cmd-list` and `.cap-cmd-foot` stay. `.cap-cmd-label` is gone.
-- The active option is `data-active`, no longer `aria-selected="true"` (and options carry no `aria-selected`). Option data attributes: `data-keywords` and `data-group` (the old `data-cap-keywords` and `data-cap-group` are still read); `data-cap-command` and `data-href` are unchanged.
-- Tests or app code that read `aria-selected` to find the active command must read `data-active`, or `aria-activedescendant` on the input.
-- New: Home, End, Page Up and Page Down move the active command; the result count is said in a visually hidden status.
-- Load `dialog.css` and `listbox.css`. `command-menu.css` no longer styles the surface, options or groups.
-- Code: `createCommandMenu`, `openCommandMenu`, `enhance`, `attach`, `buildMenu`, `stopCommand`, `STOP_GROUP`, `STOP_HINTS`, `matchesQuery`, `filterCommands`, `groupCommands`, `step` and `emptyText` keep their signatures. React: `CommandMenu` renders the shared `Dialog` and `Listbox`; its `label` prop is now the visually hidden label and `placeholder` defaults to "Search commands".
