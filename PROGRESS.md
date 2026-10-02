@@ -9,7 +9,7 @@ Batch 3 (Part 2): series palette + ramp in tokens/palette.mjs (+ check), Enarrat
 Final: package.json 0.3.0, CHANGELOG 0.3.0, delete this file, CI green, merge PR (merge commit), check site deploy. No tag.
 
 ## Done
-(nothing yet)
+- avatar (batch 1): css, behaviour, react, md, examples, spec. Passes locally (see "Local browser tests" below).
 
 ## Decisions
 - Branch is release/0.3 (the task's explicit instruction), not the session's default branch name.
@@ -25,3 +25,6 @@ Final: package.json 0.3.0, CHANGELOG 0.3.0, delete this file, CI green, merge PR
 - markdown-editor: components/admin/markdown-editor.tsx, md-editor-commands.ts, md-editor-toolbar.tsx
 - publish-gate: components/admin/publish-actions.tsx, lib/admin/check-copy.mjs, lib/editor/publish-policy.mjs
 - confirm: components/admin/confirm-dialog.tsx (already Capsomer's confirm-dialog; compare for missing behaviour)
+
+## Local browser tests
+Playwright 1.63 wants chromium 1243 but the container has 1194. Untracked `playwright.local.config.ts` (git-excluded) points at /opt/pw-browsers/chromium-1194/chrome-linux/chrome. Run: `npm run site && npx playwright test -c playwright.local.config.ts components/<name>`. Rebuild with `npm run site` after any change (tests run against site-dist).
