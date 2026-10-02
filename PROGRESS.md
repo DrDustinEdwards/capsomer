@@ -38,11 +38,22 @@ Rebuild every in-scope component to the craft of its shadcn/ui counterpart (Base
 - `components/popover` (Popover API: open/close, light-dismiss, anchor positioning + flip/shift, arrow, delay groups, `.cap-popover` surface): tooltip, select popup, and the surface shared with Base UI popups.
 - `components/meter` (one meter bar: value, max, tone, threshold, projection mark): meter, usage-meter, stat-tile, permission-matrix bars.
 
+## Phase 1 results (shared blocks), what Phase 2 workers must know
+- Tokens: done. `--accent` step 9, `--accent-text` step 11, `--primary/-hover/-fg`, `--ring`, `--accent-hover` is step 12 (link hover). Shadows `--shadow-xs/s/m/l`, `--ring-soft`, `--shadow-ring`, `--ring-width` 3px, radius s3 m6 l10 xl14. Density `[data-density=compact|comfortable]`: --control 32/36, --target 24/28, --pad-x 11/12, --pad-y 6/8, --pad-card 16/24, --fs-body 13/14, --gap 12/16, --row-h 36/44 (touch: 44). Families via css/families.css, `data-family="fox|teal"`.
+- States pages: each component supplies `examples.html` (+ `examples.tsx` for React-rendered). `states.html` is generated + gitignored. Inline `<script type="module">` in examples.html is hoisted after main: call your `enhance()` there.
+- dialog: `components/dialog` (`cap-dialog`, data-placement center|right|left|bottom|top, data-size; parts header/title/description/media/body/footer/close; `data-cap-dialog-open`; helpers re-exported from confirm-dialog.ts). confirm-dialog.css still defines `.cap-dialog*` clashing: rewriting confirm-dialog must use the shared CSS and drop its own.
+- listbox: `components/listbox` (`cap-listbox`, `cap-option`, createListbox, pure fns). Active option = `data-active` (not aria-selected). Command menu: `{input, homeEnd:true, filterInput:true}`. Base UI popups use the same classes.
+- popover: `components/popover` (`.cap-popover[popover]`, data-side/align/size/flush, `data-variant="tooltip"`, `attach`, `place`). Base UI popups: class `cap-popover`.
+- meter: `components/meter` (`.cap-meter`, role=meter on `.cap-meter-bar`), usage-meter composes it.
+
 ## Status
-(updated after every batch)
-- [ ] Phase 0: branch, PROGRESS.md
-- [ ] Phase 1: tokens + density, dialog, listbox, popover, meter, states template. Then open the PR.
-- [ ] Phase 2: components (see list in PROGRESS-queue below)
+- [x] Phase 0, Phase 1 (tokens, dialog, listbox, popover, meter, states template) committed.
+- [ ] Phase 2 batches: B1 controls (button, field, switch, switch-reason, segmented, chips, select); B2 feedback (status/badge, message, banner, empty/skeleton/spinner, time); B3 overlays (confirm-dialog, detail-panel, command-menu, shortcuts, tooltip, combobox, menu); B4 data (row-list, table, disclosure, anchor-bar, panel); B5 shell + theme-switch; B6 console (attention-list, stat-tile, session-row, approval-sheet, permission-matrix, feed, uptime-strip).
+- [ ] Final: CHANGELOG 0.2.0 from .release-notes, version 0.2.0, remove PROGRESS.md and .release-notes, CI green, merge, verify deploy.
 
 ## Decisions and why
 - Reference style nova (shadcn default); comfortable density from vega.
+- Tooltip delay 300 ms, not shadcn's 0; tooltip opens on focus-visible only.
+- Meter bar 8 px default (shadcn progress h-1 is data-size=sm): the fill needs 3:1 and hatching needs height. role=meter moved to the bar (breaking).
+- Dialog title weight stays 800; sheet max 85% wide on phone.
+- Hover Card not built (not in scope list).
