@@ -56,7 +56,7 @@ Matches shadcn/ui's Command, Select, Combobox and Dropdown Menu items (Base UI f
 ## Accessibility
 
 - `role="listbox"` named by `aria-label` or `aria-labelledby`; `role="option"` on each option; `role="group"` named by its label, whose element is `role="presentation"`; `aria-multiselectable` when several can be chosen; `aria-disabled="true"` on one that cannot.
-- The check, the separators and the key caps in a group label are decoration or named in the option's text: shortcuts read as ", shortcut g o" and a note as ", asks a reason".
+- The check and the separators are decoration (`aria-hidden`). Shortcuts and notes are part of the option's name: shortcuts read as ", shortcut g o" and a note as ", asks a reason".
 - The result count and "No results for ..." are in `role="status"` regions that exist before they change.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
