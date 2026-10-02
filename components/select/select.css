@@ -194,7 +194,8 @@
   /* The popup: the shared popover surface, as wide as the button at least. */
   .cap-popover.cap-select-popup {
     min-inline-size: var(--cap-select-min, 9rem);
-    max-inline-size: min(28rem, calc(100vw - 16px));
+    /* Never narrower than its button, even where the button is wider than the window's margin. */
+    max-inline-size: max(min(28rem, calc(100vw - 16px)), var(--cap-select-min, 0px));
   }
   .cap-select-popup > .cap-listbox {
     outline: none;
