@@ -6,6 +6,7 @@ parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [less than a minute ago, minutes ago, hours ago, yesterday, a date, in the future, exact time shown, unreadable time, live refresh]
 added: 0.1.0
+updated: 0.2.0
 source: Capsid Portal, dashboard/src/lib/format.ts (ms, portalNow, ago, utc, exactTime) and ui/When.tsx
 replaces:
   - "\\bago\\(|timeago|date-fns/formatDistance|dayjs\\(\\)\\.fromNow"
@@ -16,7 +17,7 @@ replaces:
 
 When something happened, in words: "5 minutes ago" in a row, "30 September 2026, 14:02 BST (13:02 UTC)" in its detail. Always a `<time>` element with a machine-readable `datetime`.
 
-**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01): `lib/format.ts` and `ui/When.tsx`. EXTRACTED, with renames and the Portal's comments' reasoning: `ms` (as `parse`: a server timestamp with no zone is UTC), `utc` (identical), `portalNow` (as `serverNow`), and from `exactTime` and `When` the exact time as the viewer's zone, then UTC beside it, in a `<time>` element, with the UTC part kept whole on a line and "an unreadable time" in place of a blank or "NaN". REWRITTEN: `ago` and `span` (the Portal's "5m ago" is ruled out by the audit: a screen reader reads "5m" as a metre), the spelled-out zone and month in `exact` (the Portal prints "Sep 30, 2026, 02:02 PM CDT" from the browser's locale), the 30 second shared redraw and `data-cap-now`. The Portal shows UTC in its dim tone (`.faint`); here the time takes the colour of the text around it, so the whole time shares that text's contrast.
+**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01): `lib/format.ts` and `ui/When.tsx`. EXTRACTED, with renames and the Portal's comments' reasoning: `ms` (as `parse`: a server timestamp with no zone is UTC), `utc` (identical), `portalNow` (as `serverNow`), and from `exactTime` and `When` the exact time as the viewer's zone, then UTC beside it, in a `<time>` element, with the UTC part kept whole on a line and "an unreadable time" in place of a blank or "NaN". REWRITTEN: `ago` and `span` (the Portal's "5m ago" is ruled out by the audit: a screen reader reads "5m" as a metre), the spelled-out zone and month in `exact` (the Portal prints "Sep 30, 2026, 02:02 PM CDT" from the browser's locale), the 30 second shared redraw and `data-cap-now`. The Portal shows UTC in its dim tone (`.faint`); here the UTC part is `--muted`, and the relative time is muted too (0.2).
 
 ## When to use it
 
@@ -31,7 +32,8 @@ Every time shown in an app: deploys, runs, mentions, edits, the freshness of a p
 
 - **Relative in rows, spelled out** (patterns.md "Time"): "5 minutes ago", "3 hours ago", "yesterday", "12 September", "in 3 hours". Never "5m". Minutes and hours round down, so "1 hour ago" means at least an hour. Under 10 seconds is "just now"; under a minute, "less than a minute ago", because the text redraws every 30 seconds and a count of seconds would be wrong most of the time.
 - **The exact time is in the detail, not behind a hover.** Every row that opens a detail (patterns.md "Row that opens a detail") shows the same time there with `data-format="exact"`: the viewer's zone first, then UTC. Chosen over a toggle on each time because a toggle adds a tab stop to every row, which breaks the row's one tab stop, and needs raising above the row's stretched link; the detail already exists and is reachable by keyboard, touch and screen reader alike. Where a time has no detail to live in (a page's "updated" line), show it exact.
-- **No `title` attribute.** A title is hover-only and unreachable by keyboard and touch.
+- **No `title` attribute, and no tooltip on the time.** A title is hover-only and unreachable by keyboard and touch. A tooltip through the shared popover needs a trigger that takes focus, and every time in a row would then be a tab stop, which breaks the row's one tab stop (the same reason as above). So the exact time stays in the detail, and 0.2 keeps this.
+- **Muted and tabular.** A time is a quiet value: `--muted`, tabular figures so a column of times lines up. The exact time in a detail is `--text`.
 - **Relative times redraw every 30 seconds** with one shared timer. `data-cap-now` on an ancestor freezes "now" (specimens, tests, a printed report).
 - **Server timestamps with no zone are UTC** (the Portal's rule: every timestamp the Worker writes is).
 - **"Now" can be the server's.** When the browser's clock and the server's disagree, a row written after the page's last tick reads "in less than a minute". `serverNow(clientNow, skew, newestServerRead)` is the browser's clock moved by the skew measured when the data arrived, and never earlier than the newest time a server read reported (the Portal's `portalNow`). Give `setClock(() => serverNow(...))` to the plain module, or pass the result as `now` in React.
@@ -47,7 +49,7 @@ Every time shown in an app: deploys, runs, mentions, edits, the freshness of a p
 ## Accessibility
 
 - The text is the accessible text; it is a sentence part ("deployed 5 minutes ago") and reads as one.
-- The time takes the colour of the text around it, so it shares that text's contrast.
+- A relative time is `--muted` (4.5:1 on every surface, the selected row included); an exact time is `--text` and its UTC part `--muted`. `data-tone="text"` gives a relative time the text colour.
 - The exact form names the zone ("BST") and gives UTC, so a time read aloud or copied is not ambiguous.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -62,6 +64,10 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ```
 
 Write sensible text in the markup (it shows before the script runs). `import { enhance, relative, exact, exactParts, utc, parse, serverNow, setClock } from "capsomer/behaviour/time"`: `enhance()` writes and refreshes the text; `relative(ms, now)`, `exact(ms)` and `exactParts(ms)` are pure. In React, `import { Time } from "capsomer/react/time"`: `<Time at={row.updated_at} />`, `<Time at={row.updated_at} format="exact" />`.
+
+## The shadcn component it matches
+
+None: shadcn has no time component. The nearest is the muted, tabular text its tables use for a date column (`text-muted-foreground tabular-nums`), which is what a relative time wears here. Its date-picker and calendar are input components, not display.
 
 ## Exceptions in production
 

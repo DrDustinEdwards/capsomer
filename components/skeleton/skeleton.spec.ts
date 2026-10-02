@@ -53,9 +53,11 @@ eachTheme((theme) => {
     const spinner = page.locator("#sample-page");
     const arc = spinner.locator(".cap-spinner-arc");
     await expect(spinner).toHaveCSS("flex-direction", "column");
-    const [s, a, w] = await Promise.all([spinner.boundingBox(), arc.boundingBox(), page.evaluate(() => document.documentElement.clientWidth)]);
+    const [s, a] = await Promise.all([spinner.boundingBox(), arc.boundingBox()]);
     expect(s && a).toBeTruthy();
-    expect(Math.abs(a!.x + a!.width / 2 - w / 2)).toBeLessThan(2);
+    expect(Math.abs(a!.x + a!.width / 2 - (s!.x + s!.width / 2))).toBeLessThan(2);
+    // Taller than the arc and word together: it fills the space it is given, to centre in it.
+    expect(s!.height).toBeGreaterThan(a!.height * 3);
   });
 
   test("behaviour: the skeleton pulses and the spinner turns when motion is welcome", async ({ page }) => {
