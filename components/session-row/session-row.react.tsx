@@ -106,7 +106,7 @@ function Row({ s, onAnswer }: { s: Session; onAnswer?: SessionListProps["onAnswe
   const qid = useId();
   const st = STATES[s.state];
   return (
-    <li className="cap-session" data-session={s.id}>
+    <li className="cap-session" data-session={s.id} data-tone={st.tone === "crit" ? "crit" : undefined}>
       <div className="cap-session-head">
         <span className="cap-pill" data-tone={st.tone}>
           <Glyph kind={st.glyph} />

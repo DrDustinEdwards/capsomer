@@ -1,54 +1,46 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Stat tiles: one figure each, with a word for where it stands against its threshold, a
-   detail line, and a slot for Enarratio's sparkline. A tile is a link or a button that
-   goes to the view behind the figure. Extracted from the Capsid Portal
-   (dashboard/src/styles.css, "stat tiles", and views/Overview.tsx). */
+/* Stat tiles: figure and label on one line with a word for where it stands against its
+   threshold, the detail beneath, and a slot for Enarratio's sparkline. A tile is a link or
+   a button that goes to the view behind the figure. The compact tile, and the row that
+   wraps to more rows instead of cutting a word, are the Portal's (dashboard/src/styles.css,
+   "stat tiles", design D3); the word and its glyph, the no-data state and the chart slot
+   are Capsomer's. */
 @layer cap.components {
-  /* The grid sizes by the space it has: six across, three, then two on a phone. */
   .cap-tiles {
-    container-type: inline-size;
     min-width: 0;
   }
 
+  /* A tile is never narrower than its text (flex 1 0 auto), so the row wraps to more rows
+     instead of cutting a word; only a tile wider than the whole row wraps its detail. */
   .cap-tiles-list {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
     margin: 0;
     padding: 0;
     list-style: none;
 
     & > li {
       display: grid;
+      flex: 1 0 auto;
+      max-width: 100%;
       min-width: 0;
-    }
-  }
-
-  @container (max-width: 879px) {
-    .cap-tiles-list {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  @container (max-width: 519px) {
-    .cap-tiles-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   .cap-tile {
     display: grid;
     align-content: start;
-    gap: var(--space-2);
+    gap: 1px;
     width: 100%;
     min-width: 0;
     min-height: var(--target);
     margin: 0;
-    padding: var(--space-4);
+    padding: calc(var(--space-2) + var(--space-1)) var(--space-4);
     border: 1px solid var(--line);
-    border-radius: var(--radius-l);
+    border-radius: var(--radius-m);
     background: var(--surface);
     color: var(--text);
     font: inherit;
@@ -58,7 +50,7 @@
 
     &:hover,
     &[data-force="hover"] {
-      border-color: var(--muted);
+      border-color: var(--line-strong);
       background: var(--raised);
     }
     &:active,
@@ -67,23 +59,24 @@
     }
   }
 
-  .cap-tile-label {
-    font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--muted);
+  /* The figure, its label and its word on one line, each kept whole: the tile is as wide as
+     the line wants, so they stay together. Only in a tile wider than the whole row do they
+     wrap onto a second line, whole, rather than run out of the tile. */
+  .cap-tile-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 6px;
+    white-space: nowrap;
   }
 
   .cap-tile-figure {
     display: flex;
     align-items: baseline;
-    flex-wrap: wrap;
     gap: 0 var(--space-2);
-    font-size: var(--fs-h2);
+    font-size: var(--fs-lead);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    letter-spacing: -0.01em;
     font-variant-numeric: tabular-nums;
 
     & small {
@@ -94,11 +87,17 @@
     }
   }
 
+  .cap-tile-label {
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
   /* The word for the threshold: "Over limit", "Near limit", "All up". */
   .cap-tile-word {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    margin-inline-start: var(--space-2);
     font-size: var(--fs-detail);
     font-weight: 600;
     color: var(--ok);
@@ -119,6 +118,7 @@
   .cap-tile-chart {
     display: block;
     height: 22px;
+    min-width: 6rem;
     margin-top: var(--space-1);
     color: var(--accent);
 
@@ -147,7 +147,6 @@
   /* No data: the figure says so in words, with the dashed glyph, and the detail says why. */
   .cap-tile[data-tone="nodata"] .cap-tile-figure {
     align-items: center;
-    font-size: var(--fs-lead);
     color: var(--nodata);
     letter-spacing: 0;
   }

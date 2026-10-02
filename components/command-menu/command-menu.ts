@@ -13,17 +13,34 @@ export interface Command {
   keywords?: string[];
   // The registry's spec: "g o", "r", "Mod+k". Shown in <kbd>; registering it is the app's job.
   shortcut?: string | string[];
+  // A short note beside the label, in words, for what the command will do or ask: "asks a
+  // reason", "preview first", an item's state. Read by a screen reader after the label.
+  hint?: string;
   run: () => void;
 }
 
-// Case-insensitive substring over the label and the keywords. An empty query matches all.
-export function matchesQuery(c: { label: string; keywords?: string[] }, query: string): boolean {
-  const needle = query.trim().toLowerCase();
-  if (!needle) return true;
-  return [c.label, ...(c.keywords ?? [])].some((t) => t.toLowerCase().includes(needle));
+// Every way to stop something lives in one group, so typing "stop" lists them all. A stop
+// command opens the control it stands for (a switch's reason field, the confirm dialog) and
+// never performs anything itself. List a stop only while there is something to stop. There is
+// no "stop everything" command.
+export const STOP_GROUP = "Stop";
+export const STOP_HINTS = { reason: "asks a reason", preview: "preview first" } as const;
+
+// A stop command: group Stop, found by "stop" and "pause", its hint saying what opening it
+// will ask for. `run` must only open the control.
+export function stopCommand(o: { id: string; label: string; ask: keyof typeof STOP_HINTS; keywords?: string[]; run: () => void }): Command {
+  return { id: o.id, label: o.label, group: STOP_GROUP, keywords: ["stop", "pause", ...(o.keywords ?? [])], hint: STOP_HINTS[o.ask], run: o.run };
 }
 
-export function filterCommands<T extends { label: string; keywords?: string[] }>(commands: T[], query: string): T[] {
+// Case-insensitive substring over the group, the label and the keywords, so the name of a
+// group finds all of it. An empty query matches all.
+export function matchesQuery(c: { label: string; group?: string; keywords?: string[] }, query: string): boolean {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return true;
+  return [c.group ?? "", c.label, ...(c.keywords ?? [])].some((t) => t.toLowerCase().includes(needle));
+}
+
+export function filterCommands<T extends { label: string; group?: string; keywords?: string[] }>(commands: T[], query: string): T[] {
   return commands.filter((c) => matchesQuery(c, query));
 }
 
@@ -108,18 +125,30 @@ export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDial
       o.setAttribute("role", "option");
       o.setAttribute("aria-selected", "false");
       o.dataset.capCommand = c.id;
+      o.dataset.capGroup = c.group;
       if (c.keywords?.length) o.dataset.capKeywords = c.keywords.join(",");
       const text = document.createElement("span");
       text.className = "cap-cmd-option-label";
       text.textContent = c.label;
       o.append(text);
-      if (c.shortcut) {
+      if (c.shortcut || c.hint) {
         const keys = document.createElement("span");
         keys.className = "cap-cmd-keys";
-        const sr = document.createElement("span");
-        sr.className = "cap-sr-only";
-        sr.textContent = ", shortcut ";
-        keys.append(sr, keysFragment(c.shortcut));
+        if (c.hint) {
+          const sr = document.createElement("span");
+          sr.className = "cap-sr-only";
+          sr.textContent = ", ";
+          const hint = document.createElement("span");
+          hint.className = "cap-cmd-hint";
+          hint.textContent = c.hint;
+          keys.append(sr, hint);
+        }
+        if (c.shortcut) {
+          const sr = document.createElement("span");
+          sr.className = "cap-sr-only";
+          sr.textContent = ", shortcut ";
+          keys.append(sr, keysFragment(c.shortcut));
+        }
         o.append(keys);
       }
       group.append(o);
@@ -171,6 +200,8 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
   const options = () => (listbox ? [...listbox.querySelectorAll<HTMLElement>("[role='option']")] : []);
   const shown = () => options().filter((o) => !o.hidden);
   const labelOf = (o: HTMLElement) => o.querySelector(".cap-cmd-option-label")?.textContent ?? o.textContent ?? "";
+  // The group an option sits in: named on it, or by the heading of the group around it.
+  const groupOf = (o: HTMLElement) => o.dataset.capGroup ?? o.closest("[role='group']")?.querySelector(".cap-cmd-group-title")?.textContent ?? "";
 
   const activeIndex = () => shown().findIndex((o) => o.getAttribute("aria-selected") === "true");
   const setActive = (index: number, scroll = true) => {
@@ -185,7 +216,7 @@ export function attach(dialog: HTMLDialogElement, run: (option: HTMLElement) => 
 
   const filter = () => {
     const q = input?.value ?? "";
-    for (const o of options()) o.hidden = !matchesQuery({ label: labelOf(o), keywords: (o.dataset.capKeywords ?? "").split(",").filter(Boolean) }, q);
+    for (const o of options()) o.hidden = !matchesQuery({ label: labelOf(o), group: groupOf(o), keywords: (o.dataset.capKeywords ?? "").split(",").filter(Boolean) }, q);
     for (const g of listbox?.querySelectorAll<HTMLElement>("[role='group']") ?? []) g.hidden = !g.querySelector("[role='option']:not([hidden])");
     const any = shown().length > 0;
     input?.setAttribute("aria-expanded", String(any));

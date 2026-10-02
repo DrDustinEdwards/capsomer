@@ -16,6 +16,8 @@ replaces:
 
 A group with a visible label, a row of toggle buttons (`aria-pressed`), a Clear button while any is pressed, and the result count in a live region. Pressing a chip narrows the list at once; the filter goes into the address (`?status=blocked,running`), so a reload, Back or a shared link keeps it.
 
+**Provenance.** MIXED, as of Capsid master (88bf402). EXTRACTED: the chip's rules from `dashboard/src/styles.css` (`.chip`, `.chip[aria-pressed="true"]`: pill shape, 26 px, the line-strong edge, the muted word, the accent edge and soft tint when pressed), unchanged in the Portal since 366b902. REWROTE: the behaviour and the markup, framework-free, from the audit's filter pattern (the tick on a pressed chip, Clear, the live count, per-group address parameters); the Portal's version is `NsChips` and `useNsFilter` in `views/shared.tsx`, tied to wouter and the Portal's namespace list. Carried over from the Portal's current `NsChips`: a value in the address that the list does not carry still shows, pressed. Its "Show all" empty line is the empty component's `no-match` kind.
+
 ## When to use it
 
 Filtering a list or table by up to six values of one property: a queue by status, mentions by kind, posts by state. Values in one group combine with "or"; groups combine with "and".
@@ -33,6 +35,7 @@ Filtering a list or table by up to six values of one property: a queue by status
 - **Nothing pressed means no filter**, and the count shows the whole list ("14 jobs").
 - **The count is in words with its total** ("3 of 14 jobs"), in a `role="status"` region, so a screen reader hears what the filter left without moving.
 - **The state is in the address**, written with `history.replaceState` (a filter change is not a new page in history). With `data-param`, the group reads its starting state from the address too.
+- **A value in the address that no chip carries still shows, pressed**, after the last chip, and releases like any other. A shared link that filters by a value the list does not offer would otherwise narrow the list with nothing on the page to say so (`ensureChips` does it; the React wrapper does it for any pressed `value` that is not an option). The Portal's namespace chips do the same.
 - **Clear shows only while a chip is pressed.** After Clear, focus moves to the first chip.
 - **An empty result names the filter and offers Clear**: "No jobs match "Blocked"." with a Clear filter button. That is the empty component's `no-match` kind; call `clearAll(group)` from its button.
 - **A pressed chip has a tick and an accent edge** as well as its tint, so pressed is not colour alone.

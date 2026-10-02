@@ -32,6 +32,29 @@ export function syncClear(group: Element): void {
   if (clear) clear.hidden = pressedValues(group).length === 0;
 }
 
+// A value from the address that no chip carries still shows, pressed, after the last chip.
+// Without it a filter in a shared link would narrow the list with nothing on the page to
+// say so or to release (the Portal's NsChips does the same with a namespace its list does
+// not carry).
+export function ensureChips(group: Element, values: string[]): void {
+  const have = new Set(chips(group).map(valueOf));
+  for (const v of values) {
+    if (have.has(v)) continue;
+    have.add(v);
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "cap-chip";
+    chip.dataset.value = v;
+    chip.setAttribute("aria-pressed", "true");
+    chip.textContent = v;
+    const last = chips(group).at(-1);
+    const clear = group.querySelector("[data-cap-part='clear']");
+    if (last) last.after(chip);
+    else if (clear) clear.before(chip);
+    else group.append(chip);
+  }
+}
+
 export function setPressed(group: Element, values: string[]): void {
   for (const c of chips(group)) c.setAttribute("aria-pressed", String(values.includes(valueOf(c))));
   syncClear(group);
@@ -96,8 +119,10 @@ export function enhance(root: ParentNode = document): () => void {
     group.dataset.capReady = "";
     const param = group.dataset.param;
     const fromAddress = param ? readParam(location.search, param) : null;
-    if (fromAddress) setPressed(group, fromAddress);
-    else syncClear(group);
+    if (fromAddress) {
+      ensureChips(group, fromAddress);
+      setPressed(group, fromAddress);
+    } else syncClear(group);
 
     const onClick = (e: MouseEvent) => {
       const target = e.target as Element;

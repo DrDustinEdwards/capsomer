@@ -2,8 +2,11 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The command menu: a native <dialog> near the top of the window, holding a labelled
-   combobox and a grouped listbox. From the Capsid Portal's palette (dashboard/src/app/
-   CommandMenu.tsx, styles.css ".palette"). */
+   combobox and a grouped listbox. Written for Capsomer's tokens from the Capsid Portal's
+   palette (dashboard/src/app/CommandMenu.tsx, styles.css ".palette"): the Portal's rows are
+   a flat list with a group letter and a hint column, here the groups have headings and the
+   hint is a words-first note ("asks a reason") beside any shortcut. The backdrop dims the
+   page, where the Portal's is clear, because the menu is modal. */
 @layer cap.components {
   .cap-cmd {
     width: min(620px, calc(100% - 2 * var(--space-5)));
@@ -113,6 +116,10 @@
     color: var(--muted);
     font-size: var(--fs-detail);
     white-space: nowrap;
+  }
+  /* What the command will do or ask, in words ("asks a reason"), before any shortcut. */
+  .cap-cmd-hint {
+    margin-inline-end: var(--space-3);
   }
 
   .cap-cmd-empty {

@@ -1,10 +1,10 @@
 import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { isBackdropClick, rememberOpener, returnFocus } from "../confirm-dialog/confirm-dialog.ts";
-import { grouped, keyCaps, register, setSheetOpener, setSingleKeys, singleKeysOn, type Shortcut } from "./shortcuts.ts";
+import { SINGLE_KEYS_NOTE, grouped, keyCaps, modifiedShortcutFor, register, setSheetOpener, setSingleKeys, singleKeysOn, type Shortcut } from "./shortcuts.ts";
 
 // Registers a shortcut while the component is mounted. The latest `run` is always the one
 // called, so passing a new function each render does not re-register.
-export function useShortcut(key: string | string[], run: (e: KeyboardEvent) => void, opts: { label?: string; group?: string; when?: () => boolean } = {}): void {
+export function useShortcut(key: string | string[], run: (e: KeyboardEvent) => void, opts: { label?: string; about?: string; group?: string; when?: () => boolean } = {}): void {
   const latest = useRef(run);
   latest.current = run;
   const when = useRef(opts.when);
@@ -14,13 +14,14 @@ export function useShortcut(key: string | string[], run: (e: KeyboardEvent) => v
     const s: Shortcut = {
       key,
       label: opts.label ?? keyId,
+      about: opts.about,
       group: opts.group ?? "Other",
       run: (e) => latest.current(e),
       when: () => (when.current ? when.current() : true),
     };
     return register(s);
     // The key, label and group identify the registration; run and when are read live.
-  }, [keyId, opts.label, opts.group]);
+  }, [keyId, opts.label, opts.about, opts.group]);
 }
 
 function Keys({ spec }: { spec: string | string[] }) {
@@ -94,6 +95,14 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
         const d = dlg.current;
         if (d && isBackdropClick(d, e.nativeEvent)) d.close();
       }}
+      // A shortcut with Ctrl or Cmd still works over the sheet: the sheet closes, then it runs.
+      onKeyDown={(e) => {
+        const hit = modifiedShortcutFor(e.nativeEvent);
+        if (!hit) return;
+        e.preventDefault();
+        dlg.current?.close();
+        hit.run(e.nativeEvent);
+      }}
     >
       <div className="cap-keys-head">
         <h2 className="cap-keys-title" id={`${id}-title`}>
@@ -113,7 +122,10 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
                   <dt>
                     <Keys spec={s.key} />
                   </dt>
-                  <dd>{s.label}</dd>
+                  <dd>
+                    {s.label}
+                    {s.about ? <span className="cap-keys-about">{s.about}</span> : null}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -136,7 +148,7 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
           </span>
         </label>
         <p className="cap-keys-note" id={`${id}-note`}>
-          Turn these off if they clash with a screen reader or speech input. Shortcuts with Ctrl or ⌘ keep working.
+          {SINGLE_KEYS_NOTE}
         </p>
       </div>
     </dialog>

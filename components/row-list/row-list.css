@@ -4,7 +4,9 @@
 /* A list of rows, each opening a detail. The row's title is its one link or button,
    stretched over the whole row, so the row is one tab stop with a real role. Extracted from
    the Capsid Portal (dashboard/src/styles.css: .att-row, .qrow, .frow), which drew three
-   copies of this row; here they are one. */
+   copies of this row; here they are one. The row's spacing, tones, hover, selection and
+   critical edge are the Portal's values; the stretched-link markup, the subgrid columns and
+   the container query are Capsomer's own (v0.1.1 provenance in row-list.md). */
 @layer cap.components {
   /* The list is the size container (the phone layout follows the space the list has) and
      the column grid: every row is a subgrid of it, so status, title, time and actions line
@@ -113,6 +115,9 @@
   .cap-row-meta {
     grid-column: 3;
     grid-row: 1 / span 2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
     color: var(--muted);
     font-size: var(--fs-detail);
     font-variant-numeric: tabular-nums;
@@ -138,9 +143,32 @@
     z-index: 1;
   }
 
+  /* A row whose title is a disclosure button (a group that opens in place): a chevron
+     after the time says it opens, and turns when it is open. The Portal's .chev, same
+     geometry. Decorative; aria-expanded on the button is the state. */
+  .cap-row-chevron {
+    display: inline-block;
+    flex: none;
+    width: 7px;
+    height: 7px;
+    margin: 0 3px 2px 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(-45deg);
+  }
+  .cap-row:has(.cap-row-title [aria-expanded="true"]) .cap-row-chevron {
+    transform: rotate(45deg);
+  }
+
   /* A phone, or any narrow column: the status moves above the title, the time stays
-     beside it, and actions go underneath. */
+     beside it, and actions go underneath. The title wraps instead of being cut: on a
+     phone there is no hover and no wider view to read the rest in (the Portal lets titles
+     wrap at phone width, "titles wrap instead of being cut"). */
   @container cap-rows (max-width: 30rem) {
+    .cap-row-title :is(a, button) {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
     .cap-row {
       grid-template-columns: minmax(0, 1fr) auto;
       column-gap: var(--space-4);
@@ -167,6 +195,12 @@
       grid-column: 1 / -1;
       grid-row: 4;
       justify-self: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-row-chevron {
+      transition: transform var(--dur-fast) var(--ease-out);
     }
   }
 

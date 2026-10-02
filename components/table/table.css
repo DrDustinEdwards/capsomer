@@ -277,6 +277,60 @@
     }
   }
 
+  /* A note under a column's name ("last 24 hours"): in the header's cell, not its name. */
+  .cap-table-note {
+    display: block;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--dim);
+  }
+
+  /* Small print beside a cell's main text: a site's host after its name. */
+  .cap-table-aside {
+    margin-inline-start: var(--space-3);
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
+  /* A link under the table, in the panel: "All 12 sites in Sites". */
+  .cap-table-foot {
+    padding: var(--space-2) var(--space-4);
+    border-top: 1px solid var(--line);
+    font-size: var(--fs-detail);
+
+    & a {
+      display: inline-flex;
+      align-items: center;
+      min-height: var(--target);
+    }
+  }
+
+  /* Opt-in: as the table's region narrows, columns go in order, so the table fits without
+     scrolling. `data-drop="1"` goes first (below 820 px of the region), `data-drop="2"`
+     next (below 620 px). Put it on the header cell and every cell of the column, or on a
+     span inside a cell. Only for columns whose values are also in the row's detail: a
+     dropped value is gone from the page (the Portal's Overview sites table, whose columns
+     are all in the Sites view). The default on a phone is the scroll region. */
+  .cap-table-wrap:has([data-drop]) {
+    container: cap-table / inline-size;
+  }
+
+  @container cap-table (max-width: 820px) {
+    .cap-table [data-drop="1"] {
+      display: none;
+    }
+  }
+
+  @container cap-table (max-width: 620px) {
+    .cap-table [data-drop] {
+      display: none;
+    }
+    .cap-table:has([data-drop]) :is(td, th) {
+      padding-inline: var(--space-3);
+    }
+  }
+
   @media (forced-colors: active) {
     .cap-table-sort-up,
     .cap-table-sort-down {

@@ -17,7 +17,69 @@ eachTheme((theme) => {
     await visitStates(page, "shell", theme, "phone");
     await expectNoAxeViolations(page);
     await expect(page.locator(".cap-shell-rail")).toBeHidden();
-    await expect(page.locator(".cap-shell-tabs a")).toHaveCount(5);
+    await expect(page.locator(".cap-shell-tabs a, .cap-shell-tabs button")).toHaveCount(5);
+    await expect(page.locator(".cap-shell-tabs")).toMatchAriaSnapshot(`
+      - navigation "Sections":
+        - link "Overview"
+        - link "Queue"
+        - link "Sites, 2 down or degraded"
+        - link "Activity"
+        - button "More"
+    `);
+  });
+
+  test("accessibility: the tab bar's current and More states reach their contrast", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 760 });
+    await visitStates(page, "shell", theme, "phone");
+    await expectContrast(page, [
+      { sel: ".cap-shell-tabs a[aria-current='page']", what: "the current tab" },
+      { sel: ".cap-shell-tabs button", what: "the More tab" },
+      { sel: ".cap-shell-badge", what: "a tab's count" },
+    ]);
+    await visitStates(page, "shell", theme, "phone-more-current");
+    await expectNoAxeViolations(page);
+    await expect(page.getByRole("button", { name: "More" })).toHaveAttribute("aria-current", "true");
+    await expectContrast(page, [{ sel: ".cap-shell-tabs button[aria-current]", what: "the current More tab" }]);
+  });
+
+  test("accessibility: the top bar's Settings link is named, current on its view, after Theme and before Sign out", async ({ page }) => {
+    await visitStates(page, "shell", theme, "collapsed");
+    const top = page.locator(".cap-shell-top");
+    await expect(top.getByRole("link", { name: "Settings" })).toHaveAttribute("aria-current", "page");
+    await expectContrast(page, [{ sel: ".cap-shell-settings[aria-current='page']", what: "the current Settings button's edge", part: "border" }]);
+    await visitStates(page, "shell", theme, "expanded");
+    const names = await top.locator("a, button").evaluateAll((els) => els.map((el) => el.getAttribute("aria-label") ?? el.textContent?.trim() ?? ""));
+    const at = names.indexOf("Theme");
+    expect(names[at + 1]).toBe("Settings");
+    expect(names[at + 2]).toBe("Sign out");
+    await expect(top.getByRole("link", { name: "Settings" })).not.toHaveAttribute("aria-current", "page");
+  });
+
+  test("keyboard: More opens the sheet, Esc closes it and focus returns to More", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 760 });
+    await visitStates(page, "shell", theme, "phone");
+    const more = page.getByRole("button", { name: "More" });
+    await more.focus();
+    await page.keyboard.press("Enter");
+    const sheet = page.getByRole("dialog", { name: "More views" });
+    await expect(sheet).toBeVisible();
+    await expect(more).toHaveAttribute("aria-expanded", "true");
+    await expect(sheet.getByRole("link", { name: /^Namespaces/ })).toBeVisible();
+    await expectNoAxeViolations(page);
+    await expectContrast(page, [{ sel: ".cap-shell-more-list .cap-shell-count", what: "a count in the sheet" }]);
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+    await expect(more).toBeFocused();
+    await expect(more).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test("behaviour: a link in the More sheet closes it", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 760 });
+    await visitStates(page, "shell", theme, "phone");
+    await page.getByRole("button", { name: "More" }).click();
+    const sheet = page.getByRole("dialog", { name: "More views" });
+    await sheet.getByRole("link", { name: "Backups" }).click();
+    await expect(sheet).toBeHidden();
   });
 
   test("accessibility: menu text and counts reach their contrast", async ({ page }) => {

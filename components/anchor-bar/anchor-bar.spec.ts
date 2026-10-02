@@ -10,7 +10,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["top", "third", "short"]) {
+  for (const id of ["top", "third", "short", "blocks"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "anchor-bar", theme, id);
       await expectNoAxeViolations(page);
@@ -67,13 +67,40 @@ eachTheme((theme) => {
       .toBe(true);
   });
 
+  test("keyboard: following a link replaces the address's hash and adds no history entry", async ({ page }) => {
+    await visitStates(page, "anchor-bar", theme, "top");
+    const before = await page.evaluate(() => history.length);
+    await link(page, "Thresholds").focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/#thresholds$/);
+    expect(await page.evaluate(() => history.length)).toBe(before);
+  });
+
+  test("behaviour: a bar built from data-section blocks shows when the page grows past two screens, and goes when it shrinks", async ({ page }) => {
+    await visitStates(page, "anchor-bar", theme, "blocks");
+    await expect(bar(page)).toBeHidden();
+    // Content that arrives late (a panel with its data) is what the measuring is for.
+    await page.evaluate(() => {
+      const filler = document.createElement("div");
+      filler.id = "filler";
+      filler.style.height = "4000px";
+      document.getElementById("usage")?.append(filler);
+    });
+    await expect(bar(page)).toBeVisible();
+    await expect(bar(page).getByRole("link")).toHaveText(["Usage", "Sites", "Deploys"]);
+    await expectNoAxeViolations(page);
+    await page.evaluate(() => document.getElementById("filler")?.remove());
+    await expect(bar(page)).toBeHidden();
+  });
+
   test("behaviour: a page with fewer than three sections shows no bar", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "short");
     await expect(page.locator(".cap-anchors")).toBeHidden();
   });
 
   test("behaviour: on a phone the links scroll sideways", async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 760 });
+    // The narrowest phone, so the four links cannot fit however the padding is tuned.
+    await page.setViewportSize({ width: 320, height: 640 });
     await visitStates(page, "anchor-bar", theme, "top");
     const list = page.locator(".cap-anchors-list");
     await expect(list).toHaveCSS("overflow-x", "auto");

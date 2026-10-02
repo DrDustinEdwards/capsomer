@@ -9,18 +9,16 @@
   <body class="cap-specimens">
     <main>
       <h1>Stat tile</h1>
-      <p>One figure each, with a word for where it stands against its threshold, a detail line, and a sparkline slot. Each tile opens the view behind it. Every sparkline here is a hand-drawn stand-in for Enarratio's output. Sample data.</p>
+      <p>One figure each with its label and a word for where it stands against its threshold on one line, the detail beneath, and a sparkline slot. Each tile opens the view behind it, and a tile is as wide as its text: the row wraps onto more rows instead of cutting a word. Every sparkline here is a hand-drawn stand-in for Enarratio's output. Sample data.</p>
 
       <section class="cap-specimen" aria-labelledby="s-grid">
-        <h2 id="s-grid">Six across, every tone</h2>
+        <h2 id="s-grid">A row of every tone</h2>
         <p class="cap-muted">Sparklines: stand-in for Enarratio's output.</p>
         <div class="cap-tiles">
           <ul class="cap-tiles-list" aria-label="Overview figures">
             <li>
               <a class="cap-tile" href="#sites" data-tone="ok" aria-describedby="grid-sites-chart">
-                <span class="cap-tile-label">Sites up</span>
-                <span class="cap-tile-figure">6 <small>of 6</small></span>
-                <span class="cap-tile-word">All up</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">6 <small>of 6</small></span><span class="cap-tile-label">Sites up</span><span class="cap-tile-word">All up</span></span>
                 <span class="cap-tile-detail">Watcher pass 40 seconds ago</span>
                 <span class="cap-tile-chart" aria-hidden="true"><svg viewBox="0 0 86 22" preserveAspectRatio="none" focusable="false"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="1,11 15,11 29,11 43,11 57,11 71,11 85,11" /></svg></span>
               </a>
@@ -28,17 +26,13 @@
             </li>
             <li>
               <button type="button" class="cap-tile" data-tone="warn">
-                <span class="cap-tile-label">Blocked on you</span>
-                <span class="cap-tile-figure">2 <small>jobs</small></span>
-                <span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Waiting on you</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">2 <small>jobs</small></span><span class="cap-tile-label">Blocked on you</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Waiting on you</span></span>
                 <span class="cap-tile-detail">The oldest has waited 26 minutes</span>
               </button>
             </li>
             <li>
               <a class="cap-tile" href="#budget" data-tone="crit" aria-describedby="grid-budget-chart">
-                <span class="cap-tile-label">Actions minutes</span>
-                <span class="cap-tile-figure">2,140 <small>of 2,000</small></span>
-                <span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Over limit</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">2,140 <small>of 2,000</small></span><span class="cap-tile-label">Actions minutes</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Over limit</span></span>
                 <span class="cap-tile-detail">$4.10 of $10 model spend this month</span>
                 <span class="cap-tile-chart" aria-hidden="true"><svg viewBox="0 0 86 22" preserveAspectRatio="none" focusable="false"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="1,20 15,16 29,10 43,12 57,6 71,8 85,4" /></svg></span>
               </a>
@@ -46,16 +40,13 @@
             </li>
             <li>
               <a class="cap-tile" href="#backups" data-tone="nodata">
-                <span class="cap-tile-label">Primary backup</span>
-                <span class="cap-tile-figure"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2" /></svg>No data</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2" /></svg>No data</span><span class="cap-tile-label">Primary backup</span></span>
                 <span class="cap-tile-detail">The health route has not been read yet</span>
               </a>
             </li>
             <li>
               <button type="button" class="cap-tile" data-tone="warn" aria-describedby="grid-d1-chart">
-                <span class="cap-tile-label">D1 rows read</span>
-                <span class="cap-tile-figure">78% <small>of today's limit</small></span>
-                <span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Near limit</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">78% <small>of today's limit</small></span><span class="cap-tile-label">D1 rows read</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Near limit</span></span>
                 <span class="cap-tile-detail">3.9 million of 5 million</span>
                 <span class="cap-tile-chart" aria-hidden="true"><svg viewBox="0 0 86 22" preserveAspectRatio="none" focusable="false"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="1,20.7 15,16.7 29,14.7 43,12.7 57,8.7 71,6 85,3.3" /></svg></span>
               </button>
@@ -63,9 +54,7 @@
             </li>
             <li>
               <a class="cap-tile" href="#findings" data-tone="ok">
-                <span class="cap-tile-label">Open findings</span>
-                <span class="cap-tile-figure">0</span>
-                <span class="cap-tile-word">None open</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">0</span><span class="cap-tile-label">Open findings</span><span class="cap-tile-word">None open</span></span>
                 <span class="cap-tile-detail">Watcher pass 40 seconds ago</span>
               </a>
             </li>
@@ -79,9 +68,7 @@
           <ul class="cap-tiles-list">
             <li>
               <a class="cap-tile" href="#mentions" data-tone="ok">
-                <span class="cap-tile-label">Mentions waiting</span>
-                <span class="cap-tile-figure">3</span>
-                <span class="cap-tile-word">Within a day</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">3</span><span class="cap-tile-label">Mentions waiting</span><span class="cap-tile-word">Within a day</span></span>
                 <span class="cap-tile-detail">The oldest arrived 5 hours ago</span>
               </a>
             </li>
@@ -95,9 +82,7 @@
           <ul class="cap-tiles-list">
             <li>
               <a class="cap-tile" href="#kv" data-tone="warn">
-                <span class="cap-tile-label">KV writes</span>
-                <span class="cap-tile-figure">812 <small>of 1,000</small></span>
-                <span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Near limit</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">812 <small>of 1,000</small></span><span class="cap-tile-label">KV writes</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Near limit</span></span>
                 <span class="cap-tile-detail">Resets at 00:00 UTC, in 7 hours</span>
               </a>
             </li>
@@ -111,9 +96,7 @@
           <ul class="cap-tiles-list">
             <li>
               <a class="cap-tile" href="#sites-down" data-tone="crit">
-                <span class="cap-tile-label">Sites up</span>
-                <span class="cap-tile-figure">4 <small>of 6</small></span>
-                <span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>2 down</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">4 <small>of 6</small></span><span class="cap-tile-label">Sites up</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>2 down</span></span>
                 <span class="cap-tile-detail">foxhound.app and txasm.org</span>
               </a>
             </li>
@@ -127,8 +110,7 @@
           <ul class="cap-tiles-list">
             <li>
               <a class="cap-tile" href="#germomics" data-tone="nodata">
-                <span class="cap-tile-label">Germomics backup</span>
-                <span class="cap-tile-figure"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2" /></svg>No data</span>
+                <span class="cap-tile-line"><span class="cap-tile-figure"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2" /></svg>No data</span><span class="cap-tile-label">Germomics backup</span></span>
                 <span class="cap-tile-detail">Its health route does not report a backup yet</span>
               </a>
             </li>
@@ -142,15 +124,13 @@
           <ul class="cap-tiles-list">
             <li>
               <a class="cap-tile" href="#queue" data-tone="ok" data-force="hover">
-                <span class="cap-tile-label">Running</span>
-                <span class="cap-tile-figure">3 <small>and 2 queued</small></span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">3 <small>and 2 queued</small></span><span class="cap-tile-label">Running</span></span>
                 <span class="cap-tile-detail">Across 4 namespaces</span>
               </a>
             </li>
             <li>
               <a class="cap-tile" href="#queue" data-tone="ok" data-force="pressed">
-                <span class="cap-tile-label">Running</span>
-                <span class="cap-tile-figure">3 <small>and 2 queued</small></span>
+                <span class="cap-tile-line"><span class="cap-tile-figure">3 <small>and 2 queued</small></span><span class="cap-tile-label">Running</span></span>
                 <span class="cap-tile-detail">Across 4 namespaces</span>
               </a>
             </li>
@@ -158,37 +138,30 @@
         </div>
       </section>
 
-      <template data-specimen="phone" data-title="Phone width, two across" data-height="560" data-width="390">
+      <template data-specimen="phone" data-title="Phone width: the row wraps onto more rows" data-height="560" data-width="390">
         <main class="specimen-page">
           <h1>Overview</h1>
           <div class="cap-tiles">
             <ul class="cap-tiles-list" aria-label="Overview figures">
               <li>
                 <a class="cap-tile" href="#sites" data-tone="ok">
-                  <span class="cap-tile-label">Sites up</span>
-                  <span class="cap-tile-figure">6 <small>of 6</small></span>
-                  <span class="cap-tile-word">All up</span>
+                  <span class="cap-tile-line"><span class="cap-tile-figure">6 <small>of 6</small></span><span class="cap-tile-label">Sites up</span><span class="cap-tile-word">All up</span></span>
                 </a>
               </li>
               <li>
                 <a class="cap-tile" href="#queue" data-tone="warn">
-                  <span class="cap-tile-label">Blocked on you</span>
-                  <span class="cap-tile-figure">2</span>
-                  <span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Waiting on you</span>
+                  <span class="cap-tile-line"><span class="cap-tile-figure">2</span><span class="cap-tile-label">Blocked on you</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Waiting on you</span></span>
                 </a>
               </li>
               <li>
                 <a class="cap-tile" href="#budget" data-tone="crit">
-                  <span class="cap-tile-label">Actions minutes</span>
-                  <span class="cap-tile-figure">2,140 <small>of 2,000</small></span>
-                  <span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Over limit</span>
+                  <span class="cap-tile-line"><span class="cap-tile-figure">2,140 <small>of 2,000</small></span><span class="cap-tile-label">Actions minutes</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Over limit</span></span>
                 </a>
               </li>
               <li>
                 <a class="cap-tile" href="#backups" data-tone="nodata">
-                  <span class="cap-tile-label">Primary backup</span>
-                  <span class="cap-tile-figure"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2" /></svg>No data</span>
-                  <span class="cap-tile-detail">Health route not read yet</span>
+                  <span class="cap-tile-line"><span class="cap-tile-figure"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2" /></svg>No data</span><span class="cap-tile-label">Primary backup</span></span>
+                  <span class="cap-tile-detail">The health route has not been read yet, so the age of the newest dump is not known</span>
                 </a>
               </li>
             </ul>

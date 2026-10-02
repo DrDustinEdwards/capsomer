@@ -1,29 +1,39 @@
 // The automation switch's behaviour. Clicking the switch, or Space on it, does not move it:
-// it opens a one-line form asking why. Enter applies (a reason is required), Esc cancels
+// it opens a one-line reason beside it. Enter applies (a reason is required), Esc cancels
 // and returns focus to the switch. On apply it dispatches `cap:switch-applied` with
 // { checked, reason, waitUntil }, and the switch moves: at once, or, when a listener calls
 // waitUntil(promise), once that promise resolves. The app writes its audit row there and
 // offers Undo through the message region.
+//
+// The flow is the Capsid Portal's ui/Switch.tsx (AutomationSwitch and ReasonForm, #216),
+// without its API calls: the app's own listener does the sending.
 
 import { clearError, showError } from "../field/field.ts";
-import { setSwitch } from "../switch/switch.ts";
+import { setBusy as setSwitchBusy, setSwitch } from "../switch/switch.ts";
 
 export { setSwitch };
 
 export const EVENT = "cap:switch-applied";
-export const MISSING = "Write a reason in a few words. It goes in the audit log.";
+export const MISSING = "Type a reason. It is recorded with the change.";
 
 export interface SwitchAppliedDetail {
   // The state the switch is moving to.
   checked: boolean;
   reason: string;
-  // Hold the switch until the app has saved the change. A rejection keeps the form open
-  // with the error beside the reason.
+  // Hold the switch until the app has saved the change. A rejection keeps the reason open
+  // with the error beside it.
   waitUntil(promise: Promise<unknown>): void;
 }
 
-export function question(name: string, checked: boolean): string {
-  return `Why turn ${name} ${checked ? "on" : "off"}?`;
+// What the reason is for, as the label's first words: "Turning seat start on". The label
+// reads "<verb>. Reason:". An app with a better verb ("Pausing sample-d") sets data-verb-on
+// and data-verb-off on the root.
+export function verbFor(name: string, checked: boolean): string {
+  return `Turning ${name} ${checked ? "on" : "off"}`;
+}
+
+export function reasonLabel(verb: string): string {
+  return `${verb}. Reason:`;
 }
 
 export function failedMessage(name: string, checked: boolean, err: unknown): string {
@@ -46,7 +56,7 @@ function partsOf(root: HTMLElement): Parts | null {
   const label = sw?.closest<HTMLElement>(".cap-switch");
   const form = root.querySelector<HTMLFormElement>("form.cap-switch-reason-form");
   const reason = form?.querySelector<HTMLInputElement>("input.cap-input");
-  const ask = form?.querySelector<HTMLElement>(".cap-field-label");
+  const ask = form?.querySelector<HTMLElement>(".cap-switch-reason-label");
   if (!sw || !label || !form || !reason || !ask) return null;
   return {
     sw,
@@ -60,7 +70,7 @@ function partsOf(root: HTMLElement): Parts | null {
 }
 
 // Attaches to every [data-cap="switch-reason"] under root that is not attached yet.
-// data-name on the root is the thing switched, as it reads in the question ("the improve
+// data-name on the root is the thing switched, as it reads in the label ("the improve
 // loop"); without it, the switch's label is used. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
@@ -70,32 +80,40 @@ export function enhance(root: ParentNode = document): () => void {
     el.dataset.capReady = "";
     const { sw, label, form, reason, ask, apply, cancel } = p;
     const name = el.dataset.name ?? label.textContent?.replace(/\s+(On|Off)\s*$/, "").trim() ?? "this";
+    const verb = (next: boolean) => (next ? el.dataset.verbOn : el.dataset.verbOff) ?? verbFor(name, next);
     form.noValidate = true;
     let busy = false;
+    // The state the flip asks for, fixed when the field opens, so a poll that lands
+    // meanwhile and moves the switch cannot turn "off" into "on".
+    let target: boolean | null = null;
 
     const setBusy = (on: boolean) => {
       busy = on;
       reason.readOnly = on;
-      if (apply) {
-        if (on) apply.setAttribute("aria-busy", "true");
-        else apply.removeAttribute("aria-busy");
+      setSwitchBusy(label, on);
+      if (on) {
+        form.setAttribute("aria-busy", "true");
+        apply?.setAttribute("aria-busy", "true");
+      } else {
+        form.removeAttribute("aria-busy");
+        apply?.removeAttribute("aria-busy");
       }
     };
     // `next` is where the switch would move. A checkbox flips before its click handlers run
     // and is put back when one cancels the click, so inside the handler sw.checked already
     // holds the next state.
     const open = (next: boolean) => {
-      if (busy) return;
-      if (form.hidden) {
-        reason.value = "";
-        clearError(reason);
-      }
-      ask.textContent = question(name, next);
+      if (!form.hidden) return reason.focus();
+      target = next;
+      reason.value = "";
+      clearError(reason);
+      ask.textContent = reasonLabel(verb(next));
       form.hidden = false;
       reason.focus();
     };
     const close = () => {
       form.hidden = true;
+      target = null;
       reason.value = "";
       clearError(reason);
       sw.focus();
@@ -107,10 +125,13 @@ export function enhance(root: ParentNode = document): () => void {
       e.preventDefault();
       open(next);
     };
+    // Held while the request runs, so its answer is not hidden. Stopped here either way, so
+    // an Esc that cancels the reason does not also close a panel the switch sits in.
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape" || busy) return;
+      if (e.key !== "Escape") return;
       e.preventDefault();
-      close();
+      e.stopPropagation();
+      if (!busy) close();
     };
     const onCancel = () => {
       if (!busy) close();
@@ -118,13 +139,14 @@ export function enhance(root: ParentNode = document): () => void {
     const onSubmit = (e: SubmitEvent) => {
       e.preventDefault();
       if (busy) return;
+      // Read from the field, so a value filled in without an input event counts.
       const text = reason.value.trim();
       if (!text) {
         showError(reason, MISSING, true);
         reason.focus();
         return;
       }
-      const next = !sw.checked;
+      const next = target ?? !sw.checked;
       const held: Array<Promise<unknown>> = [];
       const detail: SwitchAppliedDetail = { checked: next, reason: text, waitUntil: (promise) => void held.push(promise) };
       el.dispatchEvent(new CustomEvent<SwitchAppliedDetail>(EVENT, { bubbles: true, detail }));

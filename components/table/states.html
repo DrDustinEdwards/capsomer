@@ -139,6 +139,83 @@
         </div>
       </section>
 
+      <section class="cap-specimen" aria-labelledby="s-drop">
+        <h2 id="s-drop">Columns that can drop, a link to the rest</h2>
+        <div class="cap-table-wrap" data-cap="table" role="region" aria-labelledby="t5-cap" tabindex="0" id="t5">
+          <table class="cap-table">
+            <caption id="t5-cap">Sites</caption>
+            <thead>
+              <tr>
+                <th scope="col">Site</th>
+                <th scope="col">Status</th>
+                <th scope="col" data-num>Uptime<span class="cap-table-note">7 days</span></th>
+                <th scope="col" data-drop="2">Live deploy</th>
+                <th scope="col" data-drop="2" data-num>Errors<span class="cap-table-note">last 24 hours</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><a class="cap-table-open" href="#site-portal">capsid dashboard</a><span class="cap-table-aside" data-drop="1">dashboard.capsid.dev</span></th>
+                <td><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Up</span></td>
+                <td data-num>99.96%</td>
+                <td data-drop="2"><span class="cap-mono">366b902</span> <span class="cap-muted">53 minutes ago</span></td>
+                <td data-drop="2" data-num>5 of 38.0k · 0.01%</td>
+              </tr>
+              <tr>
+                <th scope="row"><a class="cap-table-open" href="#site-foxhound">foxhound.app</a><span class="cap-table-aside" data-drop="1">foxhound.app</span></th>
+                <td><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Down</span></td>
+                <td data-num>96.10%</td>
+                <td data-drop="2"><span class="cap-mono">a91c4e0</span> <span class="cap-muted">15 minutes ago</span></td>
+                <td data-drop="2" data-num>418 of 12.3k · 3.40%</td>
+              </tr>
+              <tr>
+                <th scope="row"><a class="cap-table-open" href="#site-germomics">germomics.org</a><span class="cap-table-aside" data-drop="1">germomics.org</span></th>
+                <td><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Up</span></td>
+                <td data-num>100.00%</td>
+                <td data-drop="2"><span class="cap-status" data-tone="nodata" title="No Cloudflare token for this site"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>No data<span class="cap-sr-only">: no Cloudflare token for this site</span></span></td>
+                <td data-drop="2" data-num><span class="cap-status" data-tone="nodata" title="No Cloudflare token for this site"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>No data<span class="cap-sr-only">: no Cloudflare token for this site</span></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cap-table-foot"><a href="#sites">All 6 sites in Sites</a></div>
+      </section>
+
+      <template data-specimen="drop" data-title="Region 560 px wide: the host, the deploy and the errors have gone" data-width="560" data-height="300">
+        <main class="specimen-page">
+          <div class="cap-table-wrap" data-cap="table" role="region" aria-labelledby="drop-cap" tabindex="0" id="t-drop">
+            <table class="cap-table">
+              <caption id="drop-cap">Sites</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Site</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" data-num>Uptime<span class="cap-table-note">7 days</span></th>
+                  <th scope="col" data-drop="2">Live deploy</th>
+                  <th scope="col" data-drop="2" data-num>Errors<span class="cap-table-note">last 24 hours</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><a class="cap-table-open" href="#site-portal">capsid dashboard</a><span class="cap-table-aside" data-drop="1">dashboard.capsid.dev</span></th>
+                  <td><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Up</span></td>
+                  <td data-num>99.96%</td>
+                  <td data-drop="2"><span class="cap-mono">366b902</span></td>
+                  <td data-drop="2" data-num>5 of 38.0k</td>
+                </tr>
+                <tr>
+                  <th scope="row"><a class="cap-table-open" href="#site-foxhound">foxhound.app</a><span class="cap-table-aside" data-drop="1">foxhound.app</span></th>
+                  <td><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Down</span></td>
+                  <td data-num>96.10%</td>
+                  <td data-drop="2"><span class="cap-mono">a91c4e0</span></td>
+                  <td data-drop="2" data-num>418 of 12.3k</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </template>
+
       <template data-specimen="narrow" data-title="Narrow: the table scrolls in its region" data-width="390" data-height="320">
         <main class="specimen-page">
           <h1 id="narrow-h">Sites</h1>

@@ -16,6 +16,8 @@ import "../css/prose.css";
 import "../tokens/themes.css";
 import "./site.css";
 import { Shell, type ShellEntry } from "../components/shell/shell.react.tsx";
+import { ThemeSwitch } from "../components/theme-switch/theme-switch.react.tsx";
+import { applyStoredTheme } from "../components/theme-switch/theme-switch.ts";
 import { BASE, CHANGELOG_MD, COMPONENTS, DEFAULTS_MD, FAMILIES, META, PALETTE, RESULTS_BUILD, SCALES, fetchResults, type ComponentDoc, type ComponentResults, type Pair, type Results } from "./data.ts";
 
 // The test results every view reads: the build's own, replaced by the last run on main
@@ -675,7 +677,7 @@ function SettingsView() {
         <p>Preferences for this browser only. Nothing here is sent anywhere.</p>
       </div>
       <Panel title="Theme" id="theme">
-        <p>The Theme button in the top bar cycles through System, Light and Dark. System follows your device.</p>
+        <p>The Theme control in the top bar switches Light and Dark. The first visit follows your device; your first choice is remembered in this browser.</p>
       </Panel>
       <Panel title="Left menu" id="rail">
         <p>The button at the foot of the left menu collapses it to icons. This browser remembers the choice.</p>
@@ -686,31 +688,13 @@ function SettingsView() {
 
 // ---- the app -------------------------------------------------------------------------------
 
+// The site's own theme control is the component's: the first visit follows the device, and
+// the first choice is remembered.
 function ThemeButton() {
-  const order = ["system", "light", "dark"] as const;
-  const read = () => {
-    try {
-      return (localStorage.getItem("cap-theme") as (typeof order)[number] | null) ?? "system";
-    } catch {
-      return "system";
-    }
-  };
-  const [theme, setTheme] = useState(read);
   useEffect(() => {
-    if (theme === "system") delete document.documentElement.dataset.theme;
-    else document.documentElement.dataset.theme = theme;
-    try {
-      localStorage.setItem("cap-theme", theme);
-    } catch {
-      // the choice lasts for this page only
-    }
-  }, [theme]);
-  const next = order[(order.indexOf(theme) + 1) % order.length] ?? "system";
-  return (
-    <button type="button" className="cap-btn" onClick={() => setTheme(next)} aria-label={`Theme: ${theme}. Switch to ${next}`}>
-      Theme: {theme === "system" ? "System" : theme === "light" ? "Light" : "Dark"}
-    </button>
-  );
+    applyStoredTheme();
+  }, []);
+  return <ThemeSwitch />;
 }
 
 function App() {

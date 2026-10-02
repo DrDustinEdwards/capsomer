@@ -2,8 +2,10 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The keyboard shortcut sheet: a native <dialog> listing every registered shortcut by group,
-   with the switch that turns single-key shortcuts off. From the Capsid Portal's HelpSheet
-   (dashboard/src/app/HelpSheet.tsx, styles.css ".help"). */
+   with the switch that turns single-key shortcuts off. Written for Capsomer's tokens from
+   the Capsid Portal's HelpSheet (dashboard/src/app/HelpSheet.tsx, styles.css ".help"): the
+   Portal's sheet is one fixed list, here it is grouped from the registry; the "about" line
+   under a name is the Portal's ".help .about". */
 @layer cap.components {
   .cap-keys {
     width: min(560px, calc(100% - 2 * var(--space-5)));
@@ -84,6 +86,12 @@
       margin: 0;
       min-width: 0;
     }
+  }
+  /* What a command is for, under its name. */
+  .cap-keys-about {
+    display: block;
+    font-size: var(--fs-detail);
+    color: var(--muted);
   }
   @container (max-width: 320px) {
     .cap-keys-list > div {
