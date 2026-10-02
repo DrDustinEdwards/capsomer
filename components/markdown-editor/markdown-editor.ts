@@ -9,6 +9,8 @@
 // editor is its own chunk. The pure helpers (edits, counting, filtering, roving) are
 // exported so the React wrapper and a node test can use them without the browser.
 
+import { createListbox, type Listbox } from "../listbox/listbox.ts";
+import { place } from "../popover/popover.ts";
 import type { Surface } from "./markdown-editor.view.ts";
 
 // ---- types ---------------------------------------------------------------------------------
@@ -300,8 +302,8 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
   let quiet = false; // true while the app itself sets the text: no onChange for that
   let upload: { token: number; panel: HTMLElement } | null = null;
   let uploadToken = 0;
-  let link: { from: number; to: number; panel: HTMLElement; input: HTMLInputElement; list: HTMLElement; note: HTMLElement; matches: LinkTarget[]; index: number; ask: number } | null = null;
-  let slash: { from: number; menu: HTMLElement } | null = null;
+  let link: { from: number; to: number; panel: HTMLElement; input: HTMLInputElement; list: HTMLElement; note: HTMLElement; lb: Listbox; matches: LinkTarget[]; ask: number; stop: () => void } | null = null;
+  let slash: { from: number; menu: HTMLElement; stop: () => void } | null = null;
   let requiredMessage: HTMLElement | null = null;
 
   // ---- what the textarea says -----------------------------------------------------------
@@ -436,24 +438,51 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     target.focus();
   });
 
-  // ---- the link palette -----------------------------------------------------------------
-  function place(panel: HTMLElement, pos: number) {
-    const c = surface?.coords(pos);
-    const box = host.getBoundingClientRect();
-    if (!c) return;
-    const width = panel.offsetWidth;
-    const height = panel.offsetHeight;
-    const left = Math.max(0, Math.min(c.left - box.left, box.width - width));
-    // Below the cursor, or above it when the window has no room below.
-    const below = c.bottom + height + 8 > window.innerHeight && c.top - height - 8 > 0 ? c.top - box.top - height - 4 : c.bottom - box.top + 4;
-    panel.style.setProperty("--cap-md-left", `${left}px`);
-    panel.style.setProperty("--cap-md-top", `${below}px`);
+  // ---- floating surfaces: the shared popover, placed at the cursor --------------------------
+  // A floating panel is the shared `.cap-popover` (popover.css), shown with the Popover API in
+  // the top layer so the editor's clipping frame cannot cut it off, and placed by popover.ts's
+  // `place()` against a virtual anchor: the box of the character at `pos`. It follows the
+  // window's scroll and resize while it is open.
+  function floating(panel: HTMLElement, pos: number): () => void {
+    const anchor = {
+      getBoundingClientRect: () => {
+        const c = surface?.coords(pos);
+        return c ? new DOMRect(c.left, c.top, 0, c.bottom - c.top) : host.getBoundingClientRect();
+      },
+    } as unknown as Element;
+    panel.showPopover();
+    place(anchor, panel, { side: "bottom", align: "start" });
+    let frame = 0;
+    const follow = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        if (panel.isConnected) place(anchor, panel, { side: "bottom", align: "start" });
+      });
+    };
+    window.addEventListener("scroll", follow, true);
+    window.addEventListener("resize", follow);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", follow, true);
+      window.removeEventListener("resize", follow);
+    };
   }
 
+  function dismiss(panel: HTMLElement) {
+    try {
+      if (panel.matches(":popover-open")) panel.hidePopover();
+    } catch {
+      // Already gone.
+    }
+    panel.remove();
+  }
+
+  // ---- the link palette: a labelled combobox over the shared listbox ----------------------
   async function resolveTargets(query: string): Promise<LinkTarget[]> {
     const src = o.linkTargets;
     if (!src) return [];
-    if (typeof src === "function") return filterLinkTargets(await src(query), "");
+    if (typeof src === "function") return (await src(query)).slice(0, LINK_RESULT_LIMIT);
     return filterLinkTargets(src, query);
   }
 
@@ -463,23 +492,23 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     const typed = l.input.value;
     const url = looksLikeUrl(typed);
     l.list.replaceChildren(
-      ...l.matches.map((t, i) => {
-        const opt = el("li", { class: "cap-md-option", role: "option", id: `${uid}-opt-${i}`, "aria-selected": String(i === l.index) });
-        opt.append(el("strong", { class: "cap-md-option-title" }, t.title), el("span", { class: "cap-md-option-hint" }, t.hint ?? t.href, t.note ? el("span", { class: "cap-md-option-note" }, ` ${t.note}`) : ""));
-        listen(opt, "mousedown", (e: MouseEvent) => e.preventDefault());
-        listen(opt, "click", () => insertLink(t.href, t.title));
+      ...l.matches.map((t) => {
+        const opt = el("div", { class: "cap-option", role: "option", "data-value": t.href, "data-label": t.title });
+        opt.append(el("span", { class: "cap-option-label" }, t.title), el("span", { class: "cap-md-option-hint" }, t.hint ?? t.href, t.note ? el("span", { class: "cap-md-option-note" }, ` ${t.note}`) : ""));
         return opt;
       }),
     );
     l.list.hidden = l.matches.length === 0;
     l.input.setAttribute("aria-expanded", String(l.matches.length > 0));
-    if (l.matches.length > 0) l.input.setAttribute("aria-controls", l.list.id);
-    else l.input.removeAttribute("aria-controls");
-    const active = l.matches[l.index] ? `${uid}-opt-${l.index}` : "";
-    if (active) l.input.setAttribute("aria-activedescendant", active);
-    else l.input.removeAttribute("aria-activedescendant");
-    l.list.querySelector("[aria-selected='true']")?.scrollIntoView({ block: "nearest" });
-    l.note.textContent = url ? "Enter to link to this address" : l.matches.length > 0 ? "" : o.linkTargets ? "No pages match. Type a URL to link out." : "Type a URL to link to.";
+    l.lb.refresh();
+    l.lb.setActive(l.matches.length > 0 ? 0 : null);
+    l.note.textContent = url
+      ? "Enter to link to this address"
+      : l.matches.length > 0
+        ? `${l.matches.length} page${l.matches.length === 1 ? "" : "s"}. Up and Down choose, Enter links.`
+        : o.linkTargets
+          ? "No pages match. Type a URL to link out."
+          : "Type a URL to link to.";
   }
 
   async function refreshLink() {
@@ -489,7 +518,6 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     const matches = await resolveTargets(l.input.value).catch(() => []);
     if (link !== l || ask !== l.ask) return;
     l.matches = matches;
-    l.index = 0;
     renderLink();
   }
 
@@ -498,35 +526,22 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     closeSlash();
     const { from, to } = surface.selection();
     const selected = doc().slice(from, to);
-    const panel = el("div", { class: "cap-md-palette", role: "group", "aria-label": "Insert a link" });
-    const input = el("input", { type: "text", class: "cap-input cap-md-palette-input", id: `${uid}-link`, role: "combobox", "aria-autocomplete": "list", "aria-expanded": "false", autocomplete: "off", spellcheck: "false", placeholder: "Search pages, or type a URL" });
+    const panel = el("div", { class: "cap-popover cap-md-palette", popover: "manual", role: "group", "aria-label": "Insert a link", "data-size": "lg", "data-side": "bottom", "data-align": "start" });
+    const input = el("input", { type: "text", class: "cap-input", id: `${uid}-link`, role: "combobox", "aria-autocomplete": "list", "aria-expanded": "false", "aria-controls": `${uid}-list`, autocomplete: "off", spellcheck: "false", placeholder: "Search pages, or type a URL" });
     input.value = selected;
     const label = el("label", { class: "cap-md-palette-label", for: input.id }, "Link to");
-    const list = el("ul", { class: "cap-md-list", role: "listbox", id: `${uid}-list`, "aria-label": "Pages" });
+    const list = el("div", { class: "cap-listbox", role: "listbox", id: `${uid}-list`, "aria-label": "Pages", "data-wrap": "" });
     const note = el("p", { class: "cap-md-palette-note", role: "status" });
     panel.append(label, input, list, note);
     host.append(panel);
-    link = { from, to, panel, input, list, note, matches: [], index: 0, ask: 0 };
-    place(panel, from);
-    input.focus();
-    renderLink();
-    void refreshLink();
-
-    input.addEventListener("input", () => void refreshLink());
+    // Enter on a typed address is the palette's own; the listbox must not also act on it, and
+    // it does not once the event is defaultPrevented. This listener goes first.
     input.addEventListener("keydown", (e) => {
       const l = link;
       if (!l) return;
-      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (e.key === "Enter" && looksLikeUrl(l.input.value)) {
         e.preventDefault();
-        if (l.matches.length === 0) return;
-        l.index = (l.index + (e.key === "ArrowDown" ? 1 : -1) + l.matches.length) % l.matches.length;
-        renderLink();
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        const typed = l.input.value.trim();
-        const chosen = l.matches[l.index];
-        if (looksLikeUrl(typed)) insertLink(typed, typed);
-        else if (chosen) insertLink(chosen.href, chosen.title);
+        insertLink(l.input.value.trim(), l.input.value.trim());
       } else if (e.key === "Escape") {
         // Stopped as well as prevented: the Escape must not also close a dialog around the editor.
         e.preventDefault();
@@ -534,6 +549,8 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
         closeLink(true);
       }
     });
+    const lb = createListbox(list, { input, selection: "none", wrap: true, status: note, hideWhenEmpty: false });
+    list.addEventListener("cap:option-select", ((e: CustomEvent<{ value: string; label: string }>) => insertLink(e.detail.value, e.detail.label)) as EventListener);
     panel.addEventListener("focusout", (e) => {
       const to = e.relatedTarget;
       if (to instanceof Node && panel.contains(to)) return;
@@ -541,13 +558,24 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
       if (to === null && !document.hasFocus()) return;
       closeLink(to === null);
     });
+    link = { from, to, panel, input, list, note, lb, matches: [], ask: 0, stop: floating(panel, from) };
+    input.focus();
+    renderLink();
+    void refreshLink();
+    input.addEventListener("input", () => void refreshLink());
+  }
+
+  function teardownLink(l: NonNullable<typeof link>) {
+    link = null;
+    l.stop();
+    l.lb.detach();
+    dismiss(l.panel);
   }
 
   function closeLink(restoreFocus: boolean) {
     const l = link;
     if (!l) return;
-    link = null;
-    l.panel.remove();
+    teardownLink(l);
     if (!surface) return;
     surface.select(l.from, l.to);
     if (restoreFocus) surface.focus();
@@ -557,8 +585,7 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     const l = link;
     if (!l || !surface) return;
     const selected = doc().slice(l.from, l.to);
-    link = null;
-    l.panel.remove();
+    teardownLink(l);
     surface.apply(linkEdit(l.from, l.to, selected, href, fallback));
   }
 
@@ -568,7 +595,7 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     const c = surface.caret();
     if (c.lineText !== "/" || c.head !== c.lineTo) return closeSlash();
     if (!slash) {
-      const menu = el("ul", { class: "cap-md-slash", "aria-label": "Insert a block" });
+      const menu = el("ul", { class: "cap-popover cap-md-slash", popover: "manual", role: "list", "aria-label": "Insert a block", "data-flush": "", "data-size": "auto", "data-side": "bottom", "data-align": "start" });
       for (const s of o.scaffolds) {
         const b = el("button", { type: "button", class: "cap-md-slash-item" }, el("strong", {}, s.label), el("span", { class: "cap-md-slash-hint" }, s.hint));
         b.tabIndex = -1;
@@ -590,19 +617,19 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
         items[next]?.focus();
       });
       host.append(menu);
-      slash = { from: c.lineFrom, menu };
+      slash = { from: c.lineFrom, menu, stop: floating(menu, c.lineFrom) };
       say("Block menu open. Press Down arrow to choose a block, Escape to close.");
     }
     slash.from = c.lineFrom;
-    place(slash.menu, c.lineFrom);
   }
 
   function closeSlash() {
     if (!slash) return;
     // Cleared first: removing a focused item fires focusout, which comes back here.
-    const { menu } = slash;
+    const { menu, stop } = slash;
     slash = null;
-    menu.remove();
+    stop();
+    dismiss(menu);
   }
 
   // ---- image upload with a mandatory alt step -------------------------------------------

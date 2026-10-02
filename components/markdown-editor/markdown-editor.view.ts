@@ -70,8 +70,8 @@ const capTheme = EditorView.theme({
     maxHeight: "var(--cap-md-max, min(70vh, 48rem))",
   },
   "&.cm-focused": {
-    outline: "var(--focus-width) solid var(--focus-color)",
-    outlineOffset: "calc(-1 * var(--focus-width))",
+    outline: "var(--ring-width) solid var(--ring)",
+    outlineOffset: "calc(-1 * var(--ring-width))",
   },
   ".cm-scroller": {
     overflow: "auto",
@@ -80,10 +80,10 @@ const capTheme = EditorView.theme({
   },
   ".cm-content": {
     caretColor: "var(--accent)",
-    padding: "var(--space-4) 0",
+    padding: "var(--pad-y) 0",
     minHeight: "var(--cap-md-min, 16rem)",
   },
-  ".cm-line": { padding: "0 var(--space-4)" },
+  ".cm-line": { padding: "0 var(--pad-x)" },
   ".cm-gutters": {
     backgroundColor: "var(--sunken)",
     color: "var(--muted)",
@@ -93,7 +93,7 @@ const capTheme = EditorView.theme({
   // The selection is the accent mixed into the surface: the pale --sel token is nearly the
   // surface colour and would not show where the selection is.
   "& .cm-content ::selection, & .cm-content::selection": {
-    backgroundColor: "color-mix(in srgb, var(--accent) 28%, var(--surface))",
+    backgroundColor: "color-mix(in srgb, var(--accent) 36%, var(--surface))",
     color: "var(--text)",
   },
   ".cm-placeholder": { color: "var(--dim)" },
@@ -105,8 +105,8 @@ const capHighlight = HighlightStyle.define([
   { tag: tags.heading, color: "var(--text)", fontWeight: "700" },
   { tag: tags.strong, color: "var(--text)", fontWeight: "700" },
   { tag: tags.emphasis, color: "var(--text)", fontStyle: "italic" },
-  { tag: tags.link, color: "var(--accent)", textDecoration: "underline" },
-  { tag: tags.url, color: "var(--accent)" },
+  { tag: tags.link, color: "var(--accent-text)", textDecoration: "underline" },
+  { tag: tags.url, color: "var(--accent-text)" },
   { tag: tags.monospace, color: "var(--info)" },
   { tag: tags.quote, color: "var(--muted)", fontStyle: "italic" },
   { tag: tags.list, color: "var(--muted)" },
