@@ -1,0 +1,342 @@
+<section class="cap-specimen" aria-labelledby="s-main">
+  <h2 id="s-main">Open flags, blocking first, with suggestions the owner can apply</h2>
+  <p class="cap-muted">The draft below is what the anchors are read against. Change a quoted phrase and its flag says "Anchor lost".</p>
+  <div class="cap-field">
+    <label class="cap-label" for="fl-draft">Draft text</label>
+    <textarea class="cap-input" id="fl-draft" rows="5">Foxhound watches 14 sites every five minutes. Roughly 40% of the alerts last quarter were false alarms. The new retry policy was shipped on Tuesday. Rosa reviewed it and said it was fine. Recieved wisdom says to alert on the first failure, but we wait for three.</textarea>
+  </div>
+    <section class="cap-flags" data-cap="flag-list" id="fl-main" aria-labelledby="fl-main-h" data-owner data-owner-name="Dustin Edwards" data-viewer="Dustin Edwards" data-text-source="#fl-draft" data-cap-now="2026-10-02T10:00:00Z">
+      <header class="cap-flags-head">
+        <h2 class="cap-flags-title" id="fl-main-h">Flags on this draft</h2>
+        <p class="cap-flags-summary" data-cap-part="summary">2 blocking, 3 advisory, 2 resolved</p>
+        <fieldset class="cap-seg cap-flags-filter" data-cap-part="filter">
+          <legend class="cap-sr-only">Show</legend>
+          <div class="cap-seg-options" data-size="sm">
+            <label><input type="radio" name="fl-main-filter" value="open" checked /> Open<span class="cap-flags-count" data-count="open">5</span></label>
+            <label><input type="radio" name="fl-main-filter" value="resolved" /> Resolved<span class="cap-flags-count" data-count="resolved">2</span></label>
+            <label><input type="radio" name="fl-main-filter" value="all" /> All<span class="cap-flags-count" data-count="all">7</span></label>
+          </div>
+        </fieldset>
+        <div class="cap-flags-batch">
+          <button type="button" class="cap-btn" data-variant="primary" data-cap-part="apply-all">Apply 2 suggestions</button>
+          <p class="cap-flags-note" data-cap-part="owner-note" hidden>2 suggestions are waiting for the owner, Dustin Edwards. Only they can apply them.</p>
+        </div>
+      </header>
+      <ul class="cap-rows cap-flags-list" data-cap="row-list" role="list" aria-labelledby="fl-main-h" data-cap-primary>
+        <li class="cap-flag-group" data-group="blocking">
+          <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-main-g-blocking">Blocking</h3><span class="cap-flag-group-count">2 open, 1 resolved</span></div>
+          <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-main-g-blocking">
+          <li class="cap-row cap-flag" id="fl-main-f1" data-flag="f1" data-kind="blocking" data-state="open" data-anchor="found" data-anchor-id="fl-draft" data-tone="crit">
+            <span class="cap-row-status" id="fl-main-f1-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-main-f1-s fl-main-f1-d"><span class="cap-flag-message">This claim has no source</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-main-f1-d">Sources check. Cause: <span data-cap-part="cause">Every factual claim needs a source or a date.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: This claim has no source</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: This claim has no source</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Roughly 40% of the alerts last quarter were false alarms</q></p></blockquote></div>
+          </li>
+          <li class="cap-row cap-flag" id="fl-main-f2" data-flag="f2" data-kind="blocking" data-state="open" data-anchor="lost" data-anchor-id="fl-draft" data-tone="crit">
+            <span class="cap-row-status" id="fl-main-f2-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
+            <div class="cap-row-title"><span class="cap-flag-title"><span class="cap-flag-message">Says the migration finished, but the changelog says it is still running</span> <span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>Anchor lost</span></span></div>
+            <p class="cap-row-detail" id="fl-main-f2-d">Continuity reviewer (AI). Cause: <span data-cap-part="cause">A statement must agree with the changelog.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: Says the migration finished, but the changelog says it is still running</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: Says the migration finished, but the changelog says it is still running</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">The text this flag was raised on changed or was removed. Last known text:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">The migration finished without downtime.</q></p></blockquote></div>
+          </li>
+          <li class="cap-row cap-flag" id="fl-main-f6" data-flag="f6" data-kind="blocking" data-state="resolved" data-anchor="found" data-anchor-id="fl-draft" data-resolution="resolved" data-resolved-by="Rosa Park" data-resolved-at="2026-10-02T07:30:00Z">
+            <span class="cap-row-status" id="fl-main-f6-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-main-f6-s fl-main-f6-d"><span class="cap-flag-message">The quoted review has no date</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-main-f6-d">Sources check. Cause: <span data-cap-part="cause">A quotation names its source and date.</span></p>
+            <span class="cap-row-meta"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Resolved</span></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: The quoted review has no date</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Rosa reviewed it and said it was fine</q></p></blockquote><p class="cap-flag-resolution">Resolved by Rosa Park <time class="cap-time" data-cap="time" datetime="2026-10-02T07:30:00Z">2 hours ago</time>.</p></div>
+          </li>
+          </ul>
+        </li>
+        <li class="cap-flag-group" data-group="advisory">
+          <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-main-g-advisory">Advisory</h3><span class="cap-flag-group-count">3 open, 1 resolved</span></div>
+          <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-main-g-advisory">
+          <li class="cap-row cap-flag" id="fl-main-f3" data-flag="f3" data-kind="advisory" data-state="open" data-anchor="found" data-anchor-id="fl-draft">
+            <span class="cap-row-status" id="fl-main-f3-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-main-f3-s fl-main-f3-d"><span class="cap-flag-message">Spelling: Recieved</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-main-f3-d">Spelling check. Cause: <span data-cap-part="cause">Words are spelt as the dictionary spells them.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: Spelling: Recieved</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: Spelling: Recieved</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Recieved wisdom</q></p></blockquote><div class="cap-flag-suggestion" data-state="inert"><p class="cap-flag-suggestion-head">Suggested by Spelling check</p><div class="cap-flag-diff"><del><span class="cap-flag-mark" aria-hidden="true">&minus;</span><span class="cap-sr-only">Before: </span>Recieved wisdom</del><ins><span class="cap-flag-mark" aria-hidden="true">+</span><span class="cap-sr-only">After: </span><span class="cap-flag-after-text">Received wisdom</span></ins></div><div class="cap-flag-suggestion-foot" data-cap-part="suggestion-foot"><button type="button" class="cap-btn" data-size="sm" data-variant="primary" data-cap-part="apply">Apply<span class="cap-sr-only"> suggestion: Spelling: Recieved</span></button><span class="cap-flag-note">Nothing changes in the draft until you apply it.</span></div></div></div>
+          </li>
+          <li class="cap-row cap-flag" id="fl-main-f4" data-flag="f4" data-kind="advisory" data-state="open" data-anchor="found" data-anchor-id="fl-draft">
+            <span class="cap-row-status" id="fl-main-f4-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-main-f4-s fl-main-f4-d"><span class="cap-flag-message">Passive voice hides who shipped it</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-main-f4-d">Voice check (AI). Cause: <span data-cap-part="cause">Prefer the active voice where the actor is known.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: Passive voice hides who shipped it</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: Passive voice hides who shipped it</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">was shipped on Tuesday</q></p></blockquote><div class="cap-flag-suggestion" data-state="inert"><p class="cap-flag-suggestion-head">Suggested by Voice check (AI)</p><div class="cap-flag-diff"><del><span class="cap-flag-mark" aria-hidden="true">&minus;</span><span class="cap-sr-only">Before: </span>was shipped on Tuesday</del><ins><span class="cap-flag-mark" aria-hidden="true">+</span><span class="cap-sr-only">After: </span><span class="cap-flag-after-text">shipped on Tuesday</span></ins></div><div class="cap-flag-suggestion-foot" data-cap-part="suggestion-foot"><button type="button" class="cap-btn" data-size="sm" data-variant="primary" data-cap-part="apply">Apply<span class="cap-sr-only"> suggestion: Passive voice hides who shipped it</span></button><span class="cap-flag-note">Nothing changes in the draft until you apply it.</span></div></div></div>
+          </li>
+          <li class="cap-row cap-flag" id="fl-main-f5" data-flag="f5" data-kind="advisory" data-state="open" data-anchor="none">
+            <span class="cap-row-status" id="fl-main-f5-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+            <div class="cap-row-title"><span class="cap-flag-title"><span class="cap-flag-message">The post has no summary line</span></span></div>
+            <p class="cap-row-detail" id="fl-main-f5-d">Header check. Cause: <span data-cap-part="cause">Every post has a summary for the feed.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: The post has no summary line</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: The post has no summary line</span></button></div>
+            <div class="cap-flag-body"></div>
+          </li>
+          <li class="cap-row cap-flag" id="fl-main-f7" data-flag="f7" data-kind="advisory" data-state="resolved" data-anchor="found" data-anchor-id="fl-draft" data-resolution="dismissed" data-resolved-by="Dustin Edwards" data-resolved-at="2026-10-01T15:00:00Z">
+            <span class="cap-row-status" id="fl-main-f7-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-main-f7-s fl-main-f7-d"><span class="cap-flag-message">14 sites differs from the sites page</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-main-f7-d">Continuity reviewer (AI). Cause: <span data-cap-part="cause">Numbers agree with the page they name.</span></p>
+            <span class="cap-row-meta"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>Dismissed</span></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: 14 sites differs from the sites page</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Foxhound watches 14 sites</q></p></blockquote><p class="cap-flag-resolution">Dismissed by Dustin Edwards <time class="cap-time" data-cap="time" datetime="2026-10-01T15:00:00Z">yesterday</time>.</p></div>
+          </li>
+          </ul>
+        </li>
+        <li class="cap-flags-empty" data-for="open">No open flags.</li>
+        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
+        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
+      </ul>
+      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
+    </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-guest">
+  <h2 id="s-guest">Seen by someone who is not the owner, with the record (All) shown</h2>
+    <section class="cap-flags" data-cap="flag-list" id="fl-guest" aria-labelledby="fl-guest-h" data-owner-name="Dustin Edwards" data-viewer="Rosa Park" data-cap-now="2026-10-02T10:00:00Z">
+      <header class="cap-flags-head">
+        <h2 class="cap-flags-title" id="fl-guest-h">Flags on this draft, as Rosa sees them</h2>
+        <p class="cap-flags-summary" data-cap-part="summary">1 blocking, 1 advisory, 2 resolved</p>
+        <fieldset class="cap-seg cap-flags-filter" data-cap-part="filter">
+          <legend class="cap-sr-only">Show</legend>
+          <div class="cap-seg-options" data-size="sm">
+            <label><input type="radio" name="fl-guest-filter" value="open" /> Open<span class="cap-flags-count" data-count="open">2</span></label>
+            <label><input type="radio" name="fl-guest-filter" value="resolved" /> Resolved<span class="cap-flags-count" data-count="resolved">2</span></label>
+            <label><input type="radio" name="fl-guest-filter" value="all" checked /> All<span class="cap-flags-count" data-count="all">4</span></label>
+          </div>
+        </fieldset>
+        <div class="cap-flags-batch">
+          <button type="button" class="cap-btn" data-variant="primary" data-cap-part="apply-all" hidden>Apply 1 suggestion</button>
+          <p class="cap-flags-note" data-cap-part="owner-note">1 suggestion is waiting for the owner, Dustin Edwards. Only they can apply them.</p>
+        </div>
+      </header>
+      <ul class="cap-rows cap-flags-list" data-cap="row-list" role="list" aria-labelledby="fl-guest-h">
+        <li class="cap-flag-group" data-group="blocking">
+          <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-guest-g-blocking">Blocking</h3><span class="cap-flag-group-count">1 open, 1 resolved</span></div>
+          <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-guest-g-blocking">
+          <li class="cap-row cap-flag" id="fl-guest-f1" data-flag="f1" data-kind="blocking" data-state="open" data-anchor="found" data-anchor-id="fl-draft" data-tone="crit">
+            <span class="cap-row-status" id="fl-guest-f1-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-guest-f1-s fl-guest-f1-d"><span class="cap-flag-message">This claim has no source</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-guest-f1-d">Sources check. Cause: <span data-cap-part="cause">Every factual claim needs a source or a date.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: This claim has no source</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: This claim has no source</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Roughly 40% of the alerts last quarter were false alarms</q></p></blockquote></div>
+          </li>
+          <li class="cap-row cap-flag" id="fl-guest-f6" data-flag="f6" data-kind="blocking" data-state="resolved" data-anchor="found" data-anchor-id="fl-draft" data-resolution="resolved" data-resolved-by="Rosa Park" data-resolved-at="2026-10-02T07:30:00Z">
+            <span class="cap-row-status" id="fl-guest-f6-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-guest-f6-s fl-guest-f6-d"><span class="cap-flag-message">The quoted review has no date</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-guest-f6-d">Sources check. Cause: <span data-cap-part="cause">A quotation names its source and date.</span></p>
+            <span class="cap-row-meta"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Resolved</span></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: The quoted review has no date</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Rosa reviewed it and said it was fine</q></p></blockquote><p class="cap-flag-resolution">Resolved by Rosa Park <time class="cap-time" data-cap="time" datetime="2026-10-02T07:30:00Z">2 hours ago</time>.</p></div>
+          </li>
+          </ul>
+        </li>
+        <li class="cap-flag-group" data-group="advisory">
+          <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-guest-g-advisory">Advisory</h3><span class="cap-flag-group-count">1 open, 1 resolved</span></div>
+          <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-guest-g-advisory">
+          <li class="cap-row cap-flag" id="fl-guest-f3" data-flag="f3" data-kind="advisory" data-state="open" data-anchor="found" data-anchor-id="fl-draft">
+            <span class="cap-row-status" id="fl-guest-f3-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-guest-f3-s fl-guest-f3-d"><span class="cap-flag-message">Spelling: Recieved</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-guest-f3-d">Spelling check. Cause: <span data-cap-part="cause">Words are spelt as the dictionary spells them.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: Spelling: Recieved</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: Spelling: Recieved</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Recieved wisdom</q></p></blockquote><div class="cap-flag-suggestion" data-state="inert"><p class="cap-flag-suggestion-head">Suggested by Spelling check</p><div class="cap-flag-diff"><del><span class="cap-flag-mark" aria-hidden="true">&minus;</span><span class="cap-sr-only">Before: </span>Recieved wisdom</del><ins><span class="cap-flag-mark" aria-hidden="true">+</span><span class="cap-sr-only">After: </span><span class="cap-flag-after-text">Received wisdom</span></ins></div><div class="cap-flag-suggestion-foot" data-cap-part="suggestion-foot"><p class="cap-flag-note">Only the owner, Dustin Edwards, can apply this. The draft stays as it is until they do.</p></div></div></div>
+          </li>
+          <li class="cap-row cap-flag" id="fl-guest-f7" data-flag="f7" data-kind="advisory" data-state="resolved" data-anchor="found" data-anchor-id="fl-draft" data-resolution="dismissed" data-resolved-by="Dustin Edwards" data-resolved-at="2026-10-01T15:00:00Z">
+            <span class="cap-row-status" id="fl-guest-f7-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-guest-f7-s fl-guest-f7-d"><span class="cap-flag-message">14 sites differs from the sites page</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-guest-f7-d">Continuity reviewer (AI). Cause: <span data-cap-part="cause">Numbers agree with the page they name.</span></p>
+            <span class="cap-row-meta"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>Dismissed</span></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: 14 sites differs from the sites page</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Foxhound watches 14 sites</q></p></blockquote><p class="cap-flag-resolution">Dismissed by Dustin Edwards <time class="cap-time" data-cap="time" datetime="2026-10-01T15:00:00Z">yesterday</time>.</p></div>
+          </li>
+          </ul>
+        </li>
+        <li class="cap-flags-empty" data-for="open">No open flags.</li>
+        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
+        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
+      </ul>
+      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
+    </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-done">
+  <h2 id="s-done">Nothing open: the record stays</h2>
+    <section class="cap-flags" data-cap="flag-list" id="fl-done" aria-labelledby="fl-done-h" data-owner data-owner-name="Dustin Edwards" data-viewer="Dustin Edwards" data-cap-now="2026-10-02T10:00:00Z">
+      <header class="cap-flags-head">
+        <h2 class="cap-flags-title" id="fl-done-h">Flags on the colophon page</h2>
+        <p class="cap-flags-summary" data-cap-part="summary">No open flags, 2 resolved</p>
+        <fieldset class="cap-seg cap-flags-filter" data-cap-part="filter">
+          <legend class="cap-sr-only">Show</legend>
+          <div class="cap-seg-options" data-size="sm">
+            <label><input type="radio" name="fl-done-filter" value="open" checked /> Open<span class="cap-flags-count" data-count="open">0</span></label>
+            <label><input type="radio" name="fl-done-filter" value="resolved" /> Resolved<span class="cap-flags-count" data-count="resolved">2</span></label>
+            <label><input type="radio" name="fl-done-filter" value="all" /> All<span class="cap-flags-count" data-count="all">2</span></label>
+          </div>
+        </fieldset>
+        <div class="cap-flags-batch">
+          <button type="button" class="cap-btn" data-variant="primary" data-cap-part="apply-all" hidden>Apply 0 suggestions</button>
+          <p class="cap-flags-note" data-cap-part="owner-note" hidden>0 suggestions are waiting for the owner, Dustin Edwards. Only they can apply them.</p>
+        </div>
+      </header>
+      <ul class="cap-rows cap-flags-list" data-cap="row-list" role="list" aria-labelledby="fl-done-h">
+        <li class="cap-flag-group" data-group="blocking">
+          <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-done-g-blocking">Blocking</h3><span class="cap-flag-group-count">0 open, 1 resolved</span></div>
+          <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-done-g-blocking">
+          <li class="cap-row cap-flag" id="fl-done-d1" data-flag="d1" data-kind="blocking" data-state="resolved" data-anchor="found" data-anchor-id="fl-draft" data-resolution="resolved" data-resolved-by="Rosa Park" data-resolved-at="2026-10-02T07:30:00Z">
+            <span class="cap-row-status" id="fl-done-d1-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-done-d1-s fl-done-d1-d"><span class="cap-flag-message">The quoted review has no date</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-done-d1-d">Sources check. Cause: <span data-cap-part="cause">A quotation names its source and date.</span></p>
+            <span class="cap-row-meta"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Resolved</span></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: The quoted review has no date</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Rosa reviewed it and said it was fine</q></p></blockquote><p class="cap-flag-resolution">Resolved by Rosa Park <time class="cap-time" data-cap="time" datetime="2026-10-02T07:30:00Z">2 hours ago</time>.</p></div>
+          </li>
+          </ul>
+        </li>
+        <li class="cap-flag-group" data-group="advisory">
+          <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-done-g-advisory">Advisory</h3><span class="cap-flag-group-count">0 open, 1 resolved</span></div>
+          <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-done-g-advisory">
+          <li class="cap-row cap-flag" id="fl-done-d2" data-flag="d2" data-kind="advisory" data-state="resolved" data-anchor="found" data-anchor-id="fl-draft" data-resolution="dismissed" data-resolved-by="Dustin Edwards" data-resolved-at="2026-10-01T15:00:00Z">
+            <span class="cap-row-status" id="fl-done-d2-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-done-d2-s fl-done-d2-d"><span class="cap-flag-message">14 sites differs from the sites page</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-done-d2-d">Continuity reviewer (AI). Cause: <span data-cap-part="cause">Numbers agree with the page they name.</span></p>
+            <span class="cap-row-meta"><span class="cap-status" data-tone="nodata"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>Dismissed</span></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="reopen">Reopen<span class="cap-sr-only"> flag: 14 sites differs from the sites page</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Foxhound watches 14 sites</q></p></blockquote><p class="cap-flag-resolution">Dismissed by Dustin Edwards <time class="cap-time" data-cap="time" datetime="2026-10-01T15:00:00Z">yesterday</time>.</p></div>
+          </li>
+          </ul>
+        </li>
+        <li class="cap-flags-empty" data-for="open">No open flags.</li>
+        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
+        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
+      </ul>
+      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
+    </section>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-phone">
+  <h2 id="s-phone">A narrow column</h2>
+  <div class="flag-sample-narrow">
+    <section class="cap-flags" data-cap="flag-list" id="fl-phone" aria-labelledby="fl-phone-h" data-owner data-owner-name="Dustin Edwards" data-viewer="Dustin Edwards" data-cap-now="2026-10-02T10:00:00Z">
+      <header class="cap-flags-head">
+        <h2 class="cap-flags-title" id="fl-phone-h">Flags</h2>
+        <p class="cap-flags-summary" data-cap-part="summary">1 blocking, 1 advisory, 0 resolved</p>
+        <fieldset class="cap-seg cap-flags-filter" data-cap-part="filter">
+          <legend class="cap-sr-only">Show</legend>
+          <div class="cap-seg-options" data-size="sm">
+            <label><input type="radio" name="fl-phone-filter" value="open" checked /> Open<span class="cap-flags-count" data-count="open">2</span></label>
+            <label><input type="radio" name="fl-phone-filter" value="resolved" /> Resolved<span class="cap-flags-count" data-count="resolved">0</span></label>
+            <label><input type="radio" name="fl-phone-filter" value="all" /> All<span class="cap-flags-count" data-count="all">2</span></label>
+          </div>
+        </fieldset>
+        <div class="cap-flags-batch">
+          <button type="button" class="cap-btn" data-variant="primary" data-cap-part="apply-all">Apply 1 suggestion</button>
+          <p class="cap-flags-note" data-cap-part="owner-note" hidden>1 suggestion is waiting for the owner, Dustin Edwards. Only they can apply them.</p>
+        </div>
+      </header>
+      <ul class="cap-rows cap-flags-list" data-cap="row-list" role="list" aria-labelledby="fl-phone-h">
+        <li class="cap-flag-group" data-group="blocking">
+          <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-phone-g-blocking">Blocking</h3><span class="cap-flag-group-count">1 open, 0 resolved</span></div>
+          <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-phone-g-blocking">
+          <li class="cap-row cap-flag" id="fl-phone-mf1" data-flag="mf1" data-kind="blocking" data-state="open" data-anchor="found" data-anchor-id="fl-draft" data-tone="crit">
+            <span class="cap-row-status" id="fl-phone-mf1-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocking</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-phone-mf1-s fl-phone-mf1-d"><span class="cap-flag-message">This claim has no source</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-phone-mf1-d">Sources check. Cause: <span data-cap-part="cause">Every factual claim needs a source or a date.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: This claim has no source</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: This claim has no source</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Roughly 40% of the alerts last quarter were false alarms</q></p></blockquote></div>
+          </li>
+          </ul>
+        </li>
+        <li class="cap-flag-group" data-group="advisory">
+          <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-phone-g-advisory">Advisory</h3><span class="cap-flag-group-count">1 open, 0 resolved</span></div>
+          <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-phone-g-advisory">
+          <li class="cap-row cap-flag" id="fl-phone-mf3" data-flag="mf3" data-kind="advisory" data-state="open" data-anchor="found" data-anchor-id="fl-draft">
+            <span class="cap-row-status" id="fl-phone-mf3-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+            <div class="cap-row-title"><a href="#fl-draft" aria-describedby="fl-phone-mf3-s fl-phone-mf3-d"><span class="cap-flag-message">Spelling: Recieved</span> <span class="cap-flag-goto">Go to passage</span></a></div>
+            <p class="cap-row-detail" id="fl-phone-mf3-d">Spelling check. Cause: <span data-cap-part="cause">Words are spelt as the dictionary spells them.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: Spelling: Recieved</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: Spelling: Recieved</span></button></div>
+            <div class="cap-flag-body"><blockquote class="cap-flag-quote"><p class="cap-flag-anchor-note" data-cap-part="anchor-note">Raised on this passage:</p><p><span class="cap-sr-only">Quoted passage: </span><q class="cap-flag-quote-text">Recieved wisdom</q></p></blockquote><div class="cap-flag-suggestion" data-state="inert"><p class="cap-flag-suggestion-head">Suggested by Spelling check</p><div class="cap-flag-diff"><del><span class="cap-flag-mark" aria-hidden="true">&minus;</span><span class="cap-sr-only">Before: </span>Recieved wisdom</del><ins><span class="cap-flag-mark" aria-hidden="true">+</span><span class="cap-sr-only">After: </span><span class="cap-flag-after-text">Received wisdom</span></ins></div><div class="cap-flag-suggestion-foot" data-cap-part="suggestion-foot"><button type="button" class="cap-btn" data-size="sm" data-variant="primary" data-cap-part="apply">Apply<span class="cap-sr-only"> suggestion: Spelling: Recieved</span></button><span class="cap-flag-note">Nothing changes in the draft until you apply it.</span></div></div></div>
+          </li>
+          </ul>
+        </li>
+        <li class="cap-flags-empty" data-for="open">No open flags.</li>
+        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
+        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
+      </ul>
+      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
+    </section>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-comfy">
+  <h2 id="s-comfy">Comfortable density</h2>
+  <div data-density="comfortable">
+    <section class="cap-flags" data-cap="flag-list" id="fl-comfy" aria-labelledby="fl-comfy-h" data-owner data-owner-name="Dustin Edwards" data-viewer="Dustin Edwards" data-cap-now="2026-10-02T10:00:00Z">
+      <header class="cap-flags-head">
+        <h2 class="cap-flags-title" id="fl-comfy-h">Flags</h2>
+        <p class="cap-flags-summary" data-cap-part="summary">0 blocking, 1 advisory, 0 resolved</p>
+        <fieldset class="cap-seg cap-flags-filter" data-cap-part="filter">
+          <legend class="cap-sr-only">Show</legend>
+          <div class="cap-seg-options" data-size="sm">
+            <label><input type="radio" name="fl-comfy-filter" value="open" checked /> Open<span class="cap-flags-count" data-count="open">1</span></label>
+            <label><input type="radio" name="fl-comfy-filter" value="resolved" /> Resolved<span class="cap-flags-count" data-count="resolved">0</span></label>
+            <label><input type="radio" name="fl-comfy-filter" value="all" /> All<span class="cap-flags-count" data-count="all">1</span></label>
+          </div>
+        </fieldset>
+        <div class="cap-flags-batch">
+          <button type="button" class="cap-btn" data-variant="primary" data-cap-part="apply-all" hidden>Apply 0 suggestions</button>
+          <p class="cap-flags-note" data-cap-part="owner-note" hidden>0 suggestions are waiting for the owner, Dustin Edwards. Only they can apply them.</p>
+        </div>
+      </header>
+      <ul class="cap-rows cap-flags-list" data-cap="row-list" role="list" aria-labelledby="fl-comfy-h">
+
+        <li class="cap-flag-group" data-group="advisory">
+          <div class="cap-flag-group-head"><h3 class="cap-flag-group-title" id="fl-comfy-g-advisory">Advisory</h3><span class="cap-flag-group-count">1 open, 0 resolved</span></div>
+          <ul class="cap-flag-group-rows" role="list" aria-labelledby="fl-comfy-g-advisory">
+          <li class="cap-row cap-flag" id="fl-comfy-c5" data-flag="c5" data-kind="advisory" data-state="open" data-anchor="none">
+            <span class="cap-row-status" id="fl-comfy-c5-s"><span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Advisory</span></span>
+            <div class="cap-row-title"><span class="cap-flag-title"><span class="cap-flag-message">The post has no summary line</span></span></div>
+            <p class="cap-row-detail" id="fl-comfy-c5-d">Header check. Cause: <span data-cap-part="cause">Every post has a summary for the feed.</span></p>
+            <span class="cap-row-meta"></span>
+            <div class="cap-row-actions"><button type="button" class="cap-btn" data-size="sm" data-cap-part="resolve">Resolve<span class="cap-sr-only"> flag: The post has no summary line</span></button><button type="button" class="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss">Dismiss<span class="cap-sr-only"> flag: The post has no summary line</span></button></div>
+            <div class="cap-flag-body"></div>
+          </li>
+          </ul>
+        </li>
+        <li class="cap-flags-empty" data-for="open">No open flags.</li>
+        <li class="cap-flags-empty" data-for="resolved">Nothing resolved yet.</li>
+        <li class="cap-flags-empty" data-for="all">No flags on this draft.</li>
+      </ul>
+      <div class="cap-sr-only" role="status" data-cap-part="live"></div>
+    </section>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-react">
+  <h2 id="s-react">The React component, holding its own flags and text</h2>
+  <div data-mount="react"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-msg">
+  <h2 id="s-msg">The page's message region, where Undo appears</h2>
+  <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+</section>
+
+<link rel="stylesheet" href="./specimen/sample.css" />
+<script type="module">
+  import { enhance } from "./flag-list.ts";
+  import { enhance as message } from "../message/message.ts";
+  import { enhance as time } from "../time/time.ts";
+  message();
+  time();
+  enhance();
+</script>
