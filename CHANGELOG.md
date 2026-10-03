@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## 0.4.0 (unreleased)
+
+**New: Catalog** (`.cap-catalog`, `data-cap="catalog"`; `capsomer/behaviour/catalog`, `capsomer/react/catalog`; from the publications list and phage table of dustinedwards.info). A searchable, filterable, sortable collection: search with ranking, combinable facets with counts (a facet's counts hold the other filters and not its own), removable filter chips that are links, a sort menu, a table that becomes cards on a phone (the table's opt-in reflow), a filter tray over the results on a narrow catalog, pagination, and the empty states. A collection declares its fields once (`defineCatalog`); `parseCatalogParams` and `queryCatalog` are pure, so a server renders the same result a browser would. The state is in the address in one fixed order (`catalogHref`, `catalogRedirect`), it is a GET form that works with no script, and the behaviour swaps regions in place with `fetch`, falling back to navigation on any failure. See `components/catalog/catalog.md`.
+
 ## 0.3.0 (2026-10-02)
 
 Two parts. Part 1 extracts the writing and admin pieces of dustinedwards.info's admin (`app/components/admin/*`, `app/routes/admin.*`, in the `dustinedwards-info` repository) into Capsomer, rebuilt in Capsomer's own CSS from the shared dialog, listbox, popover and meter, with their craft matched to the nearest shadcn/ui pattern (the pin in 0.2.0 is unchanged). Part 2 connects Capsomer to Enarratio (0.2.0, from GitHub): a chart palette, a stylesheet section that maps Enarratio's `--enarratio-*` properties onto Capsomer's tokens, a generated `capsomerTheme`, and a chart frame. Enarratio never imports Capsomer, and Capsomer never imports Enarratio at run time.
