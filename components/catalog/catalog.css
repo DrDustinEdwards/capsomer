@@ -1,0 +1,229 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the same line). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Catalog: search, facets with counts, removable chips, sort, a table that becomes cards, and a filter tray on a
+   phone. It is a form that submits with GET, so it works with no script; catalog.ts only swaps regions in place.
+   The layout answers to the catalog's own width (a container), not the window's, so it fits a narrow column too.
+   Built from the field, table, empty and pagination components; this file only lays them out. */
+@layer cap.components {
+  .cap-catalog {
+    container: cap-catalog / inline-size;
+    display: grid;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+
+  /* Search, sort and the buttons share a row that wraps. Apply is for the no-script path; once the behaviour is
+     attached every control updates the page at once and Apply goes away. */
+  .cap-catalog-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-4);
+  }
+  .cap-catalog-search {
+    flex: 1 1 18rem;
+    min-width: 0;
+  }
+  .cap-catalog-sort {
+    flex: 0 1 15rem;
+    min-width: 0;
+  }
+  .cap-catalog[data-enhanced] .cap-catalog-apply {
+    display: none;
+  }
+
+  .cap-catalog-body {
+    display: grid;
+    gap: var(--space-6);
+    min-width: 0;
+  }
+  .cap-catalog-main {
+    display: grid;
+    align-content: start;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  .cap-catalog-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .cap-catalog-count {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-catalog-count:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .cap-catalog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* Facets: general ones first (the markup order), each a labelled group of checks or radios with its count. */
+  .cap-catalog-filters {
+    display: grid;
+    align-content: start;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+  .cap-catalog-facet {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .cap-catalog-n {
+    margin-inline-start: auto;
+    color: var(--dim);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-catalog-facet .cap-check {
+    width: 100%;
+  }
+  .cap-catalog-more > summary {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    cursor: pointer;
+    min-height: var(--target);
+    display: flex;
+    align-items: center;
+  }
+
+  /* Active filters: each chip is a link that removes only itself, so it works with no script. */
+  .cap-catalog-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-catalog-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: max(var(--target), 26px);
+    padding: 0 var(--pad-x);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-full);
+    background: var(--sel);
+    color: var(--text);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cap-catalog-chip:hover {
+    background: var(--raised);
+  }
+  .cap-catalog-chip:focus-visible,
+  .cap-catalog-clear:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .cap-catalog-clear {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* A table sort that is a link: the table's sort look, on a link. */
+  .cap-catalog a.cap-table-sort {
+    text-decoration: none;
+  }
+  .cap-catalog [data-catalog-region="results"][aria-busy="true"] {
+    opacity: 0.6;
+  }
+
+  /* The phone's tray controls are for narrow catalogs only. */
+  .cap-catalog-tray-open,
+  .cap-catalog-tray-head {
+    display: none;
+  }
+
+  /* Wide: the filters are a column beside the results. */
+  @container cap-catalog (min-width: 56rem) {
+    .cap-catalog-body {
+      grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr);
+      align-items: start;
+    }
+    .cap-catalog-filters {
+      position: sticky;
+      top: var(--space-5);
+      max-height: calc(100dvh - var(--space-7));
+      overflow-y: auto;
+      padding-inline-end: var(--space-3);
+    }
+  }
+
+  /* Narrow: the filters are a tray over the results, opened by "Filters". With no script it opens by its address
+     (:target); with the behaviour attached it opens by data-tray. Escape and the Show button close it. */
+  @container cap-catalog (max-width: 55.999rem) {
+    .cap-catalog-tray-open {
+      display: inline-flex;
+    }
+    .cap-catalog-filters {
+      display: none;
+    }
+    /* Over the results, not the window: a container is the containing block of what is positioned inside it, so
+       the tray covers the results area (and scrolls inside it) and the bar above stays visible. */
+    .cap-catalog-body {
+      position: relative;
+    }
+    .cap-catalog-filters:target,
+    .cap-catalog[data-tray="open"] .cap-catalog-filters {
+      display: grid;
+      position: absolute;
+      inset: 0 0 auto 0;
+      z-index: var(--z-overlay, 50);
+      max-height: min(80dvh, 38rem);
+      overflow-y: auto;
+      padding: var(--space-5);
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-lg, 12px);
+      box-shadow: 0 12px 32px color-mix(in srgb, var(--text) 18%, transparent);
+    }
+    .cap-catalog-filters:target .cap-catalog-tray-head,
+    .cap-catalog[data-tray="open"] .cap-catalog-tray-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      position: sticky;
+      top: calc(var(--space-5) * -1);
+      margin: calc(var(--space-5) * -1) calc(var(--space-5) * -1) 0;
+      padding: var(--space-4) var(--space-5);
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+    }
+    .cap-catalog-tray-title {
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-catalog [data-catalog-region="results"] {
+      transition: opacity 100ms linear;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-catalog-chip {
+      border-color: ButtonText;
+    }
+  }
+}
