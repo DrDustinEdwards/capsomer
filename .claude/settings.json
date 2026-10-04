@@ -3,5 +3,33 @@
   "attribution": {
     "commit": "",
     "pr": ""
+  },
+  "env": {
+    "GIT_AUTHOR_NAME": "Dustin Edwards",
+    "GIT_AUTHOR_EMAIL": "204601333+DrDustinEdwards@users.noreply.github.com",
+    "GIT_COMMITTER_NAME": "Dustin Edwards",
+    "GIT_COMMITTER_EMAIL": "204601333+DrDustinEdwards@users.noreply.github.com"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/no-em-dash.sh\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/scoped-git-add.sh\""
+          }
+        ]
+      }
+    ]
   }
 }
