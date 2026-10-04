@@ -1,9 +1,11 @@
 # Headers for every file the static Worker serves (Workers static assets reads this file).
 # The site is held to the rule it asks of the apps: styles from its own origin only, with
 # dynamic values set through the CSSOM. Test results are read at runtime from the repo's
-# results branch on raw.githubusercontent.com.
+# results branch on raw.githubusercontent.com. Cloudflare Web Analytics' auto-injected
+# beacon is allowed in script-src (a public site; Dustin's analytics ruling, 2026-10-03);
+# it reports to this origin's /cdn-cgi/rum, so connect-src needs nothing new.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://raw.githubusercontent.com; frame-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'none'; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://raw.githubusercontent.com; frame-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'none'; object-src 'none'
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
