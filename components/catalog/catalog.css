@@ -215,6 +215,28 @@
     }
   }
 
+  /* A heading over a run of rows (the default order of a grouped catalog): a row-group header spanning the table,
+     so the columns stay aligned across groups. On a phone, where rows are cards, it is a plain heading over them. */
+  .cap-catalog .cap-table tbody tr.cap-catalog-group > th {
+    padding: var(--space-6) var(--pad-x) var(--space-2);
+    border-bottom: 1px solid var(--line-strong);
+    color: var(--text);
+    font-size: var(--fs-lead);
+    font-weight: 650;
+    text-align: start;
+  }
+  @container cap-table (max-width: 639px) {
+    .cap-catalog .cap-table-wrap[data-reflow] > .cap-table > tbody > tr.cap-catalog-group {
+      display: block;
+      padding: var(--space-5) var(--space-5) 0;
+      border-bottom: 0;
+    }
+    .cap-catalog .cap-table-wrap[data-reflow] > .cap-table > tbody > tr.cap-catalog-group > th {
+      display: block;
+      padding: 0 0 var(--space-2);
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .cap-catalog [data-catalog-region="results"] {
       transition: opacity 100ms linear;

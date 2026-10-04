@@ -192,3 +192,55 @@ test("catalogRedirect: an address that carries defaults or unknown parameters is
   assert.equal(catalogRedirect(def, at("?page=1")), "/research/protocols", "page one is the base address");
   assert.equal(catalogRedirect(def, at("?method=pcr&q=rev")), "/research/protocols?q=rev&method=pcr", "the order is fixed");
 });
+
+// ---- headings over the rows (group)
+
+const YEARS = [
+  { id: "a", title: "Alpha", year: 2026 },
+  { id: "b", title: "Beta", year: 2026 },
+  { id: "c", title: "Gamma", year: 2024 },
+  { id: "d", title: "Delta", year: 2019 },
+  { id: "e", title: "Epsilon", year: null },
+];
+const grouped = defineCatalog({
+  id: "papers",
+  noun: ["paper", "papers"],
+  basePath: "/papers",
+  itemKey: (i) => i.id,
+  defaultSort: "-year",
+  group: { field: "year" },
+  fields: [
+    { key: "title", label: "Title", value: (i) => i.title, search: 2, sort: true, column: {} },
+    { key: "year", label: "Year", value: (i) => i.year, type: "number", sort: true, column: { hideWhenGrouped: true } },
+  ],
+});
+
+test("group: the default order puts the rows under a heading for each value, newest first, and an item with none under Other", () => {
+  const { groups, rows } = queryCatalog(grouped, YEARS, parseCatalogParams(grouped, ""));
+  assert.deepEqual(groups.map((g) => [g.value, g.label, g.rows.map((r) => r.id)]), [
+    ["2026", "2026", ["a", "b"]],
+    ["2024", "2024", ["c"]],
+    ["2019", "2019", ["d"]],
+    ["", "Other", ["e"]],
+  ]);
+  assert.equal(rows.length, 5, "the flat rows are still all there for a consumer that wants them");
+});
+
+test("group: a search or another sort is flat, so the rows are not scattered under headings", () => {
+  assert.equal(queryCatalog(grouped, YEARS, parseCatalogParams(grouped, "q=a")).groups, null);
+  assert.equal(queryCatalog(grouped, YEARS, parseCatalogParams(grouped, "sort=year")).groups, null);
+  assert.equal(queryCatalog(grouped, YEARS, parseCatalogParams(grouped, "sort=title")).groups, null);
+  assert.ok(queryCatalog(grouped, YEARS, parseCatalogParams(grouped, "sort=-year")).groups, "the default spelled out is still the default order, so still grouped");
+});
+
+test("group: a catalog with no group has none, and the group may bucket by a finer value than a heading", () => {
+  assert.equal(queryCatalog(def, ITEMS, parseCatalogParams(def, "")).groups, null);
+  const months = defineCatalog({ ...def, id: "months", group: { field: "updated", value: (i) => i.updated.slice(0, 7), label: (v) => `Month ${v}` } });
+  const { groups } = queryCatalog(months, ITEMS, parseCatalogParams(months, ""));
+  assert.deepEqual(groups.map((g) => g.label), ["Month 2026-09", "Month 2026-08", "Month 2026-07"]);
+});
+
+test("group: a group must be on a sortable field that the default sort orders by, or defining it throws", () => {
+  assert.throws(() => defineCatalog({ ...grouped, group: { field: "title" } }), /must be the field the default sort orders by/);
+  assert.throws(() => defineCatalog({ ...grouped, group: { field: "nope" } }), /not a sortable field/);
+});
