@@ -88,6 +88,8 @@ export function Catalog<T>({ definition: def, result, title, cells, labelledBy, 
             </a>
           </div>
           {result.facets.map((facet) => {
+            // A facet with nothing to choose (every value filtered away, or none in the collection) is left out.
+            if (facet.options.length === 0) return null;
             const shown = facet.options.filter((o, i) => i < facet.limit || o.selected);
             const hidden = facet.options.length - shown.length;
             return (
