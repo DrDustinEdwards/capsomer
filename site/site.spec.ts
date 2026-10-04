@@ -79,3 +79,12 @@ eachTheme((theme) => {
     await expect(page.locator("iframe.site-frame")).toHaveCount(2);
   });
 });
+
+// Cloudflare Web Analytics injects its beacon into every HTML page on this zone. A public
+// site allows it in script-src (Dustin's analytics ruling, 2026-10-03); the beacon reports
+// to this origin's /cdn-cgi/rum, so connect-src gains nothing.
+test("security: the CSP allows Cloudflare's Web Analytics beacon and nothing else new", () => {
+  const directive = (name: string) => CSP.split(";").map((d) => d.trim()).find((d) => d.startsWith(`${name} `)) ?? "";
+  expect(directive("script-src").split(" ").slice(1)).toEqual(["'self'", "https://static.cloudflareinsights.com"]);
+  expect(directive("connect-src")).toBe("connect-src 'self' https://raw.githubusercontent.com");
+});
