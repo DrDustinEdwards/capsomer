@@ -40,7 +40,8 @@ export function Catalog<T>({ definition: def, result, title, cells, labelledBy, 
   const ref = useRef<HTMLFormElement>(null);
   useEffect(() => (ref.current ? attachCatalog(ref.current) : undefined), []);
   const id = def.id;
-  const columns = def.fields.filter((f) => f.column);
+  // Under headings a column that only repeats the heading (a Year column under year headings) is left out.
+  const columns = def.fields.filter((f) => f.column && !(result.groups && f.column.hideWhenGrouped));
   const [first, ...rest] = columns;
   const active = result.state.q !== "" || result.chips.length > 0;
   const facetCount = result.facets.reduce((n, f) => n + f.selected, 0);
@@ -87,6 +88,8 @@ export function Catalog<T>({ definition: def, result, title, cells, labelledBy, 
             </a>
           </div>
           {result.facets.map((facet) => {
+            // A facet with nothing to choose (every value filtered away, or none in the collection) is left out.
+            if (facet.options.length === 0) return null;
             const shown = facet.options.filter((o, i) => i < facet.limit || o.selected);
             const hidden = facet.options.length - shown.length;
             return (
@@ -193,18 +196,27 @@ export function Catalog<T>({ definition: def, result, title, cells, labelledBy, 
                       })}
                     </tr>
                   </thead>
-                  <tbody>
-                    {result.rows.map((item) => (
-                      <tr key={def.itemKey(item)}>
-                        {first ? <th scope="row">{title(item)}</th> : null}
-                        {rest.map((f) => (
-                          <td key={f.key} data-label={f.column?.header ?? f.label} data-num={f.column?.align === "end" ? "" : undefined} data-drop={f.column?.drop}>
-                            {cells?.[f.key]?.(item) ?? plain(f, item)}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
+                  {(result.groups ?? [{ value: "", label: "", rows: result.rows }]).map((group) => (
+                    <tbody key={group.value || "all"}>
+                      {result.groups ? (
+                        <tr className="cap-catalog-group">
+                          <th scope="rowgroup" colSpan={columns.length} id={`${id}-group-${group.value}`}>
+                            {group.label}
+                          </th>
+                        </tr>
+                      ) : null}
+                      {group.rows.map((item) => (
+                        <tr key={def.itemKey(item)}>
+                          {first ? <th scope="row">{title(item)}</th> : null}
+                          {rest.map((f) => (
+                            <td key={f.key} data-label={f.column?.header ?? f.label} data-num={f.column?.align === "end" ? "" : undefined} data-drop={f.column?.drop}>
+                              {cells?.[f.key]?.(item) ?? plain(f, item)}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  ))}
                 </table>
               </div>
             )}

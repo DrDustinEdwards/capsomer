@@ -29,6 +29,20 @@ export interface CatalogColumn {
   drop?: 1 | 2;
   // A small note under the header ("last 24 hours").
   note?: string;
+  // The column is left out while the rows are grouped, because the group heading already says it (a Year column
+  // under year headings). It shows again in every flat view.
+  hideWhenGrouped?: boolean;
+}
+
+// Rows under headings, in the default order only. The group field must be the one the default sort orders by, so
+// each heading's rows are together; a search or another sort shows the same rows flat.
+export interface CatalogGroup<T> {
+  // The sortable field the default sort orders by (its key, not "-key").
+  field: string;
+  // What puts an item in a group, when the field's own value is finer than a heading (a month, not a day).
+  value?: (item: T) => string;
+  // How a group's value reads as its heading. Default: the value.
+  label?: (value: string) => string;
 }
 
 export interface CatalogSort<T> {
@@ -66,6 +80,8 @@ export interface CatalogDefinition<T> {
   defaultSort?: string;
   // Rows per page; leave out for one page.
   pageSize?: number;
+  // Headings over the rows in the default order (see CatalogGroup).
+  group?: CatalogGroup<T>;
 }
 
 export interface CatalogState {
@@ -110,11 +126,19 @@ export interface CatalogSortOption {
   selected: boolean;
 }
 
+export interface CatalogRowGroup<T> {
+  value: string;
+  label: string;
+  rows: T[];
+}
+
 export interface CatalogResult<T> {
   state: CatalogState;
   total: number;
   count: number;
   rows: T[];
+  // The shown rows under their headings, or null when the view is flat (a search, another sort, or no group declared).
+  groups: CatalogRowGroup<T>[] | null;
   page: number;
   pageCount: number;
   // The 1-based position of the first and last row shown, of `count`.
@@ -152,6 +176,13 @@ export function defineCatalog<T>(def: CatalogDefinition<T>): CatalogDefinition<T
     const key = def.defaultSort.replace(/^-/, "");
     const field = def.fields.find((f) => f.key === key);
     if (!field?.sort) throw new Error(`catalog ${def.id}: defaultSort "${def.defaultSort}" is not a sortable field`);
+  }
+  if (def.group) {
+    const field = def.fields.find((f) => f.key === def.group?.field);
+    if (!field?.sort) throw new Error(`catalog ${def.id}: group field "${def.group.field}" is not a sortable field`);
+    if (def.defaultSort?.replace(/^-/, "") !== def.group.field) {
+      throw new Error(`catalog ${def.id}: group field "${def.group.field}" must be the field the default sort orders by`);
+    }
   }
   if (!def.basePath.startsWith("/") || def.basePath.includes("?")) throw new Error(`catalog ${def.id}: basePath is a path with no query`);
   return def;
@@ -289,6 +320,10 @@ export function queryCatalog<T>(def: CatalogDefinition<T>, items: readonly T[], 
   const slice = pageSize > 0 ? rows.slice((page - 1) * pageSize, page * pageSize) : rows;
   const from = slice.length === 0 ? 0 : (page - 1) * (pageSize || rows.length) + 1;
 
+  // Headings only in the default order with nothing typed: any other order would scatter a group's rows.
+  const grouped = def.group !== undefined && !searching && sortValue === def.defaultSort;
+  const groups = grouped ? groupRows(def, slice) : null;
+
   // Facet counts hold every other filter and the search, and not the facet's own, so the options of a field
   // show what choosing each would give.
   const facets: CatalogFacetResult[] = def.fields
@@ -358,6 +393,7 @@ export function queryCatalog<T>(def: CatalogDefinition<T>, items: readonly T[], 
     total: items.length,
     count: rows.length,
     rows: slice,
+    groups,
     page,
     pageCount,
     from,
@@ -368,6 +404,20 @@ export function queryCatalog<T>(def: CatalogDefinition<T>, items: readonly T[], 
     sorts,
     href,
   };
+}
+
+// The rows in order, cut into runs of one group value. An item with no value goes under "Other".
+function groupRows<T>(def: CatalogDefinition<T>, rows: readonly T[]): CatalogRowGroup<T>[] {
+  const group = def.group as CatalogGroup<T>;
+  const field = def.fields.find((f) => f.key === group.field) as CatalogField<T>;
+  const groups: CatalogRowGroup<T>[] = [];
+  for (const row of rows) {
+    const value = group.value ? group.value(row) : (asList(field.value(row))[0] ?? "");
+    const last = groups[groups.length - 1];
+    if (last && last.value === value) last.rows.push(row);
+    else groups.push({ value, label: value === "" ? "Other" : (group.label?.(value) ?? value), rows: [row] });
+  }
+  return groups;
 }
 
 // "3 of 14 protocols", "14 protocols", "1 protocol": the live count in words with its total.
