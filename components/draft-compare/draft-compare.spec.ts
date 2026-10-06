@@ -457,3 +457,42 @@ test.describe("without script", () => {
     await expect(box.getByRole("link", { name: "Change 2 of 4" })).toHaveAttribute("href", "#cmp-default-c2");
   });
 });
+
+eachTheme((theme) => {
+  test("accessibility: the patch's marks, numbers, path and counts reach their contrast", async ({ page }) => {
+    await visitStates(page, "draft-compare", theme);
+    await expectContrast(page, [
+      { sel: sel("cmp-patch", ".cap-patch-line[data-op='ins'] .cap-patch-code"), what: "an added line" },
+      { sel: sel("cmp-patch", ".cap-patch-line[data-op='del'] .cap-patch-code"), what: "a removed line" },
+      { sel: sel("cmp-patch", ".cap-patch-line[data-op='ins'] .cap-patch-sign"), what: "the plus" },
+      { sel: sel("cmp-patch", ".cap-patch-line[data-op='del'] .cap-patch-sign"), what: "the minus" },
+      { sel: sel("cmp-patch", ".cap-patch-line[data-op='same'] .cap-patch-no"), what: "a line number" },
+      { sel: sel("cmp-patch", ".cap-patch-hunk-head th"), what: "a hunk header" },
+      { sel: sel("cmp-patch", ".cap-patch-file-counts"), what: "a file's counts" },
+      { sel: sel("cmp-patch", ".cap-patch-note"), what: "the binary-file note" },
+      { sel: sel("cmp-patch", ".cap-compare-counts"), what: "the patch's counts" },
+    ]);
+  });
+
+  test("keyboard: each file's lines scroll in a focusable, named region", async ({ page }) => {
+    await visitStates(page, "draft-compare", theme);
+    const region = page.locator("#cmp-patch .cap-patch-scroll").first();
+    await expect(region).toHaveAttribute("tabindex", "0");
+    await expect(region).toHaveAttribute("role", "region");
+    await region.focus();
+    await expect(region).toBeFocused();
+    await expect(page.getByRole("region", { name: "app/queue.ts → app/queue.ts" }).or(page.getByRole("region", { name: "app/queue.ts" })).first()).toBeVisible();
+  });
+
+  test("behaviour: a changed line opens with a literal sign, and the numbers hold their side", async ({ page }) => {
+    await visitStates(page, "draft-compare", theme);
+    const added = page.locator("#cmp-patch .cap-patch-line[data-op='ins']").first();
+    await expect(added.locator(".cap-patch-sign")).toContainText("+");
+    const removed = page.locator("#cmp-patch .cap-patch-line[data-op='del']").first();
+    await expect(removed.locator(".cap-patch-sign")).toContainText("−");
+    // An added line has no old number; a removed line has no new number.
+    await expect(added.locator(".cap-patch-no").first()).toHaveText("");
+    await expect(removed.locator(".cap-patch-no").nth(1)).toHaveText("");
+    await expect(page.locator("#cmp-patch-none")).toContainText("No changes.");
+  });
+});

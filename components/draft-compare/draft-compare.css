@@ -380,6 +380,106 @@
     }
   }
 
+  /* The patch mode: a unified git patch, one file at a time. The line is the unit, so a
+     changed line is tinted, opens with a literal plus or minus and says "added" or "removed"
+     to a screen reader; the tint is never the only sign. Each file's table scrolls in a
+     focusable, named region (a keyboard can only scroll what it can focus). */
+  .cap-patch-file {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .cap-patch-path {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    margin: 0;
+    font-size: var(--fs-body);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+
+    & code {
+      font-family: var(--mono);
+    }
+  }
+  .cap-patch-kind,
+  .cap-patch-file-counts {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+  }
+  .cap-patch-note {
+    margin: 0;
+    color: var(--muted);
+  }
+  .cap-patch-scroll {
+    box-sizing: border-box;
+    max-block-size: min(70vh, 40rem);
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+  }
+  .cap-patch-table {
+    inline-size: 100%;
+    min-inline-size: max-content;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: var(--fs-detail);
+    line-height: var(--leading);
+  }
+  .cap-patch-hunk-head th {
+    padding: var(--space-1) var(--pad-x);
+    background: var(--sunken);
+    border-block: 1px solid var(--line);
+    color: var(--muted);
+    font-weight: 400;
+    text-align: start;
+  }
+  .cap-patch-no {
+    min-inline-size: 3.5ch;
+    padding-inline: var(--space-2);
+    color: var(--muted);
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+    vertical-align: top;
+  }
+  .cap-patch-sign {
+    inline-size: 2ch;
+    padding-inline: var(--space-1);
+    font-weight: 700;
+    text-align: center;
+    vertical-align: top;
+  }
+  .cap-patch-code {
+    padding-inline: var(--space-2) var(--pad-x);
+    white-space: pre;
+    color: var(--text);
+
+    & code {
+      font: inherit;
+    }
+  }
+  .cap-patch-eol {
+    margin-inline-start: var(--space-3);
+    color: var(--muted);
+  }
+  .cap-patch-line[data-op="ins"] {
+    background: var(--ok-soft);
+    box-shadow: inset 3px 0 0 var(--ok);
+  }
+  .cap-patch-line[data-op="del"] {
+    background: var(--crit-soft);
+    box-shadow: inset 3px 0 0 var(--crit);
+  }
+  .cap-patch-line[data-op="del"] .cap-patch-code code {
+    text-decoration: line-through;
+    text-decoration-color: var(--crit);
+    text-decoration-thickness: 1px;
+  }
+
   @media (forced-colors: active) {
     .cap-ins,
     .cap-del,
@@ -398,6 +498,11 @@
     }
     .cap-compare-hunk[data-current] {
       outline: 2px solid Highlight;
+    }
+    .cap-patch-line[data-op="ins"],
+    .cap-patch-line[data-op="del"] {
+      box-shadow: none;
+      border-inline-start: 3px solid CanvasText;
     }
     .cap-compare-jump-link[aria-current="true"] {
       border-color: Highlight;
