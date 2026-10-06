@@ -2,7 +2,7 @@
 // the html the renderer writes. Correctness only; nothing here pins a design value.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { analyse, commonSubsequence, countWords, countsText, diffSentences, diffWords, renderCompare, splitSentences } from "../../components/draft-compare/draft-compare.ts";
+import { analyse, commonSubsequence, countWords, countsText, diffSentences, diffWords, parsePatch, patchCounts, renderCompare, renderPatch, splitSentences } from "../../components/draft-compare/draft-compare.ts";
 
 const side = (s) => s.filter((p) => p.op !== "ins").map((p) => p.text).join("");
 const other = (s) => s.filter((p) => p.op !== "del").map((p) => p.text).join("");
@@ -179,4 +179,75 @@ test("commonSubsequence: agrees with a plain dynamic-programming length on rando
     assert.equal(pairs.length, dp[a.length][b.length]);
     for (const [i, j] of pairs) assert.equal(a[i], b[j]);
   }
+});
+
+const PATCH = [
+  "commit 4f2a9c1",
+  "Author: A <a@b.c>",
+  "",
+  "    Subject",
+  "",
+  "diff --git a/app/queue.ts b/app/queue.ts",
+  "index 3b1c2d4..9e8f7a6 100644",
+  "--- a/app/queue.ts",
+  "+++ b/app/queue.ts",
+  "@@ -10,3 +10,4 @@ export function sortQueue() {",
+  " keep",
+  "-old line",
+  "+new line",
+  "+extra <b>line</b>",
+  " tail",
+  "\\ No newline at end of file",
+  "diff --git a/new.txt b/new.txt",
+  "new file mode 100644",
+  "--- /dev/null",
+  "+++ b/new.txt",
+  "@@ -0,0 +1 @@",
+  "+hello",
+  "diff --git a/logo.png b/logo.png",
+  "Binary files a/logo.png and b/logo.png differ",
+  "",
+].join("\n");
+
+test("parsePatch: files, hunks, counts and line numbers, skipping commit headers", () => {
+  const files = parsePatch(PATCH);
+  assert.equal(files.length, 3);
+  assert.deepEqual(files.map((f) => [f.newPath, f.added, f.removed]), [["app/queue.ts", 2, 1], ["new.txt", 1, 0], ["logo.png", 0, 0]]);
+  const lines = files[0].hunks[0].lines;
+  assert.deepEqual(lines.map((l) => [l.op, l.oldNo, l.newNo]), [["same", 10, 10], ["del", 11, null], ["ins", null, 11], ["ins", null, 12], ["same", 12, 13]]);
+  assert.equal(lines[4].noEol, true);
+  assert.equal(files[0].hunks[0].context, "export function sortQueue() {");
+  assert.equal(files[1].oldPath, "/dev/null");
+  assert.match(files[2].note, /Binary/);
+  assert.deepEqual(patchCounts(files), { files: 3, added: 3, removed: 1 });
+});
+
+test("parsePatch: a bare ---/+++ patch with no diff --git line is read, and CRLF is not a difference", () => {
+  const files = parsePatch("--- a/x\r\n+++ b/x\r\n@@ -1 +1 @@\r\n-a\r\n+b\r\n");
+  assert.equal(files.length, 1);
+  assert.deepEqual(files[0].hunks[0].lines.map((l) => [l.op, l.text]), [["del", "a"], ["ins", "b"]]);
+});
+
+test("parsePatch: nothing that is not a patch gives no files", () => {
+  assert.deepEqual(parsePatch(""), []);
+  assert.deepEqual(parsePatch("just some text\nand more"), []);
+});
+
+test("renderPatch: a literal sign and a word on each changed line, text escaped, counts in words", () => {
+  const html = renderPatch(PATCH, { id: "p1", title: "Subject" });
+  assert.match(html, /aria-label="Patch: Subject"/);
+  assert.match(html, /3 files changed, 3 lines added, 1 removed/);
+  assert.match(html, /data-op="ins"[^]*?<span aria-hidden="true">\+<\/span><span class="cap-sr-only"> added <\/span>/);
+  assert.match(html, /data-op="del"[^]*?<span aria-hidden="true">−<\/span><span class="cap-sr-only"> removed <\/span>/);
+  assert.ok(html.includes("extra &lt;b&gt;line&lt;/b&gt;"));
+  assert.ok(!html.includes("<b>line</b>"));
+  assert.match(html, /role="region" aria-labelledby="p1-file-1" tabindex="0"/);
+  assert.match(html, /Binary file changed/);
+  assert.match(html, /no newline at end of file/);
+});
+
+test("renderPatch: a patch with no lines is a status, not an empty box", () => {
+  const html = renderPatch("", { id: "p2" });
+  assert.match(html, /<strong>No changes\.<\/strong>/);
+  assert.ok(!html.includes("cap-patch-table"));
 });

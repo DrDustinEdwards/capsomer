@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef } from "react";
-import { enhance, renderCompare, setView, VIEWS, type CompareLabels, type CompareSide, type CompareView, type RunSpan } from "./draft-compare.ts";
+import { enhance, renderCompare, renderPatch, setView, VIEWS, type CompareLabels, type CompareSide, type CompareView, type RunSpan } from "./draft-compare.ts";
 
 export interface DraftCompareProps {
   before: CompareSide;
@@ -54,4 +54,21 @@ export function DraftCompare({ before, after, labels, view, onViewChange, contex
   }, [onViewChange, html]);
 
   return <div ref={host} dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+export interface DraftPatchProps {
+  // A unified git patch (git diff, git show, git format-patch).
+  patch: string;
+  // What the patch is of; names the region.
+  title?: string;
+  // Give each patch on a page its own id. Made up when left out.
+  id?: string;
+}
+
+// The patch mode: a unified patch by line, with a literal plus or minus on each changed line.
+// Pure markup, so a server render and the browser agree; there is no behaviour to attach.
+export function DraftPatch({ patch, title, id }: DraftPatchProps) {
+  const own = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const html = useMemo(() => renderPatch(patch, { id: id ?? `patch-${own}`, title }), [patch, title, id, own]);
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

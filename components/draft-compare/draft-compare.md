@@ -4,7 +4,7 @@ title: Draft compare
 summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on colour, a legend, jump keys and folded unchanged passages.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
+states: [patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
 added: 0.3.0
 source: the site admin's revision-list.tsx (DiffBlock, RevisionMeta), admin.posts.$slug.history.tsx and admin-history.css
 replaces:
@@ -26,8 +26,46 @@ Draft 3 against draft 4; the published post against the draft that is open; what
 ## When not to
 
 - A list of commits with a patch for each: the site's history list (row list plus this component for the opened one).
-- Code or a configuration file, where the line is the unit: a unified patch in a `<pre>`.
+- Code or a configuration file, where the line is the unit: use the patch mode below, not the word compare.
 - Two numbers or two records: the table, or the detail panel's before and after list (`cap-detail-diff`).
+
+## The patch mode
+
+Where the line is the unit (code, a configuration file, a commit), give `renderPatch` a unified git patch (`git diff`, `git show`, `git format-patch`) and it draws what the site's `DiffBlock` drew, as Capsomer's own markup. It is an option of this component, not a second one: the same legend, marks, tokens and scroll region.
+
+- **One file at a time.** A heading with the path (a rename reads "old → new", a new or deleted file says so) and its counts, then the lines in a table inside a focusable, named, scrolling region (a keyboard can only scroll what it can focus).
+- **A changed line is more than a tint.** The old and new line numbers sit beside it, a literal plus or minus opens it, and a screen reader hears "added" or "removed". A removed line is also struck through. In forced colours the tint is gone and the edge and sign remain.
+- **Hunk headers stay** (`@@ -10,3 +10,4 @@ …`) as row-group headers, so a long file is still a series of places.
+- **What has no text is said in words.** A binary file, or a rename with no change, gets a note, not an empty table. A patch with no lines is a status, "No changes."
+- **Forgiving.** Commit headers, `index` and mode lines are skipped; CRLF is read as LF; a patch with only `---` and `+++` lines works. `parsePatch` is pure and exported, so a server can use it.
+- **No script.** It is markup and CSS only: `data-cap` is not set and `enhance()` has nothing to do. Do not use it for prose; a reflowed paragraph shows as wholly removed and added, which is what the word compare is for.
+
+```ts
+import { renderPatch } from "capsomer/behaviour/draft-compare";
+
+const html = renderPatch(patchText, { id: "commit-4f2a9c1", title: "Show the newest mention first" });
+```
+
+```tsx
+import { DraftPatch } from "capsomer/react/draft-compare";
+
+<DraftPatch patch={patchText} title="Show the newest mention first" />
+```
+
+```html
+<section class="cap-compare cap-patch" data-mode="patch" id="commit-4f2a9c1" aria-label="Patch: …">
+  <div class="cap-compare-bar">…the key and the counts…</div>
+  <section class="cap-patch-file" aria-labelledby="…-file-1">
+    <h3 class="cap-patch-path" id="…-file-1"><code>app/queue.ts</code><span class="cap-patch-file-counts">2 added, 1 removed</span></h3>
+    <div class="cap-patch-scroll" role="region" aria-labelledby="…-file-1" tabindex="0">
+      <table class="cap-patch-table"><caption class="cap-sr-only">…</caption>
+        <tbody class="cap-patch-hunk"><tr class="cap-patch-hunk-head"><th scope="rowgroup" colspan="4"><code>@@ -10,3 +10,4 @@</code></th></tr>
+          <tr class="cap-patch-line" data-op="ins"><td class="cap-patch-no"></td><td class="cap-patch-no">11</td><td class="cap-patch-sign">…</td><td class="cap-patch-code"><code>…</code></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</section>
+```
 
 ## The default and its reason
 
@@ -105,7 +143,7 @@ enhance(); // the jump keys, the remembered view, Expand all
 </section>
 ```
 
-`diffWords(a, b)`, `diffSentences(a, b)`, `analyse(a, b)`, `splitSentences(text)`, `countWords(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
+`parsePatch(patch)`, `patchCounts(files)` and `patchCountsText(counts)` belong to the patch mode. `diffWords(a, b)`, `diffSentences(a, b)`, `analyse(a, b)`, `splitSentences(text)`, `countWords(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
 
 In React, `import { DraftCompare } from "capsomer/react/draft-compare"`:
 
