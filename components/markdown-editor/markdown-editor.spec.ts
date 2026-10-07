@@ -151,9 +151,43 @@ test("behaviour: the edits wrap, cycle, number, place and link as the site's edi
 
 eachTheme((theme) => {
   // ---- accessibility ---------------------------------------------------------------------
+  test("accessibility: a scroller that overflows is a keyboard stop, one that does not keeps CodeMirror's own -1", async ({ page }) => {
+    await visitStates(page, NAME, theme);
+    await expect(page.locator("#sp-long .cm-editor")).toBeVisible();
+    await expect(page.locator("#sp-long .cm-scroller")).toHaveAttribute("tabindex", "0");
+    await expect(page.locator("#sp-long-disabled .cm-scroller")).toHaveAttribute("tabindex", "0");
+    await expect(page.locator("#sp-default .cm-scroller")).toHaveAttribute("tabindex", "-1");
+    await expect(page.locator("#sp-empty .cm-scroller")).toHaveAttribute("tabindex", "-1");
+  });
+
+  test("keyboard: a disabled editor's text scrolls from the keyboard, by the arrow keys and Page Down on the scroller", async ({ page }) => {
+    await visitStates(page, NAME, theme);
+    const scroller = page.locator("#sp-long-disabled .cm-scroller");
+    await expect(scroller).toHaveAttribute("tabindex", "0");
+    await scroller.focus();
+    await expect(scroller).toBeFocused();
+    await page.keyboard.press("ArrowDown");
+    await expect.poll(() => scroller.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    const after = await scroller.evaluate((el) => el.scrollTop);
+    // Chrome drops a key sent while the last key's smooth scroll settles: wait for it to hold still.
+    await page.waitForTimeout(400);
+    await page.keyboard.press("PageDown");
+    await expect.poll(() => scroller.evaluate((el) => el.scrollTop)).toBeGreaterThan(after);
+  });
+
+  test("keyboard: in an editable long editor Tab meets the scroller first and the text next, and typing still works", async ({ page }) => {
+    await visitStates(page, NAME, theme);
+    const scroller = page.locator("#sp-long .cm-scroller");
+    const content = page.locator("#sp-long .cm-content");
+    await scroller.focus();
+    await page.keyboard.press("Tab");
+    await expect(content).toBeFocused();
+    await page.keyboard.type("Z");
+    await expect(content).toContainText("Z");
+  });
   test("accessibility: no axe violations, the states page", async ({ page }) => {
     await visitStates(page, NAME, theme);
-    await expect(page.locator(".cm-content")).toHaveCount(9);
+    await expect(page.locator(".cm-content")).toHaveCount(11);
     await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
@@ -170,7 +204,7 @@ eachTheme((theme) => {
 
   test("accessibility: text, placeholder, gutter, syntax tones and the footer reach their contrast", async ({ page }) => {
     await visitStates(page, NAME, theme);
-    await expect(page.locator(".cm-content")).toHaveCount(9);
+    await expect(page.locator(".cm-content")).toHaveCount(11);
     const d = "#sp-default";
     await expectContrast(page, [
       { sel: `${d} .cm-line`, what: "body text" },
