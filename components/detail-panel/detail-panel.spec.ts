@@ -154,4 +154,84 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Copy command" }).click();
     await expect(panel(page).getByRole("status")).toHaveText(/Command copied\.|Command is selected/);
   });
+  // ---- driven by the address (?inspect=) ------------------------------------------------------
+  const MENTION = "A reply from rosa.example about the burst size paper";
+  const mention = (page: Page) => page.getByRole("dialog", { name: MENTION });
+  const visitUrl = async (page: Page, inspect?: string) => {
+    await page.goto(`components/detail-panel/states.html?theme=${theme}&only=url${inspect ? `&inspect=${inspect}` : ""}`);
+    await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  };
+
+  test("behaviour: a link to ?inspect= opens the panel as the modal and puts the id in the address, other parts kept", async ({ page }) => {
+    await visitUrl(page);
+    await expect(mention(page)).toBeHidden();
+    await page.locator("#open-mention-41").click();
+    await expect(mention(page)).toBeVisible();
+    expect(await page.locator("#mention-41").evaluate((el) => (el as HTMLDialogElement).matches(":modal"))).toBe(true);
+    const url = new URL(page.url());
+    expect(url.searchParams.get("inspect")).toBe("mention-41");
+    expect(url.searchParams.get("theme")).toBe(theme);
+    expect(url.searchParams.get("only")).toBe("url");
+  });
+
+  test("keyboard: Esc closes the address-driven panel, takes its entry back, and focus returns to the link", async ({ page }) => {
+    await visitUrl(page);
+    const before = await page.evaluate(() => history.length);
+    await page.locator("#open-mention-41").focus();
+    await page.keyboard.press("Enter");
+    await expect(mention(page)).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(mention(page)).toBeHidden();
+    await expect.poll(() => new URL(page.url()).searchParams.has("inspect")).toBe(false);
+    await expect(page.locator("#open-mention-41")).toBeFocused();
+    // The entry it pushed was taken back: Back goes where it went before, not into the panel.
+    expect(await page.evaluate(() => history.length)).toBeGreaterThanOrEqual(before);
+    expect(new URL(page.url()).searchParams.get("only")).toBe("url");
+  });
+
+  test("behaviour: Back closes the address-driven panel and Forward opens it again", async ({ page }) => {
+    await visitUrl(page);
+    await page.locator("#open-mention-41").click();
+    await expect(mention(page)).toBeVisible();
+    await page.goBack();
+    await expect(mention(page)).toBeHidden();
+    expect(new URL(page.url()).searchParams.has("inspect")).toBe(false);
+    await page.goForward();
+    await expect(mention(page)).toBeVisible();
+    expect(new URL(page.url()).searchParams.get("inspect")).toBe("mention-41");
+  });
+
+  test("behaviour: a page loaded with ?inspect= has the panel open, and closing it rewrites the address without a new entry", async ({ page }) => {
+    await visitUrl(page, "mention-41");
+    await expect(mention(page)).toBeVisible();
+    expect(await page.locator("#mention-41").evaluate((el) => (el as HTMLDialogElement).matches(":modal"))).toBe(true);
+    const before = await page.evaluate(() => history.length);
+    await page.keyboard.press("Escape");
+    await expect(mention(page)).toBeHidden();
+    await expect.poll(() => new URL(page.url()).searchParams.has("inspect")).toBe(false);
+    expect(await page.evaluate(() => history.length)).toBe(before);
+  });
+
+  test("behaviour: the plain form inside posts its fields and the pressed button, with no script of ours", async ({ page }) => {
+    await visitUrl(page, "mention-41");
+    const posted = page.evaluate(
+      () =>
+        new Promise<Record<string, string>>((done) => {
+          document.querySelector("#mention-41 form")!.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const data = new FormData(e.target as HTMLFormElement, (e as SubmitEvent).submitter);
+            done(Object.fromEntries(Array.from(data.entries()).map(([k, v]) => [k, String(v)])));
+          });
+        }),
+    );
+    await mention(page).getByRole("textbox", { name: "Note, kept with the decision" }).fill("Looks like a real reply.");
+    await mention(page).getByRole("button", { name: "Approve" }).click();
+    expect(await posted).toEqual({ id: "mention-41", note: "Looks like a real reply.", intent: "approve" });
+  });
+
+  test("accessibility: the address-driven panel, open, has no axe violations", async ({ page }) => {
+    await visitUrl(page, "mention-41");
+    await expect(mention(page)).toBeVisible();
+    await expectNoAxeViolations(page);
+  });
 });
