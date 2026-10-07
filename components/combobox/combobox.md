@@ -4,7 +4,7 @@ title: Combobox
 summary: A labelled text box that filters a list, where only a listed value can be chosen. Base UI underneath, React only.
 parts: [css, react]
 tool: Base UI
-states: [closed, closed with a value, with a clear button, several values as chips, comfortable density, open, open with chips, open with group labels, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]
+states: [a tag field, typing a new tag, closed, closed with a value, with a clear button, several values as chips, comfortable density, open, open with chips, open with group labels, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]
 added: 0.1.0
 updated: 0.2.0
 source: none (new in Capsomer; the Portal's command palette is the command menu, not this)
@@ -32,6 +32,7 @@ Two to five values: a radio group or the segmented control. Up to about fifteen:
 - **A visible label above the box**, help outside the box, and the placeholder as an example only (patterns.md, "Form"). Required is written in the label.
 - **Only a listed value can be chosen.** Text that matches nothing is not kept: when the list closes, the box shows the chosen value's label again, or nothing. The wrapper holds the box's text to make this certain.
 - **The popup wears the shared blocks**: `cap-popover` (the raised surface, hairline ring, shadow and the fade and zoom motion, with `data-flush`) around a `cap-listbox` of `cap-option`s. The highlighted option is `--accent-soft` with `--text` and a 3 px accent edge on its inline start, the same as the command menu's, so the cue is not the tint alone. DOM focus stays in the box; the option is marked `data-highlighted` and pointed to by `aria-activedescendant`. A chosen option has a check at its end.
+- **A tag field is `ComboboxMultiple` with `creatable`.** Anything typed that is not an item can be added as a value of its own, and the chips show listed and made values alike. As text is typed, a first row `Create “western blot”` offers it, highlighted, so Enter adds exactly what was typed; the box empties and keeps focus for the next tag. Text that matches an item, ignoring case and extra spaces, offers no create row and picks that item, and text that matches a tag already on the field offers nothing, so a tag is never made twice. A made value is its text (`values` is `string[]` as before, so an app stores the strings and passes them back as `values`; ones not in `items` still show as chips). Every value is posted under `name`, one input each. `createLabel(text)` changes the row's words. Backspace in the empty box and each chip's remove button take a tag away.
 - **Groups, a clear button and chips are optional.** Options with a `group` are listed under a muted label; `clearable` adds a clear button that shows while a value is chosen; `ComboboxMultiple` shows each chosen value as a chip with its own named remove button and keeps the list open for more.
 - **An empty result names the typed text**: "No match for “foxhund”. Check the spelling, or clear the box to see every option." Pass `emptyText` to say more.
 - **Loading says so, and never says no match.** The message sits in Base UI's status region, so it is announced.

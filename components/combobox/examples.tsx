@@ -42,6 +42,28 @@ function Held(props: Omit<ComboboxProps, "value" | "onValueChange"> & { initial?
   );
 }
 
+// Tag suggestions: a tag field takes these or anything typed.
+const TAGS: ComboboxOption[] = [
+  { value: "phage", label: "phage" },
+  { value: "release", label: "release" },
+  { value: "field notes", label: "field notes" },
+  { value: "search", label: "search" },
+  { value: "uptime", label: "uptime" },
+];
+
+// A tag field that holds its own values, with the values written beside it for a test.
+function Tags(props: { defaultValues?: string[]; defaultOpen?: boolean; defaultInputValue?: string }) {
+  const [values, setValues] = useState<string[]>(props.defaultValues ?? []);
+  return (
+    <>
+      <ComboboxMultiple label="Tags" items={TAGS} creatable values={values} onValuesChange={setValues} placeholder="Add a tag" help="Pick a suggestion or type a new tag and press Enter." name="tags" defaultOpen={props.defaultOpen} defaultInputValue={props.defaultInputValue} />
+      <p className="cap-muted" data-tags={values.join("|")}>
+        Tags: {values.length ? values.join(", ") : "none"}
+      </p>
+    </>
+  );
+}
+
 // Highlights an option the way a keyboard does, for the static picture. The spec checks
 // the real keys.
 function Highlighted() {
@@ -67,6 +89,8 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   chosen: () => <Held label="Deploy to" items={SITES} initial="foxhound" />,
   clearable: () => <Held label="Primary site" items={SITES} initial="germomics" clearable help="Clear it to choose again." />,
   chips: () => <ComboboxMultiple label="Sites to back up" items={SITES} defaultValues={["capsid", "foxhound", "germomics"]} help="Type to add another. Remove one with its button." />,
+  tags: () => <Tags defaultValues={["phage", "gel shift assay"]} />,
+  "open-tags": () => <Tags defaultValues={["phage"]} defaultOpen defaultInputValue="gel" />,
   comfortable: () => (
     <div data-density="comfortable">
       <Held label="Deploy to" items={SITES} initial="foxhound" clearable />
