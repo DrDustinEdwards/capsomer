@@ -2,9 +2,9 @@
 name: menu
 title: Menu
 summary: A button that opens a list of actions, with danger items last after a separator. Base UI underneath, React only.
-parts: [css, react]
+parts: [css, behaviour, react]
 tool: Base UI
-states: [closed, trigger hover, trigger keyboard focus, open, item highlighted, disabled item with its reason, danger item, shortcut shown, checkbox and radio items, submenu, group labels, comfortable density]
+states: [form menu closed, form menu open, closed, trigger hover, trigger keyboard focus, open, item highlighted, disabled item with its reason, danger item, shortcut shown, checkbox and radio items, submenu, group labels, comfortable density]
 added: 0.1.0
 updated: 0.2.0
 source: none (new in Capsomer)
@@ -35,6 +35,7 @@ One or two actions: show them as buttons (`.cap-btn`). Moving between pages: lin
 - **The popup wears the shared blocks**: `cap-popover` (the raised surface, hairline ring, shadow, and the fade and zoom motion) and the listbox's option look. The highlighted item is `--accent-soft` with `--text` and a 3 px accent edge; a highlighted danger item is `--crit-soft` with `--crit` and a `--crit` edge, so neither cue is the tint alone.
 - **Checkbox and radio items** show a check at their end while on or chosen, and stay open when pressed (a toggle is often followed by another). **Group labels** are muted headings over a group; **a submenu** opens to the side from an item with a chevron, with ArrowRight, and ArrowLeft or Esc closes only it.
 - **Not modal.** The page keeps scrolling and there is no invisible backdrop; Esc, Tab or a click outside closes the menu, and focus returns to the trigger.
+- **A form menu is the same menu with no script: `details.cap-menu-form` of submit buttons.** For row actions on a page that works as delivered (an admin table whose actions post to the server), the Base UI menu has nothing in the HTML until script runs. The form menu is a native `<details>` whose `<summary>` is the `.cap-btn` trigger and whose body is a `<form class="cap-popover cap-menu">` of `<button type="submit" class="cap-option cap-menu-item" name="intent" value="...">`. It wears the same surface and item look, danger items last after a separator, a disabled item is a real `disabled` button with its reason in plain text under it (a native disabled button cannot be reached, so the reason is never hidden behind it). It is not a `role="menu"`: without script it is a disclosure of buttons, and it promises no menu keys it cannot keep. A destructive intent is answered by the server with its own confirmation page. With script, `enhance()` adds Esc (closes, focus back on the summary), the arrow keys between the buttons (a disabled one is skipped), ArrowDown on the closed summary (opens, first button), and closing on a press or focus outside.
 
 ## Keyboard
 
@@ -106,6 +107,23 @@ More than actions:
 ```
 
 It renders `button.cap-btn.cap-menu-trigger`; portalled: `.cap-menu-positioner` > `.cap-popover.cap-menu` (role `menu`) > `.cap-option.cap-menu-item` (`.cap-option-icon`, `.cap-option-label`, `.cap-option-keys` with `kbd.cap-menu-kbd`, `.cap-option-indicator`, `.cap-menu-chevron`, `.cap-menu-reason`; `data-tone="crit"` on a danger item), `.cap-listbox-label` and `.cap-listbox-separator`. Danger items are moved to the end of the top-level menu.
+
+A form menu, with no script (HTML, or React `FormMenu` which renders exactly this):
+
+```html
+<details class="cap-menu-form" data-cap="menu-form">
+  <summary class="cap-btn cap-menu-trigger">Actions for foxhound.app <svg aria-hidden="true">...</svg></summary>
+  <form class="cap-popover cap-menu" action="/admin/sites/foxhound" method="post">
+    <input type="hidden" name="site" value="foxhound" />
+    <button type="submit" class="cap-option cap-menu-item" name="intent" value="open"><span class="cap-option-label">Open site</span></button>
+    <button type="submit" class="cap-option cap-menu-item" name="intent" value="archive" disabled><span class="cap-option-label">Archive</span><span class="cap-menu-reason">Not while a deploy runs.</span></button>
+    <hr class="cap-listbox-separator cap-menu-separator" />
+    <button type="submit" class="cap-option cap-menu-item" data-tone="crit" name="intent" value="delete"><span class="cap-option-label">Delete site</span></button>
+  </form>
+</details>
+```
+
+`import { enhance } from "capsomer/behaviour/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for foxhound.app" action="/admin/sites/foxhound" hidden={{ site: "foxhound" }} items={[{ label: "Open site", value: "open" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator.
 
 ## Matches shadcn
 

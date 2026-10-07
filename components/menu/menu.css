@@ -124,6 +124,71 @@
     font-weight: 400;
   }
 
+  /* The form menu: a <details> of submit buttons that works with no script. Not a role="menu"
+     (it is a disclosure of buttons, so it promises no arrow-key menu without script); the
+     behaviour module adds Esc, arrow keys and closing on an outside press. The popup wears the
+     same surface and item look as the Base UI menu. */
+  .cap-menu-form {
+    position: relative;
+    display: inline-block;
+
+    & > summary {
+      list-style: none;
+      cursor: pointer;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+    }
+    &[open] > summary {
+      background: var(--sunken);
+    }
+    &[open] > summary svg {
+      transform: rotate(180deg);
+    }
+    & > .cap-menu {
+      position: absolute;
+      inset-block-start: calc(100% + var(--space-1));
+      inset-inline-start: 0;
+      z-index: var(--z-overlay);
+      display: grid;
+      margin: 0;
+    }
+    /* The items are buttons: the option look, full width, in the grid the menu items use. */
+    & .cap-option.cap-menu-item {
+      inline-size: 100%;
+      border: 0;
+      background: transparent;
+      font: inherit;
+      text-align: start;
+      cursor: pointer;
+
+      /* A button's own text colour would hide the option's tone and its disabled look. */
+      &:where(:not([data-tone], :disabled)) {
+        color: var(--text);
+      }
+      &:disabled {
+        color: var(--dim);
+        cursor: not-allowed;
+      }
+      &:where(:hover, :focus-visible):not(:disabled) {
+        background: var(--accent-soft);
+        box-shadow: inset 3px 0 0 var(--accent);
+        outline: 0;
+      }
+      &[data-tone="crit"]:where(:hover, :focus-visible):not(:disabled) {
+        background: var(--crit-soft);
+        color: var(--crit);
+        box-shadow: inset 3px 0 0 var(--crit);
+      }
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-menu-form > summary svg {
+      transition: transform var(--dur-fast) var(--ease-out);
+    }
+  }
+
   @media (forced-colors: active) {
     .cap-menu-item[data-popup-open] {
       outline: 2px solid Highlight;

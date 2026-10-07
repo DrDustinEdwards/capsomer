@@ -236,4 +236,91 @@ eachTheme((theme) => {
     const violations = await page.evaluate(() => (window as unknown as { __csp: string[] }).__csp);
     expect(violations).toEqual([]);
   });
+  test("accessibility: the form menu, closed and open, has no axe violations", async ({ page }) => {
+    await visitStates(page, "menu", theme);
+    await expectNoAxeViolations(page, undefined, { baseUi: true });
+    await visitStates(page, "menu", theme, "form-open");
+    await expectNoAxeViolations(page, undefined, { baseUi: true });
+  });
+
+  test("behaviour: the form menu is a details of submit buttons, danger last, a disabled one with its reason", async ({ page }) => {
+    await visitStates(page, "menu", theme, "form-open");
+    const menu = page.locator("#menu-form-open");
+    await expect(menu).toHaveAttribute("open", "");
+    const buttons = menu.locator("form button");
+    await expect(buttons).toHaveText([/^Open site$/, /^Run checks now$/, /^ArchiveNot while a deploy runs/, /^Delete site$/]);
+    await expect(buttons.nth(2)).toBeDisabled();
+    await expect(menu.getByText("Not while a deploy runs. Try again when it ends.")).toBeVisible();
+    await expect(buttons.nth(3)).toHaveAttribute("data-tone", "crit");
+    // It promises no menu role it cannot keep without script.
+    await expect(menu.locator("[role='menu'], [role='menuitem']")).toHaveCount(0);
+  });
+
+  test("behaviour: pressing an item posts the form with its intent and the row's hidden fields", async ({ page }) => {
+    await visitStates(page, "menu", theme, "form-open");
+    const posted = page.evaluate(
+      () =>
+        new Promise<{ intent: string; site: string; action: string }>((done) => {
+          document.querySelector("#menu-form-open form")!.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const data = new FormData(form, (e as SubmitEvent).submitter);
+            done({ intent: String(data.get("intent")), site: String(data.get("site")), action: form.getAttribute("action") ?? "" });
+          });
+        }),
+    );
+    await page.locator("#menu-form-open").getByRole("button", { name: "Run checks now" }).click();
+    expect(await posted).toEqual({ intent: "check", site: "foxhound", action: "/admin/sites/foxhound" });
+  });
+
+  test("keyboard: Enter opens the form menu, the arrow keys move between its buttons, Esc closes it and returns to the summary", async ({ page }) => {
+    await visitStates(page, "menu", theme);
+    const menu = page.locator("#menu-form");
+    const summary = menu.locator("summary");
+    await summary.focus();
+    await page.keyboard.press("Enter");
+    await expect(menu).toHaveAttribute("open", "");
+    await page.keyboard.press("ArrowDown");
+    await expect(menu.getByRole("button", { name: "Open site" })).toBeFocused();
+    await page.keyboard.press("ArrowDown");
+    await expect(menu.getByRole("button", { name: "Run checks now" })).toBeFocused();
+    // The disabled item is skipped, so the next stop is the danger item, then back to the first.
+    await page.keyboard.press("ArrowDown");
+    await expect(menu.getByRole("button", { name: "Delete site" })).toBeFocused();
+    await page.keyboard.press("ArrowDown");
+    await expect(menu.getByRole("button", { name: "Open site" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(menu).not.toHaveAttribute("open", "");
+    await expect(summary).toBeFocused();
+  });
+
+  test("keyboard: ArrowDown on the closed summary opens the form menu on its first button", async ({ page }) => {
+    await visitStates(page, "menu", theme);
+    const menu = page.locator("#menu-form");
+    await menu.locator("summary").focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(menu).toHaveAttribute("open", "");
+    await expect(menu.getByRole("button", { name: "Open site" })).toBeFocused();
+  });
+
+  test("behaviour: a press outside closes the form menu", async ({ page }) => {
+    await visitStates(page, "menu", theme);
+    const menu = page.locator("#menu-form");
+    await menu.locator("summary").click();
+    await expect(menu).toHaveAttribute("open", "");
+    await page.locator("h1").click();
+    await expect(menu).not.toHaveAttribute("open", "");
+  });
+  test("accessibility: the form menu's items keep their tone, the danger item is crit and the disabled one is dim, all at contrast", async ({ page }) => {
+    await visitStates(page, "menu", theme, "form-open");
+    const color = (name: string) => page.locator("#menu-form-open").getByRole("button", { name }).evaluate((el) => getComputedStyle(el).color);
+    const [open, danger, off] = [await color("Open site"), await color("Delete site"), await color("Archive")];
+    expect(danger).not.toBe(open);
+    expect(off).not.toBe(open);
+    await expectContrast(page, [
+      { sel: "#menu-form-open .cap-option:not([data-tone]):not(:disabled) .cap-option-label", what: "a form menu item" },
+      { sel: "#menu-form-open .cap-option[data-tone='crit'] .cap-option-label", what: "the danger item" },
+      { sel: "#menu-form-open .cap-menu-reason", what: "a disabled item's reason" },
+    ]);
+  });
 });

@@ -1,5 +1,6 @@
 import { Menu as Base } from "@base-ui/react/menu";
-import { Fragment, useId, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useRef, type ReactNode } from "react";
+import { enhance } from "./menu.ts";
 
 export interface MenuAction {
   type?: "item";
@@ -241,5 +242,64 @@ export function Menu({ label, items, disabled = false, container, defaultOpen, .
         </Base.Positioner>
       </Base.Portal>
     </Base.Root>
+  );
+}
+
+export interface FormMenuItem {
+  // The button's text.
+  label: string;
+  // Posted as `intent` (or `name`) with the form: what the server is asked to do.
+  value: string;
+  // Destructive or one-way: moved last, after a separator, and drawn in --crit. The server
+  // answers it with its own confirmation page, since this works with no script.
+  danger?: boolean;
+  // A disabled item stays in the menu with its reason under it in plain text (a native
+  // disabled button cannot be reached, so the reason is not hidden behind it).
+  disabled?: boolean;
+  reason?: string;
+}
+
+export interface FormMenuProps {
+  // The summary's visible text: what the menu acts on ("Actions for foxhound.app").
+  label: ReactNode;
+  "aria-label"?: string;
+  // Where the form posts, and its method (post unless a GET filter is meant).
+  action: string;
+  method?: "post" | "get";
+  items: FormMenuItem[];
+  // The field the button's value goes in. `intent` unless the server expects another name.
+  name?: string;
+  // Fields every item sends with it: the row's id, a return address.
+  hidden?: Record<string, string>;
+}
+
+// The row-actions menu with no script: a <details> of submit buttons. Pure markup, so a server
+// renders what the browser shows; `enhance` adds Esc, arrow keys and closing on an outside press.
+export function FormMenu({ label, action, method = "post", items, name = "intent", hidden, ...rest }: FormMenuProps) {
+  const ref = useRef<HTMLDetailsElement>(null);
+  useEffect(() => (ref.current ? enhance(ref.current.parentNode ?? document) : undefined), []);
+  const ordinary = items.filter((i) => !i.danger);
+  const danger = items.filter((i) => i.danger);
+  const button = (i: FormMenuItem) => (
+    <button key={i.value} type="submit" className="cap-option cap-menu-item" name={name} value={i.value} disabled={i.disabled} data-tone={i.danger ? "crit" : undefined}>
+      <span className="cap-option-label">{i.label}</span>
+      {i.reason ? <span className="cap-menu-reason">{i.reason}</span> : null}
+    </button>
+  );
+  return (
+    <details className="cap-menu-form" data-cap="menu-form" ref={ref}>
+      <summary className="cap-btn cap-menu-trigger" aria-label={rest["aria-label"]}>
+        {label}
+        <Chevron />
+      </summary>
+      <form className="cap-popover cap-menu" action={action} method={method}>
+        {Object.entries(hidden ?? {}).map(([k, v]) => (
+          <input key={k} type="hidden" name={k} value={v} />
+        ))}
+        {ordinary.map(button)}
+        {danger.length && ordinary.length ? <hr className="cap-listbox-separator cap-menu-separator" /> : null}
+        {danger.map(button)}
+      </form>
+    </details>
   );
 }
