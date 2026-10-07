@@ -319,6 +319,16 @@ export function attachBulkBar(bar: HTMLElement): () => void {
       refresh(bar);
       return;
     }
+    // Form mode: a submit button is the browser's own. It posts the form with the button's name
+    // and value and the server answers (a destructive intent with its own confirmation page), so
+    // nothing here runs, previews or offers Undo. It only refuses a press with nothing ticked.
+    if (button instanceof HTMLButtonElement && button.type === "submit") {
+      if (list && selectedItems(bar).length === 0) {
+        e.preventDefault();
+        fail("Tick at least one item first.");
+      }
+      return;
+    }
     if (button.dataset.capBulkAction) void invoke(bar, button);
   };
   bar.addEventListener("click", onClick);

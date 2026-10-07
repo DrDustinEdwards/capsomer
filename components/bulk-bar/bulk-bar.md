@@ -4,7 +4,7 @@ title: Bulk action bar
 summary: What a selection can be done to: the live count, the actions, select all in view and Clear. A reversible action runs at once with Undo; a destructive one previews every item first.
 parts: [css, behaviour, react]
 tool: native + own JavaScript (the shared confirm dialog and message region)
-states: [three selected in the HTML, nothing selected and hidden, choose then act, reversible action with Undo, destructive action previewed, twelve items in the preview, action that fails, sticky at the bottom, sticky at the top]
+states: [a form with submit actions, three selected in the HTML, nothing selected and hidden, choose then act, reversible action with Undo, destructive action previewed, twelve items in the preview, action that fails, sticky at the bottom, sticky at the top]
 added: 0.3.0
 source: dustinedwards.info, app/components/admin/media-bulk-bar.tsx, bulk-tag-controls.tsx, lib/admin/bulk-tag.ts, media-confirm-dialogs.tsx, posts-confirm-dialogs.tsx; shadcn/ui Sonner and the Data Table selection bar (Base UI flavour, nova style, commit d75a96ab787f)
 replaces:
@@ -38,7 +38,8 @@ Over any list where several rows or tiles can be chosen: posts, media, mentions,
 - **Esc clears the selection**, from the list or the bar. Focus goes back to the item last touched, not to the page.
 - **Clear selection is a plain, quiet button at the far end**, apart from the actions. "Select all N in view" sits beside the count while fewer than all are selected; it selects what the person can see (a filter or a search may hide items), never a hidden item.
 - **The bar sticks to the bottom of its scroll container** (the top, with `data-position="top"`), so it is reachable however far the list is scrolled. It wears the popover surface with an edge that reaches 3:1 on the page.
-- **Every control is `type="button"`**, so it never submits a form the list sits in.
+- **Every control is `type="button"`**, so it never submits a form the list sits in, except in form mode.
+- **Form mode: the actions are the form's own submit buttons, and the server confirms.** For a list that is a plain form (the boxes are `name="ids"` inputs in a `<form method="post">`), an action is `<button type="submit" name="intent" value="archive">`. The bar is in the delivered page with no script, with static count text ("Tick the drafts to act on"), and the browser posts the ticked ids and the intent. A destructive intent (`data-destructive`, which only gives the danger look here) is answered by the server with its own page that lists every item and asks, because a page that works without script cannot run the preview dialog. With script the bar counts, hides while nothing is ticked and shows when something is, and refuses a press with nothing ticked ("Tick at least one item first."). It does not run, preview, offer Undo or clear: the response page is the result. Esc, Select all and Clear selection work as before.
 
 ## The shadcn component it matches
 
@@ -106,6 +107,24 @@ With the optional parts and the attributes that bind it to a list:
 </ul>
 ```
 
+Form mode, with no script needed:
+
+```html
+<form id="drafts-form" method="post" action="/admin/posts/bulk">
+  <ul id="drafts-list"><li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" name="ids" value="p1" data-cap-select /> Notes on the Foxhound release</label></li></ul>
+  <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="drafts-list" role="region" aria-label="Bulk actions">
+    <p class="cap-bulk-count" role="status">Tick the drafts to act on</p>
+    <div class="cap-bulk-actions">
+      <button type="submit" class="cap-btn" name="intent" value="archive">Archive</button>
+      <button type="submit" class="cap-btn" data-variant="danger" data-destructive name="intent" value="bin">Bin</button>
+    </div>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+  </div>
+</form>
+```
+
+The bar is not `hidden` in the delivered HTML; the script hides it while nothing is ticked. A bar outside the form names it with `form="drafts-form"` on each submit button.
+
 `data-cap-list` is the id of the container whose `input[type=checkbox][data-cap-select]` are the items; an item's name for the preview is its `data-label`, or `data-label` on an ancestor, or its label text. `data-position="top"` sticks the bar to the top. `data-cap-return` is a selector for where focus goes when the bar goes away. `data-cap-value` on an action is a selector for a field whose value goes with it (an empty value moves focus to the field and does nothing). `{n}` and `{s}` in the templates are the count and the plural "s".
 
 ```ts
@@ -129,6 +148,8 @@ import { BulkBar } from "capsomer/react/bulk-bar";
     { id: "bin", label: "Bin", destructive: true, confirmTitle: "Bin {n} item{s}?", confirmAction: "Bin {n} item{s}", run: bin },
   ]} />
 ```
+
+In React, form mode is `form="drafts-form"` on `BulkBar` and `submit: true` on an action (a submit button named `intent`, valued with the action's id, `run` not used); the bar renders visible and hides only after the page has loaded with nothing selected.
 
 The React wrapper is controlled: it renders the same markup, `hidden` while `items` is empty, calls `onClear` after an action ran, on Clear and on Esc, and has no `style` prop.
 
