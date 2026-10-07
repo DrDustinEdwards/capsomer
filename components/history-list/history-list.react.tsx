@@ -48,6 +48,11 @@ export interface HistoryListProps {
   compareBase?: string;
   // Where a line's title goes (the version's own page).
   versionHref?: (id: string) => string;
+  // Load-into-editor mode: an earlier line's action is a "Load into editor" link to this
+  // address (works without script) in place of Restore. Nothing is added to the history; the
+  // app's save makes the version. `onLoad` loads the text in place and stops the navigation.
+  loadHref?: (id: string) => string;
+  onLoad?: (entry: HistoryEntry) => void;
   // Restoring adds a new line on top: add `entry` to `entries` (and save it). The message with
   // Undo is said by the list.
   onRestore?: (e: RestoreEvent) => void | Promise<void>;
@@ -123,9 +128,11 @@ interface LineProps {
   href: (id: string) => string;
   onPick: (id: string, el: HTMLInputElement) => void;
   onRestore: (e: HistoryEntry, opener: HTMLElement) => void;
+  loadHref?: (id: string) => string;
+  onLoad?: (e: HistoryEntry) => void;
 }
 
-function Line({ entry: e, delta, prefix, current, picked, pickDisabled, now, href, onPick, onRestore }: LineProps) {
+function Line({ entry: e, delta, prefix, current, picked, pickDisabled, now, href, onPick, onRestore, loadHref, onLoad }: LineProps) {
   const p = `${prefix}-${e.id}`;
   const stampText = stamp(e.at, now);
   const hasDetail = e.kind !== "edit";
@@ -173,6 +180,18 @@ function Line({ entry: e, delta, prefix, current, picked, pickDisabled, now, hre
       <div className="cap-row-actions">
         {current ? (
           <Status tone="ok" glyph={GLYPHS.ok} word="Current" />
+        ) : loadHref ? (
+          <a
+            className="cap-btn"
+            data-variant="quiet"
+            data-size="sm"
+            data-cap-part="load"
+            data-version={e.id}
+            href={loadHref(e.id)}
+            onClick={onLoad ? (ev) => (ev.preventDefault(), onLoad(e)) : undefined}
+          >
+            Load into editor<span className="cap-sr-only"> the version from {stampText} by {e.who}</span>
+          </a>
         ) : (
           <button type="button" className="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="restore" data-version={e.id} onClick={(ev) => onRestore(e, ev.currentTarget)}>
             Restore<span className="cap-sr-only"> the version from {stampText} by {e.who}</span>
@@ -215,7 +234,7 @@ function RunLines({ run, deltas, prefix, now, open, onToggle, children }: { run:
   );
 }
 
-export function HistoryList({ entries, labelledBy, label, user, compareBase = "", versionHref, onRestore, onUndoRestore, now, olderHref, onLoadOlder, loadingOlder, primary, empty }: HistoryListProps) {
+export function HistoryList({ entries, labelledBy, label, user, compareBase = "", versionHref, loadHref, onLoad, onRestore, onUndoRestore, now, olderHref, onLoadOlder, loadingOlder, primary, empty }: HistoryListProps) {
   const prefix = useId();
   const listRef = useRef<HTMLUListElement>(null);
   const [picked, setPicked] = useState<string[]>([]);
@@ -276,7 +295,7 @@ export function HistoryList({ entries, labelledBy, label, user, compareBase = ""
       <ul ref={listRef} className="cap-rows cap-hist-list" role="list" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-cap-primary={primary ? "" : undefined}>
         {lines.map((line) => {
           const common = (e: HistoryEntry, i: number) => (
-            <Line key={e.id} entry={e} delta={deltaOf(entries, i)} prefix={prefix} current={i === 0} picked={picked.includes(e.id)} pickDisabled={picked.length >= 2 && !picked.includes(e.id)} now={now} href={href} onPick={pick} onRestore={(en, el) => void restore(en, el)} />
+            <Line key={e.id} entry={e} delta={deltaOf(entries, i)} prefix={prefix} current={i === 0} picked={picked.includes(e.id)} pickDisabled={picked.length >= 2 && !picked.includes(e.id)} now={now} href={href} onPick={pick} onRestore={(en, el) => void restore(en, el)} loadHref={loadHref} onLoad={onLoad} />
           );
           if (line.type === "entry") {
             const node = common(line.entry, index);

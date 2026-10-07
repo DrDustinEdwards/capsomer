@@ -430,4 +430,39 @@ eachTheme((theme) => {
     await expect(r.locator("li[data-kind='restore']")).toHaveCount(0);
     await expect(r.locator("li[data-id='r-5']")).toHaveAttribute("data-current", "");
   });
+  test("behaviour: load-into-editor mode links to the editor in place of Restore, and the app can take the click", async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    const l = page.locator("#hist-load");
+    await expect(l.locator("[data-cap-part='restore']")).toHaveCount(0);
+    const load = l.getByRole("link", { name: /^Load into editor the version from 1 Oct, 16:10 UTC by Rosa Park/ });
+    await expect(load).toHaveAttribute("href", "/posts/phage-lambda/edit?load=v-70");
+    // The current version has nothing to load.
+    await expect(l.locator("li[data-current] [data-cap-part='load']")).toHaveCount(0);
+    const heard = page.evaluate(
+      () =>
+        new Promise<{ id: string; summary: string }>((done) => {
+          document.querySelector("#hist-load")!.addEventListener("cap:history-load", (e) => {
+            e.preventDefault();
+            const { entry } = (e as CustomEvent<{ entry: { id: string; summary: string } }>).detail;
+            done({ id: entry.id, summary: entry.summary });
+          });
+        }),
+    );
+    await load.click();
+    expect(await heard).toEqual({ id: "v-70", summary: "Cut the duplicate paragraph" });
+    // Loading is not a restore: no line is added, nothing changes hands, the page stays put.
+    await expect(l.locator("li.cap-hist-row")).toHaveCount(2);
+    await expect(l.locator("li[data-kind='restore']")).toHaveCount(0);
+    await expect(page).not.toHaveURL(/load=/);
+  });
+
+  test("keyboard: the Load into editor link is reached by Tab in line order and works from Enter", async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    const l = page.locator("#hist-load");
+    await l.locator("li[data-id='v-70'] input[type=checkbox]").focus();
+    await page.keyboard.press("Tab");
+    expect(await focused(page)).toContain("Cut the duplicate paragraph");
+    await page.keyboard.press("Tab");
+    expect(await focused(page)).toContain("Load into editor");
+  });
 });
