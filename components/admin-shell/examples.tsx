@@ -35,7 +35,7 @@ const nav: AdminEntry[] = [
   { id: "sites", label: "Sites", href: "#sites", icon: GLOBE, count: 11, group: "Watch" },
   { id: "incidents", label: "Incidents", href: "#incidents", icon: ALERT, count: 4, countNote: "open", tone: "need", group: "Watch" },
   { id: "queue", label: "Queue", href: "#queue", icon: LIST, count: 5, countNote: "blocked", tone: "need", group: "Work" },
-  { id: "activity", label: "Activity", href: "#activity", icon: CLOCK, group: "Records" },
+  { id: "activity", label: "Activity", href: "#activity", icon: CLOCK, count: 120, group: "Records" },
   { id: "namespaces", label: "Namespaces", href: "#namespaces", icon: FOLDER, count: 11, group: "Records" },
 ];
 

@@ -24,19 +24,27 @@ export function toggleMenu(shell: HTMLElement): void {
   setMenu(shell, shell.dataset.menu !== "collapsed");
 }
 
-// The app Ctrl or Cmd plus a digit jumps to, or null: the key is not a jump, the digit has no
-// app, or that app is the one already open.
-export function jumpTarget(e: Pick<KeyboardEvent, "key" | "ctrlKey" | "metaKey" | "altKey" | "shiftKey">, apps: ReadonlyArray<{ href: string; current?: boolean }>): string | null {
-  if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey || !/^[1-9]$/.test(e.key)) return null;
+// G then a number jumps to the app in that place (the sequence GitHub and Linear use; Ctrl and a
+// digit belong to the browser's tabs). `armed` holds the time G was pressed. Returns the app's
+// address, or null: the key is not part of a jump, the number has no app, that app is already
+// open, or the person is typing in a field.
+export const JUMP_WINDOW_MS = 1200;
+export function jumpTarget(armed: { at: number }, e: Pick<KeyboardEvent, "key" | "ctrlKey" | "metaKey" | "altKey" | "target">, apps: ReadonlyArray<{ href: string; current?: boolean }>, now = Date.now()): string | null {
+  if (e.ctrlKey || e.metaKey || e.altKey) return null;
+  const t = e.target as Element | null;
+  if (t?.closest?.("input, textarea, select, [contenteditable='true']")) return null;
+  const live = armed.at > 0 && now - armed.at < JUMP_WINDOW_MS;
+  armed.at = e.key === "g" ? now : 0;
+  if (!live || !/^[1-9]$/.test(e.key)) return null;
   const app = apps[Number(e.key) - 1];
   return app && !app.current ? app.href : null;
 }
 
 // Esc hides the name a strip control is showing, until the pointer or focus moves on.
 export function hideShownNames(shell: HTMLElement): void {
-  const sel = ".cap-admin-btn, .cap-admin-tile";
+  const sel = ".cap-admin-btn, .cap-admin-tile, .cap-admin-menu a";
   const focused = (document.activeElement as Element | null)?.closest<HTMLElement>(sel);
-  const hovered = shell.querySelector<HTMLElement>(".cap-admin-btn:hover, .cap-admin-tile:hover");
+  const hovered = shell.querySelector<HTMLElement>(".cap-admin-btn:hover, .cap-admin-tile:hover, .cap-admin-menu a:hover");
   for (const el of [focused, hovered]) if (el && shell.contains(el)) el.dataset.tip = "hidden";
 }
 
@@ -82,10 +90,11 @@ export function enhance(root: ParentNode = document): () => void {
       const panel = target.closest<HTMLElement>(".cap-admin-account");
       if (panel && target.closest("a, button")) panel.hidePopover?.();
     };
+    const armed = { at: 0 };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") return hideShownNames(shell);
       const apps = [...shell.querySelectorAll<HTMLAnchorElement>(".cap-admin-tile")].map((a) => ({ href: a.href, current: a.getAttribute("aria-current") === "true" }));
-      const to = jumpTarget(e, apps);
+      const to = jumpTarget(armed, e, apps);
       if (to) {
         e.preventDefault();
         location.assign(to);

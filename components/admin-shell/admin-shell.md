@@ -4,7 +4,7 @@ title: Admin shell
 summary: The one structure every admin area, dashboard and site shares: a strip of apps and tools, a grouped menu for the current app, then the content.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [expanded, current app tile, badge on another app, menu collapsed, name shown, account panel open, reading column, comfortable density, phone tab bar, phone sheet]
+states: [expanded, current app tile, badge on another app, menu collapsed to icons, name shown, account panel open, reading column, comfortable density, phone tab bar, phone sheet]
 added: 0.4.0
 source: Dustin's pick of 2026-10-06 (capsomer/research/admin-shell-findings.md); the flagship design canvas "Flagship Shell: Capsid Portal"; the Portal's own App.tsx
 replaces:
@@ -36,14 +36,14 @@ The strip is never an empty column: its bottom tools serve everyone.
 ## The default and its reason
 
 - **The strip is always shown, one width (`--rail-w-collapsed`).** Hiding the app switcher cost Slack its multi-workspace users, because the other workspaces' badges disappeared. The strip is the only way another app's "needs you" stays visible.
-- **The menu is one width (`--rail-w`), collapsible; collapse leaves the strip.** The collapse control is the first thing in the strip, the same place in every app and in both states, with its key `[` in its name's tip (Atlassian found the control hard to discover until it was obvious). The choice is remembered per site (`localStorage`, key `cap-rail` or `data-cap-pref`). The app binds `[` itself, because single-key shortcuts are the app's setting.
+- **The menu is `--rail-w` wide, collapsible; collapsed it is an icon column at `--rail-w-collapsed` beside the strip.** Same order and same places, so nothing moves: only the labels and group headings hide (their boxes stay, and so do their names for a screen reader). Each icon shows its label as a tooltip on hover and keyboard focus (Esc hides it), keeps its accessible name, and the current page keeps its dark fill. A count sits on its icon, and becomes a dot where it does not fit (over 99). An entry with no icon shows its first letter. The collapsed column does not scroll, since a scrolling box would clip the tooltips. The collapse control is the first thing in the strip, the same place in every app and in both states, with its key `[` in its name's tip (Atlassian found the control hard to discover until it was obvious). The choice is remembered per site (`localStorage`, key `cap-rail` or `data-cap-pref`). The app binds `[` itself, because single-key shortcuts are the app's setting.
 - **No badge on the app you are in.** Strip badges are for other apps. Each "needs you" fact appears on a page once as a number and once as an action, not five times.
 - **Counts follow one rule: a plain number counts; a violet pill needs you.** `tone: "need"` on an entry, or `count` / `dot` on another app. Red and amber (`crit`, `warn`) are status colours and keep their one meaning.
 - **The current page is a dark filled pill in the palette's darkest accent step (`--accent-12`).** The current app's tile is the same dark fill. Color means something: violet marks the current selection, the primary action and "needs you"; nothing else is coloured for decoration.
 - **Tiles are neutral and carry the product's mark.** A mark drawn in `currentColor` takes the tile's colour (accent text on a neutral tile, the pill's text on the current one). With no logo yet the tile shows the name's first letter.
 - **Icons carry the controls**, one family (24 box, 1.6 stroke), every icon button one size with an accessible name and a tooltip. A tooltip is a child of its control, shows on hover and keyboard focus, and Esc hides it (WCAG 1.4.13).
 - **The account panel is the Popover API** (light dismiss, Esc, focus handed back by the platform), opened from the avatar. Sections: who you are, this app (settings, view site), elsewhere (the other apps, listed from `apps`), sign out last.
-- **Ctrl or Cmd with 1 to 9 opens the app in that place** (Slack's lesson). Browsers may keep some of these digits for their own tabs; the strip's links always work.
+- **G then a number opens the app in that place** (Slack's lesson; the sequence GitHub and Linear use, because Ctrl and a digit belong to the browser's tabs). It does nothing while a person types in a field, never opens the app already open, and an app that lets single keys be switched off passes that setting as `jumpKeys`.
 - **The page's own thin bar** (`status`, `actions`) says what is true: "Updated 6 min ago · refreshes itself", never "Live" for data that is minutes old. Page-wide controls (time range, scope, export) go there only on pages whose data actually changes with them.
 - **All content is in the server-rendered HTML.** Every menu link, the strip's links and the page are in the markup without a script, so a screen reader or an agent reads them. The shell's behaviour (collapse, remembering it, the account panel's close, the sheet) is added by script; nothing depends on it for reading or reaching a page.
 - **On a phone the strip and the menu live in one sheet.** The tab bar holds at most four of the app's top pages and More (rulings, rule 9). More opens the shared dialog as a bottom sheet: the apps first, then the other pages, then the tools and the account.
@@ -71,7 +71,7 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
 | Tab | The skip link, the strip (collapse, apps, tools, avatar), the menu, the main region |
 | Enter or Space on the collapse control | Collapses or expands the menu |
 | Esc | Hides a shown name; closes the account panel; closes the sheet |
-| Ctrl or Cmd + 1 to 9 | Opens the app in that place |
+| G, then 1 to 9 | Opens the app in that place |
 | Enter on the avatar | Opens the account panel; focus stays on the avatar, the panel follows in tab order |
 | `[` | Collapses or expands the menu, when the app binds it |
 

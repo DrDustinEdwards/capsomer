@@ -52,7 +52,7 @@ eachTheme((theme) => {
         - group "Work":
           - link "Queue, 5 blocked"
         - group "Records":
-          - link "Activity"
+          - link "Activity, 120"
           - link "Namespaces, 11"
     `);
   });
@@ -104,29 +104,71 @@ eachTheme((theme) => {
     expect(order[1]).toBeLessThan(order[2]!);
   });
 
-  test("keyboard: the collapse control hides the menu, leaves the strip and its badges, and is remembered", async ({ page }) => {
+  test("keyboard: the collapse control shrinks the menu to icons, nothing moves, and the choice is remembered", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const toggle = page.locator("[data-cap-part='menu-toggle']");
-    const before = await toggle.boundingBox();
+    const menu = page.locator(".cap-admin-menu");
+    const places = () =>
+      page.evaluate(() =>
+        [...document.querySelectorAll<HTMLElement>(".cap-admin-menu a")].map((a) => {
+          const r = a.getBoundingClientRect();
+          return { name: a.getAttribute("aria-label") ?? a.textContent?.trim(), y: Math.round(r.top), h: Math.round(r.height) };
+        }),
+      );
+    const before = await places();
+    const control = await toggle.boundingBox();
     await toggle.focus();
     await page.keyboard.press("Enter");
     await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
     await expect(toggle).toHaveAccessibleName("Expand menu");
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
-    await expect(page.locator(".cap-admin-menu")).toBeHidden();
-    await expect(page.locator(".cap-admin-strip")).toBeVisible();
+    // An icon column at the collapsed rail width, beside the strip.
+    await expect(menu).toBeVisible();
+    expect((await menu.boundingBox())?.width).toBe(56);
+    expect((await page.locator(".cap-admin-strip").boundingBox())?.width).toBe(56);
+    // Same order, same places, same names; only the words are hidden.
+    const after = await places();
+    expect(after).toEqual(before);
+    for (const sel of [".cap-admin-menu .cap-admin-group-label", ".cap-admin-menu a .cap-admin-label"]) {
+      for (const el of await page.locator(sel).all()) await expect(el).toHaveCSS("opacity", "0");
+    }
+    await expect(page.getByRole("link", { name: "Queue, 5 blocked" })).toBeVisible();
+    // Badges stay on the icons: a count, and a dot where a count does not fit.
+    const badge = page.getByRole("link", { name: "Queue, 5 blocked" }).locator(".cap-admin-count");
+    await expect(badge).toBeVisible();
+    await expect(badge).toHaveText("5");
+    const wide = await page.getByRole("link", { name: "Activity, 120" }).locator(".cap-admin-count").boundingBox();
+    expect(wide?.width).toBe(8);
+    // The current page keeps its dark fill; the strip's badges stay.
+    await expect(page.locator(".cap-admin-menu a[aria-current='page']")).toHaveCSS("background-color", /^(?!rgba\(0, 0, 0, 0\))/);
     await expect(page.getByRole("link", { name: "Carrel, 2 AI drafts waiting" })).toBeVisible();
-    // The control is in the same place in both states.
-    const after = await toggle.boundingBox();
-    expect(after?.x).toBe(before?.x);
-    expect(after?.y).toBe(before?.y);
+    // The collapse control is in the same place in both states.
+    const control2 = await toggle.boundingBox();
+    expect(control2?.x).toBe(control?.x);
+    expect(control2?.y).toBe(control?.y);
     await page.reload();
     await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
-    await page.keyboard.press("Tab");
     await toggle.focus();
     await page.keyboard.press("Space");
     await expect(page.locator(".cap-admin")).not.toHaveAttribute("data-menu", "collapsed");
-    await expect(page.locator(".cap-admin-menu")).toBeVisible();
+    expect((await menu.boundingBox())?.width).toBe(208);
+  });
+
+  test("keyboard: a collapsed menu icon shows its label on hover and focus, and Esc hides it", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "collapsed");
+    const link = page.getByRole("link", { name: "Sites, 11" });
+    const label = link.locator(".cap-admin-label");
+    await expect(label).toHaveCSS("opacity", "0");
+    await link.hover();
+    await expect(label).toHaveCSS("opacity", "1");
+    await expectContrast(page, [{ sel: ".cap-admin-menu a:hover .cap-admin-label", what: "the shown label" }]);
+    await page.mouse.move(700, 400);
+    await link.focus();
+    await expect(label).toHaveCSS("opacity", "1");
+    await expect(label).toHaveText("Sites");
+    await page.keyboard.press("Escape");
+    await expect(label).toHaveCSS("opacity", "0");
+    await expectNoAxeViolations(page);
   });
 
   test("keyboard: a strip control shows its name on focus, and Esc hides it", async ({ page }) => {
@@ -135,7 +177,7 @@ eachTheme((theme) => {
     await tile.focus();
     const tip = tile.locator(".cap-admin-tip");
     await expect(tip).toHaveCSS("opacity", "1");
-    await expect(tip).toContainText("Ctrl 2");
+    await expect(tip).toContainText("G 2");
     await expectContrast(page, [{ sel: ".cap-admin-tile:focus-visible .cap-admin-tip-text", what: "the shown name" }]);
     await page.keyboard.press("Escape");
     await expect(tip).toHaveCSS("opacity", "0");
@@ -167,11 +209,17 @@ eachTheme((theme) => {
     await expect(avatar).toBeFocused();
   });
 
-  test("behaviour: Ctrl and a digit jump to that app, never the one already open", async ({ page }) => {
+  test("behaviour: G then a number jumps to that app, never the one already open, and Ctrl and a digit do nothing", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
-    await page.keyboard.press("Control+1");
-    await expect(page).not.toHaveURL(/#portal/);
     await page.keyboard.press("Control+2");
+    await expect(page).not.toHaveURL(/#carrel/);
+    await page.keyboard.press("g");
+    await page.keyboard.press("1");
+    await expect(page).not.toHaveURL(/#portal/);
+    await page.keyboard.press("2");
+    await expect(page).not.toHaveURL(/#carrel/);
+    await page.keyboard.press("g");
+    await page.keyboard.press("2");
     await expect(page).toHaveURL(/#carrel/);
   });
 

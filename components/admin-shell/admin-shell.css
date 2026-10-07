@@ -22,7 +22,7 @@
     color: var(--text);
 
     &[data-menu="collapsed"] {
-      grid-template-columns: var(--admin-strip) 0 minmax(0, 1fr);
+      --admin-menu: var(--rail-w-collapsed);
     }
   }
 
@@ -205,7 +205,8 @@
 
   /* The name of a strip control, shown beside it on hover and keyboard focus. A child of the
      control, so the pointer can move onto it without it closing; Esc hides it (WCAG 1.4.13). */
-  .cap-admin-tip {
+  .cap-admin-tip,
+  .cap-admin[data-menu="collapsed"] .cap-admin-menu .cap-admin-label {
     position: absolute;
     left: calc(100% + var(--space-3));
     top: 50%;
@@ -233,7 +234,8 @@
       font: inherit;
     }
   }
-  :is(.cap-admin-btn, .cap-admin-tile):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-tip {
+  :is(.cap-admin-btn, .cap-admin-tile):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-tip,
+  .cap-admin[data-menu="collapsed"] .cap-admin-menu a:is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-label {
     opacity: 1;
     clip-path: inset(-8px);
   }
@@ -255,6 +257,7 @@
     border-inline-end: 1px solid var(--line);
 
     & a {
+      position: relative;
       display: grid;
       grid-template-columns: 16px minmax(0, 1fr) auto;
       align-items: center;
@@ -283,10 +286,6 @@
         font-weight: 600;
       }
     }
-  }
-  .cap-admin-menu[hidden],
-  .cap-admin[data-menu="collapsed"] .cap-admin-menu {
-    display: none;
   }
   .cap-admin-title {
     display: flex;
@@ -355,6 +354,78 @@
   }
   .cap-admin-menu a[aria-current="page"] .cap-admin-count:not([data-tone]) {
     color: inherit;
+  }
+
+  /* Collapsed: the same menu shrunk to an icon column at the collapsed rail width, in the same
+     order and the same places, so nothing moves. Labels and group headings are hidden but keep
+     their boxes (and their names for a screen reader); a label shows as a tooltip on hover and
+     keyboard focus; a count sits on its icon, a dot where it does not fit. The current page keeps
+     its dark fill. A scrolling box would clip the tooltips, so this column does not scroll. */
+  .cap-admin[data-menu="collapsed"] .cap-admin-menu {
+    overflow: visible;
+
+    & a {
+      grid-template-columns: 16px;
+      justify-content: center;
+      padding: 0;
+    }
+    & .cap-admin-title {
+      justify-content: center;
+      padding-inline: 0;
+    }
+    & .cap-admin-title-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    & .cap-admin-group-label {
+      overflow: hidden;
+      padding-inline: 0;
+      opacity: 0;
+      white-space: nowrap;
+    }
+    & .cap-admin-count {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      min-width: 16px;
+      height: 16px;
+      padding-inline: var(--space-2);
+      box-shadow: 0 0 0 2px var(--ground);
+      font-size: var(--fs-label);
+      line-height: 1;
+
+      &[data-wide] {
+        top: 5px;
+        right: 5px;
+        min-width: 0;
+        width: 8px;
+        height: 8px;
+        padding: 0;
+        font-size: 0;
+      }
+      &:not([data-tone]) {
+        background: var(--raised);
+        color: var(--text);
+      }
+    }
+    & a[aria-current="page"] .cap-admin-count {
+      box-shadow: 0 0 0 2px var(--admin-pill);
+
+      &:not([data-tone]) {
+        background: var(--admin-pill-fg);
+        color: var(--admin-pill);
+      }
+    }
+  }
+  .cap-admin-letter {
+    justify-self: center;
+    font-weight: 700;
+    font-size: var(--fs-detail);
+    line-height: 1;
   }
 
   .cap-admin-main {
@@ -619,14 +690,16 @@
         background-color var(--dur-fast) var(--ease-out),
         color var(--dur-fast) var(--ease-out);
     }
-    .cap-admin-tip {
+    .cap-admin-tip,
+    .cap-admin[data-menu="collapsed"] .cap-admin-menu .cap-admin-label {
       transform: translateX(-8px);
       transition:
         opacity var(--dur-fast) var(--ease-out),
         transform var(--dur-fast) var(--ease-out),
         clip-path 0s linear var(--dur-fast);
     }
-    :is(.cap-admin-btn, .cap-admin-tile):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-tip {
+    :is(.cap-admin-btn, .cap-admin-tile):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-tip,
+    .cap-admin[data-menu="collapsed"] .cap-admin-menu a:is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-label {
       transform: none;
       transition-delay: 0s;
     }
@@ -656,7 +729,8 @@
     .cap-admin-tabs :is(a, button)[aria-current] {
       text-decoration: underline;
     }
-    .cap-admin-tip {
+    .cap-admin-tip,
+    .cap-admin[data-menu="collapsed"] .cap-admin-menu .cap-admin-label {
       border: 1px solid CanvasText;
     }
     .cap-admin-badge {

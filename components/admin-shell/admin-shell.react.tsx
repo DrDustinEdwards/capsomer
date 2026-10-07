@@ -80,7 +80,9 @@ export interface AdminShellProps {
   status?: ReactNode;
   actions?: ReactNode;
   prefKey?: string;
-  // Ctrl or Cmd with 1 to 9 opens the app in that place; on by default.
+  // G then 1 to 9 opens the app in that place (the key sequence of GitHub and Linear; Ctrl and a
+  // digit belong to the browser's tabs); on by default. An app that lets single keys be switched off
+  // passes that setting here.
   jumpKeys?: boolean;
   // Shown in the collapse control's name tip; the app binds the key.
   collapseKey?: string;
@@ -188,13 +190,14 @@ export function AdminShell(props: AdminShellProps) {
     [prefKey, props.onCollapsedChange],
   );
 
-  // Ctrl or Cmd and a digit jump between apps; Esc hides a shown name (WCAG 1.4.13).
+  // G then a number jumps between apps; Esc hides a shown name (WCAG 1.4.13).
   const appsRef = useRef(apps);
   appsRef.current = apps;
   useEffect(() => {
+    const armed = { at: 0 };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" && root.current) return hideShownNames(root.current);
-      const to = jumpKeys ? jumpTarget(e, appsRef.current) : null;
+      const to = jumpKeys ? jumpTarget(armed, e, appsRef.current) : null;
       if (to) {
         e.preventDefault();
         location.assign(to);
@@ -216,9 +219,13 @@ export function AdminShell(props: AdminShellProps) {
         "aria-label": countName(e.label, e.count, e.countNote),
         children: (
           <>
-            {e.icon ?? <span aria-hidden="true" />}
-            <span>{e.label}</span>
-            <span className="cap-admin-count" data-tone={e.tone}>
+            {e.icon ?? (
+              <span className="cap-admin-letter" aria-hidden="true">
+                {e.label.slice(0, 1)}
+              </span>
+            )}
+            <span className="cap-admin-label">{e.label}</span>
+            <span className="cap-admin-count" data-tone={e.tone} data-wide={e.count && e.count > 99 ? "" : undefined}>
               {e.count ? e.count : ""}
             </span>
           </>
@@ -292,7 +299,7 @@ export function AdminShell(props: AdminShellProps) {
                   <>
                     {mark(a)}
                     {a.current ? null : <Badge count={a.count} dot={a.dot} />}
-                    <Tip text={a.label} keys={i < 9 && jumpKeys ? `Ctrl ${i + 1}` : undefined} />
+                    <Tip text={a.label} keys={i < 9 && jumpKeys ? `G ${i + 1}` : undefined} />
                   </>
                 ),
               })}
@@ -391,10 +398,10 @@ export function AdminShell(props: AdminShellProps) {
           )}
         </ul>
       </nav>
-      <nav className="cap-admin-menu" id="cap-admin-menu" aria-label={navLabel} hidden={collapsed || undefined}>
+      <nav className="cap-admin-menu" id="cap-admin-menu" aria-label={navLabel}>
         <div className="cap-admin-title">
           {titleMark}
-          {title}
+          <span className="cap-admin-title-text">{title}</span>
         </div>
         {groups(nav).map((g, i) =>
           g.label ? (
