@@ -43,9 +43,10 @@
       outline-offset: -2px;
     }
 
-    /* A form that wraps the parts (a dialog whose action posts) takes no box of its own, so the
-       header, body and footer stay the dialog's flex children and the body still scrolls. */
-    & > form {
+    /* An in-page dialog is a form that wraps the parts: it takes no box of its own, so the header,
+       body and footer stay the dialog's flex children. Only these dialogs: another dialog's own
+       form keeps its box. */
+    &[data-cap-inline] > form {
       display: contents;
     }
 
