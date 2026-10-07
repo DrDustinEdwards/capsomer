@@ -28,8 +28,14 @@ export interface LinkProps {
 }
 
 export interface ShellProps {
+  // The name beside the logo. Leave it null when the logo is the whole brand, and give `brandLabel`.
   brand: ReactNode;
   brandHref?: string;
+  // The site's logo (an `<img alt="">` or an `<svg>`), before the name: held to the bar's height, in
+  // proportion, and hidden from a screen reader because the name or `brandLabel` is the link's name.
+  logo?: ReactNode;
+  // The brand link's name when `brand` is empty (the logo alone).
+  brandLabel?: string;
   nav: ShellEntry[];
   // At most four: the wrapper adds More as the fifth when `more` is given.
   tabs?: ShellEntry[];
@@ -81,7 +87,7 @@ function groups(nav: ShellEntry[]): Array<{ label?: string; entries: ShellEntry[
 }
 
 export function Shell(props: ShellProps) {
-  const { brand, brandHref = "./", nav, tabs, more, moreLabel = "More", moreIcon, navLabel = "Sections", status, actions, railFoot, prefKey = DEFAULT_PREF, renderLink = plainLink, children } = props;
+  const { brand, brandHref = "./", logo, brandLabel, nav, tabs, more, moreLabel = "More", moreIcon, navLabel = "Sections", status, actions, railFoot, prefKey = DEFAULT_PREF, renderLink = plainLink, children } = props;
   const moreButton = useRef<HTMLButtonElement>(null);
   const groupId = useId();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -139,7 +145,21 @@ export function Shell(props: ShellProps) {
         Skip to content
       </a>
       <header className="cap-shell-top">
-        {renderLink({ href: brandHref, className: "cap-shell-brand", children: brand })}
+        {renderLink({
+          href: brandHref,
+          className: "cap-shell-brand",
+          "aria-label": brandLabel,
+          children: (
+            <>
+              {logo ? (
+                <span className="cap-shell-logo" aria-hidden="true">
+                  {logo}
+                </span>
+              ) : null}
+              {brand}
+            </>
+          ),
+        })}
         <div className="cap-shell-spacer" />
         {status}
         <div className="cap-shell-actions">{actions}</div>

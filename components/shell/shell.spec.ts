@@ -221,4 +221,29 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-shell")).toHaveAttribute("data-rail", "collapsed");
     await expect(page.locator("[data-cap-part='rail-toggle']")).toHaveAttribute("aria-expanded", "false");
   });
+  for (const id of ["logo", "logo-only"]) {
+    test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
+      await visitStates(page, "shell", theme, id);
+      await expectNoAxeViolations(page);
+    });
+  }
+
+  test("accessibility: the logo is decorative, and the brand link is named by the name or by brandLabel", async ({ page }) => {
+    await visitStates(page, "shell", theme, "logo");
+    await expect(page.locator(".cap-shell-brand .cap-shell-logo")).toHaveAttribute("aria-hidden", "true");
+    await expect(page.getByRole("link", { name: /^foxhound\.app/ })).toBeVisible();
+    await visitStates(page, "shell", theme, "logo-only");
+    await expect(page.getByRole("link", { name: "foxhound.app", exact: true })).toBeVisible();
+  });
+
+  test("behaviour: the logo is held to the bar's height and kept in proportion, never stretched", async ({ page }) => {
+    await visitStates(page, "shell", theme, "logo-only");
+    const logo = page.locator(".cap-shell-brand .cap-shell-logo");
+    const box = (await logo.boundingBox())!;
+    const bar = (await page.locator(".cap-shell-top").boundingBox())!;
+    expect(box.height).toBeLessThan(bar.height);
+    const svg = (await logo.locator("svg").boundingBox())!;
+    // The wordmark is 120 by 28: its width follows its height.
+    expect(Math.abs(svg.width / svg.height - 120 / 28)).toBeLessThan(0.05);
+  });
 });
