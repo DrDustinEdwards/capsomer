@@ -1,0 +1,668 @@
+/* The shared structure of every admin area: a strip of apps and tools (always shown, one fixed
+   width), a grouped menu for the current app (collapsible, one fixed width), then the content;
+   on a phone a tab bar and one sheet that holds the strip's and the menu's contents.
+   Colour means something here (rulings: color only for meaning): violet marks the current
+   page, the primary action and "needs you"; status colours keep their one meaning. The current
+   item is a dark filled pill in the palette's darkest accent step (--accent-12), the menu is a
+   shade calmer than the page (Linear), tiles are neutral with the product's own mark.
+   Sizes come from tokens: the strip is --rail-w-collapsed, the menu --rail-w. */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.components {
+  .cap-admin {
+    --admin-strip: var(--rail-w-collapsed);
+    --admin-menu: var(--rail-w);
+    --admin-tile: 36px;
+    --admin-pill: var(--accent-12);
+    --admin-pill-fg: var(--ground);
+    display: grid;
+    grid-template-columns: var(--admin-strip) var(--admin-menu) minmax(0, 1fr);
+    min-height: 100dvh;
+    background: var(--ground);
+    color: var(--text);
+
+    &[data-menu="collapsed"] {
+      grid-template-columns: var(--admin-strip) 0 minmax(0, 1fr);
+    }
+  }
+
+  .cap-admin-strip {
+    grid-column: 1;
+  }
+  .cap-admin-menu {
+    grid-column: 2;
+  }
+  .cap-admin-main {
+    grid-column: 3;
+  }
+  .cap-admin-tabs {
+    grid-column: 1 / -1;
+  }
+
+  .cap-admin-skip {
+    position: absolute;
+    left: var(--space-3);
+    top: var(--space-3);
+    z-index: var(--z-tip);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-m);
+    background: var(--primary);
+    color: var(--primary-fg);
+    box-shadow: var(--shadow-m);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(-200%);
+
+    &:focus-visible {
+      transform: none;
+    }
+  }
+
+  /* The strip: apps above, the owner's tools below. Fixed height and sticky, so it never moves
+     while the page scrolls. The collapse control is its first child, in the same place in both
+     states and in every app. */
+  .cap-admin-strip {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    z-index: var(--z-sticky);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    background: var(--raised);
+    border-inline-end: 1px solid var(--line);
+  }
+  .cap-admin-strip-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-admin-strip-group > li {
+    display: flex;
+  }
+
+  /* One icon-button size for the strip: the collapse control, the tools, the app tiles. */
+  .cap-admin-btn,
+  .cap-admin-tile {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--admin-tile);
+    height: var(--admin-tile);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-l);
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    outline-offset: 2px;
+
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--sunken);
+      color: var(--text);
+    }
+    &:active,
+    &[data-force="pressed"] {
+      background: var(--sunken);
+    }
+  }
+  .cap-admin-icon {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* An app: a neutral tile holding the product's mark. The current app is the dark filled one. */
+  .cap-admin-tile {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--accent-text);
+    font-weight: 700;
+    font-size: var(--fs-body);
+
+    &[data-mono] {
+      color: var(--text);
+    }
+    &[aria-current="true"] {
+      background: var(--admin-pill);
+      border-color: var(--admin-pill);
+      color: var(--admin-pill-fg);
+    }
+    & .cap-admin-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  /* Coloured and violet means it needs you; a plain number elsewhere only counts. A badge sits
+     on another app's tile or on Inbox, never on the app you are in. */
+  .cap-admin-badge {
+    position: absolute;
+    top: -5px;
+    right: -6px;
+    display: grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    padding-inline: 5px;
+    border-radius: var(--radius-full);
+    background: var(--primary);
+    color: var(--primary-fg);
+    box-shadow: 0 0 0 2px var(--raised);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+
+    &[data-dot] {
+      top: -3px;
+      right: -3px;
+      min-width: 0;
+      width: 10px;
+      height: 10px;
+      padding: 0;
+    }
+  }
+
+  .cap-admin-avatar {
+    display: grid;
+    place-items: center;
+    width: var(--admin-tile);
+    height: var(--admin-tile);
+    margin-block-start: var(--space-3);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--line);
+    background: var(--accent-12);
+    color: var(--ground);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+
+    &:hover,
+    &[data-force="hover"],
+    &:active {
+      background: var(--accent-12);
+      color: var(--ground);
+      opacity: 0.88;
+    }
+  }
+
+  /* The name of a strip control, shown beside it on hover and keyboard focus. A child of the
+     control, so the pointer can move onto it without it closing; Esc hides it (WCAG 1.4.13). */
+  .cap-admin-tip {
+    position: absolute;
+    left: calc(100% + var(--space-3));
+    top: 50%;
+    translate: 0 -50%;
+    z-index: var(--z-tip);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-m);
+    background: var(--text);
+    color: var(--ground);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    clip-path: inset(50%);
+
+    & kbd {
+      margin-inline-start: var(--space-3);
+      padding: 0;
+      border: 0;
+      background: none;
+      box-shadow: none;
+      color: inherit;
+      font: inherit;
+    }
+  }
+  :is(.cap-admin-btn, .cap-admin-tile):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-tip {
+    opacity: 1;
+    clip-path: inset(-8px);
+  }
+
+  /* The menu: the current app's name as a plain title, then its groups. A shade calmer than
+     the page, so the content stands out. The current page is a dark filled pill. */
+  .cap-admin-menu {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-3);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    background: var(--ground);
+    border-inline-end: 1px solid var(--line);
+
+    & a {
+      display: grid;
+      grid-template-columns: 16px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--space-3);
+      min-height: max(var(--control), var(--target));
+      padding: 0 var(--space-3);
+      border-radius: var(--radius-m);
+      color: var(--muted);
+      font-size: var(--fs-body);
+      font-weight: 500;
+      text-decoration: none;
+      outline-offset: 0;
+
+      &:hover,
+      &[data-force="hover"] {
+        background: var(--sunken);
+        color: var(--text);
+      }
+      &:active,
+      &[data-force="pressed"] {
+        background: var(--sunken);
+      }
+      &[aria-current="page"] {
+        background: var(--admin-pill);
+        color: var(--admin-pill-fg);
+        font-weight: 600;
+      }
+    }
+  }
+  .cap-admin-menu[hidden],
+  .cap-admin[data-menu="collapsed"] .cap-admin-menu {
+    display: none;
+  }
+  .cap-admin-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--admin-tile);
+    margin-block-end: var(--space-3);
+    padding-inline: var(--space-3);
+    font-size: var(--fs-lead);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .cap-admin-group {
+    display: grid;
+    gap: var(--space-1);
+
+    & + & {
+      margin-block-start: var(--space-4);
+    }
+  }
+  .cap-admin-group-label {
+    display: flex;
+    align-items: center;
+    min-height: var(--control);
+    padding-inline: var(--space-3);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+  }
+
+  /* A count beside a menu item: a plain number counts, a violet pill needs you. Red and amber are
+     status colours and keep their meaning. */
+  .cap-admin-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-full);
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+
+    &:empty {
+      display: none;
+    }
+    &[data-tone="need"] {
+      background: var(--primary);
+      color: var(--primary-fg);
+      font-weight: 600;
+    }
+    &[data-tone="crit"] {
+      background: var(--crit-soft);
+      color: var(--crit);
+      font-weight: 600;
+    }
+    &[data-tone="warn"] {
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-weight: 600;
+    }
+  }
+  .cap-admin-menu a[aria-current="page"] .cap-admin-count:not([data-tone]) {
+    color: inherit;
+  }
+
+  .cap-admin-main {
+    position: relative;
+    min-width: 0;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  /* The page's own thin bar: how fresh the data is on the left, the page-wide controls on the
+     right (time range, export, theme). Only what is true of this page goes in it. */
+  .cap-admin-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-4);
+    min-height: var(--top-h);
+    padding: var(--space-3) calc(var(--pad-card) + var(--space-3)) 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-inline-start: auto;
+  }
+
+  /* The account panel: the Popover API, anchored beside its button; light dismiss and Esc are the
+     platform's. Sections are quiet labels over plain links. */
+  .cap-admin-account {
+    position: fixed;
+    inset: auto auto var(--space-4) calc(var(--admin-strip) + var(--space-3));
+    margin: 0;
+    width: min(300px, calc(100vw - 2 * var(--space-4)));
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-l);
+
+    & a,
+    & button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: max(var(--control), var(--target));
+      padding: 0 var(--space-4);
+      border: 0;
+      border-radius: var(--radius-m);
+      background: none;
+      color: var(--text);
+      font: inherit;
+      font-size: var(--fs-body);
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+
+      &:hover {
+        background: var(--sunken);
+      }
+    }
+  }
+  .cap-admin-who {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+
+    & .cap-admin-avatar {
+      margin: 0;
+      flex: none;
+    }
+    & div {
+      display: grid;
+      min-width: 0;
+    }
+    & small {
+      color: var(--muted);
+      font-size: var(--fs-detail);
+      overflow-wrap: anywhere;
+    }
+  }
+  .cap-admin-account-section + .cap-admin-account-section {
+    margin-block-start: var(--space-2);
+  }
+  .cap-admin-account hr {
+    margin: var(--space-3) 0;
+    border: 0;
+    border-block-start: 1px solid var(--line);
+  }
+
+  /* The page frame: the padding, rhythm and measure a view shares. A reading column (a public
+     site) is centred and capped at a comfortable line length. */
+  .cap-admin-page {
+    display: grid;
+    gap: var(--gap);
+    max-width: 1480px;
+    padding: var(--pad-card) calc(var(--pad-card) + var(--space-3)) var(--space-8);
+
+    &[data-measure="reading"] {
+      max-width: calc(var(--measure) + 2 * (var(--pad-card) + var(--space-3)));
+      margin-inline: auto;
+    }
+  }
+
+  .cap-admin-tabs {
+    display: none;
+  }
+
+  /* The phone's sheet: the shared dialog as a bottom sheet, holding the apps, the other
+     views, the tools and the account. */
+  .cap-admin-sheet > .cap-dialog-body {
+    padding: var(--space-3);
+    padding-block-end: var(--space-5);
+  }
+  .cap-admin-sheet-label {
+    padding: var(--space-4) var(--space-4) var(--space-2);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+  }
+  .cap-admin-sheet-list {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & :is(a, button) {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      width: 100%;
+      min-height: max(var(--control), var(--target));
+      padding: 0 var(--space-4);
+      border: 0;
+      border-radius: var(--radius-m);
+      background: none;
+      color: var(--text);
+      font: inherit;
+      font-size: var(--fs-body);
+      text-align: left;
+      text-decoration: none;
+
+      &:hover {
+        background: var(--sunken);
+      }
+      &[aria-current="page"],
+      &[aria-current="true"] {
+        background: var(--admin-pill);
+        color: var(--admin-pill-fg);
+        font-weight: 600;
+      }
+    }
+    & .cap-admin-count {
+      margin-inline-start: auto;
+    }
+  }
+  .cap-admin-sheet-name {
+    flex: 1;
+    min-width: 0;
+  }
+  .cap-admin-app-mark {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    color: var(--accent-text);
+    font-weight: 700;
+    font-size: var(--fs-detail);
+
+    & .cap-admin-icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  [aria-current] > .cap-admin-app-mark {
+    color: inherit;
+  }
+
+  @media (max-width: 820px) {
+    .cap-admin {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+    .cap-admin-main {
+      grid-column: 1;
+    }
+    .cap-admin-strip,
+    .cap-admin-menu {
+      display: none;
+    }
+    .cap-admin-bar {
+      padding-inline: var(--space-5);
+    }
+    .cap-admin-page {
+      padding: var(--space-5) var(--space-5) var(--space-6);
+      gap: var(--space-5);
+    }
+    .cap-admin-tabs {
+      position: sticky;
+      bottom: 0;
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      z-index: var(--z-tabbar);
+      padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
+      background: var(--surface);
+      border-top: 1px solid var(--line);
+
+      & :is(a, button) {
+        position: relative;
+        display: grid;
+        justify-items: center;
+        gap: var(--space-1);
+        min-height: var(--target);
+        margin: 0;
+        padding: var(--space-2) 0;
+        border: 0;
+        border-radius: var(--radius-m);
+        background: none;
+        font: inherit;
+        font-size: var(--fs-label);
+        font-weight: 600;
+        color: var(--muted);
+        text-decoration: none;
+        outline-offset: -2px;
+
+        &[aria-current="page"],
+        &[aria-current="true"] {
+          color: var(--accent-text);
+        }
+      }
+      & .cap-admin-icon {
+        width: 20px;
+        height: 20px;
+      }
+    }
+    .cap-admin-tabs .cap-admin-badge {
+      top: 0;
+      right: auto;
+      left: calc(50% + var(--space-3));
+      box-shadow: none;
+    }
+  }
+
+  /* Colour only, and quick; nothing moves for a person who asked for stillness. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-admin-btn,
+    .cap-admin-tile,
+    .cap-admin-menu a,
+    .cap-admin-account :is(a, button),
+    .cap-admin-sheet-list :is(a, button) {
+      transition:
+        background-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    }
+    .cap-admin-tip {
+      transform: translateX(-8px);
+      transition:
+        opacity var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out),
+        clip-path 0s linear var(--dur-fast);
+    }
+    :is(.cap-admin-btn, .cap-admin-tile):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-tip {
+      transform: none;
+      transition-delay: 0s;
+    }
+    .cap-admin-account {
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out),
+        overlay var(--dur-base) allow-discrete,
+        display var(--dur-base) allow-discrete;
+      @starting-style {
+        opacity: 0;
+        transform: translateY(var(--space-3));
+      }
+      &:not(:popover-open) {
+        opacity: 0;
+        transform: translateY(var(--space-3));
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-admin-menu a[aria-current="page"],
+    .cap-admin-tile[aria-current="true"],
+    .cap-admin-sheet-list [aria-current] {
+      outline: 2px solid CanvasText;
+    }
+    .cap-admin-tabs :is(a, button)[aria-current] {
+      text-decoration: underline;
+    }
+    .cap-admin-tip {
+      border: 1px solid CanvasText;
+    }
+    .cap-admin-badge {
+      forced-color-adjust: none;
+      background: CanvasText;
+      color: Canvas;
+    }
+  }
+}

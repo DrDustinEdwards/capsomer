@@ -2,14 +2,14 @@
    Put data-family="fox" on the root or on any element to switch its subtree.
    Import after tokens.css. Do not edit: change the script and run `npm run tokens`. */
 [data-family="fox"] {
-  --ground: #fbf1ed;
+  --ground: #fef9f7;
   --surface: #fefdfd;
   --raised: #fcf5f3;
   --sunken: #efe5e2;
   --line: #e5dcd8;
   --line-strong: #978d8a;
   --text: #26160f;
-  --muted: #6d5f5a;
+  --muted: #71635e;
   --dim: #72635e;
   --accent: #cc4f0c;
   --accent-hover: #2b130a;

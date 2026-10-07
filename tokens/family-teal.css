@@ -2,14 +2,14 @@
    Put data-family="teal" on the root or on any element to switch its subtree.
    Import after tokens.css. Do not edit: change the script and run `npm run tokens`. */
 [data-family="teal"] {
-  --ground: #ebf6f6;
+  --ground: #f1fdfd;
   --surface: #fbfefe;
   --raised: #f1f8f9;
   --sunken: #dfeaeb;
   --line: #d5e1e1;
   --line-strong: #879192;
   --text: #071f20;
-  --muted: #556566;
+  --muted: #59696a;
   --dim: #5a6a6b;
   --accent: #008489;
   --accent-hover: #0c1e1f;
