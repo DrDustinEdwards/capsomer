@@ -21,7 +21,7 @@ export interface ShellEntry {
 export interface LinkProps {
   href: string;
   className?: string;
-  "aria-current"?: "page";
+  "aria-current"?: "page" | "true";
   "aria-label"?: string;
   onClick?: () => void;
   children: ReactNode;

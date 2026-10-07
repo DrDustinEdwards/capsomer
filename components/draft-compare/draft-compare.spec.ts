@@ -266,6 +266,24 @@ eachTheme((theme) => {
     await region.focus();
     await page.keyboard.press("ArrowDown");
     await expect.poll(() => region.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    // Chrome drops a key that lands while the last key's smooth scroll is still settling (about
+    // 1 run in 12), so wait until the offset has held still for 300ms before the next key.
+    await region.evaluate(
+      (el) =>
+        new Promise<void>((done) => {
+          let last = el.scrollTop;
+          let since = performance.now();
+          const tick = () => {
+            if (el.scrollTop !== last) {
+              last = el.scrollTop;
+              since = performance.now();
+            }
+            if (performance.now() - since >= 300) done();
+            else requestAnimationFrame(tick);
+          };
+          tick();
+        }),
+    );
     const after = await region.evaluate((el) => el.scrollTop);
     await page.keyboard.press("PageDown");
     await expect.poll(() => region.evaluate((el) => el.scrollTop)).toBeGreaterThan(after);

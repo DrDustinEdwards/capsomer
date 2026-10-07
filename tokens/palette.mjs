@@ -217,7 +217,7 @@ function familyTheme(seed, anchor, scheme) {
   const t = {};
   const dark = scheme === "dark";
   // Neutrals at the seed's hue.
-  t.ground = oklch(dark ? 0.16 : 0.965, NEUTRAL_CHROMA, H);
+  t.ground = oklch(dark ? 0.16 : 0.985, NEUTRAL_CHROMA, H);
   t.surface = oklch(dark ? 0.205 : 0.995, dark ? NEUTRAL_CHROMA : 0.003, H);
   t.raised = oklch(dark ? 0.245 : 0.975, dark ? NEUTRAL_CHROMA : 0.008, H);
   t.sunken = oklch(dark ? 0.135 : 0.93, NEUTRAL_CHROMA, H);

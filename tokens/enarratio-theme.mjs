@@ -13,7 +13,7 @@ export const capsomerTheme = {
   "light": {
     "background": "#fdfdfe",
     "text": "#1c1727",
-    "mutedText": "#64606d",
+    "mutedText": "#686471",
     "grid": "#dfdce5",
     "focus": "#8c5fd2",
     "series": [

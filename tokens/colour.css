@@ -2,14 +2,14 @@
    Do not edit: change the script and run `npm run tokens`. `npm run check` refuses a file
    that differs from what the script writes, and any pair below WCAG 2.2's bar. */
 :root {
-  --ground: #f4f2fb;
+  --ground: #fbf9ff;
   --surface: #fdfdfe;
   --raised: #f7f6fc;
   --sunken: #e9e6ef;
   --line: #dfdce5;
   --line-strong: #918e96;
   --text: #1c1727;
-  --muted: #64606d;
+  --muted: #686471;
   --dim: #696571;
   --accent: #8c5fd2;
   --accent-hover: #1d162c;
