@@ -162,6 +162,16 @@ eachTheme((theme) => {
     await link.hover();
     await expect(label).toHaveCSS("opacity", "1");
     await expectContrast(page, [{ sel: ".cap-admin-menu a:hover .cap-admin-label", what: "the shown label" }]);
+    // The label is painted over the page, not under it.
+    const top = await label.evaluate((el) => {
+      // The label ignores the pointer, so let it be hit for this one look.
+      (el as HTMLElement).style.pointerEvents = "auto";
+      const r = el.getBoundingClientRect();
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest(".cap-admin-label") === el;
+      (el as HTMLElement).style.pointerEvents = "";
+      return hit;
+    });
+    expect(top, "the label is covered by the page").toBe(true);
     await page.mouse.move(700, 400);
     await link.focus();
     await expect(label).toHaveCSS("opacity", "1");

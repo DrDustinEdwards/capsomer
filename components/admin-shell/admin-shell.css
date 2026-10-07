@@ -245,6 +245,8 @@
   .cap-admin-menu {
     position: sticky;
     top: 0;
+    /* Above the page, so a collapsed icon's label is not painted under it. */
+    z-index: var(--z-sticky);
     align-self: start;
     height: 100dvh;
     display: flex;
