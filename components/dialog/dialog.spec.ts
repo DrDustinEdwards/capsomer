@@ -35,6 +35,23 @@ test("behaviour: uid returns a new id on every call, with the prefix", () => {
   expect(b).not.toBe(a);
 });
 
+// With no script the dialog is a card in the page and its form works: a context with script off
+// reads the delivered HTML, which is all there is.
+test("behaviour: with no script an inline dialog is in the page, open, and its form is there", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, baseURL: "http://localhost:4319/" });
+  const page = await context.newPage();
+  await page.goto("components/dialog/states.html");
+  const card = page.locator("#inline-rename");
+  await expect(card).toHaveAttribute("open", "");
+  await expect(card).toBeVisible();
+  await expect(card.getByRole("textbox", { name: "Site name" })).toHaveValue("foxhound.app");
+  await expect(card.getByRole("button", { name: "Save name" })).toBeVisible();
+  // In the flow, not floating: it sits inside the page's main region, below its own heading.
+  expect(await card.evaluate((el) => getComputedStyle(el).position)).toBe("static");
+  await expect(page.getByRole("link", { name: "Cancel" })).toHaveAttribute("href", "/admin/sites/foxhound");
+  await context.close();
+});
+
 eachTheme((theme) => {
   test("accessibility: no axe violations, the states page", async ({ page }) => {
     await visitStates(page, "dialog", theme);
@@ -360,5 +377,35 @@ eachTheme((theme) => {
       await page.keyboard.press("Escape");
       await expect(dlg(page, "More views")).toBeHidden();
     }
+  });
+  test("behaviour: with script an inline dialog is closed on load and its link opens it as the modal", async ({ page }) => {
+    await visitStates(page, "dialog", theme);
+    const card = page.locator("#inline-rename");
+    await expect(card).not.toHaveAttribute("open", "");
+    await expect(card).toBeHidden();
+    await page.locator("#open-inline").focus();
+    await page.keyboard.press("Enter");
+    await expect(dlg(page, "Rename the site")).toBeVisible();
+    expect(await card.evaluate((el) => (el as HTMLDialogElement).matches(":modal"))).toBe(true);
+    // A form that wraps the parts takes no box of its own, so the body is still the dialog's flex child.
+    expect(await card.locator("form").evaluate((el) => getComputedStyle(el).display)).toBe("contents");
+    await expect(page).not.toHaveURL(/#inline-rename/);
+    expect(await page.evaluate(() => document.activeElement?.closest("dialog")?.id)).toBe("inline-rename");
+  });
+
+  test("keyboard: a Cancel that is a link closes the modal and stays on the page, and focus returns to the opener", async ({ page }) => {
+    await visitStates(page, "dialog", theme);
+    await page.locator("#open-inline").focus();
+    await page.keyboard.press("Enter");
+    await expect(dlg(page, "Rename the site")).toBeVisible();
+    await dlg(page, "Rename the site").getByRole("link", { name: "Cancel" }).click();
+    await expect(page.locator("#inline-rename")).toBeHidden();
+    await expect(page).toHaveURL(/states\.html/);
+    await expect(page.locator("#open-inline")).toBeFocused();
+  });
+
+  test("accessibility: the in-page dialog section has no axe violations with script on", async ({ page }) => {
+    await visitStates(page, "dialog", theme);
+    await expectNoAxeViolations(page);
   });
 });

@@ -1,4 +1,26 @@
 <!-- The dialog's specimens. A modal dialog takes the whole page, so each state is a page of its own. Sample data. -->
+<section class="cap-specimen" aria-labelledby="s-inline">
+  <h2 id="s-inline">In the page until script opens it</h2>
+  <p>With no script this dialog is a card in the page and its form works. With script it is closed on load, and the link opens it as the modal (a new tab or a modified click still follows the link to the card).</p>
+  <p><a class="cap-btn" id="open-inline" href="#inline-rename" data-cap-dialog-open="inline-rename">Rename the site…</a></p>
+  <dialog class="cap-dialog" data-cap="dialog" data-cap-inline data-placement="center" data-size="md" id="inline-rename" open aria-labelledby="inline-rename-title" aria-describedby="inline-rename-desc">
+    <form method="post" action="/admin/sites/foxhound/rename">
+      <div class="cap-dialog-header">
+        <h3 class="cap-dialog-title" id="inline-rename-title">Rename the site</h3>
+        <p class="cap-dialog-description" id="inline-rename-desc">Visitors keep the old address.</p>
+      </div>
+      <div class="cap-dialog-body">
+        <label for="inline-name">Site name</label>
+        <input class="cap-input" id="inline-name" name="name" value="foxhound.app" />
+      </div>
+      <div class="cap-dialog-footer">
+        <a class="cap-btn" href="/admin/sites/foxhound" data-cap-part="cancel">Cancel</a>
+        <button type="submit" class="cap-btn" data-variant="primary">Save name</button>
+      </div>
+    </form>
+  </dialog>
+</section>
+
       <template data-specimen="live" data-title="Working: open each placement from a button" data-height="460">
         <main class="specimen-page" id="main" tabindex="-1">
           <h1>Sites</h1>

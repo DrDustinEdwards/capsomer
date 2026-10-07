@@ -4,7 +4,7 @@ title: Dialog
 summary: The one modal surface under every overlay: a dialog, an alert dialog, a side sheet, a bottom sheet, a palette.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [open, alert dialog, large, side sheet right, side sheet left, bottom sheet, top palette, tall content scrolls, busy]
+states: [in the page until script opens it, open, alert dialog, large, side sheet right, side sheet left, bottom sheet, top palette, tall content scrolls, busy]
 added: 0.2.0
 source: shadcn/ui Dialog, Alert Dialog and Sheet (Base UI flavour, nova style, commit d75a96ab787f); the focus, backdrop, busy and history rules from Capsomer 0.1's confirm dialog and detail panel
 replaces:
@@ -45,6 +45,7 @@ Anything that must be dealt with before the page is used again: a short form, a 
 - **Focus on close** goes back to the control that opened it, after the next frame. If that control is gone, to `data-cap-return` (a selector), then to the Close button of another dialog still open behind this one, then to `main`.
 - **Busy** (`aria-busy="true"` on the dialog): Esc, Close, Cancel and the backdrop all refuse, so the answer to the request is not hidden.
 - **History** (`data-cap-history`): opening pushes `#dialog-<id>`; Back closes the dialog; closing any other way takes the entry back, so Back goes where it went before.
+- **In the page until script opens it** (`data-cap-inline` on a `<dialog open>`): a dialog written with `open` is not modal, so with no script it flows in the page as a card (CSS `position: static`, no shadow) and its form works as delivered. Its opener is a link to the dialog (`href="#id"` or the page that shows it), which with no script just goes to the card. `enhance()` takes it over on load: it removes `open`, so the dialog is closed, and an opener with `data-cap-dialog-open` opens it as the modal, with everything else the dialog does (focus, Esc, the backdrop). A Cancel written as a link (`<a data-cap-part="cancel" href="...">`) closes the modal and stays on the page; with no script it is a plain link that leaves. The dialog flashes in the page for the moment before script runs, which is the price of working without it.
 - **The page does not scroll behind it.**
 - **Motion**: a dialog fades and zooms in from 95% in 100 ms; a sheet fades and slides in 2.5rem from its edge in 200 ms; the backdrop fades with it. The same on the way out. Under `prefers-reduced-motion: reduce` nothing moves: it appears and goes.
 
@@ -91,6 +92,22 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ```
 
 Parts: `cap-dialog-header` (`data-divider` adds a line under it), `-title`, `-description`, `-media` (an icon tile, `data-tone="crit|warn"`), `-body` (`data-flush` removes its padding), `-footer` (`data-align="between|start"`), `-close`. Attributes on the dialog: `data-cap-modal-lock`, `data-cap-destructive`, `data-cap-history` (its value is the prefix of the address, default `dialog`; `data-cap-history-id` the id, default the dialog's `id`), `data-cap-return` (selector), `data-cap-open` (opens when enhanced).
+
+In the page until script opens it:
+
+```html
+<p><a class="cap-btn" href="#rename" data-cap-dialog-open="rename">Rename the site…</a></p>
+<dialog class="cap-dialog" data-cap="dialog" data-cap-inline open data-placement="center" data-size="md" id="rename" aria-labelledby="rename-title">
+  <form method="post" action="/admin/sites/foxhound/rename">
+    <div class="cap-dialog-header"><h2 class="cap-dialog-title" id="rename-title">Rename the site</h2></div>
+    <div class="cap-dialog-body"><label for="name">Site name</label><input class="cap-input" id="name" name="name" /></div>
+    <div class="cap-dialog-footer">
+      <a class="cap-btn" href="/admin/sites/foxhound" data-cap-part="cancel">Cancel</a>
+      <button type="submit" class="cap-btn" data-variant="primary">Save name</button>
+    </div>
+  </form>
+</dialog>
+```
 
 ```ts
 import { enhance, openDialog, closeDialog, setDialogBusy } from "capsomer/behaviour/dialog";
