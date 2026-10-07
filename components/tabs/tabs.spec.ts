@@ -223,4 +223,36 @@ eachTheme((theme) => {
     const roomy = await page.locator("#tc-a").evaluate((el) => el.getBoundingClientRect().height);
     expect(roomy).toBeGreaterThan(compact);
   });
+  for (const mount of ["router", "router-per-link"]) {
+    test(`behaviour: a router link drawn by the ${mount === "router" ? "nav's" : "link's"} slot keeps the tab's look, count and current state`, async ({ page }) => {
+      await visitStates(page, "tabs", theme);
+      const nav = page.locator(`[data-mount='${mount}']`);
+      const links = nav.locator("nav.cap-tabs-list a.cap-tab[data-router-link]");
+      await expect(links).toHaveCount(4);
+      await expect(nav.getByRole("link", { name: "Waiting 5" })).toHaveAttribute("aria-current", "page");
+      await expect(nav.getByRole("link", { name: "All 24" })).not.toHaveAttribute("aria-current", "page");
+      await expect(nav.getByRole("link", { name: "Approved 17" })).toHaveAttribute("href", "/mentions/approved");
+      await expect(nav.locator(".cap-tab-count")).toHaveText(["24", "5", "17", "2"]);
+    });
+
+    test(`keyboard: Enter on a ${mount} link navigates through the router with no page load, and the current tab follows`, async ({ page }) => {
+      await visitStates(page, "tabs", theme);
+      const nav = page.locator(`[data-mount='${mount}']`);
+      const before = page.url();
+      await nav.getByRole("link", { name: "Spam 2" }).focus();
+      await page.keyboard.press("Enter");
+      await expect(nav.locator("[data-router-path]")).toHaveAttribute("data-router-path", "/mentions/spam");
+      await expect(nav.getByRole("link", { name: "Spam 2" })).toHaveAttribute("aria-current", "page");
+      await expect(nav.getByRole("link", { name: "Waiting 5" })).not.toHaveAttribute("aria-current", "page");
+      expect(page.url()).toBe(before);
+    });
+  }
+
+  test("accessibility: the router links have no axe violations and keep their contrast", async ({ page }) => {
+    await visitStates(page, "tabs", theme);
+    await expectContrast(page, [
+      { sel: "[data-mount='router'] a.cap-tab[aria-current='page']", what: "the current router tab" },
+      { sel: "[data-mount='router'] a.cap-tab:not([aria-current])", what: "another router tab" },
+    ]);
+  });
 });

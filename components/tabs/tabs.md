@@ -44,6 +44,8 @@ Two ways to the same look. **Panels**: a `tablist` of buttons and the `tabpanel`
 - **A count is text.** The accessible name reads "Runs 24". Do not hide it from the name: it is part of what the tab is.
 - **The address can follow the tab** (`data-sync="hash"`): the panel's id goes after the `#` (replacing the entry, so Back does not step through every click), and a link with that hash opens the tab.
 
+- **A link slot, so a tab link can be an app's router link.** `TabsNav` takes `renderLink` (and a `TabLink` takes its own, which wins): a function given a plain `<a>`'s props with `href` always set, the tab's class (`cap-tab`) and `aria-current="page"` already on it, and the count inside; the app returns its router's `<Link to={props.href} {...props} />`. The tab keeps its look, its count and its current state, and a click navigates in the app with no page load, the router's way. Without `renderLink` a `TabLink` is a plain `<a>`, as before. Same shape as the shell's `renderLink`.
+
 ## The shadcn component it matches
 
 Tabs (`tabs.tsx`: Tabs, TabsList, TabsTrigger, TabsContent), Base UI flavour, nova style. Matched: the default muted tray with the chosen tab raised, the `line` variant, horizontal and vertical, the sizes of the list, `fill`. Different on purpose: the chosen tab has an edge, not only a fill; the list scrolls; panels are always in the HTML; a links form exists; a count has its own part.
@@ -118,6 +120,18 @@ In React, `import { Tabs, TabsList, TabsTrigger, TabsContent, TabsNav, TabLink }
 ```
 
 `value` and `onValueChange` control the chosen tab. With a router's link component, give it `className="cap-tab"` and `aria-current`, and wrap the links in `TabsNav`.
+
+A router link in React:
+
+```tsx
+import { TabsNav, TabLink } from "capsomer/react/tabs";
+import { Link } from "react-router";
+
+<TabsNav aria-label="Filter mentions by status" renderLink={({ href, ...props }) => <Link to={href} {...props} />}>
+  <TabLink href="/mentions/all" current={status === "all"} count={24}>All</TabLink>
+  <TabLink href="/mentions/waiting" current={status === "waiting"} count={5}>Waiting</TabLink>
+</TabsNav>
+```
 
 ## Deliberately different
 
