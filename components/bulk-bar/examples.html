@@ -57,6 +57,26 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-form">
+  <h2 id="s-form">A form: the actions are submit buttons and the server confirms</h2>
+  <p>This bar is in the page and works with no script: the boxes are the form's own, each action is a submit button named <code>intent</code>, and the server decides (a destructive intent gets the server's own page listing every item). With script the bar counts, hides while nothing is ticked, and refuses a press with nothing ticked.</p>
+  <form class="bulk-form" id="form-drafts" method="post" action="/admin/posts/bulk">
+    <ul class="bulk-list" id="form-list">
+      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" name="ids" value="f-1" data-cap-select /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" name="ids" value="f-2" data-cap-select /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
+      <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" name="ids" value="f-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
+    </ul>
+    <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="form-list" role="region" aria-label="Bulk actions" id="bulk-form">
+      <p class="cap-bulk-count" role="status">Tick the drafts to act on</p>
+      <div class="cap-bulk-actions">
+        <button type="submit" class="cap-btn" name="intent" value="archive">Archive</button>
+        <button type="submit" class="cap-btn" data-variant="danger" data-destructive name="intent" value="bin">Bin</button>
+      </div>
+      <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+    </div>
+  </form>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-twelve">
   <h2 id="s-twelve">Twelve selected: the preview lists every one</h2>
   <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="twelve-list" /> Select all drafts</label></div>

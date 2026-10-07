@@ -13,7 +13,10 @@ export interface BulkBarAction {
   // What the message region says afterwards, and after Undo.
   said?: string;
   undone?: string;
-  run: (items: readonly BulkItem[]) => void | Promise<void>;
+  // Form mode (the bar has `form`): the action is a submit button of that form, named `intent`
+  // with the action's id as the value. `run` is not used, the server answers.
+  submit?: boolean;
+  run?: (items: readonly BulkItem[]) => void | Promise<void>;
   // Reverses a reversible action: the region offers Undo.
   undo?: (items: readonly BulkItem[]) => void | Promise<void>;
   disabled?: boolean;
@@ -36,9 +39,15 @@ export interface BulkBarProps {
   // Extra controls before the actions (a tag field).
   children?: ReactNode;
   label?: string;
+  // Form mode: the id of the form the selection belongs to (the checkboxes sit in it or name it
+  // with their own `form`). Actions with `submit` post it. The bar is in the delivered page
+  // without script and hides itself only after the page has loaded and nothing is ticked.
+  form?: string;
 }
 
-export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, position = "bottom", returnTo, children, label = "Bulk actions" }: BulkBarProps) {
+export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, position = "bottom", returnTo, children, label = "Bulk actions", form }: BulkBarProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const n = items.length;
   // A status region that is shown and filled in one step is often missed: the count is written
   // a frame after the bar appears.
@@ -60,7 +69,7 @@ export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, p
     const ok = await performBulk({
       action: typeof a.label === "string" ? a.label : a.id,
       items,
-      run: a.run,
+      run: a.run ?? (() => undefined),
       undo: a.undo,
       destructive: a.destructive,
       confirmTitle: a.confirmTitle,
@@ -74,7 +83,7 @@ export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, p
   };
 
   return (
-    <div className="cap-bulk" data-cap="bulk-bar" role="region" aria-label={label} data-position={position === "top" ? "top" : undefined} hidden={n === 0} onKeyDown={(e) => {
+    <div className="cap-bulk" data-cap="bulk-bar" role="region" aria-label={label} data-position={position === "top" ? "top" : undefined} hidden={form ? mounted && n === 0 : n === 0} onKeyDown={(e) => {
         if (e.key === "Escape" && !e.defaultPrevented && n > 0) {
           e.preventDefault();
           onClear();
@@ -96,7 +105,11 @@ export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, p
       ) : null}
       <div className="cap-bulk-actions">
         {children}
-        {actions.map((a) => (
+        {actions.map((a) => a.submit ? (
+          <button key={a.id} type="submit" form={form} name="intent" value={a.id} className="cap-btn" data-variant={a.destructive ? "danger" : undefined} aria-disabled={a.disabled || undefined}>
+            {a.label}
+          </button>
+        ) : (
           <button key={a.id} type="button" className="cap-btn" data-variant={a.destructive ? "danger" : undefined} data-cap-bulk-action={a.id} aria-disabled={a.disabled || undefined} onClick={() => (a.disabled ? undefined : void run(a))}>
             {a.label}
           </button>

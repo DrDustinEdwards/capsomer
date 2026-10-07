@@ -255,4 +255,38 @@ eachTheme((theme) => {
     await near("#bulk-scroll", "#bulk-sticky", "bottom");
     await near("#bulk-scroll-top", "#bulk-top", "top");
   });
+  test("behaviour: in form mode the actions are submit buttons and the browser, not the bar, submits", async ({ page }) => {
+    await visitStates(page, "bulk-bar", theme);
+    const bar = page.locator("#bulk-form");
+    // With a selection the bar shows its count; a press posts the form with the button's intent.
+    const posted = page.evaluate(
+      () =>
+        new Promise<{ intent: string; ids: string[] }>((done) => {
+          document.querySelector("#form-drafts")!.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const submitter = (e as SubmitEvent).submitter as HTMLButtonElement;
+            const data = new FormData(form, submitter);
+            done({ intent: String(data.get("intent")), ids: data.getAll("ids").map(String) });
+          });
+        }),
+    );
+    await check(page, "form-list", 1).check();
+    await check(page, "form-list", 3).check();
+    await expect(bar.locator(".cap-bulk-count")).toHaveText("2 selected");
+    await bar.getByRole("button", { name: "Bin" }).click();
+    expect(await posted).toEqual({ intent: "bin", ids: ["f-1", "f-3"] });
+    // The bar did not preview, run or offer Undo: that is the server's page.
+    await expect(page.locator("dialog[open]")).toHaveCount(0);
+    await expect(check(page, "form-list", 1)).toBeChecked();
+  });
+
+  test("behaviour: in form mode the bar is in the delivered HTML and hides once the page has loaded with nothing ticked", async ({ page }) => {
+    await visitStates(page, "bulk-bar", theme);
+    // The page's script has run and nothing is ticked: the bar is out of the page, like any other.
+    await expect(page.locator("#bulk-form")).toBeHidden();
+    const html = await page.request.get("components/bulk-bar/states.html").then((r) => r.text());
+    expect(html).toMatch(/<div class="cap-bulk" data-cap="bulk-bar" data-cap-list="form-list" role="region" aria-label="Bulk actions" id="bulk-form">/);
+    expect(html).toContain('<button type="submit" class="cap-btn" name="intent" value="archive">Archive</button>');
+  });
 });
