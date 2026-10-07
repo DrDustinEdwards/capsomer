@@ -244,4 +244,59 @@ eachTheme((theme) => {
     const violations = await page.evaluate(() => (window as unknown as { __csp: string[] }).__csp);
     expect(violations).toEqual([]);
   });
+  test("accessibility: the tag field, open and closed, has no axe violations", async ({ page }) => {
+    await visitStates(page, "combobox", theme, "open-tags");
+    await expectNoAxeViolations(page);
+    await visitStates(page, "combobox", theme);
+    await expectNoAxeViolations(page);
+  });
+
+  test("keyboard: in a tag field, typed text and Enter make a new tag, and the box is ready for the next", async ({ page }) => {
+    await visitStates(page, "combobox", theme);
+    const area = page.locator("[data-mount='tags']");
+    const input = area.getByRole("combobox", { name: "Tags" });
+    await expect(area.locator(".cap-combobox-chip")).toHaveCount(2);
+    await input.focus();
+    await page.keyboard.type("western blot");
+    await expect(page.getByRole("option", { name: "Create “western blot”" })).toBeVisible();
+    await page.keyboard.press("Enter");
+    await expect(area.locator(".cap-combobox-chip")).toHaveCount(3);
+    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "phage|gel shift assay|western blot");
+    await expect(input).toHaveValue("");
+    await expect(input).toBeFocused();
+  });
+
+  test("behaviour: in a tag field, text that matches a suggestion picks it, and no tag is made twice", async ({ page }) => {
+    await visitStates(page, "combobox", theme);
+    const area = page.locator("[data-mount='tags']");
+    const input = area.getByRole("combobox", { name: "Tags" });
+    await input.focus();
+    await page.keyboard.type("RELEASE");
+    // The suggestion matches ignoring case, so there is nothing to create.
+    await expect(page.getByRole("option", { name: /^Create/ })).toHaveCount(0);
+    await page.keyboard.press("Enter");
+    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "phage|gel shift assay|release");
+    // A tag already on the field is not offered again as a new one.
+    await page.keyboard.type("Gel shift  assay");
+    await expect(page.getByRole("option", { name: /^Create/ })).toHaveCount(0);
+  });
+
+  test("behaviour: a made tag is a chip with its own remove button, and Backspace takes the last one", async ({ page }) => {
+    await visitStates(page, "combobox", theme);
+    const area = page.locator("[data-mount='tags']");
+    await area.getByRole("button", { name: "Remove gel shift assay" }).click();
+    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "phage");
+    const input = area.getByRole("combobox", { name: "Tags" });
+    await input.focus();
+    await page.keyboard.press("Backspace");
+    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "");
+  });
+
+  test("behaviour: the tag field posts every tag, made or listed, under its name", async ({ page }) => {
+    await visitStates(page, "combobox", theme);
+    const area = page.locator("[data-mount='tags']");
+    await expect(area.locator("input[name='tags']")).toHaveCount(2);
+    await expect(area.locator("input[name='tags']").first()).toHaveValue("phage");
+    await expect(area.locator("input[name='tags']").last()).toHaveValue("gel shift assay");
+  });
 });

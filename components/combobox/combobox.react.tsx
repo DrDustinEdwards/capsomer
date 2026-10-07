@@ -57,7 +57,17 @@ export interface ComboboxMultipleProps extends ComboboxBaseProps {
   values?: string[];
   defaultValues?: string[];
   onValuesChange?: (values: string[]) => void;
+  // A tag field: typed text that is not in `items` can be added as a value of its own. A first
+  // row, `Create “text”`, offers it; Enter takes it (text that matches an item, ignoring case, picks
+  // that item instead, so a tag is never made twice). The value of a made one is its text.
+  creatable?: boolean;
+  // The words of the create row, from the typed text.
+  createLabel?: (text: string) => string;
 }
+
+// A made value's id in the list, before it becomes a value: the prefix plus its text.
+const MAKE = "\u0001make:";
+const tidy = (text: string) => text.trim().replace(/\s+/g, " ");
 
 const Check = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -261,13 +271,26 @@ export function ComboboxMultiple(props: ComboboxMultipleProps) {
   const errorId = `${autoId}-error`;
   const anchor = useRef<HTMLDivElement | null>(null);
 
+  const { creatable = false, createLabel = (text: string) => `Create “${text}”` } = props;
   const [own, setOwn] = useState<string[]>(props.defaultValues ?? []);
   const current = props.values !== undefined ? props.values : own;
-  const selected = useMemo(() => current.map((v) => items.find((i) => i.value === v)).filter((i): i is ComboboxOption => !!i), [current, items]);
+  // Tags made by typing: they are not in `items`, so they are kept here (or come back in
+  // `values`, which are shown as chips whether or not they are listed).
+  const [made, setMade] = useState<ComboboxOption[]>([]);
+  const known = useMemo(() => {
+    const out = [...items];
+    for (const m of made) if (!out.some((i) => i.value === m.value)) out.push(m);
+    if (creatable) for (const v of current) if (!out.some((i) => i.value === v)) out.push({ value: v, label: v });
+    return out;
+  }, [items, made, creatable, current]);
+  const selected = useMemo(() => current.map((v) => known.find((i) => i.value === v)).filter((i): i is ComboboxOption => !!i), [current, known]);
   const [query, setQuery] = useState(defaultInputValue ?? "");
 
-  const list = useMemo(() => grouped(items), [items]);
-  const isGrouped = items.some((i) => i.group);
+  const typed = tidy(query);
+  const makeable = creatable && typed !== "" && !known.some((i) => i.label.toLowerCase() === typed.toLowerCase());
+  const options = useMemo(() => (makeable ? [{ value: `${MAKE}${typed}`, label: createLabel(typed) }, ...known] : known), [makeable, typed, known, createLabel]);
+  const list = useMemo(() => grouped(options), [options]);
+  const isGrouped = options.some((i) => i.group);
   const describedBy = [help != null ? helpId : "", error != null ? errorId : ""].filter(Boolean).join(" ") || undefined;
   const empty = typeof emptyText === "function" ? emptyText(query) : (emptyText ?? defaultEmpty(query));
 
@@ -278,14 +301,29 @@ export function ComboboxMultiple(props: ComboboxMultipleProps) {
         items={list}
         value={selected}
         onValueChange={(next: ComboboxOption[]) => {
-          const values = next.map((i) => i.value);
+          const values: string[] = [];
+          const fresh: ComboboxOption[] = [];
+          for (const i of next) {
+            if (!i.value.startsWith(MAKE)) {
+              values.push(i.value);
+              continue;
+            }
+            const text = i.value.slice(MAKE.length);
+            if (!values.includes(text)) values.push(text);
+            fresh.push({ value: text, label: text });
+          }
+          if (fresh.length) {
+            setMade((m) => [...m, ...fresh.filter((f) => !m.some((x) => x.value === f.value))]);
+            setQuery("");
+          }
           if (props.values === undefined) setOwn(values);
           props.onValuesChange?.(values);
         }}
         inputValue={query}
         onInputValueChange={(next: string) => setQuery(next)}
+        autoHighlight={creatable}
         isItemEqualToValue={(a: ComboboxOption, b: ComboboxOption) => a.value === b.value}
-        itemToStringLabel={(item: ComboboxOption) => item.label}
+        itemToStringLabel={(item: ComboboxOption) => (item.value.startsWith(MAKE) ? typed : item.label)}
         itemToStringValue={(item: ComboboxOption) => item.value}
         disabled={disabled}
         required={required}
