@@ -301,6 +301,9 @@ export interface BuildOptions {
   now?: number;
   // The address a line's title opens (the version's own page); "?version=" by default.
   versionHref?: string;
+  // Load-into-editor mode: the action on an earlier line is a link to this address plus the
+  // version's id (`?load=` is the usual tail), in place of Restore.
+  loadHref?: string;
 }
 
 function detailFor(e: HistoryEntry, id: string, now: number): HTMLElement | null {
@@ -332,6 +335,16 @@ function restoreButton(e: HistoryEntry, now: number): HTMLElement {
   return h("button", { type: "button", class: "cap-btn", "data-variant": "quiet", "data-size": "sm", "data-cap-part": "restore", "data-version": e.id }, "Restore", h("span", { class: "cap-sr-only" }, ` the version from ${stamp(e.at, now)} by ${e.who}`));
 }
 
+// Load into editor: a link, so the page works as delivered. Nothing is added to the history;
+// the text goes to the editor and a save is what makes the version.
+function loadLink(e: HistoryEntry, href: string, now: number): HTMLElement {
+  return h("a", { class: "cap-btn", "data-variant": "quiet", "data-size": "sm", "data-cap-part": "load", "data-version": e.id, href: `${href}${encodeURIComponent(e.id)}` }, "Load into editor", h("span", { class: "cap-sr-only" }, ` the version from ${stamp(e.at, now)} by ${e.who}`));
+}
+
+function actionFor(e: HistoryEntry, now: number, loadHref?: string): HTMLElement {
+  return loadHref ? loadLink(e, loadHref, now) : restoreButton(e, now);
+}
+
 // One line, exactly the markup the doc page shows (and the page is delivered with).
 export function buildRow(e: HistoryEntry, delta: number, o: BuildOptions): HTMLLIElement {
   const now = o.now ?? Date.now();
@@ -340,7 +353,7 @@ export function buildRow(e: HistoryEntry, delta: number, o: BuildOptions): HTMLL
   const described = [detail ? `${p}-d` : "", `${p}-w`, `${p}-t`].filter(Boolean).join(" ");
   const li = h("li", { class: "cap-row cap-hist-row", "data-kind": e.kind, "data-id": e.id, "data-at": e.at, "data-words": String(e.words), "data-who": e.who, "data-current": o.current ? "" : undefined });
   const title = h("div", { class: "cap-row-title" }, h("a", { href: `${o.versionHref ?? "?version="}${encodeURIComponent(e.id)}`, "aria-describedby": described, title: e.summary }, e.summary));
-  const actions = h("div", { class: "cap-row-actions" }, o.current ? statusEl("ok", GLYPHS.ok, "Current") : restoreButton(e, now));
+  const actions = h("div", { class: "cap-row-actions" }, o.current ? statusEl("ok", GLYPHS.ok, "Current") : actionFor(e, now, o.loadHref));
   li.append(pickEl(e, now), whoEl(`${p}-who`, [e.who], e.ai), title);
   if (detail) li.append(detail);
   li.append(deltaEl(`${p}-w`, delta), whenEl(`${p}-t`, e.at, now), actions);
@@ -435,12 +448,17 @@ function setCurrent(root: HTMLElement, row: HTMLLIElement, current: boolean): vo
     actions.replaceChildren(statusEl("ok", GLYPHS.ok, "Current"));
   } else {
     delete row.dataset.current;
-    actions.replaceChildren(restoreButton(entry, now));
+    actions.replaceChildren(actionFor(entry, now, root.dataset.loadHref));
   }
 }
 
 function currentRow(root: HTMLElement): HTMLLIElement | null {
   return root.querySelector<HTMLLIElement>(".cap-hist-row[data-current]");
+}
+
+export interface LoadDetail {
+  // The line whose text goes to the editor.
+  entry: HistoryEntry;
 }
 
 export interface RestoreDetail {
@@ -462,7 +480,7 @@ export function restoreVersion(root: HTMLElement, id: string): HTMLLIElement | n
   const prefix = root.id || "cap-hist";
   const source = entryOf(sourceRow);
   const entry = restoredEntry(source, entryOf(previous), root.dataset.user || "You", `${id}-restored-${list.querySelectorAll("[data-kind='restore']").length + 1}`, new Date(now).toISOString(), now);
-  const row = buildRow(entry, entry.delta ?? 0, { prefix, current: true, now, versionHref: root.dataset.versionHref });
+  const row = buildRow(entry, entry.delta ?? 0, { prefix, current: true, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref });
   setCurrent(root, previous, false);
   list.prepend(row);
   enhanceTime(row);
@@ -494,11 +512,11 @@ export function appendEntries(root: HTMLElement, entries: readonly HistoryEntry[
   let index = 0;
   for (const line of lines) {
     if (line.type === "entry") {
-      list.append(buildRow(line.entry, deltaOf(entries, index), { prefix, now, versionHref: root.dataset.versionHref }));
+      list.append(buildRow(line.entry, deltaOf(entries, index), { prefix, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref }));
       index += 1;
     } else {
       const deltas = line.entries.map((_e, k) => deltaOf(entries, index + k));
-      list.append(...buildRun(line, deltas, { prefix, now, versionHref: root.dataset.versionHref }));
+      list.append(...buildRun(line, deltas, { prefix, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref }));
       index += line.entries.length;
     }
   }
@@ -572,6 +590,14 @@ export function enhance(root: ParentNode = document): () => void {
       }
       const restore = t.closest<HTMLElement>("[data-cap-part='restore']");
       if (restore) return void restoreVersion(el, restore.dataset.version ?? "");
+      const load = t.closest<HTMLAnchorElement>("[data-cap-part='load']");
+      if (load) {
+        // The app may load the text into its own editor: cancel the event and do it. Without
+        // a listener the link is followed, so the page works as delivered.
+        const row = load.closest<HTMLElement>(".cap-hist-row");
+        if (row && !el.dispatchEvent(new CustomEvent<LoadDetail>("cap:history-load", { bubbles: true, cancelable: true, detail: { entry: entryOf(row) } }))) e.preventDefault();
+        return;
+      }
       const compare = t.closest<HTMLElement>("[data-cap-part='compare']");
       if (compare && compare.getAttribute("aria-disabled") === "true") {
         e.preventDefault();

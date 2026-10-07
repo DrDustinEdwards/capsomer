@@ -4,7 +4,7 @@ title: History list
 summary: One line per change to a draft or post, with who, when, the signed size change in words and a one-line summary; autosaves folded, any two versions picked to compare, and restoring that makes a new version.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [current version, edit, autosave, run of autosaves collapsed, run of autosaves open, named version, publish with destinations and statuses, restore line, one version picked, two versions picked, a third pick refused, size change up, down and none, hover, restored with Undo, empty, load older, comfortable density, phone width]
+states: [load into editor, current version, edit, autosave, run of autosaves collapsed, run of autosaves open, named version, publish with destinations and statuses, restore line, one version picked, two versions picked, a third pick refused, size change up, down and none, hover, restored with Undo, empty, load older, comfortable density, phone width]
 added: 0.3.0
 source: Dustin Edwards's site admin, app/components/admin/revision-list.tsx (RevisionList, RevisionMeta, DiffBlock), app/routes/admin.posts.$slug.history.tsx and app/styles/admin-history.css; app/components/post-history.tsx for the dated facts. shadcn/ui Item and Checkbox for the craft.
 replaces:
@@ -40,6 +40,7 @@ The history of one document that changes over time and where people go back: a p
 - **Pick any two to compare.** Each line has a checkbox named "Compare this version, 2 Oct, 14:02 UTC, by Rosa Park". At most two. A third is refused, not swapped in: the box is `aria-disabled`, and pressing it says, in the polite status line, "Two versions are picked; untick one first." Swapping the oldest out would change a choice the person did not touch. The status line announces the two picked, **older first, whichever was picked first**, and the "Compare 2 versions" link's address is `?from=<older>&to=<newer>`, so the compare view always reads old to new. Before two are picked the link is `aria-disabled` and says what is missing.
 - **Restoring makes a new version, never an overwrite.** Each line except the current one has Restore. It acts at once (a reversible action): the history gains a line at the top, "Restored the version from 28 Sep, 09:15 UTC", marked Current, the earlier current line loses its "Current" and gains Restore, and the message region says "Restored version from 28 Sep as a new version." with Undo (`z`). Undo removes the new line and makes the earlier version current again. Every earlier version stays. The list fires `cap:history-restored` and `cap:history-unrestored` so the app saves or removes the version.
 - **The current version says "Current" in words and has no Restore.**
+- **Load into editor is the other action, for a draft with an editor the history is not the record of.** Set `data-load-href` on the root (React: `loadHref`) and each earlier line shows "Load into editor", a link to that address plus the version's id (`/posts/phage-lambda/edit?load=v-70`), in place of Restore. It works as delivered: the editor's page reads `?load=` and fills the editor. Nothing is added to the history, because the text is only loaded; the editor's own save makes the version, on top, and the history is never rewritten. There is no Undo line, because nothing happened yet. An app that loads the text in place cancels the cancelable `cap:history-load` (detail `{ entry }`; React `onLoad`), which stops the navigation. The two actions are one or the other on a list, never both: Restore acts at once and a loaded text waits for a save, and two buttons that look alike would say neither. The current version has no action in either mode.
 - **Paging:** "Load older versions" is a link (`?before=<id>`), so the page works as delivered. An app that fetches the page itself cancels `cap:history-older` and calls `appendEntries`. The pagination component is not used: it pages by number, and a history is read from the top and extended downward.
 - **Empty is the empty component's nothing-yet kind:** "No versions yet. The first save of this post makes the first version."
 - **The pick bar is sticky,** so a second pick far down a long list can be compared without scrolling back.
@@ -65,6 +66,7 @@ Item (rows with media, content, actions) through the row list it is built on, an
 | Enter on a title | Opens that version |
 | Enter or Space on a run's button | Opens or closes the autosaves it holds; `aria-expanded` follows |
 | Space on a pick box | Picks or unpicks that version; a third pick is refused and said |
+| Enter on Load into editor | Follows the link to the editor, or asks the app to load the text in place (`cap:history-load`) |
 | Enter or Space on Restore | Restores that version as a new line on top, and says so with Undo; focus stays on the button |
 | `z` | Undoes the last restore (the message region's key); focus returns to the Restore button |
 | Enter on Compare 2 versions | Opens the compare view, older first |
@@ -113,7 +115,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </section>
 ```
 
-`import { enhance, condense, wordDelta, pickTwo, restoreVersion, appendEntries } from "capsomer/behaviour/history-list"`. `enhance()` attaches `j` and `k`, the groups, the picks, Restore and Load older, and needs the message component's region on the page (it adds one after the list if there is none). The pure helpers: `condense(entries)` groups the autosaves, `wordDelta(before, after)` is the signed change from two texts or two counts, `deltaText(n)` writes it, `pickTwo(picked, id)` toggles a pick and says when a third was refused, `orderPair(picked, at)` puts the pair older first, `compareHref(base, older, newer)`. Events on the root: `cap:history-restored` and `cap:history-unrestored` (detail `{ source, entry }`), and the cancelable `cap:history-older`.
+`import { enhance, condense, wordDelta, pickTwo, restoreVersion, appendEntries } from "capsomer/behaviour/history-list"`. `enhance()` attaches `j` and `k`, the groups, the picks, Restore and Load older, and needs the message component's region on the page (it adds one after the list if there is none). The pure helpers: `condense(entries)` groups the autosaves, `wordDelta(before, after)` is the signed change from two texts or two counts, `deltaText(n)` writes it, `pickTwo(picked, id)` toggles a pick and says when a third was refused, `orderPair(picked, at)` puts the pair older first, `compareHref(base, older, newer)`. Events on the root: `cap:history-restored` and `cap:history-unrestored` (detail `{ source, entry }`), and the cancelable `cap:history-older` and `cap:history-load` (detail `{ entry }`, load-into-editor mode).
 
 In React, `import { HistoryList } from "capsomer/react/history-list"` inside a `<MessageProvider>`:
 
@@ -122,6 +124,8 @@ In React, `import { HistoryList } from "capsomer/react/history-list"` inside a `
   onRestore={({ entry }) => addVersion(entry)} onUndoRestore={({ entry }) => removeVersion(entry)}
   olderHref="?before=v-15" primary />
 ```
+
+Load into editor, in place of Restore: `<HistoryList ... loadHref={(id) => `/posts/phage-lambda/edit?load=${id}`} onLoad={(entry) => editor.load(entry.id)} />`. In HTML: `data-load-href="/posts/phage-lambda/edit?load="` on the root, and on each earlier line `<a class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="load" data-version="v-70" href="/posts/phage-lambda/edit?load=v-70">Load into editor<span class="cap-sr-only"> the version from 1 Oct, 16:10 UTC by Rosa Park</span></a>` where the Restore button was.
 
 ## Exceptions in production
 
