@@ -138,26 +138,49 @@ export function TabsContent({ value, className, children, ...props }: ComponentP
 
 // Tabs that are pages: a nav of links, the current one `aria-current="page"`. No tab roles,
 // no arrow keys: each link is a tab stop, as links are.
+// What a router's link component is given: a plain `<a>`'s props with `href` always set, the
+// tab's class and `aria-current` already on it. Return the router's `<Link to={props.href} {...props} />`.
+export type RenderTabLink = (props: ComponentProps<"a"> & { href: string }) => ReactNode;
+
+const NavLinks = createContext<RenderTabLink | undefined>(undefined);
+
 export interface TabsNavProps extends ComponentProps<"nav"> {
   "aria-label": string;
   variant?: "default" | "line";
   size?: "sm" | "default" | "lg";
   fill?: boolean;
+  // The link slot for every `TabLink` inside: how an app's router draws a link (a client-side
+  // navigation), so a tab link is a router link and still carries the tab's look and state.
+  renderLink?: RenderTabLink;
 }
 
-export function TabsNav({ variant = "default", size = "default", fill, className, children, ...props }: TabsNavProps) {
-  return (
+export function TabsNav({ variant = "default", size = "default", fill, className, children, renderLink, ...props }: TabsNavProps) {
+  const nav = (
     <nav className={className ? `cap-tabs-list ${className}` : "cap-tabs-list"} data-variant={variant === "line" ? "line" : undefined} data-size={size === "default" ? undefined : size} data-fill={fill ? "" : undefined} {...props}>
       {children}
     </nav>
   );
+  return renderLink ? <NavLinks.Provider value={renderLink}>{nav}</NavLinks.Provider> : nav;
 }
 
-export function TabLink({ current, count, className, children, ...props }: ComponentProps<"a"> & { current?: boolean; count?: number; children: ReactNode }) {
-  return (
-    <a className={className ? `cap-tab ${className}` : "cap-tab"} aria-current={current ? "page" : undefined} {...props}>
+export interface TabLinkProps extends Omit<ComponentProps<"a">, "href"> {
+  href: string;
+  current?: boolean;
+  count?: number;
+  children: ReactNode;
+  // This link only: how the router draws it. Wins over the nav's `renderLink`.
+  renderLink?: RenderTabLink;
+}
+
+export function TabLink({ current, count, className, children, renderLink, ...props }: TabLinkProps) {
+  const inherited = useContext(NavLinks);
+  const draw = renderLink ?? inherited;
+  const inner = (
+    <>
       {children}
       {count != null ? <span className="cap-tab-count">{count}</span> : null}
-    </a>
+    </>
   );
+  const linkProps = { className: className ? `cap-tab ${className}` : "cap-tab", "aria-current": current ? ("page" as const) : undefined, ...props, children: inner };
+  return draw ? <>{draw(linkProps)}</> : <a {...linkProps} />;
 }
