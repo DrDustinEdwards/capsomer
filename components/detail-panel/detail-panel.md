@@ -4,7 +4,7 @@ title: Detail panel
 summary: A record opened from its row, in a panel from the right.
 parts: [css, behaviour, react]
 tool: native + own JavaScript (the shared dialog)
-states: [closed with its row links, open with a command to copy and a before and after list, comfortable density]
+states: [driven by the address with a plain form, closed with its row links, open with a command to copy and a before and after list, comfortable density]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/Drawer.tsx and styles.css (.drawer, .kv, .kv.diff, .cmd), as of capsid master 2026-10-01
@@ -39,6 +39,7 @@ When the record is a place someone links to or works in for a while (a draft, a 
 - **A before and after list for a change** (`cap-detail-diff` in a record's `dd`): the old value struck through above the new, each led by the words "before" and "after" for a screen reader, so the tint is never the only cue. Where the person typed a reason, show it above, under its own heading.
 - **35rem (560 px) wide, at most 85% of the window on a phone**, so the backdrop is still there to press. The record's two columns stack when the panel is narrower than 380 px (a container query).
 - Slides 2.5rem in from the right with a fade on open and out on close, its blurred backdrop fading with it, under `prefers-reduced-motion: no-preference` only; under reduced motion it appears and goes.
+- **Driven by the address** (`data-cap-detail-param="inspect"` on the panel): the panel is open while the address carries `?inspect=<id>` (the id is `data-cap-detail-id`, or the dialog's id), and the rest of the address is kept. A row's link is `href="?inspect=<id>"`, so with no script it goes to that address and the server renders the panel `open`; with script `enhance()` opens it as the modal, with a plain click pushing the address (Ctrl, Shift and middle clicks still follow the link). Closing by any means takes the address back: a panel this page opened takes its pushed entry back (so Back goes where it went before), one that began at the address (a load, a shared link) rewrites the address with no new entry, and Back and Forward move the panel with the address. What is inside is plain markup: forms that post to the server (a `<form method="post">` with its own buttons), so a decision made in the panel is a page load, not script. The hash mode (`data-cap-history`, `#detail-<id>`) is unchanged and the two are not combined on one panel.
 - **A record linked from inside the panel** is a real link or button in the panel, reachable by Tab and Enter. The Portal replaces the open panel with the linked record through its router; here the app does that by closing this panel and opening the other, with `data-cap-return` on the panel naming where focus goes if the first row is gone.
 
 ## Keyboard
