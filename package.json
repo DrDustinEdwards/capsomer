@@ -42,6 +42,10 @@
     "./tokens.json": "./tokens/tokens.json",
     "./palette": "./tokens/palette.mjs",
     "./enarratio.css": "./css/enarratio.css",
+    "./email": {
+      "types": "./dist/components/email/email.d.ts",
+      "default": "./dist/components/email/email.js"
+    },
     "./enarratio-theme": {
       "types": "./tokens/enarratio-theme.d.mts",
       "default": "./tokens/enarratio-theme.mjs"

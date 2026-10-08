@@ -9,5 +9,5 @@
     "types": []
   },
   "include": ["components/**/*.ts", "components/**/*.tsx"],
-  "exclude": ["components/**/*.spec.ts", "components/**/states.ts", "components/**/examples.tsx", "components/**/fixture.ts"]
+  "exclude": ["components/**/*.spec.ts", "components/**/states.ts", "components/**/examples.tsx", "components/**/fixture.ts", "components/**/specimen/**"]
 }
