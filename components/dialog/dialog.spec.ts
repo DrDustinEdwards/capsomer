@@ -213,6 +213,21 @@ eachTheme((theme) => {
     expect(await body.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
   });
 
+  test("behaviour: a short centred dialog is as tall as its content, not the window", async ({ page }) => {
+    await live(page, theme);
+    await openFrom(page, "open-centre");
+    const d = dlg(page, "Rename the site");
+    await expect(d).toBeVisible();
+    const { box, content, win } = await d.evaluate((el) => ({
+      box: el.getBoundingClientRect().height,
+      content: el.scrollHeight,
+      win: window.innerHeight,
+    }));
+    // The box is its content plus the 1px border each side.
+    expect(box - content).toBeLessThanOrEqual(4);
+    expect(box).toBeLessThan(win - 100);
+  });
+
   test("behaviour: a click on the backdrop closes a dialog and returns focus", async ({ page }) => {
     await live(page, theme);
     await openFrom(page, "open-centre");
