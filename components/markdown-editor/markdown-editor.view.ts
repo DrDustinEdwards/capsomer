@@ -11,10 +11,39 @@ import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { Compartment, EditorState } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers, placeholder as cmPlaceholder } from "@codemirror/view";
+import { EditorView, ViewPlugin, keymap, lineNumbers, placeholder as cmPlaceholder } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 
 import type { Edit } from "./markdown-editor.ts";
+
+// A scroller that overflows must be reachable by keyboard (WCAG 2.1.1, axe's
+// scrollable-region-focusable): it takes tabindex="0" while it overflows and gives CodeMirror's
+// own -1 back when it does not, as the dialog body does. The text inside is focusable too, so a
+// keyboard user meets the scroller first (arrow keys scroll it), then the text.
+function syncScroller(view: EditorView): void {
+  const sc = view.scrollDOM;
+  const over = sc.scrollHeight > sc.clientHeight + 1;
+  if (over && sc.getAttribute("tabindex") !== "0") sc.tabIndex = 0;
+  else if (!over && sc.getAttribute("tabindex") === "0") sc.tabIndex = -1;
+}
+
+const scrollerStop = ViewPlugin.fromClass(
+  class {
+    private readonly observer: ResizeObserver | null;
+    constructor(readonly view: EditorView) {
+      this.observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(() => syncScroller(view));
+      this.observer?.observe(view.scrollDOM);
+      this.observer?.observe(view.contentDOM);
+      queueMicrotask(() => syncScroller(view));
+    }
+    update(u: { docChanged: boolean; geometryChanged: boolean; viewportChanged: boolean }) {
+      if (u.docChanged || u.geometryChanged || u.viewportChanged) queueMicrotask(() => syncScroller(this.view));
+    }
+    destroy() {
+      this.observer?.disconnect();
+    }
+  },
+);
 
 export type KeyName = "bold" | "italic" | "link" | "code" | "save" | "escape" | "down";
 
@@ -139,6 +168,7 @@ export function createSurface(cfg: SurfaceConfig): Surface {
         markdown({ base: markdownLanguage }),
         syntaxHighlighting(capHighlight),
         capTheme,
+        scrollerStop,
         EditorView.lineWrapping,
         cfg.lineNumbers ? lineNumbers() : [],
         attrsSlot.of(attrExt(cfg.attrs)),
