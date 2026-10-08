@@ -20,7 +20,8 @@
     box-sizing: border-box;
     width: min(var(--cap-dialog-w), calc(100% - 2 * var(--cap-dialog-gap)));
     max-width: none;
-    height: auto;
+    /* fit-content, not auto: on a modal `auto` stretches the box between its insets. */
+    height: fit-content;
     max-height: calc(100dvh - 2 * var(--cap-dialog-gap));
     margin: auto;
     padding: 0;
