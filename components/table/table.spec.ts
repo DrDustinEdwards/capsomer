@@ -252,4 +252,15 @@ eachTheme((theme) => {
     await expect(cell.locator(".cap-sr-only")).toHaveText(": no Cloudflare token for this site");
   });
 
+
+  test("behaviour: a row checkbox is above the row link: it ticks, and the row does not open", async ({ page }) => {
+    await visitStates(page, "table", theme);
+    const label = page.locator("#t7 tbody tr").first().locator(".cap-check");
+    await label.click();
+    await expect(label.getByRole("checkbox")).toBeChecked();
+    expect(await page.evaluate(() => location.hash)).toBe("");
+    // The link in the same row still opens its detail.
+    await page.locator("#t7").getByRole("link", { name: "The uptime strip" }).click();
+    expect(await page.evaluate(() => location.hash)).toBe("#post-p2");
+  });
 });

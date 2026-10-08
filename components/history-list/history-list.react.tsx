@@ -53,6 +53,9 @@ export interface HistoryListProps {
   // app's save makes the version. `onLoad` loads the text in place and stops the navigation.
   loadHref?: (id: string) => string;
   onLoad?: (entry: HistoryEntry) => void;
+  // A read-only history: an earlier line has no action, neither Restore nor Load. Entries may
+  // leave out `words`; such a line shows no size change.
+  readOnly?: boolean;
   // Restoring adds a new line on top: add `entry` to `entries` (and save it). The message with
   // Undo is said by the list.
   onRestore?: (e: RestoreEvent) => void | Promise<void>;
@@ -93,7 +96,8 @@ function Who({ id, name, ai }: { id: string; name: string; ai?: boolean }) {
   );
 }
 
-function Delta({ id, n }: { id: string; n: number }) {
+function Delta({ id, n }: { id: string; n: number | undefined }) {
+  if (n === undefined) return <span className="cap-hist-delta" data-sign="none" aria-hidden="true" />;
   const sign = deltaSign(n);
   return (
     <span className="cap-hist-delta" id={id} data-sign={sign}>
@@ -119,7 +123,7 @@ function When({ id, iso, now, chevron }: { id: string; iso: string; now?: number
 
 interface LineProps {
   entry: HistoryEntry;
-  delta: number;
+  delta: number | undefined;
   prefix: string;
   current: boolean;
   picked: boolean;
@@ -130,13 +134,14 @@ interface LineProps {
   onRestore: (e: HistoryEntry, opener: HTMLElement) => void;
   loadHref?: (id: string) => string;
   onLoad?: (e: HistoryEntry) => void;
+  readOnly?: boolean;
 }
 
-function Line({ entry: e, delta, prefix, current, picked, pickDisabled, now, href, onPick, onRestore, loadHref, onLoad }: LineProps) {
+function Line({ entry: e, delta, prefix, current, picked, pickDisabled, now, href, onPick, onRestore, loadHref, onLoad, readOnly }: LineProps) {
   const p = `${prefix}-${e.id}`;
   const stampText = stamp(e.at, now);
   const hasDetail = e.kind !== "edit";
-  const described = [hasDetail ? `${p}-d` : "", `${p}-w`, `${p}-t`].filter(Boolean).join(" ");
+  const described = [hasDetail ? `${p}-d` : "", delta === undefined ? "" : `${p}-w`, `${p}-t`].filter(Boolean).join(" ");
   return (
     <li className="cap-row cap-hist-row" data-kind={e.kind} data-id={e.id} data-at={e.at} data-words={e.words} data-who={e.who} data-current={current ? "" : undefined}>
       <span className="cap-hist-pick">
@@ -180,7 +185,7 @@ function Line({ entry: e, delta, prefix, current, picked, pickDisabled, now, hre
       <div className="cap-row-actions">
         {current ? (
           <Status tone="ok" glyph={GLYPHS.ok} word="Current" />
-        ) : loadHref ? (
+        ) : readOnly ? null : loadHref ? (
           <a
             className="cap-btn"
             data-variant="quiet"
@@ -202,7 +207,7 @@ function Line({ entry: e, delta, prefix, current, picked, pickDisabled, now, hre
   );
 }
 
-function RunLines({ run, deltas, prefix, now, open, onToggle, children }: { run: Run; deltas: number[]; prefix: string; now?: number; open: boolean; onToggle: () => void; children: ReactNode }) {
+function RunLines({ run, deltas, prefix, now, open, onToggle, children }: { run: Run; deltas: (number | undefined)[]; prefix: string; now?: number; open: boolean; onToggle: () => void; children: ReactNode }) {
   const first = run.entries[0] as HistoryEntry;
   const p = `${prefix}-run-${first.id}`;
   const title = runTitle(run);
@@ -234,7 +239,7 @@ function RunLines({ run, deltas, prefix, now, open, onToggle, children }: { run:
   );
 }
 
-export function HistoryList({ entries, labelledBy, label, user, compareBase = "", versionHref, loadHref, onLoad, onRestore, onUndoRestore, now, olderHref, onLoadOlder, loadingOlder, primary, empty }: HistoryListProps) {
+export function HistoryList({ entries, labelledBy, label, user, compareBase = "", versionHref, loadHref, onLoad, readOnly, onRestore, onUndoRestore, now, olderHref, onLoadOlder, loadingOlder, primary, empty }: HistoryListProps) {
   const prefix = useId();
   const listRef = useRef<HTMLUListElement>(null);
   const [picked, setPicked] = useState<string[]>([]);
@@ -277,7 +282,7 @@ export function HistoryList({ entries, labelledBy, label, user, compareBase = ""
 
   let index = 0;
   return (
-    <section className="cap-hist" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-picked={picked.length}>
+    <section className="cap-hist" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-picked={picked.length} data-readonly={readOnly ? "" : undefined}>
       <div className="cap-hist-bar">
         <p className="cap-hist-picked" role="status" data-cap-part="picked">
           {text}
@@ -295,7 +300,7 @@ export function HistoryList({ entries, labelledBy, label, user, compareBase = ""
       <ul ref={listRef} className="cap-rows cap-hist-list" role="list" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-cap-primary={primary ? "" : undefined}>
         {lines.map((line) => {
           const common = (e: HistoryEntry, i: number) => (
-            <Line key={e.id} entry={e} delta={deltaOf(entries, i)} prefix={prefix} current={i === 0} picked={picked.includes(e.id)} pickDisabled={picked.length >= 2 && !picked.includes(e.id)} now={now} href={href} onPick={pick} onRestore={(en, el) => void restore(en, el)} loadHref={loadHref} onLoad={onLoad} />
+            <Line key={e.id} entry={e} delta={deltaOf(entries, i)} prefix={prefix} current={i === 0} picked={picked.includes(e.id)} pickDisabled={picked.length >= 2 && !picked.includes(e.id)} now={now} href={href} onPick={pick} onRestore={(en, el) => void restore(en, el)} loadHref={loadHref} onLoad={onLoad} readOnly={readOnly} />
           );
           if (line.type === "entry") {
             const node = common(line.entry, index);
