@@ -337,11 +337,16 @@ eachTheme((theme) => {
   });
 
   test("behaviour: publishing shows Publishing... while it works", async ({ page }) => {
+    // The specimen's publish takes a timer. Hold the clock so the busy state stays until the test
+    // lets it finish, instead of racing the timer on a slow machine.
+    await page.clock.install();
     await visitStates(page, "publish-gate", theme);
+    await page.clock.pauseAt(Date.now() + 60_000);
     await page.locator("#pg-multi").getByRole("button", { name: "Publish, foxhound.app" }).click();
     const b = page.locator("#pg-multi-s-foxhound [data-cap-part='publish']");
     await expect(b).toHaveAttribute("aria-busy", "true");
     await expect(b).toContainText("Publishing...");
+    await page.clock.runFor(500);
     await expect(page.locator("#pg-multi-s-foxhound")).toHaveAttribute("data-state", "published");
   });
 
