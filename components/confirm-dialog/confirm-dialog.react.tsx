@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogMedia, DialogTitle, DialogBody } from "../dialog/dialog.react.tsx";
-import { errorText, wordMatches } from "./confirm-dialog.ts";
+import { errorText, wordMatches, wordPattern } from "./confirm-dialog.ts";
 
 const ERROR_GLYPH = <path fill="currentColor" fillRule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4v5h1.6V4zM7.2 10.4V12h1.6v-1.6z" />;
 const MEDIA_GLYPH = <path fill="currentColor" fillRule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" />;
@@ -214,5 +214,110 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         </button>
       </DialogFooter>
     </Dialog>
+  );
+}
+
+export interface ConfirmPageProps {
+  // Where the form posts, and the fields it carries with it (the intent, the ids, a return address).
+  action: string;
+  method?: "post" | "get";
+  hidden?: Record<string, string>;
+  // Names the action and the object: "Delete foxhound.app?"
+  title: string;
+  lead?: ReactNode;
+  // What will change, one line each, from the server's own preview.
+  body?: string[];
+  // The perform button's label, named for the action: "Delete site".
+  action_label?: string;
+  // Where Cancel goes: a link, so it works with no script.
+  cancelHref: string;
+  cancelLabel?: string;
+  // For what cannot be recovered: the short word to type. Checked by the browser (required and
+  // pattern) and again by the server.
+  typeToConfirm?: string;
+  // Asks for a reason, required, that the audit row carries. Posted as `reason`.
+  reason?: { label?: string; note?: string };
+  // What the server found wrong the last time (the typed word did not match, no reason): shown in
+  // the alert box beside the buttons, so the page works with no script.
+  error?: ReactNode;
+  // The icon tile beside the title. Default: shown.
+  media?: boolean;
+  // `h1` when the confirmation is the whole page, `h2` when it sits under one.
+  headingLevel?: "h1" | "h2";
+}
+
+// The confirmation as a form in the page, for a server that answers a destructive request with
+// its own page and works with no script. Pure markup, so a server render and the browser agree.
+export function ConfirmPage({ action, method = "post", hidden, title, lead, body = [], action_label = "Confirm", cancelHref, cancelLabel = "Cancel", typeToConfirm, reason, error, media = true, headingLevel = "h1" }: ConfirmPageProps) {
+  const id = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const Heading = headingLevel;
+  const described = [lead ? `${id}-desc` : null, body.length ? `${id}-list` : null].filter(Boolean).join(" ") || undefined;
+  const hasBody = body.length > 0 || !!reason || !!typeToConfirm;
+  return (
+    <form className="cap-confirm-page" data-cap="confirm-page" action={action} method={method} role="group" aria-labelledby={`${id}-title`} aria-describedby={described}>
+      {Object.entries(hidden ?? {}).map(([k, v]) => (
+        <input key={k} type="hidden" name={k} value={v} />
+      ))}
+      <div className="cap-dialog-header">
+        {media ? (
+          <div className="cap-dialog-media" data-tone="crit" aria-hidden="true">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+              {MEDIA_GLYPH}
+            </svg>
+          </div>
+        ) : null}
+        <Heading className="cap-dialog-title" id={`${id}-title`}>
+          {title}
+        </Heading>
+        {lead ? (
+          <p className="cap-dialog-description" id={`${id}-desc`}>
+            {lead}
+          </p>
+        ) : null}
+      </div>
+      {hasBody ? (
+        <div className="cap-dialog-body">
+          {body.length ? (
+            <ul id={`${id}-list`}>
+              {body.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          ) : null}
+          {reason ? (
+            <div className="cap-confirm-reason">
+              <label htmlFor={`${id}-reason`}>{reason.label ?? "Reason (required)"}</label>
+              <textarea className="cap-input" id={`${id}-reason`} name="reason" rows={3} required aria-describedby={`${id}-reason-note`} />
+              <p className="cap-confirm-note" id={`${id}-reason-note`}>
+                {reason.note ?? "Recorded with the change."}
+              </p>
+            </div>
+          ) : null}
+          {typeToConfirm ? (
+            <div className="cap-confirm-typed">
+              <label htmlFor={`${id}-typed`}>
+                Type <b>{typeToConfirm}</b> to confirm
+              </label>
+              <input className="cap-input" id={`${id}-typed`} name="confirm" required pattern={wordPattern(typeToConfirm)} title={`Type ${typeToConfirm}`} autoComplete="off" spellCheck={false} />
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+      <div className="cap-confirm-error" role="alert">
+        {error ? (
+          <>
+            <b className="cap-confirm-error-lead">Not done. Nothing was changed.</b> {error}
+          </>
+        ) : null}
+      </div>
+      <div className="cap-dialog-footer" data-align="between">
+        <a className="cap-btn" href={cancelHref}>
+          {cancelLabel}
+        </a>
+        <button type="submit" className="cap-btn" data-variant="danger">
+          {action_label}
+        </button>
+      </div>
+    </form>
   );
 }

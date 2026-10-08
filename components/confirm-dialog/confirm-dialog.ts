@@ -17,6 +17,17 @@ export function wordMatches(typed: string, word: string | undefined): boolean {
   return typed.trim().toLowerCase() === word.trim().toLowerCase();
 }
 
+// The typed-word guard as an HTML `pattern`, for the page form with no script: every letter is
+// a class of both cases ("delete" gives [Dd][Ee][Ll][Ee][Tt][Ee]) and anything else is escaped,
+// so the browser's own validation says what wordMatches says. The browser anchors the pattern to
+// the whole value and does not trim, so the page's field allows no surrounding spaces; the
+// server must still check the word, because markup is not a guard.
+export function wordPattern(word: string): string {
+  return Array.from(word.trim())
+    .map((ch) => (/[a-z]/i.test(ch) ? `[${ch.toUpperCase()}${ch.toLowerCase()}]` : ch.replace(/[\^$.*+?()[\]{}|/-]/g, "\\$&")))
+    .join("");
+}
+
 // ---------------------------------------------------------------------------------------
 // The confirm dialog itself.
 

@@ -37,6 +37,76 @@
   </dialog>
 </template>
 
+<template data-specimen="page" data-title="The confirm page: a form in the page, no script needed" data-height="640">
+  <main class="specimen-page" id="main" tabindex="-1">
+    <form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/foxhound" method="post" role="group" aria-labelledby="pg-title" aria-describedby="pg-desc pg-list">
+      <input type="hidden" name="intent" value="delete" />
+      <input type="hidden" name="site" value="foxhound" />
+      <div class="cap-dialog-header">
+        <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z"/></svg></div>
+        <h1 class="cap-dialog-title" id="pg-title">Delete foxhound.app?</h1>
+        <p class="cap-dialog-description" id="pg-desc">This cannot be undone. The site and its checks are removed.</p>
+      </div>
+      <div class="cap-dialog-body">
+        <ul id="pg-list">
+          <li>Its 14 checks stop running.</li>
+          <li>Its uptime history is deleted.</li>
+          <li>An audit row records the deletion under your name.</li>
+        </ul>
+        <div class="cap-confirm-reason">
+          <label for="pg-reason">Reason (required)</label>
+          <textarea class="cap-input" id="pg-reason" name="reason" rows="3" required aria-describedby="pg-reason-note"></textarea>
+          <p class="cap-confirm-note" id="pg-reason-note">Recorded with the change.</p>
+        </div>
+        <div class="cap-confirm-typed">
+          <label for="pg-typed">Type <b>delete</b> to confirm</label>
+          <input class="cap-input" id="pg-typed" name="confirm" required pattern="[Dd][Ee][Ll][Ee][Tt][Ee]" title="Type delete" autocomplete="off" spellcheck="false" />
+        </div>
+      </div>
+      <div class="cap-confirm-error" role="alert"></div>
+      <div class="cap-dialog-footer" data-align="between">
+        <a class="cap-btn" href="/admin/sites/foxhound">Cancel</a>
+        <button type="submit" class="cap-btn" data-variant="danger">Delete site</button>
+      </div>
+    </form>
+  </main>
+</template>
+
+<template data-specimen="page-error" data-title="The confirm page, after the server refused: the typed word did not match" data-height="680">
+  <main class="specimen-page" id="main" tabindex="-1">
+    <form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/foxhound" method="post" role="group" aria-labelledby="pe-title" aria-describedby="pe-desc pe-list">
+      <input type="hidden" name="intent" value="delete" />
+      <input type="hidden" name="site" value="foxhound" />
+      <div class="cap-dialog-header">
+        <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z"/></svg></div>
+        <h1 class="cap-dialog-title" id="pe-title">Delete foxhound.app?</h1>
+        <p class="cap-dialog-description" id="pe-desc">This cannot be undone. The site and its checks are removed.</p>
+      </div>
+      <div class="cap-dialog-body">
+        <ul id="pe-list">
+          <li>Its 14 checks stop running.</li>
+          <li>Its uptime history is deleted.</li>
+          <li>An audit row records the deletion under your name.</li>
+        </ul>
+        <div class="cap-confirm-reason">
+          <label for="pe-reason">Reason (required)</label>
+          <textarea class="cap-input" id="pe-reason" name="reason" rows="3" required aria-describedby="pe-reason-note"></textarea>
+          <p class="cap-confirm-note" id="pe-reason-note">Recorded with the change.</p>
+        </div>
+        <div class="cap-confirm-typed">
+          <label for="pe-typed">Type <b>delete</b> to confirm</label>
+          <input class="cap-input" id="pe-typed" name="confirm" required pattern="[Dd][Ee][Ll][Ee][Tt][Ee]" title="Type delete" autocomplete="off" spellcheck="false" />
+        </div>
+      </div>
+      <div class="cap-confirm-error" role="alert"><b class="cap-confirm-error-lead">Not done. Nothing was changed.</b> The word did not match. Type delete exactly, then try again.</div>
+      <div class="cap-dialog-footer" data-align="between">
+        <a class="cap-btn" href="/admin/sites/foxhound">Cancel</a>
+        <button type="submit" class="cap-btn" data-variant="danger">Delete site</button>
+      </div>
+    </form>
+  </main>
+</template>
+
 <template data-specimen="comfortable" data-title="Comfortable density" data-height="520">
   <main class="specimen-page" tabindex="-1">
     <h1>Agents</h1>

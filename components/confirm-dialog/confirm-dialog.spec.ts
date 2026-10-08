@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import { wordMatches, wordPattern } from "./confirm-dialog.ts";
 
 const revoke = (page: Page) => page.getByRole("button", { name: "Revoke foxhound-driver…" });
 const dialog = (page: Page, name = "Revoke foxhound-driver?") => page.getByRole("alertdialog", { name });
@@ -10,6 +11,19 @@ async function openLive(page: Page, theme: "light" | "dark") {
   await page.keyboard.press("Enter");
   await expect(dialog(page)).toBeVisible();
 }
+
+test("behaviour: the typed word as an HTML pattern says what wordMatches says", () => {
+  const re = (w: string) => new RegExp(`^(?:${wordPattern(w)})$`);
+  expect(wordPattern("delete")).toBe("[Dd][Ee][Ll][Ee][Tt][Ee]");
+  for (const typed of ["delete", "DELETE", "Delete"]) expect(re("delete").test(typed)).toBe(true);
+  for (const typed of ["delet", "deletee", "remove", " delete", ""]) expect(re("delete").test(typed)).toBe(false);
+  // Anything that is not a letter is escaped, so a word such as "a.b" or "x+y" matches only itself.
+  expect(re("a.b").test("a.b")).toBe(true);
+  expect(re("a.b").test("axb")).toBe(false);
+  expect(re("x+y").test("xxy")).toBe(false);
+  expect(re("x+y").test("X+y")).toBe(true);
+  expect(wordMatches("DELETE", "delete")).toBe(true);
+});
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, the states page", async ({ page }) => {
@@ -212,5 +226,66 @@ eachTheme((theme) => {
   test("behaviour: the matched specimen's action is on", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "typed-matched");
     await expect(page.getByRole("button", { name: "Delete record" })).not.toHaveAttribute("aria-disabled", "true");
+  });
+  for (const id of ["page", "page-error"]) {
+    test(`accessibility: no axe violations, the confirm ${id}`, async ({ page }) => {
+      await visitStates(page, "confirm-dialog", theme, id);
+      await expect(page.locator(".cap-confirm-page")).toBeVisible();
+      await expectNoAxeViolations(page);
+    });
+  }
+
+  test("accessibility: the confirm page is a named group with its description, its fields and its error", async ({ page }) => {
+    await visitStates(page, "confirm-dialog", theme, "page-error");
+    const form = page.getByRole("group", { name: "Delete foxhound.app?" });
+    await expect(form).toBeVisible();
+    await expect(form).toHaveAccessibleDescription(/This cannot be undone\..*Its 14 checks stop running\./);
+    await expect(form.getByRole("textbox", { name: "Reason (required)" })).toBeVisible();
+    await expect(form.getByRole("textbox", { name: "Type delete to confirm" })).toBeVisible();
+    await expect(form.getByRole("alert")).toContainText("The word did not match.");
+    await expectContrast(page, [
+      { sel: ".cap-confirm-page .cap-dialog-title", what: "the page's title" },
+      { sel: ".cap-confirm-page .cap-confirm-error-lead", what: "the server's error lead" },
+      { sel: ".cap-confirm-page .cap-confirm-typed label", what: "the guard's label" },
+    ]);
+  });
+
+  test("behaviour: the confirm page's own checks hold the submit until a reason and the word are given", async ({ page }) => {
+    await visitStates(page, "confirm-dialog", theme, "page");
+    const posted = page.evaluate(
+      () =>
+        new Promise<Record<string, string>>((done) => {
+          document.querySelector(".cap-confirm-page")!.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const data = new FormData(e.target as HTMLFormElement, (e as SubmitEvent).submitter);
+            done(Object.fromEntries(Array.from(data.entries()).map(([k, v]) => [k, String(v)])));
+          });
+        }),
+    );
+    const form = page.getByRole("group", { name: "Delete foxhound.app?" });
+    const reason = form.getByRole("textbox", { name: "Reason (required)" });
+    const word = form.getByRole("textbox", { name: "Type delete to confirm" });
+    // Nothing given: the browser refuses, with no script of ours.
+    expect(await reason.evaluate((el: HTMLTextAreaElement) => el.validity.valueMissing)).toBe(true);
+    expect(await word.evaluate((el: HTMLInputElement) => el.validity.valueMissing)).toBe(true);
+    await reason.fill("Retired in the September review.");
+    await word.fill("remove");
+    expect(await word.evaluate((el: HTMLInputElement) => el.validity.patternMismatch)).toBe(true);
+    await word.fill("DELETE");
+    expect(await word.evaluate((el: HTMLInputElement) => el.validity.valid)).toBe(true);
+    await form.getByRole("button", { name: "Delete site" }).click();
+    expect(await posted).toEqual({ intent: "delete", site: "foxhound", reason: "Retired in the September review.", confirm: "DELETE" });
+  });
+
+  test("keyboard: on the confirm page Tab goes through the fields to the buttons, Cancel is a link and comes first", async ({ page }) => {
+    await visitStates(page, "confirm-dialog", theme, "page");
+    await page.getByRole("textbox", { name: "Reason (required)" }).focus();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("textbox", { name: "Type delete to confirm" })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("link", { name: "Cancel" })).toBeFocused();
+    await expect(page.getByRole("link", { name: "Cancel" })).toHaveAttribute("href", "/admin/sites/foxhound");
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Delete site" })).toBeFocused();
   });
 });

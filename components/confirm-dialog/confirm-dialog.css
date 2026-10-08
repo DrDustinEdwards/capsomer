@@ -74,4 +74,29 @@
       border-color: CanvasText;
     }
   }
+  /* The confirm page: the same confirmation as a form in the page, for a server that answers a
+     destructive request with its own page (no script). The surface and the header, body and
+     footer parts are the shared dialog's look; the page is a card, not an overlay. The typed
+     word and the reason are the browser's own required and pattern checks, and the server
+     checks them again. */
+  .cap-confirm-page {
+    box-sizing: border-box;
+    display: grid;
+    inline-size: min(30rem, 100%);
+    margin-inline: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--raised);
+    color: var(--text);
+    box-shadow: var(--shadow-l);
+    font-size: var(--fs-body);
+    overflow: hidden;
+
+    & .cap-dialog-title {
+      margin: 0;
+    }
+    & .cap-dialog-footer a.cap-btn {
+      text-decoration: none;
+    }
+  }
 }

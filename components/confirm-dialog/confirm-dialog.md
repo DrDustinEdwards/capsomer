@@ -4,7 +4,7 @@ title: Confirm dialog
 summary: Preview, then perform, for an action that cannot be undone.
 parts: [css, behaviour, react]
 tool: native + own JavaScript (the shared dialog)
-states: [open, busy, failed with Try again, reason required and empty, typed-word guard not typed, typed-word guard matched]
+states: [the confirm page, the confirm page after the server refused, open, busy, failed with Try again, reason required and empty, typed-word guard not typed, typed-word guard matched]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/ConfirmDialog.tsx and styles.css (.help), as of capsid master 2026-10-01; dustinedwards.info app/components/admin/confirm-dialog.tsx for the typed word
@@ -36,6 +36,7 @@ A reversible action happens at once and offers Undo through the message region (
 - **Focus starts on Cancel.** Enter on arrival cancels (patterns.md, "Destructive or one-way").
 - **A click outside does nothing.** A dialog that closes on a stray click loses what the person was reading, or a reason they typed. The press on the backdrop does not take focus off the control that had it either.
 - **A reason, where the audit row must carry one** (`reason`): a labelled textarea, "Reason (required)", with a note that it is recorded with the change. The perform button is never silently disabled for an empty reason: pressing it says "A reason is required." in the error box, marks the field `aria-invalid` and describes it by the error, and puts focus in it. The reason is read from the field itself, so a value the browser filled in without an input event counts. A plain Enter is a new line; Ctrl or Cmd with Enter performs.
+- **The confirm page is the same confirmation as a form in the page, for a server that answers a destructive request with its own page.** A button-mode action (a menu item or a bulk bar action posts `intent=delete`) cannot run the dialog without script, so the server's response is `form.cap-confirm-page` (React `ConfirmPage`): the same title that names the action and the object, the same lead, the list of what changes from the server's own preview, the reason, the typed word, the action named for what it does in danger style at the far end, and Cancel as a link (so it works with no script) at the other. The typed word and the reason are the browser's own `required` and `pattern` checks (`wordPattern(word)` writes the case-insensitive pattern), so a wrong word is stopped before it posts; **the server must check both again**, because markup is not a guard. When the server refuses (the word did not match, no reason), it renders the page again with the message in the `role="alert"` box, "Not done. Nothing was changed.", and the person's fields kept. There is no busy state or Try again: a form post is a page load, and the response is the result. The dialog is unchanged and is still what script-driven pages use.
 - **Esc closes it, except while the action runs.** Busy sets `aria-busy` on the dialog and the perform button, and both buttons refuse; Esc is held (the cancel event and the keydown), because closing would hide the answer.
 - **A failure stays inside the dialog** in a `role="alert"` box: "Not done. Nothing was changed.", the reason, and the perform button becomes Try again.
 - **Focus returns to the opener on close**, after the next frame so the page has re-rendered. When the opener has gone (a revoked agent's row is removed), focus goes to `data-cap-return` if set, then to the Close button of a detail panel still open behind the dialog, then to `main`.
@@ -116,6 +117,34 @@ const done = await confirm({
 ```
 
 For a dialog written in markup, `enhance()` wires it and its `[data-cap-confirm-open]` triggers, and `bindPerform(dialog, fn)` says what the action does; without it, a `type="submit"` perform button posts its form and the dialog shows busy meanwhile. In React, `import { ConfirmDialog } from "capsomer/react/confirm-dialog"` with `open`, `perform` and `onClose(performed)`. The Portal's two-step flow (type a reason, press Preview, read what changes, then perform) is the app's: show the preview's lines as `body` and call `confirm()` when it arrives.
+
+The confirm page, with no script (HTML, or React `ConfirmPage`, which renders exactly this):
+
+```html
+<form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/foxhound" method="post" role="group"
+      aria-labelledby="del-title" aria-describedby="del-desc del-list">
+  <input type="hidden" name="intent" value="delete" /><input type="hidden" name="site" value="foxhound" />
+  <div class="cap-dialog-header">
+    <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg>…</svg></div>
+    <h1 class="cap-dialog-title" id="del-title">Delete foxhound.app?</h1>
+    <p class="cap-dialog-description" id="del-desc">This cannot be undone.</p>
+  </div>
+  <div class="cap-dialog-body">
+    <ul id="del-list"><li>Its 14 checks stop running.</li></ul>
+    <div class="cap-confirm-reason"><label for="del-reason">Reason (required)</label>
+      <textarea class="cap-input" id="del-reason" name="reason" rows="3" required></textarea></div>
+    <div class="cap-confirm-typed"><label for="del-typed">Type <b>delete</b> to confirm</label>
+      <input class="cap-input" id="del-typed" name="confirm" required pattern="[Dd][Ee][Ll][Ee][Tt][Ee]" title="Type delete" autocomplete="off" spellcheck="false" /></div>
+  </div>
+  <div class="cap-confirm-error" role="alert"><!-- empty, or what the server refused --></div>
+  <div class="cap-dialog-footer" data-align="between">
+    <a class="cap-btn" href="/admin/sites/foxhound">Cancel</a>
+    <button type="submit" class="cap-btn" data-variant="danger">Delete site</button>
+  </div>
+</form>
+```
+
+`import { wordPattern } from "capsomer/behaviour/confirm-dialog"`. In React: `<ConfirmPage action="/admin/sites/foxhound" hidden={{ intent: "delete", site: "foxhound" }} title="Delete foxhound.app?" lead="This cannot be undone." body={preview} action_label="Delete site" cancelHref="/admin/sites/foxhound" reason={{}} typeToConfirm="delete" error={refusal} />`.
 
 ## Matches shadcn
 
