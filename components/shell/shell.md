@@ -4,7 +4,7 @@ title: Shell
 summary: The top bar, the left menu and the phone tab bar every app shares.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [expanded, group label, current entry, entry with a count, hover, pressed, keyboard focus, collapsed, collapsed with a shown name, Settings current, comfortable density, phone width, More tab, More sheet open, More tab current]
+states: [the site's logo, the logo alone, expanded, group label, current entry, entry with a count, hover, pressed, keyboard focus, collapsed, collapsed with a shown name, Settings current, comfortable density, phone width, More tab, More sheet open, More tab current]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/App.tsx, MoreSheet.tsx and styles.css
@@ -29,6 +29,7 @@ A public reading page (a post, a CV) has no rail; it uses the site's own header 
 
 ## The default and its reason
 
+- **A site logo slot in the brand area.** `logo` (an `<img alt="">` or an `<svg>`) sits before the name inside the brand link as `span.cap-shell-logo[aria-hidden]`, held to the bar's height and kept in proportion (`object-fit: contain`, width follows height, never wider than the rail), so a wordmark or a square mark fits without the app sizing it. It is decorative: the link's name is the brand text, or `brandLabel` (`aria-label` on the link) when `brand` is null and the logo is all there is. A logo that carries the words itself needs `brandLabel` with them. `brand` alone is unchanged.
 - **The rail lists views, at most two levels deep, each a real link with `aria-current="page"`.** Buttons that change the address break Back, middle-click and screen readers' link lists (APG Link; patterns.md "Move between views").
 - **The top bar holds, left to right: the brand, a status (how fresh the data is), actions, the theme switch, Settings, then Sign out.** Settings is a place you visit rarely, so it moves out of the rail into the top bar (ruled with capsid job_28cc5d296fdb).
 - **The rail collapses to icons, and the choice is remembered in this browser** (`localStorage`, key `cap-rail` or the shell's `data-cap-pref`). Collapsed, each name stays in the accessibility tree and shows beside its icon on hover and on keyboard focus; a count becomes a dot.

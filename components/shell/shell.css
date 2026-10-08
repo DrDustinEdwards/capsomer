@@ -85,6 +85,26 @@
     }
   }
 
+  /* The site's logo, before the name or on its own: an <img> or an <svg> held to the bar's height
+     and kept in proportion, never stretched. Decorative (aria-hidden); the link's name is the
+     brand text, or the brand label when the logo is all there is. */
+  .cap-shell-logo {
+    display: grid;
+    flex: none;
+    place-items: center;
+    block-size: calc(var(--target) - var(--space-3));
+    max-inline-size: calc(var(--rail-w) - var(--space-5));
+
+    & > img,
+    & > svg {
+      display: block;
+      block-size: 100%;
+      inline-size: auto;
+      max-inline-size: 100%;
+      object-fit: contain;
+    }
+  }
+
   .cap-shell-spacer {
     flex: 1;
   }
