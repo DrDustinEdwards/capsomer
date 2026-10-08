@@ -1,0 +1,48 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The head of a page inside the shell: where you are (an optional breadcrumb), the title, one line
+   saying what the page is for, and the page's actions at the right. The frame around it (the
+   padding, rhythm and measure) is the shell's page region, `.cap-shell-page` or `.cap-admin-page`.
+   Extracted from Carrel's PageHead and the site admin's page head. */
+@layer cap.components {
+  .cap-page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-5);
+    min-inline-size: 0;
+  }
+
+  .cap-page-head-text {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+  }
+
+  .cap-page-head-title {
+    margin: 0;
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .cap-page-head-lead {
+    margin: 0;
+    max-inline-size: 75ch;
+    color: var(--muted);
+    font-size: var(--text-size);
+    line-height: var(--leading);
+  }
+
+  .cap-page-head-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+}
