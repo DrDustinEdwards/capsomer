@@ -199,6 +199,8 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
     const closer = t instanceof Element ? t.closest<HTMLElement>("[data-cap-part='close'], [data-cap-part='cancel']") : null;
     if (closer && dialog.contains(closer)) {
       if (isBusy(dialog)) return;
+      // A Cancel that is a link (so it works with no script) closes the modal instead of leaving.
+      if (closer instanceof HTMLAnchorElement) e.preventDefault();
       return dialog.close(closer.dataset.capPart);
     }
     const wasDown = s.down;
@@ -306,11 +308,15 @@ export function closeDialog(dialog: HTMLDialogElement, returnValue?: string): vo
 
 // Wires every dialog under root ([data-cap="dialog"]) and every trigger
 // [data-cap-dialog-open="<dialog id>"]. A dialog with data-cap-open (or the specimens'
-// data-specimen-open) opens now. A trigger that is a link keeps its href for a new tab; a plain
+// data-specimen-open) opens now. A dialog with data-cap-inline and `open` is in the page until
+// this runs, then closed (see the markup on the doc page). A trigger that is a link keeps its href for a new tab; a plain
 // click opens the dialog. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const dialog of root.querySelectorAll<HTMLDialogElement>("dialog[data-cap='dialog']:not([data-cap-ready])")) {
+    // Shown in the page with no script (`open`, `data-cap-inline`): script takes it over, so it
+    // is closed until a trigger opens it as the modal.
+    if (dialog.hasAttribute("data-cap-inline") && dialog.open && !dialog.matches(":modal")) dialog.removeAttribute("open");
     undo.push(wireDialog(dialog));
     if (dialog.hasAttribute("data-cap-open") || dialog.hasAttribute("data-specimen-open")) openDialog(dialog, null);
   }

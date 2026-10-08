@@ -43,6 +43,25 @@
       outline-offset: -2px;
     }
 
+    /* An in-page dialog is a form that wraps the parts: it takes no box of its own, so the header,
+       body and footer stay the dialog's flex children. Only these dialogs: another dialog's own
+       form keeps its box. */
+    &[data-cap-inline] > form {
+      display: contents;
+    }
+
+    /* In the page until script takes it: a dialog written with `open` and `data-cap-inline` is not
+       modal, so it flows in the page like a card and its form is there with no script.
+       `enhance()` closes it on load and the opener opens it as the modal. */
+    &[data-cap-inline]:not(:modal) {
+      position: static;
+      inset: auto;
+      margin-block: var(--space-4);
+      margin-inline: auto;
+      max-height: none;
+      box-shadow: none;
+    }
+
     /* The backdrop: the scrim with a light blur, where the browser can. */
     &::backdrop {
       background: var(--scrim);
