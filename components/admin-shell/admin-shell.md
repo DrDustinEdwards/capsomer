@@ -4,7 +4,7 @@ title: Admin shell
 summary: The one structure every admin area, dashboard and site shares: a strip of apps and tools, a grouped menu for the current app, then the content.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [expanded, current app tile, badge on another app, menu collapsed to icons, name shown, account panel open, reading column, comfortable density, phone tab bar, phone sheet]
+states: [expanded, current app tile, badge on another app, menu collapsed to icons, name shown, account panel open, reading column, comfortable density, page transitions, phone tab bar, phone sheet]
 added: 0.4.0
 source: Dustin's pick of 2026-10-06 (capsomer/research/admin-shell-findings.md); the flagship design canvas "Flagship Shell: Capsid Portal"; the Portal's own App.tsx
 replaces:
@@ -48,6 +48,24 @@ The strip is never an empty column: its bottom tools serve everyone.
 - **All content is in the server-rendered HTML.** Every menu link, the strip's links and the page are in the markup without a script, so a screen reader or an agent reads them. The shell's behaviour (collapse, remembering it, the account panel's close, the sheet) is added by script; nothing depends on it for reading or reaching a page.
 - **On a phone the strip and the menu live in one sheet.** The tab bar holds at most four of the app's top pages and More (rulings, rule 9). More opens the shared dialog as a bottom sheet: the apps first, then the other pages, then the tools and the account.
 
+## Page transitions
+
+An option: `transition` in React, `data-transition="page"` on the shell in markup. When a page changes, the content area cross-fades (the old page out over `--dur-fast`, the new in over `--dur-base`) while the strip, the menu and the phone bar stay exactly where they are: each is given its own `view-transition-name`, so the browser snapshots them apart and, unchanged, they never move.
+
+- **Same-document (an app with a router).** Wrap the update that shows the next page: `startPageTransition(() => flushSync(() => navigate(to)))` (`capsomer/behaviour/admin-shell`, also exported from `capsomer/react/admin-shell`). It resolves when the page is shown, and runs the update at once, with no animation and no error, when the browser has no `document.startViewTransition`, when the person asked for reduced motion, or when the shell has not opted in. Focus and scroll are the app's, as without it.
+- **Cross-document (pages that load).** The app adds `@view-transition { navigation: auto; }` to its own stylesheet (it is a page-wide rule, so the shell cannot scope it) and `data-transition="page"` to the shell; the same names and animation apply. Browsers without it navigate as usual.
+- **Reduced motion turns it off.** Under `prefers-reduced-motion: reduce` the names are not given, the animation is not defined and `startPageTransition` skips the API: the page changes at once.
+- **Why a cross-fade and nothing moves.** Motion on a navigation is easy to overdo; a short fade shows that the content changed without hiding the structure that did not. The duration is the tokens' (`--dur-fast`, `--dur-base`), not the shell's own.
+
+## Page transitions
+
+An option: `transition` in React, `data-transition="page"` on the shell in markup. When a page changes, the content area cross-fades (the old page out over `--dur-fast`, the new in over `--dur-base`) while the strip, the menu and the phone bar stay exactly where they are: each is given its own `view-transition-name`, so the browser snapshots them apart and, unchanged, they never move.
+
+- **Same-document (an app with a router).** Wrap the update that shows the next page: `startPageTransition(() => flushSync(() => navigate(to)))` (`capsomer/behaviour/admin-shell`, also exported from `capsomer/react/admin-shell`). It resolves when the page is shown, and runs the update at once, with no animation and no error, when the browser has no `document.startViewTransition`, when the person asked for reduced motion, or when the shell has not opted in. Focus and scroll are the app's, as without it.
+- **Cross-document (pages that load).** The app adds `@view-transition { navigation: auto; }` to its own stylesheet (it is a page-wide rule, so the shell cannot scope it) and `data-transition="page"` to the shell; the same names and animation apply. Browsers without it navigate as usual.
+- **Reduced motion turns it off.** Under `prefers-reduced-motion: reduce` the names are not given, the animation is not defined and `startPageTransition` skips the API: the page changes at once.
+- **Why a cross-fade and nothing moves.** Motion on a navigation is easy to overdo; a short fade shows that the content changed without hiding the structure that did not. The durations are the tokens' (`--dur-fast`, `--dur-base`), not the shell's own.
+
 ## Props
 
 | Prop | Is |
@@ -61,6 +79,8 @@ The strip is never an empty column: its bottom tools serve everyone.
 | `status`, `actions` | The page's thin bar |
 | `renderLink` | A router's link; other apps' links stay plain anchors where the router cannot reach them |
 | `collapsed`, `onCollapsedChange`, `prefKey`, `jumpKeys`, `collapseKey` | Collapse state and keys |
+| `transition` | Page transitions (below); off by default |
+| `transition` | Page transitions (below); off by default |
 
 Badge data is a prop: Capsid supplies it, one question per app ("what needs Dustin"), not each app querying the others.
 
@@ -73,6 +93,8 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
 | Esc | Hides a shown name; closes the account panel; closes the sheet |
 | G, then 1 to 9 | Opens the app in that place |
 | Enter on the avatar | Opens the account panel; focus stays on the avatar, the panel follows in tab order |
+| Any link, with transitions on | Moves to the page as without them; focus is not moved by the transition |
+| Any link, with transitions on | Moves to the page as without them; the transition does not move focus |
 | `[` | Collapses or expands the menu, when the app binds it |
 
 ## Accessibility

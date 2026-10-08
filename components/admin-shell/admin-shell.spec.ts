@@ -312,4 +312,57 @@ eachTheme((theme) => {
       { sel: ".cap-admin-sheet-label", what: "a section label in the sheet" },
     ]);
   });
+
+  test("accessibility: no axe violations with page transitions on", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "transition");
+    await expectNoAxeViolations(page);
+  });
+
+  test("behaviour: with transitions on the content, strip and menu are named apart, and reduced motion gives no names", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "transition");
+    const name = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el).viewTransitionName);
+    expect(await name(".cap-admin-main")).toBe("cap-admin-page");
+    expect(await name(".cap-admin-strip")).toBe("cap-admin-strip");
+    expect(await name(".cap-admin-menu")).toBe("cap-admin-menu");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    expect(await name(".cap-admin-main")).toBe("none");
+    expect(await name(".cap-admin-strip")).toBe("none");
+    await visitStates(page, "admin-shell", theme, "expanded");
+    expect(await name(".cap-admin-main")).toBe("none");
+  });
+
+  test("keyboard: Enter on a menu link changes the page, the strip and menu stay and focus stays on the link", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "transition");
+    const strip = await page.locator(".cap-admin-strip").boundingBox();
+    const menu = await page.locator(".cap-admin-menu").boundingBox();
+    const link = page.getByRole("link", { name: /^Sites/ });
+    await link.focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByTestId("page-title")).toHaveText("sites");
+    await expect(link).toBeFocused();
+    await expect(link).toHaveAttribute("aria-current", "page");
+    expect(await page.locator(".cap-admin-strip").boundingBox()).toEqual(strip);
+    expect(await page.locator(".cap-admin-menu").boundingBox()).toEqual(menu);
+  });
+
+  test("keyboard: the Next page button changes the page by keyboard with reduced motion on, at once", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await visitStates(page, "admin-shell", theme, "transition");
+    await page.getByRole("button", { name: "Next page" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByTestId("page-title")).toHaveText("sites");
+    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+  });
+
+  test("behaviour: a browser without the View Transitions API changes the page with no error", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.addInitScript(() => {
+      (document as unknown as { startViewTransition?: unknown }).startViewTransition = undefined;
+    });
+    await visitStates(page, "admin-shell", theme, "transition");
+    await page.getByRole("button", { name: "Next page" }).click();
+    await expect(page.getByTestId("page-title")).toHaveText("sites");
+    expect(errors).toEqual([]);
+  });
 });
