@@ -1,7 +1,8 @@
 // Mounts the admin shell specimens. Every element with data-mount="<state>" gets that state.
-import { StrictMode, useEffect, type ReactNode } from "react";
+import { StrictMode, useEffect, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
-import { AdminShell, type AdminApp, type AdminEntry, type AdminShellProps } from "./admin-shell.react.tsx";
+import { flushSync } from "react-dom";
+import { AdminShell, startPageTransition, type AdminApp, type AdminEntry, type AdminShellProps } from "./admin-shell.react.tsx";
 
 const svg = (d: string) => (
   <svg className="cap-admin-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -121,6 +122,44 @@ const reader: Partial<AdminShellProps> = {
   status: undefined,
 };
 
+// Page transitions: the menu links and the button change the page inside startPageTransition, so
+// the content cross-fades and the strip and menu stay put.
+const PAGES = ["overview", "sites", "queue"];
+function Transitioning() {
+  const [page, setPage] = useState(0);
+  const go = (to: number) => void startPageTransition(() => flushSync(() => setPage(to)));
+  const entries = nav.map((e) => ({ ...e, current: e.id === PAGES[page] }));
+  return (
+    <AdminShell
+      {...base}
+      nav={entries}
+      transition
+      prefKey={key("transition")}
+      renderLink={({ children, ...rest }) => (
+        <a
+          {...rest}
+          onClick={(e) => {
+            const to = PAGES.indexOf(rest.href.slice(1));
+            if (to < 0) return;
+            e.preventDefault();
+            go(to);
+          }}
+        >
+          {children}
+        </a>
+      )}
+    >
+      <div className="cap-admin-page" key={page}>
+        <h1 data-testid="page-title">{PAGES[page]}</h1>
+        <p className="cap-muted">Page {page + 1} of {PAGES.length}.</p>
+        <button type="button" className="cap-btn" onClick={() => go((page + 1) % PAGES.length)}>
+          Next page
+        </button>
+      </div>
+    </AdminShell>
+  );
+}
+
 const SPECIMENS: Record<string, () => ReactNode> = {
   expanded: () => <Shell name="expanded" />,
   collapsed: () => <Shell name="collapsed" collapsed />,
@@ -134,6 +173,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
       <Shell name="comfortable" />
     </div>
   ),
+  transition: () => <Transitioning />,
   phone: () => <Shell name="phone" />,
   "phone-sheet": () => <SheetOpen />,
 };
