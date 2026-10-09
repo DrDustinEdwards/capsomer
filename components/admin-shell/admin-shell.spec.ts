@@ -320,6 +320,9 @@ eachTheme((theme) => {
     const sheet = page.getByRole("dialog", { name: /apps and more/ });
     const signOut = sheet.getByRole("button", { name: /^Sign out/ });
     await expect(signOut).toBeVisible();
+    // Measure the sheet where it rests, not mid-slide: it opens from 2.5rem below, so a box read
+    // in the first 200 ms sits up to 40px low (measured 33px at t=0, 0px once finished).
+    await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(() => undefined));
     const box = await signOut.boundingBox();
     expect(box!.y + box!.height).toBeLessThanOrEqual(560);
     const body = await sheet.locator(".cap-dialog-body").evaluate((el) => ({ scrolls: el.scrollHeight > el.clientHeight, bottom: el.getBoundingClientRect().bottom }));
