@@ -7,6 +7,30 @@ import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
 
 export const ADMIN_PREF = DEFAULT_PREF;
 
+// Page transitions (the View Transitions API), an option on the shell: `data-transition="page"`
+// names the content area, the strip and the menu for the browser, so the content cross-fades
+// between pages while the strip and menu stay put (admin-shell.css has the animation, from the
+// --dur-* tokens). An app calls this around the update that shows the next page (in React, wrap
+// the state change in flushSync). It runs `update` straight away, with no animation and no
+// error, when the browser has no document.startViewTransition, when a person asked for reduced
+// motion, or when the shell has not opted in. Resolves when the update has been shown.
+type Transitioner = { startViewTransition?: (update: () => void | Promise<void>) => { finished: Promise<void> } };
+
+export function pageTransitionsOn(shell: HTMLElement | null = document.querySelector("[data-cap='admin-shell']")): boolean {
+  if (!shell || shell.dataset.transition !== "page") return false;
+  if (typeof (document as unknown as Transitioner).startViewTransition !== "function") return false;
+  return !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+}
+
+export async function startPageTransition(update: () => void | Promise<void>, shell?: HTMLElement | null): Promise<void> {
+  if (!pageTransitionsOn(shell)) return void (await update());
+  try {
+    await (document as unknown as Required<Transitioner>).startViewTransition(update).finished;
+  } catch {
+    // A skipped or interrupted transition still showed the page; its animation is all that was lost.
+  }
+}
+
 export function setMenu(shell: HTMLElement, collapsed: boolean, remember = true): void {
   if (collapsed) shell.dataset.menu = "collapsed";
   else delete shell.dataset.menu;

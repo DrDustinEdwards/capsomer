@@ -5,6 +5,7 @@ import type { LinkProps } from "../shell/shell.react.tsx";
 import { hideShownNames, jumpTarget, showNamesAgain } from "./admin-shell.ts";
 
 export type { LinkProps };
+export { startPageTransition } from "./admin-shell.ts";
 
 // One of the current app's pages. `group` puts consecutive entries under one label.
 export interface AdminEntry {
@@ -92,6 +93,10 @@ export interface AdminShellProps {
   mainProps?: Omit<ComponentPropsWithRef<"main">, "id" | "className" | "tabIndex" | "children">;
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
+  // Page transitions (View Transitions API): the content cross-fades between pages while the
+  // strip and menu stay put. Off by default; reduced motion and browsers without the API get no
+  // animation. The app wraps its page change in `startPageTransition` (a flushSync inside).
+  transition?: boolean;
   children: ReactNode;
 }
 
@@ -272,7 +277,7 @@ export function AdminShell(props: AdminShellProps) {
     );
 
   return (
-    <div ref={root} className="cap-admin" data-cap="admin-shell" data-menu={collapsed ? "collapsed" : undefined} onMouseOut={showNamesAgain} onBlur={showNamesAgain}>
+    <div ref={root} className="cap-admin" data-cap="admin-shell" data-menu={collapsed ? "collapsed" : undefined} data-transition={props.transition ? "page" : undefined} onMouseOut={showNamesAgain} onBlur={showNamesAgain}>
       <a className="cap-admin-skip" href="#cap-main">
         Skip to content
       </a>
