@@ -1,5 +1,15 @@
 import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, focused, visitStates } from "../../test/helpers.ts";
+import { revisionPair } from "./draft-compare.ts";
+
+test("behaviour: revisionPair reads id@v1 against id@v2 as one thing at two revisions, and nothing else", () => {
+  expect(revisionPair("post-8f3a@v1", "post-8f3a@v2")).toEqual({ name: "post-8f3a", from: "v1", to: "v2" });
+  expect(revisionPair("app/page@2026-10-01", "app/page@2026-10-02")).toEqual({ name: "app/page", from: "2026-10-01", to: "2026-10-02" });
+  expect(revisionPair("a@v1", "b@v1")).toBeNull();
+  expect(revisionPair("a@v1", "a@v1")).toBeNull();
+  expect(revisionPair("a", "b")).toBeNull();
+  expect(revisionPair("a@v1", "a")).toBeNull();
+});
 
 const sel = (id: string, rest: string) => `#${id} ${rest}`;
 const view = (id: string, v: string) => `#${id} .cap-compare-view[data-view='${v}']`;
@@ -512,5 +522,14 @@ eachTheme((theme) => {
     await expect(added.locator(".cap-patch-no").first()).toHaveText("");
     await expect(removed.locator(".cap-patch-no").nth(1)).toHaveText("");
     await expect(page.locator("#cmp-patch-none")).toContainText("No changes.");
+  });
+
+  test("behaviour: a patch of two revisions names the thing once and says the revisions, not a rename", async ({ page }) => {
+    await visitStates(page, "draft-compare", theme);
+    const head = page.locator("#cmp-patch-rev .cap-patch-path");
+    await expect(head.locator("code")).toHaveText("post-8f3a");
+    await expect(head.locator(".cap-patch-kind")).toHaveText("v1 to v2");
+    await expect(head).not.toContainText("→");
+    await expect(page.locator("#cmp-patch-rev caption")).toHaveText("post-8f3a, 1 added, 1 removed");
   });
 });

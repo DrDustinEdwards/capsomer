@@ -4,7 +4,7 @@ title: Draft compare
 summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on colour, a legend, jump keys and folded unchanged passages.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
+states: [patch of two revisions, patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
 added: 0.3.0
 source: the site admin's revision-list.tsx (DiffBlock, RevisionMeta), admin.posts.$slug.history.tsx and admin-history.css
 replaces:
@@ -33,7 +33,7 @@ Draft 3 against draft 4; the published post against the draft that is open; what
 
 Where the line is the unit (code, a configuration file, a commit), give `renderPatch` a unified git patch (`git diff`, `git show`, `git format-patch`) and it draws what the site's `DiffBlock` drew, as Capsomer's own markup. It is an option of this component, not a second one: the same legend, marks, tokens and scroll region.
 
-- **One file at a time.** A heading with the path (a rename reads "old → new", a new or deleted file says so) and its counts, then the lines in a table inside a focusable, named, scrolling region (a keyboard can only scroll what it can focus).
+- **One file at a time.** A heading with the path (a rename reads "old → new", a new or deleted file says so) and its counts (two revisions of one thing, labelled `id@v1` and `id@v2`, are not a rename: the heading names `id` once with "v1 to v2" beside it, and `revisionPair(old, new)` is pure and exported; only a shared name with a different `@` suffix counts, any other pair of paths reads as before), then the lines in a table inside a focusable, named, scrolling region (a keyboard can only scroll what it can focus).
 - **A changed line is more than a tint.** The old and new line numbers sit beside it, a literal plus or minus opens it, and a screen reader hears "added" or "removed". A removed line is also struck through. In forced colours the tint is gone and the edge and sign remain.
 - **Hunk headers stay** (`@@ -10,3 +10,4 @@ …`) as row-group headers, so a long file is still a series of places.
 - **What has no text is said in words.** A binary file, or a rename with no change, gets a note, not an empty table. A patch with no lines is a status, "No changes."

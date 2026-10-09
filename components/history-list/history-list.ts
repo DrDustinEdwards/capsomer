@@ -31,8 +31,9 @@ export interface HistoryEntry {
   // When, as an ISO timestamp (a zoneless one is UTC, as in the time component).
   at: string;
   // The post's length in words after this change. The line's signed size change is the
-  // difference from the next older line.
-  words: number;
+  // difference from the next older line. Leave it out where there is no word count (a site
+  // revision): the line then shows no size change.
+  words?: number;
   // The signed change, when the caller knows it better than the difference (the oldest line,
   // whose predecessor is not loaded).
   delta?: number;
@@ -51,7 +52,8 @@ export interface Run {
   // The oldest and newest times in the run.
   from: string;
   to: string;
-  delta: number;
+  // Undefined when a line in the run has no word count.
+  delta?: number;
   who: string[];
 }
 export interface Single {
@@ -91,13 +93,26 @@ export function deltaText(n: number): string {
 
 // The change each entry made, newest first: its length less the next older entry's. An
 // entry that carries its own `delta`, or the oldest one (whose predecessor is not loaded),
-// uses that, else the whole length.
-export function deltaOf(entries: readonly HistoryEntry[], index: number): number {
+// uses that, else the whole length. Undefined when the entry or the one it is measured
+// against has no word count: that line shows no size change.
+export function deltaOf(entries: readonly HistoryEntry[], index: number): number | undefined {
   const e = entries[index];
   if (!e) return 0;
   if (e.delta !== undefined) return e.delta;
+  if (e.words === undefined) return undefined;
   const older = entries[index + 1];
-  return older ? e.words - older.words : e.words;
+  if (!older) return e.words;
+  return older.words === undefined ? undefined : e.words - older.words;
+}
+
+// The sum of the changes, undefined as soon as one has none.
+function sumDeltas(parts: (number | undefined)[]): number | undefined {
+  let total = 0;
+  for (const p of parts) {
+    if (p === undefined) return undefined;
+    total += p;
+  }
+  return total;
 }
 
 // Groups runs of consecutive autosaves into one line each; every other entry stays a line
@@ -124,7 +139,7 @@ export function condense(entries: readonly HistoryEntry[], minRun = 2): Line[] {
         entries: run,
         from: run[times.indexOf(Math.min(...times))]?.at ?? "",
         to: run[times.indexOf(Math.max(...times))]?.at ?? "",
-        delta: run.reduce((sum, _r, k) => sum + deltaOf(entries, i + k), 0),
+        delta: sumDeltas(run.map((_r, k) => deltaOf(entries, i + k))),
         who: [...new Set(run.map((r) => r.who))],
       });
     } else {
@@ -209,8 +224,8 @@ export function restoredEntry(source: HistoryEntry, current: HistoryEntry, who: 
     kind: "restore",
     who,
     at: atIso,
-    words: source.words,
-    delta: wordDelta(current.words, source.words),
+    ...(source.words !== undefined ? { words: source.words } : {}),
+    ...(source.words !== undefined && current.words !== undefined ? { delta: wordDelta(current.words, source.words) } : {}),
     summary: `Restored the version from ${stamp(source.at, now)}`,
     restoredFrom: { id: source.id, at: source.at },
   };
@@ -231,13 +246,13 @@ const SVG = "http://www.w3.org/2000/svg";
 
 type Attrs = Record<string, string | boolean | undefined>;
 
-function h<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = {}, ...kids: Array<Node | string>): HTMLElementTagNameMap[K] {
+function h<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = {}, ...kids: Array<Node | string | null>): HTMLElementTagNameMap[K] {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
     if (v === undefined || v === false) continue;
     el.setAttribute(k, v === true ? "" : v);
   }
-  el.append(...kids);
+  el.append(...kids.filter((k): k is Node | string => k !== null));
   return el;
 }
 
@@ -282,7 +297,9 @@ function whoEl(id: string, names: string[], ai?: boolean): HTMLElement {
   return h("span", { class: "cap-hist-who", id }, avatarEl(first, ai), h("span", { class: "cap-hist-name" }, label));
 }
 
-function deltaEl(id: string, n: number): HTMLElement {
+function deltaEl(id: string, n: number | undefined): HTMLElement {
+  // No word count: an empty cell keeps the columns in place and says nothing.
+  if (n === undefined) return h("span", { class: "cap-hist-delta", "data-sign": "none", "aria-hidden": "true" });
   const sign = deltaSign(n);
   return h("span", { class: "cap-hist-delta", id, "data-sign": sign }, svg(SIGN_GLYPH[sign], 12), h("span", {}, deltaText(n)));
 }
@@ -304,6 +321,8 @@ export interface BuildOptions {
   // Load-into-editor mode: the action on an earlier line is a link to this address plus the
   // version's id (`?load=` is the usual tail), in place of Restore.
   loadHref?: string;
+  // A read-only history: an earlier line has no action at all, neither Restore nor Load.
+  readOnly?: boolean;
 }
 
 function detailFor(e: HistoryEntry, id: string, now: number): HTMLElement | null {
@@ -341,19 +360,20 @@ function loadLink(e: HistoryEntry, href: string, now: number): HTMLElement {
   return h("a", { class: "cap-btn", "data-variant": "quiet", "data-size": "sm", "data-cap-part": "load", "data-version": e.id, href: `${href}${encodeURIComponent(e.id)}` }, "Load into editor", h("span", { class: "cap-sr-only" }, ` the version from ${stamp(e.at, now)} by ${e.who}`));
 }
 
-function actionFor(e: HistoryEntry, now: number, loadHref?: string): HTMLElement {
-  return loadHref ? loadLink(e, loadHref, now) : restoreButton(e, now);
+function actionFor(e: HistoryEntry, now: number, o: BuildOptions): HTMLElement | null {
+  if (o.readOnly) return null;
+  return o.loadHref ? loadLink(e, o.loadHref, now) : restoreButton(e, now);
 }
 
 // One line, exactly the markup the doc page shows (and the page is delivered with).
-export function buildRow(e: HistoryEntry, delta: number, o: BuildOptions): HTMLLIElement {
+export function buildRow(e: HistoryEntry, delta: number | undefined, o: BuildOptions): HTMLLIElement {
   const now = o.now ?? Date.now();
   const p = `${o.prefix}-${e.id}`;
   const detail = detailFor(e, `${p}-d`, now);
-  const described = [detail ? `${p}-d` : "", `${p}-w`, `${p}-t`].filter(Boolean).join(" ");
-  const li = h("li", { class: "cap-row cap-hist-row", "data-kind": e.kind, "data-id": e.id, "data-at": e.at, "data-words": String(e.words), "data-who": e.who, "data-current": o.current ? "" : undefined });
+  const described = [detail ? `${p}-d` : "", delta === undefined ? "" : `${p}-w`, `${p}-t`].filter(Boolean).join(" ");
+  const li = h("li", { class: "cap-row cap-hist-row", "data-kind": e.kind, "data-id": e.id, "data-at": e.at, "data-words": e.words === undefined ? undefined : String(e.words), "data-who": e.who, "data-current": o.current ? "" : undefined });
   const title = h("div", { class: "cap-row-title" }, h("a", { href: `${o.versionHref ?? "?version="}${encodeURIComponent(e.id)}`, "aria-describedby": described, title: e.summary }, e.summary));
-  const actions = h("div", { class: "cap-row-actions" }, o.current ? statusEl("ok", GLYPHS.ok, "Current") : actionFor(e, now, o.loadHref));
+  const actions = h("div", { class: "cap-row-actions" }, o.current ? statusEl("ok", GLYPHS.ok, "Current") : actionFor(e, now, o));
   li.append(pickEl(e, now), whoEl(`${p}-who`, [e.who], e.ai), title);
   if (detail) li.append(detail);
   li.append(deltaEl(`${p}-w`, delta), whenEl(`${p}-t`, e.at, now), actions);
@@ -361,7 +381,7 @@ export function buildRow(e: HistoryEntry, delta: number, o: BuildOptions): HTMLL
 }
 
 // The group line of a run of autosaves, and the region that holds its lines.
-export function buildRun(run: Run, deltas: number[], o: BuildOptions): HTMLLIElement[] {
+export function buildRun(run: Run, deltas: (number | undefined)[], o: BuildOptions): HTMLLIElement[] {
   const now = o.now ?? Date.now();
   const first = run.entries[0] as HistoryEntry;
   const p = `${o.prefix}-run-${first.id}`;
@@ -377,7 +397,7 @@ export function buildRun(run: Run, deltas: number[], o: BuildOptions): HTMLLIEle
     h("div", { class: "cap-row-actions" }),
   );
   const list = h("ul", { role: "list", "aria-label": runTitle(run) });
-  run.entries.forEach((e, k) => list.append(buildRow(e, deltas[k] ?? 0, o)));
+  run.entries.forEach((e, k) => list.append(buildRow(e, deltas[k], o)));
   const region = h("li", { class: "cap-hist-region", id: `${p}-rows`, hidden: true }, list);
   return [li, region];
 }
@@ -435,7 +455,7 @@ function ensureRegion(after: Element): void {
 }
 
 function entryOf(row: HTMLElement): HistoryEntry {
-  return { id: row.dataset.id ?? "", kind: (row.dataset.kind ?? "edit") as HistoryKind, who: row.dataset.who ?? "", at: row.dataset.at ?? "", words: Number(row.dataset.words ?? 0), summary: row.querySelector(".cap-row-title a")?.textContent ?? "" };
+  return { id: row.dataset.id ?? "", kind: (row.dataset.kind ?? "edit") as HistoryKind, who: row.dataset.who ?? "", at: row.dataset.at ?? "", ...(row.dataset.words !== undefined ? { words: Number(row.dataset.words) } : {}), summary: row.querySelector(".cap-row-title a")?.textContent ?? "" };
 }
 
 function setCurrent(root: HTMLElement, row: HTMLLIElement, current: boolean): void {
@@ -448,7 +468,7 @@ function setCurrent(root: HTMLElement, row: HTMLLIElement, current: boolean): vo
     actions.replaceChildren(statusEl("ok", GLYPHS.ok, "Current"));
   } else {
     delete row.dataset.current;
-    actions.replaceChildren(actionFor(entry, now, root.dataset.loadHref));
+    actions.replaceChildren(...[actionFor(entry, now, { prefix: "", loadHref: root.dataset.loadHref, readOnly: root.dataset.readonly !== undefined })].filter((a): a is HTMLElement => a !== null));
   }
 }
 
@@ -480,7 +500,7 @@ export function restoreVersion(root: HTMLElement, id: string): HTMLLIElement | n
   const prefix = root.id || "cap-hist";
   const source = entryOf(sourceRow);
   const entry = restoredEntry(source, entryOf(previous), root.dataset.user || "You", `${id}-restored-${list.querySelectorAll("[data-kind='restore']").length + 1}`, new Date(now).toISOString(), now);
-  const row = buildRow(entry, entry.delta ?? 0, { prefix, current: true, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref });
+  const row = buildRow(entry, entry.delta, { prefix, current: true, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref, readOnly: root.dataset.readonly !== undefined });
   setCurrent(root, previous, false);
   list.prepend(row);
   enhanceTime(row);
@@ -512,11 +532,11 @@ export function appendEntries(root: HTMLElement, entries: readonly HistoryEntry[
   let index = 0;
   for (const line of lines) {
     if (line.type === "entry") {
-      list.append(buildRow(line.entry, deltaOf(entries, index), { prefix, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref }));
+      list.append(buildRow(line.entry, deltaOf(entries, index), { prefix, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref, readOnly: root.dataset.readonly !== undefined }));
       index += 1;
     } else {
       const deltas = line.entries.map((_e, k) => deltaOf(entries, index + k));
-      list.append(...buildRun(line, deltas, { prefix, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref }));
+      list.append(...buildRun(line, deltas, { prefix, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref, readOnly: root.dataset.readonly !== undefined }));
       index += line.entries.length;
     }
   }
