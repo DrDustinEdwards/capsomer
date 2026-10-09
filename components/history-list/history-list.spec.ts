@@ -3,9 +3,20 @@ import { eachTheme, expectContrast, expectNoAxeViolations, focused, visitStates 
 import { PICK_BLOCKED, PICK_NONE, compareHref, condense, countWords, deltaOf, deltaSign, deltaText, orderPair, pickTwo, pickedText, rangeText, restoredEntry, stamp, wordDelta, type HistoryEntry } from "./history-list.ts";
 
 const at = (t: string) => `2026-10-02T${t}:00Z`;
-const entry = (id: string, kind: HistoryEntry["kind"], t: string, words: number, extra: Partial<HistoryEntry> = {}): HistoryEntry => ({ id, kind, who: "Dustin Edwards", at: at(t), words, summary: `Version ${id}`, ...extra });
+const entry = (id: string, kind: HistoryEntry["kind"], t: string, words: number | undefined, extra: Partial<HistoryEntry> = {}): HistoryEntry => ({ id, kind, who: "Dustin Edwards", at: at(t), words, summary: `Version ${id}`, ...extra });
 
 // The pure helpers need no browser.
+test("behaviour: an entry with no word count has no size change, and a run holding one has none either", () => {
+  const list = [entry("c", "edit", "12:00", undefined), entry("b", "autosave", "11:00", 120), entry("a", "autosave", "10:00", 100)];
+  expect(deltaOf(list, 0)).toBeUndefined();
+  expect(deltaOf(list, 1)).toBe(20);
+  expect(deltaOf([entry("b", "edit", "11:00", 120), entry("a", "edit", "10:00", undefined)], 0)).toBeUndefined();
+  expect(deltaOf([entry("a", "edit", "10:00", 100, { delta: 7 })], 0)).toBe(7);
+  const lines = condense([entry("d", "edit", "13:00", 150), entry("c", "autosave", "12:00", undefined), entry("b", "autosave", "11:00", 120), entry("a", "edit", "10:00", 100)]);
+  const run = lines.find((l) => l.type === "run");
+  expect(run && run.type === "run" ? run.delta : "none").toBeUndefined();
+});
+
 test("behaviour: wordDelta is the signed change in words, from two texts or two counts", () => {
   expect(wordDelta("one two three", "one two three four five")).toBe(2);
   expect(wordDelta(1884, 1854)).toBe(-30);
@@ -464,5 +475,31 @@ eachTheme((theme) => {
     expect(await focused(page)).toContain("Cut the duplicate paragraph");
     await page.keyboard.press("Tab");
     expect(await focused(page)).toContain("Load into editor");
+  });
+
+  test("behaviour: a read-only history has no Restore and no Load, and a line with no word count shows no size change", async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    const r = page.locator("#hist-ro");
+    await expect(r.locator('[data-cap-part="restore"], [data-cap-part="load"]')).toHaveCount(0);
+    await expect(r.getByRole("button", { name: /Restore/ })).toHaveCount(0);
+    // The current line still says so; the earlier action cell is empty.
+    await expect(r.locator("li[data-current] .cap-row-actions")).toContainText("Current");
+    await expect(r.locator('li[data-id="r-8"] .cap-row-actions')).toBeEmpty();
+    await expect(r.locator(".cap-hist-delta")).toHaveCount(2);
+    await expect(r.locator(".cap-hist-delta").first()).toBeEmpty();
+    await expect(r.locator('li[data-id="r-8"] .cap-row-title a')).toHaveAttribute("aria-describedby", "hist-ro-r-8-t");
+    // A page the app adds is built the same way: no action, no size change.
+    await r.getByRole("link", { name: "Load older versions" }).click();
+    const added = r.locator('li[data-id="r-7"]');
+    await expect(added).toHaveCount(1);
+    await expect(added.locator('[data-cap-part="restore"], [data-cap-part="load"]')).toHaveCount(0);
+    await expect(added.locator(".cap-row-actions")).toBeEmpty();
+    await expect(added.locator(".cap-hist-delta")).toBeEmpty();
+    await expect(added.locator(".cap-row-title a")).toHaveAttribute("aria-describedby", "hist-ro-r-7-t");
+    await expect(added).not.toHaveAttribute("data-words", /.*/);
+    // Picking two still compares them.
+    await r.locator("input[name=compare]").first().check();
+    await r.locator("input[name=compare]").nth(1).check();
+    await expect(r.getByRole("link", { name: "Compare 2 versions" })).toHaveAttribute("href", /compare\?from=r-8&to=r-9/);
   });
 });

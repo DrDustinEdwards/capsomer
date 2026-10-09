@@ -888,9 +888,21 @@ export function patchCountsText(c: PatchCounts): string {
 const SIGN: Record<PatchOp, string> = { same: "", ins: "+", del: "−" };
 const SIGN_WORD: Record<PatchOp, string> = { same: "", ins: "added", del: "removed" };
 
+// A revision label, `id@v1` against `id@v2`: the same thing at two revisions, not a rename.
+// Returns the shared name and the two revisions, or null for any other pair of paths.
+const REVISION = /^(.+)@([^@/]+)$/;
+export function revisionPair(oldPath: string, newPath: string): { name: string; from: string; to: string } | null {
+  const a = REVISION.exec(oldPath);
+  const b = REVISION.exec(newPath);
+  if (!a || !b || a[1] !== b[1] || a[2] === b[2]) return null;
+  return { name: a[1] as string, from: a[2] as string, to: b[2] as string };
+}
+
 function patchPath(f: PatchFile): string {
   if (f.oldPath === "/dev/null") return f.newPath;
   if (f.newPath === "/dev/null") return f.oldPath;
+  const rev = revisionPair(f.oldPath, f.newPath);
+  if (rev) return rev.name;
   return f.oldPath && f.newPath && f.oldPath !== f.newPath ? `${f.oldPath} → ${f.newPath}` : f.newPath || f.oldPath;
 }
 
@@ -903,7 +915,8 @@ function patchLine(l: PatchLine): string {
 function patchFile(f: PatchFile, id: string, n: number): string {
   const path = patchPath(f);
   const heading = `${id}-file-${n}`;
-  const kind = f.oldPath === "/dev/null" ? "new file" : f.newPath === "/dev/null" ? "deleted" : "";
+  const rev = revisionPair(f.oldPath, f.newPath);
+  const kind = f.oldPath === "/dev/null" ? "new file" : f.newPath === "/dev/null" ? "deleted" : rev ? `${rev.from} to ${rev.to}` : "";
   const counts = `${f.added} added, ${f.removed} removed`;
   const body = f.hunks
     .map((h) => `<tbody class="cap-patch-hunk"><tr class="cap-patch-hunk-head"><th scope="rowgroup" colspan="4"><code>${esc(h.header)}</code></th></tr>${h.lines.map(patchLine).join("")}</tbody>`)

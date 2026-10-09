@@ -4,7 +4,7 @@ title: Table
 summary: A native data table in a labelled, focusable scroll region, with rules between rows, tabular numbers, sortable columns and an opt-in card reflow.
 parts: [css, behaviour]
 tool: native + own JavaScript
-states: [default, row hover, selected row, footer, caption underneath, sticky header, empty, comfortable density, sorted ascending, sorted descending, sort button hover, row hover, row focused, region focused, narrow and scrolling, reflowed to cards, columns that drop as the region narrows]
+states: [default, row hover, selected row, footer, caption underneath, sticky header, empty, comfortable density, sorted ascending, sorted descending, sort button hover, row hover, row focused, region focused, narrow and scrolling, reflowed to cards, columns that drop as the region narrows, a row checkbox above the row link]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (table.list, table.fleet, .scroll-x, .reflow) and dashboard/src/views/shared.tsx (FleetTable)
@@ -35,7 +35,7 @@ Items a person scans and opens one at a time, with one title and one time each, 
 - **Numbers right-aligned in tabular figures** (`data-num` on the `td` and its `th`), so digits line up.
 - **A sortable column is a `button` in its `th`, and the `th` carries `aria-sort`.** Ascending first, then toggling; one header carries `aria-sort` at a time. Screen readers announce the change of `aria-sort`, so nothing else is announced. A cell sorts by its `data-sort` when it has one (a timestamp, a raw count, a place for "not counted"), else by its text, numbers as numbers.
 - **The sorted column's header reads in `--text`, and its glyph shows one arrow.** Unsorted columns show both arrows.
-- **A row that opens a detail uses the row list's stretched link**: the link in the row's first cell is stretched over the row, one tab stop, `--sel` with an inset `--ring` ring when focused.
+- **A row that opens a detail uses the row list's stretched link**: the link in the row's first cell is stretched over the row, one tab stop, `--sel` with an inset `--ring` ring when focused. Other links, buttons and a row checkbox (`.cap-check`, a bulk select) sit above the stretched area, so a click on them does what they say and does not open the row. Markup for the checkbox: `<td><label class="cap-check"><input type="checkbox" name="ids" value="p1"><span class="cap-sr-only">Select Why Foxhound waits</span></label></td>`.
 - **Row states, as shadcn's TableRow**: every body row takes a `--raised` hover; `data-state="selected"` (or `aria-selected="true"`) tints it `--sel` and draws a 3 px `--accent` bar on its first cell, so selection is not colour alone; a row holding an expanded button (`aria-expanded="true"`) takes a faint tint. Colour changes ease in over 100 ms when motion is allowed.
 - **Footer and caption**: a `tfoot` is a tinted band under a rule in medium weight (totals). The caption is above, bold, by default, because it names the region; `data-caption="bottom"` on the table moves it underneath in muted type, as shadcn's `caption-bottom`.
 - **Sticky header** (`data-sticky` on the region): the region scrolls vertically inside `--cap-table-max-h` (24rem by default) and the header row stays put. The rule under it is a shadow, because borders do not travel with sticky cells.

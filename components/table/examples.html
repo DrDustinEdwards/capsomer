@@ -338,3 +338,31 @@
   import { enhance } from "./table.ts";
   enhance();
 </script>
+
+<section class="cap-specimen" aria-labelledby="s-rowcheck">
+  <h2 id="s-rowcheck">A row checkbox above the row link</h2>
+  <div class="cap-table-wrap" data-cap="table" role="region" aria-labelledby="t-rowcheck-cap" tabindex="0" id="t-rowcheck">
+    <table class="cap-table">
+      <caption id="t-rowcheck-cap">Posts, each row opens its detail and can be ticked</caption>
+      <thead>
+        <tr>
+          <th scope="col"><span class="cap-sr-only">Select</span></th>
+          <th scope="col">Post</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><label class="cap-check"><input type="checkbox" name="ids" value="p1" /><span class="cap-sr-only">Select Why Foxhound waits</span></label></td>
+          <th scope="row"><a class="cap-table-open" href="#post-p1">Why Foxhound waits</a></th>
+          <td>Published</td>
+        </tr>
+        <tr>
+          <td><label class="cap-check"><input type="checkbox" name="ids" value="p2" /><span class="cap-sr-only">Select The uptime strip</span></label></td>
+          <th scope="row"><a class="cap-table-open" href="#post-p2">The uptime strip</a></th>
+          <td>Draft</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

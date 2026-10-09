@@ -197,8 +197,8 @@
   }
 
   /* A row that opens a detail: the link in its first cell is stretched over the row, the
-     same pattern as the row list. The row is one tab stop; other links and buttons in it
-     sit above the stretched area. */
+     same pattern as the row list. The row is one tab stop; other links, buttons and checkboxes
+     (a row select) in it sit above the stretched area. */
   .cap-table tbody tr:has(.cap-table-open) {
     position: relative;
 
@@ -209,7 +209,7 @@
       outline-offset: calc(var(--focus-width) * -1);
     }
 
-    & :is(a, button):not(.cap-table-open) {
+    & :is(a, button, .cap-check):not(.cap-table-open) {
       position: relative;
       z-index: 1;
     }
