@@ -136,6 +136,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   ),
   phone: () => <Shell name="phone" />,
   "phone-sheet": () => <SheetOpen />,
+  "phone-counts": () => <Shell name="phone-counts" nav={nav.map((e) => (e.id === "queue" ? { ...e, count: 120 } : e))} />,
 };
 
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {

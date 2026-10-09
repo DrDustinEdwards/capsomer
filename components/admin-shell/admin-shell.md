@@ -4,7 +4,7 @@ title: Admin shell
 summary: The one structure every admin area, dashboard and site shares: a strip of apps and tools, a grouped menu for the current app, then the content.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [expanded, current app tile, badge on another app, menu collapsed to icons, name shown, account panel open, reading column, comfortable density, phone tab bar, phone sheet]
+states: [expanded, current app tile, badge on another app, menu collapsed to icons, name shown, account panel open, reading column, comfortable density, phone tab bar, phone sheet, phone count past 99]
 added: 0.4.0
 source: Dustin's pick of 2026-10-06 (capsomer/research/admin-shell-findings.md); the flagship design canvas "Flagship Shell: Capsid Portal"; the Portal's own App.tsx
 replaces:
@@ -46,7 +46,7 @@ The strip is never an empty column: its bottom tools serve everyone.
 - **G then a number opens the app in that place** (Slack's lesson; the sequence GitHub and Linear use, because Ctrl and a digit belong to the browser's tabs). It does nothing while a person types in a field, never opens the app already open, and an app that lets single keys be switched off passes that setting as `jumpKeys`.
 - **The page's own thin bar** (`status`, `actions`) says what is true: "Updated 6 min ago · refreshes itself", never "Live" for data that is minutes old. Page-wide controls (time range, scope, export) go there only on pages whose data actually changes with them.
 - **All content is in the server-rendered HTML.** Every menu link, the strip's links and the page are in the markup without a script, so a screen reader or an agent reads them. The shell's behaviour (collapse, remembering it, the account panel's close, the sheet) is added by script; nothing depends on it for reading or reaching a page.
-- **On a phone the strip and the menu live in one sheet.** The tab bar holds at most four of the app's top pages and More (rulings, rule 9). More opens the shared dialog as a bottom sheet: the apps first, then the other pages, then the tools and the account.
+- **On a phone the strip and the menu live in one sheet.** The tab bar holds at most four of the app's top pages and More (rulings, rule 9). More opens the shared dialog as a bottom sheet: the apps first, then the other pages, then the tools; the account rows (settings, shortcuts, Sign out) are pinned under the scrolling list so Sign out is always in view. Every row starts its label in one column, with an icon or without. Opening the sheet puts focus on its heading (`tabindex="-1"`, no ring on a row until a key is pressed). The current tab is told by an accent pill behind its icon as well as its colour, a tab badge reads `99+` past 99 (the accessible name keeps the real count), tab labels are 12px, and on a phone the thin bar names the current app at the left.
 
 ## Props
 
@@ -104,11 +104,11 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
     </div>
   </nav>
   <main class="cap-admin-main" id="cap-main" tabindex="-1">
-    <div class="cap-admin-bar"><div>[status]</div><div class="cap-admin-actions">[actions]</div></div>
+    <div class="cap-admin-bar"><div class="cap-admin-bar-text"><strong class="cap-admin-bar-app">[app name, phone only]</strong><div>[status]</div></div><div class="cap-admin-actions">[actions]</div></div>
     <div class="cap-admin-page">[the view]</div>
   </main>
   <nav class="cap-admin-tabs" aria-label="Sections"> [up to four links] <button type="button" data-cap-part="more" …>More</button></nav>
-  <dialog class="cap-dialog cap-admin-sheet" data-cap="dialog" data-placement="bottom" id="cap-admin-sheet">…</dialog>
+  <dialog class="cap-dialog cap-admin-sheet" data-cap="dialog" data-placement="bottom" id="cap-admin-sheet">[header with h2#cap-admin-sheet-title tabindex=-1] [body: apps, pages, tools] <nav class="cap-admin-sheet-account" aria-label="Account">…</nav></dialog>
 </div>
 ```
 

@@ -312,4 +312,118 @@ eachTheme((theme) => {
       { sel: ".cap-admin-sheet-label", what: "a section label in the sheet" },
     ]);
   });
+
+  test("behaviour: on a short 360px phone Sign out stays in view, pinned under the scrolling list", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 560 });
+    await visitStates(page, "admin-shell", theme, "phone");
+    await page.getByRole("button", { name: "More" }).click();
+    const sheet = page.getByRole("dialog", { name: /apps and more/ });
+    const signOut = sheet.getByRole("button", { name: /^Sign out/ });
+    await expect(signOut).toBeVisible();
+    const box = await signOut.boundingBox();
+    expect(box!.y + box!.height).toBeLessThanOrEqual(560);
+    const body = await sheet.locator(".cap-dialog-body").evaluate((el) => ({ scrolls: el.scrollHeight > el.clientHeight, bottom: el.getBoundingClientRect().bottom }));
+    expect(body.scrolls, "the list above the account block scrolls").toBe(true);
+    expect(body.bottom, "the list ends where the account block begins").toBeLessThanOrEqual(box!.y);
+    await expect(sheet.getByRole("navigation", { name: "Account" }).getByRole("link", { name: "Portal settings" })).toBeVisible();
+    await expect(sheet.getByRole("navigation", { name: "Account" }).getByRole("button", { name: "Keyboard shortcuts" })).toBeVisible();
+    await expectNoAxeViolations(page);
+  });
+
+  test("behaviour: every row of the sheet starts its label in one column, icon or none", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await visitStates(page, "admin-shell", theme, "phone");
+    await page.getByRole("button", { name: "More" }).click();
+    const xs = await page.locator("dialog.cap-admin-sheet .cap-admin-sheet-name").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().x)));
+    expect(xs.length).toBeGreaterThan(10);
+    expect([...new Set(xs)]).toHaveLength(1);
+  });
+
+  test("keyboard: opening the sheet puts focus on its heading, and Tab goes on from there", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await visitStates(page, "admin-shell", theme, "phone");
+    const more = page.getByRole("button", { name: "More" });
+    await more.focus();
+    await page.keyboard.press("Enter");
+    const heading = page.locator("#cap-admin-sheet-title");
+    await expect(heading).toBeFocused();
+    await expect(heading).toHaveAttribute("tabindex", "-1");
+    await page.keyboard.press("Tab");
+    expect(await page.evaluate(() => document.activeElement?.closest("dialog.cap-admin-sheet") !== null && document.activeElement?.id !== "cap-admin-sheet-title")).toBe(true);
+  });
+
+  test("behaviour: opening the sheet with a tap leaves no focus ring on a row", async ({ browser }) => {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, colorScheme: theme });
+    const page = await context.newPage();
+    await visitStates(page, "admin-shell", theme, "phone");
+    await page.getByRole("button", { name: "More" }).tap();
+    await expect(page.locator("#cap-admin-sheet-title")).toBeFocused();
+    expect(await page.evaluate(() => document.activeElement?.matches(":focus-visible"))).toBe(false);
+    await context.close();
+  });
+
+  test("accessibility: the current tab has a tinted pill behind its icon as well as its colour, and keeps aria-current", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await visitStates(page, "admin-shell", theme, "phone");
+    const fill = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el).backgroundColor);
+    const current = ".cap-admin-tabs a[aria-current='page'] .cap-admin-icon";
+    await expect(page.locator(".cap-admin-tabs a[aria-current='page']")).toHaveCount(1);
+    expect(await fill(current)).not.toBe("rgba(0, 0, 0, 0)");
+    expect(await fill(".cap-admin-tabs a:not([aria-current]) .cap-admin-icon >> nth=0")).toBe("rgba(0, 0, 0, 0)");
+    const box = await page.locator(current).boundingBox();
+    expect(box!.width).toBeGreaterThan(box!.height * 1.5);
+  });
+
+  test("behaviour: tab labels are 12px and all five tabs fit a 360px phone, badges clear of the icon", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await visitStates(page, "admin-shell", theme, "phone");
+    const tabs = await page.locator(".cap-admin-tabs > *").evaluateAll((els) =>
+      els.map((e) => {
+        const r = e.getBoundingClientRect();
+        const text = [...e.childNodes].find((n) => n.nodeType === Node.TEXT_NODE)!;
+        const range = document.createRange();
+        range.selectNodeContents(text);
+        const t = range.getBoundingClientRect();
+        const icon = e.querySelector(".cap-admin-icon")!.getBoundingClientRect();
+        const glyph = { right: icon.left + icon.width / 2 + 10 };
+        const badge = e.querySelector(".cap-admin-badge")?.getBoundingClientRect();
+        return { right: r.right, left: r.left, font: getComputedStyle(e).fontSize, textW: t.width, w: r.width, clear: badge ? badge.left >= glyph.right : true };
+      }),
+    );
+    expect(tabs).toHaveLength(5);
+    for (const t of tabs) {
+      expect(t.font).toBe("12px");
+      expect(t.textW).toBeLessThanOrEqual(t.w);
+      expect(t.clear).toBe(true);
+    }
+    expect(Math.max(...tabs.map((t) => t.right))).toBeLessThanOrEqual(360);
+    expect(Math.min(...tabs.map((t) => t.left))).toBeGreaterThanOrEqual(0);
+  });
+
+  test("behaviour: a tab count past 99 reads 99+ and its name keeps the real count", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await visitStates(page, "admin-shell", theme, "phone-counts");
+    const queue = page.getByRole("link", { name: "Queue, 120 blocked" });
+    await expect(queue.locator(".cap-admin-badge")).toHaveText("99+");
+    const q = await queue.boundingBox();
+    const b = await queue.locator(".cap-admin-badge").boundingBox();
+    const next = await page.getByRole("button", { name: "More" }).locator(".cap-admin-icon").boundingBox();
+    expect(b!.x + b!.width, "the badge stays clear of the next tab's pill").toBeLessThanOrEqual(next!.x);
+    expect(q!.width).toBeGreaterThan(0);
+  });
+
+  test("behaviour: the phone's thin bar names the app at the left; a desktop bar does not, and an empty one is not drawn", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await visitStates(page, "admin-shell", theme, "phone");
+    await expect(page.locator(".cap-admin-bar-app")).toBeVisible();
+    await expect(page.locator(".cap-admin-bar-app")).toHaveText("Capsid Portal");
+    await expect(page.locator(".cap-admin-bar")).toContainText("Updated 6 min ago");
+    await visitStates(page, "admin-shell", theme, "reader");
+    await expect(page.locator(".cap-admin-bar")).toContainText("dustinedwards.info");
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(page.locator(".cap-admin-bar")).toBeHidden();
+    await visitStates(page, "admin-shell", theme, "expanded");
+    await expect(page.locator(".cap-admin-bar-app")).toBeHidden();
+    await expect(page.locator(".cap-admin-bar")).toBeVisible();
+  });
 });

@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useId, useRef, useState, type ComponentPropsWithRef, type ReactNode } from "react";
-import { Dialog, DialogBody, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
+import { Dialog, DialogBody, DialogHeader } from "../dialog/dialog.react.tsx";
 import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
 import type { LinkProps } from "../shell/shell.react.tsx";
 import { hideShownNames, jumpTarget, showNamesAgain } from "./admin-shell.ts";
@@ -136,10 +136,13 @@ const Tip = ({ text, keys }: { text: string; keys?: string }) => (
   </span>
 );
 
+// A badge is a glance, not a figure: past 99 it says 99+ (the accessible name keeps the real count).
+const badgeText = (count: number) => (count > 99 ? "99+" : count);
+
 const Badge = ({ count, dot }: { count?: number; dot?: boolean }) =>
   count ? (
     <span className="cap-admin-badge" aria-hidden="true">
-      {count}
+      {badgeText(count)}
     </span>
   ) : dot ? (
     <span className="cap-admin-badge" data-dot="" aria-hidden="true" />
@@ -171,6 +174,7 @@ export function AdminShell(props: AdminShellProps) {
   } = props;
   const root = useRef<HTMLDivElement>(null);
   const moreButton = useRef<HTMLButtonElement>(null);
+  const sheetTitle = useRef<HTMLHeadingElement>(null);
   const groupId = useId();
   const accountId = useId();
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -246,7 +250,7 @@ export function AdminShell(props: AdminShellProps) {
             {e.label}
             {e.count ? (
               <span className="cap-admin-badge" aria-hidden="true">
-                {e.count}
+                {badgeText(e.count)}
               </span>
             ) : null}
           </>
@@ -417,12 +421,13 @@ export function AdminShell(props: AdminShellProps) {
         )}
       </nav>
       <main {...mainProps} className="cap-admin-main" id="cap-main" tabIndex={-1}>
-        {(status || actions) && (
-          <div className="cap-admin-bar">
-            <div>{status}</div>
-            <div className="cap-admin-actions">{actions}</div>
+        <div className="cap-admin-bar" data-empty={status || actions ? undefined : ""}>
+          <div className="cap-admin-bar-text">
+            <strong className="cap-admin-bar-app">{title}</strong>
+            {status ? <div>{status}</div> : null}
           </div>
-        )}
+          <div className="cap-admin-actions">{actions}</div>
+        </div>
         {children}
       </main>
       <nav className="cap-admin-tabs" aria-label={navLabel}>
@@ -432,9 +437,11 @@ export function AdminShell(props: AdminShellProps) {
           More
         </button>
       </nav>
-      <Dialog open={sheetOpen} onOpenChange={(o) => !o && closeSheet()} placement="bottom" id="cap-admin-sheet" className="cap-admin-sheet" aria-labelledby="cap-admin-sheet-title">
+      <Dialog open={sheetOpen} onOpenChange={(o) => !o && closeSheet()} placement="bottom" id="cap-admin-sheet" className="cap-admin-sheet" aria-labelledby="cap-admin-sheet-title" initialFocus={sheetTitle}>
         <DialogHeader>
-          <DialogTitle id="cap-admin-sheet-title">{title}: apps and more</DialogTitle>
+          <h2 id="cap-admin-sheet-title" className="cap-dialog-title" ref={sheetTitle} tabIndex={-1}>
+            {title}: apps and more
+          </h2>
         </DialogHeader>
         <DialogBody>
           <nav aria-labelledby="cap-admin-sheet-title">
@@ -448,7 +455,7 @@ export function AdminShell(props: AdminShellProps) {
                     onClick: closeSheet,
                     children: (
                       <>
-                        <span className="cap-admin-app-mark">{mark(a)}</span>
+                        <span className="cap-admin-sheet-icon cap-admin-app-mark" aria-hidden="true">{mark(a)}</span>
                         <span className="cap-admin-sheet-name">{a.label}</span>
                         {a.current ? null : a.count ? <span className="cap-admin-count" data-tone="need">{a.count}</span> : null}
                       </>
@@ -469,7 +476,7 @@ export function AdminShell(props: AdminShellProps) {
                         onClick: closeSheet,
                         children: (
                           <>
-                            {e.icon}
+                            <span className="cap-admin-sheet-icon" aria-hidden="true">{e.icon}</span>
                             <span className="cap-admin-sheet-name">{e.label}</span>
                             {e.count ? (
                               <span className="cap-admin-count" data-tone={e.tone}>
@@ -484,14 +491,14 @@ export function AdminShell(props: AdminShellProps) {
                 </ul>
               </>
             )}
-            {(onSearch || inbox || onHelp || account) && (
+            {(onSearch || inbox || onHelp) && (
               <>
                 <div className="cap-admin-sheet-label">Tools</div>
                 <ul className="cap-admin-sheet-list">
                   {onSearch && (
                     <li>
                       <button type="button" onClick={() => (closeSheet(), onSearch())}>
-                        <Icon d={SEARCH_D} />
+                        <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={SEARCH_D} /></span>
                         <span className="cap-admin-sheet-name">Search everything</span>
                       </button>
                     </li>
@@ -504,7 +511,7 @@ export function AdminShell(props: AdminShellProps) {
                           onClick: closeSheet,
                           children: (
                             <>
-                              <Icon d={INBOX_D} />
+                              <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={INBOX_D} /></span>
                               <span className="cap-admin-sheet-name">Inbox</span>
                               {inbox.count ? <span className="cap-admin-count" data-tone="need">{`${inbox.count}${inbox.countNote ? ` ${inbox.countNote}` : ""}`}</span> : null}
                             </>
@@ -512,7 +519,7 @@ export function AdminShell(props: AdminShellProps) {
                         })
                       ) : (
                         <button type="button" onClick={() => (closeSheet(), inbox.onOpen?.())}>
-                          <Icon d={INBOX_D} />
+                          <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={INBOX_D} /></span>
                           <span className="cap-admin-sheet-name">Inbox</span>
                           {inbox.count ? <span className="cap-admin-count" data-tone="need">{`${inbox.count}${inbox.countNote ? ` ${inbox.countNote}` : ""}`}</span> : null}
                         </button>
@@ -522,18 +529,8 @@ export function AdminShell(props: AdminShellProps) {
                   {onHelp && (
                     <li>
                       <button type="button" onClick={() => (closeSheet(), onHelp())}>
-                        <Icon d={HELP_D} />
+                        <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={HELP_D} /></span>
                         <span className="cap-admin-sheet-name">Help and shortcuts</span>
-                      </button>
-                    </li>
-                  )}
-                  {account?.appLinks?.map((l) => (
-                    <li key={l.label}>{l.href ? renderLink({ href: l.href, "aria-current": l.current ? "page" : undefined, onClick: closeSheet, children: l.label }) : <button type="button" onClick={() => (closeSheet(), l.onClick?.())}>{l.label}</button>}</li>
-                  ))}
-                  {account?.onSignOut && (
-                    <li>
-                      <button type="button" disabled={account.signOutDisabled} onClick={() => (closeSheet(), account.onSignOut?.())}>
-                        Sign out ({account.name})
                       </button>
                     </li>
                   )}
@@ -542,6 +539,39 @@ export function AdminShell(props: AdminShellProps) {
             )}
           </nav>
         </DialogBody>
+        {(account?.appLinks?.length || account?.onSignOut) && (
+          <nav className="cap-admin-sheet-account" aria-label="Account">
+            <ul className="cap-admin-sheet-list">
+              {account.appLinks?.map((l) => {
+                const inner = (
+                  <>
+                    <span className="cap-admin-sheet-icon" aria-hidden="true" />
+                    <span className="cap-admin-sheet-name">{l.label}</span>
+                  </>
+                );
+                return (
+                  <li key={l.label}>
+                    {l.href ? (
+                      renderLink({ href: l.href, "aria-current": l.current ? "page" : undefined, onClick: closeSheet, children: inner })
+                    ) : (
+                      <button type="button" onClick={() => (closeSheet(), l.onClick?.())}>
+                        {inner}
+                      </button>
+                    )}
+                  </li>
+                );
+              })}
+              {account.onSignOut && (
+                <li>
+                  <button type="button" disabled={account.signOutDisabled} onClick={() => (closeSheet(), account.onSignOut?.())}>
+                    <span className="cap-admin-sheet-icon" aria-hidden="true" />
+                    <span className="cap-admin-sheet-name">Sign out ({account.name})</span>
+                  </button>
+                </li>
+              )}
+            </ul>
+          </nav>
+        )}
       </Dialog>
     </div>
   );

@@ -459,6 +459,12 @@
     gap: var(--space-3);
     margin-inline-start: auto;
   }
+  /* The app's name and a bar with nothing in it are for the phone only (the menu and the strip
+     carry the name elsewhere). */
+  .cap-admin-bar-app,
+  .cap-admin-bar[data-empty] {
+    display: none;
+  }
 
   /* The account panel: the Popover API, anchored beside its button; light dismiss and Esc are the
      platform's. Sections are quiet labels over plain links. */
@@ -596,6 +602,31 @@
     flex: 1;
     min-width: 0;
   }
+  /* The dialog's own link rule (`.cap-dialog-body nav a`) gives a link 11px of side padding and a
+     button 12px: a 1px step in the label column. The sheet's rows are all one inset. */
+  .cap-admin-sheet .cap-admin-sheet-list :is(a, button) {
+    padding-inline: var(--space-4);
+  }
+  /* One label column: every row, with an icon or without, starts its label after the same 24px. */
+  .cap-admin-sheet-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 24px;
+    height: 24px;
+
+    & .cap-admin-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  /* The account rows (settings, shortcuts, Sign out) are pinned under the scrolling list, so Sign
+     out is in view on any phone. */
+  .cap-admin-sheet-account {
+    flex: none;
+    padding: var(--space-2) var(--space-3) var(--space-3);
+    border-block-start: 1px solid var(--line);
+  }
   .cap-admin-app-mark {
     display: grid;
     place-items: center;
@@ -630,6 +661,23 @@
     .cap-admin-bar {
       padding-inline: var(--space-5);
     }
+    /* On a phone the bar says which app this is, at the left; with nothing else to show it is
+       just the name. */
+    .cap-admin-bar-text {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0 var(--space-3);
+      min-width: 0;
+    }
+    .cap-admin-bar-app {
+      display: block;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .cap-admin-bar[data-empty] {
+      display: flex;
+    }
     .cap-admin-page {
       padding: var(--space-5) var(--space-5) var(--space-6);
       gap: var(--space-5);
@@ -657,7 +705,7 @@
         border-radius: var(--radius-m);
         background: none;
         font: inherit;
-        font-size: var(--fs-label);
+        font-size: max(12px, var(--fs-label));
         font-weight: 600;
         color: var(--muted);
         text-decoration: none;
@@ -668,16 +716,26 @@
           color: var(--accent-text);
         }
       }
+      /* The icon sits in a pill (Material 3's active indicator): the pill is the icon's own padded
+         box, so no markup is added. Quiet until the tab is current, where it takes the accent
+         tint as well as the colour. */
       & .cap-admin-icon {
+        box-sizing: content-box;
         width: 20px;
         height: 20px;
+        padding: 2px 14px;
+        border-radius: var(--radius-full);
+      }
+      & :is(a, button):is([aria-current="page"], [aria-current="true"]) .cap-admin-icon {
+        background: var(--accent-4);
       }
     }
+    /* The badge rides the pill's top right corner, clear of the glyph. */
     .cap-admin-tabs .cap-admin-badge {
       top: 0;
       right: auto;
-      left: calc(50% + var(--space-3));
-      box-shadow: none;
+      left: calc(50% + 12px);
+      box-shadow: 0 0 0 2px var(--surface);
     }
   }
 
