@@ -1,0 +1,174 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The sortable list: rows or cards a person puts in order. Each item is a handle (the grip
+   a pointer drags and the keyboard picks up), the host's own content, and Move up and Move
+   down, the one-pointer way and the way with no script. An item that is up (by keyboard)
+   or under the pointer is raised and edged in the accent, so the cue is a shape and an
+   edge as well as a colour. */
+@layer cap.components {
+  .cap-sortable {
+    box-sizing: border-box;
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--text);
+    font-size: var(--fs-body);
+    line-height: var(--leading);
+
+    &[data-layout="cards"] {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+      gap: var(--gap);
+    }
+
+    &[data-sorting] {
+      cursor: grabbing;
+      user-select: none;
+    }
+  }
+
+  .cap-sortable-item {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    padding: var(--space-1) var(--space-1) var(--space-1) var(--space-1);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+
+    &[data-lifted],
+    &[data-dragging],
+    &[data-force="lifted"] {
+      z-index: 1;
+      border-color: var(--accent);
+      box-shadow:
+        inset 3px 0 0 var(--accent),
+        var(--shadow-m);
+    }
+  }
+
+  /* A card: the handle and the buttons on a top line, the content below. */
+  .cap-sortable[data-layout="cards"] > .cap-sortable-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "handle . steps"
+      "body body body";
+    align-items: start;
+    padding: var(--space-2) var(--space-2) var(--pad-card);
+    border-radius: var(--radius-l);
+
+    & > .cap-sortable-handle {
+      grid-area: handle;
+    }
+    & > .cap-sortable-steps {
+      grid-area: steps;
+    }
+    & > .cap-sortable-body {
+      grid-area: body;
+      padding-inline: calc(var(--pad-card) - var(--space-2));
+    }
+  }
+
+  .cap-sortable-handle {
+    flex: none;
+    display: grid;
+    place-items: center;
+    inline-size: var(--target);
+    min-block-size: var(--target);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-s);
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    cursor: grab;
+    /* A touch on the grip drags; a touch anywhere else still scrolls the page. */
+    touch-action: none;
+
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--raised);
+      color: var(--text);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+
+    &[aria-pressed="true"] {
+      background: var(--accent-soft);
+      color: var(--accent-text);
+    }
+
+    & svg {
+      display: block;
+    }
+  }
+
+  .cap-sortable-body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .cap-sortable-steps {
+    flex: none;
+    display: inline-flex;
+    gap: var(--space-1);
+
+    /* Quiet until wanted; a button at an end keeps the button's own disabled look. */
+    & .cap-btn:not(:disabled) {
+      color: var(--muted);
+
+      &:hover {
+        color: var(--text);
+      }
+    }
+  }
+
+  /* The parts a host may use for the content. */
+  .cap-sortable-label {
+    display: block;
+    overflow: hidden;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cap-sortable-detail {
+    display: block;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-sortable[data-layout="cards"] .cap-sortable-label {
+    white-space: normal;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-sortable-item {
+      transition: border-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  /* Forced colours remove the raised shadow: the item that is up gets a Highlight outline. */
+  @media (forced-colors: active) {
+    .cap-sortable-item {
+      border-color: CanvasText;
+
+      &[data-lifted],
+      &[data-dragging],
+      &[data-force="lifted"] {
+        outline: 3px solid Highlight;
+        outline-offset: -1px;
+      }
+    }
+    .cap-sortable-handle[aria-pressed="true"] {
+      outline: 2px solid Highlight;
+    }
+  }
+}

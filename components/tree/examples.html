@@ -1,0 +1,127 @@
+<link rel="stylesheet" href="./specimen/tree.css" />
+
+<section class="cap-specimen" aria-labelledby="s-binder">
+  <h2 id="s-binder">A book's binder: branches, links, a chosen row and moving</h2>
+  <p>Paluxy Portal, as Carrel's binder would show it. Arrow keys move, Right and Left open and close, Enter opens a file, Alt with an arrow moves a row, and a row drags to a new place. Each move is said in words and reported to the page.</p>
+  <div class="tree-sample">
+    <ul class="cap-tree" data-cap="tree" data-movable data-variant="surface" aria-label="Paluxy Portal binder" id="binder">
+      <li class="cap-tree-item" data-value="book"><a class="cap-tree-row" href="#book"><span class="cap-tree-label">Paluxy Portal</span><span class="cap-tree-meta">18,420 words</span></a></li>
+      <li class="cap-tree-item" data-value="ch-01">
+        <a class="cap-tree-row" href="#ch-01"><span class="cap-tree-label">01 The riverbed</span><span class="cap-tree-meta">6,210</span></a>
+        <ul class="cap-tree-group">
+          <li class="cap-tree-item" data-value="ch-01/01"><a class="cap-tree-row" href="#ch-01-01" aria-current="page"><span class="cap-tree-label">01 Low water</span><span class="cap-tree-meta"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Revised</span>2,140</span></a></li>
+          <li class="cap-tree-item" data-value="ch-01/02"><a class="cap-tree-row" href="#ch-01-02"><span class="cap-tree-label">02 Tracks in the limestone</span><span class="cap-tree-meta"><span class="cap-status" data-tone="info"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2"/></svg>Drafting</span>2,610</span></a></li>
+          <li class="cap-tree-item" data-value="ch-01/03"><a class="cap-tree-row" href="#ch-01-03"><span class="cap-tree-label">03 The ranger's notebook</span><span class="cap-tree-meta">1,460</span></a></li>
+        </ul>
+      </li>
+      <li class="cap-tree-item" data-value="ch-02">
+        <a class="cap-tree-row" href="#ch-02"><span class="cap-tree-label">02 Flood stage</span><span class="cap-tree-meta">4,980</span></a>
+        <ul class="cap-tree-group">
+          <li class="cap-tree-item" data-value="ch-02/01"><a class="cap-tree-row" href="#ch-02-01"><span class="cap-tree-label">01 Rain at Glen Rose</span><span class="cap-tree-meta">2,300</span></a></li>
+          <li class="cap-tree-item" data-value="ch-02/02"><a class="cap-tree-row" href="#ch-02-02"><span class="cap-tree-label">02 The second set</span><span class="cap-tree-meta">2,680</span></a></li>
+        </ul>
+      </li>
+      <li class="cap-tree-item" data-value="ch-03" data-branch><a class="cap-tree-row" href="#ch-03"><span class="cap-tree-label">03 Untitled chapter</span><span class="cap-tree-meta">empty</span></a></li>
+      <li class="cap-tree-item" data-value="bible" data-collapsed>
+        <span class="cap-tree-row"><span class="cap-tree-label">Bible</span></span>
+        <ul class="cap-tree-group">
+          <li class="cap-tree-item" data-value="bible/characters" data-collapsed>
+            <span class="cap-tree-row"><span class="cap-tree-label">Characters</span><span class="cap-tree-meta">2</span></span>
+            <ul class="cap-tree-group">
+              <li class="cap-tree-item" data-value="bible/characters/ines"><a class="cap-tree-row" href="#ines"><span class="cap-tree-label">Ines Calder</span></a></li>
+              <li class="cap-tree-item" data-value="bible/characters/wade"><a class="cap-tree-row" href="#wade"><span class="cap-tree-label">Wade Pruitt</span></a></li>
+            </ul>
+          </li>
+          <li class="cap-tree-item" data-value="bible/places" data-collapsed>
+            <span class="cap-tree-row"><span class="cap-tree-label">Places</span><span class="cap-tree-meta">1</span></span>
+            <ul class="cap-tree-group">
+              <li class="cap-tree-item" data-value="bible/places/paluxy"><a class="cap-tree-row" href="#paluxy"><span class="cap-tree-label">The Paluxy crossing</span></a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="cap-tree-item" data-value="notes"><a class="cap-tree-row" href="#notes"><span class="cap-tree-label">Notes</span></a></li>
+    </ul>
+    <output class="tree-sample-out" id="binder-out" for="binder">Nothing moved yet.</output>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-plain">
+  <h2 id="s-plain">As delivered with no script</h2>
+  <p>The same contract before <code>enhance</code> runs: nested lists, every level shown, every link a link. No roles a reader would expect keys for.</p>
+  <div class="tree-sample">
+    <nav aria-label="Binder, no script">
+      <ul class="cap-tree" data-variant="surface">
+        <li class="cap-tree-item" data-value="ch-01">
+          <a class="cap-tree-row" href="#ch-01"><span class="cap-tree-label">01 The riverbed</span><span class="cap-tree-meta">6,210</span></a>
+          <ul class="cap-tree-group">
+            <li class="cap-tree-item" data-value="ch-01/01"><a class="cap-tree-row" href="#ch-01-01" aria-current="page"><span class="cap-tree-label">01 Low water</span><span class="cap-tree-meta">2,140</span></a></li>
+            <li class="cap-tree-item" data-value="ch-01/02"><a class="cap-tree-row" href="#ch-01-02"><span class="cap-tree-label">02 Tracks in the limestone</span><span class="cap-tree-meta">2,610</span></a></li>
+          </ul>
+        </li>
+        <li class="cap-tree-item" data-value="notes"><a class="cap-tree-row" href="#notes"><span class="cap-tree-label">Notes</span></a></li>
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-multi">
+  <h2 id="s-multi">Several chosen, no links, one row not available</h2>
+  <p>Space chooses or clears a row; the page hears each choice. The published chapter cannot be chosen for export again.</p>
+  <div class="tree-sample">
+    <ul class="cap-tree" data-cap="tree" data-selection="multi" data-variant="surface" aria-label="Sections to export" id="export">
+      <li class="cap-tree-item" data-value="front">
+        <span class="cap-tree-row"><span class="cap-tree-label">Front matter</span></span>
+        <ul class="cap-tree-group">
+          <li class="cap-tree-item" data-value="front/title"><span class="cap-tree-row" data-selected><span class="cap-tree-label">Title page</span></span></li>
+          <li class="cap-tree-item" data-value="front/dedication"><span class="cap-tree-row"><span class="cap-tree-label">Dedication</span></span></li>
+        </ul>
+      </li>
+      <li class="cap-tree-item" data-value="body">
+        <span class="cap-tree-row" data-selected><span class="cap-tree-label">Chapters</span></span>
+        <ul class="cap-tree-group">
+          <li class="cap-tree-item" data-value="body/01"><span class="cap-tree-row" aria-disabled="true"><span class="cap-tree-label">01 The riverbed</span><span class="cap-tree-meta">published</span></span></li>
+          <li class="cap-tree-item" data-value="body/02"><span class="cap-tree-row"><span class="cap-tree-label">02 Flood stage</span></span></li>
+        </ul>
+      </li>
+    </ul>
+    <output class="tree-sample-out" id="export-out" for="export">Chosen: title page, chapters.</output>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-states">
+  <h2 id="s-states">Row states: under the pointer, keyboard focus, dragged, and where a drop lands</h2>
+  <p>Set from the page, not from a pointer: a row under the pointer, the focus ring, the row being dragged, and the three drop marks, a line before, a ring inside a branch, a line after.</p>
+  <div class="tree-sample">
+    <ul class="cap-tree" data-variant="surface" role="tree" aria-label="Row states">
+      <li class="cap-tree-item" role="none"><span class="cap-tree-row" role="treeitem" aria-level="1" aria-selected="false" data-force="hover" tabindex="-1" id="st-hover"><span class="cap-tree-label">Under the pointer</span></span></li>
+      <li class="cap-tree-item" role="none"><span class="cap-tree-row" role="treeitem" aria-level="1" aria-selected="false" data-force="focus" tabindex="0" id="st-focus"><span class="cap-tree-label">Keyboard focus</span></span></li>
+      <li class="cap-tree-item" role="none"><span class="cap-tree-row" role="treeitem" aria-level="1" aria-selected="true" tabindex="-1" id="st-chosen"><span class="cap-tree-label">Chosen</span><span class="cap-tree-meta">1,460</span></span></li>
+      <li class="cap-tree-item" role="none"><span class="cap-tree-row" role="treeitem" aria-level="1" aria-selected="false" data-dragging tabindex="-1" id="st-drag"><span class="cap-tree-label">Being dragged</span></span></li>
+      <li class="cap-tree-item" role="none"><span class="cap-tree-row" role="treeitem" aria-level="1" aria-selected="false" data-drop="before" tabindex="-1" id="st-before"><span class="cap-tree-label">A drop before this row</span></span></li>
+      <li class="cap-tree-item" role="none"><span class="cap-tree-row" role="treeitem" aria-level="1" aria-selected="false" aria-expanded="false" data-drop="inside" tabindex="-1" id="st-inside"><span class="cap-tree-toggle" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg></span><span class="cap-tree-label">A drop inside this branch</span></span></li>
+      <li class="cap-tree-item" role="none"><span class="cap-tree-row" role="treeitem" aria-level="1" aria-selected="false" data-drop="after" tabindex="-1" id="st-after"><span class="cap-tree-label">A drop after this row</span></span></li>
+      <li class="cap-tree-item" role="none"><span class="cap-tree-row" role="treeitem" aria-level="1" aria-disabled="true" tabindex="-1" id="st-disabled"><span class="cap-tree-label">Not available</span><span class="cap-tree-meta">published</span></span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-react">
+  <h2 id="s-react">In React: a series of posts, moved and saved by the page</h2>
+  <p>The React wrapper holds which branches are open; the page holds the nodes and saves each move (here, it writes the new order below).</p>
+  <div data-mount="react"></div>
+</section>
+
+<script type="module">
+  import { enhance } from "./tree.ts";
+  enhance();
+  const out = document.getElementById("binder-out");
+  document.getElementById("binder").addEventListener("cap:tree-move", (e) => {
+    const { id, to } = e.detail;
+    out.textContent = `Moved ${id} to ${to.parent ?? "the top level"}, position ${to.index + 1}.`;
+  });
+  const chosen = document.getElementById("export-out");
+  document.getElementById("export").addEventListener("cap:tree-select", (e) => {
+    chosen.textContent = e.detail.values.length ? `Chosen: ${e.detail.values.join(", ")}.` : "Nothing chosen.";
+  });
+</script>
