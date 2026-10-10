@@ -1,0 +1,19 @@
+/* Specimen only, not part of the package: a column for the rows, the full width for the
+   cards, and the line under each list where the page writes the order it was told. */
+.sortable-sample {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 34rem;
+}
+.sortable-sample[data-wide] {
+  max-width: none;
+}
+.sortable-sample-out {
+  color: var(--muted);
+  font-size: var(--fs-detail);
+}
+.sortable-sample-form {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
