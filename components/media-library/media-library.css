@@ -1,0 +1,123 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The media library: one page of one site's files, assembled from the shared parts (tabs, field,
+   chips, drop zone, bulk bar, media grid and inspector, message, empty, confirm dialog, and the
+   content components' result box), whose stylesheets it needs beside this one. This file lays
+   them out: the filters, the chip rows, the line with the count and the layout links, the upload
+   form, the picker's alt step and the paging links. */
+@layer cap.components {
+  .cap-media-lib {
+    display: grid;
+    gap: var(--space-4);
+    min-inline-size: 0;
+  }
+
+  .cap-media-lib-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+
+    & > .cap-field {
+      margin: 0;
+    }
+  }
+  .cap-media-lib-search {
+    flex: 1 1 16rem;
+    min-inline-size: 0;
+  }
+
+  /* The tag chips and a host's lenses, each a labelled list of link chips. */
+  .cap-media-lib-chips {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .cap-media-lib-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-4);
+  }
+  .cap-media-lib-count {
+    margin: 0;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-media-lib-tools,
+  .cap-media-lib-layout,
+  .cap-media-lib-extra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .cap-media-lib-withheld {
+    margin: 0;
+    padding: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    list-style: none;
+  }
+
+  /* Upload: the drop zone, the alt text for it, and Upload. */
+  .cap-media-lib-upload {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+
+    & > .cap-drop,
+    & > .cap-field {
+      justify-self: stretch;
+      margin: 0;
+    }
+  }
+
+  /* The picker's alt step: the image, the alt text it needs here, Insert. */
+  .cap-media-pick {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3) var(--space-4);
+    align-items: start;
+    padding: var(--pad-card);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+
+    & > .cap-media-pick-title {
+      grid-column: 1 / -1;
+      margin: 0;
+      font-size: var(--fs-h3);
+    }
+    & > .cap-field {
+      margin: 0;
+    }
+  }
+  .cap-media-pick-preview {
+    inline-size: 8rem;
+    block-size: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-m);
+  }
+  .cap-media-pick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    gap: var(--space-3);
+  }
+  @container (max-width: 30rem) {
+    .cap-media-pick {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .cap-media-lib-pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+}
