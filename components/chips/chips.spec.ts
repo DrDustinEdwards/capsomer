@@ -45,6 +45,20 @@ eachTheme((theme) => {
     ]);
   });
 
+  test("behaviour: a current link chip wears the pressed look, at contrast, and the others do not", async ({ page }) => {
+    await visitStates(page, "chips", theme);
+    const look = (sel: string) => page.locator(sel).evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return [cs.borderColor, cs.backgroundColor, getComputedStyle(el, "::before").content];
+    });
+    expect(await look("#chip-link-current")).toEqual(await look("#chip-pressed"));
+    expect(await look("#chip-link")).toEqual(await look("#chip-unpressed"));
+    await expectContrast(page, [
+      { sel: "#chip-link-current", what: "a current link chip's word on its tint" },
+      { sel: "#chip-link-current", what: "a current link chip's edge", part: "border" },
+    ]);
+  });
+
   test("accessibility: roles, names and pressed states", async ({ page }) => {
     await visitStates(page, "chips", theme);
     await expect(page.locator("#chips-live")).toMatchAriaSnapshot(`

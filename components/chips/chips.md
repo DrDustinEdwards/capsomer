@@ -4,7 +4,7 @@ title: Filter chips
 summary: Filter a list by up to six values with toggle chips; the filter lives in the address and a live count says what is left.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result]
+states: [link chips with the current one, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.chip)
@@ -81,6 +81,8 @@ group.addEventListener("cap:filter-change", (e) => {
 ```
 
 `readParam` and `writeParam` read and write the address for a router; values must not contain commas.
+
+A filter that is a link (a server's list whose filter is in the address, such as the media library's tags) uses link chips: `<a class="cap-chip" href="?tag=release" aria-current="true">`. The current one wears the pressed look (the tick, the accent edge and tint), and `aria-current` says it, since a link has no pressed state. Put them in a labelled `nav` with a list.
 
 In React, `import { FilterChips } from "capsomer/react/chips"` (controlled):
 
