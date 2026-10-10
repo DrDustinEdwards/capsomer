@@ -144,7 +144,7 @@ The confirm page, with no script (HTML, or React `ConfirmPage`, which renders ex
 </form>
 ```
 
-`import { wordPattern } from "capsomer/behaviour/confirm-dialog"`. In React: `<ConfirmPage action="/admin/sites/foxhound" hidden={{ intent: "delete", site: "foxhound" }} title="Delete foxhound.app?" lead="This cannot be undone." body={preview} action_label="Delete site" cancelHref="/admin/sites/foxhound" reason={{}} typeToConfirm="delete" error={refusal} />`.
+`import { wordPattern } from "capsomer/behaviour/confirm-dialog"`. In React: `<ConfirmPage action="/admin/sites/foxhound" hidden={{ intent: "delete", site: "foxhound" }} title="Delete foxhound.app?" lead="This cannot be undone." body={preview} action_label="Delete site" cancelHref="/admin/sites/foxhound" reason={{}} typeToConfirm="delete" error={refusal} />`. A list value in `hidden` is one hidden field per item under the same name: `hidden={{ intent: "delete", ids: ["p1", "p2"] }}` posts `ids` twice.
 
 ## Matches shadcn
 
