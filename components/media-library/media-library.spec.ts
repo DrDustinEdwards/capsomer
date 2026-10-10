@@ -9,11 +9,11 @@ const intents = (o: ReturnType<typeof mediaActions>) => o.bulk.map((a) => a.inte
 
 test("behaviour: an action is offered only where the site supports it and the person may run it, and delete is for good", () => {
   expect(intents(mediaActions({ offers: OFFERS, can: ALL, query: {} }))).toEqual(["add-tags", "remove-tags", "trash"]);
-  // From the bin: restore, or delete for good.
+  // From Trash: restore, or delete for good.
   const bin = mediaActions({ offers: OFFERS, can: ALL, query: { view: "trash" } });
   expect(intents(bin)).toEqual(["restore", "delete"]);
   expect(bin.bulk.find((a) => a.intent === "delete")?.destructive).toBe(true);
-  // A site with no bin deletes from the library.
+  // A site with no Trash deletes from the library.
   expect(intents(mediaActions({ offers: { ...OFFERS, trash: false }, can: ALL, query: {} }))).toEqual(["add-tags", "remove-tags", "delete"]);
   const bare = mediaActions({ offers: { upload: null, alt: false, tags: false, trash: false, delete: false }, can: ALL, query: {} });
   expect(bare.bulk).toEqual([]);
@@ -36,9 +36,9 @@ test("behaviour: an address keeps its filters in one order, leaves the defaults 
 test("behaviour: the count, the empty state, the upload rules and the picker's files", () => {
   const rec = (key: string, over: object = {}) => ({ key, name: key, url: `/m/${key}`, kind: "image" as const, type: "image/png", bytes: 1, alt: "", altState: "missing" as const, title: "", caption: "", tags: [], used: [], state: "ready" as const, ...over });
   const rows = [rec("a"), rec("b", { kind: "document", type: "application/pdf" }), rec("c", { state: "uploading" }), rec("d", { state: "binned" })];
-  expect(countLine({ rows, page: { nextCursor: null }, query: { view: "trash" } })).toBe("4 files in the bin");
+  expect(countLine({ rows, page: { nextCursor: null }, query: { view: "trash" } })).toBe("4 files in Trash");
   expect(countLine({ rows, page: { nextCursor: "n", total: 90 }, query: {} })).toBe("Showing 4 of 90 files");
-  expect(emptyWords({ view: "trash" }).title).toBe("The bin is empty");
+  expect(emptyWords({ view: "trash" }).title).toBe("Trash is empty");
   expect(emptyWords({ q: "lambda", view: "trash" })).toMatchObject({ kind: "no-match", title: "No files match “lambda”" });
   expect(uploadRules({ maxBytes: 5 * 1024 * 1024, types: ["image/png", "application/pdf"] })).toEqual({ accept: "image/png,application/pdf", hint: expect.stringMatching(/, up to 5 MB\.$/) });
   // The picker uploads images only, and none where the site takes no images.
@@ -101,7 +101,7 @@ eachTheme((theme) => {
     let posted = nextPost(page, "#media-static");
     await lib.getByRole("checkbox", { name: "Select uptime-strip.png" }).check({ force: true });
     await lib.getByRole("checkbox", { name: "Select divider.png" }).check({ force: true });
-    await lib.getByRole("button", { name: "Move to the bin" }).first().click();
+    await lib.getByRole("button", { name: "Move to Trash" }).first().click();
     expect((await posted).fields).toEqual({ ids: ["2026/09/uptime-strip.png", "2026/09/divider.png"], tag: [""], intent: ["trash"] });
     // The inspector is open on the file the address named, in form mode.
     const ins = lib.getByRole("dialog", { name: "foxhound-hero.png" });
@@ -144,24 +144,24 @@ eachTheme((theme) => {
     expect(saves.at(-1)).toMatchObject({ ids: "2026/09/foxhound-hero.png", version: "v1", alt: "The Foxhound dashboard with three sites reporting healthy, in September", tags: "release, foxhound" });
   });
 
-  test("keyboard: with script, Move to the bin runs at once with Undo, and z brings the files back", async ({ page }) => {
+  test("keyboard: with script, Move to Trash runs at once with Undo, and z brings the files back", async ({ page }) => {
     await visitStates(page, "media-library", theme);
     const lib = editor(page);
     await lib.getByRole("checkbox", { name: "Select uptime-strip.png" }).check({ force: true });
     await lib.getByRole("checkbox", { name: "Select divider.png" }).check({ force: true });
-    await lib.getByRole("region", { name: "Bulk actions on files" }).getByRole("button", { name: "Move to the bin" }).click();
+    await lib.getByRole("region", { name: "Bulk actions on files" }).getByRole("button", { name: "Move to Trash" }).click();
     await expect(lib.locator(".cap-media-tile")).toHaveCount(3);
-    await expect(lib.locator(".cap-message-item")).toContainText("Moved 2 files to the bin.");
+    await expect(lib.locator(".cap-message-item")).toContainText("Moved 2 files to Trash.");
     await page.locator("h1").click();
     await page.keyboard.press("z");
     await expect(lib.locator(".cap-media-tile")).toHaveCount(5);
     await expect(lib.locator(".cap-message-item")).toContainText("Restored 2 files.");
   });
 
-  test("keyboard: with script, Delete for good from the bin asks first with the count, and a refused file says where it is used", async ({ page }) => {
+  test("keyboard: with script, Delete for good from Trash asks first with the count, and a refused file says where it is used", async ({ page }) => {
     await visitStates(page, "media-library", theme);
     const lib = editor(page);
-    await lib.getByRole("link", { name: /^Bin/ }).click();
+    await lib.getByRole("link", { name: /^Trash/ }).click();
     await expect(lib.locator(".cap-media-tile")).toHaveCount(2);
     await lib.getByRole("checkbox", { name: "Select old-logo.png" }).check({ force: true });
     await lib.getByRole("checkbox", { name: "Select scan-0042.png" }).check({ force: true });

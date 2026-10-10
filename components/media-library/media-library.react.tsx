@@ -33,7 +33,7 @@ export interface MediaLibraryProps {
 }
 
 // One page of one site's files, the same component in Carrel and in every site admin: search, tag
-// chips, the library and the bin, the grid or list of tiles, upload checked against the site's limits,
+// chips, the library and Trash, the grid or list of tiles, upload checked against the site's limits,
 // the bulk bar with each file's outcome, the inspector (from ?inspect=) in form or autosave mode,
 // Undo, and the confirmation for what cannot be undone. In picker mode, the same grid offers images
 // and asks for the alt text this use needs. Every action is a form post, so it works with no
@@ -141,12 +141,12 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
       </div>
 
       {!picker && offers.trash ? (
-        <TabsNav aria-label={`${title}: library or bin`} className="cap-media-lib-tabs">
+        <TabsNav aria-label={`${title}: library or Trash`} className="cap-media-lib-tabs">
           <TabLink href={href(withMedia(query, { view: undefined }))} current={!trash} count={data.counts?.library}>
             Library
           </TabLink>
           <TabLink href={href(withMedia(query, { view: "trash" }))} current={trash} count={data.counts?.trash}>
-            Bin
+            Trash
           </TabLink>
         </TabsNav>
       ) : null}
@@ -307,7 +307,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
                   go(withMedia(query, { inspect: key }));
                 }}
                 inspecting={!!inspected}
-                label={picker ? "Images" : trash ? "Files in the bin" : "Files"}
+                label={picker ? "Images" : trash ? "Files in Trash" : "Files"}
               />
             )}
           </div>

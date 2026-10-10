@@ -364,14 +364,14 @@ export interface MediaInspectorProps {
   // "auto" (the default) saves by itself through onSave. "form" is one form per field with its
   // own Save button, posting to `action`, so it works with no script.
   saving?: "auto" | "form";
-  // Where its forms post: the fields in form mode, and Move to the bin, Restore and Delete in
+  // Where its forms post: the fields in form mode, and Move to Trash, Restore and Delete in
   // either mode (each a form with `intent`, `ids` and `version`). Without it those are buttons.
   action?: string;
   // The host router's form component, for those forms.
   Form?: ComponentType<FormHTMLAttributes<HTMLFormElement> & { method?: "get" | "post" }>;
   // Close as a link to this address (the list without ?inspect=), so it works with no script.
   closeHref?: string;
-  // What the footer offers. Bin and Restore by default; Delete only when given.
+  // What the footer offers. Trash and Restore by default; Delete only when given.
   can?: { trash?: boolean; delete?: boolean };
 }
 
@@ -769,7 +769,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
               <F method="post" action={action} className="cap-media-act">
                 <Ident item={item} intent="trash" />
                 <button type="submit" className="cap-btn" data-cap-part="bin">
-                  Move to the bin
+                  Move to Trash
                 </button>
               </F>
             ) : null}
@@ -788,7 +788,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
           </button>
         ) : (
           <button type="button" className="cap-btn" data-cap-part="bin" onClick={() => onBin?.(item.key)}>
-            Move to the bin
+            Move to Trash
           </button>
         )}
       </div>

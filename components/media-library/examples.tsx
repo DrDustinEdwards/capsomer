@@ -138,7 +138,7 @@ function useSite() {
       case "restore": {
         const to = intent === "trash" ? "binned" : "ready";
         change((fs) => fs.map((f) => (ids.includes(f.key) ? { ...f, state: to } : f)));
-        return intent === "trash" ? { ok: true, message: `Moved ${some(ids.length)} to the bin.`, undo: { intent: "restore", fields: { ids } } } : { ok: true, message: `Restored ${some(ids.length)}.`, undo: { intent: "trash", fields: { ids } } };
+        return intent === "trash" ? { ok: true, message: `Moved ${some(ids.length)} to Trash.`, undo: { intent: "restore", fields: { ids } } } : { ok: true, message: `Restored ${some(ids.length)}.`, undo: { intent: "trash", fields: { ids } } };
       }
       case "add-tags":
       case "remove-tags": {

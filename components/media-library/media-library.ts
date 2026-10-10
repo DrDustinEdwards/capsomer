@@ -56,7 +56,7 @@ export interface OfferedAction {
 }
 
 // The bulk actions this person may run on this view of this site, in the bar's order, and a
-// sentence for each one held back. Delete is for good: from the bin where the site has one, from
+// sentence for each one held back. Delete is for good: from Trash where the site has one, from
 // the library only where it has none.
 export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, labels?: ContentLabels): { bulk: OfferedAction[]; withheld: string[] } {
   const { plural } = nounsOf(labels);
@@ -69,7 +69,7 @@ export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, 
     if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   } else {
     if (can.edit && offers.tags) bulk.push({ intent: "add-tags", label: "Add tag" }, { intent: "remove-tags", label: "Remove tag" });
-    if (can.deleteMedia && offers.trash) bulk.push({ intent: "trash", label: "Move to the bin" });
+    if (can.deleteMedia && offers.trash) bulk.push({ intent: "trash", label: "Move to Trash" });
     else if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   }
   if (!can.edit) withheld.push(`You can look at these ${plural}. Changing them needs an editor's role.`);
@@ -91,14 +91,14 @@ export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): { alt:
 // ---------------------------------------------------------------------------------------
 // Words.
 
-// "24 files", "Showing 48 of 210 files", "3 files in the bin".
+// "24 files", "Showing 48 of 210 files", "3 files in Trash".
 export function countLine(data: Pick<MediaData, "rows" | "page" | "query">, labels?: ContentLabels): string {
   const { noun, plural } = nounsOf(labels);
   const n = data.rows.length;
   const total = data.page.total;
   const word = (k: number) => (k === 1 ? noun : plural);
   const base = total != null && total > n ? `Showing ${n} of ${total} ${word(total)}` : `${n} ${word(n)}`;
-  return data.query.view === "trash" ? `${base} in the bin` : base;
+  return data.query.view === "trash" ? `${base} in Trash` : base;
 }
 
 export function filtered(q: MediaQuery): boolean {
@@ -112,7 +112,7 @@ export function emptyWords(q: MediaQuery, labels?: ContentLabels): { kind: "noth
     const what = [q.q ? `“${q.q}”` : null, q.tag ? `tag ${q.tag}` : null, q.lens ? `the ${q.lens} lens` : null].filter(Boolean).join(", ");
     return { kind: "no-match", title: `No ${plural} match ${what}`, text: "Clear the filters to see every one." };
   }
-  if (q.view === "trash") return { kind: "all-clear", title: "The bin is empty", text: `A ${noun} moved to the bin waits here until it is restored or deleted for good.` };
+  if (q.view === "trash") return { kind: "all-clear", title: "Trash is empty", text: `A ${noun} moved to Trash waits here until it is restored or deleted for good.` };
   return { kind: "nothing-yet", title: `No ${plural} yet`, text: `Upload the first ${noun} and it shows here.` };
 }
 
@@ -125,7 +125,7 @@ export function uploadRules(limits: NonNullable<MediaOffers["upload"]>, imagesOn
   return { accept, hint: `${acceptLabel(accept)}, up to ${formatBytes(limits.maxBytes)}.` };
 }
 
-// The picker's files: images that are in the library and uploaded, nothing in the bin or on its
+// The picker's files: images that are in the library and uploaded, nothing in Trash or on its
 // way.
 export function pickable(rows: readonly MediaRecord[]): MediaRecord[] {
   return rows.filter((r) => r.kind === "image" && r.state === "ready");

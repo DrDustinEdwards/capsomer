@@ -54,7 +54,7 @@ test("behaviour: alt text has three states, and decorative is a choice that miss
   expect(flagsFor({ ...base, altState: "set", used: [] }).map((f) => f.word)).toEqual(["Unattached"]);
   // A list that did not read where a file is used does not call it unattached.
   expect(flagsFor({ ...base, altState: "set", used: [], usedUnknown: true }).map((f) => f.word)).toEqual([]);
-  expect(flagsFor({ ...base, altState: "set", state: "binned" }).map((f) => f.word)).toEqual(["In the bin"]);
+  expect(flagsFor({ ...base, altState: "set", state: "binned" }).map((f) => f.word)).toEqual(["In Trash"]);
   expect(flagsFor({ kind: "document", altState: "missing", used: [], state: "ready" }).map((f) => f.word)).toEqual(["Unattached"]);
 });
 
@@ -166,7 +166,7 @@ eachTheme((theme) => {
       { sel: "#t-uptime-strip .cap-status", what: "the No alt text status" },
       { sel: "#t-germomics-tree .cap-status", what: "the Decorative status" },
       { sel: "#t-fieldnotes-migration .cap-status", what: "the Unattached status" },
-      { sel: "#t-old-logo .cap-status", what: "the In the bin status" },
+      { sel: "#t-old-logo .cap-status", what: "the In Trash status" },
       { sel: "#t-mention-queue .cap-media-name", what: "a selected tile's name on its tint" },
       { sel: "#t-mention-queue .cap-media-check-word", what: "the word Selected" },
       { sel: "#t-mention-queue .cap-media-check-box", what: "the check box's edge", part: "border" },
@@ -204,12 +204,12 @@ eachTheme((theme) => {
     await visitStates(page, "media", theme);
     await expect(page.locator("#empty-search")).toContainText("No files match “fieldnotes”");
     await expect(page.locator("#empty-filter")).toContainText("Nothing in this view");
-    await expect(page.locator("#empty-bin")).toContainText("The bin is empty");
+    await expect(page.locator("#empty-bin")).toContainText("Trash is empty");
     await expect(page.locator("#empty-library")).toContainText("Nothing here yet");
     await expectContrast(page, [
       { sel: "#empty-search .cap-empty-title", what: "the nothing matches title" },
       { sel: "#empty-search .cap-empty-text", what: "the nothing matches text" },
-      { sel: "#empty-bin .cap-empty-text", what: "the empty bin text" },
+      { sel: "#empty-bin .cap-empty-text", what: "the empty Trash text" },
       { sel: "#empty-library .cap-empty-text", what: "the empty library text" },
     ]);
   });
@@ -494,9 +494,9 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as unknown as { retried: string[] }).retried)).toEqual(["media/scan-0042.png"]);
   });
 
-  test("keyboard: Enter on Restore puts a file in the bin back, with Undo", async ({ page }) => {
+  test("keyboard: Enter on Restore puts a file in Trash back, with Undo", async ({ page }) => {
     await library(page, theme);
-    await page.getByRole("radio", { name: /Bin/ }).check();
+    await page.getByRole("radio", { name: /Trash/ }).check();
     await expect(page.locator(".cap-media-tile:not([hidden])")).toHaveCount(1);
     await link(page, "old-logo.png").focus();
     await page.keyboard.press("Tab");
@@ -715,29 +715,29 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-media-count")).toHaveText("6 files");
   });
 
-  test("behaviour: the bin view shows the binned files, with a count and Restore", async ({ page }) => {
+  test("behaviour: the Trash view shows the files in Trash, with a count and Restore", async ({ page }) => {
     await library(page, theme);
     await expect(page.locator("[data-cap-count=bin]")).toHaveText("1");
-    await page.getByRole("radio", { name: /Bin/ }).check();
+    await page.getByRole("radio", { name: /Trash/ }).check();
     await expect(page.locator(".cap-media-tile:not([hidden])")).toHaveCount(1);
-    await expect(tile(page, "old-logo.png").locator(".cap-status")).toHaveText("In the bin");
-    await expect(page.locator(".cap-media-count")).toHaveText("1 in the bin");
+    await expect(tile(page, "old-logo.png").locator(".cap-status")).toHaveText("In Trash");
+    await expect(page.locator(".cap-media-count")).toHaveText("1 in Trash");
     await page.getByRole("button", { name: "Restore old-logo.png" }).click();
     await expect(page.locator(".cap-media-empty")).toBeVisible();
-    await expect(page.getByText("The bin is empty")).toBeVisible();
+    await expect(page.getByText("Trash is empty")).toBeVisible();
     await expect(page.locator("[data-cap-count=bin]")).toHaveText("0");
     await page.getByRole("button", { name: "Undo" }).click();
     await expect(tile(page, "old-logo.png")).toBeVisible();
   });
 
-  test("behaviour: moving a file to the bin from the inspector runs at once and offers Undo", async ({ page }) => {
+  test("behaviour: moving a file to Trash from the inspector runs at once and offers Undo", async ({ page }) => {
     await library(page, theme);
     await link(page, UPTIME).focus();
     await page.keyboard.press("Enter");
-    await inspector(page).getByRole("button", { name: "Move to the bin" }).click();
+    await inspector(page).getByRole("button", { name: "Move to Trash" }).click();
     await expect(page.getByRole("alertdialog")).toHaveCount(0);
     await expect(tile(page, UPTIME)).toBeHidden();
-    await expect(page.locator(".cap-message-item")).toContainText("Moved uptime-strip.png to the bin.");
+    await expect(page.locator(".cap-message-item")).toContainText("Moved uptime-strip.png to Trash.");
     await expect(inspector(page).getByRole("heading", { name: "germomics-tree.svg" })).toBeVisible();
     await page.getByRole("button", { name: "Undo" }).click();
     await expect(tile(page, UPTIME)).toBeVisible();
@@ -758,8 +758,8 @@ eachTheme((theme) => {
     await page.keyboard.press("Space");
     await link(page, "mention-queue.png").focus();
     await page.keyboard.press("Space");
-    await page.locator("#library-bulk").getByRole("button", { name: "Move to the bin" }).click();
-    await expect(page.locator(".cap-message-item")).toContainText("Moved 2 files to the bin.");
+    await page.locator("#library-bulk").getByRole("button", { name: "Move to Trash" }).click();
+    await expect(page.locator(".cap-message-item")).toContainText("Moved 2 files to Trash.");
     await expect(tile(page, UPTIME)).toBeHidden();
     await page.getByRole("button", { name: "Undo" }).click();
     await expect(tile(page, UPTIME)).toBeVisible();
@@ -767,7 +767,7 @@ eachTheme((theme) => {
 
   test("behaviour: deleting for good previews every file first, with focus on Cancel, and cannot be undone", async ({ page }) => {
     await library(page, theme);
-    await page.getByRole("radio", { name: /Bin/ }).check();
+    await page.getByRole("radio", { name: /Trash/ }).check();
     await tile(page, "old-logo.png").getByRole("checkbox").check({ force: true });
     await page.locator("#library-bulk").getByRole("button", { name: "Delete for good" }).click();
     const dialog = page.getByRole("alertdialog", { name: "Delete 1 file for good?" });
