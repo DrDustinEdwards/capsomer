@@ -1,0 +1,110 @@
+<section class="cap-specimen" aria-labelledby="s-shell">
+  <h2 id="s-shell">The family as a capsid</h2>
+  <p>Capsid in the middle, the shared parts around it, what people use on the outside. Choose a system to draw its connections; choose Capsid again to go inside. Arrow keys move between neighbours, Escape steps out.</p>
+  <div data-mount="shell"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-chosen">
+  <h2 id="s-chosen">A system chosen, its connections drawn</h2>
+  <p>Carrel chosen: its lines run through the middle, solid where it installs or publishes, dashed where Capsid coordinates it.</p>
+  <div data-mount="chosen"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-inside">
+  <h2 id="s-inside">Inside the core</h2>
+  <p>Capsid's parts within the shell's boundary, the systems around it faded at the rim.</p>
+  <div data-mount="inside"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-plain">
+  <h2 id="s-plain">The plain map</h2>
+  <p>The same data as three columns, for a reader who wants the list rather than the drawing.</p>
+  <div data-mount="plain"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-states">
+  <h2 id="s-states">A capsomer under the pointer and with keyboard focus</h2>
+  <p>Forced states on a map that is not enhanced: Prelum under the pointer, Carrel with the focus ring.</p>
+  <div data-mount="states"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-noscript">
+  <h2 id="s-noscript">As delivered with no script</h2>
+  <p>The drawing is a picture with a name, and the list of the same data is open.</p>
+  <div data-mount="noscript"></div>
+</section>
+
+<script type="module">
+  import { controller, enhance, systemMapHtml } from "./system-map.ts";
+
+  // Sample data in the family's own words. Private systems carry a name and an address only.
+  const data = {
+    systems: [
+      { id: "capsid", name: "Capsid", ring: "core", description: "The knowledge store, work queue and credential boundary.", domain: "mcp.example.com", href: "#capsid" },
+      { id: "capsomer", name: "Capsomer", ring: "shared", tag: "shared", description: "The design system every app is drawn in.", href: "#capsomer" },
+      { id: "site-runtime", name: "site-runtime", short: "Runtime", ring: "shared", tag: "shared", description: "Security headers, the rate limiter and the health format." },
+      { id: "d1-dump", name: "d1-dump", ring: "shared", tag: "shared", description: "Per-table backups with a restore drill." },
+      { id: "devkit", name: "devkit", ring: "shared", tag: "shared", description: "The shared CI workflow and test helpers." },
+      { id: "site-api", name: "site-api", ring: "shared", tag: "shared", description: "The contract writing is published through." },
+      { id: "prelum", name: "Prelum", ring: "shared", tag: "shared", description: "Turns finished writing into pages and feeds." },
+      { id: "carrel", name: "Carrel", ring: "used", tag: "tool", description: "The writing desk.", domain: "carrel.example.com", href: "#carrel" },
+      { id: "enarratio", name: "Enarratio", ring: "used", tag: "tool", description: "Charts, as a package." },
+      { id: "site", name: "The website", short: "Website", ring: "used", tag: "site", description: "The personal site.", domain: "example.com" },
+      { id: "site-mcp", name: "Site connector", short: "Site MCP", ring: "used", tag: "tool", description: "Publishes posts from a chat." },
+      { id: "skills", name: "Skills", ring: "used", tag: "tool", description: "Instructions the AI sessions follow." },
+      { id: "fieldnotes", name: "Fieldnotes", ring: "used", private: true, domain: "fieldnotes.example.org" },
+      { id: "foxing", name: "Foxing", ring: "used", private: true, domain: "foxing.example" },
+      { id: "foxhound", name: "Foxhound", ring: "used", private: true, domain: "foxhound.example" },
+      { id: "ledger", name: "Ledger", ring: "used", private: true, domain: "ledger.example.net" },
+    ],
+    relationships: [
+      { from: "capsid", to: "d1-dump", kind: "installs" },
+      { from: "capsid", to: "site-runtime", kind: "installs" },
+      { from: "capsid", to: "capsomer", kind: "installs" },
+      { from: "carrel", to: "site-api", kind: "installs" },
+      { from: "carrel", to: "site", kind: "publishes-to" },
+      { from: "carrel", to: "fieldnotes", kind: "publishes-to" },
+      { from: "site-mcp", to: "site", kind: "publishes-to" },
+      { from: "capsid", to: "carrel", kind: "coordinates" },
+      { from: "capsid", to: "foxhound", kind: "coordinates" },
+      { from: "capsid", to: "foxing", kind: "coordinates" },
+      { from: "capsid-worker", to: "capsid-db", kind: "writes" },
+      { from: "capsid-worker", to: "capsid-media", kind: "writes" },
+      { from: "capsid-worker", to: "capsid-kv", kind: "writes" },
+      { from: "capsid-worker", to: "capsid-portal", kind: "serves" },
+      { from: "capsid-tick", to: "capsid-db", kind: "writes" },
+    ],
+    containers: [
+      { id: "capsid-worker", system: "capsid", name: "MCP Worker", kind: "worker", technology: "Worker" },
+      { id: "capsid-portal", system: "capsid", name: "Portal", kind: "site", technology: "React" },
+      { id: "capsid-tick", system: "capsid", name: "Five-minute tick", kind: "cron", technology: "Cron" },
+      { id: "capsid-db", system: "capsid", name: "capsid", kind: "database", technology: "D1" },
+      { id: "capsid-media", system: "capsid", name: "capsid-media", kind: "bucket", technology: "R2" },
+      { id: "capsid-kv", system: "capsid", name: "app KV", kind: "kv", technology: "KV" },
+    ],
+  };
+  const caption = "A capsid is the protein shell of a virus, built from repeated parts called capsomers. This family is built the same way.";
+  const mount = (name, options) => {
+    const el = document.querySelector(`[data-mount='${name}']`);
+    el.innerHTML = systemMapHtml(data, { headingLevel: 3, ...options });
+    return el.firstElementChild;
+  };
+
+  mount("shell", { id: "map", label: "The family", caption });
+  mount("noscript", { id: "map-plain-html", label: "The family, no script" });
+  const states = mount("states", { id: "map-states", label: "The family, forced states" });
+  states.querySelector(".cap-system-map-tile[data-id='prelum']").setAttribute("data-force", "hover");
+  states.querySelector(".cap-system-map-tile[data-id='carrel']").setAttribute("data-force", "focus");
+
+  const chosen = controller(mount("chosen", { id: "map-chosen", label: "The family, Carrel chosen" }));
+  const inside = controller(mount("inside", { id: "map-inside", label: "The family, inside Capsid" }));
+  const plain = controller(mount("plain", { id: "map-plain", label: "The family, plain" }));
+  enhance(document.querySelector("[data-mount='shell']"));
+  for (const el of document.querySelectorAll("#map-chosen, #map-inside, #map-plain")) el.setAttribute("data-cap-ready", "");
+  chosen.select("carrel");
+  inside.select("capsid");
+  inside.enter();
+  plain.setView("plain");
+  // The specimen above leaves focus where the page put it, not on "Step out".
+  document.activeElement?.blur?.();
+</script>
