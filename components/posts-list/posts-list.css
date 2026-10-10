@@ -1,0 +1,140 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The posts list: one page of one site's posts. It is assembled from the shared parts (tabs,
+   field, select, table, status, menu, bulk bar, message, empty, confirm dialog), whose
+   stylesheets it needs beside this one. This file only lays them out: the filter bar, the line
+   with the count and the toolbar, the cells of the table, and the paging links. */
+@layer cap.components {
+  .cap-posts {
+    display: grid;
+    gap: var(--space-4);
+    min-inline-size: 0;
+  }
+
+  /* Search, kind, tag and sort, each with a visible label, and Show. Wraps on a narrow space. */
+  .cap-posts-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+
+    & > .cap-field {
+      margin: 0;
+    }
+  }
+  .cap-posts-search {
+    flex: 1 1 16rem;
+    min-inline-size: 0;
+  }
+
+  /* The count at the start, the toolbar (a host's own actions, New post) at the end. */
+  .cap-posts-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-4);
+  }
+  .cap-posts-count {
+    margin: 0;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-posts-tools,
+  .cap-posts-extra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* Why an action is not offered here, in words, as Carrel does. */
+  .cap-posts-withheld {
+    margin: 0;
+    padding: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    list-style: none;
+  }
+
+  /* The list's own result: at the top of the list, in the flow, not stuck to the bottom. */
+  .cap-posts-result {
+    position: static;
+
+    &:empty {
+      display: none;
+    }
+  }
+  .cap-posts-undo {
+    display: contents;
+  }
+
+  .cap-posts-check {
+    inline-size: 1%;
+  }
+  .cap-posts-table tbody tr[data-selected] {
+    background: var(--sel);
+  }
+
+  /* The title cell: the one link, stretched over the row, then the path, the kind and the
+     host's notes on a quiet line under it. */
+  .cap-posts-title {
+    min-inline-size: 14rem;
+  }
+  .cap-posts-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-3);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+  }
+  .cap-posts-path {
+    overflow-wrap: anywhere;
+  }
+  .cap-posts-notes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block-start: var(--space-2);
+  }
+
+  .cap-posts-status {
+    white-space: nowrap;
+  }
+  .cap-posts-when,
+  .cap-posts-none {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* A row's menu sits above the stretched title link, and an open one above the rows after it. */
+  .cap-posts-actions {
+    inline-size: 1%;
+    text-align: end;
+
+    & > .cap-menu-form {
+      position: relative;
+      z-index: 1;
+      text-align: start;
+
+      &[open] {
+        z-index: var(--z-overlay);
+      }
+      & > .cap-menu {
+        inset-inline: auto 0;
+        min-inline-size: 12rem;
+      }
+    }
+  }
+  /* The table's scroll region clips an open menu on the last rows: room under the table. */
+  .cap-posts-wrap:has(.cap-menu-form[open]) {
+    padding-block-end: 12rem;
+  }
+
+  .cap-posts-pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+}
