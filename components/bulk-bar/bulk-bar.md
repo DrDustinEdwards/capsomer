@@ -4,7 +4,7 @@ title: Bulk action bar
 summary: What a selection can be done to: the live count, the actions, select all in view and Clear. A reversible action runs at once with Undo; a destructive one previews every item first.
 parts: [css, behaviour, react]
 tool: native + own JavaScript (the shared confirm dialog and message region)
-states: [a form with submit actions, three selected in the HTML, nothing selected and hidden, choose then act, reversible action with Undo, destructive action previewed, twelve items in the preview, action that fails, sticky at the bottom, sticky at the top]
+states: [a form with submit actions, outcomes after an action, three selected in the HTML, nothing selected and hidden, choose then act, reversible action with Undo, destructive action previewed, twelve items in the preview, action that fails, sticky at the bottom, sticky at the top]
 added: 0.3.0
 source: dustinedwards.info, app/components/admin/media-bulk-bar.tsx, bulk-tag-controls.tsx, lib/admin/bulk-tag.ts, media-confirm-dialogs.tsx, posts-confirm-dialogs.tsx; shadcn/ui Sonner and the Data Table selection bar (Base UI flavour, nova style, commit d75a96ab787f)
 replaces:
@@ -40,6 +40,8 @@ Over any list where several rows or tiles can be chosen: posts, media, mentions,
 - **The bar sticks to the bottom of its scroll container** (the top, with `data-position="top"`), so it is reachable however far the list is scrolled. It wears the popover surface with an edge that reaches 3:1 on the page.
 - **Every control is `type="button"`**, so it never submits a form the list sits in, except in form mode.
 - **Form mode: the actions are the form's own submit buttons, and the server confirms.** For a list that is a plain form (the boxes are `name="ids"` inputs in a `<form method="post">`), an action is `<button type="submit" name="intent" value="archive">`. The bar is in the delivered page with no script, with static count text ("Tick the drafts to act on"), and the browser posts the ticked ids and the intent. A destructive intent (`data-destructive`, which only gives the danger look here) is answered by the server with its own page that lists every item and asks, because a page that works without script cannot run the preview dialog. With script the bar counts, hides while nothing is ticked and shows when something is, and refuses a press with nothing ticked ("Tick at least one item first."). It does not run, preview, offer Undo or clear: the response page is the result. Esc, Select all and Clear selection work as before.
+
+- **After an action, one outcome per item.** A site can refuse one item and do the rest (a version that moved, a post with no front matter, a file still in use), so the bar can list what happened to each: a line that counts them ("2 done, 1 not done."), then one line per item, refusals first, each a word and a shape (Done, Not done), the item's name and why, and for a refused delete every place it is still used. While the list is there the bar stays in view with nothing selected and stops sticking, so a long list never covers the page. Dismiss results takes it away; it needs script, so a server renders it `hidden` and the script shows it. This is Carrel's Result panel, built once, in the bar.
 
 ## The shadcn component it matches
 
@@ -123,7 +125,21 @@ Form mode, with no script needed:
 </form>
 ```
 
-The bar is not `hidden` in the delivered HTML; the script hides it while nothing is ticked. A bar outside the form names it with `form="drafts-form"` on each submit button.
+The bar is not `hidden` in the delivered HTML; the script hides it while nothing is ticked.
+
+The outcome list, last in the bar (a server renders it after a form post; `showOutcomes(bar, outcomes)` writes it with script):
+
+```html
+<div class="cap-bulk-results" data-cap-part="results" role="group" aria-labelledby="bulk-results">
+  <p class="cap-bulk-results-summary" id="bulk-results">2 done, 1 not done.</p>
+  <ul class="cap-bulk-results-list">
+    <li data-ok="false"><span class="cap-status" data-tone="crit">[glyph]Not done</span> <span class="cap-bulk-result-label">What a mention queue is for</span> <span class="cap-bulk-result-message">Changed on the site since this page was loaded.</span>
+      <ul class="cap-bulk-result-uses"><li>Notes on the Foxhound release (cover image)</li></ul></li>
+    <li data-ok="true"><span class="cap-status" data-tone="ok">[glyph]Done</span> <span class="cap-bulk-result-label">Notes on the Foxhound release</span></li>
+  </ul>
+  <button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="dismiss-results" hidden>Dismiss results</button>
+</div>
+``` A bar outside the form names it with `form="drafts-form"` on each submit button.
 
 `data-cap-list` is the id of the container whose `input[type=checkbox][data-cap-select]` are the items; an item's name for the preview is its `data-label`, or `data-label` on an ancestor, or its label text. `data-position="top"` sticks the bar to the top. `data-cap-return` is a selector for where focus goes when the bar goes away. `data-cap-value` on an action is a selector for a field whose value goes with it (an empty value moves focus to the field and does nothing). `{n}` and `{s}` in the templates are the count and the plural "s".
 
@@ -138,7 +154,7 @@ bar.addEventListener("cap-bulk-action", (e) => refresh(e.detail)); // { action, 
 bar.addEventListener("cap-bulk-change", (e) => (e.detail.count)); // { items, count } on every change
 ```
 
-`performBulk({ action, items, run, undo, destructive, confirmTitle, confirmLead, confirmAction, said, undone, returnTo })` is the whole flow for an app that keeps its own selection. Pure helpers: `countText`, `fillCount`, `plural`, `previewItems`. A `run` rejects with an `Error` whose message says what happened.
+`performBulk({ action, items, run, undo, destructive, confirmTitle, confirmLead, confirmAction, said, undone, returnTo })` is the whole flow for an app that keeps its own selection. Pure helpers: `countText`, `fillCount`, `plural`, `previewItems`, and for the outcome list `outcomeSummary` and `orderOutcomes` (a `BulkOutcome` is `{ id, label, ok, message?, usedBy? }`). A `run` rejects with an `Error` whose message says what happened.
 
 ```tsx
 import { BulkBar } from "capsomer/react/bulk-bar";
@@ -149,7 +165,7 @@ import { BulkBar } from "capsomer/react/bulk-bar";
   ]} />
 ```
 
-In React, form mode is `form="drafts-form"` on `BulkBar` and `submit: true` on an action (a submit button named `intent`, valued with the action's id, `run` not used); the bar renders visible and hides only after the page has loaded with nothing selected.
+In React, `outcomes` (and `onDismissOutcomes`, which shows Dismiss results) draws the outcome list. Form mode is `form="drafts-form"` on `BulkBar` (with `prompt`, the count's words before script runs) and `submit: true` on an action (a submit button named `intent`, valued with the action's id, `run` not used); the bar renders visible and hides only after the page has loaded with nothing selected.
 
 The React wrapper is controlled: it renders the same markup, `hidden` while `items` is empty, calls `onClear` after an action ran, on Clear and on Esc, and has no `style` prop.
 

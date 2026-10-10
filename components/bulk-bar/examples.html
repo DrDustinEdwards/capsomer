@@ -77,6 +77,33 @@
   </form>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-outcomes">
+  <h2 id="s-outcomes">After an action: one outcome per item, refusals first</h2>
+  <p>The page the server sent back after the form posted: nothing is ticked, and the bar stays in view to list what happened to each item. Dismiss results needs script, so it is hidden in the delivered HTML and shown on load.</p>
+  <form class="bulk-form" id="outcome-drafts" method="post" action="/admin/posts/bulk">
+    <ul class="bulk-list" id="outcome-list">
+      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" name="ids" value="o-1" data-cap-select /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" name="ids" value="o-2" data-cap-select /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
+    </ul>
+    <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="outcome-list" role="region" aria-label="Bulk actions" id="bulk-outcomes">
+      <p class="cap-bulk-count" role="status">Tick the drafts to act on</p>
+      <div class="cap-bulk-actions">
+        <button type="submit" class="cap-btn" name="intent" value="archive">Archive</button>
+      </div>
+      <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+      <div class="cap-bulk-results" data-cap-part="results" role="group" aria-labelledby="bulk-outcomes-summary">
+        <p class="cap-bulk-results-summary" id="bulk-outcomes-summary">2 done, 1 not done.</p>
+        <ul class="cap-bulk-results-list">
+          <li data-ok="false"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Not done</span> <span class="cap-bulk-result-label">What a mention queue is for</span> <span class="cap-bulk-result-message">Changed on the site since this page was loaded. Open it to see the change.</span></li>
+          <li data-ok="true"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Done</span> <span class="cap-bulk-result-label">Notes on the Foxhound release</span></li>
+          <li data-ok="true"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Done</span> <span class="cap-bulk-result-label">Why the uptime strip counts gaps</span></li>
+        </ul>
+        <button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="dismiss-results" hidden>Dismiss results</button>
+      </div>
+    </div>
+  </form>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-twelve">
   <h2 id="s-twelve">Twelve selected: the preview lists every one</h2>
   <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="twelve-list" /> Select all drafts</label></div>

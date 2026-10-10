@@ -9,7 +9,7 @@
 // same functions.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
-import { fail, say } from "../message/message.ts";
+import { GLYPHS, fail, say } from "../message/message.ts";
 
 const READY = "data-cap-ready";
 const SELECT = "input[type='checkbox'][data-cap-select]";
@@ -43,6 +43,32 @@ export function fillCount(template: string, n: number): string {
 // carries the count; the list is not shortened, because a preview that hides items is not one.
 export function previewItems(items: readonly BulkItem[]): string[] {
   return items.map((i) => i.label);
+}
+
+// One item's outcome after an action that acted on several, for the bar's outcome list. A site
+// can refuse one item and do the rest, so each says its own result.
+export interface BulkOutcome {
+  id: string;
+  label: string;
+  ok: boolean;
+  // Why it was not done, or a note on what was: "Changed since you opened it."
+  message?: string;
+  // Where it is still used, when that is why it was refused: one line each.
+  usedBy?: readonly string[];
+}
+
+// The outcomes to list, refusals first: what needs the person comes before what is done.
+export function orderOutcomes(outcomes: readonly BulkOutcome[]): BulkOutcome[] {
+  return [...outcomes.filter((o) => !o.ok), ...outcomes.filter((o) => o.ok)];
+}
+
+// The outcome list's one line: "All 3 done.", "None done: 2 refused.", "2 done, 1 not done."
+export function outcomeSummary(outcomes: readonly BulkOutcome[]): string {
+  const done = outcomes.filter((o) => o.ok).length;
+  const not = outcomes.length - done;
+  if (not === 0) return done === 1 ? "Done." : `All ${done} done.`;
+  if (done === 0) return not === 1 ? "Not done." : `None done: ${not} refused.`;
+  return `${done} done, ${not} not done.`;
 }
 
 export interface BulkActionSpec {
@@ -170,6 +196,85 @@ export function setAllInView(list: ParentNode, on: boolean): void {
 }
 
 const part = <T extends HTMLElement = HTMLElement>(bar: HTMLElement, name: string) => bar.querySelector<T>(`[data-cap-part='${name}']`);
+
+// True while the bar lists outcomes: it stays in view with nothing selected, so the results of
+// the action just run can be read.
+function hasOutcomes(bar: HTMLElement): boolean {
+  const list = part(bar, "results");
+  return !!list && !list.hidden;
+}
+
+function svg(glyph: string): SVGSVGElement {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  el.setAttribute("class", "cap-status-glyph");
+  el.setAttribute("viewBox", "0 0 16 16");
+  el.setAttribute("aria-hidden", "true");
+  el.setAttribute("focusable", "false");
+  el.innerHTML = glyph;
+  return el;
+}
+
+let resultsSeq = 0;
+
+// Writes the outcome list into the bar (the markup on the doc page), replacing any before it, and
+// shows the bar. An empty list removes it.
+export function showOutcomes(bar: HTMLElement, outcomes: readonly BulkOutcome[]): void {
+  part(bar, "results")?.remove();
+  if (outcomes.length > 0) {
+    const box = document.createElement("div");
+    box.className = "cap-bulk-results";
+    box.dataset.capPart = "results";
+    box.setAttribute("role", "group");
+    const summary = document.createElement("p");
+    summary.className = "cap-bulk-results-summary";
+    summary.id = `${bar.id || "cap-bulk"}-results-${++resultsSeq}`;
+    summary.textContent = outcomeSummary(outcomes);
+    box.setAttribute("aria-labelledby", summary.id);
+    const list = document.createElement("ul");
+    list.className = "cap-bulk-results-list";
+    for (const o of orderOutcomes(outcomes)) {
+      const li = document.createElement("li");
+      li.dataset.ok = String(o.ok);
+      const word = document.createElement("span");
+      word.className = "cap-status";
+      word.dataset.tone = o.ok ? "ok" : "crit";
+      word.append(svg(o.ok ? GLYPHS.ok : GLYPHS.failure), o.ok ? "Done" : "Not done");
+      const label = document.createElement("span");
+      label.className = "cap-bulk-result-label";
+      label.textContent = o.label;
+      li.append(word, " ", label);
+      if (o.message) {
+        const m = document.createElement("span");
+        m.className = "cap-bulk-result-message";
+        m.textContent = o.message;
+        li.append(" ", m);
+      }
+      if (o.usedBy?.length) {
+        const uses = document.createElement("ul");
+        uses.className = "cap-bulk-result-uses";
+        for (const u of o.usedBy) {
+          const item = document.createElement("li");
+          item.textContent = u;
+          uses.append(item);
+        }
+        li.append(uses);
+      }
+      list.append(li);
+    }
+    const dismiss = document.createElement("button");
+    dismiss.type = "button";
+    dismiss.className = "cap-btn";
+    dismiss.dataset.variant = "quiet";
+    dismiss.dataset.size = "sm";
+    dismiss.dataset.capPart = "dismiss-results";
+    dismiss.textContent = "Dismiss results";
+    box.append(summary, list, dismiss);
+    bar.append(box);
+  }
+  refresh(bar);
+  // A bar with no list is not counted by refresh; outcomes alone put it in view.
+  if (outcomes.length > 0) bar.hidden = false;
+}
 const lastTouched = new WeakMap<HTMLElement, HTMLInputElement>();
 
 // Redraws the bar from the list: the count, hidden when there is none, the select-all label
@@ -192,10 +297,13 @@ export function refresh(bar: HTMLElement): number {
       });
     } else if (n > 0) {
       if (count.textContent !== text) count.textContent = text;
+    } else if (hasOutcomes(bar)) {
+      bar.hidden = false;
+      if (count.textContent !== "Nothing selected") count.textContent = "Nothing selected";
     } else {
       bar.hidden = true;
     }
-  } else bar.hidden = n === 0;
+  } else bar.hidden = n === 0 && !hasOutcomes(bar);
   const total = itemsInView(list).length;
   const all = part(bar, "select-all");
   if (all) {
@@ -314,6 +422,12 @@ export function attachBulkBar(bar: HTMLElement): () => void {
     const button = target?.closest<HTMLElement>("button, [data-cap-bulk-action]");
     if (!button || !bar.contains(button) || button.getAttribute("aria-disabled") === "true") return;
     if (button.classList.contains("cap-bulk-clear")) return void clearSelection(bar);
+    if (button.dataset.capPart === "dismiss-results") {
+      const had = bar.contains(document.activeElement);
+      showOutcomes(bar, []);
+      if (had && bar.hidden) returnTarget(bar)?.focus();
+      return;
+    }
     if (button.dataset.capPart === "select-all" && list) {
       setAllInView(list, true);
       refresh(bar);
@@ -333,6 +447,9 @@ export function attachBulkBar(bar: HTMLElement): () => void {
   };
   bar.addEventListener("click", onClick);
   undo.push(() => bar.removeEventListener("click", onClick));
+  // A server-rendered outcome list carries its Dismiss hidden, since it needs script.
+  const dismiss = part(bar, "dismiss-results");
+  if (dismiss) dismiss.hidden = false;
   if (list) refresh(bar);
   return () => {
     undo.forEach((f) => f());
