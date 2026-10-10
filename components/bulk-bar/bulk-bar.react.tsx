@@ -1,5 +1,8 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { countText, fillCount, performBulk, type BulkItem } from "./bulk-bar.ts";
+import { useEffect, useId, useState, type ReactNode } from "react";
+import { Glyph } from "../status/status.react.tsx";
+import { countText, fillCount, orderOutcomes, outcomeSummary, performBulk, type BulkItem, type BulkOutcome } from "./bulk-bar.ts";
+
+export type { BulkOutcome };
 
 export interface BulkBarAction {
   id: string;
@@ -43,10 +46,21 @@ export interface BulkBarProps {
   // with their own `form`). Actions with `submit` post it. The bar is in the delivered page
   // without script and hides itself only after the page has loaded and nothing is ticked.
   form?: string;
+  // Form mode: the count's words before script runs, when nothing can be counted ("Tick the
+  // drafts to act on").
+  prompt?: string;
+  // The outcome of the action just run, one per item, refusals first. While there are any the
+  // bar stays in view with nothing selected, so they can be read; a server renders them after a
+  // form post, with no script.
+  outcomes?: readonly BulkOutcome[];
+  // Dismiss results: the app empties `outcomes`. Shown only once the page has loaded.
+  onDismissOutcomes?: () => void;
 }
 
-export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, position = "bottom", returnTo, children, label = "Bulk actions", form }: BulkBarProps) {
+export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, position = "bottom", returnTo, children, label = "Bulk actions", form, prompt, outcomes = [], onDismissOutcomes }: BulkBarProps) {
   const [mounted, setMounted] = useState(false);
+  const resultsId = `${useId().replace(/[^a-zA-Z0-9]/g, "")}-results`;
+  const showing = outcomes.length > 0;
   useEffect(() => setMounted(true), []);
   const n = items.length;
   // A status region that is shown and filled in one step is often missed: the count is written
@@ -83,14 +97,14 @@ export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, p
   };
 
   return (
-    <div className="cap-bulk" data-cap="bulk-bar" role="region" aria-label={label} data-position={position === "top" ? "top" : undefined} hidden={form ? mounted && n === 0 : n === 0} onKeyDown={(e) => {
+    <div className="cap-bulk" data-cap="bulk-bar" role="region" aria-label={label} data-position={position === "top" ? "top" : undefined} hidden={(form ? mounted && n === 0 : n === 0) && !showing} onKeyDown={(e) => {
         if (e.key === "Escape" && !e.defaultPrevented && n > 0) {
           e.preventDefault();
           onClear();
         }
       }}>
       <p className="cap-bulk-count" role="status">
-        {shown > 0 ? countText(shown) : ""}
+        {shown > 0 ? countText(shown) : !mounted && form && prompt ? prompt : showing && mounted ? "Nothing selected" : ""}
         {shown > 0 && detail ? (
           <>
             {" "}
@@ -118,6 +132,42 @@ export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, p
       <button type="button" className="cap-btn cap-bulk-clear" data-variant="quiet" onClick={onClear}>
         Clear selection
       </button>
+      {showing ? (
+        <div className="cap-bulk-results" data-cap-part="results" role="group" aria-labelledby={resultsId}>
+          <p className="cap-bulk-results-summary" id={resultsId}>
+            {outcomeSummary(outcomes)}
+          </p>
+          <ul className="cap-bulk-results-list">
+            {orderOutcomes(outcomes).map((o) => (
+              <li key={o.id} data-ok={String(o.ok)}>
+                <span className="cap-status" data-tone={o.ok ? "ok" : "crit"}>
+                  <Glyph name={o.ok ? "ok" : "crit"} />
+                  {o.ok ? "Done" : "Not done"}
+                </span>{" "}
+                <span className="cap-bulk-result-label">{o.label}</span>
+                {o.message ? (
+                  <>
+                    {" "}
+                    <span className="cap-bulk-result-message">{o.message}</span>
+                  </>
+                ) : null}
+                {o.usedBy?.length ? (
+                  <ul className="cap-bulk-result-uses">
+                    {o.usedBy.map((u) => (
+                      <li key={u}>{u}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+          {onDismissOutcomes ? (
+            <button type="button" className="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="dismiss-results" hidden={!mounted} onClick={onDismissOutcomes}>
+              Dismiss results
+            </button>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

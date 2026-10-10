@@ -182,6 +182,13 @@ export function useMessage(): MessageApi {
   return { say: ctx.say, fail: ctx.fail, dismiss: ctx.dismiss };
 }
 
+// The same API, or null when no <MessageProvider> is above: for a component that says its
+// results in the page's region when there is one and works without it (a form that posts).
+export function useOptionalMessage(): MessageApi | null {
+  const ctx = useContext(MessageContext);
+  return ctx ? { say: ctx.say, fail: ctx.fail, dismiss: ctx.dismiss } : null;
+}
+
 // The region itself. One per page. It has no data-cap attribute, so the plain behaviour
 // module never attaches to a region React owns.
 export function MessageRegion() {

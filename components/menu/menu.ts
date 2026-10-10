@@ -1,11 +1,12 @@
-// The form menu's behaviour: a <details> of submit buttons that already works with no script.
+// The form menu's behaviour: a <details> of submit buttons (and links) that already works with no script.
 // With script it also closes on Esc (focus back on the summary), closes on a press or focus
 // outside it, and moves between the buttons with the arrow keys; ArrowDown on the summary opens
 // it and lands on the first button. The Base UI menu needs none of this; it is React only.
 
 const READY = "data-cap-ready";
 
-const buttonsOf = (d: HTMLElement) => Array.from(d.querySelectorAll<HTMLButtonElement>("button:not(:disabled)"));
+// The items the arrow keys move through: the submit buttons that are not disabled, and link items.
+const buttonsOf = (d: HTMLElement) => Array.from(d.querySelectorAll<HTMLElement>(".cap-menu > :is(button:not(:disabled), a[href])"));
 
 // Moves to the next or previous button, wrapping; `from` is the focused one, or -1.
 export function stepIndex(count: number, from: number, dir: 1 | -1): number {
@@ -33,7 +34,7 @@ export function enhance(root: ParentNode = document): () => void {
         d.open = true;
         items[0]?.focus();
       } else if ((e.key === "ArrowDown" || e.key === "ArrowUp") && d.open) {
-        const at = items.indexOf(document.activeElement as HTMLButtonElement);
+        const at = items.indexOf(document.activeElement as HTMLElement);
         const next = items[stepIndex(items.length, at, e.key === "ArrowDown" ? 1 : -1)];
         if (next) {
           e.preventDefault();

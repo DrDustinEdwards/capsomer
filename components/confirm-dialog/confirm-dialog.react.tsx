@@ -221,7 +221,8 @@ export interface ConfirmPageProps {
   // Where the form posts, and the fields it carries with it (the intent, the ids, a return address).
   action: string;
   method?: "post" | "get";
-  hidden?: Record<string, string>;
+  // A list value is one hidden field per item, under one name (the ticked `ids`).
+  hidden?: Record<string, string | readonly string[]>;
   // Names the action and the object: "Delete foxhound.app?"
   title: string;
   lead?: ReactNode;
@@ -255,9 +256,7 @@ export function ConfirmPage({ action, method = "post", hidden, title, lead, body
   const hasBody = body.length > 0 || !!reason || !!typeToConfirm;
   return (
     <form className="cap-confirm-page" data-cap="confirm-page" action={action} method={method} role="group" aria-labelledby={`${id}-title`} aria-describedby={described}>
-      {Object.entries(hidden ?? {}).map(([k, v]) => (
-        <input key={k} type="hidden" name={k} value={v} />
-      ))}
+      {Object.entries(hidden ?? {}).flatMap(([k, v]) => (typeof v === "string" ? [v] : v).map((one, i) => <input key={`${k}-${i}`} type="hidden" name={k} value={one} />))}
       <div className="cap-dialog-header">
         {media ? (
           <div className="cap-dialog-media" data-tone="crit" aria-hidden="true">

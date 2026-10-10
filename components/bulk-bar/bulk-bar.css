@@ -79,6 +79,52 @@
     margin-inline-start: auto;
   }
 
+  /* The outcome of the action just run, one line per item, under the bar's own row: refusals
+     first, each with its word and shape (Done, Not done), the item, and why. Carrel's Result
+     panel, once, in the bar. */
+  /* A bar listing outcomes stays in the flow rather than sticking, so a long list never covers
+     the page it reports on. */
+  .cap-bulk:has(> .cap-bulk-results) {
+    position: static;
+  }
+  .cap-bulk-results {
+    display: grid;
+    flex: 1 0 100%;
+    gap: var(--space-2);
+    padding-block-start: var(--space-3);
+    border-top: 1px solid var(--line);
+  }
+  .cap-bulk-results-summary {
+    margin: 0;
+    font-weight: 600;
+  }
+  .cap-bulk-results-list {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & > li {
+      overflow-wrap: anywhere;
+    }
+  }
+  .cap-bulk-result-label {
+    font-weight: 600;
+  }
+  .cap-bulk-result-message {
+    color: var(--muted);
+  }
+  .cap-bulk-result-uses {
+    margin: var(--space-1) 0 0;
+    padding-inline-start: var(--space-6);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-bulk-results > [data-cap-part="dismiss-results"] {
+    justify-self: start;
+  }
+
   @media (forced-colors: active) {
     .cap-bulk {
       border-color: CanvasText;

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
-import { countText, fillCount, plural, previewItems } from "./bulk-bar.ts";
+import { countText, fillCount, orderOutcomes, outcomeSummary, plural, previewItems } from "./bulk-bar.ts";
 
 const check = (page: Page, list: string, n: number) => page.locator(`#${list} li:nth-child(${n}) input`);
 
@@ -11,6 +11,17 @@ test("behaviour: the count, the templates and the preview are pure", () => {
   expect(plural(1, "draft")).toBe("draft");
   expect(plural(2, "draft")).toBe("drafts");
   expect(previewItems([{ id: "a", label: "First" }, { id: "b", label: "Second" }])).toEqual(["First", "Second"]);
+});
+
+test("behaviour: the outcome list's line counts what was done, and refusals come first", () => {
+  const ok = (id: string) => ({ id, label: id, ok: true });
+  const no = (id: string) => ({ id, label: id, ok: false, message: "Changed since you opened it." });
+  expect(outcomeSummary([ok("a"), ok("b"), ok("c")])).toBe("All 3 done.");
+  expect(outcomeSummary([ok("a")])).toBe("Done.");
+  expect(outcomeSummary([no("a"), no("b")])).toBe("None done: 2 refused.");
+  expect(outcomeSummary([no("a")])).toBe("Not done.");
+  expect(outcomeSummary([ok("a"), no("b"), ok("c")])).toBe("2 done, 1 not done.");
+  expect(orderOutcomes([ok("a"), no("b"), ok("c"), no("d")]).map((o) => o.id)).toEqual(["b", "d", "a", "c"]);
 });
 
 eachTheme((theme) => {
@@ -28,6 +39,8 @@ eachTheme((theme) => {
       { sel: "#bulk-static [data-cap-bulk-action='bin']", what: "the destructive action's label" },
       { sel: "#bulk-static .cap-bulk-field label", what: "a value field's label" },
       { sel: "#bulk-static", what: "the bar's edge", part: "border" },
+      { sel: "#bulk-outcomes .cap-bulk-result-message", what: "why an item was not done" },
+      { sel: "#bulk-outcomes .cap-bulk-results-summary", what: "the outcome list's line" },
     ]);
   });
 
@@ -288,5 +301,29 @@ eachTheme((theme) => {
     const html = await page.request.get("components/bulk-bar/states.html").then((r) => r.text());
     expect(html).toMatch(/<div class="cap-bulk" data-cap="bulk-bar" data-cap-list="form-list" role="region" aria-label="Bulk actions" id="bulk-form">/);
     expect(html).toContain('<button type="submit" class="cap-btn" name="intent" value="archive">Archive</button>');
+  });
+
+  test("behaviour: after an action the outcome list keeps the bar in view with nothing ticked, and Dismiss results clears it", async ({ page }) => {
+    await visitStates(page, "bulk-bar", theme);
+    const bar = page.locator("#bulk-outcomes");
+    await expect(bar).toBeVisible();
+    await expect(bar.locator(".cap-bulk-count")).toHaveText("Nothing selected");
+    const results = bar.getByRole("group", { name: "2 done, 1 not done." });
+    await expect(results.locator(".cap-bulk-results-list > li")).toHaveText([/^Not done What a mention queue is for Changed on the site/, /^Done Notes on the Foxhound release/, /^Done Why the uptime strip counts gaps/]);
+    const dismiss = bar.getByRole("button", { name: "Dismiss results" });
+    await dismiss.focus();
+    await page.keyboard.press("Enter");
+    await expect(results).toHaveCount(0);
+    await expect(bar).toBeHidden();
+    await expect(check(page, "outcome-list", 1)).toBeFocused();
+    // Ticking an item brings the bar back without the old outcomes.
+    await check(page, "outcome-list", 2).check();
+    await expect(bar.locator(".cap-bulk-count")).toHaveText("1 selected");
+  });
+
+  test("behaviour: the outcome list is in the delivered HTML, with its Dismiss hidden until script runs", async ({ page }) => {
+    const html = await page.request.get("components/bulk-bar/states.html").then((r) => r.text());
+    expect(html).toContain('<div class="cap-bulk-results" data-cap-part="results" role="group" aria-labelledby="bulk-outcomes-summary">');
+    expect(html).toMatch(/data-cap-part="dismiss-results" hidden>Dismiss results/);
   });
 });

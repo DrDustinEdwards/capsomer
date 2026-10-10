@@ -102,7 +102,7 @@ say("Copied the link to the mention.", { clears: true });
 fail("Refresh failed: the watcher pass failed: GitHub answered 502.");
 ```
 
-An Undo that rejects keeps its message and shows the error's message under it. 0.1.0's region held one text and two buttons directly; `enhance()` removes those, and the messages replace them. In React, wrap the app in `<MessageProvider>` and call `const { say, fail } = useMessage()`; the provider renders the region after its children, or pass `region={false}` and place `<MessageRegion />` yourself.
+An Undo that rejects keeps its message and shows the error's message under it. 0.1.0's region held one text and two buttons directly; `enhance()` removes those, and the messages replace them. In React, wrap the app in `<MessageProvider>` and call `const { say, fail } = useMessage()`; the provider renders the region after its children, or pass `region={false}` and place `<MessageRegion />` yourself. A shared component that must also work without a provider calls `useOptionalMessage()`, which returns the same API or `null`.
 
 ## The shadcn component it matches
 
