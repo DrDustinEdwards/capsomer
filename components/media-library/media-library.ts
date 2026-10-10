@@ -117,8 +117,11 @@ export function emptyWords(q: MediaQuery, labels?: ContentLabels): { kind: "noth
 }
 
 // The site's upload rules in words, for the drop zone's hint: "PNG, JPEG and WebP, up to 5 MB".
-export function uploadRules(limits: NonNullable<MediaOffers["upload"]>): { accept: string; hint: string } {
-  const accept = limits.types.join(",");
+// The picker takes images only; null when the site takes none.
+export function uploadRules(limits: NonNullable<MediaOffers["upload"]>, imagesOnly = false): { accept: string; hint: string } | null {
+  const types = imagesOnly ? limits.types.filter((t) => t.startsWith("image/")) : limits.types;
+  if (types.length === 0) return null;
+  const accept = types.join(",");
   return { accept, hint: `${acceptLabel(accept)}, up to ${formatBytes(limits.maxBytes)}.` };
 }
 

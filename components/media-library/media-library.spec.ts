@@ -41,6 +41,9 @@ test("behaviour: the count, the empty state, the upload rules and the picker's f
   expect(emptyWords({ view: "trash" }).title).toBe("The bin is empty");
   expect(emptyWords({ q: "lambda", view: "trash" })).toMatchObject({ kind: "no-match", title: "No files match “lambda”" });
   expect(uploadRules({ maxBytes: 5 * 1024 * 1024, types: ["image/png", "application/pdf"] })).toEqual({ accept: "image/png,application/pdf", hint: expect.stringMatching(/, up to 5 MB\.$/) });
+  // The picker uploads images only, and none where the site takes no images.
+  expect(uploadRules({ maxBytes: 1024, types: ["image/png", "application/pdf"] }, true)?.accept).toBe("image/png");
+  expect(uploadRules({ maxBytes: 1024, types: ["application/pdf"] }, true)).toBeNull();
   expect(pickable(rows).map((r) => r.key)).toEqual(["a"]);
 });
 

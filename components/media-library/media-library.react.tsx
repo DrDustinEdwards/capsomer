@@ -128,7 +128,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
 
   const pick = picker && chosen ? rows.find((r) => r.key === chosen) : undefined;
   const words = emptyWords(query, labels);
-  const rules = offers.upload ? uploadRules(offers.upload) : null;
+  const rules = offers.upload ? uploadRules(offers.upload, picker) : null;
   const canUpload = !!rules && can.edit && !trash;
   const layout = query.layout ?? "grid";
 
