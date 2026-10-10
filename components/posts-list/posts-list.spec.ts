@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, nextPost, visitStates } from "../../test/helpers.ts";
 import { contentStatus, countLine, emptyWords, intentForm, outcomesOf, postActions, postsHref, rowActions, withFilter } from "./posts-list.ts";
 
 const NOW = Date.parse("2026-10-10T12:00:00Z");
@@ -63,27 +63,6 @@ test("behaviour: an undo or a confirm posts its intent with every field, a list 
   ]);
 });
 
-// Catches the next submit of a form under `root` and resolves with what it would post.
-function nextPost(page: Page, root: string) {
-  return page.evaluate(
-    (sel) =>
-      new Promise<{ method: string; fields: Record<string, string[]> }>((done) => {
-        document.querySelector(sel)!.addEventListener(
-          "submit",
-          (e) => {
-            e.preventDefault();
-            const form = e.target as HTMLFormElement;
-            const data = new FormData(form, (e as SubmitEvent).submitter);
-            const fields: Record<string, string[]> = {};
-            for (const k of new Set(data.keys())) fields[k] = data.getAll(k).map(String);
-            done({ method: form.method, fields });
-          },
-          { capture: true, once: true },
-        );
-      }),
-    root,
-  );
-}
 
 const log = (page: Page) => page.evaluate(() => (window as unknown as { postsLog: Array<Record<string, string | string[]>> }).postsLog);
 const editor = (page: Page) => page.locator("[data-mount='editor']");
@@ -156,17 +135,17 @@ eachTheme((theme) => {
     await list.getByRole("checkbox", { name: "Select Notes on the Foxhound release" }).check();
     await list.getByRole("checkbox", { name: "Select Notes on a read-only agent" }).check();
     await list.getByRole("button", { name: "Unpublish" }).click();
-    expect(await posted).toEqual({ method: "post", fields: { ids: ["foxhound-release", "read-only-agent"], tag: [""], intent: ["unpublish"] } });
+    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["foxhound-release", "read-only-agent"], tag: [""], intent: ["unpublish"] } });
     posted = nextPost(page, "#posts-static");
     const menu = rowOf(list, "Why the uptime strip counts gaps").locator("details");
     await menu.locator("summary").click();
     await expect(menu.getByRole("link", { name: "Edit" })).toHaveAttribute("href", "/editor/uptime-strip");
     await menu.getByRole("button", { name: "Duplicate" }).click();
-    expect(await posted).toEqual({ method: "post", fields: { ids: ["uptime-strip"], intent: ["duplicate"] } });
+    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["uptime-strip"], intent: ["duplicate"] } });
     posted = nextPost(page, "#posts-static");
     await list.getByRole("searchbox", { name: "Search" }).fill("lambda");
     await list.getByRole("button", { name: "Show" }).click();
-    expect(await posted).toEqual({ method: "get", fields: { q: ["lambda"], kind: [""], tag: [""], sort: ["updated"] } });
+    expect(await posted).toEqual({ method: "get", enctype: "application/x-www-form-urlencoded", fields: { q: ["lambda"], kind: [""], tag: [""], sort: ["updated"] } });
   });
 
   test("behaviour: with no script, the page after a post says the result, lists each post's outcome and posts Undo as a form", async ({ page }) => {
@@ -176,7 +155,7 @@ eachTheme((theme) => {
     await expect(list.getByRole("group", { name: "2 done, 1 not done." }).locator(".cap-bulk-results-list > li")).toHaveText([/^Not done Phage lambda: lysis or lysogeny This post has no front matter/, /^Done Notes on the Foxhound release$/, /^Done What a mention queue is for$/]);
     const posted = nextPost(page, "[data-mount='outcomes']");
     await list.getByRole("button", { name: "Undo" }).click();
-    expect(await posted).toEqual({ method: "post", fields: { ids: ["foxhound-release", "mention-queue"], tag: ["capsid"], intent: ["remove-tag"] } });
+    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["foxhound-release", "mention-queue"], tag: ["capsid"], intent: ["remove-tag"] } });
   });
 
   test("behaviour: with no script, a delete is confirmed on the server's page, which posts every id and needs the count typed", async ({ page }) => {
@@ -189,7 +168,7 @@ eachTheme((theme) => {
     const posted = nextPost(page, "[data-mount='confirm']");
     await typed.fill("2");
     await confirm.getByRole("button", { name: "Delete 2 posts" }).click();
-    expect(await posted).toEqual({ method: "post", fields: { intent: ["delete"], ids: ["mention-queue", "phage-lambda"], confirm: ["2"] } });
+    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { intent: ["delete"], ids: ["mention-queue", "phage-lambda"], confirm: ["2"] } });
   });
 
   test("keyboard: with script, a row's Unpublish runs at once with Undo, and z puts it back", async ({ page }) => {

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ComponentType, type FormEvent, type FormHTMLAttributes, type ReactNode } from "react";
-import type { BulkOutcome } from "../bulk-bar/bulk-bar.ts";
+import { BulkBar } from "../bulk-bar/bulk-bar.react.tsx";
+import type { BulkItem, BulkOutcome } from "../bulk-bar/bulk-bar.ts";
 import { ConfirmDialog, ConfirmPage } from "../confirm-dialog/confirm-dialog.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { GLYPHS, isUndoKey } from "../message/message.ts";
@@ -207,4 +208,54 @@ export function useIntents({ action, Form, submit, result = null, names, cancelH
     confirmPage,
     confirmDialog,
   };
+}
+
+export interface ContentBulkBarProps {
+  // The id of the empty bulk form the list's boxes name with `form`, and where it posts.
+  formId: string;
+  action: string;
+  Form: FormComponent;
+  // The bulk form's class, for the list's own layout.
+  formClass: string;
+  items: readonly BulkItem[];
+  // Everything on the page that can be ticked, for "Select all N in view".
+  total: number;
+  onSelectAll?: () => void;
+  onClear: () => void;
+  // What the list holds ("posts", "files"): the bar's name and its words before script runs.
+  plural: string;
+  actions: ReadonlyArray<{ intent: string; label: string; destructive?: boolean }>;
+  // A Tag field beside the actions, posted as `tag` with them.
+  tag: boolean;
+  intents: Pick<Intents, "outcomes" | "dismissOutcomes">;
+}
+
+// The content components' bulk bar: an empty form the boxes post through, and the bar in form mode
+// with its actions as submit buttons, the optional Tag field, and each item's outcome.
+export function ContentBulkBar({ formId, action, Form, formClass, items, total, onSelectAll, onClear, plural, actions, tag, intents }: ContentBulkBarProps) {
+  return (
+    <>
+      <Form id={formId} method="post" action={action} className={formClass} />
+      <BulkBar
+        form={formId}
+        position="top"
+        items={items}
+        total={total}
+        onSelectAll={onSelectAll}
+        onClear={onClear}
+        label={`Bulk actions on ${plural}`}
+        prompt={`Tick the ${plural} to act on`}
+        actions={actions.map((a) => ({ id: a.intent, label: a.label, destructive: a.destructive, submit: true }))}
+        outcomes={intents.outcomes}
+        onDismissOutcomes={intents.dismissOutcomes}
+      >
+        {tag ? (
+          <span className="cap-bulk-field">
+            <label htmlFor={`${formId}-tag`}>Tag</label>
+            <input className="cap-input" id={`${formId}-tag`} name="tag" form={formId} autoComplete="off" />
+          </span>
+        ) : null}
+      </BulkBar>
+    </>
+  );
 }

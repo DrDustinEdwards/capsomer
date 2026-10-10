@@ -1,7 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { BulkBar } from "../bulk-bar/bulk-bar.react.tsx";
 import type { ContentLabels, IntentResult, PostRow, PostsData, SubmitIntent } from "../content/content.ts";
-import { PlainForm, useIntents, type FormComponent } from "../content/content.react.tsx";
+import { ContentBulkBar, PlainForm, useIntents, type FormComponent } from "../content/content.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { FormMenu } from "../menu/menu.react.tsx";
 import { Pill, Status } from "../status/status.react.tsx";
@@ -194,29 +193,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
       {intents.resultBox}
 
       {selectable ? (
-        <>
-          <Form id={formId} method="post" action={action} className="cap-posts-bulk-form" />
-          <BulkBar
-            form={formId}
-            position="top"
-            items={selectedItems}
-            total={rows.length}
-            onSelectAll={mounted ? () => setAll(true) : undefined}
-            onClear={() => setSelected([])}
-            label={`Bulk actions on ${plural}`}
-            prompt={`Tick the ${plural} to act on`}
-            actions={bulk.map((a) => ({ id: a.intent, label: a.label, destructive: a.destructive, submit: true }))}
-            outcomes={intents.outcomes}
-            onDismissOutcomes={intents.dismissOutcomes}
-          >
-            {offers.tags && can.edit ? (
-              <span className="cap-bulk-field">
-                <label htmlFor={`${uid}-tagname`}>Tag</label>
-                <input className="cap-input" id={`${uid}-tagname`} name="tag" form={formId} autoComplete="off" />
-              </span>
-            ) : null}
-          </BulkBar>
-        </>
+        <ContentBulkBar formId={formId} action={action} Form={Form} formClass="cap-posts-bulk-form" items={selectedItems} total={rows.length} onSelectAll={mounted ? () => setAll(true) : undefined} onClear={() => setSelected([])} plural={plural} actions={bulk} tag={offers.tags && can.edit} intents={intents} />
       ) : null}
 
       {empty ? (
