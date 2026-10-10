@@ -252,8 +252,8 @@ export function insideLayout(containers: readonly MapContainer[]): Box[] {
     const row = Math.floor(i / 3);
     const inRow = Math.min(3, stores.length - row * 3);
     const col = i % 3;
-    const x = (col - (inRow - 1) / 2) * 84;
-    out.push({ c, x, y: 62 + row * 44, w: 76 });
+    const x = (col - (inRow - 1) / 2) * 94;
+    out.push({ c, x, y: 62 + row * 44, w: 88 });
   });
   return out;
 }
