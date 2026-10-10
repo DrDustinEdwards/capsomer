@@ -204,27 +204,79 @@ function tileSvg(cell: Cell, s: MapSystem | undefined): string {
   return `<g class="cap-system-map-tile" data-id="${escapeHtml(s.id)}" data-x="${cell.x}" data-y="${cell.y}" data-ring="${cell.ring}"${flags}><polygon points="${pts}"/>${name}${sub}</g>`;
 }
 
-// How far from a capsomer's centre its lines start: past its label, inside its edge.
-const LINE_INSET = R * 0.62;
+// The lines run in the seams between capsomers and are drawn beneath them, so no line
+// ever crosses a label: each is the shortest walk along the hexagons' sides from a corner
+// of one capsomer to a corner of the other (seat ruling on capsomer#57, 2026-10-10). Among
+// walks of the same length the one nearest the straight line between the two wins. The
+// grid is a few dozen corners, so a plain search does it: no layout engine.
 
-function towards(from: Cell, x: number, y: number): [number, number] {
-  const dx = x - from.x;
-  const dy = y - from.y;
-  const len = Math.hypot(dx, dy) || 1;
-  const t = Math.min(0.45, LINE_INSET / len);
-  return [from.x + dx * t, from.y + dy * t];
+const cornerKey = (x: number, y: number) => `${Math.round(x * 10)},${Math.round(y * 10)}`;
+
+function cornersOf(c: Cell): Array<[number, number]> {
+  return Array.from({ length: 6 }, (_, i) => {
+    const a = (Math.PI / 3) * i;
+    return [Math.round((c.x + R * Math.cos(a)) * 100) / 100, Math.round((c.y + R * Math.sin(a)) * 100) / 100] as [number, number];
+  });
 }
 
-function edgePath(a: Cell, b: Cell): string {
-  // A gentle curve bowed toward the middle, so lines between neighbours on one ring do
-  // not run along the shell's seams. It starts and ends at each capsomer's edge, so it
-  // never crosses a label.
-  const mx = ((a.x + b.x) / 2) * 0.55;
-  const my = ((a.y + b.y) / 2) * 0.55;
-  const [ax, ay] = towards(a, mx, my);
-  const [bx, by] = towards(b, mx, my);
+/** The walk along the seams from capsomer `a` to capsomer `b`, as the corners it passes.
+ *  Neighbours share a side, and their line is that side. */
+export function seamRoute(cells: readonly Cell[], a: Cell, b: Cell): Array<[number, number]> {
+  const at = new Map<string, [number, number]>();
+  const next = new Map<string, Set<string>>();
+  for (const c of cells) {
+    const cs = cornersOf(c);
+    cs.forEach(([x, y], i) => {
+      const k = cornerKey(x, y);
+      const [nx, ny] = cs[(i + 1) % 6]!;
+      const nk = cornerKey(nx, ny);
+      at.set(k, [x, y]);
+      at.set(nk, [nx, ny]);
+      if (!next.has(k)) next.set(k, new Set());
+      if (!next.has(nk)) next.set(nk, new Set());
+      next.get(k)!.add(nk);
+      next.get(nk)!.add(k);
+    });
+  }
+  const starts = new Set(cornersOf(a).map(([x, y]) => cornerKey(x, y)));
+  const ends = new Set(cornersOf(b).map(([x, y]) => cornerKey(x, y)));
+  const shared = [...starts].filter((k) => ends.has(k));
+  if (shared.length >= 2) return shared.slice(0, 2).map((k) => at.get(k)!);
+  // How far a side's middle is from the straight line a-b, as a tie-break well under
+  // the cost of a side.
+  const lx = b.x - a.x;
+  const ly = b.y - a.y;
+  const len = Math.hypot(lx, ly) || 1;
+  const off = (p: [number, number], q: [number, number]) => Math.abs(((p[0] + q[0]) / 2 - a.x) * ly - ((p[1] + q[1]) / 2 - a.y) * lx) / len / (R * 100);
+  const cost = new Map<string, number>([...starts].map((k) => [k, 0]));
+  const from = new Map<string, string>();
+  const done = new Set<string>();
+  for (;;) {
+    let here: string | null = null;
+    for (const [k, v] of cost) if (!done.has(k) && (here === null || v < cost.get(here)!)) here = k;
+    if (here === null) return [];
+    if (ends.has(here)) {
+      const walk = [here];
+      while (from.has(walk[0]!)) walk.unshift(from.get(walk[0]!)!);
+      return walk.map((k) => at.get(k)!);
+    }
+    done.add(here);
+    for (const k of next.get(here) ?? []) {
+      if (done.has(k)) continue;
+      const v = cost.get(here)! + 1 + off(at.get(here)!, at.get(k)!);
+      if (v < (cost.get(k) ?? Number.POSITIVE_INFINITY)) {
+        cost.set(k, v);
+        from.set(k, here);
+      }
+    }
+  }
+}
+
+function edgePath(cells: readonly Cell[], a: Cell, b: Cell): string {
   const f = (n: number) => n.toFixed(1);
-  return `M${f(ax)},${f(ay)} Q${f(mx)},${f(my)} ${f(bx)},${f(by)}`;
+  return seamRoute(cells, a, b)
+    .map(([x, y], i) => `${i ? "L" : "M"}${f(x)},${f(y)}`)
+    .join(" ");
 }
 
 interface Box {
@@ -305,7 +357,7 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
   const onMap = new Set(at.keys());
   const edges = (data.relationships ?? [])
     .filter((l) => onMap.has(l.from) && onMap.has(l.to) && l.from !== l.to)
-    .map((l) => `<path class="cap-system-map-edge" data-from="${escapeHtml(l.from)}" data-to="${escapeHtml(l.to)}" data-kind="${escapeHtml(l.kind)}"${LOOSE_KINDS.has(l.kind) ? " data-loose" : ""} d="${edgePath(at.get(l.from)!, at.get(l.to)!)}"/>`)
+    .map((l) => `<path class="cap-system-map-edge" data-from="${escapeHtml(l.from)}" data-to="${escapeHtml(l.to)}" data-kind="${escapeHtml(l.kind)}"${LOOSE_KINDS.has(l.kind) ? " data-loose" : ""} d="${edgePath(layout.cells, at.get(l.from)!, at.get(l.to)!)}"/>`)
     .join("");
   const core = data.systems.find((s) => s.ring === "core");
   const placed = data.systems.filter((s) => onMap.has(s.id));
@@ -332,10 +384,11 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
     `<figcaption class="cap-system-map-head"><span class="cap-system-map-title" id="${escapeHtml(id)}-title">${escapeHtml(label)}</span>${caption}`,
     `<span class="cap-system-map-views" role="group" aria-label="View" data-cap-part="views" hidden><button type="button" class="cap-btn" data-view="shell" aria-pressed="true">Capsid</button><button type="button" class="cap-btn" data-view="plain" aria-pressed="false">Plain map</button></span></figcaption>`,
     `<div class="cap-system-map-stage" data-cap-part="stage" role="img" aria-label="${escapeHtml(label)}: ${placed.length} systems in rings. The list below holds the same.">`,
+    // The lines first, so every capsomer and its label is painted over them.
+    `<svg class="cap-system-map-layer" data-layer="edges" viewBox="${vb}" aria-hidden="true" focusable="false">${edges}</svg>`,
     layer("core", coreCells),
     innerCells.length ? layer("inner", innerCells) : "",
     rimCells.length ? layer("rim", rimCells) : "",
-    `<svg class="cap-system-map-layer" data-layer="edges" viewBox="${vb}" aria-hidden="true" focusable="false">${edges}</svg>`,
     insideSvg(layout, core, data, vb),
     `</div>`,
     `<div class="cap-system-map-detail" data-cap-part="detail" aria-live="polite" hidden></div>`,
@@ -439,11 +492,17 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     root.toggleAttribute("data-selected", id !== null);
     for (const t of tiles) t.setAttribute("aria-pressed", String(t.dataset.id === id));
     let n = 0;
+    const linked = new Set<string>();
     for (const p of root.querySelectorAll<SVGPathElement>(".cap-system-map-edge")) {
       const on = id !== null && (p.dataset.from === id || p.dataset.to === id);
       p.toggleAttribute("data-on", on);
-      if (on) n++;
+      if (on) {
+        n++;
+        linked.add(p.dataset.from === id ? p.dataset.to! : p.dataset.from!);
+      }
     }
+    // A seam touches three capsomers at every corner, so the far ends are marked too.
+    for (const t of tiles) t.toggleAttribute("data-linked", linked.has(t.dataset.id!));
     const s = id ? systems.get(id) : undefined;
     detail.innerHTML = s ? detailHtml(s, n, enterable(s.id), openLabel) : `<span class="cap-system-map-detail-text">Choose a system to see what it connects to.</span>`;
     if (id) root.dispatchEvent(new CustomEvent("cap:system-map-select", { bubbles: true, detail: { id } }));

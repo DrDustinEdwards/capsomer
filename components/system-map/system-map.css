@@ -112,6 +112,10 @@
     &[data-force="hover"] polygon {
       fill: var(--accent-4);
     }
+    &[data-linked] polygon {
+      stroke: var(--accent);
+      stroke-width: 2;
+    }
     &[aria-pressed="true"] polygon {
       fill: var(--accent-5);
       stroke: var(--accent-text);
@@ -145,11 +149,14 @@
     pointer-events: none;
   }
 
+  /* A line runs in the seam between capsomers, beneath them: wide enough to fill the
+     seam, so what shows is the gap itself lit up, and no label is ever under it. */
   .cap-system-map-edge {
     fill: none;
     stroke: var(--accent);
-    stroke-width: 2;
+    stroke-width: 4;
     stroke-linecap: round;
+    stroke-linejoin: round;
     opacity: 0;
 
     &[data-loose] {
@@ -216,6 +223,10 @@
     }
     & [data-layer="rim"] .cap-system-map-tile {
       pointer-events: none;
+    }
+    /* The faded rim is shapes only: scaled up and clipped, its names would read as cut. */
+    & [data-layer="rim"] text {
+      visibility: hidden;
     }
     & [data-layer="edges"] {
       opacity: 0;
@@ -355,6 +366,7 @@
       stroke: CanvasText;
     }
     .cap-system-map-tile[aria-pressed="true"] polygon,
+    .cap-system-map-tile[data-linked] polygon,
     .cap-system-map-tile:focus-visible polygon,
     .cap-system-map-edge {
       stroke: Highlight;

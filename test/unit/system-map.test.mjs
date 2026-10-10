@@ -2,7 +2,7 @@
 // touches no DOM until a controller is made.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { connectionText, insideLayout, layoutMap, linksOf, ringCells, spatialNext, systemMapHtml } from "../../components/system-map/system-map.ts";
+import { connectionText, insideLayout, layoutMap, linksOf, R, ringCells, seamRoute, spatialNext, systemMapHtml } from "../../components/system-map/system-map.ts";
 
 const family = [
   { id: "core", name: "Core", ring: "core" },
@@ -81,6 +81,46 @@ test("a chosen capsomer's lines are those touching it with both ends on the map"
   assert.equal(connectionText(0), "No connections drawn");
   assert.equal(connectionText(1), "1 connection drawn");
   assert.equal(connectionText(4), "4 connections drawn");
+});
+
+test("a line between any two capsomers runs in the seams, from a corner of one to a corner of the other, and crosses no label", () => {
+  const { cells } = layoutMap(family);
+  const tiles = cells.filter((c) => c.id);
+  // The boxes the labels sit in around each centre: the name (at most 64 wide) above the
+  // word (at most 48). The browser spec measures the drawn ones.
+  const inLabel = ([x, y]) =>
+    cells.some((c) => {
+      const dx = Math.abs(x - c.x);
+      const dy = y - c.y;
+      return (dx < 32 && dy > -11 && dy < 9) || (dx < 24 && dy >= 9 && dy < 19);
+    });
+  const isCorner = (c, [x, y]) => Math.abs(Math.hypot(x - c.x, y - c.y) - R) < 0.1;
+  for (const a of tiles) {
+    for (const b of tiles) {
+      if (a === b) continue;
+      const walk = seamRoute(cells, a, b);
+      assert.ok(walk.length >= 2, `${a.id} to ${b.id}: no walk`);
+      assert.ok(isCorner(a, walk[0]) && isCorner(b, walk.at(-1)), `${a.id} to ${b.id}: does not join them`);
+      for (let i = 1; i < walk.length; i++) {
+        const [p, q] = [walk[i - 1], walk[i]];
+        assert.ok(Math.abs(Math.hypot(q[0] - p[0], q[1] - p[1]) - R) < 0.1, `${a.id} to ${b.id}: a step that is not a side`);
+        for (let t = 0; t <= 1; t += 0.05) {
+          const pt = [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+          assert.ok(!inLabel(pt), `${a.id} to ${b.id} crosses a label at ${pt.map((n) => n.toFixed(1))}`);
+        }
+      }
+    }
+  }
+  // Neighbours' line is the side they share.
+  const core = cells[0];
+  const near = cells.find((c) => c.ring === 1);
+  assert.equal(seamRoute(cells, core, near).length, 2);
+});
+
+test("the lines are drawn before, so beneath, every capsomer", () => {
+  const html = systemMapHtml({ systems: family, relationships: [{ from: "core", to: "u1", kind: "coordinates" }] }, { id: "m" });
+  const edges = html.indexOf('data-layer="edges"');
+  for (const layer of ["core", "inner", "rim"]) assert.ok(edges < html.indexOf(`data-layer="${layer}"`), `the lines are over the ${layer}`);
 });
 
 test("the core's parts sit two to a row above, stores three to a row below", () => {

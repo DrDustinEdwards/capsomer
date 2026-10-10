@@ -107,6 +107,64 @@ eachTheme((theme) => {
     expect(await events).toEqual({ id: "enarratio" });
   });
 
+  test("lines: no line crosses a label, and every label is painted over the lines", async ({ page }) => {
+    // Every line on the map, drawn or not, sampled along its length against every label's
+    // drawn box: a line through a capsomer's middle fails here.
+    const crossings = await page.locator("#map").evaluate((root) => {
+      const labels = [...root.querySelectorAll<SVGTextElement>("[data-layer='core'] text, [data-layer='inner'] text, [data-layer='rim'] text")].map((t) => ({ t, b: t.getBBox() }));
+      const out: string[] = [];
+      for (const p of root.querySelectorAll<SVGPathElement>(".cap-system-map-edge")) {
+        const len = p.getTotalLength();
+        for (let d = 0; d <= len; d += 2) {
+          const { x, y } = p.getPointAtLength(d);
+          const hit = labels.find(({ b }) => x > b.x && x < b.x + b.width && y > b.y && y < b.y + b.height);
+          if (hit) {
+            out.push(`${p.dataset.from} to ${p.dataset.to} over "${hit.t.textContent}"`);
+            break;
+          }
+        }
+      }
+      return out;
+    });
+    expect(crossings).toEqual([]);
+    expect(await page.locator("#map .cap-system-map-edge").count()).toBeGreaterThan(5);
+
+    // With Carrel's lines drawn, what is on top at the middle of every label is the label's
+    // capsomer, never a line.
+    await tile(page, "map", "carrel").click();
+    await expect(page.locator("#map .cap-system-map-edge[data-on]")).toHaveCount(4);
+    await expect(tile(page, "map", "site")).toHaveAttribute("data-linked", "");
+    // elementFromPoint skips what takes no pointer, and the lines and labels take none, so
+    // for the probe they take it, and the answer is which of them is painted on top.
+    const covered = await page.locator("#map").evaluate((root) => {
+      const probe = document.createElement("style");
+      probe.textContent = "#map .cap-system-map-edge, #map .cap-system-map-tile * { pointer-events: auto !important; }";
+      document.head.append(probe);
+      const out = [...root.querySelectorAll<SVGTextElement>("[data-layer='core'] text, [data-layer='inner'] text, [data-layer='rim'] text")]
+        .filter((t) => {
+          t.scrollIntoView({ block: "center" });
+          const r = t.getBoundingClientRect();
+          const top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+          return !top || !t.closest(".cap-system-map-tile")!.contains(top);
+        })
+        .map((t) => t.textContent);
+      probe.remove();
+      return out;
+    });
+    expect(covered).toEqual([]);
+  });
+
+  test("inside: the faded rim shows its shapes and no text", async ({ page }) => {
+    const rimText = () => page.locator("#map [data-layer='rim'] text").evaluateAll((els) => els.filter((e) => getComputedStyle(e).visibility === "visible").length);
+    // The control: at rest the rim's names are there to see.
+    expect(await rimText()).toBeGreaterThan(5);
+    await tile(page, "map", "capsid").click();
+    await tile(page, "map", "capsid").click();
+    await expect(page.locator("#map")).toHaveAttribute("data-entered", "");
+    expect(await rimText()).toBe(0);
+    await expect(page.locator("#map [data-layer='rim'] polygon").first()).toBeVisible();
+  });
+
   test("behaviour: the plain map shows the list as columns and hides the drawing", async ({ page }) => {
     await page.locator("#map").getByRole("button", { name: "Plain map" }).click();
     await expect(page.locator("#map")).toHaveAttribute("data-view", "plain");
