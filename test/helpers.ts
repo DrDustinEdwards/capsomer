@@ -91,9 +91,17 @@ export function paintedContrast(page: Page, selector: string, part: "color" | "b
         if (c[3] >= 1) break;
       }
       if (layers.length === 0 || (layers[0]?.[3] ?? 0) < 1) layers.unshift(parse(getComputedStyle(document.body).backgroundColor));
+      // SVG text is painted with fill, on the shape drawn before it in its group (a tile's
+      // polygon, a box's rect), not on a CSS background.
+      const svgText = which === "color" && (el as Element) instanceof SVGTextElement;
+      if (svgText) {
+        const shape = el.parentElement?.querySelector("polygon, rect, circle");
+        const fill = shape ? parse(getComputedStyle(shape).fill) : [0, 0, 0, 0];
+        if ((fill[3] ?? 0) > 0) layers.push(fill as [number, number, number, number]);
+      }
       for (const l of layers) bg = over(l, bg);
       const cs = getComputedStyle(el);
-      const fgRaw = parse(which === "color" ? cs.color : which === "border" ? cs.borderTopColor : cs.outlineColor);
+      const fgRaw = parse(svgText ? cs.fill : which === "color" ? cs.color : which === "border" ? cs.borderTopColor : cs.outlineColor);
       const fg = over(fgRaw, bg);
       const lum = (c: [number, number, number]) => {
         const f = (v: number) => {
