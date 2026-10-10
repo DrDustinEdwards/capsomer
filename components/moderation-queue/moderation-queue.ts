@@ -1,12 +1,12 @@
-// The moderation queue's behaviour and its pure helpers. Mentions and comments from strangers
-// wait in a list; a, s and d decide the row under focus at once (act first), a message with
-// Undo says what happened (z undoes it), x selects, j and k move. One way actions (delete
-// permanently, the retention sweep) and a mention whose source is gone are previewed in a
-// confirm dialog instead.
+// The moderation queue's behaviour and its pure helpers. Mentions from strangers wait in a list;
+// a and r approve or reject the row under focus at once (act first), a message says what
+// happened and offers Undo where the site can reverse it (z undoes it), d deletes after a
+// confirm, x selects, j and k move. The states are the site-api contract's own: Waiting
+// (pending), Approved, Rejected, Not yet checked (unverified) and Source not found (failed).
 //
 // The page is delivered with every row in the HTML, each with its state in words; this
-// module adds only what a person's action creates. No framework; the React wrapper uses the
-// same helpers.
+// module adds only what a person's action creates. No framework; MentionsList, the React
+// component on the contract's data, uses the same helpers.
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { toggleGroup } from "../disclosure/disclosure.ts";
 import { GLYPHS, enhance as enhanceMessage, say } from "../message/message.ts";
@@ -17,13 +17,16 @@ import { enhance as enhanceTime, parse } from "../time/time.ts";
 // ---------------------------------------------------------------------------------------
 // The data and the pure helpers.
 
-// What a person decided. A mention starts waiting.
-export type ModState = "waiting" | "approved" | "spam" | "bin";
-// What the filter shows: the four states, and Source gone, which is a mention that is still
-// waiting whose linked page no longer exists. The views split the mentions: each is in one.
-export type ModView = "waiting" | "approved" | "spam" | "bin" | "gone";
-// "restore" puts a decided mention back to waiting.
-export type ModAction = "approve" | "spam" | "bin" | "restore";
+// A mention's state on its site, in the contract's words (site-api MentionStatus). A mention
+// arrives unverified; the site reads its source and it becomes pending, or failed when the
+// source cannot be found. Only pending, approved and rejected can be decided.
+export type ModState = "unverified" | "pending" | "approved" | "rejected" | "failed";
+// What the filter shows: one state each, and All. Not yet checked is in All only, and counted
+// in the live line, because there is nothing to decide about it yet.
+export type ModView = "pending" | "failed" | "approved" | "rejected" | "all";
+// A decision. "reset" puts a decided mention back to waiting, where the site offers it
+// (site-api v0.6); without it a decision on a waiting mention cannot be undone.
+export type ModAction = "approve" | "reject" | "reset";
 
 export interface Mention {
   id: string;
@@ -36,70 +39,88 @@ export interface Mention {
   url?: string;
   external?: boolean;
   excerpt: string;
-  // The post it mentions.
+  // The post it mentions, and its editor.
   post: string;
   postHref?: string;
+  // When it was received (the contract's receivedAt).
   at: string;
   state: ModState;
-  // The linked page no longer exists (it answered 404 when it was last read).
-  gone?: boolean;
-  goneAt?: string;
-  // When it was last decided, for retention.
+  // When it was last decided.
   decidedAt?: string;
+  // Why the source was not found, as the site said it ("The page answered 404").
+  failureReason?: string;
+  // The contract's version, posted with each decision so a stale one is refused.
+  version?: string;
+  // The site's retention removes it at the next sweep.
+  expiring?: boolean;
 }
 
-export const VIEWS: readonly ModView[] = ["waiting", "approved", "spam", "bin", "gone"];
+export const VIEWS: readonly ModView[] = ["pending", "failed", "approved", "rejected", "all"];
 
-export const VIEW_LABEL: Record<ModView, string> = { waiting: "Waiting", approved: "Approved", spam: "Spam", bin: "Bin", gone: "Source gone" };
+export const VIEW_LABEL: Record<ModView, string> = { pending: "Waiting", failed: "Source not found", approved: "Approved", rejected: "Rejected", all: "All" };
 
-export const ACTIONS: readonly ModAction[] = ["approve", "spam", "bin", "restore"];
+export const STATE_LABEL: Record<ModState, string> = { unverified: "Not yet checked", pending: "Waiting", approved: "Approved", rejected: "Rejected", failed: "Source not found" };
 
-// The key that decides the row under focus. "restore" is r.
-export const ACTION_KEY: Record<ModAction, string> = { approve: "a", spam: "s", bin: "d", restore: "r" };
+export const ACTIONS: readonly ModAction[] = ["approve", "reject", "reset"];
 
-// The transition table. Every state to the states a decision can reach; null is a decision
-// that does nothing here (approving what is approved). A binned mention can only be restored
-// or deleted for good: restore first, then decide again.
+// The key that decides the row under focus. Back to waiting has none: it is the rare one.
+export const ACTION_KEY: Partial<Record<ModAction, string>> = { approve: "a", reject: "r" };
+
+// The key that deletes, after a confirm.
+export const DELETE_KEY = "d";
+
+// The transition table: every state to the states a decision can reach. The contract refuses a
+// decision on a mention not yet checked or whose source was not found (422), so they have none.
 const TABLE: Record<ModState, Partial<Record<ModAction, ModState>>> = {
-  waiting: { approve: "approved", spam: "spam", bin: "bin" },
-  approved: { spam: "spam", bin: "bin", restore: "waiting" },
-  spam: { approve: "approved", bin: "bin", restore: "waiting" },
-  bin: { restore: "waiting" },
+  unverified: {},
+  pending: { approve: "approved", reject: "rejected" },
+  approved: { reject: "rejected", reset: "pending" },
+  rejected: { approve: "approved", reset: "pending" },
+  failed: {},
 };
 
-export function decide(state: ModState, action: ModAction): ModState | null {
+// Where a decision takes a mention, or null where it does nothing (approving what is approved,
+// deciding what cannot be decided, or Back to waiting on a site that does not offer it).
+export function decide(state: ModState, action: ModAction, reset = false): ModState | null {
+  if (action === "reset" && !reset) return null;
   return TABLE[state][action] ?? null;
 }
 
-// Which actions a state offers, in the order the buttons show.
-export function actionsFor(state: ModState): ModAction[] {
-  return ACTIONS.filter((a) => decide(state, a) !== null);
+// Which decisions a state offers, in the order the buttons show.
+export function actionsFor(state: ModState, reset = false): ModAction[] {
+  return ACTIONS.filter((a) => decide(state, a, reset) !== null);
 }
 
-export function viewOf(m: Pick<Mention, "state" | "gone">): ModView {
-  return m.state === "waiting" && m.gone ? "gone" : m.state;
+// The decisions the bulk bar offers in a view. In All they are the two decisions; a row they do
+// not apply to is left alone and said.
+export function bulkActionsFor(view: ModView, reset = false): ModAction[] {
+  if (view === "all") return ["approve", "reject"];
+  if (view === "failed") return [];
+  return actionsFor(view, reset);
 }
 
-export type Counts = Record<ModView, number>;
+export function inView(state: ModState, view: ModView): boolean {
+  return view === "all" || state === view;
+}
 
-export function countViews(items: ReadonlyArray<Pick<Mention, "state" | "gone">>): Counts {
-  const c: Counts = { waiting: 0, approved: 0, spam: 0, bin: 0, gone: 0 };
-  for (const m of items) c[viewOf(m)] += 1;
+export type Counts = Record<ModState | "all", number>;
+
+export function countStates(items: ReadonlyArray<Pick<Mention, "state">>): Counts {
+  const c: Counts = { unverified: 0, pending: 0, approved: 0, rejected: 0, failed: 0, all: 0 };
+  for (const m of items) {
+    c[m.state] += 1;
+    c.all += 1;
+  }
   return c;
 }
 
-// The live line: how many wait. "3 waiting", "3 waiting, 2 with a source gone", "Nothing waiting".
-export function summaryText(c: Counts): string {
+// The live line: what is left to do. "3 waiting", "3 waiting, 1 not yet checked", "Nothing
+// waiting".
+export function summaryText(c: Pick<Counts, "pending" | "unverified">): string {
   const parts: string[] = [];
-  if (c.waiting > 0) parts.push(`${c.waiting} waiting`);
-  if (c.gone > 0) parts.push(`${c.gone} with a source gone`);
+  if (c.pending > 0) parts.push(`${c.pending} waiting`);
+  if (c.unverified > 0) parts.push(`${c.unverified} not yet checked`);
   return parts.length ? parts.join(", ") : "Nothing waiting";
-}
-
-// Approving a mention whose source is gone asks first: it would put text from a page nobody
-// can check any more on the post, where readers see it within seconds.
-export function needsConfirm(m: Pick<Mention, "gone">, action: ModAction): boolean {
-  return action === "approve" && !!m.gone;
 }
 
 export interface Status {
@@ -112,39 +133,33 @@ const NOTICE_GLYPH = '<rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="
 const NODATA_GLYPH = '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/>';
 
 // A status is a shape, a word and a colour.
-export function statusOf(view: ModView): Status {
-  switch (view) {
-    case "waiting":
-      return { tone: "info", word: "Waiting", glyph: NOTICE_GLYPH };
+export function statusOf(state: ModState): Status {
+  const word = STATE_LABEL[state];
+  switch (state) {
+    case "pending":
+      return { tone: "info", word, glyph: NOTICE_GLYPH };
     case "approved":
-      return { tone: "ok", word: "Approved", glyph: GLYPHS.ok };
-    case "spam":
-      return { tone: "crit", word: "Spam", glyph: GLYPHS.failure };
-    case "bin":
-      return { tone: "nodata", word: "Bin", glyph: NODATA_GLYPH };
-    case "gone":
-      return { tone: "warn", word: "Source gone", glyph: GLYPHS.warning };
+      return { tone: "ok", word, glyph: GLYPHS.ok };
+    case "rejected":
+      return { tone: "crit", word, glyph: GLYPHS.failure };
+    case "unverified":
+      return { tone: "nodata", word, glyph: NODATA_GLYPH };
+    case "failed":
+      return { tone: "warn", word, glyph: GLYPHS.warning };
   }
 }
 
-// The words on a decision's button, which depend on where the mention is.
-export function actionLabel(state: ModState, action: ModAction): string {
-  if (action === "restore") return state === "spam" ? "Not spam" : state === "bin" ? "Restore" : "Back to waiting";
-  return { approve: "Approve", spam: "Spam", bin: "Bin" }[action];
-}
+export const ACTION_LABEL: Record<ModAction, string> = { approve: "Approve", reject: "Reject", reset: "Back to waiting" };
 
-// What a decision says: "Marked the mention from Rosa Park as spam."
+// What a decision says: "Rejected the mention from Rosa Park."
 export function decidedText(action: ModAction, who: string[]): string {
-  const one = who.length === 1;
-  const noun = one ? `the mention from ${who[0]}` : `${who.length} mentions`;
+  const noun = who.length === 1 ? `the mention from ${who[0]}` : `${who.length} mentions`;
   switch (action) {
     case "approve":
       return `Approved ${noun}.`;
-    case "spam":
-      return `Marked ${noun} as spam.`;
-    case "bin":
-      return `Moved ${noun} to the bin.`;
-    case "restore":
+    case "reject":
+      return `Rejected ${noun}.`;
+    case "reset":
       return `Put ${noun} back to waiting.`;
   }
 }
@@ -152,6 +167,19 @@ export function decidedText(action: ModAction, who: string[]): string {
 export function undoneText(who: string[]): string {
   return who.length === 1 ? `The mention from ${who[0]} is back where it was.` : `${who.length} mentions are back where they were.`;
 }
+
+// The decision that puts a mention back in `from`: the opposite decision between approved and
+// rejected, which every site has; Back to waiting for a waiting one, only where the site offers
+// it. Null where nothing can.
+export function undoAction(from: ModState, reset = false): ModAction | null {
+  if (from === "approved") return "approve";
+  if (from === "rejected") return "reject";
+  if (from === "pending" && reset) return "reset";
+  return null;
+}
+
+// Said after a decision on a waiting mention, on a site that cannot put one back to waiting.
+export const NO_UNDO_TEXT = "This site cannot put a mention back to waiting, so there is no Undo; the other decision is one key away.";
 
 // What one decision changed, so it can be reversed.
 export interface UndoEntry {
@@ -193,34 +221,25 @@ export function undoStack<T>(max = 20): UndoStack<T> {
   };
 }
 
-// Retention, from the site's rules (lib/webmention/retention.mjs): a mention whose source is
-// gone is noise kept only to spot a pattern, spam is kept so a sender who comes back does not
-// look new, the bin is a holding place. Waiting and approved mentions are never swept.
-export const RETENTION_DAYS = { gone: 30, spam: 90, bin: 30 } as const;
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-export function expiredIds(items: ReadonlyArray<Pick<Mention, "id" | "state" | "gone" | "at" | "decidedAt" | "goneAt">>, now: number = Date.now()): string[] {
+// What the retention sweep will remove, one line per kind, from the site's own counts (the
+// contract's `expiring`). Waiting and approved mentions are never swept.
+export function sweepLines(expiring: { failed: number; rejected: number }): string[] {
   const out: string[] = [];
-  for (const m of items) {
-    const v = viewOf(m);
-    if (v !== "gone" && v !== "spam" && v !== "bin") continue;
-    const since = v === "gone" ? (m.goneAt ?? m.at) : (m.decidedAt ?? m.at);
-    if (now - parse(since) > RETENTION_DAYS[v] * DAY_MS) out.push(m.id);
-  }
+  if (expiring.failed) out.push(`${expiring.failed} whose source was not found`);
+  if (expiring.rejected) out.push(`${expiring.rejected} rejected`);
   return out;
 }
 
-export function retentionNote(): string {
-  return `Mentions whose source is gone are removed after ${RETENTION_DAYS.gone} days, spam after ${RETENTION_DAYS.spam} days, and the bin after ${RETENTION_DAYS.bin} days.`;
+export function mentionsWord(n: number): string {
+  return n === 1 ? "mention" : "mentions";
 }
 
 export const EMPTY_TEXT: Record<ModView, { title: string; text: string }> = {
-  waiting: { title: "All clear", text: "No mentions are waiting. Approved, spam and the bin are one filter away." },
+  pending: { title: "All clear", text: "No mentions are waiting. Approved and rejected are one filter away." },
+  failed: { title: "No missing sources", text: "Every mention's source page was found." },
   approved: { title: "Nothing approved yet", text: "Approved mentions show on their post." },
-  spam: { title: "No spam", text: "Mentions you mark as spam wait here until they are removed." },
-  bin: { title: "The bin is empty", text: "Binned mentions can be put back until they are deleted." },
-  gone: { title: "No missing sources", text: "Every waiting mention still has its page." },
+  rejected: { title: "Nothing rejected", text: "Rejected mentions wait here until the site's retention removes them." },
+  all: { title: "No mentions yet", text: "When another site links to a post, its mention arrives here." },
 };
 
 // ---------------------------------------------------------------------------------------
@@ -251,25 +270,19 @@ function svg(inner: string, size = 14): SVGSVGElement {
   return s;
 }
 
-export function statusEl(view: ModView): HTMLElement {
-  const s = statusOf(view);
+export function statusEl(state: ModState): HTMLElement {
+  const s = statusOf(state);
   return h("span", { class: "cap-status", "data-tone": s.tone }, svg(s.glyph), s.word);
 }
 
 // A decision's button: a real button with its key shown and announced (aria-keyshortcuts).
-export function actionButton(state: ModState, action: ModAction, who: string, opts: { bar?: boolean } = {}): HTMLButtonElement {
-  const key = ACTION_KEY[action];
-  const label = actionLabel(state, action);
-  const b = h("button", { type: "button", class: "cap-btn", "data-variant": "quiet", "data-size": "sm", "data-cap-action": action, "aria-keyshortcuts": key });
+export function actionButton(action: ModAction | "delete", who: string, opts: { bar?: boolean } = {}): HTMLButtonElement {
+  const key = action === "delete" ? DELETE_KEY : ACTION_KEY[action];
+  const label = action === "delete" ? "Delete" : ACTION_LABEL[action];
+  const b = h("button", { type: "button", class: "cap-btn", "data-variant": action === "delete" ? "danger" : "quiet", "data-size": "sm", "data-cap-action": action, "aria-keyshortcuts": key });
   b.append(label);
   if (!opts.bar) b.append(h("span", { class: "cap-sr-only" }, ` the mention from ${who}`));
-  b.append(h("kbd", { class: "cap-kbd", "aria-hidden": "true" }, key));
-  return b;
-}
-
-export function deleteButton(who: string): HTMLButtonElement {
-  const b = h("button", { type: "button", class: "cap-btn", "data-variant": "danger", "data-size": "sm", "data-cap-action": "delete" }, "Delete permanently");
-  b.append(h("span", { class: "cap-sr-only" }, ` the mention from ${who}`));
+  if (key) b.append(h("kbd", { class: "cap-kbd", "aria-hidden": "true" }, key));
   return b;
 }
 
@@ -282,18 +295,20 @@ const rowsOf = (root: HTMLElement) => Array.from(root.querySelectorAll<HTMLLIEle
 const listOf = (root: HTMLElement) => root.querySelector<HTMLElement>(".cap-mq-list");
 const titleOf = (row: Element) => row.querySelector<HTMLElement>(".cap-row-title button");
 const visible = (row: HTMLElement) => !row.hidden;
-const currentView = (root: HTMLElement): ModView => (VIEWS as readonly string[]).includes(root.dataset.view ?? "") ? (root.dataset.view as ModView) : "waiting";
+const currentView = (root: HTMLElement): ModView => ((VIEWS as readonly string[]).includes(root.dataset.view ?? "") ? (root.dataset.view as ModView) : "pending");
+// The site offers Back to waiting (site-api v0.6, decision "reset").
+const resetOn = (root: HTMLElement) => root.hasAttribute("data-cap-reset");
+const deleteOn = (root: HTMLElement) => !root.hasAttribute("data-cap-no-delete");
 
-export function mentionOf(row: HTMLElement): Pick<Mention, "id" | "state" | "gone" | "at" | "decidedAt" | "goneAt" | "author" | "host"> {
+export function mentionOf(row: HTMLElement): Pick<Mention, "id" | "state" | "at" | "decidedAt" | "author" | "host" | "expiring"> {
   return {
     id: row.dataset.id ?? "",
-    state: (row.dataset.state ?? "waiting") as ModState,
-    gone: row.hasAttribute("data-gone"),
+    state: (row.dataset.state ?? "pending") as ModState,
     at: row.dataset.at ?? "",
     decidedAt: row.dataset.decided || undefined,
-    goneAt: row.dataset.goneAt || undefined,
     author: row.dataset.author ?? "",
     host: row.dataset.host ?? "",
+    expiring: row.hasAttribute("data-expiring"),
   };
 }
 
@@ -312,7 +327,7 @@ function ensureRegion(after: Element): void {
 }
 
 // A key typed into a text field, or with a modifier, is never a queue shortcut. A checkbox, a
-// radio or a button is not typing: a, s, d and x must work from the box a person just ticked.
+// radio or a button is not typing: a, r, d and x must work from the box a person just ticked.
 const TEXT_INPUT = /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
 export function isTypingKey(e: KeyboardEvent): boolean {
   if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return true;
@@ -322,37 +337,28 @@ export function isTypingKey(e: KeyboardEvent): boolean {
   return t.isContentEditable || /^(TEXTAREA|SELECT)$/.test(t.tagName) || t.closest("[role='combobox'], [role='textbox']") !== null;
 }
 
-// Paints one row for its state: the status (and, for a mention whose source is gone but that
-// has been decided, a second status saying so), the buttons that apply, the data.
-function paintRow(row: HTMLLIElement): void {
+// Paints one row for its state: the status, the buttons that apply.
+function paintRow(root: HTMLElement, row: HTMLLIElement): void {
   const m = mentionOf(row);
-  const view = viewOf(m);
-  row.dataset.view = view;
-  const statusCell = row.querySelector<HTMLElement>(".cap-row-status");
-  if (statusCell) {
-    statusCell.replaceChildren(statusEl(view));
-    if (m.gone && view !== "gone") statusCell.append(" ", statusEl("gone"));
-  }
+  row.querySelector<HTMLElement>(".cap-row-status")?.replaceChildren(statusEl(m.state));
   const actions = row.querySelector<HTMLElement>("[data-cap-part='actions']");
   if (actions) {
-    actions.replaceChildren(...actionsFor(m.state).map((a) => actionButton(m.state, a, m.author)));
-    if (m.state === "bin" && !row.closest("[data-cap-no-delete]")) actions.append(deleteButton(m.author));
+    actions.replaceChildren(...actionsFor(m.state, resetOn(root)).map((a) => actionButton(a, m.author)));
+    if (deleteOn(root)) actions.append(actionButton("delete", m.author));
   }
 }
 
-// The state of every row's view, the counts, the live line, the empty state, the bulk bar.
+// Which rows are in view, the counts, the live line, the empty state, the bulk bar.
 export function refresh(root: HTMLElement): void {
   const view = currentView(root);
   const rows = rowsOf(root);
   for (const row of rows) {
-    const v = viewOf(mentionOf(row));
-    row.dataset.view = v;
-    row.hidden = v !== view;
+    row.hidden = !inView(mentionOf(row).state, view);
     const box = row.querySelector<HTMLInputElement>("[data-cap-part='select']");
     if (row.hidden && box?.checked) box.checked = false;
     row.toggleAttribute("data-selected", !!box?.checked);
   }
-  const counts = countViews(rows.map((r) => mentionOf(r)));
+  const counts = countStates(rows.map((r) => mentionOf(r)));
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap-count]")) {
     const v = el.dataset.capCount as ModView;
     const n = String(counts[v] ?? 0);
@@ -372,7 +378,7 @@ export function refresh(root: HTMLElement): void {
     const text = empty.querySelector(".cap-empty-text");
     if (title) title.textContent = t.title;
     if (text) text.textContent = t.text;
-    empty.dataset.kind = view === "waiting" ? "all-clear" : "nothing-yet";
+    empty.dataset.kind = view === "pending" ? "all-clear" : "nothing-yet";
   }
   const list = listOf(root);
   if (list) list.hidden = shown === 0;
@@ -405,12 +411,11 @@ export function syncSelection(root: HTMLElement): HTMLLIElement[] {
     bar.toggleAttribute("data-empty", picked.length === 0);
     const holder = bar.querySelector<HTMLElement>(".cap-bulk-actions");
     const view = currentView(root);
-    const state: ModState = view === "gone" ? "waiting" : view;
     const key = `${view}:${picked.length > 0}`;
     if (holder && holder.dataset.key !== key) {
       holder.dataset.key = key;
-      holder.replaceChildren(...(picked.length ? actionsFor(state).map((a) => actionButton(state, a, "", { bar: true })) : []));
-      if (picked.length && state === "bin" && !root.hasAttribute("data-cap-no-delete")) holder.append(h("button", { type: "button", class: "cap-btn", "data-variant": "danger", "data-size": "sm", "data-cap-action": "delete" }, "Delete permanently"));
+      const acts: Array<ModAction | "delete"> = picked.length ? [...bulkActionsFor(view, resetOn(root)), ...(deleteOn(root) ? (["delete"] as const) : [])] : [];
+      holder.replaceChildren(...acts.map((a) => actionButton(a, "", { bar: true })));
     }
     const clear = bar.querySelector<HTMLElement>(".cap-bulk-clear");
     if (clear) clear.hidden = picked.length === 0;
@@ -419,10 +424,15 @@ export function syncSelection(root: HTMLElement): HTMLLIElement[] {
   return picked;
 }
 
+// The sweep: what the site says will expire, counted from the rows it marked.
+function expiringRows(root: HTMLElement): HTMLLIElement[] {
+  return rowsOf(root).filter((r) => r.hasAttribute("data-expiring"));
+}
+
 function syncRetention(root: HTMLElement): void {
   const button = root.querySelector<HTMLElement>("[data-cap-part='sweep']");
   if (!button) return;
-  const n = expiredIds(rowsOf(root).map((r) => mentionOf(r)), nowOf(root)).length;
+  const n = expiringRows(root).length;
   button.textContent = `Remove ${n} expired`;
   if (n === 0) button.setAttribute("aria-disabled", "true");
   else button.removeAttribute("aria-disabled");
@@ -459,11 +469,11 @@ interface Ctx {
 
 const contexts = new WeakMap<HTMLElement, Ctx>();
 
-function applyState(row: HTMLLIElement, to: ModState, decidedAt: string | undefined): void {
+function applyState(root: HTMLElement, row: HTMLLIElement, to: ModState, decidedAt: string | undefined): void {
   row.dataset.state = to;
   if (decidedAt) row.dataset.decided = decidedAt;
   else delete row.dataset.decided;
-  paintRow(row);
+  paintRow(root, row);
 }
 
 // What Undo does for one decision: reverses it, and when earlier decisions are still
@@ -477,11 +487,6 @@ function undoThen(ctx: Ctx, entry: UndoEntry): () => void {
   };
 }
 
-// Announces a decision with its Undo.
-function announce(ctx: Ctx, entry: UndoEntry): void {
-  say(decidedText(entry.action, entry.who), { undo: undoThen(ctx, entry) });
-}
-
 function undoEntry(ctx: Ctx, entry: UndoEntry): void {
   const { root, stack } = ctx;
   stack.remove((e) => e === entry);
@@ -491,7 +496,7 @@ function undoEntry(ctx: Ctx, entry: UndoEntry): void {
     const was = entry.from[row.dataset.id ?? ""];
     if (!was) continue;
     to[row.dataset.id ?? ""] = was.state;
-    applyState(row, was.state, was.decidedAt);
+    applyState(root, row, was.state, was.decidedAt);
     back.push(row);
   }
   refresh(root);
@@ -504,10 +509,11 @@ function undoEntry(ctx: Ctx, entry: UndoEntry): void {
 }
 
 // Decides these rows at once: each moves to its new state, the counts and the live line
-// follow, focus moves to the next row, and the message says so with Undo. A row the table
-// does not allow is left alone. Returns the ids that moved.
-export function decideRows(root: HTMLElement, rows: HTMLLIElement[], action: ModAction, opts: { focus?: boolean; announce?: boolean } = {}): string[] {
+// follow, focus moves to the next row, and the message says so, with Undo where the site can
+// put each one back. A row the table does not allow is left alone. Returns the ids that moved.
+export function decideRows(root: HTMLElement, rows: HTMLLIElement[], action: ModAction, opts: { focus?: boolean; announce?: boolean; note?: string } = {}): string[] {
   const ctx = contexts.get(root);
+  const reset = resetOn(root);
   const moved: HTMLLIElement[] = [];
   const from: UndoEntry["from"] = {};
   const to: Record<string, ModState> = {};
@@ -518,11 +524,11 @@ export function decideRows(root: HTMLElement, rows: HTMLLIElement[], action: Mod
   const target = hadFocus && opts.focus !== false ? focusTargetAfter(root, rows) : null;
   for (const row of rows) {
     const m = mentionOf(row);
-    const next = decide(m.state, action);
+    const next = decide(m.state, action, reset);
     if (!next) continue;
     from[m.id] = { state: m.state, decidedAt: m.decidedAt };
     to[m.id] = next;
-    applyState(row, next, next === "waiting" ? undefined : decidedAt);
+    applyState(root, row, next, next === "pending" ? undefined : decidedAt);
     moved.push(row);
   }
   if (moved.length === 0) return [];
@@ -532,94 +538,71 @@ export function decideRows(root: HTMLElement, rows: HTMLLIElement[], action: Mod
   root.dispatchEvent(new CustomEvent<DecidedDetail>("cap:mod-decided", { bubbles: true, detail: { ids, action, from: Object.fromEntries(Object.entries(from).map(([k, v]) => [k, v.state])), to } }));
   if (ctx && opts.announce !== false) {
     const entry: UndoEntry = { ids, who: moved.map((r) => r.dataset.author ?? ""), action, from };
-    ctx.stack.push(entry);
-    announce(ctx, entry);
+    const text = [decidedText(action, entry.who), opts.note].filter(Boolean).join(" ");
+    if (Object.values(from).every((f) => undoAction(f.state, reset))) {
+      ctx.stack.push(entry);
+      say(text, { undo: undoThen(ctx, entry) });
+    } else say(`${text} ${NO_UNDO_TEXT}`);
   }
   return ids;
 }
 
-// Approve for a mention whose source is gone: preview, then perform, in a confirm dialog with
-// focus on Cancel.
-async function approveGone(root: HTMLElement, row: HTMLLIElement): Promise<void> {
-  const m = mentionOf(row);
-  const return_ = focusTargetAfter(root, [row]);
-  await confirm({
-    title: `Approve the mention from ${m.author}?`,
-    lead: "Its source page no longer exists, and nobody can check it any more.",
-    body: ["Its excerpt would show on the post within seconds.", "You can take it down again from Approved."],
-    action: "Approve anyway",
-    media: true,
-    returnTo: return_,
-    perform: async () => {
-      decideRows(root, [row], "approve", { focus: false });
-    },
-  });
-  // The row left the view, so the dialog's return target is the next row; make sure focus is not lost.
-  if (!root.contains(document.activeElement)) focusAfter(root, return_);
-}
-
-async function deletePermanently(root: HTMLElement, rows: HTMLLIElement[]): Promise<void> {
+// Delete is for good: previewed in a confirm dialog with focus on Cancel, the count typed.
+async function deleteRows(root: HTMLElement, rows: HTMLLIElement[]): Promise<void> {
+  if (rows.length === 0) return;
   const ctx = contexts.get(root);
   const ids = rows.map((r) => r.dataset.id ?? "");
   const who = rows.map((r) => r.dataset.author ?? "");
   const one = rows.length === 1;
   const target = focusTargetAfter(root, rows);
   await confirm({
-    title: one ? `Delete the mention from ${who[0]} permanently?` : `Delete ${rows.length} mentions permanently?`,
-    lead: "This cannot be undone.",
-    body: [one ? "This removes the only copy of it. Nothing else has one." : "This removes the only copy of each. Nothing else has one."],
-    action: "Delete permanently",
+    title: one ? `Delete the mention from ${who[0]}?` : `Delete ${rows.length} mentions?`,
+    lead: "This cannot be undone. Reject it instead to keep it off the post and keep the record.",
+    body: rows.map((r) => `From ${r.dataset.author ?? ""} (${r.dataset.host ?? ""})`),
+    action: one ? "Delete the mention" : `Delete ${rows.length} mentions`,
+    typeToConfirm: String(rows.length),
     returnTo: target,
     perform: async () => {
       for (const r of rows) r.remove();
       ctx?.stack.remove((e) => e.ids.some((id) => ids.includes(id)));
       refresh(root);
       root.dispatchEvent(new CustomEvent("cap:mod-deleted", { bubbles: true, detail: { ids } }));
-      say(one ? `Deleted the mention from ${who[0]} permanently.` : `Deleted ${rows.length} mentions permanently.`);
+      say(one ? `Deleted the mention from ${who[0]}.` : `Deleted ${rows.length} mentions.`);
     },
   });
   if (!root.contains(document.activeElement)) focusAfter(root, target);
 }
 
 async function sweepExpired(root: HTMLElement): Promise<void> {
-  const rows = rowsOf(root);
-  const ids = new Set(expiredIds(rows.map((r) => mentionOf(r)), nowOf(root)));
-  const doomed = rows.filter((r) => ids.has(r.dataset.id ?? ""));
+  const doomed = expiringRows(root);
   if (doomed.length === 0) return;
-  const counts = countViews(doomed.map((r) => mentionOf(r)));
-  const lines = [counts.gone ? `${counts.gone} whose source is gone` : "", counts.spam ? `${counts.spam} marked as spam` : "", counts.bin ? `${counts.bin} in the bin` : ""].filter(Boolean);
+  const counts = countStates(doomed.map((r) => mentionOf(r)));
+  const n = doomed.length;
   await confirm({
-    title: `Remove ${doomed.length} expired mention${doomed.length === 1 ? "" : "s"}?`,
-    lead: "This cannot be undone. Nothing that is still waiting or approved is touched.",
-    body: lines,
+    title: `Remove ${n} expired ${mentionsWord(n)}?`,
+    lead: "This cannot be undone. Nothing that is waiting or approved is touched.",
+    body: sweepLines(counts),
     action: "Remove them",
     returnTo: root.querySelector<HTMLElement>("[data-cap-part='sweep']"),
     perform: async () => {
+      const ids = doomed.map((r) => r.dataset.id ?? "");
       for (const r of doomed) r.remove();
-      contexts.get(root)?.stack.remove((e) => e.ids.some((id) => ids.has(id)));
+      contexts.get(root)?.stack.remove((e) => e.ids.some((id) => ids.includes(id)));
       refresh(root);
-      root.dispatchEvent(new CustomEvent("cap:mod-deleted", { bubbles: true, detail: { ids: [...ids] } }));
-      say(`Removed ${doomed.length} expired mention${doomed.length === 1 ? "" : "s"}.`);
+      root.dispatchEvent(new CustomEvent("cap:mod-deleted", { bubbles: true, detail: { ids } }));
+      say(`Removed ${n} expired ${mentionsWord(n)}.`);
     },
   });
 }
 
-// Runs one decision for these rows: a mention whose source is gone asks first, and in a bulk
-// approve is left out (and said), because the question is about each one.
+// Runs one action for these rows. A decision leaves the rows it does not apply to (a mention not
+// yet checked, or whose source was not found) and says so.
 export async function run(root: HTMLElement, rows: HTMLLIElement[], action: ModAction | "delete"): Promise<void> {
-  if (action === "delete") return deletePermanently(root, rows.filter((r) => r.dataset.state === "bin"));
-  if (action === "approve") {
-    const askFirst = rows.filter((r) => needsConfirm(mentionOf(r), "approve") && decide(mentionOf(r).state, "approve"));
-    if (rows.length === 1 && askFirst.length === 1 && askFirst[0]) return approveGone(root, askFirst[0]);
-    const rest = rows.filter((r) => !askFirst.includes(r));
-    const moved = decideRows(root, rest, "approve");
-    if (askFirst.length > 0) {
-      const n = askFirst.length;
-      say(`${moved.length ? `Approved ${moved.length}. ` : ""}${n} with a source gone ${n === 1 ? "was" : "were"} left selected: approve ${n === 1 ? "it" : "them"} one at a time.`);
-    }
-    return;
-  }
-  decideRows(root, rows, action);
+  if (action === "delete") return deleteOn(root) ? deleteRows(root, rows) : undefined;
+  const n = rows.filter((r) => actionsFor(mentionOf(r).state, true).length === 0).length;
+  const note = n > 0 ? `${n} ${n === 1 ? "was" : "were"} left as ${n === 1 ? "it was" : "they were"}: there is nothing to decide about a mention not yet checked or whose source was not found.` : undefined;
+  const moved = decideRows(root, rows, action, { note });
+  if (moved.length === 0 && note) say(note);
 }
 
 export function setView(root: HTMLElement, view: ModView): void {
@@ -636,9 +619,8 @@ export const QUEUE_SHORTCUTS = [
   { key: "j", label: "Next row" },
   { key: "k", label: "Previous row" },
   { key: "a", label: "Approve the row" },
-  { key: "s", label: "Mark the row as spam" },
-  { key: "d", label: "Move the row to the bin" },
-  { key: "r", label: "Put the row back to waiting" },
+  { key: "r", label: "Reject the row" },
+  { key: "d", label: "Delete the row, after a confirm" },
   { key: "x", label: "Select the row" },
 ] as const;
 
@@ -673,7 +655,7 @@ export function enhance(root: ParentNode = document): () => void {
       if (t.closest(".cap-bulk-clear")) {
         for (const box of el.querySelectorAll<HTMLInputElement>("[data-cap-part='select']")) box.checked = false;
         syncSelection(el);
-        (list?.querySelector<HTMLElement>(".cap-row-title button:not([hidden])") ?? null)?.focus();
+        (list?.querySelector<HTMLElement>(".cap-mq-row:not([hidden]) .cap-row-title button") ?? null)?.focus();
         return;
       }
       const sweep = t.closest<HTMLElement>("[data-cap-part='sweep']");
@@ -701,7 +683,7 @@ export function enhance(root: ParentNode = document): () => void {
         if (moveRowFocus(list, key === "j" ? 1 : -1) || list.contains(document.activeElement)) e.preventDefault();
         return;
       }
-      if (!["a", "s", "d", "r", "x"].includes(key)) return;
+      if (!["a", "r", "d", "x"].includes(key)) return;
       const row = rowOf(document.activeElement);
       if (!row || !list.contains(row) || document.querySelector("dialog:modal")) return;
       e.preventDefault();
@@ -713,12 +695,12 @@ export function enhance(root: ParentNode = document): () => void {
         }
         return;
       }
-      const action = (Object.keys(ACTION_KEY) as ModAction[]).find((a) => ACTION_KEY[a] === key);
-      if (!action) return;
       // The focused row, or every selected row when the focused one is part of the selection.
       const picked = selectedRows(el);
       const rows = picked.includes(row) ? picked : [row];
-      if (rows.every((r) => !decide(mentionOf(r).state, action))) return;
+      if (key === DELETE_KEY) return void run(el, rows, "delete");
+      const action = (Object.keys(ACTION_KEY) as ModAction[]).find((a) => ACTION_KEY[a] === key);
+      if (!action || rows.every((r) => !decide(mentionOf(r).state, action, resetOn(el)))) return;
       void run(el, rows, action);
     };
     // Single keys off: the hints and the announced keys go quiet, because pressing them does nothing.

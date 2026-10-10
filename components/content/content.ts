@@ -5,9 +5,10 @@
 // the "content kit", in site-api (job "site-api: the content kit and localClient", S1). That kit
 // had not shipped when these were written, so they are defined here from the design and are to be
 // reconciled with S1's own types when it does. Where a name came from the site-api contract
-// (v0.5.0, src/contract.ts) it is kept: ContentStatus, MediaUse.
+// (v0.5.0, src/contract.ts) it is kept: ContentStatus, MediaUse, MentionStatus, MentionCounts.
 import type { BulkOutcome } from "../bulk-bar/bulk-bar.ts";
 import type { MediaRecord } from "../media/media.ts";
+import type { Mention, ModState, ModView } from "../moderation-queue/moderation-queue.ts";
 
 // ---------------------------------------------------------------------------------------
 // Shared by every list.
@@ -236,6 +237,48 @@ export interface PickedMedia {
   id: string;
   url: string;
   alt: string;
+}
+
+// ---------------------------------------------------------------------------------------
+// Mentions.
+
+// A mention's state, the contract's own words (site-api MentionStatus).
+export type MentionStatus = ModState;
+
+// How many mentions are in each state across the whole site, not the page (site-api
+// MentionCounts), with their sum.
+export type MentionCounts = Record<MentionStatus | "all", number>;
+
+export interface MentionsQuery {
+  // The tab. With none, the list opens on Waiting, or on All when nothing waits.
+  view?: ModView;
+  cursor?: string;
+  // The mention opened in place (its whole excerpt, its source, the exact times).
+  open?: string;
+}
+
+// What the site supports, read from its capabilities by the kit. `reset` is site-api v0.6's
+// decision "reset" (back to waiting): without it a decision on a waiting mention has no Undo.
+export interface MentionOffers {
+  reset: boolean;
+  delete: boolean;
+  sweep: boolean;
+}
+
+export interface MentionsData {
+  site: { name: string };
+  query: MentionsQuery;
+  // One page of mentions, newest first, each as the moderation queue's Mention.
+  rows: Mention[];
+  page: PageInfo;
+  counts: MentionCounts;
+  // What the next sweep removes, by the site's own retention (site-api MentionList.expiring).
+  expiring: { failed: number; rejected: number };
+  // The site's retention in words, from its rules: "A mention whose source was not found is
+  // removed after 30 days, a rejected one after 90."
+  retention?: string;
+  offers: MentionOffers;
+  can: ContentCan;
 }
 
 // ---------------------------------------------------------------------------------------

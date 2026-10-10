@@ -1,0 +1,57 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The mentions list: one page of one site's mentions. It is the moderation queue (.cap-mq, whose
+   stylesheet draws the rows, the open row and the retention line) on the contract's data, with
+   the shared parts beside it (tabs, status, bulk bar, message, empty, confirm dialog, and the
+   content components' result box in content.css). This file only adds what the list brings:
+   the line under the tabs, the reasons held back, each row's decisions as a form, and the
+   paging links. */
+@layer cap.components {
+  /* The live line, the "not yet checked" pill and the count, on one line. */
+  .cap-mentions .cap-mq-head {
+    gap: var(--space-2) var(--space-4);
+  }
+  .cap-mentions-count {
+    margin: 0;
+    margin-inline-start: auto;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* What is not offered here, and why, in words. */
+  .cap-mentions-withheld {
+    margin: 0;
+    padding-inline-start: var(--space-5);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    & > li + li {
+      margin-top: var(--space-1);
+    }
+  }
+
+  /* A row's decisions are one form, so they post with no script; laid out as the queue's
+     buttons are. */
+  .cap-mentions-act {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cap-mentions-pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* The sweep is a form here; its button is disabled when nothing has expired. */
+  .cap-mentions .cap-mq-retention {
+    margin: 0;
+  }
+}
