@@ -1,6 +1,6 @@
 // The media library's behaviour: a grid of tiles with roving focus and two-dimensional arrow keys,
 // selection by real checkboxes, an inspector that sits beside the grid (a pane) or over it (a
-// side sheet) and SAVES BY ITSELF, the copy button, the filters, search, the bin and Restore.
+// side sheet) and SAVES BY ITSELF, the copy button, the filters, search, Trash and Restore.
 // Extracted from the site admin's media-keyboard.tsx and tile-nav.mjs (the arrow keys read the
 // rendered boxes, not a column count), media-grid.tsx, media-tile.tsx, media-inspector*.tsx,
 // copy-button.tsx, media-facets.tsx and lib/media/usage.mjs (the three-way alt state, the copy
@@ -49,6 +49,12 @@ export interface MediaRecord {
   suggestedTags?: string[];
   progress?: number;
   error?: string;
+  // The site's version of the file's metadata (site-api v0.4): a form posts it back as the
+  // version it last saw.
+  version?: string;
+  // Where it is used was not read (a list of files has no usedBy; the inspected one does): no
+  // Unattached flag, and the inspector says it was not checked.
+  usedUnknown?: boolean;
 }
 
 // What the inspector edits.
@@ -99,13 +105,13 @@ export interface Flag {
   tone: "warn" | "info" | "nodata";
   word: string;
 }
-export function flagsFor(r: Pick<MediaRecord, "kind" | "altState" | "used" | "state">): Flag[] {
+export function flagsFor(r: Pick<MediaRecord, "kind" | "altState" | "used" | "state" | "usedUnknown">): Flag[] {
   const out: Flag[] = [];
-  if (r.state === "binned") out.push({ tone: "nodata", word: "In the bin" });
+  if (r.state === "binned") out.push({ tone: "nodata", word: "In Trash" });
   if (r.state === "uploading" || r.state === "failed") return out;
   if (r.kind === "image" && r.altState === "missing") out.push({ tone: "warn", word: "No alt text" });
   if (r.kind === "image" && r.altState === "decorative") out.push({ tone: "info", word: "Decorative" });
-  if (r.state !== "binned" && r.used.length === 0) out.push({ tone: "nodata", word: "Unattached" });
+  if (r.state !== "binned" && !r.usedUnknown && r.used.length === 0) out.push({ tone: "nodata", word: "Unattached" });
   return out;
 }
 
@@ -682,7 +688,7 @@ export interface MediaOptions {
   // Sends the inspector's fields. Reject with an Error that says why. Default: a POST of the
   // inspector's form to its action.
   save?: (key: string, fields: MediaFields) => Promise<void>;
-  // Persist a move to the bin, a restore, a retry. Each rejects with an Error that says why.
+  // Persist a move to Trash, a restore, a retry. Each rejects with an Error that says why.
   bin?: (keys: string[]) => Promise<void>;
   restore?: (keys: string[]) => Promise<void>;
   retry?: (key: string) => Promise<void>;
@@ -1186,7 +1192,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     const count = countEl();
     if (count && announce) {
       const total = tiles().filter((t) => (v === "bin" ? t.dataset.state === "binned" : t.dataset.state === "ready")).length;
-      count.textContent = v === "bin" ? `${matchable} in the bin` : matchable === total ? `${matchable} ${matchable === 1 ? "file" : "files"}` : `${matchable} of ${total} files`;
+      count.textContent = v === "bin" ? `${matchable} in Trash` : matchable === total ? `${matchable} ${matchable === 1 ? "file" : "files"}` : `${matchable} of ${total} files`;
     }
     if (active && (active.hidden || active.closest("[hidden]"))) {
       const first = successor(active);
@@ -1240,7 +1246,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     if (focused instanceof HTMLElement && focused.isConnected && document.activeElement !== focused) focused.focus({ preventScroll: true });
   };
 
-  // ---- the bin.
+  // ---- Trash.
   const rawBin = async (keys: string[], to: "binned" | "ready") => {
     const before = keys.map((k) => ({ k, state: byKey(k)?.dataset.state ?? "ready" }));
     for (const k of keys) {
@@ -1273,7 +1279,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       items: itemsOf(keys),
       run: () => rawBin(keys, "binned"),
       undo: () => rawBin(keys, "ready"),
-      said: keys.length === 1 ? `Moved ${byKey(keys[0] ?? "")?.dataset.label ?? "the file"} to the bin.` : "Moved {n} files to the bin.",
+      said: keys.length === 1 ? `Moved ${byKey(keys[0] ?? "")?.dataset.label ?? "the file"} to Trash.` : "Moved {n} files to Trash.",
       undone: keys.length === 1 ? "Put it back in the library." : "Put {n} files back in the library.",
       returnTo: openLink(active),
     });
@@ -1284,7 +1290,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       run: () => rawBin(keys, "ready"),
       undo: () => rawBin(keys, "binned"),
       said: keys.length === 1 ? `Restored ${byKey(keys[0] ?? "")?.dataset.label ?? "the file"} to the library.` : "Restored {n} files to the library.",
-      undone: keys.length === 1 ? "Put it back in the bin." : "Put {n} files back in the bin.",
+      undone: keys.length === 1 ? "Put it back in Trash." : "Put {n} files back in Trash.",
       returnTo: openLink(active),
     });
 
@@ -1621,8 +1627,8 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     bin,
     restore,
     bulkHandlers: () => ({
-      bin: { run: (items) => rawBin(items.map((i) => i.id), "binned"), undo: (items) => rawBin(items.map((i) => i.id), "ready"), said: "Moved {n} file{s} to the bin.", undone: "Put {n} file{s} back in the library." },
-      restore: { run: (items) => rawBin(items.map((i) => i.id), "ready"), undo: (items) => rawBin(items.map((i) => i.id), "binned"), said: "Restored {n} file{s} to the library.", undone: "Put {n} file{s} back in the bin." },
+      bin: { run: (items) => rawBin(items.map((i) => i.id), "binned"), undo: (items) => rawBin(items.map((i) => i.id), "ready"), said: "Moved {n} file{s} to Trash.", undone: "Put {n} file{s} back in the library." },
+      restore: { run: (items) => rawBin(items.map((i) => i.id), "ready"), undo: (items) => rawBin(items.map((i) => i.id), "binned"), said: "Restored {n} file{s} to the library.", undone: "Put {n} file{s} back in Trash." },
       copy: {
         run: async (items) => {
           const urls = items.map((i) => byKey(i.id)?.dataset.url ?? "").filter(Boolean);

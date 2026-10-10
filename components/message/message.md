@@ -16,7 +16,7 @@ replaces:
 
 # Message
 
-The result of an action, said in the page: "Moved the mention to the bin", with Undo. One region per page, `role="status"`, so a screen reader hears it without focus moving. It holds the messages newest first: a plain result, which the next one replaces, and any warning, failure or failed Undo, which stay until dismissed.
+The result of an action, said in the page: "Moved the mention to Trash", with Undo. One region per page, `role="status"`, so a screen reader hears it without focus moving. It holds the messages newest first: a plain result, which the next one replaces, and any warning, failure or failed Undo, which stay until dismissed.
 
 **Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01): `lib/messages.ts` (`Message`, `lasting`, `withMessage`) and the message region and Undo flow in `app/App.tsx` are EXTRACTED, with the Portal's own comments' reasoning, adapted to be generic (a message holds an `undo` function and an `undone` sentence, not the Portal's `UndoRequest`; no wouter, context or feed types). The `z` key, the 4 second clearing of a plain confirmation, focus handling and the markup are REWRITTEN (the Portal at the extraction base had only a timed toast). The Portal's region is fixed at the bottom right of the window; Capsomer keeps it in the page, because the audit rules out a floating toast (see the default below).
 
@@ -92,7 +92,7 @@ Each message `say()` adds:
 ```ts
 import { enhance, say, fail } from "capsomer/behaviour/message";
 enhance();
-say("Moved the mention from fieldnotes.example to the bin.", {
+say("Moved the mention from fieldnotes.example to Trash.", {
   undo: () => restore(mention),
   undone: "The mention from fieldnotes.example is waiting again.",
   returnFocus: binButton,

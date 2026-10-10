@@ -1,8 +1,7 @@
 // The posts list's pure helpers: the status of a post in words, the addresses of its filters,
 // which actions a person is offered here and why the others are withheld, and the forms the
 // script path posts. No DOM; the React component and a server render use the same functions.
-import type { BulkOutcome } from "../bulk-bar/bulk-bar.ts";
-import type { ContentLabels, ContentStatus, IntentFields, IntentResult, PostRow, PostsData, PostsQuery, PostSort } from "../content/content.ts";
+import type { ContentLabels, ContentStatus, PostRow, PostsData, PostsQuery, PostSort } from "../content/content.ts";
 
 const DAY = 86_400_000;
 
@@ -176,28 +175,5 @@ export function rowActions(row: PostRow, data: Pick<PostsData, "offers" | "can">
 }
 
 // ---------------------------------------------------------------------------------------
-// The script path.
-
-// The form an IntentResult's undo, or a confirm request, posts: the intent and its fields, a list
-// value as one field per item.
-export function intentForm(intent: string, fields: IntentFields = {}): FormData {
-  const form = new FormData();
-  form.set("intent", intent);
-  for (const [k, v] of Object.entries(fields)) {
-    if (k === "intent") continue;
-    for (const one of typeof v === "string" ? [v] : v) form.append(k, one);
-  }
-  return form;
-}
-
-// A result's outcomes as the bulk bar lists them, each named as the person knows it. A row that is
-// gone (deleted) keeps the name it had when the form was posted.
-export function outcomesOf(result: Pick<IntentResult, "outcomes">, names: ReadonlyMap<string, string>): BulkOutcome[] {
-  return (result.outcomes ?? []).map((o) => ({
-    id: o.id,
-    label: names.get(o.id) ?? o.id,
-    ok: o.ok,
-    message: o.message,
-    usedBy: o.usedBy?.map((u) => (u.detail ? `${u.title} (${u.detail})` : u.title)),
-  }));
-}
+// The script path's helpers live with the shared types; still exported from here.
+export { intentForm, outcomesOf } from "../content/content.ts";

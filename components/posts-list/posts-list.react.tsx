@@ -1,22 +1,17 @@
-import { useEffect, useId, useMemo, useRef, useState, type ComponentType, type FormEvent, type FormHTMLAttributes, type KeyboardEvent } from "react";
-import { BulkBar, type BulkOutcome } from "../bulk-bar/bulk-bar.react.tsx";
-import { ConfirmDialog, ConfirmPage } from "../confirm-dialog/confirm-dialog.react.tsx";
-import type { ConfirmRequest, ContentLabels, IntentResult, PostRow, PostsData, SubmitIntent } from "../content/content.ts";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import type { ContentLabels, IntentResult, PostRow, PostsData, SubmitIntent } from "../content/content.ts";
+import { ContentBulkBar, PlainForm, useIntents, type FormComponent } from "../content/content.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { FormMenu } from "../menu/menu.react.tsx";
-import { useOptionalMessage } from "../message/message.react.tsx";
-import { GLYPHS, isUndoKey } from "../message/message.ts";
 import { Pill, Status } from "../status/status.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
 import { Time } from "../time/time.react.tsx";
-import { SORTS, STATUS_TABS, contentStatus, countLine, emptyWords, intentForm, nounsOf, outcomesOf, postActions, postsHref, rowActions, withFilter } from "./posts-list.ts";
+import { SORTS, STATUS_TABS, contentStatus, countLine, emptyWords, nounsOf, postActions, postsHref, rowActions, withFilter } from "./posts-list.ts";
 
 export { contentStatus };
 export type { ContentLabels, IntentResult, PostRow, PostsData, SubmitIntent };
 
-// The host router's form (React Router's <Form>), so a filter or a post stays in the app. Given
-// the props a plain <form> takes.
-export type FormComponent = ComponentType<FormHTMLAttributes<HTMLFormElement> & { method?: "get" | "post" }>;
+export type { FormComponent };
 
 export interface PostsListProps {
   // The loader's view data: one page of one site.
@@ -36,8 +31,6 @@ export interface PostsListProps {
   now?: number;
 }
 
-const PlainForm: FormComponent = (props) => <form {...props} />;
-
 function HeadCheck({ checked, mixed, label, onChange }: { checked: boolean; mixed: boolean; label: string; onChange: (on: boolean) => void }) {
   const ref = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -51,40 +44,6 @@ function HeadCheck({ checked, mixed, label, onChange }: { checked: boolean; mixe
   );
 }
 
-// The result of the last action, in the page: the sentence, and Undo as a form that posts the
-// inverse, so it works with no script. With script the list's submit handler catches that post.
-function ResultBox({ result, action, Form, keyHint }: { result: IntentResult | null; action: string; Form: FormComponent; keyHint: boolean }) {
-  const kind = result ? (result.ok ? "ok" : "failure") : null;
-  return (
-    <div className="cap-message cap-posts-result" role="status" aria-label="Results and failures" aria-atomic="false">
-      {result && kind ? (
-        <div className="cap-message-item" data-cap-part="item" data-kind={kind} data-lasting={result.ok ? undefined : ""}>
-          <svg className="cap-message-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false" dangerouslySetInnerHTML={{ __html: GLYPHS[kind] }} />
-          <p className="cap-message-text" data-cap-part="text">
-            <span data-cap-part="said" role={result.ok ? undefined : "alert"}>
-              {result.message}
-            </span>
-          </p>
-          {result.undo ? (
-            <Form method="post" action={action} className="cap-posts-undo">
-              {Object.entries(result.undo.fields).flatMap(([k, v]) => (k === "intent" ? [] : (typeof v === "string" ? [v] : v).map((one, i) => <input key={`${k}-${i}`} type="hidden" name={k} value={one} />)))}
-              <button type="submit" className="cap-link-btn cap-message-undo" data-cap-part="undo" name="intent" value={result.undo.intent}>
-                <span>Undo</span>
-                {keyHint ? (
-                  <>
-                    {" "}
-                    <kbd aria-hidden="true">z</kbd>
-                  </>
-                ) : null}
-              </button>
-            </Form>
-          ) : null}
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
 // One page of one site's posts: status tabs with counts, search and filters, the table with its
 // row menus, the bulk bar with each item's outcome, Undo, and the confirmation for what cannot be
 // undone. Every action is a form post, so it all works with no script; `submit` adds the in-place
@@ -94,7 +53,6 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const formId = `${uid}-bulk`;
   const { noun, plural } = nounsOf(labels);
   const title = plural.charAt(0).toUpperCase() + plural.slice(1);
-  const message = useOptionalMessage();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const clock = now ?? Date.now();
@@ -109,101 +67,12 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const [selected, setSelected] = useState<string[]>([]);
   // A new page or filter keeps only what is still in view.
   useEffect(() => setSelected((s) => s.filter((id) => names.has(id))), [names]);
-  const [outcomes, setOutcomes] = useState<BulkOutcome[]>(() => (result ? outcomesOf(result, names) : []));
-  // The last result the script path got. It replaces `result` (which came with the page) until
-  // the page brings a new one.
-  const [settled, setSettled] = useState<IntentResult | null>(null);
-  useEffect(() => {
-    setSettled(null);
-    setOutcomes(result ? outcomesOf(result, names) : []);
-    // Only a new result from the page resets these, not a new page of rows.
-  }, [result]);
-  const [asking, setAsking] = useState<ConfirmRequest | null>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-  // What the list's own result box says: the page's result, or with no message region on the
-  // page, the script path's too.
-  const box = settled ? (message ? null : settled) : result;
-
-  const announce = (r: IntentResult) => {
-    setSettled(r);
-    if (!message) return;
-    const inverse = r.undo;
-    // A result with nothing to undo that failed is a failure; one that did part of its work
-    // still offers Undo for that part, and the bar lists what was refused.
-    if (!r.ok && !inverse) return message.fail(r.message);
-    message.say(r.message, {
-      undo:
-        inverse && submit
-          ? async () => {
-              const u = await submit(intentForm(inverse.intent, inverse.fields));
-              if (!u.ok) throw new Error(u.message);
-              // The Undo's own result replaces the message it came from.
-              message.say(u.message);
-            }
-          : undefined,
-    });
-  };
-
-  const handle = (r: IntentResult, labelsAtPost: ReadonlyMap<string, string>) => {
-    if (r.confirm) return setAsking(r.confirm);
-    const list = outcomesOf(r, labelsAtPost);
-    setOutcomes(list.length > 1 || list.some((o) => !o.ok) ? list : []);
-    if (r.ok || list.some((o) => o.ok)) setSelected([]);
-    announce(r);
-  };
-
-  const run = async (form: FormData) => {
-    if (!submit) return;
-    const at = new Map(names);
-    let r: IntentResult;
-    try {
-      r = await submit(form);
-    } catch (err) {
-      const why = err instanceof Error && err.message ? err.message : "the site did not answer";
-      const failed: IntentResult = { ok: false, message: `Not done: ${why}. Nothing was changed.` };
-      return announce(failed);
-    }
-    handle(r, at);
-  };
-
-  // With script, every post from inside the list goes through `submit` instead of a page load:
-  // the bulk bar, a row menu, Undo, a host action. A GET (the filters) navigates as before.
-  const onSubmit = (e: FormEvent<HTMLElement>) => {
-    if (!submit || !(e.target instanceof HTMLFormElement) || e.target.method.toLowerCase() !== "post") return;
-    e.preventDefault();
-    const form = e.target;
-    const submitter = (e.nativeEvent as SubmitEvent).submitter;
-    const data = new FormData(form, submitter instanceof HTMLButtonElement ? submitter : null);
-    form.closest("details")?.removeAttribute("open");
-    void run(data);
-  };
-
-  // z runs Undo when the list's script path says its own results (the message region does it
-  // otherwise).
-  const undoForm = !!submit && !message && mounted && !!box?.undo;
-  useEffect(() => {
-    if (!undoForm) return;
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.defaultPrevented || !isUndoKey(e)) return;
-      const button = sectionRef.current?.querySelector<HTMLButtonElement>(".cap-posts-undo [data-cap-part='undo']");
-      if (!button) return;
-      e.preventDefault();
-      button.form?.requestSubmit(button);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [undoForm]);
-
-  const base = action;
-  const href = (q: typeof query) => postsHref(base, q);
-
-  // The action asked first, so the page is its confirmation: with no script this is how a
-  // delete is confirmed. With script the same form posts through `submit`.
-  if (!settled && result?.confirm) {
-    const c = result.confirm;
+  const href = (q: typeof query) => postsHref(action, q);
+  const intents = useIntents({ action, Form, submit, result, names, cancelHref: href(query), onDone: () => setSelected([]) });
+  if (intents.confirmPage) {
     return (
       <section className="cap-posts" data-cap="posts-list" aria-label={title}>
-        <ConfirmPage action={action} hidden={{ intent: c.intent, ...c.fields }} title={c.title} lead={c.lead} body={c.items} action_label={c.action} cancelHref={href(query)} typeToConfirm={c.typeToConfirm} headingLevel="h2" />
+        {intents.confirmPage}
       </section>
     );
   }
@@ -223,7 +92,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const extraColumns = data.extra?.columns ?? [];
 
   return (
-    <section className="cap-posts" data-cap="posts-list" aria-label={title} ref={sectionRef} onSubmit={onSubmit}>
+    <section className="cap-posts" data-cap="posts-list" aria-label={title} ref={(el) => void (intents.rootRef.current = el)} onSubmit={intents.onSubmit}>
       <TabsNav aria-label={`${title} by status`} className="cap-posts-tabs">
         {STATUS_TABS.map((t) => (
           <TabLink key={t.label} href={href(withFilter(query, { status: t.status }))} current={query.status === t.status} count={count(t.status)}>
@@ -232,7 +101,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         ))}
       </TabsNav>
 
-      <Form method="get" action={base.split("?")[0]} className="cap-posts-filters" role="search" aria-label={`Find ${plural}`}>
+      <Form method="get" action={action.split("?")[0]} className="cap-posts-filters" role="search" aria-label={`Find ${plural}`}>
         {query.status ? <input type="hidden" name="status" value={query.status} /> : null}
         <div className="cap-field cap-posts-search">
           <label className="cap-field-label" htmlFor={`${uid}-q`}>
@@ -321,32 +190,10 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         </ul>
       ) : null}
 
-      {!message || box ? <ResultBox result={box} action={action} Form={Form} keyHint={undoForm} /> : null}
+      {intents.resultBox}
 
       {selectable ? (
-        <>
-          <Form id={formId} method="post" action={action} className="cap-posts-bulk-form" />
-          <BulkBar
-            form={formId}
-            position="top"
-            items={selectedItems}
-            total={rows.length}
-            onSelectAll={mounted ? () => setAll(true) : undefined}
-            onClear={() => setSelected([])}
-            label={`Bulk actions on ${plural}`}
-            prompt={`Tick the ${plural} to act on`}
-            actions={bulk.map((a) => ({ id: a.intent, label: a.label, destructive: a.destructive, submit: true }))}
-            outcomes={outcomes}
-            onDismissOutcomes={() => setOutcomes([])}
-          >
-            {offers.tags && can.edit ? (
-              <span className="cap-bulk-field">
-                <label htmlFor={`${uid}-tagname`}>Tag</label>
-                <input className="cap-input" id={`${uid}-tagname`} name="tag" form={formId} autoComplete="off" />
-              </span>
-            ) : null}
-          </BulkBar>
-        </>
+        <ContentBulkBar formId={formId} action={action} Form={Form} formClass="cap-posts-bulk-form" items={selectedItems} total={rows.length} onSelectAll={mounted ? () => setAll(true) : undefined} onClear={() => setSelected([])} plural={plural} actions={bulk} tag={offers.tags && can.edit} intents={intents} />
       ) : null}
 
       {empty ? (
@@ -475,26 +322,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         </nav>
       ) : null}
 
-      {asking ? (
-        <ConfirmDialog
-          open
-          title={asking.title}
-          lead={asking.lead}
-          body={asking.items}
-          action={asking.action}
-          typeToConfirm={asking.typeToConfirm}
-          perform={async () => {
-            if (!submit) return;
-            const at = new Map(names);
-            const fields = asking.typeToConfirm ? { ...asking.fields, confirm: asking.typeToConfirm } : asking.fields;
-            const r = await submit(intentForm(asking.intent, fields));
-            // Nothing done at all stays in the dialog with the reason and Try again.
-            if (!r.ok && !(r.outcomes ?? []).some((o) => o.ok)) throw new Error(r.message);
-            handle({ ...r, confirm: undefined }, at);
-          }}
-          onClose={() => setAsking(null)}
-        />
-      ) : null}
+      {intents.confirmDialog}
     </section>
   );
 }

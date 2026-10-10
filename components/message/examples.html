@@ -112,14 +112,14 @@
   <main>
     <div class="specimen-page">
       <h1>Mentions</h1>
-      <p>Bin a mention, then press z or Undo. Copy the link to see a message that clears itself.</p>
+      <p>Move a mention to Trash, then press z or Undo. Copy the link to see a message that clears itself.</p>
     </div>
     <div class="message-sample">
       <div class="message-sample-row" id="sample-row" data-undos="0">
         <b>fieldnotes.example</b>
         <span id="sample-state">Waiting</span>
-        <button type="button" class="cap-btn" id="sample-bin">Bin</button>
-        <button type="button" class="cap-btn" id="sample-bin-warned">Bin, audit row missing</button>
+        <button type="button" class="cap-btn" id="sample-bin">Move to Trash</button>
+        <button type="button" class="cap-btn" id="sample-bin-warned">Move to Trash, audit row missing</button>
         <button type="button" class="cap-btn" id="sample-copy">Copy link</button>
         <button type="button" class="cap-btn" id="sample-refresh">Refresh, fails</button>
       </div>
@@ -139,7 +139,7 @@
   enhance();
 
   const AUDIT = "the audit row naming access:dustin@example.com was not written: D1 is unavailable";
-  const binned = "Moved the mention from fieldnotes.example to the bin.";
+  const binned = "Moved the mention from fieldnotes.example to Trash.";
   const only = new URLSearchParams(location.search).get("only");
   if (only === "plain") say("Published to TXASM newsletter.");
   if (only === "undo") say(binned, { undo: () => {} });
@@ -171,7 +171,7 @@
   const refresh = document.querySelector("#sample-refresh");
   function binIt(extra) {
     if (bin.getAttribute("aria-disabled") === "true") return;
-    state.textContent = "In the bin";
+    state.textContent = "In Trash";
     bin.setAttribute("aria-disabled", "true");
     say(binned, {
       undo: () => {

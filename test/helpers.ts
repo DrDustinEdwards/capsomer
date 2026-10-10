@@ -133,3 +133,27 @@ export function focused(page: Page): Promise<string> {
     return `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ""} "${name}"`;
   });
 }
+
+// Catches the next submit of a form under `root` (a selector), stops it, and resolves with what the
+// browser would have posted: the method, the encoding and every field, a file as "file:<name>". For
+// a spec that checks a component's forms work with no script.
+export function nextPost(page: Page, root: string): Promise<{ method: string; enctype: string; fields: Record<string, string[]> }> {
+  return page.evaluate(
+    (sel) =>
+      new Promise<{ method: string; enctype: string; fields: Record<string, string[]> }>((done) => {
+        document.querySelector(sel)!.addEventListener(
+          "submit",
+          (e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const data = new FormData(form, (e as SubmitEvent).submitter);
+            const fields: Record<string, string[]> = {};
+            for (const k of new Set(data.keys())) fields[k] = data.getAll(k).map((v) => (typeof v === "string" ? v : `file:${v.name}`));
+            done({ method: form.method, enctype: form.enctype, fields });
+          },
+          { capture: true, once: true },
+        );
+      }),
+    root,
+  );
+}

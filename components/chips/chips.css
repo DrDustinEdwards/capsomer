@@ -37,6 +37,7 @@
     font-size: var(--fs-detail);
     font-weight: 500;
     white-space: nowrap;
+    text-decoration: none;
     cursor: pointer;
 
     & > svg {
@@ -78,8 +79,9 @@
       cursor: not-allowed;
     }
 
-    /* Pressed: a tick as well as the accent edge, the tint and the darker word. */
-    &[aria-pressed="true"] {
+    /* Pressed: a tick as well as the accent edge, the tint and the darker word. A link chip (a
+       filter kept in the address) that is the current one wears the same. */
+    &:is([aria-pressed="true"], a[aria-current]:not([aria-current="false"])) {
       border-color: var(--accent);
       background: var(--accent-soft);
       color: var(--text);
@@ -101,6 +103,13 @@
     }
   }
 
+  /* Link chips in a list (a filter kept in the address): the list's own marks and indent go. */
+  ul.cap-chips {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
   /* How many results the filter leaves: "3 of 14 jobs". */
   .cap-chips-count {
     color: var(--muted);
@@ -118,7 +127,7 @@
   }
 
   @media (forced-colors: active) {
-    .cap-chip[aria-pressed="true"] {
+    .cap-chip:is([aria-pressed="true"], a[aria-current]:not([aria-current="false"])) {
       forced-color-adjust: none;
       border-color: Highlight;
       background: Highlight;

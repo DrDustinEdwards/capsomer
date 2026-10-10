@@ -2,7 +2,8 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The posts list: one page of one site's posts. It is assembled from the shared parts (tabs,
-   field, select, table, status, menu, bulk bar, message, empty, confirm dialog), whose
+   field, select, table, status, menu, bulk bar, message, empty, confirm dialog, and the content
+   components' shared result box in content.css), whose
    stylesheets it needs beside this one. This file only lays them out: the filter bar, the line
    with the count and the toolbar, the cells of the table, and the paging links. */
 @layer cap.components {
@@ -55,18 +56,6 @@
     color: var(--muted);
     font-size: var(--fs-detail);
     list-style: none;
-  }
-
-  /* The list's own result: at the top of the list, in the flow, not stuck to the bottom. */
-  .cap-posts-result {
-    position: static;
-
-    &:empty {
-      display: none;
-    }
-  }
-  .cap-posts-undo {
-    display: contents;
   }
 
   .cap-posts-check {

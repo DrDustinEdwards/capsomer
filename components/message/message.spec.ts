@@ -49,7 +49,7 @@ eachTheme((theme) => {
     await visitStates(page, "message", theme, "undo");
     await expect(page.getByRole("status")).toHaveAccessibleName("Results and failures");
     await expect(page.getByRole("status")).toMatchAriaSnapshot(`
-      - paragraph: Moved the mention from fieldnotes.example to the bin.
+      - paragraph: Moved the mention from fieldnotes.example to Trash.
       - button "Undo"
       - button "Dismiss"
     `);
@@ -69,7 +69,7 @@ eachTheme((theme) => {
     const bin = page.locator("#sample-bin");
     await bin.focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("status")).toContainText("Moved the mention from fieldnotes.example to the bin.");
+    await expect(page.getByRole("status")).toContainText("Moved the mention from fieldnotes.example to Trash.");
     await expect(bin, await focused(page)).toBeFocused();
   });
 
@@ -77,7 +77,7 @@ eachTheme((theme) => {
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-bin").focus();
     await page.keyboard.press("Enter");
-    await expect(page.locator("#sample-state")).toHaveText("In the bin");
+    await expect(page.locator("#sample-state")).toHaveText("In Trash");
     await page.keyboard.press("z");
     await expect(page.locator("#sample-state")).toHaveText("Waiting");
     await expect(page.getByRole("status")).toContainText("Undone. The mention from fieldnotes.example is waiting again.");
@@ -93,7 +93,7 @@ eachTheme((theme) => {
     await note.focus();
     await page.keyboard.press("z");
     await expect(note).toHaveValue("z");
-    await expect(page.locator("#sample-state")).toHaveText("In the bin");
+    await expect(page.locator("#sample-state")).toHaveText("In Trash");
     await expect(page.locator("#sample-row")).toHaveAttribute("data-undos", "0");
   });
 
@@ -102,7 +102,7 @@ eachTheme((theme) => {
     await page.locator("#sample-bin").click();
     await page.keyboard.press("Shift+Z");
     await page.keyboard.press("Alt+z");
-    await expect(page.locator("#sample-state")).toHaveText("In the bin");
+    await expect(page.locator("#sample-state")).toHaveText("In Trash");
   });
 
   test("keyboard: Enter on Undo runs it and focus moves to Dismiss", async ({ page }) => {
@@ -134,7 +134,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-bin")).toBeFocused();
     // Nothing is left to undo.
     await page.keyboard.press("z");
-    await expect(page.locator("#sample-state")).toHaveText("In the bin");
+    await expect(page.locator("#sample-state")).toHaveText("In Trash");
   });
 
   test("behaviour: a message with Undo stays until dismissed", async ({ page }) => {
@@ -218,7 +218,7 @@ eachTheme((theme) => {
   test("behaviour: an Undo that could not run keeps its message and its Undo, and says why", async ({ page }) => {
     await visitStates(page, "message", theme, "undo-failed");
     const item = page.locator(".cap-message-item");
-    await expect(item).toContainText("Moved the mention from fieldnotes.example to the bin.");
+    await expect(item).toContainText("Moved the mention from fieldnotes.example to Trash.");
     await expect(item.getByRole("alert")).toHaveText("Could not undo that. The server did not answer. Try again.");
     await expect(item.getByRole("button", { name: "Undo" })).toBeVisible();
     await expect(item).toHaveAttribute("data-lasting", "");
