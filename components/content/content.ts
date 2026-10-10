@@ -1,11 +1,13 @@
-// capsomer/content: the view data the shared content components take, and what their forms get
-// back. Types only; nothing here runs.
+// capsomer/content: the view data the shared content components take, what their forms get back,
+// and the two pure helpers every one of them uses to post an intent and read its outcomes.
 //
 // The design (docs/design/design-content-components.md, sections 2.2 to 2.4) puts the server half,
 // the "content kit", in site-api (job "site-api: the content kit and localClient", S1). That kit
 // had not shipped when these were written, so they are defined here from the design and are to be
 // reconciled with S1's own types when it does. Where a name came from the site-api contract
 // (v0.5.0, src/contract.ts) it is kept: ContentStatus, MediaUse.
+import type { BulkOutcome } from "../bulk-bar/bulk-bar.ts";
+import type { MediaRecord } from "../media/media.ts";
 
 // ---------------------------------------------------------------------------------------
 // Shared by every list.
@@ -178,4 +180,87 @@ export interface PostsData {
   newHref?: string;
   // Per-site additions, already rendered to data.
   extra?: { columns?: ExtraColumn[]; toolbar?: ExtraAction[] };
+}
+
+// ---------------------------------------------------------------------------------------
+// Media.
+
+export interface MediaQuery {
+  q?: string;
+  tag?: string;
+  // The library, or the trash (with mediaTrash).
+  view?: "library" | "trash";
+  // Tiles or rows, kept in the address.
+  layout?: "grid" | "list";
+  // A host's lens (dustinedwards.info's unattached, duplicates): extensions until site-api v0.6.
+  lens?: string;
+  cursor?: string;
+  // The file the inspector is open on: the kit reads it with where it is used.
+  inspect?: string;
+  // Picker mode: the file chosen, waiting for its alt text.
+  pick?: string;
+}
+
+// What the site supports, read from its capabilities by the kit. `upload` is the site's own limits
+// (capabilities.mediaUpload), checked before any byte is sent; null where it takes no uploads.
+export interface MediaOffers {
+  upload: { maxBytes: number; types: string[] } | null;
+  alt: boolean;
+  tags: boolean;
+  trash: boolean;
+  delete: boolean;
+}
+
+export interface MediaData {
+  site: { name: string };
+  query: MediaQuery;
+  // One page of files, as the media component's records: `used` filled where the kit read it,
+  // `usedUnknown` where it did not (a list has no usedBy; the inspected file does).
+  rows: MediaRecord[];
+  page: PageInfo;
+  counts?: { library?: number; trash?: number };
+  // The tags in use, for the chip row, with how many files carry each where the kit knows.
+  tags: Array<{ tag: string; count?: number }>;
+  offers: MediaOffers;
+  can: ContentCan;
+  // The file in the inspector (?inspect=), read with every place it is used.
+  inspected?: MediaRecord | null;
+  // Per-site additions, already rendered to data: lenses (dustinedwards.info's unattached,
+  // duplicates, no alt), and toolbar actions.
+  extra?: { lenses?: Array<{ id: string; label: string; count?: number }>; toolbar?: ExtraAction[] };
+}
+
+// What the picker gives the host: the file and the alt text the person wrote for this use ("" when
+// they said it is decorative).
+export interface PickedMedia {
+  id: string;
+  url: string;
+  alt: string;
+}
+
+// ---------------------------------------------------------------------------------------
+// The script path, pure.
+
+// The form an IntentResult's undo, or a confirm request, posts: the intent and its fields, a list
+// value as one field per item.
+export function intentForm(intent: string, fields: IntentFields = {}): FormData {
+  const form = new FormData();
+  form.set("intent", intent);
+  for (const [k, v] of Object.entries(fields)) {
+    if (k === "intent") continue;
+    for (const one of typeof v === "string" ? [v] : v) form.append(k, one);
+  }
+  return form;
+}
+
+// A result's outcomes as the bulk bar lists them, each named as the person knows it. An item that
+// is gone (deleted) keeps the name it had when the form was posted.
+export function outcomesOf(result: Pick<IntentResult, "outcomes">, names: ReadonlyMap<string, string>): BulkOutcome[] {
+  return (result.outcomes ?? []).map((o) => ({
+    id: o.id,
+    label: names.get(o.id) ?? o.id,
+    ok: o.ok,
+    message: o.message,
+    usedBy: o.usedBy?.map((u) => (u.detail ? `${u.title} (${u.detail})` : u.title)),
+  }));
 }

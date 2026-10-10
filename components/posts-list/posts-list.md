@@ -82,7 +82,7 @@ React renders it; a server renders the same HTML. The parts, in order:
     <div class="cap-posts-tools"><form class="cap-posts-extra" method="post" action="/posts">...host actions...</form><a class="cap-btn" data-variant="primary" href="/editor/new">New post</a></div>
   </div>
   <ul class="cap-posts-withheld"><li>Delete is not offered: this site cannot delete posts.</li></ul>
-  <div class="cap-message cap-posts-result" role="status" aria-label="Results and failures">...the last result, Undo as form.cap-posts-undo...</div>
+  <div class="cap-message cap-content-result" role="status" aria-label="Results and failures">...the last result, Undo as form.cap-content-undo...</div>
   <form id="bulk" method="post" action="/posts" class="cap-posts-bulk-form"></form>
   <div class="cap-bulk" data-cap="bulk-bar" role="region" aria-label="Bulk actions on posts" data-position="top">
     ...the bulk bar in form mode: submit buttons with form="bulk", the tag field, and .cap-bulk-results after a post...
@@ -122,7 +122,7 @@ The intents the list posts, each with the ticked or the row's `ids`: `add-tag` a
 
 `import { contentStatus } from "capsomer/behaviour/posts-list"` (also from `capsomer/react/posts-list`): `contentStatus("scheduled", publishAt, now)` gives `{ tone: "info", word: "Scheduled", when: "in 3 days" }`, for any view that shows a post's status. The pure helpers `postActions`, `rowActions`, `postsHref`, `countLine`, `emptyWords` and `intentForm` are exported too.
 
-**Dependencies.** It needs the stylesheets of the parts it composes: tabs, field, select, table, status, menu, bulk-bar, message, empty, time, dialog and confirm-dialog, with this one.
+**Dependencies.** It needs the stylesheets of the parts it composes: tabs, field, select, table, status, menu, bulk-bar, message, empty, time, dialog, confirm-dialog and content (the shared result box), with this one.
 
 ## Exceptions in production
 

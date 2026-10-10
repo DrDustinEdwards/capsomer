@@ -1,0 +1,18 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* What the shared content components (posts list, media library, mentions list) have in common:
+   their own result box, a message region item in the flow at the top of the list (not stuck to the
+   bottom like the page's region), with Undo as a form so it posts with no script. */
+@layer cap.components {
+  .cap-content-result {
+    position: static;
+
+    &:empty {
+      display: none;
+    }
+  }
+  .cap-content-undo {
+    display: contents;
+  }
+}
