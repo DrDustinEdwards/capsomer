@@ -415,8 +415,26 @@
   }
   .cap-media-form {
     display: grid;
+    /* Each row its content's height: in a body of fixed height (the pane) an auto row could shrink
+       below it, and the preview, whose size is only its aspect ratio, then drew under the fields. */
+    grid-auto-rows: max-content;
     align-content: start;
     gap: var(--space-5);
+  }
+  /* Form mode: a group of fields is its own form with its own Save button, under the fields. */
+  .cap-media-field-form {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+
+    & > .cap-field {
+      justify-self: stretch;
+      margin: 0;
+    }
+  }
+  /* Move to the bin, Restore and Delete as forms (they post with no script): each is its button. */
+  .cap-media-act {
+    display: contents;
   }
   .cap-media-preview {
     display: grid;

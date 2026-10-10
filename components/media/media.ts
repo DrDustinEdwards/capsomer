@@ -49,6 +49,12 @@ export interface MediaRecord {
   suggestedTags?: string[];
   progress?: number;
   error?: string;
+  // The site's version of the file's metadata (site-api v0.4): a form posts it back as the
+  // version it last saw.
+  version?: string;
+  // Where it is used was not read (a list of files has no usedBy; the inspected one does): no
+  // Unattached flag, and the inspector says it was not checked.
+  usedUnknown?: boolean;
 }
 
 // What the inspector edits.
@@ -99,13 +105,13 @@ export interface Flag {
   tone: "warn" | "info" | "nodata";
   word: string;
 }
-export function flagsFor(r: Pick<MediaRecord, "kind" | "altState" | "used" | "state">): Flag[] {
+export function flagsFor(r: Pick<MediaRecord, "kind" | "altState" | "used" | "state" | "usedUnknown">): Flag[] {
   const out: Flag[] = [];
   if (r.state === "binned") out.push({ tone: "nodata", word: "In the bin" });
   if (r.state === "uploading" || r.state === "failed") return out;
   if (r.kind === "image" && r.altState === "missing") out.push({ tone: "warn", word: "No alt text" });
   if (r.kind === "image" && r.altState === "decorative") out.push({ tone: "info", word: "Decorative" });
-  if (r.state !== "binned" && r.used.length === 0) out.push({ tone: "nodata", word: "Unattached" });
+  if (r.state !== "binned" && !r.usedUnknown && r.used.length === 0) out.push({ tone: "nodata", word: "Unattached" });
   return out;
 }
 

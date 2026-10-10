@@ -52,6 +52,8 @@ test("behaviour: alt text has three states, and decorative is a choice that miss
   expect(flagsFor({ ...base, altState: "missing" }).map((f) => f.word)).toEqual(["No alt text"]);
   expect(flagsFor({ ...base, altState: "decorative" }).map((f) => f.word)).toEqual(["Decorative"]);
   expect(flagsFor({ ...base, altState: "set", used: [] }).map((f) => f.word)).toEqual(["Unattached"]);
+  // A list that did not read where a file is used does not call it unattached.
+  expect(flagsFor({ ...base, altState: "set", used: [], usedUnknown: true }).map((f) => f.word)).toEqual([]);
   expect(flagsFor({ ...base, altState: "set", state: "binned" }).map((f) => f.word)).toEqual(["In the bin"]);
   expect(flagsFor({ kind: "document", altState: "missing", used: [], state: "ready" }).map((f) => f.word)).toEqual(["Unattached"]);
 });

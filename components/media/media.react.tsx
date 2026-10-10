@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from "react";
+import { useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState, type ComponentType, type FormHTMLAttributes, type KeyboardEvent, type ReactNode, type Ref } from "react";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { Glyph } from "../status/status.react.tsx";
 import { copySnippets, copyText, createAutosave, flagsFor, bands, byteSize, describeRecord, nextTile, parseTags, suggestedAlt, type Autosave, type Direction, type MediaFields, type MediaRecord, type SaveState } from "./media.ts";
@@ -21,17 +21,25 @@ export interface MediaTileProps {
   onOpen?: (key: string) => void;
   onSelect?: (key: string, how: "toggle" | "range") => void;
   onRetry?: (key: string) => void;
+  // A binned tile's Restore. Without it the tile has no Restore button (restore it from the
+  // bulk bar or the inspector).
   onRestore?: (key: string) => void;
+  // The checkbox as a form field: named `ids`, in this form (by id), so a form post carries
+  // the ticked files with no script.
+  selectForm?: string;
+  // False for a list that only opens files (the picker): no checkbox.
+  selectable?: boolean;
 }
 
 function slug(key: string): string {
   return key.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
 }
 
-export function MediaTile({ item, active, selected, inspecting, tabStop = true, href, onOpen, onSelect, onRetry, onRestore }: MediaTileProps) {
+export function MediaTile({ item, active, selected, inspecting, tabStop = true, href, onOpen, onSelect, onRetry, onRestore, selectForm, selectable: canSelect = true }: MediaTileProps) {
   const id = `tile-${slug(item.key)}`;
   const flags = flagsFor(item);
   const selectable = item.state === "ready" || item.state === "binned";
+  const checkable = selectable && canSelect;
   const tab = tabStop ? 0 : -1;
   const kind = item.type.split("/").pop()?.toUpperCase() ?? "";
   const meta = item.state === "uploading" ? "Uploading" : item.state === "failed" ? "Not uploaded" : [kind, byteSize(item.bytes)].filter(Boolean).join(" · ");
@@ -102,15 +110,15 @@ export function MediaTile({ item, active, selected, inspecting, tabStop = true, 
             {f.word}
           </span>
         ))}
-        {item.state === "binned" ? (
+        {item.state === "binned" && onRestore ? (
           <button type="button" className="cap-btn" data-size="xs" data-cap-part="restore" tabIndex={tab} onClick={() => onRestore?.(item.key)}>
             Restore<span className="cap-sr-only"> {item.name}</span>
           </button>
         ) : null}
       </span>
-      {selectable ? (
+      {checkable ? (
         <label className="cap-media-check">
-          <input type="checkbox" value={item.key} data-cap-select="" aria-label={`Select ${item.name}`} checked={!!selected} tabIndex={tab} onChange={() => onSelect?.(item.key, "toggle")} />
+          <input type="checkbox" name={selectForm ? "ids" : undefined} form={selectForm} value={item.key} data-cap-select="" aria-label={`Select ${item.name}`} checked={!!selected} tabIndex={tab} onChange={() => onSelect?.(item.key, "toggle")} />
           <span className="cap-media-check-box" aria-hidden="true">
             <svg viewBox="0 0 16 16">
               <path fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" d="M3.5 8.5l3 3 6-7" />
@@ -185,9 +193,15 @@ export interface MediaGridProps {
   onRestore?: (key: string) => void;
   size?: "s" | "m" | "l";
   label?: string;
+  // Where a tile's link goes with no script (its address); `?key=` by default.
+  hrefFor?: (key: string) => string;
+  // The tiles' checkboxes post as `ids` in this form (by id).
+  selectForm?: string;
+  // False: no checkboxes, Space and x do nothing (the picker opens a file and nothing else).
+  selectable?: boolean;
 }
 
-export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, onSelectedChange, onOpen, inspecting, onRetry, onRestore, label = "Files" }: MediaGridProps) {
+export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, onSelectedChange, onOpen, inspecting, onRetry, onRestore, label = "Files", hrefFor, selectForm, selectable = true }: MediaGridProps) {
   const root = useRef<HTMLDivElement>(null);
   const all = groups ? groups.flatMap((g) => g.items) : (items ?? []);
   const anchor = useRef<string>(activeKey);
@@ -234,6 +248,8 @@ export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, 
       });
       const next = nextTile(bands(boxes), here, dir);
       if (next) focusKey(next);
+    } else if (!selectable) {
+      return;
     } else if (e.key === " " && !(t instanceof HTMLInputElement)) {
       e.preventDefault();
       select(here, "toggle");
@@ -259,6 +275,9 @@ export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, 
         onSelect={select}
         onRetry={onRetry}
         onRestore={onRestore}
+        href={hrefFor?.(item.key)}
+        selectForm={selectForm}
+        selectable={selectable}
       />
     ));
 
@@ -340,6 +359,33 @@ export interface MediaInspectorProps {
   id?: string;
   // focus() puts focus in the first field: call it when the person asked to open the inspector (Enter on a tile).
   ref?: Ref<{ focus: () => void }>;
+  // Which fields it shows. All by default; a site that keeps no title or caption leaves them out.
+  show?: { alt?: boolean; title?: boolean; caption?: boolean; tags?: boolean };
+  // "auto" (the default) saves by itself through onSave. "form" is one form per field with its
+  // own Save button, posting to `action`, so it works with no script.
+  saving?: "auto" | "form";
+  // Where its forms post: the fields in form mode, and Move to the bin, Restore and Delete in
+  // either mode (each a form with `intent`, `ids` and `version`). Without it those are buttons.
+  action?: string;
+  // The host router's form component, for those forms.
+  Form?: ComponentType<FormHTMLAttributes<HTMLFormElement> & { method?: "get" | "post" }>;
+  // Close as a link to this address (the list without ?inspect=), so it works with no script.
+  closeHref?: string;
+  // What the footer offers. Bin and Restore by default; Delete only when given.
+  can?: { trash?: boolean; delete?: boolean };
+}
+
+const PlainForm: NonNullable<MediaInspectorProps["Form"]> = (props) => <form {...props} />;
+
+// The hidden fields every inspector form carries: what it is about and the version last seen.
+function Ident({ item, intent }: { item: MediaRecord; intent: string }) {
+  return (
+    <>
+      <input type="hidden" name="intent" value={intent} />
+      <input type="hidden" name="ids" value={item.key} />
+      {item.version ? <input type="hidden" name="version" value={item.version} /> : null}
+    </>
+  );
 }
 
 const SAVE_TEXT: Record<SaveState, string> = { idle: "Changes save by themselves.", dirty: "Unsaved changes", saving: "Saving…", saved: "Saved", failed: "Could not save" };
@@ -390,7 +436,9 @@ export function MediaInspector(props: MediaInspectorProps) {
   );
 }
 
-function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattached, onStep, base, titleId, firstRef }: MediaInspectorProps & { item: MediaRecord; base: string; titleId: string; firstRef: { current: HTMLElement | null } }) {
+function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattached, onStep, base, titleId, firstRef, show = {}, saving = "auto", action, Form: F = PlainForm, closeHref, can = {} }: MediaInspectorProps & { item: MediaRecord; base: string; titleId: string; firstRef: { current: HTMLElement | null } }) {
+  const formMode = saving === "form" && !!action;
+  const shows = { alt: show.alt ?? true, title: show.title ?? true, caption: show.caption ?? true, tags: show.tags ?? true };
   const draft = drafts.get(item.key);
   const initial: MediaFields = draft ?? { alt: item.alt, decorative: item.altState === "decorative", title: item.title, caption: item.caption, tags: item.tags };
   const [fields, setFields] = useState<MediaFields>(initial);
@@ -433,6 +481,8 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
     const next = { ...latest.current, ...patch };
     latest.current = next;
     setFields(next);
+    // In form mode each form's own Save button sends it.
+    if (formMode) return;
     saver.current?.schedule();
     if (now) void saver.current?.flush();
   };
@@ -472,6 +522,8 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
     }
   };
   const binned = item.state === "binned";
+  // One autosaving form, or (form mode) a plain block holding one form per group of fields.
+  const BodyTag = formMode ? "div" : "form";
 
   return (
     <>
@@ -481,27 +533,31 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
         </h2>
         <p className="cap-dialog-description" data-cap-part="subtitle">{sub}</p>
       </div>
-      <form
+      <BodyTag
         className="cap-dialog-body cap-media-form"
-        method="post"
         data-cap-part="form"
-        aria-busy={state === "saving" ? true : undefined}
-        onKeyDown={onKeyDown}
-        onSubmit={(e) => {
-          e.preventDefault();
-          void saver.current?.flush();
-        }}
-        onBlur={(e) => {
-          const t = e.target as HTMLElement;
-          if (/^(INPUT|TEXTAREA)$/.test(t.tagName) && t.dataset.capPart !== "tag-input") void saver.current?.flush();
-        }}
+        {...(formMode
+          ? { onKeyDown }
+          : {
+              method: "post",
+              "aria-busy": state === "saving" ? true : undefined,
+              onKeyDown,
+              onSubmit: (e: { preventDefault: () => void }) => {
+                e.preventDefault();
+                void saver.current?.flush();
+              },
+              onBlur: (e: { target: EventTarget }) => {
+                const t = e.target as HTMLElement;
+                if (/^(INPUT|TEXTAREA)$/.test(t.tagName) && t.dataset.capPart !== "tag-input") void saver.current?.flush();
+              },
+            })}
       >
         <input type="hidden" name="key" value={item.key} data-cap-part="key" />
         <div className="cap-media-preview">
           {img && item.thumb ? <img data-cap-part="preview" src={item.thumb} alt="" width={640} height={427} /> : <span className="cap-media-doc" aria-hidden="true">{(item.name.split(".").pop() ?? "file").slice(0, 5).toUpperCase()}</span>}
         </div>
-        {img ? (
-          <>
+        {img && shows.alt ? (
+          <Wrap on={formMode} F={F} action={action} label="Alt text" intent="save-alt" item={item} save="Save alt text">
             <div className="cap-field" data-cap-part="alt-field">
               <label className="cap-field-label" htmlFor={`${base}-alt`}>
                 Alt text
@@ -517,7 +573,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
                 rows={2}
                 placeholder="Describe what the picture shows"
                 aria-describedby={`${base}-alt-help`}
-                disabled={fields.decorative}
+                disabled={fields.decorative && !formMode}
                 value={fields.decorative ? "" : fields.alt}
                 onChange={(e) => edit({ alt: e.target.value })}
               />
@@ -533,22 +589,44 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
                 It adds nothing a reader needs, so a screen reader skips it. This is a choice, not a missing description.
               </p>
             </div>
-          </>
-        ) : (
+          </Wrap>
+        ) : !img ? (
           <p className="cap-field-help" data-cap-part="alt-document">A document takes no alt text. What a reader hears is the link text, and that lives in the post.</p>
-        )}
-        <div className="cap-field">
-          <label className="cap-field-label" htmlFor={`${base}-title-field`}>
-            Title
-          </label>
-          <input className="cap-input" id={`${base}-title-field`} data-cap-part="title-field" name="title" type="text" autoComplete="off" value={fields.title} onChange={(e) => edit({ title: e.target.value })} />
-        </div>
-        <div className="cap-field">
-          <label className="cap-field-label" htmlFor={`${base}-caption`}>
-            Caption
-          </label>
-          <textarea className="cap-input" id={`${base}-caption`} data-cap-part="caption" name="caption" rows={2} value={fields.caption} onChange={(e) => edit({ caption: e.target.value })} />
-        </div>
+        ) : null}
+        {shows.title || shows.caption ? (
+          <Wrap on={formMode} F={F} action={action} label="Title and caption" intent="save-details" item={item} save="Save title and caption">
+            {shows.title ? (
+              <div className="cap-field">
+                <label className="cap-field-label" htmlFor={`${base}-title-field`}>
+                  Title
+                </label>
+                <input className="cap-input" id={`${base}-title-field`} data-cap-part="title-field" name="title" type="text" autoComplete="off" value={fields.title} onChange={(e) => edit({ title: e.target.value })} />
+              </div>
+            ) : null}
+            {shows.caption ? (
+              <div className="cap-field">
+                <label className="cap-field-label" htmlFor={`${base}-caption`}>
+                  Caption
+                </label>
+                <textarea className="cap-input" id={`${base}-caption`} data-cap-part="caption" name="caption" rows={2} value={fields.caption} onChange={(e) => edit({ caption: e.target.value })} />
+              </div>
+            ) : null}
+          </Wrap>
+        ) : null}
+        {shows.tags && formMode ? (
+          <Wrap on F={F} action={action} label="Tags" intent="save-tags" item={item} save="Save tags">
+            <div className="cap-field">
+              <label className="cap-field-label" htmlFor={`${base}-tags-text`}>
+                Tags
+              </label>
+              <input className="cap-input" id={`${base}-tags-text`} name="tags" type="text" autoComplete="off" aria-describedby={`${base}-tags-help`} value={fields.tags.join(", ")} onChange={(e) => edit({ tags: parseTags(e.target.value) })} />
+              <p className="cap-field-help" id={`${base}-tags-help`}>
+                Separate tags with commas.
+              </p>
+            </div>
+          </Wrap>
+        ) : null}
+        {shows.tags && !formMode ? (
         <div className="cap-media-section" role="group" aria-labelledby={`${base}-tags-l`}>
           <span className="cap-field-label" id={`${base}-tags-l`}>
             Tags
@@ -595,6 +673,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
               ))}
           </ul>
         </div>
+        ) : null}
         <div className="cap-media-section" role="group" aria-labelledby={`${base}-addr-l`}>
           <label className="cap-field-label" id={`${base}-addr-l`} htmlFor={`${base}-addr`}>
             Address
@@ -626,7 +705,9 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
         <section className="cap-media-section" aria-labelledby={`${base}-used-l`}>
           <h3 id={`${base}-used-l`}>Used in</h3>
           <div data-cap-part="used">
-            {item.used.length > 0 ? (
+            {item.usedUnknown ? (
+              <p className="cap-media-note">Where it is used was not checked for this list. Open the file to see.</p>
+            ) : item.used.length > 0 ? (
               <ul className="cap-media-used">
                 {item.used.map((u) => (
                   <li key={u.href}>
@@ -650,8 +731,9 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
             )}
           </div>
         </section>
-      </form>
+      </BodyTag>
       <div className="cap-dialog-footer">
+        {formMode ? null : (
         <div className="cap-media-save" data-cap-part="save" data-state={state}>
           <p role="status" data-cap-part="save-status">
             {state !== "failed" ? (
@@ -673,7 +755,34 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
             Retry
           </button>
         </div>
-        {binned ? (
+        )}
+        {action ? (
+          <>
+            {binned ? (
+              <F method="post" action={action} className="cap-media-act">
+                <Ident item={item} intent="restore" />
+                <button type="submit" className="cap-btn" data-cap-part="restore">
+                  Restore
+                </button>
+              </F>
+            ) : can.trash !== false ? (
+              <F method="post" action={action} className="cap-media-act">
+                <Ident item={item} intent="trash" />
+                <button type="submit" className="cap-btn" data-cap-part="bin">
+                  Move to the bin
+                </button>
+              </F>
+            ) : null}
+            {can.delete ? (
+              <F method="post" action={action} className="cap-media-act">
+                <Ident item={item} intent="delete" />
+                <button type="submit" className="cap-btn" data-variant="danger" data-cap-part="delete">
+                  Delete for good
+                </button>
+              </F>
+            ) : null}
+          </>
+        ) : binned ? (
           <button type="button" className="cap-btn" data-cap-part="restore" onClick={() => onRestore?.(item.key)}>
             Restore
           </button>
@@ -683,11 +792,41 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
           </button>
         )}
       </div>
-      <button type="button" className="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close" onClick={onClose}>
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
-          <path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      </button>
+      {closeHref ? (
+        <a className="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close" href={closeHref} onClick={(e) => {
+            e.preventDefault();
+            onClose();
+          }}>
+          <CloseGlyph />
+        </a>
+      ) : (
+        <button type="button" className="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close" onClick={onClose}>
+          <CloseGlyph />
+        </button>
+      )}
     </>
+  );
+}
+
+function CloseGlyph() {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+      <path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// In form mode, a group of fields is its own form with its own Save button, posting `intent`, the
+// file's id and its version; otherwise the fields sit in the inspector's one autosaving form.
+function Wrap({ on, F, action, label, intent, item, save, children }: { on: boolean; F: NonNullable<MediaInspectorProps["Form"]>; action?: string; label: string; intent: string; item: MediaRecord; save: string; children: ReactNode }) {
+  if (!on || !action) return <>{children}</>;
+  return (
+    <F method="post" action={action} className="cap-media-field-form" aria-label={label}>
+      <Ident item={item} intent={intent} />
+      {children}
+      <button type="submit" className="cap-btn" data-size="sm">
+        {save}
+      </button>
+    </F>
   );
 }
