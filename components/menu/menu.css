@@ -161,6 +161,7 @@
       background: transparent;
       font: inherit;
       text-align: start;
+      text-decoration: none;
       cursor: pointer;
 
       /* A button's own text colour would hide the option's tone and its disabled look. */

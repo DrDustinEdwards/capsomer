@@ -248,8 +248,12 @@ export function Menu({ label, items, disabled = false, container, defaultOpen, .
 export interface FormMenuItem {
   // The button's text.
   label: string;
-  // Posted as `intent` (or `name`) with the form: what the server is asked to do.
+  // Posted as `intent` (or `name`) with the form: what the server is asked to do. For a link
+  // item it is only the item's key.
   value: string;
+  // A link item: goes somewhere instead of posting ("Edit", "View on the site"). Same look, and
+  // never danger.
+  href?: string;
   // Destructive or one-way: moved last, after a separator, and drawn in --crit. The server
   // answers it with its own confirmation page, since this works with no script.
   danger?: boolean;
@@ -280,7 +284,11 @@ export function FormMenu({ label, action, method = "post", items, name = "intent
   useEffect(() => (ref.current ? enhance(ref.current.parentNode ?? document) : undefined), []);
   const ordinary = items.filter((i) => !i.danger);
   const danger = items.filter((i) => i.danger);
-  const button = (i: FormMenuItem) => (
+  const button = (i: FormMenuItem) => i.href && !i.danger ? (
+    <a key={i.value} className="cap-option cap-menu-item" href={i.href}>
+      <span className="cap-option-label">{i.label}</span>
+    </a>
+  ) : (
     <button key={i.value} type="submit" className="cap-option cap-menu-item" name={name} value={i.value} disabled={i.disabled} data-tone={i.danger ? "crit" : undefined}>
       <span className="cap-option-label">{i.label}</span>
       {i.reason ? <span className="cap-menu-reason">{i.reason}</span> : null}
