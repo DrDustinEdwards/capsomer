@@ -1,0 +1,288 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The members page: one app's people, their titles, when their access ends and whether
+   Cloudflare's allow list matches yet, with add, change title, renew, remove, the term
+   review and each person's history. Built from table, field, select, status, button and
+   the confirm dialog; this file holds only the layout between them. The design is capsid
+   docs/design/design-identity-roles.md, "The members page". */
+@layer cap.components {
+  .cap-people {
+    container: cap-people / inline-size;
+    display: grid;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+
+  .cap-people-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+
+    & h2 {
+      margin: 0;
+    }
+  }
+
+  .cap-people-count,
+  .cap-people-lead {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
+  /* The answer to the last post, at the top of the list. */
+  .cap-people-result {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin: 0;
+    padding: var(--pad-y) var(--pad-x);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    color: var(--text);
+
+    &[data-tone="crit"] {
+      border-color: var(--crit);
+    }
+  }
+
+  /* The table's cells. The person is a name over an email, both readable at a glance. */
+  .cap-people-who {
+    text-align: left;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  .cap-people-name {
+    display: block;
+    font-weight: 600;
+  }
+
+  .cap-people-email {
+    display: block;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  .cap-people-you {
+    margin-inline-start: var(--space-2);
+  }
+
+  .cap-people-end {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    white-space: nowrap;
+
+    &[data-soon] {
+      color: var(--text);
+      font-weight: 600;
+    }
+  }
+
+  /* A removed or expired person stays in the list, quieter, so their work keeps their name. */
+  .cap-people-table tr[data-status="removed"],
+  .cap-people-table tr[data-status="expired"] {
+    & .cap-people-name,
+    & td:not(.cap-people-actions) {
+      color: var(--muted);
+    }
+  }
+
+  .cap-people-table td.cap-people-sync {
+    white-space: normal;
+  }
+
+  .cap-people-sync-error {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--fs-detail);
+    color: var(--muted);
+    max-inline-size: 30ch;
+    white-space: normal;
+  }
+
+  .cap-people-actions {
+    white-space: nowrap;
+  }
+
+  .cap-people-acts {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-2);
+
+    & form {
+      display: contents;
+    }
+  }
+
+  /* The change-title form opens as its own row under the person, across the table. */
+  .cap-people-edit > td {
+    background: var(--sunken);
+  }
+
+  .cap-people-change {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+    white-space: normal;
+
+    & .cap-field {
+      min-inline-size: min(100%, 14rem);
+      flex: 1 1 14rem;
+    }
+  }
+
+  .cap-people-change-actions {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  /* The review and the add form are cards. */
+  .cap-people-card {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--pad-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+
+    & h3 {
+      margin: 0;
+    }
+  }
+
+  .cap-people-card[data-variant="review"] {
+    border-color: var(--warn);
+  }
+
+  .cap-people-review-list {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .cap-people-review-item {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0 0 var(--space-3);
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    min-inline-size: 0;
+
+    &:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    & legend {
+      padding: 0;
+      margin-bottom: var(--space-2);
+      font-weight: 600;
+    }
+  }
+
+  .cap-people-review-who {
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .cap-people-review-foot,
+  .cap-people-add-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+  }
+
+  .cap-people-tally {
+    margin: 0;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
+  .cap-people-add-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    align-items: end;
+    gap: var(--space-4);
+  }
+
+  /* One person's history: a dated list of what changed and what Cloudflare said. */
+  .cap-people-history {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .cap-people-history-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+
+    & h3 {
+      margin: 0;
+    }
+  }
+
+  .cap-people-history-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .cap-people-history-item {
+    display: grid;
+    grid-template-columns: minmax(9rem, 12rem) 1fr auto;
+    gap: var(--space-1) var(--space-4);
+    padding: var(--pad-y) 0;
+    border-bottom: 1px solid var(--line);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  .cap-people-history-when {
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
+  .cap-people-history-what {
+    margin: 0;
+    color: var(--text);
+  }
+
+  .cap-people-history-by,
+  .cap-people-history-reason {
+    display: block;
+    font-size: var(--fs-detail);
+    color: var(--muted);
+  }
+
+  @container cap-people (max-width: 559px) {
+    .cap-people-history-item {
+      grid-template-columns: 1fr;
+    }
+    .cap-people-acts {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-people-card,
+    .cap-people-result {
+      border-color: CanvasText;
+    }
+  }
+}

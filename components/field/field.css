@@ -309,7 +309,7 @@
         --cap-check-edge: var(--muted);
       }
       &:checked,
-      &:indeterminate {
+      &[type="checkbox"]:indeterminate {
         --cap-check-edge: var(--primary);
         background: var(--primary);
       }
@@ -344,7 +344,7 @@
         color: var(--muted);
       }
       &:disabled:checked,
-      &:disabled:indeterminate {
+      &[type="checkbox"]:disabled:indeterminate {
         background: var(--sunken);
         color: var(--muted);
       }
@@ -533,7 +533,7 @@
       color: HighlightText;
 
       &:checked,
-      &:indeterminate {
+      &[type="checkbox"]:indeterminate {
         border-color: Highlight;
         background: Highlight;
       }
