@@ -1,0 +1,11 @@
+/* Specimen only, not part of the package: a binder-wide column for each tree, and the line
+   under it where the page writes what the tree reported. */
+.tree-sample {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 26rem;
+}
+.tree-sample-out {
+  color: var(--muted);
+  font-size: var(--fs-detail);
+}
