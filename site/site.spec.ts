@@ -2,10 +2,10 @@ import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { eachTheme, expectNoAxeViolations } from "../test/helpers.ts";
 
-// The site itself: every view loads in the shell with no axe violations, the rail moves
+// The site itself: every view loads in the AdminShell with no axe violations, the menu moves
 // between views, a component's page shows its states in both themes, and the site runs
 // under the Content-Security-Policy the static Worker sends.
-const VIEWS = ["overview", "components", "colour", "type", "motion", "tests", "defaults", "changes", "settings"];
+const VIEWS = ["overview", "components", "color", "type", "motion", "tests", "defaults", "changes", "settings"];
 
 // The policy the static Worker sends, read from site/public/_headers.
 const CSP = /Content-Security-Policy:\s*(.+)/.exec(readFileSync("site/public/_headers", "utf8"))?.[1]?.trim() ?? "";
@@ -14,32 +14,54 @@ eachTheme((theme) => {
   for (const view of VIEWS) {
     test(`accessibility: the ${view} view has no axe violations`, async ({ page }) => {
       await page.goto(`./#/${view}`);
-      await expect(page.locator(".cap-shell")).toBeVisible();
+      await expect(page.locator(".cap-admin")).toBeVisible();
       await expect(page.locator("#cap-main h1").first()).toBeVisible();
-      await expectNoAxeViolations(page, ".cap-shell");
+      await expectNoAxeViolations(page, ".cap-admin");
     });
   }
 
-  test("keyboard: the rail's links move between views and mark the current one", async ({ page }) => {
+  test("keyboard: the menu's links move between views and mark the current one with the shell's dark pill", async ({ page }) => {
     await page.goto("./#/overview");
-    const link = page.locator(".cap-shell-rail").getByRole("link", { name: /^Colour and contrast/ });
+    const link = page.locator(".cap-admin-menu").getByRole("link", { name: /^Color and contrast/ });
     await link.focus();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#\/colour$/);
+    await expect(page).toHaveURL(/#\/color$/);
     await expect(link).toHaveAttribute("aria-current", "page");
-    await expect(page.locator("#cap-main h1")).toHaveText("Colour and contrast");
+    await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
+    await expect(page).toHaveTitle(/^Color and contrast · Capsomer/);
+    // The colour page's old address still opens it.
+    await page.goto("./#/colour");
+    await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
+  });
+
+  test("behaviour: the site is the reference shell: the family's app strip, the collapse control at its top, the top bar with the theme", async ({ page }) => {
+    await page.goto("./#/overview");
+    await expect(page.locator(".cap-admin-strip .cap-admin-tile")).toHaveCount(5);
+    await expect(page.locator(".cap-admin-strip li").first().locator("[data-cap-part='menu-toggle']")).toBeVisible();
+    await expect(page.locator(".cap-admin-bar").getByRole("group", { name: "Theme" })).toBeVisible();
+    await expect(page.locator(".cap-admin-bar-page")).toHaveText("Overview");
+    await page.keyboard.press("[");
+    await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
+  });
+
+  test("behaviour: the usage example shows AdminShell", async ({ page }) => {
+    await page.goto("./#/overview");
+    const code = page.locator("#install-h ~ * .site-code, .site-code").first();
+    await expect(code).toContainText('import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"');
+    await expect(code).toContainText("<AdminShell");
   });
 
   test("behaviour: the overview counts every family's contrast pairs, not just the committed palette's", async ({ page }) => {
     await page.goto("./#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Contrast pairs" });
     await expect(fig.locator("b")).toHaveText(/^\d{3}$/);
-    await expect(fig).toContainText("0 failing");
-    await expect(fig).toContainText("3 families, both themes");
+    // Two facts, two lines: how many families and themes, then whether any pair fails.
+    const lines = await fig.locator("> *").allInnerTexts();
+    expect(lines).toEqual(["Contrast pairs", expect.stringMatching(/^\d{3}$/), "Across 3 color families, in both themes", "None failing"]);
   });
 
-  test("behaviour: the colour view shows all three families, each default theme first", async ({ page }) => {
-    await page.goto("./#/colour");
+  test("behaviour: the color view shows all three families, each default theme first", async ({ page }) => {
+    await page.goto("./#/color");
     for (const [name, first] of [["Purple", "Light"], ["Fox", "Light"], ["Teal", "Dark"]] as const) {
       const fam = page.locator(".site-family").filter({ has: page.getByRole("heading", { name: new RegExp(`^${name}`) }) });
       await expect(fam).toHaveCount(1);
@@ -64,7 +86,7 @@ eachTheme((theme) => {
         w.cspViolations.push(`${e.violatedDirective}: ${e.blockedURI || "inline"} at ${e.sourceFile}:${e.lineNumber}`);
       });
     });
-    for (const view of ["overview", "colour", "type", "components/shell"]) {
+    for (const view of ["overview", "color", "type", "components/shell"]) {
       await page.goto(`./#/${view}`);
       await expect(page.locator("#cap-main h1").first()).toBeVisible();
       await page.waitForLoadState("networkidle");

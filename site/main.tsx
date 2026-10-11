@@ -1,5 +1,6 @@
-// Capsomer's own site: a dashboard of the design system, inside the same shell as the
-// Capsid Portal (decided 2026-09-30, design.md section 11), served at
+// Capsomer's own site: a dashboard of the design system, inside the same AdminShell every
+// family admin app uses (decided 2026-09-30, design.md section 11; the reference matches what
+// the apps get, 2026-10-11), served at
 // https://capsomer.dustinedwards.info by a static Cloudflare Worker (rule 16). Hash routes,
 // so every view is one file.
 import { StrictMode, createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
@@ -15,9 +16,7 @@ import "../css/base.css";
 import "../css/prose.css";
 import "../tokens/themes.css";
 import "./site.css";
-import { Shell, type ShellEntry } from "../components/shell/shell.react.tsx";
-import { ThemeSwitch } from "../components/theme-switch/theme-switch.react.tsx";
-import { applyStoredTheme } from "../components/theme-switch/theme-switch.ts";
+import { AdminShell, FIRST_PAGE, type AdminEntry } from "../components/admin-shell/admin-shell.react.tsx";
 import { BASE, CHANGELOG_MD, COMPONENTS, DEFAULTS_MD, FAMILIES, META, PALETTE, RESULTS_BUILD, SCALES, fetchResults, type ComponentDoc, type ComponentResults, type Pair, type Results } from "./data.ts";
 
 // The test results every view reads: the build's own, replaced by the last run on main
@@ -28,30 +27,33 @@ import { renderMarkdown } from "./markdown.ts";
 
 import.meta.glob("../components/*/*.css", { eager: true });
 
-type View = "overview" | "components" | "colour" | "type" | "motion" | "tests" | "defaults" | "changes" | "settings";
-const VIEWS: Array<{ id: View; label: string; icon: ReactNode }> = [
-  { id: "overview", label: "Overview", icon: <Icon d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" /> },
-  { id: "components", label: "Components", icon: <Icon d="M8 1.5 14 5v6l-6 3.5L2 11V5z" stroke /> },
-  { id: "colour", label: "Colour and contrast", icon: <Icon d="M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zm0 0v12" stroke /> },
-  { id: "type", label: "Type and space", icon: <Icon d="M3 3h10M8 3v10M5.5 13h5" stroke /> },
-  { id: "motion", label: "Motion", icon: <Icon d="M2 8h3l2-4 2 8 2-4h3" stroke /> },
-  { id: "tests", label: "Tests", icon: <Icon d="m3.5 8.5 3 3 6-7" stroke /> },
-  { id: "defaults", label: "Defaults", icon: <Icon d="M3 2.5h10v11H3zM5.5 5.5h5M5.5 8h5M5.5 10.5h3" stroke /> },
-  { id: "changes", label: "Changes", icon: <Icon d="M8 2v6l3.5 2M8 14A6 6 0 1 1 8 2a6 6 0 0 1 0 12z" stroke /> },
+type View = "overview" | "components" | "color" | "type" | "motion" | "tests" | "defaults" | "changes" | "settings";
+const VIEWS: Array<{ id: View; label: string; icon: ReactNode; group: string }> = [
+  { id: "overview", label: FIRST_PAGE, icon: <Icon d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" />, group: "Design system" },
+  { id: "components", label: "Components", icon: <Icon d="M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z" />, group: "Design system" },
+  { id: "color", label: "Color and contrast", icon: <Icon d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 3v18" />, group: "Design system" },
+  { id: "type", label: "Type and space", icon: <Icon d="M4.5 4.5h15M12 4.5v15M8.5 19.5h7" />, group: "Design system" },
+  { id: "motion", label: "Motion", icon: <Icon d="M3 12h4.5l3-6 3 12 3-6H21" />, group: "Design system" },
+  { id: "tests", label: "Tests", icon: <Icon d="m5 12.5 4.5 4.5L19 7" />, group: "Records" },
+  { id: "defaults", label: "Defaults", icon: <Icon d="M5 3.5h14v17H5zM8.5 8h7M8.5 12h7M8.5 16h4.5" />, group: "Records" },
+  { id: "changes", label: "Changes", icon: <Icon d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 7v5l3.5 2.5" />, group: "Records" },
+  { id: "settings", label: "Settings", icon: <Icon d="M4 7h3M11 7h9M4 12h9M17 12h3M4 17h5M13 17h7M9 5v4M15 10v4M11 15v4" />, group: "Records" },
 ];
 
-function Icon({ d, stroke }: { d: string; stroke?: boolean }) {
+function Icon({ d }: { d: string }) {
   return (
-    <svg className="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-      <path d={d} fill={stroke ? "none" : "currentColor"} stroke={stroke ? "currentColor" : "none"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg className="cap-admin-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d={d} />
     </svg>
   );
 }
 
 function useRoute(): { view: View; detail: string | null } {
   const read = () => {
-    const [view, detail] = location.hash.replace(/^#\/?/, "").split("/");
-    const v = VIEWS.some((x) => x.id === view) || view === "settings" ? (view as View) : "overview";
+    const [raw, detail] = location.hash.replace(/^#\/?/, "").split("/");
+    // The colour page's old address still opens it.
+    const view = raw === "colour" ? "color" : raw;
+    const v = VIEWS.some((x) => x.id === view) ? (view as View) : "overview";
     return { view: v, detail: detail ? decodeURIComponent(detail) : null };
   };
   const [route, setRoute] = useState(read);
@@ -124,17 +126,21 @@ function Overview() {
           <b className="cap-num">{res.available ? res.totals.passed + res.totals.failed : "No data"}</b>
           <span>{res.available ? <Verdict passed={res.totals.passed} failed={res.totals.failed} /> : <span className="cap-muted">No run recorded in this build</span>}</span>
         </a>
-        <a className="site-figure" href={href("colour")}>
+        <a className="site-figure" href={href("color")}>
           <span className="cap-label">Contrast pairs</span>
           <b className="cap-num">{FAMILIES ? FAMILIES.pairs.length : "No data"}</b>
-          <span>
-            {FAMILIES ? (
-              <span className="cap-status" data-tone={FAMILIES.pairs.some((p) => !p.pass) ? "crit" : "ok"}>
-                {FAMILIES.pairs.some((p) => !p.pass) ? `${FAMILIES.pairs.filter((p) => !p.pass).length} failing` : "0 failing"}
+          {FAMILIES ? (
+            <>
+              <span className="cap-muted">{`Across ${Object.keys(FAMILIES.families).length} color families, in both themes`}</span>
+              <span>
+                <span className="cap-status" data-tone={FAMILIES.pairs.some((p) => !p.pass) ? "crit" : "ok"}>
+                  {FAMILIES.pairs.some((p) => !p.pass) ? `${FAMILIES.pairs.filter((p) => !p.pass).length} failing` : "None failing"}
+                </span>
               </span>
-            ) : null}{" "}
-            <span className="cap-muted">{FAMILIES ? `${Object.keys(FAMILIES.families).length} families, both themes` : "No palette data in this build"}</span>
-          </span>
+            </>
+          ) : (
+            <span className="cap-muted">No palette data in this build</span>
+          )}
         </a>
       </div>
       {failing.length > 0 && (
@@ -153,10 +159,21 @@ function Overview() {
         <pre className="site-code">
           <code>{`"capsomer": "github:DrDustinEdwards/capsomer#v${META.version}"
 
-import "capsomer/tokens.css";   // the layer order and every token
+import "capsomer/tokens.css";        // the layer order and every token
 import "capsomer/base.css";
-import "capsomer/button.css";   // each component's CSS, as used
-import { Shell } from "capsomer/react/shell";`}</code>
+import "capsomer/admin-shell.css";   // each component's CSS, as used
+import "capsomer/theme-switch.css";
+import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell";
+
+<AdminShell
+  app="carrel"                       // the strip, its order and logos come from Capsomer
+  page={FIRST_PAGE}                  // the top bar and the tab: "Overview · Carrel"
+  nav={[{ id: "overview", label: FIRST_PAGE, href: "/", icon, current: true }]}
+  badges={{ portal: { count: 3 } }}  // other apps that need you
+  onRefresh={refresh}                // Refresh shows only where the page refreshes
+>
+  <div className="cap-admin-page">…</div>
+</AdminShell>`}</code>
         </pre>
         <p className="cap-muted">Every Capsomer rule sits in a cap.* cascade layer, so an app's own CSS wins while it moves over one screen at a time.</p>
       </Panel>
@@ -304,7 +321,7 @@ function ComponentPage({ name }: { name: string }) {
         {r ? (
           <>
             <p className="site-verdicts">
-              Keyboard <Verdict passed={r.keyboard.passed} failed={r.keyboard.failed} /> Accessibility <Verdict passed={r.accessibility.passed} failed={r.accessibility.failed} /> Behaviour{" "}
+              Keyboard <Verdict passed={r.keyboard.passed} failed={r.keyboard.failed} /> Accessibility <Verdict passed={r.accessibility.passed} failed={r.accessibility.failed} /> Behavior{" "}
               <Verdict passed={r.behaviour.passed} failed={r.behaviour.failed} />
             </p>
             <TestList rows={r.tests} />
@@ -397,16 +414,16 @@ function ThemeColumn({ scheme }: { scheme: "light" | "dark" }) {
   );
 }
 
-// The three colour families of rules 14 and 15: each one's 12 steps in both themes, and
+// The three color families of rules 14 and 15: each one's 12 steps in both themes, and
 // every pair it is checked on, its default theme first.
 function FamilyScales() {
   const fams = FAMILIES;
   if (!fams?.scales) return null;
   const names = Object.keys(fams.families);
   return (
-    <Panel title="The colour families" id="families" src="Rules 14 and 15, locked 2026-10-01">
+    <Panel title="The color families" id="families" src="Rules 14 and 15, locked 2026-10-01">
       <p className="cap-muted">
-        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first, and every pair passes (rulings.md, rule 18): the brand colour is step 9 for focus rings and large fills, accent text and links use step 11, and the primary button fills with step 10. Purple is the default; fox and teal switch on with data-family on the root or on any element (capsomer/families.css).
+        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first, and every pair passes (rulings.md, rule 18): the brand color is step 9 for focus rings and large fills, accent text and links use step 11, and the primary button fills with step 10. Purple is the default; fox and teal switch on with data-family on the root or on any element (capsomer/families.css).
       </p>
       {names.map((n) => {
         const f = fams.families[n];
@@ -486,7 +503,7 @@ function FamilyScales() {
   );
 }
 
-function ColourView() {
+function ColorView() {
   if (!PALETTE)
     return (
       <div className="site-page">
@@ -500,9 +517,9 @@ function ColourView() {
   return (
     <div className="site-page">
       <div className="site-head">
-        <h1>Colour and contrast</h1>
+        <h1>Color and contrast</h1>
         <p>
-          One seed, <span className="cap-mono">{PALETTE.seed}</span>, makes every colour in both themes. Status colours keep their own hues and are tuned for contrast. A pair the generator asserts shows Pass or Fail against WCAG 2.2 (4.5:1 for text, 3:1 for a boundary); a pair no component puts together says “not used”.
+          One seed, <span className="cap-mono">{PALETTE.seed}</span>, makes every color in both themes. Status colors keep their own hues and are tuned for contrast. A pair the generator asserts shows Pass or Fail against WCAG 2.2 (4.5:1 for text, 3:1 for a boundary); a pair no component puts together says “not used”.
         </p>
       </div>
       <FamilyScales />
@@ -647,7 +664,7 @@ function TestsView() {
     <div className="site-page">
       <div className="site-head">
         <h1>Tests</h1>
-        <p>Every component's keyboard, accessibility and behaviour tests from the last run, in both themes, failures first. Accessibility and keyboard failures block a merge; nothing about a colour or a layout does.</p>
+        <p>Every component's keyboard, accessibility and behavior tests from the last run, in both themes, failures first. Accessibility and keyboard failures block a merge; nothing about a color or a layout does.</p>
       </div>
       {!RESULTS.available ? (
         <div className="cap-empty" data-kind="nothing-yet">
@@ -681,25 +698,16 @@ function SettingsView() {
         <p>Preferences for this browser only. Nothing here is sent anywhere.</p>
       </div>
       <Panel title="Theme" id="theme">
-        <p>The Theme control in the top bar switches Light and Dark. The first visit follows your device; your first choice is remembered in this browser.</p>
+        <p>The Light and Dark switch at the right of the top bar changes the theme. The first visit follows your device; your first choice is remembered in this browser.</p>
       </Panel>
-      <Panel title="Left menu" id="rail">
-        <p>The button at the foot of the left menu collapses it to icons. This browser remembers the choice.</p>
+      <Panel title="Menu" id="rail">
+        <p>The button at the top of the left strip collapses the menu to icons, and the [ key does the same. This browser remembers the choice.</p>
       </Panel>
     </div>
   );
 }
 
 // ---- the app -------------------------------------------------------------------------------
-
-// The site's own theme control is the component's: the first visit follows the device, and
-// the first choice is remembered.
-function ThemeButton() {
-  useEffect(() => {
-    applyStoredTheme();
-  }, []);
-  return <ThemeSwitch />;
-}
 
 function App() {
   const { view, detail } = useRoute();
@@ -714,29 +722,37 @@ function App() {
     };
   }, []);
   const failed = RESULTS.totals.failed;
-  const nav: ShellEntry[] = useMemo(
+  const nav: AdminEntry[] = useMemo(
     () =>
       VIEWS.map((v) => ({
         id: v.id,
         label: v.label,
         href: href(v.id),
         icon: v.icon,
+        group: v.group,
         current: view === v.id,
         ...(v.id === "components" ? { count: COMPONENTS.length } : {}),
         ...(v.id === "tests" && failed ? { count: failed, countNote: "failing", tone: "crit" as const } : {}),
       })),
     [view, failed],
   );
-  const tabs = nav.filter((e) => ["overview", "components", "colour", "tests"].includes(e.id)).concat({ id: "more", label: "More", href: href("defaults"), current: ["type", "motion", "defaults", "changes"].includes(view) });
+  const tabs = nav.filter((e) => ["overview", "components", "color", "tests"].includes(e.id));
+  // The collapse key, as every family app binds it.
   useEffect(() => {
-    const v = view === "settings" ? "Settings" : (VIEWS.find((x) => x.id === view)?.label ?? "Overview");
-    document.title = detail ? `${COMPONENTS.find((c) => c.name === detail)?.title ?? detail}: Capsomer` : view === "overview" ? "Capsomer" : `${v}: Capsomer`;
-  }, [view, detail]);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "[" || e.ctrlKey || e.metaKey || e.altKey) return;
+      if ((e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")) return;
+      document.querySelector<HTMLButtonElement>("[data-cap-part='menu-toggle']")?.click();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+  const pageName = view === "components" && detail ? (COMPONENTS.find((c) => c.name === detail)?.title ?? detail) : (VIEWS.find((x) => x.id === view)?.label ?? FIRST_PAGE);
 
   let page: ReactNode;
   if (view === "components" && detail) page = <ComponentPage name={detail} />;
   else if (view === "components") page = <ComponentsView />;
-  else if (view === "colour") page = <ColourView />;
+  else if (view === "color") page = <ColorView />;
   else if (view === "type") page = <TypeView />;
   else if (view === "motion") page = <MotionView />;
   else if (view === "tests") page = <TestsView />;
@@ -747,42 +763,26 @@ function App() {
 
   return (
     <ResultsContext.Provider value={RESULTS}>
-    <Shell
-      brand={
-        <>
-          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-            <path fill="var(--accent)" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" />
-            <path fill="var(--surface)" d="M10 5.4 14 7.7v4.6L10 14.6 6 12.3V7.7z" />
-          </svg>
-          Capsomer <small>{META.version}</small>
-        </>
-      }
-      brandHref={href("overview")}
-      nav={nav}
-      tabs={tabs}
-      status={
-        <span className="cap-muted site-fresh" data-hide="phone">
-          {RESULTS.available ? (
-            <>
-              Tests ran <b>{new Date(RESULTS.ran ?? META.built).toLocaleDateString(undefined, { dateStyle: "medium" })}</b>
-            </>
-          ) : (
-            "No test run in this build"
-          )}
-        </span>
-      }
-      actions={
-        <>
-          <ThemeButton />
-          <a className="cap-btn" href={href("settings")} aria-current={view === "settings" ? "page" : undefined}>
-            Settings
-          </a>
-        </>
-      }
-      prefKey="cap-site-rail"
-    >
-      {page}
-    </Shell>
+      <AdminShell
+        title="Capsomer"
+        nav={nav}
+        tabs={tabs}
+        page={pageName}
+        status={
+          <span className="site-fresh">
+            {RESULTS.available ? (
+              <>
+                Tests ran <b>{new Date(RESULTS.ran ?? META.built).toLocaleDateString(undefined, { dateStyle: "medium" })}</b>
+              </>
+            ) : (
+              "No test run in this build"
+            )}
+          </span>
+        }
+        prefKey="cap-site-rail"
+      >
+        <div className="cap-admin-page">{page}</div>
+      </AdminShell>
     </ResultsContext.Provider>
   );
 }

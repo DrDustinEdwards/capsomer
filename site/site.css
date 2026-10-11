@@ -1,9 +1,8 @@
 /* The site's own layout. Components bring their own CSS; this file arranges pages. */
+/* A view inside the shell's page frame (.cap-admin-page), which brings the padding and width. */
 .site-page {
   display: grid;
   gap: var(--space-6);
-  padding: var(--space-6) var(--space-6) var(--space-9);
-  max-width: 1320px;
   min-width: 0;
 }
 .site-head {
@@ -282,9 +281,6 @@
   }
 }
 @media (max-width: 820px) {
-  .site-page {
-    padding: var(--space-5) var(--space-5) calc(var(--space-9) + 24px);
-  }
   .site-frame {
     height: 520px;
   }
