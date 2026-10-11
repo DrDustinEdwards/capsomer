@@ -11,7 +11,10 @@
 @layer cap.components {
   .cap-admin {
     --admin-strip: var(--rail-w-collapsed);
-    --admin-menu: var(--rail-w);
+    /* Open, the menu is as much wider than the shared rail as the collapsed column is wider than
+       the strip (232px), so the row inset that keeps icons in place leaves its labels room. */
+    --admin-menu-open: calc(var(--rail-w) + var(--space-6));
+    --admin-menu: var(--admin-menu-open);
     --admin-tile: 36px;
     --admin-pill: var(--accent-12);
     --admin-pill-fg: var(--ground);
@@ -289,6 +292,12 @@
         color: var(--admin-pill-fg);
         font-weight: 600;
       }
+    }
+    /* One line per row: a long name is cut, and its full text is the link's name. */
+    & .cap-admin-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
   /* The menu's title: the app's name, in one style on every app. Open, its logo is the marked

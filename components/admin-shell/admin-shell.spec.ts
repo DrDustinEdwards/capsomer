@@ -149,7 +149,7 @@ eachTheme((theme) => {
     await toggle.focus();
     await page.keyboard.press("Space");
     await expect(page.locator(".cap-admin")).not.toHaveAttribute("data-menu", "collapsed");
-    expect((await menu.boundingBox())?.width).toBe(208);
+    expect((await menu.boundingBox())?.width).toBe(232);
   });
 
   test("keyboard: a collapsed menu icon shows its name on hover and focus, and Esc hides it", async ({ page }) => {
@@ -245,7 +245,7 @@ eachTheme((theme) => {
       return [strip, menu];
     });
     expect(widths[0]).toBe(56);
-    expect(widths[1]).toBe(208);
+    expect(widths[1]).toBe(232);
     await expect(page.locator(".cap-admin-page")).toHaveAttribute("data-measure", "reading");
   });
 

@@ -85,6 +85,13 @@ eachTheme((theme) => {
     }
   });
 
+  test("behaviour: every menu row keeps its label on one line, so every row is one height", async ({ page }) => {
+    await page.goto("./#/overview");
+    const heights = await page.locator(".cap-admin-menu a").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
+    expect(heights.length).toBe(9);
+    expect(new Set(heights).size, `row heights ${heights}`).toBe(1);
+  });
+
   test("behaviour: the Tests card says its number once", async ({ page }) => {
     await page.goto("./#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Tests" });
