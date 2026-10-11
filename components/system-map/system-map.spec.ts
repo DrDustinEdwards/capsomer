@@ -2,8 +2,8 @@ import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 // The ids are the examples' own (examples.html): #map the live map, #map-chosen with Carrel
-// chosen, #map-inside entered, #map-plain in the plain view, #map-states with forced states,
-// #map-plain-html as delivered with no script.
+// chosen, #map-inside entered, #map-flow playing a job's life at step 6, #map-plain in the
+// plain view, #map-states with forced states, #map-plain-html as delivered with no script.
 const tile = (page: Page, map: string, id: string) => page.locator(`#${map} .cap-system-map-tile[data-id='${id}']`);
 const focusedId = (page: Page) => page.evaluate(() => (document.activeElement as HTMLElement | null)?.dataset?.id ?? document.activeElement?.textContent ?? "");
 
@@ -26,6 +26,9 @@ eachTheme((theme) => {
       { sel: "#map-chosen [data-id='carrel'] .cap-system-map-name", what: "a chosen capsomer's name" },
       { sel: "#map-chosen .cap-system-map-detail-text", what: "the detail line" },
       { sel: "#map-inside .cap-system-map-box-name", what: "a part inside the core" },
+      { sel: "#map-inside [data-external] .cap-system-map-box-name", what: "a part outside the core" },
+      { sel: "#map-flow [data-at] .cap-system-map-box-name", what: "the part a step moves toward" },
+      { sel: "#map-flow .cap-system-map-detail-text", what: "a flow's step" },
     ]);
   });
 
@@ -221,4 +224,114 @@ eachTheme((theme) => {
       expect(await below(), "the list below, stepped out").toBe(top);
     });
   }
+
+  test("inside: the parts outside the core sit outside its boundary, and are counted apart", async ({ page }) => {
+    const reach = await page.locator("#map-inside [data-layer='inside']").evaluate((svg) => {
+      const r = (svg.querySelector(".cap-system-map-boundary") as SVGCircleElement).r.baseVal.value;
+      return [...svg.querySelectorAll<SVGGElement>(".cap-system-map-box[data-external]")].map((g) => {
+        const b = g.querySelector("rect")!.getBBox();
+        const nx = Math.max(0, b.x, -(b.x + b.width));
+        const ny = Math.max(0, b.y, -(b.y + b.height));
+        return { name: g.textContent, outside: Math.hypot(nx, ny) - r };
+      });
+    });
+    expect(reach.map((b) => b.name)).toEqual(["AgentsSessions", "GitHubRepos, CI"]);
+    for (const b of reach) expect(b.outside, `${b.name} reaches inside the boundary`).toBeGreaterThan(0);
+    await expect(page.locator("#map-inside .cap-system-map-detail-text")).toHaveText("6 parts, 2 outside it, with the systems around it at the rim.");
+    await expect(page.locator("#map-inside [data-layer='inside']")).toHaveAttribute("aria-label", /Agents, GitHub\.$/);
+  });
+
+  test("keyboard: Play starts a flow; Next, Back, the arrows and the number keys step it; Escape stops it, then steps out", async ({ page }) => {
+    const map = page.locator("#map");
+    const text = map.locator(".cap-system-map-detail-text");
+    const steps: Array<{ id: string | null; step: number }> = [];
+    await page.exposeFunction("noteStep", (d: { id: string | null; step: number }) => steps.push(d));
+    await map.evaluate((el) => el.addEventListener("cap:system-map-flow", (e) => (window as unknown as { noteStep: (d: unknown) => void }).noteStep((e as CustomEvent).detail)));
+    await tile(page, "map", "capsid").click();
+    await tile(page, "map", "capsid").click();
+    await map.getByRole("button", { name: "Play: A job's life" }).click();
+    await expect(map).toHaveAttribute("data-flow", "job-life");
+    await expect(text).toHaveText("Step 1 of 7. Posted: a session posts a job, and the Worker stores it.");
+    await expect(map.getByRole("button", { name: "Next" })).toBeFocused();
+    await expect(map.getByRole("button", { name: "Back" })).toBeDisabled();
+    await expect(map.locator(".cap-system-map-wire[data-on]")).toHaveCount(1);
+    await expect(map.locator(".cap-system-map-wire[data-on]")).toHaveAttribute("data-to", "capsid-agents");
+    await expect(map.locator(".cap-system-map-box[data-lit]")).toHaveAttribute("data-id", "capsid-db");
+    await expect(map.locator(".cap-system-map-box[data-at]")).toHaveAttribute("data-id", "capsid-worker");
+    await page.keyboard.press("Enter");
+    await expect(text).toContainText("Step 2 of 7.");
+    await page.keyboard.press("ArrowRight");
+    await expect(text).toContainText("Step 3 of 7.");
+    await page.keyboard.press("7");
+    await expect(text).toHaveText("Step 7 of 7. Deployed: GitHub deploys the Worker.");
+    await expect(map.getByRole("button", { name: "Next" })).toBeDisabled();
+    await expect(map.getByRole("button", { name: "Back" })).toBeFocused();
+    await expect(map.locator(".cap-system-map-box[data-lit]")).toHaveCount(0);
+    await page.keyboard.press("ArrowLeft");
+    await expect(text).toContainText("Step 6 of 7.");
+    await page.keyboard.press("9");
+    await expect(text).toContainText("Step 6 of 7.");
+    // A browser's own shortcuts stay the browser's.
+    await page.keyboard.press("Alt+ArrowLeft");
+    await page.keyboard.press("Shift+ArrowRight");
+    await expect(text).toContainText("Step 6 of 7.");
+    await page.keyboard.press("Escape");
+    await expect(map).not.toHaveAttribute("data-flow");
+    await expect(map).toHaveAttribute("data-entered", "");
+    await expect(map.locator(".cap-system-map-wire[data-on], .cap-system-map-box[data-lit], .cap-system-map-box[data-at]")).toHaveCount(0);
+    await expect(map.getByRole("button", { name: "Play: A job's life" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(map).not.toHaveAttribute("data-entered", "");
+    expect(steps).toEqual([1, 2, 3, 7, 6, 0].map((step) => ({ id: step ? "job-life" : null, step })));
+  });
+
+  test("behaviour: the token travels the step's line and stops clear of every name; with reduced motion it jumps", async ({ page }) => {
+    const map = page.locator("#map-flow");
+    const tokenOnName = () =>
+      map.evaluate((root) => {
+        const t = root.querySelector<SVGCircleElement>(".cap-system-map-token")!.getBoundingClientRect();
+        const [cx, cy] = [t.x + t.width / 2, t.y + t.height / 2];
+        return [...root.querySelectorAll(".cap-system-map-box text")].filter((n) => {
+          const b = n.getBoundingClientRect();
+          return cx > b.left && cx < b.right && cy > b.top && cy < b.bottom;
+        }).length;
+      });
+    // The control: a step plays an animation on the token.
+    await map.getByRole("button", { name: "Back" }).click();
+    expect(await map.locator(".cap-system-map-token").evaluate((t) => t.getAnimations().length)).toBe(1);
+    for (let n = 1; n <= 7; n++) {
+      await page.keyboard.press(String(n));
+      await page.waitForTimeout(800);
+      expect(await tokenOnName(), `step ${n}`).toBe(0);
+    }
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.keyboard.press("2");
+    expect(await map.locator(".cap-system-map-token").evaluate((t) => t.getAnimations().length)).toBe(0);
+    await expect(map.locator(".cap-system-map-detail-text")).toContainText("Step 2 of 7.");
+  });
+
+  test("behaviour: with no script, each flow is an open, ordered list of its steps", async ({ page }) => {
+    const flows = page.locator("#map-plain-html .cap-system-map-flows");
+    await expect(flows).toHaveAttribute("open", "");
+    await expect(flows.getByRole("heading", { name: "A job's life" })).toBeVisible();
+    await expect(flows.locator("ol > li")).toHaveCount(7);
+    await expect(flows.locator("ol > li").first()).toHaveText("Posted: a session posts a job, and the Worker stores it.");
+    // With script the step list closes, as the map's list does.
+    await expect(page.locator("#map .cap-system-map-flows")).not.toHaveAttribute("open", "");
+  });
+
+  test("behaviour: leaving by any way stops the flow and says so, and the plain view opens the steps", async ({ page }) => {
+    const map = page.locator("#map");
+    const stops: unknown[] = [];
+    await page.exposeFunction("noteStop", (d: unknown) => stops.push(d));
+    await map.evaluate((el) => el.addEventListener("cap:system-map-flow", (e) => (e as CustomEvent).detail.id === null && (window as unknown as { noteStop: (d: unknown) => void }).noteStop((e as CustomEvent).detail)));
+    await tile(page, "map", "capsid").click();
+    await tile(page, "map", "capsid").click();
+    await map.getByRole("button", { name: "Play: A job's life" }).click();
+    await map.getByRole("button", { name: "Plain map" }).click();
+    await expect(map).not.toHaveAttribute("data-flow");
+    await expect(map.locator(".cap-system-map-flows")).toHaveAttribute("open", "");
+    await expect.poll(() => stops.length).toBe(1);
+    expect(stops[0]).toEqual({ id: null, step: 0 });
+  });
 });

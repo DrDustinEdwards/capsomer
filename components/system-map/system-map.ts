@@ -45,10 +45,29 @@ export interface MapContainer {
   technology?: string;
 }
 
+// A flow: ordered steps over the core's lines, each moving toward one end with a sentence,
+// lighting the parts it touches (design section 4, animated flows). A step names a line
+// the data already holds, so a flow can never show a connection the map does not.
+export interface MapFlowStep {
+  from: string;
+  to: string;
+  toward: string;
+  text: string;
+  lights?: readonly string[];
+}
+
+export interface MapFlow {
+  id: string;
+  name: string;
+  description?: string;
+  steps: readonly MapFlowStep[];
+}
+
 export interface SystemMapData {
   systems: readonly MapSystem[];
   relationships?: readonly MapLink[];
   containers?: readonly MapContainer[];
+  flows?: readonly MapFlow[];
 }
 
 export interface SystemMapOptions {
@@ -71,6 +90,8 @@ const SQRT3 = Math.sqrt(3);
 // Kinds drawn dashed: a line that coordinates or watches rather than carries.
 const LOOSE_KINDS = new Set(["coordinates", "watches"]);
 const STORE_KINDS = new Set(["database", "bucket", "kv", "queue"]);
+const EXTERNAL = "external";
+const BOX_W = 104;
 
 export function ringCells(k: number): Array<[number, number]> {
   if (k === 0) return [[0, 0]];
@@ -287,9 +308,9 @@ interface Box {
 }
 
 /** The core's containers inside the shell: workers, sites and crons two to a row, stores
- *  three to a row below them. */
+ *  three to a row below them. An `external` container is not inside: see outsideLayout. */
 export function insideLayout(containers: readonly MapContainer[]): Box[] {
-  const tops = containers.filter((c) => !STORE_KINDS.has(c.kind));
+  const tops = containers.filter((c) => !STORE_KINDS.has(c.kind) && c.kind !== EXTERNAL);
   const stores = containers.filter((c) => STORE_KINDS.has(c.kind));
   const out: Box[] = [];
   const topRows = Math.ceil(tops.length / 2);
@@ -310,27 +331,59 @@ export function insideLayout(containers: readonly MapContainer[]): Box[] {
   return out;
 }
 
-function insideSvg(layout: Layout, core: MapSystem | undefined, data: SystemMapData, viewBox: string): string {
+/** The core's `external` containers (the agents that call it, the host its code lives on)
+ *  outside the dashed boundary, as C4 draws an external system: in the drawing's corners,
+ *  in the order given, top left, top right, bottom left, bottom right. Four at most, and
+ *  none when the map is the core alone. */
+export function outsideLayout(containers: readonly MapContainer[], layout: Layout): Box[] {
+  // A map of the core alone has no room outside its boundary, so nothing is drawn there.
+  if (layout.rings === 0) return [];
+  const [, , w, h] = layout.viewBox;
+  const x = w / 2 - BOX_W / 2 - 2;
+  const y = h / 2 - 18;
+  const corners: Array<[number, number]> = [[-x, -y], [x, -y], [-x, y], [x, y]];
+  return containers
+    .filter((c) => c.kind === EXTERNAL)
+    .slice(0, corners.length)
+    .map((c, i) => ({ c, x: Math.round(corners[i]![0] * 10) / 10, y: Math.round(corners[i]![1] * 10) / 10, w: BOX_W }));
+}
+
+/** The flows a map can play: those whose every step runs along a line between two of the
+ *  core's drawn parts, toward one of its ends, lighting only drawn parts. */
+export function playableFlows(data: SystemMapData, core: MapSystem | undefined, layout: Layout = layoutMap(data.systems)): MapFlow[] {
+  if (!core) return [];
+  const mine = (data.containers ?? []).filter((c) => c.system === core.id);
+  const parts = new Set([...insideLayout(mine), ...outsideLayout(mine, layout)].map((b) => b.c.id));
+  const lines = new Set((data.relationships ?? []).filter((l) => parts.has(l.from) && parts.has(l.to)).map((l) => `${l.from} ${l.to}`));
+  return (data.flows ?? []).filter(
+    (f) =>
+      f.steps.length > 0 &&
+      f.steps.every((st) => lines.has(`${st.from} ${st.to}`) && (st.toward === st.from || st.toward === st.to) && (st.lights ?? []).every((l) => parts.has(l))),
+  );
+}
+
+function insideSvg(layout: Layout, core: MapSystem | undefined, data: SystemMapData, viewBox: string, playable: boolean): string {
   const containers = core ? (data.containers ?? []).filter((c) => c.system === core.id) : [];
   if (!core || containers.length === 0) return "";
-  const boxes = insideLayout(containers);
+  const boxes = [...insideLayout(containers), ...outsideLayout(containers, layout)];
   const at = new Map(boxes.map((b) => [b.c.id, b]));
   const wires = (data.relationships ?? [])
     .filter((l) => at.has(l.from) && at.has(l.to))
     .map((l) => {
       const a = at.get(l.from)!;
       const b = at.get(l.to)!;
-      return `<line class="cap-system-map-wire" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+      return `<line class="cap-system-map-wire" data-from="${escapeHtml(l.from)}" data-to="${escapeHtml(l.to)}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
     })
     .join("");
   const radius = 1.5 * R * Math.max(1, layout.rings) + R * 0.4;
   const rects = boxes
     .map(({ c, x, y, w }) => {
       const store = STORE_KINDS.has(c.kind);
-      return `<g class="cap-system-map-box"${store ? " data-store" : ""}><rect x="${x - w / 2}" y="${y - 16}" width="${w}" height="32" rx="${store ? 14 : 6}"/><text class="cap-system-map-box-name" x="${x}" y="${y - 1}">${escapeHtml(c.name)}</text><text class="cap-system-map-box-kind" x="${x}" y="${y + 11}">${escapeHtml(c.technology ?? c.kind)}</text></g>`;
+      const flag = store ? " data-store" : c.kind === EXTERNAL ? " data-external" : "";
+      return `<g class="cap-system-map-box" data-id="${escapeHtml(c.id)}" data-x="${x}" data-y="${y}"${flag}><rect x="${x - w / 2}" y="${y - 16}" width="${w}" height="32" rx="${store ? 14 : 6}"/><text class="cap-system-map-box-name" x="${x}" y="${y - 1}">${escapeHtml(c.name)}</text><text class="cap-system-map-box-kind" x="${x}" y="${y + 11}">${escapeHtml(c.technology ?? c.kind)}</text></g>`;
     })
     .join("");
-  return `<svg class="cap-system-map-layer" data-layer="inside" viewBox="${viewBox}" aria-hidden="true" focusable="false"><circle class="cap-system-map-boundary" cx="0" cy="0" r="${radius.toFixed(1)}"/><text class="cap-system-map-inside-title" x="0" y="${(-radius + 22).toFixed(1)}">Inside ${escapeHtml(core.name)}</text>${wires}${rects}</svg>`;
+  return `<svg class="cap-system-map-layer" data-layer="inside" viewBox="${viewBox}" aria-hidden="true" focusable="false"><circle class="cap-system-map-boundary" cx="0" cy="0" r="${radius.toFixed(1)}"/><text class="cap-system-map-inside-title" x="0" y="${(-radius + 22).toFixed(1)}">Inside ${escapeHtml(core.name)}</text>${wires}${rects}${playable ? `<circle class="cap-system-map-token" r="6" cx="0" cy="0"/>` : ""}</svg>`;
 }
 
 /**
@@ -379,6 +432,17 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
     })
     .join("");
   const caption = options.caption ? `<p class="cap-system-map-caption">${escapeHtml(options.caption)}</p>` : "";
+  // Each flow as an ordered list, step by step: the whole story with no script, and the
+  // steps the script plays (a step's line, the end it moves toward and what it lights).
+  const playable = playableFlows(data, core, layout);
+  const flows = playable
+    .map((f) => {
+      const steps = f.steps
+        .map((st) => `<li data-from="${escapeHtml(st.from)}" data-to="${escapeHtml(st.to)}" data-toward="${escapeHtml(st.toward)}"${st.lights?.length ? ` data-lights="${escapeHtml(st.lights.join(" "))}"` : ""}>${escapeHtml(st.text)}</li>`)
+        .join("");
+      return `<section class="cap-system-map-flow" data-flow="${escapeHtml(f.id)}"><${h} class="cap-system-map-flow-name">${escapeHtml(f.name)}</${h}>${f.description ? `<p class="cap-system-map-flow-text">${escapeHtml(f.description)}</p>` : ""}<ol>${steps}</ol></section>`;
+    })
+    .join("");
   return [
     `<figure class="cap-system-map" data-cap="system-map" data-view="shell" id="${escapeHtml(id)}" aria-labelledby="${escapeHtml(id)}-title"${options.openLabel ? ` data-open-label="${escapeHtml(options.openLabel)}"` : ""}>`,
     `<figcaption class="cap-system-map-head"><span class="cap-system-map-title" id="${escapeHtml(id)}-title">${escapeHtml(label)}</span>${caption}`,
@@ -389,11 +453,12 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
     layer("core", coreCells),
     innerCells.length ? layer("inner", innerCells) : "",
     rimCells.length ? layer("rim", rimCells) : "",
-    insideSvg(layout, core, data, vb),
+    insideSvg(layout, core, data, vb, playable.length > 0),
     `</div>`,
     `<div class="cap-system-map-detail" data-cap-part="detail" aria-live="polite" hidden></div>`,
-    `<span id="${escapeHtml(id)}-keys" hidden>Arrow keys move between systems. Enter or Space chooses one and draws its connections${core ? `; on ${escapeHtml(core.name)}, Enter again goes inside` : ""}. Escape steps back out.</span>`,
+    `<span id="${escapeHtml(id)}-keys" hidden>Arrow keys move between systems. Enter or Space chooses one and draws its connections${core ? `; on ${escapeHtml(core.name)}, Enter again goes inside` : ""}. Escape steps back out.${flows ? " Playing a flow, the left and right arrows and the number keys move between its steps." : ""}</span>`,
     `<details class="cap-system-map-list" data-cap-part="list" open><summary>The same map as a list</summary><div class="cap-system-map-groups">${list}</div></details>`,
+    flows ? `<details class="cap-system-map-flows" data-cap-part="flows" open><summary>Inside ${escapeHtml(core?.name ?? "")}, step by step</summary>${flows}</details>` : "",
     `</figure>`,
   ].join("");
 }
@@ -437,11 +502,52 @@ function systemsFrom(root: HTMLElement): Map<string, MapSystem> {
   return out;
 }
 
+interface PlayFlow {
+  name: string;
+  steps: Array<{ from: string; to: string; toward: string; text: string; lights: string[] }>;
+}
+
+/** Reads the flows back out of the delivered step lists, as the systems are read from the list. */
+function flowsFrom(root: HTMLElement): Map<string, PlayFlow> {
+  const out = new Map<string, PlayFlow>();
+  for (const sec of root.querySelectorAll<HTMLElement>(".cap-system-map-flow[data-flow]")) {
+    out.set(sec.dataset.flow!, {
+      name: sec.querySelector(".cap-system-map-flow-name")?.textContent ?? sec.dataset.flow!,
+      steps: [...sec.querySelectorAll<HTMLElement>("ol > li")].map((li) => ({
+        from: li.dataset.from!,
+        to: li.dataset.to!,
+        toward: li.dataset.toward!,
+        text: li.textContent ?? "",
+        lights: (li.dataset.lights ?? "").split(" ").filter(Boolean),
+      })),
+    });
+  }
+  return out;
+}
+
+/** Where the line from a box's centre toward a point leaves the box, `gap` beyond its edge. */
+export function boxEdge([x, y]: [number, number], [hw, hh]: [number, number], [tx, ty]: [number, number], gap = 0): [number, number] {
+  const dx = tx - x;
+  const dy = ty - y;
+  if (dx === 0 && dy === 0) return [x, y];
+  const t = Math.min(dx ? (hw + gap) / Math.abs(dx) : Number.POSITIVE_INFINITY, dy ? (hh + gap) / Math.abs(dy) : Number.POSITIVE_INFINITY);
+  return [Math.round((x + dx * t) * 10) / 10, Math.round((y + dy * t) * 10) / 10];
+}
+
+/** The words a flow's step shows: where it is in the flow, then what happens. */
+export function stepText(n: number, total: number, text: string): string {
+  return `Step ${n} of ${total}. ${text}`;
+}
+
 export interface SystemMapController {
   select(id: string | null): void;
   enter(): void;
   leave(): void;
   setView(view: "shell" | "plain"): void;
+  // Inside the core: play a flow from a step (1 by default), move to a step, stop.
+  playFlow(id: string, step?: number): void;
+  step(n: number): void;
+  stopFlow(): void;
   destroy(): void;
 }
 
@@ -457,7 +563,20 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
   const points = tiles.map((t) => ({ id: t.dataset.id!, x: Number(t.dataset.x), y: Number(t.dataset.y) }));
   const coreTile = tiles.find((t) => t.hasAttribute("data-core"));
   const tileOf = (id: string) => tiles.find((t) => t.dataset.id === id);
+  const flows = flowsFrom(root);
+  const flowList = root.querySelector<HTMLDetailsElement>("[data-cap-part='flows']");
+  const token = inside?.querySelector<SVGCircleElement>(".cap-system-map-token") ?? null;
+  const boxOf = (id: string) => inside?.querySelector<SVGGElement>(`.cap-system-map-box[data-id="${CSS.escape(id)}"]`) ?? null;
+  const xy = (id: string): [number, number] => {
+    const b = boxOf(id);
+    return [Number(b?.dataset.x ?? 0), Number(b?.dataset.y ?? 0)];
+  };
+  const halfOf = (id: string): [number, number] => {
+    const r = boxOf(id)?.querySelector("rect");
+    return [(r?.width.baseVal.value ?? 0) / 2, (r?.height.baseVal.value ?? 0) / 2];
+  };
   let selected: string | null = null;
+  let playing: { id: string; n: number } | null = null;
 
   // The drawing becomes the control: the stage is a group of buttons, one tab stop.
   stage.setAttribute("role", "group");
@@ -477,6 +596,7 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
   first?.setAttribute("tabindex", "0");
   if (views) views.hidden = false;
   list.open = false;
+  if (flowList) flowList.open = false;
   detail.hidden = false;
   detail.innerHTML = `<span class="cap-system-map-detail-text">Choose a system to see what it connects to.</span>`;
 
@@ -488,6 +608,7 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
   const enterable = (id: string) => !!inside && tileOf(id)?.hasAttribute("data-core") === true;
 
   const select = (id: string | null) => {
+    stopFlow(true);
     selected = id;
     root.toggleAttribute("data-selected", id !== null);
     for (const t of tiles) t.setAttribute("aria-pressed", String(t.dataset.id === id));
@@ -508,21 +629,95 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     if (id) root.dispatchEvent(new CustomEvent("cap:system-map-select", { bubbles: true, detail: { id } }));
   };
 
-  const enter = () => {
+  const insideDetail = () => {
+    if (!inside || !coreTile) return;
+    const name = systems.get(coreTile.dataset.id!)?.name ?? "the core";
+    const own = inside.querySelectorAll(".cap-system-map-box:not([data-external])").length;
+    const outside = inside.querySelectorAll(".cap-system-map-box[data-external]").length;
+    const plays = [...flows].map(([id, f]) => `<button type="button" class="cap-btn" data-cap-part="play" data-flow="${escapeHtml(id)}">Play: ${escapeHtml(f.name)}</button>`).join("");
+    detail.innerHTML = `<strong class="cap-system-map-detail-name">Inside ${escapeHtml(name)}</strong><span class="cap-system-map-detail-text">${own} parts${outside ? `, ${outside} outside it` : ""}, with the systems around it at the rim.</span><span class="cap-system-map-detail-actions">${plays}<button type="button" class="cap-btn" data-cap-part="leave">Step out</button></span>`;
+  };
+
+  // `focus` is for a reader's own press; a host's call (playFlow, step) leaves focus alone.
+  const showStep = (n: number, focus = true) => {
+    const f = playing ? flows.get(playing.id) : undefined;
+    if (!f || !inside) return;
+    const k = Math.min(Math.max(1, Math.round(n)), f.steps.length);
+    const st = f.steps[k - 1]!;
+    playing = { id: playing!.id, n: k };
+    root.dataset.step = String(k);
+    for (const w of inside.querySelectorAll<SVGLineElement>(".cap-system-map-wire")) {
+      w.toggleAttribute("data-on", (w.dataset.from === st.from && w.dataset.to === st.to) || (w.dataset.from === st.to && w.dataset.to === st.from));
+    }
+    for (const b of inside.querySelectorAll<SVGGElement>(".cap-system-map-box")) {
+      const id = b.dataset.id!;
+      b.toggleAttribute("data-lit", st.lights.includes(id));
+      b.toggleAttribute("data-at", id === st.toward);
+    }
+    if (token) {
+      // The token runs from the edge of one box to the edge of the other, so it never sits
+      // on a part's name.
+      const start = st.toward === st.to ? st.from : st.to;
+      const [ax, ay] = boxEdge(xy(start), halfOf(start), xy(st.toward), 4);
+      const [bx, by] = boxEdge(xy(st.toward), halfOf(st.toward), xy(start), 4);
+      for (const a of token.getAnimations()) a.cancel();
+      token.style.transform = `translate(${bx}px, ${by}px)`;
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        token.animate([{ transform: `translate(${ax}px, ${ay}px)` }, { transform: `translate(${bx}px, ${by}px)` }], { duration: 700, easing: "ease-in-out" });
+      }
+    }
+    const was = (document.activeElement as HTMLElement | null)?.dataset?.capPart;
+    detail.innerHTML = `<strong class="cap-system-map-detail-name">${escapeHtml(f.name)}</strong><span class="cap-system-map-detail-text">${escapeHtml(stepText(k, f.steps.length, st.text))}</span><span class="cap-system-map-detail-actions"><button type="button" class="cap-btn" data-cap-part="back"${k === 1 ? " disabled" : ""}>Back</button><button type="button" class="cap-btn" data-cap-part="next"${k === f.steps.length ? " disabled" : ""}>Next</button><button type="button" class="cap-btn" data-cap-part="stop">Stop</button></span>`;
+    // Focus stays on the control that was pressed, unless it is now disabled.
+    const again = was && detail.querySelector<HTMLButtonElement>(`[data-cap-part="${was}"]:not([disabled])`);
+    if (focus) (again || detail.querySelector<HTMLButtonElement>("[data-cap-part='next']:not([disabled])") || detail.querySelector<HTMLButtonElement>("[data-cap-part='back']"))?.focus();
+    root.dispatchEvent(new CustomEvent("cap:system-map-flow", { bubbles: true, detail: { id: playing!.id, step: k } }));
+  };
+
+  const playFlow = (id: string, n = 1, focus = true) => {
+    if (!flows.has(id)) return;
+    if (!root.hasAttribute("data-entered")) enter(focus);
+    playing = { id, n };
+    root.dataset.flow = id;
+    showStep(n, focus);
+  };
+
+  const stopFlow = (quiet = false) => {
+    if (!playing) return;
+    const id = playing.id;
+    playing = null;
+    delete root.dataset.flow;
+    delete root.dataset.step;
+    for (const el of inside?.querySelectorAll("[data-on], [data-lit], [data-at]") ?? []) {
+      el.removeAttribute("data-on");
+      el.removeAttribute("data-lit");
+      el.removeAttribute("data-at");
+    }
+    if (token) for (const a of token.getAnimations()) a.cancel();
+    root.dispatchEvent(new CustomEvent("cap:system-map-flow", { bubbles: true, detail: { id: null, step: 0 } }));
+    // Quiet when something else is taking over the detail line: leaving, choosing, tearing down.
+    if (quiet) return;
+    insideDetail();
+    detail.querySelector<HTMLButtonElement>(`[data-cap-part="play"][data-flow="${CSS.escape(id)}"]`)?.focus();
+  };
+
+  const enter = (focus = true) => {
     if (!inside || !coreTile) return;
     root.setAttribute("data-entered", "");
     inside.removeAttribute("aria-hidden");
     inside.setAttribute("role", "img");
-    const boxes = [...inside.querySelectorAll(".cap-system-map-box")].map((b) => b.querySelector(".cap-system-map-box-name")?.textContent).filter(Boolean);
+    const named = (sel: string) => [...inside.querySelectorAll(sel)].map((b) => b.querySelector(".cap-system-map-box-name")?.textContent).filter(Boolean).join(", ");
     const name = systems.get(coreTile.dataset.id!)?.name ?? "the core";
-    inside.setAttribute("aria-label", `Inside ${name}: ${boxes.join(", ")}.`);
-    detail.innerHTML = `<strong class="cap-system-map-detail-name">Inside ${escapeHtml(name)}</strong><span class="cap-system-map-detail-text">${boxes.length} parts, with the systems around it at the rim.</span><span class="cap-system-map-detail-actions"><button type="button" class="cap-btn" data-cap-part="leave">Step out</button></span>`;
-    detail.querySelector<HTMLButtonElement>("[data-cap-part='leave']")?.focus();
+    const outside = named(".cap-system-map-box[data-external]");
+    inside.setAttribute("aria-label", `Inside ${name}: ${named(".cap-system-map-box:not([data-external])")}.${outside ? ` Outside it: ${outside}.` : ""}`);
+    insideDetail();
+    if (focus) detail.querySelector<HTMLButtonElement>("[data-cap-part='leave']")?.focus();
     root.dispatchEvent(new CustomEvent("cap:system-map-enter", { bubbles: true, detail: { id: coreTile.dataset.id } }));
   };
 
   const leave = () => {
     if (!root.hasAttribute("data-entered")) return;
+    stopFlow(true);
     root.removeAttribute("data-entered");
     inside?.setAttribute("aria-hidden", "true");
     inside?.removeAttribute("role");
@@ -536,6 +731,7 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     if (view === "plain") leave();
     root.dataset.view = view;
     list.open = view === "plain";
+    if (flowList) flowList.open = view === "plain";
     for (const b of views?.querySelectorAll<HTMLButtonElement>("button[data-view]") ?? []) b.setAttribute("aria-pressed", String(b.dataset.view === view));
   };
 
@@ -556,12 +752,31 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     const part = target.closest<HTMLElement>("[data-cap-part]")?.dataset.capPart;
     if (part === "enter") enter();
     else if (part === "leave") leave();
+    else if (part === "play") playFlow(target.closest<HTMLElement>("[data-flow]")?.dataset.flow ?? "");
+    else if (part === "next" && playing) showStep(playing.n + 1);
+    else if (part === "back" && playing) showStep(playing.n - 1);
+    else if (part === "stop") stopFlow();
     const view = target.closest<HTMLButtonElement>(".cap-system-map-views button[data-view]")?.dataset.view;
     if (view === "shell" || view === "plain") setView(view);
   };
 
   const ARROWS: Record<string, Direction> = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
   const onKey = (e: KeyboardEvent) => {
+    if (playing && !(e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)) {
+      const steps = flows.get(playing.id)!.steps.length;
+      const digit = /^[1-9]$/.test(e.key) ? Number(e.key) : 0;
+      const to = e.key === "ArrowRight" ? playing.n + 1 : e.key === "ArrowLeft" ? playing.n - 1 : digit && digit <= steps ? digit : 0;
+      if (to >= 1 && to <= steps) {
+        e.preventDefault();
+        showStep(to);
+        return;
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        stopFlow();
+        return;
+      }
+    }
     if (e.key === "Escape" && root.hasAttribute("data-entered")) {
       e.preventDefault();
       leave();
@@ -595,7 +810,11 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     enter,
     leave,
     setView,
+    playFlow: (id: string, n = 1) => playFlow(id, n, false),
+    step: (n: number) => showStep(n, false),
+    stopFlow: () => stopFlow(),
     destroy() {
+      stopFlow(true);
       root.removeEventListener("click", onClick);
       root.removeEventListener("keydown", onKey);
     },

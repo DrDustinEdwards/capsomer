@@ -2,7 +2,7 @@
 // touches no DOM until a controller is made.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { connectionText, insideLayout, layoutMap, linksOf, R, ringCells, seamRoute, spatialNext, systemMapHtml } from "../../components/system-map/system-map.ts";
+import { boxEdge, connectionText, insideLayout, layoutMap, linksOf, outsideLayout, playableFlows, R, ringCells, seamRoute, spatialNext, stepText, systemMapHtml } from "../../components/system-map/system-map.ts";
 
 const family = [
   { id: "core", name: "Core", ring: "core" },
@@ -156,4 +156,92 @@ test("the HTML holds every system once in the drawing and once in the list, esca
   assert.match(html, /data-from="core" data-to="u1" data-kind="coordinates" data-loose/);
   assert.match(html, /<details class="cap-system-map-list" data-cap-part="list" open>/);
   assert.match(html, /role="img" aria-label="Family: 17 systems in rings\. The list below holds the same\."/);
+});
+
+// Parts outside the core (Dustin, 2026-10-11: external boxes outside the dashed boundary).
+const parts = [
+  { id: "w", system: "core", name: "Worker", kind: "worker" },
+  { id: "db", system: "core", name: "Store", kind: "database" },
+  { id: "agents", system: "core", name: "Agents", kind: "external" },
+  { id: "host", system: "core", name: "Host", kind: "external" },
+];
+
+test("an external part is never inside: it takes a corner of the drawing, outside the boundary", () => {
+  assert.deepEqual(insideLayout(parts).map((b) => b.c.id), ["w", "db"]);
+  // One ring (the core and six shared parts), two (the family) and three (twelve more used).
+  const more = Array.from({ length: 12 }, (_, i) => ({ id: `x${i}`, name: `X${i}`, ring: "used" }));
+  for (const [rings, systems] of [[1, family.slice(0, 7)], [2, family], [3, [...family, ...more]]]) {
+    const layout = layoutMap(systems);
+    assert.equal(layout.rings, rings);
+    const boxes = outsideLayout(parts, layout);
+    assert.deepEqual(boxes.map((b) => b.c.id), ["agents", "host"]);
+    const [vx, vy, vw, vh] = layout.viewBox;
+    const boundary = 1.5 * R * Math.max(1, layout.rings) + R * 0.4;
+    for (const b of boxes) {
+      // The box's nearest point to the middle is outside the boundary, and the box is inside the drawing.
+      const nx = Math.max(0, Math.abs(b.x) - b.w / 2);
+      const ny = Math.max(0, Math.abs(b.y) - 16);
+      assert.ok(Math.hypot(nx, ny) > boundary, `${b.c.id} reaches inside the boundary at ${layout.rings} rings`);
+      assert.ok(b.x - b.w / 2 >= vx && b.x + b.w / 2 <= vx + vw && b.y - 16 >= vy && b.y + 16 <= vy + vh, `${b.c.id} leaves the drawing`);
+    }
+    assert.ok(boxes[0].x < 0 && boxes[0].y < 0 && boxes[1].x > 0 && boxes[1].y < 0, "top left, then top right");
+  }
+});
+
+test("a flow plays only when every step rides a line between the core's parts, toward an end, lighting the core's parts", () => {
+  const data = {
+    systems: [{ id: "core", name: "Core", ring: "core" }, { id: "a", name: "A", ring: "used" }],
+    containers: parts,
+    relationships: [
+      { from: "w", to: "agents", kind: "serves" },
+      { from: "w", to: "db", kind: "writes" },
+      { from: "core", to: "a", kind: "installs" },
+    ],
+    flows: [
+      { id: "good", name: "Good", steps: [{ from: "w", to: "agents", toward: "w", text: "In.", lights: ["db"] }, { from: "w", to: "db", toward: "db", text: "Down." }] },
+      { id: "no-line", name: "No line", steps: [{ from: "agents", to: "db", toward: "db", text: "x" }] },
+      { id: "wrong-end", name: "Wrong end", steps: [{ from: "w", to: "db", toward: "agents", text: "x" }] },
+      { id: "outside-core", name: "Outside", steps: [{ from: "core", to: "a", toward: "a", text: "x" }] },
+      { id: "bad-light", name: "Bad light", steps: [{ from: "w", to: "db", toward: "db", text: "x", lights: ["a"] }] },
+    ],
+  };
+  assert.deepEqual(playableFlows(data, data.systems[0]).map((f) => f.id), ["good"]);
+  const html = systemMapHtml(data, { id: "m" });
+  assert.match(html, /<details class="cap-system-map-flows" data-cap-part="flows" open><summary>Inside Core, step by step<\/summary><section class="cap-system-map-flow" data-flow="good">/);
+  assert.match(html, /<li data-from="w" data-to="agents" data-toward="w" data-lights="db">In\.<\/li><li data-from="w" data-to="db" data-toward="db">Down\.<\/li>/);
+  assert.match(html, /<g class="cap-system-map-box" data-id="agents" data-x="[^"]+" data-y="[^"]+" data-external>/);
+  assert.match(html, /<line class="cap-system-map-wire" data-from="w" data-to="agents"/);
+  assert.match(html, /class="cap-system-map-token"/);
+  assert.doesNotMatch(html, /no-line|wrong-end|outside-core|bad-light/);
+  // No playable flow: no list, no token, and the keys line says nothing of flows.
+  const none = systemMapHtml({ ...data, flows: [] }, { id: "m" });
+  assert.doesNotMatch(none, /cap-system-map-flows|cap-system-map-token|number keys/);
+  assert.match(html, /the number keys move between its steps/);
+});
+
+test("the token stops at a box's edge, never on its name, and a step says where it is", () => {
+  assert.deepEqual(boxEdge([0, 0], [52, 16], [200, 0], 4), [56, 0]);
+  assert.deepEqual(boxEdge([0, 0], [52, 16], [0, -100], 4), [0, -20]);
+  // Toward a corner, whichever edge the line meets first.
+  const [x, y] = boxEdge([0, 0], [52, 16], [100, 100], 0);
+  assert.deepEqual([x, y], [16, 16]);
+  assert.deepEqual(boxEdge([5, 5], [52, 16], [5, 5]), [5, 5]);
+  assert.equal(stepText(3, 9, "Worked: the agent works."), "Step 3 of 9. Worked: the agent works.");
+});
+
+test("only four parts fit outside, a core-only map has no outside, and a flow needing an undrawn part is not offered", () => {
+  const five = Array.from({ length: 5 }, (_, i) => ({ id: `e${i}`, system: "core", name: `E${i}`, kind: "external" }));
+  const layout = layoutMap(family);
+  assert.deepEqual(outsideLayout(five, layout).map((b) => b.c.id), ["e0", "e1", "e2", "e3"]);
+  assert.deepEqual(outsideLayout(five, layoutMap([{ id: "core", name: "Core", ring: "core" }])), []);
+  const data = {
+    systems: family,
+    containers: [{ id: "w", system: "core", name: "W", kind: "worker" }, ...five],
+    relationships: [{ from: "w", to: "e0", kind: "serves" }, { from: "w", to: "e4", kind: "serves" }],
+    flows: [
+      { id: "drawn", name: "Drawn", steps: [{ from: "w", to: "e0", toward: "e0", text: "x" }] },
+      { id: "undrawn", name: "Undrawn", steps: [{ from: "w", to: "e4", toward: "e4", text: "x" }] },
+    ],
+  };
+  assert.deepEqual(playableFlows(data, family[0]).map((f) => f.id), ["drawn"]);
 });
