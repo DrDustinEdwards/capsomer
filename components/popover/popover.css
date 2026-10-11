@@ -152,9 +152,12 @@
     --_arrow: 4px;
   }
 
-  /* The tooltip form: shadcn's small inverted surface. No ring, no padding of a card. */
+  /* The tooltip form: a small raised surface with a visible edge in both themes, so it never
+     reads as a selected item (the admin menu's current page is a dark fill in light and a light
+     fill in dark; a tooltip is neither). No padding of a card. Keys are key caps. One look for
+     every tooltip in Capsomer, the admin shell's included. */
   .cap-popover[data-variant="tooltip"] {
-    --_line: transparent;
+    --_line: var(--line-strong);
     flex-direction: row;
     align-items: center;
     gap: var(--space-3);
@@ -162,24 +165,33 @@
     max-inline-size: min(20rem, calc(100vw - 16px));
     padding: var(--space-2) var(--space-4);
     border-radius: var(--radius-m);
-    background: var(--text);
-    color: var(--ground);
-    box-shadow: none;
+    background: var(--raised);
+    color: var(--text);
+    box-shadow:
+      0 0 0 1px var(--_line),
+      var(--shadow-m);
     font-size: var(--fs-detail);
+    font-weight: 500;
+    white-space: nowrap;
 
     &:has(kbd) {
-      padding-inline-end: var(--space-2);
+      padding-inline-end: var(--space-3);
+    }
+    & .cap-keys {
+      display: inline-flex;
+      gap: var(--space-1);
     }
     & kbd {
-      display: inline-block;
+      display: inline-grid;
+      place-items: center;
+      min-inline-size: 1.6em;
       padding: 0 var(--space-2);
+      border: 1px solid var(--line-strong);
+      border-block-end-width: 2px;
       border-radius: var(--radius-s);
-      background: color-mix(in srgb, var(--ground) 22%, transparent);
-      color: inherit;
-      font: 500 var(--fs-label) / 1.5 var(--ui);
-    }
-    & > .cap-popover-arrow {
-      background: var(--text);
+      background: var(--surface);
+      color: var(--text);
+      font: 600 var(--fs-label) / 1.5 var(--ui);
     }
   }
 
