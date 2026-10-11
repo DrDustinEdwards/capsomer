@@ -2,10 +2,14 @@ import { Fragment, useCallback, useEffect, useId, useRef, useState, type Compone
 import { Dialog, DialogBody, DialogHeader } from "../dialog/dialog.react.tsx";
 import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
 import type { LinkProps } from "../shell/shell.react.tsx";
+import { ThemeSwitch } from "../theme-switch/theme-switch.react.tsx";
+import { applyStoredTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
 import { hideShownNames, jumpTarget, showNamesAgain } from "./admin-shell.ts";
+import { FAMILY_APPS, FIRST_PAGE, OWNER, type FamilyAppId } from "./apps.tsx";
 
-export type { LinkProps };
+export type { LinkProps, FamilyAppId };
 export { startPageTransition } from "./admin-shell.ts";
+export { FAMILY_APPS, FIRST_PAGE, OWNER };
 
 // One of the current app's pages. `group` puts consecutive entries under one label.
 export interface AdminEntry {
@@ -14,17 +18,18 @@ export interface AdminEntry {
   href: string;
   icon?: ReactNode;
   current?: boolean;
-  // A count beside the entry, and what it counts: "Queue, 2 blocked". A plain number counts;
-  // tone "need" makes it a violet pill (it needs you); crit and warn are status colours.
+  // A count beside the entry, and what it counts: "Queue, 2 blocked". Every count is one bubble;
+  // a plain one is neutral, tone "need" is violet (it needs you), crit and warn are status colours.
   count?: number;
   countNote?: string;
   tone?: "need" | "crit" | "warn";
   group?: string;
 }
 
-// One admin area in the strip. `logo` is the product's mark (an svg using currentColor takes the
-// tile's colour); with none the tile shows `mono`, the name's first letter. `count` or `dot`
-// means this app needs you; the app you are in never shows one.
+// One app in the strip. The family's admin apps come from FAMILY_APPS (apps.tsx); this shape is
+// for a public site's own one-app strip. `logo` is the product's mark (an svg using currentColor
+// takes the tile's colour). `count` or `dot` means this app needs you; the app you are in never
+// shows one.
 export interface AdminApp {
   id: string;
   label: string;
@@ -46,9 +51,17 @@ export interface AdminAccountLink {
   current?: boolean;
 }
 
+// What another app's tile says: a count, or a dot, and what it means for its accessible name.
+export interface AdminBadge {
+  count?: number;
+  dot?: boolean;
+  countNote?: string;
+}
+
+// The avatar is the owner's (OWNER, "DE") unless a name and initials are given.
 export interface AdminAccount {
-  name: string;
-  initials: string;
+  name?: string;
+  initials?: string;
   role?: string;
   email?: string;
   // This app: its settings, view site, shortcuts.
@@ -59,11 +72,19 @@ export interface AdminAccount {
 }
 
 export interface AdminShellProps {
-  // The current app's name, a plain title above its menu.
-  title: string;
-  mark?: ReactNode;
-  apps: AdminApp[];
+  // The family app this is. The strip lists every family app (FAMILY_APPS) in one order with this
+  // one marked, and the menu's title is its name.
+  app?: FamilyAppId;
+  // Other apps' badges, from Capsid's one "what needs the owner" answer. The current app's is
+  // never shown.
+  badges?: Partial<Record<FamilyAppId, AdminBadge>>;
+  // The menu's title. Default: the family app's name. Set it only outside the family.
+  title?: string;
+  // The strip for a site outside the family (a public site's one app). Admin areas pass `app`.
+  apps?: AdminApp[];
   nav: AdminEntry[];
+  // The page being shown: the left of the top bar, and the tab title "<page> · <app>".
+  page?: string;
   // The phone's bar: at most four of this app's top pages, then More. Default: the first four.
   tabs?: AdminEntry[];
   // The pages the bar has no room for. Default: the rest of `nav`.
@@ -77,9 +98,15 @@ export interface AdminShellProps {
   onHelp?: () => void;
   helpShortcut?: string;
   account?: AdminAccount;
-  // The page's own thin bar: how fresh the data is, then its page-wide controls.
+  // The top bar: the page and how fresh its data is on the left; then the page-wide controls,
+  // Refresh (shown when the page can refresh) and the theme, always last.
   status?: ReactNode;
   actions?: ReactNode;
+  onRefresh?: () => void;
+  refreshing?: boolean;
+  refreshShortcut?: string;
+  // The theme switch's localStorage key; "cap-theme" by default.
+  themePrefKey?: string;
   prefKey?: string;
   // G then 1 to 9 opens the app in that place (the key sequence of GitHub and Linear; Ctrl and a
   // digit belong to the browser's tabs); on by default. An app that lets single keys be switched off
@@ -111,6 +138,7 @@ const EXPAND_D = "M3 4h18v16H3zM9 4v16M14 10l2 2-2 2";
 const SEARCH_D = "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM21 21l-5-5";
 const INBOX_D = "M3 13h5l1 3h6l1-3h5M5 5h14l2 8v6H3v-6z";
 const HELP_D = "M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01";
+const REFRESH_D = "M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5";
 const MORE_ICON = (
   <svg className="cap-admin-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
     <circle cx="3" cy="8" r="1.4" fill="currentColor" stroke="none" />
@@ -144,6 +172,12 @@ const Tip = ({ text, keys }: { text: string; keys?: string }) => (
 // A badge is a glance, not a figure: past 99 it says 99+ (the accessible name keeps the real count).
 const badgeText = (count: number) => (count > 99 ? "99+" : count);
 
+// The strip: the family's apps in their one order, this one marked, others with their badges.
+function stripApps(app: FamilyAppId | undefined, badges: AdminShellProps["badges"], apps: AdminApp[] | undefined): AdminApp[] {
+  if (apps) return apps;
+  return FAMILY_APPS.map((a) => ({ ...badges?.[a.id], id: a.id, label: a.label, href: a.href, logo: a.logo, current: a.id === app }));
+}
+
 const Badge = ({ count, dot }: { count?: number; dot?: boolean }) =>
   count ? (
     <span className="cap-admin-badge" aria-hidden="true">
@@ -157,19 +191,21 @@ const mark = (a: AdminApp) => a.logo ?? <span aria-hidden="true">{a.mono ?? a.la
 
 export function AdminShell(props: AdminShellProps) {
   const {
-    title,
-    mark: titleMark,
-    apps,
+    app,
     nav,
+    page,
     navLabel = "Sections",
     onSearch,
     searchShortcut = "Ctrl K",
     inbox,
     onHelp,
     helpShortcut = "?",
-    account,
     status,
     actions,
+    onRefresh,
+    refreshing,
+    refreshShortcut,
+    themePrefKey = THEME_PREF,
     prefKey = DEFAULT_PREF,
     jumpKeys = true,
     collapseKey = "[",
@@ -177,6 +213,9 @@ export function AdminShell(props: AdminShellProps) {
     mainProps,
     children,
   } = props;
+  const apps = stripApps(app, props.badges, props.apps);
+  const title = props.title ?? FAMILY_APPS.find((a) => a.id === app)?.label ?? apps.find((a) => a.current)?.label ?? "";
+  const account = props.account ? { ...props.account, name: props.account.name ?? OWNER.name, initials: props.account.initials ?? OWNER.initials } : undefined;
   const root = useRef<HTMLDivElement>(null);
   const moreButton = useRef<HTMLButtonElement>(null);
   const sheetTitle = useRef<HTMLHeadingElement>(null);
@@ -198,6 +237,14 @@ export function AdminShell(props: AdminShellProps) {
     },
     [prefKey, props.onCollapsedChange],
   );
+
+  // The tab says the page, then the app: "Queue · Capsid Portal".
+  useEffect(() => {
+    if (title) document.title = page ? `${page} · ${title}` : title;
+  }, [page, title]);
+
+  // The remembered theme, in case the app's head script did not apply it before paint.
+  useEffect(() => void applyStoredTheme(themePrefKey), [themePrefKey]);
 
   // G then a number jumps between apps; Esc hides a shown name (WCAG 1.4.13).
   const appsRef = useRef(apps);
@@ -409,7 +456,6 @@ export function AdminShell(props: AdminShellProps) {
       </nav>
       <nav className="cap-admin-menu" id="cap-admin-menu" aria-label={navLabel}>
         <div className="cap-admin-title">
-          {titleMark}
           <span className="cap-admin-title-text">{title}</span>
         </div>
         {groups(nav).map((g, i) =>
@@ -426,12 +472,22 @@ export function AdminShell(props: AdminShellProps) {
         )}
       </nav>
       <main {...mainProps} className="cap-admin-main" id="cap-main" tabIndex={-1}>
-        <div className="cap-admin-bar" data-empty={status || actions ? undefined : ""}>
+        <div className="cap-admin-bar">
           <div className="cap-admin-bar-text">
             <strong className="cap-admin-bar-app">{title}</strong>
-            {status ? <div>{status}</div> : null}
+            {page ? <span className="cap-admin-bar-page">{page}</span> : null}
+            {status ? <div className="cap-admin-bar-status">{status}</div> : null}
           </div>
-          <div className="cap-admin-actions">{actions}</div>
+          <div className="cap-admin-actions">
+            {actions}
+            {onRefresh && (
+              <button type="button" className="cap-admin-btn" data-cap-part="refresh" aria-label="Refresh" aria-busy={refreshing || undefined} onClick={onRefresh}>
+                <Icon d={REFRESH_D} />
+                <Tip text="Refresh" keys={refreshShortcut} />
+              </button>
+            )}
+            <ThemeSwitch prefKey={themePrefKey} />
+          </div>
         </div>
         {children}
       </main>

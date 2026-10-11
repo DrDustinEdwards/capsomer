@@ -4,7 +4,7 @@ title: Admin shell
 summary: The one structure every admin area, dashboard and site shares: a strip of apps and tools, a grouped menu for the current app, then the content.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [expanded, current app tile, badge on another app, menu collapsed to icons, name shown, account panel open, reading column, comfortable density, page transitions, phone tab bar, phone sheet, phone count past 99]
+states: [expanded, current app tile, badge on another app, menu collapsed to icons, collapsed name shown, name shown, account panel open, reading column, comfortable density, page transitions, phone tab bar, phone sheet, phone count past 99]
 added: 0.4.0
 source: Dustin's pick of 2026-10-06 (capsomer/research/admin-shell-findings.md); the flagship design canvas "Flagship Shell: Capsid Portal"; the Portal's own App.tsx
 replaces:
@@ -26,9 +26,10 @@ An app, an admin area or a dashboard a person moves around in, and, with a one-a
 
 | Place | The owner | A reader of a public site | A merchant |
 | --- | --- | --- | --- |
-| Strip, top | The apps, each a tile with a badge when it needs them | The site's logo | Their stores, with badges, if more than one |
+| Strip, top | The family's admin apps (`FAMILY_APPS`), each its own logo, this one marked, others with a badge when they need you | The site's logo | Their stores, with badges, if more than one |
 | Strip, bottom | Search, Inbox, Help, avatar | Search, theme, subscribe | Inbox, Help, avatar |
 | Menu | The current app's sections, grouped | The site's sections | The dashboard's sections |
+| Top bar | The page, how fresh it is, Refresh, the theme | The page, the theme | The page, the theme |
 | Content | The page | A centred reading column (`data-measure="reading"`) | The page |
 
 The strip is never an empty column: its bottom tools serve everyone.
@@ -36,15 +37,24 @@ The strip is never an empty column: its bottom tools serve everyone.
 ## The default and its reason
 
 - **The strip is always shown, one width (`--rail-w-collapsed`).** Hiding the app switcher cost Slack its multi-workspace users, because the other workspaces' badges disappeared. The strip is the only way another app's "needs you" stays visible.
-- **The menu is `--rail-w` wide, collapsible; collapsed it is an icon column at `--rail-w-collapsed` beside the strip.** Same order and same places, so nothing moves: only the labels and group headings hide (their boxes stay, and so do their names for a screen reader). Each icon shows its label as a tooltip on hover and keyboard focus (Esc hides it), keeps its accessible name, and the current page keeps its dark fill. A count sits on its icon, and becomes a dot where it does not fit (over 99). An entry with no icon shows its first letter. The collapsed column does not scroll, since a scrolling box would clip the tooltips. The collapse control is the first thing in the strip, the same place in every app and in both states, with its key `[` in its name's tip (Atlassian found the control hard to discover until it was obvious). The choice is remembered per site (`localStorage`, key `cap-rail` or `data-cap-pref`). The app binds `[` itself, because single-key shortcuts are the app's setting.
+- **One strip, the same on every app, configured once here.** `FAMILY_APPS` (`apps.tsx`) lists Capsid Portal, Carrel, dustinedwards.info, germomics and Foxhound, in that order, each with its product's own mark redrawn in `currentColor` (never a letter). An app passes `app="carrel"`; the shell marks it and takes the menu's title from it. Other apps' badges come in `badges`, keyed by app. A site outside the family (a public site's one-app strip) passes `apps` and `title` instead.
+- **Tiles are neutral and carry the product's mark.** A mark drawn in `currentColor` takes the tile's color (accent text on a neutral tile, the pill's text on the current one).
+- **The menu's title is the app's name, in one style, and nothing else.** The logo is the marked tile in the strip beside it, so the mark is never shown twice (Dustin, 2026-10-11).
+- **The menu is `--rail-w` wide, collapsible; collapsed it is an icon column at `--rail-w-collapsed` beside the strip.** Nothing moves: every icon keeps its x and y, and the current row its height and left edge, open and collapsed (one row inset, `--admin-row-pad`, puts each icon in the middle of the collapsed column). Labels and group headings hide but keep their boxes (and their names for a screen reader); a group heading is a short band open and the same band holding a thin divider collapsed, so the groups are one even step apart in both states. Each icon shows its label as a tooltip on hover and keyboard focus (Esc hides it) and keeps its accessible name; the current page keeps its dark fill. The collapsed column does not scroll, since a scrolling box would clip the tooltips. The collapse control is the first thing in the strip, the same place in every app and in both states, with its key `[` in its name's tip. The choice is remembered per site (`localStorage`, key `cap-rail` or `data-cap-pref`). The app binds `[` itself, because single-key shortcuts are the app's setting.
+- **The strip and the menu are two rails.** The strip is a shade apart from the menu in both themes (`--admin-strip-bg`, darker in light, lighter in dark), so collapsed they never read as one column.
+- **A shown name is painted over every panel.** The strip stacks above the menu and the menu above the page, so a tooltip beside a control is whole and on top; the tests check every corner of every name.
 - **No badge on the app you are in.** Strip badges are for other apps. Each "needs you" fact appears on a page once as a number and once as an action, not five times.
-- **Counts follow one rule: a plain number counts; a violet pill needs you.** `tone: "need"` on an entry, or `count` / `dot` on another app. Red and amber (`crit`, `warn`) are status colours and keep their one meaning.
-- **The current page is a dark filled pill in the palette's darkest accent step (`--accent-12`).** The current app's tile is the same dark fill. Color means something: violet marks the current selection, the primary action and "needs you"; nothing else is coloured for decoration.
-- **Tiles are neutral and carry the product's mark.** A mark drawn in `currentColor` takes the tile's colour (accent text on a neutral tile, the pill's text on the current one). With no logo yet the tile shows the name's first letter.
+- **Every count and badge is one bubble**: one size, one shape, one type, in the strip, the menu and the sheet, open and collapsed. A plain count is a neutral bubble; violet (`tone: "need"`, or `count` / `dot` on another app) needs you; red and amber (`crit`, `warn`) are status colors and keep their one meaning. On an icon the bubble rides the corner just past the glyph, so it never covers it, and becomes a dot past 99.
+- **The current page is a dark filled pill in the palette's darkest accent step (`--accent-12`)**, here and on Capsomer's own site. The current app's tile is the same dark fill. Color means something: violet marks the current selection, the primary action and "needs you"; nothing else is colored for decoration.
+- **One avatar.** The account is the owner's: "DE" for Dustin Edwards (`OWNER`), unless `account` names someone else.
+- **One top bar, the same places on every app.** Left: the page's name and how fresh its data is (`page`, `status`). Right: the page-wide controls (`actions`), Refresh where the page refreshes (`onRefresh`, `refreshing`), then the theme switch, always last. The theme control is the Light and Dark switch (`theme-switch`), not an icon button: it names both choices in words, so nobody has to guess whether a sun means "is light" or "make it light", and it is the control Dustin ruled for (PR #13, 2026-10-01). On a phone its words hide and the icons stay.
+- **The tab title is "<page> · <app>"**, set by the shell from `page` and the app's name.
+- **The first page is called "Overview"** (`FIRST_PAGE`) in every app: it says what the page is, a summary of the app, and holds whether or not anything needs you. "Needs you" is the Inbox's job across apps; "Home" says where, not what; "Dashboard" is a kind of screen, not its content.
+- **The content fills the space to the menu's right**, from the same left edge, open and collapsed, up to 1480px; an app does not centre its own narrower column inside it. A reading page opts into the centred column with `data-measure="reading"`.
 - **Icons carry the controls**, one family (24 box, 1.6 stroke), every icon button one size with an accessible name and a tooltip. A tooltip is a child of its control, shows on hover and keyboard focus, and Esc hides it (WCAG 1.4.13).
 - **The account panel is the Popover API** (light dismiss, Esc, focus handed back by the platform), opened from the avatar. Sections: who you are, this app (settings, view site), elsewhere (the other apps, listed from `apps`), sign out last.
 - **G then a number opens the app in that place** (Slack's lesson; the sequence GitHub and Linear use, because Ctrl and a digit belong to the browser's tabs). It does nothing while a person types in a field, never opens the app already open, and an app that lets single keys be switched off passes that setting as `jumpKeys`.
-- **The page's own thin bar** (`status`, `actions`) says what is true: "Updated 6 min ago · refreshes itself", never "Live" for data that is minutes old. Page-wide controls (time range, scope, export) go there only on pages whose data actually changes with them.
+- **The top bar says what is true**: "Updated 6 min ago · refreshes itself", never "Live" for data that is minutes old. Page-wide controls (time range, scope, export) go there only on pages whose data actually changes with them.
 - **All content is in the server-rendered HTML.** Every menu link, the strip's links and the page are in the markup without a script, so a screen reader or an agent reads them. The shell's behaviour (collapse, remembering it, the account panel's close, the sheet) is added by script; nothing depends on it for reading or reaching a page.
 - **On a phone the strip and the menu live in one sheet.** The tab bar holds at most four of the app's top pages and More (rulings, rule 9). More opens the shared dialog as a bottom sheet: the apps first, then the other pages, then the tools; the account rows (settings, shortcuts, Sign out) are pinned under the scrolling list so Sign out is always in view. Every row starts its label in one column, with an icon or without. Opening the sheet puts focus on its heading (`tabindex="-1"`, no ring on a row until a key is pressed). The current tab is told by an accent pill behind its icon as well as its colour, a tab badge reads `99+` past 99 (the accessible name keeps the real count), tab labels are 12px, and on a phone the thin bar names the current app at the left.
 
@@ -57,30 +67,22 @@ An option: `transition` in React, `data-transition="page"` on the shell in marku
 - **Reduced motion turns it off.** Under `prefers-reduced-motion: reduce` the names are not given, the animation is not defined and `startPageTransition` skips the API: the page changes at once.
 - **Why a cross-fade and nothing moves.** Motion on a navigation is easy to overdo; a short fade shows that the content changed without hiding the structure that did not. The duration is the tokens' (`--dur-fast`, `--dur-base`), not the shell's own.
 
-## Page transitions
-
-An option: `transition` in React, `data-transition="page"` on the shell in markup. When a page changes, the content area cross-fades (the old page out over `--dur-fast`, the new in over `--dur-base`) while the strip, the menu and the phone bar stay exactly where they are: each is given its own `view-transition-name`, so the browser snapshots them apart and, unchanged, they never move.
-
-- **Same-document (an app with a router).** Wrap the update that shows the next page: `startPageTransition(() => flushSync(() => navigate(to)))` (`capsomer/behaviour/admin-shell`, also exported from `capsomer/react/admin-shell`). It resolves when the page is shown, and runs the update at once, with no animation and no error, when the browser has no `document.startViewTransition`, when the person asked for reduced motion, or when the shell has not opted in. Focus and scroll are the app's, as without it.
-- **Cross-document (pages that load).** The app adds `@view-transition { navigation: auto; }` to its own stylesheet (it is a page-wide rule, so the shell cannot scope it) and `data-transition="page"` to the shell; the same names and animation apply. Browsers without it navigate as usual.
-- **Reduced motion turns it off.** Under `prefers-reduced-motion: reduce` the names are not given, the animation is not defined and `startPageTransition` skips the API: the page changes at once.
-- **Why a cross-fade and nothing moves.** Motion on a navigation is easy to overdo; a short fade shows that the content changed without hiding the structure that did not. The durations are the tokens' (`--dur-fast`, `--dur-base`), not the shell's own.
-
 ## Props
 
 | Prop | Is |
 | --- | --- |
-| `title`, `mark` | The current app's name, a plain title over its menu |
-| `apps` | The strip: `id`, `label`, `href`, `logo` or `mono`, `current`, `count`, `dot`, `countNote` |
+| `app` | Which family app this is (`portal`, `carrel`, `info`, `germomics`, `foxhound`): the strip marks it, the menu's title is its name |
+| `badges` | Other apps' badges, by app: `count`, `dot`, `countNote` |
+| `page` | The page's name: the top bar's left, and the tab title |
 | `nav` | The menu: entries with `group`, `icon`, `count`, `countNote`, `tone`, `current` |
 | `tabs`, `more` | The phone's bar and what sits under More; default the first four and the rest |
 | `onSearch`, `inbox`, `onHelp` | The strip's tools; each shows only when given |
-| `account` | The avatar's panel: `name`, `initials`, `role`, `email`, `appLinks`, `onSignOut` |
-| `status`, `actions` | The page's thin bar |
+| `account` | The avatar's panel: `role`, `email`, `appLinks`, `onSignOut`; `name` and `initials` default to the owner's |
+| `status`, `actions`, `onRefresh`, `refreshing`, `refreshShortcut`, `themePrefKey` | The top bar |
 | `renderLink` | A router's link; other apps' links stay plain anchors where the router cannot reach them |
 | `collapsed`, `onCollapsedChange`, `prefKey`, `jumpKeys`, `collapseKey` | Collapse state and keys |
-| `transition` | Page transitions (below); off by default |
-| `transition` | Page transitions (below); off by default |
+| `transition` | Page transitions (above); off by default |
+| `title`, `apps` | Only outside the family: a public site's own title and one-app strip |
 
 Badge data is a prop: Capsid supplies it, one question per app ("what needs Dustin"), not each app querying the others.
 
@@ -93,7 +95,6 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
 | Esc | Hides a shown name; closes the account panel; closes the sheet |
 | G, then 1 to 9 | Opens the app in that place |
 | Enter on the avatar | Opens the account panel; focus stays on the avatar, the panel follows in tab order |
-| Any link, with transitions on | Moves to the page as without them; focus is not moved by the transition |
 | Any link, with transitions on | Moves to the page as without them; the transition does not move focus |
 | `[` | Collapses or expands the menu, when the app binds it |
 
@@ -112,13 +113,14 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
   <nav class="cap-admin-strip" aria-label="Apps and tools">
     <ul class="cap-admin-strip-group">
       <li><button type="button" class="cap-admin-btn" data-cap-part="menu-toggle" aria-label="Collapse menu" aria-expanded="true" aria-controls="cap-admin-menu">[icon]<span class="cap-admin-tip" aria-hidden="true"><span class="cap-admin-tip-text">Collapse menu</span><kbd>[</kbd></span></button></li>
-      <li><a class="cap-admin-tile" href="/" aria-current="true">[mark][tip]</a></li>
-      <li><a class="cap-admin-tile" href="https://carrel…" aria-label="Carrel, 2 need you">[mark]<span class="cap-admin-badge" aria-hidden="true">2</span>[tip]</a></li>
+      <li><a class="cap-admin-tile" href="https://portal.dustinedwards.info/" aria-current="true"><svg class="cap-admin-logo">[the app's mark]</svg>[tip]</a></li>
+      <li><a class="cap-admin-tile" href="https://carrel.dustinedwards.info/" aria-label="Carrel, 2 need you"><svg class="cap-admin-logo">…</svg><span class="cap-admin-badge" aria-hidden="true">2</span>[tip]</a></li>
+      [dustinedwards.info, germomics, Foxhound, in that order]
     </ul>
     <ul class="cap-admin-strip-group"> [search] [inbox] [help] [avatar and its popover] </ul>
   </nav>
   <nav class="cap-admin-menu" id="cap-admin-menu" aria-label="Sections">
-    <div class="cap-admin-title">Capsid Portal</div>
+    <div class="cap-admin-title"><span class="cap-admin-title-text">Capsid Portal</span></div>
     <div class="cap-admin-group" role="group" aria-labelledby="g-watch">
       <div class="cap-admin-group-label" id="g-watch">Watch</div>
       <a href="/" aria-current="page">[icon]<span>Overview</span><span class="cap-admin-count"></span></a>
@@ -126,7 +128,10 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
     </div>
   </nav>
   <main class="cap-admin-main" id="cap-main" tabindex="-1">
-    <div class="cap-admin-bar"><div class="cap-admin-bar-text"><strong class="cap-admin-bar-app">[app name, phone only]</strong><div>[status]</div></div><div class="cap-admin-actions">[actions]</div></div>
+    <div class="cap-admin-bar">
+      <div class="cap-admin-bar-text"><strong class="cap-admin-bar-app">[app name, phone only]</strong><span class="cap-admin-bar-page">Overview</span><div class="cap-admin-bar-status">[status]</div></div>
+      <div class="cap-admin-actions">[actions]<button type="button" class="cap-admin-btn" data-cap-part="refresh" aria-label="Refresh">[icon][tip]</button>[theme-switch fieldset]</div>
+    </div>
     <div class="cap-admin-page">[the view]</div>
   </main>
   <nav class="cap-admin-tabs" aria-label="Sections"> [up to four links] <button type="button" data-cap-part="more" …>More</button></nav>
@@ -134,7 +139,7 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
 </div>
 ```
 
-`import { enhance, toggleMenu, jumpTarget } from "capsomer/behaviour/admin-shell"` wires the collapse control, the remembered choice, the sheet and the keys for markup written by hand. In React, `import { AdminShell } from "capsomer/react/admin-shell"`.
+`import { enhance, toggleMenu, jumpTarget } from "capsomer/behaviour/admin-shell"` wires the collapse control, the remembered choice, the sheet and the keys for markup written by hand. In React, `import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"` and `<AdminShell app="carrel" page={FIRST_PAGE} nav={…} badges={…} onRefresh={…}>`; `FAMILY_APPS` and `OWNER` are exported from the same module.
 
 ## Density
 
@@ -143,7 +148,7 @@ Capsomer's default stays: compact, `data-density="comfortable"` on the shell or 
 ## Deliberately different
 
 - **Dark fill for the current item**, not the soft accent tint the older Shell uses: the current page must be unmistakable at a glance.
-- **No top bar.** The strip holds the app switcher and the tools; the page's thin bar sits in the content and holds only what is true of that page.
+- **The top bar sits in the content, not across the window.** The strip holds the app switcher and the tools; the bar holds only what is true of this page, then the theme.
 - **Another app's link is a plain anchor**, even where a router is in use, since another app is another origin.
 
 ## Exceptions in production

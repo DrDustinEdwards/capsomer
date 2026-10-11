@@ -15,6 +15,14 @@
     --admin-tile: 36px;
     --admin-pill: var(--accent-12);
     --admin-pill-fg: var(--ground);
+    /* The strip is a shade apart from the menu in both themes (darker in light, lighter in dark),
+       so the two rails never read as one, collapsed or not. */
+    --admin-strip-bg: color-mix(in srgb, var(--ground), var(--text) 7%);
+    /* A plain count's bubble: a neutral step off the ground that shows in both themes. */
+    --admin-count-bg: color-mix(in srgb, var(--ground), var(--text) 12%);
+    /* One inset for a menu row in both states: the icon sits at the same x open and collapsed,
+       centred in the collapsed column ((56 - 2 * 8 - 16) / 2 = 12). */
+    --admin-row-pad: var(--space-4);
     display: grid;
     grid-template-columns: var(--admin-strip) var(--admin-menu) minmax(0, 1fr);
     min-height: 100dvh;
@@ -60,12 +68,13 @@
 
   /* The strip: apps above, the owner's tools below. Fixed height and sticky, so it never moves
      while the page scrolls. The collapse control is its first child, in the same place in both
-     states and in every app. */
+     states and in every app. It stacks above the menu, and the menu above the page, so a name
+     shown beside a control is painted over every panel to its right. */
   .cap-admin-strip {
     position: sticky;
     top: 0;
     align-self: start;
-    z-index: var(--z-sticky);
+    z-index: calc(var(--z-sticky) + 2);
     height: 100dvh;
     display: flex;
     flex-direction: column;
@@ -73,7 +82,7 @@
     align-items: center;
     gap: var(--space-4);
     padding: var(--space-4) 0;
-    background: var(--raised);
+    background: var(--admin-strip-bg);
     border-inline-end: 1px solid var(--line);
   }
   .cap-admin-strip-group {
@@ -144,35 +153,48 @@
       border-color: var(--admin-pill);
       color: var(--admin-pill-fg);
     }
-    & .cap-admin-icon {
+    & :is(.cap-admin-icon, .cap-admin-logo) {
       width: 20px;
       height: 20px;
     }
   }
+  .cap-admin-logo {
+    flex: none;
+  }
 
-  /* Coloured and violet means it needs you; a plain number elsewhere only counts. A badge sits
-     on another app's tile or on Inbox, never on the app you are in. */
-  .cap-admin-badge {
-    position: absolute;
-    top: -5px;
-    right: -6px;
-    display: grid;
+  /* One bubble for every count and badge, open and collapsed, in the strip, the menu and the
+     sheet: one size, one shape, one type. A plain count is neutral; violet needs you; red and amber
+     are status colours and keep their meaning. On an icon it rides the corner beside the glyph, so
+     it never covers it. A badge sits on another app's tile or on Inbox, never on the app you are in. */
+  .cap-admin-badge,
+  .cap-admin-count {
+    display: inline-grid;
     place-items: center;
+    flex: none;
+    box-sizing: border-box;
     min-width: 18px;
     height: 18px;
     padding-inline: 5px;
     border-radius: var(--radius-full);
-    background: var(--primary);
-    color: var(--primary-fg);
-    box-shadow: 0 0 0 2px var(--raised);
+    background: var(--admin-count-bg);
+    color: var(--text);
     font-size: var(--fs-label);
     font-weight: 600;
     line-height: 1;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .cap-admin-badge {
+    position: absolute;
+    top: -5px;
+    /* The glyph is 20px, centred: the bubble starts 2px past its right edge. */
+    left: calc(50% + 12px);
+    background: var(--primary);
+    color: var(--primary-fg);
+    box-shadow: 0 0 0 2px var(--admin-strip-bg);
 
     &[data-dot] {
-      top: -3px;
-      right: -3px;
+      top: -2px;
       min-width: 0;
       width: 10px;
       height: 10px;
@@ -208,7 +230,7 @@
   .cap-admin-tip,
   .cap-admin[data-menu="collapsed"] .cap-admin-menu .cap-admin-label {
     position: absolute;
-    left: calc(100% + var(--space-3));
+    left: calc(100% + var(--space-4));
     top: 50%;
     translate: 0 -50%;
     z-index: var(--z-tip);
@@ -245,8 +267,8 @@
   .cap-admin-menu {
     position: sticky;
     top: 0;
-    /* Above the page, so a collapsed icon's label is not painted under it. */
-    z-index: var(--z-sticky);
+    /* Above the page, so a collapsed icon's label is not painted under it; under the strip. */
+    z-index: calc(var(--z-sticky) + 1);
     align-self: start;
     height: 100dvh;
     display: flex;
@@ -265,7 +287,7 @@
       align-items: center;
       gap: var(--space-3);
       min-height: max(var(--control), var(--target));
-      padding: 0 var(--space-3);
+      padding: 0 var(--admin-row-pad);
       border-radius: var(--radius-m);
       color: var(--muted);
       font-size: var(--fs-body);
@@ -289,91 +311,74 @@
       }
     }
   }
+  /* The menu's title: the app's name, in one style on every app. Its logo is the marked tile in
+     the strip beside it, so the mark is never shown twice. */
   .cap-admin-title {
     display: flex;
     align-items: center;
     gap: var(--space-3);
     min-height: var(--admin-tile);
     margin-block-end: var(--space-3);
-    padding-inline: var(--space-3);
+    padding-inline: var(--admin-row-pad);
     font-size: var(--fs-lead);
     font-weight: 700;
     letter-spacing: -0.01em;
     color: var(--text);
   }
+  /* Groups are one even step apart: a short heading band open, the same band holding a thin
+     divider collapsed, so no icon moves and no gap is wider than another. */
   .cap-admin-group {
     display: grid;
     gap: var(--space-1);
 
     & + & {
-      margin-block-start: var(--space-4);
+      margin-block-start: var(--space-3);
     }
   }
   .cap-admin-group-label {
+    position: relative;
     display: flex;
     align-items: center;
-    min-height: var(--control);
-    padding-inline: var(--space-3);
+    min-height: var(--space-6);
+    padding-inline: var(--admin-row-pad);
     color: var(--muted);
     font-size: var(--fs-detail);
     font-weight: 500;
   }
 
-  /* A count beside a menu item: a plain number counts, a violet pill needs you. Red and amber are
-     status colours and keep their meaning. */
   .cap-admin-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 20px;
-    height: 20px;
-    padding-inline: var(--space-3);
-    border-radius: var(--radius-full);
-    color: var(--muted);
-    font-size: var(--fs-label);
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-
     &:empty {
       display: none;
     }
     &[data-tone="need"] {
       background: var(--primary);
       color: var(--primary-fg);
-      font-weight: 600;
     }
     &[data-tone="crit"] {
       background: var(--crit-soft);
       color: var(--crit);
-      font-weight: 600;
     }
     &[data-tone="warn"] {
       background: var(--warn-soft);
       color: var(--warn);
-      font-weight: 600;
     }
   }
   .cap-admin-menu a[aria-current="page"] .cap-admin-count:not([data-tone]) {
-    color: inherit;
+    background: var(--admin-pill-fg);
+    color: var(--admin-pill);
   }
 
   /* Collapsed: the same menu shrunk to an icon column at the collapsed rail width, in the same
-     order and the same places, so nothing moves. Labels and group headings are hidden but keep
-     their boxes (and their names for a screen reader); a label shows as a tooltip on hover and
-     keyboard focus; a count sits on its icon, a dot where it does not fit. The current page keeps
-     its dark fill. A scrolling box would clip the tooltips, so this column does not scroll. */
+     order and the same places, so nothing moves: every icon keeps its x and y and the current
+     row its height and left edge. Labels and group headings are hidden but keep their boxes (and
+     their names for a screen reader); a heading's band shows a thin divider instead. A label shows
+     as a tooltip on hover and keyboard focus; a count rides the icon's corner, a dot where it does
+     not fit. A scrolling box would clip the tooltips, so this column does not scroll. */
   .cap-admin[data-menu="collapsed"] .cap-admin-menu {
     overflow: visible;
 
     & a {
       grid-template-columns: 16px;
-      justify-content: center;
-      padding: 0;
-    }
-    & .cap-admin-title {
-      justify-content: center;
-      padding-inline: 0;
     }
     & .cap-admin-title-text {
       position: absolute;
@@ -385,41 +390,38 @@
     }
     & .cap-admin-group-label {
       overflow: hidden;
-      padding-inline: 0;
-      opacity: 0;
+      color: transparent;
       white-space: nowrap;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset-inline: var(--admin-row-pad);
+        top: 50%;
+        border-block-start: 1px solid var(--line);
+      }
+    }
+    & .cap-admin-title + .cap-admin-group > .cap-admin-group-label::after {
+      display: none;
     }
     & .cap-admin-count {
       position: absolute;
-      top: 2px;
-      right: 2px;
-      min-width: 16px;
-      height: 16px;
-      padding-inline: var(--space-2);
+      top: -3px;
+      /* 2px past the icon's right edge, so the bubble never covers the glyph. */
+      left: calc(var(--admin-row-pad) + 18px);
       box-shadow: 0 0 0 2px var(--ground);
-      font-size: var(--fs-label);
-      line-height: 1;
 
       &[data-wide] {
-        top: 5px;
-        right: 5px;
+        top: 2px;
         min-width: 0;
         width: 8px;
         height: 8px;
         padding: 0;
         font-size: 0;
-      }
-      &:not([data-tone]) {
-        background: var(--raised);
-        color: var(--text);
-      }
-    }
-    & a[aria-current="page"] .cap-admin-count {
-      box-shadow: 0 0 0 2px var(--admin-pill);
 
-      &:not([data-tone]) {
-        background: var(--admin-pill-fg);
-        color: var(--admin-pill);
+        &:not([data-tone]) {
+          background: var(--muted);
+        }
       }
     }
   }
@@ -439,8 +441,9 @@
     }
   }
 
-  /* The page's own thin bar: how fresh the data is on the left, the page-wide controls on the
-     right (time range, export, theme). Only what is true of this page goes in it. */
+  /* The top bar, one set of places on every app: the page and how fresh its data is on the left;
+     on the right the page-wide controls (time range, export), Refresh where the page refreshes,
+     and the theme switch, always last. */
   .cap-admin-bar {
     display: flex;
     flex-wrap: wrap;
@@ -452,17 +455,33 @@
     color: var(--muted);
     font-size: var(--fs-detail);
   }
+  .cap-admin-bar-text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-4);
+    min-width: 0;
+  }
+  .cap-admin-bar-page {
+    color: var(--text);
+    font-weight: 600;
+  }
   .cap-admin-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3);
     margin-inline-start: auto;
+
+    /* A bar control's name shows below it: beside it would leave the window. */
+    & .cap-admin-tip {
+      left: 50%;
+      top: calc(100% + var(--space-3));
+      translate: -50% 0;
+    }
   }
-  /* The app's name and a bar with nothing in it are for the phone only (the menu and the strip
-     carry the name elsewhere). */
-  .cap-admin-bar-app,
-  .cap-admin-bar[data-empty] {
+  /* The app's name is for the phone only (the menu and the strip carry it elsewhere). */
+  .cap-admin-bar-app {
     display: none;
   }
 
@@ -663,20 +682,13 @@
     }
     /* On a phone the bar says which app this is, at the left; with nothing else to show it is
        just the name. */
-    .cap-admin-bar-text {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      gap: 0 var(--space-3);
-      min-width: 0;
-    }
     .cap-admin-bar-app {
       display: block;
       color: var(--text);
       font-weight: 600;
     }
-    .cap-admin-bar[data-empty] {
-      display: flex;
+    .cap-admin-bar-page {
+      font-weight: 400;
     }
     .cap-admin-page {
       padding: var(--space-5) var(--space-5) var(--space-6);
@@ -733,7 +745,6 @@
     /* The badge rides the pill's top right corner, clear of the glyph. */
     .cap-admin-tabs .cap-admin-badge {
       top: 0;
-      right: auto;
       left: calc(50% + 12px);
       box-shadow: 0 0 0 2px var(--surface);
     }

@@ -1,0 +1,86 @@
+// The family's admin apps, configured once here and nowhere else: every app's strip lists these,
+// in this order, with each product's own mark. An app names itself (`app="carrel"`) and passes
+// its badges; it never writes its own list. Marks are drawn in currentColor so they take the
+// tile's colour, the accent on a neutral tile and the pill's text on the current one. Each is the
+// product's own icon (its favicon or brand file) redrawn in one colour: the Portal's hexagon
+// (capsid dashboard/src/ui/icons.tsx BrandMark), Carrel's open book (carrel app/components/frame.tsx),
+// dustinedwards.info's microscope (public/dustin-edwards-logo.svg), germomics' broadcasting
+// microphone (public/brand/germomics-icon-currentcolor.svg), Foxhound's x (public/favicon.svg).
+import type { ReactNode } from "react";
+
+export type FamilyAppId = "portal" | "carrel" | "info" | "germomics" | "foxhound";
+
+export interface FamilyApp {
+  id: FamilyAppId;
+  label: string;
+  // Where the app's admin opens.
+  href: string;
+  logo: ReactNode;
+}
+
+const mark = (viewBox: string, body: ReactNode) => (
+  <svg className="cap-admin-logo" viewBox={viewBox} aria-hidden="true" focusable="false">
+    {body}
+  </svg>
+);
+
+const PORTAL = mark(
+  "0 0 24 24",
+  <g fill="none" stroke="currentColor" strokeLinejoin="round">
+    <path strokeWidth="1.7" d="M12 1.8 21.4 7.2v9.6L12 22.2 2.6 16.8V7.2z" />
+    <path strokeWidth="1.2" d="M12 1.8v6.6l9.4-1.2M12 8.4 2.6 7.2M6.8 14.6 2.6 16.8M17.2 14.6l4.2 2.2M6.8 14.6 12 22.2l5.2-7.6" />
+    <path strokeWidth="1.2" fill="currentColor" fillOpacity="0.25" d="M12 8.4l5.2 6.2H6.8z" />
+  </g>,
+);
+
+const CARREL = mark(
+  "0 0 20 20",
+  <path
+    fill="currentColor"
+    fillRule="evenodd"
+    d="M2.5 4.2C5.2 3 8 3.3 10 5c2-1.7 4.8-2 7.5-.8v11.6C14.8 14.6 12 14.9 10 16.6 8 14.9 5.2 14.6 2.5 15.8zM9.25 5.6v10h1.5v-10z"
+  />,
+);
+
+const INFO = mark(
+  "60 10 260 340",
+  <g fill="currentColor">
+    <path d="M271.75 306.65A112.5 112.5 0 1 1 167.85 117.27l9.36 42.21a69.2 69.2 0 1 0 61.62 114.25z" />
+    <path d="M212 273.2h78.8a39.4 39.4 0 0 1-78.8 0z" />
+    <path d="M81.4 341.7a44.9 44.9 0 0 1 37.7-29.08h152.5a44.9 44.9 0 0 1 37.7 29.08z" />
+    <path d="M173.37 117.1a111.6 111.6 0 0 1 114.99 53.36l18.27 31.02-31.19 18.37-18.27-31.02a75.4 75.4 0 0 0-63.42-37.11z" />
+    <path d="M109.47 86.65l34.12-20.09 73.85 125.36-34.12 20.1z" />
+    <path d="M225.72 207.36l31.79-18.73 18.27 31.02-31.79 18.73zM192.2 227.1l33.86-19.95 18.27 31.02-33.86 19.95z" />
+    <path d="M134.88 51.38 100.42 71.68 80.12 37.21l34.46-20.3z" />
+  </g>,
+);
+
+const GERMOMICS = mark(
+  "227 2 259 532",
+  <path
+    fill="currentColor"
+    d="M300 529v-6l1-9 1-7 2-8 2-15 3-27 1-6 1-5 2-12 1-5 1-4 1 1 7 13 8 16 2 5v1l5 8 7 15 3 7 1 2 1 1 3 7 4 7 3-8 4-7 1-2 3-7 1-1 7-14 4-8 1-1 2-5 8-16 6-13 1-1 2 4v5l2 12 1 5 1 6 4 27 2 15 1 8 1 7 1 9v6h-8l-1-4-1-5-1-7-1-7-1-4v-7l-1-7-1-3-1-8-1-8v-2l-2-9q0-4-2 0l-1 2-8 16-13 25-6 13-7 14-8-14-6-13-13-25-8-16-1-2q-1-4-2 0l-1 9-1 2-1 8-1 8v3l-1 7-1 7-1 4-1 7-1 7v5l-2 4zm56-36-1-4-2-3-1-1-1-1-1-4-3-5-3-5-3-6-2-4v-2h35l1 2-3 4-3 6-3 5-3 5-1 4-1 1-1 1-1 2-1 3zm5-22 3-4v-2h-15l4 8 2 5 2 2 1-3zm-19-20q-5 0-8-4l-3-7q-1-3 1-8l3-4c3-2 3-2 22-2 18 0 18 0 21 2l3 4 2 8q-2 7-6 9l-3 2zm30-9c2-1 2-6 0-7l-15-1-16 1q-3 2-1 6l3 2zm-27-23-6-1q-4-1-6-5-4-6-1-13l1-2 3-3 1-1 2-1h35l2 1 2 1 2 3 1 2q3 5 0 12l-3 3q-2 4-5 3zm27-9 2-4-2-4-15-1c-17 0-16 0-17 2q-2 5 1 6l17 1zm-31-24-6-3q-7-7-3-15l1-2 3-4c3-2 3-2 21-2 17 0 18 0 20 2l3 4 1 2q3 6 0 11l-3 4c-3 3-2 3-20 3zm32-9 1-4-1-3-1-1h-31l-1 1-1 3 1 3 18 1zm-32-24q-4 0-6-3-3-3-4-8l1-6 1-2 3-4 3-2h35l3 2 4 4 1 2v6q0 5-4 8c-3 3-2 3-20 3zm32-9 1-4-2-3-15-1-16 1-2 3 1 4 3 1h29zm-28-27h-6l-17-2-5-1q-16-2-20-9l-1-28v-24l1-1 4-4 13-5 4-1v-40l1-42 4-9 9-9 15-6h20l15 6 9 9 3 9 1 42v40l4 1 13 5 4 4 1 1v24c1 24 0 26-1 28q-3 7-20 9l-5 1-16 2zm33-9 6-1h5l18-5h1l1-3v-44h-1l-10-3c-3-1-3-2-3 10v12l-4 9-8 8-8 5-4 1-11 2-12-1-6-1-4-1-8-5-8-8-3-9-1-12c0-12 0-11-3-10l-10 3v47h2q6 3 17 5h5l15 2h15zm-18-17 16-5 8-8c2-3 2-4 2-11v-47h-8l-7-1v-7l7-1h8v-9h-8l-8-1v-4l1-3 7-1h8v-9l-8-1h-7l-1-4 1-4h7l8-1v-4q1-12-3-15l-6-5q-4-3-12-5l-8-1-9 1-12 5-5 5q-5 3-4 15v4l8 1h8v8h-8l-8 1v9h8l7 1 1 3v4l-8 1h-8v9h8l8 1v7l-8 1h-8v47c0 7 0 8 2 11l8 8q9 4 19 5zm-56-156-2-1-2-1q-3-2-1-5l3-2 11-12q8-6 19-10c2-2 9-3 12-4l18-1 13 3q15 4 25 12l12 12 2 2q2 3-1 5l-2 1q-3 3-4 0l-8-9-10-8-2-1-1-1h-1l-4-2-3-1-13-4h-17l-13 4-2 1-5 2h-1l-1 1-1 1q-10 6-19 17-1 3-2 1m-33-36-4-4 2-2 3-4 13-12q5-5 11-8l1-1 3-2 24-10 5-2h2l4-1q18-3 34-1l9 1 4 1h2l5 2c7 2 18 6 24 10l3 2 2 1c2 1 8 5 10 8l13 12 4 4 1 2-4 4-2 1h-1l-10-11-14-12-4-2-9-5-2-1-2-1-3-1-14-4-6-1q-10-2-24-2l-13 2-5 1q-8 1-14 4l-4 1-2 1-2 1-8 5-4 2-14 12-11 11h-1zm-34-33-3-3-1-1 1-1 6-6 14-12 2-2 5-4q16-10 33-17l10-4 10-3 5-1 5-1 7-1c8-2 9-2 26-2s17 0 25 2l8 1 4 1 6 1 16 5q18 8 36 19l5 4 2 2 15 12 6 6v1l-1 1-5 5-5-5-11-10-2-1c-2-3-14-11-14-11l-1-1h-1l-4-2-18-9-2-1-4-1-4-2-17-4-6-2-5-1-8-1h-31l-7 1-5 1-7 2-16 4-5 2-4 1-2 1-18 9-3 2h-1l-1 1c-1 0-13 8-15 11l-2 1-10 10-6 5z"
+  />,
+);
+
+// Foxhound's favicon is a lowercase x on a dark rounded square; the tile is the square here.
+const FOXHOUND = mark(
+  "0 0 24 24",
+  <path fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" d="M7.5 9 16.5 18M16.5 9 7.5 18" />,
+);
+
+// The order every strip shows, whichever app it is in.
+export const FAMILY_APPS: readonly FamilyApp[] = [
+  { id: "portal", label: "Capsid Portal", href: "https://portal.dustinedwards.info/", logo: PORTAL },
+  { id: "carrel", label: "Carrel", href: "https://carrel.dustinedwards.info/", logo: CARREL },
+  { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO },
+  { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
+  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND },
+];
+
+// The one account every admin area is signed in as, and its avatar.
+export const OWNER = { name: "Dustin Edwards", initials: "DE" } as const;
+
+// The first page of every admin area has this name (menu entry, page heading and tab title):
+// it says what the page is (a summary of the app) and holds whether or not anything needs you.
+export const FIRST_PAGE = "Overview";
