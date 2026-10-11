@@ -267,7 +267,7 @@ function svg(inner: string, size = 14): SVGSVGElement {
   return s;
 }
 
-const QUEUED_GLYPH = '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.2"/>';
+const QUEUED_GLYPH = '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/>';
 
 export const SIGN_GLYPH: Record<Sign, string> = {
   plus: '<path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 3v10M3 8h10"/>',

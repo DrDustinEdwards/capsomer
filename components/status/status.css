@@ -3,7 +3,7 @@
 
 /* Status: a word with a glyph, coloured by its tone, and the same word as a badge. The
    glyph's shape differs per tone (octagon critical, triangle warning, square notice, filled
-   circle ok, dashed circle no data, an arc running), so shape and word carry the meaning and
+   circle ok, an empty circle with a bar no data, an arc running), so shape and word carry the meaning and
    colour only repeats it.
 
    The badge (.cap-pill, also written .cap-badge) is shadcn's Badge: a 20 px pill, 12 px

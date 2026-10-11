@@ -38,7 +38,7 @@ export function Glyph({ name }: { name: GlyphName }) {
     case "nodata":
       return (
         <svg className="cap-status-glyph" {...box}>
-          <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeDasharray="2.6 2.2" />
+          <><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></>
         </svg>
       );
     case "running":

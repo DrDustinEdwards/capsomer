@@ -61,7 +61,7 @@ const paths: Record<FeedTone | "dot", ReactNode> = {
       <path fill="none" stroke="var(--surface)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="m4.6 8.3 2.3 2.3 4.5-4.9" />
     </>
   ),
-  nodata: <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeDasharray="2.6 2.2" />,
+  nodata: <><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></>,
   dot: <circle cx="8" cy="8" r="3.2" fill="currentColor" />,
 };
 

@@ -53,7 +53,7 @@ const GLYPH: Record<"warn" | "crit" | "nodata", ReactNode> = {
       <path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" />
     </>
   ),
-  nodata: <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeDasharray="2.6 2.2" />,
+  nodata: <><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></>,
 };
 
 function Glyph({ tone }: { tone: "warn" | "crit" | "nodata" }) {
