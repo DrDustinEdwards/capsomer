@@ -18,11 +18,15 @@
     /* The strip is a shade apart from the menu in both themes (darker in light, lighter in dark),
        so the two rails never read as one, collapsed or not. */
     --admin-strip-bg: color-mix(in srgb, var(--ground), var(--text) 7%);
-    /* A plain count's bubble: a neutral step off the ground that shows in both themes. */
-    --admin-count-bg: color-mix(in srgb, var(--ground), var(--text) 12%);
-    /* One inset for a menu row in both states: the icon sits at the same x open and collapsed,
-       centred in the collapsed column ((56 - 2 * 8 - 16) / 2 = 12). */
-    --admin-row-pad: var(--space-4);
+    /* Collapsed, the menu is an icon column wider than the strip: room beside each icon for its
+       count, up to "99+", without crossing into the content (80px). */
+    --admin-menu-collapsed: calc(var(--rail-w-collapsed) + var(--space-6));
+    /* One inset for a menu row in both states: the 16px icon sits at the same x open and
+       collapsed, centred in the collapsed column ((80 - 2 * 8 - 16) / 2 = 24). */
+    --admin-row-pad: calc((var(--admin-menu-collapsed) - 2 * var(--space-3) - 16px) / 2);
+    /* Hover: a fill a clear step off the ground in both themes, and an edge at 3:1. */
+    --admin-hover: color-mix(in srgb, var(--ground), var(--text) 10%);
+    --admin-hover-edge: var(--line-strong);
     display: grid;
     grid-template-columns: var(--admin-strip) var(--admin-menu) minmax(0, 1fr);
     min-height: 100dvh;
@@ -30,7 +34,7 @@
     color: var(--text);
 
     &[data-menu="collapsed"] {
-      --admin-menu: var(--rail-w-collapsed);
+      --admin-menu: var(--admin-menu-collapsed);
     }
   }
 
@@ -118,12 +122,13 @@
 
     &:hover,
     &[data-force="hover"] {
-      background: var(--sunken);
+      background: var(--admin-hover);
+      box-shadow: inset 0 0 0 1px var(--admin-hover-edge);
       color: var(--text);
     }
     &:active,
     &[data-force="pressed"] {
-      background: var(--sunken);
+      background: var(--admin-hover);
     }
   }
   .cap-admin-icon {
@@ -163,43 +168,44 @@
   }
 
   /* One bubble for every count and badge, open and collapsed, in the strip, the menu and the
-     sheet: one size, one shape, one type. A plain count is neutral; violet needs you; red and amber
-     are status colours and keep their meaning. On an icon it rides the corner beside the glyph, so
-     it never covers it. A badge sits on another app's tile or on Inbox, never on the app you are in. */
+     sheet: one size, one shape, one type, and the same number everywhere (99+ past 99). A plain
+     count is a neutral grey bubble; violet needs you; red and amber are status colors and keep
+     their meaning. A badge sits on another app's tile or on Inbox, never on the app you are in.
+     On an icon every bubble is in one place relative to its glyph: its left edge 2px past the
+     glyph's right edge, its middle on the glyph's top edge, so it never covers the glyph. Each
+     host says where its glyph is (--_gx, its left; --_gw, its size). */
   .cap-admin-badge,
   .cap-admin-count {
+    --_bubble: 16px;
     display: inline-grid;
     place-items: center;
     flex: none;
     box-sizing: border-box;
-    min-width: 18px;
-    height: 18px;
-    padding-inline: 5px;
+    min-width: var(--_bubble);
+    height: var(--_bubble);
+    padding-inline: 3px;
     border-radius: var(--radius-full);
-    background: var(--admin-count-bg);
-    color: var(--text);
-    font-size: var(--fs-label);
-    font-weight: 600;
+    background: var(--muted);
+    color: var(--ground);
+    font-size: 10px;
+    font-weight: 700;
     line-height: 1;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
   .cap-admin-badge {
+    --_gx: calc(50% - 10px);
+    --_gw: 20px;
     position: absolute;
-    top: -5px;
-    /* The glyph is 20px, centred: the bubble starts 2px past its right edge. */
-    left: calc(50% + 12px);
+    top: calc(50% - var(--_gw) / 2 - var(--_bubble) / 2);
+    left: calc(var(--_gx) + var(--_gw) + 2px);
     background: var(--primary);
     color: var(--primary-fg);
     box-shadow: 0 0 0 2px var(--admin-strip-bg);
-
-    &[data-dot] {
-      top: -2px;
-      min-width: 0;
-      width: 10px;
-      height: 10px;
-      padding: 0;
-    }
+  }
+  .cap-admin-btn > .cap-admin-badge {
+    --_gx: calc(50% - 9px);
+    --_gw: 18px;
   }
 
   .cap-admin-avatar {
@@ -225,41 +231,10 @@
     }
   }
 
-  /* The name of a strip control, shown beside it on hover and keyboard focus. A child of the
-     control, so the pointer can move onto it without it closing; Esc hides it (WCAG 1.4.13). */
-  .cap-admin-tip,
-  .cap-admin[data-menu="collapsed"] .cap-admin-menu .cap-admin-label {
-    position: absolute;
-    left: calc(100% + var(--space-4));
-    top: 50%;
-    translate: 0 -50%;
-    z-index: var(--z-tip);
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-m);
-    background: var(--text);
-    color: var(--ground);
-    font-size: var(--fs-detail);
-    font-weight: 400;
-    line-height: 1.4;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    clip-path: inset(50%);
-
-    & kbd {
-      margin-inline-start: var(--space-3);
-      padding: 0;
-      border: 0;
-      background: none;
-      box-shadow: none;
-      color: inherit;
-      font: inherit;
-    }
-  }
-  :is(.cap-admin-btn, .cap-admin-tile):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-tip,
-  .cap-admin[data-menu="collapsed"] .cap-admin-menu a:is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-label {
-    opacity: 1;
-    clip-path: inset(-8px);
+  /* A control's name tip is Capsomer's tooltip (popover.css, the tooltip variant), in the top
+     layer. A menu link's tip shows only while the menu is collapsed; open, its label is in view. */
+  .cap-admin:not([data-menu="collapsed"]) .cap-admin-menu .cap-admin-tip {
+    display: none;
   }
 
   /* The menu: the current app's name as a plain title, then its groups. A shade calmer than
@@ -297,12 +272,17 @@
 
       &:hover,
       &[data-force="hover"] {
-        background: var(--sunken);
+        background: var(--admin-hover);
+        box-shadow: inset 0 0 0 1px var(--admin-hover-edge);
         color: var(--text);
       }
       &:active,
       &[data-force="pressed"] {
-        background: var(--sunken);
+        background: var(--admin-hover);
+      }
+      & .cap-admin-icon {
+        width: 16px;
+        height: 16px;
       }
       &[aria-current="page"] {
         background: var(--admin-pill);
@@ -311,8 +291,22 @@
       }
     }
   }
-  /* The menu's title: the app's name, in one style on every app. Its logo is the marked tile in
-     the strip beside it, so the mark is never shown twice. */
+  /* The menu's title: the app's name, in one style on every app. Open, its logo is the marked
+     tile in the strip beside it; collapsed, the name hides and the column shows the app's mark
+     where the icons are, so the column still says which app this is. */
+  .cap-admin-title-mark {
+    display: none;
+    place-items: center;
+    width: 16px;
+    color: var(--accent-text);
+
+    /* 20px over a 16px column: centred on the icons below it. */
+    & :is(svg, .cap-admin-logo) {
+      width: 20px;
+      height: 20px;
+      margin-inline: -2px;
+    }
+  }
   .cap-admin-title {
     display: flex;
     align-items: center;
@@ -368,25 +362,29 @@
     color: var(--admin-pill);
   }
 
-  /* Collapsed: the same menu shrunk to an icon column at the collapsed rail width, in the same
-     order and the same places, so nothing moves: every icon keeps its x and y and the current
-     row its height and left edge. Labels and group headings are hidden but keep their boxes (and
-     their names for a screen reader); a heading's band shows a thin divider instead. A label shows
-     as a tooltip on hover and keyboard focus; a count rides the icon's corner, a dot where it does
-     not fit. A scrolling box would clip the tooltips, so this column does not scroll. */
+  /* Collapsed: the same menu shrunk to an icon column, in the same order and the same places,
+     so nothing moves: every icon keeps its x and y and the current row its height and left edge.
+     Labels and group headings are hidden but keep their boxes (and their names for a screen
+     reader); a heading's band shows a thin divider instead. Each icon names itself in a tooltip
+     on hover and keyboard focus. A count sits beside its icon's top right corner, inside the
+     column (never across the divider into the content), the same "99+" as open. A scrolling box
+     would clip the counts, so this column does not scroll. */
   .cap-admin[data-menu="collapsed"] .cap-admin-menu {
     overflow: visible;
 
     & a {
       grid-template-columns: 16px;
     }
-    & .cap-admin-title-text {
+    & :is(.cap-admin-title-text, .cap-admin-label) {
       position: absolute;
       width: 1px;
       height: 1px;
       overflow: hidden;
       clip-path: inset(50%);
       white-space: nowrap;
+    }
+    & .cap-admin-title-mark {
+      display: grid;
     }
     & .cap-admin-group-label {
       overflow: hidden;
@@ -405,24 +403,18 @@
       display: none;
     }
     & .cap-admin-count {
+      --_gx: var(--admin-row-pad);
+      --_gw: 16px;
       position: absolute;
-      top: -3px;
-      /* 2px past the icon's right edge, so the bubble never covers the glyph. */
-      left: calc(var(--admin-row-pad) + 18px);
+      top: calc(50% - var(--_gw) / 2 - var(--_bubble) / 2);
+      left: calc(var(--_gx) + var(--_gw) + 2px);
       box-shadow: 0 0 0 2px var(--ground);
-
-      &[data-wide] {
-        top: 2px;
-        min-width: 0;
-        width: 8px;
-        height: 8px;
-        padding: 0;
-        font-size: 0;
-
-        &:not([data-tone]) {
-          background: var(--muted);
-        }
-      }
+    }
+    & a:is(:hover, [data-force="hover"]) .cap-admin-count {
+      box-shadow: 0 0 0 2px var(--admin-hover);
+    }
+    & a[aria-current="page"] .cap-admin-count {
+      box-shadow: 0 0 0 2px var(--admin-pill);
     }
   }
   .cap-admin-letter {
@@ -462,9 +454,28 @@
     gap: 0 var(--space-4);
     min-width: 0;
   }
-  .cap-admin-bar-page {
-    color: var(--text);
-    font-weight: 600;
+  /* The trail: only on a page below the top level ("Components / Shell"), so the bar never
+     repeats the page's own heading. */
+  .cap-admin-trail ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & li + li::before {
+      content: "/";
+      margin-inline-end: var(--space-2);
+      color: var(--dim);
+    }
+    & a {
+      color: var(--accent-text);
+    }
+    & [aria-current="page"] {
+      color: var(--text);
+      font-weight: 600;
+    }
   }
   .cap-admin-actions {
     display: flex;
@@ -472,13 +483,6 @@
     align-items: center;
     gap: var(--space-3);
     margin-inline-start: auto;
-
-    /* A bar control's name shows below it: beside it would leave the window. */
-    & .cap-admin-tip {
-      left: 50%;
-      top: calc(100% + var(--space-3));
-      translate: -50% 0;
-    }
   }
   /* The app's name is for the phone only (the menu and the strip carry it elsewhere). */
   .cap-admin-bar-app {
@@ -687,9 +691,6 @@
       color: var(--text);
       font-weight: 600;
     }
-    .cap-admin-bar-page {
-      font-weight: 400;
-    }
     .cap-admin-page {
       padding: var(--space-5) var(--space-5) var(--space-6);
       gap: var(--space-5);
@@ -761,19 +762,6 @@
         background-color var(--dur-fast) var(--ease-out),
         color var(--dur-fast) var(--ease-out);
     }
-    .cap-admin-tip,
-    .cap-admin[data-menu="collapsed"] .cap-admin-menu .cap-admin-label {
-      transform: translateX(-8px);
-      transition:
-        opacity var(--dur-fast) var(--ease-out),
-        transform var(--dur-fast) var(--ease-out),
-        clip-path 0s linear var(--dur-fast);
-    }
-    :is(.cap-admin-btn, .cap-admin-tile):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-tip,
-    .cap-admin[data-menu="collapsed"] .cap-admin-menu a:is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) > .cap-admin-label {
-      transform: none;
-      transition-delay: 0s;
-    }
     .cap-admin-account {
       transition:
         opacity var(--dur-base) var(--ease-out),
@@ -800,11 +788,8 @@
     .cap-admin-tabs :is(a, button)[aria-current] {
       text-decoration: underline;
     }
-    .cap-admin-tip,
-    .cap-admin[data-menu="collapsed"] .cap-admin-menu .cap-admin-label {
-      border: 1px solid CanvasText;
-    }
-    .cap-admin-badge {
+    .cap-admin-badge,
+    .cap-admin-count {
       forced-color-adjust: none;
       background: CanvasText;
       color: Canvas;

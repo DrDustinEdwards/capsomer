@@ -5,10 +5,12 @@
 // product's own icon (its favicon or brand file) redrawn in one colour: the Portal's hexagon
 // (capsid dashboard/src/ui/icons.tsx BrandMark), Carrel's open book (carrel app/components/frame.tsx),
 // dustinedwards.info's microscope (public/dustin-edwards-logo.svg), germomics' broadcasting
-// microphone (public/brand/germomics-icon-currentcolor.svg), Foxhound's x (public/favicon.svg).
+// microphone (public/brand/germomics-icon-currentcolor.svg), and Capsomer's hexagon (its site's
+// brand mark). Foxhound's own favicon is an x, which reads as close or delete, so its mark is
+// one of the candidates below until Dustin picks (FOXHOUND_MARKS).
 import type { ReactNode } from "react";
 
-export type FamilyAppId = "portal" | "carrel" | "info" | "germomics" | "foxhound";
+export type FamilyAppId = "portal" | "carrel" | "info" | "germomics" | "foxhound" | "capsomer";
 
 export interface FamilyApp {
   id: FamilyAppId;
@@ -63,10 +65,41 @@ const GERMOMICS = mark(
   />,
 );
 
-// Foxhound's favicon is a lowercase x on a dark rounded square; the tile is the square here.
-const FOXHOUND = mark(
-  "0 0 24 24",
-  <path fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" d="M7.5 9 16.5 18M16.5 9 7.5 18" />,
+// Foxhound's candidates (its favicon's x reads as close or delete). Each is drawn on the 24
+// grid in one colour. "track": a hound's paw print, for a service that tracks down failed
+// payments; "fox": a fox's head, the name; "recover": a circular arrow around a card, what it
+// does. Shown side by side in the 0.8.0 screenshots; the one Dustin picks stays.
+export const FOXHOUND_MARKS = {
+  track: mark(
+    "0 0 24 24",
+    <g fill="currentColor">
+      <path d="M12 12.2c-2.6 0-5.2 2.6-5.6 5.2-.3 1.8.9 3 2.5 2.7 1.2-.2 2-.8 3.1-.8s1.9.6 3.1.8c1.6.3 2.8-.9 2.5-2.7-.4-2.6-3-5.2-5.6-5.2z" />
+      <ellipse cx="6.2" cy="10.2" rx="1.9" ry="2.4" transform="rotate(-18 6.2 10.2)" />
+      <ellipse cx="9.6" cy="6.4" rx="1.9" ry="2.5" transform="rotate(-6 9.6 6.4)" />
+      <ellipse cx="14.4" cy="6.4" rx="1.9" ry="2.5" transform="rotate(6 14.4 6.4)" />
+      <ellipse cx="17.8" cy="10.2" rx="1.9" ry="2.4" transform="rotate(18 17.8 10.2)" />
+    </g>,
+  ),
+  fox: mark(
+    "0 0 24 24",
+    <path
+      fill="currentColor"
+      fillRule="evenodd"
+      d="M3 3.5 8.6 8h6.8L21 3.5l-.9 8.2L12 20.5l-8.1-8.8zM8.4 12.2a1.2 1.2 0 1 0 0 .1zm7.2 0a1.2 1.2 0 1 0 0 .1zM10.6 15.6h2.8L12 17.2z"
+    />,
+  ),
+  recover: mark(
+    "0 0 24 24",
+    <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 12a8 8 0 1 1-2.6-5.9M20 3.5v4h-4" />
+      <path d="M8 10h8v5H8zM8 12h8" />
+    </g>,
+  ),
+};
+
+const CAPSOMER = mark(
+  "0 0 20 20",
+  <path fill="currentColor" fillRule="evenodd" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9zM10 5.4 6 7.7v4.6l4 2.3 4-2.3V7.7z" />,
 );
 
 // The order every strip shows, whichever app it is in.
@@ -75,7 +108,9 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
   { id: "carrel", label: "Carrel", href: "https://carrel.dustinedwards.info/", logo: CARREL },
   { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
-  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND },
+  // Provisional until Dustin picks among FOXHOUND_MARKS.
+  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND_MARKS.track },
+  { id: "capsomer", label: "Capsomer", href: "https://capsomer.dustinedwards.info/", logo: CAPSOMER },
 ];
 
 // The one account every admin area is signed in as, and its avatar.

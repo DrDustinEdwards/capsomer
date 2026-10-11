@@ -1,15 +1,17 @@
 import { Fragment, useCallback, useEffect, useId, useRef, useState, type ComponentPropsWithRef, type ReactNode } from "react";
+import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
+import { Time } from "../time/time.react.tsx";
 import { Dialog, DialogBody, DialogHeader } from "../dialog/dialog.react.tsx";
 import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
 import type { LinkProps } from "../shell/shell.react.tsx";
 import { ThemeSwitch } from "../theme-switch/theme-switch.react.tsx";
 import { applyStoredTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
-import { hideShownNames, jumpTarget, showNamesAgain } from "./admin-shell.ts";
-import { FAMILY_APPS, FIRST_PAGE, OWNER, type FamilyAppId } from "./apps.tsx";
+import { badgeText, jumpTarget } from "./admin-shell.ts";
+import { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER, type FamilyAppId } from "./apps.tsx";
 
 export type { LinkProps, FamilyAppId };
 export { startPageTransition } from "./admin-shell.ts";
-export { FAMILY_APPS, FIRST_PAGE, OWNER };
+export { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER };
 
 // One of the current app's pages. `group` puts consecutive entries under one label.
 export interface AdminEntry {
@@ -28,8 +30,8 @@ export interface AdminEntry {
 
 // One app in the strip. The family's admin apps come from FAMILY_APPS (apps.tsx); this shape is
 // for a public site's own one-app strip. `logo` is the product's mark (an svg using currentColor
-// takes the tile's colour). `count` or `dot` means this app needs you; the app you are in never
-// shows one.
+// takes the tile's colour). `count` is how many things in that app need you; the app you are in
+// never shows one.
 export interface AdminApp {
   id: string;
   label: string;
@@ -38,7 +40,6 @@ export interface AdminApp {
   mono?: string;
   current?: boolean;
   count?: number;
-  dot?: boolean;
   // What the badge means, for the accessible name: "2 AI drafts waiting". Default "need you".
   countNote?: string;
 }
@@ -51,11 +52,17 @@ export interface AdminAccountLink {
   current?: boolean;
 }
 
-// What another app's tile says: a count, or a dot, and what it means for its accessible name.
+// What another app's tile says. One rule for every tile: a badge is always a number, how many
+// things in that app need you (a state with nothing to count, one failing check, is 1). No dots.
 export interface AdminBadge {
   count?: number;
-  dot?: boolean;
   countNote?: string;
+}
+
+// A level of the top bar's trail, before the page itself: "Components" above "Shell".
+export interface AdminCrumb {
+  label: string;
+  href: string;
 }
 
 // The avatar is the owner's (OWNER, "DE") unless a name and initials are given.
@@ -83,8 +90,11 @@ export interface AdminShellProps {
   // The strip for a site outside the family (a public site's one app). Admin areas pass `app`.
   apps?: AdminApp[];
   nav: AdminEntry[];
-  // The page being shown: the left of the top bar, and the tab title "<page> · <app>".
+  // The page being shown: the tab title "<page> · <app>", and the last step of the trail.
   page?: string;
+  // The levels above the page. Given, the top bar shows the trail ("Components / Shell"); a
+  // top-level page has none, so the bar never repeats the page's own heading.
+  trail?: AdminCrumb[];
   // The phone's bar: at most four of this app's top pages, then More. Default: the first four.
   tabs?: AdminEntry[];
   // The pages the bar has no room for. Default: the rest of `nav`.
@@ -98,8 +108,11 @@ export interface AdminShellProps {
   onHelp?: () => void;
   helpShortcut?: string;
   account?: AdminAccount;
-  // The top bar: the page and how fresh its data is on the left; then the page-wide controls,
-  // Refresh (shown when the page can refresh) and the theme, always last.
+  // The top bar: the trail and how fresh the data is on the left; then the page-wide controls,
+  // Refresh (shown when the page can refresh) and the theme, always last. `updated` is the one
+  // freshness line every app shows: "Updated 6 minutes ago", with "· refreshes itself" when
+  // `auto`. `status` is anything else true of the page.
+  updated?: { at: number | Date | string; auto?: boolean };
   status?: ReactNode;
   actions?: ReactNode;
   onRefresh?: () => void;
@@ -161,16 +174,42 @@ function groups(nav: AdminEntry[]): Array<{ label?: string; entries: AdminEntry[
 
 const countName = (label: string, count?: number, note?: string) => (count ? `${label}, ${count}${note ? ` ${note}` : ""}` : undefined);
 
-// A strip control's name, shown beside it on hover and keyboard focus, with its key.
-const Tip = ({ text, keys }: { text: string; keys?: string }) => (
-  <span className="cap-admin-tip" aria-hidden="true">
-    <span className="cap-admin-tip-text">{text}</span>
-    {keys ? <kbd>{keys}</kbd> : null}
-  </span>
-);
-
-// A badge is a glance, not a figure: past 99 it says 99+ (the accessible name keeps the real count).
-const badgeText = (count: number) => (count > 99 ? "99+" : count);
+// A control's name, shown beside it on hover and keyboard focus: Capsomer's one tooltip (the
+// shared popover's tooltip variant, in the top layer, so it is above every panel, tile and
+// badge). It is a child of its control and attaches to it; keys are key caps ("G", "2").
+// `describe` false leaves the control's description alone, where the tip repeats its name.
+// `offset` clears what sits beside the control: a strip tip starts past the strip's edge (and so
+// past the control's own badge), a menu tip past the menu's.
+function Tip({ text, keys, side = "right", offset = 20, describe = true }: { text: string; keys?: string; side?: "right" | "bottom"; offset?: number; describe?: boolean }) {
+  const tip = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const el = tip.current;
+    const trigger = el?.parentElement;
+    if (!el || !trigger) return;
+    const detach = attachTip(trigger, el);
+    if (!describe) trigger.removeAttribute("aria-describedby");
+    // A control that is used (a click or Enter) has done what its name said: the name goes, so
+    // it does not sit over the panel or page the control opened.
+    const used = () => hideTip(trigger);
+    trigger.addEventListener("click", used);
+    return () => {
+      trigger.removeEventListener("click", used);
+      detach();
+    };
+  }, [describe]);
+  return (
+    <span ref={tip} className="cap-admin-tip cap-popover" data-variant="tooltip" data-side={side} data-offset={offset} popover="manual" role="tooltip" aria-hidden="true">
+      <span className="cap-admin-tip-text">{text}</span>
+      {keys ? (
+        <span className="cap-keys">
+          {keys.split(" ").map((k) => (
+            <kbd key={k}>{k}</kbd>
+          ))}
+        </span>
+      ) : null}
+    </span>
+  );
+}
 
 // The strip: the family's apps in their one order, this one marked, others with their badges.
 function stripApps(app: FamilyAppId | undefined, badges: AdminShellProps["badges"], apps: AdminApp[] | undefined): AdminApp[] {
@@ -178,13 +217,11 @@ function stripApps(app: FamilyAppId | undefined, badges: AdminShellProps["badges
   return FAMILY_APPS.map((a) => ({ ...badges?.[a.id], id: a.id, label: a.label, href: a.href, logo: a.logo, current: a.id === app }));
 }
 
-const Badge = ({ count, dot }: { count?: number; dot?: boolean }) =>
+const Badge = ({ count }: { count?: number }) =>
   count ? (
     <span className="cap-admin-badge" aria-hidden="true">
       {badgeText(count)}
     </span>
-  ) : dot ? (
-    <span className="cap-admin-badge" data-dot="" aria-hidden="true" />
   ) : null;
 
 const mark = (a: AdminApp) => a.logo ?? <span aria-hidden="true">{a.mono ?? a.label.slice(0, 1)}</span>;
@@ -200,6 +237,8 @@ export function AdminShell(props: AdminShellProps) {
     inbox,
     onHelp,
     helpShortcut = "?",
+    trail,
+    updated,
     status,
     actions,
     onRefresh,
@@ -215,6 +254,7 @@ export function AdminShell(props: AdminShellProps) {
   } = props;
   const apps = stripApps(app, props.badges, props.apps);
   const title = props.title ?? FAMILY_APPS.find((a) => a.id === app)?.label ?? apps.find((a) => a.current)?.label ?? "";
+  const currentLogo = apps.find((a) => a.current)?.logo ?? null;
   const account = props.account ? { ...props.account, name: props.account.name ?? OWNER.name, initials: props.account.initials ?? OWNER.initials } : undefined;
   const root = useRef<HTMLDivElement>(null);
   const moreButton = useRef<HTMLButtonElement>(null);
@@ -246,13 +286,12 @@ export function AdminShell(props: AdminShellProps) {
   // The remembered theme, in case the app's head script did not apply it before paint.
   useEffect(() => void applyStoredTheme(themePrefKey), [themePrefKey]);
 
-  // G then a number jumps between apps; Esc hides a shown name (WCAG 1.4.13).
+  // G then a number jumps between apps (Esc hiding a shown name is the tooltip's own).
   const appsRef = useRef(apps);
   appsRef.current = apps;
   useEffect(() => {
     const armed = { at: 0 };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && root.current) return hideShownNames(root.current);
       const to = jumpKeys ? jumpTarget(armed, e, appsRef.current) : null;
       if (to) {
         e.preventDefault();
@@ -281,9 +320,10 @@ export function AdminShell(props: AdminShellProps) {
               </span>
             )}
             <span className="cap-admin-label">{e.label}</span>
-            <span className="cap-admin-count" data-tone={e.tone} data-wide={e.count && e.count > 99 ? "" : undefined}>
-              {e.count ? e.count : ""}
+            <span className="cap-admin-count" data-tone={e.tone}>
+              {e.count ? badgeText(e.count) : ""}
             </span>
+            <Tip text={e.label} offset={12} describe={false} />
           </>
         ),
       })}
@@ -324,7 +364,7 @@ export function AdminShell(props: AdminShellProps) {
     );
 
   return (
-    <div ref={root} className="cap-admin" data-cap="admin-shell" data-menu={collapsed ? "collapsed" : undefined} data-transition={props.transition ? "page" : undefined} onMouseOut={showNamesAgain} onBlur={showNamesAgain}>
+    <div ref={root} className="cap-admin" data-cap="admin-shell" data-menu={collapsed ? "collapsed" : undefined} data-transition={props.transition ? "page" : undefined}>
       <a className="cap-admin-skip" href="#cap-main">
         Skip to content
       </a>
@@ -350,11 +390,11 @@ export function AdminShell(props: AdminShellProps) {
                 href: a.href,
                 className: "cap-admin-tile",
                 "aria-current": a.current ? "true" : undefined,
-                "aria-label": a.current ? a.label : (countName(a.label, a.count, a.countNote ?? "need you") ?? (a.dot ? `${a.label}, ${a.countNote ?? "needs you"}` : a.label)),
+                "aria-label": a.current ? a.label : (countName(a.label, a.count, a.countNote ?? "need you") ?? a.label),
                 children: (
                   <>
                     {mark(a)}
-                    {a.current ? null : <Badge count={a.count} dot={a.dot} />}
+                    {a.current ? null : <Badge count={a.count} />}
                     <Tip text={a.label} keys={i < 9 && jumpKeys ? `G ${i + 1}` : undefined} />
                   </>
                 ),
@@ -456,6 +496,11 @@ export function AdminShell(props: AdminShellProps) {
       </nav>
       <nav className="cap-admin-menu" id="cap-admin-menu" aria-label={navLabel}>
         <div className="cap-admin-title">
+          {/* Collapsed, the column keeps the app's identity: its mark at the top. Open, the
+              title is the name only (the marked strip tile beside it is the logo). */}
+          <span className="cap-admin-title-mark" aria-hidden="true">
+            {currentLogo}
+          </span>
           <span className="cap-admin-title-text">{title}</span>
         </div>
         {groups(nav).map((g, i) =>
@@ -475,7 +520,26 @@ export function AdminShell(props: AdminShellProps) {
         <div className="cap-admin-bar">
           <div className="cap-admin-bar-text">
             <strong className="cap-admin-bar-app">{title}</strong>
-            {page ? <span className="cap-admin-bar-page">{page}</span> : null}
+            {trail && trail.length > 0 ? (
+              <nav className="cap-admin-trail" aria-label="Breadcrumb">
+                <ol>
+                  {trail.map((c) => (
+                    <li key={c.href}>{renderLink({ href: c.href, children: c.label })}</li>
+                  ))}
+                  {page ? (
+                    <li>
+                      <span aria-current="page">{page}</span>
+                    </li>
+                  ) : null}
+                </ol>
+              </nav>
+            ) : null}
+            {updated ? (
+              <span className="cap-admin-fresh">
+                Updated <Time at={updated.at} />
+                {updated.auto ? " · refreshes itself" : null}
+              </span>
+            ) : null}
             {status ? <div className="cap-admin-bar-status">{status}</div> : null}
           </div>
           <div className="cap-admin-actions">
@@ -483,7 +547,7 @@ export function AdminShell(props: AdminShellProps) {
             {onRefresh && (
               <button type="button" className="cap-admin-btn" data-cap-part="refresh" aria-label="Refresh" aria-busy={refreshing || undefined} onClick={onRefresh}>
                 <Icon d={REFRESH_D} />
-                <Tip text="Refresh" keys={refreshShortcut} />
+                <Tip text="Refresh" keys={refreshShortcut} side="bottom" offset={6} />
               </button>
             )}
             <ThemeSwitch prefKey={themePrefKey} />
@@ -518,7 +582,7 @@ export function AdminShell(props: AdminShellProps) {
                       <>
                         <span className="cap-admin-sheet-icon cap-admin-app-mark" aria-hidden="true">{mark(a)}</span>
                         <span className="cap-admin-sheet-name">{a.label}</span>
-                        {a.current ? null : a.count ? <span className="cap-admin-count" data-tone="need">{a.count}</span> : null}
+                        {a.current ? null : a.count ? <span className="cap-admin-count" data-tone="need">{badgeText(a.count)}</span> : null}
                       </>
                     ),
                   })}
@@ -541,7 +605,7 @@ export function AdminShell(props: AdminShellProps) {
                             <span className="cap-admin-sheet-name">{e.label}</span>
                             {e.count ? (
                               <span className="cap-admin-count" data-tone={e.tone}>
-                                {`${e.count}${e.countNote ? ` ${e.countNote}` : ""}`}
+                                {`${badgeText(e.count)}${e.countNote ? ` ${e.countNote}` : ""}`}
                               </span>
                             ) : null}
                           </>
@@ -574,7 +638,7 @@ export function AdminShell(props: AdminShellProps) {
                             <>
                               <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={INBOX_D} /></span>
                               <span className="cap-admin-sheet-name">Inbox</span>
-                              {inbox.count ? <span className="cap-admin-count" data-tone="need">{`${inbox.count}${inbox.countNote ? ` ${inbox.countNote}` : ""}`}</span> : null}
+                              {inbox.count ? <span className="cap-admin-count" data-tone="need">{`${badgeText(inbox.count)}${inbox.countNote ? ` ${inbox.countNote}` : ""}`}</span> : null}
                             </>
                           ),
                         })
@@ -582,7 +646,7 @@ export function AdminShell(props: AdminShellProps) {
                         <button type="button" onClick={() => (closeSheet(), inbox.onOpen?.())}>
                           <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={INBOX_D} /></span>
                           <span className="cap-admin-sheet-name">Inbox</span>
-                          {inbox.count ? <span className="cap-admin-count" data-tone="need">{`${inbox.count}${inbox.countNote ? ` ${inbox.countNote}` : ""}`}</span> : null}
+                          {inbox.count ? <span className="cap-admin-count" data-tone="need">{`${badgeText(inbox.count)}${inbox.countNote ? ` ${inbox.countNote}` : ""}`}</span> : null}
                         </button>
                       )}
                     </li>

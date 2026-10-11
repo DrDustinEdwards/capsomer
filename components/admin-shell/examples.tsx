@@ -2,6 +2,7 @@
 import { StrictMode, useEffect, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
+import { showTip } from "../tooltip/tooltip.ts";
 import { AdminShell, FAMILY_APPS, FIRST_PAGE, startPageTransition, type AdminEntry, type AdminShellProps } from "./admin-shell.react.tsx";
 
 const svg = (d: string) => (
@@ -27,7 +28,7 @@ const nav: AdminEntry[] = [
 
 const base: Omit<AdminShellProps, "children"> = {
   app: "portal",
-  badges: { portal: { count: 3 }, carrel: { count: 2, countNote: "AI drafts waiting" }, germomics: { dot: true, countNote: "a check is failing" } },
+  badges: { portal: { count: 3 }, carrel: { count: 2, countNote: "AI drafts waiting" }, germomics: { count: 1, countNote: "check failing" } },
   nav,
   page: FIRST_PAGE,
   onSearch: () => undefined,
@@ -39,7 +40,8 @@ const base: Omit<AdminShellProps, "children"> = {
     appLinks: [{ label: "Portal settings", href: "#settings" }, { label: "Keyboard shortcuts", onClick: () => undefined }],
     onSignOut: () => undefined,
   },
-  status: <span>Updated 6 min ago · refreshes itself</span>,
+  // Six minutes before the page was opened, so the specimen always reads "6 minutes ago".
+  updated: { at: Date.now() - 6 * 60_000, auto: true },
   onRefresh: () => undefined,
   refreshShortcut: "R",
 };
@@ -70,18 +72,21 @@ function Shell({ name, collapsed, ...rest }: { name: string; collapsed?: boolean
 }
 
 // Shows the name a hovered control would show, for the picture; the spec checks real hover and focus.
+const showName = (sel: string, i: number) => {
+  const frame = requestAnimationFrame(() => {
+    const el = document.querySelectorAll<HTMLElement>(sel)[i];
+    if (el) showTip(el);
+  });
+  return () => cancelAnimationFrame(frame);
+};
 function Tipped() {
-  useEffect(() => {
-    document.querySelectorAll<HTMLElement>(".cap-admin-tile")[1]?.setAttribute("data-force", "hover");
-  }, []);
+  useEffect(() => showName(".cap-admin-tile", 1), []);
   return <Shell name="tip" />;
 }
 
 // Collapsed, with a menu icon's name shown, for the picture.
 function CollapsedTip() {
-  useEffect(() => {
-    document.querySelectorAll<HTMLElement>(".cap-admin-menu a")[1]?.setAttribute("data-force", "hover");
-  }, []);
+  useEffect(() => showName(".cap-admin-menu a", 1), []);
   return <Shell name="collapsed-tip" collapsed />;
 }
 
@@ -114,7 +119,7 @@ const reader: Partial<AdminShellProps> = {
   ],
   inbox: undefined,
   account: undefined,
-  status: undefined,
+  updated: undefined,
   onRefresh: undefined,
   page: "Research",
 };
@@ -163,6 +168,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   collapsed: () => <Shell name="collapsed" collapsed />,
   tip: () => <Tipped />,
   "collapsed-tip": () => <CollapsedTip />,
+  trail: () => <Shell name="trail" nav={nav.map((e) => ({ ...e, current: e.id === "sites" }))} page="fieldnotes.example" trail={[{ label: "Sites", href: "#sites" }]} />,
   account: () => <AccountOpen />,
   reader: () => (
     <AdminShell {...base} {...reader} prefKey={key("reader")} children={<div className="cap-admin-page" data-measure="reading"><h1>Research</h1><p>A reading column holds a comfortable line length.</p></div>} />
