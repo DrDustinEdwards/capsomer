@@ -1,6 +1,6 @@
 # Routine no-bloat checks (warn only)
 
-Capsomer's standing plan is to keep the repo small: nothing unused, nothing built twice, nothing heavy. These three checks run on every pull request in `.github/workflows/no-bloat.yml`. **They report and never block a merge** (rulings.md, rule 1: defaults, not laws).
+Capsomer's standing plan is to keep the repo small: nothing unused, nothing built twice, nothing heavy. These checks run on every pull request in `.github/workflows/no-bloat.yml`: Knip and jscpd through devkit's shared report (`@dustinedwards/devkit`, baseline in `.no-bloat.json`, refreshed with `npx devkit-no-bloat --write-baseline`), and page weight and lines in a job of capsomer's own. **They report and never block a merge** (rulings.md, rule 1: defaults, not laws).
 
 | Check | Tool | Command | Reads |
 | --- | --- | --- | --- |

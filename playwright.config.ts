@@ -7,7 +7,7 @@ const PORT = 4319;
 
 export default defineConfig({
   testDir: ".",
-  testMatch: ["components/*/*.spec.ts", "site/*.spec.ts"],
+  testMatch: ["components/*/*.spec.ts", "site/*.spec.ts", "test/*.spec.ts"],
   fullyParallel: false,
   workers: 1,
   forbidOnly: !!process.env.CI,

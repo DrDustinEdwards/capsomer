@@ -1,22 +1,33 @@
-# The routine no-bloat checks (no-bloat/README.md). WARN ONLY: every step has
-# continue-on-error and nothing here can fail a pull request (rulings.md, rule 1). The repo is
-# public, so the minutes are free; the job takes about two minutes.
+# The routine no-bloat checks (no-bloat/README.md). WARN ONLY: nothing here can fail a pull
+# request (rulings.md, rule 1). Two jobs. `no-bloat` is devkit's shared report (Knip and jscpd
+# against .no-bloat.json), pinned to the commit v0.5.0 points at; a move to a newer devkit is a
+# reviewed change to that sha and to the devDependency's tag together. `weight` is capsomer's
+# own page weight and line counts, which stay here. The repo is public, so the minutes are free.
 name: No bloat
 
 on:
   pull_request:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 concurrency:
   group: no-bloat-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  report:
+  no-bloat:
+    uses: DrDustinEdwards/devkit/.github/workflows/no-bloat.yml@2c5c7a5dd2d92b05d005e4f3abc47b001cdc0bf6 # v0.5.0
+    with:
+      node-version-file: .node-version
+      install: npm ci --ignore-scripts
+
+  weight:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,16 +38,7 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Build the site, for the page-weight report
         run: npm run site
-        continue-on-error: true
-      - name: Knip (unused files, exports and dependencies)
-        run: npx knip --reporter json > test-results-knip.json || true
-        continue-on-error: true
-      - name: jscpd (duplicated blocks)
-        run: npm run jscpd
-        continue-on-error: true
-      - name: Summary against the baseline
+      - name: Page weight and lines, against the baseline
         run: |
           mkdir -p test-results
-          mv test-results-knip.json test-results/knip.json 2>/dev/null || true
           npm run bloat >> "$GITHUB_STEP_SUMMARY"
-        continue-on-error: true
