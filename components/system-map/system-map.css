@@ -237,12 +237,14 @@
     }
   }
 
-  /* The detail line keeps its height, so choosing never moves the page below it. */
+  /* The detail line is a fixed box, so choosing, going inside and stepping out never move the page below it; a longer detail scrolls inside it. The size is !important because an important declaration in a layer beats a host's ordinary unlayered CSS. */
   .cap-system-map-detail {
     display: grid;
     align-content: start;
     gap: var(--space-2);
-    min-height: 5.5rem;
+    box-sizing: border-box;
+    block-size: 8.5rem !important;
+    overflow-y: auto;
     padding: var(--pad-y) var(--pad-x);
     border: 1px solid var(--line);
     border-radius: var(--radius-l);
@@ -250,6 +252,9 @@
 
     &[hidden] {
       display: none;
+    }
+    @media (max-width: 40rem) {
+      block-size: 13rem !important;
     }
   }
 

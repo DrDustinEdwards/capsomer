@@ -196,4 +196,29 @@ eachTheme((theme) => {
     await expect(page.locator("#map-plain-html .cap-system-map-tile[role='button']")).toHaveCount(0);
     await expect(page.locator("#map-plain-html .cap-system-map-views")).toBeHidden();
   });
+  for (const [label, size] of [["desktop", { width: 1280, height: 900 }], ["phone", { width: 390, height: 844 }]] as const) {
+    test(`layout: the detail line keeps its height when a system is chosen, entered and left (${label}, with a host's unlayered CSS)`, async ({ page }) => {
+      await page.setViewportSize(size);
+      // A host's ordinary unlayered CSS beats layered CSS, so the height has to hold against it.
+      await page.addStyleTag({ content: ".cap-system-map-detail { min-height: 0; height: auto; block-size: auto; overflow: visible; }" });
+      const detail = page.locator("#map .cap-system-map-detail");
+      const height = async () => (await detail.boundingBox())!.height;
+      const rest = await height();
+      const below = () => page.locator("#map .cap-system-map-list").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+      const top = await below();
+      for (const id of ["carrel", "fieldnotes", "capsid", "site-runtime"]) {
+        await tile(page, "map", id).click();
+        expect(await height(), `after choosing ${id}`).toBe(rest);
+        expect(await below(), `the list below, after choosing ${id}`).toBe(top);
+      }
+      await tile(page, "map", "capsid").click();
+      await tile(page, "map", "capsid").click();
+      await expect(page.locator("#map")).toHaveAttribute("data-entered", "");
+      expect(await height(), "inside").toBe(rest);
+      expect(await below(), "the list below, inside").toBe(top);
+      await page.keyboard.press("Escape");
+      expect(await height(), "stepped out").toBe(rest);
+      expect(await below(), "the list below, stepped out").toBe(top);
+    });
+  }
 });
