@@ -1,0 +1,382 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The system map: a family of systems drawn as a capsid. Three stacked drawings share one
+   viewBox (the core, the inner rings, the rim), with the lines and the inside above them,
+   so going inside moves whole layers by transform and opacity alone, which the compositor
+   does without repainting the shell (design section 3, "Rendering"). Chosen is a heavier
+   edge and the tint, never the tint alone; private is a dashed edge and the word. */
+@layer cap.components {
+  .cap-system-map {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .cap-system-map-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .cap-system-map-title {
+    font-weight: 600;
+  }
+
+  .cap-system-map-caption {
+    flex-basis: 100%;
+    order: 2;
+    max-width: var(--measure);
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .cap-system-map-views {
+    display: inline-flex;
+    gap: var(--space-2);
+
+    & button[aria-pressed="true"] {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent-text);
+    }
+  }
+
+  /* The core drawing is in the flow and sizes the stage; the others sit on top of it. */
+  .cap-system-map-stage {
+    position: relative;
+    overflow: clip;
+    overflow-clip-margin: var(--space-3);
+    width: 100%;
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  .cap-system-map-layer {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    transform-origin: 50% 50%;
+    /* Each drawing covers the whole stage, so the drawing itself takes no pointer: only
+       its capsomers do, or the rim on top would take every click meant for the core. */
+    pointer-events: none;
+
+    &[data-layer="core"] {
+      position: relative;
+      height: auto;
+    }
+    &[data-layer="inside"] {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  .cap-system-map-tile {
+    outline: none;
+
+    & polygon {
+      fill: var(--surface);
+      stroke: var(--line-strong);
+      stroke-width: 1.2;
+    }
+    &[data-shared] polygon {
+      fill: var(--accent-3);
+      stroke: var(--accent-7);
+    }
+    &[data-core] polygon {
+      fill: var(--accent-soft);
+      stroke: var(--accent);
+      stroke-width: 2;
+    }
+    &[data-private] polygon {
+      stroke-dasharray: 4 3;
+    }
+    &[data-empty] polygon {
+      fill: none;
+      stroke: var(--line);
+      stroke-dasharray: 2 4;
+    }
+    &[role="button"] {
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    &[role="button"]:hover polygon,
+    &[data-force="hover"] polygon {
+      fill: var(--accent-4);
+    }
+    &[data-linked] polygon {
+      stroke: var(--accent);
+      stroke-width: 2;
+    }
+    &[aria-pressed="true"] polygon {
+      fill: var(--accent-5);
+      stroke: var(--accent-text);
+      stroke-width: 2.5;
+    }
+    &:focus-visible polygon,
+    &[data-force="focus"] polygon {
+      stroke: var(--ring);
+      stroke-width: 3.5;
+    }
+  }
+
+  .cap-system-map-name {
+    fill: var(--text);
+    font: 600 12.5px var(--ui);
+    text-anchor: middle;
+    pointer-events: none;
+  }
+
+  .cap-system-map-tile[data-core] .cap-system-map-name {
+    fill: var(--accent-text);
+    font: 600 17px var(--prose);
+  }
+
+  .cap-system-map-tag {
+    fill: var(--muted);
+    font: 500 9.5px var(--ui);
+    letter-spacing: 0.06em;
+    text-anchor: middle;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  /* A line runs in the seam between capsomers, beneath them: wide enough to fill the
+     seam, so what shows is the gap itself lit up, and no label is ever under it. */
+  .cap-system-map-edge {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+
+    &[data-loose] {
+      stroke-dasharray: 5 4;
+    }
+    &[data-on] {
+      opacity: 1;
+    }
+  }
+
+  .cap-system-map-boundary {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 5;
+  }
+
+  .cap-system-map-inside-title,
+  .cap-system-map-box-kind {
+    fill: var(--muted);
+    font: 500 9px var(--mono);
+    text-anchor: middle;
+  }
+
+  .cap-system-map-inside-title {
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .cap-system-map-wire {
+    stroke: var(--line-strong);
+    stroke-width: 1.2;
+  }
+
+  .cap-system-map-box {
+    & rect {
+      fill: var(--surface);
+      stroke: var(--accent);
+      stroke-width: 1.4;
+    }
+    &[data-store] rect {
+      fill: var(--accent-3);
+      stroke: var(--accent-7);
+    }
+  }
+
+  .cap-system-map-box-name {
+    fill: var(--text);
+    font: 600 11px var(--ui);
+    text-anchor: middle;
+  }
+
+  /* Inside: the core and the inner rings fold into the middle, the rim stays as context. */
+  .cap-system-map[data-entered] {
+    & [data-layer="core"],
+    & [data-layer="inner"] {
+      transform: scale(0.2);
+      opacity: 0;
+      visibility: hidden;
+    }
+    & [data-layer="rim"] {
+      transform: scale(1.3);
+      opacity: 0.18;
+    }
+    & [data-layer="rim"] .cap-system-map-tile {
+      pointer-events: none;
+    }
+    /* The faded rim is shapes only: scaled up and clipped, its names would read as cut. */
+    & [data-layer="rim"] text {
+      visibility: hidden;
+    }
+    & [data-layer="edges"] {
+      opacity: 0;
+    }
+    & [data-layer="inside"] {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  /* The detail line keeps its height, so choosing never moves the page below it. */
+  .cap-system-map-detail {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    min-height: 5.5rem;
+    padding: var(--pad-y) var(--pad-x);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .cap-system-map-detail-name {
+    color: var(--accent-text);
+    font: 600 var(--fs-lead) var(--prose);
+  }
+
+  .cap-system-map-detail-text {
+    color: var(--muted);
+  }
+
+  .cap-system-map-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .cap-system-map-list > summary {
+    width: fit-content;
+    min-height: var(--target);
+    color: var(--accent-text);
+    cursor: pointer;
+  }
+
+  .cap-system-map-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-5);
+    padding-block: var(--space-3);
+  }
+
+  .cap-system-map-group {
+    min-width: 0;
+
+    & ul {
+      display: grid;
+      gap: var(--space-2);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      display: grid;
+      gap: var(--space-1);
+      padding: var(--pad-y) var(--pad-x);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-m);
+      background: var(--surface);
+    }
+  }
+
+  .cap-system-map-group-name {
+    margin: 0 0 var(--space-3);
+    color: var(--muted);
+    font: 600 var(--fs-label) var(--ui);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cap-system-map-item-name {
+    font-weight: 600;
+  }
+
+  .cap-system-map-item-tag,
+  .cap-system-map-item-domain {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  .cap-system-map-item-text {
+    font-size: var(--fs-detail);
+  }
+
+  .cap-system-map-item-link {
+    width: fit-content;
+    color: var(--accent-text);
+    font-size: var(--fs-detail);
+  }
+
+  /* The plain map: the list, open, as columns; the drawing steps aside. */
+  .cap-system-map[data-view="plain"] {
+    & .cap-system-map-stage,
+    & .cap-system-map-detail,
+    & .cap-system-map-list > summary {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-system-map-layer {
+      transition:
+        transform var(--dur-slow) var(--ease-in-out),
+        opacity var(--dur-slow) var(--ease-in-out),
+        visibility 0s linear var(--dur-slow);
+    }
+    .cap-system-map[data-entered] [data-layer="inside"],
+    .cap-system-map:not([data-entered]) [data-layer="core"],
+    .cap-system-map:not([data-entered]) [data-layer="inner"] {
+      transition-delay: 0s;
+    }
+    .cap-system-map-edge,
+    .cap-system-map-tile polygon {
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        fill var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-system-map-tile polygon,
+    .cap-system-map-box rect,
+    .cap-system-map-boundary {
+      stroke: CanvasText;
+    }
+    .cap-system-map-tile[aria-pressed="true"] polygon,
+    .cap-system-map-tile[data-linked] polygon,
+    .cap-system-map-tile:focus-visible polygon,
+    .cap-system-map-edge {
+      stroke: Highlight;
+    }
+    .cap-system-map-name,
+    .cap-system-map-tag,
+    .cap-system-map-box-name,
+    .cap-system-map-box-kind,
+    .cap-system-map-inside-title {
+      fill: CanvasText;
+    }
+  }
+}
