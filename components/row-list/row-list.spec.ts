@@ -248,6 +248,24 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "3 pull requests await the seat" })).toBeFocused();
   });
 
+  test("behaviour: in a narrow column an icon stays beside its title, as it is in a wide one", async ({ page }) => {
+    const sideBySide = async () =>
+      page.locator("#list-variants .cap-row:has(> .cap-row-media[data-variant='icon'])").evaluateAll((rows) =>
+        rows.map((row) => {
+          const m = row.querySelector(".cap-row-media")!.getBoundingClientRect();
+          const t = row.querySelector(".cap-row-title")!.getBoundingClientRect();
+          return m.right <= t.left && m.top < t.bottom && m.bottom > t.top;
+        }),
+      );
+    await visitStates(page, "row-list", theme);
+    const wide = await sideBySide();
+    await page.setViewportSize({ width: 390, height: 640 });
+    const narrow = await sideBySide();
+    expect(wide.length, "icon rows measured").toBeGreaterThanOrEqual(2);
+    expect(wide).toEqual(wide.map(() => true));
+    expect(narrow).toEqual(wide);
+  });
+
   test("behaviour: at phone width a long title wraps instead of being cut", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 640 });
     await visitStates(page, "row-list", theme, "phone");

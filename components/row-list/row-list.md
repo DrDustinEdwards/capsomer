@@ -33,7 +33,7 @@ Data compared across columns (versions, counts, several numbers per item) is a t
 - **The focused row shows `--sel` with an inset 2 px ring in `--ring`** (the shared focus colour), which is 3:1 against `--sel` in both themes. The link draws no ring of its own, so there is one indicator, on the row.
 - **The row is rounded and its spacing follows density** (`--pad-y`, `--pad-card`, `--row-h`), so `data-density="comfortable"` on the list or any ancestor makes it roomier. Colour changes ease in over 100 ms (only when motion is allowed).
 - **Variants and sizes, as shadcn's Item has them**: `data-variant="outline"` draws the row's own edge, `data-variant="muted"` tints it, on the `li`; `data-size="sm"` and `"xs"` tighten it. A list of such rows takes `data-gap` (default, `sm`, `xs`) on the `ul` to separate them like shadcn's ItemGroup. The default stays flush with no rules between rows.
-- **Media**: `<span class="cap-row-media" data-variant="icon|image">` takes the first column instead of a status, for an icon or a picture.
+- **Media**: `<span class="cap-row-media" data-variant="icon|image">` takes the first column instead of a status, for an icon or a picture. In a narrow column (under 30rem) an icon stays beside the title, so a list keeps one layout at every width; a picture moves above it, as a status does (row-list.spec.ts, "in a narrow column an icon stays beside its title").
 - **Critical rows only get the red left edge**, always beside the status word and its glyph: shape, word and colour.
 - **No rules between rows.** Hover and focus carry the structure (Portal: "Lists carry no rules between rows").
 - **Row actions are real buttons, raised above the stretched link** (`z-index`), so they take their own clicks and their own tab stops.

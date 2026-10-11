@@ -232,7 +232,7 @@
     transform: rotate(45deg);
   }
 
-  /* A phone, or any narrow column: the status moves above the title, the time stays
+  /* A phone, or any narrow column: the status (or a picture) moves above the title, an icon stays beside it, the time stays
      beside it, and actions go underneath. The title wraps instead of being cut: on a
      phone there is no hover and no wider view to read the rest in (the Portal lets titles
      wrap at phone width, "titles wrap instead of being cut"). */
@@ -267,6 +267,34 @@
       grid-column: 1 / -1;
       grid-row: 4;
       justify-self: start;
+    }
+    /* An icon stays beside its title, as in a wide column: one layout at every width, so a
+       card list does not stack its icons above the titles when the column narrows. A picture
+       and a status still move above. */
+    .cap-row:has(> .cap-row-media[data-variant="icon"]) {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+
+      & > .cap-row-media {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        justify-self: auto;
+      }
+      & > .cap-row-title {
+        grid-column: 2;
+        grid-row: 1;
+      }
+      & > .cap-row-detail {
+        grid-column: 2;
+        grid-row: 2;
+      }
+      & > .cap-row-meta {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+      }
+      & > .cap-row-actions {
+        grid-column: 2 / -1;
+        grid-row: 3;
+      }
     }
   }
 
