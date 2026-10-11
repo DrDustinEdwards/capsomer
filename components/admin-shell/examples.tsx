@@ -3,7 +3,7 @@ import { StrictMode, useEffect, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import { showTip } from "../tooltip/tooltip.ts";
-import { AdminShell, FAMILY_APPS, FIRST_PAGE, startPageTransition, type AdminEntry, type AdminShellProps } from "./admin-shell.react.tsx";
+import { AdminShell, FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, startPageTransition, type AdminEntry, type AdminShellProps } from "./admin-shell.react.tsx";
 
 const svg = (d: string) => (
   <svg className="cap-admin-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -163,6 +163,22 @@ function Transitioning() {
   );
 }
 
+// Foxhound's mark: today's x beside the two alternatives, for Dustin to pick from.
+function FoxhoundMarks() {
+  const today = FAMILY_APPS.find((a) => a.id === "foxhound")?.logo;
+  const options: [string, string, ReactNode][] = [["today", "Today: the favicon's x", today], ...Object.entries(FOXHOUND_MARKS).map(([k, v]): [string, string, ReactNode] => [k, k === "track" ? "Alternative: a paw print" : "Alternative: a fox's head", v])];
+  return (
+    <ul className="cap-admin-marks" style={{ display: "flex", gap: "2rem", listStyle: "none", margin: 0, padding: "1rem" }}>
+      {options.map(([id, label, logo]) => (
+        <li key={id} data-mark={id} style={{ display: "grid", justifyItems: "center", gap: ".5rem", color: "var(--text)" }}>
+          <span style={{ display: "grid", placeItems: "center", width: 56, height: 56, borderRadius: 12, background: "var(--ground)", border: "1px solid var(--line)", color: "var(--text)" }}><span style={{ display: "grid", width: 28, height: 28 }}>{logo}</span></span>
+          <span>{label}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 const SPECIMENS: Record<string, () => ReactNode> = {
   expanded: () => <Shell name="expanded" />,
   collapsed: () => <Shell name="collapsed" collapsed />,
@@ -179,6 +195,13 @@ const SPECIMENS: Record<string, () => ReactNode> = {
     </div>
   ),
   transition: () => <Transitioning />,
+  // An app that passes only `app`: the strip still lists all six, each with its real mark.
+  minimal: () => (
+    <AdminShell app="foxhound" nav={nav} page={FIRST_PAGE} prefKey={key("minimal")}>
+      <Page />
+    </AdminShell>
+  ),
+  "foxhound-marks": () => <FoxhoundMarks />,
   phone: () => <Shell name="phone" />,
   "phone-sheet": () => <SheetOpen />,
   "phone-counts": () => <Shell name="phone-counts" nav={nav.map((e) => (e.id === "queue" ? { ...e, count: 120 } : e))} />,

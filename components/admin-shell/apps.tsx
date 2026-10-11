@@ -6,8 +6,8 @@
 // (capsid dashboard/src/ui/icons.tsx BrandMark), Carrel's open book (carrel app/components/frame.tsx),
 // dustinedwards.info's microscope (public/dustin-edwards-logo.svg), germomics' broadcasting
 // microphone (public/brand/germomics-icon-currentcolor.svg), and Capsomer's hexagon (its site's
-// brand mark). Foxhound's own favicon is an x, which reads as close or delete, so its mark is
-// one of the candidates below until Dustin picks (FOXHOUND_MARKS).
+// brand mark). Foxhound's own favicon is an x, which reads as close or delete; it stays as
+// Foxhound's mark until Dustin picks one of the two alternatives in FOXHOUND_MARKS.
 import type { ReactNode } from "react";
 
 export type FamilyAppId = "portal" | "carrel" | "info" | "germomics" | "foxhound" | "capsomer";
@@ -65,10 +65,17 @@ const GERMOMICS = mark(
   />,
 );
 
-// Foxhound's candidates (its favicon's x reads as close or delete). Each is drawn on the 24
-// grid in one colour. "track": a hound's paw print, for a service that tracks down failed
-// payments; "fox": a fox's head, the name; "recover": a circular arrow around a card, what it
-// does. Shown side by side in the 0.8.0 screenshots; the one Dustin picks stays.
+// Foxhound's favicon is a lowercase x on a dark rounded square; the tile is the square here. It
+// stays until Dustin picks one of FOXHOUND_MARKS. No choice is shipped.
+const FOXHOUND = mark(
+  "0 0 24 24",
+  <path fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" d="M7.5 9 16.5 18M16.5 9 7.5 18" />,
+);
+
+// Two alternatives to Foxhound's x (which reads as close or delete), each drawn on the 24 grid
+// in one colour. "track": a hound's paw print, for a service that tracks down failed payments;
+// "fox": a fox's head, the name. Shown beside the x on the admin shell's states page; the one
+// Dustin picks replaces FOXHOUND and the other is deleted.
 export const FOXHOUND_MARKS = {
   track: mark(
     "0 0 24 24",
@@ -88,13 +95,6 @@ export const FOXHOUND_MARKS = {
       d="M3 3.5 8.6 8h6.8L21 3.5l-.9 8.2L12 20.5l-8.1-8.8zM8.4 12.2a1.2 1.2 0 1 0 0 .1zm7.2 0a1.2 1.2 0 1 0 0 .1zM10.6 15.6h2.8L12 17.2z"
     />,
   ),
-  recover: mark(
-    "0 0 24 24",
-    <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 12a8 8 0 1 1-2.6-5.9M20 3.5v4h-4" />
-      <path d="M8 10h8v5H8zM8 12h8" />
-    </g>,
-  ),
 };
 
 const CAPSOMER = mark(
@@ -108,8 +108,8 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
   { id: "carrel", label: "Carrel", href: "https://carrel.dustinedwards.info/", logo: CARREL },
   { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
-  // Provisional until Dustin picks among FOXHOUND_MARKS.
-  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND_MARKS.track },
+  // The x from its favicon stays until Dustin picks one of FOXHOUND_MARKS.
+  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND },
   { id: "capsomer", label: "Capsomer", href: "https://capsomer.dustinedwards.info/", logo: CAPSOMER },
 ];
 

@@ -535,6 +535,22 @@ eachTheme((theme) => {
     expect([...looks]).toHaveLength(1);
   });
 
+  test("behaviour: the collapse and expand button's name is opaque, whole, above the menu column and covers no neighbour, in both states", async ({ page }) => {
+    for (const [state, name] of [["expanded", "Collapse menu"], ["collapsed", "Expand menu"]] as const) {
+      await visitStates(page, "admin-shell", theme, state);
+      const toggle = page.locator("[data-cap-part='menu-toggle']");
+      await expect(toggle).toHaveAccessibleName(name);
+      // The pointer stays where it was across the page load; leave and come back so it enters.
+      await page.mouse.move(600, 400);
+      await toggle.hover();
+      const tip = toggle.locator(".cap-admin-tip");
+      await expect(tip).toBeVisible();
+      await expect(tip).toHaveCSS("opacity", "1");
+      await expect(tip).toContainText(name);
+      expect(await tipFacts(tip), `${state}: the name of the menu button`).toMatchObject({ hit: true, opaque: true, inside: true, covers: [] });
+    }
+  });
+
   test("accessibility: a shown name has its own surface and a visible edge, unlike the selected menu item, in both themes", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "collapsed");
     await page.getByRole("link", { name: "Sites, 11" }).hover();
@@ -726,6 +742,36 @@ eachTheme((theme) => {
     await expect(tiles.first()).toHaveAttribute("aria-current", "true");
     await expect(page.locator(".cap-admin-title-text")).toHaveText("Capsid Portal");
     await expect(page.getByRole("button", { name: "Your account" }).locator("> span[aria-hidden]").first()).toHaveText("DE");
+  });
+  test("behaviour: an app that passes only its own name still shows all six apps, each tile an svg mark and no letter", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "minimal");
+    const tiles = page.locator(".cap-admin-strip .cap-admin-tile");
+    await expect(tiles).toHaveCount(6);
+    const facts = await tiles.evaluateAll((els) =>
+      els.map((e) => ({
+        label: e.getAttribute("aria-label")!.split(",")[0],
+        marks: e.querySelectorAll(":scope > svg.cap-admin-logo").length,
+        letters: [...e.querySelectorAll(":scope > :not(svg):not(.cap-admin-tip):not(.cap-admin-badge)")].map((n) => n.textContent ?? "").join(""),
+      })),
+    );
+    expect(facts).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Capsomer"].map((label) => ({ label, marks: 1, letters: "" })));
+    await expect(tiles.nth(4)).toHaveAttribute("aria-current", "true");
+  });
+
+  test("behaviour: Foxhound keeps its favicon x until Dustin picks; two alternatives sit beside it and none is shipped", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "foxhound-marks");
+    const items = page.locator("[data-mark]");
+    expect(await items.evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.mark))).toEqual(["today", "track", "fox"]);
+    const svgs = await items.evaluateAll((els) => els.map((e) => e.querySelector("svg")!.innerHTML));
+    const [today, ...alternatives] = svgs;
+    expect(alternatives, "exactly two alternatives, different from each other").toHaveLength(2);
+    expect(alternatives[0]).not.toBe(alternatives[1]);
+    expect(alternatives, "Foxhound's mark in FAMILY_APPS is not one of the alternatives").not.toContain(today);
+    // Today's mark is the favicon's x: two strokes, no fill.
+    expect(today).toContain("M7.5 9 16.5 18M16.5 9 7.5 18");
+    // The strip draws that same x for Foxhound.
+    await visitStates(page, "admin-shell", theme, "minimal");
+    expect(await page.locator('.cap-admin-strip .cap-admin-tile[aria-label^="Foxhound"] svg.cap-admin-logo').innerHTML()).toBe(today);
   });
   test("behaviour: the top bar has the freshness line at the left, then Refresh, then the theme switch last, and the tab says the page and the app", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
