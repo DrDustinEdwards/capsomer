@@ -334,4 +334,31 @@ eachTheme((theme) => {
     await expect.poll(() => stops.length).toBe(1);
     expect(stops[0]).toEqual({ id: null, step: 0 });
   });
+
+  test("lines: inside the core, no line runs under a box it does not end at", async ({ page }) => {
+    // Every line as drawn, sampled along its length against every box but its two ends: a line
+    // under a box reads as a connection to it (seat ruling on capsomer#64).
+    const tunnels = await page.locator("#map-inside [data-layer='inside']").evaluate((svg) => {
+      const boxes = [...svg.querySelectorAll<SVGGElement>(".cap-system-map-box")].map((g) => ({ id: g.dataset.id!, b: g.querySelector("rect")!.getBBox() }));
+      const out: string[] = [];
+      let sampled = 0;
+      for (const w of svg.querySelectorAll<SVGPathElement>(".cap-system-map-wire")) {
+        const ends = new Set([w.dataset.from, w.dataset.to]);
+        const len = w.getTotalLength();
+        for (let d = 0; d <= len; d += 2) {
+          const { x, y } = w.getPointAtLength(d);
+          sampled++;
+          const hit = boxes.find(({ id, b }) => !ends.has(id) && x > b.x && x < b.x + b.width && y > b.y && y < b.y + b.height);
+          if (hit) {
+            out.push(`${w.dataset.from} to ${w.dataset.to} under ${hit.id}`);
+            break;
+          }
+        }
+      }
+      return { out, sampled, wires: svg.querySelectorAll(".cap-system-map-wire").length };
+    });
+    expect(tunnels.out).toEqual([]);
+    expect(tunnels.wires).toBeGreaterThan(8);
+    expect(tunnels.sampled).toBeGreaterThan(500);
+  });
 });

@@ -187,8 +187,10 @@
   }
 
   .cap-system-map-wire {
+    fill: none;
     stroke: var(--line-strong);
     stroke-width: 1.2;
+    stroke-linejoin: round;
   }
 
   .cap-system-map-box {

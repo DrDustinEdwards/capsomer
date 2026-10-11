@@ -2,7 +2,7 @@
 // touches no DOM until a controller is made.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { boxEdge, connectionText, insideLayout, layoutMap, linksOf, outsideLayout, playableFlows, R, ringCells, seamRoute, spatialNext, stepText, systemMapHtml } from "../../components/system-map/system-map.ts";
+import { boxEdge, connectionText, insideLayout, layoutMap, linksOf, outsideLayout, playableFlows, R, ringCells, routeFrames, seamRoute, segmentHitsBox, spatialNext, stepText, systemMapHtml, tokenRoute, wireRoute } from "../../components/system-map/system-map.ts";
 
 const family = [
   { id: "core", name: "Core", ring: "core" },
@@ -210,7 +210,7 @@ test("a flow plays only when every step rides a line between the core's parts, t
   assert.match(html, /<details class="cap-system-map-flows" data-cap-part="flows" open><summary>Inside Core, step by step<\/summary><section class="cap-system-map-flow" data-flow="good">/);
   assert.match(html, /<li data-from="w" data-to="agents" data-toward="w" data-lights="db">In\.<\/li><li data-from="w" data-to="db" data-toward="db">Down\.<\/li>/);
   assert.match(html, /<g class="cap-system-map-box" data-id="agents" data-x="[^"]+" data-y="[^"]+" data-external>/);
-  assert.match(html, /<line class="cap-system-map-wire" data-from="w" data-to="agents"/);
+  assert.match(html, /<path class="cap-system-map-wire" data-from="w" data-to="agents" data-route="[-\d.,]+ [-\d.,]+" d="M[^"]+"\/>/);
   assert.match(html, /class="cap-system-map-token"/);
   assert.doesNotMatch(html, /no-line|wrong-end|outside-core|bad-light/);
   // No playable flow: no list, no token, and the keys line says nothing of flows.
@@ -244,4 +244,66 @@ test("only four parts fit outside, a core-only map has no outside, and a flow ne
     ],
   };
   assert.deepEqual(playableFlows(data, family[0]).map((f) => f.id), ["drawn"]);
+});
+
+// No line runs under a box it does not end at (seat ruling on capsomer#64: a line under a box
+// reads as a connection to it, an edge tunnel; a crossing of two lines is acceptable).
+/** Every box a route passes through, other than its own two ends. */
+const tunnels = (route, from, to, boxes) =>
+  boxes.filter((o) => o !== from && o !== to && route.slice(1).some((q, i) => segmentHitsBox(route[i], q, o))).map((o) => o.c.id);
+
+test("a line never runs under a box it does not end at: Capsid's own parts, and 300 seeded random cores", () => {
+  const kinds = ["worker", "site", "cron", "database", "bucket", "kv", "queue", "external"];
+  const capsid = [
+    ["w", "worker"], ["p", "site"], ["t", "cron"], ["db", "database"], ["m", "bucket"], ["kv", "kv"], ["agents", "external"], ["gh", "external"],
+  ].map(([id, kind]) => ({ id, system: "core", name: id, kind }));
+  const capsidLinks = [["w", "db"], ["w", "m"], ["w", "kv"], ["w", "p"], ["t", "db"], ["t", "kv"], ["w", "agents"], ["w", "gh"], ["t", "gh"], ["gh", "w"]];
+  let seed = 20261011;
+  const rand = () => ((seed = (seed * 1103515245 + 12345) % 2 ** 31) / 2 ** 31);
+  const cases = [{ parts: capsid, links: capsidLinks }];
+  for (let run = 0; run < 300; run++) {
+    const n = 2 + Math.floor(rand() * 9);
+    const parts = Array.from({ length: n }, (_, i) => ({ id: `c${i}`, system: "core", name: `C${i}`, kind: kinds[Math.floor(rand() * kinds.length)] }));
+    const links = [];
+    for (let k = 0; k < n * 2; k++) {
+      const a = Math.floor(rand() * n);
+      const b = Math.floor(rand() * n);
+      if (a !== b) links.push([`c${a}`, `c${b}`]);
+    }
+    cases.push({ parts, links });
+  }
+  // Every case on a one-ring, a two-ring and a three-ring map: on a small map the parts crowd
+  // the corners the outside parts would take.
+  const more = Array.from({ length: 12 }, (_, i) => ({ id: `x${i}`, name: `X${i}`, ring: "used" }));
+  const layouts = [layoutMap(family.slice(0, 7)), layoutMap(family), layoutMap([...family, ...more])];
+  let routed = 0;
+  let bent = 0;
+  for (const { parts, links } of cases) for (const layout of layouts) {
+    const boxes = [...insideLayout(parts), ...outsideLayout(parts, layout)];
+    // No box lies on another: a line has nowhere to go between two boxes that overlap.
+    for (const [i, p] of boxes.entries()) for (const q of boxes.slice(i + 1)) {
+      assert.ok(Math.abs(p.x - q.x) >= (p.w + q.w) / 2 || Math.abs(p.y - q.y) >= 32, `${p.c.id} overlaps ${q.c.id} at ${layout.rings} rings`);
+    }
+    const at = new Map(boxes.map((b) => [b.c.id, b]));
+    for (const [f, t] of links) {
+      if (!at.has(f) || !at.has(t)) continue;
+      const route = wireRoute(at.get(f), at.get(t), boxes, layout.viewBox);
+      routed++;
+      if (route.length > 2) bent++;
+      assert.deepEqual(tunnels(route, at.get(f), at.get(t), boxes), [], `${f} to ${t} runs under a box at ${layout.rings} rings (${parts.map((p) => `${p.id}:${p.kind}`).join(" ")})`);
+    }
+  }
+  // Paired with how much was tried, so a pass cannot mean nothing was routed or nothing bent.
+  assert.ok(routed > 4500 && bent > 300, `routed ${routed}, bent ${bent}`);
+});
+
+test("a clear line stays straight, and the token's way starts and ends at the box edges", () => {
+  const boxes = insideLayout([{ id: "a", system: "core", name: "A", kind: "worker" }, { id: "b", system: "core", name: "B", kind: "database" }]);
+  assert.equal(wireRoute(boxes[0], boxes[1], boxes).length, 2);
+  // A drawn route, read backwards when the token goes the other way.
+  const way = tokenRoute("0,0 0,-100 100,-100", false, [100, -100], [52, 16], [0, 0], [44, 16]);
+  assert.deepEqual(way, [[44, -100], [0, -100], [0, -20]]);
+  const frames = routeFrames([[0, 0], [30, 0], [30, 10]]);
+  assert.deepEqual(frames.map((f) => f.offset), [0, 0.75, 1]);
+  assert.equal(frames[2].transform, "translate(30px, 10px)");
 });

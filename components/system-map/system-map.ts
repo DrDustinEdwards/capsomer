@@ -300,7 +300,7 @@ function edgePath(cells: readonly Cell[], a: Cell, b: Cell): string {
     .join(" ");
 }
 
-interface Box {
+export interface Box {
   c: MapContainer;
   x: number;
   y: number;
@@ -308,27 +308,119 @@ interface Box {
 }
 
 /** The core's containers inside the shell: workers, sites and crons two to a row, stores
- *  three to a row below them. An `external` container is not inside: see outsideLayout. */
+ *  three to a row below them. An `external` container is not inside: see outsideLayout.
+ *  The gaps between boxes are wider than two clearances (ROUTE_CLEAR), so a line routed by
+ *  wireRoute can always pass between two neighbours rather than under either. */
 export function insideLayout(containers: readonly MapContainer[]): Box[] {
   const tops = containers.filter((c) => !STORE_KINDS.has(c.kind) && c.kind !== EXTERNAL);
   const stores = containers.filter((c) => STORE_KINDS.has(c.kind));
   const out: Box[] = [];
   const topRows = Math.ceil(tops.length / 2);
   const firstY = -26 - 26 * Math.max(0, topRows - 1);
+  // The stores start under the last row of the rest, so a fourth row never lands on them.
+  const storesY = Math.max(62, firstY + (topRows - 1) * 52 + 62);
   tops.forEach((c, i) => {
     const row = Math.floor(i / 2);
     const inRow = Math.min(2, tops.length - row * 2);
-    const x = inRow === 1 ? 0 : i % 2 === 0 ? -56 : 56;
+    const x = inRow === 1 ? 0 : i % 2 === 0 ? -60 : 60;
     out.push({ c, x, y: firstY + row * 52, w: 104 });
   });
   stores.forEach((c, i) => {
     const row = Math.floor(i / 3);
     const inRow = Math.min(3, stores.length - row * 3);
     const col = i % 3;
-    const x = (col - (inRow - 1) / 2) * 94;
-    out.push({ c, x, y: 62 + row * 44, w: 88 });
+    const x = (col - (inRow - 1) / 2) * 100;
+    out.push({ c, x, y: storesY + row * 44, w: 88 });
   });
   return out;
+}
+
+// A line between two parts never runs under a third: a line that passes beneath a box reads
+// as a connection to it (an edge tunnel; Dunne and Shneiderman 2009), so the seat ruled on
+// capsomer#64 that a line may cross another line but never pass under a box. The straight
+// line is kept when it is clear; otherwise the line takes the shortest way around, through
+// the corners of the boxes in its way, each held ROUTE_CLEAR from every box it does not end
+// at. A dozen boxes make a few dozen corners, so a plain search does it: no layout engine.
+
+export const ROUTE_CLEAR = 5;
+const BOX_H = 32;
+
+type Pt = [number, number];
+
+/** Whether the segment p-q passes through the box's inside, grown by `grow`. */
+export function segmentHitsBox(p: Pt, q: Pt, b: { x: number; y: number; w: number }, grow = 0): boolean {
+  const [x0, x1, y0, y1] = [b.x - b.w / 2 - grow, b.x + b.w / 2 + grow, b.y - BOX_H / 2 - grow, b.y + BOX_H / 2 + grow];
+  // Liang-Barsky: clip the segment to the box, strictly inside, so a touch is not a hit.
+  let t0 = 0;
+  let t1 = 1;
+  const dx = q[0] - p[0];
+  const dy = q[1] - p[1];
+  for (const [pk, qk] of [[-dx, p[0] - x0], [dx, x1 - p[0]], [-dy, p[1] - y0], [dy, y1 - p[1]]] as const) {
+    if (pk === 0) {
+      if (qk <= 0) return false;
+      continue;
+    }
+    const r = qk / pk;
+    if (pk < 0) t0 = Math.max(t0, r);
+    else t1 = Math.min(t1, r);
+    if (t0 >= t1) return false;
+  }
+  return t1 - t0 > 1e-9;
+}
+
+/** The way a line takes from box `a` to box `b`: the corners it passes, centre to centre,
+ *  clear of every other box. Straight when nothing is in the way. */
+export function wireRoute(a: Box, b: Box, boxes: readonly Box[], bounds?: readonly [number, number, number, number]): Pt[] {
+  const others = boxes.filter((o) => o !== a && o !== b);
+  const start: Pt = [a.x, a.y];
+  const end: Pt = [b.x, b.y];
+  const clear = (p: Pt, q: Pt) => others.every((o) => !segmentHitsBox(p, q, o, ROUTE_CLEAR));
+  if (clear(start, end)) return [start, end];
+  const g = ROUTE_CLEAR + 1;
+  // Bends stay inside the drawing, or inside the boxes' own reach where a crowded core
+  // already runs past it.
+  const [bx0, by0, bx1, by1] = boxes.reduce(
+    ([x0, y0, x1, y1], o) => [Math.min(x0, o.x - o.w / 2 - g), Math.min(y0, o.y - BOX_H / 2 - g), Math.max(x1, o.x + o.w / 2 + g), Math.max(y1, o.y + BOX_H / 2 + g)],
+    bounds ? [bounds[0], bounds[1], bounds[0] + bounds[2], bounds[1] + bounds[3]] : [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
+  );
+  const within = ([px, py]: Pt) => !bounds || (px >= bx0 && px <= bx1 && py >= by0 && py <= by1);
+  const corners: Pt[] = boxes
+    .flatMap((o): Pt[] => [
+      [o.x - o.w / 2 - g, o.y - BOX_H / 2 - g],
+      [o.x + o.w / 2 + g, o.y - BOX_H / 2 - g],
+      [o.x - o.w / 2 - g, o.y + BOX_H / 2 + g],
+      [o.x + o.w / 2 + g, o.y + BOX_H / 2 + g],
+    ])
+    .filter((p) => within(p) && boxes.every((o) => !inside(p, o, ROUTE_CLEAR)));
+  const nodes: Pt[] = [start, end, ...corners];
+  // Shortest path, each bend costing a little, so of two near-equal ways the plainer wins.
+  const dist = nodes.map(() => Number.POSITIVE_INFINITY);
+  const prev = nodes.map(() => -1);
+  const done = nodes.map(() => false);
+  dist[0] = 0;
+  for (;;) {
+    let i = -1;
+    for (let k = 0; k < nodes.length; k++) if (!done[k] && (i < 0 || dist[k]! < dist[i]!)) i = k;
+    if (i < 0 || dist[i] === Number.POSITIVE_INFINITY || i === 1) break;
+    done[i] = true;
+    for (let k = 1; k < nodes.length; k++) {
+      if (done[k] || !clear(nodes[i]!, nodes[k]!)) continue;
+      const d = dist[i]! + Math.hypot(nodes[k]![0] - nodes[i]![0], nodes[k]![1] - nodes[i]![1]) + 8;
+      if (d < dist[k]!) {
+        dist[k] = d;
+        prev[k] = i;
+      }
+    }
+  }
+  // No clear way (the tests hold that none of Capsomer's layouts reach here): the straight line.
+  if (prev[1] === -1) return [start, end];
+  const path: Pt[] = [];
+  for (let k = 1; k !== -1; k = prev[k]!) path.unshift(nodes[k]!);
+  return path;
+}
+
+function inside(p: Pt, o: Box, grow: number): boolean {
+  return Math.abs(p[0] - o.x) < o.w / 2 + grow && Math.abs(p[1] - o.y) < BOX_H / 2 + grow;
 }
 
 /** The core's `external` containers (the agents that call it, the host its code lives on)
@@ -341,11 +433,17 @@ export function outsideLayout(containers: readonly MapContainer[], layout: Layou
   const [, , w, h] = layout.viewBox;
   const x = w / 2 - BOX_W / 2 - 2;
   const y = h / 2 - 18;
-  const corners: Array<[number, number]> = [[-x, -y], [x, -y], [-x, y], [x, y]];
+  // A corner the core's own parts reach into (a small map, many parts) is left empty, so no
+  // box lies on another and every line still has a way between them.
+  const parts = insideLayout(containers);
+  const g = 2 * (ROUTE_CLEAR + 1);
+  const corners = ([[-x, -y], [x, -y], [-x, y], [x, y]] as Pt[])
+    .map(([cx, cy]): Pt => [Math.round(cx * 10) / 10, Math.round(cy * 10) / 10])
+    .filter(([cx, cy]) => parts.every((p) => Math.abs(p.x - cx) >= (p.w + BOX_W) / 2 + g || Math.abs(p.y - cy) >= BOX_H + g));
   return containers
     .filter((c) => c.kind === EXTERNAL)
     .slice(0, corners.length)
-    .map((c, i) => ({ c, x: Math.round(corners[i]![0] * 10) / 10, y: Math.round(corners[i]![1] * 10) / 10, w: BOX_W }));
+    .map((c, i) => ({ c, x: corners[i]![0], y: corners[i]![1], w: BOX_W }));
 }
 
 /** The flows a map can play: those whose every step runs along a line between two of the
@@ -370,9 +468,12 @@ function insideSvg(layout: Layout, core: MapSystem | undefined, data: SystemMapD
   const wires = (data.relationships ?? [])
     .filter((l) => at.has(l.from) && at.has(l.to))
     .map((l) => {
-      const a = at.get(l.from)!;
-      const b = at.get(l.to)!;
-      return `<line class="cap-system-map-wire" data-from="${escapeHtml(l.from)}" data-to="${escapeHtml(l.to)}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+      // One way for a pair, whichever direction the data names it in, so a link held both ways
+      // draws one line twice, not two lines.
+      const flip = l.to < l.from;
+      const way = wireRoute(at.get(flip ? l.to : l.from)!, at.get(flip ? l.from : l.to)!, boxes, layout.viewBox);
+      const route = (flip ? [...way].reverse() : way).map(([x, y]) => `${Math.round(x * 10) / 10},${Math.round(y * 10) / 10}`);
+      return `<path class="cap-system-map-wire" data-from="${escapeHtml(l.from)}" data-to="${escapeHtml(l.to)}" data-route="${route.join(" ")}" d="M${route.join(" L")}"/>`;
     })
     .join("");
   const radius = 1.5 * R * Math.max(1, layout.rings) + R * 0.4;
@@ -380,7 +481,7 @@ function insideSvg(layout: Layout, core: MapSystem | undefined, data: SystemMapD
     .map(({ c, x, y, w }) => {
       const store = STORE_KINDS.has(c.kind);
       const flag = store ? " data-store" : c.kind === EXTERNAL ? " data-external" : "";
-      return `<g class="cap-system-map-box" data-id="${escapeHtml(c.id)}" data-x="${x}" data-y="${y}"${flag}><rect x="${x - w / 2}" y="${y - 16}" width="${w}" height="32" rx="${store ? 14 : 6}"/><text class="cap-system-map-box-name" x="${x}" y="${y - 1}">${escapeHtml(c.name)}</text><text class="cap-system-map-box-kind" x="${x}" y="${y + 11}">${escapeHtml(c.technology ?? c.kind)}</text></g>`;
+      return `<g class="cap-system-map-box" data-id="${escapeHtml(c.id)}" data-x="${x}" data-y="${y}"${flag}><rect x="${x - w / 2}" y="${y - BOX_H / 2}" width="${w}" height="${BOX_H}" rx="${store ? 14 : 6}"/><text class="cap-system-map-box-name" x="${x}" y="${y - 1}">${escapeHtml(c.name)}</text><text class="cap-system-map-box-kind" x="${x}" y="${y + 11}">${escapeHtml(c.technology ?? c.kind)}</text></g>`;
     })
     .join("");
   return `<svg class="cap-system-map-layer" data-layer="inside" viewBox="${viewBox}" aria-hidden="true" focusable="false"><circle class="cap-system-map-boundary" cx="0" cy="0" r="${radius.toFixed(1)}"/><text class="cap-system-map-inside-title" x="0" y="${(-radius + 22).toFixed(1)}">Inside ${escapeHtml(core.name)}</text>${wires}${rects}${playable ? `<circle class="cap-system-map-token" r="6" cx="0" cy="0"/>` : ""}</svg>`;
@@ -534,6 +635,31 @@ export function boxEdge([x, y]: [number, number], [hw, hh]: [number, number], [t
   return [Math.round((x + dx * t) * 10) / 10, Math.round((y + dy * t) * 10) / 10];
 }
 
+/** The token's way along a drawn line: its corners from `start` toward `end`, the first and
+ *  last points moved from the box centres to `gap` beyond the box edges. `forward` says the
+ *  line was drawn from start to end. */
+export function tokenRoute(route: string, forward: boolean, a: [number, number], ha: [number, number], b: [number, number], hb: [number, number], gap = 4): Array<[number, number]> {
+  const pts = route
+    .split(" ")
+    .filter(Boolean)
+    .map((p) => p.split(",").map(Number) as [number, number]);
+  const way = pts.length >= 2 ? (forward ? pts : pts.reverse()) : [a, b];
+  way[0] = boxEdge(a, ha, way[1]!, gap);
+  way[way.length - 1] = boxEdge(b, hb, way[way.length - 2]!, gap);
+  return way;
+}
+
+/** Keyframes that move at one speed along a route. */
+export function routeFrames(route: ReadonlyArray<[number, number]>): Array<{ transform: string; offset: number }> {
+  const lengths = route.slice(1).map((p, i) => Math.hypot(p[0] - route[i]![0], p[1] - route[i]![1]));
+  const total = lengths.reduce((a, b) => a + b, 0) || 1;
+  let run = 0;
+  return route.map((p, i) => {
+    if (i > 0) run += lengths[i - 1]!;
+    return { transform: `translate(${p[0]}px, ${p[1]}px)`, offset: Math.round((run / total) * 1000) / 1000 };
+  });
+}
+
 /** The words a flow's step shows: where it is in the flow, then what happens. */
 export function stepText(n: number, total: number, text: string): string {
   return `Step ${n} of ${total}. ${text}`;
@@ -646,7 +772,7 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     const st = f.steps[k - 1]!;
     playing = { id: playing!.id, n: k };
     root.dataset.step = String(k);
-    for (const w of inside.querySelectorAll<SVGLineElement>(".cap-system-map-wire")) {
+    for (const w of inside.querySelectorAll<SVGPathElement>(".cap-system-map-wire")) {
       w.toggleAttribute("data-on", (w.dataset.from === st.from && w.dataset.to === st.to) || (w.dataset.from === st.to && w.dataset.to === st.from));
     }
     for (const b of inside.querySelectorAll<SVGGElement>(".cap-system-map-box")) {
@@ -655,15 +781,16 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
       b.toggleAttribute("data-at", id === st.toward);
     }
     if (token) {
-      // The token runs from the edge of one box to the edge of the other, so it never sits
-      // on a part's name.
+      // The token follows the step's line as drawn, bends and all, from the edge of one box to
+      // the edge of the other, so it never sits on a part's name.
       const start = st.toward === st.to ? st.from : st.to;
-      const [ax, ay] = boxEdge(xy(start), halfOf(start), xy(st.toward), 4);
-      const [bx, by] = boxEdge(xy(st.toward), halfOf(st.toward), xy(start), 4);
+      const wire = [...inside.querySelectorAll<SVGPathElement>(".cap-system-map-wire")].find((w) => (w.dataset.from === start && w.dataset.to === st.toward) || (w.dataset.from === st.toward && w.dataset.to === start));
+      const route = tokenRoute(wire?.dataset.route ?? "", wire?.dataset.from === start, xy(start), halfOf(start), xy(st.toward), halfOf(st.toward));
+      const frames = routeFrames(route);
       for (const a of token.getAnimations()) a.cancel();
-      token.style.transform = `translate(${bx}px, ${by}px)`;
-      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        token.animate([{ transform: `translate(${ax}px, ${ay}px)` }, { transform: `translate(${bx}px, ${by}px)` }], { duration: 700, easing: "ease-in-out" });
+      token.style.transform = frames.at(-1)!.transform;
+      if (frames.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        token.animate(frames, { duration: 700, easing: "ease-in-out" });
       }
     }
     const was = (document.activeElement as HTMLElement | null)?.dataset?.capPart;
