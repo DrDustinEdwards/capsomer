@@ -13,5 +13,6 @@
     "test/**/*.{ts,mjs}"
   ],
   "project": ["**/*.{ts,tsx,mjs}"],
-  "ignoreBinaries": ["playwright", "playwright.review.config.ts"]
+  "ignoreBinaries": ["playwright", "playwright.review.config.ts"],
+  "ignoreDependencies": ["@dustinedwards/devkit"]
 }
