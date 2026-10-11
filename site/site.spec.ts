@@ -56,7 +56,7 @@ eachTheme((theme) => {
     const fig = page.locator(".site-figure").filter({ hasText: "Contrast pairs" });
     await expect(fig.locator("b")).toHaveText(/^\d{3}$/);
     // Two facts, two lines: how many families and themes, then whether any pair fails.
-    const lines = await fig.locator("> *").allInnerTexts();
+    const lines = await fig.locator("> *").allTextContents();
     expect(lines).toEqual(["Contrast pairs", expect.stringMatching(/^\d{3}$/), "Across 3 color families, in both themes", "None failing"]);
   });
 
