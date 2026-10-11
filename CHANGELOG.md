@@ -2,7 +2,7 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## Unreleased
+## [0.7.1]
 
 **Fixed: the system map's detail line is a fixed box** (capsid job_5c81a4bd1baf, found by dustinedwards-info's browser checks). Choosing a system grew the detail line (88 px to 119 px on desktop, up to 191 px on a phone), so the page below moved. `.cap-system-map-detail` now has a fixed block size (8.5rem, 13rem at 40rem and narrower) and scrolls inside it when a detail is longer; the size is `!important` inside the layer, so a host's ordinary unlayered CSS cannot undo it. A browser test measures the line and the list below it through choosing, going inside and stepping out, at desktop and phone widths, with a host override injected. CSS only: `min-height: 5.5rem` is replaced by the fixed size, and no class, token or HTML contract changes. A visual change that waits for Dustin's sign-off.
 
