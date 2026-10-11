@@ -223,11 +223,42 @@ eachTheme((theme) => {
     await expect(link).toHaveAccessibleName(/factor of two$/);
   });
 
-  test("behaviour: a critical row has the red edge, others none", async ({ page }) => {
+  test("behaviour: a critical row has the red edge, flush and clipped to its corners, others none", async ({ page }) => {
     await visitStates(page, "row-list", theme);
-    const edge = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el, "::before").content);
-    expect(await edge("#list-crit .cap-row")).toBe('""');
-    expect(await edge("#list-focus .cap-row >> nth=0")).toBe("none");
+    const edge = (sel: string) => page.locator(sel).first().evaluate((el) => getComputedStyle(el).boxShadow);
+    for (const sel of ["#list-crit .cap-row", "#list-variants .cap-row[data-tone='crit']"]) {
+      // An inset shadow at the row's own edge: flush, and it follows the border radius.
+      expect(await edge(sel)).toMatch(/ 3px 0px 0px 0px inset$/);
+      expect(await page.locator(sel).first().evaluate((el) => getComputedStyle(el, "::before").content)).toBe("none");
+    }
+    expect(await edge("#list-focus .cap-row")).toBe("none");
+  });
+
+  test("behaviour: the sizes step down, default taller than sm, sm than xs, and xs set smaller", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 900 });
+    await visitStates(page, "row-list", theme);
+    const rows = page.locator("#list-variants .cap-row");
+    const size = (i: number) =>
+      rows.nth(i).evaluate((el) => ({ h: el.getBoundingClientRect().height, font: parseFloat(getComputedStyle(el.querySelector(".cap-row-title a")!).fontSize) }));
+    const [outline, sm, xs] = [await size(1), await size(3), await size(4)];
+    expect(sm.h, "sm, with its picture, is shorter than a default row").toBeLessThan(outline.h);
+    expect(xs.h).toBeLessThan(sm.h);
+    expect(xs.font).toBeLessThan(outline.font);
+  });
+
+  test("behaviour: at phone width every row's text starts in one column, with or without an icon or a picture beside it", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 900 });
+    await visitStates(page, "row-list", theme);
+    const starts = await page.locator("#list-variants .cap-row").evaluateAll((rows) =>
+      rows.map((r) => {
+        const t = r.querySelector(".cap-row-title")!.getBoundingClientRect();
+        const m = r.querySelector(".cap-row-media")?.getBoundingClientRect();
+        return { x: Math.round(t.left), beside: m ? m.right <= t.left && m.top < t.bottom && m.bottom > t.top : true };
+      }),
+    );
+    expect(starts.length).toBe(5);
+    expect(new Set(starts.map((s) => s.x)).size, `title starts ${starts.map((s) => s.x).join(", ")}`).toBe(1);
+    expect(starts.every((s) => s.beside), "every icon and picture is beside its title").toBe(true);
   });
 
   test("accessibility: a row that opens in place is a button with aria-expanded and what it controls", async ({ page }) => {

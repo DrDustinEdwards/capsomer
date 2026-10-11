@@ -54,15 +54,19 @@
       background: color-mix(in srgb, var(--sunken) 50%, transparent);
     }
     &[data-size="sm"] {
-      padding-block: var(--space-3);
+      padding-block: var(--space-2);
       padding-inline: var(--pad-x);
     }
+    /* The sizes step down visibly: sm is tighter, xs is tighter and set a size smaller. */
     &[data-size="xs"] {
       min-height: var(--target);
-      padding-block: var(--space-2);
+      padding-block: var(--space-1);
       padding-inline: var(--pad-x);
       row-gap: 0;
 
+      & .cap-row-title :is(a, button) {
+        font-size: var(--fs-detail);
+      }
       & .cap-row-detail {
         font-size: var(--fs-label);
       }
@@ -87,19 +91,10 @@
       outline-offset: calc(var(--focus-width) * -1);
     }
 
-    /* Critical rows only: a red left edge, beside the status word and its glyph. */
-    &[data-tone="crit"]::before {
-      content: "";
-      position: absolute;
-      inset-block: 0;
-      inset-inline-start: 0;
-      width: 3px;
-      background: var(--crit);
-    }
-    &[data-tone="crit"][data-variant]::before {
-      inset-block: var(--space-3);
-      inset-inline-start: var(--space-2);
-      border-radius: var(--radius-full);
+    /* Critical rows only: a red left edge, beside the status word and its glyph. An inset
+       shadow, so it is flush with the row's edge and clipped to its rounded corners. */
+    &[data-tone="crit"] {
+      box-shadow: inset 3px 0 0 var(--crit);
     }
   }
 
@@ -132,12 +127,12 @@
     }
   }
   .cap-row[data-size="sm"] .cap-row-media[data-variant="image"] {
-    inline-size: 32px;
-    block-size: 32px;
+    inline-size: 28px;
+    block-size: 28px;
   }
   .cap-row[data-size="xs"] .cap-row-media[data-variant="image"] {
-    inline-size: 24px;
-    block-size: 24px;
+    inline-size: 20px;
+    block-size: 20px;
   }
 
   .cap-row-title {
@@ -232,69 +227,45 @@
     transform: rotate(45deg);
   }
 
-  /* A phone, or any narrow column: the status (or a picture) moves above the title, an icon stays beside it, the time stays
-     beside it, and actions go underneath. The title wraps instead of being cut: on a
-     phone there is no hover and no wider view to read the rest in (the Portal lets titles
-     wrap at phone width, "titles wrap instead of being cut"). */
+  /* A phone, or any narrow column: the actions go underneath and a status moves above the
+     title. An icon or a picture stays beside the title, as in a wide column, so a list has one
+     layout at every width, and every row's text starts in the one column (the rows stay a
+     subgrid of the list). The title wraps instead of being cut: on a phone there is no hover and
+     no wider view to read the rest in (the Portal lets titles wrap at phone width). */
   @container cap-rows (max-width: 30rem) {
+    .cap-rows {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
     .cap-row-title :is(a, button) {
       white-space: normal;
       overflow-wrap: anywhere;
     }
     .cap-row {
-      grid-template-columns: minmax(0, 1fr) auto;
-      column-gap: var(--space-4);
       row-gap: var(--space-1);
     }
-    :is(.cap-row-status, .cap-row-media) {
+    .cap-row-status {
       grid-column: 1 / -1;
       grid-row: 1;
       justify-self: start;
     }
-    .cap-row-title {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    .cap-row-detail {
-      grid-column: 1;
-      grid-row: 3;
-    }
-    .cap-row-meta {
-      grid-column: 2;
-      grid-row: 2 / span 2;
-    }
-    .cap-row-actions {
-      grid-column: 1 / -1;
-      grid-row: 4;
-      justify-self: start;
-    }
-    /* An icon stays beside its title, as in a wide column: one layout at every width, so a
-       card list does not stack its icons above the titles when the column narrows. A picture
-       and a status still move above. */
-    .cap-row:has(> .cap-row-media[data-variant="icon"]) {
-      grid-template-columns: auto minmax(0, 1fr) auto;
-
-      & > .cap-row-media {
-        grid-column: 1;
-        grid-row: 1 / span 2;
-        justify-self: auto;
-      }
+    .cap-row:has(> .cap-row-status) {
       & > .cap-row-title {
-        grid-column: 2;
-        grid-row: 1;
-      }
-      & > .cap-row-detail {
-        grid-column: 2;
         grid-row: 2;
       }
-      & > .cap-row-meta {
-        grid-column: 3;
-        grid-row: 1 / span 2;
-      }
-      & > .cap-row-actions {
-        grid-column: 2 / -1;
+      & > .cap-row-detail {
         grid-row: 3;
       }
+      & > .cap-row-meta {
+        grid-row: 2 / span 2;
+      }
+    }
+    .cap-row-meta {
+      grid-column: 3;
+    }
+    .cap-row-actions {
+      grid-column: 2 / -1;
+      grid-row: 4;
+      justify-self: start;
     }
   }
 
@@ -310,9 +281,9 @@
   /* Forced colours remove tints: the critical edge is drawn in CanvasText, and the focus
      ring (an outline) stays. */
   @media (forced-colors: active) {
-    .cap-row[data-tone="crit"]::before {
-      forced-color-adjust: none;
-      background: CanvasText;
+    /* Forced colours drop shadows: the edge is a border there. */
+    .cap-row[data-tone="crit"] {
+      border-inline-start: 3px solid CanvasText;
     }
   }
 }
