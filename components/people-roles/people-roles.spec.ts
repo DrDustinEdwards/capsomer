@@ -121,9 +121,19 @@ eachTheme((theme) => {
     // A group with nothing chosen is :indeterminate; its radios must still paint as unchosen.
     const keep = review.getByRole("radio", { name: "Keep, until 14 May 2027" }).first();
     const fill = () => keep.evaluate((el) => getComputedStyle(el).backgroundColor);
-    const unchosen = await fill();
+    // What a chosen radio fills with (field.css: background var(--primary)), resolved here.
+    const chosen = await keep.evaluate((el) => {
+      const probe = document.createElement("span");
+      probe.style.color = "var(--primary)";
+      el.parentElement!.append(probe);
+      const c = getComputedStyle(probe).color;
+      probe.remove();
+      return c;
+    });
+    expect(await fill(), "an unanswered radio paints as unchosen").not.toBe(chosen);
     await keep.check();
-    expect(await fill(), "a chosen radio fills").not.toBe(unchosen);
+    // The fill is a transition, so wait for it to arrive rather than read its first frame.
+    await expect.poll(fill, { message: "a chosen radio fills" }).toBe(chosen);
     await expect(tally).toHaveText("1 to keep, 0 to remove, 1 not answered.");
     await page.keyboard.press("ArrowDown");
     await expect(review.getByRole("radio", { name: "Remove" }).first()).toBeChecked();
