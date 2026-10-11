@@ -248,7 +248,12 @@
       grid-row: 1;
       justify-self: start;
     }
+    /* A row with a status: the status above, then the title and detail across the first two
+       columns (no media column to line up with), the time beside them, the actions under them. */
     .cap-row:has(> .cap-row-status) {
+      & > :is(.cap-row-title, .cap-row-detail) {
+        grid-column: 1 / 3;
+      }
       & > .cap-row-title {
         grid-row: 2;
       }
@@ -257,6 +262,9 @@
       }
       & > .cap-row-meta {
         grid-row: 2 / span 2;
+      }
+      & > .cap-row-actions {
+        grid-column: 1 / -1;
       }
     }
     .cap-row-meta {
