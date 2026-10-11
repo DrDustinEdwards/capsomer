@@ -2,7 +2,32 @@
 // touches no DOM until a controller is made.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { boxEdge, connectionText, insideLayout, layoutMap, linksOf, outsideLayout, playableFlows, R, ringCells, routeFrames, seamRoute, segmentHitsBox, spatialNext, stepText, systemMapHtml, tokenRoute, wireRoute } from "../../components/system-map/system-map.ts";
+import {
+  BEND_CLEAR,
+  connectionText,
+  insideScene,
+  JUNCTION_END,
+  LINE_SEP,
+  layoutMap,
+  linksOf,
+  R,
+  playableFlows,
+  pointSegDist,
+  ROUTE_CLEAR,
+  ringCells,
+  routeFrames,
+  SHORT_LINK,
+  seamRoute,
+  segDist,
+  segmentCross,
+  segmentHitsBox,
+  segmentHitsRect,
+  sideBySide,
+  spatialNext,
+  stepText,
+  systemMapHtml,
+  tokenRoute,
+} from "../../components/system-map/system-map.ts";
 
 const family = [
   { id: "core", name: "Core", ring: "core" },
@@ -124,13 +149,17 @@ test("the lines are drawn before, so beneath, every capsomer", () => {
 });
 
 test("the core's parts sit two to a row above, stores three to a row below", () => {
-  const boxes = insideLayout([
-    { id: "w", system: "core", name: "Worker", kind: "worker" },
-    { id: "p", system: "core", name: "Portal", kind: "site" },
-    { id: "t", system: "core", name: "Tick", kind: "cron" },
-    { id: "d", system: "core", name: "DB", kind: "database" },
-    { id: "k", system: "core", name: "KV", kind: "kv" },
-  ]);
+  const { boxes } = insideScene(
+    [
+      { id: "w", system: "core", name: "Worker", kind: "worker" },
+      { id: "p", system: "core", name: "Portal", kind: "site" },
+      { id: "t", system: "core", name: "Tick", kind: "cron" },
+      { id: "d", system: "core", name: "DB", kind: "database" },
+      { id: "k", system: "core", name: "KV", kind: "kv" },
+    ],
+    [],
+    layoutMap(family),
+  );
   const y = (id) => boxes.find((b) => b.c.id === id).y;
   assert.ok(y("w") === y("p") && y("t") > y("w"));
   assert.ok(y("d") > y("t") && y("d") === y("k"));
@@ -166,26 +195,11 @@ const parts = [
   { id: "host", system: "core", name: "Host", kind: "external" },
 ];
 
-test("an external part is never inside: it takes a corner of the drawing, outside the boundary", () => {
-  assert.deepEqual(insideLayout(parts).map((b) => b.c.id), ["w", "db"]);
-  // One ring (the core and six shared parts), two (the family) and three (twelve more used).
-  const more = Array.from({ length: 12 }, (_, i) => ({ id: `x${i}`, name: `X${i}`, ring: "used" }));
-  for (const [rings, systems] of [[1, family.slice(0, 7)], [2, family], [3, [...family, ...more]]]) {
-    const layout = layoutMap(systems);
-    assert.equal(layout.rings, rings);
-    const boxes = outsideLayout(parts, layout);
-    assert.deepEqual(boxes.map((b) => b.c.id), ["agents", "host"]);
-    const [vx, vy, vw, vh] = layout.viewBox;
-    const boundary = 1.5 * R * Math.max(1, layout.rings) + R * 0.4;
-    for (const b of boxes) {
-      // The box's nearest point to the middle is outside the boundary, and the box is inside the drawing.
-      const nx = Math.max(0, Math.abs(b.x) - b.w / 2);
-      const ny = Math.max(0, Math.abs(b.y) - 16);
-      assert.ok(Math.hypot(nx, ny) > boundary, `${b.c.id} reaches inside the boundary at ${layout.rings} rings`);
-      assert.ok(b.x - b.w / 2 >= vx && b.x + b.w / 2 <= vx + vw && b.y - 16 >= vy && b.y + 16 <= vy + vh, `${b.c.id} leaves the drawing`);
-    }
-    assert.ok(boxes[0].x < 0 && boxes[0].y < 0 && boxes[1].x > 0 && boxes[1].y < 0, "top left, then top right");
-  }
+test("an external part is never inside: it sits above the boundary, two to a band", () => {
+  const scene = insideScene(parts, [], layoutMap(family));
+  const ext = scene.boxes.filter((b) => b.c.kind === "external");
+  assert.deepEqual(ext.map((b) => b.c.id), ["agents", "host"]);
+  assert.ok(ext[0].x < 0 && ext[1].x > 0 && ext.every((b) => b.y + 16 < scene.boundary.y), "top left, then top right, above the boundary");
 });
 
 test("a flow plays only when every step rides a line between the core's parts, toward an end, lighting the core's parts", () => {
@@ -196,6 +210,7 @@ test("a flow plays only when every step rides a line between the core's parts, t
       { from: "w", to: "agents", kind: "serves" },
       { from: "w", to: "db", kind: "writes" },
       { from: "core", to: "a", kind: "installs" },
+      { from: "w", to: "w", kind: "calls" },
     ],
     flows: [
       { id: "good", name: "Good", steps: [{ from: "w", to: "agents", toward: "w", text: "In.", lights: ["db"] }, { from: "w", to: "db", toward: "db", text: "Down." }] },
@@ -203,6 +218,8 @@ test("a flow plays only when every step rides a line between the core's parts, t
       { id: "wrong-end", name: "Wrong end", steps: [{ from: "w", to: "db", toward: "agents", text: "x" }] },
       { id: "outside-core", name: "Outside", steps: [{ from: "core", to: "a", toward: "a", text: "x" }] },
       { id: "bad-light", name: "Bad light", steps: [{ from: "w", to: "db", toward: "db", text: "x", lights: ["a"] }] },
+      // A line from a part to itself is never drawn, so a step along one has nothing to ride.
+      { id: "self", name: "Self", steps: [{ from: "w", to: "w", toward: "w", text: "x" }] },
     ],
   };
   assert.deepEqual(playableFlows(data, data.systems[0]).map((f) => f.id), ["good"]);
@@ -212,28 +229,22 @@ test("a flow plays only when every step rides a line between the core's parts, t
   assert.match(html, /<g class="cap-system-map-box" data-id="agents" data-x="[^"]+" data-y="[^"]+" data-external>/);
   assert.match(html, /<path class="cap-system-map-wire" data-from="w" data-to="agents" data-route="[-\d.,]+ [-\d.,]+" d="M[^"]+"\/>/);
   assert.match(html, /class="cap-system-map-token"/);
-  assert.doesNotMatch(html, /no-line|wrong-end|outside-core|bad-light/);
+  assert.doesNotMatch(html, /no-line|wrong-end|outside-core|bad-light|"self"/);
   // No playable flow: no list, no token, and the keys line says nothing of flows.
   const none = systemMapHtml({ ...data, flows: [] }, { id: "m" });
   assert.doesNotMatch(none, /cap-system-map-flows|cap-system-map-token|number keys/);
   assert.match(html, /the number keys move between its steps/);
 });
 
-test("the token stops at a box's edge, never on its name, and a step says where it is", () => {
-  assert.deepEqual(boxEdge([0, 0], [52, 16], [200, 0], 4), [56, 0]);
-  assert.deepEqual(boxEdge([0, 0], [52, 16], [0, -100], 4), [0, -20]);
-  // Toward a corner, whichever edge the line meets first.
-  const [x, y] = boxEdge([0, 0], [52, 16], [100, 100], 0);
-  assert.deepEqual([x, y], [16, 16]);
-  assert.deepEqual(boxEdge([5, 5], [52, 16], [5, 5]), [5, 5]);
+test("a step says where it is", () => {
   assert.equal(stepText(3, 9, "Worked: the agent works."), "Step 3 of 9. Worked: the agent works.");
 });
 
-test("only four parts fit outside, a core-only map has no outside, and a flow needing an undrawn part is not offered", () => {
+test("only four parts fit outside, and a flow needing an undrawn part is not offered", () => {
   const five = Array.from({ length: 5 }, (_, i) => ({ id: `e${i}`, system: "core", name: `E${i}`, kind: "external" }));
   const layout = layoutMap(family);
-  assert.deepEqual(outsideLayout(five, layout).map((b) => b.c.id), ["e0", "e1", "e2", "e3"]);
-  assert.deepEqual(outsideLayout(five, layoutMap([{ id: "core", name: "Core", ring: "core" }])), []);
+  const outside = (containers) => insideScene(containers, [], layout).boxes.filter((b) => b.c.kind === "external").map((b) => b.c.id);
+  assert.deepEqual(outside(five), ["e0", "e1", "e2", "e3"]);
   const data = {
     systems: family,
     containers: [{ id: "w", system: "core", name: "W", kind: "worker" }, ...five],
@@ -246,63 +257,159 @@ test("only four parts fit outside, a core-only map has no outside, and a flow ne
   assert.deepEqual(playableFlows(data, family[0]).map((f) => f.id), ["drawn"]);
 });
 
-// No line runs under a box it does not end at (seat ruling on capsomer#64: a line under a box
-// reads as a connection to it, an edge tunnel; a crossing of two lines is acceptable).
-/** Every box a route passes through, other than its own two ends. */
-const tunnels = (route, from, to, boxes) =>
-  boxes.filter((o) => o !== from && o !== to && route.slice(1).some((q, i) => segmentHitsBox(route[i], q, o))).map((o) => o.c.id);
+// The rules a drawing inside the core keeps (the seat's rulings on capsomer#64), checked on
+// Capsid's own parts and on 100 seeded random cores, each on a one-, two- and three-ring map.
 
-test("a line never runs under a box it does not end at: Capsid's own parts, and 300 seeded random cores", () => {
+const capsidParts = [
+  ["w", "worker", "MCP Worker"], ["p", "site", "Portal"], ["t", "cron", "Tick"], ["db", "database", "capsid D1"],
+  ["m", "bucket", "capsid-media"], ["kv", "kv", "app KV"], ["agents", "external", "Agents"], ["gh", "external", "GitHub"],
+].map(([id, kind, name]) => ({ id, system: "core", name, kind }));
+const capsidLinks = [["w", "db"], ["w", "m"], ["w", "kv"], ["w", "p"], ["t", "db"], ["t", "kv"], ["w", "agents"], ["w", "gh"], ["t", "gh"], ["gh", "w"]].map(([from, to]) => ({ from, to, kind: "uses" }));
+const more = Array.from({ length: 12 }, (_, i) => ({ id: `x${i}`, name: `X${i}`, ring: "used" }));
+const layouts = [layoutMap(family.slice(0, 7)), layoutMap(family), layoutMap([...family, ...more])];
+
+function randomCores(count) {
   const kinds = ["worker", "site", "cron", "database", "bucket", "kv", "queue", "external"];
-  const capsid = [
-    ["w", "worker"], ["p", "site"], ["t", "cron"], ["db", "database"], ["m", "bucket"], ["kv", "kv"], ["agents", "external"], ["gh", "external"],
-  ].map(([id, kind]) => ({ id, system: "core", name: id, kind }));
-  const capsidLinks = [["w", "db"], ["w", "m"], ["w", "kv"], ["w", "p"], ["t", "db"], ["t", "kv"], ["w", "agents"], ["w", "gh"], ["t", "gh"], ["gh", "w"]];
   let seed = 20261011;
-  const rand = () => ((seed = (seed * 1103515245 + 12345) % 2 ** 31) / 2 ** 31);
-  const cases = [{ parts: capsid, links: capsidLinks }];
-  for (let run = 0; run < 300; run++) {
+  const rand = () => (seed = (seed * 1103515245 + 12345) % 2 ** 31) / 2 ** 31;
+  const out = [];
+  for (let run = 0; run < count; run++) {
     const n = 2 + Math.floor(rand() * 9);
     const parts = Array.from({ length: n }, (_, i) => ({ id: `c${i}`, system: "core", name: `C${i}`, kind: kinds[Math.floor(rand() * kinds.length)] }));
     const links = [];
     for (let k = 0; k < n * 2; k++) {
       const a = Math.floor(rand() * n);
       const b = Math.floor(rand() * n);
-      if (a !== b) links.push([`c${a}`, `c${b}`]);
+      if (a !== b) links.push({ from: `c${a}`, to: `c${b}`, kind: "uses" });
     }
-    cases.push({ parts, links });
+    out.push({ parts, links });
   }
-  // Every case on a one-ring, a two-ring and a three-ring map: on a small map the parts crowd
-  // the corners the outside parts would take.
-  const more = Array.from({ length: 12 }, (_, i) => ({ id: `x${i}`, name: `X${i}`, ring: "used" }));
-  const layouts = [layoutMap(family.slice(0, 7)), layoutMap(family), layoutMap([...family, ...more])];
-  let routed = 0;
-  let bent = 0;
-  for (const { parts, links } of cases) for (const layout of layouts) {
-    const boxes = [...insideLayout(parts), ...outsideLayout(parts, layout)];
-    // No box lies on another: a line has nowhere to go between two boxes that overlap.
-    for (const [i, p] of boxes.entries()) for (const q of boxes.slice(i + 1)) {
-      assert.ok(Math.abs(p.x - q.x) >= (p.w + q.w) / 2 || Math.abs(p.y - q.y) >= 32, `${p.c.id} overlaps ${q.c.id} at ${layout.rings} rings`);
-    }
-    const at = new Map(boxes.map((b) => [b.c.id, b]));
-    for (const [f, t] of links) {
-      if (!at.has(f) || !at.has(t)) continue;
-      const route = wireRoute(at.get(f), at.get(t), boxes, layout.viewBox);
-      routed++;
-      if (route.length > 2) bent++;
-      assert.deepEqual(tunnels(route, at.get(f), at.get(t), boxes), [], `${f} to ${t} runs under a box at ${layout.rings} rings (${parts.map((p) => `${p.id}:${p.kind}`).join(" ")})`);
+  return out;
+}
+
+const rectOf = (b) => ({ x: b.x - b.w / 2, y: b.y - 16, w: b.w, h: 32 });
+const within = (r, o, g) => r.x - g >= o.x && r.y - g >= o.y && r.x + r.w + g <= o.x + o.w && r.y + r.h + g <= o.y + o.h;
+const apart = (r, o, g) => r.x + r.w + g <= o.x || o.x + o.w + g <= r.x || r.y + r.h + g <= o.y || o.y + o.h + g <= r.y;
+const segs = (route) => route.slice(1).map((q, i) => [route[i], q]);
+const lengthOf = (route) => segs(route).reduce((n, [p, q]) => n + Math.hypot(q[0] - p[0], q[1] - p[1]), 0);
+/** Every rule a scene breaks, by name: where its boxes sit, then how its lines run. */
+function faults(scene) {
+  const out = { place: [], box: [], label: [], junction: [], side: [], bend: [], port: [] };
+  const [vx, vy, vw, vh] = scene.viewBox;
+  const view = { x: vx, y: vy, w: vw, h: vh };
+  for (const b of scene.boxes) {
+    const r = rectOf(b);
+    if (!within(r, view, 0)) out.place.push(`${b.c.id} leaves the drawing`);
+    if (b.c.kind === "external" ? !apart(r, scene.boundary, 8) : !within(r, scene.boundary, 8)) out.place.push(`${b.c.id} is not ${b.c.kind === "external" ? "outside" : "inside"} the boundary with clear space`);
+    if (!apart(r, scene.label.box, 4)) out.place.push(`${b.c.id} covers the boundary's name`);
+  }
+  for (const [i, p] of scene.boxes.entries()) for (const q of scene.boxes.slice(i + 1)) if (!apart(rectOf(p), rectOf(q), 2 * ROUTE_CLEAR)) out.place.push(`${p.c.id} and ${q.c.id} leave a line no room`);
+  if (!within(scene.label.box, scene.boundary, 0)) out.place.push("the name leaves the boundary");
+  const at = new Map(scene.boxes.map((b) => [b.c.id, b]));
+  for (const w of scene.wires) {
+    const name = `${w.from}-${w.to}`;
+    if (at.get(w.from)?.c.kind !== "external" && at.get(w.to)?.c.kind !== "external" && !w.route.every(([x, y]) => x >= scene.boundary.x && x <= scene.boundary.x + scene.boundary.w && y >= scene.boundary.y && y <= scene.boundary.y + scene.boundary.h)) out.place.push(`${name}, between two parts inside, leaves the boundary`);
+    for (const [p, q] of segs(w.route)) {
+      for (const o of scene.boxes) {
+        const end = o.c.id === w.from || o.c.id === w.to;
+        if (segmentHitsBox(p, q, o, end ? 0 : ROUTE_CLEAR - 0.01)) out.box.push(`${name} ${end ? "enters" : "runs within ROUTE_CLEAR of"} ${o.c.id}`);
+      }
+      if (segmentHitsRect(p, q, scene.label.box)) out.label.push(`${name} crosses the boundary's name`);
     }
   }
-  // Paired with how much was tried, so a pass cannot mean nothing was routed or nothing bent.
-  assert.ok(routed > 4500 && bent > 300, `routed ${routed}, bent ${bent}`);
+  for (const a of scene.wires) for (const b of scene.wires) {
+    if (a === b) continue;
+    const bShort = lengthOf(b.route) < SHORT_LINK;
+    const bEnds = [b.route[0], b.route.at(-1)];
+    for (const [p, q] of segs(a.route)) for (const [c, d] of segs(b.route)) {
+      const x = segmentCross(p, q, c, d);
+      if (x && (bShort || bEnds.some((e) => Math.hypot(x[0] - e[0], x[1] - e[1]) < JUNCTION_END))) out.junction.push(`${a.from}-${a.to} crosses ${b.from}-${b.to} ${bShort ? "a short line" : "near its end"}`);
+      if (!x && sideBySide(p, q, c, d) && sideBySide(c, d, p, q) && segDist(p, q, c, d) < LINE_SEP) out.side.push(`${a.from}-${a.to} runs beside ${b.from}-${b.to}`);
+    }
+    for (const bend of a.route.slice(1, -1)) if (segs(b.route).some(([c, d]) => pointSegDist(bend, c, d) < BEND_CLEAR)) out.bend.push(`a bend in ${a.from}-${a.to} sits near ${b.from}-${b.to}`);
+  }
+  // Lines sharing a box leave it at their own points.
+  const ends = new Map();
+  for (const w of scene.wires) for (const [id, pt] of [[w.from, w.route[0]], [w.to, w.route.at(-1)]]) {
+    if (!at.has(id)) continue;
+    const list = ends.get(id) ?? [];
+    for (const o of list) if (Math.hypot(o[0] - pt[0], o[1] - pt[1]) < 6) out.port.push(`two lines leave ${id} at one point`);
+    list.push(pt);
+    ends.set(id, list);
+  }
+  return Object.fromEntries(Object.entries(out).map(([rule, list]) => [rule, [...new Set(list)]]));
+}
+
+test("Capsid's own core keeps every rule, on a one-, two- and three-ring map", () => {
+  for (const layout of layouts) {
+    const scene = insideScene(capsidParts, capsidLinks, layout, "Inside Capsid");
+    const f = faults(scene);
+    for (const [rule, list] of Object.entries(f)) assert.deepEqual(list, [], `${rule} at ${layout.rings} rings`);
+    assert.equal(scene.wires.length, 9, "one line for a pair named both ways");
+    assert.ok(scene.wires.some((w) => w.route.length > 2), "some line bends: the test sees routing, not only straight lines");
+  }
 });
 
-test("a clear line stays straight, and the token's way starts and ends at the box edges", () => {
-  const boxes = insideLayout([{ id: "a", system: "core", name: "A", kind: "worker" }, { id: "b", system: "core", name: "B", kind: "database" }]);
-  assert.equal(wireRoute(boxes[0], boxes[1], boxes).length, 2);
-  // A drawn route, read backwards when the token goes the other way.
-  const way = tokenRoute("0,0 0,-100 100,-100", false, [100, -100], [52, 16], [0, 0], [44, 16]);
-  assert.deepEqual(way, [[44, -100], [0, -100], [0, -20]]);
+test("every core places its boxes inside or outside the boundary with clear space, and no line runs under a box or the boundary's name", () => {
+  let routed = 0;
+  let bent = 0;
+  const soft = { junction: 0, side: 0, bend: 0 };
+  for (const { parts, links } of randomCores(100)) for (const layout of layouts) {
+    const scene = insideScene(parts, links, layout, "Inside Sample");
+    const f = faults(scene);
+    for (const rule of ["place", "box", "label", "port"]) assert.deepEqual(f[rule], [], `${rule} at ${layout.rings} rings (${parts.map((p) => `${p.id}:${p.kind}`).join(" ")})`);
+    for (const rule of Object.keys(soft)) soft[rule] += f[rule].length;
+    routed += scene.wires.length;
+    bent += scene.wires.filter((w) => w.route.length > 2).length;
+  }
+  // Paired with how much was tried, so a pass cannot mean nothing was routed or nothing bent.
+  assert.ok(routed > 1500 && bent > 100, `routed ${routed}, bent ${bent}`);
+  // Random cores are far more crowded than Capsid's (up to ten parts and twenty lines), and a
+  // short line between neighbours can close a whole corridor. There a route that crosses no box
+  // may still break a softer rule; each stays under one line in twenty. Capsid's own core,
+  // above, keeps every rule.
+  for (const [rule, n] of Object.entries(soft)) assert.ok(n < routed / 20, `${rule}: ${n} of ${routed} lines`);
+});
+
+test("the checks see each fault: a line under a box, through the name, a junction, a short line crossed, side by side, a bend, one port", () => {
+  const scene = insideScene(capsidParts, capsidLinks, layoutMap(family), "Inside Capsid");
+  const at = new Map(scene.boxes.map((b) => [b.c.id, b]));
+  const put = (from, to, route) => ({ ...scene, wires: [...scene.wires, { from, to, route }] });
+  const [w, db, kv, t] = ["w", "db", "kv", "t"].map((id) => at.get(id));
+  assert.ok(faults(put("w", "kv", [[w.x, w.y], [w.x, t.y], [kv.x, kv.y]])).box.length > 0, "a line under a box");
+  const l = scene.label.box;
+  assert.ok(faults(put("x", "y", [[l.x - 20, l.y + l.h / 2], [l.x + l.w + 20, l.y + l.h / 2]])).label.length > 0, "a line through the name");
+  const first = scene.wires[0].route;
+  const [p, q] = first.slice(0, 2);
+  const n = [-(q[1] - p[1]), q[0] - p[0]];
+  const nl = Math.hypot(...n);
+  const along = (t, o) => [p[0] + (q[0] - p[0]) * t + (n[0] / nl) * o, p[1] + (q[1] - p[1]) * t + (n[1] / nl) * o];
+  const near = along(4 / Math.hypot(q[0] - p[0], q[1] - p[1]), 0);
+  const wp = scene.wires.find((x) => x.from === "w" && x.to === "p").route;
+  const mid = [(wp[0][0] + wp[1][0]) / 2 + 20, wp[0][1]];
+  assert.ok(faults(put("x", "y", [[mid[0], mid[1] - 30], [mid[0], mid[1] + 30]])).junction.length > 0, "a short line crossed away from its middle");
+  assert.ok(faults(put("x", "y", [[near[0] - (n[0] / nl) * 20, near[1] - (n[1] / nl) * 20], [near[0] + (n[0] / nl) * 20, near[1] + (n[1] / nl) * 20]])).junction.length > 0, "a crossing near a line's end");
+  const off = (pt) => [pt[0] + (n[0] / nl) * 4, pt[1] + (n[1] / nl) * 4];
+  assert.ok(faults(put("x", "y", [off(p), off(q)])).side.length > 0, "a line beside another");
+  const bendAt = [(p[0] + q[0]) / 2 + (n[0] / nl) * 6, (p[1] + q[1]) / 2 + (n[1] / nl) * 6];
+  assert.ok(faults(put("x", "y", [[bendAt[0] + 200, bendAt[1] + 200], bendAt, [bendAt[0] + 200, bendAt[1] - 200]])).bend.length > 0, "a bend beside a line");
+  const fromW = scene.wires.find((x) => x.from === "w");
+  assert.ok(faults(put("w", "db", [fromW.route[0], [db.x, db.y - 16]])).port.length > 0, "two lines at one port");
+  assert.ok(faults(put("w", "p", [[w.x, w.y - 16], [w.x, scene.boundary.y - 10], [at.get("p").x, at.get("p").y - 16]])).place.length > 0, "a line between two inside parts leaving the boundary");
+});
+
+test("lines that share a box leave it at their own points, spread along the side that faces their far ends", () => {
+  const scene = insideScene(capsidParts, capsidLinks, layoutMap(family), "Inside Capsid");
+  const w = scene.boxes.find((b) => b.c.id === "w");
+  const ports = scene.wires.filter((x) => x.from === "w" || x.to === "w").map((x) => (x.from === "w" ? x.route[0] : x.route.at(-1)));
+  assert.equal(new Set(ports.map((p) => p.join())).size, ports.length);
+  for (const [x, y] of ports) assert.ok(Math.abs(x - w.x) <= w.w / 2 + 0.1 && Math.abs(y - w.y) <= 16.1, "a port sits on the box's edge");
+});
+
+test("the token's way runs along the drawn line, read backwards when it goes the other way, and starts off the boxes", () => {
+  const way = tokenRoute("0,0 0,-100 100,-100", false);
+  assert.deepEqual(way, [[92, -100], [0, -100], [0, -8]]);
+  assert.deepEqual(tokenRoute("0,0 10,0", true), [[5, 0], [5, 0]]);
   const frames = routeFrames([[0, 0], [30, 0], [30, 10]]);
   assert.deepEqual(frames.map((f) => f.offset), [0, 0.75, 1]);
   assert.equal(frames[2].transform, "translate(30px, 10px)");

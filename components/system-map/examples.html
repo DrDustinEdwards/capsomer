@@ -127,7 +127,7 @@
   const chosen = controller(mount("chosen", { id: "map-chosen", label: "The family, Carrel chosen" }));
   const inside = controller(mount("inside", { id: "map-inside", label: "The family, inside Capsid" }));
   const plain = controller(mount("plain", { id: "map-plain", label: "The family, plain" }));
-  const flow = controller(mount("flow", { id: "map-flow", label: "The family, a flow playing" }));
+  const flow = controller(mount("flow", { id: "map-flow", label: "Capsid: a job's life" }));
   enhance(document.querySelector("[data-mount='shell']"));
   for (const el of document.querySelectorAll("#map-chosen, #map-inside, #map-plain, #map-flow")) el.setAttribute("data-cap-ready", "");
   chosen.select("carrel");

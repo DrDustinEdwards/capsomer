@@ -157,15 +157,20 @@ eachTheme((theme) => {
     expect(covered).toEqual([]);
   });
 
-  test("inside: the faded rim shows its shapes and no text", async ({ page }) => {
-    const rimText = () => page.locator("#map [data-layer='rim'] text").evaluateAll((els) => els.filter((e) => getComputedStyle(e).visibility === "visible").length);
-    // The control: at rest the rim's names are there to see.
-    expect(await rimText()).toBeGreaterThan(5);
+  test("inside: the rings fold away and the boundary fills the stage, so no unnamed shape stays", async ({ page }) => {
+    const shown = (layer: string) => page.locator(`#map [data-layer='${layer}']`).evaluate((e) => getComputedStyle(e).visibility === "visible");
+    // The control: at rest the rim is there to see.
+    expect(await shown("rim")).toBe(true);
     await tile(page, "map", "capsid").click();
     await tile(page, "map", "capsid").click();
     await expect(page.locator("#map")).toHaveAttribute("data-entered", "");
-    expect(await rimText()).toBe(0);
-    await expect(page.locator("#map [data-layer='rim'] polygon").first()).toBeVisible();
+    await expect.poll(() => shown("rim")).toBe(false);
+    const fill = await page.locator("#map").evaluate((root) => {
+      const stage = root.querySelector(".cap-system-map-stage")!.getBoundingClientRect();
+      const b = root.querySelector(".cap-system-map-boundary")!.getBoundingClientRect();
+      return (b.width * b.height) / (stage.width * stage.height);
+    });
+    expect(fill, "the boundary's share of the stage").toBeGreaterThan(0.6);
   });
 
   test("behaviour: the plain map shows the list as columns and hides the drawing", async ({ page }) => {
@@ -226,19 +231,44 @@ eachTheme((theme) => {
   }
 
   test("inside: the parts outside the core sit outside its boundary, and are counted apart", async ({ page }) => {
-    const reach = await page.locator("#map-inside [data-layer='inside']").evaluate((svg) => {
-      const r = (svg.querySelector(".cap-system-map-boundary") as SVGCircleElement).r.baseVal.value;
-      return [...svg.querySelectorAll<SVGGElement>(".cap-system-map-box[data-external]")].map((g) => {
-        const b = g.querySelector("rect")!.getBBox();
-        const nx = Math.max(0, b.x, -(b.x + b.width));
-        const ny = Math.max(0, b.y, -(b.y + b.height));
-        return { name: g.textContent, outside: Math.hypot(nx, ny) - r };
-      });
-    });
-    expect(reach.map((b) => b.name)).toEqual(["AgentsSessions", "GitHubRepos, CI"]);
-    for (const b of reach) expect(b.outside, `${b.name} reaches inside the boundary`).toBeGreaterThan(0);
-    await expect(page.locator("#map-inside .cap-system-map-detail-text")).toHaveText("6 parts, 2 outside it, with the systems around it at the rim.");
+    await expect(page.locator("#map-inside .cap-system-map-box[data-external]")).toHaveText(["AgentsSessions", "GitHubRepos, CI"]);
+    await expect(page.locator("#map-inside .cap-system-map-detail-text")).toHaveText("6 parts inside, 2 outside it.");
     await expect(page.locator("#map-inside [data-layer='inside']")).toHaveAttribute("aria-label", /Agents, GitHub\.$/);
+  });
+
+  test("accessibility: the panel's headings are in the page's own face", async ({ page }) => {
+    const faces = await page.evaluate(() => {
+      const body = getComputedStyle(document.body).fontFamily;
+      const of = (sel: string) => getComputedStyle(document.querySelector(sel)!).fontFamily;
+      return { body, inside: of("#map-inside .cap-system-map-detail-name"), step: of("#map-flow .cap-system-map-detail-name"), flow: of("#map-flow .cap-system-map-flow-name") };
+    });
+    expect(faces.body).not.toMatch(/Serif|Georgia|(^|, )serif$/);
+    expect(faces).toEqual({ body: faces.body, inside: faces.body, step: faces.body, flow: faces.body });
+  });
+
+  test("accessibility: in forced colours every part is the canvas with a text-coloured edge, stores and outside parts too", async ({ page }) => {
+    const colours = () =>
+      page.locator("#map-flow").evaluate((root) => {
+        const probe = document.createElement("span");
+        probe.style.cssText = "color: Canvas; background: CanvasText";
+        document.body.append(probe);
+        const canvas = getComputedStyle(probe).color;
+        const text = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        const rects = [...root.querySelectorAll<SVGRectElement>(".cap-system-map-box rect")].map((r) => ({ id: r.parentElement!.dataset.id, marked: r.parentElement!.matches("[data-lit], [data-at]"), fill: getComputedStyle(r).fill, stroke: getComputedStyle(r).stroke }));
+        const wire = getComputedStyle(root.querySelector(".cap-system-map-wire:not([data-on])")!).stroke;
+        return { canvas, text, rects, wire };
+      });
+    // The control: in ordinary colours a store keeps its tint.
+    const plain = await colours();
+    expect(plain.rects.find((r) => r.id === "capsid-db")!.fill).not.toBe(plain.canvas);
+    await page.emulateMedia({ forcedColors: "active" });
+    const forced = await colours();
+    for (const r of forced.rects) {
+      expect(r.fill, `${r.id}'s fill`).toBe(forced.canvas);
+      if (!r.marked) expect(r.stroke, `${r.id}'s edge`).toBe(forced.text);
+    }
+    expect(forced.wire).toBe(forced.text);
   });
 
   test("keyboard: Play starts a flow; Next, Back, the arrows and the number keys step it; Escape stops it, then steps out", async ({ page }) => {
@@ -335,30 +365,108 @@ eachTheme((theme) => {
     expect(stops[0]).toEqual({ id: null, step: 0 });
   });
 
-  test("lines: inside the core, no line runs under a box it does not end at", async ({ page }) => {
-    // Every line as drawn, sampled along its length against every box but its two ends: a line
-    // under a box reads as a connection to it (seat ruling on capsomer#64).
-    const tunnels = await page.locator("#map-inside [data-layer='inside']").evaluate((svg) => {
-      const boxes = [...svg.querySelectorAll<SVGGElement>(".cap-system-map-box")].map((g) => ({ id: g.dataset.id!, b: g.querySelector("rect")!.getBBox() }));
-      const out: string[] = [];
-      let sampled = 0;
-      for (const w of svg.querySelectorAll<SVGPathElement>(".cap-system-map-wire")) {
-        const ends = new Set([w.dataset.from, w.dataset.to]);
-        const len = w.getTotalLength();
-        for (let d = 0; d <= len; d += 2) {
+  // The drawing inside the core at the size a reader sees it, desktop and phone: every rule of
+  // the seat's rulings on capsomer#64, measured in screen pixels from the drawn lines.
+  for (const [width, height] of [[1280, 900], [320, 700]] as const) {
+    test(`lines: inside the core at ${width} px, every part and line keeps clear of the others`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      const drawn = await page.locator("#map-inside [data-layer='inside']").evaluate((svg: SVGSVGElement) => {
+        type P = [number, number];
+        const k = svg.getScreenCTM()!.a;
+        const sub = (a: P, b: P): P => [a[0] - b[0], a[1] - b[1]];
+        const len = (v: P) => Math.hypot(v[0], v[1]);
+        const ptSeg = (p: P, a: P, b: P) => {
+          const ab = sub(b, a);
+          const l2 = ab[0] ** 2 + ab[1] ** 2;
+          const t = l2 ? Math.max(0, Math.min(1, ((p[0] - a[0]) * ab[0] + (p[1] - a[1]) * ab[1]) / l2)) : 0;
+          return len(sub(p, [a[0] + t * ab[0], a[1] + t * ab[1]]));
+        };
+        const cross = (a: P, b: P, c: P, d: P): P | null => {
+          const r = sub(b, a);
+          const s = sub(d, c);
+          const den = r[0] * s[1] - r[1] * s[0];
+          if (Math.abs(den) < 1e-9) return null;
+          const t = ((c[0] - a[0]) * s[1] - (c[1] - a[1]) * s[0]) / den;
+          const u = ((c[0] - a[0]) * r[1] - (c[1] - a[1]) * r[0]) / den;
+          return t > 0 && t < 1 && u > 0 && u < 1 ? [a[0] + t * r[0], a[1] + t * r[1]] : null;
+        };
+        const angle = (a: P, b: P, c: P, d: P) => {
+          const u = sub(b, a);
+          const v = sub(d, c);
+          return (Math.acos(Math.min(1, Math.abs(u[0] * v[0] + u[1] * v[1]) / (len(u) * len(v)))) * 180) / Math.PI;
+        };
+        const rectDist = (p: P, r: DOMRect) => len([Math.max(r.x - p[0], 0, p[0] - r.x - r.width), Math.max(r.y - p[1], 0, p[1] - r.y - r.height)]);
+        const inRect = (p: P, r: DOMRect, g = 0) => p[0] > r.x - g && p[0] < r.x + r.width + g && p[1] > r.y - g && p[1] < r.y + r.height + g;
+        const xy = (w: SVGPathElement, d: number): P => {
           const { x, y } = w.getPointAtLength(d);
-          sampled++;
-          const hit = boxes.find(({ id, b }) => !ends.has(id) && x > b.x && x < b.x + b.width && y > b.y && y < b.y + b.height);
-          if (hit) {
-            out.push(`${w.dataset.from} to ${w.dataset.to} under ${hit.id}`);
-            break;
+          return [x, y];
+        };
+        const boundary = svg.querySelector<SVGRectElement>(".cap-system-map-boundary")!.getBBox();
+        const label = svg.querySelector<SVGTextElement>(".cap-system-map-inside-title")!.getBBox();
+        const boxes = [...svg.querySelectorAll<SVGGElement>(".cap-system-map-box")].map((g) => ({ id: g.dataset.id!, external: g.hasAttribute("data-external"), b: g.querySelector("rect")!.getBBox() }));
+        const boxOf = (id: string) => boxes.find((b) => b.id === id)!.b;
+        // A line as a reader sees it: from where it leaves one box to where it meets the other.
+        const wires = [...svg.querySelectorAll<SVGPathElement>(".cap-system-map-wire")].map((w) => {
+          const route = w.dataset.route!.split(" ").map((p) => p.split(",").map(Number) as P);
+          const total = w.getTotalLength();
+          const ends = [w.dataset.from!, w.dataset.to!];
+          let first = 0;
+          let last = total;
+          for (let d = 0; d <= total && ends.some((id) => inRect(xy(w, d), boxOf(id))); d += 0.5) first = d;
+          for (let d = total; d >= 0 && ends.some((id) => inRect(xy(w, d), boxOf(id))); d -= 0.5) last = d;
+          return { name: `${w.dataset.from}-${w.dataset.to}`, ends, route, segs: route.slice(1).map((q, i) => [route[i]!, q] as [P, P]), shown: [xy(w, first), xy(w, last)], length: last - first };
+        });
+        const out: Record<string, string[]> = { boundary: [], box: [], label: [], junction: [], beside: [], bend: [] };
+        let least = Number.POSITIVE_INFINITY;
+        // The boxes: inside the boundary, or outside it, with clear space; the name inside it.
+        for (const { id, external, b } of boxes) {
+          // Outside: above the boundary or below it, whichever side the box is on.
+          const gap = external ? Math.max(boundary.y - (b.y + b.height), b.y - (boundary.y + boundary.height)) : Math.min(b.x - boundary.x, b.y - boundary.y, boundary.x + boundary.width - b.x - b.width, boundary.y + boundary.height - b.y - b.height);
+          if (gap * k <= 5) out.boundary!.push(`${id}: ${(gap * k).toFixed(1)} px from the boundary`);
+          if (!(b.x + b.width < label.x || label.x + label.width < b.x || b.y + b.height < label.y || label.y + label.height < b.y)) out.boundary!.push(`${id} covers the name`);
+        }
+        for (const w of wires) {
+          // Sampled every drawn pixel along the line: its distance from every box but its ends.
+          const path = svg.querySelector<SVGPathElement>(`.cap-system-map-wire[data-from="${w.ends[0]}"][data-to="${w.ends[1]}"]`)!;
+          for (let d = 0; d <= w.length; d += 1 / k) {
+            const { x, y } = path.getPointAtLength(d);
+            for (const o of boxes) {
+              if (w.ends.includes(o.id)) {
+                if (inRect([x, y], o.b)) out.box!.push(`${w.name} enters ${o.id}`);
+                continue;
+              }
+              const gap = rectDist([x, y], o.b) * k;
+              least = Math.min(least, gap);
+              if (gap <= 5) out.box!.push(`${w.name} passes ${gap.toFixed(1)} px from ${o.id}`);
+            }
+            if (inRect([x, y], label, 2 / k)) out.label!.push(`${w.name} crosses the boundary's name`);
+          }
+          for (const v of wires) {
+            if (v === w) continue;
+            const vEnds = v.shown;
+            const vShort = v.length < 90;
+            for (const [p, q] of w.segs) {
+              for (const [c, d] of v.segs) {
+                const x = cross(p, q, c, d);
+                if (x && (vShort || vEnds.some((e) => len(sub(x, e)) * k < 10))) out.junction!.push(`${w.name} crosses ${v.name}${vShort ? ", a short line" : " by its end"}`);
+                if (!x && angle(p, q, c, d) < 20) {
+                  const near = Math.min(ptSeg(p, c, d), ptSeg(q, c, d), ptSeg(c, p, q), ptSeg(d, p, q)) * k;
+                  if (near < 8) out.beside!.push(`${w.name} runs ${near.toFixed(1)} px beside ${v.name}`);
+                }
+              }
+            }
+            for (const bend of w.route.slice(1, -1)) {
+              const near = Math.min(...v.segs.map(([c, d]) => ptSeg(bend, c, d))) * k;
+              if (near < 10) out.bend!.push(`a bend in ${w.name} sits ${near.toFixed(1)} px from ${v.name}`);
+            }
           }
         }
-      }
-      return { out, sampled, wires: svg.querySelectorAll(".cap-system-map-wire").length };
+        return { out: Object.fromEntries(Object.entries(out).map(([r, l]) => [r, [...new Set(l)]])), least, wires: wires.length, bent: wires.filter((w) => w.route.length > 2).length };
+      });
+      for (const [rule, list] of Object.entries(drawn.out)) expect.soft(list, rule).toEqual([]);
+      expect(drawn.least, "the nearest a line comes to a box it does not end at, in px").toBeGreaterThan(5);
+      expect(drawn.wires).toBeGreaterThanOrEqual(8);
+      expect(drawn.bent).toBeGreaterThan(0);
     });
-    expect(tunnels.out).toEqual([]);
-    expect(tunnels.wires).toBeGreaterThan(8);
-    expect(tunnels.sampled).toBeGreaterThan(500);
-  });
+  }
 });
