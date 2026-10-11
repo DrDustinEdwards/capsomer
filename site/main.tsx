@@ -124,14 +124,23 @@ function Overview() {
         <a className="site-figure" href={href("tests")}>
           <span className="cap-label">Tests</span>
           <b className="cap-num">{res.available ? res.totals.passed + res.totals.failed : "No data"}</b>
-          <span>{res.available ? <Verdict passed={res.totals.passed} failed={res.totals.failed} /> : <span className="cap-muted">No run recorded in this build</span>}</span>
+          {/* The number is said once, above: this line says only how the run went. */}
+          <span>
+            {res.available ? (
+              <span className="cap-status" data-tone={res.totals.failed ? "crit" : "ok"}>
+                {res.totals.failed ? `${res.totals.failed} failed` : "All passed"}
+              </span>
+            ) : (
+              <span className="cap-muted">No run recorded in this build</span>
+            )}
+          </span>
         </a>
         <a className="site-figure" href={href("color")}>
           <span className="cap-label">Contrast pairs</span>
           <b className="cap-num">{FAMILIES ? FAMILIES.pairs.length : "No data"}</b>
           {FAMILIES ? (
             <>
-              <span className="cap-muted">{`Across ${Object.keys(FAMILIES.families).length} color families, in both themes`}</span>
+              <span className="cap-muted">{`${Object.keys(FAMILIES.families).length} color families in 2 themes`}</span>
               <span>
                 <span className="cap-status" data-tone={FAMILIES.pairs.some((p) => !p.pass) ? "crit" : "ok"}>
                   {FAMILIES.pairs.some((p) => !p.pass) ? `${FAMILIES.pairs.filter((p) => !p.pass).length} failing` : "None failing"}
@@ -277,9 +286,6 @@ function ComponentPage({ name }: { name: string }) {
   const states = `${BASE}components/${c.name}/states.html`;
   return (
     <div className="site-page">
-      <nav aria-label="Breadcrumb" className="site-crumbs">
-        <a href={href("components")}>Components</a> <span aria-hidden="true">/</span> <span aria-current="page">{c.title}</span>
-      </nav>
       <div className="site-head">
         <h1>{c.title}</h1>
         <p>{c.summary}</p>
@@ -764,21 +770,12 @@ function App() {
   return (
     <ResultsContext.Provider value={RESULTS}>
       <AdminShell
-        title="Capsomer"
+        app="capsomer"
         nav={nav}
         tabs={tabs}
         page={pageName}
-        status={
-          <span className="site-fresh">
-            {RESULTS.available ? (
-              <>
-                Tests ran <b>{new Date(RESULTS.ran ?? META.built).toLocaleDateString(undefined, { dateStyle: "medium" })}</b>
-              </>
-            ) : (
-              "No test run in this build"
-            )}
-          </span>
-        }
+        trail={view === "components" && detail ? [{ label: "Components", href: href("components") }] : undefined}
+        updated={{ at: RESULTS.ran ?? META.built }}
         prefKey="cap-site-rail"
       >
         <div className="cap-admin-page">{page}</div>
