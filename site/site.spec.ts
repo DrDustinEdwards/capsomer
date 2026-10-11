@@ -95,9 +95,10 @@ eachTheme((theme) => {
   test("behaviour: the Tests card says its number once", async ({ page }) => {
     await page.goto("./#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Tests" });
-    const n = (await fig.locator("b").textContent())!.trim();
-    const text = (await fig.textContent())!;
-    expect(text.split(n).length - 1).toBe(1);
+    // One read of the number and the card together: the site swaps in main's last run once it
+    // has fetched it, and two separate reads could straddle that swap.
+    const { n, text } = await fig.evaluate((el) => ({ n: el.querySelector("b")!.textContent!.trim(), text: el.textContent! }));
+    expect(text.split(n).length - 1, `"${n}" in "${text}"`).toBe(1);
   });
 
   test("behaviour: the site's strip marks Capsomer as the app you are in, and the bar says how fresh the results are", async ({ page }) => {
