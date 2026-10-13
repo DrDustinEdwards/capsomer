@@ -38,7 +38,7 @@ Extra detail a person may want and can do without: what a button will do in this
 - **The pointer can move onto it**: leaving the trigger waits 150 ms before hiding, and resting on the tip keeps it.
 - **Blur hides it.** One tip shows at a time.
 - **Above its trigger by default** (`data-side` moves it), as shadcn's Tooltip, by CSS anchor positioning inside `@supports (anchor-name: --x)`, flipping when there is no room. Elsewhere the behaviour module places it below the trigger from `getBoundingClientRect`, set through the CSSOM. Anchor names are set through the CSSOM too, so nothing is a style attribute.
-- **Dark on light, light on dark** (`--text` behind `--ground`), at the detail size, with an optional arrow and a key cap (`<kbd>`) at its end.
+- **Its own surface: raised, with a visible edge** (`--raised`, an edge in `--line-strong` at 3:1 against the page, and a shadow), `--text` at the detail size, with an optional arrow and key caps (`<kbd>`, each with its own edge) at its end. Not inverted: an inverted tip looks like a selected item (the admin menu's current page is a dark fill in light and a light fill in dark), so a tip is neither (Dustin, 2026-10-11). The admin shell's names are this tooltip too: one look everywhere.
 
 ## Keyboard
 
@@ -51,7 +51,7 @@ Extra detail a person may want and can do without: what a button will do in this
 ## Accessibility
 
 - The trigger keeps its own name; the tip is its description.
-- Tip text is `--ground` on `--text`, far above 4.5:1 in both themes.
+- Tip text is `--text` on `--raised`, far above 4.5:1 in both themes; its edge is 3:1 against the page.
 - Touch: there is no hover, so a tip's detail must never be needed.
 - Forced colours: the tip gains an edge.
 

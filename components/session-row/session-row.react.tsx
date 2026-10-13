@@ -67,7 +67,7 @@ const glyphs: Record<string, ReactNode> = {
       <path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2" />
     </>
   ),
-  none: <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeDasharray="2.6 2.2" />,
+  none: <><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></>,
   stop: <rect x="3" y="3" width="10" height="10" rx="1.5" fill="currentColor" />,
   info: (
     <>

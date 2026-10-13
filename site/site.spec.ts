@@ -2,10 +2,10 @@ import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { eachTheme, expectNoAxeViolations } from "../test/helpers.ts";
 
-// The site itself: every view loads in the shell with no axe violations, the rail moves
+// The site itself: every view loads in the AdminShell with no axe violations, the menu moves
 // between views, a component's page shows its states in both themes, and the site runs
 // under the Content-Security-Policy the static Worker sends.
-const VIEWS = ["overview", "components", "colour", "type", "motion", "tests", "defaults", "changes", "settings"];
+const VIEWS = ["overview", "components", "color", "type", "motion", "tests", "defaults", "changes", "settings"];
 
 // The policy the static Worker sends, read from site/public/_headers.
 const CSP = /Content-Security-Policy:\s*(.+)/.exec(readFileSync("site/public/_headers", "utf8"))?.[1]?.trim() ?? "";
@@ -14,32 +14,107 @@ eachTheme((theme) => {
   for (const view of VIEWS) {
     test(`accessibility: the ${view} view has no axe violations`, async ({ page }) => {
       await page.goto(`./#/${view}`);
-      await expect(page.locator(".cap-shell")).toBeVisible();
+      await expect(page.locator(".cap-admin")).toBeVisible();
       await expect(page.locator("#cap-main h1").first()).toBeVisible();
-      await expectNoAxeViolations(page, ".cap-shell");
+      await expectNoAxeViolations(page, ".cap-admin");
     });
   }
 
-  test("keyboard: the rail's links move between views and mark the current one", async ({ page }) => {
+  test("keyboard: the menu's links move between views and mark the current one with the shell's dark pill", async ({ page }) => {
     await page.goto("./#/overview");
-    const link = page.locator(".cap-shell-rail").getByRole("link", { name: /^Colour and contrast/ });
+    const link = page.locator(".cap-admin-menu").getByRole("link", { name: /^Color and contrast/ });
     await link.focus();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#\/colour$/);
+    await expect(page).toHaveURL(/#\/color$/);
     await expect(link).toHaveAttribute("aria-current", "page");
-    await expect(page.locator("#cap-main h1")).toHaveText("Colour and contrast");
+    await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
+    await expect(page).toHaveTitle(/^Color and contrast · Capsomer/);
+    // The colour page's old address still opens it.
+    await page.goto("./#/colour");
+    await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
+  });
+
+  test("behaviour: the site is the reference shell: the family's app strip, the collapse control at its top, the top bar with the theme", async ({ page }) => {
+    await page.goto("./#/overview");
+    await expect(page.locator(".cap-admin-strip .cap-admin-tile")).toHaveCount(6);
+    await expect(page.locator(".cap-admin-strip li").first().locator("[data-cap-part='menu-toggle']")).toBeVisible();
+    await expect(page.locator(".cap-admin-bar").getByRole("group", { name: "Theme" })).toBeVisible();
+    await page.keyboard.press("[");
+    await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
+  });
+
+  test("behaviour: the usage example shows AdminShell", async ({ page }) => {
+    await page.goto("./#/overview");
+    const code = page.locator("#install-h ~ * .site-code, .site-code").first();
+    await expect(code).toContainText('import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"');
+    await expect(code).toContainText("<AdminShell");
   });
 
   test("behaviour: the overview counts every family's contrast pairs, not just the committed palette's", async ({ page }) => {
     await page.goto("./#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Contrast pairs" });
     await expect(fig.locator("b")).toHaveText(/^\d{3}$/);
-    await expect(fig).toContainText("0 failing");
-    await expect(fig).toContainText("3 families, both themes");
+    // Two facts, two lines: how many families and themes, then whether any pair fails.
+    const lines = await fig.locator("> *").allTextContents();
+    expect(lines).toEqual(["Contrast pairs", expect.stringMatching(/^\d{3}$/), "3 color families in 2 themes", "None failing"]);
   });
 
-  test("behaviour: the colour view shows all three families, each default theme first", async ({ page }) => {
-    await page.goto("./#/colour");
+  test("behaviour: the overview cards line up their labels and numbers across the row, open and collapsed, and no line ends on one word", async ({ page }) => {
+    await page.goto("./#/overview");
+    for (const state of ["open", "collapsed"]) {
+      if (state === "collapsed") await page.locator("[data-cap-part='menu-toggle']").click();
+      await page.evaluate(() => document.fonts.ready.then(() => undefined));
+      const cards = await page.locator(".site-figure").evaluateAll((els) =>
+        els.map((e) => {
+          const label = e.querySelector(".cap-label")!.getBoundingClientRect();
+          const num = e.querySelector("b")!.getBoundingClientRect();
+          // How many lines each text in the card takes: one, so none can end on a lone word.
+          const lastLines = [...e.querySelectorAll(":scope > span")].map((s) => {
+            const range = document.createRange();
+            range.selectNodeContents(s);
+            return { lines: new Set([...range.getClientRects()].map((r) => Math.round(r.top))).size };
+          });
+          return { label: Math.round(label.top), num: Math.round(num.bottom), lastLines };
+        }),
+      );
+      expect(cards).toHaveLength(3);
+      expect(new Set(cards.map((c) => c.label)).size, `${state}: label tops ${cards.map((c) => c.label)}`).toBe(1);
+      expect(new Set(cards.map((c) => c.num)).size, `${state}: number baselines ${cards.map((c) => c.num)}`).toBe(1);
+      // No card line wraps, so none can end on a lone word.
+      for (const c of cards) for (const l of c.lastLines) expect(l.lines, `${state}: a card line wraps`).toBe(1);
+    }
+  });
+
+  test("behaviour: every menu row keeps its label on one line, so every row is one height", async ({ page }) => {
+    await page.goto("./#/overview");
+    const heights = await page.locator(".cap-admin-menu a").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
+    expect(heights.length).toBe(9);
+    expect(new Set(heights).size, `row heights ${heights}`).toBe(1);
+  });
+
+  test("behaviour: the Tests card says its number once", async ({ page }) => {
+    await page.goto("./#/overview");
+    const fig = page.locator(".site-figure").filter({ hasText: "Tests" });
+    // One read of the number and the card together: the site swaps in main's last run once it
+    // has fetched it, and two separate reads could straddle that swap.
+    const { n, text } = await fig.evaluate((el) => ({ n: el.querySelector("b")!.textContent!.trim(), text: el.textContent! }));
+    expect(text.split(n).length - 1, `"${n}" in "${text}"`).toBe(1);
+  });
+
+  test("behaviour: the site's strip marks Capsomer as the app you are in, and the bar says how fresh the results are", async ({ page }) => {
+    await page.goto("./#/overview");
+    const current = page.locator(".cap-admin-strip .cap-admin-tile[aria-current='true']");
+    await expect(current).toHaveCount(1);
+    await expect(current).toHaveAccessibleName("Capsomer");
+    await expect(page.locator(".cap-admin-fresh")).toHaveText(/^Updated /);
+    // A top-level page: no trail repeating its heading. A component's page: Components, then it.
+    await expect(page.locator(".cap-admin-trail")).toHaveCount(0);
+    await page.goto("./#/components/shell");
+    await expect(page.locator(".cap-admin-trail li")).toHaveText(["Components", "Shell"]);
+  });
+
+  test("behaviour: the color view shows all three families, each default theme first", async ({ page }) => {
+    await page.goto("./#/color");
     for (const [name, first] of [["Purple", "Light"], ["Fox", "Light"], ["Teal", "Dark"]] as const) {
       const fam = page.locator(".site-family").filter({ has: page.getByRole("heading", { name: new RegExp(`^${name}`) }) });
       await expect(fam).toHaveCount(1);
@@ -64,7 +139,7 @@ eachTheme((theme) => {
         w.cspViolations.push(`${e.violatedDirective}: ${e.blockedURI || "inline"} at ${e.sourceFile}:${e.lineNumber}`);
       });
     });
-    for (const view of ["overview", "colour", "type", "components/shell"]) {
+    for (const view of ["overview", "color", "type", "components/shell"]) {
       await page.goto(`./#/${view}`);
       await expect(page.locator("#cap-main h1").first()).toBeVisible();
       await page.waitForLoadState("networkidle");

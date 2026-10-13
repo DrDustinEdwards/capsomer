@@ -10,7 +10,7 @@ const DAY = 86_400_000;
 
 export interface ContentStatusWords {
   // The status component's tone: Published is ok (a tick), Scheduled is a notice (a square),
-  // Draft is no data yet (a dashed circle). Shape, word and colour together.
+  // Draft is no data yet (an empty circle with a bar). Shape, word and colour together.
   tone: "ok" | "info" | "nodata";
   word: string;
   // For a scheduled post: when it goes out, "in 3 days", "today", "tomorrow", "due now".

@@ -31,7 +31,7 @@ A queue of jobs that wait for approval as a batch uses the approval sheet (`appr
 ## The default and its reason
 
 - **Waiting on you first, the longest wait at the top; then failed, working, idle, stopped.** What needs a person comes before what does not (patterns.md, "Status"). `order()` does the sort.
-- **State is a pill: shape, word and colour.** Needs you (warning triangle), Working (info, a turning arc), Failed (critical octagon), Idle (no data, dashed circle), Stopped (no data tone, a filled square, so it differs from Idle by shape and word, not colour).
+- **State is a pill: shape, word and colour.** Needs you (warning triangle), Working (info, a turning arc), Failed (critical octagon), Idle (no data, an empty circle with a bar), Stopped (no data tone, a filled square, so it differs from Idle by shape and word, not colour).
 - **A failed session carries the red left edge** (`data-tone="crit"` on the row, which the React wrapper sets), as a critical row does in every list; the pill still says Failed. From the Portal's `.qrow.sev-crit`, which its Live sessions list gained in #215. Only failed rows have it: needing you is warning, not critical.
 - **The agent's name is mono**, because it is an identifier.
 - **The age is in words**: "waiting 3 minutes", "started 18 minutes ago", never "3m".

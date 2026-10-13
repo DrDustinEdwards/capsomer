@@ -1,9 +1,14 @@
-// The admin shell's behaviour: collapse the menu (the strip stays), remember the choice, hide a
-// shown name on Esc (WCAG 1.4.13), jump between apps with Ctrl or Cmd and 1 to 9, and the phone
-// sheet. No framework; the React wrapper uses the same functions. The menu's links and the page
+// The admin shell's behaviour: collapse the menu (the strip stays), remember the choice, attach
+// each control's name tip (Capsomer's tooltip: Esc hides it, WCAG 1.4.13), jump between apps with
+// G and 1 to 9, and the phone sheet. No framework; the React wrapper uses the same functions. The menu's links and the page
 // are in the HTML without any of this.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
+import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
+
+// A count is a glance, not a figure: past 99 it says 99+, in the strip, the menu (open and
+// collapsed) and the phone bar alike; the accessible name keeps the real count.
+export const badgeText = (count: number): string => (count > 99 ? "99+" : String(count));
 
 export const ADMIN_PREF = DEFAULT_PREF;
 
@@ -38,7 +43,7 @@ export function setMenu(shell: HTMLElement, collapsed: boolean, remember = true)
   if (toggle) {
     toggle.setAttribute("aria-expanded", String(!collapsed));
     toggle.setAttribute("aria-label", collapsed ? "Expand menu" : "Collapse menu");
-    const tip = toggle.querySelector(".cap-admin-tip-text");
+    const tip = toggle.querySelector(".cap-admin-tip .cap-admin-tip-text");
     if (tip) tip.textContent = collapsed ? "Expand menu" : "Collapse menu";
   }
   if (remember) writePref(shell.dataset.capPref ?? ADMIN_PREF, collapsed ? "collapsed" : "expanded");
@@ -64,19 +69,6 @@ export function jumpTarget(armed: { at: number }, e: Pick<KeyboardEvent, "key" |
   return app && !app.current ? app.href : null;
 }
 
-// Esc hides the name a strip control is showing, until the pointer or focus moves on.
-export function hideShownNames(shell: HTMLElement): void {
-  const sel = ".cap-admin-btn, .cap-admin-tile, .cap-admin-menu a";
-  const focused = (document.activeElement as Element | null)?.closest<HTMLElement>(sel);
-  const hovered = shell.querySelector<HTMLElement>(".cap-admin-btn:hover, .cap-admin-tile:hover, .cap-admin-menu a:hover");
-  for (const el of [focused, hovered]) if (el && shell.contains(el)) el.dataset.tip = "hidden";
-}
-
-export function showNamesAgain(e: { target: EventTarget | null }): void {
-  const el = (e.target as Element).closest<HTMLElement>("[data-tip='hidden']");
-  if (el) delete el.dataset.tip;
-}
-
 export function openSheet(shell: HTMLElement): void {
   const button = shell.querySelector<HTMLButtonElement>("[data-cap-part='more']");
   const dialog = shell.querySelector<HTMLDialogElement>("dialog.cap-admin-sheet");
@@ -99,6 +91,20 @@ export function enhance(root: ParentNode = document): () => void {
     const pref = readPref(shell.dataset.capPref ?? ADMIN_PREF);
     if (pref) setMenu(shell, pref === "collapsed", false);
 
+    // Each control's name tip, a child of its control. A menu link's tip repeats its name, so it
+    // adds no description; it shows only while the menu is collapsed (admin-shell.css).
+    const detachTips = [...shell.querySelectorAll<HTMLElement>(".cap-admin-tip")].map((tip) => {
+      const trigger = tip.parentElement;
+      if (!trigger) return () => undefined;
+      const detach = attachTip(trigger, tip);
+      if (trigger.closest(".cap-admin-menu")) trigger.removeAttribute("aria-describedby");
+      const used = () => hideTip(trigger);
+      trigger.addEventListener("click", used);
+      return () => {
+        trigger.removeEventListener("click", used);
+        detach();
+      };
+    });
     const sheet = shell.querySelector<HTMLDialogElement>("dialog.cap-admin-sheet");
     const moreButton = shell.querySelector<HTMLButtonElement>("[data-cap-part='more']");
     const unwireSheet = sheet ? wireDialog(sheet) : null;
@@ -116,7 +122,6 @@ export function enhance(root: ParentNode = document): () => void {
     };
     const armed = { at: 0 };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") return hideShownNames(shell);
       const apps = [...shell.querySelectorAll<HTMLAnchorElement>(".cap-admin-tile")].map((a) => ({ href: a.href, current: a.getAttribute("aria-current") === "true" }));
       const to = jumpTarget(armed, e, apps);
       if (to) {
@@ -125,13 +130,10 @@ export function enhance(root: ParentNode = document): () => void {
       }
     };
     shell.addEventListener("click", onClick);
-    shell.addEventListener("mouseout", showNamesAgain);
-    shell.addEventListener("focusout", showNamesAgain);
     document.addEventListener("keydown", onKey);
     undo.push(() => {
       shell.removeEventListener("click", onClick);
-      shell.removeEventListener("mouseout", showNamesAgain);
-      shell.removeEventListener("focusout", showNamesAgain);
+      detachTips.forEach((f) => f());
       document.removeEventListener("keydown", onKey);
       sheet?.removeEventListener("close", onSheetClose);
       unwireSheet?.();

@@ -37,7 +37,7 @@ A public reading page may leave the choice to the system and show no control.
 - **`toggleTheme()` switches light and dark** from whatever is showing, and remembers it, for a `t` shortcut registered through the shortcut registry; every switch on the page follows, and so do other tabs.
 - **The group has a name, "Theme"**, in a visually hidden `legend`, because a top bar has no room for a visible one.
 - **A sun and a moon beside the words**, as shadcn's Mode Toggle draws them; on a phone (under 820 px) the words are visually hidden and the icons stay, and a screen reader still hears "Light" and "Dark".
-- **The chosen segment** is on the accent tint with its word in `--accent-text` (4.5:1), set heavier, with a 2 px accent bar along its foot (3:1), so it is told by shape and weight as well as colour. The control's edge is `--dim`, which reaches 3:1 on the ground tone of the top bar; `--line-strong` does not.
+- **The chosen segment has one marker, a fill**: the dark fill of the admin menu's selected page (`--accent-12`, its word in `--ground` and set heavier), over 3:1 against the ground in both themes, so no second mark (an underline) is needed (Dustin, 2026-10-11: one marker). The control's edge is `--dim`, which reaches 3:1 on the ground tone of the top bar; `--line-strong` does not.
 - **Density**: the segments are one control tall (`--control`, 44 px on a touch screen), so `data-density="comfortable"` on the top bar or the root makes them larger.
 
 The inline script, for the default key:
@@ -83,7 +83,7 @@ Toggle Group in its outline variant with spacing 0 (the items flush in one round
 
 - **Two radios, not a toggle group of buttons.** shadcn's Toggle Group is `aria-pressed` buttons; a choice of one of two is a radio group, so the arrow keys, the form and the screen reader's "1 of 2" are the browser's. It also keeps 0.1's markup contract.
 - **Two states, no System.** shadcn's Mode Toggle is a menu of Light, Dark and System; Dustin ruled for two (PR #13). The first visit follows the system without writing anything.
-- **The chosen segment is the accent tint with a bar**, not shadcn's grey muted fill: the tint alone is under 3:1 against the ground, and the bar and the weight carry the state.
+- **The chosen segment is the selected-item fill**, not shadcn's grey muted fill: one selected style across Capsomer, and over 3:1 against the ground on its own.
 - **It no longer uses `.cap-seg`.** The segmented control is a form control on a surface; this one sits on the top bar's ground tone and has icons, so its look is its own, and the two can change independently.
 
 ## Exceptions in production

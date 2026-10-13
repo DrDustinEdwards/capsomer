@@ -28,11 +28,11 @@ eachTheme((theme) => {
           - listitem:
             - link "dustinedwards.info"
           - listitem:
-            - link "germomics, a check is failing"
+            - link "germomics, 1 check failing"
           - listitem:
             - link "Foxhound"
           - listitem:
-            - link "Foxing"
+            - link "Capsomer"
         - list:
           - listitem:
             - button "Search everything"
@@ -124,21 +124,19 @@ eachTheme((theme) => {
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     // An icon column at the collapsed rail width, beside the strip.
     await expect(menu).toBeVisible();
-    expect((await menu.boundingBox())?.width).toBe(56);
+    expect((await menu.boundingBox())?.width).toBe(80);
     expect((await page.locator(".cap-admin-strip").boundingBox())?.width).toBe(56);
     // Same order, same places, same names; only the words are hidden.
     const after = await places();
     expect(after).toEqual(before);
-    for (const sel of [".cap-admin-menu .cap-admin-group-label", ".cap-admin-menu a .cap-admin-label"]) {
-      for (const el of await page.locator(sel).all()) await expect(el).toHaveCSS("opacity", "0");
-    }
+    for (const el of await page.locator(".cap-admin-menu a .cap-admin-label").all()) await expect(el).toHaveCSS("clip-path", "inset(50%)");
+    for (const el of await page.locator(".cap-admin-menu .cap-admin-group-label").all()) await expect(el).toHaveCSS("color", "rgba(0, 0, 0, 0)");
     await expect(page.getByRole("link", { name: "Queue, 5 blocked" })).toBeVisible();
-    // Badges stay on the icons: a count, and a dot where a count does not fit.
+    // Counts stay beside the icons, the same number as open: 99+ past 99.
     const badge = page.getByRole("link", { name: "Queue, 5 blocked" }).locator(".cap-admin-count");
     await expect(badge).toBeVisible();
     await expect(badge).toHaveText("5");
-    const wide = await page.getByRole("link", { name: "Activity, 120" }).locator(".cap-admin-count").boundingBox();
-    expect(wide?.width).toBe(8);
+    await expect(page.getByRole("link", { name: "Activity, 120" }).locator(".cap-admin-count")).toHaveText("99+");
     // The current page keeps its dark fill; the strip's badges stay.
     await expect(page.locator(".cap-admin-menu a[aria-current='page']")).toHaveCSS("background-color", /^(?!rgba\(0, 0, 0, 0\))/);
     await expect(page.getByRole("link", { name: "Carrel, 2 AI drafts waiting" })).toBeVisible();
@@ -151,48 +149,51 @@ eachTheme((theme) => {
     await toggle.focus();
     await page.keyboard.press("Space");
     await expect(page.locator(".cap-admin")).not.toHaveAttribute("data-menu", "collapsed");
-    expect((await menu.boundingBox())?.width).toBe(208);
+    expect((await menu.boundingBox())?.width).toBe(232);
   });
 
-  test("keyboard: a collapsed menu icon shows its label on hover and focus, and Esc hides it", async ({ page }) => {
+  test("keyboard: a collapsed menu icon shows its name on hover and focus, and Esc hides it", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "collapsed");
     const link = page.getByRole("link", { name: "Sites, 11" });
-    const label = link.locator(".cap-admin-label");
-    await expect(label).toHaveCSS("opacity", "0");
+    const tip = link.locator(".cap-admin-tip");
+    await expect(tip).toBeHidden();
     await link.hover();
-    await expect(label).toHaveCSS("opacity", "1");
-    await expectContrast(page, [{ sel: ".cap-admin-menu a:hover .cap-admin-label", what: "the shown label" }]);
-    // The label is painted over the page, not under it.
-    const top = await label.evaluate((el) => {
-      // The label ignores the pointer, so let it be hit for this one look.
-      (el as HTMLElement).style.pointerEvents = "auto";
-      const r = el.getBoundingClientRect();
-      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest(".cap-admin-label") === el;
-      (el as HTMLElement).style.pointerEvents = "";
-      return hit;
-    });
-    expect(top, "the label is covered by the page").toBe(true);
+    await expect(tip).toBeVisible();
+    await expect(tip).toHaveText("Sites");
+    await expectContrast(page, [{ sel: ".cap-admin-menu .cap-admin-tip:popover-open .cap-admin-tip-text", what: "the shown name" }]);
     await page.mouse.move(700, 400);
+    await expect(tip).toBeHidden();
     await link.focus();
-    await expect(label).toHaveCSS("opacity", "1");
-    await expect(label).toHaveText("Sites");
+    await page.keyboard.press("Shift+Tab");
+    await page.keyboard.press("Tab");
+    await expect(tip).toBeVisible();
     await page.keyboard.press("Escape");
-    await expect(label).toHaveCSS("opacity", "0");
+    await expect(tip).toBeHidden();
+    await expect(link).toBeFocused();
+    // The name is the link's own: the tip adds no description that repeats it.
+    expect(await link.getAttribute("aria-describedby")).toBeNull();
     await expectNoAxeViolations(page);
   });
-
-  test("keyboard: a strip control shows its name on focus, and Esc hides it", async ({ page }) => {
+  test("keyboard: a strip control shows its name on focus, its keys as key caps, and Esc hides it", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
+    await page.locator("[data-cap-part='menu-toggle']").focus();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
     const tile = page.getByRole("link", { name: "Carrel, 2 AI drafts waiting" });
-    await tile.focus();
+    await expect(tile).toBeFocused();
     const tip = tile.locator(".cap-admin-tip");
-    await expect(tip).toHaveCSS("opacity", "1");
-    await expect(tip).toContainText("G 2");
-    await expectContrast(page, [{ sel: ".cap-admin-tile:focus-visible .cap-admin-tip-text", what: "the shown name" }]);
+    await expect(tip).toBeVisible();
+    await expect(tip.locator(".cap-admin-tip-text")).toHaveText("Carrel");
+    // "G 2" is two keys, each a key cap with its own edge.
+    await expect(tip.locator("kbd")).toHaveText(["G", "2"]);
+    for (const k of await tip.locator("kbd").all()) expect(await k.evaluate((el) => getComputedStyle(el).borderTopStyle)).toBe("solid");
+    await expectContrast(page, [
+      { sel: ".cap-admin-tile .cap-admin-tip:popover-open .cap-admin-tip-text", what: "the shown name" },
+      { sel: ".cap-admin-tile .cap-admin-tip:popover-open kbd", what: "a key cap" },
+    ]);
     await page.keyboard.press("Escape");
-    await expect(tip).toHaveCSS("opacity", "0");
+    await expect(tip).toBeHidden();
   });
-
   test("accessibility: the account panel is a popover with this app, elsewhere and sign out", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const avatar = page.getByRole("button", { name: "Your account" });
@@ -211,7 +212,7 @@ eachTheme((theme) => {
           - link "dustinedwards.info"
           - link "germomics"
           - link "Foxhound"
-          - link "Foxing"
+          - link "Capsomer"
         - button "Sign out"
     `);
     await page.keyboard.press("Escape");
@@ -220,17 +221,18 @@ eachTheme((theme) => {
   });
 
   test("behaviour: G then a number jumps to that app, never the one already open, and Ctrl and a digit do nothing", async ({ page }) => {
+    // The other apps are other origins: a jump is caught here, not followed.
+    await page.route(/https:\/\/(portal|carrel)\.dustinedwards\.info\//, (r) => r.fulfill({ body: "another app" }));
     await visitStates(page, "admin-shell", theme, "expanded");
     await page.keyboard.press("Control+2");
-    await expect(page).not.toHaveURL(/#carrel/);
     await page.keyboard.press("g");
     await page.keyboard.press("1");
-    await expect(page).not.toHaveURL(/#portal/);
     await page.keyboard.press("2");
-    await expect(page).not.toHaveURL(/#carrel/);
+    await page.waitForTimeout(300);
+    await expect(page).toHaveURL(/localhost/);
     await page.keyboard.press("g");
     await page.keyboard.press("2");
-    await expect(page).toHaveURL(/#carrel/);
+    await expect(page).toHaveURL("https://carrel.dustinedwards.info/");
   });
 
   test("behaviour: a public site is the same structure with one app, its sections and a reading column", async ({ page }) => {
@@ -243,7 +245,7 @@ eachTheme((theme) => {
       return [strip, menu];
     });
     expect(widths[0]).toBe(56);
-    expect(widths[1]).toBe(208);
+    expect(widths[1]).toBe(232);
     await expect(page.locator(".cap-admin-page")).toHaveAttribute("data-measure", "reading");
   });
 
@@ -415,19 +417,386 @@ eachTheme((theme) => {
     expect(q!.width).toBeGreaterThan(0);
   });
 
-  test("behaviour: the phone's thin bar names the app at the left; a desktop bar does not, and an empty one is not drawn", async ({ page }) => {
+  test("behaviour: the phone's top bar names the app at the left; a desktop bar does not, and a top-level page shows no trail", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await visitStates(page, "admin-shell", theme, "phone");
     await expect(page.locator(".cap-admin-bar-app")).toBeVisible();
     await expect(page.locator(".cap-admin-bar-app")).toHaveText("Capsid Portal");
-    await expect(page.locator(".cap-admin-bar")).toContainText("Updated 6 min ago");
+    await expect(page.locator(".cap-admin-bar")).toContainText("Updated");
     await visitStates(page, "admin-shell", theme, "reader");
     await expect(page.locator(".cap-admin-bar")).toContainText("dustinedwards.info");
     await page.setViewportSize({ width: 1280, height: 800 });
-    await expect(page.locator(".cap-admin-bar")).toBeHidden();
+    await expect(page.locator(".cap-admin-bar-app")).toBeHidden();
     await visitStates(page, "admin-shell", theme, "expanded");
     await expect(page.locator(".cap-admin-bar-app")).toBeHidden();
-    await expect(page.locator(".cap-admin-bar")).toBeVisible();
+    // The page's heading is "Overview": the bar does not say it again.
+    await expect(page.locator(".cap-admin-trail")).toHaveCount(0);
+    expect(await page.locator(".cap-admin-bar").innerText()).not.toContain("Overview");
+    await visitStates(page, "admin-shell", theme, "trail");
+    await expect(page.locator(".cap-admin-trail li")).toHaveText(["Sites", "fieldnotes.example"]);
+    await expect(page.locator(".cap-admin-trail [aria-current='page']")).toHaveText("fieldnotes.example");
+  });
+  test("behaviour: every icon, the logo tiles and the current row keep their place when the menu opens and closes", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "expanded");
+    const places = () =>
+      page.evaluate(() => {
+        const at = (el: Element) => {
+          const r = el.getBoundingClientRect();
+          return { x: Math.round(r.left * 2) / 2, y: Math.round(r.top * 2) / 2, w: Math.round(r.width), h: Math.round(r.height) };
+        };
+        const menu = [...document.querySelectorAll(".cap-admin-menu a")].map((a) => at(a.querySelector(".cap-admin-icon, .cap-admin-letter")!));
+        const strip = [...document.querySelectorAll(".cap-admin-strip :is(.cap-admin-btn, .cap-admin-tile)")].map((el) => at(el.querySelector(".cap-admin-icon, .cap-admin-logo, span") ?? el));
+        const cur = at(document.querySelector(".cap-admin-menu a[aria-current='page']")!);
+        return { menu, strip, current: { x: cur.x, y: cur.y, h: cur.h } };
+      });
+    const open = await places();
+    expect(open.menu.length, "menu icons measured").toBe(6);
+    expect(open.strip.length, "strip controls measured").toBeGreaterThanOrEqual(9);
+    await page.locator("[data-cap-part='menu-toggle']").click();
+    await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
+    const shut = await places();
+    expect(shut.menu, "menu icons, open then collapsed").toEqual(open.menu);
+    expect(shut.strip, "strip icons and logos").toEqual(open.strip);
+    expect(shut.current, "the current row's left edge, top and height").toEqual(open.current);
+    // Collapsed, each icon sits in the middle of the icon column.
+    const centred = await page.evaluate(() => {
+      const col = document.querySelector(".cap-admin-menu")!.getBoundingClientRect();
+      return [...document.querySelectorAll(".cap-admin-menu a .cap-admin-icon")].map((i) => {
+        const r = i.getBoundingClientRect();
+        return Math.abs(r.left + r.width / 2 - (col.left + col.width / 2));
+      });
+    });
+    for (const off of centred) expect(off).toBeLessThanOrEqual(1.5);
+  });
+
+  // One look and one place for every shown name: Capsomer's tooltip, in the top layer.
+  const tipFacts = (tip: import("@playwright/test").Locator) =>
+    tip.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const pts = [
+        [r.left + 2, r.top + 2],
+        [r.right - 2, r.top + 2],
+        [r.left + 2, r.bottom - 2],
+        [r.right - 2, r.bottom - 2],
+        [r.left + r.width / 2, r.top + r.height / 2],
+      ];
+      const cs = getComputedStyle(el);
+      const opaque = /^rgb\(/.test(cs.backgroundColor) && cs.opacity === "1";
+      const hit = pts.every(([x, y]) => el.contains(document.elementFromPoint(x!, y!)));
+      // What the tip must not cover: its own control (and the control's badge), and the controls
+      // just above and below it.
+      const control = el.parentElement!;
+      const li = control.closest("li");
+      const near = [control, control.querySelector(".cap-admin-badge, .cap-admin-count:not(:empty)"), li?.previousElementSibling?.querySelector("a, button"), li?.nextElementSibling?.querySelector("a, button")];
+      const sib = control.closest(".cap-admin-menu") ? [control.previousElementSibling, control.nextElementSibling].filter((e) => e?.matches("a")) : [];
+      const covers = [...near, ...sib]
+        .filter((n): n is Element => !!n)
+        .filter((n) => {
+          const b = n.getBoundingClientRect();
+          return b.width > 0 && Math.min(r.right, b.right) - Math.max(r.left, b.left) > 0 && Math.min(r.bottom, b.bottom) - Math.max(r.top, b.top) > 0;
+        })
+        .map((n) => n.getAttribute("aria-label") ?? n.textContent);
+      return { hit, opaque, inside: r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight, covers, look: [cs.backgroundColor, cs.boxShadow, cs.fontSize, cs.paddingTop, cs.borderRadius].join(" | ") };
+    });
+
+  test("behaviour: a name shown beside any strip control or collapsed menu icon is opaque, whole, above every panel, tile and badge, and covers none of its neighbours", async ({ page }) => {
+    const looks = new Set<string>();
+    let checked = 0;
+    for (const state of ["expanded", "collapsed"]) {
+      await visitStates(page, "admin-shell", theme, state);
+      const controls = page.locator(".cap-admin-strip :is(.cap-admin-btn, .cap-admin-tile):not(.cap-admin-account *)");
+      for (let i = 0; i < (await controls.count()); i++) {
+        const c = controls.nth(i);
+        await c.hover();
+        const tip = c.locator(".cap-admin-tip");
+        await expect(tip).toBeVisible();
+        await expect(tip).toHaveCSS("opacity", "1");
+        const got = await tipFacts(tip);
+        expect(got, `${state}: the name of ${await c.getAttribute("aria-label")}`).toMatchObject({ hit: true, opaque: true, inside: true, covers: [] });
+        looks.add(got.look);
+        checked++;
+      }
+    }
+    const links = page.locator(".cap-admin-menu a");
+    for (let i = 0; i < (await links.count()); i++) {
+      const link = links.nth(i);
+      await link.hover();
+      const tip = link.locator(".cap-admin-tip");
+      await expect(tip).toBeVisible();
+      await expect(tip).toHaveCSS("opacity", "1");
+      await expect(tip).toHaveText((await link.locator(".cap-admin-label").textContent()) ?? "");
+      const got = await tipFacts(tip);
+      expect(got, `the collapsed name ${await tip.textContent()}`).toMatchObject({ hit: true, opaque: true, inside: true, covers: [] });
+      looks.add(got.look);
+      checked++;
+    }
+    expect(checked, "names checked").toBeGreaterThanOrEqual(26);
+    // The strip open, the strip collapsed and the menu's icons: one tooltip, one look.
+    expect([...looks]).toHaveLength(1);
+  });
+
+  test("behaviour: the collapse and expand button's name is opaque, whole, above the menu column and covers no neighbour, in both states", async ({ page }) => {
+    for (const [state, name] of [["expanded", "Collapse menu"], ["collapsed", "Expand menu"]] as const) {
+      await visitStates(page, "admin-shell", theme, state);
+      const toggle = page.locator("[data-cap-part='menu-toggle']");
+      await expect(toggle).toHaveAccessibleName(name);
+      // The pointer stays where it was across the page load; leave and come back so it enters.
+      await page.mouse.move(600, 400);
+      await toggle.hover();
+      const tip = toggle.locator(".cap-admin-tip");
+      await expect(tip).toBeVisible();
+      await expect(tip).toHaveCSS("opacity", "1");
+      await expect(tip).toContainText(name);
+      expect(await tipFacts(tip), `${state}: the name of the menu button`).toMatchObject({ hit: true, opaque: true, inside: true, covers: [] });
+    }
+  });
+
+  test("accessibility: a shown name has its own surface and a visible edge, unlike the selected menu item, in both themes", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "collapsed");
+    await page.getByRole("link", { name: "Sites, 11" }).hover();
+    const tip = page.locator(".cap-admin-menu .cap-admin-tip:popover-open");
+    await expect(tip).toBeVisible();
+    const ratios = await page.evaluate(() => {
+      const paint = (c: string) => {
+        const x = document.createElement("canvas").getContext("2d")!;
+        x.fillStyle = c;
+        x.fillRect(0, 0, 1, 1);
+        const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+        return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+      };
+      const ratio = (a: string, b: string) => {
+        const [x, y] = [paint(a), paint(b)];
+        return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+      };
+      const tip = document.querySelector(".cap-admin-menu .cap-admin-tip:popover-open")!;
+      const selected = document.querySelector(".cap-admin-menu a[aria-current='page']")!;
+      const ground = getComputedStyle(document.querySelector(".cap-admin-main")!.closest(".cap-admin")!).backgroundColor;
+      // No edge drawn reads as the surface itself: no edge.
+      const edge = getComputedStyle(tip).boxShadow.match(/rgba?\([^)]*\)/)?.[0] ?? getComputedStyle(tip).backgroundColor;
+      return { tipVsSelected: ratio(getComputedStyle(tip).backgroundColor, getComputedStyle(selected).backgroundColor), edgeVsGround: ratio(edge, ground) };
+    });
+    expect(ratios.tipVsSelected, "the tip's surface against the selected item's fill").toBeGreaterThanOrEqual(3);
+    expect(ratios.edgeVsGround, "the tip's edge against the page").toBeGreaterThanOrEqual(3);
+  });
+  // Every bubble against its glyph, with the ring around the bubble counted as part of it.
+  const bubbles = (page: import("@playwright/test").Page) =>
+    page.evaluate(() =>
+      [...document.querySelectorAll(".cap-admin-strip :is(.cap-admin-tile, .cap-admin-btn), .cap-admin-menu a")]
+        .map((el) => {
+          const bubble = el.querySelector(".cap-admin-badge, .cap-admin-count:not(:empty)");
+          const glyph = el.querySelector(".cap-admin-icon, .cap-admin-logo");
+          if (!bubble || !glyph || getComputedStyle(bubble).display === "none") return null;
+          const ring = parseFloat(getComputedStyle(bubble).boxShadow.match(/(\d+(?:\.\d+)?)px\s*$/)?.[1] ?? "0");
+          const b = bubble.getBoundingClientRect();
+          const g = glyph.getBoundingClientRect();
+          const w = Math.max(0, Math.min(b.right + ring, g.right) - Math.max(b.left - ring, g.left));
+          const h = Math.max(0, Math.min(b.bottom + ring, g.bottom) - Math.max(b.top - ring, g.top));
+          const menu = el.closest(".cap-admin-menu")?.getBoundingClientRect();
+          return { name: el.getAttribute("aria-label"), area: Math.round(w * h), dx: Math.round(b.left - g.right), dy: Math.round(b.top + b.height / 2 - g.top), right: b.right + ring, edge: menu ? menu.right - 1 : null, text: bubble.textContent };
+        })
+        .filter((x) => x !== null),
+    );
+
+  test("behaviour: collapsed, every badge and count sits in one place beside its glyph, never on it, never across the menu's edge", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "collapsed");
+    const all = await bubbles(page);
+    expect(all.length, "bubbles measured").toBeGreaterThanOrEqual(8);
+    for (const o of all) expect(o.area, `${o.name}: the bubble or its ring covers the glyph`).toBe(0);
+    // One place relative to the glyph: the same gap to its right, the same height on its top edge.
+    expect([...new Set(all.map((o) => `${o.dx},${o.dy}`))], "bubble offsets from their glyphs").toHaveLength(1);
+    for (const o of all.filter((o) => o.edge !== null)) expect(o.right, `${o.name}: the bubble crosses into the content`).toBeLessThanOrEqual(o.edge!);
+    // 120 reads 99+ here, as it does open.
+    expect(all.find((o) => o.name?.startsWith("Activity"))?.text).toBe("99+");
+  });
+
+  test("behaviour: open, no count crosses the menu's edge", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "expanded");
+    const edge = await page.locator(".cap-admin-menu").evaluate((el) => el.getBoundingClientRect().right - 1);
+    const rights = await page.locator(".cap-admin-menu .cap-admin-count:not(:empty)").evaluateAll((els) => els.map((e) => e.getBoundingClientRect().right));
+    expect(rights.length).toBeGreaterThanOrEqual(5);
+    for (const r of rights) expect(r).toBeLessThanOrEqual(edge);
+    await expect(page.getByRole("link", { name: "Activity, 120" }).locator(".cap-admin-count")).toHaveText("99+");
+  });
+
+  test("accessibility: neutral and needs-you bubbles read against their bubble and stand out from the menu, open and collapsed", async ({ page }) => {
+    for (const state of ["expanded", "collapsed"]) {
+      await visitStates(page, "admin-shell", theme, state);
+      await expectContrast(page, [
+        { sel: ".cap-admin-menu a:not([aria-current]) .cap-admin-count:not([data-tone]):not(:empty)", what: `${state}: a neutral count` },
+        { sel: ".cap-admin-menu .cap-admin-count[data-tone='need']", what: `${state}: a needs-you count` },
+        { sel: ".cap-admin-strip .cap-admin-badge", what: `${state}: a strip badge` },
+      ]);
+      const ratio = await page.evaluate(() => {
+        const paint = (c: string) => {
+          const x = document.createElement("canvas").getContext("2d")!;
+          x.fillStyle = c;
+          x.fillRect(0, 0, 1, 1);
+          const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+          return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+        };
+        const bubble = getComputedStyle(document.querySelector(".cap-admin-menu a:not([aria-current]) .cap-admin-count:not([data-tone]):not(:empty)")!).backgroundColor;
+        const menu = getComputedStyle(document.querySelector(".cap-admin-menu")!).backgroundColor;
+        const [x, y] = [paint(bubble), paint(menu)];
+        return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+      });
+      expect(ratio, `${state}: a neutral bubble against the menu`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  test("accessibility: a hovered collapsed item is clearly marked: a fill off the page and an edge at 3:1", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "collapsed");
+    const link = page.getByRole("link", { name: "Activity, 120" });
+    await link.hover();
+    const r = await link.evaluate((el) => {
+      const paint = (c: string) => {
+        const x = document.createElement("canvas").getContext("2d")!;
+        x.fillStyle = c;
+        x.fillRect(0, 0, 1, 1);
+        const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+        return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+      };
+      const ratio = (a: string, b: string) => {
+        const [x, y] = [paint(a), paint(b)];
+        return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+      };
+      const cs = getComputedStyle(el);
+      const menu = getComputedStyle(el.closest(".cap-admin-menu")!).backgroundColor;
+      const edge = cs.boxShadow.match(/rgba?\([^)]*\)/)?.[0] ?? menu;
+      return { fill: ratio(cs.backgroundColor, menu), edge: ratio(edge, menu) };
+    });
+    expect(r.fill, "the hover fill against the menu").toBeGreaterThanOrEqual(1.2);
+    expect(r.edge, "the hover edge against the menu").toBeGreaterThanOrEqual(3);
+  });
+
+  test("behaviour: collapsed, the column shows the app's mark at its top, over the icons", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "collapsed");
+    const mark = page.locator(".cap-admin-title-mark svg");
+    await expect(mark).toBeVisible();
+    const [m, icon] = await Promise.all([mark.boundingBox(), page.locator(".cap-admin-menu a .cap-admin-icon").first().boundingBox()]);
+    expect(Math.abs(m!.x + m!.width / 2 - (icon!.x + icon!.width / 2))).toBeLessThanOrEqual(1);
+    await visitStates(page, "admin-shell", theme, "expanded");
+    await expect(page.locator(".cap-admin-title-mark")).toBeHidden();
+  });
+
+  test("behaviour: every unread marker is a number, one rule on every tile, 99+ past 99", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "expanded");
+    await expect(page.locator("[data-dot], [data-wide]")).toHaveCount(0);
+    const texts = await page.locator(".cap-admin-strip .cap-admin-badge, .cap-admin-menu .cap-admin-count:not(:empty)").allTextContents();
+    expect(texts.length).toBeGreaterThanOrEqual(8);
+    for (const t of texts) expect(t).toMatch(/^(\d{1,2}|99\+)$/);
+  });
+  test("behaviour: collapsed, the icons keep one even rhythm, with one divider step between groups", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "collapsed");
+    const gaps = await page.evaluate(() => {
+      const rows = [...document.querySelectorAll(".cap-admin-menu a")].map((a) => a.getBoundingClientRect());
+      return rows.slice(1).map((r, i) => Math.round(r.top - rows[i]!.bottom));
+    });
+    const kinds = [...new Set(gaps)].sort((a, b) => a - b);
+    expect(kinds.length, `gaps ${gaps.join(", ")}`).toBe(2);
+    expect(kinds[1]!, "a group step is no more than a row and a half").toBeLessThanOrEqual(48);
+    await expect(page.locator(".cap-admin-group + .cap-admin-group > .cap-admin-group-label")).toHaveCount(2);
+    for (const label of await page.locator(".cap-admin-group + .cap-admin-group > .cap-admin-group-label").all()) {
+      expect(await label.evaluate((el) => getComputedStyle(el, "::after").borderTopWidth)).toBe("1px");
+    }
+  });
+
+  test("behaviour: collapsed, the strip and the menu are two rails, painted apart", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "collapsed");
+    // Two near-identical tints read as one rail: the strip and the menu differ by a visible step.
+    const ratio = await page.evaluate(() => {
+      const lum = (sel: string) => {
+        const c = document.createElement("canvas").getContext("2d")!;
+        c.fillStyle = getComputedStyle(document.querySelector(sel)!).backgroundColor;
+        c.fillRect(0, 0, 1, 1);
+        const [r, g, b] = [...c.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+        return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+      };
+      const [a, b] = [lum(".cap-admin-strip"), lum(".cap-admin-menu")];
+      return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    });
+    expect(ratio).toBeGreaterThanOrEqual(1.1);
+  });
+
+  test("behaviour: every count and badge is one bubble, open and collapsed", async ({ page }) => {
+    const shapes = async () =>
+      page.evaluate(() =>
+        [...document.querySelectorAll(".cap-admin-strip .cap-admin-badge, .cap-admin-menu .cap-admin-count:not(:empty)")].map((b) => {
+          const cs = getComputedStyle(b);
+          return [Math.round(b.getBoundingClientRect().height), cs.borderRadius, cs.fontSize, cs.fontWeight].join(" ");
+        }),
+      );
+    await visitStates(page, "admin-shell", theme, "expanded");
+    const open = await shapes();
+    await visitStates(page, "admin-shell", theme, "collapsed");
+    const shut = await shapes();
+    expect(open.length + shut.length, "bubbles measured").toBeGreaterThanOrEqual(12);
+    expect([...new Set([...open, ...shut])]).toHaveLength(1);
+  });
+
+  test("behaviour: the strip lists the family's apps, Capsomer last, in one order with their own marks, this one marked, and the menu title is its name only", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "expanded");
+    const tiles = page.locator(".cap-admin-strip .cap-admin-tile");
+    await expect(tiles).toHaveCount(6);
+    const names = await tiles.evaluateAll((els) => els.map((e) => ({ label: e.getAttribute("aria-label")!.split(",")[0], logo: !!e.querySelector("svg.cap-admin-logo"), letters: [...e.childNodes].some((n) => n.nodeType === Node.ELEMENT_NODE && (n as Element).tagName === "SPAN" && !(n as Element).className && /\w/.test(n.textContent ?? "")) })));
+    expect(names).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Capsomer"].map((label) => ({ label, logo: true, letters: false })));
+    await expect(tiles.first()).toHaveAttribute("aria-current", "true");
+    await expect(page.locator(".cap-admin-title-text")).toHaveText("Capsid Portal");
+    await expect(page.getByRole("button", { name: "Your account" }).locator("> span[aria-hidden]").first()).toHaveText("DE");
+  });
+  test("behaviour: an app that passes only its own name still shows all six apps, each tile an svg mark and no letter", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "minimal");
+    const tiles = page.locator(".cap-admin-strip .cap-admin-tile");
+    await expect(tiles).toHaveCount(6);
+    const facts = await tiles.evaluateAll((els) =>
+      els.map((e) => ({
+        label: e.getAttribute("aria-label")!.split(",")[0],
+        marks: e.querySelectorAll(":scope > svg.cap-admin-logo").length,
+        letters: [...e.querySelectorAll(":scope > :not(svg):not(.cap-admin-tip):not(.cap-admin-badge)")].map((n) => n.textContent ?? "").join(""),
+      })),
+    );
+    expect(facts).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Capsomer"].map((label) => ({ label, marks: 1, letters: "" })));
+    await expect(tiles.nth(4)).toHaveAttribute("aria-current", "true");
+  });
+
+  test("behaviour: Foxhound keeps its favicon x until Dustin picks; two alternatives sit beside it and none is shipped", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "foxhound-marks");
+    const items = page.locator("[data-mark]");
+    expect(await items.evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.mark))).toEqual(["today", "track", "fox"]);
+    const svgs = await items.evaluateAll((els) => els.map((e) => e.querySelector("svg")!.innerHTML));
+    const [today, ...alternatives] = svgs;
+    expect(alternatives, "exactly two alternatives, different from each other").toHaveLength(2);
+    expect(alternatives[0]).not.toBe(alternatives[1]);
+    expect(alternatives, "Foxhound's mark in FAMILY_APPS is not one of the alternatives").not.toContain(today);
+    // Today's mark is the favicon's x: two strokes, no fill.
+    expect(today).toContain("M7.5 9 16.5 18M16.5 9 7.5 18");
+    // The strip draws that same x for Foxhound.
+    await visitStates(page, "admin-shell", theme, "minimal");
+    expect(await page.locator('.cap-admin-strip .cap-admin-tile[aria-label^="Foxhound"] svg.cap-admin-logo').innerHTML()).toBe(today);
+  });
+  test("behaviour: the top bar has the freshness line at the left, then Refresh, then the theme switch last, and the tab says the page and the app", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "expanded");
+    await expect(page).toHaveTitle("Overview · Capsid Portal");
+    const bar = page.locator(".cap-admin-bar");
+    await expect(bar.locator(".cap-admin-fresh")).toHaveText(/^Updated (\d+ minutes? ago|less than a minute ago|just now) · refreshes itself$/);
+    await expect(bar.locator(".cap-admin-fresh time")).toHaveAttribute("datetime", /Z$/);
+    const order = await bar.locator(".cap-admin-actions > *").evaluateAll((els) => els.map((e) => e.getAttribute("data-cap-part") ?? e.getAttribute("data-cap")));
+    expect(order.slice(-2)).toEqual(["refresh", "theme-switch"]);
+    await expect(bar.getByRole("button", { name: "Refresh" })).toBeVisible();
+    await expect(bar.getByRole("group", { name: "Theme" })).toBeVisible();
+  });
+  test("behaviour: the page fills the content area from the same left edge, open and collapsed", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "expanded");
+    const box = () => page.evaluate(() => {
+      const main = document.querySelector(".cap-admin-main")!.getBoundingClientRect();
+      const p = document.querySelector(".cap-admin-page")!.getBoundingClientRect();
+      return { inset: Math.round(p.left - main.left), right: Math.round(main.right - p.right), w: Math.round(p.width) };
+    });
+    const open = await box();
+    await page.locator("[data-cap-part='menu-toggle']").click();
+    const shut = await box();
+    expect(shut.inset).toBe(open.inset);
+    expect(shut.right).toBe(open.right);
+    expect(shut.w).toBeGreaterThan(open.w);
   });
 
   test("accessibility: no axe violations with page transitions on", async ({ page }) => {
