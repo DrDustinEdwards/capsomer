@@ -121,11 +121,12 @@ Your admin
 
 ## 5. Phone (under 768px)
 
-One row, 56px: the logo left; the theme control, the account (or Sign in as an icon) and the menu button right, in that order.
+The same on every site (Dustin, 2026-10-13):
 
-- The menu button opens one sheet (the shared dialog, from the bottom, as AdminShell's sheet does today): the switcher's items first, then the section links, then the extras (a button extra full width), with the account rows pinned under the list so Sign out is always in view.
-- On dashboards and your admin, the bottom tab bar keeps four top pages; More goes, because the header's menu button opens the same sheet (question 5). In your admin the sheet lists the family's apps first, as the strip does.
-- Foxing's second scrolling row of links goes; they are in the sheet. Its signed-in bar (Home, Library, Diary, Feed, People) stays as the page's own bar under the header.
+- **Top row, 56px:** the logo on the left; on the right, up to two of the site's icons (Foxing: search, and the bell signed in; your admin: search and inbox), then the theme, then the avatar or Sign in (an icon), then the hamburger, last, on every page.
+- **The hamburger** opens one sheet (the shared dialog, from the bottom, as AdminShell's sheet does today) holding everything else: in your admin the family's apps first, as the strip does; then the switchers (Foxhound's business and product), the section links grouped as the desktop menus group them (Foxing: Books, Celebrity Picks, then Clubs, People, Journal), and a button extra (Free audit, Join free) full width. Account rows are pinned under the list so Sign out is always in view.
+- **No second row of links.** Foxing's sideways-scrolling row goes into the sheet: three bars (top, links, bottom) took about a quarter of the screen, and links scrolled off the edge went unfound.
+- **A bottom bar only where you are signed in and there is a set of top pages:** Foxing's Home, Library, Diary, Feed, People; Foxhound's app tabs; your admin's and a dashboard's top pages. Up to five tabs, and no More, because the hamburger already opens the full list (question 5).
 
 ## 6. Keyboard and screen reader
 
@@ -180,11 +181,11 @@ Foxing has the same kind of drift: Capsomer's fox family is `#cc4f0c`, and Foxin
 - 2. The theme control is **one icon button**, everywhere, with a tooltip that says what it does.
 - Foxing's menus stay as Foxing draws them; the frame does not change their contents.
 - 4. **Where the section links sit is each site's choice**: Foxing centres them, Foxhound keeps them on the right before a thin divider. On the right they shift a little between signed out and signed in, because the controls beside them change width; Foxhound accepts that, as it does today.
+- 5. **Phones** follow one rule (section 5): a top row with the hamburger last on every page, a sheet for everything else, no second row of links, and a bottom bar of up to five tabs only in signed-in areas.
 - 3. **The avatar is the last menu on every site**; no site ends with a gear. Foxhound's gear goes: its rows move into the avatar menu, the business's settings under the business's name, then Help, Admin and Sign out. Foxhound's account switcher moves to the left as a square tile with the business's initial, before the product switcher ("Acme Supply Co. / Recovery"): a square is the business you are in, a circle is you.
 
 **Still open:**
 
-5. **Phone tab bar.** On app and admin pages, keep the bottom bar's four pages and drop More, since the header's menu button opens the same sheet? *Recommended: yes.*
 6. **Size.** 56px and sticky on every site (Foxing is 64px; Foxhound is not sticky)? *Recommended: yes.*
 7. **Width.** Full bleed on every site, so the logo never moves (Foxing centres its header today)? *Recommended: yes.*
 8. **Foxing's logo** is a fox emoji, against your no-emoji rule. Draw a fox mark for it in Foxing's job? *Recommended: yes.* The mockup uses a placeholder.

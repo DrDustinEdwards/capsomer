@@ -440,7 +440,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
           note: "The same header as the app. Under it, your strip of family apps stays at the far left, as in the Capsid Portal, then the 232px menu, so the page starts at the same left edge as a merchant's dashboard. The strip keeps the app tiles and their badges; its search, inbox, help and avatar move to the header, so the account is top right everywhere.",
           admin: "foxhound",
           extrasDesk: () => ib(I.search, "Search", "/") + ib(I.inbox, "Inbox", "", 4),
-          extrasPhone: () => "",
+          extrasPhone: () => ib(I.search, "Search") + ib(I.inbox, "Inbox", "", 4),
           account: () => avatar("DE", "Dustin Edwards, account menu", ownerAccount()),
           menu: [[null, [["Overview", I.grid, 0, 1]]], ["Customers", [["Merchants", I.store], ["Users", I.people]]], ["Platform", [["Operations", I.gauge], ["Crons", I.clock, 1, 0, "need"], ["Webhooks", I.hook]]], ["Controls", [["Emergency brake", I.brake], ["Staged changes", I.stack, 2]]], ["Content", [["Blog", I.pen], ["Social", I.share]]], ["Records", [["Audit log", I.list]]]],
           tabs: [["Overview", I.grid, 1], ["Merchants", I.store], ["Users", I.people], ["Operations", I.gauge]],
@@ -459,10 +459,10 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
           note: "Books and Celebrity Picks open Foxing's own panels, unchanged, on hover. Search and Join free are Foxing's extras; Sign in moves to the end. The header is now full width and 56px.",
           links: [["Books", 1], ["Celebrity Picks", 1], "Clubs", "People", "Journal"], cur: "Books",
           extrasDesk: () => ib(I.search, "Search", "Ctrl K") + `<a class="btn" href="#">Join free</a>`,
-          extrasPhone: () => "",
+          extrasPhone: () => ib(I.search, "Search"),
           account: () => `<a class="signin" href="#">Sign in</a>`,
           accountPhone: () => ib(I.user, "Sign in"),
-          sheet: { groups: [["Foxing", ["Search", "Books", "Celebrity Picks", "Clubs", "Book of the Month", "Awards", "People", "Journal"]]], btn: "Join free", foot: ["Sign in"] },
+          sheet: { groups: [["Books", ["All books", "Award winners", "Before 1800", "1800 to 1849", "1850 to 1899", "1900 to 1949", "1950 and later"]], ["Celebrity Picks", ["The Remains of the Day (Foxing pick)", "Reese's Book Club", "Oprah's Book Club", "Read with Jenna", "View all picks"]], ["Foxing", ["Clubs", "People", "Journal"]]], btn: "Join free", foot: ["Sign in"] },
           body: (p) => `<div class="body-pub"><div class="eyebrow">Book of the Month</div><h4>Find the next book you can't put down.</h4><p>Picks from readers you trust, clubs that actually meet, and a diary that remembers every page.</p></div>`,
         },
         app: {
@@ -470,17 +470,17 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
           note: "A reader's pages are public-style pages, not a dashboard, so there is no left menu. Signed in, the bell joins Search as an extra, and the avatar menu is last. The Home, Library, Diary bar stays as the page's own bar under the header.",
           links: [["Books", 1], ["Celebrity Picks", 1], "Clubs", "People", "Journal"], cur: null,
           extrasDesk: () => ib(I.search, "Search", "Ctrl K") + ib(I.bell, "Notifications", "", 3),
-          extrasPhone: () => "",
+          extrasPhone: () => ib(I.search, "Search") + ib(I.bell, "Notifications", "", 3),
           account: () => avatar("SR", "Sam Reader, account menu", fxAccount()),
-          sheet: { groups: [["Foxing", ["Search", "Notifications", "Books", "Celebrity Picks", "Clubs", "People", "Journal"]]], foot: ["Settings", "Sign out"] },
-          body: (p) => `<nav class="sub" aria-label="Your Foxing"><a href="#" aria-current="page">Home</a><a href="#">Library</a><a href="#">Diary</a><a href="#">Feed</a><a href="#">People</a></nav><div class="app-body"><h5>Good evening, Sam</h5><div class="tiles"><div class="tile"><span>Reading now</span><b>2</b><i>books</i></div><div class="tile"><span>This year</span><b>14</b><i>of 30 goal</i></div><div class="tile"><span>Streak</span><b>6</b><i>days</i></div><div class="tile"><span>Club meets</span><b>Thu</b><i>7:00 pm</i></div></div></div>`,
+          sheet: { groups: [["Books", ["All books", "Award winners", "By era"]], ["Celebrity Picks", ["The Remains of the Day (Foxing pick)", "View all picks"]], ["Foxing", ["Clubs", "People", "Journal"]]], foot: ["Settings", "Sign out"] },
+          body: (p) => `${p ? "" : '<nav class="sub" aria-label="Your Foxing"><a href="#" aria-current="page">Home</a><a href="#">Library</a><a href="#">Diary</a><a href="#">Feed</a><a href="#">People</a></nav>'}<div class="app-body"><h5>Good evening, Sam</h5><div class="tiles"><div class="tile"><span>Reading now</span><b>2</b><i>books</i></div><div class="tile"><span>This year</span><b>14</b><i>of 30 goal</i></div><div class="tile"><span>Streak</span><b>6</b><i>days</i></div><div class="tile"><span>Club meets</span><b>Thu</b><i>7:00 pm</i></div></div></div>${p ? `<nav class="tabs" style="grid-template-columns:repeat(5,1fr)" aria-label="Your Foxing">${[["Home", I.home, 1], ["Library", I.book], ["Diary", I.pen], ["Feed", I.list], ["People", I.people]].map((t) => `<a href="#" ${t[2] ? 'aria-current="page"' : ""}>${t[1]}<span>${t[0]}</span></a>`).join("")}</nav>` : ""}`,
         },
         admin: {
           title: "Your admin (the owner's)",
           note: "Foxing joins the family's apps, so its admin has the same strip, extras and account as Foxhound's. Only the logo, colours and menu differ.",
           admin: "foxing",
           extrasDesk: () => ib(I.search, "Search", "/") + ib(I.inbox, "Inbox", "", 4),
-          extrasPhone: () => "",
+          extrasPhone: () => ib(I.search, "Search") + ib(I.inbox, "Inbox", "", 4),
           account: () => avatar("DE", "Dustin Edwards, account menu", ownerAccount()),
           menu: [[null, [["Overview", I.grid, 0, 1]]], ["Catalog", [["Books", I.book], ["Picks", I.star], ["Clubs", I.people], ["Book of the Month", I.star]]], ["Content", [["Journal", I.pen, 2], ["Notifications", I.bell]]], ["People", [["Users", I.people, 1, 0, "need"]]], ["Insight", [["Analytics", I.chart]]]],
           tabs: [["Overview", I.grid, 1], ["Books", I.book], ["Users", I.people], ["Journal", I.pen]],
@@ -513,7 +513,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
       }
       right = (s.extrasDesk ? s.extrasDesk() : "") + themeBtn(theme) + s.account();
     } else {
-      right = themeBtn(theme) + (s.accountPhone ? s.accountPhone() : s.account()) + `<button type="button" class="ib" data-sheet aria-label="Menu" aria-expanded="false">${I.menu}</button>`;
+      right = (s.extrasPhone ? s.extrasPhone() : "") + themeBtn(theme) + (s.accountPhone ? s.accountPhone() : s.account()) + `<button type="button" class="ib" data-sheet aria-label="Menu" aria-expanded="false">${I.menu}</button>`;
     }
     return `<header class="hd"><div class="hd-left">${left}</div>${mid}<div class="hd-right">${right}</div></header>`;
   }
