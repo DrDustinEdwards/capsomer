@@ -83,10 +83,10 @@ A site that wants anything else in its header asks for a change to this design; 
 | | Switcher | Section links | Extras | Account |
 |---|---|---|---|---|
 | Public, signed out | none | the site's sections | the site's (Free audit; Join free, Search) | **Sign in**, as a text link |
-| Public and app, signed in | the products (Foxhound: Console, Audit, Recovery, Disputes, Intelligence) | public: the sections; a user's dashboard: none | the site's (Foxing: Search, bell) | the avatar menu |
+| Public and app, signed in | Foxhound: the business (square tile), then the products (Console, Audit, Recovery, Disputes, Intelligence) | public: the sections; a user's dashboard: none | the site's (Foxing: Search, bell) | the avatar menu |
 | Your admin | none: the strip holds the family's apps | none | Search, Inbox | the avatar menu |
 
-- **The account menu** is the same shape everywhere: who you are; the site's own rows (Foxhound: its accounts with "+ Add account", then Settings, Billing, Help, Team, Audit settings, Audit history, Email settings, Alerts, API keys, Brand voice; Foxing: reading stats, Library, Diary, Profile, Settings); **Admin** for an admin; in an admin, **View site** and **Help**; **Sign out** last.
+- **The account menu** is the same shape everywhere: who you are; the site's own rows (Foxhound: the current business's Settings, Billing, Team, Audit settings, Audit history, Email settings, Alerts, API keys, Brand voice under its name, then Help; Foxing: reading stats, Library, Diary, Profile, Settings); **Admin** for an admin; in an admin, **View site** and **Help**; **Sign out** last.
 - **The switcher** is a button showing where you are (the product's name) and a chevron, opening the site's products. Your admin has none, because its strip already lists the family's apps.
 - **Sign in** is the account's place while signed out, so the last item never changes position between signed out and signed in.
 
@@ -178,10 +178,10 @@ Foxing has the same kind of drift: Capsomer's fox family is `#cc4f0c`, and Foxin
 - 1. Foxhound stays **teal** (Capsomer's teal family, `#008489`), keeping its **dark band** in both themes; the amber goes. Foxing moves to **Capsomer's `#cc4f0c`**. Capsomer gains no amber family and keeps teal.
 - 2. The theme control is **one icon button**, everywhere, with a tooltip that says what it does.
 - Foxing's menus stay as Foxing draws them; the frame does not change their contents.
+- 3. **The avatar is the last menu on every site**; no site ends with a gear. Foxhound's gear goes: its rows move into the avatar menu, the business's settings under the business's name, then Help, Admin and Sign out. Foxhound's account switcher moves to the left as a square tile with the business's initial, before the product switcher ("Acme Supply Co. / Recovery"): a square is the business you are in, a circle is you.
 
 **Still open:**
 
-3. **Foxhound's account switcher and gear.** They do different jobs: the switcher picks which business you are working in; the gear holds that business's settings, Help, Admin and Sign out. Options: move the switcher to the left beside the product switcher (it says where you are) and keep the gear last; keep both on the right with the gear last; or merge them into one menu. *Recommended: switcher to the left, gear last* (the mockup draws it).
 4. **Section links.** On the left after the switcher, or on the right before the controls, as Foxhound has them? *Recommended: left.* The right cluster changes width between signed out and signed in, so links on the right would move.
 5. **Phone tab bar.** On app and admin pages, keep the bottom bar's four pages and drop More, since the header's menu button opens the same sheet? *Recommended: yes.*
 6. **Size.** 56px and sticky on every site (Foxing is 64px; Foxhound is not sticky)? *Recommended: yes.*
@@ -198,6 +198,6 @@ Still open from #65 and unchanged by this: Foxhound's mark (item 15), which show
 Each job is a pull request that stops at green; none merges.
 
 1. **Capsomer 0.9.0.** The site header component; AdminShell on it with the owner and user variants; the theme button; states page specimens (every surface, both themes, desktop and phone); browser tests for the order, the 56px height, sticky, the phone row, keyboard and contrast; side-by-side screenshots for sign-off.
-2. **Foxhound: #40 updated, not replaced.** Merge main into it (it has a merge conflict today); pin 0.9.0; the admin on the new AdminShell; the public and app header on the site header (the gear folded into the account menu); the merchant app on the dashboard variant; the approved differences recorded; retake every screenshot. The Cloudflare Access steps in #40 stay yours, before merge.
+2. **Foxhound: #40 updated, not replaced.** Merge main into it (it has a merge conflict today); pin 0.9.0; the admin on the new AdminShell; the public and app header on the site header (the account switcher on the left, the gear replaced by the avatar menu); the merchant app on the dashboard variant; the approved differences recorded; retake every screenshot. The Cloudflare Access steps in #40 stay yours, before merge.
 3. **Foxing.** Load Capsomer's header CSS (Foxing does not use Capsomer yet; it stays on its own CSS otherwise); its public and app header on the site header; the fox mark; its admin onto AdminShell 0.9.0.
 4. **Capsid Portal**, 5. **Carrel**, 6. **dustinedwards.info**, 7. **germomics**: Part 2 of job_5ebb352157e5, moving from their current pin straight to 0.9.0, one PR each; their public headers (dustinedwards.info, germomics) on the site header in the same PR.
