@@ -97,6 +97,10 @@ body.w-phone .frames { grid-template-columns: repeat(auto-fill, minmax(min(390px
 .phone .hd { padding: 0 16px; gap: 12px; }
 .hd-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .hd-links { display: flex; align-items: center; gap: 20px; }
+.hd-links.at-center { position: absolute; left: 50%; transform: translateX(-50%); }
+.hd-links.at-right { margin-left: auto; }
+.hd-links.at-right + .hd-right { margin-left: 0; }
+.hd-links.at-right + .hd-right::before { content: ""; width: 1px; height: 16px; background: var(--band-ln); margin: 0 8px 0 4px; }
 .hd-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .logo { display: inline-flex; align-items: center; gap: 8px; color: var(--band-fg); text-decoration: none; height: 24px; white-space: nowrap; }
 .wm-fh { font-family: "DM Mono", ui-monospace, monospace; font-size: 18px; font-weight: 500; letter-spacing: -0.5px; }
@@ -292,8 +296,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
       <div class="anat-bar" role="img" aria-label="Header slots from left to right: logo, switcher, section links, space, extras, theme, account">
         <div class="slot owned"><b>Logo</b><i>site's mark, 24px tall</i></div>
         <div class="slot fixed"><b>Switcher</b><i>products; none in your admin</i></div>
-        <div class="slot fixed"><b>Section links</b><i>public only</i></div>
-        <div class="slot fixed grow"><b>&nbsp;</b><i>space</i></div>
+        <div class="slot owned grow"><b>Section links</b><i>public only; the site picks left, centre or right of this space</i></div>
         <div class="slot owned"><b>Extras</b><i>up to 2 icons + 1 button</i></div>
         <div class="slot fixed"><b>Theme</b><i>one icon</i></div>
         <div class="slot fixed"><b>Account</b><i>always last</i></div>
@@ -404,13 +407,13 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
   // ---- Sites ----
   const SITES = {
     fh: {
-      name: "Foxhound", cls: "fh",
+      name: "Foxhound", cls: "fh", linksAt: "right",
       logo: `<a class="logo" href="#" aria-label="Foxhound home"><span class="wm-fh">fo<em>x</em>hound</span></a>`,
       intro: "Teal (Capsomer's teal family, your answer to question 1) on Foxhound's dark band, which stays dark in both themes. DM Sans, wordmark in DM Mono.",
       surfaces: {
         public: {
           title: "Public, signed out",
-          note: "Section links move to the left after the logo. Free audit is Foxhound's one extra; Sign in holds the account's place, last. The inert gear goes.",
+          note: "Section links stay on the right, before a thin divider, as Foxhound has them. Free audit is Foxhound's one extra; Sign in holds the account's place, last. The inert gear goes.",
           links: ["Products", "Pricing", "Demos", "Features", "Docs", "Blog"], cur: "Pricing",
           extrasDesk: () => `<a class="btn" href="#">Free audit</a>`,
           account: () => `<a class="signin" href="#">Sign in</a>`,
@@ -447,7 +450,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
       },
     },
     fx: {
-      name: "Foxing", cls: "fx",
+      name: "Foxing", cls: "fx", linksAt: "center",
       logo: `<a class="logo wm-fx" href="#" aria-label="Foxing home">${M.foxing.replace('class="mk"', "")}<span>Foxing</span></a>`,
       intro: "Capsomer's fox orange (your answer to question 1) on a translucent band in the page's own ground. DM Sans for the controls, Fraunces for the wordmark. Its menus are Foxing's own, unchanged. The fox emoji gives way to a drawn mark (a placeholder here).",
       surfaces: {
@@ -490,7 +493,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
 
   // ---- Header ----
   function header(site, s, theme, phone) {
-    let left = site.logo, right = "";
+    let left = site.logo, right = "", mid = "";
     if (!phone) {
       if (s.admin && false) {
         const others = FAMILY.filter((f) => f[0] !== s.admin).reduce((a, f) => a + f[2], 0);
@@ -500,7 +503,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
         left += (s.switcher.pre ? s.switcher.pre() + `<span class="crumb" aria-hidden="true">/</span>` : "") + `<div class="has-pop p-sw"><button type="button" class="sw" aria-expanded="false">${s.switcher.label}${I.chev}</button>${s.switcher.panel()}</div>`;
       }
       if (s.links) {
-        left += `<nav class="hd-links" aria-label="Site">` + s.links.map((l) => {
+        mid = `<nav class="hd-links at-${site.linksAt}" aria-label="Site">` + s.links.map((l) => {
           const name = Array.isArray(l) ? l[0] : l;
           const kids = Array.isArray(l);
           const cur = name === s.cur ? 'aria-current="page"' : "";
@@ -512,7 +515,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
     } else {
       right = themeBtn(theme) + (s.accountPhone ? s.accountPhone() : s.account()) + `<button type="button" class="ib" data-sheet aria-label="Menu" aria-expanded="false">${I.menu}</button>`;
     }
-    return `<header class="hd"><div class="hd-left">${left}</div><div class="hd-right">${right}</div></header>`;
+    return `<header class="hd"><div class="hd-left">${left}</div>${mid}<div class="hd-right">${right}</div></header>`;
   }
 
   function sheet(site, s) {

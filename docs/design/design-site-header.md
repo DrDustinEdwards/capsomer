@@ -55,7 +55,7 @@ One `header` across the top of every page, the same on public, app and admin pag
 
 **Fixed by Capsomer, the same everywhere:**
 
-- **Order.** Left: the logo (links home), then the switcher, then the section links. Right: the site's extras, then the theme control, then the account, always last. A slot with nothing in it takes no room; nothing else moves into its place.
+- **Order.** Left: the logo (links home), then the switcher. The section links sit where the site chooses (below). Right: the site's extras, then the theme control, then the account, always last. A slot with nothing in it takes no room; nothing else moves into its place.
 - **Height 56px** (`--header-h: 3.5rem`) at every width. Foxing gives up 8px.
 - **Sticky** at the top of the page (`position: sticky; top: 0`), above the content, with `scroll-padding-top` set to its height so a focused control or an anchor never lands under it (WCAG 2.4.11).
 - **Full bleed** with 24px sides on desktop and 16px on a phone, so the logo is at the same x on every site and lines up with the admin's menu column below it. Foxing's header leaves its centred column; its page body keeps it.
@@ -74,6 +74,7 @@ One `header` across the top of every page, the same on public, app and admin pag
 | Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; optional `data-band="dark"` (dark in both themes) and `data-translucent` | dark in both themes | the page's ground, translucent |
 | UI face | `--font-ui` | DM Sans | DM Sans |
 | Extras | up to two icon controls and one button | Free audit (signed out) | Search, the bell (signed in), Join free (signed out) |
+| Section links' place | left (after the switcher), centred in the header, or right (before the extras, after a thin divider) | right | centred |
 | Panels | what each menu holds and its layout | its gear and account lists | Books, Celebrity Picks, the account panel, as today |
 
 A site that wants anything else in its header asks for a change to this design; it does not add it locally.
@@ -178,11 +179,11 @@ Foxing has the same kind of drift: Capsomer's fox family is `#cc4f0c`, and Foxin
 - 1. Foxhound stays **teal** (Capsomer's teal family, `#008489`), keeping its **dark band** in both themes; the amber goes. Foxing moves to **Capsomer's `#cc4f0c`**. Capsomer gains no amber family and keeps teal.
 - 2. The theme control is **one icon button**, everywhere, with a tooltip that says what it does.
 - Foxing's menus stay as Foxing draws them; the frame does not change their contents.
+- 4. **Where the section links sit is each site's choice**: Foxing centres them, Foxhound keeps them on the right before a thin divider. On the right they shift a little between signed out and signed in, because the controls beside them change width; Foxhound accepts that, as it does today.
 - 3. **The avatar is the last menu on every site**; no site ends with a gear. Foxhound's gear goes: its rows move into the avatar menu, the business's settings under the business's name, then Help, Admin and Sign out. Foxhound's account switcher moves to the left as a square tile with the business's initial, before the product switcher ("Acme Supply Co. / Recovery"): a square is the business you are in, a circle is you.
 
 **Still open:**
 
-4. **Section links.** On the left after the switcher, or on the right before the controls, as Foxhound has them? *Recommended: left.* The right cluster changes width between signed out and signed in, so links on the right would move.
 5. **Phone tab bar.** On app and admin pages, keep the bottom bar's four pages and drop More, since the header's menu button opens the same sheet? *Recommended: yes.*
 6. **Size.** 56px and sticky on every site (Foxing is 64px; Foxhound is not sticky)? *Recommended: yes.*
 7. **Width.** Full bleed on every site, so the logo never moves (Foxing centres its header today)? *Recommended: yes.*
