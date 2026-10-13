@@ -173,25 +173,20 @@ Foxing has the same kind of drift: Capsomer's fox family is `#cc4f0c`, and Foxin
 - Theme: a one-button form of the theme switch, the same storage and `toggleTheme()`.
 - Tokens: none change (Foxhound keeps teal, Foxing takes the fox family as it is).
 
-## 9. Questions for Dustin
+## 9. Dustin's answers
 
-**Answered (2026-10-13, one at a time):**
+All answered on 2026-10-13, one at a time, in the order asked:
 
 - 1. Foxhound stays **teal** (Capsomer's teal family, `#008489`), keeping its **dark band** in both themes; the amber goes. Foxing moves to **Capsomer's `#cc4f0c`**. Capsomer gains no amber family and keeps teal.
 - 2. The theme control is **one icon button**, everywhere, with a tooltip that says what it does.
-- Foxing's menus stay as Foxing draws them; the frame does not change their contents.
+- 3. **The avatar is the last menu on every site**; no site ends with a gear. Foxhound's gear goes: its rows move into the avatar menu, the business's settings under the business's name, then Help, Admin and Sign out. Foxhound's account switcher moves to the left as a square tile with the business's initial, before the product switcher ("Acme Supply Co. / Recovery"): a square is the business you are in, a circle is you. Foxing's menus stay as Foxing draws them; the frame does not change their contents.
 - 4. **Where the section links sit is each site's choice**: Foxing centres them, Foxhound keeps them on the right before a thin divider. On the right they shift a little between signed out and signed in, because the controls beside them change width; Foxhound accepts that, as it does today.
 - 5. **Phones** follow one rule (section 5): a top row with the hamburger last on every page, a sheet for everything else, no second row of links, and a bottom bar of up to five tabs only in signed-in areas.
 - 6. **56px and sticky on every site** (Foxing shrinks by 8px; Foxhound's header stops scrolling away).
 - 7. **Full width on every site**: the logo 24px from the window's edge, lined up with the admin's menu. Foxing's header leaves its centred column; its pages keep it.
 - 8. **Foxing gets a drawn fox mark** in Foxing orange, replacing the emoji, for the header, favicon and admin strip; candidates go to Dustin before anything ships, and it must read apart from Foxhound's mark.
 - 9. **Your admin's strip keeps only the app tiles and badges**; its search and inbox move to the header's right, help into the avatar menu, and the avatar is last, top right, as on every site. Your admin's header has no app switcher.
-- 3. **The avatar is the last menu on every site**; no site ends with a gear. Foxhound's gear goes: its rows move into the avatar menu, the business's settings under the business's name, then Help, Admin and Sign out. Foxhound's account switcher moves to the left as a square tile with the business's initial, before the product switcher ("Acme Supply Co. / Recovery"): a square is the business you are in, a circle is you.
-
-**Still open:**
-
-
-10. **Foxhound's parity rule.** Foxhound's CLAUDE.md says legacy is the spec and nothing moves its look toward Capsomer until parity finishes. This header and the merchant dashboard's left menu change Foxhound's public and app pages. Record them as approved differences (`parity/APPROVED-DIFFERENCES.md` in Capsid) in Foxhound's job, quoting your message? *Recommended: yes.*
+- 10. **Foxhound's changes are approved differences from legacy**: its job records them in `parity/APPROVED-DIFFERENCES.md` in Capsid, quoting Dustin's answers here (teal accents, the business switcher on the left, the avatar replacing the gear, the merchant dashboard's left menu, the phone rule).
 
 Still open from #65 and unchanged by this: Foxhound's mark (item 15), which shows in the strip.
 
