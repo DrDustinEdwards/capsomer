@@ -418,8 +418,10 @@ export function glyph(kind: "crit" | "warn" | "info" | "ok" | "nodata" | "runnin
   else if (kind === "info") {
     add("rect", { x: "1.5", y: "1.5", width: "13", height: "13", rx: "2", fill: "none", stroke: "currentColor", "stroke-width": "1.6" });
     add("path", { fill: "currentColor", d: "M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" });
-  } else if (kind === "nodata") add("circle", { cx: "8", cy: "8", r: "6.2", fill: "none", stroke: "currentColor", "stroke-width": "1.6", "stroke-dasharray": "2.6 2.2" });
-  else {
+  } else if (kind === "nodata") {
+    add("circle", { cx: "8", cy: "8", r: "6.2", fill: "none", stroke: "currentColor", "stroke-width": "1.6" });
+    add("path", { fill: "none", stroke: "currentColor", "stroke-width": "1.6", "stroke-linecap": "round", d: "M5 8h6" });
+  } else {
     add("circle", { cx: "8", cy: "8", r: "6.2", fill: "none", stroke: "currentColor", "stroke-width": "1.6", opacity: "0.35" });
     add("path", { fill: "none", stroke: "currentColor", "stroke-width": "1.8", "stroke-linecap": "round", d: "M8 1.8a6.2 6.2 0 0 1 6.2 6.2" });
   }

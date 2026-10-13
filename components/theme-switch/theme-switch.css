@@ -6,8 +6,9 @@
    chosen one filled) and its Mode Toggle's sun and moon. The inputs are real radios laid over
    each segment, so arrows, Space and forms are the browser's. It sits in the top bar, on the
    ground tone, where --line-strong is 2.9:1, so the control's edge is --dim (5:1 on it in
-   both themes). The chosen segment takes the accent tint, --accent-text and an accent bar
-   (3:1), so it is not told by colour alone: weight and the bar say it as well. */
+   both themes). The chosen segment has one marker, a fill: the same dark fill as the admin
+   menu's selected page (--accent-12, its word in --ground, set heavier), at well over 3:1
+   against the ground, so it needs no second mark. */
 @layer cap.components {
   .cap-theme {
     flex: none;
@@ -49,9 +50,8 @@
         color: var(--text);
       }
       &:has(input:checked) {
-        background: var(--accent-soft);
-        box-shadow: inset 0 -2px 0 var(--accent);
-        color: var(--accent-text);
+        background: var(--accent-12);
+        color: var(--ground);
         font-weight: 600;
       }
       /* Inside the box, so the box's edge does not clip it. */

@@ -1,9 +1,8 @@
 /* The site's own layout. Components bring their own CSS; this file arranges pages. */
+/* A view inside the shell's page frame (.cap-admin-page), which brings the padding and width. */
 .site-page {
   display: grid;
   gap: var(--space-6);
-  padding: var(--space-6) var(--space-6) var(--space-9);
-  max-width: 1320px;
   min-width: 0;
 }
 .site-head {
@@ -25,12 +24,6 @@
 .site-sub {
   font-weight: 400;
   font-size: var(--fs-detail);
-}
-.site-crumbs {
-  display: flex;
-  gap: var(--space-3);
-  font-size: var(--fs-detail);
-  color: var(--muted);
 }
 .site-facts {
   display: flex;
@@ -54,9 +47,13 @@
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: var(--space-4);
 }
+/* Every card lays its lines from the top, so the labels and the numbers share one line across
+   the row however many lines a card has below them. */
 .site-figure {
   display: grid;
+  align-content: start;
   gap: var(--space-1);
+  text-wrap: pretty;
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--line);
   border-radius: var(--radius-l);
@@ -76,10 +73,6 @@
 .site-built {
   margin: 0;
   font-size: var(--fs-detail);
-}
-.site-fresh b {
-  color: var(--text);
-  font-weight: 500;
 }
 .site-code {
   margin: 0;
@@ -282,9 +275,6 @@
   }
 }
 @media (max-width: 820px) {
-  .site-page {
-    padding: var(--space-5) var(--space-5) calc(var(--space-9) + 24px);
-  }
   .site-frame {
     height: 520px;
   }

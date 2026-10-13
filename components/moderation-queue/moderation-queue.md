@@ -88,7 +88,7 @@ The single keys do nothing in a text field, with Ctrl, Alt or Meta held, in an o
 
 - A `ul` with `role="list"`, named by the heading above it. The live line, the bulk bar's count and the message region are polite status regions; nothing takes focus by itself.
 - Every select box and every decision names its sender, so a column of Approve buttons is not a column of the same name. Each decision button has `aria-keyshortcuts` and shows its key as a `kbd` hint (hidden from screen readers, so the name is the action).
-- Status is a shape, a word and a colour: Waiting (square), Approved (tick), Rejected (octagon), Not yet checked (dashed circle), Source not found (triangle).
+- Status is a shape, a word and a colour: Waiting (square), Approved (tick), Rejected (octagon), Not yet checked (an empty circle with a bar), Source not found (triangle).
 - The avatar is `aria-hidden`: the name is text beside it.
 - Text 4.5:1 on the surface, the raised and the selected tones; each box's edge 3:1.
 - Forced colours: a selected row gets a Highlight outline (the box shows it too), and the open row's rule is CanvasText.
