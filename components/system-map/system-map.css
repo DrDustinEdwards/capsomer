@@ -181,14 +181,17 @@
     text-anchor: middle;
   }
 
+  /* The boundary's name, centred at the circle's foot. */
   .cap-system-map-inside-title {
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
   .cap-system-map-wire {
+    fill: none;
     stroke: var(--line-strong);
     stroke-width: 1.2;
+    stroke-linejoin: round;
   }
 
   .cap-system-map-box {
@@ -203,13 +206,48 @@
     }
   }
 
+  /* Outside the boundary (C4's external system): the page's own ground and a plain edge,
+     so it reads as not one of the core's parts by its place, its fill and its edge. */
+  .cap-system-map-box[data-external] rect {
+    fill: var(--ground);
+    stroke: var(--line-strong);
+    stroke-dasharray: none;
+  }
+
   .cap-system-map-box-name {
     fill: var(--text);
     font: 600 11px var(--ui);
     text-anchor: middle;
   }
 
-  /* Inside: the core and the inner rings fold into the middle, the rim stays as context. */
+  /* A flow playing: the step's line is heavy and in the accent, the part it moves toward
+     has a heavy edge, and each part it touches is tinted with a heavy edge, never the tint
+     alone. The token travels the line. */
+  .cap-system-map-wire[data-on] {
+    stroke: var(--accent);
+    stroke-width: 3;
+  }
+  .cap-system-map-box[data-lit] rect {
+    fill: var(--accent-5);
+    stroke: var(--accent-text);
+    stroke-width: 2.5;
+  }
+  .cap-system-map-box[data-at] rect {
+    stroke: var(--accent-text);
+    stroke-width: 3;
+  }
+  .cap-system-map-token {
+    fill: var(--accent);
+    stroke: var(--ground);
+    stroke-width: 2;
+    visibility: hidden;
+  }
+  .cap-system-map[data-flow] .cap-system-map-token {
+    visibility: visible;
+  }
+
+  /* Inside: the core and the inner rings fold into the middle, and the rim stays behind the
+     circle as faded shapes (Dustin, 2026-10-13: keep the hexagons in the back). */
   .cap-system-map[data-entered] {
     & [data-layer="core"],
     & [data-layer="inner"] {
@@ -243,7 +281,7 @@
     align-content: start;
     gap: var(--space-2);
     box-sizing: border-box;
-    block-size: 8.5rem !important;
+    block-size: 7.5rem !important;
     overflow-y: auto;
     padding: var(--pad-y) var(--pad-x);
     border: 1px solid var(--line);
@@ -254,13 +292,14 @@
       display: none;
     }
     @media (max-width: 40rem) {
-      block-size: 13rem !important;
+      block-size: 12rem !important;
     }
   }
 
+  /* The panel's headings are in the page's own face, as the text around them is. */
   .cap-system-map-detail-name {
     color: var(--accent-text);
-    font: 600 var(--fs-lead) var(--prose);
+    font: 600 var(--fs-lead) / 1.3 var(--face);
   }
 
   .cap-system-map-detail-text {
@@ -273,7 +312,8 @@
     gap: var(--space-2);
   }
 
-  .cap-system-map-list > summary {
+  .cap-system-map-list > summary,
+  .cap-system-map-flows > summary {
     width: fit-content;
     min-height: var(--target);
     color: var(--accent-text);
@@ -335,6 +375,28 @@
     font-size: var(--fs-detail);
   }
 
+  .cap-system-map-flow {
+    max-width: var(--measure);
+    padding-block: var(--space-3);
+
+    & ol {
+      display: grid;
+      gap: var(--space-2);
+      margin: 0;
+      padding-inline-start: var(--space-6);
+    }
+  }
+
+  .cap-system-map-flow-name {
+    margin: 0 0 var(--space-2);
+    font: 600 var(--fs-lead) / 1.3 var(--face);
+  }
+
+  .cap-system-map-flow-text {
+    margin: 0 0 var(--space-3);
+    color: var(--muted);
+  }
+
   /* The plain map: the list, open, as columns; the drawing steps aside. */
   .cap-system-map[data-view="plain"] {
     & .cap-system-map-stage,
@@ -364,19 +426,39 @@
     }
   }
 
+  /* Forced colours: an SVG keeps its own fills and strokes, so the map sets system colours
+     itself. Every shape is the canvas with a text-coloured edge; what is chosen, lit or
+     moving is the highlight. */
   @media (forced-colors: active) {
+    /* Whatever its state (shared, core, hovered, chosen, a store, lit), a shape is the canvas. */
     .cap-system-map-tile polygon,
+    .cap-system-map-box rect {
+      fill: Canvas !important;
+    }
+    .cap-system-map-tile polygon,
+    .cap-system-map-tile[data-shared] polygon,
+    .cap-system-map-tile[data-core] polygon,
     .cap-system-map-box rect,
-    .cap-system-map-boundary {
+    .cap-system-map-box[data-store] rect,
+    .cap-system-map-box[data-external] rect,
+    .cap-system-map-boundary,
+    .cap-system-map-wire {
       stroke: CanvasText;
     }
     .cap-system-map-tile[aria-pressed="true"] polygon,
     .cap-system-map-tile[data-linked] polygon,
     .cap-system-map-tile:focus-visible polygon,
-    .cap-system-map-edge {
+    .cap-system-map-edge,
+    .cap-system-map-wire[data-on],
+    .cap-system-map-box[data-lit] rect,
+    .cap-system-map-box[data-at] rect {
       stroke: Highlight;
     }
+    .cap-system-map-token {
+      fill: Highlight;
+    }
     .cap-system-map-name,
+    .cap-system-map-tile[data-core] .cap-system-map-name,
     .cap-system-map-tag,
     .cap-system-map-box-name,
     .cap-system-map-box-kind,
