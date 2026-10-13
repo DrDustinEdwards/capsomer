@@ -157,14 +157,24 @@ eachTheme((theme) => {
     expect(covered).toEqual([]);
   });
 
-  test("inside: the rings fold away and the boundary fills the stage, so no unnamed shape stays", async ({ page }) => {
+  test("inside: the inner rings fold away, the rim stays behind as faded shapes with no names, and the circle fills the stage", async ({ page }) => {
     const shown = (layer: string) => page.locator(`#map [data-layer='${layer}']`).evaluate((e) => getComputedStyle(e).visibility === "visible");
-    // The control: at rest the rim is there to see.
+    const rim = () =>
+      page.locator("#map [data-layer='rim']").evaluate((e) => ({
+        opacity: Number(getComputedStyle(e).opacity),
+        names: [...e.querySelectorAll("text")].filter((t) => getComputedStyle(t).visibility === "visible").length,
+      }));
+    // The control: at rest the rim is there to see, names and all.
     expect(await shown("rim")).toBe(true);
+    expect((await rim()).names).toBeGreaterThan(0);
     await tile(page, "map", "capsid").click();
     await tile(page, "map", "capsid").click();
     await expect(page.locator("#map")).toHaveAttribute("data-entered", "");
-    await expect.poll(() => shown("rim")).toBe(false);
+    await expect.poll(() => shown("inner")).toBe(false);
+    await expect.poll(async () => (await rim()).opacity).toBeLessThan(0.3);
+    expect(await shown("rim")).toBe(true);
+    expect((await rim()).opacity).toBeGreaterThan(0);
+    expect((await rim()).names).toBe(0);
     const fill = await page.locator("#map").evaluate((root) => {
       const stage = root.querySelector(".cap-system-map-stage")!.getBoundingClientRect();
       const b = root.querySelector(".cap-system-map-boundary")!.getBoundingClientRect();
@@ -401,7 +411,8 @@ eachTheme((theme) => {
           const { x, y } = w.getPointAtLength(d);
           return [x, y];
         };
-        const boundary = svg.querySelector<SVGRectElement>(".cap-system-map-boundary")!.getBBox();
+        const ring = svg.querySelector<SVGCircleElement>(".cap-system-map-boundary")!;
+        const [cx, cy, r] = [ring.cx.baseVal.value, ring.cy.baseVal.value, ring.r.baseVal.value];
         const label = svg.querySelector<SVGTextElement>(".cap-system-map-inside-title")!.getBBox();
         const boxes = [...svg.querySelectorAll<SVGGElement>(".cap-system-map-box")].map((g) => ({ id: g.dataset.id!, external: g.hasAttribute("data-external"), b: g.querySelector("rect")!.getBBox() }));
         const boxOf = (id: string) => boxes.find((b) => b.id === id)!.b;
@@ -420,8 +431,9 @@ eachTheme((theme) => {
         let least = Number.POSITIVE_INFINITY;
         // The boxes: inside the boundary, or outside it, with clear space; the name inside it.
         for (const { id, external, b } of boxes) {
-          // Outside: above the boundary or below it, whichever side the box is on.
-          const gap = external ? Math.max(boundary.y - (b.y + b.height), b.y - (boundary.y + boundary.height)) : Math.min(b.x - boundary.x, b.y - boundary.y, boundary.x + boundary.width - b.x - b.width, boundary.y + boundary.height - b.y - b.height);
+          // Inside: the farthest corner's distance from the circle; outside, the nearest point's.
+          const corners: P[] = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]];
+          const gap = external ? rectDist([cx, cy], b) - r : r - Math.max(...corners.map(([x, y]) => len([x - cx, y - cy])));
           if (gap * k <= 5) out.boundary!.push(`${id}: ${(gap * k).toFixed(1)} px from the boundary`);
           if (!(b.x + b.width < label.x || label.x + label.width < b.x || b.y + b.height < label.y || label.y + label.height < b.y)) out.boundary!.push(`${id} covers the name`);
         }

@@ -14,6 +14,8 @@ import {
   playableFlows,
   pointSegDist,
   ROUTE_CLEAR,
+  rectInset,
+  rectOutset,
   ringCells,
   routeFrames,
   SHORT_LINK,
@@ -28,6 +30,8 @@ import {
   systemMapHtml,
   tokenRoute,
 } from "../../components/system-map/system-map.ts";
+
+const rectOf = (b) => ({ x: b.x - b.w / 2, y: b.y - 16, w: b.w, h: 32 });
 
 const family = [
   { id: "core", name: "Core", ring: "core" },
@@ -195,12 +199,14 @@ const parts = [
   { id: "host", system: "core", name: "Host", kind: "external" },
 ];
 
-test("an external part is never inside: it sits above the boundary, two to a band", () => {
+test("an external part is never inside: it sits in a top corner outside the circle, two to a band", () => {
   const scene = insideScene(parts, [], layoutMap(family));
   const ext = scene.boxes.filter((b) => b.c.kind === "external");
   assert.deepEqual(ext.map((b) => b.c.id), ["agents", "host"]);
-  assert.ok(ext[0].x < 0 && ext[1].x > 0 && ext.every((b) => b.y + 16 < scene.boundary.y), "top left, then top right, above the boundary");
+  const { cy } = scene.boundary;
+  assert.ok(ext[0].x < 0 && ext[1].x > 0 && ext.every((b) => b.y < cy && rectOutset(rectOf(b), scene.boundary) >= 16), "top left, then top right, outside the circle");
 });
+
 
 test("a flow plays only when every step rides a line between the core's parts, toward an end, lighting the core's parts", () => {
   const data = {
@@ -265,6 +271,15 @@ const capsidParts = [
   ["m", "bucket", "capsid-media"], ["kv", "kv", "app KV"], ["agents", "external", "Agents"], ["gh", "external", "GitHub"],
 ].map(([id, kind, name]) => ({ id, system: "core", name, kind }));
 const capsidLinks = [["w", "db"], ["w", "m"], ["w", "kv"], ["w", "p"], ["t", "db"], ["t", "kv"], ["w", "agents"], ["w", "gh"], ["t", "gh"], ["gh", "w"]].map(([from, to]) => ({ from, to, kind: "uses" }));
+
+test("the circle is as large as the drawing allows: it reaches a margin or a part outside", () => {
+  const scene = insideScene(capsidParts, capsidLinks, layoutMap(family), "Inside Capsid");
+  const [vx, vy, vw, vh] = scene.viewBox;
+  const { cx, cy, r } = scene.boundary;
+  const room = Math.min(vw / 2 - 8 - Math.abs(cx - vx - vw / 2), cy - vy - 8, vy + vh - 8 - cy, ...scene.boxes.filter((b) => b.c.kind === "external").map((b) => rectOutset(rectOf(b), { cx, cy, r: 0 }) - 16));
+  assert.ok(r > room - 1 && r <= room, `radius ${r}, room ${room}`);
+  assert.ok(2 * r > 0.8 * Math.min(vw, vh), "the circle spans most of the drawing");
+});
 const more = Array.from({ length: 12 }, (_, i) => ({ id: `x${i}`, name: `X${i}`, ring: "used" }));
 const layouts = [layoutMap(family.slice(0, 7)), layoutMap(family), layoutMap([...family, ...more])];
 
@@ -287,7 +302,6 @@ function randomCores(count) {
   return out;
 }
 
-const rectOf = (b) => ({ x: b.x - b.w / 2, y: b.y - 16, w: b.w, h: 32 });
 const within = (r, o, g) => r.x - g >= o.x && r.y - g >= o.y && r.x + r.w + g <= o.x + o.w && r.y + r.h + g <= o.y + o.h;
 const apart = (r, o, g) => r.x + r.w + g <= o.x || o.x + o.w + g <= r.x || r.y + r.h + g <= o.y || o.y + o.h + g <= r.y;
 const segs = (route) => route.slice(1).map((q, i) => [route[i], q]);
@@ -300,15 +314,15 @@ function faults(scene) {
   for (const b of scene.boxes) {
     const r = rectOf(b);
     if (!within(r, view, 0)) out.place.push(`${b.c.id} leaves the drawing`);
-    if (b.c.kind === "external" ? !apart(r, scene.boundary, 8) : !within(r, scene.boundary, 8)) out.place.push(`${b.c.id} is not ${b.c.kind === "external" ? "outside" : "inside"} the boundary with clear space`);
+    if ((b.c.kind === "external" ? rectOutset(r, scene.boundary) : rectInset(r, scene.boundary)) < 8) out.place.push(`${b.c.id} is not ${b.c.kind === "external" ? "outside" : "inside"} the boundary with clear space`);
     if (!apart(r, scene.label.box, 4)) out.place.push(`${b.c.id} covers the boundary's name`);
   }
   for (const [i, p] of scene.boxes.entries()) for (const q of scene.boxes.slice(i + 1)) if (!apart(rectOf(p), rectOf(q), 2 * ROUTE_CLEAR)) out.place.push(`${p.c.id} and ${q.c.id} leave a line no room`);
-  if (!within(scene.label.box, scene.boundary, 0)) out.place.push("the name leaves the boundary");
+  if (rectInset(scene.label.box, scene.boundary) < 0) out.place.push("the name leaves the boundary");
   const at = new Map(scene.boxes.map((b) => [b.c.id, b]));
   for (const w of scene.wires) {
     const name = `${w.from}-${w.to}`;
-    if (at.get(w.from)?.c.kind !== "external" && at.get(w.to)?.c.kind !== "external" && !w.route.every(([x, y]) => x >= scene.boundary.x && x <= scene.boundary.x + scene.boundary.w && y >= scene.boundary.y && y <= scene.boundary.y + scene.boundary.h)) out.place.push(`${name}, between two parts inside, leaves the boundary`);
+    if (at.get(w.from)?.c.kind !== "external" && at.get(w.to)?.c.kind !== "external" && !w.route.every(([x, y]) => Math.hypot(x - scene.boundary.cx, y - scene.boundary.cy) <= scene.boundary.r)) out.place.push(`${name}, between two parts inside, leaves the boundary`);
     for (const [p, q] of segs(w.route)) {
       for (const o of scene.boxes) {
         const end = o.c.id === w.from || o.c.id === w.to;
@@ -395,7 +409,7 @@ test("the checks see each fault: a line under a box, through the name, a junctio
   assert.ok(faults(put("x", "y", [[bendAt[0] + 200, bendAt[1] + 200], bendAt, [bendAt[0] + 200, bendAt[1] - 200]])).bend.length > 0, "a bend beside a line");
   const fromW = scene.wires.find((x) => x.from === "w");
   assert.ok(faults(put("w", "db", [fromW.route[0], [db.x, db.y - 16]])).port.length > 0, "two lines at one port");
-  assert.ok(faults(put("w", "p", [[w.x, w.y - 16], [w.x, scene.boundary.y - 10], [at.get("p").x, at.get("p").y - 16]])).place.length > 0, "a line between two inside parts leaving the boundary");
+  assert.ok(faults(put("w", "p", [[w.x, w.y - 16], [w.x, scene.boundary.cy - scene.boundary.r - 10], [at.get("p").x, at.get("p").y - 16]])).place.length > 0, "a line between two inside parts leaving the boundary");
 });
 
 test("lines that share a box leave it at their own points, spread along the side that faces their far ends", () => {

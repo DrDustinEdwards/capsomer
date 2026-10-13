@@ -308,11 +308,12 @@ export interface Box {
 }
 
 // ---------------------------------------------------------------------------------------
-// Inside the core. The core's parts sit inside a dashed boundary, C4's system boundary drawn
-// literally as a rounded rectangle that fills the stage, its name in its bottom-left corner
-// as C4 names a boundary; what the core works with outside it (`external` parts: the agents
-// that call it, the host its code lives on) sits above it, and below it when there are more
-// than two. The seat's rulings on capsomer#64 decide how lines run between them:
+// Inside the core. The core's parts sit inside a dashed circle, the capsid's own outline and
+// C4's system boundary, as large as the stage allows, its name at its foot; what the core
+// works with outside it (`external` parts: the agents that call it, the host its code lives
+// on) sits in the stage's corners outside the circle, above it and, when there are more than
+// two, below it (Dustin, 2026-10-13: the circle, made bigger). The seat's rulings on
+// capsomer#64 decide how lines run between them:
 //
 //   - no line runs under a box it does not end at, or under the boundary's name: a line under
 //     a box reads as a connection to it (an edge tunnel; Dunne and Shneiderman 2009);
@@ -344,8 +345,13 @@ const MARGIN = 8;
 const OUT_GAP = 30;
 const PAD = 16;
 const LABEL_H = 18;
+// The name's baseline sits this far above the circle's foot.
+const LABEL_FOOT = 16;
+// Every part outside keeps this far from the circle.
+const OUT_CLEAR = 2 * ROUTE_CLEAR;
 const MIN_PITCH = BOX_H + 2 * ROUTE_CLEAR + 12;
 const MAX_PITCH = 104;
+const ROOMY_PITCH = 80;
 const COL_GAP = 2 * ROUTE_CLEAR + 12;
 
 type Pt = [number, number];
@@ -363,9 +369,15 @@ export interface InsideWire {
   route: Pt[];
 }
 
+export interface Circle {
+  cx: number;
+  cy: number;
+  r: number;
+}
+
 export interface InsideScene {
   viewBox: [number, number, number, number];
-  boundary: Rect;
+  boundary: Circle;
   // The boundary's name: its text starts at (textX, textY), and `box` is what lines avoid.
   label: { text: string; textX: number; textY: number; box: Rect; squeeze: number | null };
   boxes: Box[];
@@ -373,6 +385,19 @@ export interface InsideScene {
 }
 
 const rectOf = (b: Box): Rect => ({ x: b.x - b.w / 2, y: b.y - BOX_H / 2, w: b.w, h: BOX_H });
+const rectCorners = (r: Rect): Pt[] => [[r.x, r.y], [r.x + r.w, r.y], [r.x, r.y + r.h], [r.x + r.w, r.y + r.h]];
+
+/** How far a rectangle sits inside a circle: the circle's radius less its farthest corner's
+ *  distance from the centre (below 0, a corner is outside). */
+export function rectInset(r: Rect, c: Circle): number {
+  return c.r - Math.max(...rectCorners(r).map(([x, y]) => Math.hypot(x - c.cx, y - c.cy)));
+}
+
+/** How far a rectangle sits outside a circle: its nearest point's distance from the centre
+ *  less the radius (below 0, it reaches inside). */
+export function rectOutset(r: Rect, c: Circle): number {
+  return Math.hypot(Math.max(r.x - c.cx, 0, c.cx - r.x - r.w), Math.max(r.y - c.cy, 0, c.cy - r.y - r.h)) - c.r;
+}
 const grow = (r: Rect, g: number): Rect => ({ x: r.x - g, y: r.y - g, w: r.w + 2 * g, h: r.h + 2 * g });
 
 /** Whether the segment p-q passes through the rectangle's inside (a touch is not a hit). */
@@ -489,7 +514,7 @@ const SOFT_COST = 2000;
 
 /** The shortest way from port to port that crosses no box and no name, breaking the fewest
  *  softer rules, or null when every way crosses a box. */
-function searchRoute(start: Pt, end: Pt, ends: readonly Box[], boxes: readonly Box[], label: Rect | null, drawn: readonly Drawn[], bounds: Rect): Pt[] | null {
+function searchRoute(start: Pt, end: Pt, ends: readonly Box[], boxes: readonly Box[], label: Rect | null, drawn: readonly Drawn[], within: (p: Pt) => boolean): Pt[] | null {
   const own = [start, end];
   const cost = (p: Pt, q: Pt) => {
     const f = segmentFaults(p, q, ends, boxes, label, drawn, own);
@@ -507,15 +532,8 @@ function searchRoute(start: Pt, end: Pt, ends: readonly Box[], boxes: readonly B
     ...[ROUTE_CLEAR + 2, ROUTE_CLEAR + 2 + BEND_CLEAR].flatMap((g) => solid.map((r) => grow(r, g))),
     ...junctions.map((r) => grow(r, 2)),
   ]
-    .flatMap((r): Pt[] => [[r.x, r.y], [r.x + r.w, r.y], [r.x, r.y + r.h], [r.x + r.w, r.y + r.h]])
-    .filter(
-      ([x, y]) =>
-        x >= bounds.x &&
-        x <= bounds.x + bounds.w &&
-        y >= bounds.y &&
-        y <= bounds.y + bounds.h &&
-        boxes.every((o) => !(Math.abs(x - o.x) < o.w / 2 + ROUTE_CLEAR && Math.abs(y - o.y) < BOX_H / 2 + ROUTE_CLEAR)),
-    );
+    .flatMap(rectCorners)
+    .filter(([x, y]) => within([x, y]) && boxes.every((o) => !(Math.abs(x - o.x) < o.w / 2 + ROUTE_CLEAR && Math.abs(y - o.y) < BOX_H / 2 + ROUTE_CLEAR)));
   const nodes: Pt[] = [start, end, ...corners];
   // A bend near a line already drawn reads as a connection to it.
   const nodeCost = nodes.map((pt, k) => (k > 1 && drawn.some((d) => d.segments.some(([c, e]) => pointSegDist(pt, c, e) < BEND_CLEAR)) ? SOFT_COST : 0));
@@ -611,48 +629,92 @@ function insideViewBox(layout: Layout, containers: readonly MapContainer[]): [nu
   return [-w / 2, -h / 2, w, h];
 }
 
-/** Everything drawn inside the core: the boundary and its name, the parts in and out of it,
+/** The core's parts in rows inside the circle: rows of two (workers, sites, crons) above rows
+ *  of three (stores), the rows as far apart as fits (at most MAX_PITCH), each spread along its
+ *  chord, every box at least PAD inside the circle and the name's band left clear at its
+ *  foot. Null when they do not fit, so the drawing is made larger. */
+function placeInside(containers: readonly MapContainer[], c: Circle, minPitch: number): Box[] | null {
+  const tops = containers.filter((k) => k.kind !== EXTERNAL && !STORE_KINDS.has(k.kind));
+  const stores = containers.filter((k) => STORE_KINDS.has(k.kind));
+  const R = c.r - PAD;
+  // Two to a row above three; a drawing too small for that is made larger rather than stacked.
+  {
+    const [maxTop, maxStore] = [2, 3];
+    const rows: Array<{ items: MapContainer[]; w: number }> = [];
+    for (const [list, bw, max] of [[tops, BOX_W, maxTop], [stores, 88, maxStore]] as const) {
+      for (let i = 0; i < list.length; i += max) rows.push({ items: list.slice(i, i + max), w: bw });
+    }
+    if (rows.length === 0) return [];
+    // Half a box's width from the centre of each slot to its edge; the slots sit COL_GAP apart.
+    const fits = (pitch: number): Box[] | null => {
+      const mid = c.cy - LABEL_H / 2;
+      const out: Box[] = [];
+      for (const [r, row] of rows.entries()) {
+        const y = mid + (r - (rows.length - 1) / 2) * pitch;
+        const far = Math.abs(y - c.cy) + BOX_H / 2;
+        if (far >= R || y + BOX_H / 2 > c.cy + c.r - PAD - LABEL_H) return null;
+        const half = Math.sqrt(R * R - far * far);
+        const n = row.items.length;
+        const step = n > 1 ? Math.min((2 * half - row.w) / (n - 1), (2 * R) / n) : 0;
+        if (n > 1 && step < row.w + COL_GAP) return null;
+        if (n === 1 && row.w / 2 > half) return null;
+        row.items.forEach((k, i) => out.push({ c: k, x: Math.round((c.cx + (i - (n - 1) / 2) * step) * 10) / 10, y: Math.round(y * 10) / 10, w: row.w }));
+      }
+      return out;
+    };
+    for (let pitch = rows.length > 1 ? MAX_PITCH : 0; pitch >= (rows.length > 1 ? minPitch : 0); pitch -= 2) {
+      const placed = fits(pitch);
+      if (placed) return placed;
+      if (rows.length === 1) break;
+    }
+  }
+  return null;
+}
+
+/** Everything drawn inside the core: the circle and its name, the parts in and out of it,
  *  and every line between them, routed by the rules above. */
 export function insideScene(containers: readonly MapContainer[], links: readonly MapLink[], layout: Layout, name = "Inside"): InsideScene {
-  const viewBox = insideViewBox(layout, containers);
-  const [vx, vy, vw, vh] = viewBox;
   const externals = containers.filter((c) => c.kind === EXTERNAL).slice(0, 4);
-  const xl = vx + MARGIN + BOX_W / 2;
-  const xr = vx + vw - MARGIN - BOX_W / 2;
-  const outside: Box[] = externals.map((c, i) => ({ c, x: i % 2 === 0 ? xl : xr, y: i < 2 ? vy + MARGIN + BOX_H / 2 : vy + vh - MARGIN - BOX_H / 2, w: BOX_W }));
-  const top = externals.length ? vy + MARGIN + BOX_H + OUT_GAP : vy + MARGIN;
-  const bottom = externals.length > 2 ? vy + vh - MARGIN - BOX_H - OUT_GAP : vy + vh - MARGIN;
-  const boundary: Rect = { x: vx + MARGIN, y: top, w: vw - 2 * MARGIN, h: bottom - top };
-  // The name is 9-unit capitals in a monospace face, a little under 7 units a letter; a name
-  // too long for the boundary is squeezed to fit (textLength), so lines avoid all of it.
-  const maxLabel = boundary.w - 24;
+  // The drawing grows until its parts fit inside the circle.
+  let [vx, vy, vw, vh] = insideViewBox(layout, containers);
+  let boundary: Circle = { cx: 0, cy: 0, r: 0 };
+  let outside: Box[] = [];
+  let inside: Box[] | null = null;
+  for (let k = 0; k < 40; k++) {
+    const xl = vx + MARGIN + BOX_W / 2;
+    const xr = vx + vw - MARGIN - BOX_W / 2;
+    outside = externals.map((c, i) => ({ c, x: i % 2 === 0 ? xl : xr, y: i < 2 ? vy + MARGIN + BOX_H / 2 : vy + vh - MARGIN - BOX_H / 2, w: BOX_W }));
+    // The circle is centred between the bands the parts outside sit in, and as large as the
+    // drawing allows: within its margins, and OUT_CLEAR from every part outside, which sit in
+    // the corners it leaves.
+    const top = externals.length ? vy + MARGIN + BOX_H + OUT_GAP : vy + MARGIN;
+    const bottom = externals.length > 2 ? vy + vh - MARGIN - BOX_H - OUT_GAP : vy + vh - MARGIN;
+    const cx = vx + vw / 2;
+    const cy = (top + bottom) / 2;
+    const r = Math.min(vw / 2 - MARGIN, cy - vy - MARGIN, vy + vh - MARGIN - cy, ...outside.map((o) => rectOutset(rectOf(o), { cx, cy, r: 0 }) - OUT_CLEAR));
+    boundary = { cx, cy, r: Math.floor(r * 10) / 10 };
+    // Rows at least ROOMY_PITCH apart leave the lines room to keep their rules; a drawing
+    // grown a third larger still short of that takes the rows as close as MIN_PITCH.
+    inside = placeInside(containers, boundary, ROOMY_PITCH) ?? (k >= 4 ? placeInside(containers, boundary, MIN_PITCH) : null);
+    if (inside) break;
+    [vx, vy, vw, vh] = [vx * 1.08, vy * 1.08, vw * 1.08, vh * 1.08];
+  }
+  if (!inside) inside = [];
+  const viewBox: [number, number, number, number] = [Math.round(vx * 10) / 10, Math.round(vy * 10) / 10, Math.round(vw * 10) / 10, Math.round(vh * 10) / 10];
+  // The name is 9-unit capitals in a monospace face, a little under 7 units a letter, centred
+  // at the circle's foot; a name too long for the chord there is squeezed to fit (textLength),
+  // so lines avoid all of it.
+  const textY = boundary.cy + boundary.r - LABEL_FOOT;
+  const chord = 2 * Math.sqrt(Math.max(0, boundary.r ** 2 - (textY + 3 - boundary.cy) ** 2));
+  const maxLabel = Math.max(24, Math.floor(chord - 12));
   const labelW = Math.min(Math.round(name.length * 7 + 6), maxLabel);
   const label = {
     text: name,
-    textX: boundary.x + 12,
-    textY: boundary.y + boundary.h - 9,
-    box: { x: boundary.x + 9, y: boundary.y + boundary.h - 9 - 11, w: labelW, h: 14 },
+    textX: boundary.cx,
+    textY,
+    box: { x: boundary.cx - labelW / 2, y: textY - 11, w: labelW, h: 14 },
     squeeze: labelW === maxLabel ? labelW - 6 : null,
   };
-  // The parts: rows of two (workers, sites, crons) above rows of three (stores), spread across
-  // the boundary and down it, centred, at most MAX_PITCH apart.
-  const x0 = boundary.x + PAD;
-  const innerW = boundary.w - 2 * PAD;
-  const y0 = boundary.y + PAD;
-  const innerH = boundary.h - 2 * PAD - LABEL_H;
-  const perRow = (bw: number, max: number) => Math.max(1, Math.min(max, Math.floor((innerW + COL_GAP) / (bw + COL_GAP))));
-  const tops = containers.filter((c) => c.kind !== EXTERNAL && !STORE_KINDS.has(c.kind));
-  const stores = containers.filter((c) => STORE_KINDS.has(c.kind));
-  const rows: Array<{ items: MapContainer[]; w: number }> = [];
-  for (const [list, bw, max] of [[tops, BOX_W, 2], [stores, 88, 3]] as const) {
-    const n = perRow(bw, max);
-    for (let i = 0; i < list.length; i += n) rows.push({ items: list.slice(i, i + n), w: bw });
-  }
-  const pitch = rows.length > 1 ? Math.min(MAX_PITCH, (innerH - BOX_H) / (rows.length - 1)) : 0;
-  const firstY = y0 + (innerH - pitch * (rows.length - 1)) / 2;
-  const inside: Box[] = rows.flatMap((row, r) =>
-    row.items.map((c, i) => ({ c, x: Math.round((x0 + (innerW * (i + 0.5)) / row.items.length) * 10) / 10, y: Math.round((firstY + r * pitch) * 10) / 10, w: row.w })),
-  );
   const boxes = [...inside, ...outside];
   const at = new Map(boxes.map((b) => [b.c.id, b]));
   // One line for a pair, drawn the way the data first names it.
@@ -665,7 +727,8 @@ export function insideScene(containers: readonly MapContainer[], links: readonly
     seen.add(key);
     pairs.push([l.from, l.to]);
   }
-  const bounds: Rect = { x: vx, y: vy, w: vw, h: vh };
+  const inView = ([x, y]: Pt) => x >= vx && x <= vx + vw && y >= vy && y <= vy + vh;
+  const inCircle = ([x, y]: Pt) => Math.hypot(x - boundary.cx, y - boundary.cy) <= boundary.r - 4;
   // Every line, shortest first, each against the lines before it; with how many soft rules
   // the drawing breaks in all.
   const routeAll = (ports: Map<string, Pt>) => {
@@ -678,10 +741,10 @@ export function insideScene(containers: readonly MapContainer[], links: readonly
       const start = ports.get(`${a}>${b}`)!;
       const end = ports.get(`${b}>${a}`)!;
       const ends = [at.get(a)!, at.get(b)!];
-      // A line between two parts inside stays inside the boundary; one to a part outside may
+      // A line between two parts inside stays inside the circle; one to a part outside may
       // use the whole drawing. A box or the name is never given up; if every way crosses one
       // (a core too crowded to draw), the line goes straight and the tests say so.
-      const within = ends.every((e) => e.c.kind !== EXTERNAL) ? grow(boundary, -4) : bounds;
+      const within = ends.every((e) => e.c.kind !== EXTERNAL) ? inCircle : inView;
       const route = searchRoute(start, end, ends, boxes, label.box, drawn, within) ?? [start, end];
       broken += segmentsOf(route).reduce((n, [p, q]) => n + segmentFaults(p, q, ends, boxes, label.box, drawn, [start, end]).length, 0);
       drawn.push(drawnOf(route));
@@ -743,7 +806,7 @@ function insideSvg(layout: Layout, core: MapSystem | undefined, data: SystemMapD
     .join("");
   const b = scene.boundary;
   const [vx, vy, vw, vh] = scene.viewBox;
-  return `<svg class="cap-system-map-layer" data-layer="inside" viewBox="${f1(vx)} ${f1(vy)} ${f1(vw)} ${f1(vh)}" aria-hidden="true" focusable="false"><rect class="cap-system-map-boundary" x="${f1(b.x)}" y="${f1(b.y)}" width="${f1(b.w)}" height="${f1(b.h)}" rx="18"/><text class="cap-system-map-inside-title" x="${f1(scene.label.textX)}" y="${f1(scene.label.textY)}"${scene.label.squeeze ? ` textLength="${f1(scene.label.squeeze)}" lengthAdjust="spacingAndGlyphs"` : ""}>${escapeHtml(scene.label.text)}</text>${wires}${rects}${playable ? `<circle class="cap-system-map-token" r="6" cx="0" cy="0"/>` : ""}</svg>`;
+  return `<svg class="cap-system-map-layer" data-layer="inside" viewBox="${f1(vx)} ${f1(vy)} ${f1(vw)} ${f1(vh)}" aria-hidden="true" focusable="false"><circle class="cap-system-map-boundary" cx="${f1(b.cx)}" cy="${f1(b.cy)}" r="${f1(b.r)}"/><text class="cap-system-map-inside-title" x="${f1(scene.label.textX)}" y="${f1(scene.label.textY)}"${scene.label.squeeze ? ` textLength="${f1(scene.label.squeeze)}" lengthAdjust="spacingAndGlyphs"` : ""}>${escapeHtml(scene.label.text)}</text>${wires}${rects}${playable ? `<circle class="cap-system-map-token" r="6" cx="0" cy="0"/>` : ""}</svg>`;
 }
 
 /**

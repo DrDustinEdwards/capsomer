@@ -181,10 +181,9 @@
     text-anchor: middle;
   }
 
-  /* The boundary's name, in its bottom-left corner as C4 names a boundary. */
+  /* The boundary's name, centred at the circle's foot. */
   .cap-system-map-inside-title {
     letter-spacing: 0.06em;
-    text-anchor: start;
     text-transform: uppercase;
   }
 
@@ -247,14 +246,24 @@
     visibility: visible;
   }
 
-  /* Inside: the rings fold into the middle and the core's boundary fills the stage. What the
-     core works with outside it is drawn there by name, so no unnamed rim stays as context. */
+  /* Inside: the core and the inner rings fold into the middle, and the rim stays behind the
+     circle as faded shapes (Dustin, 2026-10-13: keep the hexagons in the back). */
   .cap-system-map[data-entered] {
     & [data-layer="core"],
-    & [data-layer="inner"],
-    & [data-layer="rim"] {
+    & [data-layer="inner"] {
       transform: scale(0.2);
       opacity: 0;
+      visibility: hidden;
+    }
+    & [data-layer="rim"] {
+      transform: scale(1.3);
+      opacity: 0.18;
+    }
+    & [data-layer="rim"] .cap-system-map-tile {
+      pointer-events: none;
+    }
+    /* The faded rim is shapes only: scaled up and clipped, its names would read as cut. */
+    & [data-layer="rim"] text {
       visibility: hidden;
     }
     & [data-layer="edges"] {
@@ -406,8 +415,7 @@
     }
     .cap-system-map[data-entered] [data-layer="inside"],
     .cap-system-map:not([data-entered]) [data-layer="core"],
-    .cap-system-map:not([data-entered]) [data-layer="inner"],
-    .cap-system-map:not([data-entered]) [data-layer="rim"] {
+    .cap-system-map:not([data-entered]) [data-layer="inner"] {
       transition-delay: 0s;
     }
     .cap-system-map-edge,
