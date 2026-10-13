@@ -182,11 +182,11 @@ Foxing has the same kind of drift: Capsomer's fox family is `#cc4f0c`, and Foxin
 - Foxing's menus stay as Foxing draws them; the frame does not change their contents.
 - 4. **Where the section links sit is each site's choice**: Foxing centres them, Foxhound keeps them on the right before a thin divider. On the right they shift a little between signed out and signed in, because the controls beside them change width; Foxhound accepts that, as it does today.
 - 5. **Phones** follow one rule (section 5): a top row with the hamburger last on every page, a sheet for everything else, no second row of links, and a bottom bar of up to five tabs only in signed-in areas.
+- 6. **56px and sticky on every site** (Foxing shrinks by 8px; Foxhound's header stops scrolling away).
 - 3. **The avatar is the last menu on every site**; no site ends with a gear. Foxhound's gear goes: its rows move into the avatar menu, the business's settings under the business's name, then Help, Admin and Sign out. Foxhound's account switcher moves to the left as a square tile with the business's initial, before the product switcher ("Acme Supply Co. / Recovery"): a square is the business you are in, a circle is you.
 
 **Still open:**
 
-6. **Size.** 56px and sticky on every site (Foxing is 64px; Foxhound is not sticky)? *Recommended: yes.*
 7. **Width.** Full bleed on every site, so the logo never moves (Foxing centres its header today)? *Recommended: yes.*
 8. **Foxing's logo** is a fox emoji, against your no-emoji rule. Draw a fox mark for it in Foxing's job? *Recommended: yes.* The mockup uses a placeholder.
 
