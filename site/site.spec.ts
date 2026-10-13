@@ -34,11 +34,12 @@ eachTheme((theme) => {
     await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
   });
 
-  test("behaviour: the site is the reference shell: the family's app strip, the collapse control at its top, the top bar with the theme", async ({ page }) => {
+  test("behaviour: the site is the reference shell: the site header with the theme button, the family's app strip, the collapse control at the menu's top", async ({ page }) => {
     await page.goto("./#/overview");
-    await expect(page.locator(".cap-admin-strip .cap-admin-tile")).toHaveCount(6);
-    await expect(page.locator(".cap-admin-strip li").first().locator("[data-cap-part='menu-toggle']")).toBeVisible();
-    await expect(page.locator(".cap-admin-bar").getByRole("group", { name: "Theme" })).toBeVisible();
+    await expect(page.locator(".cap-site-header")).toBeVisible();
+    await expect(page.locator(".cap-site-header .cap-theme-button")).toBeVisible();
+    await expect(page.locator(".cap-admin-strip .cap-admin-tile")).toHaveCount(7);
+    await expect(page.locator(".cap-admin-menu > [data-cap-part='menu-toggle']").first()).toBeVisible();
     await page.keyboard.press("[");
     await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
   });

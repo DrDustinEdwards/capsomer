@@ -34,6 +34,7 @@ const base: Omit<AdminShellProps, "children"> = {
   onSearch: () => undefined,
   inbox: { count: 7, countNote: "need you", href: "#inbox" },
   onHelp: () => undefined,
+  viewSite: "#site",
   account: {
     role: "Owner",
     email: "dustin@example.test",
@@ -90,9 +91,10 @@ function CollapsedTip() {
   return <Shell name="collapsed-tip" collapsed />;
 }
 
+// Opens the header's account menu, for the picture: a press with no pointer, as a key gives.
 function AccountOpen() {
   useEffect(() => {
-    const frame = requestAnimationFrame(() => document.querySelector<HTMLElement>(".cap-admin-account")?.showPopover());
+    const frame = requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(".cap-site-header-avatar")?.click());
     return () => cancelAnimationFrame(frame);
   }, []);
   return <Shell name="account" />;
@@ -100,18 +102,19 @@ function AccountOpen() {
 
 function SheetOpen() {
   useEffect(() => {
-    const frame = requestAnimationFrame(() => document.querySelector<HTMLButtonElement>("[data-cap-part='more']")?.click());
+    const frame = requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(".cap-site-header-menu")?.click());
     return () => cancelAnimationFrame(frame);
   }, []);
   return <Shell name="phone-sheet" />;
 }
 
-// A reader on a public site: the logo, search and the theme in the strip, the site's sections in
-// the menu, a centred reading column.
+// A reader's own area on a site outside the family: the user variant (no strip, the 288px menu),
+// the site's sections in the menu, a centred reading column.
 const reader: Partial<AdminShellProps> = {
+  variant: "user",
   app: undefined,
   title: "dustinedwards.info",
-  apps: [{ id: "home", label: "dustinedwards.info", href: "#home", logo: FAMILY_APPS.find((a) => a.id === "info")?.logo, current: true }],
+  logo: { href: "#home", label: "dustinedwards.info", mark: FAMILY_APPS.find((a) => a.id === "info")?.logo },
   nav: [
     { id: "research", label: "Research", href: "#research", icon: FOLDER, current: true },
     { id: "protocols", label: "Protocols", href: "#protocols", icon: LIST },
@@ -122,6 +125,25 @@ const reader: Partial<AdminShellProps> = {
   updated: undefined,
   onRefresh: undefined,
   page: "Research",
+};
+
+// A customer's own dashboard (the user variant): no strip, the 288px menu, so its page starts at
+// the same x as your admin's; the business and product switchers sit in the header.
+const dashboard: Partial<AdminShellProps> = {
+  variant: "user",
+  app: undefined,
+  title: "Acme Supply Co.",
+  logo: { href: "#home", label: "Acme Supply Co.", mark: GRID },
+  badges: undefined,
+  onSearch: undefined,
+  inbox: undefined,
+  onHelp: () => undefined,
+  viewSite: undefined,
+  switchers: [
+    { id: "business", label: "Acme Supply Co.", name: "Business: Acme Supply Co.", tile: "A", sheetLabel: "Businesses", groups: [{ links: [{ label: "Acme Supply Co.", href: "#acme", current: true }, { label: "Northwind Goods", href: "#northwind" }] }] },
+    { id: "product", label: "Recovery", name: "Product: Recovery", sheetLabel: "Products", groups: [{ links: [{ label: "Console", href: "#console" }, { label: "Recovery", href: "#recovery", current: true }, { label: "Disputes", href: "#disputes" }] }] },
+  ],
+  account: { name: "Sam Rivera", initials: "SR", email: "sam@example.com", appLinks: [{ label: "Settings", href: "#settings" }, { label: "Billing", href: "#billing" }], onSignOut: () => undefined },
 };
 
 // Page transitions: the menu links and the button change the page inside startPageTransition, so
@@ -189,13 +211,15 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   reader: () => (
     <AdminShell {...base} {...reader} prefKey={key("reader")} children={<div className="cap-admin-page" data-measure="reading"><h1>Research</h1><p>A reading column holds a comfortable line length.</p></div>} />
   ),
+  user: () => <Shell name="user" {...dashboard} />,
+  "user-collapsed": () => <Shell name="user-collapsed" collapsed {...dashboard} />,
   comfortable: () => (
     <div data-density="comfortable">
       <Shell name="comfortable" />
     </div>
   ),
   transition: () => <Transitioning />,
-  // An app that passes only `app`: the strip still lists all six, each with its real mark.
+  // An app that passes only `app`: the strip still lists all seven, each with its real mark.
   minimal: () => (
     <AdminShell app="foxhound" nav={nav} page={FIRST_PAGE} prefKey={key("minimal")}>
       <Page />

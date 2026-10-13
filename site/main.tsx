@@ -170,7 +170,8 @@ function Overview() {
 
 import "capsomer/tokens.css";        // the layer order and every token
 import "capsomer/base.css";
-import "capsomer/admin-shell.css";   // each component's CSS, as used
+import "capsomer/site-header.css";   // each component's CSS, as used
+import "capsomer/admin-shell.css";
 import "capsomer/theme-switch.css";
 import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell";
 

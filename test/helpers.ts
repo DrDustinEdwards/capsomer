@@ -73,6 +73,12 @@ export function paintedContrast(page: Page, selector: string, part: "color" | "b
       const el = document.querySelector<HTMLElement>(sel);
       if (!el) return null;
       const parse = (s: string): [number, number, number, number] => {
+        // A color-mix() computes to color(srgb r g b / a), its channels from 0 to 1.
+        const srgb = s.match(/color\(srgb ([^)]+)\)/)?.[1];
+        if (srgb) {
+          const q = srgb.split(/[\s/]+/).filter(Boolean).map(Number);
+          return [Math.round((q[0] ?? 0) * 255), Math.round((q[1] ?? 0) * 255), Math.round((q[2] ?? 0) * 255), q.length > 3 ? (q[3] ?? 1) : 1];
+        }
         const m = s.match(/rgba?\(([^)]+)\)/);
         const inner = m?.[1];
         if (!inner) return [0, 0, 0, 0];

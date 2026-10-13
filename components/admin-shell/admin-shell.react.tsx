@@ -1,15 +1,14 @@
 import { Fragment, useCallback, useEffect, useId, useRef, useState, type ComponentPropsWithRef, type ReactNode } from "react";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 import { Time } from "../time/time.react.tsx";
-import { Dialog, DialogBody, DialogHeader } from "../dialog/dialog.react.tsx";
 import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
 import type { LinkProps } from "../shell/shell.react.tsx";
-import { ThemeSwitch } from "../theme-switch/theme-switch.react.tsx";
+import { SheetGroup, SiteHeader, SiteTabs, type HeaderAccount, type HeaderExtra, type HeaderLink, type HeaderLogo, type HeaderSwitcher } from "../site-header/site-header.react.tsx";
 import { applyStoredTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
 import { badgeText, jumpTarget } from "./admin-shell.ts";
 import { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER, type FamilyAppId } from "./apps.tsx";
 
-export type { LinkProps, FamilyAppId };
+export type { LinkProps, FamilyAppId, HeaderExtra, HeaderLogo, HeaderSwitcher };
 export { startPageTransition } from "./admin-shell.ts";
 export { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER };
 
@@ -29,9 +28,9 @@ export interface AdminEntry {
 }
 
 // One app in the strip. The family's admin apps come from FAMILY_APPS (apps.tsx); this shape is
-// for a public site's own one-app strip. `logo` is the product's mark (an svg using currentColor
-// takes the tile's colour). `count` is how many things in that app need you; the app you are in
-// never shows one.
+// for a strip outside the family. `logo` is the product's mark (an svg using currentColor takes
+// the tile's colour). `count` is how many things in that app need you; the app you are in never
+// shows one.
 export interface AdminApp {
   id: string;
   label: string;
@@ -48,7 +47,7 @@ export interface AdminAccountLink {
   label: string;
   href?: string;
   onClick?: () => void;
-  // The page you are on (Settings, say): the link is current, and so is More on a phone.
+  // The page you are on (Settings, say).
   current?: boolean;
 }
 
@@ -65,29 +64,35 @@ export interface AdminCrumb {
   href: string;
 }
 
-// The avatar is the owner's (OWNER, "DE") unless a name and initials are given.
+// The avatar is the owner's (OWNER, "DE") unless a name and initials are given. Its menu, in the
+// header's top right: who you are; this app's rows (`appLinks`); View site and Help; Sign out last.
 export interface AdminAccount {
   name?: string;
   initials?: string;
   role?: string;
   email?: string;
-  // This app: its settings, view site, shortcuts.
   appLinks?: AdminAccountLink[];
-  // Elsewhere lists the other apps by itself; sign out goes last.
+  // The label over `appLinks`: "This app" by default; a dashboard names the business ("Acme
+  // Supply Co."), so its settings sit under its name.
+  appLabel?: string;
   onSignOut?: () => void;
   signOutDisabled?: boolean;
 }
 
 export interface AdminShellProps {
+  // "owner" (your admin): the strip of the family's apps, then a 232px menu. "user" (a customer's
+  // own dashboard): no strip and a 288px menu, so the page starts at the same left edge in both.
+  variant?: "owner" | "user";
   // The family app this is. The strip lists every family app (FAMILY_APPS) in one order with this
-  // one marked, and the menu's title is its name.
+  // one marked, and the header's logo is its mark and name unless `logo` is given.
   app?: FamilyAppId;
   // Other apps' badges, from Capsid's one "what needs the owner" answer. The current app's is
   // never shown.
   badges?: Partial<Record<FamilyAppId, AdminBadge>>;
-  // The menu's title. Default: the family app's name. Set it only outside the family.
+  // The app's name, for the tab title and the sheet. Default: the family app's. Set it only
+  // outside the family.
   title?: string;
-  // The strip for a site outside the family (a public site's one app). Admin areas pass `app`.
+  // The strip for a site outside the family. Admin areas pass `app`.
   apps?: AdminApp[];
   nav: AdminEntry[];
   // The page being shown: the tab title "<page> · <app>", and the last step of the trail.
@@ -95,37 +100,44 @@ export interface AdminShellProps {
   // The levels above the page. Given, the top bar shows the trail ("Components / Shell"); a
   // top-level page has none, so the bar never repeats the page's own heading.
   trail?: AdminCrumb[];
-  // The phone's bar: at most four of this app's top pages, then More. Default: the first four.
+  // The phone's bottom bar: up to five of this app's top pages, no More. Default: the first five.
   tabs?: AdminEntry[];
-  // The pages the bar has no room for. Default: the rest of `nav`.
-  more?: AdminEntry[];
   navLabel?: string;
-  // The strip's tools, bottom up from the account: Search, Inbox (what needs the owner, across
-  // every app), Help. A tool shows only when its handler is given.
+  // The header (components/site-header): the site's logo, its band, a switcher (a dashboard's
+  // business and product), and its extras. Search and Inbox are the header's first two extras;
+  // Help is a row of the account menu.
+  logo?: HeaderLogo;
+  band?: "dark";
+  translucent?: boolean;
+  switchers?: HeaderSwitcher[];
+  extras?: HeaderExtra[];
   onSearch?: () => void;
   searchShortcut?: string;
   inbox?: { count?: number; countNote?: string; href?: string; onOpen?: () => void; shortcut?: string };
   onHelp?: () => void;
-  helpShortcut?: string;
+  // The account menu's View site row.
+  viewSite?: string;
   account?: AdminAccount;
-  // The top bar: the trail and how fresh the data is on the left; then the page-wide controls,
-  // Refresh (shown when the page can refresh) and the theme, always last. `updated` is the one
-  // freshness line every app shows: "Updated 6 minutes ago", with "· refreshes itself" when
-  // `auto`. `status` is anything else true of the page.
+  // The page bar: the trail and how fresh the data is on the left; then the page-wide controls
+  // and Refresh (shown when the page can refresh), last. `updated` is the one freshness line every
+  // app shows: "Updated 6 minutes ago", with "· refreshes itself" when `auto`. `status` is anything
+  // else true of the page.
   updated?: { at: number | Date | string; auto?: boolean };
   status?: ReactNode;
   actions?: ReactNode;
   onRefresh?: () => void;
   refreshing?: boolean;
   refreshShortcut?: string;
-  // The theme switch's localStorage key; "cap-theme" by default.
+  // The theme button's localStorage key ("cap-theme" by default), and the single key the app lets
+  // the header bind to it ("T"); leave it out where the app binds its own.
   themePrefKey?: string;
+  themeKey?: string;
   prefKey?: string;
   // G then 1 to 9 opens the app in that place (the key sequence of GitHub and Linear; Ctrl and a
   // digit belong to the browser's tabs); on by default. An app that lets single keys be switched off
   // passes that setting here.
   jumpKeys?: boolean;
-  // Shown in the collapse control's name tip; the app binds the key.
+  // Shown on the collapse control and in its name tip; the app binds the key.
   collapseKey?: string;
   renderLink?: (props: LinkProps) => ReactNode;
   // The main region's own ref and handlers (an app that scrolls to a row, say). Its id, class and
@@ -134,15 +146,21 @@ export interface AdminShellProps {
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
   // Page transitions (View Transitions API): the content cross-fades between pages while the
-  // strip and menu stay put. Off by default; reduced motion and browsers without the API get no
-  // animation. The app wraps its page change in `startPageTransition` (a flushSync inside).
+  // header, strip and menu stay put. Off by default; reduced motion and browsers without the API
+  // get no animation. The app wraps its page change in `startPageTransition` (a flushSync inside).
   transition?: boolean;
   children: ReactNode;
 }
 
-const Icon = ({ d, children }: { d?: string; children?: ReactNode }) => (
+const Icon = ({ d }: { d: string }) => (
   <svg className="cap-admin-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    {d ? <path d={d} /> : children}
+    <path d={d} />
+  </svg>
+);
+// The header's glyphs are the 24-box, 1.6-stroke family the header draws at 18px.
+const HeaderIcon = ({ d }: { d: string }) => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d={d} />
   </svg>
 );
 
@@ -150,15 +168,7 @@ const COLLAPSE_D = "M3 4h18v16H3zM9 4v16M16 10l-2 2 2 2";
 const EXPAND_D = "M3 4h18v16H3zM9 4v16M14 10l2 2-2 2";
 const SEARCH_D = "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM21 21l-5-5";
 const INBOX_D = "M3 13h5l1 3h6l1-3h5M5 5h14l2 8v6H3v-6z";
-const HELP_D = "M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01";
 const REFRESH_D = "M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5";
-const MORE_ICON = (
-  <svg className="cap-admin-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <circle cx="3" cy="8" r="1.4" fill="currentColor" stroke="none" />
-    <circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none" />
-    <circle cx="13" cy="8" r="1.4" fill="currentColor" stroke="none" />
-  </svg>
-);
 
 const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
 
@@ -228,6 +238,7 @@ const mark = (a: AdminApp) => a.logo ?? <span aria-hidden="true">{a.mono ?? a.la
 
 export function AdminShell(props: AdminShellProps) {
   const {
+    variant = "owner",
     app,
     nav,
     page,
@@ -236,7 +247,6 @@ export function AdminShell(props: AdminShellProps) {
     searchShortcut = "Ctrl K",
     inbox,
     onHelp,
-    helpShortcut = "?",
     trail,
     updated,
     status,
@@ -245,6 +255,7 @@ export function AdminShell(props: AdminShellProps) {
     refreshing,
     refreshShortcut,
     themePrefKey = THEME_PREF,
+    themeKey,
     prefKey = DEFAULT_PREF,
     jumpKeys = true,
     collapseKey = "[",
@@ -252,20 +263,12 @@ export function AdminShell(props: AdminShellProps) {
     mainProps,
     children,
   } = props;
+  const owner = variant === "owner";
   const apps = stripApps(app, props.badges, props.apps);
-  const title = props.title ?? FAMILY_APPS.find((a) => a.id === app)?.label ?? apps.find((a) => a.current)?.label ?? "";
-  const currentLogo = apps.find((a) => a.current)?.logo ?? null;
-  const account = props.account ? { ...props.account, name: props.account.name ?? OWNER.name, initials: props.account.initials ?? OWNER.initials } : undefined;
+  const family = FAMILY_APPS.find((a) => a.id === app);
+  const title = props.title ?? family?.label ?? apps.find((a) => a.current)?.label ?? "";
   const root = useRef<HTMLDivElement>(null);
-  const moreButton = useRef<HTMLButtonElement>(null);
-  const sheetTitle = useRef<HTMLHeadingElement>(null);
   const groupId = useId();
-  const accountId = useId();
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const closeSheet = useCallback(() => {
-    setSheetOpen(false);
-    requestAnimationFrame(() => moreButton.current?.focus());
-  }, []);
   const [own, setOwn] = useState(false);
   useEffect(() => setOwn(readPref(prefKey) === "collapsed"), [prefKey]);
   const collapsed = props.collapsed ?? own;
@@ -290,6 +293,7 @@ export function AdminShell(props: AdminShellProps) {
   const appsRef = useRef(apps);
   appsRef.current = apps;
   useEffect(() => {
+    if (!owner) return;
     const armed = { at: 0 };
     const onKey = (e: KeyboardEvent) => {
       const to = jumpKeys ? jumpTarget(armed, e, appsRef.current) : null;
@@ -300,11 +304,9 @@ export function AdminShell(props: AdminShellProps) {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [jumpKeys]);
+  }, [jumpKeys, owner]);
 
-  const tabs = (props.tabs ?? nav.slice(0, 4)).slice(0, 4);
-  const more = props.more ?? (props.tabs ? [] : nav.slice(4));
-  const hidePanel = (e: { currentTarget: HTMLElement }) => e.currentTarget.closest<HTMLElement>("[popover]")?.hidePopover?.();
+  const tabs = (props.tabs ?? nav.slice(0, 5)).slice(0, 5);
 
   const item = (e: AdminEntry) => (
     <Fragment key={e.id}>
@@ -330,179 +332,123 @@ export function AdminShell(props: AdminShellProps) {
     </Fragment>
   );
 
-  const tab = (e: AdminEntry) => (
-    <Fragment key={e.id}>
-      {renderLink({
-        href: e.href,
-        "aria-current": e.current ? "page" : undefined,
-        "aria-label": countName(e.label, e.count, e.countNote),
-        children: (
-          <>
-            {e.icon}
-            {e.label}
-            {e.count ? (
-              <span className="cap-admin-badge" aria-hidden="true">
-                {badgeText(e.count)}
-              </span>
-            ) : null}
-          </>
-        ),
-      })}
-    </Fragment>
-  );
+  // The header: the logo (the app's mark and name), the extras (Search, Inbox, then the app's
+  // own), the theme, and the account menu last.
+  const logo: HeaderLogo = props.logo ?? { href: family?.href ?? apps.find((a) => a.current)?.href ?? "/", label: title, mark: family?.logo ?? apps.find((a) => a.current)?.logo };
+  const extras: HeaderExtra[] = [
+    ...(onSearch ? [{ id: "search", label: "Search everything", icon: <HeaderIcon d={SEARCH_D} />, onClick: onSearch, keys: searchShortcut }] : []),
+    ...(inbox ? [{ id: "inbox", label: "Inbox", icon: <HeaderIcon d={INBOX_D} />, href: inbox.href, onClick: inbox.onOpen, count: inbox.count, countNote: inbox.countNote ?? "need you", keys: inbox.shortcut }] : []),
+    ...(props.extras ?? []),
+  ];
+  const accountProps = props.account;
+  const account: HeaderAccount | undefined = accountProps
+    ? {
+        name: accountProps.name ?? OWNER.name,
+        initials: accountProps.initials ?? OWNER.initials,
+        detail: [accountProps.role, accountProps.email].filter(Boolean).join(" · ") || undefined,
+        groups: [
+          ...(accountProps.appLinks?.length ? [{ label: accountProps.appLabel ?? "This app", links: accountProps.appLinks }] : []),
+          ...(props.viewSite || onHelp ? [{ links: [...(props.viewSite ? [{ label: "View site", href: props.viewSite }] : []), ...(onHelp ? [{ label: "Help and shortcuts", onClick: onHelp }] : [])] }] : []),
+        ],
+        onSignOut: accountProps.onSignOut,
+        signOutDisabled: accountProps.signOutDisabled,
+      }
+    : undefined;
 
-  const others = apps.filter((a) => !a.current);
-  const inboxName = inbox ? (countName("Inbox", inbox.count, inbox.countNote ?? "need you") ?? "Inbox") : "";
-  // A link in the account panel closes the panel; a button runs its handler, then closes it.
-  const accountLink = (l: AdminAccountLink) =>
-    l.href ? (
-      renderLink({ href: l.href, "aria-current": l.current ? "page" : undefined, onClick: () => document.getElementById(accountId)?.hidePopover?.(), children: l.label })
-    ) : (
-      <button type="button" onClick={(e) => (l.onClick?.(), hidePanel(e))}>
-        {l.label}
-      </button>
-    );
+  const toSheet = (e: AdminEntry): HeaderLink => ({ id: e.id, label: e.label, href: e.href, current: e.current, icon: e.icon, count: e.count, countNote: e.countNote });
 
   return (
-    <div ref={root} className="cap-admin" data-cap="admin-shell" data-menu={collapsed ? "collapsed" : undefined} data-transition={props.transition ? "page" : undefined}>
-      <a className="cap-admin-skip" href="#cap-main">
-        Skip to content
-      </a>
-      <nav className="cap-admin-strip" aria-label="Apps and tools">
-        <ul className="cap-admin-strip-group">
-          <li>
-            <button
-              type="button"
-              className="cap-admin-btn"
-              data-cap-part="menu-toggle"
-              aria-label={collapsed ? "Expand menu" : "Collapse menu"}
-              aria-expanded={!collapsed}
-              aria-controls="cap-admin-menu"
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              <Icon d={collapsed ? EXPAND_D : COLLAPSE_D} />
-              <Tip text={collapsed ? "Expand menu" : "Collapse menu"} keys={collapseKey} />
-            </button>
-          </li>
-          {apps.map((a, i) => (
-            <li key={a.id}>
-              {(a.current ? renderLink : plainLink)({
-                href: a.href,
-                className: "cap-admin-tile",
-                "aria-current": a.current ? "true" : undefined,
-                "aria-label": a.current ? a.label : (countName(a.label, a.count, a.countNote ?? "need you") ?? a.label),
-                children: (
-                  <>
-                    {mark(a)}
-                    {a.current ? null : <Badge count={a.count} />}
-                    <Tip text={a.label} keys={i < 9 && jumpKeys ? `G ${i + 1}` : undefined} />
-                  </>
-                ),
-              })}
-            </li>
-          ))}
-        </ul>
-        <ul className="cap-admin-strip-group">
-          {onSearch && (
-            <li>
-              <button type="button" className="cap-admin-btn" aria-label="Search everything" onClick={onSearch}>
-                <Icon d={SEARCH_D} />
-                <Tip text="Search everything" keys={searchShortcut} />
-              </button>
-            </li>
-          )}
-          {inbox && (
-            <li>
-              {inbox.href ? (
-                renderLink({
-                  href: inbox.href,
-                  className: "cap-admin-btn",
-                  "aria-label": inboxName,
+    <div ref={root} className="cap-admin" data-cap="admin-shell" data-variant={variant} data-menu={collapsed ? "collapsed" : undefined} data-transition={props.transition ? "page" : undefined}>
+      <SiteHeader
+        logo={logo}
+        band={props.band}
+        translucent={props.translucent}
+        switchers={props.switchers}
+        extras={extras}
+        themePrefKey={themePrefKey}
+        themeKey={themeKey}
+        account={account}
+        skipTo="#cap-main"
+        renderLink={renderLink}
+        sheetTitle={`${title} menu`}
+        sheetStart={
+          owner
+            ? (close) => (
+                <>
+                  <div className="cap-site-header-sheet-label">Apps</div>
+                  <ul className="cap-site-header-sheet-list">
+                    {apps.map((a) => (
+                      <li key={a.id}>
+                        {renderLink({
+                          href: a.href,
+                          "aria-current": a.current ? "true" : undefined,
+                          "aria-label": a.current ? undefined : countName(a.label, a.count, a.countNote ?? "need you"),
+                          onClick: close,
+                          children: (
+                            <>
+                              <span className="cap-site-header-sheet-icon" aria-hidden="true">
+                                {mark(a)}
+                              </span>
+                              <span className="cap-site-header-sheet-name">{a.label}</span>
+                              {a.current || !a.count ? null : (
+                                <span className="cap-site-header-count" aria-hidden="true">
+                                  {badgeText(a.count)}
+                                </span>
+                              )}
+                            </>
+                          ),
+                        })}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )
+            : undefined
+        }
+        sheetEnd={(close) => groups(nav).map((g, i) => <SheetGroup key={g.label ?? `g${i}`} label={g.label ?? title} links={g.entries.map(toSheet)} renderLink={renderLink} onClose={close} />)}
+      />
+      {owner ? (
+        <nav className="cap-admin-strip" aria-label="Apps">
+          <ul className="cap-admin-strip-group">
+            {apps.map((a, i) => (
+              <li key={a.id}>
+                {(a.current ? renderLink : plainLink)({
+                  href: a.href,
+                  className: "cap-admin-tile",
+                  "aria-current": a.current ? "true" : undefined,
+                  "aria-label": a.current ? a.label : (countName(a.label, a.count, a.countNote ?? "need you") ?? a.label),
                   children: (
                     <>
-                      <Icon d={INBOX_D} />
-                      <Badge count={inbox.count} />
-                      <Tip text="Inbox" keys={inbox.shortcut} />
+                      {mark(a)}
+                      {a.current ? null : <Badge count={a.count} />}
+                      <Tip text={a.label} keys={i < 9 && jumpKeys ? `G ${i + 1}` : undefined} />
                     </>
                   ),
-                })
-              ) : (
-                <button type="button" className="cap-admin-btn" aria-label={inboxName} onClick={inbox.onOpen}>
-                  <Icon d={INBOX_D} />
-                  <Badge count={inbox.count} />
-                  <Tip text="Inbox" keys={inbox.shortcut} />
-                </button>
-              )}
-            </li>
-          )}
-          {onHelp && (
-            <li>
-              <button type="button" className="cap-admin-btn" aria-label="Help and shortcuts" onClick={onHelp}>
-                <Icon d={HELP_D} />
-                <Tip text="Help and shortcuts" keys={helpShortcut} />
-              </button>
-            </li>
-          )}
-          {account && (
-            <li>
-              <button type="button" className="cap-admin-btn cap-admin-avatar" aria-label="Your account" popoverTarget={accountId}>
-                <span aria-hidden="true">{account.initials}</span>
-                <Tip text={account.name} />
-              </button>
-              <div id={accountId} popover="auto" className="cap-admin-account" aria-label="Your account" role="group">
-                <div className="cap-admin-who">
-                  <span className="cap-admin-btn cap-admin-avatar" aria-hidden="true">
-                    {account.initials}
-                  </span>
-                  <div>
-                    <strong>{account.name}</strong>
-                    <small>{[account.role, account.email].filter(Boolean).join(" · ")}</small>
-                  </div>
-                </div>
-                {account.appLinks && account.appLinks.length > 0 && (
-                  <div className="cap-admin-account-section" role="group" aria-labelledby={`${accountId}-app`}>
-                    <div className="cap-admin-group-label" id={`${accountId}-app`}>
-                      This app
-                    </div>
-                    {account.appLinks.map((l) => (
-                      <Fragment key={l.label}>{accountLink(l)}</Fragment>
-                    ))}
-                  </div>
-                )}
-                {others.length > 0 && (
-                  <div className="cap-admin-account-section" role="group" aria-labelledby={`${accountId}-else`}>
-                    <div className="cap-admin-group-label" id={`${accountId}-else`}>
-                      Elsewhere
-                    </div>
-                    {others.map((a) => (
-                      <a key={a.id} href={a.href}>
-                        {a.label}
-                      </a>
-                    ))}
-                  </div>
-                )}
-                {account.onSignOut && (
-                  <>
-                    <hr />
-                    <button type="button" disabled={account.signOutDisabled} onClick={() => account.onSignOut?.()}>
-                      Sign out
-                    </button>
-                  </>
-                )}
-              </div>
-            </li>
-          )}
-        </ul>
-      </nav>
+                })}
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ) : null}
       <nav className="cap-admin-menu" id="cap-admin-menu" aria-label={navLabel}>
-        <div className="cap-admin-title">
-          {/* Collapsed, the column keeps the app's identity: its mark at the top. Open, the
-              title is the name only (the marked strip tile beside it is the logo). */}
-          <span className="cap-admin-title-mark" aria-hidden="true">
-            {currentLogo}
+        {/* The collapse control is the menu's first row, in the same place open and collapsed and
+            in both kinds of shell, with its key; collapsed, its words hide and its tip names it. */}
+        <button
+          type="button"
+          className="cap-admin-collapse"
+          data-cap-part="menu-toggle"
+          aria-label={collapsed ? "Expand menu" : "Collapse menu"}
+          aria-expanded={!collapsed}
+          aria-controls="cap-admin-menu"
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          <Icon d={collapsed ? EXPAND_D : COLLAPSE_D} />
+          <span className="cap-admin-label">{collapsed ? "Expand menu" : "Collapse menu"}</span>
+          <span className="cap-keys" aria-hidden="true">
+            <kbd>{collapseKey}</kbd>
           </span>
-          <span className="cap-admin-title-text">{title}</span>
-        </div>
+          <Tip text={collapsed ? "Expand menu" : "Collapse menu"} keys={collapseKey} offset={12} describe={false} />
+        </button>
         {groups(nav).map((g, i) =>
           g.label ? (
             <div key={`g${i}`} className="cap-admin-group" role="group" aria-labelledby={`${groupId}-${i}`}>
@@ -519,7 +465,6 @@ export function AdminShell(props: AdminShellProps) {
       <main {...mainProps} className="cap-admin-main" id="cap-main" tabIndex={-1}>
         <div className="cap-admin-bar">
           <div className="cap-admin-bar-text">
-            <strong className="cap-admin-bar-app">{title}</strong>
             {trail && trail.length > 0 ? (
               <nav className="cap-admin-trail" aria-label="Breadcrumb">
                 <ol>
@@ -542,162 +487,21 @@ export function AdminShell(props: AdminShellProps) {
             ) : null}
             {status ? <div className="cap-admin-bar-status">{status}</div> : null}
           </div>
-          <div className="cap-admin-actions">
-            {actions}
-            {onRefresh && (
-              <button type="button" className="cap-admin-btn" data-cap-part="refresh" aria-label="Refresh" aria-busy={refreshing || undefined} onClick={onRefresh}>
-                <Icon d={REFRESH_D} />
-                <Tip text="Refresh" keys={refreshShortcut} side="bottom" offset={6} />
-              </button>
-            )}
-            <ThemeSwitch prefKey={themePrefKey} />
-          </div>
+          {actions || onRefresh ? (
+            <div className="cap-admin-actions">
+              {actions}
+              {onRefresh && (
+                <button type="button" className="cap-admin-btn" data-cap-part="refresh" aria-label="Refresh" aria-busy={refreshing || undefined} onClick={onRefresh}>
+                  <Icon d={REFRESH_D} />
+                  <Tip text="Refresh" keys={refreshShortcut} side="bottom" offset={6} />
+                </button>
+              )}
+            </div>
+          ) : null}
         </div>
         {children}
       </main>
-      <nav className="cap-admin-tabs" aria-label={navLabel}>
-        {tabs.map(tab)}
-        <button ref={moreButton} type="button" data-cap-part="more" aria-haspopup="dialog" aria-current={more.some((e) => e.current) || account?.appLinks?.some((l) => l.current) ? "true" : undefined} aria-expanded={sheetOpen} aria-controls="cap-admin-sheet" onClick={() => setSheetOpen(true)}>
-          {MORE_ICON}
-          More
-        </button>
-      </nav>
-      <Dialog open={sheetOpen} onOpenChange={(o) => !o && closeSheet()} placement="bottom" id="cap-admin-sheet" className="cap-admin-sheet" aria-labelledby="cap-admin-sheet-title" initialFocus={sheetTitle}>
-        <DialogHeader>
-          <h2 id="cap-admin-sheet-title" className="cap-dialog-title" ref={sheetTitle} tabIndex={-1}>
-            {title}: apps and more
-          </h2>
-        </DialogHeader>
-        <DialogBody>
-          <nav aria-labelledby="cap-admin-sheet-title">
-            <div className="cap-admin-sheet-label">Apps</div>
-            <ul className="cap-admin-sheet-list">
-              {apps.map((a) => (
-                <li key={a.id}>
-                  {renderLink({
-                    href: a.href,
-                    "aria-current": a.current ? "true" : undefined,
-                    onClick: closeSheet,
-                    children: (
-                      <>
-                        <span className="cap-admin-sheet-icon cap-admin-app-mark" aria-hidden="true">{mark(a)}</span>
-                        <span className="cap-admin-sheet-name">{a.label}</span>
-                        {a.current ? null : a.count ? <span className="cap-admin-count" data-tone="need">{badgeText(a.count)}</span> : null}
-                      </>
-                    ),
-                  })}
-                </li>
-              ))}
-            </ul>
-            {more.length > 0 && (
-              <>
-                <div className="cap-admin-sheet-label">{title}</div>
-                <ul className="cap-admin-sheet-list">
-                  {more.map((e) => (
-                    <li key={e.id}>
-                      {renderLink({
-                        href: e.href,
-                        "aria-current": e.current ? "page" : undefined,
-                        onClick: closeSheet,
-                        children: (
-                          <>
-                            <span className="cap-admin-sheet-icon" aria-hidden="true">{e.icon}</span>
-                            <span className="cap-admin-sheet-name">{e.label}</span>
-                            {e.count ? (
-                              <span className="cap-admin-count" data-tone={e.tone}>
-                                {`${badgeText(e.count)}${e.countNote ? ` ${e.countNote}` : ""}`}
-                              </span>
-                            ) : null}
-                          </>
-                        ),
-                      })}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            {(onSearch || inbox || onHelp) && (
-              <>
-                <div className="cap-admin-sheet-label">Tools</div>
-                <ul className="cap-admin-sheet-list">
-                  {onSearch && (
-                    <li>
-                      <button type="button" onClick={() => (closeSheet(), onSearch())}>
-                        <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={SEARCH_D} /></span>
-                        <span className="cap-admin-sheet-name">Search everything</span>
-                      </button>
-                    </li>
-                  )}
-                  {inbox && (
-                    <li>
-                      {inbox.href ? (
-                        renderLink({
-                          href: inbox.href,
-                          onClick: closeSheet,
-                          children: (
-                            <>
-                              <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={INBOX_D} /></span>
-                              <span className="cap-admin-sheet-name">Inbox</span>
-                              {inbox.count ? <span className="cap-admin-count" data-tone="need">{`${badgeText(inbox.count)}${inbox.countNote ? ` ${inbox.countNote}` : ""}`}</span> : null}
-                            </>
-                          ),
-                        })
-                      ) : (
-                        <button type="button" onClick={() => (closeSheet(), inbox.onOpen?.())}>
-                          <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={INBOX_D} /></span>
-                          <span className="cap-admin-sheet-name">Inbox</span>
-                          {inbox.count ? <span className="cap-admin-count" data-tone="need">{`${badgeText(inbox.count)}${inbox.countNote ? ` ${inbox.countNote}` : ""}`}</span> : null}
-                        </button>
-                      )}
-                    </li>
-                  )}
-                  {onHelp && (
-                    <li>
-                      <button type="button" onClick={() => (closeSheet(), onHelp())}>
-                        <span className="cap-admin-sheet-icon" aria-hidden="true"><Icon d={HELP_D} /></span>
-                        <span className="cap-admin-sheet-name">Help and shortcuts</span>
-                      </button>
-                    </li>
-                  )}
-                </ul>
-              </>
-            )}
-          </nav>
-        </DialogBody>
-        {(account?.appLinks?.length || account?.onSignOut) && (
-          <nav className="cap-admin-sheet-account" aria-label="Account">
-            <ul className="cap-admin-sheet-list">
-              {account.appLinks?.map((l) => {
-                const inner = (
-                  <>
-                    <span className="cap-admin-sheet-icon" aria-hidden="true" />
-                    <span className="cap-admin-sheet-name">{l.label}</span>
-                  </>
-                );
-                return (
-                  <li key={l.label}>
-                    {l.href ? (
-                      renderLink({ href: l.href, "aria-current": l.current ? "page" : undefined, onClick: closeSheet, children: inner })
-                    ) : (
-                      <button type="button" onClick={() => (closeSheet(), l.onClick?.())}>
-                        {inner}
-                      </button>
-                    )}
-                  </li>
-                );
-              })}
-              {account.onSignOut && (
-                <li>
-                  <button type="button" disabled={account.signOutDisabled} onClick={() => (closeSheet(), account.onSignOut?.())}>
-                    <span className="cap-admin-sheet-icon" aria-hidden="true" />
-                    <span className="cap-admin-sheet-name">Sign out ({account.name})</span>
-                  </button>
-                </li>
-              )}
-            </ul>
-          </nav>
-        )}
-      </Dialog>
+      <SiteTabs tabs={tabs.map(toSheet)} label={navLabel} renderLink={renderLink} />
     </div>
   );
 }

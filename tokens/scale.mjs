@@ -72,6 +72,7 @@ export const SCALE = {
     ["rail-w", "208px", "the shell's left menu, expanded"],
     ["rail-w-collapsed", "56px", "the shell's left menu, collapsed to icons"],
     ["top-h", "44px", "the shell's top bar (the Portal's, #215)"],
+    ["header-h", "3.5rem", "the site header, 56px on every site and surface (docs/design/design-site-header.md, answer 6)"],
   ],
 };
 

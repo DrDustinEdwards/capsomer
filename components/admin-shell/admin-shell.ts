@@ -1,14 +1,15 @@
 // The admin shell's behaviour: collapse the menu (the strip stays), remember the choice, attach
-// each control's name tip (Capsomer's tooltip: Esc hides it, WCAG 1.4.13), jump between apps with
-// G and 1 to 9, and the phone sheet. No framework; the React wrapper uses the same functions. The menu's links and the page
-// are in the HTML without any of this.
-import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
+// each control's name tip (Capsomer's tooltip: Esc hides it, WCAG 1.4.13) and jump between apps
+// with G and 1 to 9. The header above it (its panels, the account menu and the phone's sheet) is
+// the site header's own behaviour, which enhance() attaches too. No framework; the React wrapper
+// uses the same functions. The menu's links and the page are in the HTML without any of this.
 import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
+import { enhance as enhanceHeader } from "../site-header/site-header.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
-// A count is a glance, not a figure: past 99 it says 99+, in the strip, the menu (open and
-// collapsed) and the phone bar alike; the accessible name keeps the real count.
-export const badgeText = (count: number): string => (count > 99 ? "99+" : String(count));
+// A count is a glance, not a figure: past 99 it says 99+ (the site header's rule, one for the
+// family); the accessible name keeps the real count.
+export { badgeText } from "../site-header/site-header.ts";
 
 export const ADMIN_PREF = DEFAULT_PREF;
 
@@ -41,10 +42,10 @@ export function setMenu(shell: HTMLElement, collapsed: boolean, remember = true)
   else delete shell.dataset.menu;
   const toggle = shell.querySelector<HTMLButtonElement>("[data-cap-part='menu-toggle']");
   if (toggle) {
+    const name = collapsed ? "Expand menu" : "Collapse menu";
     toggle.setAttribute("aria-expanded", String(!collapsed));
-    toggle.setAttribute("aria-label", collapsed ? "Expand menu" : "Collapse menu");
-    const tip = toggle.querySelector(".cap-admin-tip .cap-admin-tip-text");
-    if (tip) tip.textContent = collapsed ? "Expand menu" : "Collapse menu";
+    toggle.setAttribute("aria-label", name);
+    for (const text of toggle.querySelectorAll(":scope > .cap-admin-label, .cap-admin-tip .cap-admin-tip-text")) text.textContent = name;
   }
   if (remember) writePref(shell.dataset.capPref ?? ADMIN_PREF, collapsed ? "collapsed" : "expanded");
 }
@@ -67,19 +68,6 @@ export function jumpTarget(armed: { at: number }, e: Pick<KeyboardEvent, "key" |
   if (!live || !/^[1-9]$/.test(e.key)) return null;
   const app = apps[Number(e.key) - 1];
   return app && !app.current ? app.href : null;
-}
-
-export function openSheet(shell: HTMLElement): void {
-  const button = shell.querySelector<HTMLButtonElement>("[data-cap-part='more']");
-  const dialog = shell.querySelector<HTMLDialogElement>("dialog.cap-admin-sheet");
-  if (!dialog || dialog.open) return;
-  openDialog(dialog, button);
-  button?.setAttribute("aria-expanded", "true");
-}
-
-export function closeSheet(shell: HTMLElement): void {
-  const dialog = shell.querySelector<HTMLDialogElement>("dialog.cap-admin-sheet");
-  if (dialog?.open) closeDialog(dialog);
 }
 
 // Attaches to every [data-cap="admin-shell"] under root that is not attached yet. Returns a
@@ -105,20 +93,10 @@ export function enhance(root: ParentNode = document): () => void {
         detach();
       };
     });
-    const sheet = shell.querySelector<HTMLDialogElement>("dialog.cap-admin-sheet");
-    const moreButton = shell.querySelector<HTMLButtonElement>("[data-cap-part='more']");
-    const unwireSheet = sheet ? wireDialog(sheet) : null;
-    const onSheetClose = () => moreButton?.setAttribute("aria-expanded", "false");
-    sheet?.addEventListener("close", onSheetClose);
+    const detachHeader = enhanceHeader(shell);
 
     const onClick = (e: MouseEvent) => {
-      const target = e.target as Element;
-      if (target.closest("[data-cap-part='menu-toggle']")) toggleMenu(shell);
-      if (target.closest("[data-cap-part='more']")) openSheet(shell);
-      if (sheet?.open && target.closest("a") && sheet.contains(target)) closeDialog(sheet);
-      // A link in the account panel closes the panel.
-      const panel = target.closest<HTMLElement>(".cap-admin-account");
-      if (panel && target.closest("a, button")) panel.hidePopover?.();
+      if ((e.target as Element).closest("[data-cap-part='menu-toggle']")) toggleMenu(shell);
     };
     const armed = { at: 0 };
     const onKey = (e: KeyboardEvent) => {
@@ -135,8 +113,7 @@ export function enhance(root: ParentNode = document): () => void {
       shell.removeEventListener("click", onClick);
       detachTips.forEach((f) => f());
       document.removeEventListener("keydown", onKey);
-      sheet?.removeEventListener("close", onSheetClose);
-      unwireSheet?.();
+      detachHeader();
       delete shell.dataset.capReady;
     });
   }

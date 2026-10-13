@@ -107,4 +107,30 @@ eachTheme((theme) => {
     await expect(html(page)).toHaveAttribute("data-theme", "light");
     await expect(radio(page, "Light")).toBeChecked();
   });
+
+  test("accessibility: the button form names what it does, switches, remembers, and shows its name and key on focus", async ({ page }) => {
+    await visitStates(page, "theme-switch", theme, "button");
+    await expectNoAxeViolations(page);
+    const button = page.locator(".cap-theme-button");
+    const other = theme === "dark" ? "light" : "dark";
+    await expect(button).toHaveAccessibleName(`Switch to ${other} theme`);
+    await expect(page.getByRole("radio")).toHaveCount(0);
+    await button.focus();
+    const tip = button.locator(".cap-theme-tip");
+    await expect(tip).toBeVisible();
+    await expect(tip).toContainText(`Switch to ${other} theme`);
+    await expect(tip.locator("kbd")).toHaveText("T");
+    expect(await button.getAttribute("aria-describedby")).toBeNull();
+    await expectContrast(page, [{ sel: ".cap-theme-button", what: "the button's glyph" }]);
+    await page.keyboard.press("Enter");
+    await expect(html(page)).toHaveAttribute("data-theme", other);
+    await expect(button).toHaveAccessibleName(`Switch to ${theme} theme`);
+    await page.reload();
+    await expect(html(page)).toHaveAttribute("data-theme", other);
+    await expect(page.locator(".cap-theme-button")).toHaveAccessibleName(`Switch to ${theme} theme`);
+    // The T key and the button agree.
+    await page.keyboard.press("t");
+    await expect(html(page)).toHaveAttribute("data-theme", theme);
+    await expect(page.locator(".cap-theme-button")).toHaveAccessibleName(`Switch to ${other} theme`);
+  });
 });

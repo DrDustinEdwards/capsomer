@@ -69,6 +69,18 @@
   </main>
 </template>
 
+<template data-specimen="button" data-title="The button form, for a header: one icon button, its name says what it does, Light and Dark only" data-height="200">
+  <main class="specimen-page" tabindex="-1">
+    <h1>Header</h1>
+    <button type="button" class="cap-theme-button" data-cap="theme-switch" data-variant="button" data-cap-pref="cap-theme-specimen-button" aria-label="Switch to dark theme">
+      <svg class="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
+      <svg class="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+      <span class="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-theme-tip-text">Switch to dark theme</span><kbd>T</kbd></span>
+    </button>
+    <p>The moon while the page is light, the sun while it is dark. The settings page keeps the Light and Dark switch.</p>
+  </main>
+</template>
+
 <script type="module">
   import { enhance, toggleTheme } from "./theme-switch.ts";
   import { register } from "../shortcuts/shortcuts.ts";
