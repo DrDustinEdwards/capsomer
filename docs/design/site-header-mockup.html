@@ -84,12 +84,12 @@ body.w-phone .frames { grid-template-columns: repeat(auto-fill, minmax(min(390px
 .fr.phone { width: 390px; height: 560px; }
 .fr *:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 6px; }
 
-.fh { --font-ui: "DM Sans", Arial, sans-serif; --band: #1a1c18; --band-fg: #f0ede8; --band-mu: #a8a49e; --band-ln: #2a2b28; --band-hover: #2a2c26; --ac: #f0b429; --on-ac: #0d0e0c; --ring: #f0b429; }
-.fh.light { --strip: #e4e2db; --pg: #f7f6f2; --sf: #ffffff; --tx: #14150f; --mu: #595c56; --ln: #cccbc3; --act: #8a5c06; --menu: #efeee9; --hov: #e6e4de; --cur: #3d2c05; --cur-fg: #ffe7a3; --pop: #ffffff; --ring: #b5820d; }
-.fh.dark { --strip: #1d1f1b; --pg: #111210; --sf: #181917; --tx: #e5e8e2; --mu: #a8a49e; --ln: #2a2b28; --act: #f0b429; --menu: #151614; --hov: #252720; --cur: #ffd166; --cur-fg: #1a1c18; --pop: #1f211d; }
+.fh { --font-ui: "DM Sans", Arial, sans-serif; --band: #1a1c18; --band-fg: #f0ede8; --band-mu: #a8a49e; --band-ln: #2a2b28; --band-hover: #2a2c26; --ac: #249398; --on-ac: #070f0f; --ring: #249398; }
+.fh.light { --strip: #e4e2db; --pg: #f7f6f2; --sf: #ffffff; --tx: #14150f; --mu: #595c56; --ln: #cccbc3; --act: #01585c; --menu: #efeee9; --hov: #e6e4de; --cur: #0c1e1f; --cur-fg: #e3eeee; --pop: #ffffff; --ring: #008489; }
+.fh.dark { --strip: #1d1f1b; --pg: #111210; --sf: #181917; --tx: #e5e8e2; --mu: #a8a49e; --ln: #2a2b28; --act: #97c8cb; --menu: #151614; --hov: #252720; --cur: #e3eeee; --cur-fg: #0c1e1f; --pop: #1f211d; }
 .fx { --font-ui: "DM Sans", Arial, sans-serif; }
-.fx.light { --strip: #ebe0c9; --pg: #faf6ee; --sf: #ffffff; --tx: #16100b; --mu: #815e41; --ln: #e5d8bf; --ac: #d4622e; --act: #b04a1c; --on-ac: #ffffff; --band: rgba(250, 246, 238, 0.85); --band-fg: #16100b; --band-mu: #3e3028; --band-ln: #e5d8bf; --band-hover: #efe4cf; --menu: #f2ead8; --hov: #e9dcc2; --cur: #632507; --cur-fg: #ffffff; --pop: #ffffff; --ring: #b04a1c; }
-.fx.dark { --strip: #0e0b07; --pg: #16100b; --sf: #1f1710; --tx: #f5edde; --mu: #c4ae96; --ln: #34281c; --ac: #e07840; --act: #f0a070; --on-ac: #16100b; --band: rgba(22, 16, 11, 0.85); --band-fg: #f5edde; --band-mu: #c4ae96; --band-ln: #34281c; --band-hover: #2a1f16; --menu: #100d08; --hov: #261c13; --cur: #f0a070; --cur-fg: #16100b; --pop: #2a1f16; --ring: #e07840; }
+.fx.light { --strip: #ebe0c9; --pg: #faf6ee; --sf: #ffffff; --tx: #16100b; --mu: #815e41; --ln: #e5d8bf; --ac: #b64404; --act: #822e02; --on-ac: #ffffff; --band: rgba(250, 246, 238, 0.85); --band-fg: #16100b; --band-mu: #3e3028; --band-ln: #e5d8bf; --band-hover: #efe4cf; --menu: #f2ead8; --hov: #e9dcc2; --cur: #2b130a; --cur-fg: #f8e7e1; --pop: #ffffff; --ring: #cc4f0c; }
+.fx.dark { --strip: #0e0b07; --pg: #16100b; --sf: #1f1710; --tx: #f5edde; --mu: #c4ae96; --ln: #34281c; --ac: #dd5f25; --act: #f2aa8d; --on-ac: #120c09; --band: rgba(22, 16, 11, 0.85); --band-fg: #f5edde; --band-mu: #c4ae96; --band-ln: #34281c; --band-hover: #2a1f16; --menu: #100d08; --hov: #261c13; --cur: #f8e7e1; --cur-fg: #2b130a; --pop: #2a1f16; --ring: #cc4f0c; }
 
 /* The header: fixed by Capsomer */
 .hd { position: sticky; top: 0; z-index: 5; height: 56px; display: flex; align-items: center; gap: 24px; padding: 0 24px; background: var(--band); color: var(--band-fg); border-bottom: 1px solid var(--band-ln); }
@@ -148,6 +148,44 @@ body.w-phone .frames { grid-template-columns: repeat(auto-fill, minmax(min(390px
 .pop .stats b { display: block; font-size: 16px; }
 .pop .stats span { font-size: 11px; color: var(--mu); }
 .pop.scroll { max-height: 360px; overflow: auto; }
+
+/* Foxing's own panels, as Foxing draws them */
+.pop.mega { padding: 18px; border-radius: 14px; }
+.mega .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.mega .eb { font-family: "DM Mono", ui-monospace, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mu); margin-bottom: 8px; }
+.mega a { padding: 6px 8px; color: var(--mu); }
+.mega .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mega .chips a { padding: 4px 10px; border-radius: 999px; background: var(--hov); color: var(--act); font-family: "DM Mono", ui-monospace, monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.mega .pick { display: block; border: 1px solid var(--ln); background: var(--menu); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
+.mega .pick b { display: block; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 14px; color: var(--tx); margin-top: 2px; }
+.mega .pick span { font-size: 12px; color: var(--mu); }
+.mega .two { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.mega .foot { display: flex; justify-content: space-between; border-top: 1px solid var(--ln); margin-top: 10px; padding-top: 10px; }
+.mega .foot a:first-child { color: var(--act); }
+.pop.fxacct { padding: 0; width: 320px; overflow: hidden; border-radius: 14px; }
+.fxacct .id { display: flex; gap: 12px; align-items: center; padding: 12px 16px; background: var(--menu); border-bottom: 1px solid var(--ln); }
+.fxacct .id b { font-size: 14px; font-weight: 500; display: flex; gap: 6px; align-items: center; }
+.fxacct .tier { font-family: "DM Mono", ui-monospace, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; padding: 1px 6px; border-radius: 999px; background: var(--hov); color: var(--act); }
+.fxacct .id span.u { font-family: "DM Mono", ui-monospace, monospace; font-size: 12px; color: var(--mu); }
+.fxacct dl { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-bottom: 1px solid var(--ln); text-align: center; }
+.fxacct dl div { padding: 10px 6px; }
+.fxacct dl div + div { border-left: 1px solid var(--ln); }
+.fxacct dd { margin: 0; font-family: "Fraunces", Georgia, serif; font-size: 20px; }
+.fxacct dt { font-family: "DM Mono", ui-monospace, monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--mu); }
+.fxacct .sec { padding: 4px 0; }
+.fxacct .sec + .sec { border-top: 1px solid var(--ln); }
+.fxacct .sec a { border-radius: 0; padding: 6px 16px; gap: 10px; }
+.fxacct .sec a svg { width: 16px; height: 16px; color: var(--mu); flex: none; }
+.fxacct .sec a small { display: block; font-size: 11.5px; color: var(--mu); }
+.fxacct .coll { display: flex; gap: 10px; padding: 6px 16px; font-size: 13.5px; }
+.fxacct .coll svg { width: 16px; height: 16px; color: var(--mu); flex: none; margin-top: 2px; }
+.fxacct .coll span span { display: block; font-size: 11.5px; color: var(--mu); }
+.fxacct .ft { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ln); }
+.fxacct .ft a { display: grid; justify-items: center; gap: 4px; padding: 10px 0; border-radius: 0; font-family: "DM Mono", ui-monospace, monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mu); }
+.fxacct .ft a + a { border-left: 1px solid var(--ln); }
+.fxacct .ft a svg { width: 16px; height: 16px; }
+.acsw .ini { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; background: var(--ac); color: var(--on-ac); font-size: 11px; font-weight: 600; }
+.crumb { color: var(--band-ln); font-size: 18px; margin: 0 -4px; }
 
 /* Page bodies */
 .body-pub { padding: 56px 24px 0; display: grid; gap: 14px; max-width: 760px; }
@@ -351,14 +389,15 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
     `</div>`;
   const listPanel = (items, cur, side) =>
     `<div class="pop ${side || "l"}">` + items.map((x) => `<a href="#" ${x === cur ? 'aria-current="page"' : ""}>${x}</a>`).join("") + `</div>`;
-  const fhAccount = () =>
-    `<div class="pop r scroll" style="min-width:250px"><div class="who"><b>Acme Supply Co.</b><span>Signed in as sam@example.com</span></div><div class="grp">Accounts</div><a href="#" aria-current="true">Acme Supply Co.</a><a href="#">Northwind Goods</a><a href="#">+ Add account</a><hr>` +
-    ["Settings", "Billing", "Help", "Team", "Audit settings", "Audit history", "Email settings", "Alerts", "API keys", "Brand voice"].map((x) => `<a href="#">${x}</a>`).join("") +
-    `<hr><a href="#">Admin</a><hr><a href="#">Sign out</a></div>`;
   const ownerAccount = () =>
     `<div class="pop r" style="min-width:230px"><div class="who"><b>Dustin Edwards</b><span>Owner</span></div><hr><a href="#">View site</a><a href="#">Help</a><a href="#">Shortcuts</a><hr><a href="#">Sign out</a></div>`;
-  const fxAccount = () =>
-    `<div class="pop r" style="min-width:260px"><div class="who"><b>Sam Reader</b><span>@samreads</span></div><div class="stats"><div><b>14</b><span>books this year</span></div><div><b>6</b><span>day streak</span></div><div><b>212</b><span>highlights</span></div></div><hr><a href="#">Stats</a><a href="#">Goals</a><a href="#">Year in reading</a><hr><a href="#">Lists</a><a href="#">Diary</a><a href="#">Highlights</a><hr><a href="#">Admin dashboard</a><a href="#">Profile</a><a href="#">Settings</a><hr><a href="#">Sign out</a></div>`;
+  const fxIcon = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="${d}"/></svg>`;
+  const fxBooks = () => `<div class="pop l mega" style="width:26rem"><div class="cols"><div><div class="eb">Browse</div><a href="#">All books</a><a href="#">Award winners</a></div><div><div class="eb">By era</div><div class="chips">${["Before 1800", "1800 to 1849", "1850 to 1899", "1900 to 1949", "1950 and later"].map((e) => `<a href="#">${e}</a>`).join("")}</div></div></div></div>`;
+  const fxPicks = () => `<div class="pop l mega" style="width:24rem"><a class="pick" href="#"><span class="eb" style="color:var(--act)">Foxing pick</span><b>The Remains of the Day</b><span>Kazuo Ishiguro</span></a><div class="eb">Featured clubs</div><div class="two">${["Reese's Book Club", "Oprah's Book Club", "Read with Jenna", "Good Morning America"].map((c) => `<a href="#">${c}</a>`).join("")}</div><div class="foot"><a href="#">View all picks</a><a href="#">This month's pick</a></div></div>`;
+  const fxAccount = () => `<div class="pop r fxacct"><div class="id"><span class="av">SR</span><div><b>Sam Reader <span class="tier">Plus</span></b><span class="u">@samreads</span></div></div><dl><div><dd>14</dd><dt>books this year</dt></div><div><dd>6</dd><dt>day streak</dt></div><div><dd>212</dd><dt>highlights</dt></div></dl><div class="sec"><a href="#">${fxIcon("M5 20V11M12 20V5M19 20v-6")}Stats</a><a href="#">${fxIcon("M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4z")}Goals</a><a href="#">${fxIcon("M12 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM15.5 12.9 17 22l-5-3-5 3 1.5-9.1")}Year in reading</a><a href="#">${fxIcon("M12 7c-1.6-1-4-1.6-7-1.3V18c3-.3 5.4.3 7 1.3 1.6-1 4-1.6 7-1.3V5.7c-3-.3-5.4.3-7 1.3zM12 7v12.3")}<span>Vocabulary<small>8 words to master</small></span></a></div><div class="sec"><div class="coll">${fxIcon("M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.6 3.9A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z")}<span>Collections<span>Lists · Diary · Highlights · Commonplace</span></span></div></div><div class="sec"><a href="#">${fxIcon("M11 4l1.5 4 4 1.5-4 1.5L11 15l-1.5-4-4-1.5 4-1.5z")}<span>Find next book<small>AI recommendations for you</small></span></a><a href="#">${fxIcon("M12 3.5l7 2.8v4.7c0 4.3-2.9 7.2-7 8.5-4.1-1.3-7-4.2-7-8.5V6.3z")}Admin dashboard</a></div><div class="ft"><a href="#">${fxIcon("M12 5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM5.5 19.5a6.5 6.5 0 0 1 13 0")}Profile</a><a href="#">${fxIcon("M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1")}Settings</a><a href="#">${fxIcon("M14 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2M10 12h10M17 9l3 3-3 3")}Sign out</a></div></div>`;
+  // Foxhound: the account switcher (which business) and the gear (that business's settings, and you).
+  const fhSwitch = () => `<div class="has-pop p-acsw"><button type="button" class="sw acsw" aria-expanded="false" aria-label="Account: Acme Supply Co."><span class="ini" aria-hidden="true">A</span><span>Acme Supply Co.</span>${I.chev}</button><div class="pop l" style="min-width:240px"><div class="grp">Accounts</div><a href="#" aria-current="true"><span class="ini" style="width:20px;height:20px;border-radius:5px;display:grid;place-items:center;background:var(--ac);color:var(--on-ac);font-size:11px;font-weight:600">A</span>Acme Supply Co.</a><a href="#"><span class="ini" style="width:20px;height:20px;border-radius:5px;display:grid;place-items:center;background:var(--hov);font-size:11px;font-weight:600">N</span>Northwind Goods</a><hr><a href="#">+ Add account</a></div></div>`;
+  const fhGear = () => `<div class="has-pop p-acct"><button type="button" class="ib" aria-label="Settings and account" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.7l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7v.2a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.7v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"/></svg></button><div class="pop r scroll" style="min-width:230px"><div class="who"><b>Acme Supply Co.</b><span>sam@example.com</span></div><hr>${["Settings", "Billing", "Help", "Team", "Audit settings", "Audit history", "Email settings", "Alerts", "API keys", "Brand voice"].map((x) => `<a href="#">${x}</a>`).join("")}<hr><a href="#">Admin</a><hr><a href="#">Sign out</a></div></div>`;
   const avatar = (initials, name, panel) =>
     `<div class="has-pop p-acct"><button type="button" class="acct" aria-label="${esc(name)}" aria-expanded="false"><span class="av">${initials}</span></button>${panel}</div>`;
 
@@ -367,7 +406,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
     fh: {
       name: "Foxhound", cls: "fh",
       logo: `<a class="logo" href="#" aria-label="Foxhound home"><span class="wm-fh">fo<em>x</em>hound</span></a>`,
-      intro: "Amber on a dark band in both themes, DM Sans, wordmark in DM Mono. The band stays dark in light theme, as Foxhound ships it.",
+      intro: "Teal (Capsomer's teal family, your answer to question 1) on Foxhound's dark band, which stays dark in both themes. DM Sans, wordmark in DM Mono.",
       surfaces: {
         public: {
           title: "Public, signed out",
@@ -381,16 +420,16 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
         },
         app: {
           title: "User dashboard (a merchant's own area)",
-          note: "The product switcher sits after the logo. Below the header, the product's menu on the left, 288px wide: the owner's strip plus menu width, so the page starts at the same left edge as the owner's admin. No strip, because a merchant has no family of apps. The account switcher and the gear are one menu at the account, last.",
+          note: "The product switcher sits after the logo. Below the header, the product's menu on the left, 288px wide: the owner's strip plus menu width, so the page starts at the same left edge as the owner's admin. No strip, because a merchant has no family of apps. The account switcher moves to the left: it says where you are (which business), like the product beside it. The gear stays last as the menu for that business's settings and for you.",
           dash: true,
           menu: [[null, [["Overview", I.grid, 0, 1], ["Payments", I.list, 12], ["Sequences", I.stack], ["Win-back", I.share], ["Expiring cards", I.clock, 23]]], ["Account", [["Settings", I.gauge], ["Billing", I.store], ["Team", I.people]]]],
           tabs: [["Overview", I.grid, 1], ["Payments", I.list], ["Sequences", I.stack], ["Win-back", I.share]],
           page: "Recovery overview", fresh: "Updated 2 minutes ago",
           tiles: [["Recovered this month", "$8,214", "62 payments"], ["Recovery rate", "41%", "of failed charges"], ["In sequence", "118", "retrying now"], ["Cards expiring", "23", "next 30 days"]],
           rows: [["crit", "Payment from j.ortiz@example.com failed its 3rd retry", "12 minutes ago"], ["", "Win-back email opened by 14 customers", "today"], ["", "Sequence 'Card declined' sent 31 emails", "yesterday"]],
-          switcher: { label: "Recovery", panel: () => listPanel(["Console", "Audit", "Recovery", "Disputes", "Intelligence"], "Recovery") },
-          account: () => avatar("A", "Acme Supply Co., account menu", fhAccount()),
-          sheet: { groups: [["Products", ["Console", "Audit", "Recovery", "Disputes", "Intelligence"]], ["Recovery", ["Overview", "Payments", "Sequences", "Win-back", "Expiring cards"]]], foot: ["Settings", "Sign out"] },
+          switcher: { label: "Recovery", pre: fhSwitch, panel: () => listPanel(["Console", "Audit", "Recovery", "Disputes", "Intelligence"], "Recovery") },
+          account: () => fhGear(),
+          sheet: { groups: [["Accounts", ["Acme Supply Co.", "Northwind Goods", "+ Add account"]], ["Products", ["Console", "Audit", "Recovery", "Disputes", "Intelligence"]], ["Recovery", ["Overview", "Payments", "Sequences", "Win-back", "Expiring cards"]]], foot: ["Settings", "Sign out"] },
           body: (p) => `<nav class="sub" aria-label="Recovery"><a href="#" aria-current="page">Overview</a><a href="#">Payments</a><a href="#">Sequences</a><a href="#">Win-back</a>${p ? "" : '<a href="#">Expiring cards</a>'}</nav><div class="app-body"><h5>Recovery</h5><div class="tiles"><div class="tile"><span>Recovered this month</span><b>$8,214</b><i>62 payments</i></div><div class="tile"><span>Recovery rate</span><b>41%</b><i>of failed charges</i></div><div class="tile"><span>In sequence</span><b>118</b><i>retrying now</i></div><div class="tile"><span>Cards expiring</span><b>23</b><i>next 30 days</i></div></div></div>`,
         },
         admin: {
@@ -410,12 +449,12 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
     fx: {
       name: "Foxing", cls: "fx",
       logo: `<a class="logo wm-fx" href="#" aria-label="Foxing home">${M.foxing.replace('class="mk"', "")}<span>Foxing</span></a>`,
-      intro: "Foxing orange on a translucent band in the page's own ground, DM Sans for the controls, Fraunces for the wordmark. The fox emoji gives way to a drawn mark (placeholder here).",
+      intro: "Capsomer's fox orange (your answer to question 1) on a translucent band in the page's own ground. DM Sans for the controls, Fraunces for the wordmark. Its menus are Foxing's own, unchanged. The fox emoji gives way to a drawn mark (a placeholder here).",
       surfaces: {
         public: {
           title: "Public, signed out",
-          note: "Books and Picks open their panels on hover. Search and Join free are Foxing's extras; Sign in moves to the end. The header is now full width and 56px.",
-          links: [["Books", 1], ["Picks", 1], "Clubs", "People", "Journal"], cur: "Books",
+          note: "Books and Celebrity Picks open Foxing's own panels, unchanged, on hover. Search and Join free are Foxing's extras; Sign in moves to the end. The header is now full width and 56px.",
+          links: [["Books", 1], ["Celebrity Picks", 1], "Clubs", "People", "Journal"], cur: "Books",
           extrasDesk: () => ib(I.search, "Search", "Ctrl K") + `<a class="btn" href="#">Join free</a>`,
           extrasPhone: () => "",
           account: () => `<a class="signin" href="#">Sign in</a>`,
@@ -426,7 +465,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
         app: {
           title: "Signed in, reading",
           note: "A reader's pages are public-style pages, not a dashboard, so there is no left menu. Signed in, the bell joins Search as an extra, and the avatar menu is last. The Home, Library, Diary bar stays as the page's own bar under the header.",
-          links: [["Books", 1], ["Picks", 1], "Clubs", "People", "Journal"], cur: null,
+          links: [["Books", 1], ["Celebrity Picks", 1], "Clubs", "People", "Journal"], cur: null,
           extrasDesk: () => ib(I.search, "Search", "Ctrl K") + ib(I.bell, "Notifications", "", 3),
           extrasPhone: () => "",
           account: () => avatar("SR", "Sam Reader, account menu", fxAccount()),
@@ -458,7 +497,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
         const me = FAMILY.find((f) => f[0] === s.admin);
         left += `<div class="has-pop p-sw"><button type="button" class="sw" aria-expanded="false" aria-label="${me[1]}. Other apps: ${others} need you">${M[s.admin]}<span>${me[1]}</span><span class="bub" aria-hidden="true">${others}</span>${I.chev}</button>${familyPanel(s.admin)}</div>`;
       } else if (s.switcher) {
-        left += `<div class="has-pop p-sw"><button type="button" class="sw" aria-expanded="false">${s.switcher.label}${I.chev}</button>${s.switcher.panel()}</div>`;
+        left += (s.switcher.pre ? s.switcher.pre() + `<span class="crumb" aria-hidden="true">/</span>` : "") + `<div class="has-pop p-sw"><button type="button" class="sw" aria-expanded="false">${s.switcher.label}${I.chev}</button>${s.switcher.panel()}</div>`;
       }
       if (s.links) {
         left += `<nav class="hd-links" aria-label="Site">` + s.links.map((l) => {
@@ -466,8 +505,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
           const kids = Array.isArray(l);
           const cur = name === s.cur ? 'aria-current="page"' : "";
           if (!kids) return `<a class="lk" href="#" ${cur}>${name}</a>`;
-          const items = name === "Books" ? ["New releases", "Bestsellers", "By genre", "Awards", "Book of the Month"] : ["Celebrity Picks", "Staff picks", "Club picks"];
-          return `<div class="has-pop"><a class="lk" href="#" ${cur} aria-expanded="false">${name}${I.chev}</a>${listPanel(items, null)}</div>`;
+          return `<div class="has-pop"><a class="lk" href="#" ${cur} aria-expanded="false">${name}${I.chev}</a>${name === "Books" ? fxBooks() : fxPicks()}</div>`;
         }).join("") + `</nav>`;
       }
       right = (s.extrasDesk ? s.extrasDesk() : "") + themeBtn(theme) + s.account();

@@ -62,18 +62,19 @@ One `header` across the top of every page, the same on public, app and admin pag
 - **Spacing.** 12px between the logo and the switcher, 24px from the switcher to the section links, 20px between links, 8px between controls in the right cluster.
 - **Type.** Section links and the switcher at 14px in the site's UI face, weight 500 for the current page, 400 otherwise; the current link also gets a 2px underline in the accent, so it is not told by colour alone.
 - **Controls.** Every icon control is a 36px square target with an 18px glyph from Capsomer's icon family (24 box, 1.6 stroke), a tooltip on hover and focus naming it and its key, and its own accessible name. The avatar is a 32px circle inside the same 36px target.
-- **Menus.** The switcher, a section link with children (Foxing's Books and Picks) and the account each open a panel (the Popover API: light dismiss, Esc, focus handed back). On a mouse they open at once on hover, with no delay, and on click; on touch, on tap. Panels line up with the edge of their trigger and never cover the header.
+- **Menus.** What a panel holds and how it is laid out is the site's (Foxing's Books and Celebrity Picks panels and its account panel stay exactly as Foxing draws them; Dustin, 2026-10-13). Capsomer fixes only how panels behave: the switcher, a section link with children and the account each open a panel (the Popover API: light dismiss, Esc, focus handed back). On a mouse they open at once on hover, with no delay, and on click; on touch, on tap. Panels line up with the edge of their trigger and never cover the header.
 - **One bottom edge**, 1px, in the band's own line colour.
 
 **Owned by each site, from this list and nothing else:**
 
 | Slot | What the site gives | Foxhound | Foxing |
 |---|---|---|---|
-| Logo | an SVG or image, at most 24px tall and 160px wide, and its name | `fo`x`hound` in DM Mono, amber x | a fox mark and "Foxing" in Fraunces (question 8) |
-| Accent | its colour family | amber (question 1) | Foxing orange (question 1) |
+| Logo | an SVG or image, at most 24px tall and 160px wide, and its name | `fo`x`hound` in DM Mono, teal x | a fox mark and "Foxing" in Fraunces (question 8) |
+| Accent | its colour family | teal (answered) | Capsomer's fox, `#cc4f0c` (answered) |
 | Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; optional `data-band="dark"` (dark in both themes) and `data-translucent` | dark in both themes | the page's ground, translucent |
 | UI face | `--font-ui` | DM Sans | DM Sans |
 | Extras | up to two icon controls and one button | Free audit (signed out) | Search, the bell (signed in), Join free (signed out) |
+| Panels | what each menu holds and its layout | its gear and account lists | Books, Celebrity Picks, the account panel, as today |
 
 A site that wants anything else in its header asks for a change to this design; it does not add it locally.
 
@@ -146,9 +147,11 @@ One row, 56px: the logo left; the theme control, the account (or Sign in as an i
 
 ## 7. Colour families
 
+*Answered: Foxhound stays teal on its dark band; Foxing moves to `#cc4f0c`. The rest of this section is the background to that question.*
+
 Capsomer lists Foxhound as "teal" (`tokens/family-teal.css`, seed `#008489`, locked 2026-10-01 with amber rejected). Foxhound ships amber `#f0b429` on a dark band (`#1a1c18`) in both themes. Dustin's message of 2026-10-13 calls amber on a dark band Foxhound's real look, which reverses the earlier lock, so it is question 1 rather than a fix.
 
-If amber: `tokens/palette.mjs` gains an amber family seeded at `#f0b429` (step 9), generated and contrast-checked like the others. Amber is too light for text on a light ground, so its accent text is the deep step (Foxhound already splits `--amber-text: #8a5c06` in light). Teal stays a chart series colour; `family-teal.css` goes in the same release, with no app using it.
+With teal kept, Foxhound's job moves its amber to the teal family: on the always-dark band the accent is teal's dark-theme primary (`#249398`), and on the page it is the family's accent text in each theme.
 
 Foxing has the same kind of drift: Capsomer's fox family is `#cc4f0c`, and Foxing ships `#d4622e` (light) and `#e07840` (dark).
 
@@ -165,16 +168,20 @@ Foxing has the same kind of drift: Capsomer's fox family is `#cc4f0c`, and Foxin
 
 - New: `header.cap-site-header` (`data-cap="site-header"`, `capsomer/react/site-header`, `capsomer/behaviour/site-header`) with `.cap-site-header-logo`, `.cap-site-header-switcher`, `nav.cap-site-header-sections`, `.cap-site-header-extras`, `.cap-site-header-theme`, `.cap-site-header-account`, `.cap-site-header-menu` (phone), and the shared sheet.
 - AdminShell: takes the header's props (`logo`, `band`, `extras`, `account`) and draws the header; gains `variant="owner" | "user"` (owner keeps the strip of app tiles; user has none and a 288px menu); removes the strip's tools (search, inbox, help, avatar), `.cap-admin-title`, `.cap-admin-title-mark`, the page bar's theme switch, and More on the phone tab bar. Foxing joins `FAMILY_APPS` (seventh, before Capsomer).
-- Theme: a one-button form of the theme switch (if question 2 is "icon"), the same storage and `toggleTheme()`.
-- Tokens: the amber family (if question 1 is "amber"); `family-teal.css` removed.
+- Theme: a one-button form of the theme switch, the same storage and `toggleTheme()`.
+- Tokens: none change (Foxhound keeps teal, Foxing takes the fox family as it is).
 
 ## 9. Questions for Dustin
 
-The mockup draws the recommended answer to each.
+**Answered (2026-10-13, one at a time):**
 
-1. **Foxhound's colour.** Amber on the dark band, as Foxhound ships it, replacing the teal locked on 2026-10-01? *Recommended: amber.* And Foxing: its shipped orange (`#d4622e`) or Capsomer's `#cc4f0c`? *Recommended: what Foxing ships.*
-2. **The theme control.** One icon button, as both sites have it and as your note of 2026-10-06 prefers, or the Light/Dark worded switch you ruled for on 2026-10-01 and AdminShell uses? *Recommended: icon.*
-3. **Foxhound's gear.** Its rows move into the account menu, so the account is last and there is one "you" menu, or the gear stays as a second menu? *Recommended: fold it in.*
+- 1. Foxhound stays **teal** (Capsomer's teal family, `#008489`), keeping its **dark band** in both themes; the amber goes. Foxing moves to **Capsomer's `#cc4f0c`**. Capsomer gains no amber family and keeps teal.
+- 2. The theme control is **one icon button**, everywhere, with a tooltip that says what it does.
+- Foxing's menus stay as Foxing draws them; the frame does not change their contents.
+
+**Still open:**
+
+3. **Foxhound's account switcher and gear.** They do different jobs: the switcher picks which business you are working in; the gear holds that business's settings, Help, Admin and Sign out. Options: move the switcher to the left beside the product switcher (it says where you are) and keep the gear last; keep both on the right with the gear last; or merge them into one menu. *Recommended: switcher to the left, gear last* (the mockup draws it).
 4. **Section links.** On the left after the switcher, or on the right before the controls, as Foxhound has them? *Recommended: left.* The right cluster changes width between signed out and signed in, so links on the right would move.
 5. **Phone tab bar.** On app and admin pages, keep the bottom bar's four pages and drop More, since the header's menu button opens the same sheet? *Recommended: yes.*
 6. **Size.** 56px and sticky on every site (Foxing is 64px; Foxhound is not sticky)? *Recommended: yes.*
@@ -190,7 +197,7 @@ Still open from #65 and unchanged by this: Foxhound's mark (item 15), which show
 
 Each job is a pull request that stops at green; none merges.
 
-1. **Capsomer 0.9.0.** The site header component; AdminShell on it with the owner and user variants; the theme button; the amber family; states page specimens (every surface, both themes, desktop and phone); browser tests for the order, the 56px height, sticky, the phone row, keyboard and contrast; side-by-side screenshots for sign-off.
+1. **Capsomer 0.9.0.** The site header component; AdminShell on it with the owner and user variants; the theme button; states page specimens (every surface, both themes, desktop and phone); browser tests for the order, the 56px height, sticky, the phone row, keyboard and contrast; side-by-side screenshots for sign-off.
 2. **Foxhound: #40 updated, not replaced.** Merge main into it (it has a merge conflict today); pin 0.9.0; the admin on the new AdminShell; the public and app header on the site header (the gear folded into the account menu); the merchant app on the dashboard variant; the approved differences recorded; retake every screenshot. The Cloudflare Access steps in #40 stay yours, before merge.
 3. **Foxing.** Load Capsomer's header CSS (Foxing does not use Capsomer yet; it stays on its own CSS otherwise); its public and app header on the site header; the fox mark; its admin onto AdminShell 0.9.0.
 4. **Capsid Portal**, 5. **Carrel**, 6. **dustinedwards.info**, 7. **germomics**: Part 2 of job_5ebb352157e5, moving from their current pin straight to 0.9.0, one PR each; their public headers (dustinedwards.info, germomics) on the site header in the same PR.
