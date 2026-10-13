@@ -1,0 +1,636 @@
+<title>Family Site Header</title>
+<meta name="description" content="Mockup for docs/design/design-site-header.md: one header on Foxhound and Foxing public, app and admin pages.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Fraunces:opsz,wght@9..144,600&family=Martian+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a review sheet. A quiet violet-grey page (Capsomer's family) holds each site's specimens,
+   which carry their own tokens; the page's chrome never borrows a site's colour. */
+:root {
+  --bg: #f6f5f8;
+  --panel: #ffffff;
+  --fg: #1d1a24;
+  --muted: #5f596b;
+  --line: #dcd8e3;
+  --accent: #5b3a92;
+  --accent-soft: #ece5f7;
+  --fixed: #2f6f5e;
+  --owned: #9a5a0c;
+  --font-doc: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-data: "Martian Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131118; --panel: #1b1922; --fg: #ece9f2; --muted: #a49eb1; --line: #2e2a38;
+    --accent: #b99be8; --accent-soft: #2a2238; --fixed: #7cc7b0; --owned: #e9ad5f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131118; --panel: #1b1922; --fg: #ece9f2; --muted: #a49eb1; --line: #2e2a38;
+  --accent: #b99be8; --accent-soft: #2a2238; --fixed: #7cc7b0; --owned: #e9ad5f; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-doc); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; display: grid; gap: 36px; }
+h1 { font-size: 1.9rem; line-height: 1.15; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font-size: 1.3rem; margin: 0; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 68ch; margin: 6px 0 0; }
+.mono { font-family: var(--font-data); font-size: 0.78rem; }
+.top { display: grid; gap: 18px; }
+.controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line); }
+.seg { display: inline-flex; align-items: center; gap: 8px; }
+.seg > span { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.seg .opts { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel); }
+.seg button { font: inherit; font-size: 0.85rem; border: 0; background: transparent; color: var(--fg); padding: 6px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.seg button:focus-visible, .x:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Anatomy */
+.anat { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 14px; }
+.anat-bar { display: flex; align-items: stretch; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.slot { border-radius: 6px; padding: 8px 10px; font-size: 0.8rem; white-space: nowrap; display: grid; gap: 2px; border: 1px dashed; }
+.slot b { font-weight: 600; }
+.slot i { font-style: normal; font-size: 0.7rem; color: var(--muted); }
+.slot.owned { border-color: var(--owned); color: var(--owned); }
+.slot.fixed { border-color: var(--fixed); color: var(--fixed); border-style: solid; }
+.slot.grow { flex: 1; min-width: 120px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 0.85rem; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; border: 2px dashed var(--owned); }
+.legend span.f::before { border: 2px solid var(--fixed); }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 24px; margin: 0; padding: 0; list-style: none; font-size: 0.88rem; }
+.rules li { min-width: 0; }
+.rules b { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+
+.site { display: grid; gap: 22px; }
+.site-head { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.site-head p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.spec { display: grid; gap: 10px; }
+.spec-label { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.spec-label h3 { margin: 0; font-size: 1rem; }
+.spec-label p { margin: 0; color: var(--muted); font-size: 0.86rem; max-width: 80ch; }
+.frames { display: grid; gap: 14px; }
+body.w-phone .frames { grid-template-columns: repeat(auto-fill, minmax(min(390px, 100%), 390px)); }
+.frames > div { min-width: 0; }
+.fit-inner { width: max-content; }
+.cap { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 4px; }
+.fit { width: 100%; overflow: hidden; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); }
+.fit-inner { transform-origin: 0 0; }
+.note { font-size: 0.85rem; color: var(--muted); max-width: 80ch; }
+
+/* ---------- Specimens: each frame carries its site's tokens ---------- */
+.fr { position: relative; overflow: hidden; background: var(--pg); color: var(--tx); font-family: var(--font-ui); font-size: 14px; line-height: 1.45; }
+.fr.desk { width: 1200px; height: 470px; }
+.fr.phone { width: 390px; height: 560px; }
+.fr *:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 6px; }
+
+.fh { --font-ui: "DM Sans", Arial, sans-serif; --band: #1a1c18; --band-fg: #f0ede8; --band-mu: #a8a49e; --band-ln: #2a2b28; --band-hover: #2a2c26; --ac: #249398; --on-ac: #070f0f; --ring: #249398; }
+.fh.light { --strip: #e4e2db; --pg: #f7f6f2; --sf: #ffffff; --tx: #14150f; --mu: #595c56; --ln: #cccbc3; --act: #01585c; --menu: #efeee9; --hov: #e6e4de; --cur: #0c1e1f; --cur-fg: #e3eeee; --pop: #ffffff; --ring: #008489; }
+.fh.dark { --strip: #1d1f1b; --pg: #111210; --sf: #181917; --tx: #e5e8e2; --mu: #a8a49e; --ln: #2a2b28; --act: #97c8cb; --menu: #151614; --hov: #252720; --cur: #e3eeee; --cur-fg: #0c1e1f; --pop: #1f211d; }
+.fx { --font-ui: "DM Sans", Arial, sans-serif; }
+.fx.light { --strip: #ebe0c9; --pg: #faf6ee; --sf: #ffffff; --tx: #16100b; --mu: #815e41; --ln: #e5d8bf; --ac: #b64404; --act: #822e02; --on-ac: #ffffff; --band: rgba(250, 246, 238, 0.85); --band-fg: #16100b; --band-mu: #3e3028; --band-ln: #e5d8bf; --band-hover: #efe4cf; --menu: #f2ead8; --hov: #e9dcc2; --cur: #2b130a; --cur-fg: #f8e7e1; --pop: #ffffff; --ring: #cc4f0c; }
+.fx.dark { --strip: #0e0b07; --pg: #16100b; --sf: #1f1710; --tx: #f5edde; --mu: #c4ae96; --ln: #34281c; --ac: #dd5f25; --act: #f2aa8d; --on-ac: #120c09; --band: rgba(22, 16, 11, 0.85); --band-fg: #f5edde; --band-mu: #c4ae96; --band-ln: #34281c; --band-hover: #2a1f16; --menu: #100d08; --hov: #261c13; --cur: #f8e7e1; --cur-fg: #2b130a; --pop: #2a1f16; --ring: #cc4f0c; }
+
+/* The header: fixed by Capsomer */
+.hd { position: sticky; top: 0; z-index: 5; height: 56px; display: flex; align-items: center; gap: 24px; padding: 0 24px; background: var(--band); color: var(--band-fg); border-bottom: 1px solid var(--band-ln); }
+.fx .hd { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.phone .hd { padding: 0 16px; gap: 12px; }
+.hd-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.hd-links { display: flex; align-items: center; gap: 20px; }
+.hd-links.at-center { position: absolute; left: 50%; transform: translateX(-50%); }
+.hd-links.at-right { margin-left: auto; }
+.hd-links.at-right + .hd-right { margin-left: 0; }
+.hd-links.at-right + .hd-right::before { content: ""; width: 1px; height: 16px; background: var(--band-ln); margin: 0 8px 0 4px; }
+.hd-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.logo { display: inline-flex; align-items: center; gap: 8px; color: var(--band-fg); text-decoration: none; height: 24px; white-space: nowrap; }
+.wm-fh { font-family: "DM Mono", ui-monospace, monospace; font-size: 18px; font-weight: 500; letter-spacing: -0.5px; }
+.wm-fh em { font-style: normal; color: var(--ac); }
+.wm-fx { font-family: "Fraunces", Georgia, serif; font-size: 20px; font-weight: 600; }
+.wm-fx svg { width: 22px; height: 22px; color: var(--ac); }
+.lk { position: relative; color: var(--band-mu); text-decoration: none; font-size: 14px; padding: 4px 0; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+.lk:hover { color: var(--band-fg); }
+.lk[aria-current="page"] { color: var(--band-fg); font-weight: 500; }
+.lk[aria-current="page"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; background: var(--ac); }
+.lk svg, .sw svg.chev { width: 12px; height: 12px; }
+.sw { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid var(--band-ln); border-radius: 8px; background: transparent; color: var(--band-fg); font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; position: relative; }
+.sw:hover { background: var(--band-hover); }
+.sw .mk { width: 16px; height: 16px; }
+.ib { width: 36px; height: 36px; display: inline-grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: var(--band-mu); cursor: pointer; position: relative; padding: 0; }
+.ib:hover { background: var(--band-hover); color: var(--band-fg); }
+.ib svg { width: 18px; height: 18px; }
+.btn { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 8px; background: var(--ac); color: var(--on-ac); font-weight: 600; font-size: 13.5px; text-decoration: none; white-space: nowrap; border: 0; }
+.signin { color: var(--band-fg); text-decoration: none; font-size: 14px; padding: 6px 4px; white-space: nowrap; }
+.av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em; background: var(--ac); color: var(--on-ac); }
+.fx .av { background: var(--cur); color: var(--cur-fg); }
+.acct { width: 36px; height: 36px; border: 0; padding: 0; background: transparent; display: grid; place-items: center; cursor: pointer; border-radius: 50%; }
+.bub { position: absolute; top: 1px; right: -2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--ac); color: var(--on-ac); font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; box-shadow: 0 0 0 2px var(--band-solid, #1a1c18); }
+.fx.light .bub { box-shadow: 0 0 0 2px #faf6ee; }
+.fx.dark .bub { box-shadow: 0 0 0 2px #16100b; }
+.sw .bub { position: static; box-shadow: none; }
+.sep { width: 1px; height: 16px; background: var(--band-ln); }
+.tip { position: absolute; top: 44px; left: 50%; transform: translateX(-50%); background: var(--pop); color: var(--tx); border: 1px solid var(--ln); box-shadow: 0 6px 18px rgb(0 0 0 / 0.18); border-radius: 6px; padding: 4px 8px; font-size: 12px; white-space: nowrap; display: none; z-index: 30; pointer-events: none; }
+.ib:hover .tip, .ib:focus-visible .tip { display: block; }
+.tip kbd { font-family: inherit; border: 1px solid var(--ln); border-radius: 4px; padding: 0 4px; margin-left: 6px; font-size: 11px; }
+
+/* Panels */
+.has-pop { position: relative; }
+.pop { position: absolute; top: calc(100% + 8px); min-width: 220px; background: var(--pop); color: var(--tx); border: 1px solid var(--ln); border-radius: 10px; box-shadow: 0 14px 34px rgb(0 0 0 / 0.22); padding: 6px; display: none; z-index: 20; font-size: 13.5px; }
+.pop.l { left: 0; } .pop.r { right: 0; }
+.has-pop.open > .pop, .has-pop:hover > .pop { display: block; }
+.pop a { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 6px; color: var(--tx); text-decoration: none; }
+.pop a:hover { background: var(--hov); }
+.pop a[aria-current] { background: var(--hov); font-weight: 600; }
+.pop a .mk { width: 18px; height: 18px; color: var(--act); flex: none; }
+.pop a .ct { margin-left: auto; min-width: 20px; height: 18px; border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; background: var(--mu); color: var(--pg); }
+.pop a .ct.need { background: var(--ac); color: var(--on-ac); }
+.pop hr { border: 0; border-top: 1px solid var(--ln); margin: 6px 4px; }
+.pop .who { padding: 8px 10px 10px; display: grid; gap: 1px; }
+.pop .who b { font-size: 14px; }
+.pop .who span, .pop .grp { color: var(--mu); font-size: 12px; }
+.pop .grp { padding: 6px 10px 2px; text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; }
+.pop .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px 6px 8px; text-align: center; }
+.pop .stats b { display: block; font-size: 16px; }
+.pop .stats span { font-size: 11px; color: var(--mu); }
+.pop.scroll { max-height: 360px; overflow: auto; }
+
+/* Foxing's own panels, as Foxing draws them */
+.pop.mega { padding: 18px; border-radius: 14px; }
+.mega .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.mega .eb { font-family: "DM Mono", ui-monospace, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mu); margin-bottom: 8px; }
+.mega a { padding: 6px 8px; color: var(--mu); }
+.mega .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mega .chips a { padding: 4px 10px; border-radius: 999px; background: var(--hov); color: var(--act); font-family: "DM Mono", ui-monospace, monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.mega .pick { display: block; border: 1px solid var(--ln); background: var(--menu); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
+.mega .pick b { display: block; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 14px; color: var(--tx); margin-top: 2px; }
+.mega .pick span { font-size: 12px; color: var(--mu); }
+.mega .two { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.mega .foot { display: flex; justify-content: space-between; border-top: 1px solid var(--ln); margin-top: 10px; padding-top: 10px; }
+.mega .foot a:first-child { color: var(--act); }
+.pop.fxacct { padding: 0; width: 320px; overflow: hidden; border-radius: 14px; }
+.fxacct .id { display: flex; gap: 12px; align-items: center; padding: 12px 16px; background: var(--menu); border-bottom: 1px solid var(--ln); }
+.fxacct .id b { font-size: 14px; font-weight: 500; display: flex; gap: 6px; align-items: center; }
+.fxacct .tier { font-family: "DM Mono", ui-monospace, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; padding: 1px 6px; border-radius: 999px; background: var(--hov); color: var(--act); }
+.fxacct .id span.u { font-family: "DM Mono", ui-monospace, monospace; font-size: 12px; color: var(--mu); }
+.fxacct dl { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-bottom: 1px solid var(--ln); text-align: center; }
+.fxacct dl div { padding: 10px 6px; }
+.fxacct dl div + div { border-left: 1px solid var(--ln); }
+.fxacct dd { margin: 0; font-family: "Fraunces", Georgia, serif; font-size: 20px; }
+.fxacct dt { font-family: "DM Mono", ui-monospace, monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--mu); }
+.fxacct .sec { padding: 4px 0; }
+.fxacct .sec + .sec { border-top: 1px solid var(--ln); }
+.fxacct .sec a { border-radius: 0; padding: 6px 16px; gap: 10px; }
+.fxacct .sec a svg { width: 16px; height: 16px; color: var(--mu); flex: none; }
+.fxacct .sec a small { display: block; font-size: 11.5px; color: var(--mu); }
+.fxacct .coll { display: flex; gap: 10px; padding: 6px 16px; font-size: 13.5px; }
+.fxacct .coll svg { width: 16px; height: 16px; color: var(--mu); flex: none; margin-top: 2px; }
+.fxacct .coll span span { display: block; font-size: 11.5px; color: var(--mu); }
+.fxacct .ft { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ln); }
+.fxacct .ft a { display: grid; justify-items: center; gap: 4px; padding: 10px 0; border-radius: 0; font-family: "DM Mono", ui-monospace, monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mu); }
+.fxacct .ft a + a { border-left: 1px solid var(--ln); }
+.fxacct .ft a svg { width: 16px; height: 16px; }
+.acsw .ini { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; background: var(--ac); color: var(--on-ac); font-size: 11px; font-weight: 600; }
+.crumb { color: var(--band-ln); font-size: 18px; margin: 0 -4px; }
+
+/* Page bodies */
+.body-pub { padding: 56px 24px 0; display: grid; gap: 14px; max-width: 760px; }
+.phone .body-pub { padding: 32px 16px 0; }
+.body-pub .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--act); font-weight: 600; }
+.body-pub h4 { margin: 0; font-size: 38px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 600; }
+.phone .body-pub h4 { font-size: 28px; }
+.fx .body-pub h4 { font-family: "Fraunces", Georgia, serif; }
+.body-pub p { margin: 0; color: var(--mu); font-size: 16px; max-width: 56ch; }
+.sub { display: flex; gap: 4px; padding: 0 24px; height: 44px; align-items: center; border-bottom: 1px solid var(--ln); background: var(--menu); }
+.phone .sub { padding: 0 12px; overflow: hidden; }
+.sub a { padding: 4px 12px; border-radius: 6px; font-size: 13px; color: var(--mu); text-decoration: none; white-space: nowrap; }
+.sub a[aria-current] { background: var(--hov); color: var(--tx); font-weight: 500; }
+.app-body { padding: 24px; display: grid; gap: 16px; }
+.phone .app-body { padding: 16px; }
+.app-body h5 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.phone .tiles { grid-template-columns: 1fr 1fr; }
+.tile { background: var(--sf); border: 1px solid var(--ln); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; }
+.tile span { font-size: 12px; color: var(--mu); }
+.tile b { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tile i { font-style: normal; font-size: 12px; color: var(--mu); }
+
+/* Admin under the header */
+.adm { display: grid; grid-template-columns: 232px 1fr; height: calc(100% - 56px); }
+.adm.collapsed { grid-template-columns: 80px 1fr; }
+.adm.user { grid-template-columns: 288px 1fr; }
+.adm.owner { grid-template-columns: 56px 232px 1fr; }
+.adm.owner.collapsed { grid-template-columns: 56px 80px 1fr; }
+.strip { background: var(--strip); border-right: 1px solid var(--ln); display: grid; align-content: start; justify-items: center; gap: 6px; padding: 10px 0; }
+.strip a { position: relative; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; color: var(--act); }
+.strip a:hover { background: var(--hov); }
+.strip a .mk { width: 20px; height: 20px; }
+.strip a[aria-current] { background: var(--cur); color: var(--cur-fg); }
+.strip a .bub { top: -2px; right: -4px; box-shadow: 0 0 0 2px var(--strip); }
+.strip hr { width: 24px; border: 0; border-top: 1px solid var(--ln); margin: 2px 0; }
+.menu { background: var(--menu); border-right: 1px solid var(--ln); padding: 10px 12px; display: grid; align-content: start; gap: 2px; overflow: hidden; }
+.menu .col { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; color: var(--mu); font-size: 12px; border: 0; background: transparent; border-radius: 8px; cursor: pointer; font-family: inherit; }
+.menu .col:hover { background: var(--hov); }
+.menu .col svg { width: 16px; height: 16px; }
+.menu .g { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--mu); padding: 12px 10px 4px; height: 30px; }
+.menu a { display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: 8px; color: var(--tx); text-decoration: none; font-size: 13.5px; white-space: nowrap; }
+.menu a svg { width: 16px; height: 16px; flex: none; color: var(--mu); }
+.menu a:hover { background: var(--hov); }
+.menu a[aria-current] { background: var(--cur); color: var(--cur-fg); font-weight: 500; }
+.menu a[aria-current] svg { color: var(--cur-fg); }
+.menu a .ct { margin-left: auto; min-width: 20px; height: 18px; border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; background: var(--mu); color: var(--pg); }
+.menu a .ct.need { background: var(--ac); color: var(--on-ac); }
+.adm.collapsed .menu .lbl, .adm.collapsed .menu .ct, .adm.collapsed .menu .col span { display: none; }
+.adm.collapsed .menu .g { font-size: 0; position: relative; }
+.adm.collapsed .menu .g::after { content: ""; position: absolute; left: 14px; right: 14px; top: 18px; border-top: 1px solid var(--ln); }
+.pagebar { display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 24px; border-bottom: 1px solid var(--ln); }
+.pagebar .pn { font-weight: 600; font-size: 15px; }
+.pagebar .fresh { color: var(--mu); font-size: 13px; }
+.pagebar .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.pagebar .chip { height: 30px; display: inline-flex; align-items: center; padding: 0 10px; border: 1px solid var(--ln); border-radius: 7px; font-size: 12.5px; color: var(--tx); background: var(--sf); }
+.pagebar .ib { color: var(--mu); }
+.pagebar .ib:hover { background: var(--hov); color: var(--tx); }
+.pagebar .tip { top: 40px; left: auto; right: 0; transform: none; }
+.adm-main { min-width: 0; overflow: hidden; }
+.adm-main .app-body { padding: 20px 24px; }
+.rowlist { background: var(--sf); border: 1px solid var(--ln); border-radius: 10px; }
+.rowlist div { display: flex; gap: 12px; padding: 10px 14px; font-size: 13px; border-top: 1px solid var(--ln); }
+.rowlist div:first-child { border-top: 0; }
+.rowlist div span:last-child { margin-left: auto; color: var(--mu); font-variant-numeric: tabular-nums; }
+.dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex: none; background: var(--mu); }
+.dot.crit { background: #d4483f; }
+
+/* Phone tab bar and sheet */
+.tabs { position: absolute; left: 0; right: 0; bottom: 0; height: 60px; display: grid; grid-template-columns: repeat(4, 1fr); background: var(--menu); border-top: 1px solid var(--ln); }
+.tabs a { display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--mu); text-decoration: none; font-size: 12px; }
+.tabs a svg { width: 20px; height: 20px; }
+.tabs a[aria-current] { color: var(--tx); font-weight: 600; }
+.tabs a[aria-current] svg { background: var(--hov); border-radius: 10px; padding: 2px 10px; width: 42px; height: 24px; box-sizing: border-box; }
+.sheet { position: absolute; inset: 56px 0 0 0; background: rgb(0 0 0 / 0.42); display: none; z-index: 8; }
+.fr.sheet-open .sheet { display: block; }
+.sheet-in { position: absolute; left: 0; right: 0; bottom: 0; max-height: 92%; background: var(--pop); color: var(--tx); border-radius: 16px 16px 0 0; display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; }
+.sheet-h { padding: 14px 18px 8px; font-weight: 600; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+.sheet-h::before { content: ""; position: absolute; top: 6px; left: 50%; width: 36px; height: 4px; margin-left: -18px; background: var(--ln); border-radius: 2px; }
+.sheet-b { overflow: auto; padding: 0 10px 8px; }
+.sheet-b .grp { padding: 10px 8px 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--mu); }
+.sheet-b a { display: flex; align-items: center; gap: 12px; padding: 9px 8px; color: var(--tx); text-decoration: none; border-radius: 8px; font-size: 14.5px; }
+.sheet-b a .mk { width: 18px; height: 18px; color: var(--act); }
+.sheet-b a[aria-current] { background: var(--hov); font-weight: 600; }
+.sheet-b a .ct { margin-left: auto; min-width: 20px; height: 18px; border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; background: var(--ac); color: var(--on-ac); }
+.sheet-b .btn { width: 100%; justify-content: center; margin: 8px 0 4px; height: 40px; }
+.sheet-f { border-top: 1px solid var(--ln); padding: 6px 10px 10px; display: grid; }
+.sheet-f a { padding: 9px 8px; color: var(--tx); text-decoration: none; font-size: 14.5px; }
+
+/* Menus forced open by the review control */
+body.m-acct .fr.desk .has-pop.p-acct > .pop { display: block; }
+body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
+@media (prefers-reduced-motion: no-preference) { .seg button { transition: background 0.12s; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="mono" style="color: var(--muted)">capsomer · docs/design/design-site-header.md · mockup</div>
+      <h1>One header on every surface</h1>
+      <p class="lead">Foxhound and Foxing: public pages, a user's dashboard, and your own admin with its strip, drawn with the recommended answer to each question in the design. Every menu opens on hover or click; the controls below switch the theme, the width and which menu is held open.</p>
+    </div>
+    <section class="anat" aria-label="The frame">
+      <div class="anat-bar" role="img" aria-label="Header slots from left to right: logo, switcher, section links, space, extras, theme, account">
+        <div class="slot owned"><b>Logo</b><i>site's mark, 24px tall</i></div>
+        <div class="slot fixed"><b>Switcher</b><i>products; none in your admin</i></div>
+        <div class="slot owned grow"><b>Section links</b><i>public only; the site picks left, centre or right of this space</i></div>
+        <div class="slot owned"><b>Extras</b><i>up to 2 icons + 1 button</i></div>
+        <div class="slot fixed"><b>Theme</b><i>one icon</i></div>
+        <div class="slot fixed"><b>Account</b><i>always last</i></div>
+      </div>
+      <div class="legend"><span class="f">Fixed by Capsomer: place, order, size, behaviour</span><span>Filled by the site: logo, extras, plus its accent, band colour and UI face</span></div>
+      <ul class="rules">
+        <li><b>Height</b>56px at every width</li>
+        <li><b>Position</b>Sticky, full bleed, 24px sides (16px phone)</li>
+        <li><b>Type</b>14px in the site's UI face; current link 500 with a 2px accent line</li>
+        <li><b>Controls</b>36px targets, 18px glyphs, a tooltip each</li>
+        <li><b>Menus</b>Open at once on hover, and on click or tap; Esc closes</li>
+        <li><b>Phone</b>Logo left; theme, account, menu right; everything else in the sheet</li>
+      </ul>
+    </section>
+  </header>
+
+  <div class="controls" role="toolbar" aria-label="View">
+    <div class="seg"><span id="l-th">Theme</span><div class="opts" role="group" aria-labelledby="l-th">
+      <button class="x" id="th-light" data-k="th" data-v="light" aria-pressed="false">Light</button>
+      <button class="x" id="th-dark" data-k="th" data-v="dark" aria-pressed="false">Dark</button>
+      <button class="x" id="th-both" data-k="th" data-v="both" aria-pressed="true">Both</button>
+    </div></div>
+    <div class="seg"><span id="l-w">Width</span><div class="opts" role="group" aria-labelledby="l-w">
+      <button class="x" id="w-desk" data-k="w" data-v="desk" aria-pressed="true">Desktop</button>
+      <button class="x" id="w-phone" data-k="w" data-v="phone" aria-pressed="false">Phone</button>
+    </div></div>
+    <div class="seg"><span id="l-m">Hold open</span><div class="opts" role="group" aria-labelledby="l-m">
+      <button class="x" id="m-none" data-k="m" data-v="none" aria-pressed="true">Nothing</button>
+      <button class="x" id="m-sw" data-k="m" data-v="sw" aria-pressed="false">Switcher</button>
+      <button class="x" id="m-acct" data-k="m" data-v="acct" aria-pressed="false">Account</button>
+    </div></div>
+  </div>
+
+  <main id="specs"></main>
+
+  <p class="note">Numbers, names and accounts in the frames are examples, not real data. Foxing's mark is a placeholder until question 8 is answered; Foxhound's x stays until its mark is picked (capsomer #65, item 15).</p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const svg = (vb, body, cls) => `<svg class="${cls || ""}" viewBox="${vb}" aria-hidden="true" focusable="false">${body}</svg>`;
+  const st = (d, w) => `<path fill="none" stroke="currentColor" stroke-width="${w || 1.6}" stroke-linecap="round" stroke-linejoin="round" d="${d}"/>`;
+  const I = {
+    search: svg("0 0 24 24", '<circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/>' + st("m20 20-3.2-3.2")),
+    bell: svg("0 0 24 24", st("M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6M10 19a2 2 0 0 0 4 0")),
+    inbox: svg("0 0 24 24", st("M3 13h5l1.5 3h5L16 13h5M5 5h14l2 8v6H3v-6z")),
+    moon: svg("0 0 24 24", st("M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z")),
+    sun: svg("0 0 24 24", '<circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>' + st("M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4")),
+    chev: svg("0 0 24 24", st("m6 9 6 6 6-6", 2), "chev"),
+    menu: svg("0 0 24 24", st("M4 7h16M4 12h16M4 17h16", 1.8)),
+    user: svg("0 0 24 24", '<circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>' + st("M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6")),
+    refresh: svg("0 0 24 24", st("M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4")),
+    collapse: svg("0 0 24 24", st("M4 5h16v14H4zM9 5v14M15 10l-2 2 2 2")),
+    grid: svg("0 0 24 24", st("M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z")),
+    people: svg("0 0 24 24", '<circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/>' + st("M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5M16 5.2a3 3 0 0 1 0 5.6M18 15c1.6.6 2.6 2.2 3 5")),
+    store: svg("0 0 24 24", st("M4 9h16l-1-4H5zM5 9v11h14V9M9 20v-6h6v6")),
+    gauge: svg("0 0 24 24", st("M4 17a8 8 0 1 1 16 0M12 17l4-5")),
+    clock: svg("0 0 24 24", '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>' + st("M12 8v4l3 2")),
+    hook: svg("0 0 24 24", st("M9 4v7a3 3 0 0 0 6 0M15 11V9M6 20h12M12 14v6")),
+    brake: svg("0 0 24 24", '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>' + st("M12 8v5M12 16v.5")),
+    stack: svg("0 0 24 24", st("M12 4 3 9l9 5 9-5zM3 14l9 5 9-5")),
+    pen: svg("0 0 24 24", st("M4 20h4L19 9l-4-4L4 16zM13 7l4 4")),
+    share: svg("0 0 24 24", st("M8 12h8M14 7l5 5-5 5M5 5v14")),
+    list: svg("0 0 24 24", st("M8 6h12M8 12h12M8 18h12M4 6h.5M4 12h.5M4 18h.5", 1.8)),
+    book: svg("0 0 24 24", st("M4 5c3-1 6-1 8 1 2-2 5-2 8-1v14c-3-1-6-1-8 1-2-2-5-2-8-1zM12 6v14")),
+    star: svg("0 0 24 24", st("m12 4 2.4 5 5.6.6-4.2 3.8 1.2 5.6L12 16.2 7 19l1.2-5.6L4 9.6 9.6 9z")),
+    chart: svg("0 0 24 24", st("M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3")),
+    home: svg("0 0 24 24", st("M4 11 12 4l8 7v9h-5v-6H9v6H4z")),
+  };
+  const M = {
+    portal: svg("0 0 24 24", '<g fill="none" stroke="currentColor" stroke-linejoin="round"><path stroke-width="1.7" d="M12 1.8 21.4 7.2v9.6L12 22.2 2.6 16.8V7.2z"/><path stroke-width="1.2" d="M12 1.8v6.6l9.4-1.2M12 8.4 2.6 7.2M6.8 14.6 2.6 16.8M17.2 14.6l4.2 2.2M6.8 14.6 12 22.2l5.2-7.6"/><path stroke-width="1.2" fill="currentColor" fill-opacity="0.25" d="M12 8.4l5.2 6.2H6.8z"/></g>', "mk"),
+    carrel: svg("0 0 20 20", '<path fill="currentColor" fill-rule="evenodd" d="M2.5 4.2C5.2 3 8 3.3 10 5c2-1.7 4.8-2 7.5-.8v11.6C14.8 14.6 12 14.9 10 16.6 8 14.9 5.2 14.6 2.5 15.8zM9.25 5.6v10h1.5v-10z"/>', "mk"),
+    info: svg("60 10 260 340", '<g fill="currentColor"><path d="M271.75 306.65A112.5 112.5 0 1 1 167.85 117.27l9.36 42.21a69.2 69.2 0 1 0 61.62 114.25z"/><path d="M212 273.2h78.8a39.4 39.4 0 0 1-78.8 0z"/><path d="M81.4 341.7a44.9 44.9 0 0 1 37.7-29.08h152.5a44.9 44.9 0 0 1 37.7 29.08z"/><path d="M173.37 117.1a111.6 111.6 0 0 1 114.99 53.36l18.27 31.02-31.19 18.37-18.27-31.02a75.4 75.4 0 0 0-63.42-37.11z"/><path d="M109.47 86.65l34.12-20.09 73.85 125.36-34.12 20.1z"/><path d="M134.88 51.38 100.42 71.68 80.12 37.21l34.46-20.3z"/></g>', "mk"),
+    germomics: svg("0 0 24 24", '<g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M5 6.5a9 9 0 0 1 0 0M3.5 4.5c-1.5 3-1.5 6 0 9M20.5 4.5c1.5 3 1.5 6 0 9"/></g>', "mk"),
+    foxhound: svg("0 0 24 24", '<path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M7.5 9 16.5 18M16.5 9 7.5 18"/>', "mk"),
+    foxing: svg("0 0 24 24", '<path fill="currentColor" d="M4 4.5 8.4 8h7.2L20 4.5l-.6 7.4c-.4 3.6-3.5 7.6-7.4 8.6-3.9-1-7-5-7.4-8.6zm5 8.2c.7 0 1.3-.5 1.3-1.2s-.6-1.2-1.3-1.2-1.3.5-1.3 1.2.6 1.2 1.3 1.2zm6 0c.7 0 1.3-.5 1.3-1.2s-.6-1.2-1.3-1.2-1.3.5-1.3 1.2.6 1.2 1.3 1.2zM12 17l1.6-1.8h-3.2z"/>', "mk"),
+    capsomer: svg("0 0 20 20", '<path fill="currentColor" fill-rule="evenodd" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9zM10 5.4 6 7.7v4.6l4 2.3 4-2.3V7.7z"/>', "mk"),
+  };
+  const FAMILY = [
+    ["portal", "Capsid Portal", 2], ["carrel", "Carrel", 3], ["info", "dustinedwards.info", 1],
+    ["germomics", "germomics", 0], ["foxhound", "Foxhound", 0], ["foxing", "Foxing", 1], ["capsomer", "Capsomer", 0],
+  ];
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const ib = (icon, name, key, bub) =>
+    `<button type="button" class="ib" aria-label="${esc(name)}${bub ? ", " + bub + " need you" : ""}">${icon}${bub ? `<span class="bub" aria-hidden="true">${bub}</span>` : ""}<span class="tip" aria-hidden="true">${esc(name)}${key ? `<kbd>${key}</kbd>` : ""}</span></button>`;
+  const themeBtn = (t) => ib(t === "light" ? I.moon : I.sun, t === "light" ? "Switch to dark theme" : "Switch to light theme", "T");
+
+  // ---- Panels ----
+  const familyPanel = (cur) =>
+    `<div class="pop l" role="list"><div class="grp">Family</div>` +
+    FAMILY.map(([id, label, n], i) => `<a href="#" ${id === cur ? 'aria-current="true"' : ""}>${M[id]}<span>${label}</span>${id !== cur && n ? `<span class="ct need" aria-label="${n} need you">${n}</span>` : `<span class="ct" style="visibility:hidden"></span>`}<span class="mono" style="color:var(--mu);font-size:11px">G ${i + 1}</span></a>`).join("") +
+    `</div>`;
+  const listPanel = (items, cur, side) =>
+    `<div class="pop ${side || "l"}">` + items.map((x) => `<a href="#" ${x === cur ? 'aria-current="page"' : ""}>${x}</a>`).join("") + `</div>`;
+  const ownerAccount = () =>
+    `<div class="pop r" style="min-width:230px"><div class="who"><b>Dustin Edwards</b><span>Owner</span></div><hr><a href="#">View site</a><a href="#">Help</a><a href="#">Shortcuts</a><hr><a href="#">Sign out</a></div>`;
+  const fxIcon = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="${d}"/></svg>`;
+  const fxBooks = () => `<div class="pop l mega" style="width:26rem"><div class="cols"><div><div class="eb">Browse</div><a href="#">All books</a><a href="#">Award winners</a></div><div><div class="eb">By era</div><div class="chips">${["Before 1800", "1800 to 1849", "1850 to 1899", "1900 to 1949", "1950 and later"].map((e) => `<a href="#">${e}</a>`).join("")}</div></div></div></div>`;
+  const fxPicks = () => `<div class="pop l mega" style="width:24rem"><a class="pick" href="#"><span class="eb" style="color:var(--act)">Foxing pick</span><b>The Remains of the Day</b><span>Kazuo Ishiguro</span></a><div class="eb">Featured clubs</div><div class="two">${["Reese's Book Club", "Oprah's Book Club", "Read with Jenna", "Good Morning America"].map((c) => `<a href="#">${c}</a>`).join("")}</div><div class="foot"><a href="#">View all picks</a><a href="#">This month's pick</a></div></div>`;
+  const fxAccount = () => `<div class="pop r fxacct"><div class="id"><span class="av">SR</span><div><b>Sam Reader <span class="tier">Plus</span></b><span class="u">@samreads</span></div></div><dl><div><dd>14</dd><dt>books this year</dt></div><div><dd>6</dd><dt>day streak</dt></div><div><dd>212</dd><dt>highlights</dt></div></dl><div class="sec"><a href="#">${fxIcon("M5 20V11M12 20V5M19 20v-6")}Stats</a><a href="#">${fxIcon("M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4z")}Goals</a><a href="#">${fxIcon("M12 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM15.5 12.9 17 22l-5-3-5 3 1.5-9.1")}Year in reading</a><a href="#">${fxIcon("M12 7c-1.6-1-4-1.6-7-1.3V18c3-.3 5.4.3 7 1.3 1.6-1 4-1.6 7-1.3V5.7c-3-.3-5.4.3-7 1.3zM12 7v12.3")}<span>Vocabulary<small>8 words to master</small></span></a></div><div class="sec"><div class="coll">${fxIcon("M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.6 3.9A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z")}<span>Collections<span>Lists · Diary · Highlights · Commonplace</span></span></div></div><div class="sec"><a href="#">${fxIcon("M11 4l1.5 4 4 1.5-4 1.5L11 15l-1.5-4-4-1.5 4-1.5z")}<span>Find next book<small>AI recommendations for you</small></span></a><a href="#">${fxIcon("M12 3.5l7 2.8v4.7c0 4.3-2.9 7.2-7 8.5-4.1-1.3-7-4.2-7-8.5V6.3z")}Admin dashboard</a></div><div class="ft"><a href="#">${fxIcon("M12 5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM5.5 19.5a6.5 6.5 0 0 1 13 0")}Profile</a><a href="#">${fxIcon("M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1")}Settings</a><a href="#">${fxIcon("M14 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2M10 12h10M17 9l3 3-3 3")}Sign out</a></div></div>`;
+  // Foxhound: the account switcher (which business) and the gear (that business's settings, and you).
+  const fhSwitch = () => `<div class="has-pop p-acsw"><button type="button" class="sw acsw" aria-expanded="false" aria-label="Account: Acme Supply Co."><span class="ini" aria-hidden="true">A</span><span>Acme Supply Co.</span>${I.chev}</button><div class="pop l" style="min-width:240px"><div class="grp">Accounts</div><a href="#" aria-current="true"><span class="ini" style="width:20px;height:20px;border-radius:5px;display:grid;place-items:center;background:var(--ac);color:var(--on-ac);font-size:11px;font-weight:600">A</span>Acme Supply Co.</a><a href="#"><span class="ini" style="width:20px;height:20px;border-radius:5px;display:grid;place-items:center;background:var(--hov);font-size:11px;font-weight:600">N</span>Northwind Goods</a><hr><a href="#">+ Add account</a></div></div>`;
+  const fhMenu = () => `<div class="pop r scroll" style="min-width:240px"><div class="who"><b>Sam Rivera</b><span>sam@example.com</span></div><hr><div class="grp">Acme Supply Co.</div>${["Settings", "Billing", "Team", "Audit settings", "Audit history", "Email settings", "Alerts", "API keys", "Brand voice"].map((x) => `<a href="#">${x}</a>`).join("")}<hr><a href="#">Help</a><a href="#">Admin</a><hr><a href="#">Sign out</a></div>`;
+  const avatar = (initials, name, panel) =>
+    `<div class="has-pop p-acct"><button type="button" class="acct" aria-label="${esc(name)}" aria-expanded="false"><span class="av">${initials}</span></button>${panel}</div>`;
+
+  // ---- Sites ----
+  const SITES = {
+    fh: {
+      name: "Foxhound", cls: "fh", linksAt: "right",
+      logo: `<a class="logo" href="#" aria-label="Foxhound home"><span class="wm-fh">fo<em>x</em>hound</span></a>`,
+      intro: "Teal (Capsomer's teal family, your answer to question 1) on Foxhound's dark band, which stays dark in both themes. DM Sans, wordmark in DM Mono.",
+      surfaces: {
+        public: {
+          title: "Public, signed out",
+          note: "Section links stay on the right, before a thin divider, as Foxhound has them. Free audit is Foxhound's one extra; Sign in holds the account's place, last. The inert gear goes.",
+          links: ["Products", "Pricing", "Demos", "Features", "Docs", "Blog"], cur: "Pricing",
+          extrasDesk: () => `<a class="btn" href="#">Free audit</a>`,
+          account: () => `<a class="signin" href="#">Sign in</a>`,
+          accountPhone: () => ib(I.user, "Sign in"),
+          sheet: { groups: [["Foxhound", ["Products", "Pricing", "Demos", "Features", "Docs", "Blog"]]], btn: "Free audit", foot: ["Sign in"] },
+          body: (p) => `<div class="body-pub"><div class="eyebrow">Revenue recovery for Stripe</div><h4>Get back the payments your customers meant to make.</h4><p>Foxhound retries failed charges at the right moment and writes the emails that bring card holders back.</p></div>`,
+        },
+        app: {
+          title: "User dashboard (a merchant's own area)",
+          note: "The product switcher sits after the logo. Below the header, the product's menu on the left, 288px wide: the owner's strip plus menu width, so the page starts at the same left edge as the owner's admin. No strip, because a merchant has no family of apps. The account switcher moves to the left as a square tile: it says which business you are in, like the product beside it. The gear goes; the round avatar is last, as on every site, and its menu holds the business's settings under its name, then Help, Admin and Sign out.",
+          dash: true,
+          menu: [[null, [["Overview", I.grid, 0, 1], ["Payments", I.list, 12], ["Sequences", I.stack], ["Win-back", I.share], ["Expiring cards", I.clock, 23]]], ["Account", [["Settings", I.gauge], ["Billing", I.store], ["Team", I.people]]]],
+          tabs: [["Overview", I.grid, 1], ["Payments", I.list], ["Sequences", I.stack], ["Win-back", I.share]],
+          page: "Recovery overview", fresh: "Updated 2 minutes ago",
+          tiles: [["Recovered this month", "$8,214", "62 payments"], ["Recovery rate", "41%", "of failed charges"], ["In sequence", "118", "retrying now"], ["Cards expiring", "23", "next 30 days"]],
+          rows: [["crit", "Payment from j.ortiz@example.com failed its 3rd retry", "12 minutes ago"], ["", "Win-back email opened by 14 customers", "today"], ["", "Sequence 'Card declined' sent 31 emails", "yesterday"]],
+          switcher: { label: "Recovery", pre: fhSwitch, panel: () => listPanel(["Console", "Audit", "Recovery", "Disputes", "Intelligence"], "Recovery") },
+          account: () => avatar("SR", "Sam Rivera, account menu", fhMenu()),
+          sheet: { groups: [["Accounts", ["Acme Supply Co.", "Northwind Goods", "+ Add account"]], ["Products", ["Console", "Audit", "Recovery", "Disputes", "Intelligence"]], ["Recovery", ["Overview", "Payments", "Sequences", "Win-back", "Expiring cards"]]], foot: ["Settings", "Sign out"] },
+          body: (p) => `<nav class="sub" aria-label="Recovery"><a href="#" aria-current="page">Overview</a><a href="#">Payments</a><a href="#">Sequences</a><a href="#">Win-back</a>${p ? "" : '<a href="#">Expiring cards</a>'}</nav><div class="app-body"><h5>Recovery</h5><div class="tiles"><div class="tile"><span>Recovered this month</span><b>$8,214</b><i>62 payments</i></div><div class="tile"><span>Recovery rate</span><b>41%</b><i>of failed charges</i></div><div class="tile"><span>In sequence</span><b>118</b><i>retrying now</i></div><div class="tile"><span>Cards expiring</span><b>23</b><i>next 30 days</i></div></div></div>`,
+        },
+        admin: {
+          title: "Your admin (the owner's)",
+          note: "The same header as the app. Under it, your strip of family apps stays at the far left, as in the Capsid Portal, then the 232px menu, so the page starts at the same left edge as a merchant's dashboard. The strip keeps the app tiles and their badges; its search, inbox, help and avatar move to the header, so the account is top right everywhere.",
+          admin: "foxhound",
+          extrasDesk: () => ib(I.search, "Search", "/") + ib(I.inbox, "Inbox", "", 4),
+          extrasPhone: () => ib(I.search, "Search") + ib(I.inbox, "Inbox", "", 4),
+          account: () => avatar("DE", "Dustin Edwards, account menu", ownerAccount()),
+          menu: [[null, [["Overview", I.grid, 0, 1]]], ["Customers", [["Merchants", I.store], ["Users", I.people]]], ["Platform", [["Operations", I.gauge], ["Crons", I.clock, 1, 0, "need"], ["Webhooks", I.hook]]], ["Controls", [["Emergency brake", I.brake], ["Staged changes", I.stack, 2]]], ["Content", [["Blog", I.pen], ["Social", I.share]]], ["Records", [["Audit log", I.list]]]],
+          tabs: [["Overview", I.grid, 1], ["Merchants", I.store], ["Users", I.people], ["Operations", I.gauge]],
+          tiles: [["Merchants", "3", "2 active"], ["Active recoveries", "41", "this week"], ["MRR", "$12,480", "up 4%"], ["Database size", "876 KB", "of 10 GB"]],
+          rows: [["crit", "weekly-digest failed at 03:00 UTC", "2 hours ago"], ["", "Staged change waiting: raise retry cap to 5", "yesterday"], ["", "Northwind Goods connected Stripe", "2 days ago"]],
+        },
+      },
+    },
+    fx: {
+      name: "Foxing", cls: "fx", linksAt: "center",
+      logo: `<a class="logo wm-fx" href="#" aria-label="Foxing home">${M.foxing.replace('class="mk"', "")}<span>Foxing</span></a>`,
+      intro: "Capsomer's fox orange (your answer to question 1) on a translucent band in the page's own ground. DM Sans for the controls, Fraunces for the wordmark. Its menus are Foxing's own, unchanged. The fox emoji gives way to a drawn mark (a placeholder here).",
+      surfaces: {
+        public: {
+          title: "Public, signed out",
+          note: "Books and Celebrity Picks open Foxing's own panels, unchanged, on hover. Search and Join free are Foxing's extras; Sign in moves to the end. The header is now full width and 56px.",
+          links: [["Books", 1], ["Celebrity Picks", 1], "Clubs", "People", "Journal"], cur: "Books",
+          extrasDesk: () => ib(I.search, "Search", "Ctrl K") + `<a class="btn" href="#">Join free</a>`,
+          extrasPhone: () => ib(I.search, "Search"),
+          account: () => `<a class="signin" href="#">Sign in</a>`,
+          accountPhone: () => ib(I.user, "Sign in"),
+          sheet: { groups: [["Books", ["All books", "Award winners", "Before 1800", "1800 to 1849", "1850 to 1899", "1900 to 1949", "1950 and later"]], ["Celebrity Picks", ["The Remains of the Day (Foxing pick)", "Reese's Book Club", "Oprah's Book Club", "Read with Jenna", "View all picks"]], ["Foxing", ["Clubs", "People", "Journal"]]], btn: "Join free", foot: ["Sign in"] },
+          body: (p) => `<div class="body-pub"><div class="eyebrow">Book of the Month</div><h4>Find the next book you can't put down.</h4><p>Picks from readers you trust, clubs that actually meet, and a diary that remembers every page.</p></div>`,
+        },
+        app: {
+          title: "Signed in, reading",
+          note: "A reader's pages are public-style pages, not a dashboard, so there is no left menu. Signed in, the bell joins Search as an extra, and the avatar menu is last. The Home, Library, Diary bar stays as the page's own bar under the header.",
+          links: [["Books", 1], ["Celebrity Picks", 1], "Clubs", "People", "Journal"], cur: null,
+          extrasDesk: () => ib(I.search, "Search", "Ctrl K") + ib(I.bell, "Notifications", "", 3),
+          extrasPhone: () => ib(I.search, "Search") + ib(I.bell, "Notifications", "", 3),
+          account: () => avatar("SR", "Sam Reader, account menu", fxAccount()),
+          sheet: { groups: [["Books", ["All books", "Award winners", "By era"]], ["Celebrity Picks", ["The Remains of the Day (Foxing pick)", "View all picks"]], ["Foxing", ["Clubs", "People", "Journal"]]], foot: ["Settings", "Sign out"] },
+          body: (p) => `${p ? "" : '<nav class="sub" aria-label="Your Foxing"><a href="#" aria-current="page">Home</a><a href="#">Library</a><a href="#">Diary</a><a href="#">Feed</a><a href="#">People</a></nav>'}<div class="app-body"><h5>Good evening, Sam</h5><div class="tiles"><div class="tile"><span>Reading now</span><b>2</b><i>books</i></div><div class="tile"><span>This year</span><b>14</b><i>of 30 goal</i></div><div class="tile"><span>Streak</span><b>6</b><i>days</i></div><div class="tile"><span>Club meets</span><b>Thu</b><i>7:00 pm</i></div></div></div>${p ? `<nav class="tabs" style="grid-template-columns:repeat(5,1fr)" aria-label="Your Foxing">${[["Home", I.home, 1], ["Library", I.book], ["Diary", I.pen], ["Feed", I.list], ["People", I.people]].map((t) => `<a href="#" ${t[2] ? 'aria-current="page"' : ""}>${t[1]}<span>${t[0]}</span></a>`).join("")}</nav>` : ""}`,
+        },
+        admin: {
+          title: "Your admin (the owner's)",
+          note: "Foxing joins the family's apps, so its admin has the same strip, extras and account as Foxhound's. Only the logo, colours and menu differ.",
+          admin: "foxing",
+          extrasDesk: () => ib(I.search, "Search", "/") + ib(I.inbox, "Inbox", "", 4),
+          extrasPhone: () => ib(I.search, "Search") + ib(I.inbox, "Inbox", "", 4),
+          account: () => avatar("DE", "Dustin Edwards, account menu", ownerAccount()),
+          menu: [[null, [["Overview", I.grid, 0, 1]]], ["Catalog", [["Books", I.book], ["Picks", I.star], ["Clubs", I.people], ["Book of the Month", I.star]]], ["Content", [["Journal", I.pen, 2], ["Notifications", I.bell]]], ["People", [["Users", I.people, 1, 0, "need"]]], ["Insight", [["Analytics", I.chart]]]],
+          tabs: [["Overview", I.grid, 1], ["Books", I.book], ["Users", I.people], ["Journal", I.pen]],
+          tiles: [["Readers", "1,284", "38 new this week"], ["Books", "9,402", "in the catalog"], ["Clubs", "57", "12 meeting this week"], ["Journal", "2", "drafts waiting"]],
+          rows: [["crit", "A reader reported a review", "40 minutes ago"], ["", "Book of the Month for November not set", "today"], ["", "Journal draft: Ten books for long nights", "yesterday"]],
+        },
+      },
+    },
+  };
+
+  // ---- Header ----
+  function header(site, s, theme, phone) {
+    let left = site.logo, right = "", mid = "";
+    if (!phone) {
+      if (s.admin && false) {
+        const others = FAMILY.filter((f) => f[0] !== s.admin).reduce((a, f) => a + f[2], 0);
+        const me = FAMILY.find((f) => f[0] === s.admin);
+        left += `<div class="has-pop p-sw"><button type="button" class="sw" aria-expanded="false" aria-label="${me[1]}. Other apps: ${others} need you">${M[s.admin]}<span>${me[1]}</span><span class="bub" aria-hidden="true">${others}</span>${I.chev}</button>${familyPanel(s.admin)}</div>`;
+      } else if (s.switcher) {
+        left += (s.switcher.pre ? s.switcher.pre() + `<span class="crumb" aria-hidden="true">/</span>` : "") + `<div class="has-pop p-sw"><button type="button" class="sw" aria-expanded="false">${s.switcher.label}${I.chev}</button>${s.switcher.panel()}</div>`;
+      }
+      if (s.links) {
+        mid = `<nav class="hd-links at-${site.linksAt}" aria-label="Site">` + s.links.map((l) => {
+          const name = Array.isArray(l) ? l[0] : l;
+          const kids = Array.isArray(l);
+          const cur = name === s.cur ? 'aria-current="page"' : "";
+          if (!kids) return `<a class="lk" href="#" ${cur}>${name}</a>`;
+          return `<div class="has-pop"><a class="lk" href="#" ${cur} aria-expanded="false">${name}${I.chev}</a>${name === "Books" ? fxBooks() : fxPicks()}</div>`;
+        }).join("") + `</nav>`;
+      }
+      right = (s.extrasDesk ? s.extrasDesk() : "") + themeBtn(theme) + s.account();
+    } else {
+      right = (s.extrasPhone ? s.extrasPhone() : "") + themeBtn(theme) + (s.accountPhone ? s.accountPhone() : s.account()) + `<button type="button" class="ib" data-sheet aria-label="Menu" aria-expanded="false">${I.menu}</button>`;
+    }
+    return `<header class="hd"><div class="hd-left">${left}</div>${mid}<div class="hd-right">${right}</div></header>`;
+  }
+
+  function sheet(site, s) {
+    let groups = s.sheet ? s.sheet.groups : null, foot = s.sheet ? s.sheet.foot : ["Sign out"], btn = s.sheet && s.sheet.btn;
+    let body = "";
+    if (s.admin) {
+      body += `<div class="grp">Apps</div>` + FAMILY.map(([id, label, n]) => `<a href="#" ${id === s.admin ? 'aria-current="true"' : ""}>${M[id]}<span>${label}</span>${id !== s.admin && n ? `<span class="ct">${n}</span>` : ""}</a>`).join("");
+      body += `<div class="grp">Tools</div><a href="#">Search</a><a href="#">Inbox<span class="ct">4</span></a>`;
+      body += s.menu.map(([g, items]) => `<div class="grp">${g || "Pages"}</div>` + items.map((it) => `<a href="#" ${it[3] ? 'aria-current="page"' : ""}>${it[0]}${it[2] ? `<span class="ct">${it[2]}</span>` : ""}</a>`).join("")).join("");
+      foot = ["View site", "Help", "Sign out"];
+    } else {
+      body += groups.map(([g, items]) => `<div class="grp">${g}</div>` + items.map((x) => `<a href="#">${x}</a>`).join("")).join("");
+      if (btn) body += `<a class="btn" href="#">${btn}</a>`;
+    }
+    return `<div class="sheet"><div class="sheet-in" role="dialog" aria-label="Menu"><div class="sheet-h"><span>${s.admin ? site.name + " admin" : site.name}</span></div><div class="sheet-b">${body}</div><nav class="sheet-f" aria-label="Account">${foot.map((f) => `<a href="#">${f}</a>`).join("")}</nav></div></div>`;
+  }
+
+  function adminBody(s, phone) {
+    const bar = `<div class="pagebar"><span class="pn">${s.page || "Overview"}</span><span class="fresh">${s.fresh || "Updated 6 minutes ago"}</span><div class="tools">${phone ? "" : '<span class="chip">Last 24 hours</span>'}${ib(I.refresh, "Refresh", "R")}</div></div>`;
+    const content = `<div class="app-body"><div class="tiles">${s.tiles.map((t) => `<div class="tile"><span>${t[0]}</span><b>${t[1]}</b><i>${t[2]}</i></div>`).join("")}</div><div class="rowlist">${s.rows.map((r) => `<div><i class="dot ${r[0]}"></i><span>${r[1]}</span><span>${r[2]}</span></div>`).join("")}</div></div>`;
+    if (phone) {
+      return `<div class="adm-main">${bar}${content}</div><nav class="tabs" aria-label="Sections">${s.tabs.map((t) => `<a href="#" ${t[2] ? 'aria-current="page"' : ""}>${t[1]}<span>${t[0]}</span></a>`).join("")}</nav>`;
+    }
+    const menu = `<nav class="menu" aria-label="Sections"><button type="button" class="col" data-collapse aria-label="Collapse menu">${I.collapse}<span>Collapse menu</span><span class="mono" style="margin-left:auto;font-size:11px">[</span></button>` +
+      s.menu.map(([g, items]) => (g ? `<div class="g">${g}</div>` : "") + items.map((it) => `<a href="#" ${it[3] ? 'aria-current="page"' : ""} title="${it[0]}">${it[1]}<span class="lbl">${it[0]}</span>${it[2] ? `<span class="ct ${it[4] || ""}">${it[2]}</span>` : ""}</a>`).join("")).join("") + `</nav>`;
+    const strip = s.admin ? `<nav class="strip" aria-label="Apps">` + FAMILY.map(([id, label, n], i) => `<a href="#" title="${label}  G ${i + 1}" ${id === s.admin ? 'aria-current="true"' : ""} aria-label="${label}${id !== s.admin && n ? ", " + n + " need you" : ""}">${M[id]}${id !== s.admin && n ? `<span class="bub" aria-hidden="true">${n}</span>` : ""}</a>`).join("") + `</nav>` : "";
+    return `<div class="adm ${s.admin ? "owner" : "user"}">${strip}${menu}<div class="adm-main">${bar}${content}</div></div>`;
+  }
+
+  function frame(site, key, theme, phone) {
+    const s = site.surfaces[key];
+    const body = s.admin || s.dash ? adminBody(s, phone) : s.body(phone);
+    return `<div class="fr ${site.cls} ${theme} ${phone ? "phone" : "desk"}" data-theme-frame="${theme}">${header(site, s, theme, phone)}${body}${phone ? sheet(site, s) : ""}</div>`;
+  }
+
+  // ---- Page ----
+  const state = { th: "both", w: "desk", m: "none" };
+  try { const saved = JSON.parse(localStorage.getItem("site-header-mockup") || "{}"); Object.assign(state, saved); } catch (e) { /* storage off: defaults */ }
+
+  function render() {
+    const phone = state.w === "phone";
+    document.body.classList.toggle("w-phone", phone);
+    document.body.classList.toggle("m-acct", state.m === "acct");
+    document.body.classList.toggle("m-sw", state.m === "sw");
+    const themes = state.th === "both" ? ["light", "dark"] : [state.th];
+    let html = "";
+    for (const id of ["fh", "fx"]) {
+      const site = SITES[id];
+      html += `<section class="site" aria-labelledby="h-${id}"><div class="site-head"><h2 id="h-${id}">${site.name}</h2><p>${site.intro}</p></div>`;
+      for (const key of ["public", "app", "admin"]) {
+        const s = site.surfaces[key];
+        html += `<div class="spec"><div class="spec-label"><h3>${s.title}</h3><p>${s.note}</p></div><div class="frames">`;
+        for (const t of themes) {
+          html += `<div><div class="cap">${t === "light" ? "Light" : "Dark"} · ${phone ? "phone, 390px" : "desktop, 1200px"}</div><div class="fit"><div class="fit-inner">${frame(site, key, t, phone)}</div></div></div>`;
+        }
+        html += `</div></div>`;
+      }
+      html += `</section>`;
+    }
+    document.getElementById("specs").innerHTML = html;
+    document.getElementById("specs").style.display = "grid";
+    document.getElementById("specs").style.gap = "44px";
+    if (phone && state.m !== "none") document.querySelectorAll(".fr.phone").forEach((f) => {
+      if (state.m === "sw") f.classList.add("sheet-open");
+      else { const p = f.querySelector(".p-acct"); if (p) p.classList.add("open"); }
+    });
+    document.querySelectorAll(".seg button").forEach((b) => b.setAttribute("aria-pressed", String(state[b.dataset.k] === b.dataset.v)));
+    fit();
+  }
+
+  function fit() {
+    document.querySelectorAll(".fit").forEach((box) => {
+      const inner = box.firstElementChild, fr = inner.firstElementChild;
+      const w = fr.offsetWidth, h = fr.offsetHeight;
+      const scale = Math.min(1, box.clientWidth / w);
+      inner.style.transform = scale < 1 ? `scale(${scale})` : "";
+      box.style.height = Math.ceil(h * scale) + "px";
+      box.style.width = state.w === "phone" ? Math.ceil(w * scale) + 2 + "px" : "";
+    });
+  }
+
+  document.addEventListener("click", (e) => {
+    const seg = e.target.closest(".seg button");
+    if (seg) {
+      state[seg.dataset.k] = seg.dataset.v;
+      try { localStorage.setItem("site-header-mockup", JSON.stringify(state)); } catch (err) { /* ignore */ }
+      render();
+      return;
+    }
+    const fr = e.target.closest(".fr");
+    if (!fr) return;
+    if (e.target.closest("a")) e.preventDefault();
+    const sh = e.target.closest("[data-sheet]");
+    if (sh) { fr.classList.toggle("sheet-open"); sh.setAttribute("aria-expanded", String(fr.classList.contains("sheet-open"))); return; }
+    if (e.target.classList.contains("sheet")) { fr.classList.remove("sheet-open"); return; }
+    const col = e.target.closest("[data-collapse]");
+    if (col) { const adm = fr.querySelector(".adm"); adm.classList.toggle("collapsed"); col.setAttribute("aria-label", adm.classList.contains("collapsed") ? "Expand menu" : "Collapse menu"); return; }
+    const trig = e.target.closest(".has-pop > button, .has-pop > a");
+    if (trig) {
+      const hp = trig.parentElement, was = hp.classList.contains("open");
+      fr.querySelectorAll(".has-pop.open").forEach((x) => x.classList.remove("open"));
+      if (!was) hp.classList.add("open");
+      trig.setAttribute("aria-expanded", String(!was));
+      return;
+    }
+    if (!e.target.closest(".pop")) fr.querySelectorAll(".has-pop.open").forEach((x) => x.classList.remove("open"));
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    document.querySelectorAll(".has-pop.open").forEach((x) => { x.classList.remove("open"); const b = x.querySelector(":scope > button, :scope > a"); if (b) { b.setAttribute("aria-expanded", "false"); b.focus(); } });
+    document.querySelectorAll(".fr.sheet-open").forEach((f) => f.classList.remove("sheet-open"));
+  });
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(fit, 80); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  render();
+})();
+</script>
