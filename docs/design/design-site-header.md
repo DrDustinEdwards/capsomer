@@ -82,54 +82,65 @@ A site that wants anything else in its header asks for a change to this design; 
 | | Switcher | Section links | Extras | Account |
 |---|---|---|---|---|
 | Public, signed out | none | the site's sections | the site's (Free audit; Join free, Search) | **Sign in**, as a text link |
-| Public and app, signed in | the products (Foxhound: Console, Audit, Recovery, Disputes, Intelligence) | public: the sections; app: none | the site's (Foxing: Search, bell) | the avatar menu |
-| Admin | the family's apps (`FAMILY_APPS`) | none | Search, Inbox | the avatar menu |
+| Public and app, signed in | the products (Foxhound: Console, Audit, Recovery, Disputes, Intelligence) | public: the sections; a user's dashboard: none | the site's (Foxing: Search, bell) | the avatar menu |
+| Your admin | none: the strip holds the family's apps | none | Search, Inbox | the avatar menu |
 
 - **The account menu** is the same shape everywhere: who you are; the site's own rows (Foxhound: its accounts with "+ Add account", then Settings, Billing, Help, Team, Audit settings, Audit history, Email settings, Alerts, API keys, Brand voice; Foxing: reading stats, Library, Diary, Profile, Settings); **Admin** for an admin; in an admin, **View site** and **Help**; **Sign out** last.
-- **The switcher** is a button showing where you are (the product's name, or in an admin the app's mark and name) and a chevron. In an admin its panel lists the six family apps with their marks, the current one marked, each with its count of what needs you; the button carries one bubble with the total for the other apps, so a badge never disappears (the reason the strip existed). G then a number still opens the app in that place.
+- **The switcher** is a button showing where you are (the product's name) and a chevron, opening the site's products. Your admin has none, because its strip already lists the family's apps.
 - **Sign in** is the account's place while signed out, so the last item never changes position between signed out and signed in.
 
-## 4. Admin pages
+## 4. Dashboards and your admin
 
-The admin uses the same header as the site's app pages. Under it:
+Dustin, 2026-10-13: there are two kinds of signed-in area, and they differ only on the left.
+
+- **A user's dashboard**: a customer's own area, like a Foxhound merchant's (Capsomer's admin shell calls it "the merchant" or "the dashboard"). One app, so no strip.
+- **Your admin**: the owner's own admin in each app (you, and a co-owner). It keeps the strip of family apps at the far left, as in the Capsid Portal.
+
+Both use the same header as the site's other signed-in pages. Under it:
 
 ```
-| header (56px, full width)                                          |
-| menu      | page bar: trail · page name · Updated 6 minutes ago  [page tools] [Refresh] |
-| (232px,   |                                                         |
-|  or 80px  | the page                                                |
-|  collapsed)|                                                        |
+A user's dashboard
+| header (56px, full width)                                                        |
+| menu (288px open, 80px collapsed) | page bar: page · Updated 2 minutes ago [tools] [Refresh] |
+|                                   | the page                                     |
+
+Your admin
+| header (56px, full width)                                                        |
+| strip | menu (232px open, 80px collapsed) | page bar: page · Updated 6 minutes ago [tools] [Refresh] |
+| (56px)|                                   | the page                             |
 ```
 
-- **The strip goes.** Its parts move: the app tiles to the header's switcher; Search and Inbox to the header's extras; Help and the avatar to the account menu; the collapse control to the top of the menu column, the same place open and collapsed, with `[` in its tooltip.
-- **The grouped menu stays on the left**, below the header, sticky, its height the window less the header. Open 232px, collapsed 80px, everything else as 0.8.0 (icons keep their x and y, counts, tooltips, the dark pill for the current page). The menu's title (the app's name) goes, because the header's switcher now says which app this is; the collapsed column no longer needs the app's mark at its top.
-- **The page bar** sits at the top of the content, under the header: the trail below the top level, the freshness line, the page's own tools, then Refresh last. The theme control leaves it for the header.
-- **The content** starts at one left edge beside the menu, open and collapsed, up to 1480px, as in 0.8.0.
+- **The page starts at the same left edge in both, 288px**: the user's menu is as wide as your strip and menu together, so moving between a dashboard and your admin moves nothing in the page.
+- **Your strip keeps the family's app tiles** (`FAMILY_APPS`) with their marks, the current one marked, and other apps' badges, so a count never disappears. G then a number opens the app in that place. Its bottom tools move to the header so the account is top right everywhere: Search and Inbox to the header's extras, Help to the account menu, the avatar to the account.
+- **The collapse control is at the top of the menu** in both kinds, the same place open and collapsed, with `[` in its tooltip.
+- **The grouped menu** sits below the header, sticky, its height the window less the header. Everything else is as 0.8.0 (icons keep their x and y, counts, tooltips, the dark pill for the current page). The menu's title (the app's name) goes, because the header's logo and the strip's current tile already say which app this is.
+- **The page bar** sits at the top of the content: the trail below the top level, the freshness line, the page's own tools, then Refresh last. The theme control leaves it for the header.
+- **The content** fills to the right of the menu, from that one left edge, up to 1480px, as in 0.8.0.
 
 ## 5. Phone (under 768px)
 
 One row, 56px: the logo left; the theme control, the account (or Sign in as an icon) and the menu button right, in that order.
 
 - The menu button opens one sheet (the shared dialog, from the bottom, as AdminShell's sheet does today): the switcher's items first, then the section links, then the extras (a button extra full width), with the account rows pinned under the list so Sign out is always in view.
-- On app and admin pages, the bottom tab bar keeps four top pages; More goes, because the header's menu button opens the same sheet (question 5).
+- On dashboards and your admin, the bottom tab bar keeps four top pages; More goes, because the header's menu button opens the same sheet (question 5). In your admin the sheet lists the family's apps first, as the strip does.
 - Foxing's second scrolling row of links goes; they are in the sheet. Its signed-in bar (Home, Library, Diary, Feed, People) stays as the page's own bar under the header.
 
 ## 6. Keyboard and screen reader
 
 | Key | Does |
 |---|---|
-| Tab | Skip link first, then the logo, the switcher, the section links, the extras, the theme, the account, then the admin menu, then the page |
+| Tab | Skip link first, then the logo, the switcher, the section links, the extras, the theme, the account, then (in your admin) the strip, then the menu, then the page |
 | Enter or Space on the switcher, a section with children, or the account | Opens its panel; focus moves to its first item |
 | Up and Down in a panel | Move between items; Home and End go to the ends |
 | Esc | Closes the panel; focus returns to its button |
 | T | Switches the theme, where the site binds single keys |
-| G, then 1 to 9 (admin) | Opens the app in that place |
-| `[` (admin) | Collapses or expands the menu |
+| G, then 1 to 9 (your admin) | Opens the app in that place |
+| `[` (dashboard or your admin) | Collapses or expands the menu |
 
 - The header is the page's `banner` landmark. Section links are a `nav` named "Site"; the admin menu stays a `nav` named "Sections".
 - The panels are lists of links (disclosure buttons with `aria-expanded` and `aria-controls`), not ARIA menus, because every item goes somewhere.
-- The current page is `aria-current="page"`; the current app in the switcher `aria-current="true"`.
-- The theme button says what it does: "Switch to dark theme". The switcher's bubble is in its name: "Foxhound. Other apps: 7 need you".
+- The current page is `aria-current="page"`; the current app in the strip `aria-current="true"`.
+- The theme button says what it does: "Switch to dark theme". A strip tile's badge is in its name: "Carrel, 3 need you".
 - Every count reads its real number to a screen reader; the bubble shows 99+ past 99.
 - Forced colours: the current link keeps its underline, the band keeps a border.
 
@@ -146,14 +157,14 @@ Foxing has the same kind of drift: Capsomer's fox family is `#cc4f0c`, and Foxin
 **Recommendation for capsomer #65: merge it as it is and tag 0.8.0, then build this as 0.9.0. Nobody adopts 0.8.0: Part 2 and Foxhound #40 go straight to 0.9.0.**
 
 - #65 is green and has had two reviews (28 items). Most of it survives the header: one tooltip, the badge rules, the menu's geometry and hover, the row list, the cards, the theme switch's single marker. Folding the header in would reopen 48 files and redo every screenshot of a PR that is otherwise finished.
-- The header removes the strip and moves the theme control, a changed contract worth its own release and its own review.
+- The header moves the strip's tools and the theme control, adds the dashboard variant, a changed contract worth its own release and its own review.
 - What would be wasted by merging first is the adoption work, so it waits: Part 2 (Portal, Carrel, dustinedwards.info, germomics) and Foxhound #40 move once, to 0.9.0.
-- When reviewing #65, the strip and the page bar's theme switch can be skipped; 0.9.0 replaces them.
+- When reviewing #65, the strip's bottom tools and the page bar's theme switch can be skipped; 0.9.0 moves them. The strip's tiles, badges and tooltips stay.
 
 **What 0.9.0 changes** (for the CHANGELOG):
 
 - New: `header.cap-site-header` (`data-cap="site-header"`, `capsomer/react/site-header`, `capsomer/behaviour/site-header`) with `.cap-site-header-logo`, `.cap-site-header-switcher`, `nav.cap-site-header-sections`, `.cap-site-header-extras`, `.cap-site-header-theme`, `.cap-site-header-account`, `.cap-site-header-menu` (phone), and the shared sheet.
-- AdminShell: takes the header's props (`logo`, `band`, `extras`, `account`) and draws the header; removes `nav.cap-admin-strip` and its tiles and tools, `.cap-admin-title`, `.cap-admin-title-mark`, the page bar's theme switch, and More on the phone tab bar. `app`, `badges` and `FAMILY_APPS` now feed the switcher; Foxing joins `FAMILY_APPS` (seventh, before Capsomer), so its admin has the same switcher.
+- AdminShell: takes the header's props (`logo`, `band`, `extras`, `account`) and draws the header; gains `variant="owner" | "user"` (owner keeps the strip of app tiles; user has none and a 288px menu); removes the strip's tools (search, inbox, help, avatar), `.cap-admin-title`, `.cap-admin-title-mark`, the page bar's theme switch, and More on the phone tab bar. Foxing joins `FAMILY_APPS` (seventh, before Capsomer).
 - Theme: a one-button form of the theme switch (if question 2 is "icon"), the same storage and `toggleTheme()`.
 - Tokens: the amber family (if question 1 is "amber"); `family-teal.css` removed.
 
@@ -170,13 +181,16 @@ The mockup draws the recommended answer to each.
 7. **Width.** Full bleed on every site, so the logo never moves (Foxing centres its header today)? *Recommended: yes.*
 8. **Foxing's logo** is a fox emoji, against your no-emoji rule. Draw a fox mark for it in Foxing's job? *Recommended: yes.* The mockup uses a placeholder.
 
-Still open from #65 and unchanged by this: Foxhound's mark (item 15), which now shows in the switcher.
+9. **Your admin's header.** With the strip keeping the family's apps, your admin's header has no switcher, and the strip's search, inbox, help and avatar move up to the header? *Recommended: yes.*
+10. **Foxhound's parity rule.** Foxhound's CLAUDE.md says legacy is the spec and nothing moves its look toward Capsomer until parity finishes. This header and the merchant dashboard's left menu change Foxhound's public and app pages. Record them as approved differences (`parity/APPROVED-DIFFERENCES.md` in Capsid) in Foxhound's job, quoting your message? *Recommended: yes.*
+
+Still open from #65 and unchanged by this: Foxhound's mark (item 15), which shows in the strip.
 
 ## 10. The jobs, once answered
 
 Each job is a pull request that stops at green; none merges.
 
-1. **Capsomer 0.9.0.** The site header component; AdminShell on it with the strip removed; the theme button; the amber family; states page specimens (every surface, both themes, desktop and phone); browser tests for the order, the 56px height, sticky, the phone row, keyboard and contrast; side-by-side screenshots for sign-off.
-2. **Foxhound: #40 updated, not replaced.** Merge main into it (it has a merge conflict today); pin 0.9.0; the admin on the new AdminShell; the public and app header on the site header (the gear folded into the account menu); retake every screenshot. The Cloudflare Access steps in #40 stay yours, before merge.
+1. **Capsomer 0.9.0.** The site header component; AdminShell on it with the owner and user variants; the theme button; the amber family; states page specimens (every surface, both themes, desktop and phone); browser tests for the order, the 56px height, sticky, the phone row, keyboard and contrast; side-by-side screenshots for sign-off.
+2. **Foxhound: #40 updated, not replaced.** Merge main into it (it has a merge conflict today); pin 0.9.0; the admin on the new AdminShell; the public and app header on the site header (the gear folded into the account menu); the merchant app on the dashboard variant; the approved differences recorded; retake every screenshot. The Cloudflare Access steps in #40 stay yours, before merge.
 3. **Foxing.** Load Capsomer's header CSS (Foxing does not use Capsomer yet; it stays on its own CSS otherwise); its public and app header on the site header; the fox mark; its admin onto AdminShell 0.9.0.
 4. **Capsid Portal**, 5. **Carrel**, 6. **dustinedwards.info**, 7. **germomics**: Part 2 of job_5ebb352157e5, moving from their current pin straight to 0.9.0, one PR each; their public headers (dustinedwards.info, germomics) on the site header in the same PR.

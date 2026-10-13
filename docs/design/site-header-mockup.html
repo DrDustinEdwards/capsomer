@@ -85,11 +85,11 @@ body.w-phone .frames { grid-template-columns: repeat(auto-fill, minmax(min(390px
 .fr *:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 6px; }
 
 .fh { --font-ui: "DM Sans", Arial, sans-serif; --band: #1a1c18; --band-fg: #f0ede8; --band-mu: #a8a49e; --band-ln: #2a2b28; --band-hover: #2a2c26; --ac: #f0b429; --on-ac: #0d0e0c; --ring: #f0b429; }
-.fh.light { --pg: #f7f6f2; --sf: #ffffff; --tx: #14150f; --mu: #595c56; --ln: #cccbc3; --act: #8a5c06; --menu: #efeee9; --hov: #e6e4de; --cur: #3d2c05; --cur-fg: #ffe7a3; --pop: #ffffff; --ring: #b5820d; }
-.fh.dark { --pg: #111210; --sf: #181917; --tx: #e5e8e2; --mu: #a8a49e; --ln: #2a2b28; --act: #f0b429; --menu: #151614; --hov: #252720; --cur: #ffd166; --cur-fg: #1a1c18; --pop: #1f211d; }
+.fh.light { --strip: #e4e2db; --pg: #f7f6f2; --sf: #ffffff; --tx: #14150f; --mu: #595c56; --ln: #cccbc3; --act: #8a5c06; --menu: #efeee9; --hov: #e6e4de; --cur: #3d2c05; --cur-fg: #ffe7a3; --pop: #ffffff; --ring: #b5820d; }
+.fh.dark { --strip: #1d1f1b; --pg: #111210; --sf: #181917; --tx: #e5e8e2; --mu: #a8a49e; --ln: #2a2b28; --act: #f0b429; --menu: #151614; --hov: #252720; --cur: #ffd166; --cur-fg: #1a1c18; --pop: #1f211d; }
 .fx { --font-ui: "DM Sans", Arial, sans-serif; }
-.fx.light { --pg: #faf6ee; --sf: #ffffff; --tx: #16100b; --mu: #815e41; --ln: #e5d8bf; --ac: #d4622e; --act: #b04a1c; --on-ac: #ffffff; --band: rgba(250, 246, 238, 0.85); --band-fg: #16100b; --band-mu: #3e3028; --band-ln: #e5d8bf; --band-hover: #efe4cf; --menu: #f2ead8; --hov: #e9dcc2; --cur: #632507; --cur-fg: #ffffff; --pop: #ffffff; --ring: #b04a1c; }
-.fx.dark { --pg: #16100b; --sf: #1f1710; --tx: #f5edde; --mu: #c4ae96; --ln: #34281c; --ac: #e07840; --act: #f0a070; --on-ac: #16100b; --band: rgba(22, 16, 11, 0.85); --band-fg: #f5edde; --band-mu: #c4ae96; --band-ln: #34281c; --band-hover: #2a1f16; --menu: #100d08; --hov: #261c13; --cur: #f0a070; --cur-fg: #16100b; --pop: #2a1f16; --ring: #e07840; }
+.fx.light { --strip: #ebe0c9; --pg: #faf6ee; --sf: #ffffff; --tx: #16100b; --mu: #815e41; --ln: #e5d8bf; --ac: #d4622e; --act: #b04a1c; --on-ac: #ffffff; --band: rgba(250, 246, 238, 0.85); --band-fg: #16100b; --band-mu: #3e3028; --band-ln: #e5d8bf; --band-hover: #efe4cf; --menu: #f2ead8; --hov: #e9dcc2; --cur: #632507; --cur-fg: #ffffff; --pop: #ffffff; --ring: #b04a1c; }
+.fx.dark { --strip: #0e0b07; --pg: #16100b; --sf: #1f1710; --tx: #f5edde; --mu: #c4ae96; --ln: #34281c; --ac: #e07840; --act: #f0a070; --on-ac: #16100b; --band: rgba(22, 16, 11, 0.85); --band-fg: #f5edde; --band-mu: #c4ae96; --band-ln: #34281c; --band-hover: #2a1f16; --menu: #100d08; --hov: #261c13; --cur: #f0a070; --cur-fg: #16100b; --pop: #2a1f16; --ring: #e07840; }
 
 /* The header: fixed by Capsomer */
 .hd { position: sticky; top: 0; z-index: 5; height: 56px; display: flex; align-items: center; gap: 24px; padding: 0 24px; background: var(--band); color: var(--band-fg); border-bottom: 1px solid var(--band-ln); }
@@ -174,6 +174,16 @@ body.w-phone .frames { grid-template-columns: repeat(auto-fill, minmax(min(390px
 /* Admin under the header */
 .adm { display: grid; grid-template-columns: 232px 1fr; height: calc(100% - 56px); }
 .adm.collapsed { grid-template-columns: 80px 1fr; }
+.adm.user { grid-template-columns: 288px 1fr; }
+.adm.owner { grid-template-columns: 56px 232px 1fr; }
+.adm.owner.collapsed { grid-template-columns: 56px 80px 1fr; }
+.strip { background: var(--strip); border-right: 1px solid var(--ln); display: grid; align-content: start; justify-items: center; gap: 6px; padding: 10px 0; }
+.strip a { position: relative; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; color: var(--act); }
+.strip a:hover { background: var(--hov); }
+.strip a .mk { width: 20px; height: 20px; }
+.strip a[aria-current] { background: var(--cur); color: var(--cur-fg); }
+.strip a .bub { top: -2px; right: -4px; box-shadow: 0 0 0 2px var(--strip); }
+.strip hr { width: 24px; border: 0; border-top: 1px solid var(--ln); margin: 2px 0; }
 .menu { background: var(--menu); border-right: 1px solid var(--ln); padding: 10px 12px; display: grid; align-content: start; gap: 2px; overflow: hidden; }
 .menu .col { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; color: var(--mu); font-size: 12px; border: 0; background: transparent; border-radius: 8px; cursor: pointer; font-family: inherit; }
 .menu .col:hover { background: var(--hov); }
@@ -238,12 +248,12 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
     <div>
       <div class="mono" style="color: var(--muted)">capsomer · docs/design/design-site-header.md · mockup</div>
       <h1>One header on every surface</h1>
-      <p class="lead">Foxhound and Foxing, public, app and admin, drawn with the recommended answer to each question in the design. Every menu opens on hover or click; the controls below switch the theme, the width and which menu is held open.</p>
+      <p class="lead">Foxhound and Foxing: public pages, a user's dashboard, and your own admin with its strip, drawn with the recommended answer to each question in the design. Every menu opens on hover or click; the controls below switch the theme, the width and which menu is held open.</p>
     </div>
     <section class="anat" aria-label="The frame">
       <div class="anat-bar" role="img" aria-label="Header slots from left to right: logo, switcher, section links, space, extras, theme, account">
         <div class="slot owned"><b>Logo</b><i>site's mark, 24px tall</i></div>
-        <div class="slot fixed"><b>Switcher</b><i>products, or family apps in admin</i></div>
+        <div class="slot fixed"><b>Switcher</b><i>products; none in your admin</i></div>
         <div class="slot fixed"><b>Section links</b><i>public only</i></div>
         <div class="slot fixed grow"><b>&nbsp;</b><i>space</i></div>
         <div class="slot owned"><b>Extras</b><i>up to 2 icons + 1 button</i></div>
@@ -370,16 +380,22 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
           body: (p) => `<div class="body-pub"><div class="eyebrow">Revenue recovery for Stripe</div><h4>Get back the payments your customers meant to make.</h4><p>Foxhound retries failed charges at the right moment and writes the emails that bring card holders back.</p></div>`,
         },
         app: {
-          title: "App, signed in",
-          note: "The product switcher sits after the logo. The account switcher and the gear are one menu at the account, last: accounts first, then the gear's rows, Admin, Sign out.",
+          title: "User dashboard (a merchant's own area)",
+          note: "The product switcher sits after the logo. Below the header, the product's menu on the left, 288px wide: the owner's strip plus menu width, so the page starts at the same left edge as the owner's admin. No strip, because a merchant has no family of apps. The account switcher and the gear are one menu at the account, last.",
+          dash: true,
+          menu: [[null, [["Overview", I.grid, 0, 1], ["Payments", I.list, 12], ["Sequences", I.stack], ["Win-back", I.share], ["Expiring cards", I.clock, 23]]], ["Account", [["Settings", I.gauge], ["Billing", I.store], ["Team", I.people]]]],
+          tabs: [["Overview", I.grid, 1], ["Payments", I.list], ["Sequences", I.stack], ["Win-back", I.share]],
+          page: "Recovery overview", fresh: "Updated 2 minutes ago",
+          tiles: [["Recovered this month", "$8,214", "62 payments"], ["Recovery rate", "41%", "of failed charges"], ["In sequence", "118", "retrying now"], ["Cards expiring", "23", "next 30 days"]],
+          rows: [["crit", "Payment from j.ortiz@example.com failed its 3rd retry", "12 minutes ago"], ["", "Win-back email opened by 14 customers", "today"], ["", "Sequence 'Card declined' sent 31 emails", "yesterday"]],
           switcher: { label: "Recovery", panel: () => listPanel(["Console", "Audit", "Recovery", "Disputes", "Intelligence"], "Recovery") },
           account: () => avatar("A", "Acme Supply Co., account menu", fhAccount()),
           sheet: { groups: [["Products", ["Console", "Audit", "Recovery", "Disputes", "Intelligence"]], ["Recovery", ["Overview", "Payments", "Sequences", "Win-back", "Expiring cards"]]], foot: ["Settings", "Sign out"] },
           body: (p) => `<nav class="sub" aria-label="Recovery"><a href="#" aria-current="page">Overview</a><a href="#">Payments</a><a href="#">Sequences</a><a href="#">Win-back</a>${p ? "" : '<a href="#">Expiring cards</a>'}</nav><div class="app-body"><h5>Recovery</h5><div class="tiles"><div class="tile"><span>Recovered this month</span><b>$8,214</b><i>62 payments</i></div><div class="tile"><span>Recovery rate</span><b>41%</b><i>of failed charges</i></div><div class="tile"><span>In sequence</span><b>118</b><i>retrying now</i></div><div class="tile"><span>Cards expiring</span><b>23</b><i>next 30 days</i></div></div></div>`,
         },
         admin: {
-          title: "Admin",
-          note: "The same header as the app. The switcher lists the family's apps, with one bubble for the others' total. Search and Inbox are the admin's extras; Help and View site live in the account menu. The strip is gone; the menu, page bar and content sit under the header.",
+          title: "Your admin (the owner's)",
+          note: "The same header as the app. Under it, your strip of family apps stays at the far left, as in the Capsid Portal, then the 232px menu, so the page starts at the same left edge as a merchant's dashboard. The strip keeps the app tiles and their badges; its search, inbox, help and avatar move to the header, so the account is top right everywhere.",
           admin: "foxhound",
           extrasDesk: () => ib(I.search, "Search", "/") + ib(I.inbox, "Inbox", "", 4),
           extrasPhone: () => "",
@@ -408,8 +424,8 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
           body: (p) => `<div class="body-pub"><div class="eyebrow">Book of the Month</div><h4>Find the next book you can't put down.</h4><p>Picks from readers you trust, clubs that actually meet, and a diary that remembers every page.</p></div>`,
         },
         app: {
-          title: "App, signed in",
-          note: "Signed in, the bell joins Search as an extra, and the avatar menu is last. The Home, Library, Diary bar stays as the page's own bar under the header.",
+          title: "Signed in, reading",
+          note: "A reader's pages are public-style pages, not a dashboard, so there is no left menu. Signed in, the bell joins Search as an extra, and the avatar menu is last. The Home, Library, Diary bar stays as the page's own bar under the header.",
           links: [["Books", 1], ["Picks", 1], "Clubs", "People", "Journal"], cur: null,
           extrasDesk: () => ib(I.search, "Search", "Ctrl K") + ib(I.bell, "Notifications", "", 3),
           extrasPhone: () => "",
@@ -418,8 +434,8 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
           body: (p) => `<nav class="sub" aria-label="Your Foxing"><a href="#" aria-current="page">Home</a><a href="#">Library</a><a href="#">Diary</a><a href="#">Feed</a><a href="#">People</a></nav><div class="app-body"><h5>Good evening, Sam</h5><div class="tiles"><div class="tile"><span>Reading now</span><b>2</b><i>books</i></div><div class="tile"><span>This year</span><b>14</b><i>of 30 goal</i></div><div class="tile"><span>Streak</span><b>6</b><i>days</i></div><div class="tile"><span>Club meets</span><b>Thu</b><i>7:00 pm</i></div></div></div>`,
         },
         admin: {
-          title: "Admin",
-          note: "Foxing joins the family list, so its admin has the same switcher, extras and account as Foxhound's. Only the logo, colours and menu differ.",
+          title: "Your admin (the owner's)",
+          note: "Foxing joins the family's apps, so its admin has the same strip, extras and account as Foxhound's. Only the logo, colours and menu differ.",
           admin: "foxing",
           extrasDesk: () => ib(I.search, "Search", "/") + ib(I.inbox, "Inbox", "", 4),
           extrasPhone: () => "",
@@ -437,7 +453,7 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
   function header(site, s, theme, phone) {
     let left = site.logo, right = "";
     if (!phone) {
-      if (s.admin) {
+      if (s.admin && false) {
         const others = FAMILY.filter((f) => f[0] !== s.admin).reduce((a, f) => a + f[2], 0);
         const me = FAMILY.find((f) => f[0] === s.admin);
         left += `<div class="has-pop p-sw"><button type="button" class="sw" aria-expanded="false" aria-label="${me[1]}. Other apps: ${others} need you">${M[s.admin]}<span>${me[1]}</span><span class="bub" aria-hidden="true">${others}</span>${I.chev}</button>${familyPanel(s.admin)}</div>`;
@@ -477,19 +493,20 @@ body.m-sw .fr.desk .has-pop.p-sw > .pop { display: block; }
   }
 
   function adminBody(s, phone) {
-    const bar = `<div class="pagebar"><span class="pn">Overview</span><span class="fresh">Updated 6 minutes ago</span><div class="tools">${phone ? "" : '<span class="chip">Last 24 hours</span>'}${ib(I.refresh, "Refresh", "R")}</div></div>`;
+    const bar = `<div class="pagebar"><span class="pn">${s.page || "Overview"}</span><span class="fresh">${s.fresh || "Updated 6 minutes ago"}</span><div class="tools">${phone ? "" : '<span class="chip">Last 24 hours</span>'}${ib(I.refresh, "Refresh", "R")}</div></div>`;
     const content = `<div class="app-body"><div class="tiles">${s.tiles.map((t) => `<div class="tile"><span>${t[0]}</span><b>${t[1]}</b><i>${t[2]}</i></div>`).join("")}</div><div class="rowlist">${s.rows.map((r) => `<div><i class="dot ${r[0]}"></i><span>${r[1]}</span><span>${r[2]}</span></div>`).join("")}</div></div>`;
     if (phone) {
       return `<div class="adm-main">${bar}${content}</div><nav class="tabs" aria-label="Sections">${s.tabs.map((t) => `<a href="#" ${t[2] ? 'aria-current="page"' : ""}>${t[1]}<span>${t[0]}</span></a>`).join("")}</nav>`;
     }
     const menu = `<nav class="menu" aria-label="Sections"><button type="button" class="col" data-collapse aria-label="Collapse menu">${I.collapse}<span>Collapse menu</span><span class="mono" style="margin-left:auto;font-size:11px">[</span></button>` +
       s.menu.map(([g, items]) => (g ? `<div class="g">${g}</div>` : "") + items.map((it) => `<a href="#" ${it[3] ? 'aria-current="page"' : ""} title="${it[0]}">${it[1]}<span class="lbl">${it[0]}</span>${it[2] ? `<span class="ct ${it[4] || ""}">${it[2]}</span>` : ""}</a>`).join("")).join("") + `</nav>`;
-    return `<div class="adm">${menu}<div class="adm-main">${bar}${content}</div></div>`;
+    const strip = s.admin ? `<nav class="strip" aria-label="Apps">` + FAMILY.map(([id, label, n], i) => `<a href="#" title="${label}  G ${i + 1}" ${id === s.admin ? 'aria-current="true"' : ""} aria-label="${label}${id !== s.admin && n ? ", " + n + " need you" : ""}">${M[id]}${id !== s.admin && n ? `<span class="bub" aria-hidden="true">${n}</span>` : ""}</a>`).join("") + `</nav>` : "";
+    return `<div class="adm ${s.admin ? "owner" : "user"}">${strip}${menu}<div class="adm-main">${bar}${content}</div></div>`;
   }
 
   function frame(site, key, theme, phone) {
     const s = site.surfaces[key];
-    const body = s.admin ? adminBody(s, phone) : s.body(phone);
+    const body = s.admin || s.dash ? adminBody(s, phone) : s.body(phone);
     return `<div class="fr ${site.cls} ${theme} ${phone ? "phone" : "desk"}" data-theme-frame="${theme}">${header(site, s, theme, phone)}${body}${phone ? sheet(site, s) : ""}</div>`;
   }
 
