@@ -26,6 +26,6 @@ Capsomer is the family design system: tokens, components, the app shell and patt
 
 ## Releases and deploys
 
-- A release bumps the version, finishes the CHANGELOG entry and is tagged `vX.Y.Z`; apps pin a tag. Unreleased work sits under the top CHANGELOG heading.
+- A release bumps the version and finishes the CHANGELOG entry in a PR; apps pin a tag. Merging it is the release: `.github/workflows/release.yml` tags `vX.Y.Z`, publishes the GitHub release and starts the consumer bumps. Unreleased work sits under the top CHANGELOG heading.
 - The site deploys by Cloudflare Workers Builds on every push to `main` (DEPLOY.md). A merge to `main` is a deploy of the site.
 - `wrangler.jsonc` is committed on purpose: it serves static files only and holds no ids or secrets.
