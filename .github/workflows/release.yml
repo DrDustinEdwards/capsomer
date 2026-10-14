@@ -23,6 +23,7 @@ concurrency:
 jobs:
   tag:
     name: Tag and publish the release
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
