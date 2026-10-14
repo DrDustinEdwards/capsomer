@@ -89,6 +89,61 @@
     stroke-linejoin: round;
   }
 
+  /* The button form (data-variant="button"): one icon button that switches to the other theme,
+     the site header's control. A 36px target with an 18px glyph, like every header control. It
+     shows a moon while the page is light and a sun while it is dark (both are in the markup, so the
+     picture is right before any script runs); its name says what a press does. */
+  .cap-theme-button {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-m);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--sunken);
+      color: var(--text);
+    }
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
+    & .cap-theme-icon {
+      width: 18px;
+      height: 18px;
+      stroke-width: 1.6;
+    }
+    & [data-show="dark"] {
+      display: none;
+    }
+  }
+  :root[data-theme="dark"] .cap-theme-button {
+    & [data-show="light"] {
+      display: none;
+    }
+    & [data-show="dark"] {
+      display: block;
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .cap-theme-button {
+      & [data-show="light"] {
+        display: none;
+      }
+      & [data-show="dark"] {
+        display: block;
+      }
+    }
+  }
+
   /* On a phone the top bar has no room for the words: the icons stay, and the words stay for a
      screen reader. */
   @media (max-width: 820px) {
@@ -107,7 +162,8 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .cap-theme-options > label {
+    .cap-theme-options > label,
+    .cap-theme-button {
       transition:
         background-color var(--dur-fast) var(--ease-out),
         color var(--dur-fast) var(--ease-out);

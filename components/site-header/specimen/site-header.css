@@ -1,0 +1,250 @@
+@import "../../../css/families.css";
+
+/* Sample pages for the states page only: what each site owns (its wordmark, its panels' layout)
+   and the page under the header. Not part of the package. */
+.sh-site {
+  min-height: 100dvh;
+  background: var(--ground);
+  color: var(--text);
+}
+
+/* The teal site's wordmark: the mono face, the x in the accent. */
+.sh-fh-wordmark {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+
+  & em {
+    font-style: normal;
+    color: var(--accent);
+  }
+}
+/* The fox site's wordmark: the serif. */
+.sh-fx-wordmark {
+  font-family: var(--prose);
+  font-size: 20px;
+  font-weight: 600;
+}
+.cap-site-header-logo .cap-admin-logo {
+  color: var(--accent);
+}
+
+.sh-hero {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  max-width: 760px;
+  padding: var(--space-8) var(--space-6) 0;
+
+  & h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  &:focus {
+    outline: none;
+  }
+}
+[data-family="fox"] .sh-hero h1 {
+  font-family: var(--prose);
+}
+.sh-eyebrow {
+  margin: 0;
+  color: var(--accent-text);
+  font-size: var(--fs-detail);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.sh-lead {
+  margin: 0;
+  max-width: 56ch;
+  color: var(--muted);
+  font-size: 16px;
+}
+/* Room to scroll, so the sticky header and the translucent band can be seen working. */
+.sh-filler {
+  block-size: 900px;
+}
+.sh-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & li {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+  }
+  & span {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  & b {
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+.sh-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  background: var(--surface);
+
+  & li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+  }
+  & li + li {
+    border-block-start: 1px solid var(--line);
+  }
+  & li > span:last-child {
+    flex: none;
+    color: var(--muted);
+  }
+}
+
+/* The fox site's own panels, laid out as it draws them. */
+.sh-mega {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  inline-size: min(26rem, calc(100vw - 32px));
+  padding: var(--space-4);
+
+  &[data-cols="1"] {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  & ul {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  & ul[data-cols="2"] {
+    grid-template-columns: 1fr 1fr;
+  }
+  & a {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-m);
+    color: var(--text);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--sunken);
+    }
+  }
+}
+.sh-mega-label {
+  margin: 0 0 var(--space-2);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.sh-chips {
+  display: flex !important;
+  flex-wrap: wrap;
+
+  & a {
+    border-radius: var(--radius-full);
+    background: var(--accent-soft);
+    color: var(--accent-text);
+    font-size: var(--fs-detail);
+  }
+}
+.sh-pick {
+  display: grid !important;
+  gap: var(--space-1);
+  border: 1px solid var(--line);
+  background: var(--raised);
+
+  & b {
+    font-family: var(--prose);
+  }
+  & > span:last-child {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+}
+.sh-fx-account {
+  inline-size: min(320px, calc(100vw - 32px));
+
+  & .sh-fx-id {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-5);
+    border-block-end: 1px solid var(--line);
+
+    & span {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: var(--fs-detail);
+    }
+  }
+  & dl {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0;
+    border-block-end: 1px solid var(--line);
+    text-align: center;
+  }
+  & dl div {
+    display: flex;
+    flex-direction: column-reverse;
+    padding: var(--space-3) var(--space-2);
+  }
+  & dd {
+    margin: 0;
+    font-family: var(--prose);
+    font-size: 20px;
+  }
+  & dt {
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  & ul {
+    display: grid;
+    margin: 0;
+    padding: var(--space-2);
+    list-style: none;
+  }
+  & :is(a, button) {
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+    min-block-size: max(var(--control), var(--target));
+    padding: 0 var(--space-4);
+    border: 0;
+    border-radius: var(--radius-m);
+    background: none;
+    color: var(--text);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--sunken);
+    }
+  }
+}

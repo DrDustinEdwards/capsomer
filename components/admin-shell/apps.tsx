@@ -5,12 +5,12 @@
 // product's own icon (its favicon or brand file) redrawn in one colour: the Portal's hexagon
 // (capsid dashboard/src/ui/icons.tsx BrandMark), Carrel's open book (carrel app/components/frame.tsx),
 // dustinedwards.info's microscope (public/dustin-edwards-logo.svg), germomics' broadcasting
-// microphone (public/brand/germomics-icon-currentcolor.svg), and Capsomer's hexagon (its site's
+// microphone (public/brand/germomics-icon-currentcolor.svg), Foxing's placeholder fox, and Capsomer's hexagon (its site's
 // brand mark). Foxhound's own favicon is an x, which reads as close or delete; it stays as
 // Foxhound's mark until Dustin picks one of the two alternatives in FOXHOUND_MARKS.
 import type { ReactNode } from "react";
 
-export type FamilyAppId = "portal" | "carrel" | "info" | "germomics" | "foxhound" | "capsomer";
+export type FamilyAppId = "portal" | "carrel" | "info" | "germomics" | "foxhound" | "foxing" | "capsomer";
 
 export interface FamilyApp {
   id: FamilyAppId;
@@ -97,6 +97,17 @@ export const FOXHOUND_MARKS = {
   ),
 };
 
+// Foxing's mark: a placeholder fox's head in one colour, from the header design's mockup, until
+// Dustin picks Foxing's drawn mark (docs/design/design-site-header.md, answer 8: candidates go to
+// him first, and it must read apart from Foxhound's). It replaces the fox emoji.
+const FOXING = mark(
+  "0 0 24 24",
+  <path
+    fill="currentColor"
+    d="M4 4.5 8.4 8h7.2L20 4.5l-.6 7.4c-.4 3.6-3.5 7.6-7.4 8.6-3.9-1-7-5-7.4-8.6zm5 8.2c.7 0 1.3-.5 1.3-1.2s-.6-1.2-1.3-1.2-1.3.5-1.3 1.2.6 1.2 1.3 1.2zm6 0c.7 0 1.3-.5 1.3-1.2s-.6-1.2-1.3-1.2-1.3.5-1.3 1.2.6 1.2 1.3 1.2zM12 17l1.6-1.8h-3.2z"
+  />,
+);
+
 const CAPSOMER = mark(
   "0 0 20 20",
   <path fill="currentColor" fillRule="evenodd" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9zM10 5.4 6 7.7v4.6l4 2.3 4-2.3V7.7z" />,
@@ -110,6 +121,9 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
   // The x from its favicon stays until Dustin picks one of FOXHOUND_MARKS.
   { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND },
+  // Foxing joins the family's admin apps in 0.9.0, seventh, before Capsomer; its mark is a
+  // placeholder until Dustin picks one.
+  { id: "foxing", label: "Foxing", href: "https://foxing.app/admin", logo: FOXING },
   { id: "capsomer", label: "Capsomer", href: "https://capsomer.dustinedwards.info/", logo: CAPSOMER },
 ];
 

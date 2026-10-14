@@ -46,6 +46,7 @@
   --rail-w: 208px;
   --rail-w-collapsed: 56px;
   --top-h: 44px;
+  --header-h: 3.5rem;
   --control-h-coarse: 44px;
   --face: var(--ui);
 }

@@ -1,10 +1,12 @@
-// The theme switch: Light or Dark, as a two-choice segmented radio group. The first visit
+// The theme switch: Light or Dark, as a two-choice segmented radio group, or (0.9.0) as one icon
+// button that switches to the other theme (data-variant="button", the site header's control). The first visit
 // follows the operating system's setting (data-theme is left off, so the system's choice
 // applies); the first time the person chooses, data-theme is set and the choice is remembered
 // in this browser from then on, as the Portal's top bar button does. applyStoredTheme() is
 // what an app runs before first paint; toggleTheme() is for a "t" shortcut. No framework;
 // the React wrapper uses the same functions.
 import { readPref, writePref } from "../shell/shell.ts";
+import { attach as attachTip } from "../tooltip/tooltip.ts";
 
 export type ThemeChoice = "light" | "dark";
 export const THEME_PREF = "cap-theme";
@@ -53,6 +55,50 @@ function check(el: HTMLElement, choice: ThemeChoice): void {
   for (const r of el.querySelectorAll<HTMLInputElement>("input[type='radio']")) r.checked = r.value === choice;
 }
 
+// The button form says what it does, never what is showing: "Switch to dark theme" while the
+// page is light, "Switch to light theme" while it is dark.
+export function themeButtonLabel(showing: ThemeChoice): string {
+  return showing === "dark" ? "Switch to light theme" : "Switch to dark theme";
+}
+
+// Keeps a theme button's name and its tip's words in step with the theme that is showing.
+export function syncThemeButton(button: HTMLElement, showing: ThemeChoice = effectiveTheme()): void {
+  const label = themeButtonLabel(showing);
+  button.setAttribute("aria-label", label);
+  const text = button.querySelector(".cap-theme-tip-text");
+  if (text) text.textContent = label;
+}
+
+// One theme button: a press switches to the other theme and remembers it; its name follows the
+// theme from any source (a switch, the T key, another tab, the system). Its tip repeats its name,
+// so it adds no description.
+function wireButton(el: HTMLElement, key: string): () => void {
+  const start = readTheme(key);
+  if (start) applyTheme(start, { key, remember: false });
+  syncThemeButton(el);
+  const tip = el.querySelector<HTMLElement>(".cap-theme-tip");
+  const detachTip = tip ? attachTip(el, tip) : null;
+  el.removeAttribute("aria-describedby");
+  const onClick = () => toggleTheme(key);
+  const onTheme = (e: Event) => syncThemeButton(el, (e as CustomEvent<{ choice: ThemeChoice }>).detail?.choice ?? effectiveTheme());
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === key && isChoice(e.newValue)) applyTheme(e.newValue, { key, remember: false });
+  };
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const onSystem = () => syncThemeButton(el);
+  el.addEventListener("click", onClick);
+  document.addEventListener("cap-theme", onTheme);
+  window.addEventListener("storage", onStorage);
+  media.addEventListener("change", onSystem);
+  return () => {
+    el.removeEventListener("click", onClick);
+    document.removeEventListener("cap-theme", onTheme);
+    window.removeEventListener("storage", onStorage);
+    media.removeEventListener("change", onSystem);
+    detachTip?.();
+  };
+}
+
 // Attaches to every [data-cap="theme-switch"] under root. With a remembered choice, that is
 // checked and applied. With none and a radio checked in the markup (a server that read a
 // cookie), that one is applied. With neither, the radio for the operating system's theme is
@@ -64,6 +110,14 @@ export function enhance(root: ParentNode = document): () => void {
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='theme-switch']:not([data-cap-ready])")) {
     el.dataset.capReady = "";
     const key = el.dataset.capPref ?? THEME_PREF;
+    if (el.dataset.variant === "button") {
+      const unwire = wireButton(el, key);
+      undo.push(() => {
+        unwire();
+        delete el.dataset.capReady;
+      });
+      continue;
+    }
     const marked = el.querySelector<HTMLInputElement>("input[type='radio']:checked")?.value;
     const start = readTheme(key) ?? (isChoice(marked) ? marked : null);
     if (start) applyTheme(start, { key, remember: false });

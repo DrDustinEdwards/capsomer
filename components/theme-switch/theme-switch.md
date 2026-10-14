@@ -4,9 +4,9 @@ title: Theme switch
 summary: Light or Dark, following the system until the person chooses, then remembered in this browser.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [first visit follows the system, light selected, dark selected, hover, keyboard focus, disabled, comfortable density, phone width]
+states: [first visit follows the system, light selected, dark selected, hover, keyboard focus, disabled, comfortable density, phone width, the button form]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.9.0
 source: Capsid Portal, dashboard/src/lib/prefs.ts (applySavedTheme, toggleTheme, setThemeChoice) and the top bar's theme button
 replaces:
   - 'wf-theme'
@@ -16,13 +16,27 @@ replaces:
 
 # Theme switch
 
-Two choices, Light and Dark, as a segmented pair on radio inputs, each with its icon (a sun, a moon). A choice sets `data-theme` on `<html>`. It sits in the top bar after the actions, before Settings. There is no "System" choice to pick: the first visit follows the operating system's setting, and from the first choice on the person's choice is remembered.
+Two choices, Light and Dark, as a segmented pair on radio inputs, each with its icon (a sun, a moon). A choice sets `data-theme` on `<html>`. The switch is for a settings page; a header carries the **button form** (0.9.0): one icon button whose name says what it does. There is no "System" choice to pick: the first visit follows the operating system's setting, and from the first choice on the person's choice is remembered.
 
 **Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01), `lib/prefs.ts`. The logic is EXTRACTED with renames: `applySavedTheme` is `applyStoredTheme`, `toggleTheme` is `toggleTheme`, `currentTheme` is `effectiveTheme`, and `setThemeChoice` is `applyTheme` (set `data-theme`, remember, tell every switch on the page, as the Portal's listeners do). The Portal's key `wf-theme` is `cap-theme`. The markup is REWRITTEN: a two-radio segmented control, with the choice named in words, where the Portal has a top-bar button with `aria-pressed`. Dustin ruled (PR #13, 2026-10-01) for the two-state Light/Dark control with no System shown, the first visit following the system and the choice remembered after, as the Portal's button behaves. This overrides the audit's Display setting with System, Light and Dark; the 0.1.1 first draft of this page kept three choices, and that is withdrawn. Where this differs from the Portal: the control says "Light" and "Dark" as two named radios and not one button whose pressed state means dark; nothing else.
 
 ## When to use it
 
-In every app's top bar, and on a settings page.
+The switch on a settings page; the button form in the site header (components/site-header), where every page's theme control now sits (Dustin's answer 2 of 2026-10-13).
+
+## The button form
+
+One icon button, `data-variant="button"`: a moon while the page is light, a sun while it is dark, and its name says what pressing it does, "Switch to dark theme" or "Switch to light theme", so nobody has to guess whether a sun means "is light" or "make it light". Light and Dark only, no System, the same remembering as the switch. Its tooltip (the shared tooltip, in the top layer) repeats the name and its key; it adds no description, because the name already says it. It follows the `t` key, other tabs and the system's setting like the switch does. 36px, an 18px glyph, as every header icon.
+
+```html
+<button type="button" class="cap-theme-button" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
+  <svg class="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true">[moon]</svg>
+  <svg class="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true">[sun]</svg>
+  <span class="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-theme-tip-text">Switch to dark theme</span><kbd>T</kbd></span>
+</button>
+```
+
+`enhance()` wires it; `themeButtonLabel(showing)` gives its name. In React, `<ThemeButton prefKey shortcut />`.
 
 ## When not to
 
@@ -82,7 +96,7 @@ Toggle Group in its outline variant with spacing 0 (the items flush in one round
 ## Deliberately different
 
 - **Two radios, not a toggle group of buttons.** shadcn's Toggle Group is `aria-pressed` buttons; a choice of one of two is a radio group, so the arrow keys, the form and the screen reader's "1 of 2" are the browser's. It also keeps 0.1's markup contract.
-- **Two states, no System.** shadcn's Mode Toggle is a menu of Light, Dark and System; Dustin ruled for two (PR #13). The first visit follows the system without writing anything.
+- **Two states, no System.** shadcn's Mode Toggle is a menu of Light, Dark and System; Dustin ruled for two (PR #13), and kept two for the header's button (2026-10-13). The first visit follows the system without writing anything.
 - **The chosen segment is the selected-item fill**, not shadcn's grey muted fill: one selected style across Capsomer, and over 3:1 against the ground on its own.
 - **It no longer uses `.cap-seg`.** The segmented control is a form control on a surface; this one sits on the top bar's ground tone and has icons, so its look is its own, and the two can change independently.
 
