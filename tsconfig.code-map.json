@@ -1,0 +1,9 @@
+{
+  // Read only by the code map (.github/workflows/code-map.yml): the type check's own tsconfig.json, plus the plain
+  // JavaScript in bin/ and tokens/, so those modules are mapped too.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true
+  },
+  "include": ["components", "site", "test", "bin", "tokens"]
+}
