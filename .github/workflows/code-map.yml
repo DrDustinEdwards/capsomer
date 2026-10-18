@@ -1,0 +1,36 @@
+# The code map (slice 10 of the Capsid system explorer, capsid job_b6494c838e31). After each push to main, devkit's shared
+# code-map workflow maps capsomer's modules (size, imports, and each function's complexity, coverage and CRAP score) and
+# replaces code-map.json on the orphan `code-map` branch, which Capsid reads for the explorer. Not a gate: it runs only
+# on main, never on a pull request. Capsomer has no Stryker, so there is no mutation run and no schedule.
+name: code-map
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  code-map:
+    # A called workflow holds no more than this job grants: the write lets it push code-map.json to the code-map branch.
+    permissions:
+      contents: write
+    # One run at a time, so an older push's map never lands after a newer one.
+    concurrency:
+      group: code-map
+      cancel-in-progress: false
+    # Pinned to a full sha of devkit, as devkit's scripts/check-callers.mjs requires.
+    uses: DrDustinEdwards/devkit/.github/workflows/code-map.yml@5c870d43ebcde321c1afd2d9c2759dc2a479487c
+    with:
+      node-version-file: .node-version
+      install: npm ci
+      # tsconfig.json lists only the TypeScript; this one adds the JavaScript in bin/ and tokens/.
+      tsconfig: tsconfig.code-map.json
+      include: components/ bin/ tokens/ site/ test/helpers.ts
+      # The unit tests of `npm run check`. They import the .ts sources directly (not dist/), so coverage lands on the
+      # mapped files. Components tested only in the browser suite have no unit coverage and show as unmeasured.
+      # Node's test runner does not create the destination folder.
+      coverage-command: mkdir -p coverage && node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/lcov.info "test/unit/*.test.mjs"
+      coverage-file: coverage/lcov.info
