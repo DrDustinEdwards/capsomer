@@ -7,8 +7,17 @@ import { eachTheme, expectNoAxeViolations } from "../test/helpers.ts";
 // under the Content-Security-Policy the static Worker sends.
 const VIEWS = ["overview", "components", "color", "type", "motion", "tests", "defaults", "changes", "settings"];
 
-// The policy the static Worker sends, read from site/public/_headers.
-const CSP = /Content-Security-Policy:\s*(.+)/.exec(readFileSync("site/public/_headers", "utf8"))?.[1]?.trim() ?? "";
+// The headers the static Worker sends on every page: the `/*` rule of the built site's _headers,
+// which the build writes from scripts/security-headers.ts.
+const PAGE_HEADERS = Object.fromEntries(
+  (readFileSync("site-dist/_headers", "utf8").split("\n\n")[0] ?? "")
+    .split("\n")
+    .slice(1)
+    .map((line) => /^ {2}([A-Za-z-]+): (.+)$/.exec(line))
+    .filter((m): m is RegExpExecArray => m !== null)
+    .map((m) => [String(m[1]).toLowerCase(), String(m[2])]),
+);
+const CSP = PAGE_HEADERS["content-security-policy"] ?? "";
 
 eachTheme((theme) => {
   for (const view of VIEWS) {
@@ -126,12 +135,12 @@ eachTheme((theme) => {
   });
 
   test("behaviour: the site runs under its production Content-Security-Policy with no violation", async ({ page }) => {
-    expect(CSP, "the CSP line in site/public/_headers").not.toBe("");
+    expect(CSP, "the CSP line in site-dist/_headers").not.toBe("");
     await page.route("**/*", async (route) => {
       const response = await route.fetch();
       const type = response.headers()["content-type"] ?? "";
       if (!type.includes("text/html")) return route.fulfill({ response });
-      await route.fulfill({ response, headers: { ...response.headers(), "content-security-policy": CSP } });
+      await route.fulfill({ response, headers: { ...response.headers(), ...PAGE_HEADERS } });
     });
     await page.addInitScript(() => {
       const w = window as unknown as { cspViolations: string[] };
@@ -147,6 +156,20 @@ eachTheme((theme) => {
       const found = await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations);
       expect(found, `CSP violations on ${view}`).toEqual([]);
     }
+    // The site frames its own pages (frame-ancestors 'self', X-Frame-Options sameorigin): the
+    // shell's states page loads in its frame, and its specimens load in theirs, with no violation
+    // in any frame.
+    const states = page.locator("iframe.site-frame").first();
+    await states.scrollIntoViewIfNeeded();
+    const specimen = states.contentFrame().locator("iframe.cap-specimen-frame").first();
+    await specimen.scrollIntoViewIfNeeded();
+    await expect(specimen.contentFrame().locator("body.cap-specimen-only")).toBeAttached();
+    await page.waitForLoadState("networkidle");
+    expect(page.frames().length, "the states page and its specimens are framed").toBeGreaterThan(2);
+    for (const frame of page.frames()) {
+      const found = await frame.evaluate(() => (window as unknown as { cspViolations?: string[] }).cspViolations ?? []);
+      expect(found, `CSP violations in ${frame.url()}`).toEqual([]);
+    }
   });
 
   test("behaviour: a component's page shows its states in both themes", async ({ page }) => {
@@ -157,10 +180,15 @@ eachTheme((theme) => {
 });
 
 // Cloudflare Web Analytics injects its beacon into every HTML page on this zone. A public
-// site allows it in script-src (Dustin's analytics ruling, 2026-10-03); the beacon reports
+// site allows its file and versioned path in script-src (Dustin's analytics ruling,
+// 2026-10-03; site-runtime writes the two sources); the beacon reports
 // to this origin's /cdn-cgi/rum, so connect-src gains nothing.
 test("security: the CSP allows Cloudflare's Web Analytics beacon and nothing else new", () => {
   const directive = (name: string) => CSP.split(";").map((d) => d.trim()).find((d) => d.startsWith(`${name} `)) ?? "";
-  expect(directive("script-src").split(" ").slice(1)).toEqual(["'self'", "https://static.cloudflareinsights.com"]);
+  expect(directive("script-src").split(" ").slice(1)).toEqual([
+    "'self'",
+    "https://static.cloudflareinsights.com/beacon.min.js",
+    "https://static.cloudflareinsights.com/beacon.min.js/",
+  ]);
   expect(directive("connect-src")).toBe("connect-src 'self' https://raw.githubusercontent.com");
 });

@@ -1,18 +1,24 @@
-// Capsomer's site at https://capsomer.dustinedwards.info (rulings.md, rule 16): a static
-// Cloudflare Worker serving the built site from Workers static assets. No Worker script
-// runs; every request is a file from site-dist. Cloudflare's Git integration builds and
-// deploys it from this public repo on every push to main (see DEPLOY.md).
+// Capsomer's site at https://capsomer.dustinedwards.info (rulings.md, rule 16): Workers static
+// assets serving the built site from site-dist, with a tiny Worker (worker/index.ts) that only
+// receives Content-Security-Policy violation reports. Cloudflare's Git integration builds and
+// deploys it from this public repo on every push to main (see DEPLOY.md). No account id or
+// secret here: wrangler takes the account from the login or the build.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "capsomer",
   "compatibility_date": "2026-09-30",
+  "main": "./worker/index.ts",
   "assets": {
     "directory": "./site-dist",
+    "binding": "ASSETS",
+    // The Worker runs only for the report endpoint; every file is served by the assets layer
+    // directly, with the headers site-dist/_headers sets (written by scripts/security-headers.ts).
+    "run_worker_first": ["/csp-report"],
     // A missing file is a plain 404: the site routes with #, so there is no client route
     // to fall back to.
     "not_found_handling": "404-page"
   },
-  "observability": {
-    "enabled": true
-  }
+  // Workers Logs keep the Worker's own lines, which are the violation reports. Invocation logs
+  // (one per request) stay off: the site records nothing about its readers.
+  "observability": { "logs": { "enabled": true, "invocation_logs": false } }
 }

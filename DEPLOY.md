@@ -1,6 +1,6 @@
 # Deploying the site
 
-Capsomer's site lives at **https://capsomer.dustinedwards.info** (rulings.md, rule 16). It is a static Cloudflare Worker: `wrangler.jsonc` serves `site-dist/` from Workers static assets, with no Worker script. Cloudflare's Git integration (Workers Builds) builds and deploys it from this public repo on every push to `main`. It costs nothing on the free plan.
+Capsomer's site lives at **https://capsomer.dustinedwards.info** (rulings.md, rule 16). It is a Cloudflare Worker that is almost all static assets: `wrangler.jsonc` serves `site-dist/` from Workers static assets, and a tiny Worker script (`worker/index.ts`) runs only for `/csp-report`, where browsers send Content-Security-Policy violation reports; it logs them to Workers Logs and stores nothing. The security headers come from `scripts/security-headers.ts` (built on `@dustinedwards/site-runtime`), which the site build writes into `site-dist/_headers`. Cloudflare's Git integration (Workers Builds) builds and deploys it from this public repo on every push to `main`. It costs nothing on the free plan.
 
 The deployed site reads the latest test results at runtime from this repo's `results` branch, which CI writes after every run on `main`, so a new result shows without a redeploy.
 
@@ -29,7 +29,8 @@ The deployed site reads the latest test results at runtime from this repo's `res
 ### 3. Check it
 
 - https://capsomer.dustinedwards.info opens the site in the shared shell.
-- `curl -sI https://capsomer.dustinedwards.info/` shows the `Content-Security-Policy` line from `site/public/_headers`.
+- `curl -sI https://capsomer.dustinedwards.info/` shows the `Content-Security-Policy` line and the rest of the security set from `site-dist/_headers`, which `npm run site:release` generates from `scripts/security-headers.ts`.
+- `curl -s -o /dev/null -w '%{http_code}\n' -X POST https://capsomer.dustinedwards.info/csp-report -d '{}'` prints `204`: the report endpoint is the Worker.
 
 Docs: https://developers.cloudflare.com/workers/ci-cd/builds/ and https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
 
