@@ -4,10 +4,9 @@ Capsomer is the family design system: tokens, components, the app shell and patt
 
 ## Rules that come first
 
-- The portfolio rules are in Capsid: `capsid/conventions.md`. Read it with this file. Where they disagree, conventions wins.
+- The portfolio rules are in Capsid: `capsid/conventions.md`. Read it with this file.
 - Capsomer's own rulings: `capsomer/rulings.md` and `capsomer/patterns.md` in Capsid, and `DEFAULTS.md` here. Design choices are defaults, not laws: a better design overrides one and records why.
 - A shared component changes only here. An app never keeps its own copy; it takes the change in a release.
-- Every component change ships with side-by-side screenshots in both themes and waits for Dustin's sign-off before release (capsid/decisions.md, 2026-10-02).
 - Plain CSS with family tokens. No Tailwind or other CSS framework, no paid assets. shadcn/ui is the craft reference only; nothing is installed or copied from it.
 
 ## Layout
