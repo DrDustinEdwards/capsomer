@@ -278,6 +278,29 @@ eachTheme((theme) => {
     expect(roomy).toBeGreaterThanOrEqual(compact);
   });
 
+  test("behaviour: at 320px nothing runs past the window (WCAG reflow): the logo shows its mark, keeps its name, and the menu button is in view", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await visitStates(page, "admin-shell", theme, "phone");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+    // The last tab's wide count ("99+") stays inside the window and clear of its glyph.
+    const badges = await page.locator(".cap-site-tabs > *").evaluateAll((els) =>
+      els.flatMap((e) => {
+        const b = e.querySelector(".cap-site-header-badge")?.getBoundingClientRect();
+        const i = e.querySelector("svg")!.getBoundingClientRect();
+        return b ? [{ right: b.right, clear: b.left >= i.left + i.width / 2 + 10 }] : [];
+      }),
+    );
+    expect(badges.length).toBeGreaterThan(0);
+    for (const b of badges) {
+      expect(b.clear).toBe(true);
+      expect(b.right).toBeLessThanOrEqual(320);
+    }
+    const menu = (await page.getByRole("button", { name: "Menu" }).boundingBox())!;
+    expect(menu.x + menu.width).toBeLessThanOrEqual(320);
+    await expect(page.getByRole("link", { name: "Capsid Portal" })).toBeVisible();
+    await expectNoAxeViolations(page);
+  });
+
   test("accessibility: at phone width the strip and menu give way to the header's one row and five tabs, with no More", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "admin-shell", theme, "phone");
