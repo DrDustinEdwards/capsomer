@@ -111,7 +111,10 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-3);
-    flex: none;
+    /* It gives way before the controls do, so the header never runs past a 320px window
+       (WCAG 1.4.10, reflow); the mark itself never shrinks. */
+    flex: 0 1 auto;
+    min-inline-size: 0;
     block-size: 24px;
     max-inline-size: 160px;
     overflow: hidden;
@@ -631,6 +634,13 @@
     display: none;
   }
 
+  /* Under 360px a logo with a mark shows the mark alone; the link's label keeps the name. */
+  @media (max-width: 359.98px) {
+    .cap-site-header-logo > :is(svg, img) ~ * {
+      display: none;
+    }
+  }
+
   @media (max-width: 767.98px) {
     .cap-site-header {
       --header-side: var(--space-5);
@@ -716,6 +726,14 @@
         top: 0;
         left: calc(50% + 12px);
         box-shadow: 0 0 0 2px var(--surface);
+      }
+      /* Under 360px a tab is 62px: the badge sits flush on the glyph's edge with tighter padding,
+         so the last tab's "99+" stays clear of the glyph and inside the window. */
+      @media (max-width: 359.98px) {
+        & .cap-site-header-badge {
+          left: calc(50% + 10px);
+          padding-inline: 2px;
+        }
       }
     }
   }
