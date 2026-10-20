@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## Unreleased
+
+**Site only: the showcase site's security headers come from `@dustinedwards/site-runtime` v0.4.0** (no package change). `scripts/security-headers.ts` holds the site's list (`data:` images, test results from raw.githubusercontent.com, the Cloudflare Web Analytics beacon, styles from its own files only, its own pages framed with `frame-ancestors 'self'` and `X-Frame-Options: sameorigin`, the clipboard's write side for the Copy specimens) and the site build writes `site-dist/_headers` from it, in place of the hand-written `site/public/_headers`. The site now sends the shared standard set (HSTS, COOP, CORP, `Referrer-Policy: no-referrer`, the full Permissions-Policy) and `form-action 'self'`. Violations are reported to `/csp-report`, answered by a minimal Worker (`worker/index.ts`) that runs for that path only and logs to Workers Logs. `test/unit/security-headers.test.mjs` runs site-runtime's check on the generated `_headers` and on the report response.
+
 ## [0.9.1]
 
 **Site header and AdminShell: nothing runs past a 320px window** (WCAG 1.4.10, reflow; the Capsid Portal UX audit's M8, 2026-10-20; a visual change at narrow widths only). At 320px every AdminShell page was 335px wide and the menu button was clipped, because the logo never gave way. Now the logo (`.cap-site-header-logo`) shrinks before the controls do, and under 360px a logo with a mark shows the mark alone; the link's label keeps its name for screen readers. Under 360px the phone tab bar's count badges sit flush on the glyph's edge with 2px padding, so the last tab's "99+" stays clear of its glyph and inside the window. At 360px and wider nothing changes. Tested at 320px in both themes. No class, token or HTML contract changes.

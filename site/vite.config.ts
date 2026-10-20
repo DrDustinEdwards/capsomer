@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { generateStates } from "../bin/states.mjs";
+import { writeHeadersFile } from "../scripts/security-headers.ts";
 
 // One build for the site and every component's states page. The root is the repo, so a
 // states page sits at /components/<name>/states.html beside its component. The site is
@@ -13,6 +14,7 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 // The states pages are generated from each component's examples.html, so they are written
 // first: Vite finds its inputs by the file existing (build and preview both load this).
 generateStates(root);
+const outDir = resolve(root, "site-dist");
 const states = Object.fromEntries(
   readdirSync(resolve(root, "components"), { withFileTypes: true })
     .filter((d) => d.isDirectory() && existsSync(resolve(root, "components", d.name, "states.html")))
@@ -34,9 +36,18 @@ export default defineConfig({
         if (page) page.fileName = "index.html";
       },
     },
+    // The security headers and the assets' cache rule, generated from scripts/security-headers.ts
+    // into site-dist/_headers, which Workers static assets reads.
+    {
+      name: "capsomer-site-headers",
+      apply: "build",
+      writeBundle() {
+        writeHeadersFile(outDir);
+      },
+    },
   ],
   build: {
-    outDir: resolve(root, "site-dist"),
+    outDir,
     // Every asset a file, never a data: URL: the site's CSP allows fonts and images from
     // its own origin only.
     assetsInlineLimit: 0,
