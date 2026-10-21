@@ -5,9 +5,8 @@
 // to it (resolve, dismiss, reopen, apply, apply a batch) and keeps the anchors true to the
 // current text. No framework; the React wrapper reuses the pure functions.
 //
-// Extracted from the site admin's check feedback (app/lib/editor/feedback.ts: a result is said
-// in a polite region, a refusal in an alert) and Carrel's flags (a flag is a question for the
-// owner, never a decision; an open flag holds publish until it is fixed or dismissed).
+// A result is said in a polite region, a refusal in an alert. A flag is a question for the
+// owner, never a decision; an open flag holds publish until it is fixed or dismissed.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { fail, say, type SayOptions } from "../message/message.ts";

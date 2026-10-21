@@ -1,7 +1,5 @@
 // Times in words. Relative in rows ("5 minutes ago", never "5m"), exact in the viewer's
-// zone with UTC beside it. Ported from the Capsid Portal's dashboard/src/lib/format.ts
-// (`ms`, `portalNow`, `utc`, `exactTime`); `ago` is rewritten, spelled out (the audit rules
-// out "5m"). The pure functions take the zone so they can be checked anywhere; in a page
+// zone with UTC beside it. The pure functions take the zone so they can be checked anywhere; in a page
 // the zone is the viewer's.
 
 export const SEC = 1000;

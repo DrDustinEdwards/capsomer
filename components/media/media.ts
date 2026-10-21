@@ -1,12 +1,10 @@
 // The media library's behaviour: a grid of tiles with roving focus and two-dimensional arrow keys,
 // selection by real checkboxes, an inspector that sits beside the grid (a pane) or over it (a
 // side sheet) and SAVES BY ITSELF, the copy button, the filters, search, Trash and Restore.
-// Extracted from the site admin's media-keyboard.tsx and tile-nav.mjs (the arrow keys read the
-// rendered boxes, not a column count), media-grid.tsx, media-tile.tsx, media-inspector*.tsx,
-// copy-button.tsx, media-facets.tsx and lib/media/usage.mjs (the three-way alt state, the copy
-// snippets, "unattached is not unused"); rewritten for Capsomer: the site's inspector was a form
-// with Save buttons; this one saves after typing stops, with a live status that never loses
-// typed text. No framework; the React wrapper uses the same pure functions.
+// The arrow keys read the rendered boxes, not a column count; alt text has three states; an
+// unattached file is not an unused one. The inspector saves after typing stops, with a live
+// status that never loses typed text. No framework; the React wrapper uses the same pure
+// functions.
 
 import { enhance as enhanceMeters } from "../meter/meter.ts";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
@@ -143,7 +141,7 @@ export function copySnippets(r: Pick<MediaRecord, "url" | "kind" | "alt" | "name
 }
 
 // ---------------------------------------------------------------------------------------
-// The grid's arrow keys, from the rendered boxes. Extracted from the site's tile-nav.mjs: the
+// The grid's arrow keys, from the rendered boxes: the
 // browser decides the column count, and a second layout engine would disagree with it at the
 // widths nobody tested.
 
@@ -322,7 +320,7 @@ export function createAutosave(opts: AutosaveOptions): Autosave {
 }
 
 // ---------------------------------------------------------------------------------------
-// Bulk tags, extracted from the site's lib/admin/bulk-tag.ts: add or remove one tag across a
+// Bulk tags: add or remove one tag across a
 // selection. An item already in the wanted state is skipped, so it is not rewritten for nothing,
 // and one item's failure is recorded without stopping the rest.
 export async function applyBulkTag<T>({
