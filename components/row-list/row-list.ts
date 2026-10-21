@@ -37,6 +37,18 @@ export function isTyping(e: KeyboardEvent): boolean {
   return t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.closest("[role='combobox'], [role='textbox']") !== null;
 }
 
+// The same check for a list whose rows hold their own checkboxes (the moderation queue, the
+// history list): a checkbox, a radio or a button is not typing, so a list key works from a box
+// a person has just ticked.
+const TEXT_INPUT = /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
+export function isTypingKey(e: KeyboardEvent): boolean {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return true;
+  const t = e.target as HTMLElement | null;
+  if (!t) return false;
+  if (t instanceof HTMLInputElement) return TEXT_INPUT.test(t.type || "text");
+  return t.isContentEditable || /^(TEXTAREA|SELECT)$/.test(t.tagName) || t.closest("[role='combobox'], [role='textbox']") !== null;
+}
+
 // Single-key shortcuts can be switched off (DEFAULTS.md). The shortcuts registry records the
 // choice as data-cap-single-keys="off" on <html>.
 export function singleKeysOff(): boolean {
