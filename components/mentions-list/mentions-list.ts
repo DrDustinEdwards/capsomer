@@ -3,7 +3,7 @@
 // state. The states, their words and the decisions are the moderation queue's (moderation-queue.ts),
 // which the list is built from. No DOM; the React component and a server render use the same
 // functions.
-import type { MentionsData, MentionsQuery } from "../content/content.ts";
+import { queryHref, type MentionsData, type MentionsQuery } from "../content/content.ts";
 import { EMPTY_TEXT, VIEWS, bulkActionsFor, mentionsWord, type ModAction, type ModView } from "../moderation-queue/moderation-queue.ts";
 
 // ---------------------------------------------------------------------------------------
@@ -11,17 +11,9 @@ import { EMPTY_TEXT, VIEWS, bulkActionsFor, mentionsWord, type ModAction, type M
 
 const QUERY_ORDER: ReadonlyArray<keyof MentionsQuery> = ["view", "cursor", "open"];
 
-// The list's address with a query, its keys in one fixed order and the empty ones left out, so
-// the same view is always the same address. `base` is the route.
+// The list's address with a query (content.ts, queryHref).
 export function mentionsHref(base: string, q: MentionsQuery): string {
-  const params = new URLSearchParams();
-  for (const k of QUERY_ORDER) {
-    const v = q[k];
-    if (v) params.set(k, v);
-  }
-  const path = base.split("?")[0] || "";
-  const s = params.toString();
-  return s ? `${path}?${s}` : path || "?";
+  return queryHref(base, q, QUERY_ORDER);
 }
 
 // A tab change starts again at the first page with nothing open; opening a mention keeps the

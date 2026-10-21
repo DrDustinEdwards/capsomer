@@ -286,6 +286,19 @@ export interface MentionsData {
 
 // The form an IntentResult's undo, or a confirm request, posts: the intent and its fields, a list
 // value as one field per item.
+// A list's address with a query, its keys in one fixed order and the empty ones left out, so the
+// same view is always the same address. `base` is the route (any query on it is dropped).
+export function queryHref<Q extends object>(base: string, q: Q, order: ReadonlyArray<keyof Q>): string {
+  const params = new URLSearchParams();
+  for (const k of order) {
+    const v = q[k];
+    if (typeof v === "string" && v) params.set(String(k), v);
+  }
+  const path = base.split("?")[0] || "";
+  const s = params.toString();
+  return s ? `${path}?${s}` : path || "?";
+}
+
 export function intentForm(intent: string, fields: IntentFields = {}): FormData {
   const form = new FormData();
   form.set("intent", intent);

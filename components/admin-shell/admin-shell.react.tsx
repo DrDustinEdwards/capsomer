@@ -1,9 +1,10 @@
-import { Fragment, useCallback, useEffect, useId, useRef, useState, type ComponentPropsWithRef, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useRef, type ComponentPropsWithRef, type ReactNode } from "react";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 import { Time } from "../time/time.react.tsx";
-import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
-import type { LinkProps } from "../shell/shell.react.tsx";
+import { DEFAULT_PREF } from "../shell/shell.ts";
+import { groups, plainLink, useCollapsedPref, type LinkProps } from "../shell/shell.react.tsx";
 import { SheetGroup, SiteHeader, SiteTabs, type HeaderAccount, type HeaderExtra, type HeaderLink, type HeaderLogo, type HeaderSwitcher } from "../site-header/site-header.react.tsx";
+import { TipKeys } from "../site-header/site-header-parts.react.tsx";
 import { applyStoredTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
 import { badgeText, jumpTarget } from "./admin-shell.ts";
 import { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER, type FamilyAppId } from "./apps.tsx";
@@ -170,19 +171,8 @@ const SEARCH_D = "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM21 21l-5-5";
 const INBOX_D = "M3 13h5l1 3h6l1-3h5M5 5h14l2 8v6H3v-6z";
 const REFRESH_D = "M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5";
 
-const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
-
-function groups(nav: AdminEntry[]): Array<{ label?: string; entries: AdminEntry[] }> {
-  const out: Array<{ label?: string; entries: AdminEntry[] }> = [];
-  for (const e of nav) {
-    const last = out[out.length - 1];
-    if (last && last.label === e.group) last.entries.push(e);
-    else out.push({ label: e.group, entries: [e] });
-  }
-  return out;
-}
-
 const countName = (label: string, count?: number, note?: string) => (count ? `${label}, ${count}${note ? ` ${note}` : ""}` : undefined);
+
 
 // A control's name, shown beside it on hover and keyboard focus: Capsomer's one tooltip (the
 // shared popover's tooltip variant, in the top layer, so it is above every panel, tile and
@@ -210,13 +200,7 @@ function Tip({ text, keys, side = "right", offset = 20, describe = true }: { tex
   return (
     <span ref={tip} className="cap-admin-tip cap-popover" data-variant="tooltip" data-side={side} data-offset={offset} popover="manual" role="tooltip" aria-hidden="true">
       <span className="cap-admin-tip-text">{text}</span>
-      {keys ? (
-        <span className="cap-keys">
-          {keys.split(" ").map((k) => (
-            <kbd key={k}>{k}</kbd>
-          ))}
-        </span>
-      ) : null}
+      <TipKeys keys={keys} />
     </span>
   );
 }
@@ -269,17 +253,7 @@ export function AdminShell(props: AdminShellProps) {
   const title = props.title ?? family?.label ?? apps.find((a) => a.current)?.label ?? "";
   const root = useRef<HTMLDivElement>(null);
   const groupId = useId();
-  const [own, setOwn] = useState(false);
-  useEffect(() => setOwn(readPref(prefKey) === "collapsed"), [prefKey]);
-  const collapsed = props.collapsed ?? own;
-  const setCollapsed = useCallback(
-    (next: boolean) => {
-      writePref(prefKey, next ? "collapsed" : "expanded");
-      setOwn(next);
-      props.onCollapsedChange?.(next);
-    },
-    [prefKey, props.onCollapsedChange],
-  );
+  const [collapsed, setCollapsed] = useCollapsedPref(prefKey, props.collapsed, props.onCollapsedChange);
 
   // The tab says the page, then the app: "Queue · Capsid Portal".
   useEffect(() => {

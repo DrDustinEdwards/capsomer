@@ -48,6 +48,10 @@ export async function applyBulkTag<T>({
 // field and the document's own copy command; where neither works, say so and leave the text
 // selected.
 
+// How long the copy status stays: a success is short news, a failure leaves time to copy by hand.
+export const COPIED_MS = 2500;
+export const COPY_FAILED_MS = 8000;
+
 export async function copyText(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);

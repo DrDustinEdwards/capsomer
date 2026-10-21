@@ -4,6 +4,7 @@
 // its ARIA values through the CSSOM. No framework; the React wrapper uses the same functions.
 //
 import { enhance as enhanceMeter, update as drawBar } from "../meter/meter.ts";
+import { DAY, HOUR } from "../time/time.ts";
 
 // The rules (approved for 0.1): warning at 75% used, or when the projection runs out before
 // the reset; critical at 90%; no projection until 7 days of history.
@@ -11,8 +12,6 @@ import { enhance as enhanceMeter, update as drawBar } from "../meter/meter.ts";
 export const MIN_HISTORY = 7;
 export const WARN_AT = 0.75;
 export const CRIT_AT = 0.9;
-const HOUR = 3_600_000;
-const DAY = 24 * HOUR;
 
 export type UsageTone = "ok" | "warn" | "crit";
 

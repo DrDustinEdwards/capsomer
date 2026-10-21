@@ -1,9 +1,8 @@
 // The posts list's pure helpers: the status of a post in words, the addresses of its filters,
 // which actions a person is offered here and why the others are withheld, and the forms the
 // script path posts. No DOM; the React component and a server render use the same functions.
-import type { ContentLabels, ContentStatus, PostRow, PostsData, PostsQuery, PostSort } from "../content/content.ts";
-
-const DAY = 86_400_000;
+import { DAY } from "../time/time.ts";
+import { queryHref, type ContentLabels, type ContentStatus, type PostRow, type PostsData, type PostsQuery, type PostSort } from "../content/content.ts";
 
 // ---------------------------------------------------------------------------------------
 // Status.
@@ -103,17 +102,9 @@ export function emptyWords(q: PostsQuery, labels?: ContentLabels): { kind: "noth
 
 const QUERY_ORDER: ReadonlyArray<keyof PostsQuery> = ["q", "status", "kind", "tag", "sort", "cursor"];
 
-// The list's address with a query, its keys in one fixed order and the empty ones left out, so
-// the same view is always the same address. `base` is the route (any query on it is dropped).
+// The list's address with a query (content.ts, queryHref).
 export function postsHref(base: string, q: PostsQuery): string {
-  const params = new URLSearchParams();
-  for (const k of QUERY_ORDER) {
-    const v = q[k];
-    if (v) params.set(k, v);
-  }
-  const path = base.split("?")[0] || "";
-  const s = params.toString();
-  return s ? `${path}?${s}` : path || "?";
+  return queryHref(base, q, QUERY_ORDER);
 }
 
 // A filter link changes one thing and starts again at the first page.

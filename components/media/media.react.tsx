@@ -1,7 +1,8 @@
+import { type ComponentType, type FormHTMLAttributes, type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { Glyph } from "../status/status.react.tsx";
 import { type Autosave, type MediaFields, type MediaRecord, type SaveState, byteSize, copySnippets, copyText, createAutosave, parseTags, suggestedAlt } from "./media.ts";
-import { type ComponentType, type FormHTMLAttributes, type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import { COPIED_MS, COPY_FAILED_MS } from "./media-actions.ts";
 
 export { MediaTile, MediaGrid } from "./media-grid.react.tsx";
 export type { MediaTileProps, MediaGroup, MediaGridProps } from "./media-grid.react.tsx";
@@ -199,7 +200,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
         </>
       ),
     );
-    window.setTimeout(() => setCopied(null), ok ? 2500 : 8000);
+    window.setTimeout(() => setCopied(null), ok ? COPIED_MS : COPY_FAILED_MS);
   };
   const sub = [item.type.split("/").pop()?.toUpperCase(), byteSize(item.bytes), item.width && item.height ? `${item.width} by ${item.height}` : ""].filter(Boolean).join(" · ");
   const addTag = (text: string) => {

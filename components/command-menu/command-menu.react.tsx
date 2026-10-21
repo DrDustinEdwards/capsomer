@@ -1,7 +1,8 @@
-import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Dialog } from "../dialog/dialog.react.tsx";
 import { Listbox, ListboxEmpty, Option, OptionGroup } from "../listbox/listbox.react.tsx";
-import { keyCaps, register } from "../shortcuts/shortcuts.ts";
+import { register } from "../shortcuts/shortcuts.ts";
+import { Keys } from "../shortcuts/shortcuts.react.tsx";
 import { emptyText, filterCommands, groupCommands, step, type Command } from "./command-menu.ts";
 
 export type { Command } from "./command-menu.ts";
@@ -20,21 +21,10 @@ export interface CommandMenuProps {
 
 // The shortcut caps of a command, after the words that say it is a shortcut.
 function Caps({ spec }: { spec: string | string[] }) {
-  const specs = Array.isArray(spec) ? spec : [spec];
   return (
     <>
       <span className="cap-sr-only">, shortcut </span>
-      {specs.map((s, i) => (
-        <Fragment key={s}>
-          {i > 0 ? " or " : null}
-          {keyCaps(s).map((cap, j) => (
-            <Fragment key={`${cap}-${j}`}>
-              {j > 0 ? " " : null}
-              <kbd>{cap}</kbd>
-            </Fragment>
-          ))}
-        </Fragment>
-      ))}
+      <Keys spec={spec} />
     </>
   );
 }

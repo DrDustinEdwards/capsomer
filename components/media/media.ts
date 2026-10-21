@@ -13,7 +13,7 @@ import { performBulk, type BulkHandler, type BulkItem } from "../bulk-bar/bulk-b
 import { altStateOf, describeRecord, LARGE_BYTES, parseTags, type MediaFields, type MediaRecord } from "./media-record.ts";
 import { bands, nextTile, type Direction } from "./media-grid.ts";
 import { createAutosave, type Autosave, type SaveState } from "./media-autosave.ts";
-import { applyBulkTag, copyText } from "./media-actions.ts";
+import { applyBulkTag, COPIED_MS, COPY_FAILED_MS, copyText } from "./media-actions.ts";
 import { buildTile, glyph, part, recordOf, syncTile, writeRecord } from "./media-tile.ts";
 import { fillInspector, readFields, renderSave as renderSaveState, renderTags } from "./media-inspector.ts";
 
@@ -598,7 +598,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
         status.replaceChildren(glyph("crit"), document.createTextNode("Could not copy. The address is selected: press Ctrl+C or Cmd+C."));
         ins<HTMLInputElement>("address")?.select();
       }
-      copiedTimer = setTimeout(() => status.replaceChildren(), ok ? 2500 : 8000);
+      copiedTimer = setTimeout(() => status.replaceChildren(), ok ? COPIED_MS : COPY_FAILED_MS);
     }
   };
 
