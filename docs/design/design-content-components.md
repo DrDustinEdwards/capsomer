@@ -1,6 +1,6 @@
 # Design: shared posts, media and mentions components
 
-Job job_cb906e07145c, 2026-10-09. This is a design only: nothing is built. It follows Dustin's standing direction of 2026-10-09: anything shown in more than one place is one central component that every site uses.
+Job job_cb906e07145c, 2026-10-09. Built as `posts-list`, `media-library`, `mentions-list` and `content` (CHANGELOG.md). It follows Dustin's standing direction of 2026-10-09: anything shown in more than one place is one central component that every site uses.
 
 Today posts, media and mentions each exist as a separate copy in Carrel and in each site admin. This design replaces those copies with three Capsomer components. Each one is driven by the site-api contract (DrDustinEdwards/site-api, v0.5.0) through an adapter that its host supplies, so the same component runs in Carrel, which reaches many sites, and in one site's own admin.
 
