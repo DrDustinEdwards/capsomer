@@ -26,7 +26,7 @@ test("the axe and contrast helpers are playwright peers, optional", () => {
 test("the build emits the export and it carries every helper", async () => {
   const out = join(root, "test-results/testing-build");
   rmSync(out, { recursive: true, force: true });
-  execFileSync(join(root, "node_modules/.bin/tsc"), ["-p", "tsconfig.build.json", "--outDir", out], { cwd: root });
+  execFileSync(process.execPath, [join(root, "node_modules/typescript/lib/tsc.js"), "-p", "tsconfig.build.json", "--outDir", out], { cwd: root });
   assert.ok(existsSync(join(out, "test/helpers.d.ts")), "declarations are emitted");
   const mod = await import(pathToFileURL(join(out, "test/helpers.js")).href);
   for (const name of NAMES) assert.ok(name in mod, `${name} is exported`);

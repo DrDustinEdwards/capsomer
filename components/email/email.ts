@@ -67,7 +67,8 @@ export const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (
 const oneLine = (value: string): string => value.replace(/\s+/g, " ").trim();
 
 /**
- * A link is accepted only as https: or mailto:, with no space or control character in it.
+ * A link is accepted only as https: or mailto:, with no space or control character in it and no
+ * user or password before the host, which would let `https://trusted.example@evil.example/` read as the trusted name.
  * Anything else throws; the caller must not swallow it. The string comes back untouched, so
  * a token in the address is never rewritten.
  */
@@ -80,6 +81,7 @@ export function checkUrl(url: string): string {
     throw new Error("email: a link must be an absolute https: or mailto: address");
   }
   if (parsed.protocol !== "https:" && parsed.protocol !== "mailto:") throw new Error(`email: a link must be https: or mailto:, got ${parsed.protocol}`);
+  if (parsed.username || parsed.password) throw new Error("email: a link may not hold a user or password before the host");
   return url;
 }
 

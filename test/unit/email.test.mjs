@@ -84,7 +84,7 @@ test("a line break in a single-line value cannot add a line to the subject", () 
 test("links: only https and mailto, and a bad one throws", () => {
   assert.equal(checkUrl("https://a.example/p?q=1"), "https://a.example/p?q=1");
   assert.equal(checkUrl("mailto:help@a.example"), "mailto:help@a.example");
-  for (const bad of ["javascript:alert(1)", "http://a.example", "data:text/html,x", "https://a.example/ x", 'https://a.example/"onclick="x', "/relative", "", "JaVaScRiPt:alert(1)", "https://a.example/\u0000"]) {
+  for (const bad of ["javascript:alert(1)", "http://a.example", "data:text/html,x", "https://a.example/ x", 'https://a.example/"onclick="x', "/relative", "", "JaVaScRiPt:alert(1)", "https://a.example/\u0000", "https://dustinedwards.info@evil.example/login", "https://user:pass@ok.example/x"]) {
     assert.throws(() => checkUrl(bad), /email:/, bad);
   }
   assert.throws(() => renderEmail(magicLink, { ...common, ...link, url: "javascript:alert(1)" }), /email:/);
