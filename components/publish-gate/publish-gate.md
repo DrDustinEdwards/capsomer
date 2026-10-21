@@ -171,6 +171,8 @@ import { PublishGate } from "capsomer/react/publish-gate";
 
 Load `row-list.css`, `status.css`, `button.css`, `disclosure.css`, `message.css`, `time.css` and `confirm-dialog.css` with `publish-gate.css`.
 
+The post editor's transitions and the draft flag each intent asks for are the DOM-free `capsomer/publish-transition` (`transitionsFor`, `draftForIntent`, `saveInPlaceIntent`, `stateOf`, `DRAFT_BY_INTENT`, `PUBLISH_CONFIRMED_INTENT`, `FIRST_PUBLICATION_NOTE`), safe to import in a server action.
+
 ## Exceptions in production
 
 None yet.
