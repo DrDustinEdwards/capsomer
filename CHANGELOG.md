@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+**`capsomer/email`: `checkUrl` refuses a link with a user or password before the host** (`https://trusted.example@evil.example/` reads as the trusted name in a mail client but opens the other host). Every link the email renderers take goes through it, so a caller passing such a URL now gets a thrown `email:` error. No class, token or HTML contract changes.
+
+**Tooling:** a `LICENSE` file for the MIT licence `package.json` names; vite 8.3.5 and wrangler 4.151.3 (dev dependencies, off advised ranges); CI fails on a high advisory in the production install.
+
 ## [0.10.0]
 
 **New: `capsomer/publish-transition`**, the publish gate's DOM-free half, so carrel and dustinedwards-info keep one copy of the post editor's transitions in place of their own `publish-transition.mjs`. `transitionsFor(state, everPublished)`, `draftForIntent(intent)` (fails closed: an unknown or missing intent is a draft), `saveInPlaceIntent(state)`, `stateOf({ draft, publishAt }, now)` (an unparseable `publish_at` is published, not scheduled), `DRAFT_BY_INTENT` (no prototype: the apps' copies answered `draftForIntent("constructor")` with `Object`, not a draft), `PUBLISH_CONFIRMED_INTENT` and `FIRST_PUBLICATION_NOTE`, with the types `PostState` and `Transition`. Pure, no DOM, safe in a server action. `capsomer/behaviour/publish-gate` still exports `FIRST_PUBLICATION_NOTE`, now from this module, and its confirmed button posts `PUBLISH_CONFIRMED_INTENT`. No class, token or HTML contract changes.
