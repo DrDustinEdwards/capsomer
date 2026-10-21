@@ -73,17 +73,32 @@ const MoreIcon = () => (
   </svg>
 );
 
-const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
+export const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
 
 // Consecutive entries with the same `group` are one group.
-function groups(nav: ShellEntry[]): Array<{ label?: string; entries: ShellEntry[] }> {
-  const out: Array<{ label?: string; entries: ShellEntry[] }> = [];
+export function groups<E extends { group?: string }>(nav: E[]): Array<{ label?: string; entries: E[] }> {
+  const out: Array<{ label?: string; entries: E[] }> = [];
   for (const e of nav) {
     const last = out[out.length - 1];
     if (last && last.label === e.group) last.entries.push(e);
     else out.push({ label: e.group, entries: [e] });
   }
   return out;
+}
+
+// The rail's collapsed state: the prop when the app controls it, else the stored preference.
+export function useCollapsedPref(prefKey: string, controlled: boolean | undefined, onChange: ((next: boolean) => void) | undefined): [boolean, (next: boolean) => void] {
+  const [own, setOwn] = useState(false);
+  useEffect(() => setOwn(readPref(prefKey) === "collapsed"), [prefKey]);
+  const setCollapsed = useCallback(
+    (next: boolean) => {
+      writePref(prefKey, next ? "collapsed" : "expanded");
+      setOwn(next);
+      onChange?.(next);
+    },
+    [prefKey, onChange],
+  );
+  return [controlled ?? own, setCollapsed];
 }
 
 export function Shell(props: ShellProps) {
@@ -97,17 +112,7 @@ export function Shell(props: ShellProps) {
     setMoreOpen(false);
     requestAnimationFrame(() => moreButton.current?.focus());
   }, []);
-  const [own, setOwn] = useState(false);
-  useEffect(() => setOwn(readPref(prefKey) === "collapsed"), [prefKey]);
-  const collapsed = props.collapsed ?? own;
-  const setCollapsed = useCallback(
-    (next: boolean) => {
-      writePref(prefKey, next ? "collapsed" : "expanded");
-      setOwn(next);
-      props.onCollapsedChange?.(next);
-    },
-    [prefKey, props.onCollapsedChange],
-  );
+  const [collapsed, setCollapsed] = useCollapsedPref(prefKey, props.collapsed, props.onCollapsedChange);
   // A phone tab bar holds at most five entries (rule 9): with a More sheet, four and More.
   const phoneTabs = tabs?.slice(0, more ? 4 : 5);
 

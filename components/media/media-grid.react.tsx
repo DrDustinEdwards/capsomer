@@ -1,8 +1,8 @@
 // The media library's React grid: MediaTile and MediaGrid (media.react.tsx).
 
+import { type KeyboardEvent, type ReactNode, useCallback, useId, useLayoutEffect, useRef } from "react";
 import { Glyph } from "../status/status.react.tsx";
 import { type Direction, type MediaRecord, bands, byteSize, describeRecord, flagsFor, nextTile } from "./media.ts";
-import { type KeyboardEvent, type ReactNode, useCallback, useId, useLayoutEffect, useRef } from "react";
 
 // ---------------------------------------------------------------------------------------
 // MediaTile: one file. Renders exactly the contract in the doc page: the open link (the tile's

@@ -1,6 +1,6 @@
 // The moderation queue's data, its pure helpers and the markup builders (moderation-queue.ts).
 
-import { GLYPHS } from "../message/message.ts";
+import { GLYPHS, glyphSvg } from "../message/message.ts";
 
 // ---------------------------------------------------------------------------------------
 // The data and the pure helpers.
@@ -233,8 +233,6 @@ export const EMPTY_TEXT: Record<ModView, { title: string; text: string }> = {
 // ---------------------------------------------------------------------------------------
 // DOM helpers.
 
-const SVG = "http://www.w3.org/2000/svg";
-
 type Attrs = Record<string, string | boolean | undefined>;
 
 export function h<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = {}, ...kids: Array<Node | string>): HTMLElementTagNameMap[K] {
@@ -247,20 +245,9 @@ export function h<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = 
   return el;
 }
 
-function svg(inner: string, size = 14): SVGSVGElement {
-  const s = document.createElementNS(SVG, "svg");
-  s.setAttribute("viewBox", "0 0 16 16");
-  s.setAttribute("width", String(size));
-  s.setAttribute("height", String(size));
-  s.setAttribute("aria-hidden", "true");
-  s.setAttribute("focusable", "false");
-  s.innerHTML = inner;
-  return s;
-}
-
 export function statusEl(state: ModState): HTMLElement {
   const s = statusOf(state);
-  return h("span", { class: "cap-status", "data-tone": s.tone }, svg(s.glyph), s.word);
+  return h("span", { class: "cap-status", "data-tone": s.tone }, glyphSvg(s.glyph), s.word);
 }
 
 // A decision's button: a real button with its key shown and announced (aria-keyshortcuts).

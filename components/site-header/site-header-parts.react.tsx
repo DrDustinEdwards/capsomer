@@ -1,9 +1,9 @@
 // The site header's props and the small parts its panels and sheet are built from (site-header.react.tsx).
 
+import { Fragment, type ReactNode, useEffect, useRef } from "react";
 import type { LinkProps } from "../shell/shell.react.tsx";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 import { badgeText, wirePanel } from "./site-header.ts";
-import { Fragment, type ReactNode, useEffect, useRef } from "react";
 
 // One link in a panel, the sheet or the bottom bar. `count` is a bubble beside it (99+ past 99);
 // `countNote` says what it counts, for its accessible name: "Inbox, 4 need you".
@@ -154,6 +154,17 @@ export const PERSON_ICON = svg(
 // "Inbox, 4 need you": a count is in the name, with what it counts.
 export const countName = (label: string, count?: number, note?: string): string => (count ? `${label}, ${count}${note ? ` ${note}` : ""}` : label);
 
+// A tip's key caps ("G 2"), after its words.
+export function TipKeys({ keys }: { keys?: string }) {
+  return keys ? (
+    <span className="cap-keys">
+      {keys.split(" ").map((k) => (
+        <kbd key={k}>{k}</kbd>
+      ))}
+    </span>
+  ) : null;
+}
+
 // An icon control's name, shown on hover and keyboard focus: Capsomer's one tooltip, a child of
 // its control, below the header's controls. It repeats the control's name, so it adds no
 // description; a press hides it.
@@ -175,13 +186,7 @@ export function HeaderTip({ text, keys }: { text: string; keys?: string }) {
   return (
     <span ref={tip} className="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true">
       <span className="cap-site-header-tip-text">{text}</span>
-      {keys ? (
-        <span className="cap-keys">
-          {keys.split(" ").map((k) => (
-            <kbd key={k}>{k}</kbd>
-          ))}
-        </span>
-      ) : null}
+      <TipKeys keys={keys} />
     </span>
   );
 }

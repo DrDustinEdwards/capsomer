@@ -128,6 +128,19 @@ export const GLYPHS: Record<MessageKind, string> = {
   failure: '<path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/>',
 };
 
+// A 16-unit glyph from one of the drawings above (or any inner SVG), hidden from assistive tech:
+// the word beside it says what it means. The moderation queue and the history list draw theirs with it.
+export function glyphSvg(inner: string, size = 14): SVGSVGElement {
+  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("viewBox", "0 0 16 16");
+  s.setAttribute("width", String(size));
+  s.setAttribute("height", String(size));
+  s.setAttribute("aria-hidden", "true");
+  s.setAttribute("focusable", "false");
+  s.innerHTML = inner;
+  return s;
+}
+
 // What a message is, for its glyph and its edge: a failure; a warning or an Undo that
 // failed; otherwise a plain result.
 export function kindOf(m: Pick<Message, "warning" | "error" | "failure">): MessageKind {

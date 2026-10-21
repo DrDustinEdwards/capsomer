@@ -8,6 +8,7 @@
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { enhance as enhanceFields } from "../field/field.ts";
 import { enhance as enhanceMenus } from "../menu/menu.ts";
+import { DAY } from "../time/time.ts";
 
 // One person as the page shows them. The server fills `manageable` and `renewTo` from
 // site-runtime's checkChange and defaultEndDate, so the page never offers what it would refuse.
@@ -57,7 +58,6 @@ export interface HistoryEntry {
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const DAY_MS = 86_400_000;
 // How long before an end date the row shows that it ends soon, matching the review (21 days).
 export const SOON_DAYS = 21;
 
@@ -79,7 +79,7 @@ export function timeText(iso: string): string {
 
 // Whole days from `now` until the end of the end date (0 on the end date itself).
 export function daysLeft(endDate: string, now: number): number {
-  return Math.floor((Date.parse(`${endDate}T00:00:00Z`) + DAY_MS - 1 - now) / DAY_MS);
+  return Math.floor((Date.parse(`${endDate}T00:00:00Z`) + DAY - 1 - now) / DAY);
 }
 
 // The Access column's words.

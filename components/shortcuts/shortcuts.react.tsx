@@ -24,7 +24,8 @@ export function useShortcut(key: string | string[], run: (e: KeyboardEvent) => v
   }, [keyId, opts.label, opts.about, opts.group]);
 }
 
-function Keys({ spec }: { spec: string | string[] }) {
+// A shortcut's key caps, "or" between alternatives (the command menu shows them too).
+export function Keys({ spec }: { spec: string | string[] }) {
   const specs = Array.isArray(spec) ? spec : [spec];
   return (
     <>

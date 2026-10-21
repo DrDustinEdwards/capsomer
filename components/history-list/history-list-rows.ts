@@ -1,14 +1,12 @@
 // The history list's rows, built as the server would render them (history-list.ts).
 
 import { initials } from "../avatar/avatar.ts";
-import { GLYPHS } from "../message/message.ts";
+import { GLYPHS, glyphSvg } from "../message/message.ts";
 import { parse, relative } from "../time/time.ts";
 import { type Destination, type HistoryEntry, type Run, type Sign, deltaSign, deltaText, destinationWord, rangeText, runTitle, stamp } from "./history-list-model.ts";
 
 // ---------------------------------------------------------------------------------------
 // DOM.
-
-const SVG = "http://www.w3.org/2000/svg";
 
 type Attrs = Record<string, string | boolean | undefined>;
 
@@ -20,17 +18,6 @@ export function h<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = 
   }
   el.append(...kids.filter((k): k is Node | string => k !== null));
   return el;
-}
-
-function svg(inner: string, size = 14): SVGSVGElement {
-  const s = document.createElementNS(SVG, "svg");
-  s.setAttribute("viewBox", "0 0 16 16");
-  s.setAttribute("width", String(size));
-  s.setAttribute("height", String(size));
-  s.setAttribute("aria-hidden", "true");
-  s.setAttribute("focusable", "false");
-  s.innerHTML = inner;
-  return s;
 }
 
 const QUEUED_GLYPH = '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/>';
@@ -49,7 +36,7 @@ export function destinationTone(s: Destination["status"]): string {
 }
 
 export function statusEl(tone: string, glyph: string, word: string): HTMLElement {
-  return h("span", { class: "cap-status", "data-tone": tone }, svg(glyph), word);
+  return h("span", { class: "cap-status", "data-tone": tone }, glyphSvg(glyph), word);
 }
 
 function avatarEl(name: string, ai?: boolean): HTMLElement {
@@ -67,7 +54,7 @@ function deltaEl(id: string, n: number | undefined): HTMLElement {
   // No word count: an empty cell keeps the columns in place and says nothing.
   if (n === undefined) return h("span", { class: "cap-hist-delta", "data-sign": "none", "aria-hidden": "true" });
   const sign = deltaSign(n);
-  return h("span", { class: "cap-hist-delta", id, "data-sign": sign }, svg(SIGN_GLYPH[sign], 12), h("span", {}, deltaText(n)));
+  return h("span", { class: "cap-hist-delta", id, "data-sign": sign }, glyphSvg(SIGN_GLYPH[sign], 12), h("span", {}, deltaText(n)));
 }
 
 function whenEl(id: string, iso: string, now: number, chevron = false): HTMLElement {
