@@ -1,6 +1,6 @@
-# Routine no-bloat checks (warn only)
+# Routine no-bloat checks
 
-Capsomer's standing plan is to keep the repo small: nothing unused, nothing built twice, nothing heavy. These checks run on every pull request in `.github/workflows/no-bloat.yml`: Knip and jscpd through devkit's shared report (`@dustinedwards/devkit`, baseline in `.no-bloat.json`, refreshed with `npx devkit-no-bloat --write-baseline`), and page weight and lines in a job of capsomer's own. **They report and never block a merge** (rulings.md, rule 1: defaults, not laws).
+Capsomer's standing plan is to keep the repo small: nothing unused, nothing built twice, nothing heavy. These checks run on every pull request in `.github/workflows/no-bloat.yml`: Knip and jscpd through devkit's shared ratchet (`@dustinedwards/devkit`, baseline in `.no-bloat.json`), and page weight and lines in a job of capsomer's own. The ratchet fails a pull request that raises a count above `.no-bloat.json`; after a cleanup, lower it with `npx devkit-no-bloat --write-baseline` in the same pull request. The weight job only reports.
 
 | Check | Tool | Command | Reads |
 | --- | --- | --- | --- |
