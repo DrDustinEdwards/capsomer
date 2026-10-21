@@ -78,7 +78,7 @@ eachTheme((theme) => {
 ```
 
 - Test names start `keyboard:`, `accessibility:` or `behaviour:`. The site groups results by that word.
-- At least: one axe scan of the states page; `expectContrast` on each text tone and each control boundary the component paints; a `toMatchAriaSnapshot` of the roles and names; one test per row of the doc page's keyboard table.
+- Cover what must never break: one axe scan of the states page, `expectContrast` on what the component paints, and the doc page's keyboard table. Nothing that only pins the design (CLAUDE.md, tests rule).
 - Use roles and names (`getByRole`) over CSS selectors where you can.
 
 ## The doc page

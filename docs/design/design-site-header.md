@@ -1,6 +1,6 @@
 # Design: one header on every surface
 
-2026-10-13. A design only: nothing is built until Dustin answers the questions in section 9. It follows Dustin's direction of 2026-10-13 (the "admin header redesign across the family" thread): one header frame on every public, app and admin page, with Capsomer fixing the frame and each site filling a short list of slots.
+2026-10-13. Built in 0.9.0 from Dustin's answers in section 9. It follows Dustin's direction of 2026-10-13 (the "admin header redesign across the family" thread): one header frame on every public, app and admin page, with Capsomer fixing the frame and each site filling a short list of slots.
 
 The mockup is `docs/design/site-header-mockup.html` beside this file: Foxhound public, app and admin, and Foxing public, app and admin, in both themes, at desktop and phone widths. It draws the recommended answer to every question.
 

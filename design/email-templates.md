@@ -1,6 +1,6 @@
 # Email templates in Capsomer: design (D7.2)
 
-Status: design only, for Dustin's review. No template code is built until he approves. Job: job_a1cd3ed31049, from design-centralize DECIDE 7.
+Status: built as `capsomer/email`. Job: job_a1cd3ed31049, from design-centralize DECIDE 7.
 
 ## What is decided already
 
