@@ -2,11 +2,8 @@
 // the selected items ("3 selected", a live status), offers the actions, and clears. A
 // reversible action runs at once and offers Undo through the message region (`z` runs it); a
 // destructive one previews every item in the shared confirm dialog and runs only when the
-// person says so, with focus on Cancel. Extracted from the site admin's media-bulk-bar.tsx
-// (the count with its size, copy addresses, bulk tags, move to trash, Clear) and
-// posts-confirm-dialogs.tsx (the typed confirmation that lists what is at stake); rewritten
-// for the shared confirm dialog and message region. No framework; the React wrapper calls the
-// same functions.
+// person says so, with focus on Cancel. No framework; the React wrapper calls the same
+// functions.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { GLYPHS, fail, say } from "../message/message.ts";

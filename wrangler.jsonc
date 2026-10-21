@@ -8,6 +8,8 @@
   "name": "capsomer",
   "compatibility_date": "2026-09-30",
   "main": "./worker/index.ts",
+  "minify": true,
+  "upload_source_maps": true,
   "assets": {
     "directory": "./site-dist",
     "binding": "ASSETS",

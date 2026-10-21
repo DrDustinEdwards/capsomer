@@ -2,7 +2,7 @@ name: ai-author
 
 # Devkit's gate that refuses an AI attribution trailer on a commit a push or pull request adds
 # (and a commit authored or committed as Claude on a pull request). It runs the
-# devkit-check-trailers bin from the devDependency's tag. The sha is the commit v0.5.0 points
+# devkit-check-trailers bin from the devDependency's tag. The sha is the commit v0.6.0 points
 # at: a full sha, which devkit's scripts/check-callers.mjs requires.
 
 on:
@@ -15,4 +15,4 @@ permissions:
 
 jobs:
   ai-author:
-    uses: DrDustinEdwards/devkit/.github/workflows/ai-author.yml@2c5c7a5dd2d92b05d005e4f3abc47b001cdc0bf6 # v0.5.0
+    uses: DrDustinEdwards/devkit/.github/workflows/ai-author.yml@491b6cc552a80cdfcb4c0b5184e51682f907eda3 # v0.6.0

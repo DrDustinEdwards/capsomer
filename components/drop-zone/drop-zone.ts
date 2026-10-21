@@ -2,10 +2,8 @@
 // (type, size, count) and say, in words, which were taken and which were not and why. The
 // real <input type="file"> is the control, so click, Enter and Space open the picker with no
 // script; this module adds drop (on the zone, or anywhere on the page), paste, and the checks.
-// Extracted from the site admin's media-drop-anywhere.tsx (the dragenter depth counter, the
-// drop that would otherwise navigate away) and rewritten: the site loaded one file and left
-// the rest out without a rule; this validates every file and names each refusal.
-// No framework; the React wrapper uses the same pure functions.
+// A dragenter depth counter keeps the page-wide target steady, and a drop off the zone never
+// navigates away. Every file is checked and each refusal named. No framework; the React wrapper uses the same pure functions.
 
 const READY = "data-cap-ready";
 

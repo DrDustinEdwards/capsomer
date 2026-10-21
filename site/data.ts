@@ -47,7 +47,7 @@ export interface Palette {
   dark: { tokens: Record<string, string>; pairs: Pair[] };
 }
 
-export interface TestRow {
+interface TestRow {
   title: string;
   theme: "light" | "dark" | null;
   kind: "keyboard" | "accessibility" | "behaviour";
@@ -80,7 +80,7 @@ export const PALETTE = (data["./data/palette.json"] ?? null) as Palette | null;
 // from the repo's results branch, which CI writes after every run (see .github/workflows),
 // so the site never waits for a redeploy to show a new result.
 export const RESULTS_BUILD = (data["./data/results.json"] ?? { available: false, ran: null, components: {}, totals: { passed: 0, failed: 0, skipped: 0 } }) as Results;
-export const RESULTS_URL = "https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json";
+const RESULTS_URL = "https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json";
 
 export async function fetchResults(): Promise<Results | null> {
   try {
@@ -93,7 +93,7 @@ export async function fetchResults(): Promise<Results | null> {
   }
 }
 
-export interface FamilyPair extends Pair {
+interface FamilyPair extends Pair {
   family: string;
   scheme: "light" | "dark";
   isDefault: boolean;

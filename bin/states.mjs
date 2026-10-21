@@ -15,7 +15,7 @@ const unquote = (v) => {
   return t;
 };
 
-export function docMeta(md, fallback) {
+function docMeta(md, fallback) {
   const m = md.replace(/\r\n/g, "\n").match(/^---\n([\s\S]*?)\n---/);
   const get = (key) => {
     const line = m?.[1].split("\n").find((l) => l.startsWith(`${key}:`));
@@ -24,7 +24,7 @@ export function docMeta(md, fallback) {
   return { title: get("title") || fallback, summary: get("summary") };
 }
 
-export const escapeHtml = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const escapeHtml = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 // Splits examples.html into the part that belongs in <main> and the elements that belong in
 // the head (<link>) or after the main (<script>). Anything inside a <template> is left alone.

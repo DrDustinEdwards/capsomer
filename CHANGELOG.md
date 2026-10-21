@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.10.0]
+
+**New: `capsomer/publish-transition`**, the publish gate's DOM-free half, so carrel and dustinedwards-info keep one copy of the post editor's transitions in place of their own `publish-transition.mjs`. `transitionsFor(state, everPublished)`, `draftForIntent(intent)` (fails closed: an unknown or missing intent is a draft), `saveInPlaceIntent(state)`, `stateOf({ draft, publishAt }, now)` (an unparseable `publish_at` is published, not scheduled), `DRAFT_BY_INTENT` (no prototype: the apps' copies answered `draftForIntent("constructor")` with `Object`, not a draft), `PUBLISH_CONFIRMED_INTENT` and `FIRST_PUBLICATION_NOTE`, with the types `PostState` and `Transition`. Pure, no DOM, safe in a server action. `capsomer/behaviour/publish-gate` still exports `FIRST_PUBLICATION_NOTE`, now from this module, and its confirmed button posts `PUBLISH_CONFIRMED_INTENT`. No class, token or HTML contract changes.
+
+**Tooling: site-runtime v0.7.0 and devkit v0.6.0** (dev dependencies; no package change). The `ai-author` and `no-bloat` workflows pin the commit devkit v0.6.0 points at. Knip's unused exports in `bin/states.mjs` and `site/data.ts` are no longer exported, and the site's Worker deploys minified with source maps.
+
 **Site only: the showcase site's security headers come from `@dustinedwards/site-runtime` v0.4.0** (no package change). `scripts/security-headers.ts` holds the site's list (`data:` images, test results from raw.githubusercontent.com, the Cloudflare Web Analytics beacon, styles from its own files only, its own pages framed with `frame-ancestors 'self'` and `X-Frame-Options: sameorigin`, the clipboard's write side for the Copy specimens) and the site build writes `site-dist/_headers` from it, in place of the hand-written `site/public/_headers`. The site now sends the shared standard set (HSTS, COOP, CORP, `Referrer-Policy: no-referrer`, the full Permissions-Policy) and `form-action 'self'`. Violations are reported to `/csp-report`, answered by a minimal Worker (`worker/index.ts`) that runs for that path only and logs to Workers Logs. `test/unit/security-headers.test.mjs` runs site-runtime's check on the generated `_headers` and on the report response.
 
 ## [0.9.1]

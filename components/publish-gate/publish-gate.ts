@@ -5,18 +5,16 @@
 // words), then the page: the DOM is the one source of truth, every row is rendered from its data
 // attributes, so what the server delivered and what this module redraws are the same markup. No
 // framework; the React wrapper reuses the pure functions.
-//
-// Extracted from the site admin: the publish transitions and their ceremony only for a first
-// publication (app/lib/editor/publish-transition.mjs), the policy that decides who may publish and
-// that fails closed (publish-policy.mjs), a failing check named in words the operator uses with its
-// fix and failing ones first (check-copy.mjs, ADMIN-DESIGN "The overview"), the polite result
-// region and the alert for a refusal (live-notice.tsx), and the first-publication note.
+// The transitions and their intents are publish-transition.ts, the gate's DOM-free half.
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { statusEl } from "../flag-list/flag-list.ts";
 import { fail, say } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
 import { enhance as enhanceTime } from "../time/time.ts";
+import { FIRST_PUBLICATION_NOTE, PUBLISH_CONFIRMED_INTENT } from "./publish-transition.ts";
+
+export { FIRST_PUBLICATION_NOTE };
 
 export type GateState = "blocked" | "held" | "ready" | "published";
 export type CheckState = "failing" | "advisory" | "passed";
@@ -72,8 +70,6 @@ export interface GateSite {
 
 // ---------------------------------------------------------------------------------------
 // Pure helpers.
-
-export const FIRST_PUBLICATION_NOTE = "It has never been public. Publishing puts it on the blog, in the feed, the sitemap, the search index and the AI answer layer.";
 
 export function checkState(c: Pick<GateCheck, "ok" | "required">): CheckState {
   return c.ok ? "passed" : c.required ? "failing" : "advisory";
@@ -493,7 +489,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     const form = (button as HTMLButtonElement | null)?.form;
     if (!hk.publish && form && button instanceof HTMLButtonElement) {
       // No script hook: the form posts as it would without JavaScript, with the confirmed intent.
-      button.value = site.first ? "publish-confirmed" : "publish";
+      button.value = site.first ? PUBLISH_CONFIRMED_INTENT : "publish";
       form.requestSubmit(button);
       return;
     }

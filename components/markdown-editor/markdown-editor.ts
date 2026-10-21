@@ -2,8 +2,7 @@
 // upgraded in place to a CodeMirror surface with a toolbar, a link palette, a slash menu, an
 // image prompt that insists on alt text, and a word count. The textarea stays in the page,
 // hidden and kept in step, so a form posts the markdown and a page without script still has
-// a working field. Extracted from the site admin's markdown editor (app/components/admin/
-// markdown-editor.tsx and its helpers); see markdown-editor.md.
+// a working field; see markdown-editor.md.
 //
 // This file holds no CodeMirror: it imports markdown-editor.view.ts with import(), so the
 // editor is its own chunk. The pure helpers (edits, counting, filtering, roving) are
