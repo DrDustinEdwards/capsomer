@@ -1,26 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
-
-// The focused row's ring is an inset outline over the row's own --sel tint: its contrast is
-// the outline colour against the row's background.
-function ringContrast(page: Page, sel: string): Promise<{ ring: string; bg: string; ratio: number } | null> {
-  return page.evaluate((s) => {
-    const el = document.querySelector<HTMLElement>(s);
-    if (!el) return null;
-    const cs = getComputedStyle(el);
-    const rgb = (v: string) => (v.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
-    const lum = (c: number[]) => {
-      const f = (x: number) => {
-        const t = x / 255;
-        return t <= 0.04045 ? t / 12.92 : Math.pow((t + 0.055) / 1.055, 2.4);
-      };
-      return 0.2126 * f(c[0] ?? 0) + 0.7152 * f(c[1] ?? 0) + 0.0722 * f(c[2] ?? 0);
-    };
-    const a = lum(rgb(cs.outlineColor));
-    const b = lum(rgb(cs.backgroundColor));
-    return { ring: cs.outlineColor, bg: cs.backgroundColor, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
-  }, sel);
-}
+import { eachTheme, expectContrast, expectNoAxeViolations, ringContrast, visitStates } from "../../test/helpers.ts";
 
 const firstColumn = (page: Page, table: string, col: number) =>
   page.locator(`${table} tbody tr`).evaluateAll((rows, c) => rows.map((r) => (r as HTMLTableRowElement).cells[c]?.textContent?.trim() ?? ""), col);
@@ -251,7 +230,6 @@ eachTheme((theme) => {
     await expect(cell).toContainText("No data");
     await expect(cell.locator(".cap-sr-only")).toHaveText(": no Cloudflare token for this site");
   });
-
 
   test("behaviour: a row checkbox is above the row link: it ticks, and the row does not open", async ({ page }) => {
     await visitStates(page, "table", theme);

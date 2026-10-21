@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, rowOverflow, visitStates } from "../../test/helpers.ts";
 import { advisoryHeading, appliesTo, checkState, countChecks, describeGate, gateState, holdText, nameList, passedHeading, requiredHeading, siteState, sortChecks, worstState, type GateCheck, type GateSite } from "./publish-gate.ts";
 
 const region = (page: Page, id: string) => page.locator(`#${id}`);
@@ -421,21 +421,7 @@ eachTheme((theme) => {
     test(`behaviour: at ${width}px nothing in a row overflows it and every title has room to be read`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await visitStates(page, "publish-gate", theme);
-      const bad = await page.evaluate(() => {
-        const out: string[] = [];
-        for (const row of document.querySelectorAll<HTMLElement>("li.cap-row")) {
-          const r = row.getBoundingClientRect();
-          if (r.width === 0) continue;
-          for (const el of row.querySelectorAll<HTMLElement>("*")) {
-            const b = el.getBoundingClientRect();
-            if (b.width === 0 || b.height === 0 || el.closest("[hidden], .cap-sr-only")) continue;
-            if (b.right > r.right + 1 || b.left < r.left - 1) out.push(`${row.id} ${el.className || el.tagName} sticks out of its row`);
-          }
-          const t = row.querySelector<HTMLElement>(".cap-row-title");
-          if (t && t.getBoundingClientRect().width < 100) out.push(`${row.id} title is ${Math.round(t.getBoundingClientRect().width)}px wide`);
-        }
-        return out;
-      });
+      const bad = await rowOverflow(page);
       expect(bad).toEqual([]);
     });
   }

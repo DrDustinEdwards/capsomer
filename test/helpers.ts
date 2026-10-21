@@ -171,3 +171,44 @@ export function nextPost(page: Page, root: string): Promise<{ method: string; en
     root,
   );
 }
+
+// A focused row's ring is an inset outline over the row's own --sel tint, so its contrast is the
+// outline colour against the row's background (paintedContrast measures an outline against the
+// parent's background, which is not what the eye sees there).
+export function ringContrast(page: Page, sel: string): Promise<{ ring: string; bg: string; ratio: number; width: string } | null> {
+  return page.evaluate((s) => {
+    const el = document.querySelector<HTMLElement>(s);
+    if (!el) return null;
+    const cs = getComputedStyle(el);
+    const rgb = (v: string) => (v.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+    const lum = (c: number[]) => {
+      const f = (x: number) => {
+        const t = x / 255;
+        return t <= 0.04045 ? t / 12.92 : Math.pow((t + 0.055) / 1.055, 2.4);
+      };
+      return 0.2126 * f(c[0] ?? 0) + 0.7152 * f(c[1] ?? 0) + 0.0722 * f(c[2] ?? 0);
+    };
+    const a = lum(rgb(cs.outlineColor));
+    const b = lum(rgb(cs.backgroundColor));
+    return { ring: cs.outlineColor, bg: cs.backgroundColor, width: cs.outlineWidth, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
+  }, sel);
+}
+
+// What sticks out of a list row, or leaves its title under 100px to be read: an empty list is a fit.
+export function rowOverflow(page: Page): Promise<string[]> {
+  return page.evaluate(() => {
+    const out: string[] = [];
+    for (const row of document.querySelectorAll<HTMLElement>("li.cap-row")) {
+      const r = row.getBoundingClientRect();
+      if (r.width === 0) continue;
+      for (const el of row.querySelectorAll<HTMLElement>("*")) {
+        const b = el.getBoundingClientRect();
+        if (b.width === 0 || b.height === 0 || el.closest("[hidden], .cap-sr-only")) continue;
+        if (b.right > r.right + 1 || b.left < r.left - 1) out.push(`${row.id} ${el.className || el.tagName} sticks out of its row`);
+      }
+      const t = row.querySelector<HTMLElement>(".cap-row-title");
+      if (t && t.getBoundingClientRect().width < 100) out.push(`${row.id} title is ${Math.round(t.getBoundingClientRect().width)}px wide`);
+    }
+    return out;
+  });
+}
