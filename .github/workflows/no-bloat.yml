@@ -1,8 +1,6 @@
-# The routine no-bloat checks (no-bloat/README.md). WARN ONLY: nothing here can fail a pull
-# request (rulings.md, rule 1). Two jobs. `no-bloat` is devkit's shared report (Knip and jscpd
-# against .no-bloat.json), pinned to the commit v0.6.0 points at; a move to a newer devkit is a
-# reviewed change to that sha and to the devDependency's tag together. `weight` is capsomer's
-# own page weight and line counts, which stay here. The repo is public, so the minutes are free.
+# The routine no-bloat checks (no-bloat/README.md). Two jobs. `no-bloat` is devkit's shared ratchet (Knip and jscpd
+# against .no-bloat.json): a count above the baseline fails. A move to a newer devkit is a reviewed change to the sha and
+# to the devDependency's tag together. `weight` is capsomer's own page weight and line counts, a report that never fails.
 name: No bloat
 
 on:
@@ -19,7 +17,7 @@ concurrency:
 
 jobs:
   no-bloat:
-    uses: DrDustinEdwards/devkit/.github/workflows/no-bloat.yml@491b6cc552a80cdfcb4c0b5184e51682f907eda3 # v0.6.0
+    uses: DrDustinEdwards/devkit/.github/workflows/no-bloat.yml@27e0a1ca0747b5839bf7e0433c307ae671de8501 # v0.7.0
     with:
       node-version-file: .node-version
       install: npm ci --ignore-scripts
