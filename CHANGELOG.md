@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+**Fix: system map tile names match what the tile shows** (axe-core 4.14, label-content-name-mismatch, WCAG 2.5.3). The tag line's `<text>` now starts with a space, so a tile's text reads "Capsomer shared" and not "Capsomershared"; SVG does not draw the space. A tile with a `short` label is named by that label, then its full name: "Site MCP, tool (Site connector)" where it was "Site connector, tool". No visual change. The dev dependency `@axe-core/playwright` moves to 4.14.0, which is what catches it.
+
 **Development: a smaller browser suite.** Behaviour, keyboard and geometry tests run in the light theme only (`grepInvert` in `playwright.config.ts`); accessibility tests still run in both, so the suite is about 1,810 runs instead of 2,610. Six tests that pinned the look rather than a promise are gone: the showcase's card alignment, menu row heights and colour-view family list, the admin shell's collapsed icon rhythm and rail tint step, and the site header's 56px height and 24px logo inset. The canvas contrast ratio that five specs each wrote out is one in-page helper, `window.capRatio`, installed by `visitStates`. No token, class or HTML contract changes.
 
 ## [0.14.0]

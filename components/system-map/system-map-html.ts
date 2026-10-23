@@ -31,7 +31,9 @@ function tileSvg(cell: Cell, s: MapSystem | undefined): string {
   const core = s.ring === "core" && cell.ring === 0;
   const nameY = core ? cell.y + 5 : tag ? cell.y + 1 : cell.y + 4;
   const name = `<text class="cap-system-map-name" x="${cell.x}" y="${nameY}">${label}</text>`;
-  const sub = tag && !core ? `<text class="cap-system-map-tag" x="${cell.x}" y="${cell.y + 16}">${escapeHtml(tag)}</text>` : "";
+  // The leading space keeps the two lines apart as words in the tile's text ("Capsomer shared",
+  // matching its name "Capsomer, shared"); SVG drops it when drawing.
+  const sub = tag && !core ? `<text class="cap-system-map-tag" x="${cell.x}" y="${cell.y + 16}"> ${escapeHtml(tag)}</text>` : "";
   const flags = `${core ? " data-core" : ""}${s.ring === "shared" ? " data-shared" : ""}${s.private ? " data-private" : ""}`;
   return `<g class="cap-system-map-tile" data-id="${escapeHtml(s.id)}" data-x="${cell.x}" data-y="${cell.y}" data-ring="${cell.ring}"${flags}><polygon points="${pts}"/>${name}${sub}</g>`;
 }
