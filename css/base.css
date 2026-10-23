@@ -50,6 +50,24 @@
       transition: color var(--dur-fast) var(--ease-out);
     }
   }
+  /* A trailing arrow in a link or button. A site's --arrow-rest and --arrow-shift (shown and in place
+     by default) can hide it until the pointer or focus arrives, when it slides in. */
+  .cap-arrow {
+    inline-size: 1.1em;
+    block-size: 1.1em;
+    flex: none;
+    opacity: var(--arrow-rest);
+    translate: var(--arrow-shift) 0;
+    :is(a, button):is(:hover, :focus-visible) > & {
+      opacity: 1;
+      translate: 0 0;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        translate var(--dur-base) var(--ease-out);
+    }
+  }
   button {
     cursor: pointer;
   }

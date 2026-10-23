@@ -5,7 +5,7 @@
 // runs palette.mjs's WCAG pairs on the site's colours merged into its family, in both themes.
 //
 // What goes in: only what a site differs on (faces, neutrals, type sizes, space and radius,
-// --enarratio-*), as literal values, never a var() chain, so the file works on <html> or on
+// the hover touches in scale.mjs's `touch` group, --enarratio-*), as literal values, never a var() chain, so the file works on <html> or on
 // any wrapper. A brand colour is never a site setting: it is a family (FAMILIES in
 // palette.mjs), which the site keeps choosing with data-family. A site on the defaults has no
 // entry. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so a
@@ -125,10 +125,16 @@ const SITES = {
   julieedwards: {
     family: "forest",
     on: "<html>",
-    note: "Open Sans to read and Montserrat for the header and headings, which the site self-hosts",
+    note: "Open Sans to read and Montserrat for the header and headings, which the site self-hosts; the old site's hover touches (Dustin, 2026-10-23)",
     all: {
       ui: '"Open Sans", Arial, sans-serif',
       "font-ui": '"Montserrat", Helvetica, Arial, sans-serif',
+      "link-rule": "1px",
+      "icon-radius": "999px",
+      "icon-border": "1px",
+      "theme-turn": "20deg",
+      "arrow-rest": "0",
+      "arrow-shift": "-0.3em",
     },
   },
 };

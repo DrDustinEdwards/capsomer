@@ -75,6 +75,15 @@ export const SCALE = {
     ["top-h", "44px", "the shell's top bar (the Portal's, #215)"],
     ["header-h", "3.5rem", "the site header, 56px on every site and surface (docs/design/design-site-header.md, answer 6)"],
   ],
+  // The hover touches a site may turn on in its SITES entry (tokens/sites.mjs); the defaults are off.
+  touch: [
+    ["link-rule", "0px", "the site header's section links: an underline that grows in under the pointer; 0 draws none"],
+    ["icon-radius", "6px", "the site header's icon controls and the theme button (--radius-m; 999px for a circle)"],
+    ["icon-border", "0px", "their outline's width, in the band's line"],
+    ["theme-turn", "0deg", "the theme button turns this far under the pointer"],
+    ["arrow-rest", "1", "a .cap-arrow's opacity at rest; 0 lets it slide in under the pointer"],
+    ["arrow-shift", "0px", "how far back a .cap-arrow sits at rest"],
+  ],
 };
 
 // Density: [name, compact, comfortable, what it is for]. `control` and `control-h` are the

@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.14.0]
+
+**New: per-site hover touches** (Dustin, 2026-10-23: each site keeps its own differences in Capsomer's components). Six new tokens in `tokens/scale.css`, group `touch`, each off by default so no site changes unless its `SITES` entry sets them: `--link-rule` (the site header's section links grow an underline in under the pointer; `0px`), `--icon-radius` (the header's icon controls and the theme button; `6px`, as `--radius-m` was), `--icon-border` (their outline's width; `0px`), `--theme-turn` (the theme button turns under the pointer; `0deg`), and `--arrow-rest` and `--arrow-shift` (`1` and `0px`) for the new `.cap-arrow` class: a trailing arrow icon in a link or button that a site can hide until the pointer or focus arrives, when it slides in. The `julieedwards` site turns them all on, as its old site had them: a 1px underline, round outlined icon buttons, a 20 degree turn and arrows that slide in. New tokens and class only; nothing is removed or renamed.
+
 ## [0.13.1]
 
 **New site: `julieedwards`** (julieedwards.info onto Capsomer, 2026-10-23), exported as `capsomer/site-julieedwards.css` and in `capsomer/sites.css`, on `<html>` with `data-cap-site="julieedwards"` under the forest family: `--ui` is Open Sans (reading) and `--font-ui` Montserrat (the header and the site's headings), both of which the site self-hosts.
