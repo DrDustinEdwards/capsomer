@@ -12,8 +12,12 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Theme switch.** A person's choice crossfades the page in 200 ms through a view transition; a restored or synced choice paints at once. `effectiveTheme()` answers the new theme straight away.
 - **Pages.** `base.css` opts same-origin page loads into a 200 ms crossfade (`@view-transition { navigation: auto; types: cap-page }`); in a transition typed `cap-page` the `main` element rises 6 px into place while the rest stays. A client-side router starts one with `document.startViewTransition({ update, types: ["cap-page"] })`, as the showcase site now does. An app that wants none writes `@view-transition { navigation: none; }`.
 - **Messages** fade in out of a 4 px blur instead of a plain fade; still no slide. Links ease their colour on hover.
+- **Segmented control and tabs: the chosen highlight slides** and resizes to the new choice over 200 ms (uiarc). It is one mark, the tray's or list's `::before`, tethered to the chosen segment or tab by CSS anchor positioning, so it needs no script and the React wrappers and client-side routers get it as they are. Where `anchor-scope` is missing, under reduced motion and in forced colours the chosen item draws its own highlight, as before. The line variant's rule slides the same way.
+- **Morphing button labels.** New behaviour module `capsomer/behaviour/button`: `morphLabel(button, change)` eases the width to the new label's and crossfades the words out of a 4 px blur (Save draft, Saving…, Saved); the leaving copy is `aria-hidden`. Opt in: the words in `.cap-btn-label`. React: `<Button morph>`.
+- **Sheets drag away** (Vaul). A bottom, right or left sheet's header is its handle: it follows the pointer toward the edge while the backdrop thins, closes past a third of its size or on a flick (as Close does, `returnValue` `"drag"`, focus back to the opener) and springs back otherwise. A bottom sheet shows a grab bar once wired. Not on a locked or alert dialog, while busy, or under reduced motion. The sheet header takes `touch-action: none` and `user-select: none`.
+- **Testing.** `paintedContrast` and `expectContrast` read a pseudo-element when the selector ends in `::before` or `::after`.
 
-No class or HTML contract changes; one token added (`--ease-spring`), two token values changed.
+No class or HTML contract changes; one token added (`--ease-spring`), two token values changed. New: the `capsomer/behaviour/button` module, the React `Button` `morph` prop, and the `data-leaving` and `data-cap-dragging` attributes these set while they run.
 
 ## [0.11.0]
 

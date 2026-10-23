@@ -100,6 +100,25 @@
   <p class="cap-muted">The last button is the same one at rest: a pending button keeps its width.</p>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-morph">
+  <h2 id="s-morph">A label that changes</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-btn" data-variant="primary" id="b-morph"><span class="cap-btn-label">Save draft</span></button>
+  </div>
+  <p class="cap-muted">Press it: Save draft, Saving…, Saved. The width eases and the words crossfade.</p>
+</section>
+
+<script type="module">
+  import { morphLabel } from "./button.ts";
+  const button = document.getElementById("b-morph");
+  const labels = ["Save draft", "Saving…", "Saved"];
+  let at = 0;
+  button.addEventListener("click", () => {
+    at = (at + 1) % labels.length;
+    morphLabel(button, () => (button.querySelector(".cap-btn-label").textContent = labels[at]));
+  });
+</script>
+
 <section class="cap-specimen" aria-labelledby="s-icon">
   <h2 id="s-icon">Icons</h2>
   <div class="cap-specimen-row">

@@ -219,6 +219,15 @@
     }
   }
 
+  /* A label on its way out (morphLabel in button.ts): over the button, centred, out of the way. */
+  .cap-btn > .cap-btn-label[data-leaving] {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
   /* The default look has the quiet shadow shadcn's outline button has in its roomy style. */
   .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(:disabled, [aria-disabled="true"]) {
     box-shadow: var(--shadow-xs);

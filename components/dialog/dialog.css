@@ -340,6 +340,26 @@
         transition-duration: var(--dur-base);
       }
     }
+    /* Drag to dismiss (dialog.ts): a sheet's header is its handle, once script has wired it;
+       the backdrop thins as the sheet goes. A bottom sheet shows a grab bar. */
+    .cap-dialog:is([data-placement="bottom"], [data-placement="right"], [data-placement="left"])[data-cap-wired]:not([data-cap-modal-lock], [role="alertdialog"]) > .cap-dialog-header {
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .cap-dialog[data-placement="bottom"][data-cap-wired]:not([data-cap-modal-lock], [role="alertdialog"]) > .cap-dialog-header::before {
+      content: "";
+      align-self: center;
+      inline-size: 2.25rem;
+      block-size: 4px;
+      margin-block: calc(var(--pad-card) / -2) var(--space-1);
+      border-radius: 2px;
+      background: var(--line-strong);
+    }
+    .cap-dialog[data-cap-dragging]::backdrop {
+      opacity: calc(1 - var(--cap-drag, 0));
+      transition-duration: 0s;
+    }
     @starting-style {
       .cap-dialog[open] {
         opacity: 0;

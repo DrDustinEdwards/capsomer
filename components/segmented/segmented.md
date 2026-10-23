@@ -36,6 +36,7 @@ Choosing one of two to five short, mutually exclusive options that should all be
 - **Real radio inputs, not buttons with ARIA.** Arrow keys, Space, the single tab stop, disabled options and forms all come from the platform (APG Radio Group).
 - **The legend is always there.** Hide it with `.cap-sr-only` only where the context already says what is chosen; the group still has its name.
 - **The chosen segment has an accent edge, reaching 3:1 on the surface, as well as its tint and a heavier weight**, so the choice is not carried by a pale tint alone.
+- **The highlight slides.** On a new choice the highlight moves and resizes to it over 200 ms (uiarc): one highlight, the tray's `::before`, tethered to the chosen segment with CSS anchor positioning, so the control stays script-free. Where anchor positioning (with `anchor-scope`) is missing, under reduced motion and in forced colours the chosen segment draws its own highlight and nothing moves.
 - **A disabled option is struck through and says why** in text the fieldset is described by.
 - **The change applies at once** where it is a view setting (the window of a chart). In a form it is saved with the form.
 
