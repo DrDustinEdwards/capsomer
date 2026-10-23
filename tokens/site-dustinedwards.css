@@ -3,8 +3,8 @@
    Do not edit: change SITES in tokens/sites.mjs and run `npm run tokens`. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 @layer cap.tokens {
-  [data-cap-site="dustinedwards"],
-  [data-cap-site="dustinedwards"] :is([data-family], [data-density]) {
+  [data-cap-site="dustinedwards"][data-cap-site],
+  [data-cap-site="dustinedwards"][data-cap-site] :is([data-family], [data-density]) {
     --enarratio-font-size: 1rem;
     --enarratio-font-size-small: 0.875em;
     --enarratio-line-height-tooltip: 1.35;

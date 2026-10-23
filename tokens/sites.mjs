@@ -54,7 +54,8 @@ const ORDER = "@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utili
 const BRAND = /^(accent|primary|ring|series|ramp)/;
 
 function selectors(name, prefixes, indent) {
-  const s = `[data-cap-site="${name}"]`;
+  // The repeated attribute outranks tokens.css's :root, so a bundler loading the site file first still wins.
+  const s = `[data-cap-site="${name}"][data-cap-site]`;
   const bases = prefixes ? prefixes.flatMap((p) => [`${p} ${s}`, `${p}${s}`]) : [s];
   return bases.flatMap((b) => [b, `${b} :is([data-family], [data-density])`]).join(`,\n${indent}`);
 }
