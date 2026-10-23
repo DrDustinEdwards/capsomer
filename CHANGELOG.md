@@ -2,7 +2,9 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [Unreleased]
+## [0.15.0]
+
+**System map: groups** (Dustin, 2026-10-23: like goes with like, and a stranger should read the map without a key). A system people use can carry a `group` (Websites, Apps). When any does, each group is drawn together, its systems chained in the order given, apart from every other group, and named beside it in a new `text.cap-system-map-group-label` on a new `svg.cap-system-map-layer[data-layer="labels"]`, hidden inside a system. The gaps between groups are not drawn as empty shell, and the list below is sectioned by group. `Layout` gains `labels` and `grouped`. A map with no groups is drawn as before. New field, class and layer only; nothing is removed or renamed.
 
 **Fix: system map tile names match what the tile shows** (axe-core 4.14, label-content-name-mismatch, WCAG 2.5.3). The tag line's `<text>` now starts with a space, so a tile's text reads "Capsomer shared" and not "Capsomershared"; SVG does not draw the space. A tile with a `short` label is named by that label, then its full name: "Site MCP, tool (Site connector)" where it was "Site connector, tool". No visual change.
 

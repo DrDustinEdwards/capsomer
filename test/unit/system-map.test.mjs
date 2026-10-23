@@ -69,6 +69,25 @@ test("shared parts beyond six spill outward, and what people use moves out a rin
   assert.equal(layout.rings, 3);
 });
 
+test("grouped, each group is a chain of neighbours, apart from every other group, and named", () => {
+  const groups = { Sites: ["w1", "w2", "w3", "w4", "w5"], Apps: ["a1", "a2", "a3", "a4"], Books: ["b1", "b2", "b3"], Tools: ["t1", "t2", "t3", "t4"] };
+  const systems = [
+    { id: "core", name: "Core", ring: "core" },
+    ...["s1", "s2", "s3", "s4", "s5", "s6"].map((id) => ({ id, name: id, ring: "shared" })),
+    ...Object.entries(groups).flatMap(([group, ids]) => ids.map((id) => ({ id, name: id, ring: "used", group }))),
+  ];
+  const layout = layoutMap(systems);
+  const at = new Map(layout.cells.filter((c) => c.id).map((c) => [c.id, c]));
+  const touch = (a, b) => Math.hypot(a.x - b.x, a.y - b.y) < R * 1.8;
+  for (const [group, ids] of Object.entries(groups)) {
+    for (let i = 1; i < ids.length; i++) assert.ok(touch(at.get(ids[i - 1]), at.get(ids[i])), `${ids[i]} touches ${ids[i - 1]}`);
+    const others = Object.entries(groups).filter(([g]) => g !== group).flatMap(([, o]) => o);
+    for (const id of ids) for (const o of others) assert.ok(!touch(at.get(id), at.get(o)), `${id} is apart from ${o}`);
+  }
+  assert.ok(layout.grouped);
+  assert.deepEqual(layout.labels.map((l) => l.text), Object.keys(groups));
+});
+
 test("arrow keys reach every capsomer from the core, and each goes the way it points", () => {
   const layout = layoutMap(family);
   const tiles = layout.cells.filter((c) => c.id).map((c) => ({ id: c.id, x: c.x, y: c.y }));
