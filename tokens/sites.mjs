@@ -122,6 +122,15 @@ const SITES = {
       ui: '"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
     },
   },
+  julieedwards: {
+    family: "forest",
+    on: "<html>",
+    note: "Open Sans to read and Montserrat for the header and headings, which the site self-hosts",
+    all: {
+      ui: '"Open Sans", Arial, sans-serif',
+      "font-ui": '"Montserrat", Helvetica, Arial, sans-serif',
+    },
+  },
 };
 
 const ORDER = "@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;";

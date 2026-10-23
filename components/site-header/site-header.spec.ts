@@ -330,6 +330,9 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-site-header-cta")).toBeHidden();
     let row = await rowOrder(page);
     expect(row.map((r) => r.name)).toEqual(["Foxhound", themeName, "Sign in", "Menu"]);
+    // Links on the right hide on a phone; the menu button still ends the row 16px from the edge.
+    const menu = (await page.locator(".cap-site-header-menu").boundingBox())!;
+    expect(Math.round(menu.x + menu.width)).toBe(PHONE.width - 16);
     await visitStates(page, "site-header", theme, "fx-reader-phone");
     row = await rowOrder(page);
     expect(row.map((r) => r.name)).toEqual(["Foxing", "Search", "Notifications, 3 new", themeName, "Your account", "Menu"]);

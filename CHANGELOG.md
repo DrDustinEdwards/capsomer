@@ -2,6 +2,12 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.13.1]
+
+**New site: `julieedwards`** (julieedwards.info onto Capsomer, 2026-10-23), exported as `capsomer/site-julieedwards.css` and in `capsomer/sites.css`, on `<html>` with `data-cap-site="julieedwards"` under the forest family: `--ui` is Open Sans (reading) and `--font-ui` Montserrat (the header and the site's headings), both of which the site self-hosts.
+
+**Site header: on a phone, the tools keep to the window's edge when the section links sit on the right.** With `data-links="right"` the hidden links' rule still set the tools' start margin to 12px, so the theme and menu buttons sat beside the logo instead of at the right. A visual fix at phone width only; the phone test now measures the menu button's edge. No class, token or HTML contract changes.
+
 ## [0.13.0]
 
 **New: the `forest` family** (Dustin, 2026-10-23: Julie's green must go with the other families). `data-family="forest"` switches an element's subtree to julieedwards.info's green, in both themes; `capsomer/families.css` now imports it, or take it alone as `capsomer/family-forest.css`. The Bluff Dale ISD green `#15532E` is the light theme's step 11 anchor (links, headings, accent text), as navy's `#002868` is. Step 9 is `#06954f`, its hue at the lightness purple, fox and navy share (oklch 0.587 0.15 153); green leaves sRGB above chroma 0.15 at that lightness, so it takes the strongest green there is. Light is its default theme. Every pair passes WCAG 2.2 in both themes, and the chart checks pass. `EmailFamily` gains `"forest"`; the site's overview counts five families. New attribute value and new exports only; nothing is removed or renamed, and no existing family changes.

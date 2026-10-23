@@ -655,6 +655,10 @@
         display: none;
       }
     }
+    /* The links on the right are hidden here, so the tools keep to the window's edge. */
+    .cap-site-header[data-links="right"] .cap-site-header-sections + .cap-site-header-tools {
+      margin-inline-start: auto;
+    }
     .cap-site-header .cap-site-header-menu {
       display: inline-grid;
     }
