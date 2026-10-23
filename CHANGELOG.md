@@ -2,7 +2,7 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## Unreleased
+## [0.10.1]
 
 **`capsomer/email`: `checkUrl` refuses a link with a user or password before the host** (`https://trusted.example@evil.example/` reads as the trusted name in a mail client but opens the other host). Every link the email renderers take goes through it, so a caller passing such a URL now gets a thrown `email:` error. No class, token or HTML contract changes.
 
