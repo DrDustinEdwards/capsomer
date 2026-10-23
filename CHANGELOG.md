@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [Unreleased]
+
+**Development: a smaller browser suite.** Behaviour, keyboard and geometry tests run in the light theme only (`grepInvert` in `playwright.config.ts`); accessibility tests still run in both, so the suite is about 1,810 runs instead of 2,610. Six tests that pinned the look rather than a promise are gone: the showcase's card alignment, menu row heights and colour-view family list, the admin shell's collapsed icon rhythm and rail tint step, and the site header's 56px height and 24px logo inset. The canvas contrast ratio that five specs each wrote out is one in-page helper, `window.capRatio`, installed by `visitStates`. No token, class or HTML contract changes.
+
 ## [0.14.0]
 
 **New: per-site hover touches** (Dustin, 2026-10-23: each site keeps its own differences in Capsomer's components). Six new tokens in `tokens/scale.css`, group `touch`, each off by default so no site changes unless its `SITES` entry sets them: `--link-rule` (the site header's section links grow an underline in under the pointer; `0px`), `--icon-radius` (the header's icon controls and the theme button; `6px`, as `--radius-m` was), `--icon-border` (their outline's width; `0px`), `--theme-turn` (the theme button turns under the pointer; `0deg`), and `--arrow-rest` and `--arrow-shift` (`1` and `0px`) for the new `.cap-arrow` class: a trailing arrow icon in a link or button that a site can hide until the pointer or focus arrives, when it slides in. The `julieedwards` site turns them all on, as its old site had them: a 1px underline, round outlined icon buttons, a 20 degree turn and arrows that slide in. New tokens and class only; nothing is removed or renamed.

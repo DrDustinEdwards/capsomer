@@ -11,7 +11,8 @@ export const THEMES = ["light", "dark"] as const;
 export type Theme = (typeof THEMES)[number];
 
 // Runs `body` once per theme, with the browser's colour scheme and the page's data-theme
-// both set, so a component is checked as each theme actually paints it.
+// both set, so a component is checked as each theme actually paints it. In the dark theme
+// only the accessibility tests run (playwright.config.ts, grepInvert).
 export function eachTheme(body: (theme: Theme) => void): void {
   for (const theme of THEMES) {
     test.describe(`${theme} theme`, () => {
@@ -21,6 +22,28 @@ export function eachTheme(body: (theme: Theme) => void): void {
   }
 }
 
+declare global {
+  interface Window {
+    capRatio(a: string, b: string): number;
+  }
+}
+
+// The contrast ratio of two CSS colours as the browser paints them (a canvas pixel, so any
+// colour syntax works). visitStates installs it, for checks that run inside the page.
+function installRatio(): void {
+  const lum = (c: string) => {
+    const x = document.createElement("canvas").getContext("2d")!;
+    x.fillStyle = c;
+    x.fillRect(0, 0, 1, 1);
+    const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+  };
+  window.capRatio = (a, b) => {
+    const [x, y] = [lum(a), lum(b)];
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  };
+}
+
 // Opens a component's states page in the given theme and waits for its fonts.
 // With `only`, opens one page-level specimen (a <template data-specimen>) as the whole page.
 export async function visitStates(page: Page, name: string, theme: Theme, only?: string): Promise<void> {
@@ -28,6 +51,7 @@ export async function visitStates(page: Page, name: string, theme: Theme, only?:
   if (only) q.set("only", only);
   await page.goto(`components/${name}/states.html?${q}`);
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  await page.evaluate(installRatio);
   if (!only) await expect(page.locator("h1").first()).toBeVisible();
 }
 

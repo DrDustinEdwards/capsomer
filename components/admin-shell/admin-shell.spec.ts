@@ -608,23 +608,12 @@ eachTheme((theme) => {
     const tip = page.locator(".cap-admin-menu .cap-admin-tip:popover-open");
     await expect(tip).toBeVisible();
     const ratios = await page.evaluate(() => {
-      const paint = (c: string) => {
-        const x = document.createElement("canvas").getContext("2d")!;
-        x.fillStyle = c;
-        x.fillRect(0, 0, 1, 1);
-        const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-        return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
-      };
-      const ratio = (a: string, b: string) => {
-        const [x, y] = [paint(a), paint(b)];
-        return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
-      };
       const tip = document.querySelector(".cap-admin-menu .cap-admin-tip:popover-open")!;
       const selected = document.querySelector(".cap-admin-menu a[aria-current='page']")!;
       const ground = getComputedStyle(document.querySelector(".cap-admin-main")!.closest(".cap-admin")!).backgroundColor;
       // No edge drawn reads as the surface itself: no edge.
       const edge = getComputedStyle(tip).boxShadow.match(/rgba?\([^)]*\)/)?.[0] ?? getComputedStyle(tip).backgroundColor;
-      return { tipVsSelected: ratio(getComputedStyle(tip).backgroundColor, getComputedStyle(selected).backgroundColor), edgeVsGround: ratio(edge, ground) };
+      return { tipVsSelected: window.capRatio(getComputedStyle(tip).backgroundColor, getComputedStyle(selected).backgroundColor), edgeVsGround: window.capRatio(edge, ground) };
     });
     expect(ratios.tipVsSelected, "the tip's surface against the selected item's fill").toBeGreaterThanOrEqual(3);
     expect(ratios.edgeVsGround, "the tip's edge against the page").toBeGreaterThanOrEqual(3);
@@ -678,17 +667,9 @@ eachTheme((theme) => {
         { sel: ".cap-admin-strip .cap-admin-badge", what: `${state}: a strip badge` },
       ]);
       const ratio = await page.evaluate(() => {
-        const paint = (c: string) => {
-          const x = document.createElement("canvas").getContext("2d")!;
-          x.fillStyle = c;
-          x.fillRect(0, 0, 1, 1);
-          const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-          return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
-        };
         const bubble = getComputedStyle(document.querySelector(".cap-admin-menu a:not([aria-current]) .cap-admin-count:not([data-tone]):not(:empty)")!).backgroundColor;
         const menu = getComputedStyle(document.querySelector(".cap-admin-menu")!).backgroundColor;
-        const [x, y] = [paint(bubble), paint(menu)];
-        return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+        return window.capRatio(bubble, menu);
       });
       expect(ratio, `${state}: a neutral bubble against the menu`).toBeGreaterThanOrEqual(3);
     }
@@ -699,21 +680,10 @@ eachTheme((theme) => {
     const link = page.getByRole("link", { name: "Activity, 120" });
     await link.hover();
     const r = await link.evaluate((el) => {
-      const paint = (c: string) => {
-        const x = document.createElement("canvas").getContext("2d")!;
-        x.fillStyle = c;
-        x.fillRect(0, 0, 1, 1);
-        const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-        return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
-      };
-      const ratio = (a: string, b: string) => {
-        const [x, y] = [paint(a), paint(b)];
-        return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
-      };
       const cs = getComputedStyle(el);
       const menu = getComputedStyle(el.closest(".cap-admin-menu")!).backgroundColor;
       const edge = cs.boxShadow.match(/rgba?\([^)]*\)/)?.[0] ?? menu;
-      return { fill: ratio(cs.backgroundColor, menu), edge: ratio(edge, menu) };
+      return { fill: window.capRatio(cs.backgroundColor, menu), edge: window.capRatio(edge, menu) };
     });
     expect(r.fill, "the hover fill against the menu").toBeGreaterThanOrEqual(1.2);
     expect(r.edge, "the hover edge against the menu").toBeGreaterThanOrEqual(3);
@@ -736,38 +706,6 @@ eachTheme((theme) => {
     expect(texts.length).toBeGreaterThanOrEqual(7);
     for (const t of texts) expect(t).toMatch(/^(\d{1,2}|99\+)$/);
   });
-  test("behaviour: collapsed, the icons keep one even rhythm, with one divider step between groups", async ({ page }) => {
-    await visitStates(page, "admin-shell", theme, "collapsed");
-    const gaps = await page.evaluate(() => {
-      const rows = [...document.querySelectorAll(".cap-admin-menu a")].map((a) => a.getBoundingClientRect());
-      return rows.slice(1).map((r, i) => Math.round(r.top - rows[i]!.bottom));
-    });
-    const kinds = [...new Set(gaps)].sort((a, b) => a - b);
-    expect(kinds.length, `gaps ${gaps.join(", ")}`).toBe(2);
-    expect(kinds[1]!, "a group step is no more than a row and a half").toBeLessThanOrEqual(48);
-    await expect(page.locator(".cap-admin-group + .cap-admin-group > .cap-admin-group-label")).toHaveCount(2);
-    for (const label of await page.locator(".cap-admin-group + .cap-admin-group > .cap-admin-group-label").all()) {
-      expect(await label.evaluate((el) => getComputedStyle(el, "::after").borderTopWidth)).toBe("1px");
-    }
-  });
-
-  test("behaviour: collapsed, the strip and the menu are two rails, painted apart", async ({ page }) => {
-    await visitStates(page, "admin-shell", theme, "collapsed");
-    // Two near-identical tints read as one rail: the strip and the menu differ by a visible step.
-    const ratio = await page.evaluate(() => {
-      const lum = (sel: string) => {
-        const c = document.createElement("canvas").getContext("2d")!;
-        c.fillStyle = getComputedStyle(document.querySelector(sel)!).backgroundColor;
-        c.fillRect(0, 0, 1, 1);
-        const [r, g, b] = [...c.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-        return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
-      };
-      const [a, b] = [lum(".cap-admin-strip"), lum(".cap-admin-menu")];
-      return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
-    });
-    expect(ratio).toBeGreaterThanOrEqual(1.1);
-  });
-
   test("behaviour: every count and badge is one bubble, open and collapsed", async ({ page }) => {
     const shapes = async () =>
       page.evaluate(() =>

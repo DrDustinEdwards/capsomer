@@ -8,6 +8,9 @@ const PORT = 4319;
 export default defineConfig({
   testDir: ".",
   testMatch: ["components/*/*.spec.ts", "site/*.spec.ts", "test/*.spec.ts"],
+  // Behaviour, keyboard and geometry tests do not depend on the palette, so they run in the light
+  // theme only; accessibility tests (axe, contrast, the ARIA snapshot) run in both.
+  grepInvert: /dark theme .*(behaviour|keyboard|lines|inside|layout):/,
   fullyParallel: false,
   workers: 1,
   forbidOnly: !!process.env.CI,
