@@ -79,19 +79,19 @@
      data-placed (after any flip), which wins over the side an author asked for. It only
      steers the motion (slide in from the trigger's side) and the arrow. */
   .cap-popover:is([data-side="bottom"]:not([data-placed]), [data-placed="bottom"]) {
-    --_ty: -2px;
+    --_ty: -4px;
     --_origin: top;
   }
   .cap-popover:is([data-side="top"]:not([data-placed]), [data-placed="top"]) {
-    --_ty: 2px;
+    --_ty: 4px;
     --_origin: bottom;
   }
   .cap-popover:is([data-side="left"]:not([data-placed]), [data-side="inline-start"]:not([data-placed]), [data-placed="left"]) {
-    --_tx: 2px;
+    --_tx: 4px;
     --_origin: right;
   }
   .cap-popover:is([data-side="right"]:not([data-placed]), [data-side="inline-end"]:not([data-placed]), [data-placed="right"]) {
-    --_tx: -2px;
+    --_tx: -4px;
     --_origin: left;
   }
 
@@ -261,11 +261,16 @@
     }
   }
 
-  /* Open and close: fade, zoom from 95%, slide 2px in from the trigger's side, 100 ms.
-     A native popover animates through @starting-style and allow-discrete (display and
-     overlay); Base UI's popups through its data-starting-style / data-ending-style. */
+  /* Open and close. Opening, it fades in 100 ms while it grows from 96% and slides 4 px out of
+     the trigger's side over 200 ms on the long ease-out; closing is quicker and shorter, 100 ms to
+     98% and half the slide, so it gets out of the way (Radix Themes and Arc: what leaves goes
+     faster than it came). Transitions, not keyframes, so a close during the open reverses from
+     where it is. A native popover animates through @starting-style and allow-discrete (display
+     and overlay); Base UI's popups through data-starting-style and data-ending-style. A tooltip
+     keeps 100 ms both ways: the next one opens at once anyway. */
   @media (prefers-reduced-motion: no-preference) {
     .cap-popover {
+      --_in: var(--dur-base);
       transition:
         opacity var(--dur-fast) var(--ease-out),
         scale var(--dur-fast) var(--ease-out),
@@ -273,11 +278,22 @@
         display var(--dur-fast) allow-discrete,
         overlay var(--dur-fast) allow-discrete;
 
+      &[data-variant="tooltip"] {
+        --_in: var(--dur-fast);
+      }
       &[popover]:not(:popover-open),
-      &:is([data-starting-style], [data-ending-style]) {
+      &[data-ending-style] {
         opacity: 0;
-        scale: 0.95;
+        scale: 0.98;
+        translate: calc(var(--_tx) / 2) calc(var(--_ty) / 2);
+      }
+      &[data-starting-style] {
+        opacity: 0;
+        scale: 0.96;
         translate: var(--_tx) var(--_ty);
+      }
+      &:is([popover]:popover-open, :not([popover], [data-ending-style])) {
+        transition-duration: var(--dur-fast), var(--_in), var(--_in), var(--dur-fast), var(--dur-fast);
       }
       &[popover]:popover-open {
         opacity: 1;
@@ -286,7 +302,7 @@
 
         @starting-style {
           opacity: 0;
-          scale: 0.95;
+          scale: 0.96;
           translate: var(--_tx) var(--_ty);
         }
       }

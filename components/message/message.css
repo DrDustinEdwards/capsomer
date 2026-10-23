@@ -102,9 +102,10 @@
     }
   }
 
-  /* A new message fades in; text being read never moves. (Sonner's slide and stacking are
-     left out: a message that stays must not be hidden behind another, and a slide moves text
-     the person may be reading.) */
+  /* A new message fades in out of a 4 px blur; text being read never moves. (Sonner's slide and
+     stacking are left out: a message that stays must not be hidden behind another, and a slide
+     moves text the person may be reading. The blur is Arc's way in for words, and Emil
+     Kowalski's: it reads as one thing arriving, not a box appearing.) */
   @media (prefers-reduced-motion: no-preference) {
     .cap-message-item {
       animation: cap-message-in var(--dur-base) var(--ease-out);
@@ -112,6 +113,7 @@
     @keyframes cap-message-in {
       from {
         opacity: 0;
+        filter: blur(4px);
       }
     }
   }

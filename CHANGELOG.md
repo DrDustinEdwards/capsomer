@@ -2,6 +2,23 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## Unreleased
+
+**Smoother motion, family-wide** (Dustin, 2026-10-23: "more modern/smoother feeling ui/ux"; the study is in the PR). A visual change only; every value is a token or sits in a component's CSS, so every app that takes the release changes together. Nothing new moves under reduced motion.
+
+- **Tokens.** `--ease-out` is now `cubic-bezier(0.16, 1, 0.3, 1)` (was `cubic-bezier(0, 0, 0.38, 0.9)`): a faster start and a longer soft stop, Radix Themes' and Arc's curve. `--ease-in-out` is now `cubic-bezier(0.65, 0, 0.35, 1)` (was `cubic-bezier(0.2, 0, 0.38, 0.9)`). New `--ease-spring`, a damped spring as `linear()` (95% at 30% of the time, 4% past), for a release or a thumb, with `--dur-slow`. Durations unchanged.
+- **Exits are quicker than entries.** Dialog: rises 8 px and grows from 96% over 200 ms, leaves in 100 ms to 98% (was 95% both ways at 100 ms); sheets slide in over 200 ms and out in 100 ms over half the distance; the backdrop fades in 200 ms, out 100 ms. Popover and Base UI popups (select, combobox, menu): grow from 96% and slide 4 px over 200 ms, leave in 100 ms (was 95% and 2 px, 100 ms both ways). Tooltips stay 100 ms. The top palette (command menu) only fades in, and goes at once.
+- **Press.** `.cap-btn` gives to 97% at once and springs back on release (was a 1 px nudge down); stat tiles give to 98.5%. Tiles lift on `--shadow-s` under a mouse.
+- **Theme switch.** A person's choice crossfades the page in 200 ms through a view transition; a restored or synced choice paints at once. `effectiveTheme()` answers the new theme straight away.
+- **Pages.** `base.css` opts same-origin page loads into a 200 ms crossfade (`@view-transition { navigation: auto; types: cap-page }`); in a transition typed `cap-page` the `main` element rises 6 px into place while the rest stays. A client-side router starts one with `document.startViewTransition({ update, types: ["cap-page"] })`, as the showcase site now does. An app that wants none writes `@view-transition { navigation: none; }`.
+- **Messages** fade in out of a 4 px blur instead of a plain fade; still no slide. Links ease their colour on hover.
+- **Segmented control and tabs: the chosen highlight slides** and resizes to the new choice over 200 ms (uiarc). It is one mark, the tray's or list's `::before`, tethered to the chosen segment or tab by CSS anchor positioning, so it needs no script and the React wrappers and client-side routers get it as they are. Where `anchor-scope` is missing, under reduced motion and in forced colours the chosen item draws its own highlight, as before. The line variant's rule slides the same way.
+- **Morphing button labels.** New behaviour module `capsomer/behaviour/button`: `morphLabel(button, change)` eases the width to the new label's and crossfades the words out of a 4 px blur (Save draft, Saving…, Saved); the leaving copy is `aria-hidden`. Opt in: the words in `.cap-btn-label`. React: `<Button morph>`.
+- **Sheets drag away** (Vaul). A bottom, right or left sheet's header is its handle: it follows the pointer toward the edge while the backdrop thins, closes past a third of its size or on a flick (as Close does, `returnValue` `"drag"`, focus back to the opener) and springs back otherwise. A bottom sheet shows a grab bar once wired. Not on a locked or alert dialog, while busy, or under reduced motion. The sheet header takes `touch-action: none` and `user-select: none`.
+- **Testing.** `paintedContrast` and `expectContrast` read a pseudo-element when the selector ends in `::before` or `::after`.
+
+No class or HTML contract changes; one token added (`--ease-spring`), two token values changed. New: the `capsomer/behaviour/button` module, the React `Button` `morph` prop, and the `data-leaving` and `data-cap-dragging` attributes these set while they run.
+
 ## [0.11.2]
 
 **Three more sites: `foxhound`, `germomics` and `capsid`** (the site-settings plan of 2026-10-23), each exported as `capsomer/site-<name>.css` and in `capsomer/sites.css`.

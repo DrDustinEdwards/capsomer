@@ -235,6 +235,60 @@
     }
   }
 
+  /* The chosen mark slides and resizes to the new tab: the raised tray tab, or the line
+     variant's rule, is the list's ::before, tethered to the chosen tab by anchor positioning, so
+     it moves with no script (a link tab moves too when a client-side router changes it). Without
+     anchor-scope, under reduced motion and in forced colours the chosen tab draws its own mark,
+     as above, and nothing moves. */
+  @supports (anchor-name: --a) and (anchor-scope: all) {
+    @media (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+      .cap-tabs-list {
+        position: relative;
+        anchor-scope: --cap-tab-on;
+
+        & > .cap-tab:is([aria-selected="true"], [aria-current="page"]) {
+          anchor-name: --cap-tab-on;
+          border-color: transparent;
+          background: none;
+          box-shadow: none;
+        }
+        &:has(> .cap-tab:where([aria-selected="true"], [aria-current="page"]))::before {
+          content: "";
+          position: absolute;
+          position-anchor: --cap-tab-on;
+          inset: anchor(top) anchor(right) anchor(bottom) anchor(left);
+          border: 1px solid var(--accent);
+          border-radius: var(--radius-s);
+          background: var(--surface);
+          box-shadow: var(--shadow-xs);
+          pointer-events: none;
+          transition: inset var(--dur-base) var(--ease-in-out);
+        }
+        /* The line: a 2 px rule along the chosen tab's bottom (its inline start when vertical). */
+        &[data-variant="line"] > .cap-tab:is([aria-selected="true"], [aria-current="page"]) {
+          border-bottom-color: transparent;
+        }
+        &[data-variant="line"]::before {
+          inset-block-start: calc(anchor(bottom) - 2px);
+          border: 0;
+          border-radius: 0;
+          background: var(--accent);
+          box-shadow: none;
+        }
+      }
+      .cap-tabs[data-orientation="vertical"] > .cap-tabs-list[data-variant="line"] {
+        & > .cap-tab:is([aria-selected="true"], [aria-current="page"]) {
+          border-inline-start-color: transparent;
+        }
+        &::before {
+          inset-block: anchor(top) anchor(bottom);
+          inset-inline: anchor(start) auto;
+          inline-size: 2px;
+        }
+      }
+    }
+  }
+
   @media (forced-colors: active) {
     .cap-tab:is([aria-selected="true"], [aria-current="page"]) {
       forced-color-adjust: none;

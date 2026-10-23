@@ -1,4 +1,5 @@
-import { useId, type ButtonHTMLAttributes, type MouseEvent, type ReactNode } from "react";
+import { useId, useLayoutEffect, useRef, type ButtonHTMLAttributes, type MouseEvent, type ReactNode } from "react";
+import { morphFrom } from "./button.ts";
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "style"> {
   variant?: "default" | "primary" | "secondary" | "danger" | "quiet" | "link";
@@ -12,15 +13,32 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   // An icon button: `children` is the icon and `label` its accessible name.
   iconOnly?: boolean;
   label?: string;
+  // A label that changes in place (Save, Saving…, Saved) eases the width and crossfades the
+  // words. The label is wrapped in `.cap-btn-label`.
+  morph?: boolean;
   children?: ReactNode;
 }
 
 export function Button(props: ButtonProps) {
-  const { variant = "default", size = "default", pending = false, disabledReason, iconOnly = false, label, children, type = "button", onClick, className, ...rest } = props;
+  const { variant = "default", size = "default", pending = false, disabledReason, iconOnly = false, label, morph = false, children, type = "button", onClick, className, ...rest } = props;
   const reasonId = useId();
   const disabled = disabledReason != null && disabledReason !== false;
   const describedBy = [rest["aria-describedby"], disabled ? reasonId : null].filter(Boolean).join(" ") || undefined;
   if (iconOnly && !label && !rest["aria-label"]) console.warn("Button: an icon-only button needs a label.");
+
+  // The morph: after React writes a new label, animate from the last width and a copy of the
+  // last label (button.ts).
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const last = useRef<{ text: string; width: number; copy: HTMLElement } | null>(null);
+  useLayoutEffect(() => {
+    const el = labelRef.current;
+    const button = el?.parentElement;
+    if (!morph || !el || !button) return;
+    const prev = last.current;
+    const text = el.textContent ?? "";
+    const width = prev && prev.text !== text ? morphFrom(button, prev.width, prev.copy) : button.offsetWidth;
+    last.current = { text, width, copy: el.cloneNode(true) as HTMLElement };
+  });
 
   const click = (e: MouseEvent<HTMLButtonElement>) => {
     if (disabled || pending) {
@@ -45,7 +63,13 @@ export function Button(props: ButtonProps) {
       onClick={click}
     >
       {pending ? <span className="cap-btn-spinner" aria-hidden="true" /> : null}
-      {pending ? <span className="cap-btn-label">{children}</span> : children}
+      {pending || morph ? (
+        <span className="cap-btn-label" ref={labelRef}>
+          {children}
+        </span>
+      ) : (
+        children
+      )}
     </button>
   );
 

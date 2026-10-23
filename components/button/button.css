@@ -219,6 +219,15 @@
     }
   }
 
+  /* A label on its way out (morphLabel in button.ts): over the button, centred, out of the way. */
+  .cap-btn > .cap-btn-label[data-leaving] {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
   /* The default look has the quiet shadow shadcn's outline button has in its roomy style. */
   .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(:disabled, [aria-disabled="true"]) {
     box-shadow: var(--shadow-xs);
@@ -329,11 +338,15 @@
         border-color var(--dur-fast) var(--ease-out),
         background-color var(--dur-fast) var(--ease-out),
         color var(--dur-fast) var(--ease-out),
-        transform var(--dur-fast) var(--ease-out);
+        scale var(--dur-slow) var(--ease-spring);
     }
-    /* The press nudge, as shadcn's translate-y-px; not on a button that owns a popup. */
+    /* The press: down to 97% at once, back on a spring when released (Emil Kowalski's 0.97, Arc's
+       quick press and spring release). Not on a button that owns a popup: it anchors the popup,
+       which must not measure a shrunken trigger. */
     .cap-btn:is(:active, [data-force="pressed"]):not([aria-haspopup]):not([aria-disabled="true"]):not(:disabled) {
-      transform: translateY(1px);
+      scale: 0.97;
+      transition-duration: var(--dur-fast);
+      transition-timing-function: var(--ease-out);
     }
     .cap-link-btn {
       transition: color var(--dur-fast) var(--ease-out);

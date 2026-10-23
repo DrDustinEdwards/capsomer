@@ -16,13 +16,13 @@ eachTheme((theme) => {
       { sel: "#td-overview", what: "the chosen tab's label" },
       { sel: "#td-runs", what: "a tab's label on the tray" },
       { sel: "#td-runs .cap-tab-count", what: "a tab's count on the tray" },
-      { sel: "#td-overview", what: "the chosen tab's edge", part: "border" },
+      { sel: "#tabs-default > .cap-tabs-list::before", what: "the chosen tab's edge (the sliding mark)", part: "border" },
       { sel: "#tl-draft", what: "the chosen line tab's label" },
       { sel: "#tl-preview", what: "a line tab's label" },
       { sel: "#tl-history .cap-tab-count", what: "a line tab's count" },
       { sel: "#td-alerts", what: "a disabled tab's label (kept readable)" },
       { sel: "#tabs-links .cap-tab[aria-current='page']", what: "the current link tab" },
-      { sel: "#tabs-links .cap-tab[aria-current='page']", what: "the current link tab's edge", part: "border" },
+      { sel: "#tabs-links::before", what: "the current link tab's edge (the sliding mark)", part: "border" },
       { sel: "#tabs-links .cap-tab:not([aria-current])", what: "a link tab" },
     ]);
   });

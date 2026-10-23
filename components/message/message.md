@@ -111,7 +111,7 @@ Sonner (`sonner.tsx` and the `.cn-toast` rule): the toast's surface, its icon pe
 - **Stacking.** Sonner collapses a pile of toasts into a deck and expands it on hover. Here a warning or a failure stays until dismissed, and a collapsed deck would hide the one fact the person must not miss. The region lists them, newest first, and a plain result replaces the plain result before it, so the list stays short.
 - **Auto-dismiss.** Sonner closes every toast after 4 seconds by default. WCAG 2.2.1 asks for time to read, and a message with Undo is an action the person may want later. Only a plain confirmation that the control also shows clears itself.
 - **Floating and swipe.** Sonner floats over the page at a corner and is dismissed by a swipe. Dustin's default is a status region in the page (DEFAULTS.md), and Dismiss is a button.
-- **Motion.** Sonner slides each toast in and out. Here a new item fades in (`--dur-base`) and nothing slides, because text being read never moves.
+- **Motion.** Sonner slides each toast in and out. Here a new item fades in out of a 4 px blur (`--dur-base`, Arc's way in for words) and nothing slides, because text being read never moves.
 
 ## Exceptions in production
 
