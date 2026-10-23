@@ -114,6 +114,14 @@ const SITES = {
       "fs-detail": "13px",
     },
   },
+  txasm: {
+    family: "navy",
+    on: "<html>",
+    note: "the UI face stays Inter, which txasm loads",
+    all: {
+      ui: '"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+    },
+  },
 };
 
 const ORDER = "@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;";
