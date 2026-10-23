@@ -93,7 +93,7 @@ test("family: themes() carries the twelve steps and accent-text", () => {
 
 test("family: report() covers every family in both themes, its default theme first", () => {
   const rows = report();
-  assert.deepEqual([...new Set(rows.map((r) => r.family))].sort(), ["fox", "purple", "teal"]);
+  assert.deepEqual([...new Set(rows.map((r) => r.family))].sort(), Object.keys(FAMILIES).sort());
   for (const [name, f] of Object.entries(FAMILIES)) {
     const mine = rows.filter((r) => r.family === name);
     assert.equal(mine[0].scheme, f.defaultTheme, `${name} checks ${f.defaultTheme} first`);

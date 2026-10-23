@@ -15,14 +15,14 @@
 // chroma at the seed's hue; status hues are fixed and tuned by bisection against the
 // hardest surface each sits on. The OKLab conversion follows Bjorn Ottosson's reference.
 //
-//   node tokens/palette.mjs                       colour.css (purple), family-fox.css, family-teal.css
+//   node tokens/palette.mjs                       colour.css (purple), family-fox.css, family-teal.css, family-navy.css
 //   node tokens/palette.mjs --family=fox --out=f  Foxing's family as a root theme into f
 //   node tokens/palette.mjs --seed=#RRGGBB [--anchor=#RRGGBB] --out=f
 //   node tokens/palette.mjs --report              every pair, every family, both themes
 //
-// tokens/colour.css is the purple family on :root (the default). tokens/family-fox.css and
-// tokens/family-teal.css carry the same tokens scoped to [data-family="fox"] and
-// [data-family="teal"], so one element (the root, or a wrapper) can switch family for its
+// tokens/colour.css is the purple family on :root (the default). tokens/family-fox.css,
+// tokens/family-teal.css and tokens/family-navy.css carry the same tokens scoped to
+// [data-family="fox"], [data-family="teal"] and [data-family="navy"], so one element (the root, or a wrapper) can switch family for its
 // subtree. Both themes follow the same pattern as colour.css (prefers-color-scheme, then
 // [data-theme]). Everything inside a family block is a literal value, never a var() chain,
 // so a family on a wrapper does not inherit the root family's already-resolved values.
@@ -36,6 +36,10 @@ export const FAMILIES = {
   purple: { seed: "#8c5fd2", anchor: "#4F2D7F", defaultTheme: "light", note: "Capsid Portal, Carrel, dustinedwards.info, Germomics (rule 14)" },
   fox: { seed: "#cc4f0c", anchor: null, defaultTheme: "light", note: "Foxing, light by default (rules 14 and 15)" },
   teal: { seed: "#008489", anchor: null, defaultTheme: "dark", note: "Foxhound, dark by default (rule 15)" },
+  // txasm's navy: the brand #002868 is too dark to be step 9 (it fails 3:1 as a focus ring on
+  // the dark surface), so it is the light theme's step 11 anchor (links, headings, accent text)
+  // and step 9 is the same hue at the lightness and strength of purple and fox (OKLCH L 0.587, C 0.172).
+  navy: { seed: "#3978e0", anchor: "#002868", defaultTheme: "light", note: "txasm, light by default; the brand navy #002868 is step 11 in light" },
 };
 const OUT = fileURLToPath(new URL("./colour.css", import.meta.url));
 const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -451,6 +455,7 @@ export function files() {
     ["colour.css", renderFamily(p.seed, p.anchor)],
     ["family-fox.css", renderScoped("fox", FAMILIES.fox.seed, FAMILIES.fox.anchor)],
     ["family-teal.css", renderScoped("teal", FAMILIES.teal.seed, FAMILIES.teal.anchor)],
+    ["family-navy.css", renderScoped("navy", FAMILIES.navy.seed, FAMILIES.navy.anchor)],
     ["enarratio-theme.mjs", renderEnarratioTheme()],
     ["../components/email/colours.ts", renderEmailColours()],
   ];

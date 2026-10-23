@@ -2,7 +2,9 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## Unreleased
+## [0.12.0]
+
+**New: the `navy` family, and the `txasm` site** (the txasm-onto-Capsomer plan of 2026-10-23). `data-family="navy"` switches an element's subtree to txasm's navy, in both themes; `capsomer/families.css` now imports it, or take it alone as `capsomer/family-navy.css`. The brand navy `#002868` is too dark to be step 9 (as the focus ring it is under 3:1 on the dark surface), so it is the light theme's step 11 anchor (links, headings, accent text, as purple anchors `#4F2D7F`), and step 9 is `#3978e0`, the same hue at the lightness and strength purple and fox share (oklch 0.587 0.172 260; Dustin, 2026-10-23: the navy must go with the others). Light is its default theme. Every pair passes WCAG 2.2 in both themes, and the chart checks pass. The anchor is Dustin's to change. New site `txasm` in `SITES` (`capsomer/site-txasm.css`, `data-cap-site="txasm"` on `<html>`): the UI face stays Inter, which txasm loads. txasm's red `#a30e28` stays txasm's own, for its logo. `EmailFamily` gains `"navy"`; the site's overview counts four families. New attribute value and new exports only; no class, token or HTML contract is removed or renamed, and no existing family or site changes.
 
 **Smoother motion, family-wide** (Dustin, 2026-10-23: "more modern/smoother feeling ui/ux"; the study is in the PR). A visual change only; every value is a token or sits in a component's CSS, so every app that takes the release changes together. Nothing new moves under reduced motion.
 

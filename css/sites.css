@@ -6,4 +6,5 @@
 @import "../tokens/site-foxhound.css";
 @import "../tokens/site-germomics.css";
 @import "../tokens/site-capsid.css";
+@import "../tokens/site-txasm.css";
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
