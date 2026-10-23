@@ -19,6 +19,20 @@ Each release names every removed or renamed token or class, and every changed HT
 
 No class or HTML contract changes; one token added (`--ease-spring`), two token values changed. New: the `capsomer/behaviour/button` module, the React `Button` `morph` prop, and the `data-leaving` and `data-cap-dragging` attributes these set while they run.
 
+## [0.11.2]
+
+**Three more sites: `foxhound`, `germomics` and `capsid`** (the site-settings plan of 2026-10-23), each exported as `capsomer/site-<name>.css` and in `capsomer/sites.css`.
+
+- `site-foxhound.css`, on each `.fh-cap` wrapper (never `<html>`, where Foxhound's unlayered `:root` would beat it, and never the admin): Foxhound's own neutrals (`--ground`, `--surface`, `--raised`, `--sunken`, `--text`, `--muted`, `--dim`, `--line`, `--line-strong`) in both themes, and DM Sans and DM Mono (`--ui`, `--font-ui`, `--mono`), under the teal family's accents. The header band stays in Foxhound, because the admin shares it and `.cap-site-header` sets its own band tokens.
+- `site-germomics.css`, on the admin's `[data-cap-theme]` element: `--mono` is the site's JetBrains Mono.
+- `site-capsid.css`, on the Portal's `<html>`: `--fs-label` and `--fs-detail` are 13px on a phone (the Portal UX audit's m4), under the Portal's own 820px breakpoint, since moving it to Capsomer's 768px would shrink the labels between 769px and 820px.
+
+**`tokens/sites.mjs`** gains three fields. `defaultTheme: "dark"` writes a site's dark values as the plain block and its light values only where light is pinned (`:root[data-theme="light"]`, `[data-cap-theme="light"]`), as Foxhound draws its own pages; the dark values are also written under the family's dark selectors, so they tie them. `phone` holds values for a phone, under Capsomer's 767.98px or the site's own `phoneMax`. `waive` records a WCAG pair a site's own colours already fail where it renders today, with the reason; the check refuses a waiver that no longer matches a failure. Foxhound's dark `--line-strong` (`#4a4c44`, legacy's value) is the one waiver: 2.02:1 on `--surface`, under the 3:1 a control border needs. No class, token or other HTML contract changes.
+
+## [0.11.1]
+
+**Per-site settings win over `tokens.css` whatever order they load in.** A bundler can put the site file before `tokens.css` (dustinedwards-info's Vite build did), and with equal specificity the later `:root` defaults won, so the site's chart sizes did not apply. Each site selector now repeats its attribute (`[data-cap-site="x"][data-cap-site]`). No class, token or HTML contract changes.
+
 ## [0.11.0]
 
 **New: per-site settings** (`data-cap-site="<site>"`; the site-settings plan of 2026-10-23). `SITES` in `tokens/sites.mjs` holds what a site differs on from the family defaults (faces, neutrals, type sizes, space and radius, `--enarratio-*`), as literal values; a brand colour stays a family. It generates `tokens/site-<name>.css` in the `cap.tokens` layer and the barrel `css/sites.css`, exported as `capsomer/sites.css` and `capsomer/site-<name>.css`; import after `tokens.css` and `families.css`. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so dark theme and density cannot override a site value, and each also matches a `[data-family]` or `[data-density]` wrapper inside the site. `npm run tokens` writes the files; `npm run check` refuses a hand edit, a missing export, a `var()` value or a brand token, and checks the site's colours against WCAG 2.2 in both themes. The first site is `dustinedwards`, on `<html>`: its charts keep their look from before Enarratio 0.3 (title `1rem`, small text `0.875em`, and Enarratio's own spacing, shape and timing literals). New attribute `data-cap-site`; no class, token or other HTML contract changes.
