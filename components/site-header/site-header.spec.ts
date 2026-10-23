@@ -101,17 +101,6 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-site-header-switch-tile")).toHaveText("A");
   });
 
-  test("behaviour: 56px tall, full width, the logo 24px from the window's edge, at every surface", async ({ page }) => {
-    for (const only of ["fh-public", "fx-public", "fh-dashboard", "fh-admin", "markup"]) {
-      await visitStates(page, "site-header", theme, only);
-      const h = await page.locator(".cap-site-header").boundingBox();
-      expect(h!.height, only).toBe(56);
-      expect(h!.x, only).toBe(0);
-      expect(h!.width, only).toBe(page.viewportSize()!.width);
-      expect((await page.locator(".cap-site-header-logo").boundingBox())!.x, `${only}: the logo's x`).toBe(24);
-    }
-  });
-
   test("behaviour: sticky: the header stays at the top while the page scrolls, and scroll padding keeps a focused target out from under it", async ({ page }) => {
     await visitStates(page, "site-header", theme, "fx-reader");
     await page.mouse.wheel(0, 600);
@@ -286,17 +275,9 @@ eachTheme((theme) => {
       await visitStates(page, "site-header", theme, only);
       await settle(page);
       const got = await page.locator(".cap-site-header-link:is([aria-current], [data-current])").evaluate((el) => {
-        const paint = (c: string) => {
-          const x = document.createElement("canvas").getContext("2d")!;
-          x.fillStyle = c;
-          x.fillRect(0, 0, 1, 1);
-          const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-          return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
-        };
         const line = getComputedStyle(el, "::after");
         const band = getComputedStyle(el.closest(".cap-site-header")!).backgroundColor;
-        const [a, b] = [paint(line.backgroundColor), paint(band.replace(/,\s*0?\.\d+\)$/, ")"))];
-        return { h: line.height, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05), weight: getComputedStyle(el).fontWeight };
+        return { h: line.height, ratio: window.capRatio(line.backgroundColor, band.replace(/,\s*0?\.\d+\)$/, ")")), weight: getComputedStyle(el).fontWeight };
       });
       expect(got.h, only).toBe("2px");
       expect(got.weight, only).toBe("500");

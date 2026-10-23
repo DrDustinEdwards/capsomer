@@ -157,11 +157,14 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
   for (const svg of stage.querySelectorAll<SVGSVGElement>("[data-layer='core'], [data-layer='inner'], [data-layer='rim']")) svg.removeAttribute("aria-hidden");
   for (const t of tiles) {
     const s = systems.get(t.dataset.id!);
-    const tag = t.querySelector(".cap-system-map-tag")?.textContent;
+    const tag = t.querySelector(".cap-system-map-tag")?.textContent?.trim();
     t.setAttribute("role", "button");
     t.setAttribute("tabindex", "-1");
     t.setAttribute("aria-pressed", "false");
-    t.setAttribute("aria-label", [s?.name ?? t.dataset.id, tag].filter(Boolean).join(", "));
+    // The name starts with the words the tile shows (WCAG 2.5.3); a short label adds the full name after.
+    const shown = t.querySelector(".cap-system-map-name")?.textContent ?? s?.name ?? t.dataset.id;
+    const full = s?.name && s.name !== shown ? ` (${s.name})` : "";
+    t.setAttribute("aria-label", `${[shown, tag].filter(Boolean).join(", ")}${full}`);
   }
   const first = coreTile ?? tiles[0];
   first?.setAttribute("tabindex", "0");

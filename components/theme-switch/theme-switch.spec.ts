@@ -48,15 +48,7 @@ eachTheme((theme) => {
     await visitStates(page, "theme-switch", theme);
     const chosen = page.locator(".cap-theme-options > label:has(input:checked)").first();
     const r = await chosen.evaluate((el) => {
-      const paint = (c: string) => {
-        const x = document.createElement("canvas").getContext("2d")!;
-        x.fillStyle = c;
-        x.fillRect(0, 0, 1, 1);
-        const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-        return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
-      };
-      const [a, b] = [paint(getComputedStyle(el).backgroundColor), paint(getComputedStyle(document.body).backgroundColor)];
-      return { shadow: getComputedStyle(el).boxShadow, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
+      return { shadow: getComputedStyle(el).boxShadow, ratio: window.capRatio(getComputedStyle(el).backgroundColor, getComputedStyle(document.body).backgroundColor) };
     });
     expect(r.shadow, "no second marker (an underline)").toBe("none");
     expect(r.ratio).toBeGreaterThanOrEqual(3);
