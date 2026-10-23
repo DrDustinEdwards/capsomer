@@ -48,6 +48,13 @@
   --rail-w-collapsed: 56px;
   --top-h: 44px;
   --header-h: 3.5rem;
+  /* touch */
+  --link-rule: 0px;
+  --icon-radius: 6px;
+  --icon-border: 0px;
+  --theme-turn: 0deg;
+  --arrow-rest: 1;
+  --arrow-shift: 0px;
   --control-h-coarse: 44px;
   --face: var(--ui);
 }

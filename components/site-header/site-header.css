@@ -240,6 +240,19 @@
     &[data-force="hover"] {
       color: var(--header-fg);
     }
+    /* A site's --link-rule (off by default) grows an underline in under the pointer. */
+    &:not([aria-current="page"], [data-current])::after {
+      content: "";
+      position: absolute;
+      inset-inline-start: 0;
+      bottom: 4px;
+      inline-size: 0;
+      block-size: var(--link-rule);
+      background: var(--header-accent);
+    }
+    &:not([aria-current="page"], [data-current]):is(:hover, :focus-visible)::after {
+      inline-size: 100%;
+    }
     &[aria-current="page"],
     &[data-current] {
       color: var(--header-fg);
@@ -291,8 +304,8 @@
     inline-size: 36px;
     block-size: 36px;
     padding: 0;
-    border: 0;
-    border-radius: var(--radius-m);
+    border: var(--icon-border) solid var(--header-line);
+    border-radius: var(--icon-radius);
     background: none;
     color: var(--header-fg-muted);
     font: inherit;
@@ -749,6 +762,9 @@
       transition:
         background-color var(--dur-fast) var(--ease-out),
         color var(--dur-fast) var(--ease-out);
+    }
+    .cap-site-header-link::after {
+      transition: inline-size var(--dur-base) var(--ease-out);
     }
     .cap-site-header-panel {
       transition:
