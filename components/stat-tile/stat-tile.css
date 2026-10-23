@@ -157,11 +157,26 @@
     letter-spacing: 0;
   }
 
+  /* With a mouse, a pointed-at tile also lifts on a small shadow (Arc's card, Radix Themes'
+     card); a touch never leaves it lifted. Pressed, it gives to 98.5% and springs back, less
+     than a button because it is wider (Arc scales a wide target less). */
+  @media (hover: hover) and (pointer: fine) {
+    .cap-tile:is(:hover, [data-force="hover"]) {
+      box-shadow: var(--shadow-s);
+    }
+  }
   @media (prefers-reduced-motion: no-preference) {
     .cap-tile {
       transition:
         background-color var(--dur-fast) var(--ease-out),
-        border-color var(--dur-fast) var(--ease-out);
+        border-color var(--dur-fast) var(--ease-out),
+        box-shadow var(--dur-base) var(--ease-out),
+        scale var(--dur-slow) var(--ease-spring);
+    }
+    .cap-tile:is(:active, [data-force="pressed"]) {
+      scale: 0.985;
+      transition-duration: var(--dur-fast);
+      transition-timing-function: var(--ease-out);
     }
   }
 

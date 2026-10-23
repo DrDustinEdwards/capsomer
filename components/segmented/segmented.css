@@ -136,6 +136,38 @@
     }
   }
 
+  /* The chosen highlight slides and resizes to the new choice (uiarc's segmented control): one
+     highlight, the tray's ::before, tethered to the chosen segment by anchor positioning, so it
+     moves with no script. Without anchor-scope, under reduced motion and in forced colours the
+     chosen segment draws its own highlight, as above, and nothing moves. */
+  @supports (anchor-name: --a) and (anchor-scope: all) {
+    @media (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+      .cap-seg-options {
+        position: relative;
+        anchor-scope: --cap-seg-on;
+
+        & > label:has(input:checked) {
+          anchor-name: --cap-seg-on;
+          border-color: transparent;
+          background: none;
+          box-shadow: none;
+        }
+        &:has(input:checked)::before {
+          content: "";
+          position: absolute;
+          position-anchor: --cap-seg-on;
+          inset: anchor(top) anchor(right) anchor(bottom) anchor(left);
+          border: 1px solid var(--accent);
+          border-radius: var(--radius-s);
+          background: var(--accent-soft);
+          box-shadow: var(--shadow-xs);
+          pointer-events: none;
+          transition: inset var(--dur-base) var(--ease-in-out);
+        }
+      }
+    }
+  }
+
   @media (forced-colors: active) {
     .cap-seg-options > label:has(input:checked) {
       forced-color-adjust: none;

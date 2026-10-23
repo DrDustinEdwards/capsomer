@@ -66,10 +66,12 @@ export interface Reading {
 
 // Contrast as the browser paints it: the colour of the element (its text, or its border)
 // against the first opaque background behind it, compositing translucent layers. From the
-// Capsid Portal's contrast spec, where it caught a selected row at 1.06:1.
+// Capsid Portal's contrast spec, where it caught a selected row at 1.06:1. A selector ending in
+// ::before or ::after reads that pseudo-element (a sliding highlight's edge), on its element.
 export function paintedContrast(page: Page, selector: string, part: "color" | "border" | "outline" = "color"): Promise<Reading | null> {
   return page.evaluate(
-    ([sel, which]) => {
+    ([full, which]) => {
+      const [sel = full, pseudo] = full.split(/(?=::)/);
       const el = document.querySelector<HTMLElement>(sel);
       if (!el) return null;
       const parse = (s: string): [number, number, number, number] => {
@@ -91,7 +93,7 @@ export function paintedContrast(page: Page, selector: string, part: "color" | "b
       };
       let bg: [number, number, number] = [255, 255, 255];
       const layers: [number, number, number, number][] = [];
-      for (let n: HTMLElement | null = which === "color" ? el : el.parentElement; n; n = n.parentElement) {
+      for (let n: HTMLElement | null = which === "color" || pseudo ? el : el.parentElement; n; n = n.parentElement) {
         const c = parse(getComputedStyle(n).backgroundColor);
         if (c[3] > 0) layers.unshift(c);
         if (c[3] >= 1) break;
@@ -106,7 +108,7 @@ export function paintedContrast(page: Page, selector: string, part: "color" | "b
         if ((fill[3] ?? 0) > 0) layers.push(fill as [number, number, number, number]);
       }
       for (const l of layers) bg = over(l, bg);
-      const cs = getComputedStyle(el);
+      const cs = getComputedStyle(el, pseudo ?? null);
       const fgRaw = parse(svgText ? cs.fill : which === "color" ? cs.color : which === "border" ? cs.borderTopColor : cs.outlineColor);
       const fg = over(fgRaw, bg);
       const lum = (c: [number, number, number]) => {

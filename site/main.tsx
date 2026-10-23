@@ -4,6 +4,7 @@
 // https://capsomer.dustinedwards.info by a static Cloudflare Worker (rule 16). Hash routes,
 // so every view is one file.
 import { StrictMode, useEffect, useMemo, useState, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import "@fontsource/schibsted-grotesk/400.css";
 import "@fontsource/schibsted-grotesk/500.css";
@@ -56,9 +57,20 @@ function useRoute(): { view: View; detail: string | null } {
   };
   const [route, setRoute] = useState(read);
   useEffect(() => {
+    // A page change is a view transition typed cap-page (css/base.css), where the browser has one.
     const on = () => {
-      setRoute(read());
-      window.scrollTo(0, 0);
+      const swap = () =>
+        flushSync(() => {
+          setRoute(read());
+          window.scrollTo(0, 0);
+        });
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!document.startViewTransition || reduce) return swap();
+      try {
+        document.startViewTransition({ update: swap, types: ["cap-page"] });
+      } catch {
+        document.startViewTransition(swap);
+      }
     };
     addEventListener("hashchange", on);
     return () => removeEventListener("hashchange", on);

@@ -48,11 +48,12 @@ export const SCALE = {
     ["prose", '"Source Serif 4", "Iowan Old Style", Charter, Georgia, serif', "long-form text and public headings (decision 5)"],
   ],
   motion: [
-    ["dur-fast", "100ms", "feedback: hover, press, a switch moving"],
-    ["dur-base", "200ms", "a panel, dialog or menu opening"],
-    ["dur-slow", "400ms", "a page-level change"],
-    ["ease-out", "cubic-bezier(0, 0, 0.38, 0.9)", "things arriving"],
-    ["ease-in-out", "cubic-bezier(0.2, 0, 0.38, 0.9)", "things moving within the page"],
+    ["dur-fast", "100ms", "feedback (hover, press) and every exit: what leaves goes faster than it came"],
+    ["dur-base", "200ms", "an overlay or a page arriving"],
+    ["dur-slow", "400ms", "a spring settling (with --ease-spring); a page-level change"],
+    ["ease-out", "cubic-bezier(0.16, 1, 0.3, 1)", "things arriving and leaving: a fast start and a long soft stop (Radix Themes, Arc)"],
+    ["ease-in-out", "cubic-bezier(0.65, 0, 0.35, 1)", "things moving within the page"],
+    ["ease-spring", "linear(0, 0.005 1%, 0.028 2.5%, 0.117 5.5%, 0.572 16%, 0.77 21.5%, 0.839 24%, 0.906 27%, 0.956 30%, 0.992 33%, 1.012 35.5%, 1.026 38%, 1.035 41%, 1.038 44.5%, 1.035 49.5%, 1.012 63.5%, 1.003 72.5%, 0.999 84.5%, 1)", "a release or a thumb settling: a damped spring, 95% at 30% of the time, 4% past; transform only, with --dur-slow"],
   ],
   layer: [
     ["z-base", "0", "the page"],
@@ -177,7 +178,7 @@ export function renderJson() {
   for (const [group, rows] of Object.entries(groups)) {
     out[group] = {};
     for (const [name, value, why] of rows) {
-      const ty = name.startsWith("dur-") ? "duration" : name.startsWith("ease-") ? "cubicBezier" : name.startsWith("fs-") && group.startsWith("density") ? "dimension" : typeOf(group);
+      const ty = name.startsWith("dur-") ? "duration" : value.startsWith("cubic-bezier(") ? "cubicBezier" : name.startsWith("fs-") && group.startsWith("density") ? "dimension" : typeOf(group);
       let v = value;
       if (ty === "dimension" && /^\d+px$/.test(value)) v = { value: Number(value.slice(0, -2)), unit: "px" };
       else if (ty === "duration") v = { value: Number(value.slice(0, -2)), unit: "ms" };

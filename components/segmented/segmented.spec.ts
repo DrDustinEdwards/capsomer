@@ -17,7 +17,7 @@ eachTheme((theme) => {
       { sel: "#seg-view label:has(input:disabled)", what: "a disabled segment's word" },
       { sel: "#seg-view-why", what: "the reason for a disabled segment" },
       { sel: "#seg-window .cap-seg-options", what: "the control's edge", part: "border" },
-      { sel: "#seg-window label:has(input:checked)", what: "the chosen segment's edge", part: "border" },
+      { sel: "#seg-window .cap-seg-options::before", what: "the chosen segment's edge (the sliding highlight)", part: "border" },
       { sel: "#seg-sm label:has(input:checked)", what: "a small segment's word" },
       { sel: "#seg-invalid .cap-seg-options", what: "an invalid control's edge", part: "border" },
       { sel: "#seg-invalid-e", what: "the message for an invalid control" },

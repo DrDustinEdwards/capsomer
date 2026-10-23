@@ -35,6 +35,28 @@ test("behaviour: uid returns a new id on every call, with the prefix", () => {
   expect(b).not.toBe(a);
 });
 
+test("behaviour: a sheet dragged down by its header closes past a third and hands focus back; a short drag springs back", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await live(page, "light");
+  await openFrom(page, "open-bottom");
+  const sheet = dlg(page, "More views");
+  await expect(sheet).toBeVisible();
+  const head = await sheet.locator(".cap-dialog-header").boundingBox();
+  if (!head) throw new Error("no header");
+  const drag = async (dy: number) => {
+    await page.mouse.move(head.x + head.width / 2, head.y + 10);
+    await page.mouse.down();
+    await page.mouse.move(head.x + head.width / 2, head.y + 10 + dy, { steps: 8 });
+    await page.mouse.up();
+  };
+  await drag(12);
+  await expect(sheet).toBeVisible();
+  await expect.poll(() => sheet.evaluate((d) => d.getBoundingClientRect().bottom)).toBeCloseTo(await page.evaluate(() => innerHeight), 0);
+  await drag(200);
+  await expect(sheet).toBeHidden();
+  await expect(page.locator("#open-bottom")).toBeFocused();
+});
+
 // With no script the dialog is a card in the page and its form works: a context with script off
 // reads the delivered HTML, which is all there is.
 test("behaviour: with no script an inline dialog is in the page, open, and its form is there", async ({ browser }) => {
