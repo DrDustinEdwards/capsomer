@@ -145,7 +145,7 @@ function insideSvg(layout: Layout, core: MapSystem | undefined, data: SystemMapD
 /**
  * The whole map as HTML: the head with the view switch, the stage (the core, the inner
  * rings and the rim as three layers, the lines, and the inside), the detail line, and the
- * same data as a list, grouped by ring. Every text is escaped. Delivered with no script,
+ * same data as a list, grouped by ring (or by group). Every text is escaped. Delivered with no script,
  * the drawing is a picture with a label and the list is open.
  */
 export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {}): string {
@@ -161,8 +161,15 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
     `<svg class="cap-system-map-layer" data-layer="${name}" viewBox="${vb}" aria-hidden="true" focusable="false">${cells.map((c) => tileSvg(c, c.id ? byId.get(c.id) : undefined)).join("")}</svg>`;
   const rim = layout.rings;
   const coreCells = layout.cells.filter((c) => c.ring === 0);
-  const innerCells = layout.cells.filter((c) => c.ring > 0 && c.ring < rim);
-  const rimCells = rim > 0 ? layout.cells.filter((c) => c.ring === rim) : [];
+  // Grouped, the gaps are not drawn, and every group goes behind the circle inside, as the
+  // rim does: the groups are what people use, whatever ring a cell of theirs is on.
+  const drawn = layout.grouped ? layout.cells.filter((c) => c.id) : layout.cells;
+  const outerCell = (c: Cell) => (layout.grouped ? byId.get(c.id!)?.ring === "used" : c.ring === rim);
+  const innerCells = drawn.filter((c) => c.ring > 0 && !outerCell(c));
+  const rimCells = rim > 0 ? drawn.filter((c) => c.ring > 0 && outerCell(c)) : [];
+  const labels = layout.labels
+    .map((l) => `<text class="cap-system-map-group-label" x="${l.x}" y="${l.y}">${escapeHtml(l.text)}</text>`)
+    .join("");
   const onMap = new Set(at.keys());
   const edges = (data.relationships ?? [])
     .filter((l) => onMap.has(l.from) && onMap.has(l.to) && l.from !== l.to)
@@ -170,9 +177,15 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
     .join("");
   const core = data.systems.find((s) => s.ring === "core");
   const placed = data.systems.filter((s) => onMap.has(s.id));
-  const list = (["core", "shared", "used"] as const)
-    .map((ring) => {
-      const items = placed.filter((s) => s.ring === ring);
+  // The list in the map's own sections: the rings, or, grouped, the core, the shared ring
+  // and each group in turn.
+  const sections: Array<[string, MapSystem[]]> = (["core", "shared", "used"] as const).flatMap((ring) => {
+    const items = placed.filter((s) => s.ring === ring);
+    if (ring !== "used" || !layout.grouped) return [[names[ring], items] as [string, MapSystem[]]];
+    return [...new Set(items.map((s) => s.group ?? ""))].map((g) => [g || names.used, items.filter((s) => (s.group ?? "") === g)] as [string, MapSystem[]]);
+  });
+  const list = sections
+    .map(([title, items]) => {
       if (items.length === 0) return "";
       const lis = items
         .map((s) => {
@@ -184,7 +197,7 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
           return `<li data-id="${escapeHtml(s.id)}">${parts.join(" ")}</li>`;
         })
         .join("");
-      return `<section class="cap-system-map-group"><${h} class="cap-system-map-group-name">${escapeHtml(names[ring])}</${h}><ul>${lis}</ul></section>`;
+      return `<section class="cap-system-map-group"><${h} class="cap-system-map-group-name">${escapeHtml(title)}</${h}><ul>${lis}</ul></section>`;
     })
     .join("");
   const caption = options.caption ? `<p class="cap-system-map-caption">${escapeHtml(options.caption)}</p>` : "";
@@ -203,12 +216,13 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
     `<figure class="cap-system-map" data-cap="system-map" data-view="shell" id="${escapeHtml(id)}" aria-labelledby="${escapeHtml(id)}-title"${options.openLabel ? ` data-open-label="${escapeHtml(options.openLabel)}"` : ""}>`,
     `<figcaption class="cap-system-map-head"><span class="cap-system-map-title" id="${escapeHtml(id)}-title">${escapeHtml(label)}</span>${caption}`,
     `<span class="cap-system-map-views" role="group" aria-label="View" data-cap-part="views" hidden><button type="button" class="cap-btn" data-view="shell" aria-pressed="true">Capsid</button><button type="button" class="cap-btn" data-view="plain" aria-pressed="false">Plain map</button></span></figcaption>`,
-    `<div class="cap-system-map-stage" data-cap-part="stage" role="img" aria-label="${escapeHtml(label)}: ${placed.length} systems in rings. The list below holds the same.">`,
+    `<div class="cap-system-map-stage" data-cap-part="stage" role="img" aria-label="${escapeHtml(label)}: ${placed.length} systems ${layout.grouped ? "in groups" : "in rings"}. The list below holds the same.">`,
     // The lines first, so every capsomer and its label is painted over them.
     `<svg class="cap-system-map-layer" data-layer="edges" viewBox="${vb}" aria-hidden="true" focusable="false">${edges}</svg>`,
     layer("core", coreCells),
     innerCells.length ? layer("inner", innerCells) : "",
     rimCells.length ? layer("rim", rimCells) : "",
+    labels ? `<svg class="cap-system-map-layer" data-layer="labels" viewBox="${vb}" aria-hidden="true" focusable="false">${labels}</svg>` : "",
     insideSvg(layout, core, data, playable.length > 0),
     `</div>`,
     `<div class="cap-system-map-detail" data-cap-part="detail" aria-live="polite" hidden></div>`,

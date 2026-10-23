@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.15.0]
+
+**System map: groups** (Dustin, 2026-10-23: like goes with like, and a stranger should read the map without a key). A system people use can carry a `group` (Websites, Apps). When any does, each group is drawn together, its systems chained in the order given, apart from every other group, and named beside it in a new `text.cap-system-map-group-label` on a new `svg.cap-system-map-layer[data-layer="labels"]`, hidden inside a system. The gaps between groups are not drawn as empty shell, and the list below is sectioned by group. `Layout` gains `labels` and `grouped`. A map with no groups is drawn as before. New field, class and layer only; nothing is removed or renamed.
+
 ## [0.14.0]
 
 **New: per-site hover touches** (Dustin, 2026-10-23: each site keeps its own differences in Capsomer's components). Six new tokens in `tokens/scale.css`, group `touch`, each off by default so no site changes unless its `SITES` entry sets them: `--link-rule` (the site header's section links grow an underline in under the pointer; `0px`), `--icon-radius` (the header's icon controls and the theme button; `6px`, as `--radius-m` was), `--icon-border` (their outline's width; `0px`), `--theme-turn` (the theme button turns under the pointer; `0deg`), and `--arrow-rest` and `--arrow-shift` (`1` and `0px`) for the new `.cap-arrow` class: a trailing arrow icon in a link or button that a site can hide until the pointer or focus arrives, when it slides in. The `julieedwards` site turns them all on, as its old site had them: a 1px underline, round outlined icon buttons, a 20 degree turn and arrows that slide in. New tokens and class only; nothing is removed or renamed.
