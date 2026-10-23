@@ -2,6 +2,19 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## Unreleased
+
+**Smoother motion, family-wide** (Dustin, 2026-10-23: "more modern/smoother feeling ui/ux"; the study is in the PR). A visual change only; every value is a token or sits in a component's CSS, so every app that takes the release changes together. Nothing new moves under reduced motion.
+
+- **Tokens.** `--ease-out` is now `cubic-bezier(0.16, 1, 0.3, 1)` (was `cubic-bezier(0, 0, 0.38, 0.9)`): a faster start and a longer soft stop, Radix Themes' and Arc's curve. `--ease-in-out` is now `cubic-bezier(0.65, 0, 0.35, 1)` (was `cubic-bezier(0.2, 0, 0.38, 0.9)`). New `--ease-spring`, a damped spring as `linear()` (95% at 30% of the time, 4% past), for a release or a thumb, with `--dur-slow`. Durations unchanged.
+- **Exits are quicker than entries.** Dialog: rises 8 px and grows from 96% over 200 ms, leaves in 100 ms to 98% (was 95% both ways at 100 ms); sheets slide in over 200 ms and out in 100 ms over half the distance; the backdrop fades in 200 ms, out 100 ms. Popover and Base UI popups (select, combobox, menu): grow from 96% and slide 4 px over 200 ms, leave in 100 ms (was 95% and 2 px, 100 ms both ways). Tooltips stay 100 ms. The top palette (command menu) only fades in, and goes at once.
+- **Press.** `.cap-btn` gives to 97% at once and springs back on release (was a 1 px nudge down); stat tiles give to 98.5%. Tiles lift on `--shadow-s` under a mouse.
+- **Theme switch.** A person's choice crossfades the page in 200 ms through a view transition; a restored or synced choice paints at once. `effectiveTheme()` answers the new theme straight away.
+- **Pages.** `base.css` opts same-origin page loads into a 200 ms crossfade (`@view-transition { navigation: auto; types: cap-page }`); in a transition typed `cap-page` the `main` element rises 6 px into place while the rest stays. A client-side router starts one with `document.startViewTransition({ update, types: ["cap-page"] })`, as the showcase site now does. An app that wants none writes `@view-transition { navigation: none; }`.
+- **Messages** fade in out of a 4 px blur instead of a plain fade; still no slide. Links ease their colour on hover.
+
+No class or HTML contract changes; one token added (`--ease-spring`), two token values changed.
+
 ## [0.11.0]
 
 **New: per-site settings** (`data-cap-site="<site>"`; the site-settings plan of 2026-10-23). `SITES` in `tokens/sites.mjs` holds what a site differs on from the family defaults (faces, neutrals, type sizes, space and radius, `--enarratio-*`), as literal values; a brand colour stays a family. It generates `tokens/site-<name>.css` in the `cap.tokens` layer and the barrel `css/sites.css`, exported as `capsomer/sites.css` and `capsomer/site-<name>.css`; import after `tokens.css` and `families.css`. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so dark theme and density cannot override a site value, and each also matches a `[data-family]` or `[data-density]` wrapper inside the site. `npm run tokens` writes the files; `npm run check` refuses a hand edit, a missing export, a `var()` value or a brand token, and checks the site's colours against WCAG 2.2 in both themes. The first site is `dustinedwards`, on `<html>`: its charts keep their look from before Enarratio 0.3 (title `1rem`, small text `0.875em`, and Enarratio's own spacing, shape and timing literals). New attribute `data-cap-site`; no class, token or other HTML contract changes.

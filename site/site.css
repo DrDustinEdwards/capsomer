@@ -64,6 +64,22 @@
   &:hover {
     border-color: var(--line-strong);
   }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: var(--shadow-s);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out),
+      scale var(--dur-slow) var(--ease-spring);
+    &:active {
+      scale: 0.985;
+      transition-duration: var(--dur-fast);
+      transition-timing-function: var(--ease-out);
+    }
+  }
   & b {
     font-size: 26px;
     font-weight: 700;

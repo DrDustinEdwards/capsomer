@@ -42,7 +42,7 @@ A `<button class="cap-btn">` runs an action on this page. An `<a class="cap-btn"
 - **Disabled keeps focus and says why.** Use `aria-disabled="true"` and `aria-describedby` pointing at visible text beside it, never the `disabled` attribute: a disabled button drops out of the tab order and its reason cannot be found by keyboard. The dashed edge marks it without relying on colour.
 - **Pending keeps its width.** `aria-busy="true"` hides the label's paint (not its name) and shows `.cap-btn-spinner` over it, so the row does not jump. The label must be in `.cap-btn-label` for this. Say the result through the message region, not on the button.
 - **The focus ring is 3 px, opaque, in the accent** (shadcn's `ring-3` is a 50% ring, which cannot reach the 3:1 a focus indicator needs).
-- **Pressed nudges the button 1 px down** (shadcn's `translate-y-px`), only when motion is allowed and never on a button that owns a popup.
+- **Pressed shrinks the button to 97% at once and springs back on release** (Emil Kowalski's `scale(0.97)`; Arc's quick press and spring release), in place of shadcn's 1 px nudge, only when motion is allowed and never on a button that owns a popup, which anchors it.
 
 ## Keyboard
 

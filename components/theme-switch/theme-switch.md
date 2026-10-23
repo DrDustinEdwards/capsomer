@@ -44,6 +44,7 @@ A public reading page may leave the choice to the system and show no control.
 
 ## The default and its reason
 
+- **A choice crossfades the page** from the old theme to the new in 200 ms (a view transition), where the browser has one and motion is allowed; a choice restored on load, or synced from another tab, paints at once. Why: a cut between light and dark is the harshest change the family makes, and the crossfade shows it as one change.
 - **Two choices on radio inputs**; the arrow keys move between them and each takes effect at once. No "System" is shown (Dustin's ruling above), so a person who wants to go back to following the system clears this browser's site data.
 - **The first visit follows the system.** With nothing remembered, `data-theme` is left off, so the system's setting applies and keeps applying, live, if the system changes; the control shows the radio for the theme in effect. Nothing is written to storage until the person chooses.
 - **Remembered in this browser** from the first choice, `localStorage` key `cap-theme` (or the switch's `data-cap-pref`), as `light` or `dark`. A `system` that 0.1.0 remembered reads as no choice, so the system's setting still applies.

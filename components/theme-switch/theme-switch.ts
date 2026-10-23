@@ -20,9 +20,23 @@ export function readTheme(key = THEME_PREF): ThemeChoice | null {
   return isChoice(v) ? v : null;
 }
 
+// The choice a theme view transition is about to paint, so effectiveTheme() is right at once.
+let pending: ThemeChoice | null = null;
+
 // Sets data-theme, remembers the choice unless told not to, and tells every switch on the page.
+// A person's choice (one it remembers) crossfades the page in a view transition (css/base.css),
+// where the browser has one and motion is allowed; a restored or synced choice paints at once.
 export function applyTheme(choice: ThemeChoice, opts: { key?: string; remember?: boolean } = {}): void {
-  document.documentElement.setAttribute("data-theme", choice);
+  const paint = () => {
+    pending = null;
+    document.documentElement.setAttribute("data-theme", choice);
+  };
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (opts.remember === false || reduce || !document.startViewTransition) paint();
+  else {
+    pending = choice;
+    document.startViewTransition(paint);
+  }
   if (opts.remember !== false) writePref(opts.key ?? THEME_PREF, choice);
   document.dispatchEvent(new CustomEvent("cap-theme", { detail: { choice } }));
 }
@@ -39,6 +53,7 @@ export function applyStoredTheme(key = THEME_PREF): ThemeChoice | null {
 // is right even when storage cannot be read or written, because the attribute is what
 // applyTheme sets first.
 export function effectiveTheme(): ThemeChoice {
+  if (pending) return pending;
   const t = document.documentElement.getAttribute("data-theme");
   if (isChoice(t)) return t;
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";

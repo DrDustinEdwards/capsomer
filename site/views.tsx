@@ -76,7 +76,7 @@ export function MotionView() {
     <div className="site-page">
       <div className="site-head">
         <h1>Motion</h1>
-        <p>Motion explains a change. Three durations and two easings; with reduced motion on, the dots below jump instead of travelling, and nothing in Capsomer moves at all.</p>
+        <p>Motion explains a change. Three durations and three easings: things arrive on the long ease-out and leave faster than they came, a press springs back, and pages and themes crossfade. With reduced motion on, the dots below jump instead of travelling, and nothing in Capsomer moves at all.</p>
       </div>
       <Panel title="Durations" id="durations" src={<button type="button" className="cap-btn" onClick={() => setPlayed((p) => !p)} aria-pressed={played}>Play</button>}>
         <div className="site-motion" data-played={played ? "" : undefined}>

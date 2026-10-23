@@ -14,7 +14,8 @@
     --cap-dialog-w: 30rem;
     --cap-dialog-gap: max(var(--space-5), env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px));
     --cap-dialog-top: max(var(--space-5), 10dvh);
-    --cap-dialog-from: scale(0.95);
+    --cap-dialog-from: translateY(8px) scale(0.96);
+    --cap-dialog-to: translateY(4px) scale(0.98);
 
     /* Centred by default; the placements below move it. */
     box-sizing: border-box;
@@ -100,11 +101,13 @@
       inset-inline: auto 0;
       border-width: 0 0 0 1px;
       --cap-dialog-from: translateX(2.5rem);
+      --cap-dialog-to: translateX(1.25rem);
     }
     &[data-placement="left"] {
       inset-inline: 0 auto;
       border-width: 0 1px 0 0;
       --cap-dialog-from: translateX(-2.5rem);
+      --cap-dialog-to: translateX(-1.25rem);
     }
 
     /* A bottom sheet: the full width, as tall as its content up to the safe margin. */
@@ -117,6 +120,7 @@
       border-width: 1px 0 0;
       border-radius: var(--radius-l) var(--radius-l) 0 0;
       --cap-dialog-from: translateY(2.5rem);
+      --cap-dialog-to: translateY(1.25rem);
     }
 
     /* A palette: centred across, near the top, so what it filters stays in view below. */
@@ -297,38 +301,43 @@
     z-index: 1;
   }
 
-  /* Open and close. A dialog fades and zooms from 95% in 100 ms; a sheet fades and slides in
-     from its edge in 200 ms; the backdrop fades with it. @starting-style gives the open
-     frame, display and overlay with allow-discrete keep it on screen through the close.
-     Under reduced motion none of this applies: it appears and goes at once. */
+  /* Open and close. A dialog rises 8 px and grows from 96% over 200 ms on the long ease-out
+     while it fades in 100 ms (Arc, Radix Themes); a sheet slides 2.5rem in from its edge over
+     200 ms. Closing is quicker and shorter: 100 ms, half the distance, to 98% (what leaves goes
+     faster than it came). The top palette, opened from the keyboard many times a day, only
+     fades, and goes at once (Raycast, by Emil Kowalski's rule: no motion on a keyboard action
+     done hundreds of times). The backdrop fades in 200 ms and out in 100 ms. @starting-style
+     gives the open frame; display and overlay with allow-discrete keep it on screen through the
+     close. Under reduced motion none of this applies: it appears and goes at once. */
   @media (prefers-reduced-motion: no-preference) {
     .cap-dialog {
-      --cap-dialog-dur: var(--dur-fast);
-      --cap-dialog-ease: var(--ease-out);
       opacity: 0;
-      transform: var(--cap-dialog-from);
+      transform: var(--cap-dialog-to);
       transition-property: opacity, transform, overlay, display;
-      transition-duration: var(--cap-dialog-dur);
-      transition-timing-function: var(--cap-dialog-ease);
+      transition-duration: var(--dur-fast);
+      transition-timing-function: var(--ease-out);
       transition-behavior: allow-discrete;
 
-      &:is([data-placement="right"], [data-placement="left"], [data-placement="bottom"]) {
-        --cap-dialog-dur: var(--dur-base);
-        --cap-dialog-ease: var(--ease-in-out);
+      &[data-placement="top"] {
+        --cap-dialog-from: none;
+        --cap-dialog-to: none;
+        transition-duration: 0s;
       }
       &[open] {
         opacity: 1;
         transform: none;
+        transition-duration: var(--dur-fast), var(--dur-base);
       }
       &::backdrop {
         opacity: 0;
         transition-property: opacity, overlay, display;
-        transition-duration: var(--cap-dialog-dur);
-        transition-timing-function: var(--cap-dialog-ease);
+        transition-duration: var(--dur-fast);
+        transition-timing-function: var(--ease-out);
         transition-behavior: allow-discrete;
       }
       &[open]::backdrop {
         opacity: 1;
+        transition-duration: var(--dur-base);
       }
     }
     @starting-style {
