@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behaviour modules and React wrappers.",
   "license": "MIT",
   "type": "module",
@@ -41,6 +41,9 @@
     "./family-teal.css": "./tokens/family-teal.css",
     "./sites.css": "./css/sites.css",
     "./site-dustinedwards.css": "./tokens/site-dustinedwards.css",
+    "./site-foxhound.css": "./tokens/site-foxhound.css",
+    "./site-germomics.css": "./tokens/site-germomics.css",
+    "./site-capsid.css": "./tokens/site-capsid.css",
     "./tokens.json": "./tokens/tokens.json",
     "./palette": "./tokens/palette.mjs",
     "./enarratio.css": "./css/enarratio.css",

@@ -3,4 +3,7 @@
    "capsomer/site-<name>.css". Do not edit: change SITES in tokens/sites.mjs. */
 @import "./layers.css";
 @import "../tokens/site-dustinedwards.css";
+@import "../tokens/site-foxhound.css";
+@import "../tokens/site-germomics.css";
+@import "../tokens/site-capsid.css";
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
