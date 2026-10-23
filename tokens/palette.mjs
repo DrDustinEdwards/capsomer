@@ -15,14 +15,14 @@
 // chroma at the seed's hue; status hues are fixed and tuned by bisection against the
 // hardest surface each sits on. The OKLab conversion follows Bjorn Ottosson's reference.
 //
-//   node tokens/palette.mjs                       colour.css (purple), family-fox.css, family-teal.css, family-navy.css
+//   node tokens/palette.mjs                       colour.css (purple), family-fox.css, family-teal.css, family-navy.css, family-forest.css
 //   node tokens/palette.mjs --family=fox --out=f  Foxing's family as a root theme into f
 //   node tokens/palette.mjs --seed=#RRGGBB [--anchor=#RRGGBB] --out=f
 //   node tokens/palette.mjs --report              every pair, every family, both themes
 //
 // tokens/colour.css is the purple family on :root (the default). tokens/family-fox.css,
-// tokens/family-teal.css and tokens/family-navy.css carry the same tokens scoped to
-// [data-family="fox"], [data-family="teal"] and [data-family="navy"], so one element (the root, or a wrapper) can switch family for its
+// tokens/family-teal.css, tokens/family-navy.css and tokens/family-forest.css carry the same tokens scoped to
+// [data-family="fox"], [data-family="teal"], [data-family="navy"] and [data-family="forest"], so one element (the root, or a wrapper) can switch family for its
 // subtree. Both themes follow the same pattern as colour.css (prefers-color-scheme, then
 // [data-theme]). Everything inside a family block is a literal value, never a var() chain,
 // so a family on a wrapper does not inherit the root family's already-resolved values.
@@ -40,6 +40,10 @@ export const FAMILIES = {
   // the dark surface), so it is the light theme's step 11 anchor (links, headings, accent text)
   // and step 9 is the same hue at the lightness and strength of purple and fox (OKLCH L 0.587, C 0.172).
   navy: { seed: "#3978e0", anchor: "#002868", defaultTheme: "light", note: "txasm, light by default; the brand navy #002868 is step 11 in light" },
+  // julieedwards.info's forest: the Bluff Dale ISD green #15532E is step 11 in light, as navy's
+  // #002868 is. Step 9 is its hue at purple and fox's lightness (OKLCH L 0.587); green runs out of
+  // sRGB at chroma 0.15 there, so it takes that, the strongest this green can be.
+  forest: { seed: "#06954f", anchor: "#15532E", defaultTheme: "light", note: "julieedwards.info, light by default; the school green #15532E is step 11 in light" },
 };
 const OUT = fileURLToPath(new URL("./colour.css", import.meta.url));
 const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -456,6 +460,7 @@ export function files() {
     ["family-fox.css", renderScoped("fox", FAMILIES.fox.seed, FAMILIES.fox.anchor)],
     ["family-teal.css", renderScoped("teal", FAMILIES.teal.seed, FAMILIES.teal.anchor)],
     ["family-navy.css", renderScoped("navy", FAMILIES.navy.seed, FAMILIES.navy.anchor)],
+    ["family-forest.css", renderScoped("forest", FAMILIES.forest.seed, FAMILIES.forest.anchor)],
     ["enarratio-theme.mjs", renderEnarratioTheme()],
     ["../components/email/colours.ts", renderEmailColours()],
   ];

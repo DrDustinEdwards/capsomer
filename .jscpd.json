@@ -8,6 +8,7 @@
     "**/test-results/**",
     "**/site/data/**",
     "tokens/colour.css",
+    "tokens/family-*.css",
     "tokens/scale.css",
     "tokens/themes.css",
     "tokens/tokens.json",

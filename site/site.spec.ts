@@ -66,7 +66,7 @@ eachTheme((theme) => {
     await expect(fig.locator("b")).toHaveText(/^\d{3}$/);
     // Two facts, two lines: how many families and themes, then whether any pair fails.
     const lines = await fig.locator("> *").allTextContents();
-    expect(lines).toEqual(["Contrast pairs", expect.stringMatching(/^\d{3}$/), "4 color families in 2 themes", "None failing"]);
+    expect(lines).toEqual(["Contrast pairs", expect.stringMatching(/^\d{3}$/), "5 color families in 2 themes", "None failing"]);
   });
 
   test("behaviour: the overview cards line up their labels and numbers across the row, open and collapsed, and no line ends on one word", async ({ page }) => {
