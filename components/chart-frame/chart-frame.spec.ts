@@ -50,6 +50,9 @@ eachTheme((theme) => {
     await expect(details).toHaveAttribute("open", "");
     await expect(page.locator("#cf-spark").getByText("Hide data")).toBeVisible();
     await expect(page.locator("#cf-spark").getByText("Show data")).toBeHidden();
+    // The panel's content-visibility flips as its open transition starts; until the browser has
+    // drawn that frame the table is not yet a Tab stop, which no person can press Tab inside.
+    await expect.poll(() => page.locator("#cf-spark .cap-table-wrap").evaluate((el) => el.checkVisibility())).toBe(true);
     await page.keyboard.press("Tab");
     await expect(page.locator("#cf-spark .cap-table-wrap")).toBeFocused();
     await summary.focus();

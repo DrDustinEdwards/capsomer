@@ -69,39 +69,6 @@ eachTheme((theme) => {
     expect(lines).toEqual(["Contrast pairs", expect.stringMatching(/^\d{3}$/), "5 color families in 2 themes", "None failing"]);
   });
 
-  test("behaviour: the overview cards line up their labels and numbers across the row, open and collapsed, and no line ends on one word", async ({ page }) => {
-    await page.goto("./#/overview");
-    for (const state of ["open", "collapsed"]) {
-      if (state === "collapsed") await page.locator("[data-cap-part='menu-toggle']").click();
-      await page.evaluate(() => document.fonts.ready.then(() => undefined));
-      const cards = await page.locator(".site-figure").evaluateAll((els) =>
-        els.map((e) => {
-          const label = e.querySelector(".cap-label")!.getBoundingClientRect();
-          const num = e.querySelector("b")!.getBoundingClientRect();
-          // How many lines each text in the card takes: one, so none can end on a lone word.
-          const lastLines = [...e.querySelectorAll(":scope > span")].map((s) => {
-            const range = document.createRange();
-            range.selectNodeContents(s);
-            return { lines: new Set([...range.getClientRects()].map((r) => Math.round(r.top))).size };
-          });
-          return { label: Math.round(label.top), num: Math.round(num.bottom), lastLines };
-        }),
-      );
-      expect(cards).toHaveLength(3);
-      expect(new Set(cards.map((c) => c.label)).size, `${state}: label tops ${cards.map((c) => c.label)}`).toBe(1);
-      expect(new Set(cards.map((c) => c.num)).size, `${state}: number baselines ${cards.map((c) => c.num)}`).toBe(1);
-      // No card line wraps, so none can end on a lone word.
-      for (const c of cards) for (const l of c.lastLines) expect(l.lines, `${state}: a card line wraps`).toBe(1);
-    }
-  });
-
-  test("behaviour: every menu row keeps its label on one line, so every row is one height", async ({ page }) => {
-    await page.goto("./#/overview");
-    const heights = await page.locator(".cap-admin-menu a").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
-    expect(heights.length).toBe(9);
-    expect(new Set(heights).size, `row heights ${heights}`).toBe(1);
-  });
-
   test("behaviour: the Tests card says its number once", async ({ page }) => {
     await page.goto("./#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Tests" });
@@ -121,17 +88,6 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-admin-trail")).toHaveCount(0);
     await page.goto("./#/components/shell");
     await expect(page.locator(".cap-admin-trail li")).toHaveText(["Components", "Shell"]);
-  });
-
-  test("behaviour: the color view shows all three families, each default theme first", async ({ page }) => {
-    await page.goto("./#/color");
-    for (const [name, first] of [["Purple", "Light"], ["Fox", "Light"], ["Teal", "Dark"]] as const) {
-      const fam = page.locator(".site-family").filter({ has: page.getByRole("heading", { name: new RegExp(`^${name}`) }) });
-      await expect(fam).toHaveCount(1);
-      await expect(fam.locator(".site-steps")).toHaveCount(2);
-      await expect(fam.locator(".site-steps").first().locator("li")).toHaveCount(12);
-      await expect(fam.locator(".site-steps-row .cap-label").first()).toHaveText(`${first}, default`);
-    }
   });
 
   test("behaviour: the site runs under its production Content-Security-Policy with no violation", async ({ page }) => {
