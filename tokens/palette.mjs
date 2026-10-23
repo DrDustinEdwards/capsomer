@@ -38,8 +38,8 @@ export const FAMILIES = {
   teal: { seed: "#008489", anchor: null, defaultTheme: "dark", note: "Foxhound, dark by default (rule 15)" },
   // txasm's navy: the brand #002868 is too dark to be step 9 (it fails 3:1 as a focus ring on
   // the dark surface), so it is the light theme's step 11 anchor (links, headings, accent text)
-  // and step 9 is the same hue at the family's working lightness.
-  navy: { seed: "#386fc8", anchor: "#002868", defaultTheme: "light", note: "txasm, light by default; the brand navy #002868 is step 11 in light" },
+  // and step 9 is the same hue at the lightness and strength of purple and fox (OKLCH L 0.587, C 0.172).
+  navy: { seed: "#3978e0", anchor: "#002868", defaultTheme: "light", note: "txasm, light by default; the brand navy #002868 is step 11 in light" },
 };
 const OUT = fileURLToPath(new URL("./colour.css", import.meta.url));
 const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
