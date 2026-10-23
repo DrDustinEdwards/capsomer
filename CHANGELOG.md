@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.11.1]
+
+**Per-site settings win over `tokens.css` whatever order they load in.** A bundler can put the site file before `tokens.css` (dustinedwards-info's Vite build did), and with equal specificity the later `:root` defaults won, so the site's chart sizes did not apply. Each site selector now repeats its attribute (`[data-cap-site="x"][data-cap-site]`). No class, token or HTML contract changes.
+
 ## [0.11.0]
 
 **New: per-site settings** (`data-cap-site="<site>"`; the site-settings plan of 2026-10-23). `SITES` in `tokens/sites.mjs` holds what a site differs on from the family defaults (faces, neutrals, type sizes, space and radius, `--enarratio-*`), as literal values; a brand colour stays a family. It generates `tokens/site-<name>.css` in the `cap.tokens` layer and the barrel `css/sites.css`, exported as `capsomer/sites.css` and `capsomer/site-<name>.css`; import after `tokens.css` and `families.css`. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so dark theme and density cannot override a site value, and each also matches a `[data-family]` or `[data-density]` wrapper inside the site. `npm run tokens` writes the files; `npm run check` refuses a hand edit, a missing export, a `var()` value or a brand token, and checks the site's colours against WCAG 2.2 in both themes. The first site is `dustinedwards`, on `<html>`: its charts keep their look from before Enarratio 0.3 (title `1rem`, small text `0.875em`, and Enarratio's own spacing, shape and timing literals). New attribute `data-cap-site`; no class, token or other HTML contract changes.
