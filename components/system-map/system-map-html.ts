@@ -23,7 +23,7 @@ function tagOf(s: MapSystem): string {
   return s.private ? "private" : (s.tag ?? "");
 }
 
-function tileSvg(cell: Cell, s: MapSystem | undefined): string {
+function tileSvg(cell: Cell, s: MapSystem | undefined, pressed = false, linked = false): string {
   const pts = hexPoints(cell.x, cell.y, R - 2.5);
   if (!s) return `<g class="cap-system-map-tile" data-empty><polygon points="${pts}"/></g>`;
   const label = escapeHtml(s.short ?? s.name);
@@ -34,7 +34,7 @@ function tileSvg(cell: Cell, s: MapSystem | undefined): string {
   // The leading space keeps the two lines apart as words in the tile's text ("Capsomer shared",
   // matching its name "Capsomer, shared"); SVG drops it when drawing.
   const sub = tag && !core ? `<text class="cap-system-map-tag" x="${cell.x}" y="${cell.y + 16}"> ${escapeHtml(tag)}</text>` : "";
-  const flags = `${core ? " data-core" : ""}${s.ring === "shared" ? " data-shared" : ""}${s.private ? " data-private" : ""}`;
+  const flags = `${core ? " data-core" : ""}${s.ring === "shared" ? " data-shared" : ""}${s.private ? " data-private" : ""}${pressed ? ` aria-pressed="true"` : linked ? " data-linked" : ""}`;
   return `<g class="cap-system-map-tile" data-id="${escapeHtml(s.id)}" data-x="${cell.x}" data-y="${cell.y}" data-ring="${cell.ring}"${flags}><polygon points="${pts}"/>${name}${sub}</g>`;
 }
 
@@ -159,8 +159,13 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
   const byId = new Map(data.systems.map((s) => [s.id, s]));
   const at = new Map(layout.cells.filter((c) => c.id).map((c) => [c.id!, c]));
   const vb = layout.viewBox.map((n) => n.toFixed(1)).join(" ");
+  // With circles, every system has an inside of its own, and the one chosen is drawn zoomed
+  // into, its lines on and the systems at their far ends linked, as the script leaves it.
+  const circles = options.circles;
+  const chosen = circles?.chosen && at.has(circles.chosen) ? circles.chosen : undefined;
+  const linked = new Set((data.relationships ?? []).flatMap((l) => (chosen && l.from === chosen ? [l.to] : chosen && l.to === chosen ? [l.from] : [])));
   const layer = (name: string, cells: Cell[]) =>
-    `<svg class="cap-system-map-layer" data-layer="${name}" viewBox="${vb}" aria-hidden="true" focusable="false">${cells.map((c) => tileSvg(c, c.id ? byId.get(c.id) : undefined)).join("")}</svg>`;
+    `<svg class="cap-system-map-layer" data-layer="${name}" viewBox="${vb}" aria-hidden="true" focusable="false">${cells.map((c) => tileSvg(c, c.id ? byId.get(c.id) : undefined, c.id === chosen, linked.has(c.id ?? ""))).join("")}</svg>`;
   const rim = layout.rings;
   const coreCells = layout.cells.filter((c) => c.ring === 0);
   // Grouped, the gaps are not drawn, and every group goes behind the circle inside, as the
@@ -175,7 +180,7 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
   const onMap = new Set(at.keys());
   const edges = (data.relationships ?? [])
     .filter((l) => onMap.has(l.from) && onMap.has(l.to) && l.from !== l.to)
-    .map((l) => `<path class="cap-system-map-edge" data-from="${escapeHtml(l.from)}" data-to="${escapeHtml(l.to)}" data-kind="${escapeHtml(l.kind)}"${LOOSE_KINDS.has(l.kind) ? " data-loose" : ""} d="${edgePath(layout.cells, at.get(l.from)!, at.get(l.to)!)}"/>`)
+    .map((l) => `<path class="cap-system-map-edge" data-from="${escapeHtml(l.from)}" data-to="${escapeHtml(l.to)}" data-kind="${escapeHtml(l.kind)}"${LOOSE_KINDS.has(l.kind) ? " data-loose" : ""}${chosen && (l.from === chosen || l.to === chosen) ? " data-on" : ""} d="${edgePath(layout.cells, at.get(l.from)!, at.get(l.to)!)}"/>`)
     .join("");
   const core = data.systems.find((s) => s.ring === "core");
   const placed = data.systems.filter((s) => onMap.has(s.id));
@@ -206,6 +211,15 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
   // Each flow as an ordered list, step by step: the whole story with no script, and the
   // steps the script plays (a step's line, the end it moves toward and what it lights).
   const playable = playableFlows(data, core, layout);
+  const given = circles?.layers ?? {};
+  // The core's circle first: its flows play on it.
+  const insides = circles
+    ? Object.keys(given)
+        .sort((a, b) => Number(b === core?.id) - Number(a === core?.id))
+        .map((k) => (k === chosen ? given[k]!.replace(`data-system="${escapeHtml(k)}"`, (m) => `${m} data-shown`) : given[k]!))
+        .join("")
+    : insideSvg(layout, core, data, playable.length > 0);
+  const enters = circles ? "zooms into it" : `draws its connections${core ? `; on ${escapeHtml(core.name)}, Enter again goes inside` : ""}`;
   const flows = playable
     .map((f) => {
       const steps = f.steps
@@ -215,9 +229,9 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
     })
     .join("");
   return [
-    `<figure class="cap-system-map" data-cap="system-map" data-view="shell" id="${escapeHtml(id)}" aria-labelledby="${escapeHtml(id)}-title"${options.openLabel ? ` data-open-label="${escapeHtml(options.openLabel)}"` : ""}>`,
+    `<figure class="cap-system-map" data-cap="system-map" data-view="shell" id="${escapeHtml(id)}" aria-labelledby="${escapeHtml(id)}-title"${options.openLabel ? ` data-open-label="${escapeHtml(options.openLabel)}"` : ""}${circles ? ` data-circles${circles.src ? ` data-insides="${escapeHtml(circles.src)}"` : ""}` : ""}${chosen ? ` data-selected data-entered data-zoom="${escapeHtml(chosen)}"` : ""}>`,
     `<figcaption class="cap-system-map-head"><span class="cap-system-map-title" id="${escapeHtml(id)}-title">${escapeHtml(label)}</span>${caption}`,
-    `<span class="cap-system-map-views" role="group" aria-label="View" data-cap-part="views" hidden><button type="button" class="cap-btn" data-view="shell" aria-pressed="true">Capsid</button><button type="button" class="cap-btn" data-view="plain" aria-pressed="false">Plain map</button></span></figcaption>`,
+    `<span class="cap-system-map-views" role="group" aria-label="View" data-cap-part="views" hidden><button type="button" class="cap-btn" data-view="shell" aria-pressed="true">Capsid</button><button type="button" class="cap-btn" data-view="plain" aria-pressed="false">Plain map</button>${circles ? `<button type="button" class="cap-btn" data-cap-part="out"${chosen ? "" : " hidden"}>Back to all systems</button>` : ""}</span></figcaption>`,
     `<div class="cap-system-map-stage" data-cap-part="stage" role="img" aria-label="${escapeHtml(label)}: ${placed.length} systems ${layout.grouped ? "in groups" : "in rings"}. The list below holds the same.">`,
     // The lines first, so every capsomer and its label is painted over them.
     `<svg class="cap-system-map-layer" data-layer="edges" viewBox="${vb}" aria-hidden="true" focusable="false">${edges}</svg>`,
@@ -225,10 +239,10 @@ export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {
     innerCells.length ? layer("inner", innerCells) : "",
     rimCells.length ? layer("rim", rimCells) : "",
     labels ? `<svg class="cap-system-map-layer" data-layer="labels" viewBox="${vb}" aria-hidden="true" focusable="false">${labels}</svg>` : "",
-    insideSvg(layout, core, data, playable.length > 0),
+    insides,
     `</div>`,
     `<div class="cap-system-map-detail" data-cap-part="detail" aria-live="polite" hidden></div>`,
-    `<span id="${escapeHtml(id)}-keys" hidden>Arrow keys move between systems. Enter or Space chooses one and draws its connections${core ? `; on ${escapeHtml(core.name)}, Enter again goes inside` : ""}. Escape steps back out.${flows ? " Playing a flow, the left and right arrows and the number keys move between its steps." : ""}</span>`,
+    `<span id="${escapeHtml(id)}-keys" hidden>Arrow keys move between systems. Enter or Space chooses one and ${enters}. Escape steps back out.${flows ? " Playing a flow, the left and right arrows and the number keys move between its steps." : ""}</span>`,
     `<details class="cap-system-map-list" data-cap-part="list" open><summary>The same map as a list</summary><div class="cap-system-map-groups">${list}</div></details>`,
     flows ? `<details class="cap-system-map-flows" data-cap-part="flows" open><summary>Inside ${escapeHtml(core?.name ?? "")}, step by step</summary>${flows}</details>` : "",
     `</figure>`,
