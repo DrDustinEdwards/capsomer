@@ -6,7 +6,7 @@
  * the report endpoint. Site tooling only: the package never imports this or site-runtime.
  */
 
-import { buildContentSecurityPolicy } from "@dustinedwards/site-runtime/csp";
+import { buildContentSecurityPolicy, reportingEndpoints } from "@dustinedwards/site-runtime/csp";
 import { buildSecurityHeaders, STANDARD_SECURITY_HEADERS } from "@dustinedwards/site-runtime/headers";
 
 /** The site's address (rulings.md, rule 16). */
@@ -61,9 +61,8 @@ export const standardHeaders = buildSecurityHeaders({
 export const securityHeaders: Readonly<Record<string, string>> = Object.freeze({
   ...standardHeaders,
   [csp.name]: csp.value,
-  // The Reporting API needs an absolute address for the group `report-to` names; `report-uri`
-  // covers browsers without it.
-  "Reporting-Endpoints": `${REPORT_GROUP}="https://${HOST}${REPORT_PATH}"`,
+  // The group `report-to` names; `report-uri` covers browsers without the Reporting API.
+  "Reporting-Endpoints": reportingEndpoints(REPORT_GROUP, new URL(REPORT_PATH, `https://${HOST}`)),
 });
 
 /** Vite writes hashed file names under /assets/, so they never change and may be cached for a year. */
