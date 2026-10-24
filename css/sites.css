@@ -7,5 +7,6 @@
 @import "../tokens/site-germomics.css";
 @import "../tokens/site-capsid.css";
 @import "../tokens/site-txasm.css";
+@import "../tokens/site-foxing.css";
 @import "../tokens/site-julieedwards.css";
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;

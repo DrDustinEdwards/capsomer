@@ -181,6 +181,12 @@
     color: var(--header-cta-fg);
     font-size: 11px;
     font-weight: 600;
+
+    /* The letter is drawn, not text: the button is named by the business, and a letter in the
+       HTML would be read as part of its visible label (WCAG 2.5.3). */
+    &::before {
+      content: attr(data-tile);
+    }
   }
   .cap-site-header-chev {
     flex: none;
@@ -383,7 +389,10 @@
   .cap-site-header .cap-site-header-avatar {
     border-radius: var(--radius-full);
 
+    /* The initials are drawn, not text, for the same reason as the business tile's letter: the
+       button is named "Your account". A picture, when the site gives one, covers them. */
     & > .cap-site-header-initials {
+      position: relative;
       display: grid;
       place-items: center;
       inline-size: 32px;
@@ -394,6 +403,17 @@
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.02em;
+    }
+    & > .cap-site-header-initials::before {
+      content: attr(data-initials);
+    }
+    & .cap-site-header-avatar-image {
+      position: absolute;
+      inset: 0;
+      inline-size: 100%;
+      block-size: 100%;
+      border-radius: inherit;
+      object-fit: cover;
     }
     &:hover > .cap-site-header-initials {
       opacity: 0.88;

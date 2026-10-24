@@ -115,13 +115,13 @@ export function copySnippets(r: Pick<MediaRecord, "url" | "kind" | "alt" | "name
   const title = suggestedAlt(r.name);
   if (r.kind === "image") {
     return [
-      { id: "address", label: "Copy address", name: "Copy the address", value: r.url },
+      { id: "address", label: "Copy address", name: "Copy address", value: r.url },
       { id: "markdown", label: "Markdown", name: "Copy the Markdown image", value: `![${alt}](${r.url})` },
-      { id: "html", label: "HTML tag", name: "Copy the HTML image tag", value: `<img src="${r.url}" alt="${alt}">` },
+      { id: "html", label: "HTML tag", name: "Copy the HTML tag", value: `<img src="${r.url}" alt="${alt}">` },
     ];
   }
   return [
-    { id: "address", label: "Copy address", name: "Copy the address", value: r.url },
+    { id: "address", label: "Copy address", name: "Copy address", value: r.url },
     { id: "markdown", label: "Markdown", name: "Copy the Markdown link", value: `[${title}](${r.url})` },
     { id: "html", label: "HTML link", name: "Copy the HTML link", value: `<a href="${r.url}">${title}</a>` },
   ];

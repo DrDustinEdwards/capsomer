@@ -1,8 +1,14 @@
 name: release
 
 # A release is the merge of its version bump (CLAUDE.md, "Releases and deploys"). When package.json's
-# version on main has no v<version> tag yet, this tags that commit, publishes a GitHub release with
-# the version's CHANGELOG section, and starts the consumer bumps. Nobody pushes a tag by hand.
+# version on main has no v<version> tag yet, this builds the package, tags a release commit made on
+# top of that commit, publishes a GitHub release with the version's CHANGELOG section, and starts the
+# consumer bumps. Nobody pushes a tag by hand.
+#
+# The release commit is main's tree plus the built dist/ and without the prepare script, and it is
+# on no branch: an app that installs github:DrDustinEdwards/capsomer#vX.Y.Z gets the package as
+# built, with no build at install time, so it installs none of Capsomer's devDependencies (two of
+# them git dependencies, which npm 12 refuses without allow-git) and has no tsc run under its store.
 #
 # A tag made with the workflow's own token starts no other workflow (GitHub's rule against loops),
 # so bump-consumers is called from here rather than left to its tag trigger. Run it by hand
@@ -33,6 +39,9 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .node-version
       - id: release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -54,7 +63,14 @@ jobs:
             echo "::error::CHANGELOG.md has no section headed ## [$version]. Add it before bumping the version."
             exit 1
           fi
-          gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes-file notes.md
+          # npm ci runs prepare, which builds dist/.
+          npm ci
+          node -e 'const fs = require("node:fs"); const p = JSON.parse(fs.readFileSync("package.json", "utf8")); delete p.scripts.prepare; fs.writeFileSync("package.json", JSON.stringify(p, null, 2) + "\n")'
+          git add -f dist package.json
+          git -c user.name="github-actions[bot]" -c user.email="41898341+github-actions[bot]@users.noreply.github.com" commit -q -m "Release $tag: the built package"
+          git tag "$tag"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "refs/tags/$tag"
+          gh release create "$tag" --verify-tag --title "$tag" --notes-file notes.md
           echo "created=true" >> "$GITHUB_OUTPUT"
 
   bump:

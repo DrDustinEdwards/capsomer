@@ -48,10 +48,15 @@
   </main>
 </template>
 
+<template data-specimen="live" data-title="Live results: an async search answers as the person types (React)" data-height="520">
+  <div data-mount="live"></div>
+</template>
+
 <script type="module">
   import { createCommandMenu, enhance, openCommandMenu, stopCommand } from "./command-menu.ts";
   const only = new URLSearchParams(location.search).get("only");
-  if (only) {
+  // The live specimen is the React menu's (examples.tsx).
+  if (only && only !== "live") {
     const said = document.querySelector("[data-specimen-part='said']");
     const ran = (label) => () => {
       if (said) said.textContent = `Ran: ${label}`;

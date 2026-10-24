@@ -51,6 +51,9 @@ export function emptyText(query: string): string {
   return `No commands match “${query.trim()}”`;
 }
 
+// What the empty status says while a live search (the React menu's `search`) has not answered.
+export const SEARCHING = "Searching…";
+
 export interface MenuOptions {
   // The input's accessible name (a visually hidden label).
   label?: string;

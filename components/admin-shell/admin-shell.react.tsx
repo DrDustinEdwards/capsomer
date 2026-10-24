@@ -4,7 +4,7 @@ import { Time } from "../time/time.react.tsx";
 import { DEFAULT_PREF } from "../shell/shell.ts";
 import { groups, plainLink, useCollapsedPref, type LinkProps } from "../shell/shell.react.tsx";
 import { SheetGroup, SiteHeader, SiteTabs, type HeaderAccount, type HeaderExtra, type HeaderLink, type HeaderLogo, type HeaderSwitcher } from "../site-header/site-header.react.tsx";
-import { TipKeys } from "../site-header/site-header-parts.react.tsx";
+import { countName as headerCountName, TipKeys } from "../site-header/site-header-parts.react.tsx";
 import { applyStoredTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
 import { badgeText, jumpTarget } from "./admin-shell.ts";
 import { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER, type FamilyAppId } from "./apps.tsx";
@@ -70,6 +70,8 @@ export interface AdminCrumb {
 export interface AdminAccount {
   name?: string;
   initials?: string;
+  // A picture of the person, over the initials (the header's `account.avatar`).
+  avatar?: string;
   role?: string;
   email?: string;
   appLinks?: AdminAccountLink[];
@@ -171,7 +173,7 @@ const SEARCH_D = "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM21 21l-5-5";
 const INBOX_D = "M3 13h5l1 3h6l1-3h5M5 5h14l2 8v6H3v-6z";
 const REFRESH_D = "M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5";
 
-const countName = (label: string, count?: number, note?: string) => (count ? `${label}, ${count}${note ? ` ${note}` : ""}` : undefined);
+const countName = (label: string, count?: number, note?: string) => (count ? headerCountName(label, count, note) : undefined);
 
 
 // A control's name, shown beside it on hover and keyboard focus: Capsomer's one tooltip (the
@@ -295,7 +297,7 @@ export function AdminShell(props: AdminShellProps) {
                 {e.label.slice(0, 1)}
               </span>
             )}
-            <span className="cap-admin-label">{e.label}</span>
+            <span className="cap-admin-label">{e.label}</span>{" "}
             <span className="cap-admin-count" data-tone={e.tone}>
               {e.count ? badgeText(e.count) : ""}
             </span>
@@ -319,6 +321,7 @@ export function AdminShell(props: AdminShellProps) {
     ? {
         name: accountProps.name ?? OWNER.name,
         initials: accountProps.initials ?? OWNER.initials,
+        avatar: accountProps.avatar,
         detail: [accountProps.role, accountProps.email].filter(Boolean).join(" · ") || undefined,
         groups: [
           ...(accountProps.appLinks?.length ? [{ label: accountProps.appLabel ?? "This app", links: accountProps.appLinks }] : []),
@@ -364,6 +367,7 @@ export function AdminShell(props: AdminShellProps) {
                                 {mark(a)}
                               </span>
                               <span className="cap-site-header-sheet-name">{a.label}</span>
+                              {a.current || !a.count ? null : " "}
                               {a.current || !a.count ? null : (
                                 <span className="cap-site-header-count" aria-hidden="true">
                                   {badgeText(a.count)}

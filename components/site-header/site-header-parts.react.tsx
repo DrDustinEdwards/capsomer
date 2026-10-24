@@ -86,7 +86,10 @@ export interface HeaderAccountLink {
 // the sheet.
 export interface HeaderAccount {
   name: string;
+  // Drawn as the avatar when there is no picture, or under one that fails to load.
   initials: string;
+  // A picture of the person (its address), drawn over the initials in the account button.
+  avatar?: string;
   detail?: string;
   groups?: Array<{ label?: string; links: HeaderAccountLink[] }>;
   onSignOut?: () => void;
@@ -151,8 +154,11 @@ export const PERSON_ICON = svg(
   </>,
 );
 
-// "Inbox, 4 need you": a count is in the name, with what it counts.
-export const countName = (label: string, count?: number, note?: string): string => (count ? `${label}, ${count}${note ? ` ${note}` : ""}` : label);
+// "Inbox, 4 need you": a count is in the name, with what it counts. Past 99 the badge reads 99+,
+// so the name starts with what is seen and keeps the real count: "Inbox 99+, 120 need you". The
+// visible label and count must be words of the name in that order (WCAG 2.5.3; axe-core 4.14's
+// label-content-name-mismatch reads aria-hidden text too).
+export const countName = (label: string, count?: number, note?: string): string => (count ? `${label}${count > 99 ? " 99+" : ""}, ${count}${note ? ` ${note}` : ""}` : label);
 
 // A tip's key caps ("G 2"), after its words.
 export function TipKeys({ keys }: { keys?: string }) {
@@ -229,6 +235,7 @@ export function GroupList({ groups, renderLink }: { groups: HeaderGroup[]; rende
                     <>
                       {l.icon ? <span className="cap-site-header-mark" aria-hidden="true">{l.icon}</span> : null}
                       {l.label}
+                      {l.count ? " " : null}
                       {l.count ? <span className="cap-site-header-count" aria-hidden="true">{badgeText(l.count)}</span> : null}
                     </>
                   ),
@@ -258,6 +265,7 @@ function SheetList({ links, renderLink, onClose }: { links: HeaderLink[]; render
                   {l.icon}
                 </span>
                 <span className="cap-site-header-sheet-name">{l.label}</span>
+                {l.count ? " " : null}
                 {l.count ? (
                   <span className="cap-site-header-count" aria-hidden="true">
                     {badgeText(l.count)}

@@ -132,8 +132,8 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
     <button type="button" class="cap-admin-collapse" data-cap-part="menu-toggle" aria-label="Collapse menu" aria-expanded="true" aria-controls="cap-admin-menu">[icon]<span class="cap-admin-label">Collapse menu</span><span class="cap-keys"><kbd>[</kbd></span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Collapse menu</span></span></button>
     <div class="cap-admin-group" role="group" aria-labelledby="g-watch">
       <div class="cap-admin-group-label" id="g-watch">Watch</div>
-      <a href="/" aria-current="page">[icon]<span>Overview</span><span class="cap-admin-count"></span></a>
-      <a href="/queue" aria-label="Queue, 5 blocked">[icon]<span class="cap-admin-label">Queue</span><span class="cap-admin-count" data-tone="need">5</span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Queue</span></span></a>
+      <a href="/" aria-current="page">[icon]<span>Overview</span> <span class="cap-admin-count"></span></a>
+      <a href="/queue" aria-label="Queue, 5 blocked">[icon]<span class="cap-admin-label">Queue</span> <span class="cap-admin-count" data-tone="need">5</span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Queue</span></span></a>
     </div>
   </nav>
   <main class="cap-admin-main" id="cap-main" tabindex="-1">

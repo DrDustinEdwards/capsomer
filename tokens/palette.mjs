@@ -247,6 +247,11 @@ function familyTheme(seed, anchor, scheme) {
   t.primary = s[9];
   t["primary-hover"] = s[10];
   t["primary-fg"] = dark ? t.ground : t.surface;
+  // The on state: a checked box or radio, an on switch. The primary fill by default; a site may
+  // set its own (Foxing's sky blue, its Rule 05), checked by the pairs below with the tick
+  // (--primary-fg) and the switch's thumb (--surface) on it.
+  t.on = t.primary;
+  t["on-hover"] = t["primary-hover"];
   t.ring = t.accent;
   for (const [k, hue] of Object.entries(STATUS)) {
     t[`${k}-soft`] = oklch(dark ? 0.28 : 0.945, 0.05, hue);
@@ -265,7 +270,7 @@ function familyTheme(seed, anchor, scheme) {
 export const FAMILY_ORDER = [
   "ground", "surface", "raised", "sunken", "line", "line-strong", "text", "muted", "dim",
   "accent", "accent-hover", "accent-text", "accent-soft", "accent-line", "sel",
-  "primary", "primary-hover", "primary-fg", "ring",
+  "primary", "primary-hover", "primary-fg", "on", "on-hover", "ring",
   "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft", "nodata", "nodata-soft",
   ...Array.from({ length: 12 }, (_, i) => `accent-${i + 1}`),
 ];
@@ -298,6 +303,11 @@ export function pairs(t) {
     need("primary", bg, 3, "primary button fill against its surroundings");
   }
   need("primary-hover", "surface", 3, "primary button fill (hover) against its surroundings");
+  for (const bg of ["surface", "ground", "raised"]) need("on", bg, 3, "checked box or on switch against its surroundings");
+  need("on-hover", "surface", 3, "on switch (hover) against its surroundings");
+  need("primary-fg", "on", 3, "tick on a checked box");
+  need("surface", "on", 3, "thumb of an on switch");
+  need("surface", "on-hover", 3, "thumb of an on switch (hover)");
   for (const s of Object.keys(STATUS)) {
     need(s, `${s}-soft`, 4.5, "pill");
     need(s, "accent-soft", 4.5, "count on the active menu item");

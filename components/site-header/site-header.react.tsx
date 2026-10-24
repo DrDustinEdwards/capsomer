@@ -16,6 +16,8 @@ export function SiteHeader(props: SiteHeaderProps) {
   const id = useId();
   const menuButton = useRef<HTMLButtonElement>(null);
   const sheetTitle = useRef<HTMLHeadingElement>(null);
+  // A picture that fails to load gives way to the initials under it.
+  const [failedAvatar, setFailedAvatar] = useState<string>();
   const [sheetOpen, setSheetOpen] = useState(false);
   const closeSheet = useCallback(() => setSheetOpen(false), []);
 
@@ -143,9 +145,7 @@ export function SiteHeader(props: SiteHeaderProps) {
                 button={
                   <>
                     {s.tile ? (
-                      <span className="cap-site-header-switch-tile" aria-hidden="true">
-                        {s.tile}
-                      </span>
+                      <span className="cap-site-header-switch-tile" data-tile={s.tile} aria-hidden="true" />
                     ) : (
                       s.mark
                     )}
@@ -214,8 +214,8 @@ export function SiteHeader(props: SiteHeaderProps) {
               align="end"
               button={
                 <>
-                  <span className="cap-site-header-initials" aria-hidden="true">
-                    {account.initials}
+                  <span className="cap-site-header-initials" data-initials={account.initials} aria-hidden="true">
+                    {account.avatar && account.avatar !== failedAvatar ? <img className="cap-site-header-avatar-image" src={account.avatar} alt="" onError={() => setFailedAvatar(account.avatar)} /> : null}
                   </span>
                   <HeaderTip text={account.name} />
                 </>
@@ -339,6 +339,7 @@ export function SiteTabs({ tabs, label = "Sections", renderLink = plainLink }: {
               <>
                 {t.icon}
                 {t.label}
+                {t.count ? " " : null}
                 {t.count ? (
                   <span className="cap-site-header-badge" aria-hidden="true">
                     {badgeText(t.count)}
