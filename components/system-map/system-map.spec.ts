@@ -231,8 +231,8 @@ eachTheme((theme) => {
     await out.click();
     await expect(map).not.toHaveAttribute("data-entered", "");
     await tile(page, "map-circles", "site").click();
-    const box = (await map.locator(".cap-system-map-stage").boundingBox())!;
-    await page.mouse.click(box.x + 4, box.y + 4);
+    // A locator click waits for the stage to stop moving: zooming in scrolls the circle into view.
+    await map.locator(".cap-system-map-stage").click({ position: { x: 4, y: 4 } });
     await expect(map).not.toHaveAttribute("data-entered", "");
     await expect(out).toBeHidden();
   });
