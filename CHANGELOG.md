@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+- **Site only:** the showcase site serves `robots.txt` (allow all, pointing to the sitemap), `sitemap.xml` and `llms.txt` (what Capsomer is and where its documentation is), so search engines and AI assistants can find it. The package is unchanged.
+
 ## [0.17.0]
 
 **Foxing's asks** (apps/web on Capsomer v0.16.0, which kept its own copy of each).

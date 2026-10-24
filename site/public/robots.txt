@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://capsomer.dustinedwards.info/sitemap.xml
+# LLM guide: https://capsomer.dustinedwards.info/llms.txt
