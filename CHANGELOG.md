@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
-## 0.17.0 (2026-10-24)
+## [0.17.0]
 
 **Foxing's asks** (apps/web on Capsomer v0.16.0, which kept its own copy of each).
 
