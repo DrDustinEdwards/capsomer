@@ -98,7 +98,7 @@ eachTheme((theme) => {
     const row = await rowOrder(page);
     expect(row.map((r) => r.name)).toEqual(["Foxhound", "Business: Acme Supply Co.", "Product: Recovery", themeName, "Your account"]);
     await expect(page.locator(".cap-site-header-sections")).toHaveCount(0);
-    await expect(page.locator(".cap-site-header-switch-tile")).toHaveText("A");
+    await expect(page.locator(".cap-site-header-switch-tile")).toHaveAttribute("data-tile", "A");
   });
 
   test("behaviour: sticky: the header stays at the top while the page scrolls, and scroll padding keeps a focused target out from under it", async ({ page }) => {

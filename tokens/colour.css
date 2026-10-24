@@ -20,6 +20,8 @@
   --primary: #7d50c1;
   --primary-hover: #4f2d7f;
   --primary-fg: #fdfdfe;
+  --on: #7d50c1;
+  --on-hover: #4f2d7f;
   --ring: #8c5fd2;
   --ok: #047735;
   --ok-soft: #d6f7dc;
@@ -101,6 +103,8 @@
     --primary: #9b6ee3;
     --primary-hover: #c6b1f2;
     --primary-fg: #0e0c12;
+    --on: #9b6ee3;
+    --on-hover: #c6b1f2;
     --ring: #8c5fd2;
     --ok: #4aa462;
     --ok-soft: #15301b;
@@ -180,6 +184,8 @@
   --primary: #9b6ee3;
   --primary-hover: #c6b1f2;
   --primary-fg: #0e0c12;
+  --on: #9b6ee3;
+  --on-hover: #c6b1f2;
   --ring: #8c5fd2;
   --ok: #4aa462;
   --ok-soft: #15301b;

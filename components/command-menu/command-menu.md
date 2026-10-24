@@ -4,7 +4,7 @@ title: Command menu
 summary: Every view, action and shortcut in one searchable list, opened with Ctrl K.
 parts: [css, behaviour, react]
 tool: native + own JavaScript (the shared dialog and listbox)
-states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density]
+states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density, live results]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/CommandMenu.tsx, lib/stops.ts and styles.css (.palette), as of capsid master 2026-10-01
@@ -26,7 +26,7 @@ In an app with more than a handful of views or actions, so a keyboard user can r
 
 ## When not to
 
-It is never the only way to reach something: every command is also a control on screen (patterns.md, "Command menu"). To pick a value in a form, use a select or the combobox component. To search content (posts, records), use a search page with results that can be linked to.
+It is never the only way to reach something: every command is also a control on screen (patterns.md, "Command menu"). To pick a value in a form, use a select or the combobox component. To search content (posts, records), use a search page with results that can be linked to; the menu's live results (`search`) may offer the first few as a shortcut, with a command that opens that page.
 
 ## The default and its reason
 
@@ -37,6 +37,7 @@ It is never the only way to reach something: every command is also a control on 
 - **Every way to stop something is in one group, Stop**, so typing "stop" or "pause" finds them all (`stopCommand()` sets the group, the keywords and the hint). A stop opens the control it stands for, a switch's reason field or the confirm dialog, and never performs: nothing is written from the menu. A stop is listed only while there is something to stop (a paused namespace has no Pause), and there is no "stop everything": one wrong command would then end all work.
 - **An empty result says so and names the text**: "No commands match “zebra”", in a status region; the field's `aria-expanded` turns false.
 - **Ctrl K, Cmd K and `/` open it**, through the shortcut registry (`/` is a single key, so it is off when single keys are off). Ctrl K again closes it.
+- **Live results come from the app** (React: `search(query, signal)`, Foxing's catalog). It is called 180 ms after the last key (`searchDelay`), never for an empty field, and the call before is aborted; its commands follow the matching ones, in their own groups, unfiltered. While it has not answered the list is `aria-busy` and an empty list says "Searching…"; the last results stay until new ones arrive, so the list does not flash.
 - **Choosing a command closes the menu first, then runs it**, so a command that opens another dialog keeps its focus.
 - Esc, or a click on the backdrop, closes it; focus returns to what opened it.
 
@@ -100,7 +101,7 @@ createCommandMenu([
 ]);
 ```
 
-`openCommandMenu(query?)` opens it from anywhere. A menu written in markup is wired by `enhance()`: an option with `data-href` navigates, any other dispatches a `cap-command` event with its id. A command's `shortcut` is only shown; register the key itself with the shortcut registry. In React, `<CommandMenu open onOpenChange commands>`.
+`openCommandMenu(query?)` opens it from anywhere. A menu written in markup is wired by `enhance()`: an option with `data-href` navigates, any other dispatches a `cap-command` event with its id. A command's `shortcut` is only shown; register the key itself with the shortcut registry. In React, `<CommandMenu open onOpenChange commands>`, and `` search={(q, signal) => fetch(`/search/suggest?q=${encodeURIComponent(q)}`, { signal }).then(toCommands)} `` for live results (React only).
 
 ## Matches shadcn
 

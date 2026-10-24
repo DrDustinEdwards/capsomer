@@ -36,6 +36,7 @@ The first thing in every view of an app inside the shell: a list, a detail, an e
 - **The lead is one line, in `--muted`, at most 75 characters wide.** It says what the page is for, not what it contains.
 - **Actions sit at the right and wrap below on a narrow space.** The head is a wrapping flex row aligned to the bottom of the text, so a one-line title and two buttons share a baseline region and a long title pushes the actions under it.
 - **The title wraps anywhere.** A long file name or URL never widens the page.
+- **The title is set in the display face** (`--display`): Schibsted Grotesk at 800 by default, the UI face's heavy weight, so nothing changes until a site sets its own (Foxing's Fraunces).
 
 ## HTML contract
 

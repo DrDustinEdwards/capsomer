@@ -4,6 +4,25 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+**Foxing's asks** (apps/web on Capsomer v0.16.0, which kept its own copy of each).
+
+- **New site: `foxing`** in `SITES`, exported as `capsomer/site-foxing.css` and in `capsomer/sites.css`, on `<html>` with `data-cap-site="foxing"` under the fox family: Foxing's cream and charcoal neutrals, DM Sans for the UI, DM Mono, Fraunces as its display face and the sky-blue on state of its Rule 05. Its `app/styles/site-foxing.css` can go. Rule 05's `#43a1d8` is 2.7:1 on the cream ground in the light theme, under the 3:1 a checked box needs, so the light theme takes Foxing's own hover blue `#2b87bc` (hover `#1f7fb8`); the dark theme keeps `#43a1d8` (hover `#5aafe0`). Foxing's to change.
+- **New token: `--display`**, the face for a heading that wants a display face, in `tokens/scale.css` (group `type`): Schibsted Grotesk, the UI face, whose 800 weight the page head already uses, so nothing changes until a site sets its own. A site layer may set it. `.cap-page-head-title` now reads it.
+- **New tokens: `--on` and `--on-hover`**, the fill of a checked checkbox or radio, an on switch and a chosen media tile's box, in every family (the primary fill and its hover, so nothing changes by default). A site layer may set them; the palette and site checks hold them to 3:1 against the surface, ground and raised surface, with the tick (`--primary-fg`) and the switch's thumb (`--surface`) at 3:1 on them. `field`, `switch` and `media` read them in place of `--primary` and `--primary-hover`.
+- **Site header: the account button can show a picture.** `HeaderAccount` (and `AdminAccount`) gain `avatar`, an image address drawn over the initials; the initials show when there is none or it fails to load. New class `cap-site-header-avatar-image`, an `img` inside `.cap-site-header-initials`.
+- **Command menu: live results.** The React `CommandMenu` takes `search(query, signal)` and `searchDelay` (180 ms): called after the last key, never for an empty field, the call before aborted; its commands follow the matching ones in their own groups. While it runs the list is `aria-busy` and an empty list says "Searching…" (new export `SEARCHING`). New specimen `live`. React only.
+- **Releases ship the built package.** The release workflow now tags a release commit on top of the merged version bump: main's tree plus `dist/`, without the `prepare` script. An install of `github:DrDustinEdwards/capsomer#vX.Y.Z` from the next release on builds nothing, so it installs none of Capsomer's devDependencies (two are git dependencies, which npm 12 refuses without allow-git) and runs no tsc under the store. Apps can drop `NPM_CONFIG_ALLOW_GIT` and pnpm's build allowance for Capsomer once they pin it.
+- Already done: the return types on `Pagination` and the skeleton exports shipped in 0.15.1.
+
+**Fix: a visible label and count are words of the control's name** (axe-core 4.14, label-content-name-mismatch, WCAG 2.5.3; 4.14 counts `aria-hidden` text as visible). Changed HTML contracts, no visual change:
+
+- A space now separates an entry's label from its count in the shell (`.cap-shell-label` and `.cap-shell-count`, the phone tab's `.cap-shell-badge`, the More sheet's count), the admin shell's menu (`.cap-admin-label` and `.cap-admin-count`, the sheet's app rows) and the site header's panels, sheet and bottom tabs (`.cap-site-header-count`, `.cap-site-header-badge`), so "Sites2" reads "Sites 2" inside "Sites, 2 down or degraded".
+- Past 99 a count's name starts with what the bubble shows: "Inbox 99+, 120 need you" (was "Inbox, 120 need you"); `countName` changes accordingly.
+- The business tile's letter and the avatar's initials are drawn from new attributes, `data-tile` on `.cap-site-header-switch-tile` and `data-initials` on `.cap-site-header-initials`, and those spans are now empty, so a decorative letter is not read as part of "Business: Acme Supply Co." or "Your account".
+- The media inspector's copy buttons are named "Copy address" (was "Copy the address") and "Copy the HTML tag" (was "Copy the HTML image tag").
+
+**Development: axe-core 4.14** (`@axe-core/playwright` ^4.14.0). Dev dependency only.
+
 **Site only: the showcase site's `Reporting-Endpoints` header comes from site-runtime v0.12.0's `reportingEndpoints`** in place of a hand-written string (no package change). The header and the Content-Security-Policy are unchanged. site-runtime is a dev dependency at v0.12.0.
 
 **Development: site-runtime v0.12.1** (loopback report endpoints, `nonceStyles` and `baseUriSelf`). Dev dependency only; no class, token or HTML contract changes.

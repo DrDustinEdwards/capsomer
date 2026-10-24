@@ -28,7 +28,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["closed", "open", "comfortable", "filtered", "stops", "nomatch", "active"]) {
+  for (const id of ["closed", "open", "comfortable", "filtered", "stops", "nomatch", "active", "live"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "command-menu", theme, id);
       await expectNoAxeViolations(page);
@@ -182,5 +182,17 @@ eachTheme((theme) => {
     await expect(shownOptions(page)).toHaveCount(3);
     await visitStates(page, "command-menu", theme, "nomatch");
     await expect(menu(page).locator(".cap-listbox-empty")).toHaveText("No commands match “deploy to vercel”");
+  });
+
+  test("behaviour: a live search answers as the person types; Enter runs a result", async ({ page }) => {
+    await visitStates(page, "command-menu", theme, "live");
+    const input = page.getByRole("combobox", { name: "Search books" });
+    await expect(input).toBeFocused();
+    await input.pressSequentially("disp");
+    await expect(page.getByRole("option", { name: "The Dispossessed" })).toBeVisible();
+    await expect(page.getByRole("option", { name: "Your library" })).toHaveCount(0);
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await expect(page.locator("[data-specimen-part='said']")).toHaveText("Ran: The Dispossessed");
   });
 });

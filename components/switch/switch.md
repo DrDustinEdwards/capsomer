@@ -36,7 +36,7 @@ A reversible on or off preference that applies immediately: single-key shortcuts
 - **The label is a fixed noun** ("Single-key shortcuts"), never a state or an instruction ("Turn off shortcuts"), so it reads the same in both states.
 - **The state is a word as well as a position and a colour.** The word is `aria-hidden`: the switch's own checked state says it to a screen reader, and the accessible name stays the noun.
 - **It takes effect at once**, so the app acts on `change`, and says the result through the message region when it is not visible on the page.
-- **The track's edge reaches 3:1 on the surface in both states**: line-strong when off, the accent when on. The thumb slides in 100 ms, only when motion is welcome.
+- **The track's edge reaches 3:1 on the surface in both states**: line-strong when off, the on colour (`--on`, `--on-hover` under the pointer; the primary fill unless the site sets its own) when on. The thumb slides in 100 ms, only when motion is welcome.
 - **Disabled says why**, in text beside it that the switch is described by.
 - **Pending is `aria-busy="true"` on the switch, drawn as a dashed outline, and the switch is not disabled** (the Portal's rule: its change is sent, and the switch moves only when it has applied). A disabled control drops focus; a busy one keeps it. The outline is a shape, so it is not colour alone. `setBusy(label, busy)` sets it; React: `busy`.
 

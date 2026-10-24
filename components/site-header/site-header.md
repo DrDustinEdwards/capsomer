@@ -35,7 +35,7 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 - **Full width**, 24px sides on a desktop and 16px on a phone, so the logo is at the same x on every site and lines up with the admin's menu below it.
 - **Spacing.** 12px from the logo to the switcher, 24px from the switcher to the section links, 20px between links, 8px between the controls on the right.
 - **Type.** Links and the switcher at 14px in the site's UI face (`--font-ui`); the current page is weight 500 with a 2px underline in the accent, so it is not told by colour alone.
-- **Controls.** Every icon control is a 36px target with an 18px glyph (24 box, 1.6 stroke), a name of its own and a tip naming it and its key. The avatar is a 32px circle in the same target.
+- **Controls.** Every icon control is a 36px target with an 18px glyph (24 box, 1.6 stroke), a name of its own and a tip naming it and its key. The avatar is a 32px circle in the same target: the person's picture when the site gives one (`account.avatar`), drawn over their initials, which show when there is none or it fails to load.
 - **Panels.** The switcher, a section with children and the account each open a panel: a list of links under a disclosure button (`aria-expanded`, `aria-controls`), not an ARIA menu, because every item goes somewhere. On a mouse a panel opens at once on hover, with no delay, and on click; on touch, on tap. It lines up with its button's edge and starts under the header, so it never covers it. What a panel holds and how it is laid out is the site's (`panel`).
 - **One bottom edge**, 1px in the band's own line colour.
 
@@ -83,7 +83,7 @@ The account menu is the same shape everywhere: who you are; the site's own rows 
 
 - The header is the page's `banner` landmark. The section links are a `nav` named "Site"; the sheet's list is a `nav` named by its heading and its pinned rows a `nav` named "Account"; the bottom bar a `nav` named by the site ("Sections").
 - The current page is `aria-current="page"`; a section with children that holds the current page shows its underline too.
-- The theme button says what it does: "Switch to dark theme" while the page is light. A count is in its control's name: "Inbox, 4 need you"; the bubble shows 99+ past 99.
+- The theme button says what it does: "Switch to dark theme" while the page is light. A count is in its control's name: "Inbox, 4 need you"; the bubble shows 99+ past 99, and the name starts with what is seen: "Inbox 99+, 120 need you". The visible label and count are words of the name in order, a space between them in the HTML (WCAG 2.5.3, as axe-core 4.14 reads it, aria-hidden text included). The business tile's letter and the avatar's initials are drawn from `data-tile` and `data-initials`, not text, so they do not count as part of the visible label.
 - Forced colours: the current link keeps its underline, the band keeps its edge, a bubble is drawn in system colours.
 - The tests measure the painted contrast of the links, the current link's underline, the icon controls, Sign in and the button extra on both bands in both themes.
 
@@ -96,7 +96,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
   <a class="cap-site-header-logo" href="/" aria-label="Foxhound">[mark, wordmark]</a>
   <div class="cap-site-header-switcher">
-    <button type="button" class="cap-site-header-switch" data-cap-part="panel-trigger" aria-expanded="false" aria-controls="sw-business" aria-label="Business: Acme Supply Co."><span class="cap-site-header-switch-tile" aria-hidden="true">A</span><span>Acme Supply Co.</span>[chevron]</button>
+    <button type="button" class="cap-site-header-switch" data-cap-part="panel-trigger" aria-expanded="false" aria-controls="sw-business" aria-label="Business: Acme Supply Co."><span class="cap-site-header-switch-tile" data-tile="A" aria-hidden="true"></span><span>Acme Supply Co.</span>[chevron]</button>
     <div class="cap-site-header-panel" id="sw-business" popover="manual" role="group" aria-label="Businesses">[the site's panel]</div>
     <span class="cap-site-header-sep" aria-hidden="true">/</span>
     [the product's button and panel]
@@ -109,12 +109,12 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   </nav>
   <div class="cap-site-header-tools">
     <div class="cap-site-header-extras">
-      <button type="button" class="cap-site-header-icon" aria-label="Inbox, 4 need you">[18px glyph]<span class="cap-site-header-badge" aria-hidden="true">4</span><span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">Inbox</span></span></button>
+      <button type="button" class="cap-site-header-icon" aria-label="Inbox, 4 need you">[18px glyph] <span class="cap-site-header-badge" aria-hidden="true">4</span><span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">Inbox</span></span></button>
       <a class="cap-site-header-cta" href="/audit">Free audit</a>
     </div>
     [the theme button: theme-switch's button form, with the class cap-site-header-icon]
     <div class="cap-site-header-account">
-      <button type="button" class="cap-site-header-icon cap-site-header-avatar" data-cap-part="panel-trigger" aria-expanded="false" aria-controls="account" aria-label="Your account"><span class="cap-site-header-initials" aria-hidden="true">SR</span>[tip]</button>
+      <button type="button" class="cap-site-header-icon cap-site-header-avatar" data-cap-part="panel-trigger" aria-expanded="false" aria-controls="account" aria-label="Your account"><span class="cap-site-header-initials" data-initials="SR" aria-hidden="true"><img class="cap-site-header-avatar-image" src="/avatars/sam.jpg" alt=""></span>[tip]</button>
       <div class="cap-site-header-panel" id="account" popover="manual" data-align="end" role="group" aria-label="Your account">
         <div class="cap-site-header-who"><strong>Sam Rivera</strong><small>sam@example.com</small></div>
         <hr><div class="cap-site-header-panel-label">Acme Supply Co.</div><ul class="cap-site-header-panel-list">[links]</ul>

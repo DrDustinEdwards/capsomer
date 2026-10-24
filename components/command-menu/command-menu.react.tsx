@@ -3,10 +3,10 @@ import { Dialog } from "../dialog/dialog.react.tsx";
 import { Listbox, ListboxEmpty, Option, OptionGroup } from "../listbox/listbox.react.tsx";
 import { register } from "../shortcuts/shortcuts.ts";
 import { Keys } from "../shortcuts/shortcuts.react.tsx";
-import { emptyText, filterCommands, groupCommands, step, type Command } from "./command-menu.ts";
+import { emptyText, filterCommands, groupCommands, SEARCHING, step, type Command } from "./command-menu.ts";
 
 export type { Command } from "./command-menu.ts";
-export { STOP_GROUP, STOP_HINTS, stopCommand } from "./command-menu.ts";
+export { SEARCHING, STOP_GROUP, STOP_HINTS, stopCommand } from "./command-menu.ts";
 
 export interface CommandMenuProps {
   open: boolean;
@@ -17,6 +17,13 @@ export interface CommandMenuProps {
   placeholder?: string;
   // Binds Ctrl K, Cmd K and "/" to open it. On by default.
   bindKeys?: boolean;
+  // Results from an async source as the person types (books, people, records). Called with the
+  // trimmed query and an AbortSignal, `searchDelay` ms (180) after the last key, never for an
+  // empty query; the signal aborts when the query changes or the menu closes. Its commands come
+  // after the matching `commands`, in their own groups and order, unfiltered; their ids must not
+  // repeat a command's. The last results stay until new ones arrive; a failed search keeps them.
+  search?: (query: string, signal: AbortSignal) => Promise<Command[]>;
+  searchDelay?: number;
 }
 
 // The shortcut caps of a command, after the words that say it is a shortcut.
@@ -31,13 +38,15 @@ function Caps({ spec }: { spec: string | string[] }) {
 
 const SEARCH_ICON = <path fill="currentColor" fillRule="evenodd" d="M7 2.5a4.5 4.5 0 1 0 2.7 8.1l3 3 1.1-1.1-3-3A4.5 4.5 0 0 0 7 2.5zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />;
 
-export function CommandMenu({ open, onOpenChange, commands, label = "Search commands", placeholder = "Search commands", bindKeys = true }: CommandMenuProps) {
+export function CommandMenu({ open, onOpenChange, commands, label = "Search commands", placeholder = "Search commands", bindKeys = true, search, searchDelay = 180 }: CommandMenuProps) {
   const id = useId();
   const dlg = useRef<HTMLDialogElement | null>(null);
   const input = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
-  const shown = useMemo(() => filterCommands(commands, query), [commands, query]);
+  const [found, setFound] = useState<Command[]>([]);
+  const [busy, setBusy] = useState(false);
+  const shown = useMemo(() => [...filterCommands(commands, query), ...found], [commands, query, found]);
   const groups = useMemo(() => groupCommands(shown), [shown]);
   const cur = shown.length ? Math.min(active, shown.length - 1) : -1;
   const optionId = (c: Command) => `${id}-o-${c.id}`;
@@ -54,6 +63,39 @@ export function CommandMenu({ open, onOpenChange, commands, label = "Search comm
     setQuery("");
     setActive(0);
   }, [open]);
+
+  // The live search: debounced, the one before aborted, nothing for an empty query. Read through
+  // a ref, so an inline function does not start a search on every render.
+  const q = query.trim();
+  const searchRef = useRef(search);
+  searchRef.current = search;
+  const live = search != null;
+  useEffect(() => {
+    const run = searchRef.current;
+    if (!run || !open || !q) {
+      setFound([]);
+      setBusy(false);
+      return;
+    }
+    const ctrl = new AbortController();
+    setBusy(true);
+    const timer = setTimeout(() => {
+      run(q, ctrl.signal).then(
+        (results) => {
+          if (ctrl.signal.aborted) return;
+          setFound(results);
+          setBusy(false);
+        },
+        () => {
+          if (!ctrl.signal.aborted) setBusy(false);
+        },
+      );
+    }, searchDelay);
+    return () => {
+      clearTimeout(timer);
+      ctrl.abort();
+    };
+  }, [live, searchDelay, open, q]);
 
   useEffect(() => {
     if (activeCommand) document.getElementById(optionId(activeCommand))?.scrollIntoView({ block: "nearest" });
@@ -113,7 +155,7 @@ export function CommandMenu({ open, onOpenChange, commands, label = "Search comm
           }}
         />
       </div>
-      <Listbox id={`${id}-list`} className="cap-cmd-list" mode="input" controlled aria-label="Commands" hidden={shown.length === 0}>
+      <Listbox id={`${id}-list`} className="cap-cmd-list" mode="input" controlled aria-label="Commands" aria-busy={busy || undefined} hidden={shown.length === 0}>
         {groups.map((g) => (
           <OptionGroup label={g.group} key={g.group}>
             {g.items.map((c) => (
@@ -137,7 +179,7 @@ export function CommandMenu({ open, onOpenChange, commands, label = "Search comm
           </OptionGroup>
         ))}
       </Listbox>
-      <ListboxEmpty>{shown.length === 0 ? emptyText(query) : ""}</ListboxEmpty>
+      <ListboxEmpty>{shown.length === 0 ? (busy ? SEARCHING : emptyText(query)) : ""}</ListboxEmpty>
       <div className="cap-cmd-foot" aria-hidden="true">
         <span>
           <kbd>↑</kbd> <kbd>↓</kbd> move

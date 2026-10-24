@@ -205,7 +205,7 @@ eachTheme((theme) => {
   test("accessibility: the header's account menu holds this app, View site and Help, and Sign out last", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const avatar = page.getByRole("button", { name: "Your account" });
-    await expect(avatar.locator(".cap-site-header-initials")).toHaveText("DE");
+    await expect(avatar.locator(".cap-site-header-initials")).toHaveAttribute("data-initials", "DE");
     await avatar.focus();
     await page.keyboard.press("Enter");
     const panel = page.locator(".cap-site-header-account .cap-site-header-panel");

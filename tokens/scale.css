@@ -24,6 +24,7 @@
   --fs-prose-h2: clamp(22px, 1.2rem + 1.2vw, 30px);
   --fs-input-coarse: 16px;
   --prose: "Source Serif 4", "Iowan Old Style", Charter, Georgia, serif;
+  --display: "Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   /* motion */
   --dur-fast: 100ms;
   --dur-base: 200ms;

@@ -85,8 +85,8 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   <nav class="cap-shell-rail" id="cap-rail" aria-label="Sections">
     <div class="cap-shell-group" role="group" aria-labelledby="g-watch"> <!-- optional -->
       <div class="cap-shell-group-label" id="g-watch">Watch</div>
-      <a href="/" aria-current="page">[icon]<span class="cap-shell-label">Overview</span><span class="cap-shell-count"></span></a>
-      <a href="/queue" aria-label="Queue, 3 blocked">[icon]<span class="cap-shell-label">Queue</span><span class="cap-shell-count" data-tone="warn">3</span></a>
+      <a href="/" aria-current="page">[icon]<span class="cap-shell-label">Overview</span> <span class="cap-shell-count"></span></a>
+      <a href="/queue" aria-label="Queue, 3 blocked">[icon]<span class="cap-shell-label">Queue</span> <span class="cap-shell-count" data-tone="warn">3</span></a>
     </div>
     <div class="cap-shell-foot">
       <div class="cap-shell-hint">
@@ -104,7 +104,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     <div class="cap-dialog-header"><h2 class="cap-dialog-title" id="cap-more-title">More views</h2></div>
     <div class="cap-dialog-body">
       <nav aria-labelledby="cap-more-title"><ul class="cap-shell-more-list">
-        <li><a href="/namespaces">[icon]<span class="cap-shell-more-name">Namespaces</span><span class="cap-shell-count">1 paused</span></a></li>
+        <li><a href="/namespaces">[icon]<span class="cap-shell-more-name">Namespaces</span> <span class="cap-shell-count">1 paused</span></a></li>
       </ul></nav>
     </div>
     <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close">[icon]</button>

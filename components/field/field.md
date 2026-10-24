@@ -56,7 +56,7 @@ Any form: a site's settings, a new job, a post's metadata, the one-line reason o
 - Every control has a visible label; a radio group is a `fieldset.cap-field` with a `legend.cap-field-label`.
 - The error has an icon as well as its colour and a thicker edge, so it is not colour alone.
 - Inputs are 16 px on a touch screen so iOS does not zoom (base.css).
-- The checkbox and radio are real `<input>`s, drawn by CSS (`appearance: none`): the edge is `--line-strong` (3:1), the checked fill `--primary`, the tick `--primary-fg`. A mixed checkbox (`input.indeterminate = true`; there is no attribute) shows a bar and is announced as mixed.
+- The checkbox and radio are real `<input>`s, drawn by CSS (`appearance: none`): the edge is `--line-strong` (3:1), the checked fill `--on` (the primary fill unless the site sets its own on colour), the tick `--primary-fg`. A mixed checkbox (`input.indeterminate = true`; there is no attribute) shows a bar and is announced as mixed.
 - The ring is an opaque 3 px in the accent on every field, checkbox and radio; the group draws it round the whole edge.
 - Clicking an input group's text or icon puts the cursor in its field (`enhance()`, or the React `InputGroupAddon`); a button inside keeps its own click.
 - Forced colours: the error icon is drawn in CanvasText and an invalid edge doubles.

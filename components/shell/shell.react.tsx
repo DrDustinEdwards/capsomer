@@ -117,6 +117,7 @@ export function Shell(props: ShellProps) {
   const phoneTabs = tabs?.slice(0, more ? 4 : 5);
 
   const entry = (e: ShellEntry, phone: boolean) => {
+    // The visible label and count, then what it counts: "Sites, 2 down or degraded" (WCAG 2.5.3).
     const named = e.count ? `${e.label}, ${e.count}${e.countNote ? ` ${e.countNote}` : ""}` : undefined;
     return (
       <Fragment key={e.id}>
@@ -128,12 +129,13 @@ export function Shell(props: ShellProps) {
             <>
               {e.icon}
               {e.label}
+              {e.count ? " " : null}
               {e.count ? <span className="cap-shell-badge">{e.count}</span> : null}
             </>
           ) : (
             <>
               {e.icon ?? <span aria-hidden="true" />}
-              <span className="cap-shell-label">{e.label}</span>
+              <span className="cap-shell-label">{e.label}</span>{" "}
               <span className="cap-shell-count" data-tone={e.tone}>
                 {e.count ? e.count : ""}
               </span>
@@ -232,6 +234,7 @@ export function Shell(props: ShellProps) {
                         <>
                           {e.icon}
                           <span className="cap-shell-more-name">{e.label}</span>
+                          {e.count ? " " : null}
                           {e.count ? <span className="cap-shell-count">{`${e.count}${e.countNote ? ` ${e.countNote}` : ""}`}</span> : null}
                         </>
                       ),

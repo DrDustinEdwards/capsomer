@@ -310,8 +310,8 @@
       }
       &:checked,
       &[type="checkbox"]:indeterminate {
-        --cap-check-edge: var(--primary);
-        background: var(--primary);
+        --cap-check-edge: var(--on);
+        background: var(--on);
       }
       &:checked::after {
         opacity: 1;
@@ -335,7 +335,7 @@
         box-shadow: 0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
       }
       &[aria-invalid="true"]:checked {
-        --cap-check-edge: var(--primary);
+        --cap-check-edge: var(--on);
       }
       &:disabled {
         --cap-check-edge: var(--line-strong);

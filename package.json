@@ -48,6 +48,7 @@
     "./site-capsid.css": "./tokens/site-capsid.css",
     "./site-txasm.css": "./tokens/site-txasm.css",
     "./site-julieedwards.css": "./tokens/site-julieedwards.css",
+    "./site-foxing.css": "./tokens/site-foxing.css",
     "./tokens.json": "./tokens/tokens.json",
     "./palette": "./tokens/palette.mjs",
     "./enarratio.css": "./css/enarratio.css",
@@ -157,7 +158,7 @@
     }
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
+    "@axe-core/playwright": "^4.14.0",
     "@base-ui/react": "^1.8.0",
     "@codemirror/commands": "^6.10.4",
     "@codemirror/lang-markdown": "^6.5.1",

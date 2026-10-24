@@ -275,8 +275,8 @@
     }
   }
   .cap-media-check > input:checked ~ .cap-media-check-box {
-    border-color: var(--primary);
-    background: var(--primary);
+    border-color: var(--on);
+    background: var(--on);
 
     & > svg {
       opacity: 1;

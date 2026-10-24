@@ -4,8 +4,8 @@
 // difference from the committed files, a missing package export and a stale site file, and
 // runs palette.mjs's WCAG pairs on the site's colours merged into its family, in both themes.
 //
-// What goes in: only what a site differs on (faces, neutrals, type sizes, space and radius,
-// the hover touches in scale.mjs's `touch` group, --enarratio-*), as literal values, never a var() chain, so the file works on <html> or on
+// What goes in: only what a site differs on (faces, the display face, neutrals, the on state,
+// type sizes, space and radius, the hover touches in scale.mjs's `touch` group, --enarratio-*), as literal values, never a var() chain, so the file works on <html> or on
 // any wrapper. A brand colour is never a site setting: it is a family (FAMILIES in
 // palette.mjs), which the site keeps choosing with data-family. A site on the defaults has no
 // entry. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so a
@@ -121,6 +121,21 @@ const SITES = {
     all: {
       ui: '"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
     },
+  },
+  foxing: {
+    family: "fox",
+    on: "<html>",
+    note: "Foxing's cream and charcoal neutrals (design-system.md), its faces (DM Sans for the UI, DM Mono, Fraunces to display), which the site self-hosts, and the sky-blue on state of its Rule 05",
+    all: {
+      ui: '"DM Sans", system-ui, sans-serif',
+      "font-ui": '"DM Sans", system-ui, sans-serif',
+      mono: '"DM Mono", ui-monospace, monospace',
+      display: '"Fraunces", Georgia, serif',
+    },
+    // Rule 05's sky blue #43a1d8 is 2.7:1 on the cream ground, under the 3:1 a checked box needs,
+    // so the light theme takes Foxing's own hover blue for the fill and a step darker for hover.
+    light: { ground: "#faf6ee", surface: "#ffffff", raised: "#ffffff", sunken: "#f2ead8", text: "#16100b", muted: "#3e3028", dim: "#815e41", line: "#e5d8bf", "line-strong": "#815e41", on: "#2b87bc", "on-hover": "#1f7fb8" },
+    dark: { ground: "#16100b", surface: "#1f1710", raised: "#2a1f16", sunken: "#100d08", text: "#f5edde", muted: "#c4ae96", dim: "#a28269", line: "#3a2c22", "line-strong": "#a28269", on: "#43a1d8", "on-hover": "#5aafe0" },
   },
   julieedwards: {
     family: "forest",

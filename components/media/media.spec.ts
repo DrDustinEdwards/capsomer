@@ -468,7 +468,7 @@ eachTheme((theme) => {
 
   test("keyboard: Enter and Space on Copy address copy it and say so in a live region", async ({ page }) => {
     await library(page, theme);
-    const copy = inspector(page).getByRole("button", { name: "Copy the address" });
+    const copy = inspector(page).getByRole("button", { name: "Copy address" });
     await copy.focus();
     await page.keyboard.press("Enter");
     await expect(inspector(page).locator("[data-cap-part=copied]")).toHaveText("Copied the address.");
@@ -795,7 +795,7 @@ eachTheme((theme) => {
       Object.defineProperty(navigator, "clipboard", { value: { writeText: () => Promise.reject(new Error("denied")) }, configurable: true });
       document.execCommand = () => false;
     });
-    await inspector(page).getByRole("button", { name: "Copy the address" }).click();
+    await inspector(page).getByRole("button", { name: "Copy address" }).click();
     await expect(inspector(page).locator("[data-cap-part=copied]")).toContainText("Could not copy. The address is selected");
     const selected = await page.evaluate(() => {
       const el = document.activeElement as HTMLInputElement | null;

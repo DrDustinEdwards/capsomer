@@ -56,8 +56,8 @@
         box-shadow: 0 0 0 var(--ring-width) color-mix(in srgb, var(--crit) 20%, transparent);
       }
       &:checked {
-        border-color: var(--primary);
-        background: var(--primary);
+        border-color: var(--on);
+        background: var(--on);
 
         &::before {
           translate: calc(var(--cap-sw-w) - 2px - var(--cap-sw-thumb) - 4px) 0;
@@ -70,8 +70,8 @@
       border-color: var(--muted);
 
       &:checked {
-        border-color: var(--primary-hover);
-        background: var(--primary-hover);
+        border-color: var(--on-hover);
+        background: var(--on-hover);
       }
     }
 

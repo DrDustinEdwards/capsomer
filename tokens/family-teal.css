@@ -20,6 +20,8 @@
   --primary: #077478;
   --primary-hover: #01585c;
   --primary-fg: #fbfefe;
+  --on: #077478;
+  --on-hover: #01585c;
   --ring: #008489;
   --ok: #037936;
   --ok-soft: #d6f7dc;
@@ -99,6 +101,8 @@
     --primary: #249398;
     --primary-hover: #97c8cb;
     --primary-fg: #070f0f;
+    --on: #249398;
+    --on-hover: #97c8cb;
     --ring: #008489;
     --ok: #4aa462;
     --ok-soft: #15301b;
@@ -180,6 +184,8 @@
   --primary: #249398;
   --primary-hover: #97c8cb;
   --primary-fg: #070f0f;
+  --on: #249398;
+  --on-hover: #97c8cb;
   --ring: #008489;
   --ok: #4aa462;
   --ok-soft: #15301b;
