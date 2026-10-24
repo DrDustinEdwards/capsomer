@@ -229,7 +229,8 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     const plays = layer === inside ? [...flows].map(([f, flow]) => `<button type="button" class="cap-btn" data-cap-part="play" data-flow="${escapeHtml(f)}">Play: ${escapeHtml(flow.name)}</button>`).join("") : "";
     // With circles the way back is beside the views, so the detail line keeps the system's name.
     const href = systems.get(id)?.href;
-    const open = circles && href ? `<a class="cap-btn" href="${escapeHtml(href)}">${escapeHtml(openLabel)}</a>` : "";
+    // No link to the page already open, such as the system's own page zoomed into it.
+    const open = circles && href && new URL(href, location.href).pathname !== location.pathname ? `<a class="cap-btn" href="${escapeHtml(href)}">${escapeHtml(openLabel)}</a>` : "";
     const actions = `${plays}${circles ? open : `<button type="button" class="cap-btn" data-cap-part="leave">Step out</button>`}`;
     detail.innerHTML = `<strong class="cap-system-map-detail-name">${circles ? "" : "Inside "}${escapeHtml(name)}</strong><span class="cap-system-map-detail-text">${own} parts inside${outside ? `, ${outside} outside it` : ""}${rims ? `, connected to ${rims === 1 ? "1 other system" : `${rims} other systems`}` : ""}.</span>${actions ? `<span class="cap-system-map-detail-actions">${actions}</span>` : ""}`;
   };
