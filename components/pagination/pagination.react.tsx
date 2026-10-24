@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { pageItems, statusText } from "./pagination.ts";
 
 export interface PaginationProps {
@@ -19,7 +20,7 @@ export interface PaginationProps {
 }
 
 // The HTML contract in pagination.md. One page or none renders nothing: there is nowhere to go.
-export function Pagination({ page, pageCount, hrefFor, onPageChange, total, perPage, noun = "items", prevLabel = "Previous", nextLabel = "Next", label = "Pagination" }: PaginationProps) {
+export function Pagination({ page, pageCount, hrefFor, onPageChange, total, perPage, noun = "items", prevLabel = "Previous", nextLabel = "Next", label = "Pagination" }: PaginationProps): ReactElement | null {
   if (pageCount <= 1) return null;
   const links = typeof hrefFor === "function";
   const control = (to: number, className: string, content: string, extra: { kind?: "prev" | "next"; current?: boolean; name?: string; rel?: string }) => {
