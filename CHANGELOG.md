@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.15.1]
+
+**Fix: a pnpm install of Capsomer builds wherever the store sits.** `Pagination`, `Spinner`, `Skeleton` and `SkeletonBlock` now state their return type (`ReactElement`, and `| null` for `Pagination`). Without it, the install-time build failed with TS2883 when the package was built under a `node_modules` path, which is where pnpm's store sits by default, so Foxing's CI had to move its store. No class, token or HTML contract changes.
+
 ## [0.15.0]
 
 **System map: groups** (Dustin, 2026-10-23: like goes with like, and a stranger should read the map without a key). A system people use can carry a `group` (Websites, Apps). When any does, each group is drawn together, its systems chained in the order given, apart from every other group, and named beside it in a new `text.cap-system-map-group-label` on a new `svg.cap-system-map-layer[data-layer="labels"]`, hidden inside a system. The gaps between groups are not drawn as empty shell, and the list below is sectioned by group. `Layout` gains `labels` and `grouped`. A map with no groups is drawn as before. New field, class and layer only; nothing is removed or renamed.

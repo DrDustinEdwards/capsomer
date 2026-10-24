@@ -1,3 +1,5 @@
+import type { ReactElement } from "react";
+
 export interface SpinnerProps {
   // What is loading, in a word or two: "Loading", "Saving".
   label?: string;
@@ -17,7 +19,7 @@ const Arc = () => (
   </svg>
 );
 
-export function Spinner({ label = "Loading", hideLabel, size, layout }: SpinnerProps) {
+export function Spinner({ label = "Loading", hideLabel, size, layout }: SpinnerProps): ReactElement {
   return (
     <span className="cap-spinner" data-label={hideLabel ? "hidden" : undefined} data-size={size} data-layout={layout} role={layout === "page" ? "status" : undefined}>
       <Arc />
@@ -32,7 +34,7 @@ export interface SkeletonProps {
 }
 
 // Grey lines standing in for a page's content: busy, and "Loading" for a screen reader.
-export function Skeleton({ lines = 3, label = "Loading" }: SkeletonProps) {
+export function Skeleton({ lines = 3, label = "Loading" }: SkeletonProps): ReactElement {
   return (
     <div className="cap-skeleton" aria-busy="true">
       <span className="cap-sr-only">{label}</span>
@@ -49,6 +51,6 @@ export interface SkeletonBlockProps {
 
 // One shape on its own (shadcn's Skeleton): an avatar, a card. Decorative: put it inside a
 // busy region that says "Loading".
-export function SkeletonBlock({ shape = "block" }: SkeletonBlockProps) {
+export function SkeletonBlock({ shape = "block" }: SkeletonBlockProps): ReactElement {
   return <span className="cap-skeleton-block" data-shape={shape === "block" ? undefined : shape} aria-hidden="true" />;
 }
