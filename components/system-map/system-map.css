@@ -285,6 +285,84 @@
     }
   }
 
+  /* With circles (system-map-circles.ts) every system has an inside, and only the one zoomed
+     into is drawn: sixteen hidden drawings restyled on every tap made each one slow. The shown
+     one sits in the flow and sizes the stage, so a system with many parts gets the height it
+     needs, no taller than the screen, and it grows out of its capsomer. */
+  .cap-system-map[data-circles] {
+    & [data-layer="inside"]:not([data-shown]) {
+      display: none;
+    }
+    &:not([data-entered]) [data-layer="inside"] {
+      transform: scale(0.3);
+    }
+    &[data-entered] [data-layer="inside"][data-shown] {
+      position: relative;
+      height: auto;
+      max-height: calc(100svh - 4rem);
+    }
+    &[data-entered] [data-layer="core"] {
+      position: absolute;
+      height: 100%;
+    }
+    /* The faded shell is fainter here, where the rim holds boxes of its own. */
+    &[data-entered] [data-layer="rim"] {
+      opacity: 0.07;
+    }
+    /* A part's name a little larger than the core's, for a phone; a line that coordinates or
+       watches is dashed, as on the map, and one from the circle itself is the accent, fainter. */
+    & [data-layer="inside"] .cap-system-map-box-name {
+      font-size: 11.5px;
+    }
+    & .cap-system-map-wire[data-loose] {
+      stroke-dasharray: 4 3;
+    }
+    & .cap-system-map-wire[data-whole] {
+      stroke: var(--accent);
+      stroke-opacity: 0.6;
+    }
+  }
+
+  /* Another system on a circle's rim: the map's capsomer as a pill, and a tap that zooms there. */
+  .cap-system-map-rim {
+    & rect {
+      fill: var(--surface);
+      stroke: var(--accent);
+      stroke-width: 1.4;
+    }
+    &[data-private] rect {
+      stroke-dasharray: 4 3;
+    }
+  }
+
+  .cap-system-map[data-entered] [data-shown] .cap-system-map-rim {
+    cursor: pointer;
+    pointer-events: auto;
+
+    &:hover rect {
+      fill: var(--accent-soft);
+    }
+  }
+
+  .cap-system-map-rim-name {
+    fill: var(--accent-text);
+    font: 600 11px var(--ui);
+    text-anchor: middle;
+  }
+
+  /* A circle with no parts drawn: the system's name in the middle, and what it is. */
+  .cap-system-map-inside-name {
+    fill: var(--accent-text);
+    font: 600 17px var(--prose);
+    text-anchor: middle;
+  }
+
+  .cap-system-map-inside-text {
+    fill: var(--muted);
+    font: 400 11px var(--ui);
+    text-anchor: middle;
+  }
+
   /* The detail line is a fixed box, so choosing, going inside and stepping out never move the page below it; a longer detail scrolls inside it. The size is !important because an important declaration in a layer beats a host's ordinary unlayered CSS. */
   .cap-system-map-detail {
     display: grid;
@@ -428,6 +506,17 @@
     .cap-system-map:not([data-entered]) [data-layer="inner"] {
       transition-delay: 0s;
     }
+    /* A circle keeps drawing while it fades on the way out: display joins the transition. */
+    .cap-system-map[data-circles] [data-layer="inside"] {
+      transition-property: transform, opacity, visibility, display;
+      transition-behavior: allow-discrete;
+    }
+    .cap-system-map[data-circles][data-entered] [data-layer="inside"][data-shown] {
+      @starting-style {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+    }
     .cap-system-map-edge,
     .cap-system-map-tile polygon {
       transition:
@@ -442,7 +531,8 @@
   @media (forced-colors: active) {
     /* Whatever its state (shared, core, hovered, chosen, a store, lit), a shape is the canvas. */
     .cap-system-map-tile polygon,
-    .cap-system-map-box rect {
+    .cap-system-map-box rect,
+    .cap-system-map-rim rect {
       fill: Canvas !important;
     }
     .cap-system-map-tile polygon,
@@ -452,7 +542,8 @@
     .cap-system-map-box[data-store] rect,
     .cap-system-map-box[data-external] rect,
     .cap-system-map-boundary,
-    .cap-system-map-wire {
+    .cap-system-map-wire,
+    .cap-system-map-rim rect {
       stroke: CanvasText;
     }
     .cap-system-map-tile[aria-pressed="true"] polygon,
@@ -472,7 +563,10 @@
     .cap-system-map-tag,
     .cap-system-map-box-name,
     .cap-system-map-box-kind,
-    .cap-system-map-inside-title {
+    .cap-system-map-inside-title,
+    .cap-system-map-rim-name,
+    .cap-system-map-inside-name,
+    .cap-system-map-inside-text {
       fill: CanvasText;
     }
   }

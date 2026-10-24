@@ -98,11 +98,16 @@ const grow = (r: Rect, g: number): Rect => ({ x: r.x - g, y: r.y - g, w: r.w + 2
 
 /** Whether the segment p-q passes through the rectangle's inside (a touch is not a hit). */
 export function segmentHitsRect(p: Pt, q: Pt, r: Rect): boolean {
+  return hitsRect(p[0], p[1], q[0], q[1], r);
+}
+
+/** The same from four numbers, for a search's hot path (system-map-circles-search.ts). */
+export function hitsRect(px: number, py: number, qx: number, qy: number, r: Rect): boolean {
   let t0 = 0;
   let t1 = 1;
-  const dx = q[0] - p[0];
-  const dy = q[1] - p[1];
-  for (const [pk, qk] of [[-dx, p[0] - r.x], [dx, r.x + r.w - p[0]], [-dy, p[1] - r.y], [dy, r.y + r.h - p[1]]] as const) {
+  const dx = qx - px;
+  const dy = qy - py;
+  for (const [pk, qk] of [[-dx, px - r.x], [dx, r.x + r.w - px], [-dy, py - r.y], [dy, r.y + r.h - py]] as const) {
     if (pk === 0) {
       if (qk <= 0) return false;
       continue;

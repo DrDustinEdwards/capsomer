@@ -13,8 +13,8 @@
 import { type Direction, type MapSystem, connectionText, spatialNext } from "./system-map-data.ts";
 import { escapeHtml } from "./system-map-html.ts";
 
-export { R, ringCells, layoutMap, spatialNext, linksOf, connectionText } from "./system-map-data.ts";
-export type { MapRing, MapSystem, MapLink, MapContainer, MapFlowStep, MapFlow, SystemMapData, SystemMapOptions, Cell, Layout, Direction } from "./system-map-data.ts";
+export { R, ringCells, layoutMap, spatialNext, linksOf, connectionText, modelMapData } from "./system-map-data.ts";
+export type { ModelSystem, SystemModel, MapRing, MapSystem, MapLink, MapContainer, MapFlowStep, MapFlow, SystemMapData, SystemMapOptions, Cell, Layout, Direction } from "./system-map-data.ts";
 export { ROUTE_CLEAR, LINE_SEP, JUNCTION_END, SHORT_LINK, BEND_CLEAR, rectInset, rectOutset, segmentHitsRect, segmentHitsBox, pointSegDist, segmentCross, segDist, segAngle, sideBySide, segmentFaults, portsOf, insideScene, playableFlows } from "./system-map-inside.ts";
 export type { Rect, InsideWire, Circle, InsideScene } from "./system-map-inside.ts";
 export { escapeHtml, hexPoints, seamRoute, systemMapHtml } from "./system-map-html.ts";
@@ -121,7 +121,8 @@ export function stepText(n: number, total: number, text: string): string {
 
 export interface SystemMapController {
   select(id: string | null): void;
-  enter(): void;
+  // Goes inside: the core's, or with circles, any system's that has one (the chosen one's by default).
+  enter(id?: string): void;
   leave(): void;
   setView(view: "shell" | "plain"): void;
   // Inside the core: play a flow from a step (1 by default), move to a step, stop.
@@ -137,7 +138,6 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
   const list = root.querySelector<HTMLDetailsElement>("[data-cap-part='list']")!;
   const views = root.querySelector<HTMLElement>("[data-cap-part='views']");
   const keys = root.querySelector<HTMLElement>(`#${CSS.escape(root.id)}-keys`);
-  const inside = root.querySelector<SVGSVGElement>("[data-layer='inside']");
   const tiles = [...root.querySelectorAll<SVGGElement>(".cap-system-map-tile[data-id]")];
   const systems = systemsFrom(root);
   const points = tiles.map((t) => ({ id: t.dataset.id!, x: Number(t.dataset.x), y: Number(t.dataset.y) }));
@@ -145,9 +145,24 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
   const tileOf = (id: string) => tiles.find((t) => t.dataset.id === id);
   const flows = flowsFrom(root);
   const flowList = root.querySelector<HTMLDetailsElement>("[data-cap-part='flows']");
-  const token = inside?.querySelector<SVGCircleElement>(".cap-system-map-token") ?? null;
+  // With circles every system has an inside layer of its own, by id, and flows play on the
+  // core's; without, the one inside layer is the core's.
+  const circles = root.hasAttribute("data-circles");
+  const out = root.querySelector<HTMLButtonElement>("[data-cap-part='out']");
+  const layers = new Map<string, SVGSVGElement>();
+  let inside: SVGSVGElement | null = null;
+  let token: SVGCircleElement | null = null;
+  const findLayers = () => {
+    for (const l of stage.querySelectorAll<SVGSVGElement>("[data-layer='inside'][data-system]")) layers.set(l.dataset.system!, l);
+    inside = circles ? (layers.get(coreTile?.dataset.id ?? "") ?? null) : stage.querySelector<SVGSVGElement>("[data-layer='inside']");
+    token = inside?.querySelector<SVGCircleElement>(".cap-system-map-token") ?? null;
+  };
+  findLayers();
   let selected: string | null = null;
   let playing: { id: string; n: number } | null = null;
+  // With circles: the system zoomed into, and the one last asked for while its circle was on its way.
+  let zoomed: string | null = null;
+  let waiting: string | null = null;
 
   // The drawing becomes the control: the stage is a group of buttons, one tab stop.
   stage.setAttribute("role", "group");
@@ -179,7 +194,7 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     tileOf(id)?.focus();
   };
 
-  const enterable = (id: string) => !!inside && tileOf(id)?.hasAttribute("data-core") === true;
+  const enterable = (id: string) => (circles ? layers.has(id) : !!inside && tileOf(id)?.hasAttribute("data-core") === true);
 
   const select = (id: string | null) => {
     stopFlow(true);
@@ -204,12 +219,19 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
   };
 
   const insideDetail = () => {
-    if (!inside || !coreTile) return;
-    const name = systems.get(coreTile.dataset.id!)?.name ?? "the core";
-    const own = inside.querySelectorAll(".cap-system-map-box:not([data-external])").length;
-    const outside = inside.querySelectorAll(".cap-system-map-box[data-external]").length;
-    const plays = [...flows].map(([id, f]) => `<button type="button" class="cap-btn" data-cap-part="play" data-flow="${escapeHtml(id)}">Play: ${escapeHtml(f.name)}</button>`).join("");
-    detail.innerHTML = `<strong class="cap-system-map-detail-name">Inside ${escapeHtml(name)}</strong><span class="cap-system-map-detail-text">${own} parts inside${outside ? `, ${outside} outside it` : ""}.</span><span class="cap-system-map-detail-actions">${plays}<button type="button" class="cap-btn" data-cap-part="leave">Step out</button></span>`;
+    const id = circles ? zoomed : coreTile?.dataset.id;
+    const layer = id ? (circles ? layers.get(id) : inside) : null;
+    if (!id || !layer) return;
+    const name = systems.get(id)?.name ?? id;
+    const own = layer.querySelectorAll(".cap-system-map-box:not([data-external])").length;
+    const outside = layer.querySelectorAll(".cap-system-map-box[data-external]").length;
+    const rims = layer.querySelectorAll(".cap-system-map-rim").length;
+    const plays = layer === inside ? [...flows].map(([f, flow]) => `<button type="button" class="cap-btn" data-cap-part="play" data-flow="${escapeHtml(f)}">Play: ${escapeHtml(flow.name)}</button>`).join("") : "";
+    // With circles the way back is beside the views, so the detail line keeps the system's name.
+    const href = systems.get(id)?.href;
+    const open = circles && href ? `<a class="cap-btn" href="${escapeHtml(href)}">${escapeHtml(openLabel)}</a>` : "";
+    const actions = `${plays}${circles ? open : `<button type="button" class="cap-btn" data-cap-part="leave">Step out</button>`}`;
+    detail.innerHTML = `<strong class="cap-system-map-detail-name">${circles ? "" : "Inside "}${escapeHtml(name)}</strong><span class="cap-system-map-detail-text">${own} parts inside${outside ? `, ${outside} outside it` : ""}${rims ? `, connected to ${rims === 1 ? "1 other system" : `${rims} other systems`}` : ""}.</span>${actions ? `<span class="cap-system-map-detail-actions">${actions}</span>` : ""}`;
   };
 
   // `focus` is for a reader's own press; a host's call (playFlow, step) leaves focus alone.
@@ -251,7 +273,7 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
 
   const playFlow = (id: string, n = 1, focus = true) => {
     if (!flows.has(id)) return;
-    if (!root.hasAttribute("data-entered")) enter(focus);
+    if (circles ? zoomed !== coreTile?.dataset.id : !root.hasAttribute("data-entered")) enter(coreTile?.dataset.id, focus);
     playing = { id, n };
     root.dataset.flow = id;
     showStep(n, focus);
@@ -276,30 +298,140 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     detail.querySelector<HTMLButtonElement>(`[data-cap-part="play"][data-flow="${CSS.escape(id)}"]`)?.focus();
   };
 
-  const enter = (focus = true) => {
-    if (!inside || !coreTile) return;
+  const enter = (id?: string, focus = true) => {
+    if (circles) {
+      const to = id ?? selected ?? coreTile?.dataset.id;
+      if (to) zoom(to, focus);
+      return;
+    }
+    const layer = inside;
+    if (!layer || !coreTile) return;
     root.setAttribute("data-entered", "");
-    inside.removeAttribute("aria-hidden");
-    inside.setAttribute("role", "img");
-    const named = (sel: string) => [...inside.querySelectorAll(sel)].map((b) => b.querySelector(".cap-system-map-box-name")?.textContent).filter(Boolean).join(", ");
+    layer.removeAttribute("aria-hidden");
+    layer.setAttribute("role", "img");
+    const named = (sel: string) => [...layer.querySelectorAll(sel)].map((b) => b.querySelector(".cap-system-map-box-name")?.textContent).filter(Boolean).join(", ");
     const name = systems.get(coreTile.dataset.id!)?.name ?? "the core";
     const outside = named(".cap-system-map-box[data-external]");
-    inside.setAttribute("aria-label", `Inside ${name}: ${named(".cap-system-map-box:not([data-external])")}.${outside ? ` Outside it: ${outside}.` : ""}`);
+    layer.setAttribute("aria-label", `Inside ${name}: ${named(".cap-system-map-box:not([data-external])")}.${outside ? ` Outside it: ${outside}.` : ""}`);
     insideDetail();
     if (focus) detail.querySelector<HTMLButtonElement>("[data-cap-part='leave']")?.focus();
     root.dispatchEvent(new CustomEvent("cap:system-map-enter", { bubbles: true, detail: { id: coreTile.dataset.id } }));
+  };
+
+  // With circles: the rest of the circles, fetched once the page has loaded and gone quiet, off
+  // its first paint's path; a tap before then waits for them. A failed fetch adds nothing, and
+  // those systems are then chosen with their lines, as without circles.
+  let loading: Promise<void> | null = null;
+  const load = () =>
+    (loading ??= (async () => {
+      const url = root.dataset.insides;
+      if (!url) return;
+      let all: Record<string, string> = {};
+      try {
+        const res = await fetch(url);
+        if (res.ok) all = (await res.json()) as Record<string, string>;
+      } catch {
+        return;
+      }
+      for (const [id, svg] of Object.entries(all)) {
+        if (layers.has(id)) continue;
+        const t = document.createElement("template");
+        t.innerHTML = svg;
+        const layer = t.content.firstElementChild;
+        if (layer) stage.appendChild(layer);
+      }
+      findLayers();
+      root.setAttribute("data-insides-ready", "");
+    })());
+
+  /** What a circle holds, in words: its parts, what is outside it and the systems round its rim. */
+  const describe = (id: string, layer: SVGSVGElement) => {
+    const names = (sel: string) =>
+      [...layer.querySelectorAll(sel)]
+        .map((b) => [...b.querySelectorAll(".cap-system-map-box-name, .cap-system-map-rim-name")].map((t) => t.textContent).join(" ").replace(/- /g, "-"))
+        .filter(Boolean);
+    const series = (items: string[]) => (items.length < 2 ? items.join("") : items.length === 2 ? `${items[0]} and ${items[1]}` : `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`);
+    const parts = names(".cap-system-map-box:not([data-external])");
+    const outside = names(".cap-system-map-box[data-external]");
+    const rims = names(".cap-system-map-rim");
+    return `${systems.get(id)?.name ?? id}: ${parts.length ? `${series(parts)} inside.` : "no parts."}${outside.length ? ` Outside: ${series(outside)}.` : ""}${rims.length ? ` Connects to ${series(rims)}.` : ""}`;
+  };
+
+  /** With circles, one tap on a system zooms into its circle, which grows out of its capsomer. */
+  const zoom = (id: string, focus: boolean) => {
+    waiting = id;
+    const layer = layers.get(id);
+    if (!layer) {
+      // Zoomed once its circle is in, unless the reader has chosen something else, or gone back, by then.
+      if (root.dataset.insides && !root.hasAttribute("data-insides-ready")) {
+        void load().then(() => {
+          if (waiting === id && layers.has(id)) zoom(id, focus);
+        });
+      }
+      return;
+    }
+    if (zoomed === id) return;
+    stopFlow(true);
+    zoomed = id;
+    const tile = tileOf(id);
+    const shell = root.querySelector<SVGSVGElement>("[data-layer='core']")?.viewBox.baseVal;
+    if (tile && shell?.width) layer.style.setProperty("transform-origin", `${(((Number(tile.dataset.x) - shell.x) / shell.width) * 100).toFixed(1)}% ${(((Number(tile.dataset.y) - shell.y) / shell.height) * 100).toFixed(1)}%`);
+    for (const [key, l] of layers) {
+      l.toggleAttribute("data-shown", key === id);
+      l.setAttribute("aria-hidden", "true");
+      l.removeAttribute("role");
+      l.removeAttribute("aria-label");
+    }
+    root.dataset.zoom = id;
+    root.setAttribute("data-entered", "");
+    if (out) out.hidden = false;
+    layer.removeAttribute("aria-hidden");
+    layer.setAttribute("role", "img");
+    layer.setAttribute("aria-label", describe(id, layer));
+    insideDetail();
+    if (focus) {
+      // In the next frame, as is the scroll: focus lays the page out, and the tap's own handler stays short.
+      requestAnimationFrame(() => {
+        if (zoomed !== id) return;
+        out?.focus({ preventScroll: true });
+        // The circle in view, with the detail line above it where they fit together.
+        const top = Math.min(detail.getBoundingClientRect().top, stage.getBoundingClientRect().top);
+        const bottom = Math.max(detail.getBoundingClientRect().bottom, stage.getBoundingClientRect().bottom);
+        const by = bottom > innerHeight - 8 ? Math.min(top - 8, bottom - innerHeight + 8) : top < 0 ? top - 8 : 0;
+        if (by) scrollBy({ top: by, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      });
+    }
+    root.dispatchEvent(new CustomEvent("cap:system-map-enter", { bubbles: true, detail: { id } }));
   };
 
   const leave = () => {
     if (!root.hasAttribute("data-entered")) return;
     stopFlow(true);
     root.removeAttribute("data-entered");
+    if (circles) {
+      const was = zoomed;
+      zoomed = null;
+      waiting = null;
+      delete root.dataset.zoom;
+      if (out) out.hidden = true;
+      for (const l of layers.values()) {
+        l.removeAttribute("data-shown");
+        l.setAttribute("aria-hidden", "true");
+        l.removeAttribute("role");
+        l.removeAttribute("aria-label");
+      }
+      select(null);
+      if (was) focusTile(was);
+      root.dispatchEvent(new CustomEvent("cap:system-map-leave", { bubbles: true, detail: { id: was } }));
+      return;
+    }
     inside?.setAttribute("aria-hidden", "true");
     inside?.removeAttribute("role");
     if (coreTile) {
       select(coreTile.dataset.id!);
       focusTile(coreTile.dataset.id!);
     }
+    root.dispatchEvent(new CustomEvent("cap:system-map-leave", { bubbles: true, detail: { id: coreTile?.dataset.id } }));
   };
 
   const setView = (view: "shell" | "plain") => {
@@ -311,6 +443,12 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
   };
 
   const activate = (id: string) => {
+    if (circles) {
+      if (zoomed === id) return;
+      select(id);
+      zoom(id, true);
+      return;
+    }
     if (root.hasAttribute("data-entered")) leave();
     if (selected === id && enterable(id)) enter();
     else select(id);
@@ -318,6 +456,21 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
 
   const onClick = (e: Event) => {
     const target = e.target as Element;
+    if (circles && zoomed) {
+      if (target.closest("[data-cap-part='out']")) return leave();
+      // Another system on the rim zooms there; a tap outside the circle goes back.
+      const goto = target.closest<SVGGElement>(".cap-system-map-rim[data-goto]")?.dataset.goto;
+      if (goto && tileOf(goto)) {
+        for (const t of tiles) t.setAttribute("tabindex", t.dataset.id === goto ? "0" : "-1");
+        return activate(goto);
+      }
+      const circle = layers.get(zoomed)?.querySelector<SVGCircleElement>(".cap-system-map-boundary");
+      const m = circle?.getScreenCTM();
+      if (circle && m && e instanceof MouseEvent && stage.contains(target) && !target.closest(".cap-system-map-box")) {
+        const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
+        if (Math.hypot(p.x - circle.cx.baseVal.value, p.y - circle.cy.baseVal.value) > circle.r.baseVal.value) return leave();
+      }
+    }
     const tile = target.closest<SVGGElement>(".cap-system-map-tile[data-id]");
     if (tile && stage.contains(tile)) {
       focusTile(tile.dataset.id!);
@@ -378,11 +531,33 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
     if (next) focusTile(next);
   };
 
+  // With circles, Escape goes back to the map from anywhere on the page; while a flow plays it stops the flow first.
+  const onPageKey = (e: KeyboardEvent) => {
+    if (e.key !== "Escape" || e.defaultPrevented || !zoomed || playing) return;
+    e.preventDefault();
+    leave();
+  };
+  const later = () => ("requestIdleCallback" in window ? requestIdleCallback(() => void load(), { timeout: 2000 }) : setTimeout(() => void load(), 200));
+  if (circles) {
+    document.addEventListener("keydown", onPageKey);
+    if (root.dataset.insides) {
+      if (document.readyState === "complete") later();
+      else addEventListener("load", later, { once: true });
+    }
+    // Drawn zoomed into by the server (systemMapHtml's circles.chosen): the same state, with no movement.
+    const asked = root.dataset.zoom;
+    if (asked && tileOf(asked)) {
+      for (const t of tiles) t.setAttribute("tabindex", t.dataset.id === asked ? "0" : "-1");
+      select(asked);
+      zoom(asked, false);
+    }
+  }
+
   root.addEventListener("click", onClick);
   root.addEventListener("keydown", onKey);
   return {
     select,
-    enter,
+    enter: (id?: string) => enter(id),
     leave,
     setView,
     playFlow: (id: string, n = 1) => playFlow(id, n, false),
@@ -392,6 +567,8 @@ export function controller(root: HTMLElement, openLabel = "Open"): SystemMapCont
       stopFlow(true);
       root.removeEventListener("click", onClick);
       root.removeEventListener("keydown", onKey);
+      document.removeEventListener("keydown", onPageKey);
+      removeEventListener("load", later);
     },
   };
 }
