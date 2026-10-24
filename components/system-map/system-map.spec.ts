@@ -208,6 +208,43 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
   });
 
+  test("behaviour: with circles, one tap zooms into any system, its rim zooms on, and Back, Escape or a tap outside returns", async ({ page }) => {
+    const map = page.locator("#map-circles");
+    await tile(page, "map-circles", "carrel").click();
+    await expect(map).toHaveAttribute("data-zoom", "carrel");
+    await expect(map.getByRole("img", { name: /^Carrel: no parts\. Connects to .*Capsid/ })).toBeVisible();
+    await expect(map.locator("[data-layer='inside']:not([data-shown])").first()).toBeHidden();
+    const out = map.getByRole("button", { name: "Back to all systems" });
+    await expect(out).toBeFocused();
+    await map.locator("[data-shown] .cap-system-map-rim[data-goto='capsid']").click();
+    await expect(map).toHaveAttribute("data-zoom", "capsid");
+    await expect(map.getByRole("img", { name: /^Capsid: MCP Worker, Portal, .* inside\. Outside: Agents and GitHub\./ })).toBeVisible();
+    // The core's circle plays its flows.
+    await map.getByRole("button", { name: "Play: A job's life" }).click();
+    await expect(map).toHaveAttribute("data-flow", "job-life");
+    await page.keyboard.press("Escape");
+    await expect(map).not.toHaveAttribute("data-flow", /./);
+    await page.keyboard.press("Escape");
+    await expect(map).not.toHaveAttribute("data-entered", "");
+    expect(await focusedId(page)).toBe("capsid");
+    await tile(page, "map-circles", "site").click();
+    await out.click();
+    await expect(map).not.toHaveAttribute("data-entered", "");
+    await tile(page, "map-circles", "site").click();
+    // A locator click waits for the stage to stop moving: zooming in scrolls the circle into view.
+    await map.locator(".cap-system-map-stage").click({ position: { x: 4, y: 4 } });
+    await expect(map).not.toHaveAttribute("data-entered", "");
+    await expect(out).toBeHidden();
+  });
+
+  test("behaviour: with circles, a chosen system is delivered zoomed into, its lines on", async ({ page }) => {
+    const map = page.locator("#map-zoomed");
+    await expect(map).toHaveAttribute("data-zoom", "carrel");
+    await expect(map.locator("[data-layer='inside'][data-system='carrel']")).toBeVisible();
+    await expect(tile(page, "map-zoomed", "carrel")).toHaveAttribute("aria-pressed", "true");
+    await expect(map.locator(".cap-system-map-edge[data-on]")).not.toHaveCount(0);
+  });
+
   test("behaviour: delivered with no script, the drawing is one named picture and the list is open", async ({ page }) => {
     await expect(page.getByRole("img", { name: /The family, no script: 16 systems in rings/ })).toBeAttached();
     await expect(page.locator("#map-plain-html .cap-system-map-list")).toHaveAttribute("open", "");

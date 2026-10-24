@@ -22,6 +22,18 @@
   <div data-mount="flow"></div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-circles">
+  <h2 id="s-circles">Every system's wiring</h2>
+  <p>With circles drawn at build time, one tap on any system zooms into it: its parts inside, what it works with outside, and the systems it connects to round the rim. A system on the rim is a tap to zoom there; Back to all systems, Escape or a tap outside the circle returns.</p>
+  <div data-mount="circles"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-zoomed">
+  <h2 id="s-zoomed">Zoomed into one system, as delivered</h2>
+  <p>A shared link to Carrel: the server draws it zoomed in, its lines on, before any script and with none.</p>
+  <div data-mount="zoomed"></div>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-plain">
   <h2 id="s-plain">The plain map</h2>
   <p>The same data as three columns, for a reader who wants the list rather than the drawing.</p>
@@ -42,6 +54,7 @@
 
 <script type="module">
   import { controller, enhance, systemMapHtml } from "./system-map.ts";
+  import { circleLayers } from "./system-map-circles.ts";
 
   // Sample data in the family's own words. Private systems carry a name and an address only.
   const data = {
@@ -119,6 +132,10 @@
   };
 
   mount("shell", { id: "map", label: "The family", caption });
+  // A build would draw these once and keep them; the sample family is small enough to draw here.
+  const layers = circleLayers(data);
+  mount("circles", { id: "map-circles", label: "The family, every system's wiring", circles: { layers } });
+  mount("zoomed", { id: "map-zoomed", label: "The family, inside Carrel", circles: { layers: { carrel: layers.carrel }, chosen: "carrel" } });
   mount("noscript", { id: "map-plain-html", label: "The family, no script" });
   const states = mount("states", { id: "map-states", label: "The family, forced states" });
   states.querySelector(".cap-system-map-tile[data-id='prelum']").setAttribute("data-force", "hover");
@@ -129,6 +146,7 @@
   const plain = controller(mount("plain", { id: "map-plain", label: "The family, plain" }));
   const flow = controller(mount("flow", { id: "map-flow", label: "Capsid: a job's life" }));
   enhance(document.querySelector("[data-mount='shell']"));
+  enhance(document.querySelector("[data-mount='circles']"));
   for (const el of document.querySelectorAll("#map-chosen, #map-inside, #map-plain, #map-flow")) el.setAttribute("data-cap-ready", "");
   chosen.select("carrel");
   inside.select("capsid");

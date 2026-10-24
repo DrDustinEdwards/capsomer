@@ -64,6 +64,55 @@ export interface SystemMapData {
   flows?: readonly MapFlow[];
 }
 
+// Capsid's public model as it is served, before the map's narrowing: each system carries its
+// family (what kind of thing it is), which the map turns into a group and a word.
+export interface ModelSystem {
+  id: string;
+  name: string;
+  short?: string;
+  ring: MapRing;
+  private?: boolean;
+  family: string;
+  description?: string;
+  domain?: string;
+}
+
+export interface SystemModel {
+  systems: readonly ModelSystem[];
+  relationships: readonly MapLink[];
+  containers: readonly MapContainer[];
+}
+
+// The word under a system and the group it is drawn in, in a stranger's words (Dustin,
+// 2026-10-23: like goes with like, and the map should explain itself). An admin MCP sits in
+// its app's group and says so.
+const FAMILY_WORD: Record<string, string> = { system: "tool", writing: "writing", product: "app", plumbing: "tool", site: "site" };
+const FAMILY_GROUP: Record<string, string> = { system: "Tools", writing: "Writing", product: "Apps", plumbing: "Tools", site: "Websites" };
+
+/**
+ * What the map draws from Capsid's public model, the same on every host: each system with its
+ * word and, for what people use, its group, every line, and the parts with their kind (the box
+ * under a part's name is sized for a word). `href` is where a system's "Open" goes.
+ */
+export function modelMapData(model: SystemModel, href?: (id: string) => string): SystemMapData {
+  return {
+    systems: model.systems.map((s) => ({
+      id: s.id,
+      name: s.name,
+      short: s.short,
+      ring: s.ring,
+      private: s.private,
+      tag: s.ring === "core" ? undefined : s.ring === "shared" ? "shared" : s.id.endsWith("-mcp") ? "admin" : (FAMILY_WORD[s.family] ?? s.family),
+      group: s.ring === "used" ? FAMILY_GROUP[s.family] : undefined,
+      description: s.description,
+      domain: s.domain || undefined,
+      href: href?.(s.id),
+    })),
+    relationships: model.relationships.map(({ from, to, kind }) => ({ from, to, kind })),
+    containers: model.containers.map(({ id, system, name, kind }) => ({ id, system, name, kind })),
+  };
+}
+
 export interface SystemMapOptions {
   // Unique on the page; prefixes every id the map writes.
   id?: string;
@@ -72,6 +121,11 @@ export interface SystemMapOptions {
   ringNames?: Partial<Record<MapRing, string>>;
   headingLevel?: 2 | 3 | 4 | 5 | 6;
   openLabel?: string;
+  // Every system's inside, from circleLayers (system-map-circles.ts): one tap on any capsomer
+  // zooms into its circle. `layers` are put in the markup, `src` is the address of all of them
+  // as one JSON object by id, which the script fetches once the page has loaded, and `chosen`
+  // is drawn zoomed into, with no script.
+  circles?: { layers?: Readonly<Record<string, string>>; src?: string; chosen?: string };
 }
 
 // ---------------------------------------------------------------------------------------
