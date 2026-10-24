@@ -6,6 +6,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 **Site only: the showcase site's `Reporting-Endpoints` header comes from site-runtime v0.12.0's `reportingEndpoints`** in place of a hand-written string (no package change). The header and the Content-Security-Policy are unchanged. site-runtime is a dev dependency at v0.12.0.
 
+**Development: site-runtime v0.12.1** (loopback report endpoints, `nonceStyles` and `baseUriSelf`). Dev dependency only; no class, token or HTML contract changes.
+
 ## [0.16.0]
 
 **New: inside any system, in one tap** (Dustin, 2026-10-24: the Capsid explorer and dustinedwards.info should draw the map with the same code). dustinedwards.info drew every system's wiring with its own engine, beside Capsomer's map; that engine is now Capsomer's, and both sites use it. `capsomer/system-map-circles` exports `circleLayers(data, { summary?, saved? })`, which draws each system's circle at build time (its parts inside, what it works with outside and every system it connects to round the rim, searched for from fixed seeds so the same data draws the same way), with `sceneOf`, `layoutScene`, `layoutKey` and `faultsOf`. `saved` keeps the circles found, by system id under a key of what drew each (its boxes, its wires, its width and the search's own code), so a build searches again only for a circle that changed. Drawn from dustinedwards.info's model, all 23 circles are byte for byte the ones its own engine drew, the class names aside.
