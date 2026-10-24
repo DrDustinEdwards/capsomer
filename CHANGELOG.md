@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## Unreleased
+
+**Site only: the showcase site's `Reporting-Endpoints` header comes from site-runtime v0.12.0's `reportingEndpoints`** in place of a hand-written string (no package change). The header and the Content-Security-Policy are unchanged. site-runtime is a dev dependency at v0.12.0.
+
 ## [0.15.1]
 
 **Fix: a pnpm install of Capsomer builds wherever the store sits.** `Pagination`, `Spinner`, `Skeleton` and `SkeletonBlock` now state their return type (`ReactElement`, and `| null` for `Pagination`). Without it, the install-time build failed with TS2883 when the package was built under a `node_modules` path, which is where pnpm's store sits by default, so Foxing's CI had to move its store. No class, token or HTML contract changes.
