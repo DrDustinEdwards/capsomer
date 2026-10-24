@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## 0.17.0 (2026-10-24)
+
 **Foxing's asks** (apps/web on Capsomer v0.16.0, which kept its own copy of each).
 
 - **New site: `foxing`** in `SITES`, exported as `capsomer/site-foxing.css` and in `capsomer/sites.css`, on `<html>` with `data-cap-site="foxing"` under the fox family: Foxing's cream and charcoal neutrals, DM Sans for the UI, DM Mono, Fraunces as its display face and the sky-blue on state of its Rule 05. Its `app/styles/site-foxing.css` can go. Rule 05's `#43a1d8` is 2.7:1 on the cream ground in the light theme, under the 3:1 a checked box needs, so the light theme takes Foxing's own hover blue `#2b87bc` (hover `#1f7fb8`); the dark theme keeps `#43a1d8` (hover `#5aafe0`). Foxing's to change.
