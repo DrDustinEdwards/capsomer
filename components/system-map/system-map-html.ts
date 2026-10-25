@@ -8,9 +8,9 @@ import { BOX_H, insideScene, playableFlows } from "./system-map-inside.ts";
 
 const RING_NAMES: Record<MapRing, string> = { core: "Runs everything", shared: "Shared parts", used: "What people use" };
 
-export function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+import { escapeHtml } from "../email/email.ts";
+
+export { escapeHtml };
 
 export function hexPoints(x: number, y: number, r: number): string {
   return Array.from({ length: 6 }, (_, i) => {

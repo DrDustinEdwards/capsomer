@@ -7,11 +7,9 @@
 // the React wrapper uses the same functions.
 import { readPref, writePref } from "../shell/shell.ts";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
+import { isThemeChoice as isChoice, THEME_PREF, type ThemeChoice } from "./theme-server.ts";
 
-export type ThemeChoice = "light" | "dark";
-export const THEME_PREF = "cap-theme";
-
-const isChoice = (v: string | null | undefined): v is ThemeChoice => v === "light" || v === "dark";
+export { THEME_PREF, type ThemeChoice };
 
 // What the person chose and the browser remembers, or null if they never did. A "system"
 // remembered by 0.1.0 reads as no choice: the system's setting applies, as it did.

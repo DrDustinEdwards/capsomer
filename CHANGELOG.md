@@ -19,6 +19,14 @@ Each release names every removed or renamed token or class, and every changed HT
   - Changes shows unreleased work and the last three releases.
   - A long changelog line no longer pushes a phone page sideways.
   - The Settings page, which held two paragraphs and no settings, is gone; `#/settings` opens the overview.
+
+## [0.21.0]
+
+**Shared server code, moved here from the sites** (Dustin, 2026-10-25: "we keep finding things that are not moved to the shared core components").
+
+- **New: the theme switch's server half, `capsomer/theme-server`**: `readThemeCookie`, `themeCookie`, `colorSchemeContent` and `themeScript`, with no DOM, so a server-rendered site writes the person's theme into the first byte. dustinedwards.info, Foxhound and txasm each wrote their own; they move onto this. `THEME_PREF` and `ThemeChoice` now live there; `capsomer/behavior/theme-switch` still exports both.
+- **One HTML escape inside Capsomer.** `chart-frame`, `system-map` and `draft-compare` now use the email builder's `escapeHtml` (they still export it under the same names). system-map and draft-compare now also escape `'`, which is safe and changes no visible text.
+
 - **American spelling throughout** (Dustin, 2026-10-25: "i literally live in Texas. why the fuck would i want british spelling on anything"). Every doc, comment, test name and the showcase now spell color, behavior, center, gray, labeled, neighbor, catalog, license, summarize and analyze the American way. Nothing that apps use breaks; each renamed name keeps its old spelling working:
   - Import path `capsomer/behavior/<name>`; `capsomer/behaviour/<name>` still resolves.
   - `summarize` (authorship), `analyze` (draft compare) and `renderEmailColors` (palette); `summarise`, `analyse` and `renderEmailColours` stay as deprecated aliases.
