@@ -22,12 +22,12 @@ const AUTHOR = { "@type": "Person", "@id": "https://dustinedwards.info/#person",
 const ADMIN_DESCRIPTION =
   "Capsomer's admin: every token, every component in every state, and each component's test results.";
 
-/** A page's head: title, description, canonical, Open Graph and Twitter with the card; the public page also carries the JSON-LD. */
+/** A page's head: title, description, canonical, Open Graph and Twitter with the card; the public page also carries the JSON-LD, and the admin says noindex so search shows the public page. */
 export function siteHead(page: "home" | "admin"): string {
   const card = { url: "/og-card.png", width: 1200, height: 630, alt: "Capsomer, the family design system" };
   if (page === "admin")
     return headHtml(
-      headTags({ origin: ORIGIN, path: "/admin/", title: "Capsomer admin", description: ADMIN_DESCRIPTION, image: card, siteName: "Capsomer", locale: "en_US" }),
+      headTags({ origin: ORIGIN, path: "/admin/", title: "Capsomer admin", description: ADMIN_DESCRIPTION, image: card, siteName: "Capsomer", locale: "en_US", noindex: true }),
     );
   return headHtml([
     ...headTags({
@@ -60,7 +60,7 @@ export function siteHead(page: "home" | "admin"): string {
 /** The discovery files, by their path in the built site. */
 export function discoveryFiles(): Record<string, string> {
   return {
-    "sitemap.xml": sitemapDocument([{ loc: `${ORIGIN}/` }, { loc: `${ORIGIN}/admin/` }]),
+    "sitemap.xml": sitemapDocument([{ loc: `${ORIGIN}/` }]),
     "robots.txt": robotsDocument({ origin: ORIGIN, notes: [`AI usage policy: ${ORIGIN}/ai.txt`, `LLM guide: ${ORIGIN}/llms.txt`] }),
     "ai.txt": aiTxt({ origin: ORIGIN, name: "Capsomer", contact: "contact@dustinedwards.info" }),
     "llms.txt": llmsDocument({
