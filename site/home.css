@@ -302,31 +302,34 @@ h2 {
     translate: 0 0.12em;
   }
 }
-.home-steps {
+/* The palette as one systematic grid, after Richard Paul Lohse: six rows of twelve equal squares,
+   no gaps, the family's name at the head of its row. */
+.home-lohse {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 3px;
-  margin: var(--space-2) 0 0;
-  padding: 0;
-  list-style: none;
-  font-size: 0.75rem;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-7);
 
-  & li {
-    display: grid;
-    gap: 4px;
+  & figcaption {
+    max-width: 44rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
   }
-  & li::before {
-    content: "";
-    block-size: 36px;
+}
+.home-lohse-grid {
+  display: grid;
+  grid-template-columns: minmax(3.5rem, auto) repeat(12, minmax(0, 1fr));
+  align-items: center;
+
+  & i {
+    display: block;
+    aspect-ratio: 1;
     background: var(--swatch);
-    border: 1px solid var(--line);
   }
-  & li[data-step="9"] {
-    font-weight: 800;
-    color: var(--text);
-  }
+}
+.home-lohse-name {
+  padding-inline-end: var(--space-3);
+  font-weight: 600;
+  font-size: 0.875rem;
 }
 [data-step="1"] { --swatch: var(--accent-1); }
 [data-step="2"] { --swatch: var(--accent-2); }
@@ -340,6 +343,63 @@ h2 {
 [data-step="10"] { --swatch: var(--accent-10); }
 [data-step="11"] { --swatch: var(--accent-11); }
 [data-step="12"] { --swatch: var(--accent-12); }
+
+/* Albers squares: each family's steps nested, the inner square set low, as in Homage to the
+   Square; under each, the ratio of its accent text on its page. */
+.home-albers-h {
+  margin-block-start: var(--space-8);
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  letter-spacing: -0.02em;
+}
+.home-albers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--space-5) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & p {
+    margin: var(--space-2) 0 0;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+  & b {
+    color: var(--text);
+  }
+}
+.home-albers-sq,
+.home-albers-sq div {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  box-sizing: border-box;
+}
+.home-albers-sq {
+  /* Albers kept every square square and sank it: the side gap is the
+     mean of a wide top and a narrow bottom. */
+  aspect-ratio: 1;
+  padding: 15% 10% 5%;
+  background: var(--accent-3);
+
+  & > div {
+    inline-size: 100%;
+    block-size: 100%;
+    padding: 18.75% 12.5% 6.25%;
+    background: var(--accent-6);
+  }
+  & > div > div {
+    inline-size: 100%;
+    block-size: 100%;
+    padding: 25% 16.7% 8.3%;
+    background: var(--accent-9);
+  }
+  & > div > div > div {
+    inline-size: 100%;
+    block-size: 100%;
+    background: var(--accent-11);
+  }
+}
 
 /* Type: each face as a specimen, then the scale at its own sizes. */
 .home-faces {

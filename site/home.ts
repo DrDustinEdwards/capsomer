@@ -21,6 +21,8 @@ interface Data {
   components: Component[];
   families: Record<string, { seed: string; note: string }>;
   pairs: { total: number; failing: number } | null;
+  // Each family's accent text on its surface, light then dark: the pair the Albers squares name.
+  accentText: Record<string, [number, number]>;
   tests: { passed: number; failed: number } | null;
   type: Array<[string, string, string]>;
   defaults: string[];
@@ -56,6 +58,13 @@ export function readData(root: string): Data {
     version: JSON.parse(readFileSync(resolve(root, "package.json"), "utf8")).version,
     components,
     families: fams?.families ?? {},
+    accentText: Object.fromEntries(
+      FAMILIES.map((f) => {
+        const ratio = (scheme: string) =>
+          (fams?.pairs ?? []).find((p: { family: string; scheme: string; fg: string; bg: string }) => p.family === f && p.scheme === scheme && p.fg === "accent-text" && p.bg === "surface")?.ratio ?? 0;
+        return [f, [ratio("light"), ratio("dark")]];
+      }),
+    ),
     pairs: fams ? { total: fams.pairs.length, failing: fams.pairs.filter((p: { pass: boolean }) => !p.pass).length } : null,
     tests: results?.available ? { passed: results.totals.passed, failed: results.totals.failed } : null,
     type,
@@ -107,10 +116,24 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   <div class="home-wrap">
     <h2 id="colour-h">Six families from six seeds</h2>
     <p class="home-sub">Each family is one 12-step scale with the same job for each step: step 9 is the seed, step 11 is text, step 10 fills the main button. A site picks its family with one attribute, <code>data-family</code>. These scales follow your device's theme.</p>
+    <figure class="home-lohse" aria-labelledby="lohse-c">
+      <div class="home-lohse-grid" role="img" aria-label="The six families as six rows of twelve steps, lightest on the left.">
+        ${FAMILIES.map((f) => `<span class="home-lohse-name">${NAMES[f]}</span>${Array.from({ length: 12 }, (_, i) => `<i${fam(f)} data-step="${i + 1}"></i>`).join("")}`).join("")}
+      </div>
+      <figcaption id="lohse-c">Seventy-two colours, six rows of twelve steps, in your device's theme. Laid out after Richard Paul Lohse's systematic colour series (Zurich, from 1943), where every square is the same size and the system makes the picture.</figcaption>
+    </figure>
     <ul class="home-families">
       ${FAMILIES.map((f) => {
         const info = d.families[f];
-        return `<li${fam(f)}><p class="home-family-name" aria-hidden="true"><span>${NAMES[f]}</span></p><h3>${NAMES[f]} <code>${esc(info?.seed ?? "")}</code></h3><p>${esc((info?.note ?? "").replace(/\s*\(rules?[^)]*\)/g, ""))}</p><ol class="home-steps" aria-label="${NAMES[f]}, steps 1 to 12">${Array.from({ length: 12 }, (_, i) => `<li data-step="${i + 1}"><span>${i + 1}</span></li>`).join("")}</ol></li>`;
+        return `<li${fam(f)}><p class="home-family-name" aria-hidden="true"><span>${NAMES[f]}</span></p><h3>${NAMES[f]} <code>${esc(info?.seed ?? "")}</code></h3><p>${esc((info?.note ?? "").replace(/\s*\(rules?[^)]*\)/g, ""))}</p></li>`;
+      }).join("\n      ")}
+    </ul>
+    <h3 class="home-albers-h">${d.pairs ? `${d.pairs.total - d.pairs.failing} of ${d.pairs.total} contrast pairs pass` : "Every contrast pair is checked"}</h3>
+    <p class="home-sub">A colour is only as readable as what sits behind it, so the generator checks every pair a component puts together, in both themes, against WCAG 2.2. The squares are after Josef Albers's <i>Homage to the Square</i> (from 1950), his study of how a colour changes with the one around it.</p>
+    <ul class="home-albers">
+      ${FAMILIES.map((f) => {
+        const [l, dk] = d.accentText[f] ?? [0, 0];
+        return `<li${fam(f)}><div class="home-albers-sq" aria-hidden="true"><div><div><div></div></div></div></div><p><b>${NAMES[f]}</b> text on its page: ${l.toFixed(1)}:1 light, ${dk.toFixed(1)}:1 dark</p></li>`;
       }).join("\n      ")}
     </ul>
   </div>
