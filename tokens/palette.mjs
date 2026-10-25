@@ -7,7 +7,8 @@
 // The family scale (rulings.md, rule 14, locked 2026-10-01): every brand colour is a
 // 12-step OKLCH scale with the same lightness roles, the Radix Colors step roles (1 and 2
 // backgrounds, 3 to 5 element backgrounds, 6 to 8 borders, 9 the solid accent, 10 its hover,
-// 11 low-contrast text, 12 high-contrast text). Step 9 is the seed exactly, in both themes.
+// 11 low-contrast text, 12 high-contrast text). Step 9 is the seed exactly, in both themes,
+// except a seed too light for 3:1 on the light surfaces (amber), darkened in light (lightStep9).
 // Step 11 in the light theme may be a fixed anchor: the purple family keeps #4F2D7F there.
 // Every other step takes the seed's hue at a fixed lightness and a fixed share of the
 // seed's chroma, so two families with the same seed lightness and chroma (purple #8c5fd2
@@ -15,14 +16,14 @@
 // chroma at the seed's hue; status hues are fixed and tuned by bisection against the
 // hardest surface each sits on. The OKLab conversion follows Bjorn Ottosson's reference.
 //
-//   node tokens/palette.mjs                       colour.css (purple), family-fox.css, family-teal.css, family-navy.css, family-forest.css
+//   node tokens/palette.mjs                       colour.css (purple), family-<name>.css for every other family
 //   node tokens/palette.mjs --family=fox --out=f  Foxing's family as a root theme into f
 //   node tokens/palette.mjs --seed=#RRGGBB [--anchor=#RRGGBB] --out=f
 //   node tokens/palette.mjs --report              every pair, every family, both themes
 //
 // tokens/colour.css is the purple family on :root (the default). tokens/family-fox.css,
-// tokens/family-teal.css, tokens/family-navy.css and tokens/family-forest.css carry the same tokens scoped to
-// [data-family="fox"], [data-family="teal"], [data-family="navy"] and [data-family="forest"], so one element (the root, or a wrapper) can switch family for its
+// tokens/family-teal.css, tokens/family-navy.css, tokens/family-forest.css and tokens/family-amber.css carry the same tokens scoped to
+// [data-family="fox"], [data-family="teal"], [data-family="navy"], [data-family="forest"] and [data-family="amber"], so one element (the root, or a wrapper) can switch family for its
 // subtree. Both themes follow the same pattern as colour.css (prefers-color-scheme, then
 // [data-theme]). Everything inside a family block is a literal value, never a var() chain,
 // so a family on a wrapper does not inherit the root family's already-resolved values.
@@ -35,7 +36,15 @@ export const FAMILIES = {
   // setting, so its light theme is checked first as the default with no preference.
   purple: { seed: "#8c5fd2", anchor: "#4F2D7F", defaultTheme: "light", note: "Capsid Portal, Carrel, dustinedwards.info, Germomics (rule 14)" },
   fox: { seed: "#cc4f0c", anchor: null, defaultTheme: "light", note: "Foxing, light by default (rules 14 and 15)" },
-  teal: { seed: "#008489", anchor: null, defaultTheme: "dark", note: "Foxhound, dark by default (rule 15)" },
+  // Capsid's explorer (capsid.dustinedwards.info) since 2026-10-25; it was Foxhound's until amber came back.
+  teal: { seed: "#008489", anchor: null, defaultTheme: "dark", note: "capsid.dustinedwards.info, dark by default (rule 15)" },
+  // Foxhound's amber, Recova's #f0b429 (Dustin, 2026-10-25). Bright enough that white cannot sit
+  // on it, so the primary button carries a dark label in both themes (label: "dark"), as Recova's
+  // did. In the light theme the seed is under 3:1 on the light surfaces, so step 9 there is the
+  // same hue and chroma darkened until it reaches 3:1 (lightStep9), and the button fills with it.
+  // Accent text is Recova's: #8a5c06 in light (the step 11 anchor) and the seed itself in dark,
+  // where it is 10:1 on the ground (a family with a dark label is light enough to be the text).
+  amber: { seed: "#f0b429", anchor: "#8a5c06", label: "dark", defaultTheme: "dark", note: "Foxhound, dark by default; Recova's amber, with a dark button label" },
   // txasm's navy: the brand #002868 is too dark to be step 9 (it fails 3:1 as a focus ring on
   // the dark surface), so it is the light theme's step 11 anchor (links, headings, accent text)
   // and step 9 is the same hue at the lightness and strength of purple and fox (OKLCH L 0.587, C 0.172).
@@ -157,12 +166,24 @@ function seedLch(hex) {
   return { L, C: Math.hypot(a, b), H: ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360 };
 }
 
+// Step 9 in the light theme: the seed, unless it is under 3:1 on the light theme's darkest
+// surface (--raised, below), when it is the seed's hue and chroma darkened until it reaches 3:1.
+// Every family but amber keeps its seed; a light seed like Recova's amber cannot be a focus ring
+// or a large fill on white.
+export function lightStep9(seed) {
+  const { L, C, H } = seedLch(seed);
+  const raised = oklch(0.975, 0.008, H);
+  return contrast(seed, raised) >= CONTROL ? seed.toLowerCase() : tune(C, H, raised, CONTROL + 0.05, L, 0.3);
+}
+
 // The 12 steps of one family in one theme, as hex, index 0 being step 1.
 export function scale(seed, anchor = null, scheme = "light") {
-  const { L, C, H } = seedLch(seed);
+  const { C, H } = seedLch(seed);
+  const step9 = scheme === "light" ? lightStep9(seed) : seed.toLowerCase();
+  const { L } = seedLch(step9);
   return ROLES[scheme].map((role, i) => {
     const step = i + 1;
-    if (step === 9) return seed.toLowerCase();
+    if (step === 9) return step9;
     if (step === 11 && scheme === "light" && anchor) return anchor.toLowerCase();
     const [l, share] = role;
     const lightness = step === 10 ? L + l : l;
@@ -219,7 +240,7 @@ function chartTokens(t, scheme, { C, H }) {
   return out;
 }
 
-function familyTheme(seed, anchor, scheme) {
+function familyTheme(seed, anchor, scheme, label = "light") {
   const { H } = seedLch(seed);
   const s = scale(seed, anchor, scheme);
   const t = {};
@@ -237,16 +258,19 @@ function familyTheme(seed, anchor, scheme) {
   // The accent family, from the scale's roles. Step 9 is the brand colour (fills, the focus
   // ring, large shapes and icons, held to 3:1); step 11 is accent text (4.5:1); the primary
   // button fills with step 10, hovers to step 11, and carries --primary-fg: the surface tone
-  // in light, the ground tone in dark (a lighter fill takes a dark label).
+  // in light, the ground tone in dark (a lighter fill takes a dark label). A family with a dark
+  // label (amber) fills with step 9 and hovers to step 10 in both themes, with the dark ground as its label,
+  // as Recova's amber button kept one near-black label in both themes.
   t.accent = s[8];
   t["accent-hover"] = s[11]; // accent text on hover: step 12
-  t["accent-text"] = s[10];
+  t["accent-text"] = label === "dark" && dark ? s[8] : s[10];
   t["accent-soft"] = s[3];
   t.sel = s[2];
   t["accent-line"] = tune(0.1, H, t.sel, CONTROL, dark ? 0.2 : 0.9, dark ? 0.9 : 0.3);
-  t.primary = s[9];
-  t["primary-hover"] = s[10];
-  t["primary-fg"] = dark ? t.ground : t.surface;
+  const darkLabel = label === "dark";
+  t.primary = darkLabel ? s[8] : s[9];
+  t["primary-hover"] = darkLabel ? s[9] : s[10];
+  t["primary-fg"] = dark || darkLabel ? oklch(0.16, NEUTRAL_CHROMA, H) : t.surface; // the dark ground, in either theme
   // The on state: a checked box or radio, an on switch. The primary fill by default; a site may
   // set its own (Foxing's sky blue, its Rule 05), checked by the pairs below with the tick
   // (--primary-fg) and the switch's thumb (--surface) on it.
@@ -337,13 +361,14 @@ function lines(t, indent, scheme, withScheme) {
 
 const note = (seed, anchor) => {
   const { L, C, H } = seedLch(seed);
-  return `step 9 ${seed.toLowerCase()} (oklch ${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})${anchor ? `, step 11 anchored at ${anchor.toLowerCase()}` : ""}`;
+  const light = lightStep9(seed);
+  return `step 9 ${seed.toLowerCase()} (oklch ${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})${light !== seed.toLowerCase() ? `, ${light} in light` : ""}${anchor ? `, step 11 anchored at ${anchor.toLowerCase()}` : ""}`;
 };
 
 // The default family on the document root: colour.css.
-export function renderFamily(seed, anchor = null) {
-  const l = familyTheme(seed, anchor, "light");
-  const d = familyTheme(seed, anchor, "dark");
+export function renderFamily(seed, anchor = null, label = "light") {
+  const l = familyTheme(seed, anchor, "light", label);
+  const d = familyTheme(seed, anchor, "dark", label);
   return `/* Generated by tokens/palette.mjs: ${note(seed, anchor)}.
    Do not edit: change the script and run \`npm run tokens\`. \`npm run check\` refuses a file
    that differs from what the script writes, and any pair below WCAG 2.2's bar. */
@@ -364,9 +389,9 @@ ${lines(d, "  ", "dark", true)}
 }
 
 // A family scoped to [data-family="name"], on the root or on any wrapper, in both themes.
-export function renderScoped(name, seed, anchor = null) {
-  const l = familyTheme(seed, anchor, "light");
-  const d = familyTheme(seed, anchor, "dark");
+export function renderScoped(name, { seed, anchor = null, label = "light" }) {
+  const l = familyTheme(seed, anchor, "light", label);
+  const d = familyTheme(seed, anchor, "dark", label);
   const f = `[data-family="${name}"]`;
   return `/* Generated by tokens/palette.mjs: the ${name} family, ${note(seed, anchor)}.
    Put data-family="${name}" on the root or on any element to switch its subtree.
@@ -432,7 +457,7 @@ export function renderEmailColours() {
   for (const [name, f] of Object.entries(FAMILIES)) {
     out[name] = {};
     for (const scheme of ["light", "dark"]) {
-      const t = familyTheme(f.seed, f.anchor, scheme);
+      const t = familyTheme(f.seed, f.anchor, scheme, f.label);
       out[name][scheme] = Object.fromEntries(EMAIL_KEYS.map((k) => [k, t[k]]));
     }
   }
@@ -448,13 +473,13 @@ export const emailColours: Record<EmailFamily, { light: EmailColours; dark: Emai
 function active() {
   if (seedArg) return { seed: seedArg, anchor: anchorArg ?? null };
   const f = FAMILIES[familyArg ?? "purple"];
-  return { seed: f.seed, anchor: anchorArg ?? f.anchor };
+  return { seed: f.seed, anchor: anchorArg ?? f.anchor, label: f.label };
 }
 
 // Both themes' tokens and every asserted pair with its ratio, for the site's contrast grid.
-export function themes({ seed, anchor } = active()) {
-  const l = familyTheme(seed, anchor, "light");
-  const d = familyTheme(seed, anchor, "dark");
+export function themes({ seed, anchor, label } = active()) {
+  const l = familyTheme(seed, anchor, "light", label);
+  const d = familyTheme(seed, anchor, "dark", label);
   return { seed, anchor, order: FAMILY_ORDER, elevation: ELEVATION_ORDER, light: { tokens: l, pairs: pairs(l) }, dark: { tokens: d, pairs: pairs(d) } };
 }
 
@@ -462,15 +487,12 @@ export function themes({ seed, anchor } = active()) {
 export function files() {
   if (outArg || seedArg || familyArg) {
     const a = active();
-    return [[outArg ?? "colour.css", renderFamily(a.seed, a.anchor)]];
+    return [[outArg ?? "colour.css", renderFamily(a.seed, a.anchor, a.label)]];
   }
   const p = FAMILIES.purple;
   return [
     ["colour.css", renderFamily(p.seed, p.anchor)],
-    ["family-fox.css", renderScoped("fox", FAMILIES.fox.seed, FAMILIES.fox.anchor)],
-    ["family-teal.css", renderScoped("teal", FAMILIES.teal.seed, FAMILIES.teal.anchor)],
-    ["family-navy.css", renderScoped("navy", FAMILIES.navy.seed, FAMILIES.navy.anchor)],
-    ["family-forest.css", renderScoped("forest", FAMILIES.forest.seed, FAMILIES.forest.anchor)],
+    ...Object.keys(FAMILIES).filter((n) => n !== "purple").map((n) => [`family-${n}.css`, renderScoped(n, FAMILIES[n])]),
     ["enarratio-theme.mjs", renderEnarratioTheme()],
     ["../components/email/colours.ts", renderEmailColours()],
   ];

@@ -7,8 +7,9 @@
 // on 2026-09-30. Each is a default: change it here, run `npm run tokens`, and record why.
 //
 // Density (release 0.2): the sizes a person feels (control height, padding, text size, gap,
-// row height) come in two sets. Compact is the default and starts from the Capsid Portal's
-// values; comfortable starts from shadcn's vega spacing (36 px controls, 14 px text, px-3).
+// row height) come in two sets. Compact is the default: the Capsid Portal's values, raised one
+// step on 2026-10-25 (14 px text, 34 px controls, 40 px rows, 20 px
+// cards); comfortable starts from shadcn's vega spacing (36 px controls, 14 px text, px-3).
 // `[data-density="comfortable"]` on the root or on any wrapper changes them for its subtree.
 // Every density token is written as a literal in both blocks, never as a var() chain, so a
 // wrapper does not inherit a value already resolved at the root.
@@ -90,20 +91,20 @@ export const SCALE = {
 // Density: [name, compact, comfortable, what it is for]. `control` and `control-h` are the
 // same height (control-h is kept from 0.1). Touch raises control and target to 44 px in both.
 export const DENSITY = [
-  ["control", "32px", "36px", "a control's height with a fine pointer (the Portal's 32; shadcn vega's h-9)"],
-  ["control-h", "32px", "36px", "alias of --control, kept from 0.1"],
+  ["control", "34px", "36px", "a control's height with a fine pointer (one step above the Portal's 32; shadcn vega's h-9)"],
+  ["control-h", "34px", "36px", "alias of --control, kept from 0.1"],
   ["target", "24px", "28px", "the smallest hit area (WCAG 2.5.8 asks 24)"],
-  ["pad-x", "11px", "12px", "a control's inline padding (the Portal's 11; vega's px-3)"],
-  ["pad-y", "6px", "8px", "a control's block padding where it is not a fixed height (a textarea, a menu item)"],
-  ["pad-card", "16px", "24px", "a card or panel's padding (shadcn's card spacing, nova 16 and vega 24)"],
+  ["pad-x", "12px", "12px", "a control's inline padding (vega's px-3)"],
+  ["pad-y", "7px", "8px", "a control's block padding where it is not a fixed height (a textarea, a menu item)"],
+  ["pad-card", "20px", "24px", "a card or panel's padding (shadcn's card spacing, nova 16 and vega 24)"],
   ["fs-label", "11px", "12px", "column labels and section titles, uppercase; nothing is set smaller"],
-  ["fs-detail", "12px", "13px", "the line under a row title"],
-  ["fs-body", "13px", "14px", "app body and rows (vega's text-sm)"],
+  ["fs-detail", "13px", "13px", "the line under a row title"],
+  ["fs-body", "14px", "14px", "app body and rows (vega's text-sm)"],
   ["fs-lead", "15px", "16px", "a page's lead line"],
-  ["gap", "12px", "16px", "between rows of a form and between sibling blocks"],
-  ["row-h", "36px", "44px", "the least height of a list or table row"],
+  ["gap", "14px", "16px", "between rows of a form and between sibling blocks"],
+  ["row-h", "40px", "44px", "the least height of a list or table row"],
 ];
-const LEADING = ["leading", "1.45", "1.5"];
+const LEADING = ["leading", "1.5", "1.5"];
 // The alias components read for the reading size; it follows density.
 const TEXT_SIZE = ["text-size", "var(--fs-body)"];
 // Touch: the height a thumb needs wins over density.

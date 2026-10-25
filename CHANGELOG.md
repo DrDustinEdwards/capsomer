@@ -4,6 +4,15 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.18.0]
+
+**Foxhound back to amber** (Dustin, 2026-10-25: Foxhound keeps Recova's amber and its old sizes; teal goes to capsid.dustinedwards.info).
+
+- **New: the `amber` family.** `data-family="amber"` switches an element's subtree to Recova's amber `#f0b429`, in both themes; `capsomer/families.css` now imports it, or take it alone as `capsomer/family-amber.css`. Dark is its default theme, where step 9 is `#f0b429` itself (10:1 on the dark ground). The seed is under 3:1 on the light surfaces, so in the light theme step 9 is the same hue and chroma darkened to 3:1 (`#b68508`), from the new `lightStep9()`; every other family keeps its seed, unchanged. White cannot sit on amber, so the family's primary button carries the dark ground as its label in both themes (new family option `label: "dark"`), as Recova's did, and fills with step 9 (Recova's `#f0b429` in dark) and hovers to step 10. Its accent text is Recova's: `#8a5c06` in light (the step 11 anchor) and `#f0b429` itself in dark (10:1), not the paler step 11 the other families use there. Every pair passes WCAG 2.2 in both themes. `EmailFamily` gains `"amber"`. The teal family is unchanged; its note now names capsid.dustinedwards.info.
+- **Site `foxhound` moves to the amber family and Recova's sizes:** `--display` DM Sans (its page titles fell back to a system face, since Foxhound loads no Schibsted Grotesk), `--fs-detail` 13px, `--fs-body` 14px, `--control` and `--control-h` 38px, `--pad-x` 14px, `--pad-y` 8px, `--pad-card` 20px, `--row-h` 44px, with 44px controls kept under a coarse pointer. Foxhound puts `data-family="amber"` where it had `"teal"`.
+- **Compact density, one step roomier** (Dustin, 2026-10-25: "revisit Capsomer's spacing... now we are just adjusting to get things just right"). The default compact set changes on every site that does not set its own: `--fs-body` 13px to 14px, `--fs-detail` 12px to 13px, `--control` and `--control-h` 32px to 34px, `--pad-x` 11px to 12px, `--pad-y` 6px to 7px, `--pad-card` 16px to 20px, `--gap` 12px to 14px, `--row-h` 36px to 40px, `--leading` 1.45 to 1.5. Comfortable is unchanged. No token or class is renamed.
+- **New site option: `coarse`**, values applied under `(pointer: coarse)`, so a site that sets its own control size keeps the 44px touch size.
+- The site header's Foxhound specimens are amber.
 - **Site only:** the showcase site serves `robots.txt` (allow all, pointing to the sitemap), `sitemap.xml` and `llms.txt` (what Capsomer is and where its documentation is), so search engines and AI assistants can find it. The package is unchanged.
 
 ## [0.17.0]

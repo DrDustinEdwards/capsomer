@@ -88,7 +88,7 @@ function FamilyScales() {
   return (
     <Panel title="The color families" id="families" src="Rules 14 and 15, locked 2026-10-01">
       <p className="cap-muted">
-        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first, and every pair passes (rulings.md, rule 18): the brand color is step 9 for focus rings and large fills, accent text and links use step 11, and the primary button fills with step 10. Purple is the default; fox, teal, navy and forest switch on with data-family on the root or on any element (capsomer/families.css).
+        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first, and every pair passes (rulings.md, rule 18): the brand color is step 9 for focus rings and large fills, accent text and links use step 11, and the primary button fills with step 10 (amber, too light for a white label, fills with step 9 in light and carries a dark label in both themes). Purple is the default; fox, teal, amber, navy and forest switch on with data-family on the root or on any element (capsomer/families.css).
       </p>
       {names.map((n) => {
         const f = fams.families[n];
@@ -100,7 +100,7 @@ function FamilyScales() {
         return (
           <section key={n} className="site-family" aria-labelledby={`fam-${n}`}>
             <h3 id={`fam-${n}`}>
-              {n === "purple" ? "Purple" : n === "fox" ? "Fox" : n === "teal" ? "Teal" : n === "navy" ? "Navy" : n === "forest" ? "Forest" : n} <span className="cap-mono cap-muted">{f.seed}</span>
+              {n.charAt(0).toUpperCase() + n.slice(1)} <span className="cap-mono cap-muted">{f.seed}</span>
             </h3>
             <p className="cap-muted">
               {f.note}. Default theme: {f.defaultTheme}.

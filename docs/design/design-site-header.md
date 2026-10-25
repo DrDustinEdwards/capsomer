@@ -151,6 +151,8 @@ The same on every site (Dustin, 2026-10-13):
 
 *Answered: Foxhound stays teal on its dark band; Foxing moves to `#cc4f0c`. The rest of this section is the background to that question.*
 
+*Changed 2026-10-25: Dustin moved Foxhound back to Recova's amber, as Capsomer's amber family (`tokens/family-amber.css`, `#f0b429`, a deeper amber for step 9 in light), on the same dark band. Teal went to capsid.dustinedwards.info.*
+
 Capsomer lists Foxhound as "teal" (`tokens/family-teal.css`, seed `#008489`, locked 2026-10-01 with amber rejected). Foxhound ships amber `#f0b429` on a dark band (`#1a1c18`) in both themes. Dustin's message of 2026-10-13 calls amber on a dark band Foxhound's real look, which reverses the earlier lock, so it is question 1 rather than a fix.
 
 With teal kept, Foxhound's job moves its amber to the teal family: on the always-dark band the accent is teal's dark-theme primary (`#249398`), and on the page it is the family's accent text in each theme.

@@ -107,8 +107,13 @@ test("family: report() covers every family in both themes, its default theme fir
   assert.equal(FAMILIES.fox.defaultTheme, "light");
 });
 
-test("family: the teal scale keeps its seed at step 9", () => {
-  for (const scheme of ["light", "dark"]) assert.equal(scale(FAMILIES.teal.seed, null, scheme)[8], "#008489");
+test("family: a seed too light for white (amber) keeps it in dark, darkens it in light, and labels its button dark", () => {
+  assert.equal(scale(FAMILIES.teal.seed, null, "light")[8], "#008489");
+  assert.equal(scale(FAMILIES.amber.seed, null, "dark")[8], "#f0b429");
+  const t = themes(FAMILIES.amber);
+  assert.notEqual(t.light.tokens.accent, "#f0b429");
+  assert.equal(t.light.tokens.primary, t.light.tokens.accent);
+  assert.equal(t.light.tokens["primary-fg"], t.dark.tokens["primary-fg"]);
 });
 
 test("family: option 1 (rule 18), every pair of every family passes in both themes", () => {
