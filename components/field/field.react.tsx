@@ -77,6 +77,24 @@ export function Check(props: Omit<InputHTMLAttributes<HTMLInputElement>, "type" 
   );
 }
 
+// A slider (a native range input) whose track fills to the thumb: it sets --cap-range-fill
+// from value, min and max. Label it as any input, with Field or aria-label.
+export function Range(props: Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "min" | "max"> & { value: number; min?: number; max?: number }) {
+  const { value, min = 0, max = 100, className, style, ...rest } = props;
+  const fill = max > min ? ((value - min) / (max - min)) * 100 : 0;
+  return (
+    <input
+      {...rest}
+      type="range"
+      min={min}
+      max={max}
+      value={value}
+      className={className ? `cap-range ${className}` : "cap-range"}
+      style={{ ...style, ["--cap-range-fill" as string]: `${fill.toFixed(2)}%` }}
+    />
+  );
+}
+
 // An input with addons inside one edge. Put the control inside as <input className="cap-input" />.
 export function InputGroup(props: { label?: string; children?: ReactNode }) {
   return (

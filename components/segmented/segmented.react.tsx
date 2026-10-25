@@ -4,6 +4,8 @@ export interface SegmentedOption<V extends string> {
   value: V;
   label: ReactNode;
   disabled?: boolean;
+  // With layout "cards": the status colour the option takes when chosen (accent by default).
+  tone?: "info" | "warn" | "crit" | "ok";
 }
 
 export interface SegmentedProps<V extends string> {
@@ -23,19 +25,21 @@ export interface SegmentedProps<V extends string> {
   orientation?: "horizontal" | "vertical";
   // Fill the row, the segments sharing it.
   fill?: boolean;
+  // "cards": each option its own bordered card, two to a row and four from 640px.
+  layout?: "segments" | "cards";
   // Wrong: marks the radios aria-invalid; say why in text that describedBy names.
   invalid?: boolean;
 }
 
-export function Segmented<V extends string>({ legend, hideLegend = false, options, value, onChange, name, describedBy, size = "default", orientation = "horizontal", fill = false, invalid = false }: SegmentedProps<V>) {
+export function Segmented<V extends string>({ legend, hideLegend = false, options, value, onChange, name, describedBy, size = "default", orientation = "horizontal", fill = false, layout = "segments", invalid = false }: SegmentedProps<V>) {
   const own = useId();
   if ((options.length < 2 || options.length > 5)) console.warn("Segmented: use it for two to five options; a select or a combobox for more.");
   return (
     <fieldset className="cap-seg" aria-describedby={describedBy}>
       <legend className={hideLegend ? "cap-sr-only" : undefined}>{legend}</legend>
-      <div className="cap-seg-options" data-size={size === "default" ? undefined : size} data-orientation={orientation === "vertical" ? "vertical" : undefined} data-fill={fill ? "" : undefined}>
+      <div className="cap-seg-options" data-size={size === "default" ? undefined : size} data-orientation={orientation === "vertical" ? "vertical" : undefined} data-fill={fill ? "" : undefined} data-layout={layout === "cards" ? "cards" : undefined}>
         {options.map((o) => (
-          <label key={o.value}>
+          <label key={o.value} data-tone={o.tone}>
             <input type="radio" name={name ?? own} value={o.value} checked={value === o.value} disabled={o.disabled} aria-invalid={invalid || undefined} onChange={() => onChange(o.value)} /> {o.label}
           </label>
         ))}

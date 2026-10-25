@@ -4,6 +4,18 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.19.0]
+
+**Foxhound's public pages, as Recova's** (Dustin, 2026-10-25: "there is still so much wrong with foxhound... as compared to recova", and "dont forget the ui/ux, and hover and active etc").
+
+- **New: a panel that is a link** (`a.cap-panel`). Under the pointer its edge firms to `--line-strong`; its words keep the text colour. New HTML contract only; a panel that is not a link is unchanged.
+- **New touch tokens**, group `touch`, each off by default so no site changes unless its `SITES` entry sets them: `--card-lift` (`0px`; how far a linked panel rises under the pointer), `--card-edge` (`0`; its edge under the pointer, from the strong line at 0 to the accent at 1), `--card-shadow` (`none`; every panel's resting shadow) and `--btn-sweep` (`0`; at 1 the default button fills with the primary colour from the left under the pointer, its label and edge turning to match).
+- **New: the disclosure's card variant** (`data-variant="card"`): each section its own rounded card, a roomy title at the lead size with a plus at the end that turns to a cross when open, no rule under the title. Recova's questions list.
+- **New: the segmented control's cards layout** (`data-layout="cards"` on `.cap-seg-options`; React `layout="cards"`): each option a bordered card, two to a row and four from 640px, left aligned and wrapping. `data-tone="info|warn|crit|ok"` on an option (React `tone`) tints it in that status colour when chosen; the accent otherwise. The chosen highlight does not slide in this layout. Recova's decline picker.
+- **New: a slider** (`input.cap-range`, in `capsomer/field.css`; React `Range` from the field module): a native range input on a 4px track filled with the primary colour up to the thumb (`--cap-range-fill`), a 20px thumb with a hover ring, the focus ring and a small press. Recova's calculator slider.
+- **New: solid filter chips** (`data-variant="solid"` on `.cap-chips`): the pressed chip fills with the primary colour without the tick, and an unpressed chip's edge turns to the accent under the pointer. Recova's product filter.
+- **Site `foxhound`** names Foxhound's metric-matched fallback faces (`"DM Sans Fallback"`, `"DM Mono Fallback"`) after DM Sans and DM Mono, and takes Recova's 12px card corners (`--radius-l`), its card shadow (a lit top edge in dark), a 4px lift and an amber edge on linked cards, and the amber sweep on the default button.
+
 ## [0.18.0]
 
 **Foxhound back to amber** (Dustin, 2026-10-25: Foxhound keeps Recova's amber and its old sizes; teal goes to capsid.dustinedwards.info).

@@ -209,9 +209,23 @@
   </form>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-range">
+  <h2 id="s-range">Slider, at rest and under the pointer</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="range-mrr">Monthly recurring revenue</label>
+    <input class="cap-range" id="range-mrr" type="range" min="1000" max="500000" step="1000" value="25000" style="--cap-range-fill: 4.81%" />
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="range-share">Assumed recovery</label>
+    <input class="cap-range" id="range-share" type="range" min="0" max="100" value="52" data-force="hover" style="--cap-range-fill: 52%" />
+  </div>
+</section>
+
 <script type="module">
   import { enhance } from "./field.ts";
   enhance();
+  // A slider's fill follows its value.
+  for (const r of document.querySelectorAll(".cap-range")) r.addEventListener("input", () => r.style.setProperty("--cap-range-fill", `${((r.value - r.min) / (r.max - r.min)) * 100}%`));
   // Mixed has no attribute: it is set on the element.
   for (const box of document.querySelectorAll("[data-indeterminate]")) box.indeterminate = true;
   // The app's part: runs only for a valid form.

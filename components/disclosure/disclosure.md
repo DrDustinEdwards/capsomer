@@ -4,7 +4,7 @@ title: Disclosure
 summary: Show and hide, a section that opens in place and a group row in a list.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [summary hover, summary pressed, accordion variant, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
+states: [summary hover, summary pressed, accordion variant, card variant, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
 added: 0.1.0
 updated: 0.2.0
 source: the approved mockup ("4 notices", collapsed); patterns.md "Show or hide"
@@ -30,6 +30,7 @@ Two ways to show and hide. A section that opens in place is a native `<details c
 
 - **A section is native `details` and `summary`**: it works before JavaScript, with none, and with find-in-page. The chevron turns, and under `prefers-reduced-motion: no-preference` the panel fades in and, where the browser supports `interpolate-size` and `::details-content`, grows and shrinks to its height (Chromium 131 and later); elsewhere it opens at once. Stacked sections share their edges as one accordion.
 - **Accordion variant** (`data-variant="accordion"`): shadcn's flat look. No box, a rule between items, the title underlined on hover, the chevron at the end pointing down closed and up open. Same `details`, same keyboard.
+- **Card variant** (`data-variant="card"`): Recova's questions list. Each section its own rounded card (`--radius-l`), set apart by the list's gap, a roomy title at the lead size with a plus at the end that turns to a cross when open, and the answer under it with no rule between. Same `details`, same keyboard.
 - **Pressed and disabled**: a summary or group row has a pressed tint; a group button that is `disabled` or `aria-disabled="true"` dims and takes no clicks (disabled controls are exempt from contrast).
 - **Spacing follows the density tokens** (`--pad-x`, `--gap`, `--fs-body`).
 - **Group rows do not animate their height**: their rows use `hidden`, which removes them from the accessibility tree at once, so only the chevron turns.

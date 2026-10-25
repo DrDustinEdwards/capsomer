@@ -4,7 +4,7 @@ title: Filter chips
 summary: Filter a list by up to six values with toggle chips; the filter lives in the address and a live count says what is left.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [link chips with the current one, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result]
+states: [link chips with the current one, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result, solid]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.chip)
@@ -40,6 +40,7 @@ Filtering a list or table by up to six values of one property: a queue by status
 - **Clear shows only while a chip is pressed.** After Clear, focus moves to the first chip.
 - **An empty result names the filter and offers Clear**: "No jobs match "Blocked"." with a Clear filter button. That is the empty component's `no-match` kind; call `clearAll(group)` from its button.
 - **A pressed chip has a tick and an accent edge** as well as its tint, so pressed is not colour alone.
+- **Solid** (`data-variant="solid"` on the group): the pressed chip fills with the primary colour and drops the tick, and an unpressed chip's edge turns to the accent under the pointer. For a one-of-a-few filter where "All" is a value (Recova's product filter); the fill is a strong change of shape and contrast, so pressed is still not a pale tint.
 
 ## Keyboard
 

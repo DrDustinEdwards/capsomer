@@ -4,7 +4,7 @@ title: Button
 summary: A button acts; a link styled as one goes somewhere. Default, primary, secondary, danger, quiet and link variants in five sizes, with pending, disabled-with-a-reason, and groups.
 parts: [css, behaviour, react]
 tool: native
-states: [default, hover, keyboard focus, pressed, open, disabled with its reason, invalid, pending, a label that changes, primary, secondary, danger, quiet, link, xs sm lg sizes, icon only, button group, link styled as a button, button styled as a link]
+states: [default, hover, keyboard focus, pressed, open, disabled with its reason, invalid, pending, a label that changes, primary, secondary, danger, quiet, link, xs sm lg sizes, icon only, button group, link styled as a button, button styled as a link, a site's sweep]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.btn, .iconbtn, .linkbtn)
@@ -43,6 +43,7 @@ A `<button class="cap-btn">` runs an action on this page. An `<a class="cap-btn"
 - **Pending keeps its width.** `aria-busy="true"` hides the label's paint (not its name) and shows `.cap-btn-spinner` over it, so the row does not jump. The label must be in `.cap-btn-label` for this. Say the result through the message region, not on the button.
 - **The focus ring is 3 px, opaque, in the accent** (shadcn's `ring-3` is a 50% ring, which cannot reach the 3:1 a focus indicator needs).
 - **A label that changes in place morphs** (uiarc): Save draft, Saving…, Saved. `morphLabel(button, change)` from `capsomer/behaviour/button` eases the width to the new label's over 200 ms and crossfades the words out of a 4 px blur; the leaving words are an `aria-hidden` copy, so the name is only ever the new label. Opt in: the words in `.cap-btn-label`; React: `<Button morph>`. Nothing moves under reduced motion.
+- **A site's sweep** (`--btn-sweep: 1`, off by default): under the pointer the default button fills with the primary colour from the left over 400 ms and its label and edge turn to the primary's, as Recova's outlined button did. Off, nothing changes.
 - **Pressed shrinks the button to 97% at once and springs back on release** (Emil Kowalski's `scale(0.97)`; Arc's quick press and spring release), in place of shadcn's 1 px nudge, only when motion is allowed and never on a button that owns a popup, which anchors it.
 
 ## Keyboard
