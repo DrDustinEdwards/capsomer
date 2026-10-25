@@ -6,7 +6,7 @@ import { eachTheme, expectNoAxeViolations } from "../test/helpers.ts";
 // violations, the menu moves between views, a component's page shows its states in both themes,
 // an old root address opens its admin page, and the site runs under the Content-Security-Policy
 // the static Worker sends.
-const VIEWS = ["overview", "components", "color", "type", "motion", "tests", "defaults", "changes", "settings"];
+const VIEWS = ["overview", "components", "color", "type", "motion", "tests", "defaults", "changes"];
 
 // The headers the static Worker sends on every page: the `/*` rule of the built site's _headers,
 // which the build writes from scripts/security-headers.ts.
@@ -23,7 +23,7 @@ const CSP = PAGE_HEADERS["content-security-policy"] ?? "";
 eachTheme((theme) => {
   test("accessibility: the public page has no axe violations", async ({ page }) => {
     await page.goto("./");
-    await expect(page.locator("h1")).toHaveText("Capsomer");
+    await expect(page.locator("h1")).toHaveText("One design system for every site and app");
     await expectNoAxeViolations(page, "body");
   });
 
@@ -113,7 +113,7 @@ eachTheme((theme) => {
       });
     });
     await page.goto("./");
-    await expect(page.locator("h1")).toHaveText("Capsomer");
+    await expect(page.locator("h1")).toHaveText("One design system for every site and app");
     await page.waitForLoadState("networkidle");
     expect(await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations), "CSP violations on the public page").toEqual([]);
     for (const view of ["overview", "color", "type", "components/shell"]) {
@@ -151,6 +151,16 @@ test("behavior: an old address at the root opens its page in the admin", async (
   await page.goto("./#/components/shell");
   await expect(page).toHaveURL(/\/admin\/#\/components\/shell$/);
   await expect(page.locator("#cap-main h1")).toHaveText("Shell");
+});
+
+// The public page's script: the preview takes a family, and the filter narrows the components.
+test("behavior: the public page's preview takes the chosen family and the filter finds a component", async ({ page }) => {
+  await page.goto("./");
+  await page.locator(".home-try label", { hasText: "Teal" }).click();
+  await expect(page.locator("[data-cap-part='stage']")).toHaveAttribute("data-family", "teal");
+  await page.getByLabel("Find a component").fill("combobox");
+  await expect(page.locator(".home-parts > li:visible")).toHaveCount(1);
+  await expect(page.locator("#home-find-n")).toHaveText(/^1 of \d+ components$/);
 });
 
 // Cloudflare Web Analytics injects its beacon into every HTML page on this zone. A public

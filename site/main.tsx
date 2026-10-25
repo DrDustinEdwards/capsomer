@@ -22,11 +22,11 @@ import { BASE, CHANGELOG_MD, COMPONENTS, DEFAULTS_MD, FAMILIES, META, RESULTS_BU
 import { ColorView } from "./color-view.tsx";
 import { renderMarkdown } from "./markdown.ts";
 import { Panel, ResultsContext, TOOL, TestList, Verdict, useResults, when } from "./parts.tsx";
-import { MarkdownView, MotionView, SettingsView, TestsView, TypeView } from "./views.tsx";
+import { MarkdownView, MotionView, TestsView, TypeView } from "./views.tsx";
 
 import.meta.glob("../components/*/*.css", { eager: true });
 
-type View = "overview" | "components" | "color" | "type" | "motion" | "tests" | "defaults" | "changes" | "settings";
+type View = "overview" | "components" | "color" | "type" | "motion" | "tests" | "defaults" | "changes";
 const VIEWS: Array<{ id: View; label: string; icon: ReactNode; group: string }> = [
   { id: "overview", label: FIRST_PAGE, icon: <Icon d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" />, group: "Design system" },
   { id: "components", label: "Components", icon: <Icon d="M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z" />, group: "Design system" },
@@ -36,7 +36,6 @@ const VIEWS: Array<{ id: View; label: string; icon: ReactNode; group: string }> 
   { id: "tests", label: "Tests", icon: <Icon d="m5 12.5 4.5 4.5L19 7" />, group: "Records" },
   { id: "defaults", label: "Defaults", icon: <Icon d="M5 3.5h14v17H5zM8.5 8h7M8.5 12h7M8.5 16h4.5" />, group: "Records" },
   { id: "changes", label: "Changes", icon: <Icon d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 7v5l3.5 2.5" />, group: "Records" },
-  { id: "settings", label: "Settings", icon: <Icon d="M4 7h3M11 7h9M4 12h9M17 12h3M4 17h5M13 17h7M9 5v4M15 10v4M11 15v4" />, group: "Records" },
 ];
 
 function Icon({ d }: { d: string }) {
@@ -77,6 +76,10 @@ function useRoute(): { view: View; detail: string | null } {
   }, []);
   return route;
 }
+
+// Unreleased work and the last three releases; the whole changelog is a link, not 40,000px of page.
+const recentChanges = (md: string) =>
+  `${md.split(/\n(?=## \[)/).slice(0, 4).join("\n")}\n\nOlder releases: [the whole changelog](https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md).`;
 
 const href = (view: View, detail?: string) => `#/${view}${detail ? `/${encodeURIComponent(detail)}` : ""}`;
 
@@ -351,8 +354,7 @@ function App() {
   else if (view === "motion") page = <MotionView />;
   else if (view === "tests") page = <TestsView />;
   else if (view === "defaults") page = <MarkdownView title="Defaults" md={DEFAULTS_MD} />;
-  else if (view === "changes") page = <MarkdownView title="Changes" md={CHANGELOG_MD} />;
-  else if (view === "settings") page = <SettingsView />;
+  else if (view === "changes") page = <MarkdownView title="Changes" md={recentChanges(CHANGELOG_MD)} />;
   else page = <Overview />;
 
   return (

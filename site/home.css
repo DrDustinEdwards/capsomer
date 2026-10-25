@@ -10,6 +10,20 @@
 @import "../css/tokens.css";
 @import "../css/base.css";
 @import "../css/families.css";
+@import "../tokens/themes.css";
+/* Capsomer's own components: the site header with its theme button and phone sheet, and the parts
+   the family preview, the filter, the defaults and the copy button use. */
+@import "../components/popover/popover.css";
+@import "../components/dialog/dialog.css";
+@import "../components/button/button.css";
+@import "../components/theme-switch/theme-switch.css";
+@import "../components/site-header/site-header.css";
+@import "../components/segmented/segmented.css";
+@import "../components/field/field.css";
+@import "../components/switch/switch.css";
+@import "../components/chips/chips.css";
+@import "../components/status/status.css";
+@import "../components/disclosure/disclosure.css";
 
 :root {
   --home-max: 76rem;
@@ -18,13 +32,14 @@
   /* Where the page's column starts, so a band can start there and run to the window's edge. */
   --home-start: max(var(--home-gut), calc((100vw - var(--home-max)) / 2 + var(--home-gut)));
 }
+/* clip, not hidden: hidden makes a scroll container, and the sticky header would stop sticking. */
 html {
-  overflow-x: hidden;
-  scroll-padding-top: var(--space-5);
+  overflow-x: clip;
+  scroll-padding-top: calc(var(--header-h, 3.5rem) + var(--space-4));
 }
 body {
   margin: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
   background: var(--ground);
   color: var(--text);
   font: 400 17px/1.55 var(--ui);
@@ -48,45 +63,14 @@ code {
   color: var(--muted);
 }
 
-/* The top bar: the mark and the sections, wrapping under it on a phone. */
-.home-top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-6);
-  max-width: var(--home-max);
-  box-sizing: border-box;
-  margin-inline: auto;
-  padding: var(--space-4) var(--home-gut-r) var(--space-2) var(--home-gut);
-
-  & ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-5);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  & nav a {
-    display: inline-block;
-    padding-block: var(--space-1);
-    color: var(--text);
-    font-weight: 600;
-    text-decoration: none;
-  }
-  & nav a:hover {
-    color: var(--accent-text);
-    text-decoration: underline;
-  }
-}
+/* The site header is Capsomer's own (components/site-header); the page sets only its mark. */
 .home-logo {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   color: var(--text);
   font-weight: 800;
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   text-decoration: none;
 
   & svg {
@@ -241,7 +225,8 @@ h2 {
 /* The headline figures as solid tiles, each in its own family. */
 .home-figures {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  /* Two to a row on a phone, four on a desktop. */
+  grid-template-columns: repeat(auto-fit, minmax(min(45%, 210px), 1fr));
   gap: 4px;
   margin-block: 0;
   list-style: none;
@@ -250,8 +235,8 @@ h2 {
     display: grid;
     align-content: end;
     gap: var(--space-1);
-    min-block-size: 168px;
-    padding: var(--space-5);
+    min-block-size: clamp(132px, 22vw, 168px);
+    padding: clamp(var(--space-3), 2vw, var(--space-5));
     background: var(--primary);
     color: var(--primary-fg);
   }
@@ -475,7 +460,56 @@ h2 {
 [data-fs="fs-prose"] { font-size: var(--fs-prose); font-family: var(--prose); }
 [data-fs="fs-prose-h2"] { font-size: var(--fs-prose-h2); font-family: var(--prose); }
 
-/* Components: every one, linked to its states page. */
+/* The family preview: real components in a panel that takes the chosen family. */
+.home-try {
+  display: grid;
+  gap: var(--space-3);
+  margin-block-start: var(--space-8);
+
+  & h3 {
+    margin: 0;
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    letter-spacing: -0.02em;
+  }
+  & .home-sub {
+    margin: 0;
+  }
+}
+.home-try-stage {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 8px solid var(--accent);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+
+  & .cap-field {
+    max-width: 22rem;
+  }
+}
+.home-try-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+
+/* The filter over the components: a script turns it on, so without one nothing is offered. */
+.home-find {
+  display: grid;
+  gap: var(--space-1);
+  max-width: 24rem;
+  margin-block-end: var(--space-6);
+
+  & p {
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+}
+
+/* Components: every one, linked to its page in the admin. */
 .home-parts {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
@@ -514,12 +548,31 @@ h2 {
   & li {
     padding-block-start: var(--space-3);
     border-top: 6px solid var(--accent);
+  }
+  & summary {
     font-weight: 600;
     font-size: 1.125rem;
     line-height: 1.35;
   }
+  & .cap-disclosure-body {
+    color: var(--muted);
+    font-size: 0.9375rem;
+
+    & p {
+      margin: 0;
+    }
+  }
 }
 
+.home-code-wrap {
+  position: relative;
+
+  & .cap-btn {
+    position: absolute;
+    inset-block-start: var(--space-3);
+    inset-inline-end: var(--space-3);
+  }
+}
 .home-code {
   margin: 0;
   padding: var(--space-5);

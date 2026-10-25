@@ -4,6 +4,21 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+- **Site only: a critical pass over the public page and the admin** (Dustin, 2026-10-25: "critically evaluate every aspect of the site"). Public page:
+  - It uses Capsomer's own site header, with the theme button (and `T`), the phone sheet and a skip link. Before, it had a plain bar of its own and no theme control.
+  - A live family preview: real components that take the chosen family through `data-family`.
+  - A filter over the components. Each component now links to its admin page (how to use it, its states and its tests), not the bare states page.
+  - Every default opens to its reason. The heading promised reasons the page did not show.
+  - A copy button on the install lines.
+  - The test count is read from the last run on main. The deployed build has no results of its own, so the figure was missing.
+  - The heading says what Capsomer is, where it repeated the name the tiles already spell.
+
+  Admin:
+  - Test results are filed under their component. Before, every test inside a shared `eachTheme` block counted as "site", so 1,711 of 1,819 landed there and most component pages said "No results".
+  - Each component's tests fold away while they pass.
+  - Changes shows unreleased work and the last three releases.
+  - A long changelog line no longer pushes a phone page sideways.
+  - The Settings page, which held two paragraphs and no settings, is gone; `#/settings` opens the overview.
 - **American spelling throughout** (Dustin, 2026-10-25: "i literally live in Texas. why the fuck would i want british spelling on anything"). Every doc, comment, test name and the showcase now spell color, behavior, center, gray, labeled, neighbor, catalog, license, summarize and analyze the American way. Nothing that apps use breaks; each renamed name keeps its old spelling working:
   - Import path `capsomer/behavior/<name>`; `capsomer/behaviour/<name>` still resolves.
   - `summarize` (authorship), `analyze` (draft compare) and `renderEmailColors` (palette); `summarise`, `analyse` and `renderEmailColours` stay as deprecated aliases.
