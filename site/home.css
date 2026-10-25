@@ -448,6 +448,7 @@ h2 {
     }
     & li > :nth-child(3) {
       grid-area: 2 / 2;
+      max-inline-size: 10rem;
       text-align: end;
     }
     & li > :nth-child(4) {
