@@ -100,6 +100,9 @@ export interface AdminShellProps {
   nav: AdminEntry[];
   // The page being shown: the tab title "<page> · <app>", and the last step of the trail.
   page?: string;
+  // Whether the shell writes the tab title from `page` and `title`. Default true. False leaves
+  // document.title to the app's routes; `title` still names the logo, the sheet and its groups.
+  documentTitle?: boolean;
   // The levels above the page. Given, the top bar shows the trail ("Components / Shell"); a
   // top-level page has none, so the bar never repeats the page's own heading.
   trail?: AdminCrumb[];
@@ -228,6 +231,7 @@ export function AdminShell(props: AdminShellProps) {
     app,
     nav,
     page,
+    documentTitle = true,
     navLabel = "Sections",
     onSearch,
     searchShortcut = "Ctrl K",
@@ -258,9 +262,10 @@ export function AdminShell(props: AdminShellProps) {
   const [collapsed, setCollapsed] = useCollapsedPref(prefKey, props.collapsed, props.onCollapsedChange);
 
   // The tab says the page, then the app: "Queue · Capsid Portal".
+  // An app whose routes set their own titles turns this off with documentTitle={false}.
   useEffect(() => {
-    if (title) document.title = page ? `${page} · ${title}` : title;
-  }, [page, title]);
+    if (documentTitle && title) document.title = page ? `${page} · ${title}` : title;
+  }, [documentTitle, page, title]);
 
   // The remembered theme, in case the app's head script did not apply it before paint.
   useEffect(() => void applyStoredTheme(themePrefKey), [themePrefKey]);

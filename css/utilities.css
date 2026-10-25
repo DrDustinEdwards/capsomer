@@ -1,0 +1,35 @@
+/* Capsomer's utility classes, alone: for an app that keeps its own reset and body styles and does
+   not load capsomer/base.css (which imports this file), but still wants .cap-sr-only and the rest.
+   `import "capsomer/utilities.css"`. The layer order is repeated so it is safe in any order (css/layers.css). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+@layer cap.utilities {
+  /* Text a screen reader announces and the eye does not see. */
+  .cap-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* Identifiers only: ids, shas, commands, paths. Times and counts are .cap-num. */
+  .cap-mono {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: -0.01em;
+  }
+  .cap-num {
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-muted {
+    color: var(--muted);
+  }
+  .cap-label {
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+}

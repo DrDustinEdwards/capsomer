@@ -4,6 +4,13 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.20.0]
+
+**Foxhound's two asks before launch** (capsomer job_adef3dadfa88, for foxhound job_490a6bc5b957 and job_69b3fb23214b).
+
+- **AdminShell can leave the tab title to the app.** New prop `documentTitle` (default `true`, today's "<page> · <app>"). With `documentTitle={false}` the shell never writes `document.title`, so the titles an app's routes set stay; `title` still names the logo, the phone sheet and its groups. New specimen `own-title`. The default is unchanged.
+- **New stylesheet: `capsomer/utilities.css`**, Capsomer's utility classes alone (`.cap-sr-only`, `.cap-mono`, `.cap-num`, `.cap-muted`, `.cap-label`), in the `cap.utilities` layer, for an app that keeps its own reset and body styles and does not load `capsomer/base.css`. `css/base.css` now imports it, so an app that loads base.css gets the same rules as before. No class is renamed or removed.
+
 ## [0.19.0]
 
 **Foxhound's public pages, as Recova's** (Dustin, 2026-10-25: "there is still so much wrong with foxhound... as compared to recova", and "dont forget the ui/ux, and hover and active etc").
