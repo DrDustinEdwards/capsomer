@@ -8,6 +8,7 @@
 
 import { buildContentSecurityPolicy, reportingEndpoints } from "@dustinedwards/site-runtime/csp";
 import { buildSecurityHeaders, STANDARD_SECURITY_HEADERS } from "@dustinedwards/site-runtime/headers";
+import { TDM_RESERVATION_HEADERS } from "@drdustinedwards/site-helpers/robots";
 
 /** The site's address (rulings.md, rule 16). */
 const HOST = "capsomer.dustinedwards.info";
@@ -63,6 +64,8 @@ export const securityHeaders: Readonly<Record<string, string>> = Object.freeze({
   [csp.name]: csp.value,
   // The group `report-to` names; `report-uri` covers browsers without the Reporting API.
   "Reporting-Endpoints": reportingEndpoints(REPORT_GROUP, new URL(REPORT_PATH, `https://${HOST}`)),
+  // Training rights reserved (TDMRep), as the site's ai.txt says; Prelum's, like every family site.
+  ...TDM_RESERVATION_HEADERS,
 });
 
 /** Vite writes hashed file names under /assets/, so they never change and may be cached for a year. */
