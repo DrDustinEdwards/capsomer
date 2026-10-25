@@ -2,7 +2,7 @@
 name: breadcrumb
 title: Breadcrumb
 summary: Where this page sits: links back up the trail, the current page as text, a long trail folded into a popover of links.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, two levels, long names cut, folded in the HTML, folded by script, short trail stays whole, wraps in a narrow space, folded levels open, comfortable density]
 added: 0.3.0
@@ -17,7 +17,7 @@ replaces:
 
 A `nav` named "Breadcrumb" holding an ordered list: a link for each level above this page, then the current page as plain text with `aria-current="page"`. The separators are drawn by CSS, so a screen reader hears the levels and not the slashes.
 
-**Provenance.** EXTRACTED and REWROTE, from the site's `Breadcrumb` (`app/components/breadcrumb.tsx` and `.page-breadcrumb`). Kept as it is: the `nav`/`ol` structure, the last step as `aria-current="page"` text rather than a link, a trail of one level rendering nothing, wrapping when it is long. Changed: the separator was a `" / "` span with `aria-hidden` in each item and is now generated content with no text; the links were 13 px text with no height and are now at least `var(--target)` tall; links use the accent text colour (the site used the brand colour, which is not text-safe on every ground); long names are cut; and a long trail folds. The data-driven `trail` of `[name, path]` pairs became `items` of `{ label, href }`.
+**Provenance.** EXTRACTED and REWROTE, from the site's `Breadcrumb` (`app/components/breadcrumb.tsx` and `.page-breadcrumb`). Kept as it is: the `nav`/`ol` structure, the last step as `aria-current="page"` text rather than a link, a trail of one level rendering nothing, wrapping when it is long. Changed: the separator was a `" / "` span with `aria-hidden` in each item and is now generated content with no text; the links were 13 px text with no height and are now at least `var(--target)` tall; links use the accent text color (the site used the brand color, which is not text-safe on every ground); long names are cut; and a long trail folds. The data-driven `trail` of `[name, path]` pairs became `items` of `{ label, href }`.
 
 ## When to use it
 
@@ -34,7 +34,7 @@ On a page two or more levels below a hub: a post under Posts under Admin; a job 
 
 - **The whole trail is in the HTML.** Every level is a real link, so the page is readable and navigable as delivered. A trail with `data-max-items` is folded by script after load; the React wrapper (and any server) can render the folded form directly.
 - **Separators are CSS** (a small chevron that turns in a right-to-left page), not elements. shadcn's separator is an `li` with `role="presentation"`; this one is not in the tree at all, so a list of three levels is a list of three items.
-- **The current page is text,** heavier and in the full text colour: it is not a link to itself, and it is told apart from the links by more than colour.
+- **The current page is text,** heavier and in the full text color: it is not a link to itself, and it is told apart from the links by more than color.
 - **A folded trail keeps the first level and the last `max - 1`.** The first level is where the trail starts; the last ones are nearest the current page. Fewer than two levels would fold is not worth a button, so the trail stays whole.
 - **The folded levels are links in a click popover,** not a menu: they are navigation, so they are links (they open in a new tab, they show their address), and the popover is the shared one (Esc, focus return, light dismiss). shadcn uses a dropdown menu of items.
 - **Long names are cut** at 24 characters for a link and 36 for the current page, with an ellipsis. The full name is in the page and in a reader's list; the page's own heading says the current page in full.
@@ -42,7 +42,7 @@ On a page two or more levels below a hub: a post under Posts under Admin; a job 
 
 ## The shadcn component it matches
 
-Breadcrumb (`breadcrumb.tsx`: Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis). Matched: the list, the link that darkens on hover, the page, the separator, the ellipsis that opens a list of the folded levels. Different on purpose: CSS separators; links in the accent text colour rather than muted; cut names; a popover of links instead of a dropdown menu; the hit area is the target height.
+Breadcrumb (`breadcrumb.tsx`: Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis). Matched: the list, the link that darkens on hover, the page, the separator, the ellipsis that opens a list of the folded levels. Different on purpose: CSS separators; links in the accent text color rather than muted; cut names; a popover of links instead of a dropdown menu; the hit area is the target height.
 
 ## Keyboard
 
@@ -59,7 +59,7 @@ Breadcrumb (`breadcrumb.tsx`: Breadcrumb, BreadcrumbList, BreadcrumbItem, Breadc
 - A `nav` named "Breadcrumb" (use another name if a page has two) holding an `ol`. The current page is `aria-current="page"`.
 - The folded button is named for what it does ("Show 2 more levels"); it has `aria-haspopup="dialog"` and `aria-expanded`. The popover is a dialog named "More levels".
 - Link text 4.5:1 on the page; the current page 4.5:1; the separator is decorative.
-- Each link and the button are at least `var(--target)` tall and wide. Forced colours draw the separator in CanvasText.
+- Each link and the button are at least `var(--target)` tall and wide. Forced colors draw the separator in CanvasText.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -90,7 +90,7 @@ Folded in the HTML: the item that stands for the hidden levels.
 </li>
 ```
 
-Or send the whole trail and add `data-cap="breadcrumb" data-max-items="4"` to the `nav`: `enhance()` folds it. `import { enhance, collapse, foldedLevels } from "capsomer/behaviour/breadcrumb"`; `enhance()` also attaches the popover of a folded item, so the page needs only this call.
+Or send the whole trail and add `data-cap="breadcrumb" data-max-items="4"` to the `nav`: `enhance()` folds it. `import { enhance, collapse, foldedLevels } from "capsomer/behavior/breadcrumb"`; `enhance()` also attaches the popover of a folded item, so the page needs only this call.
 
 In React, `import { Breadcrumb } from "capsomer/react/breadcrumb"`:
 

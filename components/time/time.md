@@ -2,7 +2,7 @@
 name: time
 title: Time
 summary: A time in words, relative in rows and exact (your zone and UTC) in the detail.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [less than a minute ago, minutes ago, hours ago, yesterday, a date, in the future, exact time shown, unreadable time, live refresh]
 added: 0.1.0
@@ -17,7 +17,7 @@ replaces:
 
 When something happened, in words: "5 minutes ago" in a row, "30 September 2026, 14:02 BST (13:02 UTC)" in its detail. Always a `<time>` element with a machine-readable `datetime`.
 
-**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01): `lib/format.ts` and `ui/When.tsx`. EXTRACTED, with renames and the Portal's comments' reasoning: `ms` (as `parse`: a server timestamp with no zone is UTC), `utc` (identical), `portalNow` (as `serverNow`), and from `exactTime` and `When` the exact time as the viewer's zone, then UTC beside it, in a `<time>` element, with the UTC part kept whole on a line and "an unreadable time" in place of a blank or "NaN". REWRITTEN: `ago` and `span` (the Portal's "5m ago" is ruled out by the audit: a screen reader reads "5m" as a metre), the spelled-out zone and month in `exact` (the Portal prints "Sep 30, 2026, 02:02 PM CDT" from the browser's locale), the 30 second shared redraw and `data-cap-now`. The Portal shows UTC in its dim tone (`.faint`); here the UTC part is `--muted`, and the relative time is muted too (0.2).
+**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01): `lib/format.ts` and `ui/When.tsx`. EXTRACTED, with renames and the Portal's comments' reasoning: `ms` (as `parse`: a server timestamp with no zone is UTC), `utc` (identical), `portalNow` (as `serverNow`), and from `exactTime` and `When` the exact time as the viewer's zone, then UTC beside it, in a `<time>` element, with the UTC part kept whole on a line and "an unreadable time" in place of a blank or "NaN". REWRITTEN: `ago` and `span` (the Portal's "5m ago" is ruled out by the audit: a screen reader reads "5m" as a meter), the spelled-out zone and month in `exact` (the Portal prints "Sep 30, 2026, 02:02 PM CDT" from the browser's locale), the 30 second shared redraw and `data-cap-now`. The Portal shows UTC in its dim tone (`.faint`); here the UTC part is `--muted`, and the relative time is muted too (0.2).
 
 ## When to use it
 
@@ -49,7 +49,7 @@ Every time shown in an app: deploys, runs, mentions, edits, the freshness of a p
 ## Accessibility
 
 - The text is the accessible text; it is a sentence part ("deployed 5 minutes ago") and reads as one.
-- A relative time is `--muted` (4.5:1 on every surface, the selected row included); an exact time is `--text` and its UTC part `--muted`. `data-tone="text"` gives a relative time the text colour.
+- A relative time is `--muted` (4.5:1 on every surface, the selected row included); an exact time is `--text` and its UTC part `--muted`. `data-tone="text"` gives a relative time the text color.
 - The exact form names the zone ("BST") and gives UTC, so a time read aloud or copied is not ambiguous.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -63,7 +63,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <time class="cap-time" data-cap="time" data-format="exact" datetime="2026-09-30T13:02:00Z">30 September 2026, 13:02 UTC</time>
 ```
 
-Write sensible text in the markup (it shows before the script runs). `import { enhance, relative, exact, exactParts, utc, parse, serverNow, setClock } from "capsomer/behaviour/time"`: `enhance()` writes and refreshes the text; `relative(ms, now)`, `exact(ms)` and `exactParts(ms)` are pure. In React, `import { Time } from "capsomer/react/time"`: `<Time at={row.updated_at} />`, `<Time at={row.updated_at} format="exact" />`.
+Write sensible text in the markup (it shows before the script runs). `import { enhance, relative, exact, exactParts, utc, parse, serverNow, setClock } from "capsomer/behavior/time"`: `enhance()` writes and refreshes the text; `relative(ms, now)`, `exact(ms)` and `exactParts(ms)` are pure. In React, `import { Time } from "capsomer/react/time"`: `<Time at={row.updated_at} />`, `<Time at={row.updated_at} format="exact" />`.
 
 ## The shadcn component it matches
 

@@ -164,7 +164,7 @@ eachTheme((theme) => {
     await expect(root.getByRole("link", { name: "carrel #88 awaits the seat" })).toBeFocused();
   });
 
-  test("behaviour: critical rows are never inside what a button controls", async ({ page }) => {
+  test("behavior: critical rows are never inside what a button controls", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
     await expect(page.locator(".cap-attention-region .cap-row[data-tone='crit']")).toHaveCount(0);
     await expect(page.locator(".cap-attention-region .cap-status[data-tone='crit']")).toHaveCount(0);
@@ -179,14 +179,14 @@ eachTheme((theme) => {
     expect(parseFloat(width)).toBeGreaterThanOrEqual(2);
   });
 
-  test("behaviour: a click anywhere on a group's row opens it", async ({ page }) => {
+  test("behavior: a click anywhere on a group's row opens it", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
     const row = page.locator(mixed).locator(".cap-row", { has: page.getByRole("button", { name: "3 pull requests await the seat" }) });
     await row.click({ position: { x: 4, y: 4 } });
     await expect(page.locator("#att-mixed-prs")).toBeVisible();
   });
 
-  test("behaviour: at phone width a title wraps instead of being cut", async ({ page }) => {
+  test("behavior: at phone width a title wraps instead of being cut", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "attention-list", theme, "phone");
     for (const id of ["#phone-att-title", "#phone-child-title"]) {
@@ -200,20 +200,20 @@ test.describe("arrange()", () => {
   const item = (id: string, tone: AttentionItem["tone"], group?: string): AttentionItem => ({ id, tone, title: id, href: `#${id}`, group });
   const ids = (list: AttentionEntry[]) => list.map((e) => (e.kind === "row" ? e.item.id : e.key));
 
-  test("behaviour: arrange puts the worst first and keeps the given order within a tone", () => {
+  test("behavior: arrange puts the worst first and keeps the given order within a tone", () => {
     const out = arrange([item("a", "info"), item("b", "warn"), item("c", "crit"), item("d", "nodata"), item("e", "warn")]);
     expect(ids(out.problems)).toEqual(["c", "b", "e"]);
     expect(out.notices.map((n) => n.id)).toEqual(["d", "a"]);
   });
 
-  test("behaviour: no data and notices are one tier at the foot, not rows among the problems", () => {
+  test("behavior: no data and notices are one tier at the foot, not rows among the problems", () => {
     const out = arrange([item("n1", "nodata"), item("n2", "info"), item("w", "warn")]);
     expect(ids(out.problems)).toEqual(["w"]);
     expect(out.noticeCount).toBe(2);
     expect(out.more).toEqual([]);
   });
 
-  test("behaviour: arrange folds rows that share a key, named with their count, where the worst row sits", () => {
+  test("behavior: arrange folds rows that share a key, named with their count, where the worst row sits", () => {
     const out = arrange([item("w", "warn"), item("g1", "warn", "PRs"), item("g2", "warn", "PRs"), item("g3", "warn", "PRs")]);
     expect(ids(out.problems)).toEqual(["w", "PRs"]);
     const g = out.problems[1];
@@ -226,7 +226,7 @@ test.describe("arrange()", () => {
     }
   });
 
-  test("behaviour: a group takes its title, detail and view from the caller, and shows at most five rows", () => {
+  test("behavior: a group takes its title, detail and view from the caller, and shows at most five rows", () => {
     const rows = Array.from({ length: 7 }, (_, i) => item(`p${i}`, "warn", "pr"));
     const out = arrange(rows, { groups: { pr: { title: (n) => `${n} pull requests await the seat`, detail: "capsid, carrel", view: { href: "#ci", label: "CI" } } } });
     const g = out.problems[0];
@@ -240,12 +240,12 @@ test.describe("arrange()", () => {
     }
   });
 
-  test("behaviour: arrange never folds a critical row, and a group of one is a row", () => {
+  test("behavior: arrange never folds a critical row, and a group of one is a row", () => {
     const out = arrange([item("c1", "crit", "Sites"), item("c2", "crit", "Sites"), item("w1", "warn", "Sites")]);
     expect(out.problems.map((e) => e.kind)).toEqual(["row", "row", "row"]);
   });
 
-  test("behaviour: warnings past the cap wait behind the button, and critical rows are always shown", () => {
+  test("behavior: warnings past the cap wait behind the button, and critical rows are always shown", () => {
     const crit = Array.from({ length: 3 }, (_, i) => item(`c${i}`, "crit"));
     const warn = Array.from({ length: 9 }, (_, i) => item(`w${i}`, "warn"));
     const out = arrange([...warn, ...crit]);
@@ -257,14 +257,14 @@ test.describe("arrange()", () => {
     expect(flood.more).toEqual([]);
   });
 
-  test("behaviour: a group of notices is one row that opens its view", () => {
+  test("behavior: a group of notices is one row that opens its view", () => {
     const out = arrange([item("s1", "nodata", "silent"), item("s2", "nodata", "silent"), item("i", "info")], { groups: { silent: { title: (n) => `${n} drivers have been silent for over 7 days`, view: { href: "#agents", label: "Agents" } } } });
     expect(out.notices.map((n) => n.title)).toEqual(["2 drivers have been silent for over 7 days", "i"]);
     expect(out.notices[0]?.href).toBe("#agents");
     expect(out.noticeCount).toBe(3);
   });
 
-  test("behaviour: arrange of nothing is empty, the all-clear case", () => {
+  test("behavior: arrange of nothing is empty, the all-clear case", () => {
     const out = arrange([]);
     expect(out.problems).toEqual([]);
     expect(out.more).toEqual([]);

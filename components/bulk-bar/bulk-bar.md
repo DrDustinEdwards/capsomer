@@ -2,11 +2,11 @@
 name: bulk-bar
 title: Bulk action bar
 summary: What a selection can be done to: the live count, the actions, select all in view and Clear. A reversible action runs at once with Undo; a destructive one previews every item first.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript (the shared confirm dialog and message region)
 states: [a form with submit actions, outcomes after an action, three selected in the HTML, nothing selected and hidden, choose then act, reversible action with Undo, destructive action previewed, twelve items in the preview, action that fails, sticky at the bottom, sticky at the top]
 added: 0.3.0
-source: dustinedwards.info, app/components/admin/media-bulk-bar.tsx, bulk-tag-controls.tsx, lib/admin/bulk-tag.ts, media-confirm-dialogs.tsx, posts-confirm-dialogs.tsx; shadcn/ui Sonner and the Data Table selection bar (Base UI flavour, nova style, commit d75a96ab787f)
+source: dustinedwards.info, app/components/admin/media-bulk-bar.tsx, bulk-tag-controls.tsx, lib/admin/bulk-tag.ts, media-confirm-dialogs.tsx, posts-confirm-dialogs.tsx; shadcn/ui Sonner and the Data Table selection bar (Base UI flavor, nova style, commit d75a96ab787f)
 replaces:
   - 'class="(bulk|bulk-bar|bulk-actions|posts-bulk)[ "]'
   - "className=\"(bulk|bulk-bar|posts-bulk)[ \"]"
@@ -68,8 +68,8 @@ shadcn has no bulk bar. The nearest are its Data Table's selection footer ("3 of
 
 - The bar is `role="region"` named "Bulk actions"; the count is a `role="status"` inside it, announced as it changes.
 - The preview is the confirm dialog: `role="alertdialog"`, named by its title, described by its lead and its list, focus on Cancel, Esc closes.
-- A destructive action is a word and a colour (the danger variant), never colour alone.
-- The count and the detail reach 4.5:1; the bar's edge reaches 3:1; forced colours keep the edge.
+- A destructive action is a word and a color (the danger variant), never color alone.
+- The count and the detail reach 4.5:1; the bar's edge reaches 3:1; forced colors keep the edge.
 - Hit areas are the buttons' own, at least `var(--target)`; density moves the bar's padding.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -144,7 +144,7 @@ The outcome list, last in the bar (a server renders it after a form post; `showO
 `data-cap-list` is the id of the container whose `input[type=checkbox][data-cap-select]` are the items; an item's name for the preview is its `data-label`, or `data-label` on an ancestor, or its label text. `data-position="top"` sticks the bar to the top. `data-cap-return` is a selector for where focus goes when the bar goes away. `data-cap-value` on an action is a selector for a field whose value goes with it (an empty value moves focus to the field and does nothing). `{n}` and `{s}` in the templates are the count and the plural "s".
 
 ```ts
-import { enhance, bindBulk, performBulk, selectedItems, clearSelection } from "capsomer/behaviour/bulk-bar";
+import { enhance, bindBulk, performBulk, selectedItems, clearSelection } from "capsomer/behavior/bulk-bar";
 enhance(); // every [data-cap="bulk-bar"]; needs a [data-cap="message"] region on the page for results
 bindBulk(bar, {
   archive: { run: (items) => api.archive(items.map((i) => i.id)), undo: (items) => api.restore(items.map((i) => i.id)) },

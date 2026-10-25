@@ -9,7 +9,7 @@ export type HistoryKind = "edit" | "autosave" | "named" | "publish" | "restore";
 
 export interface Destination {
   name: string;
-  // Words, not colours alone: Live, Failed, Queued.
+  // Words, not colors alone: Live, Failed, Queued.
   status: "live" | "failed" | "queued";
 }
 

@@ -2,11 +2,11 @@
 name: drop-zone
 title: Drop zone
 summary: Choose files by browsing or dropping them, checked against type, size and count, with each refusal named in words.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [idle, file over, files refused with their reasons, several files taken, one file only, disabled, drop anywhere on the page]
 added: 0.3.0
-source: dustinedwards.info, app/components/admin/media-drop-anywhere.tsx, media-upload-actions.tsx, use-image-upload.ts; shadcn/ui Input (file) and Empty (Base UI flavour, nova style, commit d75a96ab787f)
+source: dustinedwards.info, app/components/admin/media-drop-anywhere.tsx, media-upload-actions.tsx, use-image-upload.ts; shadcn/ui Input (file) and Empty (Base UI flavor, nova style, commit d75a96ab787f)
 replaces:
   - 'class="(dropzone|drop-zone|dropzone-area|file-drop)[ "]'
   - "className=\"(dropzone|drop-zone|file-drop)[ \"]"
@@ -32,7 +32,7 @@ Anywhere a person adds files: the media library, an attachment on a draft, an im
 ## The default and its reason
 
 - **The input is the control.** The label wraps it, so a click, and Enter or Space on the focused input, open the picker with no script (shadcn's file Input is the same native control). The input is hidden from the eye only; the label is what is drawn and what shows the focus ring.
-- **Over is words and a shape: "Drop to upload", a solid thicker edge, a tint.** Never colour alone. The idle title swaps for the over title, so a person who cannot see the edge still reads what releasing does.
+- **Over is words and a shape: "Drop to upload", a solid thicker edge, a tint.** Never color alone. The idle title swaps for the over title, so a person who cannot see the edge still reads what releasing does.
 - **A refusal names the file and the reason**, in a box with the critical glyph and a lead ("3 files were not added"), in a `role="alert"` region: type not allowed (and what is), too big (with its size and the limit), too many (with the limit). The edge turns critical and solid too, but the words carry it.
 - **What was taken is said too**, in a `role="status"` region: "3 files are ready to upload." and the list with sizes. Both regions are in the page before anything is chosen, empty, so each result is announced when it is filled.
 - **Validation is one pure function.** `validateFiles(files, { accept, maxBytes, maxFiles })` returns `{ accepted, rejected }`, each rejection with its `reason` and a sentence. Type is checked first, then size, then the count, so the files that pass keep their order and the rest are named.
@@ -42,7 +42,7 @@ Anywhere a person adds files: the media library, an attachment on a draft, an im
 
 ## The shadcn component it matches
 
-shadcn has no drop zone. The control is its Input (type file): a native input, the same height and edge. The surface is its Empty: a dashed, centred, rounded container with an icon, a title and a line of description. Matched: both. Not in shadcn: the over, refused and accepted states, the page mode and the validation.
+shadcn has no drop zone. The control is its Input (type file): a native input, the same height and edge. The surface is its Empty: a dashed, centered, rounded container with an icon, a title and a line of description. Matched: both. Not in shadcn: the over, refused and accepted states, the page mode and the validation.
 
 ## Deliberately different
 
@@ -67,7 +67,7 @@ Dropping is a pointer gesture; the picker is its keyboard equivalent and goes th
 - Refusals are `role="alert"`, results `role="status"`. The page-mode panel is `aria-hidden`: it repeats words the zone already carries, and a drag is not something a screen reader user does.
 - The idle edge reaches 3:1 against the page; the hint is `--muted` at 4.5:1 and, while over, `--text` on the tint.
 - Hit area: the whole zone, at least three controls high; density moves it.
-- Forced colours: the edge is CanvasText, over is Highlight, the refusal box keeps its border.
+- Forced colors: the edge is CanvasText, over is Highlight, the refusal box keeps its border.
 - Reduced motion: the edge and tint change without easing.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -91,10 +91,10 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </div>
 ```
 
-Attributes on the zone: `data-state` (`idle`, `over`, `rejected`; set by the behaviour), `data-scope="page"` (drop anywhere; add `<div class="cap-drop-overlay" aria-hidden="true"><div><p class="cap-drop-overlay-title">Drop to upload</p>…</div></div>` as the last child), `data-max-bytes`, `data-max-files`, `data-paste`. The accepted types are the input's `accept`; a zone whose input has no `multiple` takes one file. A result written by the server (a refused file after a form post) is the same markup inside the two regions: lead `<p class="cap-drop-lead" data-tone="crit">` with the critical glyph, then `<ul class="cap-drop-files"><li>…</li></ul>`.
+Attributes on the zone: `data-state` (`idle`, `over`, `rejected`; set by the behavior), `data-scope="page"` (drop anywhere; add `<div class="cap-drop-overlay" aria-hidden="true"><div><p class="cap-drop-overlay-title">Drop to upload</p>…</div></div>` as the last child), `data-max-bytes`, `data-max-files`, `data-paste`. The accepted types are the input's `accept`; a zone whose input has no `multiple` takes one file. A result written by the server (a refused file after a form post) is the same markup inside the two regions: lead `<p class="cap-drop-lead" data-tone="crit">` with the critical glyph, then `<ul class="cap-drop-files"><li>…</li></ul>`.
 
 ```ts
-import { enhance, validateFiles, acceptFiles } from "capsomer/behaviour/drop-zone";
+import { enhance, validateFiles, acceptFiles } from "capsomer/behavior/drop-zone";
 enhance(); // every [data-cap="drop-zone"]
 zone.addEventListener("cap-drop-accepted", (e) => upload(e.detail.accepted));
 zone.addEventListener("cap-drop-rejected", (e) => log(e.detail.rejected)); // each { file, reason: "type" | "size" | "count", message }

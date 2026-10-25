@@ -168,7 +168,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("listbox", { name: "Platform" })).toBeHidden();
   });
 
-  test("behaviour: a click chooses an option and closes; a disabled option cannot be chosen", async ({ page }) => {
+  test("behavior: a click chooses an option and closes; a disabled option cannot be chosen", async ({ page }) => {
     await visitStates(page, "select", theme);
     const owner = page.getByRole("combobox", { name: /^Owner/ });
     await owner.click();
@@ -181,7 +181,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeHidden();
   });
 
-  test("behaviour: the chosen option shows a check and the popup is at least as wide as the button", async ({ page }) => {
+  test("behavior: the chosen option shows a check and the popup is at least as wide as the button", async ({ page }) => {
     await visitStates(page, "select", theme);
     const platform = page.getByRole("combobox", { name: "Platform" });
     await platform.click();
@@ -194,7 +194,7 @@ eachTheme((theme) => {
     expect(p).toBeGreaterThanOrEqual((t ?? 0) - 2);
   });
 
-  test("behaviour: the native select stays in the page with its options and is out of the tab order", async ({ page }) => {
+  test("behavior: the native select stays in the page with its options and is out of the tab order", async ({ page }) => {
     await visitStates(page, "select", theme);
     await expect(page.locator("#sel-platform-native option")).toHaveCount(5);
     await expect(page.locator("#sel-platform-native")).toBeHidden();

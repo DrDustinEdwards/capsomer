@@ -1,4 +1,4 @@
-// The site's colour and contrast view: both themes' pairs and every family's scales (main.tsx).
+// The site's color and contrast view: both themes' pairs and every family's scales (main.tsx).
 
 import { FAMILIES, PALETTE, type Pair } from "./data.ts";
 import { Panel, paint } from "./parts.tsx";

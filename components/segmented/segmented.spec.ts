@@ -76,7 +76,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("radio", { name: "Board" })).not.toBeChecked();
   });
 
-  test("behaviour: a click anywhere on a segment chooses it, and each segment is a full target", async ({ page }) => {
+  test("behavior: a click anywhere on a segment chooses it, and each segment is a full target", async ({ page }) => {
     await visitStates(page, "segmented", theme);
     const label = page.locator("#seg-window label").nth(2);
     await label.click({ position: { x: 4, y: 4 } });

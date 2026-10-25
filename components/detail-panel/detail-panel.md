@@ -2,7 +2,7 @@
 name: detail-panel
 title: Detail panel
 summary: A record opened from its row, in a panel from the right.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog)
 states: [driven by the address with a plain form, closed with its row links, open with a command to copy and a before and after list, comfortable density]
 added: 0.1.0
@@ -16,7 +16,7 @@ replaces:
 
 # Detail panel
 
-**Provenance.** MIXED, against the Portal's `app/Drawer.tsx` and `styles.css` (`.drawer`, `.kv`, `.kv.diff`, `.cmd`) as of capsid master on 2026-10-01. Extracted: the CSS (width, the slide in and out with the fading backdrop, the record's columns, the command block, the before and after list) and the focus rules (back to the row, or to the page when the row has gone). Rewritten: the markup and behaviour are framework-free and generic. The Portal's panel is driven by its router (an address `/<view>/<type>/<id>` opens it, its feed supplies the content, a row inside it opens another record in its place); here `data-cap-history` is the opt-in and the app fills the content. As the Portal's, the Close is an icon button named by an aria-label (0.1 used the word; 0.2 takes the shared dialog's corner button).
+**Provenance.** MIXED, against the Portal's `app/Drawer.tsx` and `styles.css` (`.drawer`, `.kv`, `.kv.diff`, `.cmd`) as of capsid master on 2026-10-01. Extracted: the CSS (width, the slide in and out with the fading backdrop, the record's columns, the command block, the before and after list) and the focus rules (back to the row, or to the page when the row has gone). Rewritten: the markup and behavior are framework-free and generic. The Portal's panel is driven by its router (an address `/<view>/<type>/<id>` opens it, its feed supplies the content, a row inside it opens another record in its place); here `data-cap-history` is the opt-in and the app fills the content. As the Portal's, the Close is an icon button named by an aria-label (0.1 used the word; 0.2 takes the shared dialog's corner button).
 
 The whole of one record (a job, a site, an agent, a mention) opened from its row without leaving the list. The shared dialog (`components/dialog`) as a side sheet on the right of the window: a native `dialog` opened with `showModal()`.
 
@@ -57,7 +57,7 @@ When the record is a place someone links to or works in for a while (a draft, a 
 - A modal `dialog` named by its title; the page behind is inert.
 - Each section is a `section` named by its heading, so a screen reader can move between them.
 - The Copy result is a `role="status"` line beside the button.
-- Forced colours: the panel keeps its edge.
+- Forced colors: the panel keeps its edge.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -110,7 +110,7 @@ The header, title, body and Close are the shared dialog's parts; `data-cap-histo
 
 ## Matches shadcn
 
-Sheet (Base UI flavour, nova), side right: the blurred backdrop, the full-height panel with a hairline edge and a large shadow, the header with title and description, the Close icon button in the corner, a 2.5rem slide with a fade at 200 ms. The shared dialog supplies all of it.
+Sheet (Base UI flavor, nova), side right: the blurred backdrop, the full-height panel with a hairline edge and a large shadow, the header with title and description, the Close icon button in the corner, a 2.5rem slide with a fade at 200 ms. The shared dialog supplies all of it.
 
 ## Deliberately different
 

@@ -11,7 +11,7 @@ export interface Edit {
 }
 
 // A page the link palette can offer: the app decides the address and the words. `note` is
-// said in words beside the title ("not live yet (draft)"), never colour alone.
+// said in words beside the title ("not live yet (draft)"), never color alone.
 export interface LinkTarget {
   href: string;
   title: string;

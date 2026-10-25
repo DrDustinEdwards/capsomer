@@ -1,5 +1,5 @@
 // Mounts the specimen: the Catalog wrapper over the fixture collection. A real site renders this on its server;
-// the specimen has no server, so it renders in the page, and answers the behaviour's fetches itself (the page's own
+// the specimen has no server, so it renders in the page, and answers the behavior's fetches itself (the page's own
 // address with a query string) with the HTML a server would have sent.
 import { createRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
@@ -25,7 +25,7 @@ const original = window.fetch.bind(window);
 window.fetch = (input, init) => {
   const url = new URL(typeof input === "string" ? input : input instanceof URL ? input.href : input.url, location.href);
   if (url.pathname !== def.basePath) return original(input, init);
-  // The behaviour asks for the catalog whose form it holds; both demos answer.
+  // The behavior asks for the catalog whose form it holds; both demos answer.
   const html = ["wide", "narrow"].map((id) => renderToString(<Demo id={id} query={url.search} />)).join("");
   return Promise.resolve(new Response(`<!doctype html><body>${html}</body>`, { headers: { "content-type": "text/html" } }));
 };

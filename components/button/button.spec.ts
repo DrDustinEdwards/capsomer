@@ -78,7 +78,7 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/#jobs$/);
   });
 
-  test("behaviour: a pending button keeps its width and shows the spinner", async ({ page }) => {
+  test("behavior: a pending button keeps its width and shows the spinner", async ({ page }) => {
     await visitStates(page, "button", theme);
     const busy = await page.locator("#b-pending").boundingBox();
     const rest = await page.locator("#b-pending-twin").boundingBox();

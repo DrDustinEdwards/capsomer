@@ -11,7 +11,7 @@ const rowOrder = (page: Page) =>
       .map((el) => ({ name: el.getAttribute("aria-label") ?? el.textContent!.trim(), x: Math.round(el.getBoundingClientRect().left) })),
   );
 
-// Lets any colour transition finish before a colour is read.
+// Lets any color transition finish before a color is read.
 const settle = (page: Page) => page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(() => undefined));
 
 eachTheme((theme) => {
@@ -101,7 +101,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-site-header-switch-tile")).toHaveAttribute("data-tile", "A");
   });
 
-  test("behaviour: sticky: the header stays at the top while the page scrolls, and scroll padding keeps a focused target out from under it", async ({ page }) => {
+  test("behavior: sticky: the header stays at the top while the page scrolls, and scroll padding keeps a focused target out from under it", async ({ page }) => {
     await visitStates(page, "site-header", theme, "fx-reader");
     await page.mouse.wheel(0, 600);
     await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(300);
@@ -112,7 +112,7 @@ eachTheme((theme) => {
     expect(parseFloat(await page.evaluate(() => getComputedStyle(document.documentElement).scrollPaddingTop))).toBeGreaterThanOrEqual(56);
   });
 
-  test("behaviour: links on the right sit after a thin divider before the tools; centred links sit in the middle of the band", async ({ page }) => {
+  test("behavior: links on the right sit after a thin divider before the tools; centered links sit in the middle of the band", async ({ page }) => {
     await visitStates(page, "site-header", theme, "fh-public");
     const right = await page.evaluate(() => {
       const nav = document.querySelector(".cap-site-header-sections")!.getBoundingClientRect();
@@ -125,14 +125,14 @@ eachTheme((theme) => {
     expect(right.w).toBe("1px");
     expect(right.h).toBe("16px");
     await visitStates(page, "site-header", theme, "fx-public");
-    const centre = await page.evaluate(() => {
+    const center = await page.evaluate(() => {
       const nav = document.querySelector(".cap-site-header-sections")!.getBoundingClientRect();
       return Math.abs(nav.left + nav.width / 2 - innerWidth / 2);
     });
-    expect(centre).toBeLessThanOrEqual(1);
+    expect(center).toBeLessThanOrEqual(1);
   });
 
-  test("behaviour: a section panel opens on hover at once, under the header, lined up with its button, and closes when the pointer leaves", async ({ page }) => {
+  test("behavior: a section panel opens on hover at once, under the header, lined up with its button, and closes when the pointer leaves", async ({ page }) => {
     await visitStates(page, "site-header", theme, "fx-public");
     const books = page.getByRole("button", { name: "Books" });
     const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
@@ -215,7 +215,7 @@ eachTheme((theme) => {
     expect(p!.x + p!.width).toBeLessThanOrEqual(1280 - 16);
   });
 
-  test("behaviour: a click outside an open panel closes it", async ({ page }) => {
+  test("behavior: a click outside an open panel closes it", async ({ page }) => {
     await visitStates(page, "site-header", theme, "fh-dashboard");
     const trigger = page.getByRole("button", { name: "Product: Recovery" });
     await trigger.click();
@@ -285,7 +285,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: the dark band stays dark in both themes; the translucent band is see-through and blurred", async ({ page }) => {
+  test("behavior: the dark band stays dark in both themes; the translucent band is see-through and blurred", async ({ page }) => {
     await visitStates(page, "site-header", theme, "fh-public");
     const lum = await page.locator(".cap-site-header").evaluate((el) => {
       const x = document.createElement("canvas").getContext("2d")!;
@@ -370,7 +370,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behaviour: the bottom bar shows only on a phone, where a person is signed in: up to five tabs and no More", async ({ page }) => {
+  test("behavior: the bottom bar shows only on a phone, where a person is signed in: up to five tabs and no More", async ({ page }) => {
     await page.setViewportSize(PHONE);
     await visitStates(page, "site-header", theme, "fx-reader-phone");
     const tabs = page.locator(".cap-site-tabs");
@@ -398,7 +398,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-site-tabs")).toBeHidden();
   });
 
-  test("behaviour: the hand-written header works through the behaviour module: its panel, the theme button and the sheet", async ({ page }) => {
+  test("behavior: the hand-written header works through the behavior module: its panel, the theme button and the sheet", async ({ page }) => {
     await visitStates(page, "site-header", theme, "markup");
     const products = page.getByRole("button", { name: "Products" });
     await products.focus();

@@ -1,7 +1,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Enarratio's charts in the family's look. Enarratio (https://github.com/DrDustinEdwards/enarratio)
-   reads every colour, font, size and timing from --enarratio-* custom properties and never
+   reads every color, font, size and timing from --enarratio-* custom properties and never
    imports Capsomer; this section maps each onto a Capsomer token, so an app that loads
    Capsomer's tokens gets charts in the family's look, a change to a token reaches every chart,
    and both themes, every family and both densities follow with no chart code. Load it with
@@ -14,7 +14,7 @@
   :root,
   [data-family],
   [data-density] {
-    /* colours */
+    /* colors */
     --enarratio-background: var(--surface);
     --enarratio-text: var(--text);
     --enarratio-text-muted: var(--muted);
@@ -51,7 +51,7 @@
     --enarratio-sequential-text-4: var(--ramp-text-4);
     --enarratio-sequential-text-5: var(--ramp-text-5);
 
-    /* status: the same colours as the status component, never the series */
+    /* status: the same colors as the status component, never the series */
     --enarratio-status-good: var(--ok);
     --enarratio-status-warning: var(--warn);
     --enarratio-status-bad: var(--crit);

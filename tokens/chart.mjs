@@ -1,13 +1,13 @@
-// The chart pieces of the palette (0.3): eight series colours and a five-step sequential
+// The chart pieces of the palette (0.3): eight series colors and a five-step sequential
 // ramp, for Enarratio's charts and anything else that draws categories or quantities.
-// Imported by tokens/palette.mjs, which writes them into the colour files and the Enarratio
+// Imported by tokens/palette.mjs, which writes them into the color files and the Enarratio
 // theme, and which checks them with the rest of the palette.
 //
 // The series: purple, fox and teal first (step 9 of each family, exactly as shipped: #8c5fd2,
 // #cc4f0c, #008489), then five companions of the same weight, found by a search over hue,
 // chroma and lightness (once, offline; the result is the parameters below, so the hexes are
 // computed here, never typed). What the search held fixed:
-//   - each colour is at least 3:1 against the surface, the ground and the raised surface, in
+//   - each color is at least 3:1 against the surface, the ground and the raised surface, in
 //     both themes (WCAG 2.2 non-text contrast), at about the lightness of the three seeds;
 //   - every pair differs by at least SERIES_MIN_DE (CIEDE2000) with typical vision and under
 //     simulated protanopia, deuteranopia and tritanopia (Machado et al. 2009, the model
@@ -41,23 +41,23 @@ const RAMP = {
   dark: [[0.3, 0.4], [0.42, 0.6], [0.54, 0.8], [0.68, 0.85], [0.82, 0.7]],
 };
 
-export function rampColours(seedHue, seedChroma, scheme) {
+export function rampColors(seedHue, seedChroma, scheme) {
   return RAMP[scheme].map(([l, share]) => oklch(l, seedChroma * share, seedHue));
 }
 
-export function companionColours(scheme) {
+export function companionColors(scheme) {
   return COMPANIONS.map((c) => oklch(c[scheme], c.c, c.h));
 }
 
-// The label colour that reads best on a mark (Enarratio's labelColor): the theme's text or
-// surface colour when either reaches 4.5:1 on the fill, else black or white.
+// The label color that reads best on a mark (Enarratio's labelColor): the theme's text or
+// surface color when either reaches 4.5:1 on the fill, else black or white.
 export function labelOn(fill, text, surface) {
   const best = (a, b) => (contrast(fill, a) >= contrast(fill, b) ? a : b);
   const themed = best(text, surface);
   return contrast(fill, themed) >= 4.5 ? themed : best("#000000", "#ffffff");
 }
 
-// ---- colour-vision simulation and CIEDE2000 (the same model as Enarratio's checkTheme) -----
+// ---- color-vision simulation and CIEDE2000 (the same model as Enarratio's checkTheme) -----
 
 const MATRICES = {
   protanopia: [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216], [-0.003882, -0.048116, 1.051998]],
@@ -123,13 +123,13 @@ function deltaE2000([L1, a1, b1], [L2, a2, b2]) {
   const ht = dH / sH;
   return Math.sqrt(lt * lt + ct * ct + ht * ht + rT * ct * ht);
 }
-// CIEDE2000 between two hex colours, with typical vision or a simulated deficiency.
-export const colourDifference = (a, b, vision) => deltaE2000(lab(seen(a, vision)), lab(seen(b, vision)));
+// CIEDE2000 between two hex colors, with typical vision or a simulated deficiency.
+export const colorDifference = (a, b, vision) => deltaE2000(lab(seen(a, vision)), lab(seen(b, vision)));
 // The smallest difference over typical vision and the three deficiencies, and where it was.
 export function worstDifference(a, b) {
   let worst = { de: Infinity, vision: undefined };
   for (const vision of VISIONS) {
-    const de = colourDifference(a, b, vision);
+    const de = colorDifference(a, b, vision);
     if (de < worst.de) worst = { de, vision };
   }
   return worst;
@@ -151,14 +151,14 @@ export function chartChecks(t) {
     }
   }
   for (let i = 3; i < 8; i++) {
-    for (const s of ["ok", "warn", "crit", "info"]) add(`series ${i + 1} is clear of --${s}`, colourDifference(series[i], t[s]), STATUS_MIN_DE, `${series[i]} and ${t[s]}`);
+    for (const s of ["ok", "warn", "crit", "info"]) add(`series ${i + 1} is clear of --${s}`, colorDifference(series[i], t[s]), STATUS_MIN_DE, `${series[i]} and ${t[s]}`);
   }
   const ramp = Array.from({ length: 5 }, (_, i) => t[`ramp-${i + 1}`]);
   add("ramp step 5 against --surface", contrast(ramp[4], t.surface), 3, `${ramp[4]} on ${t.surface}`);
   for (let i = 1; i < 5; i++) {
     // Each step must stand further from the surface than the one before: "more" never reads as less.
     add(`ramp step ${i + 1} stands out more than step ${i}`, contrast(ramp[i], t.surface) - contrast(ramp[i - 1], t.surface), 0.01, `${ramp[i - 1]} then ${ramp[i]}`);
-    add(`ramp steps ${i} and ${i + 1} differ`, colourDifference(ramp[i - 1], ramp[i]), RAMP_STEP_MIN_DE, `${ramp[i - 1]} and ${ramp[i]}`);
+    add(`ramp steps ${i} and ${i + 1} differ`, colorDifference(ramp[i - 1], ramp[i]), RAMP_STEP_MIN_DE, `${ramp[i - 1]} and ${ramp[i]}`);
   }
   for (let i = 0; i < 8; i++) add(`label on series ${i + 1}`, contrast(t[`series-text-${i + 1}`], series[i]), 4.5, `${t[`series-text-${i + 1}`]} on ${series[i]}`);
   for (let i = 0; i < 5; i++) add(`label on ramp step ${i + 1}`, contrast(t[`ramp-text-${i + 1}`], ramp[i]), 4.5, `${t[`ramp-text-${i + 1}`]} on ${ramp[i]}`);

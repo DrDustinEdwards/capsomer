@@ -11,7 +11,7 @@ const GLYPHS: Record<string, string[]> = {
   ok: ["M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"],
 };
 
-// A status glyph, drawn in currentColor: a shape for each meaning, so colour is never alone.
+// A status glyph, drawn in currentColor: a shape for each meaning, so color is never alone.
 export function glyph(kind: "crit" | "warn" | "info" | "ok" | "nodata" | "running"): SVGSVGElement {
   const svg = document.createElementNS(NS, "svg");
   svg.setAttribute("class", "cap-status-glyph");

@@ -7,7 +7,7 @@ export interface SpinnerProps {
   // already says what it does). Under reduced motion the word always shows.
   hideLabel?: boolean;
   size?: "sm" | "lg";
-  // "page": centred in the space it is given, with its word under it, for a whole page or
+  // "page": centered in the space it is given, with its word under it, for a whole page or
   // panel that has nothing else to show yet. It is a status region.
   layout?: "page";
 }
@@ -33,7 +33,7 @@ export interface SkeletonProps {
   label?: string;
 }
 
-// Grey lines standing in for a page's content: busy, and "Loading" for a screen reader.
+// Gray lines standing in for a page's content: busy, and "Loading" for a screen reader.
 export function Skeleton({ lines = 3, label = "Loading" }: SkeletonProps): ReactElement {
   return (
     <div className="cap-skeleton" aria-busy="true">

@@ -132,13 +132,13 @@ eachTheme((theme) => {
     await expect(sheet(page)).toBeVisible();
   });
 
-  test("behaviour: a click outside the sheet does not close it", async ({ page }) => {
+  test("behavior: a click outside the sheet does not close it", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "two");
     await page.mouse.click(4, 4);
     await expect(sheet(page)).toBeVisible();
   });
 
-  test("behaviour: the approval names the chosen gates and their comments", async ({ page }) => {
+  test("behavior: the approval names the chosen gates and their comments", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "one-unchecked");
     const detail = page.evaluate(
       () => new Promise((done) => document.addEventListener("cap-approve", (e) => done((e as CustomEvent).detail), { once: true })),
@@ -147,14 +147,14 @@ eachTheme((theme) => {
     expect(await detail).toEqual({ gates: [{ id: "job_8c21", comment: "Checked the preview at a91c4e0." }] });
   });
 
-  test("behaviour: a failed approval says what happened beside the buttons", async ({ page }) => {
+  test("behavior: a failed approval says what happened beside the buttons", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "error");
     await expect(page.getByRole("alert")).toContainText("Nothing was approved");
     await expect(approveBtn(page)).toHaveAccessibleName("Approve 2 gates");
   });
 });
 
-test("behaviour: the Approve label and the title follow the count", () => {
+test("behavior: the Approve label and the title follow the count", () => {
   expect(approveLabel(2)).toBe("Approve 2 gates");
   expect(approveLabel(1)).toBe("Approve 1 gate");
   expect(approveLabel(0)).toBe("Approve 0 gates");

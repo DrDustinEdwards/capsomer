@@ -8,7 +8,7 @@ const NONE = { edit: false, publish: false, deleteContent: false, deleteMedia: f
 const OFFERS = { delete: true, schedule: true, tags: true, duplicate: true };
 const row = (status: "draft" | "scheduled" | "published", liveHref: string | null = null) => ({ id: "p", title: "P", kind: "post", status, path: null, href: "/editor/p", liveHref, publishAt: null, publishedAt: null, updatedAt: null });
 
-test("behaviour: contentStatus says each status in words and shapes, and when a scheduled post goes out", () => {
+test("behavior: contentStatus says each status in words and shapes, and when a scheduled post goes out", () => {
   expect(contentStatus("published")).toEqual({ tone: "ok", word: "Published" });
   expect(contentStatus("draft")).toEqual({ tone: "nodata", word: "Draft" });
   expect(contentStatus("scheduled")).toEqual({ tone: "info", word: "Scheduled" });
@@ -18,7 +18,7 @@ test("behaviour: contentStatus says each status in words and shapes, and when a 
   expect(contentStatus("scheduled", "2026-10-10T11:00:00Z", NOW).when).toBe("due now");
 });
 
-test("behaviour: an action is offered only where the site supports it and the person may run it, and a withheld one says why", () => {
+test("behavior: an action is offered only where the site supports it and the person may run it, and a withheld one says why", () => {
   expect(postActions({ offers: OFFERS, can: ALL }).bulk.map((a) => a.intent)).toEqual(["add-tag", "remove-tag", "duplicate", "unpublish", "delete"]);
   expect(postActions({ offers: OFFERS, can: ALL }).withheld).toEqual([]);
   const noDelete = postActions({ offers: { ...OFFERS, delete: false, tags: false }, can: ALL });
@@ -35,7 +35,7 @@ test("behaviour: an action is offered only where the site supports it and the pe
   expect(rowActions(row("published", "https://example.com/p"), { offers: OFFERS, can: NONE }).map((a) => a.value)).toEqual(["view"]);
 });
 
-test("behaviour: a filter's address keeps the other filters in one order and starts at the first page", () => {
+test("behavior: a filter's address keeps the other filters in one order and starts at the first page", () => {
   const q = { sort: "title" as const, q: "phage", cursor: "c-2", status: "draft" as const };
   expect(postsHref("/posts?old=1", q)).toBe("/posts?q=phage&status=draft&sort=title&cursor=c-2");
   expect(postsHref("/posts", withFilter(q, { status: "published" }))).toBe("/posts?q=phage&status=published&sort=title");
@@ -43,7 +43,7 @@ test("behaviour: a filter's address keeps the other filters in one order and sta
   expect(postsHref("/posts", {})).toBe("/posts");
 });
 
-test("behaviour: the count and the empty state name what is there and what is not", () => {
+test("behavior: the count and the empty state name what is there and what is not", () => {
   const rows = [row("draft"), row("draft")];
   expect(countLine({ rows, page: { nextCursor: null } })).toBe("2 posts");
   expect(countLine({ rows, page: { nextCursor: "c", total: 120, sortedOnPage: true } }, { noun: "article" })).toBe("Showing 2 of 120 articles, sorted on this page only");
@@ -51,7 +51,7 @@ test("behaviour: the count and the empty state name what is there and what is no
   expect(emptyWords({ status: "draft", q: "lysogeny" })).toMatchObject({ kind: "no-match", title: "No posts match “lysogeny”" });
 });
 
-test("behaviour: an undo or a confirm posts its intent with every field, a list as one field per item", () => {
+test("behavior: an undo or a confirm posts its intent with every field, a list as one field per item", () => {
   const form = intentForm("remove-tag", { ids: ["a", "b"], tag: "capsid", intent: "ignored" });
   expect(form.getAll("intent")).toEqual(["remove-tag"]);
   expect(form.getAll("ids")).toEqual(["a", "b"]);
@@ -126,7 +126,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("behaviour: with no script, the filters are a GET form and the bar and each row's menu post the intent and the ids", async ({ page }) => {
+  test("behavior: with no script, the filters are a GET form and the bar and each row's menu post the intent and the ids", async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     const list = page.locator("#posts-static");
     // The delivered HTML has the bar in the page, with words that need no script.
@@ -148,7 +148,7 @@ eachTheme((theme) => {
     expect(await posted).toEqual({ method: "get", enctype: "application/x-www-form-urlencoded", fields: { q: ["lambda"], kind: [""], tag: [""], sort: ["updated"] } });
   });
 
-  test("behaviour: with no script, the page after a post says the result, lists each post's outcome and posts Undo as a form", async ({ page }) => {
+  test("behavior: with no script, the page after a post says the result, lists each post's outcome and posts Undo as a form", async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     const list = page.locator("[data-mount='outcomes']");
     await expect(list.getByRole("status", { name: "Results and failures" })).toContainText("Added the tag capsid to 2 posts; 1 refused.");
@@ -158,7 +158,7 @@ eachTheme((theme) => {
     expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["foxhound-release", "mention-queue"], tag: ["capsid"], intent: ["remove-tag"] } });
   });
 
-  test("behaviour: with no script, a delete is confirmed on the server's page, which posts every id and needs the count typed", async ({ page }) => {
+  test("behavior: with no script, a delete is confirmed on the server's page, which posts every id and needs the count typed", async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     const confirm = page.locator("[data-mount='confirm']").getByRole("group", { name: "Delete 2 posts?" });
     await expect(confirm.getByRole("listitem")).toHaveText(["What a mention queue is for", "Phage lambda: lysis or lysogeny"]);
@@ -189,7 +189,7 @@ eachTheme((theme) => {
     expect((await log(page)).map((e) => e.intent)).toEqual(["unpublish", "republish"]);
   });
 
-  test("behaviour: with script, a tag shows each post's outcome in the bar, and Undo reverses it only where it changed", async ({ page }) => {
+  test("behavior: with script, a tag shows each post's outcome in the bar, and Undo reverses it only where it changed", async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     const list = editor(page);
     for (const t of ["Notes on the Foxhound release", "Why the uptime strip counts gaps", "Phage lambda: lysis or lysogeny"]) await list.getByRole("checkbox", { name: `Select ${t}` }).check();

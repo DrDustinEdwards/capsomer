@@ -53,7 +53,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("row", { name: /Tue 29 Sep 72.9%/ })).toBeVisible();
   });
 
-  test("behaviour: the numbers are the chart frame's Show data, closed, with the table in the HTML", async ({ page }) => {
+  test("behavior: the numbers are the chart frame's Show data, closed, with the table in the HTML", async ({ page }) => {
     await visitStates(page, "uptime-strip", theme);
     const outage = page.locator(section("s-outage"));
     await expect(outage.locator("details.cap-chart-data")).not.toHaveAttribute("open", "");
@@ -63,7 +63,7 @@ eachTheme((theme) => {
     await expect(outage.getByText("Hide data")).toBeVisible();
   });
 
-  test("behaviour: no data is a state with a reason, never a zero", async ({ page }) => {
+  test("behavior: no data is a state with a reason, never a zero", async ({ page }) => {
     await visitStates(page, "uptime-strip", theme);
     const nodata = page.locator(section("s-no-data"));
     await expect(nodata.locator(".cap-uptime-figure")).toHaveText("100% up over the 6 of 7 days with data");
@@ -82,7 +82,7 @@ eachTheme((theme) => {
     await expect(page.locator(section("s-line")).getByRole("img", { name: /down in 1, partly down in 2/ })).toBeVisible();
   });
 
-  test("behaviour: the legend shows each kind of slot by shape as well as colour", async ({ page }) => {
+  test("behavior: the legend shows each kind of slot by shape as well as color", async ({ page }) => {
     await visitStates(page, "uptime-strip", theme);
     const keys = page.locator(section("s-all-up")).locator(".cap-uptime-key");
     await expect(keys).toHaveCount(4);

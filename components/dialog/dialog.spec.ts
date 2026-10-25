@@ -5,7 +5,7 @@ import { errorText, uid } from "./dialog.ts";
 const dlg = (page: Page, name: string) => page.getByRole("dialog", { name });
 const alertDlg = (page: Page, name = "Revoke foxhound-driver?") => page.getByRole("alertdialog", { name });
 const hash = (page: Page) => page.evaluate(() => location.hash);
-const STATIC = ["centre", "alert", "large", "right", "left", "bottom", "top", "scroll", "busy"];
+const STATIC = ["center", "alert", "large", "right", "left", "bottom", "top", "scroll", "busy"];
 
 async function live(page: Page, theme: "light" | "dark") {
   await visitStates(page, "dialog", theme, "live");
@@ -21,21 +21,21 @@ async function openFrom(page: Page, button: string) {
 const backdropClick = (page: Page) => page.mouse.click(4, 4);
 
 // Plain logic that needs no page.
-test("behaviour: errorText reads an Error, a string, or says nothing is known", () => {
+test("behavior: errorText reads an Error, a string, or says nothing is known", () => {
   expect(errorText(new Error("The key is already gone"))).toBe("The key is already gone");
   expect(errorText("Offline")).toBe("Offline");
   expect(errorText(new Error(""))).toMatch(/nothing says what/);
   expect(errorText(undefined)).toMatch(/nothing says what/);
 });
 
-test("behaviour: uid returns a new id on every call, with the prefix", () => {
+test("behavior: uid returns a new id on every call, with the prefix", () => {
   const a = uid("cap-dialog");
   const b = uid("cap-dialog");
   expect(a).toMatch(/^cap-dialog-\d+$/);
   expect(b).not.toBe(a);
 });
 
-test("behaviour: a sheet dragged down by its header closes past a third and hands focus back; a short drag springs back", async ({ page }) => {
+test("behavior: a sheet dragged down by its header closes past a third and hands focus back; a short drag springs back", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await live(page, "light");
   await openFrom(page, "open-bottom");
@@ -59,7 +59,7 @@ test("behaviour: a sheet dragged down by its header closes past a third and hand
 
 // With no script the dialog is a card in the page and its form works: a context with script off
 // reads the delivered HTML, which is all there is.
-test("behaviour: with no script an inline dialog is in the page, open, and its form is there", async ({ browser }) => {
+test("behavior: with no script an inline dialog is in the page, open, and its form is there", async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, baseURL: "http://localhost:4319/" });
   const page = await context.newPage();
   await page.goto("components/dialog/states.html");
@@ -94,7 +94,7 @@ eachTheme((theme) => {
   }
 
   test("accessibility: title, description, label and the close icon reach their contrast", async ({ page }) => {
-    await visitStates(page, "dialog", theme, "centre");
+    await visitStates(page, "dialog", theme, "center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
     await expectContrast(page, [
       { sel: ".cap-dialog-title", what: "the title" },
@@ -106,7 +106,7 @@ eachTheme((theme) => {
   });
 
   test("accessibility: the dialog is named by its title and described by its description", async ({ page }) => {
-    await visitStates(page, "dialog", theme, "centre");
+    await visitStates(page, "dialog", theme, "center");
     const d = dlg(page, "Rename the site");
     await expect(d).toHaveAccessibleName("Rename the site");
     await expect(d).toHaveAccessibleDescription(/Visitors keep the old address/);
@@ -134,7 +134,7 @@ eachTheme((theme) => {
   });
 
   test("accessibility: the page behind a modal dialog is inert, and the dialog is modal", async ({ page }) => {
-    await visitStates(page, "dialog", theme, "centre");
+    await visitStates(page, "dialog", theme, "center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
     const modal = await page.evaluate(() => document.querySelector("dialog.cap-dialog")?.matches(":modal"));
     expect(modal).toBe(true);
@@ -145,7 +145,7 @@ eachTheme((theme) => {
 
   test("keyboard: focus starts on the first control, not the Close button", async ({ page }) => {
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Site name" })).toBeFocused();
   });
@@ -169,16 +169,16 @@ eachTheme((theme) => {
 
   test("keyboard: Esc closes the dialog and focus returns to the button that opened it", async ({ page }) => {
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(dlg(page, "Rename the site")).toBeHidden();
-    await expect(page.locator("#open-centre")).toBeFocused();
+    await expect(page.locator("#open-center")).toBeFocused();
   });
 
   test("keyboard: Tab and Shift Tab stay inside the dialog", async ({ page }) => {
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
     const inside = () => page.evaluate(() => !!document.activeElement?.closest("dialog.cap-dialog[open]"));
     for (let i = 0; i < 7; i++) {
@@ -214,15 +214,15 @@ eachTheme((theme) => {
     await expect.poll(() => body.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
   });
 
-  test("behaviour: a body that fits is not a keyboard stop", async ({ page }) => {
+  test("behavior: a body that fits is not a keyboard stop", async ({ page }) => {
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     const d = dlg(page, "Rename the site");
     await expect(d).toBeVisible();
     await expect(d.locator(".cap-dialog-body")).not.toHaveAttribute("tabindex", /.*/);
   });
 
-  test("behaviour: tall content keeps the header and the footer on screen while the body scrolls", async ({ page }) => {
+  test("behavior: tall content keeps the header and the footer on screen while the body scrolls", async ({ page }) => {
     await live(page, theme);
     await openFrom(page, "open-scroll");
     const d = dlg(page, "Audit log");
@@ -235,9 +235,9 @@ eachTheme((theme) => {
     expect(await body.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
   });
 
-  test("behaviour: a short centred dialog is as tall as its content, not the window", async ({ page }) => {
+  test("behavior: a short centered dialog is as tall as its content, not the window", async ({ page }) => {
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     const d = dlg(page, "Rename the site");
     await expect(d).toBeVisible();
     const { box, content, win } = await d.evaluate((el) => ({
@@ -250,18 +250,18 @@ eachTheme((theme) => {
     expect(box).toBeLessThan(win - 100);
   });
 
-  test("behaviour: a click on the backdrop closes a dialog and returns focus", async ({ page }) => {
+  test("behavior: a click on the backdrop closes a dialog and returns focus", async ({ page }) => {
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
     await backdropClick(page);
     await expect(dlg(page, "Rename the site")).toBeHidden();
-    await expect(page.locator("#open-centre")).toBeFocused();
+    await expect(page.locator("#open-center")).toBeFocused();
   });
 
-  test("behaviour: a press that starts inside and ends on the backdrop does not close it", async ({ page }) => {
+  test("behavior: a press that starts inside and ends on the backdrop does not close it", async ({ page }) => {
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     const d = dlg(page, "Rename the site");
     await expect(d).toBeVisible();
     const box = await d.boundingBox();
@@ -273,7 +273,7 @@ eachTheme((theme) => {
     await expect(d).toBeVisible();
   });
 
-  test("behaviour: a locked dialog and an alert dialog ignore a click on the backdrop", async ({ page }) => {
+  test("behavior: a locked dialog and an alert dialog ignore a click on the backdrop", async ({ page }) => {
     await live(page, theme);
     await openFrom(page, "open-locked");
     const locked = dlg(page, "Locked, a click outside does nothing");
@@ -289,7 +289,7 @@ eachTheme((theme) => {
     await expect(alertDlg(page)).toBeVisible();
   });
 
-  test("behaviour: busy holds Esc, the backdrop and Cancel until the request answers", async ({ page }) => {
+  test("behavior: busy holds Esc, the backdrop and Cancel until the request answers", async ({ page }) => {
     await live(page, theme);
     await openFrom(page, "open-busy");
     const d = dlg(page, "Publish the draft");
@@ -306,7 +306,7 @@ eachTheme((theme) => {
     await expect(d).toBeHidden();
   });
 
-  test("behaviour: a dialog opened from history closes with Back, and Esc takes the entry back", async ({ page }) => {
+  test("behavior: a dialog opened from history closes with Back, and Esc takes the entry back", async ({ page }) => {
     await live(page, theme);
     await openFrom(page, "open-sheet");
     const d = dlg(page, "Push the capsomer branch");
@@ -324,14 +324,14 @@ eachTheme((theme) => {
     await expect.poll(() => hash(page)).toBe("");
   });
 
-  test("behaviour: a dialog without history leaves the address alone", async ({ page }) => {
+  test("behavior: a dialog without history leaves the address alone", async ({ page }) => {
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
     expect(await hash(page)).toBe("");
   });
 
-  test("behaviour: each placement sits against its edge", async ({ page }) => {
+  test("behavior: each placement sits against its edge", async ({ page }) => {
     const rect = async (id: string) => {
       await visitStates(page, "dialog", theme, id);
       await expect(page.locator("dialog.cap-dialog")).toBeVisible();
@@ -342,9 +342,9 @@ eachTheme((theme) => {
         return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, w: window.innerWidth, h: window.innerHeight };
       });
     };
-    const centre = await rect("centre");
-    expect(Math.abs(centre.left + centre.right - centre.w)).toBeLessThanOrEqual(2);
-    expect(Math.abs(centre.top + centre.bottom - centre.h)).toBeLessThanOrEqual(2);
+    const center = await rect("center");
+    expect(Math.abs(center.left + center.right - center.w)).toBeLessThanOrEqual(2);
+    expect(Math.abs(center.top + center.bottom - center.h)).toBeLessThanOrEqual(2);
     const right = await rect("right");
     expect(right.right).toBeGreaterThanOrEqual(right.w - 1);
     expect(right.top).toBeLessThanOrEqual(1);
@@ -361,14 +361,14 @@ eachTheme((theme) => {
     expect(top.top).toBeLessThan(top.h / 3);
   });
 
-  test("behaviour: under reduced motion the dialog appears and goes with no transition", async ({ page }) => {
+  test("behavior: under reduced motion the dialog appears and goes with no transition", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     const d = dlg(page, "Rename the site");
     await expect(d).toBeVisible();
     const moving = await page.evaluate(() => {
-      const el = document.getElementById("live-centre");
+      const el = document.getElementById("live-center");
       if (!el) throw new Error("no dialog");
       return { animations: el.getAnimations({ subtree: true }).filter((a) => Number(a.effect?.getComputedTiming().endTime ?? 0) > 1).length, duration: parseFloat(getComputedStyle(el).transitionDuration) };
     });
@@ -378,11 +378,11 @@ eachTheme((theme) => {
     await expect(d).toBeHidden();
   });
 
-  test("behaviour: with motion allowed the dialog opens through a transition and still closes fully", async ({ page }) => {
+  test("behavior: with motion allowed the dialog opens through a transition and still closes fully", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await live(page, theme);
     const animated = await page.evaluate(() => {
-      const el = document.getElementById("live-centre");
+      const el = document.getElementById("live-center");
       if (!(el instanceof HTMLDialogElement)) throw new Error("no dialog");
       el.showModal();
       return el.getAnimations().length > 0;
@@ -390,14 +390,14 @@ eachTheme((theme) => {
     expect(animated).toBe(true);
     const d = dlg(page, "Rename the site");
     await expect(d).toBeVisible();
-    await page.evaluate(() => (document.getElementById("live-centre") as HTMLDialogElement).close());
+    await page.evaluate(() => (document.getElementById("live-center") as HTMLDialogElement).close());
     await expect(d).toBeHidden();
-    expect(await page.evaluate(() => (document.getElementById("live-centre") as HTMLDialogElement).open)).toBe(false);
+    expect(await page.evaluate(() => (document.getElementById("live-center") as HTMLDialogElement).open)).toBe(false);
   });
 
-  test("behaviour: the page behind does not scroll while a dialog is open", async ({ page }) => {
+  test("behavior: the page behind does not scroll while a dialog is open", async ({ page }) => {
     await live(page, theme);
-    await openFrom(page, "open-centre");
+    await openFrom(page, "open-center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
     const overflow = await page.evaluate(() => getComputedStyle(document.documentElement).overflow);
     expect(overflow).toBe("hidden");
@@ -406,7 +406,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe("hidden");
   });
 
-  test("behaviour: opening the same dialog twice in a row works", async ({ page }) => {
+  test("behavior: opening the same dialog twice in a row works", async ({ page }) => {
     await live(page, theme);
     for (let i = 0; i < 2; i++) {
       await openFrom(page, "open-bottom");
@@ -415,7 +415,7 @@ eachTheme((theme) => {
       await expect(dlg(page, "More views")).toBeHidden();
     }
   });
-  test("behaviour: with script an inline dialog is closed on load and its link opens it as the modal", async ({ page }) => {
+  test("behavior: with script an inline dialog is closed on load and its link opens it as the modal", async ({ page }) => {
     await visitStates(page, "dialog", theme);
     const card = page.locator("#inline-rename");
     await expect(card).not.toHaveAttribute("open", "");

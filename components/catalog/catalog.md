@@ -2,11 +2,11 @@
 name: catalog
 title: Catalog
 summary: A searchable, filterable, sortable collection with counts, removable filter chips, a table that becomes cards on a phone, and a filter tray; its state is in the address and it works with no script.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [full width, a phone's width, tray open, filters chosen with chips, search with best match, no match, nothing yet, paged, no script]
 added: 0.4.0
-source: The site's publications filters and phage table (app/routes/publications.tsx, app/enhance/phages.ts in dustinedwards-info), generalised; Capsomer's chips, table, pagination and empty components underneath.
+source: The site's publications filters and phage table (app/routes/publications.tsx, app/enhance/phages.ts in dustinedwards-info), generalized; Capsomer's chips, table, pagination and empty components underneath.
 replaces:
   - 'class="[^"]*\b(facet|facets|filter-panel|catalog)\b'
   - 'className="[^"]*\b(facet|facets|filter-panel|catalog)\b'
@@ -14,7 +14,7 @@ replaces:
 
 # Catalog
 
-A collection a person searches, narrows and sorts: protocols, publications, phages, jobs. It is a `form` that submits with GET to the page's own address, so every control works with no script and every state is a link that can be shared. The behaviour then updates the page in place.
+A collection a person searches, narrows and sorts: protocols, publications, phages, jobs. It is a `form` that submits with GET to the page's own address, so every control works with no script and every state is a link that can be shared. The behavior then updates the page in place.
 
 ## When to use it
 
@@ -30,7 +30,7 @@ A collection of dozens to thousands of items that share fields, where a person n
 
 - **A collection declares its fields once** (`defineCatalog`): is the field searched (and its weight), a facet (one value or many, general or not), a column, sortable, and what type it is. The search box, the facets, the columns, the sort menu and the export all come from that one declaration, so a field is never described twice.
 - **The state is in the address, in one fixed order.** `?q=pcr&kind=protocol&method=pcr&sort=-updated&page=2`: only what differs from the default is written, so one state has one address. The canonical stays the base page, because every filtered address is a view of it.
-- **It works with no script.** The facets are checkboxes and radios, the sort is a select, search is a search field, Apply submits the form; the chips, the sort headers and the pages are links. The behaviour hides Apply and updates on every change.
+- **It works with no script.** The facets are checkboxes and radios, the sort is a select, search is a search field, Apply submits the form; the chips, the sort headers and the pages are links. The behavior hides Apply and updates on every change.
 - **Counts say what choosing would give.** Each option shows how many items would match with it chosen, the search and the other filters held and the facet's own filter not (so a facet's options do not collapse as you choose in it). A chosen option with no matches stays, so it can be released.
 - **A facet with no options is not drawn**: when the search and the other filters leave a facet nothing to choose, or no item has a value for it, its heading and "Any" are left out rather than shown empty.
 - **General facets first.** Facets marked `general` are listed first; the rest follow in the order declared. Values within a facet combine with "or"; facets combine with "and". A facet of one value (kind of thing) is a radio with "Any".
@@ -47,7 +47,7 @@ A collection of dozens to thousands of items that share fields, where a person n
 ## What the catalog does not do
 
 - **It does not query.** The site gives it the items (`queryCatalog(def, items, state)` is a pure function over an array). A collection too large to hold in memory computes the same result in its own database and passes it to `Catalog`.
-- **It does not hydrate.** The behaviour owns the DOM inside its regions. Do not re-render a `Catalog` with different props in the browser; render it on the server.
+- **It does not hydrate.** The behavior owns the DOM inside its regions. Do not re-render a `Catalog` with different props in the browser; render it on the server.
 
 ## Keyboard
 
@@ -61,11 +61,11 @@ A collection of dozens to thousands of items that share fields, where a person n
 
 ## Accessibility
 
-- A labelled form; each facet is a `fieldset` with a `legend`; every control has a visible label.
+- A labeled form; each facet is a `fieldset` with a `legend`; every control has a visible label.
 - The count is a polite live region. The results region is `aria-busy` while it updates.
 - A removable chip's name says it removes ("Method: PCR (remove this filter)").
 - The card layout of the table is the table component's opt-in reflow; **it has not yet been checked with a screen reader**, so the catalog says so here and an app should check it before relying on it (DEFAULTS.md).
-- Forced colours: chips keep an edge.
+- Forced colors: chips keep an edge.
 
 ## Markup
 
@@ -106,7 +106,7 @@ Use it from React (the server renders it; `queryCatalog` is the same function th
 
 ```tsx
 import { Catalog } from "capsomer/react/catalog";
-import { defineCatalog, parseCatalogParams, queryCatalog } from "capsomer/behaviour/catalog";
+import { defineCatalog, parseCatalogParams, queryCatalog } from "capsomer/behavior/catalog";
 
 const def = defineCatalog({ id: "protocols", noun: ["protocol", "protocols"], basePath: "/research/protocols", itemKey: (p) => p.id, fields: [/* ... */] });
 // in the loader: queryCatalog(def, items, parseCatalogParams(def, new URL(request.url).searchParams))

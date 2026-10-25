@@ -1,10 +1,10 @@
-// The design tokens, generated from one seed colour per family. `node tokens/palette.mjs`
-// writes tokens/colour.css; `--check` regenerates it in memory, refuses any difference from
+// The design tokens, generated from one seed color per family. `node tokens/palette.mjs`
+// writes tokens/color.css; `--check` regenerates it in memory, refuses any difference from
 // the committed file, and checks every text and control pair against WCAG 2.2 (4.5:1 for
 // text, 3:1 for a control's boundary), in both themes. `npm run check` runs the check, so CI
 // refuses a hand-edited hex and a pair that fell below the bar.
 //
-// The family scale (rulings.md, rule 14, locked 2026-10-01): every brand colour is a
+// The family scale (rulings.md, rule 14, locked 2026-10-01): every brand color is a
 // 12-step OKLCH scale with the same lightness roles, the Radix Colors step roles (1 and 2
 // backgrounds, 3 to 5 element backgrounds, 6 to 8 borders, 9 the solid accent, 10 its hover,
 // 11 low-contrast text, 12 high-contrast text). Step 9 is the seed exactly, in both themes,
@@ -16,20 +16,20 @@
 // chroma at the seed's hue; status hues are fixed and tuned by bisection against the
 // hardest surface each sits on. The OKLab conversion follows Bjorn Ottosson's reference.
 //
-//   node tokens/palette.mjs                       colour.css (purple), family-<name>.css for every other family
+//   node tokens/palette.mjs                       color.css (purple), family-<name>.css for every other family
 //   node tokens/palette.mjs --family=fox --out=f  Foxing's family as a root theme into f
 //   node tokens/palette.mjs --seed=#RRGGBB [--anchor=#RRGGBB] --out=f
 //   node tokens/palette.mjs --report              every pair, every family, both themes
 //
-// tokens/colour.css is the purple family on :root (the default). tokens/family-fox.css,
+// tokens/color.css is the purple family on :root (the default). tokens/family-fox.css,
 // tokens/family-teal.css, tokens/family-navy.css, tokens/family-forest.css and tokens/family-amber.css carry the same tokens scoped to
 // [data-family="fox"], [data-family="teal"], [data-family="navy"], [data-family="forest"] and [data-family="amber"], so one element (the root, or a wrapper) can switch family for its
-// subtree. Both themes follow the same pattern as colour.css (prefers-color-scheme, then
+// subtree. Both themes follow the same pattern as color.css (prefers-color-scheme, then
 // [data-theme]). Everything inside a family block is a literal value, never a var() chain,
 // so a family on a wrapper does not inherit the root family's already-resolved values.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { chartChecks, companionColours, labelOn, rampColours } from "./chart.mjs";
+import { chartChecks, companionColors, labelOn, rampColors } from "./chart.mjs";
 
 export const FAMILIES = {
   // defaultTheme is the theme checked first (rule 15). Purple follows the viewer's system
@@ -54,7 +54,7 @@ export const FAMILIES = {
   // sRGB at chroma 0.15 there, so it takes that, the strongest this green can be.
   forest: { seed: "#06954f", anchor: "#15532E", defaultTheme: "light", note: "julieedwards.info, light by default; the school green #15532E is step 11 in light" },
 };
-const OUT = fileURLToPath(new URL("./colour.css", import.meta.url));
+const OUT = fileURLToPath(new URL("./color.css", import.meta.url));
 const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
 const hexArg = (name) => {
   const v = arg(name);
@@ -67,7 +67,7 @@ const seedArg = hexArg("seed");
 const anchorArg = hexArg("anchor");
 const outArg = arg("out");
 
-// ---- colour math ---------------------------------------------------------------------
+// ---- color math ---------------------------------------------------------------------
 
 const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
 const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
@@ -100,13 +100,13 @@ function oklabToRgb([L, a, b]) {
 
 const inGamut = (rgb) => rgb.every((c) => c >= -0.0005 && c <= 1.0005);
 
-// A hex colour for oklch(L C H); the chroma is pulled in until the colour fits sRGB.
+// A hex color for oklch(L C H); the chroma is pulled in until the color fits sRGB.
 export function oklch(L, C, H) {
   for (let c = C; c >= 0; c -= 0.002) {
     const rgb = oklabToRgb([L, c * Math.cos((H * Math.PI) / 180), c * Math.sin((H * Math.PI) / 180)]);
     if (inGamut(rgb)) return "#" + rgb.map((v) => Math.round(Math.min(1, Math.max(0, v)) * 255).toString(16).padStart(2, "0")).join("");
   }
-  throw new Error(`no sRGB colour for oklch(${L} ${C} ${H})`);
+  throw new Error(`no sRGB color for oklch(${L} ${C} ${H})`);
 }
 
 const luminance = (hex) => {
@@ -114,7 +114,7 @@ const luminance = (hex) => {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 };
 
-// WCAG 2.x contrast ratio between two hex colours.
+// WCAG 2.x contrast ratio between two hex colors.
 export function contrast(a, b) {
   const x = luminance(a);
   const y = luminance(b);
@@ -138,7 +138,7 @@ function tune(C, H, bg, target, from, to) {
 // ---- the scales ----------------------------------------------------------------------
 
 const NEUTRAL_CHROMA = 0.012;
-// Status hues are kept; only lightness is tuned. info also colours a running job.
+// Status hues are kept; only lightness is tuned. info also colors a running job.
 const STATUS = { ok: 150, warn: 78, crit: 26, info: 255 };
 const TEXT = 4.6; // a little above 4.5, so rounding to hex cannot fall under it
 const CONTROL = 3.0;
@@ -222,13 +222,13 @@ export const CHART_ORDER = [
 
 export const ELEVATION_ORDER = ["shadow-xs", "shadow-s", "shadow-m", "shadow-l", "ring-soft", "shadow-ring", "shadow", "scrim"];
 
-// The chart palette (tokens/chart.mjs): eight series colours, the family's five-step ramp, and
-// the label colour that reads best on each. The three seeds are step 9 of the three families,
-// so a series colour is the family colour itself.
+// The chart palette (tokens/chart.mjs): eight series colors, the family's five-step ramp, and
+// the label color that reads best on each. The three seeds are step 9 of the three families,
+// so a series color is the family color itself.
 function chartTokens(t, scheme, { C, H }) {
   const out = {};
-  const series = [FAMILIES.purple.seed, FAMILIES.fox.seed, FAMILIES.teal.seed, ...companionColours(scheme)].map((h) => h.toLowerCase());
-  const ramp = rampColours(H, C, scheme);
+  const series = [FAMILIES.purple.seed, FAMILIES.fox.seed, FAMILIES.teal.seed, ...companionColors(scheme)].map((h) => h.toLowerCase());
+  const ramp = rampColors(H, C, scheme);
   series.forEach((hex, i) => {
     out[`series-${i + 1}`] = hex;
     out[`series-text-${i + 1}`] = labelOn(hex, t.text, t.surface);
@@ -255,7 +255,7 @@ function familyTheme(seed, anchor, scheme, label = "light") {
   t.text = oklch(dark ? 0.95 : 0.22, dark ? 0.008 : 0.03, H);
   t.muted = dark ? tune(0.015, H, t.surface, 6.0, 0.2, 0.95) : tune(0.02, H, t.ground, 5.5, 0.9, 0.2);
   t.dim = dark ? tune(0.015, H, t.raised, TEXT, 0.2, 0.95) : tune(0.02, H, t.sunken, TEXT, 0.9, 0.2);
-  // The accent family, from the scale's roles. Step 9 is the brand colour (fills, the focus
+  // The accent family, from the scale's roles. Step 9 is the brand color (fills, the focus
   // ring, large shapes and icons, held to 3:1); step 11 is accent text (4.5:1); the primary
   // button fills with step 10, hovers to step 11, and carries --primary-fg: the surface tone
   // in light, the ground tone in dark (a lighter fill takes a dark label). A family with a dark
@@ -310,7 +310,7 @@ export function pairs(t) {
   };
   // Rulings rule 18: accent text is step 11 (--accent-text) and its hover step 12; the
   // primary button fill is step 10 with its label --primary-fg; step 9 (--accent, the brand
-  // colour) is held to 3:1 for the focus ring and large fills and never carries text.
+  // color) is held to 3:1 for the focus ring and large fills and never carries text.
   for (const bg of ["surface", "ground", "raised"]) {
     for (const fg of ["text", "muted", "dim", "accent-text", "accent-hover"]) need(fg, bg, 4.5, "text");
     for (const s of Object.keys(STATUS)) need(s, bg, 4.5, "status word");
@@ -323,7 +323,7 @@ export function pairs(t) {
   need("accent-line", "sel", 3, "selection ring");
   for (const bg of ["surface", "ground", "raised"]) {
     need("ring", bg, 3, "focus ring");
-    need("accent", bg, 3, "brand colour as a large fill or icon");
+    need("accent", bg, 3, "brand color as a large fill or icon");
     need("primary", bg, 3, "primary button fill against its surroundings");
   }
   need("primary-hover", "surface", 3, "primary button fill (hover) against its surroundings");
@@ -365,7 +365,7 @@ const note = (seed, anchor) => {
   return `step 9 ${seed.toLowerCase()} (oklch ${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})${light !== seed.toLowerCase() ? `, ${light} in light` : ""}${anchor ? `, step 11 anchored at ${anchor.toLowerCase()}` : ""}`;
 };
 
-// The default family on the document root: colour.css.
+// The default family on the document root: color.css.
 export function renderFamily(seed, anchor = null, label = "light") {
   const l = familyTheme(seed, anchor, "light", label);
   const d = familyTheme(seed, anchor, "dark", label);
@@ -447,12 +447,15 @@ export const capsomerTheme = ${JSON.stringify(theme, null, 2)};
 `;
 }
 
-// The colours an email uses, for every family in both themes, as literal hexes. Email clients
-// ignore custom properties, so components/email/colours.ts carries the values (the same ones
+// The colors an email uses, for every family in both themes, as literal hexes. Email clients
+// ignore custom properties, so components/email/colors.ts carries the values (the same ones
 // as the site, from the same generator) and the email code stays free of node:fs.
 const EMAIL_KEYS = ["ground", "surface", "line", "text", "muted", "accent-text", "primary", "primary-fg", "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft"];
 
-export function renderEmailColours() {
+/** @deprecated The British spelling, kept so existing imports work; use `renderEmailColors`. */
+export const renderEmailColours = () => renderEmailColors();
+
+export function renderEmailColors() {
   const out = {};
   for (const [name, f] of Object.entries(FAMILIES)) {
     out[name] = {};
@@ -464,8 +467,8 @@ export function renderEmailColours() {
   return `// Generated by tokens/palette.mjs from Capsomer's tokens (every family, both themes).
 // Do not edit: change the script and run \`npm run tokens\`. \`npm run check\` refuses a file that differs.
 export type EmailFamily = ${Object.keys(FAMILIES).map((n) => JSON.stringify(n)).join(" | ")};
-export type EmailColours = Record<${EMAIL_KEYS.map((n) => JSON.stringify(n)).join(" | ")}, string>;
-export const emailColours: Record<EmailFamily, { light: EmailColours; dark: EmailColours }> = ${JSON.stringify(out, null, 2)};
+export type EmailColors = Record<${EMAIL_KEYS.map((n) => JSON.stringify(n)).join(" | ")}, string>;
+export const emailColors: Record<EmailFamily, { light: EmailColors; dark: EmailColors }> = ${JSON.stringify(out, null, 2)};
 `;
 }
 
@@ -487,14 +490,14 @@ export function themes({ seed, anchor, label } = active()) {
 export function files() {
   if (outArg || seedArg || familyArg) {
     const a = active();
-    return [[outArg ?? "colour.css", renderFamily(a.seed, a.anchor, a.label)]];
+    return [[outArg ?? "color.css", renderFamily(a.seed, a.anchor, a.label)]];
   }
   const p = FAMILIES.purple;
   return [
-    ["colour.css", renderFamily(p.seed, p.anchor)],
+    ["color.css", renderFamily(p.seed, p.anchor)],
     ...Object.keys(FAMILIES).filter((n) => n !== "purple").map((n) => [`family-${n}.css`, renderScoped(n, FAMILIES[n])]),
     ["enarratio-theme.mjs", renderEnarratioTheme()],
-    ["../components/email/colours.ts", renderEmailColours()],
+    ["../components/email/colors.ts", renderEmailColors()],
   ];
 }
 
@@ -506,8 +509,8 @@ export function check() {
   problems.push(...failures(t.light.tokens).map((p) => `light: ${p}`));
   problems.push(...failures(t.dark.tokens).map((p) => `dark: ${p}`));
   // The chart palette, for every family and both themes (tokens/chart.mjs): contrast against
-  // the chart's background, every pair apart under the colour-vision deficiencies, clear of
-  // the status colours, the ramp ordered.
+  // the chart's background, every pair apart under the color-vision deficiencies, clear of
+  // the status colors, the ramp ordered.
   for (const [name, f] of Object.entries(FAMILIES)) {
     const ft = themes(f);
     for (const scheme of ["light", "dark"]) {

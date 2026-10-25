@@ -53,7 +53,7 @@ eachTheme((theme) => {
     await expect(sheet(page)).toBeHidden();
   });
 
-  test("behaviour: the sheet says what a command is for, under its name", async ({ page }) => {
+  test("behavior: the sheet says what a command is for, under its name", async ({ page }) => {
     await visitStates(page, "shortcuts", theme, "open");
     await expect(sheet(page).getByText("Go to Overview")).toContainText("Problems first, worst first; then the sites.");
   });
@@ -129,7 +129,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("switch", { name: "Single-key shortcuts" })).not.toBeChecked();
   });
 
-  test("behaviour: the off specimen shows the switch off", async ({ page }) => {
+  test("behavior: the off specimen shows the switch off", async ({ page }) => {
     await visitStates(page, "shortcuts", theme, "off");
     await expect(page.getByRole("switch", { name: "Single-key shortcuts" })).not.toBeChecked();
   });

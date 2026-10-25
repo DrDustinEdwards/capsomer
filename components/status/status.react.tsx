@@ -6,7 +6,7 @@ export type GlyphName = Tone | "running";
 
 const box = { viewBox: "0 0 16 16", "aria-hidden": true, focusable: false } as const;
 
-// One shape per meaning, so the shape carries it without colour. Marks inside a filled
+// One shape per meaning, so the shape carries it without color. Marks inside a filled
 // shape are cut out (evenodd), so the glyph reads on any background, a tint included.
 export function Glyph({ name }: { name: GlyphName }) {
   switch (name) {
@@ -99,9 +99,9 @@ export type BadgeVariant = "default" | "secondary" | "outline" | "destructive" |
 
 export interface PillProps {
   // A status tone: the word and glyph on the tone's tint. Without a variant it is a status
-  // badge; with one, outline and ghost keep the tone's colour.
+  // badge; with one, outline and ghost keep the tone's color.
   tone?: Tone;
-  // shadcn's badge variants. Leave out for the tinted status badge (or a quiet grey one).
+  // shadcn's badge variants. Leave out for the tinted status badge (or a quiet gray one).
   variant?: BadgeVariant;
   // Running is an info tone drawn with an arc.
   running?: boolean;

@@ -5,12 +5,12 @@ import { expect, test, type Page } from "@playwright/test";
 // tests with one of the prefixes below; the site's test panel groups results by prefix.
 //   "keyboard: ..."       a key does what the doc page's keyboard table says
 //   "accessibility: ..."  the axe scan, the ARIA snapshot, painted contrast
-//   "behaviour: ..."      anything else the component promises
+//   "behavior: ..."      anything else the component promises
 
 export const THEMES = ["light", "dark"] as const;
 export type Theme = (typeof THEMES)[number];
 
-// Runs `body` once per theme, with the browser's colour scheme and the page's data-theme
+// Runs `body` once per theme, with the browser's color scheme and the page's data-theme
 // both set, so a component is checked as each theme actually paints it. In the dark theme
 // only the accessibility tests run (playwright.config.ts, grepInvert).
 export function eachTheme(body: (theme: Theme) => void): void {
@@ -28,8 +28,8 @@ declare global {
   }
 }
 
-// The contrast ratio of two CSS colours as the browser paints them (a canvas pixel, so any
-// colour syntax works). visitStates installs it, for checks that run inside the page.
+// The contrast ratio of two CSS colors as the browser paints them (a canvas pixel, so any
+// color syntax works). visitStates installs it, for checks that run inside the page.
 function installRatio(): void {
   const lum = (c: string) => {
     const x = document.createElement("canvas").getContext("2d")!;
@@ -68,7 +68,7 @@ export async function expectNoAxeViolations(page: Page, include?: string, option
   // tests that visit each frame on its own, so those frames are left out of the page scan.
   if (options.baseUi) builder = builder.exclude("[data-base-ui-focus-guard]").exclude("iframe");
   if (options.exclude) builder = builder.exclude(options.exclude);
-  // axe reads colours as painted. A dialog fading in, or a control mid-transition, is read
+  // axe reads colors as painted. A dialog fading in, or a control mid-transition, is read
   // blended with what is behind it, so wait for every finite animation and transition to end
   // first (the first CI run caught a danger button at 4.18:1 for this reason).
   await page.evaluate(() =>
@@ -90,7 +90,7 @@ export interface Reading {
   ratio: number;
 }
 
-// Contrast as the browser paints it: the colour of the element (its text, or its border)
+// Contrast as the browser paints it: the color of the element (its text, or its border)
 // against the first opaque background behind it, compositing translucent layers. From the
 // Capsid Portal's contrast spec, where it caught a selected row at 1.06:1. A selector ending in
 // ::before or ::after reads that pseudo-element (a sliding highlight's edge), on its element.
@@ -201,7 +201,7 @@ export function nextPost(page: Page, root: string): Promise<{ method: string; en
 }
 
 // A focused row's ring is an inset outline over the row's own --sel tint, so its contrast is the
-// outline colour against the row's background (paintedContrast measures an outline against the
+// outline color against the row's background (paintedContrast measures an outline against the
 // parent's background, which is not what the eye sees there).
 export function ringContrast(page: Page, sel: string): Promise<{ ring: string; bg: string; ratio: number; width: string } | null> {
   return page.evaluate((s) => {

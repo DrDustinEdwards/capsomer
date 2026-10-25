@@ -2,7 +2,7 @@
 name: authorship
 title: Authorship marks
 summary: Who wrote each passage of a text (you, AI or quoted), marked by a patterned rule and a word in the margin, shown or hidden by one switch, with a summary by words.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [shown, hidden, labels with an avatar, remembered choice, comfortable density, narrow container, React with Authorship and Run]
 added: 0.3.0
@@ -30,7 +30,7 @@ A draft that mixes your writing, an agent's and quotations, where the writer mus
 
 ## The default and its reason
 
-- **Three kinds, each with a colour, a pattern and a word.** You is a solid rule, AI is dashed, quoted is dotted; the label says "You", "AI" or "Quoted". Colour is never alone. The rule is the identifying mark, so it reaches 3:1 on the page in both themes.
+- **Three kinds, each with a color, a pattern and a word.** You is a solid rule, AI is dashed, quoted is dotted; the label says "You", "AI" or "Quoted". Color is never alone. The rule is the identifying mark, so it reaches 3:1 on the page in both themes.
 - **A run is a span or a block.** A `span.cap-run` sits inside a paragraph; a `div.cap-run` wraps paragraphs. The label is real text at the run's start, in the DOM and read. On a container 36rem or wider the label of a block sits in the margin the text leaves for it; narrower, it sits above. A span's label is always inline.
 - **One switch, shown by default.** "Show authorship" is the switch component (`role="switch"`, a fixed noun, the word On or Off beside it). The default is shown because a mark that is off by default is rarely seen. It takes effect at once and is its own undo, so there is no message with Undo: pressing it again is Undo.
 - **Hidden means plain prose.** When off, every rule, label and the summary are `display: none`, so nothing extra is read and the paragraphs have no gutter. The text is unchanged, in the HTML and on the page.
@@ -45,7 +45,7 @@ None: shadcn has no authorship or attribution component. The label is its Badge 
 ## Deliberately different
 
 - **The default is shown, not hidden**, and the hidden state removes the labels from the accessibility tree, not just the eye: a person who turns authorship off wants to read the prose, not hear "AI" before each sentence.
-- **A pattern on every rule**, where a colour-keyed margin would be enough for most readers: a colour-blind reader and a monochrome print keep the difference.
+- **A pattern on every rule**, where a color-keyed margin would be enough for most readers: a color-blind reader and a monochrome print keep the difference.
 - **Percentages by words, not characters or sentences**, and the word counts are always written out.
 
 ## Keyboard
@@ -61,7 +61,7 @@ None: shadcn has no authorship or attribution component. The label is its Badge 
 - The rules are decoration for a screen reader and the identifying mark for a sighted person: 3:1 on the page, with a pattern.
 - The summary's bar is `aria-hidden`; its numbers are text. Label text, the summary and the notes reach 4.5:1.
 - An avatar in a label is `aria-hidden`, so the kind is not said twice.
-- Forced colours: the rules and bar segments are drawn in `CanvasText`, keeping their patterns; labels get a border.
+- Forced colors: the rules and bar segments are drawn in `CanvasText`, keeping their patterns; labels get a border.
 - Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ## Markup
@@ -86,7 +86,7 @@ None: shadcn has no authorship or attribution component. The label is its Badge 
 
 An avatar goes in the label before the word, `aria-hidden`: `<span class="cap-run-label"><span class="cap-avatar" data-kind="ai" data-size="sm" aria-hidden="true">…</span>AI</span>`. `data-remember="off"` on the container keeps the choice out of storage.
 
-`import { enhance, summarise, summaryHtml, refresh, setShown, collectRuns } from "capsomer/behaviour/authorship"`. `summarise(runs)` is pure: runs are `{ kind, words }` or `{ kind, text }`, and it returns the total, a `shares` list (kind, words, percent) and the sentence. `summaryHtml(summary)` writes the summary's markup for a server; `enhance()` redraws the bar through the CSSOM and recounts from the runs on the page; `refresh(root)` recounts after the text changes; `setShown(root, shown)` sets the switch from code.
+`import { enhance, summarize, summaryHtml, refresh, setShown, collectRuns } from "capsomer/behavior/authorship"`. `summarize(runs)` is pure: runs are `{ kind, words }` or `{ kind, text }`, and it returns the total, a `shares` list (kind, words, percent) and the sentence. `summaryHtml(summary)` writes the summary's markup for a server; `enhance()` redraws the bar through the CSSOM and recounts from the runs on the page; `refresh(root)` recounts after the text changes; `setShown(root, shown)` sets the switch from code.
 
 In React, `import { Authorship, Run } from "capsomer/react/authorship"`:
 

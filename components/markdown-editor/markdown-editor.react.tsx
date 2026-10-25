@@ -33,7 +33,7 @@ export interface MarkdownEditorProps
 
 // Renders the HTML contract in markdown-editor.md: a label and a real textarea holding the
 // markdown, which is all a server render (and a reader without script) gets. After mount it
-// loads the behaviour module and CodeMirror with import(), so they are their own chunks and
+// loads the behavior module and CodeMirror with import(), so they are their own chunks and
 // never reach a bundle that renders no editor, and upgrades the textarea in place.
 export function MarkdownEditor(props: MarkdownEditorProps) {
   const { label, ariaLabel, name, value, defaultValue, placeholder, readOnly, disabled, required, maxLength, help, error } = props;
@@ -76,13 +76,13 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
   useEffect(() => {
     const host = rootRef.current;
     if (!host) return;
-    let cancelled = false;
+    let canceled = false;
     let mounted: MarkdownEditorHandle | null = null;
     import("./markdown-editor.ts")
-      .then((m) => (cancelled ? null : m.mountMarkdownEditor(host, options())))
+      .then((m) => (canceled ? null : m.mountMarkdownEditor(host, options())))
       .then((h) => {
         if (!h) return;
-        if (cancelled) return h.destroy();
+        if (canceled) return h.destroy();
         mounted = h;
         handleRef.current = h;
         const v = latest.current.value;
@@ -93,7 +93,7 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
         // CodeMirror did not load: the textarea stays as the editor.
       });
     return () => {
-      cancelled = true;
+      canceled = true;
       mounted?.destroy();
       handleRef.current = null;
     };

@@ -2,12 +2,12 @@
 name: popover
 title: Popover
 summary: The one floating surface, on the Popover API: click popovers, tooltips, and the look every popup shares.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [closed, open, open with arrow, tooltip, tooltip with a key, flipped]
 added: 0.2.0
 updated: 0.2.0
-source: shadcn/ui Popover, Tooltip and Hover Card (Base UI flavour), rebuilt in plain CSS on the native Popover API
+source: shadcn/ui Popover, Tooltip and Hover Card (Base UI flavor), rebuilt in plain CSS on the native Popover API
 replaces:
   - 'class="(popover|popup|dropdown-panel|flyout)[ "]'
   - "data-popper|data-tippy|data-radix-popper"
@@ -35,7 +35,7 @@ Reference: shadcn/ui `Popover`, `Tooltip` and `Hover Card`.
 
 - **Native Popover API.** `popover="auto"` for click popovers (light dismiss, Esc, top layer for free), `popover="manual"` for tooltips (they must not close each other or steal focus).
 - **Surface:** the raised surface with a hairline ring and `--shadow-m`, `--radius-l`, `--pad-card` padding, 18rem wide (`data-size` `sm`, `lg`, `auto`). The ring is decorative, so it is a hairline.
-- **Placement:** below the trigger, centred, 4 px away (`data-side`, `data-align`, `data-offset`). CSS anchor positioning flips it when there is no room. After opening, the module checks the popup is inside the window and, if the CSS result is not (a wide popup near an edge), or the browser has no anchor positioning, computes the placement itself (flip and shift from `getBoundingClientRect`), through the CSSOM.
+- **Placement:** below the trigger, centered, 4 px away (`data-side`, `data-align`, `data-offset`). CSS anchor positioning flips it when there is no room. After opening, the module checks the popup is inside the window and, if the CSS result is not (a wide popup near an edge), or the browser has no anchor positioning, computes the placement itself (flip and shift from `getBoundingClientRect`), through the CSSOM.
 - **Motion:** opening, a 100 ms fade while it grows from 96% and slides 4 px out of the trigger's side over 200 ms; closing, 100 ms to 98% and half the slide (Radix Themes, Arc: what leaves goes faster than it came). A tooltip takes 100 ms both ways. Transitions, so a close mid-open reverses from where it is. Only when the person has not asked for reduced motion.
 - **Tooltip delay:** 300 ms on hover, at once on keyboard focus, and at once when another tooltip is open or closed less than 400 ms ago (shadcn's provider default is 0; Capsomer keeps the 300 ms the 0.1 tooltip had so a pointer crossing a toolbar does not flash tips).
 - **Focus:** a click popover moves focus to its first control (or to itself when it has none) and returns it to the trigger on close. Tabbing past its last control closes it and leaves focus where the person went.
@@ -56,7 +56,7 @@ Reference: shadcn/ui `Popover`, `Tooltip` and `Hover Card`.
 - A tooltip is `role="tooltip"`, linked with `aria-describedby`. The trigger keeps its own name.
 - WCAG 1.4.13: a tooltip is dismissible (Esc), hoverable (the pointer can move onto it) and persistent (it stays until dismissed, or hover and focus leave).
 - Touch: a tooltip never opens on touch hover and its content is never needed. Long press is not required.
-- Forced colours: the surface gets an edge; the arrow is hidden.
+- Forced colors: the surface gets an edge; the arrow is hidden.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -82,7 +82,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 Options on the popup: `data-side` (`top`, `bottom`, `left`, `right`, `inline-start`, `inline-end`), `data-align` (`start`, `center`, `end`), `data-offset` (px), `data-size`, `data-delay` (tooltip, ms), `data-engine="js"` (always use the script placement). `.cap-popover-arrow` as a child draws the arrow. `data-flush` removes the padding for list popups.
 
-`import { enhance, place, open, close } from "capsomer/behaviour/popover"`: `enhance()` attaches every `[data-cap="popover"]`; `place(anchor, popup, { side, align, offset })` is the placement on its own. In React:
+`import { enhance, place, open, close } from "capsomer/behavior/popover"`: `enhance()` attaches every `[data-cap="popover"]`; `place(anchor, popup, { side, align, offset })` is the placement on its own. In React:
 
 ```tsx
 <Popover>
@@ -105,7 +105,7 @@ Base UI popups (combobox, menu, select) apply `class="cap-popover"` and read `da
 - No portal and no Floating UI: the top layer replaces the portal and CSS anchor positioning replaces the positioner, with a small script fallback.
 - No hover card yet: a hover-opened popover with interactive content is hard to make keyboard-equal; use a click popover.
 - Tooltip delay 300 ms instead of 0 (above).
-- Slide distance 2 px (shadcn: 8 px) so it reads as settling, not travelling.
+- Slide distance 2 px (shadcn: 8 px) so it reads as settling, not traveling.
 
 ## Exceptions in production
 

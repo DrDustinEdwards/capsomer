@@ -46,7 +46,7 @@
     text-align: center;
   }
 
-  /* A checked box or an empty one: shape first (filled with a tick, or empty), colour
+  /* A checked box or an empty one: shape first (filled with a tick, or empty), color
      second, the word for a screen reader. Sized as a Checkbox, 16 px with a 4 px corner. */
   .cap-perms-check {
     display: inline-grid;

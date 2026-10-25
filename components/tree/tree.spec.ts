@@ -41,7 +41,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: chosen is marked by more than its colour, and a drop by a line or a ring", async ({ page }) => {
+  test("accessibility: chosen is marked by more than its color, and a drop by a line or a ring", async ({ page }) => {
     const css = (sel: string, prop: string, pseudo?: string) => page.locator(sel).evaluate((el, [p, ps]) => getComputedStyle(el, ps ?? null).getPropertyValue(p!), [prop, pseudo] as const);
     expect(await css("#st-chosen", "box-shadow")).not.toBe("none");
     expect(await css("#st-hover", "box-shadow")).toBe("none");
@@ -201,14 +201,14 @@ eachTheme((theme) => {
     expect(await focusedText(page)).toBe("01 Rain at Glen Rose");
   });
 
-  test("behaviour: a host refuses a move by cancelling the event, and nothing moves", async ({ page }) => {
+  test("behavior: a host refuses a move by canceling the event, and nothing moves", async ({ page }) => {
     await page.locator("#binder").evaluate((el) => el.addEventListener("cap:tree-move", (e) => e.preventDefault()));
     await row(page, "Paluxy Portal binder", /Tracks/).focus();
     await page.keyboard.press("Alt+ArrowUp");
     expect(await labels(page, "#binder [data-value='ch-01'] > .cap-tree-group")).toEqual(["01 Low water", "02 Tracks in the limestone", "03 The ranger's notebook"]);
   });
 
-  test("behaviour: the chevron opens and closes; a click on the row chooses it", async ({ page }) => {
+  test("behavior: the chevron opens and closes; a click on the row chooses it", async ({ page }) => {
     const ch = row(page, "Paluxy Portal binder", /01 The riverbed/);
     await ch.locator(".cap-tree-toggle").click();
     await expect(ch).toHaveAttribute("aria-expanded", "false");
@@ -221,7 +221,7 @@ eachTheme((theme) => {
     await expect(row(page, "Paluxy Portal binder", /Low water/)).toHaveAttribute("aria-selected", "false");
   });
 
-  test("behaviour: dragging a row shows where it lands and moves it there; the release does not follow the link", async ({ page }) => {
+  test("behavior: dragging a row shows where it lands and moves it there; the release does not follow the link", async ({ page }) => {
     const from = row(page, "Paluxy Portal binder", /ranger's notebook/);
     const before = row(page, "Paluxy Portal binder", /Low water/);
     const a = (await from.boundingBox())!;
@@ -237,7 +237,7 @@ eachTheme((theme) => {
     await expect(page).not.toHaveURL(/#ch-01-03$/);
   });
 
-  test("behaviour: dropping in the middle of a branch puts the row inside it, at the end", async ({ page }) => {
+  test("behavior: dropping in the middle of a branch puts the row inside it, at the end", async ({ page }) => {
     const from = row(page, "Paluxy Portal binder", "Notes");
     const into = row(page, "Paluxy Portal binder", /02 Flood stage/);
     const a = (await from.boundingBox())!;
@@ -250,7 +250,7 @@ eachTheme((theme) => {
     expect(await labels(page, "#binder [data-value='ch-02'] > .cap-tree-group")).toEqual(["01 Rain at Glen Rose", "02 The second set", "Notes"]);
   });
 
-  test("behaviour: Escape during a drag puts the row back, and a row never drops inside itself", async ({ page }) => {
+  test("behavior: Escape during a drag puts the row back, and a row never drops inside itself", async ({ page }) => {
     const from = row(page, "Paluxy Portal binder", /01 The riverbed/);
     const child = row(page, "Paluxy Portal binder", /Tracks/);
     const a = (await from.boundingBox())!;
@@ -265,7 +265,7 @@ eachTheme((theme) => {
     expect(await labels(page, "#binder")).toEqual(["Paluxy Portal", "01 The riverbed", "02 Flood stage", "03 Untitled chapter", "Bible", "Notes"]);
   });
 
-  test("behaviour: the React tree moves by key, refuses a move to the top level, and hands the page the new tree", async ({ page }) => {
+  test("behavior: the React tree moves by key, refuses a move to the top level, and hands the page the new tree", async ({ page }) => {
     const out = page.locator("#series-out");
     await row(page, "Series", "What the river keeps").focus();
     await page.keyboard.press("Alt+ArrowDown");

@@ -120,7 +120,7 @@ export interface Status {
 const NOTICE_GLYPH = '<rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/>';
 const NODATA_GLYPH = '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
 
-// A status is a shape, a word and a colour.
+// A status is a shape, a word and a color.
 export function statusOf(state: ModState): Status {
   const word = STATE_LABEL[state];
   switch (state) {

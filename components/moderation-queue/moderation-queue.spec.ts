@@ -3,7 +3,7 @@ import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from ".
 import { EMPTY_TEXT, STATE_LABEL, VIEWS, VIEW_LABEL, actionsFor, bulkActionsFor, countStates, decide, decidedText, inView, summaryText, sweepLines, undoAction, undoStack } from "./moderation-queue.ts";
 
 // The pure helpers need no browser.
-test("behaviour: decide is the contract's table: only waiting, approved and rejected can be decided", () => {
+test("behavior: decide is the contract's table: only waiting, approved and rejected can be decided", () => {
   expect(decide("pending", "approve")).toBe("approved");
   expect(decide("pending", "reject")).toBe("rejected");
   expect(decide("pending", "reset", true)).toBeNull();
@@ -22,7 +22,7 @@ test("behaviour: decide is the contract's table: only waiting, approved and reje
   expect(bulkActionsFor("failed", true)).toEqual([]);
 });
 
-test("behaviour: the words are the contract's states as Dustin named them, and the views count from the whole queue", () => {
+test("behavior: the words are the contract's states as Dustin named them, and the views count from the whole queue", () => {
   expect(Object.values(STATE_LABEL)).toEqual(["Not yet checked", "Waiting", "Approved", "Rejected", "Source not found"]);
   expect(VIEWS.map((v) => VIEW_LABEL[v])).toEqual(["Waiting", "Source not found", "Approved", "Rejected", "All"]);
   expect(Object.keys(EMPTY_TEXT)).toEqual([...VIEWS]);
@@ -34,7 +34,7 @@ test("behaviour: the words are the contract's states as Dustin named them, and t
   expect(summaryText({ pending: 0, unverified: 0 })).toBe("Nothing waiting");
 });
 
-test("behaviour: Undo is the opposite decision between approved and rejected, and Back to waiting only where the site offers it", () => {
+test("behavior: Undo is the opposite decision between approved and rejected, and Back to waiting only where the site offers it", () => {
   expect(undoAction("approved")).toBe("approve");
   expect(undoAction("rejected")).toBe("reject");
   expect(undoAction("pending")).toBeNull();
@@ -42,7 +42,7 @@ test("behaviour: Undo is the opposite decision between approved and rejected, an
   expect(undoAction("unverified", true)).toBeNull();
 });
 
-test("behaviour: the undo stack keeps the newest last, is bounded, and removes one entry", () => {
+test("behavior: the undo stack keeps the newest last, is bounded, and removes one entry", () => {
   const s = undoStack<number>(3);
   for (const n of [1, 2, 3, 4]) s.push(n);
   expect(s.size).toBe(3);
@@ -56,18 +56,18 @@ test("behaviour: the undo stack keeps the newest last, is bounded, and removes o
   expect(s.size).toBe(0);
 });
 
-test("behaviour: the sweep names what the site will remove, by kind", () => {
+test("behavior: the sweep names what the site will remove, by kind", () => {
   expect(sweepLines({ failed: 2, rejected: 1 })).toEqual(["2 whose source was not found", "1 rejected"]);
   expect(sweepLines({ failed: 0, rejected: 3 })).toEqual(["3 rejected"]);
 });
 
-test("behaviour: each decision says what it did, for one mention and for several", () => {
+test("behavior: each decision says what it did, for one mention and for several", () => {
   expect(decidedText("reject", ["Rosa Park"])).toBe("Rejected the mention from Rosa Park.");
   expect(decidedText("approve", ["Rosa Park", "Sam Okafor"])).toBe("Approved 2 mentions.");
   expect(decidedText("reset", ["Rosa Park"])).toBe("Put the mention from Rosa Park back to waiting.");
 });
 
-test("behaviour: the page is delivered with every mention, its state in words, and a stranger's text escaped", async ({ page }) => {
+test("behavior: the page is delivered with every mention, its state in words, and a stranger's text escaped", async ({ page }) => {
   const html = await (await page.request.get("components/moderation-queue/states.html")).text();
   for (const word of ["Waiting", "Approved", "Rejected", "Not yet checked", "Source not found"]) expect(html).toContain(`</svg>${word}</span>`);
   for (const gone of ["Spam", "Bin", "Source gone"]) expect(html).not.toContain(`</svg>${gone}</span>`);
@@ -315,7 +315,7 @@ eachTheme((theme) => {
     await expect(title(q, "m-103")).toBeFocused();
   });
 
-  test("behaviour: on a site with no Back to waiting, a decision on a waiting mention says it has no Undo", async ({ page }) => {
+  test("behavior: on a site with no Back to waiting, a decision on a waiting mention says it has no Undo", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = page.locator("#mq-comfy");
     await expect(q.locator("[data-cap-action='reset']")).toHaveCount(0);
@@ -326,7 +326,7 @@ eachTheme((theme) => {
     await expect(region(page).getByRole("button", { name: /^Undo/ })).toHaveCount(0);
   });
 
-  test("behaviour: on the same site, approved to rejected is undone by the opposite decision", async ({ page }) => {
+  test("behavior: on the same site, approved to rejected is undone by the opposite decision", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = page.locator("#mq-approved");
     await title(q, "m-121").focus();
@@ -404,7 +404,7 @@ eachTheme((theme) => {
     await expect(row(q, "m-102")).toHaveAttribute("data-state", "pending");
   });
 
-  test("behaviour: in All, a bulk approve leaves what has nothing to decide, and says so", async ({ page }) => {
+  test("behavior: in All, a bulk approve leaves what has nothing to decide, and says so", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = page.locator("#mq-all");
     await q.getByRole("checkbox", { name: "Select all 5 shown" }).check();
@@ -479,7 +479,7 @@ eachTheme((theme) => {
     await expect(row(q, "m-103")).toBeVisible();
   });
 
-  test("behaviour: confirming a delete removes the row for good, says so without Undo, and tells the app", async ({ page }) => {
+  test("behavior: confirming a delete removes the row for good, says so without Undo, and tells the app", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await page.evaluate(() => {
@@ -498,7 +498,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as unknown as { __deleted: string[] }).__deleted)).toEqual(["m-140"]);
   });
 
-  test("behaviour: the retention sweep names what the site will remove, and removes only that", async ({ page }) => {
+  test("behavior: the retention sweep names what the site will remove, and removes only that", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     const sweep = q.getByRole("button", { name: /^Remove \d+ expired/ });
@@ -532,7 +532,7 @@ eachTheme((theme) => {
     await expect(row(q, "m-101").locator("[data-cap-part='select']")).not.toBeChecked();
   });
 
-  test("behaviour: the last row of a view decided leaves the empty state with focus, not a lost focus", async ({ page }) => {
+  test("behavior: the last row of a view decided leaves the empty state with focus, not a lost focus", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await showView(q, "Rejected");
@@ -544,7 +544,7 @@ eachTheme((theme) => {
     await expect(q.locator("[data-cap-part='empty']")).toBeFocused();
   });
 
-  test("behaviour: a decision tells the app which ids moved, from where to where", async ({ page }) => {
+  test("behavior: a decision tells the app which ids moved, from where to where", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await page.evaluate(() => {
@@ -567,7 +567,7 @@ eachTheme((theme) => {
     await expect(queue(page).getByRole("button", { name: /^Keyboard shortcuts/ })).toBeFocused();
   });
 
-  test("behaviour: the empty state names what is empty and is reached by focus", async ({ page }) => {
+  test("behavior: the empty state names what is empty and is reached by focus", async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const empty = page.locator("#mq-empty [data-cap-part='empty']");
     await expect(empty).toBeVisible();

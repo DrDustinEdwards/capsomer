@@ -2,7 +2,7 @@
 name: permission-matrix
 title: Permission matrix
 summary: Who can do what. Agents against permissions, as a table, as cards on a narrow screen, or by permission.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [by agent wide, by agent narrow, by permission, nobody holds a permission, an agent holds none]
 added: 0.1.0
@@ -27,15 +27,15 @@ For more than about eight permissions, or for actors that come and go by the hun
 
 ## The default and its reason
 
-- **A checked box or an empty box, plus a hidden word "Yes" or "No".** Shape and word, never colour alone (DEFAULTS.md). A held permission is shadcn's Checkbox in its checked state (16 px, 4 px corner, the primary fill and a tick); one not held is the empty box with its 3:1 edge. They are read-only marks, `aria-hidden`, not controls.
+- **A checked box or an empty box, plus a hidden word "Yes" or "No".** Shape and word, never color alone (DEFAULTS.md). A held permission is shadcn's Checkbox in its checked state (16 px, 4 px corner, the primary fill and a tick); one not held is the empty box with its 3:1 edge. They are read-only marks, `aria-hidden`, not controls.
 - **Narrow cards list only what is held.** A row of five empty boxes says less than "Holds no permissions"; a phone has no room for five columns (DEFAULTS.md: cards per table once tested).
 - **The switch between table and cards is a container query**, at 560 px, so the matrix changes with the space it has, in a side panel as well as on a phone. Both forms are in the page; the one not shown is `display: none`, so a screen reader meets one.
 - **The two views are a segmented control on radio inputs** (patterns.md, choose one of 2 to 5). The view not shown carries `hidden`.
-- **The table sits in a labelled, focusable scroll region** (`.cap-table-wrap`), so it scrolls by keyboard where it overflows.
+- **The table sits in a labeled, focusable scroll region** (`.cap-table-wrap`), so it scrolls by keyboard where it overflows.
 
 ## Matches
 
-shadcn/ui `Checkbox` (the held mark), `Table` (the grid, from `table`) and `Item` in an item group (the cards, outline variant), with the view switch from `segmented`. Deliberately different: shadcn's checkbox is an interactive control; here the marks are read-only (granting is a switch with a reason on the agent's page), so they take no focus and the table is the keyboard stop, as a labelled scroll region.
+shadcn/ui `Checkbox` (the held mark), `Table` (the grid, from `table`) and `Item` in an item group (the cards, outline variant), with the view switch from `segmented`. Deliberately different: shadcn's checkbox is an interactive control; here the marks are read-only (granting is a switch with a reason on the agent's page), so they take no focus and the table is the keyboard stop, as a labeled scroll region.
 
 ## Keyboard
 
@@ -50,7 +50,7 @@ shadcn/ui `Checkbox` (the held mark), `Table` (the grid, from `table`) and `Item
 - Each cell's word ("Yes", "No") is in the accessibility tree; the glyph is hidden from it.
 - Row headers (`th scope="row"`) name the agent, column headers the permission, so a screen reader reads "foxhound-driver, Money paths, Yes".
 - The filled box and the empty box's edge reach 3:1 as graphics; every word reaches 4.5:1 in both themes.
-- Forced colours: the boxes are drawn in CanvasText (filled when held); card edges become CanvasText.
+- Forced colors: the boxes are drawn in CanvasText (filled when held); card edges become CanvasText.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -97,7 +97,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </div>
 ```
 
-Give each matrix's radios their own `name`. `import { enhance, showView, holdings, holders } from "capsomer/behaviour/permission-matrix"` wires the switch; `holdings(matrix)` and `holders(matrix)` return each view's sentences. In React, `import { PermissionMatrix } from "capsomer/react/permission-matrix"` and pass `matrix={{ permissions, agents: [{ name, holds }] }}`; `view` and `onViewChange` keep the view in the address.
+Give each matrix's radios their own `name`. `import { enhance, showView, holdings, holders } from "capsomer/behavior/permission-matrix"` wires the switch; `holdings(matrix)` and `holders(matrix)` return each view's sentences. In React, `import { PermissionMatrix } from "capsomer/react/permission-matrix"` and pass `matrix={{ permissions, agents: [{ name, holds }] }}`; `view` and `onViewChange` keep the view in the address.
 
 ## Exceptions in production
 

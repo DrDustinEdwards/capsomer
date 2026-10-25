@@ -1,7 +1,7 @@
-// The admin shell's behaviour: collapse the menu (the strip stays), remember the choice, attach
+// The admin shell's behavior: collapse the menu (the strip stays), remember the choice, attach
 // each control's name tip (Capsomer's tooltip: Esc hides it, WCAG 1.4.13) and jump between apps
 // with G and 1 to 9. The header above it (its panels, the account menu and the phone's sheet) is
-// the site header's own behaviour, which enhance() attaches too. No framework; the React wrapper
+// the site header's own behavior, which enhance() attaches too. No framework; the React wrapper
 // uses the same functions. The menu's links and the page are in the HTML without any of this.
 import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
 import { enhance as enhanceHeader } from "../site-header/site-header.ts";

@@ -26,7 +26,7 @@
   }
 
   /* The slot. Enarratio's SVG fills the width at a fixed height; its marks keep their own
-     colours and per-slot titles. */
+     colors and per-slot titles. */
   .cap-uptime-strip {
     min-width: 0;
     min-height: var(--cap-uptime-h);
@@ -80,7 +80,7 @@
   }
 
   /* Each key is drawn as its slot is: full, split, or hatched, so the kinds differ in shape
-     as well as colour. */
+     as well as color. */
   .cap-uptime-key {
     flex: none;
     width: 10px;

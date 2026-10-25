@@ -111,7 +111,7 @@ eachTheme((theme) => {
     await expect(page.locator("main").first()).toBeFocused();
   });
 
-  test("behaviour: a failed refresh keeps the last good data on screen", async ({ page }) => {
+  test("behavior: a failed refresh keeps the last good data on screen", async ({ page }) => {
     await visitStates(page, "banner", theme);
     await expect(page.locator("#sample-warn")).toBeVisible();
     await expect(page.getByRole("list", { name: "Sites, as of 4 minutes ago" }).getByRole("listitem")).toHaveCount(3);

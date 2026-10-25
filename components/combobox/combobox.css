@@ -9,7 +9,7 @@
    components/listbox). Reference: shadcn/ui Combobox (nova): an input group with a clear
    button and an open button, chips for several values, a popup with groups, a check at the
    end of a chosen item and an empty state. The box reproduces .cap-input's values from the
-   tokens (it does not import the field's CSS). The popup is portalled, so its parts are
+   tokens (it does not import the field's CSS). The popup is portaled, so its parts are
    styled on their own, not under .cap-combobox. */
 @layer cap.components {
   .cap-combobox {

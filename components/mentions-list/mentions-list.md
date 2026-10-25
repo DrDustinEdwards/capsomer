@@ -2,7 +2,7 @@
 name: mentions-list
 title: Mentions list (for a site)
 summary: One page of one site's mentions, the same in Carrel and in every site admin. The moderation queue on the site-api contract's states (Waiting, Approved, Rejected, Not yet checked, Source not found), with tabs and the site's counts, each row's decisions as forms, the bulk bar with each mention's outcome, Undo where the site can reverse a decision, paging, and delete and the retention sweep behind a confirm. Every action is a form post, so it all works with no script; with script the keys decide.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + React (composes the moderation queue, tabs, status, bulk bar, message, empty and confirm dialog)
 states: [site owner with every action, a site with no Back to waiting, after a bulk post with no script, reader, second page with a mention opened, nothing waiting opens on All, empty tab, delete confirmation page, sweep confirmation page, delivered HTML]
 added: 0.6.0
@@ -62,7 +62,7 @@ The keys do nothing in a text field, with Ctrl, Alt or Meta held, in an open dia
 - The list is a region named by its heading ("Mentions on dustinedwards.info"); the tabs are a `nav` of links, the current one with `aria-current="page"`.
 - Each row's decisions are a form named for its sender ("Decide the mention from Rosa Park"), and each button names the sender too.
 - The live line is a polite status; the result box and the bar's outcome list are the content components' own.
-- A status is a shape, a word and a colour. Text reaches 4.5:1 and edges 3:1 in both themes.
+- A status is a shape, a word and a color. Text reaches 4.5:1 and edges 3:1 in both themes.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -112,7 +112,7 @@ Props: `data` (`MentionsData` from `capsomer/content`), `action`, `Form`, `submi
 
 The intents it posts, each with `ids`: `approve`, `reject` and `reset` (with `version` from a row), `delete` (answered with `result.confirm`, then posted again with `confirm`, the typed count), `sweep` (answered with `result.confirm`, then posted again with its `fields`), and whatever `result.undo` names.
 
-`import { mentionsHref, currentView, mentionActions } from "capsomer/behaviour/mentions-list"`: the pure helpers. The states, their words and the decision table are the queue's (`capsomer/behaviour/moderation-queue`: `decide`, `actionsFor`, `undoAction`, `STATE_LABEL`).
+`import { mentionsHref, currentView, mentionActions } from "capsomer/behavior/mentions-list"`: the pure helpers. The states, their words and the decision table are the queue's (`capsomer/behavior/moderation-queue`: `decide`, `actionsFor`, `undoAction`, `STATE_LABEL`).
 
 **Dependencies.** It needs the stylesheets of the parts it composes: moderation-queue, row-list, tabs, status, avatar, time, bulk-bar, message, empty, dialog, confirm-dialog and content (the shared result box), with this one.
 

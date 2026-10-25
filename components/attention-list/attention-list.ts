@@ -1,4 +1,4 @@
-// The attention list's behaviour: the order (worst first), the two tiers (problems, then
+// The attention list's behavior: the order (worst first), the two tiers (problems, then
 // notices), the grouping of like rows under one row that opens in place, the cap on how
 // many warnings show at once, and the buttons that show or hide what they control. No
 // framework; the React wrapper uses `arrange` and the same markup.

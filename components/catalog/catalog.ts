@@ -1,4 +1,4 @@
-// The catalog's behaviour: it makes a form that already works (a GET to the page's own address) update in place.
+// The catalog's behavior: it makes a form that already works (a GET to the page's own address) update in place.
 // Typing in the search box, ticking a filter, choosing a sort, removing a chip, following a sort header or a page
 // link fetches the same address a person would have navigated to and swaps the regions of the page that changed.
 // The address is written with `history.replaceState`, so a filter change is not a step in the history, and what
@@ -6,7 +6,7 @@
 // an error is never swallowed, and the page is never left showing a state its address does not describe.
 //
 // The core (field declarations, the address, the counts) is in catalog-core.ts and is re-exported here, so
-// `capsomer/behaviour/catalog` is the one import for a site that renders its own markup.
+// `capsomer/behavior/catalog` is the one import for a site that renders its own markup.
 export * from "./catalog-core.ts";
 
 const REGIONS = ["count", "chips", "results", "pages"] as const;

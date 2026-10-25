@@ -301,7 +301,7 @@
   overflow-x: auto;
 }
 
-/* The colour families. */
+/* The color families. */
 .site-family {
   display: grid;
   gap: var(--space-3);

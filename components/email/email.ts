@@ -1,9 +1,9 @@
 // Email templates: one definition makes the HTML and the text, so the two cannot disagree.
 // Pure functions with no dependency, no filesystem and no fetch: they run in a Worker, in
 // Node and in a test. Every value that reaches the HTML is escaped here, and a template
-// author never writes markup. Colours are literal hexes from the family generator
-// (colours.ts), because mail clients ignore custom properties.
-import { emailColours, type EmailColours, type EmailFamily } from "./colours.ts";
+// author never writes markup. Colors are literal hexes from the family generator
+// (colors.ts), because mail clients ignore custom properties.
+import { emailColors, type EmailColors, type EmailFamily } from "./colors.ts";
 
 export type { EmailFamily };
 
@@ -85,10 +85,10 @@ export function checkUrl(url: string): string {
   return url;
 }
 
-// ---- the colours ---------------------------------------------------------------------------
+// ---- the colors ---------------------------------------------------------------------------
 
-function coloursFor(family: EmailFamily): { light: EmailColours; dark: EmailColours } {
-  const c = emailColours[family];
+function colorsFor(family: EmailFamily): { light: EmailColors; dark: EmailColors } {
+  const c = emailColors[family];
   if (!c) throw new Error(`email: unknown family "${String(family)}"`);
   return c;
 }
@@ -99,7 +99,7 @@ const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 
 // ---- the frame -------------------------------------------------------------------------------
 
-function darkRules(d: EmailColours): string {
+function darkRules(d: EmailColors): string {
   return [
     `.e-ground{background-color:${d.ground} !important}`,
     `.e-card{background-color:${d.surface} !important;border-color:${d.line} !important}`,
@@ -112,7 +112,7 @@ function darkRules(d: EmailColours): string {
   ].join("\n");
 }
 
-function blockHtml(b: Block, c: EmailColours): string {
+function blockHtml(b: Block, c: EmailColors): string {
   const text = `font-family:${FONT};font-size:16px;line-height:24px;color:${c.text};`;
   switch (b.type) {
     case "heading":
@@ -136,7 +136,7 @@ function blockHtml(b: Block, c: EmailColours): string {
   }
 }
 
-function footerHtml(lines: FooterLine[], c: EmailColours): string {
+function footerHtml(lines: FooterLine[], c: EmailColors): string {
   return lines
     .map((l) => {
       const style = `font-family:${FONT};font-size:14px;line-height:22px;color:${c.muted};padding:0 0 4px 0;`;
@@ -164,8 +164,8 @@ function blockText(b: Block): string {
 /** Renders one template to a subject, an HTML part and a text part, from the same blocks. */
 export function renderEmail<D>(template: Template<D>, data: D & Common): Rendered {
   const { brand, to } = data;
-  const colours = coloursFor(brand.family);
-  const c = colours.light;
+  const colors = colorsFor(brand.family);
+  const c = colors.light;
   const subject = oneLine(template.subject(data));
   const blocks = template.blocks(data);
   const footer: FooterLine[] = [`This message was sent to ${oneLine(to)}.`, ...(data.footer ?? [])];
@@ -182,7 +182,7 @@ export function renderEmail<D>(template: Template<D>, data: D & Common): Rendere
 <style>
 :root{color-scheme:light dark;supported-color-schemes:light dark}
 @media (prefers-color-scheme: dark){
-${darkRules(colours.dark)}
+${darkRules(colors.dark)}
 }
 </style>
 </head>
@@ -275,7 +275,7 @@ export const reset: Template<LinkData> = {
     }),
 };
 
-/** Something needs attention: a health check, a watchdog, a budget. The level is a word, never colour alone. */
+/** Something needs attention: a health check, a watchdog, a budget. The level is a word, never color alone. */
 export const alert: Template<{ level: AlertLevel; what: string; when: string; details?: string[]; url?: string }> = {
   name: "alert",
   subject: (d) => d.copy?.subject ?? `${LEVEL_WORD[d.level]}: ${d.what}`,

@@ -2,7 +2,7 @@
 name: button
 title: Button
 summary: A button acts; a link styled as one goes somewhere. Default, primary, secondary, danger, quiet and link variants in five sizes, with pending, disabled-with-a-reason, and groups.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native
 states: [default, hover, keyboard focus, pressed, open, disabled with its reason, invalid, pending, a label that changes, primary, secondary, danger, quiet, link, xs sm lg sizes, icon only, button group, link styled as a button, button styled as a link, a site's sweep]
 added: 0.1.0
@@ -39,11 +39,11 @@ A `<button class="cap-btn">` runs an action on this page. An `<a class="cap-btn"
 ## The default and its reason
 
 - **Height `var(--control)`, at least `var(--target)` wide**, so it is a 24 px target with a pointer and 44 px on a touch screen.
-- **Disabled keeps focus and says why.** Use `aria-disabled="true"` and `aria-describedby` pointing at visible text beside it, never the `disabled` attribute: a disabled button drops out of the tab order and its reason cannot be found by keyboard. The dashed edge marks it without relying on colour.
+- **Disabled keeps focus and says why.** Use `aria-disabled="true"` and `aria-describedby` pointing at visible text beside it, never the `disabled` attribute: a disabled button drops out of the tab order and its reason cannot be found by keyboard. The dashed edge marks it without relying on color.
 - **Pending keeps its width.** `aria-busy="true"` hides the label's paint (not its name) and shows `.cap-btn-spinner` over it, so the row does not jump. The label must be in `.cap-btn-label` for this. Say the result through the message region, not on the button.
 - **The focus ring is 3 px, opaque, in the accent** (shadcn's `ring-3` is a 50% ring, which cannot reach the 3:1 a focus indicator needs).
-- **A label that changes in place morphs** (uiarc): Save draft, Saving…, Saved. `morphLabel(button, change)` from `capsomer/behaviour/button` eases the width to the new label's over 200 ms and crossfades the words out of a 4 px blur; the leaving words are an `aria-hidden` copy, so the name is only ever the new label. Opt in: the words in `.cap-btn-label`; React: `<Button morph>`. Nothing moves under reduced motion.
-- **A site's sweep** (`--btn-sweep: 1`, off by default): under the pointer the default button fills with the primary colour from the left over 400 ms and its label and edge turn to the primary's, as Recova's outlined button did. Off, nothing changes.
+- **A label that changes in place morphs** (uiarc): Save draft, Saving…, Saved. `morphLabel(button, change)` from `capsomer/behavior/button` eases the width to the new label's over 200 ms and crossfades the words out of a 4 px blur; the leaving words are an `aria-hidden` copy, so the name is only ever the new label. Opt in: the words in `.cap-btn-label`; React: `<Button morph>`. Nothing moves under reduced motion.
+- **A site's sweep** (`--btn-sweep: 1`, off by default): under the pointer the default button fills with the primary color from the left over 400 ms and its label and edge turn to the primary's, as Recova's outlined button did. Off, nothing changes.
 - **Pressed shrinks the button to 97% at once and springs back on release** (Emil Kowalski's `scale(0.97)`; Arc's quick press and spring release), in place of shadcn's 1 px nudge, only when motion is allowed and never on a button that owns a popup, which anchors it.
 
 ## Keyboard
@@ -59,7 +59,7 @@ A `<button class="cap-btn">` runs an action on this page. An `<a class="cap-btn"
 - Every icon button has an accessible name; show a word as well wherever there is room.
 - A disabled button's reason is its accessible description.
 - In plain HTML, `aria-disabled` and `aria-busy` do not stop a click: the handler returns early when either is `"true"`, and the button is `type="button"` unless it submits. The React `Button` does this for you.
-- Forced colours: a disabled button and link button turn GrayText; a quiet button gains its border.
+- Forced colors: a disabled button and link button turn GrayText; a quiet button gains its border.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -101,7 +101,7 @@ In React, `import { Button } from "capsomer/react/button"`:
 
 ## Matches
 
-shadcn/ui `Button` and `ButtonGroup` (Base UI flavour, style nova; vega's roomier sizes come with `data-density="comfortable"`). Variant map: default is shadcn `outline`, primary is `default`, secondary is `secondary`, quiet is `ghost`, danger is `destructive`, link is `link`. Sizes `xs`, `sm`, default, `lg` come from `data-size`; the icon sizes are `data-icon-only` with a size. The `data-icon="start|end"` attribute on an svg pulls the padding in, as shadcn's does.
+shadcn/ui `Button` and `ButtonGroup` (Base UI flavor, style nova; vega's roomier sizes come with `data-density="comfortable"`). Variant map: default is shadcn `outline`, primary is `default`, secondary is `secondary`, quiet is `ghost`, danger is `destructive`, link is `link`. Sizes `xs`, `sm`, default, `lg` come from `data-size`; the icon sizes are `data-icon-only` with a size. The `data-icon="start|end"` attribute on an svg pulls the padding in, as shadcn's does.
 
 ## Deliberate differences
 

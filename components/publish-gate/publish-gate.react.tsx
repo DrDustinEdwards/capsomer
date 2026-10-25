@@ -108,7 +108,7 @@ export interface PublishGateProps {
   // Where each destination's button is: in its row (default), or "none" when the page places
   // <PublishButton> itself (the editor bar's own publish control).
   actions?: "rows" | "none";
-  // Where results are said, with Undo: useMessage().say and .fail. Without them the plain behaviour
+  // Where results are said, with Undo: useMessage().say and .fail. Without them the plain behavior
   // module's region (an element with data-cap="message") is used.
   say?: (text: string, opts?: SayOptions) => void;
   fail?: (text: string) => void;

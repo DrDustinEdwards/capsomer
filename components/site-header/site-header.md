@@ -2,9 +2,9 @@
 name: site-header
 title: Site header
 summary: One header across the top of every public, app and admin page in the family, 56px and sticky, with the logo, the switcher and the section links on the left and the extras, the theme and the account on the right.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [public signed out, signed in, user's dashboard, your admin, links on the right with a divider, links centred, dark band, translucent band, switcher open, section panel open, account menu open, the site's own panel, phone row, phone sheet, phone bottom bar, written by hand]
+states: [public signed out, signed in, user's dashboard, your admin, links on the right with a divider, links centered, dark band, translucent band, switcher open, section panel open, account menu open, the site's own panel, phone row, phone sheet, phone bottom bar, written by hand]
 added: 0.9.0
 source: docs/design/design-site-header.md and its mockup; Dustin's ten answers of 2026-10-13; Foxhound's header.tsx and Foxing's page-shell.tsx
 replaces:
@@ -34,17 +34,17 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 - **56px at every width** (`--header-h`, 3.5rem), **sticky** at the top with `scroll-padding-top` set to its height, so a focused control or an anchor never lands under it (WCAG 2.4.11).
 - **Full width**, 24px sides on a desktop and 16px on a phone, so the logo is at the same x on every site and lines up with the admin's menu below it.
 - **Spacing.** 12px from the logo to the switcher, 24px from the switcher to the section links, 20px between links, 8px between the controls on the right.
-- **Type.** Links and the switcher at 14px in the site's UI face (`--font-ui`); the current page is weight 500 with a 2px underline in the accent, so it is not told by colour alone.
+- **Type.** Links and the switcher at 14px in the site's UI face (`--font-ui`); the current page is weight 500 with a 2px underline in the accent, so it is not told by color alone.
 - **Controls.** Every icon control is a 36px target with an 18px glyph (24 box, 1.6 stroke), a name of its own and a tip naming it and its key. The avatar is a 32px circle in the same target: the person's picture when the site gives one (`account.avatar`), drawn over their initials, which show when there is none or it fails to load.
 - **Panels.** The switcher, a section with children and the account each open a panel: a list of links under a disclosure button (`aria-expanded`, `aria-controls`), not an ARIA menu, because every item goes somewhere. On a mouse a panel opens at once on hover, with no delay, and on click; on touch, on tap. It lines up with its button's edge and starts under the header, so it never covers it. What a panel holds and how it is laid out is the site's (`panel`).
-- **One bottom edge**, 1px in the band's own line colour.
+- **One bottom edge**, 1px in the band's own line color.
 
 ## What each site owns
 
 | Slot | The site gives |
 | --- | --- |
 | Logo | An SVG or image at most 24px tall and 160px wide, and its name (`logo`) |
-| Accent | Its colour family (`data-family` on the page) |
+| Accent | Its color family (`data-family` on the page) |
 | Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at 85%, blurred) |
 | UI face | `--font-ui` |
 | Extras | Up to two icon controls and one button (`extras`) |
@@ -84,7 +84,7 @@ The account menu is the same shape everywhere: who you are; the site's own rows 
 - The header is the page's `banner` landmark. The section links are a `nav` named "Site"; the sheet's list is a `nav` named by its heading and its pinned rows a `nav` named "Account"; the bottom bar a `nav` named by the site ("Sections").
 - The current page is `aria-current="page"`; a section with children that holds the current page shows its underline too.
 - The theme button says what it does: "Switch to dark theme" while the page is light. A count is in its control's name: "Inbox, 4 need you"; the bubble shows 99+ past 99, and the name starts with what is seen: "Inbox 99+, 120 need you". The visible label and count are words of the name in order, a space between them in the HTML (WCAG 2.5.3, as axe-core 4.14 reads it, aria-hidden text included). The business tile's letter and the avatar's initials are drawn from `data-tile` and `data-initials`, not text, so they do not count as part of the visible label.
-- Forced colours: the current link keeps its underline, the band keeps its edge, a bubble is drawn in system colours.
+- Forced colors: the current link keeps its underline, the band keeps its edge, a bubble is drawn in system colors.
 - The tests measure the painted contrast of the links, the current link's underline, the icon controls, Sign in and the button extra on both bands in both themes.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -135,7 +135,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <nav class="cap-site-tabs" aria-label="Your reading">[up to five links: icon, label, .cap-site-header-badge]</nav>
 ```
 
-`import { enhance, wirePanel, openSheet, closeSheet, stepIndex, badgeText } from "capsomer/behaviour/site-header"` wires markup written by hand: each `[data-cap-part="panel-trigger"]` to the panel its `aria-controls` names, each tip, the menu button and its sheet. The theme button is theme-switch's (`enhance` from `capsomer/behaviour/theme-switch`). In React, `import { SiteHeader, SiteTabs } from "capsomer/react/site-header"`:
+`import { enhance, wirePanel, openSheet, closeSheet, stepIndex, badgeText } from "capsomer/behavior/site-header"` wires markup written by hand: each `[data-cap-part="panel-trigger"]` to the panel its `aria-controls` names, each tip, the menu button and its sheet. The theme button is theme-switch's (`enhance` from `capsomer/behavior/theme-switch`). In React, `import { SiteHeader, SiteTabs } from "capsomer/react/site-header"`:
 
 ```tsx
 <SiteHeader

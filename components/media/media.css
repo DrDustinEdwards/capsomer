@@ -4,7 +4,7 @@
 /* The media library's parts: a grid of tiles, and an inspector beside it. The grid is a list
    whose tiles are one tab stop each (roving), moved between by the arrow keys. The inspector
    is the shared dialog: a pane beside the grid when the container is wide, a side sheet when
-   it is narrow (a container query decides; the behaviour reads the same answer). Extracted
+   it is narrow (a container query decides; the behavior reads the same answer). Extracted
    from the site admin's admin-media.css and admin-media-later.css (the tile, the thumbnail
    frame that reserves its space, the facts list, the tag chips), rebuilt on Capsomer's
    tokens. Craft matched to shadcn/ui's Card (the tile), Checkbox, Badge, Sheet (the sheet
@@ -25,7 +25,7 @@
   }
 
   /* --cap-media-mode is how the inspector sits: "sheet" (a modal side sheet) or "pane" (beside
-     the grid). The behaviour reads it, so the container query below is the one place the
+     the grid). The behavior reads it, so the container query below is the one place the
      breakpoint is written. */
   .cap-media-layout {
     --cap-media-mode: sheet;
@@ -202,7 +202,7 @@
   }
 
   /* What is true of the file that a person should not miss: no alt text, decorative, not used
-     anywhere, in the bin. Each is a shape, a word and a colour (the status component). */
+     anywhere, in the bin. Each is a shape, a word and a color (the status component). */
   .cap-media-flags {
     display: flex;
     flex-wrap: wrap;

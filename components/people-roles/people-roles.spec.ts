@@ -88,7 +88,7 @@ eachTheme((theme) => {
     expect(posts).toHaveLength(0);
   });
 
-  test("behaviour: a confirmed Remove posts intent=remove with confirmed=yes", async ({ page }) => {
+  test("behavior: a confirmed Remove posts intent=remove with confirmed=yes", async ({ page }) => {
     const posts = await catchPosts(page);
     await visitStates(page, "people-roles", theme);
     await actionsFor(page, "Rosa Park").click();
@@ -140,7 +140,7 @@ eachTheme((theme) => {
     await expect(tally).toHaveText("0 to keep, 1 to remove, 1 not answered.");
   });
 
-  test("behaviour: the add form's end date follows the title, and a title that does not expire has none", async ({ page }) => {
+  test("behavior: the add form's end date follows the title, and a title that does not expire has none", async ({ page }) => {
     await visitStates(page, "people-roles", theme);
     const add = page.locator("[aria-labelledby='s-owner'] form.cap-people-add");
     // Found by name attribute: a hidden field leaves the accessibility tree.
@@ -157,7 +157,7 @@ eachTheme((theme) => {
     await expect(add.locator("[data-cap-part='end-help']")).toHaveText("This title does not expire.");
   });
 
-  test("behaviour: the viewer's own row offers only their history", async ({ page }) => {
+  test("behavior: the viewer's own row offers only their history", async ({ page }) => {
     await visitStates(page, "people-roles", theme);
     const own = lead(page).locator("tr[data-name='Maya Chen']");
     await expect(own.getByText("You", { exact: true })).toBeVisible();

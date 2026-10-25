@@ -6,7 +6,7 @@ const nav = (page: Page) => page.locator("#pg-buttons");
 const status = (page: Page) => nav(page).locator(".cap-pagination-status");
 const current = (page: Page) => nav(page).locator(".cap-page[aria-current='page']");
 
-test("behaviour: the page numbers keep seven slots, the first and last page always shown, a gap for the rest", () => {
+test("behavior: the page numbers keep seven slots, the first and last page always shown, a gap for the rest", () => {
   expect(pageItems(1, 5)).toEqual([1, 2, 3, 4, 5]);
   expect(pageItems(3, 7)).toEqual([1, 2, 3, 4, 5, 6, 7]);
   for (let p = 1; p <= 16; p++) {
@@ -22,7 +22,7 @@ test("behaviour: the page numbers keep seven slots, the first and last page alwa
   expect(pageItems(0, 0)).toEqual([]);
 });
 
-test("behaviour: the count line says which items are on the page", () => {
+test("behavior: the count line says which items are on the page", () => {
   expect(statusText(3, 20, 312, "posts")).toBe("Showing 41 to 60 of 312 posts");
   expect(statusText(16, 20, 312, "posts")).toBe("Showing 301 to 312 of 312 posts");
   expect(statusText(3, 20, 41, "posts")).toBe("Showing 41 of 41 posts");
@@ -161,7 +161,7 @@ eachTheme((theme) => {
     await expect(current(page)).toHaveAccessibleName("Page 1");
   });
 
-  test("behaviour: choosing a page redraws the list, updates the count line in place and tells the page", async ({ page }) => {
+  test("behavior: choosing a page redraws the list, updates the count line in place and tells the page", async ({ page }) => {
     await visitStates(page, "pagination", theme);
     await expect(status(page)).toHaveText("Showing 1 to 20 of 312 posts");
     await status(page).evaluate((el) => ((el as HTMLElement & { mark?: boolean }).mark = true));
@@ -178,7 +178,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as unknown as { pages: number[] }).pages)).toEqual([4]);
   });
 
-  test("behaviour: the numbers redraw with a gap on each side as the page moves to the middle", async ({ page }) => {
+  test("behavior: the numbers redraw with a gap on each side as the page moves to the middle", async ({ page }) => {
     await visitStates(page, "pagination", theme);
     await nav(page).getByRole("button", { name: "Page 5" }).click();
     await nav(page).getByRole("button", { name: "Next" }).click();
@@ -188,14 +188,14 @@ eachTheme((theme) => {
     await expect(nav(page).locator(".cap-pagination-num .cap-page")).toHaveText(["1", "6", "7", "8", "16"]);
   });
 
-  test("behaviour: the delivered HTML has the count line, every page link and the compact text", async ({ page }) => {
+  test("behavior: the delivered HTML has the count line, every page link and the compact text", async ({ page }) => {
     const html = await (await page.request.get("components/pagination/states.html")).text();
     expect(html).toContain("Showing 41 to 60 of 312 posts");
     expect(html).toContain('<a class="cap-page" aria-label="Page 16" href="#page-16">16</a>');
     expect(html).toContain("Page 3 of 16");
   });
 
-  test("behaviour: a wide container shows the numbers, a narrow one shows Page 3 of 16 between Previous and Next", async ({ page }) => {
+  test("behavior: a wide container shows the numbers, a narrow one shows Page 3 of 16 between Previous and Next", async ({ page }) => {
     await visitStates(page, "pagination", theme);
     await expect(page.locator("#pg-middle .cap-pagination-num").first()).toBeVisible();
     await expect(page.locator("#pg-middle .cap-pagination-where")).toBeHidden();
@@ -210,14 +210,14 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 
-  test("behaviour: other words for the ends work", async ({ page }) => {
+  test("behavior: other words for the ends work", async ({ page }) => {
     await visitStates(page, "pagination", theme);
     await expect(page.locator("#pg-words").getByRole("link", { name: "Newer" })).toBeVisible();
     await expect(page.locator("#pg-words").getByRole("link", { name: "Older" })).toBeVisible();
     await expect(page.locator("#pg-words .cap-pagination-status")).toHaveCount(0);
   });
 
-  test("behaviour: comfortable density makes the controls taller", async ({ page }) => {
+  test("behavior: comfortable density makes the controls taller", async ({ page }) => {
     await visitStates(page, "pagination", theme);
     const compact = await page.locator("#pg-middle .cap-page").first().evaluate((el) => el.getBoundingClientRect().height);
     const roomy = await page.locator("#pg-comfortable .cap-page").first().evaluate((el) => el.getBoundingClientRect().height);

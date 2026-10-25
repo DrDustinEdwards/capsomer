@@ -3,7 +3,7 @@
 
 /* The "On this page" bar: links to a long view's sections, sticky at the top, the current
    one marked. Quiet: on the ground tone with no frame, and the current link told by a text
-   colour and an underline, not a tinted pill (the Portal's .anchors, dashboard/src/styles.css:
+   color and an underline, not a tinted pill (the Portal's .anchors, dashboard/src/styles.css:
    "pinned to the top of main on a long view, on the ground tone"). Rebuilt in 0.2 to the
    look of shadcn's Tabs, line variant: transparent triggers in muted text, the hovered one
    in full text, the current one with a 2 px bar under it that fades in. */
@@ -54,7 +54,7 @@
 
       /* The line variant's bar: 2 px under the link, shown on the current one. A bar, not a
          text decoration, so it can fade in and still tells the current section by more
-         than colour. */
+         than color. */
       &::after {
         content: "";
         position: absolute;

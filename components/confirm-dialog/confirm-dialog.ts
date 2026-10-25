@@ -422,7 +422,7 @@ export function buildConfirm(o: ConfirmOptions): HTMLDialogElement {
 }
 
 // Builds a confirm dialog, opens it, and resolves true once the action has been performed,
-// false when it was cancelled. The dialog is removed when it closes.
+// false when it was canceled. The dialog is removed when it closes.
 export function confirm(o: ConfirmOptions): Promise<boolean> {
   const opener = document.activeElement;
   const dialog = buildConfirm(o);

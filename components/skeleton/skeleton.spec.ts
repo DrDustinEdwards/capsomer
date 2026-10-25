@@ -7,7 +7,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: no axe violations, the centred page spinner", async ({ page }) => {
+  test("accessibility: no axe violations, the centered page spinner", async ({ page }) => {
     await visitStates(page, "skeleton", theme, "page");
     await expectNoAxeViolations(page);
   });
@@ -48,7 +48,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: "#sample-page .cap-spinner-label", what: "page spinner word" }]);
   });
 
-  test("behaviour: the page spinner is centred in the space it is given", async ({ page }) => {
+  test("behavior: the page spinner is centered in the space it is given", async ({ page }) => {
     await visitStates(page, "skeleton", theme, "page");
     const spinner = page.locator("#sample-page");
     const arc = spinner.locator(".cap-spinner-arc");
@@ -56,11 +56,11 @@ eachTheme((theme) => {
     const [s, a] = await Promise.all([spinner.boundingBox(), arc.boundingBox()]);
     expect(s && a).toBeTruthy();
     expect(Math.abs(a!.x + a!.width / 2 - (s!.x + s!.width / 2))).toBeLessThan(2);
-    // Taller than the arc and word together: it fills the space it is given, to centre in it.
+    // Taller than the arc and word together: it fills the space it is given, to center in it.
     expect(s!.height).toBeGreaterThan(a!.height * 3);
   });
 
-  test("behaviour: the skeleton pulses and the spinner turns when motion is welcome", async ({ page }) => {
+  test("behavior: the skeleton pulses and the spinner turns when motion is welcome", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await visitStates(page, "skeleton", theme);
     await expect(page.locator("#sample-skeleton .cap-skeleton-line").first()).toHaveCSS("animation-name", "cap-skeleton-pulse");
@@ -69,7 +69,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-spinner .cap-spinner-arc")).toBeVisible();
   });
 
-  test("behaviour: under reduced motion nothing moves, and the word Loading shows alone", async ({ page }) => {
+  test("behavior: under reduced motion nothing moves, and the word Loading shows alone", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await visitStates(page, "skeleton", theme);
     await expect(page.locator("#sample-skeleton .cap-skeleton-line").first()).toHaveCSS("animation-name", "none");

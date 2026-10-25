@@ -7,7 +7,7 @@
     "**/site-dist/**",
     "**/test-results/**",
     "**/site/data/**",
-    "tokens/colour.css",
+    "tokens/color.css",
     "tokens/family-*.css",
     "tokens/scale.css",
     "tokens/themes.css",

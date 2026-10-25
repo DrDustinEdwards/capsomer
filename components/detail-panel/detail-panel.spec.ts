@@ -102,7 +102,7 @@ eachTheme((theme) => {
     await expect(other).toBeFocused();
   });
 
-  test("behaviour: Back closes the panel when it pushed a history entry", async ({ page }) => {
+  test("behavior: Back closes the panel when it pushed a history entry", async ({ page }) => {
     await visitStates(page, "detail-panel", theme, "rows");
     await rowLink(page).click();
     await expect(panel(page)).toBeVisible();
@@ -122,7 +122,7 @@ eachTheme((theme) => {
     await expect(rowLink(page)).toBeFocused();
   });
 
-  test("behaviour: a click on the backdrop closes the panel", async ({ page }) => {
+  test("behavior: a click on the backdrop closes the panel", async ({ page }) => {
     await visitStates(page, "detail-panel", theme, "rows");
     await rowLink(page).click();
     await expect(panel(page)).toBeVisible();
@@ -149,7 +149,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: Copy says what happened", async ({ page }) => {
+  test("behavior: Copy says what happened", async ({ page }) => {
     await visitStates(page, "detail-panel", theme, "open");
     await page.getByRole("button", { name: "Copy command" }).click();
     await expect(panel(page).getByRole("status")).toHaveText(/Command copied\.|Command is selected/);
@@ -162,7 +162,7 @@ eachTheme((theme) => {
     await page.evaluate(() => document.fonts.ready.then(() => undefined));
   };
 
-  test("behaviour: a link to ?inspect= opens the panel as the modal and puts the id in the address, other parts kept", async ({ page }) => {
+  test("behavior: a link to ?inspect= opens the panel as the modal and puts the id in the address, other parts kept", async ({ page }) => {
     await visitUrl(page);
     await expect(mention(page)).toBeHidden();
     await page.locator("#open-mention-41").click();
@@ -189,7 +189,7 @@ eachTheme((theme) => {
     expect(new URL(page.url()).searchParams.get("only")).toBe("url");
   });
 
-  test("behaviour: Back closes the address-driven panel and Forward opens it again", async ({ page }) => {
+  test("behavior: Back closes the address-driven panel and Forward opens it again", async ({ page }) => {
     await visitUrl(page);
     await page.locator("#open-mention-41").click();
     await expect(mention(page)).toBeVisible();
@@ -201,7 +201,7 @@ eachTheme((theme) => {
     expect(new URL(page.url()).searchParams.get("inspect")).toBe("mention-41");
   });
 
-  test("behaviour: a page loaded with ?inspect= has the panel open, and closing it rewrites the address without a new entry", async ({ page }) => {
+  test("behavior: a page loaded with ?inspect= has the panel open, and closing it rewrites the address without a new entry", async ({ page }) => {
     await visitUrl(page, "mention-41");
     await expect(mention(page)).toBeVisible();
     expect(await page.locator("#mention-41").evaluate((el) => (el as HTMLDialogElement).matches(":modal"))).toBe(true);
@@ -212,7 +212,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => history.length)).toBe(before);
   });
 
-  test("behaviour: the plain form inside posts its fields and the pressed button, with no script of ours", async ({ page }) => {
+  test("behavior: the plain form inside posts its fields and the pressed button, with no script of ours", async ({ page }) => {
     await visitUrl(page, "mention-41");
     const posted = page.evaluate(
       () =>

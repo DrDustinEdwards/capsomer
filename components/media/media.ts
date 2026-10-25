@@ -1,4 +1,4 @@
-// The media library's behaviour: a grid of tiles with roving focus and two-dimensional arrow keys,
+// The media library's behavior: a grid of tiles with roving focus and two-dimensional arrow keys,
 // selection by real checkboxes, an inspector that sits beside the grid (a pane) or over it (a
 // side sheet) and SAVES BY ITSELF, the copy button, the filters, search, Trash and Restore.
 // The arrow keys read the rendered boxes, not a column count; alt text has three states; an

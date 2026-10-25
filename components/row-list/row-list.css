@@ -8,7 +8,7 @@
    critical edge are the Portal's values; the stretched-link markup, the subgrid columns and
    the container query are Capsomer's own (v0.1.1 provenance in row-list.md). Rebuilt in 0.2
    to the craft of shadcn's Item (rounded row, outline and muted variants, sizes, media,
-   a 100 ms colour transition, a gap between rows in a group). */
+   a 100 ms color transition, a gap between rows in a group). */
 @layer cap.components {
   /* The list is the size container (the phone layout follows the space the list has) and
      the column grid: every row is a subgrid of it, so status, title, time and actions line
@@ -83,7 +83,7 @@
 
     /* The focused row: the selection tint and an inset ring in --ring, 3:1 against --sel
        in both themes. The link itself draws no ring of its own. An outline, so it follows
-       the row's radius and survives forced colours. */
+       the row's radius and survives forced colors. */
     &:has(.cap-row-title :focus-visible),
     &[data-force="focus"] {
       background: var(--sel);
@@ -98,7 +98,7 @@
     }
   }
 
-  /* The status (glyph, word, colour) or, in shadcn's ItemMedia, an icon or a picture: the
+  /* The status (glyph, word, color) or, in shadcn's ItemMedia, an icon or a picture: the
      row's first column. */
   :is(.cap-row-status, .cap-row-media) {
     grid-column: 1;
@@ -286,10 +286,10 @@
     }
   }
 
-  /* Forced colours remove tints: the critical edge is drawn in CanvasText, and the focus
+  /* Forced colors remove tints: the critical edge is drawn in CanvasText, and the focus
      ring (an outline) stays. */
   @media (forced-colors: active) {
-    /* Forced colours drop shadows: the edge is a border there. */
+    /* Forced colors drop shadows: the edge is a border there. */
     .cap-row[data-tone="crit"] {
       border-inline-start: 3px solid CanvasText;
     }

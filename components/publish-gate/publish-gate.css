@@ -3,7 +3,7 @@
 
 /* The publish gate: one region that says whether this can go out and, if not, why. Built on the
    row list (every destination and every check is a row), the status component (shape, word and
-   colour for Blocked, Held, Ready, Published, Failing, Advisory, Passed), the disclosure (the
+   color for Blocked, Held, Ready, Published, Failing, Advisory, Passed), the disclosure (the
    passing checks fold into one) and the button (the paired publish button, whose blocked state is
    aria-disabled and described by the summary). Requires row-list.css, status.css, button.css and
    disclosure.css. */

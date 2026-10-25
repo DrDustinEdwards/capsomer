@@ -2,10 +2,10 @@
 //
 // Three parts, all plain TypeScript with no framework and nothing that touches the page at
 // import time, so a server (or node's test runner) can use the first two:
-//   1. the diff:      diffWords, diffSentences, splitSentences, analyse (draft-compare-diff.ts)
+//   1. the diff:      diffWords, diffSentences, splitSentences, analyze (draft-compare-diff.ts)
 //   2. the renderer:  renderCompare(before, after, options) returns the HTML string
 //                     (draft-compare-render.ts; renderPatch, for a git patch, in draft-compare-patch.ts)
-//   3. the behaviour: enhance(root) wires the jump keys, the view memory and "expand all" (here)
+//   3. the behavior: enhance(root) wires the jump keys, the view memory and "expand all" (here)
 //
 // The HTML holds every view (side by side, inline, changes only) so a reader without script
 // still gets all of it; the radios in the bar choose which one shows, in CSS.
@@ -13,7 +13,7 @@
 import { singleKeysOff } from "../row-list/row-list.ts";
 import { type CompareView, STORAGE_KEY, VIEWS } from "./draft-compare-render.ts";
 
-export { tokenize, countWords, commonSubsequence, diffWords, splitSentences, diffSentences, analyse, countsText } from "./draft-compare-diff.ts";
+export { tokenize, countWords, commonSubsequence, diffWords, splitSentences, diffSentences, analyze, analyse, countsText } from "./draft-compare-diff.ts";
 export type { Op, WordPart, DiffOptions, Sentence, Entry, SentenceOptions, Counts, Analysis } from "./draft-compare-diff.ts";
 export { VIEWS, STORAGE_KEY, esc, renderCompare } from "./draft-compare-render.ts";
 export type { CompareView, CompareSide, RunKind, RunSpan, CompareLabels, CompareOptions } from "./draft-compare-render.ts";
@@ -21,7 +21,7 @@ export { parsePatch, patchCounts, patchCountsText, revisionPair, renderPatch } f
 export type { PatchOp, PatchLine, PatchHunk, PatchFile, PatchOptions, PatchCounts } from "./draft-compare-patch.ts";
 
 // ---------------------------------------------------------------------------------------
-// The behaviour
+// The behavior
 // ---------------------------------------------------------------------------------------
 
 const READY = "data-cap-ready";
@@ -123,7 +123,7 @@ function attach(root: HTMLElement): () => void {
   root.addEventListener("click", onClick);
   undo.push(() => root.removeEventListener("click", onClick));
 
-  // n and p: single keys, so they honour the page's switch for them, never act while typing,
+  // n and p: single keys, so they honor the page's switch for them, never act while typing,
   // and act only when focus is inside the compare or it is the page's primary one.
   const onKey = (e: KeyboardEvent) => {
     if (e.defaultPrevented || (e.key !== "n" && e.key !== "p")) return;

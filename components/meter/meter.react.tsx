@@ -19,7 +19,7 @@ export interface MeterProps {
   // Without either, the tone is the `tone` prop or none.
   warnAt?: number;
   critAt?: number;
-  // The word shown with a warn or crit tone, so colour is never alone. Shown when the tone
+  // The word shown with a warn or crit tone, so color is never alone. Shown when the tone
   // comes from warnAt/critAt, or when this is given; with a plain `tone` prop and no
   // `words`, the word is the caller's, in `note`.
   words?: { warn: string; crit: string };

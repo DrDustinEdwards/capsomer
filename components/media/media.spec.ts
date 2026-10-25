@@ -15,7 +15,7 @@ const library = (page: Page, theme: Theme, only = "library") => visitStates(page
 // ---------------------------------------------------------------------------------------
 // The pure parts run in node.
 
-test("behaviour: the grid's arrow keys read rendered rows, wrap in reading order and stop at the edges", () => {
+test("behavior: the grid's arrow keys read rendered rows, wrap in reading order and stop at the edges", () => {
   const boxes = [
     { id: "a", top: 0, left: 0, width: 100 },
     { id: "b", top: 0, left: 110, width: 100 },
@@ -42,7 +42,7 @@ test("behaviour: the grid's arrow keys read rendered rows, wrap in reading order
   expect(nextTile(rows, "gone", "left")).toBe("a");
 });
 
-test("behaviour: alt text has three states, and decorative is a choice that missing is not", () => {
+test("behavior: alt text has three states, and decorative is a choice that missing is not", () => {
   expect(altStateOf("", false)).toBe("missing");
   expect(altStateOf("   ", false)).toBe("missing");
   expect(altStateOf("A dashboard", false)).toBe("set");
@@ -58,7 +58,7 @@ test("behaviour: alt text has three states, and decorative is a choice that miss
   expect(flagsFor({ kind: "document", altState: "missing", used: [], state: "ready" }).map((f) => f.word)).toEqual(["Unattached"]);
 });
 
-test("behaviour: sizes, suggested alt text, tags and the copy snippets", () => {
+test("behavior: sizes, suggested alt text, tags and the copy snippets", () => {
   expect(byteSize(512)).toBe("512 B");
   expect(byteSize(421888)).toBe("412 kB");
   expect(byteSize(2516582)).toBe("2.4 MB");
@@ -70,7 +70,7 @@ test("behaviour: sizes, suggested alt text, tags and the copy snippets", () => {
   expect(doc[1]?.value).toBe("[uptime report](https://x.test/r.pdf)");
 });
 
-test("behaviour: autosave waits 800 ms of quiet, saves once, and saves a change made while saving", async () => {
+test("behavior: autosave waits 800 ms of quiet, saves once, and saves a change made while saving", async () => {
   expect(AUTOSAVE_MS).toBe(800);
   const log: string[] = [];
   let release: () => void = () => undefined;
@@ -98,7 +98,7 @@ test("behaviour: autosave waits 800 ms of quiet, saves once, and saves a change 
   expect(a.state()).toBe("saved");
 });
 
-test("behaviour: autosave that fails says so with the reason, and Retry saves again", async () => {
+test("behavior: autosave that fails says so with the reason, and Retry saves again", async () => {
   let ok = false;
   const states: Array<[string, string | undefined]> = [];
   const a = createAutosave({
@@ -116,7 +116,7 @@ test("behaviour: autosave that fails says so with the reason, and Retry saves ag
   expect(a.state()).toBe("saved");
 });
 
-test("behaviour: a bulk tag skips what already has it, records a failure and carries on", async () => {
+test("behavior: a bulk tag skips what already has it, records a failure and carries on", async () => {
   const tags: Record<string, string[]> = { a: [], b: ["x"], c: [] };
   const r = await applyBulkTag<string>({
     ids: ["a", "b", "c", "gone"],
@@ -262,7 +262,7 @@ eachTheme((theme) => {
     expect(before && after && Math.abs(before.height - after.height) < 1 && after.height > 50).toBe(true);
   });
 
-  test("accessibility: the inspector is a named dialog with labelled fields and a live save status", async ({ page }) => {
+  test("accessibility: the inspector is a named dialog with labeled fields and a live save status", async ({ page }) => {
     await visitStates(page, "media", theme);
     const ins = page.locator("#ins-static-ins");
     await expect(ins).toHaveAccessibleName("uptime-strip.png");
@@ -525,9 +525,9 @@ eachTheme((theme) => {
   });
 
   // -------------------------------------------------------------------------------------
-  // behaviour
+  // behavior
 
-  test("behaviour: wide, the inspector is a pane beside the grid; narrow, a closed sheet", async ({ page }) => {
+  test("behavior: wide, the inspector is a pane beside the grid; narrow, a closed sheet", async ({ page }) => {
     await library(page, theme);
     const grid = await page.locator("#library-tiles").boundingBox();
     const pane = await inspector(page).boundingBox();
@@ -538,7 +538,7 @@ eachTheme((theme) => {
     expect(await inspector(page).evaluate((el: HTMLDialogElement) => el.open)).toBe(false);
   });
 
-  test("behaviour: with no script the inspector is in the page, open, with its form and a Save button", async ({ page }) => {
+  test("behavior: with no script the inspector is in the page, open, with its form and a Save button", async ({ page }) => {
     await page.route("**/*.js", (r) => r.abort());
     await page.goto("components/media/states.html");
     const ins = page.locator("#ins-static-ins");
@@ -548,7 +548,7 @@ eachTheme((theme) => {
     await expect(ins.getByRole("link", { name: "Why the uptime strip counts gaps" })).toBeVisible();
   });
 
-  test("behaviour: typing alt text saves after 800 ms of quiet, with Saving then Saved, and the tile updates", async ({ page }) => {
+  test("behavior: typing alt text saves after 800 ms of quiet, with Saving then Saved, and the tile updates", async ({ page }) => {
     await page.clock.install();
     await library(page, theme);
     await page.clock.pauseAt(Date.now() + 60_000);
@@ -574,7 +574,7 @@ eachTheme((theme) => {
     await expect(tile(page, UPTIME).locator(".cap-status")).toHaveCount(0);
   });
 
-  test("behaviour: leaving a field saves what was typed at once", async ({ page }) => {
+  test("behavior: leaving a field saves what was typed at once", async ({ page }) => {
     await library(page, theme);
     await link(page, UPTIME).focus();
     await page.keyboard.press("Enter");
@@ -584,7 +584,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as unknown as { saves: unknown[] }).saves.length)).toBe(1);
   });
 
-  test("behaviour: a save that fails says so, keeps the typed text, and Retry saves it", async ({ page }) => {
+  test("behavior: a save that fails says so, keeps the typed text, and Retry saves it", async ({ page }) => {
     await library(page, theme);
     await page.evaluate(() => ((window as unknown as { failSave: boolean }).failSave = true));
     await link(page, UPTIME).focus();
@@ -602,7 +602,7 @@ eachTheme((theme) => {
     await expect(tile(page, UPTIME)).toHaveAttribute("data-alt", "set");
   });
 
-  test("behaviour: typed text that failed to save is still there after moving to another file and back", async ({ page }) => {
+  test("behavior: typed text that failed to save is still there after moving to another file and back", async ({ page }) => {
     await library(page, theme);
     await page.evaluate(() => ((window as unknown as { failSave: boolean }).failSave = true));
     await link(page, UPTIME).focus();
@@ -620,7 +620,7 @@ eachTheme((theme) => {
     await expect(inspector(page).getByRole("button", { name: "Retry" })).toBeVisible();
   });
 
-  test("behaviour: switching file saves unsaved text to the file it was typed for", async ({ page }) => {
+  test("behavior: switching file saves unsaved text to the file it was typed for", async ({ page }) => {
     await library(page, theme);
     await link(page, UPTIME).focus();
     await page.keyboard.press("Enter");
@@ -632,7 +632,7 @@ eachTheme((theme) => {
     await expect(tile(page, UPTIME)).toHaveAttribute("data-alt-text", "Typed for the uptime strip");
   });
 
-  test("behaviour: Decorative image clears and disables the alt text, saves, and the tile says Decorative", async ({ page }) => {
+  test("behavior: Decorative image clears and disables the alt text, saves, and the tile says Decorative", async ({ page }) => {
     await library(page, theme);
     await link(page, UPTIME).focus();
     await page.keyboard.press("Enter");
@@ -653,13 +653,13 @@ eachTheme((theme) => {
     await expect(alt(page)).toHaveValue("A strip");
   });
 
-  test("behaviour: an uploaded image can be told apart: missing alt text shows a warning word, a written one shows none", async ({ page }) => {
+  test("behavior: an uploaded image can be told apart: missing alt text shows a warning word, a written one shows none", async ({ page }) => {
     await library(page, theme);
     await expect(tile(page, UPTIME).locator(".cap-status")).toHaveText(["No alt text"]);
     await expect(tile(page, FOX).locator(".cap-status")).toHaveCount(0);
   });
 
-  test("behaviour: the inspector lists where a file is used, as links, and says so plainly when it is not used", async ({ page }) => {
+  test("behavior: the inspector lists where a file is used, as links, and says so plainly when it is not used", async ({ page }) => {
     await library(page, theme);
     await link(page, "mention-queue.png").focus();
     await page.keyboard.press("Enter");
@@ -673,7 +673,7 @@ eachTheme((theme) => {
     await expect(used.getByRole("link")).toHaveCount(0);
   });
 
-  test("behaviour: the Unattached filter has a count, narrows the grid, and the inspector's button turns it on", async ({ page }) => {
+  test("behavior: the Unattached filter has a count, narrows the grid, and the inspector's button turns it on", async ({ page }) => {
     await library(page, theme);
     const chip = page.getByRole("button", { name: /^Unattached/ });
     await expect(chip.locator(".cap-chip-count")).toHaveText("1");
@@ -692,7 +692,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-media-count")).toHaveText("1 of 6 files");
   });
 
-  test("behaviour: the no alt text filter lists what still needs a description", async ({ page }) => {
+  test("behavior: the no alt text filter lists what still needs a description", async ({ page }) => {
     await library(page, theme);
     await page.getByRole("button", { name: /^No alt text/ }).click();
     await expect(tile(page, UPTIME)).toBeVisible();
@@ -701,7 +701,7 @@ eachTheme((theme) => {
     await expect(tile(page, "germomics-tree.svg")).toBeHidden();
   });
 
-  test("behaviour: search narrows by name, alt text and tags, and says what it found, or that nothing matches", async ({ page }) => {
+  test("behavior: search narrows by name, alt text and tags, and says what it found, or that nothing matches", async ({ page }) => {
     await library(page, theme);
     const q = page.getByRole("searchbox", { name: "Search files" });
     await q.fill("uptime");
@@ -718,7 +718,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-media-count")).toHaveText("6 files");
   });
 
-  test("behaviour: the Trash view shows the files in Trash, with a count and Restore", async ({ page }) => {
+  test("behavior: the Trash view shows the files in Trash, with a count and Restore", async ({ page }) => {
     await library(page, theme);
     await expect(page.locator("[data-cap-count=bin]")).toHaveText("1");
     await page.getByRole("radio", { name: /Trash/ }).check();
@@ -733,7 +733,7 @@ eachTheme((theme) => {
     await expect(tile(page, "old-logo.png")).toBeVisible();
   });
 
-  test("behaviour: moving a file to Trash from the inspector runs at once and offers Undo", async ({ page }) => {
+  test("behavior: moving a file to Trash from the inspector runs at once and offers Undo", async ({ page }) => {
     await library(page, theme);
     await link(page, UPTIME).focus();
     await page.keyboard.press("Enter");
@@ -747,7 +747,7 @@ eachTheme((theme) => {
     await expect(page.locator("[data-cap-count=bin]")).toHaveText("1");
   });
 
-  test("behaviour: the bulk bar over the grid bins the selection with Undo and adds a tag", async ({ page }) => {
+  test("behavior: the bulk bar over the grid bins the selection with Undo and adds a tag", async ({ page }) => {
     await library(page, theme);
     await expect(page.locator("#library-bulk .cap-bulk-count")).toHaveText("1 selected");
     await link(page, UPTIME).focus();
@@ -768,7 +768,7 @@ eachTheme((theme) => {
     await expect(tile(page, UPTIME)).toBeVisible();
   });
 
-  test("behaviour: deleting for good previews every file first, with focus on Cancel, and cannot be undone", async ({ page }) => {
+  test("behavior: deleting for good previews every file first, with focus on Cancel, and cannot be undone", async ({ page }) => {
     await library(page, theme);
     await page.getByRole("radio", { name: /Trash/ }).check();
     await tile(page, "old-logo.png").getByRole("checkbox").check({ force: true });
@@ -785,14 +785,14 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Undo" })).toHaveCount(0);
   });
 
-  test("behaviour: copy address copies the file's address; Markdown copies an image reference", async ({ page }) => {
+  test("behavior: copy address copies the file's address; Markdown copies an image reference", async ({ page }) => {
     await library(page, theme);
     await inspector(page).getByRole("button", { name: "Copy the Markdown image" }).click();
     await expect(inspector(page).locator("[data-cap-part=copied]")).toHaveText("Copied the Markdown image.");
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("![The Foxhound dashboard with three sites reporting healthy](https://dustinedwards.info/media/foxhound-hero.jpg)");
   });
 
-  test("behaviour: when the clipboard refuses, copy says so and leaves the address selected", async ({ page }) => {
+  test("behavior: when the clipboard refuses, copy says so and leaves the address selected", async ({ page }) => {
     await library(page, theme);
     await page.evaluate(() => {
       Object.defineProperty(navigator, "clipboard", { value: { writeText: () => Promise.reject(new Error("denied")) }, configurable: true });
@@ -807,7 +807,7 @@ eachTheme((theme) => {
     expect(selected).toBe("https://dustinedwards.info/media/foxhound-hero.jpg");
   });
 
-  test("behaviour: dropped files become uploading tiles with a progress bar, and finish as tiles that open", async ({ page }) => {
+  test("behavior: dropped files become uploading tiles with a progress bar, and finish as tiles that open", async ({ page }) => {
     await library(page, theme, "empty");
     await expect(page.getByText("Nothing here yet")).toBeVisible();
     await page.locator("#blank-empty-drop input").setInputFiles([{ name: "release-notes.png", mimeType: "image/png", buffer: Buffer.alloc(4000, 1) }]);
@@ -837,7 +837,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("behaviour: React MediaGrid renders the tiles' contract, with the arrow keys, Space and Enter", async ({ page }) => {
+  test("behavior: React MediaGrid renders the tiles' contract, with the arrow keys, Space and Enter", async ({ page }) => {
     await library(page, theme, "react");
     await expect(page.getByRole("list", { name: "Files" })).toBeVisible();
     await expect(link(page, UPTIME)).toHaveAccessibleDescription(/No alt text/);
@@ -858,7 +858,7 @@ eachTheme((theme) => {
     await expect(alt(page)).toBeFocused();
   });
 
-  test("behaviour: React MediaInspector saves by itself, shows Saved, and keeps typed text when a save fails", async ({ page }) => {
+  test("behavior: React MediaInspector saves by itself, shows Saved, and keeps typed text when a save fails", async ({ page }) => {
     await library(page, theme, "react");
     await link(page, UPTIME).focus();
     await page.keyboard.press("Enter");
@@ -878,7 +878,7 @@ eachTheme((theme) => {
     await expect(saveStatus(page)).toHaveText("Saved");
   });
 
-  test("behaviour: React MediaInspector marks a file decorative and clears and disables its alt text", async ({ page }) => {
+  test("behavior: React MediaInspector marks a file decorative and clears and disables its alt text", async ({ page }) => {
     await library(page, theme, "react");
     await link(page, UPTIME).focus();
     await page.keyboard.press("Enter");
@@ -892,7 +892,7 @@ eachTheme((theme) => {
     await expect(tile(page, UPTIME).locator(".cap-status")).toHaveText(["Decorative", "Unattached"]);
   });
 
-  test("behaviour: the grid groups by month, and the arrow keys cross from one group to the next", async ({ page }) => {
+  test("behavior: the grid groups by month, and the arrow keys cross from one group to the next", async ({ page }) => {
     await library(page, theme);
     await expect(page.getByRole("heading", { name: /September 2026/ })).toBeVisible();
     await expect(page.getByRole("heading", { name: /August 2026/ })).toBeVisible();
@@ -905,7 +905,7 @@ eachTheme((theme) => {
     expect(label).toBe("mention-queue.png");
   });
 
-  test("behaviour: sort orders each group, keeps uploads first, and keeps focus", async ({ page }) => {
+  test("behavior: sort orders each group, keeps uploads first, and keeps focus", async ({ page }) => {
     await library(page, theme);
     const order = () => page.locator("section[aria-labelledby=library-g-september] .cap-media-tile").evaluateAll((els) => els.map((e) => e.getAttribute("data-label")));
     expect((await order()).slice(0, 3)).toEqual(["capsid-walkthrough.png", "scan-0042.png", FOX]);
@@ -918,7 +918,7 @@ eachTheme((theme) => {
     expect((await order()).slice(2, 4)).toEqual([FOX, UPTIME]);
   });
 
-  test("behaviour: the list layout puts one file on each row, with the same tiles", async ({ page }) => {
+  test("behavior: the list layout puts one file on each row, with the same tiles", async ({ page }) => {
     await library(page, theme);
     await page.getByRole("radio", { name: "List" }).check({ force: true });
     await expect(page.locator(".cap-media[data-cap=media]")).toHaveAttribute("data-view", "list");
@@ -931,7 +931,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("behaviour: a file dropped anywhere on the library page becomes an uploading tile", async ({ page }) => {
+  test("behavior: a file dropped anywhere on the library page becomes an uploading tile", async ({ page }) => {
     await library(page, theme);
     const dt = await page.evaluateHandle(() => {
       const t = new DataTransfer();
@@ -945,7 +945,7 @@ eachTheme((theme) => {
     await expect(page.locator("#library-drop .cap-drop-overlay")).toBeHidden();
   });
 
-  test("behaviour: tile size changes the columns", async ({ page }) => {
+  test("behavior: tile size changes the columns", async ({ page }) => {
     await library(page, theme);
     const w = async () => (await tile(page, FOX).boundingBox())?.width ?? 0;
     const m = await w();

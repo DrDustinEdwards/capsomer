@@ -2,7 +2,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Empty and could-not-load. An empty area always says which kind of empty it is (nothing
-   yet, no match, all clear, failed). It is shadcn's Empty: centred, a dashed edge, an optional
+   yet, no match, all clear, failed). It is shadcn's Empty: centered, a dashed edge, an optional
    icon in a tile, a title, a description, then the one action. Loading is the skeleton and
    the spinner (components/skeleton); over 10 seconds, `.cap-empty-wait` says how long. */
 @layer cap.components {

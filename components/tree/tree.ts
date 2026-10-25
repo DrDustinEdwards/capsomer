@@ -34,7 +34,7 @@ export interface Tree {
   selected(): string[];
   focus(id?: string): void;
   // Makes a move, as the keyboard or a drop would: emits cap:tree-move, and unless that is
-  // cancelled, moves the item and says so. Returns whether it moved.
+  // canceled, moves the item and says so. Returns whether it moved.
   move(move: TreeMove): boolean;
   refresh(): void;
   detach(): void;

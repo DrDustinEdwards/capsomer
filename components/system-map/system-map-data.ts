@@ -1,4 +1,4 @@
-// The system map's data shape, its hexagonal layout and the arrow keys' neighbours (system-map.ts).
+// The system map's data shape, its hexagonal layout and the arrow keys' neighbors (system-map.ts).
 
 // ---------------------------------------------------------------------------------------
 // Data. The shape of Capsid's public model (capsid/system/model.json through toPublic),
@@ -177,7 +177,7 @@ export interface Layout {
 
 const toXY = (q: number, r: number): [number, number] => [Math.round(1.5 * R * q * 100) / 100, Math.round(SQRT3 * R * (r + q / 2) * 100) / 100];
 
-const NEIGHBOURS: Array<[number, number]> = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+const NEIGHBORS: Array<[number, number]> = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
 const ringOf = (q: number, r: number) => Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r));
 const key = (q: number, r: number) => `${q},${r}`;
 // The size of a group's name, for room around the map: 11 px capitals, spaced.
@@ -211,7 +211,7 @@ function placeGroups(outer: readonly MapSystem[], start: number, taken: Map<stri
       for (let q = -reach; q <= reach; q++) {
         for (let r = -reach; r <= reach; r++) {
           if (ringOf(q, r) < start || taken.has(key(q, r))) continue;
-          const near = NEIGHBOURS.map(([dq, dr]) => [q + dq, r + dr] as [number, number]);
+          const near = NEIGHBORS.map(([dq, dr]) => [q + dq, r + dr] as [number, number]);
           if (near.some(([nq, nr]) => owner.has(key(nq, nr)) && owner.get(key(nq, nr)) !== gi)) continue;
           const mine = near.filter(([nq, nr]) => owner.get(key(nq, nr)) === gi).length;
           const touchesLast = last !== null && near.some(([nq, nr]) => nq === last![0] && nr === last![1]);

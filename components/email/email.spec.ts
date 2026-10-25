@@ -9,7 +9,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("behaviour: a mail has a language, a title, one heading and a link button, and no horizontal scroll at 320px", async ({ page }) => {
+  test("behavior: a mail has a language, a title, one heading and a link button, and no horizontal scroll at 320px", async ({ page }) => {
     await visitStates(page, "email", theme);
     const frame = page.frameLocator('iframe[data-email="magicLink"][data-width="320"]').first();
     await expect(frame.locator("h1")).toHaveText("Sign in to Carrel");

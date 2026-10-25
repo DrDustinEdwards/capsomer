@@ -2,7 +2,7 @@
 name: session-row
 title: Session row
 summary: Agent sessions, waiting on you first, with the question waiting on you answered in place.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [needs you, working, failed, idle, stopped, sampled]
 added: 0.1.0
@@ -31,7 +31,7 @@ A queue of jobs that wait for approval as a batch uses the approval sheet (`appr
 ## The default and its reason
 
 - **Waiting on you first, the longest wait at the top; then failed, working, idle, stopped.** What needs a person comes before what does not (patterns.md, "Status"). `order()` does the sort.
-- **State is a pill: shape, word and colour.** Needs you (warning triangle), Working (info, a turning arc), Failed (critical octagon), Idle (no data, an empty circle with a bar), Stopped (no data tone, a filled square, so it differs from Idle by shape and word, not colour).
+- **State is a pill: shape, word and color.** Needs you (warning triangle), Working (info, a turning arc), Failed (critical octagon), Idle (no data, an empty circle with a bar), Stopped (no data tone, a filled square, so it differs from Idle by shape and word, not color).
 - **A failed session carries the red left edge** (`data-tone="crit"` on the row, which the React wrapper sets), as a critical row does in every list; the pill still says Failed. From the Portal's `.qrow.sev-crit`, which its Live sessions list gained in #215. Only failed rows have it: needing you is warning, not critical.
 - **The agent's name is mono**, because it is an identifier.
 - **The age is in words**: "waiting 3 minutes", "started 18 minutes ago", never "3m".
@@ -43,7 +43,7 @@ A queue of jobs that wait for approval as a batch uses the approval sheet (`appr
 
 ## Matches
 
-shadcn/ui `Item` (each row: a title line, a description, actions) with `Alert` for the question (the large radius, a tinted surface, a toned edge). Deliberately different: the state is a pill with a glyph and a word (shadcn's Badge is colour-led), a failed row carries the critical edge, and the ask block is a labelled group with answers that name the action. A row is not itself a link, so it has no hover tint; the answer buttons are the shared `cap-btn` with its own hover, focus, pressed and busy states. Padding follows `--pad-card` and `--gap`, so comfortable density roomies the rows.
+shadcn/ui `Item` (each row: a title line, a description, actions) with `Alert` for the question (the large radius, a tinted surface, a toned edge). Deliberately different: the state is a pill with a glyph and a word (shadcn's Badge is color-led), a failed row carries the critical edge, and the ask block is a labeled group with answers that name the action. A row is not itself a link, so it has no hover tint; the answer buttons are the shared `cap-btn` with its own hover, focus, pressed and busy states. Padding follows `--pad-card` and `--gap`, so comfortable density roomies the rows.
 
 ## Keyboard
 
@@ -56,7 +56,7 @@ shadcn/ui `Item` (each row: a title line, a description, actions) with `Alert` f
 
 - The ask block is a group named by its question, so each answer button is heard in context.
 - A collapsed count is spoken in words.
-- The ask block's warning edge is a border, so it survives forced colours; the pill keeps its glyph and word when its tint is removed. A failed row's red edge is drawn in CanvasText there, and is never the only sign: the pill's octagon and the word Failed say it.
+- The ask block's warning edge is a border, so it survives forced colors; the pill keeps its glyph and word when its tint is removed. A failed row's red edge is drawn in CanvasText there, and is never the only sign: the pill's octagon and the word Failed say it.
 - The list is named by its panel heading.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -90,7 +90,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </ul>
 ```
 
-`import { enhance, order } from "capsomer/behaviour/session-row"`: `enhance()` makes each answer button dispatch a bubbling `cap-answer` event with `{ session, answer }`; the app performs it and sets `aria-busy="true"` on the button while it is in flight. In React, `import { SessionList } from "capsomer/react/session-row"` with `sessions` and `onAnswer`; it sorts with `order()`.
+`import { enhance, order } from "capsomer/behavior/session-row"`: `enhance()` makes each answer button dispatch a bubbling `cap-answer` event with `{ session, answer }`; the app performs it and sets `aria-busy="true"` on the button while it is in flight. In React, `import { SessionList } from "capsomer/react/session-row"` with `sessions` and `onAnswer`; it sorts with `order()`.
 
 ## Exceptions in production
 

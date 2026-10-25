@@ -2,7 +2,7 @@
 name: shell
 title: Shell
 summary: The top bar, the left menu and the phone tab bar every app shares.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [the site's logo, the logo alone, expanded, group label, current entry, entry with a count, hover, pressed, keyboard focus, collapsed, collapsed with a shown name, Settings current, comfortable density, phone width, More tab, More sheet open, More tab current]
 added: 0.1.0
@@ -17,7 +17,7 @@ replaces:
 
 The frame of every app: a top bar, a left menu (the rail) that collapses to icons, the page's main region, and a tab bar on a phone. Capsomer's own site and the Capsid Portal use the same one, so the two visibly belong together.
 
-**Provenance.** MIXED, against the Portal's dashboard/src/styles.css, app/App.tsx and app/MoreSheet.tsx as of capsid master after #226. The CSS rules (the quiet top bar and rail on the ground tone, the 30 px items, the current item on the lit surface, the collapsed dots, the tab bar and its badge, the More list, the page frame) are EXTRACTED from the Portal with renames. The behaviour is REWRITTEN framework-free: the Portal places a script-positioned tip (`.tip`) beside a collapsed entry, and Capsomer shows the entry's own label by CSS, with Esc to hide it (WCAG 1.4.13), so no tooltip script is needed. **0.2.0** rebuilds the look from shadcn/ui's Sidebar (nova) and the More sheet on the shared dialog (`components/dialog`) as a bottom sheet; see Matches shadcn below.
+**Provenance.** MIXED, against the Portal's dashboard/src/styles.css, app/App.tsx and app/MoreSheet.tsx as of capsid master after #226. The CSS rules (the quiet top bar and rail on the ground tone, the 30 px items, the current item on the lit surface, the collapsed dots, the tab bar and its badge, the More list, the page frame) are EXTRACTED from the Portal with renames. The behavior is REWRITTEN framework-free: the Portal places a script-positioned tip (`.tip`) beside a collapsed entry, and Capsomer shows the entry's own label by CSS, with Esc to hide it (WCAG 1.4.13), so no tooltip script is needed. **0.2.0** rebuilds the look from shadcn/ui's Sidebar (nova) and the More sheet on the shared dialog (`components/dialog`) as a bottom sheet; see Matches shadcn below.
 
 ## When to use it
 
@@ -33,7 +33,7 @@ A public reading page (a post, a CV) has no rail; it uses the site's own header 
 - **The rail lists views, at most two levels deep, each a real link with `aria-current="page"`.** Buttons that change the address break Back, middle-click and screen readers' link lists (APG Link; patterns.md "Move between views").
 - **The top bar holds, left to right: the brand, a status (how fresh the data is), actions, the theme switch, Settings, then Sign out.** Settings is a place you visit rarely, so it moves out of the rail into the top bar (ruled with capsid job_28cc5d296fdb).
 - **The rail collapses to icons, and the choice is remembered in this browser** (`localStorage`, key `cap-rail` or the shell's `data-cap-pref`). Collapsed, each name stays in the accessibility tree and shows beside its icon on hover and on keyboard focus; a count becomes a dot.
-- **The top bar and the rail are quiet: on the ground tone, no rule between them and the page.** The current entry is lifted onto the lit surface with a hairline, and its icon takes the accent; the page's panels are the surface (Portal design D4, D5, #215). The top bar is 44 px. The current item is tinted with the accent tint and set in `--accent-text` (4.5:1) in medium weight, which is the active menu item's job in Capsomer's step table; its icon follows the text colour.
+- **The top bar and the rail are quiet: on the ground tone, no rule between them and the page.** The current entry is lifted onto the lit surface with a hairline, and its icon takes the accent; the page's panels are the surface (Portal design D4, D5, #215). The top bar is 44 px. The current item is tinted with the accent tint and set in `--accent-text` (4.5:1) in medium weight, which is the active menu item's job in Capsomer's step table; its icon follows the text color.
 - **Settings is an icon link in the top bar** (`.cap-shell-settings`, hidden on a phone with `data-hide="phone"`), current on the Settings view with `aria-current="page"`, with a tooltip that names its shortcut. It is not in the rail.
 - **On a phone the rail gives way to a tab bar of at most five entries: four views and More** (rulings.md, rule 9). More is a button that opens the shared dialog (`components/dialog`, `data-placement="bottom"`) listing every other view with its count, so no view needs the command menu to be reached. When the current view is one of those, the More tab is `aria-current="true"` and takes the accent (the Portal's `button.cur`).
 - **The rail's foot holds the shortcut hints, then the collapse button.** Expanded, Command menu and Shortcuts are quiet rows with their keys (`.cap-shell-linkish`); collapsed, they are icon buttons (`.cap-shell-railbtn`) whose names show like an entry's. The app renders the form that matches the rail's state, as the Portal does.
@@ -62,11 +62,11 @@ A public reading page (a post, a CV) has no rail; it uses the site's own header 
 
 - Two navigation landmarks with the same name ("Sections"); only one is displayed at any width, so a screen reader meets one.
 - The More sheet is the shared dialog (a native modal `dialog`) named "More views", so the page behind it is inert, Esc closes it and focus returns to the More button. Its counts are `--muted`, since `--dim` on the active tint is 3.8:1 in dark.
-- The More tab states its popup (`aria-haspopup="dialog"`) and whether it is open (`aria-expanded`); the current tab is never conveyed by colour alone (the accent plus `aria-current`, and an underline in forced colours).
+- The More tab states its popup (`aria-haspopup="dialog"`) and whether it is open (`aria-expanded`); the current tab is never conveyed by color alone (the accent plus `aria-current`, and an underline in forced colors).
 - Collapsed names are clipped, not removed, so the links keep their names. A shown name is a child of its link, so the pointer can move onto it without it closing, and Esc hides it (WCAG 1.4.13). Because a scrolling box would clip it, a collapsed rail does not scroll; its icons fit the height.
 - Counts are part of the link's accessible name.
 - The top bar is sticky and the document scrolls, with `scroll-padding-top` for the bar, so a focused control is never hidden under it (WCAG 2.4.11).
-- Forced colours: the current entry gains an outline, because its tinted background is removed.
+- Forced colors: the current entry gains an outline, because its tinted background is removed.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -112,7 +112,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </div>
 ```
 
-`import { enhance, toggleRail, openMore, closeMore } from "capsomer/behaviour/shell"` wires the collapse button and the More sheet (through the dialog's `wireDialog`, so the sheet needs no separate `enhance()`). `readPref` and `writePref` are exported too: the theme switch and the shortcuts share them. In React, `import { Shell } from "capsomer/react/shell"`; pass `renderLink` to use a router's link, `tabs` (at most four), `more`, `moreLabel` and `moreIcon` for the phone tab bar and its sheet, and `group` on an entry to put it under a group label. The top bar's Settings link and the rail's hints go in `actions` and `railFoot`.
+`import { enhance, toggleRail, openMore, closeMore } from "capsomer/behavior/shell"` wires the collapse button and the More sheet (through the dialog's `wireDialog`, so the sheet needs no separate `enhance()`). `readPref` and `writePref` are exported too: the theme switch and the shortcuts share them. In React, `import { Shell } from "capsomer/react/shell"`; pass `renderLink` to use a router's link, `tabs` (at most four), `more`, `moreLabel` and `moreIcon` for the phone tab bar and its sheet, and `group` on an entry to put it under a group label. The top bar's Settings link and the rail's hints go in `actions` and `railFoot`.
 
 ## Density
 
@@ -120,12 +120,12 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ## Matches shadcn
 
-Sidebar (Base UI flavour, nova): the menu button (one control tall, a 16 px icon and 8 px gap, a rounded 6 px hover, a current item tinted and set in medium weight), the group and its label, the menu badge, the icon-only collapsed rail whose names show in a tooltip to the right (inverted surface, 6 px radius, 12 by 6 padding, an arrow, fade and an 8 px slide in 100 ms), the footer with the collapse trigger, and the focus ring on every item. The phone's sheet is Sidebar's mobile Sheet, here the bottom sheet of the shared dialog with the list of views.
+Sidebar (Base UI flavor, nova): the menu button (one control tall, a 16 px icon and 8 px gap, a rounded 6 px hover, a current item tinted and set in medium weight), the group and its label, the menu badge, the icon-only collapsed rail whose names show in a tooltip to the right (inverted surface, 6 px radius, 12 by 6 padding, an arrow, fade and an 8 px slide in 100 ms), the footer with the collapse trigger, and the focus ring on every item. The phone's sheet is Sidebar's mobile Sheet, here the bottom sheet of the shared dialog with the list of views.
 
 ## Deliberately different
 
-- **The current item is on the accent tint with `--accent-text`**, not Sidebar's grey: Capsomer's menu item job is step 11, and the tint is the family's.
-- **No width animation on the rail.** Sidebar animates its width over 200 ms; Capsomer moves only transform, opacity and colour, so the rail changes size at once. The tooltip and the colour changes are animated.
+- **The current item is on the accent tint with `--accent-text`**, not Sidebar's gray: Capsomer's menu item job is step 11, and the tint is the family's.
+- **No width animation on the rail.** Sidebar animates its width over 200 ms; Capsomer moves only transform, opacity and color, so the rail changes size at once. The tooltip and the color changes are animated.
 - **The collapsed rail does not scroll** (it is `overflow: visible`), so the tooltips are not clipped; Sidebar portals its tooltips instead. The rail's few icons fit the height.
 - **Tooltips here are CSS labels, not the Tooltip component**, so a collapsed link has its name with no script and the link's accessible name is its own text; they show on hover and on keyboard focus with no delay, since the label is the only name on screen.
 - **The More sheet slides up from the bottom** (a phone's thumb), where Sidebar's mobile sheet is a left side sheet; and it has the dialog's corner Close button instead of a footer Close.

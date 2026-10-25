@@ -1,4 +1,4 @@
-// The row list's behaviour: j and k move keyboard focus between the rows' title links.
+// The row list's behavior: j and k move keyboard focus between the rows' title links.
 // Focus itself moves (there is no second selection), so Enter follows the link, the
 // browser scrolls the row into view, and a screen reader reads the row it lands on.
 // No framework; the React wrapper uses the same functions.

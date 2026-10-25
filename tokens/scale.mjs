@@ -1,4 +1,4 @@
-// Every token that is not a colour: space, radius, type, control size, motion, layers,
+// Every token that is not a color: space, radius, type, control size, motion, layers,
 // focus, the reading context, and the two contexts' aliases. `node tokens/scale.mjs` writes
 // tokens/scale.css, tokens/themes.css and tokens/tokens.json; `--check` regenerates them in
 // memory and refuses any difference from the committed files.
@@ -66,7 +66,7 @@ export const SCALE = {
     ["z-tip", "80", "a tooltip"],
   ],
   focus: [
-    ["focus-width", "2px", "the focus outline, WCAG 2.4.13's 2 px perimeter; its colour is --ring, checked at 3:1 by palette.mjs"],
+    ["focus-width", "2px", "the focus outline, WCAG 2.4.13's 2 px perimeter; its color is --ring, checked at 3:1 by palette.mjs"],
     ["focus-offset", "2px", "space between the control and its ring"],
     ["ring-width", "3px", "the soft glow around a focused field (shadcn's ring-3); the 2 px outline stays the focus indicator"],
   ],
@@ -88,7 +88,7 @@ export const SCALE = {
     ["card-lift", "0px", "how far a linked panel (a.cap-panel) rises under the pointer; a negative length lifts it"],
     ["card-edge", "0", "a linked panel's edge under the pointer: 0 the strong line, 1 the accent, between them a mix"],
     ["card-shadow", "none", "a panel's resting shadow"],
-    ["btn-sweep", "0", "the default button fills with the primary colour from the left under the pointer: 0 off, 1 on"],
+    ["btn-sweep", "0", "the default button fills with the primary color from the left under the pointer: 0 off, 1 on"],
   ],
 };
 
@@ -203,8 +203,8 @@ export function renderJson() {
     }
   }
   for (const scheme of ["light", "dark"]) {
-    out[`colour-${scheme}`] = {};
-    for (const k of t.order) out[`colour-${scheme}`][k] = { $type: "color", $value: t[scheme].tokens[k] };
+    out[`color-${scheme}`] = {};
+    for (const k of t.order) out[`color-${scheme}`][k] = { $type: "color", $value: t[scheme].tokens[k] };
   }
   return JSON.stringify(out, null, 2) + "\n";
 }

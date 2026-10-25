@@ -43,7 +43,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("meter", { name: "D1 rows written" })).toHaveAttribute("aria-valuetext", /no projection yet/);
   });
 
-  test("accessibility: a warning or critical row says so in words beside its colour", async ({ page }) => {
+  test("accessibility: a warning or critical row says so in words beside its color", async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
     await expect(page.locator(section("s-runs-out")).locator(".cap-status")).toHaveText("Runs out before the reset");
     await expect(page.locator(section("s-nearly-out")).locator(".cap-status")).toHaveText("Nearly out");
@@ -59,7 +59,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: the bars are drawn by the shared meter from their values, the projection never shorter than the use", async ({ page }) => {
+  test("behavior: the bars are drawn by the shared meter from their values, the projection never shorter than the use", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await visitStates(page, "usage-meter", theme);
     const read = (id: string) =>
@@ -84,7 +84,7 @@ eachTheme((theme) => {
     expect(none.projected).toBe("");
   });
 
-  test("behaviour: every row is the shared meter and draws no bar of its own", async ({ page }) => {
+  test("behavior: every row is the shared meter and draws no bar of its own", async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
     const rows = page.locator(".cap-usage-item");
     expect(await rows.count()).toBeGreaterThan(3);
@@ -105,7 +105,7 @@ eachTheme((theme) => {
     expect(await why.evaluate((el) => !el.closest("[role='meter']"))).toBe(true);
   });
 
-  test("behaviour: each specimen's why line is the one assess() writes", async ({ page }) => {
+  test("behavior: each specimen's why line is the one assess() writes", async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
     const cases: Array<[string, Parameters<typeof assess>[0]]> = [
       ["s-on-track", { used: 61_400, limit: 100_000, history: WEEK, resetsAt: RESET, now: NOW }],
@@ -125,7 +125,7 @@ eachTheme((theme) => {
 
 // assess() is pure: these run in Node, once.
 test.describe("assess()", () => {
-  test("behaviour: on track projects the day at today's rate", () => {
+  test("behavior: on track projects the day at today's rate", () => {
     const a = assess({ used: 61_400, limit: 100_000, history: WEEK, resetsAt: RESET, now: NOW });
     expect(a.tone).toBe("ok");
     expect(a.percent).toBe(61);
@@ -135,7 +135,7 @@ test.describe("assess()", () => {
     expect(a.projection).toBe("projected 87 percent by the reset");
   });
 
-  test("behaviour: a projection that ends before the reset warns below 75%", () => {
+  test("behavior: a projection that ends before the reset warns below 75%", () => {
     const a = assess({ used: 3_700_000, limit: 5_000_000, history: WEEK, resetsAt: RESET, now: NOW, atLimit: "reads fail" });
     expect(a.percent).toBe(74);
     expect(a.tone).toBe("warn");
@@ -146,21 +146,21 @@ test.describe("assess()", () => {
     expect(a.lead).toBe("Full in about 6 hours");
   });
 
-  test("behaviour: 75% used warns even when the day ends under the limit", () => {
+  test("behavior: 75% used warns even when the day ends under the limit", () => {
     const a = assess({ used: 75, limit: 100, history: WEEK, resetsAt: RESET, now: RESET - 3_600_000 });
     expect(a.tone).toBe("warn");
     expect(a.fullAt).toBeNull();
     expect(a.text).toBe("75% used: about 78% by the reset at 00:00 UTC, in 1 hour.");
   });
 
-  test("behaviour: 90% used is critical and says what is left", () => {
+  test("behavior: 90% used is critical and says what is left", () => {
     const a = assess({ used: 962, limit: 1_000, history: WEEK, resetsAt: RESET, now: NOW, unit: "writes", atLimit: "the watcher cannot save its pass" });
     expect(a.tone).toBe("crit");
     expect(a.label).toBe("Nearly out");
     expect(a.text).toBe("38 writes left. Full in about 40 minutes. At the limit, the watcher cannot save its pass until 00:00 UTC.");
   });
 
-  test("behaviour: no projection until 7 days of history", () => {
+  test("behavior: no projection until 7 days of history", () => {
     const six = assess({ used: 18_200, limit: 100_000, history: WEEK.slice(0, 6), resetsAt: RESET, now: NOW });
     expect(six.projectedAtReset).toBeNull();
     expect(six.fullAt).toBeNull();
@@ -173,27 +173,27 @@ test.describe("assess()", () => {
     expect(assess({ used: 18_200, limit: 100_000, history: WEEK, resetsAt: RESET, now: NOW }).projectedAtReset).not.toBeNull();
   });
 
-  test("behaviour: at the limit is critical, with what happens", () => {
+  test("behavior: at the limit is critical, with what happens", () => {
     const a = assess({ used: 1_000, limit: 1_000, history: WEEK, resetsAt: RESET, now: NOW, atLimit: "writes fail" });
     expect(a.tone).toBe("crit");
     expect(a.text).toBe("At the limit: writes fail until 00:00 UTC.");
     expect(a.projection).toBe("at the limit");
   });
 
-  test("behaviour: a total that does not reset has no projection", () => {
+  test("behavior: a total that does not reset has no projection", () => {
     const a = assess({ used: 1.2, limit: 10, history: [1.1, 1.2], resetsAt: null, now: NOW });
     expect(a.projectedAtReset).toBeNull();
     expect(a.text).toBe("No projection: 2 days of history, 7 needed. This total does not reset.");
   });
 
-  test("behaviour: the first hour of a day uses the week's typical rate", () => {
+  test("behavior: the first hour of a day uses the week's typical rate", () => {
     const start = RESET - 24 * 3_600_000;
     const a = assess({ used: 100, limit: 100_000, history: WEEK, resetsAt: RESET, now: start + 30 * 60_000 });
     const typicalPerMs = WEEK.reduce((x, y) => x + y, 0) / 7 / (24 * 3_600_000);
     expect(Math.round(a.projectedAtReset ?? 0)).toBe(Math.round(100 + typicalPerMs * (RESET - (start + 30 * 60_000))));
   });
 
-  test("behaviour: durations and widths read as a person would say them", () => {
+  test("behavior: durations and widths read as a person would say them", () => {
     expect(duration(40 * 60_000)).toBe("40 minutes");
     expect(duration(60 * 60_000)).toBe("1 hour");
     expect(duration(3 * 24 * 3_600_000)).toBe("3 days");

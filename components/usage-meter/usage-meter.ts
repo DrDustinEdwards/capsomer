@@ -1,4 +1,4 @@
-// The usage meter's behaviour: a pure assessment of one usage figure against its free
+// The usage meter's behavior: a pure assessment of one usage figure against its free
 // limit (tone, projection by the reset, when it runs out, and the sentence that says so),
 // and `enhance`, which draws each row's bar through the shared meter (components/meter) from
 // its ARIA values through the CSSOM. No framework; the React wrapper uses the same functions.
@@ -42,7 +42,7 @@ export interface UsageAssessment {
   fullAt: number | null;
   // A short status word for a warning or critical row: "Runs out before the reset".
   label: string;
-  // The "why" line. It starts with `lead`, the part shown in the tone's colour.
+  // The "why" line. It starts with `lead`, the part shown in the tone's color.
   text: string;
   lead: string;
   // The projection in words for aria-valuetext: "projected 87 percent by the reset".

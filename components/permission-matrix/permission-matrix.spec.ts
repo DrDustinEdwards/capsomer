@@ -11,7 +11,7 @@ const sample: PermMatrix = {
   ],
 };
 
-test("behaviour: holdings lists what each agent holds, in column order", () => {
+test("behavior: holdings lists what each agent holds, in column order", () => {
   expect(holdings(sample)).toEqual([
     { agent: "seat", held: ["Merge", "Start CI"], text: "Holds: Merge, Start CI" },
     { agent: "capsomer-driver", held: [], text: "Holds no permissions" },
@@ -19,7 +19,7 @@ test("behaviour: holdings lists what each agent holds, in column order", () => {
   ]);
 });
 
-test("behaviour: holders lists who holds each permission, and says when nobody does", () => {
+test("behavior: holders lists who holds each permission, and says when nobody does", () => {
   const h = holders(sample);
   expect(h.map((x) => x.text)).toEqual(["Held by: seat", "Nobody holds this", "Held by: seat, foxhound-driver", "Nobody holds this", "Held by: foxhound-driver"]);
 });
@@ -108,7 +108,7 @@ eachTheme((theme) => {
     await expect(wide.getByRole("region", { name: "Permissions by agent" })).toBeVisible();
   });
 
-  test("behaviour: the By permission specimen starts on its own view", async ({ page }) => {
+  test("behavior: the By permission specimen starts on its own view", async ({ page }) => {
     await visitStates(page, "permission-matrix", theme);
     const perm = page.locator("#perms-by-permission");
     await expect(perm.getByRole("list", { name: "Agents by permission, second sample" })).toBeVisible();

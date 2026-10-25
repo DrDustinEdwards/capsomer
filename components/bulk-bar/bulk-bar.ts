@@ -91,7 +91,7 @@ export interface BulkActionSpec {
 }
 
 // Runs one bulk action the way the family does it. Resolves true when it ran, false when it was
-// cancelled or failed. Reversible: at once, then a message with Undo. Destructive: a confirm
+// canceled or failed. Reversible: at once, then a message with Undo. Destructive: a confirm
 // dialog lists every item, "Bin 12 items" performs, focus starts on Cancel.
 export async function performBulk(spec: BulkActionSpec): Promise<boolean> {
   const n = spec.items.length;

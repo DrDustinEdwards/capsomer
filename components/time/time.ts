@@ -136,7 +136,7 @@ export function serverNow(clientNow: number, skew: number, newestServerRead: num
 
 let clock: () => number = () => Date.now();
 
-// Replaces the clock the plain behaviour module reads (the default is Date.now), and
+// Replaces the clock the plain behavior module reads (the default is Date.now), and
 // redraws. setClock(null) puts it back.
 export function setClock(fn: (() => number) | null): void {
   clock = fn ?? (() => Date.now());

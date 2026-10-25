@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, focused, visitStates } from "../../test/helpers.ts";
 import { revisionPair } from "./draft-compare.ts";
 
-test("behaviour: revisionPair reads id@v1 against id@v2 as one thing at two revisions, and nothing else", () => {
+test("behavior: revisionPair reads id@v1 against id@v2 as one thing at two revisions, and nothing else", () => {
   expect(revisionPair("post-8f3a@v1", "post-8f3a@v2")).toEqual({ name: "post-8f3a", from: "v1", to: "v2" });
   expect(revisionPair("app/page@2026-10-01", "app/page@2026-10-02")).toEqual({ name: "app/page", from: "2026-10-01", to: "2026-10-02" });
   expect(revisionPair("a@v1", "b@v1")).toBeNull();
@@ -49,7 +49,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: a marked change is more than colour: a line, a glyph and hidden words", async ({ page }) => {
+  test("accessibility: a marked change is more than color: a line, a glyph and hidden words", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const marks = await page.evaluate(() => {
       const ins = document.querySelector("#cmp-single .cap-ins") as HTMLElement;
@@ -299,7 +299,7 @@ eachTheme((theme) => {
     await expect.poll(() => region.evaluate((el) => el.scrollTop)).toBeGreaterThan(after);
   });
 
-  test("behaviour: all three views carry the same changes from the same data", async ({ page }) => {
+  test("behavior: all three views carry the same changes from the same data", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const count = (v: string, tag: string) => page.locator(`${view("cmp-default", v)} ${tag}`).count();
     const insInline = await count("inline", "ins");
@@ -314,7 +314,7 @@ eachTheme((theme) => {
     for (const v of ["side", "inline", "changes"]) expect(await page.locator(`${view("cmp-default", v)} [data-change]`).count()).toBe(4);
   });
 
-  test("behaviour: ids are unique, and the jump links point at the ones that exist", async ({ page }) => {
+  test("behavior: ids are unique, and the jump links point at the ones that exist", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const dup = await page.evaluate(() => {
       const seen = new Map<string, number>();
@@ -326,7 +326,7 @@ eachTheme((theme) => {
     for (const h of hrefs) expect(await page.locator(h as string).count()).toBe(1);
   });
 
-  test("behaviour: unchanged passages are folded, with one sentence of context either side", async ({ page }) => {
+  test("behavior: unchanged passages are folded, with one sentence of context either side", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const side = view("cmp-default", "side");
     const fold = page.locator(`${side} details.cap-compare-gap`).first();
@@ -340,7 +340,7 @@ eachTheme((theme) => {
     await expect(page.locator(side).getByText("A mention from a new site is marked as new.").first()).toBeVisible();
   });
 
-  test("behaviour: the sides line up in rows, and each row's before and after share a top", async ({ page }) => {
+  test("behavior: the sides line up in rows, and each row's before and after share a top", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const rows = await page.locator(`${view("cmp-default", "side")} > .cap-compare-rows > .cap-compare-row`).evaluateAll((lis) =>
       lis.map((li) => {
@@ -356,7 +356,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: a narrow container stacks the sides, before above after, each labelled", async ({ page }) => {
+  test("behavior: a narrow container stacks the sides, before above after, each labeled", async ({ page }) => {
     await page.setViewportSize({ width: 340, height: 800 });
     await visitStates(page, "draft-compare", theme, "narrow");
     const row = page.locator(".cap-compare-row[data-op='change']").first();
@@ -371,12 +371,12 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 
-  test("behaviour: a wide container shows the sides beside each other with no cell labels", async ({ page }) => {
+  test("behavior: a wide container shows the sides beside each other with no cell labels", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     await expect(page.locator("#cmp-default .cap-compare-cell-label").first()).toBeHidden();
   });
 
-  test("behaviour: an added or removed whole sentence leaves the other side empty, not blank text", async ({ page }) => {
+  test("behavior: an added or removed whole sentence leaves the other side empty, not blank text", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const row = page.locator(`${view("cmp-default", "side")} .cap-compare-row[data-op='ins']`).first();
     await expect(row.locator("[data-side='before']")).toHaveAttribute("data-empty", "");
@@ -385,7 +385,7 @@ eachTheme((theme) => {
     await expect(gone.locator("[data-side='before'] del")).toContainText("A later post will cover the agent's notes.");
   });
 
-  test("behaviour: the changes only view lists the changed sentences and says how many it left out", async ({ page }) => {
+  test("behavior: the changes only view lists the changed sentences and says how many it left out", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const cards = page.locator("#cmp-changes .cap-compare-view[data-view='changes'] .cap-compare-card");
     await expect(cards).toHaveCount(4);
@@ -394,7 +394,7 @@ eachTheme((theme) => {
     await expect(page.locator("#cmp-changes .cap-compare-view[data-view='side']")).toBeHidden();
   });
 
-  test("behaviour: a single change reads as one change, singular", async ({ page }) => {
+  test("behavior: a single change reads as one change, singular", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     await expect(page.locator("#cmp-single .cap-compare-counts")).toHaveText("1 word added, 1 removed, 1 change");
     await expect(page.locator("#cmp-single").getByRole("link", { name: "Change 1 of 1" })).toBeVisible();
@@ -403,7 +403,7 @@ eachTheme((theme) => {
     await expect(page.locator("#cmp-single").getByRole("button", { name: /unchanged$/ })).toBeHidden();
   });
 
-  test("behaviour: authorship runs mark the sentences, and the authorship switch hides them", async ({ page }) => {
+  test("behavior: authorship runs mark the sentences, and the authorship switch hides them", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const run = page.locator("#cmp-runs .cap-run[data-kind='ai']").first();
     await expect(run).toBeVisible();
@@ -412,7 +412,7 @@ eachTheme((theme) => {
     await expect(run.locator(".cap-run-label")).toBeHidden();
   });
 
-  test("behaviour: the chosen view is remembered", async ({ page }) => {
+  test("behavior: the chosen view is remembered", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const box = page.locator("#cmp-remember");
     await box.getByRole("radio", { name: "Changes only" }).check();
@@ -423,7 +423,7 @@ eachTheme((theme) => {
     await expect(box.locator(".cap-compare-view[data-view='side']")).toBeHidden();
   });
 
-  test("behaviour: storage that throws does not break the compare", async ({ page }) => {
+  test("behavior: storage that throws does not break the compare", async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.addInitScript(() => {
@@ -440,7 +440,7 @@ eachTheme((theme) => {
     expect(errors).toEqual([]);
   });
 
-  test("behaviour: the React wrapper keeps the view in the app's state", async ({ page }) => {
+  test("behavior: the React wrapper keeps the view in the app's state", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const box = page.locator("#cmp-react");
     await expect(box.getByRole("radio", { name: "Inline" })).toBeChecked();
@@ -453,7 +453,7 @@ eachTheme((theme) => {
   });
 });
 
-test("behaviour: the delivered html holds every view, the legend and the counts, with no script", async ({ page }) => {
+test("behavior: the delivered html holds every view, the legend and the counts, with no script", async ({ page }) => {
   const html = await (await page.request.get("components/draft-compare/states.html")).text();
   for (const v of ["side", "inline", "changes"]) expect(html).toContain(`data-view="${v}"`);
   expect(html).toContain("insertion start");
@@ -470,7 +470,7 @@ test("behaviour: the delivered html holds every view, the legend and the counts,
 test.describe("without script", () => {
   test.use({ javaScriptEnabled: false });
 
-  test("behaviour: the default view reads in full and the radios switch the view in CSS", async ({ page }) => {
+  test("behavior: the default view reads in full and the radios switch the view in CSS", async ({ page }) => {
     await page.goto("components/draft-compare/states.html?theme=light");
     const box = page.locator("#cmp-default");
     await expect(box.locator(".cap-compare-counts")).toHaveText("15 words added, 12 removed, 4 changes");
@@ -512,7 +512,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("region", { name: "app/queue.ts → app/queue.ts" }).or(page.getByRole("region", { name: "app/queue.ts" })).first()).toBeVisible();
   });
 
-  test("behaviour: a changed line opens with a literal sign, and the numbers hold their side", async ({ page }) => {
+  test("behavior: a changed line opens with a literal sign, and the numbers hold their side", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const added = page.locator("#cmp-patch .cap-patch-line[data-op='ins']").first();
     await expect(added.locator(".cap-patch-sign")).toContainText("+");
@@ -524,7 +524,7 @@ eachTheme((theme) => {
     await expect(page.locator("#cmp-patch-none")).toContainText("No changes.");
   });
 
-  test("behaviour: a patch of two revisions names the thing once and says the revisions, not a rename", async ({ page }) => {
+  test("behavior: a patch of two revisions names the thing once and says the revisions, not a rename", async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const head = page.locator("#cmp-patch-rev .cap-patch-path");
     await expect(head.locator("code")).toHaveText("post-8f3a");

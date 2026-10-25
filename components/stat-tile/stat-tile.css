@@ -7,7 +7,7 @@
    wraps to more rows instead of cutting a word, are the Portal's (dashboard/src/styles.css,
    "stat tiles", design D3); the word and its glyph, the no-data state and the chart slot
    are Capsomer's. The tile wears shadcn's Item (outline variant, as a link): a hairline edge,
-   the large radius, the muted tint on hover, a 100 ms colour transition, the focus ring. */
+   the large radius, the muted tint on hover, a 100 ms color transition, the focus ring. */
 @layer cap.components {
   .cap-tiles {
     min-width: 0;

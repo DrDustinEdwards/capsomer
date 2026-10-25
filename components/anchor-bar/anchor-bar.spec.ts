@@ -36,7 +36,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behaviour: the current link shows a bar, not colour alone", async ({ page }) => {
+  test("behavior: the current link shows a bar, not color alone", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme);
     const bar = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el, "::after").opacity);
     expect(await bar("#anchor-states a[aria-current='location']")).toBe("1");
@@ -59,7 +59,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("behaviour: scrolled into the third section, its link is the current one", async ({ page }) => {
+  test("behavior: scrolled into the third section, its link is the current one", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "third");
     await expect(link(page, "When it alerts")).toHaveAttribute("aria-current", "location");
     await expect(bar(page).locator("[aria-current]")).toHaveCount(1);
@@ -92,7 +92,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => history.length)).toBe(before);
   });
 
-  test("behaviour: a bar built from data-section blocks shows when the page grows past two screens, and goes when it shrinks", async ({ page }) => {
+  test("behavior: a bar built from data-section blocks shows when the page grows past two screens, and goes when it shrinks", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "blocks");
     await expect(bar(page)).toBeHidden();
     // Content that arrives late (a panel with its data) is what the measuring is for.
@@ -109,12 +109,12 @@ eachTheme((theme) => {
     await expect(bar(page)).toBeHidden();
   });
 
-  test("behaviour: a page with fewer than three sections shows no bar", async ({ page }) => {
+  test("behavior: a page with fewer than three sections shows no bar", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "short");
     await expect(page.locator(".cap-anchors")).toBeHidden();
   });
 
-  test("behaviour: on a phone the links scroll sideways", async ({ page }) => {
+  test("behavior: on a phone the links scroll sideways", async ({ page }) => {
     // The narrowest phone, so the four links cannot fit however the padding is tuned.
     await page.setViewportSize({ width: 320, height: 640 });
     await visitStates(page, "anchor-bar", theme, "top");

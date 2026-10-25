@@ -2,7 +2,7 @@
 name: people-roles
 title: People and roles
 summary: An app's members page. Who has access, their title, when it ends and whether Cloudflare matches, with add, change title, renew, remove, the term review and each person's history.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [a lead's page, review open, changing a title, one person's history, an Owner's page after adding someone, a change Cloudflare refused, nobody added yet]
 added: 0.7.0
@@ -36,7 +36,7 @@ For an app's users (readers, teachers, merchants, authors), who sign in through 
 - **The review is a checklist at the top** while one is open: Keep or Remove per person, a tally that counts what is left, and the rule in one sentence: anyone not answered loses access on the end date.
 - **Removed and expired people stay in the list, quieter**, so their runs and edits keep their name. An expired person can be renewed; a removed one is added again.
 - **The viewer's own row is marked You and has no actions**: nobody manages their own layer.
-- **The table scrolls on a phone** (DEFAULTS.md), in a labelled, focusable region.
+- **The table scrolls on a phone** (DEFAULTS.md), in a labeled, focusable region.
 
 ## Matches
 
@@ -57,10 +57,10 @@ shadcn/ui `Table` (from `table`), `Field`, `Input` and `NativeSelect` (from `fie
 
 - Every inline action carries the person's name for a screen reader ("Renew to 14 May 2027 for Rosa Park"), and each Actions menu is named for its person ("Actions for Rosa Park"), so a column of buttons is not six "Actions".
 - The person is the row header (`th scope="row"`), so each cell reads with their name.
-- Each status is a word and a shape (ok, the running arc, critical, warning), never colour alone; the shapes are hidden from the accessibility tree.
+- Each status is a word and a shape (ok, the running arc, critical, warning), never color alone; the shapes are hidden from the accessibility tree.
 - The result line is a status region when it worked and an alert when it did not, with "Done:" or "Not done:" before the words.
 - The review's tally is a polite live region.
-- Forced colours: the cards' and the result's edges become CanvasText.
+- Forced colors: the cards' and the result's edges become CanvasText.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -118,7 +118,7 @@ The React wrapper renders the contract, and the states page is generated from it
 </section>
 ```
 
-In React, `import { PeopleRoles } from "capsomer/react/people-roles"` and pass `data` (`heading`, `lead`, `people`, `titles`, and when the address asks, `review`, `history`, `changing`, `result`), `action`, and optionally `onIntent(intent, fields)`, `hrefFor` and `closeHref`. In plain HTML, `import { enhance } from "capsomer/behaviour/people-roles"`. The words and the row's actions come from pure functions an app can reuse: `rowActions`, `accessText`, `endsSoon`, `syncText`, `actionText`, `cloudflareText`, `endHelp`, `tallyText`, `removeBody`, `dayText`, `timeText`.
+In React, `import { PeopleRoles } from "capsomer/react/people-roles"` and pass `data` (`heading`, `lead`, `people`, `titles`, and when the address asks, `review`, `history`, `changing`, `result`), `action`, and optionally `onIntent(intent, fields)`, `hrefFor` and `closeHref`. In plain HTML, `import { enhance } from "capsomer/behavior/people-roles"`. The words and the row's actions come from pure functions an app can reuse: `rowActions`, `accessText`, `endsSoon`, `syncText`, `actionText`, `cloudflareText`, `endHelp`, `tallyText`, `removeBody`, `dayText`, `timeText`.
 
 What each post carries: `intent` and `email` on every row action; `title` and `reason` on `change_title`; `email`, `name`, `title` and `end_date` on `add`; `answer-<n>` (`keep` or `remove`) with `email-<n>` on `review`; `confirmed=yes` on a confirmed `remove`. The server checks every one again with `checkChange`; the page offering an action is not permission to take it.
 

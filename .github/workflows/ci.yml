@@ -3,7 +3,7 @@
 # Blocking: the palette and scale checks (correctness, and contrast in both themes), the
 # unit tests, the type check, the build, and every component's keyboard and accessibility
 # tests in a real browser. Never blocking: the token check and the size report (rule 1,
-# decision 12), and the forced-colours screenshots, which are for review.
+# decision 12), and the forced-colors screenshots, which are for review.
 #
 # The site itself is deployed by Cloudflare's Git integration (DEPLOY.md, rule 16). On main,
 # this workflow writes the run's test results to the `results` branch, even when a test
@@ -43,7 +43,7 @@ jobs:
         run: npm run check
       - name: Every family's contrast pairs, both themes (blocking, rule 18)
         run: npm run palette-report -- --summary
-      - name: Build the behaviour modules and wrappers
+      - name: Build the behavior modules and wrappers
         run: npm run build
       - name: Build the site and every states page
         run: npm run site
@@ -51,7 +51,7 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Keyboard and accessibility tests, both themes
         run: npx playwright test --workers=4
-      - name: Forced-colours screenshots (for review, never blocks)
+      - name: Forced-colors screenshots (for review, never blocks)
         if: always()
         run: npx playwright test -c playwright.review.config.ts
         continue-on-error: true
@@ -61,7 +61,7 @@ jobs:
       - name: Token check (warns only)
         if: always()
         run: npm run token-check
-      - name: Summarise the results for the site
+      - name: Summarize the results for the site
         if: always()
         run: node bin/capsomer.mjs site-data --results-out test-results/summary.json
       - name: Keep the results

@@ -36,7 +36,7 @@ Choosing one of two to five short, mutually exclusive options that should all be
 - **Real radio inputs, not buttons with ARIA.** Arrow keys, Space, the single tab stop, disabled options and forms all come from the platform (APG Radio Group).
 - **The legend is always there.** Hide it with `.cap-sr-only` only where the context already says what is chosen; the group still has its name.
 - **The chosen segment has an accent edge, reaching 3:1 on the surface, as well as its tint and a heavier weight**, so the choice is not carried by a pale tint alone.
-- **The highlight slides.** On a new choice the highlight moves and resizes to it over 200 ms (uiarc): one highlight, the tray's `::before`, tethered to the chosen segment with CSS anchor positioning, so the control stays script-free. Where anchor positioning (with `anchor-scope`) is missing, under reduced motion and in forced colours the chosen segment draws its own highlight and nothing moves.
+- **The highlight slides.** On a new choice the highlight moves and resizes to it over 200 ms (uiarc): one highlight, the tray's `::before`, tethered to the chosen segment with CSS anchor positioning, so the control stays script-free. Where anchor positioning (with `anchor-scope`) is missing, under reduced motion and in forced colors the chosen segment draws its own highlight and nothing moves.
 - **A disabled option is struck through and says why** in text the fieldset is described by.
 - **The change applies at once** where it is a view setting (the window of a chart). In a form it is saved with the form.
 
@@ -52,7 +52,7 @@ Choosing one of two to five short, mutually exclusive options that should all be
 
 - A group named by its legend, holding radios named by their labels.
 - Each segment is at least `var(--target)` tall and the whole segment is the hit area.
-- Forced colours: the chosen segment is drawn in Highlight; a disabled one in GrayText.
+- Forced colors: the chosen segment is drawn in Highlight; a disabled one in GrayText.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -77,7 +77,7 @@ In React, `import { Segmented } from "capsomer/react/segmented"`:
 ]} />
 ```
 
-Sizes, stacking and the rest are attributes on `.cap-seg-options`: `data-size="sm|lg"`, `data-orientation="vertical"`, `data-fill`, `data-layout="cards"` (each option its own bordered card, two to a row and four from 640px, left aligned and wrapping, for a choice whose options carry a line of explanation; `data-tone="info|warn|crit|ok"` on a label tints it in that status colour when chosen, the accent otherwise). An icon sits in the label before the word (`<svg aria-hidden="true">`). A wrong choice puts `aria-invalid="true"` on the radios and a `.cap-field-error` beside the control that the fieldset is described by.
+Sizes, stacking and the rest are attributes on `.cap-seg-options`: `data-size="sm|lg"`, `data-orientation="vertical"`, `data-fill`, `data-layout="cards"` (each option its own bordered card, two to a row and four from 640px, left aligned and wrapping, for a choice whose options carry a line of explanation; `data-tone="info|warn|crit|ok"` on a label tints it in that status color when chosen, the accent otherwise). An icon sits in the label before the word (`<svg aria-hidden="true">`). A wrong choice puts `aria-invalid="true"` on the radios and a `.cap-field-error` beside the control that the fieldset is described by.
 
 ## Matches
 

@@ -1,4 +1,4 @@
-// The flag list's behaviour and its pure helpers. A flag is raised against a draft by a check, a
+// The flag list's behavior and its pure helpers. A flag is raised against a draft by a check, a
 // reviewer or an AI, and stays on the record: resolving it keeps it, with who and when. A
 // suggestion a flag carries is inert until the owner applies it; nothing here applies one by
 // itself. The whole record is in the delivered HTML; this module only adds what a person does
@@ -41,7 +41,7 @@ export function glyph(name: keyof typeof GLYPHS | string): SVGSVGElement {
   return svg;
 }
 
-// A status: glyph, word, colour.
+// A status: glyph, word, color.
 export function statusEl(tone: "crit" | "warn" | "ok" | "info" | "nodata", word: string, glyphName: string = tone): HTMLSpanElement {
   const s = document.createElement("span");
   s.className = "cap-status";

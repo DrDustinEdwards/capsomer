@@ -31,7 +31,7 @@ For things that need you now, use the `attention-list`. For records you sort and
 ## The default and its reason
 
 - **Day breaks are headings, and each day's list is named by its heading** (`aria-labelledby`), so a screen reader lists "Today" and "Yesterday" and can jump between them.
-- **Each row is a glyph, what happened, who, and when.** The words carry the status ("deployed", "deploy failed"); the glyph repeats it in shape and colour and is hidden from the accessibility tree.
+- **Each row is a glyph, what happened, who, and when.** The words carry the status ("deployed", "deploy failed"); the glyph repeats it in shape and color and is hidden from the accessibility tree.
 - **Times are relative in rows, exact in `time`** (patterns.md, time), with the `time` component's class.
 - **A routine run condenses to one row**, smaller and in the muted tone, still 4.5:1, with its time range and a link to the full list. Nothing routine pushes a deploy off the screen.
 - **The incident marker sits directly above the deploy it follows**, on its tone's tint with a left edge. Its link names the incident ("Incident began 4 minutes after this deploy") and is described by the deploy row's text, so "this deploy" is never ambiguous to a screen reader. Critical or warning tone.
@@ -57,7 +57,7 @@ shadcn/ui `Item` (a title line, a muted description, the item rhythm) in an item
 - The marker link's accessible description is the deploy it follows ("foxhound deployed a91c4e0").
 - Text on a marker's tint is the text tone or the marker's own tone, each a checked pair.
 - Glyphs reach 3:1 as graphics; every word reaches 4.5:1 in both themes.
-- Forced colours: the critical edge and the marker's edge become borders in CanvasText; day headings gain a rule, because their tinted background is removed.
+- Forced colors: the critical edge and the marker's edge become borders in CanvasText; day headings gain a rule, because their tinted background is removed.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -94,7 +94,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </div>
 ```
 
-No behaviour module: the feed is links and text. In React, `import { Feed } from "capsomer/react/feed"` and pass `days={[{ id, label, events: [{ id, kind, tone, what, detail, when, at, until, href, about }] }]}`; a marker's `about` is the id of the event it follows.
+No behavior module: the feed is links and text. In React, `import { Feed } from "capsomer/react/feed"` and pass `days={[{ id, label, events: [{ id, kind, tone, what, detail, when, at, until, href, about }] }]}`; a marker's `about` is the id of the event it follows.
 
 ## Exceptions in production
 

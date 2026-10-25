@@ -1,7 +1,7 @@
 ---
 name: combobox
 title: Combobox
-summary: A labelled text box that filters a list, where only a listed value can be chosen. Base UI underneath, React only.
+summary: A labeled text box that filters a list, where only a listed value can be chosen. Base UI underneath, React only.
 parts: [css, react]
 tool: Base UI
 states: [a tag field, typing a new tag, closed, closed with a value, with a clear button, several values as chips, comfortable density, open, open with chips, open with group labels, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]
@@ -55,7 +55,7 @@ Two to five values: a radio group or the segmented control. Up to about fifteen:
 
 - The input is the `combobox`; it is named by its `label` and described by help and error.
 - The open button is out of the tab order (Base UI, `tabindex="-1"`) and has a name for pointer and voice users. So does the clear button ("Clear Site"), and each chip's remove button ("Remove Carrel"), at least `--target` square.
-- Forced colours: the highlighted option gets a Highlight outline, since its tint is removed.
+- Forced colors: the highlighted option gets a Highlight outline, since its tint is removed.
 - Inside a modal `dialog`, pass the dialog as `container`, or the popup renders under the top layer, out of sight.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -102,11 +102,11 @@ import { ComboboxMultiple } from "capsomer/react/combobox";
 
 `ComboboxProps` adds `clearable`; an option may carry `group`.
 
-It renders, in `.cap-combobox`: `label.cap-combobox-label`, `p.cap-combobox-help`, `.cap-combobox-group` (holding `input.cap-combobox-input`, an optional `button.cap-combobox-clear` and `button.cap-combobox-trigger`; for several values `.cap-combobox-chips` holding `.cap-combobox-chip` with `button.cap-combobox-chip-remove`, then the input), `p.cap-combobox-error`; portalled: `.cap-combobox-positioner` > `.cap-popover.cap-combobox-popup` > `.cap-combobox-status`, `.cap-listbox-empty.cap-combobox-empty`, `.cap-listbox.cap-combobox-list` > (`.cap-listbox-group` > `.cap-listbox-label`,) `.cap-option` (`.cap-option-label`, `.cap-option-indicator`).
+It renders, in `.cap-combobox`: `label.cap-combobox-label`, `p.cap-combobox-help`, `.cap-combobox-group` (holding `input.cap-combobox-input`, an optional `button.cap-combobox-clear` and `button.cap-combobox-trigger`; for several values `.cap-combobox-chips` holding `.cap-combobox-chip` with `button.cap-combobox-chip-remove`, then the input), `p.cap-combobox-error`; portaled: `.cap-combobox-positioner` > `.cap-popover.cap-combobox-popup` > `.cap-combobox-status`, `.cap-listbox-empty.cap-combobox-empty`, `.cap-listbox.cap-combobox-list` > (`.cap-listbox-group` > `.cap-listbox-label`,) `.cap-option` (`.cap-option-label`, `.cap-option-indicator`).
 
 ## Matches shadcn
 
-Combobox (Base UI flavour, nova): the input group with an open button and a clear button, the popup with a hairline ring, shadow, rounded corners and the fade and zoom motion, a list with group labels, items with a check at the end, the empty message, and chips with a remove button for several values.
+Combobox (Base UI flavor, nova): the input group with an open button and a clear button, the popup with a hairline ring, shadow, rounded corners and the fade and zoom motion, a list with group labels, items with a check at the end, the empty message, and chips with a remove button for several values.
 
 ## Deliberately different
 

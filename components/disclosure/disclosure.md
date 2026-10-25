@@ -2,7 +2,7 @@
 name: disclosure
 title: Disclosure
 summary: Show and hide, a section that opens in place and a group row in a list.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [summary hover, summary pressed, accordion variant, card variant, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
 added: 0.1.0
@@ -24,7 +24,7 @@ Two ways to show and hide. A section that opens in place is a native `<details c
 
 ## When not to
 
-**A critical item is never inside a collapsed group** (patterns.md, "Show or hide"): the behaviour module opens such a group and warns. Do not hide a form's required fields or an error. Do not nest more than two levels: a third level is a page of its own. For moving between views use links; for choosing one of several panels at once use the segmented control.
+**A critical item is never inside a collapsed group** (patterns.md, "Show or hide"): the behavior module opens such a group and warns. Do not hide a form's required fields or an error. Do not nest more than two levels: a third level is a page of its own. For moving between views use links; for choosing one of several panels at once use the segmented control.
 
 ## The default and its reason
 
@@ -57,7 +57,7 @@ Different on purpose: the default is a boxed section with the chevron at the sta
 
 - `summary` is announced as a button with its expanded state by the browser; the group button sets `aria-expanded` itself.
 - Hidden rows use `hidden`, so they leave the accessibility tree and the tab order.
-- Forced colours: the chevrons take the text colour.
+- Forced colors: the chevrons take the text color.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 

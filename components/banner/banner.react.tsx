@@ -3,7 +3,7 @@ import { Glyph, type GlyphName } from "../status/status.react.tsx";
 
 export type NoticeTone = "neutral" | "info" | "ok" | "warn" | "crit";
 
-// The glyph is a shape per tone, so the tone is never colour alone. Neutral takes the
+// The glyph is a shape per tone, so the tone is never color alone. Neutral takes the
 // notice square in the muted ink.
 const glyphFor: Record<NoticeTone, GlyphName> = { neutral: "info", info: "info", ok: "ok", warn: "warn", crit: "crit" };
 

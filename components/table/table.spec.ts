@@ -56,14 +56,14 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behaviour: a selected row says so with more than colour", async ({ page }) => {
+  test("behavior: a selected row says so with more than color", async ({ page }) => {
     await visitStates(page, "table", theme);
     const bar = await page.locator("#t6-selected > :first-child").evaluate((el) => getComputedStyle(el).boxShadow);
     expect(bar).not.toBe("none");
     await expect(page.getByRole("checkbox", { name: "Select INV002" })).toBeChecked();
   });
 
-  test("behaviour: a sticky header stays in view while the region scrolls", async ({ page }) => {
+  test("behavior: a sticky header stays in view while the region scrolls", async ({ page }) => {
     await visitStates(page, "table", theme);
     const region = page.locator("#t7");
     await region.scrollIntoViewIfNeeded();
@@ -85,7 +85,7 @@ eachTheme((theme) => {
     await page.setViewportSize({ width: 390, height: 700 });
     await visitStates(page, "table", theme, "reflow");
     // The column name is a ::before, which the shared helper cannot select: measured here,
-    // its colour against the first opaque background behind its cell.
+    // its color against the first opaque background behind its cell.
     const label = await page.locator("#t-reflow td[data-label='Status']").first().evaluate((el) => {
       const rgb = (v: string) => (v.match(/[\d.]+/g) ?? []).map(Number);
       const lum = (c: number[]) => {
@@ -174,7 +174,7 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/#app-portal$/);
   });
 
-  test("behaviour: one header carries aria-sort at a time", async ({ page }) => {
+  test("behavior: one header carries aria-sort at a time", async ({ page }) => {
     await visitStates(page, "table", theme);
     await page.getByRole("button", { name: "Own copies left" }).click();
     await page.getByRole("button", { name: "Reported" }).click();
@@ -183,20 +183,20 @@ eachTheme((theme) => {
     expect(await firstColumn(page, "#t1", 0)).toEqual(["Foxhound", "dustinedwards.info", "Carrel", "Capsid Portal"]);
   });
 
-  test("behaviour: data-sort orders a cell whose text does not sort", async ({ page }) => {
+  test("behavior: data-sort orders a cell whose text does not sort", async ({ page }) => {
     await visitStates(page, "table", theme);
     await page.getByRole("button", { name: "Own copies left" }).click();
     expect(await firstColumn(page, "#t1", 3)).toEqual(["not counted", "0", "2", "4"]);
   });
 
-  test("behaviour: a click anywhere on a row follows its link", async ({ page }) => {
+  test("behavior: a click anywhere on a row follows its link", async ({ page }) => {
     await visitStates(page, "table", theme);
     // The stretched link covers the row, so a click on the row lands on the link.
     await page.locator("#t1 tbody tr").nth(2).click();
     await expect(page).toHaveURL(/#app-site$/);
   });
 
-  test("behaviour: reflow fits the region without scrolling and keeps the header row", async ({ page }) => {
+  test("behavior: reflow fits the region without scrolling and keeps the header row", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 700 });
     await visitStates(page, "table", theme, "reflow");
     // The header row stays in the accessibility tree (clipped, not removed).
@@ -205,7 +205,7 @@ eachTheme((theme) => {
     expect(overflows).toBe(false);
   });
 
-  test("behaviour: columns marked to drop are shown in a wide region and go, in order, as it narrows", async ({ page }) => {
+  test("behavior: columns marked to drop are shown in a wide region and go, in order, as it narrows", async ({ page }) => {
     await page.setViewportSize({ width: 1400, height: 900 });
     await visitStates(page, "table", theme);
     const width = await page.locator("#t5").evaluate((el) => el.clientWidth);
@@ -224,14 +224,14 @@ eachTheme((theme) => {
     expect(scrolls).toBe(false);
   });
 
-  test("behaviour: no data in a cell says its reason to a screen reader, in two words to the eye", async ({ page }) => {
+  test("behavior: no data in a cell says its reason to a screen reader, in two words to the eye", async ({ page }) => {
     await visitStates(page, "table", theme);
     const cell = page.locator("#t5 tbody tr").nth(2).locator("td").nth(2);
     await expect(cell).toContainText("No data");
     await expect(cell.locator(".cap-sr-only")).toHaveText(": no Cloudflare token for this site");
   });
 
-  test("behaviour: a row checkbox is above the row link: it ticks, and the row does not open", async ({ page }) => {
+  test("behavior: a row checkbox is above the row link: it ticks, and the row does not open", async ({ page }) => {
     await visitStates(page, "table", theme);
     const label = page.locator("#t-rowcheck tbody tr").first().locator(".cap-check");
     await label.click();

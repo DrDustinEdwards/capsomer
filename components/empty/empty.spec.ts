@@ -66,7 +66,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-clear").getByRole("button")).toHaveCount(0);
   });
 
-  test("behaviour: the markup of 0.1, with the action as a direct child, still works", async ({ page }) => {
+  test("behavior: the markup of 0.1, with the action as a direct child, still works", async ({ page }) => {
     await visitStates(page, "empty", theme);
     await expect(page.locator("#sample-direct").getByRole("button", { name: "New draft" })).toBeVisible();
   });

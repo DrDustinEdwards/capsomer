@@ -5,7 +5,7 @@
    screen below it. An alert: an error beside its source, saying what to do next. Both are
    shadcn's Alert: a glyph, a title, a description and an action, in a bordered box. Both carry
    the status glyph (.cap-status-glyph, sized here too so this file stands alone) so shape and
-   word carry the tone, and colour only repeats it. Tones: neutral, info, ok, warn, crit.
+   word carry the tone, and color only repeats it. Tones: neutral, info, ok, warn, crit.
    A banner with no tone is a warning (0.1's default); an alert with no tone is critical. */
 @layer cap.components {
   .cap-banner,
@@ -58,7 +58,7 @@
       color: var(--_tone);
     }
 
-    /* Links in the words are underlined, as shadcn's are, and keep their own colour. */
+    /* Links in the words are underlined, as shadcn's are, and keep their own color. */
     & a:not(.cap-btn) {
       color: inherit;
       text-decoration: underline;
@@ -129,8 +129,8 @@
     margin-block-start: var(--space-3);
   }
 
-  /* An alert's plain text (0.1's single line) is in the tone's own colour: critical words on
-     the critical tint keep 4.5:1; the title takes the tone's colour too. */
+  /* An alert's plain text (0.1's single line) is in the tone's own color: critical words on
+     the critical tint keep 4.5:1; the title takes the tone's color too. */
   .cap-alert[data-tone="crit"],
   .cap-alert:not([data-tone]) {
     & .cap-alert-title,

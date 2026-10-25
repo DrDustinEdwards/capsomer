@@ -93,7 +93,7 @@
     }
   }
 
-  /* Where the browser has a customisable select, the native form's own picker takes the
+  /* Where the browser has a customizable select, the native form's own picker takes the
      family's look too (so the no-script form is not left with the platform's list). */
   @supports (appearance: base-select) {
     select:is(.cap-select, .cap-input),

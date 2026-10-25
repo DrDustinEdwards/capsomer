@@ -38,7 +38,7 @@ function Held() {
 const root = document.getElementById("react-root");
 if (root) createRoot(root).render(<StrictMode><Held /></StrictMode>);
 
-// What a server render of the wrapper produces, kept for the spec to read: the labelled
+// What a server render of the wrapper produces, kept for the spec to read: the labeled
 // textarea with its text, no toolbar, no style attribute.
 (window as unknown as { capReactSsr: string }).capReactSsr = renderToString(
   <MarkdownEditor label="Body" name="body" defaultValue="## Server text" help="Help here." error="Say what is wrong." required maxLength={200} />,

@@ -1,4 +1,4 @@
-// The field's behaviour: check a field when it is left and every field on submit, with the
+// The field's behavior: check a field when it is left and every field on submit, with the
 // platform's constraint validation (required, type, pattern, min, max...), write the
 // message into the field's .cap-field-error, set aria-invalid, and on a failed submit move
 // focus to the first field in error. No framework; the React wrapper and switch-reason use

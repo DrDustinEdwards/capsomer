@@ -257,10 +257,10 @@ function layoutAt(scene: CircleScene, minWidth: number, grown: number, seed: num
         // Every other place first, then every place near the best of those and near where it is.
         const around = (p: readonly number[], c: readonly number[]) => Math.abs(p[0]! - c[0]!) <= 2 * GRID && Math.abs(p[1]! - c[1]!) <= 2 * GRID;
         for (const pass of [0, 1]) {
-          const centre = pick;
+          const center = pick;
           for (const p of slots[pi]!) {
             const coarse = (p[0] / GRID) % 2 === 0 && (p[1] / GRID) % 2 === 0;
-            if (pass === 0 ? !coarse : coarse || (!around(p, centre) && !around(p, keep))) continue;
+            if (pass === 0 ? !coarse : coarse || (!around(p, center) && !around(p, keep))) continue;
             n.x = p[0];
             n.y = p[1];
             cost.refresh(i);

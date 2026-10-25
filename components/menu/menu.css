@@ -10,7 +10,7 @@
    accent edge, a destructive item is --crit, a chosen item has a check at its end.
    Reference: shadcn/ui Dropdown Menu (nova): items, checkbox and radio items, a submenu with
    its chevron, group labels, separators, shortcuts at the end, a destructive variant. The
-   popup is portalled, so its parts are styled on their own. */
+   popup is portaled, so its parts are styled on their own. */
 @layer cap.components {
   /* The trigger is a .cap-btn with a chevron; only what a menu adds is here. */
   .cap-menu-trigger {
@@ -126,7 +126,7 @@
 
   /* The form menu: a <details> of submit buttons that works with no script. Not a role="menu"
      (it is a disclosure of buttons, so it promises no arrow-key menu without script); the
-     behaviour module adds Esc, arrow keys and closing on an outside press. The popup wears the
+     behavior module adds Esc, arrow keys and closing on an outside press. The popup wears the
      same surface and item look as the Base UI menu. */
   .cap-menu-form {
     position: relative;
@@ -164,7 +164,7 @@
       text-decoration: none;
       cursor: pointer;
 
-      /* A button's own text colour would hide the option's tone and its disabled look. */
+      /* A button's own text color would hide the option's tone and its disabled look. */
       &:where(:not([data-tone], :disabled)) {
         color: var(--text);
       }

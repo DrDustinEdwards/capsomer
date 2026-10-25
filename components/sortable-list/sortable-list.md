@@ -2,7 +2,7 @@
 name: sortable-list
 title: Sortable list
 summary: Rows or cards a person puts in order, by dragging a grip, by the keyboard or by Move up and Move down, announcing each move and handing the new order to the host.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: own JavaScript
 states: [rows, cards, an item up by keyboard, an item under the pointer, a grip under the pointer, the ends' buttons disabled, as delivered with no script inside a form, in React inside a form]
 added: 0.7.0
@@ -34,9 +34,9 @@ One list whose order is the point: the scenes of a chapter, a corkboard of cards
 - **Three ways to move, one result.** Drag the grip; or press Space on the grip, move with the arrow keys, Space to drop and Escape to put it back; or press Move up or Move down. The buttons are the one-pointer way that WCAG 2.5.7 asks for, and the way that works on touch without a drag.
 - **The host owns the order.** A finished move is a `cap:sortable-change` event with the new order, the id, and where it moved from and to; `preventDefault` puts it back. React calls `onReorder` and shows the caller's `items` again on the next render.
 - **Works with no script.** Inside a form, Move up and Move down are submit buttons (`up=<id>`, `down=<id>`) and each item posts its id as `order`, so a server can reorder with no script; with script the same buttons move in place.
-- **The item moves as you go**, with no floating copy: neighbours step aside, so what you see is the order you will get. Under the pointer, the item's place is where it would land.
-- **Focus stays on what you pressed.** The list moves the neighbours around the item, not the item, so the grip or button keeps focus; a button that reaches an end hands focus to the other one.
-- **Up is a raised item with an accent edge** and a pressed grip (`aria-pressed`), never the colour alone; in forced colours an outline.
+- **The item moves as you go**, with no floating copy: neighbors step aside, so what you see is the order you will get. Under the pointer, the item's place is where it would land.
+- **Focus stays on what you pressed.** The list moves the neighbors around the item, not the item, so the grip or button keeps focus; a button that reaches an end hands focus to the other one.
+- **Up is a raised item with an accent edge** and a pressed grip (`aria-pressed`), never the color alone; in forced colors an outline.
 - **Every move is said** in a polite live region: "Picked up Low water. Position 1 of 4.", "Low water: position 2 of 4.", "Dropped Low water at position 2 of 4.", "Put Low water back at position 1 of 4."
 - **Leaving the list while an item is up puts it back**, as Escape does.
 
@@ -80,7 +80,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 Hooks: `data-layout="cards"` (a wrapping grid of cards; rows by default), `data-value` (the id the event names), `data-label` on an item (otherwise `.cap-sortable-label`'s text), `.cap-sortable-label` and `.cap-sortable-detail` for the content. Specimen hooks: `data-lifted`, `data-dragging`, `data-force="lifted"`, and `data-force="hover"` on a grip. With no script, a list outside a form leaves out the grips and the steps.
 
 ```js
-import { enhance, moveId } from "capsomer/behaviour/sortable-list";
+import { enhance, moveId } from "capsomer/behavior/sortable-list";
 enhance(); // every [data-cap="sortable-list"]
 el.addEventListener("cap:sortable-change", (e) => save(e.detail.order)); // { order, id, from, to, by }; preventDefault puts it back
 ```

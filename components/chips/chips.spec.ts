@@ -45,7 +45,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behaviour: a current link chip wears the pressed look, at contrast, and the others do not", async ({ page }) => {
+  test("behavior: a current link chip wears the pressed look, at contrast, and the others do not", async ({ page }) => {
     await visitStates(page, "chips", theme);
     const look = (sel: string) => page.locator(sel).evaluate((el) => {
       const cs = getComputedStyle(el);
@@ -148,7 +148,7 @@ eachTheme((theme) => {
     await expect(page).not.toHaveURL(/status=/);
   });
 
-  test("behaviour: the filter is read back from the address", async ({ page }) => {
+  test("behavior: the filter is read back from the address", async ({ page }) => {
     await page.goto(`components/chips/states.html?theme=${theme}&status=running,queued`);
     await expect(page.locator("h1").first()).toBeVisible();
     const live = page.locator("#chips-live");
@@ -159,7 +159,7 @@ eachTheme((theme) => {
     await expect(live.locator(".cap-chips-count")).toHaveText("11 of 14 jobs");
   });
 
-  test("behaviour: a value from the address that no chip carries still shows, pressed, and can be released", async ({ page }) => {
+  test("behavior: a value from the address that no chip carries still shows, pressed, and can be released", async ({ page }) => {
     await page.goto(`components/chips/states.html?theme=${theme}&status=archived`);
     await expect(page.locator("h1").first()).toBeVisible();
     const live = page.locator("#chips-live");
@@ -171,7 +171,7 @@ eachTheme((theme) => {
     await expect(page).not.toHaveURL(/status=/);
   });
 
-  test("behaviour: an empty result names the filter and Clear filter brings the list back", async ({ page }) => {
+  test("behavior: an empty result names the filter and Clear filter brings the list back", async ({ page }) => {
     await visitStates(page, "chips", theme);
     const live = page.locator("#chips-live");
     await live.getByRole("button", { name: "Done" }).click();

@@ -44,10 +44,10 @@ const { subject, html, text } = renderEmail(magicLink, {
 
 Email clients ignore most of what the components rely on, so the email layer is its own small set of rules, not a reuse of the component CSS:
 
-- Layout is a single centred column, 600px wide at most, built from nested tables with inline styles. No custom properties, no `@layer`, no container queries, no web fonts.
-- Colours come from the same generator as the site. At build time `scale(seed)` in `tokens/palette.mjs` is evaluated for the product's family and the literal hexes are written inline: step 9 for the button fill with its paired label colour, step 12 for text, step 3 for the card background, step 6 for rules. The contrast pairs are checked by the same `failures()` check that guards the tokens, so a family cannot ship an email whose button label or body text is below 4.5:1.
+- Layout is a single centered column, 600px wide at most, built from nested tables with inline styles. No custom properties, no `@layer`, no container queries, no web fonts.
+- Colors come from the same generator as the site. At build time `scale(seed)` in `tokens/palette.mjs` is evaluated for the product's family and the literal hexes are written inline: step 9 for the button fill with its paired label color, step 12 for text, step 3 for the card background, step 6 for rules. The contrast pairs are checked by the same `failures()` check that guards the tokens, so a family cannot ship an email whose button label or body text is below 4.5:1.
 - Light is the base. Dark mode is best effort through `color-scheme` and `prefers-color-scheme`, with the same pairs from the dark scale. A client that ignores it still gets a readable light mail.
-- Fonts are the system stack. The button is a real link with a fill and a visible text label, never an image. Meaning is never carried by colour alone: the alert level is a word in the subject and in the first line.
+- Fonts are the system stack. The button is a real link with a fill and a visible text label, never an image. Meaning is never carried by color alone: the alert level is a word in the subject and in the first line.
 - Width and touch: the button is at least 44px high, the type at least 16px, and the layout works at 320px with no horizontal scroll.
 
 ## The template list
@@ -66,7 +66,7 @@ A marketing or bulk template is not in this list. Foxhound's unsubscribe tokens 
 
 ## How a product keeps its own copy
 
-- Capsomer owns the frame (layout, colour, type, footer slot) and the default wording.
+- Capsomer owns the frame (layout, color, type, footer slot) and the default wording.
 - A product overrides wording per template by passing `copy`, a partial object of strings (subject, heading, the paragraphs, the button label), which `renderEmail` merges over the default and escapes like any other value. It cannot replace the frame or inject markup.
 - A product that needs a template Capsomer does not have defines its own with the same block types, and gets the same frame, escaping and text part. It sends no raw HTML.
 - The brand is `{ name, family }`. `family` is one of the generated families; a new family adds one seed and the check covers it.

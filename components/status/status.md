@@ -1,7 +1,7 @@
 ---
 name: status
 title: Status
-summary: A status as a shape, a word and a colour together, as a word or as a badge; and the badge's six variants.
+summary: A status as a shape, a word and a color together, as a word or as a badge; and the badge's six variants.
 parts: [css, react]
 tool: native
 states: [critical, warning, notice, ok, running, no data, as a word, as a badge, default, secondary, outline, destructive, ghost, link, link or button badge, hover, disabled, count, comfortable, on a selected row, no data with its reason, no data in a table cell]
@@ -15,7 +15,7 @@ replaces:
 
 # Status
 
-How a thing is: critical, warning, notice, ok, running, or no data. Always a glyph whose shape carries the meaning, a word that says it, and the tone's colour on top.
+How a thing is: critical, warning, notice, ok, running, or no data. Always a glyph whose shape carries the meaning, a word that says it, and the tone's color on top.
 
 ## When to use it
 
@@ -32,16 +32,16 @@ How a thing is: critical, warning, notice, ok, running, or no data. Always a gly
 
 ## The default and its reason
 
-- **Shape, word and colour together; never colour alone** (WCAG 1.4.1). Octagon critical, triangle warning, square notice, filled circle with a tick ok, an empty circle with a bar no data, an arc running. Glyphs are `aria-hidden`: the word is the accessible text.
+- **Shape, word and color together; never color alone** (WCAG 1.4.1). Octagon critical, triangle warning, square notice, filled circle with a tick ok, an empty circle with a bar no data, an arc running. Glyphs are `aria-hidden`: the word is the accessible text.
 - **Four levels: critical, warning, notice, ok** (patterns.md). Running uses the notice tone with the arc glyph; it is a state, not a level.
 - **No data is a state with a reason, never a zero.** Put the reason after the word, as `.cap-status-reason`.
 - **In a table cell, no data says two words** (`.cap-status` with the reason in a `.cap-sr-only` span after a colon, and the same text in `title` for the pointer): a sentence does not fit a 34 px row, and the full reason is in the row's detail (Portal design D18). The word and the glyph are still there, so the cell is never a blank or a zero.
-- **A tone always draws its glyph.** A badge with `data-tone` and a glyph is a status; a badge with only a `data-variant` is a label, and has no glyph. So a variant never turns into colour alone.
-- **Tone and variant together.** `outline` and `ghost` keep the tone's colour for the word and drop the tint; `default`, `secondary`, `destructive` and `link` use their own fill. `destructive` is the critical tone's tint, with the critical glyph.
-- **A link or button badge** gets a focus ring (`--ring`, 3 px), a hover colour change, a dashed edge when disabled, and a hit area grown to `--target` by a pseudo-element, so the badge keeps its 20 px look.
+- **A tone always draws its glyph.** A badge with `data-tone` and a glyph is a status; a badge with only a `data-variant` is a label, and has no glyph. So a variant never turns into color alone.
+- **Tone and variant together.** `outline` and `ghost` keep the tone's color for the word and drop the tint; `default`, `secondary`, `destructive` and `link` use their own fill. `destructive` is the critical tone's tint, with the critical glyph.
+- **A link or button badge** gets a focus ring (`--ring`, 3 px), a hover color change, a dashed edge when disabled, and a hit area grown to `--target` by a pseudo-element, so the badge keeps its 20 px look.
 - **Size follows density**: 20 px high and 12 px text at the compact default, 22.5 px and 13 px with `data-density="comfortable"`.
 - **A pill keeps its own tint on a selected row**, so its word keeps its contrast on `--sel`.
-- **The no data pill's word is `--muted`, not `--nodata`**: on its own tint the lighter grey would fall under 4.5:1.
+- **The no data pill's word is `--muted`, not `--nodata`**: on its own tint the lighter gray would fall under 4.5:1.
 - Marks inside a filled glyph are cut out (evenodd) rather than painted in `--surface`, so the glyph reads on a tint.
 
 ## Keyboard
@@ -56,7 +56,7 @@ How a thing is: critical, warning, notice, ok, running, or no data. Always a gly
 
 - The word is the accessible text; the glyph is hidden. Do not shorten the word to fit ("Crit").
 - Each tone's word reaches 4.5:1 on surface, raised, ground and sel, and on its own tint, in both themes (checked as painted).
-- Forced colours: the tint is removed, so a badge gains an outline (a link or button badge, the link colour).
+- Forced colors: the tint is removed, so a badge gains an outline (a link or button badge, the link color).
 - A count says what it counts: put the noun in a `.cap-sr-only` span after the number (`3<span class="cap-sr-only"> waiting</span>`).
 - A link or button badge's name is its word.
 
@@ -100,9 +100,9 @@ In React, `import { Status, Pill, Badge, Glyph } from "capsomer/react/status"`: 
 
 **The shadcn component it matches:** Badge (`badge.tsx`, nova style): 20 px pill, 12 px text, `default`, `secondary`, `outline`, `destructive`, `ghost`, `link`, link badges with hover, focus ring.
 
-**Deliberately different.** Status badges (tone and glyph) are not in shadcn: Capsomer's rule is shape, word and colour together. `destructive` is the critical tint rather than shadcn's 10 percent red, so its word keeps 4.5:1 in both themes. A link or button badge gets a 24 px hit area (WCAG 2.5.8), which shadcn's 20 px badge does not. The edge of an outline badge is `--line-strong` (3:1) rather than shadcn's soft border, because a badge that is a link or a button is a control. The glyph is the status shape, not an icon slot, and sits 1 em tall instead of 12 px so it follows density.
+**Deliberately different.** Status badges (tone and glyph) are not in shadcn: Capsomer's rule is shape, word and color together. `destructive` is the critical tint rather than shadcn's 10 percent red, so its word keeps 4.5:1 in both themes. A link or button badge gets a 24 px hit area (WCAG 2.5.8), which shadcn's 20 px badge does not. The edge of an outline badge is `--line-strong` (3:1) rather than shadcn's soft border, because a badge that is a link or a button is a control. The glyph is the status shape, not an icon slot, and sits 1 em tall instead of 12 px so it follows density.
 
-**Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.st`, `.pill`, `.nodata-cell`; `dashboard/src/ui/icons.tsx` `St`, `Pill`, `NoData`, `SHAPES`). EXTRACTED: the word's and the pill's rules (inline flex, 6 px gap, 12 px, weight 600, no wrap; the pill's 2 by 8 by 2 by 6 px padding, full radius and tone tints) and their tone colours (`ok`, `warn`, `crit`, `nodata`, `run` as `info`). REWROTE: the glyphs. The Portal's `SHAPES` are 14 px drawings with marks painted in `--surface` (a cross in the octagon, a bar in the pill) and opacity tints; Capsomer's six are the mockup's, 16 px, one `currentColor` path with the marks cut out (evenodd), so they read on any tint; the Portal has no notice shape (its "notice" is the no-data circle), where Capsomer has four levels (patterns.md) and a square for notice. The no-data pill's word is `--muted` on its tint in both (EXTRACTED). Brought up to date in v0.1.1: the brief no-data cell (`NoData brief`, "No data" with the reason for a screen reader and on hover, D18). The Portal's `queued`, `blocked` and `done` kinds are not statuses here: they are words a row chooses (patterns.md: four levels, running is a state). Where the Portal and the audit differ, the audit wins: the Portal's hover tooltip (`data-tip`) is a `title` here, since the status takes no focus and Capsomer's tooltip needs a trigger that does.
+**Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.st`, `.pill`, `.nodata-cell`; `dashboard/src/ui/icons.tsx` `St`, `Pill`, `NoData`, `SHAPES`). EXTRACTED: the word's and the pill's rules (inline flex, 6 px gap, 12 px, weight 600, no wrap; the pill's 2 by 8 by 2 by 6 px padding, full radius and tone tints) and their tone colors (`ok`, `warn`, `crit`, `nodata`, `run` as `info`). REWROTE: the glyphs. The Portal's `SHAPES` are 14 px drawings with marks painted in `--surface` (a cross in the octagon, a bar in the pill) and opacity tints; Capsomer's six are the mockup's, 16 px, one `currentColor` path with the marks cut out (evenodd), so they read on any tint; the Portal has no notice shape (its "notice" is the no-data circle), where Capsomer has four levels (patterns.md) and a square for notice. The no-data pill's word is `--muted` on its tint in both (EXTRACTED). Brought up to date in v0.1.1: the brief no-data cell (`NoData brief`, "No data" with the reason for a screen reader and on hover, D18). The Portal's `queued`, `blocked` and `done` kinds are not statuses here: they are words a row chooses (patterns.md: four levels, running is a state). Where the Portal and the audit differ, the audit wins: the Portal's hover tooltip (`data-tip`) is a `title` here, since the status takes no focus and Capsomer's tooltip needs a trigger that does.
 
 ## Exceptions in production
 

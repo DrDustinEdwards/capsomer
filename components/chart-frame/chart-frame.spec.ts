@@ -60,7 +60,7 @@ eachTheme((theme) => {
     await expect(details).not.toHaveAttribute("open", "");
   });
 
-  test("behaviour: the table is in the delivered HTML while the disclosure is closed", async ({ page }) => {
+  test("behavior: the table is in the delivered HTML while the disclosure is closed", async ({ page }) => {
     const html = await (await page.request.get("components/chart-frame/states.html")).text();
     const closed = html.slice(html.indexOf('id="cf-spark-title"'), html.indexOf('id="cf-up-title"'));
     expect(closed).toContain("<details");
@@ -71,14 +71,14 @@ eachTheme((theme) => {
     expect(closed).toContain('<p class="cap-chart-summary"');
   });
 
-  test("behaviour: closed by default, open by option", async ({ page }) => {
+  test("behavior: closed by default, open by option", async ({ page }) => {
     await visitStates(page, "chart-frame", theme);
     await expect(page.locator("#cf-spark details")).not.toHaveAttribute("open", "");
     await expect(page.locator("#cf-up details")).toHaveAttribute("open", "");
     await expect(page.locator("#cf-up .cap-table")).toBeVisible();
   });
 
-  test("behaviour: no data is a reason, with no chart and no table", async ({ page }) => {
+  test("behavior: no data is a reason, with no chart and no table", async ({ page }) => {
     await visitStates(page, "chart-frame", theme);
     const frame = page.locator("#cf-nodata");
     await expect(frame).toContainText("No data");
@@ -86,7 +86,7 @@ eachTheme((theme) => {
     await expect(frame.locator("details, table, svg.enarratio")).toHaveCount(0);
   });
 
-  test("behaviour: a summary kept for screen readers is in the page but not drawn", async ({ page }) => {
+  test("behavior: a summary kept for screen readers is in the page but not drawn", async ({ page }) => {
     await visitStates(page, "chart-frame", theme);
     const summary = page.locator("#cf-hid .cap-chart-summary");
     await expect(summary).toHaveText("Sites up, last 7 days: 6 of 6 every day.");
@@ -94,7 +94,7 @@ eachTheme((theme) => {
     expect((box?.width ?? 99) <= 1 && (box?.height ?? 99) <= 1).toBe(true);
   });
 
-  test("behaviour: the chart reads its colour from Capsomer's tokens, so a token change reaches it", async ({ page }) => {
+  test("behavior: the chart reads its color from Capsomer's tokens, so a token change reaches it", async ({ page }) => {
     await visitStates(page, "chart-frame", theme);
     const stroke = () => page.evaluate(() => getComputedStyle(document.querySelector("#cf-spark svg path[stroke^=\"var\"]")!).stroke);
     const series1 = await page.evaluate(() => {
@@ -110,7 +110,7 @@ eachTheme((theme) => {
     expect(await stroke()).toBe("rgb(255, 0, 0)");
   });
 
-  test("behaviour: a family on a wrapper re-resolves the ramp the heat strip reads", async ({ page }) => {
+  test("behavior: a family on a wrapper re-resolves the ramp the heat strip reads", async ({ page }) => {
     await visitStates(page, "chart-frame", theme);
     const cell = "#cf-heat svg rect[fill*='sequential']";
     const read = () => page.evaluate((sel) => getComputedStyle(document.querySelector(sel)!).fill, cell);

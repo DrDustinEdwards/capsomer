@@ -91,7 +91,7 @@ function occurrences(text: string, quote: string): number[] {
   return at;
 }
 
-// The occurrence the flag means: the one whose neighbours match the recorded context, else the first.
+// The occurrence the flag means: the one whose neighbors match the recorded context, else the first.
 function pick(text: string, a: FlagAnchor, hits: number[]): number {
   if (hits.length > 1 && (a.before || a.after)) {
     const fit = hits.find((i) => (!a.before || text.slice(Math.max(0, i - a.before.length), i) === a.before) && (!a.after || text.slice(i + a.quote.length, i + a.quote.length + a.after.length) === a.after));

@@ -41,7 +41,7 @@ async function serveCatalog(page: Page): Promise<void> {
 
 test.describe("no script", () => {
   test.use({ javaScriptEnabled: false });
-  test("behaviour: the form, the chips, the sort headers and the pages all work as plain links and a GET form", async ({ page }) => {
+  test("behavior: the form, the chips, the sort headers and the pages all work as plain links and a GET form", async ({ page }) => {
     await serveCatalog(page);
     await page.goto(SSR);
     await expect(page.locator("form.cap-catalog")).toHaveAttribute("method", "get");
@@ -66,7 +66,7 @@ test.describe("no script", () => {
     await expect(page.locator("th[aria-sort='ascending']")).toContainText("Name");
   });
 
-  test("behaviour: the filter tray opens by its address and closes by one, with no script", async ({ page }) => {
+  test("behavior: the filter tray opens by its address and closes by one, with no script", async ({ page }) => {
     await serveCatalog(page);
     await page.setViewportSize({ width: 390, height: 800 });
     await page.goto(SSR);
@@ -79,7 +79,7 @@ test.describe("no script", () => {
   });
 });
 
-test("behaviour: typing in the search updates the results, the count, the chips and the address, with no navigation", async ({ page }) => {
+test("behavior: typing in the search updates the results, the count, the chips and the address, with no navigation", async ({ page }) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   const before = await count(form).textContent();
@@ -91,7 +91,7 @@ test("behaviour: typing in the search updates the results, the count, the chips 
   await expect(form.locator(".cap-catalog-apply")).toBeHidden();
 });
 
-test("behaviour: ticking a facet narrows the results and its chip removes just that filter", async ({ page }) => {
+test("behavior: ticking a facet narrows the results and its chip removes just that filter", async ({ page }) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   await form.getByRole("radio", { name: /^recipe/ }).check();
@@ -109,7 +109,7 @@ test("behaviour: ticking a facet narrows the results and its chip removes just t
   await expect(count(form)).toBeFocused();
 });
 
-test("behaviour: the sort menu reorders the rows and a sort header toggles direction", async ({ page }) => {
+test("behavior: the sort menu reorders the rows and a sort header toggles direction", async ({ page }) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   await form.getByLabel("Sort").selectOption({ label: "Name, A to Z" });
@@ -120,7 +120,7 @@ test("behaviour: the sort menu reorders the rows and a sort header toggles direc
   expect(await firstTitle(form).textContent()).not.toBe(a);
 });
 
-test("behaviour: a page link shows the next page in place and the count says so", async ({ page }) => {
+test("behavior: a page link shows the next page in place and the count says so", async ({ page }) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   await expect(form.locator("tbody tr")).toHaveCount(10);
@@ -130,7 +130,7 @@ test("behaviour: a page link shows the next page in place and the count says so"
   await expect(form.locator(".cap-pagination-status")).toContainText("21 to 27 of 27");
 });
 
-test("behaviour: a search nothing matches shows 'no match' with a way back", async ({ page }) => {
+test("behavior: a search nothing matches shows 'no match' with a way back", async ({ page }) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   await form.getByLabel("Search protocols").fill("zzzz");
@@ -141,7 +141,7 @@ test("behaviour: a search nothing matches shows 'no match' with a way back", asy
   await expect(count(form)).toHaveText("27 protocols");
 });
 
-test("behaviour: a failed fetch navigates to the address instead of leaving a stale page", async ({ page }) => {
+test("behavior: a failed fetch navigates to the address instead of leaving a stale page", async ({ page }) => {
   await visitStates(page, "catalog", "light");
   await page.evaluate(() => {
     window.fetch = () => Promise.reject(new Error("offline"));
@@ -151,7 +151,7 @@ test("behaviour: a failed fetch navigates to the address instead of leaving a st
   await nav;
 });
 
-test("behaviour: in a phone's width the table is cards and the filters are a tray over the results", async ({ page }) => {
+test("behavior: in a phone's width the table is cards and the filters are a tray over the results", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await visitStates(page, "catalog", "light");
   const form = narrow(page);

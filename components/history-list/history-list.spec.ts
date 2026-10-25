@@ -6,7 +6,7 @@ const at = (t: string) => `2026-10-02T${t}:00Z`;
 const entry = (id: string, kind: HistoryEntry["kind"], t: string, words: number | undefined, extra: Partial<HistoryEntry> = {}): HistoryEntry => ({ id, kind, who: "Dustin Edwards", at: at(t), words, summary: `Version ${id}`, ...extra });
 
 // The pure helpers need no browser.
-test("behaviour: an entry with no word count has no size change, and a run holding one has none either", () => {
+test("behavior: an entry with no word count has no size change, and a run holding one has none either", () => {
   const list = [entry("c", "edit", "12:00", undefined), entry("b", "autosave", "11:00", 120), entry("a", "autosave", "10:00", 100)];
   expect(deltaOf(list, 0)).toBeUndefined();
   expect(deltaOf(list, 1)).toBe(20);
@@ -17,7 +17,7 @@ test("behaviour: an entry with no word count has no size change, and a run holdi
   expect(run && run.type === "run" ? run.delta : "none").toBeUndefined();
 });
 
-test("behaviour: wordDelta is the signed change in words, from two texts or two counts", () => {
+test("behavior: wordDelta is the signed change in words, from two texts or two counts", () => {
   expect(wordDelta("one two three", "one two three four five")).toBe(2);
   expect(wordDelta(1884, 1854)).toBe(-30);
   expect(wordDelta("same words", "same words")).toBe(0);
@@ -25,7 +25,7 @@ test("behaviour: wordDelta is the signed change in words, from two texts or two 
   expect(countWords("  spaced   out \n words ")).toBe(3);
 });
 
-test("behaviour: the size change is said in words with its sign as text, and no change in words", () => {
+test("behavior: the size change is said in words with its sign as text, and no change in words", () => {
   expect(deltaText(142)).toBe("+142 words");
   expect(deltaText(-30)).toBe("−30 words");
   expect(deltaText(1)).toBe("+1 word");
@@ -34,7 +34,7 @@ test("behaviour: the size change is said in words with its sign as text, and no 
   expect([deltaSign(5), deltaSign(-5), deltaSign(0)]).toEqual(["plus", "minus", "zero"]);
 });
 
-test("behaviour: condense folds runs of consecutive autosaves and keeps every other line", () => {
+test("behavior: condense folds runs of consecutive autosaves and keeps every other line", () => {
   const list: HistoryEntry[] = [
     entry("a", "edit", "15:00", 120),
     entry("b", "autosave", "14:40", 110),
@@ -55,7 +55,7 @@ test("behaviour: condense folds runs of consecutive autosaves and keeps every ot
   expect(rangeText(run.from, run.to)).toBe("14:02 to 14:40 UTC");
 });
 
-test("behaviour: the current version is never folded into a run, and a single autosave is just a line", () => {
+test("behavior: the current version is never folded into a run, and a single autosave is just a line", () => {
   const list = [entry("a", "autosave", "15:00", 12), entry("b", "autosave", "14:00", 10), entry("c", "autosave", "13:00", 8)];
   const lines = condense(list);
   expect(lines.map((l) => (l.type === "run" ? `run:${l.entries.length}` : l.entry.id))).toEqual(["a", "run:2"]);
@@ -63,14 +63,14 @@ test("behaviour: the current version is never folded into a run, and a single au
   expect(deltaOf(list, 0)).toBe(2);
 });
 
-test("behaviour: pickTwo allows at most two and refuses a third rather than swapping", () => {
+test("behavior: pickTwo allows at most two and refuses a third rather than swapping", () => {
   expect(pickTwo([], "a")).toEqual({ picked: ["a"], blocked: false });
   expect(pickTwo(["a"], "b")).toEqual({ picked: ["a", "b"], blocked: false });
   expect(pickTwo(["a", "b"], "c")).toEqual({ picked: ["a", "b"], blocked: true });
   expect(pickTwo(["a", "b"], "a")).toEqual({ picked: ["b"], blocked: false });
 });
 
-test("behaviour: the pair is ordered older first whatever the pick order, and the address is built from the two ids", () => {
+test("behavior: the pair is ordered older first whatever the pick order, and the address is built from the two ids", () => {
   const times: Record<string, number> = { a: Date.parse(at("09:00")), b: Date.parse(at("14:00")) };
   expect(orderPair(["b", "a"], (id) => times[id] ?? 0)).toEqual(["a", "b"]);
   expect(orderPair(["a", "b"], (id) => times[id] ?? 0)).toEqual(["a", "b"]);
@@ -80,7 +80,7 @@ test("behaviour: the pair is ordered older first whatever the pick order, and th
   expect(PICK_BLOCKED).toBe("Two versions are picked; untick one first.");
 });
 
-test("behaviour: a restore is a new line with the restored length, never a change to an old line", () => {
+test("behavior: a restore is a new line with the restored length, never a change to an old line", () => {
   const current = entry("v-9", "edit", "14:00", 1954);
   const source = entry("v-2", "edit", "09:15", 1742);
   const made = restoredEntry(source, current, "Dustin Edwards", "v-2-restored-1", at("15:00"));
@@ -89,7 +89,7 @@ test("behaviour: a restore is a new line with the restored length, never a chang
   expect(source.words).toBe(1742);
 });
 
-test("behaviour: the page is delivered with every line, its size change and its state in words", async ({ page }) => {
+test("behavior: the page is delivered with every line, its size change and its state in words", async ({ page }) => {
   const html = await (await page.request.get("components/history-list/states.html")).text();
   expect(html).toContain("12 autosaves");
   expect(html).toContain("+58 words");
@@ -353,7 +353,7 @@ eachTheme((theme) => {
     await expect(page.locator("#hist-results")).toContainText("Undone.");
   });
 
-  test("behaviour: the restored line's size change is the difference from the version it replaced", async ({ page }) => {
+  test("behavior: the restored line's size change is the difference from the version it replaced", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const m = main(page);
     await m.locator("[data-id='v-15'] [data-cap-part='restore']").click();
@@ -361,7 +361,7 @@ eachTheme((theme) => {
     await expect(m.locator(".cap-hist-list > .cap-hist-row").first().locator(".cap-hist-delta")).toContainText("−70 words");
   });
 
-  test("behaviour: a restore tells the app, and an Undo tells it again", async ({ page }) => {
+  test("behavior: a restore tells the app, and an Undo tells it again", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     await page.evaluate(() => {
       const w = window as unknown as { __events: string[] };
@@ -373,7 +373,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as unknown as { __events: string[] }).__events)).toEqual(["cap:history-restored:v-16", "cap:history-unrestored:v-16"]);
   });
 
-  test("behaviour: Load older is a link that works as delivered", async ({ page }) => {
+  test("behavior: Load older is a link that works as delivered", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const older = main(page).getByRole("link", { name: "Load older versions" });
     await expect(older).toHaveAttribute("href", "?before=v-15");
@@ -402,13 +402,13 @@ eachTheme((theme) => {
     await expect(list.locator("[data-cap-part='picked']")).toHaveText("1 version picked. Pick one more.");
   });
 
-  test("behaviour: the empty state says what the first save does", async ({ page }) => {
+  test("behavior: the empty state says what the first save does", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     await expect(page.locator("#hist-empty")).toContainText("No versions yet");
     await expect(page.locator("#hist-empty")).toContainText("The first save of this post makes the first version.");
   });
 
-  test("behaviour: the React wrapper renders the same contract: lines, a run that opens, and the pick bar", async ({ page }) => {
+  test("behavior: the React wrapper renders the same contract: lines, a run that opens, and the pick bar", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const r = page.locator("#react-history");
     await expect(r.getByRole("checkbox", { name: /^Compare this version/ })).toHaveCount(3);
@@ -428,7 +428,7 @@ eachTheme((theme) => {
     await expect(box("r-4")).not.toBeChecked();
   });
 
-  test("behaviour: the React wrapper restores as a new line with Undo, and z takes it back", async ({ page }) => {
+  test("behavior: the React wrapper restores as a new line with Undo, and z takes it back", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const r = page.locator("#react-history");
     await r.locator("li[data-id='r-1'] [data-cap-part='restore']").click();
@@ -441,7 +441,7 @@ eachTheme((theme) => {
     await expect(r.locator("li[data-kind='restore']")).toHaveCount(0);
     await expect(r.locator("li[data-id='r-5']")).toHaveAttribute("data-current", "");
   });
-  test("behaviour: load-into-editor mode links to the editor in place of Restore, and the app can take the click", async ({ page }) => {
+  test("behavior: load-into-editor mode links to the editor in place of Restore, and the app can take the click", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const l = page.locator("#hist-load");
     await expect(l.locator("[data-cap-part='restore']")).toHaveCount(0);
@@ -477,7 +477,7 @@ eachTheme((theme) => {
     expect(await focused(page)).toContain("Load into editor");
   });
 
-  test("behaviour: a read-only history has no Restore and no Load, and a line with no word count shows no size change", async ({ page }) => {
+  test("behavior: a read-only history has no Restore and no Load, and a line with no word count shows no size change", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const r = page.locator("#hist-ro");
     await expect(r.locator('[data-cap-part="restore"], [data-cap-part="load"]')).toHaveCount(0);

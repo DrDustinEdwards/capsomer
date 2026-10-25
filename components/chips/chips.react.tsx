@@ -14,7 +14,7 @@ export interface FilterChipsProps<V extends string> {
   // Controlled: the pressed values, in any order.
   value: V[];
   // Called with the pressed values in the options' order. Keep them in the address
-  // (writeParam from "capsomer/behaviour/chips" makes ?status=blocked,running).
+  // (writeParam from "capsomer/behavior/chips" makes ?status=blocked,running).
   onChange: (value: V[]) => void;
   // What the filter leaves, in words: "3 of 14 jobs". Announced politely as it changes.
   count: ReactNode;

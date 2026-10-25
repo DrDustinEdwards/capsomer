@@ -2,7 +2,7 @@
 name: anchor-bar
 title: Anchor bar
 summary: '"On this page": sticky links to a long view''s sections, the current one marked.'
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: own JavaScript
 states: [link states (rest, current, hover, pressed), top of page, scrolled into the third section, blocks marked data-section, short page with no bar]
 added: 0.1.0
@@ -29,7 +29,7 @@ On a short view the bar is one more thing to read, and the headings are already 
 
 - **Sticky at the top** (`top: env(safe-area-inset-top, 0px)`), so it is there wherever the reader is. **Quiet**: on the ground tone with no frame, so it does not read as a second header (Portal: "on the ground tone").
 - **The bar's own height does not count toward "taller than two screens"**, or showing the bar could tip the rule that showed it (the Portal's finding).
-- **The current section's link has `aria-current="location"`**, set by a small IntersectionObserver: the current section is the last section above a line 35% down the view, and the last one once the view is scrolled to its end. It is shown by accent text (`--accent-text`, step 11, 4.5:1) and a 2 px `--accent` bar under the link that fades in, not colour alone. In forced colours the bar is drawn in LinkText.
+- **The current section's link has `aria-current="location"`**, set by a small IntersectionObserver: the current section is the last section above a line 35% down the view, and the last one once the view is scrolled to its end. It is shown by accent text (`--accent-text`, step 11, 4.5:1) and a 2 px `--accent` bar under the link that fades in, not color alone. In forced colors the bar is drawn in LinkText.
 - **Following a link moves focus to the section** (given `tabindex="-1"`), so a keyboard or screen reader user continues from there, and **replaces** the address's hash with its `#id`: a click on an in-page link is not a place to go Back to (Portal: "replaces the address's hash").
 - **A heading scrolled to stops below the bar, never under it** (WCAG 2.4.11): the module measures the bar into `--cap-anchors-h`, and each linked heading gets a matching `scroll-margin-top`.
 - **On a phone the links scroll sideways** rather than wrap, and the "On this page" label hides; the bar keeps its name.
@@ -37,7 +37,7 @@ On a short view the bar is one more thing to read, and the headings are already 
 
 ## The shadcn component it matches
 
-Tabs, line variant (`tabs.tsx`: TabsList `variant="line"`, TabsTrigger). Matched: transparent triggers in muted text that go to full text on hover, rounded focus ring, the 2 px bar under the active trigger with its opacity transition, 100 ms colour transition.
+Tabs, line variant (`tabs.tsx`: TabsList `variant="line"`, TabsTrigger). Matched: transparent triggers in muted text that go to full text on hover, rounded focus ring, the 2 px bar under the active trigger with its opacity transition, 100 ms color transition.
 
 Different on purpose: it is a `nav` of links with `aria-current="location"`, not a `tablist`, because the links move around one page and switch nothing; there is no arrow-key roving (Tab moves between links). The current link is `--accent-text` rather than foreground, the Capsomer rule for the active item. Spacing follows density tokens.
 
@@ -73,7 +73,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 `enhance()` applies the rule, watches the sections and handles the links; `watchSections(headings, onChange)`, `currentSection()`, `meetsRule(headings, scroller, barHeight)`, `sectionsIn(scope)` and `goToSection(section)` are exported. In React, `<AnchorBar sections={[{ id, label }]} />`; each id is the id of an `h2` or of a block.
 
-**Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/ui/anchors.tsx`, `dashboard/src/styles.css` `.anchors`, `.anchors-label`, `main:has(.anchors)`). At 0.1.0 the Portal had no anchor bar (`.anchors` is not in `366b902`), so the component was REWROTE from the mockup's `.onpage` bar and patterns.md "In-page anchors". It still is, in its markup (a `nav` with a `ul`, not the Portal's `nav` of bare links), its spy (an IntersectionObserver and a line 35% down the view; the Portal's is a scroll listener that takes the last section whose top has passed the bar) and its focus handling (`scroll-margin-top` on each linked section from a measured `--cap-anchors-h`; the Portal sets `scroll-padding-top: 48px` on `main`). EXTRACTED in v0.1.1: the rule's measuring, again whenever the window or the content changes size (`ResizeObserver` and `MutationObserver`), with the bar's own height left out; sections as `data-section` blocks with ids; `replaceState` for the hash; the quiet look (ground tone, no frame, 12 px muted links, current link in `--text` with an accent mark, 11 px upper-case label). Adapted: the current link is marked by an underline where the Portal uses a 2 px bottom border, because a transparent border turns visible in forced colours. Not ported: the Portal's spy line (see above; the 35% line is kept because the bar here is not tied to a fixed 48 px).
+**Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/ui/anchors.tsx`, `dashboard/src/styles.css` `.anchors`, `.anchors-label`, `main:has(.anchors)`). At 0.1.0 the Portal had no anchor bar (`.anchors` is not in `366b902`), so the component was REWROTE from the mockup's `.onpage` bar and patterns.md "In-page anchors". It still is, in its markup (a `nav` with a `ul`, not the Portal's `nav` of bare links), its spy (an IntersectionObserver and a line 35% down the view; the Portal's is a scroll listener that takes the last section whose top has passed the bar) and its focus handling (`scroll-margin-top` on each linked section from a measured `--cap-anchors-h`; the Portal sets `scroll-padding-top: 48px` on `main`). EXTRACTED in v0.1.1: the rule's measuring, again whenever the window or the content changes size (`ResizeObserver` and `MutationObserver`), with the bar's own height left out; sections as `data-section` blocks with ids; `replaceState` for the hash; the quiet look (ground tone, no frame, 12 px muted links, current link in `--text` with an accent mark, 11 px upper-case label). Adapted: the current link is marked by an underline where the Portal uses a 2 px bottom border, because a transparent border turns visible in forced colors. Not ported: the Portal's spy line (see above; the 35% line is kept because the bar here is not tied to a fixed 48 px).
 
 ## Exceptions in production
 

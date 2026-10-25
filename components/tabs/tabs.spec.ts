@@ -156,7 +156,7 @@ eachTheme((theme) => {
     expect(new URL(page.url()).hash).toBe("#resolved");
   });
 
-  test("behaviour: a click chooses a tab and shows only its panel", async ({ page }) => {
+  test("behavior: a click chooses a tab and shows only its panel", async ({ page }) => {
     await visitStates(page, "tabs", theme);
     await page.locator("#td-settings").click();
     await expect(page.locator("#td-settings")).toHaveAttribute("aria-selected", "true");
@@ -166,14 +166,14 @@ eachTheme((theme) => {
     await expect(page.locator("#tdp-overview")).toBeHidden();
   });
 
-  test("behaviour: a disabled tab is not chosen by a click", async ({ page }) => {
+  test("behavior: a disabled tab is not chosen by a click", async ({ page }) => {
     await visitStates(page, "tabs", theme);
     await page.locator("#td-alerts").click({ force: true });
     await expect(page.locator("#td-overview")).toHaveAttribute("aria-selected", "true");
     await expect(page.locator("#tdp-alerts")).toBeHidden();
   });
 
-  test("behaviour: choosing a tab tells the page with cap:tabs-change", async ({ page }) => {
+  test("behavior: choosing a tab tells the page with cap:tabs-change", async ({ page }) => {
     await visitStates(page, "tabs", theme);
     await page.evaluate(() => {
       (window as unknown as { seen: string[] }).seen = [];
@@ -184,7 +184,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen)).toEqual(["td-runs>tdp-runs"]);
   });
 
-  test("behaviour: the address follows the tab and a link with the hash opens it", async ({ page }) => {
+  test("behavior: the address follows the tab and a link with the hash opens it", async ({ page }) => {
     await visitStates(page, "tabs", theme);
     await page.locator("#th-keys").click();
     expect(new URL(page.url()).hash).toBe("#thp-keys");
@@ -194,14 +194,14 @@ eachTheme((theme) => {
     await expect(page.locator("#thp-start")).toBeVisible();
   });
 
-  test("behaviour: the delivered HTML holds every panel, the inactive ones hidden", async ({ page }) => {
+  test("behavior: the delivered HTML holds every panel, the inactive ones hidden", async ({ page }) => {
     const html = await (await page.request.get("components/tabs/states.html")).text();
     expect(html).toContain("24 runs in the last day.");
     expect(html).toContain('id="tdp-runs" aria-labelledby="td-runs" tabindex="0" hidden');
     expect(html).toContain('<a class="cap-tab" href="#open" aria-current="page">');
   });
 
-  test("behaviour: a list too wide for its space scrolls and keeps the chosen tab in view", async ({ page }) => {
+  test("behavior: a list too wide for its space scrolls and keeps the chosen tab in view", async ({ page }) => {
     await visitStates(page, "tabs", theme);
     const list = page.locator("#tabs-narrow .cap-tabs-list");
     const wide = await list.evaluate((el) => el.scrollWidth > el.clientWidth);
@@ -217,14 +217,14 @@ eachTheme((theme) => {
     expect(inView).toBe(true);
   });
 
-  test("behaviour: comfortable density makes the tabs taller", async ({ page }) => {
+  test("behavior: comfortable density makes the tabs taller", async ({ page }) => {
     await visitStates(page, "tabs", theme);
     const compact = await page.locator("#td-overview").evaluate((el) => el.getBoundingClientRect().height);
     const roomy = await page.locator("#tc-a").evaluate((el) => el.getBoundingClientRect().height);
     expect(roomy).toBeGreaterThan(compact);
   });
   for (const mount of ["router", "router-per-link"]) {
-    test(`behaviour: a router link drawn by the ${mount === "router" ? "nav's" : "link's"} slot keeps the tab's look, count and current state`, async ({ page }) => {
+    test(`behavior: a router link drawn by the ${mount === "router" ? "nav's" : "link's"} slot keeps the tab's look, count and current state`, async ({ page }) => {
       await visitStates(page, "tabs", theme);
       const nav = page.locator(`[data-mount='${mount}']`);
       const links = nav.locator("nav.cap-tabs-list a.cap-tab[data-router-link]");

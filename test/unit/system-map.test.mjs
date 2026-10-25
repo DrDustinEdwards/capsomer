@@ -69,7 +69,7 @@ test("shared parts beyond six spill outward, and what people use moves out a rin
   assert.equal(layout.rings, 3);
 });
 
-test("grouped, each group is a chain of neighbours, apart from every other group, and named", () => {
+test("grouped, each group is a chain of neighbors, apart from every other group, and named", () => {
   const groups = { Sites: ["w1", "w2", "w3", "w4", "w5"], Apps: ["a1", "a2", "a3", "a4"], Books: ["b1", "b2", "b3"], Tools: ["t1", "t2", "t3", "t4"] };
   const systems = [
     { id: "core", name: "Core", ring: "core" },
@@ -134,7 +134,7 @@ test("a chosen capsomer's lines are those touching it with both ends on the map"
 test("a line between any two capsomers runs in the seams, from a corner of one to a corner of the other, and crosses no label", () => {
   const { cells } = layoutMap(family);
   const tiles = cells.filter((c) => c.id);
-  // The boxes the labels sit in around each centre: the name (at most 64 wide) above the
+  // The boxes the labels sit in around each center: the name (at most 64 wide) above the
   // word (at most 48). The browser spec measures the drawn ones.
   const inLabel = ([x, y]) =>
     cells.some((c) => {
@@ -159,7 +159,7 @@ test("a line between any two capsomers runs in the seams, from a corner of one t
       }
     }
   }
-  // Neighbours' line is the side they share.
+  // Neighbors' line is the side they share.
   const core = cells[0];
   const near = cells.find((c) => c.ring === 1);
   assert.equal(seamRoute(cells, core, near).length, 2);
@@ -186,7 +186,7 @@ test("the core's parts sit two to a row above, stores three to a row below", () 
   const y = (id) => boxes.find((b) => b.c.id === id).y;
   assert.ok(y("w") === y("p") && y("t") > y("w"));
   assert.ok(y("d") > y("t") && y("d") === y("k"));
-  assert.equal(boxes.find((b) => b.c.id === "t").x, 0, "a row of one is centred");
+  assert.equal(boxes.find((b) => b.c.id === "t").x, 0, "a row of one is centered");
 });
 
 test("the HTML holds every system once in the drawing and once in the list, escaped", () => {
@@ -398,7 +398,7 @@ test("every core places its boxes inside or outside the boundary with clear spac
   // Paired with how much was tried, so a pass cannot mean nothing was routed or nothing bent.
   assert.ok(routed > 1500 && bent > 100, `routed ${routed}, bent ${bent}`);
   // Random cores are far more crowded than Capsid's (up to ten parts and twenty lines), and a
-  // short line between neighbours can close a whole corridor. There a route that crosses no box
+  // short line between neighbors can close a whole corridor. There a route that crosses no box
   // may still break a softer rule; each stays under one line in twenty. Capsid's own core,
   // above, keeps every rule.
   for (const [rule, n] of Object.entries(soft)) assert.ok(n < routed / 20, `${rule}: ${n} of ${routed} lines`);

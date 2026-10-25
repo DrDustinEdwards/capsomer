@@ -1,4 +1,4 @@
-// Pagination's behaviour. A server-rendered pager made of links needs no script at all: the
+// Pagination's behavior. A server-rendered pager made of links needs no script at all: the
 // links are the markup. This module is for the client-side form, a nav of buttons that
 // carries its state as data attributes (data-page, data-page-count, data-total,
 // data-per-page, data-noun): a click chooses a page, the list is drawn again, the "Showing

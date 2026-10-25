@@ -1,4 +1,4 @@
-// Filter chips' behaviour: a chip toggles aria-pressed; Clear shows while any chip is
+// Filter chips' behavior: a chip toggles aria-pressed; Clear shows while any chip is
 // pressed and releases them all; the pressed values go into the address
 // (?status=blocked,running) with history.replaceState, so a reload or a shared link keeps
 // the filter; and every change dispatches `cap:filter-change` with { param, values }. The

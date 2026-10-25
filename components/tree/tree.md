@@ -2,7 +2,7 @@
 name: tree
 title: Tree
 summary: Nested items a person opens and closes, chooses, and moves, after the WAI-ARIA tree pattern. Carrel's binder, and any outline of folders, sections or series.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: own JavaScript
 states: [a binder with branches, links and a chosen row, closed branches, an empty branch, as delivered with no script, several chosen, a row not available, under the pointer, keyboard focus, being dragged, a drop before, inside and after, in React with moves the page saves]
 added: 0.7.0
@@ -36,7 +36,7 @@ A hierarchy a person moves through and works in: a book's chapters and scenes, a
 - **One tab stop, arrows inside** (roving tabindex), as the tree pattern asks: Tab enters on the chosen row or the first, and leaves the tree in one press.
 - **The row is the link.** A row with an address is an `a[role=treeitem]`, so Enter, a middle click and "open in new tab" work as links do; a row that only groups is a `span`. The group is owned by its row (`aria-owns`), so a row's name is its own text, not its children's.
 - **Works with no script, where it can.** Delivered, it is nested lists with every level shown and every link working, and no tree roles a reader would expect keys for. `enhance` adds the roles, closes the branches marked `data-collapsed`, and takes the keys.
-- **Chosen is a tint and a 3 px accent edge**, as the listbox's current option, never the colour alone; in forced colours an outline. The page's own file (`aria-current="page"`) starts chosen.
+- **Chosen is a tint and a 3 px accent edge**, as the listbox's current option, never the color alone; in forced colors an outline. The page's own file (`aria-current="page"`) starts chosen.
 - **Depth indents the row's content, not the row**, so the tint and the drop line run the full width. Six levels indent; deeper ones sit at the sixth.
 - **Moving is optional and the host saves it.** With `data-movable` (React: `onMove`), Alt with an arrow moves a row, and a row drags with a mouse or pen. Every move is a cancelable `cap:tree-move` with where it came from and where it goes; nothing is stored. The host may refuse one (`preventDefault`, or React `canMove`), and offers Undo with `reverseMove`.
 - **A drop's place is shown before it happens:** a line above or below a row, or a ring inside a branch; the middle half of a branch drops inside, the outer quarters before and after.
@@ -54,7 +54,7 @@ A hierarchy a person moves through and works in: a book's chapters and scenes, a
 | A letter | Goes to the next row starting with the letters typed |
 | Enter | Opens a link row (the browser follows it); chooses any other row |
 | Space | Chooses the row; with several, adds or removes it |
-| Alt + Up arrow, Alt + Down arrow | Moves the row before or after its neighbour (`data-movable`) |
+| Alt + Up arrow, Alt + Down arrow | Moves the row before or after its neighbor (`data-movable`) |
 | Alt + Right arrow | Moves the row into the branch just above it, at the end |
 | Alt + Left arrow | Moves the row out of its branch, to just after it |
 
@@ -62,7 +62,7 @@ A hierarchy a person moves through and works in: a book's chapters and scenes, a
 
 - `role="tree"` named by `aria-label` or `aria-labelledby`; each row `role="treeitem"` with `aria-level`, `aria-posinset` and `aria-setsize`; a branch `aria-expanded` and `aria-owns` naming its `role="group"`; the list items `role="none"`. `aria-selected` on every row that can be chosen; `aria-multiselectable` with `data-selection="multi"`; `aria-disabled="true"` on one that cannot.
 - The chevron is decoration (`aria-hidden`); the state is `aria-expanded`. The note at the end is part of the row's name ("Low water, Revised, 2,140").
-- A move, a refused move ("Low water is already first here.") and a cancelled drag are said in a `role="status"` region that exists before it changes.
+- A move, a refused move ("Low water is already first here.") and a canceled drag are said in a `role="status"` region that exists before it changes.
 - Dragging is never the only way: every drag has a keyboard move. A host whose people move rows by touch adds a one-pointer command (a "Move to" menu) that calls the same move, as WCAG 2.5.7 asks.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -85,7 +85,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 Hooks: `data-value` (the id every event names), `data-branch` (a branch with nothing in it yet), `data-collapsed` (closed once script runs), `data-selected` or `aria-current="page"` (chosen at the start), `aria-disabled="true"` on a row, `data-selection="none|single|multi"` and `data-movable` on the tree, `data-variant="surface"` (own border and surface), `.cap-tree-icon` before the label. Specimen hooks: `data-force="hover|focus"`, `data-dragging`, `data-drop="before|inside|after"`.
 
 ```js
-import { enhance, treeFor, applyMove, reverseMove } from "capsomer/behaviour/tree";
+import { enhance, treeFor, applyMove, reverseMove } from "capsomer/behavior/tree";
 enhance(); // every [data-cap="tree"]
 el.addEventListener("cap:tree-select", (e) => e.detail); // { id, label, selected, values }
 el.addEventListener("cap:tree-toggle", (e) => e.detail); // { id, expanded }

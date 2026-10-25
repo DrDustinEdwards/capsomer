@@ -35,7 +35,7 @@ export interface RowProps {
   // when the detail opens in place, such as a side panel.
   href?: string;
   onOpen?: () => void;
-  // A status (.cap-status: glyph, word and colour), shown first.
+  // A status (.cap-status: glyph, word and color), shown first.
   status?: ReactNode;
   detail?: ReactNode;
   // The time or other trailing fact, usually a .cap-time.

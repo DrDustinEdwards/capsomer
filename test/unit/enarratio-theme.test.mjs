@@ -36,9 +36,9 @@ test("the chart palette: every check passes for every family in both themes", ()
   }
 });
 
-// Every colour and font property Enarratio's base rules read has no fallback there, so css/enarratio.css
+// Every color and font property Enarratio's base rules read has no fallback there, so css/enarratio.css
 // must define each one; a property Enarratio adds later fails here instead of drawing nothing.
-test("css/enarratio.css defines every --enarratio-* colour and font property the base rules read without a fallback", async () => {
+test("css/enarratio.css defines every --enarratio-* color and font property the base rules read without a fallback", async () => {
   const { readFileSync } = await import("node:fs");
   const base = readFileSync(new URL("../../node_modules/enarratio/dist/base.css", import.meta.url), "utf8");
   const ours = readFileSync(new URL("../../css/enarratio.css", import.meta.url), "utf8");
@@ -49,10 +49,10 @@ test("css/enarratio.css defines every --enarratio-* colour and font property the
   assert.deepEqual(missing, []);
 });
 
-test("css/enarratio.css maps onto Capsomer's tokens only, never a literal colour", async () => {
+test("css/enarratio.css maps onto Capsomer's tokens only, never a literal color", async () => {
   const { readFileSync } = await import("node:fs");
   const ours = readFileSync(new URL("../../css/enarratio.css", import.meta.url), "utf8");
-  const colours = ours.split("\n").filter((l) => /--enarratio-(background|text|grid|focus|series|sequential|status)/.test(l) && l.includes(":"));
-  assert.ok(colours.length >= 35);
-  for (const l of colours) assert.match(l, /var\(--/, l);
+  const colors = ours.split("\n").filter((l) => /--enarratio-(background|text|grid|focus|series|sequential|status)/.test(l) && l.includes(":"));
+  assert.ok(colors.length >= 35);
+  for (const l of colors) assert.match(l, /var\(--/, l);
 });

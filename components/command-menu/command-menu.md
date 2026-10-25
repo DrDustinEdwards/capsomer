@@ -2,7 +2,7 @@
 name: command-menu
 title: Command menu
 summary: Every view, action and shortcut in one searchable list, opened with Ctrl K.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog and listbox)
 states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density, live results]
 added: 0.1.0
@@ -16,7 +16,7 @@ replaces:
 
 # Command menu
 
-**Provenance.** REWROTE the menu itself, EXTRACTED the stops, against the Portal's `app/CommandMenu.tsx`, `lib/stops.ts` and `styles.css` (`.palette`) as of capsid master on 2026-10-01. The Portal's menu is a flat React list scored by a subsequence match, with a group letter and a hint column; Capsomer's was written fresh from the APG combobox pattern (labelled field, grouped listbox, substring match, shortcut caps), so its CSS and logic are not the Portal's. From the Portal's #222 come the Stop group (every way to stop something in one place, found by typing "stop" or "pause", each saying what it will ask, listed only while there is something to stop, no "stop everything"), the group name being searched, and the `hint` note beside a command. The Portal's `stopCommands(feed, actions)` reads its feed, so here `stopCommand()` builds one command and the app decides which stops exist.
+**Provenance.** REWROTE the menu itself, EXTRACTED the stops, against the Portal's `app/CommandMenu.tsx`, `lib/stops.ts` and `styles.css` (`.palette`) as of capsid master on 2026-10-01. The Portal's menu is a flat React list scored by a subsequence match, with a group letter and a hint column; Capsomer's was written fresh from the APG combobox pattern (labeled field, grouped listbox, substring match, shortcut caps), so its CSS and logic are not the Portal's. From the Portal's #222 come the Stop group (every way to stop something in one place, found by typing "stop" or "pause", each saying what it will ask, listed only while there is something to stop, no "stop everything"), the group name being searched, and the `hint` note beside a command. The Portal's `stopCommands(feed, actions)` reads its feed, so here `stopCommand()` builds one command and the app decides which stops exist.
 
 The shared dialog (`components/dialog`) as a palette near the top, with a search field and the shared listbox (`components/listbox`) of commands, grouped: the views to go to, the actions on this page, the things to copy, help. Typing narrows the list; Enter runs the active command.
 
@@ -56,7 +56,7 @@ It is never the only way to reach something: every command is also a control on 
 ## Accessibility
 
 - The combobox has `aria-expanded`, `aria-controls` and `aria-activedescendant`. The active option is marked `data-active`, not `aria-selected`: nothing in a command menu is "chosen", so no option carries `aria-selected`.
-- The active option is shown by its tint and a 3 px accent edge at its start, and by an outline in forced colours.
+- The active option is shown by its tint and a 3 px accent edge at its start, and by an outline in forced colors.
 - The result count ("3 results") is said politely in a visually hidden `role="status"` the listbox adds; "No commands match ..." is in the visible `role="status"` under the list.
 - The key hints under the list are `aria-hidden`; this page's keyboard table and the option names carry them.
 
@@ -64,7 +64,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ## Markup
 
-The behaviour module builds this from a list of commands; write it by hand only for a menu rendered on the server.
+The behavior module builds this from a list of commands; write it by hand only for a menu rendered on the server.
 
 ```html
 <dialog class="cap-dialog cap-cmd" data-cap="command-menu" data-placement="top" data-size="lg" aria-label="Command menu">
@@ -92,7 +92,7 @@ The behaviour module builds this from a list of commands; write it by hand only 
 Everything but `.cap-cmd-search`, `.cap-cmd-input`, `.cap-cmd-list` and `.cap-cmd-foot` is the shared dialog's or the shared listbox's.
 
 ```js
-import { createCommandMenu, stopCommand } from "capsomer/behaviour/command-menu";
+import { createCommandMenu, stopCommand } from "capsomer/behavior/command-menu";
 createCommandMenu([
   { id: "overview", label: "Overview", group: "Go to", keywords: ["home"], shortcut: "g o", run: () => go("/") },
   stopCommand({ id: "pause-capsomer", label: "Pause capsomer", ask: "reason", run: () => openReasonFor("capsomer") }),
@@ -105,7 +105,7 @@ createCommandMenu([
 
 ## Matches shadcn
 
-Command (and CommandDialog), Base UI flavour, nova: the palette dialog near the top with no Close button, the Command input (a search icon and a field in a rounded group, ringed on focus), the list with a muted group label, rounded items with the current one tinted, the shortcut at the end of the row, the empty state, 100 ms zoom-in. The dialog and the listbox supply them.
+Command (and CommandDialog), Base UI flavor, nova: the palette dialog near the top with no Close button, the Command input (a search icon and a field in a rounded group, ringed on focus), the list with a muted group label, rounded items with the current one tinted, the shortcut at the end of the row, the empty state, 100 ms zoom-in. The dialog and the listbox supply them.
 
 ## Deliberately different
 

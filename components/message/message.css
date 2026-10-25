@@ -39,7 +39,7 @@
 
     /* A message that stays (a warning, a failure, a failed Undo) wears the warning tone's
        edge; a failure wears the critical one. The word "Warning:" or the failure's own words
-       and the glyph's shape carry it too, never colour alone. */
+       and the glyph's shape carry it too, never color alone. */
     &[data-lasting] {
       border-color: var(--warn);
     }

@@ -35,9 +35,9 @@ What an area shows when it has nothing to show. Loading is the [Skeleton and spi
 ## The default and its reason
 
 - **Say which kind of empty it is** (patterns.md "Empty"). "No results" alone leaves the person guessing whether to add, clear or wait.
-- **Centred, with a dashed edge**, as shadcn's Empty: an empty area is a place to put something, and the dashed edge says "drop it here" without a fill. `data-flush` removes the edge for an empty area inside a panel or a table that already has one.
+- **Centered, with a dashed edge**, as shadcn's Empty: an empty area is a place to put something, and the dashed edge says "drop it here" without a fill. `data-flush` removes the edge for an empty area inside a panel or a table that already has one.
 - **Parts**: an optional icon tile (`.cap-empty-media[data-variant="icon"]`, `aria-hidden`, a muted tile), the header (`.cap-empty-header`: `.cap-empty-title` and `.cap-empty-text`), and the action (`.cap-empty-content`, for one or several). The 0.1 markup, with title, text and action as direct children, still works.
-- **The failed kind says it in shape, word and colour**: the critical glyph, the words, the critical edge and title.
+- **The failed kind says it in shape, word and color**: the critical glyph, the words, the critical edge and title.
 - **The long wait is a part of this component** (`.cap-empty-wait`), not a fifth kind of empty: it is loading, not empty. It uses the spinner, so load `skeleton.css` with this file.
 - Size follows density: the padding is `--pad-card`, the gaps `--gap`.
 
@@ -52,7 +52,7 @@ What an area shows when it has nothing to show. Loading is the [Skeleton and spi
 - The title is `--text`, the line under it `--muted`, the failed title `--crit`: 4.5:1 in both themes.
 - `failed` is `role="alert"`; add it when the read fails so it is announced.
 - The icon tile is decorative (`aria-hidden`); the title carries the meaning.
-- Forced colours: the dashed edge and the icon tile take the system text colour.
+- Forced colors: the dashed edge and the icon tile take the system text color.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -92,7 +92,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </div>
 
 <div class="cap-empty-wait" aria-busy="true">
-  [spinner, labelled "Building the site"]
+  [spinner, labeled "Building the site"]
   <p class="cap-empty-text">This usually takes about 30 seconds.</p>
 </div>
 ```
@@ -101,7 +101,7 @@ In React, `import { Empty, Wait } from "capsomer/react/empty"`: `<Empty kind="no
 
 ## The shadcn component it matches
 
-Empty (`empty.tsx`, nova): `Empty`, `EmptyHeader`, `EmptyMedia` (`default` and `icon` variants), `EmptyTitle`, `EmptyDescription`, `EmptyContent`; centred, balanced text, dashed border, `rounded-xl`, 24 px padding. Deliberately different:
+Empty (`empty.tsx`, nova): `Empty`, `EmptyHeader`, `EmptyMedia` (`default` and `icon` variants), `EmptyTitle`, `EmptyDescription`, `EmptyContent`; centered, balanced text, dashed border, `rounded-xl`, 24 px padding. Deliberately different:
 
 - **Kinds.** shadcn's Empty is one layout; Capsomer's `data-kind` says which of four situations it is and sets the role (`alert` for failed) and the tone. The all-clear and failed titles carry the status glyph.
 - **The default media is nothing**, as shadcn's, but a kind never relies on an icon: the glyph in the title, not the tile, carries failed and all clear.

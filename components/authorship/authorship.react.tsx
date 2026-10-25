@@ -1,6 +1,6 @@
 import { Children, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
 import { Switch } from "../switch/switch.react.tsx";
-import { KINDS, KIND_LABEL, STORAGE_KEY, summarise, type Kind, type RunInput, type Summary } from "./authorship.ts";
+import { KINDS, KIND_LABEL, STORAGE_KEY, summarize, type Kind, type RunInput, type Summary } from "./authorship.ts";
 
 export type { Kind };
 
@@ -108,7 +108,7 @@ export function Authorship({ shown, onShownChange, defaultShown = true, remember
   }, [keep]);
   const runs: RunInput[] = [];
   collect(children, null, runs);
-  const summary = summarise(runs.filter((r) => KINDS.includes(r.kind)));
+  const summary = summarize(runs.filter((r) => KINDS.includes(r.kind)));
   return (
     <div className="cap-authorship" data-authorship={on ? "on" : "off"}>
       <div className="cap-authorship-bar">

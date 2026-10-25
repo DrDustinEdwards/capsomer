@@ -137,7 +137,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-state")).toHaveText("In Trash");
   });
 
-  test("behaviour: a message with Undo stays until dismissed", async ({ page }) => {
+  test("behavior: a message with Undo stays until dismissed", async ({ page }) => {
     await page.clock.install();
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-bin").click();
@@ -145,7 +145,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toContainText("Moved the mention");
   });
 
-  test("behaviour: a plain confirmation that asks to clear goes after 4 seconds, with no buttons", async ({ page }) => {
+  test("behavior: a plain confirmation that asks to clear goes after 4 seconds, with no buttons", async ({ page }) => {
     await page.clock.install();
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-copy").click();
@@ -155,7 +155,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-message-item")).toHaveCount(0);
   });
 
-  test("behaviour: clicking Undo runs it and the region says what was undone", async ({ page }) => {
+  test("behavior: clicking Undo runs it and the region says what was undone", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-bin").click();
     await page.getByRole("button", { name: "Undo" }).click();
@@ -163,7 +163,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toContainText("Undone.");
   });
 
-  test("behaviour: a plain result is replaced by the next one", async ({ page }) => {
+  test("behavior: a plain result is replaced by the next one", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-copy").click();
     await page.locator("#sample-bin").click();
@@ -171,7 +171,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toContainText("Moved the mention");
   });
 
-  test("behaviour: a warning stays through the next result and for as long as nobody dismisses it", async ({ page }) => {
+  test("behavior: a warning stays through the next result and for as long as nobody dismisses it", async ({ page }) => {
     await page.clock.install();
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-bin-warned").click();
@@ -188,7 +188,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-message-item")).toHaveCount(0);
   });
 
-  test("behaviour: Undo on a message with a warning keeps the warning, without Undo, and says what was undone beside it", async ({ page }) => {
+  test("behavior: Undo on a message with a warning keeps the warning, without Undo, and says what was undone beside it", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-bin-warned").click();
     await page.keyboard.press("z");
@@ -201,7 +201,7 @@ eachTheme((theme) => {
     await expect(items.nth(1).getByRole("button", { name: "Dismiss" })).toBeVisible();
   });
 
-  test("behaviour: a failure with no control beside it is an alert and stays until dismissed", async ({ page }) => {
+  test("behavior: a failure with no control beside it is an alert and stays until dismissed", async ({ page }) => {
     await page.clock.install();
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-refresh").focus();
@@ -215,7 +215,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-refresh")).toBeFocused();
   });
 
-  test("behaviour: an Undo that could not run keeps its message and its Undo, and says why", async ({ page }) => {
+  test("behavior: an Undo that could not run keeps its message and its Undo, and says why", async ({ page }) => {
     await visitStates(page, "message", theme, "undo-failed");
     const item = page.locator(".cap-message-item");
     await expect(item).toContainText("Moved the mention from fieldnotes.example to Trash.");
@@ -224,7 +224,7 @@ eachTheme((theme) => {
     await expect(item).toHaveAttribute("data-lasting", "");
   });
 
-  test("behaviour: a warning stays under a newer result in the stack specimen", async ({ page }) => {
+  test("behavior: a warning stays under a newer result in the stack specimen", async ({ page }) => {
     await visitStates(page, "message", theme, "stack");
     const items = page.locator(".cap-message-item");
     await expect(items).toHaveCount(2);

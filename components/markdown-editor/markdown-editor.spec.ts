@@ -40,7 +40,7 @@ async function type(page: Page, surface: Locator, text: string) {
   await page.keyboard.type(text);
 }
 
-// Tags the syntax token whose text is `text`, so its painted colour can be measured.
+// Tags the syntax token whose text is `text`, so its painted color can be measured.
 async function probe(page: Page, scope: string, text: string): Promise<string> {
   await page.evaluate(
     ([root, needle]) => {
@@ -54,7 +54,7 @@ async function probe(page: Page, scope: string, text: string): Promise<string> {
   return "[data-probe]";
 }
 
-// A colour pair as the browser resolves it, through a canvas, so color-mix() and var() read as rgb.
+// A color pair as the browser resolves it, through a canvas, so color-mix() and var() read as rgb.
 async function pairRatio(page: Page, fg: string, bg: string): Promise<number> {
   return page.evaluate(
     ([f, b]) => {
@@ -88,7 +88,7 @@ async function pairRatio(page: Page, fg: string, bg: string): Promise<number> {
 }
 
 // ---- pure helpers (no browser) -------------------------------------------------------------
-test("behaviour: words and reading time count markdown as the site's published times do", () => {
+test("behavior: words and reading time count markdown as the site's published times do", () => {
   expect(countWords("")).toBe(0);
   expect(countWords("  one  two\nthree ")).toBe(3);
   expect(countWords("## A heading")).toBe(3);
@@ -97,7 +97,7 @@ test("behaviour: words and reading time count markdown as the site's published t
   expect(minutesForWords(500, 250)).toBe(2);
 });
 
-test("behaviour: a typed address is recognised, and a query filters the pages by title, address and hint", () => {
+test("behavior: a typed address is recognized, and a query filters the pages by title, address and hint", () => {
   expect(["https://a.example", "mailto:x@y.example", "/writing/a", "#top"].every(looksLikeUrl)).toBe(true);
   expect(looksLikeUrl("moving the monitors")).toBe(false);
   const t = [
@@ -112,7 +112,7 @@ test("behaviour: a typed address is recognised, and a query filters the pages by
   expect(filterLinkTargets(Array.from({ length: 20 }, (_, i) => ({ href: `/${i}`, title: `Post ${i}` })), "").length).toBe(8);
 });
 
-test("behaviour: the roving key map wraps and honours Home and End", () => {
+test("behavior: the roving key map wraps and honors Home and End", () => {
   expect(rovingIndex("ArrowRight", 2, 3)).toBe(0);
   expect(rovingIndex("ArrowLeft", 0, 3)).toBe(2);
   expect(rovingIndex("ArrowDown", 0, 3)).toBeNull();
@@ -123,7 +123,7 @@ test("behaviour: the roving key map wraps and honours Home and End", () => {
   expect(rovingIndex("ArrowRight", 0, 0)).toBeNull();
 });
 
-test("behaviour: the edits wrap, cycle, number, place and link as the site's editor did", () => {
+test("behavior: the edits wrap, cycle, number, place and link as the site's editor did", () => {
   expect(wrapEdit("a b", 2, 3, "**")).toEqual({ changes: [{ from: 2, to: 3, insert: "**b**" }], anchor: 4, head: 5 });
   expect(wrapEdit("", 0, 0, "_").head).toBeUndefined();
   // Heading cycle: none, h2, h3, h4, none.
@@ -315,7 +315,7 @@ eachTheme((theme) => {
     await expect(section(page, "sp-default").locator("textarea")).toBeHidden();
   });
 
-  test("accessibility: the link palette is a labelled combobox over a listbox, the slash menu a named list", async ({ page }) => {
+  test("accessibility: the link palette is a labeled combobox over a listbox, the slash menu a named list", async ({ page }) => {
     await visitOnly(page, theme, "palette");
     const input = page.getByRole("combobox", { name: "Link to" });
     await expect(input).toHaveAttribute("aria-expanded", "true");
@@ -326,7 +326,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("list", { name: "Insert a block" }).getByRole("button")).toHaveCount(3);
   });
 
-  test("accessibility: the states say what they are in words, not only colour", async ({ page }) => {
+  test("accessibility: the states say what they are in words, not only color", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-invalid");
     await expect(surfaceOf(section(page, "sp-invalid"))).toHaveAttribute("aria-invalid", "true");
@@ -652,7 +652,7 @@ eachTheme((theme) => {
     await expect(surfaceOf(page)).toBeFocused();
   });
 
-  test("behaviour: an upload in progress is said in a status region, and a failed one is an alert that leaves the text alone", async ({ page }) => {
+  test("behavior: an upload in progress is said in a status region, and a failed one is an alert that leaves the text alone", async ({ page }) => {
     await visitOnly(page, theme, "uploading");
     await expect(page.getByRole("group", { name: "Describe the image" })).toHaveAttribute("aria-busy", "true");
     await expect(page.getByRole("status").filter({ hasText: "Uploading slow.png" })).toHaveCount(1);
@@ -662,7 +662,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
   });
 
-  test("behaviour: the toolbar's Insert image opens the file chooser, and a pasted or dropped image takes the same alt step", async ({ page }) => {
+  test("behavior: the toolbar's Insert image opens the file chooser, and a pasted or dropped image takes the same alt step", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await page.keyboard.press("Escape");
     const [chooser] = await Promise.all([page.waitForEvent("filechooser"), toolbarOf(page).getByRole("button", { name: "Insert image" }).click()]);
@@ -688,7 +688,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
   });
 
-  test("behaviour: with no onUpload there is no image button and no drop hint", async ({ page }) => {
+  test("behavior: with no onUpload there is no image button and no drop hint", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-lines");
     const s = section(page, "sp-lines");
@@ -699,7 +699,7 @@ eachTheme((theme) => {
   });
 
   // ---- React -----------------------------------------------------------------------------
-  test("behaviour: React: StrictMode leaves exactly one editor, and what is typed reaches React state", async ({ page }) => {
+  test("behavior: React: StrictMode leaves exactly one editor, and what is typed reaches React state", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const s = section(page, "sp-react");
     await expect(s.locator(".cm-content")).toHaveCount(1);
@@ -711,7 +711,7 @@ eachTheme((theme) => {
     await expect(s.locator(".cap-md-stats")).toContainText("14 of 400 characters");
   });
 
-  test("behaviour: React: a controlled value set by the app replaces the text and does not echo back as a change", async ({ page }) => {
+  test("behavior: React: a controlled value set by the app replaces the text and does not echo back as a change", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const s = section(page, "sp-react");
     await expect(s.locator(".cm-content")).toHaveCount(1);
@@ -726,8 +726,8 @@ eachTheme((theme) => {
     await expect(page.locator("#react-count")).toHaveText("21");
   });
 
-  // ---- behaviour -------------------------------------------------------------------------
-  test("behaviour: the textarea the page loaded with holds the text, is labelled, and is hidden once upgraded", async ({ page }) => {
+  // ---- behavior -------------------------------------------------------------------------
+  test("behavior: the textarea the page loaded with holds the text, is labeled, and is hidden once upgraded", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-default");
     const ta = section(page, "sp-default").locator("textarea");
@@ -738,7 +738,7 @@ eachTheme((theme) => {
     await expect(surfaceOf(section(page, "sp-default"))).toBeFocused();
   });
 
-  test("behaviour: what a person types is kept in the textarea, with an input event, so a form posts it", async ({ page }) => {
+  test("behavior: what a person types is kept in the textarea, with an input event, so a form posts it", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-form");
     await page.evaluate(() => {
@@ -752,7 +752,7 @@ eachTheme((theme) => {
     await expect(page.locator("#posted")).toHaveText(JSON.stringify("## Posted from the editor\n\nTwo lines."));
   });
 
-  test("behaviour: saving an empty required editor names the problem, focuses the surface and clears when fixed", async ({ page }) => {
+  test("behavior: saving an empty required editor names the problem, focuses the surface and clears when fixed", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-form");
     await page.getByRole("button", { name: "Save draft" }).click();
@@ -766,7 +766,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("alert")).toHaveCount(0);
   });
 
-  test("behaviour: the word count and reading time follow the text, and the limit is said in words", async ({ page }) => {
+  test("behavior: the word count and reading time follow the text, and the limit is said in words", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-empty");
     const stats = section(page, "sp-empty").locator(".cap-md-stats");
@@ -781,7 +781,7 @@ eachTheme((theme) => {
     await expect(section(page, "sp-limit").locator(".cap-md-limit")).not.toHaveAttribute("data-over", "");
   });
 
-  test("behaviour: the placeholder shows while the editor is empty and goes when there is text", async ({ page }) => {
+  test("behavior: the placeholder shows while the editor is empty and goes when there is text", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-empty");
     const ph = section(page, "sp-empty").locator(".cm-placeholder");
@@ -791,7 +791,7 @@ eachTheme((theme) => {
     await expect(ph).toHaveCount(0);
   });
 
-  test("behaviour: long lines wrap instead of scrolling sideways", async ({ page }) => {
+  test("behavior: long lines wrap instead of scrolling sideways", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-empty");
     await type(page, surface, Array.from({ length: 120 }, () => "wrapping").join(" "));
@@ -799,7 +799,7 @@ eachTheme((theme) => {
     expect(scrollW).toBeLessThanOrEqual(clientW + 1);
   });
 
-  test("behaviour: line numbers appear on the gutter only when asked for", async ({ page }) => {
+  test("behavior: line numbers appear on the gutter only when asked for", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-lines");
     await ready(page, "sp-default");
@@ -807,7 +807,7 @@ eachTheme((theme) => {
     await expect(section(page, "sp-default").locator(".cm-gutters")).toHaveCount(0);
   });
 
-  test("behaviour: read-only keeps focus, selection and scrolling but takes no edits, and its toolbar is off", async ({ page }) => {
+  test("behavior: read-only keeps focus, selection and scrolling but takes no edits, and its toolbar is off", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-readonly");
     await surface.click();
@@ -819,7 +819,7 @@ eachTheme((theme) => {
     await expect(surface).toHaveAttribute("aria-readonly", "true");
   });
 
-  test("behaviour: disabled takes no focus, is not posted, and its toolbar is off", async ({ page }) => {
+  test("behavior: disabled takes no focus, is not posted, and its toolbar is off", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-disabled");
     await expect(surface).toHaveAttribute("contenteditable", "false");
@@ -827,7 +827,7 @@ eachTheme((theme) => {
     for (const b of await toolbarOf(section(page, "sp-disabled")).getByRole("button").all()) await expect(b).toBeDisabled();
   });
 
-  test("behaviour: a change to the textarea's attributes reaches the editor", async ({ page }) => {
+  test("behavior: a change to the textarea's attributes reaches the editor", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-default");
     await page.locator("#md-default").evaluate((t: HTMLTextAreaElement) => (t.readOnly = true));
@@ -840,7 +840,7 @@ eachTheme((theme) => {
     await expect(surface).not.toHaveAttribute("aria-readonly", "true");
   });
 
-  test("behaviour: a form reset puts the text the page loaded with back", async ({ page }) => {
+  test("behavior: a form reset puts the text the page loaded with back", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-form");
     await type(page, surface, "scratch");
@@ -849,7 +849,7 @@ eachTheme((theme) => {
     await expect(section(page, "sp-form").locator(".cm-placeholder")).toBeVisible();
   });
 
-  test("behaviour: the handle sets and reads the text without calling onChange, and destroying it gives the textarea back", async ({ page }) => {
+  test("behavior: the handle sets and reads the text without calling onChange, and destroying it gives the textarea back", async ({ page }) => {
     await page.addInitScript(() => {
       const w = window as unknown as { capHandles: Record<string, { getValue(): string; setValue(v: string): void; destroy(): void }> };
       w.capHandles = {};
@@ -873,7 +873,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sp-form [data-cap]")).not.toHaveAttribute("data-cap-md", "ready");
   });
 
-  test("behaviour: the block menu is the app's data, and with none supplied a lone / is only text", async ({ page }) => {
+  test("behavior: the block menu is the app's data, and with none supplied a lone / is only text", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-empty");
     await type(page, surface, "/");
@@ -881,7 +881,7 @@ eachTheme((theme) => {
     await expect(toolbarOf(section(page, "sp-empty")).getByRole("button", { name: "Chart" })).toHaveCount(0);
   });
 
-  test("behaviour: it fits a phone: the toolbar wraps and nothing scrolls the page sideways", async ({ page }) => {
+  test("behavior: it fits a phone: the toolbar wraps and nothing scrolls the page sideways", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 });
     await visitStates(page, NAME, theme);
     await ready(page, "sp-default");
@@ -892,7 +892,7 @@ eachTheme((theme) => {
     expect(target?.height).toBeGreaterThanOrEqual(24);
   });
 
-  test("behaviour: with a CSP that needs a nonce, the editor's styles carry it and nothing is blocked", async ({ page }) => {
+  test("behavior: with a CSP that needs a nonce, the editor's styles carry it and nothing is blocked", async ({ page }) => {
     const nonce = "n0nc3abc";
     await page.route("**/components/markdown-editor/states.html*", async (route) => {
       const res = await route.fetch();
@@ -914,7 +914,7 @@ eachTheme((theme) => {
 // ---- no script: the page as delivered ------------------------------------------------------
 test.describe("without script", () => {
   test.use({ javaScriptEnabled: false });
-  test("accessibility: the page as delivered has a labelled textarea holding the markdown", async ({ page }) => {
+  test("accessibility: the page as delivered has a labeled textarea holding the markdown", async ({ page }) => {
     await page.goto(`components/${NAME}/states.html`);
     const ta = page.getByRole("textbox", { name: "Body" }).first();
     await expect(ta).toBeVisible();
@@ -924,7 +924,7 @@ test.describe("without script", () => {
   });
 });
 
-test("behaviour: the HTML the server sends already contains the text, label and textarea", async ({ request }) => {
+test("behavior: the HTML the server sends already contains the text, label and textarea", async ({ request }) => {
   const res = await request.get(`components/${NAME}/states.html`);
   const html = await res.text();
   expect(html).toMatch(/<label[^>]*for="md-default"[^>]*>Body<\/label>/);
@@ -934,7 +934,7 @@ test("behaviour: the HTML the server sends already contains the text, label and 
   expect(html).not.toContain('role="toolbar"');
 });
 
-test("accessibility: React: a server render is the labelled textarea holding the text, with no style attribute", async ({ page }) => {
+test("accessibility: React: a server render is the labeled textarea holding the text, with no style attribute", async ({ page }) => {
   await visitStates(page, NAME, "light");
   // states.tsx renders the wrapper with react-dom/server and keeps the HTML it produced.
   const html = await page.evaluate(() => (window as unknown as { capReactSsr: string }).capReactSsr);
@@ -947,7 +947,7 @@ test("accessibility: React: a server render is the labelled textarea holding the
   expect(html).not.toContain('role="toolbar"');
 });
 
-test("behaviour: CodeMirror is its own chunk: no script the page loads first holds it, and it loads only when an editor mounts", async ({ page }) => {
+test("behavior: CodeMirror is its own chunk: no script the page loads first holds it, and it loads only when an editor mounts", async ({ page }) => {
   const loaded: string[] = [];
   page.on("response", (r) => {
     if (r.url().endsWith(".js")) loaded.push(r.url());

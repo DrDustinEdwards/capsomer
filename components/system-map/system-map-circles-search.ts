@@ -74,8 +74,8 @@ const UNDER_BOX = 1e5;
 export const CROSSING = 1e4;
 const FAN = 600;
 const MIN_FAN_DEG = 16;
-/** A part with nothing pulling it drifts to the middle: this much per unit from the centre. */
-const CENTRE_PULL = 0.4;
+/** A part with nothing pulling it drifts to the middle: this much per unit from the center. */
+const CENTER_PULL = 0.4;
 /** The share of the circle's area its boxes and their gaps take, at most. */
 const FILL = 0.45;
 /** How many moves the annealing tries on a drawing with a fault. */
@@ -88,7 +88,7 @@ const CURVE_STEPS = 10;
 const MAX_BOW = 0.55;
 
 /** Every number the search is drawn from, so a saved circle is searched again once one changes. */
-export const SEARCH_NUMBERS = [NAME_SIZE, KIND_SIZE, RIM_SIZE, LINE_H, BOX_PAD_X, MAX_LINE, MIN_BOX_W, RIM_H, RIM_PAD_X, MARGIN, RIM_GAP, IN_PAD, BOX_GAP, ROW_GAP, CLEAR, GRID, LABEL_SIZE, LABEL_FOOT, OVERLAP, UNDER_BOX, CROSSING, FAN, MIN_FAN_DEG, CENTRE_PULL, FILL, ANNEAL_STEPS, SEEDS, CURVE_STEPS, MAX_BOW];
+export const SEARCH_NUMBERS = [NAME_SIZE, KIND_SIZE, RIM_SIZE, LINE_H, BOX_PAD_X, MAX_LINE, MIN_BOX_W, RIM_H, RIM_PAD_X, MARGIN, RIM_GAP, IN_PAD, BOX_GAP, ROW_GAP, CLEAR, GRID, LABEL_SIZE, LABEL_FOOT, OVERLAP, UNDER_BOX, CROSSING, FAN, MIN_FAN_DEG, CENTER_PULL, FILL, ANNEAL_STEPS, SEEDS, CURVE_STEPS, MAX_BOW];
 
 export const f1 = (n: number) => Math.round(n * 10) / 10;
 
@@ -165,7 +165,7 @@ export function segmentsCross(s: readonly number[], t: readonly number[]): boole
   return u > 1e-6 && u < 1 - 1e-6 && v > 1e-6 && v < 1 - 1e-6;
 }
 
-/** Where the line from a box's centre toward a point leaves the box. */
+/** Where the line from a box's center toward a point leaves the box. */
 function exitPoint(n: CircleNode, tx: number, ty: number): [number, number] {
   const dx = tx - n.x;
   const dy = ty - n.y;
@@ -174,7 +174,7 @@ function exitPoint(n: CircleNode, tx: number, ty: number): [number, number] {
 }
 
 /**
- * A wire's segment, from edge to edge: between two boxes along the line joining their centres;
+ * A wire's segment, from edge to edge: between two boxes along the line joining their centers;
  * from the circle, at the point facing the box.
  */
 function segmentOf(w: CircleWire, nodes: readonly CircleNode[], r: number): number[] {
@@ -239,7 +239,7 @@ function placeHalf(row: CircleNode[], r: number, halfW: number, sign: 1 | -1): v
   }
   for (let i = 0; i < n; i++) xs[i] = Math.max(x(i), -right + at(i).w / 2);
   apart();
-  /** How far from the centre line a box at x must sit to keep `d` from the circle's centre. */
+  /** How far from the center line a box at x must sit to keep `d` from the circle's center. */
   const hug = (px: number, b: CircleNode, d: number) => {
     const nx = Math.max(0, Math.abs(px) - b.w / 2);
     return (nx >= d ? 0 : Math.sqrt(d * d - nx * nx)) + b.h / 2;
@@ -332,7 +332,7 @@ export function coster(nodes: CircleNode[], wires: readonly CircleWire[], r: num
     ang = Math.min(ang, 360 - ang);
     return ang < MIN_FAN_DEG ? FAN : 0;
   };
-  const pull = (i: number) => (nodes[i]!.role === "part" ? CENTRE_PULL * Math.hypot(nodes[i]!.x, nodes[i]!.y) : 0);
+  const pull = (i: number) => (nodes[i]!.role === "part" ? CENTER_PULL * Math.hypot(nodes[i]!.x, nodes[i]!.y) : 0);
   const total = () => {
     let c = 0;
     for (let i = 0; i < n; i++) c += pull(i);

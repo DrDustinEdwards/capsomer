@@ -54,7 +54,7 @@
   }
 
   /* The connector: from under this row's glyph to the next row's. Drawn only between rows
-     of one day, in the glyph column's centre. */
+     of one day, in the glyph column's center. */
   .cap-feed-row:not(:last-child)::after {
     content: "";
     position: absolute;

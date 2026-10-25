@@ -13,9 +13,9 @@ test.describe("paintedContrast", () => {
     expect(white?.bg).toBe("#000000");
     expect(white?.ratio).toBeCloseTo(21, 0);
     // black on 50% black over white is #808080: 5.32:1
-    const grey = await paintedContrast(page, "#u");
-    expect(grey?.bg).toBe("#808080");
-    expect(grey?.ratio).toBeCloseTo(5.32, 1);
+    const gray = await paintedContrast(page, "#u");
+    expect(gray?.bg).toBe("#808080");
+    expect(gray?.ratio).toBeCloseTo(5.32, 1);
   });
 
   test("accessibility: SVG text is read by its fill, on the shape drawn before it in its group", async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe("expectContrast", () => {
 });
 
 test.describe("expectNoAxeViolations", () => {
-  test("accessibility: a clean page passes and an unlabelled button fails, naming the rule", async ({ page }) => {
+  test("accessibility: a clean page passes and an unlabeled button fails, naming the rule", async ({ page }) => {
     await page.setContent(`<!doctype html><html lang="en"><head><title>t</title></head><body><main><h1>h</h1><button id="b">Save</button></main></body></html>`);
     await expectNoAxeViolations(page);
     await page.evaluate(() => (document.getElementById("b")!.textContent = ""));
@@ -72,7 +72,7 @@ test.describe("expectNoAxeViolations", () => {
 });
 
 test.describe("focused and nextPost", () => {
-  test("behaviour: focused describes the active element, or body", async ({ page }) => {
+  test("behavior: focused describes the active element, or body", async ({ page }) => {
     await page.setContent(`<button id="go" aria-label="Go now">Go</button><a href="#">Link text</a>`);
     expect(await focused(page)).toBe("body");
     await page.focus("#go");
@@ -81,7 +81,7 @@ test.describe("focused and nextPost", () => {
     expect(await focused(page)).toBe(`a "Link text"`);
   });
 
-  test("behaviour: nextPost stops the next submit and returns method, encoding and fields, a file by name", async ({ page }) => {
+  test("behavior: nextPost stops the next submit and returns method, encoding and fields, a file by name", async ({ page }) => {
     await page.route("http://helpers.test/**", (route) => route.fulfill({ contentType: "text/html", body: "<p>posted</p>" }));
     await page.goto("http://helpers.test/form");
     await page.setContent(`<div id="root"><form method="post" enctype="multipart/form-data" action="http://helpers.test/x">

@@ -1,4 +1,4 @@
-// The markdown editor's behaviour: a labelled <textarea>, delivered in the page's HTML, is
+// The markdown editor's behavior: a labeled <textarea>, delivered in the page's HTML, is
 // upgraded in place to a CodeMirror surface with a toolbar, a link palette, a slash menu, an
 // image prompt that insists on alt text, and a word count. The textarea stays in the page,
 // hidden and kept in step, so a form posts the markdown and a page without script still has
@@ -272,7 +272,7 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     panel.remove();
   }
 
-  // ---- the link palette: a labelled combobox over the shared listbox ----------------------
+  // ---- the link palette: a labeled combobox over the shared listbox ----------------------
   async function resolveTargets(query: string): Promise<LinkTarget[]> {
     const src = o.linkTargets;
     if (!src) return [];

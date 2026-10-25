@@ -84,12 +84,12 @@ const rectOf = (b: Box): Rect => ({ x: b.x - b.w / 2, y: b.y - BOX_H / 2, w: b.w
 const rectCorners = (r: Rect): Pt[] => [[r.x, r.y], [r.x + r.w, r.y], [r.x, r.y + r.h], [r.x + r.w, r.y + r.h]];
 
 /** How far a rectangle sits inside a circle: the circle's radius less its farthest corner's
- *  distance from the centre (below 0, a corner is outside). */
+ *  distance from the center (below 0, a corner is outside). */
 export function rectInset(r: Rect, c: Circle): number {
   return c.r - Math.max(...rectCorners(r).map(([x, y]) => Math.hypot(x - c.cx, y - c.cy)));
 }
 
-/** How far a rectangle sits outside a circle: its nearest point's distance from the centre
+/** How far a rectangle sits outside a circle: its nearest point's distance from the center
  *  less the radius (below 0, it reaches inside). */
 export function rectOutset(r: Rect, c: Circle): number {
   return Math.hypot(Math.max(r.x - c.cx, 0, c.cx - r.x - r.w), Math.max(r.y - c.cy, 0, c.cy - r.y - r.h)) - c.r;
@@ -346,7 +346,7 @@ function placeInside(containers: readonly MapContainer[], c: Circle, minPitch: n
       for (let i = 0; i < list.length; i += max) rows.push({ items: list.slice(i, i + max), w: bw });
     }
     if (rows.length === 0) return [];
-    // Half a box's width from the centre of each slot to its edge; the slots sit COL_GAP apart.
+    // Half a box's width from the center of each slot to its edge; the slots sit COL_GAP apart.
     const fits = (pitch: number): Box[] | null => {
       const mid = c.cy - LABEL_H / 2;
       const out: Box[] = [];
@@ -385,7 +385,7 @@ export function insideScene(containers: readonly MapContainer[], links: readonly
     const xl = vx + MARGIN + BOX_W / 2;
     const xr = vx + vw - MARGIN - BOX_W / 2;
     outside = externals.map((c, i) => ({ c, x: i % 2 === 0 ? xl : xr, y: i < 2 ? vy + MARGIN + BOX_H / 2 : vy + vh - MARGIN - BOX_H / 2, w: BOX_W }));
-    // The circle is centred between the bands the parts outside sit in, and as large as the
+    // The circle is centered between the bands the parts outside sit in, and as large as the
     // drawing allows: within its margins, and OUT_CLEAR from every part outside, which sit in
     // the corners it leaves.
     const top = externals.length ? vy + MARGIN + BOX_H + OUT_GAP : vy + MARGIN;
@@ -402,7 +402,7 @@ export function insideScene(containers: readonly MapContainer[], links: readonly
   }
   if (!inside) inside = [];
   const viewBox: [number, number, number, number] = [Math.round(vx * 10) / 10, Math.round(vy * 10) / 10, Math.round(vw * 10) / 10, Math.round(vh * 10) / 10];
-  // The name is 9-unit capitals in a monospace face, a little under 7 units a letter, centred
+  // The name is 9-unit capitals in a monospace face, a little under 7 units a letter, centered
   // at the circle's foot; a name too long for the chord there is squeezed to fit (textLength),
   // so lines avoid all of it.
   const textY = boundary.cy + boundary.r - LABEL_FOOT;

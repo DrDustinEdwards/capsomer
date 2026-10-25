@@ -2,7 +2,7 @@
 name: media-library
 title: Media library (for a site)
 summary: One page of one site's files, the same in Carrel and in every site admin. Search, tag chips, the library and Trash, a grid or a list, upload checked against the site's limits, the bulk bar with each file's outcome, an inspector in form or autosave mode, Undo, and a picker mode that asks for the alt text each use needs. Every action is a form post, so it all works with no script.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + React (composes media, drop zone, chips, tabs, field, bulk bar, message, empty and confirm dialog)
 states: [editor with every action, inspector in form mode, Trash as a list, reader on a limited site, picker, picker alt step with no script, empty trash, no match, delivered HTML]
 added: 0.6.0
@@ -47,7 +47,7 @@ The grid's and the inspector's keys are `media`'s (arrow keys, Home, End, Enter 
 ## Accessibility
 
 - The library is a region named by its noun ("Files"); the picker is "Choose an image".
-- The tags and lenses are labelled lists of links in a `nav`; the current one has `aria-current` and the pressed look.
+- The tags and lenses are labeled lists of links in a `nav`; the current one has `aria-current` and the pressed look.
 - Each tile's box names its file; the inspector is a dialog named by the file; each of its forms is named ("Alt text", "Tags").
 - The alt step's text field is required, so the browser says so; Insert as decorative skips the check on purpose.
 - Text reaches 4.5:1 and edges 3:1 in both themes.
@@ -89,7 +89,7 @@ Props: `data` (`MediaData`), `action`, `Form`, `submit`, `result`, `labels` (`{ 
 
 The intents it posts, each with `ids`: `upload` (with `file` and `alt`), `add-tags` and `remove-tags` (with `tag`), `trash`, `restore`, `delete` (answered with `result.confirm`, then posted again with `confirm`, the typed count), `save-alt` (`alt`, `decorative`, `version`) and `save-tags` (`tags`, `version`) from the form-mode inspector, `save` (every field the site keeps) from the autosave one, `pick` (`alt`, `decorative`) from the picker with no script, a host's toolbar intent, and whatever `result.undo` names.
 
-`import { mediaActions, mediaHref, uploadRules, pickable } from "capsomer/behaviour/media-library"`: the pure helpers.
+`import { mediaActions, mediaHref, uploadRules, pickable } from "capsomer/behavior/media-library"`: the pure helpers.
 
 **Dependencies.** It needs the stylesheets of the parts it composes: media, drop-zone, chips, tabs, field, bulk-bar, meter, message, empty, dialog, confirm-dialog, status and content (the shared result box), with this one.
 

@@ -1,4 +1,4 @@
-// The moderation queue's behaviour and its pure helpers. Mentions from strangers wait in a list;
+// The moderation queue's behavior and its pure helpers. Mentions from strangers wait in a list;
 // a and r approve or reject the row under focus at once (act first), a message says what
 // happened and offers Undo where the site can reverse it (z undoes it), d deletes after a
 // confirm, x selects, j and k move. The states are the site-api contract's own: Waiting
@@ -21,7 +21,7 @@ export type { ModState, ModView, ModAction, Mention, Counts, Status, UndoEntry, 
 export { isTypingKey };
 
 // ---------------------------------------------------------------------------------------
-// The behaviour.
+// The behavior.
 
 const READY = "data-cap-ready";
 

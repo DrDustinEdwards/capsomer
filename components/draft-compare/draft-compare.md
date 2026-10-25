@@ -1,8 +1,8 @@
 ---
 name: draft-compare
 title: Draft compare
-summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on colour, a legend, jump keys and folded unchanged passages.
-parts: [css, behaviour, react]
+summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on color, a legend, jump keys and folded unchanged passages.
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [patch of two revisions, patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
 added: 0.3.0
@@ -33,15 +33,15 @@ Draft 3 against draft 4; the published post against the draft that is open; what
 
 Where the line is the unit (code, a configuration file, a commit), give `renderPatch` a unified git patch (`git diff`, `git show`, `git format-patch`) and it draws what the site's `DiffBlock` drew, as Capsomer's own markup. It is an option of this component, not a second one: the same legend, marks, tokens and scroll region.
 
-- **One file at a time.** A heading with the path (a rename reads "old → new", a new or deleted file says so) and its counts (two revisions of one thing, labelled `id@v1` and `id@v2`, are not a rename: the heading names `id` once with "v1 to v2" beside it, and `revisionPair(old, new)` is pure and exported; only a shared name with a different `@` suffix counts, any other pair of paths reads as before), then the lines in a table inside a focusable, named, scrolling region (a keyboard can only scroll what it can focus).
-- **A changed line is more than a tint.** The old and new line numbers sit beside it, a literal plus or minus opens it, and a screen reader hears "added" or "removed". A removed line is also struck through. In forced colours the tint is gone and the edge and sign remain.
+- **One file at a time.** A heading with the path (a rename reads "old → new", a new or deleted file says so) and its counts (two revisions of one thing, labeled `id@v1` and `id@v2`, are not a rename: the heading names `id` once with "v1 to v2" beside it, and `revisionPair(old, new)` is pure and exported; only a shared name with a different `@` suffix counts, any other pair of paths reads as before), then the lines in a table inside a focusable, named, scrolling region (a keyboard can only scroll what it can focus).
+- **A changed line is more than a tint.** The old and new line numbers sit beside it, a literal plus or minus opens it, and a screen reader hears "added" or "removed". A removed line is also struck through. In forced colors the tint is gone and the edge and sign remain.
 - **Hunk headers stay** (`@@ -10,3 +10,4 @@ …`) as row-group headers, so a long file is still a series of places.
 - **What has no text is said in words.** A binary file, or a rename with no change, gets a note, not an empty table. A patch with no lines is a status, "No changes."
 - **Forgiving.** Commit headers, `index` and mode lines are skipped; CRLF is read as LF; a patch with only `---` and `+++` lines works. `parsePatch` is pure and exported, so a server can use it.
 - **No script.** It is markup and CSS only: `data-cap` is not set and `enhance()` has nothing to do. Do not use it for prose; a reflowed paragraph shows as wholly removed and added, which is what the word compare is for.
 
 ```ts
-import { renderPatch } from "capsomer/behaviour/draft-compare";
+import { renderPatch } from "capsomer/behavior/draft-compare";
 
 const html = renderPatch(patchText, { id: "commit-4f2a9c1", title: "Show the newest mention first" });
 ```
@@ -71,7 +71,7 @@ import { DraftPatch } from "capsomer/react/draft-compare";
 
 - **Side by side.** The sides are named, "Before" and "After", with title, who and when, so left and right are never a guess. It is the default because a person deciding what to keep wants to read the old and the new at once; the inline and changes-only views are one switch away.
 - **By sentence, then by word.** Sentences that match exactly are anchors; between anchors, sentences alike enough (0.4 shared words, `similarity`) are paired and compared word by word; the rest are whole sentences added or removed. Whitespace is not compared, a punctuation mark is a word of its own. The search is Myers' O(ND) and gives up past 2000 edits (`maxEdits`), calling the stretch replaced, so two unrelated texts cannot use unbounded memory.
-- **A mark is more than colour.** An insertion is underlined, tinted and opens with a plus; a deletion is struck through, tinted and opens with a minus; each says "insertion start" and "insertion end" (or "deletion") to a screen reader, in `.cap-sr-only` text inside `<ins>` and `<del>`. The text on the tint is 4.5:1 in both themes. In forced colours the tint is gone and the line and glyph remain.
+- **A mark is more than color.** An insertion is underlined, tinted and opens with a plus; a deletion is struck through, tinted and opens with a minus; each says "insertion start" and "insertion end" (or "deletion") to a screen reader, in `.cap-sr-only` text inside `<ins>` and `<del>`. The text on the tint is 4.5:1 in both themes. In forced colors the tint is gone and the line and glyph remain.
 - **All three views are in the HTML.** A radio group (the segmented control) chooses which one shows, in CSS (`:has()`), so the component works before script runs and a reader without script gets every word of every view. Ids for the jump links are on the shown view only, so none repeats. `enhance()` remembers the choice in `localStorage` (in try/catch, so a blocked store changes nothing).
 - **Unchanged sentences fold.** A run of unchanged sentences keeps one beside each change (`context`) and folds the rest, when that hides at least two: "7 unchanged sentences" in a disclosure. "Expand all unchanged" opens every fold and then closes them.
 - **Always-visible legend.** "Added" and "Removed" with their marks, the counts ("15 words added, 12 removed, 4 changes") and the three views explained. Nothing here is behind a popover or a fold.
@@ -119,7 +119,7 @@ None: shadcn has no diff or compare. Its nearest parts are matched through the c
 Write it with `renderCompare` (a string; safe on a server, escapes the text), or in React:
 
 ```ts
-import { renderCompare, enhance } from "capsomer/behaviour/draft-compare";
+import { renderCompare, enhance } from "capsomer/behavior/draft-compare";
 
 const html = renderCompare(
   { title: "Draft 3", who: "Dustin Edwards", time: "2026-09-28T18:05:00Z", text: before },
@@ -143,7 +143,7 @@ enhance(); // the jump keys, the remembered view, Expand all
 </section>
 ```
 
-`parsePatch(patch)`, `patchCounts(files)` and `patchCountsText(counts)` belong to the patch mode. `diffWords(a, b)`, `diffSentences(a, b)`, `analyse(a, b)`, `splitSentences(text)`, `countWords(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
+`parsePatch(patch)`, `patchCounts(files)` and `patchCountsText(counts)` belong to the patch mode. `diffWords(a, b)`, `diffSentences(a, b)`, `analyze(a, b)`, `splitSentences(text)`, `countWords(text)`, `countsText(counts)` and `commonSubsequence(a, b)` are pure and exported, with their types (`WordPart`, `Entry`, `Analysis`, `Counts`, `CompareSide`, `CompareOptions`). `setView(root, view)` and `toggleAll(root)` drive a compare from code.
 
 In React, `import { DraftCompare } from "capsomer/react/draft-compare"`:
 
@@ -151,7 +151,7 @@ In React, `import { DraftCompare } from "capsomer/react/draft-compare"`:
 <DraftCompare before={draft3} after={draft4} labels={{ before: "Saved", after: "Open" }} view={view} onViewChange={setView} />
 ```
 
-It renders the same string (so `renderToString` on a server and the browser agree) and attaches the same behaviour. Without `view` it remembers the person's choice; with it, the choice is yours.
+It renders the same string (so `renderToString` on a server and the browser agree) and attaches the same behavior. Without `view` it remembers the person's choice; with it, the choice is yours.
 
 ## Exceptions in production
 

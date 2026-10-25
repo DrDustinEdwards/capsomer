@@ -1,4 +1,4 @@
-// The select's behaviour: a real <select class="cap-select"> stays in the page (its options
+// The select's behavior: a real <select class="cap-select"> stays in the page (its options
 // are the HTML, it submits with the form, it works with no script); this module hides it and
 // puts a button (role="combobox") and a popup in its place, built from the shared listbox
 // (options, groups, check, typeahead, keyboard) and the shared popover (surface, placement,

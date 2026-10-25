@@ -54,7 +54,7 @@ eachTheme((theme) => {
     await expect(page.locator("#tip-retry")).toBeHidden();
   });
 
-  test("behaviour: hover shows the tip after a short delay, without covering its trigger", async ({ page }) => {
+  test("behavior: hover shows the tip after a short delay, without covering its trigger", async ({ page }) => {
     await visitStates(page, "tooltip", theme);
     await page.locator("#sample-retry").hover();
     const tip = page.locator("#tip-retry");
@@ -64,7 +64,7 @@ eachTheme((theme) => {
     expect(apart).toBe(true);
   });
 
-  test("behaviour: the tip is the shared popover's tooltip variant, a manual popover with role tooltip", async ({ page }) => {
+  test("behavior: the tip is the shared popover's tooltip variant, a manual popover with role tooltip", async ({ page }) => {
     await visitStates(page, "tooltip", theme);
     const tip = page.locator("#tip-retry");
     await expect(tip).toHaveAttribute("popover", "manual");
@@ -83,7 +83,7 @@ eachTheme((theme) => {
     await expect(tip).toBeHidden();
   });
 
-  test("behaviour: the pointer can move onto the tip without it closing, and leaving hides it", async ({ page }) => {
+  test("behavior: the pointer can move onto the tip without it closing, and leaving hides it", async ({ page }) => {
     await visitStates(page, "tooltip", theme);
     await page.locator("#sample-retry").hover();
     const tip = page.locator("#tip-retry");

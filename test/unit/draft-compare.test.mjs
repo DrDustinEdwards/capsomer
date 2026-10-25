@@ -2,7 +2,7 @@
 // the html the renderer writes. Correctness only; nothing here pins a design value.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { analyse, commonSubsequence, countWords, countsText, diffSentences, diffWords, parsePatch, patchCounts, renderCompare, renderPatch, splitSentences } from "../../components/draft-compare/draft-compare.ts";
+import { analyze, commonSubsequence, countWords, countsText, diffSentences, diffWords, parsePatch, patchCounts, renderCompare, renderPatch, splitSentences } from "../../components/draft-compare/draft-compare.ts";
 
 const side = (s) => s.filter((p) => p.op !== "ins").map((p) => p.text).join("");
 const other = (s) => s.filter((p) => p.op !== "del").map((p) => p.text).join("");
@@ -110,10 +110,10 @@ test("diffSentences: unrelated sentences are one removed and one added, not an e
   assert.deepEqual(ops, ["del", "ins"]);
 });
 
-test("analyse: counts words added and removed and groups the changes", () => {
+test("analyze: counts words added and removed and groups the changes", () => {
   const a = "One stays. Two goes away now. Three stays. Four stays. Five stays.\n\nSix stays.";
   const b = "One stays. Three stays. Four stays. Five stays.\n\nSix stays. Seven is new today.";
-  const an = analyse(a, b);
+  const an = analyze(a, b);
   assert.equal(an.identical, false);
   assert.equal(an.counts.changes, 2);
   assert.equal(an.counts.removed, 4);
@@ -121,8 +121,8 @@ test("analyse: counts words added and removed and groups the changes", () => {
   assert.equal(countsText(an.counts), "4 words added, 4 removed, 2 changes");
 });
 
-test("analyse: identical texts are identical, even with different spacing", () => {
-  assert.equal(analyse("Same text.  Here.", "Same text. Here.").identical, true);
+test("analyze: identical texts are identical, even with different spacing", () => {
+  assert.equal(analyze("Same text.  Here.", "Same text. Here.").identical, true);
   assert.equal(countsText({ added: 1, removed: 1, changes: 1 }), "1 word added, 1 removed, 1 change");
 });
 
