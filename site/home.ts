@@ -193,7 +193,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
       <li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a> in each release</li>
       <li><a href="https://dustinedwards.info">Dustin Edwards</a></li>
     </ul>
-    <p class="home-muted">Release ${esc(d.version)}. The letters at the top of each section are Supergraphics, after Barbara Stauffacher Solomon's walls at The Sea Ranch, 1966.</p>
+    <p class="home-muted">Release ${esc(d.version)}.</p>
   </div>
 </footer>`;
 }
