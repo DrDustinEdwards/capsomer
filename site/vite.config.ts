@@ -6,6 +6,7 @@ import react from "@vitejs/plugin-react";
 import { generateStates } from "../bin/states.mjs";
 import { readData, renderHome } from "./home.ts";
 import { writeHeadersFile } from "../scripts/security-headers.ts";
+import { discoveryFiles, siteHead } from "./seo.ts";
 
 // One build for the site and every component's states page. The root is the repo, so a
 // states page sits at /components/<name>/states.html beside its component. The site is
@@ -44,6 +45,20 @@ export default defineConfig({
         if (home) home.fileName = "index.html";
         const admin = bundle["site/index.html"];
         if (admin) admin.fileName = "admin/index.html";
+      },
+    },
+    // Each page's head tags and the discovery files, from Prelum (site/seo.ts).
+    {
+      name: "capsomer-site-seo",
+      transformIndexHtml: {
+        order: "pre",
+        handler(html, ctx) {
+          const page = ctx.path.endsWith("/site/home.html") ? "home" : "admin";
+          return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", siteHead(page));
+        },
+      },
+      generateBundle() {
+        for (const [fileName, source] of Object.entries(discoveryFiles())) this.emitFile({ type: "asset", fileName, source });
       },
     },
     // The security headers and the assets' cache rule, generated from scripts/security-headers.ts

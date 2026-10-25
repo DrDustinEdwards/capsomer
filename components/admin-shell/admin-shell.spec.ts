@@ -839,6 +839,17 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
   });
 
+  test("behaviour: the tab title is \"<page> · <app>\" by default, and documentTitle={false} leaves the app's own", async ({ page }) => {
+    await visitStates(page, "admin-shell", theme, "transition");
+    await expect(page).toHaveTitle("Overview · Capsid Portal");
+    await visitStates(page, "admin-shell", theme, "own-title");
+    await expect(page.getByTestId("page-title")).toHaveText("overview");
+    await expect(page).toHaveTitle("overview - the app's own title");
+    await page.getByRole("button", { name: "Next page" }).click();
+    await expect(page.getByTestId("page-title")).toHaveText("sites");
+    await expect(page).toHaveTitle("sites - the app's own title");
+  });
+
   test("behaviour: a browser without the View Transitions API changes the page with no error", async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));

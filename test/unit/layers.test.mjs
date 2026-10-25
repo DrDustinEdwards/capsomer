@@ -18,7 +18,7 @@ function cssFiles(dir) {
 }
 
 test("every component and base stylesheet states the layer order", () => {
-  const files = [...cssFiles("components"), "css/base.css", "css/prose.css"];
+  const files = [...cssFiles("components"), "css/base.css", "css/utilities.css", "css/prose.css"];
   assert.ok(files.length > 20);
   const bad = files.filter((f) => !readFileSync(f, "utf8").includes(ORDER));
   assert.deepEqual(bad, []);
