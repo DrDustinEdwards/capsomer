@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+- **The showcase site's search and AI surface now comes from Prelum** (`@drdustinedwards/site-helpers` 0.8.0, a dev dependency, site tooling only), as on every family site: the front page's canonical, Open Graph and Twitter tags with a share card (`site/public/og-card.png`) and JSON-LD; the sitemap, robots.txt (the family bot policy), a new ai.txt and llms.txt, written at build from `site/seo.ts`; and `tdm-reservation: 1` in `_headers`. The 404 page says noindex. The package itself is unchanged.
+
 ## [0.20.0]
 
 **Foxhound's two asks before launch** (capsomer job_adef3dadfa88, for foxhound job_490a6bc5b957 and job_69b3fb23214b).

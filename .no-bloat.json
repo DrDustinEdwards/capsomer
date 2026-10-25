@@ -1,13 +1,13 @@
 {
   "baseline": {
-    "measured_at": "ea38bcd",
+    "measured_at": "89b394b",
     "knip": {
       "Unused files": 1,
       "Duplicate exports": 1
     },
     "jscpd": {
-      "clones": 158,
-      "percentage": 2.5
+      "clones": 155,
+      "percentage": 2.4
     }
   }
 }
