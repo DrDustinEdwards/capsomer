@@ -2,8 +2,8 @@
  * The site's search and AI surface, from Prelum (`@drdustinedwards/site-helpers`), the family's one
  * SEO module: the front page's head tags and JSON-LD, and the sitemap, robots.txt (the family bot
  * policy; Cloudflare puts its own lines first), ai.txt (citation welcome, training reserved, as the
- * tdm-reservation header in _headers says) and llms.txt (https://llmstxt.org). site/vite.config.ts
- * writes them into the build. The site is two pages, the public page at / and the admin at /admin/,
+ * tdm-reservation header in _headers says), llms.txt (https://llmstxt.org), security.txt and the
+ * IndexNow key file. site/vite.config.ts writes them into the build. The site is two pages, the public page at / and the admin at /admin/,
  * whose sections are hash addresses that search engines treat as that page.
  */
 import { headHtml, headTags } from "@drdustinedwards/site-helpers/head";
@@ -11,10 +11,15 @@ import { llmsDocument } from "@drdustinedwards/site-helpers/llms";
 import { aiTxt, robotsDocument } from "@drdustinedwards/site-helpers/robots";
 import { graph, jsonLd, thing, website } from "@drdustinedwards/site-helpers/schema";
 import { sitemapDocument } from "@drdustinedwards/site-helpers/sitemap";
+import { securityTxt } from "@dustinedwards/site-runtime/security-txt";
 
 /** The production origin (rulings.md, rule 16): a workers.dev copy must not claim to be the page. */
 const ORIGIN = "https://capsomer.dustinedwards.info";
 const REPO = "https://github.com/DrDustinEdwards/capsomer";
+/** The IndexNow key, served as /<key>.txt; .github/workflows/indexnow.yml reads it from here. Public by design. */
+export const INDEXNOW_KEY = "7c3439c6084107d16882b2cecf775765";
+/** When security.txt lapses (RFC 9116 asks for under a year); renew it before then. */
+const SECURITY_TXT_EXPIRES = "2027-10-25T00:00:00Z";
 const DESCRIPTION =
   "Capsomer: the shared design system for Dustin Edwards's sites and apps. Six color families, three faces, every component in every state, in plain CSS.";
 const AUTHOR = { "@type": "Person", "@id": "https://dustinedwards.info/#person", name: "Dustin Edwards", url: "https://dustinedwards.info" };
@@ -61,6 +66,8 @@ export function siteHead(page: "home" | "admin"): string {
 export function discoveryFiles(): Record<string, string> {
   return {
     "sitemap.xml": sitemapDocument([{ loc: `${ORIGIN}/` }]),
+    ".well-known/security.txt": securityTxt({ origin: ORIGIN, contact: "security@dustinedwards.info", expires: SECURITY_TXT_EXPIRES }),
+    [`${INDEXNOW_KEY}.txt`]: INDEXNOW_KEY,
     "robots.txt": robotsDocument({ origin: ORIGIN, notes: [`AI usage policy: ${ORIGIN}/ai.txt`, `LLM guide: ${ORIGIN}/llms.txt`] }),
     "ai.txt": aiTxt({ origin: ORIGIN, name: "Capsomer", contact: "contact@dustinedwards.info" }),
     "llms.txt": llmsDocument({

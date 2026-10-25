@@ -50,7 +50,7 @@ function useRoute(): { view: View; detail: string | null } {
   const read = () => {
     const [raw, detail] = location.hash.replace(/^#\/?/, "").split("/");
     // The color page's old address still opens it.
-    const view = raw === "colour" ? "color" : raw;
+    const view = raw === "colour" ? "color" : raw; // codespell:ignore
     const v = VIEWS.some((x) => x.id === view) ? (view as View) : "overview";
     return { view: v, detail: detail ? decodeURIComponent(detail) : null };
   };

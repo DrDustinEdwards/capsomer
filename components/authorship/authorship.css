@@ -63,8 +63,8 @@
   /* A run. Color and pattern per kind; the rule is the identifying mark, so it reaches 3:1
      on the page. */
   .cap-run {
-    /* --cap-run-colour: the old spelling, still read so an app that set it keeps working. */
-    --cap-run-color: var(--cap-run-colour, var(--accent));
+    /* --cap-run-colour: the old spelling, still read so an app that set it keeps working. codespell:ignore */
+    --cap-run-color: var(--cap-run-colour, var(--accent)); /* codespell:ignore */
     --cap-run-pattern: solid;
     border: 0 var(--cap-run-pattern) var(--cap-run-color);
     border-inline-start-width: var(--cap-auth-rule, 4px);
@@ -144,7 +144,7 @@
     background: var(--sunken);
   }
   .cap-authorship-seg {
-    --cap-run-color: var(--cap-run-colour, var(--accent));
+    --cap-run-color: var(--cap-run-colour, var(--accent)); /* codespell:ignore */
     flex: var(--cap-share, 0) 1 0;
     min-width: 0;
     background: var(--cap-run-color);

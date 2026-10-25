@@ -13,7 +13,7 @@
 import { singleKeysOff } from "../row-list/row-list.ts";
 import { type CompareView, STORAGE_KEY, VIEWS } from "./draft-compare-render.ts";
 
-export { tokenize, countWords, commonSubsequence, diffWords, splitSentences, diffSentences, analyze, analyse, countsText } from "./draft-compare-diff.ts";
+export { tokenize, countWords, commonSubsequence, diffWords, splitSentences, diffSentences, analyze, analyse, countsText } from "./draft-compare-diff.ts"; // codespell:ignore
 export type { Op, WordPart, DiffOptions, Sentence, Entry, SentenceOptions, Counts, Analysis } from "./draft-compare-diff.ts";
 export { VIEWS, STORAGE_KEY, esc, renderCompare } from "./draft-compare-render.ts";
 export type { CompareView, CompareSide, RunKind, RunSpan, CompareLabels, CompareOptions } from "./draft-compare-render.ts";

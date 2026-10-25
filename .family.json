@@ -1,0 +1,16 @@
+{
+  "apps": {
+    ".": "static"
+  },
+  "copies": {
+    "components/media/media.ts": "setTags here is the media inspector's own handler (render the tags, autosave), not a frontmatter writer"
+  },
+  "spelling": {
+    "contracts": [
+      "\"\\./behaviour/\\*\""
+    ],
+    "skip": [
+      "CHANGELOG.md"
+    ]
+  }
+}
