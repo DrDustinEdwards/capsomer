@@ -1,7 +1,7 @@
 ---
 name: combobox
 title: Combobox
-summary: A labelled text box that filters a list, where only a listed value can be chosen. Base UI underneath, React only.
+summary: A labeled text box that filters a list, where only a listed value can be chosen. Base UI underneath, React only.
 parts: [css, react]
 tool: Base UI
 states: [a tag field, typing a new tag, closed, closed with a value, with a clear button, several values as chips, comfortable density, open, open with chips, open with group labels, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]

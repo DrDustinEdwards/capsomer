@@ -1,7 +1,7 @@
 ---
 name: markdown-editor
 title: Markdown editor
-summary: A labelled textarea, in the page's HTML, upgraded in place to a markdown editor with a toolbar, a link palette, a slash menu, an image step that insists on alt text, and a word count.
+summary: A labeled textarea, in the page's HTML, upgraded in place to a markdown editor with a toolbar, a link palette, a slash menu, an image step that insists on alt text, and a word count.
 parts: [css, behaviour, react]
 tool: own JavaScript (CodeMirror)
 states: [a long text whose scroller is a keyboard stop, a long disabled text, default, empty with a placeholder, line numbers, link palette open, block menu open, image uploading, image waiting for alt text, image upload failed, read-only, disabled with its reason, invalid with its message, over a character limit, without script, in a form, in React]

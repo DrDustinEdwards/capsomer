@@ -1,7 +1,7 @@
 ---
 name: field
 title: Field
-summary: A labelled input, textarea, file input, checkbox, radio or input group, with help outside it and an error beside it, checked on leave and on submit.
+summary: A labeled input, textarea, file input, checkbox, radio or input group, with help outside it and an error beside it, checked on leave and on submit.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider]

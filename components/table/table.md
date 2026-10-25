@@ -1,7 +1,7 @@
 ---
 name: table
 title: Table
-summary: A native data table in a labelled, focusable scroll region, with rules between rows, tabular numbers, sortable columns and an opt-in card reflow.
+summary: A native data table in a labeled, focusable scroll region, with rules between rows, tabular numbers, sortable columns and an opt-in card reflow.
 parts: [css, behaviour]
 tool: native + own JavaScript
 states: [default, row hover, selected row, footer, caption underneath, sticky header, empty, comfortable density, sorted ascending, sorted descending, sort button hover, row hover, row focused, region focused, narrow and scrolling, reflowed to cards, columns that drop as the region narrows, a row checkbox above the row link]

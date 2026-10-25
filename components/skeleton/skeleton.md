@@ -1,7 +1,7 @@
 ---
 name: skeleton
 title: Skeleton and spinner
-summary: What a page or a panel shows while it loads: grey shapes for content, a turning arc and a word for one panel, or centred on the page.
+summary: What a page or a panel shows while it loads: gray shapes for content, a turning arc and a word for one panel, or centered on the page.
 parts: [css, react]
 tool: native
 states: [skeleton, shapes, spinner, spinner in a button, sizes, word hidden, page spinner, reduced motion, comfortable]

@@ -1,7 +1,7 @@
 ---
 name: status
 title: Status
-summary: A status as a shape, a word and a colour together, as a word or as a badge; and the badge's six variants.
+summary: A status as a shape, a word and a color together, as a word or as a badge; and the badge's six variants.
 parts: [css, react]
 tool: native
 states: [critical, warning, notice, ok, running, no data, as a word, as a badge, default, secondary, outline, destructive, ghost, link, link or button badge, hover, disabled, count, comfortable, on a selected row, no data with its reason, no data in a table cell]

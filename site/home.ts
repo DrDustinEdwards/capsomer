@@ -89,14 +89,14 @@ import "capsomer/families.css";     // fox, teal, amber, navy and forest, on dat
 import "capsomer/button.css";       // each component's CSS, as used`;
   const figures: Array<[Family, string, string, string]> = [
     ["purple", "Components", String(d.components.length), `in release ${d.version}`],
-    ["fox", "Colour families", String(FAMILIES.length), "each one 12 steps, in light and dark"],
+    ["fox", "Color families", String(FAMILIES.length), "each one 12 steps, in light and dark"],
   ];
   if (d.pairs) figures.push(["teal", "Contrast pairs", String(d.pairs.total), d.pairs.failing ? `${d.pairs.failing} failing` : "every one passes WCAG 2.2"]);
   if (d.tests) figures.push(["forest", "Tests", String(d.tests.passed + d.tests.failed), d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"]);
   return `<header class="home-top">
   <a class="home-logo" href="/"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg>Capsomer</a>
   <nav aria-label="Sections"><ul>
-    <li><a href="#colour">Colour</a></li><li><a href="#type">Type</a></li><li><a href="#components">Components</a></li><li><a href="#defaults">Defaults</a></li><li><a href="#use">Install</a></li><li><a href="/admin/">Admin</a></li>
+    <li><a href="#color">Color</a></li><li><a href="#type">Type</a></li><li><a href="#components">Components</a></li><li><a href="#defaults">Defaults</a></li><li><a href="#use">Install</a></li><li><a href="/admin/">Admin</a></li>
   </ul></nav>
 </header>
 <main id="main">
@@ -104,23 +104,23 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   ${band("Capsomer", FAMILIES, "cover")}
   <div class="home-wrap home-intro">
     <h1 id="top-h">Capsomer</h1>
-    <p class="home-lead">One design system for every one of Dustin Edwards's sites and apps: one palette grown from one seed colour, one set of components, and the tests that keep every one of them accessible in both themes. Plain CSS, MIT licensed.</p>
+    <p class="home-lead">One design system for every one of Dustin Edwards's sites and apps: one palette grown from one seed color, one set of components, and the tests that keep every one of them accessible in both themes. Plain CSS, MIT licensed.</p>
   </div>
   <ul class="home-wrap home-figures">
     ${figures.map(([f, label, n, note]) => `<li${fam(f)}><b>${esc(n)}</b><span class="home-figure-label">${esc(label)}</span><span>${esc(note)}</span></li>`).join("\n    ")}
   </ul>
 </section>
 
-<section id="colour" aria-labelledby="colour-h">
-  ${band("Colour", FAMILIES, "section")}
+<section id="color" aria-labelledby="color-h">
+  ${band("Color", FAMILIES, "section")}
   <div class="home-wrap">
-    <h2 id="colour-h">Six families from six seeds</h2>
+    <h2 id="color-h">Six families from six seeds</h2>
     <p class="home-sub">Each family is one 12-step scale with the same job for each step: step 9 is the seed, step 11 is text, step 10 fills the main button. A site picks its family with one attribute, <code>data-family</code>. These scales follow your device's theme.</p>
     <figure class="home-lohse" aria-labelledby="lohse-c">
       <div class="home-lohse-grid" role="img" aria-label="The six families as six rows of twelve steps, lightest on the left.">
         ${FAMILIES.map((f) => `<span class="home-lohse-name">${NAMES[f]}</span>${Array.from({ length: 12 }, (_, i) => `<i${fam(f)} data-step="${i + 1}"></i>`).join("")}`).join("")}
       </div>
-      <figcaption id="lohse-c">Seventy-two colours, six rows of twelve steps, in your device's theme. Laid out after Richard Paul Lohse's systematic colour series (Zurich, from 1943), where every square is the same size and the system makes the picture.</figcaption>
+      <figcaption id="lohse-c">Seventy-two colors, six rows of twelve steps, in your device's theme. Laid out after Richard Paul Lohse's systematic color series (Zurich, from 1943), where every square is the same size and the system makes the picture.</figcaption>
     </figure>
     <ul class="home-families">
       ${FAMILIES.map((f) => {
@@ -129,7 +129,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
       }).join("\n      ")}
     </ul>
     <h3 class="home-albers-h">${d.pairs ? `${d.pairs.total - d.pairs.failing} of ${d.pairs.total} contrast pairs pass` : "Every contrast pair is checked"}</h3>
-    <p class="home-sub">A colour is only as readable as what sits behind it, so the generator checks every pair a component puts together, in both themes, against WCAG 2.2. The squares are after Josef Albers's <i>Homage to the Square</i> (from 1950), his study of how a colour changes with the one around it.</p>
+    <p class="home-sub">A color is only as readable as what sits behind it, so the generator checks every pair a component puts together, in both themes, against WCAG 2.2. The squares are after Josef Albers's <i>Homage to the Square</i> (from 1950), his study of how a color changes with the one around it.</p>
     <ul class="home-albers">
       ${FAMILIES.map((f) => {
         const [l, dk] = d.accentText[f] ?? [0, 0];

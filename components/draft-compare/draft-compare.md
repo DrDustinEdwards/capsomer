@@ -1,7 +1,7 @@
 ---
 name: draft-compare
 title: Draft compare
-summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on colour, a legend, jump keys and folded unchanged passages.
+summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on color, a legend, jump keys and folded unchanged passages.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
 states: [patch of two revisions, patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
