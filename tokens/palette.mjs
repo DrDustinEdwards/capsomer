@@ -42,7 +42,9 @@ export const FAMILIES = {
   // on it, so the primary button carries a dark label in both themes (label: "dark"), as Recova's
   // did. In the light theme the seed is under 3:1 on the light surfaces, so step 9 there is the
   // same hue and chroma darkened until it reaches 3:1 (lightStep9), and the button fills with it.
-  amber: { seed: "#f0b429", anchor: null, label: "dark", defaultTheme: "dark", note: "Foxhound, dark by default; Recova's amber, with a dark button label" },
+  // Accent text is Recova's: #8a5c06 in light (the step 11 anchor) and the seed itself in dark,
+  // where it is 10:1 on the ground (a family with a dark label is light enough to be the text).
+  amber: { seed: "#f0b429", anchor: "#8a5c06", label: "dark", defaultTheme: "dark", note: "Foxhound, dark by default; Recova's amber, with a dark button label" },
   // txasm's navy: the brand #002868 is too dark to be step 9 (it fails 3:1 as a focus ring on
   // the dark surface), so it is the light theme's step 11 anchor (links, headings, accent text)
   // and step 9 is the same hue at the lightness and strength of purple and fox (OKLCH L 0.587, C 0.172).
@@ -261,7 +263,7 @@ function familyTheme(seed, anchor, scheme, label = "light") {
   // as Recova's amber button kept one near-black label in both themes.
   t.accent = s[8];
   t["accent-hover"] = s[11]; // accent text on hover: step 12
-  t["accent-text"] = s[10];
+  t["accent-text"] = label === "dark" && dark ? s[8] : s[10];
   t["accent-soft"] = s[3];
   t.sel = s[2];
   t["accent-line"] = tune(0.1, H, t.sel, CONTROL, dark ? 0.2 : 0.9, dark ? 0.9 : 0.3);
