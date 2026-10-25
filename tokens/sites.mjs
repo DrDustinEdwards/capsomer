@@ -17,12 +17,12 @@ import { fileURLToPath } from "node:url";
 import { FAMILIES, failures, themes } from "./palette.mjs";
 
 // site -> { family (whose tokens the colours are checked against), on (where the attribute
-// goes), note, all (both themes), light, dark, defaultTheme, phone, phoneMax }. A site whose
+// goes), note, all (both themes), light, dark, defaultTheme, phone, phoneMax, coarse }. A site whose
 // defaultTheme is "dark" (as its family's is) gets its dark values in the plain block and its
 // light values only where light is pinned (data-theme="light" on the root, or
 // data-cap-theme="light"); its dark values are also written under the family's dark selectors,
 // so they tie them. phone applies under phoneMax, Capsomer's phone width (767.98px) unless the
-// site's own layout breaks elsewhere. waive names a WCAG pair the site's own colours already
+// site's own layout breaks elsewhere. coarse applies under a coarse pointer (touch). waive names a WCAG pair the site's own colours already
 // fail where it renders today ({ scheme, what, fg, why }); the check refuses a waiver that no
 // longer matches a failure, so it goes once the site's colour is fixed.
 const SITES = {
@@ -56,15 +56,28 @@ const SITES = {
     },
   },
   foxhound: {
-    family: "teal",
+    family: "amber",
     on: "each .fh-cap wrapper, never <html> (Foxhound's unlayered :root would beat it there) or the admin",
-    note: "Foxhound's own neutrals and DM faces under the teal family's accents, dark by default",
+    note: "Foxhound's own neutrals, DM faces and Recova's sizes under the amber family's accents, dark by default",
     defaultTheme: "dark",
+    // Recova's measures (Dustin, 2026-10-25: back to the old sizes): 13px secondary text and
+    // 14px controls and cells (its text-[0.8125rem] and 14px inputs), 38px controls (its py-2 and
+    // 10px/14px inputs), 44px rows (py-3) and 20px card padding (p-5). Labels stay 11px, as
+    // Recova's text-[0.6875rem].
     all: {
       ui: '"DM Sans", sans-serif, Arial, sans-serif',
       "font-ui": '"DM Sans", sans-serif, Arial, sans-serif',
       mono: '"DM Mono", monospace',
+      "fs-detail": "13px",
+      "fs-body": "14px",
+      control: "38px",
+      "control-h": "38px",
+      "pad-x": "14px",
+      "pad-y": "8px",
+      "pad-card": "20px",
+      "row-h": "44px",
     },
+    coarse: { control: "44px", "control-h": "44px" },
     dark: {
       ground: "#111210",
       surface: "#181917",
@@ -182,6 +195,11 @@ function renderSite(name, site) {
   if (darkFirst && site.light && Object.keys(site.light).length) {
     css += block(name, site.light, [':root[data-theme="light"]', '[data-cap-theme="light"]'], "  ");
   }
+  // A site that sets a control size gives the touch size back under a coarse pointer, since its
+  // own value outranks tokens.css's (pointer: coarse) block.
+  if (site.coarse && Object.keys(site.coarse).length) {
+    css += `  @media (pointer: coarse) {\n${block(name, site.coarse, null, "    ")}  }\n`;
+  }
   if (site.phone && Object.keys(site.phone).length) {
     css += `  @media (max-width: ${site.phoneMax ?? PHONE_MAX}) {\n${block(name, site.phone, null, "    ")}  }\n`;
   }
@@ -218,7 +236,7 @@ function check() {
   for (const [name, site] of Object.entries(SITES)) {
     const family = FAMILIES[site.family];
     if (!family) problems.push(`${name}: family "${site.family}" is not in FAMILIES`);
-    for (const [k, v] of Object.entries({ ...site.all, ...site.light, ...site.dark, ...site.phone })) {
+    for (const [k, v] of Object.entries({ ...site.all, ...site.light, ...site.dark, ...site.phone, ...site.coarse })) {
       if (BRAND.test(k)) problems.push(`${name}: --${k} is a brand colour; add a family in palette.mjs instead`);
       if (/var\(/.test(v)) problems.push(`${name}: --${k} must be a literal, not ${v}`);
     }

@@ -4,6 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.18.0]
+
+**Foxhound back to amber** (Dustin, 2026-10-25: Foxhound keeps Recova's amber and its old sizes; teal goes to capsid.dustinedwards.info).
+
+- **New: the `amber` family.** `data-family="amber"` switches an element's subtree to Recova's amber `#f0b429`, in both themes; `capsomer/families.css` now imports it, or take it alone as `capsomer/family-amber.css`. Dark is its default theme, where step 9 is `#f0b429` itself (10:1 on the dark ground). The seed is under 3:1 on the light surfaces, so in the light theme step 9 is the same hue and chroma darkened to 3:1 (`#b68508`), from the new `lightStep9()`; every other family keeps its seed, unchanged. White cannot sit on amber, so the family's primary button carries the dark ground as its label in both themes (new family option `label: "dark"`), as Recova's did, and in light fills with step 9 and hovers to step 10. Every pair passes WCAG 2.2 in both themes. `EmailFamily` gains `"amber"`. The teal family is unchanged; its note now names capsid.dustinedwards.info.
+- **Site `foxhound` moves to the amber family and Recova's sizes:** `--fs-detail` 13px, `--fs-body` 14px, `--control` and `--control-h` 38px, `--pad-x` 14px, `--pad-y` 8px, `--pad-card` 20px, `--row-h` 44px, with 44px controls kept under a coarse pointer. Foxhound puts `data-family="amber"` where it had `"teal"`.
+- **New site option: `coarse`**, values applied under `(pointer: coarse)`, so a site that sets its own control size keeps the 44px touch size.
+- The site header's Foxhound specimens are amber.
 - **Site only:** the showcase site serves `robots.txt` (allow all, pointing to the sitemap), `sitemap.xml` and `llms.txt` (what Capsomer is and where its documentation is), so search engines and AI assistants can find it. The package is unchanged.
 
 ## [0.17.0]

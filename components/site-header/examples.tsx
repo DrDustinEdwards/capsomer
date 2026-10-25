@@ -1,5 +1,5 @@
 // Mounts the site header specimens. Every element with data-mount="<surface>" gets that surface:
-// a teal site with a dark band (Foxhound's look) and a fox site with a translucent band (Foxing's),
+// an amber site with a dark band (Foxhound's look) and a fox site with a translucent band (Foxing's),
 // each as a public page, a signed-in page or a user's dashboard, and your admin. The phone
 // specimens mount the same surfaces in a 390px frame. Names, numbers and accounts are samples.
 import { StrictMode, useEffect, type ReactNode } from "react";
@@ -68,7 +68,7 @@ const Tiles = ({ tiles, rows }: { tiles: Array<[string, string, string]>; rows: 
   </div>
 );
 
-// The teal site: Foxhound's look, its wordmark in the mono face with the x in the accent, on a band
+// The amber site: Foxhound's look, its wordmark in the mono face with the x in the accent, on a band
 // that is dark in both themes, its section links on the right before a thin divider.
 const FH_LOGO = { href: "#home", label: "Foxhound", wordmark: <span className="sh-fh-wordmark" aria-hidden="true">fo<em>x</em>hound</span> };
 const fhSections: HeaderSection[] = ["Products", "Pricing", "Demos", "Features", "Docs", "Blog"].map((label) => ({ id: label.toLowerCase(), label, href: `#${label.toLowerCase()}`, current: label === "Pricing" }));
@@ -319,7 +319,7 @@ function Hold({ press, children }: { press?: string; children: ReactNode }) {
   return <>{children}</>;
 }
 
-const Site = ({ family, children }: { family: "teal" | "fox"; children: ReactNode }) => (
+const Site = ({ family, children }: { family: "amber" | "fox"; children: ReactNode }) => (
   <div className="sh-site" data-family={family}>
     {children}
   </div>
@@ -333,23 +333,23 @@ const admin = (p: AdminShellProps, key: string, tiles: Array<[string, string, st
 
 const SURFACES: Record<string, () => ReactNode> = {
   "fh-public": () => (
-    <Site family="teal">
+    <Site family="amber">
       <SiteHeader {...fhPublic} />
       <Hero eyebrow="Revenue recovery for Stripe" title="Get back the payments your customers meant to make." lead="Foxhound retries failed charges at the right moment and writes the emails that bring card holders back." />
     </Site>
   ),
-  "fh-dashboard": () => <Site family="teal">{admin(fhDashboard, "fh-dashboard", FH_TILES, FH_ROWS)}</Site>,
+  "fh-dashboard": () => <Site family="amber">{admin(fhDashboard, "fh-dashboard", FH_TILES, FH_ROWS)}</Site>,
   "fh-dashboard-account": () => (
-    <Site family="teal">
+    <Site family="amber">
       <Hold press=".cap-site-header-avatar">{admin(fhDashboard, "fh-dashboard-account", FH_TILES, FH_ROWS)}</Hold>
     </Site>
   ),
   "fh-dashboard-switcher": () => (
-    <Site family="teal">
+    <Site family="amber">
       <Hold press=".cap-site-header-switch">{admin(fhDashboard, "fh-dashboard-switcher", FH_TILES, FH_ROWS)}</Hold>
     </Site>
   ),
-  "fh-admin": () => <Site family="teal">{admin(fhAdmin, "fh-admin", FH_TILES, FH_ROWS)}</Site>,
+  "fh-admin": () => <Site family="amber">{admin(fhAdmin, "fh-admin", FH_TILES, FH_ROWS)}</Site>,
   "fx-public": () => (
     <Site family="fox">
       <SiteHeader {...fxPublic} />
@@ -409,7 +409,7 @@ const SURFACES: Record<string, () => ReactNode> = {
     </Site>
   ),
   "fh-sheet": () => (
-    <Site family="teal">
+    <Site family="amber">
       <Hold press=".cap-site-header-menu">{admin(fhDashboard, "fh-sheet", FH_TILES, FH_ROWS)}</Hold>
     </Site>
   ),
