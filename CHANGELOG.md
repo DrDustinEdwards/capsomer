@@ -12,6 +12,7 @@ Each release names every removed or renamed token or class, and every changed HT
   - A copy button on the install lines.
   - The test count is read from the last run on main. The deployed build has no results of its own, so the figure was missing.
   - The heading says what Capsomer is, where it repeated the name the tiles already spell.
+  - The admin is linked from the footer only, not the top menu, and the footer's links are just their names (Admin, Source, Changes).
 
   Admin:
   - Test results are filed under their component. Before, every test inside a shared `eachTheme` block counted as "site", so 1,711 of 1,819 landed there and most component pages said "No results".

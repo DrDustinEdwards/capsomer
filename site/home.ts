@@ -101,7 +101,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   // The test count: the build's own when it has one; otherwise the last run on main, read by
   // site/home-main.ts from the results branch, so the deployed page never claims a number it lacks.
   const tests = d.tests ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>` : `<li data-family="forest" data-live="tests" hidden><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
-  const links: Array<[string, string]> = [["#color", "Color"], ["#type", "Type"], ["#components", "Components"], ["#defaults", "Defaults"], ["#use", "Install"], ["/admin/", "Admin"]];
+  const links: Array<[string, string]> = [["#color", "Color"], ["#type", "Type"], ["#components", "Components"], ["#defaults", "Defaults"], ["#use", "Install"]];
   return `<header class="cap-site-header" data-cap="site-header" data-links="right" data-markup="">
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
   <a class="cap-site-header-logo home-logo" href="/" aria-label="Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span aria-hidden="true">Capsomer</span></a>
@@ -258,9 +258,9 @@ import "capsomer/button.css";       // each component's CSS, as used`;
 <footer class="home-foot">
   <div class="home-wrap">
     <ul>
-      <li><a href="/admin/">The admin</a>: every token, test result, contrast pair and change</li>
-      <li><a href="https://github.com/DrDustinEdwards/capsomer">The source</a>, MIT licensed</li>
-      <li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a> in each release</li>
+      <li><a href="/admin/">Admin</a></li>
+      <li><a href="https://github.com/DrDustinEdwards/capsomer">Source</a></li>
+      <li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li>
       <li><a href="https://dustinedwards.info">Dustin Edwards</a></li>
     </ul>
   </div>
