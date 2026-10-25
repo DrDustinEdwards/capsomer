@@ -15,34 +15,6 @@ export function Panel({ title, src, flush, children, id }: { title: string; src?
   );
 }
 
-export type Family = "purple" | "fox" | "teal" | "amber" | "navy" | "forest";
-
-// The page's name in flat letter tiles too big for the page, the last one cut by its edge, over a
-// striped rule: Barbara Stauffacher Solomon's Supergraphics (The Sea Ranch, 1966). Decoration, so
-// hidden from assistive technology; the heading below it says the same. One family paints a page
-// in its ink, solid and pale steps; several give each tile its own family, solid. Purple is the
-// default family, so it carries no attribute.
-export function Band({ word, families, short }: { word: string; families: Family[]; short?: boolean }) {
-  const one = families.length === 1;
-  const fam = (f?: Family) => (f === "purple" ? undefined : f);
-  return (
-    <div className="site-band" aria-hidden="true" data-family={one ? fam(families[0]) : undefined} data-mix={one ? undefined : ""} data-short={short ? "" : undefined}>
-      <p className="site-band-word">
-        {[...word].map((c, i) => (
-          <span key={i} data-family={one ? undefined : fam(families[i % families.length])}>
-            {c}
-          </span>
-        ))}
-      </p>
-      <p className="site-band-stripe">
-        {(one ? ["ink", "solid", "pale"] : families).map((f) => (
-          <i key={f} data-family={one ? undefined : fam(f as Family)} data-role={one ? f : undefined} />
-        ))}
-      </p>
-    </div>
-  );
-}
-
 export function Verdict({ passed, failed, none }: { passed: number; failed: number; none?: string }) {
   if (passed + failed === 0) return <span className="cap-status" data-tone="nodata">{none ?? "Not run"}</span>;
   if (failed) return <span className="cap-status" data-tone="crit">{`${failed} of ${passed + failed} failed`}</span>;

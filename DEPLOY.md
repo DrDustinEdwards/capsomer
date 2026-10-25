@@ -28,7 +28,7 @@ The deployed site reads the latest test results at runtime from this repo's `res
 
 ### 3. Check it
 
-- https://capsomer.dustinedwards.info opens the site in the shared shell.
+- https://capsomer.dustinedwards.info opens the public page, and https://capsomer.dustinedwards.info/admin/ opens the admin in the shared shell.
 - `curl -sI https://capsomer.dustinedwards.info/` shows the `Content-Security-Policy` line and the rest of the security set from `site-dist/_headers`, which `npm run site:release` generates from `scripts/security-headers.ts`.
 - `curl -s -o /dev/null -w '%{http_code}\n' -X POST https://capsomer.dustinedwards.info/csp-report -d '{}'` prints `204`: the report endpoint is the Worker.
 

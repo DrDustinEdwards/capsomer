@@ -2,9 +2,10 @@ import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { eachTheme, expectNoAxeViolations } from "../test/helpers.ts";
 
-// The site itself: every view loads in the AdminShell with no axe violations, the menu moves
-// between views, a component's page shows its states in both themes, and the site runs
-// under the Content-Security-Policy the static Worker sends.
+// The site itself: the public page at the root and every admin view at /admin/ load with no axe
+// violations, the menu moves between views, a component's page shows its states in both themes,
+// an old root address opens its admin page, and the site runs under the Content-Security-Policy
+// the static Worker sends.
 const VIEWS = ["overview", "components", "color", "type", "motion", "tests", "defaults", "changes", "settings"];
 
 // The headers the static Worker sends on every page: the `/*` rule of the built site's _headers,
@@ -20,9 +21,15 @@ const PAGE_HEADERS = Object.fromEntries(
 const CSP = PAGE_HEADERS["content-security-policy"] ?? "";
 
 eachTheme((theme) => {
+  test("accessibility: the public page has no axe violations", async ({ page }) => {
+    await page.goto("./");
+    await expect(page.locator("h1")).toHaveText("Capsomer");
+    await expectNoAxeViolations(page, "body");
+  });
+
   for (const view of VIEWS) {
     test(`accessibility: the ${view} view has no axe violations`, async ({ page }) => {
-      await page.goto(`./#/${view}`);
+      await page.goto(`./admin/#/${view}`);
       await expect(page.locator(".cap-admin")).toBeVisible();
       await expect(page.locator("#cap-main h1").first()).toBeVisible();
       await expectNoAxeViolations(page, ".cap-admin");
@@ -30,7 +37,7 @@ eachTheme((theme) => {
   }
 
   test("keyboard: the menu's links move between views and mark the current one with the shell's dark pill", async ({ page }) => {
-    await page.goto("./#/overview");
+    await page.goto("./admin/#/overview");
     const link = page.locator(".cap-admin-menu").getByRole("link", { name: /^Color and contrast/ });
     await link.focus();
     await page.keyboard.press("Enter");
@@ -39,12 +46,12 @@ eachTheme((theme) => {
     await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
     await expect(page).toHaveTitle(/^Color and contrast · Capsomer/);
     // The colour page's old address still opens it.
-    await page.goto("./#/colour");
+    await page.goto("./admin/#/colour");
     await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
   });
 
   test("behaviour: the site is the reference shell: the site header with the theme button, the family's app strip, the collapse control at the menu's top", async ({ page }) => {
-    await page.goto("./#/overview");
+    await page.goto("./admin/#/overview");
     await expect(page.locator(".cap-site-header")).toBeVisible();
     await expect(page.locator(".cap-site-header .cap-theme-button")).toBeVisible();
     await expect(page.locator(".cap-admin-strip .cap-admin-tile")).toHaveCount(7);
@@ -54,14 +61,14 @@ eachTheme((theme) => {
   });
 
   test("behaviour: the usage example shows AdminShell", async ({ page }) => {
-    await page.goto("./#/overview");
+    await page.goto("./admin/#/overview");
     const code = page.locator("#install-h ~ * .site-code, .site-code").first();
     await expect(code).toContainText('import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"');
     await expect(code).toContainText("<AdminShell");
   });
 
   test("behaviour: the overview counts every family's contrast pairs, not just the committed palette's", async ({ page }) => {
-    await page.goto("./#/overview");
+    await page.goto("./admin/#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Contrast pairs" });
     await expect(fig.locator("b")).toHaveText(/^\d{3}$/);
     // Two facts, two lines: how many families and themes, then whether any pair fails.
@@ -70,7 +77,7 @@ eachTheme((theme) => {
   });
 
   test("behaviour: the Tests card says its number once", async ({ page }) => {
-    await page.goto("./#/overview");
+    await page.goto("./admin/#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Tests" });
     // One read of the number and the card together: the site swaps in main's last run once it
     // has fetched it, and two separate reads could straddle that swap.
@@ -79,14 +86,14 @@ eachTheme((theme) => {
   });
 
   test("behaviour: the site's strip marks Capsomer as the app you are in, and the bar says how fresh the results are", async ({ page }) => {
-    await page.goto("./#/overview");
+    await page.goto("./admin/#/overview");
     const current = page.locator(".cap-admin-strip .cap-admin-tile[aria-current='true']");
     await expect(current).toHaveCount(1);
     await expect(current).toHaveAccessibleName("Capsomer");
     await expect(page.locator(".cap-admin-fresh")).toHaveText(/^Updated /);
     // A top-level page: no trail repeating its heading. A component's page: Components, then it.
     await expect(page.locator(".cap-admin-trail")).toHaveCount(0);
-    await page.goto("./#/components/shell");
+    await page.goto("./admin/#/components/shell");
     await expect(page.locator(".cap-admin-trail li")).toHaveText(["Components", "Shell"]);
   });
 
@@ -105,8 +112,12 @@ eachTheme((theme) => {
         w.cspViolations.push(`${e.violatedDirective}: ${e.blockedURI || "inline"} at ${e.sourceFile}:${e.lineNumber}`);
       });
     });
+    await page.goto("./");
+    await expect(page.locator("h1")).toHaveText("Capsomer");
+    await page.waitForLoadState("networkidle");
+    expect(await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations), "CSP violations on the public page").toEqual([]);
     for (const view of ["overview", "color", "type", "components/shell"]) {
-      await page.goto(`./#/${view}`);
+      await page.goto(`./admin/#/${view}`);
       await expect(page.locator("#cap-main h1").first()).toBeVisible();
       await page.waitForLoadState("networkidle");
       const found = await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations);
@@ -129,10 +140,17 @@ eachTheme((theme) => {
   });
 
   test("behaviour: a component's page shows its states in both themes", async ({ page }) => {
-    await page.goto("./#/components/shell");
+    await page.goto("./admin/#/components/shell");
     await expect(page.locator("#cap-main h1")).toHaveText("Shell");
     await expect(page.locator("iframe.site-frame")).toHaveCount(2);
   });
+});
+
+// The admin's pages lived at the root's hash addresses before it moved to /admin/.
+test("behaviour: an old address at the root opens its page in the admin", async ({ page }) => {
+  await page.goto("./#/components/shell");
+  await expect(page).toHaveURL(/\/admin\/#\/components\/shell$/);
+  await expect(page.locator("#cap-main h1")).toHaveText("Shell");
 });
 
 // Cloudflare Web Analytics injects its beacon into every HTML page on this zone. A public

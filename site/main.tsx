@@ -16,13 +16,12 @@ import "../css/tokens.css";
 import "../css/base.css";
 import "../css/prose.css";
 import "../tokens/themes.css";
-import "../css/families.css";
 import "./site.css";
 import { AdminShell, FIRST_PAGE, type AdminEntry } from "../components/admin-shell/admin-shell.react.tsx";
 import { BASE, CHANGELOG_MD, COMPONENTS, DEFAULTS_MD, FAMILIES, META, RESULTS_BUILD, fetchResults, type Results } from "./data.ts";
 import { ColorView } from "./color-view.tsx";
 import { renderMarkdown } from "./markdown.ts";
-import { Band, Panel, ResultsContext, TOOL, TestList, Verdict, useResults, when, type Family } from "./parts.tsx";
+import { Panel, ResultsContext, TOOL, TestList, Verdict, useResults, when } from "./parts.tsx";
 import { MarkdownView, MotionView, SettingsView, TestsView, TypeView } from "./views.tsx";
 
 import.meta.glob("../components/*/*.css", { eager: true });
@@ -39,21 +38,6 @@ const VIEWS: Array<{ id: View; label: string; icon: ReactNode; group: string }> 
   { id: "changes", label: "Changes", icon: <Icon d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 7v5l3.5 2.5" />, group: "Records" },
   { id: "settings", label: "Settings", icon: <Icon d="M4 7h3M11 7h9M4 12h9M17 12h3M4 17h5M13 17h7M9 5v4M15 10v4M11 15v4" />, group: "Records" },
 ];
-
-// Each page's band: its name, and the family it is painted in. The front page and the color page
-// wear every family at once.
-const ALL: Family[] = ["purple", "fox", "teal", "amber", "navy", "forest"];
-const BANDS: Record<View, [string, Family[]]> = {
-  overview: ["Capsomer", ALL],
-  components: ["Components", ["purple"]],
-  color: ["Color", ALL],
-  type: ["Type", ["navy"]],
-  motion: ["Motion", ["fox"]],
-  tests: ["Tests", ["forest"]],
-  defaults: ["Defaults", ["teal"]],
-  changes: ["Changes", ["amber"]],
-  settings: ["Settings", ["purple"]],
-};
 
 function Icon({ d }: { d: string }) {
   return (
@@ -113,7 +97,7 @@ function Overview() {
           <b className="cap-num">{COMPONENTS.length}</b>
           <span className="cap-muted">in release {META.version}</span>
         </a>
-        <a className="site-figure" href={href("tests")} data-family="forest">
+        <a className="site-figure" href={href("tests")}>
           <span className="cap-label">Tests</span>
           <b className="cap-num">{res.available ? res.totals.passed + res.totals.failed : "No data"}</b>
           {/* The number is said once, above: this line says only how the run went. */}
@@ -127,7 +111,7 @@ function Overview() {
             )}
           </span>
         </a>
-        <a className="site-figure" href={href("color")} data-family="fox">
+        <a className="site-figure" href={href("color")}>
           <span className="cap-label">Contrast pairs</span>
           <b className="cap-num">{FAMILIES ? FAMILIES.pairs.length : "No data"}</b>
           {FAMILIES ? (
@@ -382,10 +366,7 @@ function App() {
         updated={{ at: RESULTS.ran ?? META.built }}
         prefKey="cap-site-rail"
       >
-        <div className="cap-admin-page">
-          <Band word={BANDS[view][0]} families={BANDS[view][1]} short={Boolean(detail)} />
-          {page}
-        </div>
+        <div className="cap-admin-page">{page}</div>
       </AdminShell>
     </ResultsContext.Provider>
   );

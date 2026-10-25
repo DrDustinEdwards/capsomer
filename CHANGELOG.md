@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+- **Site only: a public front page, and the dashboard moves to `/admin/`** (Dustin, 2026-10-25: "we need a capsomer admin ... and a capsomer public display"). https://capsomer.dustinedwards.info is now a plain HTML page in the Supergraphics style (Barbara Stauffacher Solomon, The Sea Ranch, 1966): each section opens with its name in flat letter tiles painted in the families, too big for the page and cut by its edge, then the six families with their twelve steps, the three faces and the type scale, every component linked to its states page, the defaults and how to install. Its only script sends an old root address such as `/#/components/button` to the same page under `/admin/`. The admin is unchanged at https://capsomer.dustinedwards.info/admin/. The package is unchanged.
+
 ## [0.19.0]
 
 **Foxhound's public pages, as Recova's** (Dustin, 2026-10-25: "there is still so much wrong with foxhound... as compared to recova", and "dont forget the ui/ux, and hover and active etc").

@@ -80,8 +80,6 @@
       transition-timing-function: var(--ease-out);
     }
   }
-  /* A figure wears its family's solid step along its top, like a stripe on the band above. */
-  border-top: 8px solid var(--accent);
   & b {
     font-size: 26px;
     font-weight: 700;
@@ -465,108 +463,5 @@
     gap: var(--space-2);
     justify-items: start;
     padding: var(--space-4) 0;
-  }
-}
-/* The page's band (parts.tsx, Band): flat letter tiles at stepped heights, too big for the page,
-   running off its right edge, over a striped rule. It bleeds out of the page frame's right padding
-   so the edge, not the frame, cuts it. */
-.site-band {
-  --bleed: calc(var(--pad-card) + var(--space-3));
-  display: grid;
-  gap: var(--space-2);
-  margin-inline-end: calc(-1 * var(--bleed));
-  overflow: hidden;
-  background: transparent;
-  color: inherit;
-
-  @media (max-width: 767.98px) {
-    --bleed: var(--space-5);
-  }
-}
-.site-band-word {
-  display: flex;
-  align-items: flex-end;
-  gap: 4px;
-  block-size: clamp(120px, 18vw, 232px);
-  margin: 0;
-
-  & span,
-  &::after {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: flex-end;
-    justify-content: center;
-    block-size: 100%;
-    padding: 0 0.07em 0.22em;
-    overflow: hidden;
-    font: 800 clamp(4.5rem, 12vw, 11rem) / 0.8 var(--display);
-    letter-spacing: -0.04em;
-    background: var(--primary);
-    color: var(--primary-fg);
-  }
-  /* The run: an empty tile that carries the band to the edge when the word is short. */
-  &::after {
-    content: "";
-    flex: 1 1 0;
-    min-inline-size: 10vw;
-    block-size: 70%;
-    background: var(--accent-soft);
-  }
-  & span:nth-child(6n + 2) {
-    block-size: 86%;
-  }
-  & span:nth-child(6n + 3) {
-    block-size: 64%;
-  }
-  & span:nth-child(6n + 4) {
-    block-size: 92%;
-  }
-  & span:nth-child(6n + 5) {
-    block-size: 74%;
-  }
-  & span:nth-child(6n) {
-    block-size: 82%;
-  }
-}
-/* One family: its ink, solid and pale steps in turn. */
-.site-band:not([data-mix]) .site-band-word {
-  & span:nth-child(3n + 2) {
-    background: var(--text);
-    color: var(--surface);
-  }
-  & span:nth-child(3n) {
-    background: var(--accent-soft);
-    color: var(--accent-text);
-  }
-}
-.site-band[data-short] .site-band-word {
-  block-size: clamp(72px, 9vw, 112px);
-
-  & span,
-  &::after {
-    font-size: clamp(3rem, 6.5vw, 5.5rem);
-  }
-}
-.site-band-stripe {
-  display: grid;
-  gap: 3px;
-  margin: 0;
-
-  & i {
-    display: block;
-    block-size: 5px;
-    background: var(--accent);
-  }
-  & [data-role="ink"] {
-    block-size: 14px;
-    background: var(--text);
-  }
-  & [data-role="solid"] {
-    block-size: 6px;
-    background: var(--primary);
-  }
-  & [data-role="pale"] {
-    block-size: 4px;
-    background: var(--accent-soft);
   }
 }

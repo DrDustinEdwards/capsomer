@@ -2,7 +2,8 @@
 
 > Capsomer is Dustin Edwards's open-source (MIT) design system: plain CSS with design tokens, web components and React wrappers, an app shell and patterns, shared by his sites and apps (dustinedwards.info, the Capsid Portal, Carrel and others). No CSS framework; light and dark themes; every component tested for accessibility in every state.
 
-- Showcase: https://capsomer.dustinedwards.info/ (an interactive page: every token, every component in every state, and each component's test results)
+- Showcase: https://capsomer.dustinedwards.info/ (the colour families, type, every component with a link to its states, the defaults and how to install)
+- Admin: https://capsomer.dustinedwards.info/admin/ (an interactive page: every token, every component in every state, and each component's test results)
 - Code: https://github.com/DrDustinEdwards/capsomer
 - Author: Dustin Edwards, https://dustinedwards.info
 
