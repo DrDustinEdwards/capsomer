@@ -86,12 +86,12 @@ export interface Surface {
   destroy(): void;
 }
 
-// Every colour, font and size is a Capsomer token, so both themes and every density follow
+// Every color, font and size is a Capsomer token, so both themes and every density follow
 // without a second copy. The focus ring sits inside the surface, which clips overflow: an
 // outside ring would be cut off (WCAG 2.4.7).
 const capTheme = EditorView.theme({
   "&": {
-    // Colour and ground come from the frame around it (markdown-editor.css), so read-only and
+    // Color and ground come from the frame around it (markdown-editor.css), so read-only and
     // disabled change them there, in one place.
     color: "inherit",
     backgroundColor: "transparent",
@@ -120,7 +120,7 @@ const capTheme = EditorView.theme({
     borderRight: "1px solid var(--line)",
   },
   // The selection is the accent mixed into the surface: the pale --sel token is nearly the
-  // surface colour and would not show where the selection is.
+  // surface color and would not show where the selection is.
   "& .cm-content ::selection, & .cm-content::selection": {
     backgroundColor: "color-mix(in srgb, var(--accent) 36%, var(--surface))",
     color: "var(--text)",
@@ -128,8 +128,8 @@ const capTheme = EditorView.theme({
   ".cm-placeholder": { color: "var(--dim)" },
 });
 
-// Meaning is never colour alone: headings and strong are bold, emphasis is italic, links are
-// underlined, quotes are italic. Each colour is a token chosen to reach 4.5:1 on --surface.
+// Meaning is never color alone: headings and strong are bold, emphasis is italic, links are
+// underlined, quotes are italic. Each color is a token chosen to reach 4.5:1 on --surface.
 const capHighlight = HighlightStyle.define([
   { tag: tags.heading, color: "var(--text)", fontWeight: "700" },
   { tag: tags.strong, color: "var(--text)", fontWeight: "700" },

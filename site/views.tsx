@@ -76,7 +76,7 @@ export function MotionView() {
     <div className="site-page">
       <div className="site-head">
         <h1>Motion</h1>
-        <p>Motion explains a change. Three durations and three easings: things arrive on the long ease-out and leave faster than they came, a press springs back, and pages and themes crossfade. With reduced motion on, the dots below jump instead of travelling, and nothing in Capsomer moves at all.</p>
+        <p>Motion explains a change. Three durations and three easings: things arrive on the long ease-out and leave faster than they came, a press springs back, and pages and themes crossfade. With reduced motion on, the dots below jump instead of traveling, and nothing in Capsomer moves at all.</p>
       </div>
       <Panel title="Durations" id="durations" src={<button type="button" className="cap-btn" onClick={() => setPlayed((p) => !p)} aria-pressed={played}>Play</button>}>
         <div className="site-motion" data-played={played ? "" : undefined}>
@@ -99,7 +99,7 @@ export function MotionView() {
 
 export function TestsView() {
   const RESULTS = useResults();
-  const entries = Object.entries(RESULTS.components).sort(([, a], [, b]) => b.keyboard.failed + b.accessibility.failed + b.behaviour.failed - (a.keyboard.failed + a.accessibility.failed + a.behaviour.failed));
+  const entries = Object.entries(RESULTS.components).sort(([, a], [, b]) => b.keyboard.failed + b.accessibility.failed + b.behavior.failed - (a.keyboard.failed + a.accessibility.failed + a.behavior.failed));
   return (
     <div className="site-page">
       <div className="site-head">
@@ -113,7 +113,7 @@ export function TestsView() {
         </div>
       ) : (
         entries.map(([name, r]) => (
-          <Panel key={name} title={COMPONENTS.find((c) => c.name === name)?.title ?? name} id={`t-${name}`} src={<Verdict passed={r.keyboard.passed + r.accessibility.passed + r.behaviour.passed} failed={r.keyboard.failed + r.accessibility.failed + r.behaviour.failed} />}>
+          <Panel key={name} title={COMPONENTS.find((c) => c.name === name)?.title ?? name} id={`t-${name}`} src={<Verdict passed={r.keyboard.passed + r.accessibility.passed + r.behavior.passed} failed={r.keyboard.failed + r.accessibility.failed + r.behavior.failed} />}>
             <TestList rows={r.tests} />
           </Panel>
         ))

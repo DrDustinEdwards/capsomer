@@ -6,7 +6,7 @@ const ALL = { edit: true, publish: true, deleteContent: true, deleteMedia: true,
 const NONE = { edit: false, publish: false, deleteContent: false, deleteMedia: false, decideMentions: false };
 const COUNTS = { unverified: 1, pending: 3, approved: 1, rejected: 2, failed: 2, all: 9 };
 
-test("behaviour: the address keeps one order, leaves the empty out, and a tab change starts on the first page", () => {
+test("behavior: the address keeps one order, leaves the empty out, and a tab change starts on the first page", () => {
   expect(mentionsHref("/mentions?x=1", { open: "m-1", cursor: "c-2", view: "all" })).toBe("/mentions?view=all&cursor=c-2&open=m-1");
   expect(mentionsHref("/mentions", {})).toBe("/mentions");
   expect(withMentions({ view: "all", cursor: "c-2", open: "m-1" }, { view: "rejected" })).toEqual({ view: "rejected" });
@@ -14,13 +14,13 @@ test("behaviour: the address keeps one order, leaves the empty out, and a tab ch
   expect(withMentions({ view: "all", cursor: "c-2", open: "m-1" }, { open: undefined })).toEqual({ view: "all", cursor: "c-2" });
 });
 
-test("behaviour: with no tab asked, the list opens on Waiting, or on All when nothing waits", () => {
+test("behavior: with no tab asked, the list opens on Waiting, or on All when nothing waits", () => {
   expect(currentView({ query: {}, counts: COUNTS })).toBe("pending");
   expect(currentView({ query: {}, counts: { ...COUNTS, pending: 0 } })).toBe("all");
   expect(currentView({ query: { view: "failed" }, counts: COUNTS })).toBe("failed");
 });
 
-test("behaviour: an action is offered only where the site supports it and the person may run it, and a withheld one is said", () => {
+test("behavior: an action is offered only where the site supports it and the person may run it, and a withheld one is said", () => {
   const base = { query: {}, counts: COUNTS, can: ALL };
   expect(mentionActions({ ...base, offers: { reset: true, delete: true, sweep: true } })).toEqual({
     bulk: [
@@ -38,7 +38,7 @@ test("behaviour: an action is offered only where the site supports it and the pe
   expect(mentionActions({ ...base, can: NONE, offers: { reset: true, delete: true, sweep: true } })).toEqual({ bulk: [], withheld: ["You can read these mentions. Deciding them needs the site owner's role."] });
 });
 
-test("behaviour: the count, the sweep's button and the empty state in words", () => {
+test("behavior: the count, the sweep's button and the empty state in words", () => {
   const row = { id: "m", author: "A", host: "h", excerpt: "", post: "", at: "2026-10-10T00:00:00Z", state: "pending" as const };
   expect(countLine({ rows: [row], query: {}, counts: COUNTS })).toBe("Showing 1 of 3 mentions");
   expect(countLine({ rows: [row], query: {}, counts: { ...COUNTS, pending: 1 } })).toBe("1 mention");
@@ -94,7 +94,7 @@ eachTheme((theme) => {
     await expect(list.getByRole("link", { name: "1 not yet checked" })).toHaveAttribute("href", "/mentions?view=all");
   });
 
-  test("behaviour: with no script, a row's decision and the bar post the intent, the ids and the version; the sweep is a form", async ({ page }) => {
+  test("behavior: with no script, a row's decision and the bar post the intent, the ids and the version; the sweep is a form", async ({ page }) => {
     await visitStates(page, "mentions-list", theme);
     const list = page.locator("#mentions-static");
     // A source is text: nothing in the delivered list links to a stranger's page.
@@ -116,7 +116,7 @@ eachTheme((theme) => {
     expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { intent: ["sweep"] } });
   });
 
-  test("behaviour: with no script, the page after a post says the result, lists each mention's outcome and posts Undo as a form", async ({ page }) => {
+  test("behavior: with no script, the page after a post says the result, lists each mention's outcome and posts Undo as a form", async ({ page }) => {
     await visitStates(page, "mentions-list", theme);
     const list = mount(page, "outcomes");
     await expect(list.getByRole("status", { name: "Results and failures" })).toContainText("Approved 2 mentions.");
@@ -126,7 +126,7 @@ eachTheme((theme) => {
     expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["m-101", "m-102"], intent: ["reset"] } });
   });
 
-  test("behaviour: with no script, a delete is confirmed on the server's page with the count typed, and the sweep's page names what it removes", async ({ page }) => {
+  test("behavior: with no script, a delete is confirmed on the server's page with the count typed, and the sweep's page names what it removes", async ({ page }) => {
     await visitStates(page, "mentions-list", theme);
     const del = mount(page, "confirm-delete").getByRole("group", { name: "Delete 2 mentions?" });
     await expect(del.getByRole("listitem")).toHaveText(["From Cheap Pills (pills.example)", "From Dev Patel (devpatel.example)"]);
@@ -137,7 +137,7 @@ eachTheme((theme) => {
     await expect(mount(page, "confirm-sweep").getByRole("group", { name: "Remove 2 expired mentions?" }).getByRole("listitem")).toHaveText(["1 whose source was not found", "1 rejected"]);
   });
 
-  test("behaviour: one page of many: the count says so, the pages are links, and the mention in the address is open with its source", async ({ page }) => {
+  test("behavior: one page of many: the count says so, the pages are links, and the mention in the address is open with its source", async ({ page }) => {
     await visitStates(page, "mentions-list", theme);
     const list = mount(page, "paged");
     await expect(list.locator(".cap-mentions-count")).toHaveText("Showing 9 of 223 mentions");
@@ -151,7 +151,7 @@ eachTheme((theme) => {
     await expect(row(list, "m-150").locator(".cap-row-detail")).toHaveText("The source page answered 404.");
   });
 
-  test("behaviour: with nothing waiting the list opens on All, and an empty tab says what is empty", async ({ page }) => {
+  test("behavior: with nothing waiting the list opens on All, and an empty tab says what is empty", async ({ page }) => {
     await visitStates(page, "mentions-list", theme);
     await expect(mount(page, "empty-open").getByRole("link", { name: "All 6" })).toHaveAttribute("aria-current", "page");
     await expect(mount(page, "empty-rejected").locator(".cap-empty")).toContainText("Nothing rejected");
@@ -217,7 +217,7 @@ eachTheme((theme) => {
     await expect(said(list).getByRole("button", { name: "Undo" })).toHaveCount(0);
   });
 
-  test("behaviour: the sweep names what the site's retention removes, by kind, and removes only that", async ({ page }) => {
+  test("behavior: the sweep names what the site's retention removes, by kind, and removes only that", async ({ page }) => {
     await visitStates(page, "mentions-list", theme);
     const list = mount(page, "editor");
     await list.getByRole("button", { name: "Remove 2 expired" }).click();
@@ -229,7 +229,7 @@ eachTheme((theme) => {
     await expect(list.getByRole("button", { name: "Remove 0 expired" })).toBeDisabled();
   });
 
-  test("behaviour: with script, a sender's name opens the row in place", async ({ page }) => {
+  test("behavior: with script, a sender's name opens the row in place", async ({ page }) => {
     await visitStates(page, "mentions-list", theme);
     const list = mount(page, "editor");
     await title(list, "m-101").click();
@@ -241,7 +241,7 @@ eachTheme((theme) => {
     await expect(row(list, "m-101").locator(".cap-mq-quote")).toHaveCount(0);
   });
 
-  test("behaviour: on a site with no Back to waiting, a decision on a waiting mention says it has no Undo, and approved to rejected still has one", async ({ page }) => {
+  test("behavior: on a site with no Back to waiting, a decision on a waiting mention says it has no Undo, and approved to rejected still has one", async ({ page }) => {
     await visitStates(page, "mentions-list", theme);
     const list = mount(page, "v05");
     await list.getByRole("button", { name: "Approve the mention from Rosa Park" }).click();

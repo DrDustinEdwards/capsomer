@@ -91,7 +91,7 @@
     user-select: none;
   }
 
-  /* A field whose value is wrong: its label takes the error colour too (shadcn's data-invalid). */
+  /* A field whose value is wrong: its label takes the error color too (shadcn's data-invalid). */
   .cap-field[data-invalid="true"] > .cap-field-label {
     color: var(--crit);
   }
@@ -204,7 +204,7 @@
       outline-offset: 0;
     }
     /* Invalid: the edge thickens and a soft ring appears as well as turning red, and the
-       message beside it says what is wrong. Only aria-invalid, which the behaviour module
+       message beside it says what is wrong. Only aria-invalid, which the behavior module
        sets with the message: :user-invalid alone would mark a field red with no words. */
     &[aria-invalid="true"] {
       --cap-input-edge: var(--crit);
@@ -384,7 +384,7 @@
     }
   }
 
-  /* A slider: a native range input on a 4px track that fills with the primary colour up to the
+  /* A slider: a native range input on a 4px track that fills with the primary color up to the
      thumb. The fill needs the value as a share: --cap-range-fill (0% to 100%) on the input; the
      React Range sets it, and plain HTML sets it from its own input listener. The thumb is a
      20px disc ringed in the ground, which grows a soft ring under the pointer and shrinks a
@@ -461,7 +461,7 @@
       transition: box-shadow var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-out);
     }
   }
-  /* Forced colours drop the drawn track: the browser's own slider comes back. */
+  /* Forced colors drop the drawn track: the browser's own slider comes back. */
   @media (forced-colors: active) {
     .cap-range {
       appearance: auto;

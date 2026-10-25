@@ -13,7 +13,7 @@ export interface AvatarProps {
   shape?: "circle" | "square";
   // "ai" sets the initials in the mono face.
   kind?: "person" | "ai";
-  // A corner badge: a glyph, or a letter, never colour alone. Give it a `badgeLabel`.
+  // A corner badge: a glyph, or a letter, never color alone. Give it a `badgeLabel`.
   badge?: ReactNode;
   badgeLabel?: string;
   badgeTone?: "ok" | "crit" | "nodata";

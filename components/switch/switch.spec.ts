@@ -56,7 +56,7 @@ eachTheme((theme) => {
     await expect(word).toHaveText("Off");
   });
 
-  test("behaviour: a click on the label turns it on; the name stays a fixed noun", async ({ page }) => {
+  test("behavior: a click on the label turns it on; the name stays a fixed noun", async ({ page }) => {
     await visitStates(page, "switch", theme);
     await page.getByText("Compact rows").click();
     const sw = page.getByRole("switch", { name: "Compact rows" });
@@ -65,7 +65,7 @@ eachTheme((theme) => {
     await expect(sw).toHaveAccessibleName("Compact rows");
   });
 
-  test("behaviour: a pending switch says so, is not disabled, and keeps its name", async ({ page }) => {
+  test("behavior: a pending switch says so, is not disabled, and keeps its name", async ({ page }) => {
     await visitStates(page, "switch", theme);
     const sw = page.getByRole("switch", { name: "Nightly export" });
     await expect(sw).toHaveAttribute("aria-busy", "true");
@@ -75,7 +75,7 @@ eachTheme((theme) => {
     await expect(sw).toHaveAccessibleName("Nightly export");
   });
 
-  test("behaviour: a disabled switch does not move", async ({ page }) => {
+  test("behavior: a disabled switch does not move", async ({ page }) => {
     await visitStates(page, "switch", theme);
     await page.getByText("Email alerts").click({ force: true });
     await expect(page.getByRole("switch", { name: "Email alerts" })).not.toBeChecked();

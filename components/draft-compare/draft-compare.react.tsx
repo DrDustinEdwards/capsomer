@@ -21,7 +21,7 @@ export interface DraftCompareProps {
 }
 
 // Renders exactly the markup renderCompare writes, so a server render (renderToString) and the
-// browser agree, and the same behaviour module wires it.
+// browser agree, and the same behavior module wires it.
 export function DraftCompare({ before, after, labels, view, onViewChange, context, runs, similarity, id }: DraftCompareProps) {
   const own = useId().replace(/[^a-zA-Z0-9]/g, "");
   const host = useRef<HTMLDivElement>(null);
@@ -66,7 +66,7 @@ export interface DraftPatchProps {
 }
 
 // The patch mode: a unified patch by line, with a literal plus or minus on each changed line.
-// Pure markup, so a server render and the browser agree; there is no behaviour to attach.
+// Pure markup, so a server render and the browser agree; there is no behavior to attach.
 export function DraftPatch({ patch, title, id }: DraftPatchProps) {
   const own = useId().replace(/[^a-zA-Z0-9]/g, "");
   const html = useMemo(() => renderPatch(patch, { id: id ?? `patch-${own}`, title }), [patch, title, id, own]);

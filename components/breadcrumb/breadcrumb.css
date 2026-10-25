@@ -6,7 +6,7 @@
    tokens. The separator is CSS, not an element, so it is not in the accessibility tree; long
    names are cut with an ellipsis; the trail wraps on a phone; and a long trail folds its
    middle levels into a popover that holds real links. The site's `.page-breadcrumb` (a wrapped
-   ordered list, links in the brand colour, " / " between) is the shape this keeps. */
+   ordered list, links in the brand color, " / " between) is the shape this keeps. */
 @layer cap.components {
   .cap-breadcrumb {
     color: var(--muted);
@@ -81,7 +81,7 @@
     }
   }
 
-  /* The current page: text, not a link, heavier and in the full text colour. */
+  /* The current page: text, not a link, heavier and in the full text color. */
   .cap-breadcrumb-page {
     display: block;
     box-sizing: border-box;

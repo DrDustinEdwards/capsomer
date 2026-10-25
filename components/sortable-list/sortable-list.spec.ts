@@ -42,7 +42,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: an item that is up is marked by more than its colour", async ({ page }) => {
+  test("accessibility: an item that is up is marked by more than its color", async ({ page }) => {
     const shadow = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el).boxShadow);
     expect(await shadow("[aria-label='Lifted and dragged'] > li[data-lifted]")).toContain("inset");
     expect(await shadow("#scenes > li:first-child")).toBe("none");
@@ -147,7 +147,7 @@ eachTheme((theme) => {
     expect(await focusedName(page)).toBe("Move Tracks in the limestone down");
   });
 
-  test("behaviour: dragging a grip moves the item as the pointer goes and reports the order on release", async ({ page }) => {
+  test("behavior: dragging a grip moves the item as the pointer goes and reports the order on release", async ({ page }) => {
     const l = list(page, "Scenes in 01 The riverbed");
     await drag(page, page.getByRole("button", { name: "Move Low water", exact: true }), l.locator("[data-value='notebook']"), "bottom");
     await expect(l.locator("[data-value='low-water']")).toHaveAttribute("data-dragging", "");
@@ -159,7 +159,7 @@ eachTheme((theme) => {
     await expect(said(l)).toHaveText("Dropped Low water at position 3 of 4.");
   });
 
-  test("behaviour: Escape during a drag puts the item back", async ({ page }) => {
+  test("behavior: Escape during a drag puts the item back", async ({ page }) => {
     const l = list(page, "Scenes in 01 The riverbed");
     await drag(page, page.getByRole("button", { name: "Move Night at the crossing", exact: true }), l.locator("[data-value='low-water']"), "top");
     expect(await order(l)).toEqual(["crossing", "low-water", "tracks", "notebook"]);
@@ -169,14 +169,14 @@ eachTheme((theme) => {
     await expect(page.locator("#scenes-out")).toHaveText("Order: low-water, tracks, notebook, crossing.");
   });
 
-  test("behaviour: a host refuses a move by cancelling the event, and the item goes back", async ({ page }) => {
+  test("behavior: a host refuses a move by canceling the event, and the item goes back", async ({ page }) => {
     const l = list(page, "Scenes in 01 The riverbed");
     await page.locator("#scenes").evaluate((el) => el.addEventListener("cap:sortable-change", (e) => e.preventDefault()));
     await page.getByRole("button", { name: "Move Low water down" }).click();
     expect(await order(l)).toEqual(["low-water", "tracks", "notebook", "crossing"]);
   });
 
-  test("behaviour: cards move in reading order, by the arrows and by dragging across a row", async ({ page }) => {
+  test("behavior: cards move in reading order, by the arrows and by dragging across a row", async ({ page }) => {
     const l = list(page, "Scenes in 02 Flood stage");
     await l.getByRole("button", { name: "Move Rain at Glen Rose", exact: true }).focus();
     await page.keyboard.press("Space");
@@ -190,7 +190,7 @@ eachTheme((theme) => {
     await expect(page.locator("#cards-out")).toHaveText("Order: second, after, line, rain.");
   });
 
-  test("behaviour: the React rows move by button and keep focus", async ({ page }) => {
+  test("behavior: the React rows move by button and keep focus", async ({ page }) => {
     const l = list(page, "Posts in the series");
     await l.getByRole("button", { name: "Move What the river keeps down" }).click();
     await expect(page.locator("#rows-out")).toHaveText("Order: trackway, casts, river.");
@@ -198,7 +198,7 @@ eachTheme((theme) => {
     await expect(said(l)).toHaveText("Moved What the river keeps to position 3 of 3.");
   });
 
-  test("behaviour: with no script the buttons post the move and the list posts its order", async ({ page }) => {
+  test("behavior: with no script the buttons post the move and the list posts its order", async ({ page }) => {
     const form = "#reorder-form";
     const plain = list(page, "Posts in Field notes from the Paluxy");
     let posted = nextPost(page, form);

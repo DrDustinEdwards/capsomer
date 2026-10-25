@@ -2,7 +2,7 @@
 name: field
 title: Field
 summary: A labeled input, textarea, file input, checkbox, radio or input group, with help outside it and an error beside it, checked on leave and on submit.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider]
 added: 0.1.0
@@ -16,9 +16,9 @@ replaces:
 
 # Field
 
-`.cap-field` wraps one control with its label, its help and its error. `.cap-input` styles an input, a textarea or a select (see Select). `.cap-check` is a checkbox or radio with its label (the box and tick are drawn in CSS). `.cap-input-group` is an input with addons inside one edge. The behaviour module checks fields with the platform's own constraint validation (`required`, `type`, `pattern`, `min`, `max`, `minlength`) and writes the message beside the field.
+`.cap-field` wraps one control with its label, its help and its error. `.cap-input` styles an input, a textarea or a select (see Select). `.cap-check` is a checkbox or radio with its label (the box and tick are drawn in CSS). `.cap-input-group` is an input with addons inside one edge. The behavior module checks fields with the platform's own constraint validation (`required`, `type`, `pattern`, `min`, `max`, `minlength`) and writes the message beside the field.
 
-**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01), `styles.css` (`.field`, `.siteform`, `.err`) and `ui/Switch.tsx` (the reason field). `.cap-input` is EXTRACTED: its box (32px, `--line-strong` edge, 6px radius, `--surface`, `0 10px` padding), its `--dim` placeholder and its sunken read-only ground are the Portal's `.field` rules, unchanged since the extraction base (`366b902`), with the scale's tokens in their place. The Portal's invalid edge (`.field[aria-invalid="true"]`, #216) is carried and made firmer, and its `.err` (`--crit`, 12px, weight 500) is `.cap-field-error` with an icon added so the message is not colour alone and `overflow-wrap` for a long refusal. REWRITTEN from the audit: `.cap-field`, the label, help and required marker (the Portal's `.siteform .f` and `.section-title` are page layout), the dashed, muted disabled state (the Portal's `opacity: 0.5` does not reach 4.5:1), and the behaviour module (the Portal checks only in its own handlers). Two Portal behaviours are used by the automation switch, not here: an empty reason is an error on the field that sends nothing, and the value is read from the field itself, not from an input event. The Portal's compact 30px field in a reason row is `switch-reason`'s own layout.
+**Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01), `styles.css` (`.field`, `.siteform`, `.err`) and `ui/Switch.tsx` (the reason field). `.cap-input` is EXTRACTED: its box (32px, `--line-strong` edge, 6px radius, `--surface`, `0 10px` padding), its `--dim` placeholder and its sunken read-only ground are the Portal's `.field` rules, unchanged since the extraction base (`366b902`), with the scale's tokens in their place. The Portal's invalid edge (`.field[aria-invalid="true"]`, #216) is carried and made firmer, and its `.err` (`--crit`, 12px, weight 500) is `.cap-field-error` with an icon added so the message is not color alone and `overflow-wrap` for a long refusal. REWRITTEN from the audit: `.cap-field`, the label, help and required marker (the Portal's `.siteform .f` and `.section-title` are page layout), the dashed, muted disabled state (the Portal's `opacity: 0.5` does not reach 4.5:1), and the behavior module (the Portal checks only in its own handlers). Two Portal behaviors are used by the automation switch, not here: an empty reason is an error on the field that sends nothing, and the value is read from the field itself, not from an input event. The Portal's compact 30px field in a reason row is `switch-reason`'s own layout.
 
 ## When to use it
 
@@ -34,7 +34,7 @@ Any form: a site's settings, a new job, a post's metadata, the one-line reason o
 ## The default and its reason
 
 - **The label is visible and above the control.** A placeholder is an example only ("For example: capsid-driver"), never the label: it disappears as soon as someone types.
-- **A slider** (`input.cap-range`, React `Range`) is a native range input on a 4 px track that fills with the primary colour up to the thumb, from `--cap-range-fill` (React sets it from the value). The 20 px thumb grows a soft ring under the pointer, takes the focus ring on a keyboard and shrinks a little while held; forced colours bring the browser's own slider back.
+- **A slider** (`input.cap-range`, React `Range`) is a native range input on a 4 px track that fills with the primary color up to the thumb, from `--cap-range-fill` (React sets it from the value). The 20 px thumb grows a soft ring under the pointer, takes the focus ring on a keyboard and shrinks a little while held; forced colors bring the browser's own slider back.
 - **Help sits outside the control**, between the label and the control, and is the control's description.
 - **Required is marked with the word "Required"** beside the label (hidden from screen readers, which already hear the `required` attribute). Optional fields are not marked.
 - **A field is checked when it is left, once it has been changed, and every field on submit.** Tabbing through an empty form does not fill it with errors. A field showing an error is checked again as it is typed in, so the message goes as soon as it is fixed.
@@ -55,12 +55,12 @@ Any form: a site's settings, a new job, a post's metadata, the one-line reason o
 ## Accessibility
 
 - Every control has a visible label; a radio group is a `fieldset.cap-field` with a `legend.cap-field-label`.
-- The error has an icon as well as its colour and a thicker edge, so it is not colour alone.
+- The error has an icon as well as its color and a thicker edge, so it is not color alone.
 - Inputs are 16 px on a touch screen so iOS does not zoom (base.css).
-- The checkbox and radio are real `<input>`s, drawn by CSS (`appearance: none`): the edge is `--line-strong` (3:1), the checked fill `--on` (the primary fill unless the site sets its own on colour), the tick `--primary-fg`. A mixed checkbox (`input.indeterminate = true`; there is no attribute) shows a bar and is announced as mixed.
+- The checkbox and radio are real `<input>`s, drawn by CSS (`appearance: none`): the edge is `--line-strong` (3:1), the checked fill `--on` (the primary fill unless the site sets its own on color), the tick `--primary-fg`. A mixed checkbox (`input.indeterminate = true`; there is no attribute) shows a bar and is announced as mixed.
 - The ring is an opaque 3 px in the accent on every field, checkbox and radio; the group draws it round the whole edge.
 - Clicking an input group's text or icon puts the cursor in its field (`enhance()`, or the React `InputGroupAddon`); a button inside keeps its own click.
-- Forced colours: the error icon is drawn in CanvasText and an invalid edge doubles.
+- Forced colors: the error icon is drawn in CanvasText and an invalid edge doubles.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -87,7 +87,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </form>
 ```
 
-`import { enhance, validate, validateForm, showError, clearError } from "capsomer/behaviour/field"`. `enhance()` attaches to every `form[data-cap="field"]` and sets `novalidate` on it; its submit check runs first and stops the event when a field is wrong, so the app's own submit handler runs only for a valid form. `showError(control, text, announce)` writes a server's answer beside a field.
+`import { enhance, validate, validateForm, showError, clearError } from "capsomer/behavior/field"`. `enhance()` attaches to every `form[data-cap="field"]` and sets `novalidate` on it; its submit check runs first and stops the event when a field is wrong, so the app's own submit handler runs only for a valid form. `showError(control, text, announce)` writes a server's answer beside a field.
 
 In React, `import { Field } from "capsomer/react/field"`:
 
@@ -112,7 +112,7 @@ Fields in an input group, a choice card and horizontal fields:
 
 ## Matches
 
-shadcn/ui `Input`, `Textarea`, `Checkbox`, `RadioGroup`, `Label`, `Field` (FieldSet, FieldLegend, FieldGroup, FieldContent, FieldTitle, FieldDescription, FieldSeparator, FieldError) and `InputGroup` (Addon, Button, Text, Input, Textarea), Base UI flavour, style nova. The class map: `.cap-input`, `.cap-check`, `.cap-label`, `.cap-field` (`data-orientation`, `data-invalid`), `.cap-field-group`, `.cap-field-content`, `.cap-field-title`, `.cap-field-description` (same as `.cap-field-help`), `.cap-field-separator`, `.cap-field-error`, `.cap-input-group`, `.cap-input-addon[data-align]`, `.cap-input-group-text`. A button in an addon is a `cap-btn` with `data-size="xs"`.
+shadcn/ui `Input`, `Textarea`, `Checkbox`, `RadioGroup`, `Label`, `Field` (FieldSet, FieldLegend, FieldGroup, FieldContent, FieldTitle, FieldDescription, FieldSeparator, FieldError) and `InputGroup` (Addon, Button, Text, Input, Textarea), Base UI flavor, style nova. The class map: `.cap-input`, `.cap-check`, `.cap-label`, `.cap-field` (`data-orientation`, `data-invalid`), `.cap-field-group`, `.cap-field-content`, `.cap-field-title`, `.cap-field-description` (same as `.cap-field-help`), `.cap-field-separator`, `.cap-field-error`, `.cap-input-group`, `.cap-input-addon[data-align]`, `.cap-input-group-text`. A button in an addon is a `cap-btn` with `data-size="xs"`.
 
 ## Deliberate differences
 

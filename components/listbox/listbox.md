@@ -2,11 +2,11 @@
 name: listbox
 title: Listbox
 summary: One list of options a person picks from, with groups, an active option, filtering, typeahead and selection. The look every picker shares.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: own JavaScript
 states: [one chosen value, the current option, under the pointer, groups and a separator, several chosen values, a destructive choice, filtered by typing, focus on the options, nothing matches]
 added: 0.2.0
-source: Capsomer's command menu (components/command-menu), generalised
+source: Capsomer's command menu (components/command-menu), generalized
 replaces:
   - 'role="listbox"'
   - 'role="option"'
@@ -17,13 +17,13 @@ replaces:
 
 A building block, not a control on its own. It is the list inside the command menu and the select popup, and the look of the options inside the combobox and menu popups. It owns how an option looks in every state, how the active option moves, how a list filters and is announced, and how a value is chosen.
 
-Matches shadcn/ui's Command, Select, Combobox and Dropdown Menu items (Base UI flavour, nova style): a rounded row, a muted group label, a check at the end for the chosen value, a shortcut at the end.
+Matches shadcn/ui's Command, Select, Combobox and Dropdown Menu items (Base UI flavor, nova style): a rounded row, a muted group label, a check at the end for the chosen value, a shortcut at the end.
 
 ## When to use it
 
 - The list inside a command menu or a select popup.
 - A list always on the page that a person picks one or several values from (a region, notification kinds).
-- The look of the options inside a Base UI combobox or menu popup (the classes only, no behaviour).
+- The look of the options inside a Base UI combobox or menu popup (the classes only, no behavior).
 
 ## When not to
 
@@ -34,7 +34,7 @@ Matches shadcn/ui's Command, Select, Combobox and Dropdown Menu items (Base UI f
 ## The default and its reason
 
 - **The active option is not the chosen option.** The active one is where a key press acts; it is marked `data-active` and named by `aria-activedescendant` on whatever holds focus. `aria-selected` means one thing: this value is chosen. A list where nothing is chosen (a command menu) has no `aria-selected` at all.
-- **The current option shows a tint and a 3 px accent edge**, so the cue is not colour alone and holds at 3:1; in forced colours an outline. Base UI's `data-highlighted` draws the same.
+- **The current option shows a tint and a 3 px accent edge**, so the cue is not color alone and holds at 3:1; in forced colors an outline. Base UI's `data-highlighted` draws the same.
 - **Three focus models**: `input` (focus stays in a combobox, which names the active option), `descendant` (the list holds focus), `roving` (each option takes focus). Set with `data-mode`; the input is found from `aria-controls`.
 - **No wrap** at the ends by default (`data-wrap` turns it on), disabled options are skipped, and Home and End keep moving the caret while an input holds focus.
 - **Filtering is a case-insensitive substring over the group, the label and the keywords**, so a group's name finds all of it; an optional rank hook can order the results. The count is announced politely ("3 results"), and no match is said in words.
@@ -81,7 +81,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 Variants and hooks: `data-variant="surface"` (own border and surface), `data-controlled` (something else moves the highlight, so the pointer does not tint a row), `data-tone="crit"` on an option, `data-selection="single|multi"` (keeps room for the check), `data-label` and `data-group` on an option to override what it is searched by.
 
 ```js
-import { enhance, createListbox, listboxFor, filterCommands, groupBy, step, stepEnabled, nextTypeahead } from "capsomer/behaviour/listbox";
+import { enhance, createListbox, listboxFor, filterCommands, groupBy, step, stepEnabled, nextTypeahead } from "capsomer/behavior/listbox";
 enhance(); // every [data-cap="listbox"]
 const lb = createListbox(el, { input, selection: "single", wrap: true, rank });
 lb.filter("fra");              // shows the matches, announces the count, returns it
@@ -93,4 +93,4 @@ In React: `<Listbox aria-label selection mode><OptionGroup label><Option id valu
 
 ## Exceptions in production
 
-None yet. Deliberately different from shadcn: the current option has an accent edge as well as a tint; the group label keeps the contrast the family needs (muted, not a lighter grey); hover is not a separate highlight once the controller owns the active option.
+None yet. Deliberately different from shadcn: the current option has an accent edge as well as a tint; the group label keeps the contrast the family needs (muted, not a lighter gray); hover is not a separate highlight once the controller owns the active option.

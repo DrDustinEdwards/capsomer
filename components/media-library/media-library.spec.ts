@@ -7,7 +7,7 @@ const NONE = { edit: false, publish: false, deleteContent: false, deleteMedia: f
 const OFFERS = { upload: { maxBytes: 5 * 1024 * 1024, types: ["image/png", "application/pdf"] }, alt: true, tags: true, trash: true, delete: true };
 const intents = (o: ReturnType<typeof mediaActions>) => o.bulk.map((a) => a.intent);
 
-test("behaviour: an action is offered only where the site supports it and the person may run it, and delete is for good", () => {
+test("behavior: an action is offered only where the site supports it and the person may run it, and delete is for good", () => {
   expect(intents(mediaActions({ offers: OFFERS, can: ALL, query: {} }))).toEqual(["add-tags", "remove-tags", "trash"]);
   // From Trash: restore, or delete for good.
   const bin = mediaActions({ offers: OFFERS, can: ALL, query: { view: "trash" } });
@@ -23,7 +23,7 @@ test("behaviour: an action is offered only where the site supports it and the pe
   expect(reader.withheld).toEqual(["You can look at these files. Changing them needs an editor's role."]);
 });
 
-test("behaviour: an address keeps its filters in one order, leaves the defaults out, and a filter change closes the file and starts again", () => {
+test("behavior: an address keeps its filters in one order, leaves the defaults out, and a filter change closes the file and starts again", () => {
   const q = { inspect: "a/b.png", cursor: "c-2", tag: "release", q: "fox", view: "library" as const, layout: "grid" as const };
   expect(mediaHref("/media?x=1", q)).toBe("/media?q=fox&tag=release&cursor=c-2&inspect=a%2Fb.png");
   expect(mediaHref("/media", withMedia(q, { tag: "capsid" }))).toBe("/media?q=fox&tag=capsid");
@@ -33,7 +33,7 @@ test("behaviour: an address keeps its filters in one order, leaves the defaults 
   expect(mediaHref("/media", withMedia(q, { inspect: undefined }))).toBe("/media?q=fox&tag=release&cursor=c-2");
 });
 
-test("behaviour: the count, the empty state, the upload rules and the picker's files", () => {
+test("behavior: the count, the empty state, the upload rules and the picker's files", () => {
   const rec = (key: string, over: object = {}) => ({ key, name: key, url: `/m/${key}`, kind: "image" as const, type: "image/png", bytes: 1, alt: "", altState: "missing" as const, title: "", caption: "", tags: [], used: [], state: "ready" as const, ...over });
   const rows = [rec("a"), rec("b", { kind: "document", type: "application/pdf" }), rec("c", { state: "uploading" }), rec("d", { state: "binned" })];
   expect(countLine({ rows, page: { nextCursor: null }, query: { view: "trash" } })).toBe("4 files in Trash");
@@ -93,7 +93,7 @@ eachTheme((theme) => {
     await expect(limited.getByRole("button", { name: "Upload" })).toHaveCount(0);
   });
 
-  test("behaviour: with no script, a tile links to its inspector, the bar posts the ticked files, upload is a multipart form, and the inspector's fields are forms", async ({ page }) => {
+  test("behavior: with no script, a tile links to its inspector, the bar posts the ticked files, upload is a multipart form, and the inspector's fields are forms", async ({ page }) => {
     await visitStates(page, "media-library", theme);
     const lib = page.locator("#media-static");
     await expect(lib.locator(".cap-media-tile[data-key='2026/09/uptime-strip.png'] .cap-media-open")).toHaveAttribute("href", "/media?inspect=2026%2F09%2Fuptime-strip.png");
@@ -126,7 +126,7 @@ eachTheme((theme) => {
     expect(sent.fields).toEqual({ intent: ["upload"], file: ["file:lambda.png"], alt: ["Lambda plaques"] });
   });
 
-  test("behaviour: with script, opening a file reads where it is used, and the inspector saves by itself", async ({ page }) => {
+  test("behavior: with script, opening a file reads where it is used, and the inspector saves by itself", async ({ page }) => {
     await visitStates(page, "media-library", theme);
     const lib = editor(page);
     // A list of files does not know where each is used, so no tile says Unattached.
@@ -178,7 +178,7 @@ eachTheme((theme) => {
     await expect(lib.locator(".cap-media-tile")).toHaveCount(1);
   });
 
-  test("behaviour: the picker offers images only and will not insert one without alt text, unless it is said to be decorative", async ({ page }) => {
+  test("behavior: the picker offers images only and will not insert one without alt text, unless it is said to be decorative", async ({ page }) => {
     await visitStates(page, "media-library", theme);
     const picker = page.locator("[data-mount='picker']");
     await expect(picker.locator(".cap-media-tile")).toHaveCount(4);
@@ -198,7 +198,7 @@ eachTheme((theme) => {
     await expect(page.locator("#picked")).toHaveText("Picked 2026/09/uptime-strip.png with alt text “”.");
   });
 
-  test("behaviour: with no script, the picker's alt step posts the file and its alt text", async ({ page }) => {
+  test("behavior: with no script, the picker's alt step posts the file and its alt text", async ({ page }) => {
     await visitStates(page, "media-library", theme);
     const step = page.locator("[data-mount='picker-step']").getByRole("form", { name: "Alt text for uptime-strip.png" });
     await expect(step.getByRole("link", { name: "Choose another" })).toHaveAttribute("href", "/media");
@@ -208,7 +208,7 @@ eachTheme((theme) => {
     expect((await posted).fields).toEqual({ intent: ["pick"], ids: ["2026/09/uptime-strip.png"], alt: ["The uptime strip"] });
   });
 
-  test("behaviour: the inspector's preview keeps its height above the fields, in a pane shorter than its content", async ({ page }) => {
+  test("behavior: the inspector's preview keeps its height above the fields, in a pane shorter than its content", async ({ page }) => {
     await visitStates(page, "media-library", theme);
     const ins = page.locator("[data-mount='form'] .cap-media-inspector");
     const preview = await ins.locator(".cap-media-preview").boundingBox();

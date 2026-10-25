@@ -2,7 +2,7 @@
 name: theme-switch
 title: Theme switch
 summary: Light or Dark, following the system until the person chooses, then remembered in this browser.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [first visit follows the system, light selected, dark selected, hover, keyboard focus, disabled, comfortable density, phone width, the button form]
 added: 0.1.0
@@ -72,7 +72,7 @@ The inline script, for the default key:
 ## Accessibility
 
 - A `fieldset` named by its `legend`: a screen reader hears "Theme, grouping", then "Light, radio button, checked, 1 of 2".
-- The checked choice is shown by the segmented control's tint and weight, not by colour alone.
+- The checked choice is shown by the segmented control's tint and weight, not by color alone.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -98,7 +98,7 @@ Toggle Group in its outline variant with spacing 0 (the items flush in one round
 
 - **Two radios, not a toggle group of buttons.** shadcn's Toggle Group is `aria-pressed` buttons; a choice of one of two is a radio group, so the arrow keys, the form and the screen reader's "1 of 2" are the browser's. It also keeps 0.1's markup contract.
 - **Two states, no System.** shadcn's Mode Toggle is a menu of Light, Dark and System; Dustin ruled for two (PR #13), and kept two for the header's button (2026-10-13). The first visit follows the system without writing anything.
-- **The chosen segment is the selected-item fill**, not shadcn's grey muted fill: one selected style across Capsomer, and over 3:1 against the ground on its own.
+- **The chosen segment is the selected-item fill**, not shadcn's gray muted fill: one selected style across Capsomer, and over 3:1 against the ground on its own.
 - **It no longer uses `.cap-seg`.** The segmented control is a form control on a surface; this one sits on the top bar's ground tone and has icons, so its look is its own, and the two can change independently.
 
 ## Exceptions in production

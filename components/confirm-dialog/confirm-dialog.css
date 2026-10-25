@@ -34,7 +34,7 @@
     font-size: var(--fs-detail);
   }
 
-  /* A failure stays inside the dialog, beside the action: shape, word and colour. It sits
+  /* A failure stays inside the dialog, beside the action: shape, word and color. It sits
      between the body and the footer, outside what scrolls, so it is always in view. Present
      and empty until needed (role="alert" announces what is put into it); empty it takes no room. */
   .cap-confirm-error {

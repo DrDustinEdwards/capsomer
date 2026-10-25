@@ -31,7 +31,7 @@ A single current state is a `.cap-status`. A trend in a number (requests, errors
 - **Every chart has a one-sentence summary and its numbers as text.** The summary says what the strip shows ("Up all week except one outage on Tuesday 29 September, from 11:50 to 18:20 UTC") and sits under the title, before the strip, as the chart frame puts it; the numbers by day sit behind "Show data" (the frame's disclosure), closed by default, as a table in the HTML. Enarratio's `uptimeStripTable()` returns both the sentence and the table.
 - **The caption gives the uptime and its window together**, so a percent never stands without what it is a percent of. With gaps, the window says so: "100% up over the 6 of 7 days with data".
 - **No data is a state, hatched, with its reason.** It is never counted as up or as zero.
-- **Each kind of slot differs in shape as well as colour** in the legend: up and down solid, partly down split, no data hatched.
+- **Each kind of slot differs in shape as well as color** in the legend: up and down solid, partly down split, no data hatched.
 - **In a table row the strip and its percent share one line** (`.cap-uptime-line`): an 18 px strip that takes the room it is given and never less than 84 px, then the percent. A site with no probe in the window says "No data" with its reason (a status, brief) instead of a percent; never a blank and never 0% (Portal: the Sites table, "Uptime, 7 days").
 
 ## Matches
@@ -51,8 +51,8 @@ The strip itself is an image, not a control, and takes no tab stop.
 
 - A `figure` named by its `figcaption` (the title, the uptime and the window).
 - Enarratio's SVG is `role="img"` with a label that counts the slots of each kind.
-- The legend is a list named "Key"; the summary is text; the numbers are a table with row and column headers in a labelled, focusable scroll region.
-- Forced colours: the legend's keys are redrawn in CanvasText and Canvas, keeping their shapes.
+- The legend is a list named "Key"; the summary is text; the numbers are a table with row and column headers in a labeled, focusable scroll region.
+- Forced colors: the legend's keys are redrawn in CanvasText and Canvas, keeping their shapes.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -92,7 +92,7 @@ In a table cell:
 </td>
 ```
 
-CSS only: no behaviour module and no React wrapper (load `chart-frame.css` with it; React apps use `ChartFrame` from `capsomer/react/chart-frame`, whose children slot takes the legend). In React, write the markup and pass Enarratio's string to the slot through the app's own trusted-HTML path.
+CSS only: no behavior module and no React wrapper (load `chart-frame.css` with it; React apps use `ChartFrame` from `capsomer/react/chart-frame`, whose children slot takes the legend). In React, write the markup and pass Enarratio's string to the slot through the app's own trusted-HTML path.
 
 **Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.ticks`, `.upct`, `.upline`, `.sites-brief`; `dashboard/src/ui/charts.tsx` `UptimeTicks`, `UptimeFoot`). EXTRACTED: the legend keys' fills (the Portal's `.ticks i.d` red, `.ticks i.p` split `linear-gradient(to top, crit, ok)`, `.ticks i.n` hatched `repeating-linear-gradient(135deg, nodata 0 2px, transparent 2px 4px)`) and, new in v0.1.1, the inline form (`.upline`: strip and percent on one line, 18 px, 84 px at least). REWROTE: the strip itself. The Portal draws it in HTML (`i` elements in `.ticks`, 22 px, one per slot, a `data-tip` tooltip on each); Capsomer takes the SVG Enarratio draws (decision: one scale and one look across every app), so this component is the caption, legend, summary and numbers by day around it, none of which the Portal has (its `UptimeFoot` is a line of the 7-day and 24-hour percentages under the ticks, with no legend, summary or table). Evidence: no class of the Portal's `.ticks` appears here, and the legend's hatch is the only rule the two share. The Portal's per-tick hover (`outline: 1px solid var(--text)`) is not carried: Enarratio's marks carry their own titles.
 

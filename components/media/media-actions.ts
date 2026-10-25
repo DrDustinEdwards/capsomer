@@ -1,4 +1,4 @@
-// The media library's bulk tags and the clipboard: plain functions the behaviour module and the React
+// The media library's bulk tags and the clipboard: plain functions the behavior module and the React
 // wrapper share.
 
 // ---------------------------------------------------------------------------------------

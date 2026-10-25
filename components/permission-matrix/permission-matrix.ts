@@ -1,4 +1,4 @@
-// The permission matrix's behaviour: the view switch (By agent, By permission), and the
+// The permission matrix's behavior: the view switch (By agent, By permission), and the
 // pure helpers that turn a matrix into each view's sentences. No framework; the React
 // wrapper uses the same helpers.
 

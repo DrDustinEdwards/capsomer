@@ -16,7 +16,7 @@ import { sitemapDocument } from "@drdustinedwards/site-helpers/sitemap";
 const ORIGIN = "https://capsomer.dustinedwards.info";
 const REPO = "https://github.com/DrDustinEdwards/capsomer";
 const DESCRIPTION =
-  "Capsomer: the shared design system for Dustin Edwards's sites and apps. Six colour families, three faces, every component in every state, in plain CSS.";
+  "Capsomer: the shared design system for Dustin Edwards's sites and apps. Six color families, three faces, every component in every state, in plain CSS.";
 const AUTHOR = { "@type": "Person", "@id": "https://dustinedwards.info/#person", name: "Dustin Edwards", url: "https://dustinedwards.info" };
 
 const ADMIN_DESCRIPTION =
@@ -69,7 +69,7 @@ export function discoveryFiles(): Record<string, string> {
         "Capsomer is Dustin Edwards's open-source (MIT) design system: plain CSS with design tokens, web components and React wrappers, an app shell and patterns, shared by his sites and apps (dustinedwards.info, the Capsid Portal, Carrel and others). No CSS framework; light and dark themes; every component tested for accessibility in every state.",
       intro: [
         [
-          `- Showcase: ${ORIGIN}/ (the colour families, type, every component with a link to its states, the defaults and how to install)`,
+          `- Showcase: ${ORIGIN}/ (the color families, type, every component with a link to its states, the defaults and how to install)`,
           `- Admin: ${ORIGIN}/admin/ (an interactive page: every token, every component in every state, and each component's test results)`,
           `- Code: ${REPO}`,
           "- Author: Dustin Edwards, https://dustinedwards.info",

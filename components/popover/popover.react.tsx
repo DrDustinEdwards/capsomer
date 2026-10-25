@@ -3,7 +3,7 @@ import { enhance, type Align, type Side } from "./popover.ts";
 
 // Renders the HTML contract in popover.md: the content is in the markup, hidden by the
 // popover attribute, so it server-renders. Open or closed is the platform's popover state
-// (the behaviour module shows, hides, places and returns focus), not React state.
+// (the behavior module shows, hides, places and returns focus), not React state.
 type Kind = "dialog" | "tooltip";
 const Ctx = createContext<{ id: string; kind: Kind }>({ id: "", kind: "dialog" });
 

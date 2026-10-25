@@ -1,7 +1,7 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The markdown editor: a labelled textarea that markdown-editor.ts upgrades in place to a
+/* The markdown editor: a labeled textarea that markdown-editor.ts upgrades in place to a
    CodeMirror surface with a toolbar, a link palette, a slash menu, an image prompt and a
    word count. Extracted from the site admin's .md-* styles (app/styles/admin-editor.css),
    rebuilt on Capsomer's tokens. The surface's own parts (CodeMirror's lines, gutter and
@@ -34,7 +34,7 @@
     &:hover {
       border-color: var(--muted);
     }
-    /* Focus: the edge takes the ring colour, as a field's does; the ring itself is drawn
+    /* Focus: the edge takes the ring color, as a field's does; the ring itself is drawn
        inside the surface (markdown-editor.view.ts), since the frame clips overflow. */
     &:has(.cm-editor.cm-focused) {
       border-color: var(--ring);

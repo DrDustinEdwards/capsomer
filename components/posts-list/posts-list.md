@@ -2,7 +2,7 @@
 name: posts-list
 title: Posts list
 summary: One page of one site's posts, the same in Carrel and in every site admin. Status tabs with counts, search and filters in the address, a table with each row's menu, a bulk bar that lists each post's outcome, Undo for what can be undone, and a confirmation for what cannot. Every action is a form post, so it all works with no script.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + React (composes tabs, field, select, table, status, menu, bulk bar, message, empty and confirm dialog)
 states: [editor with every action, after a bulk post with no script, reader, no delete and no tags, one page of many, sorted on the page only, no drafts, no match, delete confirmation page, delivered HTML]
 added: 0.6.0
@@ -36,7 +36,7 @@ Any list of a site's posts that a person manages: Carrel's Posts tab for a site,
 - **An action is offered only when the site supports it and the person may run it** (`data.offers` and `data.can`). A withheld action is named in a line of plain text, so a missing button is never a mystery. The boxes are for people who can change something; a reader gets none.
 - **Undo for unpublish, tags and duplicate.** Unpublish's Undo republishes (never a first publication: a post that was never published cannot be unpublished). A tag's Undo reverses it on the posts that changed and only those. Duplicate's Undo removes the copy only where the site can delete. The kit decides each inverse and sends it as `result.undo`; the list posts it back as it came.
 - **Delete asks first and lists every post**, with the count to type. The kit answers a delete with `result.confirm`; the list shows it as the confirm dialog (script) or the confirm page (no script), and posting it with the typed word performs it. The kit checks the word again.
-- **The status is a word, a shape and a colour**, the same mapping everywhere (`contentStatus()`): Published (a tick), Scheduled (a square, "in 3 days"), Draft (an empty circle with a bar).
+- **The status is a word, a shape and a color**, the same mapping everywhere (`contentStatus()`): Published (a tick), Scheduled (a square, "in 3 days"), Draft (an empty circle with a bar).
 - **50 per page, by cursor.** "Next page" and "First page" are links. The design's default is "Show more", but a cursor page replaces the one before it, and "Show more" promises to add to it, so the links say what they do. Until the site can sort (site-api v0.6) the kit sorts the page it has, and the count says "sorted on this page only".
 - **Empty names its kind**: "No drafts", "Nothing scheduled", "No posts match “lysogeny”" with Clear filters.
 
@@ -54,11 +54,11 @@ Any list of a site's posts that a person manages: Carrel's Posts tab for a site,
 
 ## Accessibility
 
-- The list is a region named by its noun ("Posts"). The table is in a labelled, focusable scroll region whose caption names the site.
+- The list is a region named by its noun ("Posts"). The table is in a labeled, focusable scroll region whose caption names the site.
 - Each box and each row menu names its post ("Select Notes on the Foxhound release", "Actions for Notes on the Foxhound release"), so a column of them is not a column of the same name.
 - The bulk bar's count is a status; its outcome list is a group named by its line ("2 done, 1 not done."), each line a word and a shape.
 - The result is a status region; a failure is an alert. The confirm dialog is an alert dialog with focus on Cancel.
-- Status is never colour alone. Text reaches 4.5:1 and edges 3:1 in both themes.
+- Status is never color alone. Text reaches 4.5:1 and edges 3:1 in both themes.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -120,7 +120,7 @@ Props: `data` (`PostsData`), `action`, `Form`, `submit`, `result`, `labels` (`{ 
 
 The intents the list posts, each with the ticked or the row's `ids`: `add-tag` and `remove-tag` (with `tag`), `duplicate`, `unpublish`, `delete` (answered with `result.confirm`, then posted again with `confirm`, the typed count), a host's toolbar intent, and whatever `result.undo` names. The kit decides what each means and what its inverse is.
 
-`import { contentStatus } from "capsomer/behaviour/posts-list"` (also from `capsomer/react/posts-list`): `contentStatus("scheduled", publishAt, now)` gives `{ tone: "info", word: "Scheduled", when: "in 3 days" }`, for any view that shows a post's status. The pure helpers `postActions`, `rowActions`, `postsHref`, `countLine`, `emptyWords` and `intentForm` are exported too.
+`import { contentStatus } from "capsomer/behavior/posts-list"` (also from `capsomer/react/posts-list`): `contentStatus("scheduled", publishAt, now)` gives `{ tone: "info", word: "Scheduled", when: "in 3 days" }`, for any view that shows a post's status. The pure helpers `postActions`, `rowActions`, `postsHref`, `countLine`, `emptyWords` and `intentForm` are exported too.
 
 **Dependencies.** It needs the stylesheets of the parts it composes: tabs, field, select, table, status, menu, bulk-bar, message, empty, time, dialog, confirm-dialog and content (the shared result box), with this one.
 

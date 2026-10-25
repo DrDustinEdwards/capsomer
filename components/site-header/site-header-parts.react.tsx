@@ -105,7 +105,7 @@ export interface SiteHeaderProps {
   logo: HeaderLogo;
   switchers?: HeaderSwitcher[];
   sections?: HeaderSection[];
-  // Where the section links sit: after the switcher (left), centred in the header (center), or on
+  // Where the section links sit: after the switcher (left), centered in the header (center), or on
   // the right before the extras, after a thin divider (right).
   links?: "left" | "center" | "right";
   extras?: HeaderExtra[];
@@ -197,7 +197,7 @@ export function HeaderTip({ text, keys }: { text: string; keys?: string }) {
   );
 }
 
-// A disclosure button and its panel, wired by the behaviour module (the open state is the
+// A disclosure button and its panel, wired by the behavior module (the open state is the
 // platform's popover state, not React's).
 export function Disclosure({ id, className, label, name, current, align, children, button }: { id: string; className: string; label?: string; name?: string; current?: boolean; align?: "end"; children: ReactNode; button: ReactNode }) {
   const trigger = useRef<HTMLButtonElement>(null);
@@ -280,7 +280,7 @@ function SheetList({ links, renderLink, onClose }: { links: HeaderLink[]; render
   );
 }
 
-// A labelled group of rows in the sheet, for a site's own rows (your admin's apps, its menu).
+// A labeled group of rows in the sheet, for a site's own rows (your admin's apps, its menu).
 export function SheetGroup({ label, links, renderLink = plainLink, onClose }: { label?: string; links: HeaderLink[]; renderLink?: (p: LinkProps) => ReactNode; onClose: () => void }) {
   return (
     <>

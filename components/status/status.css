@@ -1,15 +1,15 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Status: a word with a glyph, coloured by its tone, and the same word as a badge. The
+/* Status: a word with a glyph, colored by its tone, and the same word as a badge. The
    glyph's shape differs per tone (octagon critical, triangle warning, square notice, filled
    circle ok, an empty circle with a bar no data, an arc running), so shape and word carry the meaning and
-   colour only repeats it.
+   color only repeats it.
 
    The badge (.cap-pill, also written .cap-badge) is shadcn's Badge: a 20 px pill, 12 px
    text, one pixel edge, six variants (default, secondary, outline, destructive, ghost, link).
    With a data-tone and no variant it is a status badge: the word and glyph on the tone's
-   tint. A variant and a tone together keep the tone's colour (outline, ghost) or the
+   tint. A variant and a tone together keep the tone's color (outline, ghost) or the
    variant's own fill (default, secondary, destructive, link). */
 @layer cap.components {
   .cap-status {
@@ -115,7 +115,7 @@
       --_bg: var(--info-soft);
       --_fg: var(--info);
     }
-    /* The no-data grey is lighter than muted on its own tint; muted keeps 4.5:1. */
+    /* The no-data gray is lighter than muted on its own tint; muted keeps 4.5:1. */
     &[data-tone="nodata"] {
       --_bg: var(--nodata-soft);
       --_fg: var(--muted);
@@ -134,7 +134,7 @@
       --_bg: var(--crit-soft);
       --_fg: var(--crit);
     }
-    /* Outline and ghost keep a tone's colour for the word and drop its tint. The edge is a
+    /* Outline and ghost keep a tone's color for the word and drop its tint. The edge is a
        control edge once the badge is a link or a button, so it is the strong line. */
     &[data-variant="outline"] {
       --_bg: transparent;
@@ -196,8 +196,8 @@
     }
   }
 
-  /* Hover and focus change colour only where the platform says so; no motion is needed
-     beyond a short colour change. */
+  /* Hover and focus change color only where the platform says so; no motion is needed
+     beyond a short color change. */
   @media (prefers-reduced-motion: no-preference) {
     .cap-pill,
     .cap-badge {
@@ -208,7 +208,7 @@
     }
   }
 
-  /* Forced colours remove the tint: a badge keeps its outline so it still reads as one. */
+  /* Forced colors remove the tint: a badge keeps its outline so it still reads as one. */
   @media (forced-colors: active) {
     .cap-pill,
     .cap-badge {

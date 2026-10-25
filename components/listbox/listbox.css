@@ -214,7 +214,7 @@
     display: none;
   }
 
-  /* Forced colours remove tints and shadows: the current option gets an outline, the chosen
+  /* Forced colors remove tints and shadows: the current option gets an outline, the chosen
      one keeps its check, the separator becomes a rule. */
   @media (forced-colors: active) {
     .cap-listbox[data-variant="surface"] {

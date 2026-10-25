@@ -93,7 +93,7 @@ function git(argsList, cwd) {
 // ---- token-check -------------------------------------------------------------------------
 
 function lightTokens() {
-  const css = readFileSync(join(PKG, "tokens", "colour.css"), "utf8");
+  const css = readFileSync(join(PKG, "tokens", "color.css"), "utf8");
   const root = css.slice(css.indexOf(":root {"), css.indexOf("}"));
   return [...root.matchAll(/--([\w-]+):\s*(#[0-9a-f]{6})/gi)].map((m) => ({ name: m[1], hex: m[2].toLowerCase() }));
 }
@@ -105,7 +105,7 @@ const hexRgb = (h) => {
 };
 const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 
-// Raw colours and off-scale spacing in an app's CSS, each with the nearest token. Generated
+// Raw colors and off-scale spacing in an app's CSS, each with the nearest token. Generated
 // files and Capsomer's own token files are skipped.
 export function tokenCheck(root, paths) {
   const tokens = lightTokens();
@@ -121,7 +121,7 @@ export function tokenCheck(root, paths) {
       for (const m of code.matchAll(/#[0-9a-f]{6}\b|#[0-9a-f]{3}\b/gi)) {
         const rgb = hexRgb(m[0].toLowerCase());
         const near = tokens.reduce((a, t) => (dist(hexRgb(t.hex), rgb) < dist(hexRgb(a.hex), rgb) ? t : a));
-        items.push({ file: relative(root, file).replace(/\\/g, "/"), line: i + 1, text: m[0], kind: "colour", suggestion: `var(--${near.name})` });
+        items.push({ file: relative(root, file).replace(/\\/g, "/"), line: i + 1, text: m[0], kind: "color", suggestion: `var(--${near.name})` });
       }
       for (const m of code.matchAll(/\b(?:margin|padding|gap|row-gap|column-gap|inset|top|left|right|bottom)[\w-]*\s*:\s*([^;]+)/g)) {
         for (const px of m[1].matchAll(/(?<![\w.-])(\d+(?:\.\d+)?)px\b/g)) {
@@ -173,7 +173,7 @@ function a11yFrom(reportPath) {
 
 export function report(root) {
   const lib = existsSync(join(root, "node_modules", "capsomer")) ? join(root, "node_modules", "capsomer") : PKG;
-  const catalogue = components(lib);
+  const catalog = components(lib);
   const files = walk(root, [".ts", ".tsx", ".js", ".jsx", ".mjs", ".css", ".html", ".astro"]).filter((f) => !f.includes(`${join("node_modules", "capsomer")}`));
   const used = new Set();
   const own = [];
@@ -188,8 +188,8 @@ export function report(root) {
   for (const file of files) {
     const rel = relative(root, file).replace(/\\/g, "/");
     const text = readFileSync(file, "utf8");
-    for (const m of text.matchAll(/capsomer\/(?:react\/|behaviour\/)?([\w-]+)(?:\.css)?/g)) if (catalogue.some((c) => c.name === m[1])) used.add(m[1]);
-    for (const c of catalogue) {
+    for (const m of text.matchAll(/capsomer\/(?:react\/|behavior\/)?([\w-]+)(?:\.css)?/g)) if (catalog.some((c) => c.name === m[1])) used.add(m[1]);
+    for (const c of catalog) {
       if (c.rootClass && new RegExp(`\\b${c.rootClass}\\b`).test(text)) used.add(c.name);
       for (const signal of [].concat(c.replaces ?? [])) {
         let re;
@@ -232,7 +232,7 @@ export function report(root) {
 
 // ---- size ----------------------------------------------------------------------------------
 
-const BUDGET = { base: 3 * KB, css: 15 * KB, behaviour: 10 * KB };
+const BUDGET = { base: 3 * KB, css: 15 * KB, behavior: 10 * KB };
 
 async function size() {
   const rows = [];
@@ -252,7 +252,7 @@ async function size() {
     if (total > BUDGET.css * 2) warn.push(`CSS carrying Capsomer is ${kb(total)} gzip; Capsomer's own share should stay near ${kb(BUDGET.css)}.`);
   } else {
     const read = (...p) => readFileSync(join(PKG, ...p));
-    const base = gz(Buffer.concat([read("css", "layers.css"), read("tokens", "colour.css"), read("tokens", "scale.css"), read("css", "base.css"), read("css", "utilities.css")]));
+    const base = gz(Buffer.concat([read("css", "layers.css"), read("tokens", "color.css"), read("tokens", "scale.css"), read("css", "base.css"), read("css", "utilities.css")]));
     rows.push(["base", "layers, tokens, base", base]);
     if (base > BUDGET.base) warn.push(`Tokens, layers and base are ${kb(base)} gzip, over ${kb(BUDGET.base)}.`);
     let all = base;
@@ -271,10 +271,10 @@ async function size() {
       if (!existsSync(f)) continue;
       const n = gz(readFileSync(f));
       js += n;
-      rows.push(["behaviour", c.name, n]);
+      rows.push(["behavior", c.name, n]);
     }
-    rows.push(["behaviour", existsSync(join(PKG, "dist")) ? "TOTAL, every module" : "TOTAL (run npm run build first)", js]);
-    if (js > BUDGET.behaviour) warn.push(`Every behaviour module together is ${kb(js)} gzip, over ${kb(BUDGET.behaviour)}; a page loads only the ones it uses.`);
+    rows.push(["behavior", existsSync(join(PKG, "dist")) ? "TOTAL, every module" : "TOTAL (run npm run build first)", js]);
+    if (js > BUDGET.behavior) warn.push(`Every behavior module together is ${kb(js)} gzip, over ${kb(BUDGET.behavior)}; a page loads only the ones it uses.`);
     for (const [name, n] of await baseUiSizes()) rows.push(["base ui", name, n]);
   }
   const w = Math.max(...rows.map((r) => r[1].length), 10);
@@ -340,7 +340,7 @@ async function siteData() {
   const dataDir = join(PKG, "site", "data");
   mkdirSync(dataDir, { recursive: true });
   const pal = await import(pathToFileURL(join(PKG, "tokens", "palette.mjs")).href);
-  // The committed colours (the purple family), and every family's pairs for the contrast report.
+  // The committed colors (the purple family), and every family's pairs for the contrast report.
   writeFileSync(join(dataDir, "palette.json"), JSON.stringify(pal.themes(pal.FAMILIES.purple), null, 2));
   const scales = Object.fromEntries(Object.entries(pal.FAMILIES).map(([n, f]) => [n, { light: pal.scale(f.seed, f.anchor, "light"), dark: pal.scale(f.seed, f.anchor, "dark") }]));
   writeFileSync(join(dataDir, "families.json"), JSON.stringify({ families: pal.FAMILIES, pairs: pal.report(), scales }, null, 2));
@@ -360,11 +360,11 @@ async function siteData() {
       for (const spec of suite.specs ?? []) {
         const m = /^components\/([\w-]+)\//.exec((f ?? "").replace(/\\/g, "/")) ?? /^site\//.exec((f ?? "").replace(/\\/g, "/"));
         const comp = m?.[1] ?? "site";
-        const kind = /^(keyboard|accessibility|behaviour):/.exec(spec.title)?.[1] ?? "behaviour";
+        const kind = /^(keyboard|accessibility|behavior):/.exec(spec.title)?.[1] ?? "behavior";
         for (const t of spec.tests ?? []) {
           const status = t.status === "expected" || t.status === "flaky" ? "passed" : t.status === "skipped" ? "skipped" : "failed";
           const err = t.results?.at(-1)?.error?.message?.replace(/\u001b\[[0-9;]*m/g, "").split("\n").slice(0, 6).join("\n") ?? null;
-          const entry = (results.components[comp] ??= { keyboard: { passed: 0, failed: 0 }, accessibility: { passed: 0, failed: 0 }, behaviour: { passed: 0, failed: 0 }, tests: [] });
+          const entry = (results.components[comp] ??= { keyboard: { passed: 0, failed: 0 }, accessibility: { passed: 0, failed: 0 }, behavior: { passed: 0, failed: 0 }, tests: [] });
           if (status !== "skipped") entry[kind][status]++;
           results.totals[status]++;
           entry.tests.push({ title: spec.title, theme: th ?? null, kind, status, error: status === "failed" ? err : null });
@@ -426,7 +426,7 @@ function loc(root) {
   const lang = { ".ts": "TypeScript", ".tsx": "TypeScript (React)", ".mjs": "JavaScript", ".js": "JavaScript", ".css": "CSS", ".html": "HTML", ".md": "Markdown", ".json": "JSON", ".yml": "YAML", ".jsonc": "JSON" };
   const out = {};
   for (const f of files) {
-    if (/(^|\/)(package-lock\.json|tokens\/(colour|scale|themes)\.css|tokens\/tokens\.json)$/.test(f)) continue;
+    if (/(^|\/)(package-lock\.json|tokens\/(color|scale|themes)\.css|tokens\/tokens\.json)$/.test(f)) continue;
     const l = lang[extname(f)];
     if (!l) continue;
     const text = readFileSync(join(root, f), "utf8");
@@ -487,7 +487,7 @@ if (cmd === "report") {
 } else if (cmd === "token-check") {
   const r = tokenCheck(process.cwd(), args.slice(1).filter((a) => !a.startsWith("--")));
   for (const it of r.items.slice(0, 200)) console.warn(`${it.file}:${it.line}: ${it.kind} ${it.text}; nearest token ${it.suggestion}`);
-  console.log(r.count ? `token-check: ${r.count} warning(s). Warnings never fail a build; adding a token is the normal fix.` : "token-check: no raw colours or off-scale spacing found");
+  console.log(r.count ? `token-check: ${r.count} warning(s). Warnings never fail a build; adding a token is the normal fix.` : "token-check: no raw colors or off-scale spacing found");
 } else if (cmd === "size") {
   await size();
 } else if (cmd === "weight") {

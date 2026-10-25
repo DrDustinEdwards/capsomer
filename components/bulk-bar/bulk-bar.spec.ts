@@ -4,7 +4,7 @@ import { countText, fillCount, orderOutcomes, outcomeSummary, plural, previewIte
 
 const check = (page: Page, list: string, n: number) => page.locator(`#${list} li:nth-child(${n}) input`);
 
-test("behaviour: the count, the templates and the preview are pure", () => {
+test("behavior: the count, the templates and the preview are pure", () => {
   expect(countText(3)).toBe("3 selected");
   expect(fillCount("Bin {n} item{s}", 12)).toBe("Bin 12 items");
   expect(fillCount("Bin {n} item{s}", 1)).toBe("Bin 1 item");
@@ -13,7 +13,7 @@ test("behaviour: the count, the templates and the preview are pure", () => {
   expect(previewItems([{ id: "a", label: "First" }, { id: "b", label: "Second" }])).toEqual(["First", "Second"]);
 });
 
-test("behaviour: the outcome list's line counts what was done, and refusals come first", () => {
+test("behavior: the outcome list's line counts what was done, and refusals come first", () => {
   const ok = (id: string) => ({ id, label: id, ok: true });
   const no = (id: string) => ({ id, label: id, ok: false, message: "Changed since you opened it." });
   expect(outcomeSummary([ok("a"), ok("b"), ok("c")])).toBe("All 3 done.");
@@ -180,7 +180,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-message-item")).toContainText("Binned 2 drafts.");
   });
 
-  test("behaviour: the count follows the selection and the bar hides when it is empty", async ({ page }) => {
+  test("behavior: the count follows the selection and the bar hides when it is empty", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     await check(page, "live-list", 1).check();
     await expect(page.locator("#bulk-live .cap-bulk-count")).toHaveText("1 selected");
@@ -191,7 +191,7 @@ eachTheme((theme) => {
     await expect(page.locator("#bulk-live")).toBeHidden();
   });
 
-  test("behaviour: the header checkbox selects everything in view and shows a mixed state", async ({ page }) => {
+  test("behavior: the header checkbox selects everything in view and shows a mixed state", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     const head = page.locator("input[data-cap-select-all][data-cap-list='live-list']");
     await check(page, "live-list", 1).check();
@@ -203,7 +203,7 @@ eachTheme((theme) => {
     await expect(page.locator("#bulk-live")).toBeHidden();
   });
 
-  test("behaviour: Select all in view selects what is visible and hides itself once all are", async ({ page }) => {
+  test("behavior: Select all in view selects what is visible and hides itself once all are", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     await check(page, "live-list", 1).check();
     const all = page.locator("#bulk-live").getByRole("button", { name: "Select all 5 in view" });
@@ -213,7 +213,7 @@ eachTheme((theme) => {
     await expect(all).toBeHidden();
   });
 
-  test("behaviour: a reversible action's Undo puts the items back", async ({ page }) => {
+  test("behavior: a reversible action's Undo puts the items back", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     await check(page, "live-list", 2).check();
     await check(page, "live-list", 3).check();
@@ -224,7 +224,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-message-item")).toContainText("Brought 2 drafts back.");
   });
 
-  test("behaviour: a destructive action lists every selected item and names the count", async ({ page }) => {
+  test("behavior: a destructive action lists every selected item and names the count", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     await page.locator("#bulk-twelve").getByRole("button", { name: "Bin" }).click();
     const dialog = page.getByRole("alertdialog", { name: "Bin 12 items?" });
@@ -236,14 +236,14 @@ eachTheme((theme) => {
     await expect(page.locator("#bulk-twelve .cap-bulk-count")).toHaveText("12 selected");
   });
 
-  test("behaviour: an action that fails says so in the region and keeps the selection", async ({ page }) => {
+  test("behavior: an action that fails says so in the region and keeps the selection", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     await page.locator("#bulk-fail").getByRole("button", { name: "Publish" }).click();
     await expect(page.locator(".cap-message-item")).toContainText("Could not publish 2 items: the drafts index did not answer (502)");
     await expect(page.locator("#bulk-fail .cap-bulk-count")).toHaveText("2 selected");
   });
 
-  test("behaviour: a destructive action that fails stays in the dialog with the reason", async ({ page }) => {
+  test("behavior: a destructive action that fails stays in the dialog with the reason", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     await page.locator("#bulk-fail").getByRole("button", { name: "Bin" }).click();
     const dialog = page.getByRole("alertdialog", { name: "Bin 2 items?" });
@@ -254,7 +254,7 @@ eachTheme((theme) => {
     await dialog.getByRole("button", { name: "Cancel" }).click();
   });
 
-  test("behaviour: the bar sticks to the bottom of its scroll area, or the top", async ({ page }) => {
+  test("behavior: the bar sticks to the bottom of its scroll area, or the top", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     const near = async (scroller: string, bar: string, edge: "top" | "bottom") => {
       await page.locator(scroller).evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
@@ -268,7 +268,7 @@ eachTheme((theme) => {
     await near("#bulk-scroll", "#bulk-sticky", "bottom");
     await near("#bulk-scroll-top", "#bulk-top", "top");
   });
-  test("behaviour: in form mode the actions are submit buttons and the browser, not the bar, submits", async ({ page }) => {
+  test("behavior: in form mode the actions are submit buttons and the browser, not the bar, submits", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     const bar = page.locator("#bulk-form");
     // With a selection the bar shows its count; a press posts the form with the button's intent.
@@ -294,7 +294,7 @@ eachTheme((theme) => {
     await expect(check(page, "form-list", 1)).toBeChecked();
   });
 
-  test("behaviour: in form mode the bar is in the delivered HTML and hides once the page has loaded with nothing ticked", async ({ page }) => {
+  test("behavior: in form mode the bar is in the delivered HTML and hides once the page has loaded with nothing ticked", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     // The page's script has run and nothing is ticked: the bar is out of the page, like any other.
     await expect(page.locator("#bulk-form")).toBeHidden();
@@ -303,7 +303,7 @@ eachTheme((theme) => {
     expect(html).toContain('<button type="submit" class="cap-btn" name="intent" value="archive">Archive</button>');
   });
 
-  test("behaviour: after an action the outcome list keeps the bar in view with nothing ticked, and Dismiss results clears it", async ({ page }) => {
+  test("behavior: after an action the outcome list keeps the bar in view with nothing ticked, and Dismiss results clears it", async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     const bar = page.locator("#bulk-outcomes");
     await expect(bar).toBeVisible();
@@ -321,7 +321,7 @@ eachTheme((theme) => {
     await expect(bar.locator(".cap-bulk-count")).toHaveText("1 selected");
   });
 
-  test("behaviour: the outcome list is in the delivered HTML, with its Dismiss hidden until script runs", async ({ page }) => {
+  test("behavior: the outcome list is in the delivered HTML, with its Dismiss hidden until script runs", async ({ page }) => {
     const html = await page.request.get("components/bulk-bar/states.html").then((r) => r.text());
     expect(html).toContain('<div class="cap-bulk-results" data-cap-part="results" role="group" aria-labelledby="bulk-outcomes-summary">');
     expect(html).toMatch(/data-cap-part="dismiss-results" hidden>Dismiss results/);

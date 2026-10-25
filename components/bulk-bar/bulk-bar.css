@@ -58,7 +58,7 @@
     min-inline-size: 0;
   }
 
-  /* A value beside an action, such as the tag to add: a compact labelled field. */
+  /* A value beside an action, such as the tag to add: a compact labeled field. */
   .cap-bulk-field {
     display: inline-flex;
     align-items: center;

@@ -50,7 +50,7 @@ function Icon({ d }: { d: string }) {
 function useRoute(): { view: View; detail: string | null } {
   const read = () => {
     const [raw, detail] = location.hash.replace(/^#\/?/, "").split("/");
-    // The colour page's old address still opens it.
+    // The color page's old address still opens it.
     const view = raw === "colour" ? "color" : raw;
     const v = VIEWS.some((x) => x.id === view) ? (view as View) : "overview";
     return { view: v, detail: detail ? decodeURIComponent(detail) : null };
@@ -84,7 +84,7 @@ const href = (view: View, detail?: string) => `#/${view}${detail ? `/${encodeURI
 
 function Overview() {
   const res = useResults();
-  const failing = Object.entries(res.components).filter(([, r]) => r.keyboard.failed + r.accessibility.failed + r.behaviour.failed > 0);
+  const failing = Object.entries(res.components).filter(([, r]) => r.keyboard.failed + r.accessibility.failed + r.behavior.failed > 0);
   return (
     <div className="site-page">
       <div className="site-head">
@@ -285,7 +285,7 @@ function ComponentPage({ name }: { name: string }) {
           <>
             <p className="site-verdicts">
               Keyboard <Verdict passed={r.keyboard.passed} failed={r.keyboard.failed} /> Accessibility <Verdict passed={r.accessibility.passed} failed={r.accessibility.failed} /> Behavior{" "}
-              <Verdict passed={r.behaviour.passed} failed={r.behaviour.failed} />
+              <Verdict passed={r.behavior.passed} failed={r.behavior.failed} />
             </p>
             <TestList rows={r.tests} />
           </>

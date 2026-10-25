@@ -77,7 +77,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Deploy now" })).toBeFocused();
   });
 
-  test("behaviour: the padded block sits inside a flush body, and the rows run to the panel's edges", async ({ page }) => {
+  test("behavior: the padded block sits inside a flush body, and the rows run to the panel's edges", async ({ page }) => {
     await visitStates(page, "panel", theme);
     await expect(page.locator("#p-pad .cap-panel-body")).toHaveCSS("padding-left", "0px");
     const [panel, row, pad] = await Promise.all([

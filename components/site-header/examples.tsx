@@ -149,7 +149,7 @@ const fhAdmin: AdminShellProps = {
 };
 
 // The fox site: Foxing's look, its placeholder mark and its name in the serif, a translucent band
-// in the page's ground, its section links centred. Books and Celebrity Picks open Foxing's own
+// in the page's ground, its section links centered. Books and Celebrity Picks open Foxing's own
 // panels, laid out as Foxing draws them.
 const FOX_MARK = FAMILY_APPS.find((a) => a.id === "foxing")?.logo;
 const FX_LOGO = { href: "#home", label: "Foxing", mark: FOX_MARK, wordmark: <span className="sh-fx-wordmark" aria-hidden="true">Foxing</span> };

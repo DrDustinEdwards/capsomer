@@ -1,4 +1,4 @@
-/* The layout of a states page: a title, then one labelled specimen per state. This is the
+/* The layout of a states page: a title, then one labeled specimen per state. This is the
    site's own CSS, not part of the package. */
 .cap-specimens {
   padding: var(--space-6) var(--space-5) var(--space-9);

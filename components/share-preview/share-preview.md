@@ -31,7 +31,7 @@ Beside the editor of a post or page, so the person sees the title, description a
 
 - **The text arrives already cut.** Search engines cut by pixel width, not by characters, so the limit is the app's approximation; the component says nothing about it except through the `note` the app passes.
 - **The card's image box has the card's real 1200 x 630 shape** (`aspect-ratio`), with the image covering it, so the box never implies a crop the scrapers will not make. The image is whatever the app passes: an `img` with real alt text, or an `svg`.
-- **The result's title takes the accent text colour**, as a link would, so the preview reads like a result, but it is not a link and takes no focus.
+- **The result's title takes the accent text color**, as a link would, so the preview reads like a result, but it is not a link and takes no focus.
 - **Each preview is a named group** ("Search result preview", "Social card preview"; `label` changes it), so a screen reader says what the text is before it reads it.
 
 ## HTML contract

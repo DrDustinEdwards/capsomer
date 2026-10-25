@@ -1,4 +1,4 @@
-// The popover and the tooltip, on the Popover API. One module, two behaviours picked by the
+// The popover and the tooltip, on the Popover API. One module, two behaviors picked by the
 // popup's role:
 //   - a click popover (role="dialog", popover="auto"): the trigger toggles it, light dismiss
 //     and Esc close it, focus moves in on open and returns to the trigger on close;
@@ -200,7 +200,7 @@ function focusInto(popup: HTMLElement): void {
   }
 }
 
-// Wires a trigger to its popup. The popup's role picks the behaviour. Returns a function that
+// Wires a trigger to its popup. The popup's role picks the behavior. Returns a function that
 // unwires it.
 export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
   if (instances.has(popup)) return () => undefined;

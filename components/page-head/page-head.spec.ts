@@ -42,7 +42,7 @@ eachTheme((theme) => {
     await expect(page.locator("#ph-full").getByRole("button", { name: "Publish" })).toBeFocused();
   });
 
-  test("behaviour: the actions sit at the right of the title, and drop below it in a narrow space", async ({ page }) => {
+  test("behavior: the actions sit at the right of the title, and drop below it in a narrow space", async ({ page }) => {
     await visitStates(page, "page-head", theme);
     const wide = await page.locator("#ph-full").evaluate((el) => {
       const t = el.querySelector(".cap-page-head-text")!.getBoundingClientRect();

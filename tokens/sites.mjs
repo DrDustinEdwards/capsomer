@@ -2,11 +2,11 @@
 // [data-cap-site="<site>"]. `node tokens/sites.mjs` writes tokens/site-<name>.css for each
 // entry in SITES and the barrel css/sites.css; `--check` regenerates them in memory, refuses a
 // difference from the committed files, a missing package export and a stale site file, and
-// runs palette.mjs's WCAG pairs on the site's colours merged into its family, in both themes.
+// runs palette.mjs's WCAG pairs on the site's colors merged into its family, in both themes.
 //
 // What goes in: only what a site differs on (faces, the display face, neutrals, the on state,
 // type sizes, space and radius, the hover touches in scale.mjs's `touch` group, --enarratio-*), as literal values, never a var() chain, so the file works on <html> or on
-// any wrapper. A brand colour is never a site setting: it is a family (FAMILIES in
+// any wrapper. A brand color is never a site setting: it is a family (FAMILIES in
 // palette.mjs), which the site keeps choosing with data-family. A site on the defaults has no
 // entry. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so a
 // site rule ties a family rule on specificity and wins on order, and each also matches a
@@ -16,15 +16,15 @@ import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { FAMILIES, failures, themes } from "./palette.mjs";
 
-// site -> { family (whose tokens the colours are checked against), on (where the attribute
+// site -> { family (whose tokens the colors are checked against), on (where the attribute
 // goes), note, all (both themes), light, dark, defaultTheme, phone, phoneMax, coarse }. A site whose
 // defaultTheme is "dark" (as its family's is) gets its dark values in the plain block and its
 // light values only where light is pinned (data-theme="light" on the root, or
 // data-cap-theme="light"); its dark values are also written under the family's dark selectors,
 // so they tie them. phone applies under phoneMax, Capsomer's phone width (767.98px) unless the
-// site's own layout breaks elsewhere. coarse applies under a coarse pointer (touch). waive names a WCAG pair the site's own colours already
+// site's own layout breaks elsewhere. coarse applies under a coarse pointer (touch). waive names a WCAG pair the site's own colors already
 // fail where it renders today ({ scheme, what, fg, why }); the check refuses a waiver that no
-// longer matches a failure, so it goes once the site's colour is fixed.
+// longer matches a failure, so it goes once the site's color is fixed.
 const SITES = {
   dustinedwards: {
     family: "purple",
@@ -249,7 +249,7 @@ function check() {
     const family = FAMILIES[site.family];
     if (!family) problems.push(`${name}: family "${site.family}" is not in FAMILIES`);
     for (const [k, v] of Object.entries({ ...site.all, ...site.light, ...site.dark, ...site.phone, ...site.coarse })) {
-      if (BRAND.test(k)) problems.push(`${name}: --${k} is a brand colour; add a family in palette.mjs instead`);
+      if (BRAND.test(k)) problems.push(`${name}: --${k} is a brand color; add a family in palette.mjs instead`);
       if (/var\(/.test(v)) problems.push(`${name}: --${k} must be a literal, not ${v}`);
     }
     for (const k of Object.keys(site.light ?? {})) if (!(k in (site.dark ?? {}))) problems.push(`${name}: --${k} is set for light only; give its dark value too`);

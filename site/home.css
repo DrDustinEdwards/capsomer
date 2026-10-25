@@ -1,6 +1,6 @@
 /* The public page (site/home.ts): Supergraphics in Capsomer's own families. Flat letter tiles too
    big for the page, cut by its right edge, open the page and each section; everything else is
-   plain type on the ground. Colours are the families' tokens only, so both themes and every
+   plain type on the ground. Colors are the families' tokens only, so both themes and every
    family pass the palette generator's pairs (tokens/palette.mjs). */
 @import "@fontsource/schibsted-grotesk/400.css";
 @import "@fontsource/schibsted-grotesk/600.css";

@@ -2,7 +2,7 @@
 name: approval-sheet
 title: Approval sheet
 summary: Several waiting gates approved together in one modal sheet, each with its exact command and an optional comment.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [open with two gates, one gate unchecked, none chosen, pending, error]
 added: 0.1.0
@@ -27,7 +27,7 @@ One question from one agent is answered in place in its session row (`session-ro
 
 ## The default and its reason
 
-- **The shared dialog.** A `.cap-dialog` (native `<dialog>`, `showModal()`; see `dialog`) with its header, title, description, scrolling body and muted footer band, its backdrop and its open and close motion. The page behind is inert and the browser handles Esc (APG Dialog (Modal)). The dialog's own rules do the work: Cancel and Esc held while busy, focus handed back, and the backdrop locked (`data-cap-modal-lock`) so a comment being written is never lost. The sheet is centred and `lg` (42rem), because commands need width; there is no corner Close button (Cancel is the close, as in Alert Dialog).
+- **The shared dialog.** A `.cap-dialog` (native `<dialog>`, `showModal()`; see `dialog`) with its header, title, description, scrolling body and muted footer band, its backdrop and its open and close motion. The page behind is inert and the browser handles Esc (APG Dialog (Modal)). The dialog's own rules do the work: Cancel and Esc held while busy, focus handed back, and the backdrop locked (`data-cap-modal-lock`) so a comment being written is never lost. The sheet is centered and `lg` (42rem), because commands need width; there is no corner Close button (Cancel is the close, as in Alert Dialog).
 - **A gate is shadcn's Item look.** A title, a muted description line, hairlines between gates, the command in a rounded sunken code block; padding follows `--pad-card`, so comfortable density roomies it.
 - **Focus starts on Cancel**, so a stray Enter does nothing that runs a command (patterns.md, "Destructive or one-way").
 - **Each gate is a fieldset whose legend is the job's title**, so its checkbox and comment are heard with the job they belong to.
@@ -55,7 +55,7 @@ One question from one agent is answered in place in its session row (`session-ro
 - The disabled Approve stays in the tab order with its reason as its description.
 - The error is `role="alert"` and stays until the next attempt.
 - Esc is held while pending by stopping the keydown as well as the cancel event, because Chrome skips the cancel event when the page has had no user activation since the last close request.
-- Forced colours: the dialog's edge (shared) and the command box keep a border.
+- Forced colors: the dialog's edge (shared) and the command box keep a border.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -97,7 +97,7 @@ shadcn/ui `Alert Dialog` (the muted footer band, Cancel first and focused, no co
 </dialog>
 ```
 
-`import { enhance, open, setPending, setError } from "capsomer/behaviour/approval-sheet"`. `enhance()` wires the opener (`data-cap-opens`), the count and the shared dialog's rules (Cancel, Esc, backdrop, focus). Approving dispatches a bubbling `cap-approve` event on the dialog with `{ gates: [{ id, comment }] }`; call `setPending(dialog, true)`, then `dialog.close()` on success, or `setError(dialog, "...")` and `setPending(dialog, false)` on failure. `approveLabel(n)` and `titleText(n)` are exported for other code.
+`import { enhance, open, setPending, setError } from "capsomer/behavior/approval-sheet"`. `enhance()` wires the opener (`data-cap-opens`), the count and the shared dialog's rules (Cancel, Esc, backdrop, focus). Approving dispatches a bubbling `cap-approve` event on the dialog with `{ gates: [{ id, comment }] }`; call `setPending(dialog, true)`, then `dialog.close()` on success, or `setError(dialog, "...")` and `setPending(dialog, false)` on failure. `approveLabel(n)` and `titleText(n)` are exported for other code.
 
 In React, `import { ApprovalSheet } from "capsomer/react/approval-sheet"` (it renders the shared `Dialog`) with `open`, `gates`, `onApprove` (return a promise to hold the sheet pending until it settles) and `onClose`.
 

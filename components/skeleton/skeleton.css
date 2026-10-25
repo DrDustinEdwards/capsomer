@@ -1,9 +1,9 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Skeleton and spinner: what a page or a panel shows while it loads. The skeleton is grey
+/* Skeleton and spinner: what a page or a panel shows while it loads. The skeleton is gray
    shapes standing in for content (shadcn's Skeleton: a muted block that pulses); the spinner
-   is a small turning arc and a word (shadcn's Spinner), inline, inside a button, or centred
+   is a small turning arc and a word (shadcn's Spinner), inline, inside a button, or centered
    on a page. The pulse and the turn are the only loops, and only when motion is welcome. */
 @layer cap.components {
   /* A stack of lines standing in for a page's content, 1 to 10 seconds. */
@@ -58,7 +58,7 @@
     font-size: var(--text-size);
   }
 
-  /* Inside a button the spinner takes the button's colours. */
+  /* Inside a button the spinner takes the button's colors. */
   :is(button, a) .cap-spinner {
     color: inherit;
     font-size: inherit;
@@ -80,7 +80,7 @@
     }
   }
 
-  /* The page's centred spinner: in the middle of the space it is given, with its word under
+  /* The page's centered spinner: in the middle of the space it is given, with its word under
      it. The app's main region is aria-busy while it shows. */
   .cap-spinner[data-layout="page"] {
     display: flex;

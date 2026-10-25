@@ -2,7 +2,7 @@
 name: pagination
 title: Pagination
 summary: Move between pages of a long list, with a "Showing 21 to 40 of 312" line, as links or as buttons.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [links in the middle, a gap on both sides, first page, last page, few pages, other words for the ends, buttons client-side, narrow space compact form, comfortable density]
 added: 0.3.0
@@ -42,7 +42,7 @@ A list too long for one page where a person may want a particular page: posts, m
 
 ## The shadcn component it matches
 
-Pagination (`pagination.tsx`: Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext, PaginationEllipsis). Matched: the `nav` with a list, ghost page links with the current page outlined, Previous and Next with chevron and text, an ellipsis item that says "More pages". Different on purpose: the current page also has a tint and a heavier weight (an outline alone is hard to see); a disabled end exists (shadcn has none); the count line, the compact form and the button form are added; links are in the accent text colour.
+Pagination (`pagination.tsx`: Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext, PaginationEllipsis). Matched: the `nav` with a list, ghost page links with the current page outlined, Previous and Next with chevron and text, an ellipsis item that says "More pages". Different on purpose: the current page also has a tint and a heavier weight (an outline alone is hard to see); a disabled end exists (shadcn has none); the count line, the compact form and the button form are added; links are in the accent text color.
 
 ## Keyboard
 
@@ -60,7 +60,7 @@ In the buttons form, focus stays on the control that was used: after Next it is 
 - Page links have `aria-label="Page n"`; the current one `aria-current="page"`. The gap is "More pages" to a reader and `…` to the eye.
 - A disabled end: `aria-disabled="true"`; its text keeps 4.5:1.
 - Contrast: link text 4.5:1; the current page's edge, Previous's and Next's edges 3:1.
-- Hit areas at least `var(--control)` square; forced colours draw the current page in Highlight.
+- Hit areas at least `var(--control)` square; forced colors draw the current page in Highlight.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -89,7 +89,7 @@ A disabled end in the links form: `<a class="cap-page" data-kind="prev" role="li
      data-page="1" data-page-count="16" data-total="312" data-per-page="20" data-noun="posts">
 ```
 
-`data-prev-label` and `data-next-label` change the words. `import { enhance, setPage, render, pageItems, statusText } from "capsomer/behaviour/pagination"`: `enhance()` makes a click choose a page, draw the list again (the count line is updated in place) and fire `cap:page-change` (bubbles; `detail.page`), which the app answers by loading that page. `setPage(nav, 5)` does the same from script. The links form needs no script.
+`data-prev-label` and `data-next-label` change the words. `import { enhance, setPage, render, pageItems, statusText } from "capsomer/behavior/pagination"`: `enhance()` makes a click choose a page, draw the list again (the count line is updated in place) and fire `cap:page-change` (bubbles; `detail.page`), which the app answers by loading that page. `setPage(nav, 5)` does the same from script. The links form needs no script.
 
 In React, `import { Pagination } from "capsomer/react/pagination"`:
 

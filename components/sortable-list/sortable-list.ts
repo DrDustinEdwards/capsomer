@@ -73,7 +73,7 @@ export function keyTarget(key: string, index: number, count: number): number | n
 // ---------------------------------------------------------------------------------------
 // A pointer drag, shared with the tree. It starts once the pointer has moved a few pixels
 // (so a click stays a click), follows the pointer, and ends on release (drop), or on
-// Escape or a cancelled pointer (cancel). After a drag, the click the release makes is
+// Escape or a canceled pointer (cancel). After a drag, the click the release makes is
 // swallowed, so a dragged link is not followed.
 
 export interface DragHandlers {
@@ -177,7 +177,7 @@ const idOf = (item: HTMLElement) => item.dataset.value ?? "";
 const labelOf = (item: HTMLElement) =>
   (item.dataset.label ?? item.querySelector(".cap-sortable-label")?.textContent ?? item.textContent ?? "").trim().replace(/\s+/g, " ");
 
-// Puts `item` at position `to` by moving its neighbours around it, never the item itself,
+// Puts `item` at position `to` by moving its neighbors around it, never the item itself,
 // so the handle or button that has focus keeps it.
 export function placeItem(item: HTMLElement, to: number): void {
   const list = item.parentElement;

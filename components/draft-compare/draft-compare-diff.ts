@@ -365,7 +365,10 @@ function entryWords(e: Entry): { added: number; removed: number } {
   return { added: 0, removed: 0 };
 }
 
-export function analyse(before: string, after: string, options: SentenceOptions = {}): Analysis {
+/** @deprecated The British spelling, kept so existing imports work; use `analyze`. */
+export const analyse = (before: string, after: string, options: SentenceOptions = {}): Analysis => analyze(before, after, options);
+
+export function analyze(before: string, after: string, options: SentenceOptions = {}): Analysis {
   const entries = diffSentences(before, after, options);
   const group: number[] = [];
   const perChange: Array<{ added: number; removed: number }> = [];

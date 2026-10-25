@@ -114,7 +114,7 @@ eachTheme((theme) => {
     await expect(page.locator("#add-site .cap-field-error:visible")).toHaveCount(0);
   });
 
-  test("behaviour: a message goes as soon as the field is fixed", async ({ page }) => {
+  test("behavior: a message goes as soon as the field is fixed", async ({ page }) => {
     await visitStates(page, "field", theme);
     const url = page.locator("#site-url");
     await url.fill("foxhound.app");
@@ -161,7 +161,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: "#c-off", what: "a checkbox's focus ring", part: "outline", min: 3 }]);
   });
 
-  test("behaviour: clicking an addon's text puts the cursor in its field; its button keeps its own click", async ({ page }) => {
+  test("behavior: clicking an addon's text puts the cursor in its field; its button keeps its own click", async ({ page }) => {
     await visitStates(page, "field", theme);
     await page.locator(".cap-input-group-text").first().click();
     await expect(page.locator("#g-url")).toBeFocused();
@@ -169,7 +169,7 @@ eachTheme((theme) => {
     await expect(page.locator("#g-url")).not.toBeFocused();
   });
 
-  test("behaviour: a message sets data-invalid on its field and clears it when fixed", async ({ page }) => {
+  test("behavior: a message sets data-invalid on its field and clears it when fixed", async ({ page }) => {
     await visitStates(page, "field", theme);
     const url = page.locator("#site-url");
     await url.fill("foxhound.app");

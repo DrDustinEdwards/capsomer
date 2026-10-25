@@ -138,7 +138,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("option", { name: "Recova merchant" })).toBeVisible();
   });
 
-  test("behaviour: text that matches no option is not kept", async ({ page }) => {
+  test("behavior: text that matches no option is not kept", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const input = site(page);
     await input.focus();
@@ -152,19 +152,19 @@ eachTheme((theme) => {
     await expect(page.locator("[data-mount='closed'] [data-chosen]")).toHaveAttribute("data-chosen", "carrel");
   });
 
-  test("behaviour: no match names the typed text", async ({ page }) => {
+  test("behavior: no match names the typed text", async ({ page }) => {
     await visitStates(page, "combobox", theme, "no-match");
     await expect(page.locator(".cap-combobox-empty")).toContainText("No match for “foxhund”");
     await expect(page.getByRole("option")).toHaveCount(0);
   });
 
-  test("behaviour: loading says so, and never says no match", async ({ page }) => {
+  test("behavior: loading says so, and never says no match", async ({ page }) => {
     await visitStates(page, "combobox", theme, "loading");
     await expect(page.getByRole("status").filter({ hasText: "Loading sites" })).toBeVisible();
     await expect(page.locator(".cap-combobox-empty")).toHaveText("");
   });
 
-  test("behaviour: disabled ignores input and says why", async ({ page }) => {
+  test("behavior: disabled ignores input and says why", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const input = page.getByRole("combobox", { name: "Site to back up" });
     await expect(input).toBeDisabled();
@@ -172,7 +172,7 @@ eachTheme((theme) => {
     await expect(input).toHaveAccessibleDescription("Locked while capsid deploys. It unlocks when the deploy ends.");
   });
 
-  test("behaviour: invalid is marked and described by its message", async ({ page }) => {
+  test("behavior: invalid is marked and described by its message", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const input = page.getByRole("combobox", { name: "Site to watch (required)" });
     await expect(input).toHaveAttribute("aria-invalid", "true");
@@ -201,7 +201,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
-  test("behaviour: several values show as chips, and a chip's remove button takes that value away", async ({ page }) => {
+  test("behavior: several values show as chips, and a chip's remove button takes that value away", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const chips = page.locator("[data-mount='chips']");
     await expect(chips.locator(".cap-combobox-chip")).toHaveCount(3);
@@ -223,7 +223,7 @@ eachTheme((theme) => {
     await expect(input).toBeFocused();
   });
 
-  test("behaviour: the clear button empties the chosen value and keeps focus in the box", async ({ page }) => {
+  test("behavior: the clear button empties the chosen value and keeps focus in the box", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='clearable']");
     const input = area.getByRole("combobox", { name: "Primary site" });
@@ -234,7 +234,7 @@ eachTheme((theme) => {
     await expect(area.getByRole("button", { name: "Clear Primary site" })).toHaveCount(0);
   });
 
-  test("behaviour: works under style-src 'self' with no violation", async ({ page }) => {
+  test("behavior: works under style-src 'self' with no violation", async ({ page }) => {
     await strictStyles(page);
     await visitStates(page, "combobox", theme);
     await site(page).focus();
@@ -266,7 +266,7 @@ eachTheme((theme) => {
     await expect(input).toBeFocused();
   });
 
-  test("behaviour: in a tag field, text that matches a suggestion picks it, and no tag is made twice", async ({ page }) => {
+  test("behavior: in a tag field, text that matches a suggestion picks it, and no tag is made twice", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='tags']");
     const input = area.getByRole("combobox", { name: "Tags" });
@@ -281,7 +281,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("option", { name: /^Create/ })).toHaveCount(0);
   });
 
-  test("behaviour: a made tag is a chip with its own remove button, and Backspace takes the last one", async ({ page }) => {
+  test("behavior: a made tag is a chip with its own remove button, and Backspace takes the last one", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='tags']");
     await area.getByRole("button", { name: "Remove gel shift assay" }).click();
@@ -292,7 +292,7 @@ eachTheme((theme) => {
     await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "");
   });
 
-  test("behaviour: the tag field posts every tag, made or listed, under its name", async ({ page }) => {
+  test("behavior: the tag field posts every tag, made or listed, under its name", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='tags']");
     await expect(area.locator("input[name='tags']")).toHaveCount(2);

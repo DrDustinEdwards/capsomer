@@ -2,7 +2,7 @@
 name: table
 title: Table
 summary: A native data table in a labeled, focusable scroll region, with rules between rows, tabular numbers, sortable columns and an opt-in card reflow.
-parts: [css, behaviour]
+parts: [css, behavior]
 tool: native + own JavaScript
 states: [default, row hover, selected row, footer, caption underneath, sticky header, empty, comfortable density, sorted ascending, sorted descending, sort button hover, row hover, row focused, region focused, narrow and scrolling, reflowed to cards, columns that drop as the region narrows, a row checkbox above the row link]
 added: 0.1.0
@@ -30,13 +30,13 @@ Items a person scans and opens one at a time, with one title and one time each, 
 ## The default and its reason
 
 - **A native `table` with `th scope`.** Screen readers announce each cell's column and row headers; no ARIA grid needed (patterns.md, "Tabular data").
-- **The table sits in a region that scrolls sideways, named and focusable**: `role="region"`, `aria-labelledby` its caption or its panel's heading, `tabindex="0"`. A keyboard reaches it and scrolls it with the arrow keys; a screen reader announces its name. This is the default on a phone (decision: "Tables on a phone scroll in a labelled focusable region").
+- **The table sits in a region that scrolls sideways, named and focusable**: `role="region"`, `aria-labelledby` its caption or its panel's heading, `tabindex="0"`. A keyboard reaches it and scrolls it with the arrow keys; a screen reader announces its name. This is the default on a phone (decision: "Tables on a phone scroll in a labeled focusable region").
 - **Rules between rows, none between columns.** In a table the rule aligns a row's values; lists have none.
 - **Numbers right-aligned in tabular figures** (`data-num` on the `td` and its `th`), so digits line up.
 - **A sortable column is a `button` in its `th`, and the `th` carries `aria-sort`.** Ascending first, then toggling; one header carries `aria-sort` at a time. Screen readers announce the change of `aria-sort`, so nothing else is announced. A cell sorts by its `data-sort` when it has one (a timestamp, a raw count, a place for "not counted"), else by its text, numbers as numbers.
 - **The sorted column's header reads in `--text`, and its glyph shows one arrow.** Unsorted columns show both arrows.
 - **A row that opens a detail uses the row list's stretched link**: the link in the row's first cell is stretched over the row, one tab stop, `--sel` with an inset `--ring` ring when focused. Other links, buttons and a row checkbox (`.cap-check`, a bulk select) sit above the stretched area, so a click on them does what they say and does not open the row. Markup for the checkbox: `<td><label class="cap-check"><input type="checkbox" name="ids" value="p1"><span class="cap-sr-only">Select Why Foxhound waits</span></label></td>`.
-- **Row states, as shadcn's TableRow**: every body row takes a `--raised` hover; `data-state="selected"` (or `aria-selected="true"`) tints it `--sel` and draws a 3 px `--accent` bar on its first cell, so selection is not colour alone; a row holding an expanded button (`aria-expanded="true"`) takes a faint tint. Colour changes ease in over 100 ms when motion is allowed.
+- **Row states, as shadcn's TableRow**: every body row takes a `--raised` hover; `data-state="selected"` (or `aria-selected="true"`) tints it `--sel` and draws a 3 px `--accent` bar on its first cell, so selection is not color alone; a row holding an expanded button (`aria-expanded="true"`) takes a faint tint. Color changes ease in over 100 ms when motion is allowed.
 - **Footer and caption**: a `tfoot` is a tinted band under a rule in medium weight (totals). The caption is above, bold, by default, because it names the region; `data-caption="bottom"` on the table moves it underneath in muted type, as shadcn's `caption-bottom`.
 - **Sticky header** (`data-sticky` on the region): the region scrolls vertically inside `--cap-table-max-h` (24rem by default) and the header row stays put. The rule under it is a shadow, because borders do not travel with sticky cells.
 - **Empty**: a single `td.cap-table-empty` with `colspan`, one brief sentence.
@@ -50,7 +50,7 @@ Items a person scans and opens one at a time, with one title and one time each, 
 
 Table (`table.tsx`): Table (the scroll container), TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell, TableCaption. Matched: the scroll container, hover and selected rows, the tinted footer, the bottom caption, tighter checkbox cells, the 100 ms transition. Beyond it: sortable headers, the stretched row link, sticky header, dropping columns, optional card reflow.
 
-Different on purpose: the header is small, upper-case and muted (the Portal's look, readable at 4.5:1) rather than shadcn's medium foreground; the caption is on top by default so it names the scroll region; the container is a focusable labelled region, which shadcn's plain div is not; the selected row also draws a bar, which shadcn's tint alone would not satisfy for a state that must be identifiable.
+Different on purpose: the header is small, upper-case and muted (the Portal's look, readable at 4.5:1) rather than shadcn's medium foreground; the caption is on top by default so it names the scroll region; the container is a focusable labeled region, which shadcn's plain div is not; the selected row also draws a bar, which shadcn's tint alone would not satisfy for a state that must be identifiable.
 
 ## Keyboard
 
@@ -66,7 +66,7 @@ Different on purpose: the header is small, upper-case and muted (the Portal's lo
 - The region's name comes from the caption or the panel heading, so a screen reader says what scrolls.
 - The region's focus ring is inset, so a panel's rounded clip never hides it.
 - `aria-sort` on exactly one header; the button inside has the column's name.
-- Forced colours: the sort glyph is drawn in CanvasText; focus rings are outlines and stay.
+- Forced colors: the sort glyph is drawn in CanvasText; focus rings are outlines and stay.
 
 Last checked by hand: not yet. Reflow with a screen reader: not yet, so no app uses it. Automated: see the site's Tests page.
 
@@ -106,9 +106,9 @@ Dropping columns, a note and a foot link:
 <div class="cap-table-foot"><a href="/sites">All 12 sites in Sites</a></div>
 ```
 
-`import { enhance, sortByHeader } from "capsomer/behaviour/table"` wires the sort buttons. A table whose rows are rendered by React sorts its data in React instead and sets `aria-sort` itself; there is no React wrapper.
+`import { enhance, sortByHeader } from "capsomer/behavior/table"` wires the sort buttons. A table whose rows are rendered by React sorts its data in React instead and sets `aria-sort` itself; there is no React wrapper.
 
-**Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `table.list`, `table.fleet`, `table.brief`, `.sites-brief`, `.cards-below-*`, `.reflow`, `.th-note`; `dashboard/src/views/Overview.tsx` `SitesTable`). EXTRACTED: the header (11 px, 600, 0.06em, upper case, muted, nowrap), the cell padding (7 by 12 px in the Portal, 8 by 12 px from the space tokens), the rules between rows and none after the last, the card reflow (a grid of auto-fill 150 px columns, the first cell across the top, each value under its `data-label`, in `--dim`; thresholds and gaps adapted to tokens and to Capsomer's 640 and 1100 px), and, new in v0.1.1, the compact Sites table's responsive columns (container-query thresholds of 820 and 620 px, reduced cell padding), the header note (`.th-note`) and the foot link (`.grouplink`). Adapted: the Portal's dropped columns are named in the markup (`data-drop`) rather than by a class on the table, and its hidden header row is kept. REWROTE: everything that makes the table keyboard and screen reader operable, none of which the Portal's tables have (it has no sorting, no `aria-sort`, no labelled scroll region; its rows are `tr` with `tabIndex` and `data-row`): the region, the sort buttons, `table.ts`, the stretched row link. The default on a phone differs from the Portal's: its wide tables reflow to cards (`.reflow`), and Capsomer scrolls (DEFAULTS.md: "Tables scroll on a phone by default"; the audit wins).
+**Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `table.list`, `table.fleet`, `table.brief`, `.sites-brief`, `.cards-below-*`, `.reflow`, `.th-note`; `dashboard/src/views/Overview.tsx` `SitesTable`). EXTRACTED: the header (11 px, 600, 0.06em, upper case, muted, nowrap), the cell padding (7 by 12 px in the Portal, 8 by 12 px from the space tokens), the rules between rows and none after the last, the card reflow (a grid of auto-fill 150 px columns, the first cell across the top, each value under its `data-label`, in `--dim`; thresholds and gaps adapted to tokens and to Capsomer's 640 and 1100 px), and, new in v0.1.1, the compact Sites table's responsive columns (container-query thresholds of 820 and 620 px, reduced cell padding), the header note (`.th-note`) and the foot link (`.grouplink`). Adapted: the Portal's dropped columns are named in the markup (`data-drop`) rather than by a class on the table, and its hidden header row is kept. REWROTE: everything that makes the table keyboard and screen reader operable, none of which the Portal's tables have (it has no sorting, no `aria-sort`, no labeled scroll region; its rows are `tr` with `tabIndex` and `data-row`): the region, the sort buttons, `table.ts`, the stretched row link. The default on a phone differs from the Portal's: its wide tables reflow to cards (`.reflow`), and Capsomer scrolls (DEFAULTS.md: "Tables scroll on a phone by default"; the audit wins).
 
 ## Exceptions in production
 

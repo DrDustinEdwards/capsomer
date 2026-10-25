@@ -1,4 +1,4 @@
-// The avatar's one behaviour: an image that fails to load gives way to the initials already
+// The avatar's one behavior: an image that fails to load gives way to the initials already
 // in the HTML. Without script the picture simply covers them, so a page delivered as HTML
 // still names the person in text.
 

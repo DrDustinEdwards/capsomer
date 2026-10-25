@@ -1,10 +1,10 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Filter chips: a labelled group of toggle buttons (aria-pressed), a Clear button while
+/* Filter chips: a labeled group of toggle buttons (aria-pressed), a Clear button while
    any is pressed, and the result count in a live region. From the Capsid Portal's .chip
    (dashboard/src/styles.css); the pill and its states match shadcn/ui Badge (outline) and
-   Toggle (pressed), and the group is a labelled run of toggles. */
+   Toggle (pressed), and the group is a labeled run of toggles. */
 @layer cap.components {
   .cap-chips {
     display: flex;
@@ -103,7 +103,7 @@
     }
   }
 
-  /* Solid (Recova's product filter): the pressed chip fills with the primary colour and drops
+  /* Solid (Recova's product filter): the pressed chip fills with the primary color and drops
      the tick, as a one-of-a-few filter where "All" is a value; under the pointer an unpressed
      chip's edge turns to the accent. Set data-variant="solid" on the .cap-chips group. */
   .cap-chips[data-variant="solid"] > .cap-chip {

@@ -11,7 +11,7 @@ function drawn(page: Page, id: string): Promise<number> {
   }, `#${id}`);
 }
 
-// A custom property the behaviour module set on a bar.
+// A custom property the behavior module set on a bar.
 function barVar(page: Page, id: string, name: string): Promise<string> {
   return page.evaluate(([sel, prop]) => getComputedStyle(document.querySelector(`${sel} .cap-meter-bar`)!).getPropertyValue(prop as string).trim(), [`#${id}`, name]);
 }
@@ -75,7 +75,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-indeterminate")).toContainText("Measuring");
   });
 
-  test("accessibility: a warning or critical tone has a word and a glyph, not only a colour", async ({ page }) => {
+  test("accessibility: a warning or critical tone has a word and a glyph, not only a color", async ({ page }) => {
     await visitStates(page, "meter", theme);
     for (const [id, word] of [["sample-warn", "Near the limit"], ["sample-crit", "Almost out"], ["sample-full", "Limit reached"]] as const) {
       const status = page.locator(`#${id} .cap-status`);
@@ -115,7 +115,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("meter").first()).not.toHaveAttribute("tabindex", /.*/);
   });
 
-  test("behaviour: the fill's length follows the value, and redraws when it changes", async ({ page }) => {
+  test("behavior: the fill's length follows the value, and redraws when it changes", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await visitStates(page, "meter", theme);
     expect(await drawn(page, "sample-low")).toBeCloseTo(0.12, 2);
@@ -125,7 +125,7 @@ eachTheme((theme) => {
     await expect.poll(() => drawn(page, "sample-warn")).toBeCloseTo(0.5, 2);
   });
 
-  test("behaviour: the threshold tick and the projection are placed from their values", async ({ page }) => {
+  test("behavior: the threshold tick and the projection are placed from their values", async ({ page }) => {
     await visitStates(page, "meter", theme);
     expect(Number(await barVar(page, "sample-threshold", "--cap-meter-threshold"))).toBeCloseTo(0.8, 3);
     expect(Number(await barVar(page, "sample-projection", "--cap-meter-projected"))).toBeCloseTo(0.86682, 4);
@@ -137,17 +137,17 @@ eachTheme((theme) => {
     expect(tick).not.toBe("none");
   });
 
-  test("behaviour: tones colour the fill, and each tone has a word beside it", async ({ page }) => {
+  test("behavior: tones color the fill, and each tone has a word beside it", async ({ page }) => {
     await visitStates(page, "meter", theme);
-    const colours = await page.evaluate(() =>
+    const colors = await page.evaluate(() =>
       ["#sample-low", "#sample-warn", "#sample-crit"].map((s) => getComputedStyle(document.querySelector(`${s} .cap-meter-fill`)!).backgroundColor),
     );
-    expect(new Set(colours).size).toBe(3);
+    expect(new Set(colors).size).toBe(3);
     await expect(page.locator("#sample-warn .cap-status")).toHaveText("Near the limit");
     await expect(page.locator("#sample-crit .cap-status")).toHaveText("Almost out");
   });
 
-  test("behaviour: sizes change the bar's height and keep its number in text", async ({ page }) => {
+  test("behavior: sizes change the bar's height and keep its number in text", async ({ page }) => {
     await visitStates(page, "meter", theme);
     const heights = await page.evaluate(() => ["#sample-sm", "#sample-md", "#sample-lg"].map((s) => document.querySelector(`${s} .cap-meter-bar`)!.getBoundingClientRect().height));
     expect(heights[0]).toBeLessThan(heights[1] ?? 0);
@@ -158,7 +158,7 @@ eachTheme((theme) => {
 
 // Pure functions: these run in Node, once.
 test.describe("ratio() and toneFor()", () => {
-  test("behaviour: the ratio is the share of the span, clamped; no value is zero", () => {
+  test("behavior: the ratio is the share of the span, clamped; no value is zero", () => {
     expect(ratio(50, 100)).toBe(0.5);
     expect(ratio(150, 100)).toBe(1);
     expect(ratio(-5, 100)).toBe(0);
@@ -167,7 +167,7 @@ test.describe("ratio() and toneFor()", () => {
     expect(ratio(5, 0)).toBe(0);
   });
 
-  test("behaviour: tone by threshold is warning from 75% and critical from 90% unless told otherwise", () => {
+  test("behavior: tone by threshold is warning from 75% and critical from 90% unless told otherwise", () => {
     expect(toneFor(74, 100)).toBe("ok");
     expect(toneFor(75, 100)).toBe("warn");
     expect(toneFor(90, 100)).toBe("crit");

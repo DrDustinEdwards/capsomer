@@ -6,7 +6,7 @@ import { cannotMoveText, dropMove, findNode, movedText, applyMove, planMove, tre
 export { applyMove, branchIds, dropMove, findNode, findPlace, movedText, planMove, reverseMove, treeKey, visibleRows } from "./tree.ts";
 export type { DropZone, MoveDir, TreeMove, TreePlace, TreeSelection, VisibleRow } from "./tree.ts";
 
-// The tree's HTML contract, rendered from props, with the roles and states the behaviour
+// The tree's HTML contract, rendered from props, with the roles and states the behavior
 // module writes on the delivered markup. Which branches are open and which rows are chosen
 // can be the caller's (`expanded`, `selected`) or the tree's own (`defaultExpanded`,
 // `defaultSelected`). The nodes are always the caller's: a move calls `onMove`, and the

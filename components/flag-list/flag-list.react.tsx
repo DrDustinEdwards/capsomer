@@ -26,7 +26,7 @@ export interface FlagListProps {
   // Who is resolving: written on the flag.
   viewer?: string;
   // Where results are said, with Undo. Pass useMessage().say and .fail; without them the
-  // plain behaviour module's region (an element with data-cap="message") is used.
+  // plain behavior module's region (an element with data-cap="message") is used.
   say?: (text: string, opts?: SayOptions) => void;
   fail?: (text: string) => void;
   filter?: FilterValue;

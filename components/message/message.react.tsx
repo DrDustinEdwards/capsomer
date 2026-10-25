@@ -189,7 +189,7 @@ export function useOptionalMessage(): MessageApi | null {
   return ctx ? { say: ctx.say, fail: ctx.fail, dismiss: ctx.dismiss } : null;
 }
 
-// The region itself. One per page. It has no data-cap attribute, so the plain behaviour
+// The region itself. One per page. It has no data-cap attribute, so the plain behavior
 // module never attaches to a region React owns.
 export function MessageRegion() {
   const ctx = useContext(MessageContext);

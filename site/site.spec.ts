@@ -45,12 +45,12 @@ eachTheme((theme) => {
     await expect(link).toHaveAttribute("aria-current", "page");
     await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
     await expect(page).toHaveTitle(/^Color and contrast · Capsomer/);
-    // The colour page's old address still opens it.
+    // The color page's old address still opens it.
     await page.goto("./admin/#/colour");
     await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
   });
 
-  test("behaviour: the site is the reference shell: the site header with the theme button, the family's app strip, the collapse control at the menu's top", async ({ page }) => {
+  test("behavior: the site is the reference shell: the site header with the theme button, the family's app strip, the collapse control at the menu's top", async ({ page }) => {
     await page.goto("./admin/#/overview");
     await expect(page.locator(".cap-site-header")).toBeVisible();
     await expect(page.locator(".cap-site-header .cap-theme-button")).toBeVisible();
@@ -60,14 +60,14 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-admin")).toHaveAttribute("data-menu", "collapsed");
   });
 
-  test("behaviour: the usage example shows AdminShell", async ({ page }) => {
+  test("behavior: the usage example shows AdminShell", async ({ page }) => {
     await page.goto("./admin/#/overview");
     const code = page.locator("#install-h ~ * .site-code, .site-code").first();
     await expect(code).toContainText('import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell"');
     await expect(code).toContainText("<AdminShell");
   });
 
-  test("behaviour: the overview counts every family's contrast pairs, not just the committed palette's", async ({ page }) => {
+  test("behavior: the overview counts every family's contrast pairs, not just the committed palette's", async ({ page }) => {
     await page.goto("./admin/#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Contrast pairs" });
     await expect(fig.locator("b")).toHaveText(/^\d{3}$/);
@@ -76,7 +76,7 @@ eachTheme((theme) => {
     expect(lines).toEqual(["Contrast pairs", expect.stringMatching(/^\d{3}$/), expect.stringMatching(/^\d+ color families in 2 themes$/), "None failing"]);
   });
 
-  test("behaviour: the Tests card says its number once", async ({ page }) => {
+  test("behavior: the Tests card says its number once", async ({ page }) => {
     await page.goto("./admin/#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Tests" });
     // One read of the number and the card together: the site swaps in main's last run once it
@@ -85,7 +85,7 @@ eachTheme((theme) => {
     expect(text.split(n).length - 1, `"${n}" in "${text}"`).toBe(1);
   });
 
-  test("behaviour: the site's strip marks Capsomer as the app you are in, and the bar says how fresh the results are", async ({ page }) => {
+  test("behavior: the site's strip marks Capsomer as the app you are in, and the bar says how fresh the results are", async ({ page }) => {
     await page.goto("./admin/#/overview");
     const current = page.locator(".cap-admin-strip .cap-admin-tile[aria-current='true']");
     await expect(current).toHaveCount(1);
@@ -97,7 +97,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-admin-trail li")).toHaveText(["Components", "Shell"]);
   });
 
-  test("behaviour: the site runs under its production Content-Security-Policy with no violation", async ({ page }) => {
+  test("behavior: the site runs under its production Content-Security-Policy with no violation", async ({ page }) => {
     expect(CSP, "the CSP line in site-dist/_headers").not.toBe("");
     await page.route("**/*", async (route) => {
       const response = await route.fetch();
@@ -139,7 +139,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: a component's page shows its states in both themes", async ({ page }) => {
+  test("behavior: a component's page shows its states in both themes", async ({ page }) => {
     await page.goto("./admin/#/components/shell");
     await expect(page.locator("#cap-main h1")).toHaveText("Shell");
     await expect(page.locator("iframe.site-frame")).toHaveCount(2);
@@ -147,7 +147,7 @@ eachTheme((theme) => {
 });
 
 // The admin's pages lived at the root's hash addresses before it moved to /admin/.
-test("behaviour: an old address at the root opens its page in the admin", async ({ page }) => {
+test("behavior: an old address at the root opens its page in the admin", async ({ page }) => {
   await page.goto("./#/components/shell");
   await expect(page).toHaveURL(/\/admin\/#\/components\/shell$/);
   await expect(page.locator("#cap-main h1")).toHaveText("Shell");

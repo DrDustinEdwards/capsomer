@@ -9,8 +9,8 @@
 <title>Capsomer Mockup</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
 <style>
-/* Layout: one column of labelled specimens, grouped by the app that needs them, under a
-   sticky "On this page" bar. Colour tokens below are capsid's generated tokens.css, verbatim. */
+/* Layout: one column of labeled specimens, grouped by the app that needs them, under a
+   sticky "On this page" bar. Color tokens below are capsid's generated tokens.css, verbatim. */
 :root {
   --ground: #f4f2fb; --surface: #fdfdfe; --raised: #f7f6fc; --sunken: #e9e6ef;
   --line: #dfdce5; --line-strong: #918e96;
@@ -195,7 +195,7 @@ section.group > header p { color: var(--muted); max-width: 70ch; margin-top: 2px
 .chip { display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 0 10px; border-radius: var(--radius-full); border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted); font-size: var(--fs-small); font-weight: 500; }
 .chip[aria-pressed="true"] { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
 
-/* status: shape, word and colour together */
+/* status: shape, word and color together */
 .st { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: var(--fs-small); white-space: nowrap; }
 .st svg, .pill svg { flex: none; }
 .st.crit { color: var(--crit); } .st.warn { color: var(--warn); } .st.ok { color: var(--ok); } .st.info { color: var(--info); } .st.nodata { color: var(--nodata); }
@@ -469,7 +469,7 @@ del::before { content: "\2212"; font: 700 12px var(--mono); color: var(--crit); 
             </tbody>
           </table>
         </div>
-        <div class="body"><p class="note">A tick and a dash, never colour alone. On a phone this becomes one card per agent listing only what it holds.</p></div>
+        <div class="body"><p class="note">A tick and a dash, never color alone. On a phone this becomes one card per agent listing only what it holds.</p></div>
       </div>
     </div>
 
@@ -579,7 +579,7 @@ del::before { content: "\2212"; font: 700 12px var(--mono); color: var(--crit); 
           <li><svg width="14" height="14" class="st crit"><use href="#i-crit"/></svg><div><b>Figure 2 has no description</b><span>Blocks dustinedwards.info. Add alt text, or mark the figure decorative.</span></div><a href="#writing">Fix</a></li>
           <li><svg width="14" height="14" class="st crit"><use href="#i-crit"/></svg><div><b>A reviewer’s flag is open</b><span>Blocks dustinedwards.info. “Check the burst size against the 2019 paper.”</span></div><a href="#writing">Open</a></li>
           <li><svg width="14" height="14" class="st info"><use href="#i-info"/></svg><div><b>3 style suggestions</b><span>Advice only. These never block.</span></div><a href="#writing">Review</a></li>
-          <li><svg width="14" height="14" class="st ok"><use href="#i-ok"/></svg><div><b>5 checks passed</b><span>Links resolve, title set, summary set, date set, licence set.</span></div><span></span></li>
+          <li><svg width="14" height="14" class="st ok"><use href="#i-ok"/></svg><div><b>5 checks passed</b><span>Links resolve, title set, summary set, date set, license set.</span></div><span></span></li>
         </ul>
         <div class="dest"><div class="grow"><b>dustinedwards.info</b><div class="note">Cannot publish yet: 2 things to fix above.</div></div><button class="btn" type="button" aria-disabled="true">Publish to dustinedwards.info</button></div>
         <div class="dest"><div class="grow"><b>TXASM newsletter</b><div class="note">Ready. Uses the short summary.</div></div><button class="btn primary" type="button" data-say="Published to TXASM newsletter.">Publish to TXASM newsletter</button></div>
@@ -668,7 +668,7 @@ del::before { content: "\2212"; font: 700 12px var(--mono); color: var(--crit); 
       <nav class="shell-rail" aria-label="Capsomer site">
         <a href="#site">Overview</a>
         <a href="#site" aria-current="page">Components <span class="count num">31</span></a>
-        <a href="#site">Colour and contrast</a>
+        <a href="#site">Color and contrast</a>
         <a href="#site">Type and space</a>
         <a href="#site">Motion</a>
         <a href="#site">Tests <span class="count hot num">1</span></a>
@@ -728,8 +728,8 @@ del::before { content: "\2212"; font: 700 12px var(--mono); color: var(--crit); 
 
   <!-- ============ TOKENS ============ -->
   <section class="group" id="tokens">
-    <header><h2>Tokens</h2><p>Colour is the generated palette, unchanged. Space, radius, type and motion are the proposed additions.</p></header>
-    <div class="panel"><header><h3>Colour and contrast</h3><span class="src">Both themes at once. Ratios are computed in your browser from the tokens</span></header>
+    <header><h2>Tokens</h2><p>Color is the generated palette, unchanged. Space, radius, type and motion are the proposed additions.</p></header>
+    <div class="panel"><header><h3>Color and contrast</h3><span class="src">Both themes at once. Ratios are computed in your browser from the tokens</span></header>
       <div class="body">
         <div class="cols wide">
           <div class="themed t-light" data-theme-name="Light"></div>

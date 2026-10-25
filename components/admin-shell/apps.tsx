@@ -1,8 +1,8 @@
 // The family's admin apps, configured once here and nowhere else: every app's strip lists these,
 // in this order, with each product's own mark. An app names itself (`app="carrel"`) and passes
 // its badges; it never writes its own list. Marks are drawn in currentColor so they take the
-// tile's colour, the accent on a neutral tile and the pill's text on the current one. Each is the
-// product's own icon (its favicon or brand file) redrawn in one colour: the Portal's hexagon
+// tile's color, the accent on a neutral tile and the pill's text on the current one. Each is the
+// product's own icon (its favicon or brand file) redrawn in one color: the Portal's hexagon
 // (capsid dashboard/src/ui/icons.tsx BrandMark), Carrel's open book (carrel app/components/frame.tsx),
 // dustinedwards.info's microscope (public/dustin-edwards-logo.svg), germomics' broadcasting
 // microphone (public/brand/germomics-icon-currentcolor.svg), Foxing's placeholder fox, and Capsomer's hexagon (its site's
@@ -73,7 +73,7 @@ const FOXHOUND = mark(
 );
 
 // Two alternatives to Foxhound's x (which reads as close or delete), each drawn on the 24 grid
-// in one colour. "track": a hound's paw print, for a service that tracks down failed payments;
+// in one color. "track": a hound's paw print, for a service that tracks down failed payments;
 // "fox": a fox's head, the name. Shown beside the x on the admin shell's states page; the one
 // Dustin picks replaces FOXHOUND and the other is deleted.
 export const FOXHOUND_MARKS = {
@@ -97,7 +97,7 @@ export const FOXHOUND_MARKS = {
   ),
 };
 
-// Foxing's mark: a placeholder fox's head in one colour, from the header design's mockup, until
+// Foxing's mark: a placeholder fox's head in one color, from the header design's mockup, until
 // Dustin picks Foxing's drawn mark (docs/design/design-site-header.md, answer 8: candidates go to
 // him first, and it must read apart from Foxhound's). It replaces the fox emoji.
 const FOXING = mark(

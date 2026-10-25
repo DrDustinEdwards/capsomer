@@ -2,9 +2,9 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A person, an agent or a source as a round picture or its initials. Rebuilt to the craft of
-   shadcn/ui's Avatar (Base UI flavour, nova style): 32 px round, sizes sm 24 and lg 40, a
+   shadcn/ui's Avatar (Base UI flavor, nova style): 32 px round, sizes sm 24 and lg 40, a
    fallback on the muted fill, a badge in the corner, a group that overlaps with a ring of
-   the page colour and a "+3" count. Capsomer's own values: the fallback word and fill are
+   the page color and a "+3" count. Capsomer's own values: the fallback word and fill are
    --muted on --sunken (4.5:1 in both themes), and the image's edge is drawn so a pale
    picture on a pale page still has a boundary. */
 @layer cap.components {
@@ -45,7 +45,7 @@
   }
 
   /* shadcn draws the image over the fallback and a darkening after:border; here a 1 px inset
-     edge in the line colour does the same job in both themes. */
+     edge in the line color does the same job in both themes. */
   .cap-avatar-image {
     position: absolute;
     inset: 0;
@@ -70,7 +70,7 @@
   }
 
   /* A badge in the bottom corner (presence, a kind). It carries a shape or a word, never
-     colour alone: the content is a glyph or a letter, and the dot has an accessible name. */
+     color alone: the content is a glyph or a letter, and the dot has an accessible name. */
   .cap-avatar-badge {
     position: absolute;
     inset-inline-end: 0;
@@ -105,7 +105,7 @@
     }
   }
 
-  /* A group: avatars overlap, each ringed in the page colour so the overlap reads. */
+  /* A group: avatars overlap, each ringed in the page color so the overlap reads. */
   .cap-avatar-group {
     display: inline-flex;
     align-items: center;

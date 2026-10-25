@@ -34,7 +34,7 @@ export function bands(boxes: Iterable<TileBox>): Band[] {
 
 // The tile an arrow key moves to, or null to stay put. With nothing active, or an active id no
 // longer on the page, the first tile. Left and right wrap across rows in reading order; up and
-// down take the nearest tile by centre in the next row, and stop at the edges. First and last
+// down take the nearest tile by center in the next row, and stop at the edges. First and last
 // are Home and End; prev and next step in reading order (the inspector's Alt+arrows).
 export function nextTile(rows: Band[], active: string, dir: Direction): string | null {
   const flat = rows.flatMap((b) => b.items.map((i) => i.id));

@@ -34,7 +34,7 @@ export interface ComboboxBaseProps {
   // The form field name of the hidden input that carries the value.
   name?: string;
   id?: string;
-  // Where the popup is portalled. Inside a modal <dialog> pass the dialog, or the popup
+  // Where the popup is portaled. Inside a modal <dialog> pass the dialog, or the popup
   // renders under the top layer, out of sight.
   container?: HTMLElement | null;
   // For specimens and tests: open on mount, with this text typed.
@@ -181,7 +181,7 @@ function Field({ label, labelId, inputId, required, help, helpId, error, errorId
   );
 }
 
-// One combobox: a labelled text box that filters a list, where only a listed value can be
+// One combobox: a labeled text box that filters a list, where only a listed value can be
 // chosen. Typed text that matches nothing is not kept: when the list closes, the box shows
 // the chosen value's label again (or nothing).
 export function Combobox(props: ComboboxProps) {

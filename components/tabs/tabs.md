@@ -2,7 +2,7 @@
 name: tabs
 title: Tabs
 summary: A list of tabs that show one panel at a time, or the same list as links to other pages.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default tray, line variant, vertical, count, disabled tab, manual activation, address follows the tab, links with the current page, narrow list scrolls, comfortable density]
 added: 0.3.0
@@ -35,7 +35,7 @@ Two ways to the same look. **Panels**: a `tablist` of buttons and the `tabpanel`
 ## The default and its reason
 
 - **Automatic activation.** An arrow key moves focus and chooses the tab at once. The APG recommends it when the panel is already there and shows without delay, which is true of every panel here (they are all in the HTML). `data-activation="manual"` makes the arrows only move focus and Enter or Space choose, for a panel that is slow to show.
-- **The chosen mark slides.** The raised tab, or the line, moves and resizes to the new tab over 200 ms: one mark, the list's `::before`, tethered to the chosen tab with CSS anchor positioning, so it needs no script and works for the React wrapper and a client-side router alike. Where anchor positioning (with `anchor-scope`) is missing, under reduced motion and in forced colours the chosen tab draws its own mark and nothing moves.
+- **The chosen mark slides.** The raised tab, or the line, moves and resizes to the new tab over 200 ms: one mark, the list's `::before`, tethered to the chosen tab with CSS anchor positioning, so it needs no script and works for the React wrapper and a client-side router alike. Where anchor positioning (with `anchor-scope`) is missing, under reduced motion and in forced colors the chosen tab draws its own mark and nothing moves.
 - **All panels are in the HTML.** The chosen panel is visible and the others carry `hidden`, so the delivered page is complete for an agent or a search engine and the first paint needs no script. The tab buttons, though, do nothing until `enhance()` runs: where a page must work without script, use the links form.
 - **Links form is the better default for admin filters** (Open, Resolved, All): a filter changes what the server returns, so it is a link to a URL, and the count sits in the tab.
 - **The chosen tab is drawn three ways at once**: raised on the tray with an accent edge (3:1), a heavier weight, and `aria-selected` or `aria-current`. shadcn's default tray marks it by fill alone, which fails 3:1.
@@ -49,7 +49,7 @@ Two ways to the same look. **Panels**: a `tablist` of buttons and the `tabpanel`
 
 ## The shadcn component it matches
 
-Tabs (`tabs.tsx`: Tabs, TabsList, TabsTrigger, TabsContent), Base UI flavour, nova style. Matched: the default muted tray with the chosen tab raised, the `line` variant, horizontal and vertical, the sizes of the list, `fill`. Different on purpose: the chosen tab has an edge, not only a fill; the list scrolls; panels are always in the HTML; a links form exists; a count has its own part.
+Tabs (`tabs.tsx`: Tabs, TabsList, TabsTrigger, TabsContent), Base UI flavor, nova style. Matched: the default muted tray with the chosen tab raised, the `line` variant, horizontal and vertical, the sizes of the list, `fill`. Different on purpose: the chosen tab has an edge, not only a fill; the list scrolls; panels are always in the HTML; a links form exists; a count has its own part.
 
 ## Keyboard
 
@@ -77,7 +77,7 @@ Links:
 - Links: a `nav` named by `aria-label`, the current link `aria-current="page"`. No tab roles: they are links.
 - A disabled tab has `aria-disabled="true"`. It is not removed from the page.
 - Contrast: tab text 4.5:1 on the tray and on the raised tab; the chosen tab's edge and the line variant's rule 3:1.
-- Hit areas are at least `var(--target)`; forced colours draw the chosen tab in Highlight.
+- Hit areas are at least `var(--target)`; forced colors draw the chosen tab in Highlight.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -99,7 +99,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </nav>
 ```
 
-Attributes: on `.cap-tabs` `data-orientation="vertical"`, `data-activation="manual"`, `data-sync="hash"`; on `.cap-tabs-list` `data-variant="line"`, `data-size="sm|lg"`, `data-fill`. `import { enhance, select, nextTab } from "capsomer/behaviour/tabs"`: `enhance()` attaches every `[data-cap="tabs"]`; `select(root, tab)` chooses one from script. A choice fires `cap:tabs-change` (bubbles; `detail.tab`, `detail.panel`).
+Attributes: on `.cap-tabs` `data-orientation="vertical"`, `data-activation="manual"`, `data-sync="hash"`; on `.cap-tabs-list` `data-variant="line"`, `data-size="sm|lg"`, `data-fill`. `import { enhance, select, nextTab } from "capsomer/behavior/tabs"`: `enhance()` attaches every `[data-cap="tabs"]`; `select(root, tab)` chooses one from script. A choice fires `cap:tabs-change` (bubbles; `detail.tab`, `detail.panel`).
 
 In React, `import { Tabs, TabsList, TabsTrigger, TabsContent, TabsNav, TabLink } from "capsomer/react/tabs"`:
 

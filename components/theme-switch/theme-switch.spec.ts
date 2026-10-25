@@ -44,7 +44,7 @@ eachTheme((theme) => {
     await expect(page.locator("section[aria-labelledby='s-states'] [data-density='comfortable'] .cap-theme-options")).toBeVisible();
   });
 
-  test("behaviour: the chosen choice has one marker, a fill at 3:1 against the page, and no underline", async ({ page }) => {
+  test("behavior: the chosen choice has one marker, a fill at 3:1 against the page, and no underline", async ({ page }) => {
     await visitStates(page, "theme-switch", theme);
     const chosen = page.locator(".cap-theme-options > label:has(input:checked)").first();
     const r = await chosen.evaluate((el) => {
@@ -61,16 +61,16 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-theme label:has(input:focus-visible)")).toHaveCount(1);
   });
 
-  test("behaviour: the first visit follows the system and remembers nothing", async ({ page }) => {
+  test("behavior: the first visit follows the system and remembers nothing", async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "first");
-    // The system's theme is what the emulated colour scheme says; the control shows it and
+    // The system's theme is what the emulated color scheme says; the control shows it and
     // nothing is written to storage until the person chooses. (The states page sets
     // data-theme itself from its ?theme= address, so the attribute says nothing here.)
     await expect(radio(page, theme === "dark" ? "Dark" : "Light")).toBeChecked();
     expect(await page.evaluate(() => localStorage.getItem("cap-theme-specimen-first"))).toBeNull();
   });
 
-  test("behaviour: the light and dark specimens apply their choice to the page", async ({ page }) => {
+  test("behavior: the light and dark specimens apply their choice to the page", async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "light");
     await expect(html(page)).toHaveAttribute("data-theme", "light");
     await visitStates(page, "theme-switch", theme, "dark");

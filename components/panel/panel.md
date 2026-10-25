@@ -34,7 +34,7 @@ A page with one subject needs no box around it; the page heading is enough. A me
 - **A count** (`.cap-panel-count`, "6") sits beside the heading in `--dim`. **A link to the full view** (`.cap-panel-more`, "All columns in Sites") sits at the right of the header, after the source line, so a panel that shows the top of something says where the rest is (patterns.md, "The top few of anything longer, with a link to the full view"). The link's box is at least the target size.
 - **A panel the anchor bar links to** takes `id` and `data-section="Sites"` on the `section`; the bar names the link from `data-section`.
 - **A panel is a plain `section` with a heading, not a named region.** A console page holds eight panels; eight extra landmarks make the landmark list useless. Headings carry the structure.
-- **A panel can be a link** (`a.cap-panel`, a card that leads somewhere): its edge firms to the strong line under the pointer, its words keep the text colour, and focus keeps the link's ring. A site may lift it (`--card-lift`, a negative length) and turn the edge to the accent (`--card-edge: 1`); the lift drops under reduced motion. A site's `--card-shadow` gives every panel a resting shadow.
+- **A panel can be a link** (`a.cap-panel`, a card that leads somewhere): its edge firms to the strong line under the pointer, its words keep the text color, and focus keeps the link's ring. A site may lift it (`--card-lift`, a negative length) and turn the edge to the accent (`--card-edge: 1`); the lift drops under reduced motion. A site's `--card-shadow` gives every panel a resting shadow.
 - **The heading level follows the page**: `h2` under the page's `h1`, `h3` inside a grouped section.
 - **`data-flush` on the body removes its padding**, so a list's or table's rows run to the panel's edges and the hover tint fills the row.
 - **A flush body with a padded block** (`.cap-panel-pad`, from the Capsid Portal): the body can be `data-flush` so a table or a list touches the panel's edges, and a block of text, a form or a note sits inside it in `.cap-panel-pad`, which has the body's own padding. Use it for an intro line above a list, or a note under a table.
@@ -58,7 +58,7 @@ Different on purpose: the header sits on the raised tone (a band) rather than sh
 ## Accessibility
 
 - The heading is a real `h2` or `h3`, so screen reader users move between panels by heading.
-- Forced colours: the header's tint is removed, so a rule under the header keeps it apart.
+- Forced colors: the header's tint is removed, so a rule under the header keeps it apart.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 

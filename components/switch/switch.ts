@@ -1,4 +1,4 @@
-// The switch's behaviour: keeps the state word beside it true. The word is "On" and "Off"
+// The switch's behavior: keeps the state word beside it true. The word is "On" and "Off"
 // unless the .cap-switch-state element sets its own in data-on and data-off.
 
 export function stateWord(checked: boolean, on = "On", off = "Off"): string {

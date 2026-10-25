@@ -3,7 +3,7 @@
 
 /* The one floating surface. `.cap-popover` is the look (background, ring, shadow, radius,
    padding, open and close motion, arrow, the inverted tooltip form). It depends on no
-   behaviour, so Base UI's combobox, menu and select popups wear it too: they position
+   behavior, so Base UI's combobox, menu and select popups wear it too: they position
    themselves and set data-side, data-starting-style and data-ending-style, which this file
    reads. On a native popover (`popover` attribute) it also places itself, by CSS anchor
    positioning where the browser has it, otherwise at the numbers popover.ts sets through the
@@ -113,7 +113,7 @@
 
   /* The arrow: a square turned 45 degrees, half hidden behind the surface. Its two outer
      edges carry the ring. popover.ts sets --cap-arrow-x / --cap-arrow-y so it points at
-     the trigger's centre; Base UI's Arrow sets left/top itself. */
+     the trigger's center; Base UI's Arrow sets left/top itself. */
   .cap-popover-arrow {
     position: absolute;
     inline-size: 8px;
@@ -195,7 +195,7 @@
     }
   }
 
-  /* A native popover places itself. The default: below its trigger, centred. */
+  /* A native popover places itself. The default: below its trigger, centered. */
   .cap-popover[popover] {
     position: fixed;
     inset: auto;
@@ -309,7 +309,7 @@
     }
   }
 
-  /* Forced colours drop shadows and fills: the surface keeps an edge, the arrow its lines. */
+  /* Forced colors drop shadows and fills: the surface keeps an edge, the arrow its lines. */
   @media (forced-colors: active) {
     .cap-popover {
       border: 1px solid CanvasText;

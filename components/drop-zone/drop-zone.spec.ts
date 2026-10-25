@@ -21,7 +21,7 @@ async function drag(page: Page, selector: string, type: "dragenter" | "dragover"
 const png = (name: string, size = 2000) => ({ name, mimeType: "image/png", buffer: Buffer.alloc(size, 1) });
 
 // The pure rules run in node, with no page.
-test("behaviour: validateFiles checks type, then size, then the count, and names every refusal", () => {
+test("behavior: validateFiles checks type, then size, then the count, and names every refusal", () => {
   const files = [
     { name: "hero.jpg", type: "image/jpeg", size: 1000 },
     { name: "notes.txt", type: "text/plain", size: 10 },
@@ -41,7 +41,7 @@ test("behaviour: validateFiles checks type, then size, then the count, and names
   expect(r.rejected[2]?.message).toContain("too many files");
 });
 
-test("behaviour: accept matches an extension, a wildcard and an exact type", () => {
+test("behavior: accept matches an extension, a wildcard and an exact type", () => {
   expect(matchesAccept({ name: "A.PDF", type: "" }, ".pdf")).toBe(true);
   expect(matchesAccept({ name: "a.png", type: "image/png" }, "image/*")).toBe(true);
   expect(matchesAccept({ name: "a.png", type: "image/png" }, "image/jpeg")).toBe(false);
@@ -165,7 +165,7 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-idle [role=status]")).toHaveText(/pasted-screenshot\.png is ready to upload/);
   });
 
-  test("behaviour: browsing a file says it is ready and tells the page", async ({ page }) => {
+  test("behavior: browsing a file says it is ready and tells the page", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await page.evaluate(() => {
       (window as unknown as { heard: unknown[] }).heard = [];
@@ -178,7 +178,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual([["foxhound-hero.png", "uptime.png"]]);
   });
 
-  test("behaviour: a file of the wrong type is named with the types the zone takes", async ({ page }) => {
+  test("behavior: a file of the wrong type is named with the types the zone takes", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await page.locator("#dz-idle input").setInputFiles([{ name: "fieldnotes.heic", mimeType: "image/heic", buffer: Buffer.alloc(10) }, { name: "notes.txt", mimeType: "text/plain", buffer: Buffer.alloc(10) }, png("ok.png")]);
     const alert = page.locator("#dz-idle [role=alert]");
@@ -188,14 +188,14 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-idle [role=status]")).toContainText("2 files are ready to upload.");
   });
 
-  test("behaviour: a file over the size limit is named with its size and the limit", async ({ page }) => {
+  test("behavior: a file over the size limit is named with its size and the limit", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await page.locator("#dz-single input").setInputFiles(png("big.png", 2 * 1024 * 1024));
     await expect(page.locator("#dz-single [role=alert]")).toContainText("big.png: too big at 2 MB. The limit is 1 MB.");
     await expect(page.locator("#dz-single [role=status]")).toBeEmpty();
   });
 
-  test("behaviour: files beyond the count are named as too many, and the input holds only the accepted", async ({ page }) => {
+  test("behavior: files beyond the count are named as too many, and the input holds only the accepted", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     const names = ["a.png", "b.png", "c.png", "d.png", "e.png", "f.png"];
     await page.locator("#dz-idle input").setInputFiles(names.map((n) => png(n)));
@@ -204,7 +204,7 @@ eachTheme((theme) => {
     expect(await page.locator("#dz-idle input").evaluate((el: HTMLInputElement) => Array.from(el.files ?? []).map((f) => f.name))).toEqual(["a.png", "b.png", "c.png", "d.png"]);
   });
 
-  test("behaviour: a zone without multiple takes one file and names the others", async ({ page }) => {
+  test("behavior: a zone without multiple takes one file and names the others", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await drag(page, "#dz-single", "drop", [
       { name: "me.png", type: "image/png" },
@@ -214,7 +214,7 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-single [role=alert]")).toContainText("me-too.png: too many files. The limit is 1 file at a time");
   });
 
-  test("behaviour: a drop is checked, shown, and put in the input", async ({ page }) => {
+  test("behavior: a drop is checked, shown, and put in the input", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await drag(page, "#dz-idle", "drop", [
       { name: "dropped.png", type: "image/png" },
@@ -225,7 +225,7 @@ eachTheme((theme) => {
     expect(await page.locator("#dz-idle input").evaluate((el: HTMLInputElement) => el.files?.length)).toBe(1);
   });
 
-  test("behaviour: files over the zone say Drop to upload, and leaving puts it back", async ({ page }) => {
+  test("behavior: files over the zone say Drop to upload, and leaving puts it back", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await drag(page, "#dz-idle", "dragenter");
     await expect(page.locator("#dz-idle")).toHaveAttribute("data-state", "over");
@@ -237,7 +237,7 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-idle .cap-drop-idle")).toBeVisible();
   });
 
-  test("behaviour: crossing nested elements does not end the drag early", async ({ page }) => {
+  test("behavior: crossing nested elements does not end the drag early", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await drag(page, "#dz-idle", "dragenter");
     await drag(page, "#dz-idle .cap-drop-hint", "dragenter");
@@ -247,7 +247,7 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-idle")).toHaveAttribute("data-state", "idle");
   });
 
-  test("behaviour: a dragged piece of text is not a file drag", async ({ page }) => {
+  test("behavior: a dragged piece of text is not a file drag", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     const dt = await page.evaluateHandle(() => {
       const t = new DataTransfer();
@@ -258,7 +258,7 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-idle")).not.toHaveAttribute("data-state", "over");
   });
 
-  test("behaviour: the drop anywhere panel covers the window while files are over it", async ({ page }) => {
+  test("behavior: the drop anywhere panel covers the window while files are over it", async ({ page }) => {
     await visitStates(page, "drop-zone", theme, "page");
     const zone = page.locator("#dz-page");
     await expect(zone).toHaveAttribute("data-state", "over");
@@ -270,7 +270,7 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-page [role=status]")).toContainText("anywhere.png is ready to upload.");
   });
 
-  test("behaviour: in page mode a dragged file over the window opens the panel and leaving closes it", async ({ page }) => {
+  test("behavior: in page mode a dragged file over the window opens the panel and leaving closes it", async ({ page }) => {
     await visitStates(page, "drop-zone", theme, "page");
     await drag(page, "body", "drop", [{ name: "x.png", type: "image/png" }]);
     await drag(page, "body", "dragenter");
@@ -279,7 +279,7 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-page .cap-drop-overlay")).toBeHidden();
   });
 
-  test("behaviour: a disabled zone takes no files", async ({ page }) => {
+  test("behavior: a disabled zone takes no files", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await expect(page.locator("#dz-disabled input")).toBeDisabled();
   });

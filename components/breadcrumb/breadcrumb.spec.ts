@@ -115,7 +115,7 @@ eachTheme((theme) => {
     await expect(button).toHaveAttribute("aria-expanded", "false");
   });
 
-  test("behaviour: a long trail with data-max-items folds its middle levels into links in a popover", async ({ page }) => {
+  test("behavior: a long trail with data-max-items folds its middle levels into links in a popover", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     const nav = page.locator("#bc-auto");
     await expect(nav.locator(".cap-breadcrumb-item")).toHaveCount(5);
@@ -127,19 +127,19 @@ eachTheme((theme) => {
     await expect(dialog.getByRole("link")).toHaveText(["Media library", "2026"]);
   });
 
-  test("behaviour: a trail no longer than the limit stays whole", async ({ page }) => {
+  test("behavior: a trail no longer than the limit stays whole", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     await expect(page.locator("#bc-short .cap-breadcrumb-ellipsis")).toHaveCount(0);
     await expect(page.locator("#bc-short").getByRole("link")).toHaveCount(2);
   });
 
-  test("behaviour: the delivered HTML has the whole trail as links", async ({ page }) => {
+  test("behavior: the delivered HTML has the whole trail as links", async ({ page }) => {
     const html = await (await page.request.get("components/breadcrumb/states.html")).text();
     for (const level of ["Media library", "2026", "September", "Field survey"]) expect(html).toContain(`>${level}</a>`);
     expect(html).toContain('<span class="cap-breadcrumb-page" aria-current="page">Plate 3</span>');
   });
 
-  test("behaviour: long names are cut and the page does not scroll sideways", async ({ page }) => {
+  test("behavior: long names are cut and the page does not scroll sideways", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     for (const sel of ["#bc-long-link", "#bc-long-page"]) {
       expect(await page.locator(sel).evaluate((el) => el.scrollWidth > el.clientWidth), sel).toBe(true);
@@ -148,14 +148,14 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 
-  test("behaviour: in a narrow space the trail wraps onto more lines", async ({ page }) => {
+  test("behavior: in a narrow space the trail wraps onto more lines", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     const tops = await page.locator("#bc-narrow .cap-breadcrumb-item").evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
     expect(new Set(tops).size).toBeGreaterThan(1);
     expect(await page.locator("#bc-narrow").evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
   });
 
-  test("behaviour: comfortable density makes the links taller", async ({ page }) => {
+  test("behavior: comfortable density makes the links taller", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     const compact = await page.locator("#bc-default .cap-breadcrumb-link").first().evaluate((el) => el.getBoundingClientRect().height);
     const roomy = await page.locator("#bc-comfortable .cap-breadcrumb-link").evaluate((el) => el.getBoundingClientRect().height);

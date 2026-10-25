@@ -7,10 +7,11 @@
    Matches shadcn's Progress: a rounded track, a primary fill, the label and a tabular
    value on one row. Positions come from three custom properties on the bar (0 to 1):
    --cap-meter-ratio, --cap-meter-projected and --cap-meter-threshold, set through the
-   CSSOM by the behaviour module or the React wrapper, never a style attribute. */
+   CSSOM by the behavior module or the React wrapper, never a style attribute. */
 @layer cap.components {
   .cap-meter {
-    --cap-meter-colour: var(--accent);
+    /* --cap-meter-colour: the old spelling, still read so an app that set it keeps working. */
+    --cap-meter-color: var(--cap-meter-colour, var(--accent));
     --cap-meter-h: var(--space-3);
     display: flex;
     flex-wrap: wrap;
@@ -26,13 +27,13 @@
       --cap-meter-h: var(--space-4);
     }
     &[data-tone="info"] {
-      --cap-meter-colour: var(--info);
+      --cap-meter-color: var(--info);
     }
     &[data-tone="warn"] {
-      --cap-meter-colour: var(--warn);
+      --cap-meter-color: var(--warn);
     }
     &[data-tone="crit"] {
-      --cap-meter-colour: var(--crit);
+      --cap-meter-color: var(--crit);
     }
   }
 
@@ -72,7 +73,7 @@
       background: repeating-linear-gradient(135deg, var(--muted) 0 2px, transparent 2px 5px);
     }
 
-    /* The threshold tick: a line in the text colour, edged in the surface colour so it
+    /* The threshold tick: a line in the text color, edged in the surface color so it
        shows over the fill and over the track. Its meaning is always said in words. */
     &[data-threshold]::after {
       content: "";
@@ -88,7 +89,7 @@
   .cap-meter-fill {
     position: absolute;
     inset: 0;
-    background: var(--cap-meter-colour);
+    background: var(--cap-meter-color);
     transform-origin: left center;
     transform: scaleX(var(--cap-meter-ratio, 0));
 
@@ -152,7 +153,7 @@
     }
   }
 
-  /* A native <meter class="cap-meter">: the same track, coloured by the element's own
+  /* A native <meter class="cap-meter">: the same track, colored by the element's own
      low, high and optimum. */
   meter.cap-meter {
     display: block;

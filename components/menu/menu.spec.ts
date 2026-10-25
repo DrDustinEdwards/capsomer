@@ -156,7 +156,7 @@ eachTheme((theme) => {
     await expect(chosen(page)).toHaveAttribute("data-chosen", "");
   });
 
-  test("behaviour: danger items come last, after one separator", async ({ page }) => {
+  test("behavior: danger items come last, after one separator", async ({ page }) => {
     await visitStates(page, "menu", theme);
     await trigger(page).click();
     await expect(page.getByRole("menu")).toBeVisible();
@@ -165,7 +165,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("menuitem", { name: "Delete site" })).toHaveAttribute("data-tone", "crit");
   });
 
-  test("behaviour: danger items keep their order at the end", async ({ page }) => {
+  test("behavior: danger items keep their order at the end", async ({ page }) => {
     await visitStates(page, "menu", theme, "danger");
     await expect(page.getByRole("menu")).toBeVisible();
     const labels = await page.locator(".cap-option .cap-option-label").allTextContents();
@@ -218,7 +218,7 @@ eachTheme((theme) => {
     await expect(sub).toBeFocused();
   });
 
-  test("behaviour: a click outside closes the menu", async ({ page }) => {
+  test("behavior: a click outside closes the menu", async ({ page }) => {
     await visitStates(page, "menu", theme);
     await trigger(page).click();
     await expect(page.getByRole("menu")).toBeVisible();
@@ -226,7 +226,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("menu")).toBeHidden();
   });
 
-  test("behaviour: works under style-src 'self' with no violation", async ({ page }) => {
+  test("behavior: works under style-src 'self' with no violation", async ({ page }) => {
     await strictStyles(page);
     await visitStates(page, "menu", theme);
     await trigger(page).focus();
@@ -243,7 +243,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
-  test("behaviour: the form menu is a details of submit buttons, danger last, a disabled one with its reason", async ({ page }) => {
+  test("behavior: the form menu is a details of submit buttons, danger last, a disabled one with its reason", async ({ page }) => {
     await visitStates(page, "menu", theme, "form-open");
     const menu = page.locator("#menu-form-open");
     await expect(menu).toHaveAttribute("open", "");
@@ -258,7 +258,7 @@ eachTheme((theme) => {
     await expect(menu.locator("[role='menu'], [role='menuitem']")).toHaveCount(0);
   });
 
-  test("behaviour: pressing an item posts the form with its intent and the row's hidden fields", async ({ page }) => {
+  test("behavior: pressing an item posts the form with its intent and the row's hidden fields", async ({ page }) => {
     await visitStates(page, "menu", theme, "form-open");
     const posted = page.evaluate(
       () =>
@@ -305,7 +305,7 @@ eachTheme((theme) => {
     await expect(menu.getByRole("link", { name: "Open site" })).toBeFocused();
   });
 
-  test("behaviour: a press outside closes the form menu", async ({ page }) => {
+  test("behavior: a press outside closes the form menu", async ({ page }) => {
     await visitStates(page, "menu", theme);
     const menu = page.locator("#menu-form");
     await menu.locator("summary").click();

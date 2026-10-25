@@ -108,7 +108,7 @@ eachTheme((theme) => {
     await expect(tip).toBeHidden();
   });
 
-  test("behaviour: clicking outside closes the popover (light dismiss)", async ({ page }) => {
+  test("behavior: clicking outside closes the popover (light dismiss)", async ({ page }) => {
     await visitStates(page, "popover", theme);
     await page.getByRole("button", { name: "Dimensions" }).click();
     await expect(page.locator("#pop-dims")).toBeVisible();
@@ -116,7 +116,7 @@ eachTheme((theme) => {
     await expect(page.locator("#pop-dims")).toBeHidden();
   });
 
-  test("behaviour: a tooltip waits on hover, then the next one opens at once (delay group)", async ({ page }) => {
+  test("behavior: a tooltip waits on hover, then the next one opens at once (delay group)", async ({ page }) => {
     await visitStates(page, "popover", theme);
     await page.getByRole("button", { name: "Retry job" }).hover();
     await page.waitForTimeout(80);
@@ -127,7 +127,7 @@ eachTheme((theme) => {
     await expect(page.locator("#tip-retry")).toBeHidden();
   });
 
-  test("behaviour: the pointer can move onto a tooltip without it closing (WCAG 1.4.13)", async ({ page }) => {
+  test("behavior: the pointer can move onto a tooltip without it closing (WCAG 1.4.13)", async ({ page }) => {
     await visitStates(page, "popover", theme);
     await page.getByRole("button", { name: "Retry job" }).hover();
     await expect(page.locator("#tip-retry")).toBeVisible();
@@ -138,7 +138,7 @@ eachTheme((theme) => {
     await expect(page.locator("#tip-retry")).toBeHidden();
   });
 
-  test("behaviour: placement stays inside the window, by CSS and by the script fallback", async ({ page }) => {
+  test("behavior: placement stays inside the window, by CSS and by the script fallback", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 240 });
     for (const id of ["flip-css", "flip-js"]) {
       await visitStates(page, "popover", theme, "flip");
@@ -150,7 +150,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: with little room below, the popup opens above its trigger", async ({ page }) => {
+  test("behavior: with little room below, the popup opens above its trigger", async ({ page }) => {
     await page.setViewportSize({ width: 600, height: 300 });
     await visitStates(page, "popover", theme, "flip");
     await page.locator("#flip-js").click();
@@ -163,7 +163,7 @@ eachTheme((theme) => {
     expect(above).toBe(true);
   });
 
-  test("behaviour: under reduced motion nothing animates", async ({ page }) => {
+  test("behavior: under reduced motion nothing animates", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await visitStates(page, "popover", theme);
     await page.getByRole("button", { name: "Dimensions" }).click();

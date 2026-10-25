@@ -151,7 +151,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as Win).escapes)).toBe(0);
   });
 
-  test("behaviour: a click asks too, and Cancel closes the form", async ({ page }) => {
+  test("behavior: a click asks too, and Cancel closes the form", async ({ page }) => {
     await visitStates(page, "switch-reason", theme);
     const sw = page.getByRole("switch", { name: "Nightly backups" });
     await sw.click();
@@ -162,7 +162,7 @@ eachTheme((theme) => {
     await expect(sw).toBeFocused();
   });
 
-  test("behaviour: a click on the switch while the reason is open goes back to the reason and keeps what was typed", async ({ page }) => {
+  test("behavior: a click on the switch while the reason is open goes back to the reason and keeps what was typed", async ({ page }) => {
     await visitStates(page, "switch-reason", theme);
     const sw = page.getByRole("switch", { name: "Nightly backups" });
     await sw.click();
@@ -172,7 +172,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sr-backups-why")).toHaveValue("The storage move is done");
   });
 
-  test("behaviour: the state asked for is fixed when the reason opens, whatever the switch does meanwhile", async ({ page }) => {
+  test("behavior: the state asked for is fixed when the reason opens, whatever the switch does meanwhile", async ({ page }) => {
     await visitStates(page, "switch-reason", theme);
     await recordApplied(page);
     const sw = page.getByRole("switch", { name: "Improve loop" });
@@ -188,7 +188,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as Win).applied)).toEqual([{ checked: false, reason: "The poll got there first" }]);
   });
 
-  test("behaviour: while the app saves, the switch and Apply are pending and Esc is held; a failure keeps the form with its message", async ({ page }) => {
+  test("behavior: while the app saves, the switch and Apply are pending and Esc is held; a failure keeps the form with its message", async ({ page }) => {
     await visitStates(page, "switch-reason", theme);
     await page.evaluate(() => {
       const w = window as Win;

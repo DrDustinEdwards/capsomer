@@ -8,8 +8,8 @@ Every component lives in `components/<name>/` and has the parts it needs, no mor
 | `<name>.md` | The doc page | Always |
 | `examples.html` | Every state as a live specimen: the inner sections and `<template data-specimen>` blocks only. The states page is generated from it | Always (React-rendered ones: `examples.tsx` as well) |
 | `states.html` | The generated states page (the test target and the site's source). Never edited, never committed (gitignored) | Generated |
-| `<name>.spec.ts` | Keyboard, accessibility and behaviour tests | Always |
-| `<name>.ts` | The behaviour module: plain TypeScript, no framework | When it does something CSS cannot |
+| `<name>.spec.ts` | Keyboard, accessibility and behavior tests | Always |
+| `<name>.ts` | The behavior module: plain TypeScript, no framework | When it does something CSS cannot |
 | `<name>.react.tsx` | The React wrapper | When a React app should not hand-write the markup |
 
 ## CSS
@@ -18,8 +18,8 @@ Every component lives in `components/<name>/` and has the parts it needs, no mor
 - Classes start `cap-<name>`; parts are `cap-<name>-<part>`. Variants are data attributes (`data-variant="primary"`, `data-tone="crit"`), never extra classes.
 - State is read from the platform, not invented classes: `:hover`, `:focus-visible`, `:disabled`, `aria-disabled="true"`, `aria-busy="true"`, `aria-pressed`, `aria-expanded`, `aria-invalid="true"`, `aria-current`, `[open]`, `:checked`, `:user-invalid`.
 - A states page may need to show hover or pressed without a pointer: add `&[data-force="hover"]` (or `pressed`) beside the real selector. That is the only specimen hook.
-- Colours, sizes, radii and durations come from tokens only (`tokens/colour.css`, `tokens/scale.css`). Read the context aliases (`--text-size`, `--leading`, `--gap`, `--control`, `--face`) where the component should follow the reading context.
-- Any transition or animation sits inside `@media (prefers-reduced-motion: no-preference) { ... }`. Animate opacity, colour and transform only.
+- Colors, sizes, radii and durations come from tokens only (`tokens/color.css`, `tokens/scale.css`). Read the context aliases (`--text-size`, `--leading`, `--gap`, `--control`, `--face`) where the component should follow the reading context.
+- Any transition or animation sits inside `@media (prefers-reduced-motion: no-preference) { ... }`. Animate opacity, color and transform only.
 - Container queries where the layout depends on the space a component has; a media query only for page-level layout.
 - Check `@media (forced-colors: active)`: nothing may be conveyed by a shadow or a background alone.
 - Hit areas at least `var(--target)`; control heights `var(--control)` (`--control-h` is an alias).
@@ -29,7 +29,7 @@ Every component lives in `components/<name>/` and has the parts it needs, no mor
 
 Build overlays and lists from these, never again from scratch: `dialog` (modal, sheet, palette; confirm dialog, detail panel, command menu, shortcuts, approval sheet and the shell More sheet use it), `listbox` (options, groups, active descendant; command menu, select, and the look of the combobox and menu popups), `popover` (Popover API surface and positioning; tooltip, select, combobox, menu), `meter` (one bar; usage meter and permission matrix). `skeleton` holds the skeleton and spinner.
 
-## The behaviour module
+## The behavior module
 
 - `export function enhance(root: ParentNode = document): () => void` attaches to every `[data-cap="<name>"]` under `root` not yet marked `data-cap-ready`, marks it, and returns a function that detaches. Idempotent.
 - Export the smaller functions too, so the React wrapper and other modules can reuse them.
@@ -40,7 +40,7 @@ Build overlays and lists from these, never again from scratch: `dialog` (modal, 
 ## The React wrapper
 
 - `export function <Name>(props)`, rendering exactly the HTML contract in the doc page.
-- State that changes on interaction is React state, not DOM mutation, so React's render stays true. Reuse the behaviour module's pure functions.
+- State that changes on interaction is React state, not DOM mutation, so React's render stays true. Reuse the behavior module's pure functions.
 - No `style` prop on any element it renders (server-rendered `style` attributes break `style-src 'self'`). Pass dynamic values with a ref and `style.setProperty` in an effect.
 - Base UI only in `combobox` and `menu` (decision 7).
 
@@ -77,7 +77,7 @@ eachTheme((theme) => {
 });
 ```
 
-- Test names start `keyboard:`, `accessibility:` or `behaviour:`. The site groups results by that word.
+- Test names start `keyboard:`, `accessibility:` or `behavior:`. The site groups results by that word.
 - Cover what must never break: one axe scan of the states page, `expectContrast` on what the component paints, and the doc page's keyboard table. Nothing that only pins the design (CLAUDE.md, tests rule).
 - Use roles and names (`getByRole`) over CSS selectors where you can.
 

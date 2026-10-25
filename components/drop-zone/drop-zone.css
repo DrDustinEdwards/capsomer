@@ -5,7 +5,7 @@
    click, and Enter or Space on the focused input, open the picker with no script. A drag of
    files over it (or over the whole window, for "drop anywhere") says "Drop to upload" in
    words and thickens the edge; a refused file is named in a box of its own with the reason.
-   Craft matched to shadcn/ui's Input (file) and Empty (the dashed, centred drop surface),
+   Craft matched to shadcn/ui's Input (file) and Empty (the dashed, centered drop surface),
    in Capsomer's tokens. */
 @layer cap.components {
   .cap-drop {

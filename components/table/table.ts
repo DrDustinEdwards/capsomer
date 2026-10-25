@@ -1,4 +1,4 @@
-// The table's behaviour: a sort button in a column header sorts the body rows by that
+// The table's behavior: a sort button in a column header sorts the body rows by that
 // column, toggling ascending and descending, and moves aria-sort to its header cell. Screen
 // readers announce aria-sort themselves, so nothing else is announced. No framework.
 

@@ -14,7 +14,7 @@ The mockup is `docs/design/site-header-mockup.html` beside this file: Foxhound p
 | foxhound | `930e2b9` (PR #40) | the admin on AdminShell 0.7.1 |
 | foxing | `c41f7d6` (main) | `apps/web/app/components/page-shell.tsx`, `nav/*`, `app.css` |
 
-Also read: Dustin's design notes (family colours, theme defaults, icons over text buttons, no emoji, menus open at once on hover).
+Also read: Dustin's design notes (family colors, theme defaults, icons over text buttons, no emoji, menus open at once on hover).
 
 ## 1. The problem
 
@@ -36,9 +36,9 @@ What differs between the two sites today, and has to become one rule:
 |---|---|---|
 | Height | 56px | 64px |
 | Sticky | no (static row) | yes, translucent with blur |
-| Width | full bleed, 24px sides | centred column |
+| Width | full bleed, 24px sides | centered column |
 | Band | dark in both themes (`#1a1c18`) | the page's ground at 85% |
-| Section links | right, before the controls | centre |
+| Section links | right, before the controls | center |
 | Text size | 13px | 14px |
 | Last item | gear menu | avatar menu, or Join free |
 | Logo | DM Mono wordmark, amber x | Fraunces wordmark after a fox emoji |
@@ -58,23 +58,23 @@ One `header` across the top of every page, the same on public, app and admin pag
 - **Order.** Left: the logo (links home), then the switcher. The section links sit where the site chooses (below). Right: the site's extras, then the theme control, then the account, always last. A slot with nothing in it takes no room; nothing else moves into its place.
 - **Height 56px** (`--header-h: 3.5rem`) at every width. Foxing gives up 8px.
 - **Sticky** at the top of the page (`position: sticky; top: 0`), above the content, with `scroll-padding-top` set to its height so a focused control or an anchor never lands under it (WCAG 2.4.11).
-- **Full bleed** with 24px sides on desktop and 16px on a phone, so the logo is at the same x on every site and lines up with the admin's menu column below it. Foxing's header leaves its centred column; its page body keeps it.
+- **Full bleed** with 24px sides on desktop and 16px on a phone, so the logo is at the same x on every site and lines up with the admin's menu column below it. Foxing's header leaves its centered column; its page body keeps it.
 - **Spacing.** 12px between the logo and the switcher, 24px from the switcher to the section links, 20px between links, 8px between controls in the right cluster.
-- **Type.** Section links and the switcher at 14px in the site's UI face, weight 500 for the current page, 400 otherwise; the current link also gets a 2px underline in the accent, so it is not told by colour alone.
+- **Type.** Section links and the switcher at 14px in the site's UI face, weight 500 for the current page, 400 otherwise; the current link also gets a 2px underline in the accent, so it is not told by color alone.
 - **Controls.** Every icon control is a 36px square target with an 18px glyph from Capsomer's icon family (24 box, 1.6 stroke), a tooltip on hover and focus naming it and its key, and its own accessible name. The avatar is a 32px circle inside the same 36px target.
 - **Menus.** What a panel holds and how it is laid out is the site's (Foxing's Books and Celebrity Picks panels and its account panel stay exactly as Foxing draws them; Dustin, 2026-10-13). Capsomer fixes only how panels behave: the switcher, a section link with children and the account each open a panel (the Popover API: light dismiss, Esc, focus handed back). On a mouse they open at once on hover, with no delay, and on click; on touch, on tap. Panels line up with the edge of their trigger and never cover the header.
-- **One bottom edge**, 1px, in the band's own line colour.
+- **One bottom edge**, 1px, in the band's own line color.
 
 **Owned by each site, from this list and nothing else:**
 
 | Slot | What the site gives | Foxhound | Foxing |
 |---|---|---|---|
 | Logo | an SVG or image, at most 24px tall and 160px wide, and its name | `fo`x`hound` in DM Mono, teal x | a fox mark and "Foxing" in Fraunces (question 8) |
-| Accent | its colour family | teal (answered) | Capsomer's fox, `#cc4f0c` (answered) |
+| Accent | its color family | teal (answered) | Capsomer's fox, `#cc4f0c` (answered) |
 | Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; optional `data-band="dark"` (dark in both themes) and `data-translucent` | dark in both themes | the page's ground, translucent |
 | UI face | `--font-ui` | DM Sans | DM Sans |
 | Extras | up to two icon controls and one button | Free audit (signed out) | Search, the bell (signed in), Join free (signed out) |
-| Section links' place | left (after the switcher), centred in the header, or right (before the extras, after a thin divider) | right | centred |
+| Section links' place | left (after the switcher), centered in the header, or right (before the extras, after a thin divider) | right | centered |
 | Panels | what each menu holds and its layout | its gear and account lists | Books, Celebrity Picks, the account panel, as today |
 
 A site that wants anything else in its header asks for a change to this design; it does not add it locally.
@@ -145,9 +145,9 @@ The same on every site (Dustin, 2026-10-13):
 - The current page is `aria-current="page"`; the current app in the strip `aria-current="true"`.
 - The theme button says what it does: "Switch to dark theme". A strip tile's badge is in its name: "Carrel, 3 need you".
 - Every count reads its real number to a screen reader; the bubble shows 99+ past 99.
-- Forced colours: the current link keeps its underline, the band keeps a border.
+- Forced colors: the current link keeps its underline, the band keeps a border.
 
-## 7. Colour families
+## 7. Color families
 
 *Answered: Foxhound stays teal on its dark band; Foxing moves to `#cc4f0c`. The rest of this section is the background to that question.*
 
@@ -170,7 +170,7 @@ Foxing has the same kind of drift: Capsomer's fox family is `#cc4f0c`, and Foxin
 
 **What 0.9.0 changes** (for the CHANGELOG):
 
-- New: `header.cap-site-header` (`data-cap="site-header"`, `capsomer/react/site-header`, `capsomer/behaviour/site-header`) with `.cap-site-header-logo`, `.cap-site-header-switcher`, `nav.cap-site-header-sections`, `.cap-site-header-extras`, `.cap-site-header-theme`, `.cap-site-header-account`, `.cap-site-header-menu` (phone), and the shared sheet.
+- New: `header.cap-site-header` (`data-cap="site-header"`, `capsomer/react/site-header`, `capsomer/behavior/site-header`) with `.cap-site-header-logo`, `.cap-site-header-switcher`, `nav.cap-site-header-sections`, `.cap-site-header-extras`, `.cap-site-header-theme`, `.cap-site-header-account`, `.cap-site-header-menu` (phone), and the shared sheet.
 - AdminShell: takes the header's props (`logo`, `band`, `extras`, `account`) and draws the header; gains `variant="owner" | "user"` (owner keeps the strip of app tiles; user has none and a 288px menu); removes the strip's tools (search, inbox, help, avatar), `.cap-admin-title`, `.cap-admin-title-mark`, the page bar's theme switch, and More on the phone tab bar. Foxing joins `FAMILY_APPS` (seventh, before Capsomer).
 - Theme: a one-button form of the theme switch, the same storage and `toggleTheme()`.
 - Tokens: none change (Foxhound keeps teal, Foxing takes the fox family as it is).
@@ -182,10 +182,10 @@ All answered on 2026-10-13, one at a time, in the order asked:
 - 1. Foxhound stays **teal** (Capsomer's teal family, `#008489`), keeping its **dark band** in both themes; the amber goes. Foxing moves to **Capsomer's `#cc4f0c`**. Capsomer gains no amber family and keeps teal.
 - 2. The theme control is **one icon button**, everywhere, with a tooltip that says what it does.
 - 3. **The avatar is the last menu on every site**; no site ends with a gear. Foxhound's gear goes: its rows move into the avatar menu, the business's settings under the business's name, then Help, Admin and Sign out. Foxhound's account switcher moves to the left as a square tile with the business's initial, before the product switcher ("Acme Supply Co. / Recovery"): a square is the business you are in, a circle is you. Foxing's menus stay as Foxing draws them; the frame does not change their contents.
-- 4. **Where the section links sit is each site's choice**: Foxing centres them, Foxhound keeps them on the right before a thin divider. On the right they shift a little between signed out and signed in, because the controls beside them change width; Foxhound accepts that, as it does today.
+- 4. **Where the section links sit is each site's choice**: Foxing centers them, Foxhound keeps them on the right before a thin divider. On the right they shift a little between signed out and signed in, because the controls beside them change width; Foxhound accepts that, as it does today.
 - 5. **Phones** follow one rule (section 5): a top row with the hamburger last on every page, a sheet for everything else, no second row of links, and a bottom bar of up to five tabs only in signed-in areas.
 - 6. **56px and sticky on every site** (Foxing shrinks by 8px; Foxhound's header stops scrolling away).
-- 7. **Full width on every site**: the logo 24px from the window's edge, lined up with the admin's menu. Foxing's header leaves its centred column; its pages keep it.
+- 7. **Full width on every site**: the logo 24px from the window's edge, lined up with the admin's menu. Foxing's header leaves its centered column; its pages keep it.
 - 8. **Foxing gets a drawn fox mark** in Foxing orange, replacing the emoji, for the header, favicon and admin strip; candidates go to Dustin before anything ships, and it must read apart from Foxhound's mark.
 - 9. **Your admin's strip keeps only the app tiles and badges**; its search and inbox move to the header's right, help into the avatar menu, and the avatar is last, top right, as on every site. Your admin's header has no app switcher.
 - 10. **Foxhound's changes are approved differences from legacy**: its job records them in `parity/APPROVED-DIFFERENCES.md` in Capsid, quoting Dustin's answers here (teal accents, the business switcher on the left, the avatar replacing the gear, the merchant dashboard's left menu, the phone rule).

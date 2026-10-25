@@ -109,7 +109,7 @@
     }
     /* Cards (Recova's decline picker): each option its own bordered card, two to a row and all
        on one row from 640px, its words left aligned and free to wrap (a name over a cause).
-       data-tone on an option tints it, when chosen, in that status colour: info, warn, crit,
+       data-tone on an option tints it, when chosen, in that status color: info, warn, crit,
        ok or accent (the default). */
     &[data-layout="cards"] {
       display: grid;
@@ -207,7 +207,7 @@
 
   /* The chosen highlight slides and resizes to the new choice (uiarc's segmented control): one
      highlight, the tray's ::before, tethered to the chosen segment by anchor positioning, so it
-     moves with no script. Without anchor-scope, under reduced motion and in forced colours the
+     moves with no script. Without anchor-scope, under reduced motion and in forced colors the
      chosen segment draws its own highlight, as above, and nothing moves. */
   @supports (anchor-name: --a) and (anchor-scope: all) {
     @media (prefers-reduced-motion: no-preference) and (forced-colors: none) {

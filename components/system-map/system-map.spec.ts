@@ -32,7 +32,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: chosen and private are marked by more than colour", async ({ page }) => {
+  test("accessibility: chosen and private are marked by more than color", async ({ page }) => {
     const stroke = (sel: string, prop: string) => page.locator(sel).evaluate((el, p) => getComputedStyle(el).getPropertyValue(p), prop);
     expect(Number.parseFloat(await stroke("#map-chosen [data-id='carrel'] polygon", "stroke-width"))).toBeGreaterThan(Number.parseFloat(await stroke("#map-chosen [data-id='enarratio'] polygon", "stroke-width")));
     expect(await stroke("#map [data-id='foxing'] polygon", "stroke-dasharray")).not.toBe("none");
@@ -49,7 +49,7 @@ eachTheme((theme) => {
     expect(items).toEqual(tiles);
   });
 
-  test("keyboard: Tab enters on the core and leaves in one press; arrows move to the neighbour that way, Home and End", async ({ page }) => {
+  test("keyboard: Tab enters on the core and leaves in one press; arrows move to the neighbor that way, Home and End", async ({ page }) => {
     const stops = () => page.locator("#map .cap-system-map-tile[tabindex='0']").count();
     expect(await stops()).toBe(1);
     await page.locator("#map .cap-system-map-views button").last().focus();
@@ -99,7 +99,7 @@ eachTheme((theme) => {
     expect(await focusedId(page)).toBe("capsid");
   });
 
-  test("behaviour: a pointer chooses, and Go inside and Step out work as buttons", async ({ page }) => {
+  test("behavior: a pointer chooses, and Go inside and Step out work as buttons", async ({ page }) => {
     await tile(page, "map", "capsid").click();
     await page.locator("#map").getByRole("button", { name: "Go inside" }).click();
     await expect(page.locator("#map")).toHaveAttribute("data-entered", "");
@@ -183,7 +183,7 @@ eachTheme((theme) => {
     expect(fill, "the boundary's share of the stage").toBeGreaterThan(0.6);
   });
 
-  test("behaviour: the plain map shows the list as columns and hides the drawing", async ({ page }) => {
+  test("behavior: the plain map shows the list as columns and hides the drawing", async ({ page }) => {
     await page.locator("#map").getByRole("button", { name: "Plain map" }).click();
     await expect(page.locator("#map")).toHaveAttribute("data-view", "plain");
     await expect(page.locator("#map .cap-system-map-stage")).toBeHidden();
@@ -192,7 +192,7 @@ eachTheme((theme) => {
     await expect(page.locator("#map").getByRole("heading", { name: "Shared parts" })).toBeVisible();
   });
 
-  test("behaviour: going inside animates, and with reduced motion runs no animation", async ({ page }) => {
+  test("behavior: going inside animates, and with reduced motion runs no animation", async ({ page }) => {
     // The control: without the preference the layers do move, so a count of 0 below is
     // the preference at work and not a test that cannot see an animation.
     await tile(page, "map", "capsid").click();
@@ -208,7 +208,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
   });
 
-  test("behaviour: with circles, one tap zooms into any system, its rim zooms on, and Back, Escape or a tap outside returns", async ({ page }) => {
+  test("behavior: with circles, one tap zooms into any system, its rim zooms on, and Back, Escape or a tap outside returns", async ({ page }) => {
     const map = page.locator("#map-circles");
     await tile(page, "map-circles", "carrel").click();
     await expect(map).toHaveAttribute("data-zoom", "carrel");
@@ -237,7 +237,7 @@ eachTheme((theme) => {
     await expect(out).toBeHidden();
   });
 
-  test("behaviour: with circles, a chosen system is delivered zoomed into, its lines on", async ({ page }) => {
+  test("behavior: with circles, a chosen system is delivered zoomed into, its lines on", async ({ page }) => {
     const map = page.locator("#map-zoomed");
     await expect(map).toHaveAttribute("data-zoom", "carrel");
     await expect(map.locator("[data-layer='inside'][data-system='carrel']")).toBeVisible();
@@ -245,7 +245,7 @@ eachTheme((theme) => {
     await expect(map.locator(".cap-system-map-edge[data-on]")).not.toHaveCount(0);
   });
 
-  test("behaviour: delivered with no script, the drawing is one named picture and the list is open", async ({ page }) => {
+  test("behavior: delivered with no script, the drawing is one named picture and the list is open", async ({ page }) => {
     await expect(page.getByRole("img", { name: /The family, no script: 16 systems in rings/ })).toBeAttached();
     await expect(page.locator("#map-plain-html .cap-system-map-list")).toHaveAttribute("open", "");
     await expect(page.locator("#map-plain-html .cap-system-map-tile[role='button']")).toHaveCount(0);
@@ -293,8 +293,8 @@ eachTheme((theme) => {
     expect(faces).toEqual({ body: faces.body, inside: faces.body, step: faces.body, flow: faces.body });
   });
 
-  test("accessibility: in forced colours every part is the canvas with a text-coloured edge, stores and outside parts too", async ({ page }) => {
-    const colours = () =>
+  test("accessibility: in forced colors every part is the canvas with a text-colored edge, stores and outside parts too", async ({ page }) => {
+    const colors = () =>
       page.locator("#map-flow").evaluate((root) => {
         const probe = document.createElement("span");
         probe.style.cssText = "color: Canvas; background: CanvasText";
@@ -306,11 +306,11 @@ eachTheme((theme) => {
         const wire = getComputedStyle(root.querySelector(".cap-system-map-wire:not([data-on])")!).stroke;
         return { canvas, text, rects, wire };
       });
-    // The control: in ordinary colours a store keeps its tint.
-    const plain = await colours();
+    // The control: in ordinary colors a store keeps its tint.
+    const plain = await colors();
     expect(plain.rects.find((r) => r.id === "capsid-db")!.fill).not.toBe(plain.canvas);
     await page.emulateMedia({ forcedColors: "active" });
-    const forced = await colours();
+    const forced = await colors();
     for (const r of forced.rects) {
       expect(r.fill, `${r.id}'s fill`).toBe(forced.canvas);
       if (!r.marked) expect(r.stroke, `${r.id}'s edge`).toBe(forced.text);
@@ -362,7 +362,7 @@ eachTheme((theme) => {
     expect(steps).toEqual([1, 2, 3, 7, 6, 0].map((step) => ({ id: step ? "job-life" : null, step })));
   });
 
-  test("behaviour: the token travels the step's line and stops clear of every name; with reduced motion it jumps", async ({ page }) => {
+  test("behavior: the token travels the step's line and stops clear of every name; with reduced motion it jumps", async ({ page }) => {
     const map = page.locator("#map-flow");
     const tokenOnName = () =>
       map.evaluate((root) => {
@@ -387,7 +387,7 @@ eachTheme((theme) => {
     await expect(map.locator(".cap-system-map-detail-text")).toContainText("Step 2 of 7.");
   });
 
-  test("behaviour: with no script, each flow is an open, ordered list of its steps", async ({ page }) => {
+  test("behavior: with no script, each flow is an open, ordered list of its steps", async ({ page }) => {
     const flows = page.locator("#map-plain-html .cap-system-map-flows");
     await expect(flows).toHaveAttribute("open", "");
     await expect(flows.getByRole("heading", { name: "A job's life" })).toBeVisible();
@@ -397,7 +397,7 @@ eachTheme((theme) => {
     await expect(page.locator("#map .cap-system-map-flows")).not.toHaveAttribute("open", "");
   });
 
-  test("behaviour: leaving by any way stops the flow and says so, and the plain view opens the steps", async ({ page }) => {
+  test("behavior: leaving by any way stops the flow and says so, and the plain view opens the steps", async ({ page }) => {
     const map = page.locator("#map");
     const stops: unknown[] = [];
     await page.exposeFunction("noteStop", (d: unknown) => stops.push(d));

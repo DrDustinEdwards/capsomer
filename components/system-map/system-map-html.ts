@@ -54,7 +54,7 @@ function cornersOf(c: Cell): Array<[number, number]> {
 }
 
 /** The walk along the seams from capsomer `a` to capsomer `b`, as the corners it passes.
- *  Neighbours share a side, and their line is that side. */
+ *  Neighbors share a side, and their line is that side. */
 export function seamRoute(cells: readonly Cell[], a: Cell, b: Cell): Array<[number, number]> {
   const at = new Map<string, [number, number]>();
   const next = new Map<string, Set<string>>();

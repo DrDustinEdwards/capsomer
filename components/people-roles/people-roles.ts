@@ -1,4 +1,4 @@
-// The members page's behaviour and the words it shows. Every action is a form post, so the
+// The members page's behavior and the words it shows. Every action is a form post, so the
 // page works with no script; this module adds what a form cannot do alone: the confirm
 // before a removal, the add form's end date following the chosen title, and the review's
 // running tally. The rules (who may manage whom, what may be granted, which end dates are

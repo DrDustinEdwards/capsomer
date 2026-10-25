@@ -50,14 +50,14 @@ export interface Palette {
 interface TestRow {
   title: string;
   theme: "light" | "dark" | null;
-  kind: "keyboard" | "accessibility" | "behaviour";
+  kind: "keyboard" | "accessibility" | "behavior";
   status: "passed" | "failed" | "skipped";
   error: string | null;
 }
 export interface ComponentResults {
   keyboard: { passed: number; failed: number };
   accessibility: { passed: number; failed: number };
-  behaviour: { passed: number; failed: number };
+  behavior: { passed: number; failed: number };
   tests: TestRow[];
 }
 export interface Results {
@@ -87,7 +87,13 @@ export async function fetchResults(): Promise<Results | null> {
     const r = await fetch(RESULTS_URL, { cache: "no-cache" });
     if (!r.ok) return null;
     const j = (await r.json()) as Results;
-    return j && typeof j === "object" && j.components ? j : null;
+    if (!(j && typeof j === "object" && j.components)) return null;
+    // A run written before the move to American spelling names the kind "behaviour".
+    for (const c of Object.values(j.components) as Array<ComponentResults & { behaviour?: ComponentResults["behavior"] }>) {
+      c.behavior ??= c.behaviour ?? { passed: 0, failed: 0 };
+      for (const t of c.tests) if ((t.kind as string) === "behaviour") t.kind = "behavior";
+    }
+    return j;
   } catch {
     return null;
   }

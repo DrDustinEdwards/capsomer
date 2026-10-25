@@ -110,7 +110,7 @@
   }
 
   /* The signed size change. The sign is text ("+142 words", a real minus sign for a cut), and
-     a drawn plus, minus or equals mark repeats it, so the direction is never colour alone.
+     a drawn plus, minus or equals mark repeats it, so the direction is never color alone.
      No tone: a shorter text is not a failure, and 3:1 on the mark is met by the muted tone. */
   .cap-hist-delta {
     display: inline-flex;

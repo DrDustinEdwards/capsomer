@@ -70,7 +70,7 @@ export interface MenuProps {
   "aria-label"?: string;
   items: MenuEntry[];
   disabled?: boolean;
-  // Where the popup is portalled. Inside a modal <dialog> pass the dialog.
+  // Where the popup is portaled. Inside a modal <dialog> pass the dialog.
   container?: HTMLElement | null;
   // For specimens and tests: open on mount.
   defaultOpen?: boolean;

@@ -96,7 +96,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   comfortable: () => <Logged entries={plain} defaultOpen />,
 };
 
-// The popup is portalled to the body, so the comfortable specimen sets the density there.
+// The popup is portaled to the body, so the comfortable specimen sets the density there.
 if (new URLSearchParams(location.search).get("only") === "comfortable") document.documentElement.dataset.density = "comfortable";
 
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {

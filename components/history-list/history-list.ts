@@ -1,4 +1,4 @@
-// The history list's behaviour and its pure helpers. One line per change; autosaves fold
+// The history list's behavior and its pure helpers. One line per change; autosaves fold
 // into one line that opens in place; any two lines can be picked to compare; restoring a
 // line makes a NEW version on top and offers Undo, so nothing is ever overwritten.
 //
@@ -20,7 +20,7 @@ export type { BuildOptions } from "./history-list-rows.ts";
 export { isTypingKey };
 
 // ---------------------------------------------------------------------------------------
-// The behaviour.
+// The behavior.
 
 const READY = "data-cap-ready";
 

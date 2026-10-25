@@ -10,7 +10,7 @@ const publishBtn = (page: Page, id: string) => page.locator(`[data-cap-actions][
 
 const c = (id: string, required: boolean, ok: boolean, extra: Partial<GateCheck> = {}): GateCheck => ({ id, name: id, required, ok, cause: `${id} is wrong`, ...extra });
 
-test("behaviour: gateState is blocked by a failing required check, then held, then ready", () => {
+test("behavior: gateState is blocked by a failing required check, then held, then ready", () => {
   expect(gateState([c("a", true, false), c("b", false, true)])).toBe("blocked");
   expect(gateState([c("a", true, true), c("b", false, false)])).toBe("ready");
   expect(gateState([c("a", true, true)], { by: "Rosa" })).toBe("held");
@@ -18,7 +18,7 @@ test("behaviour: gateState is blocked by a failing required check, then held, th
   expect(gateState([])).toBe("ready");
 });
 
-test("behaviour: sortChecks puts failing required first, then failing advisory, then passing, keeping order", () => {
+test("behavior: sortChecks puts failing required first, then failing advisory, then passing, keeping order", () => {
   const sorted = sortChecks([c("p1", true, true), c("a1", false, false), c("r1", true, false), c("p2", false, true), c("r2", true, false)]);
   expect(sorted.map((x) => x.id)).toEqual(["r1", "r2", "a1", "p1", "p2"]);
   expect(checkState(c("x", true, false))).toBe("failing");
@@ -26,7 +26,7 @@ test("behaviour: sortChecks puts failing required first, then failing advisory, 
   expect(checkState(c("x", true, true))).toBe("passed");
 });
 
-test("behaviour: the headings and the hold are said in words", () => {
+test("behavior: the headings and the hold are said in words", () => {
   expect(requiredHeading(2)).toBe("Required, 2 failing");
   expect(advisoryHeading(3)).toBe("Advisory, 3");
   expect(passedHeading(9)).toBe("9 checks passed");
@@ -39,7 +39,7 @@ test("behaviour: the headings and the hold are said in words", () => {
   expect(countChecks([c("a", true, false), c("b", false, false), c("c", true, true)])).toEqual({ requiredFailing: 1, advisoryFailing: 1, passed: 1, total: 3 });
 });
 
-test("behaviour: the overall state is the worst of the destinations, and a shared check counts once", () => {
+test("behavior: the overall state is the worst of the destinations, and a shared check counts once", () => {
   const sites: GateSite[] = [{ id: "a", name: "a.example" }, { id: "b", name: "b.example", published: { at: "2026-10-02T09:00:00Z", url: "https://b.example/" } }];
   const checks = [c("shared", true, false), c("only-a", true, false, { site: "a" })];
   expect(appliesTo(checks[1] as GateCheck, "b")).toBe(false);
@@ -121,7 +121,7 @@ eachTheme((theme) => {
     await expect(publishBtn(page, "pg-held")).toHaveAccessibleDescription(/^Held for review by Rosa until Fri 09:00/);
   });
 
-  test("accessibility: status is a glyph, a word and a colour", async ({ page }) => {
+  test("accessibility: status is a glyph, a word and a color", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     for (const [id, word] of [["pg-blocked", "Blocked"], ["pg-ready", "Ready"], ["pg-held", "Held"], ["pg-pub", "Published"]] as const) {
       const s = region(page, id).locator(`#${id}-sum .cap-status`);
@@ -250,9 +250,9 @@ eachTheme((theme) => {
   });
 
   // -------------------------------------------------------------------------------------
-  // Behaviour.
+  // Behavior.
 
-  test("behaviour: every row is in the delivered HTML, with its cause, link and fix", async ({ page }) => {
+  test("behavior: every row is in the delivered HTML, with its cause, link and fix", async ({ page }) => {
     const html = await (await page.request.get("components/publish-gate/states.html")).text();
     expect(html).toContain("Blocked</span>: 2 required checks failing on dustinedwards.info");
     expect(html).toContain("Required, 2 failing");
@@ -266,14 +266,14 @@ eachTheme((theme) => {
     expect(html).toContain('aria-disabled="true" aria-describedby="pg-blocked-sum"');
   });
 
-  test("behaviour: failing checks come before the passing ones, required before advisory", async ({ page }) => {
+  test("behavior: failing checks come before the passing ones, required before advisory", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const order = await region(page, "pg-blocked").locator("li.cap-check").evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.check));
     expect(order.slice(0, 5)).toEqual(["alt", "title", "length", "links", "sentences"]);
     await expect(region(page, "pg-blocked").locator("[data-section='passed'] li.cap-check")).toHaveCount(9);
   });
 
-  test("behaviour: the region redraws when a check changes, and the summary announces once", async ({ page }) => {
+  test("behavior: the region redraws when a check changes, and the summary announces once", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const sum = region(page, "pg-ready-sum");
     await expect(sum).toHaveText("Ready: nothing required is failing on dustinedwards.info, 3 advisory checks failing");
@@ -293,7 +293,7 @@ eachTheme((theme) => {
     await expect(region(page, "pg-ready").locator("[data-section='required']")).toBeHidden();
   });
 
-  test("behaviour: an app only flips the data and the region follows", async ({ page }) => {
+  test("behavior: an app only flips the data and the region follows", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     await page.evaluate(() => document.getElementById("pg-blocked-c-alt")?.setAttribute("data-ok", "true"));
     await expect(region(page, "pg-blocked-sum")).toHaveText("Blocked: 1 required check failing on dustinedwards.info");
@@ -302,21 +302,21 @@ eachTheme((theme) => {
     await expect(publishBtn(page, "pg-blocked")).toHaveAccessibleName("Publish");
   });
 
-  test("behaviour: a held destination says who holds it, until when and why", async ({ page }) => {
+  test("behavior: a held destination says who holds it, until when and why", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     await expect(region(page, "pg-held-sum")).toHaveText("Held for review by Rosa until Fri 09:00");
     await expect(region(page, "pg-held-s-dustinedwards-d")).toHaveText("Held for review by Rosa until Fri 09:00. Waiting on the legal check for the quoted figures.");
     await expect(publishBtn(page, "pg-held")).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("behaviour: a published destination shows when, and links to the live page", async ({ page }) => {
+  test("behavior: a published destination shows when, and links to the live page", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     await expect(region(page, "pg-pub-sum")).toHaveText("Published: live on dustinedwards.info");
     await expect(region(page, "pg-pub-s-dustinedwards").locator("time")).toHaveAttribute("datetime", "2026-10-02T09:12:00Z");
     await expect(page.locator("[data-cap-actions][data-gate='pg-pub']").getByRole("link", { name: /^View/ })).toHaveAttribute("href", "https://dustinedwards.info/blog/why-foxhound-waits");
   });
 
-  test("behaviour: one row per destination, the overall state is the worst, and each is published on its own", async ({ page }) => {
+  test("behavior: one row per destination, the overall state is the worst, and each is published on its own", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const multi = region(page, "pg-multi");
     await expect(multi.locator("li.cap-gate-site")).toHaveCount(3);
@@ -336,7 +336,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-message-item").first()).toContainText("Published to foxhound.app.");
   });
 
-  test("behaviour: publishing shows Publishing... while it works", async ({ page }) => {
+  test("behavior: publishing shows Publishing... while it works", async ({ page }) => {
     // The specimen's publish takes a timer. Hold the clock so the busy state stays until the test
     // lets it finish, instead of racing the timer on a slow machine.
     await page.clock.install();
@@ -350,7 +350,7 @@ eachTheme((theme) => {
     await expect(page.locator("#pg-multi-s-foxhound")).toHaveAttribute("data-state", "published");
   });
 
-  test("behaviour: a failed publish says so, leaves the destination as it was, and keeps focus on the button", async ({ page }) => {
+  test("behavior: a failed publish says so, leaves the destination as it was, and keeps focus on the button", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const b = publishBtn(page, "pg-fail");
     await b.click();
@@ -360,7 +360,7 @@ eachTheme((theme) => {
     await expect(b).toBeFocused();
   });
 
-  test("behaviour: without a script hook the button posts its form, a first publication after the preview", async ({ page }) => {
+  test("behavior: without a script hook the button posts its form, a first publication after the preview", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     await publishBtn(page, "pg-form").click();
     const dialog = page.getByRole("alertdialog", { name: "Publish to dustinedwards.info?" });
@@ -369,7 +369,7 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/intent=publish-confirmed/);
   });
 
-  test("behaviour: the markup the server sent is the markup the module draws", async ({ page, baseURL }) => {
+  test("behavior: the markup the server sent is the markup the module draws", async ({ page, baseURL }) => {
     await visitStates(page, "publish-gate", theme);
     const norm = (html: string) =>
       html
@@ -397,7 +397,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: the React component draws the same region, and its paired button follows the checks", async ({ page }) => {
+  test("behavior: the React component draws the same region, and its paired button follows the checks", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const sum = page.locator("#react-gate-sum");
     await expect(sum).toHaveText("Blocked: 1 required check failing on dustinedwards.info");
@@ -418,7 +418,7 @@ eachTheme((theme) => {
   });
 
   for (const width of [1280, 375]) {
-    test(`behaviour: at ${width}px nothing in a row overflows it and every title has room to be read`, async ({ page }) => {
+    test(`behavior: at ${width}px nothing in a row overflows it and every title has room to be read`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await visitStates(page, "publish-gate", theme);
       const bad = await rowOverflow(page);
@@ -426,7 +426,7 @@ eachTheme((theme) => {
     });
   }
 
-  test("behaviour: at phone width the page does not scroll sideways, and every control is still reachable", async ({ page }) => {
+  test("behavior: at phone width the page does not scroll sideways, and every control is still reachable", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 800 });
     await visitStates(page, "publish-gate", theme);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -434,13 +434,13 @@ eachTheme((theme) => {
     await expect(page.locator("#pg-multi").getByRole("button", { name: "Publish, foxhound.app" })).toBeVisible();
   });
 
-  test("behaviour: comfortable density makes the rows taller than the compact default", async ({ page }) => {
+  test("behavior: comfortable density makes the rows taller than the compact default", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const pad = (sel: string) => page.locator(sel).evaluate((e) => parseFloat(getComputedStyle(e).paddingTop));
     expect(await pad("#pg-comfy-s-dustinedwards")).toBeGreaterThan(await pad("#pg-narrow-s-dustinedwards"));
   });
 
-  test("behaviour: the state is reported to the app when it changes", async ({ page }) => {
+  test("behavior: the state is reported to the app when it changes", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     await page.evaluate(() => {
       (window as unknown as { seen: unknown[] }).seen = [];

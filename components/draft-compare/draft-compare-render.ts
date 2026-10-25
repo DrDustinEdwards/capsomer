@@ -1,7 +1,7 @@
 // Draft compare's renderer: renderCompare returns the HTML string for every view (draft-compare.ts).
 
 import { exact, parse } from "../time/time.ts";
-import { type Analysis, type Counts, type Entry, type Sentence, type SentenceOptions, type WordPart, analyse, countsText } from "./draft-compare-diff.ts";
+import { type Analysis, type Counts, type Entry, type Sentence, type SentenceOptions, type WordPart, analyze, countsText } from "./draft-compare-diff.ts";
 
 // ---------------------------------------------------------------------------------------
 // The renderer
@@ -339,7 +339,7 @@ export function renderCompare(before: CompareSide, after: CompareSide, options: 
   const id = options.id ?? "compare";
   const view = options.view ?? "side";
   const labels: CompareLabels = { before: "Before", after: "After", ...options.labels };
-  const an = analyse(before.text, after.text, options);
+  const an = analyze(before.text, after.text, options);
   const name = `Compare ${before.title} with ${after.title}`;
   const attrs = `class="cap-compare" data-cap="draft-compare" id="${id}" aria-label="${esc(name)}"${options.remember === false ? ' data-remember="off"' : ""}`;
   const head = `<div class="cap-compare-head">${sideHead(labels.before, before, "before")}${sideHead(labels.after, after, "after")}</div>`;

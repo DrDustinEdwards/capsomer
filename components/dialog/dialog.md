@@ -2,11 +2,11 @@
 name: dialog
 title: Dialog
 summary: The one modal surface under every overlay: a dialog, an alert dialog, a side sheet, a bottom sheet, a palette.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [in the page until script opens it, open, alert dialog, large, side sheet right, side sheet left, bottom sheet, top palette, tall content scrolls, busy]
 added: 0.2.0
-source: shadcn/ui Dialog, Alert Dialog and Sheet (Base UI flavour, nova style, commit d75a96ab787f); the focus, backdrop, busy and history rules from Capsomer 0.1's confirm dialog and detail panel
+source: shadcn/ui Dialog, Alert Dialog and Sheet (Base UI flavor, nova style, commit d75a96ab787f); the focus, backdrop, busy and history rules from Capsomer 0.1's confirm dialog and detail panel
 replaces:
   - '<dialog\b'
   - 'showModal\('
@@ -34,7 +34,7 @@ Anything that must be dealt with before the page is used again: a short form, a 
 - **center**: a dialog in the middle, up to `sm` 24rem, `md` 30rem, `lg` 42rem wide, never closer than 1rem to the screen edge (more where the device has a safe area).
 - **right, left**: a full-height side sheet on that edge (`sm` 24rem, `md` 35rem, `lg` 48rem), at most 85% of the width on a phone so the backdrop is still there to press.
 - **bottom**: a sheet on the bottom edge, the full width, as tall as its content up to the safe margin.
-- **top**: a palette: centred across, near the top, so the page it searches stays in view below.
+- **top**: a palette: centered across, near the top, so the page it searches stays in view below.
 
 ## The default and its reason
 
@@ -68,7 +68,7 @@ Anything that must be dealt with before the page is used again: a short form, a 
 - A question the person must answer is `role="alertdialog"`; it has no corner Close button and ignores the backdrop.
 - The Close button is an icon button named "Close" (`aria-label`), the last control in the order, in the corner.
 - Busy is `aria-busy` on the dialog and `aria-disabled` (not `disabled`) on Close and Cancel, so focus stays where it was.
-- Forced colours: the dialog, the footer and the divider keep their borders.
+- Forced colors: the dialog, the footer and the divider keep their borders.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -111,7 +111,7 @@ In the page until script opens it:
 ```
 
 ```ts
-import { enhance, openDialog, closeDialog, setDialogBusy } from "capsomer/behaviour/dialog";
+import { enhance, openDialog, closeDialog, setDialogBusy } from "capsomer/behavior/dialog";
 enhance(); // every [data-cap="dialog"] and every [data-cap-dialog-open] trigger
 openDialog(dialogEl, buttonEl, { history: true, focus: fieldEl, returnTo: mainEl });
 setDialogBusy(dialogEl, true); // hold Esc, Close, Cancel and the backdrop
@@ -141,7 +141,7 @@ Dialog, Alert Dialog and Sheet, in the nova style: the black-tinted backdrop wit
 ## Deliberately different
 
 - **One element for all three.** shadcn has three components; here a dialog, an alert dialog and a sheet are one `<dialog>` with `role="alertdialog"` and `data-placement`, because they share every rule above.
-- **`top` is a palette, not a top sheet.** shadcn's top sheet is full width; Capsomer's command menu needs a centred panel near the top, and a full-width top sheet has no use here yet.
+- **`top` is a palette, not a top sheet.** shadcn's top sheet is full width; Capsomer's command menu needs a centered panel near the top, and a full-width top sheet has no use here yet.
 - **Sheets are at most 85% wide on a phone** (shadcn: 75%), so a record's columns still fit, with the backdrop left to press.
 - **Surfaces use Capsomer's tokens**: `--raised` for the popover surface, `--sunken` for the footer band, `--line` for the hairline, the title in the 800 weight Capsomer headings use.
 - **A native element, not a portal.** The top layer and the inert page come from `showModal()`; there is no focus-guard markup.

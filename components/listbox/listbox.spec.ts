@@ -40,7 +40,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the current option is marked by more than its colour", async ({ page }) => {
+  test("accessibility: the current option is marked by more than its color", async ({ page }) => {
     const mark = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el).boxShadow);
     expect(await mark("#v-jobs")).not.toBe("none");
     expect(await mark("#v-agents")).toBe("none");
@@ -149,7 +149,7 @@ eachTheme((theme) => {
     await expect(page.locator("#i-5")).toHaveAttribute("tabindex", "-1");
   });
 
-  test("behaviour: typing filters by label and keyword, announces the count, and says when nothing matches", async ({ page }) => {
+  test("behavior: typing filters by label and keyword, announces the count, and says when nothing matches", async ({ page }) => {
     const input = page.getByRole("combobox", { name: "Find a site" });
     const status = page.locator("section:has(#f-a) [data-cap-part='count']");
     await input.fill("blog");
@@ -169,7 +169,7 @@ eachTheme((theme) => {
     await expect(page.locator("#f-list ~ .cap-listbox-empty")).toBeHidden();
   });
 
-  test("behaviour: the pointer moves the active option, and clicking chooses it", async ({ page }) => {
+  test("behavior: the pointer moves the active option, and clicking chooses it", async ({ page }) => {
     const selects = await recordSelects(page, "[aria-label='Region']");
     await page.locator("#r-sin").hover();
     expect(await activeOf(page, "[aria-label='Region']")).toBe("r-sin");
@@ -181,7 +181,7 @@ eachTheme((theme) => {
     expect(await selects()).toEqual(["r-fra"]);
   });
 
-  test("behaviour: a group hides with its last option, a separator only shows between two shown groups, a group name finds its options", async ({ page }) => {
+  test("behavior: a group hides with its last option, a separator only shows between two shown groups, a group name finds its options", async ({ page }) => {
     const input = page.getByRole("combobox", { name: "Find a site" });
     await input.fill("blog");
     await expect(page.getByRole("group", { name: "Tools" })).toBeHidden();

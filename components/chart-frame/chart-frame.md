@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [closed, open by option, sparkline, uptime strip, progress ring, heat strip with a gap, no data, summary kept for screen readers, comfortable density, narrow column]
 added: 0.3.0
-source: Capsomer 0.2's uptime strip ("The numbers, by day") and stat tile (the sparkline's hidden summary), generalised; shadcn/ui Chart and Card for the head and the quiet frame
+source: Capsomer 0.2's uptime strip ("The numbers, by day") and stat tile (the sparkline's hidden summary), generalized; shadcn/ui Chart and Card for the head and the quiet frame
 replaces:
   - 'class="(chart-card|chart-wrap|chart-frame)'
   - "className=\"(chart-card|chart-wrap|chart-frame)"
@@ -14,7 +14,7 @@ replaces:
 
 # Chart frame
 
-What every chart sits in. Enarratio draws the chart and reads its colours, fonts, sizes and timings from `--enarratio-*` properties that Capsomer maps onto its tokens (`css/enarratio.css`); this frame is the rest: a title, a sentence that says what the chart shows, the chart, and the numbers behind it.
+What every chart sits in. Enarratio draws the chart and reads its colors, fonts, sizes and timings from `--enarratio-*` properties that Capsomer maps onto its tokens (`css/enarratio.css`); this frame is the rest: a title, a sentence that says what the chart shows, the chart, and the numbers behind it.
 
 ## When to use it
 
@@ -34,7 +34,7 @@ Any chart a person reads: a trend, an uptime strip, a progress ring, a heat stri
 - **No data is a state with its reason**, in the summary's place, with the status glyph and word; there is no empty chart and no table.
 - **The head is a heading**, level 3 by default (`level` sets 2 to 4), with an optional figure at the end of the line (an uptime percent). The frame has no border of its own: it sits in a panel or on the page, as shadcn's Chart sits in a Card.
 - **A chart that brings its own figure** (an Enarratio bar or line chart draws a title and a closed "Data table" disclosure) goes in the body with `data-table="own"` on the frame: the figure's title is dropped (the frame's head is the title) and its disclosure takes the same look. The label stays Enarratio's "Data table"; for "Show data" everywhere, draw the piece with the primitives and their companion tables, which is what the stat tile and the uptime strip do.
-- **Colours are never set here.** The chart's series, text, axes and grid come from `--enarratio-*`, mapped to `--series-1` to `--series-8`, `--ramp-1` to `--ramp-5`, `--text`, `--muted`, `--line` (css/enarratio.css), so a token change reaches every chart in both themes and every family.
+- **Colors are never set here.** The chart's series, text, axes and grid come from `--enarratio-*`, mapped to `--series-1` to `--series-8`, `--ramp-1` to `--ramp-5`, `--text`, `--muted`, `--line` (css/enarratio.css), so a token change reaches every chart in both themes and every family.
 
 ## The shadcn component it matches
 
@@ -56,7 +56,7 @@ The chart itself is an image and takes no tab stop (Enarratio's own enhancement 
 - Enarratio's SVG is `role="img"` with a label that states the values; the title and summary say them again in text.
 - The disclosure's summary is announced as a button with its expanded state by the browser.
 - The table has row and column headers and a name; the region is focusable.
-- Series colours are at least 3:1 against the surface, every pair is apart under protanopia, deuteranopia and tritanopia, and no series colour is read as a status colour; the palette check verifies it (`npm run check`).
+- Series colors are at least 3:1 against the surface, every pair is apart under protanopia, deuteranopia and tritanopia, and no series color is read as a status color; the palette check verifies it (`npm run check`).
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -79,7 +79,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </figure>
 ```
 
-On a server without React: `import { frameHtml, tableHtml } from "capsomer/behaviour/chart-frame"`; `frameHtml({ id, title, summary, chart, table, open })` returns the figure as a string (text is escaped; `chart` is trusted markup). In React: `import { ChartFrame, ChartData } from "capsomer/react/chart-frame"`: `<ChartFrame title summary chart={sparkline(options)} table={sparklineTable(options).table} open />`; `ChartData` is the disclosure alone, for a piece that has its own title and summary.
+On a server without React: `import { frameHtml, tableHtml } from "capsomer/behavior/chart-frame"`; `frameHtml({ id, title, summary, chart, table, open })` returns the figure as a string (text is escaped; `chart` is trusted markup). In React: `import { ChartFrame, ChartData } from "capsomer/react/chart-frame"`: `<ChartFrame title summary chart={sparkline(options)} table={sparklineTable(options).table} open />`; `ChartData` is the disclosure alone, for a piece that has its own title and summary.
 
 Enarratio in an app that loads Capsomer: load `capsomer/tokens.css` (it imports the mapping) and Enarratio's `base.css`; or draw with `stylesheet(capsomerTheme)` from `capsomer/enarratio-theme`. Both give the same look.
 

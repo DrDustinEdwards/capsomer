@@ -5,7 +5,7 @@
    a pointer drags and the keyboard picks up), the host's own content, and Move up and Move
    down, the one-pointer way and the way with no script. An item that is up (by keyboard)
    or under the pointer is raised and edged in the accent, so the cue is a shape and an
-   edge as well as a colour. */
+   edge as well as a color. */
 @layer cap.components {
   .cap-sortable {
     box-sizing: border-box;
@@ -155,7 +155,7 @@
     }
   }
 
-  /* Forced colours remove the raised shadow: the item that is up gets a Highlight outline. */
+  /* Forced colors remove the raised shadow: the item that is up gets a Highlight outline. */
   @media (forced-colors: active) {
     .cap-sortable-item {
       border-color: CanvasText;

@@ -172,14 +172,14 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Decline" })).toBeFocused();
   });
 
-  test("behaviour: a click anywhere on the row follows its link", async ({ page }) => {
+  test("behavior: a click anywhere on the row follows its link", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     // The stretched link covers the whole row, so a click on the row lands on the link.
     await page.locator("#list-crit .cap-row").click();
     await expect(page).toHaveURL(/#job-failed$/);
   });
 
-  test("behaviour: row actions sit above the stretched link and take their own clicks", async ({ page }) => {
+  test("behavior: row actions sit above the stretched link and take their own clicks", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await page.locator("#act-decline").scrollIntoViewIfNeeded();
     const hit = await page.evaluate(() => {
@@ -192,7 +192,7 @@ eachTheme((theme) => {
     await expect(page).not.toHaveURL(/#job-push$/);
   });
 
-  test("behaviour: a long title is cut with an ellipsis and keeps its full name", async ({ page }) => {
+  test("behavior: a long title is cut with an ellipsis and keeps its full name", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     const link = page.locator("#long-title");
     await expect(link).toHaveCSS("text-overflow", "ellipsis");
@@ -201,7 +201,7 @@ eachTheme((theme) => {
     await expect(link).toHaveAccessibleName(/factor of two$/);
   });
 
-  test("behaviour: a critical row has the red edge, flush and clipped to its corners, others none", async ({ page }) => {
+  test("behavior: a critical row has the red edge, flush and clipped to its corners, others none", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     const edge = (sel: string) => page.locator(sel).first().evaluate((el) => getComputedStyle(el).boxShadow);
     for (const sel of ["#list-crit .cap-row", "#list-variants .cap-row[data-tone='crit']"]) {
@@ -212,7 +212,7 @@ eachTheme((theme) => {
     expect(await edge("#list-focus .cap-row")).toBe("none");
   });
 
-  test("behaviour: the sizes step down, default taller than sm, sm than xs, and xs set smaller", async ({ page }) => {
+  test("behavior: the sizes step down, default taller than sm, sm than xs, and xs set smaller", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 900 });
     await visitStates(page, "row-list", theme);
     const rows = page.locator("#list-variants .cap-row");
@@ -224,7 +224,7 @@ eachTheme((theme) => {
     expect(xs.font).toBeLessThan(outline.font);
   });
 
-  test("behaviour: at phone width every row's text starts in one column, with or without an icon or a picture beside it", async ({ page }) => {
+  test("behavior: at phone width every row's text starts in one column, with or without an icon or a picture beside it", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 900 });
     await visitStates(page, "row-list", theme);
     const starts = await page.locator("#list-variants .cap-row").evaluateAll((rows) =>
@@ -257,7 +257,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "3 pull requests await the seat" })).toBeFocused();
   });
 
-  test("behaviour: in a narrow column an icon stays beside its title, as it is in a wide one", async ({ page }) => {
+  test("behavior: in a narrow column an icon stays beside its title, as it is in a wide one", async ({ page }) => {
     const sideBySide = async () =>
       page.locator("#list-variants .cap-row:has(> .cap-row-media[data-variant='icon'])").evaluateAll((rows) =>
         rows.map((row) => {
@@ -275,7 +275,7 @@ eachTheme((theme) => {
     expect(narrow).toEqual(wide);
   });
 
-  test("behaviour: at phone width a long title wraps instead of being cut", async ({ page }) => {
+  test("behavior: at phone width a long title wraps instead of being cut", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 640 });
     await visitStates(page, "row-list", theme, "phone");
     const link = page.locator("#phone-long-title");

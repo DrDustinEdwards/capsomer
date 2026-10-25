@@ -157,7 +157,7 @@
     }
   }
 
-  /* "Go to passage": the link's own words, after the message, in the accent text colour. */
+  /* "Go to passage": the link's own words, after the message, in the accent text color. */
   .cap-flag-goto {
     margin-inline-start: var(--space-3);
     color: var(--accent-text);

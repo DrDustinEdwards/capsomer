@@ -66,7 +66,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: the app you are in is told by more than colour and shows no badge", async ({ page }) => {
+  test("accessibility: the app you are in is told by more than color and shows no badge", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const current = page.locator(".cap-admin-tile[aria-current='true']");
     await expect(current).toHaveCount(1);
@@ -243,7 +243,7 @@ eachTheme((theme) => {
     await expect(avatar).toBeFocused();
   });
 
-  test("behaviour: G then a number jumps to that app, never the one already open, and Ctrl and a digit do nothing", async ({ page }) => {
+  test("behavior: G then a number jumps to that app, never the one already open, and Ctrl and a digit do nothing", async ({ page }) => {
     // The other apps are other origins: a jump is caught here, not followed.
     await page.route(/https:\/\/(portal|carrel)\.dustinedwards\.info\//, (r) => r.fulfill({ body: "another app" }));
     await visitStates(page, "admin-shell", theme, "expanded");
@@ -258,7 +258,7 @@ eachTheme((theme) => {
     await expect(page).toHaveURL("https://carrel.dustinedwards.info/");
   });
 
-  test("behaviour: a reader's area is the user variant: no strip, the 288px menu, a reading column", async ({ page }) => {
+  test("behavior: a reader's area is the user variant: no strip, the 288px menu, a reading column", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "reader");
     await expect(page.locator(".cap-admin-strip")).toHaveCount(0);
     await expect(page.locator(".cap-admin-menu").getByRole("link", { name: "Research" })).toHaveAttribute("aria-current", "page");
@@ -266,7 +266,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-admin-page")).toHaveAttribute("data-measure", "reading");
   });
 
-  test("behaviour: the strip and the menu have the same widths in every state", async ({ page }) => {
+  test("behavior: the strip and the menu have the same widths in every state", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const strip = await page.locator(".cap-admin-strip").boundingBox();
     await visitStates(page, "admin-shell", theme, "collapsed");
@@ -274,7 +274,7 @@ eachTheme((theme) => {
     expect(collapsed?.width).toBe(strip?.width);
   });
 
-  test("behaviour: comfortable density makes the menu items taller", async ({ page }) => {
+  test("behavior: comfortable density makes the menu items taller", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const compact = (await page.getByRole("link", { name: "Overview" }).boundingBox())?.height ?? 0;
     await visitStates(page, "admin-shell", theme, "comfortable");
@@ -282,7 +282,7 @@ eachTheme((theme) => {
     expect(roomy).toBeGreaterThanOrEqual(compact);
   });
 
-  test("behaviour: at 320px nothing runs past the window (WCAG reflow): the logo shows its mark, keeps its name, and the menu button is in view", async ({ page }) => {
+  test("behavior: at 320px nothing runs past the window (WCAG reflow): the logo shows its mark, keeps its name, and the menu button is in view", async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 640 });
     await visitStates(page, "admin-shell", theme, "phone");
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
@@ -368,7 +368,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behaviour: on a short 360px phone Sign out stays in view, pinned under the scrolling list", async ({ page }) => {
+  test("behavior: on a short 360px phone Sign out stays in view, pinned under the scrolling list", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 560 });
     await visitStates(page, "admin-shell", theme, "phone");
     await page.getByRole("button", { name: "Menu" }).click();
@@ -388,7 +388,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("behaviour: every row of the sheet starts its label in one column, icon or none", async ({ page }) => {
+  test("behavior: every row of the sheet starts its label in one column, icon or none", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await visitStates(page, "admin-shell", theme, "phone");
     await page.getByRole("button", { name: "Menu" }).click();
@@ -410,7 +410,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.activeElement?.closest("dialog.cap-site-header-sheet") !== null && !document.activeElement?.classList.contains("cap-site-header-sheet-title"))).toBe(true);
   });
 
-  test("behaviour: opening the sheet with a tap leaves no focus ring on a row", async ({ browser }) => {
+  test("behavior: opening the sheet with a tap leaves no focus ring on a row", async ({ browser }) => {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, colorScheme: theme });
     const page = await context.newPage();
     await visitStates(page, "admin-shell", theme, "phone");
@@ -420,7 +420,7 @@ eachTheme((theme) => {
     await context.close();
   });
 
-  test("accessibility: the current tab has a tinted pill behind its icon as well as its colour, and keeps aria-current", async ({ page }) => {
+  test("accessibility: the current tab has a tinted pill behind its icon as well as its color, and keeps aria-current", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await visitStates(page, "admin-shell", theme, "phone");
     const fill = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el).backgroundColor);
@@ -432,7 +432,7 @@ eachTheme((theme) => {
     expect(box!.width).toBeGreaterThan(box!.height * 1.5);
   });
 
-  test("behaviour: tab labels are 12px and all five tabs fit a 360px phone, badges clear of the icon", async ({ page }) => {
+  test("behavior: tab labels are 12px and all five tabs fit a 360px phone, badges clear of the icon", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await visitStates(page, "admin-shell", theme, "phone");
     const tabs = await page.locator(".cap-site-tabs > *").evaluateAll((els) =>
@@ -458,7 +458,7 @@ eachTheme((theme) => {
     expect(Math.min(...tabs.map((t) => t.left))).toBeGreaterThanOrEqual(0);
   });
 
-  test("behaviour: a tab count past 99 reads 99+ and its name keeps the real count", async ({ page }) => {
+  test("behavior: a tab count past 99 reads 99+ and its name keeps the real count", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await visitStates(page, "admin-shell", theme, "phone-counts");
     const queue = page.getByRole("link", { name: "Queue 99+, 120 blocked" });
@@ -468,7 +468,7 @@ eachTheme((theme) => {
     expect(b!.x + b!.width, "the badge stays clear of the next tab's pill").toBeLessThanOrEqual(next!.x);
   });
 
-  test("behaviour: on a phone the header's logo names the app and the bar keeps the freshness line; a top-level page shows no trail", async ({ page }) => {
+  test("behavior: on a phone the header's logo names the app and the bar keeps the freshness line; a top-level page shows no trail", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await visitStates(page, "admin-shell", theme, "phone");
     await expect(page.locator(".cap-site-header-logo")).toBeVisible();
@@ -485,7 +485,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-admin-trail li")).toHaveText(["Sites", "fieldnotes.example"]);
     await expect(page.locator(".cap-admin-trail [aria-current='page']")).toHaveText("fieldnotes.example");
   });
-  test("behaviour: every icon, the logo tiles and the current row keep their place when the menu opens and closes", async ({ page }) => {
+  test("behavior: every icon, the logo tiles and the current row keep their place when the menu opens and closes", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const places = () =>
       page.evaluate(() => {
@@ -509,14 +509,14 @@ eachTheme((theme) => {
     expect(shut.strip, "strip icons and logos").toEqual(open.strip);
     expect(shut.current, "the current row's left edge, top and height").toEqual(open.current);
     // Collapsed, each icon sits in the middle of the icon column.
-    const centred = await page.evaluate(() => {
+    const centered = await page.evaluate(() => {
       const col = document.querySelector(".cap-admin-menu")!.getBoundingClientRect();
       return [...document.querySelectorAll(".cap-admin-menu a .cap-admin-icon")].map((i) => {
         const r = i.getBoundingClientRect();
         return Math.abs(r.left + r.width / 2 - (col.left + col.width / 2));
       });
     });
-    for (const off of centred) expect(off).toBeLessThanOrEqual(1.5);
+    for (const off of centered) expect(off).toBeLessThanOrEqual(1.5);
   });
 
   // One look and one place for every shown name: Capsomer's tooltip, in the top layer.
@@ -549,7 +549,7 @@ eachTheme((theme) => {
       return { hit, opaque, inside: r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight, covers, look: [cs.backgroundColor, cs.boxShadow, cs.fontSize, cs.paddingTop, cs.borderRadius].join(" | ") };
     });
 
-  test("behaviour: a name shown beside any strip control or collapsed menu icon is opaque, whole, above every panel, tile and badge, and covers none of its neighbours", async ({ page }) => {
+  test("behavior: a name shown beside any strip control or collapsed menu icon is opaque, whole, above every panel, tile and badge, and covers none of its neighbors", async ({ page }) => {
     const looks = new Set<string>();
     let checked = 0;
     for (const state of ["expanded", "collapsed"]) {
@@ -585,7 +585,7 @@ eachTheme((theme) => {
     expect([...looks]).toHaveLength(1);
   });
 
-  test("behaviour: the collapse control's name shows only while collapsed, where it is opaque, whole and covers no neighbour", async ({ page }) => {
+  test("behavior: the collapse control's name shows only while collapsed, where it is opaque, whole and covers no neighbor", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const toggle = page.locator("[data-cap-part='menu-toggle']");
     await expect(toggle).toHaveAccessibleName("Collapse menu");
@@ -641,7 +641,7 @@ eachTheme((theme) => {
         .filter((x) => x !== null),
     );
 
-  test("behaviour: collapsed, every badge and count sits in one place beside its glyph, never on it, never across the menu's edge", async ({ page }) => {
+  test("behavior: collapsed, every badge and count sits in one place beside its glyph, never on it, never across the menu's edge", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "collapsed");
     const all = await bubbles(page);
     expect(all.length, "bubbles measured").toBeGreaterThanOrEqual(7);
@@ -653,7 +653,7 @@ eachTheme((theme) => {
     expect(all.find((o) => o.name?.startsWith("Activity"))?.text).toBe("99+");
   });
 
-  test("behaviour: open, no count crosses the menu's edge", async ({ page }) => {
+  test("behavior: open, no count crosses the menu's edge", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const edge = await page.locator(".cap-admin-menu").evaluate((el) => el.getBoundingClientRect().right - 1);
     const rights = await page.locator(".cap-admin-menu .cap-admin-count:not(:empty)").evaluateAll((els) => els.map((e) => e.getBoundingClientRect().right));
@@ -693,7 +693,7 @@ eachTheme((theme) => {
     expect(r.edge, "the hover edge against the menu").toBeGreaterThanOrEqual(3);
   });
 
-  test("behaviour: collapsed, the collapse control's icon heads the column, over the menu's icons; the app's mark is the header's", async ({ page }) => {
+  test("behavior: collapsed, the collapse control's icon heads the column, over the menu's icons; the app's mark is the header's", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "collapsed");
     const mark = page.locator(".cap-admin-collapse .cap-admin-icon");
     await expect(mark).toBeVisible();
@@ -703,14 +703,14 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-admin-title, .cap-admin-title-mark")).toHaveCount(0);
   });
 
-  test("behaviour: every unread marker is a number, one rule on every tile, 99+ past 99", async ({ page }) => {
+  test("behavior: every unread marker is a number, one rule on every tile, 99+ past 99", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     await expect(page.locator("[data-dot], [data-wide]")).toHaveCount(0);
     const texts = await page.locator(".cap-admin-strip .cap-admin-badge, .cap-admin-menu .cap-admin-count:not(:empty)").allTextContents();
     expect(texts.length).toBeGreaterThanOrEqual(7);
     for (const t of texts) expect(t).toMatch(/^(\d{1,2}|99\+)$/);
   });
-  test("behaviour: every count and badge is one bubble, open and collapsed", async ({ page }) => {
+  test("behavior: every count and badge is one bubble, open and collapsed", async ({ page }) => {
     const shapes = async () =>
       page.evaluate(() =>
         [...document.querySelectorAll(".cap-admin-strip .cap-admin-badge, .cap-admin-menu .cap-admin-count:not(:empty)")].map((b) => {
@@ -726,7 +726,7 @@ eachTheme((theme) => {
     expect([...new Set([...open, ...shut])]).toHaveLength(1);
   });
 
-  test("behaviour: the strip lists the family's seven apps, Capsomer last, in one order with their own marks, this one marked", async ({ page }) => {
+  test("behavior: the strip lists the family's seven apps, Capsomer last, in one order with their own marks, this one marked", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const tiles = page.locator(".cap-admin-strip .cap-admin-tile");
     await expect(tiles).toHaveCount(7);
@@ -735,7 +735,7 @@ eachTheme((theme) => {
     await expect(tiles.first()).toHaveAttribute("aria-current", "true");
     await expect(page.locator(".cap-site-header-logo")).toHaveAccessibleName("Capsid Portal");
   });
-  test("behaviour: an app that passes only its own name still shows all seven apps, each tile an svg mark and no letter", async ({ page }) => {
+  test("behavior: an app that passes only its own name still shows all seven apps, each tile an svg mark and no letter", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "minimal");
     const tiles = page.locator(".cap-admin-strip .cap-admin-tile");
     await expect(tiles).toHaveCount(7);
@@ -750,7 +750,7 @@ eachTheme((theme) => {
     await expect(tiles.nth(4)).toHaveAttribute("aria-current", "true");
   });
 
-  test("behaviour: Foxhound keeps its favicon x until Dustin picks; two alternatives sit beside it and none is shipped", async ({ page }) => {
+  test("behavior: Foxhound keeps its favicon x until Dustin picks; two alternatives sit beside it and none is shipped", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "foxhound-marks");
     const items = page.locator("[data-mark]");
     expect(await items.evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.mark))).toEqual(["today", "track", "fox"]);
@@ -765,7 +765,7 @@ eachTheme((theme) => {
     await visitStates(page, "admin-shell", theme, "minimal");
     expect(await page.locator('.cap-admin-strip .cap-admin-tile[aria-label^="Foxhound"] svg.cap-admin-logo').innerHTML()).toBe(today);
   });
-  test("behaviour: the top bar has the freshness line at the left and Refresh last; the theme is the header's one button; the tab says the page and the app", async ({ page }) => {
+  test("behavior: the top bar has the freshness line at the left and Refresh last; the theme is the header's one button; the tab says the page and the app", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     await expect(page).toHaveTitle("Overview · Capsid Portal");
     const bar = page.locator(".cap-admin-bar");
@@ -782,7 +782,7 @@ eachTheme((theme) => {
     await expect(button).toHaveAccessibleName(theme === "light" ? "Switch to light theme" : "Switch to dark theme");
   });
 
-  test("behaviour: the page fills the content area from the same left edge, open and collapsed", async ({ page }) => {
+  test("behavior: the page fills the content area from the same left edge, open and collapsed", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const box = () => page.evaluate(() => {
       const main = document.querySelector(".cap-admin-main")!.getBoundingClientRect();
@@ -802,7 +802,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("behaviour: with transitions on the content, strip and menu are named apart, and reduced motion gives no names", async ({ page }) => {
+  test("behavior: with transitions on the content, strip and menu are named apart, and reduced motion gives no names", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "transition");
     const name = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el).viewTransitionName);
     expect(await name(".cap-admin-main")).toBe("cap-admin-page");
@@ -839,7 +839,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
   });
 
-  test("behaviour: the tab title is \"<page> · <app>\" by default, and documentTitle={false} leaves the app's own", async ({ page }) => {
+  test("behavior: the tab title is \"<page> · <app>\" by default, and documentTitle={false} leaves the app's own", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "transition");
     await expect(page).toHaveTitle("Overview · Capsid Portal");
     await visitStates(page, "admin-shell", theme, "own-title");
@@ -850,7 +850,7 @@ eachTheme((theme) => {
     await expect(page).toHaveTitle("sites - the app's own title");
   });
 
-  test("behaviour: a browser without the View Transitions API changes the page with no error", async ({ page }) => {
+  test("behavior: a browser without the View Transitions API changes the page with no error", async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.addInitScript(() => {

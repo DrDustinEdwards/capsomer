@@ -93,7 +93,7 @@
     }
 
     /* Chosen: a tint and a 3 px accent edge, as the listbox's current option, so the cue is
-       never the colour alone. */
+       never the color alone. */
     &[aria-selected="true"],
     &[aria-current="page"] {
       background: var(--accent-soft);
@@ -216,7 +216,7 @@
     }
   }
 
-  /* Forced colours remove tints and shadows: the chosen row gets an outline, the drop line
+  /* Forced colors remove tints and shadows: the chosen row gets an outline, the drop line
      and ring are drawn in Highlight. */
   @media (forced-colors: active) {
     .cap-tree[data-variant="surface"] {

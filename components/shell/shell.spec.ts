@@ -109,7 +109,7 @@ eachTheme((theme) => {
     await expect(more).toBeFocused();
   });
 
-  test("behaviour: a link in the More sheet closes it, and so does a press on the backdrop", async ({ page }) => {
+  test("behavior: a link in the More sheet closes it, and so does a press on the backdrop", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "shell", theme, "phone");
     const more = page.getByRole("button", { name: "More" });
@@ -151,7 +151,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: the current entry is told by more than colour, and a hovered one has contrast", async ({ page }) => {
+  test("accessibility: the current entry is told by more than color, and a hovered one has contrast", async ({ page }) => {
     await visitStates(page, "shell", theme, "expanded");
     await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
     await expectContrast(page, [
@@ -169,7 +169,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-shell-rail a:focus-visible")).toHaveCount(1);
   });
 
-  test("behaviour: comfortable density makes the menu items taller", async ({ page }) => {
+  test("behavior: comfortable density makes the menu items taller", async ({ page }) => {
     await visitStates(page, "shell", theme, "expanded");
     const compact = (await page.getByRole("link", { name: "Overview" }).boundingBox())?.height ?? 0;
     await visitStates(page, "shell", theme, "comfortable");
@@ -214,7 +214,7 @@ eachTheme((theme) => {
     await expect(label).toHaveCSS("opacity", "0");
   });
 
-  test("behaviour: the collapsed choice is remembered", async ({ page }) => {
+  test("behavior: the collapsed choice is remembered", async ({ page }) => {
     await visitStates(page, "shell", theme, "expanded");
     await page.locator("[data-cap-part='rail-toggle']").click();
     await page.reload();
@@ -236,7 +236,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("link", { name: "foxhound.app", exact: true })).toBeVisible();
   });
 
-  test("behaviour: the logo is held to the bar's height and kept in proportion, never stretched", async ({ page }) => {
+  test("behavior: the logo is held to the bar's height and kept in proportion, never stretched", async ({ page }) => {
     await visitStates(page, "shell", theme, "logo-only");
     const logo = page.locator(".cap-shell-brand .cap-shell-logo");
     const box = (await logo.boundingBox())!;

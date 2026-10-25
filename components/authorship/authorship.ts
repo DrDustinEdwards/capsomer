@@ -1,8 +1,8 @@
 // Authorship marks: who wrote each passage of a text, shown or hidden by one switch.
 //
 // A passage is a "run" (`.cap-run` with data-kind "you", "ai" or "quoted"). This module has the
-// pure counting (countWords, summarise, summaryText, summaryHtml: safe on a server and in node's
-// test runner) and the behaviour (enhance: the switch, the remembered choice, the summary).
+// pure counting (countWords, summarize, summaryText, summaryHtml: safe on a server and in node's
+// test runner) and the behavior (enhance: the switch, the remembered choice, the summary).
 
 import { countWords } from "../draft-compare/draft-compare.ts";
 import { syncWord } from "../switch/switch.ts";
@@ -39,7 +39,10 @@ export interface Summary {
 }
 
 // Word counts per kind, as percentages that add up to 100, and the sentence that says them.
-export function summarise(runs: readonly RunInput[]): Summary {
+/** @deprecated The British spelling, kept so existing imports work; use `summarize`. */
+export const summarise = (runs: readonly RunInput[]): Summary => summarize(runs);
+
+export function summarize(runs: readonly RunInput[]): Summary {
   const words: Record<Kind, number> = { you: 0, ai: 0, quoted: 0 };
   for (const r of runs) {
     if (!(r.kind in words)) continue;
@@ -80,7 +83,7 @@ export function summaryHtml(summary: Summary, label = "Authorship"): string {
 }
 
 // ---------------------------------------------------------------------------------------
-// The behaviour
+// The behavior
 // ---------------------------------------------------------------------------------------
 
 export const STORAGE_KEY = "cap-authorship";
@@ -135,7 +138,7 @@ function drawBar(summary: Element, shares: Share[]): void {
 
 // Counts the runs inside root and rewrites its summary (the line, the word counts, the bar).
 export function refresh(root: Element): Summary {
-  const summary = summarise(collectRuns(root));
+  const summary = summarize(collectRuns(root));
   const el = root.querySelector<HTMLElement>("[data-cap-part='summary']");
   if (el) {
     const line = el.querySelector("[data-cap-part='text']");

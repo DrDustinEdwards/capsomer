@@ -2,7 +2,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Tabs: a list of tabs and the panels they show, or the same list as links that go to
-   another page. Matches shadcn/ui Tabs (Base UI flavour, nova style): the default tray with
+   another page. Matches shadcn/ui Tabs (Base UI flavor, nova style): the default tray with
    the chosen tab raised in it, the line variant, horizontal and vertical. Capsomer's own
    values: the chosen tab has an accent edge (3:1) and a heavier weight, a tab list scrolls
    instead of clipping on a phone, and the same `.cap-tab` is a link (`aria-current="page"`)
@@ -238,7 +238,7 @@
   /* The chosen mark slides and resizes to the new tab: the raised tray tab, or the line
      variant's rule, is the list's ::before, tethered to the chosen tab by anchor positioning, so
      it moves with no script (a link tab moves too when a client-side router changes it). Without
-     anchor-scope, under reduced motion and in forced colours the chosen tab draws its own mark,
+     anchor-scope, under reduced motion and in forced colors the chosen tab draws its own mark,
      as above, and nothing moves. */
   @supports (anchor-name: --a) and (anchor-scope: all) {
     @media (prefers-reduced-motion: no-preference) and (forced-colors: none) {

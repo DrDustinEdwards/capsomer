@@ -1,4 +1,4 @@
-// The meter's behaviour: where the fill, the projection and the threshold tick sit on the
+// The meter's behavior: where the fill, the projection and the threshold tick sit on the
 // bar, set through the CSSOM so apps keep style-src 'self'. The number itself is in the
 // markup's text and aria-valuetext; this only draws the bar. The usage meter, the stat tile
 // and any app's bar use these same functions.
@@ -14,7 +14,7 @@ export function ratio(value: number, max: number, min = 0): number {
 
 // The tone a value earns by threshold: warning from `warnAt` of the span, critical from
 // `critAt` (both 0 to 1; the defaults are the usage meter's 75% and 90%). The caller still
-// writes the status word beside it: a tone is a word, a shape and a colour, never colour.
+// writes the status word beside it: a tone is a word, a shape and a color, never color.
 export function toneFor(value: number, max: number, options: { min?: number; warnAt?: number; critAt?: number } = {}): MeterTone {
   const { min = 0, warnAt = 0.75, critAt = 0.9 } = options;
   const r = ratio(value, max, min);

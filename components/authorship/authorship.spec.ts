@@ -31,12 +31,12 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: each kind has its own pattern as well as its own colour", async ({ page }) => {
+  test("accessibility: each kind has its own pattern as well as its own color", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const read = (kind: string) =>
       page.locator(`#au-on div.cap-run[data-kind='${kind}']`).evaluate((el) => {
         const cs = getComputedStyle(el);
-        return { style: cs.borderLeftStyle, colour: cs.borderLeftColor, width: cs.borderLeftWidth };
+        return { style: cs.borderLeftStyle, color: cs.borderLeftColor, width: cs.borderLeftWidth };
       });
     const you = await read("you");
     const ai = await read("ai");
@@ -44,7 +44,7 @@ eachTheme((theme) => {
     expect(you.style).toBe("solid");
     expect(ai.style).toBe("dashed");
     expect(quoted.style).toBe("dotted");
-    expect(new Set([you.colour, ai.colour, quoted.colour]).size).toBe(3);
+    expect(new Set([you.color, ai.color, quoted.color]).size).toBe(3);
     expect(parseFloat(you.width)).toBeGreaterThan(0);
   });
 
@@ -113,14 +113,14 @@ eachTheme((theme) => {
     expect(inside).toBe(false);
   });
 
-  test("behaviour: the summary says the percentages and the words, and matches what the html said", async ({ page }) => {
+  test("behavior: the summary says the percentages and the words, and matches what the html said", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     await expect(page.locator("#au-on [data-cap-part='text']")).toHaveText(SUMMARY);
     const notes = await page.locator("#au-on [data-cap-part='notes'] span").allTextContents();
     expect(notes).toEqual(["You: 37 words", "AI: 42 words", "Quoted: 26 words"]);
   });
 
-  test("behaviour: the bar's three segments take their share of the width, each in its own pattern", async ({ page }) => {
+  test("behavior: the bar's three segments take their share of the width, each in its own pattern", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const m = await page.locator("#au-on .cap-meter-bar").evaluate((bar) => {
       const total = bar.getBoundingClientRect().width;
@@ -137,7 +137,7 @@ eachTheme((theme) => {
     expect(new Set(m.map((s) => s.bg)).size).toBe(3);
   });
 
-  test("behaviour: the choice is remembered", async ({ page }) => {
+  test("behavior: the choice is remembered", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const box = page.locator("#au-remember");
     await box.getByRole("switch", { name: "Show authorship" }).uncheck();
@@ -150,7 +150,7 @@ eachTheme((theme) => {
     await expect(page.locator("#au-on")).toHaveAttribute("data-authorship", "on");
   });
 
-  test("behaviour: storage that throws does not break the switch", async ({ page }) => {
+  test("behavior: storage that throws does not break the switch", async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.addInitScript(() => {
@@ -167,7 +167,7 @@ eachTheme((theme) => {
     expect(errors).toEqual([]);
   });
 
-  test("behaviour: on a wide container the labels sit in the margin, left of the rule; on a narrow one above the text", async ({ page }) => {
+  test("behavior: on a wide container the labels sit in the margin, left of the rule; on a narrow one above the text", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const wide = await page.locator("#au-on div.cap-run[data-kind='ai']").evaluate((run) => {
       const l = run.querySelector(".cap-run-label")?.getBoundingClientRect();
@@ -191,7 +191,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 
-  test("behaviour: a run inside a paragraph is a span with a label at its start", async ({ page }) => {
+  test("behavior: a run inside a paragraph is a span with a label at its start", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const inline = page.locator("#au-on p > span.cap-run");
     await expect(inline).toHaveCount(3);
@@ -200,7 +200,7 @@ eachTheme((theme) => {
     expect(text).toContain("A suggestion is a note beside the mention");
   });
 
-  test("behaviour: the React Authorship counts its Runs and the switch hides them", async ({ page }) => {
+  test("behavior: the React Authorship counts its Runs and the switch hides them", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const box = page.locator("[data-mount='react'] .cap-authorship");
     await expect(box.locator("[data-cap-part='text']")).toHaveText("55% you, 20% AI, 25% quoted by words");
@@ -212,7 +212,7 @@ eachTheme((theme) => {
   });
 });
 
-test("behaviour: the delivered html has the labels, the summary and the prose with no script", async ({ page }) => {
+test("behavior: the delivered html has the labels, the summary and the prose with no script", async ({ page }) => {
   const html = await (await page.request.get("components/authorship/states.html")).text();
   expect(html).toContain('<span class="cap-run-label">AI</span>');
   expect(html).toContain('<span class="cap-run-label">Quoted</span>');
@@ -223,7 +223,7 @@ test("behaviour: the delivered html has the labels, the summary and the prose wi
 test.describe("without script", () => {
   test.use({ javaScriptEnabled: false });
 
-  test("behaviour: the switch itself hides the marks and leaves the prose", async ({ page }) => {
+  test("behavior: the switch itself hides the marks and leaves the prose", async ({ page }) => {
     await page.goto("components/authorship/states.html?theme=light");
     const box = page.locator("#au-on");
     await expect(box.locator(".cap-run-label").first()).toBeVisible();

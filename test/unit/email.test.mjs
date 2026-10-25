@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { FAMILIES, contrast } from "../../tokens/palette.mjs";
-import { emailColours } from "../../components/email/colours.ts";
+import { emailColors } from "../../components/email/colors.ts";
 import { alert, checkUrl, escapeHtml, magicLink, notice, renderEmail, reset, verification } from "../../components/email/email.ts";
 
 const FAKE = "https://carrel.example/auth/verify?t=EXAMPLE-NOT-A-TOKEN&x=1";
@@ -116,7 +116,7 @@ test("the dark rules are present and the document asks for both schemes", () => 
   const r = renderEmail(magicLink, { ...common, ...link });
   assert.match(r.html, /<meta name="color-scheme" content="light dark">/);
   assert.match(r.html, /@media \(prefers-color-scheme: dark\)\{/);
-  assert.ok(r.html.includes(emailColours.purple.dark.ground));
+  assert.ok(r.html.includes(emailColors.purple.dark.ground));
 });
 
 // ---- contrast ---------------------------------------------------------------------------------
@@ -137,11 +137,11 @@ const failing = (c) => emailPairs(c).filter(([, fg, bg, min]) => contrast(fg, bg
 
 test("contrast: every family, both schemes, every pair an email paints is 4.5:1", () => {
   for (const name of Object.keys(FAMILIES)) {
-    for (const scheme of ["light", "dark"]) assert.deepEqual(failing(emailColours[name][scheme]), [], `${name} ${scheme}`);
+    for (const scheme of ["light", "dark"]) assert.deepEqual(failing(emailColors[name][scheme]), [], `${name} ${scheme}`);
   }
 });
 
 test("contrast: the check fails on a planted low-contrast pair, so it can be trusted", () => {
-  const planted = { ...emailColours.purple.light, "primary-fg": "#9a86c4", muted: "#b9b4c4" };
+  const planted = { ...emailColors.purple.light, "primary-fg": "#9a86c4", muted: "#b9b4c4" };
   assert.deepEqual(failing(planted), ["muted on the card", "muted on the page", "button label"]);
 });

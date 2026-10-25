@@ -1,4 +1,4 @@
-// The form menu's behaviour: a <details> of submit buttons (and links) that already works with no script.
+// The form menu's behavior: a <details> of submit buttons (and links) that already works with no script.
 // With script it also closes on Esc (focus back on the summary), closes on a press or focus
 // outside it, and moves between the buttons with the arrow keys; ArrowDown on the summary opens
 // it and lands on the first button. The Base UI menu needs none of this; it is React only.

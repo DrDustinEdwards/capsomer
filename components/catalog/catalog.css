@@ -13,7 +13,7 @@
     min-width: 0;
   }
 
-  /* Search, sort and the buttons share a row that wraps. Apply is for the no-script path; once the behaviour is
+  /* Search, sort and the buttons share a row that wraps. Apply is for the no-script path; once the behavior is
      attached every control updates the page at once and Apply goes away. */
   .cap-catalog-bar {
     display: flex;
@@ -68,7 +68,7 @@
     gap: var(--space-3);
   }
 
-  /* Facets: general ones first (the markup order), each a labelled group of checks or radios with its count. */
+  /* Facets: general ones first (the markup order), each a labeled group of checks or radios with its count. */
   .cap-catalog-filters {
     display: grid;
     align-content: start;
@@ -169,7 +169,7 @@
   }
 
   /* Narrow: the filters are a tray over the results, opened by "Filters". With no script it opens by its address
-     (:target); with the behaviour attached it opens by data-tray. Escape and the Show button close it. */
+     (:target); with the behavior attached it opens by data-tray. Escape and the Show button close it. */
   @container cap-catalog (max-width: 55.999rem) {
     .cap-catalog-tray-open {
       display: inline-flex;

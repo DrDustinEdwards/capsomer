@@ -4,7 +4,7 @@ export interface SegmentedOption<V extends string> {
   value: V;
   label: ReactNode;
   disabled?: boolean;
-  // With layout "cards": the status colour the option takes when chosen (accent by default).
+  // With layout "cards": the status color the option takes when chosen (accent by default).
   tone?: "info" | "warn" | "crit" | "ok";
 }
 

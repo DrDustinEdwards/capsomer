@@ -177,7 +177,7 @@
     }
 
     /* Disabled, with its reason beside it (aria-describedby). It stays focusable so the
-       reason can be found by keyboard; a dashed edge says "not now" without colour alone. */
+       reason can be found by keyboard; a dashed edge says "not now" without color alone. */
     &:is(:disabled, [aria-disabled="true"]) {
       --cap-btn-fg: var(--muted);
       --cap-btn-bg: var(--surface);
@@ -219,7 +219,7 @@
     }
   }
 
-  /* A label on its way out (morphLabel in button.ts): over the button, centred, out of the way. */
+  /* A label on its way out (morphLabel in button.ts): over the button, centered, out of the way. */
   .cap-btn > .cap-btn-label[data-leaving] {
     position: absolute;
     inset: 0;
@@ -234,7 +234,7 @@
   }
 
   /* A site's sweep (--btn-sweep, off by default): under the pointer the default button fills with
-     the primary colour from the left and its label and edge turn to match, as Recova's ghost
+     the primary color from the left and its label and edge turn to match, as Recova's ghost
      button did. Off, the fill has no width and nothing changes. */
   .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(:disabled, [aria-disabled="true"]) {
     background-image: linear-gradient(var(--primary), var(--primary));

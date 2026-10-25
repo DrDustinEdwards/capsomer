@@ -44,7 +44,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("behaviour: each meaning has its own glyph shape, so colour is never alone", async ({ page }) => {
+  test("behavior: each meaning has its own glyph shape, so color is never alone", async ({ page }) => {
     await visitStates(page, "status", theme);
     const shapes = await page.locator(`${words} .cap-status-glyph`).evaluateAll((svgs) => svgs.map((s) => s.innerHTML));
     expect(shapes).toHaveLength(6);

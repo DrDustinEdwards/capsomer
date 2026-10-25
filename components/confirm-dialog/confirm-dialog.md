@@ -2,7 +2,7 @@
 name: confirm-dialog
 title: Confirm dialog
 summary: Preview, then perform, for an action that cannot be undone.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog)
 states: [the confirm page, the confirm page after the server refused, open, busy, failed with Try again, reason required and empty, typed-word guard not typed, typed-word guard matched]
 added: 0.1.0
@@ -16,7 +16,7 @@ replaces:
 
 # Confirm dialog
 
-**Provenance.** MIXED, against the Portal's `app/ConfirmDialog.tsx` and `styles.css` (`.help`, `.confirm`) as of capsid master on 2026-10-01. The rules and their reasoning are extracted: no light dismiss, focus on Cancel for a one-way action, the perform button named for the action and set at the far end, Esc held while busy, a required reason that says so when empty (`aria-invalid`, described by the error), focus handed back after the next frame to the opener, then the open panel, then `main`. The CSS and the markup are written for Capsomer's tokens (the Portal wraps a `.card` in a bare dialog), and the behaviour is framework-free and generic: the Portal's preview call, its `ConfirmRequest` and its router are not carried over; the app passes `perform`.
+**Provenance.** MIXED, against the Portal's `app/ConfirmDialog.tsx` and `styles.css` (`.help`, `.confirm`) as of capsid master on 2026-10-01. The rules and their reasoning are extracted: no light dismiss, focus on Cancel for a one-way action, the perform button named for the action and set at the far end, Esc held while busy, a required reason that says so when empty (`aria-invalid`, described by the error), focus handed back after the next frame to the opener, then the open panel, then `main`. The CSS and the markup are written for Capsomer's tokens (the Portal wraps a `.card` in a bare dialog), and the behavior is framework-free and generic: the Portal's preview call, its `ConfirmRequest` and its router are not carried over; the app passes `perform`.
 
 A modal alert dialog, built on the shared dialog (`components/dialog`), that shows what a one-way action will change before it is done: revoking an agent's key, deleting a site record, failing a job. The person reads the list, then performs or cancels.
 
@@ -35,7 +35,7 @@ A reversible action happens at once and offers Undo through the message region (
 - **The perform button is named for the action** ("Revoke agent"), danger style, at the far end from Cancel, so a slip does not land on it.
 - **Focus starts on Cancel.** Enter on arrival cancels (patterns.md, "Destructive or one-way").
 - **A click outside does nothing.** A dialog that closes on a stray click loses what the person was reading, or a reason they typed. The press on the backdrop does not take focus off the control that had it either.
-- **A reason, where the audit row must carry one** (`reason`): a labelled textarea, "Reason (required)", with a note that it is recorded with the change. The perform button is never silently disabled for an empty reason: pressing it says "A reason is required." in the error box, marks the field `aria-invalid` and describes it by the error, and puts focus in it. The reason is read from the field itself, so a value the browser filled in without an input event counts. A plain Enter is a new line; Ctrl or Cmd with Enter performs.
+- **A reason, where the audit row must carry one** (`reason`): a labeled textarea, "Reason (required)", with a note that it is recorded with the change. The perform button is never silently disabled for an empty reason: pressing it says "A reason is required." in the error box, marks the field `aria-invalid` and describes it by the error, and puts focus in it. The reason is read from the field itself, so a value the browser filled in without an input event counts. A plain Enter is a new line; Ctrl or Cmd with Enter performs.
 - **The confirm page is the same confirmation as a form in the page, for a server that answers a destructive request with its own page.** A button-mode action (a menu item or a bulk bar action posts `intent=delete`) cannot run the dialog without script, so the server's response is `form.cap-confirm-page` (React `ConfirmPage`): the same title that names the action and the object, the same lead, the list of what changes from the server's own preview, the reason, the typed word, the action named for what it does in danger style at the far end, and Cancel as a link (so it works with no script) at the other. The typed word and the reason are the browser's own `required` and `pattern` checks (`wordPattern(word)` writes the case-insensitive pattern), so a wrong word is stopped before it posts; **the server must check both again**, because markup is not a guard. When the server refuses (the word did not match, no reason), it renders the page again with the message in the `role="alert"` box, "Not done. Nothing was changed.", and the person's fields kept. There is no busy state or Try again: a form post is a page load, and the response is the result. The dialog is unchanged and is still what script-driven pages use.
 - **Esc closes it, except while the action runs.** Busy sets `aria-busy` on the dialog and the perform button, and both buttons refuse; Esc is held (the cancel event and the keydown), because closing would hide the answer.
 - **A failure stays inside the dialog** in a `role="alert"` box: "Not done. Nothing was changed.", the reason, and the perform button becomes Try again.
@@ -61,7 +61,7 @@ A reversible action happens at once and offers Undo through the message region (
 - The error is `role="alert"`, present and empty until it is needed, so it is announced when filled.
 - The guard's reason is the perform button's description, so a screen reader hears why it is off.
 - An empty reason is `aria-invalid="true"` and described by the error box; the border also turns critical, never alone.
-- Forced colours: the dialog and the error keep their borders.
+- Forced colors: the dialog and the error keep their borders.
 - Focus is on Cancel on open, so Enter on arrival cannot do the damage.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -104,7 +104,7 @@ The shared dialog as an alert dialog: `role="alertdialog"` (so a click on the ba
 Keep `.cap-confirm-error` empty with no whitespace; it hides while `:empty`. The body is left out when there is nothing to list and no field. The header, title, description, body and footer are the shared dialog's parts; only `.cap-confirm-*` belongs to this component.
 
 ```js
-import { confirm } from "capsomer/behaviour/confirm-dialog";
+import { confirm } from "capsomer/behavior/confirm-dialog";
 const done = await confirm({
   title: "Revoke foxhound-driver?",
   lead: "This cannot be undone.",
@@ -144,11 +144,11 @@ The confirm page, with no script (HTML, or React `ConfirmPage`, which renders ex
 </form>
 ```
 
-`import { wordPattern } from "capsomer/behaviour/confirm-dialog"`. In React: `<ConfirmPage action="/admin/sites/foxhound" hidden={{ intent: "delete", site: "foxhound" }} title="Delete foxhound.app?" lead="This cannot be undone." body={preview} action_label="Delete site" cancelHref="/admin/sites/foxhound" reason={{}} typeToConfirm="delete" error={refusal} />`. A list value in `hidden` is one hidden field per item under the same name: `hidden={{ intent: "delete", ids: ["p1", "p2"] }}` posts `ids` twice.
+`import { wordPattern } from "capsomer/behavior/confirm-dialog"`. In React: `<ConfirmPage action="/admin/sites/foxhound" hidden={{ intent: "delete", site: "foxhound" }} title="Delete foxhound.app?" lead="This cannot be undone." body={preview} action_label="Delete site" cancelHref="/admin/sites/foxhound" reason={{}} typeToConfirm="delete" error={refusal} />`. A list value in `hidden` is one hidden field per item under the same name: `hidden={{ intent: "delete", ids: ["p1", "p2"] }}` posts `ids` twice.
 
 ## Matches shadcn
 
-Alert Dialog (Base UI flavour, nova): the centred alert dialog with the blurred backdrop, the header with an optional media tile, title and description, the footer on a muted band with Cancel and the action, zoom-in-95 at 100 ms, no closing by the backdrop. Everything that is the surface comes from the shared dialog; the reason, the typed word and the error are this component's.
+Alert Dialog (Base UI flavor, nova): the centered alert dialog with the blurred backdrop, the header with an optional media tile, title and description, the footer on a muted band with Cancel and the action, zoom-in-95 at 100 ms, no closing by the backdrop. Everything that is the surface comes from the shared dialog; the reason, the typed word and the error are this component's.
 
 ## Deliberately different
 

@@ -2,7 +2,7 @@
 name: select
 title: Select
 summary: Choose one of up to about 15 options. A real select stays in the page; with one line of script it opens a popup built from the shared listbox and popover.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, keyboard focus, hover, open, groups, placeholder, a disabled option, invalid with its message, disabled with its reason, small, native without enhancement]
 added: 0.1.0
@@ -31,11 +31,11 @@ Choosing one value from a fixed list of about 6 to 15: a platform, a region, an 
 ## The default and its reason
 
 - **Two forms, one contract.** The native `select.cap-select` is drawn like a field with a chevron (shadcn's NativeSelect). With `data-cap="select"` it is replaced by a popup (shadcn's Select). The native select is always the source of truth: its options are the content, so a page without script, a crawler and a form post all work, and the popup is built from it (and rebuilt when its options change).
-- **Popup by default, native when you say so.** shadcn's Select is a popup, and a popup can show a check, groups and the family's look in every browser; the browser's own list cannot. Add `data-native` to the wrapper where the platform's picker is better (a phone). Without script the native select stays, styled; where the browser has a customisable select (`appearance: base-select`) its own list takes the family's look too.
+- **Popup by default, native when you say so.** shadcn's Select is a popup, and a popup can show a check, groups and the family's look in every browser; the browser's own list cannot. Add `data-native` to the wrapper where the platform's picker is better (a phone). Without script the native select stays, styled; where the browser has a customizable select (`appearance: base-select`) its own list takes the family's look too.
 - **The button is a combobox, not a menu button.** `role="combobox"` with `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`, and the field's label as its name; its content is the chosen option (or the placeholder, muted). It takes the select's `id`, so the label's `for` points at it; the native select gets `id` plus `-native`.
 - **Focus moves into the list on open** (the list names its current option with `aria-activedescendant`) and returns to the button on close, as Base UI's Select does.
 - **The empty first option is a prompt, not a value** ("Choose an agent", `value=""`), shown muted in the button, used with `required` when there is no sensible default. Where there is one, preselect it instead.
-- **Errors and help work as for any field**: `aria-invalid`, a `.cap-field-error` beside it, help in `.cap-field-help`, all through `aria-describedby`; the module copies `aria-invalid`, `aria-describedby`, `disabled` and `required` from the native select to the button and keeps them true. The Field behaviour module checks a select like any control and moves focus to the button when it is the first field in error.
+- **Errors and help work as for any field**: `aria-invalid`, a `.cap-field-error` beside it, help in `.cap-field-help`, all through `aria-describedby`; the module copies `aria-invalid`, `aria-describedby`, `disabled` and `required` from the native select to the button and keeps them true. The Field behavior module checks a select like any control and moves focus to the button when it is the first field in error.
 - **Disabled says why**, in help text the select describes itself with.
 - **The popup is as wide as the button at least,** opens below it, flips when there is no room, and animates as every popup does (fade, zoom, 100 ms, only when motion is welcome).
 
@@ -59,7 +59,7 @@ Choosing one value from a fixed list of about 6 to 15: a platform, a region, an 
 - The list is `role="listbox"` named by the label; groups are `role="group"` named by their heading; options are `role="option"` with `aria-selected` (the chosen one) and `aria-disabled`; the check is decoration.
 - Option text reaches 4.5:1 on the popup's surface in both themes; the edge of the button and the ring 3:1.
 - Hit areas at least `var(--target)` (the options too); inputs are 16 px on a touch screen.
-- Forced colours: the chosen option keeps its check in Highlight, the current option an outline.
+- Forced colors: the chosen option keeps its check in Highlight, the current option an outline.
 - Without script, the native select is operable by every keyboard and screen reader.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -83,7 +83,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ```
 
 ```js
-import { enhance } from "capsomer/behaviour/select";
+import { enhance } from "capsomer/behavior/select";
 enhance(); // every [data-cap="select"] not marked data-native
 ```
 
@@ -96,7 +96,7 @@ enhance(); // every [data-cap="select"] not marked data-native
 
 ## Matches
 
-shadcn/ui `Select` (trigger, value, content, group, label, item, item indicator; Base UI flavour, style nova) for the popup form, and `NativeSelect` (the field look and the chevron, `sm` size) for the native form. The popup is the shared `.cap-popover` surface around the shared `.cap-listbox`, so it matches the command menu, combobox and menu popups.
+shadcn/ui `Select` (trigger, value, content, group, label, item, item indicator; Base UI flavor, style nova) for the popup form, and `NativeSelect` (the field look and the chevron, `sm` size) for the native form. The popup is the shared `.cap-popover` surface around the shared `.cap-listbox`, so it matches the command menu, combobox and menu popups.
 
 ## Deliberate differences
 

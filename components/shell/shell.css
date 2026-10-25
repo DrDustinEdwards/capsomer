@@ -8,7 +8,7 @@
    weight, a count as a small badge, the collapsed rail as icon buttons whose names show in a
    tooltip beside them, and the phone's sheet. The top bar and the rail sit on the ground tone
    with no rule between them and the page; the page's panels are the lit surface (Portal design
-   D4, D5). The current item takes --accent-text on the accent tint, not the Sidebar's grey.
+   D4, D5). The current item takes --accent-text on the accent tint, not the Sidebar's gray.
    Density moves every size here: --control, --target, --pad-card, --fs-*. */
 @layer cap.components {
   .cap-shell {
@@ -119,7 +119,7 @@
 
   /* The top bar's Settings link: a button to look at, current on the Settings view. On a
      phone it is under More instead (data-hide="phone"). The current one keeps an accent edge
-     (3:1 on the ground) as well as the tint, so it is not told by colour alone. */
+     (3:1 on the ground) as well as the tint, so it is not told by color alone. */
   .cap-shell-settings {
     color: var(--text);
     text-decoration: none;
@@ -182,7 +182,7 @@
         background: var(--sunken);
       }
     }
-    /* The current entry: tinted, medium weight, in the accent text colour (4.5:1 on the tint). */
+    /* The current entry: tinted, medium weight, in the accent text color (4.5:1 on the tint). */
     & a[aria-current="page"] {
       background: var(--accent-soft);
       color: var(--accent-text);
@@ -198,7 +198,7 @@
   }
 
   /* A count beside a menu entry (Sidebar's menu badge): a small pill; what it counts is in the
-     entry's accessible name. Red and amber keep their colour on their own soft tint, since they
+     entry's accessible name. Red and amber keep their color on their own soft tint, since they
      are the alert channel. */
   .cap-shell-count {
     display: inline-flex;
@@ -553,7 +553,7 @@
     }
   }
 
-  /* Colour only: the menu's hover and the tab bar's. Nothing moves here. */
+  /* Color only: the menu's hover and the tab bar's. Nothing moves here. */
   @media (prefers-reduced-motion: no-preference) {
     .cap-shell-rail :is(a, .cap-shell-toggle, .cap-shell-railbtn),
     .cap-shell-more-list a,

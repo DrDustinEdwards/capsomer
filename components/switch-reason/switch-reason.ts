@@ -1,4 +1,4 @@
-// The automation switch's behaviour. Clicking the switch, or Space on it, does not move it:
+// The automation switch's behavior. Clicking the switch, or Space on it, does not move it:
 // it opens a one-line reason beside it. Enter applies (a reason is required), Esc cancels
 // and returns focus to the switch. On apply it dispatches `cap:switch-applied` with
 // { checked, reason, waitUntil }, and the switch moves: at once, or, when a listener calls

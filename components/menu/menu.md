@@ -2,7 +2,7 @@
 name: menu
 title: Menu
 summary: A button that opens a list of actions, with danger items last after a separator. Base UI underneath, React only.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: Base UI
 states: [form menu closed, form menu open, form menu link item, closed, trigger hover, trigger keyboard focus, open, item highlighted, disabled item with its reason, danger item, shortcut shown, checkbox and radio items, submenu, group labels, comfortable density]
 added: 0.1.0
@@ -55,7 +55,7 @@ One or two actions: show them as buttons (`.cap-btn`). Moving between pages: lin
 
 - The menu is named by its trigger (`aria-labelledby`, from Base UI). Checkbox and radio items are `menuitemcheckbox` and `menuitemradio` with `aria-checked`; a submenu item has `aria-haspopup="menu"`; a group is named by its label.
 - Disabled items carry `aria-disabled="true"` and stay focusable (Base UI's `focusableWhenDisabled`), so the reason is heard.
-- Forced colours: the highlighted item gets a Highlight outline, the separator a CanvasText rule.
+- Forced colors: the highlighted item gets a Highlight outline, the separator a CanvasText rule.
 - Inside a modal `dialog`, pass the dialog as `container`, or the popup renders under the top layer, out of sight.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
@@ -106,7 +106,7 @@ More than actions:
 ]} />
 ```
 
-It renders `button.cap-btn.cap-menu-trigger`; portalled: `.cap-menu-positioner` > `.cap-popover.cap-menu` (role `menu`) > `.cap-option.cap-menu-item` (`.cap-option-icon`, `.cap-option-label`, `.cap-option-keys` with `kbd.cap-menu-kbd`, `.cap-option-indicator`, `.cap-menu-chevron`, `.cap-menu-reason`; `data-tone="crit"` on a danger item), `.cap-listbox-label` and `.cap-listbox-separator`. Danger items are moved to the end of the top-level menu.
+It renders `button.cap-btn.cap-menu-trigger`; portaled: `.cap-menu-positioner` > `.cap-popover.cap-menu` (role `menu`) > `.cap-option.cap-menu-item` (`.cap-option-icon`, `.cap-option-label`, `.cap-option-keys` with `kbd.cap-menu-kbd`, `.cap-option-indicator`, `.cap-menu-chevron`, `.cap-menu-reason`; `data-tone="crit"` on a danger item), `.cap-listbox-label` and `.cap-listbox-separator`. Danger items are moved to the end of the top-level menu.
 
 A form menu, with no script (HTML, or React `FormMenu` which renders exactly this):
 
@@ -123,11 +123,11 @@ A form menu, with no script (HTML, or React `FormMenu` which renders exactly thi
 </details>
 ```
 
-`import { enhance } from "capsomer/behaviour/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for foxhound.app" action="/admin/sites/foxhound" hidden={{ site: "foxhound" }} items={[{ label: "Open site", value: "open", href: "/sites/foxhound" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link.
+`import { enhance } from "capsomer/behavior/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for foxhound.app" action="/admin/sites/foxhound" hidden={{ site: "foxhound" }} items={[{ label: "Open site", value: "open", href: "/sites/foxhound" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link.
 
 ## Matches shadcn
 
-Dropdown Menu (Base UI flavour, nova): the popover surface with a ring and shadow, items with an optional icon and a shortcut at the end, checkbox and radio items with a check at the end, group labels, separators, a submenu with a chevron, a destructive variant, and the fade and zoom motion.
+Dropdown Menu (Base UI flavor, nova): the popover surface with a ring and shadow, items with an optional icon and a shortcut at the end, checkbox and radio items with a check at the end, group labels, separators, a submenu with a chevron, a destructive variant, and the fade and zoom motion.
 
 ## Deliberately different
 

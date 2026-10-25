@@ -3,7 +3,7 @@
 
 /* The dialog: a native <dialog> opened with showModal(), shared by every Capsomer overlay.
    One modal base (backdrop, surface, header, body, footer, close button) and five
-   placements: centre (a dialog), right and left (a side sheet), bottom (a sheet on a phone)
+   placements: center (a dialog), right and left (a side sheet), bottom (a sheet on a phone)
    and top (a palette). The look is rebuilt from shadcn/ui's Dialog, Alert Dialog and Sheet
    (nova): the black-ish scrim with a light blur, the popover surface with a hairline ring and
    the large shadow, the muted band under the footer, zoom-in-95 with a fade at 100 ms for a
@@ -17,7 +17,7 @@
     --cap-dialog-from: translateY(8px) scale(0.96);
     --cap-dialog-to: translateY(4px) scale(0.98);
 
-    /* Centred by default; the placements below move it. */
+    /* Centered by default; the placements below move it. */
     box-sizing: border-box;
     width: min(var(--cap-dialog-w), calc(100% - 2 * var(--cap-dialog-gap)));
     max-width: none;
@@ -123,7 +123,7 @@
       --cap-dialog-to: translateY(1.25rem);
     }
 
-    /* A palette: centred across, near the top, so what it filters stays in view below. */
+    /* A palette: centered across, near the top, so what it filters stays in view below. */
     &[data-placement="top"] {
       inset-block: 0;
       margin-block: var(--cap-dialog-top) auto;

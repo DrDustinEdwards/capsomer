@@ -16,20 +16,20 @@ const sample: Flag[] = [
   { id: "d", kind: "advisory", state: "resolved", cause: "c", message: "m" },
 ];
 
-test("behaviour: groupFlags puts blocking first and open before resolved", () => {
+test("behavior: groupFlags puts blocking first and open before resolved", () => {
   const g = groupFlags(sample);
   expect(g.blocking.map((f) => f.id)).toEqual(["c", "b"]);
   expect(g.advisory.map((f) => f.id)).toEqual(["a", "d"]);
 });
 
-test("behaviour: countFlags counts open flags by kind and the resolved ones", () => {
+test("behavior: countFlags counts open flags by kind and the resolved ones", () => {
   expect(countFlags(sample)).toEqual({ blocking: 1, advisory: 1, open: 2, resolved: 2, total: 4 });
   expect(summaryLine(countFlags(sample))).toBe("1 blocking, 1 advisory, 2 resolved");
   expect(summaryLine(countFlags([]))).toBe("No flags");
   expect(summaryLine(countFlags([{ ...sample[1]! }]))).toBe("No open flags, 1 resolved");
 });
 
-test("behaviour: anchorStatus searches the current text for the quoted passage", () => {
+test("behavior: anchorStatus searches the current text for the quoted passage", () => {
   const f = sample[0]!;
   expect(anchorStatus(f, "I wrote teh thing")).toBe("found");
   expect(anchorStatus(f, "I wrote the thing")).toBe("lost");
@@ -37,7 +37,7 @@ test("behaviour: anchorStatus searches the current text for the quoted passage",
   expect(anchorStatus({ anchor: { id: "x", quote: "q", lost: true } })).toBe("lost");
 });
 
-test("behaviour: applySuggestion replaces the passage, and is null when the anchor is gone", () => {
+test("behavior: applySuggestion replaces the passage, and is null when the anchor is gone", () => {
   const f = sample[0]!;
   expect(applySuggestion("fix teh typo", f)).toBe("fix the typo");
   expect(applySuggestion("fix the typo", f)).toBeNull();
@@ -45,12 +45,12 @@ test("behaviour: applySuggestion replaces the passage, and is null when the anch
   expect(revertSuggestion("fix the typo", f)).toBe("fix teh typo");
 });
 
-test("behaviour: applySuggestion uses the context to pick the occurrence", () => {
+test("behavior: applySuggestion uses the context to pick the occurrence", () => {
   const f: Flag = { id: "a", kind: "advisory", state: "open", cause: "c", message: "m", anchor: { id: "x", quote: "very", before: "was ", after: " good" }, suggestion: { replacement: "quite" } };
   expect(applySuggestion("very bad; was very good", f)).toBe("very bad; was quite good");
 });
 
-test("behaviour: appliable lists open flags with a suggestion whose passage is still there", () => {
+test("behavior: appliable lists open flags with a suggestion whose passage is still there", () => {
   expect(appliable(sample, "teh").map((f) => f.id)).toEqual(["a"]);
   expect(appliable(sample, "the")).toEqual([]);
 });
@@ -128,7 +128,7 @@ eachTheme((theme) => {
     await expect(flag(page, "f3").locator(".cap-flag-diff ins")).toContainText("After: Received wisdom");
   });
 
-  test("accessibility: status is a glyph, a word and a colour", async ({ page }) => {
+  test("accessibility: status is a glyph, a word and a color", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     for (const id of ["f1", "f3"]) {
       const s = flag(page, id).locator(".cap-row-status .cap-status");
@@ -265,9 +265,9 @@ eachTheme((theme) => {
   });
 
   // -------------------------------------------------------------------------------------
-  // Behaviour.
+  // Behavior.
 
-  test("behaviour: the whole record, resolved flags included, is in the delivered HTML", async ({ page }) => {
+  test("behavior: the whole record, resolved flags included, is in the delivered HTML", async ({ page }) => {
     const html = await (await page.request.get("components/flag-list/states.html")).text();
     expect(html).toContain("Resolved by Rosa Park");
     expect(html).toContain("Dismissed by Dustin Edwards");
@@ -277,14 +277,14 @@ eachTheme((theme) => {
     expect(html).toContain("2 blocking, 3 advisory, 2 resolved");
   });
 
-  test("behaviour: blocking comes before advisory, and open before resolved within a group", async ({ page }) => {
+  test("behavior: blocking comes before advisory, and open before resolved within a group", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await main(page).getByRole("radio", { name: /^All/ }).check();
     const order = await main(page).locator("li.cap-flag").evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.flag));
     expect(order).toEqual(["f1", "f2", "f6", "f3", "f4", "f5", "f7"]);
   });
 
-  test("behaviour: the summary line and the filter counts say it in words", async ({ page }) => {
+  test("behavior: the summary line and the filter counts say it in words", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await expect(main(page).locator("[data-cap-part='summary']")).toHaveText("2 blocking, 3 advisory, 2 resolved");
     await expect(main(page).getByRole("radio", { name: "Open 5" })).toBeChecked();
@@ -292,7 +292,7 @@ eachTheme((theme) => {
     await expect(main(page).getByRole("radio", { name: "All 7" })).toBeVisible();
   });
 
-  test("behaviour: resolving keeps the flag on the record with who and when, and the counts follow", async ({ page }) => {
+  test("behavior: resolving keeps the flag on the record with who and when, and the counts follow", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await flag(page, "f5").getByRole("button", { name: /^Resolve/ }).click();
     await expect(main(page).locator("[data-cap-part='summary']")).toHaveText("2 blocking, 2 advisory, 3 resolved");
@@ -307,7 +307,7 @@ eachTheme((theme) => {
     await expect(flag(page, "f5").getByRole("button", { name: /^Resolve/ })).toHaveCount(0);
   });
 
-  test("behaviour: Undo puts a resolved flag back, and the announcement names it", async ({ page }) => {
+  test("behavior: Undo puts a resolved flag back, and the announcement names it", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await flag(page, "f4").getByRole("button", { name: /^Dismiss/ }).click();
     const item = page.locator(".cap-message-item").first();
@@ -318,7 +318,7 @@ eachTheme((theme) => {
     await expect(main(page).locator("[data-cap-part='summary']")).toHaveText("2 blocking, 3 advisory, 2 resolved");
   });
 
-  test("behaviour: a flag whose passage is edited away says Anchor lost, loses its link, and can still be resolved", async ({ page }) => {
+  test("behavior: a flag whose passage is edited away says Anchor lost, loses its link, and can still be resolved", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await expect(flag(page, "f1").getByRole("link")).toBeVisible();
     await page.locator("#fl-draft").fill(DRAFT.replace("Roughly 40% of the alerts last quarter were false alarms", "Some alerts were false alarms"));
@@ -337,7 +337,7 @@ eachTheme((theme) => {
     await expect(flag(page, "f1").getByRole("link")).toBeVisible();
   });
 
-  test("behaviour: a lost anchor takes its suggestion out of the batch and says why", async ({ page }) => {
+  test("behavior: a lost anchor takes its suggestion out of the batch and says why", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await page.locator("#fl-draft").fill(DRAFT.replace("Recieved wisdom", "Old wisdom"));
     await expect(flag(page, "f3")).toHaveAttribute("data-anchor", "lost");
@@ -346,7 +346,7 @@ eachTheme((theme) => {
     await expect(main(page).getByRole("button", { name: "Apply 1 suggestion" })).toBeVisible();
   });
 
-  test("behaviour: a suggestion is inert until the owner applies it", async ({ page }) => {
+  test("behavior: a suggestion is inert until the owner applies it", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await page.waitForTimeout(300);
     await expect(page.locator("#fl-draft")).toHaveValue(DRAFT);
@@ -354,7 +354,7 @@ eachTheme((theme) => {
     await expect(flag(page, "f3")).toHaveAttribute("data-state", "open");
   });
 
-  test("behaviour: someone who is not the owner sees the suggestion and the reason, but no Apply button", async ({ page }) => {
+  test("behavior: someone who is not the owner sees the suggestion and the reason, but no Apply button", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     const guest = page.locator("#fl-guest");
     await expect(guest.getByRole("button", { name: /^Apply/ })).toHaveCount(0);
@@ -366,7 +366,7 @@ eachTheme((theme) => {
     await expect(guest.getByRole("button", { name: /^Apply/ })).toHaveCount(0);
   });
 
-  test("behaviour: Undo of an Apply puts the old words back", async ({ page }) => {
+  test("behavior: Undo of an Apply puts the old words back", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await flag(page, "f4").getByRole("button", { name: /^Apply suggestion/ }).click();
     await expect(page.locator("#fl-draft")).toHaveValue(DRAFT.replace("was shipped on Tuesday", "shipped on Tuesday"));
@@ -376,7 +376,7 @@ eachTheme((theme) => {
     await expect(flag(page, "f4").getByRole("button", { name: /^Apply suggestion/ })).toBeVisible();
   });
 
-  test("behaviour: Undo of an Apply refuses, and says why, when the draft was edited around it", async ({ page }) => {
+  test("behavior: Undo of an Apply refuses, and says why, when the draft was edited around it", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await flag(page, "f4").getByRole("button", { name: /^Apply suggestion/ }).click();
     await page.locator("#fl-draft").fill("Something else entirely.");
@@ -385,7 +385,7 @@ eachTheme((theme) => {
     await expect(flag(page, "f4")).toHaveAttribute("data-resolution", "applied");
   });
 
-  test("behaviour: applying a batch is previewed, then rewrites the draft in each place, and can be undone", async ({ page }) => {
+  test("behavior: applying a batch is previewed, then rewrites the draft in each place, and can be undone", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await main(page).getByRole("button", { name: "Apply 2 suggestions" }).click();
     const dialog = page.getByRole("alertdialog", { name: "Apply 2 suggestions?" });
@@ -403,7 +403,7 @@ eachTheme((theme) => {
     await expect(flag(page, "f3")).toHaveAttribute("data-state", "open");
   });
 
-  test("behaviour: cancelling the batch preview changes nothing", async ({ page }) => {
+  test("behavior: canceling the batch preview changes nothing", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await main(page).getByRole("button", { name: "Apply 2 suggestions" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Cancel" }).click();
@@ -411,7 +411,7 @@ eachTheme((theme) => {
     await expect(flag(page, "f3")).toHaveAttribute("data-state", "open");
   });
 
-  test("behaviour: a change is reported to the app", async ({ page }) => {
+  test("behavior: a change is reported to the app", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await page.evaluate(() => {
       (window as unknown as { seen: unknown[] }).seen = [];
@@ -422,7 +422,7 @@ eachTheme((theme) => {
     expect(seen[0]).toMatchObject({ id: "f5", state: "resolved", resolvedBy: "Dustin Edwards" });
   });
 
-  test("behaviour: nothing open leaves the record and says so", async ({ page }) => {
+  test("behavior: nothing open leaves the record and says so", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     const done = page.locator("#fl-done");
     await expect(done.locator("[data-cap-part='summary']")).toHaveText("No open flags, 2 resolved");
@@ -432,7 +432,7 @@ eachTheme((theme) => {
     await expect(done.locator("#fl-done-d1")).toBeVisible();
   });
 
-  test("behaviour: the React component draws the same list, and resolve and apply work", async ({ page }) => {
+  test("behavior: the React component draws the same list, and resolve and apply work", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     const react = page.getByRole("region", { name: "Flags on this draft (React)" });
     await expect(react).toBeVisible();
@@ -452,7 +452,7 @@ eachTheme((theme) => {
   });
 
   for (const width of [1280, 375]) {
-    test(`behaviour: at ${width}px nothing in a row overflows it and every title has room to be read`, async ({ page }) => {
+    test(`behavior: at ${width}px nothing in a row overflows it and every title has room to be read`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await visitStates(page, "flag-list", theme);
       const bad = await rowOverflow(page);
@@ -460,7 +460,7 @@ eachTheme((theme) => {
     });
   }
 
-  test("behaviour: at phone width the page does not scroll sideways, and the flag's controls are still reachable", async ({ page }) => {
+  test("behavior: at phone width the page does not scroll sideways, and the flag's controls are still reachable", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 800 });
     await visitStates(page, "flag-list", theme);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -468,20 +468,20 @@ eachTheme((theme) => {
     await expect(page.locator("#fl-phone-mf3").getByRole("button", { name: /^Apply suggestion/ })).toBeVisible();
   });
 
-  test("behaviour: comfortable density makes a row roomier than the compact default", async ({ page }) => {
+  test("behavior: comfortable density makes a row roomier than the compact default", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     const pad = (sel: string) => page.locator(sel).evaluate((e) => parseFloat(getComputedStyle(e).paddingTop));
     expect(await pad("#fl-comfy-c5")).toBeGreaterThan(await pad("#fl-main-f5"));
   });
 
-  test("behaviour: the filter defaults per its markup and the record is complete under All", async ({ page }) => {
+  test("behavior: the filter defaults per its markup and the record is complete under All", async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await expect(page.locator("#fl-guest").getByRole("radio", { name: /^All/ })).toBeChecked();
     await expect(page.locator("#fl-guest li.cap-flag:visible")).toHaveCount(4);
   });
 });
 
-test("behaviour: the filter works before any script runs", async ({ browser, baseURL }) => {
+test("behavior: the filter works before any script runs", async ({ browser, baseURL }) => {
   const ctx = await browser.newContext({ javaScriptEnabled: false, baseURL });
   const page = await ctx.newPage();
   await page.goto("components/flag-list/states.html");

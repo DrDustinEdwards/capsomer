@@ -30,7 +30,7 @@ eachTheme((theme) => {
     expect(focusable).toBe(0);
   });
 
-  test("behaviour: the card's image box keeps the 1200 x 630 shape, and the card stays inside a narrow space", async ({ page }) => {
+  test("behavior: the card's image box keeps the 1200 x 630 shape, and the card stays inside a narrow space", async ({ page }) => {
     await visitStates(page, "share-preview", theme);
     const box = await page.locator("#sp-og-note .cap-og-card-image").evaluate((el) => {
       const r = el.getBoundingClientRect();
@@ -41,7 +41,7 @@ eachTheme((theme) => {
     expect(box.fits).toBe(true);
   });
 
-  test("behaviour: a long title wraps inside the card and the result", async ({ page }) => {
+  test("behavior: a long title wraps inside the card and the result", async ({ page }) => {
     await visitStates(page, "share-preview", theme);
     for (const sel of ["#sp-serp-cut", "#sp-og-note"]) {
       const fits = await page.locator(sel).evaluate((el) => el.scrollWidth <= el.clientWidth);

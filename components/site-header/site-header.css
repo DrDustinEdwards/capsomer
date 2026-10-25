@@ -5,7 +5,7 @@
    (docs/design/design-site-header.md; Dustin's ten answers of 2026-10-13). Capsomer fixes the
    frame: the order, 56px tall at every width, sticky, full width with the logo 24px from the
    window's edge (16px on a phone), the spacing, the type, the controls and how the panels behave.
-   Each site fills its slots: the logo, its colour family, the band (--header-bg, --header-fg,
+   Each site fills its slots: the logo, its color family, the band (--header-bg, --header-fg,
    --header-fg-muted, --header-line; data-band="dark", data-translucent), its UI face (--font-ui),
    up to two icon extras and one button, where the section links sit (data-links) and what each
    panel holds. On a phone (under 768px) it is one row, with everything else in one sheet. */
@@ -16,7 +16,7 @@
     --header-fg: var(--text);
     --header-fg-muted: var(--muted);
     --header-line: var(--line);
-    /* A hovered control: a clear step off the band, in the band's own colours. */
+    /* A hovered control: a clear step off the band, in the band's own colors. */
     --header-hover: color-mix(in srgb, var(--header-bg), var(--header-fg) 12%);
     /* The current link's underline (3:1 against the band), the one button, the avatar. */
     --header-accent: var(--accent);
@@ -57,7 +57,7 @@
   }
 
   /* Dark in both themes (Foxhound): the darkest step of the site's family in light, the dark
-     theme's own surface in dark. The controls on it read in the band's colours. */
+     theme's own surface in dark. The controls on it read in the band's colors. */
   .cap-site-header[data-band="dark"] {
     color-scheme: dark;
     --header-bg: var(--accent-12);
@@ -199,9 +199,9 @@
     stroke-linejoin: round;
   }
 
-  /* The section links: 24px after the switcher (left), centred in the header, or on the right
+  /* The section links: 24px after the switcher (left), centered in the header, or on the right
      before the extras after a thin divider; 20px apart. The current page is weight 500 with a 2px
-     underline in the accent, so it is not told by colour alone. */
+     underline in the accent, so it is not told by color alone. */
   .cap-site-header-sections {
     margin-inline-start: var(--space-6);
     min-inline-size: 0;
@@ -473,7 +473,7 @@
     font-size: var(--header-fs, 14px);
     line-height: 1.35;
   }
-  /* The default contents: who you are, labelled groups of links, Sign out last. */
+  /* The default contents: who you are, labeled groups of links, Sign out last. */
   .cap-site-header-panel-list {
     display: grid;
     gap: var(--space-1);
@@ -642,7 +642,7 @@
   [aria-current] > .cap-site-header-sheet-icon {
     color: inherit;
   }
-  /* Two classes, so the dialog's own link colour (.cap-dialog-body nav a) does not win. */
+  /* Two classes, so the dialog's own link color (.cap-dialog-body nav a) does not win. */
   .cap-dialog-body .cap-site-header-sheet-cta {
     display: flex;
     justify-content: center;
@@ -742,7 +742,7 @@
         }
       }
       /* The icon sits in a pill (Material 3's active indicator): quiet until the tab is current,
-         where it takes the accent tint as well as the colour. */
+         where it takes the accent tint as well as the color. */
       & svg {
         box-sizing: content-box;
         inline-size: 20px;

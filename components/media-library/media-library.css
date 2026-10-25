@@ -28,7 +28,7 @@
     min-inline-size: 0;
   }
 
-  /* The tag chips and a host's lenses, each a labelled list of link chips. */
+  /* The tag chips and a host's lenses, each a labeled list of link chips. */
   .cap-media-lib-chips {
     display: grid;
     gap: var(--space-3);

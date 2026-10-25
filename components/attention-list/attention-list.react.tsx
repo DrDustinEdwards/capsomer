@@ -35,7 +35,7 @@ function whenOf(when: AttentionItem["when"]): ReactNode {
   return typeof when === "string" ? when : when ? <time className="cap-time" dateTime={when.datetime}>{when.text}</time> : null;
 }
 
-// No data-cap here: React owns the open and closed state, so the behaviour module must not
+// No data-cap here: React owns the open and closed state, so the behavior module must not
 // attach (it would toggle twice).
 export function AttentionList(props: AttentionListProps) {
   const { items, title = "Needs attention", read, headingLevel = 2, clearText = "Nothing needs you.", noticesDetail = "Nothing to act on now", groups, problemRows, groupRows, primary = true, renderLink = plainLink } = props;

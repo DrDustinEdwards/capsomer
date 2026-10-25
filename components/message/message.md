@@ -2,7 +2,7 @@
 name: message
 title: Message
 summary: The page's one status region; the result of an action, with Undo, and every warning or failure that must not be missed, never taking focus.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [empty, plain message, message with Undo, after Undo, warning that stays, warning through the next result, failure, Undo that could not run, clears itself]
 added: 0.1.0
@@ -45,7 +45,7 @@ The result of an action, said in the page: "Moved the mention to Trash", with Un
 - **Focus goes to the control that was undone** when the app says which (`returnFocus`, as the Portal returns focus to the switch it undid). Otherwise, if Undo had focus, it moves to that message's Dismiss; if Dismiss had focus, it returns to the control that caused the message, else the main region. Focus is never left on nothing.
 - **A plain confirmation may clear itself after 4 seconds** (`clears: true`) only when the control that caused it shows it too ("Copy link" turns to "Copied"). Such a message has no buttons. A message with Undo, a warning or a failure never clears itself.
 - **It sits at the bottom of the view's scroll area** (`position: sticky`), in the page's flow, so a result shows near the action even in a long view. This is where the Portal and the audit differ: the Portal draws it fixed over the page at the bottom right; the audit's rule (patterns.md "Result of an action", DEFAULTS.md) is a status region in the page, so Capsomer follows the audit.
-- **A lasting message wears the warning tone's edge, and says so in words** ("Warning:", or the failure's own words), never by colour alone. A failure wears the critical edge. Each item also starts with a glyph (a tick for a result, a triangle for a warning or an Undo that failed, an octagon for a failure), `aria-hidden`, so the kind is a shape, a word and a colour.
+- **A lasting message wears the warning tone's edge, and says so in words** ("Warning:", or the failure's own words), never by color alone. A failure wears the critical edge. Each item also starts with a glyph (a tick for a result, a triangle for a warning or an Undo that failed, an octagon for a failure), `aria-hidden`, so the kind is a shape, a word and a color.
 - **The item wears the popover's surface** (raised, rounded `--radius-l`, `--shadow-m`), as shadcn's Sonner toast wears the popover's, but it stays in the page.
 
 ## Keyboard
@@ -90,7 +90,7 @@ Each message `say()` adds:
 ```
 
 ```ts
-import { enhance, say, fail } from "capsomer/behaviour/message";
+import { enhance, say, fail } from "capsomer/behavior/message";
 enhance();
 say("Moved the mention from fieldnotes.example to Trash.", {
   undo: () => restore(mention),

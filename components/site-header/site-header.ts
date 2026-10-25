@@ -1,4 +1,4 @@
-// The site header's behaviour: the panels (the switcher, a section with children, the account),
+// The site header's behavior: the panels (the switcher, a section with children, the account),
 // the phone's sheet, and each icon control's name tip. No framework; the React wrapper uses the
 // same functions. Every link, the logo, Sign in and the controls are in the HTML without any of
 // this; a panel's contents are too, so a page with no script still reads and reaches them.

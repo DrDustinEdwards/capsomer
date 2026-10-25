@@ -133,7 +133,7 @@
 
   /* An audit row before and after: the old value struck through above the new. The words
      before and after are read, the strike-through and the tint are the sighted cue (a tint
-     alone would be colour alone). */
+     alone would be color alone). */
   .cap-detail-diff {
     display: grid;
     gap: var(--space-2);

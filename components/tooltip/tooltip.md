@@ -2,12 +2,12 @@
 name: tooltip
 title: Tooltip
 summary: Extra detail about a control, on hover and on focus, built on the Popover API.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript (the shared popover)
 states: [hidden, shown on hover, shown on focus, with a shortcut, comfortable density]
 added: 0.1.0
 updated: 0.2.0
-source: Capsomer mockup (design/mockup.html); the shell's collapsed-rail label, generalised
+source: Capsomer mockup (design/mockup.html); the shell's collapsed-rail label, generalized
 replaces:
   - 'class="(tooltip|tip)[ "]'
   - "data-tooltip=|data-tippy"
@@ -37,7 +37,7 @@ Extra detail a person may want and can do without: what a button will do in this
 - **Esc hides it, and only it**: a dialog around it stays open. It stays hidden until the pointer leaves or focus moves on (WCAG 1.4.13).
 - **The pointer can move onto it**: leaving the trigger waits 150 ms before hiding, and resting on the tip keeps it.
 - **Blur hides it.** One tip shows at a time.
-- **Above its trigger by default** (`data-side` moves it), as shadcn's Tooltip, by CSS anchor positioning inside `@supports (anchor-name: --x)`, flipping when there is no room. Elsewhere the behaviour module places it below the trigger from `getBoundingClientRect`, set through the CSSOM. Anchor names are set through the CSSOM too, so nothing is a style attribute.
+- **Above its trigger by default** (`data-side` moves it), as shadcn's Tooltip, by CSS anchor positioning inside `@supports (anchor-name: --x)`, flipping when there is no room. Elsewhere the behavior module places it below the trigger from `getBoundingClientRect`, set through the CSSOM. Anchor names are set through the CSSOM too, so nothing is a style attribute.
 - **Its own surface: raised, with a visible edge** (`--raised`, an edge in `--line-strong` at 3:1 against the page, and a shadow), `--text` at the detail size, with an optional arrow and key caps (`<kbd>`, each with its own edge) at its end. Not inverted: an inverted tip looks like a selected item (the admin menu's current page is a dark fill in light and a light fill in dark), so a tip is neither (Dustin, 2026-10-11). The admin shell's names are this tooltip too: one look everywhere.
 
 ## Keyboard
@@ -53,7 +53,7 @@ Extra detail a person may want and can do without: what a button will do in this
 - The trigger keeps its own name; the tip is its description.
 - Tip text is `--text` on `--raised`, far above 4.5:1 in both themes; its edge is 3:1 against the page.
 - Touch: there is no hover, so a tip's detail must never be needed.
-- Forced colours: the tip gains an edge.
+- Forced colors: the tip gains an edge.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -66,7 +66,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 The tip is the popover's `.cap-popover`; `data-side`, `data-align`, `data-offset` and `data-delay` are the popover's options. The arrow and the key cap are optional.
 
-`import { enhance } from "capsomer/behaviour/tooltip"` attaches every `[data-cap-tip]` trigger to the element its value names, and adds the `aria-describedby` and, for 0.1 markup, the `cap-popover` class, `data-variant="tooltip"`, `popover="manual"` and `role="tooltip"`. In React, `import { Tooltip } from "capsomer/react/tooltip"`:
+`import { enhance } from "capsomer/behavior/tooltip"` attaches every `[data-cap-tip]` trigger to the element its value names, and adds the `aria-describedby` and, for 0.1 markup, the `cap-popover` class, `data-variant="tooltip"`, `popover="manual"` and `role="tooltip"`. In React, `import { Tooltip } from "capsomer/react/tooltip"`:
 
 ```tsx
 <Tooltip tip="Runs job_7c21 again with the same inputs." side="top" arrow>
@@ -76,7 +76,7 @@ The tip is the popover's `.cap-popover`; `data-side`, `data-align`, `data-offset
 
 ## Matches shadcn
 
-Tooltip (Base UI flavour, nova): the inverted surface (`bg-foreground`, `text-background`), `rounded-md`, `px-3 py-1.5`, `text-xs`, the arrow, a key cap inside it, fade and zoom-in-95 with a 2 px slide from the trigger's side at 100 ms, above the trigger by default.
+Tooltip (Base UI flavor, nova): the inverted surface (`bg-foreground`, `text-background`), `rounded-md`, `px-3 py-1.5`, `text-xs`, the arrow, a key cap inside it, fade and zoom-in-95 with a 2 px slide from the trigger's side at 100 ms, above the trigger by default.
 
 ## Deliberately different
 

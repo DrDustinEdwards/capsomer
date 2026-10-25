@@ -21,7 +21,7 @@ export interface AdminEntry {
   icon?: ReactNode;
   current?: boolean;
   // A count beside the entry, and what it counts: "Queue, 2 blocked". Every count is one bubble;
-  // a plain one is neutral, tone "need" is violet (it needs you), crit and warn are status colours.
+  // a plain one is neutral, tone "need" is violet (it needs you), crit and warn are status colors.
   count?: number;
   countNote?: string;
   tone?: "need" | "crit" | "warn";
@@ -30,7 +30,7 @@ export interface AdminEntry {
 
 // One app in the strip. The family's admin apps come from FAMILY_APPS (apps.tsx); this shape is
 // for a strip outside the family. `logo` is the product's mark (an svg using currentColor takes
-// the tile's colour). `count` is how many things in that app need you; the app you are in never
+// the tile's color). `count` is how many things in that app need you; the app you are in never
 // shows one.
 export interface AdminApp {
   id: string;

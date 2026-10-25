@@ -12,7 +12,7 @@ async function openLive(page: Page, theme: "light" | "dark") {
   await expect(dialog(page)).toBeVisible();
 }
 
-test("behaviour: the typed word as an HTML pattern says what wordMatches says", () => {
+test("behavior: the typed word as an HTML pattern says what wordMatches says", () => {
   const re = (w: string) => new RegExp(`^(?:${wordPattern(w)})$`);
   expect(wordPattern("delete")).toBe("[Dd][Ee][Ll][Ee][Tt][Ee]");
   for (const typed of ["delete", "DELETE", "Delete"]) expect(re("delete").test(typed)).toBe(true);
@@ -115,7 +115,7 @@ eachTheme((theme) => {
     await expect(revoke(page)).toBeFocused();
   });
 
-  test("behaviour: a click outside the dialog does not close it", async ({ page }) => {
+  test("behavior: a click outside the dialog does not close it", async ({ page }) => {
     await openLive(page, theme);
     await page.mouse.click(8, 8);
     await expect(dialog(page)).toBeVisible();
@@ -151,7 +151,7 @@ eachTheme((theme) => {
     await expect(page.locator("dialog.cap-dialog")).toBeVisible();
   });
 
-  test("behaviour: a failure stays inside the dialog with its reason and Try again", async ({ page }) => {
+  test("behavior: a failure stays inside the dialog with its reason and Try again", async ({ page }) => {
     await openLive(page, theme);
     await page.getByRole("button", { name: "Revoke agent" }).click();
     await page.evaluate(() => (window as unknown as { capFail: () => void }).capFail());
@@ -213,7 +213,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toContainText("Marked failed: rotated by hand");
   });
 
-  test("behaviour: a reason the browser filled in without an input event still counts", async ({ page }) => {
+  test("behavior: a reason the browser filled in without an input event still counts", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "live");
     await page.getByRole("button", { name: "Mark job_0cdf2803f0ba failed…" }).click();
     await page.getByRole("textbox", { name: "Reason (required)" }).evaluate((el: HTMLTextAreaElement) => {
@@ -223,7 +223,7 @@ eachTheme((theme) => {
     await expect(dialog(page, "Mark job failed: Rotate the watcher's Cloudflare token")).toHaveAttribute("aria-busy", "true");
   });
 
-  test("behaviour: the matched specimen's action is on", async ({ page }) => {
+  test("behavior: the matched specimen's action is on", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "typed-matched");
     await expect(page.getByRole("button", { name: "Delete record" })).not.toHaveAttribute("aria-disabled", "true");
   });
@@ -250,7 +250,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behaviour: the confirm page's own checks hold the submit until a reason and the word are given", async ({ page }) => {
+  test("behavior: the confirm page's own checks hold the submit until a reason and the word are given", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "page");
     const posted = page.evaluate(
       () =>

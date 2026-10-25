@@ -7,7 +7,7 @@
 //
 // `systemMapHtml` renders the whole contract as a string, so a server or a static build
 // delivers it (the list of the same data is readable with no script). `enhance` adds the
-// roles, one tab stop with the arrow keys moving between neighbours, choosing, going in
+// roles, one tab stop with the arrow keys moving between neighbors, choosing, going in
 // and out, and the plain view. No framework, no storage.
 
 import { type Direction, type MapSystem, connectionText, spatialNext } from "./system-map-data.ts";
@@ -21,7 +21,7 @@ export { escapeHtml, hexPoints, seamRoute, systemMapHtml } from "./system-map-ht
 export type { Box } from "./system-map-html.ts";
 
 // ---------------------------------------------------------------------------------------
-// Behaviour.
+// Behavior.
 
 const READY = "data-cap-ready";
 

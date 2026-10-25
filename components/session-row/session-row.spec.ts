@@ -65,7 +65,7 @@ eachTheme((theme) => {
     await expect(decline).toHaveAttribute("aria-busy", "true");
   });
 
-  test("behaviour: an answer announces which session and which answer", async ({ page }) => {
+  test("behavior: an answer announces which session and which answer", async ({ page }) => {
     await visitStates(page, "session-row", theme);
     const detail = page.evaluate(
       () => new Promise((done) => document.addEventListener("cap-answer", (e) => done((e as CustomEvent).detail), { once: true })),
@@ -74,7 +74,7 @@ eachTheme((theme) => {
     expect(await detail).toEqual({ session: "sess_migr", answer: "keep-0008" });
   });
 
-  test("behaviour: the list shows a sampled stream and every state's word", async ({ page }) => {
+  test("behavior: the list shows a sampled stream and every state's word", async ({ page }) => {
     await visitStates(page, "session-row", theme);
     await expect(page.getByText("Showing 1 in 10 steps", { exact: false })).toBeVisible();
     for (const word of ["Needs you", "Working", "Failed", "Idle", "Stopped"]) {
@@ -82,7 +82,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: only a failed session is marked critical, and it still says Failed in words", async ({ page }) => {
+  test("behavior: only a failed session is marked critical, and it still says Failed in words", async ({ page }) => {
     await visitStates(page, "session-row", theme);
     const critical = page.locator(".cap-session[data-tone='crit']");
     const failed = page.locator(".cap-session", { has: page.locator(".cap-pill", { hasText: "Failed" }) });
@@ -92,13 +92,13 @@ eachTheme((theme) => {
   });
 });
 
-test("behaviour: order puts waiting on you first, the longest wait at the top", () => {
+test("behavior: order puts waiting on you first, the longest wait at the top", () => {
   const s = (id: string, state: SessionState, since: number) => ({ id, state, since });
   const got = order([s("idle", "idle", 50), s("work", "working", 40), s("new-ask", "needs", 90), s("fail", "failed", 10), s("old-ask", "needs", 20), s("stop", "stopped", 99), s("work2", "working", 70)]);
   expect(got.map((x) => x.id)).toEqual(["old-ask", "new-ask", "fail", "work2", "work", "idle", "stop"]);
 });
 
-test("behaviour: a count is spoken as times", () => {
+test("behavior: a count is spoken as times", () => {
   expect(spokenCount(12)).toBe("12 times");
   expect(spokenCount(1)).toBe("once");
 });

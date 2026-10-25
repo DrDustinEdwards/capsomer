@@ -1,4 +1,4 @@
-// The tabs' behaviour (WAI-ARIA Authoring Practices, Tabs): one tab stop on the chosen tab
+// The tabs' behavior (WAI-ARIA Authoring Practices, Tabs): one tab stop on the chosen tab
 // (a roving tabindex), arrow keys, Home and End move between tabs, a tab chosen shows its
 // panel and hides the rest. The markup arrives complete (chosen tab, `tabindex`, `hidden`
 // panels), so this module only adds what changes after a person acts. No framework; the

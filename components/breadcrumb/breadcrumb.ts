@@ -1,4 +1,4 @@
-// The breadcrumb's behaviour: a long trail folds its middle levels into a popover of links.
+// The breadcrumb's behavior: a long trail folds its middle levels into a popover of links.
 // The server sends the whole trail (every level a real link in the HTML); on a trail with
 // data-max-items this module keeps the first level and the last (max - 1) and moves the rest
 // into the popover behind a three-dot button. A trail that already carries the folded item

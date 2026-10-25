@@ -2,7 +2,7 @@
 name: switch-reason
 title: Automation switch
 summary: A switch that starts or stops automation. Flipping it asks for a one-line reason beside it; it moves only when the reason is applied, then offers Undo.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [on, off, off with a note, asking for a reason, reason missing, applying, could not apply]
 added: 0.1.0
@@ -15,7 +15,7 @@ replaces:
 
 # Automation switch
 
-A `.cap-switch` inside `.cap-switch-reason`. Clicking it, or Space on it, does not move it: it opens a one-line reason beside it, labelled "Turning the improve loop off. Reason:". Enter applies, Esc cancels. The switch moves only when the reason is applied, and the app records who, when and why, then offers Undo through the message region.
+A `.cap-switch` inside `.cap-switch-reason`. Clicking it, or Space on it, does not move it: it opens a one-line reason beside it, labeled "Turning the improve loop off. Reason:". Enter applies, Esc cancels. The switch moves only when the reason is applied, and the app records who, when and why, then offers Undo through the message region.
 
 **Provenance.** MIXED, against the Capsid Portal at master (as of 2026-10-01). The Portal had no automation switch at the extraction base (`366b902`); Capsomer's 0.1.0 was drawn from the approved mockup (a boxed form under the switch). 0.1.1 EXTRACTS the Portal's current flow and rules from `ui/Switch.tsx` and `styles.css` (#216): the inline layout (`.autoctl`, `.reason`: switch, label, field and buttons in one wrapping row, the field `flex: 1 1 180px` to 420px), the label "<verb>. Reason:", the required-reason error "Type a reason. It is recorded with the change.", the state asked for fixed when the field opens, Esc held while the request runs and stopped so it does not reach a panel around the switch, the value read from the field itself, the field and Apply and the switch marked busy, a refusal shown with its line breaks and kept until the next try or Cancel, and the note shown beside the switch while no reason is open (`.state-note`). It is ADAPTED to be generic: the Portal's `useApplySwitch` (preview, perform, signOut, its `PortalActionRequest`) is the app's own listener on `cap:switch-applied`, with `waitUntil` carrying the request; the Portal's `verb` function is `data-verb-on` and `data-verb-off`; the markup is the field component's (`.cap-input`, `.cap-field-error`). What stays Capsomer's, and why: the field is read-only and not disabled while the request runs (a disabled field drops focus), and Apply keeps its name and shows the spinner where the Portal's reads "Applying..." (the button component's pending state). The Portal's `.auto-row` (its Namespaces page's row layout) is a page layout, not part of the control, and is not carried.
 
@@ -56,7 +56,7 @@ Anything that starts or stops work no one is watching: the improve loop, a sched
 - The label is the reason field's name, so it is read on focus. The keys hint is its description.
 - An error after Enter is announced (`role="alert"`) and is the field's description.
 - Pending, the switch and the form are `aria-busy`, Apply keeps its name and width and shows the spinner, and the switch is not disabled.
-- Forced colours: the switch's own rules apply; the form has no edge of its own.
+- Forced colors: the switch's own rules apply; the form has no edge of its own.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -82,8 +82,8 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ```
 
 ```js
-import { enhance, setSwitch } from "capsomer/behaviour/switch-reason";
-import { say } from "capsomer/behaviour/message";
+import { enhance, setSwitch } from "capsomer/behavior/switch-reason";
+import { say } from "capsomer/behavior/message";
 enhance();
 loop.addEventListener("cap:switch-applied", (e) => {
   e.detail.waitUntil(

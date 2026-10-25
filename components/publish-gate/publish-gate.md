@@ -2,7 +2,7 @@
 name: publish-gate
 title: Publish gate
 summary: One region beside the publish button that lists what stops a post going out, required apart from advisory, each cause linked to where it is, with a state for every destination site.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [blocked, ready, held, published, one row per destination, required failing, advisory failing, passing checks folded, check that flips while you watch, publish button states, first publication previewed, republish at once, unpublish with Undo, form without a script hook, narrow column, comfortable density]
 added: 0.3.0
@@ -32,9 +32,9 @@ In an editor or a draft page, beside the publish button, for anything that is ch
 
 - **Failing checks first, required apart from advisory, passing ones folded.** Two groups, "Required, 2 failing" then "Advisory, 3", and "9 checks passed" in a disclosure (the person is not asked to read nine passes to find two failures). A group with nothing failing is not shown; with nothing failing at all the region says "No checks are failing."
 - **Every row names its cause and links to it.** The row's one link is the cause in words ("The cover image has no alt text") and goes to the passage, field or setting that causes it (`href="#field-alt"`). The detail gives the rule's name and the fix: "Alt text. Fix: Describe what the image shows, in a sentence."
-- **Four states, each shape, word and colour.** Blocked (critical glyph), Held (square), Ready (tick), Published (tick). Blocked wins over held, held over ready; the overall state is the worst of the destinations'.
+- **Four states, each shape, word and color.** Blocked (critical glyph), Held (square), Ready (tick), Published (tick). Blocked wins over held, held over ready; the overall state is the worst of the destinations'.
 - **A blocked button is `aria-disabled="true"`, never `disabled`, and described by the summary.** A keyboard or screen reader user can reach it and hear "Blocked: 2 required checks failing on dustinedwards.info"; a `disabled` button is skipped and says nothing. Pressing it does nothing. It reads "Publish blocked"; a held one "Publish held"; the one at work "Publishing..." with `aria-busy`.
-- **The summary is a polite live region** that is written only when its words change, so a check that flips announces once. The region is a labelled `section`.
+- **The summary is a polite live region** that is written only when its words change, so a check that flips announces once. The region is a labeled `section`.
 - **One row per destination, each with its own state and button.** Publishing to each site is separate: the sites differ in what blocks them (a site's canonical address is its own check), and one blocked site does not stop another. The overall state is the worst.
 - **A hold is a person or a schedule, and says so**: "Held for review by Rosa until Fri 09:00", with a note for anything more. Nothing in the gate lifts a hold; the person who placed it does.
 - **Publishing is one-way for a first publication, so it is previewed.** The click opens the shared confirm dialog listing the destination and what a first publication does ("It has never been public. Publishing puts it on the blog, in the feed, the sitemap, the search index and the AI answer layer."), with focus on Cancel. Republishing something that has been public is reversible (Unpublish) and happens at once. Unpublishing happens at once and offers Undo in the message region.
@@ -70,10 +70,10 @@ Item (`item.tsx`) for the rows, Accordion for the folded passes, Badge for the s
 
 - The region is a `section` named by its heading, holding one `ul` (`role="list"`); each group is a list item named by its heading and holds its own list.
 - The summary is `role="status"` with `aria-live="polite"` and `aria-atomic="true"`, and describes the publish buttons that are not ready (`aria-describedby`).
-- Status is a glyph, a word and a colour: "Failing", "Advisory", "Passed", "Blocked", "Held", "Ready", "Published".
+- Status is a glyph, a word and a color: "Failing", "Advisory", "Passed", "Blocked", "Held", "Ready", "Published".
 - A published destination's button becomes a link "View" (named with the destination) and a button "Unpublish".
 - Each check row's link is described by its status and detail (`aria-describedby`), so moving by link still says "Failing" and the fix.
-- Forced colours: the region keeps its border; the critical edge turns CanvasText.
+- Forced colors: the region keeps its border; the critical edge turns CanvasText.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -147,7 +147,7 @@ The button in each state: Publish (`data-variant="primary"`, no `aria-disabled`)
 A held destination has `data-hold-text="Held for review by Rosa until Fri 09:00"` and optional `data-hold-note`; a published one has `data-published-at` (ISO) and `data-published-url`; `data-first` marks one that has never been public.
 
 ```ts
-import { enhance, attachPublishGate, gateState, sortChecks, describeGate, siteState, worstState, countChecks } from "capsomer/behaviour/publish-gate";
+import { enhance, attachPublishGate, gateState, sortChecks, describeGate, siteState, worstState, countChecks } from "capsomer/behavior/publish-gate";
 
 enhance(document, {
   publish: (siteIds) => api.publish(slug, siteIds), // resolve when it is live; reject with an Error saying why not

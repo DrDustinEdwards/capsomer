@@ -86,7 +86,7 @@ eachTheme((theme) => {
     await expect(details).not.toHaveAttribute("open", "");
   });
 
-  test("behaviour: sections that share a name open one at a time", async ({ page }) => {
+  test("behavior: sections that share a name open one at a time", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
     const first = page.locator("details[name='limits']").nth(0);
     const second = page.locator("details[name='limits']").nth(1);

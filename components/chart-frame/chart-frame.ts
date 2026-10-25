@@ -1,7 +1,7 @@
 // Pure helpers for the frame, for pages that render on a server without React: the table as
 // escaped HTML (the same shape as Enarratio's DataTable: the first column holds the row
 // headers) and the whole frame as a string. Nothing here needs a browser, and the frame has
-// no behaviour of its own: the disclosure is a native `details`.
+// no behavior of its own: the disclosure is a native `details`.
 
 export interface DataTable {
   columns: string[];
@@ -16,7 +16,7 @@ export function numericColumns(table: DataTable): boolean[] {
   return table.columns.map((_, c) => c > 0 && table.rows.length > 0 && table.rows.every((r) => /^[-+−]?[\d,.]+\s?(%|[a-zA-Z]{0,3})?$/.test((r[c] ?? "").trim())));
 }
 
-// The numbers as the table component's markup, in a labelled, focusable scroll region (a
+// The numbers as the table component's markup, in a labeled, focusable scroll region (a
 // keyboard can only scroll what it can focus). A column whose every cell reads as a number is
 // right-aligned and tabular (`data-num`).
 export function tableHtml(table: DataTable, label: string): string {

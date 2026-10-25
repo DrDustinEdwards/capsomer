@@ -2,7 +2,7 @@
 name: flag-list
 title: Flag list
 summary: Problems raised against a draft by a check, a reviewer or an AI, blocking before advisory, open and resolved, each pointing at its passage and some carrying a suggestion only the owner can apply.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [open blocking and advisory, anchored to text, anchor lost, with a suggestion for the owner, with a suggestion seen by someone who is not the owner, resolved and dismissed with who and when, filter open resolved all, nothing open, narrow column, comfortable density, resolve with Undo, apply with Undo, apply a batch after a preview]
 added: 0.3.0
@@ -31,7 +31,7 @@ Beside an editor or a draft page: the flags raised against that draft by the che
 
 ## The default and its reason
 
-- **Blocking before advisory, open before resolved.** Two groups, "Blocking" then "Advisory", each with its count ("2 open, 1 resolved"). A blocking flag is `Blocking` with the critical glyph and a red edge on the open row; an advisory flag is `Advisory` with the warning glyph. Shape, word and colour together.
+- **Blocking before advisory, open before resolved.** Two groups, "Blocking" then "Advisory", each with its count ("2 open, 1 resolved"). A blocking flag is `Blocking` with the critical glyph and a red edge on the open row; an advisory flag is `Advisory` with the warning glyph. Shape, word and color together.
 - **The record is kept.** A resolved flag stays in the list with who closed it, when, and how (resolved, dismissed, or its suggestion applied), and a Reopen button. The filter, "Open 3 · Resolved 5 · All 8", is the shared segmented control over real radios, and the hiding is CSS keyed to the checked radio: all rows are in the delivered HTML, resolved ones included, and the filter works before any script runs. A tab list would suit it as well; the segmented control is used because it changes which rows show, not which panel.
 - **A flag is a row of the row list.** The title is the flag's one link when it is anchored (the message, then "Go to passage", `href="#anchor-id"`); the actions are real buttons; `j` and `k` move between rows across both groups.
 - **An anchor shows its words.** The quoted passage sits under the row, so the person sees what the flag is about without leaving the list.
@@ -68,12 +68,12 @@ Item (`item.tsx`): the row, its media, content and actions, which this list inhe
 
 ## Accessibility
 
-- The list is a named region (`section` labelled by its heading) holding one `ul` (`role="list"`); each group is a list item named by its heading (a list of the group's rows).
-- The status is a glyph, a word and a colour. "Anchor lost" has the dashed glyph and the words. A resolved flag's state is the word "Resolved", "Dismissed" or "Applied" beside a glyph.
+- The list is a named region (`section` labeled by its heading) holding one `ul` (`role="list"`); each group is a list item named by its heading (a list of the group's rows).
+- The status is a glyph, a word and a color. "Anchor lost" has the dashed glyph and the words. A resolved flag's state is the word "Resolved", "Dismissed" or "Applied" beside a glyph.
 - The quote is a `blockquote` with the hidden words "Quoted passage"; the before and after lines carry the hidden words "Before" and "After" and a plus or minus mark.
 - Each button's name says which flag it is for ("Resolve flag: This claim has no source"), and begins with the visible word.
 - The result of every action is announced politely (the message region or the list's own `role="status"`); a failure is an alert.
-- Forced colours: the dashes, rules and marks stay; the diff tints become outlines.
+- Forced colors: the dashes, rules and marks stay; the diff tints become outlines.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
@@ -136,7 +136,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 A flag that is resolved has `data-state="resolved" data-resolution="resolved|dismissed|applied" data-resolved-by="Rosa Park" data-resolved-at="2026-10-02T07:30:00Z"`, its meta holds the state word, its only action is Reopen, and its body ends with `<p class="cap-flag-resolution">Resolved by Rosa Park <time class="cap-time" data-cap="time" datetime="...">2 hours ago</time>.</p>`. A flag whose passage has gone has `data-anchor="lost"`, a title with no link (`<span class="cap-flag-title">` and an "Anchor lost" status), and the last known quote. A flag with no anchor has no `data-anchor-id` and no quote.
 
 ```ts
-import { enhance, attachFlagList, groupFlags, countFlags, anchorStatus, applySuggestion, revertSuggestion } from "capsomer/behaviour/flag-list";
+import { enhance, attachFlagList, groupFlags, countFlags, anchorStatus, applySuggestion, revertSuggestion } from "capsomer/behavior/flag-list";
 
 enhance(); // reads data-text-source (a textarea's value, or an element's text) to keep the anchors true
 

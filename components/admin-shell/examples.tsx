@@ -109,7 +109,7 @@ function SheetOpen() {
 }
 
 // A reader's own area on a site outside the family: the user variant (no strip, the 288px menu),
-// the site's sections in the menu, a centred reading column.
+// the site's sections in the menu, a centered reading column.
 const reader: Partial<AdminShellProps> = {
   variant: "user",
   app: undefined,

@@ -3,7 +3,7 @@
 
 /* Two versions of a text, compared by word. Built from the segmented control (the view
    switch), the disclosure (folded unchanged passages), the button and the key cap; the diff
-   marks, the rows and the jump list are this file's. The marks never rely on colour: an
+   marks, the rows and the jump list are this file's. The marks never rely on color: an
    insertion is underlined, tinted and opens with a plus (and says "insertion start" and
    "insertion end" to a screen reader); a deletion is struck through, tinted and opens with a
    minus. The three views are all in the HTML and the radios choose which shows, in CSS, so
@@ -354,7 +354,7 @@
     background: var(--surface);
   }
 
-  /* A narrow container stacks the two sides: before above after in each row, each labelled. */
+  /* A narrow container stacks the two sides: before above after in each row, each labeled. */
   @container cap-compare (max-width: 40rem) {
     .cap-compare-head {
       grid-template-columns: minmax(0, 1fr);

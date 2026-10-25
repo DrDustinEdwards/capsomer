@@ -4,8 +4,8 @@
    content; in a user's dashboard no strip and a menu as wide as the strip and menu together, so
    the page starts at the same left edge in both. On a phone the header's sheet holds the apps and
    the menu, and the site header's bottom bar the top pages.
-   Colour means something here (rulings: color only for meaning): violet marks the current
-   page, the primary action and "needs you"; status colours keep their one meaning. The current
+   Color means something here (rulings: color only for meaning): violet marks the current
+   page, the primary action and "needs you"; status colors keep their one meaning. The current
    item is a dark filled pill in the palette's darkest accent step (--accent-12), the menu is a
    shade calmer than the page (Linear), tiles are neutral with the product's own mark.
    Sizes come from tokens: the strip is --rail-w-collapsed, the menu --rail-w. */
@@ -29,7 +29,7 @@
        count, up to "99+", without crossing into the content (80px). */
     --admin-menu-collapsed: calc(var(--rail-w-collapsed) + var(--space-6));
     /* One inset for a menu row in both states: the 16px icon sits at the same x open and
-       collapsed, centred in the collapsed column ((80 - 2 * 8 - 16) / 2 = 24). */
+       collapsed, centered in the collapsed column ((80 - 2 * 8 - 16) / 2 = 24). */
     --admin-row-pad: calc((var(--admin-menu-collapsed) - 2 * var(--space-3) - 16px) / 2);
     /* Hover: a fill a clear step off the ground in both themes, and an edge at 3:1. */
     --admin-hover: color-mix(in srgb, var(--ground), var(--text) 10%);
@@ -172,7 +172,7 @@
 
   /* One bubble for every count and badge, open and collapsed, in the strip, the menu and the
      sheet: one size, one shape, one type, and the same number everywhere (99+ past 99). A plain
-     count is a neutral grey bubble; violet needs you; red and amber are status colors and keep
+     count is a neutral gray bubble; violet needs you; red and amber are status colors and keep
      their meaning. A badge sits on another app's tile or on Inbox, never on the app you are in.
      On an icon every bubble is in one place relative to its glyph: its left edge 2px past the
      glyph's right edge, its middle on the glyph's top edge, so it never covers the glyph. Each
@@ -468,7 +468,7 @@
     margin-inline-start: auto;
   }
   /* The page frame: the padding, rhythm and measure a view shares. A reading column (a public
-     site) is centred and capped at a comfortable line length. */
+     site) is centered and capped at a comfortable line length. */
   .cap-admin-page {
     display: grid;
     gap: var(--gap);
@@ -503,7 +503,7 @@
     }
   }
 
-  /* Colour only, and quick; nothing moves for a person who asked for stillness. */
+  /* Color only, and quick; nothing moves for a person who asked for stillness. */
   @media (prefers-reduced-motion: no-preference) {
     .cap-admin-btn,
     .cap-admin-tile,

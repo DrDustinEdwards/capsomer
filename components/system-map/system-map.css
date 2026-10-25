@@ -190,7 +190,7 @@
     text-anchor: middle;
   }
 
-  /* The boundary's name, centred at the circle's foot. */
+  /* The boundary's name, centered at the circle's foot. */
   .cap-system-map-inside-title {
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -525,8 +525,8 @@
     }
   }
 
-  /* Forced colours: an SVG keeps its own fills and strokes, so the map sets system colours
-     itself. Every shape is the canvas with a text-coloured edge; what is chosen, lit or
+  /* Forced colors: an SVG keeps its own fills and strokes, so the map sets system colors
+     itself. Every shape is the canvas with a text-colored edge; what is chosen, lit or
      moving is the highlight. */
   @media (forced-colors: active) {
     /* Whatever its state (shared, core, hovered, chosen, a store, lit), a shape is the canvas. */

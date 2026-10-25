@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode, type Ref } from "react";
 import { closeDialog, openDialog, setDialogBusy, wireDialog } from "./dialog.ts";
 
-export type DialogPlacement = "center" | "right" | "left" | "bottom" | "top";
+/** `"centre"` is the old spelling of `"center"`, kept so existing code still type-checks; both are the default. */
+export type DialogPlacement = "center" | "centre" | "right" | "left" | "bottom" | "top";
 export type DialogSize = "sm" | "md" | "lg";
 
 interface Ids {
@@ -73,7 +74,7 @@ export function Dialog(props: DialogProps) {
   const id = useId();
   const own = useRef<HTMLDialogElement | null>(null);
   const [hasDescription, setDescribed] = useState(described);
-  const labelled = rest["aria-label"] == null && rest["aria-labelledby"] == null;
+  const labeled = rest["aria-label"] == null && rest["aria-labelledby"] == null;
   const setRefs = useCallback(
     (el: HTMLDialogElement | null) => {
       own.current = el;
@@ -115,7 +116,7 @@ export function Dialog(props: DialogProps) {
         data-cap-history={history ? "" : undefined}
         data-cap-history-id={history ? historyId : undefined}
         role={alert ? "alertdialog" : undefined}
-        aria-labelledby={rest["aria-labelledby"] ?? (labelled ? `${id}-title` : undefined)}
+        aria-labelledby={rest["aria-labelledby"] ?? (labeled ? `${id}-title` : undefined)}
         aria-describedby={rest["aria-describedby"] ?? (hasDescription ? `${id}-description` : undefined)}
         aria-busy={busy || undefined}
         onClose={() => onOpenChange(false)}

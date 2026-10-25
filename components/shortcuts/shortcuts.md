@@ -2,7 +2,7 @@
 name: shortcuts
 title: Shortcuts
 summary: One registry for every keyboard shortcut, the "?" sheet that lists them, and the switch that turns single keys off.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: own JavaScript (the shared dialog)
 states: [key caps, the sheet open, single-key shortcuts off, comfortable density]
 added: 0.1.0
@@ -84,7 +84,7 @@ The sheet can be in the page or built on first use; either way the module fills 
 ```
 
 ```js
-import { register, enhance } from "capsomer/behaviour/shortcuts";
+import { register, enhance } from "capsomer/behavior/shortcuts";
 enhance();
 const off = register({ key: "g o", label: "Go to Overview", about: "Problems first, worst first.", group: "Go to", run: () => go("/") });
 register({ key: "Mod+k", label: "Open the command menu", group: "General", run: openCommandMenu });

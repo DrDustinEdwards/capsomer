@@ -2,11 +2,11 @@
 name: avatar
 title: Avatar
 summary: A person, an agent or a source as a round picture or its initials, with a corner badge, and a group that overlaps.
-parts: [css, behaviour, react]
+parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [initials, picture, picture that fails to load, sizes, square, agent, badge, group with a count, comfortable density]
 added: 0.3.0
-source: shadcn/ui Avatar (Base UI flavour, nova style, commit d75a96ab787f); the history list and the authorship marks needed a "who"
+source: shadcn/ui Avatar (Base UI flavor, nova style, commit d75a96ab787f); the history list and the authorship marks needed a "who"
 replaces:
   - 'class="(avatar|user-avatar|initials)[ "]'
   - "className=\"(avatar|user-avatar)[ \""
@@ -32,8 +32,8 @@ Beside a name in a list, a history line, a comment, a header. It never replaces 
 - **The fallback is `--muted` on `--sunken`**, 4.5:1 in both themes (shadcn's `text-muted-foreground` on `bg-muted`, with Capsomer's tokens).
 - **The picture has a 1 px inset edge in `--line`**, so a pale picture on a pale page still has a boundary; shadcn uses a 10% black overlay, which vanishes in dark.
 - **An agent's initials are set in the mono face** (`data-kind="ai"`), a second cue beside the word "AI" that always accompanies it.
-- **A badge is a shape or a letter on a solid tone with a 2 px ring of the page colour**, and the avatar's name says what it means ("Dustin Edwards, online").
-- **A group overlaps by 8 px**, each avatar ringed in the page colour; "+3" is a count with its own name.
+- **A badge is a shape or a letter on a solid tone with a 2 px ring of the page color**, and the avatar's name says what it means ("Dustin Edwards, online").
+- **A group overlaps by 8 px**, each avatar ringed in the page color; "+3" is a count with its own name.
 
 ## The shadcn component it matches
 
@@ -65,7 +65,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </span>
 ```
 
-`import { enhance, initials } from "capsomer/behaviour/avatar"`. In React, `import { Avatar, AvatarGroup } from "capsomer/react/avatar"`: `<Avatar name="Dustin Edwards" src="..." size="lg" badge={...} badgeLabel="online" />`.
+`import { enhance, initials } from "capsomer/behavior/avatar"`. In React, `import { Avatar, AvatarGroup } from "capsomer/react/avatar"`: `<Avatar name="Dustin Edwards" src="..." size="lg" badge={...} badgeLabel="online" />`.
 
 ## Exceptions in production
 

@@ -94,7 +94,7 @@ eachTheme((theme) => {
     await expect(button).toHaveAttribute("data-clicked", "yes");
   });
 
-  test("behaviour: the row wraps onto more rows at phone width, and no tile runs out of its row", async ({ page }) => {
+  test("behavior: the row wraps onto more rows at phone width, and no tile runs out of its row", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "stat-tile", theme, "phone");
     const rows = await rowTops(page, ".cap-tiles-list");
@@ -106,7 +106,7 @@ eachTheme((theme) => {
     expect(spill).toBe(0);
   });
 
-  test("behaviour: a tile is never narrower than its text, at any width", async ({ page }) => {
+  test("behavior: a tile is never narrower than its text, at any width", async ({ page }) => {
     for (const width of [390, 760, 1280]) {
       await page.setViewportSize({ width, height: 900 });
       await visitStates(page, "stat-tile", theme);
@@ -117,7 +117,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: no data says so with its reason, never a zero", async ({ page }) => {
+  test("behavior: no data says so with its reason, never a zero", async ({ page }) => {
     await visitStates(page, "stat-tile", theme);
     for (const tile of await page.locator(".cap-tile[data-tone='nodata']").all()) {
       await expect(tile.locator(".cap-tile-figure")).toHaveText("No data");
@@ -125,7 +125,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("behaviour: a tile with its numbers sits in a chart frame, Show data outside the link", async ({ page }) => {
+  test("behavior: a tile with its numbers sits in a chart frame, Show data outside the link", async ({ page }) => {
     await visitStates(page, "stat-tile", theme);
     const frame = page.locator("#grid-sites-chart-frame");
     await expect(frame.locator("a.cap-tile")).toHaveCount(1);

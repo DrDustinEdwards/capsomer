@@ -20,7 +20,7 @@ export interface TooltipProps {
 }
 
 // Whether the tip is open is the platform's popover state, not React state: React renders
-// the same markup either way, and the behaviour module shows and hides it.
+// the same markup either way, and the behavior module shows and hides it.
 export function Tooltip({ tip, children, side = "top", align, arrow = true }: TooltipProps) {
   const id = useId();
   const tipRef = useRef<HTMLDivElement>(null);
