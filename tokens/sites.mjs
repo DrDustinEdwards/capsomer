@@ -63,11 +63,12 @@ const SITES = {
     // Recova's measures (Dustin, 2026-10-25: back to the old sizes): 13px secondary text and
     // 14px controls and cells (its text-[0.8125rem] and 14px inputs), 38px controls (its py-2 and
     // 10px/14px inputs), 44px rows (py-3) and 20px card padding (p-5). Labels stay 11px, as
-    // Recova's text-[0.6875rem].
+    // Recova's text-[0.6875rem]. Headings in DM Sans, as Recova's (Foxhound loads no Schibsted Grotesk).
     all: {
       ui: '"DM Sans", sans-serif, Arial, sans-serif',
       "font-ui": '"DM Sans", sans-serif, Arial, sans-serif',
       mono: '"DM Mono", monospace',
+      display: '"DM Sans", sans-serif, Arial, sans-serif',
       "fs-detail": "13px",
       "fs-body": "14px",
       control: "38px",
