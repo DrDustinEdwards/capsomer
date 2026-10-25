@@ -13,7 +13,7 @@ import { graph, jsonLd, thing, website } from "@drdustinedwards/site-helpers/sch
 import { sitemapDocument } from "@drdustinedwards/site-helpers/sitemap";
 
 /** The production origin (rulings.md, rule 16): a workers.dev copy must not claim to be the page. */
-export const ORIGIN = "https://capsomer.dustinedwards.info";
+const ORIGIN = "https://capsomer.dustinedwards.info";
 const REPO = "https://github.com/DrDustinEdwards/capsomer";
 const DESCRIPTION =
   "Capsomer: the shared design system for Dustin Edwards's apps. Every token, every component in every state, and each component's test results.";
