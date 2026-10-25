@@ -27,7 +27,7 @@ jobs:
       - name: Tell IndexNow
         run: |
           origin=https://capsomer.dustinedwards.info
-          key=$(sed -n 's/^export const INDEXNOW_KEY = "\(.*\)";$/\1/p' site/seo.ts)
+          key=$(sed -n 's/^const INDEXNOW_KEY = "\(.*\)";$/\1/p' site/seo.ts)
           for i in $(seq 1 30); do curl -sf "$origin/$key.txt" >/dev/null && break; sleep 30; done
           # Give the build that is deploying this push time to finish, so the engines read the new page.
           sleep 180

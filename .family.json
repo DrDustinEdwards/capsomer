@@ -3,7 +3,8 @@
     ".": "static"
   },
   "copies": {
-    "components/media/media.ts": "setTags here is the media inspector's own handler (render the tags, autosave), not a frontmatter writer"
+    "components/media/media.ts": "setTags here is the media inspector's own handler (render the tags, autosave), not a frontmatter writer",
+    "components/email/email.ts": "escapeHtml here ships in capsomer/email, whose modules carry no dependency beyond optional peers; site-runtime is not one"
   },
   "spelling": {
     "contracts": [
