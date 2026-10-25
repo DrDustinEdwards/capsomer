@@ -114,3 +114,16 @@
     </div>
   </fieldset>
 </section>
+
+<section class="cap-specimen" aria-labelledby="s-cards">
+  <h2 id="s-cards">Cards, each chosen option in its tone</h2>
+  <fieldset class="cap-seg" id="seg-cards">
+    <legend>Decline type</legend>
+    <div class="cap-seg-options" data-layout="cards">
+      <label data-tone="info"><input type="radio" name="decline" value="soft" checked /> <strong>Soft decline</strong><br />Insufficient funds</label>
+      <label data-tone="warn"><input type="radio" name="decline" value="network" /> <strong>Network error</strong><br />Processing failure</label>
+      <label data-force="hover"><input type="radio" name="decline" value="expired" /> <strong>Expired card</strong><br />Card needs updating</label>
+      <label data-tone="crit"><input type="radio" name="decline" value="fraud" /> <strong>Fraud flag</strong><br />Bank flagged the charge</label>
+    </div>
+  </fieldset>
+</section>

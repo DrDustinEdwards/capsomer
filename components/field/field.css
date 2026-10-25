@@ -384,6 +384,90 @@
     }
   }
 
+  /* A slider: a native range input on a 4px track that fills with the primary colour up to the
+     thumb. The fill needs the value as a share: --cap-range-fill (0% to 100%) on the input; the
+     React Range sets it, and plain HTML sets it from its own input listener. The thumb is a
+     20px disc ringed in the ground, which grows a soft ring under the pointer and shrinks a
+     little while held. Recova's calculator slider. */
+  .cap-range {
+    --cap-range-track: linear-gradient(to right, var(--primary) var(--cap-range-fill, 0%), var(--line-strong) 0);
+    display: block;
+    inline-size: 100%;
+    block-size: max(var(--target), 24px);
+    margin: 0;
+    background: transparent;
+    appearance: none;
+    cursor: pointer;
+
+    &::-webkit-slider-runnable-track {
+      block-size: 4px;
+      border-radius: var(--radius-full);
+      background: var(--cap-range-track);
+    }
+    &::-moz-range-track {
+      block-size: 4px;
+      border-radius: var(--radius-full);
+      background: var(--cap-range-track);
+    }
+    &::-webkit-slider-thumb {
+      appearance: none;
+      inline-size: 20px;
+      block-size: 20px;
+      margin-block-start: -8px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 2px var(--ground);
+    }
+    &::-moz-range-thumb {
+      inline-size: 20px;
+      block-size: 20px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 2px var(--ground);
+    }
+    &:is(:hover, [data-force="hover"])::-webkit-slider-thumb {
+      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+    }
+    &:is(:hover, [data-force="hover"])::-moz-range-thumb {
+      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+    }
+    &:focus-visible {
+      outline: none;
+    }
+    &:focus-visible::-webkit-slider-thumb {
+      box-shadow: 0 0 0 2px var(--ground), 0 0 0 calc(2px + var(--focus-width)) var(--ring);
+    }
+    &:focus-visible::-moz-range-thumb {
+      box-shadow: 0 0 0 2px var(--ground), 0 0 0 calc(2px + var(--focus-width)) var(--ring);
+    }
+    &:active::-webkit-slider-thumb {
+      scale: 0.9;
+    }
+    &:active::-moz-range-thumb {
+      scale: 0.9;
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-range::-webkit-slider-thumb {
+      transition: box-shadow var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-out);
+    }
+    .cap-range::-moz-range-thumb {
+      transition: box-shadow var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-out);
+    }
+  }
+  /* Forced colours drop the drawn track: the browser's own slider comes back. */
+  @media (forced-colors: active) {
+    .cap-range {
+      appearance: auto;
+    }
+  }
+
   /* Radios or checkboxes in a fieldset.cap-field: one per line. */
   .cap-field-options {
     display: grid;

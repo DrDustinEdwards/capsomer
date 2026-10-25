@@ -15,6 +15,8 @@
     /* A list's hover tint stays inside the rounded corners. Rings inside a panel are
        drawn inset (row-list, table) so nothing focusable is clipped. */
     overflow: clip;
+    /* A site's resting shadow (--card-shadow, none by default). */
+    box-shadow: var(--card-shadow);
 
     /* shadcn's Card size="sm", and its comfortable (vega) shadow. */
     &[data-size="sm"] {
@@ -29,6 +31,26 @@
     & > img:first-child {
       display: block;
       inline-size: 100%;
+    }
+  }
+
+  /* A panel that is a link, a card leading somewhere: its edge firms up under the pointer, and a
+     site may lift it (--card-lift) and turn the edge to the accent (--card-edge), as Recova's
+     cards did. Focus keeps the link's own ring. */
+  a.cap-panel {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &[data-force="hover"] {
+      border-color: color-mix(in srgb, var(--primary) calc(var(--card-edge) * 100%), var(--line-strong));
+      translate: 0 var(--card-lift);
+    }
+    &:hover,
+    &[data-force="hover"],
+    &:active {
+      color: inherit;
     }
   }
 
@@ -139,6 +161,21 @@
     border-top: 1px solid var(--line);
     background: color-mix(in srgb, var(--sunken) 50%, transparent);
     font-size: var(--fs-detail);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    a.cap-panel {
+      transition:
+        border-color var(--dur-base) var(--ease-out),
+        translate var(--dur-base) var(--ease-out),
+        box-shadow var(--dur-base) var(--ease-out);
+    }
+  }
+  /* Reduced motion keeps the edge and drops the lift. */
+  @media (prefers-reduced-motion: reduce) {
+    a.cap-panel:is(:hover, [data-force="hover"]) {
+      translate: none;
+    }
   }
 
   /* Forced colours remove the header's tint: a rule keeps the header apart. */

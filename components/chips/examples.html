@@ -109,3 +109,12 @@
   live.addEventListener("cap:filter-change", render);
   document.querySelector("#live-empty-clear").addEventListener("click", () => clearAll(live));
 </script>
+
+<section class="cap-specimen" aria-labelledby="s-solid">
+  <h2 id="s-solid">Solid, one of a few with All</h2>
+  <div class="cap-chips" data-variant="solid" role="group" aria-label="Filter features by product" id="chips-solid">
+    <button type="button" class="cap-chip" aria-pressed="true" data-value="All">All</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="Recovery" data-force="hover">Recovery</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="Disputes">Disputes</button>
+  </div>
+</section>

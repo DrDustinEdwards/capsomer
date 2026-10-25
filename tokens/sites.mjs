@@ -65,10 +65,12 @@ const SITES = {
     // 10px/14px inputs), 44px rows (py-3) and 20px card padding (p-5). Labels stay 11px, as
     // Recova's text-[0.6875rem]. Headings in DM Sans, as Recova's (Foxhound loads no Schibsted Grotesk).
     all: {
-      ui: '"DM Sans", sans-serif, Arial, sans-serif',
-      "font-ui": '"DM Sans", sans-serif, Arial, sans-serif',
-      mono: '"DM Mono", monospace',
-      display: '"DM Sans", sans-serif, Arial, sans-serif',
+      // "DM Sans Fallback" and "DM Mono Fallback" are Foxhound's metric-matched Arial faces
+      // (app.css), so a cold visit that keeps the fallback sets the same lines as the real face.
+      ui: '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
+      "font-ui": '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
+      mono: '"DM Mono", "DM Mono Fallback", monospace',
+      display: '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
       "fs-detail": "13px",
       "fs-body": "14px",
       control: "38px",
@@ -77,6 +79,12 @@ const SITES = {
       "pad-y": "8px",
       "pad-card": "20px",
       "row-h": "44px",
+      // Recova's 12px card corners and its hover touches: a linked card rises 4px and its edge
+      // turns amber (hover-spring), and the outlined button fills with amber from the left (btn-ghost).
+      "radius-l": "12px",
+      "card-lift": "-4px",
+      "card-edge": "1",
+      "btn-sweep": "1",
     },
     coarse: { control: "44px", "control-h": "44px" },
     dark: {
@@ -89,6 +97,8 @@ const SITES = {
       dim: "#928d87",
       line: "#2a2b28",
       "line-strong": "#4a4c44",
+      // Recova's card-elevated: a lit top edge over a drop shadow in dark, the drop shadow alone in light.
+      "card-shadow": "0 1px 0 0 rgb(255 255 255 / 6%) inset, 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%)",
     },
     light: {
       ground: "#f7f6f2",
@@ -100,6 +110,7 @@ const SITES = {
       dim: "#595c56",
       line: "#cccbc3",
       "line-strong": "#8a8a7e",
+      "card-shadow": "0 1px 3px 0 rgb(0 0 0 / 8%), 0 1px 2px 0 rgb(0 0 0 / 5%)",
     },
     waive: [
       {

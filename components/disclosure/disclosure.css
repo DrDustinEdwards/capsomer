@@ -123,6 +123,67 @@
     }
   }
 
+  /* The card look (Recova's questions list): each section its own rounded card, apart from the
+     next (the list sets the gap), the title roomy with a plus at the end that turns to a cross
+     when open, and no rule between the title and the answer. */
+  .cap-disclosure[data-variant="card"] {
+    border-radius: var(--radius-l);
+    overflow: clip;
+
+    &:has(+ .cap-disclosure) {
+      border-end-start-radius: var(--radius-l);
+      border-end-end-radius: var(--radius-l);
+    }
+    & + .cap-disclosure {
+      margin-block-start: 0;
+      border-start-start-radius: var(--radius-l);
+      border-start-end-radius: var(--radius-l);
+    }
+    & > summary {
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: calc(var(--pad-card) - 4px) var(--pad-card);
+      border-radius: 0;
+      font-size: var(--fs-lead);
+      font-weight: 500;
+
+      &::before {
+        content: none;
+      }
+      &::after {
+        content: "+";
+        flex: none;
+        color: var(--dim);
+        font-size: 1.125rem;
+        font-weight: 400;
+        line-height: 1;
+      }
+      &:hover,
+      &[data-force="hover"] {
+        background: transparent;
+      }
+      &:hover::after,
+      &[data-force="hover"]::after {
+        color: var(--text);
+      }
+      &:active,
+      &[data-force="pressed"] {
+        background: transparent;
+      }
+    }
+    &[open] > summary {
+      border-bottom: 0;
+
+      &::after {
+        rotate: 45deg;
+      }
+    }
+    & > .cap-disclosure-body {
+      padding: 0 var(--pad-card) calc(var(--pad-card) - 4px);
+      color: var(--muted);
+    }
+  }
+
   /* A group row: the button names what it holds and how many ("Notices, 4"). */
   .cap-group {
     display: grid;
@@ -217,6 +278,11 @@
     .cap-disclosure > summary::before,
     .cap-group-toggle::before {
       transition: transform var(--dur-fast) var(--ease-out);
+    }
+    .cap-disclosure > summary::after {
+      transition:
+        rotate var(--dur-base) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
     }
     .cap-disclosure::details-content {
       opacity: 0;

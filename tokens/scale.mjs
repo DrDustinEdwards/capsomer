@@ -85,6 +85,10 @@ export const SCALE = {
     ["theme-turn", "0deg", "the theme button turns this far under the pointer"],
     ["arrow-rest", "1", "a .cap-arrow's opacity at rest; 0 lets it slide in under the pointer"],
     ["arrow-shift", "0px", "how far back a .cap-arrow sits at rest"],
+    ["card-lift", "0px", "how far a linked panel (a.cap-panel) rises under the pointer; a negative length lifts it"],
+    ["card-edge", "0", "a linked panel's edge under the pointer: 0 the strong line, 1 the accent, between them a mix"],
+    ["card-shadow", "none", "a panel's resting shadow"],
+    ["btn-sweep", "0", "the default button fills with the primary colour from the left under the pointer: 0 off, 1 on"],
   ],
 };
 

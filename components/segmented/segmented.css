@@ -107,6 +107,75 @@
         flex: 1;
       }
     }
+    /* Cards (Recova's decline picker): each option its own bordered card, two to a row and all
+       on one row from 640px, its words left aligned and free to wrap (a name over a cause).
+       data-tone on an option tints it, when chosen, in that status colour: info, warn, crit,
+       ok or accent (the default). */
+    &[data-layout="cards"] {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-2);
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: none;
+
+      & > label {
+        --cap-seg-tone: var(--accent);
+        --cap-seg-tone-soft: var(--accent-soft);
+        --cap-seg-tone-text: var(--accent-text);
+        display: block;
+        min-height: var(--target);
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-m);
+        background: var(--ground);
+        color: var(--muted);
+        font-size: var(--fs-detail);
+        line-height: 1.35;
+        text-align: start;
+        white-space: normal;
+
+        &:hover,
+        &[data-force="hover"] {
+          border-color: var(--line-strong);
+          background: var(--ground);
+          color: var(--muted);
+        }
+        &:has(input:checked) {
+          border-color: var(--cap-seg-tone);
+          background: var(--cap-seg-tone-soft);
+          color: var(--cap-seg-tone-text);
+          font-weight: 500;
+          box-shadow: none;
+        }
+        &[data-tone="info"] {
+          --cap-seg-tone: var(--info);
+          --cap-seg-tone-soft: var(--info-soft);
+          --cap-seg-tone-text: var(--info);
+        }
+        &[data-tone="warn"] {
+          --cap-seg-tone: var(--warn);
+          --cap-seg-tone-soft: var(--warn-soft);
+          --cap-seg-tone-text: var(--warn);
+        }
+        &[data-tone="crit"] {
+          --cap-seg-tone: var(--crit);
+          --cap-seg-tone-soft: var(--crit-soft);
+          --cap-seg-tone-text: var(--crit);
+        }
+        &[data-tone="ok"] {
+          --cap-seg-tone: var(--ok);
+          --cap-seg-tone-soft: var(--ok-soft);
+          --cap-seg-tone-text: var(--ok);
+        }
+      }
+    }
+    @media (min-width: 640px) {
+      &[data-layout="cards"] {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
     /* A wrong choice: the radios carry aria-invalid, the message beside the control says why. */
     &:has(input[aria-invalid="true"]) {
       border-color: var(--crit);
@@ -142,7 +211,7 @@
      chosen segment draws its own highlight, as above, and nothing moves. */
   @supports (anchor-name: --a) and (anchor-scope: all) {
     @media (prefers-reduced-motion: no-preference) and (forced-colors: none) {
-      .cap-seg-options {
+      .cap-seg-options:not([data-layout="cards"]) {
         position: relative;
         anchor-scope: --cap-seg-on;
 

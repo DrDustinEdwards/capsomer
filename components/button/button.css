@@ -233,6 +233,20 @@
     box-shadow: var(--shadow-xs);
   }
 
+  /* A site's sweep (--btn-sweep, off by default): under the pointer the default button fills with
+     the primary colour from the left and its label and edge turn to match, as Recova's ghost
+     button did. Off, the fill has no width and nothing changes. */
+  .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(:disabled, [aria-disabled="true"]) {
+    background-image: linear-gradient(var(--primary), var(--primary));
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+
+    &:is(:hover, [data-force="hover"]) {
+      --cap-btn-fg: color-mix(in srgb, var(--primary-fg) calc(var(--btn-sweep) * 100%), var(--text));
+      --cap-btn-line: color-mix(in srgb, var(--primary) calc(var(--btn-sweep) * 100%), var(--line-strong));
+      background-size: calc(var(--btn-sweep) * 100%) 100%;
+    }
+  }
   /* The reason a button is disabled, written beside it. */
   .cap-btn-reason {
     color: var(--muted);
@@ -338,6 +352,7 @@
         border-color var(--dur-fast) var(--ease-out),
         background-color var(--dur-fast) var(--ease-out),
         color var(--dur-fast) var(--ease-out),
+        background-size var(--dur-slow) var(--ease-in-out),
         scale var(--dur-slow) var(--ease-spring);
     }
     /* The press: down to 97% at once, back on a spring when released (Emil Kowalski's 0.97, Arc's

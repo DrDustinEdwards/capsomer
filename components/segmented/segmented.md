@@ -4,7 +4,7 @@ title: Segmented control
 summary: Choose one of two to five options, all in view, drawn as one control over real radio inputs.
 parts: [css, react]
 tool: native
-states: [default with nothing chosen, one selected, hover, keyboard focus, a disabled option, legend hidden, small and large, icons, vertical, filling the row, invalid]
+states: [default with nothing chosen, one selected, hover, keyboard focus, a disabled option, legend hidden, small and large, icons, vertical, filling the row, invalid, cards with tones]
 added: 0.1.0
 updated: 0.2.0
 source: The approved mockup (design/mockup.html, .seg); the Capsid Portal's .seg rules (0.1.1) agree with it
@@ -77,18 +77,18 @@ In React, `import { Segmented } from "capsomer/react/segmented"`:
 ]} />
 ```
 
-Sizes, stacking and the rest are attributes on `.cap-seg-options`: `data-size="sm|lg"`, `data-orientation="vertical"`, `data-fill`. An icon sits in the label before the word (`<svg aria-hidden="true">`). A wrong choice puts `aria-invalid="true"` on the radios and a `.cap-field-error` beside the control that the fieldset is described by.
+Sizes, stacking and the rest are attributes on `.cap-seg-options`: `data-size="sm|lg"`, `data-orientation="vertical"`, `data-fill`, `data-layout="cards"` (each option its own bordered card, two to a row and four from 640px, left aligned and wrapping, for a choice whose options carry a line of explanation; `data-tone="info|warn|crit|ok"` on a label tints it in that status colour when chosen, the accent otherwise). An icon sits in the label before the word (`<svg aria-hidden="true">`). A wrong choice puts `aria-invalid="true"` on the radios and a `.cap-field-error` beside the control that the fieldset is described by.
 
 ## Matches
 
-shadcn/ui `ToggleGroup` (single choice) and the default style of `Tabs`' list: a tray with the chosen segment raised in it. Sizes `sm`, default, `lg`, vertical orientation and icons come from the toggle group; the 1 px press and hover tints from its toggle. In React, `Segmented` takes `size`, `orientation`, `fill` and `invalid`.
+shadcn/ui `ToggleGroup` (single choice) and the default style of `Tabs`' list: a tray with the chosen segment raised in it. Sizes `sm`, default, `lg`, vertical orientation and icons come from the toggle group; the 1 px press and hover tints from its toggle. In React, `Segmented` takes `size`, `orientation`, `fill`, `layout` and `invalid`, and each option an optional `tone`.
 
 ## Deliberate differences
 
 - **Radios, not toggle buttons.** shadcn's ToggleGroup uses `aria-pressed` buttons with a roving tab index; here the native radio group gives one tab stop, arrows that choose, and form submission, with no script.
 - **The chosen segment has an accent edge** (3:1) as well as the raised fill; shadcn's chosen state is a `bg-muted` tint, which fails 3:1.
 - **A disabled option is struck through** and explained, instead of half opacity.
-- **No outline variant or spacing prop**: the one-tray look is the only one; `data-fill` covers a full-width row.
+- **No outline variant or spacing prop**: the tray and the cards layout are the two looks; `data-fill` covers a full-width row.
 - **It is not a tab list.** It changes a value; tabs that show panels are not built here.
 
 ## Exceptions in production

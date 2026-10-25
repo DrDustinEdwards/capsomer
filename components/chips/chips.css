@@ -103,6 +103,26 @@
     }
   }
 
+  /* Solid (Recova's product filter): the pressed chip fills with the primary colour and drops
+     the tick, as a one-of-a-few filter where "All" is a value; under the pointer an unpressed
+     chip's edge turns to the accent. Set data-variant="solid" on the .cap-chips group. */
+  .cap-chips[data-variant="solid"] > .cap-chip {
+    &:where(:hover, [data-force="hover"]):not([aria-pressed="true"]) {
+      border-color: var(--accent-text);
+      background: var(--surface);
+    }
+    &[aria-pressed="true"],
+    &[aria-pressed="true"]:where(:hover, [data-force="hover"]) {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: var(--primary-fg);
+
+      &::before {
+        content: none;
+      }
+    }
+  }
+
   /* Link chips in a list (a filter kept in the address): the list's own marks and indent go. */
   ul.cap-chips {
     margin: 0;

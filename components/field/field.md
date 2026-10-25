@@ -4,7 +4,7 @@ title: Field
 summary: A labelled input, textarea, file input, checkbox, radio or input group, with help outside it and an error beside it, checked on leave and on submit.
 parts: [css, behaviour, react]
 tool: native + own JavaScript
-states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card]
+states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
@@ -34,6 +34,7 @@ Any form: a site's settings, a new job, a post's metadata, the one-line reason o
 ## The default and its reason
 
 - **The label is visible and above the control.** A placeholder is an example only ("For example: capsid-driver"), never the label: it disappears as soon as someone types.
+- **A slider** (`input.cap-range`, React `Range`) is a native range input on a 4 px track that fills with the primary colour up to the thumb, from `--cap-range-fill` (React sets it from the value). The 20 px thumb grows a soft ring under the pointer, takes the focus ring on a keyboard and shrinks a little while held; forced colours bring the browser's own slider back.
 - **Help sits outside the control**, between the label and the control, and is the control's description.
 - **Required is marked with the word "Required"** beside the label (hidden from screen readers, which already hear the `required` attribute). Optional fields are not marked.
 - **A field is checked when it is left, once it has been changed, and every field on submit.** Tabbing through an empty form does not fill it with errors. A field showing an error is checked again as it is typed in, so the message goes as soon as it is fixed.

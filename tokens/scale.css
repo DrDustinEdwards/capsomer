@@ -56,6 +56,10 @@
   --theme-turn: 0deg;
   --arrow-rest: 1;
   --arrow-shift: 0px;
+  --card-lift: 0px;
+  --card-edge: 0;
+  --card-shadow: none;
+  --btn-sweep: 0;
   --control-h-coarse: 44px;
   --face: var(--ui);
 }
