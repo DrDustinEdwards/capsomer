@@ -1,19 +1,25 @@
-// The public page's script (site/home.ts writes the page; it reads whole without this). The header and
-// its theme button are Capsomer's own site header; the rest is the page's: the family preview, the
-// component filter, the copy button and the live test count.
+// The public pages' script (site/home.ts writes them; they read whole without it). The header and its
+// theme button are Capsomer's own site header; the rest is the front page's: the family preview, the
+// type sample, the component filter, the copy button and the live test count.
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
 
 enhanceHeader();
 enhanceTheme();
 
-// The preview takes the chosen family as a site would, with data-family (purple is the default, so none).
+// The preview takes the chosen family as a site would, with data-family (purple is the default, so
+// none), crossfading where the browser has view transitions and motion is allowed (site/home.css).
 const stage = document.querySelector<HTMLElement>("[data-cap-part='stage']");
+const still = matchMedia("(prefers-reduced-motion: reduce)");
 for (const input of document.querySelectorAll<HTMLInputElement>("input[name='home-family']")) {
   input.addEventListener("change", () => {
     if (!stage) return;
-    if (input.value === "purple") delete stage.dataset.family;
-    else stage.dataset.family = input.value;
+    const apply = () => {
+      if (input.value === "purple") delete stage.dataset.family;
+      else stage.dataset.family = input.value;
+    };
+    if (document.startViewTransition && !still.matches) document.startViewTransition(apply);
+    else apply();
   });
 }
 // The preview's chips and switch respond, so the panel behaves like the components it shows.
@@ -24,6 +30,17 @@ for (const sw of document.querySelectorAll<HTMLInputElement>(".home-try .cap-swi
   sw.addEventListener("change", () => {
     const state = sw.parentElement?.querySelector(".cap-switch-state");
     if (state) state.textContent = sw.checked ? "On" : "Off";
+  });
+}
+
+// Your own words in every size of the type scale.
+const sample = document.querySelector<HTMLElement>("[data-cap-part='sample']");
+if (sample) {
+  sample.hidden = false;
+  const input = sample.querySelector("input");
+  const specimens = document.querySelectorAll<HTMLElement>(".home-scale-sample");
+  input?.addEventListener("input", () => {
+    for (const el of specimens) el.textContent = input.value.trim() || "Phage λ";
   });
 }
 

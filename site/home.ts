@@ -1,7 +1,8 @@
-// The public page at the root of https://capsomer.dustinedwards.info, written into site/home.html
-// at build time (site/vite.config.ts), so it is whole HTML that reads without a script; site/home-main.ts
-// adds the header's behavior, the family preview, the component filter, the copy button and the live
-// test count, and site/redirect.ts sends old admin links on. Its look is Supergraphics (Barbara Stauffacher Solomon, The Sea Ranch, 1966):
+// The public pages of https://capsomer.dustinedwards.info: the front page, written into site/home.html,
+// and each component's page at /components/<name>/, written into a copy of site/component.html, both at
+// build time (site/vite.config.ts), so they are whole HTML that reads without a script; site/home-main.ts
+// adds the header's behavior, the family preview, the type sample, the component filter, the copy button
+// and the live test count, and site/redirect.ts sends old admin links on. Its look is Supergraphics (Barbara Stauffacher Solomon, The Sea Ranch, 1966):
 // flat letter tiles too big for the page, cut by its edge, painted in Capsomer's own families.
 // The dashboard of tests, pairs and changes is the admin at /admin/ (site/main.tsx).
 import { readFileSync, readdirSync, existsSync } from "node:fs";
@@ -16,6 +17,12 @@ interface Component {
   name: string;
   title: string;
   summary: string;
+  // The whole summary, the doc page's body under its title, and its facts, for the component's own page.
+  lead: string;
+  body: string;
+  parts: string[];
+  added: string;
+  states: number;
 }
 interface Data {
   version: string;
@@ -41,10 +48,21 @@ export function readData(root: string): Data {
   const components = readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory() && existsSync(resolve(dir, d.name, `${d.name}.md`)))
     .map((d) => {
-      const { data } = frontmatter(readFileSync(resolve(dir, d.name, `${d.name}.md`), "utf8"));
+      const { data, body } = frontmatter(readFileSync(resolve(dir, d.name, `${d.name}.md`), "utf8"));
       const str = (k: string) => (typeof data[k] === "string" ? (data[k] as string) : "");
-      // The summary's first sentence: the page lists every component, so each says one thing.
-      return { name: d.name, title: str("title") || d.name, summary: str("summary").replace(/^(.+?[.!?])\s.*$/s, "$1") };
+      const list = (k: string) => (Array.isArray(data[k]) ? (data[k] as string[]) : []);
+      return {
+        name: d.name,
+        title: str("title") || d.name,
+        // The summary's first sentence: the page lists every component, so each says one thing.
+        summary: str("summary").replace(/^(.+?[.!?])\s.*$/s, "$1"),
+        lead: str("summary"),
+        // Without its title, and without an "Exceptions in production" that has none to list.
+        body: body.replace(/^\s*#\s+.*\n/, "").replace(/\n## Exceptions in production\n+None yet\.\n?/, "\n"),
+        parts: list("parts"),
+        added: str("added") || "0.1.0",
+        states: list("states").length,
+      };
     })
     .sort((a, b) => a.title.localeCompare(b.title));
   const fams = json(resolve(root, "site/data/families.json"));
@@ -86,6 +104,46 @@ function band(word: string, families: Family[], size: "cover" | "section") {
   return `<div class="home-band" data-size="${size}"${one ? fam(families[0] as Family) : " data-mix"} aria-hidden="true"><p class="home-band-word">${tiles}</p><p class="home-band-stripe">${stripe}</p></div>`;
 }
 
+/** The site header every public page shares: its section links go to the front page's sections, so `base` is "" there and "/" elsewhere. */
+function header(base: string): string {
+  const links: Array<[string, string]> = [["color", "Color"], ["type", "Type"], ["components", "Components"], ["defaults", "Defaults"], ["use", "Install"]];
+  return `<header class="cap-site-header" data-cap="site-header" data-links="right" data-markup="">
+  <a class="cap-site-header-skip" href="#main">Skip to content</a>
+  <a class="cap-site-header-logo home-logo" href="/" aria-label="Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span aria-hidden="true">Capsomer</span></a>
+  <nav class="cap-site-header-sections" aria-label="Sections"><ul>
+    ${links.map(([h, t]) => `<li><a class="cap-site-header-link" href="${base}#${h}">${t}</a></li>`).join("")}
+  </ul></nav>
+  <div class="cap-site-header-tools">
+    <button type="button" class="cap-theme-button cap-site-header-icon cap-site-header-theme" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
+      <svg class="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
+      <svg class="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+      <span class="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-theme-tip-text">Switch to dark theme</span><kbd>T</kbd></span>
+    </button>
+    <button type="button" class="cap-site-header-icon cap-site-header-menu" aria-label="Menu" aria-haspopup="dialog" aria-expanded="false" aria-controls="home-sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></button>
+  </div>
+  <dialog class="cap-dialog cap-site-header-sheet" data-cap="dialog" data-placement="bottom" data-size="md" id="home-sheet" aria-labelledby="home-sheet-title">
+    <div class="cap-dialog-header"><h2 id="home-sheet-title" class="cap-dialog-title cap-site-header-sheet-title" tabindex="-1">Capsomer</h2></div>
+    <div class="cap-dialog-body">
+      <nav aria-labelledby="home-sheet-title"><ul class="cap-site-header-sheet-list">
+        ${links.map(([h, t]) => `<li><a href="${base}#${h}"><span class="cap-site-header-sheet-name">${t}</span></a></li>`).join("")}
+      </ul></nav>
+    </div>
+    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only="" data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+  </dialog>
+</header>`;
+}
+
+const FOOTER = `<footer class="home-foot">
+  <div class="home-wrap">
+    <ul>
+      <li><a href="/admin/">Admin</a></li>
+      <li><a href="https://github.com/DrDustinEdwards/capsomer">Source</a></li>
+      <li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li>
+      <li><a href="https://dustinedwards.info">Dustin Edwards</a></li>
+    </ul>
+  </div>
+</footer>`;
+
 export function renderHome(d: Data): string {
   const install = `"capsomer": "github:DrDustinEdwards/capsomer#v${d.version}"
 
@@ -101,31 +159,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   // The test count: the build's own when it has one; otherwise the last run on main, read by
   // site/home-main.ts from the results branch, so the deployed page never claims a number it lacks.
   const tests = d.tests ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>` : `<li data-family="forest" data-live="tests" hidden><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
-  const links: Array<[string, string]> = [["#color", "Color"], ["#type", "Type"], ["#components", "Components"], ["#defaults", "Defaults"], ["#use", "Install"]];
-  return `<header class="cap-site-header" data-cap="site-header" data-links="right" data-markup="">
-  <a class="cap-site-header-skip" href="#main">Skip to content</a>
-  <a class="cap-site-header-logo home-logo" href="/" aria-label="Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span aria-hidden="true">Capsomer</span></a>
-  <nav class="cap-site-header-sections" aria-label="Sections"><ul>
-    ${links.map(([h, t]) => `<li><a class="cap-site-header-link" href="${h}">${t}</a></li>`).join("")}
-  </ul></nav>
-  <div class="cap-site-header-tools">
-    <button type="button" class="cap-theme-button cap-site-header-icon cap-site-header-theme" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
-      <svg class="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
-      <svg class="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
-      <span class="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-theme-tip-text">Switch to dark theme</span><kbd>T</kbd></span>
-    </button>
-    <button type="button" class="cap-site-header-icon cap-site-header-menu" aria-label="Menu" aria-haspopup="dialog" aria-expanded="false" aria-controls="home-sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></button>
-  </div>
-  <dialog class="cap-dialog cap-site-header-sheet" data-cap="dialog" data-placement="bottom" data-size="md" id="home-sheet" aria-labelledby="home-sheet-title">
-    <div class="cap-dialog-header"><h2 id="home-sheet-title" class="cap-dialog-title cap-site-header-sheet-title" tabindex="-1">Capsomer</h2></div>
-    <div class="cap-dialog-body">
-      <nav aria-labelledby="home-sheet-title"><ul class="cap-site-header-sheet-list">
-        ${links.map(([h, t]) => `<li><a href="${h}"><span class="cap-site-header-sheet-name">${t}</span></a></li>`).join("")}
-      </ul></nav>
-    </div>
-    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only="" data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
-  </dialog>
-</header>
+  return `${header("")}
 <main id="main" tabindex="-1">
 <section class="home-cover" aria-labelledby="top-h">
   ${band("Capsomer", FAMILIES, "cover")}
@@ -210,6 +244,10 @@ import "capsomer/button.css";       // each component's CSS, as used`;
       <figure data-face="mono"><p aria-hidden="true">Aa</p><figcaption><b>Martian Mono</b> for identifiers and code</figcaption></figure>
       <figure data-face="prose"><p aria-hidden="true">Aa</p><figcaption><b>Source Serif 4</b> for long reading</figcaption></figure>
     </div>
+    <div class="cap-field home-sample" data-cap-part="sample" hidden>
+      <label class="cap-field-label" for="home-sample">Try your own words</label>
+      <input class="cap-input" id="home-sample" autocomplete="off" maxlength="60" value="Phage λ" />
+    </div>
     <ol class="home-scale">
       ${d.type.map(([name, value, note]) => `<li><span class="home-scale-sample" data-fs="${esc(name)}">Phage λ</span><code>--${esc(name)}</code><span>${esc(value)}</span><span class="home-muted">${esc(note)}</span></li>`).join("\n      ")}
     </ol>
@@ -220,14 +258,14 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   ${band("Components", ["purple"], "section")}
   <div class="home-wrap">
     <h2 id="components-h">${d.components.length} components, every state on show</h2>
-    <p class="home-sub">Each one is built once and shared by every app. Open any of them for how to use it, every state it has in light and dark, and its test results.</p>
+    <p class="home-sub">Each one is built once and shared by every app. Open any of them for how to use it and every state it has, in light and dark.</p>
     <div class="home-find" data-cap-part="find" hidden>
       <label class="cap-field-label" for="home-find">Find a component</label>
       <input class="cap-input" id="home-find" type="search" autocomplete="off" aria-describedby="home-find-n" />
       <p class="home-muted" id="home-find-n" role="status">${d.components.length} components</p>
     </div>
     <ul class="home-parts">
-      ${d.components.map((c) => `<li><a href="/components/${esc(c.name)}/states">${esc(c.title)}</a><span>${prose(c.summary)}</span></li>`).join("\n      ")}
+      ${d.components.map((c) => `<li><a href="/components/${esc(c.name)}/">${esc(c.title)}</a><span>${prose(c.summary)}</span></li>`).join("\n      ")}
     </ul>
   </div>
 </section>
@@ -255,14 +293,47 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   </div>
 </section>
 </main>
-<footer class="home-foot">
-  <div class="home-wrap">
-    <ul>
-      <li><a href="/admin/">Admin</a></li>
-      <li><a href="https://github.com/DrDustinEdwards/capsomer">Source</a></li>
-      <li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li>
-      <li><a href="https://dustinedwards.info">Dustin Edwards</a></li>
-    </ul>
+${FOOTER}`;
+}
+
+
+/** A component's own public page at /components/<name>/: what it is, every state in both themes, then how to use it, from its doc page. */
+export function renderComponent(d: Data, name: string): string {
+  const i = d.components.findIndex((c) => c.name === name);
+  const c = d.components[i];
+  if (!c) throw new Error(`no component ${name}`);
+  const prev = d.components[i - 1];
+  const next = d.components[i + 1];
+  const states = `/components/${esc(c.name)}/states.html`;
+  return `${header("/")}
+<main id="main" tabindex="-1">
+<section aria-labelledby="comp-h">
+  ${band("Components", ["purple"], "section")}
+  <div class="home-wrap home-comp-head">
+    <nav class="home-trail" aria-label="Breadcrumb"><ol><li><a href="/#components">Components</a></li><li><span aria-current="page">${esc(c.title)}</span></li></ol></nav>
+    <h1 id="comp-h">${esc(c.title)}</h1>
+    <p class="home-lead">${prose(c.lead)}</p>
+    <dl class="home-facts">
+      <div><dt>States</dt><dd>${c.states}</dd></div>
+      <div><dt>Parts</dt><dd>${esc(c.parts.join(", ") || "css")}</dd></div>
+      <div><dt>Since</dt><dd>${esc(c.added)}</dd></div>
+    </dl>
   </div>
-</footer>`;
+</section>
+<section class="home-wrap" aria-labelledby="states-h">
+  <h2 id="states-h">Every state, in both themes</h2>
+  <div class="home-frames">
+    ${(["light", "dark"] as const).map((t) => `<figure><figcaption>${t === "light" ? "Light" : "Dark"}</figcaption><iframe src="${states}?theme=${t}" title="${esc(c.title)} states, ${t} theme" loading="lazy"></iframe></figure>`).join("\n    ")}
+  </div>
+  <p class="home-muted"><a href="${states}">Open the states page on its own</a></p>
+</section>
+<article class="home-wrap home-doc" aria-label="How to use ${esc(c.title)}">
+${renderMarkdown(c.body, 0)}
+</article>
+<nav class="home-wrap home-pager" aria-label="More components">
+  ${prev ? `<a href="/components/${esc(prev.name)}/" rel="prev"><span>Previous</span>${esc(prev.title)}</a>` : "<span></span>"}
+  ${next ? `<a href="/components/${esc(next.name)}/" rel="next"><span>Next</span>${esc(next.title)}</a>` : "<span></span>"}
+</nav>
+</main>
+${FOOTER}`;
 }
