@@ -63,20 +63,20 @@
    changes its subtree. Literals in every block, so a wrapper never inherits a stale value. */
 :root,
 [data-density="compact"] {
-  --control: 32px;
-  --control-h: 32px;
+  --control: 34px;
+  --control-h: 34px;
   --target: 24px;
-  --pad-x: 11px;
-  --pad-y: 6px;
-  --pad-card: 16px;
+  --pad-x: 12px;
+  --pad-y: 7px;
+  --pad-card: 20px;
   --fs-label: 11px;
-  --fs-detail: 12px;
-  --fs-body: 13px;
+  --fs-detail: 13px;
+  --fs-body: 14px;
   --fs-lead: 15px;
-  --gap: 12px;
-  --row-h: 36px;
+  --gap: 14px;
+  --row-h: 40px;
   --text-size: var(--fs-body);
-  --leading: 1.45;
+  --leading: 1.5;
 }
 [data-density="comfortable"] {
   --control: 36px;
