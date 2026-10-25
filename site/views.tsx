@@ -1,4 +1,4 @@
-// The site's type, motion, tests, defaults, changes and settings views (main.tsx).
+// The site's type, motion, tests, defaults and changes views (main.tsx).
 
 import { useState, type ReactNode } from "react";
 import { COMPONENTS, SCALES } from "./data.ts";
@@ -112,11 +112,20 @@ export function TestsView() {
           <span className="cap-muted">CI runs the tests on every push to main and builds this page from the results.</span>
         </div>
       ) : (
-        entries.map(([name, r]) => (
-          <Panel key={name} title={COMPONENTS.find((c) => c.name === name)?.title ?? name} id={`t-${name}`} src={<Verdict passed={r.keyboard.passed + r.accessibility.passed + r.behavior.passed} failed={r.keyboard.failed + r.accessibility.failed + r.behavior.failed} />}>
-            <TestList rows={r.tests} />
-          </Panel>
-        ))
+        entries.map(([name, r]) => {
+          const failed = r.keyboard.failed + r.accessibility.failed + r.behavior.failed;
+          return (
+            <Panel key={name} title={COMPONENTS.find((c) => c.name === name)?.title ?? name} id={`t-${name}`} src={<Verdict passed={r.keyboard.passed + r.accessibility.passed + r.behavior.passed} failed={failed} />}>
+              {/* Closed while every test passes: 1,800 passing rows bury the one that failed. */}
+              <details className="cap-disclosure" open={failed > 0}>
+                <summary>{`Every test: ${r.keyboard.passed + r.keyboard.failed} keyboard, ${r.accessibility.passed + r.accessibility.failed} accessibility, ${r.behavior.passed + r.behavior.failed} behavior`}</summary>
+                <div className="cap-disclosure-body">
+                  <TestList rows={r.tests} />
+                </div>
+              </details>
+            </Panel>
+          );
+        })
       )}
     </div>
   );
@@ -126,23 +135,6 @@ export function MarkdownView({ title, md }: { title: string; md: string }) {
   return (
     <div className="site-page">
       <article className="site-doc" dangerouslySetInnerHTML={{ __html: renderMarkdown(md || `# ${title}\n\nNothing yet.`, 0) }} />
-    </div>
-  );
-}
-
-export function SettingsView() {
-  return (
-    <div className="site-page">
-      <div className="site-head">
-        <h1>Settings</h1>
-        <p>Preferences for this browser only. Nothing here is sent anywhere.</p>
-      </div>
-      <Panel title="Theme" id="theme">
-        <p>The Light and Dark switch at the right of the top bar changes the theme. The first visit follows your device; your first choice is remembered in this browser.</p>
-      </Panel>
-      <Panel title="Menu" id="rail">
-        <p>The button at the top of the left strip collapses the menu to icons, and the [ key does the same. This browser remembers the choice.</p>
-      </Panel>
     </div>
   );
 }

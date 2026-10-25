@@ -358,7 +358,9 @@ async function siteData() {
       const f = suite.file ?? file;
       const th = /^(light|dark) theme$/.exec(suite.title ?? "")?.[1] ?? theme;
       for (const spec of suite.specs ?? []) {
-        const m = /^components\/([\w-]+)\//.exec((f ?? "").replace(/\\/g, "/")) ?? /^site\//.exec((f ?? "").replace(/\\/g, "/"));
+        // The spec's own file: a describe block made by a shared helper (eachTheme) names the helper's file.
+        const path = (spec.file ?? f ?? "").replace(/\\/g, "/");
+        const m = /^components\/([\w-]+)\//.exec(path) ?? /^site\//.exec(path);
         const comp = m?.[1] ?? "site";
         const kind = /^(keyboard|accessibility|behavior):/.exec(spec.title)?.[1] ?? "behavior";
         for (const t of spec.tests ?? []) {
