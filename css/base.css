@@ -1,6 +1,9 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
+/* The utility classes (.cap-sr-only and friends), also exported alone as capsomer/utilities.css. */
+@import "./utilities.css";
+
 /* Element defaults every component assumes. Layered, so an app that keeps its own body
    or link styles wins without a fight. */
 @layer cap.reset {
@@ -102,37 +105,6 @@
       animation-iteration-count: 1 !important;
       scroll-behavior: auto !important;
     }
-  }
-}
-
-@layer cap.utilities {
-  /* Text a screen reader announces and the eye does not see. */
-  .cap-sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  /* Identifiers only: ids, shas, commands, paths. Times and counts are .cap-num. */
-  .cap-mono {
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: -0.01em;
-  }
-  .cap-num {
-    font-variant-numeric: tabular-nums;
-  }
-  .cap-muted {
-    color: var(--muted);
-  }
-  .cap-label {
-    font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--muted);
   }
 }
 

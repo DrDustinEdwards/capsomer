@@ -252,7 +252,7 @@ async function size() {
     if (total > BUDGET.css * 2) warn.push(`CSS carrying Capsomer is ${kb(total)} gzip; Capsomer's own share should stay near ${kb(BUDGET.css)}.`);
   } else {
     const read = (...p) => readFileSync(join(PKG, ...p));
-    const base = gz(Buffer.concat([read("css", "layers.css"), read("tokens", "colour.css"), read("tokens", "scale.css"), read("css", "base.css")]));
+    const base = gz(Buffer.concat([read("css", "layers.css"), read("tokens", "colour.css"), read("tokens", "scale.css"), read("css", "base.css"), read("css", "utilities.css")]));
     rows.push(["base", "layers, tokens, base", base]);
     if (base > BUDGET.base) warn.push(`Tokens, layers and base are ${kb(base)} gzip, over ${kb(BUDGET.base)}.`);
     let all = base;

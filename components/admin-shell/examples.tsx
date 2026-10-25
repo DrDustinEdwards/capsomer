@@ -1,5 +1,5 @@
 // Mounts the admin shell specimens. Every element with data-mount="<state>" gets that state.
-import { StrictMode, useEffect, useState, type ReactNode } from "react";
+import { StrictMode, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import { showTip } from "../tooltip/tooltip.ts";
@@ -185,6 +185,27 @@ function Transitioning() {
   );
 }
 
+// An app whose routes set their own tab titles: the shell leaves document.title alone, even as
+// the page changes. A layout effect runs before the shell's own effect would, so the shell, were
+// it still writing, would win.
+function OwnTitle() {
+  const [page, setPage] = useState(0);
+  useLayoutEffect(() => {
+    document.title = `${PAGES[page]} - the app's own title`;
+  }, [page]);
+  const entries = nav.map((e) => ({ ...e, current: e.id === PAGES[page] }));
+  return (
+    <AdminShell {...base} nav={entries} page={entries.find((e) => e.current)?.label} documentTitle={false} prefKey={key("own-title")}>
+      <div className="cap-admin-page">
+        <h1 data-testid="page-title">{PAGES[page]}</h1>
+        <button type="button" className="cap-btn" onClick={() => setPage((page + 1) % PAGES.length)}>
+          Next page
+        </button>
+      </div>
+    </AdminShell>
+  );
+}
+
 // Foxhound's mark: today's x beside the two alternatives, for Dustin to pick from.
 function FoxhoundMarks() {
   const today = FAMILY_APPS.find((a) => a.id === "foxhound")?.logo;
@@ -219,6 +240,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
     </div>
   ),
   transition: () => <Transitioning />,
+  "own-title": () => <OwnTitle />,
   // An app that passes only `app`: the strip still lists all seven, each with its real mark.
   minimal: () => (
     <AdminShell app="foxhound" nav={nav} page={FIRST_PAGE} prefKey={key("minimal")}>
