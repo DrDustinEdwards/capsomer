@@ -434,7 +434,7 @@ h2 {
 
   & li {
     display: grid;
-    grid-template-columns: minmax(8rem, 13rem) 10rem minmax(7rem, 16rem) minmax(0, 1fr);
+    grid-template-columns: minmax(8rem, 15rem) 10rem minmax(7rem, 16rem) minmax(0, 1fr);
     gap: var(--space-4);
     align-items: baseline;
     padding-block: var(--space-3);
@@ -456,8 +456,10 @@ h2 {
     }
   }
 }
+/* A sample wraps in its own column, whatever words someone types into it. */
 .home-scale-sample {
-  white-space: nowrap;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 [data-fs="fs-label"] { font-size: var(--fs-label); }
 [data-fs="fs-detail"] { font-size: var(--fs-detail); }
