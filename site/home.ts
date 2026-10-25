@@ -227,7 +227,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
       <p class="home-muted" id="home-find-n" role="status">${d.components.length} components</p>
     </div>
     <ul class="home-parts">
-      ${d.components.map((c) => `<li><a href="/admin/#/components/${esc(c.name)}">${esc(c.title)}</a><span>${prose(c.summary)}</span></li>`).join("\n      ")}
+      ${d.components.map((c) => `<li><a href="/components/${esc(c.name)}/states">${esc(c.title)}</a><span>${prose(c.summary)}</span></li>`).join("\n      ")}
     </ul>
   </div>
 </section>

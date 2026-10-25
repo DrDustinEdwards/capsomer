@@ -7,7 +7,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Site only: a critical pass over the public page and the admin** (Dustin, 2026-10-25: "critically evaluate every aspect of the site"). Public page:
   - It uses Capsomer's own site header, with the theme button (and `T`), the phone sheet and a skip link. Before, it had a plain bar of its own and no theme control.
   - A live family preview: real components that take the chosen family through `data-family`.
-  - A filter over the components. Each component now links to its admin page (how to use it, its states and its tests), not the bare states page.
+  - A filter over the components. Each component links to its public states page, so nothing on the public page sends a visitor into the admin except the footer's Admin link.
   - Every default opens to its reason. The heading promised reasons the page did not show.
   - A copy button on the install lines.
   - The test count is read from the last run on main. The deployed build has no results of its own, so the figure was missing.
