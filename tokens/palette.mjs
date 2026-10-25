@@ -259,7 +259,7 @@ function familyTheme(seed, anchor, scheme, label = "light") {
   // ring, large shapes and icons, held to 3:1); step 11 is accent text (4.5:1); the primary
   // button fills with step 10, hovers to step 11, and carries --primary-fg: the surface tone
   // in light, the ground tone in dark (a lighter fill takes a dark label). A family with a dark
-  // label (amber) fills with step 9 in light and hovers to step 10, with the dark ground as its label,
+  // label (amber) fills with step 9 and hovers to step 10 in both themes, with the dark ground as its label,
   // as Recova's amber button kept one near-black label in both themes.
   t.accent = s[8];
   t["accent-hover"] = s[11]; // accent text on hover: step 12
@@ -267,7 +267,7 @@ function familyTheme(seed, anchor, scheme, label = "light") {
   t["accent-soft"] = s[3];
   t.sel = s[2];
   t["accent-line"] = tune(0.1, H, t.sel, CONTROL, dark ? 0.2 : 0.9, dark ? 0.9 : 0.3);
-  const darkLabel = label === "dark" && !dark;
+  const darkLabel = label === "dark";
   t.primary = darkLabel ? s[8] : s[9];
   t["primary-hover"] = darkLabel ? s[9] : s[10];
   t["primary-fg"] = dark || darkLabel ? oklch(0.16, NEUTRAL_CHROMA, H) : t.surface; // the dark ground, in either theme

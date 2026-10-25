@@ -143,7 +143,7 @@ export const emailColours: Record<EmailFamily, { light: EmailColours; dark: Emai
       "text": "#f1eee9",
       "muted": "#9a958c",
       "accent-text": "#f0b429",
-      "primary": "#ffc54a",
+      "primary": "#f0b429",
       "primary-fg": "#100d08",
       "ok": "#4aa462",
       "ok-soft": "#15301b",
