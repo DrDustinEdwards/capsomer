@@ -52,9 +52,9 @@ export const STORAGE_KEY = "cap-compare-view";
 
 const RUN_LABEL: Record<RunKind, string> = { you: "You", ai: "AI", quoted: "Quoted" };
 
-export function esc(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+import { escapeHtml as esc } from "../email/email.ts";
+
+export { esc };
 
 export const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 export const sr = (s: string) => `<span class="cap-sr-only"> ${s} </span>`;

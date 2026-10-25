@@ -55,6 +55,17 @@ A public reading page may leave the choice to the system and show no control.
 - **The chosen segment has one marker, a fill**: the dark fill of the admin menu's selected page (`--accent-12`, its word in `--ground` and set heavier), over 3:1 against the ground in both themes, so no second mark (an underline) is needed (Dustin, 2026-10-11: one marker). The control's edge is `--dim`, which reaches 3:1 on the ground tone of the top bar; `--line-strong` does not.
 - **Density**: the segments are one control tall (`--control`, 44 px on a touch screen), so `data-density="comfortable"` on the top bar or the root makes them larger.
 
+## A server-rendered site
+
+`capsomer/theme-server` is the switch's server half, with no DOM, for a Worker or Node:
+
+- `readThemeCookie(requestOrCookieHeader, name = "theme")`: the remembered choice, or `null` (follow the system). A malformed cookie is `null`, never an error.
+- `themeCookie(choice, { name, maxAge, secure })`: the `Set-Cookie` value, a year, `Path=/`, `SameSite=Lax`, `Secure`.
+- `colorSchemeContent(choice)`: the `<meta name="color-scheme">` content, the choice or `light dark`.
+- `themeScript(key = "cap-theme")`: the inline pre-paint script below, as text, so a site hashes exactly what it sends.
+
+A site keeps its own cookie name (txasm's `txasm_theme`, Foxhound's `fh_theme`) by passing it; the choice its visitors made survives.
+
 The inline script, for the default key:
 
 ```html

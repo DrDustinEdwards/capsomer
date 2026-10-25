@@ -8,8 +8,10 @@ export interface DataTable {
   rows: string[][];
 }
 
-const ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-export const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (c) => ESCAPES[c] ?? c);
+// Capsomer's one HTML escape lives with the email builder; it is re-exported here, as it always was.
+import { escapeHtml } from "../email/email.ts";
+
+export { escapeHtml };
 
 // Which columns read as numbers: every cell is a figure (a count, a percent, a short unit).
 export function numericColumns(table: DataTable): boolean[] {
