@@ -4,12 +4,13 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { generateStates } from "../bin/states.mjs";
+import { readData, renderHome } from "./home.ts";
 import { writeHeadersFile } from "../scripts/security-headers.ts";
 import { discoveryFiles, siteHead } from "./seo.ts";
 
 // One build for the site and every component's states page. The root is the repo, so a
 // states page sits at /components/<name>/states.html beside its component. The site is
-// served at the root of https://capsomer.dustinedwards.info (rulings.md, rule 16), by a
+// served at the root of https://capsomer.dustinedwards.info (rulings.md, rule 16), the admin at /admin/, by a
 // static Cloudflare Worker; CAPSOMER_BASE overrides the base for another host.
 const root = fileURLToPath(new URL("..", import.meta.url));
 // The states pages are generated from each component's examples.html, so they are written
@@ -28,22 +29,32 @@ export default defineConfig({
   publicDir: resolve(root, "site/public"),
   plugins: [
     react(),
-    // The site's page is site/index.html in the repo and the root of the published site.
+    // The public page (site/home.html, filled from site/home.ts) is the root of the published
+    // site; the admin (site/index.html) is /admin/.
+    {
+      name: "capsomer-site-pages",
+      transformIndexHtml(html, ctx) {
+        return ctx.path.endsWith("/site/home.html") ? html.replace("<!--home-->", renderHome(readData(root))) : html;
+      },
+    },
     {
       name: "capsomer-site-root",
       enforce: "post",
       generateBundle(_, bundle) {
-        const page = bundle["site/index.html"];
-        if (page) page.fileName = "index.html";
+        const home = bundle["site/home.html"];
+        if (home) home.fileName = "index.html";
+        const admin = bundle["site/index.html"];
+        if (admin) admin.fileName = "admin/index.html";
       },
     },
-    // The front page's head tags and the discovery files, from Prelum (site/seo.ts).
+    // Each page's head tags and the discovery files, from Prelum (site/seo.ts).
     {
       name: "capsomer-site-seo",
       transformIndexHtml: {
         order: "pre",
-        handler(html) {
-          return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", siteHead());
+        handler(html, ctx) {
+          const page = ctx.path.endsWith("/site/home.html") ? "home" : "admin";
+          return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", siteHead(page));
         },
       },
       generateBundle() {
@@ -66,7 +77,7 @@ export default defineConfig({
     // its own origin only.
     assetsInlineLimit: 0,
     emptyOutDir: true,
-    rollupOptions: { input: { site: resolve(root, "site/index.html"), ...states } },
+    rollupOptions: { input: { home: resolve(root, "site/home.html"), site: resolve(root, "site/index.html"), ...states } },
   },
   preview: { port: 4319, strictPort: true },
 });

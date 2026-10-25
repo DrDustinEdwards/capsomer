@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+- **Site only: a public front page, and the dashboard moves to `/admin/`** (Dustin, 2026-10-25: "we need a capsomer admin ... and a capsomer public display"). https://capsomer.dustinedwards.info is now a plain HTML page in the Supergraphics style (Barbara Stauffacher Solomon, The Sea Ranch, 1966): each section opens with its name in flat letter tiles painted in the families, too big for the page and cut by its edge, then the six families with their twelve steps, the three faces and the type scale, every component linked to its states page, the defaults and how to install. Its only script sends an old root address such as `/#/components/button` to the same page under `/admin/`. The admin is unchanged at https://capsomer.dustinedwards.info/admin/, with its own title from `site/seo.ts` and noindex, so search shows the public page; it stays out of the sitemap and is listed in llms.txt. The package is unchanged.
 - **The showcase site's search and AI surface now comes from Prelum** (`@drdustinedwards/site-helpers` 0.8.0, a dev dependency, site tooling only), as on every family site: the front page's canonical, Open Graph and Twitter tags with a share card (`site/public/og-card.png`) and JSON-LD; the sitemap, robots.txt (the family bot policy), a new ai.txt and llms.txt, written at build from `site/seo.ts`; and `tdm-reservation: 1` in `_headers`. The 404 page says noindex. The package itself is unchanged.
 
 ## [0.20.0]

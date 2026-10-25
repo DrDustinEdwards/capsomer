@@ -3,8 +3,8 @@
  * SEO module: the front page's head tags and JSON-LD, and the sitemap, robots.txt (the family bot
  * policy; Cloudflare puts its own lines first), ai.txt (citation welcome, training reserved, as the
  * tdm-reservation header in _headers says) and llms.txt (https://llmstxt.org). site/vite.config.ts
- * writes them into the build. The site is one page; its sections are hash addresses, which search
- * engines treat as that page.
+ * writes them into the build. The site is two pages, the public page at / and the admin at /admin/,
+ * whose sections are hash addresses that search engines treat as that page.
  */
 import { headHtml, headTags } from "@drdustinedwards/site-helpers/head";
 import { llmsDocument } from "@drdustinedwards/site-helpers/llms";
@@ -16,18 +16,26 @@ import { sitemapDocument } from "@drdustinedwards/site-helpers/sitemap";
 const ORIGIN = "https://capsomer.dustinedwards.info";
 const REPO = "https://github.com/DrDustinEdwards/capsomer";
 const DESCRIPTION =
-  "Capsomer: the shared design system for Dustin Edwards's apps. Every token, every component in every state, and each component's test results.";
+  "Capsomer: the shared design system for Dustin Edwards's sites and apps. Six colour families, three faces, every component in every state, in plain CSS.";
 const AUTHOR = { "@type": "Person", "@id": "https://dustinedwards.info/#person", name: "Dustin Edwards", url: "https://dustinedwards.info" };
 
-/** The front page's head: title, description, canonical, Open Graph and Twitter with the card, and JSON-LD. */
-export function siteHead(): string {
+const ADMIN_DESCRIPTION =
+  "Capsomer's admin: every token, every component in every state, and each component's test results.";
+
+/** A page's head: title, description, canonical, Open Graph and Twitter with the card; the public page also carries the JSON-LD, and the admin says noindex so search shows the public page. */
+export function siteHead(page: "home" | "admin"): string {
+  const card = { url: "/og-card.png", width: 1200, height: 630, alt: "Capsomer, the family design system" };
+  if (page === "admin")
+    return headHtml(
+      headTags({ origin: ORIGIN, path: "/admin/", title: "Capsomer admin", description: ADMIN_DESCRIPTION, image: card, siteName: "Capsomer", locale: "en_US", noindex: true }),
+    );
   return headHtml([
     ...headTags({
       origin: ORIGIN,
       path: "/",
       title: "Capsomer",
       description: DESCRIPTION,
-      image: { url: "/og-card.png", width: 1200, height: 630, alt: "Capsomer, the family design system" },
+      image: card,
       siteName: "Capsomer",
       locale: "en_US",
     }),
@@ -61,7 +69,8 @@ export function discoveryFiles(): Record<string, string> {
         "Capsomer is Dustin Edwards's open-source (MIT) design system: plain CSS with design tokens, web components and React wrappers, an app shell and patterns, shared by his sites and apps (dustinedwards.info, the Capsid Portal, Carrel and others). No CSS framework; light and dark themes; every component tested for accessibility in every state.",
       intro: [
         [
-          `- Showcase: ${ORIGIN}/ (an interactive page: every token, every component in every state, and each component's test results)`,
+          `- Showcase: ${ORIGIN}/ (the colour families, type, every component with a link to its states, the defaults and how to install)`,
+          `- Admin: ${ORIGIN}/admin/ (an interactive page: every token, every component in every state, and each component's test results)`,
           `- Code: ${REPO}`,
           "- Author: Dustin Edwards, https://dustinedwards.info",
         ].join("\n"),

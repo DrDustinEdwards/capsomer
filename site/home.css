@@ -1,0 +1,548 @@
+/* The public page (site/home.ts): Supergraphics in Capsomer's own families. Flat letter tiles too
+   big for the page, cut by its right edge, open the page and each section; everything else is
+   plain type on the ground. Colours are the families' tokens only, so both themes and every
+   family pass the palette generator's pairs (tokens/palette.mjs). */
+@import "@fontsource/schibsted-grotesk/400.css";
+@import "@fontsource/schibsted-grotesk/600.css";
+@import "@fontsource/schibsted-grotesk/800.css";
+@import "@fontsource/martian-mono/400.css";
+@import "@fontsource-variable/source-serif-4/index.css";
+@import "../css/tokens.css";
+@import "../css/base.css";
+@import "../css/families.css";
+
+:root {
+  --home-max: 76rem;
+  --home-gut: max(16px, env(safe-area-inset-left, 0px));
+  --home-gut-r: max(16px, env(safe-area-inset-right, 0px));
+  /* Where the page's column starts, so a band can start there and run to the window's edge. */
+  --home-start: max(var(--home-gut), calc((100vw - var(--home-max)) / 2 + var(--home-gut)));
+}
+html {
+  overflow-x: hidden;
+  scroll-padding-top: var(--space-5);
+}
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--ground);
+  color: var(--text);
+  font: 400 17px/1.55 var(--ui);
+}
+a {
+  color: var(--accent-text);
+  text-underline-offset: 3px;
+}
+code {
+  font: 0.85em var(--mono);
+}
+.home-wrap {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-width: var(--home-max);
+  margin-inline: auto;
+  padding-left: var(--home-gut);
+  padding-right: var(--home-gut-r);
+}
+.home-muted {
+  color: var(--muted);
+}
+
+/* The top bar: the mark and the sections, wrapping under it on a phone. */
+.home-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-6);
+  max-width: var(--home-max);
+  box-sizing: border-box;
+  margin-inline: auto;
+  padding: var(--space-4) var(--home-gut-r) var(--space-2) var(--home-gut);
+
+  & ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  & nav a {
+    display: inline-block;
+    padding-block: var(--space-1);
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  & nav a:hover {
+    color: var(--accent-text);
+    text-decoration: underline;
+  }
+}
+.home-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text);
+  font-weight: 800;
+  font-size: 1.125rem;
+  text-decoration: none;
+
+  & svg {
+    inline-size: 22px;
+    block-size: 22px;
+    fill: var(--accent);
+  }
+}
+
+/* A band: a word in tiles at stepped heights, from the column's left edge to the window's right
+   edge, which cuts it. Under it a stripe: ink, solid and pale for one family, or one thin band per
+   family. */
+.home-band {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-2);
+  padding-inline-start: var(--home-start);
+  overflow: hidden;
+}
+.home-band-word {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  margin: 0;
+  block-size: clamp(96px, 12vw, 168px);
+
+  & span,
+  &::after {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-end;
+    justify-content: center;
+    block-size: 100%;
+    padding: 0 0.07em 0.22em;
+    overflow: hidden;
+    background: var(--primary);
+    color: var(--primary-fg);
+    font: 800 clamp(3.5rem, 8vw, 7.5rem) / 0.8 var(--ui);
+    letter-spacing: -0.04em;
+  }
+  /* The run: an empty tile that carries a short word to the edge. */
+  &::after {
+    content: "";
+    flex: 1 1 0;
+    min-inline-size: 10vw;
+    block-size: 70%;
+    background: var(--accent-soft);
+  }
+  & span:nth-child(6n + 2) {
+    block-size: 86%;
+  }
+  & span:nth-child(6n + 3) {
+    block-size: 64%;
+  }
+  & span:nth-child(6n + 4) {
+    block-size: 92%;
+  }
+  & span:nth-child(6n + 5) {
+    block-size: 74%;
+  }
+  & span:nth-child(6n) {
+    block-size: 82%;
+  }
+}
+.home-band[data-size="cover"] .home-band-word {
+  block-size: clamp(140px, 24vw, 330px);
+
+  & span {
+    font-size: clamp(5rem, 15vw, 14.5rem);
+  }
+}
+/* One family: its solid, ink and pale steps in turn. */
+.home-band:not([data-mix]) .home-band-word {
+  & span:nth-child(3n + 2) {
+    background: var(--text);
+    color: var(--surface);
+  }
+  & span:nth-child(3n) {
+    background: var(--accent-soft);
+    color: var(--accent-text);
+  }
+}
+.home-band-stripe {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+
+  & i {
+    display: block;
+    block-size: 5px;
+    background: var(--accent);
+  }
+  & [data-role="ink"] {
+    block-size: 14px;
+    background: var(--text);
+  }
+  & [data-role="solid"] {
+    block-size: 6px;
+    background: var(--primary);
+  }
+  & [data-role="pale"] {
+    block-size: 4px;
+    background: var(--accent-soft);
+  }
+}
+
+main > section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+  padding-block: var(--space-8) 0;
+}
+.home-cover {
+  padding-block-start: var(--space-4) !important;
+}
+h1,
+h2,
+h3 {
+  margin: 0;
+  text-wrap: balance;
+}
+h1 {
+  font: 800 clamp(2.4rem, 5vw, 3.75rem) / 1 var(--ui);
+  letter-spacing: -0.035em;
+}
+h2 {
+  font: 800 clamp(1.75rem, 3.4vw, 2.6rem) / 1.05 var(--ui);
+  letter-spacing: -0.03em;
+}
+h3 {
+  font: 800 1.2rem / 1.2 var(--ui);
+}
+h2 {
+  margin-block-end: var(--space-5);
+}
+.home-intro {
+  display: grid;
+  gap: var(--space-4);
+}
+.home-lead {
+  max-width: 44rem;
+  margin: 0;
+  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.4rem);
+  line-height: 1.45;
+}
+.home-sub {
+  max-width: 44rem;
+  margin: calc(-1 * var(--space-2)) 0 var(--space-6);
+  font-size: 1.0625rem;
+}
+
+/* The headline figures as solid tiles, each in its own family. */
+.home-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 4px;
+  margin-block: 0;
+  list-style: none;
+
+  & li {
+    display: grid;
+    align-content: end;
+    gap: var(--space-1);
+    min-block-size: 168px;
+    padding: var(--space-5);
+    background: var(--primary);
+    color: var(--primary-fg);
+  }
+  & b {
+    font: 800 clamp(3rem, 6vw, 4.5rem) / 0.9 var(--ui);
+    letter-spacing: -0.04em;
+  }
+  & .home-figure-label {
+    font-weight: 600;
+    font-size: 1.0625rem;
+  }
+}
+
+/* The families: each a solid block with its name too big for it, then its twelve steps. */
+.home-families {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+  gap: var(--space-7) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & > li {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    min-width: 0;
+  }
+  & > li > p:not(.home-family-name) {
+    margin: 0;
+    color: var(--muted);
+  }
+}
+.home-family-name {
+  display: flex;
+  align-items: flex-end;
+  block-size: 132px;
+  margin: 0 0 var(--space-2);
+  overflow: hidden;
+  background: var(--primary);
+  color: var(--primary-fg);
+
+  & span {
+    padding-inline-start: 0.05em;
+    font: 800 11rem / 0.62 var(--ui);
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+    translate: 0 0.12em;
+  }
+}
+/* The palette as one systematic grid, after Richard Paul Lohse: six rows of twelve equal squares,
+   no gaps, the family's name at the head of its row. */
+.home-lohse {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-7);
+
+  & figcaption {
+    max-width: 44rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+}
+.home-lohse-grid {
+  display: grid;
+  grid-template-columns: minmax(3.5rem, auto) repeat(12, minmax(0, 1fr));
+  align-items: center;
+
+  & i {
+    display: block;
+    aspect-ratio: 1;
+    background: var(--swatch);
+  }
+}
+.home-lohse-name {
+  padding-inline-end: var(--space-3);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+[data-step="1"] { --swatch: var(--accent-1); }
+[data-step="2"] { --swatch: var(--accent-2); }
+[data-step="3"] { --swatch: var(--accent-3); }
+[data-step="4"] { --swatch: var(--accent-4); }
+[data-step="5"] { --swatch: var(--accent-5); }
+[data-step="6"] { --swatch: var(--accent-6); }
+[data-step="7"] { --swatch: var(--accent-7); }
+[data-step="8"] { --swatch: var(--accent-8); }
+[data-step="9"] { --swatch: var(--accent-9); }
+[data-step="10"] { --swatch: var(--accent-10); }
+[data-step="11"] { --swatch: var(--accent-11); }
+[data-step="12"] { --swatch: var(--accent-12); }
+
+/* Albers squares: each family's steps nested, the inner square set low, as in Homage to the
+   Square; under each, the ratio of its accent text on its page. */
+.home-albers-h {
+  margin-block-start: var(--space-8);
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  letter-spacing: -0.02em;
+}
+.home-albers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--space-5) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & p {
+    margin: var(--space-2) 0 0;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+  & b {
+    color: var(--text);
+  }
+}
+.home-albers-sq,
+.home-albers-sq div {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  box-sizing: border-box;
+}
+.home-albers-sq {
+  /* Albers kept every square square and sank it: the side gap is the
+     mean of a wide top and a narrow bottom. */
+  aspect-ratio: 1;
+  padding: 15% 10% 5%;
+  background: var(--accent-3);
+
+  & > div {
+    inline-size: 100%;
+    block-size: 100%;
+    padding: 18.75% 12.5% 6.25%;
+    background: var(--accent-6);
+  }
+  & > div > div {
+    inline-size: 100%;
+    block-size: 100%;
+    padding: 25% 16.7% 8.3%;
+    background: var(--accent-9);
+  }
+  & > div > div > div {
+    inline-size: 100%;
+    block-size: 100%;
+    background: var(--accent-11);
+  }
+}
+
+/* Type: each face as a specimen, then the scale at its own sizes. */
+.home-faces {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 4px;
+  margin-block-end: var(--space-6);
+
+  & figure {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  & p {
+    margin: 0;
+    font-size: clamp(5rem, 9vw, 8rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  & [data-face="ui"] p {
+    font-family: var(--ui);
+    font-weight: 800;
+  }
+  & [data-face="mono"] p {
+    font-family: var(--mono);
+    letter-spacing: -0.06em;
+  }
+  & [data-face="prose"] p {
+    font-family: var(--prose);
+  }
+  & figcaption {
+    color: var(--muted);
+  }
+  & b {
+    color: var(--text);
+  }
+}
+.home-scale {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & li {
+    display: grid;
+    grid-template-columns: minmax(8rem, 13rem) 10rem minmax(7rem, 16rem) minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: baseline;
+    padding-block: var(--space-3);
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 760px) {
+    & li {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    & li > :nth-child(4) {
+      grid-column: 1 / -1;
+    }
+  }
+}
+.home-scale-sample {
+  white-space: nowrap;
+}
+[data-fs="fs-label"] { font-size: var(--fs-label); }
+[data-fs="fs-detail"] { font-size: var(--fs-detail); }
+[data-fs="fs-body"] { font-size: var(--fs-body); }
+[data-fs="fs-lead"] { font-size: var(--fs-lead); }
+[data-fs="fs-h3"] { font-size: var(--fs-h3); }
+[data-fs="fs-h2"] { font-size: var(--fs-h2); }
+[data-fs="fs-prose"] { font-size: var(--fs-prose); font-family: var(--prose); }
+[data-fs="fs-prose-h2"] { font-size: var(--fs-prose-h2); font-family: var(--prose); }
+
+/* Components: every one, linked to its states page. */
+.home-parts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: var(--space-5) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-1);
+    padding-block-start: var(--space-3);
+    border-top: 4px solid var(--text);
+    min-width: 0;
+  }
+  & a {
+    font-weight: 800;
+    font-size: 1.125rem;
+  }
+  & span {
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+}
+
+/* Defaults: each lead as a short statement under a stripe in its section's family. */
+.home-defaults {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: var(--space-5) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & li {
+    padding-block-start: var(--space-3);
+    border-top: 6px solid var(--accent);
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 1.35;
+  }
+}
+
+.home-code {
+  margin: 0;
+  padding: var(--space-5);
+  overflow-x: auto;
+  background: var(--sunken);
+  border: 1px solid var(--line);
+  font: 14px/1.6 var(--mono);
+}
+
+.home-foot {
+  margin-block-start: var(--space-9);
+  padding-block: var(--space-7);
+  border-top: 14px solid var(--text);
+
+  & ul {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+  & p {
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+}
