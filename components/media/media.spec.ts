@@ -325,13 +325,16 @@ eachTheme((theme) => {
     await page.keyboard.press("ArrowRight");
     await expect(link(page, FOX)).toBeFocused();
     // Down: a tile in the next row, near the same column.
-    const here = await link(page, FOX).boundingBox();
+    // Page coordinates, since moving focus to the next row may scroll it into view.
+    const top = () =>
+      page.evaluate(() => {
+        const r = document.activeElement?.closest(".cap-media-tile")?.getBoundingClientRect();
+        return r ? r.top + window.scrollY : null;
+      });
+    const here = await top();
     await page.keyboard.press("ArrowDown");
-    const there = await page.evaluate(() => {
-      const r = document.activeElement?.closest(".cap-media-tile")?.getBoundingClientRect();
-      return r ? { top: r.top, left: r.left } : null;
-    });
-    expect(there && here && there.top > here.y).toBe(true);
+    const there = await top();
+    expect(there !== null && here !== null && there > here).toBe(true);
     await page.keyboard.press("ArrowUp");
     await expect(link(page, FOX)).toBeFocused();
     await page.keyboard.press("End");
