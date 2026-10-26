@@ -103,7 +103,7 @@ eachTheme((theme) => {
     await page.goto("./admin/#/overview");
     const current = page.locator(".cap-admin-strip .cap-admin-tile[aria-current='true']");
     await expect(current).toHaveCount(1);
-    await expect(current).toHaveAccessibleName("Capsomer");
+    await expect(current).toHaveAccessibleName("Capsomer Scaffold");
     await expect(page.locator(".cap-admin-fresh")).toHaveText(/^Updated /);
     // A top-level page: no trail repeating its heading. A component's page: Components, then it.
     await expect(page.locator(".cap-admin-trail")).toHaveCount(0);

@@ -55,7 +55,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { to: "/admin", label: "Admin", name: `Admin, dustinedwards.info ${SIGN_IN_NOTE}`, icon: "gear" },
   { to: "https://portal.dustinedwards.info", label: "Portal", name: `Capsid Portal ${SIGN_IN_NOTE}`, hover: "Capsid Portal", icon: "capsid", external: true },
   { to: "https://carrel.dustinedwards.info", label: "Carrel", name: `Carrel, writing ${SIGN_IN_NOTE}`, icon: "lamp", external: true },
-  { to: "/lab", label: "Lab", name: `Lab, the members' workspace ${SIGN_IN_NOTE}`, icon: "flask" },
+  { to: "/lab", label: "Lab bench", name: `Lab bench, the members' workspace ${SIGN_IN_NOTE}`, icon: "flask" },
 ];
 
 export const SITE_HEADING = "Site";

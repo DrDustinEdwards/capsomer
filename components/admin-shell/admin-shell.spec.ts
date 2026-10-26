@@ -48,7 +48,7 @@ eachTheme((theme) => {
           - listitem:
             - link "Foxing"
           - listitem:
-            - link "Capsomer"
+            - link "Capsomer Scaffold"
     `);
     await expect(page.locator(".cap-admin-strip button")).toHaveCount(0);
     await expect(page.locator(".cap-admin-menu")).toMatchAriaSnapshot(`
@@ -104,7 +104,7 @@ eachTheme((theme) => {
       names.push(await page.evaluate(() => document.activeElement?.getAttribute("aria-label") ?? document.activeElement?.textContent?.trim() ?? ""));
     }
     expect(names.slice(0, 5)).toEqual(["Capsid Portal", "Search everything", "Inbox, 7 need you", themeName, "Your account"]);
-    expect(names.slice(5, 12).map((n) => n.split(",")[0])).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer"]);
+    expect(names.slice(5, 12).map((n) => n.split(",")[0])).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer Scaffold"]);
     await expect(page.locator("[data-cap-part='menu-toggle']")).toBeFocused();
     await expect(page.locator(".cap-admin-collapse:focus-visible")).toHaveCount(1);
     const order = await page.evaluate(() => {
@@ -731,7 +731,7 @@ eachTheme((theme) => {
     const tiles = page.locator(".cap-admin-strip .cap-admin-tile");
     await expect(tiles).toHaveCount(7);
     const names = await tiles.evaluateAll((els) => els.map((e) => ({ label: e.getAttribute("aria-label")!.split(",")[0], logo: !!e.querySelector("svg.cap-admin-logo"), letters: [...e.childNodes].some((n) => n.nodeType === Node.ELEMENT_NODE && (n as Element).tagName === "SPAN" && !(n as Element).className && /\w/.test(n.textContent ?? "")) })));
-    expect(names).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer"].map((label) => ({ label, logo: true, letters: false })));
+    expect(names).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer Scaffold"].map((label) => ({ label, logo: true, letters: false })));
     await expect(tiles.first()).toHaveAttribute("aria-current", "true");
     await expect(page.locator(".cap-site-header-logo")).toHaveAccessibleName("Capsid Portal");
   });
@@ -746,7 +746,7 @@ eachTheme((theme) => {
         letters: [...e.querySelectorAll(":scope > :not(svg):not(.cap-admin-tip):not(.cap-admin-badge)")].map((n) => n.textContent ?? "").join(""),
       })),
     );
-    expect(facts).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer"].map((label) => ({ label, marks: 1, letters: "" })));
+    expect(facts).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer Scaffold"].map((label) => ({ label, marks: 1, letters: "" })));
     await expect(tiles.nth(4)).toHaveAttribute("aria-current", "true");
   });
 

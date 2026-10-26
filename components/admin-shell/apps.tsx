@@ -124,7 +124,7 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
   // Foxing joins the family's admin apps in 0.9.0, seventh, before Capsomer; its mark is a
   // placeholder until Dustin picks one.
   { id: "foxing", label: "Foxing", href: "https://foxing.app/admin", logo: FOXING },
-  { id: "capsomer", label: "Capsomer", href: "https://capsomer.dustinedwards.info/", logo: CAPSOMER },
+  { id: "capsomer", label: "Capsomer Scaffold", href: "https://capsomer.dustinedwards.info/admin/", logo: CAPSOMER },
 ];
 
 // The one account every admin area is signed in as, and its avatar.
