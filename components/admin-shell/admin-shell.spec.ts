@@ -38,7 +38,7 @@ eachTheme((theme) => {
           - listitem:
             - link "Capsid Portal"
           - listitem:
-            - link "Carrel, 2 AI drafts waiting"
+            - link "Carrel Desk, 2 AI drafts waiting"
           - listitem:
             - link "dustinedwards.info"
           - listitem:
@@ -72,7 +72,7 @@ eachTheme((theme) => {
     await expect(current).toHaveCount(1);
     await expect(current.locator(".cap-admin-badge")).toHaveCount(0);
     // Another app's badge is there, and the current page in the menu is the dark pill.
-    await expect(page.getByRole("link", { name: "Carrel, 2 AI drafts waiting" }).locator(".cap-admin-badge")).toHaveText("2");
+    await expect(page.getByRole("link", { name: "Carrel Desk, 2 AI drafts waiting" }).locator(".cap-admin-badge")).toHaveText("2");
     await expect(page.locator(".cap-admin-menu a[aria-current='page']")).toHaveCSS("font-weight", "600");
   });
 
@@ -104,7 +104,7 @@ eachTheme((theme) => {
       names.push(await page.evaluate(() => document.activeElement?.getAttribute("aria-label") ?? document.activeElement?.textContent?.trim() ?? ""));
     }
     expect(names.slice(0, 5)).toEqual(["Capsid Portal", "Search everything", "Inbox, 7 need you", themeName, "Your account"]);
-    expect(names.slice(5, 12).map((n) => n.split(",")[0])).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer Scaffold"]);
+    expect(names.slice(5, 12).map((n) => n.split(",")[0])).toEqual(["Capsid Portal", "Carrel Desk", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer Scaffold"]);
     await expect(page.locator("[data-cap-part='menu-toggle']")).toBeFocused();
     await expect(page.locator(".cap-admin-collapse:focus-visible")).toHaveCount(1);
     const order = await page.evaluate(() => {
@@ -152,7 +152,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("link", { name: "Activity 99+, 120" }).locator(".cap-admin-count")).toHaveText("99+");
     // The current page keeps its dark fill; the strip's badges stay.
     await expect(page.locator(".cap-admin-menu a[aria-current='page']")).toHaveCSS("background-color", /^(?!rgba\(0, 0, 0, 0\))/);
-    await expect(page.getByRole("link", { name: "Carrel, 2 AI drafts waiting" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Carrel Desk, 2 AI drafts waiting" })).toBeVisible();
     // The collapse control is in the same place in both states.
     const control2 = await toggle.boundingBox();
     expect(control2?.x).toBe(control?.x);
@@ -191,11 +191,11 @@ eachTheme((theme) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     await page.locator(".cap-admin-tile").first().focus();
     await page.keyboard.press("Tab");
-    const tile = page.getByRole("link", { name: "Carrel, 2 AI drafts waiting" });
+    const tile = page.getByRole("link", { name: "Carrel Desk, 2 AI drafts waiting" });
     await expect(tile).toBeFocused();
     const tip = tile.locator(".cap-admin-tip");
     await expect(tip).toBeVisible();
-    await expect(tip.locator(".cap-admin-tip-text")).toHaveText("Carrel");
+    await expect(tip.locator(".cap-admin-tip-text")).toHaveText("Carrel Desk");
     // "G 2" is two keys, each a key cap with its own edge.
     await expect(tip.locator("kbd")).toHaveText(["G", "2"]);
     for (const k of await tip.locator("kbd").all()) expect(await k.evaluate((el) => getComputedStyle(el).borderTopStyle)).toBe("solid");
@@ -245,7 +245,7 @@ eachTheme((theme) => {
 
   test("behavior: G then a number jumps to that app, never the one already open, and Ctrl and a digit do nothing", async ({ page }) => {
     // The other apps are other origins: a jump is caught here, not followed.
-    await page.route(/https:\/\/(portal|carrel)\.dustinedwards\.info\//, (r) => r.fulfill({ body: "another app" }));
+    await page.route(/https:\/\/(portal|desk)\.dustinedwards\.info\//, (r) => r.fulfill({ body: "another app" }));
     await visitStates(page, "admin-shell", theme, "expanded");
     await page.keyboard.press("Control+2");
     await page.keyboard.press("g");
@@ -255,7 +255,7 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/localhost/);
     await page.keyboard.press("g");
     await page.keyboard.press("2");
-    await expect(page).toHaveURL("https://carrel.dustinedwards.info/");
+    await expect(page).toHaveURL("https://desk.dustinedwards.info/");
   });
 
   test("behavior: a reader's area is the user variant: no strip, the 288px menu, a reading column", async ({ page }) => {
@@ -731,7 +731,7 @@ eachTheme((theme) => {
     const tiles = page.locator(".cap-admin-strip .cap-admin-tile");
     await expect(tiles).toHaveCount(7);
     const names = await tiles.evaluateAll((els) => els.map((e) => ({ label: e.getAttribute("aria-label")!.split(",")[0], logo: !!e.querySelector("svg.cap-admin-logo"), letters: [...e.childNodes].some((n) => n.nodeType === Node.ELEMENT_NODE && (n as Element).tagName === "SPAN" && !(n as Element).className && /\w/.test(n.textContent ?? "")) })));
-    expect(names).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer Scaffold"].map((label) => ({ label, logo: true, letters: false })));
+    expect(names).toEqual(["Capsid Portal", "Carrel Desk", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer Scaffold"].map((label) => ({ label, logo: true, letters: false })));
     await expect(tiles.first()).toHaveAttribute("aria-current", "true");
     await expect(page.locator(".cap-site-header-logo")).toHaveAccessibleName("Capsid Portal");
   });
@@ -746,7 +746,7 @@ eachTheme((theme) => {
         letters: [...e.querySelectorAll(":scope > :not(svg):not(.cap-admin-tip):not(.cap-admin-badge)")].map((n) => n.textContent ?? "").join(""),
       })),
     );
-    expect(facts).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer Scaffold"].map((label) => ({ label, marks: 1, letters: "" })));
+    expect(facts).toEqual(["Capsid Portal", "Carrel Desk", "dustinedwards.info", "germomics", "Foxhound", "Foxing", "Capsomer Scaffold"].map((label) => ({ label, marks: 1, letters: "" })));
     await expect(tiles.nth(4)).toHaveAttribute("aria-current", "true");
   });
 

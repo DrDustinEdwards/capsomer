@@ -7,8 +7,10 @@
   --family-amber: #b68508;
   --family-navy: #2a68cf;
   --family-forest: #028445;
-  --family-magenta: #a23f9c;
+  --family-magenta: #a53d96;
   --family-cerulean: #0478a0;
+  --family-olive: #687603;
+  --family-rose: #b83466;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -18,8 +20,10 @@
     --family-amber: #f0b429;
     --family-navy: #4888f1;
     --family-forest: #28a55e;
-    --family-magenta: #c35fbc;
+    --family-magenta: #c75db6;
     --family-cerulean: #2797c4;
+    --family-olive: #859522;
+    --family-rose: #db5583;
   }
 }
 :root[data-theme="dark"],
@@ -30,6 +34,8 @@
   --family-amber: #f0b429;
   --family-navy: #4888f1;
   --family-forest: #28a55e;
-  --family-magenta: #c35fbc;
+  --family-magenta: #c75db6;
   --family-cerulean: #2797c4;
+  --family-olive: #859522;
+  --family-rose: #db5583;
 }
