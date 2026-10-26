@@ -30,7 +30,7 @@ export const MAKE_DESCRIPTION =
   "Make a light and dark theme from one brand color: 12-step scales, every pair checked against WCAG 2.2, faces, sizes and corners, a live preview, and the CSS and design tokens.";
 
 const ADMIN_DESCRIPTION =
-  "Capsomer's admin: every token, every component in every state, and each component's test results.";
+  "Scaffold, Capsomer's admin: every token, every component in every state, and each component's test results.";
 
 /** A page's head: title, description, canonical, Open Graph and Twitter with the card; the public page also carries the JSON-LD, and the admin says noindex so search shows the public page. */
 export function siteHead(page: "home" | "admin" | { path: string; title: string; description: string }): string {
@@ -40,7 +40,7 @@ export function siteHead(page: "home" | "admin" | { path: string; title: string;
     return headHtml(headTags({ origin: ORIGIN, path: page.path, title: page.title, description: page.description, image: card, siteName: "Capsomer", locale: "en_US" }));
   if (page === "admin")
     return headHtml(
-      headTags({ origin: ORIGIN, path: "/admin/", title: "Capsomer admin", description: ADMIN_DESCRIPTION, image: card, siteName: "Capsomer", locale: "en_US", noindex: true }),
+      headTags({ origin: ORIGIN, path: "/admin/", title: "Capsomer Scaffold", description: ADMIN_DESCRIPTION, image: card, siteName: "Capsomer", locale: "en_US", noindex: true }),
     );
   return headHtml([
     ...headTags({
@@ -85,7 +85,7 @@ export function discoveryFiles(components: string[]): Record<string, string> {
       intro: [
         [
           `- Showcase: ${ORIGIN}/ (the color families, type, every component with its own page, the defaults and how to install)`,
-          `- Admin: ${ORIGIN}/admin/ (an interactive page: every token, every component in every state, and each component's test results)`,
+          `- Scaffold: ${ORIGIN}/admin/ (an interactive page: every token, every component in every state, and each component's test results)`,
           `- Code: ${REPO}`,
           "- Author: Dustin Edwards, https://dustinedwards.info",
         ].join("\n"),

@@ -39,6 +39,7 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [0.26.2]
 
 - **The footer's Workspace link to the members' area reads "Lab bench"** (Dustin, 2026-10-26), not "Lab", since "Lab" names other parts of dustinedwards.info.
+- **Capsomer's admin is named Scaffold** (Dustin, 2026-10-26), after the proteins that guide a capsid's assembly and leave before it is finished, as Capsid's is the Portal. In the admin shell's strip it is "Capsomer Scaffold" and goes to `/admin/` (it went to the public page). Site only: the admin's title, the footer link and llms.txt say Scaffold.
 
 ## [0.26.1]
 

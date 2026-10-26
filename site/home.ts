@@ -215,7 +215,7 @@ const CENTER = `<div class="cap-family-footer-center">
   <div class="cap-family-footer-columns">
     <ul class="cap-family-footer-links"><li><a href="/#components">Components</a></li><li><a href="/make/">Theme builder</a></li></ul>
     <ul class="cap-family-footer-links"><li><a href="https://github.com/DrDustinEdwards/capsomer">Source</a></li><li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li></ul>
-    <ul class="cap-family-footer-links"><li><a href="/admin/">Admin</a></li></ul>
+    <ul class="cap-family-footer-links"><li><a href="/admin/">Scaffold</a></li></ul>
   </div>
   <p class="cap-family-footer-stamp"><span>Release ${VERSION}</span></p>
 </div>`;
