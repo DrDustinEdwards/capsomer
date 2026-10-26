@@ -1,0 +1,22 @@
+export declare const SEC = 1000;
+export declare const MIN: number;
+export declare const HOUR: number;
+export declare const DAY: number;
+export declare const REFRESH_MS: number;
+export declare function parse(iso: string): number;
+export declare function calendarDays(t: number, now: number, zone?: string): number;
+export declare function day(t: number, now?: number, zone?: string): string;
+export declare function relative(t: number, now?: number, zone?: string): string;
+export declare function utc(t: number): string;
+export declare const UNREADABLE = "an unreadable time";
+export declare function exactParts(t: number, zone?: string): {
+    local: string;
+    utc: string | null;
+};
+export declare function exact(t: number, zone?: string): string;
+export type TimeFormat = "relative" | "exact";
+export declare function text(t: number, format: TimeFormat, now?: number, zone?: string): string;
+export declare function serverNow(clientNow: number, skew: number, newestServerRead: number): number;
+export declare function setClock(fn: (() => number) | null): void;
+export declare function draw(el: HTMLElement): void;
+export declare function enhance(root?: ParentNode): () => void;

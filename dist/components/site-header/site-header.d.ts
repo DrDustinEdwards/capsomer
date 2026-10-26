@@ -1,0 +1,11 @@
+export declare const badgeText: (count: number) => string;
+export declare const HOVER_GRACE_MS = 150;
+export declare const PHONE_QUERY = "(max-width: 767.98px)";
+export declare function stepIndex(count: number, at: number, key: string): number | null;
+export declare function panelItems(panel: HTMLElement): HTMLElement[];
+export declare function closePanels(except?: HTMLElement): void;
+export declare function placePanel(trigger: HTMLElement, panel: HTMLElement): void;
+export declare function wirePanel(trigger: HTMLElement, panel: HTMLElement): () => void;
+export declare function openSheet(header: HTMLElement): void;
+export declare function closeSheet(header: HTMLElement): void;
+export declare function enhance(root?: ParentNode): () => void;
