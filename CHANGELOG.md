@@ -4,7 +4,6 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
-- **`family-purple.css`**: purple is now scoped on `[data-family="purple"]` too, like the other families, so a page whose root is another family can still show purple. `families.css` imports it first. Purple stays the default on `:root`.
 - **Site only: the public site in the NASA manual style, in magenta** (Dustin, 2026-10-26). The page root is `data-family="magenta"`; each page opens with a running head, the section titles are numbered parts, and the footer is a letterhead, all from `manual.css`. The Supergraphics tiles and the Lohse and Albers pieces stay. The family preview now always sets `data-family`, so purple shows purple on a magenta page.
 - **Site only: component pages laid out like shadcn/ui's docs** (Dustin, 2026-10-26: "our component pages should be like theirs"). Every component sits in a list on the left with a filter, and the page's sections on the right, with the one you are reading marked. In the middle: the name with Copy page (its doc as Markdown) and previous and next, the first example live with its markup under it, Installation (HTML and CSS, React), every other example live with its markup, then the doc. Each example is the states page showing only that example (`?example=<heading id>`), framed at its own height and in the page's theme. Code starts closed to its first lines, with View code and Copy. The full states page is a link at the end.
 - **Site only: the theme builder wears your theme.** As you pick, the whole page, its letter tiles, header, buttons and links, takes your color, faces and corners, in whichever theme it is showing.
@@ -36,6 +35,11 @@ Each release names every removed or renamed token or class, and every changed HT
   - Changes shows unreleased work and the last three releases.
   - A long changelog line no longer pushes a phone page sideways.
   - The Settings page, which held two paragraphs and no settings, is gone; `#/settings` opens the overview.
+
+## [0.24.0]
+
+- **The rest of NASA's marks in the manual theme** (Dustin, 2026-10-26: "Incorporate them all"), moved from Capsid's explorer so every public site shares one copy: the layout grid behind a page's head (`.cap-layout-grid`, twelve columns and a 24px baseline in faint red, four columns on a phone), the direction strip for a trail (`nav.cap-direction`, a dark band, arrows in the family's color, the current page lit), the livery band across the foot of a page and a card's stripe (`.cap-livery`, `[data-livery]`), the Saturn V roll blocks for steps (`ol.cap-roll`, `li[data-state="done|now|ahead"]`), the Apollo flight plan's time line (`ol.cap-timeline`, `.cap-timeline-mark`, `.cap-timeline-body`) and the Apollo cue card (`.cap-cue`, `.cap-cue-strip`, `.cap-cue-title`, `.cap-cue-lines`, `.cap-cue-name`, `.cap-cue-value`). New classes only; nothing is removed or renamed.
+- **`family-purple.css`**: purple is now scoped on `[data-family="purple"]` too, like the other families, so a page whose root is another family can still show purple. `families.css` imports it first. Purple stays the default on `:root`.
 
 ## [0.23.0]
 
