@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+- **Site only: specimens keep their inline styles.** The site's Content-Security-Policy allows no inline style, so every `style=""` in an `examples.html` was dropped on the states pages: the button's sweep, the range fill, the panel's lift and a few layout grids. `bin/states.mjs` now moves each one into the page's own `states.css`. Found by a Lighthouse run; the CSP browser test now checks a component page's states frames too.
 - **Site only: a second pass over the public site** (Dustin, 2026-10-25: "do another pass and examine website structure ... consider motion and interactive elements").
   - Every component has its own public page at `/components/<name>/`: its summary, its facts, every state in both themes and its whole doc, with Previous and Next. The front page's list links there; the list linked to a bare states page with no way back. The pages are in the sitemap.
   - On a phone the component list shows names in two columns (the front page went from 17,929 px tall to about 11,100).

@@ -126,7 +126,15 @@ eachTheme((theme) => {
     await page.goto("./components/button/");
     await expect(page.locator("h1")).toHaveText("Button");
     await page.waitForLoadState("networkidle");
-    expect(await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations), "CSP violations on a component's page").toEqual([]);
+    // Its states frames too: the button's examples carry a style attribute, which bin/states.mjs
+    // lifts into the page's states.css because the CSP drops inline style.
+    await page.locator(".home-frames iframe").first().scrollIntoViewIfNeeded();
+    await expect(page.locator(".home-frames iframe").first().contentFrame().locator("main")).toBeAttached();
+    await page.waitForLoadState("networkidle");
+    for (const frame of page.frames()) {
+      const found = await frame.evaluate(() => (window as unknown as { cspViolations?: string[] }).cspViolations ?? []);
+      expect(found, `CSP violations in ${frame.url()}`).toEqual([]);
+    }
     for (const view of ["overview", "color", "type", "components/shell"]) {
       await page.goto(`./admin/#/${view}`);
       await expect(page.locator("#cap-main h1").first()).toBeVisible();
