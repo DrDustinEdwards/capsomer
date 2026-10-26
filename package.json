@@ -110,7 +110,6 @@
     "tokens": "node tokens/palette.mjs && node tokens/scale.mjs && node tokens/sites.mjs",
     "check": "node tokens/palette.mjs --check && node tokens/palette.mjs --report --summary && node tokens/scale.mjs --check && node tokens/sites.mjs --check && node --test test/unit/*.test.mjs && tsc --noEmit -p tsconfig.json",
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "npm run build",
     "states": "node bin/capsomer.mjs states",
     "site": "node bin/capsomer.mjs states && node bin/capsomer.mjs site-data && vite build --config site/vite.config.ts",
     "site:release": "node bin/capsomer.mjs states && node bin/capsomer.mjs site-data && vite build --config site/vite.config.ts",
