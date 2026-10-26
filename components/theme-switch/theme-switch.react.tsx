@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from "react";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
 import { applyTheme, effectiveTheme, readTheme, themeButtonLabel, THEME_PREF, toggleTheme, type ThemeChoice } from "./theme-switch.ts";
 
@@ -96,6 +96,20 @@ const BUTTON_SUN = (
   </svg>
 );
 
+// The button's tip: its name again, and the key that does the same, shown on hover and keyboard focus.
+function ThemeTip({ ref, label, shortcut }: { ref?: Ref<HTMLSpanElement>; label: string; shortcut?: string }) {
+  return (
+    <span ref={ref} className="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true">
+      <span className="cap-theme-tip-text">{label}</span>
+      {shortcut ? (
+        <span className="cap-keys">
+          <kbd>{shortcut}</kbd>
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 // The theme as one icon button (the site header's theme control, Dustin's answer 2 of
 // 2026-10-13): Light and Dark only, no System; it says what it does, "Switch to dark theme", in
 // its name and its tip.
@@ -129,14 +143,7 @@ export function ThemeButton({ prefKey = THEME_PREF, shortcut, className, initial
     <button ref={button} type="button" className={className ? `cap-theme-button ${className}` : "cap-theme-button"} data-cap="theme-switch" data-variant="button" data-cap-ready="" aria-label={label} onClick={() => setShowing(toggleTheme(prefKey))}>
       {BUTTON_MOON}
       {BUTTON_SUN}
-      <span ref={tip} className="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true">
-        <span className="cap-theme-tip-text">{label}</span>
-        {shortcut ? (
-          <span className="cap-keys">
-            <kbd>{shortcut}</kbd>
-          </span>
-        ) : null}
-      </span>
+      <ThemeTip ref={tip} label={label} shortcut={shortcut} />
     </button>
   );
 }
@@ -158,14 +165,7 @@ function FormButton({ value, show, label, icon, className, shortcut }: { value: 
   return (
     <button type="submit" name="theme" value={value} className={className ? `cap-theme-button ${className}` : "cap-theme-button"} data-show={show} aria-label={label}>
       {icon}
-      <span className="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true">
-        <span className="cap-theme-tip-text">{label}</span>
-        {shortcut ? (
-          <span className="cap-keys">
-            <kbd>{shortcut}</kbd>
-          </span>
-        ) : null}
-      </span>
+      <ThemeTip label={label} shortcut={shortcut} />
     </button>
   );
 }
