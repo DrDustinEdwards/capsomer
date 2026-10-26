@@ -1,16 +1,19 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The family footer (family-footer.ts): dustinedwards.info's foot, closing every site of the family
-   under that site's own footer. It is drawn with the manual theme's livery band and letterhead
-   (components/manual/manual.css, which a page loads with it), without the letterhead's heavy rule,
-   which would sit right under the band (Dustin, 2026-10-26). The band is the page family's --on, so
-   each site draws it in its own color. */
+/* The family footer (family-footer.ts), the one footer of every dustinedwards.info site: a thin
+   stripe over the site's own part and the strip of sites, then the manual theme's double stripe
+   (the livery) over the letterhead (components/manual/manual.css, which a page loads with it),
+   without the letterhead's heavy rule (Dustin, 2026-10-26). Both stripes are the page family's --on,
+   so each site draws them in its own color; the strip marks every site in its family's color
+   (tokens/family-marks.css). The two parts share one grid: a name column, then three. */
 @layer cap.components {
   .cap-family-footer {
     margin-block-start: var(--space-8);
     padding-block-end: var(--space-6);
     font-family: var(--ui);
+
+    --family-footer-name: minmax(0, 20rem);
 
     & > .cap-livery {
       margin-block: 0 var(--space-5);
@@ -28,8 +31,106 @@
     }
   }
 
+  /* The site's own part: under the thin stripe, on the same columns as the letterhead below. */
+  .cap-family-footer-local {
+    padding-block-start: var(--space-6);
+    border-block-start: 6px solid var(--on);
+  }
+
+  .cap-family-footer-center {
+    display: grid;
+    grid-template-columns: var(--family-footer-name) minmax(0, 1fr);
+    gap: var(--space-5) var(--space-8);
+    padding-block-end: var(--space-6);
+
+    & p {
+      margin: 0;
+    }
+  }
+
+  .cap-family-footer-center-name {
+    font: 700 2.25rem / 0.95 var(--display);
+    letter-spacing: -0.04em;
+  }
+
+  .cap-family-footer-about {
+    margin-block-start: var(--space-3) !important;
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+
+  /* A line of facts about the site's build, as a plate's small print. */
+  .cap-family-footer-stamp {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    color: var(--muted);
+    font: 500 0.6875rem / 1.6 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* The family's sites, each marked in its family's color; the one you are on carries a heavy top
+     edge in it, so the double stripe below stays the one strong mark. */
+  .cap-family-footer-sites {
+    padding-block: var(--space-5) var(--space-7);
+    border-block-start: 1px solid var(--line);
+
+    /* With no site part above it, the stripe is the strip's only top edge. */
+    &:first-child {
+      padding-block-start: 0;
+      border-block-start: 0;
+    }
+
+    & ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+      gap: var(--space-3);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    & a {
+      display: grid;
+      align-content: center;
+      min-block-size: var(--target);
+      padding: calc(var(--space-3) + 3px) var(--space-4) var(--space-3) calc(var(--space-4) + 14px);
+      border: 1px solid var(--line);
+      background: linear-gradient(var(--mark), var(--mark)) var(--space-4) 50% / 6px calc(100% - 2 * var(--space-4)) no-repeat;
+    }
+
+    & a:hover {
+      border-color: var(--mark);
+    }
+
+    & a[aria-current] {
+      padding-block-start: var(--space-3);
+      border-color: var(--mark);
+      border-block-start-width: 4px;
+    }
+  }
+
+  [data-family-mark="purple"] { --mark: var(--family-purple); }
+  [data-family-mark="teal"] { --mark: var(--family-teal); }
+  [data-family-mark="magenta"] { --mark: var(--family-magenta); }
+  [data-family-mark="cerulean"] { --mark: var(--family-cerulean); }
+
+  .cap-family-footer-site-name {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  .cap-family-footer-site-role {
+    color: var(--muted);
+    font: 500 0.6875rem / 1.5 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
   .cap-family-footer-head {
-    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-columns: var(--family-footer-name) minmax(0, 1fr);
     align-items: start;
     padding-block-start: 0;
     border-block-start: 0;
@@ -54,7 +155,8 @@
   }
 
   @media (max-width: 46rem) {
-    .cap-family-footer-head {
+    .cap-family-footer-head,
+    .cap-family-footer-center {
       grid-template-columns: minmax(0, 1fr);
     }
   }

@@ -30,7 +30,7 @@
 // so a family on a wrapper does not inherit the root family's already-resolved values.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { ELEVATION_ORDER, FAMILIES, FAMILY_ORDER, contrast, failures, renderEmailColors, renderEnarratioTheme, renderFamily, renderScoped, themes as coreThemes } from "./palette-core.mjs";
+import { ELEVATION_ORDER, FAMILIES, FAMILY_ORDER, contrast, failures, renderEmailColors, renderEnarratioTheme, renderFamily, renderMarks, renderScoped, themes as coreThemes } from "./palette-core.mjs";
 
 // The color math, the families and the renderers live in palette-core.mjs; this module adds the
 // command line, the files it owns and the checks, and re-exports the rest.
@@ -73,6 +73,7 @@ export function files() {
     ["color.css", renderFamily(p.seed, p.anchor)],
     // Purple is the default on :root, and scoped as well, so a page on another family can still show it.
     ...Object.keys(FAMILIES).map((n) => [`family-${n}.css`, renderScoped(n, FAMILIES[n])]),
+    ["family-marks.css", renderMarks()],
     ["enarratio-theme.mjs", renderEnarratioTheme()],
     ["../components/email/colors.ts", renderEmailColors()],
   ];

@@ -40,6 +40,7 @@ export declare const CHART_ORDER: string[];
 export declare const ELEVATION_ORDER: string[];
 export declare function renderFamily(seed: string, anchor?: string | null, label?: Label): string;
 export declare function renderScoped(name: string, family: { seed: string; anchor?: string | null; label?: Label }): string;
+export declare function renderMarks(): string;
 export declare function themes(family: { seed: string; anchor?: string | null; label?: Label }): {
   seed: string;
   anchor: string | null;
