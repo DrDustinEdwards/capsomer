@@ -1,4 +1,4 @@
-import { useId, useLayoutEffect, useRef, type ButtonHTMLAttributes, type MouseEvent, type ReactNode } from "react";
+import { useId, useLayoutEffect, useRef, type ButtonHTMLAttributes, type MouseEvent, type ReactNode, type Ref } from "react";
 import { morphFrom } from "./button.ts";
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "style"> {
@@ -16,6 +16,8 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   // A label that changes in place (Save, Saving…, Saved) eases the width and crossfades the
   // words. The label is wrapped in `.cap-btn-label`.
   morph?: boolean;
+  // The button element, for an app that moves focus to it (React 19 passes it through).
+  ref?: Ref<HTMLButtonElement>;
   children?: ReactNode;
 }
 

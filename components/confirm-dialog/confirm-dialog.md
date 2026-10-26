@@ -146,6 +146,16 @@ The confirm page, with no script (HTML, or React `ConfirmPage`, which renders ex
 
 `import { wordPattern } from "capsomer/behavior/confirm-dialog"`. In React: `<ConfirmPage action="/admin/sites/foxhound" hidden={{ intent: "delete", site: "foxhound" }} title="Delete foxhound.app?" lead="This cannot be undone." body={preview} action_label="Delete site" cancelHref="/admin/sites/foxhound" reason={{}} typeToConfirm="delete" error={refusal} />`. A list value in `hidden` is one hidden field per item under the same name: `hidden={{ intent: "delete", ids: ["p1", "p2"] }}` posts `ids` twice.
 
+`ConfirmModal` (0.22.0) is the confirm page drawn over the page it came from, for a server that answers a destructive request by rendering the confirmation in place: it sits in the page until script runs (`data-inline`), then opens as a modal `alertdialog`. Esc leaves the way Cancel does, and focus goes back to the control that opened it (or its menu's button, when that menu has closed, or `main`). Both take `children` (more fields), `onCancel` (cancel without leaving the page; the link still works with no script) and `renderForm` (a router's own form, so the post is a client navigation):
+
+```tsx
+<ConfirmModal title="Delete this mention" lead="This removes the only copy of it." typeToConfirm="1" action_label="Delete permanently" cancelHref={cancelHref} onCancel={() => navigate(cancelHref)} renderForm={(p) => <Form {...p} />}>
+  <input type="hidden" name="intent" value="delete" />
+</ConfirmModal>
+```
+
+The typed word posts as `confirm`. A `lead` that is not a string is drawn in a `div`, so it can hold paragraphs.
+
 ## Matches shadcn
 
 Alert Dialog (Base UI flavor, nova): the centered alert dialog with the blurred backdrop, the header with an optional media tile, title and description, the footer on a muted band with Cancel and the action, zoom-in-95 at 100 ms, no closing by the backdrop. Everything that is the surface comes from the shared dialog; the reason, the typed word and the error are this component's.

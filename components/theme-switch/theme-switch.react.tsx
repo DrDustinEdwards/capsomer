@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from "react";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
 import { applyTheme, effectiveTheme, readTheme, themeButtonLabel, THEME_PREF, toggleTheme, type ThemeChoice } from "./theme-switch.ts";
 
@@ -96,6 +96,20 @@ const BUTTON_SUN = (
   </svg>
 );
 
+// The button's tip: its name again, and the key that does the same, shown on hover and keyboard focus.
+function ThemeTip({ ref, label, shortcut }: { ref?: Ref<HTMLSpanElement>; label: string; shortcut?: string }) {
+  return (
+    <span ref={ref} className="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true">
+      <span className="cap-theme-tip-text">{label}</span>
+      {shortcut ? (
+        <span className="cap-keys">
+          <kbd>{shortcut}</kbd>
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 // The theme as one icon button (the site header's theme control, Dustin's answer 2 of
 // 2026-10-13): Light and Dark only, no System; it says what it does, "Switch to dark theme", in
 // its name and its tip.
@@ -129,14 +143,42 @@ export function ThemeButton({ prefKey = THEME_PREF, shortcut, className, initial
     <button ref={button} type="button" className={className ? `cap-theme-button ${className}` : "cap-theme-button"} data-cap="theme-switch" data-variant="button" data-cap-ready="" aria-label={label} onClick={() => setShowing(toggleTheme(prefKey))}>
       {BUTTON_MOON}
       {BUTTON_SUN}
-      <span ref={tip} className="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true">
-        <span className="cap-theme-tip-text">{label}</span>
-        {shortcut ? (
-          <span className="cap-keys">
-            <kbd>{shortcut}</kbd>
-          </span>
-        ) : null}
-      </span>
+      <ThemeTip ref={tip} label={label} shortcut={shortcut} />
     </button>
+  );
+}
+
+export interface ThemeFormProps {
+  // The site's theme route: a post with theme=light or theme=dark sets the cookie and comes back.
+  action?: string;
+  // The cookie the press writes with script, so the server reads the same choice; "theme" by default.
+  cookie?: string;
+  // Extra classes for both buttons: the site header adds its own icon-control class.
+  className?: string;
+  // The key the site binds to the theme, shown in the tips as a key cap. The site binds it.
+  shortcut?: string;
+  // Also remember the choice under this localStorage key, for a part of the site whose shell reads it.
+  prefKey?: string;
+}
+
+function FormButton({ value, show, label, icon, className, shortcut }: { value: ThemeChoice; show: ThemeChoice; label: string; icon: ReactNode; className?: string; shortcut?: string }) {
+  return (
+    <button type="submit" name="theme" value={value} className={className ? `cap-theme-button ${className}` : "cap-theme-button"} data-show={show} aria-label={label}>
+      {icon}
+      <ThemeTip label={label} shortcut={shortcut} />
+    </button>
+  );
+}
+
+// The theme button for a site that keeps the choice in a cookie and works with no script
+// (data-variant="form", 0.22.0): two real submit buttons, one shown by CSS, each saying what it
+// does. Pure markup, so a server render and the browser agree; capsomer/behavior/theme-switch's
+// enhance() makes a press switch at once and write the cookie.
+export function ThemeForm({ action = "/theme", cookie, className, shortcut, prefKey }: ThemeFormProps) {
+  return (
+    <form method="post" action={action} className="cap-theme-form" data-cap="theme-switch" data-variant="form" data-cap-cookie={cookie} data-cap-pref={prefKey}>
+      <FormButton value="dark" show="light" label={themeButtonLabel("light")} icon={BUTTON_MOON} className={className} shortcut={shortcut} />
+      <FormButton value="light" show="dark" label={themeButtonLabel("dark")} icon={BUTTON_SUN} className={className} shortcut={shortcut} />
+    </form>
   );
 }
