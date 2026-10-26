@@ -172,11 +172,15 @@ test("behavior: an old address at the root opens its page in the admin", async (
   await expect(page.locator("#cap-main h1")).toHaveText("Shell");
 });
 
-// The public page's script: the preview takes a family, and the filter narrows the components.
-test("behavior: the public page's preview takes the chosen family and the filter finds a component", async ({ page }) => {
+// The public page's script: the page wears a family site's layer and family, and the filter narrows the components.
+test("behavior: the public page wears the chosen site and the filter finds a component", async ({ page }) => {
   await page.goto("./");
-  await page.locator(".home-try label", { hasText: "Teal" }).click();
-  await expect(page.locator("[data-cap-part='stage']")).toHaveAttribute("data-family", "teal");
+  await page.locator(".home-wear-options label", { hasText: "Foxing" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-cap-site", "foxing");
+  await expect(page.locator("html")).toHaveAttribute("data-family", "fox");
+  await expect(page.locator("h1")).toHaveCSS("font-family", /Fraunces/);
+  await page.locator(".home-wear-options label", { hasText: "Capsomer" }).click();
+  await expect(page.locator("html")).not.toHaveAttribute("data-cap-site", /./);
   await page.getByLabel("Find a component").fill("combobox");
   await expect(page.locator(".home-parts > li:visible")).toHaveCount(1);
   await expect(page.locator("#home-find-n")).toHaveText(/^1 of \d+ components$/);

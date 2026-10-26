@@ -11,14 +11,14 @@
 @import "../css/base.css";
 @import "../css/families.css";
 @import "../tokens/themes.css";
+@import "../css/sites.css";
 /* Capsomer's own components: the site header with its theme button and phone sheet, and the parts
-   the family preview, the filter, the defaults, the copy button and a component page's tables use. */
+   the site picker, the filter, the defaults, the copy button and a component page's tables use. */
 @import "../components/popover/popover.css";
 @import "../components/dialog/dialog.css";
 @import "../components/button/button.css";
 @import "../components/theme-switch/theme-switch.css";
 @import "../components/site-header/site-header.css";
-@import "../components/segmented/segmented.css";
 @import "../components/field/field.css";
 @import "../components/switch/switch.css";
 @import "../components/chips/chips.css";
@@ -109,7 +109,7 @@ code {
     overflow: hidden;
     background: var(--primary);
     color: var(--primary-fg);
-    font: 800 clamp(3.5rem, 8vw, 7.5rem) / 0.8 var(--ui);
+    font: 800 clamp(3.5rem, 8vw, 7.5rem) / 0.8 var(--display);
     letter-spacing: -0.04em;
   }
   /* The run: an empty tile that carries a short word to the edge. */
@@ -194,15 +194,15 @@ h3 {
   text-wrap: balance;
 }
 h1 {
-  font: 800 clamp(2.4rem, 5vw, 3.75rem) / 1 var(--ui);
+  font: 800 clamp(2.4rem, 5vw, 3.75rem) / 1 var(--display);
   letter-spacing: -0.035em;
 }
 h2 {
-  font: 800 clamp(1.75rem, 3.4vw, 2.6rem) / 1.05 var(--ui);
+  font: 800 clamp(1.75rem, 3.4vw, 2.6rem) / 1.05 var(--display);
   letter-spacing: -0.03em;
 }
 h3 {
-  font: 800 1.2rem / 1.2 var(--ui);
+  font: 800 1.2rem / 1.2 var(--display);
 }
 h2 {
   margin-block-end: var(--space-5);
@@ -242,7 +242,7 @@ h2 {
     color: var(--primary-fg);
   }
   & b {
-    font: 800 clamp(3rem, 6vw, 4.5rem) / 0.9 var(--ui);
+    font: 800 clamp(3rem, 6vw, 4.5rem) / 0.9 var(--display);
     letter-spacing: -0.04em;
   }
   & .home-figure-label {
@@ -282,7 +282,7 @@ h2 {
 
   & span {
     padding-inline-start: 0.05em;
-    font: 800 11rem / 0.62 var(--ui);
+    font: 800 11rem / 0.62 var(--display);
     letter-spacing: -0.05em;
     white-space: nowrap;
     translate: 0 0.12em;
@@ -476,20 +476,69 @@ h2 {
   margin-block-end: var(--space-5);
 }
 
-/* The family preview: real components in a panel that takes the chosen family. */
-.home-try {
+/* The site picker: each choice is a tile in its own site's layer, so it previews the look it puts on
+   the page; the chosen one fills with its family's main color. */
+.home-wear {
+  display: grid;
+  gap: var(--space-4);
+}
+.home-wear-pick {
   display: grid;
   gap: var(--space-3);
-  margin-block-start: var(--space-8);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
 
-  & h3 {
-    margin: 0;
-    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  & legend {
+    padding: 0;
+    margin-block-end: var(--space-3);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}
+.home-wear-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(45%, 10rem), 1fr));
+  gap: 4px;
+
+  & label {
+    position: relative;
+    display: flex;
+    align-items: end;
+    min-block-size: 4.5rem;
+    padding: var(--space-3);
+    background: var(--surface);
+    color: var(--text);
+    border: 2px solid var(--line-strong);
+    font: 800 1.25rem / 1.05 var(--display);
     letter-spacing: -0.02em;
+    cursor: pointer;
   }
-  & .home-sub {
-    margin: 0;
+  & label:has(:checked) {
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-color: var(--primary);
   }
+  & label:has(:focus-visible) {
+    outline: var(--focus-width) solid var(--ring);
+    outline-offset: var(--focus-offset);
+  }
+  & input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+/* Capsomer's own choice keeps Capsomer's face whatever site the page wears. */
+.home-wear-options label:first-child {
+  font-family: "Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+.home-wear-now {
+  margin: 0;
+  font-size: 1.0625rem;
 }
 .home-try-stage {
   display: grid;
@@ -808,9 +857,5 @@ h2 {
       &:nth-child(2n) { animation-range: entry 30% cover 40%; }
       &:nth-child(3n) { animation-range: entry 40% cover 45%; }
     }
-  }
-  /* The family preview crossfades to the chosen family (site/home-main.ts). */
-  .home-try-stage {
-    view-transition-name: home-stage;
   }
 }

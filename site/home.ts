@@ -1,7 +1,7 @@
 // The public pages of https://capsomer.dustinedwards.info: the front page, written into site/home.html,
 // and each component's page at /components/<name>/, written into a copy of site/component.html, both at
 // build time (site/vite.config.ts), so they are whole HTML that reads without a script; site/home-main.ts
-// adds the header's behavior, the family preview, the type sample, the component filter, the copy button
+// adds the header's behavior, the site picker, the type sample, the component filter, the copy button
 // and the live test count, and site/redirect.ts sends old admin links on. Its look is Supergraphics (Barbara Stauffacher Solomon, The Sea Ranch, 1966):
 // flat letter tiles too big for the page, cut by its edge, painted in Capsomer's own families.
 // The dashboard of tests, pairs and changes is the admin at /admin/ (site/main.tsx).
@@ -34,7 +34,20 @@ interface Data {
   tests: { passed: number; failed: number } | null;
   type: Array<[string, string, string]>;
   defaults: Array<{ lead: string; reason: string }>;
+  sites: Site[];
 }
+// A family site the front page can wear: its per-site layer (tokens/site-<id>.css) and what that sets.
+interface Site {
+  id: string;
+  name: string;
+  family: Family;
+  face: string;
+  display: string;
+}
+
+// The sites whose layer changes how the page looks; Capsid, dustinedwards.info and Germomics use
+// Capsomer nearly as it comes, so wearing them would look like the default.
+const WEAR: Array<[string, string]> = [["foxhound", "Foxhound"], ["foxing", "Foxing"], ["julieedwards", "Julie Edwards"], ["txasm", "TXASM"]];
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 // Backticks in a summary become code, as on the admin's pages.
@@ -93,8 +106,17 @@ export function readData(root: string): Data {
     tests: results?.available ? { passed: results.totals.passed, failed: results.totals.failed } : null,
     type,
     defaults,
+    // Read from the generated layers themselves, so the page says what it really applies.
+    sites: WEAR.map(([id, name]) => {
+      const css = readFileSync(resolve(root, `tokens/site-${id}.css`), "utf8");
+      const face = /--ui: "([^"]+)"/.exec(css)?.[1] ?? "Schibsted Grotesk";
+      return { id, name, family: (/on the (\w+) family/.exec(css)?.[1] ?? "purple") as Family, face, display: /--display: "([^"]+)"/.exec(css)?.[1] ?? face };
+    }),
   };
 }
+
+const wearNote = (name: string, family: Family, face: string, display: string) =>
+  `${name}: the ${NAMES[family].toLowerCase()} family in ${face}${display === face ? "" : `, headings in ${display}`}.`;
 
 /** A word in letter tiles over a stripe, hidden from assistive technology: the heading says it. */
 function band(word: string, families: Family[], size: "cover" | "section") {
@@ -165,7 +187,41 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   ${band("Capsomer", FAMILIES, "cover")}
   <div class="home-wrap home-intro">
     <h1 id="top-h">One design system for every site and app</h1>
-    <p class="home-lead">Capsomer is the palette, type and components shared by every one of Dustin Edwards's sites and apps, with the tests that keep each of them accessible in both themes. Plain CSS, MIT licensed.</p>
+    <p class="home-lead">Capsomer is the palette, type and components shared by every one of Dustin Edwards's sites and apps, with the tests that keep each of them accessible in both themes. Plain CSS, MIT licensed. Each site sets one attribute, <code>data-cap-site</code>, and keeps its own type, sizes and neutrals.</p>
+  </div>
+  <div class="home-wrap home-wear">
+    <fieldset class="home-wear-pick" data-cap-part="wear" hidden>
+      <legend>See this page as</legend>
+      <div class="home-wear-options">
+        <label data-note="${esc(wearNote("Capsomer as it comes", "purple", "Schibsted Grotesk", "Schibsted Grotesk"))}"><input type="radio" name="home-wear" value="" checked /> Capsomer</label>
+        ${d.sites.map((x) => `<label data-cap-site="${x.id}"${fam(x.family)} data-note="${esc(wearNote(x.name, x.family, x.face, x.display))}"><input type="radio" name="home-wear" value="${x.id}" data-family="${x.family}" /> ${esc(x.name)}</label>`).join("\n        ")}
+      </div>
+      <p class="home-wear-now" role="status">${esc(wearNote("Capsomer as it comes", "purple", "Schibsted Grotesk", "Schibsted Grotesk"))}</p>
+    </fieldset>
+    <div class="home-try-stage" data-cap-part="stage">
+      <div class="home-try-row">
+        <button type="button" class="cap-btn" data-variant="primary">Save changes</button>
+        <button type="button" class="cap-btn" data-variant="secondary">Preview</button>
+        <button type="button" class="cap-btn">Cancel</button>
+        <button type="button" class="cap-btn" data-variant="link">View history</button>
+      </div>
+      <div class="cap-field">
+        <label class="cap-field-label" for="home-try-name">Site name</label>
+        <input class="cap-input" id="home-try-name" value="Phage λ notes" autocomplete="off" />
+      </div>
+      <div class="home-try-row">
+        <label class="cap-switch" data-cap="switch"><input type="checkbox" role="switch" checked /> Publish on save <span class="cap-switch-state" aria-hidden="true">On</span></label>
+        <div class="cap-chips" role="group" aria-label="Show">
+          <button type="button" class="cap-chip" aria-pressed="true">Drafts</button>
+          <button type="button" class="cap-chip" aria-pressed="false">Published</button>
+        </div>
+      </div>
+      <div class="home-try-row">
+        <span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Healthy</span>
+        <span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Needs you</span>
+        <span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Down</span>
+      </div>
+    </div>
   </div>
   <ul class="home-wrap home-figures">
     ${figures.map(([f, label, n, note]) => `<li${fam(f)}><b>${esc(n)}</b><span class="home-figure-label">${esc(label)}</span><span>${esc(note)}</span></li>`).join("\n    ")}
@@ -190,40 +246,6 @@ import "capsomer/button.css";       // each component's CSS, as used`;
         return `<li${fam(f)}><p class="home-family-name" aria-hidden="true"><span>${NAMES[f]}</span></p><h3>${NAMES[f]} <code>${esc(info?.seed ?? "")}</code></h3><p>${esc((info?.note ?? "").replace(/\s*\(rules?[^)]*\)/g, ""))}</p></li>`;
       }).join("\n      ")}
     </ul>
-    <div class="home-try">
-      <h3 id="try-h">One attribute changes the family</h3>
-      <p class="home-sub">These are Capsomer's own components, live. Pick a family and the panel takes it, the way a site does with <code>data-family</code>; the theme button at the top switches light and dark.</p>
-      <fieldset class="cap-seg">
-        <legend>Family</legend>
-        <div class="cap-seg-options">
-          ${FAMILIES.map((f, i) => `<label><input type="radio" name="home-family" value="${f}"${i === 0 ? " checked" : ""} /> ${NAMES[f]}</label>`).join("\n          ")}
-        </div>
-      </fieldset>
-      <div class="home-try-stage" data-cap-part="stage">
-        <div class="home-try-row">
-          <button type="button" class="cap-btn" data-variant="primary">Save changes</button>
-          <button type="button" class="cap-btn" data-variant="secondary">Preview</button>
-          <button type="button" class="cap-btn">Cancel</button>
-          <button type="button" class="cap-btn" data-variant="link">View history</button>
-        </div>
-        <div class="cap-field">
-          <label class="cap-field-label" for="home-try-name">Site name</label>
-          <input class="cap-input" id="home-try-name" value="Phage λ notes" autocomplete="off" />
-        </div>
-        <div class="home-try-row">
-          <label class="cap-switch" data-cap="switch"><input type="checkbox" role="switch" checked /> Publish on save <span class="cap-switch-state" aria-hidden="true">On</span></label>
-          <div class="cap-chips" role="group" aria-label="Show">
-            <button type="button" class="cap-chip" aria-pressed="true">Drafts</button>
-            <button type="button" class="cap-chip" aria-pressed="false">Published</button>
-          </div>
-        </div>
-        <div class="home-try-row">
-          <span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Healthy</span>
-          <span class="cap-status" data-tone="warn"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/></svg>Needs you</span>
-          <span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Down</span>
-        </div>
-      </div>
-    </div>
     <h3 class="home-albers-h">${d.pairs ? `${d.pairs.total - d.pairs.failing} of ${d.pairs.total} contrast pairs pass` : "Every contrast pair is checked"}</h3>
     <p class="home-sub">A color is only as readable as what sits behind it, so the generator checks every pair a component puts together, in both themes, against WCAG 2.2. The squares are after Josef Albers's <i>Homage to the Square</i> (from 1950), his study of how a color changes with the one around it.</p>
     <ul class="home-albers">

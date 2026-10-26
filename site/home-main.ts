@@ -1,32 +1,53 @@
 // The public pages' script (site/home.ts writes them; they read whole without it). The header and its
-// theme button are Capsomer's own site header; the rest is the front page's: the family preview, the
+// theme button are Capsomer's own site header; the rest is the front page's: the site picker, the
 // type sample, the component filter, the copy button and the live test count.
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
+// The family sites' faces, for the site picker: a browser fetches a face only once a site that uses it is worn.
+import "@fontsource/dm-sans/latin-400.css";
+import "@fontsource/dm-sans/latin-600.css";
+import "@fontsource/dm-sans/latin-800.css";
+import "@fontsource/dm-mono/latin-400.css";
+import "@fontsource/fraunces/latin-400.css";
+import "@fontsource/fraunces/latin-800.css";
+import "@fontsource/open-sans/latin-400.css";
+import "@fontsource/open-sans/latin-600.css";
+import "@fontsource/inter/latin-400.css";
+import "@fontsource/inter/latin-600.css";
+import "@fontsource/inter/latin-800.css";
 
 enhanceHeader();
 enhanceTheme();
 
-// The preview takes the chosen family as a site would, with data-family (purple is the default, so
-// none), crossfading where the browser has view transitions and motion is allowed (site/home.css).
-const stage = document.querySelector<HTMLElement>("[data-cap-part='stage']");
+// The page wears a family site: its layer (data-cap-site) and its family (data-family; purple is the
+// default, so none) go on <html>, as the sites themselves set them, crossfading where the browser
+// has view transitions and motion is allowed. Without a script the picker stays hidden.
+const wear = document.querySelector<HTMLFieldSetElement>("[data-cap-part='wear']");
 const still = matchMedia("(prefers-reduced-motion: reduce)");
-for (const input of document.querySelectorAll<HTMLInputElement>("input[name='home-family']")) {
-  input.addEventListener("change", () => {
-    if (!stage) return;
-    const apply = () => {
-      if (input.value === "purple") delete stage.dataset.family;
-      else stage.dataset.family = input.value;
-    };
-    if (document.startViewTransition && !still.matches) document.startViewTransition(apply);
-    else apply();
-  });
+if (wear) {
+  wear.hidden = false;
+  const root = document.documentElement;
+  const now = wear.querySelector(".home-wear-now");
+  for (const input of wear.querySelectorAll<HTMLInputElement>("input[name='home-wear']")) {
+    input.addEventListener("change", () => {
+      const apply = () => {
+        if (input.value) root.dataset.capSite = input.value;
+        else delete root.dataset.capSite;
+        const family = input.dataset.family;
+        if (family && family !== "purple") root.dataset.family = family;
+        else delete root.dataset.family;
+        if (now) now.textContent = input.closest("label")?.dataset.note ?? "";
+      };
+      if (document.startViewTransition && !still.matches) document.startViewTransition(apply);
+      else apply();
+    });
+  }
 }
-// The preview's chips and switch respond, so the panel behaves like the components it shows.
-for (const chip of document.querySelectorAll<HTMLButtonElement>(".home-try .cap-chip")) {
+// The stage's chips and switch respond, so the panel behaves like the components it shows.
+for (const chip of document.querySelectorAll<HTMLButtonElement>(".home-try-stage .cap-chip")) {
   chip.addEventListener("click", () => chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true")));
 }
-for (const sw of document.querySelectorAll<HTMLInputElement>(".home-try .cap-switch input")) {
+for (const sw of document.querySelectorAll<HTMLInputElement>(".home-try-stage .cap-switch input")) {
   sw.addEventListener("change", () => {
     const state = sw.parentElement?.querySelector(".cap-switch-state");
     if (state) state.textContent = sw.checked ? "On" : "Off";
