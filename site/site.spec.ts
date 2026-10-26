@@ -84,10 +84,10 @@ eachTheme((theme) => {
   test("behavior: the overview counts every family's contrast pairs, not just the committed palette's", async ({ page }) => {
     await page.goto("./admin/#/overview");
     const fig = page.locator(".site-figure").filter({ hasText: "Contrast pairs" });
-    await expect(fig.locator("b")).toHaveText(/^\d{3}$/);
+    await expect(fig.locator("b")).toHaveText(/^\d[\d,]*$/);
     // Two facts, two lines: how many families and themes, then whether any pair fails.
     const lines = await fig.locator("> *").allTextContents();
-    expect(lines).toEqual(["Contrast pairs", expect.stringMatching(/^\d{3}$/), expect.stringMatching(/^\d+ color families in 2 themes$/), "None failing"]);
+    expect(lines).toEqual(["Contrast pairs", expect.stringMatching(/^\d[\d,]*$/), expect.stringMatching(/^\d+ color families in 2 themes$/), "None failing"]);
   });
 
   test("behavior: the Tests card says its number once", async ({ page }) => {

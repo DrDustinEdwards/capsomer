@@ -26,6 +26,12 @@ export const FAMILIES = {
   // #002868 is. Step 9 is its hue at purple and fox's lightness (OKLCH L 0.587); green runs out of
   // sRGB at chroma 0.15 there, so it takes that, the strongest this green can be.
   forest: { seed: "#06954f", anchor: "#15532E", defaultTheme: "light", note: "julieedwards.info, light by default; the school green #15532E is step 11 in light" },
+  // Two families for the public sites under dustinedwards.info, each its own color under the
+  // shared manual theme (Dustin, 2026-10-26). Both are purple's lightness and strength (OKLCH L 0.587,
+  // C 0.172) at a hue no family had: magenta at 330 between purple and fox, cerulean at 230
+  // between teal and navy. A red was left out: it would read as the error color.
+  magenta: { seed: "#b24fac", anchor: null, defaultTheme: "light", note: "Capsomer's public site, light by default" },
+  cerulean: { seed: "#0588b4", anchor: null, defaultTheme: "light", note: "Prelum's specimen site, light by default" },
 };
 // ---- color math ---------------------------------------------------------------------
 
