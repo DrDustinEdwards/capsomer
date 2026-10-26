@@ -1,0 +1,162 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The family footer (family-footer.ts): dustinedwards.info's foot, closing every site of the family
+   under that site's own footer. It is drawn with the manual theme's livery band and letterhead
+   (components/manual/manual.css, which a page loads with it), without the letterhead's heavy rule,
+   which would sit right under the band (Dustin, 2026-10-26). The band is the page family's --on, so
+   each site draws it in its own color. */
+@layer cap.components {
+  .cap-family-footer {
+    margin-block-start: var(--space-8);
+    padding-block-end: var(--space-6);
+    font-family: var(--ui);
+
+    & > .cap-livery {
+      margin-block: 0 var(--space-5);
+    }
+
+    & a,
+    & a:visited {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    & a:hover,
+    & a:focus-visible {
+      color: var(--accent-text);
+    }
+  }
+
+  .cap-family-footer-head {
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: start;
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+
+  .cap-family-footer-logo {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cap-family-footer-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 48rem) {
+    .cap-family-footer-columns {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--space-6);
+    }
+  }
+
+  @media (max-width: 46rem) {
+    .cap-family-footer-head {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .cap-family-footer-social {
+    display: flex;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-family-footer-social-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: var(--target);
+    min-block-size: var(--target);
+  }
+
+  /* Visually hidden until hover or focus, never display:none, so it stays the link's name. */
+  .cap-family-footer-social-label {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 50%;
+    translate: -50% var(--space-2);
+    padding: 2px var(--space-3);
+    border: 1px solid var(--line);
+    background: var(--ground);
+    color: var(--text);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    pointer-events: none;
+    clip-path: inset(50%);
+    opacity: 0;
+  }
+
+  .cap-family-footer-social-link:is(:hover, :focus-visible) .cap-family-footer-social-label {
+    clip-path: none;
+    opacity: 1;
+  }
+
+  .cap-family-footer-mark {
+    display: block;
+    inline-size: auto;
+    block-size: 1.5rem;
+  }
+
+  .cap-family-footer-knockout {
+    fill: var(--ground);
+  }
+
+  .cap-family-footer-heading {
+    margin: 0 0 var(--space-3);
+    color: var(--muted);
+    font: 500 0.6875rem / 1.6 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cap-family-footer-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
+      font-size: 0.875rem;
+    }
+
+    & a:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  .cap-family-footer-private {
+    gap: var(--space-3);
+  }
+
+  .cap-family-footer-icon {
+    flex: none;
+    inline-size: 1rem;
+    block-size: 1rem;
+  }
+
+  /* The sign-in lock: small and muted after the label, so the name still leads. */
+  .cap-family-footer-lock {
+    flex: none;
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .cap-family-footer-note {
+    margin: var(--space-6) 0 0;
+    color: var(--muted);
+    font: 500 0.6875rem / 1.6 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+}

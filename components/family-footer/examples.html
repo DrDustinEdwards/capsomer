@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="./specimen/family-footer.css" />
+
+<section class="cap-specimen" aria-labelledby="s-purple">
+  <h2 id="s-purple">On dustinedwards.info, in purple</h2>
+  <div data-family="purple" id="m-purple" data-origin=""></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-teal">
+  <h2 id="s-teal">Under Capsid's own footer, in teal</h2>
+  <div data-family="teal" id="m-teal"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-magenta">
+  <h2 id="s-magenta">Under Capsomer's own footer, in magenta</h2>
+  <div data-family="magenta" id="m-magenta"></div>
+</section>
+
+<script type="module">
+  import { familyFooterHtml } from "./family-footer.ts";
+  for (const el of document.querySelectorAll("#m-purple, #m-teal, #m-magenta")) {
+    el.innerHTML = familyFooterHtml({ origin: el.dataset.origin, year: 2026 });
+  }
+</script>
