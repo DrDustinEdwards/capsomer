@@ -28,6 +28,10 @@ eachTheme((theme) => {
       { sel: "#m-checklist .cap-checklist-note", what: "a checklist note" },
       { sel: "#m-signs .cap-sign", what: "a sign" },
       { sel: "#m-plate .cap-plate-fig", what: "a plate's figure number" },
+      { sel: "#m-direction a:not([aria-current])", what: "a way on the direction strip" },
+      { sel: "#m-direction [aria-current]", what: "the lit page on the direction strip" },
+      { sel: "#m-cue .cap-cue-strip", what: "the cue card's strip" },
+      { sel: "#m-cue .cap-cue-value", what: "a cue line's value" },
     ]);
   });
 });

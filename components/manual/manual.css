@@ -605,3 +605,339 @@
     }
   }
 }
+
+/* The head of a page drawn on the manual's layout grid (5.1), as it prints its grids in fine red
+   lines: twelve columns with their gutters and a baseline every 24 pixels, four columns on a
+   phone, the grid's own label at its foot on the right. Red is the manual's, not the family's: the
+   grid is the printer's, under the page, never a mark on it. */
+@layer cap.components {
+  .cap-layout-grid {
+    --cols: 12;
+    --gap: 24px;
+    --grid-line: color-mix(in oklab, var(--crit) 45%, transparent);
+    --grid-soft: color-mix(in oklab, var(--crit) 14%, transparent);
+    --grid-fill: color-mix(in oklab, var(--crit) 4%, transparent);
+    position: relative;
+    isolation: isolate;
+    padding-block: var(--space-3) var(--space-6);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        repeating-linear-gradient(to bottom, transparent 0 23px, var(--grid-soft) 23px 24px),
+        linear-gradient(to right, var(--grid-line) 0 1px, var(--grid-fill) 1px calc(100% - var(--gap) - 1px), var(--grid-line) calc(100% - var(--gap) - 1px) calc(100% - var(--gap)), transparent calc(100% - var(--gap))) 0 0 / calc((100% + var(--gap)) / var(--cols)) 100% repeat-x;
+    }
+
+    &::after {
+      content: "12 columns, 24 px baseline" / "";
+      position: absolute;
+      inset-block-end: 4px;
+      inset-inline-end: 0;
+      color: var(--crit);
+      font: 500 0.625rem / 1 var(--mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .cap-layout-grid {
+      --cols: 4;
+      --gap: 16px;
+
+      &::after {
+        content: "4 columns, 24 px baseline" / "";
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-layout-grid::before {
+      display: none;
+    }
+  }
+}
+
+/* The trail to a page as the directional strip of the manual's signs (6.2): a dark band of light
+   type, an arrow in the family's color between the ways, and the page you are on lit. */
+@layer cap.components {
+  .cap-direction {
+    padding: var(--space-2) var(--space-4);
+    background: var(--text);
+    color: var(--ground);
+    font: 600 0.9375rem / 1.4 var(--ui);
+
+    > ol {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      min-inline-size: 0;
+    }
+
+    li + li::before {
+      content: "\2192" / "";
+      margin-inline: 0.6em;
+      color: var(--on);
+      font-weight: 700;
+    }
+
+    a {
+      display: inline-block;
+      min-block-size: 24px;
+      line-height: 24px;
+      color: var(--ground);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+
+      &:hover,
+      &:focus-visible {
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+      }
+    }
+
+    [aria-current] {
+      padding-inline: 0.5em;
+      background: var(--on);
+      color: var(--primary-fg);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-direction {
+      border: 1px solid CanvasText;
+    }
+  }
+}
+
+/* The livery: one bold band of the family's color with a thin pin stripe under it, as the manual
+   paints every NASA car, van and aircraft (7.1 to 7.6). The band runs across the foot of a page;
+   a card carries a short length of it along its top as data-livery. */
+@layer cap.components {
+  .cap-livery {
+    block-size: 49px;
+    margin-block-start: var(--space-8);
+    background: linear-gradient(to bottom, var(--on) 0 40px, transparent 40px 44px, var(--on) 44px);
+  }
+
+  [data-livery] {
+    border-block-start: 6px solid var(--on);
+  }
+}
+
+/* The roll blocks painted round a Saturn V, so the cameras could see how far it had turned: one
+   block a step, its opposite quarters filled for a step done and lit in the family's color for the
+   one you are on, a step ahead faint. Drawn, so it is hidden from screen readers and the page says
+   which step it is in words. */
+@layer cap.components {
+  .cap-roll {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > li {
+      inline-size: 22px;
+      block-size: 22px;
+      border: 2px solid var(--text);
+    }
+
+    > [data-state="done"] {
+      background: conic-gradient(var(--text) 0 25%, transparent 0 50%, var(--text) 0 75%, transparent 0);
+    }
+
+    > [data-state="now"] {
+      border-color: var(--on);
+      background: conic-gradient(var(--on) 0 25%, transparent 0 50%, var(--on) 0 75%, transparent 0);
+    }
+
+    > [data-state="ahead"] {
+      opacity: 0.4;
+    }
+  }
+}
+
+/* Dated steps on the Apollo flight plan's time line: a ruled scale down the left, ticked every
+   10px, each step's mark (a year, a time or a number) at its tick, the step beside it. */
+@layer cap.components {
+  .cap-timeline {
+    margin: 0 0 0 1.25rem;
+    padding: 0;
+    border-inline-start: 1px solid var(--text);
+    background: repeating-linear-gradient(var(--line-strong) 0 1px, transparent 1px 10px) 0 0 / 6px 100% no-repeat;
+    list-style: none;
+    font-family: var(--ui);
+
+    > li {
+      position: relative;
+      display: grid;
+      grid-template-columns: 5.5rem minmax(0, 1fr);
+      gap: var(--space-2) var(--space-4);
+      padding: var(--space-4) 0 var(--space-4) var(--space-6);
+      border-block-end: 1px solid var(--line);
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset-block-start: calc(var(--space-4) + 0.7em);
+        inset-inline-start: 0;
+        inline-size: 14px;
+        border-block-start: 1px solid var(--text);
+      }
+    }
+  }
+
+  .cap-timeline-mark {
+    font: 500 0.8125rem / 1.6 var(--mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+
+  .cap-timeline-body {
+    min-inline-size: 0;
+
+    > :first-child {
+      margin-block-start: 0;
+    }
+
+    > :last-child {
+      margin-block-end: 0;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .cap-timeline > li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}
+
+/* One step as an Apollo cue card: a ruled box, a dark strip naming the procedure and the card, the
+   step's title in capitals in the mono, and its lines each with a drawn box, a name in capitals, a
+   dotted leader and its value. The roll blocks may sit under the strip. */
+@layer cap.components {
+  .cap-cue {
+    padding-block-end: var(--space-4);
+    border: 2px solid var(--text);
+    background: var(--ground);
+    font-family: var(--ui);
+
+    > :not(.cap-cue-strip) {
+      margin-inline: var(--space-4);
+    }
+
+    > .cap-roll {
+      margin-block-end: var(--space-3);
+    }
+  }
+
+  .cap-cue-strip {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background: var(--text);
+    color: var(--ground);
+    font: 700 0.75rem / 1.2 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cap-cue-title {
+    margin-block: 0 var(--space-3);
+    font: 700 clamp(1.25rem, 2vw, 1.5rem) / 1.2 var(--mono);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .cap-cue-lines {
+    display: grid;
+    gap: var(--space-1);
+    margin-block: var(--space-3) 0;
+    padding: var(--space-3) 0 0;
+    border-block-start: 1px solid var(--text);
+    list-style: none;
+    font: 500 0.8125rem / 1.5 var(--mono);
+    text-transform: uppercase;
+
+    > li {
+      display: grid;
+      grid-template-columns: auto auto minmax(1rem, 1fr) minmax(0, max-content);
+      align-items: baseline;
+      gap: var(--space-2);
+      min-block-size: 24px;
+
+      &::before {
+        content: "";
+        inline-size: 12px;
+        block-size: 12px;
+        border: 1.5px solid var(--text);
+        transform: translateY(1px);
+      }
+
+      &::after {
+        content: "";
+        grid-column: 3;
+        grid-row: 1;
+        border-block-end: 1.5px dotted var(--text);
+      }
+    }
+  }
+
+  .cap-cue-name {
+    grid-column: 2;
+    font-weight: 700;
+
+    &:is(a) {
+      color: var(--text);
+
+      &:hover,
+      &:focus-visible {
+        color: var(--accent-text);
+      }
+    }
+  }
+
+  /* A value keeps its case: a unit (µL, mL) changes meaning in capitals. */
+  .cap-cue-value {
+    grid-column: 4;
+    grid-row: 1;
+    text-align: end;
+    text-transform: none;
+  }
+
+  @media (max-width: 40rem) {
+    .cap-cue-lines > li {
+      grid-template-columns: auto minmax(0, 1fr);
+
+      &::after {
+        display: none;
+      }
+    }
+
+    .cap-cue-value {
+      grid-column: 2;
+      grid-row: auto;
+      text-align: start;
+    }
+  }
+}
