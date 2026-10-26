@@ -11,7 +11,7 @@ export interface Family {
   defaultTheme: Scheme;
   note: string;
 }
-export declare const FAMILIES: Record<"purple" | "fox" | "teal" | "amber" | "navy" | "forest" | "magenta" | "cerulean", Family>;
+export declare const FAMILIES: Record<"purple" | "fox" | "teal" | "amber" | "navy" | "forest" | "magenta" | "cerulean" | "olive" | "rose", Family>;
 
 /** One theme's tokens, by name without the leading --, as hex or CSS values. */
 export type Tokens = Record<string, string>;

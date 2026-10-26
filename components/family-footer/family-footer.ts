@@ -50,11 +50,15 @@ export const PROFILE_LINKS: FamilyLink[] = [
 export const WORKSPACE_HEADING = "Workspace";
 const SIGN_IN_NOTE = "(requires sign-in)";
 
-/** The logins, in Dustin's order: Admin, Portal, Carrel, Lab. Each one's own sign-in keeps it private. */
+/**
+ * The logins, in Dustin's order: Admin, Portal, Desk, Lab. Each one's own sign-in keeps it private.
+ * Desk is Carrel's signed-in writing app, as Portal is Capsid's (Dustin, 2026-10-26); Carrel itself
+ * is a public site in the strip of sites.
+ */
 export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { to: "/admin", label: "Admin", name: `Admin, dustinedwards.info ${SIGN_IN_NOTE}`, icon: "gear" },
   { to: "https://portal.dustinedwards.info", label: "Portal", name: `Capsid Portal ${SIGN_IN_NOTE}`, hover: "Capsid Portal", icon: "capsid", external: true },
-  { to: "https://carrel.dustinedwards.info", label: "Carrel", name: `Carrel, writing ${SIGN_IN_NOTE}`, icon: "lamp", external: true },
+  { to: "https://desk.dustinedwards.info", label: "Desk", name: `Desk, Carrel's writing app ${SIGN_IN_NOTE}`, hover: "Carrel Desk", icon: "lamp", external: true },
   { to: "/lab", label: "Lab bench", name: `Lab bench, the members' workspace ${SIGN_IN_NOTE}`, icon: "flask" },
 ];
 
@@ -87,7 +91,7 @@ export interface FamilySite {
   /** What the site is, in a word or two. */
   role: string;
   /** Its color family: --family-<family> (tokens/family-marks.css) draws its mark. */
-  family: "purple" | "teal" | "magenta" | "cerulean";
+  family: "purple" | "teal" | "magenta" | "cerulean" | "olive" | "rose";
 }
 
 export const FAMILY_SITES: FamilySite[] = [
@@ -95,6 +99,8 @@ export const FAMILY_SITES: FamilySite[] = [
   { id: "capsid", name: "Capsid", href: "https://capsid.dustinedwards.info", role: "Agent memory", family: "teal" },
   { id: "capsomer", name: "Capsomer", href: "https://capsomer.dustinedwards.info", role: "Design system", family: "magenta" },
   { id: "prelum", name: "Prelum", href: "https://prelum.dustinedwards.info", role: "Publishing", family: "cerulean" },
+  { id: "carrel", name: "Carrel", href: "https://carrel.dustinedwards.info", role: "Writing", family: "olive" },
+  { id: "enarratio", name: "Enarratio", href: "https://enarratio.dustinedwards.info", role: "Charts", family: "rose" },
 ];
 
 export interface FamilyFooterOptions {
@@ -122,7 +128,7 @@ const line = (cls: string, body: string, stroke = 1.5) =>
   svg(cls, "0 0 24 24", `<g fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">${body}</g>`);
 
 const ICONS: Record<WorkspaceLink["icon"], string> = {
-  // Carrel: a desk lamp, the study-carrel light.
+  // Desk: a desk lamp, the study-carrel light.
   lamp: '<path d="M5 21h8"/><path d="M9 21v-2l-3-7 5-5"/><path d="M11 7l2.5-2.5 6 6L17 13z"/><path d="M17 13l-1.5 2"/>',
   // Admin: a gear, eight teeth.
   gear: '<path d="M18.85 9.78L21.28 9.96L21.28 14.04L18.85 14.22L18.42 15.27L20 17.12L17.12 20L15.27 18.42L14.22 18.85L14.04 21.28L9.96 21.28L9.78 18.85L8.73 18.42L6.88 20L4 17.12L5.58 15.27L5.15 14.22L2.72 14.04L2.72 9.96L5.15 9.78L5.58 8.73L4 6.88L6.88 4L8.73 5.58L9.78 5.15L9.96 2.72L14.04 2.72L14.22 5.15L15.27 5.58L17.12 4L20 6.88L18.42 8.73z"/><circle cx="12" cy="12" r="3"/>',

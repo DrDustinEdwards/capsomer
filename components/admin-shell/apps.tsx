@@ -116,7 +116,8 @@ const CAPSOMER = mark(
 // The order every strip shows, whichever app it is in.
 export const FAMILY_APPS: readonly FamilyApp[] = [
   { id: "portal", label: "Capsid Portal", href: "https://portal.dustinedwards.info/", logo: PORTAL },
-  { id: "carrel", label: "Carrel", href: "https://carrel.dustinedwards.info/", logo: CARREL },
+  // Carrel's signed-in app is Desk (Dustin, 2026-10-26); carrel.dustinedwards.info is its public site.
+  { id: "carrel", label: "Carrel Desk", href: "https://desk.dustinedwards.info/", logo: CARREL },
   { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
   // The x from its favicon stays until Dustin picks one of FOXHOUND_MARKS.
