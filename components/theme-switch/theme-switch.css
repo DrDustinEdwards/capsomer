@@ -145,6 +145,36 @@
     }
   }
 
+  /* The form (data-variant="form"): the button form as two submit buttons, for a site that keeps
+     the choice in a cookie and works with no script. CSS shows the one that switches away from the
+     theme showing, before any script runs. */
+  .cap-theme-form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+  }
+  .cap-theme-form > .cap-theme-button[data-show="dark"] {
+    display: none;
+  }
+  :root[data-theme="dark"] .cap-theme-form > .cap-theme-button {
+    &[data-show="light"] {
+      display: none;
+    }
+    &[data-show="dark"] {
+      display: inline-grid;
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .cap-theme-form > .cap-theme-button {
+      &[data-show="light"] {
+        display: none;
+      }
+      &[data-show="dark"] {
+        display: inline-grid;
+      }
+    }
+  }
+
   /* On a phone the top bar has no room for the words: the icons stay, and the words stay for a
      screen reader. */
   @media (max-width: 820px) {

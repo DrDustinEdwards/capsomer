@@ -34,10 +34,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [0.22.0]
 
-**What the Capsid Portal needs to drop its own switches** (Dustin approved moving the Portal's own copies onto Capsomer, 2026-10-26).
+**What the Capsid Portal and dustinedwards.info need to drop their own copies** (Dustin approved moving them onto Capsomer, 2026-10-26).
 
 - **New: `ReasonForm`** in `capsomer/react/switch-reason`: the one-line reason on its own, for a change that is not a switch (the Portal's "Runs on" radio group). Props: `open`, `verb`, `onApply(reason)` (a rejection keeps it open with the error), `onCancel`, and optional `failed`, `id`, `placeholder` and `onPendingChange`. `SwitchWithReason` is now built on it; its markup is unchanged.
 - **New: `SwitchWithReason`'s `id` prop**: the switch input's id, so an app can focus it again after an Undo or press it from a command. The reason field is then `<id>-why`.
+- **New: the theme switch's no-script form**, `data-variant="form"` (React `ThemeForm`): two submit buttons posting to the site's theme route, one shown by CSS, for a site that keeps the choice in a cookie. `enhance()` makes a press switch at once and write the cookie (`data-cap-cookie`). New classes: `.cap-theme-form`. dustinedwards.info's own theme toggle moves onto it.
+- **New: `ConfirmModal`**, the confirm page drawn over the page as a modal that a server opens, in the page until script runs (`.cap-confirm-modal`, `data-inline`). `ConfirmPage` gains `children`, `onCancel` and `renderForm`, its `action` may be left out (it posts to the page it is on), and a `lead` that is not a string is drawn in a `div`. dustinedwards.info's own admin confirm dialog moves onto it.
 - **`Button` takes a `ref`** in its props type, so an app can move focus to it (the Portal's confirm dialog focuses Cancel or the action after a preview). React 19 already passed it through; only the type is new.
 - **The chart palette's color difference is Enarratio's.** `tokens/chart.mjs` kept its own copy of CIEDE2000 and the color-vision simulation. The checks now live in `tokens/chart-checks.mjs`, which uses Enarratio's `colorDifference` and is not in the package. `colorDifference`, `worstDifference`, `VISIONS`, `chartChecks` and the three thresholds are no longer exported from `tokens/chart.mjs`; no app imported them. `check()` in `tokens/palette.mjs` is now async.
 

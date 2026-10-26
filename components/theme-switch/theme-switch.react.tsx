@@ -140,3 +140,45 @@ export function ThemeButton({ prefKey = THEME_PREF, shortcut, className, initial
     </button>
   );
 }
+
+export interface ThemeFormProps {
+  // The site's theme route: a post with theme=light or theme=dark sets the cookie and comes back.
+  action?: string;
+  // The cookie the press writes with script, so the server reads the same choice; "theme" by default.
+  cookie?: string;
+  // Extra classes for both buttons: the site header adds its own icon-control class.
+  className?: string;
+  // The key the site binds to the theme, shown in the tips as a key cap. The site binds it.
+  shortcut?: string;
+  // Also remember the choice under this localStorage key, for a part of the site whose shell reads it.
+  prefKey?: string;
+}
+
+function FormButton({ value, show, label, icon, className, shortcut }: { value: ThemeChoice; show: ThemeChoice; label: string; icon: ReactNode; className?: string; shortcut?: string }) {
+  return (
+    <button type="submit" name="theme" value={value} className={className ? `cap-theme-button ${className}` : "cap-theme-button"} data-show={show} aria-label={label}>
+      {icon}
+      <span className="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true">
+        <span className="cap-theme-tip-text">{label}</span>
+        {shortcut ? (
+          <span className="cap-keys">
+            <kbd>{shortcut}</kbd>
+          </span>
+        ) : null}
+      </span>
+    </button>
+  );
+}
+
+// The theme button for a site that keeps the choice in a cookie and works with no script
+// (data-variant="form", 0.22.0): two real submit buttons, one shown by CSS, each saying what it
+// does. Pure markup, so a server render and the browser agree; capsomer/behavior/theme-switch's
+// enhance() makes a press switch at once and write the cookie.
+export function ThemeForm({ action = "/theme", cookie, className, shortcut, prefKey }: ThemeFormProps) {
+  return (
+    <form method="post" action={action} className="cap-theme-form" data-cap="theme-switch" data-variant="form" data-cap-cookie={cookie} data-cap-pref={prefKey}>
+      <FormButton value="dark" show="light" label={themeButtonLabel("light")} icon={BUTTON_MOON} className={className} shortcut={shortcut} />
+      <FormButton value="light" show="dark" label={themeButtonLabel("dark")} icon={BUTTON_SUN} className={className} shortcut={shortcut} />
+    </form>
+  );
+}

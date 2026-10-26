@@ -66,6 +66,12 @@ A public reading page may leave the choice to the system and show no control.
 
 A site keeps its own cookie name (txasm's `txasm_theme`, Foxhound's `fh_theme`) by passing it; the choice its visitors made survives.
 
+**With no script (0.22.0):** a site that keeps the choice in a cookie and must work with no script uses the form, `data-variant="form"` (React `ThemeForm`): two real submit buttons in a `<form method="post" action="/theme">`, each named for what it does, and CSS shows the one that switches away from the theme showing. With no script a press posts to the site's theme route, which sets the cookie and comes back, and the server writes `data-theme` into the next page's first byte. With script, `enhance()` switches at once, writes the cookie named by `data-cap-cookie` (default `theme`) and keeps focus on the button now shown. `prefKey` (`data-cap-pref`) also writes the choice to that localStorage key, for an admin whose shell reads it there. dustinedwards.info's header uses it.
+
+```tsx
+<ThemeForm action="/theme" className="cap-site-header-icon" />
+```
+
 The inline script, for the default key:
 
 ```html
