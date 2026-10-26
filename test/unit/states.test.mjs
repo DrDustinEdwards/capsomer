@@ -77,7 +77,7 @@ test("generateStates: writes a page for each component with examples, none witho
   writeFileSync(join(dir, "components", "gamma", "gamma.md"), "---\nname: gamma\n---\n");
   assert.deepEqual(generateStates(dir).sort(), ["alpha", "beta"]);
   const alpha = readFileSync(join(dir, "components", "alpha", "states.html"), "utf8");
-  assert.match(alpha, /<h1>Alpha part<\/h1>\s*<p>The alpha's job\.<\/p>/);
+  assert.match(alpha, /<h1>Alpha part<\/h1>\s*<p>The alpha&#39;s job\.<\/p>/, "the YAML's doubled quote is one apostrophe, escaped");
   const beta = readFileSync(join(dir, "components", "beta", "states.html"), "utf8");
   assert.match(beta, /<h1>beta<\/h1>/, "falls back to the folder name without a doc page");
   assert.ok(beta.includes('src="./examples.tsx"'));

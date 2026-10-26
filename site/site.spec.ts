@@ -53,7 +53,7 @@ eachTheme((theme) => {
     await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
     await expect(page).toHaveTitle(/^Color and contrast · Capsomer/);
     // The color page's old address still opens it.
-    await page.goto("./admin/#/colour");
+    await page.goto("./admin/#/colour"); // codespell:ignore
     await expect(page.locator("#cap-main h1")).toHaveText("Color and contrast");
   });
 
