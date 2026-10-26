@@ -366,7 +366,7 @@ function entryWords(e: Entry): { added: number; removed: number } {
 }
 
 /** @deprecated The British spelling, kept so existing imports work; use `analyze`. */
-export const analyse = (before: string, after: string, options: SentenceOptions = {}): Analysis => analyze(before, after, options);
+export const analyse = (before: string, after: string, options: SentenceOptions = {}): Analysis => analyze(before, after, options); // codespell:ignore
 
 export function analyze(before: string, after: string, options: SentenceOptions = {}): Analysis {
   const entries = diffSentences(before, after, options);

@@ -4,6 +4,9 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+- **The chart palette's color difference is Enarratio's.** `tokens/chart.mjs` kept its own copy of CIEDE2000 and the color-vision simulation. The checks now live in `tokens/chart-checks.mjs`, which uses Enarratio's `colorDifference` and is not in the package. `colorDifference`, `worstDifference`, `VISIONS`, `chartChecks` and the three thresholds are no longer exported from `tokens/chart.mjs`; no app imported them. `check()` in `tokens/palette.mjs` is now async.
+- **Site only:** `/.well-known/security.txt` (security@dustinedwards.info) and an IndexNow key file, with `.github/workflows/indexnow.yml` pinging IndexNow after each deploy. devkit's family check runs in CI (`.family.json` lists the old-spelling aliases it leaves alone).
+- devkit v0.13.1, site-runtime v0.22.0 and Prelum v0.12.1 for the site and tests.
 - **Site only: a critical pass over the public page and the admin** (Dustin, 2026-10-25: "critically evaluate every aspect of the site"). Public page:
   - It uses Capsomer's own site header, with the theme button (and `T`), the phone sheet and a skip link. Before, it had a plain bar of its own and no theme control.
   - A live family preview: real components that take the chosen family through `data-family`.

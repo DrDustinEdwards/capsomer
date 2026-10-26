@@ -5,6 +5,7 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -23,8 +24,6 @@ function docMeta(md, fallback) {
   };
   return { title: get("title") || fallback, summary: get("summary") };
 }
-
-const escapeHtml = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 // Splits examples.html into the part that belongs in <main> and the elements that belong in
 // the head (<link>) or after the main (<script>). Anything inside a <template> is left alone.

@@ -2,8 +2,8 @@ import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import { checkTheme, defineTheme, stylesheet } from "enarratio";
 import { capsomerTheme } from "../../tokens/enarratio-theme.mjs";
-import { FAMILIES, themes } from "../../tokens/palette.mjs";
-import { SERIES_MIN_DE, chartChecks } from "../../tokens/chart.mjs";
+import { FAMILIES, contrast, themes } from "../../tokens/palette.mjs";
+import { SERIES_MIN_DE, chartChecks } from "../../tokens/chart-checks.mjs";
 
 // Enarratio is a dev dependency for this check only: Capsomer never imports it at run time.
 test("capsomerTheme is a valid Enarratio theme and passes Enarratio's own checkTheme", () => {
@@ -30,7 +30,7 @@ test("capsomerTheme is built from the tokens: series 1 to 3 are the three famili
 test("the chart palette: every check passes for every family in both themes", () => {
   for (const [name, f] of Object.entries(FAMILIES)) {
     for (const scheme of ["light", "dark"]) {
-      const failed = chartChecks(themes(f)[scheme].tokens).filter((c) => !c.pass);
+      const failed = chartChecks(themes(f)[scheme].tokens, contrast).filter((c) => !c.pass);
       assert.deepEqual(failed.map((c) => `${c.what} ${c.value}`), [], `${name} ${scheme}`);
     }
   }

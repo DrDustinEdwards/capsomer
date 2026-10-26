@@ -29,7 +29,7 @@
 // so a family on a wrapper does not inherit the root family's already-resolved values.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { chartChecks, companionColors, labelOn, rampColors } from "./chart.mjs";
+import { companionColors, labelOn, rampColors } from "./chart.mjs";
 
 export const FAMILIES = {
   // defaultTheme is the theme checked first (rule 15). Purple follows the viewer's system
@@ -453,7 +453,7 @@ export const capsomerTheme = ${JSON.stringify(theme, null, 2)};
 const EMAIL_KEYS = ["ground", "surface", "line", "text", "muted", "accent-text", "primary", "primary-fg", "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft"];
 
 /** @deprecated The British spelling, kept so existing imports work; use `renderEmailColors`. */
-export const renderEmailColours = () => renderEmailColors();
+export const renderEmailColours = () => renderEmailColors(); // codespell:ignore
 
 export function renderEmailColors() {
   const out = {};
@@ -503,18 +503,19 @@ export function files() {
 
 const target = (rel) => (outArg ? outArg : fileURLToPath(new URL(`./${rel}`, import.meta.url)));
 
-export function check() {
+export async function check() {
+  const { chartChecks } = await import("./chart-checks.mjs");
   const problems = [];
   const t = themes();
   problems.push(...failures(t.light.tokens).map((p) => `light: ${p}`));
   problems.push(...failures(t.dark.tokens).map((p) => `dark: ${p}`));
-  // The chart palette, for every family and both themes (tokens/chart.mjs): contrast against
+  // The chart palette, for every family and both themes (tokens/chart-checks.mjs): contrast against
   // the chart's background, every pair apart under the color-vision deficiencies, clear of
   // the status colors, the ramp ordered.
   for (const [name, f] of Object.entries(FAMILIES)) {
     const ft = themes(f);
     for (const scheme of ["light", "dark"]) {
-      for (const c of chartChecks(ft[scheme].tokens).filter((x) => !x.pass)) problems.push(`${name} ${scheme} chart: ${c.what} is ${c.value.toFixed(2)}, needs ${c.min} (${c.detail})`);
+      for (const c of chartChecks(ft[scheme].tokens, contrast).filter((x) => !x.pass)) problems.push(`${name} ${scheme} chart: ${c.what} is ${c.value.toFixed(2)}, needs ${c.min} (${c.detail})`);
     }
   }
   for (const [rel, want] of files()) {
@@ -549,7 +550,7 @@ export function report() {
 const invoked = process.argv[1] && fileURLToPath(import.meta.url).replace(/\\/g, "/").toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase();
 if (invoked) {
   if (process.argv.includes("--check")) {
-    const problems = check();
+    const problems = await check();
     if (problems.length) {
       console.error(`palette: ${problems.length} problem(s)\n  ${problems.join("\n  ")}`);
       process.exit(1);
@@ -568,10 +569,11 @@ if (invoked) {
       for (const k of [...FAMILY_ORDER, ...ELEVATION_ORDER]) console.log(`  --${k}: ${t.tokens[k]}`);
     }
   } else if (process.argv.includes("--chart")) {
+    const { chartChecks } = await import("./chart-checks.mjs");
     for (const [name, f] of Object.entries(FAMILIES)) {
       const ft = themes(f);
       for (const scheme of ["light", "dark"]) {
-        const rows = chartChecks(ft[scheme].tokens);
+        const rows = chartChecks(ft[scheme].tokens, contrast);
         const worst = rows.filter((r) => r.what.includes("differ")).sort((a, b) => a.value - b.value)[0];
         console.log(`${name} ${scheme}: ${rows.length} checks, ${rows.filter((r) => !r.pass).length} fail; closest pair ${worst?.value.toFixed(1)} (${worst?.what})`);
       }

@@ -10,8 +10,8 @@
    CSSOM by the behavior module or the React wrapper, never a style attribute. */
 @layer cap.components {
   .cap-meter {
-    /* --cap-meter-colour: the old spelling, still read so an app that set it keeps working. */
-    --cap-meter-color: var(--cap-meter-colour, var(--accent));
+    /* --cap-meter-colour: the old spelling, still read so an app that set it keeps working. codespell:ignore */
+    --cap-meter-color: var(--cap-meter-colour, var(--accent)); /* codespell:ignore */
     --cap-meter-h: var(--space-3);
     display: flex;
     flex-wrap: wrap;
