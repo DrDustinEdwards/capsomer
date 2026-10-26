@@ -45,7 +45,7 @@ body {
   color: var(--text);
   font: 400 17px/1.55 var(--ui);
 }
-a {
+a:not(.cap-btn) {
   color: var(--accent-text);
   text-underline-offset: 3px;
 }
@@ -211,6 +211,15 @@ h2 {
   display: grid;
   gap: var(--space-4);
 }
+/* The front page's way to the theme builder. */
+.home-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  align-items: center;
+  margin: var(--space-3) 0 0;
+}
+
 .home-lead {
   max-width: 44rem;
   margin: 0;

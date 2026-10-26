@@ -123,7 +123,7 @@ const ROLES = {
   ],
 };
 
-function seedLch(hex) {
+export function seedLch(hex) {
   const [L, a, b] = rgbToOklab(hexToRgb(hex));
   return { L, C: Math.hypot(a, b), H: ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360 };
 }

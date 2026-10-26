@@ -5,8 +5,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { generateStates } from "../bin/states.mjs";
 import { readData, renderComponent, renderHome } from "./home.ts";
+import { renderMake } from "./make.ts";
 import { writeHeadersFile } from "../scripts/security-headers.ts";
-import { discoveryFiles, siteHead } from "./seo.ts";
+import { MAKE_DESCRIPTION, discoveryFiles, siteHead } from "./seo.ts";
 
 // One build for the site and every component's states page. The root is the repo, so a
 // states page sits at /components/<name>/states.html beside its component. The site is
@@ -36,11 +37,12 @@ export default defineConfig({
   plugins: [
     react(),
     // The public page (site/home.html, filled from site/home.ts) is the root of the published
-    // site; the admin (site/index.html) is /admin/.
+    // site, the theme builder (site/make.html, from site/make.ts) is /make/; the admin (site/index.html) is /admin/.
     {
       name: "capsomer-site-pages",
       transformIndexHtml(html, ctx) {
         if (ctx.path.endsWith("/site/home.html")) return html.replace("<!--home-->", renderHome(data));
+        if (ctx.path.endsWith("/site/make.html")) return html.replace("<!--make-->", renderMake());
         return html.replace(/<!--component:([\w-]+)-->/, (_, name: string) => renderComponent(data, name));
       },
     },
@@ -50,6 +52,8 @@ export default defineConfig({
       generateBundle(_, bundle) {
         const home = bundle["site/home.html"];
         if (home) home.fileName = "index.html";
+        const make = bundle["site/make.html"];
+        if (make) make.fileName = "make/index.html";
         const admin = bundle["site/index.html"];
         if (admin) admin.fileName = "admin/index.html";
       },
@@ -62,7 +66,13 @@ export default defineConfig({
         handler(html, ctx) {
           const name = /\/components\/([\w-]+)\/index\.html$/.exec(ctx.path)?.[1];
           const c = data.components.find((x) => x.name === name);
-          const page = ctx.path.endsWith("/site/home.html") ? "home" : c ? { path: `/components/${c.name}/`, title: `${c.title} · Capsomer`, description: c.lead } : "admin";
+          const page = ctx.path.endsWith("/site/home.html")
+            ? "home"
+            : ctx.path.endsWith("/site/make.html")
+              ? { path: "/make/", title: "Make a theme · Capsomer", description: MAKE_DESCRIPTION }
+              : c
+                ? { path: `/components/${c.name}/`, title: `${c.title} · Capsomer`, description: c.lead }
+                : "admin";
           return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", siteHead(page));
         },
       },
@@ -86,7 +96,7 @@ export default defineConfig({
     // its own origin only.
     assetsInlineLimit: 0,
     emptyOutDir: true,
-    rollupOptions: { input: { home: resolve(root, "site/home.html"), site: resolve(root, "site/index.html"), ...states, ...pages } },
+    rollupOptions: { input: { home: resolve(root, "site/home.html"), make: resolve(root, "site/make.html"), site: resolve(root, "site/index.html"), ...states, ...pages } },
   },
   preview: { port: 4319, strictPort: true },
 });

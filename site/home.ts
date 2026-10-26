@@ -36,7 +36,7 @@ interface Data {
   defaults: Array<{ lead: string; reason: string }>;
 }
 
-const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 // Backticks in a summary become code, as on the admin's pages.
 const prose = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const fam = (f: Family) => (f === "purple" ? "" : ` data-family="${f}"`);
@@ -97,21 +97,24 @@ export function readData(root: string): Data {
 }
 
 /** A word in letter tiles over a stripe, hidden from assistive technology: the heading says it. */
-function band(word: string, families: Family[], size: "cover" | "section") {
+export function band(word: string, families: Family[], size: "cover" | "section") {
   const one = families.length === 1;
   const tiles = [...word].map((c, i) => `<span${one ? "" : fam(families[i % families.length] as Family)}>${esc(c)}</span>`).join("");
   const stripe = (one ? ["ink", "solid", "pale"] : families).map((f) => `<i${one ? ` data-role="${f}"` : fam(f as Family)}></i>`).join("");
   return `<div class="home-band" data-size="${size}"${one ? fam(families[0] as Family) : " data-mix"} aria-hidden="true"><p class="home-band-word">${tiles}</p><p class="home-band-stripe">${stripe}</p></div>`;
 }
 
-/** The site header every public page shares: its section links go to the front page's sections, so `base` is "" there and "/" elsewhere. */
-function header(base: string): string {
-  const links: Array<[string, string]> = [["color", "Color"], ["type", "Type"], ["components", "Components"], ["defaults", "Defaults"], ["use", "Install"]];
+/** The site header every public page shares: its section links go to the front page's sections, so `base` is "" there and "/" elsewhere; the last goes to the theme builder. */
+export function header(base: string): string {
+  const links: Array<[string, string]> = [
+    ...[["color", "Color"], ["type", "Type"], ["components", "Components"], ["defaults", "Defaults"], ["use", "Install"]].map(([h, t]) => [`${base}#${h}`, t] as [string, string]),
+    ["/make/", "Make a theme"],
+  ];
   return `<header class="cap-site-header" data-cap="site-header" data-links="right" data-markup="">
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
   <a class="cap-site-header-logo home-logo" href="/" aria-label="Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span aria-hidden="true">Capsomer</span></a>
   <nav class="cap-site-header-sections" aria-label="Sections"><ul>
-    ${links.map(([h, t]) => `<li><a class="cap-site-header-link" href="${base}#${h}">${t}</a></li>`).join("")}
+    ${links.map(([h, t]) => `<li><a class="cap-site-header-link" href="${h}">${t}</a></li>`).join("")}
   </ul></nav>
   <div class="cap-site-header-tools">
     <button type="button" class="cap-theme-button cap-site-header-icon cap-site-header-theme" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
@@ -125,7 +128,7 @@ function header(base: string): string {
     <div class="cap-dialog-header"><h2 id="home-sheet-title" class="cap-dialog-title cap-site-header-sheet-title" tabindex="-1">Capsomer</h2></div>
     <div class="cap-dialog-body">
       <nav aria-labelledby="home-sheet-title"><ul class="cap-site-header-sheet-list">
-        ${links.map(([h, t]) => `<li><a href="${base}#${h}"><span class="cap-site-header-sheet-name">${t}</span></a></li>`).join("")}
+        ${links.map(([h, t]) => `<li><a href="${h}"><span class="cap-site-header-sheet-name">${t}</span></a></li>`).join("")}
       </ul></nav>
     </div>
     <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only="" data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
@@ -133,7 +136,7 @@ function header(base: string): string {
 </header>`;
 }
 
-const FOOTER = `<footer class="home-foot">
+export const FOOTER = `<footer class="home-foot">
   <div class="home-wrap">
     <ul>
       <li><a href="/admin/">Admin</a></li>
@@ -166,6 +169,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   <div class="home-wrap home-intro">
     <h1 id="top-h">One design system for every site and app</h1>
     <p class="home-lead">Capsomer is the palette, type and components shared by every one of Dustin Edwards's sites and apps, with the tests that keep each of them accessible in both themes. Plain CSS, MIT licensed.</p>
+    <p class="home-cta"><a class="cap-btn" data-variant="primary" href="/make/">Make your own theme</a> <span class="home-muted">From one brand color: scales, contrast checks, type, a live preview and the CSS.</span></p>
   </div>
   <ul class="home-wrap home-figures">
     ${figures.map(([f, label, n, note]) => `<li${fam(f)}><b>${esc(n)}</b><span class="home-figure-label">${esc(label)}</span><span>${esc(note)}</span></li>`).join("\n    ")}

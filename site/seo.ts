@@ -4,7 +4,7 @@
  * policy; Cloudflare puts its own lines first), ai.txt (citation welcome, training reserved, as the
  * tdm-reservation header in _headers says), llms.txt (https://llmstxt.org), security.txt and the
  * IndexNow key file. site/vite.config.ts writes them into the build. The public pages are the front page
- * at / and each component's page at /components/<name>/; the admin at /admin/ keeps its sections at hash
+ * at /, the theme builder at /make/ and each component's page at /components/<name>/; the admin at /admin/ keeps its sections at hash
  * addresses and stays out of search.
  */
 import { headHtml, headTags } from "@drdustinedwards/site-helpers/head";
@@ -24,6 +24,10 @@ const SECURITY_TXT_EXPIRES = "2027-10-25T00:00:00Z";
 const DESCRIPTION =
   "Capsomer: the shared design system for Dustin Edwards's sites and apps. Six color families, three faces, every component in every state, in plain CSS.";
 const AUTHOR = { "@type": "Person", "@id": "https://dustinedwards.info/#person", name: "Dustin Edwards", url: "https://dustinedwards.info" };
+
+/** The theme builder's description, for its head tags (site/vite.config.ts). */
+export const MAKE_DESCRIPTION =
+  "Make a light and dark theme from one brand color: 12-step scales, every pair checked against WCAG 2.2, faces, sizes and corners, a live preview, and the CSS and design tokens.";
 
 const ADMIN_DESCRIPTION =
   "Capsomer's admin: every token, every component in every state, and each component's test results.";
@@ -69,7 +73,7 @@ export function siteHead(page: "home" | "admin" | { path: string; title: string;
 /** The discovery files, by their path in the built site. */
 export function discoveryFiles(components: string[]): Record<string, string> {
   return {
-    "sitemap.xml": sitemapDocument([{ loc: `${ORIGIN}/` }, ...components.map((name) => ({ loc: `${ORIGIN}/components/${name}/` }))]),
+    "sitemap.xml": sitemapDocument([{ loc: `${ORIGIN}/` }, { loc: `${ORIGIN}/make/` }, ...components.map((name) => ({ loc: `${ORIGIN}/components/${name}/` }))]),
     ".well-known/security.txt": securityTxt({ origin: ORIGIN, contact: "security@dustinedwards.info", expires: SECURITY_TXT_EXPIRES }),
     [`${INDEXNOW_KEY}.txt`]: INDEXNOW_KEY,
     "robots.txt": robotsDocument({ origin: ORIGIN, notes: [`AI usage policy: ${ORIGIN}/ai.txt`, `LLM guide: ${ORIGIN}/llms.txt`] }),

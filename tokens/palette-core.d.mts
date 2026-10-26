@@ -27,6 +27,8 @@ export interface Pair {
 
 export declare function oklch(L: number, C: number, H: number): string;
 export declare function contrast(a: string, b: string): number;
+/** A hex color as OKLCH: lightness 0..1, chroma, hue in degrees. */
+export declare function seedLch(hex: string): { L: number; C: number; H: number };
 export declare function lightStep9(seed: string): string;
 export declare function darkStep9(seed: string): string;
 export declare function scale(seed: string, anchor?: string | null, scheme?: Scheme): string[];
