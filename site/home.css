@@ -26,6 +26,8 @@
 @import "../components/disclosure/disclosure.css";
 @import "../components/table/table.css";
 @import "../components/tabs/tabs.css";
+/* The manual theme: the running head, numbered parts and the letterhead (the public pages only). */
+@import "../components/manual/manual.css";
 
 :root {
   --home-max: 76rem;
@@ -529,10 +531,6 @@ h2 {
   max-width: 24rem;
   margin-block-end: var(--space-6);
 
-  & p {
-    margin: 0;
-    font-size: 0.9375rem;
-  }
 }
 
 /* Components: every one, linked to its own page. On a phone, names only in two columns: the
@@ -625,8 +623,11 @@ h2 {
 
 .home-foot {
   margin-block-start: var(--space-9);
-  padding-block: var(--space-7);
-  border-top: 14px solid var(--text);
+  padding-block: 0 var(--space-7);
+
+  & .cap-letterhead {
+    margin-block-end: var(--space-6);
+  }
 
   & ul {
     display: flex;
@@ -952,4 +953,13 @@ h2 {
   .home-try-stage {
     view-transition-name: home-stage;
   }
+}
+
+/* The running head sits under the site header, the page's column wide. */
+.home-running {
+  padding-block-start: var(--space-5);
+}
+/* A part's number beside its title, set small and regular as the manual sets it. */
+h2.cap-part-title {
+  align-items: baseline;
 }

@@ -71,7 +71,8 @@ export function files() {
   const p = FAMILIES.purple;
   return [
     ["color.css", renderFamily(p.seed, p.anchor)],
-    ...Object.keys(FAMILIES).filter((n) => n !== "purple").map((n) => [`family-${n}.css`, renderScoped(n, FAMILIES[n])]),
+    // Purple is the default on :root, and scoped as well, so a page on another family can still show it.
+    ...Object.keys(FAMILIES).map((n) => [`family-${n}.css`, renderScoped(n, FAMILIES[n])]),
     ["enarratio-theme.mjs", renderEnarratioTheme()],
     ["../components/email/colors.ts", renderEmailColors()],
   ];
