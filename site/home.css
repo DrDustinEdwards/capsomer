@@ -623,30 +623,6 @@ h2:not(.cap-family-footer-heading) {
   font: 14px/1.6 var(--mono);
 }
 
-.home-foot {
-  margin-block-start: var(--space-9);
-  padding-block: 0 var(--space-7);
-
-  /* Capsomer's own letterhead and links; the family footer under them (capsomer/family-footer.css)
-     keeps its own. */
-  & .home-wrap > .cap-letterhead {
-    margin-block-end: var(--space-6);
-  }
-
-  & .home-wrap > ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-6);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  & .home-wrap > .cap-letterhead p {
-    margin: 0;
-    font-size: 0.9375rem;
-  }
-}
-
 .home-trail ol {
   display: flex;
   flex-wrap: wrap;

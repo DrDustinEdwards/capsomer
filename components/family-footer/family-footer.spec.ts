@@ -9,6 +9,7 @@ test("behavior: another site's footer points the family's paths at dustinedwards
   const home = familyFooterHtml({ origin: "", published: [], year: 2026 });
   expect(home).toContain('href="/privacy"');
   expect(home).not.toContain("/accessibility");
+  expect(familyFooterHtml({ site: "capsid" }).match(/aria-current="page"/g)).toHaveLength(1);
 });
 
 eachTheme((theme) => {

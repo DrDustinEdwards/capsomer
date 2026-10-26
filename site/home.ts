@@ -207,19 +207,20 @@ export const runningHead = (no: string, name: string, folio: string) =>
 /** A numbered section heading, as the manual numbers its parts. */
 const partTitle = (id: string, no: string, text: string) => `<h2 class="cap-part-title" id="${id}"><span class="cap-part-no">${no}</span>${text}</h2>`;
 
-// The foot of every public page: the manual's letterhead, the site's name as the logotype beside what it is,
-// then the family footer every dustinedwards.info site closes with (Dustin, 2026-10-26).
-export const FOOTER = `<footer class="home-foot">
-  <div class="home-wrap">
-    <div class="cap-letterhead"><p class="cap-letterhead-logo">Capsomer</p><p class="cap-letterhead-address"><b>The family design system</b><br>Plain CSS, MIT licensed<br>capsomer.dustinedwards.info</p></div>
-    <ul>
-      <li><a href="/admin/">Admin</a></li>
-      <li><a href="https://github.com/DrDustinEdwards/capsomer">Source</a></li>
-      <li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li>
-      <li><a href="https://dustinedwards.info">Dustin Edwards</a></li>
-    </ul>
-    ${familyFooterHtml()}
+// The foot of every public page: the family footer every dustinedwards.info site closes with, with
+// Capsomer's own part under its thin magenta stripe (Dustin, 2026-10-26).
+const VERSION: string = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).version;
+const CENTER = `<div class="cap-family-footer-center">
+  <div><p class="cap-family-footer-center-name">Capsomer</p><p class="cap-family-footer-about">The family design system. Plain CSS, MIT licensed.</p></div>
+  <div class="cap-family-footer-columns">
+    <ul class="cap-family-footer-links"><li><a href="/#components">Components</a></li><li><a href="/make/">Theme builder</a></li></ul>
+    <ul class="cap-family-footer-links"><li><a href="https://github.com/DrDustinEdwards/capsomer">Source</a></li><li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li></ul>
+    <ul class="cap-family-footer-links"><li><a href="/admin/">Admin</a></li></ul>
   </div>
+  <p class="cap-family-footer-stamp"><span>Release ${VERSION}</span></p>
+</div>`;
+export const FOOTER = `<footer class="home-foot">
+  <div class="home-wrap">${familyFooterHtml({ site: "capsomer", center: CENTER })}</div>
 </footer>`;
 
 export function renderHome(d: Data): string {

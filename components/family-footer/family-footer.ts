@@ -1,10 +1,11 @@
 import { escapeHtml } from "../email/email.ts";
 
 /*
- * The foot every dustinedwards.info site closes with, under its own footer (Dustin, 2026-10-26): the
- * family's band in the page's own color, the name as the letterhead's logotype, then the profiles,
- * the workspace logins and the site links of dustinedwards.info, and the copyright line. Moved here
- * from dustinedwards.info's shell-footer.tsx so every site draws the same bytes.
+ * The one footer every dustinedwards.info site closes with (Dustin, 2026-10-26), as NASA's agency and
+ * its centers: under a thin stripe in the page's own color, the site's own part (its name, links and
+ * stamp) and the strip of the family's sites with this one lit; then the double stripe, the name as the
+ * letterhead's logotype, the profiles, the workspace logins and the site links of dustinedwards.info,
+ * and the copyright line. Every site draws the same bytes but its own part.
  */
 
 /** The family's home: every path below is on it. */
@@ -78,7 +79,33 @@ export function familyLinks(published?: readonly string[]): FamilyLink[] {
   return [...SOCIAL_LINKS, ...PROFILE_LINKS, ...WORKSPACE_LINKS, ...siteLinks(published)];
 }
 
+/** The family's public sites, each in its own family's color, in the order the strip lists them. */
+export interface FamilySite {
+  id: string;
+  name: string;
+  href: string;
+  /** What the site is, in a word or two. */
+  role: string;
+  /** Its color family: --family-<family> (tokens/family-marks.css) draws its mark. */
+  family: "purple" | "teal" | "magenta" | "cerulean";
+}
+
+export const FAMILY_SITES: FamilySite[] = [
+  { id: "dustinedwards", name: "dustinedwards.info", href: FAMILY_ORIGIN, role: "Research", family: "purple" },
+  { id: "capsid", name: "Capsid", href: "https://capsid.dustinedwards.info", role: "Agent memory", family: "teal" },
+  { id: "capsomer", name: "Capsomer", href: "https://capsomer.dustinedwards.info", role: "Design system", family: "magenta" },
+  { id: "prelum", name: "Prelum", href: "https://prelum.dustinedwards.info", role: "Publishing", family: "cerulean" },
+];
+
 export interface FamilyFooterOptions {
+  /** The site the footer is on (a FAMILY_SITES id): lit in the strip of sites. */
+  site?: string;
+  /**
+   * The site's own part, as HTML, under a thin stripe in its color and over the strip of sites: its
+   * name, what it is, its links and a stamp (the classes are in family-footer.md). Left out, the
+   * footer opens with the strip.
+   */
+  center?: string;
   /** Where the family's paths point: "" on dustinedwards.info itself, its full origin elsewhere (the default). */
   origin?: string;
   /** The published prose pages, so a draft's link waits; left out, every page link shows. */
@@ -128,7 +155,7 @@ const MARKS: Record<SocialLink["mark"], string> = {
  * The footer as HTML: plain string building, so a server, a React page or a static build writes the
  * same markup. Its band is the family's `--on`, so each site's own color draws it.
  */
-export function familyFooterHtml({ origin = FAMILY_ORIGIN, published, year = new Date().getFullYear() }: FamilyFooterOptions = {}): string {
+export function familyFooterHtml({ site, center = "", origin = FAMILY_ORIGIN, published, year = new Date().getFullYear() }: FamilyFooterOptions = {}): string {
   const href = (link: FamilyLink) => escapeHtml(link.external ? link.to : `${origin}${link.to}`);
   const anchor = (link: FamilyLink) => `<a href="${href(link)}"${link.me ? ' rel="me"' : ""}>${escapeHtml(link.label)}</a>`;
   const social = SOCIAL_LINKS.map(
@@ -140,5 +167,9 @@ export function familyFooterHtml({ origin = FAMILY_ORIGIN, published, year = new
       `<li><a href="${href(link)}" rel="nofollow" class="cap-family-footer-private" aria-label="${escapeHtml(link.name)}"${link.hover ? ` title="${escapeHtml(link.hover)}"` : ""}>${line("cap-family-footer-icon", ICONS[link.icon])}${escapeHtml(link.label)}${LOCK}</a></li>`,
   ).join("");
   const list = (links: FamilyLink[]) => `<ul class="cap-family-footer-links">${links.map((link) => `<li>${anchor(link)}</li>`).join("")}</ul>`;
-  return `<div class="cap-family-footer"><div class="cap-livery" aria-hidden="true"></div><div class="cap-letterhead cap-family-footer-head"><a href="${escapeHtml(`${origin}/`)}" class="cap-letterhead-logo cap-family-footer-logo"><span>Dustin</span><span>Edwards</span></a><div class="cap-family-footer-columns"><div><ul class="cap-family-footer-social" aria-label="Social media">${social}</ul>${list(PROFILE_LINKS)}</div><nav aria-labelledby="cap-family-footer-workspace"><h2 class="cap-family-footer-heading" id="cap-family-footer-workspace">${WORKSPACE_HEADING}</h2><ul class="cap-family-footer-links">${workspace}</ul></nav><nav aria-labelledby="cap-family-footer-site"><h2 class="cap-family-footer-heading" id="cap-family-footer-site">${SITE_HEADING}</h2>${list(siteLinks(published))}</nav></div></div><p class="cap-family-footer-note">&copy; 2006&ndash;${year}</p></div>`;
+  const sites = FAMILY_SITES.map(
+    (s) =>
+      `<li data-family-mark="${s.family}"><a href="${escapeHtml(s.id === "dustinedwards" ? `${origin}/` : s.href)}"${s.id === site ? ' aria-current="page"' : ""}><span class="cap-family-footer-site-name">${escapeHtml(s.name)}</span><span class="cap-family-footer-site-role">${escapeHtml(s.role)}</span></a></li>`,
+  ).join("");
+  return `<div class="cap-family-footer"><div class="cap-family-footer-local">${center}<nav class="cap-family-footer-sites" aria-labelledby="cap-family-footer-family"><h2 class="cap-family-footer-heading" id="cap-family-footer-family">The family</h2><ul>${sites}</ul></nav></div><div class="cap-livery" aria-hidden="true"></div><div class="cap-letterhead cap-family-footer-head"><a href="${escapeHtml(`${origin}/`)}" class="cap-letterhead-logo cap-family-footer-logo"><span>Dustin</span><span>Edwards</span></a><div class="cap-family-footer-columns"><div><ul class="cap-family-footer-social" aria-label="Social media">${social}</ul>${list(PROFILE_LINKS)}</div><nav aria-labelledby="cap-family-footer-workspace"><h2 class="cap-family-footer-heading" id="cap-family-footer-workspace">${WORKSPACE_HEADING}</h2><ul class="cap-family-footer-links">${workspace}</ul></nav><nav aria-labelledby="cap-family-footer-site"><h2 class="cap-family-footer-heading" id="cap-family-footer-site">${SITE_HEADING}</h2>${list(siteLinks(published))}</nav></div></div><p class="cap-family-footer-note">&copy; 2006&ndash;${year}</p></div>`;
 }
