@@ -12,7 +12,6 @@ Each release names every removed or renamed token or class, and every changed HT
   - The family preview crossfades to the chosen family.
   - "Try your own words" sets every size in the type scale to your text. On a phone each size takes two lines, not four.
   - The footer's links sit in one row.
-- **The chart palette's color difference is Enarratio's.** `tokens/chart.mjs` kept its own copy of CIEDE2000 and the color-vision simulation. The checks now live in `tokens/chart-checks.mjs`, which uses Enarratio's `colorDifference` and is not in the package. `colorDifference`, `worstDifference`, `VISIONS`, `chartChecks` and the three thresholds are no longer exported from `tokens/chart.mjs`; no app imported them. `check()` in `tokens/palette.mjs` is now async.
 - **Site only:** `/.well-known/security.txt` (security@dustinedwards.info) and an IndexNow key file, with `.github/workflows/indexnow.yml` pinging IndexNow after each deploy. devkit's family check runs in CI (`.family.json` lists the old-spelling aliases it leaves alone).
 - devkit v0.13.1, site-runtime v0.23.0 and Prelum v0.13.0 for the site and tests.
 - **Site only: a critical pass over the public page and the admin** (Dustin, 2026-10-25: "critically evaluate every aspect of the site"). Public page:
@@ -31,6 +30,15 @@ Each release names every removed or renamed token or class, and every changed HT
   - Changes shows unreleased work and the last three releases.
   - A long changelog line no longer pushes a phone page sideways.
   - The Settings page, which held two paragraphs and no settings, is gone; `#/settings` opens the overview.
+
+## [0.22.0]
+
+**What the Capsid Portal needs to drop its own switches** (Dustin approved moving the Portal's own copies onto Capsomer, 2026-10-26).
+
+- **New: `ReasonForm`** in `capsomer/react/switch-reason`: the one-line reason on its own, for a change that is not a switch (the Portal's "Runs on" radio group). Props: `open`, `verb`, `onApply(reason)` (a rejection keeps it open with the error), `onCancel`, and optional `failed`, `id`, `placeholder` and `onPendingChange`. `SwitchWithReason` is now built on it; its markup is unchanged.
+- **New: `SwitchWithReason`'s `id` prop**: the switch input's id, so an app can focus it again after an Undo or press it from a command. The reason field is then `<id>-why`.
+- **`Button` takes a `ref`** in its props type, so an app can move focus to it (the Portal's confirm dialog focuses Cancel or the action after a preview). React 19 already passed it through; only the type is new.
+- **The chart palette's color difference is Enarratio's.** `tokens/chart.mjs` kept its own copy of CIEDE2000 and the color-vision simulation. The checks now live in `tokens/chart-checks.mjs`, which uses Enarratio's `colorDifference` and is not in the package. `colorDifference`, `worstDifference`, `VISIONS`, `chartChecks` and the three thresholds are no longer exported from `tokens/chart.mjs`; no app imported them. `check()` in `tokens/palette.mjs` is now async.
 
 ## [0.21.0]
 
