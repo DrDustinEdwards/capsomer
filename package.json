@@ -16,6 +16,8 @@
     "tokens/*.css",
     "tokens/tokens.json",
     "tokens/palette.mjs",
+    "tokens/palette-core.mjs",
+    "tokens/palette-core.d.mts",
     "tokens/chart.mjs",
     "tokens/scale.mjs",
     "tokens/enarratio-theme.mjs",
