@@ -1,0 +1,143 @@
+// The posts list's pure helpers: the status of a post in words, the addresses of its filters,
+// which actions a person is offered here and why the others are withheld, and the forms the
+// script path posts. No DOM; the React component and a server render use the same functions.
+import { DAY } from "../time/time.js";
+import { queryHref } from "../content/content.js";
+const utcDay = (ms) => Math.floor(ms / DAY);
+// How far off a scheduled time is, in whole UTC days. Past it, the site has not published it yet.
+export function inDays(at, now) {
+    const t = Date.parse(at);
+    if (!Number.isFinite(t))
+        return "";
+    if (t <= now)
+        return "due now";
+    const days = utcDay(t) - utcDay(now);
+    if (days <= 0)
+        return "today";
+    if (days === 1)
+        return "tomorrow";
+    return `in ${days} days`;
+}
+// The one mapping from a content status to its words, for every list and editor that shows one
+// (Carrel wrote it inline six times).
+export function contentStatus(status, publishAt = null, now = Date.now()) {
+    switch (status) {
+        case "published":
+            return { tone: "ok", word: "Published" };
+        case "scheduled":
+            return publishAt ? { tone: "info", word: "Scheduled", when: inDays(publishAt, now) } : { tone: "info", word: "Scheduled" };
+        case "draft":
+            return { tone: "nodata", word: "Draft" };
+    }
+}
+// ---------------------------------------------------------------------------------------
+// Words.
+export function nounsOf(labels = {}) {
+    const noun = labels.noun ?? "post";
+    return { noun, plural: labels.plural ?? `${noun}s` };
+}
+export const STATUS_TABS = [
+    { status: undefined, label: "All" },
+    { status: "draft", label: "Drafts" },
+    { status: "scheduled", label: "Scheduled" },
+    { status: "published", label: "Published" },
+];
+export const SORTS = [
+    { value: "updated", label: "Last updated" },
+    { value: "published", label: "Last published" },
+    { value: "title", label: "Title" },
+];
+// "12 posts", "Showing 50 of 120 posts", and a note when the site could only sort this page.
+export function countLine(data, labels) {
+    const { noun, plural } = nounsOf(labels);
+    const n = data.rows.length;
+    const total = data.page.total;
+    const word = (k) => (k === 1 ? noun : plural);
+    const base = total != null && total > n ? `Showing ${n} of ${total} ${word(total)}` : `${n} ${word(n)}`;
+    return data.page.sortedOnPage ? `${base}, sorted on this page only` : base;
+}
+// Filters in the query other than the page and the order: what the empty state says is hiding rows.
+export function filtered(q) {
+    return !!(q.q || q.kind || q.tag);
+}
+// The empty state's title and line, naming what is not there.
+export function emptyWords(q, labels) {
+    const { plural } = nounsOf(labels);
+    if (filtered(q)) {
+        const what = [q.q ? `“${q.q}”` : null, q.kind ? `kind ${q.kind}` : null, q.tag ? `tag ${q.tag}` : null].filter(Boolean).join(", ");
+        return { kind: "no-match", title: `No ${plural} match ${what}`, text: "Clear the filters to see every one." };
+    }
+    switch (q.status) {
+        case "draft":
+            return { kind: "nothing-yet", title: "No drafts", text: `Every ${nounsOf(labels).noun} here is scheduled or published.` };
+        case "scheduled":
+            return { kind: "nothing-yet", title: "Nothing scheduled", text: "A scheduled post shows here until it goes out." };
+        case "published":
+            return { kind: "nothing-yet", title: "Nothing published yet", text: "Published posts show here." };
+        default:
+            return { kind: "nothing-yet", title: `No ${plural} yet`, text: `The first ${nounsOf(labels).noun} you start shows here.` };
+    }
+}
+// ---------------------------------------------------------------------------------------
+// Addresses.
+const QUERY_ORDER = ["q", "status", "kind", "tag", "sort", "cursor"];
+// The list's address with a query (content.ts, queryHref).
+export function postsHref(base, q) {
+    return queryHref(base, q, QUERY_ORDER);
+}
+// A filter link changes one thing and starts again at the first page.
+export function withFilter(q, change) {
+    const next = { ...q, ...change };
+    delete next.cursor;
+    for (const k of Object.keys(change))
+        if (change[k] === undefined)
+            delete next[k];
+    return next;
+}
+// The bulk actions this person may run on this site, in the bar's order, and a sentence for each
+// one held back, so a missing button is never a mystery. An action shows only when the site
+// offers it (data.offers) and the person may run it (data.can).
+export function postActions(data, labels) {
+    const { plural } = nounsOf(labels);
+    const { offers, can } = data;
+    const bulk = [];
+    const withheld = [];
+    if (can.edit && offers.tags)
+        bulk.push({ intent: "add-tag", label: "Add tag" }, { intent: "remove-tag", label: "Remove tag" });
+    if (can.edit && offers.duplicate)
+        bulk.push({ intent: "duplicate", label: "Duplicate" });
+    if (can.publish)
+        bulk.push({ intent: "unpublish", label: "Unpublish" });
+    if (can.deleteContent && offers.delete)
+        bulk.push({ intent: "delete", label: "Delete", destructive: true });
+    if (!can.edit)
+        withheld.push(`You can read these ${plural}. Changing them needs an editor's role.`);
+    else if (!offers.tags)
+        withheld.push(`Tags are not offered: this site keeps no tags on its ${plural}.`);
+    if (can.edit && !offers.duplicate)
+        withheld.push(`Duplicate is not offered by this site.`);
+    if (can.edit && !can.publish)
+        withheld.push(`Unpublishing needs a publisher's role.`);
+    if (can.deleteContent && !offers.delete)
+        withheld.push(`Delete is not offered: this site cannot delete ${plural}.`);
+    return { bulk, withheld };
+}
+// One row's menu: Edit and View on the site go somewhere; the rest post an intent for this row.
+export function rowActions(row, data) {
+    const { offers, can } = data;
+    const items = [];
+    if (can.edit)
+        items.push({ label: "Edit", value: "edit", href: row.href });
+    if (row.status === "published" && row.liveHref)
+        items.push({ label: "View on the site", value: "view", href: row.liveHref });
+    if (can.publish && row.status !== "draft")
+        items.push({ label: "Unpublish", value: "unpublish" });
+    if (can.edit && offers.duplicate)
+        items.push({ label: "Duplicate", value: "duplicate" });
+    if (can.deleteContent && offers.delete)
+        items.push({ label: "Delete", value: "delete", danger: true });
+    return items;
+}
+// ---------------------------------------------------------------------------------------
+// The script path's helpers live with the shared types; still exported from here.
+export { intentForm, outcomesOf } from "../content/content.js";
