@@ -44,8 +44,23 @@ export function splitExamples(src) {
   return { body, head, scripts };
 }
 
-export function renderStates({ template, title, summary, examples, hasTsx }) {
-  const { body, head, scripts } = splitExamples(examples);
+// The site's CSP allows no inline style, so a style attribute in examples.html would be dropped:
+// each one becomes a rule in the page's own states.css, keyed by a data attribute.
+// Specimens inside a <template> are cloned into this same page's frames, so they are lifted too.
+function liftStyles(body) {
+  const rules = [];
+  const out = body.replace(/\sstyle="([^"]*)"/g, (_, css) => {
+    rules.push(`[data-states-style="${rules.length}"] { ${css} }`);
+    return ` data-states-style="${rules.length - 1}"`;
+  });
+  return { body: out, css: rules.join("\n") };
+}
+
+export function renderStates({ template, title, summary, examples, hasTsx, css = "" }) {
+  const split = splitExamples(examples);
+  const { body } = split;
+  const head = css ? [...split.head, '<link rel="stylesheet" href="./states.css" />'] : split.head;
+  const { scripts } = split;
   const after = [...scripts.map((s) => s.replace(/^\s+/, "")), ...(hasTsx ? ['<script type="module" src="./examples.tsx"></script>'] : [])];
   const fill = {
     title: escapeHtml(title),
@@ -71,8 +86,9 @@ export function generateStates(root = PKG) {
     if (!existsSync(html) && !existsSync(tsx)) continue;
     const mdPath = join(base, `${d.name}.md`);
     const { title, summary } = docMeta(existsSync(mdPath) ? readFileSync(mdPath, "utf8") : "", d.name);
-    const examples = existsSync(html) ? readFileSync(html, "utf8") : "";
-    writeFileSync(join(base, "states.html"), renderStates({ template, title, summary, examples, hasTsx: existsSync(tsx) }));
+    const lifted = liftStyles(existsSync(html) ? readFileSync(html, "utf8") : "");
+    if (lifted.css) writeFileSync(join(base, "states.css"), `${lifted.css}\n`);
+    writeFileSync(join(base, "states.html"), renderStates({ template, title, summary, examples: lifted.body, hasTsx: existsSync(tsx), css: lifted.css }));
     written.push(d.name);
   }
   return written;

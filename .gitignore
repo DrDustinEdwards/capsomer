@@ -8,5 +8,6 @@ site/data/
 
 test-results-knip.json
 components/*/states.html
+components/*/states.css
 coverage/
 components/*/index.html
