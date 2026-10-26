@@ -23,8 +23,8 @@
 //   node tokens/palette.mjs --report              every pair, every family, both themes
 //
 // tokens/color.css is the purple family on :root (the default). tokens/family-fox.css,
-// tokens/family-teal.css, tokens/family-navy.css, tokens/family-forest.css and tokens/family-amber.css carry the same tokens scoped to
-// [data-family="fox"], [data-family="teal"], [data-family="navy"], [data-family="forest"] and [data-family="amber"], so one element (the root, or a wrapper) can switch family for its
+// tokens/family-teal.css, tokens/family-navy.css, tokens/family-forest.css, tokens/family-amber.css, tokens/family-magenta.css and
+// tokens/family-cerulean.css carry the same tokens scoped to [data-family="<name>"], so one element (the root, or a wrapper) can switch family for its
 // subtree. Both themes follow the same pattern as color.css (prefers-color-scheme, then
 // [data-theme]). Everything inside a family block is a literal value, never a var() chain,
 // so a family on a wrapper does not inherit the root family's already-resolved values.

@@ -50,6 +50,8 @@ export const PRESETS: Array<{ group: string; items: Array<{ id: string; name: st
       { id: "amber", name: "Amber", settings: family("amber") },
       { id: "navy", name: "Navy", settings: family("navy") },
       { id: "forest", name: "Forest", settings: family("forest") },
+      { id: "magenta", name: "Magenta", settings: family("magenta") },
+      { id: "cerulean", name: "Cerulean", settings: family("cerulean") },
     ],
   },
   {

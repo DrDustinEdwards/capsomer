@@ -1,0 +1,607 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The manual theme: the public pages of the dustinedwards.info sites set after the NASA Graphics
+   Standards Manual (Danne & Blackburn, 1976). Opt-in: an app imports capsomer/manual.css only on
+   its public pages; nothing else in Capsomer reads it. Every color comes from the page's family, so
+   dustinedwards.info is purple and Capsid teal. Lifted from Capsid's explorer (capsid #560, #562,
+   #583). Its parts, in the order a page uses them: */
+
+/* The running head over a page: its section's number and name on the left in bold, the folio or
+   date on the right, over a hairline (the manual's index, page i). The sign variant sets it as
+   one of the manual's building signs (6.1): a dark panel of light type, the family's color in a
+   strip along its top, the number on a plate of its own. */
+@layer cap.components {
+  .cap-running-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-6);
+    padding-block-end: var(--space-3);
+    border-block-end: 1px solid var(--text);
+    font: 400 0.9375rem / 1.3 var(--ui);
+  }
+
+  .cap-running-head-name {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    font-weight: 700;
+  }
+
+  .cap-running-head-no {
+    min-inline-size: 2.5ch;
+  }
+
+  .cap-running-head[data-variant="sign"] {
+    padding: var(--space-3) var(--space-5) var(--space-4);
+    border: 0;
+    border-block-start: 10px solid var(--on);
+    background: var(--text);
+    color: var(--ground);
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+
+    .cap-running-head-name {
+      letter-spacing: -0.01em;
+    }
+
+    .cap-running-head-no {
+      min-inline-size: 1.5em;
+      padding-inline: 0.2em;
+      background: var(--ground);
+      color: var(--text);
+      text-align: center;
+    }
+
+    .cap-running-head-folio {
+      font-size: 0.9375rem;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-running-head[data-variant="sign"] {
+      border: 1px solid CanvasText;
+    }
+  }
+}
+
+/* A numbered part of a page, set as the NASA Graphics Standards Manual sets its pages (1976,
+   5.1): the number and title on the left over a rule across the whole width, what the part says
+   beside it, and its figures and lists full width below. */
+@layer cap.components {
+  .cap-part {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--space-7);
+    margin-block-start: var(--space-9);
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid var(--text);
+    container-type: inline-size;
+
+    > * {
+      grid-column: 1 / -1;
+      min-inline-size: 0;
+    }
+  }
+
+  .cap-part-title {
+    display: flex;
+    gap: var(--space-4);
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(1.25rem, 1.8vw, 1.625rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .cap-part-no {
+    flex: none;
+    min-inline-size: 2.5ch;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.7;
+  }
+
+  .cap-part-lead {
+    margin: var(--space-3) 0 0;
+    max-inline-size: 62ch;
+    line-height: 1.35;
+    font-size: 1.25rem;
+  }
+
+  /* Two columns once the page is wide enough: the title on the left third. */
+  @media (min-width: 52rem) {
+    .cap-part {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+
+    .cap-part > .cap-part-title {
+      grid-column: 1;
+    }
+
+    .cap-part > .cap-part-title + .cap-part-lead {
+      grid-column: 2;
+      margin-block-start: 0;
+    }
+  }
+}
+
+/* Facts as a form's ruled boxes: a small label in the mono over each value, the boxes sharing
+   their rules (the manual's forms, 4.1; the Apollo flight plan's title block, MSC Form 29). Used
+   for a page's title block, a post's report documentation and a row of readings. The tones
+   variant steps the boxes from light to dark through one ink, as the manual sets type on stepped
+   grays (7.2). */
+@layer cap.components {
+  .cap-form-boxes {
+    --cols: 4;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    margin: 0;
+    border-block-start: 1px solid var(--text);
+    border-inline-start: 1px solid var(--text);
+    font-family: var(--ui);
+    container-type: inline-size;
+  }
+
+  .cap-form-boxes-box {
+    min-inline-size: 0;
+    padding: 6px var(--space-4) var(--space-3);
+    border-inline-end: 1px solid var(--text);
+    border-block-end: 1px solid var(--text);
+
+    > dt {
+      color: var(--muted);
+      font: 500 0.6875rem / 1.4 var(--mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    > dd {
+      margin: 2px 0 0;
+      overflow-wrap: anywhere;
+    }
+
+    &[data-span="2"] {
+      grid-column: span 2;
+    }
+
+    &[data-span="all"] {
+      grid-column: 1 / -1;
+    }
+
+    &[data-weight="bold"] > dd {
+      font-weight: 700;
+    }
+  }
+
+  /* A reading: the figure large and bold under its label. */
+  .cap-form-boxes[data-variant="readings"] .cap-form-boxes-box > dd,
+  .cap-form-boxes[data-variant="tones"] .cap-form-boxes-box > dd {
+    margin-block-start: var(--space-3);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .cap-form-boxes[data-variant="tones"] .cap-form-boxes-box {
+    /* The label takes the value's color: the muted gray does not hold 4.5:1 on the gray steps. */
+    > dt {
+      color: var(--text);
+    }
+
+    &:nth-child(4n + 1) {
+      background: color-mix(in srgb, var(--text) 6%, var(--ground));
+    }
+
+    &:nth-child(4n + 2) {
+      background: color-mix(in srgb, var(--text) 22%, var(--ground));
+    }
+
+    &:nth-child(4n + 3) {
+      background: color-mix(in srgb, var(--text) 62%, var(--ground));
+    }
+
+    &:nth-child(4n + 4) {
+      background: var(--text);
+    }
+
+    &:is(:nth-child(4n + 3), :nth-child(4n + 4)) > :is(dt, dd) {
+      color: var(--ground);
+    }
+  }
+
+  @container (max-width: 36rem) {
+    .cap-form-boxes-box[data-span="2"] {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .cap-form-boxes {
+      --cols: 2;
+    }
+  }
+}
+
+/* A contents list set as the manual's index (page i): number and name in bold, a dotted leader,
+   the page or the count at the right. */
+@layer cap.components {
+  .cap-leader-index {
+    margin: 0;
+    padding: 0;
+    border-block-start: 1px solid var(--text);
+    list-style: none;
+    font-family: var(--ui);
+  }
+
+  .cap-leader-index-link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    min-block-size: var(--target);
+    padding-block: var(--space-3);
+    border-block-end: 1px solid var(--line);
+    color: var(--text);
+    text-decoration: none;
+
+    &:hover .cap-leader-index-name,
+    &:focus-visible .cap-leader-index-name {
+      color: var(--accent-text);
+      text-decoration: underline;
+    }
+
+    &[aria-current] .cap-leader-index-name {
+      color: var(--accent-text);
+    }
+  }
+
+  .cap-leader-index-no {
+    flex: none;
+    min-inline-size: 3ch;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cap-leader-index-name {
+    font-weight: 700;
+  }
+
+  .cap-leader-index-dots {
+    flex: 1 1 2rem;
+    min-inline-size: 1rem;
+    border-block-end: 2px dotted var(--muted);
+  }
+
+  .cap-leader-index-fact {
+    flex: none;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+}
+
+/* A list of procedures as an Apollo checklist card: a ruled box, a dark strip naming the card,
+   and per step a box to tick, its number, its name, a dotted leader to what kind of step it is,
+   and a line under it. The box to tick is drawn, not a control: the card is a list of links.
+   */
+@layer cap.components {
+  .cap-checklist {
+    border: 2px solid var(--text);
+    background: var(--ground);
+    font-family: var(--ui);
+  }
+
+  .cap-checklist-strip {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: 0;
+    padding: var(--space-3) var(--space-5);
+    background: var(--text);
+    color: var(--ground);
+    font: 700 0.75rem / 1.4 var(--mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .cap-checklist-items {
+    margin: 0;
+    padding: var(--space-2) var(--space-5) var(--space-3);
+    list-style: none;
+    counter-reset: cap-step;
+  }
+
+  .cap-checklist-item {
+    display: grid;
+    grid-template-columns: 1.25rem 2rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    padding-block: var(--space-4);
+    border-block-end: 1px solid var(--line);
+    counter-increment: cap-step;
+
+    &:last-child {
+      border-block-end: 0;
+    }
+
+    &::before {
+      content: "";
+      inline-size: 14px;
+      block-size: 14px;
+      border: 1.5px solid var(--text);
+      transform: translateY(2px);
+    }
+
+    &::after {
+      content: counter(cap-step, decimal-leading-zero) / "";
+      grid-column: 2;
+      grid-row: 1;
+      color: var(--muted);
+      font: 500 0.75rem var(--mono);
+    }
+  }
+
+  .cap-checklist-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    grid-column: 3;
+    grid-row: 1;
+    min-inline-size: 0;
+
+    > a {
+      display: inline-block;
+      min-block-size: 24px;
+      color: var(--text);
+      font-weight: 700;
+      text-decoration: none;
+
+      &:hover,
+      &:focus-visible {
+        color: var(--accent-text);
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .cap-checklist-dots {
+    flex: 1 1 2rem;
+    min-inline-size: 1rem;
+    border-block-end: 2px dotted var(--muted);
+  }
+
+  .cap-checklist-kind {
+    font: 500 0.6875rem var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .cap-checklist-note {
+    grid-column: 3;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 40rem) {
+    .cap-checklist-dots {
+      display: none;
+    }
+  }
+}
+
+/* A figure as a plate: the drawing or photograph in a ruled box on the raised surface, its plate
+   number in the mono at the top left, the caption under the box with the figure number at the
+   right. The manual boxes every diagram (5.17), as NASA's photo plates were boxed and numbered. */
+@layer cap.components {
+  .cap-plate {
+    margin: 0;
+    min-inline-size: 0;
+    font-family: var(--ui);
+  }
+
+  .cap-plate-box {
+    position: relative;
+    border: 1px solid var(--text);
+    background: var(--raised);
+
+    > :is(svg, img, picture, canvas) {
+      display: block;
+      inline-size: 100%;
+      max-inline-size: 100%;
+      block-size: auto;
+    }
+  }
+
+  .cap-plate-no {
+    position: absolute;
+    inset-block-start: var(--space-4);
+    inset-inline-start: var(--space-4);
+    font: 700 0.75rem / 1 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cap-plate-caption {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-5);
+    padding-block-start: var(--space-2);
+    font-size: 0.875rem;
+    line-height: 1.4;
+
+    > b {
+      font-weight: 700;
+    }
+  }
+
+  .cap-plate-fig {
+    flex: none;
+    color: var(--muted);
+  }
+}
+
+/* The ways on from a page, as the manual's directional signs (6.1, 6.2): a dark panel of light
+   type with an arrow, the way back pointing left and the way forward right, and the way forward
+   carrying the family's color along its top. */
+@layer cap.components {
+  .cap-signs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .cap-sign {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    max-inline-size: 100%;
+    min-block-size: 48px;
+    padding: var(--space-3) var(--space-5);
+    background: var(--text);
+    color: var(--ground);
+    font: 500 1rem / 1.3 var(--ui);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+
+    &[rel~="prev"]::before {
+      content: "\2190" / "";
+    }
+
+    &[rel~="next"]::after {
+      content: "\2192" / "";
+    }
+
+    &[rel~="next"],
+    &[data-variant="forward"] {
+      box-shadow: inset 0 6px 0 var(--on);
+    }
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-sign {
+      border: 1px solid LinkText;
+    }
+  }
+}
+
+/* A round patch for a project, as each Apollo crew wore its mission's: the name round the top,
+   a line round the foot, the count on a disc of the family's color, a dot round the disc for
+   each of the things counted. Drawn by patchSvg() (manual.ts). */
+@layer cap.components {
+  .cap-patch {
+    display: block;
+    flex: none;
+    inline-size: 140px;
+    block-size: 140px;
+    max-inline-size: 100%;
+  }
+
+  .cap-patch-rim {
+    fill: var(--text);
+  }
+
+  .cap-patch-field {
+    fill: var(--ground);
+    stroke: var(--on);
+    stroke-width: 3;
+  }
+
+  .cap-patch-disc {
+    fill: var(--on);
+  }
+
+  .cap-patch-dot {
+    fill: var(--ground);
+    stroke: var(--text);
+    stroke-width: 1.2;
+  }
+
+  .cap-patch-name,
+  .cap-patch-foot {
+    fill: var(--text);
+    font: 700 10px var(--mono);
+    letter-spacing: 1.4px;
+  }
+
+  .cap-patch-foot {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .cap-patch-count {
+    fill: var(--primary-fg);
+    font: 700 24px var(--display);
+  }
+
+  .cap-patch-unit {
+    fill: var(--primary-fg);
+    font: 700 7px var(--mono);
+    letter-spacing: 1px;
+  }
+
+  .cap-patch[data-size="s"] {
+    inline-size: 96px;
+    block-size: 96px;
+  }
+}
+
+/* The foot of a page as the manual's letterhead (3.1): the site's name as the logotype, large and
+   bold, the address beside it in regular and medium, and the folio at the right. */
+@layer cap.components {
+  .cap-letterhead {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--space-5) var(--space-8);
+    padding-block: var(--space-7);
+    border-block-start: 4px solid var(--text);
+    font-family: var(--ui);
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .cap-letterhead-logo {
+    font: 700 clamp(2.5rem, 6vw, 4.5rem) / 0.82 var(--display);
+    letter-spacing: -0.045em;
+  }
+
+  .cap-letterhead-address {
+    font-size: 0.9375rem;
+    line-height: 1.45;
+
+    b {
+      font-weight: 600;
+    }
+  }
+
+  .cap-letterhead-folio {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 46rem) {
+    .cap-letterhead {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}
