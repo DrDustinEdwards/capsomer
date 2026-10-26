@@ -19,7 +19,7 @@ import "@fontsource/fraunces/700.css";
 import { enhance as enhanceMeters } from "../components/meter/meter.ts";
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTabs } from "../components/tabs/tabs.ts";
-import { enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
+import { effectiveTheme, enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
 import { CHART_ORDER, ELEVATION_ORDER, FAMILY_ORDER, familyTheme, oklch, pairs, renderFamily, renderScoped, seedLch, type Pair, type Tokens } from "../tokens/palette-core.mjs";
 import { DEFAULT, DENSITY, DISPLAY_FACES, FACES, MONO_FACES, PRESETS, SIZES, TEXT_FACES, corners, sizes, type Density, type Label, type Settings } from "./make-presets.ts";
 
@@ -200,6 +200,20 @@ function paint(b: Built) {
   }
 }
 
+// The page itself wears the theme being made, in whichever theme it is showing: its tiles,
+// stripes, header, buttons and links, in your color and your faces and corners. Sizes and density
+// stay the page's own, so the settings do not jump about under your hand.
+const PAGE_LOOK = ["ui", "font-ui", "face", "display", "mono", "radius-s", "radius-m", "radius-l", "radius-xl"];
+function paintPage(b: Built) {
+  const root = document.documentElement;
+  const t = b.t[effectiveTheme()];
+  for (const k of TOKENS) root.style.setProperty(`--${k}`, t[k] ?? "");
+  const look = shape(b.s);
+  for (const k of PAGE_LOOK) root.style.setProperty(`--${k}`, look[k] ?? "");
+}
+new MutationObserver(() => current && paintPage(current)).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => current && paintPage(current));
+
 function fixFor(p: Pair, scheme: Scheme, b: Built): string {
   const other = b.label === "light" ? "dark" : "light";
   if (p.fg === "primary-fg") {
@@ -368,6 +382,7 @@ function update() {
     const b = build(s);
     current = b;
     paint(b);
+    paintPage(b);
     check(b);
     files(b);
     try {

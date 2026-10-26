@@ -23,8 +23,15 @@ if (theme === "light" || theme === "dark") document.documentElement.dataset.them
 // each one in a frame of its own, so every specimen is a whole document with one main
 // landmark and its own ids; ?only=<id> renders that one template as the whole page, which
 // is also what a spec visits.
+// ?example=<heading id> shows one specimen section alone, on the ground, without its heading: a
+// component's public page frames each example this way, with the title and the code beside it.
+const example = params.get("example");
 const only = params.get("only");
-if (only) {
+if (example) {
+  const section = document.getElementById(example)?.closest<HTMLElement>(".cap-specimen");
+  document.body.classList.add("cap-specimen-example");
+  section?.classList.add("cap-specimen-shown");
+} else if (only) {
   const tpl = document.querySelector<HTMLTemplateElement>(`template[data-specimen="${CSS.escape(only)}"]`);
   document.body.className = "cap-specimen-only";
   document.body.replaceChildren(tpl ? tpl.content.cloneNode(true) : Object.assign(document.createElement("p"), { textContent: `No specimen named ${only}.` }));

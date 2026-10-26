@@ -102,10 +102,10 @@ export function renderMake(): string {
   return `${header("/")}
 <main id="main" tabindex="-1">
 <section class="make-top" aria-labelledby="make-h">
-  ${band("Make", ["purple", "fox", "teal", "amber"], "section")}
+  ${band("Make", ["purple"], "section")}
   <div class="home-wrap home-intro">
     <h1 id="make-h">Make a theme from one color</h1>
-    <p class="home-lead">Pick a brand color and get a full light and dark theme: two 12-step scales, every text and control color, checked against WCAG 2.2 as you go. Choose the faces, text size and corners, see them on real components, then take the CSS or the tokens. It is Capsomer's own generator, running in your browser; nothing you choose leaves it.</p>
+    <p class="home-lead">Pick a brand color and get a full light and dark theme: two 12-step scales, every text and control color, checked against WCAG 2.2 as you go. Choose the faces, text size and corners, see them on real components, then take the CSS or the tokens. This page takes your theme as you go. It runs Capsomer's own generator in your browser, and nothing you choose leaves it.</p>
     <noscript><p class="cap-banner" data-tone="warn"><span class="cap-banner-text">The theme builder needs JavaScript.</span></p></noscript>
   </div>
 </section>

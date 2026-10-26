@@ -69,3 +69,21 @@
   gap: var(--space-3);
   align-items: center;
 }
+
+/* One example alone (?example=<heading id>), framed on a component's public page. */
+.cap-specimen-example {
+  padding: var(--space-6);
+
+  & > main > :not(.cap-specimen-shown) {
+    display: none;
+  }
+  & .cap-specimen-shown {
+    padding: 0;
+    border: 0;
+    background: none;
+
+    & > h2 {
+      display: none;
+    }
+  }
+}

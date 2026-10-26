@@ -30,7 +30,8 @@ eachTheme((theme) => {
   test("accessibility: a component's public page has no axe violations", async ({ page }) => {
     await page.goto("./components/button/");
     await expect(page.locator("h1")).toHaveText("Button");
-    await expect(page.locator(".home-frames iframe")).toHaveCount(2);
+    await expect(page.locator(".comp-side [aria-current='page']")).toHaveText("Button");
+    await expect(page.locator(".comp-ex-frame").first().contentFrame().locator(".cap-specimen-shown")).toBeVisible();
     await expectNoAxeViolations(page, "body");
   });
 
@@ -137,10 +138,10 @@ eachTheme((theme) => {
     await page.goto("./components/button/");
     await expect(page.locator("h1")).toHaveText("Button");
     await page.waitForLoadState("networkidle");
-    // Its states frames too: the button's examples carry a style attribute, which bin/states.mjs
+    // Its example frames too: the button's examples carry a style attribute, which bin/states.mjs
     // lifts into the page's states.css because the CSP drops inline style.
-    await page.locator(".home-frames iframe").first().scrollIntoViewIfNeeded();
-    await expect(page.locator(".home-frames iframe").first().contentFrame().locator("main")).toBeAttached();
+    await page.locator(".comp-ex-frame").first().scrollIntoViewIfNeeded();
+    await expect(page.locator(".comp-ex-frame").first().contentFrame().locator(".cap-specimen-shown")).toBeVisible();
     await page.waitForLoadState("networkidle");
     for (const frame of page.frames()) {
       const found = await frame.evaluate(() => (window as unknown as { cspViolations?: string[] }).cspViolations ?? []);

@@ -23,6 +23,19 @@ interface Component {
   parts: string[];
   added: string;
   states: number;
+  // Each example in examples.html, for a preview with its code; the React wrapper's exports.
+  examples: Example[];
+  react: string[];
+  behavior: string[];
+  md: string;
+}
+interface Example {
+  id: string;
+  title: string;
+  code: string;
+  // "example": a section of the states page (?example=<heading id>); "only": a page-level template (?only=<id>).
+  kind: "example" | "only";
+  height: number;
 }
 interface Data {
   version: string;
@@ -40,6 +53,43 @@ export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;")
 // Backticks in a summary become code, as on the admin's pages.
 const prose = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const fam = (f: Family) => (f === "purple" ? "" : ` data-family="${f}"`);
+const plain = (html: string) => html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').trim();
+// The markup as an app writes it: no forced demo states, indented from the left edge.
+const tidy = (html: string) => {
+  const lines = html.replace(/\s+data-force="[^"]*"/g, "").replace(/^\s*\n|\n\s*$/g, "").split("\n");
+  const indent = Math.min(...lines.filter((l) => l.trim()).map((l) => /^ */.exec(l)?.[0].length ?? 0));
+  return lines.map((l) => l.slice(indent)).join("\n");
+};
+
+/** The examples in a component's examples.html: each top-level specimen section (nested sections counted) and each page-level template. */
+function examplesOf(html: string): Example[] {
+  const out: Example[] = [];
+  const open = /<section class="cap-specimen" aria-labelledby="([^"]+)">/g;
+  for (let m = open.exec(html); m; m = open.exec(html)) {
+    let depth = 1;
+    const tag = /<(\/?)section\b/g;
+    tag.lastIndex = open.lastIndex;
+    let end = -1;
+    for (let t = tag.exec(html); t; t = tag.exec(html)) {
+      depth += t[1] ? -1 : 1;
+      if (depth === 0) {
+        end = t.index;
+        break;
+      }
+    }
+    if (end < 0) break;
+    const body = html.slice(open.lastIndex, end);
+    const id = m[1] ?? "";
+    const h = new RegExp(`<h2 id="${id}">([\\s\\S]*?)</h2>`).exec(body);
+    out.push({ id, title: plain(h?.[1] ?? id), code: tidy(body.replace(h?.[0] ?? "", "")), kind: "example", height: 0 });
+    open.lastIndex = end;
+  }
+  for (const t of html.matchAll(/<template data-specimen="([^"]+)" data-title="([^"]*)"(?: data-height="(\d+)")?[^>]*>([\s\S]*?)<\/template>/g)) {
+    out.push({ id: t[1] ?? "", title: plain(t[2] ?? ""), code: tidy(t[4] ?? ""), kind: "only", height: Number(t[3] ?? 360) });
+  }
+  return out;
+}
+
 const json = (path: string) => (existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : null);
 
 /** Everything the page says, read from the repo and the site's data files (capsomer site-data). */
@@ -62,6 +112,14 @@ export function readData(root: string): Data {
         parts: list("parts"),
         added: str("added") || "0.1.0",
         states: list("states").length,
+        examples: existsSync(resolve(dir, d.name, "examples.html")) ? examplesOf(readFileSync(resolve(dir, d.name, "examples.html"), "utf8")) : [],
+        behavior: existsSync(resolve(dir, d.name, `${d.name}.ts`))
+          ? [...readFileSync(resolve(dir, d.name, `${d.name}.ts`), "utf8").matchAll(/^export (?:async )?function (\w+)/gm)].map((x) => x[1] ?? "")
+          : [],
+        md: readFileSync(resolve(dir, d.name, `${d.name}.md`), "utf8").replace(/^---\n[\s\S]*?\n---\n+/, ""),
+        react: existsSync(resolve(dir, d.name, `${d.name}.react.tsx`))
+          ? [...readFileSync(resolve(dir, d.name, `${d.name}.react.tsx`), "utf8").matchAll(/^export (?:function|const) ([A-Z]\w*)/gm)].map((x) => x[1] ?? "")
+          : [],
       };
     })
     .sort((a, b) => a.title.localeCompare(b.title));
@@ -301,7 +359,33 @@ ${FOOTER}`;
 }
 
 
-/** A component's own public page at /components/<name>/: what it is, every state in both themes, then how to use it, from its doc page. */
+/** One example: the live component in a frame of its own (the states page showing only it), with its markup under it. */
+function exampleBlock(c: Component, e: Example, heading: boolean): string {
+  const src = `/components/${esc(c.name)}/states.html?${e.kind}=${encodeURIComponent(e.id)}`;
+  const label = heading ? `ex-${esc(e.id)}` : `comp-h`;
+  return `<section class="comp-ex"${heading ? ` aria-labelledby="${label}"` : ` aria-label="${esc(c.title)}, ${esc(e.title)}"`}>
+  ${heading ? `<h3 id="${label}">${esc(e.title)}</h3>` : ""}
+  <div class="comp-ex-box">
+    <iframe class="comp-ex-frame" src="${src}" title="${esc(c.title)}: ${esc(e.title)}" loading="lazy" data-kind="${e.kind}" data-height="${e.height}"></iframe>
+    <div class="comp-ex-code" data-cap-part="code">
+      <pre tabindex="0" aria-label="HTML for ${esc(e.title)}"><code>${esc(e.code)}</code></pre>
+      <div class="comp-ex-tools"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="copy-code" hidden>Copy</button></div>
+      <button type="button" class="cap-btn" data-size="sm" data-cap-part="show-code" aria-expanded="false" hidden>View code</button>
+    </div>
+  </div>
+</section>`;
+}
+
+const ARROW = {
+  prev: `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  next: `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+};
+
+/**
+ * A component's own public page at /components/<name>/, laid out as shadcn/ui's docs are: every
+ * component in a list on the left, the page's sections on the right, and in the middle its name, the
+ * first example live with its markup, how to install it, every other example the same way, then its doc.
+ */
 export function renderComponent(d: Data, name: string): string {
   const i = d.components.findIndex((c) => c.name === name);
   const c = d.components[i];
@@ -309,35 +393,93 @@ export function renderComponent(d: Data, name: string): string {
   const prev = d.components[i - 1];
   const next = d.components[i + 1];
   const states = `/components/${esc(c.name)}/states.html`;
+  const [hero, ...rest] = c.examples;
+  const docHeads = [...c.body.matchAll(/^## (.+)$/gm)].map((m) => {
+    const text = (m[1] ?? "").trim();
+    return [`doc-${text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`, text.replace(/`/g, "")] as [string, string];
+  });
+  const usesCss = c.parts.includes("css") || c.parts.length === 0;
+  const enhance = c.behavior.includes("enhance");
+  const html = [
+    `// package.json: "capsomer": "github:DrDustinEdwards/capsomer#v${d.version}"`,
+    `import "capsomer/tokens.css";`,
+    `import "capsomer/base.css";`,
+    ...(usesCss ? [`import "capsomer/${c.name}.css";`] : []),
+    ...(enhance ? [`import { enhance } from "capsomer/behavior/${c.name}";`, "", "enhance();"] : c.behavior.length ? [`import { ${c.behavior.slice(0, 3).join(", ")} } from "capsomer/behavior/${c.name}";`] : []),
+  ].join("\n");
+  const react = c.react.length
+    ? [`import "capsomer/tokens.css";`, ...(usesCss ? [`import "capsomer/${c.name}.css";`] : []), `import { ${c.react.join(", ")} } from "capsomer/react/${c.name}";`].join("\n")
+    : "";
+  const tab = (id: string, text: string, on: boolean) =>
+    `<button type="button" class="cap-tab" role="tab" id="inst-t-${id}" aria-selected="${on}" aria-controls="inst-p-${id}" tabindex="${on ? 0 : -1}">${text}</button>`;
+  const panel = (id: string, code: string, on: boolean) =>
+    `<div class="cap-tabs-panel" role="tabpanel" id="inst-p-${id}" aria-labelledby="inst-t-${id}" tabindex="0"${on ? "" : " hidden"}><div class="comp-ex-code" data-open><pre aria-label="Install"><code>${esc(code)}</code></pre><div class="comp-ex-tools"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="copy-code" hidden>Copy</button></div></div></div>`;
+  const toc: Array<[string, string, boolean]> = [
+    ["install-h", "Installation", false],
+    ...(rest.length ? ([["examples-h", "Examples", false], ...rest.map((e) => [`ex-${e.id}`, e.title, true])] as Array<[string, string, boolean]>) : []),
+    ...docHeads.map(([id, t]) => [id, t, false] as [string, string, boolean]),
+    ["states-h", "Every state", false],
+  ];
   return `${header("/")}
-<main id="main" tabindex="-1">
-<section aria-labelledby="comp-h">
-  ${band("Components", ["purple"], "section")}
-  <div class="home-wrap home-comp-head">
-    <nav class="home-trail" aria-label="Breadcrumb"><ol><li><a href="/#components">Components</a></li><li><span aria-current="page">${esc(c.title)}</span></li></ol></nav>
-    <h1 id="comp-h">${esc(c.title)}</h1>
-    <p class="home-lead">${prose(c.lead)}</p>
-    <dl class="home-facts">
-      <div><dt>States</dt><dd>${c.states}</dd></div>
-      <div><dt>Parts</dt><dd>${esc(c.parts.join(", ") || "css")}</dd></div>
-      <div><dt>Since</dt><dd>${esc(c.added)}</dd></div>
-    </dl>
+<div class="comp-layout">
+<nav class="comp-side" aria-label="Components">
+  <div class="cap-field comp-side-find" data-cap-part="side-find" hidden>
+    <label class="cap-field-label cap-sr-only" for="side-find">Find a component</label>
+    <input class="cap-input" id="side-find" type="search" placeholder="Find a component" autocomplete="off" />
   </div>
-</section>
-<section class="home-wrap" aria-labelledby="states-h">
-  <h2 id="states-h">Every state, in both themes</h2>
-  <div class="home-frames">
-    ${(["light", "dark"] as const).map((t) => `<figure><figcaption>${t === "light" ? "Light" : "Dark"}</figcaption><iframe src="${states}?theme=${t}" title="${esc(c.title)} states, ${t} theme" loading="lazy"></iframe></figure>`).join("\n    ")}
-  </div>
-  <p class="home-muted"><a href="${states}">Open the states page on its own</a></p>
-</section>
-<article class="home-wrap home-doc" aria-label="How to use ${esc(c.title)}">
-${renderMarkdown(c.body, 0)}
-</article>
-<nav class="home-wrap home-pager" aria-label="More components">
-  ${prev ? `<a href="/components/${esc(prev.name)}/" rel="prev"><span>Previous</span>${esc(prev.title)}</a>` : "<span></span>"}
-  ${next ? `<a href="/components/${esc(next.name)}/" rel="next"><span>Next</span>${esc(next.title)}</a>` : "<span></span>"}
+  <p class="comp-side-h">Components</p>
+  <ul>
+    ${d.components.map((x) => `<li><a href="/components/${esc(x.name)}/"${x.name === c.name ? ' aria-current="page"' : ""}>${esc(x.title)}</a></li>`).join("\n    ")}
+  </ul>
 </nav>
+<main id="main" tabindex="-1" class="comp-main">
+  <nav class="home-trail" aria-label="Breadcrumb"><ol><li><a href="/#components">Components</a></li><li><span aria-current="page">${esc(c.title)}</span></li></ol></nav>
+  <div class="comp-title">
+    <h1 id="comp-h">${esc(c.title)}</h1>
+    <div class="comp-title-tools">
+      <button type="button" class="cap-btn" data-size="sm" data-cap-part="copy-page" hidden>Copy page</button>
+      ${prev ? `<a class="cap-btn" data-size="sm" data-icon-only="" href="/components/${esc(prev.name)}/" rel="prev" aria-label="Previous: ${esc(prev.title)}">${ARROW.prev}</a>` : ""}
+      ${next ? `<a class="cap-btn" data-size="sm" data-icon-only="" href="/components/${esc(next.name)}/" rel="next" aria-label="Next: ${esc(next.title)}">${ARROW.next}</a>` : ""}
+    </div>
+  </div>
+  <p class="comp-lead">${prose(c.lead)}</p>
+  <p class="comp-facts">${c.states} states · since ${esc(c.added)} · ${esc((c.parts.length ? c.parts : ["css"]).map((p) => (p === "behavior" ? "behavior" : p === "react" ? "React" : p.toUpperCase())).join(", "))}</p>
+  <template data-cap-part="md">${esc(c.md)}</template>
+  ${hero ? exampleBlock(c, hero, false) : ""}
+
+  <section aria-labelledby="install-h">
+    <h2 id="install-h">Installation</h2>
+    <div class="cap-tabs" data-cap="tabs">
+      <div class="cap-tabs-list" role="tablist" aria-label="Installation">${tab("html", "HTML and CSS", true)}${react ? tab("react", "React", false) : ""}</div>
+      ${panel("html", html, true)}${react ? panel("react", react, false) : ""}
+    </div>
+  </section>
+
+  ${rest.length ? `<section aria-labelledby="examples-h">
+    <h2 id="examples-h">Examples</h2>
+    ${rest.map((e) => exampleBlock(c, e, true)).join("\n    ")}
+  </section>` : ""}
+
+  <article class="home-doc comp-doc" aria-label="How to use ${esc(c.title)}">
+  ${renderMarkdown(c.body, 0)}
+  </article>
+
+  <section aria-labelledby="states-h">
+    <h2 id="states-h">Every state</h2>
+    <p>Every example on one page, as the tests see it: <a href="${states}?theme=light">light</a> or <a href="${states}?theme=dark">dark</a>.</p>
+  </section>
+
+  <nav class="comp-pager" aria-label="More components">
+    ${prev ? `<a class="cap-btn" href="/components/${esc(prev.name)}/" rel="prev">${ARROW.prev}${esc(prev.title)}</a>` : "<span></span>"}
+    ${next ? `<a class="cap-btn" href="/components/${esc(next.name)}/" rel="next">${esc(next.title)}${ARROW.next}</a>` : "<span></span>"}
+  </nav>
 </main>
+<nav class="comp-toc" aria-label="On this page">
+  <p class="comp-side-h">On this page</p>
+  <ul>
+    ${toc.map(([id, t, sub]) => `<li${sub ? ' class="comp-toc-sub"' : ""}><a href="#${esc(id)}">${esc(t)}</a></li>`).join("\n    ")}
+  </ul>
+</nav>
+</div>
 ${FOOTER}`;
 }
