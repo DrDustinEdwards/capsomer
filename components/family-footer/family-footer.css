@@ -254,8 +254,9 @@
     color: var(--muted);
   }
 
+  /* The copyright sits right under the name. */
   .cap-family-footer-note {
-    margin: var(--space-6) 0 0;
+    margin: var(--space-3) 0 0;
     color: var(--muted);
     font: 500 0.6875rem / 1.6 var(--mono);
     letter-spacing: 0.08em;

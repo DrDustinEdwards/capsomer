@@ -36,6 +36,11 @@ Each release names every removed or renamed token or class, and every changed HT
   - A long changelog line no longer pushes a phone page sideways.
   - The Settings page, which held two paragraphs and no settings, is gone; `#/settings` opens the overview.
 
+## [0.26.1]
+
+- **The family footer's strip is headed "Network"** (Dustin, 2026-10-26), not "The family". Changed HTML contract: its heading's id is `cap-family-footer-network` (was `cap-family-footer-family`).
+- **The copyright sits right under Dustin Edwards** (Dustin, 2026-10-26), not below the tallest column. Changed HTML contract: `.cap-family-footer-note` moved into the name's column, beside the logo in a new wrapper `div`.
+
 ## [0.26.0]
 
 - **The family footer is now each site's one footer** (Dustin, 2026-10-26: option 4 of the footer mocks). `familyFooterHtml()` takes `site` (a `FAMILY_SITES` id) and `center` (the site's own HTML). Under a thin stripe in the page's color: the site's own part (`.cap-family-footer-center`, `-center-name`, `-about`, `-stamp`, with `.cap-family-footer-columns` on the letterhead's columns), then the strip of the family's sites (`nav.cap-family-footer-sites`), each marked in its family's color, with the one you are on carrying a heavy top edge. Then the double stripe over Dustin Edwards, as before. Changed HTML contract: the footer's markup now opens with `.cap-family-footer-local`.
