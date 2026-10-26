@@ -99,4 +99,16 @@
       text-decoration: none;
     }
   }
+
+  /* The confirm page as a modal (ConfirmModal): the form takes no box of its own, so its header,
+     body and footer lay out as the dialog's own parts. Until script opens it, it sits in the page
+     (data-inline), so a reader with no script still gets the second step. */
+  .cap-confirm-modal > .cap-confirm-page {
+    display: contents;
+  }
+  .cap-confirm-modal[data-inline] {
+    display: flex;
+    position: static;
+    margin: 0 0 var(--space-5);
+  }
 }

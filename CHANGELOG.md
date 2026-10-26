@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+- Prelum v0.14.0 for the site and tests.
 - **Site only: specimens keep their inline styles.** The site's Content-Security-Policy allows no inline style, so every `style=""` in an `examples.html` was dropped on the states pages: the button's sweep, the range fill, the panel's lift and a few layout grids. `bin/states.mjs` now moves each one into the page's own `states.css`. Found by a Lighthouse run; the CSP browser test now checks a component page's states frames too.
 - **Site only: a second pass over the public site** (Dustin, 2026-10-25: "do another pass and examine website structure ... consider motion and interactive elements").
   - Every component has its own public page at `/components/<name>/`: its summary, its facts, every state in both themes and its whole doc, with Previous and Next. The front page's list links there; the list linked to a bare states page with no way back. The pages are in the sitemap.
@@ -12,7 +13,6 @@ Each release names every removed or renamed token or class, and every changed HT
   - The family preview crossfades to the chosen family.
   - "Try your own words" sets every size in the type scale to your text. On a phone each size takes two lines, not four.
   - The footer's links sit in one row.
-- **The chart palette's color difference is Enarratio's.** `tokens/chart.mjs` kept its own copy of CIEDE2000 and the color-vision simulation. The checks now live in `tokens/chart-checks.mjs`, which uses Enarratio's `colorDifference` and is not in the package. `colorDifference`, `worstDifference`, `VISIONS`, `chartChecks` and the three thresholds are no longer exported from `tokens/chart.mjs`; no app imported them. `check()` in `tokens/palette.mjs` is now async.
 - **Site only:** `/.well-known/security.txt` (security@dustinedwards.info) and an IndexNow key file, with `.github/workflows/indexnow.yml` pinging IndexNow after each deploy. devkit's family check runs in CI (`.family.json` lists the old-spelling aliases it leaves alone).
 - devkit v0.13.1, site-runtime v0.23.0 and Prelum v0.13.0 for the site and tests.
 - **Site only: a critical pass over the public page and the admin** (Dustin, 2026-10-25: "critically evaluate every aspect of the site"). Public page:
@@ -31,6 +31,17 @@ Each release names every removed or renamed token or class, and every changed HT
   - Changes shows unreleased work and the last three releases.
   - A long changelog line no longer pushes a phone page sideways.
   - The Settings page, which held two paragraphs and no settings, is gone; `#/settings` opens the overview.
+
+## [0.22.0]
+
+**What the Capsid Portal and dustinedwards.info need to drop their own copies** (Dustin approved moving them onto Capsomer, 2026-10-26).
+
+- **New: `ReasonForm`** in `capsomer/react/switch-reason`: the one-line reason on its own, for a change that is not a switch (the Portal's "Runs on" radio group). Props: `open`, `verb`, `onApply(reason)` (a rejection keeps it open with the error), `onCancel`, and optional `failed`, `id`, `placeholder` and `onPendingChange`. `SwitchWithReason` is now built on it; its markup is unchanged.
+- **New: `SwitchWithReason`'s `id` prop**: the switch input's id, so an app can focus it again after an Undo or press it from a command. The reason field is then `<id>-why`.
+- **New: the theme switch's no-script form**, `data-variant="form"` (React `ThemeForm`): two submit buttons posting to the site's theme route, one shown by CSS, for a site that keeps the choice in a cookie. `enhance()` makes a press switch at once and write the cookie (`data-cap-cookie`). New classes: `.cap-theme-form`. dustinedwards.info's own theme toggle moves onto it.
+- **New: `ConfirmModal`**, the confirm page drawn over the page as a modal that a server opens, in the page until script runs (`.cap-confirm-modal`, `data-inline`). `ConfirmPage` gains `children`, `onCancel` and `renderForm`, its `action` may be left out (it posts to the page it is on), and a `lead` that is not a string is drawn in a `div`. dustinedwards.info's own admin confirm dialog moves onto it.
+- **`Button` takes a `ref`** in its props type, so an app can move focus to it (the Portal's confirm dialog focuses Cancel or the action after a preview). React 19 already passed it through; only the type is new.
+- **The chart palette's color difference is Enarratio's.** `tokens/chart.mjs` kept its own copy of CIEDE2000 and the color-vision simulation. The checks now live in `tokens/chart-checks.mjs`, which uses Enarratio's `colorDifference` and is not in the package. `colorDifference`, `worstDifference`, `VISIONS`, `chartChecks` and the three thresholds are no longer exported from `tokens/chart.mjs`; no app imported them. `check()` in `tokens/palette.mjs` is now async.
 
 ## [0.21.0]
 

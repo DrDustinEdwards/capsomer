@@ -7,7 +7,7 @@
 // the React wrapper uses the same functions.
 import { readPref, writePref } from "../shell/shell.ts";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
-import { isThemeChoice as isChoice, THEME_PREF, type ThemeChoice } from "./theme-server.ts";
+import { isThemeChoice as isChoice, THEME_COOKIE, THEME_PREF, themeCookie, type ThemeChoice } from "./theme-server.ts";
 
 export { THEME_PREF, type ThemeChoice };
 
@@ -112,6 +112,39 @@ function wireButton(el: HTMLElement, key: string): () => void {
   };
 }
 
+// The form (data-variant="form", 0.22.0): the button form for a site that keeps the choice in a
+// cookie and works with no script. Two submit buttons ship, each a real post to the site's theme
+// route, and CSS shows the one for the theme that is not showing. With script a press switches at
+// once and writes the cookie (data-cap-cookie names it), and the server writes the same data-theme
+// into the next page's first byte. The cookie is the memory; data-cap-pref also writes the choice
+// to that localStorage key, for a part of the site (an admin) whose shell reads it from there.
+function wireForm(form: HTMLFormElement): () => void {
+  const detachTips = [...form.querySelectorAll<HTMLElement>(".cap-theme-tip")].map((tip) => {
+    const button = tip.parentElement;
+    if (!button) return () => undefined;
+    const detach = attachTip(button, tip);
+    button.removeAttribute("aria-describedby");
+    return detach;
+  });
+  const onSubmit = (e: SubmitEvent) => {
+    const choice = e.submitter instanceof HTMLButtonElement ? e.submitter.value : null;
+    if (!isChoice(choice)) return;
+    e.preventDefault();
+    // Held before the page changes: the pressed button is about to be hidden, which drops focus.
+    const had = form.contains(document.activeElement);
+    applyTheme(choice, { remember: false });
+    if (form.dataset.capPref) writePref(form.dataset.capPref, choice);
+    document.cookie = themeCookie(choice, { name: form.dataset.capCookie ?? THEME_COOKIE, secure: location.protocol === "https:" });
+    // preventScroll: Chrome scrolls a focused sticky-header control toward where it would sit unstuck.
+    if (had) [...form.querySelectorAll<HTMLElement>("button[value]")].find((b) => b.offsetParent !== null)?.focus({ preventScroll: true });
+  };
+  form.addEventListener("submit", onSubmit);
+  return () => {
+    form.removeEventListener("submit", onSubmit);
+    detachTips.forEach((f) => f());
+  };
+}
+
 // Attaches to every [data-cap="theme-switch"] under root. With a remembered choice, that is
 // checked and applied. With none and a radio checked in the markup (a server that read a
 // cookie), that one is applied. With neither, the radio for the operating system's theme is
@@ -123,6 +156,14 @@ export function enhance(root: ParentNode = document): () => void {
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='theme-switch']:not([data-cap-ready])")) {
     el.dataset.capReady = "";
     const key = el.dataset.capPref ?? THEME_PREF;
+    if (el.dataset.variant === "form" && el instanceof HTMLFormElement) {
+      const unwire = wireForm(el);
+      undo.push(() => {
+        unwire();
+        delete el.dataset.capReady;
+      });
+      continue;
+    }
     if (el.dataset.variant === "button") {
       const unwire = wireButton(el, key);
       undo.push(() => {

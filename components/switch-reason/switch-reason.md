@@ -102,6 +102,14 @@ In React, `import { SwitchWithReason } from "capsomer/react/switch-reason"`:
 <SwitchWithReason label="Improve loop" name="the improve loop" checked={loopOn} onApply={(on, why) => api.setLoop(on, why)} note="Runs on the subscription." />
 ```
 
+Give it an `id` when the app focuses the switch again (after an Undo) or presses it from a command (0.22.0).
+
+`ReasonForm` (0.22.0) is the reason on its own, for a change made by a control that is not a switch, such as a radio group. It is hidden until `open`, and rejecting `onApply` keeps it open with the error:
+
+```tsx
+<ReasonForm open={pending != null} verb={`Changing the overnight run to run on ${pending}`} onApply={(why) => api.setRunsOn(pending, why)} onCancel={() => setPending(null)} />
+```
+
 ## Exceptions in production
 
 None yet.
