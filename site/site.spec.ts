@@ -30,7 +30,14 @@ eachTheme((theme) => {
   test("accessibility: a component's public page has no axe violations", async ({ page }) => {
     await page.goto("./components/button/");
     await expect(page.locator("h1")).toHaveText("Button");
-    await expect(page.locator(".home-frames iframe")).toHaveCount(2);
+    await expect(page.locator(".comp-side [aria-current='page']")).toHaveText("Button");
+    await expect(page.locator(".comp-ex-frame").first().contentFrame().locator(".cap-specimen-shown")).toBeVisible();
+    await expectNoAxeViolations(page, "body");
+  });
+
+  test("accessibility: the theme builder has no axe violations", async ({ page }) => {
+    await page.goto("./make/");
+    await expect(page.locator("[data-cap-part='verdict']")).toHaveText(/^All \d+ pairs pass/);
     await expectNoAxeViolations(page, "body");
   });
 
@@ -123,13 +130,18 @@ eachTheme((theme) => {
     await expect(page.locator("h1")).toHaveText("One design system for every site and app");
     await page.waitForLoadState("networkidle");
     expect(await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations), "CSP violations on the public page").toEqual([]);
+    // The theme builder paints its previews through the CSSOM, which the CSP allows.
+    await page.goto("./make/");
+    await expect(page.locator("[data-cap-part='verdict']")).toHaveText(/pass/);
+    await page.waitForLoadState("networkidle");
+    expect(await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations), "CSP violations on the theme builder").toEqual([]);
     await page.goto("./components/button/");
     await expect(page.locator("h1")).toHaveText("Button");
     await page.waitForLoadState("networkidle");
-    // Its states frames too: the button's examples carry a style attribute, which bin/states.mjs
+    // Its example frames too: the button's examples carry a style attribute, which bin/states.mjs
     // lifts into the page's states.css because the CSP drops inline style.
-    await page.locator(".home-frames iframe").first().scrollIntoViewIfNeeded();
-    await expect(page.locator(".home-frames iframe").first().contentFrame().locator("main")).toBeAttached();
+    await page.locator(".comp-ex-frame").first().scrollIntoViewIfNeeded();
+    await expect(page.locator(".comp-ex-frame").first().contentFrame().locator(".cap-specimen-shown")).toBeVisible();
     await page.waitForLoadState("networkidle");
     for (const frame of page.frames()) {
       const found = await frame.evaluate(() => (window as unknown as { cspViolations?: string[] }).cspViolations ?? []);
@@ -180,6 +192,24 @@ test("behavior: the public page's preview takes the chosen family and the filter
   await page.getByLabel("Find a component").fill("combobox");
   await expect(page.locator(".home-parts > li:visible")).toHaveCount(1);
   await expect(page.locator("#home-find-n")).toHaveText(/^1 of \d+ components$/);
+});
+
+// The theme builder: a brand color rebuilds the previews and the CSS, and the address carries the
+// theme, so a shared link opens it again.
+test("behavior: the theme builder makes a theme from a brand color and a link reopens it", async ({ page }) => {
+  await page.goto("./make/");
+  await page.getByLabel("Brand color", { exact: true }).fill("#0b6e4f");
+  const light = page.locator(".make-pane[data-scheme='light']");
+  await expect(light).toHaveCSS("--accent", "#0b6e4f");
+  await expect(page.locator("[data-cap-part='css']")).toContainText("--accent: #0b6e4f;");
+  await page.getByLabel("Start from").selectOption("foxing");
+  await expect(page.getByLabel("Headings")).toHaveValue("fraunces");
+  const url = page.url();
+  expect(url).toContain("h=fraunces");
+  await page.goto("about:blank");
+  await page.goto(url);
+  await expect(page.getByLabel("Start from")).toHaveValue("foxing");
+  await expect(light).toHaveCSS("--accent", "#cc4f0c");
 });
 
 // Cloudflare Web Analytics injects its beacon into every HTML page on this zone. A public

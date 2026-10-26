@@ -1,11 +1,14 @@
 // The public pages' script (site/home.ts writes them; they read whole without it). The header and its
-// theme button are Capsomer's own site header; the rest is the front page's: the family preview, the
-// type sample, the component filter, the copy button and the live test count.
+// theme button are Capsomer's own site header. The front page's: the family preview, the type sample,
+// the component filter, the copy button and the live test count. A component page's: its examples'
+// frames, their code, the component list's filter, the page's sections marked as you read, Copy page.
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
-import { enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
+import { enhance as enhanceTabs } from "../components/tabs/tabs.ts";
+import { effectiveTheme, enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
 
 enhanceHeader();
 enhanceTheme();
+enhanceTabs();
 
 // The preview takes the chosen family as a site would, with data-family (purple is the default, so
 // none), crossfading where the browser has view transitions and motion is allowed (site/home.css).
@@ -92,4 +95,103 @@ if (live) {
       live.hidden = false;
     })
     .catch(() => {});
+}
+
+// ---- a component's page --------------------------------------------------------------------
+
+// Each example's frame takes the page's theme and grows to its content (same origin, so the page
+// can read it; sizes go through the CSSOM, as the CSP asks).
+const frames = [...document.querySelectorAll<HTMLIFrameElement>(".comp-ex-frame")];
+const syncFrame = (frame: HTMLIFrameElement) => {
+  const doc = frame.contentDocument;
+  if (!doc?.body || doc.URL === "about:blank") return;
+  doc.documentElement.dataset.theme = effectiveTheme();
+  // An example's own height: its section plus the page's padding (scrollHeight never drops below the frame).
+  const shown = doc.querySelector(".cap-specimen-shown");
+  const tall = frame.dataset.kind === "only" || !shown ? Number(frame.dataset.height) || 360 : Math.max(140, Math.ceil(shown.getBoundingClientRect().height) + 48);
+  frame.style.setProperty("block-size", `${tall}px`);
+};
+for (const frame of frames) {
+  frame.addEventListener("load", () => {
+    syncFrame(frame);
+    const shown = frame.contentDocument?.querySelector(".cap-specimen-shown");
+    if (shown && frame.dataset.kind !== "only") new ResizeObserver(() => syncFrame(frame)).observe(shown);
+  });
+  syncFrame(frame);
+}
+const resync = () => frames.forEach(syncFrame);
+new MutationObserver(resync).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", resync);
+
+// An example's code starts closed to its first lines, with View code over it; install code stays open.
+const copyText = async (button: HTMLButtonElement, text: string) => {
+  const was = button.textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    button.textContent = "Copied";
+  } catch {
+    button.textContent = "Copy failed";
+  }
+  setTimeout(() => (button.textContent = was), 2000);
+};
+for (const box of document.querySelectorAll<HTMLElement>(".comp-ex-code")) {
+  const show = box.querySelector<HTMLButtonElement>("[data-cap-part='show-code']");
+  const copyButton = box.querySelector<HTMLButtonElement>("[data-cap-part='copy-code']");
+  const code = box.querySelector("code")?.textContent ?? "";
+  if (copyButton && navigator.clipboard) {
+    copyButton.hidden = false;
+    copyButton.addEventListener("click", () => copyText(copyButton, code));
+  }
+  if (!show || code.split("\n").length <= 4) continue;
+  box.toggleAttribute("data-closed", true);
+  show.hidden = false;
+  show.addEventListener("click", () => {
+    const closed = box.toggleAttribute("data-closed");
+    show.textContent = closed ? "View code" : "Hide code";
+    show.setAttribute("aria-expanded", String(!closed));
+  });
+}
+
+// Copy page: the component's doc as Markdown, for a note or an assistant.
+const copyPage = document.querySelector<HTMLButtonElement>("[data-cap-part='copy-page']");
+const md = document.querySelector<HTMLTemplateElement>("template[data-cap-part='md']");
+if (copyPage && md && navigator.clipboard) {
+  copyPage.hidden = false;
+  copyPage.addEventListener("click", () => copyText(copyPage, md.content.textContent ?? ""));
+}
+
+// The component list's filter.
+const sideFind = document.querySelector<HTMLElement>("[data-cap-part='side-find']");
+if (sideFind) {
+  sideFind.hidden = false;
+  const input = sideFind.querySelector("input");
+  const items = [...document.querySelectorAll<HTMLLIElement>(".comp-side li")];
+  input?.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    for (const li of items) li.hidden = Boolean(q) && !(li.textContent ?? "").toLowerCase().includes(q);
+  });
+  // The current component in view in the list.
+  const side = document.querySelector<HTMLElement>(".comp-side");
+  const here = side?.querySelector<HTMLElement>("[aria-current]");
+  if (side && here) side.scrollTop = here.offsetTop - side.clientHeight / 2;
+}
+
+// On this page: the section being read is marked.
+const tocLinks = [...document.querySelectorAll<HTMLAnchorElement>(".comp-toc a")];
+if (tocLinks.length && "IntersectionObserver" in window) {
+  const byId = new Map(tocLinks.map((a) => [a.hash.slice(1), a]));
+  const seen = new Set<string>();
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id);
+      const first = [...byId.keys()].find((id) => seen.has(id));
+      if (!first) return;
+      for (const [id, a] of byId) id === first ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current");
+    },
+    { rootMargin: "-10% 0px -70% 0px" },
+  );
+  for (const id of byId.keys()) {
+    const target = document.getElementById(id);
+    if (target) io.observe(target);
+  }
 }

@@ -39,7 +39,7 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
       i++;
       while (i < lines.length && !/^```/.test(lines[i] ?? "")) body.push(lines[i++] ?? "");
       i++;
-      out.push(`<pre class="site-code"><code>${escape(body.join("\n"))}</code></pre>`);
+      out.push(`<pre class="site-code" tabindex="0"><code>${escape(body.join("\n"))}</code></pre>`);
       continue;
     }
     const h = line.match(/^(#{1,6})\s+(.*)$/);

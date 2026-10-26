@@ -17,7 +17,7 @@
 //   - each slot keeps its hue from light to dark, with lightness set per theme.
 // Order, so a chart with few series uses the most distinct ones first: purple, fox, teal,
 // then sage, indigo, pine, orchid, rose.
-import { contrast, oklch } from "./palette.mjs";
+import { contrast, oklch } from "./palette-core.mjs";
 
 export const SERIES_SEEDS = ["purple", "fox", "teal"];
 

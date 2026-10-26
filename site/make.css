@@ -1,0 +1,290 @@
+/* The theme builder at /make/ (site/make.ts): the public pages' look (site/home.css) with the
+   settings in a column on the left and what they make on the right. Each preview carries its
+   whole theme as custom properties set by site/make-main.ts, so it paints the same on a light or
+   a dark page. */
+@import "./home.css";
+@import "../components/select/select.css";
+@import "../components/tabs/tabs.css";
+@import "../components/banner/banner.css";
+@import "../components/meter/meter.css";
+@import "../components/panel/panel.css";
+
+.make-grid {
+  display: grid;
+  grid-template-columns: minmax(16rem, 20rem) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: start;
+  margin-block-start: var(--space-7);
+}
+.make-controls {
+  position: sticky;
+  inset-block-start: calc(var(--header-h) + var(--space-5));
+  display: grid;
+  gap: var(--space-6);
+  max-block-size: calc(100dvh - var(--header-h) - var(--space-7));
+  overflow-y: auto;
+  padding-inline-end: var(--space-3);
+  font-size: 15px;
+}
+.make-group {
+  display: grid;
+  gap: var(--space-5);
+  margin: 0;
+  padding: var(--space-5) 0 0;
+  border: 0;
+  border-top: 6px solid var(--text);
+
+  & > legend {
+    float: left;
+    inline-size: 100%;
+    padding: 0;
+    font: 800 1.2rem / 1.2 var(--ui);
+  }
+}
+.make-color {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+
+  & input[type="color"] {
+    flex: none;
+    inline-size: 44px;
+    block-size: 44px;
+    padding: 2px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    cursor: pointer;
+  }
+  & .cap-input {
+    font-family: var(--mono);
+  }
+}
+.make-controls output {
+  margin-inline-start: var(--space-2);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-weight: 400;
+}
+
+.make-out {
+  display: grid;
+  gap: var(--space-8);
+  min-inline-size: 0;
+
+  /* A long line of CSS scrolls inside its block instead of widening the column. */
+  & > * {
+    min-inline-size: 0;
+  }
+}
+.make-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+/* The previews: every color, face and size inside comes from the pane's own custom properties. */
+.make-panes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--space-5);
+}
+.make-pane {
+  margin: 0;
+  display: grid;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  background: var(--ground);
+  color: var(--text);
+  font: 400 var(--text-size) / var(--leading) var(--face);
+}
+.make-pane-cap {
+  padding: var(--space-3) var(--pad-card);
+  border-block-end: 1px solid var(--line);
+  background: var(--raised);
+  color: var(--muted);
+  font: 600 var(--fs-label) / 1.4 var(--face);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.make-pane-body {
+  display: grid;
+  gap: var(--gap);
+  padding: var(--pad-card);
+}
+.make-pane-head p {
+  margin: 0;
+}
+.make-pane-title {
+  font: 700 var(--fs-h2) / 1.2 var(--display);
+}
+.make-pane-sub {
+  color: var(--muted);
+  font-size: var(--fs-detail);
+}
+.make-pane a {
+  color: var(--accent-text);
+}
+.make-pane .cap-tabs-panel p {
+  margin: 0;
+}
+.make-pane-code {
+  justify-self: start;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-s);
+  background: var(--sunken);
+  color: var(--text);
+  font: var(--fs-detail) / 1.4 var(--mono);
+}
+
+/* The scale: twelve swatches a theme, each with its step and its hex. */
+.make-scales {
+  display: grid;
+  gap: var(--space-4);
+}
+.make-scale-row {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+.make-scale-name {
+  padding-block-start: var(--space-3);
+  font-weight: 600;
+}
+.make-scale {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & li {
+    display: grid;
+    gap: var(--space-1);
+    min-inline-size: 0;
+    font-size: 12px;
+  }
+  & i {
+    block-size: 3rem;
+    border-radius: var(--radius-s);
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
+  }
+  & code {
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 10px;
+    text-overflow: clip;
+  }
+}
+
+/* The checks. */
+.make-verdict {
+  margin: 0 0 var(--space-4);
+  font-size: 1.1rem;
+  font-weight: 600;
+
+  &[data-tone="ok"] {
+    color: var(--ok);
+  }
+  &[data-tone="crit"] {
+    color: var(--crit);
+  }
+}
+.make-fails {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-5);
+  padding: 0;
+  list-style: none;
+
+  & li {
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--line);
+    border-inline-start: 6px solid var(--crit);
+    background: var(--surface);
+  }
+  & p {
+    margin: 0;
+  }
+}
+.make-fail-what {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
+}
+.make-fail-fix {
+  margin-block-start: var(--space-2);
+  color: var(--muted);
+}
+.make-sw {
+  display: inline-block;
+  inline-size: 1.1em;
+  block-size: 1.1em;
+  border-radius: var(--radius-s);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 15%);
+  vertical-align: -0.15em;
+}
+.make-sw + .make-sw {
+  margin-inline-start: -0.4em;
+}
+.make-nearest {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  margin-block-end: var(--space-5);
+
+  & p {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+}
+.make-pairs {
+  & td code {
+    margin-inline-start: var(--space-3);
+  }
+  & tr[data-fail] td {
+    color: var(--crit);
+  }
+}
+
+/* The files. */
+.make-where {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  align-items: end;
+  margin-block-end: var(--space-5);
+}
+.make-code {
+  max-block-size: 28rem;
+  overflow: auto;
+  font-size: 13px;
+}
+.make-actions {
+  margin-block-start: var(--space-4);
+}
+
+@media (max-width: 1023.98px) {
+  .make-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .make-controls {
+    position: static;
+    max-block-size: none;
+    overflow: visible;
+    padding: 0;
+  }
+}
+@media (max-width: 599.98px) {
+  .make-scale {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}

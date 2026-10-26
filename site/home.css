@@ -25,6 +25,7 @@
 @import "../components/status/status.css";
 @import "../components/disclosure/disclosure.css";
 @import "../components/table/table.css";
+@import "../components/tabs/tabs.css";
 
 :root {
   --home-max: 76rem;
@@ -45,7 +46,7 @@ body {
   color: var(--text);
   font: 400 17px/1.55 var(--ui);
 }
-a {
+a:not(.cap-btn) {
   color: var(--accent-text);
   text-underline-offset: 3px;
 }
@@ -211,6 +212,15 @@ h2 {
   display: grid;
   gap: var(--space-4);
 }
+/* The front page's way to the theme builder. */
+.home-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  align-items: center;
+  margin: var(--space-3) 0 0;
+}
+
 .home-lead {
   max-width: 44rem;
   margin: 0;
@@ -632,11 +642,6 @@ h2 {
   }
 }
 
-/* A component's own page: its name and facts, every state in both themes, then its doc. */
-.home-comp-head {
-  display: grid;
-  gap: var(--space-4);
-}
 .home-trail ol {
   display: flex;
   flex-wrap: wrap;
@@ -650,63 +655,6 @@ h2 {
     content: "/";
     margin-inline-end: var(--space-2);
     color: var(--muted);
-  }
-}
-.home-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3) var(--space-7);
-  margin: 0;
-
-  & div {
-    display: grid;
-    gap: 2px;
-    min-inline-size: 7rem;
-    padding-block-start: var(--space-2);
-    border-top: 4px solid var(--text);
-  }
-  & dt {
-    color: var(--muted);
-    font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  & dd {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 800;
-  }
-}
-.home-frames {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
-  gap: var(--space-5);
-
-  & figure {
-    display: grid;
-    gap: var(--space-2);
-    min-width: 0;
-    margin: 0;
-  }
-  & figcaption {
-    color: var(--muted);
-    font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  & iframe {
-    box-sizing: border-box;
-    inline-size: 100%;
-    block-size: 640px;
-    border: 1px solid var(--line);
-    background: var(--ground);
-  }
-  @media (max-width: 820px) {
-    & iframe {
-      block-size: 520px;
-    }
   }
 }
 .home-doc {
@@ -746,29 +694,220 @@ h2 {
     font: 14px/1.6 var(--mono);
   }
 }
-.home-pager {
+/* A component's own page, laid out as shadcn/ui's docs: every component on the left, the page's
+   sections on the right, the component in the middle, each example live with its markup under it. */
+.comp-layout {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-5);
-  padding-block-start: var(--space-8);
+  grid-template-columns: 14rem minmax(0, 46rem) 13rem;
+  justify-content: center;
+  gap: var(--space-8);
+  box-sizing: border-box;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: var(--home-gut) var(--home-gut-r);
+}
+.comp-side,
+.comp-toc {
+  position: sticky;
+  inset-block-start: var(--header-h);
+  align-self: start;
+  max-block-size: calc(100dvh - var(--header-h));
+  overflow-y: auto;
+  padding-block: var(--space-6);
+  font-size: 0.9375rem;
 
-  & a {
+  & ul {
     display: grid;
-    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  & a {
+    display: block;
+    padding: 5px var(--space-3);
+    border-radius: var(--radius-m);
+    color: var(--muted);
+    text-decoration: none;
+  }
+  & a:hover {
+    background: var(--raised);
+    color: var(--text);
+  }
+  & a[aria-current] {
+    background: var(--accent-soft);
+    color: var(--accent-text);
+    font-weight: 600;
+  }
+}
+.comp-side-h {
+  margin: 0 0 var(--space-2);
+  padding-inline: var(--space-3);
+  color: var(--text);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.comp-side-find {
+  margin-block-end: var(--space-4);
+}
+.comp-toc .comp-toc-sub a {
+  padding-inline-start: var(--space-6);
+  font-size: 0.875rem;
+}
+.comp-main {
+  display: grid;
+  gap: var(--space-5);
+  align-content: start;
+  min-inline-size: 0;
+  padding-block: var(--space-6) var(--space-9);
+
+  & h2 {
+    margin: var(--space-5) 0 var(--space-4);
     padding-block-start: var(--space-3);
     border-top: 4px solid var(--text);
+    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  }
+  & section > p {
+    margin: 0;
+  }
+}
+.comp-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+
+  & h1 {
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+    line-height: 1.05;
+  }
+}
+.comp-title-tools {
+  display: flex;
+  gap: var(--space-2);
+}
+.comp-lead {
+  max-width: 40rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.15rem;
+}
+.comp-facts {
+  margin: 0;
+  color: var(--muted);
+  font: 0.8125rem / 1.5 var(--mono);
+}
+
+/* An example: the live component above, its markup below, as one box. */
+.comp-ex {
+  display: grid;
+  gap: var(--space-3);
+  min-inline-size: 0;
+
+  & + & {
+    margin-block-start: var(--space-7);
+  }
+
+  & h3 {
+    margin: 0;
     font-size: 1.125rem;
-    font-weight: 800;
   }
-  & [rel="next"] {
-    text-align: end;
+}
+.comp-ex-box {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+}
+.comp-ex-frame {
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: 220px;
+  border: 0;
+  background: var(--ground);
+}
+.comp-ex-code {
+  position: relative;
+  border-block-start: 1px solid var(--line);
+  background: var(--sunken);
+
+  & pre {
+    margin: 0;
+    padding: var(--space-5) 5rem var(--space-5) var(--space-5);
+    overflow: auto;
+    max-block-size: 28rem;
+    font: 13px/1.6 var(--mono);
   }
-  & a span {
-    color: var(--muted);
-    font-size: var(--fs-label);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+  .cap-tabs-panel & {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+  }
+}
+/* Closed, the code shows its first lines under a fade, with View code over it (shadcn's preview). */
+.comp-ex-code[data-closed] {
+  & pre {
+    max-block-size: 6.5rem;
+    overflow: hidden;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--sunken) 15%, transparent);
+    pointer-events: none;
+  }
+  & .comp-ex-tools {
+    display: none;
+  }
+}
+.comp-ex-code [data-cap-part="show-code"] {
+  position: absolute;
+  inset-block-end: var(--space-4);
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  z-index: 1;
+}
+.comp-ex-code:not([data-closed]) [data-cap-part="show-code"] {
+  position: static;
+  translate: none;
+  margin: 0 var(--space-5) var(--space-4);
+}
+.comp-ex-tools {
+  position: absolute;
+  inset-block-start: var(--space-3);
+  inset-inline-end: var(--space-3);
+}
+.comp-doc {
+  padding-block-start: 0;
+}
+.comp-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block-start: var(--space-6);
+
+  & .cap-btn svg {
+    flex: none;
+  }
+}
+@media (max-width: 1279.98px) {
+  .comp-layout {
+    grid-template-columns: 14rem minmax(0, 1fr);
+  }
+  .comp-toc {
+    display: none;
+  }
+}
+@media (max-width: 899.98px) {
+  .comp-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .comp-side {
+    display: none;
   }
 }
 
