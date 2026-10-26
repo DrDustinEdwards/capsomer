@@ -9,9 +9,10 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { frontmatter, renderMarkdown } from "./markdown.ts";
 
-type Family = "purple" | "fox" | "teal" | "amber" | "navy" | "forest";
+// Magenta is the public site's own family, on its root; the six are the ones it shows.
+type Family = "purple" | "fox" | "teal" | "amber" | "navy" | "forest" | "magenta";
 const FAMILIES: Family[] = ["purple", "fox", "teal", "amber", "navy", "forest"];
-const NAMES: Record<Family, string> = { purple: "Purple", fox: "Fox", teal: "Teal", amber: "Amber", navy: "Navy", forest: "Forest" };
+const NAMES: Record<Family, string> = { purple: "Purple", fox: "Fox", teal: "Teal", amber: "Amber", navy: "Navy", forest: "Forest", magenta: "Magenta" };
 
 interface Component {
   name: string;
@@ -52,7 +53,7 @@ interface Data {
 export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 // Backticks in a summary become code, as on the admin's pages.
 const prose = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
-const fam = (f: Family) => (f === "purple" ? "" : ` data-family="${f}"`);
+const fam = (f: Family) => ` data-family="${f}"`;
 const plain = (html: string) => html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').trim();
 // The markup as an app writes it: no forced demo states, indented from the left edge.
 const tidy = (html: string) => {
@@ -194,8 +195,21 @@ export function header(base: string): string {
 </header>`;
 }
 
+/**
+ * The running head over a public page, as the NASA Graphics Standards Manual heads its pages (1976,
+ * page i): the section's number and name, and the folio at the right (capsomer/manual.css). It repeats
+ * what the header and the title say, so it is hidden from screen readers.
+ */
+export const runningHead = (no: string, name: string, folio: string) =>
+  `<div class="home-wrap home-running" aria-hidden="true"><div class="cap-running-head"><span class="cap-running-head-name"><span class="cap-running-head-no">${esc(no)}</span>${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
+
+/** A numbered section heading, as the manual numbers its parts. */
+const partTitle = (id: string, no: string, text: string) => `<h2 class="cap-part-title" id="${id}"><span class="cap-part-no">${no}</span>${text}</h2>`;
+
+// The foot of every public page: the manual's letterhead, the site's name as the logotype beside what it is.
 export const FOOTER = `<footer class="home-foot">
   <div class="home-wrap">
+    <div class="cap-letterhead"><p class="cap-letterhead-logo">Capsomer</p><p class="cap-letterhead-address"><b>The family design system</b><br>Plain CSS, MIT licensed<br>capsomer.dustinedwards.info</p></div>
     <ul>
       <li><a href="/admin/">Admin</a></li>
       <li><a href="https://github.com/DrDustinEdwards/capsomer">Source</a></li>
@@ -210,7 +224,7 @@ export function renderHome(d: Data): string {
 
 import "capsomer/tokens.css";       // the layer order and every token
 import "capsomer/base.css";
-import "capsomer/families.css";     // fox, teal, amber, navy and forest, on data-family
+import "capsomer/families.css";     // every family, on data-family
 import "capsomer/button.css";       // each component's CSS, as used`;
   const figures: Array<[Family, string, string, string]> = [
     ["purple", "Components", String(d.components.length), `in release ${d.version}`],
@@ -222,6 +236,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   const tests = d.tests ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>` : `<li data-family="forest" data-live="tests" hidden><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
   return `${header("")}
 <main id="main" tabindex="-1">
+${runningHead("0", "Capsomer", `Release ${d.version}`)}
 <section class="home-cover" aria-labelledby="top-h">
   ${band("Capsomer", FAMILIES, "cover")}
   <div class="home-wrap home-intro">
@@ -238,7 +253,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
 <section id="color" aria-labelledby="color-h">
   ${band("Color", FAMILIES, "section")}
   <div class="home-wrap">
-    <h2 id="color-h">Six families from six seeds</h2>
+    ${partTitle("color-h", "1", "Six families from six seeds")}
     <p class="home-sub">Each family is one 12-step scale with the same job for each step: step 9 is the seed, step 11 is text, step 10 fills the main button. A site picks its family with one attribute, <code>data-family</code>. These scales follow your device's theme.</p>
     <figure class="home-lohse" aria-labelledby="lohse-c">
       <div class="home-lohse-grid" role="img" aria-label="The six families as six rows of twelve steps, lightest on the left.">
@@ -261,7 +276,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
           ${FAMILIES.map((f, i) => `<label><input type="radio" name="home-family" value="${f}"${i === 0 ? " checked" : ""} /> ${NAMES[f]}</label>`).join("\n          ")}
         </div>
       </fieldset>
-      <div class="home-try-stage" data-cap-part="stage">
+      <div class="home-try-stage" data-cap-part="stage" data-family="purple">
         <div class="home-try-row">
           <button type="button" class="cap-btn" data-variant="primary">Save changes</button>
           <button type="button" class="cap-btn" data-variant="secondary">Preview</button>
@@ -300,7 +315,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
 <section id="type" data-family="navy" aria-labelledby="type-h">
   ${band("Type", ["navy"], "section")}
   <div class="home-wrap">
-    <h2 id="type-h">Three faces, one scale</h2>
+    ${partTitle("type-h", "2", "Three faces, one scale")}
     <div class="home-faces">
       <figure data-face="ui"><p aria-hidden="true">Aa</p><figcaption><b>Schibsted Grotesk</b> for every screen of an app</figcaption></figure>
       <figure data-face="mono"><p aria-hidden="true">Aa</p><figcaption><b>Martian Mono</b> for identifiers and code</figcaption></figure>
@@ -317,9 +332,9 @@ import "capsomer/button.css";       // each component's CSS, as used`;
 </section>
 
 <section id="components" aria-labelledby="components-h">
-  ${band("Components", ["purple"], "section")}
+  ${band("Components", ["magenta"], "section")}
   <div class="home-wrap">
-    <h2 id="components-h">${d.components.length} components, every state on show</h2>
+    ${partTitle("components-h", "3", `${d.components.length} components, every state on show`)}
     <p class="home-sub">Each one is built once and shared by every app. Open any of them for how to use it and every state it has, in light and dark.</p>
     <div class="home-find" data-cap-part="find" hidden>
       <label class="cap-field-label" for="home-find">Find a component</label>
@@ -335,7 +350,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
 <section id="defaults" data-family="teal" aria-labelledby="defaults-h">
   ${band("Defaults", ["teal"], "section")}
   <div class="home-wrap">
-    <h2 id="defaults-h">Defaults, each with its reason</h2>
+    ${partTitle("defaults-h", "4", "Defaults, each with its reason")}
     <p class="home-sub">A default is not a law: a better design overrides it and writes down why. CI blocks only on accessibility, security, privacy and correctness. Open one for its reason.</p>
     <ul class="home-defaults">
       ${d.defaults.map((t) => `<li><details class="cap-disclosure"><summary><span>${prose(t.lead)}</span></summary><div class="cap-disclosure-body">${renderMarkdown(t.reason, 0)}</div></details></li>`).join("\n      ")}
@@ -346,7 +361,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
 <section id="use" data-family="amber" aria-labelledby="use-h">
   ${band("Install", ["amber"], "section")}
   <div class="home-wrap">
-    <h2 id="use-h">Pin a release, import what you use</h2>
+    ${partTitle("use-h", "5", "Pin a release, import what you use")}
     <p class="home-sub">An app pins a tagged release and imports the tokens, then each component's CSS as it needs it. Every Capsomer rule sits in a <code>cap.*</code> cascade layer, so the app's own CSS still wins while it moves over one screen at a time.</p>
     <div class="home-code-wrap">
       <pre class="home-code" id="home-install"><code>${esc(install)}</code></pre>
@@ -421,6 +436,7 @@ export function renderComponent(d: Data, name: string): string {
     ["states-h", "Every state", false],
   ];
   return `${header("/")}
+${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
 <div class="comp-layout">
 <nav class="comp-side" aria-label="Components">
   <div class="cap-field comp-side-find" data-cap-part="side-find" hidden>

@@ -10,16 +10,14 @@ enhanceHeader();
 enhanceTheme();
 enhanceTabs();
 
-// The preview takes the chosen family as a site would, with data-family (purple is the default, so
-// none), crossfading where the browser has view transitions and motion is allowed (site/home.css).
+// The preview takes the chosen family as a site would, with data-family, crossfading where the browser has view transitions and motion is allowed (site/home.css).
 const stage = document.querySelector<HTMLElement>("[data-cap-part='stage']");
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 for (const input of document.querySelectorAll<HTMLInputElement>("input[name='home-family']")) {
   input.addEventListener("change", () => {
     if (!stage) return;
     const apply = () => {
-      if (input.value === "purple") delete stage.dataset.family;
-      else stage.dataset.family = input.value;
+      stage.dataset.family = input.value;
     };
     if (document.startViewTransition && !still.matches) document.startViewTransition(apply);
     else apply();

@@ -1,7 +1,7 @@
 // The theme builder at /make/, written into site/make.html at build (site/vite.config.ts). The page is
 // whole HTML; site/make-main.ts runs it: it builds the theme from the settings with Capsomer's own
 // generator (tokens/palette-core.mjs), paints the two previews, checks every pair and writes the files.
-import { FOOTER, band, esc, header } from "./home.ts";
+import { FOOTER, band, esc, header, runningHead } from "./home.ts";
 import { DEFAULT, DISPLAY_FACES, FACES, MONO_FACES, PRESETS, SIZES, TEXT_FACES } from "./make-presets.ts";
 
 const options = (ids: string[], chosen: string) => ids.map((id) => `<option value="${id}"${id === chosen ? " selected" : ""}>${esc(FACES[id]?.name ?? id)}</option>`).join("");
@@ -101,8 +101,9 @@ export function renderMake(): string {
   const d = DEFAULT;
   return `${header("/")}
 <main id="main" tabindex="-1">
+${runningHead("6", "Make a theme", "From one color")}
 <section class="make-top" aria-labelledby="make-h">
-  ${band("Make", ["purple"], "section")}
+  ${band("Make", ["magenta"], "section")}
   <div class="home-wrap home-intro">
     <h1 id="make-h">Make a theme from one color</h1>
     <p class="home-lead">Pick a brand color and get a full light and dark theme: two 12-step scales, every text and control color, checked against WCAG 2.2 as you go. Choose the faces, text size and corners, see them on real components, then take the CSS or the tokens. This page takes your theme as you go. It runs Capsomer's own generator in your browser, and nothing you choose leaves it.</p>

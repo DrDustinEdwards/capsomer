@@ -40,6 +40,7 @@
     "./prose.css": "./css/prose.css",
     "./themes.css": "./tokens/themes.css",
     "./families.css": "./css/families.css",
+    "./family-purple.css": "./tokens/family-purple.css",
     "./family-fox.css": "./tokens/family-fox.css",
     "./family-teal.css": "./tokens/family-teal.css",
     "./family-navy.css": "./tokens/family-navy.css",
