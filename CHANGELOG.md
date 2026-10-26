@@ -36,6 +36,10 @@ Each release names every removed or renamed token or class, and every changed HT
   - A long changelog line no longer pushes a phone page sideways.
   - The Settings page, which held two paragraphs and no settings, is gone; `#/settings` opens the overview.
 
+## [0.26.2]
+
+- **The footer's Workspace link to the members' area reads "Lab bench"** (Dustin, 2026-10-26), not "Lab", since "Lab" names other parts of dustinedwards.info.
+
 ## [0.26.1]
 
 - **The family footer's strip is headed "Network"** (Dustin, 2026-10-26), not "The family". Changed HTML contract: its heading's id is `cap-family-footer-network` (was `cap-family-footer-family`).
