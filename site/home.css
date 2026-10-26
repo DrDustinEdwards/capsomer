@@ -12,7 +12,7 @@
 @import "../css/families.css";
 @import "../tokens/themes.css";
 /* Capsomer's own components: the site header with its theme button and phone sheet, and the parts
-   the family preview, the filter, the defaults and the copy button use. */
+   the family preview, the filter, the defaults, the copy button and a component page's tables use. */
 @import "../components/popover/popover.css";
 @import "../components/dialog/dialog.css";
 @import "../components/button/button.css";
@@ -24,6 +24,7 @@
 @import "../components/chips/chips.css";
 @import "../components/status/status.css";
 @import "../components/disclosure/disclosure.css";
+@import "../components/table/table.css";
 
 :root {
   --home-max: 76rem;
@@ -433,23 +434,32 @@ h2 {
 
   & li {
     display: grid;
-    grid-template-columns: minmax(8rem, 13rem) 10rem minmax(7rem, 16rem) minmax(0, 1fr);
+    grid-template-columns: minmax(8rem, 15rem) 10rem minmax(7rem, 16rem) minmax(0, 1fr);
     gap: var(--space-4);
     align-items: baseline;
     padding-block: var(--space-3);
     border-top: 1px solid var(--line);
   }
+  /* A phone: the sample and its token, then what it is for and its size. */
   @media (max-width: 760px) {
     & li {
       grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-1) var(--space-4);
+    }
+    & li > :nth-child(3) {
+      grid-area: 2 / 2;
+      max-inline-size: 10rem;
+      text-align: end;
     }
     & li > :nth-child(4) {
-      grid-column: 1 / -1;
+      grid-area: 2 / 1;
     }
   }
 }
+/* A sample wraps in its own column, whatever words someone types into it. */
 .home-scale-sample {
-  white-space: nowrap;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 [data-fs="fs-label"] { font-size: var(--fs-label); }
 [data-fs="fs-detail"] { font-size: var(--fs-detail); }
@@ -459,6 +469,12 @@ h2 {
 [data-fs="fs-h2"] { font-size: var(--fs-h2); }
 [data-fs="fs-prose"] { font-size: var(--fs-prose); font-family: var(--prose); }
 [data-fs="fs-prose-h2"] { font-size: var(--fs-prose-h2); font-family: var(--prose); }
+
+/* Your own words in every size of the scale: a script turns it on. */
+.home-sample {
+  max-width: 24rem;
+  margin-block-end: var(--space-5);
+}
 
 /* The family preview: real components in a panel that takes the chosen family. */
 .home-try {
@@ -509,7 +525,8 @@ h2 {
   }
 }
 
-/* Components: every one, linked to its page in the admin. */
+/* Components: every one, linked to its own page. On a phone, names only in two columns: the
+   summary is the first thing its page says. */
 .home-parts {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
@@ -533,6 +550,20 @@ h2 {
   & span {
     color: var(--muted);
     font-size: 0.9375rem;
+  }
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+
+    & li {
+      border-top-width: 3px;
+    }
+    & a {
+      font-size: 1rem;
+    }
+    & span {
+      display: none;
+    }
   }
 }
 
@@ -588,14 +619,198 @@ h2 {
   border-top: 14px solid var(--text);
 
   & ul {
-    display: grid;
-    gap: var(--space-2);
-    margin: 0 0 var(--space-5);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin: 0;
     padding: 0;
     list-style: none;
   }
   & p {
     margin: 0;
     font-size: 0.9375rem;
+  }
+}
+
+/* A component's own page: its name and facts, every state in both themes, then its doc. */
+.home-comp-head {
+  display: grid;
+  gap: var(--space-4);
+}
+.home-trail ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+
+  & li + li::before {
+    content: "/";
+    margin-inline-end: var(--space-2);
+    color: var(--muted);
+  }
+}
+.home-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-7);
+  margin: 0;
+
+  & div {
+    display: grid;
+    gap: 2px;
+    min-inline-size: 7rem;
+    padding-block-start: var(--space-2);
+    border-top: 4px solid var(--text);
+  }
+  & dt {
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  & dd {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
+}
+.home-frames {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+  gap: var(--space-5);
+
+  & figure {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+    margin: 0;
+  }
+  & figcaption {
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  & iframe {
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 640px;
+    border: 1px solid var(--line);
+    background: var(--ground);
+  }
+  @media (max-width: 820px) {
+    & iframe {
+      block-size: 520px;
+    }
+  }
+}
+.home-doc {
+  display: grid;
+  gap: var(--space-3);
+  padding-block-start: var(--space-8);
+  overflow-wrap: anywhere;
+
+  & > * {
+    max-width: 46rem;
+    margin: 0;
+  }
+  & > .cap-table-wrap {
+    max-width: 100%;
+  }
+  & h2 {
+    margin-block-start: var(--space-6);
+    padding-block-start: var(--space-3);
+    border-top: 4px solid var(--text);
+    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  }
+  & h3 {
+    margin-block-start: var(--space-4);
+  }
+  & ul,
+  & ol {
+    display: grid;
+    gap: var(--space-2);
+    padding-inline-start: 1.2em;
+  }
+  & pre {
+    max-width: 100%;
+    padding: var(--space-4);
+    overflow-x: auto;
+    background: var(--sunken);
+    border: 1px solid var(--line);
+    font: 14px/1.6 var(--mono);
+  }
+}
+.home-pager {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  padding-block-start: var(--space-8);
+
+  & a {
+    display: grid;
+    gap: 2px;
+    padding-block-start: var(--space-3);
+    border-top: 4px solid var(--text);
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
+  & [rel="next"] {
+    text-align: end;
+  }
+  & a span {
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}
+
+/* Motion: the letter tiles rise out of their stripe, the cover's as the page opens and each
+   section's as it scrolls into view, so the page assembles from the same blocks it describes.
+   Decorative, so a browser without scroll-driven animations shows the section tiles in place, and
+   nothing moves under reduced motion. */
+@keyframes home-rise {
+  from {
+    translate: 0 105%;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .home-band-word {
+    overflow: clip;
+  }
+  .home-band[data-size="cover"] .home-band-word span {
+    animation: home-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+
+    &:nth-child(2) { animation-delay: 60ms; }
+    &:nth-child(3) { animation-delay: 120ms; }
+    &:nth-child(4) { animation-delay: 180ms; }
+    &:nth-child(5) { animation-delay: 240ms; }
+    &:nth-child(6) { animation-delay: 300ms; }
+    &:nth-child(7) { animation-delay: 360ms; }
+    &:nth-child(8) { animation-delay: 420ms; }
+  }
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    .home-band[data-size="section"] {
+      view-timeline: --home-band;
+    }
+    .home-band[data-size="section"] .home-band-word span {
+      animation: home-rise linear backwards;
+      animation-timeline: --home-band;
+      animation-range: entry 20% cover 35%;
+
+      &:nth-child(2n) { animation-range: entry 30% cover 40%; }
+      &:nth-child(3n) { animation-range: entry 40% cover 45%; }
+    }
+  }
+  /* The family preview crossfades to the chosen family (site/home-main.ts). */
+  .home-try-stage {
+    view-transition-name: home-stage;
   }
 }

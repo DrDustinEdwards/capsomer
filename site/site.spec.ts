@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { eachTheme, expectNoAxeViolations } from "../test/helpers.ts";
 
-// The site itself: the public page at the root and every admin view at /admin/ load with no axe
-// violations, the menu moves between views, a component's page shows its states in both themes,
+// The site itself: the public page at the root, a component's public page and every admin view at
+// /admin/ load with no axe violations, the menu moves between views, a component's page shows its states in both themes,
 // an old root address opens its admin page, and the site runs under the Content-Security-Policy
 // the static Worker sends.
 const VIEWS = ["overview", "components", "color", "type", "motion", "tests", "defaults", "changes"];
@@ -24,6 +24,13 @@ eachTheme((theme) => {
   test("accessibility: the public page has no axe violations", async ({ page }) => {
     await page.goto("./");
     await expect(page.locator("h1")).toHaveText("One design system for every site and app");
+    await expectNoAxeViolations(page, "body");
+  });
+
+  test("accessibility: a component's public page has no axe violations", async ({ page }) => {
+    await page.goto("./components/button/");
+    await expect(page.locator("h1")).toHaveText("Button");
+    await expect(page.locator(".home-frames iframe")).toHaveCount(2);
     await expectNoAxeViolations(page, "body");
   });
 
@@ -116,6 +123,10 @@ eachTheme((theme) => {
     await expect(page.locator("h1")).toHaveText("One design system for every site and app");
     await page.waitForLoadState("networkidle");
     expect(await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations), "CSP violations on the public page").toEqual([]);
+    await page.goto("./components/button/");
+    await expect(page.locator("h1")).toHaveText("Button");
+    await page.waitForLoadState("networkidle");
+    expect(await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations), "CSP violations on a component's page").toEqual([]);
     for (const view of ["overview", "color", "type", "components/shell"]) {
       await page.goto(`./admin/#/${view}`);
       await expect(page.locator("#cap-main h1").first()).toBeVisible();
