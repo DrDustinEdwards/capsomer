@@ -36,6 +36,11 @@ Each release names every removed or renamed token or class, and every changed HT
   - A long changelog line no longer pushes a phone page sideways.
   - The Settings page, which held two paragraphs and no settings, is gone; `#/settings` opens the overview.
 
+## [0.25.0]
+
+- **The family footer** (`components/family-footer`, Dustin, 2026-10-26: "i want them to all have the same footer"). dustinedwards.info's footer, moved here so it and the public sites of Capsid and Capsomer all end with the same one, the last two under their own footer. `familyFooterHtml({ origin, published, year })` from `capsomer/behavior/family-footer` writes it; `capsomer/family-footer.css` styles it, with `manual.css` for its band and letterhead. Its band is the page family's `--on`, so each site draws it in its own color, and it leaves off the letterhead's heavy rule (Dustin: "remove that one black line"). The links are exported as data for a site's own tests. New classes only (`.cap-family-footer` and its parts); nothing is removed or renamed.
+- **Site only:** the public pages end with the family footer, in magenta, under Capsomer's own.
+
 ## [0.24.0]
 
 - **The rest of NASA's marks in the manual theme** (Dustin, 2026-10-26: "Incorporate them all"), moved from Capsid's explorer so every public site shares one copy: the layout grid behind a page's head (`.cap-layout-grid`, twelve columns and a 24px baseline in faint red, four columns on a phone), the direction strip for a trail (`nav.cap-direction`, a dark band, arrows in the family's color, the current page lit), the livery band across the foot of a page and a card's stripe (`.cap-livery`, `[data-livery]`), the Saturn V roll blocks for steps (`ol.cap-roll`, `li[data-state="done|now|ahead"]`), the Apollo flight plan's time line (`ol.cap-timeline`, `.cap-timeline-mark`, `.cap-timeline-body`) and the Apollo cue card (`.cap-cue`, `.cap-cue-strip`, `.cap-cue-title`, `.cap-cue-lines`, `.cap-cue-name`, `.cap-cue-value`). New classes only; nothing is removed or renamed.

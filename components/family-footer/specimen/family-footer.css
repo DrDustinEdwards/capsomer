@@ -1,0 +1,8 @@
+@import "../../../css/families.css";
+
+/* The states page only: each family's own ground, so its band and links read as on its site. */
+[data-family] {
+  background: var(--ground);
+  color: var(--text);
+  padding-inline: var(--space-5);
+}

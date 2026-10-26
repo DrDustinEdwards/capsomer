@@ -28,6 +28,7 @@
 @import "../components/tabs/tabs.css";
 /* The manual theme: the running head, numbered parts and the letterhead (the public pages only). */
 @import "../components/manual/manual.css";
+@import "../components/family-footer/family-footer.css";
 
 :root {
   --home-max: 76rem;
@@ -48,7 +49,8 @@ body {
   color: var(--text);
   font: 400 17px/1.55 var(--ui);
 }
-a:not(.cap-btn) {
+/* The family footer keeps its own links and headings (capsomer/family-footer.css). */
+a:not(.cap-btn, .cap-family-footer a) {
   color: var(--accent-text);
   text-underline-offset: 3px;
 }
@@ -191,7 +193,7 @@ main > section {
   padding-block-start: var(--space-4) !important;
 }
 h1,
-h2,
+h2:not(.cap-family-footer-heading),
 h3 {
   margin: 0;
   text-wrap: balance;
@@ -200,14 +202,14 @@ h1 {
   font: 800 clamp(2.4rem, 5vw, 3.75rem) / 1 var(--ui);
   letter-spacing: -0.035em;
 }
-h2 {
+h2:not(.cap-family-footer-heading) {
   font: 800 clamp(1.75rem, 3.4vw, 2.6rem) / 1.05 var(--ui);
   letter-spacing: -0.03em;
 }
 h3 {
   font: 800 1.2rem / 1.2 var(--ui);
 }
-h2 {
+h2:not(.cap-family-footer-heading) {
   margin-block-end: var(--space-5);
 }
 .home-intro {
@@ -625,11 +627,13 @@ h2 {
   margin-block-start: var(--space-9);
   padding-block: 0 var(--space-7);
 
-  & .cap-letterhead {
+  /* Capsomer's own letterhead and links; the family footer under them (capsomer/family-footer.css)
+     keeps its own. */
+  & .home-wrap > .cap-letterhead {
     margin-block-end: var(--space-6);
   }
 
-  & ul {
+  & .home-wrap > ul {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2) var(--space-6);
@@ -637,7 +641,7 @@ h2 {
     padding: 0;
     list-style: none;
   }
-  & p {
+  & .home-wrap > .cap-letterhead p {
     margin: 0;
     font-size: 0.9375rem;
   }
