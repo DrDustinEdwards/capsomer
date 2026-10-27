@@ -782,12 +782,11 @@
      Vignelli, 1977), whose brochures open with a black band carrying the park's name in white: here
      in the page's text color (dark in light, light in dark), under an 8px stripe of the site's
      family color. The top row is the same 64px on every
-     site and in every admin, and in it the logo, the names, the search box and the theme sit on the
-     same pixels in a site's public pages and its admin, centered on the row's middle. The section
+     site and in every admin, everything in it centered on the row's middle. The section
      links take a second row under a hairline, at every width, so they are never hidden behind a
      menu. The utilities run search, theme, inbox, account, with the account in the corner as in
      Carbon, Fiori and most products; a page without an inbox or account leaves their slots empty,
-     so the logo, names, search and theme never move between the public pages and the admin. Two
+     so search and the theme keep their places. Two
      defaults change here: a header
      with a links row scrolls away with the page (two rows sticky take too much of a phone); and
      the phone keeps the links row, which swipes, instead of the sheet. */

@@ -319,8 +319,8 @@ function Hold({ press, children }: { press?: string; children: ReactNode }) {
   return <>{children}</>;
 }
 
-// The family letterhead: a teal site's public page and its admin, the names, search box and theme
-// on the same pixels in both.
+// The family letterhead: a teal site's public page and its admin, with search and the theme in the
+// same places in both.
 const HEX = (
   <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" style={{ fill: "var(--on)" }}>
     <path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" />
