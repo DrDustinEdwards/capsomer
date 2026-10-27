@@ -795,12 +795,12 @@
     --header-row-2: 3rem;
     --header-bg: var(--text);
     --header-fg: var(--ground);
-    --header-fg-muted: color-mix(in srgb, var(--ground) 78%, var(--text));
-    --header-line: color-mix(in srgb, var(--ground) 26%, var(--text));
-    --header-hover: color-mix(in srgb, var(--text), var(--ground) 14%);
-    --header-accent: var(--ground);
-    --header-avatar: var(--ground);
-    --header-avatar-fg: var(--text);
+    --header-fg-muted: color-mix(in srgb, var(--header-fg) 78%, var(--header-bg));
+    --header-line: color-mix(in srgb, var(--header-fg) 26%, var(--header-bg));
+    --header-hover: color-mix(in srgb, var(--header-bg), var(--header-fg) 14%);
+    --header-accent: var(--header-fg);
+    --header-avatar: var(--header-fg);
+    --header-avatar-fg: var(--header-bg);
     color-scheme: dark;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -920,23 +920,11 @@
   :root[data-theme="dark"] .cap-site-header[data-variant="letterhead"] {
     --header-bg: var(--raised);
     --header-fg: var(--text);
-    --header-fg-muted: color-mix(in srgb, var(--text) 78%, var(--raised));
-    --header-line: color-mix(in srgb, var(--text) 26%, var(--raised));
-    --header-hover: color-mix(in srgb, var(--raised), var(--text) 10%);
-    --header-accent: var(--text);
-    --header-avatar: var(--text);
-    --header-avatar-fg: var(--raised);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .cap-site-header[data-variant="letterhead"] {
       --header-bg: var(--raised);
       --header-fg: var(--text);
-      --header-fg-muted: color-mix(in srgb, var(--text) 78%, var(--raised));
-      --header-line: color-mix(in srgb, var(--text) 26%, var(--raised));
-      --header-hover: color-mix(in srgb, var(--raised), var(--text) 10%);
-      --header-accent: var(--text);
-      --header-avatar: var(--text);
-      --header-avatar-fg: var(--raised);
     }
   }
   /* The whole band stays at the top of the window, on public pages and in the admin alike
