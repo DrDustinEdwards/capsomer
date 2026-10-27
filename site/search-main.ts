@@ -2,6 +2,7 @@
 // wrote (/search.json) and lists what Prelum's staticSearch ranks, with the count said aloud. The
 // query's words are marked in each result, as people scan results for them (NN/g), and the header's
 // box shows the query too, so the page never holds two boxes that disagree.
+import "./home-main.ts";
 import { searchWords, staticSearch, type StaticSearchIndex } from "@drdustinedwards/site-helpers/search";
 
 const input = document.querySelector<HTMLInputElement>("#search-q");
