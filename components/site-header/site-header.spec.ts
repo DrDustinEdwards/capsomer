@@ -112,18 +112,8 @@ eachTheme((theme) => {
     expect(parseFloat(await page.evaluate(() => getComputedStyle(document.documentElement).scrollPaddingTop))).toBeGreaterThanOrEqual(56);
   });
 
-  test("behavior: the letterhead stays whole at the top as the page scrolls, with the logo, names, search and theme at the admin's pixels; a short window lets it scroll away", async ({ page }) => {
+  test("behavior: the letterhead stays whole at the top as the page scrolls; a short window lets it scroll away", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    const places = async (only: string) => {
-      await visitStates(page, "site-header", theme, only);
-      return page.locator(".cap-site-header[data-variant='letterhead']").evaluate((h) =>
-        [".cap-site-header-logo > :is(svg, img)", ".cap-site-header-name", ".cap-site-header-search", ".cap-site-header-theme"].map((s) => {
-          const r = h.querySelector(s)!.getBoundingClientRect();
-          return [Math.round(r.left), Math.round(r.top)];
-        }),
-      );
-    };
-    expect(await places("lh-public")).toEqual(await places("lh-admin"));
     await visitStates(page, "site-header", theme, "lh-public");
     const header = page.locator(".cap-site-header[data-variant='letterhead']");
     await header.evaluate((h) => h.after(Object.assign(document.createElement("div"), { style: "block-size: 3000px" })));

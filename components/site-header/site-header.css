@@ -919,27 +919,25 @@
     }
   }
   /* The whole band stays at the top of the window, on public pages and in the admin alike
-     (Dustin, 2026-10-27), and sits at the same pixels in both: the logo and the names on the admin
-     menu's left edge, search and the theme where the admin has them. Where the band would cover more
+     (Dustin, 2026-10-27). Where the band would cover more
      than a quarter of the window (a phone held sideways, a page zoomed to 400%), it scrolls away
      with the page instead, so reading is never left a few lines (WCAG 1.4.10's zoom, testers'
      quarter rule). A focused link never lands under it (WCAG 2.2, 2.4.11). */
   .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
     grid-template-rows: var(--header-row) var(--header-row-2);
   }
-  /* From 768px the band stands 16px in from the window's sides, so the page shows around it and it
-     reads as a letterhead printed on the sheet, not the browser's bar (Dustin, 2026-10-27). Its
-     contents keep their places: the inset comes out of the padding. The page's ground covers the
-     margins beside it, so nothing scrolling under shows there; a shadow is never painted under its
-     own box and adds nothing to scroll. */
+  /* From 768px a public page's band sits inside the page's margins, at the content's width
+     (--header-max; the site sets it), as a letterhead is printed inside the sheet's: it lines up
+     with the content and the family footer and reads as a sign on the page, not the browser's bar
+     (Dustin, 2026-10-27). It still stays at the top of the window; the page's ground covers the
+     margins beside it, so nothing scrolling under shows there (a shadow is never painted under its
+     own box and adds nothing to scroll). In an admin the band runs the full width, and the logo,
+     the names and where you are line up with the menu's buttons, the app strip standing outside
+     them like a binder's tabs. */
   @media (min-width: 768px) {
-    .cap-site-header[data-variant="letterhead"] {
-      --header-inset: var(--space-5);
-      --header-side: calc(var(--rail-w-collapsed) + var(--space-3) - var(--header-inset));
-      --header-end: calc(var(--pad-card) + var(--space-3) - var(--header-inset));
-      inline-size: calc(100% - 2 * var(--header-inset));
+    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
+      inline-size: min(100% - 2 * var(--header-gutter, 16px), var(--header-max, 74rem));
       margin-inline: auto;
-      padding-inline-end: var(--header-end);
 
       &::before {
         content: "";
@@ -947,12 +945,17 @@
         inset: calc(-1 * var(--header-stripe)) 0 0;
         z-index: -1;
         pointer-events: none;
-        box-shadow: 0 0 0 var(--header-inset) var(--ground);
-        clip-path: inset(0 calc(-1 * var(--header-inset)));
+        box-shadow: 0 0 0 100vmax var(--ground);
+        clip-path: inset(0 -100vmax);
       }
-      & > :is(.cap-site-header-sections, .cap-site-header-trail) {
-        margin-inline-end: calc(-1 * var(--header-end));
-        padding-inline-end: var(--header-end);
+    }
+    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-trail) {
+      --header-side: calc(var(--rail-w-collapsed) + var(--space-3));
+      padding-inline-end: calc(var(--pad-card) + var(--space-3));
+
+      & > .cap-site-header-trail {
+        margin-inline-end: calc(-1 * (var(--pad-card) + var(--space-3)));
+        padding-inline-end: calc(var(--pad-card) + var(--space-3));
       }
     }
   }
