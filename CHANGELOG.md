@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+- **Site only: the same head as the other family sites** (Dustin, 2026-10-27). Each page's running head is now the sign (`data-variant="sign"`): a dark panel under a magenta strip, its number on a white plate, numbered from 1 like Capsid, Enarratio, Carrel and Prelum. The section links move next to the logo, as on Capsid and Enarratio. The letter tiles stay under it.
+
 ## [0.27.0]
 
 - **Magenta moves from hue 330 to 334** (seed #b24fac to #b64da6; Dustin, 2026-10-26, after a search of every hue for the six public sites). Its closest neighbors were purple (CIEDE2000 11.9) and rose (14.6); now both are about 13.3. No token is renamed; magenta's values change a little.

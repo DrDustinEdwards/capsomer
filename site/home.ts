@@ -170,7 +170,7 @@ export function header(base: string): string {
     ...[["color", "Color"], ["type", "Type"], ["components", "Components"], ["defaults", "Defaults"], ["use", "Install"]].map(([h, t]) => [`${base}#${h}`, t] as [string, string]),
     ["/make/", "Make a theme"],
   ];
-  return `<header class="cap-site-header" data-cap="site-header" data-links="right" data-markup="">
+  return `<header class="cap-site-header" data-cap="site-header" data-links="left" data-markup="">
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
   <a class="cap-site-header-logo home-logo" href="/" aria-label="Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span aria-hidden="true">Capsomer</span></a>
   <nav class="cap-site-header-sections" aria-label="Sections"><ul>
@@ -202,7 +202,7 @@ export function header(base: string): string {
  * what the header and the title say, so it is hidden from screen readers.
  */
 export const runningHead = (no: string, name: string, folio: string) =>
-  `<div class="home-wrap home-running" aria-hidden="true"><div class="cap-running-head"><span class="cap-running-head-name"><span class="cap-running-head-no">${esc(no)}</span>${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
+  `<div class="home-wrap home-running" aria-hidden="true"><div class="cap-running-head" data-variant="sign"><span class="cap-running-head-name"><span class="cap-running-head-no">${esc(no)}</span>${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
 
 /** A numbered section heading, as the manual numbers its parts. */
 const partTitle = (id: string, no: string, text: string) => `<h2 class="cap-part-title" id="${id}"><span class="cap-part-no">${no}</span>${text}</h2>`;
@@ -240,7 +240,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   const tests = d.tests ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>` : `<li data-family="forest" data-live="tests" hidden><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
   return `${header("")}
 <main id="main" tabindex="-1">
-${runningHead("0", "Capsomer", `Release ${d.version}`)}
+${runningHead("1", "Capsomer", `Release ${d.version}`)}
 <section class="home-cover" aria-labelledby="top-h">
   ${band("Capsomer", FAMILIES, "cover")}
   <div class="home-wrap home-intro">
