@@ -128,6 +128,8 @@ export function SiteHeader(props: SiteHeaderProps) {
             {letterhead ? (
               <span className="cap-site-header-names" aria-hidden="true">
                 {logo.agency ? <span className="cap-site-header-agency">{logo.agency}</span> : null}
+                {/* A space, so the visible text reads "Dustin Edwards Capsid" as the name does (WCAG 2.5.3). */}
+                {logo.agency ? " " : null}
                 <span className="cap-site-header-name">
                   {logo.label}
                   {logo.app ? <span className="cap-site-header-app"> {logo.app}</span> : null}

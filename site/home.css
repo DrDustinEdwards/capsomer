@@ -51,7 +51,7 @@ body {
 }
 /* The family footer and the site header keep their own links (capsomer/family-footer.css,
    capsomer/site-header.css). */
-a:not(.cap-btn, .cap-family-footer a, .cap-site-header a) {
+a:not(.cap-btn, .cap-sign, .cap-family-footer a, .cap-site-header a) {
   color: var(--accent-text);
   text-underline-offset: 3px;
 }
@@ -932,4 +932,51 @@ h2:not(.cap-family-footer-heading) {
 /* A part's number beside its title, set small and regular as the manual sets it. */
 h2.cap-part-title {
   align-items: baseline;
+}
+
+/* The search page (site/search.ts): the form, the count said aloud, then each result's title, the
+   heading it matched and the words around the match. */
+.search-page {
+  display: grid;
+  gap: var(--space-5);
+  padding-block: var(--space-6) var(--space-9);
+
+  & > * {
+    max-width: 48rem;
+  }
+}
+.search-title {
+  margin: 0;
+}
+.search-form {
+  display: grid;
+  gap: var(--space-2);
+}
+.search-row {
+  display: flex;
+  gap: var(--space-3);
+
+  & > .cap-input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+.search-results {
+  display: grid;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & > li {
+    display: grid;
+    gap: var(--space-1);
+  }
+  & a {
+    font-weight: 600;
+  }
+  & p {
+    margin: 0;
+    color: var(--muted);
+  }
 }

@@ -39,7 +39,7 @@ interface Example {
   kind: "example" | "only";
   height: number;
 }
-interface Data {
+export interface Data {
   version: string;
   components: Component[];
   families: Record<string, { seed: string; note: string }>;
@@ -172,7 +172,7 @@ export function header(base: string, current = "Home"): string {
   ];
   return `<header class="cap-site-header" data-cap="site-header" data-variant="letterhead" data-markup="">
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
-  <a class="cap-site-header-logo home-logo" href="/" aria-label="Dustin Edwards Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span class="cap-site-header-names" aria-hidden="true"><span class="cap-site-header-agency">Dustin Edwards</span><span class="cap-site-header-name">Capsomer</span></span></a>
+  <a class="cap-site-header-logo home-logo" href="/" aria-label="Dustin Edwards Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span class="cap-site-header-names" aria-hidden="true"><span class="cap-site-header-agency">Dustin Edwards</span> <span class="cap-site-header-name">Capsomer</span></span></a>
   <nav class="cap-site-header-sections" aria-label="Sections"><ul>
     ${[["/", "Home"] as [string, string], ...links].map(([h, t]) => `<li><a class="cap-site-header-link" href="${h}"${t === current ? ' aria-current="page"' : ""}>${t}</a></li>`).join("")}
   </ul></nav>
@@ -214,7 +214,7 @@ const CENTER = `<div class="cap-family-footer-center">
   <div><p class="cap-family-footer-center-name">Capsomer</p><p class="cap-family-footer-about">The family design system. Plain CSS, MIT licensed.</p></div>
   <div class="cap-family-footer-columns">
     <ul class="cap-family-footer-links"><li><a href="/#components">Components</a></li><li><a href="/make/">Theme builder</a></li></ul>
-    <ul class="cap-family-footer-links"><li><a href="https://github.com/DrDustinEdwards/capsomer">Source</a></li><li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li></ul>
+    <ul class="cap-family-footer-links"><li><a class="cap-go" data-go="out" href="https://github.com/DrDustinEdwards/capsomer">Source</a></li><li><a class="cap-go" data-go="out" href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li></ul>
     <ul class="cap-family-footer-links"><li><a href="/admin/">Scaffold</a></li></ul>
   </div>
   <p class="cap-family-footer-stamp"><span>Release ${VERSION}</span></p>
@@ -246,7 +246,7 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
   <div class="home-wrap home-intro">
     <h1 id="top-h">One design system for every site and app</h1>
     <p class="home-lead">Capsomer is the palette, type and components shared by every one of Dustin Edwards's sites and apps, with the tests that keep each of them accessible in both themes. Plain CSS, MIT licensed.</p>
-    <p class="home-cta"><a class="cap-btn" data-variant="primary" href="/make/">Make your own theme</a> <span class="home-muted">From one brand color: scales, contrast checks, type, a live preview and the CSS.</span></p>
+    <p class="home-cta"><a class="cap-sign" data-variant="forward" href="/make/">Make your own theme</a> <span class="home-muted">From one brand color: scales, contrast checks, type, a live preview and the CSS.</span></p>
   </div>
   <ul class="home-wrap home-figures">
     ${figures.map(([f, label, n, note]) => `<li${fam(f)}><b>${esc(n)}</b><span class="home-figure-label">${esc(label)}</span><span>${esc(note)}</span></li>`).join("\n    ")}
@@ -490,8 +490,8 @@ ${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
   </section>
 
   <nav class="comp-pager" aria-label="More components">
-    ${prev ? `<a class="cap-btn" href="/components/${esc(prev.name)}/" rel="prev">${ARROW.prev}${esc(prev.title)}</a>` : "<span></span>"}
-    ${next ? `<a class="cap-btn" href="/components/${esc(next.name)}/" rel="next">${esc(next.title)}${ARROW.next}</a>` : "<span></span>"}
+    ${prev ? `<a class="cap-sign" href="/components/${esc(prev.name)}/" rel="prev">${esc(prev.title)}</a>` : "<span></span>"}
+    ${next ? `<a class="cap-sign" href="/components/${esc(next.name)}/" rel="next">${esc(next.title)}</a>` : "<span></span>"}
   </nav>
 </main>
 <nav class="comp-toc" aria-label="On this page">
