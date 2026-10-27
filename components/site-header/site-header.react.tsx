@@ -217,7 +217,7 @@ export function SiteHeader(props: SiteHeaderProps) {
           </div>
         ) : null}
         {search ? (
-          <form className="cap-site-header-search" role="search" action={search.action}>
+          <form className="cap-site-header-search" role="search" aria-label="Site" action={search.action}>
             <button type="submit" aria-label={search.label}>
               {SEARCH_ICON}
             </button>
