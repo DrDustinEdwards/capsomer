@@ -927,14 +927,32 @@
   .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
     grid-template-rows: var(--header-row) var(--header-row-2);
   }
+  /* From 768px the band stands 16px in from the window's sides, so the page shows around it and it
+     reads as a letterhead printed on the sheet, not the browser's bar (Dustin, 2026-10-27). Its
+     contents keep their places: the inset comes out of the padding. The page's ground covers the
+     margins beside it, so nothing scrolling under shows there; a shadow is never painted under its
+     own box and adds nothing to scroll. */
   @media (min-width: 768px) {
     .cap-site-header[data-variant="letterhead"] {
-      --header-side: calc(var(--rail-w-collapsed) + var(--space-3));
-      padding-inline-end: calc(var(--pad-card) + var(--space-3));
+      --header-inset: var(--space-5);
+      --header-side: calc(var(--rail-w-collapsed) + var(--space-3) - var(--header-inset));
+      --header-end: calc(var(--pad-card) + var(--space-3) - var(--header-inset));
+      inline-size: calc(100% - 2 * var(--header-inset));
+      margin-inline: auto;
+      padding-inline-end: var(--header-end);
 
+      &::before {
+        content: "";
+        position: absolute;
+        inset: calc(-1 * var(--header-stripe)) 0 0;
+        z-index: -1;
+        pointer-events: none;
+        box-shadow: 0 0 0 var(--header-inset) var(--ground);
+        clip-path: inset(0 calc(-1 * var(--header-inset)));
+      }
       & > :is(.cap-site-header-sections, .cap-site-header-trail) {
-        margin-inline-end: calc(-1 * (var(--pad-card) + var(--space-3)));
-        padding-inline-end: calc(var(--pad-card) + var(--space-3));
+        margin-inline-end: calc(-1 * var(--header-end));
+        padding-inline-end: var(--header-end);
       }
     }
   }
