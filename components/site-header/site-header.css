@@ -796,8 +796,6 @@
     /* Roomier than the 56px one-row header: a 64px top row and a 48px second row (Dustin, 2026-10-27). */
     --header-row: 4rem;
     --header-row-2: 3rem;
-    /* Hover grows a thin underline, kin to the current page's 2px one. */
-    --link-rule: 1px;
     --header-bg: var(--text);
     --header-fg: var(--ground);
     --header-fg-muted: color-mix(in srgb, var(--ground) 78%, var(--text));
@@ -896,8 +894,22 @@
     & .cap-site-header-theme {
       order: 2;
     }
+    /* The current page keeps its 2px underline; hover is a faint tint, so it never looks like
+       "you are here" and never like the focus ring (Carbon's split). The padding the tint needs
+       is taken back by the margin, so the words stay where they were. */
     & .cap-site-header-link {
       font-weight: inherit;
+    }
+    & .cap-site-header-sections .cap-site-header-link {
+      padding-inline: var(--space-2);
+      margin-inline: calc(-1 * var(--space-2));
+
+      &:hover {
+        background: var(--header-hover);
+      }
+      &[aria-current="page"]::after {
+        inset-inline: var(--space-2);
+      }
     }
   }
   :root[data-theme="dark"] .cap-site-header[data-variant="letterhead"] {
