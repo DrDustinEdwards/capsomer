@@ -32,7 +32,6 @@
 
 :root {
   --home-max: 76rem;
-  --header-max: calc(var(--home-max) - 2rem);
   --home-gut: max(16px, env(safe-area-inset-left, 0px));
   --home-gut-r: max(16px, env(safe-area-inset-right, 0px));
   /* Where the page's column starts, so a band can start there and run to the window's edge. */
@@ -41,7 +40,6 @@
 /* clip, not hidden: hidden makes a scroll container, and the sticky header would stop sticking. */
 html {
   overflow-x: clip;
-  scroll-padding-top: calc(var(--header-h, 3.5rem) + var(--space-4));
 }
 body {
   margin: 0;

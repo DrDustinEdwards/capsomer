@@ -112,6 +112,28 @@ eachTheme((theme) => {
     expect(parseFloat(await page.evaluate(() => getComputedStyle(document.documentElement).scrollPaddingTop))).toBeGreaterThanOrEqual(56);
   });
 
+  test("behavior: the letterhead stays whole at the top as the page scrolls, with the logo, names, search and theme at the admin's pixels; a short window lets it scroll away", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const places = async (only: string) => {
+      await visitStates(page, "site-header", theme, only);
+      return page.locator(".cap-site-header[data-variant='letterhead']").evaluate((h) =>
+        [".cap-site-header-logo > :is(svg, img)", ".cap-site-header-name", ".cap-site-header-search", ".cap-site-header-theme"].map((s) => {
+          const r = h.querySelector(s)!.getBoundingClientRect();
+          return [Math.round(r.left), Math.round(r.top)];
+        }),
+      );
+    };
+    expect(await places("lh-public")).toEqual(await places("lh-admin"));
+    await visitStates(page, "site-header", theme, "lh-public");
+    const header = page.locator(".cap-site-header[data-variant='letterhead']");
+    await header.evaluate((h) => h.after(Object.assign(document.createElement("div"), { style: "block-size: 3000px" })));
+    await page.mouse.wheel(0, 600);
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(300);
+    expect((await header.boundingBox())!.y).toBe(0);
+    await page.setViewportSize({ width: 1440, height: 400 });
+    expect((await header.boundingBox())!.y).toBeLessThan(0);
+  });
+
   test("behavior: links on the right sit after a thin divider before the tools; centered links sit in the middle of the band", async ({ page }) => {
     await visitStates(page, "site-header", theme, "fh-public");
     const right = await page.evaluate(() => {
