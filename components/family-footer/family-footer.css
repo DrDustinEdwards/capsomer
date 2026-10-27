@@ -210,6 +210,16 @@
     opacity: 0;
   }
 
+  /* The end icons' names open inward, so the first one's never runs off a phone's left edge. */
+  .cap-family-footer-social > li:first-child .cap-family-footer-social-label {
+    inset-inline-start: 0;
+    translate: 0 var(--space-2);
+  }
+  .cap-family-footer-social > li:last-child .cap-family-footer-social-label {
+    inset-inline: auto 0;
+    translate: 0 var(--space-2);
+  }
+
   .cap-family-footer-social-link:is(:hover, :focus-visible) .cap-family-footer-social-label {
     clip-path: none;
     opacity: 1;
