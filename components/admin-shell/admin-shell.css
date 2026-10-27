@@ -64,6 +64,20 @@
   .cap-admin:has(> .cap-site-header[data-variant="letterhead"] > .cap-site-header-trail) {
     --admin-top: calc(var(--space-3) + 4rem + 3rem);
   }
+  /* The letterhead's left edge is the menu's, not the screen's (Dustin, 2026-10-27): the names and
+     where you are line up with the menu's buttons, the strip stands outside them like a binder's
+     tabs, and the right edge is the page's. */
+  @media (min-width: 768px) {
+    .cap-admin:has(> .cap-admin-strip) > .cap-site-header[data-variant="letterhead"] {
+      --header-side: calc(var(--admin-strip) + var(--space-3));
+      padding-inline-end: calc(var(--pad-card) + var(--space-3));
+
+      & > .cap-site-header-trail {
+        margin-inline-end: calc(-1 * (var(--pad-card) + var(--space-3)));
+        padding-inline-end: calc(var(--pad-card) + var(--space-3));
+      }
+    }
+  }
   .cap-admin-strip {
     grid-column: 1;
     grid-row: 2;

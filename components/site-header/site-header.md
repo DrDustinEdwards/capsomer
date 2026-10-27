@@ -95,10 +95,11 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
 
 - **The band:** the page's text color (dark in light, light in dark) under an 8px stripe of the site's family color. A 64px top row and a 48px second row, 120px in all, on every site and every admin.
 - **The top row, left:** the logo (32px), with the names beside it. A center stacks "Dustin Edwards" small over its own name in bold (`agency`, `label`); an admin adds its app name on the same line in regular weight (`app`: "Capsid Portal"). dustinedwards.info shows only "Dustin Edwards", and the row keeps its height.
-- **The top row, right:** search (a `form role="search"`, `search={{ action, label }}`; on a phone only its icon), the theme, then in an admin the inbox and the account in the corner. This is the order of IBM Carbon's UI shell and SAP Fiori's shell bar: search first, the account last. Where a page has no inbox or account, their slots stay empty, so the logo, the names, search and the theme sit on the same pixels in the public pages and the admin (from 768px; a phone uses the room).
+- **The top row, right:** search (a `form role="search"`, `search={{ action, label }}`; on a phone only its icon), the theme, then in an admin the inbox and the account in the corner. This is the order of IBM Carbon's UI shell and SAP Fiori's shell bar: search first, the account last. Where a page has no inbox or account, their slots stay empty, so search and the theme keep their places in the band (from 768px; a phone uses the room).
 - **The second row:** on the public pages, the section links, Home first, visible at every width (they swipe on a phone; no menu sheet). In an admin, where you are (`trail`: "Watch / Overview") and View site on the right.
 - **Search engines:** every link is a real `a href` in the server HTML.
-- A header with a links row scrolls away with the page; the admin's stays put.
+- **The margins:** on a public page from 768px the band sits inside the page's margins, as a letterhead is printed inside the sheet's: it lines up with the content and the family footer and reads as a sign on the page, not the browser's bar. The site sets `--header-max` to its content width (default 74rem). On a phone it runs edge to edge. In an admin it runs the full width, and the logo and where you are line up with the menu's buttons; the app strip stands outside them, like a binder's tabs.
+- A header with a links row scrolls away with the page; the admin's stays put. A 120px band kept on screen would take about a seventh of a laptop's view from reading (NN/g keeps sticky headers for constant navigation and small).
 
 ## Markup
 
