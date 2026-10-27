@@ -783,7 +783,7 @@
      in the page's text color (dark in light, light in dark), under an 8px stripe of the site's
      family color. The top row is the same 64px on every
      site and in every admin, everything in it centered on the row's middle. The section
-     links take a second row under a hairline, at every width, so they are never hidden behind a
+     links take a second row, at every width, so they are never hidden behind a
      menu. The utilities run search, theme, inbox, account, with the account in the corner as in
      Carbon, Fiori and most products; a page without an inbox or account leaves their slots empty,
      so search and the theme keep their places. Two
@@ -870,7 +870,8 @@
       padding-inline: var(--header-side);
       overflow-x: auto;
       scrollbar-width: none;
-      border-block-start: 1px solid var(--header-line);
+      /* No hairline between the rows (Dustin, 2026-10-27): the band is one sign. */
+      border-block-start: 0;
       font-size: 15px;
       font-weight: 500;
 
