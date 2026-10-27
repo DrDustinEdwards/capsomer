@@ -776,10 +776,12 @@
   }
 
   /* The family letterhead (data-variant="letterhead"): the header of dustinedwards.info and its
-     *.dustinedwards.info sites, public pages and admins alike (Dustin, 2026-10-27). It follows the
-     center letterhead of the NASA Graphics Standards Manual (1976, page 3.2): the agency's name
-     small, the center's name bold under it. A band in the page's text color (dark in light, light
-     in dark) under an 8px stripe of the site's family color; the top row is the same 64px on every
+     *.dustinedwards.info sites, public pages and admins alike (Dustin, 2026-10-27). The names follow
+     the center letterhead of the NASA Graphics Standards Manual (1976, page 3.2): the agency's name
+     small, the center's name bold under it. The band is the Park Service's Unigrid (Massimo
+     Vignelli, 1977), whose brochures open with a black band carrying the park's name in white: here
+     in the page's text color (dark in light, light in dark), under an 8px stripe of the site's
+     family color. The top row is the same 64px on every
      site and in every admin, and in it the logo, the names, the search box and the theme sit on the
      same pixels in a site's public pages and its admin, centered on the row's middle. The section
      links take a second row under a hairline, at every width, so they are never hidden behind a

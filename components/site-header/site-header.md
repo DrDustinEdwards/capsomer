@@ -91,7 +91,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ## The letterhead (`variant="letterhead"`)
 
-The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarratio) and their admins (Portal, Desk, Scaffold) use this variant, after the center letterhead in the NASA Graphics Standards Manual (1976, page 3.2; Dustin, 2026-10-27). Products on their own domains keep the default header.
+The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarratio) and their admins (Portal, Desk, Scaffold) use this variant (Dustin, 2026-10-27). The names follow the center letterhead in the NASA Graphics Standards Manual (1976, page 3.2); the band is the Park Service's Unigrid (Massimo Vignelli, 1977), whose brochures open with a black band carrying the park's name in white; the admin's second row follows GOV.UK's service navigation, and the icon order IBM Carbon's UI shell and SAP Fiori's shell bar. Products on their own domains keep the default header.
 
 - **The band:** the page's text color (dark in light, light in dark) under an 8px stripe of the site's family color. A 64px top row and a 48px second row, 120px in all, on every site and every admin.
 - **The top row, left:** the logo (32px), with the names beside it. A center stacks "Dustin Edwards" small over its own name in bold (`agency`, `label`); an admin adds its app name on the same line in regular weight (`app`: "Capsid Portal"). dustinedwards.info shows only "Dustin Edwards", and the row keeps its height.
