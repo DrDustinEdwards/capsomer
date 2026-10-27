@@ -231,9 +231,9 @@ export function enhance(root: ParentNode = document): () => void {
 }
 
 export interface LetterheadOptions {
-  /** The site's name, bold under the agency ("Prelum"). */
+  /** The site's name, bold under the agency ("Prelum"); the headquarters site passes "" and shows the agency alone. */
   name: string;
-  /** The small line over it; the headquarters site passes "" and its name takes this size. */
+  /** The small line over it. */
   agency?: string;
   /** Where the logo goes. */
   home?: string;
@@ -264,9 +264,9 @@ const THEME_BUTTON = `<button type="button" class="cap-theme-button cap-site-hea
  */
 export function letterheadHtml({ name, agency = "Dustin Edwards", home = "/", mark, links, current, search, skipTo = "#main", theme = true }: LetterheadOptions): string {
   const label = [agency, name].filter(Boolean).join(" ");
-  const names = agency
-    ? `<span class="cap-site-header-agency">${escapeHtml(agency)}</span> <span class="cap-site-header-name">${escapeHtml(name)}</span>`
-    : `<span class="cap-site-header-name">${escapeHtml(name)}</span>`;
+  const names = [agency && `<span class="cap-site-header-agency">${escapeHtml(agency)}</span>`, name && `<span class="cap-site-header-name">${escapeHtml(name)}</span>`]
+    .filter(Boolean)
+    .join(" ");
   const items = links
     .map(([href, text]) => `<li><a class="cap-site-header-link" href="${escapeHtml(href)}"${text === current ? ' aria-current="page"' : ""}>${escapeHtml(text)}</a></li>`)
     .join("");

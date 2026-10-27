@@ -1046,6 +1046,11 @@
   .cap-site-header-app {
     font-weight: 400;
   }
+  /* The headquarters site (dustinedwards.info) shows "Dustin Edwards" alone, at the agency's size:
+     the names line with no site name under it, in the band's full color. */
+  .cap-site-header-names:not(:has(.cap-site-header-name)) > .cap-site-header-agency {
+    color: var(--header-fg);
+  }
 
   /* An admin's second row: where you are on the left ("Watch / Overview"), View site on the right,
      so the admin's band is as tall as its public pages'. */
