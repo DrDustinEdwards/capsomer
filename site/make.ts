@@ -99,7 +99,7 @@ const steps = (scheme: "light" | "dark") =>
 export function renderMake(): string {
   const presets = `<option value="" selected>Your own</option>${PRESETS.map((g) => `<optgroup label="${esc(g.group)}">${g.items.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join("")}</optgroup>`).join("")}`;
   const d = DEFAULT;
-  return `${header("/")}
+  return `${header("/", "Make a theme")}
 <main id="main" tabindex="-1">
 ${runningHead("6", "Make a theme", "From one color")}
 <section class="make-top" aria-labelledby="make-h">

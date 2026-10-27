@@ -34,7 +34,7 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 - **56px at every width** (`--header-h`, 3.5rem), **sticky** at the top with `scroll-padding-top` set to its height, so a focused control or an anchor never lands under it (WCAG 2.4.11).
 - **Full width**, 24px sides on a desktop and 16px on a phone, so the logo is at the same x on every site and lines up with the admin's menu below it.
 - **Spacing.** 12px from the logo to the switcher, 24px from the switcher to the section links, 20px between links, 8px between the controls on the right.
-- **Type.** Links and the switcher at 14px in the site's UI face (`--font-ui`); the current page is weight 500 with a 2px underline in the accent, so it is not told by color alone.
+- **Type.** Links and the switcher at 14px in the site's UI face (`--font-ui`); the current page is weight 500 with a 2px underline in the accent, so it is not told by color alone. In the letterhead a link under the pointer takes a faint tint of the band (`--header-hover`), as Carbon's shell does, and View site ends in the family arrow.
 - **Controls.** Every icon control is a 36px target with an 18px glyph (24 box, 1.6 stroke), a name of its own and a tip naming it and its key. The avatar is a 32px circle in the same target: the person's picture when the site gives one (`account.avatar`), drawn over their initials, which show when there is none or it fails to load.
 - **Panels.** The switcher, a section with children and the account each open a panel: a list of links under a disclosure button (`aria-expanded`, `aria-controls`), not an ARIA menu, because every item goes somewhere. On a mouse a panel opens at once on hover, with no delay, and on click; on touch, on tap. It lines up with its button's edge and starts under the header, so it never covers it. What a panel holds and how it is laid out is the site's (`panel`).
 - **One bottom edge**, 1px in the band's own line color.
@@ -88,6 +88,18 @@ The account menu is the same shape everywhere: who you are; the site's own rows 
 - The tests measure the painted contrast of the links, the current link's underline, the icon controls, Sign in and the button extra on both bands in both themes.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
+
+## The letterhead (`variant="letterhead"`)
+
+The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarratio) and their admins (Portal, Desk, Scaffold) use this variant (Dustin, 2026-10-27). The names follow the center letterhead in the NASA Graphics Standards Manual (1976, page 3.2); the band is the Park Service's Unigrid (Massimo Vignelli, 1977), whose brochures open with a black band carrying the park's name in white; the admin's second row follows GOV.UK's service navigation, and the icon order IBM Carbon's UI shell and SAP Fiori's shell bar. Products on their own domains keep the default header.
+
+- **The band:** the page's text color (dark in light, light in dark) under an 8px stripe of the site's family color. A 64px top row and a 48px second row, 120px in all, on every site and every admin.
+- **The top row, left:** the logo (32px), with the names beside it. A center stacks "Dustin Edwards" small over its own name in bold (`agency`, `label`); an admin adds its app name on the same line in regular weight (`app`: "Capsid Portal"). dustinedwards.info shows only "Dustin Edwards", and the row keeps its height.
+- **The top row, right:** search (a `form role="search"`, `search={{ action, label }}`; on a phone only its icon), the theme, then in an admin the inbox and the account in the corner. This is the order of IBM Carbon's UI shell and SAP Fiori's shell bar: search first, the account last. Where a page has no inbox or account, their slots stay empty, so search and the theme keep their places in the band (from 768px; a phone uses the room).
+- **The second row:** on the public pages, the section links, Home first, visible at every width (they swipe on a phone; no menu sheet). In an admin, where you are (`trail`: "Watch / Overview") and View site on the right.
+- **Search engines:** every link is a real `a href` in the server HTML.
+- **The margins:** on a public page from 768px the band sits inside the page's margins, at the content's width (`--header-max`, default 74rem), as a letterhead is printed inside the sheet's; the page's ground covers the margins beside it while it is pinned. On a phone it runs edge to edge. In an admin it runs the full width, and the logo and where you are line up with the menu's buttons; the app strip stands outside them, like a binder's tabs.
+- The whole band stays at the top of the window while the page scrolls, on public pages and in the admin (Dustin, 2026-10-27), with `scroll-padding-top` set to its height so a focused link never lands under it (WCAG 2.2, 2.4.11). Where the band would cover more than a quarter of the window (under 480px tall: a phone held sideways, a page zoomed to 400%), it scrolls away with the page instead, so a zoomed reader is not left a few lines.
 
 ## Markup
 

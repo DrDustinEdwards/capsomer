@@ -470,12 +470,20 @@
     text-decoration: none;
     overflow-wrap: anywhere;
 
-    &[rel~="prev"]::before {
-      content: "\2190" / "";
+    /* The family arrow (css/base.css), at the sign's outer edge in the way you go. */
+    &[rel~="prev"]::before,
+    &[rel~="next"]::after,
+    &[data-variant="forward"]::after {
+      content: "";
+      flex: none;
+      inline-size: 1.1em;
+      block-size: 1.1em;
+      background: currentColor;
+      clip-path: var(--cap-arrow);
     }
 
-    &[rel~="next"]::after {
-      content: "\2192" / "";
+    &[rel~="prev"]::before {
+      rotate: 180deg;
     }
 
     &[rel~="next"],
@@ -483,10 +491,12 @@
       box-shadow: inset 0 6px 0 var(--on);
     }
 
-    &:hover,
-    &:focus-visible {
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
+    /* No underline: under the pointer the arrow steps the way it goes (css/base.css), and that is
+       the sign's whole answer. Where motion is reduced the panel lightens a little instead. */
+    @media (prefers-reduced-motion: reduce) {
+      &:hover {
+        background: color-mix(in srgb, var(--text) 86%, var(--ground));
+      }
     }
 
     &:focus-visible {
@@ -498,6 +508,12 @@
   @media (forced-colors: active) {
     .cap-sign {
       border: 1px solid LinkText;
+
+      &::before,
+      &::after {
+        forced-color-adjust: none;
+        background: LinkText;
+      }
     }
   }
 }

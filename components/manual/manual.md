@@ -36,7 +36,7 @@ On a public page of a dustinedwards.info site: a home page, an index of papers o
 - **Leader index** (`ol.cap-leader-index`): number, bold name, a dotted leader and a count or page at the right. `aria-current` on a link marks the one you are on.
 - **Checklist card** (`.cap-checklist`): a list of procedures as an Apollo checklist card. A dark strip names the card; each step has a drawn box, its number, its name as a link, a dotted leader to its kind, and a note. The box is drawn, not a control. The leaders drop on a phone.
 - **Plate** (`figure.cap-plate`): a drawing or photo in a ruled box on the raised surface, its plate number at the top left, the caption under it with the figure number at the right. The drawing carries its own scale bar.
-- **Signs** (`nav.cap-signs` of `a.cap-sign`): the ways on as dark panels with light type. `rel="prev"` adds a left arrow and `rel="next"` a right arrow and the family color along the top, as does `data-variant="forward"`. 48px tall.
+- **Signs** (`nav.cap-signs` of `a.cap-sign`): the ways on as dark panels with light type. `rel="prev"` adds a left arrow and `rel="next"` a right arrow and the family color along the top, as does `data-variant="forward"`. The arrow is the family arrow (`--cap-arrow`); under the pointer or focus it steps 3px the way it points, so a sign has no underline. With reduced motion the panel lightens instead. 48px tall. Signs are for the way on; an action is a button (`.cap-btn`).
 - **Mission patch** (`patchSvg()` from `capsomer/behavior/manual`, drawn by `.cap-patch`): a project's round patch, the name round the top, a line round the foot, the count on a disc of the family color with a dot round it for each. `data-size="s"` makes it 96px.
 - **Letterhead** (`.cap-letterhead`): the foot of a page, the site's name as the logotype, the address beside it and the folio at the right. Put it in the page's `footer`.
 - **Layout grid** (`.cap-layout-grid`): the head of a page drawn on the manual's layout grid in fine red lines, as the manual prints its grids: twelve columns and a 24px baseline, four columns on a phone, labeled at its foot on the right. The red is the family's `--crit`, faint. Put it on the block that holds the page's `h1`. Forced colors drop it.
@@ -58,7 +58,7 @@ Running text stays in the page's reading face (`--prose` on dustinedwards.info),
 
 - Every label and value is text in `--text` or `--muted` on the ground; the sign panels and strips set `--ground` on `--text`, so both themes keep the page's own contrast.
 - The checklist's box, the leaders and the patch are drawn and hidden from screen readers. The patch says nothing the page does not say beside it.
-- The arrows on the signs are generated content with an empty alternative, so a sign is read as its words.
+- The arrows on the signs are generated content with an empty alternative, so a sign is read as its words. In forced colors they are drawn in `LinkText`.
 - In forced colors the sign panels, the running-head sign and the direction strip keep a border, as their dark fill is dropped, and the layout grid is not drawn.
 - The direction strip's lit page sets `--primary-fg` on `--on`, the family's button pair. The roll blocks, the livery and the layout grid are drawn and say nothing the page does not say in words.
 

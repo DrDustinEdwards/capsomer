@@ -7,7 +7,7 @@
     "components/*/examples.tsx",
     "components/*/*.spec.ts",
     "site/main.tsx",
-    "site/redirect.ts", "site/home-main.ts", "site/make-main.ts",
+    "site/redirect.ts", "site/home-main.ts", "site/make-main.ts", "site/search-main.ts",
     "site/specimen.ts",
     "site/*.spec.ts",
     "tokens/*.mjs",

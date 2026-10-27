@@ -163,7 +163,9 @@ const MARKS: Record<SocialLink["mark"], string> = {
  */
 export function familyFooterHtml({ site, center = "", origin = FAMILY_ORIGIN, published, year = new Date().getFullYear() }: FamilyFooterOptions = {}): string {
   const href = (link: FamilyLink) => escapeHtml(link.external ? link.to : `${origin}${link.to}`);
-  const anchor = (link: FamilyLink) => `<a href="${href(link)}"${link.me ? ' rel="me"' : ""}>${escapeHtml(link.label)}</a>`;
+  // A profile off the family (Google Scholar, PubMed, ORCID) takes the family arrow, turned out (css/base.css).
+  const anchor = (link: FamilyLink) =>
+    `<a href="${href(link)}"${link.me ? ' rel="me" class="cap-go" data-go="out"' : ""}>${escapeHtml(link.label)}</a>`;
   const social = SOCIAL_LINKS.map(
     (link) =>
       `<li><a href="${href(link)}" class="cap-family-footer-social-link">${MARKS[link.mark]}<span class="cap-family-footer-social-label">${escapeHtml(link.label)}</span></a></li>`,

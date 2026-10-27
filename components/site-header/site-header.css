@@ -775,6 +775,375 @@
     }
   }
 
+  /* The family letterhead (data-variant="letterhead"): the header of dustinedwards.info and its
+     *.dustinedwards.info sites, public pages and admins alike (Dustin, 2026-10-27). The names follow
+     the center letterhead of the NASA Graphics Standards Manual (1976, page 3.2): the agency's name
+     small, the center's name bold under it. The band is the Park Service's Unigrid (Massimo
+     Vignelli, 1977), whose brochures open with a black band carrying the park's name in white: here
+     in the page's text color (dark in light, light in dark), under an 8px stripe of the site's
+     family color. The top row is the same 64px on every
+     site and in every admin, everything in it centered on the row's middle. The section
+     links take a second row, at every width, so they are never hidden behind a
+     menu. The utilities run search, theme, inbox, account, with the account in the corner as in
+     Carbon, Fiori and most products; a page without an inbox or account leaves their slots empty,
+     so search and the theme keep their places. One default changes here: the phone keeps the
+     links row, which swipes, instead of the sheet. */
+  .cap-site-header[data-variant="letterhead"] {
+    --header-stripe: var(--space-3);
+    /* Roomier than the 56px one-row header: a 64px top row and a 48px second row (Dustin, 2026-10-27). */
+    --header-row: 4rem;
+    --header-row-2: 3rem;
+    --header-bg: var(--text);
+    --header-fg: var(--ground);
+    --header-fg-muted: color-mix(in srgb, var(--ground) 78%, var(--text));
+    --header-line: color-mix(in srgb, var(--ground) 26%, var(--text));
+    --header-hover: color-mix(in srgb, var(--text), var(--ground) 14%);
+    --header-accent: var(--ground);
+    --header-avatar: var(--ground);
+    --header-avatar-fg: var(--text);
+    color-scheme: dark;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: var(--header-row) auto;
+    align-items: center;
+    column-gap: var(--space-4);
+    block-size: auto;
+    border-block-start: var(--header-stripe) solid var(--on);
+    border-block-end: 0;
+
+    & > .cap-site-header-logo {
+      grid-area: 1 / 1;
+      justify-self: start;
+      gap: var(--space-4);
+      block-size: auto;
+      max-inline-size: 100%;
+      overflow: visible;
+
+      & > :is(svg, img) {
+        block-size: 32px;
+        max-inline-size: 32px;
+      }
+    }
+    & > .cap-site-header-switcher {
+      display: none;
+    }
+    & > .cap-site-header-tools {
+      --header-slot: calc(36px + var(--space-4));
+      grid-area: 1 / 2;
+      gap: var(--space-4);
+      margin: 0;
+
+      /* Search and the theme keep the places the admin gives them (Dustin, 2026-10-27): where the
+         inbox or the account is missing, its slot in the corner stays empty. Not on a phone. */
+      & > .cap-site-header-account:empty {
+        display: none;
+      }
+      @media (min-width: 768px) {
+        &:not(:has(.cap-site-header-account > *)) {
+          padding-inline-end: var(--header-slot);
+        }
+        &:not(:has(.cap-site-header-extras > *)) {
+          &:has(.cap-site-header-account > *) > .cap-site-header-account {
+            margin-inline-start: var(--header-slot);
+          }
+          &:not(:has(.cap-site-header-account > *)) {
+            padding-inline-end: calc(2 * var(--header-slot));
+          }
+        }
+      }
+
+      &::before {
+        display: none;
+      }
+    }
+    & > :is(.cap-site-header-sections, .cap-site-header-trail) {
+      grid-area: 2 / 1 / 3 / -1;
+      display: flex;
+      align-items: center;
+      position: static;
+      translate: none;
+      block-size: var(--header-row-2);
+      box-sizing: border-box;
+      margin: 0 calc(-1 * var(--header-side));
+      padding-inline: var(--header-side);
+      overflow-x: auto;
+      scrollbar-width: none;
+      /* No hairline between the rows (Dustin, 2026-10-27): the band is one sign. */
+      border-block-start: 0;
+      font-size: 15px;
+      font-weight: 500;
+
+      & > ul {
+        gap: var(--space-6);
+      }
+    }
+    & .cap-site-header-extras {
+      order: 3;
+    }
+    & .cap-site-header-account {
+      order: 4;
+    }
+    & .cap-site-header-menu {
+      order: 5;
+    }
+    & .cap-site-header-search {
+      order: 1;
+    }
+    & .cap-site-header-theme {
+      order: 2;
+    }
+    /* The current page keeps its 2px underline; hover is a faint tint, so it never looks like
+       "you are here" and never like the focus ring (Carbon's split). The padding the tint needs
+       is taken back by the margin, so the words stay where they were. */
+    & .cap-site-header-link {
+      font-weight: inherit;
+    }
+    & .cap-site-header-sections .cap-site-header-link {
+      padding-inline: var(--space-2);
+      margin-inline: calc(-1 * var(--space-2));
+
+      &:hover {
+        background: var(--header-hover);
+      }
+      &[aria-current="page"]::after {
+        inset-inline: var(--space-2);
+      }
+    }
+  }
+  :root[data-theme="dark"] .cap-site-header[data-variant="letterhead"] {
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .cap-site-header[data-variant="letterhead"] {
+      color-scheme: light;
+    }
+  }
+  /* The whole band stays at the top of the window, on public pages and in the admin alike
+     (Dustin, 2026-10-27). Where the band would cover more
+     than a quarter of the window (a phone held sideways, a page zoomed to 400%), it scrolls away
+     with the page instead, so reading is never left a few lines (WCAG 1.4.10's zoom, testers'
+     quarter rule). A focused link never lands under it (WCAG 2.2, 2.4.11). */
+  .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
+    grid-template-rows: var(--header-row) var(--header-row-2);
+  }
+  /* From 768px a public page's band sits inside the page's margins, at the content's width
+     (--header-max; the site sets it), as a letterhead is printed inside the sheet's: it lines up
+     with the content and the family footer and reads as a sign on the page, not the browser's bar
+     (Dustin, 2026-10-27). It still stays at the top of the window; the page's ground covers the
+     margins beside it, so nothing scrolling under shows there (a shadow is never painted under its
+     own box and adds nothing to scroll). In an admin the band runs the full width, and the logo,
+     the names and where you are line up with the menu's buttons, the app strip standing outside
+     them like a binder's tabs. */
+  @media (min-width: 768px) {
+    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
+      inline-size: min(100% - 2 * var(--header-gutter, 16px), var(--header-max, 74rem));
+      margin-inline: auto;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: calc(-1 * var(--header-stripe)) 0 0;
+        z-index: -1;
+        pointer-events: none;
+        box-shadow: 0 0 0 100vmax var(--ground);
+        clip-path: inset(0 -100vmax);
+      }
+    }
+    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-trail) {
+      --header-side: calc(var(--rail-w-collapsed) + var(--space-3));
+      padding-inline-end: calc(var(--pad-card) + var(--space-3));
+
+      & > .cap-site-header-trail {
+        margin-inline-end: calc(-1 * (var(--pad-card) + var(--space-3)));
+        padding-inline-end: calc(var(--pad-card) + var(--space-3));
+      }
+    }
+  }
+  @media (max-height: 479.98px) {
+    .cap-site-header[data-variant="letterhead"] {
+      position: relative;
+    }
+  }
+  :root:has(.cap-site-header[data-variant="letterhead"]) {
+    scroll-padding-top: calc(var(--space-3) + 4rem + 3rem + var(--space-3));
+
+    @media (max-height: 479.98px) {
+      scroll-padding-top: 0;
+    }
+  }
+  @media print {
+    .cap-site-header[data-variant="letterhead"] {
+      position: relative;
+    }
+  }
+
+  /* The names beside the mark: the agency small, the site's name bold under it, an admin's name
+     after it in the regular weight ("Capsid Portal"). The headquarters site has its name alone, at
+     the same size. Each line is trimmed to its capitals (text-box), so the letters themselves
+     center on the row, not their line spacing. */
+  .cap-site-header-names {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-inline-size: 0;
+  }
+  .cap-site-header-agency {
+    color: var(--header-fg-muted);
+    font-size: 12.5px;
+    line-height: 1;
+    text-box: trim-both cap alphabetic;
+  }
+  .cap-site-header-name {
+    color: var(--header-fg);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-box: trim-both cap alphabetic;
+  }
+  .cap-site-header-app {
+    font-weight: 400;
+  }
+
+  /* An admin's second row: where you are on the left ("Watch / Overview"), View site on the right,
+     so the admin's band is as tall as its public pages'. */
+  .cap-site-header-trail {
+    gap: var(--space-4);
+    font-size: 15px;
+
+    & ol {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-weight: 500;
+    }
+    & li + li::before {
+      content: "/";
+      margin-inline-end: var(--space-3);
+      color: var(--header-fg-muted);
+      font-weight: 400;
+    }
+    & a {
+      color: var(--header-fg-muted);
+      font-weight: 400;
+      text-decoration: none;
+
+      &:hover {
+        color: var(--header-fg);
+      }
+    }
+    /* View site leaves the admin: the family arrow, turned out (css/base.css). */
+    & > .cap-site-header-view {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35em;
+      margin-inline-start: auto;
+
+      &::after {
+        content: "";
+        inline-size: 0.8em;
+        block-size: 0.8em;
+        background: currentColor;
+        clip-path: var(--cap-arrow);
+        rotate: -45deg;
+
+        @media (forced-colors: active) {
+          forced-color-adjust: none;
+          background: LinkText;
+        }
+      }
+    }
+  }
+
+  /* The search box: an open field, as people look for one (NN/g), its glyph the submit button. On
+     a phone the field folds away and the glyph goes to the site's search page. */
+  .cap-site-header-search {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    inline-size: 240px;
+    block-size: 36px;
+    margin: 0;
+    border: 1px solid color-mix(in srgb, var(--header-fg) 55%, var(--header-bg));
+    border-radius: var(--radius-s);
+
+    &:focus-within {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
+    & > button {
+      display: grid;
+      place-items: center;
+      flex: none;
+      inline-size: 36px;
+      block-size: 34px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--header-fg-muted);
+      cursor: pointer;
+
+      & > svg {
+        inline-size: 18px;
+        block-size: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    }
+    & > input {
+      flex: 1;
+      min-inline-size: 0;
+      block-size: 100%;
+      padding: 0 var(--space-3) 0 0;
+      border: 0;
+      background: none;
+      color: var(--header-fg);
+      font: inherit;
+
+      &::placeholder {
+        color: var(--header-fg-muted);
+      }
+      &:focus-visible {
+        outline: none;
+      }
+    }
+  }
+
+  /* On a phone the letterhead keeps its links row, which swipes and fades at its end to show there
+     is more; the menu button and its sheet stay only where there is no links row (an admin). The
+     search field folds to its glyph. */
+  @media (max-width: 767.98px) {
+    .cap-site-header[data-variant="letterhead"] {
+      & > .cap-site-header-sections {
+        display: flex;
+        mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
+      }
+      & > .cap-site-header-trail > .cap-site-header-view {
+        display: none;
+      }
+      & .cap-site-header-tools {
+        gap: var(--space-2);
+      }
+      & .cap-site-header-search {
+        inline-size: auto;
+        border-color: transparent;
+
+        & > input {
+          display: none;
+        }
+      }
+    }
+    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) .cap-site-header-menu {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .cap-site-header :is(.cap-site-header-icon, .cap-site-header-link, .cap-site-header-switch, .cap-site-header-cta, .cap-site-header-signin),
     .cap-site-header-panel-list :is(a, button),

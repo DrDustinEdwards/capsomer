@@ -39,7 +39,7 @@ interface Example {
   kind: "example" | "only";
   height: number;
 }
-interface Data {
+export interface Data {
   version: string;
   components: Component[];
   families: Record<string, { seed: string; note: string }>;
@@ -165,18 +165,19 @@ export function band(word: string, families: Family[], size: "cover" | "section"
 }
 
 /** The site header every public page shares: its section links go to the front page's sections, so `base` is "" there and "/" elsewhere; the last goes to the theme builder. */
-export function header(base: string): string {
+export function header(base: string, current = "Home"): string {
   const links: Array<[string, string]> = [
     ...[["color", "Color"], ["type", "Type"], ["components", "Components"], ["defaults", "Defaults"], ["use", "Install"]].map(([h, t]) => [`${base}#${h}`, t] as [string, string]),
     ["/make/", "Make a theme"],
   ];
-  return `<header class="cap-site-header" data-cap="site-header" data-links="right" data-markup="">
+  return `<header class="cap-site-header" data-cap="site-header" data-variant="letterhead" data-markup="">
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
-  <a class="cap-site-header-logo home-logo" href="/" aria-label="Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span aria-hidden="true">Capsomer</span></a>
+  <a class="cap-site-header-logo home-logo" href="/" aria-label="Dustin Edwards Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span class="cap-site-header-names" aria-hidden="true"><span class="cap-site-header-agency">Dustin Edwards</span> <span class="cap-site-header-name">Capsomer</span></span></a>
   <nav class="cap-site-header-sections" aria-label="Sections"><ul>
-    ${links.map(([h, t]) => `<li><a class="cap-site-header-link" href="${h}">${t}</a></li>`).join("")}
+    ${[["/", "Home"] as [string, string], ...links].map(([h, t]) => `<li><a class="cap-site-header-link" href="${h}"${t === current ? ' aria-current="page"' : ""}>${t}</a></li>`).join("")}
   </ul></nav>
   <div class="cap-site-header-tools">
+    <form class="cap-site-header-search" role="search" aria-label="Site" action="/search/" method="get"><button type="submit" aria-label="Search Capsomer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM20 20l-3.2-3.2" /></svg></button><input type="search" name="q" placeholder="Search Capsomer" aria-label="Search Capsomer" autocomplete="off" /></form>
     <button type="button" class="cap-theme-button cap-site-header-icon cap-site-header-theme" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
       <svg class="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
       <svg class="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
@@ -198,11 +199,11 @@ export function header(base: string): string {
 
 /**
  * The running head over a public page, as the NASA Graphics Standards Manual heads its pages (1976,
- * page i): the section's number and name, and the folio at the right (capsomer/manual.css). It repeats
+ * page i): the section's number and name (a page outside the parts, such as search, has none), and the folio at the right (capsomer/manual.css). It repeats
  * what the header and the title say, so it is hidden from screen readers.
  */
 export const runningHead = (no: string, name: string, folio: string) =>
-  `<div class="home-wrap home-running" aria-hidden="true"><div class="cap-running-head"><span class="cap-running-head-name"><span class="cap-running-head-no">${esc(no)}</span>${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
+  `<div class="home-wrap home-running" aria-hidden="true"><div class="cap-running-head"><span class="cap-running-head-name">${no ? `<span class="cap-running-head-no">${esc(no)}</span>` : ""}${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
 
 /** A numbered section heading, as the manual numbers its parts. */
 const partTitle = (id: string, no: string, text: string) => `<h2 class="cap-part-title" id="${id}"><span class="cap-part-no">${no}</span>${text}</h2>`;
@@ -214,7 +215,7 @@ const CENTER = `<div class="cap-family-footer-center">
   <div><p class="cap-family-footer-center-name">Capsomer</p><p class="cap-family-footer-about">The family design system. Plain CSS, MIT licensed.</p></div>
   <div class="cap-family-footer-columns">
     <ul class="cap-family-footer-links"><li><a href="/#components">Components</a></li><li><a href="/make/">Theme builder</a></li></ul>
-    <ul class="cap-family-footer-links"><li><a href="https://github.com/DrDustinEdwards/capsomer">Source</a></li><li><a href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li></ul>
+    <ul class="cap-family-footer-links"><li><a class="cap-go" data-go="out" href="https://github.com/DrDustinEdwards/capsomer">Source</a></li><li><a class="cap-go" data-go="out" href="https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md">Changes</a></li></ul>
     <ul class="cap-family-footer-links"><li><a href="/admin/">Scaffold</a></li></ul>
   </div>
   <p class="cap-family-footer-stamp"><span>Release ${VERSION}</span></p>
@@ -240,13 +241,13 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   const tests = d.tests ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>` : `<li data-family="forest" data-live="tests" hidden><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
   return `${header("")}
 <main id="main" tabindex="-1">
-${runningHead("0", "Capsomer", `Release ${d.version}`)}
+${runningHead("1", "Overview", `Release ${d.version}`)}
 <section class="home-cover" aria-labelledby="top-h">
   ${band("Capsomer", FAMILIES, "cover")}
   <div class="home-wrap home-intro">
     <h1 id="top-h">One design system for every site and app</h1>
     <p class="home-lead">Capsomer is the palette, type and components shared by every one of Dustin Edwards's sites and apps, with the tests that keep each of them accessible in both themes. Plain CSS, MIT licensed.</p>
-    <p class="home-cta"><a class="cap-btn" data-variant="primary" href="/make/">Make your own theme</a> <span class="home-muted">From one brand color: scales, contrast checks, type, a live preview and the CSS.</span></p>
+    <p class="home-cta"><a class="cap-sign" data-variant="forward" href="/make/">Make your own theme</a> <span class="home-muted">From one brand color: scales, contrast checks, type, a live preview and the CSS.</span></p>
   </div>
   <ul class="home-wrap home-figures">
     ${figures.map(([f, label, n, note]) => `<li${fam(f)}><b>${esc(n)}</b><span class="home-figure-label">${esc(label)}</span><span>${esc(note)}</span></li>`).join("\n    ")}
@@ -439,7 +440,7 @@ export function renderComponent(d: Data, name: string): string {
     ...docHeads.map(([id, t]) => [id, t, false] as [string, string, boolean]),
     ["states-h", "Every state", false],
   ];
-  return `${header("/")}
+  return `${header("/", "Components")}
 ${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
 <div class="comp-layout">
 <nav class="comp-side" aria-label="Components">
@@ -490,8 +491,8 @@ ${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
   </section>
 
   <nav class="comp-pager" aria-label="More components">
-    ${prev ? `<a class="cap-btn" href="/components/${esc(prev.name)}/" rel="prev">${ARROW.prev}${esc(prev.title)}</a>` : "<span></span>"}
-    ${next ? `<a class="cap-btn" href="/components/${esc(next.name)}/" rel="next">${esc(next.title)}${ARROW.next}</a>` : "<span></span>"}
+    ${prev ? `<a class="cap-sign" href="/components/${esc(prev.name)}/" rel="prev">${esc(prev.title)}</a>` : "<span></span>"}
+    ${next ? `<a class="cap-sign" href="/components/${esc(next.name)}/" rel="next">${esc(next.title)}</a>` : "<span></span>"}
   </nav>
 </main>
 <nav class="comp-toc" aria-label="On this page">
