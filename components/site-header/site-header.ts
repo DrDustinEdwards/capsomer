@@ -247,6 +247,8 @@ export interface LetterheadOptions {
   search?: { action: string; label: string };
   /** The link the skip link goes to. */
   skipTo?: string;
+  /** The theme button; a page with no script follows the system's setting and leaves it out. */
+  theme?: boolean;
 }
 
 const SEARCH_GLYPH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM20 20l-3.2-3.2" /></svg>';
@@ -260,7 +262,7 @@ const THEME_BUTTON = `<button type="button" class="cap-theme-button cap-site-hea
  * A public page's letterhead as HTML: plain string building, so a static build or a server writes
  * the same markup as the React header (Dustin, 2026-10-27). `enhance` and the theme switch wire it.
  */
-export function letterheadHtml({ name, agency = "Dustin Edwards", home = "/", mark, links, current, search, skipTo = "#main" }: LetterheadOptions): string {
+export function letterheadHtml({ name, agency = "Dustin Edwards", home = "/", mark, links, current, search, skipTo = "#main", theme = true }: LetterheadOptions): string {
   const label = [agency, name].filter(Boolean).join(" ");
   const names = agency
     ? `<span class="cap-site-header-agency">${escapeHtml(agency)}</span> <span class="cap-site-header-name">${escapeHtml(name)}</span>`
@@ -275,6 +277,6 @@ export function letterheadHtml({ name, agency = "Dustin Edwards", home = "/", ma
 <a class="cap-site-header-skip" href="${escapeHtml(skipTo)}">Skip to content</a>
 <a class="cap-site-header-logo" href="${escapeHtml(home)}" aria-label="${escapeHtml(label)}">${mark}<span class="cap-site-header-names" aria-hidden="true">${names}</span></a>
 <nav class="cap-site-header-sections" aria-label="Sections"><ul>${items}</ul></nav>
-<div class="cap-site-header-tools">${field}${THEME_BUTTON}</div>
+<div class="cap-site-header-tools">${field}${theme ? THEME_BUTTON : ""}</div>
 </header>`;
 }
