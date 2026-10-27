@@ -8,6 +8,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **The letterhead keeps a 16px gap above it on public pages** (Dustin, 2026-10-27): from 768px the band sits 16px below the top of the window, at rest and pinned, with the page's ground covering the gap and the margins beside it, so it reads as a letterhead on the sheet. `scroll-padding-top` grows to match. The admin's band stays at the top edge.
 - **A fade under the pinned band** on public pages, as wide as the window, once the page has scrolled (a scroll timeline; none where unsupported).
+- **`letterheadHtml()`** (`capsomer/behavior/site-header`): a public page's letterhead as an HTML string, for static builds and servers (the Prelum specimen, the Enarratio gallery, Capsid's explorer, Carrel's public page), the way `familyFooterHtml()` writes the footer. Capsomer's own site uses it. A mark drawn without its own fill takes the site's color.
 - **The family arrow glides** under the pointer or focus: its 200ms slide never ran, because its rule put pseudo-elements inside `:is()`, which matches none, so the arrow jumped.
 - **The letterhead stays dark in dark mode** (Dustin, 2026-10-27): the band is the raised dark surface (`--raised`) with light text, instead of flipping to a light band. Its stripe keeps the site's color.
 

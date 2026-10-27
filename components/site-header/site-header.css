@@ -823,6 +823,10 @@
         block-size: 32px;
         max-inline-size: 32px;
       }
+      /* A mark drawn without its own fill takes the site's color. */
+      & > svg:not([fill]) {
+        fill: var(--on);
+      }
     }
     & > .cap-site-header-switcher {
       display: none;

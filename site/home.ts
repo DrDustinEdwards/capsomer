@@ -8,6 +8,7 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { familyFooterHtml } from "../components/family-footer/family-footer.ts";
+import { letterheadHtml } from "../components/site-header/site-header.ts";
 import { frontmatter, renderMarkdown } from "./markdown.ts";
 
 // Magenta is the public site's own family, on its root; the six are the ones it shows.
@@ -170,31 +171,13 @@ export function header(base: string, current = "Home"): string {
     ...[["color", "Color"], ["type", "Type"], ["components", "Components"], ["defaults", "Defaults"], ["use", "Install"]].map(([h, t]) => [`${base}#${h}`, t] as [string, string]),
     ["/make/", "Make a theme"],
   ];
-  return `<header class="cap-site-header" data-cap="site-header" data-variant="letterhead" data-markup="">
-  <a class="cap-site-header-skip" href="#main">Skip to content</a>
-  <a class="cap-site-header-logo home-logo" href="/" aria-label="Dustin Edwards Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span class="cap-site-header-names" aria-hidden="true"><span class="cap-site-header-agency">Dustin Edwards</span> <span class="cap-site-header-name">Capsomer</span></span></a>
-  <nav class="cap-site-header-sections" aria-label="Sections"><ul>
-    ${[["/", "Home"] as [string, string], ...links].map(([h, t]) => `<li><a class="cap-site-header-link" href="${h}"${t === current ? ' aria-current="page"' : ""}>${t}</a></li>`).join("")}
-  </ul></nav>
-  <div class="cap-site-header-tools">
-    <form class="cap-site-header-search" role="search" aria-label="Site" action="/search/" method="get"><button type="submit" aria-label="Search Capsomer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM20 20l-3.2-3.2" /></svg></button><input type="search" name="q" placeholder="Search Capsomer" aria-label="Search Capsomer" autocomplete="off" /></form>
-    <button type="button" class="cap-theme-button cap-site-header-icon cap-site-header-theme" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
-      <svg class="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
-      <svg class="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
-      <span class="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-theme-tip-text">Switch to dark theme</span><kbd>T</kbd></span>
-    </button>
-    <button type="button" class="cap-site-header-icon cap-site-header-menu" aria-label="Menu" aria-haspopup="dialog" aria-expanded="false" aria-controls="home-sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></button>
-  </div>
-  <dialog class="cap-dialog cap-site-header-sheet" data-cap="dialog" data-placement="bottom" data-size="md" id="home-sheet" aria-labelledby="home-sheet-title">
-    <div class="cap-dialog-header"><h2 id="home-sheet-title" class="cap-dialog-title cap-site-header-sheet-title" tabindex="-1">Capsomer</h2></div>
-    <div class="cap-dialog-body">
-      <nav aria-labelledby="home-sheet-title"><ul class="cap-site-header-sheet-list">
-        ${links.map(([h, t]) => `<li><a href="${h}"><span class="cap-site-header-sheet-name">${t}</span></a></li>`).join("")}
-      </ul></nav>
-    </div>
-    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only="" data-cap-part="close" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
-  </dialog>
-</header>`;
+  return letterheadHtml({
+    name: "Capsomer",
+    mark: '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg>',
+    links: [["/", "Home"], ...links],
+    current,
+    search: { action: "/search/", label: "Search Capsomer" },
+  });
 }
 
 /**
