@@ -470,12 +470,19 @@
     text-decoration: none;
     overflow-wrap: anywhere;
 
-    &[rel~="prev"]::before {
-      content: "\2190" / "";
+    /* The family arrow (css/base.css), at the sign's outer edge in the way you go. */
+    &[rel~="prev"]::before,
+    &[rel~="next"]::after {
+      content: "";
+      flex: none;
+      inline-size: 1.1em;
+      block-size: 1.1em;
+      background: currentColor;
+      clip-path: var(--cap-arrow);
     }
 
-    &[rel~="next"]::after {
-      content: "\2192" / "";
+    &[rel~="prev"]::before {
+      rotate: 180deg;
     }
 
     &[rel~="next"],
@@ -498,6 +505,12 @@
   @media (forced-colors: active) {
     .cap-sign {
       border: 1px solid LinkText;
+
+      &::before,
+      &::after {
+        forced-color-adjust: none;
+        background: LinkText;
+      }
     }
   }
 }

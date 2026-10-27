@@ -796,6 +796,8 @@
     /* Roomier than the 56px one-row header: a 64px top row and a 48px second row (Dustin, 2026-10-27). */
     --header-row: 4rem;
     --header-row-2: 3rem;
+    /* Hover grows a thin underline, kin to the current page's 2px one. */
+    --link-rule: 1px;
     --header-bg: var(--text);
     --header-fg: var(--ground);
     --header-fg-muted: color-mix(in srgb, var(--ground) 78%, var(--text));
@@ -975,8 +977,26 @@
         color: var(--header-fg);
       }
     }
+    /* View site leaves the admin: the family arrow, turned out (css/base.css). */
     & > .cap-site-header-view {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35em;
       margin-inline-start: auto;
+
+      &::after {
+        content: "";
+        inline-size: 0.8em;
+        block-size: 0.8em;
+        background: currentColor;
+        clip-path: var(--cap-arrow);
+        rotate: -45deg;
+
+        @media (forced-colors: active) {
+          forced-color-adjust: none;
+          background: LinkText;
+        }
+      }
     }
   }
 
