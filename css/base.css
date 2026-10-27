@@ -183,6 +183,22 @@
       rotate: 180deg;
     }
   }
+  /* Under the pointer or focus the arrow steps 3px the way it points, and back when you leave:
+     the one motion it has, and none under reduced motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    :is(.cap-go, .cap-sign, .cap-site-header-view):is(::before, ::after) {
+      transition: translate var(--dur-fast) var(--ease-out);
+    }
+    :is(.cap-go, .cap-sign[rel~="next"], .cap-sign[data-variant="forward"]):is(:hover, :focus-visible)::after {
+      translate: 3px 0;
+    }
+    :is(.cap-go[data-go="out"], .cap-site-header-view):is(:hover, :focus-visible)::after {
+      translate: 2px -2px;
+    }
+    :is(.cap-go[data-go="back"], .cap-sign[rel~="prev"]):is(:hover, :focus-visible)::before {
+      translate: -3px 0;
+    }
+  }
   @media (forced-colors: active) {
     .cap-go::after,
     .cap-go[data-go="back"]::before {

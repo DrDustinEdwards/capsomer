@@ -472,7 +472,8 @@
 
     /* The family arrow (css/base.css), at the sign's outer edge in the way you go. */
     &[rel~="prev"]::before,
-    &[rel~="next"]::after {
+    &[rel~="next"]::after,
+    &[data-variant="forward"]::after {
       content: "";
       flex: none;
       inline-size: 1.1em;
