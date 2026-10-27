@@ -186,8 +186,14 @@
   /* Under the pointer or focus the arrow steps 3px the way it points, and back when you leave:
      the one motion it has, and none under reduced motion. */
   @media (prefers-reduced-motion: no-preference) {
-    :is(.cap-go, .cap-sign, .cap-site-header-view):is(::before, ::after) {
-      transition: translate var(--dur-fast) var(--ease-out);
+    /* 200ms, ease-out (Material's and NN/g's range for a small hover motion: under 100ms reads as a
+       jump). Pseudo-elements cannot sit inside :is(), so each is named. */
+    .cap-go::before,
+    .cap-go::after,
+    .cap-sign::before,
+    .cap-sign::after,
+    .cap-site-header-view::after {
+      transition: translate var(--dur-base) var(--ease-out);
     }
     :is(.cap-go, .cap-sign[rel~="next"], .cap-sign[data-variant="forward"]):is(:hover, :focus-visible)::after {
       translate: 3px 0;

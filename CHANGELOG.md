@@ -4,6 +4,13 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.28.1]
+
+- **The letterhead keeps a 16px gap above it on public pages** (Dustin, 2026-10-27): from 768px the band sits 16px below the top of the window, at rest and pinned, with the page's ground covering the gap and the margins beside it, so it reads as a letterhead on the sheet. `scroll-padding-top` grows to match. The admin's band stays at the top edge.
+- **A fade under the pinned band** on public pages, as wide as the window, once the page has scrolled (a scroll timeline; none where unsupported).
+- **The family arrow glides** under the pointer or focus: its 200ms slide never ran, because its rule put pseudo-elements inside `:is()`, which matches none, so the arrow jumped.
+- **The letterhead stays dark in dark mode** (Dustin, 2026-10-27): the band is the raised dark surface (`--raised`) with light text, instead of flipping to a light band. Its stripe keeps the site's color.
+
 ## [0.28.0]
 
 - **The letterhead header** (`<SiteHeader variant="letterhead">`, `data-variant="letterhead"`; Dustin, 2026-10-27). One header for the six family sites and their admins: a dark band (light in dark mode) under an 8px stripe of the site's color, a 64px top row with the logo at the left and the names beside it ("Dustin Edwards" small over the site's name), search, the theme and, in an admin, the inbox and account in the corner (their slots stay empty on the public pages, so search and the theme never move); a 48px second row with the section links, Home first, at every width. The band stays at the top of the window while the page scrolls, on public pages and in the admin. On a public page from 768px it sits inside the page's margins, at the content's width (`--header-max`, default 74rem), with the page's ground covering the margins beside it; on a phone it runs edge to edge. In an admin it runs the full width, the logo and where you are lined up with the menu's buttons. Under 480px tall (a phone held sideways, 400% zoom) it scrolls away instead. New props: `variant`, `search`, `trail`, and `agency` and `app` on the logo. New classes: `cap-site-header-names`, `-agency`, `-name`, `-app`, `-search`, `-trail`, `-view`. The default header is unchanged.
