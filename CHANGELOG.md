@@ -11,6 +11,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **`letterheadHtml()`** (`capsomer/behavior/site-header`): a public page's letterhead as an HTML string, for static builds and servers (the Prelum specimen, the Enarratio gallery, Capsid's explorer, Carrel's public page), the way `familyFooterHtml()` writes the footer. Capsomer's own site uses it. A mark drawn without its own fill takes the site's color.
 - **The family arrow glides** under the pointer or focus: its 200ms slide never ran, because its rule put pseudo-elements inside `:is()`, which matches none, so the arrow jumped.
 - **The letterhead stays dark in dark mode** (Dustin, 2026-10-27): the band is the raised dark surface (`--raised`) with light text, instead of flipping to a light band. Its stripe keeps the site's color.
+- **Fix: an admin's letterhead row is never empty.** Without a `page` title, its second row now names the current menu entry ("Home", or "Sites / Foxhound"), where before it stood blank, which on a phone left an empty dark band.
 - **Fix: a leader index fits a phone.** A long name or fact wraps inside its row instead of pushing the page 10px wider (Capsid's front page at 360px).
 - **Fix: the footer's first social icon names itself inside the screen.** Its name opened centered on the icon and ran off a phone's left edge; the first and last now open inward.
 

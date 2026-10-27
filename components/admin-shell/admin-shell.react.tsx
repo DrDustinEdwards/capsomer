@@ -342,11 +342,12 @@ export function AdminShell(props: AdminShellProps) {
     : undefined;
 
   // The letterhead's second row: the levels above the page, else the current entry's group, then
-  // the page.
+  // the page, else the current entry, so the row never stands empty.
   const here = nav.find((e) => e.current);
+  const heading = page ?? here?.label;
   const crumbs = [
     ...(trail?.length ? trail : here?.group ? [{ label: here.group }] : []),
-    ...(page ? [{ label: page, current: true }] : []),
+    ...(heading ? [{ label: heading, current: true }] : []),
   ];
   const toSheet = (e: AdminEntry): HeaderLink => ({ id: e.id, label: e.label, href: e.href, current: e.current, icon: e.icon, count: e.count, countNote: e.countNote });
 
