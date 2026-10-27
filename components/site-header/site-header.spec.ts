@@ -112,14 +112,15 @@ eachTheme((theme) => {
     expect(parseFloat(await page.evaluate(() => getComputedStyle(document.documentElement).scrollPaddingTop))).toBeGreaterThanOrEqual(56);
   });
 
-  test("behavior: the letterhead stays whole at the top as the page scrolls; a short window lets it scroll away", async ({ page }) => {
+  test("behavior: the letterhead stays whole near the top as the page scrolls; a short window lets it scroll away", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await visitStates(page, "site-header", theme, "lh-public");
     const header = page.locator(".cap-site-header[data-variant='letterhead']");
     await header.evaluate((h) => h.after(Object.assign(document.createElement("div"), { style: "block-size: 3000px" })));
     await page.mouse.wheel(0, 600);
     await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(300);
-    expect((await header.boundingBox())!.y).toBe(0);
+    // Pinned 16px down, the letterhead's margin, with its 8px stripe inside the box.
+    expect((await header.boundingBox())!.y).toBe(16);
     await page.setViewportSize({ width: 1440, height: 400 });
     expect((await header.boundingBox())!.y).toBeLessThan(0);
   });

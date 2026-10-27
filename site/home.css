@@ -70,12 +70,6 @@ code {
   color: var(--muted);
 }
 
-/* The site header is Capsomer's own letterhead (components/site-header); the page sets only its
-   mark, in the family's color. */
-.home-logo svg {
-  fill: var(--on);
-}
-
 /* A band: a word in tiles at stepped heights, from the column's left edge to the window's right
    edge, which cuts it. Under it a stripe: ink, solid and pale for one family, or one thin band per
    family. */

@@ -76,6 +76,7 @@ export const SCALE = {
     ["rail-w-collapsed", "56px", "the shell's left menu, collapsed to icons"],
     ["top-h", "44px", "the shell's top bar (the Portal's, #215)"],
     ["header-h", "3.5rem", "the site header, 56px on every site and surface (docs/design/design-site-header.md, answer 6)"],
+    ["cap-arrow", "polygon(8.3% 41.7%, 59.2% 41.7%, 40% 22.5%, 50% 12.5%, 87.5% 50%, 50% 87.5%, 40% 77.5%, 59.2% 58.3%, 8.3% 58.3%)", "the family arrow's shape, a clip path (css/base.css): a token so a page without base.css, such as the Portal, still draws the header's arrows"],
   ],
   // The hover touches a site may turn on in its SITES entry (tokens/sites.mjs); the defaults are off.
   touch: [

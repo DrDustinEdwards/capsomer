@@ -10,6 +10,7 @@
 // moves to its first item; Up and Down move between items, Home and End go to the ends, Esc closes
 // it and focus goes back to its button.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
+import { escapeHtml } from "../email/email.ts";
 import { place } from "../popover/popover.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
@@ -227,4 +228,55 @@ export function enhance(root: ParentNode = document): () => void {
     });
   }
   return () => undo.forEach((f) => f());
+}
+
+export interface LetterheadOptions {
+  /** The site's name, bold under the agency ("Prelum"); the headquarters site passes "" and shows the agency alone. */
+  name: string;
+  /** The small line over it. */
+  agency?: string;
+  /** Where the logo goes. */
+  home?: string;
+  /** The site's mark, an inline <svg> (trusted markup). */
+  mark: string;
+  /** The section links, Home first: [href, label]. */
+  links: Array<[string, string]>;
+  /** The label of the page's own link, marked aria-current="page". */
+  current?: string;
+  /** The site's search page and the field's label ("Search Prelum"); none leaves the slot empty. */
+  search?: { action: string; label: string };
+  /** The link the skip link goes to. */
+  skipTo?: string;
+  /** The theme button; a page with no script follows the system's setting and leaves it out. */
+  theme?: boolean;
+}
+
+const SEARCH_GLYPH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM20 20l-3.2-3.2" /></svg>';
+const THEME_BUTTON = `<button type="button" class="cap-theme-button cap-site-header-icon cap-site-header-theme" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
+<svg class="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
+<svg class="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+<span class="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-theme-tip-text">Switch to dark theme</span><kbd>T</kbd></span>
+</button>`;
+
+/**
+ * A public page's letterhead as HTML: plain string building, so a static build or a server writes
+ * the same markup as the React header (Dustin, 2026-10-27). `enhance` and the theme switch wire it.
+ */
+export function letterheadHtml({ name, agency = "Dustin Edwards", home = "/", mark, links, current, search, skipTo = "#main", theme = true }: LetterheadOptions): string {
+  const label = [agency, name].filter(Boolean).join(" ");
+  const names = [agency && `<span class="cap-site-header-agency">${escapeHtml(agency)}</span>`, name && `<span class="cap-site-header-name">${escapeHtml(name)}</span>`]
+    .filter(Boolean)
+    .join(" ");
+  const items = links
+    .map(([href, text]) => `<li><a class="cap-site-header-link" href="${escapeHtml(href)}"${text === current ? ' aria-current="page"' : ""}>${escapeHtml(text)}</a></li>`)
+    .join("");
+  const field = search
+    ? `<form class="cap-site-header-search" role="search" aria-label="Site" action="${escapeHtml(search.action)}" method="get"><button type="submit" aria-label="${escapeHtml(search.label)}">${SEARCH_GLYPH}</button><input type="search" name="q" placeholder="${escapeHtml(search.label)}" aria-label="${escapeHtml(search.label)}" autocomplete="off" /></form>`
+    : "";
+  return `<header class="cap-site-header" data-cap="site-header" data-variant="letterhead" data-markup="">
+<a class="cap-site-header-skip" href="${escapeHtml(skipTo)}">Skip to content</a>
+<a class="cap-site-header-logo" href="${escapeHtml(home)}" aria-label="${escapeHtml(label)}">${mark}<span class="cap-site-header-names" aria-hidden="true">${names}</span></a>
+<nav class="cap-site-header-sections" aria-label="Sections"><ul>${items}</ul></nav>
+<div class="cap-site-header-tools">${field}${theme ? THEME_BUTTON : ""}</div>
+</header>`;
 }

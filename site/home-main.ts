@@ -193,3 +193,40 @@ if (tocLinks.length && "IntersectionObserver" in window) {
     if (target) io.observe(target);
   }
 }
+
+// The front page's header links go to its own sections, so the underline follows the section being
+// read (Home above the first), and moves at once on a click. The section counts as read once its
+// top passes a third of the way down the window.
+const headerLinks = [...document.querySelectorAll<HTMLAnchorElement>(".cap-site-header-sections a")];
+const sectionLinks = headerLinks.filter((a) => a.pathname === location.pathname && a.hash);
+const homeLink = headerLinks.find((a) => a.getAttribute("aria-current") === "page");
+if (sectionLinks.length && homeLink) {
+  const mark = (on: HTMLAnchorElement) => {
+    for (const a of [homeLink, ...sectionLinks]) {
+      if (a === on) {
+        a.setAttribute("aria-current", a === homeLink ? "page" : "location");
+        if (a !== homeLink) a.dataset.current = "";
+      } else {
+        a.removeAttribute("aria-current");
+        delete a.dataset.current;
+      }
+    }
+  };
+  let queued = false;
+  const spy = () => {
+    queued = false;
+    const line = innerHeight / 3;
+    let on = homeLink;
+    for (const a of sectionLinks) {
+      const top = document.getElementById(a.hash.slice(1))?.getBoundingClientRect().top;
+      if (top !== undefined && top <= line) on = a;
+    }
+    mark(on);
+  };
+  addEventListener("scroll", () => {
+    if (!queued) requestAnimationFrame(spy);
+    queued = true;
+  }, { passive: true });
+  for (const a of sectionLinks) a.addEventListener("click", () => mark(a));
+  spy();
+}

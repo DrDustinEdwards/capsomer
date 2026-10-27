@@ -266,8 +266,11 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* A long name or fact wraps inside the row instead of pushing it past a narrow screen. */
   .cap-leader-index-name {
+    min-inline-size: 0;
     font-weight: 700;
+    overflow-wrap: anywhere;
   }
 
   .cap-leader-index-dots {
@@ -277,7 +280,9 @@
   }
 
   .cap-leader-index-fact {
-    flex: none;
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
     font-variant-numeric: tabular-nums;
     text-align: end;
   }

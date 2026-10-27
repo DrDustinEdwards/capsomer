@@ -780,7 +780,7 @@
      the center letterhead of the NASA Graphics Standards Manual (1976, page 3.2): the agency's name
      small, the center's name bold under it. The band is the Park Service's Unigrid (Massimo
      Vignelli, 1977), whose brochures open with a black band carrying the park's name in white: here
-     in the page's text color (dark in light, light in dark), under an 8px stripe of the site's
+     in the page's text color (in dark mode the raised dark surface), under an 8px stripe of the site's
      family color. The top row is the same 64px on every
      site and in every admin, everything in it centered on the row's middle. The section
      links take a second row, at every width, so they are never hidden behind a
@@ -795,12 +795,12 @@
     --header-row-2: 3rem;
     --header-bg: var(--text);
     --header-fg: var(--ground);
-    --header-fg-muted: color-mix(in srgb, var(--ground) 78%, var(--text));
-    --header-line: color-mix(in srgb, var(--ground) 26%, var(--text));
-    --header-hover: color-mix(in srgb, var(--text), var(--ground) 14%);
-    --header-accent: var(--ground);
-    --header-avatar: var(--ground);
-    --header-avatar-fg: var(--text);
+    --header-fg-muted: color-mix(in srgb, var(--header-fg) 78%, var(--header-bg));
+    --header-line: color-mix(in srgb, var(--header-fg) 26%, var(--header-bg));
+    --header-hover: color-mix(in srgb, var(--header-bg), var(--header-fg) 14%);
+    --header-accent: var(--header-fg);
+    --header-avatar: var(--header-fg);
+    --header-avatar-fg: var(--header-bg);
     color-scheme: dark;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -822,6 +822,10 @@
       & > :is(svg, img) {
         block-size: 32px;
         max-inline-size: 32px;
+      }
+      /* A mark drawn without its own fill takes the site's color. */
+      & > svg:not([fill]) {
+        fill: var(--on);
       }
     }
     & > .cap-site-header-switcher {
@@ -905,17 +909,22 @@
       &:hover {
         background: var(--header-hover);
       }
-      &[aria-current="page"]::after {
+      &:is([aria-current="page"], [data-current])::after {
         inset-inline: var(--space-2);
       }
     }
   }
+  /* In dark mode the band stays dark rather than flipping to white (Dustin, 2026-10-27): it is the
+     same sign at night, lifted off the darker page as a raised surface (Material's dark theme
+     lightens what sits higher). Its stripe keeps the site's color. */
   :root[data-theme="dark"] .cap-site-header[data-variant="letterhead"] {
-    color-scheme: light;
+    --header-bg: var(--raised);
+    --header-fg: var(--text);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .cap-site-header[data-variant="letterhead"] {
-      color-scheme: light;
+      --header-bg: var(--raised);
+      --header-fg: var(--text);
     }
   }
   /* The whole band stays at the top of the window, on public pages and in the admin alike
@@ -929,7 +938,7 @@
   /* From 768px a public page's band sits inside the page's margins, at the content's width
      (--header-max; the site sets it), as a letterhead is printed inside the sheet's: it lines up
      with the content and the family footer and reads as a sign on the page, not the browser's bar
-     (Dustin, 2026-10-27). It still stays at the top of the window; the page's ground covers the
+     (Dustin, 2026-10-27). It stays pinned 16px below the top of the window; the page's ground covers the
      margins beside it, so nothing scrolling under shows there (a shadow is never painted under its
      own box and adds nothing to scroll). In an admin the band runs the full width, and the logo,
      the names and where you are line up with the menu's buttons, the app strip standing outside
@@ -937,7 +946,8 @@
   @media (min-width: 768px) {
     .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
       inline-size: min(100% - 2 * var(--header-gutter, 16px), var(--header-max, 74rem));
-      margin-inline: auto;
+      margin: var(--space-5) auto 0;
+      inset-block-start: var(--space-5);
 
       &::before {
         content: "";
@@ -946,7 +956,11 @@
         z-index: -1;
         pointer-events: none;
         box-shadow: 0 0 0 100vmax var(--ground);
-        clip-path: inset(0 -100vmax);
+        clip-path: inset(-100vmax -100vmax 0);
+      }
+      /* The skip link keeps to the page's top corner, above the margin. */
+      & > .cap-site-header-skip {
+        top: calc(var(--space-3) - var(--space-5) - var(--space-3));
       }
     }
     .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-trail) {
@@ -959,6 +973,28 @@
       }
     }
   }
+  /* Under a public page's pinned band, a fade, so text never looks cut off at its edge: as wide as
+     the window (a border image's outset paints without adding to scroll), and only once the page
+     has scrolled, so at rest nothing under the band is dimmed. Where scroll timelines are not
+     supported, there is no fade. */
+  @supports (animation-timeline: scroll()) {
+    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections)::after {
+      content: "";
+      position: absolute;
+      inset: 100% 0 auto;
+      block-size: 56px;
+      pointer-events: none;
+      border-image: linear-gradient(var(--ground) 20%, color-mix(in srgb, var(--ground) 60%, transparent) 55%, transparent) fill 0 / 0 / 0 100vmax;
+      animation: cap-header-fade linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 48px;
+    }
+  }
+  @keyframes cap-header-fade {
+    from {
+      opacity: 0;
+    }
+  }
   @media (max-height: 479.98px) {
     .cap-site-header[data-variant="letterhead"] {
       position: relative;
@@ -966,6 +1002,12 @@
   }
   :root:has(.cap-site-header[data-variant="letterhead"]) {
     scroll-padding-top: calc(var(--space-3) + 4rem + 3rem + var(--space-3));
+
+    @media (min-width: 768px) {
+      &:has(.cap-site-header[data-variant="letterhead"] > .cap-site-header-sections) {
+        scroll-padding-top: calc(var(--space-5) + var(--space-3) + 4rem + 3rem + var(--space-3));
+      }
+    }
 
     @media (max-height: 479.98px) {
       scroll-padding-top: 0;
@@ -1003,6 +1045,11 @@
   }
   .cap-site-header-app {
     font-weight: 400;
+  }
+  /* The headquarters site (dustinedwards.info) shows "Dustin Edwards" alone, at the agency's size:
+     the names line with no site name under it, in the band's full color. */
+  .cap-site-header-names:not(:has(.cap-site-header-name)) > .cap-site-header-agency {
+    color: var(--header-fg);
   }
 
   /* An admin's second row: where you are on the left ("Watch / Overview"), View site on the right,
@@ -1120,6 +1167,16 @@
      search field folds to its glyph. */
   @media (max-width: 767.98px) {
     .cap-site-header[data-variant="letterhead"] {
+      /* A long name ("Capsid Portal" beside an admin's four tools) wraps to two lines instead of
+         running under the tools. */
+      & > .cap-site-header-logo {
+        min-inline-size: 0;
+      }
+      & .cap-site-header-name {
+        white-space: normal;
+        line-height: 1.1;
+        text-box: none;
+      }
       & > .cap-site-header-sections {
         display: flex;
         mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
