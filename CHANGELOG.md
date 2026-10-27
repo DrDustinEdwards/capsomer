@@ -4,7 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
-- **Site only: the same head as the other family sites** (Dustin, 2026-10-27). Each page's running head is now the sign (`data-variant="sign"`): a dark panel under a magenta strip, its number on a white plate, numbered from 1 like Capsid, Enarratio, Carrel and Prelum. The section links move next to the logo, as on Capsid and Enarratio. The letter tiles stay under it.
+## [0.28.0]
+
+- **The letterhead header** (`<SiteHeader variant="letterhead">`, `data-variant="letterhead"`; Dustin, 2026-10-27). One header for the six family sites and their admins: a dark band (light in dark mode) under an 8px stripe of the site's color, a 64px top row with the logo at the left and the names beside it ("Dustin Edwards" small over the site's name), search, the theme and, in an admin, the inbox and account in the corner; a 48px second row with the section links, Home first, at every width. New props: `variant`, `search`, `trail`, and `agency` and `app` on the logo. New classes: `cap-site-header-names`, `-agency`, `-name`, `-app`, `-search`, `-trail`, `-view`. The default header is unchanged.
+- **`AdminShell` takes `letterhead` and `search`**: the header's second row shows where you are and View site, and the page bar drops its breadcrumb. `--admin-top` grows to match.
+- **Site only: the site wears the letterhead.** Its links are Home, Color, Type, Components, Defaults, Install and Make a theme; the running head is back to the plain one.
 
 ## [0.27.0]
 

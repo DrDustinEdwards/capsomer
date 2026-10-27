@@ -113,6 +113,10 @@ export interface AdminShellProps {
   // business and product), and its extras. Search and Inbox are the header's first two extras;
   // Help is a row of the account menu.
   logo?: HeaderLogo;
+  // The family letterhead (components/site-header): the band as tall as the site's public pages,
+  // its second row holding where you are and View site; `search` is the header's search box.
+  letterhead?: boolean;
+  search?: { action: string; label: string; name?: string };
   band?: "dark";
   translucent?: boolean;
   switchers?: HeaderSwitcher[];
@@ -317,7 +321,7 @@ export function AdminShell(props: AdminShellProps) {
   // own), the theme, and the account menu last.
   const logo: HeaderLogo = props.logo ?? { href: family?.href ?? apps.find((a) => a.current)?.href ?? "/", label: title, mark: family?.logo ?? apps.find((a) => a.current)?.logo };
   const extras: HeaderExtra[] = [
-    ...(onSearch ? [{ id: "search", label: "Search everything", icon: <HeaderIcon d={SEARCH_D} />, onClick: onSearch, keys: searchShortcut }] : []),
+    ...(onSearch && !props.search ? [{ id: "search", label: "Search everything", icon: <HeaderIcon d={SEARCH_D} />, onClick: onSearch, keys: searchShortcut }] : []),
     ...(inbox ? [{ id: "inbox", label: "Inbox", icon: <HeaderIcon d={INBOX_D} />, href: inbox.href, onClick: inbox.onOpen, count: inbox.count, countNote: inbox.countNote ?? "need you", keys: inbox.shortcut }] : []),
     ...(props.extras ?? []),
   ];
@@ -337,12 +341,22 @@ export function AdminShell(props: AdminShellProps) {
       }
     : undefined;
 
+  // The letterhead's second row: the levels above the page, else the current entry's group, then
+  // the page.
+  const here = nav.find((e) => e.current);
+  const crumbs = [
+    ...(trail?.length ? trail : here?.group ? [{ label: here.group }] : []),
+    ...(page ? [{ label: page, current: true }] : []),
+  ];
   const toSheet = (e: AdminEntry): HeaderLink => ({ id: e.id, label: e.label, href: e.href, current: e.current, icon: e.icon, count: e.count, countNote: e.countNote });
 
   return (
     <div ref={root} className="cap-admin" data-cap="admin-shell" data-variant={variant} data-menu={collapsed ? "collapsed" : undefined} data-transition={props.transition ? "page" : undefined}>
       <SiteHeader
         logo={logo}
+        variant={props.letterhead ? "letterhead" : undefined}
+        search={props.search}
+        trail={props.letterhead ? { crumbs: crumbs, viewSite: props.viewSite } : undefined}
         band={props.band}
         translucent={props.translucent}
         switchers={props.switchers}
@@ -448,7 +462,7 @@ export function AdminShell(props: AdminShellProps) {
       <main {...mainProps} className="cap-admin-main" id="cap-main" tabIndex={-1}>
         <div className="cap-admin-bar">
           <div className="cap-admin-bar-text">
-            {trail && trail.length > 0 ? (
+            {trail && trail.length > 0 && !props.letterhead ? (
               <nav className="cap-admin-trail" aria-label="Breadcrumb">
                 <ol>
                   {trail.map((c) => (

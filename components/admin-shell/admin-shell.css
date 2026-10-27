@@ -57,6 +57,13 @@
     grid-column: 1 / -1;
     grid-row: 1;
   }
+  /* Under the letterhead the strip and menu start below its stripe and both rows. */
+  .cap-admin:has(> .cap-site-header[data-variant="letterhead"]) {
+    --admin-top: calc(var(--space-3) + 4rem);
+  }
+  .cap-admin:has(> .cap-site-header[data-variant="letterhead"] > .cap-site-header-trail) {
+    --admin-top: calc(var(--space-3) + 4rem + 3rem);
+  }
   .cap-admin-strip {
     grid-column: 1;
     grid-row: 2;

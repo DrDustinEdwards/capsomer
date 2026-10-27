@@ -165,16 +165,16 @@ export function band(word: string, families: Family[], size: "cover" | "section"
 }
 
 /** The site header every public page shares: its section links go to the front page's sections, so `base` is "" there and "/" elsewhere; the last goes to the theme builder. */
-export function header(base: string): string {
+export function header(base: string, current = "Home"): string {
   const links: Array<[string, string]> = [
     ...[["color", "Color"], ["type", "Type"], ["components", "Components"], ["defaults", "Defaults"], ["use", "Install"]].map(([h, t]) => [`${base}#${h}`, t] as [string, string]),
     ["/make/", "Make a theme"],
   ];
-  return `<header class="cap-site-header" data-cap="site-header" data-links="left" data-markup="">
+  return `<header class="cap-site-header" data-cap="site-header" data-variant="letterhead" data-markup="">
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
-  <a class="cap-site-header-logo home-logo" href="/" aria-label="Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span aria-hidden="true">Capsomer</span></a>
+  <a class="cap-site-header-logo home-logo" href="/" aria-label="Dustin Edwards Capsomer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z"/></svg><span class="cap-site-header-names" aria-hidden="true"><span class="cap-site-header-agency">Dustin Edwards</span><span class="cap-site-header-name">Capsomer</span></span></a>
   <nav class="cap-site-header-sections" aria-label="Sections"><ul>
-    ${links.map(([h, t]) => `<li><a class="cap-site-header-link" href="${h}">${t}</a></li>`).join("")}
+    ${[["/", "Home"] as [string, string], ...links].map(([h, t]) => `<li><a class="cap-site-header-link" href="${h}"${t === current ? ' aria-current="page"' : ""}>${t}</a></li>`).join("")}
   </ul></nav>
   <div class="cap-site-header-tools">
     <button type="button" class="cap-theme-button cap-site-header-icon cap-site-header-theme" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
@@ -202,7 +202,7 @@ export function header(base: string): string {
  * what the header and the title say, so it is hidden from screen readers.
  */
 export const runningHead = (no: string, name: string, folio: string) =>
-  `<div class="home-wrap home-running" aria-hidden="true"><div class="cap-running-head" data-variant="sign"><span class="cap-running-head-name"><span class="cap-running-head-no">${esc(no)}</span>${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
+  `<div class="home-wrap home-running" aria-hidden="true"><div class="cap-running-head"><span class="cap-running-head-name"><span class="cap-running-head-no">${esc(no)}</span>${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
 
 /** A numbered section heading, as the manual numbers its parts. */
 const partTitle = (id: string, no: string, text: string) => `<h2 class="cap-part-title" id="${id}"><span class="cap-part-no">${no}</span>${text}</h2>`;
@@ -240,7 +240,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   const tests = d.tests ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>` : `<li data-family="forest" data-live="tests" hidden><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
   return `${header("")}
 <main id="main" tabindex="-1">
-${runningHead("1", "Capsomer", `Release ${d.version}`)}
+${runningHead("1", "Home", `Release ${d.version}`)}
 <section class="home-cover" aria-labelledby="top-h">
   ${band("Capsomer", FAMILIES, "cover")}
   <div class="home-wrap home-intro">
@@ -439,7 +439,7 @@ export function renderComponent(d: Data, name: string): string {
     ...docHeads.map(([id, t]) => [id, t, false] as [string, string, boolean]),
     ["states-h", "Every state", false],
   ];
-  return `${header("/")}
+  return `${header("/", "Components")}
 ${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
 <div class="comp-layout">
 <nav class="comp-side" aria-label="Components">

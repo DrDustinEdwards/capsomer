@@ -118,7 +118,7 @@ const fhDashboard: AdminShellProps = {
   onRefresh: () => undefined,
   children: null,
 };
-const ownerBase = (app: "foxhound" | "foxing", nav: AdminEntry[]): AdminShellProps => ({
+const ownerBase = (app: "foxhound" | "foxing" | "portal", nav: AdminEntry[]): AdminShellProps => ({
   app,
   variant: "owner",
   badges: { portal: { count: 2 }, carrel: { count: 3, countNote: "AI drafts waiting" }, info: { count: 1 }, ...(app === "foxhound" ? { foxing: { count: 1 } } : { foxhound: { count: 1 } }) },
@@ -319,7 +319,32 @@ function Hold({ press, children }: { press?: string; children: ReactNode }) {
   return <>{children}</>;
 }
 
-const Site = ({ family, children }: { family: "amber" | "fox"; children: ReactNode }) => (
+// The family letterhead: a teal site's public page and its admin, the names, search box and theme
+// on the same pixels in both.
+const HEX = (
+  <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" style={{ fill: "var(--on)" }}>
+    <path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" />
+  </svg>
+);
+const lhSearch = { action: "#search", label: "Search Capsid" };
+const lhPublic: SiteHeaderProps = {
+  variant: "letterhead",
+  logo: { href: "#home", label: "Capsid", agency: "Dustin Edwards", mark: HEX },
+  sections: ["Home", "Systems", "Flows", "Tools", "Numbers", "Code"].map((label, i) => ({ id: label.toLowerCase(), label, href: `#${label.toLowerCase()}`, current: i === 0 })),
+  search: lhSearch,
+  skipTo: "#main",
+};
+const lhAdmin: AdminShellProps = {
+  ...ownerBase("portal", [
+    { id: "overview", label: FIRST_PAGE, href: "#overview", icon: icon(D.grid), current: true, group: "Watch" },
+    { id: "queue", label: "Queue", href: "#queue", icon: icon(D.list), count: 5, group: "Work" },
+  ]),
+  letterhead: true,
+  search: lhSearch,
+  logo: { href: "#home", label: "Capsid", agency: "Dustin Edwards", app: "Portal", mark: HEX },
+};
+
+const Site = ({ family, children }: { family: "amber" | "fox" | "teal"; children: ReactNode }) => (
   <div className="sh-site" data-family={family}>
     {children}
   </div>
@@ -332,6 +357,13 @@ const admin = (p: AdminShellProps, key: string, tiles: Array<[string, string, st
 );
 
 const SURFACES: Record<string, () => ReactNode> = {
+  "lh-public": () => (
+    <Site family="teal">
+      <SiteHeader {...lhPublic} />
+      <Hero eyebrow="Sample" title="AI agents say it's done. Capsid checks." lead="A public page under the family letterhead: the names beside the mark, the links in a second row." />
+    </Site>
+  ),
+  "lh-admin": () => <Site family="teal">{admin(lhAdmin, "lh-admin", FH_TILES, FH_ROWS)}</Site>,
   "fh-public": () => (
     <Site family="amber">
       <SiteHeader {...fhPublic} />

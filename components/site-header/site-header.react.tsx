@@ -3,7 +3,7 @@ import { Dialog, DialogBody, DialogHeader } from "../dialog/dialog.react.tsx";
 import type { LinkProps } from "../shell/shell.react.tsx";
 import { ThemeButton } from "../theme-switch/theme-switch.react.tsx";
 import { THEME_PREF, toggleTheme } from "../theme-switch/theme-switch.ts";
-import { CHEV, Disclosure, GroupList, type HeaderExtra, type HeaderLink, HeaderTip, MENU_ICON, PERSON_ICON, SheetGroup, type SiteHeaderProps, countName, part, plainLink } from "./site-header-parts.react.tsx";
+import { CHEV, Disclosure, GroupList, type HeaderExtra, type HeaderLink, HeaderTip, MENU_ICON, PERSON_ICON, SEARCH_ICON, SheetGroup, type SiteHeaderProps, countName, part, plainLink } from "./site-header-parts.react.tsx";
 import { badgeText } from "./site-header.ts";
 
 export { countName, HeaderTip, SheetGroup } from "./site-header-parts.react.tsx";
@@ -12,7 +12,8 @@ export type { HeaderLink, HeaderGroup, HeaderLogo, HeaderSwitcher, HeaderSection
 export type { LinkProps };
 
 export function SiteHeader(props: SiteHeaderProps) {
-  const { logo, switchers = [], sections = [], links = "left", extras = [], theme = true, themePrefKey = THEME_PREF, themeKey, account, signIn, band, translucent, sticky = true, skipTo, renderLink = plainLink } = props;
+  const { logo, switchers = [], sections = [], links = "left", extras = [], theme = true, themePrefKey = THEME_PREF, themeKey, account, signIn, band, translucent, sticky = true, skipTo, renderLink = plainLink, variant, search, trail } = props;
+  const letterhead = variant === "letterhead";
   const id = useId();
   const menuButton = useRef<HTMLButtonElement>(null);
   const sheetTitle = useRef<HTMLHeadingElement>(null);
@@ -111,7 +112,7 @@ export function SiteHeader(props: SiteHeaderProps) {
 
   return (
     // data-cap-ready: React wires this header itself, so a page-wide enhance() leaves it alone.
-    <header className="cap-site-header" data-cap="site-header" data-cap-ready="" data-links={links} data-band={band} data-translucent={translucent ? "" : undefined} data-sticky={sticky ? undefined : "false"}>
+    <header className="cap-site-header" data-cap="site-header" data-cap-ready="" data-variant={variant} data-links={links} data-band={band} data-translucent={translucent ? "" : undefined} data-sticky={sticky ? undefined : "false"}>
       {skipTo ? (
         <a className="cap-site-header-skip" href={skipTo}>
           Skip to content
@@ -120,11 +121,21 @@ export function SiteHeader(props: SiteHeaderProps) {
       {renderLink({
         href: logo.href,
         className: "cap-site-header-logo",
-        "aria-label": logo.label,
+        "aria-label": letterhead ? [logo.agency, logo.label, logo.app].filter(Boolean).join(" ") : logo.label,
         children: (
           <>
             {logo.mark}
-            {logo.wordmark ?? <span aria-hidden="true">{logo.label}</span>}
+            {letterhead ? (
+              <span className="cap-site-header-names" aria-hidden="true">
+                {logo.agency ? <span className="cap-site-header-agency">{logo.agency}</span> : null}
+                <span className="cap-site-header-name">
+                  {logo.label}
+                  {logo.app ? <span className="cap-site-header-app"> {logo.app}</span> : null}
+                </span>
+              </span>
+            ) : (
+              (logo.wordmark ?? <span aria-hidden="true">{logo.label}</span>)
+            )}
           </>
         ),
       })}
@@ -203,6 +214,14 @@ export function SiteHeader(props: SiteHeaderProps) {
             ) : null}
           </div>
         ) : null}
+        {search ? (
+          <form className="cap-site-header-search" role="search" action={search.action}>
+            <button type="submit" aria-label={search.label}>
+              {SEARCH_ICON}
+            </button>
+            <input type="search" name={search.name ?? "q"} placeholder={search.label} aria-label={search.label} autoComplete="off" />
+          </form>
+        ) : null}
         {theme ? <ThemeButton prefKey={themePrefKey} shortcut={themeKey} className="cap-site-header-icon cap-site-header-theme" /> : null}
         <div className="cap-site-header-account">
           {account ? (
@@ -240,6 +259,18 @@ export function SiteHeader(props: SiteHeaderProps) {
           {MENU_ICON}
         </button>
       </div>
+      {letterhead && trail ? (
+        <div className="cap-site-header-trail">
+          <nav aria-label="You are here">
+            <ol>
+              {trail.crumbs.map((c) => (
+                <li key={c.label}>{c.href && !c.current ? renderLink({ href: c.href, children: c.label }) : <span aria-current={c.current ? "page" : undefined}>{c.label}</span>}</li>
+              ))}
+            </ol>
+          </nav>
+          {trail.viewSite ? renderLink({ href: trail.viewSite, className: "cap-site-header-view", children: "View site" }) : null}
+        </div>
+      ) : null}
       <Dialog open={sheetOpen} onOpenChange={(o) => !o && closeSheet()} placement="bottom" id={`${id}-sheet`} className="cap-site-header-sheet" aria-labelledby={`${id}-sheet-title`} initialFocus={sheetTitle}>
         <DialogHeader>
           <h2 id={`${id}-sheet-title`} className="cap-dialog-title cap-site-header-sheet-title" ref={sheetTitle} tabIndex={-1}>

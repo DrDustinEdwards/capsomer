@@ -30,6 +30,10 @@ export interface HeaderLogo {
   label: string;
   mark?: ReactNode;
   wordmark?: ReactNode;
+  // The letterhead's names: `agency` small over `label` in bold, and an admin's `app` after it in
+  // the regular weight ("Dustin Edwards" over "Capsid Portal"). The headquarters site has no agency.
+  agency?: string;
+  app?: string;
 }
 
 // A button showing where you are, opening the site's panel: Foxhound's business ("Acme Supply
@@ -117,6 +121,14 @@ export interface SiteHeaderProps {
   // Signed in: the avatar menu. Signed out: Sign in holds its place, last.
   account?: HeaderAccount;
   signIn?: { href: string; label?: string };
+  // The family letterhead: the band in the page's text color under the family's stripe, the names
+  // beside the mark, the section links in a second row at every width (components/site-header).
+  variant?: "letterhead";
+  // The search box, an open field whose glyph submits to `action` (the site's search page), with
+  // the query as `name` (default "q"). `label` names it and is its placeholder ("Search Capsid").
+  search?: { action: string; label: string; name?: string };
+  // An admin's second row in the letterhead: where you are, and View site.
+  trail?: { crumbs: Array<{ label: string; href?: string; current?: boolean }>; viewSite?: string };
   // The band: dark in both themes, and translucent over the page.
   band?: "dark";
   translucent?: boolean;
@@ -147,6 +159,7 @@ export const CHEV = (
   </svg>
 );
 export const MENU_ICON = svg(<path d="M4 7h16M4 12h16M4 17h16" />);
+export const SEARCH_ICON = svg(<path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM20 20l-3.2-3.2" />);
 export const PERSON_ICON = svg(
   <>
     <circle cx="12" cy="8" r="4" />

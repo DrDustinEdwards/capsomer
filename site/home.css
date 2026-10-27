@@ -49,8 +49,9 @@ body {
   color: var(--text);
   font: 400 17px/1.55 var(--ui);
 }
-/* The family footer keeps its own links and headings (capsomer/family-footer.css). */
-a:not(.cap-btn, .cap-family-footer a) {
+/* The family footer and the site header keep their own links (capsomer/family-footer.css,
+   capsomer/site-header.css). */
+a:not(.cap-btn, .cap-family-footer a, .cap-site-header a) {
   color: var(--accent-text);
   text-underline-offset: 3px;
 }
@@ -69,21 +70,10 @@ code {
   color: var(--muted);
 }
 
-/* The site header is Capsomer's own (components/site-header); the page sets only its mark. */
-.home-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--text);
-  font-weight: 800;
-  font-size: 1.0625rem;
-  text-decoration: none;
-
-  & svg {
-    inline-size: 22px;
-    block-size: 22px;
-    fill: var(--accent);
-  }
+/* The site header is Capsomer's own letterhead (components/site-header); the page sets only its
+   mark, in the family's color. */
+.home-logo svg {
+  fill: var(--on);
 }
 
 /* A band: a word in tiles at stepped heights, from the column's left edge to the window's right
