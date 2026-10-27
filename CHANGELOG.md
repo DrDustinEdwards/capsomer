@@ -12,6 +12,8 @@ Each release names every removed or renamed token or class, and every changed HT
 - **The family arrow glides** under the pointer or focus: its 200ms slide never ran, because its rule put pseudo-elements inside `:is()`, which matches none, so the arrow jumped.
 - **The letterhead stays dark in dark mode** (Dustin, 2026-10-27): the band is the raised dark surface (`--raised`) with light text, instead of flipping to a light band. Its stripe keeps the site's color.
 - **Fix: an admin's letterhead row is never empty.** Without a `page` title, its second row now names the current menu entry ("Home", or "Sites / Foxhound"), where before it stood blank, which on a phone left an empty dark band.
+- **Fix: a long name wraps on a phone.** "Capsid Portal" beside an admin's four header tools ran under them; under 768px the name now wraps to two lines.
+- **Fix: the header's arrows in a page without `base.css`.** The arrow's shape is now the `--cap-arrow` token in `tokens/scale.css` (moved from `css/base.css`), so the Portal, which loads the tokens but not the base, draws View site's arrow instead of a square.
 - **Fix: a leader index fits a phone.** A long name or fact wraps inside its row instead of pushing the page 10px wider (Capsid's front page at 360px).
 - **Fix: the footer's first social icon names itself inside the screen.** Its name opened centered on the icon and ran off a phone's left edge; the first and last now open inward.
 

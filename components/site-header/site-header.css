@@ -1167,6 +1167,16 @@
      search field folds to its glyph. */
   @media (max-width: 767.98px) {
     .cap-site-header[data-variant="letterhead"] {
+      /* A long name ("Capsid Portal" beside an admin's four tools) wraps to two lines instead of
+         running under the tools. */
+      & > .cap-site-header-logo {
+        min-inline-size: 0;
+      }
+      & .cap-site-header-name {
+        white-space: normal;
+        line-height: 1.1;
+        text-box: none;
+      }
       & > .cap-site-header-sections {
         display: flex;
         mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
