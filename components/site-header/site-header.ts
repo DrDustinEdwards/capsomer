@@ -190,6 +190,47 @@ export function closeSheet(header: HTMLElement): void {
   if (sheet?.open) closeDialog(sheet);
 }
 
+// The letterhead's links row comes back when a person scrolls up on purpose (NN/g's "partially
+// persistent" header; Dustin, 2026-10-27): once the band has scrolled away, 60px of scrolling up
+// pins the 48px links row to the top of the window; scrolling down, or back to where the band
+// shows, lets it go. A small wobble or a trackpad's bounce is not 60px. Returns a detach function.
+export const LINKS_BACK_PX = 60;
+export function wireLinksBack(header: HTMLElement): () => void {
+  const row = header.querySelector<HTMLElement>(":scope > .cap-site-header-sections");
+  if (header.dataset.variant !== "letterhead" || !row) return () => {};
+  let last = window.scrollY;
+  let up = 0;
+  const set = (back: boolean) => {
+    if (back === ("linksBack" in header.dataset)) return;
+    if (back) {
+      const box = header.getBoundingClientRect();
+      header.style.setProperty("--links-left", `${box.left}px`);
+      header.style.setProperty("--links-width", `${box.width}px`);
+      header.dataset.linksBack = "";
+    } else delete header.dataset.linksBack;
+  };
+  const onScroll = () => {
+    const y = window.scrollY;
+    const d = y - last;
+    last = y;
+    if (d > 0 || header.getBoundingClientRect().bottom > 0) {
+      up = 0;
+      set(false);
+      return;
+    }
+    up -= d;
+    if (up >= LINKS_BACK_PX) set(true);
+  };
+  const onResize = () => set(false);
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onResize);
+  return () => {
+    window.removeEventListener("scroll", onScroll);
+    window.removeEventListener("resize", onResize);
+    delete header.dataset.linksBack;
+  };
+}
+
 // Attaches to every [data-cap="site-header"] under root not yet attached: each panel, each
 // icon control's tip, the menu button and its sheet. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
@@ -219,6 +260,7 @@ export function enhance(root: ParentNode = document): () => void {
       if (sheet?.open && sheet.contains(t) && t.closest("a[href]")) closeDialog(sheet);
     };
     header.addEventListener("click", onClick);
+    parts.push(wireLinksBack(header));
     undo.push(() => {
       header.removeEventListener("click", onClick);
       sheet?.removeEventListener("close", onClose);

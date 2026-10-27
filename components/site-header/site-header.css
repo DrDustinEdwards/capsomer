@@ -923,6 +923,40 @@
   .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
     position: relative;
   }
+  /* The links row, back at the top of the window after a deliberate scroll up (wireLinksBack): it
+     keeps the band's box and colors, and its place in the band holds its height, so nothing under
+     it moves. It slides down where motion is allowed. */
+  .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
+    grid-template-rows: var(--header-row) var(--header-row-2);
+  }
+  .cap-site-header[data-variant="letterhead"][data-links-back] > .cap-site-header-sections {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: var(--links-left, 0);
+    z-index: calc(var(--z-sticky) + 3);
+    inline-size: var(--links-width, 100%);
+    margin: 0;
+    background: var(--header-bg);
+    border-block-start: var(--header-stripe) solid var(--on);
+    block-size: calc(var(--header-row-2) + var(--header-stripe));
+    box-shadow: var(--shadow-m);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-site-header[data-variant="letterhead"][data-links-back] > .cap-site-header-sections {
+      animation: cap-links-back var(--dur-base) var(--ease-out);
+    }
+  }
+  @keyframes cap-links-back {
+    from {
+      translate: 0 -100%;
+    }
+  }
+  @media print {
+    .cap-site-header[data-variant="letterhead"][data-links-back] > .cap-site-header-sections {
+      position: static;
+    }
+  }
+
   /* A public page's letterhead sits inside the page's margins, as a letterhead is printed inside
      the sheet's (Dustin, 2026-10-27): it lines up with the content and the family footer, and reads
      as a sign on the page rather than the browser's bar. The site sets --header-max to its content

@@ -99,7 +99,7 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
 - **The second row:** on the public pages, the section links, Home first, visible at every width (they swipe on a phone; no menu sheet). In an admin, where you are (`trail`: "Watch / Overview") and View site on the right.
 - **Search engines:** every link is a real `a href` in the server HTML.
 - **The margins:** on a public page from 768px the band sits inside the page's margins, as a letterhead is printed inside the sheet's: it lines up with the content and the family footer and reads as a sign on the page, not the browser's bar. The site sets `--header-max` to its content width (default 74rem). On a phone it runs edge to edge. In an admin it runs the full width, and the logo and where you are line up with the menu's buttons; the app strip stands outside them, like a binder's tabs.
-- A header with a links row scrolls away with the page; the admin's stays put. A 120px band kept on screen would take about a seventh of a laptop's view from reading (NN/g keeps sticky headers for constant navigation and small).
+- A header with a links row scrolls away with the page; the admin's stays put. Once the band is gone, a deliberate scroll up (60px; a wobble or a trackpad's bounce is less) brings the links row back to the top of the window with the site's stripe, and scrolling down lets it go (`wireLinksBack`, run by `enhance` and by the React header). This is NN/g's "partially persistent" header: the screen stays whole for reading, and the other sections are there the moment a person goes looking. A 120px band kept on screen would take about a seventh of a laptop's view from reading (NN/g keeps sticky headers for constant navigation and small).
 
 ## Markup
 

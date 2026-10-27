@@ -4,7 +4,7 @@ import type { LinkProps } from "../shell/shell.react.tsx";
 import { ThemeButton } from "../theme-switch/theme-switch.react.tsx";
 import { THEME_PREF, toggleTheme } from "../theme-switch/theme-switch.ts";
 import { CHEV, Disclosure, GroupList, type HeaderExtra, type HeaderLink, HeaderTip, MENU_ICON, PERSON_ICON, SEARCH_ICON, SheetGroup, type SiteHeaderProps, countName, part, plainLink } from "./site-header-parts.react.tsx";
-import { badgeText } from "./site-header.ts";
+import { badgeText, wireLinksBack } from "./site-header.ts";
 
 export { countName, HeaderTip, SheetGroup } from "./site-header-parts.react.tsx";
 export type { HeaderLink, HeaderGroup, HeaderLogo, HeaderSwitcher, HeaderSection, HeaderExtra, HeaderAccountLink, HeaderAccount, SheetPart, SiteHeaderProps } from "./site-header-parts.react.tsx";
@@ -16,11 +16,15 @@ export function SiteHeader(props: SiteHeaderProps) {
   const letterhead = variant === "letterhead";
   const id = useId();
   const menuButton = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const sheetTitle = useRef<HTMLHeadingElement>(null);
   // A picture that fails to load gives way to the initials under it.
   const [failedAvatar, setFailedAvatar] = useState<string>();
   const [sheetOpen, setSheetOpen] = useState(false);
   const closeSheet = useCallback(() => setSheetOpen(false), []);
+
+  // The letterhead's links row comes back on a deliberate scroll up.
+  useEffect(() => (headerRef.current ? wireLinksBack(headerRef.current) : undefined), [variant, sections.length]);
 
   // The theme key, where the site binds single keys: not while a person types.
   useEffect(() => {
@@ -112,7 +116,7 @@ export function SiteHeader(props: SiteHeaderProps) {
 
   return (
     // data-cap-ready: React wires this header itself, so a page-wide enhance() leaves it alone.
-    <header className="cap-site-header" data-cap="site-header" data-cap-ready="" data-variant={variant} data-links={links} data-band={band} data-translucent={translucent ? "" : undefined} data-sticky={sticky ? undefined : "false"}>
+    <header ref={headerRef} className="cap-site-header" data-cap="site-header" data-cap-ready="" data-variant={variant} data-links={links} data-band={band} data-translucent={translucent ? "" : undefined} data-sticky={sticky ? undefined : "false"}>
       {skipTo ? (
         <a className="cap-site-header-skip" href={skipTo}>
           Skip to content
