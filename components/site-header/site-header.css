@@ -784,8 +784,9 @@
      same pixels in a site's public pages and its admin, centered on the row's middle. The section
      links take a second row under a hairline, at every width, so they are never hidden behind a
      menu. The utilities run search, theme, inbox, account, with the account in the corner as in
-     Carbon, Fiori and most products, so in an admin the search box and theme sit left of where
-     the public pages have them; the logo and names never move. Two defaults change here: a header
+     Carbon, Fiori and most products; a page without an inbox or account leaves their slots empty,
+     so the logo, names, search and theme never move between the public pages and the admin. Two
+     defaults change here: a header
      with a links row scrolls away with the page (two rows sticky take too much of a phone); and
      the phone keeps the links row, which swipes, instead of the sheet. */
   .cap-site-header[data-variant="letterhead"] {
@@ -828,9 +829,29 @@
       display: none;
     }
     & > .cap-site-header-tools {
+      --header-slot: calc(36px + var(--space-4));
       grid-area: 1 / 2;
       gap: var(--space-4);
       margin: 0;
+
+      /* Search and the theme keep the places the admin gives them (Dustin, 2026-10-27): where the
+         inbox or the account is missing, its slot in the corner stays empty. Not on a phone. */
+      & > .cap-site-header-account:empty {
+        display: none;
+      }
+      @media (min-width: 768px) {
+        &:not(:has(.cap-site-header-account > *)) {
+          padding-inline-end: var(--header-slot);
+        }
+        &:not(:has(.cap-site-header-extras > *)) {
+          &:has(.cap-site-header-account > *) > .cap-site-header-account {
+            margin-inline-start: var(--header-slot);
+          }
+          &:not(:has(.cap-site-header-account > *)) {
+            padding-inline-end: calc(2 * var(--header-slot));
+          }
+        }
+      }
 
       &::before {
         display: none;
