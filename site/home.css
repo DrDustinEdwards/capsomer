@@ -981,3 +981,8 @@ h2.cap-part-title {
     color: var(--muted);
   }
 }
+.search-results mark {
+  background: none;
+  color: inherit;
+  font-weight: 700;
+}

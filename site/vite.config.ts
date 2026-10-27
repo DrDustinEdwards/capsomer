@@ -6,6 +6,7 @@ import react from "@vitejs/plugin-react";
 import { generateStates } from "../bin/states.mjs";
 import { readData, renderComponent, renderHome } from "./home.ts";
 import { renderMake } from "./make.ts";
+import { SEARCH_PAGE, renderSearch, searchIndexJson } from "./search.ts";
 import { writeHeadersFile } from "../scripts/security-headers.ts";
 import { MAKE_DESCRIPTION, discoveryFiles, siteHead } from "./seo.ts";
 
@@ -43,6 +44,7 @@ export default defineConfig({
       transformIndexHtml(html, ctx) {
         if (ctx.path.endsWith("/site/home.html")) return html.replace("<!--home-->", renderHome(data));
         if (ctx.path.endsWith("/site/make.html")) return html.replace("<!--make-->", renderMake());
+        if (ctx.path.endsWith("/site/search.html")) return html.replace("<!--search-->", renderSearch(data));
         return html.replace(/<!--component:([\w-]+)-->/, (_, name: string) => renderComponent(data, name));
       },
     },
@@ -54,6 +56,8 @@ export default defineConfig({
         if (home) home.fileName = "index.html";
         const make = bundle["site/make.html"];
         if (make) make.fileName = "make/index.html";
+        const search = bundle["site/search.html"];
+        if (search) search.fileName = "search/index.html";
         const admin = bundle["site/index.html"];
         if (admin) admin.fileName = "admin/index.html";
       },
@@ -70,7 +74,9 @@ export default defineConfig({
             ? "home"
             : ctx.path.endsWith("/site/make.html")
               ? { path: "/make/", title: "Make a theme · Capsomer", description: MAKE_DESCRIPTION }
-              : c
+              : ctx.path.endsWith("/site/search.html")
+                ? { ...SEARCH_PAGE, noindex: true }
+                : c
                 ? { path: `/components/${c.name}/`, title: `${c.title} · Capsomer`, description: c.lead }
                 : "admin";
           return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", siteHead(page));
@@ -78,6 +84,7 @@ export default defineConfig({
       },
       generateBundle() {
         for (const [fileName, source] of Object.entries(discoveryFiles(data.components.map((c) => c.name)))) this.emitFile({ type: "asset", fileName, source });
+        this.emitFile({ type: "asset", fileName: "search.json", source: searchIndexJson(data) });
       },
     },
     // The security headers and the assets' cache rule, generated from scripts/security-headers.ts
@@ -96,7 +103,7 @@ export default defineConfig({
     // its own origin only.
     assetsInlineLimit: 0,
     emptyOutDir: true,
-    rollupOptions: { input: { home: resolve(root, "site/home.html"), make: resolve(root, "site/make.html"), site: resolve(root, "site/index.html"), ...states, ...pages } },
+    rollupOptions: { input: { home: resolve(root, "site/home.html"), make: resolve(root, "site/make.html"), search: resolve(root, "site/search.html"), site: resolve(root, "site/index.html"), ...states, ...pages } },
   },
   preview: { port: 4319, strictPort: true },
 });
