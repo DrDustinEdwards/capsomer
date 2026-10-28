@@ -105,10 +105,9 @@ eachTheme((theme) => {
     await expect(current).toHaveCount(1);
     await expect(current).toHaveAccessibleName("Capsomer Scaffold");
     await expect(page.locator(".cap-admin-fresh")).toHaveText(/^Updated /);
-    // A top-level page: no trail repeating its heading. A component's page: Components, then it.
-    await expect(page.locator(".cap-admin-trail")).toHaveCount(0);
+    // The letterhead's second row says where you are: a component's page is Components, then it.
     await page.goto("./admin/#/components/shell");
-    await expect(page.locator(".cap-admin-trail li")).toHaveText(["Components", "Shell"]);
+    await expect(page.locator(".cap-site-header-trail li")).toHaveText(["Components", "Shell"]);
   });
 
   test("behavior: the site runs under its production Content-Security-Policy with no violation", async ({ page }) => {

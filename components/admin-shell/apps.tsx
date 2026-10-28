@@ -18,6 +18,9 @@ export interface FamilyApp {
   // Where the app's admin opens.
   href: string;
   logo: ReactNode;
+  // In the letterhead: the site's name and the app's ("Capsid", "Portal"), under the agency's
+  // (the headquarters' admin, "Dustin Edwards", has no agency over it).
+  names?: readonly [site: string, app: string];
 }
 
 const mark = (viewBox: string, body: ReactNode) => (
@@ -115,17 +118,17 @@ const CAPSOMER = mark(
 
 // The order every strip shows, whichever app it is in.
 export const FAMILY_APPS: readonly FamilyApp[] = [
-  { id: "portal", label: "Capsid Portal", href: "https://portal.dustinedwards.info/", logo: PORTAL },
+  { id: "portal", label: "Capsid Portal", href: "https://portal.dustinedwards.info/", logo: PORTAL, names: ["Capsid", "Portal"] },
   // Carrel's signed-in app is Desk (Dustin, 2026-10-26); carrel.dustinedwards.info is its public site.
-  { id: "carrel", label: "Carrel Desk", href: "https://desk.dustinedwards.info/", logo: CARREL },
-  { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO },
+  { id: "carrel", label: "Carrel Desk", href: "https://desk.dustinedwards.info/", logo: CARREL, names: ["Carrel", "Desk"] },
+  { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO, names: ["Dustin Edwards", "Admin"] },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
   // The x from its favicon stays until Dustin picks one of FOXHOUND_MARKS.
   { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND },
   // Foxing joins the family's admin apps in 0.9.0, seventh, before Capsomer; its mark is a
   // placeholder until Dustin picks one.
   { id: "foxing", label: "Foxing", href: "https://foxing.app/admin", logo: FOXING },
-  { id: "capsomer", label: "Capsomer Scaffold", href: "https://capsomer.dustinedwards.info/admin/", logo: CAPSOMER },
+  { id: "capsomer", label: "Capsomer Scaffold", href: "https://capsomer.dustinedwards.info/admin/", logo: CAPSOMER, names: ["Capsomer", "Scaffold"] },
 ];
 
 // The one account every admin area is signed in as, and its avatar.

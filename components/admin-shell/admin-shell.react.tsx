@@ -320,7 +320,9 @@ export function AdminShell(props: AdminShellProps) {
 
   // The header: the logo (the app's mark and name), the extras (Search, Inbox, then the app's
   // own), the theme, and the account menu last.
-  const logo: HeaderLogo = props.logo ?? { href: family?.href ?? apps.find((a) => a.current)?.href ?? "/", label: title, mark: family?.logo ?? apps.find((a) => a.current)?.logo };
+  // In the letterhead the names stack as on the public pages: the agency over the site, then the app.
+  const stacked = props.letterhead && family?.names ? { agency: family.names[0] === OWNER.name ? undefined : OWNER.name, label: family.names[0], app: family.names[1] } : { label: title };
+  const logo: HeaderLogo = props.logo ?? { href: family?.href ?? apps.find((a) => a.current)?.href ?? "/", ...stacked, mark: family?.logo ?? apps.find((a) => a.current)?.logo };
   const extras: HeaderExtra[] = [
     ...(onSearch && !props.search ? [{ id: "search", label: "Search everything", icon: <HeaderIcon d={SEARCH_D} />, onClick: onSearch, keys: searchShortcut }] : []),
     ...(inbox ? [{ id: "inbox", label: "Inbox", icon: <HeaderIcon d={INBOX_D} />, href: inbox.href, onClick: inbox.onOpen, count: inbox.count, countNote: inbox.countNote ?? "need you", keys: inbox.shortcut }] : []),

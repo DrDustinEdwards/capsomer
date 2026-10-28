@@ -63,6 +63,10 @@
   }
   .cap-admin:has(> .cap-site-header[data-variant="letterhead"] > .cap-site-header-trail) {
     --admin-top: calc(var(--space-3) + 4rem + 3rem);
+
+    @media (min-width: 768px) {
+      --admin-top: calc(var(--space-5) + var(--space-3) + 4rem + 3rem);
+    }
   }
   .cap-admin-strip {
     grid-column: 1;

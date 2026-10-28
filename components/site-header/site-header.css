@@ -944,9 +944,9 @@
      with the content and the family footer and reads as a sign on the page, not the browser's bar
      (Dustin, 2026-10-27). It stays pinned 16px below the top of the window; the page's ground covers the
      margins beside it, so nothing scrolling under shows there (a shadow is never painted under its
-     own box and adds nothing to scroll). In an admin the band runs the full width, and the logo,
-     the names and where you are line up with the menu's buttons, the app strip standing outside
-     them like a binder's tabs. */
+     own box and adds nothing to scroll). In an admin the band runs the full width, but everything in it
+     keeps the public page's pixels, so nothing moves between a site and its admin (Dustin, 2026-10-28):
+     the inbox and the account fill the slots a public page leaves empty. */
   @media (min-width: 768px) {
     .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
       inline-size: calc(min(100%, var(--page-max)) - 2 * var(--page-gutter));
@@ -968,12 +968,21 @@
       }
     }
     .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-trail) {
-      --header-side: calc(var(--rail-w-collapsed) + var(--space-3));
-      padding-inline-end: calc(var(--pad-card) + var(--space-3));
+      padding-inline: calc((100% - min(100%, var(--page-max))) / 2 + var(--page-gutter) + var(--header-side));
+      margin-block-start: var(--space-5);
+      inset-block-start: var(--space-5);
 
-      & > .cap-site-header-trail {
-        margin-inline-end: calc(-1 * (var(--pad-card) + var(--space-3)));
-        padding-inline-end: calc(var(--pad-card) + var(--space-3));
+      /* The 16px above the band, as on a public page, so nothing scrolling under shows there. */
+      &::before {
+        content: "";
+        position: absolute;
+        inset: auto 0 calc(100% + var(--header-stripe));
+        block-size: var(--space-5);
+        pointer-events: none;
+        background: var(--ground);
+      }
+      & > .cap-site-header-skip {
+        top: calc(var(--space-3) - var(--space-5) - var(--space-3));
       }
     }
   }
@@ -1031,9 +1040,7 @@
     scroll-padding-top: calc(var(--header-h) + var(--space-3));
 
     @media (min-width: 768px) {
-      &:has(.cap-site-header[data-variant="letterhead"] > .cap-site-header-sections) {
-        --header-h: calc(var(--space-5) + var(--space-3) + 4rem + 3rem);
-      }
+      --header-h: calc(var(--space-5) + var(--space-3) + 4rem + 3rem);
     }
     @media (min-width: 1080px) {
       &:has(.cap-site-header[data-variant="letterhead"] > .cap-site-header-sections) {
@@ -1080,8 +1087,10 @@
   }
   /* The headquarters site (dustinedwards.info) has no site name: "Dustin Edwards" takes the site
      name's size, weight and place, under an empty agency line, so it sits where "Capsid" or
-     "Prelum" sits on the other sites (Dustin, 2026-10-28). */
-  .cap-site-header-names:not(:has(.cap-site-header-name)) {
+     "Prelum" sits on the other sites (Dustin, 2026-10-28). Its admin, "Dustin Edwards Admin", has a name
+     and no agency, under the same empty line. */
+  .cap-site-header-names:not(:has(.cap-site-header-name)),
+  .cap-site-header-names:not(:has(.cap-site-header-agency)) {
     &::before {
       content: "\00a0";
       font-size: 12.5px;
