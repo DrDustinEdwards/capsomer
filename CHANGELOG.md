@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.33.2]
+
+- **An admin's bar reaches the top of the window in the band's color** (Dustin, 2026-10-28: "fill the gap above the stripe with the black color used below it"). The 16px above an admin's stripe was the page's ground, which read as a gap over a full-width bar.
+- **Site layer: the Portal takes the Capsid site's teal** (Dustin, 2026-10-28: "match the theme of the site"), where it was purple. Changed: `capsid-portal`'s family in `tokens/sites.mjs`; the Portal sets `data-family="teal"` on its `<html>`.
+- **Site only:** the Scaffold takes the showcase's magenta, so its stripe and accents match the public pages.
+
 ## [0.33.1]
 
 - **An app's own search keeps the search slot in the letterhead.** An admin that opens a command menu (`onSearch`, an extra with id `search`) had its search icon after the theme, in the inbox's group (the Portal's search sat at x 1240 and its theme at x 1192 at 1536px). It now sits before the theme, where a site's search form sits.

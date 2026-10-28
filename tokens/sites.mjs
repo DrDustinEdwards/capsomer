@@ -144,7 +144,7 @@ const SITES = {
     dark: { ground: "#111919" },
   },
   "capsid-portal": {
-    family: "purple",
+    family: "teal",
     on: "the Portal's <html>",
     note: "secondary text is 13px at the least on a phone (the Portal UX audit's m4), at the Portal's own 820px",
     phoneMax: "820px",
