@@ -3,7 +3,7 @@
 import { Fragment, type ReactNode, useEffect, useRef } from "react";
 import type { LinkProps } from "../shell/shell.react.tsx";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
-import { badgeText, wirePanel } from "./site-header.ts";
+import { type Suggest, badgeText, wirePanel } from "./site-header.ts";
 
 // One link in a panel, the sheet or the bottom bar. `count` is a bubble beside it (99+ past 99);
 // `countNote` says what it counts, for its accessible name: "Inbox, 4 need you".
@@ -124,9 +124,10 @@ export interface SiteHeaderProps {
   // The family letterhead: the band in the page's text color under the family's stripe, the names
   // beside the mark, the section links in a second row at every width (components/site-header).
   variant?: "letterhead";
-  // The search box, an open field whose glyph submits to `action` (the site's search page), with
-  // the query as `name` (default "q"). `label` names it and is its placeholder ("Search Capsid").
-  search?: { action: string; label: string; name?: string };
+  // Search: an icon linking to `action` (the site's search page) that opens a field under it, the
+  // query sent as `name` (default "q"). `label` names it and is its placeholder ("Search Capsid").
+  // `suggest` answers each query as it is typed, and its matches drop down under the field (wireSearch).
+  search?: { action: string; label: string; name?: string; suggest?: Suggest };
   // An admin's second row in the letterhead: where you are, and View site.
   trail?: { crumbs: Array<{ label: string; href?: string; current?: boolean }>; viewSite?: string };
   // The band: dark in both themes, and translucent over the page.

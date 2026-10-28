@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.31.0]
+
+- **Search is an icon, and it answers as you type** (Dustin, 2026-10-28). The letterhead's search box was a box on half the sites (the header differed from tab to tab), opened a second box on dustinedwards.info, and did nothing until Enter elsewhere. Now it is a magnifier icon beside the theme, only on a site with search. The icon links to the search page, so it works with no script; with script it, or "/", opens a field under it, focused. Pass `suggest(query, signal)` (the site's own search; `search.suggest` in React, `enhance(root, { suggest })` for `letterheadHtml` pages) and up to six matches drop down as the person types, then "All results for …". Up and Down mark one, Enter opens it (or, with none marked, the full results page), Esc closes the list and then the field. The field is a WAI-ARIA combobox with the marked match as its `aria-activedescendant`. New: `wireSearch`, `searchHtml`, `SearchHit`, `Suggest`, `SUGGEST_DELAY_MS`. Changed HTML contract: `.cap-site-header-search` now wraps the icon link (`.cap-site-header-search-button`, `data-cap-part="search-trigger"`) and its panel (`.cap-site-header-search-panel`) holding the form; the form is no longer in the band. A site that bound "/" to its own search should drop that binding.
+- **The section links sit in the top row where they fit** (Dustin, 2026-10-28). From 1080px a public page's letterhead is one 64px row, the links after the names (`--header-h` drops by 48px there); narrower, they keep their second row. An admin keeps its second row.
+- **Site only:** the header's search answers from the site's search index.
+
 ## [0.30.0]
 
 - **The letterhead sets `--header-h`** to what it covers when pinned (its stripe and two rows, 120px, and from 768px on a public page the 16px above it), and its scroll padding reads it. A site's sticky parts and anchors read the token instead of working the height out again (dustinedwards.info did).

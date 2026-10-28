@@ -411,6 +411,30 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-site-tabs")).toBeHidden();
   });
 
+  test("keyboard: search is an icon; it opens a focused field, matches drop down as one types, Down and Enter open one, Esc closes", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await visitStates(page, "site-header", theme, "lh-public");
+    const header = page.locator(".cap-site-header[data-variant='letterhead']").first();
+    // The links sit in the one 64px row beside the names, where they fit.
+    expect(Math.round((await header.boundingBox())!.height)).toBe(72);
+    await header.getByRole("link", { name: "Search Capsid" }).click();
+    const field = page.getByRole("combobox", { name: "Search Capsid" });
+    await expect(field).toBeFocused();
+    await field.pressSequentially("fl");
+    const options = page.getByRole("option");
+    await expect(options).toHaveText(["PageFlowsEvery flows on the site", "All results for “fl”"]);
+    await page.keyboard.press("ArrowDown");
+    await expect(field).toHaveAttribute("aria-activedescendant", (await options.first().getAttribute("id"))!);
+    await expectNoAxeViolations(page);
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/#flows$/);
+    await header.getByRole("link", { name: "Search Capsid" }).click();
+    await page.keyboard.press("Escape");
+    await page.keyboard.press("Escape");
+    await expect(field).toBeHidden();
+    await expect(header.getByRole("link", { name: "Search Capsid" })).toBeFocused();
+  });
+
   test("behavior: the hand-written header works through the behavior module: its panel, the theme button and the sheet", async ({ page }) => {
     await visitStates(page, "site-header", theme, "markup");
     const products = page.getByRole("button", { name: "Products" });

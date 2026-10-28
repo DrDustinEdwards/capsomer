@@ -1,12 +1,22 @@
-// The public pages' script (site/home.ts writes them; they read whole without it). The header and its
-// theme button are Capsomer's own site header. The front page's: the family preview, the type sample,
+// The public pages' script (site/home.ts writes them; they read whole without it). The header, its
+// search and its theme button are Capsomer's own site header. The front page's: the family preview, the type sample,
 // the component filter, the copy button and the live test count. A component page's: its examples'
 // frames, their code, the component list's filter, the page's sections marked as you read, Copy page.
+import { staticSearch, type StaticSearchIndex } from "@drdustinedwards/site-helpers/search";
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTabs } from "../components/tabs/tabs.ts";
 import { effectiveTheme, enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
 
-enhanceHeader();
+// The header's search answers from the same index the search page reads (site/search.ts), loaded
+// once, on the first word typed.
+let index: Promise<StaticSearchIndex> | undefined;
+enhanceHeader(document, {
+  suggest: async (query) => {
+    index ??= fetch("/search.json").then((r) => (r.ok ? (r.json() as Promise<StaticSearchIndex>) : Promise.reject(new Error(String(r.status)))));
+    index.catch(() => (index = undefined));
+    return staticSearch(await index, query).map((r) => ({ url: r.url, title: r.heading ? `${r.title}: ${r.heading}` : r.title, detail: r.snippet }));
+  },
+});
 enhanceTheme();
 enhanceTabs();
 

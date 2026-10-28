@@ -4,7 +4,7 @@ import type { LinkProps } from "../shell/shell.react.tsx";
 import { ThemeButton } from "../theme-switch/theme-switch.react.tsx";
 import { THEME_PREF, toggleTheme } from "../theme-switch/theme-switch.ts";
 import { CHEV, Disclosure, GroupList, type HeaderExtra, type HeaderLink, HeaderTip, MENU_ICON, PERSON_ICON, SEARCH_ICON, SheetGroup, type SiteHeaderProps, countName, part, plainLink } from "./site-header-parts.react.tsx";
-import { badgeText } from "./site-header.ts";
+import { badgeText, wireSearch } from "./site-header.ts";
 
 export { countName, HeaderTip, SheetGroup } from "./site-header-parts.react.tsx";
 export type { HeaderLink, HeaderGroup, HeaderLogo, HeaderSwitcher, HeaderSection, HeaderExtra, HeaderAccountLink, HeaderAccount, SheetPart, SiteHeaderProps } from "./site-header-parts.react.tsx";
@@ -34,6 +34,14 @@ export function SiteHeader(props: SiteHeaderProps) {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [theme, themeKey, themePrefKey]);
+
+  // Search: the icon opens the field; where the site answers queries, its matches show as one types.
+  const searchBox = useRef<HTMLDivElement>(null);
+  const suggest = search?.suggest;
+  useEffect(() => {
+    if (!searchBox.current) return;
+    return wireSearch(searchBox.current, suggest);
+  }, [suggest]);
 
   const icons = extras.filter((e) => e.kind !== "button").slice(0, 2);
   const cta = extras.find((e) => e.kind === "button");
@@ -217,12 +225,18 @@ export function SiteHeader(props: SiteHeaderProps) {
           </div>
         ) : null}
         {search ? (
-          <form className="cap-site-header-search" role="search" aria-label="Site" action={search.action}>
-            <button type="submit" aria-label={search.label}>
+          <div ref={searchBox} className="cap-site-header-search" data-cap-part="search">
+            <a className="cap-site-header-icon cap-site-header-search-button" href={search.action} aria-label={search.label} data-cap-part="search-trigger">
               {SEARCH_ICON}
-            </button>
-            <input type="search" name={search.name ?? "q"} placeholder={search.label} aria-label={search.label} autoComplete="off" />
-          </form>
+              <HeaderTip text={search.label} keys="/" />
+            </a>
+            <div className="cap-site-header-search-panel" data-align="end">
+              <form role="search" aria-label="Site" action={search.action} method="get">
+                {SEARCH_ICON}
+                <input type="search" name={search.name ?? "q"} placeholder={search.label} aria-label={search.label} autoComplete="off" enterKeyHint="search" />
+              </form>
+            </div>
+          </div>
         ) : null}
         {theme ? <ThemeButton prefKey={themePrefKey} shortcut={themeKey} className="cap-site-header-icon cap-site-header-theme" /> : null}
         <div className="cap-site-header-account">

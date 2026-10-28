@@ -326,7 +326,13 @@ const HEX = (
     <path d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9z" />
   </svg>
 );
-const lhSearch = { action: "#search", label: "Search Capsid" };
+// Search answers from a short list here; a site passes its own search (site-header.md, Search).
+const PAGES = ["Systems", "Flows", "Tools", "Numbers", "Code", "Backups", "Sessions"];
+const lhSearch = {
+  action: "#search",
+  label: "Search Capsid",
+  suggest: (q: string) => PAGES.filter((p) => p.toLowerCase().includes(q.toLowerCase())).map((p) => ({ url: `#${p.toLowerCase()}`, title: p, kind: "Page", detail: `Every ${p.toLowerCase()} on the site` })),
+};
 const lhPublic: SiteHeaderProps = {
   variant: "letterhead",
   logo: { href: "#home", label: "Capsid", agency: "Dustin Edwards", mark: HEX },
