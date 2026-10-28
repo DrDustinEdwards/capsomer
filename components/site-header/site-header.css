@@ -1087,8 +1087,10 @@
   }
   /* The headquarters site (dustinedwards.info) has no site name: "Dustin Edwards" takes the site
      name's size, weight and place, under an empty agency line, so it sits where "Capsid" or
-     "Prelum" sits on the other sites (Dustin, 2026-10-28). */
-  .cap-site-header-names:not(:has(.cap-site-header-name)) {
+     "Prelum" sits on the other sites (Dustin, 2026-10-28). Its admin, "Dustin Edwards Admin", has a name
+     and no agency, under the same empty line. */
+  .cap-site-header-names:not(:has(.cap-site-header-name)),
+  .cap-site-header-names:not(:has(.cap-site-header-agency)) {
     &::before {
       content: "\00a0";
       font-size: 12.5px;

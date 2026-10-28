@@ -18,7 +18,8 @@ export interface FamilyApp {
   // Where the app's admin opens.
   href: string;
   logo: ReactNode;
-  // In the letterhead: the site's name and the app's ("Capsid", "Portal"), under the agency's.
+  // In the letterhead: the site's name and the app's ("Capsid", "Portal"), under the agency's
+  // (the headquarters' admin, "Dustin Edwards", has no agency over it).
   names?: readonly [site: string, app: string];
 }
 
@@ -120,7 +121,7 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
   { id: "portal", label: "Capsid Portal", href: "https://portal.dustinedwards.info/", logo: PORTAL, names: ["Capsid", "Portal"] },
   // Carrel's signed-in app is Desk (Dustin, 2026-10-26); carrel.dustinedwards.info is its public site.
   { id: "carrel", label: "Carrel Desk", href: "https://desk.dustinedwards.info/", logo: CARREL, names: ["Carrel", "Desk"] },
-  { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO },
+  { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO, names: ["Dustin Edwards", "Admin"] },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
   // The x from its favicon stays until Dustin picks one of FOXHOUND_MARKS.
   { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND },
