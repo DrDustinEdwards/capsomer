@@ -73,6 +73,7 @@ export const SCALE = {
   layout: [
     ["measure", "80ch", "a reading line: WCAG 1.4.8's 80-character ceiling, about two-thirds of the family page's column at the 17px body (Dustin, 2026-10-28: the 66-character line was too narrow on the wider page)"],
     ["page-max", "1280px", "the family page width, gutters included (a 1248px column): every site's letterhead, content and footer line up on it (.cap-page). Running text keeps --measure inside it; grids, maps and tables use the rest (Dustin, 2026-10-28: \"it can be wider\")"],
+    ["fs-page", "17px", "the family page's body text (.cap-page), the same on every site; an app's rows keep --fs-body"],
     ["page-gutter", "16px", "the page's side margin inside --page-max, and the least margin at any width"],
     ["rail-w", "208px", "the shell's left menu, expanded"],
     ["rail-w-collapsed", "56px", "the shell's left menu, collapsed to icons"],

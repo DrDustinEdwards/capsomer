@@ -25,9 +25,11 @@
   .cap-muted {
     color: var(--muted);
   }
-  /* The family page: one width on every site (--page-max), so a page's content and footer line up
-     with the letterhead above them, and with every other site's. */
+  /* The family page: one width and one body size on every site (--page-max, --fs-page), so a
+     page's content and footer line up with the letterhead above them, and with every other site's. */
   .cap-page {
+    font-size: var(--fs-page);
+    line-height: 1.55;
     box-sizing: border-box;
     inline-size: 100%;
     max-inline-size: var(--page-max);

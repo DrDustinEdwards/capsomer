@@ -46,6 +46,7 @@
   /* layout */
   --measure: 80ch;
   --page-max: 1280px;
+  --fs-page: 17px;
   --page-gutter: 16px;
   --rail-w: 208px;
   --rail-w-collapsed: 56px;
