@@ -988,19 +988,26 @@
     }
   }
   /* Where the links fit beside the names (from 1080px: the longest row, Capsomer's seven, is 545px),
-     a public page's band is one 64px row, the links after the names (Dustin, 2026-10-28, once search
-     became an icon); narrower, they keep their own row. An admin keeps its second row, where you are. */
+     the band is one 64px row (Dustin, 2026-10-28, once search became an icon): a public page's links,
+     or an admin's trail with View site, after the names; narrower, they keep their own row. Home and
+     an admin's first crumb start at one place on every site, whatever the name's length (Dustin,
+     2026-10-28): --header-names clears the longest name, "Dustin Edwards Lab bench"
+     (it ends at x462 at 1536 wide), by 34px. */
   @media (min-width: 1080px) {
-    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
-      grid-template-columns: auto minmax(0, 1fr) auto;
+    .cap-site-header[data-variant="letterhead"]:has(> :is(.cap-site-header-sections, .cap-site-header-trail)) {
+      --header-names: 19.75rem;
+      grid-template-columns: minmax(var(--header-names), max-content) minmax(0, 1fr) auto;
       grid-template-rows: var(--header-row);
 
-      & > .cap-site-header-sections {
+      & > :is(.cap-site-header-sections, .cap-site-header-trail) {
         grid-area: 1 / 2;
         block-size: var(--header-row);
         margin: 0;
-        padding-inline: var(--space-6) 0;
+        padding-inline: 0;
         overflow: visible;
+      }
+      & > .cap-site-header-trail {
+        padding-inline-end: var(--space-6);
       }
       & > .cap-site-header-tools {
         grid-area: 1 / 3;
@@ -1044,7 +1051,7 @@
       --header-h: calc(var(--space-5) + var(--space-3) + 4rem + 3rem);
     }
     @media (min-width: 1080px) {
-      &:has(.cap-site-header[data-variant="letterhead"] > .cap-site-header-sections) {
+      &:has(.cap-site-header[data-variant="letterhead"] > :is(.cap-site-header-sections, .cap-site-header-trail)) {
         --header-h: calc(var(--space-5) + var(--space-3) + 4rem);
       }
     }
@@ -1106,8 +1113,8 @@
     }
   }
 
-  /* An admin's second row: where you are on the left ("Watch / Overview"), View site on the right,
-     so the admin's band is as tall as its public pages'. */
+  /* An admin's trail: where you are ("Watch / Overview") where a public page has its links, and View
+     site at its end, so the admin's band is as tall as its public pages'. */
   .cap-site-header-trail {
     gap: var(--space-4);
     font-size: 15px;
