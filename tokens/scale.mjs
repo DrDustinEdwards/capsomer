@@ -72,6 +72,8 @@ export const SCALE = {
   ],
   layout: [
     ["measure", "66ch", "a reading line (Bringhurst's 66 characters)"],
+    ["page-max", "1064px", "the family page width, gutters included: the 1032px column holds the reading line (--measure, 686px at the 17px body) in two-thirds of it, GOV.UK's two-thirds rule, rounded to the 8px grid; every site's letterhead, content and footer line up on it (.cap-page; 2026-10-28)"],
+    ["page-gutter", "16px", "the page's side margin inside --page-max, and the least margin at any width"],
     ["rail-w", "208px", "the shell's left menu, expanded"],
     ["rail-w-collapsed", "56px", "the shell's left menu, collapsed to icons"],
     ["top-h", "44px", "the shell's top bar (the Portal's, #215)"],

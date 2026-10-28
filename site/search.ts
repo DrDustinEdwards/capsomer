@@ -44,7 +44,7 @@ export function renderSearch(d: Data): string {
   return `${header("/", "")}
 <main id="main" tabindex="-1">
 ${runningHead("", "Search", `Release ${d.version}`)}
-<div class="home-wrap search-page">
+<div class="cap-page search-page">
   <h1 class="search-title" id="search-title">Search Capsomer</h1>
   <form class="search-form" role="search" aria-labelledby="search-title" action="/search/" method="get">
     <label class="cap-field-label" for="search-q">Components, docs and defaults</label>

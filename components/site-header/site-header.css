@@ -936,7 +936,7 @@
     grid-template-rows: var(--header-row) var(--header-row-2);
   }
   /* From 768px a public page's band sits inside the page's margins, at the content's width
-     (--header-max; the site sets it), as a letterhead is printed inside the sheet's: it lines up
+     (--page-max, one width for the whole family), as a letterhead is printed inside the sheet's: it lines up
      with the content and the family footer and reads as a sign on the page, not the browser's bar
      (Dustin, 2026-10-27). It stays pinned 16px below the top of the window; the page's ground covers the
      margins beside it, so nothing scrolling under shows there (a shadow is never painted under its
@@ -945,7 +945,7 @@
      them like a binder's tabs. */
   @media (min-width: 768px) {
     .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) {
-      inline-size: min(100% - 2 * var(--header-gutter, 16px), var(--header-max, 74rem));
+      inline-size: calc(min(100%, var(--page-max)) - 2 * var(--page-gutter));
       margin: var(--space-5) auto 0;
       inset-block-start: var(--space-5);
 
