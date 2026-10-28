@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.29.0]
+
+- **One page width for the family** (Dustin, 2026-10-28: "why are they all different widths"). The new `--page-max` token (1180px, gutters included) and `--page-gutter` (16px) set it, and the new `.cap-page` class wraps a page's content and footer in it, so every site's letterhead, content and footer sit on the same 1148px column at a wide window. The letterhead takes its width from `--page-max`. Removed: `--header-max` (each site set its own) and `--header-gutter`.
+- **Site only:** the front page's column is `--page-max` (it was 76rem).
+
 ## [0.28.1]
 
 - **The letterhead keeps a 16px gap above it on public pages** (Dustin, 2026-10-27): from 768px the band sits 16px below the top of the window, at rest and pinned, with the page's ground covering the gap and the margins beside it, so it reads as a letterhead on the sheet. `scroll-padding-top` grows to match. The admin's band stays at the top edge.
