@@ -1,0 +1,19 @@
+/* The family's faces, one file each with every weight (variable, latin): Schibsted Grotesk for the UI and
+   display, Martian Mono for labels and code. Every site loads these same files, so a bold name is the same
+   bold on every site (Dustin, 2026-10-28: "the footer dustin edwards is not exact in all of the sites";
+   sites had each picked their own static weights, and some had no 700). OFL 1.1, fonts/OFL-*.txt. A site
+   that inlines this file copies ../fonts/ beside it. */
+@font-face {
+  font-family: "Schibsted Grotesk";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("../fonts/schibsted-grotesk-latin-wght-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Martian Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("../fonts/martian-mono-latin-wght-normal.woff2") format("woff2");
+}
