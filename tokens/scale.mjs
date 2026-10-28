@@ -71,7 +71,7 @@ export const SCALE = {
     ["ring-width", "3px", "the soft glow around a focused field (shadcn's ring-3); the 2 px outline stays the focus indicator"],
   ],
   layout: [
-    ["measure", "90ch", "a reading line: about three-quarters of the family page's column at the 17px body (Dustin, 2026-10-28: the 66-character line was too narrow on the wider page)"],
+    ["measure", "80ch", "a reading line: WCAG 1.4.8's 80-character ceiling, about two-thirds of the family page's column at the 17px body (Dustin, 2026-10-28: the 66-character line was too narrow on the wider page)"],
     ["page-max", "1280px", "the family page width, gutters included (a 1248px column): every site's letterhead, content and footer line up on it (.cap-page). Running text keeps --measure inside it; grids, maps and tables use the rest (Dustin, 2026-10-28: \"it can be wider\")"],
     ["page-gutter", "16px", "the page's side margin inside --page-max, and the least margin at any width"],
     ["rail-w", "208px", "the shell's left menu, expanded"],
