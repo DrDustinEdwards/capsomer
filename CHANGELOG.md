@@ -7,6 +7,7 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [0.33.1]
 
 - **An app's own search keeps the search slot in the letterhead.** An admin that opens a command menu (`onSearch`, an extra with id `search`) had its search icon after the theme, in the inbox's group (the Portal's search sat at x 1240 and its theme at x 1192 at 1536px). It now sits before the theme, where a site's search form sits.
+- **An admin's names on a phone.** Under 768px the account avatar moves out of the bar into the menu's sheet, which already lists the account's rows and Sign out, and the names wrap only before the app's name: "Dustin Edwards" over "Admin" on dustinedwards.info, where it read "Dustin", "Edwards", "Admin" on three lines beside four icons.
 
 ## [0.33.0]
 
