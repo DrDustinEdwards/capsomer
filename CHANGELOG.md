@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.32.0]
+
+- **One body size for the family page: `--fs-page` (17px)** (Dustin, 2026-10-28: "pixel perfect as I move browser tab between websites"). Each site set its own body size, from 14px to 17px; `.cap-page` now sets `--fs-page` and a 1.55 leading, so text inside the page column is the same size on every site. An app's rows keep `--fs-body`. New token: `--fs-page`.
+- **The system map's caption keeps its own row.** Its `max-width` let the next item wrap up beside it, so the Capsid explorer set its own rule to undo it; the measure is now padding inside a full-width row.
+
 ## [0.31.0]
 
 - **Search is an icon, and it answers as you type** (Dustin, 2026-10-28). The letterhead's search box was a box on half the sites (the header differed from tab to tab), opened a second box on dustinedwards.info, and did nothing until Enter elsewhere. Now it is a magnifier icon beside the theme, only on a site with search. The icon links to the search page, so it works with no script; with script it, or "/", opens a field under it, focused. Pass `suggest(query, signal)` (the site's own search; `search.suggest` in React, `enhance(root, { suggest })` for `letterheadHtml` pages) and up to six matches drop down as the person types, then "All results for …". Up and Down mark one, Enter opens it (or, with none marked, the full results page), Esc closes the list and then the field. The field is a WAI-ARIA combobox with the marked match as its `aria-activedescendant`. New: `wireSearch`, `searchHtml`, `SearchHit`, `Suggest`, `SUGGEST_DELAY_MS`. Changed HTML contract: `.cap-site-header-search` now wraps the icon link (`.cap-site-header-search-button`, `data-cap-part="search-trigger"`) and its panel (`.cap-site-header-search-panel`) holding the form; the form is no longer in the band. A site that bound "/" to its own search should drop that binding.

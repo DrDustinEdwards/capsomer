@@ -27,10 +27,12 @@
     font-weight: 600;
   }
 
+  /* Its own row (a max-width here let the next item wrap up beside it and move the map when it
+     loaded); the measure is kept as padding. */
   .cap-system-map-caption {
     flex-basis: 100%;
     order: 2;
-    max-width: var(--measure);
+    padding-inline-end: max(0px, 100% - var(--measure));
     margin: 0;
     color: var(--muted);
   }

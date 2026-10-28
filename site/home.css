@@ -42,7 +42,7 @@ body {
   overflow-x: clip;
   background: var(--ground);
   color: var(--text);
-  font: 400 17px/1.55 var(--ui);
+  font: 400 var(--fs-page)/1.55 var(--ui);
 }
 /* The family footer and the site header keep their own links (capsomer/family-footer.css,
    capsomer/site-header.css). */
