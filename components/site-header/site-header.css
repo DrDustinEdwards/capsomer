@@ -972,14 +972,15 @@
       margin-block-start: var(--space-5);
       inset-block-start: var(--space-5);
 
-      /* The 16px above the band, as on a public page, so nothing scrolling under shows there. */
+      /* The 16px above the stripe, as on a public page, in the band's own color (Dustin, 2026-10-28),
+         so the admin's bar reads as one block to the window's top edge. */
       &::before {
         content: "";
         position: absolute;
         inset: auto 0 calc(100% + var(--header-stripe));
         block-size: var(--space-5);
         pointer-events: none;
-        background: var(--ground);
+        background: var(--header-bg);
       }
       & > .cap-site-header-skip {
         top: calc(var(--space-3) - var(--space-5) - var(--space-3));

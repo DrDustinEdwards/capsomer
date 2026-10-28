@@ -10,6 +10,7 @@ import "../css/fonts.css";
 import "@fontsource-variable/source-serif-4/index.css";
 import "../css/tokens.css";
 import "../css/base.css";
+import "../tokens/family-magenta.css";
 import "../css/prose.css";
 import "../tokens/themes.css";
 import "./site.css";
