@@ -7,6 +7,7 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [0.32.0]
 
 - **One body size for the family page: `--fs-page` (17px)** (Dustin, 2026-10-28: "pixel perfect as I move browser tab between websites"). Each site set its own body size, from 14px to 17px; `.cap-page` now sets `--fs-page` and a 1.55 leading, so text inside the page column is the same size on every site. An app's rows keep `--fs-body`. New token: `--fs-page`.
+- **The system map's caption keeps its own row.** Its `max-width` let the next item wrap up beside it, so the Capsid explorer set its own rule to undo it; the measure is now padding inside a full-width row.
 
 ## [0.31.0]
 
