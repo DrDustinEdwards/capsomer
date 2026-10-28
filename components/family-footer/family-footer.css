@@ -8,10 +8,12 @@
    so each site draws them in its own color; the strip marks every site in its family's color
    (tokens/family-marks.css). The two parts share one grid: a name column, then three. */
 @layer cap.components {
+  /* Its own type and spacing, never the page's, so it is the same to the pixel on every site: a
+     site's body size (14px to 17px) and its wrapper's margins stay out of it. */
   .cap-family-footer {
     margin-block-start: var(--space-8);
     padding-block-end: var(--space-6);
-    font-family: var(--ui);
+    font: 400 var(--fs-body) / 1.5 var(--ui);
 
     --family-footer-name: minmax(0, 20rem);
 

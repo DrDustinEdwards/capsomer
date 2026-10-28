@@ -8,6 +8,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **The letterhead sets `--header-h`** to what it covers when pinned (its stripe and two rows, 120px, and from 768px on a public page the 16px above it), and its scroll padding reads it. A site's sticky parts and anchors read the token instead of working the height out again (dustinedwards.info did).
 - **Site layer: the Capsid explorer and the Portal are two sites.** `data-cap-site="capsid"` is now the explorer (capsid.dustinedwards.info, teal): running text in the UI face, and its surface as the ground. The Portal is `data-cap-site="capsid-portal"` with `capsomer/site-capsid-portal.css` (its 13px secondary text on a phone, as before). Changed HTML contract: the Portal's root attribute.
+- **The family footer is the same to the pixel on every site** (Dustin, 2026-10-28): it sets its own type (`--fs-body`, 1.5 leading, the UI face) instead of taking the page's body size, which ran from 14px to 17px across the sites.
+- **The family arrow (`.cap-go`) moves to `capsomer/utilities.css`**, which `base.css` still imports, so a page that keeps its own base (dustinedwards.info) draws the footer's arrows too. It is now in the `cap.utilities` layer.
 - **Site layer: dustinedwards.info** takes its faces (the self-hosted Schibsted Grotesk, Source Serif 4 and Martian Mono), its 42rem reading line, its paper ground and its layers above its own pinned bar (`--z-sticky` 100, `--z-overlay` 800) from Capsomer, where the site had set them itself.
 
 ## [0.29.0]
