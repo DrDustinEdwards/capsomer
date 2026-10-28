@@ -105,7 +105,7 @@ eachTheme((theme) => {
     await expect(current).toHaveCount(1);
     await expect(current).toHaveAccessibleName("Capsomer Scaffold");
     await expect(page.locator(".cap-admin-fresh")).toHaveText(/^Updated /);
-    // The letterhead's second row says where you are: a component's page is Components, then it.
+    // The letterhead's trail says where you are: a component's page is Components, then it.
     await page.goto("./admin/#/components/shell");
     await expect(page.locator(".cap-site-header-trail li")).toHaveText(["Components", "Shell"]);
   });

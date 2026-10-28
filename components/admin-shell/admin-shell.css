@@ -67,6 +67,10 @@
     @media (min-width: 768px) {
       --admin-top: calc(var(--space-5) + var(--space-3) + 4rem + 3rem);
     }
+    /* From 1080px the trail shares the band's one row (site-header.css). */
+    @media (min-width: 1080px) {
+      --admin-top: calc(var(--space-5) + var(--space-3) + 4rem);
+    }
   }
   .cap-admin-strip {
     grid-column: 1;

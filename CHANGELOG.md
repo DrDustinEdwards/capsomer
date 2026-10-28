@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.34.0]
+
+- **Home and an admin's breadcrumbs start at one place on every site** (Dustin, 2026-10-28: "The home link should be in the same location on all sites and same for the breadcrumbs"). From 1080px a letterhead's first column is at least `--header-names` (19.75rem) wide, so a public page's first link and an admin's first crumb start at x 496 at 1536px whatever the site's name. Before, the links followed the name: Home sat at x 334 on Capsid, x 344 on Capsomer and x 395 on dustinedwards.info. The links' 32px start padding is gone; the column replaces it.
+- **An admin's band is one row from 1080px, like a public page's.** The trail ("Components / Shell") sits where a public page has its links, and View site sits at its end, 36px before search. Before, both had a 48px second row. Changed: `--header-h` and `--admin-top` are 88px in an admin from 1080px (136px from 768px to 1080px, where the trail keeps its row).
+
 ## [0.33.2]
 
 - **An admin's bar reaches the top of the window in the band's color** (Dustin, 2026-10-28: "fill the gap above the stripe with the black color used below it"). The 16px above an admin's stripe was the page's ground, which read as a gap over a full-width bar.
