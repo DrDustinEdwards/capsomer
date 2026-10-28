@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.34.1]
+
+- **A short page's letterhead sits on the same pixels as a long page's.** A page with a letterhead keeps the scrollbar's room (`scrollbar-gutter: stable`), so a page too short to scroll no longer shifts the band half a scrollbar (7px in Chrome on Windows) to the right. Dustin saw it on the dustinedwards.info admin's Drafts list (2026-10-28).
+
 ## [0.34.0]
 
 - **Home and an admin's breadcrumbs start at one place on every site** (Dustin, 2026-10-28: "The home link should be in the same location on all sites and same for the breadcrumbs"). From 1080px a letterhead's first column is at least `--header-names` (19.75rem) wide, so a public page's first link and an admin's first crumb start at x 496 at 1536px whatever the site's name. Before, the links followed the name: Home sat at x 334 on Capsid, x 344 on Capsomer and x 395 on dustinedwards.info. The links' 32px start padding is gone; the column replaces it.

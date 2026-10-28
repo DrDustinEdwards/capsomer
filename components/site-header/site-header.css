@@ -1045,6 +1045,10 @@
      above it. A page's own sticky parts and anchors read it, so no site works it out again. */
   :root:has(.cap-site-header[data-variant="letterhead"]) {
     --header-h: calc(var(--space-3) + 4rem + 3rem);
+    /* Every page keeps the scrollbar's room, so a short page with no scrollbar centers the letterhead on
+       the same pixels as a long one; without it a short admin page sat half a scrollbar to the right
+       (Dustin, 2026-10-28). */
+    scrollbar-gutter: stable;
     scroll-padding-top: calc(var(--header-h) + var(--space-3));
 
     @media (min-width: 768px) {
