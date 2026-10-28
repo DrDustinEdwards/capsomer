@@ -1294,15 +1294,22 @@
      search icon stays. */
   @media (max-width: 767.98px) {
     .cap-site-header[data-variant="letterhead"] {
-      /* A long name ("Capsid Portal" beside an admin's four tools) wraps to two lines instead of
-         running under the tools. */
+      /* An admin's name keeps the site's name whole and moves the app's to the next line where the
+         two do not fit ("Dustin Edwards" over "Admin", never "Dustin" over "Edwards"). The account is in
+         the menu's sheet here, so the bar holds search, theme and the menu and the names have room. */
       & > .cap-site-header-logo {
         min-inline-size: 0;
       }
       & .cap-site-header-name {
-        white-space: normal;
+        white-space: nowrap;
         line-height: 1.1;
         text-box: none;
+      }
+      & .cap-site-header-app {
+        white-space: normal;
+      }
+      &:not(:has(> .cap-site-header-sections)) .cap-site-header-tools:has(> .cap-site-header-menu) > .cap-site-header-account {
+        display: none;
       }
       & > .cap-site-header-sections {
         display: flex;

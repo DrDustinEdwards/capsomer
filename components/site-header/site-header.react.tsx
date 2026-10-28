@@ -43,7 +43,10 @@ export function SiteHeader(props: SiteHeaderProps) {
     return wireSearch(searchBox.current, suggest);
   }, [suggest]);
 
-  const icons = extras.filter((e) => e.kind !== "button").slice(0, 2);
+  // In the letterhead an app's own search (an extra with id "search", say a command menu) takes the
+  // search slot before the theme, where a site's search form sits, so it never moves between them.
+  const ownSearch = letterhead && !search ? extras.find((e) => e.id === "search" && e.kind !== "button") : undefined;
+  const icons = extras.filter((e) => e.kind !== "button" && e !== ownSearch).slice(0, 2);
   const cta = extras.find((e) => e.kind === "button");
   const signOutLabel = account ? `Sign out (${account.name})` : "Sign out";
 
@@ -210,6 +213,7 @@ export function SiteHeader(props: SiteHeaderProps) {
         </nav>
       ) : null}
       <div className="cap-site-header-tools">
+        {ownSearch ? extra(ownSearch) : null}
         {icons.length > 0 || cta ? (
           <div className="cap-site-header-extras">
             {icons.map(extra)}
