@@ -1000,12 +1000,15 @@
       position: relative;
     }
   }
+  /* --header-h is what the pinned letterhead covers: its stripe and two rows, and on a public page from 768px the 16px
+     above it. A page's own sticky parts and anchors read it, so no site works it out again. */
   :root:has(.cap-site-header[data-variant="letterhead"]) {
-    scroll-padding-top: calc(var(--space-3) + 4rem + 3rem + var(--space-3));
+    --header-h: calc(var(--space-3) + 4rem + 3rem);
+    scroll-padding-top: calc(var(--header-h) + var(--space-3));
 
     @media (min-width: 768px) {
       &:has(.cap-site-header[data-variant="letterhead"] > .cap-site-header-sections) {
-        scroll-padding-top: calc(var(--space-5) + var(--space-3) + 4rem + 3rem + var(--space-3));
+        --header-h: calc(var(--space-5) + var(--space-3) + 4rem + 3rem);
       }
     }
 

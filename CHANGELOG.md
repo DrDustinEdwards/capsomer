@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.30.0]
+
+- **The letterhead sets `--header-h`** to what it covers when pinned (its stripe and two rows, 120px, and from 768px on a public page the 16px above it), and its scroll padding reads it. A site's sticky parts and anchors read the token instead of working the height out again (dustinedwards.info did).
+- **Site layer: the Capsid explorer and the Portal are two sites.** `data-cap-site="capsid"` is now the explorer (capsid.dustinedwards.info, teal): running text in the UI face, and its surface as the ground. The Portal is `data-cap-site="capsid-portal"` with `capsomer/site-capsid-portal.css` (its 13px secondary text on a phone, as before). Changed HTML contract: the Portal's root attribute.
+- **Site layer: dustinedwards.info** takes its faces (the self-hosted Schibsted Grotesk, Source Serif 4 and Martian Mono), its 42rem reading line, its paper ground and its layers above its own pinned bar (`--z-sticky` 100, `--z-overlay` 800) from Capsomer, where the site had set them itself.
+
 ## [0.29.0]
 
 - **One page width for the family** (Dustin, 2026-10-28: "why are they all different widths"). The new `--page-max` token (1064px, gutters included) and `--page-gutter` (16px) set it, and the new `.cap-page` class wraps a page's content and footer in it, so every site's letterhead, content and footer sit on the same 1032px column at a wide window. The width comes from the reading line, not taste: the column is the measure (66ch, 686px at the 17px body) divided by two-thirds, GOV.UK's rule that a page's main text takes two-thirds of the column, rounded to the 8px grid. The letterhead takes its width from `--page-max`. Removed: `--header-max` (each site set its own) and `--header-gutter`.

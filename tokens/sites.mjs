@@ -29,8 +29,15 @@ const SITES = {
   dustinedwards: {
     family: "purple",
     on: "<html>",
-    note: "the public charts keep their look from before Enarratio 0.3 (Enarratio's own literals)",
+    note: "the site's self-hosted faces (sans for the UI, the report's serif for running text), its 42rem reading line, its paper ground, layers above its own pinned bar, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
     all: {
+      ui: '"Schibsted Grotesk Web", "Inter", "Schibsted Grotesk Fallback", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+      display: '"Schibsted Grotesk Web", "Inter", "Schibsted Grotesk Fallback", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+      mono: '"Martian Mono Web", "Martian Mono Fallback", ui-monospace, Menlo, Consolas, monospace',
+      prose: '"Source Serif 4 Web", "Source Serif 4 Web Fallback", Georgia, "Times New Roman", serif',
+      measure: "42rem",
+      "z-sticky": "100",
+      "z-overlay": "800",
       "enarratio-font-size": "1rem",
       "enarratio-font-size-small": "0.875em",
       "enarratio-line-height-tooltip": "1.35",
@@ -54,6 +61,8 @@ const SITES = {
       "enarratio-ease-grow": "cubic-bezier(0.2, 0.7, 0.3, 1)",
       "enarratio-ease-out": "ease-out",
     },
+    light: { ground: "#fdfdfe" },
+    dark: { ground: "#0e0c12" },
   },
   foxhound: {
     family: "amber",
@@ -130,6 +139,16 @@ const SITES = {
     },
   },
   capsid: {
+    family: "teal",
+    on: "the explorer's <html> (capsid.dustinedwards.info)",
+    note: "running text in the UI face, on the surface as the ground, as the explorer's board draws them",
+    all: {
+      prose: '"Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+    },
+    light: { ground: "#fbfefe" },
+    dark: { ground: "#111919" },
+  },
+  "capsid-portal": {
     family: "purple",
     on: "the Portal's <html>",
     note: "secondary text is 13px at the least on a phone (the Portal UX audit's m4), at the Portal's own 820px",
