@@ -3,7 +3,6 @@
    plain type on the ground. Colors are the families' tokens only, so both themes and every
    family pass the palette generator's pairs (tokens/palette.mjs). */
 @import "../css/fonts.css";
-@import "@fontsource-variable/source-serif-4/index.css";
 @import "../css/tokens.css";
 @import "../css/base.css";
 @import "../css/families.css";
