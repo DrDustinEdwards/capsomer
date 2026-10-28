@@ -1,11 +1,7 @@
 // Loaded by every component's states.html. It brings in the fonts, the tokens, the base
 // and every component's CSS, and sets the theme from ?theme=light|dark so the site can
 // show a page in either theme and the tests can visit both.
-import "@fontsource/schibsted-grotesk/400.css";
-import "@fontsource/schibsted-grotesk/500.css";
-import "@fontsource/schibsted-grotesk/600.css";
-import "@fontsource/schibsted-grotesk/800.css";
-import "@fontsource/martian-mono/400.css";
+import "../css/fonts.css";
 import "@fontsource-variable/source-serif-4/index.css";
 import "../css/tokens.css";
 import "../css/base.css";

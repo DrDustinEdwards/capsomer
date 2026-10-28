@@ -6,11 +6,7 @@
 import { StrictMode, useEffect, useMemo, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
-import "@fontsource/schibsted-grotesk/400.css";
-import "@fontsource/schibsted-grotesk/500.css";
-import "@fontsource/schibsted-grotesk/600.css";
-import "@fontsource/schibsted-grotesk/800.css";
-import "@fontsource/martian-mono/400.css";
+import "../css/fonts.css";
 import "@fontsource-variable/source-serif-4/index.css";
 import "../css/tokens.css";
 import "../css/base.css";

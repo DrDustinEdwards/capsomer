@@ -29,13 +29,8 @@ const SITES = {
   dustinedwards: {
     family: "purple",
     on: "<html>",
-    note: "the site's self-hosted faces (sans for the UI, the report's serif for running text), its 42rem reading line, its paper ground, layers above its own pinned bar, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
+    note: "its paper ground, layers above its own pinned bar, and the public charts' look from before Enarratio 0.3 (Enarratio's own literals)",
     all: {
-      ui: '"Schibsted Grotesk Web", "Inter", "Schibsted Grotesk Fallback", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-      display: '"Schibsted Grotesk Web", "Inter", "Schibsted Grotesk Fallback", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-      mono: '"Martian Mono Web", "Martian Mono Fallback", ui-monospace, Menlo, Consolas, monospace',
-      prose: '"Source Serif 4 Web", "Source Serif 4 Web Fallback", Georgia, "Times New Roman", serif',
-      measure: "42rem",
       "z-sticky": "100",
       "z-overlay": "800",
       "enarratio-font-size": "1rem",

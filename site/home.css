@@ -2,10 +2,7 @@
    big for the page, cut by its right edge, open the page and each section; everything else is
    plain type on the ground. Colors are the families' tokens only, so both themes and every
    family pass the palette generator's pairs (tokens/palette.mjs). */
-@import "@fontsource/schibsted-grotesk/400.css";
-@import "@fontsource/schibsted-grotesk/600.css";
-@import "@fontsource/schibsted-grotesk/800.css";
-@import "@fontsource/martian-mono/400.css";
+@import "../css/fonts.css";
 @import "@fontsource-variable/source-serif-4/index.css";
 @import "../css/tokens.css";
 @import "../css/base.css";

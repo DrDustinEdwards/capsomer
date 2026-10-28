@@ -6,6 +6,7 @@ import { groups, plainLink, useCollapsedPref, type LinkProps } from "../shell/sh
 import { SheetGroup, SiteHeader, SiteTabs, type HeaderAccount, type HeaderExtra, type HeaderLink, type HeaderLogo, type HeaderSwitcher } from "../site-header/site-header.react.tsx";
 import { countName as headerCountName, TipKeys } from "../site-header/site-header-parts.react.tsx";
 import { applyStoredTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
+import type { Suggest } from "../site-header/site-header.ts";
 import { badgeText, jumpTarget } from "./admin-shell.ts";
 import { FAMILY_APPS, FIRST_PAGE, FOXHOUND_MARKS, OWNER, type FamilyAppId } from "./apps.tsx";
 
@@ -114,9 +115,9 @@ export interface AdminShellProps {
   // Help is a row of the account menu.
   logo?: HeaderLogo;
   // The family letterhead (components/site-header): the band as tall as the site's public pages,
-  // its second row holding where you are and View site; `search` is the header's search box.
+  // its second row holding where you are and View site; `search` is the header's search icon and field.
   letterhead?: boolean;
-  search?: { action: string; label: string; name?: string };
+  search?: { action: string; label: string; name?: string; suggest?: Suggest };
   band?: "dark";
   translucent?: boolean;
   switchers?: HeaderSwitcher[];
