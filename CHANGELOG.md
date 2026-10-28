@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.33.0]
+
+- **An admin's letterhead keeps the public page's pixels** (Dustin, 2026-10-28: "it is full screen yet all the components need to stay in place"). The admin band still runs the full width, but from 768px its logo, names, search, theme and second row sit exactly where a public page's do: 16px down from the top, inside the 1280px page column. The inbox and the account take the two slots a public page leaves empty. Before, the logo lined up with the menu (x 64 at 1536px) and the band started at the top of the window. `--header-h` is 136px in an admin from 768px.
+- **An admin's names stack as on the public pages**: "Dustin Edwards" over the site's name in bold, then the app's name in the regular weight ("Capsid Portal", "Carrel Desk", "Capsomer Scaffold"). Before, the admin showed its name on one line with no agency. New: `FamilyApp.names`.
+- **Site only:** the Scaffold (`/admin/`) uses the letterhead, with search and View site.
+
 ## [0.32.0]
 
 - **One body size for the family page: `--fs-page` (17px)** (Dustin, 2026-10-28: "pixel perfect as I move browser tab between websites"). Each site set its own body size, from 14px to 17px; `.cap-page` now sets `--fs-page` and a 1.55 leading, so text inside the page column is the same size on every site. An app's rows keep `--fs-body`. New token: `--fs-page`.

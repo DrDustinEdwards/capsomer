@@ -357,6 +357,9 @@ function App() {
     <ResultsContext.Provider value={RESULTS}>
       <AdminShell
         app="capsomer"
+        letterhead
+        viewSite="/"
+        search={{ action: "/search/", label: "Search Capsomer" }}
         nav={nav}
         tabs={tabs}
         page={pageName}
