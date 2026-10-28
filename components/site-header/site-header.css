@@ -819,9 +819,13 @@
       max-inline-size: 100%;
       overflow: visible;
 
+      /* The mark fills one 32px square on every site, so the names start at the same place
+         whatever the mark's shape. */
       & > :is(svg, img) {
+        flex: none;
+        inline-size: 32px;
         block-size: 32px;
-        max-inline-size: 32px;
+        object-fit: contain;
       }
       /* A mark drawn without its own fill takes the site's color. */
       & > svg:not([fill]) {
@@ -1074,10 +1078,22 @@
   .cap-site-header-app {
     font-weight: 400;
   }
-  /* The headquarters site (dustinedwards.info) shows "Dustin Edwards" alone, at the agency's size:
-     the names line with no site name under it, in the band's full color. */
-  .cap-site-header-names:not(:has(.cap-site-header-name)) > .cap-site-header-agency {
-    color: var(--header-fg);
+  /* The headquarters site (dustinedwards.info) has no site name: "Dustin Edwards" takes the site
+     name's size, weight and place, under an empty agency line, so it sits where "Capsid" or
+     "Prelum" sits on the other sites (Dustin, 2026-10-28). */
+  .cap-site-header-names:not(:has(.cap-site-header-name)) {
+    &::before {
+      content: "\00a0";
+      font-size: 12.5px;
+      line-height: 1;
+      text-box: trim-both cap alphabetic;
+    }
+    & > .cap-site-header-agency {
+      color: var(--header-fg);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
   }
 
   /* An admin's second row: where you are on the left ("Watch / Overview"), View site on the right,

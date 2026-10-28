@@ -44,8 +44,8 @@
   --focus-offset: 2px;
   --ring-width: 3px;
   /* layout */
-  --measure: 66ch;
-  --page-max: 1064px;
+  --measure: 90ch;
+  --page-max: 1280px;
   --page-gutter: 16px;
   --rail-w: 208px;
   --rail-w-collapsed: 56px;
