@@ -104,13 +104,13 @@ export function renderMake(): string {
 ${runningHead("6", "Make a theme", "From one color")}
 <section class="make-top" aria-labelledby="make-h">
   ${band("Make", ["magenta"], "section")}
-  <div class="home-wrap home-intro">
+  <div class="cap-page home-intro">
     <h1 id="make-h">Make a theme from one color</h1>
     <p class="home-lead">Pick a brand color and get a full light and dark theme: two 12-step scales, every text and control color, checked against WCAG 2.2 as you go. Choose the faces, text size and corners, see them on real components, then take the CSS or the tokens. This page takes your theme as you go. It runs Capsomer's own generator in your browser, and nothing you choose leaves it.</p>
     <noscript><p class="cap-banner" data-tone="warn"><span class="cap-banner-text">The theme builder needs JavaScript.</span></p></noscript>
   </div>
 </section>
-<div class="home-wrap make-grid">
+<div class="cap-page make-grid">
   <form class="make-controls" aria-label="Theme settings" data-cap-part="controls">
     ${select("mk-preset", "Start from", presets)}
     <fieldset class="make-group">

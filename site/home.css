@@ -31,11 +31,10 @@
 @import "../components/family-footer/family-footer.css";
 
 :root {
-  --home-max: var(--page-max);
-  --home-gut: max(16px, env(safe-area-inset-left, 0px));
-  --home-gut-r: max(16px, env(safe-area-inset-right, 0px));
+  --home-gut: max(var(--page-gutter), env(safe-area-inset-left, 0px));
+  --home-gut-r: max(var(--page-gutter), env(safe-area-inset-right, 0px));
   /* Where the page's column starts, so a band can start there and run to the window's edge. */
-  --home-start: max(var(--home-gut), calc((100vw - var(--home-max)) / 2 + var(--home-gut)));
+  --home-start: max(var(--home-gut), calc((100vw - var(--page-max)) / 2 + var(--home-gut)));
 }
 /* clip, not hidden: hidden makes a scroll container, and the sticky header would stop sticking. */
 html {
@@ -56,14 +55,6 @@ a:not(.cap-btn, .cap-sign, .cap-family-footer a, .cap-site-header a) {
 }
 code {
   font: 0.85em var(--mono);
-}
-.home-wrap {
-  box-sizing: border-box;
-  inline-size: 100%;
-  max-width: var(--home-max);
-  margin-inline: auto;
-  padding-left: var(--home-gut);
-  padding-right: var(--home-gut-r);
 }
 .home-muted {
   color: var(--muted);
@@ -659,16 +650,12 @@ h2:not(.cap-family-footer-heading) {
   }
 }
 /* A component's own page, laid out as shadcn/ui's docs: every component on the left, the page's
-   sections on the right, the component in the middle, each example live with its markup under it. */
+   sections on the right, the component in the middle, each example live with its markup under it.
+   It keeps to the family page (.cap-page), so the menus line up with the letterhead's edges. */
 .comp-layout {
   display: grid;
-  grid-template-columns: 14rem minmax(0, 46rem) 13rem;
-  justify-content: center;
-  gap: var(--space-8);
-  box-sizing: border-box;
-  max-width: 90rem;
-  margin-inline: auto;
-  padding-inline: var(--home-gut) var(--home-gut-r);
+  grid-template-columns: 13rem minmax(0, 1fr) 11rem;
+  gap: var(--space-6);
 }
 .comp-side,
 .comp-toc {
@@ -860,7 +847,7 @@ h2:not(.cap-family-footer-heading) {
 }
 @media (max-width: 1279.98px) {
   .comp-layout {
-    grid-template-columns: 14rem minmax(0, 1fr);
+    grid-template-columns: 13rem minmax(0, 1fr);
   }
   .comp-toc {
     display: none;

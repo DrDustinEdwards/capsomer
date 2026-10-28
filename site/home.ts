@@ -186,7 +186,7 @@ export function header(base: string, current = "Home"): string {
  * what the header and the title say, so it is hidden from screen readers.
  */
 export const runningHead = (no: string, name: string, folio: string) =>
-  `<div class="home-wrap home-running" aria-hidden="true"><div class="cap-running-head"><span class="cap-running-head-name">${no ? `<span class="cap-running-head-no">${esc(no)}</span>` : ""}${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
+  `<div class="cap-page home-running" aria-hidden="true"><div class="cap-running-head"><span class="cap-running-head-name">${no ? `<span class="cap-running-head-no">${esc(no)}</span>` : ""}${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
 
 /** A numbered section heading, as the manual numbers its parts. */
 const partTitle = (id: string, no: string, text: string) => `<h2 class="cap-part-title" id="${id}"><span class="cap-part-no">${no}</span>${text}</h2>`;
@@ -204,7 +204,7 @@ const CENTER = `<div class="cap-family-footer-center">
   <p class="cap-family-footer-stamp"><span>Release ${VERSION}</span></p>
 </div>`;
 export const FOOTER = `<footer class="home-foot">
-  <div class="home-wrap">${familyFooterHtml({ site: "capsomer", center: CENTER })}</div>
+  <div class="cap-page">${familyFooterHtml({ site: "capsomer", center: CENTER })}</div>
 </footer>`;
 
 export function renderHome(d: Data): string {
@@ -227,12 +227,12 @@ import "capsomer/button.css";       // each component's CSS, as used`;
 ${runningHead("1", "Overview", `Release ${d.version}`)}
 <section class="home-cover" aria-labelledby="top-h">
   ${band("Capsomer", FAMILIES, "cover")}
-  <div class="home-wrap home-intro">
+  <div class="cap-page home-intro">
     <h1 id="top-h">One design system for every site and app</h1>
     <p class="home-lead">Capsomer is the palette, type and components shared by every one of Dustin Edwards's sites and apps, with the tests that keep each of them accessible in both themes. Plain CSS, MIT licensed.</p>
     <p class="home-cta"><a class="cap-sign" data-variant="forward" href="/make/">Make your own theme</a> <span class="home-muted">From one brand color: scales, contrast checks, type, a live preview and the CSS.</span></p>
   </div>
-  <ul class="home-wrap home-figures">
+  <ul class="cap-page home-figures">
     ${figures.map(([f, label, n, note]) => `<li${fam(f)}><b>${esc(n)}</b><span class="home-figure-label">${esc(label)}</span><span>${esc(note)}</span></li>`).join("\n    ")}
     ${tests}
   </ul>
@@ -240,7 +240,7 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
 
 <section id="color" aria-labelledby="color-h">
   ${band("Color", FAMILIES, "section")}
-  <div class="home-wrap">
+  <div class="cap-page">
     ${partTitle("color-h", "1", "Six families from six seeds")}
     <p class="home-sub">Each family is one 12-step scale with the same job for each step: step 9 is the seed, step 11 is text, step 10 fills the main button. A site picks its family with one attribute, <code>data-family</code>. These scales follow your device's theme.</p>
     <figure class="home-lohse" aria-labelledby="lohse-c">
@@ -302,7 +302,7 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
 
 <section id="type" data-family="navy" aria-labelledby="type-h">
   ${band("Type", ["navy"], "section")}
-  <div class="home-wrap">
+  <div class="cap-page">
     ${partTitle("type-h", "2", "Three faces, one scale")}
     <div class="home-faces">
       <figure data-face="ui"><p aria-hidden="true">Aa</p><figcaption><b>Schibsted Grotesk</b> for every screen of an app</figcaption></figure>
@@ -321,7 +321,7 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
 
 <section id="components" aria-labelledby="components-h">
   ${band("Components", ["magenta"], "section")}
-  <div class="home-wrap">
+  <div class="cap-page">
     ${partTitle("components-h", "3", `${d.components.length} components, every state on show`)}
     <p class="home-sub">Each one is built once and shared by every app. Open any of them for how to use it and every state it has, in light and dark.</p>
     <div class="home-find" data-cap-part="find" hidden>
@@ -337,7 +337,7 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
 
 <section id="defaults" data-family="teal" aria-labelledby="defaults-h">
   ${band("Defaults", ["teal"], "section")}
-  <div class="home-wrap">
+  <div class="cap-page">
     ${partTitle("defaults-h", "4", "Defaults, each with its reason")}
     <p class="home-sub">A default is not a law: a better design overrides it and writes down why. CI blocks only on accessibility, security, privacy and correctness. Open one for its reason.</p>
     <ul class="home-defaults">
@@ -348,7 +348,7 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
 
 <section id="use" data-family="amber" aria-labelledby="use-h">
   ${band("Install", ["amber"], "section")}
-  <div class="home-wrap">
+  <div class="cap-page">
     ${partTitle("use-h", "5", "Pin a release, import what you use")}
     <p class="home-sub">An app pins a tagged release and imports the tokens, then each component's CSS as it needs it. Every Capsomer rule sits in a <code>cap.*</code> cascade layer, so the app's own CSS still wins while it moves over one screen at a time.</p>
     <div class="home-code-wrap">
@@ -425,7 +425,7 @@ export function renderComponent(d: Data, name: string): string {
   ];
   return `${header("/", "Components")}
 ${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
-<div class="comp-layout">
+<div class="cap-page comp-layout">
 <nav class="comp-side" aria-label="Components">
   <div class="cap-field comp-side-find" data-cap-part="side-find" hidden>
     <label class="cap-field-label cap-sr-only" for="side-find">Find a component</label>

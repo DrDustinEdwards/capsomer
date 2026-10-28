@@ -6,7 +6,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [0.29.0]
 
-- **One page width for the family** (Dustin, 2026-10-28: "why are they all different widths"). The new `--page-max` token (1180px, gutters included) and `--page-gutter` (16px) set it, and the new `.cap-page` class wraps a page's content and footer in it, so every site's letterhead, content and footer sit on the same 1148px column at a wide window. The letterhead takes its width from `--page-max`. Removed: `--header-max` (each site set its own) and `--header-gutter`.
+- **One page width for the family** (Dustin, 2026-10-28: "why are they all different widths"). The new `--page-max` token (1064px, gutters included) and `--page-gutter` (16px) set it, and the new `.cap-page` class wraps a page's content and footer in it, so every site's letterhead, content and footer sit on the same 1032px column at a wide window. The width comes from the reading line, not taste: the column is the measure (66ch, 686px at the 17px body) divided by two-thirds, GOV.UK's rule that a page's main text takes two-thirds of the column, rounded to the 8px grid. The letterhead takes its width from `--page-max`. Removed: `--header-max` (each site set its own) and `--header-gutter`.
 - **Site only:** the front page's column is `--page-max` (it was 76rem).
 
 ## [0.28.1]
