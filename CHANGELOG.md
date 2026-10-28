@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.33.1]
+
+- **An app's own search keeps the search slot in the letterhead.** An admin that opens a command menu (`onSearch`, an extra with id `search`) had its search icon after the theme, in the inbox's group (the Portal's search sat at x 1240 and its theme at x 1192 at 1536px). It now sits before the theme, where a site's search form sits.
+
 ## [0.33.0]
 
 - **An admin's letterhead keeps the public page's pixels** (Dustin, 2026-10-28: "it is full screen yet all the components need to stay in place"). The admin band still runs the full width, but from 768px its logo, names, search, theme and second row sit exactly where a public page's do: 16px down from the top, inside the 1280px page column. The inbox and the account take the two slots a public page leaves empty. Before, the logo lined up with the menu (x 64 at 1536px) and the band started at the top of the window. `--header-h` is 136px in an admin from 768px.
