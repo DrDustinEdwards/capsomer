@@ -54,6 +54,9 @@ export interface MediaRecord {
   licenseExpires?: string | null;
   takenAt?: string | null;
   twins?: Array<{ key: string; name: string }>;
+  // Which way a picture lies, as the site's kit says (site-api v0.13.1 rows); absent for a file with
+  // no size. Capsomer never works it out from the size: the rule is site-api's orientationOf.
+  orientation?: "landscape" | "portrait" | "square";
 }
 
 // What the inspector edits.

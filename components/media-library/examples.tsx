@@ -10,7 +10,7 @@ import type { FormComponent } from "../content/content.react.tsx";
 import type { MediaRecord } from "../media/media.ts";
 import { MessageProvider } from "../message/message.react.tsx";
 import { MediaLibrary } from "./media-library.react.tsx";
-import { orientationOf, type KitMediaChanges, type KitMediaRow } from "./media-library.ts";
+import { type KitMediaChanges, type KitMediaRow } from "./media-library.ts";
 
 const ALL: ContentCan = { edit: true, publish: true, deleteContent: true, deleteMedia: true, decideMentions: true };
 const NONE: ContentCan = { edit: false, publish: false, deleteContent: false, deleteMedia: false, decideMentions: false };
@@ -109,6 +109,12 @@ const BY: Record<string, (a: MediaRecord, b: MediaRecord) => number> = {
   used: (a, b) => (b.usedCount ?? 0) - (a.usedCount ?? 0),
 };
 
+// This specimen site's orientation for its files, which have exact sizes (a real site's kit uses
+// site-api's orientationOf).
+const lies = (f: Pick<MediaRecord, "width" | "height">): MediaRecord["orientation"] =>
+  !f.width || !f.height ? undefined : f.width === f.height ? "square" : f.width > f.height ? "landscape" : "portrait";
+const placed = (f: MediaRecord): MediaRecord => ({ ...f, ...(lies(f) ? { orientation: lies(f) } : {}) });
+
 // What the kit's loader would give for a query over these files.
 function load(files: MediaRecord[], query: MediaQuery, over: Partial<MediaData> = {}): MediaData {
   const trash = query.view === "trash";
@@ -116,8 +122,9 @@ function load(files: MediaRecord[], query: MediaQuery, over: Partial<MediaData> 
   const natural = query.sort === "name" ? "asc" : "desc";
   const flip = (query.dir ?? natural) === natural ? 1 : -1;
   const rows = inView
+    .map(placed)
     .filter((f) => (!query.q || f.name.includes(query.q)) && (!query.tag || f.tags.includes(query.tag)) && (!query.lens || !LENS[query.lens] || LENS[query.lens]!(f)))
-    .filter((f) => (!query.kind || f.kind === query.kind) && (!query.orientation || orientationOf(f.width, f.height) === query.orientation))
+    .filter((f) => (!query.kind || f.kind === query.kind) && (!query.orientation || f.orientation === query.orientation))
     .sort((a, b) => flip * (BY[query.sort ?? "added"] ?? BY.added!)(a, b));
   const tagCounts = new Map<string, number>();
   for (const f of inView) for (const t of f.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
@@ -131,7 +138,7 @@ function load(files: MediaRecord[], query: MediaQuery, over: Partial<MediaData> 
     tags: [...tagCounts].sort().map(([tag, count]) => ({ tag, count })),
     offers: OFFERS,
     can: ALL,
-    inspected: inspect ? { ...inspect, used: USES[inspect.key] ?? [], usedUnknown: false } : null,
+    inspected: inspect ? { ...placed(inspect), used: USES[inspect.key] ?? [], usedUnknown: false } : null,
     extra: { lenses: [{ id: "no-alt", label: "No alt text", count: inView.filter((f) => f.kind === "image" && f.altState === "missing").length }] },
     ...over,
   };
@@ -299,7 +306,7 @@ function useSite(initial: MediaRecord[] = FILES, keepsSize = false) {
         if (!was) return { ok: false, message: "That file is not here." };
         const quarter = op === "rotate-90" || op === "rotate-270";
         const turned = quarter ? { width: was.height, height: was.width } : {};
-        if (quarter && keepsSize && orientationOf(was.width, was.height) !== "square") {
+        if (quarter && keepsSize && lies(was) !== "square") {
           const copy = was.key.replace(/(\.[a-z]+)$/, "-turned$1");
           change((fs) => [{ ...was, ...turned, key: copy, name: copy.split("/").pop() ?? copy, version: next(), usedCount: 0, twins: [] }, ...fs]);
           return { ok: true, message: `Saved the turned picture as a new file, ${copy.split("/").pop()}.`, outcomes: [{ id, ok: true, copyId: copy, message: "Saved as a new file." }] };

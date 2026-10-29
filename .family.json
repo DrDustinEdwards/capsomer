@@ -4,7 +4,9 @@
   },
   "copies": {
     "components/media/media.ts": "setTags here is the media inspector's own handler (render the tags, autosave), not a frontmatter writer",
-    "components/email/email.ts": "escapeHtml here ships in capsomer/email, whose modules carry no dependency beyond optional peers; site-runtime is not one"
+    "components/email/email.ts": "escapeHtml here ships in capsomer/email, whose modules carry no dependency beyond optional peers; site-runtime is not one",
+    "components/message/message.ts": "kindOf here names a message's kind (warning, error, failure), not site-api's media kind",
+    "components/draft-compare/draft-compare-render.ts": "kindOf here names a sentence's run kind in a draft comparison, not site-api's media kind"
   },
   "spelling": {
     "contracts": [

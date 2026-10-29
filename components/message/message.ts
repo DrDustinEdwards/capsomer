@@ -143,7 +143,7 @@ export function glyphSvg(inner: string, size = 14): SVGSVGElement {
 
 // What a message is, for its glyph and its edge: a failure; a warning or an Undo that
 // failed; otherwise a plain result.
-export function messageKind(m: Pick<Message, "warning" | "error" | "failure">): MessageKind {
+export function kindOf(m: Pick<Message, "warning" | "error" | "failure">): MessageKind {
   return m.failure ? "failure" : m.warning !== null || m.error !== null ? "warning" : "ok";
 }
 
@@ -229,7 +229,7 @@ function paint(it: Item, m: Message): void {
   it.el.dataset.id = String(m.id);
   if (lasting(m)) it.el.dataset.lasting = "";
   else delete it.el.dataset.lasting;
-  const kind = messageKind(m);
+  const kind = kindOf(m);
   if (it.el.dataset.kind !== kind) {
     it.el.dataset.kind = kind;
     it.glyph.innerHTML = GLYPHS[kind];

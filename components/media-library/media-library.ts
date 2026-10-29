@@ -285,6 +285,8 @@ export interface KitMediaRow {
   sourceUrl?: string | null;
   licenseExpires?: string | null;
   takenAt?: string | null;
+  // site-api v0.13.1: which way a picture lies, by the package's orientationOf.
+  orientation?: "landscape" | "portrait" | "square";
 }
 
 // The content kit's loadMedia answer (site-api v0.13.0 MediaData), by shape.
@@ -339,6 +341,7 @@ export function recordOfKit(row: KitMediaRow, used?: UsedIn[]): MediaRecord {
     ...(row.sourceUrl !== undefined ? { sourceUrl: row.sourceUrl } : {}),
     ...(row.licenseExpires !== undefined ? { licenseExpires: row.licenseExpires } : {}),
     ...(row.takenAt !== undefined ? { takenAt: row.takenAt } : {}),
+    ...(row.orientation ? { orientation: row.orientation } : {}),
   };
 }
 
@@ -387,7 +390,7 @@ function inView(r: MediaRecord, q: MediaQuery): boolean {
   if ((q.view === "trash") !== (r.state === "binned")) return false;
   if (q.tag && !r.tags.includes(q.tag)) return false;
   if (q.kind && (q.kind === "image" || q.kind === "document") && r.kind !== q.kind) return false;
-  if (q.orientation && orientationOf(r.width, r.height) !== q.orientation) return false;
+  if (q.orientation && r.orientation !== q.orientation) return false;
   return true;
 }
 
@@ -413,18 +416,11 @@ export function applyChanges(rows: readonly MediaRecord[], changed: ReadonlyMap<
   return { rows: out, elsewhere, updated };
 }
 
-// Which way a picture lies, as site-api v0.13.0's orientationOf says: square when its edges differ by
-// at most 1% of the longer. null for a file with no size.
-export function orientationOf(width: number | undefined | null, height: number | undefined | null): "landscape" | "portrait" | "square" | null {
-  if (!width || !height) return null;
-  if (Math.abs(width - height) <= Math.max(width, height) / 100) return "square";
-  return width > height ? "landscape" : "portrait";
-}
-
 // True when a quarter turn saves the turned picture as a new file: a site whose addresses carry the
-// size (offers.replaceKeepsSize) turns a picture that is not square that way (site-api v0.13.0).
-export function turnMakesCopy(item: Pick<MediaRecord, "width" | "height">, offers: Pick<MediaOffers, "replaceKeepsSize">): boolean {
-  return !!offers.replaceKeepsSize && orientationOf(item.width, item.height) !== "square";
+// size (offers.replaceKeepsSize) turns a picture that is not square that way (site-api v0.13.0), by
+// the orientation the kit gives.
+export function turnMakesCopy(item: Pick<MediaRecord, "orientation">, offers: Pick<MediaOffers, "replaceKeepsSize">): boolean {
+  return !!offers.replaceKeepsSize && item.orientation !== "square";
 }
 
 // True when a picture has an edge longer than the site keeps (the oversized lens's rule).
