@@ -387,6 +387,14 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
               </div>
             </Disclosure>
           ) : null}
+          {!picker && trash && can.deleteMedia && offers.trash && rows.length > 0 ? (
+            // The kit lists every file in Trash and asks for the count before anything goes.
+            <Form method="post" action={action} className="cap-media-lib-extra">
+              <button type="submit" className="cap-btn" data-variant="danger" name="intent" value="empty-trash">
+                Empty Trash
+              </button>
+            </Form>
+          ) : null}
           {!picker && data.extra?.toolbar?.length ? (
             <Form method="post" action={action} className="cap-media-lib-extra">
               {data.extra.toolbar.map((a) => (
