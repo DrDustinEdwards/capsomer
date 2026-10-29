@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [0.40.0]
 
-The media library's ideas from site-api v0.13.0, each shown only where the kit offers it, each a form post that works with no script.
+The media library's ideas from site-api v0.13.0 (v0.13.1 for the rows' orientation), each shown only where the kit offers it, each a form post that works with no script.
 
 - **Duplicates**: an upload or import of bytes the site holds links the file already stored under the result (`filesToOpen`, new, read from the kit's `IntentOutcome.duplicate`, new); the inspector lists the file's twins; the Duplicates lens.
 - **Usage**: `MediaRecord.usedCount` (new) gives a list's tiles the Unattached flag at 0 (`flagsFor`); Most used as a sort (`MediaQuery.sort` gains `used`, `SORT_DIR.used`).
@@ -17,7 +17,7 @@ The media library's ideas from site-api v0.13.0, each shown only where the kit o
 - **Shrink**: Shrink to the site's size in the inspector, and Shrink all on this page on the Oversized lens, posting `resize` (the kit lists every file and asks first); Keep it at full size (`resize=no`) on upload and import where the site shrinks uploads.
 - **Embedded metadata**: the inspector shows when a picture was taken and offers its caption as an editable starting point for alt text.
 - **Suggestions**: Suggest tags and alt links to `suggest=1` (`MediaQuery.suggest`, new); each suggested tag and the suggested alt text is accepted on its own, never applied unasked (`MediaData.suggestions`, `MediaSuggestions`, new).
-- `MediaOffers` gains `duplicates`, `usage`, `filters`, `import`, `credit`, `transform`, `history`, `live`, `resize`, `resizePass`, `embedded` and `suggestions`, all optional; `mediaDataOfKit` and `recordOfKit` map the new fields; `inspectorOffers` names the new ones. New helpers: `orientationOf`, `turnMakesCopy`, `oversized`, `licenseEnded`, `dayWords`, `momentWords`.
+- `MediaOffers` gains `duplicates`, `usage`, `filters`, `import`, `credit`, `transform`, `history`, `live`, `resize`, `resizePass`, `embedded` and `suggestions`, all optional; `mediaDataOfKit` and `recordOfKit` map the new fields; `inspectorOffers` names the new ones. `MediaRecord.orientation` (new) is the kit's (site-api v0.13.1 rows), never worked out here. New helpers: `turnMakesCopy`, `oversized`, `licenseEnded`, `dayWords`, `momentWords`.
 - `MediaInspector` takes `more` (new): sections after the picture tools, built from the inspector's own form or nested group; a nested tool now also sends text areas, selects and checked boxes.
 - New classes: `.cap-media-lib-opened`, `.cap-media-lib-accept`, `.cap-media-lib-history` (with `-what`, `-facts`), `.cap-media-lib-revert`. The ended-license note is the banner stylesheet's `.cap-alert`, already needed by the picture tools.
 
