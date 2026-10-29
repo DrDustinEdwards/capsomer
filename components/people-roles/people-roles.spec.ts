@@ -49,10 +49,10 @@ eachTheme((theme) => {
     await expect(lead(page).locator("tr[data-name='Rosa Park']")).toMatchAriaSnapshot(`
       - rowheader "Rosa Park rosa.park@example.edu"
       - cell "Lab worker"
-      - cell "Ends 18 Dec 2026, in 18 days"
+      - cell "Ends Dec 18, 2026, in 18 days"
       - 'cell "Ready: they can sign in"'
-      - cell "Renew to 14 May 2027 for Rosa Park":
-        - button "Renew to 14 May 2027 for Rosa Park"
+      - cell "Renew to May 14, 2027 for Rosa Park":
+        - button "Renew to May 14, 2027 for Rosa Park"
         - group
     `);
     await expect(lead(page).locator("tr[data-name='Rosa Park'] summary")).toHaveAccessibleName("Actions for Rosa Park");
@@ -66,7 +66,7 @@ eachTheme((theme) => {
     await visitStates(page, "people-roles", theme);
     await lead(page).locator("tr[data-name='Maya Chen'] a").focus();
     await page.keyboard.press("Tab");
-    await expect(lead(page).getByRole("button", { name: "Renew to 14 May 2027 for Rosa Park" })).toBeFocused();
+    await expect(lead(page).getByRole("button", { name: "Renew to May 14, 2027 for Rosa Park" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(actionsFor(page, "Rosa Park")).toBeFocused();
   });
@@ -119,7 +119,7 @@ eachTheme((theme) => {
     const tally = review.locator("[data-cap-part='tally']");
     await expect(tally).toHaveText("0 to keep, 0 to remove, 2 not answered.");
     // A group with nothing chosen is :indeterminate; its radios must still paint as unchosen.
-    const keep = review.getByRole("radio", { name: "Keep, until 14 May 2027" }).first();
+    const keep = review.getByRole("radio", { name: "Keep, until May 14, 2027" }).first();
     const fill = () => keep.evaluate((el) => getComputedStyle(el).backgroundColor);
     // What a chosen radio fills with (field.css: background var(--primary)), resolved here.
     const chosen = await keep.evaluate((el) => {

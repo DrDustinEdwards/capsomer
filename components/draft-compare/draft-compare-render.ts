@@ -11,7 +11,7 @@ export type CompareView = "side" | "inline" | "changes";
 export const VIEWS: readonly CompareView[] = ["side", "inline", "changes"];
 
 export interface CompareSide {
-  // What the version is called: "Draft 3", "Published 14 September".
+  // What the version is called: "Draft 3", "Published September 14".
   title: string;
   // Who wrote or saved it.
   who?: string;
@@ -46,6 +46,9 @@ export interface CompareOptions extends SentenceOptions {
   runs?: { before?: RunSpan[]; after?: RunSpan[] };
   // Leave the chosen view to the app (false): enhance() then does not read or write storage.
   remember?: boolean;
+  // Draw each side's name over its column (default). false leaves it to the page, which names
+  // the sides in its own words (the posts list's scheduled update, with times in the viewer's zone).
+  heads?: boolean;
 }
 
 export const STORAGE_KEY = "cap-compare-view";
@@ -62,9 +65,12 @@ export const sr = (s: string) => `<span class="cap-sr-only"> ${s} </span>`;
 function markup(parts: WordPart[], show: "before" | "after" | "both"): string {
   let out = "";
   for (const p of parts) {
+    // A part's own leading space (diffWords) is drawn before the mark, so no mark underlines a gap.
+    const gap = /^\s*/.exec(p.text)?.[0] ?? "";
+    const text = p.text.slice(gap.length);
     if (p.op === "same") out += esc(p.text);
-    else if (p.op === "ins" && show !== "before") out += `<ins class="cap-ins">${sr("insertion start")}${esc(p.text)}${sr("insertion end")}</ins>`;
-    else if (p.op === "del" && show !== "after") out += `<del class="cap-del">${sr("deletion start")}${esc(p.text)}${sr("deletion end")}</del>`;
+    else if (p.op === "ins" && show !== "before") out += `${gap}<ins class="cap-ins">${sr("insertion start")}${esc(text)}${sr("insertion end")}</ins>`;
+    else if (p.op === "del" && show !== "after") out += `${gap}<del class="cap-del">${sr("deletion start")}${esc(text)}${sr("deletion end")}</del>`;
   }
   return out;
 }
@@ -297,18 +303,15 @@ function viewRegion(view: CompareView, label: string, inner: string): string {
 
 const fmtCounts = (c: Counts) => `<p class="cap-compare-counts" data-cap-part="counts">${esc(countsText(c))}</p>`;
 
+// The legend, on one line: the counts, then the key to the marks. What each view does is the
+// view switch's description (viewSwitch), for a screen reader; its labels say it to the eye.
 function legend(c: Counts): string {
   return `<div class="cap-compare-legend">
-<ul class="cap-compare-key" aria-label="Key to the marks">
-<li><span class="cap-compare-key-mark" data-kind="ins">Added</span> underlined, with a plus</li>
-<li><span class="cap-compare-key-mark" data-kind="del">Removed</span> struck through, with a minus</li>
-</ul>
 ${fmtCounts(c)}
-<dl class="cap-compare-views-help">
-<div><dt>Side by side</dt><dd>before on the left, after on the right, sentence by sentence</dd></div>
-<div><dt>Inline</dt><dd>one column, with each removal and addition where it happened</dd></div>
-<div><dt>Changes only</dt><dd>just the changed sentences</dd></div>
-</dl>
+<ul class="cap-compare-key" aria-label="Key to the marks">
+<li><span class="cap-compare-key-mark" data-kind="ins">Added</span></li>
+<li><span class="cap-compare-key-mark" data-kind="del">Removed</span></li>
+</ul>
 </div>`;
 }
 
@@ -319,8 +322,8 @@ function jump(id: string, total: number): string {
   }
   return `<div class="cap-compare-tools"><nav class="cap-compare-jump" aria-label="Changes">
 <span class="cap-compare-jump-title" aria-hidden="true">Jump to</span>
-<button type="button" class="cap-btn" data-size="sm" data-cap-part="prev" hidden>Previous change <kbd class="cap-kbd">p</kbd></button>
-<button type="button" class="cap-btn" data-size="sm" data-cap-part="next" hidden>Next change <kbd class="cap-kbd">n</kbd></button>
+<button type="button" class="cap-btn" data-size="sm" data-cap-part="prev" hidden>Previous<span class="cap-sr-only"> change</span> <kbd class="cap-kbd">p</kbd></button>
+<button type="button" class="cap-btn" data-size="sm" data-cap-part="next" hidden>Next<span class="cap-sr-only"> change</span> <kbd class="cap-kbd">n</kbd></button>
 <ol class="cap-compare-jump-list">${items}</ol>
 </nav>
 <button type="button" class="cap-btn" data-size="sm" data-cap-part="expand" aria-pressed="false" hidden>Expand all unchanged</button></div>`;
@@ -328,7 +331,7 @@ function jump(id: string, total: number): string {
 
 function viewSwitch(id: string, view: CompareView): string {
   const radios = VIEWS.map((v) => `<label><input type="radio" name="${id}-view" value="${v}"${v === view ? " checked" : ""} /> ${VIEW_NAMES[v]}</label>`).join("");
-  return `<fieldset class="cap-seg"><legend class="cap-sr-only">View</legend><div class="cap-seg-options" data-size="sm">${radios}</div></fieldset>`;
+  return `<fieldset class="cap-seg" aria-describedby="${id}-views"><legend class="cap-sr-only">View</legend><div class="cap-seg-options" data-size="sm">${radios}</div><p class="cap-sr-only" id="${id}-views">Side by side: before on the left, after on the right, sentence by sentence. Inline: one column, with each removal and addition where it happened. Changes only: just the changed sentences.</p></fieldset>`;
 }
 
 // The compared versions, as the HTML a page delivers: both sides named, a switch between three
@@ -342,7 +345,7 @@ export function renderCompare(before: CompareSide, after: CompareSide, options: 
   const an = analyze(before.text, after.text, options);
   const name = `Compare ${before.title} with ${after.title}`;
   const attrs = `class="cap-compare" data-cap="draft-compare" id="${id}" aria-label="${esc(name)}"${options.remember === false ? ' data-remember="off"' : ""}`;
-  const head = `<div class="cap-compare-head">${sideHead(labels.before, before, "before")}${sideHead(labels.after, after, "after")}</div>`;
+  const head = options.heads === false ? "" : `<div class="cap-compare-head">${sideHead(labels.before, before, "before")}${sideHead(labels.after, after, "after")}</div>`;
 
   if (an.identical) {
     const words = (s: CompareSide) => `“${esc(s.title)}”${s.who || s.time ? ` (${[s.who ? esc(s.who) : "", s.time ? timeHtml(s.time) : ""].filter(Boolean).join(", ")})` : ""}`;
@@ -354,5 +357,5 @@ export function renderCompare(before: CompareSide, after: CompareSide, options: 
   const ctx: Ctx = { id, an, opts: options, total: an.counts.changes, labels };
   const body = (v: CompareView) => (v === "side" ? renderSide(ctx, v === view) : v === "inline" ? renderInline(ctx, v === view) : renderChanges(ctx, v === view));
   const views = VIEWS.map((v) => viewRegion(v, `${VIEW_NAMES[v]}, ${name}`, body(v))).join("");
-  return `<section ${attrs}>${head}<div class="cap-compare-bar">${viewSwitch(id, view)}${legend(an.counts)}</div>${jump(id, an.counts.changes)}<p class="cap-sr-only" role="status" data-cap-part="live"></p><div class="cap-compare-views">${views}</div></section>`;
+  return `<section ${attrs}>${head}<div class="cap-compare-bar">${viewSwitch(id, view)}${legend(an.counts)}${jump(id, an.counts.changes)}</div><p class="cap-sr-only" role="status" data-cap-part="live"></p><div class="cap-compare-views">${views}</div></section>`;
 }

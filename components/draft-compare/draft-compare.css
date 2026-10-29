@@ -20,19 +20,20 @@
     font-size: var(--fs-body);
   }
 
-  /* Both sides, named: which one is "left" is never a guess. */
+  /* Both sides, named: which one is "left" is never a guess. Each is one line over its
+     column: the role, the title, then who and when. */
   .cap-compare-head {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--gap);
   }
   .cap-compare-side {
-    display: grid;
-    gap: var(--space-1);
-    padding: var(--space-3) var(--pad-x);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-m);
-    background: var(--surface);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    padding-block-end: var(--space-2);
+    border-bottom: 1px solid var(--line);
     min-width: 0;
   }
   .cap-compare-side-role {
@@ -51,57 +52,47 @@
     font-size: var(--fs-detail);
   }
 
-  /* The switch and the legend. Always shown: nothing here is behind a popover or a fold. */
+  /* One line, centered on one axis: the view switch, the counts and the key, then the jump
+     list at the end. It wraps on a narrow space. Always shown: nothing here is behind a
+     popover or a fold. */
   .cap-compare-bar {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
-    gap: var(--space-3) var(--space-6);
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
   }
   .cap-compare-legend {
-    display: grid;
-    gap: var(--space-2);
-    flex: 1 1 18rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
     min-width: 0;
   }
   .cap-compare-key {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-2) var(--space-5);
+    gap: var(--space-2) var(--space-3);
     margin: 0;
     padding: 0;
     list-style: none;
   }
+  /* A sentence, so proportional figures: tabular ones space out its commas. */
   .cap-compare-counts {
     margin: 0;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-  }
-  .cap-compare-views-help {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-5);
-    margin: 0;
     color: var(--muted);
-    font-size: var(--fs-detail);
-
-    & > div {
-      display: block;
-      min-width: 0;
-    }
-    & dt {
-      display: inline;
-      color: var(--text);
-      font-weight: 600;
-    }
-    & dt::after {
-      content: " ";
-    }
-    & dd {
-      display: inline;
-      margin: 0;
-    }
+  }
+  /* The patch's legend keeps its words beside each mark, over its counts. */
+  .cap-patch .cap-compare-legend {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .cap-patch .cap-compare-key {
+    gap: var(--space-2) var(--space-5);
+  }
+  .cap-patch .cap-compare-counts {
+    color: var(--text);
+    font-weight: 600;
   }
 
   /* The marks. An insertion and a deletion differ by line (under, through), by the glyph that
@@ -147,13 +138,13 @@
     font-weight: 600;
   }
 
-  /* The jump list and the tools beside it. */
+  /* The jump list and Expand all, at the end of the bar. */
   .cap-compare-tools {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
     gap: var(--space-3);
+    margin-inline-start: auto;
   }
   .cap-compare-jump {
     display: flex;
@@ -161,9 +152,9 @@
     align-items: center;
     gap: var(--space-2) var(--space-3);
   }
+  /* "Jump to" is for the markup's reader; on the bar the buttons and numbers say it. */
   .cap-compare-jump-title {
-    color: var(--muted);
-    font-size: var(--fs-detail);
+    display: none;
   }
   .cap-compare-jump-list {
     display: flex;
@@ -208,7 +199,7 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-m);
     background: var(--surface);
-    font-family: var(--prose);
+    font-family: var(--face);
     scroll-padding-block: var(--space-6);
   }
   .cap-compare:has(.cap-compare-bar input[value="side"]:checked) > .cap-compare-views > .cap-compare-view:not([data-view="side"]),
@@ -300,7 +291,7 @@
     }
     & > .cap-compare-gap-rows {
       padding: var(--space-3);
-      font-family: var(--prose);
+      font-family: var(--face);
     }
   }
 
@@ -358,6 +349,9 @@
   @container cap-compare (max-width: 40rem) {
     .cap-compare-head {
       grid-template-columns: minmax(0, 1fr);
+    }
+    .cap-compare-tools {
+      margin-inline-start: 0;
     }
     .cap-compare-row {
       grid-template-columns: minmax(0, 1fr);

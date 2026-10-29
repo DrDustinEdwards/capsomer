@@ -4,8 +4,9 @@ title: Drop zone
 summary: Choose files by browsing or dropping them, checked against type, size and count, with each refusal named in words.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [idle, file over, files refused with their reasons, several files taken, one file only, disabled, drop anywhere on the page]
+states: [idle, file over, files refused with their reasons, several files taken, one file only, the app lists the files itself, disabled, drop anywhere on the page]
 added: 0.3.0
+updated: 0.37.0
 source: dustinedwards.info, app/components/admin/media-drop-anywhere.tsx, media-upload-actions.tsx, use-image-upload.ts; shadcn/ui Input (file) and Empty (Base UI flavor, nova style, commit d75a96ab787f)
 replaces:
   - 'class="(dropzone|drop-zone|dropzone-area|file-drop)[ "]'
@@ -36,6 +37,7 @@ Anywhere a person adds files: the media library, an attachment on a draft, an im
 - **A refusal names the file and the reason**, in a box with the critical glyph and a lead ("3 files were not added"), in a `role="alert"` region: type not allowed (and what is), too big (with its size and the limit), too many (with the limit). The edge turns critical and solid too, but the words carry it.
 - **What was taken is said too**, in a `role="status"` region: "3 files are ready to upload." and the list with sizes. Both regions are in the page before anything is chosen, empty, so each result is announced when it is filled.
 - **Validation is one pure function.** `validateFiles(files, { accept, maxBytes, maxFiles })` returns `{ accepted, rejected }`, each rejection with its `reason` and a sentence. Type is checked first, then size, then the count, so the files that pass keep their order and the rest are named.
+- **An app with its own upload queue turns the list off** (`data-accepted-list="off"`; in React `acceptedList={false}`). The zone then writes nothing about the files it took, not "3 files are ready to upload." and not the list, so the queue is the one place they show; it still names every refusal and still sends `cap-drop-accepted`. Leave the status region out of the markup, or keep it: the zone leaves it empty and hidden. The queue is then the app's to announce (a `role="status"` line when uploads start and finish).
 - **A drop never uploads.** The zone puts the accepted files into the input (so a form posts them) and tells the page with `cap-drop-accepted` and `cap-drop-rejected`. The app uploads when the person says so, or at once; that is the app's choice.
 - **Drop anywhere** (`data-scope="page"`) listens on the window: while files are over it, a full-window panel says "Drop to upload". The panel does not take the pointer, so the drop is handled once. A zone of its own on the page takes its own drops first.
 - **Paste** (`data-paste`) takes files from the clipboard, on the zone, or anywhere in page mode.
@@ -91,7 +93,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </div>
 ```
 
-Attributes on the zone: `data-state` (`idle`, `over`, `rejected`; set by the behavior), `data-scope="page"` (drop anywhere; add `<div class="cap-drop-overlay" aria-hidden="true"><div><p class="cap-drop-overlay-title">Drop to upload</p>…</div></div>` as the last child), `data-max-bytes`, `data-max-files`, `data-paste`. The accepted types are the input's `accept`; a zone whose input has no `multiple` takes one file. A result written by the server (a refused file after a form post) is the same markup inside the two regions: lead `<p class="cap-drop-lead" data-tone="crit">` with the critical glyph, then `<ul class="cap-drop-files"><li>…</li></ul>`.
+Attributes on the zone: `data-state` (`idle`, `over`, `rejected`; set by the behavior), `data-accepted-list="off"` (the zone does not list the files it took; the app's own queue does, and the status region may be left out), `data-scope="page"` (drop anywhere; add `<div class="cap-drop-overlay" aria-hidden="true"><div><p class="cap-drop-overlay-title">Drop to upload</p>…</div></div>` as the last child), `data-max-bytes`, `data-max-files`, `data-paste`. The accepted types are the input's `accept`; a zone whose input has no `multiple` takes one file. A result written by the server (a refused file after a form post) is the same markup inside the two regions: lead `<p class="cap-drop-lead" data-tone="crit">` with the critical glyph, then `<ul class="cap-drop-files"><li>…</li></ul>`.
 
 ```ts
 import { enhance, validateFiles, acceptFiles } from "capsomer/behavior/drop-zone";
@@ -107,6 +109,8 @@ const { accepted, rejected } = validateFiles(files, { accept: "image/*,.pdf", ma
 import { DropZone } from "capsomer/react/drop-zone";
 <DropZone accept="image/*,.pdf" maxBytes={5 * 1024 * 1024} maxFiles={4} multiple scope="page" paste
   hint="Images and PDF, up to 5 MB each, up to 4 at a time." onAccepted={(files) => upload(files)} />
+// An app that shows its own upload queue:
+<DropZone accept="image/*" multiple acceptedList={false} onAccepted={(files) => queue.add(files)} />
 ```
 
 The React wrapper renders exactly this markup, keeps over, accepted and refused as state, and has no `style` prop.

@@ -4,8 +4,9 @@ title: Posts list
 summary: One page of one site's posts, the same in Carrel and in every site admin. Status tabs with counts, search and filters in the address, a table with each row's menu, a bulk bar that lists each post's outcome, Undo for what can be undone, and a confirmation for what cannot. Every action is a form post, so it all works with no script.
 parts: [css, behavior, react]
 tool: native + React (composes tabs, field, select, table, status, menu, bulk bar, message, empty and confirm dialog)
-states: [editor with every action, after a bulk post with no script, reader, no delete and no tags, one page of many, sorted on the page only, no drafts, no match, delete confirmation page, delivered HTML]
+states: [editor with every action, after a bulk post with no script, reader, no delete and no tags, one page of many, sorted on the page only, scheduled updates, the waiting update, the waiting update for a reader, no drafts, no match, delete confirmation page, delivered HTML]
 added: 0.6.0
+updated: 0.37.0
 source: dustinedwards.info, app/routes/admin.posts._index.tsx, app/components/admin/posts-table.tsx, posts-filters.tsx, row-menu.tsx; Carrel, app/routes/project.tsx, project.bulk.ts (the outcome per item, the per-site gating); docs/design/design-content-components.md section 2.4.1
 replaces:
   - "PostsTable|PostsFilters|PostsToolbar"
@@ -36,6 +37,11 @@ Any list of a site's posts that a person manages: Carrel's Posts tab for a site,
 - **An action is offered only when the site supports it and the person may run it** (`data.offers` and `data.can`). A withheld action is named in a line of plain text, so a missing button is never a mystery. The boxes are for people who can change something; a reader gets none.
 - **Undo for unpublish, tags and duplicate.** Unpublish's Undo republishes (never a first publication: a post that was never published cannot be unpublished). A tag's Undo reverses it on the posts that changed and only those. Duplicate's Undo removes the copy only where the site can delete. The kit decides each inverse and sends it as `result.undo`; the list posts it back as it came.
 - **Delete asks first and lists every post**, with the count to type. The kit answers a delete with `result.confirm`; the list shows it as the confirm dialog (script) or the confirm page (no script), and posting it with the typed word performs it. The kit checks the word again.
+- **A scheduled update to a live post shows in its status, on one line** (site-api v0.10.0, `row.scheduledUpdate`): "Published · update in 2 days", as a scheduled post reads "Scheduled · in 3 days" (`rowStatus()`). The row's menu links to it ("View the scheduled update", its `href`, the host's page for it).
+- **The menu holds actions, never a form.** Where the site keeps updates (`offers.scheduledUpdates`) and the person may publish, it adds Reschedule… and, after the separator with the other one-way actions, Cancel the update. With script, Reschedule… opens a small dialog with the new time in the person's own zone (named under the field) and posts it in UTC as `publishAt`; Cancel the update opens the confirm dialog ("Keep the update" backs out), since it has no Undo. With no script both are links to the update's page, which does them with plain forms. Reschedule… moves a scheduled post too; a scheduled post is canceled by Unpublish, as before.
+- **The title takes the spare width.** The status, the date and the menu are as wide as their content and sit together at the end of the row, so none is stranded across the table.
+- **On a phone each post is a card**, not a table that scrolls sideways (DEFAULTS.md's default for tables; overridden here because a post is read as a whole, title, status, date and menu, and the list is the screen's one job: Dustin, 2026-10-29). The box, the title and the menu run across the top; the status, "Updated 3 hours ago" and a host's columns sit under the title. It is the table's own reflow (`data-reflow`), so the markup is still a table.
+- **The waiting update has its own page, `PostScheduledUpdate`**: a page head with the post's title, "The update goes live October 12, 2026, 10:00 AM CDT (3:00 PM UTC), in 2 days" in the person's zone, and its actions (Reschedule…, Edit the update, View the live post, and Cancel the update set apart as the one-way one). Then "Live post · on the site since …" and "Scheduled update · goes live …" over the two columns, in the viewer's zone as the head says it, the draft compare under them (its own side names off, `heads={false}`), and the unified patch in a disclosure.
 - **The status is a word, a shape and a color**, the same mapping everywhere (`contentStatus()`): Published (a tick), Scheduled (a square, "in 3 days"), Draft (an empty circle with a bar).
 - **50 per page, by cursor.** "Next page" and "First page" are links. The design's default is "Show more", but a cursor page replaces the one before it, and "Show more" promises to add to it, so the links say what they do. Until the site can sort (site-api v0.6) the kit sorts the page it has, and the count says "sorted on this page only".
 - **Empty names its kind**: "No drafts", "Nothing scheduled", "No posts match “lysogeny”" with Clear filters.
@@ -118,11 +124,22 @@ import type { PostsData, IntentResult } from "capsomer/content";
 
 Props: `data` (`PostsData`), `action`, `Form`, `submit`, `result`, `labels` (`{ noun, plural }`, "post" by default), `now`. `submit` is optional: without it every form posts and the page comes back with `result`. With it, wrap the page in `<MessageProvider>` so results and Undo go to the page's region; without one the list keeps its own.
 
-The intents the list posts, each with the ticked or the row's `ids`: `add-tag` and `remove-tag` (with `tag`), `duplicate`, `unpublish`, `delete` (answered with `result.confirm`, then posted again with `confirm`, the typed count), a host's toolbar intent, and whatever `result.undo` names. The kit decides what each means and what its inverse is.
+The intents the list posts, each with the ticked or the row's `ids`: `add-tag` and `remove-tag` (with `tag`), `duplicate`, `unpublish`, `delete` (answered with `result.confirm`, then posted again with `confirm`, the typed count), `reschedule` (with `publishAt`, a UTC time) and `cancel-schedule` (site-api v0.10.0's names), a host's toolbar intent, and whatever `result.undo` names. The kit decides what each means and what its inverse is.
 
-`import { contentStatus } from "capsomer/behavior/posts-list"` (also from `capsomer/react/posts-list`): `contentStatus("scheduled", publishAt, now)` gives `{ tone: "info", word: "Scheduled", when: "in 3 days" }`, for any view that shows a post's status. The pure helpers `postActions`, `rowActions`, `postsHref`, `countLine`, `emptyWords` and `intentForm` are exported too.
+The waiting update's page takes site-api's `loadScheduledUpdate(source, id)` as it is:
 
-**Dependencies.** It needs the stylesheets of the parts it composes: tabs, field, select, table, status, menu, bulk-bar, message, empty, time, dialog, confirm-dialog and content (the shared result box), with this one.
+```tsx
+import { PostScheduledUpdate } from "capsomer/react/posts-list";
+import type { ScheduledUpdateView } from "capsomer/content";
+
+<PostScheduledUpdate data={update} action="/posts" Form={Form} result={useActionData()} submit={(form) => fetcherSubmit(form)} liveSince={row.publishedAt} crumbs={[{ label: "Posts", href: "/posts" }, { label: update.title, href: update.editorHref }, { label: "Scheduled update" }]} />
+```
+
+Props: `data` (`ScheduledUpdateView`: `source`, `live.source`, `patch`, `publishAt`), `action` (the posts list's action, which runs `reschedule` and `cancel-schedule`), `Form`, `submit`, `result`, `liveSince` (when the live version went out, for its side's name), `crumbs`, `headingLevel` (`h1` by default), `labels`, `now`. Its forms post `ids` and `versions` (the live version) with the intent. Without `can.publish` it shows the compare and says why there are no actions. It needs the page-head, breadcrumb, dialog and draft-compare stylesheets as well.
+
+`import { contentStatus } from "capsomer/behavior/posts-list"` (also from `capsomer/react/posts-list`): `contentStatus("scheduled", publishAt, now)` gives `{ tone: "info", word: "Scheduled", when: "in 3 days" }`, for any view that shows a post's status. The pure helpers `postActions`, `rowActions`, `scheduledTime`, `rowStatus`, `postsHref`, `countLine`, `emptyWords`, `intentForm`, and for a time field `localInputValue` and `isoFromLocal`, are exported too.
+
+**Dependencies.** It needs the stylesheets of the parts it composes: tabs, field, select, table, status, menu, bulk-bar, message, empty, time, dialog, confirm-dialog, content (the shared result box) and, for `PostScheduledUpdate`, page-head, breadcrumb and draft-compare, with this one.
 
 ## Exceptions in production
 

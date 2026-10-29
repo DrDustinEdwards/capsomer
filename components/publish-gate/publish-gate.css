@@ -154,16 +154,28 @@
 
   /* On a narrow column the rows stack as the row list does (status above, actions below), and the
      metadata (the site a check concerns, the time it went live) falls under the detail so the
-     title keeps the width. */
+     title keeps the width. The selectors outrank the row list's narrow rule for a row with a
+     status (`.cap-row:has(> .cap-row-status) > .cap-row-meta`, which puts the time beside the
+     title in rows 2 and 3); at equal weight the order the stylesheets load in decided it, and the
+     date was drawn over the site's name. */
   @container cap-rows (max-width: 30rem) {
-    :is(.cap-gate-site, .cap-check) .cap-row-meta {
+    /* With the time under them, the name and the cause take the row's whole width. */
+    .cap-gate .cap-row:is(.cap-gate-site, .cap-check) > :is(.cap-row-title, .cap-row-detail) {
+      grid-column: 1 / -1;
+    }
+    .cap-gate .cap-row:is(.cap-gate-site, .cap-check) > .cap-row-meta {
       grid-column: 1 / -1;
       grid-row: 4;
       justify-content: flex-start;
       white-space: normal;
       text-align: start;
+
+      /* An empty one (a check on the only site, a destination not yet live) takes no row. */
+      &:empty {
+        display: none;
+      }
     }
-    .cap-gate-site .cap-row-actions {
+    .cap-gate .cap-row.cap-gate-site > .cap-row-actions {
       grid-row: 5;
     }
   }

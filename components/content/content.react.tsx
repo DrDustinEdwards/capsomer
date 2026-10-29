@@ -79,6 +79,9 @@ export interface Intents {
   confirmPage: ReactNode;
   // The confirm dialog of the script path, while it is open.
   confirmDialog: ReactNode;
+  // Asks before a one-way intent the kit runs at once (the posts list's Cancel the update):
+  // the same confirm dialog, which posts the request's fields when confirmed.
+  ask: (request: ConfirmRequest) => void;
 }
 
 export function useIntents({ action, Form, submit, result = null, names, cancelHref, onDone }: IntentsOptions): Intents {
@@ -186,6 +189,7 @@ export function useIntents({ action, Form, submit, result = null, names, cancelH
       body={asking.items}
       action={asking.action}
       typeToConfirm={asking.typeToConfirm}
+      cancelLabel={asking.cancelLabel}
       perform={async () => {
         if (!submit) return;
         const at = new Map(namesRef.current);
@@ -207,6 +211,7 @@ export function useIntents({ action, Form, submit, result = null, names, cancelH
     resultBox: !message || box ? <ResultBox result={box} action={action} Form={Form} keyHint={keyHint} /> : null,
     confirmPage,
     confirmDialog,
+    ask: setAsking,
   };
 }
 

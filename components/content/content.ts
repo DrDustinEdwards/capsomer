@@ -41,6 +41,8 @@ export interface ConfirmSpec {
   lead?: string;
   action: string;
   typeToConfirm?: string;
+  // The button that backs out, when "Cancel" would read as the action ("Keep the update").
+  cancelLabel?: string;
 }
 
 // A host's own toolbar action (dustinedwards.info's Ask index maintenance), posted as `intent`
@@ -145,6 +147,16 @@ export interface PostOffers {
   schedule: boolean;
   tags: boolean;
   duplicate: boolean;
+  // The site keeps an update waiting on a live post (site-api v0.10.0), so Reschedule and Cancel
+  // work on it.
+  scheduledUpdates?: boolean;
+}
+
+// An update scheduled to replace a live post (site-api v0.10.0): when it goes live, and the page
+// that shows it beside the live version (the host's, else the editor).
+export interface ScheduledUpdateSummary {
+  publishAt: string;
+  href: string;
 }
 
 export interface PostRow {
@@ -161,6 +173,8 @@ export interface PostRow {
   publishAt: string | null;
   publishedAt: string | null;
   updatedAt: string | null;
+  // A live post with an update waiting. Absent when nothing waits.
+  scheduledUpdate?: ScheduledUpdateSummary;
   // Present from site-api v0.6; the kit reads each post before writing otherwise.
   version?: string;
   tags?: string[];
@@ -181,6 +195,22 @@ export interface PostsData {
   newHref?: string;
   // Per-site additions, already rendered to data.
   extra?: { columns?: ExtraColumn[]; toolbar?: ExtraAction[] };
+}
+
+// The update waiting on one live post, for the page that shows it (site-api's loadScheduledUpdate,
+// v0.10.0): its source beside the live one, a unified patch from one to the other, and the time
+// in words ("2030-01-01 15:00 UTC").
+export interface ScheduledUpdateView {
+  id: string;
+  title: string;
+  publishAt: string;
+  when: string;
+  scheduledAt: string;
+  source: string;
+  live: { source: string; version: string; href: string | null };
+  patch: string;
+  editorHref: string;
+  can: ContentCan;
 }
 
 // ---------------------------------------------------------------------------------------

@@ -144,27 +144,33 @@ export function condense(entries: readonly HistoryEntry[], minRun = 2): Line[] {
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const two = (n: number) => String(n).padStart(2, "0");
 
-// "2 Oct, 14:40 UTC", with the year when it is not the reference year ("2 Oct 2025, ...").
-// Always UTC, so the page delivered by a server and the page a browser draws agree.
+// "Oct 2, 2:40 PM UTC", with the year when it is not the reference year ("Oct 2, 2025, ...").
+// American English, month first and the 12-hour clock. Always UTC, so the page delivered by a
+// server and the page a browser draws agree.
 export function stamp(iso: string, now: number = Date.now()): string {
   const t = parse(iso);
   if (!Number.isFinite(t)) return "an unreadable time";
   const d = new Date(t);
-  const year = d.getUTCFullYear() === new Date(now).getUTCFullYear() ? "" : ` ${d.getUTCFullYear()}`;
-  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}${year}, ${two(d.getUTCHours())}:${two(d.getUTCMinutes())} UTC`;
+  const year = d.getUTCFullYear() === new Date(now).getUTCFullYear() ? "" : `, ${d.getUTCFullYear()}`;
+  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}${year}, ${clock12(d)} UTC`;
 }
 
-// "2 Oct": the day alone, for a sentence ("Restored version from 2 Oct").
+// "2:40 PM", in UTC.
+function clock12(d: Date): string {
+  const h = d.getUTCHours();
+  return `${h % 12 || 12}:${two(d.getUTCMinutes())} ${h < 12 ? "AM" : "PM"}`;
+}
+
+// "Oct 2": the day alone, for a sentence ("Restored version from Oct 2").
 export function dayOf(iso: string, now: number = Date.now()): string {
-  return stamp(iso, now).replace(/, \d\d:\d\d UTC$/, "");
+  return stamp(iso, now).replace(/, \d{1,2}:\d\d [AP]M UTC$/, "");
 }
 
-// "14:02 to 14:40 UTC" for a run inside one UTC day; with days when it spans more than one.
+// "2:02 PM to 2:40 PM UTC" for a run inside one UTC day; with days when it spans more than one.
 export function rangeText(fromIso: string, toIso: string, now: number = Date.now()): string {
   const a = new Date(parse(fromIso));
   const b = new Date(parse(toIso));
-  const clock = (d: Date) => `${two(d.getUTCHours())}:${two(d.getUTCMinutes())}`;
-  if (a.toISOString().slice(0, 10) === b.toISOString().slice(0, 10)) return `${clock(a)} to ${clock(b)} UTC`;
+  if (a.toISOString().slice(0, 10) === b.toISOString().slice(0, 10)) return `${clock12(a)} to ${clock12(b)} UTC`;
   return `${stamp(fromIso, now)} to ${stamp(toIso, now)}`;
 }
 

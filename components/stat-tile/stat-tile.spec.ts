@@ -137,6 +137,6 @@ eachTheme((theme) => {
     await frame.locator("summary").focus();
     await page.keyboard.press("Enter");
     await expect(frame.getByRole("table")).toBeVisible();
-    await expect(frame.getByRole("row", { name: /Tue 29 Sep/ })).toBeVisible();
+    await expect(frame.getByRole("row", { name: /Tue, Sep 29/ })).toBeVisible();
   });
 });

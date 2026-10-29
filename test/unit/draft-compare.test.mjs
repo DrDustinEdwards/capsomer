@@ -34,7 +34,7 @@ test("diffWords: identical text has no insertion and no deletion", () => {
 test("diffWords: marks the words that changed and keeps the rest", () => {
   const parts = diffWords("The quick brown fox", "The slow brown fox jumps");
   assert.deepEqual(
-    parts.filter((p) => p.op !== "same").map((p) => [p.op, p.text]),
+    parts.filter((p) => p.op !== "same").map((p) => [p.op, p.text.trim()]),
     [["del", "quick"], ["ins", "slow"], ["ins", "jumps"]],
   );
   assert.equal(norm(side(parts)), "The quick brown fox");
@@ -49,6 +49,8 @@ test("diffWords: each side reads back whole, whatever changed", () => {
     ["thing", "new thing"],
     ["It ended.", "It ended"],
     ["A, b and c.", "A b and c, d."],
+    // The side without the insertion keeps its full stop against the word ("nothing.", not "nothing .").
+    ["It writes nothing.", "It writes nothing but notes."],
   ];
   for (const [a, b] of cases) {
     const parts = diffWords(a, b);

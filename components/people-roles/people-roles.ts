@@ -57,24 +57,24 @@ export interface HistoryEntry {
   cloudflareError?: string;
 }
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 // How long before an end date the row shows that it ends soon, matching the review (21 days).
 export const SOON_DAYS = 21;
 
 export const REASON_MISSING = "Type a reason. It is recorded with the change.";
 
-// "18 Dec 2026", from a YYYY-MM-DD date, in UTC.
+// "Dec 18, 2026", from a YYYY-MM-DD date, in UTC: American English, as the family writes dates.
 export function dayText(date: string): string {
-  const t = new Date(`${date}T00:00:00Z`);
-  return `${t.getUTCDate()} ${MONTHS[t.getUTCMonth()]} ${t.getUTCFullYear()}`;
+  return new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" }).format(new Date(`${date}T00:00:00Z`));
 }
 
-// "2 Oct 2026, 14:52 UTC", from an ISO time.
+// "Oct 2, 2026, 2:52 PM UTC", from an ISO time.
 export function timeText(iso: string): string {
   const t = new Date(iso);
-  const hh = String(t.getUTCHours()).padStart(2, "0");
-  const mm = String(t.getUTCMinutes()).padStart(2, "0");
-  return `${t.getUTCDate()} ${MONTHS[t.getUTCMonth()]} ${t.getUTCFullYear()}, ${hh}:${mm} UTC`;
+  const day = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" }).format(t);
+  // From the parts: some engines put a narrow no-break space before AM and PM.
+  const p: Record<string, string> = {};
+  for (const x of new Intl.DateTimeFormat("en-US", { timeZone: "UTC", hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(t)) p[x.type] = x.value;
+  return `${day}, ${p.hour}:${p.minute} ${p.dayPeriod} UTC`;
 }
 
 // Whole days from `now` until the end of the end date (0 on the end date itself).

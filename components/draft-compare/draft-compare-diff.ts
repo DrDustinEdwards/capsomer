@@ -142,8 +142,17 @@ function fold(tokens: Marked[]): WordPart[] {
       j++;
     }
     const lead = first ? "" : (tokens[i] as Marked).lead;
-    push("same", lead);
-    push(op, text);
+    // The space before an insertion or a deletion is shared only when the text after it also
+    // follows a space on the other side. Before punctuation that touches the word before it
+    // ("nothing." becoming "nothing but notes."), or at the end, the space belongs to the
+    // changed side alone, so it goes in the part (the renderer draws it outside the mark).
+    const next = tokens[j];
+    const own = op !== "same" && (!next || (next.op === "same" && next.lead === ""));
+    if (own) push(op, lead + text);
+    else {
+      push("same", lead);
+      push(op, text);
+    }
     first = false;
     i = j;
   }

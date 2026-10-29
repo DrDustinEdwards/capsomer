@@ -82,6 +82,19 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-own-list">
+  <h2 id="s-own-list">The app lists the files in its own queue</h2>
+  <div class="cap-drop" data-cap="drop-zone" data-accepted-list="off" data-max-bytes="5242880" id="dz-own-list">
+    <label class="cap-drop-label">
+      <input class="cap-drop-input" type="file" multiple accept="image/*" data-cap-part="input" aria-labelledby="dz-own-list-title" aria-describedby="dz-own-list-hint" />
+      <span class="cap-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg></span>
+      <span class="cap-drop-title" id="dz-own-list-title"><span class="cap-drop-idle">Drop images here, or <span class="cap-drop-browse">browse</span></span><span class="cap-drop-over">Drop to upload</span></span>
+      <span class="cap-drop-hint" id="dz-own-list-hint">Images up to 5 MB each. They upload at once.</span>
+    </label>
+    <div class="cap-drop-rejections" role="alert" data-cap-part="rejections"></div>
+  </div>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-disabled">
   <h2 id="s-disabled">Disabled</h2>
   <div class="cap-drop" id="dz-disabled">

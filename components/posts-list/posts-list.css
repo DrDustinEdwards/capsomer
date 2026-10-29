@@ -66,9 +66,18 @@
   }
 
   /* The title cell: the one link, stretched over the row, then the path, the kind and the
-     host's notes on a quiet line under it. */
+     host's notes on a quiet line under it. It takes the table's spare width and wraps, so the
+     status, the date and the menu sit together at the end, each as wide as its content. */
   .cap-posts-title {
+    inline-size: 100%;
     min-inline-size: 14rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .cap-posts-status,
+  .cap-posts-updated,
+  .cap-posts-extra-cell {
+    inline-size: 1%;
   }
   .cap-posts-meta {
     display: flex;
@@ -112,13 +121,138 @@
       }
       & > .cap-menu {
         inset-inline: auto 0;
-        min-inline-size: 12rem;
+        min-inline-size: 15rem;
       }
     }
   }
-  /* The table's scroll region clips an open menu on the last rows: room under the table. */
+  /* The table's scroll region would clip an open menu on the last rows: while one is open the
+     region lets it out. The table fits its region at every width it is a table (a phone gets
+     cards), so nothing scrolls sideways meanwhile. */
   .cap-posts-wrap:has(.cap-menu-form[open]) {
-    padding-block-end: 12rem;
+    overflow: visible;
+  }
+
+  /* On a phone each post is a card: the box, the title and its menu across the top, then the
+     status and the date under the title (the table's reflow, laid out for a post). */
+  @container cap-table (max-width: 639px) {
+    .cap-posts-wrap.cap-table-wrap[data-reflow] > .cap-posts-table > tbody > tr {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: var(--space-1) var(--space-3);
+      padding: var(--space-3) var(--space-4);
+
+      & > .cap-posts-check {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      & > .cap-posts-title {
+        grid-column: 2;
+        grid-row: 1;
+        min-inline-size: 0;
+      }
+      & > .cap-posts-actions {
+        grid-column: 3;
+        grid-row: 1;
+        inline-size: auto;
+      }
+      & > :is(.cap-posts-status, .cap-posts-updated, .cap-posts-extra-cell) {
+        grid-column: 2 / -1;
+        inline-size: auto;
+        color: var(--muted);
+        font-size: var(--fs-detail);
+      }
+      /* The status says what it is; the date and a host's column say their name before the
+         value, on the same line. */
+      & > .cap-posts-status::before {
+        content: none;
+      }
+      & > :is(.cap-posts-updated, .cap-posts-extra-cell)::before {
+        display: inline;
+        margin: 0 var(--space-2) 0 0;
+        font-size: inherit;
+        letter-spacing: 0;
+        text-transform: none;
+        font-weight: 400;
+        color: var(--muted);
+      }
+    }
+    /* A reader has no boxes: the title starts the card. */
+    .cap-posts-wrap.cap-table-wrap[data-reflow] > .cap-posts-table:not(:has(.cap-posts-check)) > tbody > tr {
+      grid-template-columns: minmax(0, 1fr) auto;
+
+      & > .cap-posts-title {
+        grid-column: 1;
+      }
+      & > .cap-posts-actions {
+        grid-column: 2;
+      }
+      & > :is(.cap-posts-status, .cap-posts-updated, .cap-posts-extra-cell) {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+
+  /* The page of one scheduled update: the page head, then the no-script form, then the
+     compare and the patch. */
+  .cap-posts-update-view {
+    display: grid;
+    gap: var(--space-5);
+    min-inline-size: 0;
+  }
+  .cap-posts-update-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3);
+
+    & > .cap-field {
+      margin: 0;
+    }
+  }
+  /* Each side of the compare named over its column, in the viewer's zone: "Live post · on the
+     site since …", "Scheduled update · goes live …". One column under 40rem, as the compare. */
+  .cap-posts-update-view {
+    container: cap-posts-update / inline-size;
+  }
+  .cap-posts-update-sides {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2) var(--gap);
+    margin-block-end: calc(var(--space-3) - var(--space-5));
+  }
+  .cap-posts-update-side {
+    margin: 0;
+    padding-block-end: var(--space-2);
+    border-bottom: 1px solid var(--line);
+    font-size: var(--fs-body);
+    font-weight: 600;
+  }
+  .cap-posts-update-side-when {
+    color: var(--muted);
+    font-weight: 400;
+
+    & .cap-time {
+      color: inherit;
+    }
+  }
+  @container cap-posts-update (max-width: 40rem) {
+    .cap-posts-update-sides {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* The reschedule dialog's form holds its body and footer: the dialog lays them out as its
+     own parts, and the field sits at the header's normal distance. */
+  .cap-posts-reschedule {
+    display: contents;
+
+    & > .cap-dialog-body {
+      padding-block-start: 0;
+    }
+  }
+
+  /* The page head's danger action stands apart from the others. */
+  .cap-posts-update-view .cap-page-head-actions > [data-cap-part="cancel-update"] {
+    margin-inline-start: var(--space-4);
   }
 
   .cap-posts-pages {

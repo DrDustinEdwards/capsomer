@@ -19,6 +19,9 @@ export interface DropZoneProps {
   // The idle title ("Drop files here, or browse" by default) and the line of rules under it.
   title?: ReactNode;
   hint?: ReactNode;
+  // false: the zone does not list the files it took ("3 files are ready to upload." and the
+  // list), because the app shows its own upload queue. Refusals are still listed.
+  acceptedList?: boolean;
   // Called with the files that passed, and again with the files that did not.
   onAccepted?: (files: File[], rejected: Rejection[]) => void;
   onRejected?: (rejected: Rejection[], accepted: File[]) => void;
@@ -27,7 +30,7 @@ export interface DropZoneProps {
 
 const CRIT = "M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z";
 
-export function DropZone({ accept, maxBytes, maxFiles, multiple = false, name, disabled, scope = "zone", paste, title, hint, onAccepted, onRejected, id }: DropZoneProps) {
+export function DropZone({ accept, maxBytes, maxFiles, multiple = false, name, disabled, scope = "zone", paste, title, hint, acceptedList = true, onAccepted, onRejected, id }: DropZoneProps) {
   const own = useId();
   const base = id ?? own;
   const input = useRef<HTMLInputElement>(null);
@@ -114,7 +117,7 @@ export function DropZone({ accept, maxBytes, maxFiles, multiple = false, name, d
 
   const state = over ? "over" : rejected.length > 0 ? "rejected" : "idle";
   return (
-    <div ref={root} className="cap-drop" data-state={state} data-scope={scope === "page" ? "page" : undefined}>
+    <div ref={root} className="cap-drop" data-state={state} data-scope={scope === "page" ? "page" : undefined} data-accepted-list={acceptedList ? undefined : "off"}>
       <label className="cap-drop-label">
         <input ref={input} className="cap-drop-input" type="file" name={name} multiple={multiple || (maxFiles ?? 1) > 1} accept={accept} disabled={disabled} aria-labelledby={`${base}-title`} aria-describedby={`${base}-hint`} />
         <span className="cap-drop-icon" aria-hidden="true">
@@ -137,21 +140,23 @@ export function DropZone({ accept, maxBytes, maxFiles, multiple = false, name, d
           {hint}
         </span>
       </label>
-      <div className="cap-drop-status" role="status">
-        {accepted.length > 0 ? (
-          <>
-            <p className="cap-drop-lead">{acceptedText(accepted)}</p>
-            <ul className="cap-drop-files">
-              {accepted.map((f, i) => (
-                <li key={`${f.name}-${i}`}>
-                  <span className="cap-drop-file-name">{f.name}</span>
-                  <span className="cap-drop-file-size">{formatBytes(f.size)}</span>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : null}
-      </div>
+      {acceptedList ? (
+        <div className="cap-drop-status" role="status">
+          {accepted.length > 0 ? (
+            <>
+              <p className="cap-drop-lead">{acceptedText(accepted)}</p>
+              <ul className="cap-drop-files">
+                {accepted.map((f, i) => (
+                  <li key={`${f.name}-${i}`}>
+                    <span className="cap-drop-file-name">{f.name}</span>
+                    <span className="cap-drop-file-size">{formatBytes(f.size)}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+        </div>
+      ) : null}
       <div className="cap-drop-rejections" role="alert">
         {rejected.length > 0 ? (
           <>

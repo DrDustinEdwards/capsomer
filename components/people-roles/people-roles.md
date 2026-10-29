@@ -28,9 +28,9 @@ For an app's users (readers, teachers, merchants, authors), who sign in through 
 
 - **Every action is a form post with an `intent`** (`add`, `change_title`, `renew`, `remove`, `retry`, `review`), so the page works with no script, and the server answers with `result`. The script adds the confirm before a removal, the end date that follows the chosen title, and the review's running tally. With `onIntent`, React runs the same posts in place.
 - **A Cloudflare column on every row**, in words and a shape: "Ready: they can sign in", "Waiting for Cloudflare" (the running arc) with Retry, or "Cloudflare refused" with Cloudflare's own reason and Retry. A change is never shown as done before the allow list matches it (design: "a failure is shown and retried, never ignored").
-- **The end date is a date, never a countdown alone.** Within three weeks of it the row says "Ends 18 Dec 2026, in 18 days" in bold beside the warning shape, the same window that opens the review.
+- **The end date is a date, never a countdown alone.** Within three weeks of it the row says "Ends Dec 18, 2026, in 18 days" in bold beside the warning shape, the same window that opens the review.
 - **One action on the row, the rest in its Actions menu.** The row shows Retry while Cloudflare has not caught up, otherwise Renew; Change title, History and Remove (last, after a separator) sit in the shared form menu (`menu`), so six people do not make thirty buttons. `rowActions(person)` decides which.
-- **Renew is one click** and names the date it sets ("Renew to 14 May 2027"), which the server worked out.
+- **Renew is one click** and names the date it sets ("Renew to May 14, 2027"), which the server worked out.
 - **Remove asks first** (any submit whose `intent` is `remove`, found by its submitter), saying what follows: refused on the next request, off the allow list, seat freed, row kept. The confirm is the shared confirm dialog; with no script, the post comes back as the confirm page (`ConfirmPage`) until it carries `confirmed=yes`.
 - **Change title needs a one-line reason**, recorded with the change. It opens as its own row under the person, by the address (`?change=<email>`), so the table's columns stay put and the form works with no script.
 - **The review is a checklist at the top** while one is open: Keep or Remove per person, a tally that counts what is left, and the rule in one sentence: anyone not answered loses access on the end date.
@@ -55,7 +55,7 @@ shadcn/ui `Table` (from `table`), `Field`, `Input` and `NativeSelect` (from `fie
 
 ## Accessibility
 
-- Every inline action carries the person's name for a screen reader ("Renew to 14 May 2027 for Rosa Park"), and each Actions menu is named for its person ("Actions for Rosa Park"), so a column of buttons is not six "Actions".
+- Every inline action carries the person's name for a screen reader ("Renew to May 14, 2027 for Rosa Park"), and each Actions menu is named for its person ("Actions for Rosa Park"), so a column of buttons is not six "Actions".
 - The person is the row header (`th scope="row"`), so each cell reads with their name.
 - Each status is a word and a shape (ok, the running arc, critical, warning), never color alone; the shapes are hidden from the accessibility tree.
 - The result line is a status region when it worked and an alert when it did not, with "Done:" or "Not done:" before the words.
@@ -79,7 +79,7 @@ The React wrapper renders the contract, and the states page is generated from it
     <h3 id="pr-rv">Still on your team?</h3>
     <div class="cap-people-review-list">
       <fieldset class="cap-people-review-item"><legend>Rosa Park <span class="cap-people-review-who">Lab worker</span></legend>
-        <label class="cap-check"><input type="radio" name="answer-0" value="keep"> Keep, until 14 May 2027</label>
+        <label class="cap-check"><input type="radio" name="answer-0" value="keep"> Keep, until May 14, 2027</label>
         <label class="cap-check"><input type="radio" name="answer-0" value="remove"> Remove</label>
         <input type="hidden" name="email-0" value="rosa.park@example.edu">
       </fieldset>
@@ -94,10 +94,10 @@ The React wrapper renders the contract, and the states page is generated from it
         <tr data-status="active" data-email="rosa.park@example.edu" data-name="Rosa Park">
           <th scope="row" class="cap-people-who"><span class="cap-people-name">Rosa Park</span><span class="cap-people-email cap-mono">rosa.park@example.edu</span></th>
           <td>Lab worker</td>
-          <td><span class="cap-people-end" data-soon>[warn glyph]Ends 18 Dec 2026, in 18 days</span></td>
+          <td><span class="cap-people-end" data-soon>[warn glyph]Ends Dec 18, 2026, in 18 days</span></td>
           <td><span class="cap-status" data-tone="ok">[ok glyph]Ready: they can sign in</span></td>
           <td class="cap-people-actions"><div class="cap-people-acts">
-            <form method="post" action="/lab/members"><input type="hidden" name="intent" value="renew"><input type="hidden" name="email" value="rosa.park@example.edu"><button type="submit" class="cap-btn" data-size="sm">Renew to 14 May 2027<span class="cap-sr-only"> for Rosa Park</span></button></form>
+            <form method="post" action="/lab/members"><input type="hidden" name="intent" value="renew"><input type="hidden" name="email" value="rosa.park@example.edu"><button type="submit" class="cap-btn" data-size="sm">Renew to May 14, 2027<span class="cap-sr-only"> for Rosa Park</span></button></form>
             <details class="cap-menu-form" data-cap="menu-form"><summary class="cap-btn cap-menu-trigger" aria-label="Actions for Rosa Park">Actions[chevron]</summary>
               <form class="cap-popover cap-menu" action="/lab/members" method="post"><input type="hidden" name="email" value="rosa.park@example.edu">
                 <a class="cap-option cap-menu-item" href="?change=rosa.park%40example.edu">Change title</a>
@@ -112,7 +112,7 @@ The React wrapper renders the contract, and the states page is generated from it
     </table>
   </div>
 
-  <section class="cap-people-history" aria-labelledby="pr-hi">...<ol class="cap-people-history-list"><li class="cap-people-history-item"><time class="cap-people-history-when">...</time><div><p class="cap-people-history-what">Renewed, until 14 May 2027</p><span class="cap-people-history-by">By Maya Chen</span></div><span class="cap-status" data-tone="info">...Waiting for Cloudflare</span></li></ol></section>
+  <section class="cap-people-history" aria-labelledby="pr-hi">...<ol class="cap-people-history-list"><li class="cap-people-history-item"><time class="cap-people-history-when">...</time><div><p class="cap-people-history-what">Renewed, until May 14, 2027</p><span class="cap-people-history-by">By Maya Chen</span></div><span class="cap-status" data-tone="info">...Waiting for Cloudflare</span></li></ol></section>
 
   <form class="cap-people-card cap-people-add" data-cap="field" method="post" aria-labelledby="pr-add">...email, name, title (each option's data-end), end date (max is the title's default)...</form>
 </section>

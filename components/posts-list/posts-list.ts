@@ -42,6 +42,14 @@ export function contentStatus(status: ContentStatus, publishAt: string | null = 
   }
 }
 
+// A row's status on one line: the status word, then what is due, after a middle dot:
+// "Scheduled · in 3 days", "Published · update in 2 days".
+export function rowStatus(row: Pick<PostRow, "status" | "publishAt" | "scheduledUpdate">, now: number = Date.now()): ContentStatusWords & { note?: string } {
+  const st = contentStatus(row.status, row.publishAt, now);
+  if (row.status === "published" && row.scheduledUpdate) return { ...st, note: `update ${inDays(row.scheduledUpdate.publishAt, now)}` };
+  return st.when ? { ...st, note: st.when } : st;
+}
+
 // ---------------------------------------------------------------------------------------
 // Words.
 
@@ -118,7 +126,7 @@ export function withFilter(q: PostsQuery, change: Partial<PostsQuery>): PostsQue
 // ---------------------------------------------------------------------------------------
 // What is offered.
 
-export type PostIntent = "add-tag" | "remove-tag" | "duplicate" | "unpublish" | "delete";
+export type PostIntent = "add-tag" | "remove-tag" | "duplicate" | "unpublish" | "delete" | "reschedule" | "cancel-schedule";
 
 export interface OfferedAction {
   intent: PostIntent;
@@ -151,18 +159,58 @@ export interface RowAction {
   value: string;
   href?: string;
   danger?: boolean;
+  // Reschedule: the time it moves from, which the menu's time field starts at.
+  publishAt?: string;
+}
+
+// The time a row's schedule goes out: its waiting update's on a live post, its own on a scheduled
+// one. null when nothing is scheduled.
+export function scheduledTime(row: Pick<PostRow, "status" | "publishAt" | "scheduledUpdate">): string | null {
+  if (row.status === "published") return row.scheduledUpdate?.publishAt ?? null;
+  return row.status === "scheduled" ? row.publishAt : null;
 }
 
 // One row's menu: Edit and View on the site go somewhere; the rest post an intent for this row.
+// With scheduled updates (site-api v0.10.0) a scheduled post or a live post's waiting update can
+// be moved (`reschedule`, with `publishAt`), and a live post's update canceled (`cancel-schedule`,
+// one-way, so it is a danger item); a scheduled post is canceled by Unpublish, as before.
 export function rowActions(row: PostRow, data: Pick<PostsData, "offers" | "can">): RowAction[] {
   const { offers, can } = data;
   const items: RowAction[] = [];
   if (can.edit) items.push({ label: "Edit", value: "edit", href: row.href });
   if (row.status === "published" && row.liveHref) items.push({ label: "View on the site", value: "view", href: row.liveHref });
+  const at = scheduledTime(row);
+  const update = row.status === "published" ? row.scheduledUpdate : undefined;
+  const moves = can.publish && offers.scheduledUpdates === true;
+  if (update) items.push({ label: "View the scheduled update", value: "view-update", href: update.href });
+  // Reschedule… and Cancel the update act in place with script (a dialog, a confirmation);
+  // with no script they go to the page that does it: the update's own, or the editor.
+  if (moves && at) items.push({ label: "Reschedule…", value: "reschedule", href: update?.href ?? row.href, publishAt: at });
   if (can.publish && row.status !== "draft") items.push({ label: "Unpublish", value: "unpublish" });
   if (can.edit && offers.duplicate) items.push({ label: "Duplicate", value: "duplicate" });
+  if (moves && update) items.push({ label: "Cancel the update", value: "cancel-schedule", href: update.href, danger: true });
   if (can.deleteContent && offers.delete) items.push({ label: "Delete", value: "delete", danger: true });
   return items;
+}
+
+// ---------------------------------------------------------------------------------------
+// The reschedule time field.
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+// An ISO time as a datetime-local value in this browser's zone ("2030-01-01T16:00").
+export function localInputValue(iso: string): string {
+  const d = new Date(iso);
+  if (!Number.isFinite(d.getTime())) return "";
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// A datetime-local value, read in this browser's zone, as the UTC time the kit takes
+// ("2030-01-01T15:00:00Z"). "" for an empty or impossible value.
+export function isoFromLocal(value: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) return "";
+  const d = new Date(value);
+  return Number.isFinite(d.getTime()) ? d.toISOString().replace(/\.\d{3}Z$/, "Z") : "";
 }
 
 // ---------------------------------------------------------------------------------------

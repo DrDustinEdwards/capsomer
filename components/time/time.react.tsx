@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { REFRESH_MS, exactParts, parse, text, type TimeFormat } from "./time.ts";
 
 export interface TimeProps {
@@ -27,15 +27,32 @@ function useClock(enabled: boolean): number {
   return now;
 }
 
+const noSubscribe = () => () => {};
+
+// False on the server and while React hydrates what the server sent; true from then on (and at
+// once for a time first drawn in the browser).
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    noSubscribe,
+    () => true,
+    () => false,
+  );
+}
+
 export function Time({ at, format = "relative", now }: TimeProps) {
   const t = toMs(at);
   const clock = useClock(format === "relative" && now === undefined);
+  const hydrated = useHydrated();
   const iso = Number.isFinite(t) ? new Date(t).toISOString() : undefined;
   // A time that cannot be read is said in words and is not a <time> (it has no datetime).
   if (!iso) return <span className="cap-time">{text(t, format)}</span>;
-  // The server's words can differ from the browser's (its clock, its zone); the browser's
-  // win without a warning.
-  const p = format === "exact" ? exactParts(t) : null;
+  // The server cannot know the viewer's zone. Until hydration is done the time is drawn in UTC
+  // on both sides ("October 2, 2026, 9:12 AM UTC", one text with no UTC part), so the markup the
+  // server sent and the browser's first render are the same and React does not throw (#418);
+  // then it redraws in the viewer's zone with the UTC part beside it. A relative time's words
+  // can still differ by the clock; they are text alone, and the browser's win without a warning.
+  const zone = hydrated ? undefined : "UTC";
+  const p = format === "exact" ? exactParts(t, zone) : null;
   return (
     <time className="cap-time" dateTime={iso} data-format={format === "exact" ? "exact" : undefined} suppressHydrationWarning>
       {p ? (
@@ -44,7 +61,7 @@ export function Time({ at, format = "relative", now }: TimeProps) {
           {p.utc ? <span className="cap-time-utc">{p.utc}</span> : null}
         </>
       ) : (
-        text(t, format, now ?? clock)
+        text(t, format, now ?? clock, zone)
       )}
     </time>
   );

@@ -28,7 +28,7 @@ A single current state is a `.cap-status`. A trend in a number (requests, errors
 ## The default and its reason
 
 - **Render the strip with Enarratio**: `uptimeStrip()` from the `enarratio` package returns an SVG string; put it in `.cap-uptime-strip`. The strip gets one scale and one look across every app, and its marks carry their own titles for the pointer.
-- **Every chart has a one-sentence summary and its numbers as text.** The summary says what the strip shows ("Up all week except one outage on Tuesday 29 September, from 11:50 to 18:20 UTC") and sits under the title, before the strip, as the chart frame puts it; the numbers by day sit behind "Show data" (the frame's disclosure), closed by default, as a table in the HTML. Enarratio's `uptimeStripTable()` returns both the sentence and the table.
+- **Every chart has a one-sentence summary and its numbers as text.** The summary says what the strip shows ("Up all week except one outage on Tuesday, September 29, from 11:50 to 18:20 UTC") and sits under the title, before the strip, as the chart frame puts it; the numbers by day sit behind "Show data" (the frame's disclosure), closed by default, as a table in the HTML. Enarratio's `uptimeStripTable()` returns both the sentence and the table.
 - **The caption gives the uptime and its window together**, so a percent never stands without what it is a percent of. With gaps, the window says so: "100% up over the 6 of 7 days with data".
 - **No data is a state, hatched, with its reason.** It is never counted as up or as zero.
 - **Each kind of slot differs in shape as well as color** in the legend: up and down solid, partly down split, no data hatched.

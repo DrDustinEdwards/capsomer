@@ -176,6 +176,11 @@
       margin: 0;
     }
   }
+  /* data-accepted-list="off": the app lists the files in its own queue. A status region
+     written by the server stays out of sight too. */
+  .cap-drop[data-accepted-list="off"] > .cap-drop-status {
+    display: none;
+  }
   .cap-drop-rejections {
     padding: var(--space-3) var(--space-4);
     border: 1px solid var(--crit);

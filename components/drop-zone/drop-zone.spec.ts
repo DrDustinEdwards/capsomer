@@ -204,6 +204,18 @@ eachTheme((theme) => {
     expect(await page.locator("#dz-idle input").evaluate((el: HTMLInputElement) => Array.from(el.files ?? []).map((f) => f.name))).toEqual(["a.png", "b.png", "c.png", "d.png"]);
   });
 
+  test("behavior: with its list off, the zone says nothing of the files it took but still tells the page and names refusals", async ({ page }) => {
+    await visitStates(page, "drop-zone", theme);
+    await page.evaluate(() => {
+      (window as unknown as { heard: unknown[] }).heard = [];
+      document.querySelector("#dz-own-list")!.addEventListener("cap-drop-accepted", (e) => (window as unknown as { heard: unknown[] }).heard.push((e as CustomEvent).detail.accepted.map((f: File) => f.name)));
+    });
+    await page.locator("#dz-own-list input").setInputFiles([png("cover.png"), { name: "notes.txt", mimeType: "text/plain", buffer: Buffer.alloc(10) }]);
+    await expect(page.locator("#dz-own-list [role=alert]")).toContainText("notes.txt: type not allowed.");
+    await expect(page.locator("#dz-own-list")).not.toContainText("ready to upload");
+    expect(await page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual([["cover.png"]]);
+  });
+
   test("behavior: a zone without multiple takes one file and names the others", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await drag(page, "#dz-single", "drop", [

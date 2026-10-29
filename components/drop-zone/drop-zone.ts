@@ -188,8 +188,14 @@ export function rulesOf(zone: HTMLElement): DropRules {
   return rules;
 }
 
+// A zone with data-accepted-list="off" writes nothing about the files it took: the app shows
+// its own upload queue. The refusals are still the zone's.
+function listsAccepted(zone: HTMLElement): boolean {
+  return zone.dataset.acceptedList !== "off";
+}
+
 function render(zone: HTMLElement, result: Validation): void {
-  const status = part(zone, "status");
+  const status = listsAccepted(zone) ? part(zone, "status") : null;
   const alert = part(zone, "rejections");
   if (status) {
     if (result.accepted.length === 0) status.replaceChildren();

@@ -13,8 +13,11 @@
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 
+    /* An exact time is read in a sentence, not down a column: proportional figures, so the
+       comma and the colon sit against the digits ("12 October 2026, 10:00", not "10 : 00"). */
     &[data-format="exact"] {
       color: var(--text);
+      font-variant-numeric: normal;
       white-space: normal;
     }
     &[data-tone="text"] {

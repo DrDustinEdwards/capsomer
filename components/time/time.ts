@@ -36,14 +36,15 @@ export function calendarDays(t: number, now: number, zone?: string): number {
   return Math.round((at(now) - at(t)) / DAY);
 }
 
-// "12 September", or "12 September 2025" when the year is not this one.
+// "September 12", or "September 12, 2025" when the year is not this one: American English,
+// the family's (Dustin, 2026-10-25).
 export function day(t: number, now: number = Date.now(), zone?: string): string {
-  const year = (x: number) => new Intl.DateTimeFormat("en-GB", { timeZone: zone, year: "numeric" }).format(x);
-  return new Intl.DateTimeFormat("en-GB", { timeZone: zone, day: "numeric", month: "long", year: year(t) === year(now) ? undefined : "numeric" }).format(t);
+  const year = (x: number) => new Intl.DateTimeFormat("en-US", { timeZone: zone, year: "numeric" }).format(x);
+  return new Intl.DateTimeFormat("en-US", { timeZone: zone, day: "numeric", month: "long", year: year(t) === year(now) ? undefined : "numeric" }).format(t);
 }
 
 // Relative, spelled out: "just now", "less than a minute ago", "5 minutes ago",
-// "3 hours ago", "yesterday", "4 days ago", "12 September"; and ahead, "in 3 hours",
+// "3 hours ago", "yesterday", "4 days ago", "September 12"; and ahead, "in 3 hours",
 // "tomorrow". Minutes and hours are whole and round down, so "1 hour ago" means at least
 // an hour.
 export function relative(t: number, now: number = Date.now(), zone?: string): string {
@@ -69,24 +70,36 @@ export function utc(t: number): string {
   return `${new Date(t).toISOString().replace("T", " ").slice(0, 16)}Z`;
 }
 
-function parts(t: number, zone: string | undefined, withZone: boolean): Record<string, string> {
-  const f = new Intl.DateTimeFormat("en-GB", {
+function parts(t: number, zone: string | undefined): Record<string, string> {
+  const f = new Intl.DateTimeFormat("en-US", {
     timeZone: zone,
     day: "numeric",
     month: "long",
     year: "numeric",
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
-    hourCycle: "h23",
-    timeZoneName: withZone ? "short" : undefined,
+    hour12: true,
   });
   const out: Record<string, string> = {};
   for (const p of f.formatToParts(t)) out[p.type] = p.value;
   return out;
 }
 
+const zoneWord = (locale: string, t: number, zone?: string) =>
+  new Intl.DateTimeFormat(locale, { timeZone: zone, timeZoneName: "short" }).formatToParts(t).find((p) => p.type === "timeZoneName")?.value ?? "";
+
+// The zone's short name as an American reader knows it: "CST", "CDT", "EST", "PDT".
+// en-US has names only for the American zones and writes "GMT+1" for the rest, so a zone it
+// has no name for takes the British one when there is one ("BST", "CEST"), else the offset.
+export function zoneName(t: number, zone?: string): string {
+  const us = zoneWord("en-US", t, zone);
+  if (!/^(GMT|UTC)[+-]/.test(us)) return us;
+  const gb = zoneWord("en-GB", t, zone);
+  return /^(GMT|UTC)[+-]/.test(gb) || gb === "" ? us : gb;
+}
+
 function isUtc(zone?: string): boolean {
-  const z = new Intl.DateTimeFormat("en-GB", { timeZone: zone }).resolvedOptions().timeZone;
+  const z = new Intl.DateTimeFormat("en-US", { timeZone: zone }).resolvedOptions().timeZone;
   return z === "UTC" || z === "Etc/UTC" || z === "Etc/GMT" || z === "GMT";
 }
 
@@ -96,20 +109,20 @@ export const UNREADABLE = "an unreadable time";
 
 // Exact, in the viewer's zone with UTC beside it, in two parts so the UTC part can be kept
 // whole on a line (the Portal's `.when .faint { white-space: nowrap }`): the local time, and
-// "(13:02 UTC)". UTC's date is added when it differs from the local one; a viewer in UTC sees
+// "(1:02 PM UTC)". UTC's date is added when it differs from the local one; a viewer in UTC sees
 // one time and no second part.
 export function exactParts(t: number, zone?: string): { local: string; utc: string | null } {
   if (!Number.isFinite(t)) return { local: UNREADABLE, utc: null };
-  const u = parts(t, "UTC", false);
-  const uDate = `${u.day} ${u.month} ${u.year}`;
-  const uTime = `${u.hour}:${u.minute} UTC`;
+  const u = parts(t, "UTC");
+  const uDate = `${u.month} ${u.day}, ${u.year}`;
+  const uTime = `${u.hour}:${u.minute} ${u.dayPeriod} UTC`;
   if (isUtc(zone)) return { local: `${uDate}, ${uTime}`, utc: null };
-  const l = parts(t, zone, true);
-  const lDate = `${l.day} ${l.month} ${l.year}`;
-  return { local: `${lDate}, ${l.hour}:${l.minute} ${l.timeZoneName}`, utc: `(${lDate === uDate ? uTime : `${uDate}, ${uTime}`})` };
+  const l = parts(t, zone);
+  const lDate = `${l.month} ${l.day}, ${l.year}`;
+  return { local: `${lDate}, ${l.hour}:${l.minute} ${l.dayPeriod} ${zoneName(t, zone)}`, utc: `(${lDate === uDate ? uTime : `${uDate}, ${uTime}`})` };
 }
 
-// "30 September 2026, 14:02 BST (13:02 UTC)".
+// "November 3, 2026, 8:00 AM CST (2:00 PM UTC)".
 export function exact(t: number, zone?: string): string {
   const p = exactParts(t, zone);
   return p.utc ? `${p.local} ${p.utc}` : p.local;

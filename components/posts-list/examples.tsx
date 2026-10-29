@@ -4,9 +4,9 @@
 import { StrictMode, useRef, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
-import type { ContentCan, IntentResult, PostRow, PostsData } from "../content/content.ts";
+import type { ContentCan, IntentResult, PostRow, PostsData, ScheduledUpdateView } from "../content/content.ts";
 import { MessageProvider } from "../message/message.react.tsx";
-import { PostsList } from "./posts-list.react.tsx";
+import { PostScheduledUpdate, PostsList } from "./posts-list.react.tsx";
 
 const NOW = Date.parse("2026-10-10T12:00:00Z");
 const ALL: ContentCan = { edit: true, publish: true, deleteContent: true, deleteMedia: true, decideMentions: true };
@@ -15,7 +15,7 @@ const ROWS: PostRow[] = [
   { id: "foxhound-release", title: "Notes on the Foxhound release", kind: "post", status: "published", path: "/blog/foxhound-release", href: "/editor/foxhound-release", liveHref: "https://dustinedwards.info/blog/foxhound-release", publishAt: null, publishedAt: "2026-10-02T09:00:00Z", updatedAt: "2026-10-09T16:20:00Z", tags: ["release"] },
   { id: "uptime-strip", title: "Why the uptime strip counts gaps", kind: "post", status: "scheduled", path: null, href: "/editor/uptime-strip", liveHref: null, publishAt: "2026-10-13T08:00:00Z", publishedAt: null, updatedAt: "2026-10-10T08:05:00Z", tags: ["capsid"] },
   { id: "mention-queue", title: "What a mention queue is for", kind: "post", status: "draft", path: null, href: "/editor/mention-queue", liveHref: null, publishAt: null, publishedAt: null, updatedAt: "2026-10-08T21:40:00Z", notes: [{ text: "2 AI drafts waiting", tone: "info" }], tags: [] },
-  { id: "read-only-agent", title: "Notes on a read-only agent", kind: "post", status: "published", path: "/blog/read-only-agent", href: "/editor/read-only-agent", liveHref: "https://dustinedwards.info/blog/read-only-agent", publishAt: null, publishedAt: "2026-09-21T10:00:00Z", updatedAt: "2026-09-22T08:00:00Z", tags: ["agents", "capsid"] },
+  { id: "read-only-agent", title: "Notes on a read-only agent", kind: "post", status: "published", path: "/blog/read-only-agent", href: "/editor/read-only-agent", liveHref: "https://dustinedwards.info/blog/read-only-agent", publishAt: null, publishedAt: "2026-09-21T10:00:00Z", updatedAt: "2026-09-22T08:00:00Z", scheduledUpdate: { publishAt: "2026-10-12T15:00:00Z", href: "/posts/read-only-agent/update" }, tags: ["agents", "capsid"] },
   { id: "phage-lambda", title: "Phage lambda: lysis or lysogeny", kind: "post", status: "draft", path: null, href: "/editor/phage-lambda", liveHref: null, publishAt: null, publishedAt: null, updatedAt: "2026-10-01T12:00:00Z", notes: [{ text: "New draft" }, { text: "Held by a flag", tone: "warn" }] },
   { id: "about", title: "About", kind: "page", status: "published", path: "/about", href: "/editor/about", liveHref: "https://dustinedwards.info/about", publishAt: null, publishedAt: "2026-06-01T09:00:00Z", updatedAt: "2026-09-02T11:00:00Z", tags: [] },
 ];
@@ -113,6 +113,22 @@ function useSite() {
         setRows((rs) => rs.filter((r) => !ids.includes(r.id)));
         return { ok: true, message: `Deleted ${ids.length} ${posts(ids.length)}.`, outcomes: ids.map((id) => ({ id, ok: true })) };
       }
+      case "reschedule": {
+        // One time for every post, or (its Undo) one per post in the order of ids, as the kit takes them.
+        const times = form.getAll("publishAts").map(String);
+        const at = (id: string) => (times.length ? times[ids.indexOf(id)] : String(form.get("publishAt") ?? "")) ?? "";
+        if (!ids.every((id) => /[zZ]|[+-]\d{2}:\d{2}$/.test(at(id)))) return { ok: false, message: "Choose the new time, with its time zone." };
+        const before = ids.map((id) => {
+          const r = rows.find((x) => x.id === id);
+          return (r?.status === "published" ? r.scheduledUpdate?.publishAt : r?.publishAt) ?? "";
+        });
+        setRows((rs) => rs.map((r) => (!ids.includes(r.id) ? r : r.status === "published" && r.scheduledUpdate ? { ...r, scheduledUpdate: { ...r.scheduledUpdate, publishAt: at(r.id) } } : { ...r, publishAt: at(r.id) })));
+        const when = `${at(ids[0] ?? "").slice(0, 16).replace("T", " ")} UTC`;
+        return { ok: true, message: ids.length === 1 ? `Rescheduled “${title(ids[0] ?? "")}” for ${when}.` : `Rescheduled ${ids.length} posts.`, undo: { intent: "reschedule", fields: { ids, publishAts: before } } };
+      }
+      case "cancel-schedule":
+        setRows((rs) => rs.map((r) => (ids.includes(r.id) ? { ...r, scheduledUpdate: undefined } : r)));
+        return { ok: true, message: `Canceled the scheduled update to “${title(ids[0] ?? "")}”; the live post stays as it is. A canceled schedule has no Undo.` };
       case "ask-reindex":
         return { ok: true, message: "The Ask index is rebuilding; it takes about a minute." };
       default:
@@ -125,6 +141,58 @@ function useSite() {
 function Editor() {
   const { rows, submit } = useSite();
   return <PostsList data={dataOf(rows)} action="/posts" submit={submit} now={NOW} />;
+}
+
+// A site that keeps an update waiting on a live post (site-api v0.10.0): the row says so, and its
+// menu moves or cancels it.
+function Updates() {
+  const { rows, submit } = useSite();
+  return <PostsList data={dataOf(rows.slice(1, 4), { offers: { delete: true, schedule: true, tags: true, duplicate: true, scheduledUpdates: true }, extra: undefined })} action="/posts" submit={submit} now={NOW} />;
+}
+
+const LIVE = "A read-only agent can look but not touch. It reads the knowledge base and the repositories, and it writes nothing. That makes it safe to leave running.";
+const UPDATE = "A read-only agent can look but not touch. It reads the knowledge base and the repositories, and it writes nothing but its own notes. That makes it safe to leave running overnight.";
+const PATCH = `--- read-only-agent (live)
++++ read-only-agent (scheduled)
+@@ -1 +1 @@
+-${LIVE}
++${UPDATE}
+`;
+const UPDATE_VIEW: ScheduledUpdateView = {
+  id: "read-only-agent",
+  title: "Notes on a read-only agent",
+  publishAt: "2026-10-12T15:00:00Z",
+  when: "2026-10-12 15:00 UTC",
+  scheduledAt: "2026-10-09T18:30:00Z",
+  source: UPDATE,
+  live: { source: LIVE, version: "v-7f3a", href: "https://dustinedwards.info/blog/read-only-agent" },
+  patch: PATCH,
+  editorHref: "/editor/read-only-agent?update=1",
+  can: ALL,
+};
+
+const CRUMBS = [{ label: "Posts", href: "/posts" }, { label: "Notes on a read-only agent", href: "/editor/read-only-agent" }, { label: "Scheduled update" }];
+
+// The page of one waiting update, with a host that moves it and cancels it.
+function UpdateView() {
+  const [data, setData] = useState<ScheduledUpdateView | null>(UPDATE_VIEW);
+  const submit = async (form: FormData): Promise<IntentResult> => {
+    const entry: Record<string, string | string[]> = {};
+    for (const k of new Set(form.keys())) entry[k] = String(form.get(k));
+    win.postsLog.push(entry);
+    await new Promise((r) => setTimeout(r, 40));
+    if (form.get("intent") === "cancel-schedule") {
+      setData(null);
+      return { ok: true, message: "Canceled the scheduled update; the live post stays as it is." };
+    }
+    const at = String(form.get("publishAt") ?? "");
+    if (!/Z$/.test(at)) return { ok: false, message: "Choose the new time, with its time zone." };
+    const when = `${at.slice(0, 16).replace("T", " ")} UTC`;
+    setData((d) => (d ? { ...d, publishAt: at, when } : d));
+    return { ok: true, message: `Rescheduled for ${when}.` };
+  };
+  if (!data) return <p>Nothing is scheduled for this post now. <a href="/posts">Back to the list</a></p>;
+  return <PostScheduledUpdate data={data} action="/posts" submit={submit} liveSince="2026-09-21T10:00:00Z" crumbs={CRUMBS} headingLevel="h3" now={NOW} />;
 }
 
 const outcomeResult: IntentResult = {
@@ -161,6 +229,9 @@ const mounts: Record<string, () => ReactNode> = {
   "empty-drafts": () => <PostsList data={emptyDrafts} action="/posts" now={NOW} />,
   "empty-match": () => <PostsList data={emptyMatch} action="/posts" now={NOW} />,
   confirm: () => <PostsList data={dataOf(ROWS)} action="/posts" result={confirmResult} now={NOW} />,
+  updates: () => <Updates />,
+  "update-view": () => <UpdateView />,
+  "update-reader": () => <PostScheduledUpdate data={{ ...UPDATE_VIEW, can: { ...ALL, edit: false, publish: false } }} action="/posts" liveSince="2026-09-21T10:00:00Z" crumbs={CRUMBS} headingLevel="h3" now={NOW} />,
 };
 
 for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {

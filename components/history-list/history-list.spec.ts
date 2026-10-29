@@ -52,7 +52,7 @@ test("behavior: condense folds runs of consecutive autosaves and keeps every oth
   expect(run.to).toBe(at("14:40"));
   // 110 - 80 after the run began from "e": the run's total is the change from the line before it.
   expect(run.delta).toBe(30);
-  expect(rangeText(run.from, run.to)).toBe("14:02 to 14:40 UTC");
+  expect(rangeText(run.from, run.to)).toBe("2:02 PM to 2:40 PM UTC");
 });
 
 test("behavior: the current version is never folded into a run, and a single autosave is just a line", () => {
@@ -138,26 +138,26 @@ eachTheme((theme) => {
   test("accessibility: the roles and names of the pick bar and the first line", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "history-list", theme);
     await expect(page.locator("#hist-two .cap-hist-bar")).toMatchAriaSnapshot(`
-      - status: "2 versions picked. Older: 1 Oct, 09:00 UTC. Newer: 2 Oct, 13:30 UTC. The older is always first, whichever you picked first."
+      - status: "2 versions picked. Older: Oct 1, 9:00 AM UTC. Newer: Oct 2, 1:30 PM UTC. The older is always first, whichever you picked first."
       - link "Compare 2 versions"
     `);
     await expect(page.locator("#hist-two")).toMatchAriaSnapshot(`
       - list "History with two picked":
         - listitem:
-          - checkbox "Compare this version, 2 Oct, 14:52 UTC, by Dustin Edwards" [disabled]
+          - checkbox "Compare this version, Oct 2, 2:52 PM UTC, by Dustin Edwards" [disabled]
           - link "Added the 2019 burst size paper and its caveat"
           - text: +42 words
           - time: 8 minutes ago
-          - time: 2 Oct, 14:52 UTC
+          - time: Oct 2, 2:52 PM UTC
           - text: Current
         - listitem:
-          - checkbox "Compare this version, 2 Oct, 13:30 UTC, by Dustin Edwards" [checked]
+          - checkbox "Compare this version, Oct 2, 1:30 PM UTC, by Dustin Edwards" [checked]
           - link "Cut the introduction to two paragraphs"
           - paragraph: "Named version: Before the rewrite"
           - text: +58 words
-          - button "Restore the version from 2 Oct, 13:30 UTC by Dustin Edwards"
+          - button "Restore the version from Oct 2, 1:30 PM UTC by Dustin Edwards"
         - listitem:
-          - checkbox "Compare this version, 1 Oct, 16:10 UTC, by Rosa Park" [disabled]
+          - checkbox "Compare this version, Oct 1, 4:10 PM UTC, by Rosa Park" [disabled]
           - text: \u221230 words
     `);
   });
@@ -283,7 +283,7 @@ eachTheme((theme) => {
     await expect(older).toBeChecked();
     await expect(compare).toHaveAttribute("href", "/posts/phage-lambda/compare?from=v-15&to=v-17");
     await expect(compare).not.toHaveAttribute("aria-disabled", "true");
-    await expect(m.locator("[data-cap-part='picked']")).toContainText("2 versions picked. Older: 1 Oct, 09:00 UTC. Newer: 2 Oct, 13:30 UTC.");
+    await expect(m.locator("[data-cap-part='picked']")).toContainText("2 versions picked. Older: Oct 1, 9:00 AM UTC. Newer: Oct 2, 1:30 PM UTC.");
   });
 
   test("keyboard: a third pick is refused and said, and unticking one lets another be picked", async ({ page }) => {
@@ -326,14 +326,14 @@ eachTheme((theme) => {
     const top = m.locator(".cap-hist-list > .cap-hist-row").first();
     await expect(top).toHaveAttribute("data-kind", "restore");
     await expect(top).toHaveAttribute("data-current", "");
-    await expect(top).toContainText("Restored the version from 1 Oct, 16:10 UTC");
+    await expect(top).toContainText("Restored the version from Oct 1, 4:10 PM UTC");
     await expect(top.locator(".cap-status")).toHaveText("Current");
     // The earlier current line is a plain line again, with Restore, and every old line is still there.
     await expect(m.locator("[data-id='v-31']")).not.toHaveAttribute("data-current", "");
     await expect(m.locator("[data-id='v-31'] [data-cap-part='restore']")).toBeVisible();
     await expect(m.locator(".cap-hist-list > .cap-hist-row[data-id]")).toHaveCount(before + 1);
     await expect(m.locator("[data-id='v-16']")).toHaveCount(1);
-    await expect(page.locator("#hist-results")).toContainText("Restored version from 1 Oct as a new version.");
+    await expect(page.locator("#hist-results")).toContainText("Restored version from Oct 1 as a new version.");
     await expect(page.locator("#hist-results").getByRole("button", { name: /^Undo/ })).toBeVisible();
     await expect(restore).toBeFocused();
   });
@@ -434,9 +434,9 @@ eachTheme((theme) => {
     await r.locator("li[data-id='r-1'] [data-cap-part='restore']").click();
     const top = r.locator(".cap-hist-list > li.cap-hist-row").first();
     await expect(top).toHaveAttribute("data-kind", "restore");
-    await expect(top).toContainText("Restored the version from 1 Oct, 16:10 UTC");
+    await expect(top).toContainText("Restored the version from Oct 1, 4:10 PM UTC");
     await expect(r.locator("li[data-id='r-5']")).not.toHaveAttribute("data-current", "");
-    await expect(r.locator(".cap-message")).toContainText("Restored version from 1 Oct as a new version.");
+    await expect(r.locator(".cap-message")).toContainText("Restored version from Oct 1 as a new version.");
     await page.keyboard.press("z");
     await expect(r.locator("li[data-kind='restore']")).toHaveCount(0);
     await expect(r.locator("li[data-id='r-5']")).toHaveAttribute("data-current", "");
@@ -445,7 +445,7 @@ eachTheme((theme) => {
     await visitStates(page, "history-list", theme);
     const l = page.locator("#hist-load");
     await expect(l.locator("[data-cap-part='restore']")).toHaveCount(0);
-    const load = l.getByRole("link", { name: /^Load into editor the version from 1 Oct, 16:10 UTC by Rosa Park/ });
+    const load = l.getByRole("link", { name: /^Load into editor the version from Oct 1, 4:10 PM UTC by Rosa Park/ });
     await expect(load).toHaveAttribute("href", "/posts/phage-lambda/edit?load=v-70");
     // The current version has nothing to load.
     await expect(l.locator("li[data-current] [data-cap-part='load']")).toHaveCount(0);
