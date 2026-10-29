@@ -68,7 +68,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: a reader's library is a named region of filters, files and no boxes", async ({ page }) => {
+  test("accessibility: a reader's library is a named region of filters, files and no boxes", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media-library", theme);
     const limited = page.locator("[data-mount='limited']");
     await expect(limited).toMatchAriaSnapshot(`

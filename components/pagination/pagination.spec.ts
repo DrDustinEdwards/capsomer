@@ -57,7 +57,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: "#pg-narrow .cap-pagination-where", what: "Page 3 of 16" }]);
   });
 
-  test("accessibility: roles and names", async ({ page }) => {
+  test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "pagination", theme);
     await expect(page.locator("#pg-middle")).toMatchAriaSnapshot(`
       - navigation "Pagination":
@@ -86,13 +86,13 @@ eachTheme((theme) => {
     await expect(page.locator("#pg-first .cap-page[data-kind='prev']")).not.toHaveAttribute("href");
   });
 
-  test("accessibility: the chevrons and the gap's dots are not read out", async ({ page }) => {
+  test("accessibility: the chevrons and the gap's dots are not read out", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "pagination", theme);
     expect(await page.locator("#pg-middle .cap-page[data-kind='next']").evaluate((el) => (el as HTMLElement).innerText)).toBe("Next");
     expect(await page.locator("#pg-middle .cap-page-gap").evaluate((el) => el.querySelector("[aria-hidden='true']")?.textContent)).toBe("…");
   });
 
-  test("accessibility: every control is at least the target size", async ({ page }) => {
+  test("accessibility: every control is at least the target size", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "pagination", theme);
     const boxes = await page.locator("#pg-middle .cap-page, #pg-both .cap-page").evaluateAll((els) => els.map((el) => el.getBoundingClientRect()).map((r) => [r.width, r.height]));
     expect(boxes.length).toBeGreaterThan(10);

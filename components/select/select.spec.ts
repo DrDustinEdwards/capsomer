@@ -41,7 +41,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles, names and values", async ({ page }) => {
+  test("accessibility: roles, names and values", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "select", theme);
     const platform = page.getByRole("combobox", { name: "Platform" });
     await expect(platform).toHaveText("Cloudflare");
@@ -56,7 +56,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("combobox", { name: "Sort by", exact: true })).toBeVisible();
   });
 
-  test("accessibility: the open list is a named listbox with groups, a chosen option and a disabled one", async ({ page }) => {
+  test("accessibility: the open list is a named listbox with groups, a chosen option and a disabled one", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "select", theme);
     const owner = page.getByRole("combobox", { name: /^Owner/ });
     await owner.click();

@@ -20,7 +20,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the figure is named by its title and window, described by its summary, and holds a named chart and a key", async ({ page }) => {
+  test("accessibility: the figure is named by its title and window, described by its summary, and holds a named chart and a key", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "uptime-strip", theme);
     await expect(page.locator(section("s-outage")).locator(".cap-uptime")).toMatchAriaSnapshot(`
       - figure "foxhound.app 96.1% up over 7 days":

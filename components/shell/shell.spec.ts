@@ -135,7 +135,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the menu's roles and names", async ({ page }) => {
+  test("accessibility: the menu's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "shell", theme, "expanded");
     await expect(page.locator(".cap-shell-rail")).toMatchAriaSnapshot(`
       - navigation "Sections":
@@ -228,7 +228,7 @@ eachTheme((theme) => {
     });
   }
 
-  test("accessibility: the logo is decorative, and the brand link is named by the name or by brandLabel", async ({ page }) => {
+  test("accessibility: the logo is decorative, and the brand link is named by the name or by brandLabel", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "shell", theme, "logo");
     await expect(page.locator(".cap-shell-brand .cap-shell-logo")).toHaveAttribute("aria-hidden", "true");
     await expect(page.getByRole("link", { name: /^foxhound\.app/ })).toBeVisible();

@@ -24,7 +24,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles, names and the chosen one", async ({ page }) => {
+  test("accessibility: roles, names and the chosen one", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "segmented", theme);
     await expect(page.locator("#seg-window")).toMatchAriaSnapshot(`
       - group "Window":
@@ -85,7 +85,7 @@ eachTheme((theme) => {
     expect(box?.height).toBeGreaterThanOrEqual(24);
   });
 
-  test("accessibility: every size keeps a 24 px hit area", async ({ page }) => {
+  test("accessibility: every size keeps a 24 px hit area", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "segmented", theme);
     for (const id of ["#seg-sm", "#seg-lg", "#seg-icons", "#seg-comf"]) {
       const box = await page.locator(`${id} label`).first().boundingBox();
@@ -93,7 +93,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("accessibility: an invalid control is described by its message and its radios say so", async ({ page }) => {
+  test("accessibility: an invalid control is described by its message and its radios say so", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "segmented", theme);
     await expect(page.getByRole("group", { name: "Check every" })).toHaveAccessibleDescription("Choose how often to check.");
     await expect(page.getByRole("radio", { name: "1 minute" })).toHaveAttribute("aria-invalid", "true");

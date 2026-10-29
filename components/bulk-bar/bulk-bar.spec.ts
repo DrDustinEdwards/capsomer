@@ -44,7 +44,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the bar is a named region with a live count and its actions", async ({ page }) => {
+  test("accessibility: the bar is a named region with a live count and its actions", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "bulk-bar", theme);
     await expect(page.locator("#bulk-static")).toMatchAriaSnapshot(`
       - region "Bulk actions":
@@ -59,7 +59,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: the delivered HTML has the selection, and the empty bar is hidden", async ({ page }) => {
+  test("accessibility: the delivered HTML has the selection, and the empty bar is hidden", { tag: "@markup" }, async ({ page }) => {
     const html = await (await page.request.get("components/bulk-bar/states.html")).text();
     expect(html).toContain('<p class="cap-bulk-count" role="status">3 selected <span');
     expect(html).toContain('<p class="cap-bulk-count" role="status">12 selected</p>');

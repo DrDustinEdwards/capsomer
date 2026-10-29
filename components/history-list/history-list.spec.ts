@@ -135,7 +135,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the roles and names of the pick bar and the first line", async ({ page }) => {
+  test("accessibility: the roles and names of the pick bar and the first line", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "history-list", theme);
     await expect(page.locator("#hist-two .cap-hist-bar")).toMatchAriaSnapshot(`
       - status: "2 versions picked. Older: 1 Oct, 09:00 UTC. Newer: 2 Oct, 13:30 UTC. The older is always first, whichever you picked first."
@@ -162,7 +162,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: every pick box and Restore button names its version", async ({ page }) => {
+  test("accessibility: every pick box and Restore button names its version", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const names = await page.locator("#hist-main [data-cap-part='pick']").evaluateAll((els) => els.map((e) => (e.closest("label")?.textContent ?? "").trim()));
     expect(names.length).toBeGreaterThanOrEqual(15);
@@ -171,7 +171,7 @@ eachTheme((theme) => {
     await expect(main(page).getByRole("button", { name: /^Restore the version from/ }).first()).toBeVisible();
   });
 
-  test("accessibility: the size change says its sign in text, and a drawn mark repeats it", async ({ page }) => {
+  test("accessibility: the size change says its sign in text, and a drawn mark repeats it", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const m = main(page);
     await expect(m.locator("[data-sign='plus']").first()).toContainText(/^\+\d+ words$/);
@@ -180,7 +180,7 @@ eachTheme((theme) => {
     for (const sign of ["plus", "minus", "zero"]) await expect(m.locator(`[data-sign='${sign}'] svg`).first()).toHaveAttribute("aria-hidden", "true");
   });
 
-  test("accessibility: a status is a word and a shape, and the avatar is hidden because the name is beside it", async ({ page }) => {
+  test("accessibility: a status is a word and a shape, and the avatar is hidden because the name is beside it", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const failed = main(page).locator(".cap-hist-dest .cap-status[data-tone='crit']");
     await expect(failed).toHaveText("Failed");
@@ -188,7 +188,7 @@ eachTheme((theme) => {
     await expect(main(page).locator(".cap-hist-who .cap-avatar").first()).toHaveAttribute("aria-hidden", "true");
   });
 
-  test("accessibility: the phone layout does not scroll sideways and keeps the hit areas", async ({ page }) => {
+  test("accessibility: the phone layout does not scroll sideways and keeps the hit areas", { tag: "@markup" }, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 800 });
     await visitStates(page, "history-list", theme, "phone");
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

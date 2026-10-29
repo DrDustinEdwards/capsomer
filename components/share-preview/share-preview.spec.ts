@@ -21,7 +21,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names: each preview is a named group, and nothing in it takes focus", async ({ page }) => {
+  test("accessibility: roles and names: each preview is a named group, and nothing in it takes focus", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "share-preview", theme);
     await expect(page.getByRole("group", { name: "Search result preview" })).toHaveCount(2);
     await expect(page.getByRole("group", { name: "Social card preview" })).toHaveCount(2);

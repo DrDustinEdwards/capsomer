@@ -34,7 +34,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("accessibility: the header is the banner, in the fixed order: logo, section links, extras, theme, Sign in last", async ({ page }) => {
+  test("accessibility: the header is the banner, in the fixed order: logo, section links, extras, theme, Sign in last", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "site-header", theme, "fh-public");
     await expect(page.locator(".cap-site-header")).toMatchAriaSnapshot(`
       - banner:
@@ -64,7 +64,7 @@ eachTheme((theme) => {
     expect(row.map((r) => r.x)).toEqual([...row.map((r) => r.x)].sort((a, b) => a - b));
   });
 
-  test("accessibility: signed in, the extras then the theme, and the avatar last", async ({ page }) => {
+  test("accessibility: signed in, the extras then the theme, and the avatar last", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "site-header", theme, "fx-reader");
     await expect(page.locator(".cap-site-header")).toMatchAriaSnapshot(`
       - banner:
@@ -93,7 +93,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("link", { name: "Notifications, 3 new" }).locator(".cap-site-header-badge")).toHaveText("3");
   });
 
-  test("accessibility: a dashboard puts the business tile and the product switcher after the logo, with no section links", async ({ page }) => {
+  test("accessibility: a dashboard puts the business tile and the product switcher after the logo, with no section links", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "site-header", theme, "fh-dashboard");
     const row = await rowOrder(page);
     expect(row.map((r) => r.name)).toEqual(["Foxhound", "Business: Acme Supply Co.", "Product: Recovery", themeName, "Your account"]);

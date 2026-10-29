@@ -59,7 +59,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles, names and pressed states", async ({ page }) => {
+  test("accessibility: roles, names and pressed states", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "chips", theme);
     await expect(page.locator("#chips-live")).toMatchAriaSnapshot(`
       - group "Status":
@@ -209,7 +209,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: "#chip-unpressed", what: "the focus ring", part: "outline", min: 3 }]);
   });
 
-  test("accessibility: a disabled chip keeps its name and says so", async ({ page }) => {
+  test("accessibility: a disabled chip keeps its name and says so", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "chips", theme);
     await expect(page.locator("#chip-disabled")).toHaveAttribute("aria-disabled", "true");
     await expect(page.getByRole("button", { name: "Archived" })).toBeVisible();

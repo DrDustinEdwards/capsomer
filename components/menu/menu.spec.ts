@@ -70,7 +70,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: ".cap-option[data-tone='crit'][data-highlighted] .cap-option-label", what: "a highlighted danger item on --crit-soft" }]);
   });
 
-  test("accessibility: the menu's roles and names", async ({ page }) => {
+  test("accessibility: the menu's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "menu", theme, "open");
     await expect(page.getByRole("menu")).toMatchAriaSnapshot(`
       - menu "Actions":

@@ -50,7 +50,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the switch and the table's roles and names", async ({ page }) => {
+  test("accessibility: the switch and the table's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "permission-matrix", theme);
     const wide = page.locator("#perms-wide");
     await expect(wide).toMatchAriaSnapshot(`

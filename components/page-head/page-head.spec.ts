@@ -15,7 +15,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names: a trail, a heading, a lead and the actions, and no banner landmark", async ({ page }) => {
+  test("accessibility: roles and names: a trail, a heading, a lead and the actions, and no banner landmark", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "page-head", theme);
     await expect(page.locator("#ph-full")).toMatchAriaSnapshot(`
       - navigation "Breadcrumb":

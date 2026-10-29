@@ -25,7 +25,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the kinds' roles and names", async ({ page }) => {
+  test("accessibility: the kinds' roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "empty", theme);
     await expect(page.locator("#sample-nomatch")).toMatchAriaSnapshot(`
       - paragraph: No jobs match “Blocked”
@@ -40,7 +40,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: the icon tile is decorative and hidden from assistive technology", async ({ page }) => {
+  test("accessibility: the icon tile is decorative and hidden from assistive technology", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "empty", theme);
     await expect(page.locator("#sample-nothing .cap-empty-media")).toHaveAttribute("aria-hidden", "true");
     await expect(page.locator("#sample-nothing")).toMatchAriaSnapshot(`
@@ -50,7 +50,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: a long wait is busy and names what it waits for", async ({ page }) => {
+  test("accessibility: a long wait is busy and names what it waits for", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "empty", theme);
     await expect(page.locator("#sample-wait")).toHaveAttribute("aria-busy", "true");
     await expect(page.locator("#sample-wait .cap-spinner-label")).toHaveText("Building the site");

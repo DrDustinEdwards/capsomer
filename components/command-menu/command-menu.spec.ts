@@ -54,7 +54,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: ".cap-listbox-empty", what: "the no-match line" }]);
   });
 
-  test("accessibility: the menu's roles and names", async ({ page }) => {
+  test("accessibility: the menu's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "command-menu", theme, "open");
     await expect(menu(page)).toMatchAriaSnapshot(`
       - dialog "Command menu":

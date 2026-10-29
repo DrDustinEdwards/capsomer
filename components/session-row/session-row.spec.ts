@@ -23,7 +23,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the ask's roles and names", async ({ page }) => {
+  test("accessibility: the ask's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "session-row", theme);
     await expect(page.locator("#s-needs ~ .cap-session-list .cap-session-ask")).toMatchAriaSnapshot(`
       - group "Asks to push a branch and open a pull request:":
@@ -34,7 +34,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("list", { name: "Agent sessions", exact: true })).toBeVisible();
   });
 
-  test("accessibility: a collapsed count is spoken in words", async ({ page }) => {
+  test("accessibility: a collapsed count is spoken in words", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "session-row", theme);
     const steps = page.locator("#steps-tests");
     await expect(steps.locator("[aria-hidden='true']").first()).toHaveText(" ×12");

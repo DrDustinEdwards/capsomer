@@ -31,7 +31,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: each bar is a named meter whose value text includes the projection", async ({ page }) => {
+  test("accessibility: each bar is a named meter whose value text includes the projection", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
     const onTrack = page.locator(section("s-on-track")).locator("[data-cap='usage-meter']");
     await expect(onTrack.getByRole("meter", { name: "Worker requests" })).toHaveCount(1);
@@ -43,7 +43,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("meter", { name: "D1 rows written" })).toHaveAttribute("aria-valuetext", /no projection yet/);
   });
 
-  test("accessibility: a warning or critical row says so in words beside its color", async ({ page }) => {
+  test("accessibility: a warning or critical row says so in words beside its color", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
     await expect(page.locator(section("s-runs-out")).locator(".cap-status")).toHaveText("Runs out before the reset");
     await expect(page.locator(section("s-nearly-out")).locator(".cap-status")).toHaveText("Nearly out");
@@ -95,7 +95,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-usage-bar, .cap-usage-used, .cap-usage-projected")).toHaveCount(0);
   });
 
-  test("accessibility: the rows' roles and names, the why line outside the meter role", async ({ page }) => {
+  test("accessibility: the rows' roles and names, the why line outside the meter role", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
     await expect(page.locator(section("s-runs-out"))).toMatchAriaSnapshot(`
       - meter "D1 rows read"

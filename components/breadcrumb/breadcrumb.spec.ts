@@ -28,7 +28,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: "#bc-folded .cap-breadcrumb-more-link", what: "a folded level's link in the popover" }]);
   });
 
-  test("accessibility: roles and names", async ({ page }) => {
+  test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     await expect(page.locator("#bc-default")).toMatchAriaSnapshot(`
       - navigation "Breadcrumb":
@@ -51,7 +51,7 @@ eachTheme((theme) => {
     expect(content).toBe('""');
   });
 
-  test("accessibility: links and the button are at least the target size", async ({ page }) => {
+  test("accessibility: links and the button are at least the target size", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     const boxes = await page.locator(".cap-breadcrumb-link, .cap-breadcrumb-ellipsis").evaluateAll((els) => els.map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0).map((r) => [r.width, r.height]));
     expect(boxes.length).toBeGreaterThan(8);

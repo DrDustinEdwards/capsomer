@@ -86,7 +86,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: a reader's list is a named region of tabs, filters and a table, with no boxes", async ({ page }) => {
+  test("accessibility: a reader's list is a named region of tabs, filters and a table, with no boxes", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     await expect(page.locator("[data-mount='reader']")).toMatchAriaSnapshot(`
       - region "Posts":

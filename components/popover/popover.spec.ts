@@ -38,7 +38,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: "#open-tip", what: "tooltip text" }]);
   });
 
-  test("accessibility: roles, names and the trigger's wiring", async ({ page }) => {
+  test("accessibility: roles, names and the trigger's wiring", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "popover", theme);
     const trigger = page.getByRole("button", { name: "Dimensions" });
     await expect(trigger).toHaveAttribute("aria-expanded", "false");

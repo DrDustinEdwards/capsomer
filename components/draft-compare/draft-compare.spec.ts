@@ -71,7 +71,7 @@ eachTheme((theme) => {
     expect(marks.del.text).toContain("deletion end");
   });
 
-  test("accessibility: the compare, its sides, switch and jump list have roles and names", async ({ page }) => {
+  test("accessibility: the compare, its sides, switch and jump list have roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     await expect(page.locator("#cmp-single")).toMatchAriaSnapshot(`
       - region "Compare Draft 1 with Draft 2":
@@ -89,7 +89,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: each side is named, with its title, who and when", async ({ page }) => {
+  test("accessibility: each side is named, with its title, who and when", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const head = page.locator("#cmp-default .cap-compare-head");
     await expect(head.locator("[data-side='before']")).toContainText("Before");
@@ -101,7 +101,7 @@ eachTheme((theme) => {
     await expect(head.locator("[data-side='after'] time")).toHaveAttribute("datetime", "2026-09-29T07:42:00.000Z");
   });
 
-  test("accessibility: the scroll regions are focusable and named", async ({ page }) => {
+  test("accessibility: the scroll regions are focusable and named", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const region = page.locator("#cmp-default").getByRole("region", { name: "Side by side, Compare Draft 3 with Draft 4" });
     await expect(region).toHaveAttribute("tabindex", "0");
@@ -111,7 +111,7 @@ eachTheme((theme) => {
     await expect(page.locator("#cmp-default").getByRole("region", { name: /^Inline,/ })).toHaveCount(0);
   });
 
-  test("accessibility: the legend is always on the page, with the marks, the counts and the views explained", async ({ page }) => {
+  test("accessibility: the legend is always on the page, with the marks, the counts and the views explained", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const legend = page.locator("#cmp-default .cap-compare-legend");
     await expect(legend).toBeVisible();
@@ -121,7 +121,7 @@ eachTheme((theme) => {
     for (const name of ["Side by side", "Inline", "Changes only"]) await expect(legend.locator("dt", { hasText: name })).toBeVisible();
   });
 
-  test("accessibility: the no differences state is a status with both titles and times", async ({ page }) => {
+  test("accessibility: the no differences state is a status with both titles and times", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const status = page.locator("#cmp-none").getByRole("status").first();
     await expect(status).toContainText("No differences");

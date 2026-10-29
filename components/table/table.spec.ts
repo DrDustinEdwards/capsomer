@@ -112,7 +112,7 @@ eachTheme((theme) => {
     expect(label.ratio).toBeGreaterThanOrEqual(4.5);
   });
 
-  test("accessibility: the region, table and headers' roles and names", async ({ page }) => {
+  test("accessibility: the region, table and headers' roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "table", theme);
     await expect(page.locator("#t2")).toMatchAriaSnapshot(`
       - region "Worker requests by site, today":

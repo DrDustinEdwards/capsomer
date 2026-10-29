@@ -41,7 +41,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the list's roles and names", async ({ page }) => {
+  test("accessibility: the list's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "attention-list", theme);
     await expect(page.locator(`${mixed} .cap-attention`)).toMatchAriaSnapshot(`
       - region "Needs attention":
@@ -68,7 +68,7 @@ eachTheme((theme) => {
     await expect(page.locator("#att-mixed-notices")).toBeHidden();
   });
 
-  test("accessibility: a link's description carries its status and detail", async ({ page }) => {
+  test("accessibility: a link's description carries its status and detail", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "attention-list", theme);
     await expect(page.locator(mixed).getByRole("link", { name: "foxhound.app is not answering" })).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
   });

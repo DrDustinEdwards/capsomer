@@ -43,7 +43,7 @@ eachTheme((theme) => {
     expect(await bar("#anchor-states li:first-child a")).toBe("0");
   });
 
-  test("accessibility: the bar's roles and names", async ({ page }) => {
+  test("accessibility: the bar's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "top");
     await expect(bar(page)).toMatchAriaSnapshot(`
       - navigation "On this page":

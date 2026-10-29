@@ -151,7 +151,7 @@ test("behavior: the edits wrap, cycle, number, place and link as the site's edit
 
 eachTheme((theme) => {
   // ---- accessibility ---------------------------------------------------------------------
-  test("accessibility: a scroller that overflows is a keyboard stop, one that does not keeps CodeMirror's own -1", async ({ page }) => {
+  test("accessibility: a scroller that overflows is a keyboard stop, one that does not keeps CodeMirror's own -1", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, NAME, theme);
     await expect(page.locator("#sp-long .cm-editor")).toBeVisible();
     await expect(page.locator("#sp-long .cm-scroller")).toHaveAttribute("tabindex", "0");
@@ -292,7 +292,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: ".cap-md-upload-error", what: "the failed-upload message" }]);
   });
 
-  test("accessibility: the toolbar's roles and names, and the surface's name and description", async ({ page }) => {
+  test("accessibility: the toolbar's roles and names, and the surface's name and description", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-default");
     await expect(toolbarOf(section(page, "sp-default"))).toMatchAriaSnapshot(`
@@ -315,7 +315,7 @@ eachTheme((theme) => {
     await expect(section(page, "sp-default").locator("textarea")).toBeHidden();
   });
 
-  test("accessibility: the link palette is a labeled combobox over a listbox, the slash menu a named list", async ({ page }) => {
+  test("accessibility: the link palette is a labeled combobox over a listbox, the slash menu a named list", { tag: "@markup" }, async ({ page }) => {
     await visitOnly(page, theme, "palette");
     const input = page.getByRole("combobox", { name: "Link to" });
     await expect(input).toHaveAttribute("aria-expanded", "true");
@@ -326,7 +326,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("list", { name: "Insert a block" }).getByRole("button")).toHaveCount(3);
   });
 
-  test("accessibility: the states say what they are in words, not only color", async ({ page }) => {
+  test("accessibility: the states say what they are in words, not only color", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-invalid");
     await expect(surfaceOf(section(page, "sp-invalid"))).toHaveAttribute("aria-invalid", "true");
@@ -337,7 +337,7 @@ eachTheme((theme) => {
     await expect(surfaceOf(section(page, "sp-disabled"))).toHaveAccessibleDescription(/Locked while the draft is being published/);
   });
 
-  test("accessibility: the word count is not a live region", async ({ page }) => {
+  test("accessibility: the word count is not a live region", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-default");
     const live = await section(page, "sp-default").locator(".cap-md-stats").evaluate((n) => !!n.closest("[aria-live], [role='status'], [role='alert'], [role='log']"));
@@ -914,7 +914,7 @@ eachTheme((theme) => {
 // ---- no script: the page as delivered ------------------------------------------------------
 test.describe("without script", () => {
   test.use({ javaScriptEnabled: false });
-  test("accessibility: the page as delivered has a labeled textarea holding the markdown", async ({ page }) => {
+  test("accessibility: the page as delivered has a labeled textarea holding the markdown", { tag: "@markup" }, async ({ page }) => {
     await page.goto(`components/${NAME}/states.html`);
     const ta = page.getByRole("textbox", { name: "Body" }).first();
     await expect(ta).toBeVisible();

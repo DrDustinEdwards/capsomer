@@ -12,7 +12,7 @@ eachTheme((theme) => {
     });
   }
 
-  test("accessibility: no axe violations, empty region", async ({ page }) => {
+  test("accessibility: the empty region is present and shows nothing", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "message", theme, "empty");
     // Present for the next message, and showing nothing.
     await expect(page.getByRole("status")).toHaveCount(1);
@@ -45,7 +45,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: ".cap-message-error", what: "the reason Undo failed" }]);
   });
 
-  test("accessibility: the region's roles and names", async ({ page }) => {
+  test("accessibility: the region's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "message", theme, "undo");
     await expect(page.getByRole("status")).toHaveAccessibleName("Results and failures");
     await expect(page.getByRole("status")).toMatchAriaSnapshot(`
@@ -55,7 +55,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: a warning is a word as well as an edge, and a failure is an alert", async ({ page }) => {
+  test("accessibility: a warning is a word as well as an edge, and a failure is an alert", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "message", theme, "warning");
     await expect(page.locator(".cap-message-text")).toContainText(`Seat start is on. Warning: ${AUDIT}`);
     await visitStates(page, "message", theme, "failure");

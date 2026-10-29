@@ -45,7 +45,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: `${grid} .cap-tile:focus-visible`, what: "a focused tile's ring", part: "outline" }]);
   });
 
-  test("accessibility: the tiles' roles and names", async ({ page }) => {
+  test("accessibility: the tiles' roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "stat-tile", theme);
     await expect(page.locator(`${grid} .cap-tiles`)).toMatchAriaSnapshot(`
       - list "Overview figures":

@@ -15,7 +15,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: each avatar is one image named for the person", async ({ page }) => {
+  test("accessibility: each avatar is one image named for the person", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "avatar", theme);
     await expect(page.getByRole("img", { name: "Dustin Edwards", exact: true }).first()).toBeVisible();
     await expect(page.getByRole("img", { name: "Dustin Edwards, online" })).toBeVisible();

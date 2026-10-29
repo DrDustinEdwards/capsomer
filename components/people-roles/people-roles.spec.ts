@@ -44,7 +44,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names", async ({ page }) => {
+  test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "people-roles", theme);
     await expect(lead(page).locator("tr[data-name='Rosa Park']")).toMatchAriaSnapshot(`
       - rowheader "Rosa Park rosa.park@example.edu"

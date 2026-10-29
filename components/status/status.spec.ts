@@ -31,7 +31,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the words' roles and names, glyphs hidden", async ({ page }) => {
+  test("accessibility: the words' roles and names, glyphs hidden", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "status", theme);
     await expect(page.locator(words)).toMatchAriaSnapshot(`
       - list "Statuses as words":
@@ -118,7 +118,7 @@ eachTheme((theme) => {
     expect(box.h).toBeGreaterThanOrEqual(24);
   });
 
-  test("accessibility: a count badge says what it counts", async ({ page }) => {
+  test("accessibility: a count badge says what it counts", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "status", theme);
     await expect(page.getByText("3 waiting")).toHaveCount(1);
   });

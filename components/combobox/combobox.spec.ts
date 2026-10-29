@@ -64,7 +64,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: ".cap-combobox-status", what: "the loading message" }]);
   });
 
-  test("accessibility: the combobox's roles and names", async ({ page }) => {
+  test("accessibility: the combobox's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "combobox", theme);
     await expect(page.locator("[data-mount='closed']")).toMatchAriaSnapshot(`
       - paragraph: Type to filter. Only a listed site can be chosen.
@@ -76,7 +76,7 @@ eachTheme((theme) => {
     await expect(site(page)).toHaveAccessibleDescription("Type to filter. Only a listed site can be chosen.");
   });
 
-  test("accessibility: the open list's roles and names", async ({ page }) => {
+  test("accessibility: the open list's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "combobox", theme, "filtered");
     await expect(page.getByRole("listbox")).toMatchAriaSnapshot(`
       - listbox:
