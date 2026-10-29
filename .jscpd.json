@@ -9,6 +9,7 @@
     "**/site/data/**",
     "tokens/color.css",
     "tokens/family-*.css",
+    "tokens/site-*.css",
     "tokens/scale.css",
     "tokens/themes.css",
     "tokens/tokens.json",

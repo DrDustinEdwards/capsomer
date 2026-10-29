@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { FAMILIES, themes } from "../../tokens/palette.mjs";
+import { FAMILIES, themes } from "../../tokens/palette-core.mjs";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const html = (page: Page) => page.locator("html");
