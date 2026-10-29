@@ -118,7 +118,7 @@ export function withFilter(q: PostsQuery, change: Partial<PostsQuery>): PostsQue
 // ---------------------------------------------------------------------------------------
 // What is offered.
 
-export type PostIntent = "add-tag" | "remove-tag" | "duplicate" | "unpublish" | "delete";
+export type PostIntent = "add-tag" | "remove-tag" | "duplicate" | "unpublish" | "delete" | "reschedule" | "cancel-schedule";
 
 export interface OfferedAction {
   intent: PostIntent;
@@ -151,18 +151,54 @@ export interface RowAction {
   value: string;
   href?: string;
   danger?: boolean;
+  // Reschedule: the time it moves from, which the menu's time field starts at.
+  publishAt?: string;
+}
+
+// The time a row's schedule goes out: its waiting update's on a live post, its own on a scheduled
+// one. null when nothing is scheduled.
+export function scheduledTime(row: Pick<PostRow, "status" | "publishAt" | "scheduledUpdate">): string | null {
+  if (row.status === "published") return row.scheduledUpdate?.publishAt ?? null;
+  return row.status === "scheduled" ? row.publishAt : null;
 }
 
 // One row's menu: Edit and View on the site go somewhere; the rest post an intent for this row.
+// With scheduled updates (site-api v0.10.0) a scheduled post or a live post's waiting update can
+// be moved (`reschedule`, with `publishAt`), and a live post's update canceled (`cancel-schedule`);
+// a scheduled post is canceled by Unpublish, as before.
 export function rowActions(row: PostRow, data: Pick<PostsData, "offers" | "can">): RowAction[] {
   const { offers, can } = data;
   const items: RowAction[] = [];
   if (can.edit) items.push({ label: "Edit", value: "edit", href: row.href });
   if (row.status === "published" && row.liveHref) items.push({ label: "View on the site", value: "view", href: row.liveHref });
+  const at = scheduledTime(row);
+  if (row.scheduledUpdate) items.push({ label: "View the scheduled update", value: "view-update", href: row.scheduledUpdate.href });
+  if (can.publish && offers.scheduledUpdates && at) items.push({ label: "Reschedule", value: "reschedule", publishAt: at });
+  if (can.publish && offers.scheduledUpdates && row.scheduledUpdate) items.push({ label: "Cancel the update", value: "cancel-schedule" });
   if (can.publish && row.status !== "draft") items.push({ label: "Unpublish", value: "unpublish" });
   if (can.edit && offers.duplicate) items.push({ label: "Duplicate", value: "duplicate" });
   if (can.deleteContent && offers.delete) items.push({ label: "Delete", value: "delete", danger: true });
   return items;
+}
+
+// ---------------------------------------------------------------------------------------
+// The reschedule time field.
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+// An ISO time as a datetime-local value in this browser's zone ("2030-01-01T16:00").
+export function localInputValue(iso: string): string {
+  const d = new Date(iso);
+  if (!Number.isFinite(d.getTime())) return "";
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// A datetime-local value, read in this browser's zone, as the UTC time the kit takes
+// ("2030-01-01T15:00:00Z"). "" for an empty or impossible value.
+export function isoFromLocal(value: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) return "";
+  const d = new Date(value);
+  return Number.isFinite(d.getTime()) ? d.toISOString().replace(/\.\d{3}Z$/, "Z") : "";
 }
 
 // ---------------------------------------------------------------------------------------

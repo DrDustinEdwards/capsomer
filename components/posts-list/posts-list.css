@@ -97,6 +97,52 @@
     font-size: var(--fs-detail);
   }
 
+  /* A live post with an update waiting: a second status line under Published. */
+  .cap-posts-update {
+    display: block;
+    margin-block-start: var(--space-1);
+  }
+
+  /* The page of one scheduled update: the time and what it means, Reschedule and Cancel, then
+     the update's source beside the live one. */
+  .cap-posts-update-view {
+    display: grid;
+    gap: var(--space-4);
+    min-inline-size: 0;
+  }
+  .cap-posts-update-head {
+    display: grid;
+    gap: var(--space-2);
+
+    & > * {
+      margin: 0;
+    }
+  }
+  .cap-posts-update-note {
+    max-inline-size: 70ch;
+    color: var(--muted);
+  }
+  .cap-posts-update-links,
+  .cap-posts-update-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .cap-posts-update-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+
+    & > .cap-field {
+      margin: 0;
+    }
+  }
+  .cap-posts-update-patch > summary {
+    cursor: pointer;
+    color: var(--accent-text);
+  }
+
   /* A row's menu sits above the stretched title link, and an open one above the rows after it. */
   .cap-posts-actions {
     inline-size: 1%;
@@ -112,7 +158,7 @@
       }
       & > .cap-menu {
         inset-inline: auto 0;
-        min-inline-size: 12rem;
+        min-inline-size: 16rem;
       }
     }
   }

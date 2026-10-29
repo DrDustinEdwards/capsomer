@@ -243,3 +243,28 @@ eachTheme((theme) => {
     await expect(list.getByRole("checkbox", { name: "Select About" })).not.toBeChecked();
   });
 });
+
+test.describe("in a zone behind UTC", () => {
+  test.use({ timezoneId: "America/Chicago" });
+
+  test("behavior: with script, Reschedule takes the time in the person's zone and posts it in UTC, and a live post's update can be canceled", async ({ page }) => {
+    await visitStates(page, "posts-list", "light");
+    const list = page.locator("[data-mount='updates']");
+    const target = rowOf(list, "Notes on a read-only agent");
+    await expect(target.locator(".cap-posts-update")).toHaveText("Update scheduled in 2 days");
+    await target.locator("summary").click();
+    // 15:00 UTC is 10:00 in Chicago (CDT) on 12 October.
+    const time = target.getByLabel("New time");
+    await expect(time).toHaveValue("2026-10-12T10:00");
+    await time.fill("2026-10-20T09:30");
+    await target.getByRole("button", { name: "Reschedule" }).click();
+    await expect(target.locator(".cap-posts-update")).toHaveText("Update scheduled in 10 days");
+    await target.locator("summary").click();
+    await target.getByRole("button", { name: "Cancel the update" }).click();
+    await expect(target.locator(".cap-posts-update")).toHaveCount(0);
+    expect((await log(page)).map((e) => [e.intent, e.ids, e.publishAt])).toEqual([
+      ["reschedule", "read-only-agent", "2026-10-20T14:30:00Z"],
+      ["cancel-schedule", "read-only-agent", "2026-10-20T14:30:00Z"],
+    ]);
+  });
+});

@@ -8,6 +8,8 @@
 //   capsomer size [--dist <dir>]           reports and warns, always exits 0 (decision 12)
 //   capsomer states                        writes components/<name>/states.html from examples.html (capsomer repo only)
 //   capsomer site-data                     the site's data files (capsomer repo only)
+//   capsomer fallback-font <file.woff2> [--family name] [--local Arial|"Courier New"|"Times New Roman"|Georgia]
+//                                          measures a font file (needs @capsizecss/unpack) and prints its fallback's @font-face
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
@@ -479,6 +481,35 @@ function bloat(root) {
   out.push(`**Lines:** ${delta(Object.values(l).reduce((n, r) => n + r.lines, 0), base?.loc?.total)} across ${Object.keys(l).length} languages`, "");
   console.log(out.join("\n"));
 }
+// ---- fallback-font ------------------------------------------------------------------------
+
+async function fallbackFont() {
+  const file = args[1];
+  if (!file || file.startsWith("--")) {
+    console.error('usage: capsomer fallback-font <file.woff2> [--family name] [--local Arial|"Courier New"|"Times New Roman"|Georgia]');
+    process.exit(1);
+  }
+  let fromBuffer;
+  try {
+    ({ fromBuffer } = await import("@capsizecss/unpack"));
+  } catch {
+    console.error("fallback-font: install @capsizecss/unpack first (npm i -D @capsizecss/unpack)");
+    process.exit(1);
+  }
+  const { fallbackFontFace, LOCAL } = await import("../tokens/fallback-fonts.mjs");
+  if (flag("local") && !LOCAL[flag("local")]) {
+    console.error(`fallback-font: no local face "${flag("local")}"; use one of ${Object.keys(LOCAL).join(", ")}`);
+    process.exit(1);
+  }
+  const m = await fromBuffer(readFileSync(file));
+  const family = flag("family", m.familyName);
+  // A monospaced face falls back to Courier New, anything else to Arial, unless --local says otherwise.
+  const local = flag("local", /mono/i.test(family) ? "Courier New" : "Arial");
+  const metrics = { ascent: m.ascent, descent: m.descent, lineGap: m.lineGap, unitsPerEm: m.unitsPerEm, xWidthAvg: m.xWidthAvg };
+  console.log(`/* ${basename(file)}, measured with @capsizecss/unpack: ${JSON.stringify(metrics)} */`);
+  console.log(fallbackFontFace({ family, metrics, local }));
+}
+
 // ---- main ----------------------------------------------------------------------------------
 
 if (cmd === "report") {
@@ -515,7 +546,9 @@ if (cmd === "report") {
   console.log(`states: wrote ${written.length} states pages (components/<name>/states.html, generated, gitignored)`);
 } else if (cmd === "site-data") {
   await siteData();
+} else if (cmd === "fallback-font") {
+  await fallbackFont();
 } else {
-  console.log("usage: capsomer report | token-check [paths] | size [--dist dir] [--json out] | weight [--dist dir] [--json out] | loc [--json out] | bloat --knip f --jscpd f | states | site-data");
+  console.log("usage: capsomer report | token-check [paths] | size [--dist dir] [--json out] | weight [--dist dir] [--json out] | loc [--json out] | bloat --knip f --jscpd f | states | site-data | fallback-font <file.woff2> [--family name] [--local face]");
   process.exit(cmd ? 1 : 0);
 }

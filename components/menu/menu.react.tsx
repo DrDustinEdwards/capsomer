@@ -261,6 +261,9 @@ export interface FormMenuItem {
   // disabled button cannot be reached, so the reason is not hidden behind it).
   disabled?: boolean;
   reason?: string;
+  // A field the item needs, drawn just before its button inside the same form (a reschedule's
+  // new time). Every item's post carries it; the server reads it only for this item's intent.
+  field?: ReactNode;
 }
 
 export interface FormMenuProps {
@@ -284,6 +287,15 @@ export function FormMenu({ label, action, method = "post", items, name = "intent
   useEffect(() => (ref.current ? enhance(ref.current.parentNode ?? document) : undefined), []);
   const ordinary = items.filter((i) => !i.danger);
   const danger = items.filter((i) => i.danger);
+  const entry = (i: FormMenuItem) =>
+    i.field ? (
+      <Fragment key={i.value}>
+        <div className="cap-menu-field">{i.field}</div>
+        {button(i)}
+      </Fragment>
+    ) : (
+      button(i)
+    );
   const button = (i: FormMenuItem) => i.href && !i.danger ? (
     <a key={i.value} className="cap-option cap-menu-item" href={i.href}>
       <span className="cap-option-label">{i.label}</span>
@@ -304,9 +316,9 @@ export function FormMenu({ label, action, method = "post", items, name = "intent
         {Object.entries(hidden ?? {}).map(([k, v]) => (
           <input key={k} type="hidden" name={k} value={v} />
         ))}
-        {ordinary.map(button)}
+        {ordinary.map(entry)}
         {danger.length && ordinary.length ? <hr className="cap-listbox-separator cap-menu-separator" /> : null}
-        {danger.map(button)}
+        {danger.map(entry)}
       </form>
     </details>
   );

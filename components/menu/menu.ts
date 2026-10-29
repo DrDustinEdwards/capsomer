@@ -33,7 +33,8 @@ export function enhance(root: ParentNode = document): () => void {
         e.preventDefault();
         d.open = true;
         items[0]?.focus();
-      } else if ((e.key === "ArrowDown" || e.key === "ArrowUp") && d.open) {
+      } else if ((e.key === "ArrowDown" || e.key === "ArrowUp") && d.open && !(e.target instanceof Element && e.target.closest(".cap-menu-field"))) {
+        // An item's own field (a time to reschedule to) keeps its arrow keys.
         const at = items.indexOf(document.activeElement as HTMLElement);
         const next = items[stepIndex(items.length, at, e.key === "ArrowDown" ? 1 : -1)];
         if (next) {

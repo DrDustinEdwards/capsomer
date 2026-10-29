@@ -123,7 +123,7 @@ A form menu, with no script (HTML, or React `FormMenu` which renders exactly thi
 </details>
 ```
 
-`import { enhance } from "capsomer/behavior/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for foxhound.app" action="/admin/sites/foxhound" hidden={{ site: "foxhound" }} items={[{ label: "Open site", value: "open", href: "/sites/foxhound" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link.
+`import { enhance } from "capsomer/behavior/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for foxhound.app" action="/admin/sites/foxhound" hidden={{ site: "foxhound" }} items={[{ label: "Open site", value: "open", href: "/sites/foxhound" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link. An item that needs a value names it as `field` (a React node, such as a labeled time input): it is drawn just above the item's button, inside the same form, in `.cap-menu-field`, and keeps its own arrow keys.
 
 ## Matches shadcn
 

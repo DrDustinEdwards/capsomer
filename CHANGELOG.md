@@ -4,6 +4,16 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.37.0]
+
+Fallback fonts for any site's faces, and scheduled updates in the posts list (site-api v0.10.0).
+
+- **Size-matched fallbacks for a site's own faces.** New entry `capsomer/fonts` (`tokens/fallback-fonts.mjs`, with types): `fallbackFontFace({ family, metrics, local })` writes the @font-face rule tokens/fonts.mjs writes for the family's faces, `fallbackName(family)` its name, `LOCAL` the local faces' metrics and their metric twins, and `MEASURED` the faces already measured. New local faces for serif: Times New Roman (with Liberation Serif and Tinos) and Georgia (with Gelasio). Pre-measured: DM Sans, DM Mono and Source Serif 4, with the rules ready to paste in README.md (DM Sans matches foxhound's hand-made rule to the hundredth).
+- **`capsomer fallback-font <file.woff2> [--family] [--local]`** measures a site's font file with `@capsizecss/unpack` (a new optional peer dependency) and prints the rule. `css/fonts.css` is unchanged; the MIT notice for Astro's method moves to `tokens/fallback-fonts.mjs` with the code.
+- **A live post's scheduled update shows on its row.** `PostRow.scheduledUpdate` (`{ publishAt, href }`) draws "Update scheduled in 2 days" under Published, and the row's menu links to it. With `offers.scheduledUpdates` (new, optional) and the publish role, the menu adds Reschedule, with a time field, posting `reschedule` with `publishAt`, and "Cancel the update", posting `cancel-schedule`. Reschedule moves a scheduled post too. The time field is in the person's zone with script and posts UTC; as delivered it is a UTC text field, since a form with no script cannot add a zone. New: `ScheduledUpdateSummary`, `scheduledTime`, `localInputValue`, `isoFromLocal`; `PostIntent` gains the two intents.
+- **`PostScheduledUpdate`**, in `capsomer/react/posts-list`: the page of one waiting update, from site-api's `loadScheduledUpdate` (new type `ScheduledUpdateView` in `capsomer/content`). It says when the update goes live and that it replaces the live post whole, offers Reschedule and Cancel, and shows the update's source beside the live one in the draft compare, with the unified patch under it.
+- **A form menu item can carry a field.** `FormMenuItem.field` is drawn just above the item's button, inside the menu's form, in `.cap-menu-field` (new class), and keeps its own arrow keys.
+
 ## [0.36.0]
 
 Size-matched fallback fonts, from Astro's Fonts API (MIT, credited in `tokens/fonts.mjs`).
