@@ -11,13 +11,16 @@ import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
 import { readPref, writePref } from "../shell/shell.ts";
 import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
-import { countLine, dirOf, emptyWords, groupRows, inspectorOffers, lensChips, mediaActions, mediaHref, nounsOf, pickable, SORT_DIR, uploadRules, withMedia, type MediaSort } from "./media-library.ts";
+import { MediaMore } from "./media-library-more.react.tsx";
+import { applyChanges, countLine, dirOf, emptyWords, filesToOpen, groupRows, inspectorOffers, KIND_WORDS, lensChips, mediaActions, mediaHref, nounsOf, ORIENTATION_WORDS, oversized, pickable, recordOfKit, SORT_DIR, uploadRules, withMedia, type KitMediaChanges, type MediaSort } from "./media-library.ts";
 
 // The viewer's last layout and tile size, remembered in this browser (shell.ts readPref).
 const LAYOUT_PREF = "cap-media-layout";
 const SIZE_PREF = "cap-media-size";
 
-const SORT_WORDS: Record<MediaSort, string> = { added: "Newest", name: "A to Z", size: "Largest" };
+const SORT_WORDS: Record<MediaSort, string> = { added: "Newest", name: "A to Z", size: "Largest", used: "Most used" };
+// How often the library asks for what others changed, with script and `changes` (site-api v0.13.0).
+const LIVE_MS = 15000;
 const GROUP_WORDS = { flat: "None", folder: "Folder", month: "Month" } as const;
 const KEYS: Array<[string | string[], string]> = [
   [["Mod+k", "/"], "Find a file"],
@@ -28,7 +31,7 @@ const KEYS: Array<[string | string[], string]> = [
   ["Escape", "Clear the selection, then close the details"],
 ];
 
-export type { FormComponent, IntentResult, MediaData, PickedMedia, SubmitIntent };
+export type { FormComponent, IntentResult, KitMediaChanges, MediaData, PickedMedia, SubmitIntent };
 
 export interface MediaLibraryProps {
   // The loader's view data: one page of one site's files.
@@ -61,6 +64,13 @@ export interface MediaLibraryProps {
   // canvas could not export a picture from another origin. Without it, or without `submit`, there
   // is no Crop.
   bytesHref?: (key: string) => string;
+  // Live updates, with script, where the kit offers them (`offers.live` and `page.changeCursor`,
+  // site-api v0.13.0): what others changed since a cursor, as the kit's `loadMediaChanges(source,
+  // cursor)` answers it (the host serves it, say as a JSON route). The library asks every 15 seconds
+  // while the page is visible, at once again when more wait, puts changed files in place and takes
+  // deleted ones out; `{ reload: true }` asks the person to load the page again. Without script, or
+  // without it, the page is as the server sent it.
+  changes?: (cursor: string, signal: AbortSignal) => Promise<KitMediaChanges | { reload: true }>;
 }
 
 // One page of one site's files, the same component in Carrel and in every site admin: search, tag
@@ -69,17 +79,66 @@ export interface MediaLibraryProps {
 // Undo, and the confirmation for what cannot be undone. In picker mode, the same grid offers images
 // and asks for the alt text this use needs. Every action is a form post, so it works with no
 // script; `submit` adds the in-place path.
-export function MediaLibrary({ data, action, Form = PlainForm, submit, result = null, labels, mode = "library", inspector = "form", onPick, search, shortcuts = true, bytesHref }: MediaLibraryProps) {
+export function MediaLibrary({ data, action, Form = PlainForm, submit, result = null, labels, mode = "library", inspector = "form", onPick, search, shortcuts = true, bytesHref, changes }: MediaLibraryProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const formId = `${uid}-bulk`;
   const { plural } = nounsOf(labels);
   const title = mode === "picker" ? "Choose an image" : plural.charAt(0).toUpperCase() + plural.slice(1);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  const { rows, query, page, offers, can } = data;
+  const { query, page, offers, can } = data;
   const path = action.split("?")[0] ?? action;
   const href = (q: MediaQuery) => mediaHref(path, q);
   const picker = mode === "picker";
+
+  // Live: what others changed, put over the page's rows until the page itself is loaded again.
+  const [changed, setChanged] = useState<ReadonlyMap<string, MediaRecord | null>>(new Map());
+  const [stale, setStale] = useState(false);
+  useEffect(() => {
+    setChanged(new Map());
+    setStale(false);
+  }, [data.rows]);
+  const cursor = page.changeCursor;
+  const polling = !!changes && !!offers.live && !!cursor && !picker;
+  const changesRef = useRef(changes);
+  changesRef.current = changes;
+  useEffect(() => {
+    if (!polling || !cursor) return;
+    const stop = new AbortController();
+    let from = cursor;
+    let timer = 0;
+    const next = (ms: number) => {
+      timer = window.setTimeout(() => void poll(), ms);
+    };
+    const poll = async () => {
+      if (document.hidden) return next(LIVE_MS);
+      try {
+        const got = await changesRef.current?.(from, stop.signal);
+        if (!got || stop.signal.aborted) return;
+        if ("reload" in got) return setStale(true);
+        if (got.rows.length || got.removed.length) {
+          setChanged((was) => {
+            const now = new Map(was);
+            for (const r of got.rows) now.set(r.id, recordOfKit(r));
+            for (const id of got.removed) now.set(id, null);
+            return now;
+          });
+        }
+        from = got.changeCursor;
+        next(got.more ? 0 : LIVE_MS);
+      } catch {
+        // The site did not answer: ask again later, quietly.
+        if (!stop.signal.aborted) next(LIVE_MS * 2);
+      }
+    };
+    next(LIVE_MS);
+    return () => {
+      stop.abort();
+      window.clearTimeout(timer);
+    };
+  }, [polling, cursor]);
+  const live = useMemo(() => applyChanges(data.rows, changed, query), [data.rows, changed, query]);
+  const rows = live.rows;
   const trash = query.view === "trash";
   const { bulk, withheld } = mediaActions(data, labels);
   const selectable = !picker && bulk.length > 0;
@@ -91,7 +150,18 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   const [active, setActive] = useState(query.inspect ?? query.pick ?? shown[0]?.key ?? "");
   const [chosen, setChosen] = useState<string | undefined>(query.pick);
   useEffect(() => setChosen(query.pick), [query.pick]);
-  const intents = useIntents({ action, Form, submit, result, names, cancelHref: href(withMedia(query, {})), onDone: () => setSelected([]) });
+  // The last result the script path got, for the links to what an upload, an import or a turn left
+  // to open; the page's own result otherwise.
+  const [last, setLast] = useState<IntentResult | null>(null);
+  useEffect(() => setLast(null), [result]);
+  const tracked: SubmitIntent | undefined = submit
+    ? async (form) => {
+        const r = await submit(form);
+        setLast(r);
+        return r;
+      }
+    : undefined;
+  const intents = useIntents({ action, Form, submit: tracked, result, names, cancelHref: href(withMedia(query, {})), onDone: () => setSelected([]) });
 
   // Moving to another view of the library (open a file, close it) with script is a GET of the
   // library's own form, so the host's router (React Router's <Form>) makes it a navigation in the
@@ -118,6 +188,8 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
     else insRef.current?.focus();
   }, [inspected?.key, chosen, picker, uid]);
   const iOffers = inspectorOffers(data);
+  const inspectedMoved = !!inspected && changed.has(inspected.key) && changed.get(inspected.key)?.version !== inspected.version;
+
 
   // Grid or list and the tile size: the address's when a link set them, else this viewer's last
   // choice (read after mount, so the server's HTML and the first paint agree).
@@ -247,6 +319,25 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   const words = emptyWords(query, labels);
   const rules = offers.upload ? uploadRules(offers.upload, picker) : null;
   const canUpload = !!rules && can.edit && !trash;
+  const canImport = !picker && can.edit && !trash && !!offers.import && !!offers.upload;
+  // Where the site shrinks large pictures at upload, a box keeps this one at its own size.
+  const keepSize = (id: string) =>
+    offers.resize ? (
+      <div className="cap-field">
+        <label className="cap-check">
+          <input type="checkbox" name="resize" value="no" aria-describedby={`${uid}-${id}-size-help`} /> Keep it at full size
+        </label>
+        <p className="cap-field-help" id={`${uid}-${id}-size-help`}>
+          This site shrinks a picture whose longer edge is over {offers.resize.maxEdge} pixels.
+        </p>
+      </div>
+    ) : null;
+  const filters = !picker && !trash && !!offers.filters;
+  const filterWords = [query.kind ? KIND_WORDS[query.kind] : null, query.orientation ? ORIENTATION_WORDS[query.orientation] : null].filter(Boolean).join(", ") || "everything";
+  const toOpen = picker ? [] : filesToOpen(last ?? result);
+  const nameOf = (id: string) => names.get(id) ?? id.split("/").pop() ?? id;
+  // The resize pass: every oversized picture on this page, from the oversized lens.
+  const shrinkAll = !picker && query.lens === "oversized" && iOffers.resize != null ? rows.filter((r): r is MediaRecord & { version: string } => r.state === "ready" && !!r.version && oversized(r, iOffers.resize)) : [];
   // The picture tools for the open file: the focal point, replace (the file's own type, the site's
   // size limit) and crop (with script and the host's same-origin bytes).
   const tools = (item: MediaRecord) => {
@@ -301,7 +392,9 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
     <section className="cap-media-lib" data-cap="media-library" data-mode={picker ? "picker" : undefined} aria-label={title} ref={(el) => void (intents.rootRef.current = el)} onSubmit={onSubmit}>
       <div ref={goRef} hidden>
         <Form method="get" action={path}>
-          {Object.entries(goTo ?? {}).map(([k, v]) => (v ? <input key={k} type="hidden" name={k} value={v} /> : null))}
+          {[...new URLSearchParams(mediaHref("", goTo ?? {}).split("?")[1] ?? "")].map(([k, v]) => (
+            <input key={k} type="hidden" name={k} value={v} />
+          ))}
         </Form>
       </div>
 
@@ -317,7 +410,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
       ) : null}
 
       <Form method="get" action={path} className="cap-media-lib-filters" role="search" aria-label={`Find ${plural}`}>
-        {(["view", "layout", "size", "tag", "lens", "sort", "dir", "group"] as const).map((k) => (query[k] ? <input key={k} type="hidden" name={k} value={query[k]} /> : null))}
+        {(["view", "layout", "size", "tag", "kind", "orientation", "lens", "sort", "dir", "group"] as const).map((k) => (query[k] ? <input key={k} type="hidden" name={k} value={query[k]} /> : null))}
         <div className="cap-field cap-media-lib-search">
           <label className="cap-field-label" htmlFor={`${uid}-q`}>
             Search
@@ -377,10 +470,18 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
               </a>
             </nav>
           ) : null}
+          {filters ? (
+            <Disclosure summary={`Filter: ${filterWords}`}>
+              <div className="cap-media-lib-display">
+                {chipLinks<"any" | NonNullable<MediaQuery["kind"]>>("Type", [["any", "Any"], ...(Object.entries(KIND_WORDS) as Array<[NonNullable<MediaQuery["kind"]>, string]>)], query.kind ?? "any", (v) => withMedia(query, { kind: v === "any" ? undefined : v }))}
+                {chipLinks<"any" | NonNullable<MediaQuery["orientation"]>>("Orientation", [["any", "Any"], ...(Object.entries(ORIENTATION_WORDS) as Array<[NonNullable<MediaQuery["orientation"]>, string]>)], query.orientation ?? "any", (v) => withMedia(query, { orientation: v === "any" ? undefined : v }))}
+              </div>
+            </Disclosure>
+          ) : null}
           {!picker ? (
             <Disclosure summary={`Display: ${display}`}>
               <div className="cap-media-lib-display">
-                {chipLinks<MediaSort>("Sort", [["added", SORT_WORDS.added], ["name", SORT_WORDS.name], ["size", SORT_WORDS.size]], sort, (v) => withMedia(query, { sort: v }))}
+                {chipLinks<MediaSort>("Sort", [["added", SORT_WORDS.added], ["name", SORT_WORDS.name], ["size", SORT_WORDS.size], ...(offers.usage ? [["used", SORT_WORDS.used] as [MediaSort, string]] : [])], sort, (v) => withMedia(query, { sort: v }))}
                 {chipLinks<"asc" | "desc">("Direction", [["desc", "Descending"], ["asc", "Ascending"]], dir, (v) => withMedia(query, { sort, dir: v }))}
                 {chipLinks<"flat" | "folder" | "month">("Group by", [["flat", GROUP_WORDS.flat], ["folder", GROUP_WORDS.folder], ["month", GROUP_WORDS.month]], query.group ?? "flat", (v) => withMedia(query, { group: v === "flat" ? undefined : v }))}
                 {layout === "grid" ? chipLinks<"s" | "m" | "l">("Tile size", [["s", "S"], ["m", "M"], ["l", "L"]], tileSize, (v) => withMedia(query, { size: v }), (v) => remember({ size: v })) : null}
@@ -392,6 +493,21 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
             <Form method="post" action={action} className="cap-media-lib-extra">
               <button type="submit" className="cap-btn" data-variant="danger" name="intent" value="empty-trash">
                 Empty Trash
+              </button>
+            </Form>
+          ) : null}
+          {shrinkAll.length > 0 ? (
+            // The kit lists every picture and asks before any is stored again (site-api v0.13.0).
+            <Form method="post" action={action} className="cap-media-lib-extra">
+              <input type="hidden" name="intent" value="resize" />
+              {shrinkAll.map((r) => (
+                <span key={r.key} hidden>
+                  <input type="hidden" name="ids" value={r.key} />
+                  <input type="hidden" name="versions" value={r.version} />
+                </span>
+              ))}
+              <button type="submit" className="cap-btn">
+                Shrink {shrinkAll.length === 1 ? "this picture" : `all ${shrinkAll.length} on this page`}
               </button>
             </Form>
           ) : null}
@@ -411,6 +527,20 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
       {!picker ? (
         <p className="cap-media-lib-note" role="status">
           {copied}
+        </p>
+      ) : null}
+      {polling ? (
+        <p className="cap-media-lib-note" role="status" data-cap-part="live">
+          {stale ? (
+            <>
+              The library changed more than this page can follow. <a href={href(query)}>Load it again</a>.
+            </>
+          ) : live.updated || live.elsewhere || inspectedMoved ? (
+            <>
+              {[live.updated ? `${live.updated} ${live.updated === 1 ? "file was" : "files were"} changed elsewhere and ${live.updated === 1 ? "is" : "are"} shown as ${live.updated === 1 ? "it is" : "they are"} now.` : null, live.elsewhere ? `${live.elsewhere} more changed that this page does not show.` : null, inspectedMoved ? `${inspected?.name} changed since you opened it.` : null].filter(Boolean).join(" ")}{" "}
+              {live.elsewhere || inspectedMoved ? <a href={href(query)}>Load the page again</a> : null}
+            </>
+          ) : null}
         </p>
       ) : null}
 
@@ -435,13 +565,52 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
               What the picture shows, for a person who cannot see it. You can add it later.
             </p>
           </div>
+          {keepSize("up")}
           <button type="submit" className="cap-btn" data-variant="primary">
             Upload
           </button>
         </Form>
       ) : null}
 
+      {canImport ? (
+        <Disclosure summary="Import from a web address">
+        <Form method="post" action={action} className="cap-media-lib-upload" aria-label={`Import a ${nounsOf(labels).noun} from the web`}>
+          <input type="hidden" name="intent" value="import" />
+          <div className="cap-field">
+            <label className="cap-field-label" htmlFor={`${uid}-import`}>
+              Web address
+            </label>
+            <input className="cap-input" id={`${uid}-import`} name="url" type="url" inputMode="url" autoComplete="off" required placeholder="https://" aria-describedby={`${uid}-import-help`} />
+            <p className="cap-field-help" id={`${uid}-import-help`}>
+              The site fetches its own copy and serves that, never the other site's. An https address only. {rules ? rules.hint : ""}
+            </p>
+          </div>
+          <div className="cap-field">
+            <label className="cap-field-label" htmlFor={`${uid}-imalt`}>
+              Alt text
+            </label>
+            <input className="cap-input" id={`${uid}-imalt`} name="alt" type="text" autoComplete="off" />
+          </div>
+          {keepSize("im")}
+          <button type="submit" className="cap-btn">
+            Import
+          </button>
+        </Form>
+        </Disclosure>
+      ) : null}
+
       {intents.resultBox}
+      {toOpen.length > 0 ? (
+        <ul className="cap-media-lib-opened" aria-label="Files to open">
+          {toOpen.map((f) => (
+            <li key={`${f.why}:${f.id}`}>
+              <a href={href(withMedia(query, { inspect: f.id }))}>
+                {f.why === "duplicate" ? `Open ${nameOf(f.id)}, the file already stored` : f.why === "copy" ? `Open the new file, ${nameOf(f.id)}` : `Open ${nameOf(f.id)}`}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
 
       {selectable ? (
         <ContentBulkBar
@@ -526,6 +695,19 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
               Form={Form}
               closeHref={href(withMedia(query, { inspect: undefined }))}
               can={{ trash: iOffers.trash, delete: iOffers.delete && (trash || !offers.trash) }}
+              more={({ Tool, ident, base }) => (
+                <MediaMore
+                  item={inspected}
+                  data={data}
+                  Tool={Tool}
+                  ident={ident}
+                  base={base}
+                  action={action}
+                  inspectHref={(key) => href(withMedia(query, { inspect: key }))}
+                  suggestHref={href(withMedia(query, { inspect: inspected.key, suggest: true }))}
+                  unsuggestHref={href(withMedia(query, { inspect: inspected.key }))}
+                />
+              )}
             />
           ) : null}
         </div>

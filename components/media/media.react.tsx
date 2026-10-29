@@ -87,6 +87,10 @@ export interface MediaInspectorProps {
   // In autosave mode the tools sit inside the inspector's own form, so they cannot be forms: their
   // buttons hand the fields here instead (MediaLibrary posts them through `submit`).
   onTool?: (form: FormData) => void;
+  // More sections after the picture tools, built by the host from `Tool` (a form in form mode, a
+  // group that hands its fields to `onTool` inside the autosaving form) and `ident(intent)`, the
+  // hidden fields every inspector form carries. MediaLibrary's credit, turns, history and suggestions.
+  more?: (kit: { Tool: NonNullable<MediaInspectorProps["Form"]>; ident: (intent: string) => ReactNode; base: string }) => ReactNode;
 }
 
 const PlainForm: NonNullable<MediaInspectorProps["Form"]> = (props) => <form {...props} />;
@@ -150,8 +154,13 @@ export function MediaInspector(props: MediaInspectorProps) {
   );
 }
 
-function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattached, onStep, base, titleId, firstRef, show = {}, saving = "auto", action, Form: F = PlainForm, closeHref, can = {}, tools = {}, onTool }: MediaInspectorProps & { item: MediaRecord; base: string; titleId: string; firstRef: { current: HTMLElement | null } }) {
+function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattached, onStep, base, titleId, firstRef, show = {}, saving = "auto", action, Form: F = PlainForm, closeHref, can = {}, tools = {}, onTool, more }: MediaInspectorProps & { item: MediaRecord; base: string; titleId: string; firstRef: { current: HTMLElement | null } }) {
   const formMode = saving === "form" && !!action;
+  const toolRef = useRef(onTool);
+  toolRef.current = onTool;
+  // One component for the inspector's life, so a re-render never remounts a tool and loses its state.
+  const [Nested] = useState(() => nestedTool(toolRef));
+  const Tool = formMode ? F : Nested;
   const shows = { alt: show.alt ?? true, title: show.title ?? true, caption: show.caption ?? true, tags: show.tags ?? true };
   const draft = drafts.get(item.key);
   const initial: MediaFields = draft ?? { alt: item.alt, decorative: item.altState === "decorative", title: item.title, caption: item.caption, tags: item.tags };
@@ -389,8 +398,9 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
         </div>
         ) : null}
         {img && !binned && (tools.focus || tools.replace || tools.crop) && action ? (
-          <PictureTools item={item} base={base} tools={tools} action={action} F={F} nested={!formMode} onTool={onTool} />
+          <PictureTools item={item} base={base} tools={tools} action={action} Tool={Tool} />
         ) : null}
+        {more && action ? more({ Tool, ident: (intent) => <Ident item={item} intent={intent} />, base }) : null}
         <div className="cap-media-section" role="group" aria-labelledby={`${base}-addr-l`}>
           <label className="cap-field-label" id={`${base}-addr-l`} htmlFor={`${base}-addr`}>
             Address
@@ -552,14 +562,9 @@ function Wrap({ on, F, action, label, intent, item, save, children }: { on: bool
 // used now and then, and open each is as tall as the rest of the inspector). In form mode each is its
 // own form; inside the autosaving form (`nested`) each is a group whose button hands its fields to
 // `onTool`, since a form cannot sit inside a form.
-function PictureTools({ item, base, tools, action, F, nested, onTool }: { item: MediaRecord; base: string; tools: NonNullable<MediaInspectorProps["tools"]>; action: string; F: NonNullable<MediaInspectorProps["Form"]>; nested: boolean; onTool?: (form: FormData) => void }) {
+function PictureTools({ item, base, tools, action, Tool }: { item: MediaRecord; base: string; tools: NonNullable<MediaInspectorProps["tools"]>; action: string; Tool: NonNullable<MediaInspectorProps["Form"]> }) {
   const [cropOpen, setCropOpen] = useState(false);
   const [opener, setOpener] = useState<HTMLElement | null>(null);
-  const toolRef = useRef(onTool);
-  toolRef.current = onTool;
-  // One component for the inspector's life, so a re-render never remounts a tool and loses its state.
-  const [Nested] = useState(() => nestedTool(toolRef));
-  const Tool = nested ? Nested : F;
   const ident = (intent: string) => <Ident item={item} intent={intent} />;
   const size = item.width && item.height ? `${item.width} by ${item.height} pixels` : "the size of this one";
   const crop = tools.crop;
@@ -635,7 +640,8 @@ function nestedTool(handler: { current: ((form: FormData) => void) | undefined }
           e.preventDefault();
           e.stopPropagation();
           const data = new FormData();
-          for (const el of (e.currentTarget as HTMLElement).querySelectorAll<HTMLInputElement>("input[name]")) {
+          for (const el of (e.currentTarget as HTMLElement).querySelectorAll<HTMLInputElement>("input[name], textarea[name], select[name]")) {
+            if ((el.type === "checkbox" || el.type === "radio") && !el.checked) continue;
             if (el.type === "file") {
               if (!el.reportValidity()) return;
               for (const f of el.files ?? []) data.append(el.name, f);

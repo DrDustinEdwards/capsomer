@@ -4,6 +4,12 @@
   <div data-mount="editor"></div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-ideas">
+  <h2 id="s-ideas">A site with every media idea (site-api v0.13.0), with script: filters, import, duplicates, credit, turns, history, shrinking, suggestions and live updates</h2>
+  <p>Its addresses carry the size, so a quarter turn of a picture that is not square is saved as a new file. Upload a file with “brazos” in its name and the site answers with the one it already holds. Open Filter for type and orientation, Suggest tags and alt to ask the site's model, and the Oversized lens to shrink every picture on the page. Changes made elsewhere (<code>mediaChange(key, alt)</code> at the console) arrive within 15 seconds.</p>
+  <div data-mount="ideas"></div>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-form">
   <h2 id="s-form">The inspector in form mode, as delivered with no script: one form per field with its own Save</h2>
   <div data-mount="form"></div>
@@ -58,4 +64,10 @@
   <h2 id="s-static">The delivered HTML: what a server sends, before any script runs</h2>
   <p>Rendered to a string and put in the page as it is, with nothing attached: the search is a GET form, the tiles are links to <code>?inspect=</code>, their boxes post as <code>ids</code> with the bar's submit buttons, upload is a multipart form, and the inspector's fields are forms.</p>
   <div id="media-static"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-ideas-static">
+  <h2 id="s-ideas-static">The media ideas as delivered HTML, on the Oversized lens: every one a form or a link</h2>
+  <p>Import, credit, the turns, Shrink, Go back to a version, Suggest and the resize pass all post the content kit's own intents (or, for Suggest, link to <code>suggest=1</code>), so they work before any script runs.</p>
+  <div id="media-ideas-static"></div>
 </section>
