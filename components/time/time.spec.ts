@@ -74,7 +74,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: rows read as words", async ({ page }) => {
+  test("accessibility: rows read as words", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "time", theme);
     await expect(page.locator("#sample-rows")).toHaveAccessibleName("Deploys");
     await expect(page.locator("#sample-rows > li")).toHaveText([

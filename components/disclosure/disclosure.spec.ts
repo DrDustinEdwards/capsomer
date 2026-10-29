@@ -19,7 +19,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the group rows' roles and names", async ({ page }) => {
+  test("accessibility: the group rows' roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "disclosure", theme);
     await expect(page.locator("section[aria-labelledby='s-collapsed']")).toMatchAriaSnapshot(`
       - region "Group row, collapsed, with its count":
@@ -64,7 +64,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: /^Dependency updates\s*,\s*5$/ })).toHaveAttribute("aria-expanded", "true");
   });
 
-  test("accessibility: a group row in a heading is found by heading and still toggles by key", async ({ page }) => {
+  test("accessibility: a group row in a heading is found by heading and still toggles by key", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "disclosure", theme);
     await expect(page.getByRole("heading", { name: /^Finished jobs\s*,\s*12$/, level: 3 })).toBeVisible();
     const btn = page.getByRole("button", { name: /^Finished jobs\s*,\s*12$/ });
@@ -116,7 +116,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: a disabled group row is not operable and keeps its state", async ({ page }) => {
+  test("accessibility: a disabled group row is not operable and keeps its state", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "disclosure", theme);
     const btn = page.getByRole("button", { name: /^Archived/ });
     await expect(btn).toBeDisabled();

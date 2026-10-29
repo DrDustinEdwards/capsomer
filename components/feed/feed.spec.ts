@@ -35,7 +35,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: day headings name their lists, and the marker names its deploy", async ({ page }) => {
+  test("accessibility: day headings name their lists, and the marker names its deploy", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "feed", theme);
     await expect(page.locator("#feed-incident")).toMatchAriaSnapshot(`
       - heading "Today" [level=4]
@@ -71,7 +71,7 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/#incident-foxhound-412$/);
   });
 
-  test("accessibility: at phone width nothing runs out of the viewport", async ({ page }) => {
+  test("accessibility: at phone width nothing runs out of the viewport", { tag: "@markup" }, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "feed", theme, "narrow");
     const over = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);

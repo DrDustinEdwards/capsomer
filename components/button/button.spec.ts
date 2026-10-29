@@ -34,7 +34,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the variants' roles and names", async ({ page }) => {
+  test("accessibility: the variants' roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "button", theme);
     await expect(page.locator("#variants")).toMatchAriaSnapshot(`
       - button "Refresh"
@@ -88,7 +88,7 @@ eachTheme((theme) => {
     await expect(page.locator("#b-pending .cap-btn-label")).toHaveCSS("opacity", "0");
   });
 
-  test("accessibility: every size keeps a 24 px hit area", async ({ page }) => {
+  test("accessibility: every size keeps a 24 px hit area", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "button", theme);
     for (const id of ["#b-xs", "#b-sm", "#b-size-default", "#b-lg", "#b-icon"]) {
       const b = await page.locator(id).boundingBox();
@@ -99,7 +99,7 @@ eachTheme((theme) => {
     expect(link?.height).toBeGreaterThanOrEqual(24);
   });
 
-  test("accessibility: a button group is a named group and its buttons are reachable", async ({ page }) => {
+  test("accessibility: a button group is a named group and its buttons are reachable", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "button", theme);
     await expect(page.getByRole("group", { name: "Page navigation" })).toBeVisible();
     await page.getByRole("button", { name: "Previous" }).focus();
@@ -107,7 +107,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("group", { name: "Page navigation" }).getByRole("button", { name: "Next" })).toBeFocused();
   });
 
-  test("accessibility: an open popup button reports aria-expanded", async ({ page }) => {
+  test("accessibility: an open popup button reports aria-expanded", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "button", theme);
     await expect(page.locator("#b-expanded")).toHaveAttribute("aria-expanded", "true");
   });

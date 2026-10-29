@@ -89,7 +89,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names", async ({ page }) => {
+  test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     await expect(page.getByRole("region", { name: "Publish checks", exact: true }).first()).toBeVisible();
     await expect(region(page, "pg-blocked").getByRole("list", { name: "Required, 2 failing" })).toBeVisible();
@@ -107,7 +107,7 @@ eachTheme((theme) => {
     await expect(region(page, "pg-blocked").getByRole("link", { name: /Every image has alt text/ })).toBeHidden();
   });
 
-  test("accessibility: the blocked button is aria-disabled, focusable and described by the summary", async ({ page }) => {
+  test("accessibility: the blocked button is aria-disabled, focusable and described by the summary", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const b = publishBtn(page, "pg-blocked");
     await expect(b).toHaveAttribute("aria-disabled", "true");
@@ -121,7 +121,7 @@ eachTheme((theme) => {
     await expect(publishBtn(page, "pg-held")).toHaveAccessibleDescription(/^Held for review by Rosa until Fri 09:00/);
   });
 
-  test("accessibility: status is a glyph, a word and a color", async ({ page }) => {
+  test("accessibility: status is a glyph, a word and a color", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     for (const [id, word] of [["pg-blocked", "Blocked"], ["pg-ready", "Ready"], ["pg-held", "Held"], ["pg-pub", "Published"]] as const) {
       const s = region(page, id).locator(`#${id}-sum .cap-status`);

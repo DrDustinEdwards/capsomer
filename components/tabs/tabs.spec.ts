@@ -27,7 +27,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names", async ({ page }) => {
+  test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "tabs", theme);
     await expect(page.locator("#tabs-default")).toMatchAriaSnapshot(`
       - tablist "Site sections":
@@ -47,7 +47,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("tablist", { name: "Settings sections" })).toHaveAttribute("aria-orientation", "vertical");
   });
 
-  test("accessibility: the chosen tab is the one tab stop and each tab names its panel", async ({ page }) => {
+  test("accessibility: the chosen tab is the one tab stop and each tab names its panel", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "tabs", theme);
     const tabs = page.locator("#tabs-default [role='tab']");
     await expect(tabs.nth(0)).toHaveAttribute("tabindex", "0");
@@ -58,7 +58,7 @@ eachTheme((theme) => {
     await expect(page.locator("#td-alerts")).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("accessibility: every tab is at least the target size", async ({ page }) => {
+  test("accessibility: every tab is at least the target size", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "tabs", theme);
     const sizes = await page.locator(".cap-tab").evaluateAll((els) => els.map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0).map((r) => [r.width, r.height]));
     expect(sizes.length).toBeGreaterThan(10);

@@ -17,7 +17,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the panels' roles and names", async ({ page }) => {
+  test("accessibility: the panels' roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "panel", theme);
     await expect(page.locator("#p-head")).toMatchAriaSnapshot(`
       - heading "Usage against free limits" [level=3]
@@ -52,7 +52,7 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/#sites$/);
   });
 
-  test("accessibility: a panel given a heading id is a named region wired to its title", async ({ page }) => {
+  test("accessibility: a panel given a heading id is a named region wired to its title", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "panel", theme);
     await expect(page.getByRole("region", { name: "Deploy settings" })).toBeVisible();
     await expect(page.locator("#p-card")).toHaveAttribute("aria-labelledby", "p-card-h");

@@ -94,7 +94,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names", async ({ page }) => {
+  test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     await expect(page.getByRole("region", { name: "Flags on this draft", exact: true })).toBeVisible();
     await expect(main(page).getByRole("list", { name: "Blocking" })).toBeVisible();
@@ -128,7 +128,7 @@ eachTheme((theme) => {
     await expect(flag(page, "f3").locator(".cap-flag-diff ins")).toContainText("After: Received wisdom");
   });
 
-  test("accessibility: status is a glyph, a word and a color", async ({ page }) => {
+  test("accessibility: status is a glyph, a word and a color", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "flag-list", theme);
     for (const id of ["f1", "f3"]) {
       const s = flag(page, id).locator(".cap-row-status .cap-status");

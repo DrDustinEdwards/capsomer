@@ -20,7 +20,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the banner's and the alert's roles and names", async ({ page }) => {
+  test("accessibility: the banner's and the alert's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "banner", theme);
     await expect(page.locator("#sample-warn")).toMatchAriaSnapshot(`
       - status:
@@ -57,7 +57,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: a banner with a title and an alert with a title keep their roles and names", async ({ page }) => {
+  test("accessibility: a banner with a title and an alert with a title keep their roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "banner", theme);
     await expect(page.locator("#sample-title")).toMatchAriaSnapshot(`
       - status:
@@ -77,7 +77,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-crit")).toHaveAttribute("role", "alert");
   });
 
-  test("accessibility: every tone has its own glyph shape, hidden from assistive technology", async ({ page }) => {
+  test("accessibility: every tone has its own glyph shape, hidden from assistive technology", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "banner", theme);
     const shapes = await page.evaluate(() =>
       ["#sample-ok", "#sample-warn", "#sample-crit", "#sample-info"].map((id) => document.querySelector(`${id} > .cap-status-glyph`)!.innerHTML),

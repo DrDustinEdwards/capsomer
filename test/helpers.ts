@@ -12,7 +12,7 @@ export type Theme = (typeof THEMES)[number];
 
 // Runs `body` once per theme, with the browser's color scheme and the page's data-theme
 // both set, so a component is checked as each theme actually paints it. In the dark theme
-// only the accessibility tests run (playwright.config.ts, grepInvert).
+// only the accessibility tests not tagged @markup run (playwright.config.ts, grepInvert).
 export function eachTheme(body: (theme: Theme) => void): void {
   for (const theme of THEMES) {
     test.describe(`${theme} theme`, () => {

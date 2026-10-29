@@ -49,7 +49,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names", async ({ page }) => {
+  test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "switch-reason", theme);
     await expect(page.locator("#sr-loop")).toMatchAriaSnapshot(`
       - switch "Improve loop" [checked]
@@ -59,7 +59,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sr-miss-why")).toHaveAccessibleDescription(`${MISSING} Enter applies, Esc cancels. The reason is recorded with the change.`);
   });
 
-  test("accessibility: while the change is sent, the switch and the form say they are busy, and the switch keeps its name", async ({ page }) => {
+  test("accessibility: while the change is sent, the switch and the form say they are busy, and the switch keeps its name", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "switch-reason", theme);
     const sw = page.locator("[aria-labelledby='s-pending'] input[role='switch']");
     await expect(sw).toHaveAttribute("aria-busy", "true");

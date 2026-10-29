@@ -122,7 +122,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("accessibility: the roles and names of the head, the bulk bar and a row", async ({ page }) => {
+  test("accessibility: the roles and names of the head, the bulk bar and a row", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     await expect(queue(page).locator(".cap-mq-head")).toMatchAriaSnapshot(`
       - group "Show mentions that are":
@@ -156,7 +156,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: each decision is a real button with its key announced and shown", async ({ page }) => {
+  test("accessibility: each decision is a real button with its key announced and shown", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const r = row(queue(page), "m-101");
     for (const [action, key] of [["approve", "a"], ["reject", "r"], ["delete", "d"]] as const) {
@@ -170,7 +170,7 @@ eachTheme((theme) => {
     expect(new Set(names).size).toBe(names.length);
   });
 
-  test("accessibility: a source is text, never a link, unless marked external with rel nofollow ugc noopener", async ({ page }) => {
+  test("accessibility: a source is text, never a link, unless marked external with rel nofollow ugc noopener", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     // Nothing in the main queue links to a stranger's page.
     await expect(queue(page).locator("a[href^='http']")).toHaveCount(0);
@@ -181,7 +181,7 @@ eachTheme((theme) => {
     await expect(row(queue(page), "m-101").locator(".cap-mq-host")).toHaveText("fieldnotes.example");
   });
 
-  test("accessibility: a source not found says so in a word and a shape, and the open row gives the site's reason", async ({ page }) => {
+  test("accessibility: a source not found says so in a word and a shape, and the open row gives the site's reason", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     const failed = page.locator("#mq-failed li[data-id='m-150']");
     await expect(failed.locator(".cap-row-status .cap-status")).toHaveText("Source not found");
@@ -193,14 +193,14 @@ eachTheme((theme) => {
     await expect(failed.locator("[data-cap-action='delete']")).toHaveCount(1);
   });
 
-  test("accessibility: the phone layout does not scroll sideways and keeps the hit areas", async ({ page }) => {
+  test("accessibility: the phone layout does not scroll sideways and keeps the hit areas", { tag: "@markup" }, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 800 });
     await visitStates(page, "moderation-queue", theme, "phone");
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
     for (const b of await page.locator("#mq-phone li:not([hidden]) [data-cap-action]").all()) expect((await b.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(24);
   });
 
-  test("accessibility: the live count and the result are polite status regions", async ({ page }) => {
+  test("accessibility: the live count and the result are polite status regions", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     await expect(queue(page).locator("[data-cap-part='summary']")).toHaveAttribute("role", "status");
     await expect(page.locator("#mq-results")).toHaveAttribute("aria-atomic", "false");

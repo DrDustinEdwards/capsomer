@@ -55,7 +55,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("accessibility: the bars are named meters with their values; no data and measuring are not meters", async ({ page }) => {
+  test("accessibility: the bars are named meters with their values; no data and measuring are not meters", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "meter", theme);
     await expect(page.locator("#sample-warn")).toMatchAriaSnapshot(`
       - meter "Worker requests"
@@ -75,7 +75,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-indeterminate")).toContainText("Measuring");
   });
 
-  test("accessibility: a warning or critical tone has a word and a glyph, not only a color", async ({ page }) => {
+  test("accessibility: a warning or critical tone has a word and a glyph, not only a color", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "meter", theme);
     for (const [id, word] of [["sample-warn", "Near the limit"], ["sample-crit", "Almost out"], ["sample-full", "Limit reached"]] as const) {
       const status = page.locator(`#${id} .cap-status`);
@@ -84,7 +84,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("accessibility: the tick and the projection are said in words, not only drawn", async ({ page }) => {
+  test("accessibility: the tick and the projection are said in words, not only drawn", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "meter", theme);
     await expect(page.locator("#sample-threshold [role=meter]")).toHaveAttribute("aria-valuetext", /target of 1,600 words/);
     await expect(page.locator("#sample-threshold .cap-meter-note")).toContainText("1,600-word target");

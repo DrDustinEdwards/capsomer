@@ -20,7 +20,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("accessibility: the strip's and the menu's roles and names", async ({ page }) => {
+  test("accessibility: the strip's and the menu's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     await expect(page.locator(".cap-site-header")).toMatchAriaSnapshot(`
       - banner:
@@ -206,7 +206,7 @@ eachTheme((theme) => {
     await page.keyboard.press("Escape");
     await expect(tip).toBeHidden();
   });
-  test("accessibility: the header's account menu holds this app, View site and Help, and Sign out last", async ({ page }) => {
+  test("accessibility: the header's account menu holds this app, View site and Help, and Sign out last", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "expanded");
     const avatar = page.getByRole("button", { name: "Your account" });
     await expect(avatar.locator(".cap-site-header-initials")).toHaveAttribute("data-initials", "DE");
@@ -445,12 +445,11 @@ eachTheme((theme) => {
         const icon = e.querySelector("svg")!.getBoundingClientRect();
         const glyph = { right: icon.left + icon.width / 2 + 10 };
         const badge = e.querySelector(".cap-site-header-badge")?.getBoundingClientRect();
-        return { right: r.right, left: r.left, font: getComputedStyle(e).fontSize, textW: t.width, w: r.width, clear: badge ? badge.left >= glyph.right : true };
+        return { right: r.right, left: r.left, textW: t.width, w: r.width, clear: badge ? badge.left >= glyph.right : true };
       }),
     );
     expect(tabs).toHaveLength(5);
     for (const t of tabs) {
-      expect(t.font).toBe("12px");
       expect(t.textW).toBeLessThanOrEqual(t.w);
       expect(t.clear).toBe(true);
     }

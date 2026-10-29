@@ -39,7 +39,7 @@ eachTheme((theme) => {
     await expect(tile(page, "map", "foxing")).toHaveAttribute("aria-label", "Foxing, private");
   });
 
-  test("accessibility: the map is a group of named buttons, and the list holds the same systems", async ({ page }) => {
+  test("accessibility: the map is a group of named buttons, and the list holds the same systems", { tag: "@markup" }, async ({ page }) => {
     const map = page.getByRole("group", { name: "The family", exact: true });
     await expect(map.getByRole("button", { name: "Capsid" })).toHaveAttribute("aria-pressed", "false");
     await expect(map.getByRole("button", { name: "Carrel, tool" })).toBeAttached();

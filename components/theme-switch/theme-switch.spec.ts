@@ -18,7 +18,7 @@ eachTheme((theme) => {
     });
   }
 
-  test("accessibility: the switch's roles and names, two choices and no System", async ({ page }) => {
+  test("accessibility: the switch's roles and names, two choices and no System", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "light");
     await expect(page.locator(".cap-theme")).toMatchAriaSnapshot(`
       - group "Theme":

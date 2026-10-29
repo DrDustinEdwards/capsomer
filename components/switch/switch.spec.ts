@@ -25,7 +25,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles, names and states", async ({ page }) => {
+  test("accessibility: roles, names and states", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "switch", theme);
     await expect(page.locator("#main")).toMatchAriaSnapshot(`
       - switch "Single-key shortcuts" [checked]
@@ -81,14 +81,14 @@ eachTheme((theme) => {
     await expect(page.getByRole("switch", { name: "Email alerts" })).not.toBeChecked();
   });
 
-  test("accessibility: an invalid switch exposes aria-invalid and its message", async ({ page }) => {
+  test("accessibility: an invalid switch exposes aria-invalid and its message", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "switch", theme);
     const sw = page.getByRole("switch", { name: "Public status page" });
     await expect(sw).toHaveAttribute("aria-invalid", "true");
     await expect(sw).toHaveAccessibleDescription("Verify the domain before publishing.");
   });
 
-  test("accessibility: a small switch keeps a 24 px hit area", async ({ page }) => {
+  test("accessibility: a small switch keeps a 24 px hit area", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "switch", theme);
     const box = await page.locator("#sw-sm").boundingBox();
     expect(box?.height).toBeGreaterThanOrEqual(24);

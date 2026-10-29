@@ -65,7 +65,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the dialog's roles and names", async ({ page }) => {
+  test("accessibility: the dialog's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "open");
     await expect(page.locator("dialog.cap-dialog")).toMatchAriaSnapshot(`
       - alertdialog "Revoke foxhound-driver?":
@@ -86,7 +86,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
   });
 
-  test("accessibility: it is an alert dialog with no corner Close button", async ({ page }) => {
+  test("accessibility: it is an alert dialog with no corner Close button", { tag: "@markup" }, async ({ page }) => {
     await openLive(page, theme);
     await expect(dialog(page)).toHaveAttribute("role", "alertdialog");
     await expect(dialog(page).getByRole("button", { name: "Close" })).toHaveCount(0);

@@ -28,7 +28,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the figure is named by its title and described by its summary", async ({ page }) => {
+  test("accessibility: the figure is named by its title and described by its summary", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "chart-frame", theme);
     const fig = page.locator("#cf-spark");
     await expect(fig).toHaveAttribute("aria-labelledby", "cf-spark-title");

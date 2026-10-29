@@ -59,7 +59,7 @@ eachTheme((theme) => {
     expect(real?.bg).toBe(forced?.bg);
   });
 
-  test("accessibility: the list's roles and names", async ({ page }) => {
+  test("accessibility: the list's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await expect(page.locator("#list-mixed")).toMatchAriaSnapshot(`
       - list /Mixed, worst first/:
@@ -83,7 +83,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: a row's link is described by its status and detail", async ({ page }) => {
+  test("accessibility: a row's link is described by its status and detail", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await expect(page.getByRole("link", { name: "foxhound.app is not answering" })).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
   });
@@ -239,7 +239,7 @@ eachTheme((theme) => {
     expect(starts.every((s) => s.beside), "every icon and picture is beside its title").toBe(true);
   });
 
-  test("accessibility: a row that opens in place is a button with aria-expanded and what it controls", async ({ page }) => {
+  test("accessibility: a row that opens in place is a button with aria-expanded and what it controls", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "row-list", theme);
     const button = page.getByRole("button", { name: "3 pull requests await the seat" });
     await expect(button).toHaveAttribute("aria-expanded", "false");

@@ -105,7 +105,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the dialog is named by its title and described by its description", async ({ page }) => {
+  test("accessibility: the dialog is named by its title and described by its description", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "dialog", theme, "center");
     const d = dlg(page, "Rename the site");
     await expect(d).toHaveAccessibleName("Rename the site");
@@ -117,7 +117,7 @@ eachTheme((theme) => {
     await expect(d.getByRole("button", { name: "Close" })).toBeVisible();
   });
 
-  test("accessibility: a confirm question is an alertdialog, named and described", async ({ page }) => {
+  test("accessibility: a confirm question is an alertdialog, named and described", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "dialog", theme, "alert");
     const d = alertDlg(page);
     await expect(d).toBeVisible();
@@ -126,14 +126,14 @@ eachTheme((theme) => {
     await expect(d.getByRole("button", { name: "Close" })).toHaveCount(0);
   });
 
-  test("accessibility: a dialog named with aria-label has no dangling labelledby", async ({ page }) => {
+  test("accessibility: a dialog named with aria-label has no dangling labelledby", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "dialog", theme, "top");
     const d = dlg(page, "Command menu");
     await expect(d).toBeVisible();
     await expect(d).not.toHaveAttribute("aria-labelledby", /.+/);
   });
 
-  test("accessibility: the page behind a modal dialog is inert, and the dialog is modal", async ({ page }) => {
+  test("accessibility: the page behind a modal dialog is inert, and the dialog is modal", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "dialog", theme, "center");
     await expect(dlg(page, "Rename the site")).toBeVisible();
     const modal = await page.evaluate(() => document.querySelector("dialog.cap-dialog")?.matches(":modal"));

@@ -9,8 +9,9 @@ export default defineConfig({
   testDir: ".",
   testMatch: ["components/*/*.spec.ts", "site/*.spec.ts", "test/*.spec.ts"],
   // Behavior, keyboard and geometry tests do not depend on the palette, so they run in the light
-  // theme only; accessibility tests (axe, contrast, the ARIA snapshot) run in both.
-  grepInvert: /dark theme .*(behavior|keyboard|lines|inside|layout):/,
+  // theme only, and so do accessibility tests tagged @markup (roles, names, ARIA snapshots, hit
+  // areas: nothing a palette paints). The axe scans and contrast checks run in both.
+  grepInvert: [/dark theme .*(behavior|keyboard|lines|inside|layout):/, /dark theme .*@markup/],
   fullyParallel: false,
   workers: 1,
   forbidOnly: !!process.env.CI,

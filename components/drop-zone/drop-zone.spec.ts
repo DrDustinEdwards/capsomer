@@ -89,7 +89,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the control is one named input described by the rules", async ({ page }) => {
+  test("accessibility: the control is one named input described by the rules", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     const input = page.getByLabel("Drop files here, or browse").first();
     await expect(input).toHaveAttribute("type", "file");
@@ -98,7 +98,7 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-single input")).toHaveAccessibleName("Drop a profile picture, or browse");
   });
 
-  test("accessibility: results are a status and refusals an alert, both present before anything is chosen", async ({ page }) => {
+  test("accessibility: results are a status and refusals an alert, both present before anything is chosen", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await expect(page.locator("#dz-idle [role=status]")).toBeAttached();
     await expect(page.locator("#dz-idle [role=alert]")).toBeAttached();
@@ -120,7 +120,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: every state is in the delivered HTML", async ({ page }) => {
+  test("accessibility: every state is in the delivered HTML", { tag: "@markup" }, async ({ page }) => {
     const html = await (await page.request.get("components/drop-zone/states.html")).text();
     expect(html).toContain("3 files were not added");
     expect(html).toContain("fieldnotes-scan.heic: type not allowed");

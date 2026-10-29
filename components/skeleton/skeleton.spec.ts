@@ -22,7 +22,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: a skeleton is busy and says Loading to a screen reader", async ({ page }) => {
+  test("accessibility: a skeleton is busy and says Loading to a screen reader", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "skeleton", theme);
     const skel = page.locator("#sample-skeleton");
     await expect(skel).toHaveAttribute("aria-busy", "true");
@@ -34,7 +34,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-shapes .cap-sr-only")).toHaveText("Loading the mention");
   });
 
-  test("accessibility: the spinner has a name, in words, even when the word is hidden", async ({ page }) => {
+  test("accessibility: the spinner has a name, in words, even when the word is hidden", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "skeleton", theme);
     await expect(page.locator("#sample-spinner")).toHaveText("Loading");
     await expect(page.locator("#sample-hidden-label .cap-spinner-label")).toHaveText("Refreshing the queue");

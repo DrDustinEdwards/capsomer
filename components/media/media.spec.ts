@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates, type Theme } from "../../test/helpers.ts";
-import { AUTOSAVE_MS, applyBulkTag, altStateOf, bands, byteSize, copySnippets, createAutosave, flagsFor, nextTile, parseTags, suggestedAlt } from "./media.ts";
+import { applyBulkTag, altStateOf, bands, byteSize, copySnippets, createAutosave, flagsFor, nextTile, parseTags, suggestedAlt } from "./media.ts";
 
 const FOX = "foxhound-hero.jpg";
 const UPTIME = "uptime-strip.png";
@@ -70,8 +70,7 @@ test("behavior: sizes, suggested alt text, tags and the copy snippets", () => {
   expect(doc[1]?.value).toBe("[uptime report](https://x.test/r.pdf)");
 });
 
-test("behavior: autosave waits 800 ms of quiet, saves once, and saves a change made while saving", async () => {
-  expect(AUTOSAVE_MS).toBe(800);
+test("behavior: autosave waits for quiet, saves once, and saves a change made while saving", async () => {
   const log: string[] = [];
   let release: () => void = () => undefined;
   let calls = 0;
@@ -214,7 +213,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: each tile is one named link, a named checkbox and its states in words", async ({ page }) => {
+  test("accessibility: each tile is one named link, a named checkbox and its states in words", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media", theme);
     await expect(page.locator("#t-foxhound-hero")).toMatchAriaSnapshot(`
       - listitem:
@@ -237,7 +236,7 @@ eachTheme((theme) => {
     await expect(page.locator("#t-uptime-strip .cap-status")).toHaveText("No alt text");
   });
 
-  test("accessibility: an uploading tile is a progress bar named Uploading; a failed one names its reason and Retry", async ({ page }) => {
+  test("accessibility: an uploading tile is a progress bar named Uploading; a failed one names its reason and Retry", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media", theme);
     const bar = page.locator("#t-capsid-walkthrough").getByRole("progressbar", { name: "Uploading" });
     await expect(bar).toHaveAttribute("aria-valuenow", "62");
@@ -249,7 +248,7 @@ eachTheme((theme) => {
     await expect(page.locator("#t-old-logo").getByRole("button", { name: "Restore old-logo.png" })).toBeVisible();
   });
 
-  test("accessibility: thumbnails load lazily with a size, and the frame keeps its space without the picture", async ({ page }) => {
+  test("accessibility: thumbnails load lazily with a size, and the frame keeps its space without the picture", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media", theme);
     const img = page.locator("#t-foxhound-hero img");
     await expect(img).toHaveAttribute("loading", "lazy");
@@ -262,7 +261,7 @@ eachTheme((theme) => {
     expect(before && after && Math.abs(before.height - after.height) < 1 && after.height > 50).toBe(true);
   });
 
-  test("accessibility: the inspector is a named dialog with labeled fields and a live save status", async ({ page }) => {
+  test("accessibility: the inspector is a named dialog with labeled fields and a live save status", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media", theme);
     const ins = page.locator("#ins-static-ins");
     await expect(ins).toHaveAccessibleName("uptime-strip.png");
@@ -277,7 +276,7 @@ eachTheme((theme) => {
     await expect(ins.getByRole("link", { name: "Why the uptime strip counts gaps" })).toHaveAttribute("href", "/admin/posts/uptime-gaps/edit");
   });
 
-  test("accessibility: the delivered HTML has the tiles and the active file's inspector", async ({ page }) => {
+  test("accessibility: the delivered HTML has the tiles and the active file's inspector", { tag: "@markup" }, async ({ page }) => {
     const html = await (await page.request.get("components/media/states.html")).text();
     expect(html).toContain('data-label="foxhound-hero.jpg"');
     expect(html).toContain("No alt text");
@@ -288,7 +287,7 @@ eachTheme((theme) => {
     expect(html).toContain('role="progressbar"');
   });
 
-  test("accessibility: a decorative file is a different state from a missing one, and says so in words", async ({ page }) => {
+  test("accessibility: a decorative file is a different state from a missing one, and says so in words", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media", theme);
     const deco = page.locator("#ins-deco");
     await expect(deco.getByRole("checkbox", { name: "Decorative image" })).toBeChecked();

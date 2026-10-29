@@ -48,7 +48,7 @@ eachTheme((theme) => {
     expect(parseFloat(you.width)).toBeGreaterThan(0);
   });
 
-  test("accessibility: shown, the labels are read; hidden, the prose is plain with no extra words", async ({ page }) => {
+  test("accessibility: shown, the labels are read; hidden, the prose is plain with no extra words", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const on = await page.locator("#au-on").ariaSnapshot();
     expect(on).toContain("You");
@@ -64,7 +64,7 @@ eachTheme((theme) => {
     await expect(page.locator("#au-off .cap-authorship-summary")).toBeHidden();
   });
 
-  test("accessibility: the switch and the shown specimen have roles and names", async ({ page }) => {
+  test("accessibility: the switch and the shown specimen have roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "authorship", theme);
     await expect(page.locator("#au-on")).toMatchAriaSnapshot(`
       - /children: contain
@@ -76,7 +76,7 @@ eachTheme((theme) => {
     await expect(page.locator("#au-off").getByRole("switch", { name: "Show authorship" })).not.toBeChecked();
   });
 
-  test("accessibility: an avatar in a label is not read a second time", async ({ page }) => {
+  test("accessibility: an avatar in a label is not read a second time", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const label = page.locator("#au-avatar div.cap-run[data-kind='ai'] > .cap-run-label");
     await expect(label).toBeVisible();

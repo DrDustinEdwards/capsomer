@@ -76,7 +76,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: a reader's list is a named region of tab links with counts and rows with no boxes and no decisions", async ({ page }) => {
+  test("accessibility: a reader's list is a named region of tab links with counts and rows with no boxes and no decisions", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "mentions-list", theme);
     const list = mount(page, "reader");
     await expect(list.getByRole("navigation", { name: "Mentions by state" })).toMatchAriaSnapshot(`

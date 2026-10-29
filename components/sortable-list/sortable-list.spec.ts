@@ -48,7 +48,7 @@ eachTheme((theme) => {
     expect(await shadow("#scenes > li:first-child")).toBe("none");
   });
 
-  test("accessibility: roles, names and states", async ({ page }) => {
+  test("accessibility: roles, names and states", { tag: "@markup" }, async ({ page }) => {
     await expect(list(page, "Scenes in 01 The riverbed")).toMatchAriaSnapshot(`
       - list "Scenes in 01 The riverbed":
         - listitem:

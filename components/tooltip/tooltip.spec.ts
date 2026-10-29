@@ -17,7 +17,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the trigger keeps its own name, and the tip is its description", async ({ page }) => {
+  test("accessibility: the trigger keeps its own name, and the tip is its description", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "tooltip", theme);
     const retry = page.getByRole("button", { name: "Retry job" });
     await expect(retry).toHaveAccessibleName("Retry job");

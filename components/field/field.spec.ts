@@ -33,7 +33,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the live form's roles and names", async ({ page }) => {
+  test("accessibility: the live form's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "field", theme);
     await expect(page.locator("#add-site")).toMatchAriaSnapshot(`
       - form "A live form":
@@ -125,12 +125,12 @@ eachTheme((theme) => {
     await expect(url).not.toHaveAttribute("aria-invalid", "true");
   });
 
-  test("accessibility: a checkbox can be mixed and reports it", async ({ page }) => {
+  test("accessibility: a checkbox can be mixed and reports it", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "field", theme);
     await expect(page.getByRole("checkbox", { name: "Select all sites (some chosen)" })).toBeChecked({ indeterminate: true });
   });
 
-  test("accessibility: an invalid checkbox and radio expose aria-invalid and their message", async ({ page }) => {
+  test("accessibility: an invalid checkbox and radio expose aria-invalid and their message", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "field", theme);
     await expect(page.locator("#c-invalid")).toHaveAttribute("aria-invalid", "true");
     await expect(page.locator("#c-invalid")).toHaveAccessibleDescription("Accept the terms to continue.");

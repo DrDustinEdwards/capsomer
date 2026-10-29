@@ -50,7 +50,7 @@ eachTheme((theme) => {
     expect(await css("#st-inside", "border-top-width", "::after")).toBe("2px");
   });
 
-  test("accessibility: roles, levels, names and states", async ({ page }) => {
+  test("accessibility: roles, levels, names and states", { tag: "@markup" }, async ({ page }) => {
     await expect(page.getByRole("tree", { name: "Paluxy Portal binder" })).toMatchAriaSnapshot(`
       - tree "Paluxy Portal binder":
         - treeitem "Paluxy Portal 18,420 words"

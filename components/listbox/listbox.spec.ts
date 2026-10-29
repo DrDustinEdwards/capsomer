@@ -46,7 +46,7 @@ eachTheme((theme) => {
     expect(await mark("#v-agents")).toBe("none");
   });
 
-  test("accessibility: roles, names, groups and selection state", async ({ page }) => {
+  test("accessibility: roles, names, groups and selection state", { tag: "@markup" }, async ({ page }) => {
     const grouped = page.getByRole("listbox", { name: "Commands, grouped" });
     await expect(grouped.getByRole("group", { name: "Go to" }).getByRole("option")).toHaveCount(2);
     await expect(grouped.getByRole("group", { name: "Actions" }).getByRole("option")).toHaveCount(2);
