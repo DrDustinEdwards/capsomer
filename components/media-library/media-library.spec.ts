@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, nextPost, visitStates } from "../../test/helpers.ts";
-import { countLine, emptyWords, groupRows, lensChips, mediaActions, mediaHref, pickable, readMediaView, uploadRules, withMedia } from "./media-library.ts";
+import { applyChanges, countLine, emptyWords, filesToOpen, groupRows, lensChips, mediaActions, mediaHref, pickable, readMediaView, uploadRules, withMedia } from "./media-library.ts";
 
 const ALL = { edit: true, publish: true, deleteContent: true, deleteMedia: true, decideMentions: true };
 const NONE = { edit: false, publish: false, deleteContent: false, deleteMedia: false, decideMentions: false };
@@ -63,6 +63,37 @@ test("behavior: the count, the empty state, the upload rules and the picker's fi
   expect(uploadRules({ maxBytes: 1024, types: ["image/png", "application/pdf"] }, true)?.accept).toBe("image/png");
   expect(uploadRules({ maxBytes: 1024, types: ["application/pdf"] }, true)).toBeNull();
   expect(pickable(rows).map((r) => r.key)).toEqual(["a"]);
+});
+
+
+test("behavior: others' changes replace a tile, leave the view they no longer match, and are counted when not on the page; an upload's outcome links the file", () => {
+  const rec = (key: string, over: object = {}) => ({ key, name: key, url: `/m/${key}`, kind: "image" as const, type: "image/png", bytes: 1, alt: "", altState: "missing" as const, title: "", caption: "", tags: ["river"], used: [], state: "ready" as const, ...over });
+  const rows = [rec("a"), rec("b"), rec("c")];
+  const changed = new Map([
+    ["a", rec("a", { alt: "Now described", version: "v9" })],
+    ["b", rec("b", { state: "binned" as const })],
+    ["c", null],
+    ["d", rec("d")],
+    ["e", rec("e", { tags: [] })],
+  ]);
+  const out = applyChanges(rows, changed, { tag: "river" });
+  expect(out.rows.map((r) => [r.key, r.alt])).toEqual([["a", "Now described"]]);
+  // d is new and would show here; e no longer carries the tag, so it would not.
+  expect([out.updated, out.elsewhere]).toEqual([3, 1]);
+  // The kit's outcomes: the file already stored, a new one, and a turned copy.
+  expect(
+    filesToOpen({
+      outcomes: [
+        { id: "x", ok: true, message: "brazos.png is already in the library as brazos-dusk.png, so no second copy was stored." },
+        { id: "y", ok: true, message: "Uploaded. Filled in from the file: credit." },
+        { id: "z", ok: true, copyId: "z-turned", message: "Saved the turned picture as a new file." },
+        { id: "w", ok: false, message: "Uploaded." },
+      ],
+    }),
+  ).toEqual([{ id: "x", why: "duplicate" }, { id: "y", why: "new" }, { id: "z-turned", why: "copy" }]);
+  // The model's suggestions are for one file: asking is in the address, and moving on drops it.
+  expect(mediaHref("/media", withMedia({ kind: "image" }, { inspect: "a.png", suggest: true }))).toBe("/media?kind=image&inspect=a.png&suggest=1");
+  expect(mediaHref("/media", withMedia({ inspect: "a.png", suggest: true }, { inspect: "b.png" }))).toBe("/media?inspect=b.png");
 });
 
 
@@ -289,6 +320,78 @@ eachTheme((theme) => {
     await step.getByRole("textbox", { name: "Alt text (required)" }).fill("The uptime strip");
     await step.getByRole("button", { name: "Insert", exact: true }).click();
     expect((await posted).fields).toEqual({ intent: ["pick"], ids: ["2026/09/uptime-strip.png"], alt: ["The uptime strip"] });
+  });
+
+  test("behavior: with no script, each media idea of site-api v0.13.0 is a form posting the kit's intent, or a link", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    const lib = page.locator("#media-ideas-static");
+    const ins = lib.getByRole("dialog", { name: "brazos-dusk.png" });
+    const ident = { ids: ["2026/10/brazos-dusk.png"], versions: ["v1"] };
+    await expect(lib.getByRole("link", { name: "Portrait", includeHidden: true })).toHaveAttribute("href", "/media?orientation=portrait&lens=oversized");
+    await expect(ins.getByRole("link", { name: "Suggest tags and alt" })).toHaveAttribute("href", "/media?lens=oversized&inspect=2026%2F10%2Fbrazos-dusk.png&suggest=1");
+    await expect(ins.getByRole("link", { name: "brazos-copy.png" })).toHaveAttribute("href", "/media?lens=oversized&inspect=2026%2F10%2Fbrazos-copy.png");
+    let posted = nextPost(page, "#media-ideas-static");
+    await ins.getByRole("textbox", { name: "License ends" }).fill("2027-12-31");
+    await ins.getByRole("button", { name: "Save credit" }).click();
+    expect((await posted).fields).toEqual({ intent: ["credit"], ...ident, credit: ["Ada Example"], license: ["CC BY 4.0"], sourceUrl: ["https://photos.example.com/r/1"], licenseExpires: ["2027-12-31"] });
+    posted = nextPost(page, "#media-ideas-static");
+    await ins.getByRole("button", { name: "Rotate left" }).click();
+    expect((await posted).fields).toEqual({ intent: ["transform"], ...ident, op: ["rotate-270"] });
+    posted = nextPost(page, "#media-ideas-static");
+    await ins.getByRole("button", { name: /^Go back to this version/ }).click();
+    expect((await posted).fields).toEqual({ intent: ["revert"], ...ident, to: ["r1"] });
+    posted = nextPost(page, "#media-ideas-static");
+    await ins.getByRole("button", { name: "Save as alt text" }).click();
+    expect((await posted).fields).toEqual({ intent: ["alt"], ...ident, alt: ["The Brazos at dusk, from the Waco suspension bridge."] });
+    // The resize pass names every oversized picture on the page, with the version each was seen at.
+    posted = nextPost(page, "#media-ideas-static");
+    await lib.getByRole("button", { name: "Shrink all 2 on this page" }).click();
+    expect((await posted).fields).toEqual({ intent: ["resize"], ids: ["2026/10/brazos-copy.png", "2026/10/brazos-dusk.png"], versions: ["v1", "v1"] });
+    posted = nextPost(page, "#media-ideas-static");
+    await lib.locator("summary", { hasText: "Import from a web address" }).click();
+    await lib.getByRole("textbox", { name: "Web address" }).fill("https://photos.example.com/r/2");
+    await lib.getByRole("checkbox", { name: "Keep it at full size" }).last().check();
+    await lib.getByRole("button", { name: "Import" }).click();
+    expect((await posted).fields).toEqual({ intent: ["import"], url: ["https://photos.example.com/r/2"], alt: [""], resize: ["no"] });
+  });
+
+  test("behavior: with script, suggestions load when asked and each is applied only when accepted", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    const lib = page.locator("[data-mount='ideas']");
+    const ins = lib.getByRole("dialog", { name: "brazos-dusk.png" });
+    await ins.getByRole("link", { name: "Suggest tags and alt" }).click();
+    await expect(ins.getByRole("textbox", { name: "Suggested alt text" })).toHaveValue("The Brazos River at dusk under a pink sky, the suspension bridge in silhouette");
+    expect(await log(page)).toEqual([]);
+    await ins.getByRole("button", { name: "Add suggested tag bridge" }).click();
+    await expect.poll(async () => (await log(page)).length).toBe(1);
+    expect((await log(page))[0]).toEqual({ intent: "tag-add", ids: "2026/10/brazos-dusk.png", versions: "v1", tags: "bridge" });
+  });
+
+  test("behavior: with script, an upload the site already holds links the stored file", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    const lib = page.locator("[data-mount='ideas']");
+    const upload = lib.getByRole("form", { name: "Upload a file" });
+    await upload.locator("input[type=file]").setInputFiles({ name: "brazos-again.png", mimeType: "image/png", buffer: Buffer.from("png") });
+    await upload.getByRole("button", { name: "Upload" }).click();
+    await expect(lib.getByRole("link", { name: "Open brazos-dusk.png, the file already stored" })).toHaveAttribute("href", "/media?inspect=2026%2F10%2Fbrazos-dusk.png");
+    await expect(lib.locator(".cap-media-tile")).toHaveCount(4);
+  });
+
+  test("behavior: with script, files others changed are put in place and deleted ones leave", async ({ page }) => {
+    await page.clock.install();
+    await visitStates(page, "media-library", theme);
+    const lib = page.locator("[data-mount='ideas']");
+    const copy = lib.locator(".cap-media-tile[data-key='2026/10/brazos-copy.png']");
+    await expect(copy).toContainText("No alt text");
+    await page.evaluate(() => {
+      const w = window as unknown as { mediaChange: (k: string, a: string) => void; mediaRemove: (k: string) => void };
+      w.mediaChange("2026/10/brazos-copy.png", "The Brazos at dusk");
+      w.mediaRemove("2026/10/field-notes.pdf");
+    });
+    await page.clock.runFor(16000);
+    await expect(copy).not.toContainText("No alt text");
+    await expect(lib.locator(".cap-media-tile")).toHaveCount(3);
+    await expect(lib.locator("[data-cap-part='live']")).toContainText("2 files were changed elsewhere");
   });
 
   test("behavior: the inspector's preview keeps its height above the fields, in a pane shorter than its content", async ({ page }) => {

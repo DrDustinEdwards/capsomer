@@ -43,6 +43,17 @@ export interface MediaRecord {
   // The point a site's crops are cut around, "XxY" from 0 to 1 from the top left (site-api v0.10.0
   // MediaFocus); null or absent for none, when the crop is the site's guess.
   focus?: string | null;
+  // site-api v0.13.0, each where the site keeps it: how many places use the file (a list's rows carry
+  // it, so a tile can say Unattached without reading every use), who made it and the terms it is used
+  // under, where it came from, the day the license runs out (YYYY-MM-DD), when the picture was taken
+  // (from the file's own metadata), and the other files holding exactly its bytes.
+  usedCount?: number;
+  credit?: string;
+  license?: string;
+  sourceUrl?: string | null;
+  licenseExpires?: string | null;
+  takenAt?: string | null;
+  twins?: Array<{ key: string; name: string }>;
 }
 
 // What the inspector edits.
@@ -93,13 +104,13 @@ export interface Flag {
   tone: "warn" | "info" | "nodata";
   word: string;
 }
-export function flagsFor(r: Pick<MediaRecord, "kind" | "altState" | "used" | "state" | "usedUnknown">): Flag[] {
+export function flagsFor(r: Pick<MediaRecord, "kind" | "altState" | "used" | "state" | "usedUnknown" | "usedCount">): Flag[] {
   const out: Flag[] = [];
   if (r.state === "binned") out.push({ tone: "nodata", word: "In Trash" });
   if (r.state === "uploading" || r.state === "failed") return out;
   if (r.kind === "image" && r.altState === "missing") out.push({ tone: "warn", word: "No alt text" });
   if (r.kind === "image" && r.altState === "decorative") out.push({ tone: "info", word: "Decorative" });
-  if (r.state !== "binned" && !r.usedUnknown && r.used.length === 0) out.push({ tone: "nodata", word: "Unattached" });
+  if (r.state !== "binned" && (r.usedUnknown ? r.usedCount === 0 : r.used.length === 0)) out.push({ tone: "nodata", word: "Unattached" });
   return out;
 }
 

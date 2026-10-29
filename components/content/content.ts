@@ -90,6 +90,9 @@ export interface IntentOutcome {
   usedBy?: MediaUse[];
   // The version the item's write made (site-api's Outcome.version), for the next write to it.
   version?: string;
+  // The new file's id, where the intent made one beside this item (a quarter turn saved as a new
+  // file, site-api v0.13.0 Outcome.copyId).
+  copyId?: string;
 }
 
 // The kit asks before a one-way intent: the component shows this as the confirm dialog (with
@@ -231,8 +234,9 @@ export interface MediaQuery {
   // `offers.lenses`) or a host's own (`extra.lenses`).
   lens?: string;
   // The site-api contract's sorts (v0.6.0 MEDIA_SORTS) and direction, as the kit reads them. Each sort
-  // has its own direction (newest, A to Z, largest first) when `dir` is absent.
-  sort?: "added" | "name" | "size";
+  // has its own direction (newest, A to Z, largest first) when `dir` is absent. `used` (site-api
+  // v0.13.0, with `offers.usage`) runs most used first.
+  sort?: "added" | "name" | "size" | "used";
   dir?: "asc" | "desc";
   // Headings over the page's files: by the folder in each file's id, or by the month it was uploaded.
   // Drawn by the component from the rows it has, so a group never spans a page.
@@ -242,6 +246,12 @@ export interface MediaQuery {
   inspect?: string;
   // Picker mode: the file chosen, waiting for its alt text.
   pick?: string;
+  // site-api v0.13.0, with `offers.filters`: which way a picture lies, and what a file is.
+  orientation?: "landscape" | "portrait" | "square";
+  kind?: "image" | "document" | "video" | "audio";
+  // site-api v0.13.0, with `offers.suggestions`: ask the site's model about the inspected file
+  // (`suggest=1` in the address). Only when the person asks: a model costs the site money.
+  suggest?: boolean;
 }
 
 // What the site supports, read from its capabilities by the kit. `upload` is the site's own limits
@@ -263,6 +273,46 @@ export interface MediaOffers {
   // site-api v0.11.0 (`capabilities.mediaReplaceKeepsSize`): a replacement must be the size of the
   // picture it replaces, so replace asks for that size and a crop is saved only as a new file.
   replaceKeepsSize?: boolean;
+  // site-api v0.13.0, the kit's offers of the same names, each absent or false where the site lacks
+  // it: an upload of bytes the site holds answers that file (and the inspected file names its twins);
+  // rows carry how many places use them and the list sorts by `used`; the orientation and kind
+  // filters; the `import` intent; credit, license, source and license end (the `credit` intent);
+  // turns and mirrors (`transform`); the file's earlier bytes and `revert`; polling for what others
+  // changed (`changes`); what uploads shrink to (`resize`) and a pass over stored pictures
+  // (`resizePass`, the `resize` intent); metadata read from the file at upload (`embedded`); and the
+  // site's model's suggestions (`suggest`).
+  duplicates?: boolean;
+  usage?: boolean;
+  filters?: boolean;
+  import?: boolean;
+  credit?: boolean;
+  transform?: boolean;
+  history?: boolean;
+  live?: boolean;
+  resize?: { maxEdge: number; quality: number } | null;
+  resizePass?: boolean;
+  embedded?: boolean;
+  suggestions?: boolean;
+}
+
+// One set of a file's bytes, earlier or current (site-api v0.13.0 MediaRevision): `rev` is what a
+// revert names as `to`.
+export interface MediaRevision {
+  rev: string;
+  at: string;
+  bytes: number;
+  width: number | null;
+  height: number | null;
+  reason: "upload" | "import" | "replace" | "transform" | "resize" | "revert";
+  current: boolean;
+}
+
+// What the site's model suggests for the inspected file (site-api v0.13.0 MediaSuggestionView): only
+// what would change it, each for the person to accept or leave.
+export interface MediaSuggestions {
+  tags: string[];
+  alt: string | null;
+  model: string;
 }
 
 export interface MediaData {
@@ -271,7 +321,8 @@ export interface MediaData {
   // One page of files, as the media component's records: `used` filled where the kit read it,
   // `usedUnknown` where it did not (a list has no usedBy; the inspected file does).
   rows: MediaRecord[];
-  page: PageInfo;
+  // `changeCursor` (site-api v0.13.0, with `offers.live`): where polling for others' changes starts.
+  page: PageInfo & { changeCursor?: string };
   counts?: { library?: number; trash?: number };
   // The tags in use, for the chip row, with how many files carry each where the kit knows.
   tags: Array<{ tag: string; count?: number }>;
@@ -279,6 +330,10 @@ export interface MediaData {
   can: ContentCan;
   // The file in the inspector (?inspect=), read with every place it is used.
   inspected?: MediaRecord | null;
+  // The inspected file's byte history, newest first (with `offers.history`), and the model's
+  // suggestions for it: absent when not asked (no `suggest`), null when the site could not answer.
+  history?: MediaRevision[];
+  suggestions?: MediaSuggestions | null;
   // Per-site additions, already rendered to data: lenses (dustinedwards.info's unattached,
   // duplicates, no alt), and toolbar actions.
   extra?: { lenses?: Array<{ id: string; label: string; count?: number }>; toolbar?: ExtraAction[] };
