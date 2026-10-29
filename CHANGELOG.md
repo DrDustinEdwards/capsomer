@@ -2,7 +2,7 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## Unreleased
+## [0.38.0]
 
 Media library parity with dustinedwards.info's own library, so Carrel can be the one place a site's media is managed.
 
