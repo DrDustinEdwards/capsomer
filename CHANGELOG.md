@@ -2,11 +2,11 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## Unreleased
+## [0.40.0]
 
-The media library's ideas from site-api v0.13.0 (merged as 80d87d3; tag v0.13.0 to follow), each shown only where the kit offers it, each a form post that works with no script.
+The media library's ideas from site-api v0.13.0, each shown only where the kit offers it, each a form post that works with no script.
 
-- **Duplicates**: an upload or import of bytes the site holds links the file already stored under the result (`filesToOpen`, new); the inspector lists the file's twins; the Duplicates lens.
+- **Duplicates**: an upload or import of bytes the site holds links the file already stored under the result (`filesToOpen`, new, read from the kit's `IntentOutcome.duplicate`, new); the inspector lists the file's twins; the Duplicates lens.
 - **Usage**: `MediaRecord.usedCount` (new) gives a list's tiles the Unattached flag at 0 (`flagsFor`); Most used as a sort (`MediaQuery.sort` gains `used`, `SORT_DIR.used`).
 - **Filters**: Type and Orientation as link chips under a Filter disclosure (`MediaQuery.kind` and `orientation`, new, in the address; `KIND_WORDS`, `ORIENTATION_WORDS`). The contract has no date filter, so none is offered.
 - **Import from a web address** under upload, posting `import` with `url` and `alt`.
