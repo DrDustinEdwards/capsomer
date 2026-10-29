@@ -6,8 +6,8 @@
 export const capsomerTheme = {
   "name": "capsomer",
   "fonts": {
-    "body": "\"Schibsted Grotesk\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
-    "numeric": "\"Schibsted Grotesk\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif"
+    "body": "\"Schibsted Grotesk\", \"Schibsted Grotesk Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
+    "numeric": "\"Schibsted Grotesk\", \"Schibsted Grotesk Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif"
   },
   "gridlines": "y",
   "light": {

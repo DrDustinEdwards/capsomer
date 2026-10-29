@@ -4,6 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.36.0]
+
+Size-matched fallback fonts, from Astro's Fonts API (MIT, credited in `tokens/fonts.mjs`).
+
+- **The swap to the family faces barely moves the text.** `css/fonts.css` gains "Schibsted Grotesk Fallback" and "Martian Mono Fallback": local Arial and Courier New (and their metric twins Liberation and Arimo or Cousine, for Linux and ChromeOS) scaled to each face's average width, with its ascent, descent and line gap. Checked in Chromium: a 600px paragraph in the fallback breaks on the same 7 lines as Schibsted Grotesk, where plain Arial took 6; Martian Mono's fallback matched its 11 lines exactly. Changed: `--ui`, `--mono`, `--display`, Capsid's `--prose` and the Enarratio theme's fonts list the fallback second.
+- **`css/fonts.css` is generated** by `tokens/fonts.mjs` (`npm run tokens`), and `npm run check` refuses a stale file or a font file whose bytes no longer match the metrics measured from it.
+- **One font stack.** The UI and mono stacks are written once, as `UI_STACK` and `MONO_STACK` in `tokens/palette-core.mjs`, instead of in four modules and the theme builder. New exports: `UI_STACK`, `MONO_STACK`.
+
 ## [0.35.0]
 
 Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the dark mode plan). Every family's dark theme was already its own OKLCH scale, but it was tuned to WCAG 2's ratio alone, which overrates gray on near-black: dark muted text, status words, button labels, focus rings and control borders passed at about half the APCA contrast of the light theme.

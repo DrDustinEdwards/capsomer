@@ -16,6 +16,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { ELEVATION_ORDER, FAMILIES, moreLines, themes } from "./palette.mjs";
+import { UI_STACK } from "./palette-core.mjs";
 
 const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 
@@ -47,7 +48,7 @@ export const SCALE = {
     ["fs-prose-h2", "clamp(22px, 1.2rem + 1.2vw, 30px)", "a heading in the reading context"],
     ["fs-input-coarse", "16px", "a form input on a touch screen, so iOS does not zoom"],
     ["prose", '"Source Serif 4", "Iowan Old Style", Charter, Georgia, serif', "long-form text and public headings (decision 5)"],
-    ["display", '"Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif', "a heading that wants a display face (the page head's title, an app's own headings); Schibsted Grotesk at 800, the UI face's own heavy weight; a site may set its own"],
+    ["display", UI_STACK, "a heading that wants a display face (the page head's title, an app's own headings); Schibsted Grotesk at 800, the UI face's own heavy weight; a site may set its own"],
   ],
   motion: [
     ["dur-fast", "100ms", "feedback (hover, press) and every exit: what leaves goes faster than it came"],
