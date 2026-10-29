@@ -132,12 +132,11 @@ const SITES = {
   capsid: {
     family: "teal",
     on: "the explorer's <html> (capsid.dustinedwards.info)",
-    note: "running text in the UI face, on the surface as the ground, as the explorer's board draws them",
+    note: "running text in the UI face; in light the ground is the surface, as the explorer's board draws them; in dark the family's darker ground stays, so panels on the surface stand out",
     all: {
       prose: '"Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
     },
     light: { ground: "#fbfefe" },
-    dark: { ground: "#111919" },
   },
   "capsid-portal": {
     family: "teal",
