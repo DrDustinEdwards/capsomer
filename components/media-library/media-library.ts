@@ -75,7 +75,8 @@ export interface OfferedAction {
 }
 
 // The bulk actions this person may run on this view of this site, in the bar's order, and a
-// sentence for each one held back. Delete is for good: from Trash where the site has one, from
+// sentence for each one held back. Trash and Restore are an editor's (reversible, as the kit says);
+// Delete is for good and the delete role's: from Trash where the site has one, from
 // the library only where it has none.
 export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, labels?: ContentLabels): { bulk: OfferedAction[]; withheld: string[] } {
   const { plural } = nounsOf(labels);
@@ -84,11 +85,11 @@ export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, 
   const bulk: OfferedAction[] = [];
   const withheld: string[] = [];
   if (trash) {
-    if (can.deleteMedia && offers.trash) bulk.push({ intent: "restore", label: "Restore" });
+    if (can.edit && offers.trash) bulk.push({ intent: "restore", label: "Restore" });
     if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   } else {
     if (can.edit && offers.tags) bulk.push({ intent: "tag-add", label: "Add tag" }, { intent: "tag-remove", label: "Remove tag" });
-    if (can.deleteMedia && offers.trash) bulk.push({ intent: "trash", label: "Move to Trash" });
+    if (can.edit && offers.trash) bulk.push({ intent: "trash", label: "Move to Trash" });
     else if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   }
   if (!can.edit) withheld.push(`You can look at these ${plural}. Changing them needs an editor's role.`);
@@ -108,7 +109,7 @@ export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): { alt:
   return {
     alt: can.edit && offers.alt,
     tags: can.edit && offers.tags,
-    trash: can.deleteMedia && offers.trash,
+    trash: can.edit && offers.trash,
     delete: can.deleteMedia && offers.delete,
     focus: can.edit && !!offers.focus,
     caption: can.edit && !!offers.caption,
