@@ -103,6 +103,8 @@ The intents it posts are the content kit's own (site-api's `runMediaIntent`), so
 
 `import { mediaActions, mediaHref, withMedia, uploadRules, pickable, lensChips, groupRows, readMediaView, SORT_DIR, dirOf } from "capsomer/behavior/media-library"`: the pure helpers.
 
+**From the kit.** A host turns site-api's `loadMedia` answer into `data` with `mediaDataOfKit(kit, { usedHref, view: { ...readMediaView(searchParams), pick } })`, so every host maps a file the same way: the kit's rows become `MediaRecord`s, a list's tiles are `usedUnknown`, the inspected file's uses link through `usedHref`, and the tag chips are the page's tags with their counts on this page.
+
 **Dependencies.** It needs the stylesheets of the parts it composes: media, drop-zone, chips, tabs, field, disclosure, bulk-bar, meter, message, empty, dialog, listbox, command-menu, shortcuts, confirm-dialog, status and content (the shared result box), with this one.
 
 ## Exceptions in production

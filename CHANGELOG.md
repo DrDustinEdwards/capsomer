@@ -2,6 +2,12 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.39.0]
+
+One mapping from the content kit to the media library, so Carrel and every site admin read the kit's page the same way.
+
+- **`mediaDataOfKit(kit, { usedHref, view })`** (new, `capsomer/behavior/media-library`) turns site-api's `loadMedia` answer into `MediaData`: each row a `MediaRecord` (id as key, the file name or id as name, the kit's absolute `src`, image or document by type, Trash as `binned`, version, tags, caption and focal point), tiles from a list marked `usedUnknown`, the inspected file with where it is used linking through `usedHref`, and the tag chips from the page's rows with their counts on this page. `view` merges the drawing from the address (`readMediaView`) and the picker's `pick`. `recordOfKit(row, used?)` (new) maps one file. `KitMediaRow` and `KitMediaData` (new) are the kit's shapes, typed here so Capsomer imports nothing from site-api.
+
 ## [0.38.0]
 
 Media library parity with dustinedwards.info's own library, so Carrel can be the one place a site's media is managed.
