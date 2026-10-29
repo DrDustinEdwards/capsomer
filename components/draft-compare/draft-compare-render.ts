@@ -11,7 +11,7 @@ export type CompareView = "side" | "inline" | "changes";
 export const VIEWS: readonly CompareView[] = ["side", "inline", "changes"];
 
 export interface CompareSide {
-  // What the version is called: "Draft 3", "Published 14 September".
+  // What the version is called: "Draft 3", "Published September 14".
   title: string;
   // Who wrote or saved it.
   who?: string;

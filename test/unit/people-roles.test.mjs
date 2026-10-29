@@ -6,10 +6,10 @@ import { accessText, actionText, cloudflareText, dayText, daysLeft, endHelp, end
 
 const NOW = Date.parse("2026-11-30T15:00:00Z");
 
-test("dates read as day, month and year in UTC", () => {
-  assert.equal(dayText("2026-12-18"), "18 Dec 2026");
-  assert.equal(dayText("2027-01-01"), "1 Jan 2027");
-  assert.equal(timeText("2026-10-02T14:52:00Z"), "2 Oct 2026, 14:52 UTC");
+test("dates read month first, as American English writes them, in UTC", () => {
+  assert.equal(dayText("2026-12-18"), "Dec 18, 2026");
+  assert.equal(dayText("2027-01-01"), "Jan 1, 2027");
+  assert.equal(timeText("2026-10-02T14:52:00Z"), "Oct 2, 2026, 2:52 PM UTC");
 });
 
 test("days left counts the end date itself as the last day", () => {
@@ -20,13 +20,13 @@ test("days left counts the end date itself as the last day", () => {
 
 test("the access column: a date, and how soon only within three weeks", () => {
   const row = (endDate, status = "active", endedOn) => ({ endDate, status, endedOn });
-  assert.equal(accessText(row("2027-05-14"), NOW), "Ends 14 May 2027");
-  assert.equal(accessText(row("2026-12-18"), NOW), "Ends 18 Dec 2026, in 18 days");
-  assert.equal(accessText(row("2026-12-01"), NOW), "Ends 1 Dec 2026, in 1 day");
-  assert.equal(accessText(row("2026-11-30"), NOW), "Ends today, 30 Nov 2026");
+  assert.equal(accessText(row("2027-05-14"), NOW), "Ends May 14, 2027");
+  assert.equal(accessText(row("2026-12-18"), NOW), "Ends Dec 18, 2026, in 18 days");
+  assert.equal(accessText(row("2026-12-01"), NOW), "Ends Dec 1, 2026, in 1 day");
+  assert.equal(accessText(row("2026-11-30"), NOW), "Ends today, Nov 30, 2026");
   assert.equal(accessText(row(null), NOW), "Does not expire");
-  assert.equal(accessText(row("2026-08-14", "expired"), NOW), "Ended 14 Aug 2026");
-  assert.equal(accessText(row("2026-12-18", "removed", "2026-10-02"), NOW), "Removed 2 Oct 2026");
+  assert.equal(accessText(row("2026-08-14", "expired"), NOW), "Ended Aug 14, 2026");
+  assert.equal(accessText(row("2026-12-18", "removed", "2026-10-02"), NOW), "Removed Oct 2, 2026");
   assert.equal(endsSoon(row("2026-12-21"), NOW), true, "21 days is inside the review window");
   assert.equal(endsSoon(row("2026-12-22"), NOW), false);
   assert.equal(endsSoon(row(null), NOW), false);
@@ -43,14 +43,14 @@ test("the Cloudflare column never says ready before the allow list matches", () 
 });
 
 test("history lines say what changed", () => {
-  assert.equal(actionText({ action: "add", toTitle: "Lab worker", endDate: "2026-12-18" }), "Added as Lab worker, until 18 Dec 2026");
+  assert.equal(actionText({ action: "add", toTitle: "Lab worker", endDate: "2026-12-18" }), "Added as Lab worker, until Dec 18, 2026");
   assert.equal(actionText({ action: "change_title", fromTitle: "Lab worker", toTitle: "Safety officer" }), "Title changed from Lab worker to Safety officer");
-  assert.equal(actionText({ action: "renew", endDate: "2027-05-14" }), "Renewed, until 14 May 2027");
+  assert.equal(actionText({ action: "renew", endDate: "2027-05-14" }), "Renewed, until May 14, 2027");
   assert.equal(actionText({ action: "expire" }), "Access ended on the end date");
 });
 
 test("the add form's end date help and the review tally", () => {
-  assert.equal(endHelp("2026-12-18"), "Defaults to the end of the term, 18 Dec 2026. You can choose an earlier date.");
+  assert.equal(endHelp("2026-12-18"), "Defaults to the end of the term, Dec 18, 2026. You can choose an earlier date.");
   assert.equal(endHelp(null), "This title does not expire.");
   assert.equal(tallyText(1, 0, 2), "1 to keep, 0 to remove, 2 not answered.");
   assert.equal(tallyText(2, 1, 0), "2 to keep, 1 to remove.");
@@ -60,7 +60,7 @@ test("row actions: Retry first while Cloudflare lags, Renew otherwise, nothing f
   const base = { manageable: true, status: "active", sync: "ready", renewTo: "2027-05-14" };
   const values = (r) => r.items.map((i) => i.value);
   let r = rowActions(base, true, "?change=a", "?person=a");
-  assert.deepEqual(r.primary, { intent: "renew", label: "Renew to 14 May 2027" });
+  assert.deepEqual(r.primary, { intent: "renew", label: "Renew to May 14, 2027" });
   assert.deepEqual(values(r), ["change", "history", "remove"]);
   r = rowActions({ ...base, sync: "waiting" }, true, "?change=a", "?person=a");
   assert.equal(r.primary?.intent, "retry");

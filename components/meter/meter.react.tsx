@@ -83,7 +83,7 @@ export function Meter({ label, value, max, min = 0, valueText, display, tone, wa
           {word}
         </span>
       ) : null}
-      <span className="cap-meter-value">{display ?? `${value.toLocaleString()} of ${max.toLocaleString()}`}</span>
+      <span className="cap-meter-value">{display ?? `${value.toLocaleString("en-US")} of ${max.toLocaleString("en-US")}`}</span>
       <span
         className="cap-meter-bar"
         ref={bar}

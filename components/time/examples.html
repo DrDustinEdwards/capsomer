@@ -15,7 +15,7 @@
   <h2 id="s-exact">Exact, in the detail</h2>
   <dl id="sample-exact">
     <dt>Deployed</dt>
-    <dd><time class="cap-time" data-cap="time" data-format="exact" datetime="2026-09-30T13:02:00Z">September 30, 2026, 13:02 UTC</time></dd>
+    <dd><time class="cap-time" data-cap="time" data-format="exact" datetime="2026-09-30T13:02:00Z">September 30, 2026, 1:02 PM UTC</time></dd>
     <dt>Last seen</dt>
     <dd><span class="cap-time" id="sample-unreadable">an unreadable time</span></dd>
     <dt>Commit</dt>
@@ -25,7 +25,12 @@
 
 <section class="cap-specimen" aria-labelledby="s-live">
   <h2 id="s-live">Live: redrawn every 30 seconds</h2>
-  <p id="sample-live">The improve loop last ran <time class="cap-time" data-cap="time" datetime="2026-09-30T13:59:00Z">at 13:59 UTC on September 30, 2026</time>.</p>
+  <p id="sample-live">The improve loop last ran <time class="cap-time" data-cap="time" datetime="2026-09-30T13:59:00Z">at 1:59 PM UTC on September 30, 2026</time>.</p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-hydrate">
+  <h2 id="s-hydrate">React: sent by a server in UTC, then hydrated into your zone</h2>
+  <div id="time-hydrate"></div>
 </section>
 
 <script type="module">

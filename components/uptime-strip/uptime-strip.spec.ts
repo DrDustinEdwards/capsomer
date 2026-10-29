@@ -24,7 +24,7 @@ eachTheme((theme) => {
     await visitStates(page, "uptime-strip", theme);
     await expect(page.locator(section("s-outage")).locator(".cap-uptime")).toMatchAriaSnapshot(`
       - figure "foxhound.app 96.1% up over 7 days":
-        - paragraph: /except one outage on Tuesday 29 September/
+        - paragraph: /except one outage on Tuesday, September 29/
         - img /down in 1, partly down in 2/
         - list "Key":
           - listitem: Up
@@ -50,7 +50,7 @@ eachTheme((theme) => {
       return el ? `${el.tagName.toLowerCase()}${el.id ? "#" + el.id : ""}.${el.className} [${el.getAttribute("aria-label") ?? el.textContent?.trim().slice(0, 30)}]` : "nothing";
     });
     await expect(page.getByRole("region", { name: "Uptime by day, foxhound.app" }), `focus is on ${active}`).toBeFocused();
-    await expect(page.getByRole("row", { name: /Tue 29 Sep 72.9%/ })).toBeVisible();
+    await expect(page.getByRole("row", { name: /Tue, Sep 29 72.9%/ })).toBeVisible();
   });
 
   test("behavior: the numbers are the chart frame's Show data, closed, with the table in the HTML", async ({ page }) => {
@@ -67,10 +67,10 @@ eachTheme((theme) => {
     await visitStates(page, "uptime-strip", theme);
     const nodata = page.locator(section("s-no-data"));
     await expect(nodata.locator(".cap-uptime-figure")).toHaveText("100% up over the 6 of 7 days with data");
-    await expect(nodata.locator(".cap-uptime-summary")).toContainText("no data for Saturday 26 September");
+    await expect(nodata.locator(".cap-uptime-summary")).toContainText("no data for Saturday, September 26");
     await nodata.locator("summary").click();
-    await expect(nodata.getByRole("row", { name: /Sat 26 Sep/ })).toContainText("No data: the watcher did not run");
-    await expect(nodata.getByRole("row", { name: /Sat 26 Sep/ })).not.toContainText("0%");
+    await expect(nodata.getByRole("row", { name: /Sat, Sep 26/ })).toContainText("No data: the watcher did not run");
+    await expect(nodata.getByRole("row", { name: /Sat, Sep 26/ })).not.toContainText("0%");
   });
 
   test("accessibility: in a table cell the percent reaches its contrast and the strip is a named image", async ({ page }) => {

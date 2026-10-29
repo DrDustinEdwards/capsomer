@@ -255,7 +255,7 @@ test.describe("in a zone behind UTC", () => {
     await target.locator("summary").click();
     await target.getByRole("link", { name: "Reschedule…" }).click();
     const dialog = page.getByRole("dialog", { name: "Reschedule Notes on a read-only agent" });
-    // 15:00 UTC is 10:00 in Chicago (CDT) on 12 October.
+    // 15:00 UTC is 10:00 in Chicago (CDT) on October 12.
     const time = dialog.getByLabel("New time");
     await expect(time).toHaveValue("2026-10-12T10:00");
     await time.fill("2026-10-20T09:30");

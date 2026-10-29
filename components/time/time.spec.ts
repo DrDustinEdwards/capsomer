@@ -27,14 +27,14 @@ test("behavior: relative times are spelled out, never abbreviated", () => {
 
 test("behavior: exact times give the viewer's zone and UTC", () => {
   const t = Date.parse("2026-09-30T13:02:00Z");
-  expect(exact(t, LONDON)).toBe("September 30, 2026, 14:02 BST (13:02 UTC)");
-  expect(exact(t, "UTC")).toBe("September 30, 2026, 13:02 UTC");
+  expect(exact(t, LONDON)).toBe("September 30, 2026, 2:02 PM BST (1:02 PM UTC)");
+  expect(exact(t, "UTC")).toBe("September 30, 2026, 1:02 PM UTC");
   // UTC's date is given when it is a different day from the viewer's.
-  expect(exact(Date.parse("2026-09-30T20:30:00Z"), "Australia/Sydney")).toMatch(/^October 1, 2026, 06:30 .+ \(September 30, 2026, 20:30 UTC\)$/);
+  expect(exact(Date.parse("2026-09-30T20:30:00Z"), "Australia/Sydney")).toMatch(/^October 1, 2026, 6:30 AM .+ \(September 30, 2026, 8:30 PM UTC\)$/);
   // An American zone has its American name, not "GMT-6"; a zone with none in either has its offset.
-  expect(exact(Date.parse("2026-11-03T14:00:00Z"), "America/Chicago")).toBe("November 3, 2026, 08:00 CST (14:00 UTC)");
-  expect(exact(Date.parse("2026-10-29T10:37:00Z"), "America/Chicago")).toBe("October 29, 2026, 05:37 CDT (10:37 UTC)");
-  expect(exact(Date.parse("2026-11-03T14:00:00Z"), "Asia/Tokyo")).toBe("November 3, 2026, 23:00 GMT+9 (14:00 UTC)");
+  expect(exact(Date.parse("2026-11-03T14:00:00Z"), "America/Chicago")).toBe("November 3, 2026, 8:00 AM CST (2:00 PM UTC)");
+  expect(exact(Date.parse("2026-10-29T10:37:00Z"), "America/Chicago")).toBe("October 29, 2026, 5:37 AM CDT (10:37 AM UTC)");
+  expect(exact(Date.parse("2026-11-03T14:00:00Z"), "Asia/Tokyo")).toBe("November 3, 2026, 11:00 PM GMT+9 (2:00 PM UTC)");
 });
 
 test("behavior: the Portal's UTC form and its zoneless server timestamps are kept", () => {
@@ -45,14 +45,29 @@ test("behavior: the Portal's UTC form and its zoneless server timestamps are kep
 
 test("behavior: the UTC part of an exact time is its own part, absent for a viewer in UTC", () => {
   const t = Date.parse("2026-09-30T13:02:00Z");
-  expect(exactParts(t, LONDON)).toEqual({ local: "September 30, 2026, 14:02 BST", utc: "(13:02 UTC)" });
-  expect(exactParts(t, "UTC")).toEqual({ local: "September 30, 2026, 13:02 UTC", utc: null });
+  expect(exactParts(t, LONDON)).toEqual({ local: "September 30, 2026, 2:02 PM BST", utc: "(1:02 PM UTC)" });
+  expect(exactParts(t, "UTC")).toEqual({ local: "September 30, 2026, 1:02 PM UTC", utc: null });
 });
 
 test("behavior: a time that cannot be read says so in words, not blank or NaN", () => {
   expect(text(Number.NaN, "exact")).toBe(UNREADABLE);
   expect(text(Number.NaN, "relative")).toBe(UNREADABLE);
   expect(exact(parse("garbage"), LONDON)).toBe("an unreadable time");
+});
+
+test.describe("React, rendered on a server", () => {
+  test.use({ timezoneId: "America/Chicago" });
+
+  test("behavior: an exact Time hydrates with no error, then shows the viewer's zone", async ({ page }) => {
+    await visitStates(page, "time", "light");
+    const t = page.locator("#time-hydrate time.cap-time");
+    // The server cannot know the zone: it sends UTC, with no UTC part, and the browser's first
+    // render matches it, so React reports no hydration error (#418).
+    expect(await page.evaluate(() => (window as unknown as { timeHydration: { server: string } }).timeHydration.server)).toBe("Went live October 2, 2026, 9:12 AM UTC");
+    await expect(t).toHaveText("October 2, 2026, 4:12 AM CDT (9:12 AM UTC)");
+    await expect(t.locator(".cap-time-utc")).toHaveText("(9:12 AM UTC)");
+    expect(await page.evaluate(() => (window as unknown as { timeHydration: { errors: string[] } }).timeHydration.errors)).toEqual([]);
+  });
 });
 
 test("behavior: the server's now is the browser's moved by the skew, and never before the newest server read", () => {
@@ -96,7 +111,7 @@ eachTheme((theme) => {
     await visitStates(page, "time", theme);
     const t = page.locator("#sample-exact time.cap-time");
     await expect(t).toBeVisible();
-    await expect(t).toHaveText("September 30, 2026, 14:02 BST (13:02 UTC)");
+    await expect(t).toHaveText("September 30, 2026, 2:02 PM BST (1:02 PM UTC)");
     await expect(page.locator(".cap-time[title]")).toHaveCount(0);
     // Every real time carries its machine value; the unreadable one is a plain span.
     for (const el of await page.locator("time.cap-time").all()) await expect(el).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}T/);
@@ -104,7 +119,7 @@ eachTheme((theme) => {
 
   test("behavior: the UTC part of an exact time stays whole on a line, and an unreadable time is words", async ({ page }) => {
     await visitStates(page, "time", theme);
-    await expect(page.locator("#sample-exact .cap-time-utc")).toHaveText("(13:02 UTC)");
+    await expect(page.locator("#sample-exact .cap-time-utc")).toHaveText("(1:02 PM UTC)");
     await expect(page.locator("#sample-exact .cap-time-utc")).toHaveCSS("white-space", "nowrap");
     await expect(page.locator("#sample-unreadable")).toHaveText("an unreadable time");
     await expect(page.locator("#sample-unreadable")).not.toHaveAttribute("datetime", /.*/);

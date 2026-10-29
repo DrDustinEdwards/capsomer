@@ -15,8 +15,8 @@ const SAMPLES: Record<string, () => string> = {
       ...common,
       level: "crit",
       what: "Backups have not run for 26 hours",
-      when: "08:15 UTC on 8 October",
-      details: ["The nightly backup job failed twice. The last good copy is from 6 October."],
+      when: "08:15 UTC on October 8",
+      details: ["The nightly backup job failed twice. The last good copy is from October 6."],
       url: "https://carrel.example/admin/health",
     }).html,
   notice: () =>
