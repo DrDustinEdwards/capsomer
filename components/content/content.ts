@@ -93,6 +93,8 @@ export interface IntentOutcome {
   // The new file's id, where the intent made one beside this item (a quarter turn saved as a new
   // file, site-api v0.13.0 Outcome.copyId).
   copyId?: string;
+  // True when an upload or import matched a file already stored, which is `id` (site-api v0.13.0).
+  duplicate?: boolean;
 }
 
 // The kit asks before a one-way intent: the component shows this as the confirm dialog (with

@@ -272,7 +272,7 @@ function useSite(initial: MediaRecord[] = FILES, keepsSize = false) {
         const twin = keepsSize && f.name.includes("brazos") ? live.current.find((x) => x.key === "2026/10/brazos-dusk.png") : undefined;
         if (twin) {
           const message = `${f.name} is already in the library as ${twin.name}, so no second copy was stored.`;
-          return { ok: true, message, outcomes: [{ id: twin.key, ok: true, message }] };
+          return { ok: true, message, outcomes: [{ id: twin.key, ok: true, duplicate: true, message }] };
         }
         const key = `2026/10/${f.name}`;
         change((fs) => [file(key, "#bfe3d0", { alt: String(form.get("alt") ?? ""), altState: form.get("alt") ? "set" : "missing", bytes: f.size }), ...fs]);

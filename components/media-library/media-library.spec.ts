@@ -84,7 +84,7 @@ test("behavior: others' changes replace a tile, leave the view they no longer ma
   expect(
     filesToOpen({
       outcomes: [
-        { id: "x", ok: true, message: "brazos.png is already in the library as brazos-dusk.png, so no second copy was stored." },
+        { id: "x", ok: true, duplicate: true, message: "brazos.png is already in the library as brazos-dusk.png, so no second copy was stored." },
         { id: "y", ok: true, message: "Uploaded. Filled in from the file: credit." },
         { id: "z", ok: true, copyId: "z-turned", message: "Saved the turned picture as a new file." },
         { id: "w", ok: false, message: "Uploaded." },

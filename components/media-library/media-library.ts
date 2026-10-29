@@ -439,14 +439,14 @@ export function licenseEnded(licenseExpires: string | null | undefined, today: D
 }
 
 // The files an upload, an import or a turn left to open, read from the kit's outcomes (site-api
-// v0.13.0): a file already stored (the kit's "already in the library" sentence, whose outcome is that
-// file), a new file, and a turned copy (`copyId`).
+// v0.13.0): a file already stored (`duplicate`, whose outcome is that file), a new file, and a turned
+// copy (`copyId`).
 export function filesToOpen(result: Pick<IntentResult, "outcomes"> | null | undefined): Array<{ id: string; why: "duplicate" | "new" | "copy" }> {
   const out: Array<{ id: string; why: "duplicate" | "new" | "copy" }> = [];
   for (const o of result?.outcomes ?? []) {
     if (!o.ok) continue;
     if (o.copyId) out.push({ id: o.copyId, why: "copy" });
-    else if (/ already in the library\b/.test(o.message ?? "")) out.push({ id: o.id, why: "duplicate" });
+    else if (o.duplicate) out.push({ id: o.id, why: "duplicate" });
     else if (/^(Uploaded|Imported)\./.test(o.message ?? "")) out.push({ id: o.id, why: "new" });
   }
   return out;
