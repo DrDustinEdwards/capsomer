@@ -155,7 +155,8 @@ export function useIntents({ action, Form, submit, result = null, names, cancelH
   // the bulk bar, a row menu, Undo, a host action, an upload. A GET (the filters) navigates as
   // before.
   const onSubmit = (e: FormEvent<HTMLElement>) => {
-    if (!submit || !(e.target instanceof HTMLFormElement) || e.target.method.toLowerCase() !== "post") return;
+    // A form the host's own Form already sent (a router's <Form> prevents the default first) is not posted twice.
+    if (!submit || e.defaultPrevented || !(e.target instanceof HTMLFormElement) || e.target.method.toLowerCase() !== "post") return;
     e.preventDefault();
     const form = e.target;
     const submitter = (e.nativeEvent as SubmitEvent).submitter;
