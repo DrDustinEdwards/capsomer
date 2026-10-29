@@ -6,8 +6,11 @@ import { FormMenu } from "../menu/menu.react.tsx";
 import { Pill, Status } from "../status/status.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
 import { Time } from "../time/time.react.tsx";
+import { Dialog, DialogBody, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 import { DraftCompare, DraftPatch } from "../draft-compare/draft-compare.react.tsx";
-import { SORTS, STATUS_TABS, contentStatus, countLine, emptyWords, inDays, isoFromLocal, localInputValue, nounsOf, postActions, postsHref, rowActions, withFilter, type RowAction } from "./posts-list.ts";
+import { PageHead } from "../page-head/page-head.react.tsx";
+import { SORTS, STATUS_TABS, contentStatus, countLine, emptyWords, inDays, isoFromLocal, localInputValue, nounsOf, postActions, postsHref, rowActions, rowStatus, withFilter, type RowAction } from "./posts-list.ts";
+import type { ConfirmRequest } from "../content/content.ts";
 
 export { contentStatus };
 export type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent };
@@ -45,10 +48,9 @@ function HeadCheck({ checked, mixed, label, onChange }: { checked: boolean; mixe
   );
 }
 
-// The new time for a reschedule. As delivered it is a text field in UTC that starts at the time
-// it moves from ("2030-01-01T15:00:00Z"), since a form with no script cannot add the zone the
-// site needs. With script it becomes a date and time field in the person's own zone, and the
-// UTC time it means is posted as publishAt.
+// The new time for a reschedule, in the person's own zone; the UTC time it means is posted as
+// publishAt. As delivered (the update page with no script) it is a text field in UTC that starts
+// at the time it moves from, since a form with no script cannot add the zone the site needs.
 function RescheduleField({ id, at }: { id: string; at: string }) {
   const [local, setLocal] = useState<string | null>(null);
   useEffect(() => setLocal(localInputValue(at)), [at]);
@@ -65,25 +67,72 @@ function RescheduleField({ id, at }: { id: string; at: string }) {
       </div>
     );
   }
-  const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return (
     <div className="cap-field">
       <label className="cap-field-label" htmlFor={id}>
         New time
       </label>
-      <input className="cap-input" type="datetime-local" id={id} value={local} onChange={(e) => setLocal(e.target.value)} aria-describedby={`${id}-help`} />
+      <input className="cap-input" type="datetime-local" id={id} value={local} onChange={(e) => setLocal(e.target.value)} aria-describedby={`${id}-help`} required />
       <input type="hidden" name="publishAt" value={isoFromLocal(local)} />
       <p className="cap-field-description" id={`${id}-help`}>
-        Your time zone, {zone}
+        In your time zone, {Intl.DateTimeFormat().resolvedOptions().timeZone}.
       </p>
     </div>
   );
 }
 
-// A row's menu items, with the reschedule's time field.
-function menuItems(items: RowAction[], fieldId: string) {
-  return items.map(({ publishAt, ...item }) => (publishAt ? { ...item, field: <RescheduleField id={fieldId} at={publishAt} /> } : item));
+// What Reschedule… is moving: one post, its name and the time it goes out now.
+interface Moving {
+  id: string;
+  name: string;
+  at: string;
+  version?: string;
 }
+
+// The small dialog Reschedule… opens: the time field and Reschedule. Its form posts inside the
+// list (or the update page), so the script path runs it like any other intent.
+function RescheduleDialog({ moving, action, Form, onClose, now }: { moving: Moving | null; action: string; Form: FormComponent; onClose: () => void; now?: number }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  return (
+    <Dialog open={!!moving} onOpenChange={(open) => (open ? undefined : onClose())} size="sm" described>
+      {moving ? (
+        <>
+          <DialogHeader>
+            <DialogTitle>Reschedule {moving.name}</DialogTitle>
+            <DialogDescription>
+              It goes out <Time at={moving.at} format="exact" />. Choose the new time.
+            </DialogDescription>
+          </DialogHeader>
+          <Form method="post" action={action} className="cap-posts-reschedule" onSubmit={() => onClose()}>
+            <input type="hidden" name="intent" value="reschedule" />
+            <input type="hidden" name="ids" value={moving.id} />
+            {moving.version ? <input type="hidden" name="versions" value={moving.version} /> : null}
+            <DialogBody>
+              <RescheduleField id={`${uid}-at`} at={moving.at} key={moving.id + moving.at} />
+            </DialogBody>
+            <DialogFooter>
+              <DialogClose part="cancel">Close</DialogClose>
+              <button type="submit" className="cap-btn" data-variant="primary">
+                Reschedule
+              </button>
+            </DialogFooter>
+          </Form>
+        </>
+      ) : null}
+    </Dialog>
+  )
+}
+
+// Asks before canceling an update: it has no Undo.
+const cancelRequest = (id: string, name: string, noun: string, version?: string): ConfirmRequest => ({
+  intent: "cancel-schedule",
+  title: `Cancel the scheduled update to ${name}?`,
+  lead: `The live ${noun} stays as it is and the update's changes are dropped. This cannot be undone.`,
+  action: "Cancel the update",
+  cancelLabel: "Keep the update",
+  items: [name],
+  fields: version ? { ids: [id], versions: [version] } : { ids: [id] },
+});
 
 // One page of one site's posts: status tabs with counts, search and filters, the table with its
 // row menus, the bulk bar with each item's outcome, Undo, and the confirmation for what cannot be
@@ -110,6 +159,17 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   useEffect(() => setSelected((s) => s.filter((id) => names.has(id))), [names]);
   const href = (q: typeof query) => postsHref(action, q);
   const intents = useIntents({ action, Form, submit, result, names, cancelHref: href(query), onDone: () => setSelected([]) });
+  const [moving, setMoving] = useState<Moving | null>(null);
+  // With script, Reschedule… opens the dialog and Cancel the update asks first; with no script
+  // their links go to the page that does it.
+  const menuItems = (row: PostRow, list: RowAction[]) =>
+    list.map(({ publishAt, ...item }) => {
+      if (!mounted || !submit) return item;
+      const name = row.title || "Untitled";
+      if (item.value === "reschedule" && publishAt) return { ...item, onSelect: () => setMoving({ id: row.id, name, at: publishAt, version: row.version }) };
+      if (item.value === "cancel-schedule") return { ...item, onSelect: () => intents.ask(cancelRequest(row.id, name, noun, row.version)) };
+      return item;
+    });
   if (intents.confirmPage) {
     return (
       <section className="cap-posts" data-cap="posts-list" aria-label={title}>
@@ -256,7 +316,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
           {words.text}
         </Empty>
       ) : (
-        <div className="cap-table-wrap cap-posts-wrap" role="region" aria-labelledby={`${uid}-cap`} tabIndex={0} onKeyDown={onTableKey}>
+        <div className="cap-table-wrap cap-posts-wrap" data-reflow="" role="region" aria-labelledby={`${uid}-cap`} tabIndex={0} onKeyDown={onTableKey}>
           <table className="cap-table cap-posts-table">
             <caption id={`${uid}-cap`} className="cap-sr-only">
               {title} on {data.site.name}
@@ -285,7 +345,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
             </thead>
             <tbody>
               {rows.map((row) => {
-                const st = contentStatus(row.status, row.publishAt, clock);
+                const st = rowStatus(row, clock);
                 const name = row.title || "Untitled";
                 const items = rowActions(row, data);
                 return (
@@ -322,27 +382,19 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
                         </span>
                       ) : null}
                     </th>
-                    <td className="cap-posts-status">
+                    <td className="cap-posts-status" data-label="Status">
                       <Status tone={st.tone}>{st.word}</Status>
-                      {st.when ? (
-                        <>
-                          {" "}
-                          <span className="cap-posts-when">{st.when}</span>
-                        </>
-                      ) : null}
-                      {row.status === "published" && row.scheduledUpdate ? (
-                        <span className="cap-posts-update">
-                          <Status tone="info">Update scheduled</Status> <span className="cap-posts-when">{inDays(row.scheduledUpdate.publishAt, clock)}</span>
-                        </span>
-                      ) : null}
+                      {st.note ? <span className="cap-posts-when"> · {st.note}</span> : null}
                     </td>
-                    <td className="cap-posts-updated">{row.updatedAt ? <Time at={row.updatedAt} now={now} /> : <span className="cap-posts-none">No date</span>}</td>
+                    <td className="cap-posts-updated" data-label="Updated">{row.updatedAt ? <Time at={row.updatedAt} now={now} /> : <span className="cap-posts-none">No date</span>}</td>
                     {extraColumns.map((c) => (
-                      <td key={c.id}>{c.cells[row.id] ?? ""}</td>
+                      <td key={c.id} className="cap-posts-extra-cell" data-label={c.label}>
+                        {c.cells[row.id] ?? ""}
+                      </td>
                     ))}
                     {withMenus ? (
                       <td className="cap-posts-actions">
-                        {items.length ? <FormMenu label="Actions" aria-label={`Actions for ${name}`} action={action} hidden={{ ids: row.id }} items={menuItems(items, `${uid}-${row.id}-at`)} /> : null}
+                        {items.length ? <FormMenu label="Actions" aria-label={`Actions for ${name}`} action={action} hidden={{ ids: row.id }} items={menuItems(row, items)} /> : null}
                       </td>
                     ) : null}
                   </tr>
@@ -368,6 +420,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         </nav>
       ) : null}
 
+      <RescheduleDialog moving={moving} action={action} Form={Form} onClose={() => setMoving(null)} now={now} />
       {intents.confirmDialog}
     </section>
   );
@@ -375,84 +428,107 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
 
 export interface PostScheduledUpdateProps {
   // site-api's loadScheduledUpdate(source, id): the update's source, the live one, the patch and
-  // the time in words.
+  // the times.
   data: ScheduledUpdateView;
   // Where Reschedule and Cancel post: the posts list's action, which runs the kit's intents.
   action: string;
   Form?: FormComponent;
   submit?: SubmitIntent;
   result?: IntentResult | null;
-  // Where the person goes back to: the posts list.
-  backHref?: string;
+  // When the live version went out (the row's publishedAt), for the live side's heading.
+  liveSince?: string | null;
+  // The trail above the title: the posts list, then this post.
+  crumbs?: Array<{ label: string; href?: string }>;
+  // The title's level: the page's h1 by default.
+  headingLevel?: "h1" | "h2" | "h3";
   labels?: ContentLabels;
   now?: number;
 }
 
-// The update waiting on a live post: when it goes live, its source beside the live one (the
-// draft compare, with the unified patch under it), and Reschedule and Cancel, posting the posts
-// list's own intents.
-export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, result = null, backHref, labels, now }: PostScheduledUpdateProps) {
+// The page of the update waiting on a live post: a page head with the post's title, when the
+// update goes live and its actions, then the update beside the live post in the draft compare,
+// with the unified patch under it. Reschedule… opens the dialog and Cancel the update asks
+// first, posting the posts list's own intents; with no script both are plain forms under the
+// head.
+export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, result = null, liveSince, crumbs, headingLevel, labels, now }: PostScheduledUpdateProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const { noun } = nounsOf(labels);
   const name = data.title || "Untitled";
   const names = useMemo(() => new Map([[data.id, name]]), [data.id, name]);
-  const intents = useIntents({ action, Form, submit, result, names, cancelHref: backHref ?? action });
+  const intents = useIntents({ action, Form, submit, result, names, cancelHref: action });
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const [moving, setMoving] = useState<Moving | null>(null);
   const clock = now ?? Date.now();
+  const scripted = mounted && !!submit;
+  const may = data.can.publish;
+  const actions = (
+    <>
+      {may && scripted ? (
+        <button type="button" className="cap-btn" data-variant="primary" onClick={() => setMoving({ id: data.id, name, at: data.publishAt, version: data.live.version })}>
+          Reschedule…
+        </button>
+      ) : null}
+      {data.can.edit ? (
+        <a className="cap-btn" href={data.editorHref}>
+          Edit the update
+        </a>
+      ) : null}
+      {data.live.href ? (
+        <a className="cap-btn" href={data.live.href}>
+          View the live {noun}
+        </a>
+      ) : null}
+      {may && scripted ? (
+        <button type="button" className="cap-btn" data-variant="danger" data-cap-part="cancel-update" onClick={() => intents.ask(cancelRequest(data.id, name, noun, data.live.version))}>
+          Cancel the update
+        </button>
+      ) : null}
+    </>
+  );
   return (
     <section className="cap-posts-update-view" data-cap="posts-list" aria-labelledby={`${uid}-h`} ref={(el) => void (intents.rootRef.current = el)} onSubmit={intents.onSubmit}>
-      <header className="cap-posts-update-head">
-        <h2 id={`${uid}-h`}>Update scheduled for {name}</h2>
-        <p className="cap-posts-update-when">
-          <Status tone="info">Goes live {data.when}</Status> <span className="cap-posts-when">{inDays(data.publishAt, clock)}</span>
-        </p>
-        <p className="cap-posts-update-note">
-          Until then the site serves the live {noun}. At that time this update replaces it whole, so a change saved to the live {noun} meanwhile is lost unless it is made here too. Scheduled <Time at={data.scheduledAt} now={now} />.
-        </p>
-        <div className="cap-posts-update-links">
-          {backHref ? (
-            <a className="cap-btn" href={backHref}>
-              Back to the list
-            </a>
-          ) : null}
-          {data.can.edit ? (
-            <a className="cap-btn" href={data.editorHref}>
-              Edit the update
-            </a>
-          ) : null}
-          {data.live.href ? (
-            <a className="cap-btn" href={data.live.href}>
-              View the live {noun}
-            </a>
-          ) : null}
-        </div>
-      </header>
+      <PageHead
+        crumbs={crumbs}
+        headingLevel={headingLevel}
+        title={<span id={`${uid}-h`}>{name}</span>}
+        lead={
+          <>
+            The update goes live <Time at={data.publishAt} format="exact" />, {inDays(data.publishAt, clock)}. Until then the site serves the live {noun}; then the update replaces it whole.
+          </>
+        }
+        actions={actions}
+      />
 
       {intents.resultBox}
 
-      {data.can.publish ? (
+      {may && !scripted ? (
         <Form method="post" action={action} className="cap-posts-update-form">
           <input type="hidden" name="ids" value={data.id} />
           <input type="hidden" name="versions" value={data.live.version} />
           <RescheduleField id={`${uid}-at`} at={data.publishAt} />
-          <div className="cap-posts-update-actions">
-            <button type="submit" className="cap-btn" data-variant="primary" name="intent" value="reschedule">
-              Reschedule
-            </button>
-            <button type="submit" className="cap-btn" name="intent" value="cancel-schedule">
-              Cancel the update
-            </button>
-          </div>
+          <button type="submit" className="cap-btn" data-variant="primary" name="intent" value="reschedule">
+            Reschedule
+          </button>
+          <button type="submit" className="cap-btn" data-variant="danger" name="intent" value="cancel-schedule">
+            Cancel the update
+          </button>
         </Form>
-      ) : (
-        <p className="cap-posts-withheld">Rescheduling or canceling it needs a publisher's role.</p>
-      )}
+      ) : null}
+      {!may ? <p className="cap-posts-withheld">Rescheduling or canceling it needs a publisher's role.</p> : null}
 
-      <DraftCompare before={{ title: `Live ${noun}`, text: data.live.source }} after={{ title: "Scheduled update", time: data.scheduledAt, text: data.source }} labels={{ before: "Live", after: "Scheduled" }} id={`${uid}-cmp`} />
-      <details className="cap-posts-update-patch">
+      <DraftCompare
+        before={{ title: `On the site${liveSince ? " since" : " now"}`, time: liveSince ?? undefined, text: data.live.source }}
+        after={{ title: "Goes live", time: data.publishAt, text: data.source }}
+        labels={{ before: "Live", after: "Scheduled" }}
+        id={`${uid}-cmp`}
+      />
+      <details className="cap-disclosure cap-posts-update-patch">
         <summary>The change as a patch</summary>
         <DraftPatch patch={data.patch} title={`The scheduled update to ${name}`} id={`${uid}-patch`} />
       </details>
 
+      <RescheduleDialog moving={moving} action={action} Form={Form} onClose={() => setMoving(null)} now={now} />
       {intents.confirmDialog}
     </section>
   );

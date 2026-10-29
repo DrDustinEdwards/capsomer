@@ -1,5 +1,5 @@
 import { Menu as Base } from "@base-ui/react/menu";
-import { Fragment, useEffect, useId, useRef, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useRef, type MouseEvent, type ReactNode } from "react";
 import { enhance } from "./menu.ts";
 
 export interface MenuAction {
@@ -261,9 +261,10 @@ export interface FormMenuItem {
   // disabled button cannot be reached, so the reason is not hidden behind it).
   disabled?: boolean;
   reason?: string;
-  // A field the item needs, drawn just before its button inside the same form (a reschedule's
-  // new time). Every item's post carries it; the server reads it only for this item's intent.
-  field?: ReactNode;
+  // A link item that script turns into an action: once the page runs script a press calls
+  // this instead of following the link (Reschedule… opens a dialog), and with no script the
+  // link goes to the page that does it. Only such a link may be a danger item.
+  onSelect?: () => void;
 }
 
 export interface FormMenuProps {
@@ -287,17 +288,14 @@ export function FormMenu({ label, action, method = "post", items, name = "intent
   useEffect(() => (ref.current ? enhance(ref.current.parentNode ?? document) : undefined), []);
   const ordinary = items.filter((i) => !i.danger);
   const danger = items.filter((i) => i.danger);
-  const entry = (i: FormMenuItem) =>
-    i.field ? (
-      <Fragment key={i.value}>
-        <div className="cap-menu-field">{i.field}</div>
-        {button(i)}
-      </Fragment>
-    ) : (
-      button(i)
-    );
-  const button = (i: FormMenuItem) => i.href && !i.danger ? (
-    <a key={i.value} className="cap-option cap-menu-item" href={i.href}>
+  const select = (i: FormMenuItem) => (e: MouseEvent<HTMLAnchorElement>) => {
+    if (!i.onSelect) return;
+    e.preventDefault();
+    if (ref.current) ref.current.open = false;
+    i.onSelect();
+  };
+  const button = (i: FormMenuItem) => i.href && (!i.danger || i.onSelect) ? (
+    <a key={i.value} className="cap-option cap-menu-item" href={i.href} onClick={select(i)} data-tone={i.danger ? "crit" : undefined}>
       <span className="cap-option-label">{i.label}</span>
     </a>
   ) : (
@@ -316,9 +314,9 @@ export function FormMenu({ label, action, method = "post", items, name = "intent
         {Object.entries(hidden ?? {}).map(([k, v]) => (
           <input key={k} type="hidden" name={k} value={v} />
         ))}
-        {ordinary.map(entry)}
+        {ordinary.map(button)}
         {danger.length && ordinary.length ? <hr className="cap-listbox-separator cap-menu-separator" /> : null}
-        {danger.map(entry)}
+        {danger.map(button)}
       </form>
     </details>
   );

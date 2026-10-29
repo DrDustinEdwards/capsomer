@@ -39,7 +39,6 @@ eachTheme((theme) => {
       { sel: sel("cmp-default", ".cap-compare-side-title"), what: "a side's title" },
       { sel: sel("cmp-default", ".cap-compare-side-meta"), what: "a side's who and time" },
       { sel: sel("cmp-default", ".cap-compare-counts"), what: "the counts" },
-      { sel: sel("cmp-default", ".cap-compare-views-help dd"), what: "the views explained" },
       { sel: sel("cmp-default", ".cap-compare-change-label"), what: "a change's label" },
       { sel: sel("cmp-default", ".cap-compare-jump-link"), what: "a jump link" },
       { sel: sel("cmp-default", ".cap-compare-jump-link"), what: "a jump link's edge", part: "border" },
@@ -111,14 +110,15 @@ eachTheme((theme) => {
     await expect(page.locator("#cmp-default").getByRole("region", { name: /^Inline,/ })).toHaveCount(0);
   });
 
-  test("accessibility: the legend is always on the page, with the marks, the counts and the views explained", { tag: "@markup" }, async ({ page }) => {
+  test("accessibility: the legend is always on the page, with the marks and the counts, and the views are explained", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "draft-compare", theme);
     const legend = page.locator("#cmp-default .cap-compare-legend");
     await expect(legend).toBeVisible();
     await expect(legend.getByText("Added", { exact: true })).toBeVisible();
     await expect(legend.getByText("Removed", { exact: true })).toBeVisible();
     await expect(legend.locator(".cap-compare-counts")).toHaveText("15 words added, 12 removed, 4 changes");
-    for (const name of ["Side by side", "Inline", "Changes only"]) await expect(legend.locator("dt", { hasText: name })).toBeVisible();
+    // What each view does is the view switch's description.
+    await expect(page.locator("#cmp-default fieldset.cap-seg")).toHaveAccessibleDescription(/^Side by side: before on the left.*Changes only: just the changed sentences\.$/);
   });
 
   test("accessibility: the no differences state is a status with both titles and times", { tag: "@markup" }, async ({ page }) => {

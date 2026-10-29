@@ -41,6 +41,8 @@ export interface ConfirmSpec {
   lead?: string;
   action: string;
   typeToConfirm?: string;
+  // The button that backs out, when "Cancel" would read as the action ("Keep the update").
+  cancelLabel?: string;
 }
 
 // A host's own toolbar action (dustinedwards.info's Ask index maintenance), posted as `intent`

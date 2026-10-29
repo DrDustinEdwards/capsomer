@@ -123,7 +123,7 @@ A form menu, with no script (HTML, or React `FormMenu` which renders exactly thi
 </details>
 ```
 
-`import { enhance } from "capsomer/behavior/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for foxhound.app" action="/admin/sites/foxhound" hidden={{ site: "foxhound" }} items={[{ label: "Open site", value: "open", href: "/sites/foxhound" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link. An item that needs a value names it as `field` (a React node, such as a labeled time input): it is drawn just above the item's button, inside the same form, in `.cap-menu-field`, and keeps its own arrow keys.
+`import { enhance } from "capsomer/behavior/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for foxhound.app" action="/admin/sites/foxhound" hidden={{ site: "foxhound" }} items={[{ label: "Open site", value: "open", href: "/sites/foxhound" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link. A link item with `onSelect` runs it instead of following the link once script runs (the posts list's Reschedule… opens a dialog), and with no script goes to the page that does it; only such a link may be a danger item.
 
 ## Matches shadcn
 

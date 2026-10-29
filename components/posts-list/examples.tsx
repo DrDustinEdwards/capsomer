@@ -171,6 +171,8 @@ const UPDATE_VIEW: ScheduledUpdateView = {
   can: ALL,
 };
 
+const CRUMBS = [{ label: "Posts", href: "/posts" }, { label: "Notes on a read-only agent", href: "/editor/read-only-agent" }, { label: "Scheduled update" }];
+
 // The page of one waiting update, with a host that moves it and cancels it.
 function UpdateView() {
   const [data, setData] = useState<ScheduledUpdateView | null>(UPDATE_VIEW);
@@ -190,7 +192,7 @@ function UpdateView() {
     return { ok: true, message: `Rescheduled for ${when}.` };
   };
   if (!data) return <p>Nothing is scheduled for this post now. <a href="/posts">Back to the list</a></p>;
-  return <PostScheduledUpdate data={data} action="/posts" submit={submit} backHref="/posts" now={NOW} />;
+  return <PostScheduledUpdate data={data} action="/posts" submit={submit} liveSince="2026-09-21T10:00:00Z" crumbs={CRUMBS} headingLevel="h3" now={NOW} />;
 }
 
 const outcomeResult: IntentResult = {
@@ -229,7 +231,7 @@ const mounts: Record<string, () => ReactNode> = {
   confirm: () => <PostsList data={dataOf(ROWS)} action="/posts" result={confirmResult} now={NOW} />,
   updates: () => <Updates />,
   "update-view": () => <UpdateView />,
-  "update-reader": () => <PostScheduledUpdate data={{ ...UPDATE_VIEW, can: { ...ALL, edit: false, publish: false } }} action="/posts" backHref="/posts" now={NOW} />,
+  "update-reader": () => <PostScheduledUpdate data={{ ...UPDATE_VIEW, can: { ...ALL, edit: false, publish: false } }} action="/posts" liveSince="2026-09-21T10:00:00Z" crumbs={CRUMBS} headingLevel="h3" now={NOW} />,
 };
 
 for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {

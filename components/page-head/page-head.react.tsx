@@ -12,15 +12,18 @@ export interface PageHeadProps {
   lead?: ReactNode;
   // The page's actions, at the right (buttons and links).
   actions?: ReactNode;
+  // The title's level: the page's one h1, or lower where the page already has one (a states
+  // page's specimen, a view inside another page).
+  headingLevel?: "h1" | "h2" | "h3";
 }
 
 // The HTML contract in page-head.md.
-export function PageHead({ crumbs, renderLink, title, lead, actions }: PageHeadProps) {
+export function PageHead({ crumbs, renderLink, title, lead, actions, headingLevel: H = "h1" }: PageHeadProps) {
   return (
     <header className="cap-page-head">
       <div className="cap-page-head-text">
         {crumbs && crumbs.length > 1 ? <Breadcrumb items={crumbs} renderLink={renderLink} /> : null}
-        <h1 className="cap-page-head-title">{title}</h1>
+        <H className="cap-page-head-title">{title}</H>
         {lead ? <p className="cap-page-head-lead">{lead}</p> : null}
       </div>
       {actions ? <div className="cap-page-head-actions">{actions}</div> : null}
