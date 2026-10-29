@@ -4,6 +4,15 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+Media library parity with dustinedwards.info's own library, so Carrel can be the one place a site's media is managed.
+
+- **The site's lenses as chips.** `MediaOffers.lenses` (new, optional: the kit's `offers.lenses`, site-api v0.6.0 `capabilities.mediaLenses`) gives a chip for each of the contract's lenses the site names, in words: Unattached, No alt text, Over 1 MB, with what the open one means under the chips. A host's own lenses (`extra.lenses`) follow; a count in `extra.lenses` for a contract lens shows on its chip. Lenses are shown in the library only, not in Trash. New: `lensChips`, `LENS_WORDS`.
+- **Sort, direction, grouping and tile size, as links** under a Display disclosure beside Grid and List: Newest, A to Z, Largest (the contract's `added`, `name`, `size`), Descending or Ascending, grouping by None, Folder or Month, and tile size S, M or L. `MediaQuery` gains `sort`, `dir`, `group` and `size` (new HTML contract: those query parameters). A sort starts in its own direction and its default is left out of the address (`SORT_DIR`, `dirOf`); a layout, size or grouping change keeps the page and the open file (`withMedia`). Where the kit sorted only the page (`page.sortedOnPage`) the library says so.
+- **Groups by folder or month**, drawn from the page's rows: the folder before the last "/" of each id, or the upload month in UTC, through the media grid's `groups` (`groupRows`, `folderOf`, `monthOf`). Page-local, as dustinedwards.info's are.
+- **Grid or List and the tile size are remembered in this browser** (`cap-media-layout`, `cap-media-size`); a link that names one still wins. `readMediaView(searchParams)` reads `layout`, `size` and `group` for a host to merge with the kit's `readMediaQuery`.
+- **Keyboard: quick search and Esc.** Ctrl K, Cmd K or "/" opens the command menu over the host's matches when it passes `search` (new prop), with Enter opening a file; without it the keys put focus in the search field. `shortcuts={false}` (new prop) leaves the keys to the host. Esc on a tile clears the selection, then closes the open file's details. The keys are listed under a Keyboard shortcuts disclosure.
+- New classes: `.cap-media-lib-display`, `.cap-media-lib-tool-label`, `.cap-media-lib-note`, `.cap-media-lib-keys`. The library now also needs the disclosure, listbox, command-menu and shortcuts stylesheets.
+
 ## [0.37.0]
 
 Fallback fonts for any site's faces, and scheduled updates in the posts list (site-api v0.10.0).

@@ -221,10 +221,20 @@ export interface MediaQuery {
   tag?: string;
   // The library, or the trash (with mediaTrash).
   view?: "library" | "trash";
-  // Tiles or rows, kept in the address.
+  // Tiles or rows, and the tile size: in the address when a link sets them, otherwise the viewer's
+  // last choice, remembered in this browser (MediaLibrary).
   layout?: "grid" | "list";
-  // A host's lens (dustinedwards.info's unattached, duplicates): extensions until site-api v0.6.
+  size?: "s" | "m" | "l";
+  // A lens: one the site names (site-api v0.6.0 MediaLens: unattached, no-alt, large, through
+  // `offers.lenses`) or a host's own (`extra.lenses`).
   lens?: string;
+  // The site-api contract's sorts (v0.6.0 MEDIA_SORTS) and direction, as the kit reads them. Each sort
+  // has its own direction (newest, A to Z, largest first) when `dir` is absent.
+  sort?: "added" | "name" | "size";
+  dir?: "asc" | "desc";
+  // Headings over the page's files: by the folder in each file's id, or by the month it was uploaded.
+  // Drawn by the component from the rows it has, so a group never spans a page.
+  group?: "folder" | "month";
   cursor?: string;
   // The file the inspector is open on: the kit reads it with where it is used.
   inspect?: string;
@@ -240,6 +250,9 @@ export interface MediaOffers {
   tags: boolean;
   trash: boolean;
   delete: boolean;
+  // The lenses the site answers (site-api v0.6.0 `capabilities.mediaLenses`, the kit's
+  // `offers.lenses`): a chip each, with the contract's meaning in words. Absent or empty: none.
+  lenses?: string[];
 }
 
 export interface MediaData {

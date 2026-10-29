@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, nextPost, visitStates } from "../../test/helpers.ts";
-import { countLine, emptyWords, mediaActions, mediaHref, pickable, uploadRules, withMedia } from "./media-library.ts";
+import { countLine, emptyWords, groupRows, lensChips, mediaActions, mediaHref, pickable, readMediaView, uploadRules, withMedia } from "./media-library.ts";
 
 const ALL = { edit: true, publish: true, deleteContent: true, deleteMedia: true, decideMentions: true };
 const NONE = { edit: false, publish: false, deleteContent: false, deleteMedia: false, decideMentions: false };
@@ -31,6 +31,24 @@ test("behavior: an address keeps its filters in one order, leaves the defaults o
   // Opening another file keeps the page it is on.
   expect(mediaHref("/media", withMedia(q, { inspect: "c.png" }))).toBe("/media?q=fox&tag=release&cursor=c-2&inspect=c.png");
   expect(mediaHref("/media", withMedia(q, { inspect: undefined }))).toBe("/media?q=fox&tag=release&cursor=c-2");
+});
+
+test("behavior: a sort runs its own way unless told, a display change keeps the open file, and groups come from the page's ids and UTC months", () => {
+  const q = { inspect: "a/b.png", cursor: "c-2", q: "fox" };
+  // Each sort's own direction is left out of the address; a new sort drops the old direction.
+  expect(mediaHref("/media", withMedia(q, { sort: "name" }))).toBe("/media?q=fox&sort=name");
+  expect(mediaHref("/media", withMedia({ sort: "name", dir: "desc" }, { sort: "size" }))).toBe("/media?sort=size");
+  expect(mediaHref("/media", { sort: "added", dir: "asc" })).toBe("/media?dir=asc");
+  // Layout, size and grouping change only the drawing: the page and the open file stay.
+  expect(mediaHref("/media", withMedia(q, { group: "month", size: "s" }))).toBe("/media?q=fox&size=s&group=month&cursor=c-2&inspect=a%2Fb.png");
+  expect(readMediaView(new URLSearchParams("layout=list&size=xl&group=month"))).toEqual({ layout: "list", group: "month" });
+  const rec = (key: string, uploaded?: string) => ({ key, name: key, url: `/m/${key}`, kind: "image" as const, type: "image/png", bytes: 1, alt: "", altState: "missing" as const, title: "", caption: "", tags: [], used: [], state: "ready" as const, uploaded });
+  const rows = [rec("2026/09/a.png", "2026-09-30T23:30:00-05:00"), rec("logo.png"), rec("2026/09/b.png", "2026-09-02")];
+  expect(groupRows(rows, "folder")?.map((g) => [g.label, g.items.length])).toEqual([["2026/09", 2], ["Top level", 1]]);
+  expect(groupRows(rows, "month")?.map((g) => g.label)).toEqual(["October 2026", "No upload date", "September 2026"]);
+  expect(groupRows(rows, undefined)).toBeNull();
+  // Only the contract's lenses the site names get a chip, in words, with a host's own after them.
+  expect(lensChips({ offers: { ...OFFERS, lenses: ["no-alt", "made-up"] }, extra: { lenses: [{ id: "no-alt", label: "x", count: 3 }, { id: "duplicates", label: "Duplicates" }] } }).map((l) => [l.id, l.label, l.count])).toEqual([["no-alt", "No alt text", 3], ["duplicates", "Duplicates", undefined]]);
 });
 
 test("behavior: the count, the empty state, the upload rules and the picker's files", () => {
@@ -142,6 +160,30 @@ eachTheme((theme) => {
     await expect(ins.locator("[data-cap-part='save-status']")).toHaveText("Saved");
     const saves = (await log(page)).filter((e) => e.intent === "save");
     expect(saves.at(-1)).toMatchObject({ ids: "2026/09/foxhound-hero.png", version: "v1", alt: "The Foxhound dashboard with three sites reporting healthy, in September", tags: "release, foxhound" });
+  });
+
+  test("keyboard: Ctrl K finds a file and opens it, and Esc on a tile closes its details", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    const lib = editor(page);
+    await page.locator("h1").click();
+    await page.keyboard.press("Control+k");
+    const menu = page.getByRole("dialog", { name: "Command menu" });
+    await menu.getByRole("combobox").fill("uptime-s");
+    await expect(menu.getByRole("option", { name: /uptime-strip\.png/ })).toBeVisible();
+    await page.keyboard.press("Enter");
+    await expect(lib.getByRole("dialog", { name: "uptime-strip.png" })).toBeVisible();
+    await lib.locator(".cap-media-tile[data-key='2026/09/uptime-strip.png'] .cap-media-open").focus();
+    await page.keyboard.press("Escape");
+    await expect(lib.getByRole("dialog", { name: "uptime-strip.png" })).toHaveCount(0);
+    await expect(lib.locator(".cap-media-tile[data-key='2026/09/uptime-strip.png'] .cap-media-open")).toBeFocused();
+  });
+
+  test("behavior: Grid or List and the tile size are remembered in this browser", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    await editor(page).getByRole("navigation", { name: "Show as" }).getByRole("link", { name: "List" }).click();
+    await expect(editor(page).locator(".cap-media")).toHaveAttribute("data-view", "list");
+    await page.reload();
+    await expect(editor(page).locator(".cap-media")).toHaveAttribute("data-view", "list");
   });
 
   test("keyboard: with script, Move to Trash runs at once with Undo, and z brings the files back", async ({ page }) => {

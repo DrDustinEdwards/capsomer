@@ -1,12 +1,31 @@
-import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { CommandMenu, type Command } from "../command-menu/command-menu.react.tsx";
 import type { ContentLabels, IntentResult, MediaData, MediaQuery, PickedMedia, SubmitIntent } from "../content/content.ts";
 import { ContentBulkBar, PlainForm, useIntents, type FormComponent } from "../content/content.react.tsx";
+import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { DropZone } from "../drop-zone/drop-zone.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { MediaGrid, MediaInspector, useMediaMode, type MediaFields } from "../media/media.react.tsx";
-import { suggestedAlt } from "../media/media.ts";
+import { byteSize, suggestedAlt, type MediaRecord } from "../media/media.ts";
+import { readPref, writePref } from "../shell/shell.ts";
+import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
-import { countLine, emptyWords, inspectorOffers, mediaActions, mediaHref, nounsOf, pickable, uploadRules, withMedia } from "./media-library.ts";
+import { countLine, dirOf, emptyWords, groupRows, inspectorOffers, lensChips, mediaActions, mediaHref, nounsOf, pickable, SORT_DIR, uploadRules, withMedia, type MediaSort } from "./media-library.ts";
+
+// The viewer's last layout and tile size, remembered in this browser (shell.ts readPref).
+const LAYOUT_PREF = "cap-media-layout";
+const SIZE_PREF = "cap-media-size";
+
+const SORT_WORDS: Record<MediaSort, string> = { added: "Newest", name: "A to Z", size: "Largest" };
+const GROUP_WORDS = { flat: "None", folder: "Folder", month: "Month" } as const;
+const KEYS: Array<[string | string[], string]> = [
+  [["Mod+k", "/"], "Find a file"],
+  [["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"], "Move through the files"],
+  [["Home", "End"], "First or last file"],
+  ["Enter", "Open the file's details"],
+  [["Space", "x"], "Select the file"],
+  ["Escape", "Clear the selection, then close the details"],
+];
 
 export type { FormComponent, IntentResult, MediaData, PickedMedia, SubmitIntent };
 
@@ -30,6 +49,13 @@ export interface MediaLibraryProps {
   // Picker mode, with script: called with the file and the alt text written for this use, in
   // place of posting `intent=pick`.
   onPick?: (picked: PickedMedia) => void;
+  // Quick search, with script: the files matching what was typed (the host asks the kit). With it,
+  // Ctrl K, Cmd K or "/" opens the command menu over those files; without it, the keys put focus in
+  // the search field.
+  search?: (query: string, signal: AbortSignal) => Promise<MediaRecord[]>;
+  // False leaves Ctrl K, Cmd K and "/" to the host (an app-wide command menu). True by default in
+  // library mode; the picker never takes them.
+  shortcuts?: boolean;
 }
 
 // One page of one site's files, the same component in Carrel and in every site admin: search, tag
@@ -38,7 +64,7 @@ export interface MediaLibraryProps {
 // Undo, and the confirmation for what cannot be undone. In picker mode, the same grid offers images
 // and asks for the alt text this use needs. Every action is a form post, so it works with no
 // script; `submit` adds the in-place path.
-export function MediaLibrary({ data, action, Form = PlainForm, submit, result = null, labels, mode = "library", inspector = "form", onPick }: MediaLibraryProps) {
+export function MediaLibrary({ data, action, Form = PlainForm, submit, result = null, labels, mode = "library", inspector = "form", onPick, search, shortcuts = true }: MediaLibraryProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const formId = `${uid}-bulk`;
   const { plural } = nounsOf(labels);
@@ -88,6 +114,65 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   }, [inspected?.key, chosen, picker, uid]);
   const iOffers = inspectorOffers(data);
 
+  // Grid or list and the tile size: the address's when a link set them, else this viewer's last
+  // choice (read after mount, so the server's HTML and the first paint agree).
+  const [pref, setPref] = useState<Pick<MediaQuery, "layout" | "size">>({});
+  useEffect(() => {
+    const l = readPref(LAYOUT_PREF);
+    const z = readPref(SIZE_PREF);
+    setPref({ ...(l === "grid" || l === "list" ? { layout: l } : {}), ...(z === "s" || z === "m" || z === "l" ? { size: z } : {}) });
+  }, []);
+  const remember = (change: Pick<MediaQuery, "layout" | "size">) => {
+    if (change.layout) writePref(LAYOUT_PREF, change.layout);
+    if (change.size) writePref(SIZE_PREF, change.size);
+    setPref((p) => ({ ...p, ...change }));
+  };
+
+  // Quick search: the command menu over the host's matches, or focus in the search field.
+  const [finding, setFinding] = useState(false);
+  useShortcut(
+    ["Mod+k", "/"],
+    () => {
+      if (search) return setFinding(true);
+      const field = document.getElementById(`${uid}-q`);
+      if (field instanceof HTMLInputElement) {
+        field.focus();
+        field.select();
+      }
+    },
+    { label: `Find a ${nounsOf(labels).noun}`, group: "Media", when: () => shortcuts && !picker },
+  );
+  const find = async (text: string, signal: AbortSignal): Promise<Command[]> => {
+    const found = search ? await search(text, signal) : [];
+    return [
+      ...found.slice(0, 8).map((r) => ({
+        id: `file-${r.key}`,
+        label: r.name,
+        group: plural.charAt(0).toUpperCase() + plural.slice(1),
+        keywords: [r.key],
+        hint: [r.type.split("/").pop()?.toUpperCase(), byteSize(r.bytes)].filter(Boolean).join(" · "),
+        run: () => {
+          opening.current = true;
+          go(withMedia(query, { inspect: r.key }));
+        },
+      })),
+      { id: "search-all", label: `Search for “${text}”`, group: "Search", run: () => go(withMedia(query, { q: text })) },
+    ];
+  };
+
+  // Esc on a tile clears the selection first, then closes the file's details.
+  const onGridKey = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key !== "Escape" || e.defaultPrevented || !(e.target as Element).closest(".cap-media-tile")) return;
+    if (selected.length) {
+      e.preventDefault();
+      setSelected([]);
+    } else if (inspected) {
+      e.preventDefault();
+      opening.current = false;
+      go(withMedia(query, { inspect: undefined }));
+    }
+  };
+
   // The inspector's autosave posts one `save` with every field the site keeps.
   const save = async (key: string, fields: MediaFields) => {
     if (!submit) return;
@@ -130,7 +215,26 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   const words = emptyWords(query, labels);
   const rules = offers.upload ? uploadRules(offers.upload, picker) : null;
   const canUpload = !!rules && can.edit && !trash;
-  const layout = query.layout ?? "grid";
+  const layout = query.layout ?? pref.layout ?? "grid";
+  const tileSize = query.size ?? pref.size ?? "m";
+  const sort = query.sort ?? "added";
+  const dir = dirOf(query);
+  const lenses = picker || trash ? [] : lensChips(data);
+  const lensHint = lenses.find((l) => l.id === query.lens)?.hint;
+  const groups = groupRows(shown, query.group);
+  const display = [`${SORT_WORDS[sort]}${dir === SORT_DIR[sort] ? "" : ", reversed"}`, query.group ? `by ${query.group}` : null, layout === "grid" ? `size ${tileSize.toUpperCase()}` : null].filter(Boolean).join(", ");
+  const chipLinks = <V extends string>(label: string, options: Array<[V, string]>, current: V, to: (v: V) => MediaQuery, onPick?: (v: V) => void) => (
+    <nav className="cap-media-lib-layout" aria-label={label}>
+      <span className="cap-media-lib-tool-label" aria-hidden="true">
+        {label}
+      </span>
+      {options.map(([v, text]) => (
+        <a key={v} className="cap-chip" href={href(to(v))} aria-current={current === v ? "true" : undefined} onClick={onPick ? () => onPick(v) : undefined}>
+          {text}
+        </a>
+      ))}
+    </nav>
+  );
 
   return (
     <section className="cap-media-lib" data-cap="media-library" data-mode={picker ? "picker" : undefined} aria-label={title} ref={(el) => void (intents.rootRef.current = el)} onSubmit={onSubmit}>
@@ -152,7 +256,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
       ) : null}
 
       <Form method="get" action={path} className="cap-media-lib-filters" role="search" aria-label={`Find ${plural}`}>
-        {(["view", "layout", "tag", "lens"] as const).map((k) => (query[k] ? <input key={k} type="hidden" name={k} value={query[k]} /> : null))}
+        {(["view", "layout", "size", "tag", "lens", "sort", "dir", "group"] as const).map((k) => (query[k] ? <input key={k} type="hidden" name={k} value={query[k]} /> : null))}
         <div className="cap-field cap-media-lib-search">
           <label className="cap-field-label" htmlFor={`${uid}-q`}>
             Search
@@ -164,7 +268,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
         </button>
       </Form>
 
-      {data.tags.length || data.extra?.lenses?.length ? (
+      {data.tags.length || lenses.length ? (
         <nav className="cap-media-lib-chips" aria-label={`Narrow the ${plural}`}>
           {data.tags.length ? (
             <ul className="cap-chips" aria-label="Tags">
@@ -183,11 +287,11 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
               ))}
             </ul>
           ) : null}
-          {data.extra?.lenses?.length && !picker ? (
+          {lenses.length ? (
             <ul className="cap-chips" aria-label="Lenses">
-              {data.extra.lenses.map((l) => (
+              {lenses.map((l) => (
                 <li key={l.id}>
-                  <a className="cap-chip" href={href(withMedia(query, { lens: query.lens === l.id ? undefined : l.id }))} aria-current={query.lens === l.id ? "true" : undefined}>
+                  <a className="cap-chip" href={href(withMedia(query, { lens: query.lens === l.id ? undefined : l.id }))} aria-current={query.lens === l.id ? "true" : undefined} title={l.hint}>
                     {l.label}
                     {l.count != null ? <span className="cap-chip-count">{l.count}</span> : null}
                   </a>
@@ -195,6 +299,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
               ))}
             </ul>
           ) : null}
+          {lensHint ? <p className="cap-media-lib-note">{lensHint}</p> : null}
         </nav>
       ) : null}
 
@@ -203,13 +308,23 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
         <div className="cap-media-lib-tools">
           {!picker ? (
             <nav className="cap-media-lib-layout" aria-label="Show as">
-              <a className="cap-chip" href={href(withMedia(query, { layout: undefined }))} aria-current={layout === "grid" ? "true" : undefined}>
+              <a className="cap-chip" href={href(withMedia(query, { layout: undefined }))} aria-current={layout === "grid" ? "true" : undefined} onClick={() => remember({ layout: "grid" })}>
                 Grid
               </a>
-              <a className="cap-chip" href={href(withMedia(query, { layout: "list" }))} aria-current={layout === "list" ? "true" : undefined}>
+              <a className="cap-chip" href={href(withMedia(query, { layout: "list" }))} aria-current={layout === "list" ? "true" : undefined} onClick={() => remember({ layout: "list" })}>
                 List
               </a>
             </nav>
+          ) : null}
+          {!picker ? (
+            <Disclosure summary={`Display: ${display}`}>
+              <div className="cap-media-lib-display">
+                {chipLinks<MediaSort>("Sort", [["added", SORT_WORDS.added], ["name", SORT_WORDS.name], ["size", SORT_WORDS.size]], sort, (v) => withMedia(query, { sort: v }))}
+                {chipLinks<"asc" | "desc">("Direction", [["desc", "Descending"], ["asc", "Ascending"]], dir, (v) => withMedia(query, { sort, dir: v }))}
+                {chipLinks<"flat" | "folder" | "month">("Group by", [["flat", GROUP_WORDS.flat], ["folder", GROUP_WORDS.folder], ["month", GROUP_WORDS.month]], query.group ?? "flat", (v) => withMedia(query, { group: v === "flat" ? undefined : v }))}
+                {layout === "grid" ? chipLinks<"s" | "m" | "l">("Tile size", [["s", "S"], ["m", "M"], ["l", "L"]], tileSize, (v) => withMedia(query, { size: v }), (v) => remember({ size: v })) : null}
+              </div>
+            </Disclosure>
           ) : null}
           {!picker && data.extra?.toolbar?.length ? (
             <Form method="post" action={action} className="cap-media-lib-extra">
@@ -222,6 +337,8 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
           ) : null}
         </div>
       </div>
+
+      {page.sortedOnPage ? <p className="cap-media-lib-note">Sorted on this page only: this site does not sort its whole library.</p> : null}
 
       {!picker && withheld.length ? (
         <ul className="cap-media-lib-withheld">
@@ -269,9 +386,9 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
           />
       ) : null}
 
-      <div className="cap-media" data-size="m" data-view={layout === "list" ? "list" : undefined}>
+      <div className="cap-media" data-size={tileSize} data-view={layout === "list" ? "list" : undefined}>
         <div className="cap-media-layout" ref={layoutRef}>
-          <div className="cap-media-main">
+          <div className="cap-media-main" onKeyDown={onGridKey}>
             {shown.length === 0 ? (
               <Empty
                 kind={words.kind}
@@ -288,7 +405,8 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
               </Empty>
             ) : (
               <MediaGrid
-                items={shown}
+                items={groups ? undefined : shown}
+                groups={groups ?? undefined}
                 activeKey={active}
                 onActiveChange={setActive}
                 selected={selected}
@@ -385,6 +503,23 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
           ) : null}
         </nav>
       ) : null}
+
+      {!picker && shortcuts ? (
+        <Disclosure summary="Keyboard shortcuts">
+          <dl className="cap-media-lib-keys">
+            {KEYS.map(([spec, what]) => (
+              <div key={what}>
+                <dt>
+                  <Keys spec={spec} />
+                </dt>
+                <dd>{what}</dd>
+              </div>
+            ))}
+          </dl>
+        </Disclosure>
+      ) : null}
+
+      {search && !picker ? <CommandMenu open={finding} onOpenChange={setFinding} commands={[]} search={find} bindKeys={false} label={`Find a ${nounsOf(labels).noun}`} placeholder="Name, address or alt text" /> : null}
 
       {intents.confirmDialog}
     </section>

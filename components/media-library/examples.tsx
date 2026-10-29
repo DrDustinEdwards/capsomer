@@ -54,13 +54,36 @@ const FILES: MediaRecord[] = [
   file("2026/08/scan-0042.png", "#ece5ff", { state: "binned", bytes: 6291456 }),
 ];
 
-const OFFERS: MediaData["offers"] = { upload: { maxBytes: 5 * 1024 * 1024, types: ["image/png", "image/jpeg", "image/webp", "application/pdf"] }, alt: true, tags: true, trash: true, delete: true };
+// Two more, in another month and another folder, for the grouped specimens.
+const GROUPED: MediaRecord[] = [
+  ...FILES,
+  file("2026/08/phage-plaques.png", "#c9b8ef", { alt: "Clear plaques on a lawn of bacteria", altState: "set", tags: ["phage"], bytes: 1572864, uploaded: "2026-08-03" }),
+  file("brand/mark.png", "#a98fdc", { alt: "The site's mark", altState: "set", bytes: 8192, uploaded: "2026-07-01" }),
+];
+
+const OFFERS: MediaData["offers"] = { upload: { maxBytes: 5 * 1024 * 1024, types: ["image/png", "image/jpeg", "image/webp", "application/pdf"] }, alt: true, tags: true, trash: true, delete: true, lenses: ["unattached", "no-alt", "large"] };
+
+// The contract's lenses and sorts, as the site would answer them (site-api v0.6.0).
+const LENS: Record<string, (f: MediaRecord) => boolean> = {
+  unattached: (f) => !USES[f.key]?.length,
+  "no-alt": (f) => f.kind === "image" && f.altState === "missing",
+  large: (f) => f.bytes > 1024 * 1024,
+};
+const BY: Record<string, (a: MediaRecord, b: MediaRecord) => number> = {
+  added: (a, b) => (b.uploaded ?? "").localeCompare(a.uploaded ?? ""),
+  name: (a, b) => a.name.localeCompare(b.name),
+  size: (a, b) => b.bytes - a.bytes,
+};
 
 // What the kit's loader would give for a query over these files.
 function load(files: MediaRecord[], query: MediaQuery, over: Partial<MediaData> = {}): MediaData {
   const trash = query.view === "trash";
   const inView = files.filter((f) => (trash ? f.state === "binned" : f.state !== "binned"));
-  const rows = inView.filter((f) => (!query.q || f.name.includes(query.q)) && (!query.tag || f.tags.includes(query.tag)) && (query.lens !== "no-alt" || (f.kind === "image" && f.altState === "missing")));
+  const natural = query.sort === "name" ? "asc" : "desc";
+  const flip = (query.dir ?? natural) === natural ? 1 : -1;
+  const rows = inView
+    .filter((f) => (!query.q || f.name.includes(query.q)) && (!query.tag || f.tags.includes(query.tag)) && (!query.lens || !LENS[query.lens] || LENS[query.lens]!(f)))
+    .sort((a, b) => flip * (BY[query.sort ?? "added"] ?? BY.added!)(a, b));
   const tagCounts = new Map<string, number>();
   for (const f of inView) for (const t of f.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
   const inspect = files.find((f) => f.key === query.inspect);
@@ -193,7 +216,14 @@ function Editor() {
   const { query, Form, onClickCapture } = useRouter({});
   return (
     <div onClickCapture={onClickCapture}>
-      <MediaLibrary data={load(files, query)} action="/media" Form={Form} submit={submit} inspector="autosave" />
+      <MediaLibrary
+        data={load(files, query)}
+        action="/media"
+        Form={Form}
+        submit={submit}
+        inspector="autosave"
+        search={async (text) => files.filter((f) => f.state !== "binned" && f.name.toLowerCase().includes(text.toLowerCase()))}
+      />
     </div>
   );
 }
@@ -224,13 +254,15 @@ const mounts: Record<string, () => ReactNode> = {
       <Editor />
     </MessageProvider>
   ),
-  form: () => <MediaLibrary data={load(FILES, { inspect: "2026/09/uptime-strip.png" })} action="/media" />,
-  trash: () => <MediaLibrary data={load(FILES, { view: "trash", layout: "list" })} action="/media" />,
-  limited: () => <MediaLibrary data={reader} action="/media" />,
+  form: () => <MediaLibrary data={load(FILES, { inspect: "2026/09/uptime-strip.png" })} action="/media" shortcuts={false} />,
+  trash: () => <MediaLibrary data={load(FILES, { view: "trash", layout: "list" })} action="/media" shortcuts={false} />,
+  grouped: () => <MediaLibrary data={load(GROUPED, { group: "folder", size: "s" })} action="/media" shortcuts={false} />,
+  "by-month": () => <MediaLibrary data={load(GROUPED, { group: "month", layout: "list", sort: "size" }, { page: { nextCursor: null, sortedOnPage: true } })} action="/media" shortcuts={false} />,
+  limited: () => <MediaLibrary data={reader} action="/media" shortcuts={false} />,
   picker: () => <Picker />,
   "picker-step": () => <MediaLibrary data={load(FILES, { pick: "2026/09/uptime-strip.png" }, { extra: undefined })} action="/media" mode="picker" />,
-  "empty-trash": () => <MediaLibrary data={load(FILES.filter((f) => f.state !== "binned"), { view: "trash" }, { extra: undefined })} action="/media" />,
-  "empty-match": () => <MediaLibrary data={load(FILES, { q: "lysogeny" }, { extra: undefined })} action="/media" />,
+  "empty-trash": () => <MediaLibrary data={load(FILES.filter((f) => f.state !== "binned"), { view: "trash" }, { extra: undefined })} action="/media" shortcuts={false} />,
+  "empty-match": () => <MediaLibrary data={load(FILES, { q: "lysogeny" }, { extra: undefined })} action="/media" shortcuts={false} />,
 };
 
 for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
@@ -239,4 +271,4 @@ for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
 }
 
 const staticHost = document.getElementById("media-static");
-if (staticHost) staticHost.innerHTML = renderToStaticMarkup(<MediaLibrary data={load(FILES, { inspect: "2026/09/foxhound-hero.png" })} action="/media" />, { identifierPrefix: "static" });
+if (staticHost) staticHost.innerHTML = renderToStaticMarkup(<MediaLibrary data={load(FILES, { inspect: "2026/09/foxhound-hero.png" })} action="/media" shortcuts={false} />, { identifierPrefix: "static" });
