@@ -166,6 +166,10 @@
   .cap-posts-wrap:has(.cap-menu-form[open]) {
     padding-block-end: 12rem;
   }
+  /* A menu with Reschedule's time field is taller. */
+  .cap-posts-wrap:has(.cap-menu-form[open] .cap-menu-field) {
+    padding-block-end: 22rem;
+  }
 
   .cap-posts-pages {
     display: flex;
