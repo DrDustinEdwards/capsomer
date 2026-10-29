@@ -96,7 +96,7 @@ function entryHtml(e: Entry, show: "before" | "after" | "both"): string {
   }
 }
 
-function kindOf(spans: RunSpan[] | undefined, s: Sentence): RunKind | null {
+function runKindAt(spans: RunSpan[] | undefined, s: Sentence): RunKind | null {
   if (!spans) return null;
   let best: RunKind | null = null;
   let most = 0;
@@ -177,8 +177,8 @@ function renderSideRows(ctx: Ctx, from: number, to: number, withIds: boolean, la
     const g = an.group[i] as number;
     const opensChange = g > 0 && (i === 0 || an.group[i - 1] !== g);
     const para = (e.a?.para ?? false) || (e.b?.para ?? false);
-    const kb = e.a ? kindOf(opts.runs?.before, e.a) : null;
-    const ka = e.b ? kindOf(opts.runs?.after, e.b) : null;
+    const kb = e.a ? runKindAt(opts.runs?.before, e.a) : null;
+    const ka = e.b ? runKindAt(opts.runs?.after, e.b) : null;
     const before = e.op === "ins" ? "" : runWrap(kb, last.before, entryHtml(e, "before"), "div");
     const after = e.op === "del" ? "" : runWrap(ka, last.after, entryHtml(e, "after"), "div");
     if (e.a) last.before = kb;
@@ -249,7 +249,7 @@ function paragraphs(ctx: Ctx, from: number, to: number, withIds: boolean, last: 
     }
     const spans = e.b ? opts.runs?.after : opts.runs?.before;
     const sentence = e.b ?? e.a;
-    const kind = sentence ? kindOf(spans, sentence) : null;
+    const kind = sentence ? runKindAt(spans, sentence) : null;
     out += `${runWrap(kind, last.k, entryHtml(e, "both"), "span")} `;
     last.k = kind;
   }
