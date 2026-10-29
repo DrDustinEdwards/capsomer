@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.35.0",
+  "version": "0.36.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
   "license": "MIT",
   "type": "module",
@@ -111,8 +111,8 @@
     "capsomer": "./bin/capsomer.mjs"
   },
   "scripts": {
-    "tokens": "node tokens/palette.mjs && node tokens/scale.mjs && node tokens/sites.mjs",
-    "check": "node tokens/palette.mjs --check && node tokens/palette.mjs --report --summary && node tokens/scale.mjs --check && node tokens/sites.mjs --check && node --test test/unit/*.test.mjs && tsc --noEmit -p tsconfig.json",
+    "tokens": "node tokens/palette.mjs && node tokens/scale.mjs && node tokens/sites.mjs && node tokens/fonts.mjs",
+    "check": "node tokens/palette.mjs --check && node tokens/palette.mjs --report --summary && node tokens/scale.mjs --check && node tokens/sites.mjs --check && node tokens/fonts.mjs --check && node --test test/unit/*.test.mjs && tsc --noEmit -p tsconfig.json",
     "build": "tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "states": "node bin/capsomer.mjs states",

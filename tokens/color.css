@@ -85,8 +85,8 @@
   --scrim: rgba(28, 23, 39, 0.28);
   --img-filter: none;
   color-scheme: light;
-  --ui: "Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --mono: "Martian Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --ui: "Schibsted Grotesk", "Schibsted Grotesk Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Martian Mono", "Martian Mono Fallback", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {

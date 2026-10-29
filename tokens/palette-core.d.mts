@@ -12,6 +12,9 @@ export interface Family {
   note: string;
 }
 export declare const FAMILIES: Record<"purple" | "fox" | "teal" | "amber" | "navy" | "forest" | "magenta" | "cerulean" | "olive" | "rose", Family>;
+/** The family font stacks, each face with its size-matched fallback second (tokens/fonts.mjs). */
+export declare const UI_STACK: string;
+export declare const MONO_STACK: string;
 
 /** One theme's tokens, by name without the leading --, as hex or CSS values. */
 export type Tokens = Record<string, string>;

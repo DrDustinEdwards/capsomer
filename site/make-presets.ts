@@ -2,13 +2,13 @@
 // can load, the presets it starts from, and the sizes and corners each setting comes to. The faces are
 // self-hosted from @fontsource, as the family sites load them; the site presets are what
 // tokens/sites.mjs gives those sites.
-import { FAMILIES } from "../tokens/palette-core.mjs";
+import { FAMILIES, MONO_STACK, UI_STACK } from "../tokens/palette-core.mjs";
 
 export type Label = "auto" | "light" | "dark";
 export type Density = "compact" | "comfortable";
 
 export const FACES: Record<string, { name: string; stack: string }> = {
-  schibsted: { name: "Schibsted Grotesk", stack: '"Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif' },
+  schibsted: { name: "Schibsted Grotesk", stack: UI_STACK },
   "dm-sans": { name: "DM Sans", stack: '"DM Sans", system-ui, sans-serif' },
   inter: { name: "Inter", stack: '"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif' },
   "open-sans": { name: "Open Sans", stack: '"Open Sans", Arial, sans-serif' },
@@ -16,7 +16,7 @@ export const FACES: Record<string, { name: string; stack: string }> = {
   fraunces: { name: "Fraunces", stack: '"Fraunces", Georgia, serif' },
   "source-serif": { name: "Source Serif 4", stack: '"Source Serif 4 Variable", "Source Serif 4", Charter, Georgia, serif' },
   system: { name: "The device's own", stack: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' },
-  martian: { name: "Martian Mono", stack: '"Martian Mono", ui-monospace, "Cascadia Mono", Consolas, monospace' },
+  martian: { name: "Martian Mono", stack: MONO_STACK },
   "dm-mono": { name: "DM Mono", stack: '"DM Mono", ui-monospace, monospace' },
   "system-mono": { name: "The device's own", stack: 'ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace' },
 };

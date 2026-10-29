@@ -505,6 +505,11 @@ const note = (seed, anchor) => {
   return `step 9 ${seed.toLowerCase()} (oklch ${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})${light !== seed.toLowerCase() ? `, ${light} in light` : ""}${dark !== seed.toLowerCase() ? `, ${dark} in dark` : ""}${anchor ? `, step 11 anchored at ${anchor.toLowerCase()}` : ""}`;
 };
 
+// The family's font stacks, the one place they are written. Each face's size-matched fallback
+// (tokens/fonts.mjs) comes second, so the swap to the face barely moves the text.
+export const UI_STACK = '"Schibsted Grotesk", "Schibsted Grotesk Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif';
+export const MONO_STACK = '"Martian Mono", "Martian Mono Fallback", ui-monospace, "Cascadia Mono", Consolas, monospace';
+
 // The default family on the document root: color.css.
 export function renderFamily(seed, anchor = null, label = "light") {
   const th = bothLevels(seed, anchor, label);
@@ -513,8 +518,8 @@ export function renderFamily(seed, anchor = null, label = "light") {
    that differs from what the script writes, and any pair below WCAG 2.2's bar or its APCA floor. */
 :root {
 ${lines(th.light, "  ", "light", true)}
-  --ui: "Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --mono: "Martian Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --ui: ${UI_STACK};
+  --mono: ${MONO_STACK};
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -591,7 +596,6 @@ ${marks("dark", "  ")}
 // "capsomer/enarratio-theme"` and hand it to Enarratio's stylesheet(), with no dependency of
 // Capsomer on Enarratio (and none of Enarratio on Capsomer). The same tokens feed
 // css/enarratio.css, which maps the custom properties for an app that loads Capsomer's CSS.
-const FONT_STACK = '"Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif';
 export function enarratioTheme(family = FAMILIES.purple) {
   const scheme = (t) => ({
     background: t.surface,
@@ -605,7 +609,7 @@ export function enarratioTheme(family = FAMILIES.purple) {
   });
   const l = familyTheme(family.seed, family.anchor, "light");
   const d = familyTheme(family.seed, family.anchor, "dark");
-  return { name: "capsomer", fonts: { body: FONT_STACK, numeric: FONT_STACK }, gridlines: "y", light: scheme(l), dark: scheme(d) };
+  return { name: "capsomer", fonts: { body: UI_STACK, numeric: UI_STACK }, gridlines: "y", light: scheme(l), dark: scheme(d) };
 }
 
 export function renderEnarratioTheme() {

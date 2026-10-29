@@ -5,7 +5,7 @@
 @layer cap.tokens {
   [data-cap-site="capsid"][data-cap-site],
   [data-cap-site="capsid"][data-cap-site] :is([data-family], [data-density]) {
-    --prose: "Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --prose: "Schibsted Grotesk", "Schibsted Grotesk Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     --ground: #fbfefe;
   }
   @media (prefers-color-scheme: dark) {

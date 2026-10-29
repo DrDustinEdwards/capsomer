@@ -16,6 +16,7 @@
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { FAMILIES, failures, fitNeutrals, themes } from "./palette.mjs";
+import { UI_STACK } from "./palette-core.mjs";
 
 // site -> { family (whose tokens the colors are checked against), on (where the attribute
 // goes), note, all (both themes), light, dark, defaultTheme, phone, phoneMax, coarse }. A site whose
@@ -134,7 +135,7 @@ const SITES = {
     on: "the explorer's <html> (capsid.dustinedwards.info)",
     note: "running text in the UI face; in light the ground is the surface, as the explorer's board draws them; in dark the family's darker ground, so panels on the surface stand out",
     all: {
-      prose: '"Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+      prose: UI_STACK,
     },
     light: { ground: "#fbfefe" },
     dark: { ground: "#070f0f" },
