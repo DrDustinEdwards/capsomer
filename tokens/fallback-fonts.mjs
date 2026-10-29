@@ -4,27 +4,8 @@
 // With font-display: swap the page first paints in a local face, then swaps to the site's own once
 // it loads, and the text reflows by the difference in their widths and heights. A fallback face
 // scaled to the face's average width, with its ascent, descent and line gap set to match, makes the
-// swap land on (nearly) the same lines. This is Astro's Fonts API fallback
-// (packages/astro/src/assets/fonts/infra/capsize-font-metrics-resolver.ts and
-// system-fallbacks-provider.ts, Astro 7.4), itself adapted from Capsize and Nuxt Fonts, under the
-// MIT license:
-//
-//   Copyright (c) 2021 Fred K. Schott
-//
-//   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
-//   and associated documentation files (the "Software"), to deal in the Software without
-//   restriction, including without limitation the rights to use, copy, modify, merge, publish,
-//   distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
-//   Software is furnished to do so, subject to the following conditions:
-//
-//   The above copyright notice and this permission notice shall be included in all copies or
-//   substantial portions of the Software.
-//
-//   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
-//   BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-//   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-//   DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// swap land on (nearly) the same lines. Method from Astro's Fonts API (packages/astro/src/assets/fonts),
+// itself from Capsize and Nuxt Fonts; no code copied.
 
 // The local faces' metrics, from Capsize's collection (@capsizecss/metrics 4.4.0, as Astro carries
 // them). Astro's defaults are Arial for sans-serif, Courier New for monospace and Times New Roman

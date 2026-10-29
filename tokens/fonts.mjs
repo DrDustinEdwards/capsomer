@@ -2,8 +2,8 @@
 // `--check` regenerates it in memory, refuses a difference from the committed file, and refuses a
 // font file whose bytes no longer match the metrics measured from it.
 //
-// Each face has a size-matched fallback (tokens/fallback-fonts.mjs, Astro's Fonts API method, MIT
-// notice there), listed second in the font stacks.
+// Each face has a size-matched fallback (tokens/fallback-fonts.mjs, Astro's Fonts API method),
+// listed second in the font stacks.
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
