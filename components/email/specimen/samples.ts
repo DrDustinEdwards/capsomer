@@ -8,6 +8,7 @@ const link = { url: "https://carrel.example/auth/verify?t=EXAMPLE-NOT-A-TOKEN", 
 
 const SAMPLES: Record<string, () => string> = {
   magicLink: () => renderEmail(magicLink, { ...common, ...link }).html,
+  magicLinkCode: () => renderEmail(magicLink, { ...common, ...link, code: "000000" }).html,
   verification: () => renderEmail(verification, { ...common, ...link }).html,
   reset: () => renderEmail(reset, { ...common, ...link }).html,
   alert: () =>

@@ -236,17 +236,35 @@ const linkBlocks = (d: LinkData & Common, defaults: { heading: string; intro: st
   ];
 };
 
-/** Sign in with one link. */
-export const magicLink: Template<LinkData> = {
+interface MagicLinkData extends LinkData {
+  /** A one-time code that signs in the page that asked, for a link opened in another browser. Optional. */
+  code?: string;
+}
+
+/** Sign in with one link, and with a code typed into the page that asked when the product sends one. */
+export const magicLink: Template<MagicLinkData> = {
   name: "magic-link",
   subject: (d) => d.copy?.subject ?? `Your sign-in link for ${d.brand.name}`,
-  blocks: (d) =>
-    linkBlocks(d, {
+  blocks: (d) => {
+    const blocks = linkBlocks(d, {
       heading: `Sign in to ${d.brand.name}`,
       intro: `Someone asked to sign in to ${d.brand.name} as ${d.to}. Use the button to finish.`,
       button: "Sign in",
-      ignore: "If this was not you, ignore this message. Nothing happens unless the link is used.",
-    }),
+      ignore: d.code
+        ? "If this was not you, ignore this message. Nothing happens unless the link or the code is used."
+        : "If this was not you, ignore this message. Nothing happens unless the link is used.",
+    });
+    if (!d.code) return blocks;
+    // A link opens in the mail app's browser, which is often not the one that asked (a private window, another
+    // device), so the code follows the button and the expiry line covers both.
+    return [
+      ...blocks.slice(0, 3),
+      { type: "paragraph", text: "Or enter this code on the page where you asked:" },
+      { type: "code", text: d.code },
+      { type: "fine", text: `The link and the code work once and expire in ${d.expiresIn}.` },
+      ...blocks.slice(4),
+    ];
+  },
 };
 
 /** Confirm an address. */

@@ -2,6 +2,12 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.41.0]
+
+A sign-in code in the magic-link mail, for a link that opens in another browser than the one that asked.
+
+- **`magicLink` takes an optional `code`.** With it, the mail says "Or enter this code on the page where you asked:" under the button, shows the code in the code block (the text part puts it on its own indented line), and the expiry and ignore lines cover the link and the code. Without it the mail is unchanged. The subject never carries the code, so a lock-screen preview does not show it. site-runtime 0.29.0's `./sign-in` sends one with every sign-in link.
+
 ## [0.40.0]
 
 The media library's ideas from site-api v0.13.0 (v0.13.1 for the rows' orientation), each shown only where the kit offers it, each a form post that works with no script.
