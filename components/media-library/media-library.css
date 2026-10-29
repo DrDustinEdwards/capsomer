@@ -34,19 +34,25 @@
     gap: var(--space-3);
   }
 
+  /* On the first line's baseline, so an open Display panel grows downward and the count and Grid or
+     List stay on the top line beside its summary. */
   .cap-media-lib-bar {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
     gap: var(--space-3) var(--space-4);
   }
   .cap-media-lib-count {
     margin: 0;
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
   }
-  .cap-media-lib-tools,
+  .cap-media-lib-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
   .cap-media-lib-layout,
   .cap-media-lib-extra {
     display: flex;

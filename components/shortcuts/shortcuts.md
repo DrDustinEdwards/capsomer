@@ -91,7 +91,7 @@ register({ key: "Mod+k", label: "Open the command menu", group: "General", run: 
 // off() removes it again.
 ```
 
-`list()` and `grouped()` read the registry, `setSingleKeys(on)` and `singleKeysOn()` the preference, `keyCaps("Mod+k")` gives what to print on a key cap. In React, `useShortcut(key, run, { label, about, group })` registers while mounted, and `<ShortcutSheet open onOpenChange>` becomes the sheet `?` opens.
+`list()` and `grouped()` read the registry, `setSingleKeys(on)` and `singleKeysOn()` the preference, `keyCaps("Mod+k")` gives what to print on a key cap (the arrows as ←, →, ↑ and ↓, which the key caps name for a screen reader and in a tooltip, from `capName`; Escape as Esc). In React, `useShortcut(key, run, { label, about, group })` registers while mounted, and `<ShortcutSheet open onOpenChange>` becomes the sheet `?` opens.
 
 ## Matches shadcn
 

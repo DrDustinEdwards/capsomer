@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useId, useRef, useState } from "react";
 import { Dialog, DialogBody, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
-import { SINGLE_KEYS_NOTE, grouped, keyCaps, modifiedShortcutFor, register, setSheetOpener, setSingleKeys, singleKeysOn, type Shortcut } from "./shortcuts.ts";
+import { SINGLE_KEYS_NOTE, capName, grouped, keyCaps, modifiedShortcutFor, register, setSheetOpener, setSingleKeys, singleKeysOn, type Shortcut } from "./shortcuts.ts";
 
 // Registers a shortcut while the component is mounted. The latest `run` is always the one
 // called, so passing a new function each render does not re-register.
@@ -35,12 +35,24 @@ export function Keys({ spec }: { spec: string | string[] }) {
           {keyCaps(s).map((cap, j) => (
             <Fragment key={`${cap}-${j}`}>
               {j > 0 ? " " : null}
-              <kbd>{cap}</kbd>
+              <Cap cap={cap} />
             </Fragment>
           ))}
         </Fragment>
       ))}
     </>
+  );
+}
+
+// One key cap. An arrow is drawn as its symbol, named for a screen reader and in a tooltip.
+function Cap({ cap }: { cap: string }) {
+  const name = capName(cap);
+  if (!name) return <kbd>{cap}</kbd>;
+  return (
+    <kbd title={name}>
+      <span aria-hidden="true">{cap}</span>
+      <span className="cap-sr-only">{name}</span>
+    </kbd>
   );
 }
 

@@ -67,7 +67,6 @@
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
   }
 
   /* A group of tiles under a heading (a folder, a month). The count is for this page. */
@@ -78,6 +77,10 @@
     &[hidden] {
       display: none;
     }
+  }
+  /* Groups are sections of the page, spaced as the family spaces sections. */
+  .cap-media-group:not([hidden]) ~ .cap-media-group:not([hidden]) {
+    margin-block-start: var(--space-7);
   }
   .cap-media-group-title {
     display: flex;
@@ -195,10 +198,10 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* Proportional figures: tabular ones give the point a digit's width, so "1.8 MB" read "1 . 8 MB". */
   .cap-media-meta {
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
   }
 
   /* What is true of the file that a person should not miss: no alt text, decorative, not used
