@@ -65,7 +65,8 @@ export function withMedia(q: MediaQuery, change: Partial<MediaQuery>): MediaQuer
 // ---------------------------------------------------------------------------------------
 // What is offered.
 
-export type MediaIntent = "add-tags" | "remove-tags" | "trash" | "restore" | "delete";
+// The content kit's names (site-api runMediaIntent), so a host passes the form straight on.
+export type MediaIntent = "tag-add" | "tag-remove" | "trash" | "restore" | "delete";
 
 export interface OfferedAction {
   intent: MediaIntent;
@@ -86,7 +87,7 @@ export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, 
     if (can.deleteMedia && offers.trash) bulk.push({ intent: "restore", label: "Restore" });
     if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   } else {
-    if (can.edit && offers.tags) bulk.push({ intent: "add-tags", label: "Add tag" }, { intent: "remove-tags", label: "Remove tag" });
+    if (can.edit && offers.tags) bulk.push({ intent: "tag-add", label: "Add tag" }, { intent: "tag-remove", label: "Remove tag" });
     if (can.deleteMedia && offers.trash) bulk.push({ intent: "trash", label: "Move to Trash" });
     else if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   }

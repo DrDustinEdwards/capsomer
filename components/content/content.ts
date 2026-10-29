@@ -88,6 +88,8 @@ export interface IntentOutcome {
   message?: string;
   // On a refused media delete: every place the file is used.
   usedBy?: MediaUse[];
+  // The version the item's write made (site-api's Outcome.version), for the next write to it.
+  version?: string;
 }
 
 // The kit asks before a one-way intent: the component shows this as the confirm dialog (with

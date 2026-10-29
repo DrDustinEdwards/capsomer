@@ -8,13 +8,13 @@ const OFFERS = { upload: { maxBytes: 5 * 1024 * 1024, types: ["image/png", "appl
 const intents = (o: ReturnType<typeof mediaActions>) => o.bulk.map((a) => a.intent);
 
 test("behavior: an action is offered only where the site supports it and the person may run it, and delete is for good", () => {
-  expect(intents(mediaActions({ offers: OFFERS, can: ALL, query: {} }))).toEqual(["add-tags", "remove-tags", "trash"]);
+  expect(intents(mediaActions({ offers: OFFERS, can: ALL, query: {} }))).toEqual(["tag-add", "tag-remove", "trash"]);
   // From Trash: restore, or delete for good.
   const bin = mediaActions({ offers: OFFERS, can: ALL, query: { view: "trash" } });
   expect(intents(bin)).toEqual(["restore", "delete"]);
   expect(bin.bulk.find((a) => a.intent === "delete")?.destructive).toBe(true);
   // A site with no Trash deletes from the library.
-  expect(intents(mediaActions({ offers: { ...OFFERS, trash: false }, can: ALL, query: {} }))).toEqual(["add-tags", "remove-tags", "delete"]);
+  expect(intents(mediaActions({ offers: { ...OFFERS, trash: false }, can: ALL, query: {} }))).toEqual(["tag-add", "tag-remove", "delete"]);
   const bare = mediaActions({ offers: { upload: null, alt: false, tags: false, trash: false, delete: false }, can: ALL, query: {} });
   expect(bare.bulk).toEqual([]);
   expect(bare.withheld).toEqual(["Uploads are not offered by this site.", "Alt text is set at upload here: this site cannot change it afterwards.", "Tags are not offered: this site keeps no tags on its files.", "Delete is not offered: this site cannot delete files."]);
@@ -120,7 +120,8 @@ eachTheme((theme) => {
     await lib.getByRole("checkbox", { name: "Select uptime-strip.png" }).check({ force: true });
     await lib.getByRole("checkbox", { name: "Select divider.png" }).check({ force: true });
     await lib.getByRole("button", { name: "Move to Trash" }).first().click();
-    expect((await posted).fields).toEqual({ ids: ["2026/09/uptime-strip.png", "2026/09/divider.png"], tag: [""], intent: ["trash"] });
+    // Each box's version is posted under its id, which the content kit reads for the ticked ones.
+    expect((await posted).fields).toMatchObject({ ids: ["2026/09/uptime-strip.png", "2026/09/divider.png"], tags: [""], intent: ["trash"], "version:2026/09/uptime-strip.png": ["v1"], "version:2026/09/divider.png": ["v1"] });
     // The inspector is open on the file the address named, in form mode.
     const ins = lib.getByRole("dialog", { name: "foxhound-hero.png" });
     await expect(ins.getByRole("link", { name: "Close" })).toHaveAttribute("href", "/media");
@@ -170,10 +171,20 @@ eachTheme((theme) => {
     await expect(ins.getByRole("textbox", { name: "Alt text" })).toBeFocused();
     await page.keyboard.press("Control+End");
     await page.keyboard.type(", in September");
-    await expect.poll(async () => (await log(page)).filter((e) => e.intent === "save").length, { timeout: 4000 }).toBeGreaterThan(0);
+    await expect.poll(async () => (await log(page)).filter((e) => e.intent === "alt").length, { timeout: 4000 }).toBeGreaterThan(0);
     await expect(ins.locator("[data-cap-part='save-status']")).toHaveText("Saved");
-    const saves = (await log(page)).filter((e) => e.intent === "save");
-    expect(saves.at(-1)).toMatchObject({ ids: "2026/09/foxhound-hero.png", versions: "v1", alt: "The Foxhound dashboard with three sites reporting healthy, in September", tags: "release, foxhound" });
+    // Only the field that changed is saved, as the content kit's own intent.
+    const saves = (await log(page)).filter((e) => e.intent === "alt");
+    expect(saves.at(-1)).toMatchObject({ ids: "2026/09/foxhound-hero.png", versions: "v1", alt: "The Foxhound dashboard with three sites reporting healthy, in September" });
+    expect((await log(page)).some((e) => e.intent === "tags" || e.intent === "save")).toBe(false);
+    // The next field saves on the version the alt text's write made, so the site takes it.
+    await ins.getByRole("textbox", { name: "Add a tag" }).fill("launch");
+    await page.keyboard.press("Enter");
+    await expect.poll(async () => (await log(page)).filter((e) => e.intent === "tags").length, { timeout: 4000 }).toBeGreaterThan(0);
+    await expect(ins.locator("[data-cap-part='save-status']")).toHaveText("Saved");
+    const tagged = (await log(page)).filter((e) => e.intent === "tags").at(-1);
+    expect(tagged).toMatchObject({ tags: "release, foxhound, launch" });
+    expect(tagged?.versions).not.toBe("v1");
   });
 
   test("keyboard: Ctrl K finds a file and opens it, and Esc on a tile closes its details", async ({ page }) => {

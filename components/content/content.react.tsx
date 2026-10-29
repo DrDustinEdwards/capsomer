@@ -237,14 +237,16 @@ export interface ContentBulkBarProps {
   // What the list holds ("posts", "files"): the bar's name and its words before script runs.
   plural: string;
   actions: ReadonlyArray<{ intent: string; label: string; destructive?: boolean }>;
-  // A Tag field beside the actions, posted as `tag` with them.
+  // A Tag field beside the actions, posted as `tag` with them (`tagName` names it otherwise:
+  // the media kit reads `tags`).
   tag: boolean;
+  tagName?: string;
   intents: Pick<Intents, "outcomes" | "dismissOutcomes">;
 }
 
 // The content components' bulk bar: an empty form the boxes post through, and the bar in form mode
 // with its actions as submit buttons, the optional Tag field, and each item's outcome.
-export function ContentBulkBar({ formId, action, Form, formClass, items, total, onSelectAll, onClear, plural, actions, tag, intents }: ContentBulkBarProps) {
+export function ContentBulkBar({ formId, action, Form, formClass, items, total, onSelectAll, onClear, plural, actions, tag, tagName = "tag", intents }: ContentBulkBarProps) {
   return (
     <>
       <Form id={formId} method="post" action={action} className={formClass} />
@@ -264,7 +266,7 @@ export function ContentBulkBar({ formId, action, Form, formClass, items, total, 
         {tag ? (
           <span className="cap-bulk-field">
             <label htmlFor={`${formId}-tag`}>Tag</label>
-            <input className="cap-input" id={`${formId}-tag`} name="tag" form={formId} autoComplete="off" />
+            <input className="cap-input" id={`${formId}-tag`} name={tagName} form={formId} autoComplete="off" />
           </span>
         ) : null}
       </BulkBar>

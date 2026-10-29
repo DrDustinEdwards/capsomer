@@ -164,6 +164,7 @@ function useRouter(initial: MediaQuery) {
 const fileWord = (n: number) => (n === 1 ? "file" : "files");
 
 // The in-memory site: what the content kit would do through site-api.
+let written = 1;
 function useSite() {
   const live = useRef(FILES.map((f) => ({ ...f })));
   const [, setTick] = useState(0);
@@ -181,7 +182,14 @@ function useSite() {
     await new Promise((r) => setTimeout(r, 40));
     const intent = String(form.get("intent"));
     const ids = form.getAll("ids").map(String);
-    const tag = String(form.get("tag") ?? "").trim();
+    const tag = String(form.get("tags") ?? "").trim();
+    // As the kit does: a single file's write needs the version the page saw, and says the one it made.
+    const seen = String(form.get("versions") ?? "");
+    const stale = () => {
+      const now = live.current.find((f) => f.key === ids[0])?.version;
+      return !!now && seen !== now;
+    };
+    const next = () => `v${++written}`;
     const name = (id: string) => live.current.find((f) => f.key === id)?.name ?? id;
     const some = (n: number) => (n === 1 ? `“${name(ids[0] ?? "")}”` : `${n} files`);
     switch (intent) {
@@ -191,17 +199,18 @@ function useSite() {
         change((fs) => fs.map((f) => (ids.includes(f.key) ? { ...f, state: to } : f)));
         return intent === "trash" ? { ok: true, message: `Moved ${some(ids.length)} to Trash.`, undo: { intent: "restore", fields: { ids } } } : { ok: true, message: `Restored ${some(ids.length)}.`, undo: { intent: "trash", fields: { ids } } };
       }
-      case "add-tags":
-      case "remove-tags": {
+      case "tag-add":
+      case "tag-remove": {
         if (!tag) return { ok: false, message: "Type a tag first. Nothing was changed." };
-        const adding = intent === "add-tags";
+        if (ids.some((id) => !form.has(`version:${id}`))) return { ok: false, message: "The page did not say which version of each file you saw, so nothing was sent." };
+        const adding = intent === "tag-add";
         const changed = ids.filter((id) => live.current.find((f) => f.key === id)?.tags.includes(tag) !== adding);
         change((fs) => fs.map((f) => (changed.includes(f.key) ? { ...f, tags: adding ? [...f.tags, tag] : f.tags.filter((t) => t !== tag) } : f)));
         return {
           ok: true,
           message: `${adding ? "Added" : "Removed"} the tag ${tag} ${adding ? "to" : "from"} ${changed.length} ${fileWord(changed.length)}.`,
           outcomes: ids.map((id) => ({ id, ok: true, message: changed.includes(id) ? undefined : adding ? "Already had it." : "Did not have it." })),
-          undo: changed.length ? { intent: adding ? "remove-tags" : "add-tags", fields: { ids: changed, tag } } : undefined,
+          undo: changed.length ? { intent: adding ? "tag-remove" : "tag-add", fields: { ids: changed, tags: tag, ...Object.fromEntries(changed.map((id) => [`version:${id}`, live.current.find((f) => f.key === id)?.version ?? ""])) } } : undefined,
         };
       }
       case "delete": {
@@ -216,29 +225,31 @@ function useSite() {
           outcomes: ids.map((id) => (refused.includes(id) ? { id, ok: false, message: "Still used, so the site kept it.", usedBy: (USES[id] ?? []).map((u) => ({ type: "post", id: u.href, title: u.title, detail: u.how ?? "" })) } : { id, ok: true })),
         };
       }
-      case "save":
       case "alt":
       case "tags":
       case "caption": {
         const id = ids[0] ?? "";
+        if (stale()) return { ok: false, message: "Changed elsewhere since this page read it. Reload and try again." };
+        const version = next();
         const decorative = form.get("decorative") === "on";
         const alt = String(form.get("alt") ?? "");
         const tags = form.has("tags") ? String(form.get("tags")).split(",").map((t) => t.trim()).filter(Boolean) : undefined;
         const caption = form.has("caption") ? String(form.get("caption")) : undefined;
-        change((fs) => fs.map((f) => (f.key !== id ? f : { ...f, ...(form.has("alt") || decorative ? { alt: decorative ? "" : alt, altState: decorative ? "decorative" : alt.trim() ? "set" : "missing" } : {}), ...(tags ? { tags } : {}), ...(caption !== undefined ? { caption } : {}), version: `v${Date.now()}` })));
-        return { ok: true, message: `Saved ${some(1)}.` };
+        change((fs) => fs.map((f) => (f.key !== id ? f : { ...f, ...(form.has("alt") || decorative ? { alt: decorative ? "" : alt, altState: decorative ? "decorative" : alt.trim() ? "set" : "missing" } : {}), ...(tags ? { tags } : {}), ...(caption !== undefined ? { caption } : {}), version })));
+        return { ok: true, message: `Saved ${some(1)}.`, outcomes: [{ id, ok: true, version }] };
       }
       case "focus": {
         const id = ids[0] ?? "";
         const focus = form.get("clear") === "yes" ? null : `${Number(form.get("x")) / 100}x${Number(form.get("y")) / 100}`;
-        change((fs) => fs.map((f) => (f.key !== id ? f : { ...f, focus, version: `v${Date.now()}` })));
-        return { ok: true, message: focus ? "Focal point saved." : "Focal point cleared." };
+        const version = next();
+        change((fs) => fs.map((f) => (f.key !== id ? f : { ...f, focus, version })));
+        return { ok: true, message: focus ? "Focal point saved." : "Focal point cleared.", outcomes: [{ id, ok: true, version }] };
       }
       case "replace": {
         const id = ids[0] ?? "";
         const f = form.get("file");
         if (!(f instanceof File) || !f.name) return { ok: false, message: "Choose the new file." };
-        change((fs) => fs.map((x) => (x.key !== id ? x : { ...x, bytes: f.size, focus: null, thumb: thumb("#bfe3d0"), version: `v${Date.now()}` })));
+        change((fs) => fs.map((x) => (x.key !== id ? x : { ...x, bytes: f.size, focus: null, thumb: thumb("#bfe3d0"), version: next() })));
         return { ok: true, message: `Replaced ${some(1)}. Every page that shows it shows the new one.` };
       }
       case "upload": {
