@@ -224,6 +224,15 @@ export function grouped(): Array<{ group: string; items: Shortcut[] }> {
   return out;
 }
 
+// Keys whose cap is a symbol or a short word, with the name a screen reader says for the symbols.
+const CAPS: Record<string, string> = { ArrowLeft: "←", ArrowRight: "→", ArrowUp: "↑", ArrowDown: "↓", Escape: "Esc" };
+const CAP_NAMES: Record<string, string> = { "←": "Left arrow", "→": "Right arrow", "↑": "Up arrow", "↓": "Down arrow" };
+
+// The spoken name of a key cap drawn as a symbol (an arrow); undefined for a cap that reads as it is.
+export function capName(cap: string): string | undefined {
+  return CAP_NAMES[cap];
+}
+
 // What a key spec looks like on a key cap, one string per step: "Mod+k" is ["Ctrl K"]
 // (["⌘ K"] on a Mac), "g o" is ["g", "o"].
 export function keyCaps(spec: string): string[] {
@@ -234,7 +243,7 @@ export function keyCaps(spec: string): string[] {
     if (c.ctrl || (c.mod && !mac)) names.push("Ctrl");
     if (c.meta || (c.mod && mac)) names.push(mac ? "⌘" : "Meta");
     if (c.alt) names.push(mac ? "⌥" : "Alt");
-    const k = c.key.length === 1 && names.length ? c.key.toUpperCase() : c.key;
+    const k = CAPS[c.key] ?? (c.key.length === 1 && names.length ? c.key.toUpperCase() : c.key);
     names.push(k);
     return names.join(" ");
   });
@@ -250,7 +259,18 @@ export function keysFragment(key: string | string[]): DocumentFragment {
     keyCaps(spec).forEach((cap, j) => {
       if (j > 0) frag.append(" ");
       const k = document.createElement("kbd");
-      k.textContent = cap;
+      const name = capName(cap);
+      if (name) {
+        // The arrow is drawn; its name is what a screen reader says and what a pointer's tooltip shows.
+        k.title = name;
+        const shown = document.createElement("span");
+        shown.setAttribute("aria-hidden", "true");
+        shown.textContent = cap;
+        const said = document.createElement("span");
+        said.className = "cap-sr-only";
+        said.textContent = name;
+        k.append(shown, said);
+      } else k.textContent = cap;
       frag.append(k);
     });
   });

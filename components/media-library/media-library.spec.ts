@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, nextPost, visitStates } from "../../test/helpers.ts";
-import { countLine, emptyWords, mediaActions, mediaHref, pickable, uploadRules, withMedia } from "./media-library.ts";
+import { countLine, emptyWords, groupRows, lensChips, mediaActions, mediaHref, pickable, readMediaView, uploadRules, withMedia } from "./media-library.ts";
 
 const ALL = { edit: true, publish: true, deleteContent: true, deleteMedia: true, decideMentions: true };
 const NONE = { edit: false, publish: false, deleteContent: false, deleteMedia: false, decideMentions: false };
@@ -8,13 +8,13 @@ const OFFERS = { upload: { maxBytes: 5 * 1024 * 1024, types: ["image/png", "appl
 const intents = (o: ReturnType<typeof mediaActions>) => o.bulk.map((a) => a.intent);
 
 test("behavior: an action is offered only where the site supports it and the person may run it, and delete is for good", () => {
-  expect(intents(mediaActions({ offers: OFFERS, can: ALL, query: {} }))).toEqual(["add-tags", "remove-tags", "trash"]);
+  expect(intents(mediaActions({ offers: OFFERS, can: ALL, query: {} }))).toEqual(["tag-add", "tag-remove", "trash"]);
   // From Trash: restore, or delete for good.
   const bin = mediaActions({ offers: OFFERS, can: ALL, query: { view: "trash" } });
   expect(intents(bin)).toEqual(["restore", "delete"]);
   expect(bin.bulk.find((a) => a.intent === "delete")?.destructive).toBe(true);
   // A site with no Trash deletes from the library.
-  expect(intents(mediaActions({ offers: { ...OFFERS, trash: false }, can: ALL, query: {} }))).toEqual(["add-tags", "remove-tags", "delete"]);
+  expect(intents(mediaActions({ offers: { ...OFFERS, trash: false }, can: ALL, query: {} }))).toEqual(["tag-add", "tag-remove", "delete"]);
   const bare = mediaActions({ offers: { upload: null, alt: false, tags: false, trash: false, delete: false }, can: ALL, query: {} });
   expect(bare.bulk).toEqual([]);
   expect(bare.withheld).toEqual(["Uploads are not offered by this site.", "Alt text is set at upload here: this site cannot change it afterwards.", "Tags are not offered: this site keeps no tags on its files.", "Delete is not offered: this site cannot delete files."]);
@@ -31,6 +31,24 @@ test("behavior: an address keeps its filters in one order, leaves the defaults o
   // Opening another file keeps the page it is on.
   expect(mediaHref("/media", withMedia(q, { inspect: "c.png" }))).toBe("/media?q=fox&tag=release&cursor=c-2&inspect=c.png");
   expect(mediaHref("/media", withMedia(q, { inspect: undefined }))).toBe("/media?q=fox&tag=release&cursor=c-2");
+});
+
+test("behavior: a sort runs its own way unless told, a display change keeps the open file, and groups come from the page's ids and UTC months", () => {
+  const q = { inspect: "a/b.png", cursor: "c-2", q: "fox" };
+  // Each sort's own direction is left out of the address; a new sort drops the old direction.
+  expect(mediaHref("/media", withMedia(q, { sort: "name" }))).toBe("/media?q=fox&sort=name");
+  expect(mediaHref("/media", withMedia({ sort: "name", dir: "desc" }, { sort: "size" }))).toBe("/media?sort=size");
+  expect(mediaHref("/media", { sort: "added", dir: "asc" })).toBe("/media?dir=asc");
+  // Layout, size and grouping change only the drawing: the page and the open file stay.
+  expect(mediaHref("/media", withMedia(q, { group: "month", size: "s" }))).toBe("/media?q=fox&size=s&group=month&cursor=c-2&inspect=a%2Fb.png");
+  expect(readMediaView(new URLSearchParams("layout=list&size=xl&group=month"))).toEqual({ layout: "list", group: "month" });
+  const rec = (key: string, uploaded?: string) => ({ key, name: key, url: `/m/${key}`, kind: "image" as const, type: "image/png", bytes: 1, alt: "", altState: "missing" as const, title: "", caption: "", tags: [], used: [], state: "ready" as const, uploaded });
+  const rows = [rec("2026/09/a.png", "2026-09-30T23:30:00-05:00"), rec("logo.png"), rec("2026/09/b.png", "2026-09-02")];
+  expect(groupRows(rows, "folder")?.map((g) => [g.label, g.items.length])).toEqual([["2026/09", 2], ["Top level", 1]]);
+  expect(groupRows(rows, "month")?.map((g) => g.label)).toEqual(["October 2026", "No upload date", "September 2026"]);
+  expect(groupRows(rows, undefined)).toBeNull();
+  // Only the contract's lenses the site names get a chip, in words, with a host's own after them.
+  expect(lensChips({ offers: { ...OFFERS, lenses: ["no-alt", "made-up"] }, extra: { lenses: [{ id: "no-alt", label: "x", count: 3 }, { id: "duplicates", label: "Duplicates" }] } }).map((l) => [l.id, l.label, l.count])).toEqual([["no-alt", "No alt text", 3], ["duplicates", "Duplicates", undefined]]);
 });
 
 test("behavior: the count, the empty state, the upload rules and the picker's files", () => {
@@ -102,18 +120,33 @@ eachTheme((theme) => {
     await lib.getByRole("checkbox", { name: "Select uptime-strip.png" }).check({ force: true });
     await lib.getByRole("checkbox", { name: "Select divider.png" }).check({ force: true });
     await lib.getByRole("button", { name: "Move to Trash" }).first().click();
-    expect((await posted).fields).toEqual({ ids: ["2026/09/uptime-strip.png", "2026/09/divider.png"], tag: [""], intent: ["trash"] });
+    // Each box's version is posted under its id, which the content kit reads for the ticked ones.
+    expect((await posted).fields).toMatchObject({ ids: ["2026/09/uptime-strip.png", "2026/09/divider.png"], tags: [""], intent: ["trash"], "version:2026/09/uptime-strip.png": ["v1"], "version:2026/09/divider.png": ["v1"] });
     // The inspector is open on the file the address named, in form mode.
     const ins = lib.getByRole("dialog", { name: "foxhound-hero.png" });
     await expect(ins.getByRole("link", { name: "Close" })).toHaveAttribute("href", "/media");
     posted = nextPost(page, "#media-static");
     await ins.getByRole("textbox", { name: "Alt text" }).fill("The Foxhound dashboard");
     await ins.getByRole("button", { name: "Save alt text" }).click();
-    expect((await posted).fields).toEqual({ intent: ["save-alt"], ids: ["2026/09/foxhound-hero.png"], version: ["v1"], alt: ["The Foxhound dashboard"] });
+    expect((await posted).fields).toEqual({ intent: ["alt"], ids: ["2026/09/foxhound-hero.png"], versions: ["v1"], alt: ["The Foxhound dashboard"] });
     posted = nextPost(page, "#media-static");
     await ins.getByRole("textbox", { name: "Tags" }).fill("release, launch");
     await ins.getByRole("button", { name: "Save tags" }).click();
-    expect((await posted).fields).toEqual({ intent: ["save-tags"], ids: ["2026/09/foxhound-hero.png"], version: ["v1"], tags: ["release, launch"] });
+    expect((await posted).fields).toEqual({ intent: ["tags"], ids: ["2026/09/foxhound-hero.png"], versions: ["v1"], tags: ["release, launch"] });
+    // The focal point posts its two percents; Replace is a multipart form of its own.
+    posted = nextPost(page, "#media-static");
+    await ins.locator("summary", { hasText: "Focal point" }).click();
+    await ins.getByRole("spinbutton", { name: "From the left (%)" }).fill("25");
+    await ins.getByRole("button", { name: "Save focal point" }).click();
+    expect((await posted).fields).toMatchObject({ intent: ["focus"], ids: ["2026/09/foxhound-hero.png"], x: ["25"], y: ["40"] });
+    posted = nextPost(page, "#media-static");
+    await ins.locator("summary", { hasText: "Replace the file" }).click();
+    const replace = ins.getByRole("form", { name: "Replace the file" });
+    await replace.locator("input[type=file]").setInputFiles({ name: "hero.png", mimeType: "image/png", buffer: Buffer.from("png") });
+    await replace.getByRole("button", { name: "Replace" }).click();
+    const swapped = await posted;
+    expect(swapped.enctype).toBe("multipart/form-data");
+    expect(swapped.fields).toMatchObject({ intent: ["replace"], ids: ["2026/09/foxhound-hero.png"], file: ["file:hero.png"] });
     // Upload is checked against the site's limits before any byte is sent, and posts the file with its alt text.
     const upload = lib.getByRole("form", { name: "Upload a file" });
     await expect(upload.locator("input[type=file]")).toHaveAttribute("accept", "image/png,image/jpeg,image/webp,application/pdf");
@@ -138,10 +171,60 @@ eachTheme((theme) => {
     await expect(ins.getByRole("textbox", { name: "Alt text" })).toBeFocused();
     await page.keyboard.press("Control+End");
     await page.keyboard.type(", in September");
-    await expect.poll(async () => (await log(page)).filter((e) => e.intent === "save").length, { timeout: 4000 }).toBeGreaterThan(0);
+    await expect.poll(async () => (await log(page)).filter((e) => e.intent === "alt").length, { timeout: 4000 }).toBeGreaterThan(0);
     await expect(ins.locator("[data-cap-part='save-status']")).toHaveText("Saved");
-    const saves = (await log(page)).filter((e) => e.intent === "save");
-    expect(saves.at(-1)).toMatchObject({ ids: "2026/09/foxhound-hero.png", version: "v1", alt: "The Foxhound dashboard with three sites reporting healthy, in September", tags: "release, foxhound" });
+    // Only the field that changed is saved, as the content kit's own intent.
+    const saves = (await log(page)).filter((e) => e.intent === "alt");
+    expect(saves.at(-1)).toMatchObject({ ids: "2026/09/foxhound-hero.png", versions: "v1", alt: "The Foxhound dashboard with three sites reporting healthy, in September" });
+    expect((await log(page)).some((e) => e.intent === "tags" || e.intent === "save")).toBe(false);
+    // The next field saves on the version the alt text's write made, so the site takes it.
+    await ins.getByRole("textbox", { name: "Add a tag" }).fill("launch");
+    await page.keyboard.press("Enter");
+    await expect.poll(async () => (await log(page)).filter((e) => e.intent === "tags").length, { timeout: 4000 }).toBeGreaterThan(0);
+    await expect(ins.locator("[data-cap-part='save-status']")).toHaveText("Saved");
+    const tagged = (await log(page)).filter((e) => e.intent === "tags").at(-1);
+    expect(tagged).toMatchObject({ tags: "release, foxhound, launch" });
+    expect(tagged?.versions).not.toBe("v1");
+  });
+
+  test("keyboard: Ctrl K finds a file and opens it, and Esc on a tile closes its details", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    const lib = editor(page);
+    await page.locator("h1").click();
+    await page.keyboard.press("Control+k");
+    const menu = page.getByRole("dialog", { name: "Command menu" });
+    await menu.getByRole("combobox").fill("uptime-s");
+    await expect(menu.getByRole("option", { name: "Copy the address of uptime-strip.png" })).toBeVisible();
+    await expect(menu.getByRole("option", { name: /uptime-strip\.png/ }).first()).toBeVisible();
+    await page.keyboard.press("Enter");
+    await expect(lib.getByRole("dialog", { name: "uptime-strip.png" })).toBeVisible();
+    await lib.locator(".cap-media-tile[data-key='2026/09/uptime-strip.png'] .cap-media-open").focus();
+    await page.keyboard.press("Escape");
+    await expect(lib.getByRole("dialog", { name: "uptime-strip.png" })).toHaveCount(0);
+    await expect(lib.locator(".cap-media-tile[data-key='2026/09/uptime-strip.png'] .cap-media-open")).toBeFocused();
+  });
+
+  test("behavior: with script, Crop loads its editor when pressed and saves the crop as a new file", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    const lib = editor(page);
+    await lib.locator(".cap-media-tile[data-key='2026/09/foxhound-hero.png'] .cap-media-open").click();
+    const ins = lib.getByRole("dialog", { name: "foxhound-hero.png" });
+    await ins.locator("summary", { hasText: "Crop or replace the file" }).click();
+    await ins.getByRole("button", { name: "Crop foxhound-hero.png" }).click();
+    const crop = page.getByRole("dialog", { name: "Crop foxhound-hero.png" });
+    await crop.getByRole("combobox", { name: "Shape" }).selectOption({ label: "Square, 1:1" });
+    await crop.getByRole("button", { name: "Save as a new file" }).click();
+    await expect(crop).toHaveCount(0);
+    const made = (await log(page)).filter((e) => e.intent === "upload").at(-1);
+    expect(made).toMatchObject({ intent: "upload", file: expect.stringMatching(/^file:foxhound-hero-crop.*\.png$/) });
+  });
+
+  test("behavior: Grid or List and the tile size are remembered in this browser", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    await editor(page).getByRole("navigation", { name: "Show as" }).getByRole("link", { name: "List" }).click();
+    await expect(editor(page).locator(".cap-media")).toHaveAttribute("data-view", "list");
+    await page.reload();
+    await expect(editor(page).locator(".cap-media")).toHaveAttribute("data-view", "list");
   });
 
   test("keyboard: with script, Move to Trash runs at once with Undo, and z brings the files back", async ({ page }) => {

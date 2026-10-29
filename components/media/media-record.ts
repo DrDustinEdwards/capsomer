@@ -40,6 +40,9 @@ export interface MediaRecord {
   // Where it is used was not read (a list of files has no usedBy; the inspected one does): no
   // Unattached flag, and the inspector says it was not checked.
   usedUnknown?: boolean;
+  // The point a site's crops are cut around, "XxY" from 0 to 1 from the top left (site-api v0.10.0
+  // MediaFocus); null or absent for none, when the crop is the site's guess.
+  focus?: string | null;
 }
 
 // What the inspector edits.

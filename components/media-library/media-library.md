@@ -1,10 +1,10 @@
 ---
 name: media-library
 title: Media library (for a site)
-summary: One page of one site's files, the same in Carrel and in every site admin. Search, tag chips, the library and Trash, a grid or a list, upload checked against the site's limits, the bulk bar with each file's outcome, an inspector in form or autosave mode, Undo, and a picker mode that asks for the alt text each use needs. Every action is a form post, so it all works with no script.
+summary: One page of one site's files, the same in Carrel and in every site admin. Search, tag chips, the site's lenses, the library and Trash, a sort and its direction, groups by folder or month, a grid or a list at three tile sizes, quick search, upload checked against the site's limits, the bulk bar with each file's outcome, an inspector in form or autosave mode, Undo, and a picker mode that asks for the alt text each use needs. Every action is a form post, so it all works with no script.
 parts: [css, behavior, react]
-tool: native + React (composes media, drop zone, chips, tabs, field, bulk bar, message, empty and confirm dialog)
-states: [editor with every action, inspector in form mode, Trash as a list, reader on a limited site, picker, picker alt step with no script, empty trash, no match, delivered HTML]
+tool: native + React (composes media, drop zone, chips, tabs, field, disclosure, bulk bar, message, empty, confirm dialog, shortcuts and command menu)
+states: [editor with every action, inspector in form mode, Trash as a list, grouped by folder at the small size, a list grouped by month sorted on the page only, reader on a limited site, picker, picker alt step with no script, empty trash, no match, delivered HTML]
 added: 0.6.0
 source: Carrel, app/routes/media.tsx, media.bulk.ts, lib/media.server.ts, components/media/library-insert.tsx (server forms on purpose, the capability gates, the refused-because-used list, cursor paging, the picker that asks for alt text); dustinedwards.info, app/routes/admin.media._index.tsx and components/admin/media-* (the library experience, already in Capsomer's media); docs/design/design-content-components.md section 2.4.2
 replaces:
@@ -38,11 +38,21 @@ Any screen where a person manages one site's files, and any editor that inserts 
 - **An action is offered only when the site supports it and the person may run it** (`data.offers`, `data.can`), and a withheld one is named in words. Delete is for good: from Trash where the site has one, from the library only where it has none. The page says Trash, as the site-api contract does (`view=trash`, `intent=trash`), and so does `media` (Dustin, 2026-10-10).
 - **Upload is checked before any byte is sent**, against the site's own limits (`capabilities.mediaUpload`): the drop zone's `accept` and size, and its hint in words ("PNG, JPEG, WebP and PDF, up to 5 MB."). Alt text is asked in the upload form, and a suggestion from the file name is offered, never applied.
 - **The picker is the same grid, images only, with an alt step.** Choosing an image opens a form for the alt text this use needs, starting from the file's own. Insert needs words; Insert as decorative says the image adds nothing. With script, `onPick` gets `{ id, url, alt }`; with no script the form posts `intent=pick`.
+- **The view is an address, and the drawing is the viewer's.** The site's lenses (`offers.lenses`, the contract's unattached, no-alt and large, site-api v0.6.0; a host's own in `extra.lenses`) are link chips with their meaning in words, in the library only. Display holds the sort (Newest, A to Z, Largest, the contract's `added`, `name`, `size`), its direction, the grouping and the tile size, each a row of link chips, so a view can be sent as a link and works with no script. A sort starts in its own direction (newest, A to Z, largest first) and its default is left out of the address. Grid or List and the tile size are also remembered in this browser (`cap-media-layout`, `cap-media-size`): the address wins when it names one, the last choice otherwise. Where the site did not sort, the kit sorts the page it has (`page.sortedOnPage`) and the library says so.
+- **Groups are headings over the page, by folder or by month.** The folder is everything before the last "/" of a file's id ("Top level" with none); the month is the upload's, in UTC, so a heading does not move with the reader's zone. A group never spans a page and its count is this page's, as dustinedwards.info's library does: fetching the whole library or repeating a heading across pages are both worse. Groups keep the sort's order.
+- **Quick search.** Ctrl K, Cmd K or "/" (through the shortcut registry, so "/" is off when single keys are) opens the command menu over the host's matches when it passes `search`, with the files as options and Enter opening one, and the last option searching the page for what was typed; without `search` the keys put focus in the search field. `shortcuts={false}` leaves the keys to an app-wide command menu; the picker never takes them.
+- **The picture tools are the site's to offer.** Focal point, caption and replace show where the kit offers them (`offers.focus`, `offers.caption`, `offers.replace`, site-api's `mediaFocus`, `mediaCaption` and `mediaReplace`) and the person may edit (replace needs the delete role, since the old file is gone); Crop needs script, the file's own bytes (`bytesHref`) and an upload, and saves the crop as a new file (an upload, then the new file opens) or, where the site allows it, in place of this one. A site that refuses a replacement of another size says so in its offers (`offers.replaceKeepsSize`, site-api's `mediaReplaceKeepsSize`): replace then asks for the same size and a crop is only ever a new file. The rule is the site's flag, never a guess from the file's id.
+- **Quick search copies an address too.** Each match has a second option, Copy the address of it, beside the one Enter opens, and the library says it copied in a live region.
 - **A list of files does not know where each is used** (the contract's list has no `usedBy`), so a tile in a list carries no Unattached flag (`usedUnknown`); the inspected file does.
 
 ## Keyboard
 
-The grid's and the inspector's keys are `media`'s (arrow keys, Home, End, Enter to open, Space or x to select, Alt and an arrow from a field). The bulk bar's are the bulk bar's (Esc clears). z is Undo. In the picker, Enter on a tile opens the alt step.
+The grid's and the inspector's keys are `media`'s (arrow keys, Home, End, Enter to open, Space or x to select, Alt and an arrow from a field). The bulk bar's are the bulk bar's (Esc clears). z is Undo. In the picker, Enter on a tile opens the alt step. The library adds these, and lists them under Keyboard shortcuts:
+
+| Key | Does |
+| --- | --- |
+| Ctrl K, Cmd K, `/` | Find a file: the command menu over the host's matches, or focus in the search field |
+| Esc, on a tile | Clears the selection; with nothing selected, closes the open file's details and keeps focus on the tile |
 
 ## Accessibility
 
@@ -85,13 +95,15 @@ import { MediaLibrary } from "capsomer/react/media-library";
 <MediaLibrary data={data} action="/media/pick" Form={Form} mode="picker" onPick={({ id, url, alt }) => editor.insertImage(url, alt)} />
 ```
 
-Props: `data` (`MediaData`), `action`, `Form`, `submit`, `result`, `labels` (`{ noun, plural }`, "file" by default), `mode` (`"library"` or `"picker"`), `inspector` (`"form"` or `"autosave"`), `onPick`.
+Props: `data` (`MediaData`), `action`, `Form`, `submit`, `result`, `labels` (`{ noun, plural }`, "file" by default), `mode` (`"library"` or `"picker"`), `inspector` (`"form"` or `"autosave"`), `onPick`, `search` (`(query, signal) => Promise<MediaRecord[]>`, quick search), `shortcuts` (true by default), `bytesHref` (`(id) => string`: the file's own bytes on the page's origin, for Crop).
 
-The intents it posts, each with `ids`: `upload` (with `file` and `alt`), `add-tags` and `remove-tags` (with `tag`), `trash`, `restore`, `delete` (answered with `result.confirm`, then posted again with `confirm`, the typed count), `save-alt` (`alt`, `decorative`, `version`) and `save-tags` (`tags`, `version`) from the form-mode inspector, `save` (every field the site keeps) from the autosave one, `pick` (`alt`, `decorative`) from the picker with no script, a host's toolbar intent, and whatever `result.undo` names.
+The query (`data.query`) adds `sort`, `dir`, `group` and `size` to `q`, `tag`, `view`, `layout`, `lens`, `cursor`, `inspect` and `pick`. The kit's `readMediaQuery` reads the lens, the sort and the direction; `readMediaView(searchParams)` reads the rest of the drawing (`layout`, `size`, `group`), and a host merges the two.
 
-`import { mediaActions, mediaHref, uploadRules, pickable } from "capsomer/behavior/media-library"`: the pure helpers.
+The intents it posts are the content kit's own (site-api's `runMediaIntent`), so a host passes each form straight on with no translation. Each has `ids`: `upload` (with `file` and `alt`), `tag-add` and `tag-remove` (with `tags`), `trash`, `restore`, `delete` (answered with `result.confirm`, then posted again with `confirm`, the typed count), `alt` (`alt`, `decorative`, `versions`), `tags` (`tags`, `versions`) and `caption` (`caption`, `versions`) from the form-mode inspector, the same three from the autosave one (only the fields that changed, one after another, each on the version the last write made: the kit's `outcomes[].version`), `focus` (`x` and `y` in percent, or `clear=yes`), `replace` (multipart, `file`) and, from Crop, `upload` or `replace` with the cut file, `pick` (`alt`, `decorative`) from the picker with no script, a host's toolbar intent, and whatever `result.undo` names. The bulk bar's posts carry each box's version as `version:<id>` (a form with no script cannot line a `versions` list up with the boxes ticked), which the kit reads for the ticked ids; the single-file forms post `versions`.
 
-**Dependencies.** It needs the stylesheets of the parts it composes: media, drop-zone, chips, tabs, field, bulk-bar, meter, message, empty, dialog, confirm-dialog, status and content (the shared result box), with this one.
+`import { mediaActions, mediaHref, withMedia, uploadRules, pickable, lensChips, groupRows, readMediaView, SORT_DIR, dirOf } from "capsomer/behavior/media-library"`: the pure helpers.
+
+**Dependencies.** It needs the stylesheets of the parts it composes: media, drop-zone, chips, tabs, field, disclosure, bulk-bar, meter, message, empty, dialog, listbox, command-menu, shortcuts, confirm-dialog, status and content (the shared result box), with this one.
 
 ## Exceptions in production
 

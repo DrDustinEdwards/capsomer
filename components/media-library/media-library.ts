@@ -14,7 +14,18 @@ export function nounsOf(labels: ContentLabels = {}): { noun: string; plural: str
 // ---------------------------------------------------------------------------------------
 // Addresses.
 
-const QUERY_ORDER: ReadonlyArray<keyof MediaQuery> = ["q", "tag", "view", "layout", "lens", "cursor", "inspect", "pick"];
+const QUERY_ORDER: ReadonlyArray<keyof MediaQuery> = ["q", "tag", "view", "layout", "size", "lens", "sort", "dir", "group", "cursor", "inspect", "pick"];
+
+export type MediaSort = NonNullable<MediaQuery["sort"]>;
+
+// The way each of the contract's sorts runs when no direction is given (site-api v0.6.0): newest
+// first, A to Z, largest first.
+export const SORT_DIR: Record<MediaSort, "asc" | "desc"> = { added: "desc", name: "asc", size: "desc" };
+
+// The direction a query sorts in: its own, or its sort's.
+export function dirOf(q: Pick<MediaQuery, "sort" | "dir">): "asc" | "desc" {
+  return q.dir ?? SORT_DIR[q.sort ?? "added"];
+}
 
 // The library's address with a query, its keys in one fixed order and the empty or default ones
 // left out, so the same view is always the same address. `base` is the route.
@@ -22,7 +33,8 @@ export function mediaHref(base: string, q: MediaQuery): string {
   const params = new URLSearchParams();
   for (const k of QUERY_ORDER) {
     const v = q[k];
-    if (!v || (k === "view" && v === "library") || (k === "layout" && v === "grid")) continue;
+    if (!v || (k === "view" && v === "library") || (k === "layout" && v === "grid") || (k === "size" && v === "m") || (k === "sort" && v === "added")) continue;
+    if (k === "dir" && v === SORT_DIR[q.sort ?? "added"]) continue;
     params.set(k, v);
   }
   const path = base.split("?")[0] || "";
@@ -30,12 +42,18 @@ export function mediaHref(base: string, q: MediaQuery): string {
   return s ? `${path}?${s}` : path || "?";
 }
 
-// A filter or view change starts again at the first page, with the inspector and the pick closed;
-// opening a file (`inspect`, `pick`) keeps the page it is on.
+// The keys that only change how the page is drawn, not which files it holds.
+const DISPLAY: ReadonlyArray<keyof MediaQuery> = ["layout", "size", "group"];
+
+// A filter, sort or view change starts again at the first page, with the inspector and the pick
+// closed; opening a file (`inspect`, `pick`) and a display change (layout, size, grouping) keep the
+// page it is on and the open file. A new sort starts in its own direction unless `dir` is given.
 export function withMedia(q: MediaQuery, change: Partial<MediaQuery>): MediaQuery {
   const next: MediaQuery = { ...q, ...change };
-  const opening = "inspect" in change || "pick" in change;
-  if (!opening) {
+  if ("sort" in change && !("dir" in change)) delete next.dir;
+  const keys = Object.keys(change) as Array<keyof MediaQuery>;
+  const keeps = "inspect" in change || "pick" in change || (keys.length > 0 && keys.every((k) => DISPLAY.includes(k)));
+  if (!keeps) {
     delete next.cursor;
     delete next.inspect;
     delete next.pick;
@@ -47,7 +65,8 @@ export function withMedia(q: MediaQuery, change: Partial<MediaQuery>): MediaQuer
 // ---------------------------------------------------------------------------------------
 // What is offered.
 
-export type MediaIntent = "add-tags" | "remove-tags" | "trash" | "restore" | "delete";
+// The content kit's names (site-api runMediaIntent), so a host passes the form straight on.
+export type MediaIntent = "tag-add" | "tag-remove" | "trash" | "restore" | "delete";
 
 export interface OfferedAction {
   intent: MediaIntent;
@@ -68,7 +87,7 @@ export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, 
     if (can.deleteMedia && offers.trash) bulk.push({ intent: "restore", label: "Restore" });
     if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   } else {
-    if (can.edit && offers.tags) bulk.push({ intent: "add-tags", label: "Add tag" }, { intent: "remove-tags", label: "Remove tag" });
+    if (can.edit && offers.tags) bulk.push({ intent: "tag-add", label: "Add tag" }, { intent: "tag-remove", label: "Remove tag" });
     if (can.deleteMedia && offers.trash) bulk.push({ intent: "trash", label: "Move to Trash" });
     else if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   }
@@ -82,10 +101,19 @@ export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, 
   return { bulk, withheld };
 }
 
-// What a file's inspector may do here.
-export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): { alt: boolean; tags: boolean; trash: boolean; delete: boolean } {
+// What a file's inspector may do here. Replacing a file's bytes changes every page that shows it and
+// cannot be undone here, so it needs the delete role, as the content kit says.
+export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): { alt: boolean; tags: boolean; trash: boolean; delete: boolean; focus: boolean; caption: boolean; replace: boolean } {
   const { offers, can } = data;
-  return { alt: can.edit && offers.alt, tags: can.edit && offers.tags, trash: can.deleteMedia && offers.trash, delete: can.deleteMedia && offers.delete };
+  return {
+    alt: can.edit && offers.alt,
+    tags: can.edit && offers.tags,
+    trash: can.deleteMedia && offers.trash,
+    delete: can.deleteMedia && offers.delete,
+    focus: can.edit && !!offers.focus,
+    caption: can.edit && !!offers.caption,
+    replace: can.deleteMedia && !!offers.replace && !!offers.upload,
+  };
 }
 
 // ---------------------------------------------------------------------------------------
@@ -129,4 +157,69 @@ export function uploadRules(limits: NonNullable<MediaOffers["upload"]>, imagesOn
 // way.
 export function pickable(rows: readonly MediaRecord[]): MediaRecord[] {
   return rows.filter((r) => r.kind === "image" && r.state === "ready");
+}
+
+// ---------------------------------------------------------------------------------------
+// The view: lenses, groups, and what the address says about how to draw the page.
+
+// The site-api contract's lenses (v0.6.0 MEDIA_LENSES), in words: what each chip shows.
+export const LENS_WORDS: Record<string, { label: string; hint: string }> = {
+  unattached: { label: "Unattached", hint: "The site's own check finds nothing that uses these. A file placed by a page template is unattached by this measure and still live, so look before deleting." },
+  "no-alt": { label: "No alt text", hint: "Images with no alt text written yet." },
+  large: { label: "Over 1 MB", hint: "Files larger than one mebibyte." },
+};
+
+// The lens chips: the contract's lenses the site names, then a host's own, each once.
+export function lensChips(data: Pick<MediaData, "offers" | "extra">): Array<{ id: string; label: string; hint?: string; count?: number }> {
+  const out: Array<{ id: string; label: string; hint?: string; count?: number }> = [];
+  for (const id of data.offers.lenses ?? []) {
+    const words = LENS_WORDS[id];
+    const counted = data.extra?.lenses?.find((l) => l.id === id)?.count;
+    if (words) out.push({ id, ...words, ...(counted != null ? { count: counted } : {}) });
+  }
+  for (const l of data.extra?.lenses ?? []) if (!out.some((o) => o.id === l.id)) out.push(l);
+  return out;
+}
+
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+// The folder a file's id puts it in: everything before its last "/", or "Top level".
+export function folderOf(key: string): string {
+  const at = key.lastIndexOf("/");
+  return at > 0 ? key.slice(0, at) : "Top level";
+}
+
+// The month a file was uploaded, in UTC, so a heading does not move with the reader's time zone.
+export function monthOf(uploaded: string | undefined): string {
+  const at = uploaded ? Date.parse(uploaded) : Number.NaN;
+  if (Number.isNaN(at)) return "No upload date";
+  const d = new Date(at);
+  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
+
+// The page's files under headings, each group in the order its first file came, so the sort still
+// reads down the page. Page-local on purpose: a group never spans a page, and its count is this page's.
+export function groupRows(rows: readonly MediaRecord[], group: MediaQuery["group"]): Array<{ label: string; items: MediaRecord[] }> | null {
+  if (group !== "folder" && group !== "month") return null;
+  const groups = new Map<string, MediaRecord[]>();
+  for (const r of rows) {
+    const label = group === "folder" ? folderOf(r.key) : monthOf(r.uploaded);
+    const list = groups.get(label);
+    if (list) list.push(r);
+    else groups.set(label, [r]);
+  }
+  return [...groups].map(([label, items]) => ({ label, items }));
+}
+
+// What the address says about drawing the page, which the content kit's readMediaQuery leaves to the
+// component: the layout, the tile size and the grouping. A host merges it into the kit's query.
+export function readMediaView(search: URLSearchParams): Pick<MediaQuery, "layout" | "size" | "group"> {
+  const layout = search.get("layout");
+  const size = search.get("size");
+  const group = search.get("group");
+  return {
+    ...(layout === "grid" || layout === "list" ? { layout } : {}),
+    ...(size === "s" || size === "m" || size === "l" ? { size } : {}),
+    ...(group === "folder" || group === "month" ? { group } : {}),
+  };
 }

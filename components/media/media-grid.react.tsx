@@ -128,6 +128,9 @@ export function MediaTile({ item, active, selected, inspecting, tabStop = true, 
           </span>
         </label>
       ) : null}
+      {/* The version this page saw, under the file's id: a form with no script cannot line a list of versions up
+          with the boxes ticked, so the content kit reads each ticked id's own (site-api: version:<id>). */}
+      {checkable && selectForm && item.version ? <input type="hidden" name={`version:${item.key}`} form={selectForm} value={item.version} /> : null}
       {item.state === "uploading" ? (
         <div className="cap-media-state">
           <div className="cap-meter" data-cap="meter">
