@@ -2,7 +2,8 @@
 // [data-cap-site="<site>"]. `node tokens/sites.mjs` writes tokens/site-<name>.css for each
 // entry in SITES and the barrel css/sites.css; `--check` regenerates them in memory, refuses a
 // difference from the committed files, a missing package export and a stale site file, and
-// runs palette.mjs's WCAG pairs on the site's colors merged into its family, in both themes.
+// runs palette.mjs's WCAG and APCA pairs on the site's colors merged into its family, in both themes
+// and under prefers-contrast: more.
 //
 // What goes in: only what a site differs on (faces, the display face, neutrals, the on state,
 // type sizes, space and radius, the hover touches in scale.mjs's `touch` group, --enarratio-*), as literal values, never a var() chain, so the file works on <html> or on
@@ -14,7 +15,7 @@
 // block cannot put Capsomer's own values back there.
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { FAMILIES, failures, themes } from "./palette.mjs";
+import { FAMILIES, failures, fitNeutrals, themes } from "./palette.mjs";
 
 // site -> { family (whose tokens the colors are checked against), on (where the attribute
 // goes), note, all (both themes), light, dark, defaultTheme, phone, phoneMax, coarse }. A site whose
@@ -91,16 +92,19 @@ const SITES = {
       "btn-sweep": "1",
     },
     coarse: { control: "44px", "control-h": "44px" },
+    // Text, muted, dim and the control border are Foxhound's own hues lifted to Capsomer's APCA
+    // floors (the dark mode plan, 2026-10-29): they were #e5e8e2, #a8a49e, #928d87 and #4a4c44,
+    // the last 2.02:1 on the surface, under WCAG's 3:1 for a control's edge.
     dark: {
       ground: "#111210",
       surface: "#181917",
       raised: "#222420",
       sunken: "#0d0e0c",
-      text: "#e5e8e2",
-      muted: "#a8a49e",
-      dim: "#928d87",
+      text: "#e6eae3",
+      muted: "#bab6b0",
+      dim: "#bbb6af",
       line: "#2a2b28",
-      "line-strong": "#4a4c44",
+      "line-strong": "#7b7e75",
       // Recova's card-elevated: a lit top edge over a drop shadow in dark, the drop shadow alone in light.
       "card-shadow": "0 1px 0 0 rgb(255 255 255 / 6%) inset, 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%)",
     },
@@ -116,14 +120,6 @@ const SITES = {
       "line-strong": "#8a8a7e",
       "card-shadow": "0 1px 3px 0 rgb(0 0 0 / 8%), 0 1px 2px 0 rgb(0 0 0 / 5%)",
     },
-    waive: [
-      {
-        scheme: "dark",
-        what: "control border",
-        fg: "line-strong",
-        why: "Foxhound's dark --border-strong #4a4c44 is legacy's value (prime directive); the bridge this file replaces already drew it",
-      },
-    ],
   },
   germomics: {
     family: "purple",
@@ -136,12 +132,12 @@ const SITES = {
   capsid: {
     family: "teal",
     on: "the explorer's <html> (capsid.dustinedwards.info)",
-    note: "running text in the UI face, on the surface as the ground, as the explorer's board draws them",
+    note: "running text in the UI face; in light the ground is the surface, as the explorer's board draws them; in dark the family's darker ground, so panels on the surface stand out",
     all: {
       prose: '"Schibsted Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
     },
     light: { ground: "#fbfefe" },
-    dark: { ground: "#111919" },
+    dark: { ground: "#070f0f" },
   },
   "capsid-portal": {
     family: "teal",
@@ -174,7 +170,9 @@ const SITES = {
     // Rule 05's sky blue #43a1d8 is 2.7:1 on the cream ground, under the 3:1 a checked box needs,
     // so the light theme takes Foxing's own hover blue for the fill and a step darker for hover.
     light: { ground: "#faf6ee", surface: "#ffffff", raised: "#ffffff", sunken: "#f2ead8", text: "#16100b", muted: "#3e3028", dim: "#815e41", line: "#e5d8bf", "line-strong": "#815e41", on: "#2b87bc", "on-hover": "#1f7fb8" },
-    dark: { ground: "#16100b", surface: "#1f1710", raised: "#2a1f16", sunken: "#100d08", text: "#f5edde", muted: "#c4ae96", dim: "#a28269", line: "#3a2c22", "line-strong": "#a28269", on: "#43a1d8", "on-hover": "#5aafe0" },
+    // Dark muted and dim are Foxing's hues lifted to Capsomer's APCA text floor (the dark mode
+    // plan, 2026-10-29); they were #c4ae96 and #a28269 (Lc 58 and 36 on the raised surface).
+    dark: { ground: "#16100b", surface: "#1f1710", raised: "#2a1f16", sunken: "#100d08", text: "#f5edde", muted: "#c9b39a", dim: "#d1b095", line: "#3a2c22", "line-strong": "#a28269", on: "#43a1d8", "on-hover": "#5aafe0" },
   },
   julieedwards: {
     family: "forest",
@@ -210,6 +208,19 @@ function block(name, values, prefixes, indent) {
 
 const PHONE_MAX = "767.98px";
 
+// The site's own neutrals under prefers-contrast: more, per scheme: only those it sets and the
+// more pass changes.
+function moreValues(site) {
+  const out = { light: {}, dark: {} };
+  const t = themes(FAMILIES[site.family]);
+  for (const scheme of ["light", "dark"]) {
+    const own = { ...site.all, ...site[scheme] };
+    const merged = { ...t[`${scheme}More`].tokens, ...own };
+    for (const [k, v] of Object.entries(fitNeutrals(merged, scheme, "more"))) if (k in own && v !== own[k]) out[scheme][k] = v;
+  }
+  return out;
+}
+
 function renderSite(name, site) {
   const darkFirst = site.defaultTheme === "dark";
   const plain = { ...site.all, ...(darkFirst ? site.dark : site.light) };
@@ -220,6 +231,20 @@ function renderSite(name, site) {
   }
   if (darkFirst && site.light && Object.keys(site.light).length) {
     css += block(name, site.light, [':root[data-theme="light"]', '[data-cap-theme="light"]'], "  ");
+  }
+  // Under prefers-contrast: more, the site's own neutrals go through the family's more pass
+  // (fitNeutrals), since a site value outranks the family's more block.
+  const more = moreValues(site);
+  if (Object.keys(more.light).length || Object.keys(more.dark).length) {
+    let m = "";
+    const plainMore = darkFirst ? more.dark : more.light;
+    if (Object.keys(plainMore).length) m += block(name, plainMore, null, "    ");
+    if (Object.keys(more.dark).length) {
+      m += `    @media (prefers-color-scheme: dark) {\n${block(name, more.dark, [':root:not([data-theme="light"])'], "      ")}    }\n`;
+      m += block(name, more.dark, [':root[data-theme="dark"]', '[data-cap-theme="dark"]'], "    ");
+    }
+    if (darkFirst && Object.keys(more.light).length) m += block(name, more.light, [':root[data-theme="light"]', '[data-cap-theme="light"]'], "    ");
+    css += `  @media (prefers-contrast: more) {\n${m}  }\n`;
   }
   // A site that sets a control size gives the touch size back under a coarse pointer, since its
   // own value outranks tokens.css's (pointer: coarse) block.
@@ -278,6 +303,8 @@ function check() {
       const waived = (f) => waivers.some((w) => f.startsWith(`${w.what}: --${w.fg} `));
       problems.push(...fails.filter((f) => !waived(f)).map((p) => `${name} ${scheme}: ${p}`));
       for (const w of waivers) if (!fails.some((f) => f.startsWith(`${w.what}: --${w.fg} `))) problems.push(`${name} ${scheme}: the waiver for ${w.what} --${w.fg} matches no failure; remove it`);
+      const mergedMore = { ...t[`${scheme}More`].tokens, ...site.all, ...site[scheme], ...moreValues(site)[scheme] };
+      problems.push(...failures(mergedMore, "more").map((p) => `${name} ${scheme} (more contrast): ${p}`));
     }
   }
   for (const f of readdirSync(path("tokens")).filter((f) => /^site-.+\.css$/.test(f))) {
@@ -303,7 +330,7 @@ if (invoked) {
       console.error(`sites: ${problems.length} problem(s)\n  ${problems.join("\n  ")}`);
       process.exit(1);
     }
-    console.log(`sites: ${files().map(([r]) => r).join(", ")} match the script and every pair meets WCAG 2.2 in both themes`);
+    console.log(`sites: ${files().map(([r]) => r).join(", ")} match the script and every pair meets WCAG 2.2 and its APCA floor in both themes, at both contrast levels`);
   } else {
     for (const [rel, text] of files()) writeFileSync(path(rel), text);
     console.log(`sites: wrote ${files().map(([r]) => r).join(", ")}`);

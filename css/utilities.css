@@ -4,6 +4,15 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 @layer cap.utilities {
+  /* A flat image, a screenshot or a diagram on white: an edge so it sits on the page, and in dark
+     a little dimmer so it does not glow (--img-filter). Photos need neither and go without it. An
+     image with its own dark version uses <picture> with a (prefers-color-scheme: dark) source,
+     which follows the system setting rather than the switch. */
+  .cap-img-flat {
+    border: 1px solid var(--line);
+    filter: var(--img-filter);
+  }
+
   /* Text a screen reader announces and the eye does not see. */
   .cap-sr-only {
     position: absolute;

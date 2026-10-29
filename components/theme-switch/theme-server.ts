@@ -48,6 +48,14 @@ export function colorSchemeContent(choice: ThemeChoice | null): "light" | "dark"
   return choice ?? "light dark";
 }
 
+// The <meta name="theme-color"> tags, so a phone's browser bar matches the page's ground in both themes: one tag for
+// a person's choice, or one per scheme (with its media query) when they never chose. `ground` is the site's --ground
+// in each theme. The theme switch keeps the tags in step when the person switches (theme-switch.ts).
+export function themeColorMeta(choice: ThemeChoice | null, ground: { light: string; dark: string }): string {
+  if (choice) return `<meta name="theme-color" content="${ground[choice]}">`;
+  return (["light", "dark"] as const).map((s) => `<meta name="theme-color" media="(prefers-color-scheme: ${s})" content="${ground[s]}">`).join("");
+}
+
 // The pre-paint script for a site that remembers the choice in localStorage: run inline in the head, before the
 // stylesheet, or the page flashes the other theme. A site with a Content Security Policy allows it by its hash, so
 // the text must be exactly this.

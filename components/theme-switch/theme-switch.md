@@ -52,7 +52,7 @@ A public reading page may leave the choice to the system and show no control.
 - **`toggleTheme()` switches light and dark** from whatever is showing, and remembers it, for a `t` shortcut registered through the shortcut registry; every switch on the page follows, and so do other tabs.
 - **The group has a name, "Theme"**, in a visually hidden `legend`, because a top bar has no room for a visible one.
 - **A sun and a moon beside the words**, as shadcn's Mode Toggle draws them; on a phone (under 820 px) the words are visually hidden and the icons stay, and a screen reader still hears "Light" and "Dark".
-- **The chosen segment has one marker, a fill**: the dark fill of the admin menu's selected page (`--accent-12`, its word in `--ground` and set heavier), over 3:1 against the ground in both themes, so no second mark (an underline) is needed (Dustin, 2026-10-11: one marker). The control's edge is `--dim`, which reaches 3:1 on the ground tone of the top bar; `--line-strong` does not.
+- **The chosen segment has one marker, a fill**: the dark fill of the admin menu's selected page (`--accent-12`, its word in `--ground` and set heavier), over 3:1 against the ground in both themes, so no second mark (an underline) is needed (Dustin, 2026-10-11: one marker). The control's edge is `--line-strong`, which reaches 3:1 and APCA Lc 30 on the ground, the surface and the raised surface (the dark mode plan, 2026-10-29).
 - **Density**: the segments are one control tall (`--control`, 44 px on a touch screen), so `data-density="comfortable"` on the top bar or the root makes them larger.
 
 ## A server-rendered site
@@ -62,6 +62,7 @@ A public reading page may leave the choice to the system and show no control.
 - `readThemeCookie(requestOrCookieHeader, name = "theme")`: the remembered choice, or `null` (follow the system). A malformed cookie is `null`, never an error.
 - `themeCookie(choice, { name, maxAge, secure })`: the `Set-Cookie` value, a year, `Path=/`, `SameSite=Lax`, `Secure`.
 - `colorSchemeContent(choice)`: the `<meta name="color-scheme">` content, the choice or `light dark`.
+- `themeColorMeta(choice, { light, dark })`: the `<meta name="theme-color">` tags, so a phone's browser bar takes the page's ground: one tag for a choice, one per scheme with its media query when there is none. Pass the site's `--ground` in each theme. The switch updates every theme-color tag to the chosen theme's ground when the person switches.
 - `themeScript(key = "cap-theme")`: the inline pre-paint script below, as text, so a site hashes exactly what it sends.
 
 A site keeps its own cookie name (txasm's `txasm_theme`, Foxhound's `fh_theme`) by passing it; the choice its visitors made survives.

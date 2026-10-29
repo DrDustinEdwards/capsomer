@@ -40,7 +40,9 @@ async function serveCatalog(page: Page): Promise<void> {
 }
 
 test.describe("no script", () => {
-  test.use({ javaScriptEnabled: false });
+  // Reduced motion turns off the page-to-page view transition (base.css), whose overlay takes the clicks
+  // made in its first 200 ms after each load; Playwright's click kept landing on it.
+  test.use({ javaScriptEnabled: false, reducedMotion: "reduce" });
   test("behavior: the form, the chips, the sort headers and the pages all work as plain links and a GET form", async ({ page }) => {
     await serveCatalog(page);
     await page.goto(SSR);

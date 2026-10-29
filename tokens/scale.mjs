@@ -15,7 +15,7 @@
 // wrapper does not inherit a value already resolved at the root.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { ELEVATION_ORDER, FAMILIES, themes } from "./palette.mjs";
+import { ELEVATION_ORDER, FAMILIES, moreLines, themes } from "./palette.mjs";
 
 const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 
@@ -178,7 +178,9 @@ export function renderThemes() {
   const t = themes(FAMILIES.purple);
   const block = (name) =>
     `[data-cap-theme="${name}"] {\n${[...t.order, ...ELEVATION_ORDER].map((k) => `  --${k}: ${t[name].tokens[k]};`).join("\n")}\n  color-scheme: ${name};\n  color: var(--text);\n  background: var(--ground);\n}`;
-  return `${HEADER(`both themes pinned to an element, from the seed ${t.seed}`)}${block("light")}\n${block("dark")}\n`;
+  // The viewer's "increase contrast" setting on a pinned element: only the tokens it changes.
+  const more = (name) => `  [data-cap-theme="${name}"] {\n${moreLines(t[name].tokens, t[`${name}More`].tokens, "    ")}\n  }`;
+  return `${HEADER(`both themes pinned to an element, from the seed ${t.seed}`)}${block("light")}\n${block("dark")}\n@media (prefers-contrast: more) {\n${more("light")}\n${more("dark")}\n}\n`;
 }
 
 // The same values in the Design Tokens Community Group format (2025.10), for tools that

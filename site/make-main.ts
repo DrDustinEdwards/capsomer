@@ -220,10 +220,12 @@ function fixFor(p: Pair, scheme: Scheme, b: Built): string {
     return failingFor(b.s.seed, b.s.anchor, other) < b.failing ? `Choose ${other === "dark" ? "Dark" : "Light"} for the label on buttons.` : "Move the brand color further from the middle, so a label stands out on it.";
   }
   if (b.s.anchor && scheme === "light" && (p.fg === "accent-text" || p.fg === "accent-hover")) return "Pick a darker text color, or turn your own text color off.";
-  const brand = ["ring", "accent", "primary", "primary-hover", "on", "on-hover"];
+  const brand = ["ring", "accent", "primary", "primary-hover", "primary-line", "on", "on-hover"];
   if (brand.includes(p.fg) || ["on", "on-hover"].includes(p.bg)) return scheme === "light" ? "Pick a darker brand color." : "Pick a lighter brand color.";
   return "Try the nearest color that passes, below.";
 }
+
+const needs = (p: Pair) => `${p.min}:1${p.lcMin ? ` and Lc ${p.lcMin}` : ""}`;
 
 const swatch = (color: string) => {
   const s = el("span", "make-sw");
@@ -236,8 +238,8 @@ function check(b: Built) {
   const verdict = part("verdict");
   if (verdict) {
     verdict.textContent = b.failing
-      ? `${total - b.failing} of ${total} pairs pass WCAG 2.2. ${b.failing} ${b.failing === 1 ? "does" : "do"} not:`
-      : `All ${total} pairs pass WCAG 2.2 in both themes: text at 4.5:1, controls and focus rings at 3:1.`;
+      ? `${total - b.failing} of ${total} pairs pass WCAG 2.2 and APCA. ${b.failing} ${b.failing === 1 ? "does" : "do"} not:`
+      : `All ${total} pairs pass WCAG 2.2 and APCA in both themes: text at 4.5:1 and Lc 60 (links Lc 75, body Lc 90), focus rings at 3:1 and Lc 45, control borders at 3:1 and Lc 30.`;
     verdict.dataset.tone = b.failing ? "crit" : "ok";
   }
   const fails = part("fails");
@@ -249,7 +251,7 @@ function check(b: Built) {
           .map((p) => {
             const li = el("li");
             const what = el("p", "make-fail-what");
-            what.append(swatch(b.t[scheme][p.fg] ?? ""), swatch(b.t[scheme][p.bg] ?? ""), el("b", undefined, `${p.what[0]?.toUpperCase()}${p.what.slice(1)}`), ` in ${scheme}: ${p.ratio.toFixed(2)}:1, needs ${p.min}:1`);
+            what.append(swatch(b.t[scheme][p.fg] ?? ""), swatch(b.t[scheme][p.bg] ?? ""), el("b", undefined, `${p.what[0]?.toUpperCase()}${p.what.slice(1)}`), ` in ${scheme}: ${p.ratio.toFixed(2)}:1 and Lc ${Math.abs(p.lc).toFixed(0)}, needs ${needs(p)}`);
             li.append(what, el("p", "make-fail-fix", fixFor(p, scheme, b)));
             return li;
           }),
@@ -268,9 +270,9 @@ function check(b: Built) {
           if (!p.pass) tr.dataset.fail = "";
           const colors = el("td");
           colors.append(swatch(b.t[scheme][p.fg] ?? ""), swatch(b.t[scheme][p.bg] ?? ""), el("code", undefined, `--${p.fg} on --${p.bg}`));
-          const ratio = el("td", undefined, `${p.ratio.toFixed(2)}:1${p.pass ? "" : " (fails)"}`);
+          const ratio = el("td", undefined, `${p.ratio.toFixed(2)}:1, Lc ${Math.abs(p.lc).toFixed(0)}${p.pass ? "" : " (fails)"}`);
           ratio.dataset.num = "";
-          const need = el("td", undefined, `${p.min}:1`);
+          const need = el("td", undefined, needs(p));
           need.dataset.num = "";
           tr.append(el("td", undefined, scheme === "light" ? "Light" : "Dark"), el("td", undefined, p.what), colors, ratio, need);
           return tr;
