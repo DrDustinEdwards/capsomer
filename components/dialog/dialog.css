@@ -240,18 +240,21 @@
     & p {
       margin: 0;
     }
-    & ul {
-      display: grid;
-      gap: var(--space-2);
-      margin: 0;
-      padding-inline-start: 1.15em;
-      list-style: disc;
-    }
     /* A scrolling body is a keyboard stop (dialog.ts gives it tabindex); it shows where it is. */
     &:focus-visible {
       outline: 2px solid var(--ring);
       outline-offset: -2px;
     }
+  }
+
+  /* Prose lists in a dialog. Under :where, so a component's own list there (chips, the media grid)
+     keeps its layout. */
+  :where(.cap-dialog-body) ul {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding-inline-start: 1.15em;
+    list-style: disc;
   }
 
   /* The footer: a muted band under a dialog (as Alert Dialog's), a plain row under a sheet.
@@ -382,12 +385,12 @@
   }
 
   /* A list of links in a sheet (the More sheet): each link is a full-width row, a target. */
-  .cap-dialog-body nav ul {
+  :where(.cap-dialog-body nav) ul {
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .cap-dialog-body nav a {
+  :where(.cap-dialog-body nav) a {
     display: flex;
     align-items: center;
     min-block-size: max(var(--target), var(--row-h));
