@@ -1,8 +1,13 @@
-import { type ComponentType, type FormHTMLAttributes, type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import { type ComponentType, type FormHTMLAttributes, type KeyboardEvent, type MouseEvent, type ReactNode, type Ref, lazy, Suspense, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
+import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { Glyph } from "../status/status.react.tsx";
 import { type Autosave, type MediaFields, type MediaRecord, type SaveState, byteSize, copySnippets, copyText, createAutosave, parseTags, suggestedAlt } from "./media.ts";
 import { COPIED_MS, COPY_FAILED_MS } from "./media-actions.ts";
+import { MediaFocus, focusWords } from "./media-focus.react.tsx";
+
+// The crop editor, loaded the first time Crop is pressed, so a library page does not carry it.
+const MediaCrop = lazy(() => import("./media-crop.react.tsx"));
 
 export { MediaTile, MediaGrid } from "./media-grid.react.tsx";
 export type { MediaTileProps, MediaGroup, MediaGridProps } from "./media-grid.react.tsx";
@@ -67,6 +72,21 @@ export interface MediaInspectorProps {
   closeHref?: string;
   // What the footer offers. Trash and Restore by default; Delete only when given.
   can?: { trash?: boolean; delete?: boolean };
+  // The tools that change the picture itself, each offered only when given (site-api v0.10.0):
+  // the focal point (a form posting `intent=focus` with `x` and `y` in percent), replace (a
+  // multipart form posting `intent=replace` and `file`, with what it accepts in words), and crop
+  // (needs script: the editor reads `src`, the file's bytes on the page's own origin, and hands the
+  // crop to `onSave`). `keepsSize`: the site refuses a replacement of another size, so replace asks
+  // for the same size and a crop is only ever a new file.
+  tools?: {
+    focus?: boolean;
+    replace?: { accept: string; hint: string } | null;
+    crop?: { src: string; asNew: boolean; inPlace: boolean; onSave: (file: File, how: "new" | "replace") => Promise<void> } | null;
+    keepsSize?: boolean;
+  };
+  // In autosave mode the tools sit inside the inspector's own form, so they cannot be forms: their
+  // buttons hand the fields here instead (MediaLibrary posts them through `submit`).
+  onTool?: (form: FormData) => void;
 }
 
 const PlainForm: NonNullable<MediaInspectorProps["Form"]> = (props) => <form {...props} />;
@@ -77,7 +97,7 @@ function Ident({ item, intent }: { item: MediaRecord; intent: string }) {
     <>
       <input type="hidden" name="intent" value={intent} />
       <input type="hidden" name="ids" value={item.key} />
-      {item.version ? <input type="hidden" name="version" value={item.version} /> : null}
+      {item.version ? <input type="hidden" name="versions" value={item.version} /> : null}
     </>
   );
 }
@@ -130,7 +150,7 @@ export function MediaInspector(props: MediaInspectorProps) {
   );
 }
 
-function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattached, onStep, base, titleId, firstRef, show = {}, saving = "auto", action, Form: F = PlainForm, closeHref, can = {} }: MediaInspectorProps & { item: MediaRecord; base: string; titleId: string; firstRef: { current: HTMLElement | null } }) {
+function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattached, onStep, base, titleId, firstRef, show = {}, saving = "auto", action, Form: F = PlainForm, closeHref, can = {}, tools = {}, onTool }: MediaInspectorProps & { item: MediaRecord; base: string; titleId: string; firstRef: { current: HTMLElement | null } }) {
   const formMode = saving === "form" && !!action;
   const shows = { alt: show.alt ?? true, title: show.title ?? true, caption: show.caption ?? true, tags: show.tags ?? true };
   const draft = drafts.get(item.key);
@@ -251,7 +271,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
           {img && item.thumb ? <img data-cap-part="preview" src={item.thumb} alt="" width={640} height={427} /> : <span className="cap-media-doc" aria-hidden="true">{(item.name.split(".").pop() ?? "file").slice(0, 5).toUpperCase()}</span>}
         </div>
         {img && shows.alt ? (
-          <Wrap on={formMode} F={F} action={action} label="Alt text" intent="save-alt" item={item} save="Save alt text">
+          <Wrap on={formMode} F={F} action={action} label="Alt text" intent="alt" item={item} save="Save alt text">
             <div className="cap-field" data-cap-part="alt-field">
               <label className="cap-field-label" htmlFor={`${base}-alt`}>
                 Alt text
@@ -288,7 +308,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
           <p className="cap-field-help" data-cap-part="alt-document">A document takes no alt text. What a reader hears is the link text, and that lives in the post.</p>
         ) : null}
         {shows.title || shows.caption ? (
-          <Wrap on={formMode} F={F} action={action} label="Title and caption" intent="save-details" item={item} save="Save title and caption">
+          <Wrap on={formMode} F={F} action={action} label={shows.title ? "Title and caption" : "Caption"} intent={shows.title ? "save-details" : "caption"} item={item} save={shows.title ? "Save title and caption" : "Save caption"}>
             {shows.title ? (
               <div className="cap-field">
                 <label className="cap-field-label" htmlFor={`${base}-title-field`}>
@@ -308,7 +328,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
           </Wrap>
         ) : null}
         {shows.tags && formMode ? (
-          <Wrap on F={F} action={action} label="Tags" intent="save-tags" item={item} save="Save tags">
+          <Wrap on F={F} action={action} label="Tags" intent="tags" item={item} save="Save tags">
             <div className="cap-field">
               <label className="cap-field-label" htmlFor={`${base}-tags-text`}>
                 Tags
@@ -367,6 +387,9 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
               ))}
           </ul>
         </div>
+        ) : null}
+        {img && !binned && (tools.focus || tools.replace || tools.crop) && action ? (
+          <PictureTools item={item} base={base} tools={tools} action={action} F={F} nested={!formMode} onTool={onTool} />
         ) : null}
         <div className="cap-media-section" role="group" aria-labelledby={`${base}-addr-l`}>
           <label className="cap-field-label" id={`${base}-addr-l`} htmlFor={`${base}-addr`}>
@@ -523,4 +546,108 @@ function Wrap({ on, F, action, label, intent, item, save, children }: { on: bool
       </button>
     </F>
   );
+}
+
+// The tools that change the picture: the focal point, crop, and replace, each folded away (they are
+// used now and then, and open each is as tall as the rest of the inspector). In form mode each is its
+// own form; inside the autosaving form (`nested`) each is a group whose button hands its fields to
+// `onTool`, since a form cannot sit inside a form.
+function PictureTools({ item, base, tools, action, F, nested, onTool }: { item: MediaRecord; base: string; tools: NonNullable<MediaInspectorProps["tools"]>; action: string; F: NonNullable<MediaInspectorProps["Form"]>; nested: boolean; onTool?: (form: FormData) => void }) {
+  const [cropOpen, setCropOpen] = useState(false);
+  const [opener, setOpener] = useState<HTMLElement | null>(null);
+  const toolRef = useRef(onTool);
+  toolRef.current = onTool;
+  // One component for the inspector's life, so a re-render never remounts a tool and loses its state.
+  const [Nested] = useState(() => nestedTool(toolRef));
+  const Tool = nested ? Nested : F;
+  const ident = (intent: string) => <Ident item={item} intent={intent} />;
+  const size = item.width && item.height ? `${item.width} by ${item.height} pixels` : "the size of this one";
+  const crop = tools.crop;
+  return (
+    <div className="cap-media-section" data-cap-part="tools">
+      {tools.focus && item.thumb ? (
+        <Disclosure summary={<>Focal point <span className="cap-media-summary-note">{focusWords(item.focus)}</span></>}>
+          <MediaFocus key={`${item.key}:${item.version ?? ""}`} name={item.name} src={item.thumb} focus={item.focus} action={action} Form={Tool} ident={ident("focus")} base={base} />
+        </Disclosure>
+      ) : null}
+      {crop || tools.replace ? (
+        <Disclosure summary={crop && tools.replace ? "Crop or replace the file" : tools.replace ? "Replace the file" : "Crop"}>
+          {crop ? (
+            <div className="cap-media-tool" data-inline="">
+              <button
+                type="button"
+                className="cap-btn"
+                data-size="sm"
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                  setOpener(e.currentTarget);
+                  setCropOpen(true);
+                }}
+              >
+                Crop<span className="cap-sr-only"> {item.name}</span>
+              </button>
+              <p className="cap-media-note">
+                {tools.keepsSize ? "Cut out part of the picture as a new file. This site takes a replacement only at the original's size, so a crop never replaces this one." : `Cut out part of the picture, as a new file${crop.inPlace ? " or in place of this one" : ""}.`}
+              </p>
+              {opener ? (
+                <Suspense fallback={null}>
+                  <MediaCrop name={item.name} src={crop.src} asNew={crop.asNew} inPlace={crop.inPlace && !tools.keepsSize} keepsSize={tools.keepsSize} onSave={crop.onSave} open={cropOpen} opener={opener} onClose={() => setCropOpen(false)} />
+                </Suspense>
+              ) : null}
+            </div>
+          ) : null}
+          {tools.replace ? (
+            <Tool method="post" action={action} encType="multipart/form-data" className="cap-media-field-form cap-media-tool" aria-label="Replace the file" key={`replace:${item.key}:${item.version ?? ""}`}>
+              {ident("replace")}
+              <div className="cap-field">
+                <label className="cap-field-label" htmlFor={`${base}-replace`}>
+                  The new file
+                </label>
+                <p className="cap-field-help" id={`${base}-replace-help`}>
+                  {tools.replace.hint} {tools.keepsSize ? `It must be ${size}: this site sizes its pages by them and refuses any other size. ` : ""}It goes under the same address, so every page that shows this file shows the new one, and the old one is gone from the site. Alt text, caption and tags stay; the focal point is cleared. Readers who already loaded the old picture may see it until their browser's cache expires.
+                </p>
+                <input className="cap-input" id={`${base}-replace`} type="file" name="file" accept={tools.replace.accept} required aria-describedby={`${base}-replace-help`} />
+              </div>
+              <div className="cap-media-tool-actions">
+                <button type="submit" className="cap-btn" data-size="sm" data-variant="danger">
+                  Replace<span className="cap-sr-only"> {item.name}</span>
+                </button>
+              </div>
+            </Tool>
+          ) : null}
+        </Disclosure>
+      ) : null}
+    </div>
+  );
+}
+
+// A tool inside the autosaving form: a group, not a form, whose submit buttons hand its named fields
+// (and the pressed button's) to the handler the ref holds.
+function nestedTool(handler: { current: ((form: FormData) => void) | undefined }): NonNullable<MediaInspectorProps["Form"]> {
+  return function NestedTool({ children, className, "aria-label": label }) {
+    return (
+      <div
+        className={className}
+        role="group"
+        aria-label={label}
+        onClickCapture={(e) => {
+          const button = (e.target as Element).closest("button");
+          if (!button || button.type !== "submit") return;
+          e.preventDefault();
+          e.stopPropagation();
+          const data = new FormData();
+          for (const el of (e.currentTarget as HTMLElement).querySelectorAll<HTMLInputElement>("input[name]")) {
+            if (el.type === "file") {
+              if (!el.reportValidity()) return;
+              for (const f of el.files ?? []) data.append(el.name, f);
+            } else data.append(el.name, el.value);
+          }
+          if (button.name) data.append(button.name, button.value);
+          handler.current?.(data);
+          button.closest("details")?.removeAttribute("open");
+        }}
+      >
+        {children}
+      </div>
+    );
+  };
 }

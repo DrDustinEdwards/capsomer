@@ -600,7 +600,181 @@
     }
   }
 
+  /* The picture tools in the inspector (focal point, crop, replace), each folded away; a section's
+     note sits after its name. */
+  .cap-media-summary-note {
+    margin-inline-start: var(--space-2);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 400;
+  }
+  .cap-media-tool {
+    display: grid;
+    gap: var(--space-3);
+
+    /* A button with its one-line note beside it. */
+    &[data-inline] {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+    }
+    & + & {
+      padding-block-start: var(--space-3);
+      border-block-start: 1px solid var(--line);
+    }
+    & .cap-media-note {
+      margin: 0;
+    }
+  }
+  .cap-media-tool-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* The focal point: the picture with a ring where the point is, and the crops a site may cut around
+     it. --cap-focus-x and --cap-focus-y are set on .cap-media-focus by the picker. */
+  .cap-media-focus {
+    --cap-focus-x: 50%;
+    --cap-focus-y: 50%;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .cap-media-focus-frame {
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+    cursor: crosshair;
+    overflow: hidden;
+
+    & img {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+  /* A ring in two tones, so it shows on a light picture and a dark one alike. */
+  .cap-media-focus-mark {
+    position: absolute;
+    inset-inline-start: var(--cap-focus-x);
+    inset-block-start: var(--cap-focus-y);
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    translate: -50% -50%;
+    border: 2px solid var(--on-sign);
+    border-radius: var(--radius-full);
+    box-shadow: 0 0 0 2px var(--sign);
+    pointer-events: none;
+  }
+  /* Two classes, to win over the dialog body's list rule when the inspector is a sheet. */
+  .cap-media-focus .cap-media-focus-previews {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & li {
+      display: grid;
+      gap: var(--space-1);
+      color: var(--muted);
+      font-size: var(--fs-detail);
+    }
+    & img {
+      display: block;
+      /* Small enough that the three sit on one row in a phone's sheet. */
+      block-size: 3.5rem;
+      inline-size: auto;
+      object-fit: cover;
+      object-position: var(--cap-focus-x) var(--cap-focus-y);
+      border-radius: var(--radius-s);
+    }
+    & [data-ratio="1:1"] img {
+      aspect-ratio: 1 / 1;
+    }
+    & [data-ratio="16:9"] img {
+      aspect-ratio: 16 / 9;
+    }
+    & [data-ratio="4:5"] img {
+      aspect-ratio: 4 / 5;
+    }
+  }
+  .cap-media-focus-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+
+    & > .cap-field {
+      margin: 0;
+    }
+  }
+
+  /* The crop editor: the picture the width of the dialog at most and short enough that the fields and
+     the buttons fit under it in a laptop's window; then the shape and the four numbers, one row where
+     the dialog has room, else the shape across and the numbers two by two. */
+  .cap-media-crop-body {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .cap-media-crop-canvas {
+    display: block;
+    max-inline-size: 100%;
+    max-block-size: min(24rem, 45dvh);
+    inline-size: auto;
+    block-size: auto;
+    margin-inline: auto;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .cap-media-crop-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+
+    & > :first-child {
+      grid-column: 1 / -1;
+    }
+    & > .cap-field {
+      margin: 0;
+    }
+  }
+  @media (min-width: 48rem) {
+    .cap-media-crop-fields {
+      grid-template-columns: minmax(9rem, 1.6fr) repeat(4, minmax(0, 1fr));
+
+      & > :first-child {
+        grid-column: auto;
+      }
+    }
+  }
+  .cap-media-crop-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  /* On a phone the dialog's footer stacks every button full width, so the group gives way. */
+  @media (max-width: 39.99rem) {
+    .cap-media-crop-actions {
+      display: contents;
+    }
+  }
+
   @media (forced-colors: active) {
+    .cap-media-focus-mark {
+      border-color: Highlight;
+      box-shadow: none;
+    }
     .cap-media-tile {
       border-color: CanvasText;
 

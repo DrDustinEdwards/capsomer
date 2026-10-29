@@ -21,6 +21,7 @@ export * from "./media-record.ts";
 export * from "./media-grid.ts";
 export * from "./media-autosave.ts";
 export * from "./media-actions.ts";
+export * from "./media-crop.ts";
 export { buildTile, glyph, recordOf, syncTile, writeRecord } from "./media-tile.ts";
 
 const READY = "data-cap-ready";

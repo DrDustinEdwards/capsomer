@@ -253,6 +253,14 @@ export interface MediaOffers {
   // The lenses the site answers (site-api v0.6.0 `capabilities.mediaLenses`, the kit's
   // `offers.lenses`): a chip each, with the contract's meaning in words. Absent or empty: none.
   lenses?: string[];
+  // site-api v0.10.0, the kit's offers of the same names: the site keeps a focal point and a caption,
+  // and replaces a file's bytes under its own address. Absent: not offered.
+  focus?: boolean;
+  caption?: boolean;
+  replace?: boolean;
+  // site-api v0.11.0 (`capabilities.mediaReplaceKeepsSize`): a replacement must be the size of the
+  // picture it replaces, so replace asks for that size and a crop is saved only as a new file.
+  replaceKeepsSize?: boolean;
 }
 
 export interface MediaData {

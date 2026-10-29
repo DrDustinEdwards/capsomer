@@ -6,7 +6,8 @@ import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { DropZone } from "../drop-zone/drop-zone.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { MediaGrid, MediaInspector, useMediaMode, type MediaFields } from "../media/media.react.tsx";
-import { byteSize, suggestedAlt, type MediaRecord } from "../media/media.ts";
+import { bareType, byteSize, copyText, CROPPABLE, suggestedAlt, type MediaRecord } from "../media/media.ts";
+import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
 import { readPref, writePref } from "../shell/shell.ts";
 import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
@@ -56,6 +57,10 @@ export interface MediaLibraryProps {
   // False leaves Ctrl K, Cmd K and "/" to the host (an app-wide command menu). True by default in
   // library mode; the picker never takes them.
   shortcuts?: boolean;
+  // A file's own bytes on the page's own origin (the host serves them), for the crop editor, whose
+  // canvas could not export a picture from another origin. Without it, or without `submit`, there
+  // is no Crop.
+  bytesHref?: (key: string) => string;
 }
 
 // One page of one site's files, the same component in Carrel and in every site admin: search, tag
@@ -64,7 +69,7 @@ export interface MediaLibraryProps {
 // Undo, and the confirmation for what cannot be undone. In picker mode, the same grid offers images
 // and asks for the alt text this use needs. Every action is a form post, so it works with no
 // script; `submit` adds the in-place path.
-export function MediaLibrary({ data, action, Form = PlainForm, submit, result = null, labels, mode = "library", inspector = "form", onPick, search, shortcuts = true }: MediaLibraryProps) {
+export function MediaLibrary({ data, action, Form = PlainForm, submit, result = null, labels, mode = "library", inspector = "form", onPick, search, shortcuts = true, bytesHref }: MediaLibraryProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const formId = `${uid}-bulk`;
   const { plural } = nounsOf(labels);
@@ -142,10 +147,16 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
     },
     { label: `Find a ${nounsOf(labels).noun}`, group: "Media", when: () => shortcuts && !picker },
   );
+  // Copying an address says so, in words, where the person is looking.
+  const [copied, setCopied] = useState("");
+  const copyAddress = async (r: MediaRecord) => {
+    const ok = await copyText(r.url);
+    setCopied(ok ? `Copied the address of ${r.name}.` : `Could not copy. The address of ${r.name} is ${r.url}`);
+  };
   const find = async (text: string, signal: AbortSignal): Promise<Command[]> => {
-    const found = search ? await search(text, signal) : [];
+    const found = (search ? await search(text, signal) : []).slice(0, 8);
     return [
-      ...found.slice(0, 8).map((r) => ({
+      ...found.map((r) => ({
         id: `file-${r.key}`,
         label: r.name,
         group: plural.charAt(0).toUpperCase() + plural.slice(1),
@@ -156,6 +167,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
           go(withMedia(query, { inspect: r.key }));
         },
       })),
+      ...found.map((r) => ({ id: `copy-${r.key}`, label: `Copy the address of ${r.name}`, group: "Copy the address", keywords: [r.key], run: () => void copyAddress(r) })),
       { id: "search-all", label: `Search for “${text}”`, group: "Search", run: () => go(withMedia(query, { q: text })) },
     ];
   };
@@ -180,11 +192,12 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
     form.set("intent", "save");
     form.set("ids", key);
     const version = rows.find((r) => r.key === key)?.version ?? inspected?.version;
-    if (version) form.set("version", version);
+    if (version) form.set("versions", version);
     if (iOffers.alt) {
       form.set("alt", fields.alt);
       if (fields.decorative) form.set("decorative", "on");
     }
+    if (iOffers.caption) form.set("caption", fields.caption);
     if (iOffers.tags) form.set("tags", fields.tags.join(", "));
     const r = await submit(form);
     if (!r.ok) throw new Error(r.message);
@@ -215,6 +228,35 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   const words = emptyWords(query, labels);
   const rules = offers.upload ? uploadRules(offers.upload, picker) : null;
   const canUpload = !!rules && can.edit && !trash;
+  // The picture tools for the open file: the focal point, replace (the file's own type, the site's
+  // size limit) and crop (with script and the host's same-origin bytes).
+  const tools = (item: MediaRecord) => {
+    const type = bareType(item.type);
+    const asNew = can.edit && !!offers.upload?.types.includes(type);
+    const replace = iOffers.replace && !!item.version && offers.upload ? { accept: type, hint: `A new ${acceptLabel(type)} file, up to ${formatBytes(offers.upload.maxBytes)}.` } : null;
+    const crop =
+      bytesHref && submit && CROPPABLE.includes(type) && (asNew || replace)
+        ? {
+            src: bytesHref(item.key),
+            asNew,
+            inPlace: !!replace,
+            onSave: async (file: File, how: "new" | "replace") => {
+              const form = new FormData();
+              form.set("intent", how === "new" ? "upload" : "replace");
+              if (how === "replace") {
+                form.set("ids", item.key);
+                if (item.version) form.set("versions", item.version);
+              }
+              form.set("file", file);
+              const r = await intents.run(form);
+              if (!r?.ok) throw new Error(r?.message ?? "The crop was not saved.");
+              const made = how === "new" ? r.outcomes?.find((o) => o.ok)?.id : undefined;
+              if (made) go(withMedia(query, { inspect: made }));
+            },
+          }
+        : null;
+    return { focus: iOffers.focus && !!item.version, replace, crop, keepsSize: !!offers.replaceKeepsSize };
+  };
   const layout = query.layout ?? pref.layout ?? "grid";
   const tileSize = query.size ?? pref.size ?? "m";
   const sort = query.sort ?? "added";
@@ -339,6 +381,11 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
       </div>
 
       {page.sortedOnPage ? <p className="cap-media-lib-note">Sorted on this page only: this site does not sort its whole library.</p> : null}
+      {!picker ? (
+        <p className="cap-media-lib-note" role="status">
+          {copied}
+        </p>
+      ) : null}
 
       {!picker && withheld.length ? (
         <ul className="cap-media-lib-withheld">
@@ -443,7 +490,9 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
                 const next = keys[keys.indexOf(inspected.key) + (dir === "next" ? 1 : -1)];
                 if (next) go(withMedia(query, { inspect: next }));
               }}
-              show={{ alt: iOffers.alt, title: false, caption: false, tags: iOffers.tags }}
+              show={{ alt: iOffers.alt, title: false, caption: iOffers.caption, tags: iOffers.tags }}
+              tools={tools(inspected)}
+              onTool={(form) => void intents.run(form)}
               saving={inspector === "autosave" && submit ? "auto" : "form"}
               action={action}
               Form={Form}

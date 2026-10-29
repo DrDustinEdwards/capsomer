@@ -45,7 +45,7 @@ const USES: Record<string, MediaRecord["used"]> = {
 };
 
 const FILES: MediaRecord[] = [
-  file("2026/09/foxhound-hero.png", "#b29ae3", { alt: "The Foxhound dashboard with three sites reporting healthy", altState: "set", tags: ["release", "foxhound"], bytes: 421888 }),
+  file("2026/09/foxhound-hero.png", "#b29ae3", { alt: "The Foxhound dashboard with three sites reporting healthy", altState: "set", tags: ["release", "foxhound"], bytes: 421888, focus: "0.3x0.4", caption: "Three sites, all green." }),
   file("2026/09/uptime-strip.png", "#7fc4c0", { tags: ["capsid"], bytes: 98304 }),
   file("2026/09/mention-queue.png", "#d8c9f5", { alt: "The mention queue with four mentions waiting", altState: "set", tags: ["capsid"], bytes: 207872 }),
   file("2026/09/divider.png", "#cfc8dc", { altState: "decorative", bytes: 4096 }),
@@ -61,7 +61,32 @@ const GROUPED: MediaRecord[] = [
   file("brand/mark.png", "#a98fdc", { alt: "The site's mark", altState: "set", bytes: 8192, uploaded: "2026-07-01" }),
 ];
 
-const OFFERS: MediaData["offers"] = { upload: { maxBytes: 5 * 1024 * 1024, types: ["image/png", "image/jpeg", "image/webp", "application/pdf"] }, alt: true, tags: true, trash: true, delete: true, lenses: ["unattached", "no-alt", "large"] };
+const OFFERS: MediaData["offers"] = { upload: { maxBytes: 5 * 1024 * 1024, types: ["image/png", "image/jpeg", "image/webp", "application/pdf"] }, alt: true, tags: true, trash: true, delete: true, lenses: ["unattached", "no-alt", "large"], focus: true, caption: true, replace: true };
+
+// A file's own bytes, as a host serves them on its own origin for the crop editor: a PNG drawn here,
+// since the tiles' pictures are SVG, which a canvas does not crop.
+const pngs = new Map<string, string>();
+function bytesOf(key: string): string {
+  const made = pngs.get(key);
+  if (made) return made;
+  const c = document.createElement("canvas");
+  c.width = 1600;
+  c.height = 900;
+  const ctx = c.getContext("2d");
+  if (ctx) {
+    ctx.fillStyle = "#b29ae3";
+    ctx.fillRect(0, 0, 1600, 900);
+    ctx.fillStyle = "#7fc4c0";
+    ctx.fillRect(160, 120, 520, 520);
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(1100, 450, 260, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  const url = c.toDataURL("image/png");
+  pngs.set(key, url);
+  return url;
+}
 
 // The contract's lenses and sorts, as the site would answer them (site-api v0.6.0).
 const LENS: Record<string, (f: MediaRecord) => boolean> = {
@@ -148,7 +173,10 @@ function useSite() {
   };
   const submit = async (form: FormData): Promise<IntentResult> => {
     const entry: Record<string, string | string[]> = {};
-    for (const k of new Set(form.keys())) entry[k] = form.getAll(k).length > 1 ? form.getAll(k).map(String) : String(form.get(k));
+    for (const k of new Set(form.keys())) {
+      const all = form.getAll(k).map((v) => (v instanceof File ? `file:${v.name}` : String(v)));
+      entry[k] = all.length > 1 ? all : (all[0] ?? "");
+    }
     win.mediaLog.push(entry);
     await new Promise((r) => setTimeout(r, 40));
     const intent = String(form.get("intent"));
@@ -189,20 +217,36 @@ function useSite() {
         };
       }
       case "save":
-      case "save-alt":
-      case "save-tags": {
+      case "alt":
+      case "tags":
+      case "caption": {
         const id = ids[0] ?? "";
         const decorative = form.get("decorative") === "on";
         const alt = String(form.get("alt") ?? "");
         const tags = form.has("tags") ? String(form.get("tags")).split(",").map((t) => t.trim()).filter(Boolean) : undefined;
-        change((fs) => fs.map((f) => (f.key !== id ? f : { ...f, ...(form.has("alt") || decorative ? { alt: decorative ? "" : alt, altState: decorative ? "decorative" : alt.trim() ? "set" : "missing" } : {}), ...(tags ? { tags } : {}), version: `v${Date.now()}` })));
+        const caption = form.has("caption") ? String(form.get("caption")) : undefined;
+        change((fs) => fs.map((f) => (f.key !== id ? f : { ...f, ...(form.has("alt") || decorative ? { alt: decorative ? "" : alt, altState: decorative ? "decorative" : alt.trim() ? "set" : "missing" } : {}), ...(tags ? { tags } : {}), ...(caption !== undefined ? { caption } : {}), version: `v${Date.now()}` })));
         return { ok: true, message: `Saved ${some(1)}.` };
+      }
+      case "focus": {
+        const id = ids[0] ?? "";
+        const focus = form.get("clear") === "yes" ? null : `${Number(form.get("x")) / 100}x${Number(form.get("y")) / 100}`;
+        change((fs) => fs.map((f) => (f.key !== id ? f : { ...f, focus, version: `v${Date.now()}` })));
+        return { ok: true, message: focus ? "Focal point saved." : "Focal point cleared." };
+      }
+      case "replace": {
+        const id = ids[0] ?? "";
+        const f = form.get("file");
+        if (!(f instanceof File) || !f.name) return { ok: false, message: "Choose the new file." };
+        change((fs) => fs.map((x) => (x.key !== id ? x : { ...x, bytes: f.size, focus: null, thumb: thumb("#bfe3d0"), version: `v${Date.now()}` })));
+        return { ok: true, message: `Replaced ${some(1)}. Every page that shows it shows the new one.` };
       }
       case "upload": {
         const f = form.get("file");
         if (!(f instanceof File) || !f.name) return { ok: false, message: "Choose a file first. Nothing was uploaded." };
-        change((fs) => [file(`2026/10/${f.name}`, "#bfe3d0", { alt: String(form.get("alt") ?? ""), altState: form.get("alt") ? "set" : "missing", bytes: f.size }), ...fs]);
-        return { ok: true, message: `Uploaded “${f.name}”.` };
+        const key = `2026/10/${f.name}`;
+        change((fs) => [file(key, "#bfe3d0", { alt: String(form.get("alt") ?? ""), altState: form.get("alt") ? "set" : "missing", bytes: f.size }), ...fs]);
+        return { ok: true, message: `Uploaded “${f.name}”.`, outcomes: [{ id: key, ok: true }] };
       }
       default:
         return { ok: false, message: `Nothing here runs “${intent}”.` };
@@ -223,7 +267,20 @@ function Editor() {
         submit={submit}
         inspector="autosave"
         search={async (text) => files.filter((f) => f.state !== "binned" && f.name.toLowerCase().includes(text.toLowerCase()))}
+        bytesHref={bytesOf}
       />
+    </div>
+  );
+}
+
+// A site whose replace must keep the picture's size (site-api v0.11.0 mediaReplaceKeepsSize), in form
+// mode as Carrel shows it: replace asks for the same size, and a crop is only ever a new file.
+function KeepsSize() {
+  const { files, submit } = useSite();
+  const { query, Form, onClickCapture } = useRouter({ inspect: "2026/09/foxhound-hero.png" });
+  return (
+    <div onClickCapture={onClickCapture}>
+      <MediaLibrary data={load(files, query, { offers: { ...OFFERS, replaceKeepsSize: true } })} action="/media" Form={Form} submit={submit} bytesHref={bytesOf} shortcuts={false} />
     </div>
   );
 }
@@ -257,6 +314,7 @@ const mounts: Record<string, () => ReactNode> = {
   form: () => <MediaLibrary data={load(FILES, { inspect: "2026/09/uptime-strip.png" })} action="/media" shortcuts={false} />,
   trash: () => <MediaLibrary data={load(FILES, { view: "trash", layout: "list" })} action="/media" shortcuts={false} />,
   grouped: () => <MediaLibrary data={load(GROUPED, { group: "folder", size: "s" })} action="/media" shortcuts={false} />,
+  "keeps-size": () => <KeepsSize />,
   "by-month": () => <MediaLibrary data={load(GROUPED, { group: "month", layout: "list", sort: "size" }, { page: { nextCursor: null, sortedOnPage: true } })} action="/media" shortcuts={false} />,
   limited: () => <MediaLibrary data={reader} action="/media" shortcuts={false} />,
   picker: () => <Picker />,

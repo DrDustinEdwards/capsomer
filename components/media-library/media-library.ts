@@ -100,10 +100,19 @@ export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, 
   return { bulk, withheld };
 }
 
-// What a file's inspector may do here.
-export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): { alt: boolean; tags: boolean; trash: boolean; delete: boolean } {
+// What a file's inspector may do here. Replacing a file's bytes changes every page that shows it and
+// cannot be undone here, so it needs the delete role, as the content kit says.
+export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): { alt: boolean; tags: boolean; trash: boolean; delete: boolean; focus: boolean; caption: boolean; replace: boolean } {
   const { offers, can } = data;
-  return { alt: can.edit && offers.alt, tags: can.edit && offers.tags, trash: can.deleteMedia && offers.trash, delete: can.deleteMedia && offers.delete };
+  return {
+    alt: can.edit && offers.alt,
+    tags: can.edit && offers.tags,
+    trash: can.deleteMedia && offers.trash,
+    delete: can.deleteMedia && offers.delete,
+    focus: can.edit && !!offers.focus,
+    caption: can.edit && !!offers.caption,
+    replace: can.deleteMedia && !!offers.replace && !!offers.upload,
+  };
 }
 
 // ---------------------------------------------------------------------------------------

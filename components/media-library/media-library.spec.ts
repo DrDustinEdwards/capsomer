@@ -127,11 +127,25 @@ eachTheme((theme) => {
     posted = nextPost(page, "#media-static");
     await ins.getByRole("textbox", { name: "Alt text" }).fill("The Foxhound dashboard");
     await ins.getByRole("button", { name: "Save alt text" }).click();
-    expect((await posted).fields).toEqual({ intent: ["save-alt"], ids: ["2026/09/foxhound-hero.png"], version: ["v1"], alt: ["The Foxhound dashboard"] });
+    expect((await posted).fields).toEqual({ intent: ["alt"], ids: ["2026/09/foxhound-hero.png"], versions: ["v1"], alt: ["The Foxhound dashboard"] });
     posted = nextPost(page, "#media-static");
     await ins.getByRole("textbox", { name: "Tags" }).fill("release, launch");
     await ins.getByRole("button", { name: "Save tags" }).click();
-    expect((await posted).fields).toEqual({ intent: ["save-tags"], ids: ["2026/09/foxhound-hero.png"], version: ["v1"], tags: ["release, launch"] });
+    expect((await posted).fields).toEqual({ intent: ["tags"], ids: ["2026/09/foxhound-hero.png"], versions: ["v1"], tags: ["release, launch"] });
+    // The focal point posts its two percents; Replace is a multipart form of its own.
+    posted = nextPost(page, "#media-static");
+    await ins.locator("summary", { hasText: "Focal point" }).click();
+    await ins.getByRole("spinbutton", { name: "From the left (%)" }).fill("25");
+    await ins.getByRole("button", { name: "Save focal point" }).click();
+    expect((await posted).fields).toMatchObject({ intent: ["focus"], ids: ["2026/09/foxhound-hero.png"], x: ["25"], y: ["40"] });
+    posted = nextPost(page, "#media-static");
+    await ins.locator("summary", { hasText: "Replace the file" }).click();
+    const replace = ins.getByRole("form", { name: "Replace the file" });
+    await replace.locator("input[type=file]").setInputFiles({ name: "hero.png", mimeType: "image/png", buffer: Buffer.from("png") });
+    await replace.getByRole("button", { name: "Replace" }).click();
+    const swapped = await posted;
+    expect(swapped.enctype).toBe("multipart/form-data");
+    expect(swapped.fields).toMatchObject({ intent: ["replace"], ids: ["2026/09/foxhound-hero.png"], file: ["file:hero.png"] });
     // Upload is checked against the site's limits before any byte is sent, and posts the file with its alt text.
     const upload = lib.getByRole("form", { name: "Upload a file" });
     await expect(upload.locator("input[type=file]")).toHaveAttribute("accept", "image/png,image/jpeg,image/webp,application/pdf");
@@ -159,7 +173,7 @@ eachTheme((theme) => {
     await expect.poll(async () => (await log(page)).filter((e) => e.intent === "save").length, { timeout: 4000 }).toBeGreaterThan(0);
     await expect(ins.locator("[data-cap-part='save-status']")).toHaveText("Saved");
     const saves = (await log(page)).filter((e) => e.intent === "save");
-    expect(saves.at(-1)).toMatchObject({ ids: "2026/09/foxhound-hero.png", version: "v1", alt: "The Foxhound dashboard with three sites reporting healthy, in September", tags: "release, foxhound" });
+    expect(saves.at(-1)).toMatchObject({ ids: "2026/09/foxhound-hero.png", versions: "v1", alt: "The Foxhound dashboard with three sites reporting healthy, in September", tags: "release, foxhound" });
   });
 
   test("keyboard: Ctrl K finds a file and opens it, and Esc on a tile closes its details", async ({ page }) => {
@@ -169,13 +183,29 @@ eachTheme((theme) => {
     await page.keyboard.press("Control+k");
     const menu = page.getByRole("dialog", { name: "Command menu" });
     await menu.getByRole("combobox").fill("uptime-s");
-    await expect(menu.getByRole("option", { name: /uptime-strip\.png/ })).toBeVisible();
+    await expect(menu.getByRole("option", { name: "Copy the address of uptime-strip.png" })).toBeVisible();
+    await expect(menu.getByRole("option", { name: /uptime-strip\.png/ }).first()).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(lib.getByRole("dialog", { name: "uptime-strip.png" })).toBeVisible();
     await lib.locator(".cap-media-tile[data-key='2026/09/uptime-strip.png'] .cap-media-open").focus();
     await page.keyboard.press("Escape");
     await expect(lib.getByRole("dialog", { name: "uptime-strip.png" })).toHaveCount(0);
     await expect(lib.locator(".cap-media-tile[data-key='2026/09/uptime-strip.png'] .cap-media-open")).toBeFocused();
+  });
+
+  test("behavior: with script, Crop loads its editor when pressed and saves the crop as a new file", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    const lib = editor(page);
+    await lib.locator(".cap-media-tile[data-key='2026/09/foxhound-hero.png'] .cap-media-open").click();
+    const ins = lib.getByRole("dialog", { name: "foxhound-hero.png" });
+    await ins.locator("summary", { hasText: "Crop or replace the file" }).click();
+    await ins.getByRole("button", { name: "Crop foxhound-hero.png" }).click();
+    const crop = page.getByRole("dialog", { name: "Crop foxhound-hero.png" });
+    await crop.getByRole("combobox", { name: "Shape" }).selectOption({ label: "Square, 1:1" });
+    await crop.getByRole("button", { name: "Save as a new file" }).click();
+    await expect(crop).toHaveCount(0);
+    const made = (await log(page)).filter((e) => e.intent === "upload").at(-1);
+    expect(made).toMatchObject({ intent: "upload", file: expect.stringMatching(/^file:foxhound-hero-crop.*\.png$/) });
   });
 
   test("behavior: Grid or List and the tile size are remembered in this browser", async ({ page }) => {

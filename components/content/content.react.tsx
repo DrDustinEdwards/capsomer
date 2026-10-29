@@ -82,6 +82,9 @@ export interface Intents {
   // Asks before a one-way intent the kit runs at once (the posts list's Cancel the update):
   // the same confirm dialog, which posts the request's fields when confirmed.
   ask: (request: ConfirmRequest) => void;
+  // Posts a form built in script (a crop's new file, a tool with no form of its own) the way a
+  // post from inside the list goes, and answers what the kit said; null with no `submit`.
+  run: (form: FormData) => Promise<IntentResult | null>;
 }
 
 export function useIntents({ action, Form, submit, result = null, names, cancelHref, onDone }: IntentsOptions): Intents {
@@ -132,17 +135,20 @@ export function useIntents({ action, Form, submit, result = null, names, cancelH
     announce(r);
   };
 
-  const run = async (form: FormData) => {
-    if (!submit) return;
+  const run = async (form: FormData): Promise<IntentResult | null> => {
+    if (!submit) return null;
     const at = new Map(namesRef.current);
     let r: IntentResult;
     try {
       r = await submit(form);
     } catch (err) {
       const why = err instanceof Error && err.message ? err.message : "the site did not answer";
-      return announce({ ok: false, message: `Not done: ${why}. Nothing was changed.` });
+      const failed = { ok: false, message: `Not done: ${why}. Nothing was changed.` };
+      announce(failed);
+      return failed;
     }
     handle(r, at);
+    return r;
   };
 
   // With script, every post from inside the list goes through `submit` instead of a page load:
@@ -212,6 +218,7 @@ export function useIntents({ action, Form, submit, result = null, names, cancelH
     confirmPage,
     confirmDialog,
     ask: setAsking,
+    run,
   };
 }
 
