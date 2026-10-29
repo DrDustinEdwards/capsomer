@@ -37,7 +37,7 @@ Any transactional mail a product sends: a sign-in link, an address to confirm, a
 
 | Template | Takes | Says |
 | --- | --- | --- |
-| `magicLink` | `url`, `expiresIn` | who asked, works once, expires, ignore if not you |
+| `magicLink` | `url`, `expiresIn`, optional `code` | who asked, works once, expires, ignore if not you; with `code`, the code to type into the page that asked, under the button |
 | `verification` | `url`, `expiresIn` | the same, for confirming an address |
 | `reset` | `url`, `expiresIn` | the same, for a password |
 | `alert` | `level` (`crit`, `warn`, `info`), `what`, `when`, `details`, `url` | the level as a word, what and when, the detail lines |

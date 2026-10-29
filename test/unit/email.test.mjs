@@ -53,6 +53,14 @@ test("the security wording: who asked, works once, expires, ignore if not you", 
   }
 });
 
+test("a sign-in code sits under the button in both parts, and the expiry covers it", () => {
+  const r = renderEmail(magicLink, { ...common, ...link, code: "000000" });
+  assert.ok(r.text.includes("\n    000000\n"));
+  assert.ok(r.html.indexOf("000000") > r.html.indexOf(FAKE.replace("&", "&amp;")));
+  assert.match(r.text, /The link and the code work once and expire in 15 minutes/);
+  assert.equal(r.subject.includes("000000"), false);
+});
+
 test("every value is escaped in the HTML", () => {
   const evil = `<script>alert("x")</script> & 'q'`;
   const fields = {

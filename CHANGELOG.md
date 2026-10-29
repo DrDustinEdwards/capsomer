@@ -2,6 +2,12 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.40.0]
+
+A sign-in code in the magic-link mail, for a link that opens in another browser than the one that asked.
+
+- **`magicLink` takes an optional `code`.** With it, the mail says "Or enter this code on the page where you asked:" under the button, shows the code in the code block (the text part puts it on its own indented line), and the expiry and ignore lines cover the link and the code. Without it the mail is unchanged. The subject never carries the code, so a lock-screen preview does not show it. site-runtime's `./sign-in` sends one with every sign-in link.
+
 ## [0.39.0]
 
 One mapping from the content kit to the media library, so Carrel and every site admin read the kit's page the same way.
