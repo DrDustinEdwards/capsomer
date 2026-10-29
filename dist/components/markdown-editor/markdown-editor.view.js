@@ -1,0 +1,213 @@
+// The CodeMirror half of the markdown editor. Only this file imports CodeMirror, and only
+// markdown-editor.ts's dynamic import() reaches it, so the editor stays its own chunk and a
+// bundle that never mounts one never carries it. It exposes a small `Surface` and nothing of
+// CodeMirror's own types, so the chrome (toolbar, link palette, slash menu, image prompt)
+// stays plain DOM in markdown-editor.ts.
+//
+// CodeMirror writes its styles into the page unlayered, and an unlayered rule beats a
+// `@layer cap.components` one. So the theme for CodeMirror's own parts is written through its
+// theme API below, from Capsomer's tokens only; everything else is in markdown-editor.css.
+import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
+import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
+import { Compartment, EditorState } from "@codemirror/state";
+import { EditorView, ViewPlugin, keymap, lineNumbers, placeholder as cmPlaceholder } from "@codemirror/view";
+import { tags } from "@lezer/highlight";
+// A scroller that overflows must be reachable by keyboard (WCAG 2.1.1, axe's
+// scrollable-region-focusable): it takes tabindex="0" while it overflows and gives CodeMirror's
+// own -1 back when it does not, as the dialog body does. The text inside is focusable too, so a
+// keyboard user meets the scroller first (arrow keys scroll it), then the text.
+function syncScroller(view) {
+    const sc = view.scrollDOM;
+    const over = sc.scrollHeight > sc.clientHeight + 1;
+    if (over && sc.getAttribute("tabindex") !== "0")
+        sc.tabIndex = 0;
+    else if (!over && sc.getAttribute("tabindex") === "0")
+        sc.tabIndex = -1;
+}
+const scrollerStop = ViewPlugin.fromClass(class {
+    view;
+    observer;
+    constructor(view) {
+        this.view = view;
+        this.observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(() => syncScroller(view));
+        this.observer?.observe(view.scrollDOM);
+        this.observer?.observe(view.contentDOM);
+        queueMicrotask(() => syncScroller(view));
+    }
+    update(u) {
+        if (u.docChanged || u.geometryChanged || u.viewportChanged)
+            queueMicrotask(() => syncScroller(this.view));
+    }
+    destroy() {
+        this.observer?.disconnect();
+    }
+});
+// Every color, font and size is a Capsomer token, so both themes and every density follow
+// without a second copy. The focus ring sits inside the surface, which clips overflow: an
+// outside ring would be cut off (WCAG 2.4.7).
+const capTheme = EditorView.theme({
+    "&": {
+        // Color and ground come from the frame around it (markdown-editor.css), so read-only and
+        // disabled change them there, in one place.
+        color: "inherit",
+        backgroundColor: "transparent",
+        fontSize: "var(--text-size)",
+        maxHeight: "var(--cap-md-max, min(70vh, 48rem))",
+    },
+    "&.cm-focused": {
+        outline: "var(--ring-width) solid var(--ring)",
+        outlineOffset: "calc(-1 * var(--ring-width))",
+    },
+    ".cm-scroller": {
+        overflow: "auto",
+        fontFamily: "var(--mono)",
+        lineHeight: "1.65",
+    },
+    ".cm-content": {
+        caretColor: "var(--accent)",
+        padding: "var(--pad-y) 0",
+        minHeight: "var(--cap-md-min, 16rem)",
+    },
+    ".cm-line": { padding: "0 var(--pad-x)" },
+    ".cm-gutters": {
+        backgroundColor: "var(--sunken)",
+        color: "var(--muted)",
+        border: "none",
+        borderRight: "1px solid var(--line)",
+    },
+    // The selection is the accent mixed into the surface: the pale --sel token is nearly the
+    // surface color and would not show where the selection is.
+    "& .cm-content ::selection, & .cm-content::selection": {
+        backgroundColor: "color-mix(in srgb, var(--accent) 36%, var(--surface))",
+        color: "var(--text)",
+    },
+    ".cm-placeholder": { color: "var(--dim)" },
+});
+// Meaning is never color alone: headings and strong are bold, emphasis is italic, links are
+// underlined, quotes are italic. Each color is a token chosen to reach 4.5:1 on --surface.
+const capHighlight = HighlightStyle.define([
+    { tag: tags.heading, color: "var(--text)", fontWeight: "700" },
+    { tag: tags.strong, color: "var(--text)", fontWeight: "700" },
+    { tag: tags.emphasis, color: "var(--text)", fontStyle: "italic" },
+    { tag: tags.link, color: "var(--accent-text)", textDecoration: "underline" },
+    { tag: tags.url, color: "var(--accent-text)" },
+    { tag: tags.monospace, color: "var(--info)" },
+    { tag: tags.quote, color: "var(--muted)", fontStyle: "italic" },
+    { tag: tags.list, color: "var(--muted)" },
+    { tag: tags.meta, color: "var(--muted)" },
+    { tag: tags.processingInstruction, color: "var(--muted)" },
+    { tag: tags.contentSeparator, color: "var(--muted)" },
+    { tag: tags.strikethrough, color: "var(--muted)", textDecoration: "line-through" },
+]);
+export function createSurface(cfg) {
+    const attrsSlot = new Compartment();
+    const editableSlot = new Compartment();
+    const placeholderSlot = new Compartment();
+    const attrExt = (attrs) => EditorView.contentAttributes.of({ role: "textbox", "aria-multiline": "true", spellcheck: "true", ...attrs });
+    const editableExt = (readOnly, disabled) => [
+        EditorView.editable.of(!disabled),
+        EditorState.readOnly.of(readOnly || disabled),
+    ];
+    const view = new EditorView({
+        parent: cfg.parent,
+        state: EditorState.create({
+            doc: cfg.doc,
+            extensions: [
+                // Without the nonce a strict style-src drops every style CodeMirror injects.
+                EditorView.cspNonce.of(cfg.nonce),
+                history(),
+                markdown({ base: markdownLanguage }),
+                syntaxHighlighting(capHighlight),
+                capTheme,
+                scrollerStop,
+                EditorView.lineWrapping,
+                cfg.lineNumbers ? lineNumbers() : [],
+                attrsSlot.of(attrExt(cfg.attrs)),
+                editableSlot.of(editableExt(cfg.readOnly, cfg.disabled)),
+                placeholderSlot.of(cmPlaceholder(cfg.placeholder)),
+                EditorView.updateListener.of((u) => {
+                    if (u.docChanged)
+                        cfg.onDocChange(u.state.doc.toString());
+                    if (u.docChanged || u.selectionSet)
+                        cfg.onCaret();
+                }),
+                EditorView.domEventHandlers({
+                    paste(event) {
+                        const item = [...(event.clipboardData?.items ?? [])].find((i) => i.type.startsWith("image/"));
+                        const file = item?.getAsFile();
+                        if (!file || !cfg.onFile(file))
+                            return false;
+                        event.preventDefault();
+                        return true;
+                    },
+                    drop(event) {
+                        const file = [...(event.dataTransfer?.files ?? [])].find((f) => f.type.startsWith("image/"));
+                        if (!file || !cfg.onFile(file))
+                            return false;
+                        event.preventDefault();
+                        return true;
+                    },
+                }),
+                // Tab is not bound: it leaves the editor, so the surface is no keyboard trap (WCAG 2.1.2).
+                keymap.of([
+                    { key: "Mod-b", run: () => cfg.onKey("bold"), preventDefault: true },
+                    { key: "Mod-i", run: () => cfg.onKey("italic"), preventDefault: true },
+                    { key: "Mod-k", run: () => cfg.onKey("link"), preventDefault: true },
+                    { key: "Mod-e", run: () => cfg.onKey("code"), preventDefault: true },
+                    { key: "Mod-s", run: () => cfg.onKey("save"), preventDefault: true },
+                    { key: "Escape", run: () => cfg.onKey("escape") },
+                    { key: "ArrowDown", run: () => cfg.onKey("down") },
+                    ...historyKeymap,
+                    ...defaultKeymap,
+                ]),
+            ],
+        }),
+    });
+    return {
+        getValue: () => view.state.doc.toString(),
+        setValue(value) {
+            const current = view.state.doc.toString();
+            if (current === value)
+                return;
+            view.dispatch({ changes: { from: 0, to: current.length, insert: value } });
+        },
+        focus: () => view.focus(),
+        hasFocus: () => view.hasFocus,
+        selection() {
+            const { from, to } = view.state.selection.main;
+            return { from, to };
+        },
+        caret() {
+            const head = view.state.selection.main.head;
+            const line = view.state.doc.lineAt(head);
+            return { head, lineFrom: line.from, lineTo: line.to, lineText: line.text };
+        },
+        coords(pos) {
+            const c = view.coordsAtPos(pos);
+            return c ? { top: c.top, bottom: c.bottom, left: c.left } : null;
+        },
+        select(from, to) {
+            view.dispatch({ selection: { anchor: from, head: to } });
+        },
+        apply(edit) {
+            view.dispatch({
+                changes: edit.changes,
+                selection: { anchor: edit.anchor, head: edit.head ?? edit.anchor },
+                scrollIntoView: true,
+                userEvent: "input",
+            });
+            view.focus();
+        },
+        configure(c) {
+            view.dispatch({
+                effects: [
+                    attrsSlot.reconfigure(attrExt(c.attrs)),
+                    editableSlot.reconfigure(editableExt(c.readOnly, c.disabled)),
+                    placeholderSlot.reconfigure(cmPlaceholder(c.placeholder)),
+                ],
+            });
+        },
+        destroy: () => view.destroy(),
+    };
+}
