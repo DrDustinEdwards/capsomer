@@ -49,13 +49,19 @@
       --_soft: var(--crit-soft);
     }
 
-    /* The glyph sits on the first line of the title or text, whatever the text's size. */
+    /* The glyph sits on the first line of the title or text, whatever the text's size. It hangs
+       in the box's start padding, so the words start at the content's edge and actions that wrap
+       onto a line of their own start under the words, not under the glyph. */
     & > .cap-status-glyph {
       flex: none;
       inline-size: 1.15em;
       block-size: 1.15em;
       margin-block-start: calc((var(--leading) - 1.15) * 0.5em);
+      margin-inline-start: calc(-1.15em - var(--space-4));
       color: var(--_tone);
+    }
+    &:has(> .cap-status-glyph) {
+      padding-inline-start: calc(var(--pad-x) + 1.15em + var(--space-4));
     }
 
     /* Links in the words are underlined, as shadcn's are, and keep their own color. */
@@ -121,6 +127,14 @@
     align-self: center;
     margin-inline-start: auto;
     min-block-size: var(--target);
+  }
+
+  /* After the words, which grow to fill their line, the actions already sit at the end of it;
+     when they wrap they start on the next line under the words, aligned with them, rather than
+     pushed to the far end. The auto margin stays for actions with no words before them. */
+  .cap-banner > :is(.cap-banner-body, .cap-banner-text) ~ .cap-banner-actions,
+  .cap-alert > :is(.cap-alert-body, .cap-alert-text) ~ :is(.cap-alert-action, button, a) {
+    margin-inline-start: 0;
   }
 
   /* A banner is about the page: it sits flush with the content's edge. An alert is about
