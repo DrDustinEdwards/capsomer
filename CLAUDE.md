@@ -6,7 +6,6 @@ Capsomer is the family design system: tokens, components, the app shell and patt
 
 - Tests: keep the minimal set (a few browser tests for flows that must never break, one integration test per real behavior, unit tests only for tricky logic, shared code tested once where it lives), and remove any test that pins design, repeats coverage or has never caught a real mistake, unless it guards a harm that cannot be undone.
 - Capsomer's defaults are `DEFAULTS.md`. Design choices are defaults, not laws: a better design overrides one and records why.
-- A shared component changes only here. An app never keeps its own copy; it takes the change in a release.
 - Plain CSS with family tokens. No Tailwind or other CSS framework, no paid assets. shadcn/ui is the craft reference only; nothing is installed or copied from it.
 
 ## Layout
