@@ -2,6 +2,25 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## Unreleased
+
+The media library's ideas from site-api v0.13.0 (merged as 80d87d3; tag v0.13.0 to follow), each shown only where the kit offers it, each a form post that works with no script.
+
+- **Duplicates**: an upload or import of bytes the site holds links the file already stored under the result (`filesToOpen`, new); the inspector lists the file's twins; the Duplicates lens.
+- **Usage**: `MediaRecord.usedCount` (new) gives a list's tiles the Unattached flag at 0 (`flagsFor`); Most used as a sort (`MediaQuery.sort` gains `used`, `SORT_DIR.used`).
+- **Filters**: Type and Orientation as link chips under a Filter disclosure (`MediaQuery.kind` and `orientation`, new, in the address; `KIND_WORDS`, `ORIENTATION_WORDS`). The contract has no date filter, so none is offered.
+- **Import from a web address** under upload, posting `import` with `url` and `alt`.
+- **Credit and license** in the inspector, posting `credit`, with a note when the license has ended; the License ended lens. New `MediaRecord` fields: `credit`, `license`, `sourceUrl`, `licenseExpires`, `takenAt`, `twins`.
+- **Turns**: Rotate left and right, Flip horizontally and vertically, posting `transform` with `op`; on a site whose addresses carry the size, the inspector says a quarter turn is saved as a new file, and the result links the copy (`IntentOutcome.copyId`, new).
+- **History**: the file's earlier bytes with Go back to this, posting `revert` with `to` (`MediaData.history`, `MediaRevision`, new).
+- **Live updates**: with script and the new `changes` prop (the kit's `loadMediaChanges`), the library polls from `page.changeCursor` every 15 seconds while visible, puts changed files in place, takes deleted ones out, and says so (`applyChanges`, `KitMediaChanges`, new).
+- **Shrink**: Shrink to the site's size in the inspector, and Shrink all on this page on the Oversized lens, posting `resize` (the kit lists every file and asks first); Keep it at full size (`resize=no`) on upload and import where the site shrinks uploads.
+- **Embedded metadata**: the inspector shows when a picture was taken and offers its caption as an editable starting point for alt text.
+- **Suggestions**: Suggest tags and alt links to `suggest=1` (`MediaQuery.suggest`, new); each suggested tag and the suggested alt text is accepted on its own, never applied unasked (`MediaData.suggestions`, `MediaSuggestions`, new).
+- `MediaOffers` gains `duplicates`, `usage`, `filters`, `import`, `credit`, `transform`, `history`, `live`, `resize`, `resizePass`, `embedded` and `suggestions`, all optional; `mediaDataOfKit` and `recordOfKit` map the new fields; `inspectorOffers` names the new ones. New helpers: `orientationOf`, `turnMakesCopy`, `oversized`, `licenseEnded`, `dayWords`, `momentWords`.
+- `MediaInspector` takes `more` (new): sections after the picture tools, built from the inspector's own form or nested group; a nested tool now also sends text areas, selects and checked boxes.
+- New classes: `.cap-media-lib-opened`, `.cap-media-lib-accept`, `.cap-media-lib-history` (with `-what`, `-facts`), `.cap-media-lib-revert`. The ended-license note is the banner stylesheet's `.cap-alert`, already needed by the picture tools.
+
 ## [0.39.0]
 
 One mapping from the content kit to the media library, so Carrel and every site admin read the kit's page the same way.

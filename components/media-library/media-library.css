@@ -156,6 +156,47 @@
     }
   }
 
+  /* The links to what an upload, an import or a turn left to open, under the result. */
+  .cap-media-lib-opened {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The model's suggested tags: each chip is its own form's button, so a tag is accepted alone. */
+  .cap-media-lib-accept {
+    display: contents;
+  }
+
+  /* The file's byte history, newest first: what made each version, its size, and a way back. */
+  .cap-media-lib-history {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & > li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--space-1) var(--space-3);
+    }
+    & > li[aria-current] .cap-media-lib-history-what {
+      font-weight: 600;
+    }
+  }
+  .cap-media-lib-history-facts {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-media-lib-revert {
+    display: contents;
+  }
+
   .cap-media-lib-pages {
     display: flex;
     flex-wrap: wrap;
