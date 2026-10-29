@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { FAMILIES, contrast, report, scale, themes } from "../../tokens/palette.mjs";
+import { FAMILIES, apca, report, scale, themes } from "../../tokens/palette.mjs";
 
 const css = (f) => readFileSync(new URL(`../../tokens/${f}`, import.meta.url), "utf8");
 
@@ -24,16 +24,10 @@ test("families: fox and teal are scoped to [data-family], in both themes, with l
   }
 });
 
-test("primary: the label passes 4.5:1 on the fill and its hover, in both themes, for every family", () => {
-  for (const f of Object.values(FAMILIES)) {
-    const t = themes(f);
-    for (const scheme of ["light", "dark"]) {
-      const tk = t[scheme].tokens;
-      assert.ok(contrast(tk["primary-fg"], tk.primary) >= 4.5, `${scheme} ${f.seed} primary`);
-      assert.ok(contrast(tk["primary-fg"], tk["primary-hover"]) >= 4.5, `${scheme} ${f.seed} primary hover`);
-      assert.ok(contrast(tk.ring, tk.surface) >= 3, `${scheme} ${f.seed} ring`);
-      assert.equal(tk.ring, tk.accent);
-    }
+test("apca: matches the apca-w3 reference (0.1.9, APCA 0.0.98G-4g) in both polarities", () => {
+  // Values from apca-w3's APCAcontrast(sRGBtoY(text), sRGBtoY(bg)), computed 2026-10-29.
+  for (const [txt, bg, lc] of [["#1c1727", "#fdfdfe", 103.15], ["#96949e", "#18161c", -44.215], ["#ffffff", "#7d50c1", -82.617], ["#0e0c12", "#9b6ee3", 39.761], ["#888888", "#777777", -7.32]]) {
+    assert.ok(Math.abs(apca(txt, bg) - lc) < 0.01, `${txt} on ${bg}: ${apca(txt, bg)} vs ${lc}`);
   }
 });
 
@@ -112,7 +106,7 @@ test("family: a seed too light for white (amber) keeps it in dark, darkens it in
   assert.equal(scale(FAMILIES.amber.seed, null, "dark")[8], "#f0b429");
   const t = themes(FAMILIES.amber);
   assert.notEqual(t.light.tokens.accent, "#f0b429");
-  assert.equal(t.light.tokens.primary, t.light.tokens.accent);
+  assert.equal(t.light.tokens["primary-line"], t.light.tokens.accent);
   assert.equal(t.light.tokens["primary-fg"], t.dark.tokens["primary-fg"]);
 });
 

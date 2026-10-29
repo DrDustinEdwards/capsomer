@@ -28,6 +28,12 @@ export function applyTheme(choice: ThemeChoice, opts: { key?: string; remember?:
   const paint = () => {
     pending = null;
     document.documentElement.setAttribute("data-theme", choice);
+    // The browser bar (themeColorMeta): every theme-color tag takes the chosen theme's ground.
+    const metas = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
+    if (metas.length) {
+      const ground = getComputedStyle(document.documentElement).getPropertyValue("--ground").trim();
+      if (ground) for (const m of metas) m.content = ground;
+    }
   };
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (opts.remember === false || reduce || !document.startViewTransition) paint();

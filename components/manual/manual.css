@@ -10,7 +10,8 @@
 /* The running head over a page: its section's number and name on the left in bold, the folio or
    date on the right, over a hairline (the manual's index, page i). The sign variant sets it as
    one of the manual's building signs (6.1): a dark panel of light type, the family's color in a
-   strip along its top, the number on a plate of its own. */
+   strip along its top, the number on a plate of its own. The signs take --sign and --on-sign, so
+   in dark they stay dark panels with an edge instead of turning into white slabs. */
 @layer cap.components {
   .cap-running-head {
     display: flex;
@@ -36,10 +37,10 @@
 
   .cap-running-head[data-variant="sign"] {
     padding: var(--space-3) var(--space-5) var(--space-4);
-    border: 0;
+    border: 1px solid var(--sign-edge);
     border-block-start: 10px solid var(--on);
-    background: var(--text);
-    color: var(--ground);
+    background: var(--sign);
+    color: var(--on-sign);
     font-size: clamp(1.25rem, 2.4vw, 1.75rem);
 
     .cap-running-head-name {
@@ -305,8 +306,8 @@
     gap: var(--space-4);
     margin: 0;
     padding: var(--space-3) var(--space-5);
-    background: var(--text);
-    color: var(--ground);
+    background: var(--sign);
+    color: var(--on-sign);
     font: 700 0.75rem / 1.4 var(--mono);
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -469,8 +470,9 @@
     max-inline-size: 100%;
     min-block-size: 48px;
     padding: var(--space-3) var(--space-5);
-    background: var(--text);
-    color: var(--ground);
+    border: 1px solid var(--sign-edge);
+    background: var(--sign);
+    color: var(--on-sign);
     font: 500 1rem / 1.3 var(--ui);
     text-decoration: none;
     overflow-wrap: anywhere;
@@ -500,7 +502,7 @@
        the sign's whole answer. Where motion is reduced the panel lightens a little instead. */
     @media (prefers-reduced-motion: reduce) {
       &:hover {
-        background: color-mix(in srgb, var(--text) 86%, var(--ground));
+        background: color-mix(in srgb, var(--sign) 86%, var(--on-sign));
       }
     }
 
@@ -687,8 +689,9 @@
 @layer cap.components {
   .cap-direction {
     padding: var(--space-2) var(--space-4);
-    background: var(--text);
-    color: var(--ground);
+    border: 1px solid var(--sign-edge);
+    background: var(--sign);
+    color: var(--on-sign);
     font: 600 0.9375rem / 1.4 var(--ui);
 
     > ol {
@@ -717,7 +720,7 @@
       display: inline-block;
       min-block-size: 24px;
       line-height: 24px;
-      color: var(--ground);
+      color: var(--on-sign);
       text-decoration: none;
       overflow-wrap: anywhere;
 
@@ -876,8 +879,8 @@
     gap: var(--space-3);
     margin: 0 0 var(--space-3);
     padding: var(--space-2) var(--space-4);
-    background: var(--text);
-    color: var(--ground);
+    background: var(--sign);
+    color: var(--on-sign);
     font: 700 0.75rem / 1.2 var(--mono);
     letter-spacing: 0.08em;
     text-transform: uppercase;

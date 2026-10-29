@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { FAMILIES, themes } from "../../tokens/palette.mjs";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const html = (page: Page) => page.locator("html");
@@ -126,3 +127,23 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-theme-button")).toHaveAccessibleName(`Switch to ${other} theme`);
   });
 });
+
+// The device's "increase contrast" setting turns on the generated stronger set, in the theme the
+// person chose with the switch as well as in the system's (the dark mode plan, 2026-10-29).
+for (const theme of ["light", "dark"] as const) {
+  test(`behavior: prefers-contrast: more applies the stronger ${theme} set, with ${theme} chosen in the switch`, async ({ page }) => {
+    const other = theme === "dark" ? "light" : "dark";
+    await page.emulateMedia({ colorScheme: other, contrast: "more" });
+    await visitStates(page, "theme-switch", theme);
+    await page.evaluate((choice) => document.documentElement.setAttribute("data-theme", choice), theme);
+    const t = themes(FAMILIES.purple);
+    const base = t[theme].tokens;
+    const more = t[`${theme}More`].tokens;
+    const changed = ["muted", "line-strong", "ring", "accent-text", "line"].filter((k) => more[k] !== base[k]);
+    expect(changed.length).toBeGreaterThan(0);
+    for (const k of changed) {
+      const painted = await page.evaluate((name) => getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim(), k);
+      expect(painted, `--${k}`).toBe(more[k]);
+    }
+  });
+}

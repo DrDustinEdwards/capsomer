@@ -43,9 +43,9 @@ export const capsomerTheme = {
   "dark": {
     "background": "#18161c",
     "text": "#efedf3",
-    "mutedText": "#96949e",
+    "mutedText": "#b7b5bf",
     "grid": "#343238",
-    "focus": "#8c5fd2",
+    "focus": "#d8c7ff",
     "series": [
       "#8c5fd2",
       "#cc4f0c",
@@ -64,10 +64,10 @@ export const capsomerTheme = {
       "#cdb5ff"
     ],
     "status": {
-      "good": "#4aa462",
-      "warning": "#bc861a",
-      "bad": "#d97269",
-      "unknown": "#898790"
+      "good": "#72cc87",
+      "warning": "#e7ae4e",
+      "bad": "#fe9e94",
+      "unknown": "#b7b5be"
     }
   }
 };

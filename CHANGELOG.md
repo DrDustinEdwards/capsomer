@@ -4,6 +4,20 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## Unreleased
 
+## [0.35.0]
+
+Dark mode, designed rather than inverted (Dustin, 2026-10-29: "proceed" on the dark mode plan). Every family's dark theme was already its own OKLCH scale, but it was tuned to WCAG 2's ratio alone, which overrates gray on near-black: dark muted text, status words, button labels, focus rings and control borders passed at about half the APCA contrast of the light theme.
+
+- **The palette is checked against APCA as well as WCAG 2.2.** Every pair now needs its WCAG ratio and an APCA floor: Lc 90 for body text, 75 for accent text, 60 for other text, 45 for the focus ring, 30 for a control's border (`LEVELS` in `tokens/palette-core.mjs`). `npm run check` checks all ten families in both themes and at both contrast levels; the theme builder shows both numbers. New exports: `apca`, `LEVELS`, `strengthen`, `fitNeutrals`, `moreLines`; `familyTheme`, `pairs` and `failures` take a contrast level, and a pair carries `lc` and `lcMin`.
+- **Dark text, buttons, rings and borders are stronger.** In dark, muted and dim text reach Lc 60 (purple's muted #96949e is now #b7b5bf), status words Lc 60, accent text Lc 75 (purple #c6b1f2 is #d8c7ff), and the primary fill is lighter so its dark label reaches Lc 60 (purple #9b6ee3 is #c09eff). The focus ring in dark is accent text, not the brand color, which was 3.96:1 and Lc 30 for teal. Control borders reach Lc 30. The light themes are unchanged apart from amber.
+- **Amber's light button** fills lighter (#daa73f) so its dark label reaches Lc 60 (it was 43.5), and keeps the 3:1 step 9 (#b68508) as its edge. New token: `--primary-line`, the primary button's edge; it equals `--primary` everywhere else. Amber's light accent text moves from #8a5c06 to #845802 to reach Lc 75. Changed: the primary button's edge reads `--primary-line`.
+- **Increase contrast.** Under `prefers-contrast: more` every family, the pinned themes (`themes.css`) and each site's own neutrals take a generated stronger set: muted text, status words and links at Lc 75, rings at Lc 60, borders at Lc 45 and visible dividers. Only the tokens that change are written. The Light and Dark switch is unchanged.
+- **The manual's signs stay dark in dark.** The running head's sign variant, the signs, the direction strip and the checklist and cue strips were `--text` panels with `--ground` type, so in dark they turned into near-white slabs. They now take `--sign`, `--on-sign` and `--sign-edge`: the same dark panel in light, and in dark a raised panel of light type with an edge. New tokens: `--sign`, `--on-sign`, `--sign-edge`.
+- **`--dim` is text only.** The bulk bar, the message region and the theme switch drew their edge in `--dim`; they now use `--line-strong`, which is checked at 3:1 on the ground as well. Changed: those three components' borders.
+- **Flat images.** `.cap-img-flat` gives a screenshot or a diagram on white an edge and, in dark, dims it a little (`--img-filter`, new) so it does not glow.
+- **The browser bar.** `themeColorMeta(choice, { light, dark })` in `capsomer/theme-server` writes `<meta name="theme-color">` tags, and the theme switch keeps them on the chosen theme's ground.
+- **Site layer.** Foxhound's dark text, muted, dim and control border, and Foxing's dark muted and dim, are lifted to the APCA floors in their own hues (Foxhound's dark border was #4a4c44, 2.02:1; its waiver is gone). Changed: those values in `tokens/sites.mjs`.
+
 ## [0.34.1]
 
 - **A short page's letterhead sits on the same pixels as a long page's.** A page with a letterhead keeps the scrollbar's room (`scrollbar-gutter: stable`), so a page too short to scroll no longer shifts the band half a scrollbar (7px in Chrome on Windows) to the right. Dustin saw it on the dustinedwards.info admin's Drafts list (2026-10-28).

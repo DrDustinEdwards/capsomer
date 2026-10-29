@@ -97,7 +97,9 @@
     &[data-variant="primary"] {
       --cap-btn-fg: var(--primary-fg);
       --cap-btn-bg: var(--primary);
-      --cap-btn-line: var(--primary);
+      /* The edge is the fill everywhere but amber's light theme, where the fill is lightened for
+         its dark label and the edge keeps the 3:1 step 9 against the page. */
+      --cap-btn-line: var(--primary-line);
       --cap-btn-hover: var(--primary-hover);
       --cap-btn-press: var(--primary-hover);
       font-weight: 600;
@@ -243,7 +245,7 @@
 
     &:is(:hover, [data-force="hover"]) {
       --cap-btn-fg: color-mix(in srgb, var(--primary-fg) calc(var(--btn-sweep) * 100%), var(--text));
-      --cap-btn-line: color-mix(in srgb, var(--primary) calc(var(--btn-sweep) * 100%), var(--line-strong));
+      --cap-btn-line: color-mix(in srgb, var(--primary-line) calc(var(--btn-sweep) * 100%), var(--line-strong));
       background-size: calc(var(--btn-sweep) * 100%) 100%;
     }
   }

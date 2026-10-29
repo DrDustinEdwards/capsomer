@@ -1,7 +1,8 @@
 // The design tokens, generated from one seed color per family. `node tokens/palette.mjs`
 // writes tokens/color.css; `--check` regenerates it in memory, refuses any difference from
 // the committed file, and checks every text and control pair against WCAG 2.2 (4.5:1 for
-// text, 3:1 for a control's boundary), in both themes. `npm run check` runs the check, so CI
+// text, 3:1 for a control's boundary) and against its APCA floor (LEVELS in palette-core.mjs),
+// in both themes, at the standard contrast and under prefers-contrast: more. `npm run check` runs the check, so CI
 // refuses a hand-edited hex and a pair that fell below the bar.
 //
 // The family scale (rulings.md, rule 14, locked 2026-10-01): every brand color is a
@@ -79,14 +80,19 @@ export function files() {
   ];
 }
 
+// The four themes a family has: [key in themes(), contrast level].
+const THEME_KEYS = [["light", "standard"], ["dark", "standard"], ["lightMore", "more"], ["darkMore", "more"]];
+
 const target = (rel) => (outArg ? outArg : fileURLToPath(new URL(`./${rel}`, import.meta.url)));
 
 export async function check() {
   const { chartChecks } = await import("./chart-checks.mjs");
   const problems = [];
-  const t = themes();
-  problems.push(...failures(t.light.tokens).map((p) => `light: ${p}`));
-  problems.push(...failures(t.dark.tokens).map((p) => `dark: ${p}`));
+  // Every family, both themes, at the standard contrast and under prefers-contrast: more.
+  for (const [name, f] of Object.entries(FAMILIES)) {
+    const ft = themes(f);
+    for (const [key, level] of THEME_KEYS) problems.push(...failures(ft[key].tokens, level).map((p) => `${name} ${key}: ${p}`));
+  }
   // The chart palette, for every family and both themes (tokens/chart-checks.mjs): contrast against
   // the chart's background, every pair apart under the color-vision deficiencies, clear of
   // the status colors, the ramp ordered.
@@ -118,7 +124,7 @@ export function report() {
   const rows = [];
   for (const [name, f] of Object.entries(FAMILIES)) {
     const t = themes(f);
-    const schemes = f.defaultTheme === "dark" ? ["dark", "light"] : ["light", "dark"];
+    const schemes = f.defaultTheme === "dark" ? ["dark", "light", "darkMore", "lightMore"] : ["light", "dark", "lightMore", "darkMore"];
     for (const scheme of schemes) for (const p of t[scheme].pairs) rows.push({ family: name, scheme, isDefault: scheme === f.defaultTheme, ...p, fgHex: t[scheme].tokens[p.fg], bgHex: t[scheme].tokens[p.bg] });
   }
   // Each family in turn, its default theme first, failures first within each theme.
@@ -133,13 +139,13 @@ if (invoked) {
       console.error(`palette: ${problems.length} problem(s)\n  ${problems.join("\n  ")}`);
       process.exit(1);
     }
-    console.log(`palette: ${files().map(([r]) => `tokens/${r}`).join(", ")} match the script and every pair meets WCAG 2.2 in both themes`);
+    console.log(`palette: ${files().map(([r]) => `tokens/${r}`).join(", ")} match the script and every pair meets WCAG 2.2 and its APCA floor in both themes, at both contrast levels`);
   } else if (process.argv.includes("--report")) {
     const rows = report();
     const failed = rows.filter((r) => !r.pass);
-    for (const r of process.argv.includes("--summary") ? failed : rows) console.log(`${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${(r.scheme + (r.isDefault ? "*" : "")).padEnd(6)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 (needs ${r.min})`);
+    for (const r of process.argv.includes("--summary") ? failed : rows) console.log(`${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${(r.scheme + (r.isDefault ? "*" : "")).padEnd(10)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 Lc ${Math.abs(r.lc).toFixed(1)} (needs ${r.min}${r.lcMin ? `, Lc ${r.lcMin}` : ""})`);
     console.log("(* the family's default theme, checked first)");
-    console.log(`palette: ${rows.length} pairs across ${Object.keys(FAMILIES).length} families and both themes; ${failed.length} fail`);
+    console.log(`palette: ${rows.length} pairs across ${Object.keys(FAMILIES).length} families, both themes and both contrast levels; ${failed.length} fail`);
     if (failed.length) process.exit(1);
   } else if (process.argv.includes("--table")) {
     for (const [name, t] of Object.entries(themes())) if (name === "light" || name === "dark") {
