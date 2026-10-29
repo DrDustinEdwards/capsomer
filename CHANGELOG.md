@@ -2,6 +2,16 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.39.0]
+
+One mapping from the content kit to the media library, so Carrel and every site admin read the kit's page the same way.
+
+- **`mediaDataOfKit(kit, { usedHref, view })`** (new, `capsomer/behavior/media-library`) turns site-api's `loadMedia` answer into `MediaData`: each row a `MediaRecord` (id as key, the file name or id as name, the site's own address as `url` and the kit's absolute `src` as `thumb`, image or document by type, Trash as `binned`, version, tags, caption and focal point), tiles from a list marked `usedUnknown`, the inspected file with where it is used linking through `usedHref`, and the tag chips from the page's rows with their counts on this page. `view` merges the drawing from the address (`readMediaView`) and the picker's `pick`. `recordOfKit(row, used?)` (new) maps one file. `KitMediaRow` and `KitMediaData` (new) are the kit's shapes, typed here so Capsomer imports nothing from site-api.
+- **Empty Trash**: in Trash, with the delete role and a site with a trash, a button posts the kit's `empty-trash`, which names every file and asks for the count before anything goes (site-api v0.12.0). Carrel's own library had it.
+- **A post is never sent twice.** With `submit` and a router's `Form` (React Router's prevents the default and posts itself), the content components' script path also posted the same form, so a write ran twice and the second hit a version conflict. The script path now leaves a form whose submit was already handled. To get the in-place path, pass a `Form` that is the router's for `method="get"` and a plain form for posts.
+- **A component's own list keeps its layout in a dialog.** The dialog's rules for prose lists and sheet links (`.cap-dialog-body ul`, `.cap-dialog-body nav ul`, `.cap-dialog-body nav a`) are now under `:where`, so chips and the media grid in a dialog (the image picker) are no longer stacked as full-width rows with bullets. Unclassed lists and links in a dialog look as before.
+- **An editor can move files to Trash and restore them**, as the content kit allows (site-api `Permissions.edit`: trash and restore are reversible). The bulk bar and the inspector offered them only with the delete role, so Carrel's Editors lost them; Delete for good and Replace still need it.
+
 ## [0.38.0]
 
 Media library parity with dustinedwards.info's own library, so Carrel can be the one place a site's media is managed.

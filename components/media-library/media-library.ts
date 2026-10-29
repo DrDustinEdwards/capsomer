@@ -2,9 +2,9 @@
 // is offered here and why the others are withheld, the count, the empty state, the upload rules in
 // words, and which files the picker offers. No DOM; the React component and a server render use the
 // same functions.
-import type { ContentLabels, MediaData, MediaOffers, MediaQuery } from "../content/content.ts";
+import type { ContentLabels, MediaData, MediaOffers, MediaQuery, MediaUse } from "../content/content.ts";
 import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
-import type { MediaRecord } from "../media/media.ts";
+import { altStateOf, type MediaRecord, type UsedIn } from "../media/media-record.ts";
 
 export function nounsOf(labels: ContentLabels = {}): { noun: string; plural: string } {
   const noun = labels.noun ?? "file";
@@ -75,7 +75,8 @@ export interface OfferedAction {
 }
 
 // The bulk actions this person may run on this view of this site, in the bar's order, and a
-// sentence for each one held back. Delete is for good: from Trash where the site has one, from
+// sentence for each one held back. Trash and Restore are an editor's (reversible, as the kit says);
+// Delete is for good and the delete role's: from Trash where the site has one, from
 // the library only where it has none.
 export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, labels?: ContentLabels): { bulk: OfferedAction[]; withheld: string[] } {
   const { plural } = nounsOf(labels);
@@ -84,11 +85,11 @@ export function mediaActions(data: Pick<MediaData, "offers" | "can" | "query">, 
   const bulk: OfferedAction[] = [];
   const withheld: string[] = [];
   if (trash) {
-    if (can.deleteMedia && offers.trash) bulk.push({ intent: "restore", label: "Restore" });
+    if (can.edit && offers.trash) bulk.push({ intent: "restore", label: "Restore" });
     if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   } else {
     if (can.edit && offers.tags) bulk.push({ intent: "tag-add", label: "Add tag" }, { intent: "tag-remove", label: "Remove tag" });
-    if (can.deleteMedia && offers.trash) bulk.push({ intent: "trash", label: "Move to Trash" });
+    if (can.edit && offers.trash) bulk.push({ intent: "trash", label: "Move to Trash" });
     else if (can.deleteMedia && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
   }
   if (!can.edit) withheld.push(`You can look at these ${plural}. Changing them needs an editor's role.`);
@@ -108,7 +109,7 @@ export function inspectorOffers(data: Pick<MediaData, "offers" | "can">): { alt:
   return {
     alt: can.edit && offers.alt,
     tags: can.edit && offers.tags,
-    trash: can.deleteMedia && offers.trash,
+    trash: can.edit && offers.trash,
     delete: can.deleteMedia && offers.delete,
     focus: can.edit && !!offers.focus,
     caption: can.edit && !!offers.caption,
@@ -221,5 +222,91 @@ export function readMediaView(search: URLSearchParams): Pick<MediaQuery, "layout
     ...(layout === "grid" || layout === "list" ? { layout } : {}),
     ...(size === "s" || size === "m" || size === "l" ? { size } : {}),
     ...(group === "folder" || group === "month" ? { group } : {}),
+  };
+}
+
+// ---------------------------------------------------------------------------------------
+// The content kit's page, as the library's data.
+
+// One file as the site-api contract gives it (MediaItem, with the kit's absolute `src`), typed here by
+// shape so Capsomer needs no site-api import.
+export interface KitMediaRow {
+  id: string;
+  url: string;
+  src: string;
+  filename: string | null;
+  contentType: string;
+  bytes: number;
+  width: number | null;
+  height: number | null;
+  alt: string;
+  uploadedAt: string | null;
+  version?: string;
+  tags?: string[];
+  trashedAt?: string | null;
+  focus?: string | null;
+  caption?: string;
+}
+
+// The content kit's loadMedia answer (site-api v0.11.0 MediaData), by shape.
+export interface KitMediaData {
+  site: { name: string };
+  query: Omit<MediaQuery, "layout" | "size" | "group" | "pick">;
+  rows: KitMediaRow[];
+  page: MediaData["page"];
+  detail?: (KitMediaRow & { usedBy: MediaUse[] }) | null;
+  offers: MediaOffers & { media?: boolean };
+  can: MediaData["can"];
+}
+
+// A kit row as the media component's record: `url` is the site's own address for it (what Markdown and the
+// copy snippets carry), `thumb` the absolute one a browser loads. A list has no usedBy, so its tiles
+// carry no Unattached flag.
+export function recordOfKit(row: KitMediaRow, used?: UsedIn[]): MediaRecord {
+  return {
+    key: row.id,
+    name: row.filename ?? row.id,
+    url: row.url,
+    thumb: row.src,
+    kind: row.contentType.startsWith("image/") ? "image" : "document",
+    type: row.contentType,
+    bytes: row.bytes,
+    ...(row.width != null ? { width: row.width } : {}),
+    ...(row.height != null ? { height: row.height } : {}),
+    ...(row.uploadedAt ? { uploaded: row.uploadedAt } : {}),
+    alt: row.alt,
+    altState: altStateOf(row.alt, false),
+    title: "",
+    caption: row.caption ?? "",
+    tags: row.tags ?? [],
+    used: used ?? [],
+    state: row.trashedAt ? "binned" : "ready",
+    ...(row.version ? { version: row.version } : {}),
+    ...(used ? {} : { usedUnknown: true }),
+    focus: row.focus ?? null,
+  };
+}
+
+// The kit's page as MediaLibrary's data, so every host maps it the same way. `usedHref` is where a
+// place that uses the file links (the host's editor); the page's tags, with their counts on this page,
+// make the chip row, and the chosen tag stays in it even when no file here carries it. `view` is the
+// drawing the address asks for (readMediaView) and `pick` the picker's chosen file.
+export function mediaDataOfKit(kit: KitMediaData, options: { usedHref?: (use: MediaUse) => string; view?: Pick<MediaQuery, "layout" | "size" | "group" | "pick"> } = {}): MediaData {
+  const counts = new Map<string, number>();
+  for (const r of kit.rows) for (const t of r.tags ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);
+  if (kit.query.tag && !counts.has(kit.query.tag)) counts.set(kit.query.tag, 0);
+  const href = options.usedHref ?? (() => "");
+  const { media: _media, ...offers } = kit.offers;
+  return {
+    site: { name: kit.site.name },
+    query: { ...kit.query, ...options.view },
+    rows: kit.rows.map((r) => recordOfKit(r)),
+    page: kit.page,
+    tags: [...counts].sort(([a], [b]) => a.localeCompare(b)).map(([tag, count]) => ({ tag, count })),
+    offers,
+    can: kit.can,
+    ...(kit.detail !== undefined
+      ? { inspected: kit.detail ? recordOfKit(kit.detail, kit.detail.usedBy.map((u) => ({ title: u.title || u.id, href: href(u), how: u.detail }))) : null }
+      : {}),
   };
 }
