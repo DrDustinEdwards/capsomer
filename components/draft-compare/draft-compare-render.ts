@@ -46,6 +46,9 @@ export interface CompareOptions extends SentenceOptions {
   runs?: { before?: RunSpan[]; after?: RunSpan[] };
   // Leave the chosen view to the app (false): enhance() then does not read or write storage.
   remember?: boolean;
+  // Draw each side's name over its column (default). false leaves it to the page, which names
+  // the sides in its own words (the posts list's scheduled update, with times in the viewer's zone).
+  heads?: boolean;
 }
 
 export const STORAGE_KEY = "cap-compare-view";
@@ -342,7 +345,7 @@ export function renderCompare(before: CompareSide, after: CompareSide, options: 
   const an = analyze(before.text, after.text, options);
   const name = `Compare ${before.title} with ${after.title}`;
   const attrs = `class="cap-compare" data-cap="draft-compare" id="${id}" aria-label="${esc(name)}"${options.remember === false ? ' data-remember="off"' : ""}`;
-  const head = `<div class="cap-compare-head">${sideHead(labels.before, before, "before")}${sideHead(labels.after, after, "after")}</div>`;
+  const head = options.heads === false ? "" : `<div class="cap-compare-head">${sideHead(labels.before, before, "before")}${sideHead(labels.after, after, "after")}</div>`;
 
   if (an.identical) {
     const words = (s: CompareSide) => `“${esc(s.title)}”${s.who || s.time ? ` (${[s.who ? esc(s.who) : "", s.time ? timeHtml(s.time) : ""].filter(Boolean).join(", ")})` : ""}`;

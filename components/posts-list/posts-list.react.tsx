@@ -461,6 +461,7 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
   const [moving, setMoving] = useState<Moving | null>(null);
   const clock = now ?? Date.now();
   const scripted = mounted && !!submit;
+  const Side = headingLevel === "h3" ? "h4" : headingLevel === "h2" ? "h3" : "h2";
   const may = data.can.publish;
   const actions = (
     <>
@@ -517,12 +518,25 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
       ) : null}
       {!may ? <p className="cap-posts-withheld">Rescheduling or canceling it needs a publisher's role.</p> : null}
 
-      <DraftCompare
-        before={{ title: `On the site${liveSince ? " since" : " now"}`, time: liveSince ?? undefined, text: data.live.source }}
-        after={{ title: "Goes live", time: data.publishAt, text: data.source }}
-        labels={{ before: "Live", after: "Scheduled" }}
-        id={`${uid}-cmp`}
-      />
+      <div className="cap-posts-update-sides">
+        <Side className="cap-posts-update-side">
+          Live {noun}
+          {liveSince ? (
+            <span className="cap-posts-update-side-when">
+              {" "}
+              · on the site since <Time at={liveSince} format="exact" />
+            </span>
+          ) : null}
+        </Side>
+        <Side className="cap-posts-update-side">
+          Scheduled update
+          <span className="cap-posts-update-side-when">
+            {" "}
+            · goes live <Time at={data.publishAt} format="exact" />
+          </span>
+        </Side>
+      </div>
+      <DraftCompare before={{ title: `Live ${noun}`, text: data.live.source }} after={{ title: "Scheduled update", text: data.source }} labels={{ before: "Live", after: "Scheduled" }} id={`${uid}-cmp`} heads={false} />
       <details className="cap-disclosure cap-posts-update-patch">
         <summary>The change as a patch</summary>
         <DraftPatch patch={data.patch} title={`The scheduled update to ${name}`} id={`${uid}-patch`} />

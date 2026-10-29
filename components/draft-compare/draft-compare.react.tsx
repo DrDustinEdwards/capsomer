@@ -18,19 +18,21 @@ export interface DraftCompareProps {
   similarity?: number;
   // Ids and radio names; give each compare on a page its own. Made up when left out.
   id?: string;
+  // false: the page names the sides itself (renderCompare's heads).
+  heads?: boolean;
 }
 
 // Renders exactly the markup renderCompare writes, so a server render (renderToString) and the
 // browser agree, and the same behavior module wires it.
-export function DraftCompare({ before, after, labels, view, onViewChange, context, runs, similarity, id }: DraftCompareProps) {
+export function DraftCompare({ before, after, labels, view, onViewChange, context, runs, similarity, id, heads }: DraftCompareProps) {
   const own = useId().replace(/[^a-zA-Z0-9]/g, "");
   const host = useRef<HTMLDivElement>(null);
   const first = useRef<CompareView>(view ?? "side");
   const controlled = view !== undefined;
-  const key = JSON.stringify([before, after, labels, runs, context, similarity, id, controlled]);
+  const key = JSON.stringify([before, after, labels, runs, context, similarity, id, controlled, heads]);
   // The view is not part of the html's identity: the radios hold it, in CSS, so choosing one
   // does not rebuild the page's folds and focus.
-  const html = useMemo(() => renderCompare(before, after, { id: id ?? `compare-${own}`, view: first.current, context, labels, runs, similarity, remember: !controlled }), [key, own]);
+  const html = useMemo(() => renderCompare(before, after, { id: id ?? `compare-${own}`, view: first.current, context, labels, runs, similarity, remember: !controlled, heads }), [key, own]);
 
   useEffect(() => {
     const el = host.current;

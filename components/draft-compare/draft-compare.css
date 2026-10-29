@@ -52,7 +52,7 @@
     font-size: var(--fs-detail);
   }
 
-  /* One line, on one centre line: the view switch, the counts and the key, then the jump
+  /* One line, centered on one axis: the view switch, the counts and the key, then the jump
      list at the end. It wraps on a narrow space. Always shown: nothing here is behind a
      popover or a fold. */
   .cap-compare-bar {

@@ -208,6 +208,48 @@
       margin: 0;
     }
   }
+  /* Each side of the compare named over its column, in the viewer's zone: "Live post · on the
+     site since …", "Scheduled update · goes live …". One column under 40rem, as the compare. */
+  .cap-posts-update-view {
+    container: cap-posts-update / inline-size;
+  }
+  .cap-posts-update-sides {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2) var(--gap);
+    margin-block-end: calc(var(--space-3) - var(--space-5));
+  }
+  .cap-posts-update-side {
+    margin: 0;
+    padding-block-end: var(--space-2);
+    border-bottom: 1px solid var(--line);
+    font-size: var(--fs-body);
+    font-weight: 600;
+  }
+  .cap-posts-update-side-when {
+    color: var(--muted);
+    font-weight: 400;
+
+    & .cap-time {
+      color: inherit;
+    }
+  }
+  @container cap-posts-update (max-width: 40rem) {
+    .cap-posts-update-sides {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* The reschedule dialog's form holds its body and footer: the dialog lays them out as its
+     own parts, and the field sits at the header's normal distance. */
+  .cap-posts-reschedule {
+    display: contents;
+
+    & > .cap-dialog-body {
+      padding-block-start: 0;
+    }
+  }
+
   /* The page head's danger action stands apart from the others. */
   .cap-posts-update-view .cap-page-head-actions > [data-cap-part="cancel-update"] {
     margin-inline-start: var(--space-4);
