@@ -259,12 +259,14 @@ export interface KitMediaData {
   can: MediaData["can"];
 }
 
-// A kit row as the media component's record. A list has no usedBy, so its tiles carry no Unattached flag.
+// A kit row as the media component's record: `url` is the site's own address for it (what Markdown and the
+// copy snippets carry), `thumb` the absolute one a browser loads. A list has no usedBy, so its tiles
+// carry no Unattached flag.
 export function recordOfKit(row: KitMediaRow, used?: UsedIn[]): MediaRecord {
   return {
     key: row.id,
     name: row.filename ?? row.id,
-    url: row.src,
+    url: row.url,
     thumb: row.src,
     kind: row.contentType.startsWith("image/") ? "image" : "document",
     type: row.contentType,
