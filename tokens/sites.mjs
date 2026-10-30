@@ -153,20 +153,20 @@ const SITES = {
   txasm: {
     family: "navy",
     on: "<html>",
-    note: "the UI face stays Inter, which txasm loads",
+    note: "the UI face stays Inter, which txasm self-hosts (Fontsource names the variable file Inter Variable)",
     all: {
-      ui: '"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+      ui: '"Inter Variable", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
     },
   },
   foxing: {
     family: "fox",
     on: "<html>",
-    note: "Foxing's cream and charcoal neutrals (design-system.md), its faces (DM Sans for the UI, DM Mono, Fraunces to display), which the site self-hosts, and the sky-blue on state of its Rule 05",
+    note: "Foxing's cream and charcoal neutrals (design-system.md), its faces (DM Sans for the UI, DM Mono, Fraunces to display), which the site self-hosts (Fontsource names the variable files DM Sans Variable and Fraunces Variable), and the sky-blue on state of its Rule 05",
     all: {
-      ui: '"DM Sans", system-ui, sans-serif',
-      "font-ui": '"DM Sans", system-ui, sans-serif',
+      ui: '"DM Sans Variable", "DM Sans", system-ui, sans-serif',
+      "font-ui": '"DM Sans Variable", "DM Sans", system-ui, sans-serif',
       mono: '"DM Mono", ui-monospace, monospace',
-      display: '"Fraunces", Georgia, serif',
+      display: '"Fraunces Variable", "Fraunces", Georgia, serif',
     },
     // Rule 05's sky blue #43a1d8 is 2.7:1 on the cream ground, under the 3:1 a checked box needs,
     // so the light theme takes Foxing's own hover blue for the fill and a step darker for hover.
