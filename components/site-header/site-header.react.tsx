@@ -72,6 +72,14 @@ export function SiteHeader(props: SiteHeaderProps) {
     );
   };
 
+  // The letterhead's second row already shows View site wherever the account button is in the bar
+  // (from 768px; on a phone the account is in the sheet, which keeps the row), so the menu leaves
+  // it out rather than offering it twice.
+  const shownView = letterhead && trail?.viewSite ? trail.viewSite : undefined;
+  const panelGroups = (account?.groups ?? [])
+    .map((g) => ({ ...g, links: shownView ? g.links.filter((l) => l.href !== shownView) : g.links }))
+    .filter((g) => g.links.length > 0);
+
   const accountPanel = account ? (
     (account.panel ?? (
       <>
@@ -79,7 +87,7 @@ export function SiteHeader(props: SiteHeaderProps) {
           <strong>{account.name}</strong>
           {account.detail ? <small>{account.detail}</small> : null}
         </div>
-        {account.groups?.map((g, i) => (
+        {panelGroups.map((g, i) => (
           <Fragment key={g.label ?? i}>
             <hr />
             {g.label ? <div className="cap-site-header-panel-label">{g.label}</div> : null}

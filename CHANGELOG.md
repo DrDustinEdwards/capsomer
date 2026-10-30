@@ -2,6 +2,11 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.44.0]
+
+- **The account button's name tip no longer sits over its open menu, even when moving along the header's icons.** Once one tip is up, the next icon's shows at once, before the panel's own hover opened the account menu, so 0.42.0's check never ran. Opening a header panel now hides its button's tip (`wirePanel`). No HTML contract changes.
+- **View site appears once in an admin.** The letterhead's second row shows View site from 768px, where the account button sits in the bar, so the account menu leaves out the row that goes to the same address. On a phone the account is in the menu sheet, which keeps the row. No HTML contract changes.
+
 ## [0.43.0]
 
 - **Foxhound's admin takes the family letterhead, without the agency.** `FAMILY_APPS` gives Foxhound `names: ["Foxhound", "Admin"]` and the new `standalone: true`: a commercial app outside the Dustin Edwards network, whose letterhead shows "Foxhound Admin" with no "Dustin Edwards" over it and no stripe of the family color on top. The admin shell root carries `data-standalone` for such an app (new attribute).
