@@ -486,6 +486,9 @@
      site) is centered and capped at a comfortable line length. */
   .cap-admin-page {
     display: grid;
+    /* minmax(0, ...) so a wide child (a table) scrolls or reflows inside its panel instead
+       of widening the page past the window. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--gap);
     max-width: 1480px;
     padding: var(--pad-card) calc(var(--pad-card) + var(--space-3)) var(--space-8);

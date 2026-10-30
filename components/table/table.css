@@ -1,8 +1,10 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A data table: a native table in a labeled, focusable region that scrolls sideways when
-   the table is wider than its space. Rules between rows, numbers right-aligned in tabular
+/* A data table: a native table in a labeled, focusable region. Cells wrap at spaces, so
+   the table fits its space; the region scrolls sideways only when even wrapped it cannot
+   (a long unbroken word, or many columns on a phone), and data-reflow makes each row a
+   card there instead (Dustin, 2026-10-30: no dashboard should need a sideways slider). Rules between rows, numbers right-aligned in tabular
    figures, sortable columns with a button in the header. Extracted from the Capsid Portal
    (dashboard/src/styles.css: table.list, table.fleet, .scroll-x, .reflow). Rebuilt in 0.2 to
    the craft of shadcn's Table: row hover and selected states, a tinted footer, a bottom
@@ -50,7 +52,7 @@
       letter-spacing: 0.06em;
       text-align: start;
       text-transform: uppercase;
-      white-space: nowrap;
+      overflow-wrap: break-word;
       vertical-align: bottom;
 
       /* The column the rows are sorted by reads in --text. */
@@ -65,7 +67,9 @@
       border-bottom: 1px solid var(--line);
       text-align: start;
       vertical-align: middle;
-      white-space: nowrap;
+      /* Wrap rather than widen the table past its region; one long word (an email, an id)
+         still keeps its line. Before 0.45.0 every cell stayed on one line. */
+      overflow-wrap: break-word;
     }
 
     /* A checkbox cell hugs its column (shadcn drops its right padding). */

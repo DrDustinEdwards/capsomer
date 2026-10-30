@@ -2,6 +2,14 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.45.0]
+
+No dashboard needs a sideways slider (Dustin, 2026-10-30).
+
+- **Table cells wrap.** Body and header cells no longer keep `white-space: nowrap`; text wraps at spaces (`overflow-wrap: break-word`), so a table fits its region instead of scrolling. The scroll region stays as the fallback for a table that cannot fit even wrapped; `data-reflow` still turns rows into cards there. A host that needs a cell on one line sets it itself. Changed HTML contract: none.
+- **An admin page never grows wider than the window.** `.cap-admin-page` takes `grid-template-columns: minmax(0, 1fr)`, so a wide child scrolls or reflows inside its panel; before, a table wider than the page pushed the whole page sideways. No HTML contract changes.
+- **No stray scrollbar on a tab strip.** `.cap-tabs-list` sets `overflow-y: hidden` beside its `overflow-x: auto`; the line variant's underline overhung a pixel, and Windows drew a tiny vertical scrollbar on the strip. No HTML contract changes.
+
 ## [0.44.2]
 
 - **txasm's and Foxing's faces lead with the self-hosted variable files.** Both sites now serve their fonts from Fontsource instead of the Google Fonts stylesheet, and Fontsource names a variable file with "Variable" after the family. The txasm layer's `--ui` starts with "Inter Variable"; Foxing's `--ui` and `--font-ui` start with "DM Sans Variable" and `--display` with "Fraunces Variable". The old names stay next in each stack. No token or class is removed or renamed, and no HTML contract changes.
