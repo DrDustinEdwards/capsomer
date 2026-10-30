@@ -565,6 +565,25 @@
       }
     }
   }
+
+  /* A standalone app (FAMILY_APPS standalone, a commercial app outside the Dustin Edwards network)
+     drops the letterhead's stripe of the family color, which marks a family site, and the 8px it
+     took (Dustin, 2026-10-30, of Foxhound). */
+  .cap-admin[data-standalone] > .cap-site-header[data-variant="letterhead"] {
+    --header-stripe: 0px;
+  }
+  :root:has(.cap-admin[data-standalone] > .cap-site-header[data-variant="letterhead"]) {
+    --header-h: calc(4rem + 3rem);
+
+    @media (min-width: 768px) {
+      --header-h: calc(var(--space-5) + 4rem + 3rem);
+    }
+    @media (min-width: 1080px) {
+      &:has(.cap-site-header[data-variant="letterhead"] > :is(.cap-site-header-sections, .cap-site-header-trail)) {
+        --header-h: calc(var(--space-5) + 4rem);
+      }
+    }
+  }
 }
 
 /* The pseudo-elements sit outside the layers. */

@@ -356,7 +356,7 @@ export function AdminShell(props: AdminShellProps) {
   const toSheet = (e: AdminEntry): HeaderLink => ({ id: e.id, label: e.label, href: e.href, current: e.current, icon: e.icon, count: e.count, countNote: e.countNote });
 
   return (
-    <div ref={root} className="cap-admin" data-cap="admin-shell" data-variant={variant} data-menu={collapsed ? "collapsed" : undefined} data-transition={props.transition ? "page" : undefined}>
+    <div ref={root} className="cap-admin" data-cap="admin-shell" data-variant={variant} data-standalone={family?.standalone ? "" : undefined} data-menu={collapsed ? "collapsed" : undefined} data-transition={props.transition ? "page" : undefined}>
       <SiteHeader
         logo={logo}
         variant={props.letterhead ? "letterhead" : undefined}
