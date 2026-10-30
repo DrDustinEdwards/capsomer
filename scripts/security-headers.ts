@@ -42,8 +42,8 @@ const permissionsPolicy = (STANDARD_SECURITY_HEADERS["Permissions-Policy"] ?? ""
   "clipboard-write=(self)",
 );
 
-/** The shared standard set with the site's deviations, which the check grades against. */
-export const standardHeaders = buildSecurityHeaders({
+/** The shared standard set with the site's deviations. */
+const standardHeaders = buildSecurityHeaders({
   overrides: {
     "Permissions-Policy": {
       value: permissionsPolicy,
@@ -77,7 +77,7 @@ const ASSETS_CACHE_CONTROL = "public, max-age=31536000, immutable";
  * pages with their own; every page here is a static file under this one policy, so a second `/*` rule carries it
  * (Cloudflare joins the headers of every rule a path matches).
  */
-export function headersFile(): string {
+function headersFile(): string {
   const { [csp.name]: policy, ...set } = securityHeaders;
   return sharedHeadersFile(set, {
     paths: {
