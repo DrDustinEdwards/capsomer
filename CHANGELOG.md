@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.44.1]
+
+- **A standalone app's letterhead keeps the stripe's height.** The stripe is painted in the header's own color instead of removed, so Foxhound's header, its content and the page under it sit exactly where they do in every family admin. The 0.43.0 `--header-h` override for standalone apps is gone. No HTML contract changes.
+
 ## [0.44.0]
 
 - **The account button's name tip no longer sits over its open menu, even when moving along the header's icons.** Once one tip is up, the next icon's shows at once, before the panel's own hover opened the account menu, so 0.42.0's check never ran. Opening a header panel now hides its button's tip (`wirePanel`). No HTML contract changes.
