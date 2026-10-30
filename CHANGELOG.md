@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.42.0]
+
+- **A tooltip no longer shows over its own open menu.** The shared popover skips a tip whose trigger has `aria-expanded="true"`, so the account button's name tip stays hidden while the account menu is open (the site header and the admin shell). No HTML contract changes.
+
 ## [0.41.0]
 
 A sign-in code in the magic-link mail, for a link that opens in another browser than the one that asked.

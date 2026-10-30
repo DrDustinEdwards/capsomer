@@ -272,7 +272,8 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
     const show = () => {
       window.clearTimeout(showTimer);
       window.clearTimeout(hideTimer);
-      if (held || !popup.isConnected) return;
+      // A trigger whose own menu is open needs no tip over that menu.
+      if (held || !popup.isConnected || trigger.getAttribute("aria-expanded") === "true") return;
       if (openTip && openTip !== me) openTip.hide();
       if (!isOpen(popup)) {
         popup.showPopover();
