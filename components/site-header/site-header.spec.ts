@@ -145,6 +145,17 @@ eachTheme((theme) => {
     expect(center).toBeLessThanOrEqual(1);
   });
 
+  test("behavior: moving along the icons, the avatar's name never sits over its open account menu", async ({ page }) => {
+    await visitStates(page, "site-header", theme, "fx-reader");
+    const themeButton = page.locator(".cap-site-header-theme");
+    await themeButton.hover();
+    await expect(page.locator(".cap-theme-tip:popover-open, .cap-site-header-theme .cap-site-header-tip:popover-open").first()).toBeVisible();
+    // With a tip already up, the next icon's tip shows at once: before the fix it stayed over the panel.
+    const avatar = page.getByRole("button", { name: "Your account" });
+    await avatar.hover();
+    await expect(page.locator(".cap-site-header-account .cap-site-header-panel")).toBeVisible();
+    await expect(avatar.locator(".cap-site-header-tip")).toBeHidden();
+  });
   test("behavior: a section panel opens on hover at once, under the header, lined up with its button, and closes when the pointer leaves", async ({ page }) => {
     await visitStates(page, "site-header", theme, "fx-public");
     const books = page.getByRole("button", { name: "Books" });
