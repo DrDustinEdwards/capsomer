@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.49.1]
+
+- **The filter tray's "Show N results" link lands on the results.** The results region carries `id="<catalog id>-results"`, the address the link has always pointed at; before, the link went to an id no page had (dustinedwards.info's publications, phages and protocols catalogs). Changed HTML contract: the results region gains the id.
+
 ## [0.49.0]
 
 A table between a phone and a laptop no longer scrolls sideways (Dustin, 2026-10-30).

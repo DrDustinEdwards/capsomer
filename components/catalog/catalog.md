@@ -95,7 +95,7 @@ A collection of dozens to thousands of items that share fields, where a person n
     <div class="cap-catalog-main">
       <p class="cap-catalog-count" role="status" data-catalog-region="count">3 of 14 protocols</p>
       <div data-catalog-region="chips"><ul class="cap-catalog-chips">...</ul></div>
-      <div data-catalog-region="results" aria-busy="false">[the table, or the empty state]</div>
+      <div id="protocols-results" data-catalog-region="results" aria-busy="false">[the table, or the empty state]</div>
       <div data-catalog-region="pages">[the pagination]</div>
     </div>
   </div>
