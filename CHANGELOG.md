@@ -2,11 +2,17 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [0.48.0]
+## [0.49.0]
 
 A table between a phone and a laptop no longer scrolls sideways (Dustin, 2026-10-30).
 
 - **New reflow width: `data-reflow="medium"`.** Rows become cards below 860 px of the region, for an app table that fits a laptop but not a 1024 px tablet beside a sidebar. `""` (640 px) and `"wide"` (1100 px) are unchanged. No HTML contract changes.
+
+## [0.48.0]
+
+The error page takes a site's own words.
+
+- **Error page.** `ErrorPage` takes `title`, `text` and `homeLabel`, which replace the default words for this error, and `as` (`"main"`, the default, or `"div"` for a Layout that already has the page's `main`). julieedwards.info's 404 words are Carrel copy in D1, so it could not use the page before. No HTML contract changes for existing markup.
 
 ## [0.47.0]
 
