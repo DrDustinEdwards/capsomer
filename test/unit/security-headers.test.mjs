@@ -35,9 +35,12 @@ const assets = {
 
 test("the generated _headers passes checkSecurityHeaders on every path", () => {
   const rules = parseHeadersFile(headersFile());
-  assert.deepEqual(rules.map((r) => r.path), ["/*", "/assets/*"]);
-  assert.deepEqual(check(rules[0].headers), []);
-  assert.equal(rules[1].headers.get("Cache-Control"), "public, max-age=31536000, immutable");
+  // Cloudflare joins the headers of every rule a path matches; the page policy is a second /* rule.
+  const every = new Headers();
+  for (const rule of rules.filter((r) => r.path === "/*")) for (const [name, value] of rule.headers) every.append(name, value);
+  assert.deepEqual(check(every), []);
+  const assetRule = rules.find((r) => r.path === "/assets/*");
+  assert.equal(assetRule?.headers.get("Cache-Control"), "public, max-age=31536000, immutable");
 });
 
 test("the policy allows only what the site loads, and its own origin to frame it", () => {

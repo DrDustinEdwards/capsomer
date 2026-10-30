@@ -10,6 +10,7 @@ One error page, theme-color tags a React Layout can use, and the axe helpers wri
 - **Empty's title can be a heading.** React `Empty` takes `titleAs` (`"p"`, the default, `"h1"`, `"h2"` or `"h3"`). No HTML contract changes for existing markup.
 - **theme-color as descriptors.** `themeColorTags(choice, ground)` in `capsomer/theme-server` returns `{ name, content, media }[]`, and React `<ThemeColor choice ground />` in `capsomer/react/theme-switch` renders them in a Layout's head, so dustinedwards.info, julieedwards.info and germomics stop hand-writing the pair. `themeColorMeta` is now those tags as HTML, byte for byte as before.
 - **README: Accessibility test for a site.** How a site scans its home, a content page and its 404 in both themes with `capsomer/testing` (`eachTheme`, `expectNoAxeViolations`).
+- **Showcase site only.** Its `_headers` is written by site-runtime's `headersFile` (pin v0.32.0); the page policy moves to a second `/*` rule, the same headers on every path. Nothing in the package changes.
 
 ## [0.46.0]
 
