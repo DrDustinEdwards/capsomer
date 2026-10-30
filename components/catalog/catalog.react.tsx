@@ -161,7 +161,7 @@ export function Catalog<T>({ definition: def, result, title, cells, labelledBy, 
             ) : null}
           </div>
 
-          <div data-catalog-region="results" aria-busy="false">
+          <div id={`${id}-results`} data-catalog-region="results" aria-busy="false">
             {result.rows.length === 0 ? (
               active ? (
                 <Empty kind="no-match" title={`No ${noun} match`} action={result.clearHref ? <a className="cap-btn" href={result.clearHref}>Clear filters</a> : undefined}>
