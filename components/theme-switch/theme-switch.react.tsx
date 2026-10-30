@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from "react";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
+import { themeColorTags } from "./theme-server.ts";
 import { applyTheme, effectiveTheme, readTheme, themeButtonLabel, THEME_PREF, toggleTheme, type ThemeChoice } from "./theme-switch.ts";
 
 export interface ThemeSwitchProps {
@@ -180,5 +181,24 @@ export function ThemeForm({ action = "/theme", cookie, className, shortcut, pref
       <FormButton value="dark" show="light" label={themeButtonLabel("light")} icon={BUTTON_MOON} className={className} shortcut={shortcut} />
       <FormButton value="light" show="dark" label={themeButtonLabel("dark")} icon={BUTTON_SUN} className={className} shortcut={shortcut} />
     </form>
+  );
+}
+
+export interface ThemeColorProps {
+  // The person's remembered choice (readThemeCookie), or null to follow the system.
+  choice?: ThemeChoice | null;
+  // The site's --ground in each theme, as literal colors.
+  ground: { light: string; dark: string };
+}
+
+// The <meta name="theme-color"> tags for a React Layout's head: themeColorTags (theme-server.ts) as elements, so a
+// site stops hand-writing the light and dark pair.
+export function ThemeColor({ choice = null, ground }: ThemeColorProps) {
+  return (
+    <>
+      {themeColorTags(choice, ground).map((t) => (
+        <meta key={t.media ?? "chosen"} name={t.name} content={t.content} media={t.media} />
+      ))}
+    </>
   );
 }

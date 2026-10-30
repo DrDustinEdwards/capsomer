@@ -2,6 +2,15 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.46.0]
+
+One error page, theme-color tags a React Layout can use, and the axe helpers written up for sites (the shared-code audit, 2026-10-30).
+
+- **Error page (new component, `capsomer/react/error-page`).** `ErrorPage({ error, home, siteHeader, siteFooter, children, dev })` is a React Router root ErrorBoundary's page: the failed Empty as the page's `h1`, plain words for 404, 410 and everything else, Go to the home page, Try again (a link to the same address) for a server error, `<meta name="robots" content="noindex">`, and the stack only with `dev`. The site's header and footer are slots, so the skip link and landmarks stay. `errorTitle(error, siteName)` is the root `meta`'s title on the error path; `errorWords(error)` gives the status, title and sentence. New classes: `.cap-error-page`, `.cap-error-page-stack` (`capsomer/error-page.css`, with `empty.css`). It replaces the eight sites' own ErrorBoundaries.
+- **Empty's title can be a heading.** React `Empty` takes `titleAs` (`"p"`, the default, `"h1"`, `"h2"` or `"h3"`). No HTML contract changes for existing markup.
+- **theme-color as descriptors.** `themeColorTags(choice, ground)` in `capsomer/theme-server` returns `{ name, content, media }[]`, and React `<ThemeColor choice ground />` in `capsomer/react/theme-switch` renders them in a Layout's head, so dustinedwards.info, julieedwards.info and germomics stop hand-writing the pair. `themeColorMeta` is now those tags as HTML, byte for byte as before.
+- **README: Accessibility test for a site.** How a site scans its home, a content page and its 404 in both themes with `capsomer/testing` (`eachTheme`, `expectNoAxeViolations`).
+
 ## [0.45.0]
 
 No dashboard needs a sideways slider (Dustin, 2026-10-30).

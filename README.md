@@ -3,6 +3,33 @@ Capsomer: the shared design system for Dustin Edwards's apps: tokens, components
 
 Components live in `components/<name>/`; how one is built, including its `examples.html` (the generated states page's source) and the shared dialog, listbox, popover and meter blocks, is in `components/README.md`. Tokens, density and the color families are in `tokens/`. Each release's breaking changes are in `CHANGELOG.md`; the defaults and their reasons are in `DEFAULTS.md`.
 
+## Accessibility test for a site
+
+`capsomer/testing` is the Playwright helpers every component's spec uses, built for a site's own tests: `eachTheme` runs a block once in light and once in dark (the browser's color scheme), and `expectNoAxeViolations` scans the page against WCAG 2.2 A and AA and fails with each rule, its impact and the first node it found. Install the two optional peers, `npm i -D @playwright/test @axe-core/playwright`, then scan the pages that must never regress, the 404 included:
+
+```ts
+// e2e/accessibility.spec.ts
+import { expect, test } from "@playwright/test";
+import { eachTheme, expectNoAxeViolations } from "capsomer/testing";
+
+const PAGES = [
+  { name: "home", path: "/", status: 200 },
+  { name: "a content page", path: "/about", status: 200 },
+  { name: "the 404", path: "/no-such-page", status: 404 },
+];
+
+eachTheme((theme) => {
+  for (const { name, path, status } of PAGES) {
+    test(`accessibility: ${name} has no axe violations in ${theme}`, async ({ page }) => {
+      expect((await page.goto(path))?.status()).toBe(status);
+      await expectNoAxeViolations(page);
+    });
+  }
+});
+```
+
+A site whose theme comes from a cookie or localStorage follows the system with neither set, which is what a fresh Playwright context has, so `eachTheme`'s color scheme picks the theme. `expectNoAxeViolations(page, "main")` scans one region; `{ exclude: "selector" }` leaves out an element the scan misreads, with a comment saying why. `visitStates` and the other helpers read Capsomer's own states pages and are not for a site.
+
 ## Fallback fonts for a site's own faces
 
 `capsomer/fonts.css` already gives the family's faces, Schibsted Grotesk and Martian Mono, a size-matched fallback (Astro's Fonts API method): a local face scaled to the face's width and line metrics, listed second in the font stack, so the swap to the real face barely moves the text. A site with its own faces gets the same from `capsomer/fonts`:

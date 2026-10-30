@@ -63,6 +63,7 @@ A public reading page may leave the choice to the system and show no control.
 - `themeCookie(choice, { name, maxAge, secure })`: the `Set-Cookie` value, a year, `Path=/`, `SameSite=Lax`, `Secure`.
 - `colorSchemeContent(choice)`: the `<meta name="color-scheme">` content, the choice or `light dark`.
 - `themeColorMeta(choice, { light, dark })`: the `<meta name="theme-color">` tags, so a phone's browser bar takes the page's ground: one tag for a choice, one per scheme with its media query when there is none. Pass the site's `--ground` in each theme. The switch updates every theme-color tag to the chosen theme's ground when the person switches.
+- `themeColorTags(choice, { light, dark })`: the same tags as descriptors, `{ name, content, media }[]`, for a React Layout or a `meta()`. React: `<ThemeColor choice={theme} ground={{ light: "#fdfdfe", dark: "#0e0c12" }} />` from `capsomer/react/theme-switch`, in the Layout's head, instead of a hand-written pair. `themeColorMeta` is these tags as HTML.
 - `themeScript(key = "cap-theme")`: the inline pre-paint script below, as text, so a site hashes exactly what it sends.
 
 A site keeps its own cookie name (txasm's `txasm_theme`, Foxhound's `fh_theme`) by passing it; the choice its visitors made survives.

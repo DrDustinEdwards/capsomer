@@ -36,7 +36,7 @@ What an area shows when it has nothing to show. Loading is the [Skeleton and spi
 
 - **Say which kind of empty it is** (patterns.md "Empty"). "No results" alone leaves the person guessing whether to add, clear or wait.
 - **Centered, with a dashed edge**, as shadcn's Empty: an empty area is a place to put something, and the dashed edge says "drop it here" without a fill. `data-flush` removes the edge for an empty area inside a panel or a table that already has one.
-- **Parts**: an optional icon tile (`.cap-empty-media[data-variant="icon"]`, `aria-hidden`, a muted tile), the header (`.cap-empty-header`: `.cap-empty-title` and `.cap-empty-text`), and the action (`.cap-empty-content`, for one or several). The 0.1 markup, with title, text and action as direct children, still works.
+- **Parts**: an optional icon tile (`.cap-empty-media[data-variant="icon"]`, `aria-hidden`, a muted tile), the header (`.cap-empty-header`: `.cap-empty-title` and `.cap-empty-text`), and the action (`.cap-empty-content`, for one or several). The 0.1 markup, with title, text and action as direct children, still works. The title may be a heading where the empty area is the page's subject (React `titleAs="h1"`, as the [error page](../error-page/error-page.md) uses).
 - **The failed kind says it in shape, word and color**: the critical glyph, the words, the critical edge and title.
 - **The long wait is a part of this component** (`.cap-empty-wait`), not a fifth kind of empty: it is loading, not empty. It uses the spinner, so load `skeleton.css` with this file.
 - Size follows density: the padding is `--pad-card`, the gaps `--gap`.
