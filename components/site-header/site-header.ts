@@ -114,6 +114,9 @@ export function wirePanel(trigger: HTMLElement, panel: HTMLElement): () => void 
   };
   const open = (how: "hover" | "held", focusFirst = false) => {
     window.clearTimeout(timer);
+    // The button's tip can already be up (moving along the header's icons shows tips at once), and
+    // the panel says more than its name does, so the tip goes rather than sit over the panel.
+    hideTip(trigger);
     closePanels(panel);
     mode = how;
     if (!isOpen(panel)) panel.showPopover();
