@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.43.1]
+
+- **A standalone app's letterhead keeps the stripe's height.** The stripe is painted in the header's own color instead of removed, so Foxhound's header, its content and the page under it sit exactly where they do in every family admin. The 0.43.0 `--header-h` override for standalone apps is gone. No HTML contract changes.
+
 ## [0.43.0]
 
 - **Foxhound's admin takes the family letterhead, without the agency.** `FAMILY_APPS` gives Foxhound `names: ["Foxhound", "Admin"]` and the new `standalone: true`: a commercial app outside the Dustin Edwards network, whose letterhead shows "Foxhound Admin" with no "Dustin Edwards" over it and no stripe of the family color on top. The admin shell root carries `data-standalone` for such an app (new attribute).
