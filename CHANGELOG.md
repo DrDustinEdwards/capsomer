@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.44.2]
+
+- **txasm's and Foxing's faces lead with the self-hosted variable files.** Both sites now serve their fonts from Fontsource instead of the Google Fonts stylesheet, and Fontsource names a variable file with "Variable" after the family. The txasm layer's `--ui` starts with "Inter Variable"; Foxing's `--ui` and `--font-ui` start with "DM Sans Variable" and `--display` with "Fraunces Variable". The old names stay next in each stack. No token or class is removed or renamed, and no HTML contract changes.
+
 ## [0.44.1]
 
 - **A standalone app's letterhead keeps the stripe's height.** The stripe is painted in the header's own color instead of removed, so Foxhound's header, its content and the page under it sit exactly where they do in every family admin. The 0.43.0 `--header-h` override for standalone apps is gone. No HTML contract changes.
