@@ -8,12 +8,13 @@ import { eachTheme, expectNoAxeViolations } from "../test/helpers.ts";
 // the static Worker sends.
 const VIEWS = ["overview", "components", "color", "type", "motion", "tests", "defaults", "changes"];
 
-// The headers the static Worker sends on every page: the `/*` rule of the built site's _headers,
-// which the build writes from scripts/security-headers.ts.
+// The headers the static Worker sends on every page: every `/*` rule of the built site's _headers
+// combined, as Cloudflare combines them, which the build writes from scripts/security-headers.ts.
 const PAGE_HEADERS = Object.fromEntries(
-  (readFileSync("site-dist/_headers", "utf8").split("\n\n")[0] ?? "")
-    .split("\n")
-    .slice(1)
+  readFileSync("site-dist/_headers", "utf8")
+    .split("\n\n")
+    .filter((block) => block.trimStart().startsWith("/*\n"))
+    .flatMap((block) => block.trimStart().split("\n").slice(1))
     .map((line) => /^ {2}([A-Za-z-]+): (.+)$/.exec(line))
     .filter((m): m is RegExpExecArray => m !== null)
     .map((m) => [String(m[1]).toLowerCase(), String(m[2])]),
