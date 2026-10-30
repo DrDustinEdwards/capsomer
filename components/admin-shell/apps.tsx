@@ -124,7 +124,7 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
   { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO, names: ["Dustin Edwards", "Admin"] },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
   // The x from its favicon stays until Dustin picks one of FOXHOUND_MARKS.
-  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND },
+  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND, names: ["Foxhound", "Admin"] },
   // Foxing joins the family's admin apps in 0.9.0, seventh, before Capsomer; its mark is a
   // placeholder until Dustin picks one.
   { id: "foxing", label: "Foxing", href: "https://foxing.app/admin", logo: FOXING },

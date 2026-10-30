@@ -2,6 +2,11 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.43.0]
+
+- **Foxhound's admin takes the family letterhead.** `FAMILY_APPS` gives Foxhound `names: ["Foxhound", "Admin"]`, so an admin shell with `letterhead` stacks "Dustin Edwards" over "Foxhound" and "Admin", as dustinedwards.info and Carrel do.
+- **The header mark follows the strip.** The admin shell's logo takes the current app's mark from `apps` before the family default, so an app that passes its own strip mark (Foxhound's hound head) shows it in the header too. No HTML contract changes.
+
 ## [0.42.0]
 
 - **A tooltip no longer shows over its own open menu.** The shared popover skips a tip whose trigger has `aria-expanded="true"`, so the account button's name tip stays hidden while the account menu is open (the site header and the admin shell). No HTML contract changes.
