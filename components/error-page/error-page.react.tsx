@@ -56,10 +56,33 @@ export interface ErrorPageProps {
   mainId?: string;
   // A class for main beside cap-error-page, for the site's own page frame.
   className?: string;
+  // The site's own words, in place of errorWords' for this error: a site whose copy is edited
+  // content (julieedwards.info's 404 is Carrel copy in D1) passes it here.
+  title?: string;
+  text?: string;
+  // The home link's words. Default "Go to the home page".
+  homeLabel?: string;
+  // Render the region as a div when the site's Layout already wraps every page in its main, so the
+  // page keeps one main. Default "main".
+  as?: "main" | "div";
 }
 
-export function ErrorPage({ error, home, siteHeader, siteFooter, children, dev = false, mainId = "main", className }: ErrorPageProps) {
-  const words = errorWords(error);
+export function ErrorPage({
+  error,
+  home,
+  siteHeader,
+  siteFooter,
+  children,
+  dev = false,
+  mainId = "main",
+  className,
+  title,
+  text,
+  homeLabel = "Go to the home page",
+  as: Region = "main",
+}: ErrorPageProps) {
+  const found = errorWords(error);
+  const words = { status: found.status, title: title ?? found.title, text: text ?? found.text };
   const thrown = dev && error instanceof Error ? error : null;
   const server = words.status >= 500;
   const action = (
@@ -71,7 +94,7 @@ export function ErrorPage({ error, home, siteHeader, siteFooter, children, dev =
         </a>
       ) : null}
       <a className="cap-btn" data-variant={server ? undefined : "primary"} href={home}>
-        Go to the home page
+        {homeLabel}
       </a>
     </>
   );
@@ -80,7 +103,7 @@ export function ErrorPage({ error, home, siteHeader, siteFooter, children, dev =
       {/* React hoists it into head: an error page is never indexed. */}
       <meta name="robots" content="noindex" />
       {siteHeader}
-      <main id={mainId} tabIndex={-1} className={className ? `cap-error-page ${className}` : "cap-error-page"} data-status={words.status}>
+      <Region id={Region === "main" ? mainId : undefined} tabIndex={Region === "main" ? -1 : undefined} className={className ? `cap-error-page ${className}` : "cap-error-page"} data-status={words.status}>
         <Empty kind="failed" titleAs="h1" title={words.title} action={action}>
           {thrown ? thrown.message : words.text}
         </Empty>
@@ -91,7 +114,7 @@ export function ErrorPage({ error, home, siteHeader, siteFooter, children, dev =
             <code>{thrown.stack}</code>
           </pre>
         ) : null}
-      </main>
+      </Region>
       {siteFooter}
     </>
   );

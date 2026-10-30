@@ -2,6 +2,12 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.48.0]
+
+The error page takes a site's own words.
+
+- **Error page.** `ErrorPage` takes `title`, `text` and `homeLabel`, which replace the default words for this error, and `as` (`"main"`, the default, or `"div"` for a Layout that already has the page's `main`). julieedwards.info's 404 words are Carrel copy in D1, so it could not use the page before. No HTML contract changes for existing markup.
+
 ## [0.47.0]
 
 One error page, theme-color tags a React Layout can use, and the axe helpers written up for sites (the shared-code audit, 2026-10-30).
