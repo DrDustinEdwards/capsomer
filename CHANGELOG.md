@@ -2,7 +2,7 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [0.46.0]
+## [0.47.0]
 
 One error page, theme-color tags a React Layout can use, and the axe helpers written up for sites (the shared-code audit, 2026-10-30).
 
@@ -10,6 +10,14 @@ One error page, theme-color tags a React Layout can use, and the axe helpers wri
 - **Empty's title can be a heading.** React `Empty` takes `titleAs` (`"p"`, the default, `"h1"`, `"h2"` or `"h3"`). No HTML contract changes for existing markup.
 - **theme-color as descriptors.** `themeColorTags(choice, ground)` in `capsomer/theme-server` returns `{ name, content, media }[]`, and React `<ThemeColor choice ground />` in `capsomer/react/theme-switch` renders them in a Layout's head, so dustinedwards.info, julieedwards.info and germomics stop hand-writing the pair. `themeColorMeta` is now those tags as HTML, byte for byte as before.
 - **README: Accessibility test for a site.** How a site scans its home, a content page and its 404 in both themes with `capsomer/testing` (`eachTheme`, `expectNoAxeViolations`).
+
+## [0.46.0]
+
+Hover prefetch for the hydrated React Router apps, through one shared link.
+
+- **New: `capsomer/react/link`.** `Link` and `NavLink` are React Router's own, with the same props, prefetching on hover and focus by default (`prefetch="intent"`: the route's modules and loader data, which is what a client navigation uses, where speculation rules would fetch HTML it never reads). A link that loads a whole document (`reloadDocument`), opens elsewhere (`target` other than `_self`), downloads, leaves the app, points at a file (site-runtime's `FILE_EXTENSIONS`) or goes under site-runtime's `NEVER_PREFETCH` renders with `prefetch="none"`, whatever it asked for, because a prefetch runs the target's loader. `/admin` prefetches only from a page already under `/admin`. `LinkPrefetch` (`<LinkPrefetch exclude={["/demos/:product"]}>`) adds an app's own paths that act on a GET; `:name` and `*` stand for one segment.
+- **New: `capsomer/behavior/link`.** `mayPrefetch`, the rule above, and `underPath`, the path match it uses.
+- **New optional peers**: `react-router` (^8.0.0) and `@dustinedwards/site-runtime` (>=0.29.0), needed only by these two modules. No HTML contract changes.
 
 ## [0.45.0]
 

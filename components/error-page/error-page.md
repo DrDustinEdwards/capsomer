@@ -5,8 +5,8 @@ summary: The page a site's root ErrorBoundary shows for 404, 410 and 500, in pla
 parts: [css, react]
 tool: native
 states: [404, 410, 500, development, phone width]
-added: 0.46.0
-updated: 0.46.0
+added: 0.47.0
+updated: 0.47.0
 source: dustinedwards.info, app/components/error-page.tsx; Foxhound, app/components/error-view.tsx
 replaces:
   - 'isRouteErrorResponse\(error\)'
