@@ -21,6 +21,9 @@ export interface FamilyApp {
   // In the letterhead: the site's name and the app's ("Capsid", "Portal"), under the agency's
   // (the headquarters' admin, "Dustin Edwards", has no agency over it).
   names?: readonly [site: string, app: string];
+  // A commercial app that stands apart from the Dustin Edwards network: its letterhead has no
+  // agency over its name (Foxhound, Dustin 2026-10-30).
+  standalone?: boolean;
 }
 
 const mark = (viewBox: string, body: ReactNode) => (
@@ -124,7 +127,7 @@ export const FAMILY_APPS: readonly FamilyApp[] = [
   { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO, names: ["Dustin Edwards", "Admin"] },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
   // The x from its favicon stays until Dustin picks one of FOXHOUND_MARKS.
-  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND, names: ["Foxhound", "Admin"] },
+  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND, names: ["Foxhound", "Admin"], standalone: true },
   // Foxing joins the family's admin apps in 0.9.0, seventh, before Capsomer; its mark is a
   // placeholder until Dustin picks one.
   { id: "foxing", label: "Foxing", href: "https://foxing.app/admin", logo: FOXING },
