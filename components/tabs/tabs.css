@@ -35,6 +35,9 @@
     margin: 0;
     padding: 4px;
     overflow-x: auto;
+    /* overflow-x makes y auto too, and the line variant's underline overhangs a pixel, so
+       Windows drew a tiny vertical scrollbar on the strip. */
+    overflow-y: hidden;
     overscroll-behavior-x: contain;
     scrollbar-width: thin;
     border: 1px solid var(--line);
