@@ -2,6 +2,14 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.45.0]
+
+Hover prefetch for the hydrated React Router apps, through one shared link.
+
+- **New: `capsomer/react/link`.** `Link` and `NavLink` are React Router's own, with the same props, prefetching on hover and focus by default (`prefetch="intent"`: the route's modules and loader data, which is what a client navigation uses, where speculation rules would fetch HTML it never reads). A link that loads a whole document (`reloadDocument`), opens elsewhere (`target` other than `_self`), downloads, leaves the app, points at a file (site-runtime's `FILE_EXTENSIONS`) or goes under site-runtime's `NEVER_PREFETCH` renders with `prefetch="none"`, whatever it asked for, because a prefetch runs the target's loader. `/admin` prefetches only from a page already under `/admin`. `LinkPrefetch` (`<LinkPrefetch exclude={["/demos/:product"]}>`) adds an app's own paths that act on a GET; `:name` and `*` stand for one segment.
+- **New: `capsomer/behavior/link`.** `mayPrefetch`, the rule above, and `underPath`, the path match it uses.
+- **New optional peers**: `react-router` (^8.0.0) and `@dustinedwards/site-runtime` (>=0.29.0), needed only by these two modules. No HTML contract changes.
+
 ## [0.44.2]
 
 - **txasm's and Foxing's faces lead with the self-hosted variable files.** Both sites now serve their fonts from Fontsource instead of the Google Fonts stylesheet, and Fontsource names a variable file with "Variable" after the family. The txasm layer's `--ui` starts with "Inter Variable"; Foxing's `--ui` and `--font-ui` start with "DM Sans Variable" and `--display` with "Fraunces Variable". The old names stay next in each stack. No token or class is removed or renamed, and no HTML contract changes.
