@@ -41,6 +41,7 @@
     "./base.css": "./css/base.css",
     "./utilities.css": "./css/utilities.css",
     "./fonts.css": "./css/fonts.css",
+    "./fallback-fonts.css": "./css/fallback-fonts.css",
     "./fonts/*": "./fonts/*",
     "./prose.css": "./css/prose.css",
     "./themes.css": "./tokens/themes.css",
