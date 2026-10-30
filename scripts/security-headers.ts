@@ -22,14 +22,14 @@ const REPORT_GROUP = "csp-endpoint";
 /**
  * The policy, from what the site loads beyond its own origin. Styles come from the site's own files
  * only, with dynamic values set through the CSSOM, the rule the site asks of the apps, so there is no
- * style allowance. Test results are read at runtime from the repo's results branch on
- * raw.githubusercontent.com. Images may be `data:` URLs. Cloudflare Web Analytics' injected beacon may
+ * style allowance. Test results are read at runtime from the one file on the repo's results branch
+ * (RESULTS_URL in site/data.ts), and connect-src names that file, not the whole host. Images may be `data:` URLs. Cloudflare Web Analytics' injected beacon may
  * run (a public site; Dustin's analytics ruling, 2026-10-03); it reports to this origin's /cdn-cgi/rum.
  * The site shows its own pages in frames (the states pages in site/main.tsx, the specimens in
  * site/specimen.ts), so its own origin may frame it and no other.
  */
 const csp = buildContentSecurityPolicy({
-  sources: { img: ["data:"], connect: ["https://raw.githubusercontent.com"] },
+  sources: { img: ["data:"], connect: ["https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json"] },
   cloudflareWebAnalytics: true,
   framedBySameOrigin: true,
   reportUri: REPORT_PATH,

@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [Unreleased]
+
+- **Site only: the report endpoint is rate limited and connect-src names one file** (no package change). `/csp-report` passes site-runtime's receiver an `allow` backed by a Workers rate-limit binding (`CSP_REPORT_RATE_LIMIT` in `wrangler.jsonc`, 60 a minute per address), so a flood no longer reaches the log. The site's `connect-src` names the results file it reads (`https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json`) instead of every repository on raw.githubusercontent.com. `test/unit/security-headers.test.mjs` is removed: the family's live header check grades the public site.
+
 ## [0.49.0]
 
 A table between a phone and a laptop no longer scrolls sideways (Dustin, 2026-10-30).
