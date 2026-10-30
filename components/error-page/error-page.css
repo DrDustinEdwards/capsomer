@@ -1,0 +1,56 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The error page: the failed Empty (components/empty, load empty.css with this file) centered in
+   the page's main region, under the site's own header. In development, the stack under it. */
+@layer cap.components {
+  .cap-error-page {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--gap);
+    inline-size: 100%;
+    max-inline-size: 48rem;
+    margin-inline: auto;
+    padding: var(--space-8) var(--pad-x);
+
+    /* main takes focus from the skip link; the ring on a whole region reads as a frame, not a control. */
+    &:focus {
+      outline: none;
+    }
+
+    & > .cap-empty {
+      padding-block: var(--space-8);
+    }
+
+    & h1.cap-empty-title {
+      font-size: var(--fs-h2);
+      line-height: 1.25;
+    }
+  }
+
+  /* Development only: the thrown error's stack, scrolled inside its box on a phone. */
+  .cap-error-page-stack {
+    box-sizing: border-box;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    margin: 0;
+    padding: var(--pad-card);
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--sunken);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: var(--fs-detail);
+    line-height: 1.5;
+    text-align: start;
+  }
+
+  @media (forced-colors: active) {
+    .cap-error-page-stack {
+      border-color: CanvasText;
+    }
+  }
+}

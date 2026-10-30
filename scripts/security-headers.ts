@@ -7,7 +7,7 @@
  */
 
 import { buildContentSecurityPolicy, reportingEndpoints } from "@dustinedwards/site-runtime/csp";
-import { buildSecurityHeaders, STANDARD_SECURITY_HEADERS } from "@dustinedwards/site-runtime/headers";
+import { buildSecurityHeaders, headersFile as sharedHeadersFile, STANDARD_SECURITY_HEADERS } from "@dustinedwards/site-runtime/headers";
 import { TDM_RESERVATION_HEADERS } from "@drdustinedwards/site-helpers/robots";
 
 /** The site's address (rulings.md, rule 16). */
@@ -72,12 +72,19 @@ export const securityHeaders: Readonly<Record<string, string>> = Object.freeze({
 const ASSETS_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 /**
- * The `_headers` file Workers static assets reads: the security set on every path, and the cache rule
- * on the hashed assets.
+ * The `_headers` file Workers static assets reads, from site-runtime's `headersFile`: the security set on every path,
+ * and the cache rule on the hashed assets. The shared writer leaves the page policy out of `/*`, since most sites render
+ * pages with their own; every page here is a static file under this one policy, so a second `/*` rule carries it
+ * (Cloudflare joins the headers of every rule a path matches).
  */
 export function headersFile(): string {
-  const lines = Object.entries(securityHeaders).map(([name, value]) => `  ${name}: ${value}`);
-  return `/*\n${lines.join("\n")}\n\n/assets/*\n  Cache-Control: ${ASSETS_CACHE_CONTROL}\n`;
+  const { [csp.name]: policy, ...set } = securityHeaders;
+  return sharedHeadersFile(set, {
+    paths: {
+      "/*": { [csp.name]: policy as string },
+      "/assets/*": { "Cache-Control": ASSETS_CACHE_CONTROL },
+    },
+  });
 }
 
 /**

@@ -21,9 +21,12 @@ export interface EmptyProps {
   icon?: ReactNode;
   // No edge, for inside a panel or a table that already has one.
   flush?: boolean;
+  // The title's element: a paragraph by default, a heading where the empty area is the page's
+  // subject (the error page's h1).
+  titleAs?: "p" | "h1" | "h2" | "h3";
 }
 
-export function Empty({ kind, title, children, action, icon, flush }: EmptyProps) {
+export function Empty({ kind, title, children, action, icon, flush, titleAs: Title = "p" }: EmptyProps) {
   let head: ReactNode;
   if (kind === "all-clear") {
     head = (
@@ -50,7 +53,7 @@ export function Empty({ kind, title, children, action, icon, flush }: EmptyProps
         </div>
       ) : null}
       <div className="cap-empty-header">
-        <p className="cap-empty-title">{head}</p>
+        <Title className="cap-empty-title">{head}</Title>
         {children ? <p className="cap-empty-text">{children}</p> : null}
       </div>
       {kind !== "all-clear" && action ? <div className="cap-empty-content">{action}</div> : null}

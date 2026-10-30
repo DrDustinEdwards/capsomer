@@ -48,12 +48,27 @@ export function colorSchemeContent(choice: ThemeChoice | null): "light" | "dark"
   return choice ?? "light dark";
 }
 
-// The <meta name="theme-color"> tags, so a phone's browser bar matches the page's ground in both themes: one tag for
-// a person's choice, or one per scheme (with its media query) when they never chose. `ground` is the site's --ground
-// in each theme. The theme switch keeps the tags in step when the person switches (theme-switch.ts).
+// The <meta name="theme-color"> tags as descriptors ({ name, content, media }), so a phone's browser bar matches the
+// page's ground in both themes: one for a person's choice, or one per scheme (with its media query) when they never
+// chose. `ground` is the site's --ground in each theme, as literal colors: browser chrome resolves no custom property.
+// A React Layout renders them with <ThemeColor> (capsomer/react/theme-switch); a meta() can return them as they are.
+// The theme switch keeps the tags in step when the person switches (theme-switch.ts).
+export interface ThemeColorTag {
+  name: "theme-color";
+  content: string;
+  media?: string;
+}
+
+export function themeColorTags(choice: ThemeChoice | null, ground: { light: string; dark: string }): ThemeColorTag[] {
+  if (choice) return [{ name: "theme-color", content: ground[choice] }];
+  return (["light", "dark"] as const).map((s) => ({ name: "theme-color", content: ground[s], media: `(prefers-color-scheme: ${s})` }));
+}
+
+// The same tags as an HTML string, for a site that writes its head as text.
 export function themeColorMeta(choice: ThemeChoice | null, ground: { light: string; dark: string }): string {
-  if (choice) return `<meta name="theme-color" content="${ground[choice]}">`;
-  return (["light", "dark"] as const).map((s) => `<meta name="theme-color" media="(prefers-color-scheme: ${s})" content="${ground[s]}">`).join("");
+  return themeColorTags(choice, ground)
+    .map((t) => `<meta name="theme-color"${t.media ? ` media="${t.media}"` : ""} content="${t.content}">`)
+    .join("");
 }
 
 // The pre-paint script for a site that remembers the choice in localStorage: run inline in the head, before the
