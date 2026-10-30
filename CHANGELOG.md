@@ -2,6 +2,12 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.49.0]
+
+A table between a phone and a laptop no longer scrolls sideways (Dustin, 2026-10-30).
+
+- **New reflow width: `data-reflow="medium"`.** Rows become cards below 860 px of the region, for an app table that fits a laptop but not a 1024 px tablet beside a sidebar. `""` (640 px) and `"wide"` (1100 px) are unchanged. No HTML contract changes.
+
 ## [0.48.0]
 
 The error page takes a site's own words.
