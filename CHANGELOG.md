@@ -2,6 +2,12 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [0.48.0]
+
+A table between a phone and a laptop no longer scrolls sideways (Dustin, 2026-10-30).
+
+- **New reflow width: `data-reflow="medium"`.** Rows become cards below 860 px of the region, for an app table that fits a laptop but not a 1024 px tablet beside a sidebar. `""` (640 px) and `"wide"` (1100 px) are unchanged. No HTML contract changes.
+
 ## [0.47.0]
 
 One error page, theme-color tags a React Layout can use, and the axe helpers written up for sites (the shared-code audit, 2026-10-30).

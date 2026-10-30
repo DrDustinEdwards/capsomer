@@ -253,8 +253,9 @@
 
   /* Opt-in: below a container width each row becomes a card, the first cell across the
      top and every other cell under it with its column name above its value (data-label).
-     Ported from the Portal's .reflow rules. Use it only once the table has been checked
-     with a screen reader (decision 17): a table drawn as blocks can lose its table
+     Three widths: "" (or "narrow") below 640 px, "medium" below 860 px (an app table
+     too wide for a tablet beside a sidebar), "wide" below 1100 px. Ported from the
+     Portal's .reflow rules. Use it only once the table has been checked with a screen reader (decision 17): a table drawn as blocks can lose its table
      semantics. The default on a phone is the scroll region above. */
   .cap-table-wrap[data-reflow] {
     container: cap-table / inline-size;
@@ -262,6 +263,58 @@
 
   @container cap-table (max-width: 639px) {
     .cap-table-wrap:is([data-reflow=""], [data-reflow="narrow"]) > .cap-table {
+      display: block;
+
+      & > tbody {
+        display: block;
+      }
+      & > thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+      & > tbody > tr {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
+        gap: var(--space-3) var(--space-5);
+        align-items: start;
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--line);
+
+        &:last-child {
+          border-bottom: 0;
+        }
+        & > :is(td, th) {
+          display: block;
+          min-width: 0;
+          padding: 0;
+          border: 0;
+          text-align: start;
+          white-space: normal;
+          overflow-wrap: anywhere;
+        }
+        & > :first-child {
+          grid-column: 1 / -1;
+        }
+        & > [data-label]::before {
+          content: attr(data-label);
+          display: block;
+          margin-bottom: var(--space-1);
+          color: var(--dim);
+          font-size: var(--fs-label);
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+      }
+    }
+  }
+
+  @container cap-table (max-width: 859px) {
+    .cap-table-wrap[data-reflow="medium"] > .cap-table {
       display: block;
 
       & > tbody {
