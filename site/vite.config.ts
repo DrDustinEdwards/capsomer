@@ -73,11 +73,11 @@ export default defineConfig({
           const page = ctx.path.endsWith("/site/home.html")
             ? "home"
             : ctx.path.endsWith("/site/make.html")
-              ? { path: "/make/", title: "Make a theme · Capsomer", description: MAKE_DESCRIPTION }
+              ? { path: "/make/", title: "Make a theme", description: MAKE_DESCRIPTION }
               : ctx.path.endsWith("/site/search.html")
                 ? { ...SEARCH_PAGE, noindex: true }
                 : c
-                ? { path: `/components/${c.name}/`, title: `${c.title} · Capsomer`, description: c.lead }
+                ? { path: `/components/${c.name}/`, title: c.title, description: c.lead }
                 : "admin";
           return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", siteHead(page));
         },

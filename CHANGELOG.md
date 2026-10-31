@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Showcase site: each page's WebPage and breadcrumb.** `site/seo.ts` builds heads with Prelum's `defineHead`, so the theme builder and every component page carry a WebPage and a Home > page BreadcrumbList, and the canonical keeps the slash the pages are served at.
 - The posts list names site-api v0.17.0, the release its Trash, rename, preview links, authors and excerpts shipped in: site-api 0.16.0 went to the 404 report first. Text only; no HTML contract changes.
 
 ## [0.53.0]
