@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.55.0]
+
+The catalog's filter tray link reaches its results (writing and rendering, area 4).
+
 - **Showcase site: the family icon set** (no package change). Prelum v0.22.0's icons, drawn from the letterhead's hexagon on the magenta family's `#752c6a` (white on it for the Apple touch and maskable icons), are in `site/public`; every page links them with `iconLinks()` and `site.webmanifest` comes from `webManifest()`. The inline data-URL favicon is gone.
 - **Catalog: the results region has its id** (`{id}-results`). The filter tray's "Show N" link pointed at `#{id}-results`, which nothing carried, so on a phone it closed the tray without moving to the results; Prelum's live check flagged it on all eight dustinedwards.info research pages. HTML contract: the results region gains `id="{id}-results"`.
 
