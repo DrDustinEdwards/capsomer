@@ -681,7 +681,11 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
           </button>
         </Form>
       ) : null}
-      {!may ? <p className="cap-posts-withheld">Rescheduling or canceling it needs a publisher's role.</p> : null}
+      {!may ? (
+        <ul className="cap-posts-withheld">
+          <li>Rescheduling or canceling it needs a publisher's role.</li>
+        </ul>
+      ) : null}
 
       <div className="cap-posts-update-sides">
         <Side className="cap-posts-update-side">

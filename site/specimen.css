@@ -29,6 +29,11 @@
   border-radius: var(--radius-l);
   min-width: 0;
 }
+/* Each wrapper takes the width it is given, as an app's grid item should, not its content's
+   widest line (a tab strip that scrolls); content that is still too wide shows past it. */
+.cap-specimen > * {
+  min-width: 0;
+}
 .cap-specimen > h2 {
   margin: 0;
   font-size: var(--fs-label);

@@ -522,14 +522,18 @@ eachTheme((theme) => {
   const tipFacts = (tip: import("@playwright/test").Locator) =>
     tip.evaluate((el) => {
       const r = el.getBoundingClientRect();
+      const cs = getComputedStyle(el);
+      // 2px inside each rounded corner: on the diagonal a corner of radius R cuts R(1 - 1/√2) off
+      // the box (1.76px of a 6px radius), so a point 2px in from the box's corner sits a fraction
+      // of a pixel from the curve and missed the hit test at some sub-pixel positions.
+      const k = 2 + parseFloat(cs.borderTopLeftRadius) * (1 - Math.SQRT1_2);
       const pts = [
-        [r.left + 2, r.top + 2],
-        [r.right - 2, r.top + 2],
-        [r.left + 2, r.bottom - 2],
-        [r.right - 2, r.bottom - 2],
+        [r.left + k, r.top + k],
+        [r.right - k, r.top + k],
+        [r.left + k, r.bottom - k],
+        [r.right - k, r.bottom - k],
         [r.left + r.width / 2, r.top + r.height / 2],
       ];
-      const cs = getComputedStyle(el);
       const opaque = /^rgb\(/.test(cs.backgroundColor) && cs.opacity === "1";
       const hit = pts.every(([x, y]) => el.contains(document.elementFromPoint(x!, y!)));
       // What the tip must not cover: its own control (and the control's badge), and the controls

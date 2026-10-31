@@ -38,7 +38,7 @@ On a page two or more levels below a hub: a post under Posts under Admin; a job 
 - **The current page is text,** heavier and in the full text color: it is not a link to itself, and it is told apart from the links by more than color.
 - **A folded trail keeps the first level and the last `max - 1`.** The first level is where the trail starts; the last ones are nearest the current page. Fewer than two levels would fold is not worth a button, so the trail stays whole.
 - **The folded levels are links in a click popover,** not a menu: they are navigation, so they are links (they open in a new tab, they show their address), and the popover is the shared one (Esc, focus return, light dismiss). shadcn uses a dropdown menu of items.
-- **Long names are cut** at 24 characters for a link and 36 for the current page, with an ellipsis. The full name is in the page and in a reader's list; the page's own heading says the current page in full.
+- **Long names take a second line, then are cut** with an ellipsis: past 24 characters for a link and 36 for the current page. Two lines, not one, so a name that fits still fits with a reader's own text spacing (WCAG 1.4.12). The full name is in the page and in a reader's list; the page's own heading says the current page in full.
 - **It wraps** on a phone: the list is a wrapping flex row, so a long trail takes a second line rather than scrolling.
 
 ## The shadcn component it matches

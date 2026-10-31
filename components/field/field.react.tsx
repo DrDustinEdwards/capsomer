@@ -280,8 +280,9 @@ export function SearchField(props: Pick<FieldProps, "label" | "help"> & Omit<Inp
   const ready = useMounted();
   const input = useRef<HTMLInputElement>(null);
   const Wrap = action ? "form" : "div";
+  // The landmark is named, as in the HTML contract: `landmark`, or else the field's own label.
   return (
-    <Wrap className="cap-search" role="search" aria-label={landmark} action={action} data-cap-ready={ready ? "" : undefined}>
+    <Wrap className="cap-search" role="search" aria-label={landmark ?? (typeof label === "string" ? label : undefined)} action={action} data-cap-ready={ready ? "" : undefined}>
       <Field label={label} help={help}>
         {(p) => (
           <div className="cap-input-group">
