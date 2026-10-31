@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Showcase site: Prelum v0.23.0** (no package change). The site's `@drdustinedwards/site-helpers` pin moves from v0.22.0 to v0.23.0, where Prelum wraps `:::chart` output in this frame (`div.cap-chart > div.cap-chart-figure`) and sets `RENDER_VERSION` to 9. The site uses Prelum only for search, head tags and icons, so no page changes.
+
 ## [0.55.0]
 
 The catalog's filter tray link reaches its results (writing and rendering, area 4).
