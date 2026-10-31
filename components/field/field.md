@@ -9,8 +9,8 @@ added: 0.1.0
 updated: 0.50.0
 source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
 replaces:
-  - 'class="[^"]*\bfield\b'
-  - 'className="[^"]*\bfield\b'
+  - 'class="(?:[^"]*\s)?field[\s"]'
+  - 'className="(?:[^"]*\s)?field[\s"]'
   - 'class="(f|check)"'
 ---
 

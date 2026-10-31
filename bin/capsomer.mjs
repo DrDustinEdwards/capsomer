@@ -15,7 +15,6 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSy
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { gzipSync } from "node:zlib";
-import { generateStates } from "./states.mjs";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -50,6 +49,11 @@ function walk(dir, exts, out = []) {
   return out;
 }
 
+// A YAML scalar's value: a double-quoted one has its \\ and \" escapes read, so a `replaces`
+// pattern written "approveGates?\\(" is the regular expression approveGates?\( it means.
+const unquote = (t) =>
+  t.length > 1 && t.startsWith('"') && t.endsWith('"') ? t.slice(1, -1).replace(/\\(["\\])/g, "$1") : t.length > 1 && t.startsWith("'") && t.endsWith("'") ? t.slice(1, -1).replace(/''/g, "'") : t;
+
 // The doc pages' frontmatter: name, parts, tool, states, added, replaces.
 function frontmatter(src) {
   const m = src.replace(/\r\n/g, "\n").match(/^---\n([\s\S]*?)\n---/);
@@ -59,14 +63,14 @@ function frontmatter(src) {
   for (const raw of m[1].split("\n")) {
     const item = raw.match(/^\s+-\s+(.*)$/);
     if (item && key) {
-      (data[key] = Array.isArray(data[key]) ? data[key] : []).push(item[1].replace(/^(['"])(.*)\1$/, "$2"));
+      (data[key] = Array.isArray(data[key]) ? data[key] : []).push(unquote(item[1]));
       continue;
     }
     const kv = raw.match(/^([\w-]+):\s*(.*)$/);
     if (!kv) continue;
     key = kv[1];
     const v = kv[2].trim();
-    data[key] = v.startsWith("[") ? v.slice(1, -1).split(",").map((s) => s.trim()).filter(Boolean) : v === "" ? [] : v.replace(/^(['"])(.*)\1$/, "$2");
+    data[key] = v.startsWith("[") ? v.slice(1, -1).split(",").map((s) => s.trim()).filter(Boolean) : v === "" ? [] : unquote(v);
   }
   return data;
 }
@@ -176,7 +180,7 @@ function a11yFrom(reportPath) {
 export function report(root) {
   const lib = existsSync(join(root, "node_modules", "capsomer")) ? join(root, "node_modules", "capsomer") : PKG;
   const catalog = components(lib);
-  const files = walk(root, [".ts", ".tsx", ".js", ".jsx", ".mjs", ".css", ".html", ".astro"]).filter((f) => !f.includes(`${join("node_modules", "capsomer")}`));
+  const files = walk(root, [".ts", ".tsx", ".js", ".jsx", ".mjs", ".css", ".html", ".astro"]).filter((f) => !f.includes(`${join("node_modules", "capsomer")}`) && !/\.min\.[cm]?js$/.test(f));
   const used = new Set();
   const own = [];
   let keep = [];
@@ -190,6 +194,7 @@ export function report(root) {
   for (const file of files) {
     const rel = relative(root, file).replace(/\\/g, "/");
     const text = readFileSync(file, "utf8");
+    const lines = text.split(/\r?\n/);
     for (const m of text.matchAll(/capsomer\/(?:react\/|behavior\/)?([\w-]+)(?:\.css)?/g)) if (catalog.some((c) => c.name === m[1])) used.add(m[1]);
     for (const c of catalog) {
       if (c.rootClass && new RegExp(`\\b${c.rootClass}\\b`).test(text)) used.add(c.name);
@@ -200,8 +205,9 @@ export function report(root) {
         } catch {
           continue;
         }
-        const lines = text.split(/\r?\n/);
-        const at = lines.findIndex((l) => re.test(l));
+        // A line that carries a Capsomer class or imports from capsomer is Capsomer's own markup
+        // (role="tablist" on .cap-tabs-list, <dialog class="cap-dialog">), not a copy of it.
+        const at = lines.findIndex((l) => re.test(l) && !/(^|[^\w-])cap-[\w-]|capsomer\//.test(l));
         if (at < 0) continue;
         const k = kept(c.name, rel);
         if (k) keptHits.push({ component: c.name, file: rel, reason: k.reason });
@@ -356,14 +362,17 @@ async function siteData() {
     const r = readJson(src);
     results.available = true;
     results.ran = r.stats?.startTime ?? null;
-    const visit = (suite, file, theme) => {
+    // The sweep (test/sweep.spec.ts) groups its tests in a describe block named for the component.
+    const names = new Set(components(PKG).map((c) => c.name));
+    const visit = (suite, file, theme, group) => {
       const f = suite.file ?? file;
       const th = /^(light|dark) theme$/.exec(suite.title ?? "")?.[1] ?? theme;
+      const g = names.has(suite.title) ? suite.title : group;
       for (const spec of suite.specs ?? []) {
         // The spec's own file: a describe block made by a shared helper (eachTheme) names the helper's file.
         const path = (spec.file ?? f ?? "").replace(/\\/g, "/");
         const m = /^components\/([\w-]+)\//.exec(path) ?? /^site\//.exec(path);
-        const comp = m?.[1] ?? "site";
+        const comp = m?.[1] ?? g ?? "site";
         const kind = /^(keyboard|accessibility|behavior):/.exec(spec.title)?.[1] ?? "behavior";
         for (const t of spec.tests ?? []) {
           const status = t.status === "expected" || t.status === "flaky" ? "passed" : t.status === "skipped" ? "skipped" : "failed";
@@ -374,9 +383,9 @@ async function siteData() {
           entry.tests.push({ title: spec.title, theme: th ?? null, kind, status, error: status === "failed" ? err : null });
         }
       }
-      for (const s of suite.suites ?? []) visit(s, f, th);
+      for (const s of suite.suites ?? []) visit(s, f, th, g);
     };
-    for (const s of r.suites ?? []) visit(s, s.file, null);
+    for (const s of r.suites ?? []) visit(s, s.file, null, null);
   }
   writeFileSync(join(dataDir, "results.json"), JSON.stringify(results, null, 2));
   const resultsOut = flag("results-out");
@@ -542,6 +551,9 @@ if (cmd === "report") {
 } else if (cmd === "bloat") {
   bloat(process.cwd());
 } else if (cmd === "states") {
+  // Imported here, not at the top: states.mjs needs site-runtime, a dev dependency, and the
+  // commands an app runs from the installed package (report, token-check) must not.
+  const { generateStates } = await import("./states.mjs");
   const written = generateStates(PKG);
   console.log(`states: wrote ${written.length} states pages (components/<name>/states.html, generated, gitignored)`);
 } else if (cmd === "site-data") {

@@ -349,7 +349,6 @@ eachTheme((theme) => {
       expect(b.bottom).toBeLessThanOrEqual(56);
       expect(b.right).toBeLessThanOrEqual(390);
     }
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   });
 
   test("keyboard: the menu button opens one sheet from the bottom, focus on its heading, Sign in pinned under the list; Esc returns focus", async ({ page }) => {

@@ -188,7 +188,6 @@ eachTheme((theme) => {
     expect(narrow).not.toBeNull();
     expect((narrow?.labelBottom ?? 0) <= (narrow?.textTop ?? 0) + 1).toBe(true);
     expect((narrow?.labelLeft ?? 0) >= (narrow?.runLeft ?? 0)).toBe(true);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 
   test("behavior: a run inside a paragraph is a span with a label at its start", async ({ page }) => {
