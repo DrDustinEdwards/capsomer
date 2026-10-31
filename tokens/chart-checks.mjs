@@ -6,7 +6,7 @@
 // while it is still running, so an import back into it would never settle.
 import { colorDifference } from "enarratio";
 
-export const SERIES_MIN_DE = 8;
+export const SERIES_MIN_DE = 10;
 export const STATUS_MIN_DE = 6;
 export const RAMP_STEP_MIN_DE = 6;
 

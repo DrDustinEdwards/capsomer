@@ -95,8 +95,8 @@ function examplesOf(html: string): Example[] {
 
 const json = (path: string) => (existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : null);
 
-/** Everything the page says, read from the repo and the site's data files (capsomer site-data). */
-export function readData(root: string): Data {
+/** Everything the page says, read from the repo and the site's data files (capsomer site-data). `examples` is each component's examples.html as the states generator filled it. */
+export function readData(root: string, examples: Map<string, string>): Data {
   const dir = resolve(root, "components");
   const components = readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory() && existsSync(resolve(dir, d.name, `${d.name}.md`)))
@@ -115,7 +115,7 @@ export function readData(root: string): Data {
         parts: list("parts"),
         added: str("added") || "0.1.0",
         states: list("states").length,
-        examples: existsSync(resolve(dir, d.name, "examples.html")) ? examplesOf(readFileSync(resolve(dir, d.name, "examples.html"), "utf8")) : [],
+        examples: examplesOf(examples.get(d.name) ?? ""),
         behavior: existsSync(resolve(dir, d.name, `${d.name}.ts`))
           ? [...readFileSync(resolve(dir, d.name, `${d.name}.ts`), "utf8").matchAll(/^export (?:async )?function (\w+)/gm)].map((x) => x[1] ?? "")
           : [],

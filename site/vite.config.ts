@@ -17,10 +17,10 @@ import { MAKE_DESCRIPTION, discoveryFiles, siteHead } from "./seo.ts";
 const root = fileURLToPath(new URL("..", import.meta.url));
 // The states pages are generated from each component's examples.html, so they are written
 // first: Vite finds its inputs by the file existing (build and preview both load this).
-generateStates(root);
+const examples = await generateStates(root);
 // Each component's public page, /components/<name>/, is written the same way: a copy of
 // site/component.html naming its component, filled from site/home.ts below.
-const data = readData(root);
+const data = readData(root, examples);
 const template = readFileSync(resolve(root, "site/component.html"), "utf8");
 for (const c of data.components) writeFileSync(resolve(root, "components", c.name, "index.html"), template.replace("<!--component-->", `<!--component:${c.name}-->`));
 const pages = Object.fromEntries(data.components.map((c) => [`page-${c.name}`, resolve(root, "components", c.name, "index.html")]));

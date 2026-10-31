@@ -1,10 +1,13 @@
 // Generates components/<name>/states.html from site/states-template.html, the component's
-// doc-page frontmatter (title, summary) and its examples.html (and examples.tsx, if any).
+// doc-page frontmatter (title, summary) and its examples.html (and examples.tsx, if any). A
+// component whose specimens are drawn by Enarratio has examples.build.ts: its default export
+// maps names to markup, rendered when the pages are built, and each <!-- build:name --> in
+// examples.html is replaced by it, so the specimens are the package's live output, never pasted.
 // Imported by bin/capsomer.mjs (`capsomer states`) and by site/vite.config.ts, so the pages
 // exist before Vite discovers its inputs. The generated pages are gitignored.
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -72,24 +75,36 @@ export function renderStates({ template, title, summary, examples, hasTsx, css =
   return template.replace(/\{\{(\w+)\}\}/g, (_, k) => fill[k] ?? "");
 }
 
-// Writes states.html for every component that has examples.html or examples.tsx. Returns
-// the component names written.
-export function generateStates(root = PKG) {
+// A component's examples.html with every <!-- build:name --> filled from its examples.build.ts.
+async function loadExamples(base) {
+  const html = existsSync(join(base, "examples.html")) ? readFileSync(join(base, "examples.html"), "utf8") : "";
+  const build = join(base, "examples.build.ts");
+  if (!existsSync(build)) return html;
+  const parts = (await import(pathToFileURL(build).href)).default;
+  return html.replace(/<!-- build:([\w-]+) -->/g, (_, k) => {
+    if (typeof parts[k] !== "string") throw new Error(`${build} has no "${k}"`);
+    return parts[k];
+  });
+}
+
+// Writes states.html for every component that has examples.html or examples.tsx. Returns each
+// component written, with its filled examples.html.
+export async function generateStates(root = PKG) {
   const template = readFileSync(join(root, "site", "states-template.html"), "utf8");
   const dir = join(root, "components");
-  const written = [];
+  const written = new Map();
   for (const d of readdirSync(dir, { withFileTypes: true })) {
     if (!d.isDirectory()) continue;
     const base = join(dir, d.name);
-    const html = join(base, "examples.html");
     const tsx = join(base, "examples.tsx");
-    if (!existsSync(html) && !existsSync(tsx)) continue;
+    if (!existsSync(join(base, "examples.html")) && !existsSync(tsx)) continue;
     const mdPath = join(base, `${d.name}.md`);
     const { title, summary } = docMeta(existsSync(mdPath) ? readFileSync(mdPath, "utf8") : "", d.name);
-    const lifted = liftStyles(existsSync(html) ? readFileSync(html, "utf8") : "");
+    const examples = await loadExamples(base);
+    const lifted = liftStyles(examples);
     if (lifted.css) writeFileSync(join(base, "states.css"), `${lifted.css}\n`);
     writeFileSync(join(base, "states.html"), renderStates({ template, title, summary, examples: lifted.body, hasTsx: existsSync(tsx), css: lifted.css }));
-    written.push(d.name);
+    written.set(d.name, examples);
   }
   return written;
 }

@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
+// Enarratio tests its strip, sentence and table; these cover what the component adds: the
+// percent, the legend, the inline form, and that its parts reach their contrast.
 const section = (id: string) => `section[aria-labelledby='${id}']`;
 
 eachTheme((theme) => {
@@ -9,88 +11,41 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the caption, figure, legend and summary reach their contrast", async ({ page }) => {
+  test("accessibility: the title, window, finding, legend and inline percent reach their contrast", async ({ page }) => {
     await visitStates(page, "uptime-strip", theme);
     await expectContrast(page, [
-      { sel: ".cap-uptime-title", what: "the strip's title" },
-      { sel: ".cap-uptime-pct", what: "the uptime percent" },
-      { sel: ".cap-uptime-figure", what: "the window" },
+      { sel: "#up-2 .enarratio-title", what: "the strip's title" },
+      { sel: "#up-2 .enarratio-subtitle", what: "the uptime and its window" },
+      { sel: "#up-2 .enarratio-finding", what: "the finding" },
       { sel: ".cap-uptime-legend li", what: "the legend" },
-      { sel: ".cap-uptime-summary", what: "the summary" },
-    ]);
-  });
-
-  test("accessibility: the figure is named by its title and window, described by its summary, and holds a named chart and a key", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "uptime-strip", theme);
-    await expect(page.locator(section("s-outage")).locator(".cap-uptime")).toMatchAriaSnapshot(`
-      - figure "foxhound.app 96.1% up over 7 days":
-        - paragraph: /except one outage on Tuesday, September 29/
-        - img /down in 1, partly down in 2/
-        - list "Key":
-          - listitem: Up
-          - listitem: Down
-          - listitem: Partly down
-          - listitem: No data
-    `);
-  });
-
-  test("keyboard: Tab reaches the numbers by day, Enter opens them, and the table's region is next", async ({ page }) => {
-    await visitStates(page, "uptime-strip", theme);
-    const outage = page.locator(section("s-outage"));
-    const summary = outage.locator("summary");
-    await summary.focus();
-    await expect(summary).toBeFocused();
-    await page.keyboard.press("Enter");
-    await expect(outage.locator("details")).toHaveAttribute("open", "");
-    // The table is drawn once the details are open; Tab only reaches it after that.
-    await expect(page.getByRole("region", { name: "Uptime by day, foxhound.app" })).toBeVisible();
-    await page.keyboard.press("Tab");
-    const active = await page.evaluate(() => {
-      const el = document.activeElement as HTMLElement | null;
-      return el ? `${el.tagName.toLowerCase()}${el.id ? "#" + el.id : ""}.${el.className} [${el.getAttribute("aria-label") ?? el.textContent?.trim().slice(0, 30)}]` : "nothing";
-    });
-    await expect(page.getByRole("region", { name: "Uptime by day, foxhound.app" }), `focus is on ${active}`).toBeFocused();
-    await expect(page.getByRole("row", { name: /Tue, Sep 29 72.9%/ })).toBeVisible();
-  });
-
-  test("behavior: the numbers are the chart frame's Show data, closed, with the table in the HTML", async ({ page }) => {
-    await visitStates(page, "uptime-strip", theme);
-    const outage = page.locator(section("s-outage"));
-    await expect(outage.locator("details.cap-chart-data")).not.toHaveAttribute("open", "");
-    await expect(outage.getByText("Show data")).toBeVisible();
-    await expect(outage.locator(".cap-table")).toBeAttached();
-    await outage.locator("summary").click();
-    await expect(outage.getByText("Hide data")).toBeVisible();
-  });
-
-  test("behavior: no data is a state with a reason, never a zero", async ({ page }) => {
-    await visitStates(page, "uptime-strip", theme);
-    const nodata = page.locator(section("s-no-data"));
-    await expect(nodata.locator(".cap-uptime-figure")).toHaveText("100% up over the 6 of 7 days with data");
-    await expect(nodata.locator(".cap-uptime-summary")).toContainText("no data for Saturday, September 26");
-    await nodata.locator("summary").click();
-    await expect(nodata.getByRole("row", { name: /Sat, Sep 26/ })).toContainText("No data: the watcher did not run");
-    await expect(nodata.getByRole("row", { name: /Sat, Sep 26/ })).not.toContainText("0%");
-  });
-
-  test("accessibility: in a table cell the percent reaches its contrast and the strip is a named image", async ({ page }) => {
-    await visitStates(page, "uptime-strip", theme);
-    await expectContrast(page, [
       { sel: `${section("s-line")} .cap-uptime-pct`, what: "the percent beside an inline strip" },
       { sel: `${section("s-line")} .cap-status`, what: "no data in a cell" },
     ]);
-    await expect(page.locator(section("s-line")).getByRole("img", { name: /down in 1, partly down in 2/ })).toBeVisible();
   });
 
-  test("behavior: the legend shows each kind of slot by shape as well as color", async ({ page }) => {
+  test("accessibility: the figure is named, its strip is a named image, and the key follows it", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "uptime-strip", theme);
+    const outage = page.locator(section("s-outage"));
+    await expect(outage.getByRole("figure", { name: /foxhound\.app/ })).toBeVisible();
+    await expect(outage.getByRole("img", { name: /down on Tuesday, September 29/ })).toBeVisible();
+    await expect(outage.getByRole("list", { name: "Key" }).getByRole("listitem")).toHaveText(["Up", "Degraded", "Down", "No data"]);
+    await expect(page.locator(section("s-line")).getByRole("img", { name: /Uptime of foxhound\.app, 7 days/ })).toBeVisible();
+  });
+
+  test("behavior: no data is a slot with its reason, never a zero", async ({ page }) => {
+    await visitStates(page, "uptime-strip", theme);
+    const nodata = page.locator(section("s-no-data"));
+    await expect(nodata.locator(".enarratio-subtitle")).toHaveText("100% up over the 6 of 7 days with data");
+    await nodata.getByText("Show data").click();
+    await expect(nodata.getByRole("row", { name: /Sat, Sep 26/ })).toContainText("no data");
+  });
+
+  test("behavior: the legend draws each kind of slot by shape as well as color", async ({ page }) => {
     await visitStates(page, "uptime-strip", theme);
     const keys = page.locator(section("s-all-up")).locator(".cap-uptime-key");
-    await expect(keys).toHaveCount(4);
-    const images = await keys.evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundImage));
-    // Up and down are solid; partly down is split; no data is hatched.
-    expect(images[0]).toBe("none");
-    expect(images[1]).toBe("none");
-    expect(images[2]).toContain("linear-gradient");
-    expect(images[3]).toContain("repeating-linear-gradient");
+    const shapes = await keys.evaluateAll((els) => els.map((el) => [getComputedStyle(el).backgroundImage, getComputedStyle(el).outlineStyle]));
+    // Up, degraded and down are ticks of three heights; no data is a dashed outline.
+    expect(new Set(shapes.slice(0, 3).map(([bg]) => bg)).size).toBe(3);
+    expect(shapes[3]).toEqual(["none", "dashed"]);
   });
 });
