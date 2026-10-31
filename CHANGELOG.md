@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.51.0]
+
+The sites' own faces swap in without moving text.
+
+- **Site layers name their fallback faces.** foxing's DM Sans, DM Mono and Fraunces stacks, julieedwards.info's Open Sans and Montserrat, and txasm's Inter now list the matching `… Fallback` face second, so a site that also imports `capsomer/fallback-fonts.css` swaps fonts without moving text. A site that does not import it gets the next face in the stack, as before. Each such layer's header says to import it. No HTML contract changes.
+
 ## [0.50.0]
 
 Font swaps no longer move text on the sites that load their own faces (the speed and caching pass, 2026-10-31).
