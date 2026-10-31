@@ -1,6 +1,54 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
+import { Fragment, createElement as h, type ReactElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { THEMES, expectNoAxeViolations, settled, visitStates } from "./helpers.ts";
+// The wrappers as the package ships them (npm run build): Playwright rewrites the JSX of a .tsx
+// file a spec imports, so the source cannot be rendered here (catalog.spec.ts says the same).
+import { AnchorBar } from "../dist/components/anchor-bar/anchor-bar.react.js";
+import { ApprovalSheet } from "../dist/components/approval-sheet/approval-sheet.react.js";
+import { AttentionList } from "../dist/components/attention-list/attention-list.react.js";
+import { Avatar, AvatarGroup } from "../dist/components/avatar/avatar.react.js";
+import { Alert, Banner } from "../dist/components/banner/banner.react.js";
+import { Breadcrumb } from "../dist/components/breadcrumb/breadcrumb.react.js";
+import { BulkBar } from "../dist/components/bulk-bar/bulk-bar.react.js";
+import { Button, ButtonGroup, ButtonGroupText } from "../dist/components/button/button.react.js";
+import { ChartFrame } from "../dist/components/chart-frame/chart-frame.react.js";
+import { FilterChips } from "../dist/components/chips/chips.react.js";
+import { ConfirmDialog, ConfirmPage } from "../dist/components/confirm-dialog/confirm-dialog.react.js";
+import { DatePicker } from "../dist/components/date-picker/date-picker.react.js";
+import { DetailCommand, DetailPanel, DetailSection } from "../dist/components/detail-panel/detail-panel.react.js";
+import { Dialog, DialogBody, DialogClose, DialogFooter, DialogHeader, DialogTitle } from "../dist/components/dialog/dialog.react.js";
+import { Disclosure, Group } from "../dist/components/disclosure/disclosure.react.js";
+import { DropZone } from "../dist/components/drop-zone/drop-zone.react.js";
+import { Empty, Wait } from "../dist/components/empty/empty.react.js";
+import { ErrorSummary } from "../dist/components/error-summary/error-summary.react.js";
+import { Feed } from "../dist/components/feed/feed.react.js";
+import { CharacterCount, Check, DateInput, Field, InputGroup, InputGroupAddon, NumberField, PasswordInput, Range, SearchField } from "../dist/components/field/field.react.js";
+import { Listbox, ListboxSeparator, Option, OptionGroup } from "../dist/components/listbox/listbox.react.js";
+import { MessageProvider } from "../dist/components/message/message.react.js";
+import { Meter } from "../dist/components/meter/meter.react.js";
+import { PageHead } from "../dist/components/page-head/page-head.react.js";
+import { Pagination } from "../dist/components/pagination/pagination.react.js";
+import { Panel } from "../dist/components/panel/panel.react.js";
+import { PeopleRoles } from "../dist/components/people-roles/people-roles.react.js";
+import { PermissionMatrix } from "../dist/components/permission-matrix/permission-matrix.react.js";
+import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from "../dist/components/popover/popover.react.js";
+import { Row, RowList } from "../dist/components/row-list/row-list.react.js";
+import { Segmented } from "../dist/components/segmented/segmented.react.js";
+import { Select } from "../dist/components/select/select.react.js";
+import { SessionList } from "../dist/components/session-row/session-row.react.js";
+import { OgCardPreview, SerpPreview } from "../dist/components/share-preview/share-preview.react.js";
+import { Shell } from "../dist/components/shell/shell.react.js";
+import { Keys, ShortcutSheet } from "../dist/components/shortcuts/shortcuts.react.js";
+import { Skeleton, Spinner } from "../dist/components/skeleton/skeleton.react.js";
+import { StatTile, StatTiles } from "../dist/components/stat-tile/stat-tile.react.js";
+import { Pill, Status } from "../dist/components/status/status.react.js";
+import { SwitchWithReason } from "../dist/components/switch-reason/switch-reason.react.js";
+import { Switch } from "../dist/components/switch/switch.react.js";
+import { ThemeButton, ThemeSwitch } from "../dist/components/theme-switch/theme-switch.react.js";
+import { Tooltip } from "../dist/components/tooltip/tooltip.react.js";
+import { UsageMeter } from "../dist/components/usage-meter/usage-meter.react.js";
 
 // The sweep: every component's states page and each of its page-level specimens, checked for
 // what every component owes and no component spec has to repeat. A failure names the
@@ -17,7 +65,8 @@ import { THEMES, expectNoAxeViolations, settled, visitStates } from "./helpers.t
 //                 Chromium follows the color scheme to a dark or a light system palette
 //   React         a wrapper renders each of its classes with the role (written, or implied by
 //                 the tag) and the naming the HTML contract (the doc page's markup and
-//                 examples.html) gives it
+//                 examples.html) gives it: in its React specimens, or for a wrapper with none,
+//                 in one fixture rendered on the server (FIXTURES)
 // Geometry does not depend on the palette, so reflow, spacing, targets and React run once, in
 // the light theme (playwright.config.ts, grepInvert).
 
@@ -30,6 +79,76 @@ function spots(name: string): Spot[] {
   return [{ name }, ...[...html.matchAll(/<template\b[^>]*\bdata-specimen="([^"]+)"/g)].map((m) => ({ name, only: m[1] }))];
 }
 const where = (s: Spot) => (s.only ? `${s.name} ?only=${s.only}` : `${s.name} states page`);
+
+// A wrapper with no React specimen (no examples.tsx) is checked against one small fixture,
+// rendered to HTML as a server would: the cheapest real check that it writes the contract.
+const noop = () => undefined;
+const later = async () => undefined;
+const NOW = Date.parse("2026-10-31T12:00:00Z");
+const FIXTURES: Record<string, () => ReactElement> = {
+  "anchor-bar": () => h(AnchorBar, { sections: [{ id: "overview", label: "Overview" }, { id: "checks", label: "Checks" }], always: true }),
+  "approval-sheet": () => h(ApprovalSheet, { open: true, gates: [{ id: "push", title: "Push the capsomer branch", command: "git push origin a11y-all" }], onApprove: noop, onClose: noop }),
+  "attention-list": () => h(AttentionList, { title: "Needs you", items: [{ id: "down", tone: "crit", title: "foxhound.app does not answer", detail: "3 failed checks since 13:40", href: "#down" }, { id: "cert", tone: "warn", title: "Renew txasm.example's certificate", href: "#cert" }] }),
+  avatar: () => h(Fragment, null, h(Avatar, { name: "Rosa Park" }), h(AvatarGroup, { label: "Reviewers", extra: 2, children: h(Avatar, { name: "Sam Okafor" }) })),
+  banner: () => h(Fragment, null, h(Banner, { title: "Maintenance tonight", onDismiss: noop, children: "The queue pauses at 22:00 UTC." }), h(Alert, { title: "The draft was not saved", children: "Try again in a minute." })),
+  breadcrumb: () => h(Breadcrumb, { items: [{ label: "Sites", href: "#sites" }, { label: "fieldnotes.example", href: "#site" }, { label: "Media", href: "#media" }, { label: "IMG_4821" }], maxItems: 3 }),
+  "bulk-bar": () => h(BulkBar, { items: [{ id: "p1", label: "Notes on the Foxhound release" }], actions: [{ id: "publish", label: "Publish" }, { id: "delete", label: "Delete", destructive: true }], onClear: noop, total: 4 }),
+  button: () => h(Fragment, null, h(Button, { variant: "primary" }, "Save"), h(ButtonGroup, { label: "Zoom" }, h(Button, null, "Smaller"), h(ButtonGroupText, null, "100%"))),
+  "chart-frame": () => h(ChartFrame, { title: "Uptime", summary: "Up 99.9% this week.", chart: "<svg></svg>", table: { columns: ["Day", "Uptime"], rows: [["Monday", "100%"]] } }),
+  chips: () => h(FilterChips, { label: "Status", options: [{ value: "open", label: "Open" }, { value: "done", label: "Done" }], value: ["open"], onChange: noop, count: "12 shown" }),
+  "confirm-dialog": () => h(Fragment, null, h(ConfirmDialog, { open: true, title: "Delete 3 drafts?", body: ["They are gone for good."], action: "Delete", perform: later, onClose: noop }), h(ConfirmPage, { title: "Delete fieldnotes.example?", cancelHref: "#back", typeToConfirm: "fieldnotes" })),
+  "date-picker": () => h(DatePicker, { label: "Publish on", name: "on" }),
+  "detail-panel": () => h(DetailPanel, { open: true, onClose: noop, id: "job_7f3a", title: "Push the capsomer branch", kind: "Job", children: h(DetailSection, { title: "Command", children: h(DetailCommand, { text: "git push origin a11y-all" }) }) }),
+  dialog: () => h(Dialog, { open: true, onOpenChange: noop }, h(DialogHeader, null, h(DialogTitle, null, "Rename the draft")), h(DialogBody, null, "The old address redirects."), h(DialogFooter, null, h(DialogClose, { part: "cancel" }, "Cancel"))),
+  disclosure: () => h(Fragment, null, h(Disclosure, { summary: "What the check reads", children: "The site's sitemap." }), h(Group, { label: "Warnings", count: 2, children: h("p", null, "Two certificates end this month.") })),
+  "drop-zone": () => h(DropZone, { name: "files", title: "Drop pictures here" }),
+  empty: () => h(Fragment, null, h(Empty, { kind: "no-match", title: "No posts match" }), h(Wait, { label: "Loading posts", children: h("p", null, "Posts") })),
+  "error-summary": () => h(ErrorSummary, { errors: [{ id: "email", text: "Enter an email address" }, { id: "name", text: "Enter a name" }] }),
+  feed: () => h(Feed, { days: [{ id: "today", label: "Today", events: [{ id: "e1", tone: "ok", what: "Deployed capsomer", when: "10:02", at: "2026-10-31T10:02:00Z" }] }] }),
+  field: () =>
+    h(
+      Fragment,
+      null,
+      h(Field, { label: "Email", help: "Your work address", error: "Enter an email address", children: (p) => h("input", { ...p, className: "cap-input", type: "email" }) }),
+      h(Check, { label: "Send me the digest" }),
+      h(Range, { "aria-label": "Volume", value: 4, max: 10 }),
+      h(InputGroup, { label: "Price" }, h(InputGroupAddon, null, "$"), h("input", { className: "cap-input" })),
+      h(PasswordInput, { label: "Password", name: "password" }),
+      h(CharacterCount, { label: "Summary", value: "Short", limit: 160 }),
+      h(NumberField, { label: "Copies", value: 2, onChange: noop }),
+      h(SearchField, { label: "Search posts", value: "", onChange: noop }),
+      h(DateInput, { legend: "Date of birth", name: "dob", value: { day: "", month: "", year: "" }, onChange: noop }),
+    ),
+  listbox: () => h(Listbox, { "aria-label": "Sites", selection: "single" }, h(OptionGroup, { label: "Watch" }, h(Option, { id: "o1", value: "fh", selected: true }, "foxhound.app"), h(Option, { id: "o2", value: "tx" }, "txasm.example")), h(ListboxSeparator)),
+  message: () => h(MessageProvider, null, h("p", null, "The page.")),
+  meter: () => h(Meter, { label: "Storage", value: 7, max: 10, valueText: "7 of 10 GB" }),
+  "page-head": () => h(PageHead, { title: "Media", lead: "Every picture on the site.", crumbs: [{ label: "Sites", href: "#sites" }, { label: "Media" }], actions: h(Button, null, "Upload") }),
+  pagination: () => h(Pagination, { page: 2, pageCount: 5, hrefFor: (n: number) => `?page=${n}`, total: 48, perPage: 10, noun: "posts" }),
+  panel: () => h(Panel, { title: "Checks", count: 3, description: "What ran today.", children: h("p", null, "All passed.") }),
+  "people-roles": () =>
+    h(PeopleRoles, {
+      action: "/members",
+      now: NOW,
+      data: { heading: "Lab members", people: [{ email: "rosa@example.com", name: "Rosa Park", title: "Lab worker", endDate: "2027-01-31", status: "active", sync: "ready", manageable: true }], titles: [{ value: "worker", label: "Lab worker", defaultEnd: "2027-01-31" }] },
+    }),
+  "permission-matrix": () => h(PermissionMatrix, { matrix: { permissions: ["read", "write"], agents: [{ name: "capsid-agent", holds: ["read"] }] } }),
+  popover: () => h(Popover, null, h(PopoverTrigger, null, "Details"), h(PopoverContent, null, h(PopoverHeader, null, h(PopoverTitle, null, "Job"), h(PopoverDescription, null, "Runs at noon.")))),
+  "row-list": () => h(RowList, { label: "Jobs", children: h(Row, { title: "Push the branch", href: "#push", detail: "Waiting for approval", meta: "2 min ago" }) }),
+  segmented: () => h(Segmented, { legend: "View", options: [{ value: "grid", label: "Grid" }, { value: "list", label: "List" }], value: "grid", onChange: noop }),
+  select: () => h(Select, { "aria-label": "Site", options: [{ value: "fh", label: "foxhound.app" }, { group: "Labs", options: [{ value: "tx", label: "txasm.example" }] }] }),
+  "session-row": () => h(SessionList, { label: "Sessions", sessions: [{ id: "s1", agent: "capsid-agent", state: "needs", since: NOW, age: "2 min", ask: { question: "Push the branch?", command: "git push", answers: [{ id: "yes", label: "Push", variant: "primary" }] } }] }),
+  "share-preview": () => h(Fragment, null, h(SerpPreview, { url: "https://dustinedwards.info/blog/foxhound", title: "Notes on the Foxhound release", description: "What changed." }), h(OgCardPreview, { image: h("img", { src: "/card.png", alt: "" }), host: "dustinedwards.info", title: "Notes on the Foxhound release" })),
+  shell: () => h(Shell, { brand: "Capsid", nav: [{ id: "queue", label: "Queue", href: "#queue", current: true, count: 5 }, { id: "sites", label: "Sites", href: "#sites" }], children: h("p", null, "The page.") }),
+  shortcuts: () => h(Fragment, null, h(Keys, { spec: "g o" }), h(ShortcutSheet, { open: true, onOpenChange: noop })),
+  skeleton: () => h(Fragment, null, h(Spinner, { label: "Loading jobs" }), h(Skeleton, { lines: 2 })),
+  "stat-tile": () => h(StatTiles, { label: "This week", children: [h(StatTile, { key: "up", label: "Uptime", figure: "99.9", unit: "%", tone: "ok" }), h(StatTile, { key: "err", label: "Errors", tone: "nodata", reason: "No data yet" })] }),
+  status: () => h(Fragment, null, h(Status, { tone: "crit", children: "Down" }), h(Pill, { tone: "warn", href: "#mentions", children: "Mentions 4" })),
+  "switch-reason": () => h(SwitchWithReason, { label: "Pause the queue", checked: false, onApply: later }),
+  switch: () => h(Switch, { label: "Email me" }),
+  "theme-switch": () => h(Fragment, null, h(ThemeSwitch, { initial: "light" }), h(ThemeButton, { initial: "dark" })),
+  tooltip: () => h(Tooltip, { tip: "3 failed checks", children: (t) => h("button", { ...t, type: "button", className: "cap-btn" }, "foxhound.app") }),
+  "usage-meter": () => h(UsageMeter, { now: NOW, items: [{ id: "runs", name: "Runs", amount: "40 of 100", used: 40, limit: 100, history: [10, 20, 40], resetsAt: NOW + 86_400_000 }] }),
+};
 
 // A state axe misreads, left out exactly as the component's own spec leaves it out: the
 // admin-shell tile whose tip is open (admin-shell.spec.ts says why).
@@ -341,22 +460,30 @@ for (const name of NAMES) {
       });
     }
 
-    if (existsSync(`components/${name}/examples.tsx`)) {
+    const fixture = FIXTURES[name];
+    if (existsSync(`components/${name}/examples.tsx`) || fixture) {
       test("behavior: sweep: the React wrapper renders the HTML contract's elements, roles and names", async ({ page }) => {
         const css = readFileSync(`components/${name}/${name}.css`, "utf8");
         const own = [...new Set([...css.matchAll(/\.(cap-[\w-]+)/g)].map((m) => m[1] as string))];
         const md = readFileSync(`components/${name}/${name}.md`, "utf8");
         const contract = [readFileSync(`components/${name}/examples.html`, "utf8").replace(/<template\b[^>]*>|<\/template>/g, ""), ...[...md.matchAll(/```html\n([\s\S]*?)```/g)].map((m) => m[1] as string)];
-        // Where React renders: every data-mount, and each element examples.tsx finds by id.
-        const tsx = readFileSync(`components/${name}/examples.tsx`, "utf8");
-        const ids = [...new Set([...tsx.matchAll(/"([a-z][\w-]*)"/g)].map((m) => m[1] as string))].filter((id) => contract[0]?.includes(`id="${id}"`));
-        const roots = ["[data-mount]", ...ids.map((id) => `#${id}`)].join(", ");
         const rendered: (Shape & { at: string })[] = [];
         let html: Shape[] = [];
-        for (const s of pages) {
-          await open(page, s);
-          if (!html.length) html = await page.evaluate(([h, o, r]) => window.__sweep.contractShape(h, o, r), [contract, own, roots] as const);
-          rendered.push(...(await page.evaluate(([o, r]) => window.__sweep.reactShape(o, r), [own, roots] as const)).map((r) => ({ ...r, at: where(s) })));
+        if (fixture) {
+          await open(page, { name });
+          html = await page.evaluate(([h, o]) => window.__sweep.contractShape(h, o, ""), [contract, own] as const);
+          const markup = renderToStaticMarkup(fixture());
+          rendered.push(...(await page.evaluate(([m, o]) => window.__sweep.contractShape(m, o, ""), [[markup] as string[], own] as const)).map((r) => ({ ...r, at: `${name} fixture` })));
+        } else {
+          // Where React renders: every data-mount, and each element examples.tsx finds by id.
+          const tsx = readFileSync(`components/${name}/examples.tsx`, "utf8");
+          const ids = [...new Set([...tsx.matchAll(/"([a-z][\w-]*)"/g)].map((m) => m[1] as string))].filter((id) => contract[0]?.includes(`id="${id}"`));
+          const roots = ["[data-mount]", ...ids.map((id) => `#${id}`)].join(", ");
+          for (const s of pages) {
+            await open(page, s);
+            if (!html.length) html = await page.evaluate(([h, o, r]) => window.__sweep.contractShape(h, o, r), [contract, own, roots] as const);
+            rendered.push(...(await page.evaluate(([o, r]) => window.__sweep.reactShape(o, r), [own, roots] as const)).map((r) => ({ ...r, at: where(s) })));
+          }
         }
         expect(rendered.length, "the React specimens rendered").toBeGreaterThan(0);
         const found = new Set<string>();

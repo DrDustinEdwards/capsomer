@@ -230,8 +230,11 @@
     }
   }
 
-  /* The body is the part that scrolls: header and footer stay. */
+  /* The body is the part that scrolls: header and footer stay. It holds what is positioned in
+     it (a .cap-sr-only text), so that cannot reach past the body and give the dialog a scroll
+     of its own. */
   .cap-dialog-body {
+    position: relative;
     display: grid;
     align-content: start;
     flex: 1 1 auto;

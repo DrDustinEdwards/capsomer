@@ -154,10 +154,15 @@
       --_fg: var(--accent-text);
     }
 
-    /* Interactive: a link or a button. The hit area grows past the pill to --target. */
+    /* Interactive: a link or a button. The hit area grows past the pill to --target, so the
+       pill does not clip it. */
     &:is(a, button) {
+      overflow: visible;
       cursor: pointer;
       font-family: inherit;
+      /* Where the target is taller than the pill (a coarse pointer), a margin keeps wrapped lines
+         of pills a whole target apart, so no hit area covers the next (WCAG 2.5.8). */
+      margin-block: max(0px, (var(--target) - max(var(--control) * 0.625, 1lh + 2 * var(--space-1) + 2px)) / 2);
 
       &::after {
         content: "";
@@ -166,7 +171,6 @@
         inset-inline: -2px;
       }
       &:focus-visible {
-        overflow: visible;
         outline: var(--ring-width) solid var(--ring);
         outline-offset: 1px;
       }

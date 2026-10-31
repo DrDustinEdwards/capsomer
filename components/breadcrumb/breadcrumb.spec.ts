@@ -139,11 +139,11 @@ eachTheme((theme) => {
     expect(html).toContain('<span class="cap-breadcrumb-page" aria-current="page">Plate 3</span>');
   });
 
-  test("behavior: long names are cut", async ({ page }) => {
+  test("behavior: long names take two lines, then are cut", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     for (const sel of ["#bc-long-link", "#bc-long-page"]) {
-      expect(await page.locator(sel).evaluate((el) => el.scrollWidth > el.clientWidth), sel).toBe(true);
-      await expect(page.locator(sel)).toHaveCSS("text-overflow", "ellipsis");
+      expect(await page.locator(sel).evaluate((el) => el.scrollHeight > el.clientHeight), sel).toBe(true);
+      await expect(page.locator(sel)).toHaveCSS("-webkit-line-clamp", "2");
     }
   });
 

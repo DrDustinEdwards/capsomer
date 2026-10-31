@@ -16,7 +16,7 @@ replaces:
 
 # Tree
 
-A hierarchy a person moves through and works in: a book's chapters and scenes, a manuscript's sections, a blog's series and their posts, a site's folders. Each row is one line: a chevron on a branch, an optional icon, the label, and a muted note at the end (a status, a word count). It is Carrel's binder, and a Capsomer component so every app gets the same keys and the same reading.
+A hierarchy a person moves through and works in: a book's chapters and scenes, a manuscript's sections, a blog's series and their posts, a site's folders. Each row is one line (a long label wraps): a chevron on a branch, an optional icon, the label, and a muted note at the end (a status, a word count). It is Carrel's binder, and a Capsomer component so every app gets the same keys and the same reading.
 
 ## When to use it
 
@@ -80,6 +80,15 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   <li class="cap-tree-item" data-value="ch-03" data-branch><span class="cap-tree-row"><span class="cap-tree-label">03 Untitled chapter</span></span></li>
   <li class="cap-tree-item" data-value="bible" data-collapsed>...</li>
 </ul>
+```
+
+What `enhance()` (and the React wrapper) makes of a branch, as APG's tree view has it:
+
+```html
+<li class="cap-tree-item" data-value="ch-01" role="none">
+  <a class="cap-tree-row" href="/book/ch-01" role="treeitem" aria-level="1" aria-posinset="2" aria-setsize="3" aria-expanded="true" aria-owns="ch-01-group" tabindex="-1"><span class="cap-tree-toggle" aria-hidden="true">...</span><span class="cap-tree-label">01 The riverbed</span></a>
+  <ul class="cap-tree-group" role="group" id="ch-01-group">...</ul>
+</li>
 ```
 
 Hooks: `data-value` (the id every event names), `data-branch` (a branch with nothing in it yet), `data-collapsed` (closed once script runs), `data-selected` or `aria-current="page"` (chosen at the start), `aria-disabled="true"` on a row, `data-selection="none|single|multi"` and `data-movable` on the tree, `data-variant="surface"` (own border and surface), `.cap-tree-icon` before the label. Specimen hooks: `data-force="hover|focus"`, `data-dragging`, `data-drop="before|inside|after"`.

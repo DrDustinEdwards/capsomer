@@ -263,6 +263,11 @@
     color: var(--text);
   }
 
+  /* Cloudflare's answer wraps, as in the table, so it never widens the page (WCAG 1.4.10). */
+  .cap-people-history-item > .cap-status {
+    white-space: normal;
+  }
+
   .cap-people-history-by,
   .cap-people-history-reason {
     display: block;
