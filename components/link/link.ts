@@ -43,7 +43,7 @@ function segments(path: string): string[] {
 
 // True when `path` is `pattern` or sits under it, segment by segment and ignoring case, as the
 // router matches. A pattern segment ":name" or "*" stands for any one segment:
-// underPath("/b/novel/export/epub", "/b/:project/export") is true, underPath("/administer", "/admin") false.
+// underPath("/b/handbook/export/epub", "/b/:project/export") is true, underPath("/administer", "/admin") false.
 export function underPath(path: string, pattern: string): boolean {
   const want = segments(pattern);
   const have = segments(path);

@@ -5,6 +5,7 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [Unreleased]
 
 - **Showcase site: Prelum v0.23.0** (no package change). The site's `@drdustinedwards/site-helpers` pin moves from v0.22.0 to v0.23.0, where Prelum wraps `:::chart` output in this frame (`div.cap-chart > div.cap-chart-figure`) and sets `RENDER_VERSION` to 9. The site uses Prelum only for search, head tags and icons, so no page changes.
+- **Samples and docs use neutral content instead of one site's subject matter** (no HTML contract change). The specimens, specs and doc examples of admin-shell, approval-sheet, attention-list, avatar, banner, breadcrumb, bulk-bar, button, catalog, chart-frame, chips, combobox, command-menu, confirm-dialog, detail-panel, dialog, disclosure, draft-compare, drop-zone, email, error-page, feed, field, flag-list, history-list and listbox drop phage, lab, podcast, book, payment-recovery and family-site names for example.com domains, made-up people (Alex Rivera) and neutral topics. The catalog's specimen is an article library (`fixture.ts` exports `ARTICLES` and `articleCatalog`) in place of a protocol library.
 
 ## [0.55.0]
 

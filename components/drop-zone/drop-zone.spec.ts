@@ -114,9 +114,9 @@ eachTheme((theme) => {
       - status:
         - paragraph: 3 files are ready to upload.
         - list:
-          - listitem: foxhound-hero.jpg 412 kB
+          - listitem: spring-hero.jpg 412 kB
           - listitem: uptime-report-september.pdf 1.8 MB
-          - listitem: germomics-diagram.png 96 kB
+          - listitem: annual-report-chart.png 96 kB
     `);
   });
 
@@ -171,11 +171,11 @@ eachTheme((theme) => {
       (window as unknown as { heard: unknown[] }).heard = [];
       document.querySelector("#dz-idle")!.addEventListener("cap-drop-accepted", (e) => (window as unknown as { heard: unknown[] }).heard.push((e as CustomEvent).detail.accepted.map((f: File) => f.name)));
     });
-    await page.locator("#dz-idle input").setInputFiles([png("foxhound-hero.png"), png("uptime.png")]);
+    await page.locator("#dz-idle input").setInputFiles([png("spring-hero.png"), png("uptime.png")]);
     await expect(page.locator("#dz-idle [role=status]")).toContainText("2 files are ready to upload.");
     await expect(page.locator("#dz-idle [role=status] li")).toHaveCount(2);
     await expect(page.locator("#dz-idle [role=alert]")).toBeEmpty();
-    expect(await page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual([["foxhound-hero.png", "uptime.png"]]);
+    expect(await page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual([["spring-hero.png", "uptime.png"]]);
   });
 
   test("behavior: a file of the wrong type is named with the types the zone takes", async ({ page }) => {

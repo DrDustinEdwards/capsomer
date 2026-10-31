@@ -123,8 +123,8 @@ Write it with `renderCompare` (a string; safe on a server, escapes the text), or
 import { renderCompare, enhance } from "capsomer/behavior/draft-compare";
 
 const html = renderCompare(
-  { title: "Draft 3", who: "Dustin Edwards", time: "2026-09-28T18:05:00Z", text: before },
-  { title: "Draft 4", who: "Dustin Edwards", time: "2026-09-29T07:42:00Z", text: after },
+  { title: "Draft 3", who: "Alex Rivera", time: "2026-09-28T18:05:00Z", text: before },
+  { title: "Draft 4", who: "Alex Rivera", time: "2026-09-29T07:42:00Z", text: after },
   { id: "cmp", view: "side", context: 1 },
 );
 enhance(); // the jump keys, the remembered view, Expand all

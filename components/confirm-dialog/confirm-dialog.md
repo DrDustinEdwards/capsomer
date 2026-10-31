@@ -30,7 +30,7 @@ A reversible action happens at once and offers Undo through the message region (
 
 ## The default and its reason
 
-- **The title names the action and the object**: "Revoke foxhound-driver?", never "Are you sure?".
+- **The title names the action and the object**: "Revoke deploy-agent?", never "Are you sure?".
 - **The body lists what will change**, one line each, from the server's preview where there is one.
 - **The perform button is named for the action** ("Revoke agent"), danger style, at the far end from Cancel, so a slip does not land on it.
 - **Focus starts on Cancel.** Enter on arrival cancels (patterns.md, "Destructive or one-way").
@@ -75,7 +75,7 @@ The shared dialog as an alert dialog: `role="alertdialog"` (so a click on the ba
         id="revoke" aria-labelledby="revoke-title" aria-describedby="revoke-desc revoke-list">
   <div class="cap-dialog-header">
     <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg>…</svg></div>
-    <h2 class="cap-dialog-title" id="revoke-title">Revoke foxhound-driver?</h2>
+    <h2 class="cap-dialog-title" id="revoke-title">Revoke deploy-agent?</h2>
     <p class="cap-dialog-description" id="revoke-desc">This cannot be undone. The agent stops working at once.</p>
   </div>
   <div class="cap-dialog-body">
@@ -98,7 +98,7 @@ The shared dialog as an alert dialog: `role="alertdialog"` (so a click on the ba
     <button type="button" class="cap-btn" data-variant="danger" data-cap-part="perform">Revoke agent</button>
   </div>
 </dialog>
-<button type="button" class="cap-btn" data-variant="danger" data-cap-confirm-open="revoke">Revoke foxhound-driver…</button>
+<button type="button" class="cap-btn" data-variant="danger" data-cap-confirm-open="revoke">Revoke deploy-agent…</button>
 ```
 
 Keep `.cap-confirm-error` empty with no whitespace; it hides while `:empty`. The body is left out when there is nothing to list and no field. The header, title, description, body and footer are the shared dialog's parts; only `.cap-confirm-*` belongs to this component.
@@ -106,13 +106,13 @@ Keep `.cap-confirm-error` empty with no whitespace; it hides while `:empty`. The
 ```js
 import { confirm } from "capsomer/behavior/confirm-dialog";
 const done = await confirm({
-  title: "Revoke foxhound-driver?",
+  title: "Revoke deploy-agent?",
   lead: "This cannot be undone.",
   body: ["Its key stops being accepted.", "Its 1 claimed job goes back to the queue."],
   action: "Revoke agent",
   reason: {}, // only where the audit row carries a reason; perform gets it
   typeToConfirm: "revoke", // only for what cannot be recovered
-  perform: (reason) => api.revoke("foxhound-driver", reason), // reject with an Error whose message says what happened
+  perform: (reason) => api.revoke("deploy-agent", reason), // reject with an Error whose message says what happened
 });
 ```
 
@@ -121,12 +121,12 @@ For a dialog written in markup, `enhance()` wires it and its `[data-cap-confirm-
 The confirm page, with no script (HTML, or React `ConfirmPage`, which renders exactly this):
 
 ```html
-<form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/foxhound" method="post" role="group"
+<form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/example" method="post" role="group"
       aria-labelledby="del-title" aria-describedby="del-desc del-list">
-  <input type="hidden" name="intent" value="delete" /><input type="hidden" name="site" value="foxhound" />
+  <input type="hidden" name="intent" value="delete" /><input type="hidden" name="site" value="example" />
   <div class="cap-dialog-header">
     <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg>…</svg></div>
-    <h1 class="cap-dialog-title" id="del-title">Delete foxhound.app?</h1>
+    <h1 class="cap-dialog-title" id="del-title">Delete example.com?</h1>
     <p class="cap-dialog-description" id="del-desc">This cannot be undone.</p>
   </div>
   <div class="cap-dialog-body">
@@ -138,13 +138,13 @@ The confirm page, with no script (HTML, or React `ConfirmPage`, which renders ex
   </div>
   <div class="cap-confirm-error" role="alert"><!-- empty, or what the server refused --></div>
   <div class="cap-dialog-footer" data-align="between">
-    <a class="cap-btn" href="/admin/sites/foxhound">Cancel</a>
+    <a class="cap-btn" href="/admin/sites/example">Cancel</a>
     <button type="submit" class="cap-btn" data-variant="danger">Delete site</button>
   </div>
 </form>
 ```
 
-`import { wordPattern } from "capsomer/behavior/confirm-dialog"`. In React: `<ConfirmPage action="/admin/sites/foxhound" hidden={{ intent: "delete", site: "foxhound" }} title="Delete foxhound.app?" lead="This cannot be undone." body={preview} action_label="Delete site" cancelHref="/admin/sites/foxhound" reason={{}} typeToConfirm="delete" error={refusal} />`. A list value in `hidden` is one hidden field per item under the same name: `hidden={{ intent: "delete", ids: ["p1", "p2"] }}` posts `ids` twice.
+`import { wordPattern } from "capsomer/behavior/confirm-dialog"`. In React: `<ConfirmPage action="/admin/sites/example" hidden={{ intent: "delete", site: "example" }} title="Delete example.com?" lead="This cannot be undone." body={preview} action_label="Delete site" cancelHref="/admin/sites/example" reason={{}} typeToConfirm="delete" error={refusal} />`. A list value in `hidden` is one hidden field per item under the same name: `hidden={{ intent: "delete", ids: ["p1", "p2"] }}` posts `ids` twice.
 
 `ConfirmModal` (0.22.0) is the confirm page drawn over the page it came from, for a server that answers a destructive request by rendering the confirmation in place: it sits in the page until script runs (`data-inline`), then opens as a modal `alertdialog`. Esc leaves the way Cancel does, and focus goes back to the control that opened it (or its menu's button, when that menu has closed, or `main`). Both take `children` (more fields), `onCancel` (cancel without leaving the page; the link still works with no script) and `renderForm` (a router's own form, so the post is a client navigation):
 

@@ -50,9 +50,9 @@ Every template also takes `brand` (`{ name, family }`), `to`, and optionally `co
 import { renderEmail, magicLink } from "capsomer/email";
 
 const { subject, html, text } = renderEmail(magicLink, {
-  brand: { name: "Carrel", family: "purple" },
+  brand: { name: "Example Co", family: "purple" },
   to: "reader@example.com",
-  url: "https://carrel.example/auth/verify?t=EXAMPLE-NOT-A-TOKEN",
+  url: "https://app.example.com/auth/verify?t=EXAMPLE-NOT-A-TOKEN",
   expiresIn: "15 minutes",
 });
 ```

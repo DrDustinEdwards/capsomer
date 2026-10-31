@@ -258,7 +258,7 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
 }
 
 export interface ConfirmOptions {
-  // Names the action and the object: "Revoke foxhound-driver?"
+  // Names the action and the object: "Revoke deploy-agent?"
   title: string;
   // An optional first sentence: "This cannot be undone."
   lead?: string;

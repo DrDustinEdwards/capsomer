@@ -9,7 +9,7 @@ const routeError = (status: number, statusText: string) => ({ status, statusText
 
 const header = (
   <SiteHeader
-    logo={{ href: "#home", label: "Phage notes" }}
+    logo={{ href: "#home", label: "Field notes" }}
     sections={["Notes", "Projects", "About"].map((label) => ({ id: label.toLowerCase(), label, href: `#${label.toLowerCase()}` }))}
     skipTo="#main"
     sticky={false}

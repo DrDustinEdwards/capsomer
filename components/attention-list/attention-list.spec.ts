@@ -48,9 +48,9 @@ eachTheme((theme) => {
         - heading "Needs attention" [level=3]
         - list "Needs attention":
           - listitem:
-            - link "foxhound.app is not answering"
+            - link "example.com is not answering"
           - listitem:
-            - link "Nightly backup for capsid failed"
+            - link "Nightly backup for api failed"
           - listitem:
             - link "D1 rows read will run out before the reset"
           - listitem:
@@ -70,14 +70,14 @@ eachTheme((theme) => {
 
   test("accessibility: a link's description carries its status and detail", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "attention-list", theme);
-    await expect(page.locator(mixed).getByRole("link", { name: "foxhound.app is not answering" })).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
+    await expect(page.locator(mixed).getByRole("link", { name: "example.com is not answering" })).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
   });
 
   test("keyboard: Tab reaches each row's title, then the group button, then the notices button", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
     const root = page.locator(mixed);
-    await root.getByRole("link", { name: "foxhound.app is not answering" }).focus();
-    for (const name of ["Nightly backup for capsid failed", "D1 rows read will run out before the reset", "2 jobs are waiting for approval"]) {
+    await root.getByRole("link", { name: "example.com is not answering" }).focus();
+    for (const name of ["Nightly backup for api failed", "D1 rows read will run out before the reset", "2 jobs are waiting for approval"]) {
       await page.keyboard.press("Tab");
       await expect(root.getByRole("link", { name })).toBeFocused();
     }
@@ -95,7 +95,7 @@ eachTheme((theme) => {
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await expect(page.locator("#att-mixed-prs")).toBeVisible();
     await page.keyboard.press("Tab");
-    await expect(page.locator("#att-mixed-prs").getByRole("link", { name: "capsid #212 awaits the seat" })).toBeFocused();
+    await expect(page.locator("#att-mixed-prs").getByRole("link", { name: "api #212 awaits the seat" })).toBeFocused();
   });
 
   test("keyboard: Space on a group's button hides its rows again", async ({ page }) => {
@@ -115,7 +115,7 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await page.keyboard.press("Tab");
-    await expect(page.locator("#att-mixed-notices").getByRole("link", { name: "germomics: no backup reported" })).toBeFocused();
+    await expect(page.locator("#att-mixed-notices").getByRole("link", { name: "blog: no backup reported" })).toBeFocused();
   });
 
   test("keyboard: Enter on the more-warnings button shows the warnings past the cap", async ({ page }) => {
@@ -128,14 +128,14 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await expect(button).toHaveText("Fewer warnings");
-    await expect(page.locator("#att-more-rows").getByRole("link", { name: "Capsid reports degraded health" })).toBeVisible();
+    await expect(page.locator("#att-more-rows").getByRole("link", { name: "API reports degraded health" })).toBeVisible();
   });
 
   test("keyboard: Enter on a row's title follows its link", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
-    await page.locator(mixed).getByRole("link", { name: "foxhound.app is not answering" }).focus();
+    await page.locator(mixed).getByRole("link", { name: "example.com is not answering" }).focus();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#att-foxhound$/);
+    await expect(page).toHaveURL(/#att-web$/);
   });
 
   test("keyboard: j and k move focus among the rows, the group's button and the notices button included", async ({ page }) => {
@@ -143,7 +143,7 @@ eachTheme((theme) => {
     const root = page.locator(mixed);
     await page.locator("h1").click();
     await page.keyboard.press("j");
-    await expect(root.getByRole("link", { name: "foxhound.app is not answering" })).toBeFocused();
+    await expect(root.getByRole("link", { name: "example.com is not answering" })).toBeFocused();
     for (let i = 0; i < 4; i++) await page.keyboard.press("j");
     await expect(root.getByRole("button", { name: "3 pull requests await the seat" })).toBeFocused();
     await page.keyboard.press("j");
@@ -159,9 +159,9 @@ eachTheme((theme) => {
     await button.focus();
     await page.keyboard.press("Enter");
     await page.keyboard.press("j");
-    await expect(root.getByRole("link", { name: "capsid #212 awaits the seat" })).toBeFocused();
+    await expect(root.getByRole("link", { name: "api #212 awaits the seat" })).toBeFocused();
     await page.keyboard.press("j");
-    await expect(root.getByRole("link", { name: "carrel #88 awaits the seat" })).toBeFocused();
+    await expect(root.getByRole("link", { name: "docs #88 awaits the seat" })).toBeFocused();
   });
 
   test("behavior: critical rows are never inside what a button controls", async ({ page }) => {
@@ -228,12 +228,12 @@ test.describe("arrange()", () => {
 
   test("behavior: a group takes its title, detail and view from the caller, and shows at most five rows", () => {
     const rows = Array.from({ length: 7 }, (_, i) => item(`p${i}`, "warn", "pr"));
-    const out = arrange(rows, { groups: { pr: { title: (n) => `${n} pull requests await the seat`, detail: "capsid, carrel", view: { href: "#ci", label: "CI" } } } });
+    const out = arrange(rows, { groups: { pr: { title: (n) => `${n} pull requests await the seat`, detail: "api, docs", view: { href: "#ci", label: "CI" } } } });
     const g = out.problems[0];
     expect(g?.kind).toBe("group");
     if (g?.kind === "group") {
       expect(g.label).toBe("7 pull requests await the seat");
-      expect(g.detail).toBe("capsid, carrel");
+      expect(g.detail).toBe("api, docs");
       expect(g.items).toHaveLength(GROUP_CHILDREN);
       expect(g.total).toBe(7);
       expect(g.view?.href).toBe("#ci");

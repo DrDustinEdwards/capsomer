@@ -34,7 +34,7 @@ A list of one kind of thing (jobs, deploys, mentions) is a row-list, or a feed f
 - **Worst first, one status per row, shape plus word plus color.** The eye should meet the worst thing first (patterns.md "Status"). Within a tone, the order you pass is kept.
 - **Two tiers: problems (critical, warning) and notices (no data, notice).** A problem needs a person; a notice is a fact with nothing to do now, so it is one closed row at the foot under a rule, not a row among the problems (the Portal's audit ruling 3). The tier follows from the tone, so a new row lands in the right one.
 - **Critical rows are never grouped, never collapsed and never behind a button** (patterns.md "Show or hide"). A critical row carries row-list's red edge; other tones do not.
-- **Rows that share a `group` key fold into one row that opens in place**, placed where its worst row would sit. Its title says what and how many ("3 pull requests await the seat"), its detail what they have in common ("capsid, carrel, foxhound"). A group of one is just a row. A group opens (APG Disclosure) to at most five rows, then a link to the view that lists them all ("All 7 in CI and merges", or "Open CI and merges" when it shows everything).
+- **Rows that share a `group` key fold into one row that opens in place**, placed where its worst row would sit. Its title says what and how many ("3 pull requests await the seat"), its detail what they have in common ("api, docs, web"). A group of one is just a row. A group opens (APG Disclosure) to at most five rows, then a link to the view that lists them all ("All 7 in CI and merges", or "Open CI and merges" when it shows everything).
 - **A group's rows are on the raised tone, with no status of their own and their title in the group's title column.** The group's status covers them, and the indent says they belong to it. Their text wraps (it is not cut).
 - **Past eight problem rows, the rest of the warnings wait behind "N more warnings".** Critical rows are always shown, and count against the eight. This keeps the list on one screen at 1080 p (patterns.md "Overview").
 - **Notices fold differently**: a group of notices (a driver silent for a week) is one row that opens its view, not a second disclosure. Each notice shows its tone's word before its detail ("No data · Its health route does not report one yet"), since a row with no status of its own would otherwise lose the difference.
@@ -77,7 +77,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="att-h" data-cap-primary>
     <li class="cap-row" data-tone="crit">
       <span class="cap-row-status" id="r1-s"><span class="cap-status" data-tone="crit">[glyph]Critical</span></span>
-      <div class="cap-row-title"><a href="/sites/foxhound" aria-describedby="r1-s r1-d">foxhound.app is not answering</a></div>
+      <div class="cap-row-title"><a href="/sites/web" aria-describedby="r1-s r1-d">example.com is not answering</a></div>
       <p class="cap-row-detail" id="r1-d">3 failed checks in a row</p>
       <span class="cap-row-meta"><time class="cap-time" datetime="...">11 minutes ago</time></span>
     </li>
@@ -86,13 +86,13 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     <li class="cap-row">
       <span class="cap-row-status" id="r2-s"><span class="cap-status" data-tone="warn">[glyph]Warning</span></span>
       <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="att-prs" aria-describedby="r2-s r2-d">3 pull requests await the seat</button></div>
-      <p class="cap-row-detail" id="r2-d">capsid, carrel, foxhound</p>
+      <p class="cap-row-detail" id="r2-d">api, docs, web</p>
       <span class="cap-row-meta"><time datetime="...">32 minutes ago</time><span class="cap-row-chevron" aria-hidden="true"></span></span>
     </li>
     <li class="cap-attention-region" id="att-prs" hidden>
       <ul role="list" aria-label="3 pull requests await the seat">
         <li class="cap-row cap-attention-child">
-          <div class="cap-row-title"><a href="/ci/capsid/212">capsid #212 awaits the seat</a></div>
+          <div class="cap-row-title"><a href="/ci/api/212">api #212 awaits the seat</a></div>
           <p class="cap-row-detail">Type check failed</p>
           <span class="cap-row-meta">32 minutes ago</span>
         </li>

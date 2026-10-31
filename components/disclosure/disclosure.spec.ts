@@ -31,10 +31,10 @@ eachTheme((theme) => {
         - heading "Group row, expanded, two levels" [level=2]
         - button /^Dependency updates\\s*,\\s*5$/ [expanded]
         - list:
-          - listitem: "capsid: vite 8.3.1 to 8.4.0"
-          - listitem: "capsid: wrangler 4.40.0 to 4.41.2"
+          - listitem: "api: vite 8.3.1 to 8.4.0"
+          - listitem: "api: wrangler 4.40.0 to 4.41.2"
           - listitem:
-            - button /^carrel\\s*,\\s*3$/
+            - button /^docs\\s*,\\s*3$/
     `);
   });
 
@@ -56,11 +56,11 @@ eachTheme((theme) => {
 
   test("keyboard: a second-level group toggles on its own", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
-    const inner = page.getByRole("button", { name: /^carrel\s*,\s*3$/ });
+    const inner = page.getByRole("button", { name: /^docs\s*,\s*3$/ });
     await inner.focus();
     await page.keyboard.press("Enter");
     await expect(inner).toHaveAttribute("aria-expanded", "true");
-    await expect(page.locator("#carrel-updates")).toBeVisible();
+    await expect(page.locator("#docs-updates")).toBeVisible();
     await expect(page.getByRole("button", { name: /^Dependency updates\s*,\s*5$/ })).toHaveAttribute("aria-expanded", "true");
   });
 
@@ -76,7 +76,7 @@ eachTheme((theme) => {
 
   test("keyboard: Enter on a summary opens and closes its section", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
-    const details = page.locator("details", { hasText: "Why is foxhound.app marked degraded?" });
+    const details = page.locator("details", { hasText: "Why is example.com marked degraded?" });
     const summary = details.locator("summary");
     await summary.focus();
     await page.keyboard.press("Enter");

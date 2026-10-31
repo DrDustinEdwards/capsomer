@@ -3,7 +3,7 @@ import { eachTheme, expectContrast, expectNoAxeViolations, focused, visitStates 
 import { PICK_BLOCKED, PICK_NONE, compareHref, condense, countWords, deltaOf, deltaSign, deltaText, orderPair, pickTwo, pickedText, rangeText, restoredEntry, stamp, wordDelta, type HistoryEntry } from "./history-list.ts";
 
 const at = (t: string) => `2026-10-02T${t}:00Z`;
-const entry = (id: string, kind: HistoryEntry["kind"], t: string, words: number | undefined, extra: Partial<HistoryEntry> = {}): HistoryEntry => ({ id, kind, who: "Dustin Edwards", at: at(t), words, summary: `Version ${id}`, ...extra });
+const entry = (id: string, kind: HistoryEntry["kind"], t: string, words: number | undefined, extra: Partial<HistoryEntry> = {}): HistoryEntry => ({ id, kind, who: "Alex Rivera", at: at(t), words, summary: `Version ${id}`, ...extra });
 
 // The pure helpers need no browser.
 test("behavior: an entry with no word count has no size change, and a run holding one has none either", () => {
@@ -75,7 +75,7 @@ test("behavior: the pair is ordered older first whatever the pick order, and the
   expect(orderPair(["b", "a"], (id) => times[id] ?? 0)).toEqual(["a", "b"]);
   expect(orderPair(["a", "b"], (id) => times[id] ?? 0)).toEqual(["a", "b"]);
   expect(orderPair(["a"], (id) => times[id] ?? 0)).toBeNull();
-  expect(compareHref("/posts/phage/compare", "a", "b")).toBe("/posts/phage/compare?from=a&to=b");
+  expect(compareHref("/posts/spring/compare", "a", "b")).toBe("/posts/spring/compare?from=a&to=b");
   expect(pickedText(0)).toBe(PICK_NONE);
   expect(PICK_BLOCKED).toBe("Two versions are picked; untick one first.");
 });
@@ -83,7 +83,7 @@ test("behavior: the pair is ordered older first whatever the pick order, and the
 test("behavior: a restore is a new line with the restored length, never a change to an old line", () => {
   const current = entry("v-9", "edit", "14:00", 1954);
   const source = entry("v-2", "edit", "09:15", 1742);
-  const made = restoredEntry(source, current, "Dustin Edwards", "v-2-restored-1", at("15:00"));
+  const made = restoredEntry(source, current, "Alex Rivera", "v-2-restored-1", at("15:00"));
   expect(made).toMatchObject({ kind: "restore", words: 1742, delta: -212, restoredFrom: { id: "v-2" } });
   expect(made.summary).toBe(`Restored the version from ${stamp(source.at, Date.parse(at("15:00")))}`);
   expect(source.words).toBe(1742);
@@ -144,18 +144,18 @@ eachTheme((theme) => {
     await expect(page.locator("#hist-two")).toMatchAriaSnapshot(`
       - list "History with two picked":
         - listitem:
-          - checkbox "Compare this version, Oct 2, 2:52 PM UTC, by Dustin Edwards" [disabled]
-          - link "Added the 2019 burst size paper and its caveat"
+          - checkbox "Compare this version, Oct 2, 2:52 PM UTC, by Alex Rivera" [disabled]
+          - link "Added the 2019 annual report and its caveat"
           - text: +42 words
           - time: 8 minutes ago
           - time: Oct 2, 2:52 PM UTC
           - text: Current
         - listitem:
-          - checkbox "Compare this version, Oct 2, 1:30 PM UTC, by Dustin Edwards" [checked]
+          - checkbox "Compare this version, Oct 2, 1:30 PM UTC, by Alex Rivera" [checked]
           - link "Cut the introduction to two paragraphs"
           - paragraph: "Named version: Before the rewrite"
           - text: +58 words
-          - button "Restore the version from Oct 2, 1:30 PM UTC by Dustin Edwards"
+          - button "Restore the version from Oct 2, 1:30 PM UTC by Alex Rivera"
         - listitem:
           - checkbox "Compare this version, Oct 1, 4:10 PM UTC, by Rosa Park" [disabled]
           - text: \u221230 words
@@ -281,7 +281,7 @@ eachTheme((theme) => {
     await older.focus();
     await page.keyboard.press("Space");
     await expect(older).toBeChecked();
-    await expect(compare).toHaveAttribute("href", "/posts/phage-lambda/compare?from=v-15&to=v-17");
+    await expect(compare).toHaveAttribute("href", "/posts/spring-update/compare?from=v-15&to=v-17");
     await expect(compare).not.toHaveAttribute("aria-disabled", "true");
     await expect(m.locator("[data-cap-part='picked']")).toContainText("2 versions picked. Older: Oct 1, 9:00 AM UTC. Newer: Oct 2, 1:30 PM UTC.");
   });
@@ -412,7 +412,7 @@ eachTheme((theme) => {
     await visitStates(page, "history-list", theme);
     const r = page.locator("#react-history");
     await expect(r.getByRole("checkbox", { name: /^Compare this version/ })).toHaveCount(3);
-    await expect(r.getByRole("link", { name: "Added the 2019 burst size paper and its caveat" })).toBeVisible();
+    await expect(r.getByRole("link", { name: "Added the 2019 annual report and its caveat" })).toBeVisible();
     await expect(r.getByText("+42 words")).toBeVisible();
     const run = r.getByRole("button", { name: "2 autosaves" });
     await expect(run).toHaveAttribute("aria-expanded", "false");
@@ -422,7 +422,7 @@ eachTheme((theme) => {
     const box = (id: string) => r.locator(`li[data-id='${id}'] input[type=checkbox]`);
     await box("r-5").check();
     await box("r-1").check();
-    await expect(r.getByRole("link", { name: "Compare 2 versions" })).toHaveAttribute("href", "/posts/phage-lambda/compare?from=r-1&to=r-5");
+    await expect(r.getByRole("link", { name: "Compare 2 versions" })).toHaveAttribute("href", "/posts/spring-update/compare?from=r-1&to=r-5");
     await box("r-4").click({ force: true });
     await expect(r.locator("[data-cap-part='picked']")).toHaveText("Two versions are picked; untick one first.");
     await expect(box("r-4")).not.toBeChecked();
@@ -446,7 +446,7 @@ eachTheme((theme) => {
     const l = page.locator("#hist-load");
     await expect(l.locator("[data-cap-part='restore']")).toHaveCount(0);
     const load = l.getByRole("link", { name: /^Load into editor the version from Oct 1, 4:10 PM UTC by Rosa Park/ });
-    await expect(load).toHaveAttribute("href", "/posts/phage-lambda/edit?load=v-70");
+    await expect(load).toHaveAttribute("href", "/posts/spring-update/edit?load=v-70");
     // The current version has nothing to load.
     await expect(l.locator("li[data-current] [data-cap-part='load']")).toHaveCount(0);
     const heard = page.evaluate(

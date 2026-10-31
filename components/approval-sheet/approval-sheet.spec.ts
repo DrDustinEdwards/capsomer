@@ -32,10 +32,10 @@ eachTheme((theme) => {
       - dialog "2 gates are waiting":
         - heading "2 gates are waiting" [level=2]
         - group "Gates waiting for approval":
-          - group "Deploy foxhound to production":
+          - group "Deploy web to production":
             - checkbox "Include this gate" [checked]
             - textbox "Comment (optional)"
-          - group "Run the Carrel migration 0008":
+          - group "Run the docs migration 0008":
             - checkbox "Include this gate" [checked]
             - textbox "Comment (optional)"
         - button "Cancel"
@@ -50,7 +50,7 @@ eachTheme((theme) => {
 
   test("keyboard: Space on a gate's checkbox changes the count", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "two");
-    const second = page.getByRole("group", { name: "Run the Carrel migration 0008" }).getByRole("checkbox");
+    const second = page.getByRole("group", { name: "Run the docs migration 0008" }).getByRole("checkbox");
     await second.focus();
     await page.keyboard.press("Space");
     await expect(approveBtn(page)).toHaveAccessibleName("Approve 1 gate");
@@ -61,7 +61,7 @@ eachTheme((theme) => {
   test("keyboard: with no gate chosen, Approve says why and does nothing", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "one-unchecked");
     await expect(approveBtn(page)).toHaveAccessibleName("Approve 1 gate");
-    const first = page.getByRole("group", { name: "Deploy foxhound to production" }).getByRole("checkbox");
+    const first = page.getByRole("group", { name: "Deploy web to production" }).getByRole("checkbox");
     await first.focus();
     await page.keyboard.press("Space");
     await expect(approveBtn(page)).toHaveAccessibleName("Approve 0 gates");

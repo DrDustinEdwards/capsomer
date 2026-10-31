@@ -28,7 +28,7 @@ export interface AttentionItem {
 // group is called "<key>, <count>" and has no link to a view.
 export interface AttentionGroupInfo {
   title?: (count: number) => string;
-  // The facets the rows differ by: "capsid, carrel, foxhound".
+  // The facets the rows differ by: "api, docs, web".
   detail?: string;
   when?: string | { text: string; datetime: string };
   view?: { href: string; label: string };
