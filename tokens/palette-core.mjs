@@ -768,6 +768,11 @@ ${pairs}
 .enarratio svg :is([data-enarratio-mark$="tick label"], .enarratio-numeric) {
   font-variant-numeric: var(--figures);
 }
+/* The export buttons beside the CSV link (Download SVG, Download PNG, Copy embed) are full
+   targets, 44px on a touch screen, over Enarratio's 24px minimum. */
+.enarratio .enarratio-source .enarratio-export {
+  min-height: var(--target);
+}
 `;
 }
 
