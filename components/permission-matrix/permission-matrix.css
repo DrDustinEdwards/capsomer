@@ -33,7 +33,7 @@
 
   /* Wide: the table. The row header is an identifier, so it reads as one. */
   .cap-perms-agent {
-    text-align: left;
+    text-align: start;
     text-transform: none;
     letter-spacing: 0;
     font-weight: 400;

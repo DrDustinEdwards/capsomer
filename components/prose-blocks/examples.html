@@ -40,7 +40,7 @@
   <h2 id="s-table">Table</h2>
   <p class="cap-muted">A table scrolls inside its own box, which takes keyboard focus; numbers align right in tabular figures.</p>
   <article data-context="prose" id="pb-table">
-<div class="table-scroll" tabindex="0"><table>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table: Site, Posts, Words, Last published"><table>
 <thead>
 <tr>
 <th>Site</th>
@@ -130,11 +130,11 @@
   <h2 id="s-code">Code</h2>
   <p class="cap-muted">A titled block, and a plain one. Sites that highlight get shiki's two themes, picked by the page's theme, and a marked line has a rule at its start as well as a band. The space at the top of each block is kept for the language name and the Copy button that render/enhance adds, so the page does not shift when they arrive.</p>
   <article data-context="prose" id="pb-code">
-<figure class="code-frame"><figcaption class="code-title">render.ts</figcaption><pre><code class="language-ts">import { render } from "@drdustinedwards/site-helpers/render";
+<figure class="code-frame"><figcaption class="code-title">render.ts</figcaption><pre tabindex="0" role="region" aria-label="Code: render.ts"><code class="language-ts">import { render } from "@drdustinedwards/site-helpers/render";
 const { html } = await render({ file, body, resolveImage });
 export default html;
 </code></pre></figure>
-<pre><code>plain code, no language
+<pre tabindex="0" role="region" aria-label="Code"><code>plain code, no language
 </code></pre>
   </article>
 </section>

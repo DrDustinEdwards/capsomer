@@ -10,7 +10,7 @@ updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/App.tsx, MoreSheet.tsx and styles.css
 replaces:
   - 'class="(app|rail|tabbar)"'
-  - "className=\"(app|rail|tabbar)"
+  - 'className="(app|rail|tabbar)[ "]'
 ---
 
 # Shell

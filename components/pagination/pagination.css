@@ -126,10 +126,10 @@
       transform: rotate(45deg);
       margin-inline-end: 2px;
     }
-    &[data-kind="prev"]:dir(rtl)::before {
+    &[data-kind="prev"]:dir(rtl)::before, :where([dir="rtl"]) &[data-kind="prev"]::before {
       transform: rotate(45deg);
     }
-    &[data-kind="next"]:dir(rtl)::after {
+    &[data-kind="next"]:dir(rtl)::after, :where([dir="rtl"]) &[data-kind="next"]::after {
       transform: rotate(-135deg);
     }
 

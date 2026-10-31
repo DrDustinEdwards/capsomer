@@ -40,6 +40,12 @@
       &::-webkit-details-marker {
         display: none;
       }
+      /* A heading in the summary (an accordion's sections in the page outline) keeps its look. */
+      & > :is(h2, h3, h4, h5, h6) {
+        margin: 0;
+        font: inherit;
+        letter-spacing: inherit;
+      }
       &::before {
         content: "";
         flex: none;
@@ -272,6 +278,12 @@
   }
   .cap-group .cap-group .cap-group-rows > li:where(:not([class])) {
     padding-inline-start: calc(var(--space-4) + 36px);
+  }
+
+  /* Right to left, the chevron is mirrored: a closed one points to the inline end there too. */
+  .cap-disclosure > summary:dir(rtl)::before, :where([dir="rtl"]) .cap-disclosure > summary::before,
+  .cap-group-toggle:dir(rtl)::before, :where([dir="rtl"]) .cap-group-toggle::before {
+    scale: -1 1;
   }
 
   @media (prefers-reduced-motion: no-preference) {

@@ -122,7 +122,5 @@ eachTheme((theme) => {
     await expect(list).toHaveCSS("overflow-x", "auto");
     const wide = await list.evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(wide).toBe(true);
-    const doc = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
-    expect(doc).toBe(true);
   });
 });

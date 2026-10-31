@@ -93,7 +93,7 @@
     transform-origin: left center;
     transform: scaleX(var(--cap-meter-ratio, 0));
 
-    &:dir(rtl) {
+    &:dir(rtl), :where([dir="rtl"]) & {
       transform-origin: right center;
     }
   }

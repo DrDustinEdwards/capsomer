@@ -1,0 +1,50 @@
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">A date to type, or to pick from the calendar</h2>
+  <form class="cap-field-options" id="dp-form" data-cap="field" action="#saved" aria-labelledby="s-default">
+    <div class="cap-field">
+      <label class="cap-field-label" for="dp-due">Publish on</label>
+      <p class="cap-field-help" id="dp-due-h">Year, month and day, for example 2026-11-14.</p>
+      <div class="cap-date-picker" data-cap="date-picker">
+        <div class="cap-input-group">
+          <input class="cap-input" id="dp-due" name="publish" pattern="\d{4}-\d{1,2}-\d{1,2}" autocomplete="off" aria-describedby="dp-due-e dp-due-h" value="2026-11-14" data-min="2026-10-01" data-max="2027-12-31" data-error-pattern-mismatch="Enter the date as year, month and day, such as 2026-11-14." />
+          <div class="cap-input-addon" data-align="inline-end">
+            <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="open" aria-label="Choose date" hidden>
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <p class="cap-field-error" id="dp-due-e" hidden></p>
+    </div>
+    <div><button type="submit" class="cap-btn" data-variant="primary">Schedule the post</button></div>
+  </form>
+</section>
+
+<template data-specimen="open" data-title="The calendar open" data-height="560">
+  <main class="specimen-page" id="main" tabindex="-1">
+    <h1>Schedule a post</h1>
+    <div class="cap-field">
+      <label class="cap-field-label" for="dp-open">Publish on</label>
+      <div class="cap-date-picker" data-cap="date-picker">
+        <div class="cap-input-group">
+          <input class="cap-input" id="dp-open" name="publish" pattern="\d{4}-\d{1,2}-\d{1,2}" autocomplete="off" value="2026-11-14" data-min="2026-11-03" />
+          <div class="cap-input-addon" data-align="inline-end">
+            <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="open" aria-label="Choose date" hidden data-specimen-open>
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</template>
+
+<script type="module">
+  import { enhance as enhanceFields } from "../field/field.ts";
+  import { enhance } from "./date-picker.ts";
+  enhance();
+  enhanceFields();
+  document.querySelector("#dp-form")?.addEventListener("submit", (e) => e.preventDefault());
+  // The open specimen: its calendar is opened as the page loads.
+  document.querySelector("[data-specimen-open]")?.click();
+</script>

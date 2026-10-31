@@ -8,8 +8,8 @@ states: [search result, search result with a note, social card, social card with
 added: 0.5.0
 source: The site admin's SerpPreview and OgPreview (dustinedwards-info app/components/admin/social-previews.tsx, .serp-* and .og-* in app/admin.css; PR #320, gap 5)
 replaces:
-  - 'class="[^"]*\b(serp-preview|og-preview)\b'
-  - 'className="[^"]*\b(serp-preview|og-preview)\b'
+  - 'class="(?:[^"]*\s)?(serp-preview|og-preview)[\s"]'
+  - 'className="(?:[^"]*\s)?(serp-preview|og-preview)[\s"]'
 ---
 
 # Share preview

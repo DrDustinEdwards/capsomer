@@ -34,6 +34,11 @@
     }
   }
 
+  /* A focused row never lands under the bar (WCAG 2.4.11): it is about 52px, 12px up. */
+  :root:has(.cap-bulk:not([hidden], [data-position="top"])) {
+    scroll-padding-bottom: calc(var(--space-9) + var(--space-5));
+  }
+
   /* "3 selected": the live status. The number is the first thing read, the size or any other
      detail follows it in muted text. */
   .cap-bulk-count {

@@ -87,36 +87,17 @@
     scroll-padding-top: calc(var(--header-h) + var(--space-3));
   }
 
-  .cap-site-header-skip {
-    position: absolute;
-    left: var(--space-3);
-    top: var(--space-3);
-    z-index: var(--z-tip);
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-m);
-    background: var(--primary);
-    color: var(--primary-fg);
-    box-shadow: var(--shadow-m);
-    font-weight: 600;
-    text-decoration: none;
-    transform: translateY(-200%);
-
-    &:focus-visible {
-      transform: none;
-    }
-  }
-
   /* The logo: the site's mark and name, at most 24px tall and 160px wide; it links home. */
   .cap-site-header-logo {
     display: inline-flex;
     align-items: center;
     gap: var(--space-3);
     /* It gives way before the controls do, so the header never runs past a 320px window
-       (WCAG 1.4.10, reflow); the mark itself never shrinks. */
+       (WCAG 1.4.10, reflow); the mark itself never shrinks, and is the part held to 160px, so
+       a written name keeps its room under a reader's own text spacing (WCAG 1.4.12). */
     flex: 0 1 auto;
     min-inline-size: 0;
-    block-size: 24px;
-    max-inline-size: 160px;
+    min-block-size: 24px;
     overflow: hidden;
     border-radius: var(--radius-s);
     color: var(--header-fg);
@@ -229,7 +210,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    min-block-size: 36px;
+    min-block-size: max(36px, var(--target));
     padding: 0;
     border: 0;
     border-radius: var(--radius-s);
@@ -341,7 +322,7 @@
     --_bubble: 16px;
     position: absolute;
     top: calc(50% - 9px - var(--_bubble) / 2);
-    left: calc(50% + 9px + 2px);
+    inset-inline-start: calc(50% + 9px + 2px);
     display: inline-grid;
     place-items: center;
     box-sizing: border-box;
@@ -712,9 +693,13 @@
         white-space: nowrap;
       }
     }
+    /* A focused control never lands under the tab bar (WCAG 2.4.11): the bar is 61 to 79px. */
+    :root:has(.cap-site-tabs) {
+      scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    }
     .cap-site-tabs {
       position: sticky;
-      bottom: 0;
+      inset-block-end: 0;
       z-index: var(--z-tabbar);
       display: grid;
       grid-auto-flow: column;
@@ -758,17 +743,17 @@
       & a[aria-current="page"] svg {
         background: var(--accent-4);
       }
-      /* The badge rides the pill's top right corner, clear of the glyph. */
+      /* The badge rides the pill's top end corner, clear of the glyph. */
       & .cap-site-header-badge {
         top: 0;
-        left: calc(50% + 12px);
+        inset-inline-start: calc(50% + 12px);
         box-shadow: 0 0 0 2px var(--surface);
       }
       /* Under 360px a tab is 62px: the badge sits flush on the glyph's edge with tighter padding,
          so the last tab's "99+" stays clear of the glyph and inside the window. */
       @media (max-width: 359.98px) {
         & .cap-site-header-badge {
-          left: calc(50% + 10px);
+          inset-inline-start: calc(50% + 10px);
           padding-inline: 2px;
         }
       }
@@ -964,7 +949,7 @@
       }
       /* The skip link keeps to the page's top corner, above the margin. */
       & > .cap-site-header-skip {
-        top: calc(var(--space-3) - var(--space-5) - var(--space-3));
+        inset-block-start: calc(var(--space-3) - var(--space-5) - var(--space-3));
       }
     }
     .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-trail) {
@@ -983,7 +968,7 @@
         background: var(--header-bg);
       }
       & > .cap-site-header-skip {
-        top: calc(var(--space-3) - var(--space-5) - var(--space-3));
+        inset-block-start: calc(var(--space-3) - var(--space-5) - var(--space-3));
       }
     }
   }
@@ -1016,19 +1001,21 @@
   }
   /* Under a public page's pinned band, a fade, so text never looks cut off at its edge: as wide as
      the window (a border image's outset paints without adding to scroll), and only once the page
-     has scrolled, so at rest nothing under the band is dimmed. Where scroll timelines are not
-     supported, there is no fade. */
-  @supports (animation-timeline: scroll()) {
-    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections)::after {
-      content: "";
-      position: absolute;
-      inset: 100% 0 auto;
-      block-size: 56px;
-      pointer-events: none;
-      border-image: linear-gradient(var(--ground) 20%, color-mix(in srgb, var(--ground) 60%, transparent) 55%, transparent) fill 0 / 0 / 0 100vmax;
-      animation: cap-header-fade linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 48px;
+     has scrolled, so at rest nothing under the band is dimmed. It moves with the scroll, so under
+     reduced motion, and where scroll timelines are not supported, there is no fade. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections)::after {
+        content: "";
+        position: absolute;
+        inset: 100% 0 auto;
+        block-size: 56px;
+        pointer-events: none;
+        border-image: linear-gradient(var(--ground) 20%, color-mix(in srgb, var(--ground) 60%, transparent) 55%, transparent) fill 0 / 0 / 0 100vmax;
+        animation: cap-header-fade linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 48px;
+      }
     }
   }
   @keyframes cap-header-fade {

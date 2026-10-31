@@ -88,4 +88,12 @@
     font-size: var(--fs-detail);
     line-height: var(--leading);
   }
+
+  /* The image's place is a tint until it loads, which forced colors drop: an edge keeps its shape. */
+  @media (forced-colors: active) {
+    .cap-og-card-image {
+      outline: 1px solid CanvasText;
+      outline-offset: -1px;
+    }
+  }
 }

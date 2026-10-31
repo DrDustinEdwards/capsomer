@@ -61,8 +61,10 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   <div class="cap-perms-bar">
     <fieldset class="cap-seg">
       <legend class="cap-sr-only">View</legend>
-      <label><input type="radio" name="perms-view" value="agent" checked>By agent</label>
-      <label><input type="radio" name="perms-view" value="permission">By permission</label>
+      <div class="cap-seg-options">
+        <label><input type="radio" name="perms-view" value="agent" checked>By agent</label>
+        <label><input type="radio" name="perms-view" value="permission">By permission</label>
+      </div>
     </fieldset>
     <p class="cap-perms-note">A filled box holds the permission; an empty box does not.</p>
   </div>

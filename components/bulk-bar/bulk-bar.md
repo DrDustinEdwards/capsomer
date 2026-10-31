@@ -62,7 +62,7 @@ shadcn has no bulk bar. The nearest are its Data Table's selection footer ("3 of
 | Enter or Space on Clear selection | Clears the selection; focus returns to the list |
 | Esc, in the list or the bar | Clears the selection; focus returns to the item last touched |
 | Space, on an item's checkbox | Selects or clears it; the count follows |
-| z | Runs the last action's Undo (the message region's key; `data-cap-single-keys="off"` turns it off) |
+| z | Runs the last action's Undo (the message region's key; off with the shortcuts switch, which sets `data-cap-single-keys="off"` on `<html>`) |
 
 ## Accessibility
 

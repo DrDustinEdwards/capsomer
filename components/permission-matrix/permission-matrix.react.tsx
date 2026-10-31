@@ -52,12 +52,14 @@ export function PermissionMatrix(props: PermissionMatrixProps) {
       <div className="cap-perms-bar">
         <fieldset className="cap-seg">
           <legend className="cap-sr-only">View</legend>
-          {(["agent", "permission"] as const).map((v) => (
-            <label key={v}>
-              <input type="radio" name={`${id}-view`} value={v} checked={view === v} onChange={() => choose(v)} />
-              {v === "agent" ? "By agent" : "By permission"}
-            </label>
-          ))}
+          <div className="cap-seg-options">
+            {(["agent", "permission"] as const).map((v) => (
+              <label key={v}>
+                <input type="radio" name={`${id}-view`} value={v} checked={view === v} onChange={() => choose(v)} />
+                {v === "agent" ? "By agent" : "By permission"}
+              </label>
+            ))}
+          </div>
         </fieldset>
         {note ? <p className="cap-perms-note">{note}</p> : null}
       </div>

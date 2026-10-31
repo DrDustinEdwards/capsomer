@@ -77,7 +77,8 @@
     --enarratio-gap: var(--space-5);
     --enarratio-gap-row: var(--space-2);
     --enarratio-gap-inline: calc(var(--space-2) + var(--space-1));
-    --enarratio-padding-button: var(--space-1) var(--space-2);
+    /* a button's padding makes up the family's target height (44px on a touch screen) */
+    --enarratio-padding-button: max(var(--space-1), (var(--target) - 1lh) / 2) var(--space-2);
     --enarratio-cell-padding: var(--space-2) var(--space-4) var(--space-2) 0;
     --enarratio-radius: var(--radius-s);
     --enarratio-radius-swatch: var(--radius-s);

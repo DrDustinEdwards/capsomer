@@ -1,0 +1,192 @@
+<link rel="stylesheet" href="./specimen/link.css" />
+<section class="cap-specimen" aria-labelledby="s-base">
+  <h2 id="s-base">Every link: the four cues, and its states</h2>
+  <div class="link-scroll" role="region" aria-label="A text link in each state" tabindex="0">
+  <table class="link-states">
+    <caption class="cap-sr-only">A text link in each state</caption>
+    <thead>
+      <tr><th scope="col">At rest</th><th scope="col">Hover</th><th scope="col">Pressed</th><th scope="col">Visited</th><th scope="col">Focus</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="/writing/field-notes">Field notes</a></td>
+        <td><a href="/writing/field-notes" data-force="hover">Field notes</a></td>
+        <td><a href="/writing/field-notes" data-force="pressed">Field notes</a></td>
+        <td><a href="/writing/field-notes" data-force="visited">Field notes</a></td>
+        <td><a href="/writing/field-notes" data-force="focus">Field notes</a></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p>In a sentence: the <a href="/writing/field-day">field day notes</a> sit beside the <a href="/writing/spring-survey" data-force="visited">spring garden survey</a>, and a long link wraps with its tint on each line: <a href="/writing/why-field-notebooks-keep-coming-back" data-force="hover">why field notebooks keep coming back after a century of being forgotten</a>.</p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-kinds">
+  <h2 id="s-kinds">Each kind, with its one cue, in each state</h2>
+  <div class="link-scroll" role="region" aria-label="Every kind of link in each state" tabindex="0">
+  <table class="link-states" id="link-kinds">
+    <caption class="cap-sr-only">Every kind of link in each state</caption>
+    <thead>
+      <tr><th scope="col">Kind</th><th scope="col">At rest</th><th scope="col">Hover</th><th scope="col">Pressed</th><th scope="col">Visited</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">away</th>
+        <td><a href="https://example.org/" data-link="away">Example Org<span class="cap-sr-only"> (opens another site)</span></a></td>
+        <td><a href="https://example.org/" data-link="away" data-force="hover">Example Org<span class="cap-sr-only"> (opens another site)</span></a></td>
+        <td><a href="https://example.org/" data-link="away" data-force="pressed">Example Org<span class="cap-sr-only"> (opens another site)</span></a></td>
+        <td><a href="https://example.org/" data-link="away" data-force="visited">Example Org<span class="cap-sr-only"> (opens another site)</span></a></td>
+      </tr>
+      <tr>
+        <th scope="row">away, with the site's icon</th>
+        <td><a href="https://fieldnotes.example.com/" data-link="away" rel="external"><img class="cap-link-icon" src="./specimen/outside-icon.svg" alt="" width="16" height="16">Field Notes<span class="cap-sr-only"> (opens another site)</span></a></td>
+        <td><a href="https://fieldnotes.example.com/" data-link="away" rel="external" data-force="hover"><img class="cap-link-icon" src="./specimen/outside-icon.svg" alt="" width="16" height="16">Field Notes<span class="cap-sr-only"> (opens another site)</span></a></td>
+        <td><a href="https://fieldnotes.example.com/" data-link="away" rel="external" data-force="pressed"><img class="cap-link-icon" src="./specimen/outside-icon.svg" alt="" width="16" height="16">Field Notes<span class="cap-sr-only"> (opens another site)</span></a></td>
+        <td><a href="https://fieldnotes.example.com/" data-link="away" rel="external" data-force="visited"><img class="cap-link-icon" src="./specimen/outside-icon.svg" alt="" width="16" height="16">Field Notes<span class="cap-sr-only"> (opens another site)</span></a></td>
+      </tr>
+      <tr>
+        <th scope="row">family</th>
+        <td><a href="https://germomics.com" data-link="family" data-site="germomics">Germomics</a></td>
+        <td><a href="https://germomics.com" data-link="family" data-site="germomics" data-force="hover">Germomics</a></td>
+        <td><a href="https://germomics.com" data-link="family" data-site="germomics" data-force="pressed">Germomics</a></td>
+        <td><a href="https://germomics.com" data-link="family" data-site="germomics" data-force="visited">Germomics</a></td>
+      </tr>
+      <tr>
+        <th scope="row">file</th>
+        <td><a href="/files/survey-protocol.pdf" data-link="file">Survey protocol</a> <span class="cap-link-meta">PDF, 2 MB</span></td>
+        <td><a href="/files/survey-protocol.pdf" data-link="file" data-force="hover">Survey protocol</a> <span class="cap-link-meta">PDF, 2 MB</span></td>
+        <td><a href="/files/survey-protocol.pdf" data-link="file" data-force="pressed">Survey protocol</a> <span class="cap-link-meta">PDF, 2 MB</span></td>
+        <td><a href="/files/survey-protocol.pdf" data-link="file" data-force="visited">Survey protocol</a> <span class="cap-link-meta">PDF, 2 MB</span></td>
+      </tr>
+      <tr>
+        <th scope="row">jump</th>
+        <td><a href="#methods" data-link="jump">Methods</a></td>
+        <td><a href="#methods" data-link="jump" data-force="hover">Methods</a></td>
+        <td><a href="#methods" data-link="jump" data-force="pressed">Methods</a></td>
+        <td><a href="#methods" data-link="jump" data-force="visited">Methods</a></td>
+      </tr>
+      <tr>
+        <th scope="row">email</th>
+        <td><a href="mailto:editor@example.com" data-link="email">Write to the editor</a></td>
+        <td><a href="mailto:editor@example.com" data-link="email" data-force="hover">Write to the editor</a></td>
+        <td><a href="mailto:editor@example.com" data-link="email" data-force="pressed">Write to the editor</a></td>
+        <td><a href="mailto:editor@example.com" data-link="email" data-force="visited">Write to the editor</a></td>
+      </tr>
+      <tr>
+        <th scope="row">phone</th>
+        <td><a href="tel:+15550100" data-link="phone">Call the office</a></td>
+        <td><a href="tel:+15550100" data-link="phone" data-force="hover">Call the office</a></td>
+        <td><a href="tel:+15550100" data-link="phone" data-force="pressed">Call the office</a></td>
+        <td><a href="tel:+15550100" data-link="phone" data-force="visited">Call the office</a></td>
+      </tr>
+      <tr>
+        <th scope="row">lang</th>
+        <td><a href="/es/" hreflang="es" data-link="lang">Read it</a> <span class="cap-link-meta" lang="es">Español</span></td>
+        <td><a href="/es/" hreflang="es" data-link="lang" data-force="hover">Read it</a> <span class="cap-link-meta" lang="es">Español</span></td>
+        <td><a href="/es/" hreflang="es" data-link="lang" data-force="pressed">Read it</a> <span class="cap-link-meta" lang="es">Español</span></td>
+        <td><a href="/es/" hreflang="es" data-link="lang" data-force="visited">Read it</a> <span class="cap-link-meta" lang="es">Español</span></td>
+      </tr>
+      <tr>
+        <th scope="row">footnote</th>
+        <td>A claim.<sup><a href="#fn-1" class="cap-footnote-ref" aria-describedby="link-notes">1</a></sup></td>
+        <td>A claim.<sup><a href="#fn-1" class="cap-footnote-ref" aria-describedby="link-notes" data-force="hover">1</a></sup></td>
+        <td>A claim.<sup><a href="#fn-1" class="cap-footnote-ref" aria-describedby="link-notes" data-force="pressed">1</a></sup></td>
+        <td>A claim.<sup><a href="#fn-1" class="cap-footnote-ref" aria-describedby="link-notes" data-force="visited">1</a></sup></td>
+      </tr>
+      <tr>
+        <th scope="row">xref</th>
+        <td><a href="/writing/sampling" data-link="xref">Sampling</a></td>
+        <td><a href="/writing/sampling" data-link="xref" data-force="hover">Sampling</a></td>
+        <td><a href="/writing/sampling" data-link="xref" data-force="pressed">Sampling</a></td>
+        <td><a href="/writing/sampling" data-link="xref" data-force="visited">Sampling</a></td>
+      </tr>
+      <tr>
+        <th scope="row">address</th>
+        <td><a href="https://doi.org/10.5555/12345678" data-link="address" rel="external">doi.org/10.5555/12345678<span class="cap-sr-only"> (opens another site)</span></a></td>
+        <td><a href="https://doi.org/10.5555/12345678" data-link="address" rel="external" data-force="hover">doi.org/10.5555/12345678</a></td>
+        <td><a href="https://doi.org/10.5555/12345678" data-link="address" rel="external" data-force="pressed">doi.org/10.5555/12345678</a></td>
+        <td><a href="https://doi.org/10.5555/12345678" data-link="address" rel="external" data-force="visited">doi.org/10.5555/12345678</a></td>
+      </tr>
+      <tr>
+        <th scope="row">next</th>
+        <td><a href="/writing/part-two" data-link="next">Part two</a></td>
+        <td><a href="/writing/part-two" data-link="next" data-force="hover">Part two</a></td>
+        <td><a href="/writing/part-two" data-link="next" data-force="pressed">Part two</a></td>
+        <td><a href="/writing/part-two" data-link="next" data-force="visited">Part two</a></td>
+      </tr>
+      <tr>
+        <th scope="row">tag</th>
+        <td><a href="/tags/survey" data-link="tag">survey</a></td>
+        <td><a href="/tags/survey" data-link="tag" data-force="hover">survey</a></td>
+        <td><a href="/tags/survey" data-link="tag" data-force="pressed">survey</a></td>
+        <td><a href="/tags/survey" data-link="tag" data-force="visited">survey</a></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap-sr-only" id="link-notes">Footnotes</p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-title">
+  <h2 id="s-title">title: a heading that is a link, its arrow on hover or focus</h2>
+  <div class="link-titles">
+    <h3><a href="/writing/field-notebooks">Why field notebooks keep coming back</a></h3>
+    <h3><a href="/writing/field-notebooks" data-force="hover">Why field notebooks keep coming back</a></h3>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-family">
+  <h2 id="s-family">family: every site's icon</h2>
+  <ul class="link-sites" id="link-family">
+    <li><a href="https://dustinedwards.info" data-link="family" data-site="dustinedwards">dustinedwards.info</a></li>
+    <li><a href="https://germomics.com" data-link="family" data-site="germomics">Germomics</a></li>
+    <li><a href="https://julieedwards.info" data-link="family" data-site="julieedwards">Julie Edwards</a></li>
+    <li><a href="https://foxing.app" data-link="family" data-site="foxing">Foxing</a></li>
+    <li><a href="https://foxhoundapp.com" data-link="family" data-site="foxhound">Foxhound</a></li>
+    <li><a href="https://txasm.org" data-link="family" data-site="txasm">Texas Branch ASM</a></li>
+    <li><a href="https://biosciencewriters.com" data-link="family" data-site="bsw">BioScience Writers</a></li>
+    <li><a href="https://carrel.dustinedwards.info" data-link="family" data-site="carrel">Carrel</a></li>
+    <li><a href="https://capsid.dustinedwards.info" data-link="family" data-site="capsid">Capsid</a></li>
+    <li><a href="https://capsomer.dustinedwards.info" data-link="family" data-site="capsomer">Capsomer</a></li>
+    <li><a href="https://prelum.dustinedwards.info" data-link="family" data-site="prelum">Prelum</a></li>
+    <li><a href="https://enarratio.dustinedwards.info" data-link="family" data-site="enarratio">Enarratio (no icon yet)</a></li>
+  </ul>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-tags">
+  <h2 id="s-tags">tag: a post's tags</h2>
+  <p>Filed under <a href="/tags/survey" data-link="tag">survey</a> <a href="/tags/history" data-link="tag">history</a> <a href="/tags/gardens" data-link="tag" data-force="visited">gardens</a></p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-fallback">
+  <h2 id="s-fallback">Found without the attribute</h2>
+  <ul id="link-fallbacks">
+    <li>Another site: <a href="https://example.net/" rel="external">Example Net</a>, and a new tab: <a href="https://example.org/archive" target="_blank">the archive</a></li>
+    <li>A download: <a href="/files/survey.zip" download>the survey data</a>, and a file by its ending: <a href="/files/annual-report.pdf">the annual report</a></li>
+    <li>A place on this page, in running text: <a href="#results">the results</a></li>
+    <li>Mail and phone: <a href="mailto:team@example.com">team@example.com</a>, <a href="tel:+15550100">555 0100</a></li>
+    <li>A footnote as GFM writes it: a claim<sup><a href="#user-content-fn-1" id="user-content-fnref-1" data-footnote-ref aria-describedby="link-notes">2</a></sup>, and the way back: <a href="#user-content-fnref-1" data-footnote-backref aria-label="Back to reference 2">↩</a></li>
+  </ul>
+</section>
+
+<template data-specimen="post" data-title="A post: every kind in running text" data-height="760">
+  <main class="specimen-page link-post">
+    <article data-context="prose">
+      <h1>Why field notebooks keep coming back</h1>
+      <p>Filed under <a href="/tags/survey" data-link="tag">survey</a> <a href="/tags/history" data-link="tag">history</a></p>
+      <p>In 1917 a schoolteacher began a notebook of every bird in the town square, and by the 1930s whole towns kept them across Europe and America.<sup><a href="#fn-1" id="fnref-1" class="cap-footnote-ref" aria-describedby="post-notes">1</a></sup> Spreadsheets pushed the habit aside everywhere but a few villages, where the <a href="https://archive.example.net" data-link="away">Example Co archive<span class="cap-sr-only"> (opens another site)</span></a> kept collecting them. The <a href="/writing/sampling" data-link="xref">sampling</a> essay covers the method; this one is about the people.</p>
+      <p>We read every notebook we could find (see <a href="#methods" data-link="jump">Methods</a>), and the charts of the counts are on <a href="https://germomics.com" data-link="family" data-site="germomics">Germomics</a>. The full protocol is <a href="/files/survey-protocol.pdf" data-link="file">the survey protocol</a> <span class="cap-link-meta">PDF, 2 MB</span>, and the review we leaned on is <a href="https://doi.org/10.5555/12345678" data-link="address" rel="external">doi.org/10.5555/12345678<span class="cap-sr-only"> (opens another site)</span></a>.</p>
+      <p>There is a shorter version <a href="/es/writing/field-notebooks" hreflang="es" data-link="lang">in Spanish</a> <span class="cap-link-meta" lang="es">Español</span>. Questions go to <a href="mailto:editor@example.com" data-link="email">the editor</a>, and the office answers the phone at <a href="tel:+15550100" data-link="phone">555 0100</a>.</p>
+      <h2 id="methods"><a href="#methods">Methods</a></h2>
+      <p>We searched <a href="https://example.org/" data-link="away">Example Org<span class="cap-sr-only"> (opens another site)</span></a> for every notebook since 1990, and read the <a href="/writing/spring-survey" data-force="visited">spring garden survey</a> again for the field sites.</p>
+      <p><a href="/writing/field-notebooks-part-two" data-link="next">Part two: the notebooks</a></p>
+      <section data-footnotes>
+        <h2 id="post-notes" class="cap-sr-only">Footnotes</h2>
+        <ol>
+          <li id="fn-1"><p>The teacher's own account, 1917.
+ <a href="#fnref-1" data-footnote-backref aria-label="Back to reference 1">↩</a></p></li>
+        </ol>
+      </section>
+    </article>
+  </main>
+</template>

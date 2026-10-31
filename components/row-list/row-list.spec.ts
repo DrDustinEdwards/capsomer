@@ -192,13 +192,13 @@ eachTheme((theme) => {
     await expect(page).not.toHaveURL(/#job-push$/);
   });
 
-  test("behavior: a long title is cut with an ellipsis and keeps its full name", async ({ page }) => {
+  test("behavior: a long title takes two lines, is then cut, and keeps its full name", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     const link = page.locator("#long-title");
-    await expect(link).toHaveCSS("text-overflow", "ellipsis");
-    const cut = await link.evaluate((el) => el.scrollWidth > el.clientWidth);
+    await expect(link).toHaveCSS("-webkit-line-clamp", "2");
+    const cut = await link.evaluate((el) => el.scrollHeight > el.clientHeight);
     expect(cut).toBe(true);
-    await expect(link).toHaveAccessibleName(/factor of two$/);
+    await expect(link).toHaveAccessibleName(/a fresh count every time$/);
   });
 
   test("behavior: a critical row has the red edge, flush and clipped to its corners, others none", async ({ page }) => {

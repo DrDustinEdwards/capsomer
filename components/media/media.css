@@ -191,12 +191,16 @@
     opacity: 0.5;
   }
 
+  /* Two lines, then cut, so a name that fits still fits with a reader's text spacing. */
   .cap-media-name {
+    display: -webkit-box;
     overflow: hidden;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     font-size: var(--fs-body);
     font-weight: 600;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
   /* Proportional figures: tabular ones give the point a digit's width, so "1.8 MB" read "1 . 8 MB". */
   .cap-media-meta {
@@ -390,7 +394,11 @@
   .cap-media-inspector {
     /* Open but not modal: a pane in the flow of the page, the whole width when it is below the
        grid (narrow, no script), sticking beside it when wide. */
+    /* It goes at once, not sliding out as the sheet does: in the page a slide pushes past the
+       window's edge (WCAG 1.4.10). */
     &:not(:modal)[data-placement] {
+      --cap-dialog-from: none;
+      --cap-dialog-to: none;
       position: static;
       inline-size: auto;
       block-size: auto;
@@ -529,7 +537,14 @@
     & li {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: var(--space-1) var(--space-3);
+    }
+    /* A link on its own in the row, not a word in a sentence: a target (WCAG 2.5.8). */
+    & a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
     }
   }
   .cap-media-used-how,
@@ -781,10 +796,11 @@
     .cap-media-tile {
       border-color: CanvasText;
 
+      /* The active tile's thicker edge is a border, so the focus outline still shows on it. */
       &[data-active] {
-        border-color: Highlight;
+        padding: calc(var(--space-2) - 1px);
+        border: 2px solid Highlight;
         box-shadow: none;
-        outline: 2px solid Highlight;
       }
     }
     .cap-media-check {

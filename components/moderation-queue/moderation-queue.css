@@ -129,9 +129,13 @@
     grid-column: 3;
     grid-row: 1;
   }
+  /* The excerpt is what a decision is made on: it wraps, never cut (and a reader's own text
+     spacing cuts nothing, WCAG 1.4.12). */
   .cap-mq-list .cap-row-detail {
     grid-column: 3;
     grid-row: 2;
+    -webkit-line-clamp: none;
+    line-clamp: none;
   }
   .cap-mq-list .cap-row-meta {
     grid-column: 4;
@@ -193,6 +197,11 @@
       margin: 0;
       min-width: 0;
       overflow-wrap: anywhere;
+    }
+    /* A value that is only a link is a target, not a word in a sentence (WCAG 2.5.8): padding
+       on the inline link reaches it without moving the lines. */
+    & a {
+      padding-block: calc((var(--target) - 1lh) / 2);
     }
   }
   .cap-mq-why {
@@ -273,9 +282,9 @@
     .cap-mq-quote {
       border-color: CanvasText;
     }
+    /* The row's own edge, not an outline: the outline is the focus ring, and must still show. */
     .cap-mq-list .cap-mq-row[data-selected] {
-      outline: 1px solid Highlight;
-      outline-offset: -1px;
+      border-color: Highlight;
     }
   }
 }
