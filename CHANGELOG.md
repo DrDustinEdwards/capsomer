@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **New component: prose blocks** (`capsomer/prose-blocks.css`). Every class Prelum's renderer writes is now styled inside `<article data-context="prose">`, in both themes, every family and at a phone's width: headings with their own links, task lists, scrolling tables, code with a title and marked lines, the five callouts, figures with credits and wide or full widths, galleries, video, audio and transcripts, embeds that load nothing until a click, button links, bookmarks, details, FAQs, footnotes, the editorial pack's side note, pull quote and swatch, and `render/enhance`'s reading progress, Copy, footnote preview, image viewer and selection link. Links in a post are semibold in the link color with no underline. A site imports the file and deletes its own copy. `.sr-only` (GFM's footnotes heading) is hidden inside the prose context, as `.cap-sr-only` is. New classes only; nothing is removed or renamed.
 - **Showcase site: Prelum v0.23.0** (no package change). The site's `@drdustinedwards/site-helpers` pin moves from v0.22.0 to v0.23.0, where Prelum wraps `:::chart` output in this frame (`div.cap-chart > div.cap-chart-figure`) and sets `RENDER_VERSION` to 9. The site uses Prelum only for search, head tags and icons, so no page changes.
 
 ## [0.55.0]
