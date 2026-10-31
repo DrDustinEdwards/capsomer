@@ -54,7 +54,7 @@
 
   /* "Worst first. Read 40 seconds ago": the order and how fresh the reading is. */
   .cap-attention-src {
-    margin-left: auto;
+    margin-inline-start: auto;
     font-size: var(--fs-label);
     color: var(--dim);
   }
@@ -103,10 +103,14 @@
       font-weight: 500;
       white-space: normal;
       overflow-wrap: anywhere;
+      -webkit-line-clamp: none;
+      line-clamp: none;
     }
     & .cap-row-detail {
       white-space: normal;
       overflow-wrap: anywhere;
+      -webkit-line-clamp: none;
+      line-clamp: none;
     }
   }
 
@@ -135,10 +139,21 @@
 
       border-radius: var(--radius-s);
 
+      /* A text link's states (css/base.css), which this rule's own colors would otherwise hide. */
+      &:is(a):visited,
+      &:is(a)[data-force="visited"] {
+        color: var(--accent-visited);
+      }
       &:hover,
       &[data-force="hover"] {
-        text-decoration: underline;
-        text-underline-offset: 3px;
+        background: var(--accent-soft);
+        box-shadow: 0 0 0 2px var(--accent-soft);
+        color: var(--accent-hover);
+      }
+      &:active,
+      &[data-force="pressed"] {
+        background: var(--accent-5);
+        box-shadow: 0 0 0 2px var(--accent-5);
       }
       &:focus-visible,
       &[data-force="focus"] {
@@ -193,7 +208,7 @@
 
   @container (max-width: 480px) {
     .cap-attention-src {
-      margin-left: 0;
+      margin-inline-start: 0;
       flex-basis: 100%;
     }
   }

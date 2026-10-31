@@ -145,8 +145,8 @@ export interface AdminShellProps {
   themeKey?: string;
   prefKey?: string;
   // G then 1 to 9 opens the app in that place (the key sequence of GitHub and Linear; Ctrl and a
-  // digit belong to the browser's tabs); on by default. An app that lets single keys be switched off
-  // passes that setting here.
+  // digit belong to the browser's tabs); on by default, and off with the shortcuts switch. false
+  // turns it off for this app alone.
   jumpKeys?: boolean;
   // Shown on the collapse control and in its name tip; the app binds the key.
   collapseKey?: string;
@@ -307,11 +307,13 @@ export function AdminShell(props: AdminShellProps) {
                 {e.label.slice(0, 1)}
               </span>
             )}
-            <span className="cap-admin-label">{e.label}</span>{" "}
+            <span className="cap-admin-label">{e.label}</span>
+            {/* The tip before the count: collapsed, the two are the row's visible words, in the
+                order its name says them ("Queue, 5"; WCAG 2.5.3). */}
+            <Tip text={e.label} offset={12} describe={false} />{" "}
             <span className="cap-admin-count" data-tone={e.tone}>
               {e.count ? badgeText(e.count) : ""}
             </span>
-            <Tip text={e.label} offset={12} describe={false} />
           </>
         ),
       })}

@@ -31,6 +31,10 @@
     & a:focus-visible {
       color: var(--accent-text);
     }
+    /* The family's hover tint, as every menu keeps (link.md); a site tile keeps its mark bar. */
+    & a:hover {
+      background-color: var(--accent-soft);
+    }
   }
 
   /* The site's own part: under the thin stripe, on the same columns as the letterhead below. */
@@ -256,11 +260,6 @@
       min-block-size: var(--target);
       font-size: 0.875rem;
     }
-
-    & a:hover {
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
   }
 
   .cap-family-footer-private {
@@ -288,5 +287,13 @@
     font: 500 0.6875rem / 1.6 var(--mono);
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  /* Forced colors drop the family's color mark (a background): the current site keeps its thick
+     top edge, in the system's highlight. */
+  @media (forced-colors: active) {
+    .cap-family-footer-sites a[aria-current] {
+      border-color: Highlight;
+    }
   }
 }

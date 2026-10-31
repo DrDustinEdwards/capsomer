@@ -12,6 +12,8 @@
 @layer cap.components {
   .cap-chart {
     display: grid;
+    /* One column no wider than the frame, so a wide table scrolls inside it. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-3);
     min-width: 0;
     margin: 0;
@@ -64,6 +66,27 @@
     --enarratio-text-muted: var(--accent-text);
     line-height: var(--target);
     font-weight: 600;
+  }
+
+  /* The CSV link stands alone at the end of the source line, so it is a full target. Its color
+     and states are the link system's (css/base.css), handed back over Enarratio's own rule by
+     css/enarratio.css. */
+  .cap-chart .enarratio-csv {
+    display: inline-block;
+    line-height: var(--target);
+  }
+
+  /* An open range picker takes its own row, so its inputs fit beside their labels. */
+  .cap-chart .enarratio-range[open] {
+    flex-basis: 100%;
+  }
+
+  /* A table wider than its frame (or a tile's or meter's data) scrolls inside it (named by its
+     caption), not the page. */
+  :is(.cap-chart, .cap-data) .enarratio-data table {
+    display: block;
+    max-inline-size: 100%;
+    overflow-x: auto;
   }
 
   /* Numbers behind "Show data" that belong to something that is not a chart: a stat tile with

@@ -2,7 +2,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The tree: nested rows that open and close, after the WAI-ARIA tree pattern. Each row is
-   one line: a chevron for a branch, an icon, the label and a muted note at the end (a
+   one line (a long label wraps): a chevron for a branch, an icon, the label and a muted note at the end (a
    status, a word count). Depth indents the row's content, not the row, so the tint of the
    chosen row and the drop line run the full width, as in a file tree. Delivered with no
    script, every level shows and nothing hides; the chevrons come with the script. */
@@ -10,6 +10,8 @@
   .cap-tree {
     --tree-indent: calc(var(--space-5) + var(--space-1));
     box-sizing: border-box;
+    /* A grid or flex parent does not grow to the uncut labels (WCAG 1.4.10). */
+    min-inline-size: 0;
     margin: 0;
     padding: var(--space-1);
     list-style: none;
@@ -186,12 +188,12 @@
     }
   }
 
+  /* A long label wraps, never cut: a narrow binder still shows each whole name, with a reader's
+     own text spacing too (WCAG 1.4.12). */
   .cap-tree-label {
     flex: 1 1 auto;
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
   }
 
   .cap-tree-meta {

@@ -4,7 +4,7 @@ title: Disclosure
 summary: Show and hide, a section that opens in place and a group row in a list.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [summary hover, summary pressed, accordion variant, card variant, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
+states: [summary hover, summary pressed, accordion variant, accordion titles in headings, card variant, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
 added: 0.1.0
 updated: 0.2.0
 source: the approved mockup ("4 notices", collapsed); patterns.md "Show or hide"
@@ -30,6 +30,7 @@ Two ways to show and hide. A section that opens in place is a native `<details c
 
 - **A section is native `details` and `summary`**: it works before JavaScript, with none, and with find-in-page. The chevron turns, and under `prefers-reduced-motion: no-preference` the panel fades in and, where the browser supports `interpolate-size` and `::details-content`, grows and shrinks to its height (Chromium 131 and later); elsewhere it opens at once. Stacked sections share their edges as one accordion.
 - **Accordion variant** (`data-variant="accordion"`): shadcn's flat look. No box, a rule between items, the title underlined on hover, the chevron at the end pointing down closed and up open. Same `details`, same keyboard.
+- **An accordion's titles may be headings** (`<summary><h3>Connect a site</h3></summary>`), one level under the heading the accordion sits under, so a person moving by heading finds each section (APG accordion, where each header is a heading; GOV.UK accordion). HTML allows one heading in a `summary`; the heading takes the summary's look. Screen readers differ on whether they also read it as a heading inside the button, so the title still says what the section holds on its own.
 - **Card variant** (`data-variant="card"`): Recova's questions list. Each section its own rounded card (`--radius-l`), set apart by the list's gap, a roomy title at the lead size with a plus at the end that turns to a cross when open, and the answer under it with no rule between. Same `details`, same keyboard.
 - **Pressed and disabled**: a summary or group row has a pressed tint; a group button that is `disabled` or `aria-disabled="true"` dims and takes no clicks (disabled controls are exempt from contrast).
 - **Spacing follows the density tokens** (`--pad-x`, `--gap`, `--fs-body`).
@@ -79,6 +80,8 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   </ul>
 </div>
 ```
+
+An accordion section titled by a heading: `<summary><h3>Connect a site</h3></summary>`.
 
 In a heading: `<h3 class="cap-group-heading"><button type="button" class="cap-group-toggle" ...>...</button></h3>` in place of the bare button.
 

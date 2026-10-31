@@ -9,8 +9,8 @@ added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.chip)
 replaces:
-  - 'class="[^"]*\bchip\b'
-  - 'className="[^"]*\bchip\b'
+  - 'class="(?:[^"]*\s)?chip[\s"]'
+  - 'className="(?:[^"]*\s)?chip[\s"]'
 ---
 
 # Filter chips

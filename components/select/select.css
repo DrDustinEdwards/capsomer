@@ -76,7 +76,7 @@
       right 1.15rem top 50%,
       right 0.8rem top 50%;
 
-    &:dir(rtl) {
+    &:dir(rtl), :where([dir="rtl"]) & {
       background-position:
         left 0.8rem top 50%,
         left 1.15rem top 50%;

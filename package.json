@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.56.0",
+  "version": "0.57.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
   "license": "MIT",
   "type": "module",
@@ -103,6 +103,10 @@
       "default": "./tokens/enarratio-theme.mjs"
     },
     "./*.css": "./components/*/*.css",
+    "./behavior/chart-enhance": {
+      "types": "./dist/components/chart-frame/chart-enhance.d.ts",
+      "default": "./dist/components/chart-frame/chart-enhance.js"
+    },
     "./behavior/*": {
       "types": "./dist/components/*/*.d.ts",
       "default": "./dist/components/*/*.js"
@@ -213,7 +217,7 @@
     "@codemirror/state": "^6.7.1",
     "@codemirror/view": "^6.43.7",
     "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.20.13",
-    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.52.0",
+    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.60.0",
     "@fontsource-variable/source-serif-4": "^5.3.0",
     "@fontsource/dm-mono": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",

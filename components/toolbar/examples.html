@@ -1,0 +1,47 @@
+<link rel="stylesheet" href="./specimen/toolbar.css" />
+
+<section class="cap-specimen" aria-labelledby="s-default">
+  <h2 id="s-default">A draft's toolbar: actions, a separator, toggle buttons</h2>
+  <div class="cap-toolbar" role="toolbar" aria-label="Draft" data-cap="toolbar" id="tb-draft">
+    <button type="button" class="cap-btn">Save</button>
+    <button type="button" class="cap-btn">Preview</button>
+    <button type="button" class="cap-btn" disabled>Publish</button>
+    <span class="cap-toolbar-sep" role="separator" aria-orientation="vertical"></span>
+    <button type="button" class="cap-btn" aria-pressed="true" id="tb-wrap">Wrap lines</button>
+    <button type="button" class="cap-btn" aria-pressed="false">Show changes</button>
+    <a class="cap-btn" data-variant="quiet" href="#history">History</a>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-rtl">
+  <h2 id="s-rtl">Right to left: Left arrow moves forward</h2>
+  <div dir="rtl" lang="ar">
+    <div class="cap-toolbar" role="toolbar" aria-label="مسودة" data-cap="toolbar" id="tb-rtl">
+      <button type="button" class="cap-btn">حفظ</button>
+      <button type="button" class="cap-btn">معاينة</button>
+      <button type="button" class="cap-btn" aria-pressed="false">التغييرات</button>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-vertical">
+  <h2 id="s-vertical">Vertical, comfortable density</h2>
+  <div data-density="comfortable">
+    <div class="cap-toolbar" role="toolbar" aria-label="Sites" aria-orientation="vertical" data-cap="toolbar" id="tb-vertical">
+      <button type="button" class="cap-btn">Refresh all</button>
+      <button type="button" class="cap-btn" data-force="hover">Pause checks</button>
+      <span class="cap-toolbar-sep" role="separator"></span>
+      <button type="button" class="cap-btn" aria-pressed="true">Only failing</button>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./toolbar.ts";
+  enhance();
+  // A toggle button says its state: aria-pressed follows a click, as an app's handler would set it.
+  document.addEventListener("click", (e) => {
+    const b = e.target instanceof Element ? e.target.closest(".cap-toolbar [aria-pressed]") : null;
+    if (b) b.setAttribute("aria-pressed", String(b.getAttribute("aria-pressed") !== "true"));
+  });
+</script>

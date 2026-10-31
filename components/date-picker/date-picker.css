@@ -1,0 +1,103 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The date picker: an input group with a calendar button, and the calendar in a small
+   dialog (dialog.css draws the dialog). APG Date picker dialog. The chosen day is filled,
+   today is underlined and bold, and a day that cannot be chosen is struck through, so none
+   of them is color alone. */
+@layer cap.components {
+  .cap-date-picker {
+    display: block;
+    min-width: 0;
+
+    & .cap-input-addon > .cap-btn > svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .cap-dialog-header.cap-date-picker-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-1);
+
+    & .cap-dialog-title {
+      flex: 1;
+      font-size: var(--fs-lead);
+      text-align: center;
+    }
+    & svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .cap-date-picker-grid {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 2px;
+    font-variant-numeric: var(--figures-column);
+
+    & th {
+      padding-block: var(--space-2);
+      color: var(--muted);
+      font-size: var(--fs-detail);
+      font-weight: 600;
+    }
+    & td {
+      block-size: max(var(--target), 36px);
+      min-inline-size: var(--target);
+      padding: 0;
+      border-radius: var(--radius-m);
+      color: var(--text);
+      text-align: center;
+    }
+    & td[data-date] {
+      cursor: pointer;
+
+      &:hover,
+      &[data-force="hover"] {
+        background: var(--sunken);
+      }
+    }
+    & td:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: 0;
+    }
+    & td[aria-current="date"] {
+      font-weight: 700;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.2em;
+    }
+    & td[aria-selected="true"] {
+      background: var(--primary);
+      color: var(--primary-fg);
+      font-weight: 600;
+    }
+    & td[aria-disabled="true"] {
+      color: var(--muted);
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-date-picker-grid td {
+      transition: background-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  /* Forced colors: the chosen day keeps its fill as the system's highlight. */
+  @media (forced-colors: active) {
+    .cap-date-picker-grid td[aria-selected="true"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .cap-date-picker-grid td[aria-disabled="true"] {
+      color: GrayText;
+    }
+  }
+}

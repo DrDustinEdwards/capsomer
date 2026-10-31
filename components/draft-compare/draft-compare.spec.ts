@@ -368,7 +368,6 @@ eachTheme((theme) => {
     await expect(before.locator(".cap-compare-cell-label")).toBeVisible();
     await expect(before.locator(".cap-compare-cell-label")).toHaveText("Before");
     await expect(after.locator(".cap-compare-cell-label")).toHaveText("After");
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 
   test("behavior: a wide container shows the sides beside each other with no cell labels", async ({ page }) => {

@@ -78,6 +78,8 @@ test.describe("no script", () => {
     await expect(filters).toBeVisible();
     await page.getByRole("link", { name: /^Show \d+ articles$/ }).click();
     await expect(filters).toBeHidden();
+    // The link lands on the results, not on an id the page lacks.
+    expect(await page.evaluate(() => document.querySelector(location.hash)?.getAttribute("data-catalog-region"))).toBe("results");
   });
 });
 

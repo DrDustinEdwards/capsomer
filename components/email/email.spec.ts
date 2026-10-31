@@ -4,7 +4,7 @@ import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helper
 eachTheme((theme) => {
   test("accessibility: no axe violations, frames included", async ({ page }) => {
     await visitStates(page, "email", theme);
-    await expect(page.locator("iframe[data-email]")).toHaveCount(24);
+    await expect(page.locator("iframe[data-email]")).toHaveCount(26);
     await expect.poll(() => page.locator("iframe[data-email]").evaluateAll((fs) => fs.every((f) => (f as HTMLIFrameElement).contentDocument?.querySelector("h1")))).toBe(true);
     await expectNoAxeViolations(page);
   });
