@@ -3,6 +3,7 @@
 // data"); the frame is only the layout around it, so nothing here builds a second table or a
 // second head. No behavior of its own: the disclosure is Enarratio's native `details`.
 import { escapeHtml } from "enarratio";
+import { type RedrawSpec, redrawAttribute } from "enarratio/redraw";
 
 export type Gridlines = "none" | "x" | "y" | "both";
 
@@ -13,12 +14,16 @@ export interface FrameOptions {
   gridlines?: Gridlines;
   // Trusted markup after the figure: a legend of the slots.
   after?: string;
+  // What behavior/chart-enhance draws the chart again from at the frame's width (Enarratio's
+  // enarratio/redraw): a light chart and its options. Without it the server's drawing scales.
+  redraw?: RedrawSpec;
 }
 
 // Enarratio's figure (trusted markup: a chart or a primitive's figure) in the frame.
 export function frameHtml(chart: string, o: FrameOptions = {}): string {
   const grid = o.gridlines ? ` data-gridlines="${o.gridlines}"` : "";
-  return `<div class="cap-chart"${o.inline ? ' data-head="inline"' : ""}${grid}><div class="cap-chart-figure">${chart}</div>${o.after ?? ""}</div>`;
+  const redraw = o.redraw ? ` ${redrawAttribute(o.redraw)}` : "";
+  return `<div class="cap-chart"${o.inline ? ' data-head="inline"' : ""}${grid}${redraw}><div class="cap-chart-figure">${chart}</div>${o.after ?? ""}</div>`;
 }
 
 // No data is a state with its reason, never an empty chart or a zero: the title, then the
