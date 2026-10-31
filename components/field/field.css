@@ -466,6 +466,11 @@
     .cap-range {
       appearance: auto;
     }
+    /* The thumb's ring is a box-shadow, which forced colors removes. */
+    .cap-range:focus-visible {
+      outline: var(--focus-width) solid Highlight;
+      outline-offset: 2px;
+    }
   }
 
   /* Radios or checkboxes in a fieldset.cap-field: one per line. */

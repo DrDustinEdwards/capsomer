@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [Unreleased]
+
+- **The sweep (`test/sweep.spec.ts`), blocking in CI.** Every states page and page-level specimen is checked for reflow at 320px, right-to-left spill, WCAG 1.4.12 text spacing, touch targets on a coarse pointer, forced colors (axe and a visible focus outline, both themes) and React wrapper parity with the HTML contract; the per-spec sideways-scroll checks it covers are gone, and the forced-colors screenshots are now taken by the sweep (`playwright.review.config.ts` removed). `expectNoAxeViolations` takes `disableRules`. `capsomer report` runs from an installed package without devDependencies, no longer counts Capsomer's own classes, markup or imports (`cap-btn`, `cap-chip`, `cap-field`, `app-*`, a site that renders ErrorPage) as own copies, reads double-quoted `replaces` patterns correctly and skips `*.min.js`; the `replaces` patterns in 21 doc pages are tightened (whole class names; dead or noisy ones fixed or dropped). Forced colors: `.cap-range` and the no-script menu's items show an outline on focus (their rings were a box-shadow or a tint).
+
 ## [0.49.0]
 
 A table between a phone and a laptop no longer scrolls sideways (Dustin, 2026-10-30).

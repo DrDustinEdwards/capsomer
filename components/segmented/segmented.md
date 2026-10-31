@@ -9,8 +9,8 @@ added: 0.1.0
 updated: 0.2.0
 source: The approved mockup (design/mockup.html, .seg); the Capsid Portal's .seg rules (0.1.1) agree with it
 replaces:
-  - 'class="[^"]*\bseg\b'
-  - 'className="[^"]*\bseg\b'
+  - 'class="(?:[^"]*\s)?seg[\s"]'
+  - 'className="(?:[^"]*\s)?seg[\s"]'
   - 'role="tablist"'
 ---
 

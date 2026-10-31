@@ -1,9 +1,11 @@
 # Capsomer's CI. The repo is public, so these minutes are free (rulings.md, rule 11).
 #
 # Blocking: the palette and scale checks (correctness, and contrast in both themes), the
-# unit tests, the type check, the build, and every component's keyboard and accessibility
-# tests in a real browser. Never blocking: the token check and the size report (rule 1,
-# decision 12), and the forced-colors screenshots, which are for review.
+# unit tests, the type check, the build, every component's keyboard and accessibility
+# tests in a real browser, and the sweep (test/sweep.spec.ts: reflow, right to left, text
+# spacing, touch targets, forced colors and React parity over every states page). Never
+# blocking: the token check and the size report (rule 1, decision 12). The sweep also
+# writes forced-colors screenshots to test-results/forced-colors/, kept with the run for review.
 #
 # The site itself is deployed by Cloudflare's Git integration (DEPLOY.md, rule 16). On main,
 # this workflow writes the run's test results to the `results` branch, even when a test
@@ -49,12 +51,8 @@ jobs:
         run: npm run site
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Keyboard and accessibility tests, both themes
+      - name: Keyboard and accessibility tests and the sweep, both themes
         run: npx playwright test --workers=4
-      - name: Forced-colors screenshots (for review, never blocks)
-        if: always()
-        run: npx playwright test -c playwright.review.config.ts
-        continue-on-error: true
       - name: Size (warns only)
         if: always()
         run: npm run size

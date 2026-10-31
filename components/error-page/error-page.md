@@ -9,7 +9,8 @@ added: 0.47.0
 updated: 0.48.0
 source: dustinedwards.info, app/components/error-page.tsx; Foxhound, app/components/error-view.tsx
 replaces:
-  - 'isRouteErrorResponse\(error\)'
+  - 'error\.status === 404 \? "404" : "Error"'
+  - 'The requested page could not be found\.'
 ---
 
 # Error page

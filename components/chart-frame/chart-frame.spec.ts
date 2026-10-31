@@ -12,8 +12,6 @@ eachTheme((theme) => {
     await visitStates(page, "chart-frame", theme);
     await page.locator("#cf-narrow details > summary").click();
     await expectNoAxeViolations(page);
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-    expect(overflow, "the page does not scroll sideways").toBeLessThanOrEqual(0);
   });
 
   test("accessibility: the title, summary, figure and disclosure reach their contrast", async ({ page }) => {

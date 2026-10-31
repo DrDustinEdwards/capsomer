@@ -9,8 +9,8 @@ added: 0.3.0
 source: The site's breadcrumb (app/components/breadcrumb.tsx, .page-breadcrumb in app/styles/shell.css); shadcn/ui Breadcrumb
 replaces:
   - '<nav[^>]*aria-label="Breadcrumb'
-  - 'class="[^"]*\b(page-breadcrumb|breadcrumbs?)\b'
-  - 'className="[^"]*\b(page-breadcrumb|breadcrumbs?)\b'
+  - 'class="(?:[^"]*\s)?(page-breadcrumb|breadcrumbs?)[\s"]'
+  - 'className="(?:[^"]*\s)?(page-breadcrumb|breadcrumbs?)[\s"]'
 ---
 
 # Breadcrumb
