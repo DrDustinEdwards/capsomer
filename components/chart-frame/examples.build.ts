@@ -2,9 +2,10 @@
 // fills each <!-- build:name --> in examples.html), so they are the package's live output in
 // every state: each kind of chart and primitive, the data open, a source, no data, a refusal,
 // and the same chart in every family. Invented, plausible data from the family's own world.
-import { heatStrip, progressRing, sparkline, timeline, uptimeStrip } from "enarratio";
+import { escapeHtml, heatStrip, progressRing, sparkline, timeline, uptimeStrip } from "enarratio";
 import { areaChart, type BarChartOptions, barChart, lineChart } from "enarratio/lite";
 import { frameHtml, noDataHtml } from "./chart-frame.ts";
+import { builds, refused } from "./specimen/react-charts.ts";
 
 const days = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
 const jobs = days.flatMap((day, i) => [
@@ -27,6 +28,8 @@ const drawings: Record<string, string> = {
     timeline({
       label: "Deploys and downtime, today",
       id: "cf-timeline",
+      // Drawn at the column's width, so its 12 px text is not scaled down.
+      width: 440,
       start: "2026-10-30T00:00:00Z",
       end: "2026-10-30T24:00:00Z",
       events: [
@@ -79,13 +82,26 @@ const drawings: Record<string, string> = {
   nodata: noDataHtml("Requests per hour", "The health route has not reported yet, so there is nothing to draw."),
   narrow: frameHtml(bar("cf-narrow")),
   comfortable: frameHtml(sparkline({ ...minutes, id: "cf-comfy" })),
+  // What ChartFrame renders on the server, before it measures its column: the page reads with
+  // scripts off, and React replaces it when it mounts.
+  redraw: frameHtml(builds(640)), // ChartFrame's DEFAULT_WIDTH
+  refused: (() => {
+    let reason = "";
+    try {
+      refused();
+    } catch (err) {
+      reason = err instanceof Error ? err.message : String(err);
+    }
+    if (!reason) throw new Error("the refused specimen drew a chart");
+    return `<div class="cap-chart" data-state="refused"><p class="cap-chart-reason">This chart could not be drawn: ${escapeHtml(reason)}</p></div>`;
+  })(),
 };
 
 // The same chart in every family, for the palette: series 1 to 8 in each family's surfaces.
 const families = ["purple", "fox", "teal", "amber", "navy", "forest", "magenta", "cerulean", "olive", "rose"];
 const eight = ["Builds", "Reviews", "Deploys", "Probes", "Backups", "Imports", "Mail", "Indexing"].flatMap((kind, k) => ["Q1", "Q2", "Q3"].map((q, i) => ({ q, kind, n: 3 + ((k * 7 + i * 3) % 6) })));
 drawings.families = families
-  .map((f) => `<div data-family="${f}" class="cf-family">${frameHtml(barChart({ data: eight, x: "q", y: "n", series: "kind", layout: "stacked", id: `cf-fam-${f}`, title: `Eight series in the ${f} family`, alt: `Every series color in the ${f} family, stacked by quarter.`, xLabel: "Quarter", yLabel: "Jobs", width: 440, height: 240, csv: false, summary: false, onIssue: () => {} }))}</div>`)
+  .map((f) => `<div data-family="${f}" class="cf-family">${frameHtml(barChart({ data: eight, x: "q", y: "n", series: "kind", layout: "stacked", id: `cf-fam-${f}`, title: `Eight series in the ${f} family`, alt: `Every series color in the ${f} family, stacked by quarter.`, xLabel: "Quarter", yLabel: "Jobs", width: 440, height: 240, source, summary: false, onIssue: () => {} }))}</div>`)
   .join("");
 
 export default drawings;

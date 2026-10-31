@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [bar, line, area, sparkline, uptime strip, heat strip with a gap, progress ring, timeline, data open with notes and source, no data, redrawn to its width, refused, comfortable density, narrow column, every family]
 added: 0.3.0
-updated: 0.53.0
+updated: 0.56.0
 source: Capsomer 0.2's uptime strip ("The numbers, by day") and stat tile (the sparkline's hidden summary), generalized; shadcn/ui Chart and Card for the head and the quiet frame
 replaces:
   - 'class="(chart-card|chart-wrap|chart-frame)'
@@ -26,7 +26,7 @@ Any chart a person reads: a bar, line or area chart, a sparkline, an uptime stri
 
 - A value against a limit is a meter (`.cap-meter`), which is not a chart.
 - A table of figures that is the content itself is a table. The frame is for a picture whose numbers are the alternative.
-- A chart in a sentence or a table cell (a sparkline beside a word) needs no frame: draw it with `inline: true` and put its summary in the cell.
+- A chart in a sentence or a table cell (a sparkline in a stat tile, an uptime strip in a row) needs no frame: it is an inline primitive, `role="img"` named by its numbers, or `aria-hidden` beside visible numbers ("Inline primitives", components/README.md).
 
 ## The default and its reason
 
@@ -34,8 +34,10 @@ Any chart a person reads: a bar, line or area chart, a sparkline, an uptime stri
 - **The table is in the HTML, behind "Show data"**, closed by default, a native `details` that works without script, opens with find-in-page and prints open. Enarratio labels it "Show data", then "Hide data"; the frame makes the label read as an action, at a full target's height.
 - **No data is a state with its reason**, in the chart's place, with the status glyph and word; there is no empty chart and no table.
 - **Drawn to its width.** A chart drawn at one width and shrunk to a phone shrinks its text. In React, `ChartFrame` draws at 640 on the server and before the first measurement (so hydration matches), then redraws at its own width in 40 px steps, keeping "Show data" open if the reader opened it. A chart Enarratio refuses says why in its place, not the page's.
+- **Enhanced by default.** `ChartFrame` loads `enarratio/enhance` after it mounts and runs it on its figure after each draw (hover details, keyboard reading, legend filters, a sortable table), so every site's charts behave alike; `enhance={false}` opts out. A page drawn on the server imports `capsomer/behavior/chart-enhance` once and gets the same for every `.cap-chart`.
+- **Gridlines are an attribute**, `data-gridlines="none | x | y | both"` on the frame or a wrapper (`gridlines` in React and `frameHtml`); the default is capsomerTheme's `y`.
 - **`data-head="inline"`** puts the subtitle at the end of the title's line, for a figure such as "99.4% up over 7 days".
-- **Colors are never set here.** The series, ramp, text, axes and grid come from the tokens through `css/enarratio.css`, so a token change reaches every chart in both themes and every family. Every pair of series is 10 CIEDE2000 apart under every color vision; under "increase contrast" the family's stronger text and lines reach the chart, and forced colors are Enarratio's.
+- **Colors are never set here.** The series, ramp, text, axes and grid come from the tokens through `capsomer/enarratio.css`, so a token change reaches every chart in both themes and every family. Every pair of series is 10 CIEDE2000 apart under every color vision; a series' words beside its marks (direct labels) take its ink, `--series-ink-N`, at 4.5:1; the ramp's least step is 3:1; under "increase contrast" the family's stronger text and lines reach the chart, and forced colors are Enarratio's. A one-chart color (`colors: { Refunds: "var(--crit)" }`) that names a Capsomer token needs nothing more.
 
 ## The shadcn component it matches
 
@@ -45,7 +47,7 @@ Chart inside Card. Matched: the quiet head with a title and a muted description,
 
 | Key | Does |
 | --- | --- |
-| Tab | Reaches the CSV link and "Show data"; once open, the table's sort buttons. With `enarratio/enhance`, the chart is one tab stop |
+| Tab | Reaches the chart (one tab stop, from the enhancement layer), the CSV link and "Show data"; once open, the table's sort buttons |
 | Enter or Space on "Show data" | Opens or closes the table |
 | Arrow keys, Home, End, Page Up, Page Down in an enhanced chart | Move between points (Enarratio's keys) |
 
@@ -71,22 +73,22 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </figure>
 ```
 
-On a server without React: `import { frameHtml, noDataHtml } from "capsomer/behavior/chart-frame"`; `frameHtml(figure, { inline, after })` and `noDataHtml(title, reason)` return the strings (the reason and title are escaped; the figure and `after` are trusted markup).
+On a server without React: `import { frameHtml, noDataHtml } from "capsomer/behavior/chart-frame"`; `frameHtml(figure, { inline, gridlines, after })` and `noDataHtml(title, reason)` return the strings (the reason and title are escaped; the figure and `after` are trusted markup). The page imports `capsomer/behavior/chart-enhance` once (a module it serves itself): it enhances every `.cap-chart` without a `data-enhance` attribute, now and as frames are added; `enhanceCharts(root, options)` and `watchCharts(options)` are exported for a page that wants options.
 
 In React: `import { ChartFrame } from "capsomer/react/chart-frame"`.
 
 ```tsx
 import { barChart } from "enarratio/lite/bar";
-import { enhance } from "enarratio/enhance";
 
-<ChartFrame draw={(width) => barChart({ ...options, width })} onDraw={(el) => { const c = enhance(el); return () => c.forEach((x) => x.destroy()); }} />
+<ChartFrame draw={(width) => barChart({ ...options, width })} />
+<ChartFrame draw={draw} enhance={{ url: true }} gridlines="none" />
 <ChartFrame chart={uptimeStrip(options)} inline>{legend}</ChartFrame>
 <ChartFrame noData={{ title: "Requests per hour", reason: "The health route has not reported yet." }} />
 ```
 
-Props: `draw(width)` (redrawn to the frame's width) or `chart` (a figure drawn once), `width` (the server's width, 640), `minWidth` (240), `noData`, `inline`, `onDraw(el)` (after each draw; may return a cleanup), `className`, `children` (after the figure).
+Props: `draw(width)` (redrawn to the frame's width) or `chart` (a figure drawn once), `width` (the server's width, 640), `minWidth` (240), `noData`, `inline`, `enhance` (true, false, or `enarratio/enhance` options), `gridlines`, `onDraw(el)` (after each draw; may return a cleanup), `className`, `children` (after the figure). The frame carries `data-enhance="self"` (or `"off"`), so the page module leaves it to React, and `data-state="refused"` when Enarratio refuses the chart.
 
-The page loads `capsomer/tokens.css` (it imports the mapping) and Enarratio's `base.css`, or `stylesheet(capsomerTheme, { highContrast: capsomerMoreTheme })` from `capsomer/enarratio-theme`; both give the same look. A chart with a `colors` override also needs `colorStyles(html)` in the page's CSS (Enarratio 0.4 writes no `style` attribute).
+The page loads `capsomer/tokens.css` and `capsomer/enarratio.css`: one stylesheet for every chart (Enarratio's base rules are in it). A chart with a `colors` override naming a Capsomer token needs nothing more; any other color also needs `colorStyles(html)` in the page's CSS (Enarratio 0.4 writes no `style` attribute).
 
 ## Exceptions in production
 

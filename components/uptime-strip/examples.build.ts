@@ -25,10 +25,14 @@ export default {
   ),
   comfy: strip("up-4", "dustinedwards.info", "100% up over 7 days", week({})),
   noData: strip("up-3", "germomics.org", "100% up over the 6 of 7 days with data", week({ 2: { status: "unknown", label: "Sat, Sep 26: no data, the watcher did not run" } })),
-  inline: [
-    ["foxhound.app", week({ 5: { status: "down", label: "Tue, Sep 29: down from 11:50 to 18:20 UTC" } }), "96.1%"],
-    ["carrel.app", week({}), "100%"],
-  ]
-    .map(([site, slots, pct]) => `<tr><th scope="row">${site}</th><td><span class="cap-uptime-line"><span class="cap-uptime-strip">${uptimeStrip({ slots: slots as UptimeSlot[], label: `Uptime of ${site}, 7 days`, inline: true, width: 160, height: 18 })}</span><span class="cap-uptime-pct">${pct}</span></span></td></tr>`)
+  // An inline primitive: the strip is role="img" named by a sentence with the same numbers as
+  // the percent beside it, so it needs no frame (components/README.md, "Inline primitives").
+  inline: (
+    [
+      ["foxhound.app", week({ 5: { status: "down", label: "Tue, Sep 29: down from 11:50 to 18:20 UTC" } }), "96.1%", "Uptime of foxhound.app, 7 days: 96.1% up; down on Tuesday, September 29, from 11:50 to 18:20 UTC."],
+      ["carrel.app", week({}), "100%", "Uptime of carrel.app, 7 days: 100% up, every day."],
+    ] as const
+  )
+    .map(([site, slots, pct, alt]) => `<tr><th scope="row">${site}</th><td><span class="cap-uptime-line"><span class="cap-uptime-strip">${uptimeStrip({ slots, label: `Uptime of ${site}, 7 days`, alt, inline: true, width: 160, height: 18 })}</span><span class="cap-uptime-pct">${pct}</span></span></td></tr>`)
     .join(""),
 };

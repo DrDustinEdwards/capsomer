@@ -6,5 +6,5 @@
 @import "../tokens/scale.css" layer(cap.tokens);
 /* Every family's one color, so a page can mark the others (tokens/family-marks.css). */
 @import "../tokens/family-marks.css" layer(cap.tokens);
-/* Enarratio's custom properties, mapped onto the tokens above (css/enarratio.css). */
-@import "./enarratio.css";
+/* Enarratio's custom properties, mapped onto the tokens above (css/enarratio-tokens.css; charts import css/enarratio.css). */
+@import "./enarratio-tokens.css";

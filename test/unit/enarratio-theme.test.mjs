@@ -35,12 +35,12 @@ test("the chart palette: every check passes for every family in both themes", ()
   }
 });
 
-// Every color and font property Enarratio's base rules read has no fallback there, so css/enarratio.css
+// Every color and font property Enarratio's base rules read has no fallback there, so css/enarratio-tokens.css
 // must define each one; a property Enarratio adds later fails here instead of drawing nothing.
-test("css/enarratio.css defines every --enarratio-* color and font property the base rules read without a fallback", async () => {
+test("css/enarratio-tokens.css defines every --enarratio-* color and font property the base rules read without a fallback", async () => {
   const { readFileSync } = await import("node:fs");
   const base = readFileSync(new URL("../../node_modules/enarratio/dist/base.css", import.meta.url), "utf8");
-  const ours = readFileSync(new URL("../../css/enarratio.css", import.meta.url), "utf8");
+  const ours = readFileSync(new URL("../../css/enarratio-tokens.css", import.meta.url), "utf8");
   const bare = new Set([...base.matchAll(/var\((--enarratio-[\w-]+)\s*\)/g)].map((m) => m[1]));
   assert.ok(bare.size > 10, "found the properties without a fallback");
   // Some (--enarratio-slot, --enarratio-texture) are set by the base rules or each chart element itself.
@@ -48,10 +48,23 @@ test("css/enarratio.css defines every --enarratio-* color and font property the 
   assert.deepEqual(missing, []);
 });
 
-test("css/enarratio.css maps onto Capsomer's tokens only, never a literal color", async () => {
+test("css/enarratio-tokens.css maps onto Capsomer's tokens only, never a literal color", async () => {
   const { readFileSync } = await import("node:fs");
-  const ours = readFileSync(new URL("../../css/enarratio.css", import.meta.url), "utf8");
+  const ours = readFileSync(new URL("../../css/enarratio-tokens.css", import.meta.url), "utf8");
   const colors = ours.split("\n").filter((l) => /--enarratio-(background|text|grid|focus|series|sequential|status)/.test(l) && l.includes(":"));
   assert.ok(colors.length >= 35);
   for (const l of colors) assert.match(l, /var\(--/, l);
+});
+
+// The pair rules match Enarratio's attribute by substring; if Enarratio changes how it writes a
+// `colors` override, a chart would silently lose its color, so the real markup is checked here.
+test("css/enarratio.css carries the rule for a colors override that names a Capsomer token, with its ink", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { barChart } = await import("enarratio/lite");
+  const css = readFileSync(new URL("../../css/enarratio.css", import.meta.url), "utf8");
+  const html = barChart({ data: [{ x: "a", s: "A", n: 1 }, { x: "a", s: "B", n: 2 }], x: "x", y: "n", series: "s", colors: { A: "var(--crit)", B: "var(--series-5)" }, title: "t", alt: "a" });
+  const attr = html.match(/data-enarratio-colors="([^"]*)"/)?.[1] ?? "";
+  const rules = [...css.matchAll(/\.enarratio\[data-enarratio-colors\*="([^"]+)"\] \{ ([^}]*)\}/g)].filter(([, sub]) => attr.includes(sub));
+  assert.ok(rules.some(([, , body]) => body.includes("--enarratio-series-1: var(--crit)") && body.includes("--chart-ink-1: var(--crit)")), attr);
+  assert.ok(rules.some(([, , body]) => body.includes("--enarratio-series-2: var(--series-5)") && body.includes("--chart-ink-2: var(--series-ink-5)")), attr);
 });

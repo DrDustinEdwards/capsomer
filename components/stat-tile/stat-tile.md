@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [ok, warning, critical, no data, hover, pressed, keyboard focus, a row of every tone, phone width wrapping onto more rows]
 added: 0.1.0
-updated: 0.53.0
+updated: 0.56.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx (tiles) and styles.css ("stat tiles")
 replaces:
   - 'class="tiles?( |")'
@@ -33,7 +33,7 @@ A value against a hard limit with a projection is a usage meter. A list of what 
 - **The figure is tabular**, with its unit or denominator small beside it ("2,140 of 2,000"), so figures line up across tiles. It comes before its label in the markup, so the tile's name reads "6 of 6 Sites up All up".
 - **When it is not ok, a status glyph and a word say so** ("Over limit", "Near limit"), and the figure, the word and the sparkline take the tone's color. Shape, word and color together (patterns.md "Status"). An ok tile may carry a word ("All up") without a glyph.
 - **No data is a state with a reason, never a zero.** The figure says "No data" beside the dashed glyph, and the detail line says why ("The health route has not been read yet").
-- **The sparkline comes from Enarratio.** Render it with `sparkline({ values, label, inline: true, width: 96, height: 22 })` and put its SVG in `.cap-tile-chart`, which is `aria-hidden`; the slot sets its height and makes Enarratio's series color the tile's tone (`--enarratio-series-1: currentColor`). Give every chart a one-sentence summary with its numbers, in a `.cap-sr-only` element the tile names with `aria-describedby`, so the numbers are text and the tile's name stays short. **With the numbers too**, the tile joins a chart frame: wrap the tile and its summary in `<div class="cap-chart" data-variant="tile">` and add Enarratio's "Show data" (`dataTableBlock(table, label)`, or `sparklineTable(options).markup`) under the tile, outside the link (a disclosure inside a link is nested interactive content). React `StatTile` takes `chartTable` and `chartTableLabel` and draws it with `dataTableBlock`. Without `chartTable` nothing changes.
+- **The sparkline comes from Enarratio and is an inline primitive.** Render it with `sparkline({ values, label, alt, inline: true, width: 96, height: 22 })` and put its SVG in `.cap-tile-chart`; the slot sets its height and makes Enarratio's series color the tile's tone (`--enarratio-series-1: currentColor`). The SVG is `role="img"` named by a sentence with its numbers (its `alt`, or Enarratio's own from the values), so it is read with the tile and needs no frame ("Inline primitives", components/README.md); to name it with your own sentence instead, put `role="img"` and `aria-label` on `.cap-tile-chart` (React: `chartSummary`). **With the numbers too**, wrap the tile in `<div class="cap-data">` and add Enarratio's "Show data" (`dataTableBlock(table, label)`, or `sparklineTable(options).markup`) under the tile, outside the link (a disclosure inside a link is nested interactive content). React `StatTile` takes `chartTable` and `chartTableLabel` and draws it with `dataTableBlock`.
 - **A tile is never narrower than its text** (`flex: 1 0 auto`), so the row wraps to more rows instead of cutting a word: no breakpoints, and a phone gets one or two across by what fits. Only a tile wider than the whole row wraps its detail, and its line wraps whole.
 - **Hover** darkens the border to `--line-strong` and tints the tile `--raised`; pressed tints it `--sunken`; keyboard focus draws the shared 2 px `--ring` outline; the color changes ease over 100 ms; with a mouse, hover also lifts it on `--shadow-s`, and a press gives it to 98.5% and springs it back (no movement under reduced motion). The tile is shadcn's Item look: hairline edge, `--radius-l`, padding from `--pad-y` and `--pad-x` so comfortable density roomies it.
 
@@ -47,7 +47,7 @@ A value against a hard limit with a projection is a usage meter. A list of what 
 
 ## Accessibility
 
-- A tile's accessible name is its text in reading order: figure, label, word, detail. The sparkline's summary is its description.
+- A tile's accessible name is its text in reading order: figure, label, word, detail, then the sparkline's sentence with its numbers.
 - The tiles sit in a list; name it (`aria-label="Overview figures"`) when the page has more than one.
 - The tile's border is decoration: the tile is identified by its text and shows a focus ring at 3:1. Hover and pressed change the background and the border; in forced colors the border is the button color and hover uses Highlight.
 - Text reaches 4.5:1 in every tone on the tile's surface, its hover tint and its pressed tint.
@@ -64,16 +64,15 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <div class="cap-tiles">
   <ul class="cap-tiles-list" aria-label="Overview figures">
     <li>
-      <a class="cap-tile" href="/agents" data-tone="crit" aria-describedby="budget-chart">
+      <a class="cap-tile" href="/agents" data-tone="crit">
         <span class="cap-tile-line">
           <span class="cap-tile-figure">2,140 <small>of 2,000</small></span>
           <span class="cap-tile-label">Actions minutes</span>
           <span class="cap-tile-word">[crit glyph]Over limit</span>
         </span>
         <span class="cap-tile-detail">$4.10 of $10 model spend this month</span>
-        <span class="cap-tile-chart" aria-hidden="true">[Enarratio sparkline({ inline: true }) SVG]</span>
+        <span class="cap-tile-chart" role="img" aria-label="Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.">[Enarratio sparkline({ inline: true }) SVG]</span>
       </a>
-      <span class="cap-sr-only" id="budget-chart">Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.</span>
     </li>
     <li>
       <a class="cap-tile" href="/backups" data-tone="nodata">
