@@ -1,0 +1,4 @@
+/* Specimen layout only: a narrow column. */
+#steps-narrow-wrap {
+  max-inline-size: 320px;
+}

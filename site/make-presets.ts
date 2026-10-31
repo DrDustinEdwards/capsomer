@@ -69,10 +69,10 @@ export const PRESETS: Array<{ group: string; items: Array<{ id: string; name: st
 ];
 export const DEFAULT = family("purple");
 
-/** The type sizes for a body size and density: Capsomer's own at 14px, scaled. */
+/** The type sizes for a body size and density: Capsomer's own at 14px, scaled, in rem (16px each at the default size). */
 export function sizes(body: number, density: Density): Record<string, string> {
   const comfy = density === "comfortable";
-  const px = (n: number) => `${Math.round(n)}px`;
+  const px = (n: number) => `${Math.round(n) / 16}rem`;
   return {
     "fs-label": px(body - (comfy ? 2 : 3)),
     "fs-detail": px(body - 1),

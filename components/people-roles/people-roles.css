@@ -51,7 +51,7 @@
 
   /* The table's cells. The person is a name over an email, both readable at a glance. */
   .cap-people-who {
-    text-align: left;
+    text-align: start;
     text-transform: none;
     letter-spacing: 0;
     font-weight: 400;

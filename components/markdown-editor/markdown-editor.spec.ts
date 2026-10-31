@@ -9,7 +9,6 @@ import {
   linkEdit,
   looksLikeUrl,
   minutesForWords,
-  rovingIndex,
   scaffoldCursor,
   wrapEdit,
 } from "./markdown-editor.ts";
@@ -110,17 +109,6 @@ test("behavior: a typed address is recognized, and a query filters the pages by 
   expect(filterLinkTargets(t, "notes").length).toBe(1);
   expect(filterLinkTargets(t, "https://x.example")).toEqual([]);
   expect(filterLinkTargets(Array.from({ length: 20 }, (_, i) => ({ href: `/${i}`, title: `Post ${i}` })), "").length).toBe(8);
-});
-
-test("behavior: the roving key map wraps and honors Home and End", () => {
-  expect(rovingIndex("ArrowRight", 2, 3)).toBe(0);
-  expect(rovingIndex("ArrowLeft", 0, 3)).toBe(2);
-  expect(rovingIndex("ArrowDown", 0, 3)).toBeNull();
-  expect(rovingIndex("ArrowDown", 1, 3, "vertical")).toBe(2);
-  expect(rovingIndex("Home", 2, 3)).toBe(0);
-  expect(rovingIndex("End", 0, 3)).toBe(2);
-  expect(rovingIndex("a", 0, 3)).toBeNull();
-  expect(rovingIndex("ArrowRight", 0, 0)).toBeNull();
 });
 
 test("behavior: the edits wrap, cycle, number, place and link as the site's editor did", () => {

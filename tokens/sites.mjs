@@ -77,8 +77,8 @@ const SITES = {
       "font-ui": '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
       mono: '"DM Mono", "DM Mono Fallback", monospace',
       display: '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
-      "fs-detail": "13px",
-      "fs-body": "14px",
+      "fs-detail": "0.8125rem",
+      "fs-body": "0.875rem",
       control: "38px",
       "control-h": "38px",
       "pad-x": "14px",
@@ -146,8 +146,8 @@ const SITES = {
     note: "secondary text is 13px at the least on a phone (the Portal UX audit's m4), at the Portal's own 820px",
     phoneMax: "820px",
     phone: {
-      "fs-label": "13px",
-      "fs-detail": "13px",
+      "fs-label": "0.8125rem",
+      "fs-detail": "0.8125rem",
     },
   },
   txasm: {

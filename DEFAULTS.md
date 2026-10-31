@@ -26,4 +26,21 @@ One page. Every line is a default with its reason, not a law: a better design ov
 - **Chart colors are tokens, never chart code.** Eight series colors (purple, fox and teal first, then sage, indigo, pine, orchid, rose) and a five-step ramp in the family's hue are tokens (`--series-1` to `--series-8`, `--ramp-1` to `--ramp-5`); `css/enarratio.css` maps every `--enarratio-*` property onto them. Each series is at least 3:1 against the surface, ground and raised surface in both themes, every pair is at least 8 CIEDE2000 apart with typical vision and under protanopia, deuteranopia and tritanopia, and no companion sits within 6 of a status color; `npm run check` verifies it. Why: a chart is read by everyone, and a change to a token must reach every chart. (Enarratio's own default of 10 between series is not reachable for eight colors of one weight without dull or status-like colors; the pairs between 8 and 10 are its warnings, never errors.)
 - **Size budgets warn.**
 
+## Refused patterns
+
+Patterns other systems ship that Capsomer does not build, each with its reason and what to use instead. A product that needs one makes the case on the component's page first, as for any default.
+
+| Pattern | Why not | Instead |
+| --- | --- | --- |
+| Carousel | It hides all but one slide, and a moving one fails WCAG 2.2.2 unless it can be paused; people rarely see past the first slide (NN/g, "Auto-Forwarding Carousels and Accordions Annoy Users", 2013). | Everything in view: a grid of panels or a row list. |
+| Feed (APG `role="feed"`) | Endless loading puts the footer out of reach and loses a person's place; the APG feed pattern itself depends on screen reader reading modes behaving alike, which they do not. | Pagination (GOV.UK Pagination), or "Show more" that adds rows and moves no focus. |
+| Window splitter | A dragged divider needs a keyboard model and a single-pointer alternative (WCAG 2.5.7), for a layout container queries already fit to the space. | The shell's rail and collapse, the detail panel, and container queries. |
+| Menubar | APG's menubar is a desktop application's menu; for a site's navigation APG uses disclosure buttons and links (Example Disclosure Navigation Menu), and screen readers then announce plain links people know. | Site header and shell links; the menu button for a short list of commands. |
+| Context menu | Right-click or long press shows nothing that says it is there, and touch and keyboard have no standard way to open it (a pattern APG does not define). | A visible "More actions" menu button on the row. |
+| Grid (APG `role="grid"`) | Its two-way arrow model replaces the screen reader's own table keys, and every cell becomes a stop to learn (APG's Table pattern: data that is read, not edited cell by cell, is a table). | Table, with `aria-sort` header buttons and a row's own link and actions. |
+| Tree grid | A grid's cost and a tree's together; nothing in the family needs rows that are both nested and edited by cell. | Tree, or a table with group rows (disclosure's group row). |
+| Two-thumb range slider | Two thumbs on one track are hard to hit apart on a touch screen and to set to an exact value by speech (APG Multi-Thumb Slider; WCAG 2.5.7). | Two number fields, minimum and maximum (GOV.UK's design system has no slider at all). |
+| Phase banner | GOV.UK uses it for a service in alpha or beta; no family site is released in phases, and a standing "beta" label tells a person nothing to act on. | Banner, for a notice with something to say. |
+| Cookie notice | Open, not refused: no family site is known to set non-essential cookies, but bsw has a cookie policy page, so it is not confirmed. Until it is, a site that sets them needs one (GOV.UK Cookie banner). | Nothing, where a site sets only essential cookies. |
+
 The full reasoning, with sources: capsomer/research/design.md in Capsid.
