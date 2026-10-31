@@ -40,6 +40,12 @@
     font-family: var(--ui);
     font-size: var(--fs-body);
   }
+  /* The transcript link is a whole target (24px, 44px on a touch screen; WCAG 2.5.8). */
+  :where(.cap-player-transcript a) {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target);
+  }
 
   /* The embed before a click: the site's own poster (never one fetched from the service), a play
      button, and a bar that names the service and the title. Without script it is a link to the
