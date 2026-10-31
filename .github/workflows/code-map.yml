@@ -22,7 +22,7 @@ jobs:
       group: code-map
       cancel-in-progress: false
     # Pinned to a full sha of devkit, as devkit's scripts/check-callers.mjs requires.
-    uses: DrDustinEdwards/devkit/.github/workflows/code-map.yml@766881e150d2de96689523c4e3530cc748c64cc0 # v0.17.0
+    uses: DrDustinEdwards/devkit/.github/workflows/code-map.yml@64997ae3facf4360eb676c57b7a5b5e8ec3350de # v0.18.0
     with:
       node-version-file: .node-version
       install: npm ci
