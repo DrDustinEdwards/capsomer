@@ -9,7 +9,7 @@ import { eachTheme, expectNoAxeViolations } from "../test/helpers.ts";
 const VIEWS = ["overview", "components", "color", "type", "motion", "tests", "defaults", "changes"];
 
 // The headers the static Worker sends on every page: every `/*` rule of the built site's _headers
-// combined, as Cloudflare combines them, which the build writes from scripts/security-headers.ts.
+// combined, as Cloudflare combines them, which `npm run site` writes from the site registry (site-runtime-headers).
 const PAGE_HEADERS = Object.fromEntries(
   readFileSync("site-dist/_headers", "utf8")
     .split("\n\n")
