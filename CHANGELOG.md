@@ -4,6 +4,23 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+The foundation's accessibility gaps from the area 9 audit (2026-10-30).
+
+- **One switch for every single-key shortcut (WCAG 2.1.4).** The shortcuts sheet's switch (`setSingleKeys`) now sets `data-cap-single-keys` on `<html>`, and the stored choice is put there again when any component with single keys loads. Every component's own keys obey it: row list `j`/`k` (and so the attention list, flag list and publish gate), media `x`, draft compare `n`/`p`, history list, moderation queue, mentions list, message `z`, site header `T` (`themeKey`) and admin shell `G` and a digit (`enhance()` and the React `jumpKeys`). `singleKeysOff()` now lives in `shortcuts.ts` (row-list re-exports it). `data-cap-undo-key="off"` still turns off one region's `z`. Changed contract: setting `data-cap-single-keys="off"` on `<html>` yourself also turns off the registry's own single keys.
+- **Font sizes in rem** (WCAG 1.4.4): `--fs-h3`, `--fs-h2`, `--fs-prose`, `--fs-prose-h2`, `--fs-page`, `--fs-label`, `--fs-detail`, `--fs-body`, `--fs-lead`, the Foxhound and Portal site layers' sizes, the Make page's presets and `.cap-mono` are rem, the same size at the default 16px. `--fs-input-coarse` is `max(1rem, 16px)`. `tokens.json` writes rem as `{ unit: "rem" }`. No token renamed.
+- **Focus is never hidden under a bottom bar (WCAG 2.4.11).** `scroll-padding-bottom` on the page while the shell's phone tab bar, the site header's tab bar or a bottom bulk bar is shown.
+- **New: `.cap-sr-only-focusable`**, hidden like `.cap-sr-only` until it or something in it has focus. **New: `.cap-skip`**, the skip link for a page with neither shell nor site header. `.cap-shell-skip` and `.cap-site-header-skip` are now drawn by `utilities.css` (one rule, same look); their markup is unchanged.
+- **Forced colors** blocks in shortcuts (key caps), family footer (the current site), share preview (the image's place) and table (a selected row, which was a tint and a shadow).
+- **Right to left.** Logical properties replace physical ones that misplaced things: admin shell and site header badges, attention list and panel source lines, dialog side sheets (their edge and their slide), the disclosure and row list chevrons (mirrored), feed times, people roles, permission matrix and stat tile headings, the shell's labels, tips, counts and badges, and the switch's thumb. `--cap-dialog-dir` is new on `.cap-dialog`.
+- **Reduced motion:** the letterhead's scroll-linked fade is off under `prefers-reduced-motion: reduce`.
+- **A 16px checkbox's hit area is `--target`** (44px on a touch screen), drawn the same size, for a row's box with no visible label.
+- **Disclosure:** an accordion's titles may be headings (`<summary><h3>...</h3></summary>`), documented and in the specimen.
+- **New: toolbar** (`components/toolbar`: `.cap-toolbar`, `.cap-toolbar-sep`, `attachToolbar`, `rovingIndex`), the APG toolbar with one tab stop and a pressed look for toggle buttons. The markdown editor's toolbar uses it; `rovingIndex` moved there (still exported by the markdown editor) and now swaps Left and Right right to left.
+- **New: tag group** (`components/tag-group`: `.cap-tags`, `.cap-tags-label`, `.cap-tags-list`, `.cap-tags-empty`, `.cap-tag`, `.cap-tag-name`, `.cap-tag-remove`), removable tags with arrows, Delete or Backspace, focus kept and Undo.
+- **New: summary list** (`components/summary-list`: `.cap-summary-list`, `.cap-summary-actions`, `.cap-summary-missing`), GOV.UK's summary list with Change links. **Changed contract:** the detail panel's `.cap-detail-record` is drawn by `summary-list.css` now, so load it with `detail-panel.css`.
+- **New: step indicator** (`components/step-indicator`: `.cap-steps`, `.cap-steps-list`, `.cap-step`, `.cap-step-name`, `.cap-steps-heading`, `.cap-steps-counter`), USWDS's, with `aria-current="step"`.
+- **Docs:** the link page (`components/link/link.md`), the back link (on the breadcrumb page), and a Refused patterns section in DEFAULTS.md (carousel, feed, window splitter, menubar, context menu, grid, tree grid, two-thumb range slider, phase banner; the cookie notice is open). The bulk bar, history list and mentions list pages no longer claim a switch that did nothing.
+
 ## [0.51.0]
 
 The sites' own faces swap in without moving text.

@@ -27,7 +27,7 @@ Two ways to the same look. **Panels**: a `tablist` of buttons and the `tabpanel`
 ## When not to
 
 - **A value, not a view** (a time window, a layout): the segmented control. It is radios and changes a setting, not a panel.
-- **Steps in order**: numbered headings or a stepper, not tabs.
+- **Steps in order**: the step indicator (components/step-indicator) over one step per page, not tabs.
 - **One long page with sections**: the anchor bar, or headings.
 - **Show or hide one thing in place**: a disclosure.
 - Tabs inside tabs: the second level is a page of its own.

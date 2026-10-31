@@ -13,8 +13,10 @@
     filter: var(--img-filter);
   }
 
-  /* Text a screen reader announces and the eye does not see. */
-  .cap-sr-only {
+  /* Text a screen reader announces and the eye does not see. The focusable variant shows
+     while it, or something in it, has focus. */
+  .cap-sr-only,
+  .cap-sr-only-focusable:not(:focus-within) {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -25,7 +27,7 @@
   /* Identifiers only: ids, shas, commands, paths. Times and counts are .cap-num. */
   .cap-mono {
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 0.75rem;
     letter-spacing: -0.01em;
   }
   .cap-num {
@@ -114,6 +116,31 @@
     .cap-go[data-go="back"]::before {
       forced-color-adjust: none;
       background: LinkText;
+    }
+  }
+}
+
+/* In the components layer, where the shell and the site header drew their own copies, so a
+   component can still move it (the letterhead does). */
+@layer cap.components {
+  /* The skip link, the first thing a keyboard reaches: hidden until focused, then a primary
+     button in the corner (the shell's .cap-shell-skip and the site header's .cap-site-header-skip
+     are the same link). */
+  :is(.cap-skip, .cap-shell-skip, .cap-site-header-skip) {
+    position: absolute;
+    inset-inline-start: var(--space-3);
+    inset-block-start: var(--space-3);
+    z-index: var(--z-tip);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-m);
+    background: var(--primary);
+    color: var(--primary-fg);
+    box-shadow: var(--shadow-m);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:not(:focus-visible) {
+      transform: translateY(-200%);
     }
   }
 }

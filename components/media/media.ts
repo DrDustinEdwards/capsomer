@@ -9,6 +9,7 @@
 import { enhance as enhanceMeters } from "../meter/meter.ts";
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { fail } from "../message/message.ts";
+import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { performBulk, type BulkHandler, type BulkItem } from "../bulk-bar/bulk-bar.ts";
 import { altStateOf, describeRecord, LARGE_BYTES, parseTags, type MediaFields, type MediaRecord } from "./media-record.ts";
 import { bands, nextTile, type Direction } from "./media-grid.ts";
@@ -62,10 +63,6 @@ const controllers = new WeakMap<HTMLElement, MediaController>();
 
 export function controllerFor(root: HTMLElement | null): MediaController | undefined {
   return root ? controllers.get(root) : undefined;
-}
-
-function singleKeysOff(): boolean {
-  return document.documentElement.dataset.capSingleKeys === "off";
 }
 
 export function attachMedia(root: HTMLElement, options: MediaOptions = {}): MediaController {
