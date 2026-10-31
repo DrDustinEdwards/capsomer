@@ -9,8 +9,8 @@ added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (select.field, select.search)
 replaces:
-  - '<select class="[^"]*\b(field|search)\b'
-  - '<select className="[^"]*\b(field|search)\b'
+  - '<select class="(?:[^"]*\s)?(field|search)[\s"]'
+  - '<select className="(?:[^"]*\s)?(field|search)[\s"]'
 ---
 
 # Select

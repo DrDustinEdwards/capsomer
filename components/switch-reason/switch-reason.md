@@ -9,8 +9,8 @@ added: 0.1.0
 updated: 0.2.0
 source: The approved mockup (design/mockup.html, the improve loop switch and .reason); the Capsid Portal's ui/Switch.tsx (AutomationSwitch, ReasonForm) and its .autoctl, .reason, .err and .state-note rules (0.1.1)
 replaces:
-  - 'class="[^"]*\breason\b'
-  - 'class="[^"]*\bautoctl\b'
+  - 'class="(?:[^"]*\s)?reason[\s"]'
+  - 'class="(?:[^"]*\s)?autoctl[\s"]'
 ---
 
 # Automation switch

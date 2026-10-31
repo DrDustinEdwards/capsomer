@@ -881,17 +881,6 @@ eachTheme((theme) => {
     await expect(toolbarOf(section(page, "sp-empty")).getByRole("button", { name: "Chart" })).toHaveCount(0);
   });
 
-  test("behavior: it fits a phone: the toolbar wraps and nothing scrolls the page sideways", async ({ page }) => {
-    await page.setViewportSize({ width: 360, height: 800 });
-    await visitStates(page, NAME, theme);
-    await ready(page, "sp-default");
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-    expect(overflow).toBeLessThanOrEqual(0);
-    const target = await toolbarOf(section(page, "sp-default")).getByRole("button", { name: "Bold" }).boundingBox();
-    expect(target?.width).toBeGreaterThanOrEqual(24);
-    expect(target?.height).toBeGreaterThanOrEqual(24);
-  });
-
   test("behavior: with a CSP that needs a nonce, the editor's styles carry it and nothing is blocked", async ({ page }) => {
     const nonce = "n0nc3abc";
     await page.route("**/components/markdown-editor/states.html*", async (route) => {

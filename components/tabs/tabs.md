@@ -9,8 +9,8 @@ added: 0.3.0
 source: The site admin's status tabs (app/components/admin/posts-filters.tsx, .posts-tab) and mention filters (app/routes/admin.mentions.tsx, .admin-chip); shadcn/ui Tabs for the panel form
 replaces:
   - 'role="tablist"'
-  - 'class="[^"]*\b(posts-tab|tabs?-(list|trigger)|tab-list)\b'
-  - 'className="[^"]*\b(posts-tab|tab-list)\b'
+  - 'class="(?:[^"]*\s)?(posts-tab|tabs?-(list|trigger)|tab-list)[\s"]'
+  - 'className="(?:[^"]*\s)?(posts-tab|tab-list)[\s"]'
 ---
 
 # Tabs
