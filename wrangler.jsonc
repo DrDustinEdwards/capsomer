@@ -14,7 +14,7 @@
     "directory": "./site-dist",
     "binding": "ASSETS",
     // The Worker runs first for every page; the hashed files under /assets/ are served by the assets layer
-    // directly, with the headers site-dist/_headers sets (written by scripts/security-headers.ts).
+    // directly, with the headers site-dist/_headers sets (written by site-runtime-headers from the site registry).
     "run_worker_first": ["/*", "!/assets/*"],
     // A missing file gets the Worker's 404 page, private and never stored. The site routes with #, so there is no
     // client route to fall back to.
