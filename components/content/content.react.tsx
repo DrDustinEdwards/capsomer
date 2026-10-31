@@ -79,6 +79,9 @@ export interface Intents {
   confirmPage: ReactNode;
   // The confirm dialog of the script path, while it is open.
   confirmDialog: ReactNode;
+  // The last result, from the script path or the page, for what a list shows of it beyond the
+  // sentence (the posts list's preview link).
+  latest: IntentResult | null;
   // Asks before a one-way intent the kit runs at once (the posts list's Cancel the update):
   // the same confirm dialog, which posts the request's fields when confirmed.
   ask: (request: ConfirmRequest) => void;
@@ -218,6 +221,7 @@ export function useIntents({ action, Form, submit, result = null, names, cancelH
     resultBox: !message || box ? <ResultBox result={box} action={action} Form={Form} keyHint={keyHint} /> : null,
     confirmPage,
     confirmDialog,
+    latest: settled ?? result,
     ask: setAsking,
     run,
   };

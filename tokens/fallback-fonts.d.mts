@@ -10,8 +10,11 @@ export interface FontMetrics {
 export type LocalFace = "Arial" | "Courier New" | "Times New Roman" | "Georgia";
 /** Each local face's metrics and the local() names it is tried under, its metric twins after it. */
 export const LOCAL: Record<LocalFace, { metrics: FontMetrics; src: readonly string[] }>;
+export type MeasuredFamily =
+  | "Schibsted Grotesk" | "Martian Mono" | "DM Sans" | "DM Mono" | "Source Serif 4"
+  | "Montserrat" | "Open Sans" | "Inter" | "Fraunces" | "Space Grotesk" | "JetBrains Mono";
 /** Faces already measured, keyed by family. */
-export const MEASURED: Record<"Schibsted Grotesk" | "Martian Mono" | "DM Sans" | "DM Mono" | "Source Serif 4", { metrics: FontMetrics; local: LocalFace }>;
+export const MEASURED: Record<MeasuredFamily, { metrics: FontMetrics; local: LocalFace }>;
 /** `${family} Fallback`. */
 export function fallbackName(family: string): string;
 /** The @font-face rule for the size-matched fallback named fallbackName(family). local defaults to Arial. */
