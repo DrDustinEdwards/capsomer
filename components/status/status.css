@@ -183,8 +183,6 @@
       }
       &[data-variant="link"]:is(:hover, [data-force="hover"]) {
         color: var(--accent-hover);
-        text-decoration: underline;
-        text-underline-offset: 3px;
       }
       &[data-variant="default"]:is(:hover, [data-force="hover"]) {
         background: var(--primary-hover);

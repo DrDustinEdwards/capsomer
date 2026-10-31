@@ -43,9 +43,14 @@
     font-size: var(--text-size);
     line-height: var(--leading);
   }
+  /* A link is told by weight, not a line (DEFAULTS.md): a text link, one with no component
+     class, is semibold in the link color. */
   a {
     color: var(--accent-text);
-    text-underline-offset: 2px;
+    text-decoration: none;
+    &:not([class*="cap-"]) {
+      font-weight: 600;
+    }
     &:hover {
       color: var(--accent-hover);
     }

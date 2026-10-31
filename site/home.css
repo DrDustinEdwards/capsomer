@@ -48,7 +48,6 @@ body {
    capsomer/site-header.css). */
 a:not(.cap-btn, .cap-sign, .cap-family-footer a, .cap-site-header a) {
   color: var(--accent-text);
-  text-underline-offset: 3px;
 }
 code {
   font: 0.85em var(--mono);

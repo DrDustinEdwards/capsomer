@@ -143,18 +143,16 @@
       }
     }
 
-    /* Reads as a link, still a button. shadcn "link". The underline carries the hover. */
+    /* Reads as a link, still a button. shadcn "link". The color carries the hover. */
     &[data-variant="link"] {
       --cap-btn-fg: var(--accent-text);
       --cap-btn-bg: transparent;
       --cap-btn-line: transparent;
       --cap-btn-hover: transparent;
       --cap-btn-press: transparent;
-      text-underline-offset: 4px;
 
       &:where(:hover, [data-force="hover"]) {
         --cap-btn-fg: var(--accent-hover);
-        text-decoration: underline;
       }
     }
 
@@ -266,14 +264,12 @@
     background: none;
     color: var(--accent-text);
     font: inherit;
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    font-weight: 600;
     cursor: pointer;
 
     &:hover,
     &[data-force="hover"] {
       color: var(--accent-hover);
-      text-decoration-thickness: 2px;
     }
     &:focus-visible {
       outline: var(--ring-width) solid var(--ring);
@@ -281,7 +277,6 @@
     }
     &:is(:disabled, [aria-disabled="true"]) {
       color: var(--dim);
-      text-decoration: none;
       cursor: not-allowed;
     }
   }

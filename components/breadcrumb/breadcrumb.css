@@ -77,8 +77,6 @@
     &:hover,
     &[data-force="hover"] {
       color: var(--accent-hover);
-      text-decoration: underline;
-      text-underline-offset: 3px;
     }
     &:focus-visible {
       outline: var(--ring-width) solid var(--ring);
@@ -164,8 +162,6 @@
     &:hover {
       background: var(--raised);
       color: var(--accent-hover);
-      text-decoration: underline;
-      text-underline-offset: 3px;
     }
     &:focus-visible {
       outline: var(--ring-width) solid var(--ring);

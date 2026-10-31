@@ -171,9 +171,6 @@
       content: " \203A" / "";
     }
   }
-  .cap-flag .cap-row-title a:hover .cap-flag-goto {
-    text-decoration: underline;
-  }
   .cap-flag-title .cap-status {
     margin-inline-start: var(--space-3);
     font-size: var(--fs-detail);

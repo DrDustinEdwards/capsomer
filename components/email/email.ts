@@ -141,7 +141,7 @@ function footerHtml(lines: FooterLine[], c: EmailColors): string {
     .map((l) => {
       const style = `font-family:${FONT};font-size:14px;line-height:22px;color:${c.muted};padding:0 0 4px 0;`;
       if (typeof l === "string") return `<tr><td class="e-muted" style="${style}">${escapeHtml(l)}</td></tr>`;
-      return `<tr><td class="e-muted" style="${style}"><a class="e-link" href="${escapeHtml(checkUrl(l.url))}" style="color:${c["accent-text"]};text-decoration:underline;">${escapeHtml(l.text)}</a></td></tr>`;
+      return `<tr><td class="e-muted" style="${style}"><a class="e-link" href="${escapeHtml(checkUrl(l.url))}" style="color:${c["accent-text"]};text-decoration:none;font-weight:600;">${escapeHtml(l.text)}</a></td></tr>`;
     })
     .join("\n");
 }
