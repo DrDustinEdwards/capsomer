@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- The posts list names site-api v0.17.0, the release its Trash, rename, preview links, authors and excerpts shipped in: site-api 0.16.0 went to the 404 report first. Text only; no HTML contract changes.
+
 ## [0.53.0]
 
 Charts move to Enarratio 0.4 (the charts checklist, area 10, 2026-10-31). Enarratio now draws the whole figure, so the chart frame is a thin layout around it instead of a second figure. Needs Enarratio 0.4.0.
@@ -21,7 +23,7 @@ Charts move to Enarratio 0.4 (the charts checklist, area 10, 2026-10-31). Enarra
 
 ## [0.52.0]
 
-The posts list posts the content kit's own intent names and shows what site-api v0.16.0 adds, each only where the kit offers it, each a form post that works with no script.
+The posts list posts the content kit's own intent names and shows what site-api v0.17.0 adds, each only where the kit offers it, each a form post that works with no script.
 
 - **Changed HTML contract: the tag intents are the kit's names.** The bulk bar posts `intent=tag-add` and `intent=tag-remove` (were `add-tag` and `remove-tag`, which site-api's `runPostsIntent` refused). `PostIntent` changes to match. A host that translated the old names drops the translation.
 - **Trash** (`offers.trash`): a Trash status tab (`trashed=1` in the address, `PostsQuery.trashed`, `counts.trash`) with "Posts in Trash are deleted for good 30 days after they were moved there." (`trashLine`); new intents `trash` (Move to Trash, in the bar and the row menu, replacing Delete there) and `restore` (in the Trash), each the other's Undo; `delete` is offered in the Trash only, as Delete for good, behind the same typed count. With script, focus goes from a post that leaves to the next post's title, the table or the current tab. New `PostRow.trashedAt`; "Trash is empty" as the empty state. New class `.cap-posts-trash-note`.
