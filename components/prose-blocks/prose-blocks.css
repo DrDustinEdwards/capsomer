@@ -319,8 +319,9 @@
 
     /* An embed: no request to the service until the reader asks. Until then a card the size of the
        player it becomes, so nothing moves on the click: the site's own poster (never the service's
-       thumbnail), a play button for a video or a song, and a bar naming the service and the title.
-       render/enhance swaps in the player; without script the link opens the service. */
+       thumbnail), a play button for a video or a song, and a bar naming the service and the title,
+       drawn by capsomer/player.css. render/enhance swaps in the player; without script the link
+       opens the service. */
     & :where(.embed) {
       /* Each service's player: a screen (16:9), a map (4:3), a post (4:5, about the width the
          services draw a post at), an upright video, or a strip as tall as the service's own player. */
@@ -333,7 +334,6 @@
       }
     }
     & :where(.embed-link, .embed iframe) {
-      display: grid;
       inline-size: 100%;
       max-inline-size: var(--embed-max);
       aspect-ratio: var(--embed-ratio);
@@ -346,88 +346,13 @@
       border: 0;
       background: var(--sunken);
     }
-    & :where(.embed-link) {
-      position: relative;
-      grid-template: 1fr auto / 1fr;
-      overflow: hidden;
-      border: 1px solid var(--line-strong);
-      background: var(--sunken);
-      color: var(--text);
-      font-family: var(--ui);
-      text-decoration: none;
-      & > :where(picture, img) {
-        grid-area: 1 / 1 / -1 / -1;
-        inline-size: 100%;
-        block-size: 100%;
-      }
-      & :where(img) {
-        inline-size: 100%;
-        block-size: 100%;
-        object-fit: cover;
-        border-radius: 0;
-      }
-      & > :where(.embed-play) {
-        position: relative;
-        grid-area: 1 / 1;
-        place-self: center;
-        inline-size: calc(var(--target) * 1.5);
-        block-size: calc(var(--target) * 1.5);
-        border: 2px solid var(--primary-fg);
-        border-radius: var(--radius-full);
-        background: var(--primary);
-        box-shadow: var(--shadow-m);
-        &::before {
-          content: "";
-          position: absolute;
-          inset: 30% 26% 30% 36%;
-          background: var(--primary-fg);
-          clip-path: polygon(0 0, 100% 50%, 0 100%);
-        }
-      }
-      & > :where(.embed-label) {
-        position: relative;
-        grid-area: 2 / 1;
-        padding: var(--space-3) var(--space-4);
-        border-block-start: 1px solid var(--line);
-        background: var(--surface);
-        font-size: var(--fs-body);
-        font-weight: 600;
-        line-height: 1.35;
-        text-wrap: balance;
-      }
-      /* The card keeps the link system's states: the tint under the pointer, a stronger one pressed. */
-      &:hover,
-      &[data-force="hover"] {
-        border-color: var(--accent);
-        & > :where(.embed-play) {
-          background: var(--primary-hover);
-        }
-      }
-      &:active,
-      &[data-force="pressed"] {
-        border-color: var(--accent);
-      }
-      @media (prefers-reduced-motion: no-preference) {
-        & > :where(.embed-play) {
-          transition: scale var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
-        }
-        &:hover > :where(.embed-play) {
-          scale: 1.06;
-        }
-      }
-      @media (forced-colors: active) {
-        & > :where(.embed-play) {
-          border-color: ButtonText;
-          &::before {
-            forced-color-adjust: none;
-            background: ButtonText;
-          }
-        }
-      }
-    }
     /* HTML stored before Prelum 0.28: the link's text alone, centered, after a play mark. */
     & :where(.embed-link:not(:has(.embed-label))) {
       display: flex;
+      border: 1px solid var(--line-strong);
+      background: var(--sunken);
+      font-family: var(--ui);
+      text-decoration: none;
       align-items: center;
       justify-content: center;
       padding: var(--space-4);

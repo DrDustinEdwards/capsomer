@@ -48,9 +48,10 @@
   }
 
   /* The embed before a click: the site's own poster (never one fetched from the service), a play
-     button, and a bar that names the service and the title. Without script it is a link to the
+     button, and a bar that names the service and the title. Prelum 0.28's ::embed writes the same
+     parts as .embed-link, .embed-poster, .embed-play and .embed-label; prose blocks size it. Without script it is a link to the
      service; with script the player takes its place. */
-  :where(.cap-player-facade) {
+  :where(.cap-player-facade, .embed-link:has(.embed-label)) {
     position: relative;
     display: grid;
     grid-template: 1fr auto / 1fr;
@@ -63,13 +64,13 @@
     font-family: var(--ui);
     text-decoration: none;
 
-    & > :where(.cap-player-poster) {
+    & > :where(.cap-player-poster, .embed-poster, picture) {
       grid-area: 1 / 1 / -1 / -1;
       inline-size: 100%;
       block-size: 100%;
       object-fit: cover;
     }
-    & > :where(.cap-player-play) {
+    & > :where(.cap-player-play, .embed-play) {
       position: relative;
       grid-area: 1 / 1;
       place-self: center;
@@ -87,7 +88,7 @@
         clip-path: polygon(0 0, 100% 50%, 0 100%);
       }
     }
-    & > :where(.cap-player-label) {
+    & > :where(.cap-player-label, .embed-label) {
       position: relative;
       grid-area: 2 / 1;
       padding: var(--space-3) var(--space-4);
@@ -98,19 +99,19 @@
       line-height: 1.35;
       text-wrap: balance;
     }
-    &:hover > :where(.cap-player-play) {
+    &:hover > :where(.cap-player-play, .embed-play) {
       background: var(--primary-hover);
     }
     @media (prefers-reduced-motion: no-preference) {
-      & > :where(.cap-player-play) {
+      & > :where(.cap-player-play, .embed-play) {
         transition: scale var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
       }
-      &:hover > :where(.cap-player-play) {
+      &:hover > :where(.cap-player-play, .embed-play) {
         scale: 1.06;
       }
     }
     @media (forced-colors: active) {
-      & > :where(.cap-player-play) {
+      & > :where(.cap-player-play, .embed-play) {
         border-color: ButtonText;
         &::before {
           forced-color-adjust: none;
