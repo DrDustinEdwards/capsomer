@@ -140,7 +140,7 @@
       border-collapse: collapse;
       font-family: var(--ui);
       font-size: var(--fs-body);
-      font-variant-numeric: tabular-nums;
+      font-variant-numeric: var(--figures-column);
     }
     & :where(th, td) {
       padding: var(--space-2) var(--space-3);

@@ -51,7 +51,7 @@
 
     & .enarratio-subtitle {
       margin-inline-start: auto;
-      font-variant-numeric: tabular-nums;
+      font-variant-numeric: var(--figures);
     }
     & .enarratio-finding {
       flex-basis: 100%;
@@ -60,20 +60,23 @@
 
   /* "Show data" (then "Hide data", Enarratio's words) reads as the action it is, at a full
      target's height. */
-  .cap-chart .enarratio-data > summary {
+  :is(.cap-chart, .cap-data) .enarratio-data > summary {
     --enarratio-text-muted: var(--accent-text);
     line-height: var(--target);
     font-weight: 600;
   }
 
-  /* The tile form: a stat tile is its own title and link, so the frame adds only the data
-     disclosure under it (outside the link, never inside). */
-  .cap-chart[data-variant="tile"] {
+  /* Numbers behind "Show data" that belong to something that is not a chart: a stat tile with
+     its inline sparkline (the disclosure under the tile, outside the link, never inside) and a
+     usage meter's table. Not a frame, so not read as a chart. */
+  .cap-data {
+    display: grid;
     gap: var(--space-2);
+    min-width: 0;
   }
 
   @media (forced-colors: active) {
-    .cap-chart .enarratio-data > summary {
+    :is(.cap-chart, .cap-data) .enarratio-data > summary {
       --enarratio-text-muted: LinkText;
     }
   }

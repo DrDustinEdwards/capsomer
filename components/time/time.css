@@ -10,7 +10,7 @@
 @layer cap.components {
   .cap-time {
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     white-space: nowrap;
 
     /* An exact time is read in a sentence, not down a column: proportional figures, so the

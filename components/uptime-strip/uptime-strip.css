@@ -12,7 +12,7 @@
     font-size: var(--fs-body);
     font-weight: 600;
     color: var(--text);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   /* The strip in a table cell (uptimeStrip({ inline: true })), with its percent after it on

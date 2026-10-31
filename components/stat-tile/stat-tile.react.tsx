@@ -1,5 +1,5 @@
 import { dataTableBlock, type DataTable } from "enarratio";
-import { Children, useId, type ReactNode } from "react";
+import { Children, type ReactNode } from "react";
 
 export type StatTone = "ok" | "warn" | "crit" | "nodata";
 
@@ -18,13 +18,16 @@ interface StatTileBase {
   // Shown with a status glyph when the tone is warn or crit.
   word?: string;
   detail?: ReactNode;
-  // Enarratio's sparkline({ ..., inline: true }) output, an SVG string, placed in the chart slot as it comes.
+  // Enarratio's sparkline({ ..., inline: true }) output, an SVG string, placed in the chart slot
+  // as it comes: an inline primitive, role="img" named by a sentence with its numbers (its `alt`,
+  // or Enarratio's own from the values), so it needs no frame.
   chart?: string;
-  // One sentence with the chart's numbers: "Actions minutes per day, last 7 days: 260 rising to 340."
+  // One sentence with the chart's numbers, "Actions minutes per day, last 7 days: 260 rising to
+  // 340.", when the SVG's own name is not it: the slot becomes the image, named by this.
   chartSummary?: string;
-  // The chart's numbers (Enarratio's sparklineTable().table). With it the tile sits in a chart
-  // frame and Enarratio's "Show data" opens the table under the tile, outside the link. Name it
-  // in chartTableLabel ("Actions minutes by day").
+  // The chart's numbers (Enarratio's sparklineTable().table). With it Enarratio's "Show data"
+  // opens the table under the tile, outside the link. Name it in chartTableLabel ("Actions
+  // minutes by day").
   chartTable?: DataTable;
   chartTableLabel?: string;
   // Opens the view behind the figure: a link with href, or a button with onClick.
@@ -67,9 +70,8 @@ const plainLink = ({ children, ...props }: StatTileLinkProps) => <a {...props}>{
 
 export function StatTile(props: StatTileProps) {
   const { label, tone, word, chart, chartSummary, chartTable, chartTableLabel, href, onClick, renderLink = plainLink } = props;
-  const id = useId();
   const nodata = props.tone === "nodata";
-  const describedBy = chart && chartSummary && !nodata ? `${id}-chart` : undefined;
+  const hasChart = Boolean(chart) && !nodata;
 
   // The figure, its label and its word on one line, the detail beneath (the Portal's compact
   // tile). The figure comes first in the DOM, so the name reads "6 of 6 Sites up All up".
@@ -101,40 +103,29 @@ export function StatTile(props: StatTileProps) {
           ) : null}
         </span>
         {props.detail ? <span className="cap-tile-detail">{props.detail}</span> : null}
-        {chart ? <span className="cap-tile-chart" aria-hidden="true" dangerouslySetInnerHTML={{ __html: chart }} /> : null}
+        {chart ? <span className="cap-tile-chart" {...(chartSummary ? { role: "img", "aria-label": chartSummary } : {})} dangerouslySetInnerHTML={{ __html: chart }} /> : null}
       </>
     );
 
   const tile =
     href !== undefined ? (
-      renderLink({ href, className: "cap-tile", "data-tone": tone, "aria-describedby": describedBy, children: body })
+      renderLink({ href, className: "cap-tile", "data-tone": tone, children: body })
     ) : (
-      <button type="button" className="cap-tile" data-tone={tone} aria-describedby={describedBy} onClick={onClick}>
+      <button type="button" className="cap-tile" data-tone={tone} onClick={onClick}>
         {body}
       </button>
     );
 
-  const summary = describedBy ? (
-    <span className="cap-sr-only" id={describedBy}>
-      {chartSummary}
-    </span>
-  ) : null;
-  // With a table the tile joins the chart frame: "Show data" sits under the tile, never inside the link.
-  if (describedBy && chartTable) {
+  // With a table, "Show data" sits under the tile, never inside the link.
+  if (hasChart && chartTable) {
     return (
-      <div className="cap-chart" data-variant="tile">
+      <div className="cap-data">
         {tile}
-        {summary}
         <div dangerouslySetInnerHTML={{ __html: dataTableBlock(chartTable, chartTableLabel ?? `${label}, by period`) }} />
       </div>
     );
   }
-  return (
-    <>
-      {tile}
-      {summary}
-    </>
-  );
+  return tile;
 }
 
 export interface StatTilesProps {

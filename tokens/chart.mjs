@@ -32,10 +32,13 @@ export const COMPANIONS = [
 
 // The sequential ramp: one hue (the family's), five steps from least to most. In light the
 // most is the darkest; in dark the most is the lightest, so each step stands further from
-// the surface than the one before (Enarratio's check). [lightness, share of the seed chroma].
+// the surface than the one before (Enarratio's check). Since 0.56 the least step is already
+// 3:1 against the surface (WCAG 2.2 non-text contrast), so a heat-strip or heatmap cell is
+// found without an outline; the ramp spans the rest of the lightness range from there.
+// [lightness, share of the seed chroma].
 const RAMP = {
-  light: [[0.91, 0.22], [0.81, 0.45], [0.7, 0.7], [0.57, 0.95], [0.43, 0.9]],
-  dark: [[0.3, 0.4], [0.42, 0.6], [0.54, 0.8], [0.68, 0.85], [0.82, 0.7]],
+  light: [[0.63, 0.7], [0.555, 0.85], [0.48, 0.95], [0.405, 0.9], [0.33, 0.8]],
+  dark: [[0.585, 0.75], [0.67, 0.8], [0.755, 0.7], [0.84, 0.55], [0.925, 0.35]],
 };
 
 export function rampColors(seedHue, seedChroma, scheme) {

@@ -64,7 +64,7 @@
     margin-inline-start: auto;
     font-size: var(--fs-detail);
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     white-space: nowrap;
   }
 
@@ -91,7 +91,7 @@
     }
   }
   .cap-session-count {
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   /* The question waiting on you, answered here without leaving the list. */

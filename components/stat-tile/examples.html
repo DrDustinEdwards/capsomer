@@ -4,13 +4,12 @@
   <div class="cap-tiles">
     <ul class="cap-tiles-list" aria-label="Overview figures">
       <li>
-        <div class="cap-chart" data-variant="tile" id="grid-sites-chart-frame">
-          <a class="cap-tile" href="#sites" data-tone="ok" aria-describedby="grid-sites-chart">
+        <div class="cap-data" id="grid-sites-data">
+          <a class="cap-tile" href="#sites" data-tone="ok">
           <span class="cap-tile-line"><span class="cap-tile-figure">6 <small>of 6</small></span><span class="cap-tile-label">Sites up</span><span class="cap-tile-word">All up</span></span>
           <span class="cap-tile-detail">Watcher pass 40 seconds ago</span>
-          <span class="cap-tile-chart" aria-hidden="true"><!-- build:sitesSpark --></span>
+          <span class="cap-tile-chart" role="img" aria-label="Sites up, last 7 days: 6 of 6 every day."><!-- build:sitesSpark --></span>
         </a>
-          <span class="cap-sr-only" id="grid-sites-chart">Sites up, last 7 days: 6 of 6 every day.</span>
           <!-- build:sitesTable -->
         </div>
       </li>
@@ -21,13 +20,12 @@
         </button>
       </li>
       <li>
-        <div class="cap-chart" data-variant="tile" id="grid-budget-chart-frame">
-          <a class="cap-tile" href="#budget" data-tone="crit" aria-describedby="grid-budget-chart">
+        <div class="cap-data">
+          <a class="cap-tile" href="#budget" data-tone="crit">
           <span class="cap-tile-line"><span class="cap-tile-figure">2,140 <small>of 2,000</small></span><span class="cap-tile-label">Actions minutes</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Over limit</span></span>
           <span class="cap-tile-detail">$4.10 of $10 model spend this month</span>
-          <span class="cap-tile-chart" aria-hidden="true"><!-- build:budgetSpark --></span>
+          <span class="cap-tile-chart" role="img" aria-label="Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340."><!-- build:budgetSpark --></span>
         </a>
-          <span class="cap-sr-only" id="grid-budget-chart">Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.</span>
           <!-- build:budgetTable -->
         </div>
       </li>
@@ -38,12 +36,11 @@
         </a>
       </li>
       <li>
-        <button type="button" class="cap-tile" data-tone="warn" aria-describedby="grid-d1-chart">
+        <button type="button" class="cap-tile" data-tone="warn">
           <span class="cap-tile-line"><span class="cap-tile-figure">78% <small>of today's limit</small></span><span class="cap-tile-label">D1 rows read</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Near limit</span></span>
           <span class="cap-tile-detail">3.9 million of 5 million</span>
-          <span class="cap-tile-chart" aria-hidden="true"><!-- build:d1Spark --></span>
+          <span class="cap-tile-chart" role="img" aria-label="D1 rows read at this hour, last 7 days, rising: 52, 58, 61, 64, 70, 74 and 78 percent."><!-- build:d1Spark --></span>
         </button>
-        <span class="cap-sr-only" id="grid-d1-chart">D1 rows read at this hour, last 7 days, rising: 52, 58, 61, 64, 70, 74 and 78 percent.</span>
       </li>
       <li>
         <a class="cap-tile" href="#findings" data-tone="ok">

@@ -90,7 +90,7 @@ export function UsageMeter({ items, now = Date.now(), freshness, stale = false, 
           </li>
         </ul>
       )}
-      <div className="cap-chart" dangerouslySetInnerHTML={{ __html: dataTableBlock(usageTable(items.map((item) => ({ ...item, now }))), tableLabel) }} />
+      <div className="cap-data" dangerouslySetInnerHTML={{ __html: dataTableBlock(usageTable(items.map((item) => ({ ...item, now }))), tableLabel) }} />
     </div>
   );
 }
