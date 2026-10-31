@@ -6,7 +6,7 @@
    contract, stored in every site's rendered HTML, so they are not cap- prefixed; each selector is held
    inside the prose context by :where(), which adds no specificity, so a site overrides one with a
    single class. css/prose.css keeps the measure, the serif and the heading sizes; this file adds the
-   rest. Colors, sizes and radii are tokens only. */
+   rest, except links, which are the link system's in every context. Colors, sizes and radii are tokens only. */
 @layer cap.components {
   :where([data-context="prose"]) {
     /* A post is often a grid or flex item, whose min-width: auto would let a wide table or code block
@@ -78,11 +78,6 @@
       padding-inline: 0.15em;
       background: var(--warn-soft);
       color: inherit;
-    }
-    /* Links: semibold in the link color, never underlined, even under the pointer (Dustin, 2026-10-31). */
-    & :where(a:not(.button, .bookmark-link, .embed-link)) {
-      font-weight: 600;
-      text-decoration: none;
     }
     & :where(abbr[title]) {
       text-decoration: none;
@@ -445,19 +440,13 @@
       }
     }
 
-    /* Footnotes: a rule above, the smaller size, back links a full target wide. */
+    /* Footnotes: a rule above and the smaller size. The reference and back links are the link system's. */
     & :where(.footnotes) {
       max-inline-size: var(--measure);
       margin-block-start: 2em;
       padding-block-start: var(--space-4);
       border-block-start: 1px solid var(--line);
       font-size: 0.9em;
-    }
-    & :where([data-footnote-ref], .data-footnote-backref) {
-      display: inline-block;
-      min-inline-size: var(--target);
-      text-align: center;
-      text-decoration: none;
     }
 
     /* The editorial pack: a side note, a pull quote, a color swatch, a diagram. */

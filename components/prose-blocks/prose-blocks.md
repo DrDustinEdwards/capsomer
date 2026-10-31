@@ -47,5 +47,5 @@ Any page whose body is rendered Markdown: a post, an essay, a doc page, a book c
 ## Accessibility
 
 - Every color is a token pair that meets WCAG 2.2 AA in both themes; the specs check the callout titles, the bookmark, the button and the code title.
-- Footnote references and back links are a full target wide.
+- Links, footnote references and back links included, are styled by Capsomer's link system, not here.
 - The footnotes heading is `.sr-only`, GFM's name for it, hidden as `.cap-sr-only` is.
