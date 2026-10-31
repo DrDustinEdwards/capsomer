@@ -46,9 +46,18 @@ The foundation's accessibility gaps from the area 9 audit (2026-10-30).
 - **New: step indicator** (`components/step-indicator`: `.cap-steps`, `.cap-steps-list`, `.cap-step`, `.cap-step-name`, `.cap-steps-heading`, `.cap-steps-counter`), USWDS's, with `aria-current="step"`.
 - **Docs:** the link page (`components/link/link.md`), the back link (on the breadcrumb page), and a Refused patterns section in DEFAULTS.md (carousel, feed, window splitter, menubar, context menu, grid, tree grid, two-thumb range slider, phase banner; the cookie notice is open). The bulk bar, history list and mentions list pages no longer claim a switch that did nothing.
 
+- **Showcase site: the family icon set** (no package change). Prelum v0.22.0's icons, drawn from the letterhead's hexagon on the magenta family's `#752c6a` (white on it for the Apple touch and maskable icons), are in `site/public`; every page links them with `iconLinks()` and `site.webmanifest` comes from `webManifest()`. The inline data-URL favicon is gone.
+- **Catalog: the results region has its id** (`{id}-results`). The filter tray's "Show N" link pointed at `#{id}-results`, which nothing carried, so on a phone it closed the tray without moving to the results; Prelum's live check flagged it on all eight dustinedwards.info research pages. HTML contract: the results region gains `id="{id}-results"`.
+
+## [0.54.0]
+
+A mail for every change to how a person signs in (sign-in and access, area 3: A8, E1).
+
+- **New email template: `securityNotice`** (`capsomer/email`). It takes `title`, `what`, `when` and `secure`, with optional `device`, `location` and `url`, the fields of site-runtime 0.45.0's `sendSecurityNotice` `detail`, so a site renders the notice with `renderEmail(securityNotice, { brand, to: user.email, ...detail, url })`. The mail says what changed and when, then "Device:" and "Near:" lines when it has them, what to do if it was not the person, a "Review your account" button with `url`, and that it holds no link that signs in. The subject is "{brand}: {title}". It takes `copy` like the others. States page: two new frames. No class, token or HTML contract changes.
 - **Site only: the report endpoint is rate limited and connect-src names one file** (no package change). `/csp-report` passes site-runtime's receiver an `allow` backed by a Workers rate-limit binding (`CSP_REPORT_RATE_LIMIT` in `wrangler.jsonc`, 60 a minute per address), so a flood no longer reaches the log. The site's `connect-src` names the results file it reads (`https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json`) instead of every repository on raw.githubusercontent.com. `test/unit/security-headers.test.mjs` is removed: the family's live header check grades the public site.
 - **Site only: static files carry their charset and cross-origin CORP where another origin loads them** (no package change). The site's `_headers` gives every static text file `charset=utf-8`, and stylesheets, scripts and fonts `Cross-Origin-Resource-Policy: cross-origin` (site-runtime 0.43.0 `headersFile({ charset: true })` and `corpFor`).
 - **Showcase site: each page's WebPage and breadcrumb.** `site/seo.ts` builds heads with Prelum's `defineHead`, so the theme builder and every component page carry a WebPage and a Home > page BreadcrumbList, and the canonical keeps the slash the pages are served at.
+- The posts list names site-api v0.17.0, the release its Trash, rename, preview links, authors and excerpts shipped in: site-api 0.16.0 went to the 404 report first. Text only; no HTML contract changes.
 
 ## [0.53.0]
 
@@ -67,7 +76,7 @@ Charts move to Enarratio 0.4 (the charts checklist, area 10, 2026-10-31). Enarra
 
 ## [0.52.0]
 
-The posts list posts the content kit's own intent names and shows what site-api v0.16.0 adds, each only where the kit offers it, each a form post that works with no script.
+The posts list posts the content kit's own intent names and shows what site-api v0.17.0 adds, each only where the kit offers it, each a form post that works with no script.
 
 - **Changed HTML contract: the tag intents are the kit's names.** The bulk bar posts `intent=tag-add` and `intent=tag-remove` (were `add-tag` and `remove-tag`, which site-api's `runPostsIntent` refused). `PostIntent` changes to match. A host that translated the old names drops the translation.
 - **Trash** (`offers.trash`): a Trash status tab (`trashed=1` in the address, `PostsQuery.trashed`, `counts.trash`) with "Posts in Trash are deleted for good 30 days after they were moved there." (`trashLine`); new intents `trash` (Move to Trash, in the bar and the row menu, replacing Delete there) and `restore` (in the Trash), each the other's Undo; `delete` is offered in the Trash only, as Delete for good, behind the same typed count. With script, focus goes from a post that leaves to the next post's title, the table or the current tab. New `PostRow.trashedAt`; "Trash is empty" as the empty state. New class `.cap-posts-trash-note`.
