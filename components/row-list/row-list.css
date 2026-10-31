@@ -75,10 +75,6 @@
     &:hover,
     &[data-force="hover"] {
       background: var(--raised);
-
-      & .cap-row-title :is(a, button) {
-        text-decoration: underline;
-      }
     }
 
     /* The focused row: the selection tint and an inset ring in --ring, 3:1 against --sel
@@ -142,8 +138,10 @@
     margin: 0;
     font: inherit;
 
+    /* The title and the detail take two lines at most: one that fits on a line still fits with
+       a reader's own text spacing (WCAG 1.4.12). */
     & :is(a, button) {
-      display: block;
+      display: -webkit-box;
       width: 100%;
       overflow: hidden;
       padding: 0;
@@ -154,9 +152,11 @@
       font-weight: 600;
       text-align: start;
       text-decoration: none;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow-wrap: anywhere;
       outline: none;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
 
       /* The stretched hit area: the whole row opens the detail. */
       &::after {
@@ -172,11 +172,14 @@
     grid-row: 2;
     min-width: 0;
     margin: 0;
+    display: -webkit-box;
     overflow: hidden;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     color: var(--muted);
     font-size: var(--fs-detail);
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .cap-row-meta {
@@ -218,10 +221,16 @@
     flex: none;
     width: 7px;
     height: 7px;
-    margin: 0 3px 2px 6px;
+    margin-block: 0 2px;
+    margin-inline: 6px 3px;
     border-right: 1.5px solid currentColor;
     border-bottom: 1.5px solid currentColor;
     transform: rotate(-45deg);
+
+    /* Right to left, mirrored: closed, it points to the inline end there too. */
+    &:dir(rtl), :where([dir="rtl"]) & {
+      scale: -1 1;
+    }
   }
   .cap-row:has(.cap-row-title [aria-expanded="true"]) .cap-row-chevron {
     transform: rotate(45deg);
@@ -237,8 +246,13 @@
       grid-template-columns: auto minmax(0, 1fr) auto;
     }
     .cap-row-title :is(a, button) {
-      white-space: normal;
-      overflow-wrap: anywhere;
+      -webkit-line-clamp: none;
+      line-clamp: none;
+    }
+    /* A picture or an icon sits at the top, so it stays beside the title however many lines the
+       title and the detail take. */
+    .cap-row-media {
+      align-self: start;
     }
     .cap-row {
       row-gap: var(--space-1);

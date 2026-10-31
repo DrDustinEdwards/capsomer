@@ -10,7 +10,7 @@ updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/ConfirmDialog.tsx and styles.css (.help), as of capsid master 2026-10-01; dustinedwards.info app/components/admin/confirm-dialog.tsx for the typed word
 replaces:
   - 'className="(help )?confirm'
-  - "confirm-dialog"
+  - '(?<![\w/.-])confirm-dialog'
   - 'window\.confirm\('
 ---
 

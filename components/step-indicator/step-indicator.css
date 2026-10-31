@@ -1,0 +1,79 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A step indicator (USWDS Step indicator): where a person is in a flow of a few steps, one per
+   page. A bar per step with its name under it, then the heading "Step 2 of 4" and the step's
+   name. Done is a filled bar and a tick, the current step a filled bar and a heavier name, a step
+   to come an empty bar: never color alone, and the heading says it in words. */
+@layer cap.components {
+  .cap-steps {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .cap-steps-list {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: cap-step;
+  }
+  .cap-step {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding-block-start: var(--space-3);
+    border-block-start: var(--space-3) solid var(--line-strong);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    overflow-wrap: break-word;
+    hyphens: auto;
+
+    &:is([data-state="complete"], [aria-current="step"]) {
+      border-block-start-color: var(--primary);
+      color: var(--text);
+    }
+    &[aria-current="step"] {
+      font-weight: 700;
+    }
+    /* The tick: a drawn check, as the field's checkbox draws its own. */
+    &[data-state="complete"]::before {
+      content: "";
+      flex: none;
+      inline-size: 5px;
+      block-size: 9px;
+      margin-inline: 2px 1px;
+      border: solid var(--accent-text);
+      border-width: 0 2px 2px 0;
+      rotate: 45deg;
+    }
+  }
+  .cap-steps-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin: 0;
+    font-family: var(--display);
+    font-size: var(--fs-h3);
+    font-weight: 700;
+  }
+  .cap-steps-counter {
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    font-variant-numeric: var(--figures);
+  }
+
+  @media (forced-colors: active) {
+    .cap-step:is([data-state="complete"], [aria-current="step"]) {
+      border-block-start-color: Highlight;
+    }
+    .cap-step[data-state="complete"]::before {
+      border-color: CanvasText;
+    }
+  }
+}

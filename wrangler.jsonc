@@ -1,7 +1,7 @@
 // Capsomer's site at https://capsomer.dustinedwards.info (rulings.md, rule 16): Workers static
 // assets serving the built site from site-dist, with site-runtime's staticSite Worker (worker/index.ts) in front of
-// every page: the report endpoint, the prefetch rules, the page headers and the 404 page. Cloudflare's Git integration builds and
-// deploys it from this public repo on every push to main (see DEPLOY.md). No account id or
+// every page: /health, the report endpoint, the prefetch rules, the page headers and the 404 page. devkit's shared deploy
+// (ci.yml's deploy job) deploys it on every push to main (see DEPLOY.md). No account id or
 // secret here: wrangler takes the account from the login or the build.
 {
   "$schema": "node_modules/wrangler/config-schema.json",

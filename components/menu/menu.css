@@ -110,7 +110,7 @@
     place-items: center;
     color: var(--muted);
 
-    &:dir(rtl) {
+    &:dir(rtl), :where([dir="rtl"]) & {
       transform: scaleX(-1);
     }
   }
@@ -191,7 +191,9 @@
   }
 
   @media (forced-colors: active) {
-    .cap-menu-item[data-popup-open] {
+    /* The no-script form's items show focus by a tint and an inset edge, which forced colors removes. */
+    .cap-menu-item[data-popup-open],
+    .cap-menu-form .cap-option.cap-menu-item:focus-visible:not(:disabled) {
       outline: 2px solid Highlight;
       outline-offset: -2px;
     }

@@ -10,10 +10,12 @@
 
 import { type Listbox, createListbox } from "../listbox/listbox.ts";
 import { place } from "../popover/popover.ts";
-import { type Edit, LINK_RESULT_LIMIT, type LinkTarget, type MarkdownEditorHandle, type MarkdownEditorOptions, type Scaffold, blockEdit, countWords, defaultImageMarkdown, filterLinkTargets, footnoteEdit, headingEdit, linkEdit, looksLikeUrl, minutesForWords, rovingIndex, scaffoldCursor, slashBlockEdit, wrapEdit } from "./markdown-editor-edits.ts";
+import { attachToolbar, rovingIndex } from "../toolbar/toolbar.ts";
+import { type Edit, LINK_RESULT_LIMIT, type LinkTarget, type MarkdownEditorHandle, type MarkdownEditorOptions, type Scaffold, blockEdit, countWords, defaultImageMarkdown, filterLinkTargets, footnoteEdit, headingEdit, linkEdit, looksLikeUrl, minutesForWords, scaffoldCursor, slashBlockEdit, wrapEdit } from "./markdown-editor-edits.ts";
 import type { Surface } from "./markdown-editor.view.ts";
 
-export { countWords, minutesForWords, looksLikeUrl, filterLinkTargets, rovingIndex, lineBounds, wrapEdit, headingEdit, footnoteEdit, blockEdit, slashBlockEdit, scaffoldCursor, linkEdit, defaultImageMarkdown } from "./markdown-editor-edits.ts";
+export { rovingIndex } from "../toolbar/toolbar.ts";
+export { countWords, minutesForWords, looksLikeUrl, filterLinkTargets, lineBounds, wrapEdit, headingEdit, footnoteEdit, blockEdit, slashBlockEdit, scaffoldCursor, linkEdit, defaultImageMarkdown } from "./markdown-editor-edits.ts";
 export type { Edit, LinkTarget, Scaffold, UploadResult, MarkdownEditorOptions, MarkdownEditorHandle } from "./markdown-editor-edits.ts";
 
 // ---- the DOM -------------------------------------------------------------------------------
@@ -180,8 +182,8 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     }
   }
 
-  // ---- toolbar (APG toolbar: one tab stop, arrows between the buttons) -------------------
-  let activeTool = 0;
+  // ---- toolbar (the shared APG toolbar: one tab stop, arrows between the buttons) ----------
+  const TOOLS = ".cap-md-tool:not(:disabled)";
   function tools(): Tool[] {
     const t: Tool[] = [
       { id: "bold", label: "Bold", hint: "Ctrl or Cmd + B", keys: "Control+B Meta+B", paths: GLYPH.bold, run: commands.bold },
@@ -199,7 +201,9 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     const main = tools();
     const blocks: Tool[] = (o.scaffolds ?? []).map((s) => ({ id: `scaffold-${s.id}`, label: s.label, hint: s.hint, paths: s.icon ? [s.icon] : [], glyph: s.label.slice(0, 1).toUpperCase(), run: () => insertScaffold(s) }));
     const all = [...main, ...blocks];
-    activeTool = Math.min(activeTool, Math.max(0, all.length - 1));
+    // A rebuilt bar keeps its tab stop where it was.
+    const was = [...toolbar.querySelectorAll(".cap-md-tool")].findIndex((b) => b.getAttribute("tabindex") === "0");
+    const activeTool = Math.min(Math.max(0, was), Math.max(0, all.length - 1));
     const nodes: Node[] = [];
     all.forEach((t, i) => {
       if (i === main.length && blocks.length > 0) nodes.push(el("span", { class: "cap-md-sep", "aria-hidden": "true" }));
@@ -209,10 +213,6 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
       b.disabled = disabled() || readOnly();
       b.append(t.paths.length > 0 ? icon(t.paths) : el("span", { class: "cap-md-tool-glyph", "aria-hidden": "true" }, t.glyph ?? ""));
       b.addEventListener("click", () => t.run());
-      b.addEventListener("focus", () => {
-        activeTool = i;
-        for (const [j, other] of [...toolbar.querySelectorAll<HTMLElement>(".cap-md-tool")].entries()) other.tabIndex = j === i ? 0 : -1;
-      });
       nodes.push(b);
     });
     if (blocks.length > 0) nodes.push(el("span", { class: "cap-md-toolbar-hint" }, "Type / on an empty line"));
@@ -221,16 +221,7 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     hint.hidden = !o.onUpload;
   }
 
-  listen(toolbar, "keydown", (e: KeyboardEvent) => {
-    const buttons = [...toolbar.querySelectorAll<HTMLButtonElement>(".cap-md-tool:not(:disabled)")];
-    const at = buttons.findIndex((b) => b === e.target);
-    if (at < 0) return;
-    const next = rovingIndex(e.key, at, buttons.length);
-    const target = next === null ? undefined : buttons[next];
-    if (!target) return;
-    e.preventDefault();
-    target.focus();
-  });
+  cleanups.push(attachToolbar(toolbar, TOOLS));
 
   // ---- floating surfaces: the shared popover, placed at the cursor --------------------------
   // A floating panel is the shared `.cap-popover` (popover.css), shown with the Popover API in

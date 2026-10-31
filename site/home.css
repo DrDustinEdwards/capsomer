@@ -23,6 +23,7 @@
 @import "../components/disclosure/disclosure.css";
 @import "../components/table/table.css";
 @import "../components/tabs/tabs.css";
+@import "../components/link/link.css";
 /* The manual theme: the running head, numbered parts and the letterhead (the public pages only). */
 @import "../components/manual/manual.css";
 @import "../components/family-footer/family-footer.css";
@@ -48,7 +49,6 @@ body {
    capsomer/site-header.css). */
 a:not(.cap-btn, .cap-sign, .cap-family-footer a, .cap-site-header a) {
   color: var(--accent-text);
-  text-underline-offset: 3px;
 }
 code {
   font: 0.85em var(--mono);

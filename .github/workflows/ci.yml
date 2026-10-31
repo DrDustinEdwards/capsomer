@@ -1,12 +1,14 @@
 # Capsomer's CI. The repo is public, so these minutes are free (rulings.md, rule 11).
 #
 # Blocking: the palette and scale checks (correctness, and contrast in both themes), the
-# unit tests, the type check, the build, and every component's keyboard and accessibility
-# tests in a real browser. Never blocking: the token check and the size report (rule 1,
-# decision 12), and the forced-colors screenshots, which are for review.
+# unit tests, the type check, the build, every component's keyboard and accessibility
+# tests in a real browser, and the sweep (test/sweep.spec.ts: reflow, right to left, text
+# spacing, touch targets, forced colors and React parity over every states page). Never
+# blocking: the token check and the size report (rule 1, decision 12). The sweep also
+# writes forced-colors screenshots to test-results/forced-colors/, kept with the run for review.
 #
-# The site itself is deployed by Cloudflare's Git integration (DEPLOY.md, rule 16). On main,
-# this workflow writes the run's test results to the `results` branch, even when a test
+# On main, once the checks pass, the `deploy` job ships the site through devkit's shared deploy
+# (DEPLOY.md, rule 16). On main, this workflow also writes the run's test results to the `results` branch, even when a test
 # failed, and the deployed site reads them from there, so it shows the last run on main.
 name: CI
 
@@ -18,9 +20,11 @@ on:
 permissions:
   contents: read
 
+# A pull request's newer push cancels its older run; a push to main never cancels one, so a deploy
+# is never stopped halfway.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
@@ -51,12 +55,8 @@ jobs:
         run: npm run site
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Keyboard and accessibility tests, both themes
+      - name: Keyboard and accessibility tests and the sweep, both themes
         run: npx playwright test --workers=4
-      - name: Forced-colors screenshots (for review, never blocks)
-        if: always()
-        run: npx playwright test -c playwright.review.config.ts
-        continue-on-error: true
       - name: Size (warns only)
         if: always()
         run: npm run size
@@ -103,3 +103,50 @@ jobs:
           git add results.json
           git commit -q -m "Test results for ${SHA}"
           git push -q --force "https://x-access-token:${TOKEN}@github.com/${REPO}.git" results
+
+  # devkit's shared deploy (worker-deploy.yml), as on the D1 sites: it builds the site, deploys with DEPLOY_SHA set to
+  # this commit, waits for /health (site-runtime's staticSite) to report it, checks the home page answers, and rolls the
+  # deploy back if it does not. Dormant until the repo variable CF_DEPLOY is 'true' (with the secrets
+  # CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID), which is set once Workers Builds is disconnected (DEPLOY.md).
+  deploy:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.CF_DEPLOY == 'true'
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    uses: DrDustinEdwards/devkit/.github/workflows/worker-deploy.yml@fbf3824ab08f76af5befd7471677778e8b132c9b # v0.20.18
+    with:
+      worker-name: capsomer
+      health-url: https://capsomer.dustinedwards.info/health
+      verify-command: >-
+        code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://capsomer.dustinedwards.info/ || true);
+        echo "home page answered $code";
+        if [ "$code" = 200 ]; then exit 0; elif [ "$code" = 000 ]; then exit 3; else exit 1; fi
+      node-version-file: .node-version
+      install: npm ci --ignore-scripts
+      pre-deploy: npm run site:release
+      sha-var: DEPLOY_SHA
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  # Once the live gate passes, tell IndexNow with Prelum's prelum-indexnow, the key in site/seo.ts (INDEXNOW_KEY) and the
+  # live sitemap. A refused or failed ping is a warning, never a failure: the engines then crawl on their own schedule.
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .node-version
+      - name: Tell IndexNow
+        run: |
+          origin=https://capsomer.dustinedwards.info
+          key=$(sed -n 's/^const INDEXNOW_KEY = "\(.*\)";$/\1/p' site/seo.ts)
+          curl -sf "$origin/sitemap.xml" -o "$RUNNER_TEMP/sitemap.xml"
+          prelum=$(node -p "require('./package.json').devDependencies['@drdustinedwards/site-helpers']")
+          npx -y -p "$prelum" prelum-indexnow --origin "$origin" --key "$key" --sitemap "$RUNNER_TEMP/sitemap.xml"

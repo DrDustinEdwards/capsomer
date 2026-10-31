@@ -1,7 +1,8 @@
 // The keyboard shortcut registry and the "?" sheet that lists it (the shared dialog,
 // components/dialog). One document keydown listener for the whole app. Single-key shortcuts (a letter, "?", a sequence like "g o")
 // can be switched off and the choice is remembered (WCAG 2.1.4); shortcuts with Ctrl, Cmd
-// or Alt always work. No framework; the React wrapper uses the same registry.
+// or Alt always work. The choice lives on <html> as data-cap-single-keys, the one switch every
+// component's own single keys read. No framework; the React wrapper uses the same registry.
 import { readPref, writePref } from "../shell/shell.ts";
 import { openDialog, uid, wireDialog } from "../dialog/dialog.ts";
 
@@ -26,7 +27,6 @@ export const SEQUENCE_MS = 1200;
 
 const entries: Shortcut[] = [];
 let installed = false;
-let singleOverride: boolean | null = null;
 let pending: { step: string; at: number } | null = null;
 let sheetOpener: () => void = () => openShortcutSheet();
 
@@ -82,17 +82,26 @@ function matchesStep(step: string, e: KeyboardEvent): boolean {
 }
 
 export function singleKeysOn(): boolean {
-  if (singleOverride !== null) return singleOverride;
-  return readPref(SINGLE_KEYS_PREF) !== "off";
+  return typeof document === "undefined" || document.documentElement.dataset.capSingleKeys !== "off";
 }
 
-// Turns single-key shortcuts on or off. Remembered in this browser unless remember is
-// false (a specimen, a test).
+export function singleKeysOff(): boolean {
+  return !singleKeysOn();
+}
+
+// Turns single-key shortcuts on or off, here and in every component. Remembered in this browser
+// unless remember is false (a specimen, a test).
 export function setSingleKeys(on: boolean, opts: { remember?: boolean } = {}): void {
-  singleOverride = on;
   if (opts.remember !== false) writePref(SINGLE_KEYS_PREF, on ? "on" : "off");
   pending = null;
-  if (typeof document !== "undefined") document.dispatchEvent(new CustomEvent("cap-single-keys", { detail: { on } }));
+  if (typeof document === "undefined") return;
+  document.documentElement.dataset.capSingleKeys = on ? "on" : "off";
+  document.dispatchEvent(new CustomEvent("cap-single-keys", { detail: { on } }));
+}
+
+// The remembered choice reaches <html> as soon as any component that has single keys loads.
+if (typeof document !== "undefined" && !document.documentElement.dataset.capSingleKeys && readPref(SINGLE_KEYS_PREF) === "off") {
+  document.documentElement.dataset.capSingleKeys = "off";
 }
 
 // Keys typed into a field belong to the field. Checkboxes, radios and buttons are not

@@ -10,7 +10,7 @@ updated: 0.9.0
 source: Dustin's pick of 2026-10-06 (capsomer/research/admin-shell-findings.md); the flagship design canvas "Flagship Shell: Capsid Portal"; the Portal's own App.tsx
 replaces:
   - 'class="(app|rail|tabbar)"'
-  - "className=\"(app|rail|tabbar)"
+  - 'className="(app|rail|tabbar)[ "]'
 ---
 
 # Admin shell
@@ -134,7 +134,7 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
     <div class="cap-admin-group" role="group" aria-labelledby="g-watch">
       <div class="cap-admin-group-label" id="g-watch">Watch</div>
       <a href="/" aria-current="page">[icon]<span>Overview</span> <span class="cap-admin-count"></span></a>
-      <a href="/queue" aria-label="Queue, 5 blocked">[icon]<span class="cap-admin-label">Queue</span> <span class="cap-admin-count" data-tone="need">5</span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Queue</span></span></a>
+      <a href="/queue" aria-label="Queue, 5 blocked">[icon]<span class="cap-admin-label">Queue</span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Queue</span></span> <span class="cap-admin-count" data-tone="need">5</span></a>
     </div>
   </nav>
   <main class="cap-admin-main" id="cap-main" tabindex="-1">

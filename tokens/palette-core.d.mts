@@ -56,6 +56,8 @@ export declare function darkStep9(seed: string): string;
 export declare function scale(seed: string, anchor?: string | null, scheme?: Scheme): string[];
 export declare function familyTheme(seed: string, anchor: string | null, scheme: Scheme, label?: Label, level?: Level): Tokens;
 export declare function pairs(t: Tokens, level?: Level): Pair[];
+/** Colors that must look apart: the visited link against accent text and body text, as OKLab distance x 100. */
+export declare function apart(t: Tokens): { a: string; b: string; min: number; what: string; d: number; pass: boolean }[];
 export declare function failures(t: Tokens, level?: Level): string[];
 export declare const FAMILY_ORDER: string[];
 export declare const CHART_ORDER: string[];

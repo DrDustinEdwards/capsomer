@@ -55,7 +55,7 @@ Two ways to say something went wrong or needs attention, by where it belongs.
 ## Accessibility
 
 - Banner and alert text is `--text` on the tone's tint, and an alert's title is the tone's color on its tint; all 4.5:1 in both themes. The edge and glyph are 3:1 (the neutral edge is `--dim`).
-- Links in the words are underlined, so they are not told apart by color alone.
+- Links in the words are semibold, so they are not told apart by color alone (WCAG F73 names weight as a cue).
 - A live region present at load is not announced; add the banner or alert when the failure happens.
 - Forced colors: the tint is removed, and the banner keeps its edge.
 
@@ -106,6 +106,8 @@ The glyphs are Status's (`.cap-status-glyph`). `import { enhance } from "capsome
 ## The shadcn component it matches
 
 Alert (`alert.tsx`, nova): icon, `AlertTitle`, `AlertDescription`, `AlertAction`, `default` and `destructive` variants, links underlined. Deliberately different:
+
+- **Links.** Semibold, not underlined, as every Capsomer text link is (DEFAULTS.md).
 
 - **Tones.** shadcn has two; Capsomer has five (neutral, notice, ok, warning, critical), because status is four levels plus a neutral one, each with its own shape.
 - **The tint.** shadcn's alert is a card with colored text; here the box wears the tone's tint and edge, and the text stays `--text` (title in the tone's color on an alert) so the words keep 4.5:1 on the tint.
