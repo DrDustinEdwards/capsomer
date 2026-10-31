@@ -5,8 +5,8 @@ summary: A labeled list of tags a person can remove, one tab stop with arrow key
 parts: [css, behavior]
 tool: own JavaScript
 states: [removable tags, hover on remove, empty, comfortable density, after a removal with Undo]
-added: 0.54.0
-updated: 0.54.0
+added: 0.55.0
+updated: 0.55.0
 source: React Aria's TagGroup and GOV.UK's guidance on removing an item; the combobox chip's look
 replaces:
   - 'class="[^"]*\btags?\b'
