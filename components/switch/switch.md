@@ -10,8 +10,8 @@ updated: 0.2.0
 source: The approved mockup (design/mockup.html, .switch); the Capsid Portal's ui/Switch.tsx and its .switch rules (0.1.1)
 replaces:
   - 'role="switch"'
-  - 'class="[^"]*\b(switch|toggle)\b'
-  - 'className="[^"]*\b(switch|toggle)\b'
+  - 'class="(?:[^"]*\s)?(switch|toggle)[\s"]'
+  - 'className="(?:[^"]*\s)?(switch|toggle)[\s"]'
 ---
 
 # Switch

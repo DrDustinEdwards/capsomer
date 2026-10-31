@@ -24,25 +24,7 @@
     }
   }
 
-  /* The first thing a keyboard reaches: hidden until focused. */
-  .cap-shell-skip {
-    position: absolute;
-    left: var(--space-3);
-    top: var(--space-3);
-    z-index: var(--z-tip);
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-m);
-    background: var(--primary);
-    color: var(--primary-fg);
-    box-shadow: var(--shadow-m);
-    font-weight: 600;
-    text-decoration: none;
-    transform: translateY(-200%);
-
-    &:focus-visible {
-      transform: none;
-    }
-  }
+  /* The skip link (.cap-shell-skip) is drawn by css/utilities.css, shared with the site header. */
 
   .cap-shell-top {
     grid-column: 1 / -1;
@@ -167,7 +149,7 @@
       background: none;
       color: var(--text);
       font-size: var(--fs-body);
-      text-align: left;
+      text-align: start;
       text-decoration: none;
       /* The hover and focus outline sit inside the rail's padding, never clipped. */
       outline-offset: 0;
@@ -277,7 +259,7 @@
     background: none;
     color: inherit;
     font-size: var(--fs-detail);
-    text-align: left;
+    text-align: start;
 
     &:hover {
       color: var(--text);
@@ -342,7 +324,7 @@
        keeps it open (WCAG 1.4.13); Esc hides it. */
     & .cap-shell-label {
       position: absolute;
-      left: calc(100% + var(--space-3));
+      inset-inline-start: calc(100% + var(--space-3));
       top: 50%;
       translate: 0 -50%;
       z-index: var(--z-tip);
@@ -361,7 +343,7 @@
         content: "";
         position: absolute;
         top: 50%;
-        left: -3px;
+        inset-inline-start: -3px;
         width: 8px;
         height: 8px;
         translate: 0 -50%;
@@ -392,7 +374,7 @@
     & .cap-shell-count {
       position: absolute;
       top: var(--space-3);
-      right: var(--space-3);
+      inset-inline-end: var(--space-3);
       min-width: 0;
       width: 8px;
       height: 8px;
@@ -490,9 +472,13 @@
       padding: var(--space-5) var(--space-5) var(--space-6);
       gap: var(--space-5);
     }
+    /* A focused control never lands under the tab bar (WCAG 2.4.11): the bar is about 56px. */
+    :root:has(.cap-shell-tabs) {
+      scroll-padding-bottom: calc(var(--space-9) + env(safe-area-inset-bottom, 0px));
+    }
     .cap-shell-tabs {
       position: sticky;
-      bottom: 0;
+      inset-block-end: 0;
       display: grid;
       grid-auto-flow: column;
       grid-auto-columns: minmax(0, 1fr);
@@ -541,7 +527,7 @@
     .cap-shell-badge {
       position: absolute;
       top: 0;
-      left: calc(50% + var(--space-3));
+      inset-inline-start: calc(50% + var(--space-3));
       min-width: 16px;
       padding: 0 var(--space-2);
       border-radius: var(--radius-full);
@@ -563,16 +549,18 @@
         color var(--dur-fast) var(--ease-out);
     }
     /* The tooltip fades in and slides 8 px from the rail (Tooltip's slide-in-from-left-2) in
-       100 ms; it fades out the same, and is clipped only once it has faded. */
+       100 ms; it fades out the same, and is clipped only once it has faded. Its inline-start
+       offset, not a transform, so it slides from the rail in both directions with no :dir()
+       (which a build may lower to :lang() and miss a page that sets only dir). */
     .cap-shell[data-rail="collapsed"] .cap-shell-label {
-      transform: translateX(-8px);
+      inset-inline-start: calc(100% + var(--space-3) - 8px);
       transition:
         opacity var(--dur-fast) var(--ease-out),
-        transform var(--dur-fast) var(--ease-out),
+        inset-inline-start var(--dur-fast) var(--ease-out),
         clip-path 0s linear var(--dur-fast);
     }
     .cap-shell[data-rail="collapsed"] :is(a, .cap-shell-toggle, .cap-shell-railbtn):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) .cap-shell-label {
-      transform: none;
+      inset-inline-start: calc(100% + var(--space-3));
       transition-delay: 0s;
     }
   }

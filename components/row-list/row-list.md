@@ -40,7 +40,7 @@ Data compared across columns (versions, counts, several numbers per item) is a t
 - **The link is described by the row's status and detail** (`aria-describedby`), so moving by link still says "Critical" and why.
 - **Columns line up from row to row**: the list is a grid and each row a subgrid of it.
 - **On a narrow column the status moves above the title** (a container query on the list, below 30rem), and actions go underneath.
-- **Long titles and details are cut with an ellipsis on one line**, and the full text stays in the link's name. **In a narrow column the title wraps instead**: on a phone there is no hover and no wider view to read the rest in (Portal: "titles wrap instead of being cut"). The detail line stays cut.
+- **Long titles and details take two lines, then are cut with an ellipsis**, and the full text stays in the link's name. Two lines, not one, so text that fits still fits with a reader's own text spacing (WCAG 1.4.12). **In a narrow column the title wraps instead**: on a phone there is no hover and no wider view to read the rest in (Portal: "titles wrap instead of being cut"). The detail stays cut at two lines (the moderation queue's excerpt wraps instead: it is what a decision is made on).
 - **A row that opens in place** (a group of like rows) uses a `button` title with `aria-expanded` and `aria-controls`, and a `.cap-row-chevron` after the time, which turns when it is open. The attention list's group rows are these.
 
 ## The shadcn component it matches

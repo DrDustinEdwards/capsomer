@@ -104,6 +104,8 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </dialog>
 ```
 
+The record (`dl.cap-detail-record`) is the summary list's form without rows; load `summary-list.css` with this page's CSS.
+
 The header, title, body and Close are the shared dialog's parts; `data-cap-history="detail"` makes the address `#detail-<id>`. Only the `cap-detail-*` classes belong to this component.
 
 `enhance()` wires every panel and every `[data-cap-detail-open]` trigger; a Ctrl or middle click on a trigger link still opens its href in a new tab. `openDetail(dialog, opener, { history })` and `closeDetail(dialog)` do it by hand. In React, `<DetailPanel open onClose id title identifier history>` with `DetailSection` and `DetailCommand` inside.

@@ -8,9 +8,9 @@ states: [patch of two revisions, patch by line, patch with nothing to show, side
 added: 0.3.0
 source: the site admin's revision-list.tsx (DiffBlock, RevisionMeta), admin.posts.$slug.history.tsx and admin-history.css
 replaces:
-  - 'class="[^"]*\b(history-diff|diff-block|diff-view)\b'
+  - 'class="(?:[^"]*\s)?(history-diff|diff-block|diff-view)[\s"]'
   - 'data-diff="(add|del)"'
-  - 'className="[^"]*\b(history-diff|diff-block)\b'
+  - 'className="(?:[^"]*\s)?(history-diff|diff-block)[\s"]'
 ---
 
 # Draft compare

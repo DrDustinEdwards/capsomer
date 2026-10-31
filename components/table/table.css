@@ -476,5 +476,10 @@
     .cap-table-sort-down {
       fill: CanvasText;
     }
+    /* A selected row's tint and edge are a background and a shadow, which forced colors drop. */
+    .cap-table tbody tr:is([data-state="selected"], [aria-selected="true"], [data-force="selected"]) {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
   }
 }

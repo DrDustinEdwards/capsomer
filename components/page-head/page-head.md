@@ -8,8 +8,8 @@ states: [trail, title and lead and actions, title and lead, title only, long tit
 added: 0.5.0
 source: Carrel's PageHead (app/components/page-head.tsx, .app-head in app/app.css); the site admin's PageHead (dustinedwards-info PR #320, gap 11)
 replaces:
-  - 'class="[^"]*\bapp-head\b'
-  - 'className="[^"]*\bapp-head\b'
+  - 'class="(?:[^"]*\s)?app-head[\s"]'
+  - 'className="(?:[^"]*\s)?app-head[\s"]'
 ---
 
 # Page head

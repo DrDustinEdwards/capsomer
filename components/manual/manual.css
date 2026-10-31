@@ -932,6 +932,9 @@
     font-weight: 700;
 
     &:is(a) {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
       color: var(--text);
 
       &:hover,

@@ -121,6 +121,9 @@ export interface IntentResult {
   conflict?: { id: string; currentVersion: string | null };
   // Asked before a one-way intent runs. Nothing has changed yet.
   confirm?: ConfirmRequest;
+  // The posts list's `preview-link` (site-api v0.16.0 PreviewLink): the page anyone with the
+  // address can open, and when it stops working. The site answers it once and keeps only a hash.
+  previewLink?: { url: string; expiresAt: string };
 }
 
 // The script path: a host passes a function that posts the form and resolves with the action's
@@ -144,9 +147,20 @@ export interface PostsQuery {
   status?: ContentStatus;
   kind?: string;
   tag?: string;
+  // site-api v0.16.0, each with its name in `offers.filters`: one credited name, and the published
+  // dates from and to, both days included, as a date field gives them ("2026-10-01").
+  author?: string;
+  from?: string;
+  to?: string;
   sort?: PostSort;
+  // "1": the Trash (site-api v0.16.0 `trashed=true`, with `offers.trash`).
+  trashed?: "1";
   cursor?: string;
 }
+
+// The list filters a site applies itself (site-api v0.16.0 CONTENT_FILTERS, from
+// `capabilities.contentFilters`); `published` is the pair of dates.
+export type PostFilter = "kind" | "tag" | "author" | "published" | "trashed";
 
 // What the site supports, read from its capabilities by the kit.
 export interface PostOffers {
@@ -157,6 +171,16 @@ export interface PostOffers {
   // The site keeps an update waiting on a live post (site-api v0.10.0), so Reschedule and Cancel
   // work on it.
   scheduledUpdates?: boolean;
+  // site-api v0.16.0, each absent or false where the site lacks it: a Trash that posts go to and
+  // come back from (`contentTrash`, the `trash` and `restore` intents); a move to a new id whose old
+  // address redirects (`contentRename`, `rename`); shareable preview links (`previewLinks`,
+  // `preview-link`); the filters the site applies (`contentFilters`); and the names an Author
+  // filter offers, the primary ones the site credits.
+  trash?: boolean;
+  rename?: boolean;
+  previewLinks?: boolean;
+  filters?: PostFilter[];
+  authors?: string[];
 }
 
 // An update scheduled to replace a live post (site-api v0.10.0): when it goes live, and the page
@@ -185,6 +209,12 @@ export interface PostRow {
   // Present from site-api v0.6; the kit reads each post before writing otherwise.
   version?: string;
   tags?: string[];
+  // site-api v0.16.0, where the site keeps the post fields: everyone credited, the primary first,
+  // and the excerpt.
+  authors?: string[];
+  excerpt?: string;
+  // When the post went to the Trash; null or absent when it is not there.
+  trashedAt?: string | null;
   notes?: RowNote[];
 }
 
@@ -193,8 +223,8 @@ export interface PostsData {
   query: PostsQuery;
   rows: PostRow[];
   page: PageInfo;
-  // Across the whole site, not the page, for the status tabs.
-  counts?: Partial<Record<ContentStatus | "all", number>>;
+  // Across the whole site, not the page, for the status tabs (and the Trash tab, with `trash`).
+  counts?: Partial<Record<ContentStatus | "all" | "trash", number>>;
   kinds: string[];
   offers: PostOffers;
   can: ContentCan;

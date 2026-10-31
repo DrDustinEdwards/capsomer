@@ -8,8 +8,8 @@ states: [full width, a phone's width, tray open, filters chosen with chips, sear
 added: 0.4.0
 source: The site's publications filters and phage table (app/routes/publications.tsx, app/enhance/phages.ts in dustinedwards-info), generalized; Capsomer's chips, table, pagination and empty components underneath.
 replaces:
-  - 'class="[^"]*\b(facet|facets|filter-panel|catalog)\b'
-  - 'className="[^"]*\b(facet|facets|filter-panel|catalog)\b'
+  - 'class="(?:[^"]*\s)?(facet|facets|filter-panel|catalog)[\s"]'
+  - 'className="(?:[^"]*\s)?(facet|facets|filter-panel|catalog)[\s"]'
 ---
 
 # Catalog

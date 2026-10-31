@@ -39,8 +39,8 @@
       &::before {
         content: "";
         position: absolute;
-        top: 2px;
-        left: 2px;
+        inset-block-start: 2px;
+        inset-inline-start: 2px;
         width: var(--cap-sw-thumb);
         height: var(--cap-sw-thumb);
         border-radius: 50%;
@@ -63,6 +63,10 @@
           translate: calc(var(--cap-sw-w) - 2px - var(--cap-sw-thumb) - 4px) 0;
           background: var(--surface);
         }
+      }
+      /* Right to left, the thumb starts at the right and slides left. */
+      &:checked:dir(rtl)::before, :where([dir="rtl"]) &:checked::before {
+        translate: calc(-1 * (var(--cap-sw-w) - 2px - var(--cap-sw-thumb) - 4px)) 0;
       }
     }
 
