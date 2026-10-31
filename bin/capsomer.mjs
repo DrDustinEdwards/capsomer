@@ -542,8 +542,8 @@ if (cmd === "report") {
 } else if (cmd === "bloat") {
   bloat(process.cwd());
 } else if (cmd === "states") {
-  const written = generateStates(PKG);
-  console.log(`states: wrote ${written.length} states pages (components/<name>/states.html, generated, gitignored)`);
+  const written = await generateStates(PKG);
+  console.log(`states: wrote ${written.size} states pages (components/<name>/states.html, generated, gitignored)`);
 } else if (cmd === "site-data") {
   await siteData();
 } else if (cmd === "fallback-font") {

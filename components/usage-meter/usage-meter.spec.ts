@@ -50,11 +50,11 @@ eachTheme((theme) => {
     await expect(page.locator(section("s-stale")).locator(".cap-usage-fresh .cap-status")).toHaveText("Stale");
   });
 
-  test("keyboard: the meters are not controls and take no tab stop", async ({ page }) => {
+  test("keyboard: the meters are not controls and take no tab stop; Show data is the only one", async ({ page }) => {
     await visitStates(page, "usage-meter", theme);
     for (let i = 0; i < 4; i++) {
       await page.keyboard.press("Tab");
-      const onBar = await page.evaluate(() => !!document.activeElement?.closest(".cap-usage"));
+      const onBar = await page.evaluate(() => !!document.activeElement?.closest(".cap-usage-list"));
       expect(onBar).toBe(false);
     }
   });
@@ -93,6 +93,14 @@ eachTheme((theme) => {
       await expect(row.locator(".cap-meter-bar[role='meter']")).toHaveCount(1);
     }
     await expect(page.locator(".cap-usage-bar, .cap-usage-used, .cap-usage-projected")).toHaveCount(0);
+  });
+
+  test("behavior: the numbers are in the HTML behind Show data, one row per meter", async ({ page }) => {
+    await visitStates(page, "usage-meter", theme);
+    const stale = page.locator(section("s-stale"));
+    await expect(stale.locator(".enarratio-data")).not.toHaveAttribute("open", "");
+    await stale.getByText("Show data").click();
+    await expect(stale.getByRole("row", { name: /R2 storage/ })).toContainText("no projection");
   });
 
   test("accessibility: the rows' roles and names, the why line outside the meter role", { tag: "@markup" }, async ({ page }) => {
