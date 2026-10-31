@@ -86,7 +86,7 @@ Last checked by hand: not yet. Reflow with a screen reader: not yet, so no app u
     </thead>
     <tbody>
       <tr>
-        <th scope="row"><a class="cap-table-open" href="/apps/carrel">Carrel</a></th>
+        <th scope="row"><a class="cap-table-open" href="/apps/docs">Docs</a></th>
         <td data-num>9</td>
         <td data-sort="2026-09-30T12:13Z"><time datetime="2026-09-30T12:13Z">2 hours ago</time></td>
       </tr>

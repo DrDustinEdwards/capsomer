@@ -162,16 +162,16 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "App" }).focus();
     await page.keyboard.press("Space");
     await expect(page.locator("#t1 thead th").first()).toHaveAttribute("aria-sort", "ascending");
-    expect(await firstColumn(page, "#t1", 0)).toEqual(["Capsid Portal", "Carrel", "example.com", "Foxhound"]);
+    expect(await firstColumn(page, "#t1", 0)).toEqual(["Admin", "Docs", "example.com", "Storefront"]);
   });
 
   test("keyboard: a row that opens a detail is one tab stop, and Enter follows it", async ({ page }) => {
     await visitStates(page, "table", theme);
-    await page.getByRole("link", { name: "Carrel" }).focus();
+    await page.getByRole("link", { name: "Docs" }).focus();
     await page.keyboard.press("Tab");
-    await expect(page.getByRole("link", { name: "Capsid Portal" })).toBeFocused();
+    await expect(page.getByRole("link", { name: "Admin" })).toBeFocused();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#app-portal$/);
+    await expect(page).toHaveURL(/#app-admin$/);
   });
 
   test("behavior: one header carries aria-sort at a time", async ({ page }) => {
@@ -180,7 +180,7 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Reported" }).click();
     await expect(page.locator("#t1 thead th[aria-sort]")).toHaveCount(1);
     await expect(page.locator("#t1 thead th").nth(5)).toHaveAttribute("aria-sort", "ascending");
-    expect(await firstColumn(page, "#t1", 0)).toEqual(["Foxhound", "example.com", "Carrel", "Capsid Portal"]);
+    expect(await firstColumn(page, "#t1", 0)).toEqual(["Storefront", "example.com", "Docs", "Admin"]);
   });
 
   test("behavior: data-sort orders a cell whose text does not sort", async ({ page }) => {
