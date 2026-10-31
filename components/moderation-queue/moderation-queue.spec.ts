@@ -148,7 +148,7 @@ eachTheme((theme) => {
         - checkbox "Select the mention from Rosa Park"
         - text: Select the mention from Rosa Park Waiting
         - button "Rosa Park fieldnotes.example"
-        - paragraph: /On Field notes: the spring survey/
+        - paragraph: /On Field notes/
         - time: 1 hour ago
         - button "Approve the mention from Rosa Park"
         - button "Reject the mention from Rosa Park"

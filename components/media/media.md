@@ -30,7 +30,7 @@ Anywhere a person browses files they own and edits what describes them: a site's
 
 ## The default and its reason
 
-- **The tile is one link, one tab stop.** The thumbnail, the name and the type and size are a single link, so a screen reader reads "release-hero.jpg, JPEG, 412 kB" once, and Tab crosses the grid in the active tile's few controls instead of through every file. The arrow keys move focus (real focus, so Enter, scrolling and a screen reader's cursor all follow). The grid is a list, not a `role="grid"`: the column count follows the container's width, so a position means nothing to a screen reader.
+- **The tile is one link, one tab stop.** The thumbnail, the name and the type and size are a single link, so a screen reader reads "launch-hero.jpg, JPEG, 412 kB" once, and Tab crosses the grid in the active tile's few controls instead of through every file. The arrow keys move focus (real focus, so Enter, scrolling and a screen reader's cursor all follow). The grid is a list, not a `role="grid"`: the column count follows the container's width, so a position means nothing to a screen reader.
 - **Selection is a real checkbox.** It sits over the picture on its own surface (so its edge reads over any photo), appears on hover, focus and whenever anything is selected, and when checked says "Selected" in words beside the tick. Space and x toggle it from the tile; Shift-click selects a range, Ctrl or Cmd click toggles.
 - **No alt text, Decorative, Unattached, In Trash are words with shapes.** Missing alt text is a warning ("No alt text"), decorative is a notice ("Decorative"): a choice the author made is not a gap, so it carries a different glyph, word and tone, and is stored as `data-alt="decorative"`, never as empty alt text.
 - **The inspector saves by itself.** Typing waits 800 ms of quiet, then saves; leaving a field saves at once; the decorative checkbox and tag changes save at once. A change made while a save runs is saved after it. The status is a live region with a glyph and a word: "Changes save by themselves.", "Unsaved changes", "Saving…", "Saved", and "Could not save: the reason. What you typed is still here." with Retry. The form is `aria-busy` while saving. Nothing typed is ever lost: the fields are never cleared by a failure, and a failed edit is kept per file, so moving to another file and back brings it back with Retry.
@@ -78,7 +78,7 @@ Card for the tile (a bordered, rounded surface with a media area and a text area
 
 ## Accessibility
 
-- A tile is a list item holding one named link (name, type and size, described by its flags), a named checkbox ("Select release-hero.jpg"), and its state in words. An uploading tile's bar is `role="progressbar"` named "Uploading" with `aria-valuetext` "62 percent of capsid-walkthrough.png uploaded". A failed tile names its reason, and Retry names the file.
+- A tile is a list item holding one named link (name, type and size, described by its flags), a named checkbox ("Select launch-hero.jpg"), and its state in words. An uploading tile's bar is `role="progressbar"` named "Uploading" with `aria-valuetext` "62 percent of capsid-walkthrough.png uploaded". A failed tile names its reason, and Retry names the file.
 - The inspector is a dialog named by the file's name. Every field has a visible label and, where it helps, a description (what alt text is for, what decorative means). Alt text is disabled while Decorative is checked.
 - The save status is `role="status"`; a failure is `role="alert"`; the copy confirmation is `role="status"`. All are in the page before they are used.
 - Color is never alone: every flag and status has a glyph and a word. Text is at 4.5:1 in both themes (the flags, the meta line, the help, the facts, the used-in links); the checkbox edge and the fields' edges are at 3:1.
@@ -93,20 +93,20 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 A tile, as the server renders it. Every fact the filters and the inspector read is a data attribute.
 
 ```html
-<li class="cap-media-tile" id="tile-release-hero" data-key="media/release-hero.jpg" data-label="release-hero.jpg"
+<li class="cap-media-tile" id="tile-launch-hero" data-key="media/launch-hero.jpg" data-label="launch-hero.jpg"
     data-state="ready" data-kind="image" data-type="image/jpeg" data-bytes="421888" data-width="1600" data-height="900"
-    data-uploaded="2026-09-18" data-url="https://example.com/media/release-hero.jpg"
+    data-uploaded="2026-09-18" data-url="https://example.com/media/launch-hero.jpg"
     data-alt="set" data-alt-text="The status dashboard with three sites reporting healthy" data-title="" data-caption=""
     data-tags="release, dashboard" data-used="2" data-used-in='[{"title":"Notes on the spring release","href":"/admin/posts/spring-release/edit","how":"image in the body"}]'
     data-suggested-tags='["2026"]' data-active>
-  <a class="cap-media-open" href="?key=media%2Frelease-hero.jpg" aria-describedby="tile-release-hero-flags" aria-current="true">
+  <a class="cap-media-open" href="?key=media%2Flaunch-hero.jpg" aria-describedby="tile-launch-hero-flags" aria-current="true">
     <span class="cap-media-thumb"><img src="…" alt="" loading="lazy" decoding="async" width="320" height="320" /></span>
-    <span class="cap-media-name" title="media/release-hero.jpg">release-hero.jpg</span>
+    <span class="cap-media-name" title="media/launch-hero.jpg">launch-hero.jpg</span>
     <span class="cap-media-meta">JPEG · 412 kB</span>
   </a>
-  <span class="cap-media-flags" id="tile-release-hero-flags"><span class="cap-status" data-tone="warn">[warning glyph]No alt text</span></span>
+  <span class="cap-media-flags" id="tile-launch-hero-flags"><span class="cap-status" data-tone="warn">[warning glyph]No alt text</span></span>
   <label class="cap-media-check">
-    <input type="checkbox" data-cap-select value="media/release-hero.jpg" aria-label="Select release-hero.jpg" />
+    <input type="checkbox" data-cap-select value="media/launch-hero.jpg" aria-label="Select launch-hero.jpg" />
     <span class="cap-media-check-box" aria-hidden="true"><svg viewBox="0 0 16 16">…</svg></span>
     <span class="cap-media-check-word" aria-hidden="true">Selected</span>
   </label>
@@ -139,9 +139,9 @@ The library: a container, a layout, the main column and the inspector.
       <div class="cap-media-empty" hidden>…one .cap-empty per cause, each with data-cap-empty="search|filter|library|bin" and hidden…</div>
     </div>
     <dialog class="cap-dialog cap-media-inspector" data-cap="media-inspector" data-placement="right" data-size="md" id="ins" aria-labelledby="ins-title" open>
-      <div class="cap-dialog-header" data-divider><h2 class="cap-dialog-title cap-media-title" id="ins-title" data-cap-part="title">release-hero.jpg</h2><p class="cap-dialog-description" data-cap-part="subtitle">JPEG · 412 kB · 1600 by 900</p></div>
+      <div class="cap-dialog-header" data-divider><h2 class="cap-dialog-title cap-media-title" id="ins-title" data-cap-part="title">launch-hero.jpg</h2><p class="cap-dialog-description" data-cap-part="subtitle">JPEG · 412 kB · 1600 by 900</p></div>
       <form class="cap-dialog-body cap-media-form" method="post" action="/admin/media/save" data-cap-part="form">
-        <input type="hidden" name="key" value="media/release-hero.jpg" data-cap-part="key" />
+        <input type="hidden" name="key" value="media/launch-hero.jpg" data-cap-part="key" />
         <div class="cap-media-preview"><img data-cap-part="preview" src="…" alt="" width="640" height="427" /></div>
         <div class="cap-field" data-cap-part="alt-field"><label class="cap-field-label" for="ins-alt">Alt text</label><textarea class="cap-input" id="ins-alt" name="alt" rows="2" data-cap-part="alt">…</textarea><p class="cap-field-help" id="ins-alt-help">…</p></div>
         <div class="cap-field" data-cap-part="decorative-field"><label class="cap-check"><input type="checkbox" name="decorative" data-cap-part="decorative" /> Decorative image</label>…</div>

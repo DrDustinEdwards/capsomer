@@ -2,7 +2,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates, type Theme } from "../../test/helpers.ts";
 import { applyBulkTag, altStateOf, bands, byteSize, copySnippets, createAutosave, flagsFor, nextTile, parseTags, suggestedAlt } from "./media.ts";
 
-const FOX = "release-hero.jpg";
+const FOX = "launch-hero.jpg";
 const UPTIME = "uptime-strip.png";
 
 const tile = (page: Page, name: string): Locator => page.locator(`.cap-media-tile[data-label="${name}"]`);
@@ -62,7 +62,7 @@ test("behavior: sizes, suggested alt text, tags and the copy snippets", () => {
   expect(byteSize(512)).toBe("512 B");
   expect(byteSize(421888)).toBe("412 kB");
   expect(byteSize(2516582)).toBe("2.4 MB");
-  expect(suggestedAlt("release-hero_v2.jpg")).toBe("release hero v2");
+  expect(suggestedAlt("launch-hero_v2.jpg")).toBe("launch hero v2");
   expect(parseTags(" Release, dashboard,release,, ")).toEqual(["release", "dashboard"]);
   const img = copySnippets({ url: "https://x.test/a.png", kind: "image", alt: "A dashboard", name: "a.png" });
   expect(img.map((s) => s.value)).toEqual(["https://x.test/a.png", "![A dashboard](https://x.test/a.png)", '<img src="https://x.test/a.png" alt="A dashboard">']);
@@ -160,8 +160,8 @@ eachTheme((theme) => {
   test("accessibility: tile text, flags and the selected check reach their contrast", async ({ page }) => {
     await visitStates(page, "media", theme);
     await expectContrast(page, [
-      { sel: "#t-release-hero .cap-media-name", what: "a tile's name" },
-      { sel: "#t-release-hero .cap-media-meta", what: "a tile's type and size" },
+      { sel: "#t-launch-hero .cap-media-name", what: "a tile's name" },
+      { sel: "#t-launch-hero .cap-media-meta", what: "a tile's type and size" },
       { sel: "#t-uptime-strip .cap-status", what: "the No alt text status" },
       { sel: "#t-project-tree .cap-status", what: "the Decorative status" },
       { sel: "#t-fieldnotes-migration .cap-status", what: "the Unattached status" },
@@ -215,10 +215,10 @@ eachTheme((theme) => {
 
   test("accessibility: each tile is one named link, a named checkbox and its states in words", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media", theme);
-    await expect(page.locator("#t-release-hero")).toMatchAriaSnapshot(`
+    await expect(page.locator("#t-launch-hero")).toMatchAriaSnapshot(`
       - listitem:
-        - link "release-hero.jpg JPEG · 412 kB"
-        - checkbox "Select release-hero.jpg"
+        - link "launch-hero.jpg JPEG · 412 kB"
+        - checkbox "Select launch-hero.jpg"
     `);
     await expect(page.locator("#t-mention-queue")).toMatchAriaSnapshot(`
       - listitem:
@@ -250,11 +250,11 @@ eachTheme((theme) => {
 
   test("accessibility: thumbnails load lazily with a size, and the frame keeps its space without the picture", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media", theme);
-    const img = page.locator("#t-release-hero img");
+    const img = page.locator("#t-launch-hero img");
     await expect(img).toHaveAttribute("loading", "lazy");
     await expect(img).toHaveAttribute("width", "320");
     await expect(img).toHaveAttribute("height", "320");
-    const frame = page.locator("#t-release-hero .cap-media-thumb");
+    const frame = page.locator("#t-launch-hero .cap-media-thumb");
     const before = await frame.boundingBox();
     await img.evaluate((el) => el.removeAttribute("src"));
     const after = await frame.boundingBox();
@@ -278,7 +278,7 @@ eachTheme((theme) => {
 
   test("accessibility: the delivered HTML has the tiles and the active file's inspector", { tag: "@markup" }, async ({ page }) => {
     const html = await (await page.request.get("components/media/states.html")).text();
-    expect(html).toContain('data-label="release-hero.jpg"');
+    expect(html).toContain('data-label="launch-hero.jpg"');
     expect(html).toContain("No alt text");
     expect(html).toContain("Not used anywhere.");
     expect(html).toContain('class="cap-dialog cap-media-inspector"');
@@ -474,13 +474,13 @@ eachTheme((theme) => {
     await copy.focus();
     await page.keyboard.press("Enter");
     await expect(inspector(page).locator("[data-cap-part=copied]")).toHaveText("Copied the address.");
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://example.com/media/release-hero.jpg");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://example.com/media/launch-hero.jpg");
     await page.evaluate(() => navigator.clipboard.writeText("something else"));
     await page.waitForTimeout(50);
     await copy.focus();
     await page.keyboard.press("Space");
     await expect(inspector(page).locator("[data-cap-part=copied]")).toHaveText("Copied the address.");
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://example.com/media/release-hero.jpg");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://example.com/media/launch-hero.jpg");
   });
 
   test("keyboard: Enter on Retry asks for the upload again", async ({ page }) => {
@@ -788,7 +788,7 @@ eachTheme((theme) => {
     await library(page, theme);
     await inspector(page).getByRole("button", { name: "Copy the Markdown image" }).click();
     await expect(inspector(page).locator("[data-cap-part=copied]")).toHaveText("Copied the Markdown image.");
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("![The status dashboard with three sites reporting healthy](https://example.com/media/release-hero.jpg)");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("![The status dashboard with three sites reporting healthy](https://example.com/media/launch-hero.jpg)");
   });
 
   test("behavior: when the clipboard refuses, copy says so and leaves the address selected", async ({ page }) => {
@@ -803,7 +803,7 @@ eachTheme((theme) => {
       const el = document.activeElement as HTMLInputElement | null;
       return el?.selectionEnd && el.selectionEnd > 0 ? el.value : "";
     });
-    expect(selected).toBe("https://example.com/media/release-hero.jpg");
+    expect(selected).toBe("https://example.com/media/launch-hero.jpg");
   });
 
   test("behavior: dropped files become uploading tiles with a progress bar, and finish as tiles that open", async ({ page }) => {
