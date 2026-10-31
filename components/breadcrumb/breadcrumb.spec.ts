@@ -37,15 +37,15 @@ eachTheme((theme) => {
             - link "Admin"
           - listitem:
             - link "Posts"
-          - listitem: Why phage therapy keeps coming back
+          - listitem: Why the spring update took so long
     `);
-    await expect(page.locator("#bc-default [aria-current='page']")).toHaveText("Why phage therapy keeps coming back");
+    await expect(page.locator("#bc-default [aria-current='page']")).toHaveText("Why the spring update took so long");
     await expect(page.locator("#bc-folded").getByRole("button", { name: "Show 2 more levels" })).toHaveAttribute("aria-expanded", "false");
   });
 
   test("accessibility: a separator is not in the page's text or accessibility tree", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
-    expect(await page.locator("#bc-default").evaluate((el) => (el as HTMLElement).innerText.replace(/\s+/g, " ").trim())).toBe("Admin Posts Why phage therapy keeps coming back");
+    expect(await page.locator("#bc-default").evaluate((el) => (el as HTMLElement).innerText.replace(/\s+/g, " ").trim())).toBe("Admin Posts Why the spring update took so long");
     expect(await page.locator("#bc-default .cap-breadcrumb-item").count()).toBe(3);
     const content = await page.locator("#bc-default .cap-breadcrumb-item:nth-child(2)").evaluate((el) => getComputedStyle(el, "::before").content);
     expect(content).toBe('""');
@@ -100,7 +100,7 @@ eachTheme((theme) => {
     await page.locator("#bc-folded").getByRole("button", { name: "Show 2 more levels" }).click();
     await expect(page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "Sites" })).toBeFocused();
     await page.keyboard.press("Tab");
-    await expect(page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "foxhound.app" })).toBeFocused();
+    await expect(page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "example.com" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("dialog", { name: "More levels" })).toBeHidden();
   });
@@ -120,7 +120,7 @@ eachTheme((theme) => {
     const nav = page.locator("#bc-auto");
     await expect(nav.locator(".cap-breadcrumb-item")).toHaveCount(5);
     await expect(nav.getByRole("link")).toHaveText(["Admin", "September", "Field survey"]);
-    await expect(nav.locator("[aria-current='page']")).toHaveText("Plate 3");
+    await expect(nav.locator("[aria-current='page']")).toHaveText("Photo 3");
     const button = nav.getByRole("button", { name: "Show 2 more levels" });
     await button.click();
     const dialog = page.getByRole("dialog", { name: "More levels" });
@@ -136,7 +136,7 @@ eachTheme((theme) => {
   test("behavior: the delivered HTML has the whole trail as links", async ({ page }) => {
     const html = await (await page.request.get("components/breadcrumb/states.html")).text();
     for (const level of ["Media library", "2026", "September", "Field survey"]) expect(html).toContain(`>${level}</a>`);
-    expect(html).toContain('<span class="cap-breadcrumb-page" aria-current="page">Plate 3</span>');
+    expect(html).toContain('<span class="cap-breadcrumb-page" aria-current="page">Photo 3</span>');
   });
 
   test("behavior: long names take two lines, then are cut", async ({ page }) => {

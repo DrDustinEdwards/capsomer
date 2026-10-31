@@ -22,7 +22,7 @@ function Held() {
         </label>
         <textarea className="cap-input" id="react-draft" rows={3} value={text} onChange={(e) => setText(e.target.value)} />
       </div>
-      <FlagList label="Flags on this draft (React)" flags={FLAGS} text={text} onTextChange={setText} owner ownerName="Dustin Edwards" viewer="Dustin Edwards" />
+      <FlagList label="Flags on this draft (React)" flags={FLAGS} text={text} onTextChange={setText} owner ownerName="Alex Rivera" viewer="Alex Rivera" />
     </>
   );
 }

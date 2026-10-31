@@ -48,7 +48,7 @@ shadcn/ui `Checkbox` (the held mark), `Table` (the grid, from `table`) and `Item
 
 - The view switch is a fieldset of native radios named "View"; arrow keys are the browser's own.
 - Each cell's word ("Yes", "No") is in the accessibility tree; the glyph is hidden from it.
-- Row headers (`th scope="row"`) name the agent, column headers the permission, so a screen reader reads "foxhound-driver, Money paths, Yes".
+- Row headers (`th scope="row"`) name the agent, column headers the permission, so a screen reader reads "billing-driver, Money paths, Yes".
 - The filled box and the empty box's edge reach 3:1 as graphics; every word reaches 4.5:1 in both themes.
 - Forced colors: the boxes are drawn in CanvasText (filled when held); card edges become CanvasText.
 
@@ -92,7 +92,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   </div>
   <div class="cap-perms-view" data-view="permission" hidden>
     <ul class="cap-perms-cards" aria-label="Agents by permission">
-      <li class="cap-perms-card"><span class="cap-perms-name">Start CI</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span>, <span class="cap-mono">foxhound-driver</span></div></li>
+      <li class="cap-perms-card"><span class="cap-perms-name">Start CI</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span>, <span class="cap-mono">billing-driver</span></div></li>
       <li class="cap-perms-card"><span class="cap-perms-name">Write to main</span><div class="cap-perms-holds" data-empty>Nobody holds this</div></li>
     </ul>
   </div>

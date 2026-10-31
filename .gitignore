@@ -2,6 +2,7 @@
 node_modules/
 dist/
 site-dist/
+worker/preload.generated.json
 test-results/
 playwright-report/
 site/data/

@@ -66,7 +66,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```html
 <details class="cap-disclosure" name="limits">
-  <summary>Why is foxhound.app marked degraded?</summary>
+  <summary>Why is example.com marked degraded?</summary>
   <div class="cap-disclosure-body"><p>Its median response over the last hour is 2.4 seconds.</p></div>
 </details>
 
@@ -75,7 +75,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     <span class="cap-group-label">Notices</span><span class="cap-sr-only">, </span><span class="cap-group-count">4</span>
   </button>
   <ul class="cap-group-rows" id="notices-rows" hidden>
-    <li>capsid: 3 dependency updates waiting</li>
+    <li>api: 3 dependency updates waiting</li>
     <!-- a second level: <li class="cap-group-nest"><div class="cap-group" data-cap="disclosure">...</div></li> -->
   </ul>
 </div>

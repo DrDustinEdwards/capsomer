@@ -268,7 +268,7 @@ export interface FormMenuItem {
 }
 
 export interface FormMenuProps {
-  // The summary's visible text: what the menu acts on ("Actions for foxhound.app").
+  // The summary's visible text: what the menu acts on ("Actions for example.org").
   label: ReactNode;
   "aria-label"?: string;
   // Where the form posts, and its method (post unless a GET filter is meant).

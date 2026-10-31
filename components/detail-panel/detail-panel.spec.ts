@@ -155,7 +155,7 @@ eachTheme((theme) => {
     await expect(panel(page).getByRole("status")).toHaveText(/Command copied\.|Command is selected/);
   });
   // ---- driven by the address (?inspect=) ------------------------------------------------------
-  const MENTION = "A reply from rosa.example about the burst size paper";
+  const MENTION = "A reply from rosa.example about the annual report";
   const mention = (page: Page) => page.getByRole("dialog", { name: MENTION });
   const visitUrl = async (page: Page, inspect?: string) => {
     await page.goto(`components/detail-panel/states.html?theme=${theme}&only=url${inspect ? `&inspect=${inspect}` : ""}`);

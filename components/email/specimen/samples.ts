@@ -3,8 +3,8 @@
 // to dark applies them whatever the page's own scheme, so both show on one page.
 import { alert, magicLink, notice, renderEmail, reset, securityNotice, verification, type Common } from "../email.ts";
 
-const common: Common = { brand: { name: "Carrel", family: "purple" }, to: "reader@example.com" };
-const link = { url: "https://carrel.example/auth/verify?t=EXAMPLE-NOT-A-TOKEN", expiresIn: "15 minutes" };
+const common: Common = { brand: { name: "Example Co", family: "purple" }, to: "reader@example.com" };
+const link = { url: "https://app.example.com/auth/verify?t=EXAMPLE-NOT-A-TOKEN", expiresIn: "15 minutes" };
 
 const SAMPLES: Record<string, () => string> = {
   magicLink: () => renderEmail(magicLink, { ...common, ...link }).html,
@@ -18,14 +18,14 @@ const SAMPLES: Record<string, () => string> = {
       what: "Backups have not run for 26 hours",
       when: "08:15 UTC on October 8",
       details: ["The nightly backup job failed twice. The last good copy is from October 6."],
-      url: "https://carrel.example/admin/health",
+      url: "https://app.example.com/admin/health",
     }).html,
   notice: () =>
     renderEmail(notice, {
       ...common,
       title: "Your drafts moved",
       body: ["Drafts now live under Writing in the sidebar.", "Nothing was deleted, and the links you shared still work."],
-      action: { label: "Open Writing", url: "https://carrel.example/writing" },
+      action: { label: "Open Writing", url: "https://app.example.com/writing" },
     }).html,
   securityNotice: () =>
     renderEmail(securityNotice, {
@@ -33,9 +33,9 @@ const SAMPLES: Record<string, () => string> = {
       title: "A passkey from Apple Passwords was added to your account",
       when: "October 31, 2026 at 1:52 AM UTC",
       device: "Safari on iPhone",
-      location: "Austin, Texas, United States",
+      location: "Portland, Oregon, United States",
       secure: "If this was not you, sign in now, remove any passkey or sign-in method you do not recognize, and sign out of every other device.",
-      url: "https://carrel.example/account",
+      url: "https://app.example.com/account",
     }).html,
 };
 

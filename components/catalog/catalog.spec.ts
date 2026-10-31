@@ -5,7 +5,7 @@ import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helper
 // The wrapper is imported as the package ships it (compiled by npm run build): Playwright rewrites the JSX of any .tsx file a spec imports for its own component testing, so the source cannot be rendered here.
 import { Catalog } from "../../dist/components/catalog/catalog.react.js";
 import { defineCatalog, parseCatalogParams, queryCatalog } from "./catalog-core.ts";
-import { PROTOCOLS, protocolCatalog, type Protocol } from "./fixture.ts";
+import { ARTICLES, articleCatalog, type Article } from "./fixture.ts";
 
 const wide = (page: Page) => page.locator('form[data-catalog="wide"]');
 const narrow = (page: Page) => page.locator('form[data-catalog="narrow"]');
@@ -14,8 +14,8 @@ const firstTitle = (form: ReturnType<typeof wide>) => form.locator("tbody tr").f
 
 // The specimen has no server, so a no-script test needs one: a route that renders the catalog the way a site's
 // loader and page would, with the same stylesheet the states page uses.
-const SSR = "/ssr/protocols";
-const ssrCatalog = defineCatalog({ ...protocolCatalog, basePath: SSR });
+const SSR = "/ssr/articles";
+const ssrCatalog = defineCatalog({ ...articleCatalog, basePath: SSR });
 async function serveCatalog(page: Page): Promise<void> {
   const states = await (await page.request.get("components/catalog/states.html")).text();
   const links = (states.match(/<link rel="stylesheet"[^>]*>/g) ?? []).join("\n");
@@ -23,18 +23,18 @@ async function serveCatalog(page: Page): Promise<void> {
     const url = new URL(route.request().url());
     // A site's loader would also redirect an address that carries defaults to its clean one (catalogRedirect,
     // unit-tested); Playwright does not route a redirected request, so this server answers the address it is given.
-    const result = queryCatalog(ssrCatalog, PROTOCOLS, parseCatalogParams(ssrCatalog, url.searchParams));
+    const result = queryCatalog(ssrCatalog, ARTICLES, parseCatalogParams(ssrCatalog, url.searchParams));
     const body = renderToStaticMarkup(
-      createElement(Catalog<Protocol>, {
+      createElement(Catalog<Article>, {
         definition: ssrCatalog,
         result,
         labelledBy: "h",
-        title: (p: Protocol) => createElement("a", { className: "cap-table-open", href: `#${p.id}` }, p.title),
+        title: (p: Article) => createElement("a", { className: "cap-table-open", href: `#${p.id}` }, p.title),
       }),
     );
     await route.fulfill({
       contentType: "text/html",
-      body: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Protocols</title>${links}</head><body class="cap-specimens"><main><h1 id="h">Protocols</h1>${body}</main></body></html>`,
+      body: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Articles</title>${links}</head><body class="cap-specimens"><main><h1 id="h">Articles</h1>${body}</main></body></html>`,
     });
   });
 }
@@ -49,11 +49,11 @@ test.describe("no script", () => {
     await expect(page.locator("form.cap-catalog")).toHaveAttribute("method", "get");
     await expect(page.locator(".cap-catalog-apply")).toBeVisible();
     // The form: a facet and a search, submitted with Apply.
-    await page.getByLabel("Search protocols").fill("phage");
+    await page.getByLabel("Search articles").fill("billing");
     await page.getByRole("button", { name: "Apply" }).click();
     // A native submit sends every control, including defaults, so the address carries more than q.
-    await expect(page).toHaveURL(/\?q=phage/);
-    await expect(page.locator(".cap-catalog-count")).toContainText("of 27 protocols");
+    await expect(page).toHaveURL(/\?q=billing/);
+    await expect(page.locator(".cap-catalog-count")).toContainText("of 27 articles");
     // A chip is a link that removes only itself.
     await expect(page.locator(".cap-catalog-chip")).toHaveCount(1);
     await page.locator(".cap-catalog-chip").click();
@@ -61,7 +61,7 @@ test.describe("no script", () => {
     // A page link.
     await page.getByRole("link", { name: "Page 2", exact: true }).click();
     await expect(page).toHaveURL(/\?page=2$/);
-    await expect(page.locator(".cap-catalog-count")).toHaveText("27 protocols");
+    await expect(page.locator(".cap-catalog-count")).toHaveText("27 articles");
     // A sort header link, ascending first.
     await page.getByRole("link", { name: "Name" }).first().click();
     await expect(page).toHaveURL(/\?sort=title$/);
@@ -76,7 +76,7 @@ test.describe("no script", () => {
     await expect(filters).toBeHidden();
     await page.getByRole("link", { name: /^Filters/ }).click();
     await expect(filters).toBeVisible();
-    await page.getByRole("link", { name: /^Show \d+ protocols$/ }).click();
+    await page.getByRole("link", { name: /^Show \d+ articles$/ }).click();
     await expect(filters).toBeHidden();
     // The link lands on the results, not on an id the page lacks.
     expect(await page.evaluate(() => document.querySelector(location.hash)?.getAttribute("data-catalog-region"))).toBe("results");
@@ -87,28 +87,28 @@ test("behavior: typing in the search updates the results, the count, the chips a
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   const before = await count(form).textContent();
-  await form.getByLabel("Search protocols").fill("phage");
+  await form.getByLabel("Search articles").fill("billing");
   await expect(count(form)).not.toHaveText(before ?? "");
-  await expect(count(form)).toContainText("of 27 protocols");
-  await expect(form.locator(".cap-catalog-chip")).toHaveText(/"phage"/);
-  expect(new URL(page.url()).searchParams.get("q")).toBe("phage");
+  await expect(count(form)).toContainText("of 27 articles");
+  await expect(form.locator(".cap-catalog-chip")).toHaveText(/"billing"/);
+  expect(new URL(page.url()).searchParams.get("q")).toBe("billing");
   await expect(form.locator(".cap-catalog-apply")).toBeHidden();
 });
 
 test("behavior: ticking a facet narrows the results and its chip removes just that filter", async ({ page }) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
-  await form.getByRole("radio", { name: /^recipe/ }).check();
-  await expect(form.locator(".cap-catalog-chip")).toHaveText(/Kind: recipe/);
-  const recipeCount = await count(form).textContent();
-  expect(recipeCount).toMatch(/^\d+ of 27 protocols$/);
-  await form.getByRole("checkbox", { name: /^pcr/i }).check();
+  await form.getByRole("radio", { name: /^report/ }).check();
+  await expect(form.locator(".cap-catalog-chip")).toHaveText(/Kind: report/);
+  const reportCount = await count(form).textContent();
+  expect(reportCount).toMatch(/^\d+ of 27 articles$/);
+  await form.getByRole("checkbox", { name: /^pricing/i }).check();
   await expect(form.locator(".cap-catalog-chip")).toHaveCount(2);
-  await form.locator(".cap-catalog-chip", { hasText: "Method" }).click();
+  await form.locator(".cap-catalog-chip", { hasText: "Topic" }).click();
   await expect(form.locator(".cap-catalog-chip")).toHaveCount(1);
-  await expect(count(form)).toHaveText(recipeCount ?? "");
-  await expect(page).toHaveURL(/kind=recipe/);
-  expect(new URL(page.url()).searchParams.getAll("method")).toEqual([]);
+  await expect(count(form)).toHaveText(reportCount ?? "");
+  await expect(page).toHaveURL(/kind=report/);
+  expect(new URL(page.url()).searchParams.getAll("topic")).toEqual([]);
   // Focus lands somewhere that says what changed, not on the removed chip.
   await expect(count(form)).toBeFocused();
 });
@@ -137,12 +137,12 @@ test("behavior: a page link shows the next page in place and the count says so",
 test("behavior: a search nothing matches shows 'no match' with a way back", async ({ page }) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
-  await form.getByLabel("Search protocols").fill("zzzz");
+  await form.getByLabel("Search articles").fill("zzzz");
   await expect(form.locator(".cap-empty[data-kind='no-match']")).toBeVisible();
   await expect(form.getByRole("link", { name: "Clear filters" })).toBeVisible();
   await form.getByRole("link", { name: "Clear filters" }).click();
   await expect(form.locator("tbody tr").first()).toBeVisible();
-  await expect(count(form)).toHaveText("27 protocols");
+  await expect(count(form)).toHaveText("27 articles");
 });
 
 test("behavior: a failed fetch navigates to the address instead of leaving a stale page", async ({ page }) => {
@@ -151,7 +151,7 @@ test("behavior: a failed fetch navigates to the address instead of leaving a sta
     window.fetch = () => Promise.reject(new Error("offline"));
   });
   const nav = page.waitForURL(/q=boom/, { timeout: 5000 });
-  await wide(page).getByLabel("Search protocols").fill("boom");
+  await wide(page).getByLabel("Search articles").fill("boom");
   await nav;
 });
 
@@ -185,7 +185,7 @@ eachTheme((theme) => {
     await visitStates(page, "catalog", theme);
     const form = narrow(page);
     await form.getByRole("link", { name: /^Filters/ }).click();
-    await form.getByRole("radio", { name: /^protocol/ }).check();
+    await form.getByRole("radio", { name: /^guide/ }).check();
     await expect(form.locator(".cap-catalog-chip")).toHaveCount(1);
     await expectNoAxeViolations(page);
   });

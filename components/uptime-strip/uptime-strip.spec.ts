@@ -26,10 +26,10 @@ eachTheme((theme) => {
   test("accessibility: the figure is named, its strip is a named image, and the key follows it", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "uptime-strip", theme);
     const outage = page.locator(section("s-outage"));
-    await expect(outage.getByRole("figure", { name: /foxhound\.app/ })).toBeVisible();
+    await expect(outage.getByRole("figure", { name: /example\.org/ })).toBeVisible();
     await expect(outage.getByRole("img", { name: /down on Tuesday, September 29/ })).toBeVisible();
     await expect(outage.getByRole("list", { name: "Key" }).getByRole("listitem")).toHaveText(["Up", "Degraded", "Down", "No data"]);
-    await expect(page.locator(section("s-line")).getByRole("img", { name: /Uptime of foxhound\.app, 7 days/ })).toBeVisible();
+    await expect(page.locator(section("s-line")).getByRole("img", { name: /Uptime of example\.org, 7 days/ })).toBeVisible();
   });
 
   test("behavior: no data is a slot with its reason, never a zero", async ({ page }) => {

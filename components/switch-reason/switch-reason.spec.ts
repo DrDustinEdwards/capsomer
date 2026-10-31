@@ -63,7 +63,7 @@ eachTheme((theme) => {
     await visitStates(page, "switch-reason", theme);
     const sw = page.locator("[aria-labelledby='s-pending'] input[role='switch']");
     await expect(sw).toHaveAttribute("aria-busy", "true");
-    await expect(sw).toHaveAccessibleName("Agent access for foxhound-driver");
+    await expect(sw).toHaveAccessibleName("Agent access for billing-driver");
     await expect(page.locator("[aria-labelledby='s-pending'] form")).toHaveAttribute("aria-busy", "true");
     await expect(page.locator("#sr-pend-apply")).toHaveAttribute("aria-busy", "true");
   });

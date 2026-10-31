@@ -274,7 +274,7 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
         </div>
         <div class="cap-field">
           <label class="cap-field-label" for="home-try-name">Site name</label>
-          <input class="cap-input" id="home-try-name" value="Phage λ notes" autocomplete="off" />
+          <input class="cap-input" id="home-try-name" value="Field notes" autocomplete="off" />
         </div>
         <div class="home-try-row">
           <label class="cap-switch" data-cap="switch"><input type="checkbox" role="switch" checked /> Publish on save <span class="cap-switch-state" aria-hidden="true">On</span></label>
@@ -312,10 +312,10 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
     </div>
     <div class="cap-field home-sample" data-cap-part="sample" hidden>
       <label class="cap-field-label" for="home-sample">Try your own words</label>
-      <input class="cap-input" id="home-sample" autocomplete="off" maxlength="60" value="Phage λ" />
+      <input class="cap-input" id="home-sample" autocomplete="off" maxlength="60" value="Field notes" />
     </div>
     <ol class="home-scale">
-      ${d.type.map(([name, value, note]) => `<li><span class="home-scale-sample" data-fs="${esc(name)}">Phage λ</span><code>--${esc(name)}</code><span>${esc(value)}</span><span class="home-muted">${esc(note)}</span></li>`).join("\n      ")}
+      ${d.type.map(([name, value, note]) => `<li><span class="home-scale-sample" data-fs="${esc(name)}">Field notes</span><code>--${esc(name)}</code><span>${esc(value)}</span><span class="home-muted">${esc(note)}</span></li>`).join("\n      ")}
     </ol>
   </div>
 </section>

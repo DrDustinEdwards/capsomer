@@ -37,7 +37,7 @@ It is never the only way to reach something: every command is also a control on 
 - **Every way to stop something is in one group, Stop**, so typing "stop" or "pause" finds them all (`stopCommand()` sets the group, the keywords and the hint). A stop opens the control it stands for, a switch's reason field or the confirm dialog, and never performs: nothing is written from the menu. A stop is listed only while there is something to stop (a paused namespace has no Pause), and there is no "stop everything": one wrong command would then end all work.
 - **An empty result says so and names the text**: "No commands match “zebra”", in a status region; the field's `aria-expanded` turns false.
 - **Ctrl K, Cmd K and `/` open it**, through the shortcut registry (`/` is a single key, so it is off when single keys are off). Ctrl K again closes it.
-- **Live results come from the app** (React: `search(query, signal)`, Foxing's catalog). It is called 180 ms after the last key (`searchDelay`), never for an empty field, and the call before is aborted; its commands follow the matching ones, in their own groups, unfiltered. While it has not answered the list is `aria-busy` and an empty list says "Searching…"; the last results stay until new ones arrive, so the list does not flash.
+- **Live results come from the app** (React: `search(query, signal)`, a store's catalog). It is called 180 ms after the last key (`searchDelay`), never for an empty field, and the call before is aborted; its commands follow the matching ones, in their own groups, unfiltered. While it has not answered the list is `aria-busy` and an empty list says "Searching…"; the last results stay until new ones arrive, so the list does not flash.
 - **Choosing a command closes the menu first, then runs it**, so a command that opens another dialog keeps its focus.
 - Esc, or a click on the backdrop, closes it; focus returns to what opened it.
 
@@ -96,7 +96,7 @@ import { createCommandMenu, stopCommand } from "capsomer/behavior/command-menu";
 createCommandMenu([
   { id: "overview", label: "Overview", group: "Go to", keywords: ["home"], shortcut: "g o", run: () => go("/") },
   stopCommand({ id: "pause-capsomer", label: "Pause capsomer", ask: "reason", run: () => openReasonFor("capsomer") }),
-  stopCommand({ id: "revoke-driver", label: "Revoke foxhound-driver", ask: "preview", keywords: ["revoke"], run: () => confirmRevoke("foxhound-driver") }),
+  stopCommand({ id: "revoke-driver", label: "Revoke deploy-agent", ask: "preview", keywords: ["revoke"], run: () => confirmRevoke("deploy-agent") }),
   { id: "refresh", label: "Refresh now", group: "Actions", shortcut: "r", run: refresh },
 ]);
 ```

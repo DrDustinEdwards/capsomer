@@ -36,7 +36,7 @@ eachTheme((theme) => {
         - tab "Alerts" [disabled]
         - tab "Settings"
       - tabpanel "Overview":
-        - paragraph: /foxhound.app is up.*/
+        - paragraph: /example.org is up.*/
     `);
     await expect(page.locator("#tabs-links")).toMatchAriaSnapshot(`
       - navigation "Filter mentions by status":

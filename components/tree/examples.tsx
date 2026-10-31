@@ -17,7 +17,7 @@ const SERIES: TreeNode[] = [
     id: "lab",
     label: "Lab notebook",
     children: [
-      { id: "lab-1", label: "Phage plaques at 37 degrees" },
+      { id: "lab-1", label: "Plant counts on the north plot" },
       { id: "lab-2", label: "When a control fails" },
     ],
   },

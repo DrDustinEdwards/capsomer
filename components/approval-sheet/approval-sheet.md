@@ -77,8 +77,8 @@ shadcn/ui `Alert Dialog` (the muted footer band, Cancel first and focused, no co
     </div>
     <div class="cap-dialog-body cap-approval-gates" data-flush role="group" aria-label="Gates waiting for approval">
       <fieldset class="cap-approval-gate">
-        <legend class="cap-approval-job">Deploy foxhound to production</legend>
-        <p class="cap-approval-meta">job_8c21 in foxhound, waiting 26 minutes</p>
+        <legend class="cap-approval-job">Deploy web to production</legend>
+        <p class="cap-approval-meta">job_8c21 in web, waiting 26 minutes</p>
         <pre class="cap-approval-cmd"><code>npx wrangler deploy --env production</code></pre>
         <label class="cap-check"><input type="checkbox" data-cap-part="include" name="gate" value="job_8c21" checked> Include this gate</label>
         <div class="cap-field"><label class="cap-field-label" for="ap-c1">Comment (optional)</label><textarea class="cap-input" id="ap-c1" data-cap-part="comment" rows="2"></textarea></div>

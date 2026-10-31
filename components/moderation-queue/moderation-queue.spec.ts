@@ -148,7 +148,7 @@ eachTheme((theme) => {
         - checkbox "Select the mention from Rosa Park"
         - text: Select the mention from Rosa Park Waiting
         - button "Rosa Park fieldnotes.example"
-        - paragraph: /On Phage lambda/
+        - paragraph: /On Field notes/
         - time: 1 hour ago
         - button "Approve the mention from Rosa Park"
         - button "Reject the mention from Rosa Park"
@@ -233,7 +233,7 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(t).toHaveAttribute("aria-expanded", "true");
     await expect(row(q, "m-101").locator(".cap-mq-quote")).toBeVisible();
-    await expect(row(q, "m-101").locator(".cap-mq-quote")).toContainText("Lysogeny is not a failure to lyse");
+    await expect(row(q, "m-101").locator(".cap-mq-quote")).toContainText("Survey results are not a verdict");
     await page.keyboard.press("Space");
     await expect(t).toHaveAttribute("aria-expanded", "false");
     await expect(row(q, "m-101").locator(".cap-mq-quote")).toBeHidden();

@@ -12,7 +12,7 @@ const CHECKS: GateCheck[] = [
 
 function Held() {
   const [checks, setChecks] = useState(CHECKS);
-  const [site, setSite] = useState<GateSite>({ id: "dustinedwards", name: "dustinedwards.info" });
+  const [site, setSite] = useState<GateSite>({ id: "example", name: "example.com" });
   const { sites } = gateStates([site], checks);
   const state = sites[site.id] ?? "ready";
   const [busy, setBusy] = useState(false);
@@ -20,7 +20,7 @@ function Held() {
     setBusy(true);
     await new Promise((r) => setTimeout(r, 200));
     setBusy(false);
-    setSite((s) => ({ ...s, published: { at: "2026-10-02T09:12:00Z", url: "https://dustinedwards.info/blog/react-post" } }));
+    setSite((s) => ({ ...s, published: { at: "2026-10-02T09:12:00Z", url: "https://example.com/blog/react-post" } }));
   };
   const unpublish = async () => {
     await new Promise((r) => setTimeout(r, 200));

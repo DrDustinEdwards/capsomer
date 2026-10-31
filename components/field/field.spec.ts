@@ -65,7 +65,7 @@ eachTheme((theme) => {
     await expect(page.locator("#site-name-e")).toBeHidden();
     await expect(name).not.toHaveAttribute("aria-invalid", "true");
 
-    await page.keyboard.type("http://foxhound.app/health");
+    await page.keyboard.type("http://example.com/health");
     await page.keyboard.press("Tab");
     const err = page.locator("#site-url-e");
     await expect(err).toBeVisible();
@@ -284,10 +284,10 @@ eachTheme((theme) => {
   test("behavior: a message sets data-invalid on its field and clears it when fixed", async ({ page }) => {
     await visitStates(page, "field", theme);
     const url = page.locator("#site-url");
-    await url.fill("foxhound.app");
+    await url.fill("example.com");
     await url.blur();
     await expect(page.locator("#site-url").locator("xpath=ancestor::div[contains(@class,'cap-field')][1]")).toHaveAttribute("data-invalid", "true");
-    await url.fill("https://foxhound.app");
+    await url.fill("https://example.com");
     await expect(page.locator("#site-url").locator("xpath=ancestor::div[contains(@class,'cap-field')][1]")).not.toHaveAttribute("data-invalid", "true");
   });
 });

@@ -99,11 +99,11 @@ In the page until script opens it:
 ```html
 <p><a class="cap-btn" href="#rename" data-cap-dialog-open="rename">Rename the site…</a></p>
 <dialog class="cap-dialog" data-cap="dialog" data-cap-inline open data-placement="center" data-size="md" id="rename" aria-labelledby="rename-title">
-  <form method="post" action="/admin/sites/foxhound/rename">
+  <form method="post" action="/admin/sites/example/rename">
     <div class="cap-dialog-header"><h2 class="cap-dialog-title" id="rename-title">Rename the site</h2></div>
     <div class="cap-dialog-body"><label for="name">Site name</label><input class="cap-input" id="name" name="name" /></div>
     <div class="cap-dialog-footer">
-      <a class="cap-btn" href="/admin/sites/foxhound" data-cap-part="cancel">Cancel</a>
+      <a class="cap-btn" href="/admin/sites/example" data-cap-part="cancel">Cancel</a>
       <button type="submit" class="cap-btn" data-variant="primary">Save name</button>
     </div>
   </form>

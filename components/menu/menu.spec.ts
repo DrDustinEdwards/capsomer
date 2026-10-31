@@ -16,7 +16,7 @@ async function strictStyles(page: Page): Promise<void> {
   });
 }
 
-const trigger = (page: Page) => page.getByRole("button", { name: "Actions for foxhound.app" });
+const trigger = (page: Page) => page.getByRole("button", { name: "Actions for example.org" });
 const chosen = (page: Page) => page.locator("[data-chosen]").first();
 
 eachTheme((theme) => {
@@ -250,7 +250,7 @@ eachTheme((theme) => {
     const items = menu.locator("form .cap-menu-item");
     await expect(items).toHaveText([/^Open site$/, /^Run checks now$/, /^ArchiveNot while a deploy runs/, /^Delete site$/]);
     // A link item goes somewhere instead of posting.
-    await expect(menu.getByRole("link", { name: "Open site" })).toHaveAttribute("href", "/admin/sites/foxhound");
+    await expect(menu.getByRole("link", { name: "Open site" })).toHaveAttribute("href", "/admin/sites/example-org");
     await expect(items.nth(2)).toBeDisabled();
     await expect(menu.getByText("Not while a deploy runs. Try again when it ends.")).toBeVisible();
     await expect(items.nth(3)).toHaveAttribute("data-tone", "crit");
@@ -272,7 +272,7 @@ eachTheme((theme) => {
         }),
     );
     await page.locator("#menu-form-open").getByRole("button", { name: "Run checks now" }).click();
-    expect(await posted).toEqual({ intent: "check", site: "foxhound", action: "/admin/sites/foxhound" });
+    expect(await posted).toEqual({ intent: "check", site: "example-org", action: "/admin/sites/example-org" });
   });
 
   test("keyboard: Enter opens the form menu, the arrow keys move between its buttons and links, Esc closes it and returns to the summary", async ({ page }) => {

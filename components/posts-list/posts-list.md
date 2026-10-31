@@ -48,7 +48,7 @@ Any list of a site's posts that a person manages: Carrel's Posts tab for a site,
 - **The waiting update has its own page, `PostScheduledUpdate`**: a page head with the post's title, "The update goes live October 12, 2026, 10:00 AM CDT (3:00 PM UTC), in 2 days" in the person's zone, and its actions (Reschedule…, Edit the update, View the live post, and Cancel the update set apart as the one-way one). Then "Live post · on the site since …" and "Scheduled update · goes live …" over the two columns, in the viewer's zone as the head says it, the draft compare under them (its own side names off, `heads={false}`), and the unified patch in a disclosure.
 - **The status is a word, a shape and a color**, the same mapping everywhere (`contentStatus()`): Published (a tick), Scheduled (a square, "in 3 days"), Draft (an empty circle with a bar).
 - **50 per page, by cursor.** "Next page" and "First page" are links. The design's default is "Show more", but a cursor page replaces the one before it, and "Show more" promises to add to it, so the links say what they do. Until the site can sort (site-api v0.6) the kit sorts the page it has, and the count says "sorted on this page only".
-- **Empty names its kind**: "No drafts", "Nothing scheduled", "Trash is empty", "No posts match “lysogeny”" with Clear filters.
+- **Empty names its kind**: "No drafts", "Nothing scheduled", "Trash is empty", "No posts match “survey”" with Clear filters.
 
 ## Keyboard
 
@@ -66,11 +66,11 @@ Any list of a site's posts that a person manages: Carrel's Posts tab for a site,
 ## Accessibility
 
 - The list is a region named by its noun ("Posts"). The table is in a labeled, focusable scroll region whose caption names the site.
-- Each box and each row menu names its post ("Select Notes on the Foxhound release", "Actions for Notes on the Foxhound release"), so a column of them is not a column of the same name.
+- Each box and each row menu names its post ("Select Notes on the spring release", "Actions for Notes on the spring release"), so a column of them is not a column of the same name.
 - The bulk bar's count is a status; its outcome list is a group named by its line ("2 done, 1 not done."), each line a word and a shape.
 - The result is a status region; a failure is an alert. The confirm dialog is an alert dialog with focus on Cancel.
 - The preview link is a status region named "Preview link"; its field is named for the post and described by when the link stops working, and Copy says what it did there.
-- The rename dialog is a dialog named by its title ("Rename Notes on the Foxhound release"), its field labeled "New slug" and described by what a slug may hold. The date fields are labeled "Published from" and "Published to".
+- The rename dialog is a dialog named by its title ("Rename Notes on the spring release"), its field labeled "New slug" and described by what a slug may hold. The date fields are labeled "Published from" and "Published to".
 - After Move to Trash, Restore or Delete for good takes a post out of the list, focus goes to a defined place (above), never to the top of the page.
 - Status is never color alone. Text reaches 4.5:1 and edges 3:1 in both themes.
 
@@ -113,13 +113,13 @@ React renders it; a server renders the same HTML. The parts, in order:
   </div>
   <div class="cap-table-wrap cap-posts-wrap" role="region" aria-labelledby="cap" tabindex="0">
     <table class="cap-table cap-posts-table">
-      <caption id="cap" class="cap-sr-only">Posts on dustinedwards.info</caption>
+      <caption id="cap" class="cap-sr-only">Posts on example.com</caption>
       <thead><tr><th class="cap-posts-check">...</th><th>Title</th><th>Status</th><th>Updated</th><th><span class="cap-sr-only">Actions</span></th></tr></thead>
       <tbody>
         <tr data-status="scheduled">
           <td class="cap-posts-check"><label class="cap-check"><input type="checkbox" name="ids" value="uptime-strip" form="bulk"><span class="cap-sr-only">Select Why the uptime strip counts gaps</span></label></td>
           <th scope="row" class="cap-posts-title"><a class="cap-table-open" href="/editor/uptime-strip">Why the uptime strip counts gaps</a>
-            <span class="cap-posts-meta"><span class="cap-posts-path">Not on the site yet</span><span class="cap-posts-kind">post</span><span class="cap-posts-authors">By Dustin Edwards with Julie Edwards</span></span>
+            <span class="cap-posts-meta"><span class="cap-posts-path">Not on the site yet</span><span class="cap-posts-kind">post</span><span class="cap-posts-authors">By Alex Rivera with Sam Lee</span></span>
             <span class="cap-posts-excerpt">A gap is not a zero: ...</span>
             <span class="cap-posts-notes"><span class="cap-pill" data-tone="info">...</span></span></th>
           <td class="cap-posts-status"><span class="cap-status" data-tone="info">[glyph]Scheduled</span> <span class="cap-posts-when">in 3 days</span></td>

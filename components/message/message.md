@@ -23,7 +23,7 @@ The result of an action, said in the page: "Moved the mention to Trash", with Un
 ## When to use it
 
 - After a reversible action that happened at once: say what happened and offer Undo (patterns.md "Reversible").
-- After an action whose result is not otherwise visible: "Published to TXASM newsletter."
+- After an action whose result is not otherwise visible: "Published to the Example Co newsletter."
 - When a result carries a warning the person must not miss: "Seat start is on. Warning: the audit row naming you was not written."
 - For a failure with no control beside it to say so: a failed copy, a failed refresh, a failed sign out.
 

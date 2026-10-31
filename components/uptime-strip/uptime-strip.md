@@ -59,7 +59,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```html
 <div class="cap-chart" data-head="inline">
-  <div class="cap-chart-figure">[uptimeStrip({ slots, label: "foxhound.app", subtitle: "99.4% up over 7 days", alt }) from Enarratio]</div>
+  <div class="cap-chart-figure">[uptimeStrip({ slots, label: "example.org", subtitle: "99.4% up over 7 days", alt }) from Enarratio]</div>
   <ul class="cap-uptime-legend" aria-label="Key">
     <li><span class="cap-uptime-key" data-key="up" aria-hidden="true"></span>Up</li>
     <li><span class="cap-uptime-key" data-key="degraded" aria-hidden="true"></span>Degraded</li>

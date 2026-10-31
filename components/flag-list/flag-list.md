@@ -36,7 +36,7 @@ Beside an editor or a draft page: the flags raised against that draft by the che
 - **A flag is a row of the row list.** The title is the flag's one link when it is anchored (the message, then "Go to passage", `href="#anchor-id"`); the actions are real buttons; `j` and `k` move between rows across both groups.
 - **An anchor shows its words.** The quoted passage sits under the row, so the person sees what the flag is about without leaving the list.
 - **A lost anchor is never dropped.** When the quoted words are no longer in the text (edited or removed) the flag says "Anchor lost", shows the last known text in a dashed, muted quote, has no link, and can still be resolved or dismissed. The anchors are re-read as the text changes.
-- **A suggestion is inert until the owner applies it.** It is shown as a before and after pair: the old words struck through behind a minus mark and the hidden word "Before", the new words behind a plus mark and "After" (the draft compare's convention, so the tint is never the only cue). Only the owner (`data-owner`) gets an Apply button; a person who is not the owner sees the pair and the sentence "Only the owner, Dustin Edwards, can apply this." Nothing, an AI's suggestion included, applies itself: there is no code path that does.
+- **A suggestion is inert until the owner applies it.** It is shown as a before and after pair: the old words struck through behind a minus mark and the hidden word "Before", the new words behind a plus mark and "After" (the draft compare's convention, so the tint is never the only cue). Only the owner (`data-owner`) gets an Apply button; a person who is not the owner sees the pair and the sentence "Only the owner, Alex Rivera, can apply this." Nothing, an AI's suggestion included, applies itself: there is no code path that does.
 - **Reversible things happen at once with Undo; a rewrite of the draft is previewed.** Resolve, dismiss, reopen and a single Apply act at once and say so in the page's message region with Undo (`z`): "Flag resolved. Undo". Undoing an Apply puts the old words back where the new ones are now, and refuses, saying why, if the draft has been edited around them since. "Apply 4 suggestions" rewrites the draft in several places, so it opens the shared confirm dialog listing every replacement, with focus on Cancel; after it the message region offers Undo too.
 - **Announced.** With no message region on the page the list's own polite region says the same words. Focus goes to the row's next action, or the next visible row when the row leaves the filtered view; it is never left on nothing.
 - **A summary line** says it in words: "2 blocking, 3 advisory, 4 resolved".
@@ -80,8 +80,8 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ## Markup
 
 ```html
-<section class="cap-flags" data-cap="flag-list" aria-labelledby="fl-h" data-owner data-owner-name="Dustin Edwards"
-         data-viewer="Dustin Edwards" data-text-source="#draft">
+<section class="cap-flags" data-cap="flag-list" aria-labelledby="fl-h" data-owner data-owner-name="Alex Rivera"
+         data-viewer="Alex Rivera" data-text-source="#draft">
   <header class="cap-flags-head">
     <h2 class="cap-flags-title" id="fl-h">Flags on this draft</h2>
     <p class="cap-flags-summary" data-cap-part="summary">2 blocking, 3 advisory, 4 resolved</p>
@@ -159,7 +159,7 @@ import { FlagList, Flag } from "capsomer/react/flag-list";
 import { useMessage } from "capsomer/react/message";
 
 const { say, fail } = useMessage();
-<FlagList label="Flags on this draft" flags={flags} text={draft} onTextChange={setDraft} owner ownerName="Dustin Edwards" viewer="Dustin Edwards" say={say} fail={fail} onFlagsChange={save} />
+<FlagList label="Flags on this draft" flags={flags} text={draft} onTextChange={setDraft} owner ownerName="Alex Rivera" viewer="Alex Rivera" say={say} fail={fail} onFlagsChange={save} />
 ```
 
 A `Flag` is `{ id, kind, cause, message, raisedBy?, anchor?: { id, quote, before?, after?, lost?, label? }, suggestion?: { replacement, by? }, state, resolution?, resolvedBy?, resolvedAt? }`. Load `row-list.css`, `status.css`, `button.css`, `segmented.css`, `message.css`, `time.css` and `confirm-dialog.css` with `flag-list.css`.
