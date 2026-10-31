@@ -242,7 +242,7 @@
     "wrangler": "^4.151.3"
   },
   "dependencies": {
-    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.24.0"
+    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.27.1"
   },
   "overrides": {
     "@drdustinedwards/site-helpers": {
