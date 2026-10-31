@@ -13,6 +13,9 @@
 // `[data-density="comfortable"]` on the root or on any wrapper changes them for its subtree.
 // Every density token is written as a literal in both blocks, never as a var() chain, so a
 // wrapper does not inherit a value already resolved at the root.
+//
+// Font sizes are in rem (16px each at the browser's default), so a person's own default text
+// size reaches every size (WCAG 1.4.4); spaces and controls stay in px.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { ELEVATION_ORDER, FAMILIES, moreLines, themes } from "./palette.mjs";
@@ -42,11 +45,11 @@ export const SCALE = {
     ["radius-full", "999px", "pills and switches"],
   ],
   type: [
-    ["fs-h3", "18px", "a panel or dialog title"],
-    ["fs-h2", "22px", "a page title in the app"],
-    ["fs-prose", "clamp(17px, 1rem + 0.25vw, 19px)", "body text in the reading context"],
-    ["fs-prose-h2", "clamp(22px, 1.2rem + 1.2vw, 30px)", "a heading in the reading context"],
-    ["fs-input-coarse", "16px", "a form input on a touch screen, so iOS does not zoom"],
+    ["fs-h3", "1.125rem", "a panel or dialog title"],
+    ["fs-h2", "1.375rem", "a page title in the app"],
+    ["fs-prose", "clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem)", "body text in the reading context"],
+    ["fs-prose-h2", "clamp(1.375rem, 1.2rem + 1.2vw, 1.875rem)", "a heading in the reading context"],
+    ["fs-input-coarse", "max(1rem, 16px)", "a form input on a touch screen, so iOS does not zoom (never under 16px, whatever the default size)"],
     ["prose", '"Source Serif 4", "Iowan Old Style", Charter, Georgia, serif', "long-form text and public headings (decision 5)"],
     ["display", UI_STACK, "a heading that wants a display face (the page head's title, an app's own headings); Schibsted Grotesk at 800, the UI face's own heavy weight; a site may set its own"],
   ],
@@ -74,7 +77,7 @@ export const SCALE = {
   layout: [
     ["measure", "80ch", "a reading line: WCAG 1.4.8's 80-character ceiling, about two-thirds of the family page's column at the 17px body (Dustin, 2026-10-28: the 66-character line was too narrow on the wider page)"],
     ["page-max", "1280px", "the family page width, gutters included (a 1248px column): every site's letterhead, content and footer line up on it (.cap-page). Running text keeps --measure inside it; grids, maps and tables use the rest (Dustin, 2026-10-28: \"it can be wider\")"],
-    ["fs-page", "17px", "the family page's body text (.cap-page), the same on every site; an app's rows keep --fs-body"],
+    ["fs-page", "1.0625rem", "the family page's body text (.cap-page), the same on every site; an app's rows keep --fs-body"],
     ["page-gutter", "16px", "the page's side margin inside --page-max, and the least margin at any width"],
     ["rail-w", "208px", "the shell's left menu, expanded"],
     ["rail-w-collapsed", "56px", "the shell's left menu, collapsed to icons"],
@@ -106,10 +109,10 @@ export const DENSITY = [
   ["pad-x", "12px", "12px", "a control's inline padding (vega's px-3)"],
   ["pad-y", "7px", "8px", "a control's block padding where it is not a fixed height (a textarea, a menu item)"],
   ["pad-card", "20px", "24px", "a card or panel's padding (shadcn's card spacing, nova 16 and vega 24)"],
-  ["fs-label", "11px", "12px", "column labels and section titles, uppercase; nothing is set smaller"],
-  ["fs-detail", "13px", "13px", "the line under a row title"],
-  ["fs-body", "14px", "14px", "app body and rows (vega's text-sm)"],
-  ["fs-lead", "15px", "16px", "a page's lead line"],
+  ["fs-label", "0.6875rem", "0.75rem", "column labels and section titles, uppercase; nothing is set smaller"],
+  ["fs-detail", "0.8125rem", "0.8125rem", "the line under a row title"],
+  ["fs-body", "0.875rem", "0.875rem", "app body and rows (vega's text-sm)"],
+  ["fs-lead", "0.9375rem", "1rem", "a page's lead line"],
   ["gap", "14px", "16px", "between rows of a form and between sibling blocks"],
   ["row-h", "40px", "44px", "the least height of a list or table row"],
 ];
@@ -202,7 +205,7 @@ export function renderJson() {
     for (const [name, value, why] of rows) {
       const ty = name.startsWith("dur-") ? "duration" : value.startsWith("cubic-bezier(") ? "cubicBezier" : name.startsWith("fs-") && group.startsWith("density") ? "dimension" : typeOf(group);
       let v = value;
-      if (ty === "dimension" && /^\d+px$/.test(value)) v = { value: Number(value.slice(0, -2)), unit: "px" };
+      if (ty === "dimension" && /^[\d.]+(px|rem)$/.test(value)) v = { value: Number.parseFloat(value), unit: value.endsWith("rem") ? "rem" : "px" };
       else if (ty === "duration") v = { value: Number(value.slice(0, -2)), unit: "ms" };
       else if (ty === "cubicBezier") v = value.match(/[\d.]+/g).map(Number);
       else if (ty === "number") v = Number(value);

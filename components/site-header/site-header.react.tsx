@@ -2,6 +2,7 @@ import { Fragment, type ReactNode, useCallback, useEffect, useId, useRef, useSta
 import { Dialog, DialogBody, DialogHeader } from "../dialog/dialog.react.tsx";
 import type { LinkProps } from "../shell/shell.react.tsx";
 import { ThemeButton } from "../theme-switch/theme-switch.react.tsx";
+import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { THEME_PREF, toggleTheme } from "../theme-switch/theme-switch.ts";
 import { CHEV, Disclosure, GroupList, type HeaderExtra, type HeaderLink, HeaderTip, MENU_ICON, PERSON_ICON, SEARCH_ICON, SheetGroup, type SiteHeaderProps, countName, part, plainLink } from "./site-header-parts.react.tsx";
 import { badgeText, wireSearch } from "./site-header.ts";
@@ -27,7 +28,7 @@ export function SiteHeader(props: SiteHeaderProps) {
     if (!theme || !themeKey) return;
     const want = themeKey.toLowerCase();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() !== want || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key.toLowerCase() !== want || e.ctrlKey || e.metaKey || e.altKey || singleKeysOff()) return;
       if ((e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")) return;
       toggleTheme(themePrefKey);
     };

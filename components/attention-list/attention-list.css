@@ -54,7 +54,7 @@
 
   /* "Worst first. Read 40 seconds ago": the order and how fresh the reading is. */
   .cap-attention-src {
-    margin-left: auto;
+    margin-inline-start: auto;
     font-size: var(--fs-label);
     color: var(--dim);
   }
@@ -193,7 +193,7 @@
 
   @container (max-width: 480px) {
     .cap-attention-src {
-      margin-left: 0;
+      margin-inline-start: 0;
       flex-basis: 100%;
     }
   }

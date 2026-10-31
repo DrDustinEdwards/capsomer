@@ -2,6 +2,7 @@
 // Focus itself moves (there is no second selection), so Enter follows the link, the
 // browser scrolls the row into view, and a screen reader reads the row it lands on.
 // No framework; the React wrapper uses the same functions.
+import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 
 // Every row's one link or button, in order, skipping rows hidden or disabled.
 export function rowTargets(list: ParentNode): HTMLElement[] {
@@ -49,11 +50,8 @@ export function isTypingKey(e: KeyboardEvent): boolean {
   return t.isContentEditable || /^(TEXTAREA|SELECT)$/.test(t.tagName) || t.closest("[role='combobox'], [role='textbox']") !== null;
 }
 
-// Single-key shortcuts can be switched off (DEFAULTS.md). The shortcuts registry records the
-// choice as data-cap-single-keys="off" on <html>.
-export function singleKeysOff(): boolean {
-  return document.documentElement.dataset.capSingleKeys === "off";
-}
+// Single-key shortcuts can be switched off (DEFAULTS.md): the shortcuts switch is the one source.
+export { singleKeysOff };
 
 // Whether j and k should act on this list now: focus is in it, or it is the page's primary
 // list and focus is in no other list and no open dialog.
