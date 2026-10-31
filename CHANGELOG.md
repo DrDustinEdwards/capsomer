@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Site only: the report endpoint is rate limited and connect-src names one file** (no package change). `/csp-report` passes site-runtime's receiver an `allow` backed by a Workers rate-limit binding (`CSP_REPORT_RATE_LIMIT` in `wrangler.jsonc`, 60 a minute per address), so a flood no longer reaches the log. The site's `connect-src` names the results file it reads (`https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json`) instead of every repository on raw.githubusercontent.com. `test/unit/security-headers.test.mjs` is removed: the family's live header check grades the public site.
+- **Site only: static files carry their charset and cross-origin CORP where another origin loads them** (no package change). The site's `_headers` gives every static text file `charset=utf-8`, and stylesheets, scripts and fonts `Cross-Origin-Resource-Policy: cross-origin` (site-runtime 0.43.0 `headersFile({ charset: true })` and `corpFor`).
 - **Showcase site: each page's WebPage and breadcrumb.** `site/seo.ts` builds heads with Prelum's `defineHead`, so the theme builder and every component page carry a WebPage and a Home > page BreadcrumbList, and the canonical keeps the slash the pages are served at.
 
 ## [0.53.0]
