@@ -30,7 +30,7 @@ Any page whose body is rendered Markdown: a post, an essay, a doc page, a book c
 - **Prelum's class names, held in the prose context.** The names are Prelum's contract, stored in every site's rendered HTML, so they keep Prelum's spelling instead of a `cap-` prefix. Each rule is inside `:where([data-context="prose"])`, which adds no specificity: the styles reach nothing outside a post, and a site overrides any of them with one class.
 - **A heading's link to itself shows on hover and on focus**, and always on a touch screen, a full target wide. It is a `#`, not an underline.
 - **Callouts carry their kind in words.** The title ("Note", "Warning" or the writer's own) says what the box is; the tone's color and the thicker start rule only repeat it, and forced colors keep the border.
-- **Tables scroll in their own box**, which takes focus so a keyboard can scroll it, and never widen the page. Numbers sit right in tabular figures.
+- **Tables and code blocks scroll in their own box**, never the page. Each box is a named region a keyboard can focus and scroll (`tabindex="0"`, `role="region"`, and Prelum's `aria-label`: "Table: " and the first headers, "Code: " and the frame title or language, or "Code"). Numbers sit right in tabular figures.
 - **No request to a video service until the reader asks.** An embed is a 16:9 card naming the service and the title; `render/enhance` swaps in the no-cookie player on a click.
 - **A marked code line has a rule at its start** as well as a band, so it is told by more than a tint. Shiki's light and dark themes are picked by the page's theme.
 - **An image drawn for one theme** (a figure's `dark=` twin, each diagram) shows only in that theme, by Capsomer's `data-theme` or the system's when none is set.
