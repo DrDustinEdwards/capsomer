@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary]
 added: 0.1.0
-updated: 0.55.0
+updated: 0.56.0
 source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
 replaces:
   - 'class="(?:[^"]*\s)?field[\s"]'

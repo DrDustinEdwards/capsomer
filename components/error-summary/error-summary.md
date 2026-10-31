@@ -5,7 +5,7 @@ summary: After a failed submit, a titled list of links to every field in error a
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [as the server renders it, written by Field's submit check, hidden when the form is valid]
-added: 0.55.0
+added: 0.56.0
 source: GOV.UK Design System Error summary (https://design-system.service.gov.uk/components/error-summary/)
 replaces:
   - 'class="[^"]*\b(error-summary|errorlist|form-errors)\b'

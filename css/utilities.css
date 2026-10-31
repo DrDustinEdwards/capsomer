@@ -14,9 +14,11 @@
   }
 
   /* Text a screen reader announces and the eye does not see. The focusable variant shows
-     while it, or something in it, has focus. */
+     while it, or something in it, has focus. Prelum's footnotes heading carries GFM's own name
+     for it, .sr-only (components/prose-blocks). */
   .cap-sr-only,
-  .cap-sr-only-focusable:not(:focus-within) {
+  .cap-sr-only-focusable:not(:focus-within),
+  :where([data-context="prose"]) .sr-only {
     position: absolute;
     width: 1px;
     height: 1px;

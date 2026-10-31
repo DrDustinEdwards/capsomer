@@ -1,0 +1,4 @@
+/* The specimen's sample layout: each article a reading column. */
+.cap-specimen > article[data-context="prose"] {
+  max-inline-size: 46rem;
+}

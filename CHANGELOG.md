@@ -2,7 +2,7 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [0.55.0]
+## [0.56.0]
 
 The accessibility release (area 9 of the completeness plan, 2026-10-31).
 
@@ -45,6 +45,13 @@ The foundation's accessibility gaps from the area 9 audit (2026-10-30).
 - **New: summary list** (`components/summary-list`: `.cap-summary-list`, `.cap-summary-actions`, `.cap-summary-missing`), GOV.UK's summary list with Change links. **Changed contract:** the detail panel's `.cap-detail-record` is drawn by `summary-list.css` now, so load it with `detail-panel.css`.
 - **New: step indicator** (`components/step-indicator`: `.cap-steps`, `.cap-steps-list`, `.cap-step`, `.cap-step-name`, `.cap-steps-heading`, `.cap-steps-counter`), USWDS's, with `aria-current="step"`.
 - **Docs:** the link page (`components/link/link.md`), the back link (on the breadcrumb page), and a Refused patterns section in DEFAULTS.md (carousel, feed, window splitter, menubar, context menu, grid, tree grid, two-thumb range slider, phase banner; the cookie notice is open). The bulk bar, history list and mentions list pages no longer claim a switch that did nothing.
+
+- **New component: prose blocks** (`capsomer/prose-blocks.css`). Every class Prelum's renderer writes is now styled inside `<article data-context="prose">`, in both themes, every family and at a phone's width: headings with their own links, task lists, scrolling tables, code with a title and marked lines, the five callouts, figures with credits and wide or full widths, galleries, video, audio and transcripts, embeds that load nothing until a click, button links, bookmarks, details, FAQs, footnotes, the editorial pack's side note, pull quote and swatch, and `render/enhance`'s reading progress, Copy, footnote preview, image viewer and selection link. Links are left to Capsomer's link system. A site imports the file and deletes its own copy. `.sr-only` (GFM's footnotes heading) is hidden inside the prose context, as `.cap-sr-only` is. New classes only; nothing is removed or renamed.
+- **Showcase site: Prelum v0.23.0** (no package change). The site's `@drdustinedwards/site-helpers` pin moves from v0.22.0 to v0.23.0, where Prelum wraps `:::chart` output in this frame (`div.cap-chart > div.cap-chart-figure`) and sets `RENDER_VERSION` to 9. The site uses Prelum only for search, head tags and icons, so no page changes.
+
+## [0.55.0]
+
+The catalog's filter tray link reaches its results (writing and rendering, area 4).
 
 - **Showcase site: the family icon set** (no package change). Prelum v0.22.0's icons, drawn from the letterhead's hexagon on the magenta family's `#752c6a` (white on it for the Apple touch and maskable icons), are in `site/public`; every page links them with `iconLinks()` and `site.webmanifest` comes from `webManifest()`. The inline data-URL favicon is gone.
 - **Catalog: the results region has its id** (`{id}-results`). The filter tray's "Show N" link pointed at `#{id}-results`, which nothing carried, so on a phone it closed the tray without moving to the results; Prelum's live check flagged it on all eight dustinedwards.info research pages. HTML contract: the results region gains `id="{id}-results"`.

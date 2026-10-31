@@ -6,7 +6,7 @@ parts: [css, ts, react]
 tool: own JavaScript
 states: [rest, hover, pressed, visited, focus, away, family, file, jump, email, phone, lang, footnote, xref, address, next, title, tag]
 added: 0.45.0
-updated: 0.55.0
+updated: 0.56.0
 source: site-runtime's ./prefetch (NEVER_PREFETCH, FILE_EXTENSIONS), which this rule follows for client navigation
 replaces:
   - '\{[^}]*\b(Nav)?Link\b[^}]*\} from "react-router(-dom)?"'

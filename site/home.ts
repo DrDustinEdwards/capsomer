@@ -9,7 +9,8 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { familyFooterHtml } from "../components/family-footer/family-footer.ts";
 import { letterheadHtml } from "../components/site-header/site-header.ts";
-import { frontmatter, renderMarkdown } from "./markdown.ts";
+import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
+import { renderMarkdown } from "./markdown.ts";
 
 // Magenta is the public site's own family, on its root; the six are the ones it shows.
 type Family = "purple" | "fox" | "teal" | "amber" | "navy" | "forest" | "magenta";
@@ -119,7 +120,7 @@ export function readData(root: string, examples: Map<string, string>): Data {
         behavior: existsSync(resolve(dir, d.name, `${d.name}.ts`))
           ? [...readFileSync(resolve(dir, d.name, `${d.name}.ts`), "utf8").matchAll(/^export (?:async )?function (\w+)/gm)].map((x) => x[1] ?? "")
           : [],
-        md: readFileSync(resolve(dir, d.name, `${d.name}.md`), "utf8").replace(/^---\n[\s\S]*?\n---\n+/, ""),
+        md: frontmatter(readFileSync(resolve(dir, d.name, `${d.name}.md`), "utf8")).body,
         react: existsSync(resolve(dir, d.name, `${d.name}.react.tsx`))
           ? [...readFileSync(resolve(dir, d.name, `${d.name}.react.tsx`), "utf8").matchAll(/^export (?:function|const) ([A-Z]\w*)/gm)].map((x) => x[1] ?? "")
           : [],
