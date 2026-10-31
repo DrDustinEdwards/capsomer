@@ -311,12 +311,12 @@ export const alert: Template<{ level: AlertLevel; what: string; when: string; de
 
 /**
  * A change to how a person signs in: what happened, when, the device and the place it came from, and what to do if it
- * was not them (NIST SP 800-63B-4 4.6). site-runtime's `./sign-in` gives `title`, `what`, `when`, `device`, `location`
+ * was not them (NIST SP 800-63B-4 4.6). site-runtime's `./sign-in` gives `title`, `what` (null when the title says it all), `when`, `device`, `location`
  * and `secure` as its notice's `detail`; `url` is the product's own account page. The mail holds no link that signs in.
  */
 export const securityNotice: Template<{
   title: string;
-  what: string;
+  what?: string | null;
   when: string;
   device?: string | null;
   location?: string | null;
@@ -329,7 +329,7 @@ export const securityNotice: Template<{
     const k = d.copy ?? {};
     const out: Block[] = [
       { type: "heading", text: k.heading ?? d.title },
-      { type: "paragraph", text: k.intro ?? d.what },
+      ...((k.intro ?? d.what) ? [{ type: "paragraph", text: (k.intro ?? d.what) as string } as const] : []),
       { type: "fine", text: `When: ${d.when}` },
       ...(d.device ? [{ type: "fine", text: `Device: ${d.device}` } as const] : []),
       ...(d.location ? [{ type: "fine", text: `Near: ${d.location}` } as const] : []),

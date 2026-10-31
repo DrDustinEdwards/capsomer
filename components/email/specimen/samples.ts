@@ -30,8 +30,7 @@ const SAMPLES: Record<string, () => string> = {
   securityNotice: () =>
     renderEmail(securityNotice, {
       ...common,
-      title: "A passkey was added to your account",
-      what: "A passkey (Apple Passwords) was added to your Carrel account.",
+      title: "A passkey from Apple Passwords was added to your account",
       when: "October 31, 2026 at 1:52 AM UTC",
       device: "Safari on iPhone",
       location: "Austin, Texas, United States",
