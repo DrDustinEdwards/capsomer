@@ -103,6 +103,10 @@
       "default": "./tokens/enarratio-theme.mjs"
     },
     "./*.css": "./components/*/*.css",
+    "./behavior/chart-enhance": {
+      "types": "./dist/components/chart-frame/chart-enhance.d.ts",
+      "default": "./dist/components/chart-frame/chart-enhance.js"
+    },
     "./behavior/*": {
       "types": "./dist/components/*/*.d.ts",
       "default": "./dist/components/*/*.js"
