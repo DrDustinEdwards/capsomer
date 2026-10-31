@@ -19,7 +19,7 @@ A `div.cap-steps` holding an ordered list of the steps (`ol.cap-steps-list`, a `
 
 ## When to use it
 
-A flow of three to seven steps a person goes through in order, one per page, where knowing how much is left helps: adding a site, publishing a book, signing up.
+A flow of three to seven steps a person goes through in order, one per page, where knowing how much is left helps: adding a site, publishing a report, signing up.
 
 ## When not to
 

@@ -138,7 +138,7 @@ eachTheme((theme) => {
     await visitStates(page, "row-list", theme);
     await page.locator("h1").click();
     await page.keyboard.press("j");
-    await expect(page.getByRole("link", { name: "foxhound.app is not answering" })).not.toBeFocused();
+    await expect(page.getByRole("link", { name: "example.org is not answering" })).not.toBeFocused();
   });
 
   test("behavior: the off specimen shows the switch off", async ({ page }) => {

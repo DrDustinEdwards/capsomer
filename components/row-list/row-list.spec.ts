@@ -198,7 +198,7 @@ eachTheme((theme) => {
     await expect(link).toHaveCSS("-webkit-line-clamp", "2");
     const cut = await link.evaluate((el) => el.scrollHeight > el.clientHeight);
     expect(cut).toBe(true);
-    await expect(link).toHaveAccessibleName(/a fresh lawn every time$/);
+    await expect(link).toHaveAccessibleName(/a fresh count every time$/);
   });
 
   test("behavior: a critical row has the red edge, flush and clipped to its corners, others none", async ({ page }) => {

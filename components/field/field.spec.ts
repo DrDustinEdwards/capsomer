@@ -107,21 +107,21 @@ eachTheme((theme) => {
     const summary = page.locator("#add-site .cap-error-summary");
     await expect(summary).toBeFocused();
     await expect(summary).toHaveAccessibleName("There is a problem");
-    await expect(summary.getByRole("link")).toHaveText(["Give the site a name, such as Foxhound.", "Enter the site's address.", "Choose where the site runs."]);
+    await expect(summary.getByRole("link")).toHaveText(["Give the site a name, such as Field notes.", "Enter the site's address.", "Choose where the site runs."]);
     await expect(page).toHaveTitle(`Error: ${title}`);
     await expect(page.locator("#site-name")).toHaveAttribute("aria-invalid", "true");
-    await expect(page.locator("#site-name-e")).toHaveText("Give the site a name, such as Foxhound.");
+    await expect(page.locator("#site-name-e")).toHaveText("Give the site a name, such as Field notes.");
     // The summary is what is said; the messages beside the fields are not announced as well.
     await expect(page.locator("#site-name-e")).not.toHaveAttribute("role", "alert");
     await expect(page.getByRole("radio", { name: "Vercel" })).toHaveAttribute("aria-invalid", "true");
     await expect(page.locator("#add-result")).toHaveText("");
 
-    await page.locator("#site-name").fill("Foxhound");
-    await url.fill("https://foxhound.app");
+    await page.locator("#site-name").fill("Field notes");
+    await url.fill("https://fieldnotes.example");
     await page.getByRole("radio", { name: "Cloudflare" }).check();
     await page.locator("#site-name").focus();
     await page.keyboard.press("Enter");
-    await expect(page.locator("#add-result")).toHaveText("Added Foxhound. Its checks start on the next pass.");
+    await expect(page.locator("#add-result")).toHaveText("Added Field notes. Its checks start on the next pass.");
     await expect(page.locator("#add-site .cap-field-error:visible")).toHaveCount(0);
     await expect(summary).toBeHidden();
     await expect(page).toHaveTitle(title);
@@ -211,7 +211,7 @@ eachTheme((theme) => {
     await expect(q).toHaveValue("");
     await expect(q).toBeFocused();
     await expect(clear).toBeHidden();
-    await page.keyboard.type("mussels");
+    await page.keyboard.type("gardens");
     await clear.click();
     await expect(q).toHaveValue("");
     await expect(q).toBeFocused();
@@ -229,10 +229,10 @@ eachTheme((theme) => {
   test("behavior: a message goes as soon as the field is fixed", async ({ page }) => {
     await visitStates(page, "field", theme);
     const url = page.locator("#site-url");
-    await url.fill("foxhound.app");
+    await url.fill("fieldnotes.example");
     await url.blur();
     await expect(page.locator("#site-url-e")).toHaveText("Enter a full address, starting with https://.");
-    await url.fill("https://foxhound.app/");
+    await url.fill("https://fieldnotes.example/");
     await expect(page.locator("#site-url-e")).toBeHidden();
     await expect(url).not.toHaveAttribute("aria-invalid", "true");
   });
