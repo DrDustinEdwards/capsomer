@@ -336,7 +336,7 @@ export const securityNotice: Template<{
       { type: "note", text: d.secure },
     ];
     if (d.url) out.push({ type: "button", label: k.button ?? "Review your account", url: d.url });
-    out.push({ type: "fine", text: k.ignore ?? "We send this notice for every change to how you sign in. It holds no link that signs you in." });
+    out.push({ type: "fine", text: k.ignore ?? "You get this email whenever your sign-in settings change. It has no sign-in link." });
     return out;
   },
 };
