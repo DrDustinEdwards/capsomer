@@ -6,7 +6,7 @@ import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { DropZone } from "../drop-zone/drop-zone.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { MediaGrid, MediaInspector, useMediaMode, type MediaFields } from "../media/media.react.tsx";
-import { bareType, byteSize, copyText, CROPPABLE, suggestedAlt, type MediaRecord } from "../media/media.ts";
+import { bareType, byteSize, copyText, CROPPABLE, type MediaRecord } from "../media/media.ts";
 import { acceptLabel, formatBytes } from "../drop-zone/drop-zone.ts";
 import { readPref, writePref } from "../shell/shell.ts";
 import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";
@@ -177,6 +177,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   const layoutRef = useRef<HTMLDivElement>(null);
   const inspectorMode = useMediaMode(layoutRef);
   const insRef = useRef<{ focus: () => void }>(null);
+  const pickAlt = useRef<HTMLTextAreaElement>(null);
   const inspected = picker ? null : (data.inspected ?? null);
   // A file the person opened (Enter or a click) gets focus in its first field once it is here; one
   // that came with the page leaves focus where the page put it.
@@ -316,6 +317,10 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   }
 
   const pick = picker && chosen ? rows.find((r) => r.key === chosen) : undefined;
+  // The model's alt text for the picked file, where the host read it (the kit's detail for `pick`
+  // with `suggest`). Shown and offered; never put in the field unless the person chooses it.
+  const suggestions = pick && data.inspected?.key === pick.key ? data.suggestions : undefined;
+  const pickSuggestion = suggestions?.alt ?? "";
   const words = emptyWords(query, labels);
   const rules = offers.upload ? uploadRules(offers.upload, picker) : null;
   const canUpload = !!rules && can.edit && !trash;
@@ -562,7 +567,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
             </label>
             <input className="cap-input" id={`${uid}-upalt`} name="alt" type="text" autoComplete="off" aria-describedby={`${uid}-upalt-help`} />
             <p className="cap-field-help" id={`${uid}-upalt-help`}>
-              What the picture shows, for a person who cannot see it. You can add it later.
+              What the picture shows, for a person who cannot see it. A picture without it is flagged No alt text, and every use of it asks for alt text or a decorative choice.
             </p>
           </div>
           {keepSize("up")}
@@ -589,7 +594,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
             <label className="cap-field-label" htmlFor={`${uid}-imalt`}>
               Alt text
             </label>
-            <input className="cap-input" id={`${uid}-imalt`} name="alt" type="text" autoComplete="off" />
+            <input className="cap-input" id={`${uid}-imalt`} name="alt" type="text" autoComplete="off" aria-describedby={`${uid}-upalt-help`} />
           </div>
           {keepSize("im")}
           <button type="submit" className="cap-btn">
@@ -725,10 +730,28 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
             <label className="cap-field-label" htmlFor={`${uid}-pick-alt`}>
               Alt text (required)
             </label>
-            <textarea className="cap-input" id={`${uid}-pick-alt`} name="alt" rows={2} required defaultValue={pick.alt} aria-describedby={`${uid}-pick-help`} />
+            <textarea ref={pickAlt} className="cap-input" id={`${uid}-pick-alt`} name="alt" rows={2} required defaultValue={pick.alt} aria-describedby={`${uid}-pick-help`} />
             <p className="cap-field-help" id={`${uid}-pick-help`}>
-              What a person who cannot see the picture needs to know here. {pick.alt ? "It starts with the file's own alt text." : `Suggested: ${suggestedAlt(pick.name)}.`}
+              What a person who cannot see the picture needs to know here, or Insert as decorative if it adds nothing. {pick.alt ? "It starts with the file's own alt text." : null}
             </p>
+            {pickSuggestion ? (
+              <p className="cap-field-help" data-cap-part="pick-suggestion">
+                {suggestions?.model} suggests: “{pickSuggestion}”{" "}
+                {mounted ? (
+                  <button type="button" className="cap-btn" data-variant="quiet" onClick={() => {
+                      if (!pickAlt.current) return;
+                      pickAlt.current.value = pickSuggestion;
+                      pickAlt.current.focus();
+                    }}>
+                    Use it
+                  </button>
+                ) : null}
+              </p>
+            ) : iOffers.suggest && offers.alt && suggestions === undefined ? (
+              <p className="cap-field-help">
+                <a href={href(withMedia(query, { pick: pick.key, suggest: true }))}>Suggest alt text</a> asks the site's model; nothing is filled in unless you choose it.
+              </p>
+            ) : null}
           </div>
           <div className="cap-media-pick-actions">
             <button type="submit" className="cap-btn" data-variant="primary">

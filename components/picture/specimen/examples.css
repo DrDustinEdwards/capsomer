@@ -1,0 +1,20 @@
+/* The specimen's sample layout: pictures at a reading column's width, side by side where there is room. */
+.picture-sample-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  gap: var(--space-5);
+  max-inline-size: 46rem;
+  & figure {
+    margin: 0;
+  }
+  & img {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+  & figcaption {
+    margin-block-start: var(--space-2);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+}
