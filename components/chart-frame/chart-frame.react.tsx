@@ -6,13 +6,12 @@ import { Glyph } from "../status/status.react.tsx";
 // The width a chart is drawn at on the server and before the first measurement: Enarratio's own
 // default drawing width.
 export const DEFAULT_WIDTH = 640;
-// Redraws come in steps of this many pixels, so dragging a window redraws a few times, not on
-// every pixel; never under MIN_WIDTH.
-const STEP = 40;
+// Redraws at the frame's whole-pixel width, so the chart fills its column (steps of 40 px left up
+// to 39 px empty beside it); never under MIN_WIDTH. A resize redraws at most once a frame.
 const MIN_WIDTH = 240;
 
 export function drawWidth(measured: number, min = MIN_WIDTH): number {
-  return Math.max(min, Math.floor(measured / STEP) * STEP);
+  return Math.max(min, Math.floor(measured));
 }
 
 export interface ChartFrameProps {

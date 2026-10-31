@@ -1,5 +1,8 @@
 /* Specimen only, not part of the package: the gallery's grid, a narrow column, and a family's
-   own ground behind its chart. */
+   own ground behind its chart. The families' scopes (data-family) are loaded here: the states
+   page loads tokens.css, which has only the default family, so without them every family's
+   specimen fell back to purple's surface and ramp. */
+@import "../../../css/families.css";
 .cf-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
@@ -12,6 +15,8 @@
 }
 
 .cf-family {
+  display: grid;
+  gap: var(--space-5);
   min-width: 0;
   padding: var(--space-4);
   border: 1px solid var(--line);

@@ -12,6 +12,8 @@
    - a chart's `colors` override naming a Capsomer color token (series-1 to series-8, ok, warn,
      crit, info, nodata, accent): the rule Enarratio's colorStyles() would write, with the label's
      ink. Any other override still needs colorStyles(html) in the page's stylesheet.
+   - the figure's links (the source and "Download CSV") in the family's link style, semibold in
+     the link color with no underline, and tick labels in proportional figures (below).
    A site never writes [data-enarratio-colors] rules or sets --enarratio-series-N itself. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 @import "enarratio/base.css";
@@ -157,4 +159,22 @@
   .enarratio[data-enarratio-colors*="series-8: var(--info)"] { --enarratio-series-8: var(--info); --chart-ink-8: var(--info); }
   .enarratio[data-enarratio-colors*="series-8: var(--nodata)"] { --enarratio-series-8: var(--nodata); --chart-ink-8: var(--nodata); }
   .enarratio[data-enarratio-colors*="series-8: var(--accent)"] { --enarratio-series-8: var(--accent); --chart-ink-8: var(--accent-text); }
+}
+
+/* Unlayered, as Enarratio's base rules are, so these win over them (a layered rule never would).
+   Enarratio writes `.enarratio-source a { color: inherit }`, which leaves the source and "Download
+   CSV" muted and underlined; the family's links are semibold in the link color with no
+   underline, even under the pointer, as "Show data" beside them already is. Its tick labels
+   ask for tabular figures, and the interface face's tabular set gives the comma and the 1 a
+   full figure's width ("1 , 600"); proportional figures read as the page's numbers do. */
+.enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) a {
+  color: var(--accent-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+.enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) a:hover {
+  color: var(--accent-hover);
+}
+.enarratio svg :is([data-enarratio-mark$="tick label"], .enarratio-numeric) {
+  font-variant-numeric: normal;
 }

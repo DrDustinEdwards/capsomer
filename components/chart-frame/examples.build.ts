@@ -97,11 +97,12 @@ const drawings: Record<string, string> = {
   })(),
 };
 
-// The same chart in every family, for the palette: series 1 to 8 in each family's surfaces.
+// The same chart in every family, for the palette: series 1 to 8 on each family's surface (the
+// same eight in every family, DEFAULTS.md), then the five-step ramp, which is in the family's hue.
 const families = ["purple", "fox", "teal", "amber", "navy", "forest", "magenta", "cerulean", "olive", "rose"];
 const eight = ["Builds", "Reviews", "Deploys", "Probes", "Backups", "Imports", "Mail", "Indexing"].flatMap((kind, k) => ["Q1", "Q2", "Q3"].map((q, i) => ({ q, kind, n: 3 + ((k * 7 + i * 3) % 6) })));
 drawings.families = families
-  .map((f) => `<div data-family="${f}" class="cf-family">${frameHtml(barChart({ data: eight, x: "q", y: "n", series: "kind", layout: "stacked", id: `cf-fam-${f}`, title: `Eight series in the ${f} family`, alt: `Every series color in the ${f} family, stacked by quarter.`, xLabel: "Quarter", yLabel: "Jobs", width: 440, height: 240, source, summary: false, onIssue: () => {} }))}</div>`)
+  .map((f) => `<div data-family="${f}" class="cf-family">${frameHtml(barChart({ data: eight, x: "q", y: "n", series: "kind", layout: "stacked", id: `cf-fam-${f}`, title: `Eight series in the ${f} family`, alt: `Every series color in the ${f} family, stacked by quarter.`, xLabel: "Quarter", yLabel: "Jobs", width: 440, height: 240, source, summary: false, onIssue: () => {} }))}${frameHtml(heatStrip({ values: [1, 2, 3, 4, 5], label: `The ramp in the ${f} family`, id: `cf-ramp-${f}`, width: 440, height: 28 }))}</div>`)
   .join("");
 
 export default drawings;
