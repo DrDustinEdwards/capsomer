@@ -140,6 +140,8 @@
       overflow: visible;
       text-overflow: clip;
       white-space: normal;
+      -webkit-line-clamp: none;
+      line-clamp: none;
     }
     & .cap-row-title > .cap-flag-title {
       display: block;

@@ -289,4 +289,12 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
+
+  /* Forced colors drop the family's color mark (a background): the current site keeps its thick
+     top edge, in the system's highlight. */
+  @media (forced-colors: active) {
+    .cap-family-footer-sites a[aria-current] {
+      border-color: Highlight;
+    }
+  }
 }

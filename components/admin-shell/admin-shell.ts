@@ -4,6 +4,7 @@
 // the site header's own behavior, which enhance() attaches too. No framework; the React wrapper
 // uses the same functions. The menu's links and the page are in the HTML without any of this.
 import { DEFAULT_PREF, readPref, writePref } from "../shell/shell.ts";
+import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceHeader } from "../site-header/site-header.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
@@ -57,10 +58,10 @@ export function toggleMenu(shell: HTMLElement): void {
 // G then a number jumps to the app in that place (the sequence GitHub and Linear use; Ctrl and a
 // digit belong to the browser's tabs). `armed` holds the time G was pressed. Returns the app's
 // address, or null: the key is not part of a jump, the number has no app, that app is already
-// open, or the person is typing in a field.
+// open, the person is typing in a field, or single-key shortcuts are off (the shortcuts switch).
 export const JUMP_WINDOW_MS = 1200;
 export function jumpTarget(armed: { at: number }, e: Pick<KeyboardEvent, "key" | "ctrlKey" | "metaKey" | "altKey" | "target">, apps: ReadonlyArray<{ href: string; current?: boolean }>, now = Date.now()): string | null {
-  if (e.ctrlKey || e.metaKey || e.altKey) return null;
+  if (e.ctrlKey || e.metaKey || e.altKey || singleKeysOff()) return null;
   const t = e.target as Element | null;
   if (t?.closest?.("input, textarea, select, [contenteditable='true']")) return null;
   const live = armed.at > 0 && now - armed.at < JUMP_WINDOW_MS;

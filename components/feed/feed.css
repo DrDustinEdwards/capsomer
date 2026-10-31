@@ -116,7 +116,7 @@
     font-size: var(--fs-detail);
     color: var(--muted);
     white-space: nowrap;
-    text-align: right;
+    text-align: end;
     font-variant-numeric: tabular-nums;
   }
 
@@ -174,7 +174,7 @@
     }
     .cap-feed-when {
       grid-column: 2;
-      text-align: left;
+      text-align: start;
     }
     .cap-feed-day-title {
       padding-inline: var(--pad-x);

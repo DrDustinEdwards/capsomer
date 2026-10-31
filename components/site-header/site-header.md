@@ -77,7 +77,7 @@ The account menu is the same shape everywhere: who you are; the site's own rows 
 | Up and Down in a panel | Move between items (they wrap); Home and End go to the ends |
 | Esc | Closes the panel; focus returns to its button. Closes the sheet; focus returns to the menu button |
 | Tab past a panel's last item | Closes the panel and goes on |
-| T | Switches the theme, where the site binds single keys (`themeKey`) |
+| T | Switches the theme, where the site binds single keys (`themeKey`); off with the shortcuts switch |
 
 ## Accessibility
 
@@ -122,6 +122,7 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
     </ul>
   </nav>
   <div class="cap-site-header-tools">
+    <div class="cap-site-header-search" data-cap-part="search"><a class="cap-site-header-icon cap-site-header-search-button" href="/search" aria-label="Search" data-cap-part="search-trigger">[glyph][tip]</a><div class="cap-site-header-search-panel" data-align="end"><form role="search" aria-label="Site" action="/search" method="get">[glyph]<input type="search" name="q" placeholder="Search" aria-label="Search" autocomplete="off" enterkeyhint="search"></form></div></div>
     <div class="cap-site-header-extras">
       <button type="button" class="cap-site-header-icon" aria-label="Inbox, 4 need you">[18px glyph] <span class="cap-site-header-badge" aria-hidden="true">4</span><span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">Inbox</span></span></button>
       <a class="cap-site-header-cta" href="/audit">Free audit</a>

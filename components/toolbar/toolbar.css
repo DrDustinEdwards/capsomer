@@ -1,0 +1,49 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A toolbar (APG Toolbar): a row of the page's buttons and toggle buttons, one tab stop for the
+   lot, groups set apart by a separator. The buttons are .cap-btn (or a group of them); this file
+   lays them out and draws the separator. It wraps, so it never needs a sideways scroll. */
+@layer cap.components {
+  .cap-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+
+    &[aria-orientation="vertical"] {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+  /* A toggle button in the bar (aria-pressed): pressed, it takes the chips' pressed look, the
+     accent edge and tint, with the edge doubled so pressed is a change of shape, not only of color. */
+  .cap-toolbar .cap-btn[aria-pressed="true"] {
+    --cap-btn-bg: var(--accent-soft);
+    --cap-btn-line: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  .cap-toolbar-sep {
+    flex: none;
+    align-self: stretch;
+    inline-size: 1px;
+    margin-inline: var(--space-2);
+    background: var(--line);
+  }
+  .cap-toolbar[aria-orientation="vertical"] > .cap-toolbar-sep {
+    inline-size: auto;
+    block-size: 1px;
+    margin-inline: 0;
+    margin-block: var(--space-2);
+  }
+
+  @media (forced-colors: active) {
+    .cap-toolbar-sep {
+      background: CanvasText;
+    }
+    .cap-toolbar .cap-btn[aria-pressed="true"] {
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}

@@ -9,8 +9,8 @@ added: 0.3.0
 source: The site's Pager (app/components/post-row.tsx, .pager in app/styles/listing.css) and the admin's "Showing N of M posts" line (app/components/admin/posts-table.tsx); shadcn/ui Pagination
 replaces:
   - '<nav[^>]*aria-label="Pagination'
-  - 'class="[^"]*\b(pager|pagination|paginator)\b'
-  - 'className="[^"]*\b(pager|pagination|paginator)\b'
+  - 'class="(?:[^"]*\s)?(pager|pagination|paginator)[\s"]'
+  - 'className="(?:[^"]*\s)?(pager|pagination|paginator)[\s"]'
 ---
 
 # Pagination

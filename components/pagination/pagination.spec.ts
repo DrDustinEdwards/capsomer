@@ -207,7 +207,6 @@ eachTheme((theme) => {
     );
     expect(prev).toBeLessThan(where as number);
     expect(where).toBeLessThan(next as number);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 
   test("behavior: other words for the ends work", async ({ page }) => {

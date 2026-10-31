@@ -9,7 +9,7 @@ added: 0.1.0
 updated: 0.37.0
 source: Capsid Portal, dashboard/src/lib/format.ts (ms, portalNow, ago, utc, exactTime) and ui/When.tsx
 replaces:
-  - "\\bago\\(|timeago|date-fns/formatDistance|dayjs\\(\\)\\.fromNow"
+  - "timeago|date-fns/formatDistance|dayjs\\(\\)\\.fromNow"
   - '<time[^>]*title='
 ---
 

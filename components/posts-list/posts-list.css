@@ -13,7 +13,8 @@
     min-inline-size: 0;
   }
 
-  /* Search, kind, tag and sort, each with a visible label, and Show. Wraps on a narrow space. */
+  /* Search, kind, tag, author, the published dates and sort, each with a visible label, Show and
+     Clear filters. Wraps on a narrow space. */
   .cap-posts-filters {
     display: flex;
     flex-wrap: wrap;
@@ -49,8 +50,10 @@
     gap: var(--space-3);
   }
 
-  /* Why an action is not offered here, in words, as Carrel does. */
-  .cap-posts-withheld {
+  /* Why an action is not offered here, in words, as Carrel does; and in the Trash, when what is
+     there goes for good. */
+  .cap-posts-withheld,
+  .cap-posts-trash-note {
     margin: 0;
     padding: 0;
     color: var(--muted);
@@ -89,6 +92,15 @@
   }
   .cap-posts-path {
     overflow-wrap: anywhere;
+  }
+  /* The excerpt, on its own quiet line under the path. A summary is short, so it wraps rather
+     than being cut, and a reader's own text spacing cuts nothing (WCAG 1.4.12). */
+  .cap-posts-excerpt {
+    display: block;
+    margin-block-start: var(--space-1);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 400;
   }
   .cap-posts-notes {
     display: flex;
@@ -240,9 +252,36 @@
     }
   }
 
-  /* The reschedule dialog's form holds its body and footer: the dialog lays them out as its
-     own parts, and the field sits at the header's normal distance. */
-  .cap-posts-reschedule {
+  /* The preview link the last post made: its address and Copy on one line, when it stops working
+     under them. */
+  .cap-posts-preview {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--pad-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+
+    &:empty {
+      display: none;
+    }
+    & > .cap-field-description {
+      margin: 0;
+    }
+  }
+  .cap-posts-preview-row {
+    display: flex;
+    gap: var(--space-2);
+
+    & > .cap-input {
+      flex: 1 1 auto;
+      min-inline-size: 0;
+    }
+  }
+
+  /* The reschedule and rename dialogs' forms hold their body and footer: the dialog lays them out
+     as its own parts, and the field sits at the header's normal distance. */
+  .cap-posts-reschedule,
+  .cap-posts-rename {
     display: contents;
 
     & > .cap-dialog-body {
@@ -259,5 +298,15 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
+  }
+
+  /* Forced colors drop the selected row's tint, so it takes the table's selected edge. The rest
+     is drawn by text and borders the system palette keeps: the Trash tab is a tab (tabs.css),
+     the preview box a border, the authors and the Trash note text. */
+  @media (forced-colors: active) {
+    .cap-posts-table tbody tr[data-selected] {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
   }
 }

@@ -9,8 +9,8 @@ added: 0.3.0
 source: The site admin's status tabs (app/components/admin/posts-filters.tsx, .posts-tab) and mention filters (app/routes/admin.mentions.tsx, .admin-chip); shadcn/ui Tabs for the panel form
 replaces:
   - 'role="tablist"'
-  - 'class="[^"]*\b(posts-tab|tabs?-(list|trigger)|tab-list)\b'
-  - 'className="[^"]*\b(posts-tab|tab-list)\b'
+  - 'class="(?:[^"]*\s)?(posts-tab|tabs?-(list|trigger)|tab-list)[\s"]'
+  - 'className="(?:[^"]*\s)?(posts-tab|tab-list)[\s"]'
 ---
 
 # Tabs
@@ -27,7 +27,7 @@ Two ways to the same look. **Panels**: a `tablist` of buttons and the `tabpanel`
 ## When not to
 
 - **A value, not a view** (a time window, a layout): the segmented control. It is radios and changes a setting, not a panel.
-- **Steps in order**: numbered headings or a stepper, not tabs.
+- **Steps in order**: the step indicator (components/step-indicator) over one step per page, not tabs.
 - **One long page with sections**: the anchor bar, or headings.
 - **Show or hide one thing in place**: a disclosure.
 - Tabs inside tabs: the second level is a page of its own.

@@ -55,7 +55,7 @@ With script, as the queue's (single keys can be turned off):
 | `z` | Undo (the message region's key) |
 | Esc | Clears the selection, from a row or the bulk bar |
 
-The keys do nothing in a text field, with Ctrl, Alt or Meta held, in an open dialog, or when `data-cap-single-keys="off"` is on the page; the hints and `aria-keyshortcuts` are shown only while the keys work.
+The keys do nothing in a text field, with Ctrl, Alt or Meta held, in an open dialog, or when single-key shortcuts are off (the shortcuts switch, `data-cap-single-keys="off"` on `<html>`; `z` is the message region's and follows it too); the hints and `aria-keyshortcuts` are shown only while the keys work.
 
 ## Accessibility
 

@@ -109,18 +109,6 @@ export function filterLinkTargets(targets: LinkTarget[], query: string, limit = 
   return pool.slice(0, limit);
 }
 
-// Which item an arrow, Home or End moves to in a roving group (APG toolbar and menu). It wraps.
-export function rovingIndex(key: string, at: number, count: number, axis: "horizontal" | "vertical" = "horizontal"): number | null {
-  if (count <= 0) return null;
-  const next = axis === "horizontal" ? "ArrowRight" : "ArrowDown";
-  const prev = axis === "horizontal" ? "ArrowLeft" : "ArrowUp";
-  if (key === next) return (at + 1) % count;
-  if (key === prev) return (at - 1 + count) % count;
-  if (key === "Home") return 0;
-  if (key === "End") return count - 1;
-  return null;
-}
-
 // The start and end of the line holding `pos`.
 export function lineBounds(doc: string, pos: number): { from: number; to: number } {
   const from = doc.lastIndexOf("\n", pos - 1) + 1;

@@ -176,11 +176,9 @@
   .cap-md-option-hint {
     flex: none;
     max-inline-size: 45%;
-    overflow: hidden;
     color: var(--muted);
     font-size: var(--fs-detail);
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
 
     .cap-option[data-active] & {
       color: var(--text);

@@ -98,4 +98,13 @@
     color: var(--muted);
     max-width: 60ch;
   }
+
+  /* A key cap is a tint, which forced colors drop: an edge draws it there. */
+  @media (forced-colors: active) {
+    kbd,
+    .cap-kbd {
+      outline: 1px solid CanvasText;
+      outline-offset: -1px;
+    }
+  }
 }
