@@ -8,6 +8,7 @@
 
 import { buildContentSecurityPolicy, reportingEndpoints } from "@dustinedwards/site-runtime/csp";
 import { buildSecurityHeaders, headersFile as sharedHeadersFile } from "@dustinedwards/site-runtime/headers";
+import { capsomer } from "@dustinedwards/site-runtime/sites";
 import { TDM_RESERVATION_HEADERS } from "@drdustinedwards/site-helpers/robots";
 
 /** The site's address (rulings.md, rule 16). */
@@ -40,7 +41,7 @@ const csp = buildContentSecurityPolicy({
 export const securityHeaders: Readonly<Record<string, string>> = Object.freeze({
   // The shared standard with the deviations the site registry declares for this site (site-runtime ./sites): the
   // clipboard's write side for the Copy specimens, and X-Frame-Options sameorigin for its own framed pages.
-  ...buildSecurityHeaders({ site: "capsomer" }),
+  ...buildSecurityHeaders({ site: capsomer }),
   [csp.name]: csp.value,
   // The group `report-to` names; `report-uri` covers browsers without the Reporting API.
   "Reporting-Endpoints": reportingEndpoints(REPORT_GROUP, new URL(REPORT_PATH, `https://${HOST}`)),
