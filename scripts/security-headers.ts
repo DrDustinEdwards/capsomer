@@ -7,7 +7,7 @@
  */
 
 import { buildContentSecurityPolicy, reportingEndpoints } from "@dustinedwards/site-runtime/csp";
-import { buildSecurityHeaders, headersFile as sharedHeadersFile, STANDARD_SECURITY_HEADERS } from "@dustinedwards/site-runtime/headers";
+import { buildSecurityHeaders, headersFile as sharedHeadersFile } from "@dustinedwards/site-runtime/headers";
 import { TDM_RESERVATION_HEADERS } from "@drdustinedwards/site-helpers/robots";
 
 /** The site's address (rulings.md, rule 16). */
@@ -36,31 +36,11 @@ const csp = buildContentSecurityPolicy({
   reportTo: REPORT_GROUP,
 });
 
-/** The standard Permissions-Policy, with the clipboard's write side allowed to the site's own pages. */
-const permissionsPolicy = (STANDARD_SECURITY_HEADERS["Permissions-Policy"] ?? "").replace(
-  "clipboard-write=()",
-  "clipboard-write=(self)",
-);
-
-/** The shared standard set with the site's deviations. */
-const standardHeaders = buildSecurityHeaders({
-  overrides: {
-    "Permissions-Policy": {
-      value: permissionsPolicy,
-      reason:
-        "The states pages show the detail panel's and media library's Copy buttons working (navigator.clipboard.writeText); every other feature stays denied.",
-    },
-    "X-Frame-Options": {
-      value: "sameorigin",
-      reason:
-        "The site frames its own states pages and specimens (site/main.tsx, site/specimen.ts); frame-ancestors 'self' says the same to browsers that read it.",
-    },
-  },
-});
-
 /** Every security header the site sends, in the order `_headers` lists them. */
 export const securityHeaders: Readonly<Record<string, string>> = Object.freeze({
-  ...standardHeaders,
+  // The shared standard with the deviations the site registry declares for this site (site-runtime ./sites): the
+  // clipboard's write side for the Copy specimens, and X-Frame-Options sameorigin for its own framed pages.
+  ...buildSecurityHeaders({ site: "capsomer" }),
   [csp.name]: csp.value,
   // The group `report-to` names; `report-uri` covers browsers without the Reporting API.
   "Reporting-Endpoints": reportingEndpoints(REPORT_GROUP, new URL(REPORT_PATH, `https://${HOST}`)),
