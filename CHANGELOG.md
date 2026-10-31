@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Showcase site: each page's WebPage and breadcrumb.** `site/seo.ts` builds heads with Prelum's `defineHead`, so the theme builder and every component page carry a WebPage and a Home > page BreadcrumbList, and the canonical keeps the slash the pages are served at.
+
 ## [0.53.0]
 
 Charts move to Enarratio 0.4 (the charts checklist, area 10, 2026-10-31). Enarratio now draws the whole figure, so the chart frame is a thin layout around it instead of a second figure. Needs Enarratio 0.4.0.
