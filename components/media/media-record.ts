@@ -77,15 +77,6 @@ export function byteSize(size: number): string {
 
 export const LARGE_BYTES = 1024 * 1024;
 
-// "launch-hero.jpg" gives "launch hero": offered as alt text, never applied (alt text nobody
-// read is worse than a visibly empty field).
-export function suggestedAlt(name: string): string {
-  return name
-    .replace(/\.[a-z0-9]+$/i, "")
-    .replace(/[-_]+/g, " ")
-    .trim();
-}
-
 // The state of a file's alt text. Missing and decorative are different: missing is a to-do,
 // decorative is a decision the author made.
 export function altStateOf(alt: string, decorative: boolean): AltState {
@@ -127,13 +118,17 @@ export function describeRecord(r: Pick<MediaRecord, "kind" | "type" | "bytes" | 
 
 // The three things a person copies: the address, the Markdown, the HTML. An image goes in as an
 // image and a document as a link: an <img> for a PDF breaks the page.
-export function copySnippets(r: Pick<MediaRecord, "url" | "kind" | "alt" | "name">): Array<{ id: string; label: string; name: string; value: string }> {
+export function copySnippets(r: Pick<MediaRecord, "url" | "kind" | "alt" | "name"> & { decorative?: boolean }): Array<{ id: string; label: string; name: string; value: string }> {
   const alt = r.alt.trim();
-  const title = suggestedAlt(r.name);
+  // Prelum refuses ![](x) as missing alt text; ![""](x) is how Markdown says decorative.
+  const mdAlt = !alt && r.decorative ? '""' : alt;
+  // A document's link text: "uptime-report.pdf" gives "uptime report". Never an image's alt text: a
+  // file's name says nothing of what the picture shows (the checklist's B2).
+  const title = r.name.replace(/\.[a-z0-9]+$/i, "").replace(/[-_]+/g, " ").trim();
   if (r.kind === "image") {
     return [
       { id: "address", label: "Copy address", name: "Copy address", value: r.url },
-      { id: "markdown", label: "Markdown", name: "Copy the Markdown image", value: `![${alt}](${r.url})` },
+      { id: "markdown", label: "Markdown", name: "Copy the Markdown image", value: `![${mdAlt}](${r.url})` },
       { id: "html", label: "HTML tag", name: "Copy the HTML tag", value: `<img src="${r.url}" alt="${alt}">` },
     ];
   }

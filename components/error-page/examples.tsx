@@ -26,6 +26,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   "not-found": () => <ErrorPage error={routeError(404, "Not Found")} home="#home" siteHeader={header} />,
   gone: () => <ErrorPage error={routeError(410, "Gone")} home="#home" siteHeader={header} />,
   server: () => <ErrorPage error={new Error("D1 timed out")} home="#home" siteHeader={header} />,
+  database: () => <ErrorPage error={routeError(503, "Database unavailable")} home="#home" siteHeader={header} />,
   dev: () => <ErrorPage error={thrown} home="#home" siteHeader={header} dev />,
 };
 

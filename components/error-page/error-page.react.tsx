@@ -23,12 +23,21 @@ function statusOf(error: unknown): number | null {
   return typeof status === "number" && typeof statusText === "string" ? status : null;
 }
 
+// The statusText site-runtime's databaseDown(error) gives the 503 a loader throws when D1 is down
+// or reset for a moment (DATABASE_DOWN_STATUS_TEXT in @dustinedwards/site-runtime/health).
+const DATABASE_DOWN = /database/i;
+
 /** What the page says for an error: its status, a title and one plain sentence. */
 export function errorWords(error: unknown): ErrorWords {
   const status = statusOf(error);
   if (status === 404) return { status, title: "Page not found", text: "There is nothing at this address. Check it for a typo, or start again from the home page." };
   if (status === 410) return { status, title: "This page is gone", text: "It was taken down on purpose and is not coming back." };
   if (status !== null && status < 500) return { status, title: "This page cannot be shown", text: `The request was refused (${status}). Start again from the home page.` };
+  if (status === 503) {
+    const { statusText } = error as { statusText: string };
+    if (DATABASE_DOWN.test(statusText)) return { status, title: "The site's data is unavailable", text: "Its database is not answering for the moment. Nothing you did caused this; try again in a few minutes." };
+    return { status, title: "This page is unavailable for now", text: "The site is busy or being updated. Try again in a few minutes." };
+  }
   return { status: status ?? 500, title: "Something went wrong", text: "The page could not be shown. It is not something you did; try again in a moment." };
 }
 

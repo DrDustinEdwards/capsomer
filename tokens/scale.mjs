@@ -87,6 +87,16 @@ export const SCALE = {
     ["header-h", "3.5rem", "the site header, 56px on every site and surface (docs/design/design-site-header.md, answer 6)"],
     ["cap-arrow", "polygon(8.3% 41.7%, 59.2% 41.7%, 40% 22.5%, 50% 12.5%, 87.5% 50%, 50% 87.5%, 40% 77.5%, 59.2% 58.3%, 8.3% 58.3%)", "the family arrow's shape, a clip path (css/base.css): a token so a page without base.css, such as the Portal, still draws the header's arrows"],
   ],
+  // How a text link looks (css/base.css), so a site that wants its own links sets these in its SITES entry
+  // instead of writing CSS over the base. The defaults are the network's look: semibold, no line, a soft
+  // tint under the pointer. A site can use weight "inherit", decoration "underline", tints "transparent".
+  link: [
+    ["link-weight", "600", "a text link's weight; \"inherit\" draws it at the text's own weight"],
+    ["link-decoration", "none", "a text link's line at rest, hover and focus; \"underline\" for a site that wants one"],
+    ["link-hover-bg", "var(--accent-soft)", "the tint under the pointer; \"transparent\" for none"],
+    ["link-pressed-bg", "var(--accent-5)", "the tint while pressed; \"transparent\" for none"],
+    ["link-tint-pad", "2px", "how far the tint reaches past the text, in a shadow of the tint's color; 0px for none"],
+  ],
   // The hover touches a site may turn on in its SITES entry (tokens/sites.mjs); the defaults are off.
   touch: [
     ["link-rule", "0px", "the site header's section links: an underline that grows in under the pointer; 0 draws none"],

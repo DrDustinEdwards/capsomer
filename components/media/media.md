@@ -173,7 +173,7 @@ media.add({ key, name, url, kind: "image", type: file.type, bytes: file.size, al
 media.update(key, { progress: 60 }); media.update(key, { state: "ready" }); media.update(key, { state: "failed", error: "The file is 6 MB and the limit is 5 MB." });
 ```
 
-`enhance()` attaches every `[data-cap="media"]` with the default save, a POST of the inspector's form to its `action`. The module also exports the pure parts: `bands`, `nextTile`, `createAutosave` (`AUTOSAVE_MS` is 800), `applyBulkTag`, `altStateOf`, `flagsFor`, `copySnippets`, `copyText`, `byteSize`, `suggestedAlt`, `parseTags`, `buildTile`, `recordOf`, `syncTile`. The filters are the chips behavior (`enhance` from `capsomer/behavior/chips`) and the uploads are the drop zone's `cap-drop-accepted`, wired by the app as above.
+`enhance()` attaches every `[data-cap="media"]` with the default save, a POST of the inspector's form to its `action`. The module also exports the pure parts: `bands`, `nextTile`, `createAutosave` (`AUTOSAVE_MS` is 800), `applyBulkTag`, `altStateOf`, `flagsFor`, `copySnippets`, `copyText`, `byteSize`, `parseTags`, `buildTile`, `recordOf`, `syncTile`. The filters are the chips behavior (`enhance` from `capsomer/behavior/chips`) and the uploads are the drop zone's `cap-drop-accepted`, wired by the app as above.
 
 ```tsx
 import { MediaGrid, MediaInspector, MediaTile, useMediaMode } from "capsomer/react/media";

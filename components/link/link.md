@@ -33,6 +33,10 @@ Every text link (an `a` with no component class, or any `a[data-link]`) has:
 
 A link that is a control (a menu, a tab, a button) is drawn by its component. Menus and navigation (site header, shell, admin shell, tabs, breadcrumb, family footer, pagination, anchor bar) are told by placement: they keep a hover tint and the focus ring, take no visited color, and mark the current page with `aria-current`, drawn as the place you are, not as a link.
 
+## A site's own links
+
+The base look is five tokens (`tokens/scale.mjs`, group `link`): `--link-weight` (600), `--link-decoration` (none), `--link-hover-bg` (`--accent-soft`), `--link-pressed-bg` (`--accent-5`) and `--link-tint-pad` (2px). A site outside the network that wants its own links sets them in its `SITES` entry (`tokens/sites.mjs`) as literal values, for example `"link-weight": "inherit"`, `"link-decoration": "underline"`, `"link-hover-bg": "transparent"`, `"link-tint-pad": "0px"`, instead of writing CSS over the base. It leaves out `capsomer/link.css` to drop the kind marks. The network's sites set none of them.
+
 ## The kinds
 
 Each kind adds one cue, named by `data-link="<kind>"` on the `a`. Where CSS can tell the kind from the markup it finds it with no attribute (the fallback). The kind is read from `data-link` only: Prelum puts `rel="external"` on every link off the family, whatever its kind, so `rel` and `target` count only on a link with no `data-link`.

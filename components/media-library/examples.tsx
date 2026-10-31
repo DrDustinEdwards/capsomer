@@ -365,6 +365,13 @@ function KeepsSize() {
   );
 }
 
+// The picked file with the site's model asked (`suggest`): the host loaded the kit's detail for it.
+function PickerSuggest() {
+  const key = "2026/09/uptime-strip.png";
+  const suggestions = { tags: [], alt: "A row of green bars with two short red gaps", model: "@cf/example/vision" };
+  return <MediaLibrary data={load(FILES, { pick: key, inspect: key, suggest: true }, { extra: undefined, offers: IDEA_OFFERS, suggestions })} action="/media" mode="picker" onPick={() => {}} />;
+}
+
 function Picker() {
   const { query, Form, onClickCapture } = useRouter({});
   return (
@@ -471,6 +478,7 @@ const mounts: Record<string, () => ReactNode> = {
   "by-month": () => <MediaLibrary data={load(GROUPED, { group: "month", layout: "list", sort: "size" }, { page: { nextCursor: null, sortedOnPage: true } })} action="/media" shortcuts={false} />,
   limited: () => <MediaLibrary data={reader} action="/media" shortcuts={false} />,
   picker: () => <Picker />,
+  "picker-suggest": () => <PickerSuggest />,
   "picker-step": () => <MediaLibrary data={load(FILES, { pick: "2026/09/uptime-strip.png" }, { extra: undefined })} action="/media" mode="picker" />,
   "empty-trash": () => <MediaLibrary data={load(FILES.filter((f) => f.state !== "binned"), { view: "trash" }, { extra: undefined })} action="/media" shortcuts={false} />,
   ideas: () => (

@@ -1,7 +1,7 @@
 // Sample mails for the states page. Invented, with an obviously fake token. Each frame is the
 // real renderEmail output in an iframe. A frame forced to light drops the dark rules; one forced
 // to dark applies them whatever the page's own scheme, so both show on one page.
-import { alert, magicLink, notice, renderEmail, reset, securityNotice, verification, type Common } from "../email.ts";
+import { alert, emailChange, magicLink, notice, renderEmail, reset, securityNotice, verification, type Common } from "../email.ts";
 
 const common: Common = { brand: { name: "Example Co", family: "purple" }, to: "reader@example.com" };
 const link = { url: "https://app.example.com/auth/verify?t=EXAMPLE-NOT-A-TOKEN", expiresIn: "15 minutes" };
@@ -11,6 +11,10 @@ const SAMPLES: Record<string, () => string> = {
   magicLinkCode: () => renderEmail(magicLink, { ...common, ...link, code: "000000" }).html,
   verification: () => renderEmail(verification, { ...common, ...link }).html,
   reset: () => renderEmail(reset, { ...common, ...link }).html,
+  emailChangeCurrent: () =>
+    renderEmail(emailChange, { ...common, url: link.url, expiresIn: "1 hour", step: "current", newEmail: "new-reader@example.com" }).html,
+  emailChangeNew: () =>
+    renderEmail(emailChange, { ...common, to: "new-reader@example.com", url: link.url, expiresIn: "1 hour", step: "new" }).html,
   alert: () =>
     renderEmail(alert, {
       ...common,
