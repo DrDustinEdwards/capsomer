@@ -100,7 +100,7 @@ export function fillInspector(inspector: ParentNode, r: MediaRecord, draft: Medi
   renderTags(inspector, values.tags, r.suggestedTags ?? []);
   set<HTMLInputElement>("address", (el) => (el.value = r.url));
   for (const b of inspector.querySelectorAll<HTMLElement>("[data-cap-copy-kind]")) {
-    const snippet = copySnippets({ url: r.url, kind: r.kind, alt: values.alt, name: r.name }).find((s) => s.id === b.dataset.capCopyKind);
+    const snippet = copySnippets({ url: r.url, kind: r.kind, alt: values.alt, decorative: values.decorative, name: r.name }).find((s) => s.id === b.dataset.capCopyKind);
     if (snippet) {
       b.dataset.capCopy = snippet.value;
       b.setAttribute("aria-label", snippet.name);

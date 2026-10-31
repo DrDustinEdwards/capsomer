@@ -212,7 +212,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
 
   const img = item.kind === "image";
   const url = item.url;
-  const snippets = copySnippets({ url, kind: item.kind, alt: fields.alt, name: item.name });
+  const snippets = copySnippets({ url, kind: item.kind, alt: fields.alt, decorative: fields.decorative, name: item.name });
   const copy = async (value: string, what: string) => {
     setCopied(null);
     const ok = await copyText(value);

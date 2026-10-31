@@ -204,7 +204,10 @@ export function linkEdit(from: number, to: number, selected: string, href: strin
   return { changes: [{ from, to, insert: markdown }], anchor: from + markdown.length };
 }
 
-// The markdown for an image when the app does not say: alt text with its brackets made safe.
+// The markdown for an image when the app does not say: alt text with its brackets made safe. The
+// picker asks for alt text or decorative, so an empty alt is a decorative pick: Prelum reads
+// ![""](x) as decorative and refuses ![](x) as missing.
 export function defaultImageMarkdown({ url, alt }: { url: string; alt: string }): string {
-  return `![${alt.replace(/[[\]\n]/g, " ").replace(/\s+/g, " ").trim()}](${url})`;
+  const text = alt.replace(/[[\]\n]/g, " ").replace(/\s+/g, " ").trim();
+  return `![${text || '""'}](${url})`;
 }
