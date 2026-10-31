@@ -7,6 +7,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Site only: the report endpoint is rate limited and connect-src names one file** (no package change). `/csp-report` passes site-runtime's receiver an `allow` backed by a Workers rate-limit binding (`CSP_REPORT_RATE_LIMIT` in `wrangler.jsonc`, 60 a minute per address), so a flood no longer reaches the log. The site's `connect-src` names the results file it reads (`https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json`) instead of every repository on raw.githubusercontent.com. `test/unit/security-headers.test.mjs` is removed: the family's live header check grades the public site.
 - **Site only: static files carry their charset and cross-origin CORP where another origin loads them** (no package change). The site's `_headers` gives every static text file `charset=utf-8`, and stylesheets, scripts and fonts `Cross-Origin-Resource-Policy: cross-origin` (site-runtime 0.43.0 `headersFile({ charset: true })` and `corpFor`).
 - **Showcase site: each page's WebPage and breadcrumb.** `site/seo.ts` builds heads with Prelum's `defineHead`, so the theme builder and every component page carry a WebPage and a Home > page BreadcrumbList, and the canonical keeps the slash the pages are served at.
+- The posts list names site-api v0.17.0, the release its Trash, rename, preview links, authors and excerpts shipped in: site-api 0.16.0 went to the 404 report first. Text only; no HTML contract changes.
 
 ## [0.53.0]
 
@@ -25,7 +26,7 @@ Charts move to Enarratio 0.4 (the charts checklist, area 10, 2026-10-31). Enarra
 
 ## [0.52.0]
 
-The posts list posts the content kit's own intent names and shows what site-api v0.16.0 adds, each only where the kit offers it, each a form post that works with no script.
+The posts list posts the content kit's own intent names and shows what site-api v0.17.0 adds, each only where the kit offers it, each a form post that works with no script.
 
 - **Changed HTML contract: the tag intents are the kit's names.** The bulk bar posts `intent=tag-add` and `intent=tag-remove` (were `add-tag` and `remove-tag`, which site-api's `runPostsIntent` refused). `PostIntent` changes to match. A host that translated the old names drops the translation.
 - **Trash** (`offers.trash`): a Trash status tab (`trashed=1` in the address, `PostsQuery.trashed`, `counts.trash`) with "Posts in Trash are deleted for good 30 days after they were moved there." (`trashLine`); new intents `trash` (Move to Trash, in the bar and the row menu, replacing Delete there) and `restore` (in the Trash), each the other's Undo; `delete` is offered in the Trash only, as Delete for good, behind the same typed count. With script, focus goes from a post that leaves to the next post's title, the table or the current tab. New `PostRow.trashedAt`; "Trash is empty" as the empty state. New class `.cap-posts-trash-note`.
