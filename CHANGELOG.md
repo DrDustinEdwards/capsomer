@@ -4,6 +4,19 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.52.0]
+
+The posts list posts the content kit's own intent names and shows what site-api v0.16.0 adds, each only where the kit offers it, each a form post that works with no script.
+
+- **Changed HTML contract: the tag intents are the kit's names.** The bulk bar posts `intent=tag-add` and `intent=tag-remove` (were `add-tag` and `remove-tag`, which site-api's `runPostsIntent` refused). `PostIntent` changes to match. A host that translated the old names drops the translation.
+- **Trash** (`offers.trash`): a Trash status tab (`trashed=1` in the address, `PostsQuery.trashed`, `counts.trash`) with "Posts in Trash are deleted for good 30 days after they were moved there." (`trashLine`); new intents `trash` (Move to Trash, in the bar and the row menu, replacing Delete there) and `restore` (in the Trash), each the other's Undo; `delete` is offered in the Trash only, as Delete for good, behind the same typed count. With script, focus goes from a post that leaves to the next post's title, the table or the current tab. New `PostRow.trashedAt`; "Trash is empty" as the empty state. New class `.cap-posts-trash-note`.
+- **Filters** (`offers.filters`, the contract's `contentFilters`): Author (`author`, a select of `offers.authors`) and Published from and to (`from`, `to`, date fields) in the GET form, each where the site applies it; Clear filters beside Show once any filter is set (`NO_FILTERS`, `filtered` now counts every one).
+- **Authors and excerpt** on a row (`PostRow.authors`, the primary first, and `PostRow.excerpt`): "By Dustin Edwards with Julie Edwards" on the path's line (`authorLine`), the excerpt on a two-line quiet line under it. New classes `.cap-posts-authors`, `.cap-posts-excerpt`.
+- **Rename** (`offers.rename`): Rename… in the row menu opens a dialog for the new slug that says the old address will redirect, posting the new intent `rename` with `newId` (and `versions`); with no script it links to the editor. New class `.cap-posts-rename`.
+- **Preview links** (`offers.previewLinks`): Get a preview link posts the new intent `preview-link`; `IntentResult.previewLink` (`{ url, expiresAt }`, new) shows in a status region named "Preview link", with Copy and the expiry in the reader's zone. New classes `.cap-posts-preview`, `.cap-posts-preview-row`. `useIntents` returns `latest`, the last result.
+- **New view data**, each optional: `PostOffers.trash`, `rename`, `previewLinks`, `filters` (`PostFilter[]`, new type), `authors`; `PostsQuery.author`, `from`, `to`, `trashed`.
+- **Media library doc**: the inspector shows a caption where the site keeps one (since site-api v0.10.0); the line that said the contract has none is fixed.
+
 ## [0.51.0]
 
 The sites' own faces swap in without moving text.

@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type FocusEvent, type FormEvent, type KeyboardEvent } from "react";
 import type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent } from "../content/content.ts";
 import { ContentBulkBar, PlainForm, useIntents, type FormComponent } from "../content/content.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
@@ -9,7 +9,8 @@ import { Time } from "../time/time.react.tsx";
 import { Dialog, DialogBody, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 import { DraftCompare, DraftPatch } from "../draft-compare/draft-compare.react.tsx";
 import { PageHead } from "../page-head/page-head.react.tsx";
-import { SORTS, STATUS_TABS, contentStatus, countLine, emptyWords, inDays, isoFromLocal, localInputValue, nounsOf, postActions, postsHref, rowActions, rowStatus, withFilter, type RowAction } from "./posts-list.ts";
+import { copyText } from "../media/media-actions.ts";
+import { NO_FILTERS, SORTS, STATUS_TABS, authorLine, contentStatus, countLine, emptyWords, filtered, inDays, isoFromLocal, localInputValue, nounsOf, postActions, postsHref, rowActions, rowStatus, trashLine, withFilter, type RowAction } from "./posts-list.ts";
 import type { ConfirmRequest } from "../content/content.ts";
 
 export { contentStatus };
@@ -123,6 +124,89 @@ function RescheduleDialog({ moving, action, Form, onClose, now }: { moving: Movi
   )
 }
 
+// What Rename… is moving: one post, its name, its id and the address it has now (null for a post
+// never published).
+interface Renaming {
+  id: string;
+  name: string;
+  path: string | null;
+  version?: string;
+}
+
+// A slug as the contract's ContentId takes it ("notes-on-lambda"). The kit checks it again.
+const SLUG = "[A-Za-z0-9][A-Za-z0-9._\\-]{0,199}";
+
+// The small dialog Rename… opens (site-api v0.16.0): the new slug, starting at the old one, and
+// what happens to the old address. It posts `rename` with `newId` inside the list, as Reschedule does.
+function RenameDialog({ renaming, action, Form, onClose }: { renaming: Renaming | null; action: string; Form: FormComponent; onClose: () => void }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  return (
+    <Dialog open={!!renaming} onOpenChange={(open) => (open ? undefined : onClose())} size="sm" described>
+      {renaming ? (
+        <>
+          <DialogHeader>
+            <DialogTitle>Rename {renaming.name}</DialogTitle>
+            <DialogDescription>{renaming.path ? `Its address is ${renaming.path} now. The old address will redirect to the new one, so links to it keep working.` : "It has never been published, so no address changes."}</DialogDescription>
+          </DialogHeader>
+          <Form method="post" action={action} className="cap-posts-rename" onSubmit={() => onClose()}>
+            <input type="hidden" name="intent" value="rename" />
+            <input type="hidden" name="ids" value={renaming.id} />
+            {renaming.version ? <input type="hidden" name="versions" value={renaming.version} /> : null}
+            <DialogBody>
+              <div className="cap-field">
+                <label className="cap-field-label" htmlFor={`${uid}-slug`}>
+                  New slug
+                </label>
+                <input className="cap-input" id={`${uid}-slug`} name="newId" defaultValue={renaming.id} pattern={SLUG} maxLength={200} required autoComplete="off" spellCheck={false} aria-describedby={`${uid}-slug-help`} />
+                <p className="cap-field-description" id={`${uid}-slug-help`}>
+                  Letters, digits, dots, dashes and underscores, starting with a letter or a digit.
+                </p>
+              </div>
+            </DialogBody>
+            <DialogFooter>
+              <DialogClose part="cancel">Close</DialogClose>
+              <button type="submit" className="cap-btn" data-variant="primary">
+                Rename
+              </button>
+            </DialogFooter>
+          </Form>
+        </>
+      ) : null}
+    </Dialog>
+  );
+}
+
+// The preview link the last post made (`preview-link`, site-api v0.16.0): its address in a field
+// that selects whole, Copy with script, and when it stops working in the reader's own zone. A status
+// region, so the new link and a copy are said where the person is looking.
+function PreviewLinkBox({ link, name, noun, scripted }: { link: { url: string; expiresAt: string } | undefined; name?: string; noun: string; scripted: boolean }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const [copied, setCopied] = useState("");
+  useEffect(() => setCopied(""), [link?.url]);
+  return (
+    <div className="cap-posts-preview" role="status" aria-label="Preview link">
+      {link ? (
+        <>
+          <label className="cap-field-label" htmlFor={`${uid}-url`}>
+            {name ? `Preview link for ${name}` : "Preview link"}
+          </label>
+          <div className="cap-posts-preview-row">
+            <input className="cap-input" id={`${uid}-url`} value={link.url} readOnly onFocus={(e) => e.currentTarget.select()} aria-describedby={`${uid}-until`} />
+            {scripted ? (
+              <button type="button" className="cap-btn" onClick={async () => setCopied((await copyText(link.url)) ? "Copied." : "Could not copy. Select the address and copy it.")}>
+                Copy
+              </button>
+            ) : null}
+          </div>
+          <p className="cap-field-description" id={`${uid}-until`}>
+            Anyone with the link can read the {noun} until <Time at={link.expiresAt} format="exact" />. {copied}
+          </p>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
 // Asks before canceling an update: it has no Undo.
 const cancelRequest = (id: string, name: string, noun: string, version?: string): ConfirmRequest => ({
   intent: "cancel-schedule",
@@ -149,6 +233,9 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
 
   const { rows, query, page, offers, can } = data;
   const { bulk, withheld } = postActions(data, labels);
+  const inTrash = !!(offers.trash && query.trashed);
+  const authors = offers.filters?.includes("author") ? Array.from(new Set([...(offers.authors ?? []), ...(query.author ? [query.author] : [])])) : [];
+  const dates = !!offers.filters?.includes("published");
   const selectable = bulk.length > 0;
   const names = useMemo(() => new Map(rows.map((r) => [r.id, r.title || "Untitled"])), [rows]);
   const tags = useMemo(() => Array.from(new Set(rows.flatMap((r) => r.tags ?? []))).sort(), [rows]);
@@ -160,6 +247,31 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const href = (q: typeof query) => postsHref(action, q);
   const intents = useIntents({ action, Form, submit, result, names, cancelHref: href(query), onDone: () => setSelected([]) });
   const [moving, setMoving] = useState<Moving | null>(null);
+  const [renaming, setRenaming] = useState<Renaming | null>(null);
+  // Where focus goes when a post leaves the list under it (Move to Trash, Restore, Delete for good,
+  // with script): the title of the post that took its place, or of the one before when it was the
+  // last; after the bulk bar, the table; with nothing left, the current tab. Never the page's top.
+  const lastRow = useRef(-1);
+  const placeFocus = useRef<number | null>(null);
+  const onFocus = (e: FocusEvent<HTMLElement>) => {
+    const tr = e.target.closest("tbody tr");
+    lastRow.current = tr?.parentElement ? Array.prototype.indexOf.call(tr.parentElement.children, tr) : -1;
+  };
+  const onSubmit = (e: FormEvent<HTMLElement>) => {
+    if (submit && e.target instanceof HTMLFormElement && e.target.method.toLowerCase() === "post") placeFocus.current = lastRow.current;
+    intents.onSubmit(e);
+  };
+  useEffect(() => {
+    const at = placeFocus.current;
+    const root = intents.rootRef.current;
+    placeFocus.current = null;
+    if (at === null || !root) return;
+    const active = document.activeElement;
+    if (active && active !== document.body && active.isConnected) return;
+    const titles = root.querySelectorAll<HTMLElement>("tbody .cap-table-open");
+    const target = at >= 0 && titles.length ? titles[Math.min(at, titles.length - 1)] : root.querySelector<HTMLElement>(titles.length ? ".cap-posts-wrap" : ".cap-posts-tabs [aria-current='page']");
+    target?.focus();
+  }, [rows, intents.rootRef]);
   // With script, Reschedule… opens the dialog and Cancel the update asks first; with no script
   // their links go to the page that does it.
   const menuItems = (row: PostRow, list: RowAction[]) =>
@@ -168,6 +280,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
       const name = row.title || "Untitled";
       if (item.value === "reschedule" && publishAt) return { ...item, onSelect: () => setMoving({ id: row.id, name, at: publishAt, version: row.version }) };
       if (item.value === "cancel-schedule") return { ...item, onSelect: () => intents.ask(cancelRequest(row.id, name, noun, row.version)) };
+      if (item.value === "rename") return { ...item, onSelect: () => setRenaming({ id: row.id, name, path: row.path, version: row.version }) };
       return item;
     });
   if (intents.confirmPage) {
@@ -189,21 +302,29 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   };
   const empty = rows.length === 0;
   const words = emptyWords(query, labels);
+  const linked = intents.latest?.previewLink;
+  const linkedId = linked ? intents.latest?.outcomes?.[0]?.id : undefined;
   const count = (s: string | undefined) => data.counts?.[(s ?? "all") as keyof NonNullable<PostsData["counts"]>];
   const extraColumns = data.extra?.columns ?? [];
 
   return (
-    <section className="cap-posts" data-cap="posts-list" aria-label={title} ref={(el) => void (intents.rootRef.current = el)} onSubmit={intents.onSubmit}>
+    <section className="cap-posts" data-cap="posts-list" aria-label={title} ref={(el) => void (intents.rootRef.current = el)} onSubmit={onSubmit} onFocus={onFocus}>
       <TabsNav aria-label={`${title} by status`} className="cap-posts-tabs">
         {STATUS_TABS.map((t) => (
-          <TabLink key={t.label} href={href(withFilter(query, { status: t.status }))} current={query.status === t.status} count={count(t.status)}>
+          <TabLink key={t.label} href={href(withFilter(query, { status: t.status, trashed: undefined }))} current={!query.trashed && query.status === t.status} count={count(t.status)}>
             {t.label}
           </TabLink>
         ))}
+        {offers.trash ? (
+          <TabLink href={href(withFilter(query, { status: undefined, trashed: "1" }))} current={!!query.trashed} count={data.counts?.trash}>
+            Trash
+          </TabLink>
+        ) : null}
       </TabsNav>
 
       <Form method="get" action={action.split("?")[0]} className="cap-posts-filters" role="search" aria-label={`Find ${plural}`}>
-        {query.status ? <input type="hidden" name="status" value={query.status} /> : null}
+        {query.status && !query.trashed ? <input type="hidden" name="status" value={query.status} /> : null}
+        {query.trashed ? <input type="hidden" name="trashed" value="1" /> : null}
         <div className="cap-field cap-posts-search">
           <label className="cap-field-label" htmlFor={`${uid}-q`}>
             Search
@@ -244,6 +365,39 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
             </div>
           </div>
         ) : null}
+        {authors.length ? (
+          <div className="cap-field">
+            <label className="cap-field-label" htmlFor={`${uid}-author`}>
+              Author
+            </label>
+            <div className="cap-select-wrap" data-native="">
+              <select className="cap-select" id={`${uid}-author`} name="author" defaultValue={query.author ?? ""}>
+                <option value="">Any author</option>
+                {authors.map((a) => (
+                  <option key={a} value={a}>
+                    {a}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        ) : null}
+        {dates ? (
+          <>
+            <div className="cap-field">
+              <label className="cap-field-label" htmlFor={`${uid}-from`}>
+                Published from
+              </label>
+              <input className="cap-input" type="date" id={`${uid}-from`} name="from" defaultValue={query.from ?? ""} />
+            </div>
+            <div className="cap-field">
+              <label className="cap-field-label" htmlFor={`${uid}-to`}>
+                Published to
+              </label>
+              <input className="cap-input" type="date" id={`${uid}-to`} name="to" defaultValue={query.to ?? ""} />
+            </div>
+          </>
+        ) : null}
         <div className="cap-field">
           <label className="cap-field-label" htmlFor={`${uid}-sort`}>
             Sort by
@@ -261,6 +415,11 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         <button type="submit" className="cap-btn">
           Show
         </button>
+        {filtered(query) ? (
+          <a className="cap-btn" data-variant="quiet" href={href(withFilter(query, NO_FILTERS))}>
+            Clear filters
+          </a>
+        ) : null}
       </Form>
 
       <div className="cap-posts-bar">
@@ -283,6 +442,8 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         </div>
       </div>
 
+      {inTrash ? <p className="cap-posts-trash-note">{trashLine(labels)}</p> : null}
+
       {withheld.length ? (
         <ul className="cap-posts-withheld">
           {withheld.map((w) => (
@@ -292,9 +453,10 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
       ) : null}
 
       {intents.resultBox}
+      {offers.previewLinks ? <PreviewLinkBox link={linked} name={linkedId ? names.get(linkedId) : undefined} noun={noun} scripted={mounted} /> : null}
 
       {selectable ? (
-        <ContentBulkBar formId={formId} action={action} Form={Form} formClass="cap-posts-bulk-form" items={selectedItems} total={rows.length} onSelectAll={mounted ? () => setAll(true) : undefined} onClear={() => setSelected([])} plural={plural} actions={bulk} tag={offers.tags && can.edit} intents={intents} />
+        <ContentBulkBar formId={formId} action={action} Form={Form} formClass="cap-posts-bulk-form" items={selectedItems} total={rows.length} onSelectAll={mounted ? () => setAll(true) : undefined} onClear={() => setSelected([])} plural={plural} actions={bulk} tag={offers.tags && can.edit && !inTrash} intents={intents} />
       ) : null}
 
       {empty ? (
@@ -303,10 +465,10 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
           title={words.title}
           action={
             words.kind === "no-match" ? (
-              <a className="cap-btn" href={href(withFilter(query, { q: undefined, kind: undefined, tag: undefined }))}>
+              <a className="cap-btn" href={href(withFilter(query, NO_FILTERS))}>
                 Clear filters
               </a>
-            ) : !query.status && can.edit && data.newHref ? (
+            ) : !query.status && !query.trashed && can.edit && data.newHref ? (
               <a className="cap-btn" data-variant="primary" href={data.newHref}>
                 New {noun}
               </a>
@@ -319,7 +481,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         <div className="cap-table-wrap cap-posts-wrap" data-reflow="" role="region" aria-labelledby={`${uid}-cap`} tabIndex={0} onKeyDown={onTableKey}>
           <table className="cap-table cap-posts-table">
             <caption id={`${uid}-cap`} className="cap-sr-only">
-              {title} on {data.site.name}
+              {inTrash ? `${title} in Trash` : title} on {data.site.name}
             </caption>
             <thead>
               <tr>
@@ -365,7 +527,9 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
                       <span className="cap-posts-meta">
                         <span className="cap-posts-path">{row.path ?? "Not on the site yet"}</span>
                         {data.kinds.length > 1 ? <span className="cap-posts-kind">{row.kind}</span> : null}
+                        {row.authors?.length ? <span className="cap-posts-authors">{authorLine(row.authors)}</span> : null}
                       </span>
+                      {row.excerpt ? <span className="cap-posts-excerpt">{row.excerpt}</span> : null}
                       {row.notes?.length ? (
                         <span className="cap-posts-notes">
                           {row.notes.map((n) =>
@@ -421,6 +585,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
       ) : null}
 
       <RescheduleDialog moving={moving} action={action} Form={Form} onClose={() => setMoving(null)} now={now} />
+      <RenameDialog renaming={renaming} action={action} Form={Form} onClose={() => setRenaming(null)} />
       {intents.confirmDialog}
     </section>
   );
