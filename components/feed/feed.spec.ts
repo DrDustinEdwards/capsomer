@@ -68,6 +68,6 @@ eachTheme((theme) => {
     await visitStates(page, "feed", theme);
     await page.locator("#feed-incident").getByRole("link", { name: "Incident began 4 minutes after this deploy" }).focus();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#incident-foxhound-412$/);
+    await expect(page).toHaveURL(/#incident-412$/);
   });
 });
