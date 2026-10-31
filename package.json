@@ -239,5 +239,10 @@
   },
   "dependencies": {
     "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.24.0"
+  },
+  "overrides": {
+    "@drdustinedwards/site-helpers": {
+      "enarratio": "$enarratio"
+    }
   }
 }
