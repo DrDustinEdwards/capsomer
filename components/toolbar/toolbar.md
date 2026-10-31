@@ -5,8 +5,8 @@ summary: A row of buttons and toggle buttons that is one tab stop, with arrow ke
 parts: [css, behavior]
 tool: own JavaScript
 states: [default with a disabled button, a separator, toggle buttons pressed and not, a link in the bar, right to left, vertical, hover, comfortable density]
-added: 0.53.0
-updated: 0.53.0
+added: 0.54.0
+updated: 0.54.0
 source: WAI-ARIA Authoring Practices, Toolbar; the markdown editor's toolbar, which now uses it
 replaces:
   - 'role="toolbar"'

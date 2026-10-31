@@ -6,7 +6,7 @@ parts: [css, react]
 tool: native
 states: [ok, warning, critical, no data, hover, pressed, keyboard focus, a row of every tone, phone width wrapping onto more rows]
 added: 0.1.0
-updated: 0.3.0
+updated: 0.53.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx (tiles) and styles.css ("stat tiles")
 replaces:
   - 'class="tiles?( |")'
@@ -33,7 +33,7 @@ A value against a hard limit with a projection is a usage meter. A list of what 
 - **The figure is tabular**, with its unit or denominator small beside it ("2,140 of 2,000"), so figures line up across tiles. It comes before its label in the markup, so the tile's name reads "6 of 6 Sites up All up".
 - **When it is not ok, a status glyph and a word say so** ("Over limit", "Near limit"), and the figure, the word and the sparkline take the tone's color. Shape, word and color together (patterns.md "Status"). An ok tile may carry a word ("All up") without a glyph.
 - **No data is a state with a reason, never a zero.** The figure says "No data" beside the dashed glyph, and the detail line says why ("The health route has not been read yet").
-- **The sparkline comes from Enarratio.** Render it with `sparkline()` and put its SVG in `.cap-tile-chart`, which is `aria-hidden`; the slot sets its size and `color`, so draw with `currentColor`. Give every chart a one-sentence summary with its numbers, in a `.cap-sr-only` element the tile names with `aria-describedby`, so the numbers are text and the tile's name stays short. **With the numbers too**, the tile joins a chart frame: wrap the tile and its summary in `<div class="cap-chart" data-variant="tile" data-summary="hidden">`, make the summary a `<p class="cap-chart-summary">`, and add the frame's "Show data" disclosure under the tile, outside the link (a disclosure inside a link is nested interactive content). Enarratio's `sparklineTable()` returns the sentence and the table; React `StatTile` takes `chartTable` and `chartTableLabel`. Without `chartTable` nothing changes.
+- **The sparkline comes from Enarratio.** Render it with `sparkline({ values, label, inline: true, width: 96, height: 22 })` and put its SVG in `.cap-tile-chart`, which is `aria-hidden`; the slot sets its height and makes Enarratio's series color the tile's tone (`--enarratio-series-1: currentColor`). Give every chart a one-sentence summary with its numbers, in a `.cap-sr-only` element the tile names with `aria-describedby`, so the numbers are text and the tile's name stays short. **With the numbers too**, the tile joins a chart frame: wrap the tile and its summary in `<div class="cap-chart" data-variant="tile">` and add Enarratio's "Show data" (`dataTableBlock(table, label)`, or `sparklineTable(options).markup`) under the tile, outside the link (a disclosure inside a link is nested interactive content). React `StatTile` takes `chartTable` and `chartTableLabel` and draws it with `dataTableBlock`. Without `chartTable` nothing changes.
 - **A tile is never narrower than its text** (`flex: 1 0 auto`), so the row wraps to more rows instead of cutting a word: no breakpoints, and a phone gets one or two across by what fits. Only a tile wider than the whole row wraps its detail, and its line wraps whole.
 - **Hover** darkens the border to `--line-strong` and tints the tile `--raised`; pressed tints it `--sunken`; keyboard focus draws the shared 2 px `--ring` outline; the color changes ease over 100 ms; with a mouse, hover also lifts it on `--shadow-s`, and a press gives it to 98.5% and springs it back (no movement under reduced motion). The tile is shadcn's Item look: hairline edge, `--radius-l`, padding from `--pad-y` and `--pad-x` so comfortable density roomies it.
 
@@ -71,7 +71,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
           <span class="cap-tile-word">[crit glyph]Over limit</span>
         </span>
         <span class="cap-tile-detail">$4.10 of $10 model spend this month</span>
-        <span class="cap-tile-chart" aria-hidden="true">[Enarratio sparkline() SVG]</span>
+        <span class="cap-tile-chart" aria-hidden="true">[Enarratio sparkline({ inline: true }) SVG]</span>
       </a>
       <span class="cap-sr-only" id="budget-chart">Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.</span>
     </li>
@@ -88,7 +88,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </div>
 ```
 
-`data-tone` is `ok`, `warn`, `crit` or `nodata`. In React, `import { StatTile, StatTiles } from "capsomer/react/stat-tile"`: `<StatTiles label="Overview figures"><StatTile label="Actions minutes" figure="2,140" unit="of 2,000" tone="crit" word="Over limit" href="/agents" chart={sparkline(values)} chartSummary="..." /></StatTiles>`. A `tone="nodata"` tile takes a `reason` and no figure. Pass `onClick` instead of `href` for a button, and `renderLink` for a router's link.
+`data-tone` is `ok`, `warn`, `crit` or `nodata`. In React, `import { StatTile, StatTiles } from "capsomer/react/stat-tile"`: `<StatTiles label="Overview figures"><StatTile label="Actions minutes" figure="2,140" unit="of 2,000" tone="crit" word="Over limit" href="/agents" chart={sparkline({ values, label, inline: true })} chartSummary="..." /></StatTiles>`. A `tone="nodata"` tile takes a `reason` and no figure. Pass `onClick` instead of `href` for a button, and `renderLink` for a router's link.
 
 **Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.tiles`, `.tile`, `.t1`, `.v`, `.l`, `.d`; `dashboard/src/views/Overview.tsx` `tiles`). At 0.1.0 the CSS values were EXTRACTED from `366b902` (the surface, the 1 px `--line` border, the 22 px figure (tabular figures: Capsomer's at 0.1.0, the Portal's since), the muted detail, the tone on the figure) while the layout was REWROTE: the Portal's base `.tiles` was a six, five, three, two-column grid (`repeat(6, minmax(0, 1fr))` with media queries) of `button`s with the label above the figure, which 0.1.0 followed as a container-query grid. Since then the Portal changed to a compact tile, and v0.1.1 EXTRACTED that: a flex row that wraps (`flex: 1 0 auto`, `max-width: 100%`, 8 px gap), a 1 px gap between the figure line and the detail, 7 by 12 px padding (here 6 by 12 px, from the space tokens), the figure and label on one line, the label in 12 px muted instead of upper case, the hover border `--line-strong`, the tile as a link (`Link`, not a `button` with `go()`). Adapted: the figure is 15 px (`--fs-lead`, the nearest token to the Portal's 16 px) and the corner radius is `--radius-m` (6 px, the nearest token to 8 px). Capsomer's own, kept: the word and its glyph beside the label (the Portal colors the figure alone for `ok`, `warn` and `crit`; DEFAULTS.md: shape, word and color together), the no-data state with its reason, the sparkline slot and its text summary, and `li` wrappers in a named list.
 

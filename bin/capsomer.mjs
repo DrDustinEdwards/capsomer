@@ -554,8 +554,8 @@ if (cmd === "report") {
   // Imported here, not at the top: states.mjs needs site-runtime, a dev dependency, and the
   // commands an app runs from the installed package (report, token-check) must not.
   const { generateStates } = await import("./states.mjs");
-  const written = generateStates(PKG);
-  console.log(`states: wrote ${written.length} states pages (components/<name>/states.html, generated, gitignored)`);
+  const written = await generateStates(PKG);
+  console.log(`states: wrote ${written.size} states pages (components/<name>/states.html, generated, gitignored)`);
 } else if (cmd === "site-data") {
   await siteData();
 } else if (cmd === "fallback-font") {

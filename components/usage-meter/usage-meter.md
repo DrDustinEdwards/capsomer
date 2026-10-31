@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [on track, will run out before the reset, nearly out, no projection yet, stale reading]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.53.0
 source: Capsid Portal, dashboard/src/styles.css (meter) and the approved mockup's "Usage against free limits"
 replaces:
   - 'class="(meter|usage|use)"'
@@ -33,13 +33,14 @@ A value against a limit with no rate or reset (a disk that is 40% full, a score)
 - **The why line says what happens at the limit and until when**: "At the limit, reads fail until 00:00 UTC." A bar alone says how full, not what it costs.
 - **Shape, word and color.** A warning or critical row carries a `.cap-status` word ("Runs out before the reset", "Nearly out") beside its colored bar and lead. The hatching has a text legend, and the meter's value text includes the projection.
 - **A stale reading says so** with a warning status word and its age, and keeps the figures: the last good reading is better than nothing.
+- **Its numbers are a table too**, behind Enarratio's "Show data" (`dataTableBlock(usageTable(items), "Usage against free limits")`), one row per figure: used, limit, percent and the projection at the reset. The bar stays the shared meter, not a chart (a value against a limit), but a reader who cannot see it gets every figure as text, as from a chart.
 - **The bar is the shared meter's** (`components/meter`): its track, fill, tone colors and projection segment are drawn by `meter.css`, so a change to the bar is made once. Load `meter.css` with this file. The limit is said in the amount ("of 100,000"); the hatching is drawn in the muted text color.
 
 ## Keyboard
 
 | Key | Does |
 | --- | --- |
-| Tab | Passes over the meters: they are values, not controls. A screen reader reads each as a meter with its name and value text |
+| Tab | Passes over the meters: they are values, not controls (a screen reader reads each as a meter with its name and value text). "Show data" after them is the one stop |
 
 ## Accessibility
 
@@ -74,7 +75,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 A stale reading: `<p class="cap-usage-fresh" data-stale><span class="cap-status" data-tone="warn">[glyph]Stale</span><span>Read 3 hours ago. Usage has likely grown since.</span></p>`.
 
-`import { assess, enhance } from "capsomer/behavior/usage-meter"`. `assess({ used, limit, history, resetsAt, now, unit?, atLimit? })` is pure and returns `{ tone, percent, projectedAtReset, fullAt, label, lead, text, projection }`: the row's `data-tone`, its status word, its why line (which starts with `lead`) and the projection in words for the value text. `enhance()` draws every row's bar through the meter's `enhance`, from `aria-valuenow`, `aria-valuemax` and `data-projected`, through the CSSOM. In React, `import { UsageMeter } from "capsomer/react/usage-meter"` and pass `items` ({ id, name, amount, amountSpoken?, used, limit, history, resetsAt, unit?, atLimit? }), `now`, `freshness` and `stale`.
+`import { assess, enhance } from "capsomer/behavior/usage-meter"`. `assess({ used, limit, history, resetsAt, now, unit?, atLimit? })` is pure and returns `{ tone, percent, projectedAtReset, fullAt, label, lead, text, projection }`: the row's `data-tone`, its status word, its why line (which starts with `lead`) and the projection in words for the value text. `enhance()` draws every row's bar through the meter's `enhance`, from `aria-valuenow`, `aria-valuemax` and `data-projected`, through the CSSOM. In React, `import { UsageMeter } from "capsomer/react/usage-meter"` and pass `items` ({ id, name, amount, amountSpoken?, used, limit, history, resetsAt, unit?, atLimit? }), `now`, `freshness`, `stale` and `tableLabel`. `usageTable(items)` returns the rows as Enarratio's `DataTable`, for `dataTableBlock()` from `enarratio` (which React's `UsageMeter` calls; load `chart-frame.css` for its "Show data").
 
 ## The reference and what is different
 

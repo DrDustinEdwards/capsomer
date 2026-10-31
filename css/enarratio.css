@@ -9,7 +9,13 @@
    charts with `stylesheet(capsomerTheme)` from `capsomer/enarratio-theme` instead; the two give
    the same look (the theme's values are generated from the same tokens, tokens/palette.mjs).
    The selector list re-resolves the chain on a wrapper that sets data-family or data-density,
-   because a custom property that names another is substituted where it is declared. */
+   because a custom property that names another is substituted where it is declared.
+   Reader settings need nothing more here: under prefers-contrast: more Capsomer's stronger
+   text, muted text and lines reach the charts through these same properties (and Enarratio's
+   base rules add full textures, wider gaps and gridlines in the muted color), and under
+   forced-colors: active Enarratio's base rules repaint the drawing and legend in system
+   colors on the elements themselves, so they win over this mapping. With stylesheet() instead,
+   pass `{ highContrast: capsomerMoreTheme }` for the same stronger set. */
 @layer cap.tokens {
   :root,
   [data-family],
@@ -63,7 +69,8 @@
 
     /* sizes follow density */
     --enarratio-font-size: var(--text-size);
-    --enarratio-font-size-mark: var(--fs-detail);
+    /* never under the reader's own text size (Enarratio's 0.75rem), so mark text follows it */
+    --enarratio-font-size-mark: max(var(--fs-detail), 0.75rem);
     --enarratio-font-size-small: var(--fs-detail);
     --enarratio-font-size-tooltip: var(--fs-body);
     --enarratio-line-height-tooltip: var(--leading);

@@ -8,15 +8,19 @@
 import { receiveCspReport } from "@dustinedwards/site-runtime/csp-report";
 import { REPORT_PATH, securityHeaders } from "../scripts/security-headers.ts";
 
-/** The assets binding wrangler provides as `env.ASSETS`. */
+/** The assets binding and the report endpoint's rate limit (wrangler.jsonc). */
 export interface Env {
   readonly ASSETS: { fetch(request: Request): Promise<Response> };
+  readonly CSP_REPORT_RATE_LIMIT: { limit(options: { key: string }): Promise<{ success: boolean }> };
 }
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (new URL(request.url).pathname === REPORT_PATH) {
-      return receiveCspReport(request, { headers: securityHeaders });
+      // Keyed on the edge-set client address, which is counted and never logged; a refusal drops the report (still 204).
+      const allow = async (r: Request) =>
+        (await env.CSP_REPORT_RATE_LIMIT.limit({ key: r.headers.get("CF-Connecting-IP") ?? "unknown" })).success;
+      return receiveCspReport(request, { headers: securityHeaders, allow });
     }
     return env.ASSETS.fetch(request);
   },

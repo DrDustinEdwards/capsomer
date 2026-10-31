@@ -60,4 +60,4 @@ ${runningHead("", "Search", `Release ${d.version}`)}
 ${FOOTER}`;
 }
 
-export const SEARCH_PAGE = { path: "/search/", title: "Search · Capsomer", description: "Search Capsomer's components, their docs and the defaults." };
+export const SEARCH_PAGE = { path: "/search/", title: "Search", description: "Search Capsomer's components, their docs and the defaults." };
