@@ -129,7 +129,7 @@ test("analyze: identical texts are identical, even with different spacing", () =
 });
 
 const before = { title: "Draft 3", who: "Rosa Park", time: "2026-09-14T09:12:00Z", text: "A. B.\n\nThe launch is in May. We will tell no one. Middle one. Middle two. Middle three. Middle four. Ends here." };
-const after = { title: "Draft 4", who: "Dustin Edwards", time: "2026-09-15T16:40:00Z", text: "A. B.\n\nThe launch is in June. We will tell everyone. Middle one. Middle two. Middle three. Middle four. Ends here." };
+const after = { title: "Draft 4", who: "Alex Rivera", time: "2026-09-15T16:40:00Z", text: "A. B.\n\nThe launch is in June. We will tell everyone. Middle one. Middle two. Middle three. Middle four. Ends here." };
 
 test("renderCompare: all three views are in the html, with ins and del carrying hidden text", () => {
   const html = renderCompare(before, after, { id: "t" });

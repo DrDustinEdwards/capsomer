@@ -15,22 +15,22 @@ const legend = `<ul class="cap-uptime-legend" aria-label="Key">${[
 const strip = (id: string, label: string, subtitle: string, slots: UptimeSlot[], alt?: string) => frameHtml(uptimeStrip({ id, label, subtitle, slots, alt, width: 640, height: 28 }), { inline: true, after: legend });
 
 export default {
-  allUp: strip("up-1", "dustinedwards.info", "100% up over 7 days", week({})),
+  allUp: strip("up-1", "example.com", "100% up over 7 days", week({})),
   outage: strip(
     "up-2",
-    "foxhound.app",
+    "example.org",
     "96.1% up over 7 days",
     week({ 4: { status: "degraded", label: "Mon, Sep 28: slow from 09:00 to 10:10 UTC" }, 5: { status: "down", label: "Tue, Sep 29: down from 11:50 to 18:20 UTC" } }),
     "Up all week but for one outage. It was down on Tuesday, September 29, from 11:50 to 18:20 UTC, and slow on Monday morning.",
   ),
-  comfy: strip("up-4", "dustinedwards.info", "100% up over 7 days", week({})),
-  noData: strip("up-3", "germomics.org", "100% up over the 6 of 7 days with data", week({ 2: { status: "unknown", label: "Sat, Sep 26: no data, the watcher did not run" } })),
+  comfy: strip("up-4", "example.com", "100% up over 7 days", week({})),
+  noData: strip("up-3", "example.net", "100% up over the 6 of 7 days with data", week({ 2: { status: "unknown", label: "Sat, Sep 26: no data, the watcher did not run" } })),
   // An inline primitive: the strip is role="img" named by a sentence with the same numbers as
   // the percent beside it, so it needs no frame (components/README.md, "Inline primitives").
   inline: (
     [
-      ["foxhound.app", week({ 5: { status: "down", label: "Tue, Sep 29: down from 11:50 to 18:20 UTC" } }), "96.1%", "Uptime of foxhound.app, 7 days: 96.1% up; down on Tuesday, September 29, from 11:50 to 18:20 UTC."],
-      ["carrel.app", week({}), "100%", "Uptime of carrel.app, 7 days: 100% up, every day."],
+      ["example.org", week({ 5: { status: "down", label: "Tue, Sep 29: down from 11:50 to 18:20 UTC" } }), "96.1%", "Uptime of example.org, 7 days: 96.1% up; down on Tuesday, September 29, from 11:50 to 18:20 UTC."],
+      ["docs.example.com", week({}), "100%", "Uptime of docs.example.com, 7 days: 100% up, every day."],
     ] as const
   )
     .map(([site, slots, pct, alt]) => `<tr><th scope="row">${site}</th><td><span class="cap-uptime-line"><span class="cap-uptime-strip">${uptimeStrip({ slots, label: `Uptime of ${site}, 7 days`, alt, inline: true, width: 160, height: 18 })}</span><span class="cap-uptime-pct">${pct}</span></span></td></tr>`)

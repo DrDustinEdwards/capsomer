@@ -5,8 +5,8 @@ import { FAMILIES, contrast } from "../../tokens/palette.mjs";
 import { emailColors } from "../../components/email/colors.ts";
 import { alert, checkUrl, escapeHtml, magicLink, notice, renderEmail, reset, securityNotice, verification } from "../../components/email/email.ts";
 
-const FAKE = "https://carrel.example/auth/verify?t=EXAMPLE-NOT-A-TOKEN&x=1";
-const common = { brand: { name: "Carrel", family: "purple" }, to: "reader@example.com" };
+const FAKE = "https://app.example.com/auth/verify?t=EXAMPLE-NOT-A-TOKEN&x=1";
+const common = { brand: { name: "Example Co", family: "purple" }, to: "reader@example.com" };
 const link = { url: FAKE, expiresIn: "15 minutes" };
 const all = [
   [magicLink, link],
@@ -14,7 +14,7 @@ const all = [
   [reset, link],
   [alert, { level: "warn", what: "Disk is 91% full", when: "08:15 UTC", details: ["Free space: 9 GB."], url: FAKE }],
   [notice, { title: "Terms changed", body: ["First.", "Second."], action: { label: "Read", url: FAKE } }],
-  [securityNotice, { title: "A passkey was added to your account", what: "A passkey was added.", when: "October 31, 2026 at 1:52 AM UTC", device: "Safari on iPhone", location: "Austin, Texas, United States", secure: "If this was not you, sign in now.", url: FAKE }],
+  [securityNotice, { title: "A passkey was added to your account", what: "A passkey was added.", when: "October 31, 2026 at 1:52 AM UTC", device: "Safari on iPhone", location: "Portland, Oregon, United States", secure: "If this was not you, sign in now.", url: FAKE }],
 ];
 
 test("every template renders a subject, HTML and text from the same data", () => {
@@ -26,7 +26,7 @@ test("every template renders a subject, HTML and text from the same data", () =>
     assert.equal((r.html.match(/<h1\b/g) ?? []).length, 1, t.name);
     assert.ok(r.html.includes(`<title>${escapeHtml(r.subject)}</title>`));
     assert.ok(r.text.includes("reader@example.com"), `${t.name} text says who it was sent to`);
-    assert.ok(r.text.startsWith("Carrel"));
+    assert.ok(r.text.startsWith("Example Co"));
   }
 });
 
@@ -88,8 +88,8 @@ test("every value is escaped in the HTML", () => {
 test("a security notice says what, when, the device, the place and what to do, and leaves out what it was not given", () => {
   const data = all.find(([t]) => t === securityNotice)[1];
   const r = renderEmail(securityNotice, { ...common, ...data });
-  assert.equal(r.subject, "Carrel: A passkey was added to your account");
-  for (const line of ["When: October 31, 2026 at 1:52 AM UTC", "Device: Safari on iPhone", "Near: Austin, Texas, United States", "If this was not you, sign in now."]) {
+  assert.equal(r.subject, "Example Co: A passkey was added to your account");
+  for (const line of ["When: October 31, 2026 at 1:52 AM UTC", "Device: Safari on iPhone", "Near: Portland, Oregon, United States", "If this was not you, sign in now."]) {
     assert.ok(r.text.includes(line), line);
   }
   const bare = renderEmail(securityNotice, { ...common, ...data, device: null, location: null, url: undefined });
@@ -104,7 +104,7 @@ test("a line break in a single-line value cannot add a line to the subject", () 
 test("links: only https and mailto, and a bad one throws", () => {
   assert.equal(checkUrl("https://a.example/p?q=1"), "https://a.example/p?q=1");
   assert.equal(checkUrl("mailto:help@a.example"), "mailto:help@a.example");
-  for (const bad of ["javascript:alert(1)", "http://a.example", "data:text/html,x", "https://a.example/ x", 'https://a.example/"onclick="x', "/relative", "", "JaVaScRiPt:alert(1)", "https://a.example/\u0000", "https://dustinedwards.info@evil.example/login", "https://user:pass@ok.example/x"]) {
+  for (const bad of ["javascript:alert(1)", "http://a.example", "data:text/html,x", "https://a.example/ x", 'https://a.example/"onclick="x', "/relative", "", "JaVaScRiPt:alert(1)", "https://a.example/\u0000", "https://example.com@evil.example/login", "https://user:pass@ok.example/x"]) {
     assert.throws(() => checkUrl(bad), /email:/, bad);
   }
   assert.throws(() => renderEmail(magicLink, { ...common, ...link, url: "javascript:alert(1)" }), /email:/);
@@ -121,10 +121,10 @@ test("an alert carries its level as a word in the subject, the HTML and the text
 });
 
 test("copy overrides the wording and nothing else; the footer slot is filled", () => {
-  const r = renderEmail(magicLink, { ...common, ...link, copy: { subject: "Hi", heading: "Welcome", button: "Go" }, footer: ["Unsubscribe: reply STOP", { text: "Preferences", url: "https://carrel.example/prefs" }] });
+  const r = renderEmail(magicLink, { ...common, ...link, copy: { subject: "Hi", heading: "Welcome", button: "Go" }, footer: ["Unsubscribe: reply STOP", { text: "Preferences", url: "https://app.example.com/prefs" }] });
   assert.equal(r.subject, "Hi");
   assert.ok(r.html.includes(">Go</a>") && r.html.includes(">Welcome</h1>"));
-  assert.ok(r.text.includes("Preferences: https://carrel.example/prefs"));
+  assert.ok(r.text.includes("Preferences: https://app.example.com/prefs"));
   assert.ok(r.text.includes("Unsubscribe: reply STOP"));
 });
 

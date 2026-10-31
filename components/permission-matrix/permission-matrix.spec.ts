@@ -7,7 +7,7 @@ const sample: PermMatrix = {
   agents: [
     { name: "seat", holds: ["Start CI", "Merge"] },
     { name: "capsomer-driver", holds: [] },
-    { name: "foxhound-driver", holds: ["Money paths", "Start CI"] },
+    { name: "billing-driver", holds: ["Money paths", "Start CI"] },
   ],
 };
 
@@ -15,13 +15,13 @@ test("behavior: holdings lists what each agent holds, in column order", () => {
   expect(holdings(sample)).toEqual([
     { agent: "seat", held: ["Merge", "Start CI"], text: "Holds: Merge, Start CI" },
     { agent: "capsomer-driver", held: [], text: "Holds no permissions" },
-    { agent: "foxhound-driver", held: ["Start CI", "Money paths"], text: "Holds: Start CI, Money paths" },
+    { agent: "billing-driver", held: ["Start CI", "Money paths"], text: "Holds: Start CI, Money paths" },
   ]);
 });
 
 test("behavior: holders lists who holds each permission, and says when nobody does", () => {
   const h = holders(sample);
-  expect(h.map((x) => x.text)).toEqual(["Held by: seat", "Nobody holds this", "Held by: seat, foxhound-driver", "Nobody holds this", "Held by: foxhound-driver"]);
+  expect(h.map((x) => x.text)).toEqual(["Held by: seat", "Nobody holds this", "Held by: seat, billing-driver", "Nobody holds this", "Held by: billing-driver"]);
 });
 
 eachTheme((theme) => {
@@ -62,7 +62,7 @@ eachTheme((theme) => {
     `);
     const region = wide.getByRole("region", { name: "Permissions by agent" });
     await expect(region.getByRole("columnheader", { name: "Money paths" })).toBeVisible();
-    await expect(region.getByRole("rowheader", { name: "foxhound-driver" })).toBeVisible();
+    await expect(region.getByRole("rowheader", { name: "billing-driver" })).toBeVisible();
     await expect(region.getByRole("cell", { name: "Yes" })).toHaveCount(5);
     await expect(region.getByRole("cell", { name: "No" })).toHaveCount(15);
   });
@@ -74,7 +74,7 @@ eachTheme((theme) => {
     const cards = page.getByRole("list", { name: "Permissions by agent" });
     await expect(cards).toBeVisible();
     await expect(cards.getByRole("listitem")).toHaveCount(4);
-    await expect(cards.getByRole("listitem").filter({ hasText: "foxhound-driver" })).toContainText("Holds: Start CI, Money paths");
+    await expect(cards.getByRole("listitem").filter({ hasText: "billing-driver" })).toContainText("Holds: Start CI, Money paths");
     await expect(cards.getByRole("listitem").filter({ hasText: "capsomer-driver" })).toContainText("Holds no permissions");
     await expectContrast(page, [
       { sel: ".cap-perms-narrow .cap-perms-name", what: "an agent's name on a card" },

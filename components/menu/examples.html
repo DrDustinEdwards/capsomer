@@ -6,10 +6,10 @@
 <section class="cap-specimen" aria-labelledby="s-form">
   <h2 id="s-form">A form menu, closed: a details of submit buttons and links, no script needed</h2>
   <details class="cap-menu-form" data-cap="menu-form" id="menu-form">
-    <summary class="cap-btn cap-menu-trigger">Row actions for foxhound.app<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m3.5 6 4.5 4.5L12.5 6"/></svg></summary>
-    <form class="cap-popover cap-menu" action="/admin/sites/foxhound" method="post">
-      <input type="hidden" name="site" value="foxhound" />
-      <a class="cap-option cap-menu-item" href="/admin/sites/foxhound"><span class="cap-option-label">Open site</span></a>
+    <summary class="cap-btn cap-menu-trigger">Row actions for example.org<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m3.5 6 4.5 4.5L12.5 6"/></svg></summary>
+    <form class="cap-popover cap-menu" action="/admin/sites/example-org" method="post">
+      <input type="hidden" name="site" value="example-org" />
+      <a class="cap-option cap-menu-item" href="/admin/sites/example-org"><span class="cap-option-label">Open site</span></a>
       <button type="submit" class="cap-option cap-menu-item" name="intent" value="check"><span class="cap-option-label">Run checks now</span></button>
       <button type="submit" class="cap-option cap-menu-item" name="intent" value="archive" disabled><span class="cap-option-label">Archive</span><span class="cap-menu-reason">Not while a deploy runs. Try again when it ends.</span></button>
       <hr class="cap-listbox-separator cap-menu-separator" />
@@ -21,10 +21,10 @@
 <template data-specimen="form-open" data-title="A form menu, open: a disabled item with its reason, a danger item last" data-height="340">
   <main class="specimen-page">
   <details class="cap-menu-form" data-cap="menu-form" id="menu-form-open" open>
-    <summary class="cap-btn cap-menu-trigger">Row actions for foxhound.app<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m3.5 6 4.5 4.5L12.5 6"/></svg></summary>
-    <form class="cap-popover cap-menu" action="/admin/sites/foxhound" method="post">
-      <input type="hidden" name="site" value="foxhound" />
-      <a class="cap-option cap-menu-item" href="/admin/sites/foxhound"><span class="cap-option-label">Open site</span></a>
+    <summary class="cap-btn cap-menu-trigger">Row actions for example.org<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m3.5 6 4.5 4.5L12.5 6"/></svg></summary>
+    <form class="cap-popover cap-menu" action="/admin/sites/example-org" method="post">
+      <input type="hidden" name="site" value="example-org" />
+      <a class="cap-option cap-menu-item" href="/admin/sites/example-org"><span class="cap-option-label">Open site</span></a>
       <button type="submit" class="cap-option cap-menu-item" name="intent" value="check"><span class="cap-option-label">Run checks now</span></button>
       <button type="submit" class="cap-option cap-menu-item" name="intent" value="archive" disabled><span class="cap-option-label">Archive</span><span class="cap-menu-reason">Not while a deploy runs. Try again when it ends.</span></button>
       <hr class="cap-listbox-separator cap-menu-separator" />

@@ -157,7 +157,7 @@ eachTheme((theme) => {
     await page.keyboard.press("ArrowDown");
     await expect(page.getByRole("option", { name: "improve-loop" })).toHaveAttribute("data-active", "");
     await page.keyboard.press("ArrowDown");
-    await expect(page.getByRole("option", { name: "Dustin" })).toHaveAttribute("data-active", "");
+    await expect(page.getByRole("option", { name: "Alex" })).toHaveAttribute("data-active", "");
   });
 
   test("keyboard: Tab from the open list closes it and moves on", async ({ page }) => {
@@ -175,9 +175,9 @@ eachTheme((theme) => {
     await page.getByRole("option", { name: "seat-start (paused)" }).click({ force: true });
     await expect(page.locator("#sel-owner-native")).toHaveValue("");
     await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeVisible();
-    await page.getByRole("option", { name: "Dustin" }).click();
-    await expect(page.locator("#sel-owner-native")).toHaveValue("dustin");
-    await expect(owner).toHaveText("Dustin");
+    await page.getByRole("option", { name: "Alex" }).click();
+    await expect(page.locator("#sel-owner-native")).toHaveValue("alex");
+    await expect(owner).toHaveText("Alex");
     await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeHidden();
   });
 

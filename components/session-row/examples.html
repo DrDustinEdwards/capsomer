@@ -41,7 +41,7 @@
     <li class="cap-session" data-session="sess_types" data-tone="crit">
       <div class="cap-session-head">
         <span class="cap-pill" data-tone="crit"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Failed</span>
-        <span class="cap-session-agent">foxhound-driver</span>
+        <span class="cap-session-agent">billing-driver</span>
         <span class="cap-session-age"><time class="cap-time" datetime="2026-09-30T13:32Z">41 minutes ago</time></span>
       </div>
       <p class="cap-session-now">Stopped: the type check failed twice on the same file. <a href="#s-failed">Open the job</a></p>
@@ -52,10 +52,10 @@
 <section class="cap-specimen" aria-labelledby="s-idle">
   <h2 id="s-idle">Idle</h2>
   <ul class="cap-session-list" data-cap="session-row" aria-label="Agent sessions, idle">
-    <li class="cap-session" data-session="sess_txasm">
+    <li class="cap-session" data-session="sess_newsletter">
       <div class="cap-session-head">
         <span class="cap-pill" data-tone="nodata"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Idle</span>
-        <span class="cap-session-agent">txasm-driver</span>
+        <span class="cap-session-agent">newsletter-driver</span>
         <span class="cap-session-age">last seen <time class="cap-time" datetime="2026-09-29T17:40Z">yesterday</time></span>
       </div>
     </li>
@@ -68,7 +68,7 @@
     <li class="cap-session" data-session="sess_germ">
       <div class="cap-session-head">
         <span class="cap-pill" data-tone="nodata"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="3" y="3" width="10" height="10" rx="1.5" fill="currentColor" /></svg>Stopped</span>
-        <span class="cap-session-agent">germomics-driver</span>
+        <span class="cap-session-agent">backup-driver</span>
         <span class="cap-session-age">stopped <time class="cap-time" datetime="2026-09-30T11:05Z">3 hours ago</time></span>
       </div>
       <p class="cap-session-now">Stopped by you after the backup check passed.</p>
@@ -79,10 +79,10 @@
 <section class="cap-specimen" aria-labelledby="s-sampled">
   <h2 id="s-sampled">Sampled stream</h2>
   <ul class="cap-session-list" data-cap="session-row" aria-label="Agent sessions, sampled">
-    <li class="cap-session" data-session="sess_carrel">
+    <li class="cap-session" data-session="sess_docs">
       <div class="cap-session-head">
         <span class="cap-pill" data-tone="info"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35" /><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2" /></svg>Working</span>
-        <span class="cap-session-agent">carrel-driver</span>
+        <span class="cap-session-agent">docs-driver</span>
         <span class="cap-session-age">started <time class="cap-time" datetime="2026-09-30T12:40Z">1 hour ago</time></span>
       </div>
       <p class="cap-session-now">Checking every post's links, 214 of 380.</p>
@@ -101,7 +101,7 @@
         <li class="cap-session" data-session="sess_migr">
           <div class="cap-session-head">
             <span class="cap-pill" data-tone="warn"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Needs you</span>
-            <span class="cap-session-agent">carrel-driver</span>
+            <span class="cap-session-agent">docs-driver</span>
             <span class="cap-session-age">waiting <time class="cap-time" datetime="2026-09-30T14:01Z">12 minutes</time></span>
           </div>
           <div class="cap-session-ask" role="group" aria-labelledby="q-migr">
@@ -132,7 +132,7 @@
         <li class="cap-session" data-session="sess_types2" data-tone="crit">
           <div class="cap-session-head">
             <span class="cap-pill" data-tone="crit"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Failed</span>
-            <span class="cap-session-agent">foxhound-driver</span>
+            <span class="cap-session-agent">billing-driver</span>
             <span class="cap-session-age"><time class="cap-time" datetime="2026-09-30T13:32Z">41 minutes ago</time></span>
           </div>
           <p class="cap-session-now">Stopped: the type check failed twice on the same file. <a href="#s-list">Open the job</a></p>
@@ -146,10 +146,10 @@
           <p class="cap-session-now">Running the browser tests, file 3 of 5.</p>
           <p class="cap-session-steps">Before that: read file<span aria-hidden="true" class="cap-session-count"> ×12</span><span class="cap-sr-only"> 12 times</span>, ran command<span aria-hidden="true" class="cap-session-count"> ×4</span><span class="cap-sr-only"> 4 times</span>.</p>
         </li>
-        <li class="cap-session" data-session="sess_txasm2">
+        <li class="cap-session" data-session="sess_newsletter2">
           <div class="cap-session-head">
             <span class="cap-pill" data-tone="nodata"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Idle</span>
-            <span class="cap-session-agent">txasm-driver</span>
+            <span class="cap-session-agent">newsletter-driver</span>
             <span class="cap-session-age">last seen <time class="cap-time" datetime="2026-09-29T17:40Z">yesterday</time></span>
           </div>
         </li>
@@ -185,7 +185,7 @@
     <li class="cap-session" data-session="sess_comfy" data-tone="crit">
       <div class="cap-session-head">
         <span class="cap-pill" data-tone="crit"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Failed</span>
-        <span class="cap-session-agent">foxhound-driver</span>
+        <span class="cap-session-agent">billing-driver</span>
         <span class="cap-session-age">failed <time class="cap-time" datetime="2026-09-30T13:30Z">43 minutes ago</time></span>
       </div>
       <p class="cap-session-now">The type check failed twice and the session stopped.</p>

@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   no-bloat:
-    uses: DrDustinEdwards/devkit/.github/workflows/no-bloat.yml@d9d5a3448a50f183c3c8b4a5f293717728717245 # v0.20.8
+    uses: DrDustinEdwards/devkit/.github/workflows/no-bloat.yml@71f342e07f91d3be216f2dfd8e9815a0f9f7299c # v0.20.13
     with:
       node-version-file: .node-version
       install: npm ci --ignore-scripts

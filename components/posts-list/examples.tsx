@@ -12,35 +12,35 @@ const NOW = Date.parse("2026-10-10T12:00:00Z");
 const ALL: ContentCan = { edit: true, publish: true, deleteContent: true, deleteMedia: true, decideMentions: true };
 
 const ROWS: PostRow[] = [
-  { id: "foxhound-release", title: "Notes on the Foxhound release", kind: "post", status: "published", path: "/blog/foxhound-release", href: "/editor/foxhound-release", liveHref: "https://dustinedwards.info/blog/foxhound-release", publishAt: null, publishedAt: "2026-10-02T09:00:00Z", updatedAt: "2026-10-09T16:20:00Z", tags: ["release"] },
+  { id: "spring-release", title: "Notes on the spring release", kind: "post", status: "published", path: "/blog/spring-release", href: "/editor/spring-release", liveHref: "https://example.com/blog/spring-release", publishAt: null, publishedAt: "2026-10-02T09:00:00Z", updatedAt: "2026-10-09T16:20:00Z", tags: ["release"] },
   { id: "uptime-strip", title: "Why the uptime strip counts gaps", kind: "post", status: "scheduled", path: null, href: "/editor/uptime-strip", liveHref: null, publishAt: "2026-10-13T08:00:00Z", publishedAt: null, updatedAt: "2026-10-10T08:05:00Z", tags: ["capsid"] },
   { id: "mention-queue", title: "What a mention queue is for", kind: "post", status: "draft", path: null, href: "/editor/mention-queue", liveHref: null, publishAt: null, publishedAt: null, updatedAt: "2026-10-08T21:40:00Z", notes: [{ text: "2 AI drafts waiting", tone: "info" }], tags: [] },
-  { id: "read-only-agent", title: "Notes on a read-only agent", kind: "post", status: "published", path: "/blog/read-only-agent", href: "/editor/read-only-agent", liveHref: "https://dustinedwards.info/blog/read-only-agent", publishAt: null, publishedAt: "2026-09-21T10:00:00Z", updatedAt: "2026-09-22T08:00:00Z", scheduledUpdate: { publishAt: "2026-10-12T15:00:00Z", href: "/posts/read-only-agent/update" }, tags: ["agents", "capsid"] },
-  { id: "phage-lambda", title: "Phage lambda: lysis or lysogeny", kind: "post", status: "draft", path: null, href: "/editor/phage-lambda", liveHref: null, publishAt: null, publishedAt: null, updatedAt: "2026-10-01T12:00:00Z", notes: [{ text: "New draft" }, { text: "Held by a flag", tone: "warn" }] },
-  { id: "about", title: "About", kind: "page", status: "published", path: "/about", href: "/editor/about", liveHref: "https://dustinedwards.info/about", publishAt: null, publishedAt: "2026-06-01T09:00:00Z", updatedAt: "2026-09-02T11:00:00Z", tags: [] },
+  { id: "read-only-agent", title: "Notes on a read-only agent", kind: "post", status: "published", path: "/blog/read-only-agent", href: "/editor/read-only-agent", liveHref: "https://example.com/blog/read-only-agent", publishAt: null, publishedAt: "2026-09-21T10:00:00Z", updatedAt: "2026-09-22T08:00:00Z", scheduledUpdate: { publishAt: "2026-10-12T15:00:00Z", href: "/posts/read-only-agent/update" }, tags: ["agents", "capsid"] },
+  { id: "spring-survey", title: "Field notes: the spring survey", kind: "post", status: "draft", path: null, href: "/editor/spring-survey", liveHref: null, publishAt: null, publishedAt: null, updatedAt: "2026-10-01T12:00:00Z", notes: [{ text: "New draft" }, { text: "Held by a flag", tone: "warn" }] },
+  { id: "about", title: "About", kind: "page", status: "published", path: "/about", href: "/editor/about", liveHref: "https://example.com/about", publishAt: null, publishedAt: "2026-06-01T09:00:00Z", updatedAt: "2026-09-02T11:00:00Z", tags: [] },
 ];
 
 // A site with site-api v0.17.0's ideas: a Trash, rename, preview links, the author and date
 // filters, and rows that carry their authors and excerpt.
-const IDEAS: PostOffers = { delete: true, schedule: true, tags: true, duplicate: true, trash: true, rename: true, previewLinks: true, filters: ["kind", "tag", "author", "published", "trashed"], authors: ["Dustin Edwards", "Julie Edwards"] };
+const IDEAS: PostOffers = { delete: true, schedule: true, tags: true, duplicate: true, trash: true, rename: true, previewLinks: true, filters: ["kind", "tag", "author", "published", "trashed"], authors: ["Alex Rivera", "Sam Lee"] };
 const CREDITS: Record<string, Pick<PostRow, "authors" | "excerpt">> = {
-  "foxhound-release": { authors: ["Dustin Edwards"], excerpt: "What shipped in the Foxhound release, what was cut, and the one migration that needs a hand." },
-  "uptime-strip": { authors: ["Dustin Edwards", "Julie Edwards"], excerpt: "A gap is not a zero: the strip draws a missing check as its own state, with the reason." },
-  "mention-queue": { authors: ["Julie Edwards"] },
-  "read-only-agent": { authors: ["Dustin Edwards"], excerpt: "An agent that reads the knowledge base and the repositories and writes nothing but its own notes is safe to leave running overnight, which is most of what makes it useful." },
+  "spring-release": { authors: ["Alex Rivera"], excerpt: "What shipped in the spring release, what was cut, and the one migration that needs a hand." },
+  "uptime-strip": { authors: ["Alex Rivera", "Sam Lee"], excerpt: "A gap is not a zero: the strip draws a missing check as its own state, with the reason." },
+  "mention-queue": { authors: ["Sam Lee"] },
+  "read-only-agent": { authors: ["Alex Rivera"], excerpt: "An agent that reads the knowledge base and the repositories and writes nothing but its own notes is safe to leave running overnight, which is most of what makes it useful." },
 };
 const IDEA_ROWS: PostRow[] = [
   ...ROWS.slice(0, 4).map((r) => ({ ...r, ...CREDITS[r.id], scheduledUpdate: undefined, trashedAt: null })),
-  { id: "lysogeny-notes", title: "Old notes on lysogeny", kind: "post", status: "draft", path: null, href: "/editor/lysogeny-notes", liveHref: null, publishAt: null, publishedAt: null, updatedAt: "2026-08-14T10:00:00Z", authors: ["Dustin Edwards"], trashedAt: "2026-10-08T09:00:00Z" },
-  { id: "carrel-launch", title: "Carrel is open", kind: "post", status: "draft", path: "/blog/carrel-launch", href: "/editor/carrel-launch", liveHref: null, publishAt: null, publishedAt: "2026-05-02T09:00:00Z", updatedAt: "2026-09-30T15:00:00Z", authors: ["Julie Edwards", "Dustin Edwards"], excerpt: "The writing hub for every site in the family, and what it will never do to your prose.", trashedAt: "2026-09-20T12:00:00Z" },
+  { id: "old-survey-notes", title: "Old notes on the survey", kind: "post", status: "draft", path: null, href: "/editor/old-survey-notes", liveHref: null, publishAt: null, publishedAt: null, updatedAt: "2026-08-14T10:00:00Z", authors: ["Alex Rivera"], trashedAt: "2026-10-08T09:00:00Z" },
+  { id: "docs-launch", title: "The docs site is open", kind: "post", status: "draft", path: "/blog/docs-launch", href: "/editor/docs-launch", liveHref: null, publishAt: null, publishedAt: "2026-05-02T09:00:00Z", updatedAt: "2026-09-30T15:00:00Z", authors: ["Sam Lee", "Alex Rivera"], excerpt: "The new home for every guide we write, and what it will never do to your prose.", trashedAt: "2026-09-20T12:00:00Z" },
 ];
 
-const WORDS: Record<string, string> = { "foxhound-release": "1,240", "uptime-strip": "860", "mention-queue": "1,530", "read-only-agent": "2,110", "phage-lambda": "3,020", about: "410" };
+const WORDS: Record<string, string> = { "spring-release": "1,240", "uptime-strip": "860", "mention-queue": "1,530", "read-only-agent": "2,110", "spring-survey": "3,020", about: "410" };
 
 function dataOf(rows: PostRow[], over: Partial<PostsData> = {}): PostsData {
   const count = (s: PostRow["status"]) => rows.filter((r) => r.status === s).length;
   return {
-    site: { name: "dustinedwards.info" },
+    site: { name: "example.com" },
     query: {},
     rows,
     page: { nextCursor: null },
@@ -87,7 +87,7 @@ function useSite(initial: PostRow[] = ROWS) {
       case "unpublish":
       case "republish": {
         const to = intent === "unpublish" ? "draft" : "published";
-        setRows((rs) => rs.map((r) => (ids.includes(r.id) ? { ...r, status: to, publishAt: null, path: to === "draft" ? null : `/blog/${r.id}`, liveHref: to === "draft" ? null : `https://dustinedwards.info/blog/${r.id}` } : r)));
+        setRows((rs) => rs.map((r) => (ids.includes(r.id) ? { ...r, status: to, publishAt: null, path: to === "draft" ? null : `/blog/${r.id}`, liveHref: to === "draft" ? null : `https://example.com/blog/${r.id}` } : r)));
         return intent === "unpublish"
           ? { ok: true, message: `Unpublished ${ids.length === 1 ? `“${title(ids[0] ?? "")}”` : `${ids.length} posts`}.`, undo: { intent: "republish", fields: { ids } } }
           : { ok: true, message: `Published ${ids.length === 1 ? `“${title(ids[0] ?? "")}”` : `${ids.length} posts`} again.` };
@@ -105,7 +105,7 @@ function useSite(initial: PostRow[] = ROWS) {
         if (!tag) return { ok: false, message: "Type a tag first. Nothing was changed." };
         const adding = intent === "tag-add";
         // The site refuses a post with no front matter (Carrel's bulk.server.ts does).
-        const refused: string[] = ids.filter((id) => id === "phage-lambda");
+        const refused: string[] = ids.filter((id) => id === "spring-survey");
         const changed = ids.filter((id) => !refused.includes(id) && (rows.find((r) => r.id === id)?.tags ?? []).includes(tag) !== adding);
         setRows((rs) => rs.map((r) => (changed.includes(r.id) ? { ...r, tags: adding ? [...(r.tags ?? []), tag] : (r.tags ?? []).filter((t) => t !== tag) } : r)));
         const outcomes = ids.map((id) => (refused.includes(id) ? { id, ok: false, message: "This post has no front matter, so it cannot carry tags yet." } : { id, ok: true, message: changed.includes(id) ? undefined : adding ? "Already had it." : "Did not have it." }));
@@ -143,7 +143,7 @@ function useSite(initial: PostRow[] = ROWS) {
         if (rows.some((r) => r.id === next)) return { ok: false, message: `The slug ${next} is taken. Nothing was changed.` };
         const old = rows.find((r) => r.id === id);
         const path = old?.path ? old.path.replace(/[^/]+$/, next) : null;
-        setRows((rs) => rs.map((r) => (r.id === id ? { ...r, id: next, href: `/editor/${next}`, path, liveHref: path && r.liveHref ? `https://dustinedwards.info${path}` : r.liveHref } : r)));
+        setRows((rs) => rs.map((r) => (r.id === id ? { ...r, id: next, href: `/editor/${next}`, path, liveHref: path && r.liveHref ? `https://example.com${path}` : r.liveHref } : r)));
         return { ok: true, message: old?.path ? `Renamed “${title(id)}” to ${next}. ${old.path} now redirects to ${path}.` : `Renamed “${title(id)}” to ${next}.` };
       }
       case "preview-link": {
@@ -152,7 +152,7 @@ function useSite(initial: PostRow[] = ROWS) {
           ok: true,
           message: `Made a preview link for “${title(id)}”. It works for 48 hours.`,
           outcomes: [{ id, ok: true }],
-          previewLink: { url: "https://dustinedwards.info/preview/Xk2fQ9bLm4TzR7wVc1nH8sJd5pYa3gUe6oKi0qWtBvE", expiresAt: new Date(NOW + 48 * 3600_000).toISOString() },
+          previewLink: { url: "https://example.com/preview/Xk2fQ9bLm4TzR7wVc1nH8sJd5pYa3gUe6oKi0qWtBvE", expiresAt: new Date(NOW + 48 * 3600_000).toISOString() },
         };
       }
       case "reschedule": {
@@ -207,7 +207,7 @@ const UPDATE_VIEW: ScheduledUpdateView = {
   when: "2026-10-12 15:00 UTC",
   scheduledAt: "2026-10-09T18:30:00Z",
   source: UPDATE,
-  live: { source: LIVE, version: "v-7f3a", href: "https://dustinedwards.info/blog/read-only-agent" },
+  live: { source: LIVE, version: "v-7f3a", href: "https://example.com/blog/read-only-agent" },
   patch: PATCH,
   editorHref: "/editor/read-only-agent?update=1",
   can: ALL,
@@ -241,11 +241,11 @@ const outcomeResult: IntentResult = {
   ok: false,
   message: "Added the tag capsid to 2 posts; 1 refused.",
   outcomes: [
-    { id: "foxhound-release", ok: true },
-    { id: "phage-lambda", ok: false, message: "This post has no front matter, so it cannot carry tags yet." },
+    { id: "spring-release", ok: true },
+    { id: "spring-survey", ok: false, message: "This post has no front matter, so it cannot carry tags yet." },
     { id: "mention-queue", ok: true },
   ],
-  undo: { intent: "tag-remove", fields: { ids: ["foxhound-release", "mention-queue"], tag: "capsid" } },
+  undo: { intent: "tag-remove", fields: { ids: ["spring-release", "mention-queue"], tag: "capsid" } },
 };
 
 // The v0.15.0 site, live or its Trash, with every action.
@@ -263,26 +263,26 @@ function Ideas({ trash = false }: { trash?: boolean }) {
 const ideaRows = IDEA_ROWS.filter((r) => !r.trashedAt);
 const ideaCounts = { all: 4, draft: 1, scheduled: 1, published: 2, trash: 2 };
 const filteredIdeas = dataOf(
-  ideaRows.filter((r) => r.authors?.includes("Julie Edwards")),
-  { offers: IDEAS, query: { author: "Julie Edwards", from: "2026-09-01", to: "2026-10-31" }, counts: ideaCounts, extra: undefined },
+  ideaRows.filter((r) => r.authors?.includes("Sam Lee")),
+  { offers: IDEAS, query: { author: "Sam Lee", from: "2026-09-01", to: "2026-10-31" }, counts: ideaCounts, extra: undefined },
 );
 const linkResult: IntentResult = {
   ok: true,
   message: "Made a preview link for “Why the uptime strip counts gaps”. It works for 48 hours.",
   outcomes: [{ id: "uptime-strip", ok: true }],
-  previewLink: { url: "https://dustinedwards.info/preview/Xk2fQ9bLm4TzR7wVc1nH8sJd5pYa3gUe6oKi0qWtBvE", expiresAt: "2026-10-12T12:00:00Z" },
+  previewLink: { url: "https://example.com/preview/Xk2fQ9bLm4TzR7wVc1nH8sJd5pYa3gUe6oKi0qWtBvE", expiresAt: "2026-10-12T12:00:00Z" },
 };
 
 const confirmResult: IntentResult = {
   ok: false,
   message: "Confirm first.",
-  confirm: { intent: "delete", title: "Delete 2 posts?", lead: "This removes them from the site and cannot be undone.", items: ["What a mention queue is for", "Phage lambda: lysis or lysogeny"], action: "Delete 2 posts", typeToConfirm: "2", fields: { ids: ["mention-queue", "phage-lambda"] } },
+  confirm: { intent: "delete", title: "Delete 2 posts?", lead: "This removes them from the site and cannot be undone.", items: ["What a mention queue is for", "Field notes: the spring survey"], action: "Delete 2 posts", typeToConfirm: "2", fields: { ids: ["mention-queue", "spring-survey"] } },
 };
 
 const reader = dataOf(ROWS.slice(0, 4), { can: { edit: false, publish: false, deleteContent: false, deleteMedia: false, decideMentions: false }, newHref: undefined, extra: undefined });
 const limited = dataOf(ROWS.slice(0, 3), { offers: { delete: false, schedule: true, tags: false, duplicate: true }, query: { sort: "title" }, page: { nextCursor: "c-2", sortedOnPage: true }, counts: { all: 128, draft: 9, scheduled: 2, published: 117 }, kinds: ["post"], extra: undefined });
 const emptyDrafts = dataOf([], { query: { status: "draft" }, counts: { all: 4, draft: 0, scheduled: 1, published: 3 }, extra: undefined });
-const emptyMatch = dataOf([], { query: { q: "lysogeny", kind: "page" }, extra: undefined });
+const emptyMatch = dataOf([], { query: { q: "lighthouse", kind: "page" }, extra: undefined });
 
 const mounts: Record<string, () => ReactNode> = {
   editor: () => (

@@ -33,7 +33,7 @@ In an editor or a draft page, beside the publish button, for anything that is ch
 - **Failing checks first, required apart from advisory, passing ones folded.** Two groups, "Required, 2 failing" then "Advisory, 3", and "9 checks passed" in a disclosure (the person is not asked to read nine passes to find two failures). A group with nothing failing is not shown; with nothing failing at all the region says "No checks are failing."
 - **Every row names its cause and links to it.** The row's one link is the cause in words ("The cover image has no alt text") and goes to the passage, field or setting that causes it (`href="#field-alt"`). The detail gives the rule's name and the fix: "Alt text. Fix: Describe what the image shows, in a sentence."
 - **Four states, each shape, word and color.** Blocked (critical glyph), Held (square), Ready (tick), Published (tick). Blocked wins over held, held over ready; the overall state is the worst of the destinations'.
-- **A blocked button is `aria-disabled="true"`, never `disabled`, and described by the summary.** A keyboard or screen reader user can reach it and hear "Blocked: 2 required checks failing on dustinedwards.info"; a `disabled` button is skipped and says nothing. Pressing it does nothing. It reads "Publish blocked"; a held one "Publish held"; the one at work "Publishing..." with `aria-busy`.
+- **A blocked button is `aria-disabled="true"`, never `disabled`, and described by the summary.** A keyboard or screen reader user can reach it and hear "Blocked: 2 required checks failing on example.com"; a `disabled` button is skipped and says nothing. Pressing it does nothing. It reads "Publish blocked"; a held one "Publish held"; the one at work "Publishing..." with `aria-busy`.
 - **The summary is a polite live region** that is written only when its words change, so a check that flips announces once. The region is a labeled `section`.
 - **One row per destination, each with its own state and button.** Publishing to each site is separate: the sites differ in what blocks them (a site's canonical address is its own check), and one blocked site does not stop another. The overall state is the worst.
 - **A hold is a person or a schedule, and says so**: "Held for review by Rosa until Fri 09:00", with a note for anything more. Nothing in the gate lifts a hold; the person who placed it does.
@@ -84,8 +84,8 @@ The region and the button it describes:
 ```html
 <div class="cap-gate-bar">
   <!-- The page's own publish control comes first, so a keyboard user reaches it before the checks, paired with the region by data-gate and data-site: -->
-  <div data-cap-actions data-gate="pg" data-site="dustinedwards" data-btn-size="default">
-    <button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards"
+  <div data-cap-actions data-gate="pg" data-site="example" data-btn-size="default">
+    <button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="example"
             data-variant="secondary" aria-disabled="true" aria-describedby="pg-sum">Publish blocked</button>
   </div>
 
@@ -93,20 +93,20 @@ The region and the button it describes:
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-h">Publish checks</h2>
       <p class="cap-gate-summary" id="pg-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary">
-        <span class="cap-status" data-tone="crit">[critical glyph]Blocked</span>: 2 required checks failing on dustinedwards.info
+        <span class="cap-status" data-tone="crit">[critical glyph]Blocked</span>: 2 required checks failing on example.com
       </p>
     </header>
     <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-h">
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-g-sites">
-          <li class="cap-row cap-gate-site" id="pg-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="blocked" data-first data-tone="crit">
-            <span class="cap-row-status" id="pg-s-dustinedwards-s">[status]Blocked</span>
-            <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
-            <p class="cap-row-detail" id="pg-s-dustinedwards-d">2 required checks failing: The cover image has no alt text; The title is empty</p>
+          <li class="cap-row cap-gate-site" id="pg-s-example" data-site="example" data-name="example.com" data-state="blocked" data-first data-tone="crit">
+            <span class="cap-row-status" id="pg-s-example-s">[status]Blocked</span>
+            <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
+            <p class="cap-row-detail" id="pg-s-example-d">2 required checks failing: The cover image has no alt text; The title is empty</p>
             <span class="cap-row-meta"></span>
             <!-- With several destinations each row holds its own buttons:
-            <div class="cap-row-actions" data-cap-actions data-gate="pg" data-site="dustinedwards" data-site-label="dustinedwards.info">…</div> -->
+            <div class="cap-row-actions" data-cap-actions data-gate="pg" data-site="example" data-site-label="example.com">…</div> -->
           </li>
         </ul>
       </li>
@@ -140,8 +140,8 @@ The region and the button it describes:
 The button in each state: Publish (`data-variant="primary"`, no `aria-disabled`); Publishing... (`aria-busy="true" aria-disabled="true"`); Publish blocked and Publish held (`aria-disabled="true" aria-describedby="pg-sum"`); published, a link and a button:
 
 ```html
-<a class="cap-btn" data-cap-part="view" href="https://dustinedwards.info/blog/why-foxhound-waits">View<span class="cap-sr-only"> live page</span></a>
-<button type="button" class="cap-btn" data-cap-part="unpublish" data-variant="quiet" data-site="dustinedwards">Unpublish</button>
+<a class="cap-btn" data-cap-part="view" href="https://example.com/blog/why-the-editor-waits">View<span class="cap-sr-only"> live page</span></a>
+<button type="button" class="cap-btn" data-cap-part="unpublish" data-variant="quiet" data-site="example">Unpublish</button>
 ```
 
 A held destination has `data-hold-text="Held for review by Rosa until Fri 09:00"` and optional `data-hold-note`; a published one has `data-published-at` (ISO) and `data-published-url`; `data-first` marks one that has never been public.
@@ -156,7 +156,7 @@ enhance(document, {
 
 const gate = attachPublishGate(region, hooks);
 gate.setCheck("alt", { ok: true });                       // or flip data-ok on the row
-gate.setHold("dustinedwards", { by: "Rosa", reason: "review", untilLabel: "Fri 09:00" });
+gate.setHold("example", { by: "Rosa", reason: "review", untilLabel: "Fri 09:00" });
 
 gateState(checks, hold);   // "blocked" | "held" | "ready"
 sortChecks(checks);        // failing required, failing advisory, passing; stable

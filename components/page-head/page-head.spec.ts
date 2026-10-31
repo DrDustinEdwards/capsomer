@@ -23,8 +23,8 @@ eachTheme((theme) => {
           - listitem:
             - link "Sites":
               - /url: "#sites"
-          - listitem: foxhound.app
-      - heading "foxhound.app" [level=3]
+          - listitem: example.org
+      - heading "example.org" [level=3]
       - paragraph: Checks run every five minutes. A failing required check blocks publishing.
       - button "Run checks now"
       - button "Publish"

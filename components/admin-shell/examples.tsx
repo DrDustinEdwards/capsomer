@@ -113,18 +113,18 @@ function SheetOpen() {
 const reader: Partial<AdminShellProps> = {
   variant: "user",
   app: undefined,
-  title: "dustinedwards.info",
-  logo: { href: "#home", label: "dustinedwards.info", mark: FAMILY_APPS.find((a) => a.id === "info")?.logo },
+  title: "example.org",
+  logo: { href: "#home", label: "example.org", mark: GLOBE },
   nav: [
-    { id: "research", label: "Research", href: "#research", icon: FOLDER, current: true },
-    { id: "protocols", label: "Protocols", href: "#protocols", icon: LIST },
-    { id: "episodes", label: "Episodes", href: "#episodes", icon: CLOCK },
+    { id: "articles", label: "Articles", href: "#articles", icon: FOLDER, current: true },
+    { id: "guides", label: "Guides", href: "#guides", icon: LIST },
+    { id: "updates", label: "Updates", href: "#updates", icon: CLOCK },
   ],
   inbox: undefined,
   account: undefined,
   updated: undefined,
   onRefresh: undefined,
-  page: "Research",
+  page: "Articles",
 };
 
 // A customer's own dashboard (the user variant): no strip, the 288px menu, so its page starts at
@@ -141,7 +141,7 @@ const dashboard: Partial<AdminShellProps> = {
   viewSite: undefined,
   switchers: [
     { id: "business", label: "Acme Supply Co.", name: "Business: Acme Supply Co.", tile: "A", sheetLabel: "Businesses", groups: [{ links: [{ label: "Acme Supply Co.", href: "#acme", current: true }, { label: "Northwind Goods", href: "#northwind" }] }] },
-    { id: "product", label: "Recovery", name: "Product: Recovery", sheetLabel: "Products", groups: [{ links: [{ label: "Console", href: "#console" }, { label: "Recovery", href: "#recovery", current: true }, { label: "Disputes", href: "#disputes" }] }] },
+    { id: "product", label: "Reports", name: "Product: Reports", sheetLabel: "Products", groups: [{ links: [{ label: "Console", href: "#console" }, { label: "Reports", href: "#reports", current: true }, { label: "Invoices", href: "#invoices" }] }] },
   ],
   account: { name: "Sam Rivera", initials: "SR", email: "sam@example.com", appLinks: [{ label: "Settings", href: "#settings" }, { label: "Billing", href: "#billing" }], onSignOut: () => undefined },
 };
@@ -230,7 +230,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   trail: () => <Shell name="trail" nav={nav.map((e) => ({ ...e, current: e.id === "sites" }))} page="fieldnotes.example" trail={[{ label: "Sites", href: "#sites" }]} />,
   account: () => <AccountOpen />,
   reader: () => (
-    <AdminShell {...base} {...reader} prefKey={key("reader")} children={<div className="cap-admin-page" data-measure="reading"><h1>Research</h1><p>A reading column holds a comfortable line length.</p></div>} />
+    <AdminShell {...base} {...reader} prefKey={key("reader")} children={<div className="cap-admin-page" data-measure="reading"><h1>Articles</h1><p>A reading column holds a comfortable line length.</p></div>} />
   ),
   user: () => <Shell name="user" {...dashboard} />,
   "user-collapsed": () => <Shell name="user-collapsed" collapsed {...dashboard} />,

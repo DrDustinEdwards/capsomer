@@ -32,7 +32,7 @@ A single current state is a `.cap-status`. A trend in a number (requests, errors
 - **The finding says what the strip shows** ("Up all week but for one outage..."); without `alt`, Enarratio writes one from the counts.
 - **No data is a state**, a dashed outline, never counted as up or as zero.
 - **Each kind of slot differs in shape as well as color**, in the strip and in the legend: up a full tick, degraded two thirds, down one third, no data a dashed outline.
-- **In a table row the strip and its percent share one line** (`.cap-uptime-line`): `uptimeStrip({ inline: true, alt, height: 18 })`, a strip that takes the room it is given and never less than 84 px, then the percent. It is an inline primitive, needing no frame: `role="img"` named by `alt`, a sentence whose numbers match the percent beside it ("Uptime of foxhound.app, 7 days: 96.1% up; down on Tuesday, September 29, from 11:50 to 18:20 UTC."). Without `alt`, Enarratio counts slots, which can disagree with a percent measured in minutes. A site with no probe in the window says "No data" with its reason (a status, brief) instead of a percent; never a blank and never 0%.
+- **In a table row the strip and its percent share one line** (`.cap-uptime-line`): `uptimeStrip({ inline: true, alt, height: 18 })`, a strip that takes the room it is given and never less than 84 px, then the percent. It is an inline primitive, needing no frame: `role="img"` named by `alt`, a sentence whose numbers match the percent beside it ("Uptime of example.org, 7 days: 96.1% up; down on Tuesday, September 29, from 11:50 to 18:20 UTC."). Without `alt`, Enarratio counts slots, which can disagree with a percent measured in minutes. A site with no probe in the window says "No data" with its reason (a status, brief) instead of a percent; never a blank and never 0%.
 
 ## Matches
 
@@ -59,7 +59,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```html
 <div class="cap-chart" data-head="inline">
-  <div class="cap-chart-figure">[uptimeStrip({ slots, label: "foxhound.app", subtitle: "99.4% up over 7 days", alt }) from Enarratio]</div>
+  <div class="cap-chart-figure">[uptimeStrip({ slots, label: "example.org", subtitle: "99.4% up over 7 days", alt }) from Enarratio]</div>
   <ul class="cap-uptime-legend" aria-label="Key">
     <li><span class="cap-uptime-key" data-key="up" aria-hidden="true"></span>Up</li>
     <li><span class="cap-uptime-key" data-key="degraded" aria-hidden="true"></span>Degraded</li>

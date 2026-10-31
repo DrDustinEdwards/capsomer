@@ -2,20 +2,20 @@
   <h2 id="s-blocked">Blocked: the publish button stays focusable and says why</h2>
   <p class="cap-muted">The region sits beside the publish button. The button is aria-disabled, not disabled, and its description is the region's summary.</p>
   <div class="cap-gate-bar">
-    <div data-cap-actions data-gate="pg-blocked" data-site="dustinedwards" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-blocked-sum">Publish blocked</button></div>
+    <div data-cap-actions data-gate="pg-blocked" data-site="example" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="example" data-variant="secondary" aria-disabled="true" aria-describedby="pg-blocked-sum">Publish blocked</button></div>
   <section class="cap-gate" data-cap="publish-gate" id="pg-blocked" data-state="blocked" aria-labelledby="pg-blocked-h">
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-blocked-h">Publish checks</h2>
-      <p class="cap-gate-summary" id="pg-blocked-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span>: 2 required checks failing on dustinedwards.info</p>
+      <p class="cap-gate-summary" id="pg-blocked-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span>: 2 required checks failing on example.com</p>
     </header>
     <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-blocked-h">
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-blocked-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-blocked-g-sites">
-            <li class="cap-row cap-gate-site" id="pg-blocked-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="blocked" data-first data-tone="crit">
-              <span class="cap-row-status" id="pg-blocked-s-dustinedwards-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
-              <p class="cap-row-detail" id="pg-blocked-s-dustinedwards-d">2 required checks failing: The cover image has no alt text; The title is empty</p>
+            <li class="cap-row cap-gate-site" id="pg-blocked-s-example" data-site="example" data-name="example.com" data-state="blocked" data-first data-tone="crit">
+              <span class="cap-row-status" id="pg-blocked-s-example-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
+              <p class="cap-row-detail" id="pg-blocked-s-example-d">2 required checks failing: The cover image has no alt text; The title is empty</p>
               <span class="cap-row-meta"></span>
             </li>
         </ul>
@@ -133,20 +133,20 @@
   <h2 id="s-ready">Ready: a first publication is previewed before it happens</h2>
   <p class="cap-muted">Publish opens the confirm dialog with the destination listed and focus on Cancel. The checks can change while you watch: <button type="button" class="cap-btn" data-size="sm" id="pg-ready-break">Break the alt text check</button></p>
   <div class="cap-gate-bar">
-    <div data-cap-actions data-gate="pg-ready" data-site="dustinedwards" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="primary">Publish</button></div>
+    <div data-cap-actions data-gate="pg-ready" data-site="example" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="example" data-variant="primary">Publish</button></div>
   <section class="cap-gate" data-cap="publish-gate" id="pg-ready" data-state="ready" aria-labelledby="pg-ready-h">
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-ready-h">Publish checks</h2>
-      <p class="cap-gate-summary" id="pg-ready-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on dustinedwards.info, 3 advisory checks failing</p>
+      <p class="cap-gate-summary" id="pg-ready-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on example.com, 3 advisory checks failing</p>
     </header>
     <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-ready-h">
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-ready-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-ready-g-sites">
-            <li class="cap-row cap-gate-site" id="pg-ready-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="ready" data-first data-live-url="https://dustinedwards.info/blog/why-foxhound-waits">
-              <span class="cap-row-status" id="pg-ready-s-dustinedwards-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
-              <p class="cap-row-detail" id="pg-ready-s-dustinedwards-d">Nothing required is failing. 3 advisory checks failing.</p>
+            <li class="cap-row cap-gate-site" id="pg-ready-s-example" data-site="example" data-name="example.com" data-state="ready" data-first data-live-url="https://example.com/blog/why-the-editor-waits">
+              <span class="cap-row-status" id="pg-ready-s-example-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
+              <p class="cap-row-detail" id="pg-ready-s-example-d">Nothing required is failing. 3 advisory checks failing.</p>
               <span class="cap-row-meta"></span>
             </li>
         </ul>
@@ -264,7 +264,7 @@
 <section class="cap-specimen" aria-labelledby="s-held">
   <h2 id="s-held">Held: a person or a schedule holds it, and the reason is in words</h2>
   <div class="cap-gate-bar">
-    <div data-cap-actions data-gate="pg-held" data-site="dustinedwards" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-held-sum">Publish held</button></div>
+    <div data-cap-actions data-gate="pg-held" data-site="example" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="example" data-variant="secondary" aria-disabled="true" aria-describedby="pg-held-sum">Publish held</button></div>
   <section class="cap-gate" data-cap="publish-gate" id="pg-held" data-state="held" aria-labelledby="pg-held-h">
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-held-h">Publish checks</h2>
@@ -274,10 +274,10 @@
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-held-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-held-g-sites">
-            <li class="cap-row cap-gate-site" id="pg-held-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="held" data-first data-hold-text="Held for review by Rosa until Fri 09:00" data-hold-note="Waiting on the legal check for the quoted figures.">
-              <span class="cap-row-status" id="pg-held-s-dustinedwards-s"><span class="cap-status" data-tone="info"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/></svg>Held</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
-              <p class="cap-row-detail" id="pg-held-s-dustinedwards-d">Held for review by Rosa until Fri 09:00. Waiting on the legal check for the quoted figures.</p>
+            <li class="cap-row cap-gate-site" id="pg-held-s-example" data-site="example" data-name="example.com" data-state="held" data-first data-hold-text="Held for review by Rosa until Fri 09:00" data-hold-note="Waiting on the legal check for the quoted figures.">
+              <span class="cap-row-status" id="pg-held-s-example-s"><span class="cap-status" data-tone="info"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/></svg>Held</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
+              <p class="cap-row-detail" id="pg-held-s-example-d">Held for review by Rosa until Fri 09:00. Waiting on the legal check for the quoted figures.</p>
               <span class="cap-row-meta"></span>
             </li>
         </ul>
@@ -395,20 +395,20 @@
 <section class="cap-specimen" aria-labelledby="s-pub">
   <h2 id="s-pub">Published: when, and a link to the live page; the button becomes View and Unpublish</h2>
   <div class="cap-gate-bar">
-    <div data-cap-actions data-gate="pg-pub" data-site="dustinedwards" data-btn-size="default"><a class="cap-btn" data-cap-part="view" href="https://dustinedwards.info/blog/why-foxhound-waits">View</a><button type="button" class="cap-btn" data-cap-part="unpublish" data-variant="quiet" data-site="dustinedwards">Unpublish</button></div>
+    <div data-cap-actions data-gate="pg-pub" data-site="example" data-btn-size="default"><a class="cap-btn" data-cap-part="view" href="https://example.com/blog/why-the-editor-waits">View</a><button type="button" class="cap-btn" data-cap-part="unpublish" data-variant="quiet" data-site="example">Unpublish</button></div>
   <section class="cap-gate" data-cap="publish-gate" id="pg-pub" data-state="published" aria-labelledby="pg-pub-h">
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-pub-h">Publish checks</h2>
-      <p class="cap-gate-summary" id="pg-pub-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Published</span>: live on dustinedwards.info</p>
+      <p class="cap-gate-summary" id="pg-pub-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Published</span>: live on example.com</p>
     </header>
     <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-pub-h">
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-pub-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-pub-g-sites">
-            <li class="cap-row cap-gate-site" id="pg-pub-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="published" data-published-at="2026-10-02T09:12:00Z" data-published-url="https://dustinedwards.info/blog/why-foxhound-waits">
-              <span class="cap-row-status" id="pg-pub-s-dustinedwards-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Published</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
-              <p class="cap-row-detail" id="pg-pub-s-dustinedwards-d">Live.</p>
+            <li class="cap-row cap-gate-site" id="pg-pub-s-example" data-site="example" data-name="example.com" data-state="published" data-published-at="2026-10-02T09:12:00Z" data-published-url="https://example.com/blog/why-the-editor-waits">
+              <span class="cap-row-status" id="pg-pub-s-example-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Published</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
+              <p class="cap-row-detail" id="pg-pub-s-example-d">Live.</p>
               <span class="cap-row-meta"><time class="cap-time" data-cap="time" data-format="exact" datetime="2026-10-02T09:12:00Z">Oct 2, 2026, 9:12 AM UTC</time></span>
             </li>
         </ul>
@@ -528,43 +528,43 @@
   <section class="cap-gate" data-cap="publish-gate" id="pg-multi" data-state="blocked" aria-labelledby="pg-multi-h">
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-multi-h">Publish checks for three sites</h2>
-      <p class="cap-gate-summary" id="pg-multi-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span>: 1 required check failing on dustinedwards.info</p>
+      <p class="cap-gate-summary" id="pg-multi-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span>: 1 required check failing on example.com</p>
     </header>
     <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-multi-h">
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-multi-g-sites">Destinations</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-multi-g-sites">
-            <li class="cap-row cap-gate-site" id="pg-multi-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="blocked" data-first data-live-url="https://foxhound.app/notes/why-foxhound-waits" data-tone="crit">
-              <span class="cap-row-status" id="pg-multi-s-dustinedwards-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
-              <p class="cap-row-detail" id="pg-multi-s-dustinedwards-d">1 required check failing: The canonical address is missing on dustinedwards.info</p>
+            <li class="cap-row cap-gate-site" id="pg-multi-s-example" data-site="example" data-name="example.com" data-state="blocked" data-first data-live-url="https://example.org/notes/why-the-editor-waits" data-tone="crit">
+              <span class="cap-row-status" id="pg-multi-s-example-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
+              <p class="cap-row-detail" id="pg-multi-s-example-d">1 required check failing: The canonical address is missing on example.com</p>
               <span class="cap-row-meta"></span>
-              <div class="cap-row-actions" data-cap-actions data-gate="pg-multi" data-site="dustinedwards" data-site-label="dustinedwards.info"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-multi-sum" aria-label="Publish blocked, dustinedwards.info">Publish blocked</button></div>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-multi" data-site="example" data-site-label="example.com"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="example" data-variant="secondary" aria-disabled="true" aria-describedby="pg-multi-sum" aria-label="Publish blocked, example.com">Publish blocked</button></div>
             </li>
-            <li class="cap-row cap-gate-site" id="pg-multi-s-foxhound" data-site="foxhound" data-name="foxhound.app" data-state="ready" data-live-url="https://foxhound.app/notes/why-foxhound-waits">
-              <span class="cap-row-status" id="pg-multi-s-foxhound-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">foxhound.app</span></div>
-              <p class="cap-row-detail" id="pg-multi-s-foxhound-d">Nothing required is failing. 3 advisory checks failing.</p>
+            <li class="cap-row cap-gate-site" id="pg-multi-s-example-org" data-site="example-org" data-name="example.org" data-state="ready" data-live-url="https://example.org/notes/why-the-editor-waits">
+              <span class="cap-row-status" id="pg-multi-s-example-org-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.org</span></div>
+              <p class="cap-row-detail" id="pg-multi-s-example-org-d">Nothing required is failing. 3 advisory checks failing.</p>
               <span class="cap-row-meta"></span>
-              <div class="cap-row-actions" data-cap-actions data-gate="pg-multi" data-site="foxhound" data-site-label="foxhound.app"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="foxhound" data-variant="primary" aria-label="Publish, foxhound.app">Publish</button></div>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-multi" data-site="example-org" data-site-label="example.org"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="example-org" data-variant="primary" aria-label="Publish, example.org">Publish</button></div>
             </li>
-            <li class="cap-row cap-gate-site" id="pg-multi-s-carrel" data-site="carrel" data-name="carrel.app" data-state="published" data-published-at="2026-10-01T15:40:00Z" data-published-url="https://carrel.app/p/why-foxhound-waits" data-live-url="https://foxhound.app/notes/why-foxhound-waits">
-              <span class="cap-row-status" id="pg-multi-s-carrel-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Published</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">carrel.app</span></div>
-              <p class="cap-row-detail" id="pg-multi-s-carrel-d">Live.</p>
+            <li class="cap-row cap-gate-site" id="pg-multi-s-docs" data-site="docs" data-name="docs.example.com" data-state="published" data-published-at="2026-10-01T15:40:00Z" data-published-url="https://docs.example.com/p/why-the-editor-waits" data-live-url="https://example.org/notes/why-the-editor-waits">
+              <span class="cap-row-status" id="pg-multi-s-docs-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Published</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">docs.example.com</span></div>
+              <p class="cap-row-detail" id="pg-multi-s-docs-d">Live.</p>
               <span class="cap-row-meta"><time class="cap-time" data-cap="time" data-format="exact" datetime="2026-10-01T15:40:00Z">Oct 1, 2026, 3:40 PM UTC</time></span>
-              <div class="cap-row-actions" data-cap-actions data-gate="pg-multi" data-site="carrel" data-site-label="carrel.app"><a class="cap-btn" data-cap-part="view" data-size="sm" aria-label="View live page, carrel.app" href="https://carrel.app/p/why-foxhound-waits">View</a><button type="button" class="cap-btn" data-cap-part="unpublish" data-size="sm" aria-label="Unpublish, carrel.app" data-variant="quiet" data-site="carrel">Unpublish</button></div>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-multi" data-site="docs" data-site-label="docs.example.com"><a class="cap-btn" data-cap-part="view" data-size="sm" aria-label="View live page, docs.example.com" href="https://docs.example.com/p/why-the-editor-waits">View</a><button type="button" class="cap-btn" data-cap-part="unpublish" data-size="sm" aria-label="Unpublish, docs.example.com" data-variant="quiet" data-site="docs">Unpublish</button></div>
             </li>
         </ul>
       </li>
         <li class="cap-gate-section" data-section="required">
           <h3 class="cap-gate-group-title" id="pg-multi-g-req">Required, 1 failing</h3>
           <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-multi-g-req">
-            <li class="cap-row cap-check" id="pg-multi-c-canon" data-check="canon" data-name="Canonical address" data-required data-ok="false" data-cause="The canonical address is missing on dustinedwards.info" data-pass="The canonical address is set" data-href="#setting-canonical" data-fix="Set it in the site's settings." data-site="dustinedwards" data-order="12" data-tone="crit">
+            <li class="cap-row cap-check" id="pg-multi-c-canon" data-check="canon" data-name="Canonical address" data-required data-ok="false" data-cause="The canonical address is missing on example.com" data-pass="The canonical address is set" data-href="#setting-canonical" data-fix="Set it in the site's settings." data-site="example" data-order="12" data-tone="crit">
               <span class="cap-row-status" id="pg-multi-c-canon-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Failing</span></span>
-              <div class="cap-row-title"><a href="#setting-canonical" aria-describedby="pg-multi-c-canon-s pg-multi-c-canon-d">The canonical address is missing on dustinedwards.info</a></div>
+              <div class="cap-row-title"><a href="#setting-canonical" aria-describedby="pg-multi-c-canon-s pg-multi-c-canon-d">The canonical address is missing on example.com</a></div>
               <p class="cap-row-detail" id="pg-multi-c-canon-d"><span class="cap-check-name">Canonical address</span>. <span class="cap-check-fix">Fix: Set it in the site's settings.</span></p>
-              <span class="cap-row-meta">on dustinedwards.info</span>
+              <span class="cap-row-meta">on example.com</span>
             </li>
           </ul>
         </li>
@@ -663,20 +663,20 @@
   <h2 id="s-form">Without a script hook the button belongs to a form and posts it</h2>
   <p class="cap-muted">A real submit, as the site admin's is: the first publication still goes through the preview, then the form is sent with the intent publish-confirmed. The server must refuse an unconfirmed first publication too.</p>
   <form class="cap-gate-bar" method="get" action="#form-posted" id="pg-form-el">
-    <div data-cap-actions data-gate="pg-form" data-site="dustinedwards" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="primary">Publish</button></div>
+    <div data-cap-actions data-gate="pg-form" data-site="example" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="example" data-variant="primary">Publish</button></div>
   <section class="cap-gate" data-cap="publish-gate" id="pg-form" data-state="ready" aria-labelledby="pg-form-h">
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-form-h">Publish checks</h2>
-      <p class="cap-gate-summary" id="pg-form-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on dustinedwards.info, 3 advisory checks failing</p>
+      <p class="cap-gate-summary" id="pg-form-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on example.com, 3 advisory checks failing</p>
     </header>
     <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-form-h">
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-form-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-form-g-sites">
-            <li class="cap-row cap-gate-site" id="pg-form-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="ready" data-first>
-              <span class="cap-row-status" id="pg-form-s-dustinedwards-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
-              <p class="cap-row-detail" id="pg-form-s-dustinedwards-d">Nothing required is failing. 3 advisory checks failing.</p>
+            <li class="cap-row cap-gate-site" id="pg-form-s-example" data-site="example" data-name="example.com" data-state="ready" data-first>
+              <span class="cap-row-status" id="pg-form-s-example-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
+              <p class="cap-row-detail" id="pg-form-s-example-d">Nothing required is failing. 3 advisory checks failing.</p>
               <span class="cap-row-meta"></span>
             </li>
         </ul>
@@ -794,20 +794,20 @@
 <section class="cap-specimen" aria-labelledby="s-fail">
   <h2 id="s-fail">A publish that fails says so and leaves the destination as it was</h2>
   <div class="cap-gate-bar">
-    <div data-cap-actions data-gate="pg-fail" data-site="foxhound" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="foxhound" data-variant="primary">Publish</button></div>
+    <div data-cap-actions data-gate="pg-fail" data-site="example-org" data-btn-size="default"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="example-org" data-variant="primary">Publish</button></div>
   <section class="cap-gate" data-cap="publish-gate" id="pg-fail" data-state="ready" aria-labelledby="pg-fail-h">
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-fail-h">Publish checks</h2>
-      <p class="cap-gate-summary" id="pg-fail-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on foxhound.app</p>
+      <p class="cap-gate-summary" id="pg-fail-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on example.org</p>
     </header>
     <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-fail-h">
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-fail-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-fail-g-sites">
-            <li class="cap-row cap-gate-site" id="pg-fail-s-foxhound" data-site="foxhound" data-name="foxhound.app" data-state="ready">
-              <span class="cap-row-status" id="pg-fail-s-foxhound-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">foxhound.app</span></div>
-              <p class="cap-row-detail" id="pg-fail-s-foxhound-d">Nothing required is failing.</p>
+            <li class="cap-row cap-gate-site" id="pg-fail-s-example-org" data-site="example-org" data-name="example.org" data-state="ready">
+              <span class="cap-row-status" id="pg-fail-s-example-org-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.org</span></div>
+              <p class="cap-row-detail" id="pg-fail-s-example-org-d">Nothing required is failing.</p>
               <span class="cap-row-meta"></span>
             </li>
         </ul>
@@ -877,10 +877,10 @@
 <section class="cap-specimen" aria-labelledby="s-buttons">
   <h2 id="s-buttons">The paired publish button, in each state</h2>
   <div class="cap-specimen-row" id="pg-buttons">
-    <div class="pg-sample-cell"><p class="cap-muted">Ready</p><div data-cap-actions><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="primary">Publish</button></div></div>
-    <div class="pg-sample-cell"><p class="cap-muted">Publishing</p><div data-cap-actions><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="primary" aria-disabled="true" aria-describedby="pg-blocked-sum" aria-busy="true">Publishing...</button></div></div>
-    <div class="pg-sample-cell"><p class="cap-muted">Blocked</p><div data-cap-actions><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-blocked-sum">Publish blocked</button></div></div>
-    <div class="pg-sample-cell"><p class="cap-muted">Published</p><div data-cap-actions><a class="cap-btn" data-cap-part="view" href="https://dustinedwards.info/blog/why-foxhound-waits">View</a><button type="button" class="cap-btn" data-cap-part="unpublish" data-variant="quiet" data-site="dustinedwards">Unpublish</button></div></div>
+    <div class="pg-sample-cell"><p class="cap-muted">Ready</p><div data-cap-actions><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="example" data-variant="primary">Publish</button></div></div>
+    <div class="pg-sample-cell"><p class="cap-muted">Publishing</p><div data-cap-actions><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="example" data-variant="primary" aria-disabled="true" aria-describedby="pg-blocked-sum" aria-busy="true">Publishing...</button></div></div>
+    <div class="pg-sample-cell"><p class="cap-muted">Blocked</p><div data-cap-actions><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-site="example" data-variant="secondary" aria-disabled="true" aria-describedby="pg-blocked-sum">Publish blocked</button></div></div>
+    <div class="pg-sample-cell"><p class="cap-muted">Published</p><div data-cap-actions><a class="cap-btn" data-cap-part="view" href="https://example.com/blog/why-the-editor-waits">View</a><button type="button" class="cap-btn" data-cap-part="unpublish" data-variant="quiet" data-site="example">Unpublish</button></div></div>
   </div>
 </section>
 
@@ -890,18 +890,18 @@
   <section class="cap-gate" data-cap="publish-gate" id="pg-narrow" data-state="blocked" aria-labelledby="pg-narrow-h">
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-narrow-h">Publish checks</h2>
-      <p class="cap-gate-summary" id="pg-narrow-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span>: 2 required checks failing on dustinedwards.info</p>
+      <p class="cap-gate-summary" id="pg-narrow-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span>: 2 required checks failing on example.com</p>
     </header>
     <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-narrow-h">
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-narrow-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-narrow-g-sites">
-            <li class="cap-row cap-gate-site" id="pg-narrow-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="blocked" data-first data-tone="crit">
-              <span class="cap-row-status" id="pg-narrow-s-dustinedwards-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
-              <p class="cap-row-detail" id="pg-narrow-s-dustinedwards-d">2 required checks failing: The cover image has no alt text; The title is empty</p>
+            <li class="cap-row cap-gate-site" id="pg-narrow-s-example" data-site="example" data-name="example.com" data-state="blocked" data-first data-tone="crit">
+              <span class="cap-row-status" id="pg-narrow-s-example-s"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Blocked</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
+              <p class="cap-row-detail" id="pg-narrow-s-example-d">2 required checks failing: The cover image has no alt text; The title is empty</p>
               <span class="cap-row-meta"></span>
-              <div class="cap-row-actions" data-cap-actions data-gate="pg-narrow" data-site="dustinedwards" data-site-label="dustinedwards.info"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="dustinedwards" data-variant="secondary" aria-disabled="true" aria-describedby="pg-narrow-sum" aria-label="Publish blocked, dustinedwards.info">Publish blocked</button></div>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-narrow" data-site="example" data-site-label="example.com"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="example" data-variant="secondary" aria-disabled="true" aria-describedby="pg-narrow-sum" aria-label="Publish blocked, example.com">Publish blocked</button></div>
             </li>
         </ul>
       </li>
@@ -984,18 +984,18 @@
   <section class="cap-gate" data-cap="publish-gate" id="pg-comfy" data-state="ready" aria-labelledby="pg-comfy-h">
     <header class="cap-gate-head">
       <h2 class="cap-gate-title" id="pg-comfy-h">Publish checks</h2>
-      <p class="cap-gate-summary" id="pg-comfy-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on dustinedwards.info</p>
+      <p class="cap-gate-summary" id="pg-comfy-sum" role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span>: nothing required is failing on example.com</p>
     </header>
     <ul class="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby="pg-comfy-h">
       <li class="cap-gate-section" data-section="sites">
         <h3 class="cap-gate-group-title" id="pg-comfy-g-sites">Destination</h3>
         <ul class="cap-gate-section-rows" role="list" aria-labelledby="pg-comfy-g-sites">
-            <li class="cap-row cap-gate-site" id="pg-comfy-s-dustinedwards" data-site="dustinedwards" data-name="dustinedwards.info" data-state="ready" data-first>
-              <span class="cap-row-status" id="pg-comfy-s-dustinedwards-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
-              <div class="cap-row-title"><span class="cap-gate-site-name">dustinedwards.info</span></div>
-              <p class="cap-row-detail" id="pg-comfy-s-dustinedwards-d">Nothing required is failing.</p>
+            <li class="cap-row cap-gate-site" id="pg-comfy-s-example" data-site="example" data-name="example.com" data-state="ready" data-first>
+              <span class="cap-row-status" id="pg-comfy-s-example-s"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Ready</span></span>
+              <div class="cap-row-title"><span class="cap-gate-site-name">example.com</span></div>
+              <p class="cap-row-detail" id="pg-comfy-s-example-d">Nothing required is failing.</p>
               <span class="cap-row-meta"></span>
-              <div class="cap-row-actions" data-cap-actions data-gate="pg-comfy" data-site="dustinedwards" data-site-label="dustinedwards.info"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="dustinedwards" data-variant="primary" aria-label="Publish, dustinedwards.info">Publish</button></div>
+              <div class="cap-row-actions" data-cap-actions data-gate="pg-comfy" data-site="example" data-site-label="example.com"><button type="submit" name="intent" value="publish" class="cap-btn" data-cap-part="publish" data-size="sm" data-site="example" data-variant="primary" aria-label="Publish, example.com">Publish</button></div>
             </li>
         </ul>
       </li>

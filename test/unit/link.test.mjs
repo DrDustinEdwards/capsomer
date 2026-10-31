@@ -24,7 +24,7 @@ test("never-prefetch paths, files, other documents and other sites do not", () =
 test("/admin prefetches only from inside /admin; the app's own exclusions hold everywhere", () => {
   assert.equal(mayPrefetch({ href: "/admin/posts", from: "/admin" }), true);
   const exclude = ["/b/:project/export", "/admin/view-as"];
-  assert.equal(mayPrefetch({ href: "/b/novel/export/epub", from, exclude }), false);
-  assert.equal(mayPrefetch({ href: "/b/novel/outliner", from, exclude }), true);
-  assert.equal(mayPrefetch({ href: "/admin/view-as/stop", from: "/admin/merchants", exclude }), false);
+  assert.equal(mayPrefetch({ href: "/b/handbook/export/epub", from, exclude }), false);
+  assert.equal(mayPrefetch({ href: "/b/handbook/outliner", from, exclude }), true);
+  assert.equal(mayPrefetch({ href: "/admin/view-as/stop", from: "/admin/customers", exclude }), false);
 });

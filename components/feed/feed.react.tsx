@@ -8,8 +8,8 @@ export interface FeedEvent {
   // an incident began, linked to the event it follows.
   kind?: "event" | "condensed" | "marker";
   tone: FeedTone;
-  // What happened, with its own words for the status: "capsid deployed 366b902",
-  // "germomics deploy failed". For a marker, the link's words.
+  // What happened, with its own words for the status: "api deployed 366b902",
+  // "blog deploy failed". For a marker, the link's words.
   what: ReactNode;
   // Who, and any short detail: "Merged by seat."
   detail?: ReactNode;

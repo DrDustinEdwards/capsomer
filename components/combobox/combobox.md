@@ -34,7 +34,7 @@ Two to five values: a radio group or the segmented control. Up to about fifteen:
 - **The popup wears the shared blocks**: `cap-popover` (the raised surface, hairline ring, shadow and the fade and zoom motion, with `data-flush`) around a `cap-listbox` of `cap-option`s. The highlighted option is `--accent-soft` with `--text` and a 3 px accent edge on its inline start, the same as the command menu's, so the cue is not the tint alone. DOM focus stays in the box; the option is marked `data-highlighted` and pointed to by `aria-activedescendant`. A chosen option has a check at its end.
 - **A tag field is `ComboboxMultiple` with `creatable`.** Anything typed that is not an item can be added as a value of its own, and the chips show listed and made values alike. As text is typed, a first row `Create “western blot”` offers it, highlighted, so Enter adds exactly what was typed; the box empties and keeps focus for the next tag. Text that matches an item, ignoring case and extra spaces, offers no create row and picks that item, and text that matches a tag already on the field offers nothing, so a tag is never made twice. A made value is its text (`values` is `string[]` as before, so an app stores the strings and passes them back as `values`; ones not in `items` still show as chips). Every value is posted under `name`, one input each. `createLabel(text)` changes the row's words. Backspace in the empty box and each chip's remove button take a tag away.
 - **Groups, a clear button and chips are optional.** Options with a `group` are listed under a muted label; `clearable` adds a clear button that shows while a value is chosen; `ComboboxMultiple` shows each chosen value as a chip with its own named remove button and keeps the list open for more.
-- **An empty result names the typed text**: "No match for “foxhund”. Check the spelling, or clear the box to see every option." Pass `emptyText` to say more.
+- **An empty result names the typed text**: "No match for “shoop”. Check the spelling, or clear the box to see every option." Pass `emptyText` to say more.
 - **Loading says so, and never says no match.** The message sits in Base UI's status region, so it is announced.
 - **Disabled says why** in its help text. Invalid marks the box `aria-invalid`, draws its border in `--crit`, and describes it by the message beside it.
 - **The popup is as wide as the box and never taller than the room below or above it** (`--anchor-width`, `--available-height` from Base UI).
@@ -54,7 +54,7 @@ Two to five values: a radio group or the segmented control. Up to about fifteen:
 ## Accessibility
 
 - The input is the `combobox`; it is named by its `label` and described by help and error.
-- The open button is out of the tab order (Base UI, `tabindex="-1"`) and has a name for pointer and voice users. So does the clear button ("Clear Site"), and each chip's remove button ("Remove Carrel"), at least `--target` square.
+- The open button is out of the tab order (Base UI, `tabindex="-1"`) and has a name for pointer and voice users. So does the clear button ("Clear Site"), and each chip's remove button ("Remove Docs"), at least `--target` square.
 - Forced colors: the highlighted option gets a Highlight outline, since its tint is removed.
 - Inside a modal `dialog`, pass the dialog as `container`, or the popup renders under the top layer, out of sight.
 
@@ -85,10 +85,10 @@ import { Combobox } from "capsomer/react/combobox";
 
 <Combobox
   label="Site"
-  items={[{ value: "carrel", label: "Carrel" }, { value: "foxhound", label: "foxhound.app" }]}
+  items={[{ value: "docs", label: "Docs" }, { value: "shop", label: "shop.example.com" }]}
   value={site}
   onValueChange={setSite}
-  placeholder="For example: carrel"
+  placeholder="For example: docs"
   help="Only a listed site can be chosen."
 />
 ```

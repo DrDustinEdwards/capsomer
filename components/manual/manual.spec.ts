@@ -3,9 +3,9 @@ import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from ".
 import { patchSvg } from "./manual.ts";
 
 test("behavior: a patch escapes its words and draws one dot per thing counted, at most 24", () => {
-  const svg = patchSvg({ id: "a&b", name: "<Carrel>", foot: "dustinedwards.info", count: 6, unit: "sites" });
-  expect(svg).not.toContain("<Carrel>");
-  expect(svg).toContain("&lt;CARREL&gt;");
+  const svg = patchSvg({ id: "a&b", name: "<The desk>", foot: "example.com", count: 6, unit: "sites" });
+  expect(svg).not.toContain("<The desk>");
+  expect(svg).toContain("&lt;THE DESK&gt;");
   expect(svg.match(/cap-patch-dot/g)).toHaveLength(6);
   expect(patchSvg({ id: "x", name: "x", foot: "x", count: 80, unit: "x" }).match(/cap-patch-dot/g)).toHaveLength(24);
 });

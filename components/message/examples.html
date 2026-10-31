@@ -138,10 +138,10 @@
   import { enhance, fail, runUndo, say } from "./message.ts";
   enhance();
 
-  const AUDIT = "the audit row naming access:dustin@example.com was not written: D1 is unavailable";
+  const AUDIT = "the audit row naming access:alex@example.com was not written: D1 is unavailable";
   const binned = "Moved the mention from fieldnotes.example to Trash.";
   const only = new URLSearchParams(location.search).get("only");
-  if (only === "plain") say("Published to TXASM newsletter.");
+  if (only === "plain") say("Published to the Example Co newsletter.");
   if (only === "undo") say(binned, { undo: () => {} });
   if (only === "undone") {
     say(binned, { undo: () => {}, undone: "The mention from fieldnotes.example is waiting again." });

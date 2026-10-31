@@ -129,7 +129,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
       <span class="cap-mq-check"><label class="cap-check"><input type="checkbox" data-cap-part="select" value="m-101"><span class="cap-sr-only">Select the mention from Rosa Park</span></label></span>
       <span class="cap-row-status" id="m-101-s"><span class="cap-status" data-tone="info"><svg aria-hidden="true">...</svg>Waiting</span></span>
       <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="m-101-more" aria-describedby="m-101-s m-101-d"><span class="cap-avatar" data-size="sm" aria-hidden="true"><span class="cap-avatar-fallback">RP</span></span> <span class="cap-mq-name">Rosa Park</span> <span class="cap-mq-host">fieldnotes.example</span></button></div>
-      <p class="cap-row-detail" id="m-101-d">On Phage lambda: lysis or lysogeny: “Lysogeny is not a failure to lyse…”</p>
+      <p class="cap-row-detail" id="m-101-d">On Field notes: the spring survey: “Survey results are not a verdict…”</p>
       <span class="cap-row-meta"><time class="cap-time" data-cap="time" datetime="2026-10-02T13:10:00Z">2 hours ago</time><span class="cap-row-chevron" aria-hidden="true"></span></span>
       <div class="cap-row-actions" data-cap-part="actions">
         <button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-cap-action="approve" aria-keyshortcuts="a">Approve<span class="cap-sr-only"> the mention from Rosa Park</span><kbd class="cap-kbd" aria-hidden="true">a</kbd></button>
