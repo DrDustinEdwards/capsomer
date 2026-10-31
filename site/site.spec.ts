@@ -223,5 +223,5 @@ test("security: the CSP allows Cloudflare's Web Analytics beacon and nothing els
     "https://static.cloudflareinsights.com/beacon.min.js",
     "https://static.cloudflareinsights.com/beacon.min.js/",
   ]);
-  expect(directive("connect-src")).toBe("connect-src 'self' https://raw.githubusercontent.com");
+  expect(directive("connect-src")).toBe("connect-src 'self' https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json");
 });
