@@ -18,7 +18,7 @@ import { securityTxt } from "@dustinedwards/site-runtime/security-txt";
 /** The production origin (rulings.md, rule 16): a workers.dev copy must not claim to be the page. */
 const ORIGIN = "https://capsomer.dustinedwards.info";
 const REPO = "https://github.com/DrDustinEdwards/capsomer";
-/** The IndexNow key, served as /<key>.txt; .github/workflows/indexnow.yml reads it from here. Public by design. */
+/** The IndexNow key, served as /<key>.txt; .github/workflows/ci.yml's indexnow job reads it from here. Public by design. */
 const INDEXNOW_KEY = "7c3439c6084107d16882b2cecf775765";
 /** When security.txt lapses (RFC 9116 asks for under a year); renew it before then. */
 const SECURITY_TXT_EXPIRES = "2027-10-25T00:00:00Z";
