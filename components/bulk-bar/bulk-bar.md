@@ -105,7 +105,7 @@ With the optional parts and the attributes that bind it to a list:
 
 <label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="drafts" /> Select all</label>
 <ul id="drafts">
-  <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="p1" data-cap-select /> Notes on the Foxhound release</label></li>
+  <li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" value="p1" data-cap-select /> Notes on the spring release</label></li>
 </ul>
 ```
 
@@ -113,7 +113,7 @@ Form mode, with no script needed:
 
 ```html
 <form id="drafts-form" method="post" action="/admin/posts/bulk">
-  <ul id="drafts-list"><li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" name="ids" value="p1" data-cap-select /> Notes on the Foxhound release</label></li></ul>
+  <ul id="drafts-list"><li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" name="ids" value="p1" data-cap-select /> Notes on the spring release</label></li></ul>
   <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="drafts-list" role="region" aria-label="Bulk actions">
     <p class="cap-bulk-count" role="status">Tick the drafts to act on</p>
     <div class="cap-bulk-actions">
@@ -134,8 +134,8 @@ The outcome list, last in the bar (a server renders it after a form post; `showO
   <p class="cap-bulk-results-summary" id="bulk-results">2 done, 1 not done.</p>
   <ul class="cap-bulk-results-list">
     <li data-ok="false"><span class="cap-status" data-tone="crit">[glyph]Not done</span> <span class="cap-bulk-result-label">What a mention queue is for</span> <span class="cap-bulk-result-message">Changed on the site since this page was loaded.</span>
-      <ul class="cap-bulk-result-uses"><li>Notes on the Foxhound release (cover image)</li></ul></li>
-    <li data-ok="true"><span class="cap-status" data-tone="ok">[glyph]Done</span> <span class="cap-bulk-result-label">Notes on the Foxhound release</span></li>
+      <ul class="cap-bulk-result-uses"><li>Notes on the spring release (cover image)</li></ul></li>
+    <li data-ok="true"><span class="cap-status" data-tone="ok">[glyph]Done</span> <span class="cap-bulk-result-label">Notes on the spring release</span></li>
   </ul>
   <button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="dismiss-results" hidden>Dismiss results</button>
 </div>

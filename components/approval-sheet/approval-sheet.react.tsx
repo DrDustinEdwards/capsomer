@@ -6,11 +6,11 @@ export type { GateChoice } from "./approval-sheet.ts";
 
 export interface Gate {
   id: string;
-  // The job's title, the gate's legend: "Deploy foxhound to production".
+  // The job's title, the gate's legend: "Deploy web to production".
   title: string;
   // The exact command that will run.
   command: string;
-  // One line under the title: "job_8c21 in foxhound, waiting 26 minutes".
+  // One line under the title: "job_8c21 in web, waiting 26 minutes".
   meta?: string;
   // Whether the gate starts checked; true by default.
   include?: boolean;

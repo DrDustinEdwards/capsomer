@@ -261,7 +261,7 @@ eachTheme((theme) => {
   test("behavior: a reader's area is the user variant: no strip, the 288px menu, a reading column", async ({ page }) => {
     await visitStates(page, "admin-shell", theme, "reader");
     await expect(page.locator(".cap-admin-strip")).toHaveCount(0);
-    await expect(page.locator(".cap-admin-menu").getByRole("link", { name: "Research" })).toHaveAttribute("aria-current", "page");
+    await expect(page.locator(".cap-admin-menu").getByRole("link", { name: "Articles" })).toHaveAttribute("aria-current", "page");
     expect((await page.locator(".cap-admin-menu").boundingBox())?.width).toBe(288);
     await expect(page.locator(".cap-admin-page")).toHaveAttribute("data-measure", "reading");
   });

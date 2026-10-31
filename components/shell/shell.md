@@ -21,7 +21,7 @@ The frame of every app: a top bar, a left menu (the rail) that collapses to icon
 
 ## When to use it
 
-For an app with several views a person moves between: an operations console, an admin, a writing hub, a product's merchant screens.
+For an app with several views a person moves between: an operations console, an admin, a writing hub, a product's customer screens.
 
 ## When not to
 

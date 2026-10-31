@@ -4,7 +4,7 @@ import { anchorStatus, appliable, applySuggestion, countFlags, groupFlags, rever
 
 const main = (page: Page) => page.locator("#fl-main");
 const flag = (page: Page, id: string) => page.locator(`#fl-main-${id}`);
-const DRAFT = "Foxhound watches 14 sites every five minutes. Roughly 40% of the alerts last quarter were false alarms. The new retry policy was shipped on Tuesday. Rosa reviewed it and said it was fine. Recieved wisdom says to alert on the first failure, but we wait for three.";
+const DRAFT = "The tool watches 14 sites every five minutes. Roughly 40% of the alerts last quarter were false alarms. The new retry policy was shipped on Tuesday. Rosa reviewed it and said it was fine. Recieved wisdom says to alert on the first failure, but we wait for three.";
 
 // ---------------------------------------------------------------------------------------
 // Pure helpers.
@@ -270,7 +270,7 @@ eachTheme((theme) => {
   test("behavior: the whole record, resolved flags included, is in the delivered HTML", async ({ page }) => {
     const html = await (await page.request.get("components/flag-list/states.html")).text();
     expect(html).toContain("Resolved by Rosa Park");
-    expect(html).toContain("Dismissed by Dustin Edwards");
+    expect(html).toContain("Dismissed by Alex Rivera");
     expect(html).toContain("Anchor lost");
     expect(html).toContain("Roughly 40% of the alerts last quarter were false alarms");
     expect(html).toContain('href="#fl-draft"');
@@ -301,7 +301,7 @@ eachTheme((theme) => {
     await expect(main(page).locator(".cap-flag-group[data-group='advisory'] .cap-flag-group-count")).toHaveText("2 open, 2 resolved");
     await main(page).getByRole("radio", { name: /^Resolved/ }).check();
     await expect(flag(page, "f5")).toBeVisible();
-    await expect(flag(page, "f5").locator(".cap-flag-resolution")).toContainText("Resolved by Dustin Edwards");
+    await expect(flag(page, "f5").locator(".cap-flag-resolution")).toContainText("Resolved by Alex Rivera");
     await expect(flag(page, "f5").locator(".cap-row-meta")).toContainText("Resolved");
     await expect(flag(page, "f5").getByRole("button", { name: /^Reopen/ })).toBeVisible();
     await expect(flag(page, "f5").getByRole("button", { name: /^Resolve/ })).toHaveCount(0);
@@ -359,7 +359,7 @@ eachTheme((theme) => {
     const guest = page.locator("#fl-guest");
     await expect(guest.getByRole("button", { name: /^Apply/ })).toHaveCount(0);
     await expect(guest.locator("#fl-guest-f3 .cap-flag-diff")).toContainText("Received wisdom");
-    await expect(guest.locator("#fl-guest-f3 .cap-flag-note")).toHaveText("Only the owner, Dustin Edwards, can apply this. The draft stays as it is until they do.");
+    await expect(guest.locator("#fl-guest-f3 .cap-flag-note")).toHaveText("Only the owner, Alex Rivera, can apply this. The draft stays as it is until they do.");
     await expect(guest.locator("[data-cap-part='owner-note']")).toBeVisible();
     // Resolving it does not offer Apply either.
     await guest.locator("#fl-guest-f6").getByRole("button", { name: /^Reopen/ }).click();
@@ -419,7 +419,7 @@ eachTheme((theme) => {
     });
     await flag(page, "f5").getByRole("button", { name: /^Resolve/ }).click();
     const seen = await page.evaluate(() => (window as unknown as { seen: Array<{ id: string; state: string; resolvedBy: string }> }).seen);
-    expect(seen[0]).toMatchObject({ id: "f5", state: "resolved", resolvedBy: "Dustin Edwards" });
+    expect(seen[0]).toMatchObject({ id: "f5", state: "resolved", resolvedBy: "Alex Rivera" });
   });
 
   test("behavior: nothing open leaves the record and says so", async ({ page }) => {

@@ -80,8 +80,8 @@ eachTheme((theme) => {
     await visitStates(page, "combobox", theme, "filtered");
     await expect(page.getByRole("listbox")).toMatchAriaSnapshot(`
       - listbox:
-        - option "foxhound.app"
-        - option "foxhound.app staging"
+        - option "shop.example.com"
+        - option "shop.example.com staging"
     `);
     await expect(page.getByRole("option")).toHaveCount(2);
   });
@@ -132,29 +132,29 @@ eachTheme((theme) => {
   test("keyboard: typing filters the list", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     await site(page).focus();
-    await page.keyboard.type("recova");
+    await page.keyboard.type("billing");
     await expect(page.getByRole("listbox")).toBeVisible();
     await expect(page.getByRole("option")).toHaveCount(2);
-    await expect(page.getByRole("option", { name: "Recova merchant" })).toBeVisible();
+    await expect(page.getByRole("option", { name: "Billing app" })).toBeVisible();
   });
 
   test("behavior: text that matches no option is not kept", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const input = site(page);
     await input.focus();
-    await page.keyboard.type("carrel");
+    await page.keyboard.type("docs");
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
-    await expect(input).toHaveValue("Carrel");
+    await expect(input).toHaveValue("Docs");
     await input.fill("not a site");
     await page.keyboard.press("Tab");
-    await expect(input).toHaveValue("Carrel");
-    await expect(page.locator("[data-mount='closed'] [data-chosen]")).toHaveAttribute("data-chosen", "carrel");
+    await expect(input).toHaveValue("Docs");
+    await expect(page.locator("[data-mount='closed'] [data-chosen]")).toHaveAttribute("data-chosen", "docs");
   });
 
   test("behavior: no match names the typed text", async ({ page }) => {
     await visitStates(page, "combobox", theme, "no-match");
-    await expect(page.locator(".cap-combobox-empty")).toContainText("No match for “foxhund”");
+    await expect(page.locator(".cap-combobox-empty")).toContainText("No match for “shoop”");
     await expect(page.getByRole("option")).toHaveCount(0);
   });
 
@@ -168,8 +168,8 @@ eachTheme((theme) => {
     await visitStates(page, "combobox", theme);
     const input = page.getByRole("combobox", { name: "Site to back up" });
     await expect(input).toBeDisabled();
-    await expect(input).toHaveValue("Capsid Portal");
-    await expect(input).toHaveAccessibleDescription("Locked while capsid deploys. It unlocks when the deploy ends.");
+    await expect(input).toHaveValue("Admin portal");
+    await expect(input).toHaveAccessibleDescription("Locked while the admin portal deploys. It unlocks when the deploy ends.");
   });
 
   test("behavior: invalid is marked and described by its message", async ({ page }) => {
@@ -197,7 +197,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page, undefined, { baseUi: true });
     await expect(page.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true");
     await visitStates(page, "combobox", theme);
-    await expect(page.locator("[data-mount='chips']").getByRole("button", { name: "Remove Capsid Portal" })).toBeVisible();
+    await expect(page.locator("[data-mount='chips']").getByRole("button", { name: "Remove Admin portal" })).toBeVisible();
     await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
@@ -205,9 +205,9 @@ eachTheme((theme) => {
     await visitStates(page, "combobox", theme);
     const chips = page.locator("[data-mount='chips']");
     await expect(chips.locator(".cap-combobox-chip")).toHaveCount(3);
-    await chips.getByRole("button", { name: "Remove foxhound.app" }).click();
+    await chips.getByRole("button", { name: "Remove shop.example.com" }).click();
     await expect(chips.locator(".cap-combobox-chip")).toHaveCount(2);
-    await expect(chips.getByText("foxhound.app", { exact: true })).toHaveCount(0);
+    await expect(chips.getByText("shop.example.com", { exact: true })).toHaveCount(0);
   });
 
   test("keyboard: with several values, Enter adds the highlighted option as a chip and the list stays open", async ({ page }) => {
@@ -215,11 +215,11 @@ eachTheme((theme) => {
     const chips = page.locator("[data-mount='chips']");
     const input = chips.getByRole("combobox", { name: "Sites to back up" });
     await input.focus();
-    await page.keyboard.type("carrel");
+    await page.keyboard.type("docs");
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
     await expect(chips.locator(".cap-combobox-chip")).toHaveCount(4);
-    await expect(chips.getByText("Carrel", { exact: true })).toBeVisible();
+    await expect(chips.getByText("Docs", { exact: true })).toBeVisible();
     await expect(input).toBeFocused();
   });
 
@@ -227,7 +227,7 @@ eachTheme((theme) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='clearable']");
     const input = area.getByRole("combobox", { name: "Primary site" });
-    await expect(input).toHaveValue("germomics.org");
+    await expect(input).toHaveValue("example.org");
     await area.getByRole("button", { name: "Clear Primary site" }).click();
     await expect(input).toHaveValue("");
     await expect(area.locator("[data-chosen]")).toHaveAttribute("data-chosen", "");
@@ -257,11 +257,11 @@ eachTheme((theme) => {
     const input = area.getByRole("combobox", { name: "Tags" });
     await expect(area.locator(".cap-combobox-chip")).toHaveCount(2);
     await input.focus();
-    await page.keyboard.type("western blot");
-    await expect(page.getByRole("option", { name: "Create “western blot”" })).toBeVisible();
+    await page.keyboard.type("getting started");
+    await expect(page.getByRole("option", { name: "Create “getting started”" })).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(area.locator(".cap-combobox-chip")).toHaveCount(3);
-    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "phage|gel shift assay|western blot");
+    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "news|annual report|getting started");
     await expect(input).toHaveValue("");
     await expect(input).toBeFocused();
   });
@@ -275,17 +275,17 @@ eachTheme((theme) => {
     // The suggestion matches ignoring case, so there is nothing to create.
     await expect(page.getByRole("option", { name: /^Create/ })).toHaveCount(0);
     await page.keyboard.press("Enter");
-    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "phage|gel shift assay|release");
+    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "news|annual report|release");
     // A tag already on the field is not offered again as a new one.
-    await page.keyboard.type("Gel shift  assay");
+    await page.keyboard.type("Annual  report");
     await expect(page.getByRole("option", { name: /^Create/ })).toHaveCount(0);
   });
 
   test("behavior: a made tag is a chip with its own remove button, and Backspace takes the last one", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='tags']");
-    await area.getByRole("button", { name: "Remove gel shift assay" }).click();
-    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "phage");
+    await area.getByRole("button", { name: "Remove annual report" }).click();
+    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "news");
     const input = area.getByRole("combobox", { name: "Tags" });
     await input.focus();
     await page.keyboard.press("Backspace");
@@ -296,7 +296,7 @@ eachTheme((theme) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='tags']");
     await expect(area.locator("input[name='tags']")).toHaveCount(2);
-    await expect(area.locator("input[name='tags']").first()).toHaveValue("phage");
-    await expect(area.locator("input[name='tags']").last()).toHaveValue("gel shift assay");
+    await expect(area.locator("input[name='tags']").first()).toHaveValue("news");
+    await expect(area.locator("input[name='tags']").last()).toHaveValue("annual report");
   });
 });

@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [read-only with no word counts, load into editor, current version, edit, autosave, run of autosaves collapsed, run of autosaves open, named version, publish with destinations and statuses, restore line, one version picked, two versions picked, a third pick refused, size change up, down and none, hover, restored with Undo, empty, load older, comfortable density, phone width]
 added: 0.3.0
-source: Dustin Edwards's site admin, app/components/admin/revision-list.tsx (RevisionList, RevisionMeta, DiffBlock), app/routes/admin.posts.$slug.history.tsx and app/styles/admin-history.css; app/components/post-history.tsx for the dated facts. shadcn/ui Item and Checkbox for the craft.
+source: Alex Rivera's site admin, app/components/admin/revision-list.tsx (RevisionList, RevisionMeta, DiffBlock), app/routes/admin.posts.$slug.history.tsx and app/styles/admin-history.css; app/components/post-history.tsx for the dated facts. shadcn/ui Item and Checkbox for the craft.
 replaces:
   - 'class="(history-list|history-entry|history-meta|history-actions)"'
   - 'className="(history-list|history-entry|history-meta|history-actions)"'
@@ -41,7 +41,7 @@ The history of one document that changes over time and where people go back: a p
 - **Restoring makes a new version, never an overwrite.** Each line except the current one has Restore. It acts at once (a reversible action): the history gains a line at the top, "Restored the version from Sep 28, 9:15 AM UTC", marked Current, the earlier current line loses its "Current" and gains Restore, and the message region says "Restored version from Sep 28 as a new version." with Undo (`z`). Undo removes the new line and makes the earlier version current again. Every earlier version stays. The list fires `cap:history-restored` and `cap:history-unrestored` so the app saves or removes the version.
 - **The current version says "Current" in words and has no Restore.**
 - **Read-only is the third mode, for a history with nothing to restore or load** (a site's revisions). Set `data-readonly` on the root (React: `readOnly`) and an earlier line has no action at all: its action cell is empty, and the current line still says "Current". Picking two lines to compare works as before. A line may also leave out `words` (a revision has no word count): it then shows no size change, an empty cell that keeps the columns in place, and the line's description leaves it out. A run of autosaves that holds such a line has no size change either. `deltaOf` returns `undefined` for these. Read-only applies to lines the app adds with `appendEntries` as well.
-- **Load into editor is the other action, for a draft with an editor the history is not the record of.** Set `data-load-href` on the root (React: `loadHref`) and each earlier line shows "Load into editor", a link to that address plus the version's id (`/posts/phage-lambda/edit?load=v-70`), in place of Restore. It works as delivered: the editor's page reads `?load=` and fills the editor. Nothing is added to the history, because the text is only loaded; the editor's own save makes the version, on top, and the history is never rewritten. There is no Undo line, because nothing happened yet. An app that loads the text in place cancels the cancelable `cap:history-load` (detail `{ entry }`; React `onLoad`), which stops the navigation. The two actions are one or the other on a list, never both: Restore acts at once and a loaded text waits for a save, and two buttons that look alike would say neither. The current version has no action in either mode.
+- **Load into editor is the other action, for a draft with an editor the history is not the record of.** Set `data-load-href` on the root (React: `loadHref`) and each earlier line shows "Load into editor", a link to that address plus the version's id (`/posts/spring-update/edit?load=v-70`), in place of Restore. It works as delivered: the editor's page reads `?load=` and fills the editor. Nothing is added to the history, because the text is only loaded; the editor's own save makes the version, on top, and the history is never rewritten. There is no Undo line, because nothing happened yet. An app that loads the text in place cancels the cancelable `cap:history-load` (detail `{ entry }`; React `onLoad`), which stops the navigation. The two actions are one or the other on a list, never both: Restore acts at once and a loaded text waits for a save, and two buttons that look alike would say neither. The current version has no action in either mode.
 - **Paging:** "Load older versions" is a link (`?before=<id>`), so the page works as delivered. An app that fetches the page itself cancels `cap:history-older` and calls `appendEntries`. The pagination component is not used: it pages by number, and a history is read from the top and extended downward.
 - **Empty is the empty component's nothing-yet kind:** "No versions yet. The first save of this post makes the first version."
 - **The pick bar is sticky,** so a second pick far down a long list can be compared without scrolling back.
@@ -90,17 +90,17 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ## Markup
 
 ```html
-<section class="cap-hist" data-cap="history-list" id="history" data-user="Dustin Edwards" data-compare-href="/posts/phage-lambda/compare" aria-labelledby="history-h">
+<section class="cap-hist" data-cap="history-list" id="history" data-user="Alex Rivera" data-compare-href="/posts/spring-update/compare" aria-labelledby="history-h">
   <h2 id="history-h">History</h2>
   <div class="cap-hist-bar">
     <p class="cap-hist-picked" role="status" data-cap-part="picked">Pick two versions to compare.</p>
     <a class="cap-btn" data-variant="primary" data-cap-part="compare" role="link" aria-disabled="true" tabindex="0">Compare 2 versions</a>
   </div>
   <ul class="cap-rows cap-hist-list" role="list" aria-labelledby="history-h" data-cap-primary>
-    <li class="cap-row cap-hist-row" data-kind="edit" data-id="v-31" data-at="2026-10-02T14:52:00Z" data-words="1954" data-who="Dustin Edwards" data-current>
-      <span class="cap-hist-pick"><label class="cap-check"><input type="checkbox" name="compare" value="v-31" data-cap-part="pick"><span class="cap-sr-only">Compare this version, Oct 2, 2:52 PM UTC, by Dustin Edwards</span></label></span>
-      <span class="cap-hist-who" id="h-v-31-who"><span class="cap-avatar" data-size="sm" aria-hidden="true"><span class="cap-avatar-fallback">DE</span></span><span class="cap-hist-name">Dustin Edwards</span></span>
-      <div class="cap-row-title"><a href="?version=v-31" aria-describedby="h-v-31-w h-v-31-t" title="Added the 2019 burst size paper">Added the 2019 burst size paper</a></div>
+    <li class="cap-row cap-hist-row" data-kind="edit" data-id="v-31" data-at="2026-10-02T14:52:00Z" data-words="1954" data-who="Alex Rivera" data-current>
+      <span class="cap-hist-pick"><label class="cap-check"><input type="checkbox" name="compare" value="v-31" data-cap-part="pick"><span class="cap-sr-only">Compare this version, Oct 2, 2:52 PM UTC, by Alex Rivera</span></label></span>
+      <span class="cap-hist-who" id="h-v-31-who"><span class="cap-avatar" data-size="sm" aria-hidden="true"><span class="cap-avatar-fallback">AR</span></span><span class="cap-hist-name">Alex Rivera</span></span>
+      <div class="cap-row-title"><a href="?version=v-31" aria-describedby="h-v-31-w h-v-31-t" title="Added the 2019 annual report">Added the 2019 annual report</a></div>
       <span class="cap-hist-delta" id="h-v-31-w" data-sign="plus"><svg aria-hidden="true">...</svg><span>+42 words</span></span>
       <span class="cap-row-meta" id="h-v-31-t"><span class="cap-hist-when"><time class="cap-time" data-cap="time" datetime="2026-10-02T14:52:00Z">8 minutes ago</time><time class="cap-hist-exact" datetime="2026-10-02T14:52:00Z">Oct 2, 2:52 PM UTC</time></span></span>
       <div class="cap-row-actions"><span class="cap-status" data-tone="ok">...Current</span></div>
@@ -121,12 +121,12 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 In React, `import { HistoryList } from "capsomer/react/history-list"` inside a `<MessageProvider>`:
 
 ```tsx
-<HistoryList entries={versions} labelledBy="history-h" user="Dustin Edwards" compareBase="/posts/phage-lambda/compare"
+<HistoryList entries={versions} labelledBy="history-h" user="Alex Rivera" compareBase="/posts/spring-update/compare"
   onRestore={({ entry }) => addVersion(entry)} onUndoRestore={({ entry }) => removeVersion(entry)}
   olderHref="?before=v-15" primary />
 ```
 
-Load into editor, in place of Restore: `<HistoryList ... loadHref={(id) => `/posts/phage-lambda/edit?load=${id}`} onLoad={(entry) => editor.load(entry.id)} />`. In HTML: `data-load-href="/posts/phage-lambda/edit?load="` on the root, and on each earlier line `<a class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="load" data-version="v-70" href="/posts/phage-lambda/edit?load=v-70">Load into editor<span class="cap-sr-only"> the version from Oct 1, 4:10 PM UTC by Rosa Park</span></a>` where the Restore button was.
+Load into editor, in place of Restore: `<HistoryList ... loadHref={(id) => `/posts/spring-update/edit?load=${id}`} onLoad={(entry) => editor.load(entry.id)} />`. In HTML: `data-load-href="/posts/spring-update/edit?load="` on the root, and on each earlier line `<a class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="load" data-version="v-70" href="/posts/spring-update/edit?load=v-70">Load into editor<span class="cap-sr-only"> the version from Oct 1, 4:10 PM UTC by Rosa Park</span></a>` where the Restore button was.
 
 ## Exceptions in production
 

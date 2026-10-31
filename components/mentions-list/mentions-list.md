@@ -59,7 +59,7 @@ The keys do nothing in a text field, with Ctrl, Alt or Meta held, in an open dia
 
 ## Accessibility
 
-- The list is a region named by its heading ("Mentions on dustinedwards.info"); the tabs are a `nav` of links, the current one with `aria-current="page"`.
+- The list is a region named by its heading ("Mentions on example.com"); the tabs are a `nav` of links, the current one with `aria-current="page"`.
 - Each row's decisions are a form named for its sender ("Decide the mention from Rosa Park"), and each button names the sender too.
 - The live line is a polite status; the result box and the bar's outcome list are the content components' own.
 - A status is a shape, a word and a color. Text reaches 4.5:1 and edges 3:1 in both themes.
@@ -72,7 +72,7 @@ React renders it; a server renders the same HTML. The parts, in order:
 
 ```html
 <section class="cap-mq cap-mentions" data-cap="mentions-list" data-view="pending" aria-labelledby="m-h">
-  <h2 class="cap-sr-only" id="m-h">Mentions on dustinedwards.info</h2>
+  <h2 class="cap-sr-only" id="m-h">Mentions on example.com</h2>
   <nav class="cap-tabs-list cap-mentions-tabs" aria-label="Mentions by state">
     <a class="cap-tab" href="/mentions?view=pending" aria-current="page">Waiting<span class="cap-tab-count">3</span></a>
     ...Source not found, Approved, Rejected, All
@@ -87,7 +87,7 @@ React renders it; a server renders the same HTML. The parts, in order:
       <span class="cap-mq-check"><label class="cap-check"><input type="checkbox" name="ids" value="m-101" form="bulk">...</label></span>
       <span class="cap-row-status"><span class="cap-status" data-tone="info">...Waiting</span></span>
       <div class="cap-row-title"><a href="/mentions?open=m-101" aria-expanded="false">...Rosa Park fieldnotes.example</a></div>
-      <p class="cap-row-detail">On Phage lambda: lysis or lysogeny: “...”</p>
+      <p class="cap-row-detail">On Field notes: the spring survey: “...”</p>
       <span class="cap-row-meta"><time class="cap-time" datetime="...">...</time></span>
       <form class="cap-row-actions cap-mentions-act" method="post" action="/mentions" aria-label="Decide the mention from Rosa Park">
         <input type="hidden" name="ids" value="m-101"><input type="hidden" name="version" value="3">

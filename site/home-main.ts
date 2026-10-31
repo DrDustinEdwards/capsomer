@@ -51,7 +51,7 @@ if (sample) {
   const input = sample.querySelector("input");
   const specimens = document.querySelectorAll<HTMLElement>(".home-scale-sample");
   input?.addEventListener("input", () => {
-    for (const el of specimens) el.textContent = input.value.trim() || "Phage λ";
+    for (const el of specimens) el.textContent = input.value.trim() || "Field notes";
   });
 }
 

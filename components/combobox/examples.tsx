@@ -6,18 +6,18 @@ import { createRoot } from "react-dom/client";
 import { Combobox, ComboboxMultiple, type ComboboxOption, type ComboboxProps } from "./combobox.react.tsx";
 
 const SITES: ComboboxOption[] = [
-  { value: "capsid", label: "Capsid Portal" },
-  { value: "carrel", label: "Carrel" },
-  { value: "capsomer", label: "Capsomer site" },
-  { value: "dustinedwards", label: "dustinedwards.info" },
-  { value: "enarratio", label: "Enarratio demo" },
-  { value: "foxhound", label: "foxhound.app" },
-  { value: "foxhound-staging", label: "foxhound.app staging" },
-  { value: "germomics", label: "germomics.org" },
-  { value: "recova", label: "Recova merchant" },
-  { value: "recova-admin", label: "Recova admin" },
-  { value: "txasm", label: "txasm" },
-  { value: "phage-notes", label: "Phage notes" },
+  { value: "admin", label: "Admin portal" },
+  { value: "docs", label: "Docs" },
+  { value: "design", label: "Design system site" },
+  { value: "news", label: "example.edu" },
+  { value: "charts", label: "Charts demo" },
+  { value: "shop", label: "shop.example.com" },
+  { value: "shop-staging", label: "shop.example.com staging" },
+  { value: "blog", label: "example.org" },
+  { value: "billing", label: "Billing app" },
+  { value: "billing-admin", label: "Billing admin" },
+  { value: "events", label: "events" },
+  { value: "field-notes", label: "Field notes" },
   { value: "reading-list", label: "Reading list" },
   { value: "uptime-probe", label: "Uptime probe" },
   { value: "watcher", label: "Watcher" },
@@ -44,7 +44,7 @@ function Held(props: Omit<ComboboxProps, "value" | "onValueChange"> & { initial?
 
 // Tag suggestions: a tag field takes these or anything typed.
 const TAGS: ComboboxOption[] = [
-  { value: "phage", label: "phage" },
+  { value: "news", label: "news" },
   { value: "release", label: "release" },
   { value: "field notes", label: "field notes" },
   { value: "search", label: "search" },
@@ -79,31 +79,31 @@ function Highlighted() {
   }, []);
   return (
     <div ref={ref}>
-      <Held label="Site" items={SITES} placeholder="For example: carrel" defaultOpen />
+      <Held label="Site" items={SITES} placeholder="For example: docs" defaultOpen />
     </div>
   );
 }
 
 const SPECIMENS: Record<string, () => ReactNode> = {
-  closed: () => <Held label="Site" items={SITES} placeholder="For example: carrel" help="Type to filter. Only a listed site can be chosen." />,
-  chosen: () => <Held label="Deploy to" items={SITES} initial="foxhound" />,
-  clearable: () => <Held label="Primary site" items={SITES} initial="germomics" clearable help="Clear it to choose again." />,
-  chips: () => <ComboboxMultiple label="Sites to back up" items={SITES} defaultValues={["capsid", "foxhound", "germomics"]} help="Type to add another. Remove one with its button." />,
-  tags: () => <Tags defaultValues={["phage", "gel shift assay"]} />,
-  "open-tags": () => <Tags defaultValues={["phage"]} defaultOpen defaultInputValue="gel" />,
+  closed: () => <Held label="Site" items={SITES} placeholder="For example: docs" help="Type to filter. Only a listed site can be chosen." />,
+  chosen: () => <Held label="Deploy to" items={SITES} initial="shop" />,
+  clearable: () => <Held label="Primary site" items={SITES} initial="blog" clearable help="Clear it to choose again." />,
+  chips: () => <ComboboxMultiple label="Sites to back up" items={SITES} defaultValues={["admin", "shop", "blog"]} help="Type to add another. Remove one with its button." />,
+  tags: () => <Tags defaultValues={["news", "annual report"]} />,
+  "open-tags": () => <Tags defaultValues={["news"]} defaultOpen defaultInputValue="ann" />,
   comfortable: () => (
     <div data-density="comfortable">
-      <Held label="Deploy to" items={SITES} initial="foxhound" clearable />
+      <Held label="Deploy to" items={SITES} initial="shop" clearable />
     </div>
   ),
-  disabled: () => <Held label="Site to back up" items={SITES} initial="capsid" disabled help="Locked while capsid deploys. It unlocks when the deploy ends." />,
+  disabled: () => <Held label="Site to back up" items={SITES} initial="admin" disabled help="Locked while the admin portal deploys. It unlocks when the deploy ends." />,
   invalid: () => <Held label="Site to watch" items={SITES} required error="Choose a site from the list. The watcher only checks sites it knows." />,
-  open: () => <Held label="Site" items={SITES} placeholder="For example: carrel" defaultOpen />,
-  filtered: () => <Held label="Site" items={SITES} defaultOpen defaultInputValue="fox" />,
-  "no-match": () => <Held label="Site" items={SITES} defaultOpen defaultInputValue="foxhund" />,
+  open: () => <Held label="Site" items={SITES} placeholder="For example: docs" defaultOpen />,
+  filtered: () => <Held label="Site" items={SITES} defaultOpen defaultInputValue="shop" />,
+  "no-match": () => <Held label="Site" items={SITES} defaultOpen defaultInputValue="shoop" />,
   highlighted: () => <Highlighted />,
-  "open-chips": () => <ComboboxMultiple label="Sites to back up" items={SITES} defaultValues={["capsid", "foxhound"]} defaultOpen />,
-  grouped: () => <Held label="Site" items={GROUPED} placeholder="For example: carrel" defaultOpen />,
+  "open-chips": () => <ComboboxMultiple label="Sites to back up" items={SITES} defaultValues={["admin", "shop"]} defaultOpen />,
+  grouped: () => <Held label="Site" items={GROUPED} placeholder="For example: docs" defaultOpen />,
   loading: () => <Held label="Site" items={[]} loading loadingText="Loading sites" defaultOpen />,
 };
 

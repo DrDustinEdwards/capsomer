@@ -41,13 +41,13 @@ test("behavior: an action is offered only where the site supports it and the per
 });
 
 test("behavior: a filter's address keeps the other filters in one order and starts at the first page", () => {
-  const q = { sort: "title" as const, q: "phage", cursor: "c-2", status: "draft" as const };
-  expect(postsHref("/posts?old=1", q)).toBe("/posts?q=phage&status=draft&sort=title&cursor=c-2");
-  expect(postsHref("/posts", withFilter(q, { status: "published" }))).toBe("/posts?q=phage&status=published&sort=title");
-  expect(postsHref("/posts", withFilter(q, { status: undefined }))).toBe("/posts?q=phage&sort=title");
+  const q = { sort: "title" as const, q: "survey", cursor: "c-2", status: "draft" as const };
+  expect(postsHref("/posts?old=1", q)).toBe("/posts?q=survey&status=draft&sort=title&cursor=c-2");
+  expect(postsHref("/posts", withFilter(q, { status: "published" }))).toBe("/posts?q=survey&status=published&sort=title");
+  expect(postsHref("/posts", withFilter(q, { status: undefined }))).toBe("/posts?q=survey&sort=title");
   expect(postsHref("/posts", {})).toBe("/posts");
-  const dated = { q: "phage", author: "Julie Edwards", from: "2026-09-01", to: "2026-10-31", trashed: "1" as const };
-  expect(postsHref("/posts", dated)).toBe("/posts?q=phage&trashed=1&author=Julie+Edwards&from=2026-09-01&to=2026-10-31");
+  const dated = { q: "survey", author: "Sam Lee", from: "2026-09-01", to: "2026-10-31", trashed: "1" as const };
+  expect(postsHref("/posts", dated)).toBe("/posts?q=survey&trashed=1&author=Sam+Lee&from=2026-09-01&to=2026-10-31");
   expect(postsHref("/posts", withFilter(dated, NO_FILTERS))).toBe("/posts?trashed=1");
 });
 
@@ -56,7 +56,7 @@ test("behavior: the count and the empty state name what is there and what is not
   expect(countLine({ rows, page: { nextCursor: null } })).toBe("2 posts");
   expect(countLine({ rows, page: { nextCursor: "c", total: 120, sortedOnPage: true } }, { noun: "article" })).toBe("Showing 2 of 120 articles, sorted on this page only");
   expect(emptyWords({ status: "draft" }).title).toBe("No drafts");
-  expect(emptyWords({ status: "draft", q: "lysogeny" })).toMatchObject({ kind: "no-match", title: "No posts match “lysogeny”" });
+  expect(emptyWords({ status: "draft", q: "survey" })).toMatchObject({ kind: "no-match", title: "No posts match “survey”" });
 });
 
 test("behavior: an undo or a confirm posts its intent with every field, a list as one field per item", () => {
@@ -64,9 +64,9 @@ test("behavior: an undo or a confirm posts its intent with every field, a list a
   expect(form.getAll("intent")).toEqual(["tag-remove"]);
   expect(form.getAll("ids")).toEqual(["a", "b"]);
   expect(form.get("tag")).toBe("capsid");
-  const names = new Map([["a", "Notes on the Foxhound release"]]);
-  expect(outcomesOf({ outcomes: [{ id: "a", ok: false, message: "In use", usedBy: [{ type: "post", id: "x", title: "Lambda", detail: "cover image" }] }, { id: "gone", ok: true }] }, names)).toEqual([
-    { id: "a", label: "Notes on the Foxhound release", ok: false, message: "In use", usedBy: ["Lambda (cover image)"] },
+  const names = new Map([["a", "Notes on the spring release"]]);
+  expect(outcomesOf({ outcomes: [{ id: "a", ok: false, message: "In use", usedBy: [{ type: "post", id: "x", title: "Survey map", detail: "cover image" }] }, { id: "gone", ok: true }] }, names)).toEqual([
+    { id: "a", label: "Notes on the spring release", ok: false, message: "In use", usedBy: ["Survey map (cover image)"] },
     { id: "gone", label: "gone", ok: true, message: undefined, usedBy: undefined },
   ]);
 });
@@ -118,14 +118,14 @@ eachTheme((theme) => {
         - paragraph: 4 posts
         - list:
           - listitem: You can read these posts. Changing them needs an editor's role.
-        - region "Posts on dustinedwards.info":
-          - table "Posts on dustinedwards.info":
+        - region "Posts on example.com":
+          - table "Posts on example.com":
             - rowgroup:
               - row "Title Status Updated Actions"
             - rowgroup:
-              - row /Notes on the Foxhound release/:
-                - rowheader /Notes on the Foxhound release/:
-                  - link "Notes on the Foxhound release"
+              - row /Notes on the spring release/:
+                - rowheader /Notes on the spring release/:
+                  - link "Notes on the spring release"
                 - cell "Published"
                 - cell "19 hours ago"
                 - cell:
@@ -142,10 +142,10 @@ eachTheme((theme) => {
     // The delivered HTML has the bar in the page, with words that need no script.
     await expect(list.locator(".cap-bulk-count")).toHaveText("Tick the posts to act on");
     let posted = nextPost(page, "#posts-static");
-    await list.getByRole("checkbox", { name: "Select Notes on the Foxhound release" }).check();
+    await list.getByRole("checkbox", { name: "Select Notes on the spring release" }).check();
     await list.getByRole("checkbox", { name: "Select Notes on a read-only agent" }).check();
     await list.getByRole("button", { name: "Unpublish" }).click();
-    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["foxhound-release", "read-only-agent"], tag: [""], intent: ["unpublish"] } });
+    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["spring-release", "read-only-agent"], tag: [""], intent: ["unpublish"] } });
     posted = nextPost(page, "#posts-static");
     const menu = rowOf(list, "Why the uptime strip counts gaps").locator("details");
     await menu.locator("summary").click();
@@ -153,69 +153,69 @@ eachTheme((theme) => {
     await menu.getByRole("button", { name: "Duplicate" }).click();
     expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["uptime-strip"], intent: ["duplicate"] } });
     posted = nextPost(page, "#posts-static");
-    await list.getByRole("searchbox", { name: "Search" }).fill("lambda");
+    await list.getByRole("searchbox", { name: "Search" }).fill("survey");
     await list.getByRole("button", { name: "Show" }).click();
-    expect(await posted).toEqual({ method: "get", enctype: "application/x-www-form-urlencoded", fields: { q: ["lambda"], kind: [""], tag: [""], sort: ["updated"] } });
+    expect(await posted).toEqual({ method: "get", enctype: "application/x-www-form-urlencoded", fields: { q: ["survey"], kind: [""], tag: [""], sort: ["updated"] } });
   });
 
   test("behavior: with no script, the page after a post says the result, lists each post's outcome and posts Undo as a form", async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     const list = page.locator("[data-mount='outcomes']");
     await expect(list.getByRole("status", { name: "Results and failures" })).toContainText("Added the tag capsid to 2 posts; 1 refused.");
-    await expect(list.getByRole("group", { name: "2 done, 1 not done." }).locator(".cap-bulk-results-list > li")).toHaveText([/^Not done Phage lambda: lysis or lysogeny This post has no front matter/, /^Done Notes on the Foxhound release$/, /^Done What a mention queue is for$/]);
+    await expect(list.getByRole("group", { name: "2 done, 1 not done." }).locator(".cap-bulk-results-list > li")).toHaveText([/^Not done Field notes: the spring survey This post has no front matter/, /^Done Notes on the spring release$/, /^Done What a mention queue is for$/]);
     const posted = nextPost(page, "[data-mount='outcomes']");
     await list.getByRole("button", { name: "Undo" }).click();
-    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["foxhound-release", "mention-queue"], tag: ["capsid"], intent: ["tag-remove"] } });
+    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["spring-release", "mention-queue"], tag: ["capsid"], intent: ["tag-remove"] } });
   });
 
   test("behavior: with no script, a delete is confirmed on the server's page, which posts every id and needs the count typed", async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     const confirm = page.locator("[data-mount='confirm']").getByRole("group", { name: "Delete 2 posts?" });
-    await expect(confirm.getByRole("listitem")).toHaveText(["What a mention queue is for", "Phage lambda: lysis or lysogeny"]);
+    await expect(confirm.getByRole("listitem")).toHaveText(["What a mention queue is for", "Field notes: the spring survey"]);
     await expect(page.locator("[data-mount='confirm'] table")).toHaveCount(0);
     const typed = confirm.getByRole("textbox", { name: "Type 2 to confirm" });
     await expect(typed).toHaveAttribute("required", "");
     const posted = nextPost(page, "[data-mount='confirm']");
     await typed.fill("2");
     await confirm.getByRole("button", { name: "Delete 2 posts" }).click();
-    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { intent: ["delete"], ids: ["mention-queue", "phage-lambda"], confirm: ["2"] } });
+    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { intent: ["delete"], ids: ["mention-queue", "spring-survey"], confirm: ["2"] } });
   });
 
   test("keyboard: with script, a row's Unpublish runs at once with Undo, and z puts it back", async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     const list = editor(page);
-    const target = rowOf(list, "Notes on the Foxhound release");
+    const target = rowOf(list, "Notes on the spring release");
     await target.locator("summary").focus();
     await page.keyboard.press("Enter");
     await target.getByRole("button", { name: "Unpublish" }).focus();
     await page.keyboard.press("Enter");
     await expect(target.locator(".cap-posts-status")).toHaveText("Draft");
-    await expect(editor(page).locator(".cap-message-item")).toContainText("Unpublished “Notes on the Foxhound release”.");
+    await expect(editor(page).locator(".cap-message-item")).toContainText("Unpublished “Notes on the spring release”.");
     await expect(target.locator("details")).not.toHaveAttribute("open", "");
     await page.locator("h1").click();
     await page.keyboard.press("z");
     await expect(target.locator(".cap-posts-status")).toHaveText("Published");
-    await expect(editor(page).locator(".cap-message-item")).toContainText("Published “Notes on the Foxhound release” again.");
+    await expect(editor(page).locator(".cap-message-item")).toContainText("Published “Notes on the spring release” again.");
     expect((await log(page)).map((e) => e.intent)).toEqual(["unpublish", "republish"]);
   });
 
   test("behavior: with script, a tag shows each post's outcome in the bar, and Undo reverses it only where it changed", async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     const list = editor(page);
-    for (const t of ["Notes on the Foxhound release", "Why the uptime strip counts gaps", "Phage lambda: lysis or lysogeny"]) await list.getByRole("checkbox", { name: `Select ${t}` }).check();
+    for (const t of ["Notes on the spring release", "Why the uptime strip counts gaps", "Field notes: the spring survey"]) await list.getByRole("checkbox", { name: `Select ${t}` }).check();
     const bar = list.getByRole("region", { name: "Bulk actions on posts" });
     await expect(bar.getByRole("status")).toHaveText("3 selected");
     await bar.getByRole("textbox", { name: "Tag" }).fill("capsid");
     await bar.getByRole("button", { name: "Add tag" }).click();
     const outcomes = bar.getByRole("group", { name: "2 done, 1 not done." });
-    await expect(outcomes.locator(".cap-bulk-results-list > li")).toHaveText([/^Not done Phage lambda/, /^Done Notes on the Foxhound release$/, /^Done Why the uptime strip counts gaps Already had it\.$/]);
+    await expect(outcomes.locator(".cap-bulk-results-list > li")).toHaveText([/^Not done Field notes: the spring survey/, /^Done Notes on the spring release$/, /^Done Why the uptime strip counts gaps Already had it\.$/]);
     await expect(bar.getByRole("status")).toHaveText("Nothing selected");
     await editor(page).locator(".cap-message").getByRole("button", { name: "Undo" }).click();
     await expect(editor(page).locator(".cap-message-item")).toContainText("Removed the tag capsid from 1 post.");
     const sent = await log(page);
-    expect(sent[0]).toMatchObject({ intent: "tag-add", ids: ["foxhound-release", "uptime-strip", "phage-lambda"], tag: "capsid" });
+    expect(sent[0]).toMatchObject({ intent: "tag-add", ids: ["spring-release", "uptime-strip", "spring-survey"], tag: "capsid" });
     // The uptime post already had the tag, so Undo leaves it on.
-    expect(sent[1]).toMatchObject({ intent: "tag-remove", ids: "foxhound-release", tag: "capsid" });
+    expect(sent[1]).toMatchObject({ intent: "tag-remove", ids: "spring-release", tag: "capsid" });
     await bar.getByRole("button", { name: "Dismiss results" }).click();
     await expect(bar).toBeHidden();
   });
@@ -224,12 +224,12 @@ eachTheme((theme) => {
     await visitStates(page, "posts-list", theme);
     const list = editor(page);
     await list.getByRole("checkbox", { name: "Select What a mention queue is for" }).check();
-    await list.getByRole("checkbox", { name: "Select Phage lambda: lysis or lysogeny" }).check();
+    await list.getByRole("checkbox", { name: "Select Field notes: the spring survey" }).check();
     await list.getByRole("button", { name: "Delete" }).focus();
     await page.keyboard.press("Enter");
     const dialog = page.getByRole("alertdialog", { name: "Delete 2 posts?" });
     await expect(dialog.getByRole("button", { name: "Cancel" })).toBeFocused();
-    await expect(dialog.getByRole("listitem")).toHaveText(["What a mention queue is for", "Phage lambda: lysis or lysogeny"]);
+    await expect(dialog.getByRole("listitem")).toHaveText(["What a mention queue is for", "Field notes: the spring survey"]);
     await expect(list.locator("tbody tr")).toHaveCount(6);
     await dialog.getByRole("textbox").fill("2");
     await dialog.getByRole("button", { name: "Delete 2 posts" }).click();
@@ -264,24 +264,24 @@ eachTheme((theme) => {
   test("behavior: with script, Rename… posts the new slug and says the old address redirects, and a preview link shows with Copy", async ({ page }) => {
     await visitStates(page, "posts-list", theme);
     const list = page.locator("[data-mount='ideas']");
-    const target = rowOf(list, "Notes on the Foxhound release");
+    const target = rowOf(list, "Notes on the spring release");
     await target.locator("summary").click();
     await target.getByRole("link", { name: "Rename…" }).click();
-    const dialog = page.getByRole("dialog", { name: "Rename Notes on the Foxhound release" });
+    const dialog = page.getByRole("dialog", { name: "Rename Notes on the spring release" });
     await expect(dialog).toContainText("The old address will redirect to the new one");
-    await dialog.getByRole("textbox", { name: "New slug" }).fill("foxhound-notes");
+    await dialog.getByRole("textbox", { name: "New slug" }).fill("spring-notes");
     await dialog.getByRole("button", { name: "Rename" }).click();
     await expect(dialog).toBeHidden();
-    await expect(rowOf(list, "Notes on the Foxhound release").locator(".cap-posts-path")).toHaveText("/blog/foxhound-notes");
+    await expect(rowOf(list, "Notes on the spring release").locator(".cap-posts-path")).toHaveText("/blog/spring-notes");
     const draft = rowOf(list, "What a mention queue is for");
     await draft.locator("summary").click();
     await draft.getByRole("button", { name: "Get a preview link" }).click();
     const box = list.getByRole("status", { name: "Preview link" });
-    await expect(box.getByRole("textbox", { name: "Preview link for What a mention queue is for" })).toHaveValue(/^https:\/\/dustinedwards\.info\/preview\//);
+    await expect(box.getByRole("textbox", { name: "Preview link for What a mention queue is for" })).toHaveValue(/^https:\/\/example\.com\/preview\//);
     await expect(box.getByRole("button", { name: "Copy" })).toBeVisible();
     await expect(box.locator("time")).toHaveAttribute("datetime", "2026-10-12T12:00:00.000Z");
     expect((await log(page)).map((e) => [e.intent, e.ids, e.newId ?? null])).toEqual([
-      ["rename", "foxhound-release", "foxhound-notes"],
+      ["rename", "spring-release", "spring-notes"],
       ["preview-link", "mention-queue", null],
     ]);
   });

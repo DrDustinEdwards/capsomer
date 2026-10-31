@@ -47,7 +47,7 @@
                     <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
                   </tr>
                   <tr>
-                    <th scope="row" class="cap-perms-agent cap-mono">foxhound-driver</th>
+                    <th scope="row" class="cap-perms-agent cap-mono">billing-driver</th>
                     <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
                     <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
                     <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
@@ -63,7 +63,7 @@
               <li class="cap-perms-card"><span class="cap-perms-name cap-mono">seat</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Merge, Start CI</div></li>
               <li class="cap-perms-card"><span class="cap-perms-name cap-mono">capsid-driver</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Start CI</div></li>
               <li class="cap-perms-card"><span class="cap-perms-name cap-mono">capsomer-driver</span><div class="cap-perms-holds" data-empty="">Holds no permissions</div></li>
-              <li class="cap-perms-card"><span class="cap-perms-name cap-mono">foxhound-driver</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Start CI, Money paths</div></li>
+              <li class="cap-perms-card"><span class="cap-perms-name cap-mono">billing-driver</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Start CI, Money paths</div></li>
             </ul>
           </div>
         </div>
@@ -71,9 +71,9 @@
           <ul class="cap-perms-cards" aria-label="Agents by permission">
             <li class="cap-perms-card"><span class="cap-perms-name">Merge</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span></div></li>
             <li class="cap-perms-card"><span class="cap-perms-name">Write to main</span><div class="cap-perms-holds" data-empty="">Nobody holds this</div></li>
-            <li class="cap-perms-card"><span class="cap-perms-name">Start CI</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span>, <span class="cap-mono">capsid-driver</span>, <span class="cap-mono">foxhound-driver</span></div></li>
+            <li class="cap-perms-card"><span class="cap-perms-name">Start CI</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span>, <span class="cap-mono">capsid-driver</span>, <span class="cap-mono">billing-driver</span></div></li>
             <li class="cap-perms-card"><span class="cap-perms-name">Edit workflows</span><div class="cap-perms-holds" data-empty="">Nobody holds this</div></li>
-            <li class="cap-perms-card"><span class="cap-perms-name">Money paths</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">foxhound-driver</span></div></li>
+            <li class="cap-perms-card"><span class="cap-perms-name">Money paths</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">billing-driver</span></div></li>
           </ul>
         </div>
       </div>
@@ -107,7 +107,7 @@
                 <td class="cap-perms-cell" data-held="yes"><span class="cap-perms-check" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m3.5 8.5 3 3 6-7" /></svg></span><span class="cap-sr-only">Yes</span></td>
               </tr>
               <tr>
-                <th scope="row" class="cap-perms-agent cap-mono">carrel-reviewer</th>
+                <th scope="row" class="cap-perms-agent cap-mono">docs-reviewer</th>
                 <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
                 <td class="cap-perms-cell" data-held="no"><span class="cap-perms-check" aria-hidden="true"></span><span class="cap-sr-only">No</span></td>
               </tr>
@@ -118,7 +118,7 @@
       <div class="cap-perms-narrow">
         <ul class="cap-perms-cards" aria-label="Permissions by agent, second sample">
           <li class="cap-perms-card"><span class="cap-perms-name cap-mono">seat</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Merge, Start CI</div></li>
-          <li class="cap-perms-card"><span class="cap-perms-name cap-mono">carrel-reviewer</span><div class="cap-perms-holds" data-empty="">Holds no permissions</div></li>
+          <li class="cap-perms-card"><span class="cap-perms-name cap-mono">docs-reviewer</span><div class="cap-perms-holds" data-empty="">Holds no permissions</div></li>
         </ul>
       </div>
     </div>
@@ -208,15 +208,15 @@
                 <li class="cap-perms-card"><span class="cap-perms-name cap-mono">seat</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Merge, Start CI</div></li>
                 <li class="cap-perms-card"><span class="cap-perms-name cap-mono">capsid-driver</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Start CI</div></li>
                 <li class="cap-perms-card"><span class="cap-perms-name cap-mono">capsomer-driver</span><div class="cap-perms-holds" data-empty="">Holds no permissions</div></li>
-                <li class="cap-perms-card"><span class="cap-perms-name cap-mono">foxhound-driver</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Start CI, Money paths</div></li>
+                <li class="cap-perms-card"><span class="cap-perms-name cap-mono">billing-driver</span><div class="cap-perms-holds"><span class="cap-perms-key">Holds:</span> Start CI, Money paths</div></li>
               </ul>
             </div>
           </div>
           <div class="cap-perms-view" data-view="permission" hidden>
             <ul class="cap-perms-cards" aria-label="Agents by permission">
               <li class="cap-perms-card"><span class="cap-perms-name">Merge</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span></div></li>
-              <li class="cap-perms-card"><span class="cap-perms-name">Start CI</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span>, <span class="cap-mono">capsid-driver</span>, <span class="cap-mono">foxhound-driver</span></div></li>
-              <li class="cap-perms-card"><span class="cap-perms-name">Money paths</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">foxhound-driver</span></div></li>
+              <li class="cap-perms-card"><span class="cap-perms-name">Start CI</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">seat</span>, <span class="cap-mono">capsid-driver</span>, <span class="cap-mono">billing-driver</span></div></li>
+              <li class="cap-perms-card"><span class="cap-perms-name">Money paths</span><div class="cap-perms-holds"><span class="cap-perms-key">Held by:</span> <span class="cap-mono">billing-driver</span></div></li>
             </ul>
           </div>
         </div>

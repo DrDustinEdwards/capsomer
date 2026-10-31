@@ -3,8 +3,8 @@
     <h1>Agents</h1>
     <p>Revoke opens the dialog. Cancel, Esc and Revoke agent all work here; the action waits until the page says so.</p>
     <ul class="specimen-agents">
-      <li><span class="cap-mono">foxhound-driver</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="revoke">Revoke foxhound-driver…</button></li>
-      <li><span class="cap-mono">germomics.org</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="delete">Delete the germomics.org record…</button></li>
+      <li><span class="cap-mono">deploy-agent</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="revoke">Revoke deploy-agent…</button></li>
+      <li><span class="cap-mono">example.org</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="delete">Delete the example.org record…</button></li>
       <li><span class="cap-mono">job_0cdf2803f0ba</span> <button type="button" class="cap-btn" data-variant="danger" data-specimen-action="fail">Mark job_0cdf2803f0ba failed…</button></li>
     </ul>
     <p role="status" data-specimen-part="said"></p>
@@ -19,7 +19,7 @@
   <dialog class="cap-dialog" data-cap="confirm-dialog" data-placement="center" data-size="md" role="alertdialog" data-specimen-open aria-labelledby="open-title" aria-describedby="open-desc open-list">
     <div class="cap-dialog-header">
       <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
-      <h2 class="cap-dialog-title" id="open-title">Revoke foxhound-driver?</h2>
+      <h2 class="cap-dialog-title" id="open-title">Revoke deploy-agent?</h2>
       <p class="cap-dialog-description" id="open-desc">This cannot be undone. The agent stops working at once.</p>
     </div>
     <div class="cap-dialog-body">
@@ -39,12 +39,12 @@
 
 <template data-specimen="page" data-title="The confirm page: a form in the page, no script needed" data-height="640">
   <main class="specimen-page" id="main" tabindex="-1">
-    <form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/foxhound" method="post" role="group" aria-labelledby="pg-title" aria-describedby="pg-desc pg-list">
+    <form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/example" method="post" role="group" aria-labelledby="pg-title" aria-describedby="pg-desc pg-list">
       <input type="hidden" name="intent" value="delete" />
-      <input type="hidden" name="site" value="foxhound" />
+      <input type="hidden" name="site" value="example" />
       <div class="cap-dialog-header">
         <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z"/></svg></div>
-        <h1 class="cap-dialog-title" id="pg-title">Delete foxhound.app?</h1>
+        <h1 class="cap-dialog-title" id="pg-title">Delete example.com?</h1>
         <p class="cap-dialog-description" id="pg-desc">This cannot be undone. The site and its checks are removed.</p>
       </div>
       <div class="cap-dialog-body">
@@ -65,7 +65,7 @@
       </div>
       <div class="cap-confirm-error" role="alert"></div>
       <div class="cap-dialog-footer" data-align="between">
-        <a class="cap-btn" href="/admin/sites/foxhound">Cancel</a>
+        <a class="cap-btn" href="/admin/sites/example">Cancel</a>
         <button type="submit" class="cap-btn" data-variant="danger">Delete site</button>
       </div>
     </form>
@@ -74,12 +74,12 @@
 
 <template data-specimen="page-error" data-title="The confirm page, after the server refused: the typed word did not match" data-height="680">
   <main class="specimen-page" id="main" tabindex="-1">
-    <form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/foxhound" method="post" role="group" aria-labelledby="pe-title" aria-describedby="pe-desc pe-list">
+    <form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/example" method="post" role="group" aria-labelledby="pe-title" aria-describedby="pe-desc pe-list">
       <input type="hidden" name="intent" value="delete" />
-      <input type="hidden" name="site" value="foxhound" />
+      <input type="hidden" name="site" value="example" />
       <div class="cap-dialog-header">
         <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z"/></svg></div>
-        <h1 class="cap-dialog-title" id="pe-title">Delete foxhound.app?</h1>
+        <h1 class="cap-dialog-title" id="pe-title">Delete example.com?</h1>
         <p class="cap-dialog-description" id="pe-desc">This cannot be undone. The site and its checks are removed.</p>
       </div>
       <div class="cap-dialog-body">
@@ -100,7 +100,7 @@
       </div>
       <div class="cap-confirm-error" role="alert"><b class="cap-confirm-error-lead">Not done. Nothing was changed.</b> The word did not match. Type delete exactly, then try again.</div>
       <div class="cap-dialog-footer" data-align="between">
-        <a class="cap-btn" href="/admin/sites/foxhound">Cancel</a>
+        <a class="cap-btn" href="/admin/sites/example">Cancel</a>
         <button type="submit" class="cap-btn" data-variant="danger">Delete site</button>
       </div>
     </form>
@@ -115,7 +115,7 @@
   <dialog class="cap-dialog" data-cap="confirm-dialog" data-placement="center" data-size="md" role="alertdialog" data-density="comfortable" data-specimen-open aria-labelledby="comf-title" aria-describedby="comf-desc comf-list">
     <div class="cap-dialog-header">
       <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
-      <h2 class="cap-dialog-title" id="comf-title">Revoke foxhound-driver?</h2>
+      <h2 class="cap-dialog-title" id="comf-title">Revoke deploy-agent?</h2>
       <p class="cap-dialog-description" id="comf-desc">This cannot be undone. The agent stops working at once.</p>
     </div>
     <div class="cap-dialog-body">
@@ -141,7 +141,7 @@
   <dialog class="cap-dialog" data-cap="confirm-dialog" data-placement="center" data-size="md" role="alertdialog" data-specimen-open aria-labelledby="busy-title" aria-describedby="busy-desc busy-list" aria-busy="true">
     <div class="cap-dialog-header">
       <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
-      <h2 class="cap-dialog-title" id="busy-title">Revoke foxhound-driver?</h2>
+      <h2 class="cap-dialog-title" id="busy-title">Revoke deploy-agent?</h2>
       <p class="cap-dialog-description" id="busy-desc">This cannot be undone. The agent stops working at once.</p>
     </div>
     <div class="cap-dialog-body">
@@ -167,7 +167,7 @@
   <dialog class="cap-dialog" data-cap="confirm-dialog" data-placement="center" data-size="md" role="alertdialog" data-specimen-open aria-labelledby="error-title" aria-describedby="error-desc error-list">
     <div class="cap-dialog-header">
       <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
-      <h2 class="cap-dialog-title" id="error-title">Revoke foxhound-driver?</h2>
+      <h2 class="cap-dialog-title" id="error-title">Revoke deploy-agent?</h2>
       <p class="cap-dialog-description" id="error-desc">This cannot be undone. The agent stops working at once.</p>
     </div>
     <div class="cap-dialog-body">
@@ -223,13 +223,13 @@
   <dialog class="cap-dialog" data-cap="confirm-dialog" data-placement="center" data-size="md" role="alertdialog" data-specimen-open aria-labelledby="te-title" aria-describedby="te-desc te-list">
     <div class="cap-dialog-header">
       <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
-      <h2 class="cap-dialog-title" id="te-title">Delete the germomics.org record?</h2>
+      <h2 class="cap-dialog-title" id="te-title">Delete the example.org record?</h2>
       <p class="cap-dialog-description" id="te-desc">This cannot be recovered. There is no backup of a site record.</p>
     </div>
     <div class="cap-dialog-body">
       <ul id="te-list">
         <li>Its 7 days of uptime history are deleted.</li>
-        <li>The watcher stops checking germomics.org on its next pass.</li>
+        <li>The watcher stops checking example.org on its next pass.</li>
         <li>An audit row records the deletion under your name.</li>
       </ul>
       <div class="cap-confirm-typed">
@@ -253,13 +253,13 @@
   <dialog class="cap-dialog" data-cap="confirm-dialog" data-placement="center" data-size="md" role="alertdialog" data-specimen-open aria-labelledby="tm-title" aria-describedby="tm-desc tm-list">
     <div class="cap-dialog-header">
       <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
-      <h2 class="cap-dialog-title" id="tm-title">Delete the germomics.org record?</h2>
+      <h2 class="cap-dialog-title" id="tm-title">Delete the example.org record?</h2>
       <p class="cap-dialog-description" id="tm-desc">This cannot be recovered. There is no backup of a site record.</p>
     </div>
     <div class="cap-dialog-body">
       <ul id="tm-list">
         <li>Its 7 days of uptime history are deleted.</li>
-        <li>The watcher stops checking germomics.org on its next pass.</li>
+        <li>The watcher stops checking example.org on its next pass.</li>
         <li>An audit row records the deletion under your name.</li>
       </ul>
       <div class="cap-confirm-typed">
@@ -294,13 +294,13 @@
   document.querySelector("[data-specimen-action='revoke']")?.addEventListener("click", async (e) => {
     const row = e.currentTarget.closest("li");
     const done = await confirm({
-      title: "Revoke foxhound-driver?",
+      title: "Revoke deploy-agent?",
       lead: "This cannot be undone. The agent stops working at once.",
       body: ["Its key stops being accepted.", "Its 1 claimed job goes back to the queue.", "An audit row records the revocation under your name."],
       action: "Revoke agent",
       perform: () => wait(() => row?.remove()),
     });
-    if (said) said.textContent = done ? "Revoked foxhound-driver." : "Nothing changed.";
+    if (said) said.textContent = done ? "Revoked deploy-agent." : "Nothing changed.";
   });
   document.querySelector("[data-specimen-action='fail']")?.addEventListener("click", async () => {
     let given = "";
@@ -316,13 +316,13 @@
   });
   document.querySelector("[data-specimen-action='delete']")?.addEventListener("click", async () => {
     const done = await confirm({
-      title: "Delete the germomics.org record?",
+      title: "Delete the example.org record?",
       lead: "This cannot be recovered. There is no backup of a site record.",
-      body: ["Its 7 days of uptime history are deleted.", "The watcher stops checking germomics.org on its next pass.", "An audit row records the deletion under your name."],
+      body: ["Its 7 days of uptime history are deleted.", "The watcher stops checking example.org on its next pass.", "An audit row records the deletion under your name."],
       action: "Delete record",
       typeToConfirm: "delete",
       perform: () => wait(() => undefined),
     });
-    if (said) said.textContent = done ? "Deleted the germomics.org record." : "Nothing changed.";
+    if (said) said.textContent = done ? "Deleted the example.org record." : "Nothing changed.";
   });
 </script>

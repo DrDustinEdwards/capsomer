@@ -133,7 +133,7 @@ interface Renaming {
   version?: string;
 }
 
-// A slug as the contract's ContentId takes it ("notes-on-lambda"). The kit checks it again.
+// A slug as the contract's ContentId takes it ("notes-on-the-survey"). The kit checks it again.
 const SLUG = "[A-Za-z0-9][A-Za-z0-9._\\-]{0,199}";
 
 // The small dialog Rename… opens (site-api v0.17.0): the new slug, starting at the old one, and

@@ -26,7 +26,7 @@ function pane(scheme: "light" | "dark"): string {
   <figcaption id="mk-${s}-cap" class="make-pane-cap">${scheme === "light" ? "Light" : "Dark"}</figcaption>
   <div class="make-pane-body">
     <div class="make-pane-head">
-      <p class="make-pane-title">Phage λ notes</p>
+      <p class="make-pane-title">Field notes</p>
       <p class="make-pane-sub">Last saved at 14:02. <a href="#mk-${s}-name">Edit the name</a></p>
     </div>
     <div class="make-row">
@@ -37,11 +37,11 @@ function pane(scheme: "light" | "dark"): string {
     <div class="cap-field">
       <label class="cap-field-label" for="mk-${s}-name">Site name</label>
       <p class="cap-field-help" id="mk-${s}-name-h">Shown at the top of every page.</p>
-      <input class="cap-input" id="mk-${s}-name" value="Phage λ notes" autocomplete="off" aria-describedby="mk-${s}-name-h" />
+      <input class="cap-input" id="mk-${s}-name" value="Field notes" autocomplete="off" aria-describedby="mk-${s}-name-h" />
     </div>
     <div class="cap-field">
       <label class="cap-field-label" for="mk-${s}-url">Address</label>
-      <input class="cap-input" id="mk-${s}-url" value="http://phage.example.com" autocomplete="off" aria-invalid="true" aria-describedby="mk-${s}-url-e" />
+      <input class="cap-input" id="mk-${s}-url" value="http://notes.example.com" autocomplete="off" aria-invalid="true" aria-describedby="mk-${s}-url-e" />
       <p class="cap-field-error" id="mk-${s}-url-e">Use https://.</p>
     </div>
     <div class="make-row">
@@ -88,7 +88,7 @@ function pane(scheme: "light" | "dark"): string {
         </table>
       </div>
     </section>
-    <code class="make-pane-code">phage-λ.example.com/methods</code>
+    <code class="make-pane-code">field-notes.example.com/methods</code>
   </div>
 </figure>`;
 }

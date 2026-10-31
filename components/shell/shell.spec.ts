@@ -231,9 +231,9 @@ eachTheme((theme) => {
   test("accessibility: the logo is decorative, and the brand link is named by the name or by brandLabel", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "shell", theme, "logo");
     await expect(page.locator(".cap-shell-brand .cap-shell-logo")).toHaveAttribute("aria-hidden", "true");
-    await expect(page.getByRole("link", { name: /^foxhound\.app/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^example\.org/ })).toBeVisible();
     await visitStates(page, "shell", theme, "logo-only");
-    await expect(page.getByRole("link", { name: "foxhound.app", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "example.org", exact: true })).toBeVisible();
   });
 
   test("behavior: the logo is held to the bar's height and kept in proportion, never stretched", async ({ page }) => {

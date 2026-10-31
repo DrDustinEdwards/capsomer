@@ -38,7 +38,7 @@ Beside the editor of a post or page, so the person sees the title, description a
 
 ```html
 <div class="cap-serp" role="group" aria-label="Search result preview">
-  <p class="cap-serp-url">dustinedwards.info › blog › post</p>
+  <p class="cap-serp-url">example.com › blog › post</p>
   <p class="cap-serp-title">Title</p>
   <p class="cap-serp-description">Description</p>
   <p class="cap-serp-note">Optional note</p>
@@ -47,7 +47,7 @@ Beside the editor of a post or page, so the person sees the title, description a
 <div class="cap-og-card" role="group" aria-label="Social card preview">
   <div class="cap-og-card-image"><img src="..." alt="..." width="1200" height="630" /></div>
   <div class="cap-og-card-body">
-    <p class="cap-og-card-host">dustinedwards.info</p>
+    <p class="cap-og-card-host">example.com</p>
     <p class="cap-og-card-title">Title</p>
     <p class="cap-og-card-description">Description (optional)</p>
   </div>
