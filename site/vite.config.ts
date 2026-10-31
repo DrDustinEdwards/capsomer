@@ -3,12 +3,12 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { subresourceIntegrity } from "@dustinedwards/site-runtime/sri";
 import { generateStates } from "../bin/states.mjs";
 import { readData, renderComponent, renderHome } from "./home.ts";
 import { renderMake } from "./make.ts";
 import { SEARCH_PAGE, renderSearch, searchIndexJson } from "./search.ts";
 import { writePreloadFile } from "../scripts/preload.ts";
-import { writeHeadersFile } from "../scripts/security-headers.ts";
 import { ICON_TAGS, MAKE_DESCRIPTION, discoveryFiles, siteHead } from "./seo.ts";
 
 // One build for the site and every component's states page. The root is the repo, so a
@@ -88,17 +88,19 @@ export default defineConfig({
         this.emitFile({ type: "asset", fileName: "search.json", source: searchIndexJson(data) });
       },
     },
-    // The security headers and the assets' cache rule, generated from scripts/security-headers.ts
-    // into site-dist/_headers, which Workers static assets reads; and the home page's preload header, from the
-    // hashed names just written, into worker/preload.generated.json, which the Worker bundles (scripts/preload.ts).
+    // The home page's preload header, from the hashed names just written, into worker/preload.generated.json,
+    // which the Worker bundles (scripts/preload.ts). The security headers are site-runtime-headers', from the
+    // site's registry entry, which `npm run site` writes into site-dist/_headers after the build.
     {
-      name: "capsomer-site-headers",
+      name: "capsomer-site-preload",
       apply: "build",
       writeBundle() {
-        writeHeadersFile(outDir);
         writePreloadFile(outDir, resolve(root, "worker"));
       },
     },
+    // A sha384 integrity and crossorigin on every script and modulepreload the build wrote (theme.js included),
+    // for Integrity-Policy.
+    subresourceIntegrity(),
   ],
   build: {
     outDir,
