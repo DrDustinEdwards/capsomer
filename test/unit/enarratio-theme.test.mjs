@@ -1,20 +1,19 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import { checkTheme, defineTheme, stylesheet } from "enarratio";
-import { capsomerTheme } from "../../tokens/enarratio-theme.mjs";
+import { capsomerMoreTheme, capsomerTheme } from "../../tokens/enarratio-theme.mjs";
 import { FAMILIES, contrast, themes } from "../../tokens/palette.mjs";
-import { SERIES_MIN_DE, chartChecks } from "../../tokens/chart-checks.mjs";
+import { chartChecks } from "../../tokens/chart-checks.mjs";
 
-// Enarratio is a dev dependency for this check only: Capsomer never imports it at run time.
-test("capsomerTheme is a valid Enarratio theme and passes Enarratio's own checkTheme", () => {
-  defineTheme(capsomerTheme);
-  const report = checkTheme(capsomerTheme);
-  const errors = report.issues.filter((i) => i.severity === "error");
-  assert.deepEqual(errors, [], errors.map((e) => e.message).join("\n"));
-  assert.equal(report.ok, true);
-  // A warning is two series closer than Enarratio's default 10 but still at Capsomer's own floor.
-  for (const w of report.issues) assert.ok(w.measured >= SERIES_MIN_DE, w.message);
-  assert.ok(stylesheet(capsomerTheme).includes("--enarratio-series-8"));
+// Enarratio is a dev dependency for this check only: the tokens never import it. Its stylesheet()
+// throws on any error, a pair of series closer than 10 CIEDE2000 under any color vision included.
+test("capsomerTheme and capsomerMoreTheme pass Enarratio's own checkTheme, so stylesheet() takes them", () => {
+  for (const theme of [capsomerTheme, capsomerMoreTheme]) {
+    defineTheme(theme);
+    const report = checkTheme(theme);
+    assert.deepEqual(report.issues, [], report.issues.map((e) => e.message).join("\n"));
+  }
+  assert.ok(stylesheet(capsomerTheme, { highContrast: capsomerMoreTheme }).includes("prefers-contrast: more"));
 });
 
 test("capsomerTheme is built from the tokens: series 1 to 3 are the three families' step 9", () => {
@@ -44,8 +43,8 @@ test("css/enarratio.css defines every --enarratio-* color and font property the 
   const ours = readFileSync(new URL("../../css/enarratio.css", import.meta.url), "utf8");
   const bare = new Set([...base.matchAll(/var\((--enarratio-[\w-]+)\s*\)/g)].map((m) => m[1]));
   assert.ok(bare.size > 10, "found the properties without a fallback");
-  // --enarratio-slot and --enarratio-length are set by each chart element itself.
-  const missing = [...bare].filter((name) => !["--enarratio-slot", "--enarratio-length"].includes(name) && !new RegExp(`${name}:`).test(ours));
+  // Some (--enarratio-slot, --enarratio-texture) are set by the base rules or each chart element itself.
+  const missing = [...bare].filter((name) => !["--enarratio-length"].includes(name) && !new RegExp(`${name}:`).test(base) && !new RegExp(`${name}:`).test(ours));
   assert.deepEqual(missing, []);
 });
 

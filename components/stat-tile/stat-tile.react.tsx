@@ -1,6 +1,5 @@
+import { dataTableBlock, type DataTable } from "enarratio";
 import { Children, useId, type ReactNode } from "react";
-import { ChartData } from "../chart-frame/chart-frame.react.tsx";
-import type { DataTable } from "../chart-frame/chart-frame.ts";
 
 export type StatTone = "ok" | "warn" | "crit" | "nodata";
 
@@ -19,13 +18,13 @@ interface StatTileBase {
   // Shown with a status glyph when the tone is warn or crit.
   word?: string;
   detail?: ReactNode;
-  // Enarratio's sparkline() output, an SVG string, placed in the chart slot as it comes.
+  // Enarratio's sparkline({ ..., inline: true }) output, an SVG string, placed in the chart slot as it comes.
   chart?: string;
   // One sentence with the chart's numbers: "Actions minutes per day, last 7 days: 260 rising to 340."
   chartSummary?: string;
   // The chart's numbers (Enarratio's sparklineTable().table). With it the tile sits in a chart
-  // frame and "Show data" opens the table under the tile, outside the link. Name it in
-  // chartTableLabel ("Actions minutes by day").
+  // frame and Enarratio's "Show data" opens the table under the tile, outside the link. Name it
+  // in chartTableLabel ("Actions minutes by day").
   chartTable?: DataTable;
   chartTableLabel?: string;
   // Opens the view behind the figure: a link with href, or a button with onClick.
@@ -115,27 +114,25 @@ export function StatTile(props: StatTileProps) {
       </button>
     );
 
-  // With a table the tile joins the chart frame: the sentence is the frame's summary (hidden
-  // visually, still text), and "Show data" sits under the tile, never inside the link.
+  const summary = describedBy ? (
+    <span className="cap-sr-only" id={describedBy}>
+      {chartSummary}
+    </span>
+  ) : null;
+  // With a table the tile joins the chart frame: "Show data" sits under the tile, never inside the link.
   if (describedBy && chartTable) {
     return (
-      <div className="cap-chart" data-variant="tile" data-summary="hidden">
+      <div className="cap-chart" data-variant="tile">
         {tile}
-        <p className="cap-chart-summary" id={describedBy}>
-          {chartSummary}
-        </p>
-        <ChartData table={chartTable} label={chartTableLabel ?? `${label}, by period`} />
+        {summary}
+        <div dangerouslySetInnerHTML={{ __html: dataTableBlock(chartTable, chartTableLabel ?? `${label}, by period`) }} />
       </div>
     );
   }
   return (
     <>
       {tile}
-      {describedBy ? (
-        <span className="cap-sr-only" id={describedBy}>
-          {chartSummary}
-        </span>
-      ) : null}
+      {summary}
     </>
   );
 }

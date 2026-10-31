@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.52.0",
+  "version": "0.53.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
   "license": "MIT",
   "type": "module",
@@ -139,8 +139,8 @@
   },
   "peerDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@capsizecss/unpack": "^4.0.1",
     "@base-ui/react": "^1.8.0",
+    "@capsizecss/unpack": "^4.0.1",
     "@codemirror/commands": "^6.10.4",
     "@codemirror/lang-markdown": "^6.5.1",
     "@codemirror/language": "^6.12.4",
@@ -149,6 +149,7 @@
     "@dustinedwards/site-runtime": ">=0.29.0",
     "@lezer/highlight": "^1.2.3",
     "@playwright/test": "^1.50.0",
+    "enarratio": "^0.4.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^8.0.0"
@@ -157,10 +158,10 @@
     "@axe-core/playwright": {
       "optional": true
     },
-    "@capsizecss/unpack": {
+    "@base-ui/react": {
       "optional": true
     },
-    "@base-ui/react": {
+    "@capsizecss/unpack": {
       "optional": true
     },
     "@codemirror/commands": {
@@ -187,6 +188,9 @@
     "@playwright/test": {
       "optional": true
     },
+    "enarratio": {
+      "optional": true
+    },
     "react": {
       "optional": true
     },
@@ -206,7 +210,7 @@
     "@codemirror/language": "^6.12.4",
     "@codemirror/state": "^6.7.1",
     "@codemirror/view": "^6.43.7",
-    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.18.0",
+    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.20.0",
     "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.20.3",
     "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.41.0",
     "@fontsource-variable/source-serif-4": "^5.3.0",
@@ -222,7 +226,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "enarratio": "0.3.1",
+    "enarratio": "0.4.0",
     "jscpd": "^5.3.2",
     "knip": "^6.38.0",
     "react": "^19.3.0",

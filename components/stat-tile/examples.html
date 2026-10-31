@@ -1,20 +1,17 @@
 <section class="cap-specimen" aria-labelledby="s-grid">
   <h2 id="s-grid">A row of every tone</h2>
-  <p class="cap-muted">Sparklines: stand-in for Enarratio's output.</p>
+  <p class="cap-muted">Sparklines and tables: Enarratio's output, drawn when this page was built.</p>
   <div class="cap-tiles">
     <ul class="cap-tiles-list" aria-label="Overview figures">
       <li>
-        <div class="cap-chart" data-variant="tile" data-summary="hidden" id="grid-sites-chart-frame">
+        <div class="cap-chart" data-variant="tile" id="grid-sites-chart-frame">
           <a class="cap-tile" href="#sites" data-tone="ok" aria-describedby="grid-sites-chart">
           <span class="cap-tile-line"><span class="cap-tile-figure">6 <small>of 6</small></span><span class="cap-tile-label">Sites up</span><span class="cap-tile-word">All up</span></span>
           <span class="cap-tile-detail">Watcher pass 40 seconds ago</span>
-          <span class="cap-tile-chart" aria-hidden="true"><svg viewBox="0 0 86 22" preserveAspectRatio="none" focusable="false"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="1,11 15,11 29,11 43,11 57,11 71,11 85,11" /></svg></span>
+          <span class="cap-tile-chart" aria-hidden="true"><!-- build:sitesSpark --></span>
         </a>
-          <p class="cap-chart-summary" id="grid-sites-chart">Sites up, last 7 days: 6 of 6 every day.</p>
-          <details class="cap-disclosure cap-chart-data" data-variant="accordion">
-            <summary><span class="cap-chart-show">Show data</span><span class="cap-chart-hide">Hide data</span></summary>
-            <div class="cap-table-wrap" role="region" aria-label="Sites up by day" tabindex="0"><table class="cap-table"><thead><tr><th scope="col">Day</th><th scope="col" data-num>Sites up</th></tr></thead><tbody><tr><th scope="row">Thu, Sep 24</th><td data-num>6</td></tr><tr><th scope="row">Fri, Sep 25</th><td data-num>6</td></tr><tr><th scope="row">Sat, Sep 26</th><td data-num>6</td></tr><tr><th scope="row">Sun, Sep 27</th><td data-num>6</td></tr><tr><th scope="row">Mon, Sep 28</th><td data-num>6</td></tr><tr><th scope="row">Tue, Sep 29</th><td data-num>6</td></tr><tr><th scope="row">Wed, Sep 30</th><td data-num>6</td></tr></tbody></table></div>
-          </details>
+          <span class="cap-sr-only" id="grid-sites-chart">Sites up, last 7 days: 6 of 6 every day.</span>
+          <!-- build:sitesTable -->
         </div>
       </li>
       <li>
@@ -24,17 +21,14 @@
         </button>
       </li>
       <li>
-        <div class="cap-chart" data-variant="tile" data-summary="hidden" id="grid-budget-chart-frame">
+        <div class="cap-chart" data-variant="tile" id="grid-budget-chart-frame">
           <a class="cap-tile" href="#budget" data-tone="crit" aria-describedby="grid-budget-chart">
           <span class="cap-tile-line"><span class="cap-tile-figure">2,140 <small>of 2,000</small></span><span class="cap-tile-label">Actions minutes</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 1h6l4 4v6l-4 4H5l-4-4V5z" /><path fill="var(--surface)" d="M7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z" /></svg>Over limit</span></span>
           <span class="cap-tile-detail">$4.10 of $10 model spend this month</span>
-          <span class="cap-tile-chart" aria-hidden="true"><svg viewBox="0 0 86 22" preserveAspectRatio="none" focusable="false"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="1,20 15,16 29,10 43,12 57,6 71,8 85,4" /></svg></span>
+          <span class="cap-tile-chart" aria-hidden="true"><!-- build:budgetSpark --></span>
         </a>
-          <p class="cap-chart-summary" id="grid-budget-chart">Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.</p>
-          <details class="cap-disclosure cap-chart-data" data-variant="accordion">
-            <summary><span class="cap-chart-show">Show data</span><span class="cap-chart-hide">Hide data</span></summary>
-            <div class="cap-table-wrap" role="region" aria-label="Actions minutes by day" tabindex="0"><table class="cap-table"><thead><tr><th scope="col">Day</th><th scope="col" data-num>Minutes</th></tr></thead><tbody><tr><th scope="row">Thu, Sep 24</th><td data-num>260</td></tr><tr><th scope="row">Fri, Sep 25</th><td data-num>280</td></tr><tr><th scope="row">Sat, Sep 26</th><td data-num>310</td></tr><tr><th scope="row">Sun, Sep 27</th><td data-num>300</td></tr><tr><th scope="row">Mon, Sep 28</th><td data-num>330</td></tr><tr><th scope="row">Tue, Sep 29</th><td data-num>320</td></tr><tr><th scope="row">Wed, Sep 30</th><td data-num>340</td></tr></tbody></table></div>
-          </details>
+          <span class="cap-sr-only" id="grid-budget-chart">Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.</span>
+          <!-- build:budgetTable -->
         </div>
       </li>
       <li>
@@ -47,7 +41,7 @@
         <button type="button" class="cap-tile" data-tone="warn" aria-describedby="grid-d1-chart">
           <span class="cap-tile-line"><span class="cap-tile-figure">78% <small>of today's limit</small></span><span class="cap-tile-label">D1 rows read</span><span class="cap-tile-word"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.2 15.4 14H.6z" /><path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" /></svg>Near limit</span></span>
           <span class="cap-tile-detail">3.9 million of 5 million</span>
-          <span class="cap-tile-chart" aria-hidden="true"><svg viewBox="0 0 86 22" preserveAspectRatio="none" focusable="false"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="1,20.7 15,16.7 29,14.7 43,12.7 57,8.7 71,6 85,3.3" /></svg></span>
+          <span class="cap-tile-chart" aria-hidden="true"><!-- build:d1Spark --></span>
         </button>
         <span class="cap-sr-only" id="grid-d1-chart">D1 rows read at this hour, last 7 days, rising: 52, 58, 61, 64, 70, 74 and 78 percent.</span>
       </li>
@@ -193,3 +187,4 @@
     </div>
   </main>
 </template>
+<script type="module" src="../../site/charts.ts"></script>

@@ -1,87 +1,92 @@
 ---
 name: chart-frame
 title: Chart frame
-summary: A title, one sentence that says what the chart shows, the chart, and its numbers as a table behind a "Show data" disclosure that is closed unless asked open.
+summary: The layout every chart sits in, around Enarratio's own figure (its title, the sentence that says what it shows, the chart, its summary, source and CSV link, and the numbers behind "Show data"), redrawn to its width in React.
 parts: [css, react]
 tool: native
-states: [closed, open by option, sparkline, uptime strip, progress ring, heat strip with a gap, no data, summary kept for screen readers, comfortable density, narrow column]
+states: [bar, line, area, sparkline, uptime strip, heat strip with a gap, progress ring, timeline, data open with notes and source, no data, redrawn to its width, refused, comfortable density, narrow column, every family]
 added: 0.3.0
+updated: 0.53.0
 source: Capsomer 0.2's uptime strip ("The numbers, by day") and stat tile (the sparkline's hidden summary), generalized; shadcn/ui Chart and Card for the head and the quiet frame
 replaces:
   - 'class="(chart-card|chart-wrap|chart-frame)'
   - "className=\"(chart-card|chart-wrap|chart-frame)"
+  - "function (EnarratioFigure|EnarFigure|EnarChart)\b"
 ---
 
 # Chart frame
 
-What every chart sits in. Enarratio draws the chart and reads its colors, fonts, sizes and timings from `--enarratio-*` properties that Capsomer maps onto its tokens (`css/enarratio.css`); this frame is the rest: a title, a sentence that says what the chart shows, the chart, and the numbers behind it.
+What every chart sits in. Enarratio draws the whole figure: the title, a subtitle, the finding (one sentence that says what the chart shows, with its numbers), the chart, a summary computed from the data, notes, the source line with a "Download CSV" link, and the numbers behind "Show data". Its colors, fonts, sizes and timings come from `--enarratio-*` properties that Capsomer maps onto its tokens (`css/enarratio.css`). The frame is only the layout around that figure: the family's type for its head, "Show data" as an action, a place after the figure for a legend, the no-data state, and, in React, a redraw to the width it is given.
 
 ## When to use it
 
-Any chart a person reads: a trend, an uptime strip, a progress ring, a heat strip, a bar or line chart. The stat tile and the uptime strip are built from it.
+Any chart a person reads: a bar, line or area chart, a sparkline, an uptime strip, a heat strip, a progress ring, a timeline. The stat tile and the uptime strip are built on it.
 
 ## When not to
 
 - A value against a limit is a meter (`.cap-meter`), which is not a chart.
 - A table of figures that is the content itself is a table. The frame is for a picture whose numbers are the alternative.
-- A chart in a sentence or a table cell (a sparkline beside a word) needs no frame; use the piece alone and put its summary in the cell.
+- A chart in a sentence or a table cell (a sparkline beside a word) needs no frame: draw it with `inline: true` and put its summary in the cell.
 
 ## The default and its reason
 
-- **The summary is one sentence, in the HTML, visible.** It says what the chart shows with its numbers ("Actions minutes per day, last 7 days: 7 values, from 260 to 340; lowest 260, highest 340."). Enarratio's companion functions (`sparklineTable`, `uptimeStripTable`, `progressRingTable`, `heatStripTable`) return this sentence and the table, computed from the same values as the drawing, so neither can disagree with the picture. The figure is named by the title and described by the sentence, so a screen reader hears both and an AI agent or a search engine reads the chart as text. `data-summary="hidden"` keeps the sentence for screen readers only, for a piece that already names itself (a stat tile).
-- **The table is in the HTML, behind "Show data".** A native `details` (the disclosure component's accordion variant), so it works without script, opens with find-in-page and prints when opened. Closed by default, because most readers want the picture and the table is for checking it; `open` (React) or the `open` attribute shows it when the page loads. The label says what a press does ("Show data", then "Hide data"; only one is ever in the accessibility tree). shadcn's Chart has no table at all: charts are images there.
-- **The table is the table component's**, in a named, focusable region (a keyboard can only scroll what it can focus), the first column as row headers, a column of figures right-aligned in tabular numerals.
-- **No data is a state with its reason**, in the summary's place, with the status glyph and word; there is no empty chart and no table.
-- **The head is a heading**, level 3 by default (`level` sets 2 to 4), with an optional figure at the end of the line (an uptime percent). The frame has no border of its own: it sits in a panel or on the page, as shadcn's Chart sits in a Card.
-- **A chart that brings its own figure** (an Enarratio bar or line chart draws a title and a closed "Data table" disclosure) goes in the body with `data-table="own"` on the frame: the figure's title is dropped (the frame's head is the title) and its disclosure takes the same look. The label stays Enarratio's "Data table"; for "Show data" everywhere, draw the piece with the primitives and their companion tables, which is what the stat tile and the uptime strip do.
-- **Colors are never set here.** The chart's series, text, axes and grid come from `--enarratio-*`, mapped to `--series-1` to `--series-8`, `--ramp-1` to `--ramp-5`, `--text`, `--muted`, `--line` (css/enarratio.css), so a token change reaches every chart in both themes and every family.
+- **One figure, Enarratio's.** The frame builds no head, sentence or table of its own: Enarratio's figure has them all, in the HTML with scripts off, computed from the same values as the drawing, so the words and the table cannot disagree with the picture, and two copies cannot drift. Pass `title`, `subtitle`, `alt` (the finding), `notes` and `source` to the chart.
+- **The table is in the HTML, behind "Show data"**, closed by default, a native `details` that works without script, opens with find-in-page and prints open. Enarratio labels it "Show data", then "Hide data"; the frame makes the label read as an action, at a full target's height.
+- **No data is a state with its reason**, in the chart's place, with the status glyph and word; there is no empty chart and no table.
+- **Drawn to its width.** A chart drawn at one width and shrunk to a phone shrinks its text. In React, `ChartFrame` draws at 640 on the server and before the first measurement (so hydration matches), then redraws at its own width in 40 px steps, keeping "Show data" open if the reader opened it. A chart Enarratio refuses says why in its place, not the page's.
+- **`data-head="inline"`** puts the subtitle at the end of the title's line, for a figure such as "99.4% up over 7 days".
+- **Colors are never set here.** The series, ramp, text, axes and grid come from the tokens through `css/enarratio.css`, so a token change reaches every chart in both themes and every family. Every pair of series is 10 CIEDE2000 apart under every color vision; under "increase contrast" the family's stronger text and lines reach the chart, and forced colors are Enarratio's.
 
 ## The shadcn component it matches
 
-Chart (`chart.tsx`: ChartContainer, ChartTooltip, ChartLegend) inside Card (CardHeader, CardTitle, CardDescription, CardContent). Matched: the header with a title and a muted description, the chart on the surface with no chrome, the accordion disclosure. Different on purpose: the description is the chart's text alternative, with its numbers, not marketing copy; the data table is part of the frame, because a chart that only exists as a picture fails 1.1.1 for the reader who cannot see it.
+Chart inside Card. Matched: the quiet head with a title and a muted description, the chart on the surface with no chrome. Different on purpose: the description is the chart's finding with its numbers, and the data table, the summary and the source are part of the figure, because a chart that only exists as a picture fails 1.1.1 for the reader who cannot see it.
 
 ## Keyboard
 
 | Key | Does |
 | --- | --- |
-| Tab | Reaches "Show data"; once open, the table's scroll region |
+| Tab | Reaches the CSV link and "Show data"; once open, the table's sort buttons. With `enarratio/enhance`, the chart is one tab stop |
 | Enter or Space on "Show data" | Opens or closes the table |
-| Arrow keys on the table region | Scroll the table |
-
-The chart itself is an image and takes no tab stop (Enarratio's own enhancement layer adds its own keyboard model for its interactive charts).
+| Arrow keys, Home, End, Page Up, Page Down in an enhanced chart | Move between points (Enarratio's keys) |
 
 ## Accessibility
 
-- `figure` named by the title (`aria-labelledby`) and described by the summary (`aria-describedby`).
-- Enarratio's SVG is `role="img"` with a label that states the values; the title and summary say them again in text.
-- The disclosure's summary is announced as a button with its expanded state by the browser.
-- The table has row and column headers and a name; the region is focusable.
-- Series colors are at least 3:1 against the surface, every pair is apart under protanopia, deuteranopia and tritanopia, and no series color is read as a status color; the palette check verifies it (`npm run check`).
+- Enarratio's `figure` is named by its `figcaption` (the title); the SVG is `role="img"` named by the finding, which is shown once for the eye and read once by a screen reader; a hidden overview states the type, series and axes before the chart.
+- The table has row and column headers and a caption; the CSV link is built from the same rows.
+- The no-data state is a `figure` named by its title, with the reason as text.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ## Markup
 
 ```html
-<figure class="cap-chart" aria-labelledby="c1-title" aria-describedby="c1-summary">
-  <div class="cap-chart-head">
-    <h3 class="cap-chart-title" id="c1-title">Actions minutes per day</h3>
-    <span class="cap-chart-meta">340 min today</span>
-  </div>
-  <p class="cap-chart-summary" id="c1-summary">Actions minutes per day, last 7 days: 7 values, from 260 to 340.</p>
-  <div class="cap-chart-body">[sparkline() from Enarratio]</div>
-  <details class="cap-disclosure cap-chart-data" data-variant="accordion">
-    <summary><span class="cap-chart-show">Show data</span><span class="cap-chart-hide">Hide data</span></summary>
-    <div class="cap-table-wrap" role="region" aria-label="Actions minutes per day, last 7 days" tabindex="0">
-      <table class="cap-table">[Position, Actions minutes per day]</table>
-    </div>
-  </details>
+<div class="cap-chart">
+  <div class="cap-chart-figure">[barChart({ title, subtitle, alt, source, ... }) from Enarratio: a figure.enarratio]</div>
+  [an optional legend]
+</div>
+
+<figure class="cap-chart" data-state="nodata">
+  <figcaption class="cap-chart-title">Requests per hour</figcaption>
+  <p class="cap-chart-reason"><span class="cap-status" data-tone="nodata">[glyph]No data</span> The health route has not reported yet.</p>
 </figure>
 ```
 
-On a server without React: `import { frameHtml, tableHtml } from "capsomer/behavior/chart-frame"`; `frameHtml({ id, title, summary, chart, table, open })` returns the figure as a string (text is escaped; `chart` is trusted markup). In React: `import { ChartFrame, ChartData } from "capsomer/react/chart-frame"`: `<ChartFrame title summary chart={sparkline(options)} table={sparklineTable(options).table} open />`; `ChartData` is the disclosure alone, for a piece that has its own title and summary.
+On a server without React: `import { frameHtml, noDataHtml } from "capsomer/behavior/chart-frame"`; `frameHtml(figure, { inline, after })` and `noDataHtml(title, reason)` return the strings (the reason and title are escaped; the figure and `after` are trusted markup).
 
-Enarratio in an app that loads Capsomer: load `capsomer/tokens.css` (it imports the mapping) and Enarratio's `base.css`; or draw with `stylesheet(capsomerTheme)` from `capsomer/enarratio-theme`. Both give the same look.
+In React: `import { ChartFrame } from "capsomer/react/chart-frame"`.
+
+```tsx
+import { barChart } from "enarratio/lite/bar";
+import { enhance } from "enarratio/enhance";
+
+<ChartFrame draw={(width) => barChart({ ...options, width })} onDraw={(el) => { const c = enhance(el); return () => c.forEach((x) => x.destroy()); }} />
+<ChartFrame chart={uptimeStrip(options)} inline>{legend}</ChartFrame>
+<ChartFrame noData={{ title: "Requests per hour", reason: "The health route has not reported yet." }} />
+```
+
+Props: `draw(width)` (redrawn to the frame's width) or `chart` (a figure drawn once), `width` (the server's width, 640), `minWidth` (240), `noData`, `inline`, `onDraw(el)` (after each draw; may return a cleanup), `className`, `children` (after the figure).
+
+The page loads `capsomer/tokens.css` (it imports the mapping) and Enarratio's `base.css`, or `stylesheet(capsomerTheme, { highContrast: capsomerMoreTheme })` from `capsomer/enarratio-theme`; both give the same look. A chart with a `colors` override also needs `colorStyles(html)` in the page's CSS (Enarratio 0.4 writes no `style` attribute).
 
 ## Exceptions in production
 

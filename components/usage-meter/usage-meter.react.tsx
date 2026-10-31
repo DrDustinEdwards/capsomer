@@ -1,7 +1,8 @@
+import { dataTableBlock } from "enarratio";
 import type { ReactNode } from "react";
 import { Meter } from "../meter/meter.react.tsx";
 import { Glyph } from "../status/status.react.tsx";
-import { assess, type UsageAssessment } from "./usage-meter.ts";
+import { assess, type UsageAssessment, usageTable } from "./usage-meter.ts";
 
 export interface UsageItem {
   id: string;
@@ -28,6 +29,8 @@ export interface UsageMeterProps {
   stale?: boolean;
   // The text legend under the bars; on by default.
   legend?: boolean;
+  // Names the numbers behind "Show data" (Enarratio's disclosure): "Usage against free limits".
+  tableLabel?: string;
 }
 
 function UsageRow({ item, a, stale }: { item: UsageItem; a: UsageAssessment; stale: boolean }) {
@@ -56,7 +59,7 @@ function UsageRow({ item, a, stale }: { item: UsageItem; a: UsageAssessment; sta
   );
 }
 
-export function UsageMeter({ items, now = Date.now(), freshness, stale = false, legend = true }: UsageMeterProps) {
+export function UsageMeter({ items, now = Date.now(), freshness, stale = false, legend = true, tableLabel = "Usage against free limits" }: UsageMeterProps) {
   return (
     <div className="cap-usage" data-cap="usage-meter" data-cap-ready="">
       {freshness != null && (
@@ -87,6 +90,7 @@ export function UsageMeter({ items, now = Date.now(), freshness, stale = false, 
           </li>
         </ul>
       )}
+      <div className="cap-chart" dangerouslySetInnerHTML={{ __html: dataTableBlock(usageTable(items.map((item) => ({ ...item, now }))), tableLabel) }} />
     </div>
   );
 }
