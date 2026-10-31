@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + React (composes tabs, field, select, table, status, menu, bulk bar, message, empty and confirm dialog)
 states: [editor with every action, after a bulk post with no script, reader, no delete and no tags, one page of many, sorted on the page only, scheduled updates, the waiting update, the waiting update for a reader, a site with site-api v0.16.0's ideas, filtered by author and dates, the Trash, a preview link with no script, no drafts, no match, delete confirmation page, delivered HTML]
 added: 0.6.0
-updated: 0.51.0
+updated: 0.52.0
 source: dustinedwards.info, app/routes/admin.posts._index.tsx, app/components/admin/posts-table.tsx, posts-filters.tsx, row-menu.tsx; Carrel, app/routes/project.tsx, project.bulk.ts (the outcome per item, the per-site gating); docs/design/design-content-components.md section 2.4.1
 replaces:
   - "PostsTable|PostsFilters|PostsToolbar"

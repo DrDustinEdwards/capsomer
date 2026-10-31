@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.51.0]
+## [0.52.0]
 
 The posts list posts the content kit's own intent names and shows what site-api v0.16.0 adds, each only where the kit offers it, each a form post that works with no script.
 
@@ -16,6 +16,12 @@ The posts list posts the content kit's own intent names and shows what site-api 
 - **Preview links** (`offers.previewLinks`): Get a preview link posts the new intent `preview-link`; `IntentResult.previewLink` (`{ url, expiresAt }`, new) shows in a status region named "Preview link", with Copy and the expiry in the reader's zone. New classes `.cap-posts-preview`, `.cap-posts-preview-row`. `useIntents` returns `latest`, the last result.
 - **New view data**, each optional: `PostOffers.trash`, `rename`, `previewLinks`, `filters` (`PostFilter[]`, new type), `authors`; `PostsQuery.author`, `from`, `to`, `trashed`.
 - **Media library doc**: the inspector shows a caption where the site keeps one (since site-api v0.10.0); the line that said the contract has none is fixed.
+
+## [0.51.0]
+
+The sites' own faces swap in without moving text.
+
+- **Site layers name their fallback faces.** foxing's DM Sans, DM Mono and Fraunces stacks, julieedwards.info's Open Sans and Montserrat, and txasm's Inter now list the matching `… Fallback` face second, so a site that also imports `capsomer/fallback-fonts.css` swaps fonts without moving text. A site that does not import it gets the next face in the stack, as before. Each such layer's header says to import it. No HTML contract changes.
 
 ## [0.50.0]
 
