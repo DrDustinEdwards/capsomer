@@ -148,5 +148,5 @@ jobs:
           origin=https://capsomer.dustinedwards.info
           key=$(sed -n 's/^const INDEXNOW_KEY = "\(.*\)";$/\1/p' site/seo.ts)
           curl -sf "$origin/sitemap.xml" -o "$RUNNER_TEMP/sitemap.xml"
-          prelum=$(node -p "require('./package.json').devDependencies['@drdustinedwards/site-helpers']")
+          prelum=$(node -p "const p = require('./package.json'); (p.dependencies ?? {})['@drdustinedwards/site-helpers'] ?? p.devDependencies['@drdustinedwards/site-helpers']")
           npx -y -p "$prelum" prelum-indexnow --origin "$origin" --key "$key" --sitemap "$RUNNER_TEMP/sitemap.xml"
