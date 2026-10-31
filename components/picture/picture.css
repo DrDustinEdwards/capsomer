@@ -1,0 +1,89 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Picture: what a stored image shows while it loads, and the pause control an animated one needs.
+   The same markup comes from site-runtime's pictureProps (a JSX page) and Prelum's renderer (a post),
+   so these rules are not held to the prose context. Colors, sizes and radii are tokens only. */
+@layer cap.components {
+  /* The stored placeholder (site-api's placeholder and color, made at upload): a tiny picture and the
+     main color in the img's own style attribute, under the image until its pixels paint over them.
+     The tiny picture is drawn at the box's size, which the browser smooths into a blur. A file with
+     transparency should carry no placeholder: it would show through. */
+  :where(img.has-lqip) {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  /* An animated image (a GIF, served as animated WebP) and its still: WCAG 2.2.2 asks for a way to
+     stop anything that moves for more than five seconds. The toggle is a checkbox, so it works with
+     no script; while it is checked, or when the reader asks the system for less motion, the still
+     shows instead. The still is lazy, so it costs nothing until it is shown. Which one shows is
+     !important because an important declaration in a layer beats a host's unlayered img rules
+     (img { display: block } in nearly every reset), which would otherwise show both. */
+  :where(.cap-motion) {
+    position: relative;
+    display: block;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+
+    & :where(.cap-motion-still) {
+      display: none !important;
+    }
+  }
+  :where(.cap-motion:has(.cap-motion-pause:checked)) {
+    & :where(picture, img:not(.cap-motion-still, picture > img)) {
+      display: none !important;
+    }
+    & :where(.cap-motion-still) {
+      display: block !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :where(.cap-motion) {
+      & :where(picture, img:not(.cap-motion-still, picture > img), .cap-motion-toggle) {
+        display: none !important;
+      }
+      & :where(.cap-motion-still) {
+        display: block !important;
+      }
+    }
+  }
+
+  :where(.cap-motion-toggle) {
+    position: absolute;
+    inset-block-end: var(--space-3);
+    inset-inline-start: var(--space-3);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--target);
+    padding-inline: var(--space-3) var(--space-4);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    box-shadow: var(--shadow-s);
+    color: var(--text);
+    font-family: var(--ui);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+
+    & :where(input) {
+      inline-size: 1rem;
+      block-size: 1rem;
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    /* The ring goes round the whole pill, where the eye already is, not the small box inside it. */
+    &:has(:focus-visible) {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+      & :where(input) {
+        outline: none;
+      }
+    }
+  }
+}

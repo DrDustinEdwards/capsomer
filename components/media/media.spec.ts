@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates, type Theme } from "../../test/helpers.ts";
-import { applyBulkTag, altStateOf, bands, byteSize, copySnippets, createAutosave, flagsFor, nextTile, parseTags, suggestedAlt } from "./media.ts";
+import { applyBulkTag, altStateOf, bands, byteSize, copySnippets, createAutosave, flagsFor, nextTile, parseTags } from "./media.ts";
 
 const FOX = "launch-hero.jpg";
 const UPTIME = "uptime-strip.png";
@@ -58,11 +58,10 @@ test("behavior: alt text has three states, and decorative is a choice that missi
   expect(flagsFor({ kind: "document", altState: "missing", used: [], state: "ready" }).map((f) => f.word)).toEqual(["Unattached"]);
 });
 
-test("behavior: sizes, suggested alt text, tags and the copy snippets", () => {
+test("behavior: sizes, tags and the copy snippets", () => {
   expect(byteSize(512)).toBe("512 B");
   expect(byteSize(421888)).toBe("412 kB");
   expect(byteSize(2516582)).toBe("2.4 MB");
-  expect(suggestedAlt("launch-hero_v2.jpg")).toBe("launch hero v2");
   expect(parseTags(" Release, dashboard,release,, ")).toEqual(["release", "dashboard"]);
   const img = copySnippets({ url: "https://x.test/a.png", kind: "image", alt: "A dashboard", name: "a.png" });
   expect(img.map((s) => s.value)).toEqual(["https://x.test/a.png", "![A dashboard](https://x.test/a.png)", '<img src="https://x.test/a.png" alt="A dashboard">']);

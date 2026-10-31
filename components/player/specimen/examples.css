@@ -1,0 +1,6 @@
+/* The specimen's sample layout: each player in a reading column. */
+.player-sample-column {
+  display: grid;
+  gap: var(--space-6);
+  max-inline-size: 46rem;
+}

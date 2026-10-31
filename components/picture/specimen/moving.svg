@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360"><rect width="640" height="360" fill="#1e1e1e"/><rect x="64" y="300" width="512" height="8" fill="#0b6e6e" opacity="0.6"/><circle cx="120" cy="180" r="56" fill="#0b6e6e"><animate attributeName="cx" values="120;520;120" dur="3s" repeatCount="indefinite"/></circle></svg>
