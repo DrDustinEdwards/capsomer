@@ -163,7 +163,7 @@
   }
   .cap-authorship-summary .cap-meter-note {
     gap: var(--space-1) var(--space-4);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   @media (forced-colors: active) {

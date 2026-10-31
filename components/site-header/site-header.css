@@ -355,7 +355,7 @@
     font-size: 10px;
     font-weight: 700;
     line-height: 1;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     white-space: nowrap;
   }
 
@@ -558,7 +558,7 @@
     font-weight: 700;
     line-height: 16px;
     text-align: center;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   /* The phone's sheet: the shared dialog from the bottom, holding everything the top row does not:

@@ -17,7 +17,7 @@
     margin-inline-start: auto;
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   /* What is not offered here, and why, in words. */

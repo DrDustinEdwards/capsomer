@@ -26,14 +26,14 @@
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
   .cap-mq-head .cap-btn[data-cap-keys-open] {
     margin-inline-start: auto;
   }
   .cap-mq-count {
     margin-inline-start: var(--space-2);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
   /* Without script the filter is a form: the radios choose, this button sends. With script
      the rows are filtered where they are and the button is not needed. */
@@ -69,7 +69,7 @@
   :where(.cap-mq) .cap-bulk-count {
     margin: 0;
     font-weight: 600;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
   :where(.cap-mq) .cap-bulk-actions {
     display: flex;

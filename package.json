@@ -32,7 +32,8 @@
     "DEFAULTS.md"
   ],
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "./dist/components/chart-frame/chart-enhance.js"
   ],
   "exports": {
     "./package.json": "./package.json",

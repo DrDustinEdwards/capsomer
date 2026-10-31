@@ -136,6 +136,11 @@
     --info: #014b95;
     --nodata: #4e4a56;
     --accent-11: #4a2779;
+    --series-ink-1: #7647b9;
+    --series-ink-2: #a73d02;
+    --series-ink-3: #056b70;
+    --series-ink-4: #4b6a3c;
+    --series-ink-7: #944380;
   }
   [data-cap-theme="dark"] {
     --line: #5a585e;
@@ -158,6 +163,14 @@
     --sign-edge: #9b99a0;
     --accent-10: #d5c2ff;
     --accent-11: #ebe4fe;
+    --series-ink-1: #d8c7ff;
+    --series-ink-2: #ffc2aa;
+    --series-ink-3: #7adfe3;
+    --series-ink-4: #b6daa6;
+    --series-ink-5: #c5cdfe;
+    --series-ink-6: #70e3cc;
+    --series-ink-7: #ffbbeb;
+    --series-ink-8: #ffc1b1;
     --ring-soft: rgba(235, 228, 254, 0.5);
     --shadow-ring: 0 0 0 var(--ring-width) rgba(235, 228, 254, 0.5);
   }

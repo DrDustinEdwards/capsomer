@@ -185,7 +185,7 @@
     margin-block-start: var(--space-3);
     font-size: clamp(1.5rem, 3vw, 2.25rem);
     font-weight: 700;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     line-height: 1;
   }
 
@@ -264,7 +264,7 @@
   .cap-leader-index-no {
     flex: none;
     min-inline-size: 3ch;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   /* A long name or fact wraps inside the row instead of pushing it past a narrow screen. */
@@ -284,7 +284,7 @@
     flex: 0 1 auto;
     min-inline-size: 0;
     overflow-wrap: anywhere;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     text-align: end;
   }
 }
@@ -619,7 +619,7 @@
 
   .cap-letterhead-folio {
     font-weight: 700;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   @media (max-width: 46rem) {
@@ -831,7 +831,7 @@
 
   .cap-timeline-mark {
     font: 500 0.8125rem / 1.6 var(--mono);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     letter-spacing: 0.04em;
   }
 

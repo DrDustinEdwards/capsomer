@@ -1,21 +1,13 @@
-// Mounts the React ChartFrame specimens: a chart redrawn to its column's width (drag the window),
-// and a chart Enarratio refuses, shown in the chart's place.
-import { enhance } from "enarratio/enhance";
-import { barChart } from "enarratio/lite/bar";
+// Mounts the React ChartFrame specimens over the markup drawn when the page was built (so they
+// read with scripts off): a chart redrawn to its column's width (drag the window) and enhanced by
+// the frame itself, and a chart Enarratio refuses, shown in the chart's place.
 import { StrictMode, type JSX } from "react";
 import { createRoot } from "react-dom/client";
 import { ChartFrame } from "./chart-frame.react.tsx";
-
-const data = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"].map((day, i) => ({ day, n: [14, 18, 9, 7, 21, 19, 23][i] ?? 0 }));
-const draw = (width: number) => barChart({ data, x: "day", y: "n", width, height: 240, id: "cf-react", title: "Builds per day", alt: "Builds dipped at the weekend and peaked at 23 on Wednesday.", xLabel: "Day", yLabel: "Builds" });
-const refused = () => barChart({ data: data.slice(0, 0), x: "day", y: "n", title: "Builds per day", alt: "No builds." });
-const onDraw = (el: HTMLElement) => {
-  const charts = enhance(el);
-  return () => charts.forEach((c) => c.destroy());
-};
+import { builds as draw, refused } from "./specimen/react-charts.ts";
 
 const mounts: Record<string, () => JSX.Element> = {
-  redraw: () => <ChartFrame draw={draw} onDraw={onDraw} />,
+  redraw: () => <ChartFrame draw={draw} />,
   refused: () => <ChartFrame draw={refused} />,
 };
 for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
