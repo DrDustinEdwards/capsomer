@@ -5,8 +5,8 @@
 //
 // The series: purple, fox and teal first (step 9 of each family, exactly as shipped: #8c5fd2,
 // #cc4f0c, #008489), then five companions of the same weight, found by a search over hue,
-// chroma and lightness (once, offline; the result is the parameters below, so the hexes are
-// computed here, never typed). What the search held fixed:
+// chroma and lightness (offline, last on 2026-10-31 when the gate rose from 8 to 10; the result
+// is the parameters below, so the hexes are computed here, never typed). What it held fixed:
 //   - each color is at least 3:1 against the surface, the ground and the raised surface, in
 //     both themes (WCAG 2.2 non-text contrast), at about the lightness of the three seeds;
 //   - every pair differs by at least SERIES_MIN_DE (CIEDE2000, chart-checks.mjs) with typical vision and under
@@ -16,18 +16,18 @@
 //     never read as a status;
 //   - each slot keeps its hue from light to dark, with lightness set per theme.
 // Order, so a chart with few series uses the most distinct ones first: purple, fox, teal,
-// then sage, indigo, pine, orchid, rose.
+// then sage, indigo, pine, orchid, rust.
 import { contrast, oklch } from "./palette-core.mjs";
 
 export const SERIES_SEEDS = ["purple", "fox", "teal"];
 
 // [hue, chroma, light-theme lightness, dark-theme lightness]; chroma is pulled in to fit sRGB.
 export const COMPANIONS = [
-  { name: "sage", h: 130.6, c: 0.096, light: 0.628, dark: 0.783 },
-  { name: "indigo", h: 273.9, c: 0.11, light: 0.498, dark: 0.787 },
-  { name: "pine", h: 178.3, c: 0.101, light: 0.48, dark: 0.775 },
-  { name: "orchid", h: 343.4, c: 0.143, light: 0.636, dark: 0.63 },
-  { name: "rose", h: 5.1, c: 0.114, light: 0.502, dark: 0.73 },
+  { name: "sage", h: 135.8, c: 0.079, light: 0.619, dark: 0.812 },
+  { name: "indigo", h: 277.9, c: 0.107, light: 0.483, dark: 0.778 },
+  { name: "pine", h: 178.7, c: 0.11, light: 0.471, dark: 0.776 },
+  { name: "orchid", h: 337.5, c: 0.131, light: 0.645, dark: 0.642 },
+  { name: "rust", h: 35, c: 0.129, light: 0.495, dark: 0.708 },
 ];
 
 // The sequential ramp: one hue (the family's), five steps from least to most. In light the
@@ -46,8 +46,10 @@ export function companionColors(scheme) {
   return COMPANIONS.map((c) => oklch(c[scheme], c.c, c.h));
 }
 
-// The label color that reads best on a mark (Enarratio's labelColor): the theme's text or
-// surface color when either reaches 4.5:1 on the fill, else black or white.
+// The label color that reads best on a mark: the theme's text or surface color when either
+// reaches 4.5:1 on the fill, else black or white. The same rule as Enarratio's labelColor, kept
+// here so the palette generator needs no chart package. The theme test runs Enarratio's
+// checkTheme over the result.
 export function labelOn(fill, text, surface) {
   const best = (a, b) => (contrast(fill, a) >= contrast(fill, b) ? a : b);
   const themed = best(text, surface);

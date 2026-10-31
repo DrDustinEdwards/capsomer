@@ -1,30 +1,27 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The frame every chart sits in: a title, one sentence saying what the chart shows, the
-   chart, and its numbers as a table behind a "Show data" disclosure (closed unless asked
-   open). Built for Enarratio's pieces (sparkline, uptime strip, progress ring, heat strip
-   and the tables Enarratio draws beside them), but it holds any SVG. The disclosure is
-   shadcn's Accordion look in native `details` (the disclosure component's accordion
-   variant); the table is the table component's. The craft follows shadcn's Card and Chart:
-   a quiet header, a muted description, the chart on the surface, no chrome of its own. */
+/* The frame every chart sits in: a thin layout around Enarratio's own figure, which brings the
+   title, the sentence that says what the chart shows, the chart, its summary, the source and CSV
+   link, and the numbers behind "Show data". The frame only sets them in the family's type and
+   spacing (Enarratio's colors, fonts and sizes come from css/enarratio.css), puts a legend or a
+   note after the figure, and stands in for the chart when there is no data. Enarratio's base
+   rules are unlayered, so this sets only what they leave to the page, and colors through the
+   --enarratio-* properties. The craft follows shadcn's Card and Chart: a quiet header, a muted
+   description, the chart on the surface, no chrome of its own. */
 @layer cap.components {
   .cap-chart {
-    position: relative;
     display: grid;
     gap: var(--space-3);
     min-width: 0;
     margin: 0;
   }
 
-  .cap-chart-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-1) var(--space-4);
+  .cap-chart-figure {
+    min-width: 0;
   }
 
-  .cap-chart-title {
+  .cap-chart :is(.enarratio-title, .cap-chart-title) {
     margin: 0;
     color: var(--text);
     font-size: var(--fs-body);
@@ -32,75 +29,40 @@
     line-height: 1.375;
   }
 
-  /* A figure beside the title (an uptime percent, a total): at the end of the line. */
-  .cap-chart-meta {
-    margin-inline-start: auto;
-    color: var(--muted);
+  .cap-chart .enarratio-subtitle {
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
   }
 
-  /* The sentence that says what the chart shows, with its numbers: the chart as text. It is
-     in the HTML and visible by default; a tile that already names itself keeps it for
-     screen readers only (data-summary="hidden"). */
-  .cap-chart-summary {
+  /* The sentence that says what the chart shows, with its numbers (or why there is no chart). */
+  .cap-chart :is(.enarratio-finding, .cap-chart-reason) {
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-detail);
     line-height: var(--leading);
   }
-  .cap-chart[data-summary="hidden"] > .cap-chart-summary,
-  .cap-chart[data-summary="hidden"] > .cap-chart-head > .cap-chart-summary {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
 
-  .cap-chart-body {
-    min-width: 0;
+  /* The title and a figure at the end of its line (the subtitle: "99.4% up over 7 days"), the
+     finding under both. */
+  .cap-chart[data-head="inline"] .enarratio-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-4);
 
-    & > svg {
-      display: block;
-      max-width: 100%;
-      height: auto;
+    & .enarratio-subtitle {
+      margin-inline-start: auto;
+      font-variant-numeric: tabular-nums;
+    }
+    & .enarratio-finding {
+      flex-basis: 100%;
     }
   }
 
-  /* "Show data": the table behind it. The label says what a press does, and the two words
-     swap with the state (one is display: none, so only one is ever read). */
-  .cap-chart-data > summary {
-    font-size: var(--fs-detail);
-  }
-  .cap-chart-data .cap-chart-hide {
-    display: none;
-  }
-  .cap-chart-data[open] .cap-chart-show {
-    display: none;
-  }
-  .cap-chart-data[open] .cap-chart-hide {
-    display: inline;
-  }
-
-  .cap-chart-data .cap-table-wrap {
-    margin-block-start: var(--space-2);
-  }
-
-  /* A chart that draws its own figure (an Enarratio bar or line chart brings a title and a
-     closed "Data table" disclosure): the frame supplies the head and the summary, so the
-     figure's own title is dropped, and its disclosure takes the same look as ours. */
-  .cap-chart[data-table="own"] .enarratio-title {
-    display: none;
-  }
-  .cap-chart[data-table="own"] .enarratio-data > summary {
-    cursor: pointer;
-    min-height: var(--target);
-    color: var(--accent-text);
-    font-size: var(--fs-detail);
+  /* "Show data" (then "Hide data", Enarratio's words) reads as the action it is, at a full
+     target's height. */
+  .cap-chart .enarratio-data > summary {
+    --enarratio-text-muted: var(--accent-text);
+    line-height: var(--target);
     font-weight: 600;
   }
 
@@ -111,8 +73,8 @@
   }
 
   @media (forced-colors: active) {
-    .cap-chart[data-table="own"] .enarratio-data > summary {
-      color: LinkText;
+    .cap-chart .enarratio-data > summary {
+      --enarratio-text-muted: LinkText;
     }
   }
 }

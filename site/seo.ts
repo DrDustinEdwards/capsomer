@@ -7,7 +7,7 @@
  * at /, the theme builder at /make/ and each component's page at /components/<name>/; the admin at /admin/ keeps its sections at hash
  * addresses and stays out of search.
  */
-import { headHtml, headTags } from "@drdustinedwards/site-helpers/head";
+import { defineHead, headHtml } from "@drdustinedwards/site-helpers/head";
 import { llmsDocument } from "@drdustinedwards/site-helpers/llms";
 import { aiTxt, robotsDocument } from "@drdustinedwards/site-helpers/robots";
 import { graph, jsonLd, thing, website } from "@drdustinedwards/site-helpers/schema";
@@ -32,26 +32,26 @@ export const MAKE_DESCRIPTION =
 const ADMIN_DESCRIPTION =
   "Scaffold, Capsomer's admin: every token, every component in every state, and each component's test results.";
 
-/** A page's head: title, description, canonical, Open Graph and Twitter with the card; the public page also carries the JSON-LD, and the admin says noindex so search shows the public page. */
+const head = defineHead({
+  origin: ORIGIN,
+  siteName: "Capsomer",
+  image: { url: "/og-card.png", width: 1200, height: 630, alt: "Capsomer, the family design system" },
+  suffix: " · Capsomer",
+  locale: "en_US",
+});
+
+/**
+ * A page's head: title (`title` and the " · Capsomer" suffix), description, canonical, Open Graph and Twitter with the card,
+ * and on an indexed page its WebPage and breadcrumb; the front page also carries the site's JSON-LD, and the admin says
+ * noindex so search shows the public page.
+ */
 export function siteHead(page: "home" | "admin" | { path: string; title: string; description: string; noindex?: boolean }): string {
-  const card = { url: "/og-card.png", width: 1200, height: 630, alt: "Capsomer, the family design system" };
-  // A component's own public page: indexed, with its own title and its summary.
+  // Pages are served at their slash (a bare path redirects to it), so the canonical and the trail keep it.
   if (typeof page === "object")
-    return headHtml(headTags({ origin: ORIGIN, path: page.path, title: page.title, description: page.description, image: card, siteName: "Capsomer", locale: "en_US", noindex: page.noindex }));
-  if (page === "admin")
-    return headHtml(
-      headTags({ origin: ORIGIN, path: "/admin/", title: "Capsomer Scaffold", description: ADMIN_DESCRIPTION, image: card, siteName: "Capsomer", locale: "en_US", noindex: true }),
-    );
+    return headHtml(head({ ...page, keepTrailingSlash: true, breadcrumbs: [{ name: "Capsomer", path: "/" }, { name: page.title, path: page.path }] }));
+  if (page === "admin") return headHtml(head({ path: "/admin/", title: "Capsomer Scaffold", fullTitle: true, description: ADMIN_DESCRIPTION, noindex: true }));
   return headHtml([
-    ...headTags({
-      origin: ORIGIN,
-      path: "/",
-      title: "Capsomer",
-      description: DESCRIPTION,
-      image: card,
-      siteName: "Capsomer",
-      locale: "en_US",
-    }),
+    ...head({ path: "/", title: "Capsomer", fullTitle: true, description: DESCRIPTION }),
     jsonLd(
       graph([
         website({ origin: ORIGIN, name: "Capsomer", description: DESCRIPTION, searchUrl: `${ORIGIN}/search/?q={search_term_string}`, publisher: AUTHOR }),

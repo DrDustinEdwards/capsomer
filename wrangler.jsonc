@@ -20,6 +20,9 @@
     // to fall back to.
     "not_found_handling": "404-page"
   },
+  // At most 60 violation reports a minute from one address reach the log (worker/index.ts); the rest still get 204.
+  // namespace_id is this site's own: sites sharing one share counters.
+  "ratelimits": [{ "name": "CSP_REPORT_RATE_LIMIT", "namespace_id": "7801", "simple": { "limit": 60, "period": 60 } }],
   // Workers Logs keep the Worker's own lines, which are the violation reports. Invocation logs
   // (one per request) stay off: the site records nothing about its readers.
   "observability": { "logs": { "enabled": true, "invocation_logs": false } }

@@ -17,10 +17,10 @@ import { MAKE_DESCRIPTION, discoveryFiles, siteHead } from "./seo.ts";
 const root = fileURLToPath(new URL("..", import.meta.url));
 // The states pages are generated from each component's examples.html, so they are written
 // first: Vite finds its inputs by the file existing (build and preview both load this).
-generateStates(root);
+const examples = await generateStates(root);
 // Each component's public page, /components/<name>/, is written the same way: a copy of
 // site/component.html naming its component, filled from site/home.ts below.
-const data = readData(root);
+const data = readData(root, examples);
 const template = readFileSync(resolve(root, "site/component.html"), "utf8");
 for (const c of data.components) writeFileSync(resolve(root, "components", c.name, "index.html"), template.replace("<!--component-->", `<!--component:${c.name}-->`));
 const pages = Object.fromEntries(data.components.map((c) => [`page-${c.name}`, resolve(root, "components", c.name, "index.html")]));
@@ -73,11 +73,11 @@ export default defineConfig({
           const page = ctx.path.endsWith("/site/home.html")
             ? "home"
             : ctx.path.endsWith("/site/make.html")
-              ? { path: "/make/", title: "Make a theme · Capsomer", description: MAKE_DESCRIPTION }
+              ? { path: "/make/", title: "Make a theme", description: MAKE_DESCRIPTION }
               : ctx.path.endsWith("/site/search.html")
                 ? { ...SEARCH_PAGE, noindex: true }
                 : c
-                ? { path: `/components/${c.name}/`, title: `${c.title} · Capsomer`, description: c.lead }
+                ? { path: `/components/${c.name}/`, title: c.title, description: c.lead }
                 : "admin";
           return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", siteHead(page));
         },
