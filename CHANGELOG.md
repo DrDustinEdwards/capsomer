@@ -5,6 +5,12 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [Unreleased]
 
 - **Showcase site: the family icon set** (no package change). Prelum v0.22.0's icons, drawn from the letterhead's hexagon on the magenta family's `#752c6a` (white on it for the Apple touch and maskable icons), are in `site/public`; every page links them with `iconLinks()` and `site.webmanifest` comes from `webManifest()`. The inline data-URL favicon is gone.
+
+## [0.54.0]
+
+A mail for every change to how a person signs in (sign-in and access, area 3: A8, E1).
+
+- **New email template: `securityNotice`** (`capsomer/email`). It takes `title`, `what`, `when` and `secure`, with optional `device`, `location` and `url`, the fields of site-runtime 0.45.0's `sendSecurityNotice` `detail`, so a site renders the notice with `renderEmail(securityNotice, { brand, to: user.email, ...detail, url })`. The mail says what changed and when, then "Device:" and "Near:" lines when it has them, what to do if it was not the person, a "Review your account" button with `url`, and that it holds no link that signs in. The subject is "{brand}: {title}". It takes `copy` like the others. States page: two new frames. No class, token or HTML contract changes.
 - **Site only: the report endpoint is rate limited and connect-src names one file** (no package change). `/csp-report` passes site-runtime's receiver an `allow` backed by a Workers rate-limit binding (`CSP_REPORT_RATE_LIMIT` in `wrangler.jsonc`, 60 a minute per address), so a flood no longer reaches the log. The site's `connect-src` names the results file it reads (`https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json`) instead of every repository on raw.githubusercontent.com. `test/unit/security-headers.test.mjs` is removed: the family's live header check grades the public site.
 - **Site only: static files carry their charset and cross-origin CORP where another origin loads them** (no package change). The site's `_headers` gives every static text file `charset=utf-8`, and stylesheets, scripts and fonts `Cross-Origin-Resource-Policy: cross-origin` (site-runtime 0.43.0 `headersFile({ charset: true })` and `corpFor`).
 - **Showcase site: each page's WebPage and breadcrumb.** `site/seo.ts` builds heads with Prelum's `defineHead`, so the theme builder and every component page carry a WebPage and a Home > page BreadcrumbList, and the canonical keeps the slash the pages are served at.

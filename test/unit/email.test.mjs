@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { FAMILIES, contrast } from "../../tokens/palette.mjs";
 import { emailColors } from "../../components/email/colors.ts";
-import { alert, checkUrl, escapeHtml, magicLink, notice, renderEmail, reset, verification } from "../../components/email/email.ts";
+import { alert, checkUrl, escapeHtml, magicLink, notice, renderEmail, reset, securityNotice, verification } from "../../components/email/email.ts";
 
 const FAKE = "https://carrel.example/auth/verify?t=EXAMPLE-NOT-A-TOKEN&x=1";
 const common = { brand: { name: "Carrel", family: "purple" }, to: "reader@example.com" };
@@ -14,6 +14,7 @@ const all = [
   [reset, link],
   [alert, { level: "warn", what: "Disk is 91% full", when: "08:15 UTC", details: ["Free space: 9 GB."], url: FAKE }],
   [notice, { title: "Terms changed", body: ["First.", "Second."], action: { label: "Read", url: FAKE } }],
+  [securityNotice, { title: "A passkey was added to your account", what: "A passkey was added.", when: "October 31, 2026 at 1:52 AM UTC", device: "Safari on iPhone", location: "Austin, Texas, United States", secure: "If this was not you, sign in now.", url: FAKE }],
 ];
 
 test("every template renders a subject, HTML and text from the same data", () => {
@@ -82,6 +83,17 @@ test("every value is escaped in the HTML", () => {
     assert.ok(!r.html.includes('lang="<'), t.name);
     assert.ok(r.html.includes("&lt;script&gt;"), t.name);
   }
+});
+
+test("a security notice says what, when, the device, the place and what to do, and leaves out what it was not given", () => {
+  const data = all.find(([t]) => t === securityNotice)[1];
+  const r = renderEmail(securityNotice, { ...common, ...data });
+  assert.equal(r.subject, "Carrel: A passkey was added to your account");
+  for (const line of ["When: October 31, 2026 at 1:52 AM UTC", "Device: Safari on iPhone", "Near: Austin, Texas, United States", "If this was not you, sign in now."]) {
+    assert.ok(r.text.includes(line), line);
+  }
+  const bare = renderEmail(securityNotice, { ...common, ...data, device: null, location: null, url: undefined });
+  assert.ok(!bare.text.includes("Device:") && !bare.text.includes("Near:") && !bare.html.includes("<a class=\"e-btn\""));
 });
 
 test("a line break in a single-line value cannot add a line to the subject", () => {
