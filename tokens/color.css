@@ -14,6 +14,7 @@
   --accent: #8c5fd2;
   --accent-hover: #1d162c;
   --accent-text: #4f2d7f;
+  --accent-visited: #832151;
   --accent-soft: #ece5ff;
   --accent-line: #9780c3;
   --sel: #f4efff;
@@ -102,6 +103,7 @@
     --accent: #8c5fd2;
     --accent-hover: #ede8f7;
     --accent-text: #d8c7ff;
+    --accent-visited: #ffbdd5;
     --accent-soft: #2c243c;
     --accent-line: #8670b0;
     --sel: #211c2c;
@@ -188,6 +190,7 @@
   --accent: #8c5fd2;
   --accent-hover: #ede8f7;
   --accent-text: #d8c7ff;
+  --accent-visited: #ffbdd5;
   --accent-soft: #2c243c;
   --accent-line: #8670b0;
   --sel: #211c2c;

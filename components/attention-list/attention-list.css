@@ -139,9 +139,21 @@
 
       border-radius: var(--radius-s);
 
+      /* A text link's states (css/base.css), which this rule's own colors would otherwise hide. */
+      &:is(a):visited,
+      &:is(a)[data-force="visited"] {
+        color: var(--accent-visited);
+      }
       &:hover,
       &[data-force="hover"] {
+        background: var(--accent-soft);
+        box-shadow: 0 0 0 2px var(--accent-soft);
         color: var(--accent-hover);
+      }
+      &:active,
+      &[data-force="pressed"] {
+        background: var(--accent-5);
+        box-shadow: 0 0 0 2px var(--accent-5);
       }
       &:focus-visible,
       &[data-force="focus"] {

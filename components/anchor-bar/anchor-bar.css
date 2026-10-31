@@ -70,6 +70,7 @@
       &[data-force="hover"],
       &:active,
       &[data-force="pressed"] {
+        background: var(--accent-soft);
         color: var(--text);
       }
       /* Inside the ring's own box, so the scrolling list does not clip it. */

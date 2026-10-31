@@ -109,24 +109,7 @@
     padding: 0;
     list-style: none;
   }
-  .cap-catalog-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: max(var(--target), 26px);
-    padding: 0 var(--pad-x);
-    border: 1px solid var(--accent);
-    border-radius: var(--radius-full);
-    background: var(--sel);
-    color: var(--text);
-    font-size: var(--fs-detail);
-    font-weight: 500;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .cap-catalog-chip:hover {
-    background: var(--raised);
-  }
+  /* The chip is the link system's tag pill (components/link/link.css), which a catalog page loads. */
   .cap-catalog-chip:focus-visible,
   .cap-catalog-clear:focus-visible {
     outline: 2px solid var(--ring);
@@ -239,12 +222,6 @@
   @media (prefers-reduced-motion: no-preference) {
     .cap-catalog [data-catalog-region="results"] {
       transition: opacity 100ms linear;
-    }
-  }
-
-  @media (forced-colors: active) {
-    .cap-catalog-chip {
-      border-color: ButtonText;
     }
   }
 }

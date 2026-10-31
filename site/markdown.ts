@@ -15,6 +15,8 @@ function inline(s: string): string {
     .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>")
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text: string, href: string) => {
       const safe = /^(https?:|#|\.{0,2}\/)/.test(href) ? href : "#";
+      // Another site takes the link system's away contract (components/link/link.md).
+      if (/^https?:/.test(safe)) return `<a href="${safe}" data-link="away" rel="external">${text}<span class="cap-sr-only"> (opens another site)</span></a>`;
       return `<a href="${safe}">${text}</a>`;
     });
   return out.replace(/\u0000(\d+)\u0000/g, (_, i: string) => codes[Number(i)] ?? "");

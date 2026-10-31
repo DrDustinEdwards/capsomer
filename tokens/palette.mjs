@@ -31,7 +31,7 @@
 // so a family on a wrapper does not inherit the root family's already-resolved values.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { ELEVATION_ORDER, FAMILIES, FAMILY_ORDER, contrast, failures, renderEmailColors, renderEnarratioTheme, renderFamily, renderMarks, renderScoped, themes as coreThemes } from "./palette-core.mjs";
+import { ELEVATION_ORDER, FAMILIES, FAMILY_ORDER, apart, contrast, failures, renderEmailColors, renderEnarratioTheme, renderFamily, renderMarks, renderScoped, themes as coreThemes } from "./palette-core.mjs";
 
 // The color math, the families and the renderers live in palette-core.mjs; this module adds the
 // command line, the files it owns and the checks, and re-exports the rest.
@@ -144,9 +144,12 @@ if (invoked) {
     const rows = report();
     const failed = rows.filter((r) => !r.pass);
     for (const r of process.argv.includes("--summary") ? failed : rows) console.log(`${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${(r.scheme + (r.isDefault ? "*" : "")).padEnd(10)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 Lc ${Math.abs(r.lc).toFixed(1)} (needs ${r.min}${r.lcMin ? `, Lc ${r.lcMin}` : ""})`);
+    // The visited link, against a link and body text (apart() in palette-core.mjs).
+    const far = Object.entries(FAMILIES).flatMap(([name, f]) => THEME_KEYS.flatMap(([k]) => apart(themes(f)[k].tokens).map((x) => ({ name, k, ...x }))));
+    for (const x of process.argv.includes("--summary") ? far.filter((x) => !x.pass) : far) console.log(`${x.pass ? "pass" : "FAIL"}  ${x.name.padEnd(6)} ${x.k.padEnd(10)} ${x.what.padEnd(32)} --${x.a} and --${x.b} ${x.d.toFixed(1)} apart (needs ${x.min})`);
     console.log("(* the family's default theme, checked first)");
     console.log(`palette: ${rows.length} pairs across ${Object.keys(FAMILIES).length} families, both themes and both contrast levels; ${failed.length} fail`);
-    if (failed.length) process.exit(1);
+    if (failed.length || far.some((x) => !x.pass)) process.exit(1);
   } else if (process.argv.includes("--table")) {
     for (const [name, t] of Object.entries(themes())) if (name === "light" || name === "dark") {
       console.log(`\n${name}`);
