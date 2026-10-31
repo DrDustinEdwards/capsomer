@@ -6,6 +6,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **Site: headers from site-runtime's registry, and integrity on every script** (area 2). The Worker is `staticSite({ site: capsomer })` with the TDMRep header, and `npm run site` writes `site-dist/_headers` with `site-runtime-headers --site capsomer`, so `scripts/security-headers.ts` is gone. The registry adds COEP (Report-Only) with `report-to`, `Integrity-Policy-Report-Only`, and a Report-Only policy with Trusted Types and `default-src 'none'`. Every script and modulepreload the site build writes, `theme.js` included, carries a sha384 `integrity` and `crossorigin` (site-runtime's `subresourceIntegrity()` Vite plugin). Site only: the package is unchanged.
 
+## Unreleased
+
+- **Link style is five tokens (group `link`).** `--link-weight`, `--link-decoration`, `--link-hover-bg`, `--link-pressed-bg` and `--link-tint-pad`, read by `css/base.css` where it had literals. The defaults are the values it had, so no site changes. A site outside the network sets its own in its `SITES` entry (components/link/link.md, "A site's own links"). Added tokens only; no class or HTML contract changes.
+
 ## [0.56.0]
 
 The accessibility release (area 9 of the completeness plan, 2026-10-31).

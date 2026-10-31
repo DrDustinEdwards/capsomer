@@ -53,9 +53,9 @@
   a,
   :where(.enarratio-export) {
     color: var(--accent-text);
-    text-decoration: none;
+    text-decoration: var(--link-decoration);
     &:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref) {
-      font-weight: 600;
+      font-weight: var(--link-weight);
     }
     /* Not in a nav: a menu is told by its place, and draws its own tint (link.md). */
     &:is([href], .enarratio-export):is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a) {
@@ -70,14 +70,14 @@
       &:hover,
       &[data-force="hover"] {
         color: var(--accent-hover);
-        background: var(--accent-soft);
-        box-shadow: 0 0 0 2px var(--accent-soft);
+        background: var(--link-hover-bg);
+        box-shadow: 0 0 0 var(--link-tint-pad) var(--link-hover-bg);
       }
       &:active,
       &[data-force="pressed"] {
         color: var(--accent-hover);
-        background: var(--accent-5);
-        box-shadow: 0 0 0 2px var(--accent-5);
+        background: var(--link-pressed-bg);
+        box-shadow: 0 0 0 var(--link-tint-pad) var(--link-pressed-bg);
       }
       /* Forced colors paint no tint, so the pointer gets the system's own cue. */
       @media (forced-colors: active) {
