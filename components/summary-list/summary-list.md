@@ -5,8 +5,8 @@ summary: Labels and their values in a description list, each row with an optiona
 parts: [css]
 tool: native
 states: [rows with Change links, a missing value, a row without actions, two actions on a row, narrow column stacked, the record form without rows]
-added: 0.50.0
-updated: 0.50.0
+added: 0.53.0
+updated: 0.53.0
 source: GOV.UK Summary list; detail-panel's dl.cap-detail-record, which it generalizes
 replaces:
   - 'class="[^"]*\b(summary-list|kv)\b'
