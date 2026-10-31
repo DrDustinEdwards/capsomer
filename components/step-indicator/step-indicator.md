@@ -5,8 +5,8 @@ summary: Where a person is in a flow of a few steps, one per page; a bar for eac
 parts: [css]
 tool: native
 states: [current step in the middle, the first step, the last step with the rest done, five steps in a narrow column]
-added: 0.55.0
-updated: 0.55.0
+added: 0.56.0
+updated: 0.56.0
 source: USWDS Step indicator; GOV.UK's question pages, one thing per page
 replaces:
   - 'class="[^"]*\b(stepper|steps|step-indicator)\b'

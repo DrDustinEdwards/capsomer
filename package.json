@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.55.0",
+  "version": "0.56.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
   "license": "MIT",
   "type": "module",
@@ -210,9 +210,8 @@
     "@codemirror/language": "^6.12.4",
     "@codemirror/state": "^6.7.1",
     "@codemirror/view": "^6.43.7",
-    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.22.0",
-    "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.20.7",
-    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.43.0",
+    "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.20.8",
+    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.50.0",
     "@fontsource-variable/source-serif-4": "^5.3.0",
     "@fontsource/dm-mono": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",
@@ -226,7 +225,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "enarratio": "0.4.0",
+    "enarratio": "0.4.1",
     "jscpd": "^5.3.2",
     "knip": "^6.38.0",
     "react": "^19.3.0",
@@ -235,5 +234,8 @@
     "typescript": "^6.0.3",
     "vite": "^8.3.5",
     "wrangler": "^4.151.3"
+  },
+  "dependencies": {
+    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.24.0"
   }
 }

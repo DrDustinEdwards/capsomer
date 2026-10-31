@@ -1,0 +1,689 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Prose blocks: every class Prelum's renderer writes (README, "What writers get"), inside the reading
+   context <article data-context="prose"> that css/prose.css sets up. The class names are Prelum's
+   contract, stored in every site's rendered HTML, so they are not cap- prefixed; each selector is held
+   inside the prose context by :where(), which adds no specificity, so a site overrides one with a
+   single class. css/prose.css keeps the measure, the serif and the heading sizes; this file adds the
+   rest, except links, which are the link system's in every context. Colors, sizes and radii are tokens only. */
+@layer cap.components {
+  :where([data-context="prose"]) {
+    /* A post is often a grid or flex item, whose min-width: auto would let a wide table or code block
+       widen the page instead of scrolling in its own box. */
+    min-inline-size: 0;
+    overflow-wrap: break-word;
+
+    & > :first-child {
+      margin-block-start: 0;
+    }
+    & > :last-child {
+      margin-block-end: 0;
+    }
+    & :where(h4, h5, h6) {
+      margin-block: 1.4em 0.5em;
+      font-family: var(--ui);
+      font-size: 1em;
+      line-height: 1.3;
+    }
+    & :where(ul, ol) {
+      padding-inline-start: 1.5em;
+    }
+    & :where(li) {
+      margin-block-end: 0.3em;
+    }
+    & :where(li > ul, li > ol) {
+      margin-block: 0.3em 0;
+    }
+    & :where(blockquote) {
+      margin-inline: 0;
+      padding-inline-start: var(--space-4);
+      border-inline-start: 3px solid var(--line-strong);
+      color: var(--muted);
+    }
+    & :where(hr) {
+      margin-block: 2em;
+      border: 0;
+      border-block-start: 1px solid var(--line-strong);
+    }
+    & :where(img, video) {
+      display: block;
+      max-inline-size: 100%;
+      block-size: auto;
+    }
+    & :where(figure) {
+      margin-inline: 0;
+    }
+    & :where(figcaption) {
+      margin-block-start: var(--space-2);
+      line-height: 1.5;
+      & p {
+        margin: 0;
+      }
+    }
+    & :where(:not(pre) > code) {
+      padding: 0.1em 0.35em;
+      border-radius: var(--radius-s);
+      background: var(--sunken);
+      overflow-wrap: anywhere;
+    }
+    & :where(kbd) {
+      padding: 0.05em 0.4em;
+      border: 1px solid var(--line-strong);
+      border-block-end-width: 2px;
+      border-radius: var(--radius-s);
+      background: var(--raised);
+    }
+    & :where(mark) {
+      padding-inline: 0.15em;
+      background: var(--warn-soft);
+      color: inherit;
+    }
+    & :where(abbr[title]) {
+      text-decoration: none;
+      cursor: help;
+    }
+
+    /* Task lists: the checkbox in its label, no bullet. */
+    & :where(.contains-task-list) {
+      list-style: none;
+      padding-inline-start: 0.25em;
+    }
+    & :where(.task-list-item input) {
+      margin-inline-end: 0.4em;
+      accent-color: var(--accent);
+    }
+
+    /* A heading's link to itself: shown on the heading's hover and on focus, always under touch. */
+    & :where(.heading-anchor) {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-inline-size: var(--target);
+      min-block-size: var(--target);
+      margin-inline-start: 0.15em;
+      color: var(--muted);
+      font-family: var(--ui);
+      font-weight: 400;
+      text-decoration: none;
+      opacity: 0;
+    }
+    & :where(:hover > .heading-anchor, .heading-anchor:focus-visible, .heading-anchor[data-copied]) {
+      opacity: 1;
+    }
+    @media (hover: none) {
+      & :where(.heading-anchor) {
+        opacity: 1;
+      }
+    }
+    & :where(.heading-anchor[data-copied])::after {
+      content: " copied";
+      font-size: var(--fs-detail);
+    }
+
+    /* Tables scroll inside their own box (focusable, so a keyboard can scroll it), never the page. */
+    & :where(.table-scroll) {
+      max-inline-size: var(--measure);
+      margin-block: 0 1em;
+      overflow-x: auto;
+      &:focus-visible {
+        outline: var(--focus-width) solid var(--ring);
+        outline-offset: var(--focus-offset);
+      }
+      & table {
+        margin: 0;
+      }
+    }
+    & :where(table) {
+      inline-size: max-content;
+      min-inline-size: 100%;
+      border-collapse: collapse;
+      font-family: var(--ui);
+      font-size: var(--fs-body);
+      font-variant-numeric: tabular-nums;
+    }
+    & :where(th, td) {
+      padding: var(--space-2) var(--space-3);
+      border-block-end: 1px solid var(--line);
+      text-align: start;
+    }
+    & :where(th) {
+      border-block-end: 2px solid var(--text);
+      font-weight: 600;
+    }
+    & :where(th, td)[align="right"] {
+      text-align: end;
+    }
+    & :where(th, td)[align="center"] {
+      text-align: center;
+    }
+
+    /* Code: a sunken block; shiki's two themes picked by the page's color-scheme. */
+    & :where(pre) {
+      position: relative;
+      padding: var(--space-4);
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-m);
+      background: var(--sunken);
+      font-size: var(--fs-detail);
+      line-height: 1.6;
+      & code {
+        font-size: inherit;
+      }
+      &:focus-visible {
+        outline: var(--focus-width) solid var(--ring);
+        outline-offset: var(--focus-offset);
+      }
+    }
+    & :where(pre.shiki) {
+      background: light-dark(var(--shiki-light-bg), var(--shiki-dark-bg));
+    }
+    & :where(.shiki, .shiki span) {
+      color: light-dark(var(--shiki-light), var(--shiki-dark));
+    }
+    /* A marked line: a neutral band and a rule at its start, so it is told by more than a tint. */
+    & :where(.shiki .line.highlighted) {
+      display: inline-block;
+      min-inline-size: 100%;
+      background: color-mix(in srgb, currentColor 8%, transparent);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+    & :where(.code-frame) {
+      max-inline-size: var(--measure);
+      margin-block: 0 1em;
+      & pre {
+        max-inline-size: none;
+        margin: 0;
+        border-start-start-radius: 0;
+        border-start-end-radius: 0;
+      }
+    }
+    & :where(.code-title) {
+      margin: 0;
+      padding: var(--space-1) var(--space-4);
+      border: 1px solid var(--line);
+      border-block-end: 0;
+      border-start-start-radius: var(--radius-m);
+      border-start-end-radius: var(--radius-m);
+      background: var(--raised);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: var(--fs-detail);
+    }
+
+    /* Callouts (GitHub's five alerts): a rule in the tone's color, the title in words. The word
+       carries the kind; the color only repeats it. */
+    & :where(.callout) {
+      --_tone: var(--info);
+      --_soft: var(--info-soft);
+      max-inline-size: var(--measure);
+      margin-block: 0 1em;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--_tone);
+      border-inline-start-width: 4px;
+      border-radius: var(--radius-m);
+      background: var(--_soft);
+      & > :last-child {
+        margin-block-end: 0;
+      }
+      & > p {
+        margin-block-end: 0.5em;
+      }
+    }
+    & :where(.callout-tip) {
+      --_tone: var(--ok);
+      --_soft: var(--ok-soft);
+    }
+    & :where(.callout-important) {
+      --_tone: var(--accent);
+      --_soft: var(--accent-soft);
+    }
+    & :where(.callout-warning) {
+      --_tone: var(--warn);
+      --_soft: var(--warn-soft);
+    }
+    & :where(.callout-caution) {
+      --_tone: var(--crit);
+      --_soft: var(--crit-soft);
+    }
+    & :where(.callout-title) {
+      margin-block-end: 0.25em;
+      font-family: var(--ui);
+      font-size: var(--fs-body);
+      font-weight: 600;
+    }
+
+    /* Figures: a credit under the caption; wide and full widths break out of the measure. */
+    & :where(.figure-credit) {
+      display: block;
+      margin-block-start: var(--space-1);
+      font-family: var(--ui);
+      font-size: var(--fs-detail);
+    }
+    & :where(.image-link) {
+      display: block;
+      inline-size: fit-content;
+    }
+    & :where(.width-wide, .width-full) {
+      max-inline-size: none;
+    }
+    & :where(.width-full) img {
+      inline-size: 100%;
+    }
+    /* An image drawn for one theme (Prelum's figure dark= twin and each diagram): the other one hides. */
+    & :where(.figure-dark, .diagram-dark) {
+      display: none;
+    }
+
+    /* A gallery: two to nine images in an even grid, each cropped to the same frame. */
+    & :where(.gallery-grid) {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+      gap: var(--space-2);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      & li {
+        margin: 0;
+      }
+      & .image-link {
+        inline-size: 100%;
+      }
+      & img {
+        inline-size: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
+    }
+
+    /* Video and audio: the native players at the column's width; the transcript link under the audio. */
+    & :where(.media video, .media audio) {
+      inline-size: 100%;
+      border-radius: var(--radius-m);
+    }
+    & :where(.media video) {
+      background: var(--sunken);
+    }
+    & :where(.media-transcript) {
+      margin: var(--space-2) 0 0;
+      font-family: var(--ui);
+      font-size: var(--fs-body);
+    }
+
+    /* An embed: no request to the service until the reader asks. Until then a 16:9 card that names
+       the service and the title; render/enhance swaps in the player on a click. */
+    & :where(.embed-link) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 16 / 9;
+      padding: var(--space-4);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-m);
+      background: var(--sunken);
+      font-family: var(--ui);
+      text-align: center;
+      text-wrap: balance;
+      text-decoration: none;
+      &::before {
+        content: "";
+        flex: none;
+        inline-size: 0;
+        block-size: 0;
+        margin-inline-end: var(--space-3);
+        border-block: 0.6em solid transparent;
+        border-inline-start: 1em solid currentColor;
+      }
+      &:hover {
+        border-color: var(--accent);
+      }
+    }
+    & :where(.embed iframe) {
+      display: block;
+      inline-size: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: var(--radius-m);
+    }
+
+    /* A button link: the family's primary button, at a full control's height. */
+    & :where(.button-row) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    & :where(.button) {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--control);
+      padding: 0 var(--pad-x);
+      border: 1px solid var(--primary-line);
+      border-radius: var(--radius-m);
+      background: var(--primary);
+      color: var(--primary-fg);
+      font-family: var(--ui);
+      font-size: var(--fs-body);
+      font-weight: 500;
+      text-decoration: none;
+      &:hover {
+        background: var(--primary-hover);
+        color: var(--primary-fg);
+      }
+    }
+
+    /* A bookmark: a link card with the title, the description and the host. */
+    & :where(.bookmark-link) {
+      display: grid;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-m);
+      background: var(--surface);
+      color: var(--text);
+      font-family: var(--ui);
+      text-decoration: none;
+      &:hover {
+        border-color: var(--accent);
+        color: var(--text);
+      }
+    }
+    & :where(.bookmark-title) {
+      color: var(--accent-text);
+      font-weight: 600;
+    }
+    & :where(.bookmark-description) {
+      font-size: var(--fs-body);
+    }
+    & :where(.bookmark-host) {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: var(--fs-detail);
+    }
+
+    /* Details and the FAQ: a bordered disclosure; each question a heading-weight term. */
+    & :where(.post-details) {
+      max-inline-size: var(--measure);
+      margin-block: 0 1em;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-m);
+      & > summary {
+        display: flex;
+        align-items: center;
+        min-block-size: var(--target);
+        padding: var(--space-2) var(--space-4);
+        font-family: var(--ui);
+        font-weight: 600;
+        cursor: pointer;
+      }
+      & > :not(summary) {
+        margin: 0;
+        padding: 0 var(--space-4) var(--space-3);
+      }
+    }
+    & :where(.faq) {
+      max-inline-size: var(--measure);
+      margin-block: 0 1em;
+    }
+    & :where(.faq-item) {
+      padding-block: var(--space-3);
+      border-block-start: 1px solid var(--line);
+      &:last-child {
+        border-block-end: 1px solid var(--line);
+      }
+      & dt {
+        font-family: var(--ui);
+        font-weight: 600;
+      }
+      & dd {
+        margin: var(--space-1) 0 0;
+      }
+    }
+
+    /* Footnotes: a rule above and the smaller size. The reference and back links are the link system's. */
+    & :where(.footnotes) {
+      max-inline-size: var(--measure);
+      margin-block-start: 2em;
+      padding-block-start: var(--space-4);
+      border-block-start: 1px solid var(--line);
+      font-size: 0.9em;
+    }
+
+    /* The editorial pack: a side note, a pull quote, a color swatch, a diagram. */
+    & :where(.post-note) {
+      max-inline-size: var(--measure);
+      margin-block: 0 1em;
+      padding: var(--space-3) var(--space-4);
+      border-inline-start: 3px solid var(--accent-line);
+      background: var(--raised);
+      font-size: 0.9em;
+      & p {
+        margin: 0;
+      }
+    }
+    & :where(.post-note-kind) {
+      display: block;
+      color: var(--accent-text);
+      font-family: var(--ui);
+      font-size: var(--fs-detail);
+    }
+    & :where(.pull-quote) {
+      margin-block: 0.5em 1em;
+      padding: 0;
+      border: 0;
+      color: var(--accent-text);
+      font-size: 1.3em;
+      line-height: 1.35;
+      text-wrap: balance;
+    }
+    & :where(.swatch) {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3em;
+    }
+    & :where(.swatch-chip) {
+      flex: none;
+      inline-size: 0.85em;
+      block-size: 0.85em;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-s);
+      background: var(--swatch, transparent);
+    }
+    & :where(.diagram-title) {
+      margin: 0 0 var(--space-2);
+      font-family: var(--ui);
+      font-weight: 600;
+    }
+    & :where(.katex-display) {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-block: 0.25em;
+    }
+
+    @media (forced-colors: active) {
+      & :where(.callout, .post-note, .embed-link, .bookmark-link) {
+        border-color: CanvasText;
+      }
+      & :where(.swatch-chip) {
+        border-color: CanvasText;
+        forced-color-adjust: none;
+      }
+    }
+  }
+
+  /* The dark theme's drawing, by the page's theme (Capsomer's data-theme, or the system's when none is set). */
+  :root[data-theme="dark"] :where([data-context="prose"]) {
+    & :where(.figure-light, .diagram-light) {
+      display: none;
+    }
+    & :where(.figure-dark, .diagram-dark) {
+      display: block;
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) :where([data-context="prose"]) {
+      & :where(.figure-light, .diagram-light) {
+        display: none;
+      }
+      & :where(.figure-dark, .diagram-dark) {
+        display: block;
+      }
+    }
+  }
+
+  /* render/enhance's furniture: reading progress, the code block's language and Copy, the footnote
+     preview, the image viewer and the selection link. Room for Copy is kept only where script runs. */
+  .reading-progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: var(--z-sticky);
+    block-size: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+  @media (scripting: enabled) {
+    :where([data-context="prose"]) :where(pre) {
+      padding-block-start: calc(var(--space-4) + 1.5rem);
+    }
+  }
+  .code-lang {
+    position: absolute;
+    inset-block-start: var(--space-2);
+    inset-inline-start: var(--space-4);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+  }
+  .code-copy {
+    position: absolute;
+    inset-block-start: var(--space-1);
+    inset-inline-end: var(--space-2);
+    min-block-size: var(--target);
+    padding: 0 var(--space-2);
+    border: 0;
+    background: transparent;
+    color: var(--accent-text);
+    font-family: var(--ui);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+    cursor: pointer;
+    &:hover {
+      color: var(--accent-hover);
+    }
+  }
+  .footnote-preview {
+    position: absolute;
+    z-index: var(--z-tip);
+    max-inline-size: 22rem;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    box-shadow: var(--shadow-m);
+    color: var(--text);
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    & p {
+      margin: 0;
+    }
+  }
+  :where([data-context="prose"]) a[data-footnote-ref][aria-describedby~="footnote-preview"] {
+    anchor-name: --footnote-ref;
+  }
+  .footnote-preview:popover-open {
+    position: fixed;
+    position-anchor: --footnote-ref;
+    inset: auto;
+    inset-block-start: calc(anchor(bottom) + 8px);
+    inset-inline-start: max(8px, calc(anchor(left) - 20px));
+    margin: 0;
+    position-try-fallbacks: flip-block;
+  }
+  :where([data-context="prose"]) img.zoomable {
+    cursor: zoom-in;
+  }
+  .lightbox {
+    max-inline-size: 100%;
+    max-block-size: 100%;
+    margin: auto;
+    padding: var(--space-6);
+    border: 0;
+    background: transparent;
+    overflow: visible;
+    &::backdrop {
+      background: var(--scrim);
+      cursor: zoom-out;
+    }
+    & img {
+      display: block;
+      max-inline-size: 100%;
+      max-block-size: 85vh;
+      background: var(--surface);
+    }
+  }
+  .lightbox-close {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    min-block-size: var(--control);
+    padding: 0 var(--pad-x);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--ui);
+    cursor: pointer;
+  }
+  .selection-link {
+    display: block;
+    margin-block: var(--space-2) var(--space-4);
+    padding: var(--space-1) var(--space-3);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: var(--fs-detail);
+    cursor: pointer;
+    &:hover {
+      border-style: solid;
+      border-color: var(--accent);
+      color: var(--accent-text);
+    }
+  }
+  .code-copy[data-copied="true"],
+  .selection-link[data-copied="true"] {
+    font-weight: 700;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .reading-progress {
+      transition: transform 0.1s linear;
+    }
+    .lightbox[open] {
+      animation: cap-lightbox-in var(--dur-fast) var(--ease-out);
+    }
+    :where([data-context="prose"]) :where(.heading-anchor) {
+      transition: opacity var(--dur-fast) var(--ease-out);
+    }
+  }
+  @keyframes cap-lightbox-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @media print {
+    .reading-progress,
+    .code-lang,
+    .code-copy,
+    .selection-link,
+    .lightbox,
+    :where([data-context="prose"]) :where(.heading-anchor) {
+      display: none;
+    }
+    :where([data-context="prose"]) :where(pre) {
+      padding-block-start: var(--space-4);
+      white-space: pre-wrap;
+    }
+  }
+}

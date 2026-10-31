@@ -87,29 +87,3 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
   }
   return out.join("\n");
 }
-
-// Doc-page frontmatter: `key: value`, `key: [a, b]`, and `key:` followed by `- item` lines.
-export function frontmatter(src: string): { data: Record<string, string | string[]>; body: string } {
-  const m = src.replace(/\r\n/g, "\n").match(/^---\n([\s\S]*?)\n---\n?/);
-  if (!m) return { data: {}, body: src };
-  const data: Record<string, string | string[]> = {};
-  let key = "";
-  for (const raw of (m[1] ?? "").split("\n")) {
-    const item = raw.match(/^\s+-\s+(.*)$/);
-    if (item && key) {
-      const list = Array.isArray(data[key]) ? (data[key] as string[]) : [];
-      list.push(unquote(item[1] ?? ""));
-      data[key] = list;
-      continue;
-    }
-    const kv = raw.match(/^([\w-]+):\s*(.*)$/);
-    if (!kv) continue;
-    key = kv[1] ?? "";
-    const v = (kv[2] ?? "").trim();
-    if (v.startsWith("[") && v.endsWith("]")) data[key] = v.slice(1, -1).split(",").map((s) => unquote(s.trim())).filter(Boolean);
-    else data[key] = v === "" ? [] : unquote(v);
-  }
-  return { data, body: src.slice(m[0].length) };
-}
-
-const unquote = (s: string) => s.replace(/^(['"])(.*)\1$/, "$2");
