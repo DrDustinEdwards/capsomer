@@ -4,7 +4,7 @@
 import { StrictMode, useRef, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
-import type { ContentCan, IntentResult, PostRow, PostsData, ScheduledUpdateView } from "../content/content.ts";
+import type { ContentCan, IntentResult, PostOffers, PostRow, PostsData, ScheduledUpdateView } from "../content/content.ts";
 import { MessageProvider } from "../message/message.react.tsx";
 import { PostScheduledUpdate, PostsList } from "./posts-list.react.tsx";
 
@@ -18,6 +18,21 @@ const ROWS: PostRow[] = [
   { id: "read-only-agent", title: "Notes on a read-only agent", kind: "post", status: "published", path: "/blog/read-only-agent", href: "/editor/read-only-agent", liveHref: "https://dustinedwards.info/blog/read-only-agent", publishAt: null, publishedAt: "2026-09-21T10:00:00Z", updatedAt: "2026-09-22T08:00:00Z", scheduledUpdate: { publishAt: "2026-10-12T15:00:00Z", href: "/posts/read-only-agent/update" }, tags: ["agents", "capsid"] },
   { id: "phage-lambda", title: "Phage lambda: lysis or lysogeny", kind: "post", status: "draft", path: null, href: "/editor/phage-lambda", liveHref: null, publishAt: null, publishedAt: null, updatedAt: "2026-10-01T12:00:00Z", notes: [{ text: "New draft" }, { text: "Held by a flag", tone: "warn" }] },
   { id: "about", title: "About", kind: "page", status: "published", path: "/about", href: "/editor/about", liveHref: "https://dustinedwards.info/about", publishAt: null, publishedAt: "2026-06-01T09:00:00Z", updatedAt: "2026-09-02T11:00:00Z", tags: [] },
+];
+
+// A site with site-api v0.16.0's ideas: a Trash, rename, preview links, the author and date
+// filters, and rows that carry their authors and excerpt.
+const IDEAS: PostOffers = { delete: true, schedule: true, tags: true, duplicate: true, trash: true, rename: true, previewLinks: true, filters: ["kind", "tag", "author", "published", "trashed"], authors: ["Dustin Edwards", "Julie Edwards"] };
+const CREDITS: Record<string, Pick<PostRow, "authors" | "excerpt">> = {
+  "foxhound-release": { authors: ["Dustin Edwards"], excerpt: "What shipped in the Foxhound release, what was cut, and the one migration that needs a hand." },
+  "uptime-strip": { authors: ["Dustin Edwards", "Julie Edwards"], excerpt: "A gap is not a zero: the strip draws a missing check as its own state, with the reason." },
+  "mention-queue": { authors: ["Julie Edwards"] },
+  "read-only-agent": { authors: ["Dustin Edwards"], excerpt: "An agent that reads the knowledge base and the repositories and writes nothing but its own notes is safe to leave running overnight, which is most of what makes it useful." },
+};
+const IDEA_ROWS: PostRow[] = [
+  ...ROWS.slice(0, 4).map((r) => ({ ...r, ...CREDITS[r.id], scheduledUpdate: undefined, trashedAt: null })),
+  { id: "lysogeny-notes", title: "Old notes on lysogeny", kind: "post", status: "draft", path: null, href: "/editor/lysogeny-notes", liveHref: null, publishAt: null, publishedAt: null, updatedAt: "2026-08-14T10:00:00Z", authors: ["Dustin Edwards"], trashedAt: "2026-10-08T09:00:00Z" },
+  { id: "carrel-launch", title: "Carrel is open", kind: "post", status: "draft", path: "/blog/carrel-launch", href: "/editor/carrel-launch", liveHref: null, publishAt: null, publishedAt: "2026-05-02T09:00:00Z", updatedAt: "2026-09-30T15:00:00Z", authors: ["Julie Edwards", "Dustin Edwards"], excerpt: "The writing hub for every site in the family, and what it will never do to your prose.", trashedAt: "2026-09-20T12:00:00Z" },
 ];
 
 const WORDS: Record<string, string> = { "foxhound-release": "1,240", "uptime-strip": "860", "mention-queue": "1,530", "read-only-agent": "2,110", "phage-lambda": "3,020", about: "410" };
@@ -50,10 +65,10 @@ win.postsLog = [];
 let copies = 0;
 
 // The in-memory site: what the content kit would do through site-api, enough to try each action.
-function useSite() {
-  const [rows, setRowsState] = useState(ROWS);
+function useSite(initial: PostRow[] = ROWS) {
+  const [rows, setRowsState] = useState(initial);
   // The site's truth between renders: an Undo posted later reads the rows as they are then.
-  const live = useRef(ROWS);
+  const live = useRef(initial);
   const setRows = (f: (rs: PostRow[]) => PostRow[]) => {
     live.current = f(live.current);
     setRowsState(live.current);
@@ -85,10 +100,10 @@ function useSite() {
       case "remove-copies":
         setRows((rs) => rs.filter((r) => !ids.includes(r.id)));
         return { ok: true, message: `Removed the ${ids.length === 1 ? "copy" : `${ids.length} copies`}.` };
-      case "add-tag":
-      case "remove-tag": {
+      case "tag-add":
+      case "tag-remove": {
         if (!tag) return { ok: false, message: "Type a tag first. Nothing was changed." };
-        const adding = intent === "add-tag";
+        const adding = intent === "tag-add";
         // The site refuses a post with no front matter (Carrel's bulk.server.ts does).
         const refused: string[] = ids.filter((id) => id === "phage-lambda");
         const changed = ids.filter((id) => !refused.includes(id) && (rows.find((r) => r.id === id)?.tags ?? []).includes(tag) !== adding);
@@ -98,7 +113,7 @@ function useSite() {
           ok: refused.length === 0,
           message: `${adding ? "Added" : "Removed"} the tag ${tag} ${adding ? "to" : "from"} ${changed.length} ${posts(changed.length)}${refused.length ? `; ${refused.length} refused` : ""}.`,
           outcomes,
-          undo: changed.length ? { intent: adding ? "remove-tag" : "add-tag", fields: { ids: changed, tag } } : undefined,
+          undo: changed.length ? { intent: adding ? "tag-remove" : "tag-add", fields: { ids: changed, tag } } : undefined,
         };
       }
       case "delete": {
@@ -112,6 +127,33 @@ function useSite() {
         }
         setRows((rs) => rs.filter((r) => !ids.includes(r.id)));
         return { ok: true, message: `Deleted ${ids.length} ${posts(ids.length)}.`, outcomes: ids.map((id) => ({ id, ok: true })) };
+      }
+      case "trash":
+      case "restore": {
+        // Each is the other's Undo, as the kit's are.
+        const binning = intent === "trash";
+        setRows((rs) => rs.map((r) => (ids.includes(r.id) ? { ...r, trashedAt: binning ? new Date(NOW).toISOString() : null, ...(binning ? { status: "draft" as const } : {}) } : r)));
+        const what = ids.length === 1 ? `“${title(ids[0] ?? "")}”` : `${ids.length} posts`;
+        return { ok: true, message: binning ? `Moved ${what} to Trash.` : `Restored ${what}.`, undo: { intent: binning ? "restore" : "trash", fields: { ids } } };
+      }
+      case "rename": {
+        const id = ids[0] ?? "";
+        const next = String(form.get("newId") ?? "").trim();
+        if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,199}$/.test(next)) return { ok: false, message: "A slug is letters, digits, dots, dashes and underscores. Nothing was changed." };
+        if (rows.some((r) => r.id === next)) return { ok: false, message: `The slug ${next} is taken. Nothing was changed.` };
+        const old = rows.find((r) => r.id === id);
+        const path = old?.path ? old.path.replace(/[^/]+$/, next) : null;
+        setRows((rs) => rs.map((r) => (r.id === id ? { ...r, id: next, href: `/editor/${next}`, path, liveHref: path && r.liveHref ? `https://dustinedwards.info${path}` : r.liveHref } : r)));
+        return { ok: true, message: old?.path ? `Renamed “${title(id)}” to ${next}. ${old.path} now redirects to ${path}.` : `Renamed “${title(id)}” to ${next}.` };
+      }
+      case "preview-link": {
+        const id = ids[0] ?? "";
+        return {
+          ok: true,
+          message: `Made a preview link for “${title(id)}”. It works for 48 hours.`,
+          outcomes: [{ id, ok: true }],
+          previewLink: { url: "https://dustinedwards.info/preview/Xk2fQ9bLm4TzR7wVc1nH8sJd5pYa3gUe6oKi0qWtBvE", expiresAt: new Date(NOW + 48 * 3600_000).toISOString() },
+        };
       }
       case "reschedule": {
         // One time for every post, or (its Undo) one per post in the order of ids, as the kit takes them.
@@ -203,7 +245,32 @@ const outcomeResult: IntentResult = {
     { id: "phage-lambda", ok: false, message: "This post has no front matter, so it cannot carry tags yet." },
     { id: "mention-queue", ok: true },
   ],
-  undo: { intent: "remove-tag", fields: { ids: ["foxhound-release", "mention-queue"], tag: "capsid" } },
+  undo: { intent: "tag-remove", fields: { ids: ["foxhound-release", "mention-queue"], tag: "capsid" } },
+};
+
+// The v0.15.0 site, live or its Trash, with every action.
+function Ideas({ trash = false }: { trash?: boolean }) {
+  const { rows, submit } = useSite(IDEA_ROWS);
+  const live = rows.filter((r) => !r.trashedAt);
+  const binned = rows.filter((r) => r.trashedAt);
+  const count = (s: PostRow["status"]) => live.filter((r) => r.status === s).length;
+  const counts = { all: live.length, draft: count("draft"), scheduled: count("scheduled"), published: count("published"), trash: binned.length };
+  return <PostsList data={dataOf(trash ? binned : live, { offers: IDEAS, query: trash ? { trashed: "1" } : {}, counts, extra: undefined })} action="/posts" submit={submit} now={NOW} />;
+}
+
+// The same site's list as a server sends it after the filters were used, and after a preview link
+// was made with no script.
+const ideaRows = IDEA_ROWS.filter((r) => !r.trashedAt);
+const ideaCounts = { all: 4, draft: 1, scheduled: 1, published: 2, trash: 2 };
+const filteredIdeas = dataOf(
+  ideaRows.filter((r) => r.authors?.includes("Julie Edwards")),
+  { offers: IDEAS, query: { author: "Julie Edwards", from: "2026-09-01", to: "2026-10-31" }, counts: ideaCounts, extra: undefined },
+);
+const linkResult: IntentResult = {
+  ok: true,
+  message: "Made a preview link for “Why the uptime strip counts gaps”. It works for 48 hours.",
+  outcomes: [{ id: "uptime-strip", ok: true }],
+  previewLink: { url: "https://dustinedwards.info/preview/Xk2fQ9bLm4TzR7wVc1nH8sJd5pYa3gUe6oKi0qWtBvE", expiresAt: "2026-10-12T12:00:00Z" },
 };
 
 const confirmResult: IntentResult = {
@@ -230,6 +297,10 @@ const mounts: Record<string, () => ReactNode> = {
   "empty-match": () => <PostsList data={emptyMatch} action="/posts" now={NOW} />,
   confirm: () => <PostsList data={dataOf(ROWS)} action="/posts" result={confirmResult} now={NOW} />,
   updates: () => <Updates />,
+  ideas: () => <Ideas />,
+  "ideas-filtered": () => <PostsList data={filteredIdeas} action="/posts" now={NOW} />,
+  "ideas-trash": () => <Ideas trash />,
+  "ideas-link": () => <PostsList data={dataOf(ideaRows, { offers: IDEAS, counts: ideaCounts, extra: undefined })} action="/posts" result={linkResult} now={NOW} />,
   "update-view": () => <UpdateView />,
   "update-reader": () => <PostScheduledUpdate data={{ ...UPDATE_VIEW, can: { ...ALL, edit: false, publish: false } }} action="/posts" liveSince="2026-09-21T10:00:00Z" crumbs={CRUMBS} headingLevel="h3" now={NOW} />,
 };
