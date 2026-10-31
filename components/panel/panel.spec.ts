@@ -28,7 +28,7 @@ eachTheme((theme) => {
       - heading "Recent drafts" [level=3]
       - list "Recent drafts":
         - listitem:
-          - link "How phage lambda chooses"
+          - link "How the survey sites were chosen"
         - listitem:
           - link "Notes on a quiet deploy"
     `);

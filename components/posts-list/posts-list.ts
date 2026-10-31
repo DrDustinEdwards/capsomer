@@ -93,8 +93,8 @@ export function countLine(data: Pick<PostsData, "rows" | "page"> & { query?: Pos
   return data.page.sortedOnPage ? `${base}, sorted on this page only` : base;
 }
 
-// A row's credits on one line, the primary name first: "By Dustin Edwards", "By Dustin Edwards
-// with Julie Edwards". "" for a post that credits no one.
+// A row's credits on one line, the primary name first: "By Alex Rivera", "By Alex Rivera
+// with Sam Lee". "" for a post that credits no one.
 export function authorLine(authors: readonly string[] | undefined): string {
   const [first, ...rest] = authors ?? [];
   if (!first) return "";

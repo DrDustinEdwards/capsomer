@@ -97,11 +97,11 @@ eachTheme((theme) => {
     await visitStates(page, "time", theme);
     await expect(page.locator("#sample-rows")).toHaveAccessibleName("Deploys");
     await expect(page.locator("#sample-rows > li")).toHaveText([
-      /dustinedwards\.info deployed\s+less than a minute ago/,
-      /carrel\.app deployed\s+5 minutes ago/,
+      /example\.com deployed\s+less than a minute ago/,
+      /docs\.example\.com deployed\s+5 minutes ago/,
       /capsid deployed\s+3 hours ago/,
-      /foxhound\.app deployed\s+yesterday/,
-      /recova deployed\s+September 12/,
+      /example\.org deployed\s+yesterday/,
+      /example\.net deployed\s+September 12/,
       /The next uptime pass runs in\s+3 hours/,
       /Last edited\s+5 minutes ago/,
     ]);

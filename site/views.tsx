@@ -42,13 +42,13 @@ export function TypeView() {
         <p>Schibsted Grotesk for app chrome, Martian Mono for identifiers, Source Serif 4 for long-form text. App body text is 13 px; a reading page's body is 17 to 19 px with a 66-character measure.</p>
       </div>
       <Panel title="Type" id="type">
-        <ScaleTable group="type" render={(name) => (name.startsWith("fs-") ? <span className="site-type-sample" ref={paint("font-size", `var(--${name})`)}>Phage λ and φX174</span> : null)} />
+        <ScaleTable group="type" render={(name) => (name.startsWith("fs-") ? <span className="site-type-sample" ref={paint("font-size", `var(--${name})`)}>Field notes and the 2026 survey</span> : null)} />
       </Panel>
       <Panel title="Reading context" id="prose">
         <div data-context="prose" className="site-prose-sample">
-          <h2>How a temperate phage decides</h2>
+          <h2>How a survey site is chosen</h2>
           <p>
-            A temperate phage such as λ does not always kill the cell it enters. In <i>Escherichia coli</i> the outcome turns on two proteins, CI and Cro, each of which shuts off the gene for the other. Small lytic phages such as φX174 have no such switch. Sample text.
+            A survey site is not picked at random. In <i>The Field Handbook</i> the choice turns on two questions, access and coverage, each of which limits the other. Small plots beside a road have no such tension. Sample text.
           </p>
         </div>
       </Panel>

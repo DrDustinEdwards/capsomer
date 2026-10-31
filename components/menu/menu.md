@@ -28,7 +28,7 @@ One or two actions: show them as buttons (`.cap-btn`). Moving between pages: lin
 ## The default and its reason
 
 - **Base UI's Menu does the hard part** (decision 7): the `menu` and `menuitem` roles, focus moving into the menu and back to the trigger, arrow keys, typeahead and positioning.
-- **The trigger is a `.cap-btn`** with a chevron, and is named by what the menu acts on ("Actions for foxhound.app").
+- **The trigger is a `.cap-btn`** with a chevron, and is named by what the menu acts on ("Actions for example.org").
 - **Danger items come last, after a separator, in `--crit`** (Primer's rule). The menu moves them there whatever order the app passes, so a destructive action is never between two routine ones. A danger item opens the confirm dialog; it never acts at once.
 - **A disabled item stays in the menu and reachable by the arrow keys**, with its reason under it and read as its description. A hidden action leaves a person wondering where it went.
 - **A shortcut is shown at the item's end and set as `aria-keyshortcuts`**; the visible key is hidden from the item's name so the name stays the action.
@@ -83,7 +83,7 @@ React only:
 import { Menu } from "capsomer/react/menu";
 
 <Menu
-  label="Actions for foxhound.app"
+  label="Actions for example.org"
   items={[
     { label: "Open site", shortcut: "O", onSelect: open },
     { label: "Run checks now", onSelect: run },
@@ -112,10 +112,10 @@ A form menu, with no script (HTML, or React `FormMenu` which renders exactly thi
 
 ```html
 <details class="cap-menu-form" data-cap="menu-form">
-  <summary class="cap-btn cap-menu-trigger">Actions for foxhound.app <svg aria-hidden="true">...</svg></summary>
-  <form class="cap-popover cap-menu" action="/admin/sites/foxhound" method="post">
-    <input type="hidden" name="site" value="foxhound" />
-    <a class="cap-option cap-menu-item" href="/sites/foxhound"><span class="cap-option-label">Open site</span></a>
+  <summary class="cap-btn cap-menu-trigger">Actions for example.org <svg aria-hidden="true">...</svg></summary>
+  <form class="cap-popover cap-menu" action="/admin/sites/example-org" method="post">
+    <input type="hidden" name="site" value="example-org" />
+    <a class="cap-option cap-menu-item" href="/sites/example-org"><span class="cap-option-label">Open site</span></a>
     <button type="submit" class="cap-option cap-menu-item" name="intent" value="archive" disabled><span class="cap-option-label">Archive</span><span class="cap-menu-reason">Not while a deploy runs.</span></button>
     <hr class="cap-listbox-separator cap-menu-separator" />
     <button type="submit" class="cap-option cap-menu-item" data-tone="crit" name="intent" value="delete"><span class="cap-option-label">Delete site</span></button>
@@ -123,7 +123,7 @@ A form menu, with no script (HTML, or React `FormMenu` which renders exactly thi
 </details>
 ```
 
-`import { enhance } from "capsomer/behavior/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for foxhound.app" action="/admin/sites/foxhound" hidden={{ site: "foxhound" }} items={[{ label: "Open site", value: "open", href: "/sites/foxhound" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link. A link item with `onSelect` runs it instead of following the link once script runs (the posts list's Reschedule… opens a dialog), and with no script goes to the page that does it; only such a link may be a danger item.
+`import { enhance } from "capsomer/behavior/menu"` adds the keys. In React, `import { FormMenu } from "capsomer/react/menu"`: `<FormMenu label="Actions for example.org" action="/admin/sites/example-org" hidden={{ site: "example-org" }} items={[{ label: "Open site", value: "open", href: "/sites/example-org" }, { label: "Archive", value: "archive", disabled: true, reason: "Not while a deploy runs." }, { label: "Delete site", value: "delete", danger: true }]} />`; `items` keep the order given except danger items, which go last after a separator; an item with `href` is a link. A link item with `onSelect` runs it instead of following the link once script runs (the posts list's Reschedule… opens a dialog), and with no script goes to the page that does it; only such a link may be a danger item.
 
 ## Matches shadcn
 

@@ -77,7 +77,7 @@ export function byteSize(size: number): string {
 
 export const LARGE_BYTES = 1024 * 1024;
 
-// "foxhound-hero.jpg" gives "foxhound hero": offered as alt text, never applied (alt text nobody
+// "release-hero.jpg" gives "release hero": offered as alt text, never applied (alt text nobody
 // read is worse than a visibly empty field).
 export function suggestedAlt(name: string): string {
   return name

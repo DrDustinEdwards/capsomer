@@ -87,7 +87,7 @@ function Highlighted() {
 }
 
 const SPECIMENS: Record<string, () => ReactNode> = {
-  closed: () => <Logged entries={full} label="Actions for foxhound.app" />,
+  closed: () => <Logged entries={full} label="Actions for example.org" />,
   open: () => <Logged entries={plain} defaultOpen />,
   highlighted: () => <Highlighted />,
   disabled: () => <Logged entries={disabled} defaultOpen />,

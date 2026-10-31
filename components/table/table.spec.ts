@@ -126,7 +126,7 @@ eachTheme((theme) => {
               - columnheader "Errors"
           - rowgroup:
             - row:
-              - rowheader "germomics.org"
+              - rowheader "example.net"
     `);
     await expect(page.locator("#t2 th[aria-sort='ascending']")).toHaveCount(1);
   });
@@ -162,7 +162,7 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "App" }).focus();
     await page.keyboard.press("Space");
     await expect(page.locator("#t1 thead th").first()).toHaveAttribute("aria-sort", "ascending");
-    expect(await firstColumn(page, "#t1", 0)).toEqual(["Capsid Portal", "Carrel", "dustinedwards.info", "Foxhound"]);
+    expect(await firstColumn(page, "#t1", 0)).toEqual(["Capsid Portal", "Carrel", "example.com", "Foxhound"]);
   });
 
   test("keyboard: a row that opens a detail is one tab stop, and Enter follows it", async ({ page }) => {
@@ -180,7 +180,7 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Reported" }).click();
     await expect(page.locator("#t1 thead th[aria-sort]")).toHaveCount(1);
     await expect(page.locator("#t1 thead th").nth(5)).toHaveAttribute("aria-sort", "ascending");
-    expect(await firstColumn(page, "#t1", 0)).toEqual(["Foxhound", "dustinedwards.info", "Carrel", "Capsid Portal"]);
+    expect(await firstColumn(page, "#t1", 0)).toEqual(["Foxhound", "example.com", "Carrel", "Capsid Portal"]);
   });
 
   test("behavior: data-sort orders a cell whose text does not sort", async ({ page }) => {
