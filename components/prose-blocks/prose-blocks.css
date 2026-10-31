@@ -309,6 +309,12 @@
       margin: var(--space-2) 0 0;
       font-family: var(--ui);
       font-size: var(--fs-body);
+      /* A link on its own line: a full target, 44px on a touch screen. */
+      & a {
+        display: inline-flex;
+        align-items: center;
+        min-block-size: var(--target);
+      }
     }
 
     /* An embed: no request to the service until the reader asks. Until then a 16:9 card that names
@@ -335,8 +341,15 @@
         border-block: 0.6em solid transparent;
         border-inline-start: 1em solid currentColor;
       }
-      &:hover {
+      /* The card keeps the link system's states: the tint under the pointer, a stronger one pressed. */
+      &:hover,
+      &[data-force="hover"] {
         border-color: var(--accent);
+        background: var(--accent-soft);
+      }
+      &:active,
+      &[data-force="pressed"] {
+        background: var(--accent-5);
       }
     }
     & :where(.embed iframe) {

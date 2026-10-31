@@ -102,17 +102,18 @@
     color: var(--dim);
   }
 
-  /* Where the panel's data comes from and how fresh it is, pushed to the right. */
+  /* Where the panel's data comes from and how fresh it is, pushed to the end of the line. */
   .cap-panel-src {
-    margin-left: auto;
+    margin-inline-start: auto;
     font-size: var(--fs-label);
     color: var(--dim);
   }
 
-  /* A link to the full view ("All columns in Sites"), at the right of the header, after the
+  /* A link to the full view ("All columns in Sites"), at the end of the header, after the
      source line when there is one. */
   .cap-panel-more {
-    margin: calc(var(--space-1) * -1) 0 calc(var(--space-1) * -1) auto;
+    margin-block: calc(var(--space-1) * -1);
+    margin-inline: auto 0;
     font-size: var(--fs-detail);
     font-weight: 500;
 
@@ -124,7 +125,7 @@
     }
   }
   .cap-panel-src + .cap-panel-more {
-    margin-left: 0;
+    margin-inline-start: 0;
   }
 
   .cap-panel-body {

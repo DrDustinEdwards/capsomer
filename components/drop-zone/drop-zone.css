@@ -72,8 +72,7 @@
   /* "browse" reads as the link it is; the whole label is the target. */
   .cap-drop-browse {
     color: var(--accent-text);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+    font-weight: 600;
   }
   .cap-drop-hint {
     color: var(--muted);

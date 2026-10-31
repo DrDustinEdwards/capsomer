@@ -43,14 +43,54 @@
     font-size: var(--text-size);
     line-height: var(--leading);
   }
+  /* A link is told by weight, not a line (DEFAULTS.md). Every link takes the link color and the
+     focus ring; a text link (no component class, or a kind of the link system: components/link)
+     is semibold, turns the visited color once followed (outside a nav), and under the pointer darkens on a soft
+     tint, which a press makes stronger. The tint is a background and a 2px shadow of the same
+     color, cloned onto each line a link wraps to. A link that is a control is drawn by its component. */
   a {
     color: var(--accent-text);
-    text-underline-offset: 2px;
+    text-decoration: none;
+    &:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref) {
+      font-weight: 600;
+    }
+    /* Not in a nav: a menu is told by its place, and draws its own tint (link.md). */
+    &[href]:is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a) {
+      border-radius: 3px;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+      /* :visited may set colors only, and getComputedStyle hides it, so a specimen forces it. */
+      &:visited,
+      &[data-force="visited"] {
+        color: var(--accent-visited);
+      }
+      &:hover,
+      &[data-force="hover"] {
+        color: var(--accent-hover);
+        background: var(--accent-soft);
+        box-shadow: 0 0 0 2px var(--accent-soft);
+      }
+      &:active,
+      &[data-force="pressed"] {
+        color: var(--accent-hover);
+        background: var(--accent-5);
+        box-shadow: 0 0 0 2px var(--accent-5);
+      }
+      /* Forced colors paint no tint, so the pointer gets the system's own cue. */
+      @media (forced-colors: active) {
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
     &:hover {
       color: var(--accent-hover);
     }
     @media (prefers-reduced-motion: no-preference) {
-      transition: color var(--dur-fast) var(--ease-out);
+      transition:
+        color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out),
+        box-shadow var(--dur-fast) var(--ease-out);
     }
   }
   /* A trailing arrow in a link or button. A site's --arrow-rest and --arrow-shift (shown and in place
@@ -74,7 +114,8 @@
   button {
     cursor: pointer;
   }
-  :focus-visible {
+  :focus-visible,
+  a[data-force="focus"] {
     /* The shared focus indicator: a 2 px solid --ring outline, 3:1 against every surface
        (palette.mjs checks it). A field may add --shadow-ring, the soft 3 px glow, beside it. */
     outline: var(--focus-width) solid var(--ring);

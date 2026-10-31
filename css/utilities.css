@@ -13,9 +13,11 @@
     filter: var(--img-filter);
   }
 
-  /* Text a screen reader announces and the eye does not see. Prelum's footnotes heading carries GFM's
-     own name for it, .sr-only (components/prose-blocks). */
+  /* Text a screen reader announces and the eye does not see. The focusable variant shows
+     while it, or something in it, has focus. Prelum's footnotes heading carries GFM's own name
+     for it, .sr-only (components/prose-blocks). */
   .cap-sr-only,
+  .cap-sr-only-focusable:not(:focus-within),
   :where([data-context="prose"]) .sr-only {
     position: absolute;
     width: 1px;
@@ -27,7 +29,7 @@
   /* Identifiers only: ids, shas, commands, paths. Times and counts are .cap-num. */
   .cap-mono {
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 0.75rem;
     letter-spacing: -0.01em;
   }
   .cap-num {
@@ -64,9 +66,12 @@
    header's section links keep none: an arrow on everything stops meaning "this goes somewhere". A utility, so
    a page that keeps its own base (dustinedwards.info) still draws the footer's arrows. */
 @layer cap.utilities {
-  /* The shape is the --cap-arrow token (tokens/scale.css). */
+  /* The shape is the --cap-arrow token (tokens/scale.css). The link system's next and title
+     links take it too (components/link/link.md): a title's waits for the pointer or focus. */
   .cap-go::after,
-  .cap-go[data-go="back"]::before {
+  .cap-go[data-go="back"]::before,
+  a[data-link="next"]::after,
+  :is(a[data-link="title"], :is(h1, h2, h3, h4) > a:not([class*="cap-"]))::after {
     content: "";
     display: inline-block;
     flex: none;
@@ -79,6 +84,9 @@
   }
   .cap-go[data-go="out"]::after {
     rotate: -45deg;
+  }
+  :is(a[data-link="title"], :is(h1, h2, h3, h4) > a:not([class*="cap-"])):not(:hover, :focus-visible, [data-force="hover"])::after {
+    opacity: 0;
   }
   .cap-go[data-go="back"] {
     &::after {
@@ -96,12 +104,13 @@
        jump). Pseudo-elements cannot sit inside :is(), so each is named. */
     .cap-go::before,
     .cap-go::after,
+    a[data-link="next"]::after,
     .cap-sign::before,
     .cap-sign::after,
     .cap-site-header-view::after {
       transition: translate var(--dur-base) var(--ease-out);
     }
-    :is(.cap-go, .cap-sign[rel~="next"], .cap-sign[data-variant="forward"]):is(:hover, :focus-visible)::after {
+    :is(.cap-go, .cap-sign[rel~="next"], .cap-sign[data-variant="forward"], a[data-link="next"]):is(:hover, :focus-visible)::after {
       translate: 3px 0;
     }
     :is(.cap-go[data-go="out"], .cap-site-header-view):is(:hover, :focus-visible)::after {
@@ -113,9 +122,36 @@
   }
   @media (forced-colors: active) {
     .cap-go::after,
-    .cap-go[data-go="back"]::before {
+    .cap-go[data-go="back"]::before,
+    a[data-link="next"]::after,
+    :is(a[data-link="title"], :is(h1, h2, h3, h4) > a:not([class*="cap-"]))::after {
       forced-color-adjust: none;
       background: LinkText;
+    }
+  }
+}
+
+/* In the components layer, where the shell and the site header drew their own copies, so a
+   component can still move it (the letterhead does). */
+@layer cap.components {
+  /* The skip link, the first thing a keyboard reaches: hidden until focused, then a primary
+     button in the corner (the shell's .cap-shell-skip and the site header's .cap-site-header-skip
+     are the same link). */
+  :is(.cap-skip, .cap-shell-skip, .cap-site-header-skip) {
+    position: absolute;
+    inset-inline-start: var(--space-3);
+    inset-block-start: var(--space-3);
+    z-index: var(--z-tip);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-m);
+    background: var(--primary);
+    color: var(--primary-fg);
+    box-shadow: var(--shadow-m);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:not(:focus-visible) {
+      transform: translateY(-200%);
     }
   }
 }

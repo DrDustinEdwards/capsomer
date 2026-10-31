@@ -16,6 +16,11 @@
     --cap-dialog-top: max(var(--space-5), 10dvh);
     --cap-dialog-from: translateY(8px) scale(0.96);
     --cap-dialog-to: translateY(4px) scale(0.98);
+    /* Side sheets are logical (right is the inline end): in right-to-left they sit and slide mirrored. */
+    --cap-dialog-dir: 1;
+    &:dir(rtl), :where([dir="rtl"]) & {
+      --cap-dialog-dir: -1;
+    }
 
     /* Centered by default; the placements below move it. */
     box-sizing: border-box;
@@ -99,15 +104,17 @@
     }
     &[data-placement="right"] {
       inset-inline: auto 0;
-      border-width: 0 0 0 1px;
-      --cap-dialog-from: translateX(2.5rem);
-      --cap-dialog-to: translateX(1.25rem);
+      border-width: 0;
+      border-inline-start-width: 1px;
+      --cap-dialog-from: translateX(calc(2.5rem * var(--cap-dialog-dir)));
+      --cap-dialog-to: translateX(calc(1.25rem * var(--cap-dialog-dir)));
     }
     &[data-placement="left"] {
       inset-inline: 0 auto;
-      border-width: 0 1px 0 0;
-      --cap-dialog-from: translateX(-2.5rem);
-      --cap-dialog-to: translateX(-1.25rem);
+      border-width: 0;
+      border-inline-end-width: 1px;
+      --cap-dialog-from: translateX(calc(-2.5rem * var(--cap-dialog-dir)));
+      --cap-dialog-to: translateX(calc(-1.25rem * var(--cap-dialog-dir)));
     }
 
     /* A bottom sheet: the full width, as tall as its content up to the safe margin. */
@@ -214,8 +221,7 @@
 
     & a {
       color: inherit;
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
+      font-weight: 600;
 
       &:hover {
         color: var(--text);
@@ -223,8 +229,11 @@
     }
   }
 
-  /* The body is the part that scrolls: header and footer stay. */
+  /* The body is the part that scrolls: header and footer stay. It holds what is positioned in
+     it (a .cap-sr-only text), so that cannot reach past the body and give the dialog a scroll
+     of its own. */
   .cap-dialog-body {
+    position: relative;
     display: grid;
     align-content: start;
     flex: 1 1 auto;

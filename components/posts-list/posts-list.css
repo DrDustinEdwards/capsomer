@@ -93,17 +93,14 @@
   .cap-posts-path {
     overflow-wrap: anywhere;
   }
-  /* The excerpt, on its own quiet line under the path, two lines at most so a row stays a row. */
+  /* The excerpt, on its own quiet line under the path. A summary is short, so it wraps rather
+     than being cut, and a reader's own text spacing cuts nothing (WCAG 1.4.12). */
   .cap-posts-excerpt {
-    display: -webkit-box;
+    display: block;
     margin-block-start: var(--space-1);
-    overflow: hidden;
     color: var(--muted);
     font-size: var(--fs-detail);
     font-weight: 400;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
   }
   .cap-posts-notes {
     display: flex;
@@ -301,5 +298,15 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
+  }
+
+  /* Forced colors drop the selected row's tint, so it takes the table's selected edge. The rest
+     is drawn by text and borders the system palette keeps: the Trash tab is a tab (tabs.css),
+     the preview box a border, the authors and the Trash note text. */
+  @media (forced-colors: active) {
+    .cap-posts-table tbody tr[data-selected] {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
   }
 }

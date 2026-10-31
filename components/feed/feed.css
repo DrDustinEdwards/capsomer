@@ -116,7 +116,7 @@
     font-size: var(--fs-detail);
     color: var(--muted);
     white-space: nowrap;
-    text-align: right;
+    text-align: end;
     font-variant-numeric: tabular-nums;
   }
 
@@ -151,15 +151,10 @@
   .cap-feed-marker-link {
     font-weight: 600;
     color: var(--crit);
-    text-decoration: underline;
-    text-underline-offset: 2px;
 
     [data-tone="warn"] & {
       color: var(--warn);
     }
-  }
-  .cap-feed-marker-link:hover {
-    text-decoration-thickness: 2px;
   }
 
   /* Narrow: the time drops under the words. */
@@ -174,7 +169,7 @@
     }
     .cap-feed-when {
       grid-column: 2;
-      text-align: left;
+      text-align: start;
     }
     .cap-feed-day-title {
       padding-inline: var(--pad-x);

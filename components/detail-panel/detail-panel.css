@@ -4,7 +4,7 @@
 /* The detail panel: a record opened from its row, in the shared dialog as a side sheet on the
    right (data-placement="right"). The surface, backdrop, slide, header, Close and body are the
    shared dialog's; this file adds what a record needs inside it: the kind, title and identifier
-   in the header, the sections, the command block, the record's columns, the controls, the
+   in the header, the sections, the command block, the controls, the
    source line and the before and after list. Reference: shadcn/ui Sheet (nova). Extracted
    from the Capsid Portal's drawer (.kv, .kv.diff, .cmd). */
 @layer cap.components {
@@ -79,32 +79,7 @@
     overflow-wrap: anywhere;
   }
 
-  /* The record: label and value side by side, stacked when the panel is narrow. */
-  .cap-detail-record {
-    display: grid;
-    grid-template-columns: minmax(7em, 150px) minmax(0, 1fr);
-    gap: var(--space-2) var(--space-4);
-    margin: 0;
-
-    & dt {
-      color: var(--muted);
-    }
-    & dd {
-      margin: 0;
-      min-width: 0;
-      overflow-wrap: anywhere;
-    }
-  }
-  @container (max-width: 380px) {
-    .cap-detail-record {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0;
-
-      & dd + dt {
-        margin-top: var(--space-3);
-      }
-    }
-  }
+  /* The record (.cap-detail-record) is the summary list's form without rows: summary-list.css. */
 
   /* Controls in a row; the destructive one at the far end, apart from the rest. */
   .cap-detail-controls {

@@ -51,7 +51,7 @@
 
   /* The table's cells. The person is a name over an email, both readable at a glance. */
   .cap-people-who {
-    text-align: left;
+    text-align: start;
     text-transform: none;
     letter-spacing: 0;
     font-weight: 400;
@@ -261,6 +261,11 @@
   .cap-people-history-what {
     margin: 0;
     color: var(--text);
+  }
+
+  /* Cloudflare's answer wraps, as in the table, so it never widens the page (WCAG 1.4.10). */
+  .cap-people-history-item > .cap-status {
+    white-space: normal;
   }
 
   .cap-people-history-by,

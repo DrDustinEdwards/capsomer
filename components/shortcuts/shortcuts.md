@@ -10,7 +10,6 @@ updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/HelpSheet.tsx, App.tsx's key handler and lib/prefs.ts, as of capsid master 2026-10-01
 replaces:
   - 'className="help"'
-  - "addEventListener\\(\"keydown\""
   - 'wf-single-keys'
 ---
 
@@ -30,7 +29,7 @@ A shortcut is never the only way: every one is also a control on screen or a com
 
 ## The default and its reason
 
-- **Single-key shortcuts can be turned off, and the choice is remembered** (`localStorage` key `cap-single-keys`, on by default). WCAG 2.1.4: a speech-input user saying a word must not fire a string of commands. A sequence (`g o`) and `?` count as single keys. Shortcuts with Ctrl, Cmd or Alt always work.
+- **Single-key shortcuts can be turned off, and the choice is remembered** (`localStorage` key `cap-single-keys`, on by default). WCAG 2.1.4: a speech-input user saying a word must not fire a string of commands. A sequence (`g o`) and `?` count as single keys. Shortcuts with Ctrl, Cmd or Alt always work. The switch is the one for the whole app: it sets `data-cap-single-keys` on `<html>` (read again from storage when a page loads), and every component's own single keys (row list `j`/`k`, media `x`, draft compare `n`/`p`, the queues' keys, message `z`, site header `T`, admin shell `G` and a digit) obey it.
 - **Keys typed into a field belong to the field.** Single keys and sequences are ignored while focus is in a text input, a textarea, a select or anything editable. Checkboxes, radios and buttons are not typing, so shortcuts still work from them. A shortcut with Ctrl or Cmd works everywhere.
 - **A modal dialog owns the keyboard.** While one is open, the registry does nothing. The one exception is the sheet itself: a registered shortcut with Ctrl or Cmd (Ctrl K) pressed there closes the sheet and runs, so the person is not stuck behind it. Keys that match no shortcut (Ctrl C) are left to the browser, and the confirm dialog keeps every key.
 - **The sheet says what a command is for**: a shortcut's `about` is one line under its name. What a view is for lives here, so the page needs no intro sentence under its heading.

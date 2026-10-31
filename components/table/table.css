@@ -247,9 +247,6 @@
       inset: 0;
     }
   }
-  .cap-table tbody tr:hover .cap-table-open {
-    text-decoration: underline;
-  }
 
   /* Opt-in: below a container width each row becomes a card, the first cell across the
      top and every other cell under it with its column name above its value (data-label).
@@ -475,6 +472,11 @@
     .cap-table-sort-up,
     .cap-table-sort-down {
       fill: CanvasText;
+    }
+    /* A selected row's tint and edge are a background and a shadow, which forced colors drop. */
+    .cap-table tbody tr:is([data-state="selected"], [aria-selected="true"], [data-force="selected"]) {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
     }
   }
 }
