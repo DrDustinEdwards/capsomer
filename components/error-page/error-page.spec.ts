@@ -3,7 +3,7 @@ import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from ".
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, the stack included", async ({ page }) => {
-    for (const only of ["not-found", "server", "dev"]) {
+    for (const only of ["not-found", "server", "database", "dev"]) {
       await visitStates(page, "error-page", theme, only);
       await expectNoAxeViolations(page);
     }
@@ -23,6 +23,7 @@ eachTheme((theme) => {
       { only: "not-found", title: "Page not found", retry: 0 },
       { only: "gone", title: "This page is gone", retry: 0 },
       { only: "server", title: "Something went wrong", retry: 1 },
+      { only: "database", title: "The site's data is unavailable", retry: 1 },
     ];
     for (const c of cases) {
       await visitStates(page, "error-page", theme, c.only);
