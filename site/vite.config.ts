@@ -8,7 +8,7 @@ import { readData, renderComponent, renderHome } from "./home.ts";
 import { renderMake } from "./make.ts";
 import { SEARCH_PAGE, renderSearch, searchIndexJson } from "./search.ts";
 import { writeHeadersFile } from "../scripts/security-headers.ts";
-import { MAKE_DESCRIPTION, discoveryFiles, siteHead } from "./seo.ts";
+import { ICON_TAGS, MAKE_DESCRIPTION, discoveryFiles, siteHead } from "./seo.ts";
 
 // One build for the site and every component's states page. The root is the repo, so a
 // states page sits at /components/<name>/states.html beside its component. The site is
@@ -79,7 +79,7 @@ export default defineConfig({
                 : c
                 ? { path: `/components/${c.name}/`, title: c.title, description: c.lead }
                 : "admin";
-          return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", siteHead(page));
+          return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", `${siteHead(page)}\n${ICON_TAGS}`);
         },
       },
       generateBundle() {

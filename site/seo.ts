@@ -8,6 +8,7 @@
  * addresses and stays out of search.
  */
 import { defineHead, headHtml } from "@drdustinedwards/site-helpers/head";
+import { iconLinks, webManifest } from "@drdustinedwards/site-helpers/icons";
 import { llmsDocument } from "@drdustinedwards/site-helpers/llms";
 import { aiTxt, robotsDocument } from "@drdustinedwards/site-helpers/robots";
 import { graph, jsonLd, thing, website } from "@drdustinedwards/site-helpers/schema";
@@ -70,6 +71,11 @@ export function siteHead(page: "home" | "admin" | { path: string; title: string;
   ]);
 }
 
+/** The family icon set's links, on every page (site/vite.config.ts); the files are in site/public. */
+export const ICON_TAGS = iconLinks()
+  .map((link) => `<link ${Object.entries(link).map(([name, value]) => `${name}="${value}"`).join(" ")} />`)
+  .join("\n");
+
 /** The discovery files, by their path in the built site. */
 export function discoveryFiles(components: string[]): Record<string, string> {
   return {
@@ -77,6 +83,7 @@ export function discoveryFiles(components: string[]): Record<string, string> {
     ".well-known/security.txt": securityTxt({ origin: ORIGIN, contact: "security@dustinedwards.info", expires: SECURITY_TXT_EXPIRES }),
     [`${INDEXNOW_KEY}.txt`]: INDEXNOW_KEY,
     "robots.txt": robotsDocument({ origin: ORIGIN, notes: [`AI usage policy: ${ORIGIN}/ai.txt`, `LLM guide: ${ORIGIN}/llms.txt`] }),
+    "site.webmanifest": JSON.stringify(webManifest({ name: "Capsomer", description: DESCRIPTION, themeColor: "#752c6a", backgroundColor: "#752c6a", lang: "en" })),
     "ai.txt": aiTxt({ origin: ORIGIN, name: "Capsomer", contact: "contact@dustinedwards.info" }),
     "llms.txt": llmsDocument({
       title: "Capsomer",
