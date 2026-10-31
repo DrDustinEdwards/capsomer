@@ -301,6 +301,8 @@ eachTheme((theme) => {
     const step = picker.getByRole("form", { name: "Alt text for uptime-strip.png" });
     const alt = step.getByRole("textbox", { name: "Alt text (required)" });
     await expect(alt).toBeFocused();
+    // Nothing is suggested from the file's name (the checklist's B2).
+    await expect(step).not.toContainText("uptime strip");
     await step.getByRole("button", { name: "Insert", exact: true }).click();
     await expect(page.locator("#picked")).toHaveText("");
     expect(await alt.evaluate((el: HTMLTextAreaElement) => el.validity.valueMissing)).toBe(true);
@@ -310,6 +312,17 @@ eachTheme((theme) => {
     await alt.fill("");
     await step.getByRole("button", { name: "Insert as decorative" }).click();
     await expect(page.locator("#picked")).toHaveText("Picked 2026/09/uptime-strip.png with alt text “”.");
+  });
+
+  test("behavior: the picker shows the model's alt text and fills the field only when asked", async ({ page }) => {
+    await visitStates(page, "media-library", theme);
+    const step = page.locator("[data-mount='picker-suggest']").getByRole("form", { name: "Alt text for uptime-strip.png" });
+    const alt = step.getByRole("textbox", { name: "Alt text (required)" });
+    await expect(step).toContainText("@cf/example/vision suggests: “A row of green bars with two short red gaps”");
+    await expect(alt).toHaveValue("");
+    await step.getByRole("button", { name: "Use it" }).click();
+    await expect(alt).toHaveValue("A row of green bars with two short red gaps");
+    await expect(alt).toBeFocused();
   });
 
   test("behavior: with no script, the picker's alt step posts the file and its alt text", async ({ page }) => {

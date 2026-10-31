@@ -2,7 +2,7 @@ import { type ComponentType, type FormHTMLAttributes, type KeyboardEvent, type M
 import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { Disclosure } from "../disclosure/disclosure.react.tsx";
 import { Glyph } from "../status/status.react.tsx";
-import { type Autosave, type MediaFields, type MediaRecord, type SaveState, byteSize, copySnippets, copyText, createAutosave, parseTags, suggestedAlt } from "./media.ts";
+import { type Autosave, type MediaFields, type MediaRecord, type SaveState, byteSize, copySnippets, copyText, createAutosave, parseTags } from "./media.ts";
 import { COPIED_MS, COPY_FAILED_MS } from "./media-actions.ts";
 import { MediaFocus, focusWords } from "./media-focus.react.tsx";
 
@@ -301,7 +301,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
                 onChange={(e) => edit({ alt: e.target.value })}
               />
               <p className="cap-field-help" id={`${base}-alt-help`}>
-                What a person who cannot see the picture needs to know. Leave out “image of”. {fields.alt.trim() ? "" : `Suggested: ${suggestedAlt(item.name)}.`}
+                What a person who cannot see the picture needs to know. Leave out “image of”.
               </p>
             </div>
             <div className="cap-field" data-cap-part="decorative-field">
