@@ -31,6 +31,10 @@
     & a:focus-visible {
       color: var(--accent-text);
     }
+    /* The family's hover tint, as every menu keeps (link.md); a site tile keeps its mark bar. */
+    & a:hover {
+      background-color: var(--accent-soft);
+    }
   }
 
   /* The site's own part: under the thin stripe, on the same columns as the letterhead below. */

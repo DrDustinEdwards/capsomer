@@ -1,0 +1,183 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The link system (link.md). css/base.css gives every link its four cues (the link color,
+   semibold, the hover tint, the focus ring) and the visited and pressed states; this file gives
+   each kind of link one cue more, named by data-link="<kind>" on the a, or found by CSS where the
+   kind shows in the markup (an a with a component class keeps only its component's look). Every
+   mark is hidden from assistive technology: alt text "" on a glyph, no content on a drawn icon; the
+   words a mark stands for are in the contract (visually hidden text, or the meta). */
+@layer cap.components {
+  /* A kind names its glyph in --link-after or --link-before; two rules of no specificity draw them,
+     so a component's own ::before and ::after always win. A fallback (no data-link) speaks its
+     words as alt text, since its author wrote none. */
+  /* An outside site's own icon (.cap-link-icon, below) replaces the arrow. Prelum puts rel="external"
+     on every off-family link whatever its kind, so rel and target count only with no data-link. */
+  a[data-link="away"]:not(:has(.cap-link-icon)),
+  a:not([data-link], [class*="cap-"]):is([rel~="external"], [target="_blank"]) {
+    --link-after: "\2197";
+  }
+  a:not([data-link], [class*="cap-"])[rel~="external"] {
+    --link-alt: ", opens another site";
+  }
+  a:not([data-link], [class*="cap-"], [rel~="external"])[target="_blank"] {
+    --link-alt: ", opens in a new tab";
+  }
+  a[data-link="file"],
+  a:not([data-link], [class*="cap-"]):is([download], [href$=".pdf" i], [href$=".zip" i], [href$=".csv" i], [href$=".epub" i], [href$=".docx" i], [href$=".xlsx" i], [href$=".pptx" i]) {
+    --link-after: "\2193";
+  }
+  /* "#", the fragment's own character: a place on this page. A down arrow would repeat the
+     download's mark, and point the wrong way to a place above. Found in running text only, never
+     in a nav (a table of contents), a footnote or a component. */
+  a[data-link="jump"],
+  :is(p, li, dd, td, blockquote, figcaption) > a:not([data-link], [class*="cap-"], [href="#"], [data-footnote-ref], [data-footnote-backref], nav a)[href^="#"] {
+    --link-after: "#";
+  }
+  a[data-link="email"],
+  a:not([data-link], [class*="cap-"])[href^="mailto:" i] {
+    --link-before: "\2709\FE0E";
+  }
+  a[data-link="phone"],
+  a:not([data-link], [class*="cap-"])[href^="tel:" i] {
+    --link-before: "\260E\FE0E";
+  }
+  :where(a[data-link], a:not([class*="cap-"]))::after {
+    content: var(--link-after) / var(--link-alt, "");
+    margin-inline-start: 0.2em;
+    font-weight: 400;
+    font-variant-emoji: text;
+  }
+  :where(a[data-link], a:not([class*="cap-"]))::before {
+    content: var(--link-before) / "";
+    margin-inline-end: 0.25em;
+    font-weight: 400;
+    font-variant-emoji: text;
+  }
+
+  /* The meta: a file's format and size, or a language's name, as a sibling after the link (a
+     space between), in the mono face, smaller and muted. Outside the link, so the link's name
+     stays the words and the meta is read after it. */
+  .cap-link-meta {
+    color: var(--muted);
+    font: 400 0.75em / 1 var(--mono);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  /* An outside site's icon, fetched by the site (Prelum), as the link's first child: the family
+     icons' size and place. In dark it sits on a light plate so a dark mark still shows; in forced
+     colors, where its colors may vanish, it gives way to the arrow. */
+  .cap-link-icon {
+    display: inline-block;
+    inline-size: 1em;
+    block-size: 1em;
+    margin-inline-end: 0.3em;
+    vertical-align: -0.14em;
+    border-radius: 3px;
+    object-fit: contain;
+    background: light-dark(transparent, var(--text));
+    padding: 1px;
+  }
+
+  /* A family site: its icon before the name, drawn from the list below as a mask in the link's
+     color (never loaded from the site). A site with no icon here keeps the family arrow turned out. */
+  a[data-link="family"]::before {
+    content: "";
+    display: inline-block;
+    inline-size: 1em;
+    block-size: 1em;
+    margin-inline-end: 0.3em;
+    vertical-align: -0.14em;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath transform='rotate(-45 12 12)' d='M2 10h12.2L9.6 5.4 12 3l9 9-9 9-2.4-2.4 4.6-4.6H2z'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  /* One icon per site in FAMILY_LINK_SITES (components/family-footer/family-footer.ts), each its
+     site's own favicon or mark reduced to one color on a 24-unit grid. */
+  a[data-link="family"][data-site="dustinedwards"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17.4 20.9 14.7 22.7 11.5 23.2 8.4 22.4 5.9 20.5 4.9 19.1 4 16.1 4.4 12.9 6 10.1 7.2 9 10.1 7.7 10.8 10.6 8.2 11.9 6.7 14.4 7 17.3 8.1 18.9 9.7 19.9 11.7 20.3 13.5 19.8 15.1 18.6z'/%3E%3Cpath d='M13.2 18.6 18.7 18.6 18.5 19.6 17.9 20.5 17 21.1 16 21.3 14.9 21.1 14 20.5 13.4 19.6z'/%3E%3Cpath d='M4.1 23.4 4.8 22.2 6.7 21.3 17.4 21.3 19.3 22.2 20 23.4z'/%3E%3Cpath d='M10.5 7.6 13.6 7.7 16.5 9.1 17.6 10.1 19.9 13.6 17.7 14.8 15.8 11.8 14 10.5 11.9 10.1z'/%3E%3Cpath d='M6 5.5 8.4 4.1 13.6 12.9 11.2 14.3z'/%3E%3Cpath d='M14.2 14 16.4 12.7 17.7 14.8 15.5 16.1z'/%3E%3Cpath d='M11.8 15.3 14.2 14 15.5 16.1 13.1 17.5z'/%3E%3Cpath d='M7.8 3 5.4 4.5 4 2 6.4 .6z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="germomics"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 .4 23.6 6.2 23.6 17.8 12 23.6 .4 17.8 .4 6.2zM11.9 19.5 10.2 19.3 8.7 18.8 6.6 17.2 5.6 15.9 5 14.5 4.7 13.1 4.6 11.5 4.9 10 5.4 8.8 6.4 7.3 7.8 6.1 10.3 5 12.8 4.9 15.6 5.6 18.1 7.5 16.2 9.3 14.8 8.1 12.9 7.5 10.8 7.6 9.2 8.3 8 9.6 7.3 11.1 7.3 13.1 8.1 14.9 9.8 16.4 11.4 16.9 13 16.9 14.8 16.2 15.6 15.4 16.1 14.6 12.1 14.6 12.1 12.1 19 12.1 19 13.5 18.8 14.7 18.1 16.2 16.4 18.2 14.4 19.2z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="julieedwards"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M2.3 0 4.6 .5 6.4 1.4 8.8 3.7 9.3 4.9 10.5 3.6 12.1 2.6 9.3 6.6 12.2 5.8 14.4 5.9 16.5 7.1 17.9 9.1 18.7 12.1 18.1 16.6 16 20.9 14.7 22.6 13.1 23.7 11.2 24 9.3 23.3 7.5 23.9 5.8 23.6 3.3 22 1.1 18.9 -.6 13.7 -.5 10.8 .3 8.2 1.4 6.7 3 5.9 5.8 5.8 8.6 6.9 8.9 5.7 6.8 5.3 4.1 3.8 1.7 .6 1.8 .1zM5.3 8.6 5.3 20.9 12.5 20.9 12.5 19.4 6.9 19.4 6.9 14.9 11.1 14.9 11 13.5 6.9 13.5 6.9 10.1 12.6 10.1 12.6 8.6z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="foxing"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M5.2 0 19.8 .1 21.7 .9 23.1 2.3 23.6 3.2 24 5.2 24 18.8 23.6 20.8 23.1 21.7 21.7 23.1 20.8 23.6 18.8 24 5.2 24 3.2 23.6 2.3 23.1 .9 21.7 .1 19.8 0 18.8 .1 4.2 .9 2.3 1.5 1.5 3.2 .4zM6.8 4.9 17.6 4.9 17.6 8.2 16.1 8.2 15.8 7.1 11.2 7.1 11.2 10.9 15 10.9 15 13.5 11.2 13.5 11.2 18 13.1 18.4 13.1 19.5 6.4 19.5 6.4 18.4 7.9 18 7.9 6.4 6.8 6z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="foxhound"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M3 4 4.2 2.9 5.5 2.1 7.1 1.6 8.7 1.5 10.2 1.8 11.6 2.4 13.8 4.6 20.2 5.6 21 5.3 21.9 5.3 22.9 6 23.3 7.1 23.2 8.3 22.6 9.2 22.5 10.9 21.9 11.7 20.5 12.3 18.3 12.6 16.4 12.5 15.5 13.8 14.2 14.5 13 14.5 11.8 14 9 14.2 8.4 18.5 7.2 21.3 5.8 22.7 5 23 3.7 22.8 2.7 22.1 1.8 20.2 1.1 17.4 .8 14.1 .8 10.7 1.1 7.9 1.8 5.9zM12.4 6.4 11.6 6.8 11.3 7.6 11.7 8.4 12.5 8.7 13.3 8.3 13.5 7.4 13.1 6.6zM6.3 5.6 7.1 7.7 7.6 9.9 7.8 12.2 7.6 14.5 9 14.3 9.2 10.4 8.6 7.4 7.8 5.2z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="txasm"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11.4 22.4 11.4 23.6 12.6 23.6 12.6 22.4z'/%3E%3Cpath d='M13.7 6.3 13.7 .4 10.3 .4 10.3 3.1 7.3 4.2 5.6 5.4 4.2 7 2.9 10 2.7 12.2 3.9 12.2 4.1 10.3 4.7 8.6 5.7 7.1 7.8 5.3 10.3 4.3 10.3 6.3z'/%3E%3Cpath d='M6.8 22.1 7.9 22.6 8.5 21.6 7.4 21z'/%3E%3Cpath d='M19.8 19.5 20.4 18.4 19.3 17.8 18.7 18.9z'/%3E%3Cpath d='M16.1 22.6 17.2 22.1 16.6 21 15.5 21.6z'/%3E%3Cpath d='M3.6 18.4 4.2 19.5 5.3 18.9 4.7 17.8z'/%3E%3Cpath d='M3.9 13.7 2.7 13.7 2.7 14.9 3.9 14.9z'/%3E%3Cpath d='M20.1 14.9 21.3 14.9 21.3 13.7 20.1 13.7z'/%3E%3Cpath d='M19.2 13.7 4.8 13.7 4.8 14.9 8.5 15 8.6 15.6 5.4 17.4 5.8 18.1 6 18.4 9.4 16.6 9.7 17.1 7.9 20.2 8.9 20.8 10.7 17.8 11.1 17.6 11.4 18 11.4 21.5 12.6 21.5 12.7 17.7 13.3 17.7 15.1 20.8 15.8 20.5 16.1 20.2 14.4 16.9 14.8 16.6 18 18.4 18.6 17.4 15.5 15.6 15.3 15.2 15.7 14.9 19.2 14.9z'/%3E%3Cpath d='M11.2 9.6 13 9.6 13 7.1 11 7.1 11 9.4z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="bsw"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.3 1 11.3 3.9v5.8L6.3 12.6 1.3 9.7V3.9zM17.7 1l5 2.9v5.8l-5 2.9-5-2.9V3.9zM6.3 11.4l5 2.9v5.8L6.3 23l-5-2.9v-5.8zM17.7 11.4l5 2.9v5.8l-5 2.9-5-2.9v-5.8z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="carrel"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M4.5 0 20.4 .1 22 .8 23.2 2 23.7 2.8 24 4.5 24 19.5 23.7 21.2 22.7 22.7 22 23.2 21.2 23.7 19.5 24 4.5 24 2.8 23.7 2 23.2 .8 22 .3 21.2 0 19.5 .1 3.6 .8 2 1.3 1.3 2.8 .3zM6.4 7.7 7.9 7.2 9.4 7.1 10.8 7.5 12 8.2 13.2 7.5 14.6 7.1 16.1 7.2 17.6 7.7 17.6 16.4 16.1 15.9 14.6 15.8 13.2 16.2 12 17 10.8 16.2 9.4 15.8 7.9 15.9 6.4 16.4zM11.4 8.7 11.4 16.2 12.6 16.2 12.6 8.7z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="capsid"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M23.5 12 17.75 22H6.25L.5 12 6.25 2h11.5zM20.6 12 16.1 4.5H7.9L3.4 12l4.5 7.5h8.2z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="capsomer"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1 21.5 6.5v11L12 23l-9.5-5.5v-11z'/%3E%3C/svg%3E"); }
+  a[data-link="family"][data-site="prelum"]::before { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M4.5 0 20.4 .1 22 .8 23.2 2 23.7 2.8 24 4.5 24 19.5 23.7 21.2 22.7 22.7 22 23.2 21.2 23.7 19.5 24 4.5 24 2.8 23.7 2 23.2 .8 22 .3 21.2 0 19.5 .1 3.6 .8 2 1.3 1.3 2.8 .3zM7.5 5.2 13.5 5.2 15.2 5.6 16.7 6.6 17.7 8 17.9 8.9 17.9 10.6 17.7 11.5 17.2 12.3 16 13.5 14.4 14.2 10.5 14.2 10.5 18.8 7.5 18.8z'/%3E%3C/svg%3E"); }
+
+  /* A footnote: the superscript number, and the way back from the note (GFM writes both). */
+  :is(.cap-footnote-ref, a[data-link="footnote"], a[data-footnote-ref]) {
+    padding-inline: 0.1em;
+    font-variant-numeric: lining-nums;
+    &:not(sup > *) {
+      vertical-align: super;
+      font-size: 0.75em;
+      line-height: 0;
+    }
+  }
+  a[data-footnote-backref] {
+    padding-inline: 0.15em;
+    font: 600 1.1em / 1 var(--ui);
+    font-variant-emoji: text;
+  }
+
+  /* A cross-reference on the same site; an address written out (a URL, a DOI, an email), which
+     may break anywhere rather than run past a phone's edge. */
+  a[data-link="xref"] {
+    font-style: italic;
+  }
+  /* A next link stands alone, so it is a whole target, not a word in a sentence. */
+  a[data-link="next"] {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target);
+  }
+  a[data-link="address"] {
+    font-family: var(--mono);
+    font-size: 0.875em;
+    overflow-wrap: anywhere;
+  }
+
+  /* A tag or category: a pill. The catalog's active-filter chip is the same pill. */
+  :is(a[data-link="tag"], .cap-catalog-chip) {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: max(var(--target), 26px);
+    padding: 0 var(--pad-x);
+    border: 1px solid var(--ring);
+    border-radius: var(--radius-full);
+    background: var(--accent-soft);
+    color: var(--accent-text);
+    font: 600 var(--fs-detail) / 1.2 var(--ui);
+    white-space: nowrap;
+    vertical-align: middle;
+    &:visited,
+    &[data-force="visited"] {
+      color: var(--accent-visited);
+    }
+    &:is(:hover, [data-force="hover"]) {
+      background: var(--accent-5);
+      box-shadow: none;
+      color: var(--accent-hover);
+    }
+    &:is(:active, [data-force="pressed"]) {
+      background: var(--accent-6);
+      box-shadow: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    a[data-link="family"]::before {
+      forced-color-adjust: none;
+      background: LinkText;
+    }
+    .cap-link-icon {
+      display: none;
+    }
+    a[data-link="away"] {
+      --link-after: "\2197";
+    }
+  }
+}

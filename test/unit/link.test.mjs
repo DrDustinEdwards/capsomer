@@ -1,7 +1,9 @@
 // The link prefetch rule: a prefetch runs the target's loader, so a link that acts on a GET, opens
-// elsewhere or leaves the app must never prefetch.
+// elsewhere or leaves the app must never prefetch. And the family icons against the site list.
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { FAMILY_LINK_SITES } from "../../components/family-footer/family-footer.ts";
 import { mayPrefetch } from "../../components/link/link.ts";
 
 const from = "/";
@@ -27,4 +29,12 @@ test("/admin prefetches only from inside /admin; the app's own exclusions hold e
   assert.equal(mayPrefetch({ href: "/b/novel/export/epub", from, exclude }), false);
   assert.equal(mayPrefetch({ href: "/b/novel/outliner", from, exclude }), true);
   assert.equal(mayPrefetch({ href: "/admin/view-as/stop", from: "/admin/merchants", exclude }), false);
+});
+
+// One list of family sites: every site a family link can name has its icon in link.css (or is
+// marked as having none), and link.css draws no site the list does not name.
+test("every family link site has its icon in link.css, and link.css draws no other", () => {
+  const css = readFileSync(new URL("../../components/link/link.css", import.meta.url), "utf8");
+  const drawn = [...css.matchAll(/\[data-site="([\w-]+)"\]::before \{ mask-image: url\("data:image\/svg\+xml,/g)].map((m) => m[1]).sort();
+  assert.deepEqual(drawn, FAMILY_LINK_SITES.filter((s) => s.icon).map((s) => s.id).sort());
 });

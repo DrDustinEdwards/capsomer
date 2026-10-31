@@ -56,7 +56,12 @@ import { UsageMeter } from "../dist/components/usage-meter/usage-meter.react.js"
 //                 and with dir="rtl" no element newly sticks out of its parent (physical
 //                 left/right where a logical property belongs), at 320px and 1280px
 //   text spacing  WCAG 1.4.12's overrides clip no text that fitted before
-//   links         no link is underlined, and every text link is semibold (DEFAULTS.md)
+//   links         no link is underlined, and every text link is semibold (DEFAULTS.md); in both
+//                 themes a text link in the link color has the base cues (components/link):
+//                 a hover tint, a stronger pressed tint, a visited color, each 4.5:1 as painted;
+//                 every data-link kind shows its mark, and no mark glyph reaches assistive
+//                 technology (alt text, CSS content's "/ ..." part); in forced colors, too, the
+//                 marks are drawn
 //   targets       on a coarse pointer every target is 44 x 44, or at least 24 x 24 with no
 //                 other target within 22px of its center (WCAG 2.5.8's spacing, at the 44px
 //                 Capsomer promises on touch, tokens/scale.css)
@@ -267,8 +272,9 @@ function install(): void {
     const found: { el: Element; label: string; w: number; h: number; x: number; y: number; box: DOMRect }[] = [];
     for (const el of document.body.querySelectorAll(TARGETS)) {
       if (!vis(el) || (el as HTMLButtonElement).disabled || el.closest("[aria-disabled='true'], [aria-hidden='true']")) continue;
-      // Inline in a sentence: WCAG 2.5.8's inline exception.
-      if (getComputedStyle(el).display === "inline" && el.parentElement && (el.parentElement.textContent ?? "").trim().length > (el.textContent ?? "").trim().length + 1) continue;
+      // Inline in a sentence: WCAG 2.5.8's inline exception (a footnote's sup is part of the sentence).
+      const line = el.parentElement?.matches("sup, sub") ? el.parentElement.parentElement : el.parentElement;
+      if (getComputedStyle(el).display === "inline" && line && (line.textContent ?? "").trim().length > (el.textContent ?? "").trim().length + 1) continue;
       el.scrollIntoView({ block: "center", inline: "center" });
       const r = el.getBoundingClientRect();
       const cx = r.left + r.width / 2;
@@ -317,6 +323,72 @@ function install(): void {
       else if (cs.display === "inline" && !el.matches("[class*='cap-']") && Number(cs.fontWeight) < 600) out.push(`${label(el)} is a text link at weight ${cs.fontWeight}, not 600`);
     }
     return out.slice(0, 12);
+  };
+
+  // The link system (components/link/link.md). A state is shown with its data-force hook, since
+  // :visited cannot be read by script; transitions are held so a state reads at once.
+  const KIND_MARK: Record<string, [pseudo: "::before" | "::after", glyph: string]> = { away: ["::after", "\u2197"], file: ["::after", "\u2193"], jump: ["::after", "#"], email: ["::before", "\u2709"], phone: ["::before", "\u260E"] };
+  const GLYPHS = /[\u2197\u2193#\u2709\u260E\u21A9]/;
+  const paint = (el: Element) => {
+    for (let a: Element | null = el; a; a = a.parentElement) {
+      const bg = getComputedStyle(a).backgroundColor;
+      if (bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent") return bg;
+    }
+    return getComputedStyle(document.body).backgroundColor;
+  };
+  const textLink = (el: Element) => el.matches(':is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a)');
+  const drawn = (el: Element, pseudo: "::before" | "::after") => {
+    const cs = getComputedStyle(el, pseudo);
+    if (cs.content === "none" || cs.content === "normal" || cs.display === "none") return false;
+    return cs.content !== '""' || (cs.maskImage !== "none" || cs.clipPath !== "none") && parseFloat(cs.width) > 0;
+  };
+  const kinds = (forced: boolean) => {
+    const out: string[] = [];
+    const hold = document.createElement("style");
+    hold.textContent = "*, *::before, *::after { transition: none !important; }";
+    document.head.append(hold);
+    for (const el of document.body.querySelectorAll("a[href]")) {
+      if (!vis(el)) continue;
+      // No mark glyph is read: CSS content keeps it only with alt text after a slash.
+      for (const pseudo of ["::before", "::after"] as const) {
+        const c = getComputedStyle(el, pseudo).content;
+        if (GLYPHS.test(c.split(" / ")[0] ?? "") && !c.includes(" / ")) out.push(`${label(el)} has a mark ${pseudo} a screen reader reads (${c})`);
+      }
+      const kind = el.getAttribute("data-link");
+      const mark = kind ? KIND_MARK[kind] : undefined;
+      if (mark && !(kind === "away" && el.querySelector(".cap-link-icon")) && !getComputedStyle(el, mark[0]).content.includes(mark[1])) out.push(`${label(el)} (${kind}) shows no ${mark[1]}`);
+      if (kind === "family" && !drawn(el, "::before")) out.push(`${label(el)} (family) shows no icon`);
+      if (kind === "next" && !drawn(el, "::after")) out.push(`${label(el)} (next) shows no arrow`);
+      if (kind === "tag" && getComputedStyle(el).borderTopStyle !== "solid") out.push(`${label(el)} (tag) is not a pill`);
+      if (forced && kind === "family" && getComputedStyle(el, "::before").backgroundColor === paint(el)) out.push(`${label(el)} (family) loses its icon in forced colors`);
+      if (forced || !textLink(el) || el.hasAttribute("data-force")) continue;
+      // The base cues, where no component has recolored the link.
+      const probe = document.createElement("span");
+      probe.style.color = "var(--accent-text)";
+      el.parentElement?.append(probe);
+      const own = getComputedStyle(probe).color;
+      probe.remove();
+      const rest = { color: getComputedStyle(el).color, bg: paint(el) };
+      if (rest.color !== own) continue;
+      const state = (force: string) => {
+        el.setAttribute("data-force", force);
+        const s = { color: getComputedStyle(el).color, bg: paint(el) };
+        el.removeAttribute("data-force");
+        return s;
+      };
+      const hover = state("hover");
+      const pressed = state("pressed");
+      const visited = state("visited");
+      if (hover.bg === rest.bg) out.push(`${label(el)} has no tint under the pointer`);
+      if (pressed.bg === hover.bg || pressed.bg === rest.bg) out.push(`${label(el)} pressed looks like hover or rest`);
+      if (visited.color === rest.color) out.push(`${label(el)} visited looks like unvisited`);
+      for (const [name, s] of Object.entries({ rest, hover, pressed, visited })) {
+        const r = window.capRatio(s.color, s.bg);
+        if (r < 4.5) out.push(`${label(el)} ${name} is ${r.toFixed(2)}:1`);
+      }
+    }
+    hold.remove();
+    return out.slice(0, 15);
   };
 
   // Every focusable element, focused from script with no pointer used (so :focus-visible
@@ -375,7 +447,7 @@ function install(): void {
   const reactShape = (own: string[], roots: string) => [...document.querySelectorAll(roots)].flatMap((m) => shape(m, own, ""));
   const contractShape = (html: string[], own: string[], roots: string) => html.flatMap((h) => shape(new DOMParser().parseFromString(h, "text/html").body, own, roots));
 
-  Object.assign(window, { __sweep: { reflow, rtl, spacing, links, targets, rings, reactShape, contractShape } });
+  Object.assign(window, { __sweep: { reflow, rtl, spacing, links, kinds, targets, rings, reactShape, contractShape } });
 }
 
 type Sweep = {
@@ -383,6 +455,7 @@ type Sweep = {
   rtl(phase: "ltr" | "rtl"): string[];
   spacing(phase: "before" | "after"): string[];
   links(): string[];
+  kinds(forced: boolean): string[];
   targets(): string[];
   rings(): Promise<string[]>;
   reactShape(own: string[], roots: string): Shape[];
@@ -425,11 +498,15 @@ for (const name of NAMES) {
       expect(found).toEqual([]);
     });
 
-    test("accessibility: sweep: text spacing clips no text (WCAG 1.4.12), and links are told by weight", async ({ page }) => {
+    test("accessibility: sweep: text spacing clips no text (WCAG 1.4.12), and links have their cues", async ({ page }) => {
       const found: string[] = [];
       for (const s of pages) {
+        // Painted contrast needs both themes; the page's data-theme switches the tokens.
+        await open(page, s, "dark");
+        found.push(...tag(s, await page.evaluate(() => window.__sweep.kinds(false))).map((f) => `dark: ${f}`));
         await open(page, s);
         found.push(...tag(s, await page.evaluate(() => window.__sweep.links())));
+        found.push(...tag(s, await page.evaluate(() => window.__sweep.kinds(false))));
         await page.evaluate(() => window.__sweep.spacing("before"));
         await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
         found.push(...tag(s, await page.evaluate(() => window.__sweep.spacing("after"))));
@@ -465,6 +542,7 @@ for (const name of NAMES) {
             if (misread) await page.evaluate((sel) => document.querySelector(sel)?.closest(".cap-admin-tile")?.setAttribute("data-tip-open", ""), misread);
             await expectNoAxeViolations(page, undefined, { baseUi: true, exclude: misread ? "[data-tip-open]" : undefined, disableRules: ["color-contrast"] });
             found.push(...tag(s, await page.evaluate(() => window.__sweep.rings())));
+            found.push(...tag(s, await page.evaluate(() => window.__sweep.kinds(true))));
             // A person's look at what no check reads: a state drawn only by a background or a
             // shadow, which forced colors removes. Kept with the run (ci.yml), never compared.
             if (theme === "light" && !s.only) {

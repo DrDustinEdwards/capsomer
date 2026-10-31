@@ -1,0 +1,35 @@
+/* The states page's own layout: a grid of each kind in each state. Not part of the package. */
+.link-states {
+  border-collapse: collapse;
+  & :is(th, td) {
+    padding: var(--space-3) var(--space-4);
+    border-block-end: 1px solid var(--line);
+    text-align: start;
+  }
+  & thead th,
+  & tbody th {
+    color: var(--muted);
+    font: 500 var(--fs-detail) / 1.4 var(--mono);
+  }
+}
+/* A link alone in a cell is no longer in a sentence, so it takes the target height (44px on touch). */
+.link-states td > a,
+.link-sites a {
+  display: inline-block;
+  line-height: var(--target);
+}
+.link-sites {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.link-titles h3 {
+  margin: 0 0 var(--space-3);
+}
+/* The tables run wider than a phone, so each scrolls in its own named region. */
+.link-scroll {
+  overflow-x: auto;
+}

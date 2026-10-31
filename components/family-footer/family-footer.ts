@@ -103,6 +103,29 @@ export const FAMILY_SITES: FamilySite[] = [
   { id: "enarratio", name: "Enarratio", href: "https://enarratio.dustinedwards.info", role: "Charts", family: "rose" },
 ];
 
+/**
+ * Every family site a link can name: `<a data-link="family" data-site="<id>">` draws the site's icon
+ * before the name (components/link/link.css, one mask per id here). The footer's strip is the public
+ * few of them (FAMILY_SITES). `icon: false` for a site whose icon Capsomer has not drawn yet (no clone
+ * to take it from); its links keep the family arrow turned out.
+ */
+export interface FamilyLinkSite {
+  id: string;
+  name: string;
+  href: string;
+  icon: boolean;
+}
+
+export const FAMILY_LINK_SITES: FamilyLinkSite[] = [
+  ...FAMILY_SITES.map(({ id, name, href }) => ({ id, name, href, icon: id !== "enarratio" })),
+  { id: "germomics", name: "Germomics", href: "https://germomics.com", icon: true },
+  { id: "julieedwards", name: "Julie Edwards", href: "https://julieedwards.info", icon: true },
+  { id: "foxing", name: "Foxing", href: "https://foxing.app", icon: true },
+  { id: "foxhound", name: "Foxhound", href: "https://foxhoundapp.com", icon: true },
+  { id: "txasm", name: "Texas Branch ASM", href: "https://txasm.org", icon: true },
+  { id: "bsw", name: "BioScience Writers", href: "https://biosciencewriters.com", icon: true },
+];
+
 export interface FamilyFooterOptions {
   /** The site the footer is on (a FAMILY_SITES id): lit in the strip of sites. */
   site?: string;

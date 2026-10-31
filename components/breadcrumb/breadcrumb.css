@@ -76,6 +76,7 @@
     }
     &:hover,
     &[data-force="hover"] {
+      background: var(--accent-soft);
       color: var(--accent-hover);
     }
     &:focus-visible {
@@ -160,7 +161,7 @@
       color: var(--accent-text);
     }
     &:hover {
-      background: var(--raised);
+      background: var(--accent-soft);
       color: var(--accent-hover);
     }
     &:focus-visible {
