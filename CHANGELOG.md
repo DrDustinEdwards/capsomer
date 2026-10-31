@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Catalog: the results region has its id** (`{id}-results`). The filter tray's "Show N" link pointed at `#{id}-results`, which nothing carried, so on a phone it closed the tray without moving to the results; Prelum's live check flagged it on all eight dustinedwards.info research pages. HTML contract: the results region gains `id="{id}-results"`.
+
 ## [0.54.0]
 
 A mail for every change to how a person signs in (sign-in and access, area 3: A8, E1).
