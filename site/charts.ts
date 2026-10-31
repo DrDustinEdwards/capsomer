@@ -1,6 +1,5 @@
-// Loaded by the states pages that show Enarratio's charts: its base rules (the family's look comes
-// from css/enarratio.css through the tokens) and its enhancement layer, as a site loads them.
-import "enarratio/base.css";
-import { enhance } from "enarratio/enhance";
-
-enhance();
+// Loaded by the states pages that show Enarratio's charts, as a site loads them: the one chart
+// stylesheet (Enarratio's base rules, the token mapping, gridlines, each series' ink and the
+// color pairs) and the module that enhances every chart in Capsomer's frame.
+import "../css/enarratio.css";
+import "../components/chart-frame/chart-enhance.ts";

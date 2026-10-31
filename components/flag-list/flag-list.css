@@ -32,7 +32,7 @@
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
   .cap-flags-filter {
     grid-column: 2;
@@ -41,7 +41,7 @@
   }
   .cap-flags-count {
     margin-inline-start: var(--space-2);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
   .cap-flags-batch {
     grid-column: 1 / -1;
@@ -115,7 +115,7 @@
   .cap-flag-group-count {
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   .cap-flags-empty {

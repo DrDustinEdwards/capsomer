@@ -254,7 +254,7 @@
     color: var(--muted);
     font-size: var(--fs-detail);
     font-weight: 600;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     text-align: center;
   }
   .cap-group-rows {

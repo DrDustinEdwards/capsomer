@@ -49,7 +49,7 @@
     /* A count inside the chip: "Blocked 3". */
     & > .cap-chip-count {
       color: var(--dim);
-      font-variant-numeric: tabular-nums;
+      font-variant-numeric: var(--figures);
     }
 
     &[data-size="sm"] {
@@ -134,7 +134,7 @@
   .cap-chips-count {
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   @media (prefers-reduced-motion: no-preference) {

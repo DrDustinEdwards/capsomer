@@ -119,7 +119,7 @@
     justify-content: flex-end;
     color: var(--text);
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     white-space: nowrap;
 
     & svg {
@@ -139,7 +139,7 @@
   .cap-hist-exact {
     color: var(--muted);
     font-size: var(--fs-label);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   /* A publish line's destinations, each with its status in words and a shape. */

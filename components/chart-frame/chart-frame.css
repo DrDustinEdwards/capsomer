@@ -53,7 +53,7 @@
 
     & .enarratio-subtitle {
       margin-inline-start: auto;
-      font-variant-numeric: tabular-nums;
+      font-variant-numeric: var(--figures);
     }
     & .enarratio-finding {
       flex-basis: 100%;
@@ -62,13 +62,15 @@
 
   /* "Show data" (then "Hide data", Enarratio's words) reads as the action it is, at a full
      target's height. */
-  .cap-chart .enarratio-data > summary {
+  :is(.cap-chart, .cap-data) .enarratio-data > summary {
     --enarratio-text-muted: var(--accent-text);
     line-height: var(--target);
     font-weight: 600;
   }
 
-  /* The CSV link stands alone at the end of the source line, so it is a full target. */
+  /* The CSV link stands alone at the end of the source line, so it is a full target. Its color
+     and states are the link system's (css/base.css), handed back over Enarratio's own rule by
+     css/enarratio.css. */
   .cap-chart .enarratio-csv {
     display: inline-block;
     line-height: var(--target);
@@ -79,21 +81,25 @@
     flex-basis: 100%;
   }
 
-  /* A table wider than the frame scrolls inside it (named by its caption), not the page. */
-  .cap-chart .enarratio-data table {
+  /* A table wider than its frame (or a tile's or meter's data) scrolls inside it (named by its
+     caption), not the page. */
+  :is(.cap-chart, .cap-data) .enarratio-data table {
     display: block;
     max-inline-size: 100%;
     overflow-x: auto;
   }
 
-  /* The tile form: a stat tile is its own title and link, so the frame adds only the data
-     disclosure under it (outside the link, never inside). */
-  .cap-chart[data-variant="tile"] {
+  /* Numbers behind "Show data" that belong to something that is not a chart: a stat tile with
+     its inline sparkline (the disclosure under the tile, outside the link, never inside) and a
+     usage meter's table. Not a frame, so not read as a chart. */
+  .cap-data {
+    display: grid;
     gap: var(--space-2);
+    min-width: 0;
   }
 
   @media (forced-colors: active) {
-    .cap-chart .enarratio-data > summary {
+    :is(.cap-chart, .cap-data) .enarratio-data > summary {
       --enarratio-text-muted: LinkText;
     }
   }

@@ -11,7 +11,7 @@
 // palette.mjs), which the site keeps choosing with data-family. A site on the defaults has no
 // entry. The selectors repeat the family files' shapes (plain, system dark, pinned dark), so a
 // site rule ties a family rule on specificity and wins on order, and each also matches a
-// [data-family] or [data-density] wrapper inside the site, so css/enarratio.css's wrapper
+// [data-family] or [data-density] wrapper inside the site, so css/enarratio-tokens.css's wrapper
 // block cannot put Capsomer's own values back there.
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

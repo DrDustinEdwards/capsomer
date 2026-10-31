@@ -44,7 +44,7 @@
   .cap-bulk-count {
     margin: 0;
     font-weight: 600;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     white-space: nowrap;
   }
   .cap-bulk-detail {

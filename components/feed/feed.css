@@ -117,7 +117,7 @@
     color: var(--muted);
     white-space: nowrap;
     text-align: end;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   /* A routine run in one row: smaller and quieter, still 4.5:1. */

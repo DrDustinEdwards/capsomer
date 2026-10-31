@@ -29,6 +29,15 @@ Every component lives in `components/<name>/` and has the parts it needs, no mor
 
 Build overlays and lists from these, never again from scratch: `dialog` (modal, sheet, palette; confirm dialog, detail panel, command menu, shortcuts, approval sheet and the shell More sheet use it), `listbox` (options, groups, active descendant; command menu, select, and the look of the combobox and menu popups), `popover` (Popover API surface and positioning; tooltip, select, combobox, menu), `meter` (one bar; usage meter and permission matrix). `skeleton` holds the skeleton and spinner.
 
+## Inline primitives
+
+A chart a person reads on its own goes in the chart frame (`.cap-chart`) with its title, finding, source, CSV and table. A small drawing that belongs to a line of text, a sparkline in a stat tile or an uptime strip in a table row, is an inline primitive and needs no frame, title or table when either:
+
+- it is `role="img"` with an `aria-label` that states its values or its finding ("Uptime of foxhound.app, 7 days: 96.1% up; down on Tuesday, September 29, from 11:50 to 18:20 UTC."). Enarratio's `inline: true` output is this; pass `alt` when its own sentence is not the one the reader needs, and keep its numbers the same as the visible ones beside it; or
+- it is `aria-hidden="true"` beside visible text that gives the numbers it draws.
+
+A hidden sentence (`.cap-sr-only`) beside an `aria-hidden` drawing is neither: the eye gets a picture without its numbers. Numbers behind "Show data" for something that is not a chart (a stat tile's table, a usage meter's) sit in `.cap-data`, never in `.cap-chart`, so nothing reads them as a chart missing its title. The stat tile and the uptime strip are built this way; Prelum's chart check accepts exactly this.
+
 ## The behavior module
 
 - `export function enhance(root: ParentNode = document): () => void` attaches to every `[data-cap="<name>"]` under `root` not yet marked `data-cap-ready`, marks it, and returns a function that detaches. Idempotent.

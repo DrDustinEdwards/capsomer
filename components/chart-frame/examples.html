@@ -24,10 +24,10 @@
 </section>
 <section class="cap-specimen" aria-labelledby="s-react">
   <h2 id="s-react">Redrawn to its width (React)</h2>
-  <p class="cap-muted">ChartFrame draws at 640 on the server, then redraws to its column's width in 40 px steps; a chart Enarratio refuses says why in its place.</p>
+  <p class="cap-muted">ChartFrame draws at 640 on the server, then redraws to fill its column's width; a chart Enarratio refuses says why in its place.</p>
   <div class="cf-gallery">
-    <div data-mount="redraw"></div>
-    <div data-mount="refused"></div>
+    <div data-mount="redraw"><!-- build:redraw --></div>
+    <div data-mount="refused"><!-- build:refused --></div>
   </div>
 </section>
 <section class="cap-specimen" aria-labelledby="s-comfortable">
@@ -39,8 +39,8 @@
   <div class="cf-narrow"><!-- build:narrow --></div>
 </section>
 <section class="cap-specimen" aria-labelledby="s-families">
-  <h2 id="s-families">Every family's series</h2>
-  <p class="cap-muted">The same eight series on each family's surface: every pair at least 10 CIEDE2000 apart under protanopia, deuteranopia and tritanopia, in both themes.</p>
+  <h2 id="s-families">Every family's series and ramp</h2>
+  <p class="cap-muted">The eight series are the same in every family, so a chart reads the same on every site (DEFAULTS.md, chart colors): each sits on its family's surface here, every pair at least 10 CIEDE2000 apart under protanopia, deuteranopia and tritanopia, in both themes. What changes with the family is the five-step ramp under each, in the family's hue.</p>
   <div class="cf-gallery"><!-- build:families --></div>
 </section>
 <script type="module" src="../../site/charts.ts"></script>

@@ -129,7 +129,7 @@
 
     /* Numbers: right-aligned, in tabular figures, so digits line up down the column. */
     & :is(td, th)[data-num] {
-      font-variant-numeric: tabular-nums;
+      font-variant-numeric: var(--figures-column);
       text-align: end;
     }
   }

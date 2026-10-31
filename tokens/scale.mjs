@@ -82,6 +82,8 @@ export const SCALE = {
     ["rail-w", "208px", "the shell's left menu, expanded"],
     ["rail-w-collapsed", "56px", "the shell's left menu, collapsed to icons"],
     ["top-h", "44px", "the shell's top bar (the Portal's, #215)"],
+    ["figures", "proportional-nums", "a number on its own (a count, a tile's figure, a percent, a time): Schibsted Grotesk's tabular set gives the comma, period and colon a figure's width (\"61 , 400\"); a site whose face has narrow tabular punctuation may set tabular-nums"],
+    ["figures-column", "tabular-nums", "numbers down a column (a table's data-num cells, .cap-num), where the digits must line up and a wide comma lines up too"],
     ["header-h", "3.5rem", "the site header, 56px on every site and surface (docs/design/design-site-header.md, answer 6)"],
     ["cap-arrow", "polygon(8.3% 41.7%, 59.2% 41.7%, 40% 22.5%, 50% 12.5%, 87.5% 50%, 50% 87.5%, 40% 77.5%, 59.2% 58.3%, 8.3% 58.3%)", "the family arrow's shape, a clip path (css/base.css): a token so a page without base.css, such as the Portal, still draws the header's arrows"],
   ],

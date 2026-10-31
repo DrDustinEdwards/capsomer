@@ -48,7 +48,7 @@
   /* "3 problems": how many rows there are, before reading them. */
   .cap-attention-count {
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     color: var(--dim);
   }
 

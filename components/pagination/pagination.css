@@ -22,7 +22,7 @@
 
   .cap-pagination-status {
     margin: 0;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   .cap-pagination-list {
@@ -51,7 +51,7 @@
     background: none;
     color: var(--accent-text);
     font: inherit;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     font-weight: 500;
     line-height: 1.2;
     text-decoration: none;
@@ -159,7 +159,7 @@
     display: none;
     padding-inline: var(--space-3);
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     text-align: center;
   }
 

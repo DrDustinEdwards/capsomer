@@ -33,7 +33,7 @@
     letter-spacing: -0.01em;
   }
   .cap-num {
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures-column);
   }
   .cap-muted {
     color: var(--muted);

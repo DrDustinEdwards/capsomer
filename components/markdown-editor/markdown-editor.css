@@ -137,7 +137,7 @@
   .cap-md-stats {
     margin: 0;
     margin-inline-start: auto;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
   .cap-md-limit[data-over] {
     color: var(--crit);

@@ -213,7 +213,7 @@
   }
   .cap-drop-file-size {
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   @media (prefers-reduced-motion: no-preference) {

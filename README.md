@@ -3,6 +3,24 @@ Capsomer: the shared design system for Dustin Edwards's apps: tokens, components
 
 Components live in `components/<name>/`; how one is built, including its `examples.html` (the generated states page's source) and the shared dialog, listbox, popover and meter blocks, is in `components/README.md`. Tokens, density and the color families are in `tokens/`. Each release's breaking changes are in `CHANGELOG.md`; the defaults and their reasons are in `DEFAULTS.md`.
 
+## Charts on a site
+
+There is one way to theme and enhance charts. Enarratio draws every chart; Capsomer gives it the family's look and behavior:
+
+```js
+import "capsomer/tokens.css";   // already on every Capsomer page
+import "capsomer/enarratio.css"; // every chart's look: Enarratio's base rules, the token mapping, gridlines, each series' ink and the color pairs
+```
+
+- React: `<ChartFrame draw={(width) => barChart({ ...options, width })} />` from `capsomer/react/chart-frame` loads `enarratio/enhance` and runs it on its figure after each draw. `enhance={false}` leaves a figure as drawn; `enhance={{ url: true }}` passes Enarratio's options. `gridlines="none" | "x" | "y" | "both"` picks the gridlines (default `"y"`).
+- HTML from a server (`frameHtml(figure, { gridlines })`, Prelum's `:::chart`): import `capsomer/behavior/chart-enhance` once per page, as a module the site serves (same origin, no inline script, safe under a hash-based CSP). It enhances every `.cap-chart` figure, including ones added later; `data-enhance="off"` on a frame leaves it alone.
+- A series color for one chart: `colors: { Refunds: "var(--crit)" }` naming a Capsomer token (`--series-1` to `--series-8`, `--ok`, `--warn`, `--crit`, `--info`, `--nodata`, `--accent`). `capsomer/enarratio.css` already has the rule for it, so a site writes no `[data-enarratio-colors]` rules and never sets `--enarratio-series-N`.
+- Gridlines are `data-gridlines` on the frame or any wrapper, never site CSS.
+- Not needed on a Capsomer site: `enarratio/base.css` (in `capsomer/enarratio.css`), `stylesheet(capsomerTheme)` (the same colors as hex, for a page without Capsomer's CSS), `colorStyles()` for token colors, and a wrapper around `enhance`.
+- A site that needs its own palette and is not on Capsomer's tokens yet (germomics) uses Enarratio's own path: `stylesheet(theme)` with its colors as CSS variables, plus `colorStyles(html)`.
+
+A sparkline in a stat tile or an uptime strip in a table row is an inline primitive and needs no frame: see "Inline primitives" in `components/README.md`.
+
 ## Accessibility test for a site
 
 `capsomer/testing` is the Playwright helpers every component's spec uses, built for a site's own tests: `eachTheme` runs a block once in light and once in dark (the browser's color scheme), and `expectNoAxeViolations` scans the page against WCAG 2.2 A and AA and fails with each rule, its impact and the first node it found. Install the two optional peers, `npm i -D @playwright/test @axe-core/playwright`, then scan the pages that must never regress, the 404 included:

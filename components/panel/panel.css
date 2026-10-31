@@ -98,7 +98,7 @@
   /* How many the panel holds, beside its heading. */
   .cap-panel-count {
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     color: var(--dim);
   }
 
