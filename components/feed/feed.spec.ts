@@ -70,11 +70,4 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/#incident-foxhound-412$/);
   });
-
-  test("accessibility: at phone width nothing runs out of the viewport", { tag: "@markup" }, async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 760 });
-    await visitStates(page, "feed", theme, "narrow");
-    const over = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
-    expect(over).toBe(false);
-  });
 });

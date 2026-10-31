@@ -282,10 +282,10 @@ eachTheme((theme) => {
     expect(roomy).toBeGreaterThanOrEqual(compact);
   });
 
-  test("behavior: at 320px nothing runs past the window (WCAG reflow): the logo shows its mark, keeps its name, and the menu button is in view", async ({ page }) => {
+  // Reflow at 320px is the sweep's (test/sweep.spec.ts).
+  test("behavior: at 320px the logo shows its mark, keeps its name, and the menu button is in view", async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 640 });
     await visitStates(page, "admin-shell", theme, "phone");
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
     // The last tab's wide count ("99+") stays inside the window and clear of its glyph.
     const badges = await page.locator(".cap-site-tabs > *").evaluateAll((els) =>
       els.flatMap((e) => {

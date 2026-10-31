@@ -8,7 +8,7 @@ states: [shown, hidden, labels with an avatar, remembered choice, comfortable de
 added: 0.3.0
 source: new; Carrel's authorship record per change (publish.server.ts) and the colophon's AI disclosure (colophon-sections.mjs) in the site admin gave it a reason, not a design
 replaces:
-  - 'class="[^"]*\b(ai-written|ai-generated|authorship|author-mark)\b'
+  - 'class="(?:[^"]*\s)?(ai-written|ai-generated|authorship|author-mark)[\s"]'
   - 'data-author(ship)?='
 ---
 

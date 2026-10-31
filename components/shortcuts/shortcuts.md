@@ -10,7 +10,6 @@ updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/HelpSheet.tsx, App.tsx's key handler and lib/prefs.ts, as of capsid master 2026-10-01
 replaces:
   - 'className="help"'
-  - "addEventListener\\(\"keydown\""
   - 'wf-single-keys'
 ---
 

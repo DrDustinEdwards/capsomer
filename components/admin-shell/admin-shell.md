@@ -10,7 +10,7 @@ updated: 0.9.0
 source: Dustin's pick of 2026-10-06 (capsomer/research/admin-shell-findings.md); the flagship design canvas "Flagship Shell: Capsid Portal"; the Portal's own App.tsx
 replaces:
   - 'class="(app|rail|tabbar)"'
-  - "className=\"(app|rail|tabbar)"
+  - 'className="(app|rail|tabbar)[ "]'
 ---
 
 # Admin shell
