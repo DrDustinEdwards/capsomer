@@ -58,7 +58,7 @@ import { UsageMeter } from "../dist/components/usage-meter/usage-meter.react.js"
 //   text spacing  WCAG 1.4.12's overrides clip no text that fitted before
 //   links         no link is underlined, and every text link is semibold (DEFAULTS.md)
 //   targets       on a coarse pointer every target is 44 x 44, or at least 24 x 24 with no
-//                 other target within 22px of its centre (WCAG 2.5.8's spacing, at the 44px
+//                 other target within 22px of its center (WCAG 2.5.8's spacing, at the 44px
 //                 Capsomer promises on touch, tokens/scale.css)
 //   forced colors axe-free, and every focusable element shows an outline on :focus-visible
 //                 (a box-shadow or background ring is gone in forced colors), in both themes:
@@ -258,7 +258,7 @@ function install(): void {
     return out.slice(0, 12);
   };
 
-  // A target's hit extent along the lines through its centre, by hit testing, so a label, a
+  // A target's hit extent along the lines through its center, by hit testing, so a label, a
   // ::before hit area and padding count, and what covers it does not.
   const TARGETS =
     "a[href], button, input:not([type=hidden]), select, textarea, summary, [role=button], [role=link], [role=tab], [role=checkbox], [role=radio], [role=switch], [role=menuitem], [role=menuitemradio], [role=menuitemcheckbox], [role=option], [role=treeitem], [role=slider], [role=combobox], [tabindex]:not([tabindex='-1'])";
