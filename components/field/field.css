@@ -45,6 +45,22 @@
     font-size: var(--fs-detail);
   }
 
+  /* A character count, below the control: how many are left, then, over the limit, how many
+     too many, in the error's color and weight with its icon, so it is not color alone. */
+  .cap-field-count {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+
+    &[data-over="true"] {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      color: var(--crit);
+      font-weight: 600;
+    }
+  }
+
   /* The error: an icon, then what is wrong and what to do. */
   .cap-field-error {
     display: flex;
@@ -57,26 +73,27 @@
     font-size: var(--fs-detail);
     font-weight: 500;
 
-    &::before {
-      content: "!";
-      content: "!" / "";
-      flex: none;
-      display: inline-grid;
-      place-items: center;
-      width: 14px;
-      height: 14px;
-      margin-top: 1px;
-      border: 1px solid var(--crit);
-      border-radius: 50%;
-      background: var(--crit);
-      color: var(--surface);
-      font-size: 10px;
-      font-weight: 800;
-      line-height: 1;
-    }
     &:empty {
       display: none;
     }
+  }
+  .cap-field-error::before,
+  .cap-field-count[data-over="true"]::before {
+    content: "!";
+    content: "!" / "";
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 14px;
+    height: 14px;
+    margin-top: 1px;
+    border: 1px solid var(--crit);
+    border-radius: 50%;
+    background: var(--crit);
+    color: var(--surface);
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
   }
 
   /* A label on its own, outside a .cap-field. */
@@ -590,6 +607,71 @@
     color: var(--muted);
   }
 
+  /* An addon whose only button waits for script (a password's Show, number steppers, a
+     search's Clear) takes no room until it is shown. */
+  .cap-input-addon:has(> [hidden]):not(:has(> :not([hidden]))) {
+    display: none;
+  }
+  /* Once script has shown the steppers or Show, the browser's own spinner and reveal eye go,
+     so there is one of each. */
+  .cap-input-group:has([data-cap-part="step-up"]:not([hidden])) > input[type="number"] {
+    appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+  .cap-input-group:has([data-cap-part="reveal"]:not([hidden])) > input::-ms-reveal {
+    display: none;
+  }
+
+  /* A one-time code: one input in the mono face with room for the digits, never split into
+     boxes, so autofill and paste fill it at once. */
+  .cap-input[data-variant="code"] {
+    max-inline-size: calc(10ch + 2 * var(--pad-x));
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.1em;
+  }
+
+  /* A date input: day, month and year, each with its own label, in a fieldset.cap-field. A
+     part in error takes the invalid edge alone (aria-invalid on that input). */
+  .cap-date-input {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  .cap-date-input-part {
+    display: grid;
+    gap: var(--space-1);
+
+    & > label {
+      color: var(--text);
+      font-size: var(--fs-detail);
+      font-weight: 500;
+    }
+    & > .cap-input {
+      inline-size: calc(2ch + 2 * var(--pad-x) + 1ch);
+    }
+    & > .cap-input[data-cap-part="year"] {
+      inline-size: calc(4ch + 2 * var(--pad-x) + 1ch);
+    }
+  }
+
+  /* A search field: a form or div with role="search" around one field. Once script shows its
+     Clear, the browser's own clear button goes. */
+  .cap-search {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+
+    &[data-cap-ready] input[type="search"]::-webkit-search-cancel-button {
+      appearance: none;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .cap-input,
     .cap-input-group {
@@ -632,7 +714,8 @@
         border-color: GrayText;
       }
     }
-    .cap-field-error::before {
+    .cap-field-error::before,
+    .cap-field-count[data-over="true"]::before {
       forced-color-adjust: none;
       background: CanvasText;
       border-color: CanvasText;
