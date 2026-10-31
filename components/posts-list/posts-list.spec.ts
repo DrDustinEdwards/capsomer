@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, nextPost, visitStates } from "../../test/helpers.ts";
-import { contentStatus, countLine, emptyWords, intentForm, outcomesOf, postActions, postsHref, rowActions, withFilter } from "./posts-list.ts";
+import { NO_FILTERS, contentStatus, countLine, emptyWords, intentForm, outcomesOf, postActions, postsHref, rowActions, withFilter } from "./posts-list.ts";
 
 const NOW = Date.parse("2026-10-10T12:00:00Z");
 const ALL = { edit: true, publish: true, deleteContent: true, deleteMedia: true, decideMentions: true };
@@ -19,7 +19,7 @@ test("behavior: contentStatus says each status in words and shapes, and when a s
 });
 
 test("behavior: an action is offered only where the site supports it and the person may run it, and a withheld one says why", () => {
-  expect(postActions({ offers: OFFERS, can: ALL }).bulk.map((a) => a.intent)).toEqual(["add-tag", "remove-tag", "duplicate", "unpublish", "delete"]);
+  expect(postActions({ offers: OFFERS, can: ALL }).bulk.map((a) => a.intent)).toEqual(["tag-add", "tag-remove", "duplicate", "unpublish", "delete"]);
   expect(postActions({ offers: OFFERS, can: ALL }).withheld).toEqual([]);
   const noDelete = postActions({ offers: { ...OFFERS, delete: false, tags: false }, can: ALL });
   expect(noDelete.bulk.map((a) => a.intent)).toEqual(["duplicate", "unpublish"]);
@@ -33,6 +33,11 @@ test("behavior: an action is offered only where the site supports it and the per
   // A draft cannot be unpublished, so its menu never offers it.
   expect(rowActions(row("draft"), { offers: OFFERS, can: ALL }).map((a) => a.value)).toEqual(["edit", "duplicate", "delete"]);
   expect(rowActions(row("published", "https://example.com/p"), { offers: OFFERS, can: NONE }).map((a) => a.value)).toEqual(["view"]);
+  // With a Trash (site-api v0.15.0), Move to Trash is the way out, and Delete for good waits in the Trash with Restore.
+  const trash = { ...OFFERS, trash: true };
+  expect(postActions({ offers: trash, can: ALL }).bulk.map((a) => a.intent)).toEqual(["tag-add", "tag-remove", "duplicate", "unpublish", "trash"]);
+  expect(postActions({ offers: trash, can: ALL, query: { trashed: "1" } }).bulk.map((a) => a.intent)).toEqual(["restore", "delete"]);
+  expect(rowActions({ ...row("published"), trashedAt: "2026-10-08T09:00:00Z" }, { offers: trash, can: ALL }).map((a) => a.value)).toEqual(["restore", "delete"]);
 });
 
 test("behavior: a filter's address keeps the other filters in one order and starts at the first page", () => {
@@ -41,6 +46,9 @@ test("behavior: a filter's address keeps the other filters in one order and star
   expect(postsHref("/posts", withFilter(q, { status: "published" }))).toBe("/posts?q=phage&status=published&sort=title");
   expect(postsHref("/posts", withFilter(q, { status: undefined }))).toBe("/posts?q=phage&sort=title");
   expect(postsHref("/posts", {})).toBe("/posts");
+  const dated = { q: "phage", author: "Julie Edwards", from: "2026-09-01", to: "2026-10-31", trashed: "1" as const };
+  expect(postsHref("/posts", dated)).toBe("/posts?q=phage&trashed=1&author=Julie+Edwards&from=2026-09-01&to=2026-10-31");
+  expect(postsHref("/posts", withFilter(dated, NO_FILTERS))).toBe("/posts?trashed=1");
 });
 
 test("behavior: the count and the empty state name what is there and what is not", () => {
@@ -52,8 +60,8 @@ test("behavior: the count and the empty state name what is there and what is not
 });
 
 test("behavior: an undo or a confirm posts its intent with every field, a list as one field per item", () => {
-  const form = intentForm("remove-tag", { ids: ["a", "b"], tag: "capsid", intent: "ignored" });
-  expect(form.getAll("intent")).toEqual(["remove-tag"]);
+  const form = intentForm("tag-remove", { ids: ["a", "b"], tag: "capsid", intent: "ignored" });
+  expect(form.getAll("intent")).toEqual(["tag-remove"]);
   expect(form.getAll("ids")).toEqual(["a", "b"]);
   expect(form.get("tag")).toBe("capsid");
   const names = new Map([["a", "Notes on the Foxhound release"]]);
@@ -83,6 +91,8 @@ eachTheme((theme) => {
       { sel: "[data-mount='editor'] .cap-posts-when", what: "when a scheduled post goes out" },
       { sel: "[data-mount='limited'] .cap-posts-withheld li", what: "why an action is withheld" },
       { sel: "[data-mount='outcomes'] .cap-bulk-result-message", what: "why a post was not done" },
+      { sel: "[data-mount='ideas'] .cap-posts-excerpt", what: "a post's excerpt" },
+      { sel: "[data-mount='ideas-trash'] .cap-posts-trash-note", what: "when the Trash deletes for good" },
     ]);
   });
 
@@ -155,7 +165,7 @@ eachTheme((theme) => {
     await expect(list.getByRole("group", { name: "2 done, 1 not done." }).locator(".cap-bulk-results-list > li")).toHaveText([/^Not done Phage lambda: lysis or lysogeny This post has no front matter/, /^Done Notes on the Foxhound release$/, /^Done What a mention queue is for$/]);
     const posted = nextPost(page, "[data-mount='outcomes']");
     await list.getByRole("button", { name: "Undo" }).click();
-    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["foxhound-release", "mention-queue"], tag: ["capsid"], intent: ["remove-tag"] } });
+    expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["foxhound-release", "mention-queue"], tag: ["capsid"], intent: ["tag-remove"] } });
   });
 
   test("behavior: with no script, a delete is confirmed on the server's page, which posts every id and needs the count typed", async ({ page }) => {
@@ -203,9 +213,9 @@ eachTheme((theme) => {
     await editor(page).locator(".cap-message").getByRole("button", { name: "Undo" }).click();
     await expect(editor(page).locator(".cap-message-item")).toContainText("Removed the tag capsid from 1 post.");
     const sent = await log(page);
-    expect(sent[0]).toMatchObject({ intent: "add-tag", ids: ["foxhound-release", "uptime-strip", "phage-lambda"], tag: "capsid" });
+    expect(sent[0]).toMatchObject({ intent: "tag-add", ids: ["foxhound-release", "uptime-strip", "phage-lambda"], tag: "capsid" });
     // The uptime post already had the tag, so Undo leaves it on.
-    expect(sent[1]).toMatchObject({ intent: "remove-tag", ids: "foxhound-release", tag: "capsid" });
+    expect(sent[1]).toMatchObject({ intent: "tag-remove", ids: "foxhound-release", tag: "capsid" });
     await bar.getByRole("button", { name: "Dismiss results" }).click();
     await expect(bar).toBeHidden();
   });
@@ -229,6 +239,50 @@ eachTheme((theme) => {
     expect((await log(page)).map((e) => [e.intent, e.confirm ?? null])).toEqual([
       ["delete", null],
       ["delete", "2"],
+    ]);
+  });
+
+  test("keyboard: with script, Move to Trash takes the post out, focus goes to the next post's title, and z restores it", async ({ page }) => {
+    await visitStates(page, "posts-list", theme);
+    const list = page.locator("[data-mount='ideas']");
+    const target = rowOf(list, "Why the uptime strip counts gaps");
+    await target.locator("summary").focus();
+    await page.keyboard.press("Enter");
+    await target.getByRole("button", { name: "Move to Trash" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(list.getByRole("link", { name: "Why the uptime strip counts gaps", exact: true })).toHaveCount(0);
+    await expect(list.getByRole("link", { name: "What a mention queue is for", exact: true })).toBeFocused();
+    await expect(list.getByRole("link", { name: "Trash 3" })).toBeVisible();
+    await page.keyboard.press("z");
+    await expect(list.getByRole("link", { name: "Why the uptime strip counts gaps", exact: true })).toBeVisible();
+    expect((await log(page)).map((e) => [e.intent, e.ids])).toEqual([
+      ["trash", "uptime-strip"],
+      ["restore", "uptime-strip"],
+    ]);
+  });
+
+  test("behavior: with script, Rename… posts the new slug and says the old address redirects, and a preview link shows with Copy", async ({ page }) => {
+    await visitStates(page, "posts-list", theme);
+    const list = page.locator("[data-mount='ideas']");
+    const target = rowOf(list, "Notes on the Foxhound release");
+    await target.locator("summary").click();
+    await target.getByRole("link", { name: "Rename…" }).click();
+    const dialog = page.getByRole("dialog", { name: "Rename Notes on the Foxhound release" });
+    await expect(dialog).toContainText("The old address will redirect to the new one");
+    await dialog.getByRole("textbox", { name: "New slug" }).fill("foxhound-notes");
+    await dialog.getByRole("button", { name: "Rename" }).click();
+    await expect(dialog).toBeHidden();
+    await expect(rowOf(list, "Notes on the Foxhound release").locator(".cap-posts-path")).toHaveText("/blog/foxhound-notes");
+    const draft = rowOf(list, "What a mention queue is for");
+    await draft.locator("summary").click();
+    await draft.getByRole("button", { name: "Get a preview link" }).click();
+    const box = list.getByRole("status", { name: "Preview link" });
+    await expect(box.getByRole("textbox", { name: "Preview link for What a mention queue is for" })).toHaveValue(/^https:\/\/dustinedwards\.info\/preview\//);
+    await expect(box.getByRole("button", { name: "Copy" })).toBeVisible();
+    await expect(box.locator("time")).toHaveAttribute("datetime", "2026-10-12T12:00:00.000Z");
+    expect((await log(page)).map((e) => [e.intent, e.ids, e.newId ?? null])).toEqual([
+      ["rename", "foxhound-release", "foxhound-notes"],
+      ["preview-link", "mention-queue", null],
     ]);
   });
 
