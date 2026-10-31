@@ -77,7 +77,7 @@ The account menu is the same shape everywhere: who you are; the site's own rows 
 | Up and Down in a panel | Move between items (they wrap); Home and End go to the ends |
 | Esc | Closes the panel; focus returns to its button. Closes the sheet; focus returns to the menu button |
 | Tab past a panel's last item | Closes the panel and goes on |
-| T | Switches the theme, where the site binds single keys (`themeKey`) |
+| T | Switches the theme, where the site binds single keys (`themeKey`); off with the shortcuts switch |
 
 ## Accessibility
 

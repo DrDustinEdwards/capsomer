@@ -145,8 +145,8 @@ export interface AdminShellProps {
   themeKey?: string;
   prefKey?: string;
   // G then 1 to 9 opens the app in that place (the key sequence of GitHub and Linear; Ctrl and a
-  // digit belong to the browser's tabs); on by default. An app that lets single keys be switched off
-  // passes that setting here.
+  // digit belong to the browser's tabs); on by default, and off with the shortcuts switch. false
+  // turns it off for this app alone.
   jumpKeys?: boolean;
   // Shown on the collapse control and in its name tip; the app binds the key.
   collapseKey?: string;

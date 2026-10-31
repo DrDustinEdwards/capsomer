@@ -1,6 +1,7 @@
 // The media library's React grid: MediaTile and MediaGrid (media.react.tsx).
 
 import { type KeyboardEvent, type ReactNode, useCallback, useId, useLayoutEffect, useRef } from "react";
+import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { Glyph } from "../status/status.react.tsx";
 import { type Direction, type MediaRecord, bands, byteSize, describeRecord, flagsFor, nextTile } from "./media.ts";
 
@@ -255,7 +256,7 @@ export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, 
     } else if (e.key === " " && !(t instanceof HTMLInputElement)) {
       e.preventDefault();
       select(here, "toggle");
-    } else if ((e.key === "x" || e.key === "X") && !e.shiftKey && document.documentElement.dataset.capSingleKeys !== "off") {
+    } else if ((e.key === "x" || e.key === "X") && !e.shiftKey && !singleKeysOff()) {
       e.preventDefault();
       select(here, "toggle");
     }

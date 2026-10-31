@@ -28,6 +28,7 @@ On a page two or more levels below a hub: a post under Posts under Admin; a job 
 - **A hub or a top-level page**: nothing. A one-level trail is the page's own title, so the React `Breadcrumb` renders nothing for it.
 - **Moving between peers** (Open, Resolved): tabs, in their links form.
 - **A path a person built through the app** (history): the browser's Back.
+- **One step back to one fixed parent** (a page with a single way in, a step in a flow): the back link, below.
 - **A file path or an address to copy**: plain text in the mono face.
 
 ## The default and its reason
@@ -100,6 +101,14 @@ In React, `import { Breadcrumb } from "capsomer/react/breadcrumb"`:
   maxItems={4}
   renderLink={({ href, className, children }) => <Link to={href} className={className}>{children}</Link>}
 />
+```
+
+## The back link
+
+A page that is one step from a single parent (a form, a step in a flow, a detail opened from one list) gets one link back instead of a trail: `.cap-go[data-go="back"]` (css/utilities.css), the family arrow turned to point back, before the text. Like GOV.UK's back link, it sits at the top of the page, before the `h1` and outside `main`'s heading, and it is a real link to a real address, never `history.back()`: it works with no script, in a new tab, and when the person arrived from somewhere else. It names where it goes ("Sites", not "Back"), so it reads on its own in a list of links. It is a link, so Tab reaches it and Enter follows it; the arrow is drawn, not text, so nothing extra is announced.
+
+```html
+<a class="cap-go" data-go="back" href="/sites">Sites</a>
 ```
 
 ## Deliberately different

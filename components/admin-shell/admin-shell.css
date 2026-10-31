@@ -216,7 +216,7 @@
     --_gw: 20px;
     position: absolute;
     top: calc(50% - var(--_gw) / 2 - var(--_bubble) / 2);
-    left: calc(var(--_gx) + var(--_gw) + 2px);
+    inset-inline-start: calc(var(--_gx) + var(--_gw) + 2px);
     background: var(--primary);
     color: var(--primary-fg);
     box-shadow: 0 0 0 2px var(--admin-strip-bg);
@@ -405,7 +405,7 @@
       --_gw: 16px;
       position: absolute;
       top: calc(50% - var(--_gw) / 2 - var(--_bubble) / 2);
-      left: calc(var(--_gx) + var(--_gw) + 2px);
+      inset-inline-start: calc(var(--_gx) + var(--_gw) + 2px);
       box-shadow: 0 0 0 2px var(--ground);
     }
     & a:is(:hover, [data-force="hover"]) .cap-admin-count {

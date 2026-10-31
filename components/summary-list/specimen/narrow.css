@@ -1,0 +1,4 @@
+/* Specimen layout only: a narrow column. */
+#sl-narrow-wrap {
+  max-inline-size: 360px;
+}
