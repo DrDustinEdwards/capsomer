@@ -122,7 +122,10 @@ eachTheme((theme) => {
     await page.addInitScript(() => {
       const w = window as unknown as { cspViolations: string[] };
       w.cspViolations = [];
+      // Enforced violations only: the staged Report-Only policy (Trusted Types, frame-src) reports
+      // by design, and those reports are what it is staged to collect.
       document.addEventListener("securitypolicyviolation", (e) => {
+        if (e.disposition !== "enforce") return;
         w.cspViolations.push(`${e.violatedDirective}: ${e.blockedURI || "inline"} at ${e.sourceFile}:${e.lineNumber}`);
       });
     });
