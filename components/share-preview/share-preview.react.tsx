@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export interface SerpPreviewProps {
-  // The address as a search result writes it: "dustinedwards.info › blog › post".
+  // The address as a search result writes it: "example.com › blog › post".
   url: string;
   title: ReactNode;
   description: ReactNode;

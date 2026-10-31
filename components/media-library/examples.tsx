@@ -19,7 +19,7 @@ const thumb = (fill: string) => `data:image/svg+xml,${encodeURIComponent(`<svg x
 const file = (key: string, fill: string | null, over: Partial<MediaRecord>): MediaRecord => ({
   key,
   name: key.split("/").pop() ?? key,
-  url: `https://dustinedwards.info/media/${key}`,
+  url: `https://example.com/media/${key}`,
   thumb: fill ? thumb(fill) : undefined,
   kind: fill ? "image" : "document",
   type: fill ? "image/png" : "application/pdf",
@@ -40,17 +40,17 @@ const file = (key: string, fill: string | null, over: Partial<MediaRecord>): Med
 });
 
 const USES: Record<string, MediaRecord["used"]> = {
-  "2026/09/foxhound-hero.png": [{ title: "Notes on the Foxhound release", href: "/editor/foxhound-release", how: "cover image" }],
+  "2026/09/launch-hero.png": [{ title: "Notes on the spring release", href: "/editor/spring-release", how: "cover image" }],
   "2026/09/mention-queue.png": [{ title: "What a mention queue is for", href: "/editor/mention-queue", how: "image in the body" }],
   "2026/08/old-logo.png": [{ title: "About", href: "/editor/about", how: "image in the body" }],
-  "2026/10/brazos-dusk.png": [
-    { title: "A walk along the Brazos", href: "/editor/brazos-walk", how: "cover image" },
+  "2026/10/bay-dusk.png": [
+    { title: "A walk along the bay", href: "/editor/bay-walk", how: "cover image" },
     { title: "Field notes, October", href: "/editor/field-notes-october", how: "image in the body" },
   ],
 };
 
 const FILES: MediaRecord[] = [
-  file("2026/09/foxhound-hero.png", "#b29ae3", { alt: "The Foxhound dashboard with three sites reporting healthy", altState: "set", tags: ["release", "foxhound"], bytes: 421888, focus: "0.3x0.4", caption: "Three sites, all green." }),
+  file("2026/09/launch-hero.png", "#b29ae3", { alt: "The status dashboard with three sites reporting healthy", altState: "set", tags: ["release", "dashboard"], bytes: 421888, focus: "0.3x0.4", caption: "Three sites, all green." }),
   file("2026/09/uptime-strip.png", "#7fc4c0", { tags: ["capsid"], bytes: 98304 }),
   file("2026/09/mention-queue.png", "#d8c9f5", { alt: "The mention queue with four mentions waiting", altState: "set", tags: ["capsid"], bytes: 207872 }),
   file("2026/09/divider.png", "#cfc8dc", { altState: "decorative", bytes: 4096 }),
@@ -62,7 +62,7 @@ const FILES: MediaRecord[] = [
 // Two more, in another month and another folder, for the grouped specimens.
 const GROUPED: MediaRecord[] = [
   ...FILES,
-  file("2026/08/phage-plaques.png", "#c9b8ef", { alt: "Clear plaques on a lawn of bacteria", altState: "set", tags: ["phage"], bytes: 1572864, uploaded: "2026-08-03" }),
+  file("2026/08/plot-notebook.png", "#c9b8ef", { alt: "A field notebook open to a page of sketches", altState: "set", tags: ["notes"], bytes: 1572864, uploaded: "2026-08-03" }),
   file("brand/mark.png", "#a98fdc", { alt: "The site's mark", altState: "set", bytes: 8192, uploaded: "2026-07-01" }),
 ];
 
@@ -130,7 +130,7 @@ function load(files: MediaRecord[], query: MediaQuery, over: Partial<MediaData> 
   for (const f of inView) for (const t of f.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
   const inspect = files.find((f) => f.key === query.inspect);
   return {
-    site: { name: "dustinedwards.info" },
+    site: { name: "example.com" },
     query,
     rows,
     page: { nextCursor: null },
@@ -275,8 +275,8 @@ function useSite(initial: MediaRecord[] = FILES, keepsSize = false) {
       case "upload": {
         const f = form.get("file");
         if (!(f instanceof File) || !f.name) return { ok: false, message: "Choose a file first. Nothing was uploaded." };
-        // This specimen's site already holds the bytes of any file named for the Brazos.
-        const twin = keepsSize && f.name.includes("brazos") ? live.current.find((x) => x.key === "2026/10/brazos-dusk.png") : undefined;
+        // This specimen's site already holds the bytes of any file named for the bay.
+        const twin = keepsSize && f.name.includes("bay") ? live.current.find((x) => x.key === "2026/10/bay-dusk.png") : undefined;
         if (twin) {
           const message = `${f.name} is already in the library as ${twin.name}, so no second copy was stored.`;
           return { ok: true, message, outcomes: [{ id: twin.key, ok: true, duplicate: true, message }] };
@@ -357,7 +357,7 @@ function Editor() {
 // mode as Carrel shows it: replace asks for the same size, and a crop is only ever a new file.
 function KeepsSize() {
   const { files, submit } = useSite();
-  const { query, Form, onClickCapture } = useRouter({ inspect: "2026/09/foxhound-hero.png" });
+  const { query, Form, onClickCapture } = useRouter({ inspect: "2026/09/launch-hero.png" });
   return (
     <div onClickCapture={onClickCapture}>
       <MediaLibrary data={load(files, query, { offers: { ...OFFERS, replaceKeepsSize: true } })} action="/media" Form={Form} submit={submit} bytesHref={bytesOf} shortcuts={false} />
@@ -404,9 +404,9 @@ const IDEA_OFFERS: MediaData["offers"] = {
 };
 
 const IDEAS: MediaRecord[] = [
-  file("2026/10/brazos-dusk.png", "#e0b4a8", { width: 4000, height: 3000, bytes: 3145728, uploaded: "2026-10-20", caption: "The Brazos at dusk, from the Waco suspension bridge.", credit: "Ada Example", license: "CC BY 4.0", sourceUrl: "https://photos.example.com/r/1", licenseExpires: "2026-10-01", takenAt: "2026-05-01T09:30:00Z", usedCount: 2, twins: [{ key: "2026/10/brazos-copy.png", name: "brazos-copy.png" }], tags: ["river"] }),
-  file("2026/10/brazos-copy.png", "#e0b4a8", { width: 4000, height: 3000, bytes: 3145728, uploaded: "2026-10-21", usedCount: 0, twins: [{ key: "2026/10/brazos-dusk.png", name: "brazos-dusk.png" }] }),
-  file("2026/10/lab-bench.png", "#a8d0c8", { width: 1600, height: 1600, alt: "A lab bench with three plates of phage plaques", altState: "set", uploaded: "2026-10-12", usedCount: 1, credit: "", license: "" }),
+  file("2026/10/bay-dusk.png", "#e0b4a8", { width: 4000, height: 3000, bytes: 3145728, uploaded: "2026-10-20", caption: "The bay at dusk, from the old suspension bridge.", credit: "Ada Example", license: "CC BY 4.0", sourceUrl: "https://photos.example.com/r/1", licenseExpires: "2026-10-01", takenAt: "2026-05-01T09:30:00Z", usedCount: 2, twins: [{ key: "2026/10/bay-copy.png", name: "bay-copy.png" }], tags: ["river"] }),
+  file("2026/10/bay-copy.png", "#e0b4a8", { width: 4000, height: 3000, bytes: 3145728, uploaded: "2026-10-21", usedCount: 0, twins: [{ key: "2026/10/bay-dusk.png", name: "bay-dusk.png" }] }),
+  file("2026/10/workbench.png", "#a8d0c8", { width: 1600, height: 1600, alt: "A workbench with three open notebooks", altState: "set", uploaded: "2026-10-12", usedCount: 1, credit: "", license: "" }),
   file("2026/10/field-notes.pdf", null, { uploaded: "2026-10-02", usedCount: 3 }),
 ];
 
@@ -420,8 +420,8 @@ const loadIdeas = (files: MediaRecord[], query: MediaQuery): MediaData =>
     offers: IDEA_OFFERS,
     page: { nextCursor: null, changeCursor: "c0" },
     extra: undefined,
-    ...(query.inspect === "2026/10/brazos-dusk.png" ? { history: HISTORY } : {}),
-    ...(query.inspect && query.suggest ? { suggestions: { tags: ["dusk", "bridge"], alt: "The Brazos River at dusk under a pink sky, the suspension bridge in silhouette", model: "@cf/example/vision" } } : {}),
+    ...(query.inspect === "2026/10/bay-dusk.png" ? { history: HISTORY } : {}),
+    ...(query.inspect && query.suggest ? { suggestions: { tags: ["dusk", "bridge"], alt: "The bay at dusk under a pink sky, the suspension bridge in silhouette", model: "@cf/example/vision" } } : {}),
   });
 
 // What the site would answer to loadMediaChanges: the test (or a person at the console) queues a
@@ -438,7 +438,7 @@ Object.assign(window, {
 
 function Ideas() {
   const { files, submit } = useSite(IDEAS, true);
-  const { query, Form, onClickCapture } = useRouter({ inspect: "2026/10/brazos-dusk.png" });
+  const { query, Form, onClickCapture } = useRouter({ inspect: "2026/10/bay-dusk.png" });
   return (
     <div onClickCapture={onClickCapture}>
       <MediaLibrary
@@ -478,7 +478,7 @@ const mounts: Record<string, () => ReactNode> = {
       <Ideas />
     </MessageProvider>
   ),
-  "empty-match": () => <MediaLibrary data={load(FILES, { q: "lysogeny" }, { extra: undefined })} action="/media" shortcuts={false} />,
+  "empty-match": () => <MediaLibrary data={load(FILES, { q: "lighthouse" }, { extra: undefined })} action="/media" shortcuts={false} />,
 };
 
 for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
@@ -487,7 +487,7 @@ for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
 }
 
 const staticHost = document.getElementById("media-static");
-if (staticHost) staticHost.innerHTML = renderToStaticMarkup(<MediaLibrary data={load(FILES, { inspect: "2026/09/foxhound-hero.png" })} action="/media" shortcuts={false} />, { identifierPrefix: "static" });
+if (staticHost) staticHost.innerHTML = renderToStaticMarkup(<MediaLibrary data={load(FILES, { inspect: "2026/09/launch-hero.png" })} action="/media" shortcuts={false} />, { identifierPrefix: "static" });
 
 const ideasHost = document.getElementById("media-ideas-static");
-if (ideasHost) ideasHost.innerHTML = renderToStaticMarkup(<MediaLibrary data={loadIdeas(IDEAS, { inspect: "2026/10/brazos-dusk.png", lens: "oversized" })} action="/media" shortcuts={false} />, { identifierPrefix: "ideas" });
+if (ideasHost) ideasHost.innerHTML = renderToStaticMarkup(<MediaLibrary data={loadIdeas(IDEAS, { inspect: "2026/10/bay-dusk.png", lens: "oversized" })} action="/media" shortcuts={false} />, { identifierPrefix: "ideas" });

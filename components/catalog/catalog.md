@@ -14,11 +14,11 @@ replaces:
 
 # Catalog
 
-A collection a person searches, narrows and sorts: protocols, publications, phages, jobs. It is a `form` that submits with GET to the page's own address, so every control works with no script and every state is a link that can be shared. The behavior then updates the page in place.
+A collection a person searches, narrows and sorts: articles, products, people, jobs. It is a `form` that submits with GET to the page's own address, so every control works with no script and every state is a link that can be shared. The behavior then updates the page in place.
 
 ## When to use it
 
-A collection of dozens to thousands of items that share fields, where a person narrows by several of them at once: the protocol library, the publications list, the phage table.
+A collection of dozens to thousands of items that share fields, where a person narrows by several of them at once: an article library, a product list, a staff directory.
 
 ## When not to
 
@@ -29,17 +29,17 @@ A collection of dozens to thousands of items that share fields, where a person n
 ## The default and its reason
 
 - **A collection declares its fields once** (`defineCatalog`): is the field searched (and its weight), a facet (one value or many, general or not), a column, sortable, and what type it is. The search box, the facets, the columns, the sort menu and the export all come from that one declaration, so a field is never described twice.
-- **The state is in the address, in one fixed order.** `?q=pcr&kind=protocol&method=pcr&sort=-updated&page=2`: only what differs from the default is written, so one state has one address. The canonical stays the base page, because every filtered address is a view of it.
+- **The state is in the address, in one fixed order.** `?q=billing&kind=guide&topic=pricing&sort=-updated&page=2`: only what differs from the default is written, so one state has one address. The canonical stays the base page, because every filtered address is a view of it.
 - **It works with no script.** The facets are checkboxes and radios, the sort is a select, search is a search field, Apply submits the form; the chips, the sort headers and the pages are links. The behavior hides Apply and updates on every change.
 - **Counts say what choosing would give.** Each option shows how many items would match with it chosen, the search and the other filters held and the facet's own filter not (so a facet's options do not collapse as you choose in it). A chosen option with no matches stays, so it can be released.
 - **A facet with no options is not drawn**: when the search and the other filters leave a facet nothing to choose, or no item has a value for it, its heading and "Any" are left out rather than shown empty.
 - **General facets first.** Facets marked `general` are listed first; the rest follow in the order declared. Values within a facet combine with "or"; facets combine with "and". A facet of one value (kind of thing) is a radio with "Any".
 - **Active filters are chips that are links.** Each removes only itself; "Clear all" removes them all. They are above the results, where the count is.
-- **The count is words with the total, in a live region** ("3 of 140 protocols"), as the chips component's is.
+- **The count is words with the total, in a live region** ("3 of 140 articles"), as the chips component's is.
 - **Search ranks while it is typed.** Every word must match; a word that starts a word of a field counts double; fields count by their weight. "Best match" is the first sort while a search is typed, and an item with no value in a sort field sorts last either way.
 - **The results are a table, and a card on a phone.** The table's own reflow (`data-reflow`): the first column across the top, every other cell under its column name. The sort is in the header links on a table and in the sort menu everywhere, because a card has no header.
-- **A phone gets a filter tray over the results.** Under 56 rem of the catalog's own width (a container query, not the window's) the filters leave the column and open as a tray over the results from a "Filters (2)" button, with no script by the tray's own address (`:target`) and with it by `data-tray`. Escape and "Show 12 protocols" close it; focus returns to the button.
-- **Headings over the rows, in the default order only** (`group: { field }`). A list read by year (publications) shows a heading for each year while it is in its default order; a search or another sort shows the same rows flat, with the grouped field in a column (`hideWhenGrouped` leaves the column out only under headings). The heading is a row-group header (`th[scope=rowgroup]`) spanning the table, so the columns stay aligned across groups, and on a phone it is a plain heading over the cards. The group field must be the sortable field the default sort orders by, so each heading's rows are together.
+- **A phone gets a filter tray over the results.** Under 56 rem of the catalog's own width (a container query, not the window's) the filters leave the column and open as a tray over the results from a "Filters (2)" button, with no script by the tray's own address (`:target`) and with it by `data-tray`. Escape and "Show 12 articles" close it; focus returns to the button.
+- **Headings over the rows, in the default order only** (`group: { field }`). A list read by year (a news archive) shows a heading for each year while it is in its default order; a search or another sort shows the same rows flat, with the grouped field in a column (`hideWhenGrouped` leaves the column out only under headings). The heading is a row-group header (`th[scope=rowgroup]`) spanning the table, so the columns stay aligned across groups, and on a phone it is a plain heading over the cards. The group field must be the sortable field the default sort orders by, so each heading's rows are together.
 - **An empty result says which kind of empty it is**: no items at all is "nothing yet"; filters that hide everything is "no match" with Clear filters ([empty](../empty/empty.md)).
 - **Updating in place never traps a failure.** If the fetch fails for any reason the browser navigates to the address, which is what a link would have done. Changing a filter replaces the history entry instead of adding one, as the chips component does.
 - **Focus follows the change.** When the control a person used is one the swap removes (a chip, a page link), focus moves to the count line, which says what the page now shows.
@@ -63,39 +63,39 @@ A collection of dozens to thousands of items that share fields, where a person n
 
 - A labeled form; each facet is a `fieldset` with a `legend`; every control has a visible label.
 - The count is a polite live region. The results region is `aria-busy` while it updates.
-- A removable chip's name says it removes ("Method: PCR (remove this filter)").
+- A removable chip's name says it removes ("Topic: Pricing (remove this filter)").
 - The card layout of the table is the table component's opt-in reflow; **it has not yet been checked with a screen reader**, so the catalog says so here and an app should check it before relying on it (DEFAULTS.md).
 - Forced colors: chips keep an edge.
 
 ## Markup
 
 ```html
-<form class="cap-catalog" data-cap="catalog" data-catalog="protocols" method="get" action="/research/protocols" aria-labelledby="h">
+<form class="cap-catalog" data-cap="catalog" data-catalog="articles" method="get" action="/library/articles" aria-labelledby="h">
   <div class="cap-catalog-bar">
     <div class="cap-field cap-catalog-search">
-      <label class="cap-field-label" for="protocols-q">Search protocols</label>
-      <input class="cap-input" id="protocols-q" type="search" name="q" />
+      <label class="cap-field-label" for="articles-q">Search articles</label>
+      <input class="cap-input" id="articles-q" type="search" name="q" />
     </div>
     <div class="cap-field cap-catalog-sort">
-      <label class="cap-field-label" for="protocols-sort">Sort</label>
-      <select class="cap-input" id="protocols-sort" name="sort">...</select>
+      <label class="cap-field-label" for="articles-sort">Sort</label>
+      <select class="cap-input" id="articles-sort" name="sort">...</select>
     </div>
     <button type="submit" class="cap-btn cap-catalog-apply" data-variant="primary">Apply</button>
-    <a class="cap-btn cap-catalog-tray-open" href="#protocols-filters" data-catalog-tray="open">Filters</a>
+    <a class="cap-btn cap-catalog-tray-open" href="#articles-filters" data-catalog-tray="open">Filters</a>
   </div>
   <div class="cap-catalog-body">
-    <div class="cap-catalog-filters" id="protocols-filters" role="group" aria-label="Filters" data-catalog-region="filters">
+    <div class="cap-catalog-filters" id="articles-filters" role="group" aria-label="Filters" data-catalog-region="filters">
       <fieldset class="cap-field cap-catalog-facet">
-        <legend class="cap-field-label">Method</legend>
+        <legend class="cap-field-label">Topic</legend>
         <div class="cap-field-options">
-          <label class="cap-check"><input type="checkbox" name="method" value="pcr" /><span>PCR</span> <span class="cap-catalog-n">4</span></label>
+          <label class="cap-check"><input type="checkbox" name="topic" value="pricing" /><span>Pricing</span> <span class="cap-catalog-n">4</span></label>
         </div>
       </fieldset>
     </div>
     <div class="cap-catalog-main">
-      <p class="cap-catalog-count" role="status" data-catalog-region="count">3 of 14 protocols</p>
+      <p class="cap-catalog-count" role="status" data-catalog-region="count">3 of 14 articles</p>
       <div data-catalog-region="chips"><ul class="cap-catalog-chips">...</ul></div>
-      <div id="protocols-results" data-catalog-region="results" aria-busy="false">[the table, or the empty state]</div>
+      <div id="articles-results" data-catalog-region="results" aria-busy="false">[the table, or the empty state]</div>
       <div data-catalog-region="pages">[the pagination]</div>
     </div>
   </div>
@@ -108,7 +108,7 @@ Use it from React (the server renders it; `queryCatalog` is the same function th
 import { Catalog } from "capsomer/react/catalog";
 import { defineCatalog, parseCatalogParams, queryCatalog } from "capsomer/behavior/catalog";
 
-const def = defineCatalog({ id: "protocols", noun: ["protocol", "protocols"], basePath: "/research/protocols", itemKey: (p) => p.id, fields: [/* ... */] });
+const def = defineCatalog({ id: "articles", noun: ["article", "articles"], basePath: "/library/articles", itemKey: (p) => p.id, fields: [/* ... */] });
 // in the loader: queryCatalog(def, items, parseCatalogParams(def, new URL(request.url).searchParams))
 <Catalog definition={def} result={result} labelledBy="page-title" title={(p) => <a className="cap-table-open" href={p.path}>{p.title}</a>} />
 ```

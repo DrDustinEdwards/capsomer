@@ -14,7 +14,7 @@ export interface CatalogProps<T> {
   cells?: Partial<Record<string, (item: T) => ReactNode>>;
   // The page's heading id, which names the results region.
   labelledBy: string;
-  // What to say when the collection itself is empty, and the sentence under "No protocols match".
+  // What to say when the collection itself is empty, and the sentence under "No articles match".
   emptyText?: { nothingYet?: ReactNode; noMatch?: ReactNode };
   // Beside the count: downloads, a view switch.
   actions?: ReactNode;

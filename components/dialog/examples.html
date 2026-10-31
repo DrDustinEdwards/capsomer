@@ -4,17 +4,17 @@
   <p>With no script this dialog is a card in the page and its form works. With script it is closed on load, and the link opens it as the modal (a new tab or a modified click still follows the link to the card).</p>
   <p><a class="cap-btn" id="open-inline" href="#inline-rename" data-cap-dialog-open="inline-rename">Rename the site…</a></p>
   <dialog class="cap-dialog" data-cap="dialog" data-cap-inline data-placement="center" data-size="md" id="inline-rename" open aria-labelledby="inline-rename-title" aria-describedby="inline-rename-desc">
-    <form method="post" action="/admin/sites/foxhound/rename">
+    <form method="post" action="/admin/sites/example/rename">
       <div class="cap-dialog-header">
         <h3 class="cap-dialog-title" id="inline-rename-title">Rename the site</h3>
         <p class="cap-dialog-description" id="inline-rename-desc">Visitors keep the old address.</p>
       </div>
       <div class="cap-dialog-body">
         <label for="inline-name">Site name</label>
-        <input class="cap-input" id="inline-name" name="name" value="foxhound.app" />
+        <input class="cap-input" id="inline-name" name="name" value="example.com" />
       </div>
       <div class="cap-dialog-footer">
-        <a class="cap-btn" href="/admin/sites/foxhound" data-cap-part="cancel">Cancel</a>
+        <a class="cap-btn" href="/admin/sites/example" data-cap-part="cancel">Cancel</a>
         <button type="submit" class="cap-btn" data-variant="primary">Save name</button>
       </div>
     </form>
@@ -27,7 +27,7 @@
           <p>Each button opens one of the dialogs. Esc, the backdrop and the close buttons all work here.</p>
           <p class="cap-specimen-row">
             <button type="button" class="cap-btn" id="open-center" data-cap-dialog-open="live-center">Rename…</button>
-            <button type="button" class="cap-btn" data-variant="danger" id="open-alert" data-cap-dialog-open="live-alert">Revoke foxhound-driver…</button>
+            <button type="button" class="cap-btn" data-variant="danger" id="open-alert" data-cap-dialog-open="live-alert">Revoke deploy-agent…</button>
             <button type="button" class="cap-btn" id="open-sheet" data-cap-dialog-open="live-sheet">Open the job</button>
             <button type="button" class="cap-btn" id="open-bottom" data-cap-dialog-open="live-bottom">More…</button>
             <button type="button" class="cap-btn" id="open-top" data-cap-dialog-open="live-top">Commands…</button>
@@ -45,7 +45,7 @@
           </div>
           <div class="cap-dialog-body">
             <label for="live-center-name">Site name</label>
-            <input class="cap-input" id="live-center-name" value="germomics.org" autocomplete="off" />
+            <input class="cap-input" id="live-center-name" value="example.org" autocomplete="off" />
           </div>
           <div class="cap-dialog-footer">
             <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
@@ -56,7 +56,7 @@
         <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="sm" role="alertdialog" id="live-alert" aria-labelledby="live-alert-title" aria-describedby="live-alert-desc">
           <div class="cap-dialog-header">
             <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
-            <h2 class="cap-dialog-title" id="live-alert-title">Revoke foxhound-driver?</h2>
+            <h2 class="cap-dialog-title" id="live-alert-title">Revoke deploy-agent?</h2>
             <p class="cap-dialog-description" id="live-alert-desc">This cannot be undone. The agent stops working at once and its 1 claimed job goes back to the queue.</p>
           </div>
           <div class="cap-dialog-footer">
@@ -71,7 +71,7 @@
           </div>
           <div class="cap-dialog-body">
             <p>Waiting on you: the branch needs a pull request before the job can continue.</p>
-            <p>Claimed by foxhound-driver, 14 minutes ago. Last heartbeat 40 seconds ago.</p>
+            <p>Claimed by deploy-agent, 14 minutes ago. Last heartbeat 40 seconds ago.</p>
             <p>Release it to put it back in the queue, or mark it failed to stop retries.</p>
           </div>
           <div class="cap-dialog-footer">
@@ -100,7 +100,7 @@
             <input class="cap-input" type="search" aria-label="Search commands" placeholder="Search commands" autocomplete="off" />
             <ul>
               <li>Go to Jobs</li>
-              <li>Pause the germomics.org namespace</li>
+              <li>Pause the example.org namespace</li>
               <li>Open the audit log</li>
             </ul>
           </div>
@@ -111,36 +111,36 @@
             <p class="cap-dialog-description" id="live-scroll-desc">Thirty entries. The header and the footer stay; the list scrolls.</p>
           </div>
           <div class="cap-dialog-body">
-            <p>Audit entry 1: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
-            <p>Audit entry 2: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
-            <p>Audit entry 3: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
-            <p>Audit entry 4: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
-            <p>Audit entry 5: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
-            <p>Audit entry 6: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
-            <p>Audit entry 7: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
-            <p>Audit entry 8: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
-            <p>Audit entry 9: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
-            <p>Audit entry 10: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
-            <p>Audit entry 11: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
-            <p>Audit entry 12: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
-            <p>Audit entry 13: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
-            <p>Audit entry 14: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
-            <p>Audit entry 15: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
-            <p>Audit entry 16: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
-            <p>Audit entry 17: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
-            <p>Audit entry 18: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
-            <p>Audit entry 19: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
-            <p>Audit entry 20: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
-            <p>Audit entry 21: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
-            <p>Audit entry 22: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
-            <p>Audit entry 23: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
-            <p>Audit entry 24: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
-            <p>Audit entry 25: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
-            <p>Audit entry 26: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
-            <p>Audit entry 27: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
-            <p>Audit entry 28: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
-            <p>Audit entry 29: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
-            <p>Audit entry 30: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 1: deploy-agent renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 2: deploy-agent renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 3: deploy-agent renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 4: deploy-agent renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 5: deploy-agent renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 6: deploy-agent renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 7: deploy-agent renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 8: deploy-agent renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 9: deploy-agent renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 10: deploy-agent renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 11: deploy-agent renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 12: deploy-agent renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 13: deploy-agent renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 14: deploy-agent renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 15: deploy-agent renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 16: deploy-agent renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 17: deploy-agent renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 18: deploy-agent renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 19: deploy-agent renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 20: deploy-agent renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 21: deploy-agent renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 22: deploy-agent renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 23: deploy-agent renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 24: deploy-agent renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 25: deploy-agent renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 26: deploy-agent renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 27: deploy-agent renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 28: deploy-agent renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 29: deploy-agent renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 30: deploy-agent renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
           </div>
           <div class="cap-dialog-footer">
             <button type="button" class="cap-btn" data-cap-part="cancel">Close</button>
@@ -153,7 +153,7 @@
             <p class="cap-dialog-description" id="live-busy-desc">The request is running. Esc, Close, Cancel and the backdrop wait until it answers.</p>
           </div>
           <div class="cap-dialog-body">
-            <p>Pushing 3 files to germomics.org.</p>
+            <p>Pushing 3 files to example.org.</p>
           </div>
           <div class="cap-dialog-footer">
             <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
@@ -169,7 +169,7 @@
           </div>
           <div class="cap-dialog-body">
             <label for="live-locked-name">Site name</label>
-            <input class="cap-input" id="live-locked-name" value="germomics.org" autocomplete="off" />
+            <input class="cap-input" id="live-locked-name" value="example.org" autocomplete="off" />
           </div>
           <div class="cap-dialog-footer">
             <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
@@ -206,7 +206,7 @@
           </div>
           <div class="cap-dialog-body">
             <label for="center-name">Site name</label>
-            <input class="cap-input" id="center-name" value="germomics.org" autocomplete="off" />
+            <input class="cap-input" id="center-name" value="example.org" autocomplete="off" />
           </div>
           <div class="cap-dialog-footer">
             <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
@@ -224,7 +224,7 @@
         <dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="sm" role="alertdialog" id="alert" aria-labelledby="alert-title" aria-describedby="alert-desc" data-specimen-open>
           <div class="cap-dialog-header">
             <div class="cap-dialog-media" data-tone="crit" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" /></svg></div>
-            <h2 class="cap-dialog-title" id="alert-title">Revoke foxhound-driver?</h2>
+            <h2 class="cap-dialog-title" id="alert-title">Revoke deploy-agent?</h2>
             <p class="cap-dialog-description" id="alert-desc">This cannot be undone. The agent stops working at once and its 1 claimed job goes back to the queue.</p>
           </div>
           <div class="cap-dialog-footer">
@@ -246,7 +246,7 @@
           </div>
           <div class="cap-dialog-body">
             <label for="large-name">Site name</label>
-            <input class="cap-input" id="large-name" value="germomics.org" autocomplete="off" />
+            <input class="cap-input" id="large-name" value="example.org" autocomplete="off" />
           </div>
           <div class="cap-dialog-footer">
             <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
@@ -268,7 +268,7 @@
           </div>
           <div class="cap-dialog-body">
             <p>Waiting on you: the branch needs a pull request before the job can continue.</p>
-            <p>Claimed by foxhound-driver, 14 minutes ago. Last heartbeat 40 seconds ago.</p>
+            <p>Claimed by deploy-agent, 14 minutes ago. Last heartbeat 40 seconds ago.</p>
             <p>Release it to put it back in the queue, or mark it failed to stop retries.</p>
           </div>
           <div class="cap-dialog-footer">
@@ -291,7 +291,7 @@
           </div>
           <div class="cap-dialog-body">
             <p>Waiting on you: the branch needs a pull request before the job can continue.</p>
-            <p>Claimed by foxhound-driver, 14 minutes ago. Last heartbeat 40 seconds ago.</p>
+            <p>Claimed by deploy-agent, 14 minutes ago. Last heartbeat 40 seconds ago.</p>
             <p>Release it to put it back in the queue, or mark it failed to stop retries.</p>
           </div>
           <div class="cap-dialog-footer">
@@ -334,7 +334,7 @@
             <input class="cap-input" type="search" aria-label="Search commands" placeholder="Search commands" autocomplete="off" />
             <ul>
               <li>Go to Jobs</li>
-              <li>Pause the germomics.org namespace</li>
+              <li>Pause the example.org namespace</li>
               <li>Open the audit log</li>
             </ul>
           </div>
@@ -352,36 +352,36 @@
             <p class="cap-dialog-description" id="scroll-desc">Thirty entries. The header and the footer stay; the list scrolls.</p>
           </div>
           <div class="cap-dialog-body">
-            <p>Audit entry 1: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
-            <p>Audit entry 2: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
-            <p>Audit entry 3: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
-            <p>Audit entry 4: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
-            <p>Audit entry 5: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
-            <p>Audit entry 6: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
-            <p>Audit entry 7: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
-            <p>Audit entry 8: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
-            <p>Audit entry 9: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
-            <p>Audit entry 10: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
-            <p>Audit entry 11: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
-            <p>Audit entry 12: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
-            <p>Audit entry 13: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
-            <p>Audit entry 14: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
-            <p>Audit entry 15: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
-            <p>Audit entry 16: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
-            <p>Audit entry 17: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
-            <p>Audit entry 18: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
-            <p>Audit entry 19: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
-            <p>Audit entry 20: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
-            <p>Audit entry 21: foxhound-driver renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
-            <p>Audit entry 22: foxhound-driver renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
-            <p>Audit entry 23: foxhound-driver renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
-            <p>Audit entry 24: foxhound-driver renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
-            <p>Audit entry 25: foxhound-driver renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
-            <p>Audit entry 26: foxhound-driver renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
-            <p>Audit entry 27: foxhound-driver renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
-            <p>Audit entry 28: foxhound-driver renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
-            <p>Audit entry 29: foxhound-driver renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
-            <p>Audit entry 30: foxhound-driver renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 1: deploy-agent renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 2: deploy-agent renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 3: deploy-agent renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 4: deploy-agent renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 5: deploy-agent renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 6: deploy-agent renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 7: deploy-agent renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 8: deploy-agent renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 9: deploy-agent renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 10: deploy-agent renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 11: deploy-agent renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 12: deploy-agent renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 13: deploy-agent renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 14: deploy-agent renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 15: deploy-agent renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 16: deploy-agent renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 17: deploy-agent renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 18: deploy-agent renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 19: deploy-agent renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 20: deploy-agent renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
+            <p>Audit entry 21: deploy-agent renewed its claim on job_7f3a92c1d4e1 and reported the branch as unchanged.</p>
+            <p>Audit entry 22: deploy-agent renewed its claim on job_7f3a92c1d4e2 and reported the branch as unchanged.</p>
+            <p>Audit entry 23: deploy-agent renewed its claim on job_7f3a92c1d4e3 and reported the branch as unchanged.</p>
+            <p>Audit entry 24: deploy-agent renewed its claim on job_7f3a92c1d4e4 and reported the branch as unchanged.</p>
+            <p>Audit entry 25: deploy-agent renewed its claim on job_7f3a92c1d4e5 and reported the branch as unchanged.</p>
+            <p>Audit entry 26: deploy-agent renewed its claim on job_7f3a92c1d4e6 and reported the branch as unchanged.</p>
+            <p>Audit entry 27: deploy-agent renewed its claim on job_7f3a92c1d4e7 and reported the branch as unchanged.</p>
+            <p>Audit entry 28: deploy-agent renewed its claim on job_7f3a92c1d4e8 and reported the branch as unchanged.</p>
+            <p>Audit entry 29: deploy-agent renewed its claim on job_7f3a92c1d4e9 and reported the branch as unchanged.</p>
+            <p>Audit entry 30: deploy-agent renewed its claim on job_7f3a92c1d4e0 and reported the branch as unchanged.</p>
           </div>
           <div class="cap-dialog-footer">
             <button type="button" class="cap-btn" data-cap-part="cancel">Close</button>
@@ -401,7 +401,7 @@
             <p class="cap-dialog-description" id="busy-desc">The request is running. Esc, Close, Cancel and the backdrop wait until it answers.</p>
           </div>
           <div class="cap-dialog-body">
-            <p>Pushing 3 files to germomics.org.</p>
+            <p>Pushing 3 files to example.org.</p>
           </div>
           <div class="cap-dialog-footer">
             <button type="button" class="cap-btn" data-cap-part="cancel" aria-disabled="true">Cancel</button>

@@ -70,7 +70,7 @@ export interface CatalogField<T> {
 export interface CatalogDefinition<T> {
   // Names the live regions and the form: unique on a page.
   id: string;
-  // The items' name, singular and plural, for the count ("3 of 14 protocols").
+  // The items' name, singular and plural, for the count ("3 of 14 articles").
   noun: readonly [string, string];
   // The page's address, with no query: the canonical, and where every filtered address is built from.
   basePath: string;
@@ -114,7 +114,7 @@ export interface CatalogChip {
   id: string;
   field: string;
   value: string;
-  // "Method: PCR", or the search typed in quotes.
+  // "Topic: Pricing", or the search typed in quotes.
   label: string;
   // The address with this one filter removed: a link that works with no script.
   href: string;
@@ -154,7 +154,7 @@ export interface CatalogResult<T> {
 
 export const RESERVED_PARAMS = ["q", "sort", "page"] as const;
 
-// Folds case and accents, so "Mycobacterium" matches "mycobacterium" and "Genève" matches "geneve".
+// Folds case and accents, so "Report" matches "report" and "Genève" matches "geneve".
 export function fold(text: string): string {
   return text.normalize("NFD").replace(/\p{M}+/gu, "").toLowerCase();
 }
@@ -224,7 +224,7 @@ export function catalogHref<T>(def: CatalogDefinition<T>, state: CatalogState): 
 }
 
 // The address a request should have, or null when it already has it. A browser submitting the form with no script
-// sends every control, including the ones at their defaults (`?q=phage&sort=-updated&kind=`); a server answers
+// sends every control, including the ones at their defaults (`?q=billing&sort=-updated&kind=`); a server answers
 // that with a redirect to the one address the state has, so what is shared and cached is the clean one.
 export function catalogRedirect<T>(def: CatalogDefinition<T>, url: URL): string | null {
   const wanted = catalogHref(def, parseCatalogParams(def, url.searchParams));
@@ -420,7 +420,7 @@ function groupRows<T>(def: CatalogDefinition<T>, rows: readonly T[]): CatalogRow
   return groups;
 }
 
-// "3 of 14 protocols", "14 protocols", "1 protocol": the live count in words with its total.
+// "3 of 14 articles", "14 articles", "1 article": the live count in words with its total.
 export function countText<T>(def: CatalogDefinition<T>, result: Pick<CatalogResult<T>, "count" | "total">): string {
   const noun = (n: number) => (n === 1 ? def.noun[0] : def.noun[1]);
   return result.count === result.total ? `${result.total} ${noun(result.total)}` : `${result.count} of ${result.total} ${noun(result.total)}`;

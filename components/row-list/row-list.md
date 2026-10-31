@@ -74,7 +74,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="attention-h" data-cap-primary>
   <li class="cap-row" data-tone="crit">
     <span class="cap-row-status" id="r1-s"><span class="cap-status" data-tone="crit">[glyph] Critical</span></span>
-    <div class="cap-row-title"><a href="/sites/foxhound" aria-describedby="r1-s r1-d">foxhound.app is not answering</a></div>
+    <div class="cap-row-title"><a href="/sites/example-org" aria-describedby="r1-s r1-d">example.org is not answering</a></div>
     <p class="cap-row-detail" id="r1-d">3 failed checks in a row, first at 14:02</p>
     <span class="cap-row-meta"><time class="cap-time" datetime="2026-09-30T14:02Z">11 minutes ago</time></span>
     <div class="cap-row-actions"><button type="button" class="cap-btn">Retry</button></div>
@@ -90,7 +90,7 @@ A group row, whose button opens the rows it holds:
 <li class="cap-row">
   <span class="cap-row-status" id="g-s"><span class="cap-status" data-tone="warn">[glyph] Warning</span></span>
   <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="g-rows" aria-describedby="g-s g-d">3 pull requests await the seat</button></div>
-  <p class="cap-row-detail" id="g-d">capsid, carrel, foxhound</p>
+  <p class="cap-row-detail" id="g-d">web, docs, billing</p>
   <span class="cap-row-meta"><time datetime="...">26 minutes ago</time><span class="cap-row-chevron" aria-hidden="true"></span></span>
 </li>
 ```

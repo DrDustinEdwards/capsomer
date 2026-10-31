@@ -130,11 +130,11 @@ export const stateWord = (s: GateState) => WORD[s];
 export interface GateReading {
   sites: Array<{ site: GateSite; state: GateState; failing: GateCheck[] }>;
   state: GateState;
-  // The words after the status word, with the colon: "Blocked" then ": 2 required checks failing on dustinedwards.info".
+  // The words after the status word, with the colon: "Blocked" then ": 2 required checks failing on example.com".
   rest: string;
 }
 
-// The one sentence for the whole region: "Blocked: 2 required checks failing on dustinedwards.info".
+// The one sentence for the whole region: "Blocked: 2 required checks failing on example.com".
 export function describeGate(sites: readonly GateSite[], checks: readonly GateCheck[]): GateReading {
   const read = sites.map((site) => ({ site, state: siteState(site, checks), failing: checks.filter((c) => appliesTo(c, site.id) && !c.ok && c.required) }));
   const state = worstState(read.map((r) => r.state));

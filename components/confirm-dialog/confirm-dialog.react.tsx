@@ -7,7 +7,7 @@ const MEDIA_GLYPH = <path fill="currentColor" fillRule="evenodd" d="M8 1.5l7 12.
 
 export interface ConfirmDialogProps {
   open: boolean;
-  // Names the action and the object: "Revoke foxhound-driver?"
+  // Names the action and the object: "Revoke deploy-agent?"
   title: string;
   // An optional first sentence: "This cannot be undone."
   lead?: ReactNode;
@@ -236,7 +236,7 @@ export interface ConfirmPageProps {
   method?: "post" | "get";
   // A list value is one hidden field per item, under one name (the ticked `ids`).
   hidden?: Record<string, string | readonly string[]>;
-  // Names the action and the object: "Delete foxhound.app?"
+  // Names the action and the object: "Delete example.com?"
   title: string;
   lead?: ReactNode;
   // What will change, one line each, from the server's own preview.

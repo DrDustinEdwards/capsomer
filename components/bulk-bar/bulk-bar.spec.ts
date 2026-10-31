@@ -157,7 +157,7 @@ eachTheme((theme) => {
     const dialog = page.getByRole("alertdialog", { name: "Bin 2 items?" });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("button", { name: "Cancel" })).toBeFocused();
-    await expect(dialog.getByRole("listitem")).toHaveText(["Notes on the Foxhound release", "What a mention queue is for"]);
+    await expect(dialog.getByRole("listitem")).toHaveText(["Notes on the spring release", "What a mention queue is for"]);
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(bin).toBeFocused();
@@ -309,7 +309,7 @@ eachTheme((theme) => {
     await expect(bar).toBeVisible();
     await expect(bar.locator(".cap-bulk-count")).toHaveText("Nothing selected");
     const results = bar.getByRole("group", { name: "2 done, 1 not done." });
-    await expect(results.locator(".cap-bulk-results-list > li")).toHaveText([/^Not done What a mention queue is for Changed on the site/, /^Done Notes on the Foxhound release/, /^Done Why the uptime strip counts gaps/]);
+    await expect(results.locator(".cap-bulk-results-list > li")).toHaveText([/^Not done What a mention queue is for Changed on the site/, /^Done Notes on the spring release/, /^Done Why the uptime strip counts gaps/]);
     const dismiss = bar.getByRole("button", { name: "Dismiss results" });
     await dismiss.focus();
     await page.keyboard.press("Enter");

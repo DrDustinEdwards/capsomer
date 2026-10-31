@@ -21,7 +21,7 @@
   <p>The bar below is in the HTML with the <code>hidden</code> attribute, so it takes no room and is not read. It appears when the first item is chosen.</p>
   <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="none-list" /> Select all drafts</label></div>
   <ul class="bulk-list" id="none-list">
-      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="n-1" data-cap-select /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" value="n-1" data-cap-select /> Notes on the spring release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
       <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="n-2" data-cap-select /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
       <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="n-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
   </ul>
@@ -40,10 +40,10 @@
   <h2 id="s-live">Choose, then act: archive runs at once with Undo, bin previews first</h2>
   <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="live-list" /> Select all drafts</label></div>
   <ul class="bulk-list" id="live-list">
-      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="d-1" data-cap-select /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" value="d-1" data-cap-select /> Notes on the spring release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
       <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="d-2" data-cap-select /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
       <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="d-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
-      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="d-4" data-cap-select /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
+      <li data-label="Annual report: reading the charts"><label class="cap-check"><input type="checkbox" value="d-4" data-cap-select /> Annual report: reading the charts</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
       <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="d-5" data-cap-select /> Search without a server</label><span class="bulk-meta">Draft, edited 5 days ago</span></li>
   </ul>
   <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="live-list" role="region" aria-label="Bulk actions" id="bulk-live" hidden>
@@ -62,7 +62,7 @@
   <p>This bar is in the page and works with no script: the boxes are the form's own, each action is a submit button named <code>intent</code>, and the server decides (a destructive intent gets the server's own page listing every item). With script the bar counts, hides while nothing is ticked, and refuses a press with nothing ticked.</p>
   <form class="bulk-form" id="form-drafts" method="post" action="/admin/posts/bulk">
     <ul class="bulk-list" id="form-list">
-      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" name="ids" value="f-1" data-cap-select /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" name="ids" value="f-1" data-cap-select /> Notes on the spring release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
       <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" name="ids" value="f-2" data-cap-select /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
       <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" name="ids" value="f-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
     </ul>
@@ -82,7 +82,7 @@
   <p>The page the server sent back after the form posted: nothing is ticked, and the bar stays in view to list what happened to each item. Dismiss results needs script, so it is hidden in the delivered HTML and shown on load.</p>
   <form class="bulk-form" id="outcome-drafts" method="post" action="/admin/posts/bulk">
     <ul class="bulk-list" id="outcome-list">
-      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" name="ids" value="o-1" data-cap-select /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" name="ids" value="o-1" data-cap-select /> Notes on the spring release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
       <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" name="ids" value="o-2" data-cap-select /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
     </ul>
     <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="outcome-list" role="region" aria-label="Bulk actions" id="bulk-outcomes">
@@ -95,7 +95,7 @@
         <p class="cap-bulk-results-summary" id="bulk-outcomes-summary">2 done, 1 not done.</p>
         <ul class="cap-bulk-results-list">
           <li data-ok="false"><span class="cap-status" data-tone="crit"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/></svg>Not done</span> <span class="cap-bulk-result-label">What a mention queue is for</span> <span class="cap-bulk-result-message">Changed on the site since this page was loaded. Open it to see the change.</span></li>
-          <li data-ok="true"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Done</span> <span class="cap-bulk-result-label">Notes on the Foxhound release</span></li>
+          <li data-ok="true"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Done</span> <span class="cap-bulk-result-label">Notes on the spring release</span></li>
           <li data-ok="true"><span class="cap-status" data-tone="ok"><svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/></svg>Done</span> <span class="cap-bulk-result-label">Why the uptime strip counts gaps</span></li>
         </ul>
         <button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="dismiss-results" hidden>Dismiss results</button>
@@ -108,10 +108,10 @@
   <h2 id="s-twelve">Twelve selected: the preview lists every one</h2>
   <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="twelve-list" /> Select all drafts</label></div>
   <ul class="bulk-list" id="twelve-list">
-      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="t-1" data-cap-select checked /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" value="t-1" data-cap-select checked /> Notes on the spring release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
       <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="t-2" data-cap-select checked /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
       <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="t-3" data-cap-select checked /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
-      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="t-4" data-cap-select checked /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
+      <li data-label="Annual report: reading the charts"><label class="cap-check"><input type="checkbox" value="t-4" data-cap-select checked /> Annual report: reading the charts</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
       <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="t-5" data-cap-select checked /> Search without a server</label><span class="bulk-meta">Draft, edited 5 days ago</span></li>
       <li data-label="A weekend with the media library"><label class="cap-check"><input type="checkbox" value="t-6" data-cap-select checked /> A weekend with the media library</label><span class="bulk-meta">Draft, edited 6 days ago</span></li>
       <li data-label="Tokens, not hex codes"><label class="cap-check"><input type="checkbox" value="t-7" data-cap-select checked /> Tokens, not hex codes</label><span class="bulk-meta">Draft, edited 7 days ago</span></li>
@@ -136,7 +136,7 @@
   <h2 id="s-fail">An action that fails</h2>
   <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="fail-list" /> Select all drafts</label></div>
   <ul class="bulk-list" id="fail-list">
-      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="f-1" data-cap-select checked /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Annual report: reading the charts"><label class="cap-check"><input type="checkbox" value="f-1" data-cap-select checked /> Annual report: reading the charts</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
       <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="f-2" data-cap-select checked /> Search without a server</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
       <li data-label="A weekend with the media library"><label class="cap-check"><input type="checkbox" value="f-3" data-cap-select /> A weekend with the media library</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
   </ul>
@@ -156,10 +156,10 @@
   <div class="bulk-scroll" id="bulk-scroll" tabindex="0" role="group" aria-label="Drafts, scrolling">
   <div class="bulk-head"><label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="sticky-list" /> Select all drafts</label></div>
     <ul class="bulk-list" id="sticky-list">
-      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="s-1" data-cap-select checked /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" value="s-1" data-cap-select checked /> Notes on the spring release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
       <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="s-2" data-cap-select checked /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
       <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="s-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
-      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="s-4" data-cap-select /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
+      <li data-label="Annual report: reading the charts"><label class="cap-check"><input type="checkbox" value="s-4" data-cap-select /> Annual report: reading the charts</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
       <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="s-5" data-cap-select /> Search without a server</label><span class="bulk-meta">Draft, edited 5 days ago</span></li>
       <li data-label="A weekend with the media library"><label class="cap-check"><input type="checkbox" value="s-6" data-cap-select /> A weekend with the media library</label><span class="bulk-meta">Draft, edited 6 days ago</span></li>
       <li data-label="Tokens, not hex codes"><label class="cap-check"><input type="checkbox" value="s-7" data-cap-select /> Tokens, not hex codes</label><span class="bulk-meta">Draft, edited 7 days ago</span></li>
@@ -186,10 +186,10 @@
     <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
   </div>
     <ul class="bulk-list" id="top-list">
-      <li data-label="Notes on the Foxhound release"><label class="cap-check"><input type="checkbox" value="u-1" data-cap-select checked /> Notes on the Foxhound release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
+      <li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" value="u-1" data-cap-select checked /> Notes on the spring release</label><span class="bulk-meta">Draft, edited 1 day ago</span></li>
       <li data-label="Why the uptime strip counts gaps"><label class="cap-check"><input type="checkbox" value="u-2" data-cap-select checked /> Why the uptime strip counts gaps</label><span class="bulk-meta">Draft, edited 2 days ago</span></li>
       <li data-label="What a mention queue is for"><label class="cap-check"><input type="checkbox" value="u-3" data-cap-select /> What a mention queue is for</label><span class="bulk-meta">Draft, edited 3 days ago</span></li>
-      <li data-label="Germomics: reading a phage tree"><label class="cap-check"><input type="checkbox" value="u-4" data-cap-select /> Germomics: reading a phage tree</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
+      <li data-label="Annual report: reading the charts"><label class="cap-check"><input type="checkbox" value="u-4" data-cap-select /> Annual report: reading the charts</label><span class="bulk-meta">Draft, edited 4 days ago</span></li>
       <li data-label="Search without a server"><label class="cap-check"><input type="checkbox" value="u-5" data-cap-select /> Search without a server</label><span class="bulk-meta">Draft, edited 5 days ago</span></li>
       <li data-label="A weekend with the media library"><label class="cap-check"><input type="checkbox" value="u-6" data-cap-select /> A weekend with the media library</label><span class="bulk-meta">Draft, edited 6 days ago</span></li>
       <li data-label="Tokens, not hex codes"><label class="cap-check"><input type="checkbox" value="u-7" data-cap-select /> Tokens, not hex codes</label><span class="bulk-meta">Draft, edited 7 days ago</span></li>

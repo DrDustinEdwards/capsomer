@@ -48,7 +48,7 @@ eachTheme((theme) => {
     await expect(page.locator("#pop-dims")).toMatchAriaSnapshot(`
       - dialog "Dimensions":
         - heading "Dimensions" [level=2]
-        - paragraph: Set the size of the status badge for foxhound.app.
+        - paragraph: Set the size of the status badge for example.org.
     `);
     const retry = page.getByRole("button", { name: "Retry job" });
     await expect(retry).toHaveAccessibleName("Retry job");

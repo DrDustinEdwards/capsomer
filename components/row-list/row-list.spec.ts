@@ -64,13 +64,13 @@ eachTheme((theme) => {
     await expect(page.locator("#list-mixed")).toMatchAriaSnapshot(`
       - list /Mixed, worst first/:
         - listitem:
-          - link "foxhound.app is not answering"
+          - link "example.org is not answering"
         - listitem:
           - link "D1 rows read will run out before the reset"
         - listitem:
           - link "2 jobs are waiting for approval"
         - listitem:
-          - link /germomics/
+          - link /example\.net/
         - listitem:
           - link "4 notices"
     `);
@@ -85,20 +85,20 @@ eachTheme((theme) => {
 
   test("accessibility: a row's link is described by its status and detail", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "row-list", theme);
-    await expect(page.getByRole("link", { name: "foxhound.app is not answering" })).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
+    await expect(page.getByRole("link", { name: "example.org is not answering" })).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
   });
 
   test("keyboard: j and k move focus between the primary list's rows", async ({ page }) => {
     await visitStates(page, "row-list", theme);
     await page.locator("h1").click();
     await page.keyboard.press("j");
-    await expect(page.getByRole("link", { name: "foxhound.app is not answering" })).toBeFocused();
+    await expect(page.getByRole("link", { name: "example.org is not answering" })).toBeFocused();
     await page.keyboard.press("j");
     await expect(page.getByRole("link", { name: "D1 rows read will run out before the reset" })).toBeFocused();
     await page.keyboard.press("k");
-    await expect(page.getByRole("link", { name: "foxhound.app is not answering" })).toBeFocused();
+    await expect(page.getByRole("link", { name: "example.org is not answering" })).toBeFocused();
     await page.keyboard.press("k");
-    await expect(page.getByRole("link", { name: "foxhound.app is not answering" })).toBeFocused();
+    await expect(page.getByRole("link", { name: "example.org is not answering" })).toBeFocused();
   });
 
   test("keyboard: k from outside the list starts at its last row", async ({ page }) => {
@@ -110,7 +110,7 @@ eachTheme((theme) => {
 
   test("keyboard: j stops at the last row", async ({ page }) => {
     await visitStates(page, "row-list", theme);
-    await page.getByRole("link", { name: "germomics: no backup reported" }).focus();
+    await page.getByRole("link", { name: "example.net: no backup reported" }).focus();
     await page.keyboard.press("j");
     await expect(page.getByRole("link", { name: "4 notices" })).toBeFocused();
     await page.keyboard.press("j");
@@ -129,7 +129,7 @@ eachTheme((theme) => {
 
   test("keyboard: Tab moves from row to row, one stop each", async ({ page }) => {
     await visitStates(page, "row-list", theme);
-    await page.getByRole("link", { name: "foxhound.app is not answering" }).focus();
+    await page.getByRole("link", { name: "example.org is not answering" }).focus();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: "D1 rows read will run out before the reset" })).toBeFocused();
   });
@@ -139,7 +139,7 @@ eachTheme((theme) => {
     await page.locator("h1").click();
     await page.keyboard.press("j");
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#site-foxhound$/);
+    await expect(page).toHaveURL(/#site-example-org$/);
   });
 
   test("keyboard: j typed into a field stays in the field", async ({ page }) => {
@@ -160,7 +160,7 @@ eachTheme((theme) => {
     await page.evaluate(() => (document.documentElement.dataset.capSingleKeys = "off"));
     await page.locator("h1").click();
     await page.keyboard.press("j");
-    await expect(page.getByRole("link", { name: "foxhound.app is not answering" })).not.toBeFocused();
+    await expect(page.getByRole("link", { name: "example.org is not answering" })).not.toBeFocused();
   });
 
   test("keyboard: a row is one tab stop, and its actions are their own", async ({ page }) => {

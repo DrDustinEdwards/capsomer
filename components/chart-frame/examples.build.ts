@@ -1,7 +1,7 @@
 // The chart frame's specimens, drawn by Enarratio when the states page is built (bin/states.mjs
 // fills each <!-- build:name --> in examples.html), so they are the package's live output in
 // every state: each kind of chart and primitive, the data open, a source, no data, a refusal,
-// and the same chart in every family. Invented, plausible data from the family's own world.
+// and the same chart in every family. Invented, plausible data.
 import { heatStrip, progressRing, sparkline, timeline, uptimeStrip } from "enarratio";
 import { areaChart, type BarChartOptions, barChart, lineChart } from "enarratio/lite";
 import { frameHtml, noDataHtml } from "./chart-frame.ts";
@@ -13,14 +13,14 @@ const jobs = days.flatMap((day, i) => [
   { day, kind: "Deploys", n: [3, 4, 1, 0, 5, 4, 6][i] ?? 0 },
 ]);
 const minutes = { values: [260, 280, 310, 300, 330, 320, 340], label: "Actions minutes per day, last 7 days", id: "cf-spark", width: 320, height: 56 };
-const source = { name: "Capsid's job log", href: "https://example.com/jobs" };
+const source = { name: "The job log", href: "https://example.com/jobs" };
 
 const bar = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[number]>> = {}) =>
   barChart({ data: jobs, x: "day", y: "n", series: "kind", layout: "stacked", id, title: "Jobs run per day", subtitle: "Last 7 days, by kind", alt: "Jobs rose through the week to 39 on Wednesday, most of them builds.", xLabel: "Day", yLabel: "Jobs", source, width: 440, height: 240, ...extra });
 
 const drawings: Record<string, string> = {
   spark: frameHtml(sparkline(minutes)),
-  uptime: frameHtml(uptimeStrip({ slots: ["up", "up", "degraded", "up", "down", "unknown", "up"], label: "Uptime of dustinedwards.info", subtitle: "83% up over 7 days", id: "cf-up", width: 480, height: 28, dataTable: "details" }), { inline: true }),
+  uptime: frameHtml(uptimeStrip({ slots: ["up", "up", "degraded", "up", "down", "unknown", "up"], label: "Uptime of example.edu", subtitle: "83% up over 7 days", id: "cf-up", width: 480, height: 28, dataTable: "details" }), { inline: true }),
   ring: frameHtml(progressRing({ value: 0.72, label: "Nightly backups verified", id: "cf-ring", size: 96 })),
   heat: frameHtml(heatStrip({ values: [3, 5, 8, 12, null, 19, 22, 17, 11, 6, 4, 3], label: "Requests per hour, last 12 hours", id: "cf-heat", width: 480, height: 28 })),
   timeline: frameHtml(
@@ -30,27 +30,27 @@ const drawings: Record<string, string> = {
       start: "2026-10-30T00:00:00Z",
       end: "2026-10-30T24:00:00Z",
       events: [
-        { lane: "carrel.app", label: "Deploy 412", status: "ok", at: "2026-10-30T09:12:00Z" },
-        { lane: "carrel.app", label: "Probe failing", status: "error", from: "2026-10-30T13:40:00Z", to: "2026-10-30T14:05:00Z" },
-        { lane: "foxhound.app", label: "Deploy 87", status: "ok", at: "2026-10-30T11:30:00Z" },
-        { lane: "foxhound.app", label: "Slow responses", status: "warning", from: "2026-10-30T18:00:00Z", to: "2026-10-30T19:20:00Z" },
+        { lane: "example.net", label: "Deploy 412", status: "ok", at: "2026-10-30T09:12:00Z" },
+        { lane: "example.net", label: "Probe failing", status: "error", from: "2026-10-30T13:40:00Z", to: "2026-10-30T14:05:00Z" },
+        { lane: "example.com", label: "Deploy 87", status: "ok", at: "2026-10-30T11:30:00Z" },
+        { lane: "example.com", label: "Slow responses", status: "warning", from: "2026-10-30T18:00:00Z", to: "2026-10-30T19:20:00Z" },
       ],
     }),
   ),
   bar: frameHtml(bar("cf-bar")),
-  open: frameHtml(bar("cf-open", { notes: "A job counts on the day it finished.", byline: "Capsid Portal", width: 640, height: 280 }).replace('<details class="enarratio-data">', '<details class="enarratio-data" open>')),
+  open: frameHtml(bar("cf-open", { notes: "A job counts on the day it finished.", byline: "Example Co", width: 640, height: 280 }).replace('<details class="enarratio-data">', '<details class="enarratio-data" open>')),
   line: frameHtml(
     lineChart({
       data: ["2026-10-24", "2026-10-25", "2026-10-26", "2026-10-27", "2026-10-28", "2026-10-29", "2026-10-30"].flatMap((x, i) => [
-        { x, site: "carrel.app", ms: [212, 220, 205, 260, 240, 231, 225][i] ?? 0 },
-        { x, site: "foxhound.app", ms: [180, 175, 190, 185, 310, 200, 195][i] ?? 0 },
+        { x, site: "example.net", ms: [212, 220, 205, 260, 240, 231, 225][i] ?? 0 },
+        { x, site: "example.com", ms: [180, 175, 190, 185, 310, 200, 195][i] ?? 0 },
       ]),
       x: "x",
       y: "ms",
       series: "site",
       id: "cf-line",
       title: "Response time, median",
-      alt: "Both sites answer in about 200 ms; foxhound.app slowed to 310 ms on Tuesday.",
+      alt: "Both sites answer in about 200 ms; example.com slowed to 310 ms on Tuesday.",
       xLabel: "Day",
       yLabel: "Milliseconds",
       directLabels: true,
@@ -61,7 +61,7 @@ const drawings: Record<string, string> = {
   area: frameHtml(
     areaChart({
       data: days.flatMap((day, i) => [
-        { x: i + 1, queue: "Waiting on Dustin", n: [4, 6, 5, 3, 2, 2, 1][i] ?? 0 },
+        { x: i + 1, queue: "Waiting on review", n: [4, 6, 5, 3, 2, 2, 1][i] ?? 0 },
         { x: i + 1, queue: "Running", n: [2, 3, 3, 4, 3, 5, 4][i] ?? 0 },
       ]),
       x: "x",
@@ -69,7 +69,7 @@ const drawings: Record<string, string> = {
       series: "queue",
       id: "cf-area",
       title: "Queue by day",
-      alt: "The queue waiting on Dustin fell from 6 to 1 while running jobs held near 4.",
+      alt: "The queue waiting on review fell from 6 to 1 while running jobs held near 4.",
       xLabel: "Day of the week",
       yLabel: "Jobs",
       width: 440,

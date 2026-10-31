@@ -5,10 +5,10 @@ import { createRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { Catalog } from "./catalog.react.tsx";
 import { parseCatalogParams, queryCatalog } from "./catalog-core.ts";
-import { PROTOCOLS, protocolCatalog as def } from "./fixture.ts";
+import { ARTICLES, articleCatalog as def } from "./fixture.ts";
 
 function Demo({ id, query }: { id: string; query: string }) {
-  const result = queryCatalog(def, PROTOCOLS, parseCatalogParams(def, query));
+  const result = queryCatalog(def, ARTICLES, parseCatalogParams(def, query));
   return (
     <Catalog
       definition={{ ...def, id }}

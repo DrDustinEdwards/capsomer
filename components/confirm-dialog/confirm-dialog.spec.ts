@@ -2,8 +2,8 @@ import { expect, test, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import { wordMatches, wordPattern } from "./confirm-dialog.ts";
 
-const revoke = (page: Page) => page.getByRole("button", { name: "Revoke foxhound-driver…" });
-const dialog = (page: Page, name = "Revoke foxhound-driver?") => page.getByRole("alertdialog", { name });
+const revoke = (page: Page) => page.getByRole("button", { name: "Revoke deploy-agent…" });
+const dialog = (page: Page, name = "Revoke deploy-agent?") => page.getByRole("alertdialog", { name });
 
 async function openLive(page: Page, theme: "light" | "dark") {
   await visitStates(page, "confirm-dialog", theme, "live");
@@ -68,8 +68,8 @@ eachTheme((theme) => {
   test("accessibility: the dialog's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "open");
     await expect(page.locator("dialog.cap-dialog")).toMatchAriaSnapshot(`
-      - alertdialog "Revoke foxhound-driver?":
-        - heading "Revoke foxhound-driver?" [level=2]
+      - alertdialog "Revoke deploy-agent?":
+        - heading "Revoke deploy-agent?" [level=2]
         - paragraph: This cannot be undone. The agent stops working at once.
         - list:
           - listitem: Its key stops being accepted.
@@ -139,7 +139,7 @@ eachTheme((theme) => {
     await expect(dialog(page)).toBeVisible();
     await page.evaluate(() => (window as unknown as { capRelease: () => void }).capRelease());
     await expect(dialog(page)).toBeHidden();
-    await expect(page.getByRole("status")).toHaveText("Revoked foxhound-driver.");
+    await expect(page.getByRole("status")).toHaveText("Revoked deploy-agent.");
     // The opener went with its row, so focus lands on the main region, not the body.
     await expect(page.locator("main")).toBeFocused();
   });
@@ -167,8 +167,8 @@ eachTheme((theme) => {
 
   test("keyboard: the typed word turns the action on, in any case", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "live");
-    await page.getByRole("button", { name: "Delete the germomics.org record…" }).click();
-    const d = dialog(page, "Delete the germomics.org record?");
+    await page.getByRole("button", { name: "Delete the example.org record…" }).click();
+    const d = dialog(page, "Delete the example.org record?");
     await expect(d).toBeVisible();
     await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
     const perform = page.getByRole("button", { name: "Delete record" });
@@ -237,7 +237,7 @@ eachTheme((theme) => {
 
   test("accessibility: the confirm page is a named group with its description, its fields and its error", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "page-error");
-    const form = page.getByRole("group", { name: "Delete foxhound.app?" });
+    const form = page.getByRole("group", { name: "Delete example.com?" });
     await expect(form).toBeVisible();
     await expect(form).toHaveAccessibleDescription(/This cannot be undone\..*Its 14 checks stop running\./);
     await expect(form.getByRole("textbox", { name: "Reason (required)" })).toBeVisible();
@@ -262,7 +262,7 @@ eachTheme((theme) => {
           });
         }),
     );
-    const form = page.getByRole("group", { name: "Delete foxhound.app?" });
+    const form = page.getByRole("group", { name: "Delete example.com?" });
     const reason = form.getByRole("textbox", { name: "Reason (required)" });
     const word = form.getByRole("textbox", { name: "Type delete to confirm" });
     // Nothing given: the browser refuses, with no script of ours.
@@ -274,7 +274,7 @@ eachTheme((theme) => {
     await word.fill("DELETE");
     expect(await word.evaluate((el: HTMLInputElement) => el.validity.valid)).toBe(true);
     await form.getByRole("button", { name: "Delete site" }).click();
-    expect(await posted).toEqual({ intent: "delete", site: "foxhound", reason: "Retired in the September review.", confirm: "DELETE" });
+    expect(await posted).toEqual({ intent: "delete", site: "example", reason: "Retired in the September review.", confirm: "DELETE" });
   });
 
   test("keyboard: on the confirm page Tab goes through the fields to the buttons, Cancel is a link and comes first", async ({ page }) => {
@@ -284,7 +284,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("textbox", { name: "Type delete to confirm" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: "Cancel" })).toBeFocused();
-    await expect(page.getByRole("link", { name: "Cancel" })).toHaveAttribute("href", "/admin/sites/foxhound");
+    await expect(page.getByRole("link", { name: "Cancel" })).toHaveAttribute("href", "/admin/sites/example");
     await page.keyboard.press("Tab");
     await expect(page.getByRole("button", { name: "Delete site" })).toBeFocused();
   });

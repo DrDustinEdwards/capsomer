@@ -50,7 +50,7 @@ eachTheme((theme) => {
           - link "Error rate rose 2 minutes after this deploy"
     `);
     const marker = page.getByRole("link", { name: "Incident began 4 minutes after this deploy" });
-    await expect(marker).toHaveAccessibleDescription("foxhound deployed a91c4e0");
+    await expect(marker).toHaveAccessibleDescription("web deployed a91c4e0");
     await expect(page.locator("#feed-day").getByRole("list", { name: "Yesterday" }).getByRole("listitem")).toHaveCount(2);
   });
 

@@ -66,7 +66,7 @@ eachTheme((theme) => {
             - option /Queue/
           - group "Stop":
             - option /Pause capsomer\\s*,\\s*asks a reason/
-            - option /Revoke foxhound-driver\\s*,\\s*preview first/
+            - option /Revoke deploy-agent\\s*,\\s*preview first/
           - group "Actions":
             - option /Refresh now\\s*,\\s*shortcut r/
           - group "Copy":
@@ -148,7 +148,7 @@ eachTheme((theme) => {
     await expect(shownOptions(page)).toHaveCount(2);
     await expect(page.getByRole("group", { name: "Stop" })).toBeVisible();
     await expect(page.getByRole("option", { name: /Pause capsomer\s*,\s*asks a reason/ })).toBeVisible();
-    await expect(page.getByRole("option", { name: /Revoke foxhound-driver\s*,\s*preview first/ })).toBeVisible();
+    await expect(page.getByRole("option", { name: /Revoke deploy-agent\s*,\s*preview first/ })).toBeVisible();
     // No command stops everything.
     await box(page).fill("all");
     await expect(page.getByRole("option", { name: /Stop|Pause|Revoke/ })).toHaveCount(0);
@@ -157,10 +157,10 @@ eachTheme((theme) => {
     await box(page).fill("pause everything");
     await expect(shownOptions(page)).toHaveCount(0);
     await box(page).fill("revoke");
-    expect(await activeName(page)).toBe("Revoke foxhound-driver");
+    expect(await activeName(page)).toBe("Revoke deploy-agent");
     await page.keyboard.press("Enter");
     await expect(menu(page)).toBeHidden();
-    await expect(page.getByRole("status")).toHaveText("Ran: Revoke foxhound-driver opens its preview");
+    await expect(page.getByRole("status")).toHaveText("Ran: Revoke deploy-agent opens its preview");
   });
 
   test("behavior: the stops specimen shows what typing stop finds", async ({ page }) => {
@@ -186,13 +186,13 @@ eachTheme((theme) => {
 
   test("behavior: a live search answers as the person types; Enter runs a result", async ({ page }) => {
     await visitStates(page, "command-menu", theme, "live");
-    const input = page.getByRole("combobox", { name: "Search books" });
+    const input = page.getByRole("combobox", { name: "Search articles" });
     await expect(input).toBeFocused();
-    await input.pressSequentially("disp");
-    await expect(page.getByRole("option", { name: "The Dispossessed" })).toBeVisible();
-    await expect(page.getByRole("option", { name: "Your library" })).toHaveCount(0);
+    await input.pressSequentially("rele");
+    await expect(page.getByRole("option", { name: "Release notes for version 4" })).toBeVisible();
+    await expect(page.getByRole("option", { name: "Your workspace" })).toHaveCount(0);
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
-    await expect(page.locator("[data-specimen-part='said']")).toHaveText("Ran: The Dispossessed");
+    await expect(page.locator("[data-specimen-part='said']")).toHaveText("Ran: Release notes for version 4");
   });
 });

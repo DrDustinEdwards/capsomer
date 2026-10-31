@@ -76,9 +76,9 @@ eachTheme((theme) => {
       { sel: "#pg-blocked-c-alt a", what: "a cause link" },
       { sel: "#pg-blocked-c-alt-d .cap-check-name", what: "a check's name" },
       { sel: "#pg-blocked-c-alt-d .cap-check-fix", what: "a fix hint" },
-      { sel: "#pg-blocked-s-dustinedwards .cap-gate-site-name", what: "a destination's name" },
-      { sel: "#pg-blocked-s-dustinedwards-d", what: "a destination's cause line" },
-      { sel: "#pg-held-s-dustinedwards-d", what: "the hold's words" },
+      { sel: "#pg-blocked-s-example .cap-gate-site-name", what: "a destination's name" },
+      { sel: "#pg-blocked-s-example-d", what: "a destination's cause line" },
+      { sel: "#pg-held-s-example-d", what: "the hold's words" },
       { sel: "#pg-multi-c-canon .cap-row-meta", what: "the site a check concerns" },
       { sel: "[data-gate='pg-ready'] [data-cap-part='publish']", what: "the Publish button's label" },
       { sel: "[data-gate='pg-blocked'] [data-cap-part='publish']", what: "the blocked button's label" },
@@ -94,7 +94,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("region", { name: "Publish checks", exact: true }).first()).toBeVisible();
     await expect(region(page, "pg-blocked").getByRole("list", { name: "Required, 2 failing" })).toBeVisible();
     await expect(region(page, "pg-blocked").getByRole("list", { name: "Advisory, 3" })).toBeVisible();
-    await expect(region(page, "pg-blocked").getByRole("status")).toHaveText("Blocked: 2 required checks failing on dustinedwards.info");
+    await expect(region(page, "pg-blocked").getByRole("status")).toHaveText("Blocked: 2 required checks failing on example.com");
     await expect(region(page, "pg-blocked-c-alt")).toMatchAriaSnapshot(`
       - listitem:
         - text: Failing
@@ -116,7 +116,7 @@ eachTheme((theme) => {
     await b.focus();
     await expect(b).toBeFocused();
     await expect(b).toHaveAccessibleName("Publish blocked");
-    await expect(b).toHaveAccessibleDescription("Blocked: 2 required checks failing on dustinedwards.info");
+    await expect(b).toHaveAccessibleDescription("Blocked: 2 required checks failing on example.com");
     await expect(publishBtn(page, "pg-held")).toHaveAccessibleName("Publish held");
     await expect(publishBtn(page, "pg-held")).toHaveAccessibleDescription(/^Held for review by Rosa until Fri 09:00/);
   });
@@ -174,10 +174,10 @@ eachTheme((theme) => {
     const b = publishBtn(page, "pg-ready");
     await b.focus();
     await page.keyboard.press("Enter");
-    const dialog = page.getByRole("alertdialog", { name: "Publish to dustinedwards.info?" });
+    const dialog = page.getByRole("alertdialog", { name: "Publish to example.com?" });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("button", { name: "Cancel" })).toBeFocused();
-    await expect(dialog).toContainText("dustinedwards.info: It has never been public. Publishing puts it on the blog, in the feed, the sitemap, the search index and the AI answer layer.");
+    await expect(dialog).toContainText("example.com: It has never been public. Publishing puts it on the blog, in the feed, the sitemap, the search index and the AI answer layer.");
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(b).toBeFocused();
@@ -188,15 +188,15 @@ eachTheme((theme) => {
     await visitStates(page, "publish-gate", theme);
     await publishBtn(page, "pg-ready").focus();
     await page.keyboard.press("Enter");
-    const dialog = page.getByRole("alertdialog", { name: "Publish to dustinedwards.info?" });
-    await dialog.getByRole("button", { name: "Publish to dustinedwards.info" }).focus();
+    const dialog = page.getByRole("alertdialog", { name: "Publish to example.com?" });
+    await dialog.getByRole("button", { name: "Publish to example.com" }).focus();
     await page.keyboard.press("Enter");
     await expect(region(page, "pg-ready")).toHaveAttribute("data-state", "published");
-    await expect(region(page, "pg-ready-sum")).toHaveText("Published: live on dustinedwards.info");
+    await expect(region(page, "pg-ready-sum")).toHaveText("Published: live on example.com");
     const box = page.locator("[data-cap-actions][data-gate='pg-ready']");
-    await expect(box.getByRole("link", { name: /^View/ })).toHaveAttribute("href", "https://dustinedwards.info/blog/why-foxhound-waits");
+    await expect(box.getByRole("link", { name: /^View/ })).toHaveAttribute("href", "https://example.com/blog/why-the-editor-waits");
     await expect(box.getByRole("button", { name: "Unpublish" })).toBeVisible();
-    await expect(page.locator(".cap-message-item").first()).toContainText("Published to dustinedwards.info.");
+    await expect(page.locator(".cap-message-item").first()).toContainText("Published to example.com.");
   });
 
   test("keyboard: Enter on a check's link goes to its cause", async ({ page }) => {
@@ -212,12 +212,12 @@ eachTheme((theme) => {
     await box.getByRole("button", { name: "Unpublish" }).focus();
     await page.keyboard.press("Enter");
     await expect(region(page, "pg-pub")).toHaveAttribute("data-state", "ready");
-    await expect(page.locator(".cap-message-item").first()).toContainText("Unpublished from dustinedwards.info.");
+    await expect(page.locator(".cap-message-item").first()).toContainText("Unpublished from example.com.");
     // Focus is not lost: it goes to the Publish button that replaced it.
     await expect(box.getByRole("button", { name: "Publish" })).toBeFocused();
     await page.keyboard.press("z");
     await expect(region(page, "pg-pub")).toHaveAttribute("data-state", "published");
-    await expect(page.locator(".cap-message-item").first()).toContainText("Published to dustinedwards.info again.");
+    await expect(page.locator(".cap-message-item").first()).toContainText("Published to example.com again.");
   });
 
   test("keyboard: Enter or Space on the passed-checks summary opens and closes them", async ({ page }) => {
@@ -254,7 +254,7 @@ eachTheme((theme) => {
 
   test("behavior: every row is in the delivered HTML, with its cause, link and fix", async ({ page }) => {
     const html = await (await page.request.get("components/publish-gate/states.html")).text();
-    expect(html).toContain("Blocked</span>: 2 required checks failing on dustinedwards.info");
+    expect(html).toContain("Blocked</span>: 2 required checks failing on example.com");
     expect(html).toContain("Required, 2 failing");
     expect(html).toContain("Advisory, 3");
     expect(html).toContain("9 checks passed");
@@ -276,19 +276,19 @@ eachTheme((theme) => {
   test("behavior: the region redraws when a check changes, and the summary announces once", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const sum = region(page, "pg-ready-sum");
-    await expect(sum).toHaveText("Ready: nothing required is failing on dustinedwards.info, 3 advisory checks failing");
+    await expect(sum).toHaveText("Ready: nothing required is failing on example.com, 3 advisory checks failing");
     await expect(publishBtn(page, "pg-ready")).not.toHaveAttribute("aria-disabled", /.+/);
     await page.getByRole("button", { name: "Break the alt text check" }).click();
-    await expect(sum).toHaveText("Blocked: 1 required check failing on dustinedwards.info");
+    await expect(sum).toHaveText("Blocked: 1 required check failing on example.com");
     await expect(region(page, "pg-ready")).toHaveAttribute("data-state", "blocked");
     await expect(publishBtn(page, "pg-ready")).toHaveAccessibleName("Publish blocked");
     await expect(publishBtn(page, "pg-ready")).toHaveAttribute("aria-disabled", "true");
     await expect(region(page, "pg-ready").getByRole("list", { name: "Required, 1 failing" })).toBeVisible();
     await expect(region(page, "pg-ready").getByText("10 checks passed")).toBeVisible();
-    await expect(region(page, "pg-ready-s-dustinedwards-d")).toHaveText("1 required check failing: The cover image has no alt text");
+    await expect(region(page, "pg-ready-s-example-d")).toHaveText("1 required check failing: The cover image has no alt text");
     // Fixing it brings the button back.
     await page.evaluate(() => (window as unknown as { gates: Record<string, { setCheck(id: string, p: { ok: boolean }): void }> }).gates["pg-ready"]?.setCheck("alt", { ok: true }));
-    await expect(sum).toHaveText("Ready: nothing required is failing on dustinedwards.info, 3 advisory checks failing");
+    await expect(sum).toHaveText("Ready: nothing required is failing on example.com, 3 advisory checks failing");
     await expect(publishBtn(page, "pg-ready")).toHaveAccessibleName("Publish");
     await expect(region(page, "pg-ready").locator("[data-section='required']")).toBeHidden();
   });
@@ -296,44 +296,44 @@ eachTheme((theme) => {
   test("behavior: an app only flips the data and the region follows", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     await page.evaluate(() => document.getElementById("pg-blocked-c-alt")?.setAttribute("data-ok", "true"));
-    await expect(region(page, "pg-blocked-sum")).toHaveText("Blocked: 1 required check failing on dustinedwards.info");
+    await expect(region(page, "pg-blocked-sum")).toHaveText("Blocked: 1 required check failing on example.com");
     await page.evaluate(() => document.getElementById("pg-blocked-c-title")?.setAttribute("data-ok", "true"));
-    await expect(region(page, "pg-blocked-sum")).toHaveText("Ready: nothing required is failing on dustinedwards.info, 3 advisory checks failing");
+    await expect(region(page, "pg-blocked-sum")).toHaveText("Ready: nothing required is failing on example.com, 3 advisory checks failing");
     await expect(publishBtn(page, "pg-blocked")).toHaveAccessibleName("Publish");
   });
 
   test("behavior: a held destination says who holds it, until when and why", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     await expect(region(page, "pg-held-sum")).toHaveText("Held for review by Rosa until Fri 09:00");
-    await expect(region(page, "pg-held-s-dustinedwards-d")).toHaveText("Held for review by Rosa until Fri 09:00. Waiting on the legal check for the quoted figures.");
+    await expect(region(page, "pg-held-s-example-d")).toHaveText("Held for review by Rosa until Fri 09:00. Waiting on the legal check for the quoted figures.");
     await expect(publishBtn(page, "pg-held")).toHaveAttribute("aria-disabled", "true");
   });
 
   test("behavior: a published destination shows when, and links to the live page", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
-    await expect(region(page, "pg-pub-sum")).toHaveText("Published: live on dustinedwards.info");
-    await expect(region(page, "pg-pub-s-dustinedwards").locator("time")).toHaveAttribute("datetime", "2026-10-02T09:12:00Z");
-    await expect(page.locator("[data-cap-actions][data-gate='pg-pub']").getByRole("link", { name: /^View/ })).toHaveAttribute("href", "https://dustinedwards.info/blog/why-foxhound-waits");
+    await expect(region(page, "pg-pub-sum")).toHaveText("Published: live on example.com");
+    await expect(region(page, "pg-pub-s-example").locator("time")).toHaveAttribute("datetime", "2026-10-02T09:12:00Z");
+    await expect(page.locator("[data-cap-actions][data-gate='pg-pub']").getByRole("link", { name: /^View/ })).toHaveAttribute("href", "https://example.com/blog/why-the-editor-waits");
   });
 
   test("behavior: one row per destination, the overall state is the worst, and each is published on its own", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const multi = region(page, "pg-multi");
     await expect(multi.locator("li.cap-gate-site")).toHaveCount(3);
-    await expect(region(page, "pg-multi-sum")).toHaveText("Blocked: 1 required check failing on dustinedwards.info");
-    await expect(region(page, "pg-multi-s-dustinedwards")).toHaveAttribute("data-state", "blocked");
-    await expect(region(page, "pg-multi-s-foxhound")).toHaveAttribute("data-state", "ready");
-    await expect(region(page, "pg-multi-s-carrel")).toHaveAttribute("data-state", "published");
-    await expect(region(page, "pg-multi-c-canon").locator(".cap-row-meta")).toHaveText("on dustinedwards.info");
+    await expect(region(page, "pg-multi-sum")).toHaveText("Blocked: 1 required check failing on example.com");
+    await expect(region(page, "pg-multi-s-example")).toHaveAttribute("data-state", "blocked");
+    await expect(region(page, "pg-multi-s-example-org")).toHaveAttribute("data-state", "ready");
+    await expect(region(page, "pg-multi-s-docs")).toHaveAttribute("data-state", "published");
+    await expect(region(page, "pg-multi-c-canon").locator(".cap-row-meta")).toHaveText("on example.com");
     // The blocked site's button is described by the one summary; the ready one is not blocked by it.
-    await expect(multi.getByRole("button", { name: "Publish blocked, dustinedwards.info" })).toHaveAttribute("aria-disabled", "true");
-    await multi.getByRole("button", { name: "Publish, foxhound.app" }).click();
-    await expect(region(page, "pg-multi-s-foxhound")).toHaveAttribute("data-state", "published");
-    await expect(region(page, "pg-multi-s-dustinedwards")).toHaveAttribute("data-state", "blocked");
-    await expect(multi.getByRole("link", { name: "View live page, foxhound.app" })).toBeVisible();
+    await expect(multi.getByRole("button", { name: "Publish blocked, example.com" })).toHaveAttribute("aria-disabled", "true");
+    await multi.getByRole("button", { name: "Publish, example.org" }).click();
+    await expect(region(page, "pg-multi-s-example-org")).toHaveAttribute("data-state", "published");
+    await expect(region(page, "pg-multi-s-example")).toHaveAttribute("data-state", "blocked");
+    await expect(multi.getByRole("link", { name: "View live page, example.org" })).toBeVisible();
     // A republication of what has been public is not previewed.
     await expect(page.getByRole("alertdialog")).toHaveCount(0);
-    await expect(page.locator(".cap-message-item").first()).toContainText("Published to foxhound.app.");
+    await expect(page.locator(".cap-message-item").first()).toContainText("Published to example.org.");
   });
 
   test("behavior: publishing shows Publishing... while it works", async ({ page }) => {
@@ -342,19 +342,19 @@ eachTheme((theme) => {
     await page.clock.install();
     await visitStates(page, "publish-gate", theme);
     await page.clock.pauseAt(Date.now() + 60_000);
-    await page.locator("#pg-multi").getByRole("button", { name: "Publish, foxhound.app" }).click();
-    const b = page.locator("#pg-multi-s-foxhound [data-cap-part='publish']");
+    await page.locator("#pg-multi").getByRole("button", { name: "Publish, example.org" }).click();
+    const b = page.locator("#pg-multi-s-example-org [data-cap-part='publish']");
     await expect(b).toHaveAttribute("aria-busy", "true");
     await expect(b).toContainText("Publishing...");
     await page.clock.runFor(500);
-    await expect(page.locator("#pg-multi-s-foxhound")).toHaveAttribute("data-state", "published");
+    await expect(page.locator("#pg-multi-s-example-org")).toHaveAttribute("data-state", "published");
   });
 
   test("behavior: a failed publish says so, leaves the destination as it was, and keeps focus on the button", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const b = publishBtn(page, "pg-fail");
     await b.click();
-    await expect(page.locator(".cap-message-item").first()).toContainText("Could not publish to foxhound.app: The site did not answer.");
+    await expect(page.locator(".cap-message-item").first()).toContainText("Could not publish to example.org: The site did not answer.");
     await expect(region(page, "pg-fail")).toHaveAttribute("data-state", "ready");
     await expect(b).toHaveAccessibleName("Publish");
     await expect(b).toBeFocused();
@@ -363,9 +363,9 @@ eachTheme((theme) => {
   test("behavior: without a script hook the button posts its form, a first publication after the preview", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     await publishBtn(page, "pg-form").click();
-    const dialog = page.getByRole("alertdialog", { name: "Publish to dustinedwards.info?" });
+    const dialog = page.getByRole("alertdialog", { name: "Publish to example.com?" });
     await expect(dialog).toBeVisible();
-    await dialog.getByRole("button", { name: "Publish to dustinedwards.info" }).click();
+    await dialog.getByRole("button", { name: "Publish to example.com" }).click();
     await expect(page).toHaveURL(/intent=publish-confirmed/);
   });
 
@@ -400,19 +400,19 @@ eachTheme((theme) => {
   test("behavior: the React component draws the same region, and its paired button follows the checks", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const sum = page.locator("#react-gate-sum");
-    await expect(sum).toHaveText("Blocked: 1 required check failing on dustinedwards.info");
+    await expect(sum).toHaveText("Blocked: 1 required check failing on example.com");
     const b = page.locator("[data-cap-actions][data-gate='react-gate'] [data-cap-part='publish']");
     await expect(b).toHaveAccessibleName("Publish blocked");
-    await expect(b).toHaveAccessibleDescription("Blocked: 1 required check failing on dustinedwards.info");
+    await expect(b).toHaveAccessibleDescription("Blocked: 1 required check failing on example.com");
     await expect(page.locator("#react-gate").getByRole("link", { name: "The cover image has no alt text" })).toHaveAttribute("href", "#react-field-alt");
     await expect(page.locator("#react-gate").getByRole("list", { name: "Advisory, 1" })).toBeVisible();
     await page.locator("#react-fix").click();
-    await expect(sum).toHaveText("Ready: nothing required is failing on dustinedwards.info, 1 advisory check failing");
+    await expect(sum).toHaveText("Ready: nothing required is failing on example.com, 1 advisory check failing");
     await expect(b).toHaveAccessibleName("Publish");
     await b.click();
     await expect(b).toHaveAttribute("aria-busy", "true");
     await expect(page.locator("#react-gate")).toHaveAttribute("data-state", "published");
-    await expect(page.locator("[data-cap-actions][data-gate='react-gate']").getByRole("link", { name: "View" })).toHaveAttribute("href", "https://dustinedwards.info/blog/react-post");
+    await expect(page.locator("[data-cap-actions][data-gate='react-gate']").getByRole("link", { name: "View" })).toHaveAttribute("href", "https://example.com/blog/react-post");
     await page.locator("[data-cap-actions][data-gate='react-gate']").getByRole("button", { name: "Unpublish" }).click();
     await expect(page.locator("#react-gate")).toHaveAttribute("data-state", "ready");
   });
@@ -431,13 +431,13 @@ eachTheme((theme) => {
     await visitStates(page, "publish-gate", theme);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await expect(page.locator("#pg-narrow-c-alt a")).toBeVisible();
-    await expect(page.locator("#pg-multi").getByRole("button", { name: "Publish, foxhound.app" })).toBeVisible();
+    await expect(page.locator("#pg-multi").getByRole("button", { name: "Publish, example.org" })).toBeVisible();
   });
 
   test("behavior: comfortable density makes the rows taller than the compact default", async ({ page }) => {
     await visitStates(page, "publish-gate", theme);
     const pad = (sel: string) => page.locator(sel).evaluate((e) => parseFloat(getComputedStyle(e).paddingTop));
-    expect(await pad("#pg-comfy-s-dustinedwards")).toBeGreaterThan(await pad("#pg-narrow-s-dustinedwards"));
+    expect(await pad("#pg-comfy-s-example")).toBeGreaterThan(await pad("#pg-narrow-s-example"));
   });
 
   test("behavior: the state is reported to the app when it changes", async ({ page }) => {
@@ -449,6 +449,6 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Break the alt text check" }).click();
     await expect.poll(() => page.evaluate(() => (window as unknown as { seen: Array<{ state: string }> }).seen.length)).toBe(1);
     const seen = await page.evaluate(() => (window as unknown as { seen: Array<{ state: string; sites: Record<string, string> }> }).seen);
-    expect(seen[0]).toMatchObject({ state: "blocked", sites: { dustinedwards: "blocked" } });
+    expect(seen[0]).toMatchObject({ state: "blocked", sites: { example: "blocked" } });
   });
 });

@@ -282,7 +282,7 @@ eachTheme((theme) => {
     await page.mouse.move(b.x + 40, b.y + b.height / 2, { steps: 6 });
     await expect(row(page, "Series", "Lab notebook")).toHaveAttribute("data-drop", "inside");
     await page.mouse.up();
-    await expect(out).toContainText("Lab notebook: Phage plaques at 37 degrees, When a control fails, What the river keeps.");
+    await expect(out).toContainText("Lab notebook: Plant counts on the north plot, When a control fails, What the river keeps.");
   });
 
   test("keyboard: the React tree follows the same keys", async ({ page }) => {

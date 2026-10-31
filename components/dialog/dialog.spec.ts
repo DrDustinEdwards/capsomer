@@ -3,7 +3,7 @@ import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from ".
 import { errorText, uid } from "./dialog.ts";
 
 const dlg = (page: Page, name: string) => page.getByRole("dialog", { name });
-const alertDlg = (page: Page, name = "Revoke foxhound-driver?") => page.getByRole("alertdialog", { name });
+const alertDlg = (page: Page, name = "Revoke deploy-agent?") => page.getByRole("alertdialog", { name });
 const hash = (page: Page) => page.evaluate(() => location.hash);
 const STATIC = ["center", "alert", "large", "right", "left", "bottom", "top", "scroll", "busy"];
 
@@ -66,11 +66,11 @@ test("behavior: with no script an inline dialog is in the page, open, and its fo
   const card = page.locator("#inline-rename");
   await expect(card).toHaveAttribute("open", "");
   await expect(card).toBeVisible();
-  await expect(card.getByRole("textbox", { name: "Site name" })).toHaveValue("foxhound.app");
+  await expect(card.getByRole("textbox", { name: "Site name" })).toHaveValue("example.com");
   await expect(card.getByRole("button", { name: "Save name" })).toBeVisible();
   // In the flow, not floating: it sits inside the page's main region, below its own heading.
   expect(await card.evaluate((el) => getComputedStyle(el).position)).toBe("static");
-  await expect(page.getByRole("link", { name: "Cancel" })).toHaveAttribute("href", "/admin/sites/foxhound");
+  await expect(page.getByRole("link", { name: "Cancel" })).toHaveAttribute("href", "/admin/sites/example");
   await context.close();
 });
 

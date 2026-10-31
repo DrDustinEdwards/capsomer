@@ -2,7 +2,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates, type Theme } from "../../test/helpers.ts";
 import { applyBulkTag, altStateOf, bands, byteSize, copySnippets, createAutosave, flagsFor, nextTile, parseTags, suggestedAlt } from "./media.ts";
 
-const FOX = "foxhound-hero.jpg";
+const FOX = "launch-hero.jpg";
 const UPTIME = "uptime-strip.png";
 
 const tile = (page: Page, name: string): Locator => page.locator(`.cap-media-tile[data-label="${name}"]`);
@@ -62,8 +62,8 @@ test("behavior: sizes, suggested alt text, tags and the copy snippets", () => {
   expect(byteSize(512)).toBe("512 B");
   expect(byteSize(421888)).toBe("412 kB");
   expect(byteSize(2516582)).toBe("2.4 MB");
-  expect(suggestedAlt("foxhound-hero_v2.jpg")).toBe("foxhound hero v2");
-  expect(parseTags(" Release, foxhound,release,, ")).toEqual(["release", "foxhound"]);
+  expect(suggestedAlt("launch-hero_v2.jpg")).toBe("launch hero v2");
+  expect(parseTags(" Release, dashboard,release,, ")).toEqual(["release", "dashboard"]);
   const img = copySnippets({ url: "https://x.test/a.png", kind: "image", alt: "A dashboard", name: "a.png" });
   expect(img.map((s) => s.value)).toEqual(["https://x.test/a.png", "![A dashboard](https://x.test/a.png)", '<img src="https://x.test/a.png" alt="A dashboard">']);
   const doc = copySnippets({ url: "https://x.test/r.pdf", kind: "document", alt: "", name: "uptime-report.pdf" });
@@ -160,10 +160,10 @@ eachTheme((theme) => {
   test("accessibility: tile text, flags and the selected check reach their contrast", async ({ page }) => {
     await visitStates(page, "media", theme);
     await expectContrast(page, [
-      { sel: "#t-foxhound-hero .cap-media-name", what: "a tile's name" },
-      { sel: "#t-foxhound-hero .cap-media-meta", what: "a tile's type and size" },
+      { sel: "#t-launch-hero .cap-media-name", what: "a tile's name" },
+      { sel: "#t-launch-hero .cap-media-meta", what: "a tile's type and size" },
       { sel: "#t-uptime-strip .cap-status", what: "the No alt text status" },
-      { sel: "#t-germomics-tree .cap-status", what: "the Decorative status" },
+      { sel: "#t-project-tree .cap-status", what: "the Decorative status" },
       { sel: "#t-fieldnotes-migration .cap-status", what: "the Unattached status" },
       { sel: "#t-old-logo .cap-status", what: "the In Trash status" },
       { sel: "#t-mention-queue .cap-media-name", what: "a selected tile's name on its tint" },
@@ -215,10 +215,10 @@ eachTheme((theme) => {
 
   test("accessibility: each tile is one named link, a named checkbox and its states in words", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media", theme);
-    await expect(page.locator("#t-foxhound-hero")).toMatchAriaSnapshot(`
+    await expect(page.locator("#t-launch-hero")).toMatchAriaSnapshot(`
       - listitem:
-        - link "foxhound-hero.jpg JPEG · 412 kB"
-        - checkbox "Select foxhound-hero.jpg"
+        - link "launch-hero.jpg JPEG · 412 kB"
+        - checkbox "Select launch-hero.jpg"
     `);
     await expect(page.locator("#t-mention-queue")).toMatchAriaSnapshot(`
       - listitem:
@@ -232,7 +232,7 @@ eachTheme((theme) => {
         - checkbox "Select uptime-strip.png"
     `);
     await expect(link(page, UPTIME).first()).toHaveAccessibleDescription("No alt text");
-    await expect(page.locator("#t-germomics-tree .cap-status")).toHaveText("Decorative");
+    await expect(page.locator("#t-project-tree .cap-status")).toHaveText("Decorative");
     await expect(page.locator("#t-uptime-strip .cap-status")).toHaveText("No alt text");
   });
 
@@ -250,11 +250,11 @@ eachTheme((theme) => {
 
   test("accessibility: thumbnails load lazily with a size, and the frame keeps its space without the picture", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "media", theme);
-    const img = page.locator("#t-foxhound-hero img");
+    const img = page.locator("#t-launch-hero img");
     await expect(img).toHaveAttribute("loading", "lazy");
     await expect(img).toHaveAttribute("width", "320");
     await expect(img).toHaveAttribute("height", "320");
-    const frame = page.locator("#t-foxhound-hero .cap-media-thumb");
+    const frame = page.locator("#t-launch-hero .cap-media-thumb");
     const before = await frame.boundingBox();
     await img.evaluate((el) => el.removeAttribute("src"));
     const after = await frame.boundingBox();
@@ -270,7 +270,7 @@ eachTheme((theme) => {
     await expect(ins.getByLabel("Title")).toBeVisible();
     await expect(ins.getByLabel("Caption")).toBeVisible();
     await expect(ins.getByLabel("Add a tag")).toBeVisible();
-    await expect(ins.getByRole("textbox", { name: "Address" })).toHaveValue("https://dustinedwards.info/media/uptime-strip.png");
+    await expect(ins.getByRole("textbox", { name: "Address" })).toHaveValue("https://example.com/media/uptime-strip.png");
     await expect(ins.locator("[data-cap-part=save-status]")).toHaveAttribute("role", "status");
     await expect(ins.locator("[data-cap-part=save-error]")).toHaveAttribute("role", "alert");
     await expect(ins.getByRole("link", { name: "Why the uptime strip counts gaps" })).toHaveAttribute("href", "/admin/posts/uptime-gaps/edit");
@@ -278,11 +278,11 @@ eachTheme((theme) => {
 
   test("accessibility: the delivered HTML has the tiles and the active file's inspector", { tag: "@markup" }, async ({ page }) => {
     const html = await (await page.request.get("components/media/states.html")).text();
-    expect(html).toContain('data-label="foxhound-hero.jpg"');
+    expect(html).toContain('data-label="launch-hero.jpg"');
     expect(html).toContain("No alt text");
     expect(html).toContain("Not used anywhere.");
     expect(html).toContain('class="cap-dialog cap-media-inspector"');
-    expect(html).toContain("The Foxhound dashboard with three sites reporting healthy");
+    expect(html).toContain("The status dashboard with three sites reporting healthy");
     expect(html).toContain('data-alt="decorative"');
     expect(html).toContain('role="progressbar"');
   });
@@ -293,7 +293,7 @@ eachTheme((theme) => {
     await expect(deco.getByRole("checkbox", { name: "Decorative image" })).toBeChecked();
     await expect(deco.getByLabel("Alt text")).toBeDisabled();
     await expect(deco.getByLabel("Alt text")).toHaveValue("");
-    await expect(page.locator("#t-germomics-tree")).toHaveAttribute("data-alt", "decorative");
+    await expect(page.locator("#t-project-tree")).toHaveAttribute("data-alt", "decorative");
     await expect(page.locator("#t-uptime-strip")).toHaveAttribute("data-alt", "missing");
   });
 
@@ -360,7 +360,7 @@ eachTheme((theme) => {
     await page.keyboard.press("ArrowRight");
     await page.keyboard.press("ArrowRight");
     const stops = await page.locator(".cap-media-open").evaluateAll((els) => els.map((e) => [(e as HTMLElement).closest(".cap-media-tile")?.getAttribute("data-label"), (e as HTMLElement).tabIndex]));
-    expect(stops.filter(([, t]) => t === 0)).toEqual([["germomics-tree.svg", 0]]);
+    expect(stops.filter(([, t]) => t === 0)).toEqual([["project-tree.svg", 0]]);
   });
 
   test("keyboard: Enter on a tile opens its inspector and puts focus in the alt text", async ({ page }) => {
@@ -381,8 +381,8 @@ eachTheme((theme) => {
     await expect(link(page, UPTIME)).toHaveAttribute("aria-current", "true");
     await expect(link(page, FOX)).not.toHaveAttribute("aria-current", "true");
     await page.keyboard.press("ArrowRight");
-    await expect(inspector(page).getByRole("heading", { name: "germomics-tree.svg" })).toBeVisible();
-    await expect(link(page, "germomics-tree.svg")).toBeFocused();
+    await expect(inspector(page).getByRole("heading", { name: "project-tree.svg" })).toBeVisible();
+    await expect(link(page, "project-tree.svg")).toBeFocused();
   });
 
   test("keyboard: Alt and an arrow in a field moves to the next file and keeps focus in the field", async ({ page }) => {
@@ -474,13 +474,13 @@ eachTheme((theme) => {
     await copy.focus();
     await page.keyboard.press("Enter");
     await expect(inspector(page).locator("[data-cap-part=copied]")).toHaveText("Copied the address.");
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://dustinedwards.info/media/foxhound-hero.jpg");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://example.com/media/launch-hero.jpg");
     await page.evaluate(() => navigator.clipboard.writeText("something else"));
     await page.waitForTimeout(50);
     await copy.focus();
     await page.keyboard.press("Space");
     await expect(inspector(page).locator("[data-cap-part=copied]")).toHaveText("Copied the address.");
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://dustinedwards.info/media/foxhound-hero.jpg");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://example.com/media/launch-hero.jpg");
   });
 
   test("keyboard: Enter on Retry asks for the upload again", async ({ page }) => {
@@ -625,7 +625,7 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await page.keyboard.type("Typed for the uptime strip");
     await page.keyboard.press("Alt+ArrowRight");
-    await expect(inspector(page).getByRole("heading", { name: "germomics-tree.svg" })).toBeVisible();
+    await expect(inspector(page).getByRole("heading", { name: "project-tree.svg" })).toBeVisible();
     const saves = await page.evaluate(() => (window as unknown as { saves: Array<{ key: string; fields: { alt: string } }> }).saves);
     expect(saves.map((s) => [s.key, s.fields.alt])).toEqual([["media/uptime-strip.png", "Typed for the uptime strip"]]);
     await expect(tile(page, UPTIME)).toHaveAttribute("data-alt-text", "Typed for the uptime strip");
@@ -697,7 +697,7 @@ eachTheme((theme) => {
     await expect(tile(page, UPTIME)).toBeVisible();
     await expect(tile(page, "fieldnotes-migration.jpg")).toBeVisible();
     await expect(tile(page, FOX)).toBeHidden();
-    await expect(tile(page, "germomics-tree.svg")).toBeHidden();
+    await expect(tile(page, "project-tree.svg")).toBeHidden();
   });
 
   test("behavior: search narrows by name, alt text and tags, and says what it found, or that nothing matches", async ({ page }) => {
@@ -705,8 +705,8 @@ eachTheme((theme) => {
     const q = page.getByRole("searchbox", { name: "Search files" });
     await q.fill("uptime");
     await expect(page.locator(".cap-media-tile:not([hidden])[data-state=ready]")).toHaveCount(2);
-    await q.fill("germomics");
-    await expect(tile(page, "germomics-tree.svg")).toBeVisible();
+    await q.fill("diagrams");
+    await expect(tile(page, "project-tree.svg")).toBeVisible();
     await q.fill("zzzz");
     await expect(page.locator(".cap-media-empty")).toBeVisible();
     await expect(page.getByText("No files match your search")).toBeVisible();
@@ -740,7 +740,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("alertdialog")).toHaveCount(0);
     await expect(tile(page, UPTIME)).toBeHidden();
     await expect(page.locator(".cap-message-item")).toContainText("Moved uptime-strip.png to Trash.");
-    await expect(inspector(page).getByRole("heading", { name: "germomics-tree.svg" })).toBeVisible();
+    await expect(inspector(page).getByRole("heading", { name: "project-tree.svg" })).toBeVisible();
     await page.getByRole("button", { name: "Undo" }).click();
     await expect(tile(page, UPTIME)).toBeVisible();
     await expect(page.locator("[data-cap-count=bin]")).toHaveText("1");
@@ -788,7 +788,7 @@ eachTheme((theme) => {
     await library(page, theme);
     await inspector(page).getByRole("button", { name: "Copy the Markdown image" }).click();
     await expect(inspector(page).locator("[data-cap-part=copied]")).toHaveText("Copied the Markdown image.");
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("![The Foxhound dashboard with three sites reporting healthy](https://dustinedwards.info/media/foxhound-hero.jpg)");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("![The status dashboard with three sites reporting healthy](https://example.com/media/launch-hero.jpg)");
   });
 
   test("behavior: when the clipboard refuses, copy says so and leaves the address selected", async ({ page }) => {
@@ -803,7 +803,7 @@ eachTheme((theme) => {
       const el = document.activeElement as HTMLInputElement | null;
       return el?.selectionEnd && el.selectionEnd > 0 ? el.value : "";
     });
-    expect(selected).toBe("https://dustinedwards.info/media/foxhound-hero.jpg");
+    expect(selected).toBe("https://example.com/media/launch-hero.jpg");
   });
 
   test("behavior: dropped files become uploading tiles with a progress bar, and finish as tiles that open", async ({ page }) => {
@@ -909,10 +909,10 @@ eachTheme((theme) => {
     const order = () => page.locator("section[aria-labelledby=library-g-september] .cap-media-tile").evaluateAll((els) => els.map((e) => e.getAttribute("data-label")));
     expect((await order()).slice(0, 3)).toEqual(["capsid-walkthrough.png", "scan-0042.png", FOX]);
     await page.getByRole("radio", { name: "A to Z" }).check({ force: true });
-    expect(await order()).toEqual(["capsid-walkthrough.png", "scan-0042.png", "fieldnotes-migration.jpg", FOX, "germomics-tree.svg", "uptime-report-september.pdf", UPTIME]);
+    expect(await order()).toEqual(["capsid-walkthrough.png", "scan-0042.png", "fieldnotes-migration.jpg", FOX, "project-tree.svg", "uptime-report-september.pdf", UPTIME]);
     await page.getByRole("radio", { name: "Largest" }).check({ force: true });
     expect((await order()).slice(2, 4)).toEqual(["fieldnotes-migration.jpg", "uptime-report-september.pdf"]);
-    await link(page, "germomics-tree.svg").focus();
+    await link(page, "project-tree.svg").focus();
     await page.getByRole("radio", { name: "Newest" }).check({ force: true });
     expect((await order()).slice(2, 4)).toEqual([FOX, UPTIME]);
   });

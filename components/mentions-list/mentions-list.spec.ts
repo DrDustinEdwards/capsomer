@@ -120,7 +120,7 @@ eachTheme((theme) => {
     await visitStates(page, "mentions-list", theme);
     const list = mount(page, "outcomes");
     await expect(list.getByRole("status", { name: "Results and failures" })).toContainText("Approved 2 mentions.");
-    await expect(list.getByRole("group", { name: "2 done, 1 not done." }).locator(".cap-bulk-results-list > li")).toHaveText([/^Not done An unnamed sender \(reader\.example\) It changed since the page was read/, /^Done Rosa Park \(fieldnotes\.example\)$/, /^Done Sam Okafor \(bacteriophage\.example\)$/]);
+    await expect(list.getByRole("group", { name: "2 done, 1 not done." }).locator(".cap-bulk-results-list > li")).toHaveText([/^Not done An unnamed sender \(reader\.example\) It changed since the page was read/, /^Done Rosa Park \(fieldnotes\.example\)$/, /^Done Sam Okafor \(teamnotes\.example\)$/]);
     const posted = nextPost(page, "[data-mount='outcomes']");
     await list.getByRole("button", { name: "Undo" }).click();
     expect(await posted).toEqual({ method: "post", enctype: "application/x-www-form-urlencoded", fields: { ids: ["m-101", "m-102"], intent: ["reset"] } });
@@ -234,8 +234,8 @@ eachTheme((theme) => {
     const list = mount(page, "editor");
     await title(list, "m-101").click();
     await expect(title(list, "m-101")).toHaveAttribute("aria-expanded", "true");
-    await expect(row(list, "m-101").locator(".cap-mq-quote")).toContainText("Lysogeny is not a failure to lyse");
-    await expect(row(list, "m-101").locator(".cap-mq-facts")).toContainText("https://fieldnotes.example/2026/lambda-decision");
+    await expect(row(list, "m-101").locator(".cap-mq-quote")).toContainText("Survey results are not a verdict");
+    await expect(row(list, "m-101").locator(".cap-mq-facts")).toContainText("https://fieldnotes.example/2026/survey-results");
     await expect(row(list, "m-101").locator("a[href^='http']")).toHaveCount(0);
     await title(list, "m-101").click();
     await expect(row(list, "m-101").locator(".cap-mq-quote")).toHaveCount(0);

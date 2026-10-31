@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { eachTheme, expectContrast, expectNoAxeViolations, focused, visitStates } from "../../test/helpers.ts";
 
-const AUDIT = "the audit row naming access:dustin@example.com was not written: D1 is unavailable";
+const AUDIT = "the audit row naming access:alex@example.com was not written: D1 is unavailable";
 
 eachTheme((theme) => {
   for (const id of ["undo", "empty", "warning", "stack", "failure", "undo-failed"]) {
