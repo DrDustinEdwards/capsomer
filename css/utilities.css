@@ -13,8 +13,10 @@
     filter: var(--img-filter);
   }
 
-  /* Text a screen reader announces and the eye does not see. */
-  .cap-sr-only {
+  /* Text a screen reader announces and the eye does not see. Prelum's footnotes heading carries GFM's
+     own name for it, .sr-only (components/prose-blocks). */
+  .cap-sr-only,
+  :where([data-context="prose"]) .sr-only {
     position: absolute;
     width: 1px;
     height: 1px;
