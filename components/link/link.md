@@ -68,21 +68,22 @@ Every mark is hidden: a glyph is written `content: "↗" / ""`, an icon has no c
 What a site or Prelum writes. A meta is a sibling after the link, a space between.
 
 ```html
-<a href="https://pubmed.ncbi.nlm.nih.gov/" data-link="away" rel="external">PubMed<span class="cap-sr-only"> (opens another site)</span></a>
+<a href="https://example.org/" data-link="away" rel="external">Example Org<span class="cap-sr-only"> (opens another site)</span></a>
 <a href="https://fieldnotes.example.com/" data-link="away" rel="external"><img class="cap-link-icon" src="/link-icons/fieldnotes.example.com.png" alt="" width="16" height="16">Field Notes<span class="cap-sr-only"> (opens another site)</span></a>
 <a href="https://germomics.com" data-link="family" data-site="germomics">Germomics</a>
-<a href="/files/plaque-protocol.pdf" data-link="file">The plaque protocol</a> <span class="cap-link-meta">PDF, 2 MB</span>
+<a href="/files/survey-protocol.pdf" data-link="file">The survey protocol</a> <span class="cap-link-meta">PDF, 2 MB</span>
 <a href="#methods" data-link="jump">Methods</a>
 <a href="mailto:editor@example.com" data-link="email">Write to the editor</a>
-<a href="tel:+15550100" data-link="phone">Call the lab</a>
+<a href="tel:+15550100" data-link="phone">Call the office</a>
 <a href="/es/" hreflang="es" data-link="lang">Read it</a> <span class="cap-link-meta" lang="es">Español</span>
 <sup><a href="#fn-1" id="fnref-1" class="cap-footnote-ref" aria-describedby="footnote-label">1</a></sup>
 <a href="#fnref-1" data-footnote-backref aria-label="Back to reference 1">↩</a>
-<a href="/writing/lysogeny" data-link="xref">lysogeny</a>
+<a href="/writing/sampling" data-link="xref">sampling</a>
 <a href="https://doi.org/10.5555/12345678" data-link="address" rel="external">doi.org/10.5555/12345678<span class="cap-sr-only"> (opens another site)</span></a>
-<p><a href="/writing/part-two" data-link="next">Part two: the trials</a></p>
-<h2><a href="/writing/phage-therapy">Why phage therapy keeps coming back</a></h2>
-<a href="/tags/phage" data-link="tag">phage</a>
+<p><a href="/writing/part-two" data-link="next">Part two: the notebooks</a></p>
+<h2><a href="/writing/field-notebooks">Why field notebooks keep coming back</a></h2>
+<a href="/tags/survey" data-link="tag">survey</a>
+
 ```
 
 Load `capsomer/link.css` after `capsomer/base.css`. `data-force="hover|pressed|visited|focus"` shows a state on a states page (`:visited` cannot be read by script).
