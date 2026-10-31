@@ -5,7 +5,7 @@ summary: A text input that takes a date as 2026-11-14, with a button that opens 
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [filled, calendar open with the chosen day, today and days that cannot be chosen, in error]
-added: 0.50.0
+added: 0.53.0
 source: WAI-ARIA APG Date picker dialog example (https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/), built on Capsomer's Dialog
 replaces:
   - 'type="date"'
