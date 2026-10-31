@@ -121,7 +121,7 @@ export interface IntentResult {
   conflict?: { id: string; currentVersion: string | null };
   // Asked before a one-way intent runs. Nothing has changed yet.
   confirm?: ConfirmRequest;
-  // The posts list's `preview-link` (site-api v0.15.0 PreviewLink): the page anyone with the
+  // The posts list's `preview-link` (site-api v0.16.0 PreviewLink): the page anyone with the
   // address can open, and when it stops working. The site answers it once and keeps only a hash.
   previewLink?: { url: string; expiresAt: string };
 }
@@ -147,18 +147,18 @@ export interface PostsQuery {
   status?: ContentStatus;
   kind?: string;
   tag?: string;
-  // site-api v0.15.0, each with its name in `offers.filters`: one credited name, and the published
+  // site-api v0.16.0, each with its name in `offers.filters`: one credited name, and the published
   // dates from and to, both days included, as a date field gives them ("2026-10-01").
   author?: string;
   from?: string;
   to?: string;
   sort?: PostSort;
-  // "1": the Trash (site-api v0.15.0 `trashed=true`, with `offers.trash`).
+  // "1": the Trash (site-api v0.16.0 `trashed=true`, with `offers.trash`).
   trashed?: "1";
   cursor?: string;
 }
 
-// The list filters a site applies itself (site-api v0.15.0 CONTENT_FILTERS, from
+// The list filters a site applies itself (site-api v0.16.0 CONTENT_FILTERS, from
 // `capabilities.contentFilters`); `published` is the pair of dates.
 export type PostFilter = "kind" | "tag" | "author" | "published" | "trashed";
 
@@ -171,7 +171,7 @@ export interface PostOffers {
   // The site keeps an update waiting on a live post (site-api v0.10.0), so Reschedule and Cancel
   // work on it.
   scheduledUpdates?: boolean;
-  // site-api v0.15.0, each absent or false where the site lacks it: a Trash that posts go to and
+  // site-api v0.16.0, each absent or false where the site lacks it: a Trash that posts go to and
   // come back from (`contentTrash`, the `trash` and `restore` intents); a move to a new id whose old
   // address redirects (`contentRename`, `rename`); shareable preview links (`previewLinks`,
   // `preview-link`); the filters the site applies (`contentFilters`); and the names an Author
@@ -209,7 +209,7 @@ export interface PostRow {
   // Present from site-api v0.6; the kit reads each post before writing otherwise.
   version?: string;
   tags?: string[];
-  // site-api v0.15.0, where the site keeps the post fields: everyone credited, the primary first,
+  // site-api v0.16.0, where the site keeps the post fields: everyone credited, the primary first,
   // and the excerpt.
   authors?: string[];
   excerpt?: string;

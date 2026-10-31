@@ -136,7 +136,7 @@ interface Renaming {
 // A slug as the contract's ContentId takes it ("notes-on-lambda"). The kit checks it again.
 const SLUG = "[A-Za-z0-9][A-Za-z0-9._\\-]{0,199}";
 
-// The small dialog Rename… opens (site-api v0.15.0): the new slug, starting at the old one, and
+// The small dialog Rename… opens (site-api v0.16.0): the new slug, starting at the old one, and
 // what happens to the old address. It posts `rename` with `newId` inside the list, as Reschedule does.
 function RenameDialog({ renaming, action, Form, onClose }: { renaming: Renaming | null; action: string; Form: FormComponent; onClose: () => void }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
@@ -176,7 +176,7 @@ function RenameDialog({ renaming, action, Form, onClose }: { renaming: Renaming 
   );
 }
 
-// The preview link the last post made (`preview-link`, site-api v0.15.0): its address in a field
+// The preview link the last post made (`preview-link`, site-api v0.16.0): its address in a field
 // that selects whole, Copy with script, and when it stops working in the reader's own zone. A status
 // region, so the new link and a copy are said where the person is looking.
 function PreviewLinkBox({ link, name, noun, scripted }: { link: { url: string; expiresAt: string } | undefined; name?: string; noun: string; scripted: boolean }) {

@@ -20,7 +20,7 @@ const ROWS: PostRow[] = [
   { id: "about", title: "About", kind: "page", status: "published", path: "/about", href: "/editor/about", liveHref: "https://dustinedwards.info/about", publishAt: null, publishedAt: "2026-06-01T09:00:00Z", updatedAt: "2026-09-02T11:00:00Z", tags: [] },
 ];
 
-// A site with site-api v0.15.0's ideas: a Trash, rename, preview links, the author and date
+// A site with site-api v0.16.0's ideas: a Trash, rename, preview links, the author and date
 // filters, and rows that carry their authors and excerpt.
 const IDEAS: PostOffers = { delete: true, schedule: true, tags: true, duplicate: true, trash: true, rename: true, previewLinks: true, filters: ["kind", "tag", "author", "published", "trashed"], authors: ["Dustin Edwards", "Julie Edwards"] };
 const CREDITS: Record<string, Pick<PostRow, "authors" | "excerpt">> = {

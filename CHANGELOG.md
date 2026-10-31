@@ -6,7 +6,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [0.51.0]
 
-The posts list posts the content kit's own intent names and shows what site-api v0.15.0 adds, each only where the kit offers it, each a form post that works with no script.
+The posts list posts the content kit's own intent names and shows what site-api v0.16.0 adds, each only where the kit offers it, each a form post that works with no script.
 
 - **Changed HTML contract: the tag intents are the kit's names.** The bulk bar posts `intent=tag-add` and `intent=tag-remove` (were `add-tag` and `remove-tag`, which site-api's `runPostsIntent` refused). `PostIntent` changes to match. A host that translated the old names drops the translation.
 - **Trash** (`offers.trash`): a Trash status tab (`trashed=1` in the address, `PostsQuery.trashed`, `counts.trash`) with "Posts in Trash are deleted for good 30 days after they were moved there." (`trashLine`); new intents `trash` (Move to Trash, in the bar and the row menu, replacing Delete there) and `restore` (in the Trash), each the other's Undo; `delete` is offered in the Trash only, as Delete for good, behind the same typed count. With script, focus goes from a post that leaves to the next post's title, the table or the current tab. New `PostRow.trashedAt`; "Trash is empty" as the empty state. New class `.cap-posts-trash-note`.

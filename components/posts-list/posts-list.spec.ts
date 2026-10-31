@@ -33,7 +33,7 @@ test("behavior: an action is offered only where the site supports it and the per
   // A draft cannot be unpublished, so its menu never offers it.
   expect(rowActions(row("draft"), { offers: OFFERS, can: ALL }).map((a) => a.value)).toEqual(["edit", "duplicate", "delete"]);
   expect(rowActions(row("published", "https://example.com/p"), { offers: OFFERS, can: NONE }).map((a) => a.value)).toEqual(["view"]);
-  // With a Trash (site-api v0.15.0), Move to Trash is the way out, and Delete for good waits in the Trash with Restore.
+  // With a Trash (site-api v0.16.0), Move to Trash is the way out, and Delete for good waits in the Trash with Restore.
   const trash = { ...OFFERS, trash: true };
   expect(postActions({ offers: trash, can: ALL }).bulk.map((a) => a.intent)).toEqual(["tag-add", "tag-remove", "duplicate", "unpublish", "trash"]);
   expect(postActions({ offers: trash, can: ALL, query: { trashed: "1" } }).bulk.map((a) => a.intent)).toEqual(["restore", "delete"]);

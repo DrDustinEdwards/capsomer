@@ -71,7 +71,7 @@ export const SORTS: ReadonlyArray<{ value: PostSort; label: string }> = [
   { value: "title", label: "Title" },
 ];
 
-// How long a post stays in the Trash before the site deletes it for good (site-api v0.15.0
+// How long a post stays in the Trash before the site deletes it for good (site-api v0.16.0
 // TRASH_DAYS, run by the site's cron).
 const TRASH_DAYS = 30;
 
@@ -163,7 +163,7 @@ export interface OfferedAction {
 // The bulk actions this person may run on this view of this site, in the bar's order, and a
 // sentence for each one held back, so a missing button is never a mystery. An action shows only
 // when the site offers it (data.offers) and the person may run it (data.can). Where the site has a
-// Trash (site-api v0.15.0), Move to Trash is the normal way out, an editor's since Restore undoes
+// Trash (site-api v0.16.0), Move to Trash is the normal way out, an editor's since Restore undoes
 // it, and Delete for good is the delete role's, in the Trash only; elsewhere Delete stays as it was.
 export function postActions(data: Pick<PostsData, "offers" | "can"> & { query?: PostsQuery }, labels?: ContentLabels): { bulk: OfferedAction[]; withheld: string[] } {
   const { plural } = nounsOf(labels);
@@ -210,7 +210,7 @@ export function scheduledTime(row: Pick<PostRow, "status" | "publishAt" | "sched
 // With scheduled updates (site-api v0.10.0) a scheduled post or a live post's waiting update can
 // be moved (`reschedule`, with `publishAt`), and a live post's update canceled (`cancel-schedule`,
 // one-way, so it is a danger item); a scheduled post is canceled by Unpublish, as before.
-// site-api v0.15.0 adds Rename… (a dialog with script, the editor without; a live post's address
+// site-api v0.16.0 adds Rename… (a dialog with script, the editor without; a live post's address
 // changes, so it needs a publisher), a preview link, and Move to Trash in place of Delete; a post
 // in the Trash offers only Restore and Delete for good.
 export function rowActions(row: PostRow, data: Pick<PostsData, "offers" | "can">): RowAction[] {
