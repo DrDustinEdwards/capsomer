@@ -202,7 +202,7 @@
     margin-inline-start: auto;
     color: var(--muted);
     font-size: var(--fs-detail);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
     font-weight: 400;
     white-space: nowrap;
   }

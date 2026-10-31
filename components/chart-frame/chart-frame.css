@@ -51,7 +51,7 @@
 
     & .enarratio-subtitle {
       margin-inline-start: auto;
-      font-variant-numeric: tabular-nums;
+      font-variant-numeric: var(--figures);
     }
     & .enarratio-finding {
       flex-basis: 100%;

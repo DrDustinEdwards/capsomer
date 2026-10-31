@@ -705,7 +705,7 @@ ${pairs}
    CSV" muted and underlined; the family's links are semibold in the link color with no
    underline, even under the pointer, as "Show data" beside them already is. Its tick labels
    ask for tabular figures, and the interface face's tabular set gives the comma and the 1 a
-   full figure's width ("1 , 600"); proportional figures read as the page's numbers do. */
+   full figure's width ("1 , 600"); they take --figures, as the page's own numbers do. */
 .enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) a {
   color: var(--accent-text);
   font-weight: 600;
@@ -715,7 +715,7 @@ ${pairs}
   color: var(--accent-hover);
 }
 .enarratio svg :is([data-enarratio-mark$="tick label"], .enarratio-numeric) {
-  font-variant-numeric: normal;
+  font-variant-numeric: var(--figures);
 }
 `;
 }
