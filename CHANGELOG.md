@@ -2,6 +2,22 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [Unreleased]
+
+The form components the accessibility audit found missing (area 9, rows B6, B7, B10, B11, B16): an error summary, a password with Show, a character count, a one-time code, a number with steppers, a search field, a date input and a date picker.
+
+- **Error summary (new component, `capsomer/error-summary.css`, `capsomer/behavior/error-summary`, `capsomer/react/error-summary`).** GOV.UK's pattern: a titled list of links to every field in error, at the top of the form, taking focus; the page title starts "Error: " until the form is sent. New classes: `.cap-error-summary`, `.cap-error-summary-title`, `.cap-error-summary-list`; new contract `[data-cap="error-summary"]` with `role="alert"`, `tabindex="-1"` and `aria-labelledby` its title (`autofocus` when the server renders it). Functions: `enhance`, `wireSummary`, `summaryFor`, `showSummary`, `hideSummary`, `setTitleError`. React: `ErrorSummary({ errors, title })`.
+- **Changed: Field's submit check.** A `form[data-cap="field"]` whose submit finds two or more fields in error now writes the error summary (the form's own `.cap-error-summary`, or a new one as its first child) and moves focus to it, and the messages beside the fields are no longer announced (`role="alert"`) as well. One field in error behaves as before: focus moves to it and its message is announced. Either way the page title takes "Error: ". A field whose part is fixed while another part is still wrong keeps that part's message (`clearError`).
+- **New Field parts** (in `field.css`, `field.ts`, `field.react.tsx`; documented on the Field page, with a section on autocomplete tokens for personal data, WCAG 1.3.5):
+  - Password: an input group with `button[data-cap-part="reveal"][aria-controls]`, `hidden` until script shows it; Show and Hide change the type, the words and the name ("Show password", "Hide password") and are said in the status region; a sent form hides it again. React `PasswordInput`.
+  - Character count: `data-maxlength` or `data-maxwords` on the control and new class `.cap-field-count` (`data-over="true"` over the limit, with the error's icon); the status region says the count a second after typing stops; over the limit is wrong on submit (`data-error-too-long`). React `CharacterCount`.
+  - One-time code: `.cap-input[data-variant="code"]` with `autocomplete="one-time-code"` and `inputmode="numeric"`, one input, paste allowed.
+  - Number: `button[data-cap-part="step-down"]` and `button[data-cap-part="step-up"]` in a number input's group, named, `tabindex="-1"` and `hidden` until script; Page Up, Page Down, Home and End (APG spinbutton). React `NumberField`.
+  - Search: new class `.cap-search` (`role="search"`, a form or a div) with `button[data-cap-part="clear"]`; Esc clears. React `SearchField`.
+  - Date input: new classes `.cap-date-input` (`data-error-date`) and `.cap-date-input-part`, inputs with `data-cap-part="day|month|year"`; per-part errors and a real-date check. React `DateInput`.
+  - New exports in `capsomer/behavior/field`: `dateFrom`, `checkDate`, `setRevealed`, `revealedText`, `countText`, `limitOf`, `stepValue`, `keyValue`, `setValue`. React `Field` takes a function as its child and `after`.
+- **Date picker (new component, `capsomer/date-picker.css`, `capsomer/behavior/date-picker`, `capsomer/react/date-picker`).** The APG date picker dialog on Capsomer's Dialog, enhancing a text input that takes 2026-11-14, so it works with no script. New contract: `.cap-date-picker[data-cap="date-picker"]` around an input group with `button[data-cap-part="open"]` (`hidden` until script), `data-min`, `data-max` and `data-error-date` on the input. New classes, built by script: `.cap-date-picker-dialog`, `.cap-date-picker-head`, `.cap-date-picker-grid`. Functions: `enhance`, `wirePicker`, `parseDate`, `isoDate`, `addMonths`, `moveDate`. React `DatePicker`.
+
 ## [0.49.0]
 
 A table between a phone and a laptop no longer scrolls sideways (Dustin, 2026-10-30).

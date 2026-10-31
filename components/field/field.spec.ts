@@ -30,6 +30,13 @@ eachTheme((theme) => {
       { sel: "#g-url", what: "an input group's text" },
       { sel: "[aria-label='Site address with scheme']", what: "an input group's edge", part: "border" },
       { sel: ".cap-input-group-text", what: "an addon's text" },
+      { sel: "#cc-summary-c", what: "a character count" },
+      { sel: "#cc-bio-c", what: "a count over its limit" },
+      { sel: "[aria-controls='pw-current']", what: "a password's Show" },
+      { sel: "#dob-day", what: "a date part's edge", part: "border" },
+      { sel: "#since-month", what: "a date part in error's edge", part: "border" },
+      { sel: "label[for='dob-day']", what: "a date part's label" },
+      { sel: "#otp", what: "a one-time code's edge", part: "border" },
     ]);
   });
 
@@ -90,28 +97,133 @@ eachTheme((theme) => {
     await expect(five).toBeChecked();
   });
 
-  test("keyboard: Enter submits; a wrong form moves focus to the first field in error and announces it", async ({ page }) => {
+  test("keyboard: Enter submits; two or more fields in error send focus to the error summary", async ({ page }) => {
     await visitStates(page, "field", theme);
+    const title = await page.title();
     const url = page.locator("#site-url");
     await url.focus();
     await page.keyboard.press("Enter");
 
-    await expect(page.locator("#site-name")).toBeFocused();
+    const summary = page.locator("#add-site .cap-error-summary");
+    await expect(summary).toBeFocused();
+    await expect(summary).toHaveAccessibleName("There is a problem");
+    await expect(summary.getByRole("link")).toHaveText(["Give the site a name, such as Foxhound.", "Enter the site's address.", "Choose where the site runs."]);
+    await expect(page).toHaveTitle(`Error: ${title}`);
     await expect(page.locator("#site-name")).toHaveAttribute("aria-invalid", "true");
     await expect(page.locator("#site-name-e")).toHaveText("Give the site a name, such as Foxhound.");
-    await expect(page.locator("#site-name-e")).toHaveAttribute("role", "alert");
-    await expect(page.locator("#site-url-e")).toHaveText("Enter the site's address.");
-    await expect(page.locator("#platform-e")).toHaveText("Choose where the site runs.");
+    // The summary is what is said; the messages beside the fields are not announced as well.
+    await expect(page.locator("#site-name-e")).not.toHaveAttribute("role", "alert");
     await expect(page.getByRole("radio", { name: "Vercel" })).toHaveAttribute("aria-invalid", "true");
     await expect(page.locator("#add-result")).toHaveText("");
 
-    await page.keyboard.type("Foxhound");
+    await page.locator("#site-name").fill("Foxhound");
     await url.fill("https://foxhound.app");
     await page.getByRole("radio", { name: "Cloudflare" }).check();
     await page.locator("#site-name").focus();
     await page.keyboard.press("Enter");
     await expect(page.locator("#add-result")).toHaveText("Added Foxhound. Its checks start on the next pass.");
     await expect(page.locator("#add-site .cap-field-error:visible")).toHaveCount(0);
+    await expect(summary).toBeHidden();
+    await expect(page).toHaveTitle(title);
+  });
+
+  test("keyboard: Enter with one field in error moves focus there and announces it; a date that does not exist is wrong on its day", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    const [day, month, year] = [page.locator("#join-day"), page.locator("#join-month"), page.locator("#join-year")];
+    await day.fill("31");
+    await year.fill("2026");
+    await year.press("Enter");
+    await expect(month).toBeFocused();
+    await expect(month).toHaveAttribute("aria-invalid", "true");
+    await expect(day).not.toHaveAttribute("aria-invalid", "true");
+    await expect(month).toHaveAccessibleDescription("Start date must include a month.");
+    await expect(page.locator("#join .cap-field-error").last()).toHaveAttribute("role", "alert");
+    await expect(page.locator("#join .cap-error-summary")).toHaveCount(0);
+
+    await month.fill("2");
+    await month.press("Enter");
+    await expect(day).toBeFocused();
+    await expect(day).toHaveAccessibleDescription("Start date must be a real date.");
+    await expect(month).not.toHaveAttribute("aria-invalid", "true");
+    await day.fill("28");
+    await day.press("Enter");
+    await expect(page.locator("#join-result")).toHaveText("Joined. A sign-in code is on its way.");
+  });
+
+  test("keyboard: Show shows the password and says so; Hide hides it again", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    const input = page.locator("#pw-current");
+    const show = page.getByRole("button", { name: "Show password" }).first();
+    await show.focus();
+    await page.keyboard.press("Enter");
+    await expect(input).toHaveAttribute("type", "text");
+    const hide = page.getByRole("button", { name: "Hide password" });
+    await expect(hide).toBeFocused();
+    await expect(hide).toHaveText("Hide");
+    await expect(page.getByRole("status", { name: "Results and failures" })).toContainText("Your password is shown.");
+    await page.keyboard.press("Space");
+    await expect(input).toHaveAttribute("type", "password");
+    await expect(page.getByRole("status", { name: "Results and failures" })).toContainText("Your password is hidden.");
+  });
+
+  test("behavior: a character count says what is left, then how many too many, and the region says it once typing stops", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    const count = page.locator("#cc-summary-c");
+    await expect(count).toHaveText("You have 66 characters remaining");
+    await expect(page.locator("#cc-bio-c")).toHaveText("You have 5 words too many");
+    await expect(page.locator("#cc-bio-c")).toHaveAttribute("data-over", "true");
+    const area = page.locator("#cc-summary");
+    await area.fill("x".repeat(125));
+    await expect(count).toHaveText("You have 5 characters too many");
+    await expect(page.getByRole("status", { name: "Results and failures" })).toContainText("You have 5 characters too many");
+    // Over the limit is wrong on submit; nothing stopped the typing.
+    expect(await area.evaluate((el: HTMLTextAreaElement) => el.validationMessage)).toBe("Use 120 characters or fewer.");
+  });
+
+  test("keyboard: arrows, Page Up and Down, Home and End step a number; the steppers stop at its bounds", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    const n = page.getByRole("spinbutton", { name: "Retries" });
+    await n.focus();
+    await page.keyboard.press("ArrowUp");
+    await expect(n).toHaveValue("4");
+    await page.keyboard.press("PageUp");
+    await expect(n).toHaveValue("10");
+    await expect(page.getByRole("button", { name: "Increase retries" })).toBeDisabled();
+    await page.keyboard.press("Home");
+    await expect(n).toHaveValue("0");
+    await expect(page.getByRole("button", { name: "Decrease retries" })).toBeDisabled();
+    await page.keyboard.press("End");
+    await expect(n).toHaveValue("10");
+    await page.keyboard.press("PageDown");
+    await expect(n).toHaveValue("0");
+    await page.getByRole("button", { name: "Increase retries" }).click();
+    await expect(n).toHaveValue("1");
+    await expect(n).toBeFocused();
+  });
+
+  test("keyboard: Esc clears a search and keeps focus; Clear does the same", async ({ page }) => {
+    await visitStates(page, "field", theme);
+    const q = page.getByRole("search", { name: "Posts" }).getByRole("searchbox", { name: "Search posts" });
+    const clear = page.getByRole("button", { name: "Clear search" });
+    await expect(clear).toBeVisible();
+    await q.focus();
+    await page.keyboard.press("Escape");
+    await expect(q).toHaveValue("");
+    await expect(q).toBeFocused();
+    await expect(clear).toBeHidden();
+    await page.keyboard.type("mussels");
+    await clear.click();
+    await expect(q).toHaveValue("");
+    await expect(q).toBeFocused();
+  });
+
+  test("accessibility: the parts' buttons are at least the target size", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "field", theme);
+    for (const name of ["Show password", "Decrease retries", "Increase retries", "Clear search"]) {
+      const box = await page.getByRole("button", { name }).first().boundingBox();
+      expect(box && Math.min(box.width, box.height), name).toBeGreaterThanOrEqual(24);
+    }
+    await expect(page.getByRole("textbox", { name: "Sign-in code" })).toHaveAttribute("autocomplete", "one-time-code");
   });
 
   test("behavior: a message goes as soon as the field is fixed", async ({ page }) => {
