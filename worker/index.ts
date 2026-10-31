@@ -1,36 +1,17 @@
 /**
- * The showcase site's Worker: it receives Content-Security-Policy violation reports and answers paths with no file.
- * wrangler.jsonc runs it first only for /csp-report (`run_worker_first`), so every request for a file is
- * answered by Workers static assets directly, with the headers from `_headers`. The report response
- * carries the same security set, from scripts/security-headers.ts. A GET or HEAD for a path with no file reaches
- * the Worker (`not_found_handling` is none), which sends the 404 page with charset=utf-8: no `_headers` rule can match
- * a path that has no file, so the asset server's own 404 page went out as a bare text/html (ASVS 4.1.1).
+ * The showcase site's Worker: site-runtime's `staticSite`, the one front door the family's static sites share. It
+ * receives Content-Security-Policy violation reports at /csp-report (limited by CSP_REPORT_RATE_LIMIT), serves the
+ * prefetch rules at /speculation-rules.json, and sends every page with the Speculation-Rules, Server-Timing and preload
+ * Link headers (so Early Hints answers with a 103), and the security set from scripts/security-headers.ts. A path with
+ * no file gets site-dist/404.html with status 404 and `private, no-store`, and so does a page asked for with a cookie.
+ * wrangler.jsonc runs it first for every path but /assets/*, the hashed files, which the asset server answers with the
+ * immutable cache rule from `_headers`. Pages end in a slash (/make/), which the asset server's auto-trailing-slash
+ * redirect keeps, so there is no canonical redirect here.
  */
 
-import { receiveCspReport } from "@dustinedwards/site-runtime/csp-report";
-import { applyHeaderSet } from "@dustinedwards/site-runtime/headers";
+import { staticSite } from "@dustinedwards/site-runtime/static-site";
 import { REPORT_PATH, securityHeaders } from "../scripts/security-headers.ts";
+// Written by the site build (scripts/preload.ts) from the hashed names in site-dist.
+import preload from "./preload.generated.json";
 
-/** The assets binding and the report endpoint's rate limit (wrangler.jsonc). */
-export interface Env {
-  readonly ASSETS: { fetch(request: Request): Promise<Response> };
-  readonly CSP_REPORT_RATE_LIMIT: { limit(options: { key: string }): Promise<{ success: boolean }> };
-}
-
-export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    if (new URL(request.url).pathname === REPORT_PATH) {
-      // Keyed on the edge-set client address, which is counted and never logged; a refusal drops the report (still 204).
-      const allow = async (r: Request) =>
-        (await env.CSP_REPORT_RATE_LIMIT.limit({ key: r.headers.get("CF-Connecting-IP") ?? "unknown" })).success;
-      return receiveCspReport(request, { headers: securityHeaders, allow });
-    }
-    if (request.method !== "GET" && request.method !== "HEAD") return env.ASSETS.fetch(request);
-    // The 404 page is site-dist/404.html, served at /404 by the assets' html_handling. It carries the site's security
-    // set itself, and applyHeaderSet adds charset=utf-8 to the bare text/html.
-    const page = await env.ASSETS.fetch(new Request(new URL("/404", request.url)));
-    const notFound = new Response(request.method === "HEAD" ? null : page.body, { status: 404, headers: page.headers });
-    applyHeaderSet(notFound.headers, securityHeaders);
-    return notFound;
-  },
-};
+export default staticSite({ headers: securityHeaders, preload: preload.header, reportPath: REPORT_PATH, canonical: false });
