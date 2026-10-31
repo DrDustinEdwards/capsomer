@@ -19,3 +19,5 @@ export interface EnarratioTheme {
   dark: EnarratioScheme;
 }
 export const capsomerTheme: EnarratioTheme;
+// The same family under prefers-contrast: more, for stylesheet()'s highContrast option.
+export const capsomerMoreTheme: EnarratioTheme;

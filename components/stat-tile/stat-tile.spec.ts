@@ -73,7 +73,7 @@ eachTheme((theme) => {
     for (let i = 1; i < count; i++) {
       await page.keyboard.press("Tab");
       // A tile with its numbers has one more stop after it: the chart frame's "Show data".
-      if (await page.locator(".cap-chart-data > summary:focus").count()) await page.keyboard.press("Tab");
+      if (await page.locator(".enarratio-data > summary:focus").count()) await page.keyboard.press("Tab");
       await expect(tiles.nth(i)).toBeFocused();
     }
   });
@@ -132,7 +132,7 @@ eachTheme((theme) => {
     await expect(frame.locator("a.cap-tile details, a.cap-tile summary")).toHaveCount(0);
     await expect(frame.getByText("Show data")).toBeVisible();
     // The sentence is text in the page, still hidden from the eye, and the tile is described by it.
-    await expect(frame.locator(".cap-chart-summary")).toContainText("Sites up, last 7 days");
+    await expect(frame.locator("#grid-sites-chart")).toContainText("Sites up, last 7 days");
     await expect(frame.locator("a.cap-tile")).toHaveAttribute("aria-describedby", "grid-sites-chart");
     await frame.locator("summary").focus();
     await page.keyboard.press("Enter");
