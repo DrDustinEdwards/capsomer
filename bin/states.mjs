@@ -8,23 +8,14 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
-const unquote = (v) => {
-  const t = v.trim();
-  if (t.startsWith("'") && t.endsWith("'") && t.length > 1) return t.slice(1, -1).replace(/''/g, "'");
-  if (t.startsWith('"') && t.endsWith('"') && t.length > 1) return t.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, "\\");
-  return t;
-};
-
 function docMeta(md, fallback) {
-  const m = md.replace(/\r\n/g, "\n").match(/^---\n([\s\S]*?)\n---/);
-  const get = (key) => {
-    const line = m?.[1].split("\n").find((l) => l.startsWith(`${key}:`));
-    return line ? unquote(line.slice(key.length + 1)) : "";
-  };
+  const { data } = frontmatter(md);
+  const get = (key) => (typeof data[key] === "string" ? data[key] : "");
   return { title: get("title") || fallback, summary: get("summary") };
 }
 

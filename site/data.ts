@@ -1,7 +1,7 @@
 // What the site reads at build time: every component's doc page, the palette with its
 // asserted pairs, the last test run, the scales, and the repo's own pages. The data files
 // come from `capsomer site-data`, which CI runs after the tests and before the build.
-import { frontmatter } from "./markdown.ts";
+import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import tokensJson from "../tokens/tokens.json";
 
 export interface ComponentDoc {

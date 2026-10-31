@@ -15,6 +15,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSy
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { gzipSync } from "node:zlib";
+import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import { generateStates } from "./states.mjs";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -50,27 +51,6 @@ function walk(dir, exts, out = []) {
   return out;
 }
 
-// The doc pages' frontmatter: name, parts, tool, states, added, replaces.
-function frontmatter(src) {
-  const m = src.replace(/\r\n/g, "\n").match(/^---\n([\s\S]*?)\n---/);
-  const data = {};
-  if (!m) return data;
-  let key = "";
-  for (const raw of m[1].split("\n")) {
-    const item = raw.match(/^\s+-\s+(.*)$/);
-    if (item && key) {
-      (data[key] = Array.isArray(data[key]) ? data[key] : []).push(item[1].replace(/^(['"])(.*)\1$/, "$2"));
-      continue;
-    }
-    const kv = raw.match(/^([\w-]+):\s*(.*)$/);
-    if (!kv) continue;
-    key = kv[1];
-    const v = kv[2].trim();
-    data[key] = v.startsWith("[") ? v.slice(1, -1).split(",").map((s) => s.trim()).filter(Boolean) : v === "" ? [] : v.replace(/^(['"])(.*)\1$/, "$2");
-  }
-  return data;
-}
-
 function components(root) {
   const dir = join(root, "components");
   if (!existsSync(dir)) return [];
@@ -80,7 +60,7 @@ function components(root) {
       const css = join(dir, d.name, `${d.name}.css`);
       // The component's root class is the first cap- class its CSS styles.
       const rootClass = existsSync(css) ? (readFileSync(css, "utf8").match(/\.(cap-[\w-]+)/)?.[1] ?? null) : null;
-      return { name: d.name, dir: join(dir, d.name), rootClass, ...frontmatter(readFileSync(join(dir, d.name, `${d.name}.md`), "utf8")) };
+      return { name: d.name, dir: join(dir, d.name), rootClass, ...frontmatter(readFileSync(join(dir, d.name, `${d.name}.md`), "utf8")).data };
     });
 }
 
