@@ -253,7 +253,6 @@
     &:hover .cap-leader-index-name,
     &:focus-visible .cap-leader-index-name {
       color: var(--accent-text);
-      text-decoration: underline;
     }
 
     &[aria-current] .cap-leader-index-name {
@@ -369,7 +368,6 @@
       &:hover,
       &:focus-visible {
         color: var(--accent-text);
-        text-decoration: underline;
       }
     }
   }
@@ -723,12 +721,6 @@
       color: var(--on-sign);
       text-decoration: none;
       overflow-wrap: anywhere;
-
-      &:hover,
-      &:focus-visible {
-        text-decoration: underline;
-        text-underline-offset: 0.2em;
-      }
 
       &:focus-visible {
         outline: 2px solid var(--ring);

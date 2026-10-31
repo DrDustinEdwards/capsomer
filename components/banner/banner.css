@@ -64,15 +64,10 @@
       padding-inline-start: calc(var(--pad-x) + 1.15em + var(--space-4));
     }
 
-    /* Links in the words are underlined, as shadcn's are, and keep their own color. */
+    /* Links in the words are semibold and keep their own color. */
     & a:not(.cap-btn) {
       color: inherit;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-
-      &:hover {
-        text-decoration-thickness: 2px;
-      }
+      font-weight: 600;
     }
   }
 

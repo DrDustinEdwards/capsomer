@@ -44,13 +44,7 @@
       min-block-size: var(--target);
       color: var(--crit);
       font-weight: 600;
-      text-decoration: underline;
-      text-underline-offset: 0.15em;
       overflow-wrap: anywhere;
-
-      &:hover {
-        text-decoration-thickness: 2px;
-      }
     }
   }
 

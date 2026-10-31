@@ -221,8 +221,7 @@
 
     & a {
       color: inherit;
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
+      font-weight: 600;
 
       &:hover {
         color: var(--text);

@@ -13,7 +13,6 @@ import { Alert, Banner } from "../dist/components/banner/banner.react.js";
 import { Breadcrumb } from "../dist/components/breadcrumb/breadcrumb.react.js";
 import { BulkBar } from "../dist/components/bulk-bar/bulk-bar.react.js";
 import { Button, ButtonGroup, ButtonGroupText } from "../dist/components/button/button.react.js";
-import { ChartFrame } from "../dist/components/chart-frame/chart-frame.react.js";
 import { FilterChips } from "../dist/components/chips/chips.react.js";
 import { ConfirmDialog, ConfirmPage } from "../dist/components/confirm-dialog/confirm-dialog.react.js";
 import { DatePicker } from "../dist/components/date-picker/date-picker.react.js";
@@ -57,6 +56,7 @@ import { UsageMeter } from "../dist/components/usage-meter/usage-meter.react.js"
 //                 and with dir="rtl" no element newly sticks out of its parent (physical
 //                 left/right where a logical property belongs), at 320px and 1280px
 //   text spacing  WCAG 1.4.12's overrides clip no text that fitted before
+//   links         no link is underlined, and every text link is semibold (DEFAULTS.md)
 //   targets       on a coarse pointer every target is 44 x 44, or at least 24 x 24 with no
 //                 other target within 22px of its centre (WCAG 2.5.8's spacing, at the 44px
 //                 Capsomer promises on touch, tokens/scale.css)
@@ -94,7 +94,6 @@ const FIXTURES: Record<string, () => ReactElement> = {
   breadcrumb: () => h(Breadcrumb, { items: [{ label: "Sites", href: "#sites" }, { label: "fieldnotes.example", href: "#site" }, { label: "Media", href: "#media" }, { label: "IMG_4821" }], maxItems: 3 }),
   "bulk-bar": () => h(BulkBar, { items: [{ id: "p1", label: "Notes on the Foxhound release" }], actions: [{ id: "publish", label: "Publish" }, { id: "delete", label: "Delete", destructive: true }], onClear: noop, total: 4 }),
   button: () => h(Fragment, null, h(Button, { variant: "primary" }, "Save"), h(ButtonGroup, { label: "Zoom" }, h(Button, null, "Smaller"), h(ButtonGroupText, null, "100%"))),
-  "chart-frame": () => h(ChartFrame, { title: "Uptime", summary: "Up 99.9% this week.", chart: "<svg></svg>", table: { columns: ["Day", "Uptime"], rows: [["Monday", "100%"]] } }),
   chips: () => h(FilterChips, { label: "Status", options: [{ value: "open", label: "Open" }, { value: "done", label: "Done" }], value: ["open"], onChange: noop, count: "12 shown" }),
   "confirm-dialog": () => h(Fragment, null, h(ConfirmDialog, { open: true, title: "Delete 3 drafts?", body: ["They are gone for good."], action: "Delete", perform: later, onClose: noop }), h(ConfirmPage, { title: "Delete fieldnotes.example?", cancelHref: "#back", typeToConfirm: "fieldnotes" })),
   "date-picker": () => h(DatePicker, { label: "Publish on", name: "on" }),
@@ -160,7 +159,10 @@ function install(): void {
     const r = el.getBoundingClientRect();
     if (r.width === 0 && r.height === 0) return false;
     const cs = getComputedStyle(el);
-    return cs.visibility !== "hidden" && cs.display !== "contents" && !el.closest("[hidden], [inert], .cap-sr-only, template, svg *");
+    if (cs.visibility === "hidden" || cs.display === "contents" || el.closest("[hidden], [inert], template, svg *, details:not([open]) > :not(summary)")) return false;
+    // Visually hidden (.cap-sr-only, Enarratio's hidden list and caption): clipped to nothing.
+    for (let a: Element | null = el; a; a = a.parentElement) if (getComputedStyle(a).clipPath === "inset(50%)") return false;
+    return true;
   };
   const label = (el: Element) => {
     const id = el.id ? `#${el.id}` : "";
@@ -304,6 +306,19 @@ function install(): void {
     return out.slice(0, 15);
   };
 
+  // A link is told by weight, not a line (DEFAULTS.md): no link is underlined (the current page
+  // in a bar may be, as its marker), and a text link, inline with no component class, is semibold.
+  const links = () => {
+    const out: string[] = [];
+    for (const el of document.body.querySelectorAll("a[href]")) {
+      if (!vis(el)) continue;
+      const cs = getComputedStyle(el);
+      if (cs.textDecorationLine.includes("underline") && !el.hasAttribute("aria-current")) out.push(`${label(el)} is underlined`);
+      else if (cs.display === "inline" && !el.matches("[class*='cap-']") && Number(cs.fontWeight) < 600) out.push(`${label(el)} is a text link at weight ${cs.fontWeight}, not 600`);
+    }
+    return out.slice(0, 12);
+  };
+
   // Every focusable element, focused from script with no pointer used (so :focus-visible
   // matches), must draw an outline on itself, on a pseudo-element or on an ancestor up to four
   // levels up (a row that rings when its link is focused) that had none before, or that shows
@@ -360,13 +375,14 @@ function install(): void {
   const reactShape = (own: string[], roots: string) => [...document.querySelectorAll(roots)].flatMap((m) => shape(m, own, ""));
   const contractShape = (html: string[], own: string[], roots: string) => html.flatMap((h) => shape(new DOMParser().parseFromString(h, "text/html").body, own, roots));
 
-  Object.assign(window, { __sweep: { reflow, rtl, spacing, targets, rings, reactShape, contractShape } });
+  Object.assign(window, { __sweep: { reflow, rtl, spacing, links, targets, rings, reactShape, contractShape } });
 }
 
 type Sweep = {
   reflow(): string[];
   rtl(phase: "ltr" | "rtl"): string[];
   spacing(phase: "before" | "after"): string[];
+  links(): string[];
   targets(): string[];
   rings(): Promise<string[]>;
   reactShape(own: string[], roots: string): Shape[];
@@ -409,10 +425,11 @@ for (const name of NAMES) {
       expect(found).toEqual([]);
     });
 
-    test("accessibility: sweep: text spacing clips no text (WCAG 1.4.12)", async ({ page }) => {
+    test("accessibility: sweep: text spacing clips no text (WCAG 1.4.12), and links are told by weight", async ({ page }) => {
       const found: string[] = [];
       for (const s of pages) {
         await open(page, s);
+        found.push(...tag(s, await page.evaluate(() => window.__sweep.links())));
         await page.evaluate(() => window.__sweep.spacing("before"));
         await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
         found.push(...tag(s, await page.evaluate(() => window.__sweep.spacing("after"))));

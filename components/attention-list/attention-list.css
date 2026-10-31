@@ -141,8 +141,7 @@
 
       &:hover,
       &[data-force="hover"] {
-        text-decoration: underline;
-        text-underline-offset: 3px;
+        color: var(--accent-hover);
       }
       &:focus-visible,
       &[data-force="focus"] {

@@ -31,7 +31,7 @@ Any form whose submit finds two or more fields in error, and any page the server
 - **The page title starts "Error: "** until the form is sent, so the tab and a screen reader's title say it too (GOV.UK). It goes when a submit finds nothing wrong.
 - **The words are the field's own message**, so the link and the message beside the field say the same thing.
 - **A link goes to the control** (the first radio of a group, the first part of a date in error) and scrolls the field's label or legend into view, so the question is seen as well as the box.
-- **It is not color alone**: a thick critical edge on its start side, the title in words, and links underlined.
+- **It is not color alone**: a thick critical edge on its start side, the title in words, and semibold links.
 - **Field makes one when the form has none**, as the form's first child. Write your own `.cap-error-summary` in the form to choose where it goes or what the title says.
 - **A server-rendered summary takes focus with `autofocus`**, which needs no script.
 
@@ -47,7 +47,7 @@ Any form whose submit finds two or more fields in error, and any page the server
 
 - `role="alert"`, `tabindex="-1"` and `aria-labelledby` its title: announced as it appears and named "There is a problem".
 - The title is an `h2` (an `h3` where the form sits under an `h2`).
-- Each link is at least `--target` high; links are `--crit` on the surface, underlined, at 4.5:1 in both themes.
+- Each link is at least `--target` high; links are `--crit` on the surface, semibold, at 4.5:1 in both themes.
 - Forced colors: the edge is CanvasText and the links LinkText.
 - No motion.
 

@@ -14,7 +14,7 @@ replaces:
 
 # Link
 
-`capsomer/react/link` exports `Link` and `NavLink`: React Router's own, with the same props, prefetching the page on hover and focus by default (`prefetch="intent"`). `capsomer/behavior/link` exports `mayPrefetch`, the rule that decides whether a link may prefetch, and `underPath`, the path match it uses. The link's look is not here: every `a` takes the accent text color, an underline and the hover color from `css/base.css`, and `.cap-go` (utilities) adds an arrow.
+`capsomer/react/link` exports `Link` and `NavLink`: React Router's own, with the same props, prefetching the page on hover and focus by default (`prefetch="intent"`). `capsomer/behavior/link` exports `mayPrefetch`, the rule that decides whether a link may prefetch, and `underPath`, the path match it uses. The link's look is not here: every `a` takes the accent text color and the hover color from `css/base.css`, and a text link (no `cap-` class) is semibold, and `.cap-go` (utilities) adds an arrow.
 
 ## When to use it
 
@@ -30,7 +30,7 @@ Every link between routes in a hydrated React Router app (the Portal, Carrel, Fo
 
 - **Prefetch on intent.** A hydrated app navigates on the client, so it prefetches what a client navigation reads (the route's modules and loader data), not the HTML speculation rules would fetch.
 - **Never where a GET acts.** A prefetch runs the target's loader, so a link renders with `prefetch="none"`, whatever it asked for, when it loads a whole document (`reloadDocument`), opens elsewhere (`target` other than `_self`), downloads, leaves the app, points at a file (site-runtime's `FILE_EXTENSIONS`) or goes under site-runtime's `NEVER_PREFETCH`. `/admin` prefetches only from a page already under `/admin`. `<LinkPrefetch exclude={["/demos/:product"]}>` at the root adds an app's own paths; `:name` and `*` stand for one segment.
-- **A link looks like a link.** Text links keep their underline (base.css), so a link is never told apart by color alone (WCAG 1.4.1). A link that is a control in a bar (the shell's rail, the site header's sections) is drawn by its component.
+- **A link looks like a link.** Text links are semibold, not underlined (base.css), so a link is never told apart by color alone (WCAG 1.4.1; F73 names weight as a cue). A link that is a control in a bar (the shell's rail, the site header's sections) is drawn by its component.
 
 ## Keyboard
 

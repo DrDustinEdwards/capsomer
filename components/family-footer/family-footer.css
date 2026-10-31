@@ -256,11 +256,6 @@
       min-block-size: var(--target);
       font-size: 0.875rem;
     }
-
-    & a:hover {
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
   }
 
   .cap-family-footer-private {

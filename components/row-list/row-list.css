@@ -75,10 +75,6 @@
     &:hover,
     &[data-force="hover"] {
       background: var(--raised);
-
-      & .cap-row-title :is(a, button) {
-        text-decoration: underline;
-      }
     }
 
     /* The focused row: the selection tint and an inset ring in --ring, 3:1 against --sel

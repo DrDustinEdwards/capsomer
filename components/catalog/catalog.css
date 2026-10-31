@@ -135,8 +135,7 @@
   .cap-catalog-clear {
     color: var(--muted);
     font-size: var(--fs-detail);
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    font-weight: 600;
   }
 
   /* A table sort that is a link: the table's sort look, on a link. */

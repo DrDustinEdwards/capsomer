@@ -103,8 +103,7 @@
 
     & a {
       color: var(--accent-text);
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      font-weight: 600;
 
       &:hover {
         color: var(--accent-hover);
