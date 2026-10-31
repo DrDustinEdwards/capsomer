@@ -46,7 +46,7 @@
       border-inline-end: 1.5px solid var(--dim);
       transform: rotate(45deg);
     }
-    &:not(:first-child):dir(rtl)::before {
+    &:not(:first-child):dir(rtl)::before, :where([dir="rtl"]) &:not(:first-child)::before {
       transform: rotate(-135deg);
     }
   }

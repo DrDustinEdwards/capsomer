@@ -18,7 +18,7 @@
     --cap-dialog-to: translateY(4px) scale(0.98);
     /* Side sheets are logical (right is the inline end): in right-to-left they sit and slide mirrored. */
     --cap-dialog-dir: 1;
-    &:dir(rtl) {
+    &:dir(rtl), :where([dir="rtl"]) & {
       --cap-dialog-dir: -1;
     }
 

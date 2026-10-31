@@ -232,7 +232,7 @@
     transform: rotate(-45deg);
 
     /* Right to left, mirrored: closed, it points to the inline end there too. */
-    &:dir(rtl) {
+    &:dir(rtl), :where([dir="rtl"]) & {
       scale: -1 1;
     }
   }
