@@ -65,7 +65,7 @@
         }
       }
       /* Right to left, the thumb starts at the right and slides left. */
-      &:checked:dir(rtl)::before {
+      &:checked:dir(rtl)::before, :where([dir="rtl"]) &:checked::before {
         translate: calc(-1 * (var(--cap-sw-w) - 2px - var(--cap-sw-thumb) - 4px)) 0;
       }
     }
