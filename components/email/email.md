@@ -1,12 +1,12 @@
 ---
 name: email
 title: Email templates
-summary: Magic link, verification, reset, alert and notice mails from one definition, with the HTML and the text made from the same blocks, in the family's colors.
+summary: Magic link, verification, reset, alert, notice and security notice mails from one definition, with the HTML and the text made from the same blocks, in the family's colors.
 parts: [ts]
 tool: own JavaScript
-states: [magic link, verification, reset, alert, notice]
+states: [magic link, verification, reset, alert, notice, security notice]
 added: 0.5.0
-updated: 0.5.0
+updated: 0.53.0
 source: design/email-templates.md (D7.2); the senders in Foxhound, Foxing, TXASM, Carrel and dustinedwards-info are unverified, this driver could not read them
 replaces: []
 ---
@@ -17,7 +17,7 @@ replaces: []
 
 ## When to use it
 
-Any transactional mail a product sends: a sign-in link, an address to confirm, a password reset, an alert, a plain notice.
+Any transactional mail a product sends: a sign-in link, an address to confirm, a password reset, an alert, a plain notice, a change to how a person signs in.
 
 ## When not to
 
@@ -42,6 +42,7 @@ Any transactional mail a product sends: a sign-in link, an address to confirm, a
 | `reset` | `url`, `expiresIn` | the same, for a password |
 | `alert` | `level` (`crit`, `warn`, `info`), `what`, `when`, `details`, `url` | the level as a word, what and when, the detail lines |
 | `notice` | `title`, `body`, `action` | a title and paragraphs, an optional button |
+| `securityNotice` | `title`, `what`, `when`, `secure`, optional `device`, `location`, `url` | what changed and when, the device and place it came from when known, what to do if it was not them, a button to the account page; no link that signs in. site-runtime's `./sign-in` notice `detail` carries these fields |
 
 Every template also takes `brand` (`{ name, family }`), `to`, and optionally `copy`, `footer` and `lang`.
 

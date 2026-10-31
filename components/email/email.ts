@@ -309,6 +309,38 @@ export const alert: Template<{ level: AlertLevel; what: string; when: string; de
   },
 };
 
+/**
+ * A change to how a person signs in: what happened, when, the device and the place it came from, and what to do if it
+ * was not them (NIST SP 800-63B-4 4.6). site-runtime's `./sign-in` gives `title`, `what`, `when`, `device`, `location`
+ * and `secure` as its notice's `detail`; `url` is the product's own account page. The mail holds no link that signs in.
+ */
+export const securityNotice: Template<{
+  title: string;
+  what: string;
+  when: string;
+  device?: string | null;
+  location?: string | null;
+  secure: string;
+  url?: string;
+}> = {
+  name: "security-notice",
+  subject: (d) => d.copy?.subject ?? `${d.brand.name}: ${d.title}`,
+  blocks: (d) => {
+    const k = d.copy ?? {};
+    const out: Block[] = [
+      { type: "heading", text: k.heading ?? d.title },
+      { type: "paragraph", text: k.intro ?? d.what },
+      { type: "fine", text: `When: ${d.when}` },
+      ...(d.device ? [{ type: "fine", text: `Device: ${d.device}` } as const] : []),
+      ...(d.location ? [{ type: "fine", text: `Near: ${d.location}` } as const] : []),
+      { type: "note", text: d.secure },
+    ];
+    if (d.url) out.push({ type: "button", label: k.button ?? "Review your account", url: d.url });
+    out.push({ type: "fine", text: k.ignore ?? "We send this notice for every change to how you sign in. It holds no link that signs you in." });
+    return out;
+  },
+};
+
 /** A plain message: a decision, a digest line, a change of terms. */
 export const notice: Template<{ title: string; body: string[]; action?: { label: string; url: string } }> = {
   name: "notice",

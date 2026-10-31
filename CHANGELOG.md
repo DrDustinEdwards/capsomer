@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.53.0]
+
+A mail for every change to how a person signs in (sign-in and access, area 3: A8, E1).
+
+- **New email template: `securityNotice`** (`capsomer/email`). It takes `title`, `what`, `when` and `secure`, with optional `device`, `location` and `url`, the fields of site-runtime 0.45.0's `sendSecurityNotice` `detail`, so a site renders the notice with `renderEmail(securityNotice, { brand, to: user.email, ...detail, url })`. The mail says what changed and when, then "Device:" and "Near:" lines when it has them, what to do if it was not the person, a "Review your account" button with `url`, and that it holds no link that signs in. The subject is "{brand}: {title}". It takes `copy` like the others. States page: two new frames. No class, token or HTML contract changes.
+
 ## [0.52.0]
 
 The posts list posts the content kit's own intent names and shows what site-api v0.16.0 adds, each only where the kit offers it, each a form post that works with no script.

@@ -1,7 +1,7 @@
 // Sample mails for the states page. Invented, with an obviously fake token. Each frame is the
 // real renderEmail output in an iframe. A frame forced to light drops the dark rules; one forced
 // to dark applies them whatever the page's own scheme, so both show on one page.
-import { alert, magicLink, notice, renderEmail, reset, verification, type Common } from "../email.ts";
+import { alert, magicLink, notice, renderEmail, reset, securityNotice, verification, type Common } from "../email.ts";
 
 const common: Common = { brand: { name: "Carrel", family: "purple" }, to: "reader@example.com" };
 const link = { url: "https://carrel.example/auth/verify?t=EXAMPLE-NOT-A-TOKEN", expiresIn: "15 minutes" };
@@ -26,6 +26,17 @@ const SAMPLES: Record<string, () => string> = {
       title: "Your drafts moved",
       body: ["Drafts now live under Writing in the sidebar.", "Nothing was deleted, and the links you shared still work."],
       action: { label: "Open Writing", url: "https://carrel.example/writing" },
+    }).html,
+  securityNotice: () =>
+    renderEmail(securityNotice, {
+      ...common,
+      title: "A passkey was added to your account",
+      what: "A passkey (Apple Passwords) was added to your Carrel account.",
+      when: "October 31, 2026 at 1:52 AM UTC",
+      device: "Safari on iPhone",
+      location: "Austin, Texas, United States",
+      secure: "If this was not you, sign in now, remove any passkey or sign-in method you do not recognize, and sign out of every other device.",
+      url: "https://carrel.example/account",
     }).html,
 };
 
