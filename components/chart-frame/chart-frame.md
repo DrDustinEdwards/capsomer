@@ -73,7 +73,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </figure>
 ```
 
-On a server without React: `import { frameHtml, noDataHtml } from "capsomer/behavior/chart-frame"`; `frameHtml(figure, { inline, gridlines, after })` and `noDataHtml(title, reason)` return the strings (the reason and title are escaped; the figure and `after` are trusted markup). The page imports `capsomer/behavior/chart-enhance` once (a module it serves itself): it enhances every `.cap-chart` without a `data-enhance` attribute, now and as frames are added; `enhanceCharts(root, options)` and `watchCharts(options)` are exported for a page that wants options.
+On a server without React: `import { frameHtml, noDataHtml } from "capsomer/behavior/chart-frame"`; `frameHtml(figure, { inline, gridlines, after, redraw })` and `noDataHtml(title, reason)` return the strings (the reason and title are escaped; the figure and `after` are trusted markup). The page imports `capsomer/behavior/chart-enhance` once (a module it serves itself): it enhances every `.cap-chart` without a `data-enhance` attribute, now and as frames are added; `enhanceCharts(root, options)` and `watchCharts(options)` are exported for a page that wants options. With `redraw` (Enarratio's `RedrawSpec`: `{ chart: "bar" | "line" | "area", options }`, the light chart and the options it was drawn with), chart-enhance draws the frame again at its column's width as that changes (`enarratio/redraw`), so a server drawing never scales its text down in a narrow column.
 
 In React: `import { ChartFrame } from "capsomer/react/chart-frame"`.
 

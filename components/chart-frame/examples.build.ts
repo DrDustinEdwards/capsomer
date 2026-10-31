@@ -16,9 +16,46 @@ const jobs = days.flatMap((day, i) => [
 const minutes = { values: [260, 280, 310, 300, 330, 320, 340], label: "Actions minutes per day, last 7 days", id: "cf-spark", width: 320, height: 56 };
 const source = { name: "The job log", href: "https://example.com/jobs" };
 
-const bar = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[number]>> = {}) =>
-  barChart({ data: jobs, x: "day", y: "n", series: "kind", layout: "stacked", id, title: "Jobs run per day", subtitle: "Last 7 days, by kind", alt: "Jobs rose through the week to 39 on Wednesday, most of them builds.", xLabel: "Day", yLabel: "Jobs", source, width: 440, height: 240, ...extra });
+const barOptions = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[number]>> = {}) =>
+  ({ data: jobs, x: "day", y: "n", series: "kind", layout: "stacked", id, title: "Jobs run per day", subtitle: "Last 7 days, by kind", alt: "Jobs rose through the week to 39 on Wednesday, most of them builds.", xLabel: "Day", yLabel: "Jobs", source, width: 440, height: 240, ...extra }) as BarChartOptions<(typeof jobs)[number]>;
+const bar = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[number]>> = {}) => barChart(barOptions(id, extra));
+// A light chart in the frame with the spec behavior/chart-enhance draws it again from at its width.
+const drawn = (chart: "bar" | "line" | "area", html: string, options: object) =>
+  frameHtml(html, { redraw: { chart, options: options as Record<string, unknown> } });
 
+const lineSpec = {
+  data: ["2026-10-24", "2026-10-25", "2026-10-26", "2026-10-27", "2026-10-28", "2026-10-29", "2026-10-30"].flatMap((x, i) => [
+    { x, site: "example.net", ms: [212, 220, 205, 260, 240, 231, 225][i] ?? 0 },
+    { x, site: "example.com", ms: [180, 175, 190, 185, 310, 200, 195][i] ?? 0 },
+  ]),
+  x: "x",
+  y: "ms",
+  series: "site",
+  id: "cf-line",
+  title: "Response time, median",
+  alt: "Both sites answer in about 200 ms; example.com slowed to 310 ms on Tuesday.",
+  xLabel: "Day",
+  yLabel: "Milliseconds",
+  directLabels: true,
+  width: 440,
+  height: 240,
+} as const;
+const areaSpec = {
+  data: days.flatMap((day, i) => [
+    { x: i + 1, queue: "Waiting on review", n: [4, 6, 5, 3, 2, 2, 1][i] ?? 0 },
+    { x: i + 1, queue: "Running", n: [2, 3, 3, 4, 3, 5, 4][i] ?? 0 },
+  ]),
+  x: "x",
+  y: "n",
+  series: "queue",
+  id: "cf-area",
+  title: "Queue by day",
+  alt: "The queue waiting on review fell from 6 to 1 while running jobs held near 4.",
+  xLabel: "Day of the week",
+  yLabel: "Jobs",
+  width: 440,
+  height: 240,
+} as const;
 const drawings: Record<string, string> = {
   spark: frameHtml(sparkline(minutes)),
   uptime: frameHtml(uptimeStrip({ slots: ["up", "up", "degraded", "up", "down", "unknown", "up"], label: "Uptime of example.edu", subtitle: "83% up over 7 days", id: "cf-up", width: 480, height: 28, dataTable: "details" }), { inline: true }),
@@ -40,45 +77,10 @@ const drawings: Record<string, string> = {
       ],
     }),
   ),
-  bar: frameHtml(bar("cf-bar")),
+  bar: drawn("bar", bar("cf-bar"), barOptions("cf-bar")),
   open: frameHtml(bar("cf-open", { notes: "A job counts on the day it finished.", byline: "Example Co", width: 640, height: 280 }).replace('<details class="enarratio-data">', '<details class="enarratio-data" open>')),
-  line: frameHtml(
-    lineChart({
-      data: ["2026-10-24", "2026-10-25", "2026-10-26", "2026-10-27", "2026-10-28", "2026-10-29", "2026-10-30"].flatMap((x, i) => [
-        { x, site: "example.net", ms: [212, 220, 205, 260, 240, 231, 225][i] ?? 0 },
-        { x, site: "example.com", ms: [180, 175, 190, 185, 310, 200, 195][i] ?? 0 },
-      ]),
-      x: "x",
-      y: "ms",
-      series: "site",
-      id: "cf-line",
-      title: "Response time, median",
-      alt: "Both sites answer in about 200 ms; example.com slowed to 310 ms on Tuesday.",
-      xLabel: "Day",
-      yLabel: "Milliseconds",
-      directLabels: true,
-      width: 440,
-      height: 240,
-    }),
-  ),
-  area: frameHtml(
-    areaChart({
-      data: days.flatMap((day, i) => [
-        { x: i + 1, queue: "Waiting on review", n: [4, 6, 5, 3, 2, 2, 1][i] ?? 0 },
-        { x: i + 1, queue: "Running", n: [2, 3, 3, 4, 3, 5, 4][i] ?? 0 },
-      ]),
-      x: "x",
-      y: "n",
-      series: "queue",
-      id: "cf-area",
-      title: "Queue by day",
-      alt: "The queue waiting on review fell from 6 to 1 while running jobs held near 4.",
-      xLabel: "Day of the week",
-      yLabel: "Jobs",
-      width: 440,
-      height: 240,
-    }),
-  ),
+  line: drawn("line", lineChart(lineSpec), lineSpec),
+  area: drawn("area", areaChart(areaSpec), areaSpec),
   nodata: noDataHtml("Requests per hour", "The health route has not reported yet, so there is nothing to draw."),
   narrow: frameHtml(bar("cf-narrow")),
   comfortable: frameHtml(sparkline({ ...minutes, id: "cf-comfy" })),
