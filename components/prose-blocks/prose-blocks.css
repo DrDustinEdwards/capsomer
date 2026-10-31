@@ -317,21 +317,122 @@
       }
     }
 
-    /* An embed: no request to the service until the reader asks. Until then a 16:9 card that names
-       the service and the title; render/enhance swaps in the player on a click. */
+    /* An embed: no request to the service until the reader asks. Until then a card the size of the
+       player it becomes, so nothing moves on the click: the site's own poster (never the service's
+       thumbnail), a play button for a video or a song, and a bar naming the service and the title.
+       render/enhance swaps in the player; without script the link opens the service. */
+    & :where(.embed) {
+      /* Each service's player: a screen (16:9), a map (4:3), a post (4:5, about the width the
+         services draw a post at), an upright video, or a strip as tall as the service's own player. */
+      --embed-ratio: 16 / 9;
+      --embed-block: auto;
+      --embed-max: none;
+      margin-inline: 0;
+      & > :where(figcaption) {
+        margin-block-start: var(--space-2);
+      }
+    }
+    & :where(.embed-link, .embed iframe) {
+      display: grid;
+      inline-size: 100%;
+      max-inline-size: var(--embed-max);
+      aspect-ratio: var(--embed-ratio);
+      block-size: var(--embed-block);
+      margin-inline: auto;
+      border-radius: var(--radius-m);
+    }
+    & :where(.embed iframe) {
+      display: block;
+      border: 0;
+      background: var(--sunken);
+    }
     & :where(.embed-link) {
+      position: relative;
+      grid-template: 1fr auto / 1fr;
+      overflow: hidden;
+      border: 1px solid var(--line-strong);
+      background: var(--sunken);
+      color: var(--text);
+      font-family: var(--ui);
+      text-decoration: none;
+      & > :where(picture, img) {
+        grid-area: 1 / 1 / -1 / -1;
+        inline-size: 100%;
+        block-size: 100%;
+      }
+      & :where(img) {
+        inline-size: 100%;
+        block-size: 100%;
+        object-fit: cover;
+        border-radius: 0;
+      }
+      & > :where(.embed-play) {
+        position: relative;
+        grid-area: 1 / 1;
+        place-self: center;
+        inline-size: calc(var(--target) * 1.5);
+        block-size: calc(var(--target) * 1.5);
+        border: 2px solid var(--primary-fg);
+        border-radius: var(--radius-full);
+        background: var(--primary);
+        box-shadow: var(--shadow-m);
+        &::before {
+          content: "";
+          position: absolute;
+          inset: 30% 26% 30% 36%;
+          background: var(--primary-fg);
+          clip-path: polygon(0 0, 100% 50%, 0 100%);
+        }
+      }
+      & > :where(.embed-label) {
+        position: relative;
+        grid-area: 2 / 1;
+        padding: var(--space-3) var(--space-4);
+        border-block-start: 1px solid var(--line);
+        background: var(--surface);
+        font-size: var(--fs-body);
+        font-weight: 600;
+        line-height: 1.35;
+        text-wrap: balance;
+      }
+      /* The card keeps the link system's states: the tint under the pointer, a stronger one pressed. */
+      &:hover,
+      &[data-force="hover"] {
+        border-color: var(--accent);
+        & > :where(.embed-play) {
+          background: var(--primary-hover);
+        }
+      }
+      &:active,
+      &[data-force="pressed"] {
+        border-color: var(--accent);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        & > :where(.embed-play) {
+          transition: scale var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+        }
+        &:hover > :where(.embed-play) {
+          scale: 1.06;
+        }
+      }
+      @media (forced-colors: active) {
+        & > :where(.embed-play) {
+          border-color: ButtonText;
+          &::before {
+            forced-color-adjust: none;
+            background: ButtonText;
+          }
+        }
+      }
+    }
+    /* HTML stored before Prelum 0.28: the link's text alone, centered, after a play mark. */
+    & :where(.embed-link:not(:has(.embed-label))) {
       display: flex;
       align-items: center;
       justify-content: center;
-      aspect-ratio: 16 / 9;
       padding: var(--space-4);
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius-m);
-      background: var(--sunken);
-      font-family: var(--ui);
       text-align: center;
       text-wrap: balance;
-      text-decoration: none;
       &::before {
         content: "";
         flex: none;
@@ -341,10 +442,8 @@
         border-block: 0.6em solid transparent;
         border-inline-start: 1em solid currentColor;
       }
-      /* The card keeps the link system's states: the tint under the pointer, a stronger one pressed. */
       &:hover,
       &[data-force="hover"] {
-        border-color: var(--accent);
         background: var(--accent-soft);
       }
       &:active,
@@ -352,12 +451,59 @@
         background: var(--accent-5);
       }
     }
-    & :where(.embed iframe) {
-      display: block;
-      inline-size: 100%;
-      aspect-ratio: 16 / 9;
-      border: 0;
-      border-radius: var(--radius-m);
+
+    /* The shapes. A map is 4:3. A post (X, Bluesky, Instagram) is 4:5 at most 34rem wide, about the
+       width each service draws one at. A TikTok video stands upright at its player's 9:16. */
+    & :where(.embed-google-maps) {
+      --embed-ratio: 4 / 3;
+    }
+    & :where(.embed-x, .embed-bluesky, .embed-instagram) {
+      --embed-ratio: 4 / 5;
+      --embed-max: 34rem;
+    }
+    & :where(.embed-tiktok) {
+      --embed-ratio: 9 / 16;
+      --embed-max: 20rem;
+    }
+    /* A song or a podcast is a strip at the height of the service's own player, in px because the
+       player lays itself out in px: Spotify 152 (a track or an episode) or 352 (a list), SoundCloud
+       166, Apple Podcasts 175 (an episode) or 450 (a show), Amazon Music 352. On the strip the
+       poster is a square at the start and the play button sits on it. */
+    & :where(.embed-spotify, .embed-soundcloud, .embed-apple-podcasts, .embed-amazon-music) {
+      --embed-ratio: auto;
+      & :where(.embed-link:has(.embed-label)) {
+        grid-template: 1fr auto / auto 1fr;
+        & > :where(picture, img) {
+          grid-area: 1 / 1 / -1 / 2;
+          inline-size: auto;
+          aspect-ratio: 1;
+        }
+        & > :where(.embed-play) {
+          grid-area: 1 / 1 / -1 / 2;
+          margin-inline: var(--space-4);
+        }
+        & > :where(.embed-label) {
+          grid-area: 1 / 2 / -1 / -1;
+          align-self: center;
+          border-block-start: 0;
+          background: none;
+        }
+      }
+    }
+    & :where(.embed-spotify, .embed-amazon-music) {
+      --embed-block: 352px;
+    }
+    & :where(.embed-spotify:has([data-embed-src*="/embed/track/"], [data-embed-src*="/embed/episode/"], iframe[src*="/embed/track/"], iframe[src*="/embed/episode/"])) {
+      --embed-block: 152px;
+    }
+    & :where(.embed-soundcloud) {
+      --embed-block: 166px;
+    }
+    & :where(.embed-apple-podcasts) {
+      --embed-block: 450px;
+    }
+    & :where(.embed-apple-podcasts:has([data-embed-src*="?i="], iframe[src*="?i="])) {
+      --embed-block: 175px;
     }
 
     /* A button link: the family's primary button, at a full control's height. */
