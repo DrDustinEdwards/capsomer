@@ -2,8 +2,8 @@
  * The showcase site's security headers: its own list of what it loads, and site-runtime's builders
  * (`@dustinedwards/site-runtime`). This is the only place they are set up. The site build
  * (site/vite.config.ts) calls `writeHeadersFile` to put them in `site-dist/_headers` for every static
- * file, and the Worker (`worker/index.ts`) sends `securityHeaders` on the one response it makes itself,
- * the report endpoint. Site tooling only: the package never imports this or site-runtime.
+ * file, and the Worker (`worker/index.ts`, site-runtime's staticSite) sends `securityHeaders` on the responses it
+ * makes itself and adds any the page's own `_headers` rules left out. Site tooling only: the package never imports this or site-runtime.
  */
 
 import { buildContentSecurityPolicy, reportingEndpoints } from "@dustinedwards/site-runtime/csp";
