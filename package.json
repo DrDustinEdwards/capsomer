@@ -33,7 +33,8 @@
   ],
   "sideEffects": [
     "**/*.css",
-    "./dist/components/chart-frame/chart-enhance.js"
+    "./dist/components/chart-frame/chart-enhance.js",
+    "./components/chart-frame/chart-enhance.ts"
   ],
   "exports": {
     "./package.json": "./package.json",
