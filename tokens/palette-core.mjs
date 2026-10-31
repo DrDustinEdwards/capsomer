@@ -702,16 +702,16 @@ ${pairs}
 
 /* Unlayered, as Enarratio's base rules are, so these win over them (a layered rule never would).
    Enarratio writes \`.enarratio-source a { color: inherit }\`, which leaves the source and "Download
-   CSV" muted and underlined; the family's links are semibold in the link color with no
+   CSV" (and 0.5's "Download SVG" and "Download PNG" buttons) muted and underlined; the family's links are semibold in the link color with no
    underline, even under the pointer, as "Show data" beside them already is. Its tick labels
    ask for tabular figures, and the interface face's tabular set gives the comma and the 1 a
    full figure's width ("1 , 600"); they take --figures, as the page's own numbers do. */
-.enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) a {
+.enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) :is(a, .enarratio-export) {
   color: var(--accent-text);
   font-weight: 600;
   text-decoration: none;
 }
-.enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) a:hover {
+.enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) :is(a, .enarratio-export):hover {
   color: var(--accent-hover);
 }
 .enarratio svg :is([data-enarratio-mark$="tick label"], .enarratio-numeric) {
