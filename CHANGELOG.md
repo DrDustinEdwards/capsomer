@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.57.0]
+
+Images and media (area 6) and the site headers (area 2). New components: picture and player. Removed export: `suggestedAlt`. Decorative images are written `![""](url)`.
+
 - **Images and media** (images and media, area 6; the verifier's gaps of 2026-10-31, sections 5, 7 and 9).
   - **A decorative pick is written `![""](url)`**, not `![](url)`, by the editor's default image Markdown and by the copy snippets (`copySnippets` takes `decorative`). Prelum 0.28 refuses `![](url)` as missing alt text.
   - **The picker no longer suggests alt text from the file name** (B2). The alt step said "Suggested: launch hero" for `launch-hero.jpg`, and so did the media inspector; a file's name says nothing of what the picture shows. The step now asks for alt text or Insert as decorative, and where the site's model can suggest (`offers.suggestions`) it links Suggest alt text (`?pick=<id>&suggest=1`) and shows the model's words with Use it, which fills the field for the person to read and edit. A host shows that suggestion by loading the kit with `inspect` set to the picked file when the address has `pick` and `suggest`; `data.suggestions` is then read when `data.inspected` is the picked file. The upload form no longer says alt text can wait. Removed export: `suggestedAlt` (from `capsomer/behavior/media`); a document's link text in the copy snippets is still made from its name.
