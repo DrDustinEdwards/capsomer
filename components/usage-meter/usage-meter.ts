@@ -154,6 +154,19 @@ export function widths(used: number, limit: number, projected: number | null): {
   return { used: u, projected: projected == null ? u : Math.max(u, pct(projected)) };
 }
 
+// The rows as a table, Enarratio's DataTable shape (the first column holds the row headers), for
+// its dataTableBlock(): the meter is the picture, and this is its numbers as text (B30).
+export function usageTable(items: Array<UsageInput & { name: string }>): { columns: string[]; rows: string[][] } {
+  const n = (v: number) => Math.round(v).toLocaleString("en-US");
+  return {
+    columns: ["Measure", "Used", "Limit", "Percent used", "Projected at the reset"],
+    rows: items.map((item) => {
+      const a = assess(item);
+      return [item.name, n(item.used), n(item.limit), `${a.percent}%`, a.projectedAtReset == null ? "no projection" : n(a.projectedAtReset)];
+    }),
+  };
+}
+
 // Draws one row's bar from its aria-valuenow and aria-valuemax and its data-projected (the
 // projected total at the reset, in the same unit; absent with no projection).
 export const sizeBar: (bar: HTMLElement) => void = drawBar;

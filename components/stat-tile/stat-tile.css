@@ -119,9 +119,11 @@
     overflow-wrap: anywhere;
   }
 
-  /* Enarratio's sparkline() goes here as it comes. Decorative: the tile's description
-     carries the same numbers as a sentence. */
+  /* Enarratio's sparkline({ inline: true }) goes here as it comes, drawn in the tile's tone
+     (its series 1 is the slot's color). Decorative: the tile's description carries the same
+     numbers as a sentence. */
   .cap-tile-chart {
+    --enarratio-series-1: currentColor;
     display: block;
     height: 22px;
     min-width: 6rem;
@@ -130,9 +132,9 @@
 
     & svg {
       display: block;
-      width: 100%;
+      width: auto;
+      max-width: 100%;
       height: 100%;
-      overflow: visible;
     }
   }
 

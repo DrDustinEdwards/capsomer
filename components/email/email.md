@@ -6,7 +6,7 @@ parts: [ts]
 tool: own JavaScript
 states: [magic link, verification, reset, alert, notice, security notice]
 added: 0.5.0
-updated: 0.53.0
+updated: 0.54.0
 source: design/email-templates.md (D7.2); the senders in Foxhound, Foxing, TXASM, Carrel and dustinedwards-info are unverified, this driver could not read them
 replaces: []
 ---
