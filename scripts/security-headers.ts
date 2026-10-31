@@ -54,14 +54,18 @@ const ASSETS_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 /**
  * The `_headers` file Workers static assets reads, from site-runtime's `headersFile`: the security set on every path,
- * and the cache rule on the hashed assets. The shared writer leaves the page policy out of `/*`, since most sites render
+ * charset=utf-8 on the static text files, cross-origin CORP on stylesheets, scripts and fonts (site-runtime corpFor: another
+ * origin may load them), and the cache rule on the hashed assets. The shared writer leaves the page policy out of `/*`, since most sites render
  * pages with their own; every page here is a static file under this one policy, so a second `/*` rule carries it
  * (Cloudflare joins the headers of every rule a path matches).
  */
 function headersFile(): string {
   const { [csp.name]: policy, ...set } = securityHeaders;
+  const subresources = Object.fromEntries(["css", "js", "mjs", "woff2"].map((ext) => [`/*.${ext}`, { "Cross-Origin-Resource-Policy": "cross-origin" }]));
   return sharedHeadersFile(set, {
+    charset: true,
     paths: {
+      ...subresources,
       "/*": { [csp.name]: policy as string },
       "/assets/*": { "Cache-Control": ASSETS_CACHE_CONTROL },
     },
