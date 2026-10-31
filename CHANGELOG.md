@@ -15,6 +15,10 @@ The error page says when the database is down (area 8), and the email-change mai
   - **New component: player** (`capsomer/player.css`, `capsomer/react/player`). `Video`, `Audio` and `Embed` for JSX pages, and the markup Prelum's `:::video`, `:::audio` and `::embed` are to write: `figure.cap-player[data-kind]`; a video with its poster, width, height and `preload="none"`; audio with `preload="none"` and its transcript link (`.cap-player-transcript`); an embed as `a.cap-player-facade` with the site's own poster (`img.cap-player-poster`), a play button (`.cap-player-play`) and the service and title (`.cap-player-label`), keeping `data-embed-src` and `data-embed-title`, and the player in its place on a click. Spotify and SoundCloud (`data-service`) are a strip, not 16:9. Prose blocks keep their `.media` and `.embed-link` rules for HTML already stored. New classes only.
 - **Site: headers from site-runtime's registry, and integrity on every script** (area 2). The Worker is `staticSite({ site: capsomer })` with the TDMRep header, and `npm run site` writes `site-dist/_headers` with `site-runtime-headers --site capsomer`, so `scripts/security-headers.ts` is gone. The registry adds COEP (Report-Only) with `report-to`, `Integrity-Policy-Report-Only`, and a Report-Only policy with Trusted Types and `default-src 'none'`. Every script and modulepreload the site build writes, `theme.js` included, carries a sha384 `integrity` and `crossorigin` (site-runtime's `subresourceIntegrity()` Vite plugin). Site only: the package is unchanged.
 
+## Unreleased
+
+- **Link style is five tokens (group `link`).** `--link-weight`, `--link-decoration`, `--link-hover-bg`, `--link-pressed-bg` and `--link-tint-pad`, read by `css/base.css` where it had literals. The defaults are the values it had, so no site changes. A site outside the network sets its own in its `SITES` entry (components/link/link.md, "A site's own links"). Added tokens only; no class or HTML contract changes.
+
 ## [0.56.0]
 
 The accessibility release (area 9 of the completeness plan, 2026-10-31).
