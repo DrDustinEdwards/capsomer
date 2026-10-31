@@ -1,6 +1,6 @@
 // Capsomer's site at https://capsomer.dustinedwards.info (rulings.md, rule 16): Workers static
-// assets serving the built site from site-dist, with a tiny Worker (worker/index.ts) that only
-// receives Content-Security-Policy violation reports. Cloudflare's Git integration builds and
+// assets serving the built site from site-dist, with a tiny Worker (worker/index.ts) that
+// receives Content-Security-Policy violation reports and sends the 404 page. Cloudflare's Git integration builds and
 // deploys it from this public repo on every push to main (see DEPLOY.md). No account id or
 // secret here: wrangler takes the account from the login or the build.
 {
@@ -13,12 +13,13 @@
   "assets": {
     "directory": "./site-dist",
     "binding": "ASSETS",
-    // The Worker runs only for the report endpoint; every file is served by the assets layer
+    // The Worker runs first only for the report endpoint; every file is served by the assets layer
     // directly, with the headers site-dist/_headers sets (written by scripts/security-headers.ts).
     "run_worker_first": ["/csp-report"],
-    // A missing file is a plain 404: the site routes with #, so there is no client route
-    // to fall back to.
-    "not_found_handling": "404-page"
+    // A missing file goes to the Worker, which sends the 404 page with its charset (no
+    // _headers rule matches a path with no file). The site routes with #, so there is no
+    // client route to fall back to.
+    "not_found_handling": "none"
   },
   // At most 60 violation reports a minute from one address reach the log (worker/index.ts); the rest still get 204.
   // namespace_id is this site's own: sites sharing one share counters.
