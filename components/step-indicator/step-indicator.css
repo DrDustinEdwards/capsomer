@@ -65,7 +65,7 @@
     font-family: var(--ui);
     font-size: var(--fs-body);
     font-weight: 500;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures);
   }
 
   @media (forced-colors: active) {

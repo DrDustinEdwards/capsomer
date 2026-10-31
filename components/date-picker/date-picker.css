@@ -37,7 +37,7 @@
     inline-size: 100%;
     border-collapse: separate;
     border-spacing: 2px;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures-column);
 
     & th {
       padding-block: var(--space-2);

@@ -637,7 +637,7 @@
   .cap-input[data-variant="code"] {
     max-inline-size: calc(10ch + 2 * var(--pad-x));
     font-family: var(--mono);
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: var(--figures-column);
     letter-spacing: 0.1em;
   }
 
