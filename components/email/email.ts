@@ -293,6 +293,45 @@ export const reset: Template<LinkData> = {
     }),
 };
 
+/**
+ * One of an email change's two mails: `step: "current"` asks the account's current address to approve a change to
+ * `newEmail`, then `step: "new"` asks the new address to confirm it (Better Auth's change-email flow, each link opening
+ * site-runtime's `./sign-in` emailConfirmURL page, which acts only on its button). The link works until it expires,
+ * not once, so this says only when it expires. The mail goes `to` the address it asks.
+ */
+export const emailChange: Template<{ step: "current" | "new"; newEmail?: string; url: string; expiresIn: string }> = {
+  name: "email-change",
+  subject: (d) =>
+    d.copy?.subject ??
+    (d.step === "current" ? `Approve the change to your ${d.brand.name} email address` : `Confirm your new ${d.brand.name} email address`),
+  blocks: (d) => {
+    const k = d.copy ?? {};
+    const current = d.step === "current";
+    if (current && !d.newEmail) throw new Error("emailChange: step current needs newEmail");
+    return [
+      { type: "heading", text: k.heading ?? (current ? "Approve the change to your email address" : "Confirm your new email address") },
+      {
+        type: "paragraph",
+        text:
+          k.intro ??
+          (current
+            ? `Someone signed in to your ${d.brand.name} account asked to change its email address to ${d.newEmail}. If it was you, approve it here, then confirm from the new address.`
+            : `Confirm this address to finish moving your ${d.brand.name} account to it. Sign-in links will come here.`),
+      },
+      { type: "button", label: k.button ?? (current ? "Approve the change" : "Confirm this address"), url: d.url },
+      { type: "fine", text: `The link expires in ${d.expiresIn}.` },
+      {
+        type: "fine",
+        text:
+          k.ignore ??
+          (current
+            ? "If this was not you, ignore this message and your address stays as it is. Then sign in and check your passkeys and signed-in devices."
+            : "If you did not ask for this, ignore this message. Nothing changes unless the link is used."),
+      },
+    ];
+  },
+};
+
 /** Something needs attention: a health check, a watchdog, a budget. The level is a word, never color alone. */
 export const alert: Template<{ level: AlertLevel; what: string; when: string; details?: string[]; url?: string }> = {
   name: "alert",
