@@ -4,9 +4,9 @@ title: Error page
 summary: The page a site's root ErrorBoundary shows for 404, 410 and 500, in plain words, under the site's own header.
 parts: [css, react]
 tool: native
-states: [404, 410, 500, development, phone width]
+states: [404, 410, 500, database down, development, phone width]
 added: 0.47.0
-updated: 0.48.0
+updated: 0.56.0
 source: dustinedwards.info, app/components/error-page.tsx; Foxhound, app/components/error-view.tsx
 replaces:
   - 'error\.status === 404 \? "404" : "Error"'
@@ -29,7 +29,8 @@ What a React Router site shows when a page is missing, gone or broke: the failed
 
 ## The default and its reason
 
-- **Plain words, one per case.** 404 "Page not found", 410 "This page is gone" (taken down on purpose, not coming back: nothing to retry), any other refusal "This page cannot be shown" with its status, and anything else, a thrown error included, "Something went wrong", which says it is not the reader's doing. `errorWords(error)` gives the status, title and sentence.
+- **Plain words, one per case.** 404 "Page not found", 410 "This page is gone" (taken down on purpose, not coming back: nothing to retry), any other refusal "This page cannot be shown" with its status, a 503 whose statusText names the database "The site's data is unavailable" (what site-runtime's `databaseDown(error)` throws when D1 is down or reset; any other 503 is "This page is unavailable for now"), and anything else, a thrown error included, "Something went wrong", which says it is not the reader's doing. `errorWords(error)` gives the status, title and sentence. The database wording needs the thrown 503 Response, not a thrown Error: React Router replaces a thrown Error with a generic one on the client in production, so the page would change its words on hydration.
+- **The marker the live check reads.** The region's class `cap-error-page` is how devkit's ops-audit (N6) tells the shared error page from a router's default 404, with the page's `<title>` from `errorTitle`. Keep the class on the region, `as="div"` included.
 - **The way out is a link.** Go to the home page always; Try again only for a server error, as a link to the same address (`href=""`), so it works before hydration and with no script, where Foxhound's `location.reload()` button did not.
 - **Never indexed.** `<meta name="robots" content="noindex">` is rendered with the page; React hoists it into the head.
 - **The stack only in development.** `dev` (pass `import.meta.env.DEV`) shows the thrown error's message and stack; off by default, so production never shows one.
