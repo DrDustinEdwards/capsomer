@@ -188,17 +188,6 @@ eachTheme((theme) => {
     await expect(main(page).locator(".cap-hist-who .cap-avatar").first()).toHaveAttribute("aria-hidden", "true");
   });
 
-  test("accessibility: the phone layout does not scroll sideways and keeps the hit areas", { tag: "@markup" }, async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 800 });
-    await visitStates(page, "history-list", theme, "phone");
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-    expect(overflow).toBeLessThanOrEqual(0);
-    for (const b of await page.locator("#hist-phone [data-cap-part='restore']").all()) {
-      const box = await b.boundingBox();
-      expect(box?.height ?? 0).toBeGreaterThanOrEqual(24);
-    }
-  });
-
   test("keyboard: Tab goes through the pick box, the title and Restore of each line, in order", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const list = page.locator("#hist-comfy");

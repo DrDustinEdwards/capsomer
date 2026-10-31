@@ -460,7 +460,10 @@
   }
 
   .cap-system-map-item-link {
+    display: inline-flex;
+    align-items: center;
     width: fit-content;
+    min-block-size: var(--target);
     color: var(--accent-text);
     font-size: var(--fs-detail);
   }

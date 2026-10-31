@@ -1,0 +1,80 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A tag group: a labeled list of tags a person can remove, each with its own remove button. The
+   tag wears the combobox chip's look (the sunken tint at the detail size) with an edge, so it
+   keeps its shape in forced colors; the remove button is a full target. */
+@layer cap.components {
+  .cap-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .cap-tags-label {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+  }
+  .cap-tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-tags-empty {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+  .cap-tags-list:has(> .cap-tag) + .cap-tags-empty {
+    display: none;
+  }
+  .cap-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: var(--target);
+    padding-inline-start: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    background: var(--sunken);
+    color: var(--text);
+    font-size: var(--fs-detail);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .cap-tag-remove {
+    display: grid;
+    place-items: center;
+    min-inline-size: var(--target);
+    min-block-size: var(--target);
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-s);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+
+    &:hover,
+    &[data-force="hover"] {
+      background: var(--line);
+      color: var(--text);
+    }
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: calc(var(--focus-width) * -1);
+    }
+    & svg {
+      display: block;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-tag {
+      border-color: CanvasText;
+    }
+  }
+}

@@ -73,7 +73,7 @@ Item (rows with media, content, actions) through the row list it is built on, an
 | Enter on Compare 2 versions | Opens the compare view, older first |
 | Enter on Load older versions | Follows the link, or asks the app to add the next page |
 
-`j`, `k` and `z` are single keys: they stay quiet in a text field and when `data-cap-single-keys="off"` is on the page.
+`j`, `k` and `z` are single keys: they stay quiet in a text field and when single-key shortcuts are off (the shortcuts switch sets `data-cap-single-keys="off"` on `<html>`; `z` is the message region's and follows it too).
 
 ## Accessibility
 

@@ -174,7 +174,7 @@
   <form class="cap-field-options" id="add-site" data-cap="field" action="#added" aria-labelledby="s-live">
     <div class="cap-field">
       <label class="cap-field-label" for="site-name">Site name <span class="cap-field-required" aria-hidden="true">Required</span></label>
-      <input class="cap-input" id="site-name" name="name" required autocomplete="off" aria-describedby="site-name-e" data-error-value-missing="Give the site a name, such as Foxhound." />
+      <input class="cap-input" id="site-name" name="name" required autocomplete="off" aria-describedby="site-name-e" data-error-value-missing="Give the site a name, such as Field notes." />
       <p class="cap-field-error" id="site-name-e" hidden></p>
     </div>
     <div class="cap-field">
@@ -221,6 +221,143 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-password">
+  <h2 id="s-password">Password with Show and Hide</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="pw-current">Password</label>
+    <div class="cap-input-group">
+      <input class="cap-input" id="pw-current" name="password" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="spring-field-day" />
+      <div class="cap-input-addon" data-align="inline-end">
+        <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="reveal" aria-controls="pw-current" aria-label="Show password" hidden>Show</button>
+      </div>
+    </div>
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="pw-new">New password</label>
+    <p class="cap-field-help" id="pw-new-h">At least 12 characters. Four words you will remember are enough.</p>
+    <div class="cap-input-group">
+      <input class="cap-input" id="pw-new" name="new-password" type="password" autocomplete="new-password" minlength="12" spellcheck="false" autocapitalize="none" aria-describedby="pw-new-h" />
+      <div class="cap-input-addon" data-align="inline-end">
+        <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="reveal" aria-controls="pw-new" aria-label="Show password" hidden>Show</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-otp">
+  <h2 id="s-otp">One-time code</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="otp">Sign-in code</label>
+    <p class="cap-field-help" id="otp-h">The 6 digits in the email we sent you. You can paste it.</p>
+    <input class="cap-input" data-variant="code" id="otp" name="code" autocomplete="one-time-code" inputmode="numeric" spellcheck="false" aria-describedby="otp-h" />
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-count">
+  <h2 id="s-count">Character count, under and over the limit</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="cc-summary">Summary</label>
+    <p class="cap-field-help" id="cc-summary-h">Shown under the post's title in feeds.</p>
+    <textarea class="cap-input" id="cc-summary" name="summary" data-maxlength="120" aria-describedby="cc-summary-c cc-summary-h">Notes from the September field day at the garden plot.</textarea>
+    <p class="cap-field-count" id="cc-summary-c">You can enter up to 120 characters</p>
+    <p class="cap-field-error" hidden></p>
+  </div>
+  <div class="cap-field">
+    <label class="cap-field-label" for="cc-bio">Short bio</label>
+    <textarea class="cap-input" id="cc-bio" name="bio" data-maxwords="12" aria-describedby="cc-bio-c">Volunteer who keeps field notes for the spring survey in two parks, and writes about the work.</textarea>
+    <p class="cap-field-count" id="cc-bio-c">You can enter up to 12 words</p>
+    <p class="cap-field-error" hidden></p>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-number">
+  <h2 id="s-number">Number with steppers</h2>
+  <div class="cap-field">
+    <label class="cap-field-label" for="num-retries">Retries</label>
+    <p class="cap-field-help" id="num-retries-h">From 0 to 10.</p>
+    <div class="cap-input-group">
+      <div class="cap-input-addon" data-align="inline-start">
+        <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="step-down" tabindex="-1" aria-label="Decrease retries" hidden>&minus;</button>
+      </div>
+      <input class="cap-input" id="num-retries" name="retries" type="number" min="0" max="10" step="1" value="3" aria-describedby="num-retries-h" />
+      <div class="cap-input-addon" data-align="inline-end">
+        <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="step-up" tabindex="-1" aria-label="Increase retries" hidden>+</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-search">
+  <h2 id="s-search">Search field</h2>
+  <form class="cap-search" role="search" aria-label="Posts" action="#results">
+    <div class="cap-field">
+      <label class="cap-field-label" for="q-posts">Search posts</label>
+      <div class="cap-input-group">
+        <div class="cap-input-addon" data-align="inline-start">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+        </div>
+        <input class="cap-input" id="q-posts" name="q" type="search" enterkeyhint="search" value="field day" />
+        <div class="cap-input-addon" data-align="inline-end">
+          <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="clear" aria-label="Clear search" hidden>
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-date">
+  <h2 id="s-date">Date input, and one part in error</h2>
+  <fieldset class="cap-field" aria-describedby="dob-h">
+    <legend class="cap-field-label">Date of birth</legend>
+    <p class="cap-field-help" id="dob-h">For example, 27 3 1990.</p>
+    <div class="cap-date-input">
+      <div class="cap-date-input-part"><label for="dob-day">Day</label><input class="cap-input" id="dob-day" name="dob-day" data-cap-part="day" inputmode="numeric" pattern="[0-9]{1,2}" autocomplete="bday-day" /></div>
+      <div class="cap-date-input-part"><label for="dob-month">Month</label><input class="cap-input" id="dob-month" name="dob-month" data-cap-part="month" inputmode="numeric" pattern="[0-9]{1,2}" autocomplete="bday-month" /></div>
+      <div class="cap-date-input-part"><label for="dob-year">Year</label><input class="cap-input" id="dob-year" name="dob-year" data-cap-part="year" inputmode="numeric" pattern="[0-9]{4}" autocomplete="bday-year" /></div>
+    </div>
+  </fieldset>
+  <fieldset class="cap-field" data-invalid="true" aria-describedby="since-h">
+    <legend class="cap-field-label">Member since</legend>
+    <p class="cap-field-help" id="since-h">For example, 9 2024.</p>
+    <div class="cap-date-input">
+      <div class="cap-date-input-part"><label for="since-month">Month</label><input class="cap-input" id="since-month" data-cap-part="month" inputmode="numeric" value="13" aria-invalid="true" aria-describedby="since-e" autocomplete="off" /></div>
+      <div class="cap-date-input-part"><label for="since-year">Year</label><input class="cap-input" id="since-year" data-cap-part="year" inputmode="numeric" value="2024" aria-describedby="since-e" autocomplete="off" /></div>
+    </div>
+    <p class="cap-field-error" id="since-e">Member since must have a month from 1 to 12.</p>
+  </fieldset>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-join">
+  <h2 id="s-join">A live sign-up form: one error, and a date that does not exist</h2>
+  <form class="cap-field-options" id="join" data-cap="field" action="#joined" aria-labelledby="s-join">
+    <div class="cap-field">
+      <label class="cap-field-label" for="join-email">Email</label>
+      <input class="cap-input" id="join-email" name="email" type="email" autocomplete="email" spellcheck="false" value="maya.chen@example.edu" required aria-describedby="join-email-e" />
+      <p class="cap-field-error" id="join-email-e" hidden></p>
+    </div>
+    <fieldset class="cap-field" aria-describedby="join-start-h">
+      <legend class="cap-field-label">Start date <span class="cap-field-required" aria-hidden="true">Required</span></legend>
+      <p class="cap-field-help" id="join-start-h">For example, 14 11 2026.</p>
+      <div class="cap-date-input" data-error-date="Start date must be a real date.">
+        <div class="cap-date-input-part"><label for="join-day">Day</label><input class="cap-input" id="join-day" name="start-day" data-cap-part="day" inputmode="numeric" pattern="[0-9]{1,2}" required autocomplete="off" data-error-value-missing="Start date must include a day." data-error-pattern-mismatch="Day must be a number." /></div>
+        <div class="cap-date-input-part"><label for="join-month">Month</label><input class="cap-input" id="join-month" name="start-month" data-cap-part="month" inputmode="numeric" pattern="[0-9]{1,2}" required autocomplete="off" data-error-value-missing="Start date must include a month." data-error-pattern-mismatch="Month must be a number." /></div>
+        <div class="cap-date-input-part"><label for="join-year">Year</label><input class="cap-input" id="join-year" name="start-year" data-cap-part="year" inputmode="numeric" pattern="[0-9]{4}" required autocomplete="off" data-error-value-missing="Start date must include a year." data-error-pattern-mismatch="Year must be four digits, such as 2026." /></div>
+      </div>
+      <p class="cap-field-error" hidden></p>
+    </fieldset>
+    <div><button type="submit" class="cap-btn" data-variant="primary">Join the team</button></div>
+    <p class="cap-muted" id="join-result"></p>
+  </form>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-region">
+  <h2 id="s-region">The page's status region</h2>
+  <p class="cap-muted">Show and Hide, and a character count once typing stops, are said here.</p>
+  <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+</section>
+
 <script type="module">
   import { enhance } from "./field.ts";
   enhance();
@@ -229,6 +366,10 @@
   // Mixed has no attribute: it is set on the element.
   for (const box of document.querySelectorAll("[data-indeterminate]")) box.indeterminate = true;
   // The app's part: runs only for a valid form.
+  document.querySelector("#join")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    document.querySelector("#join-result").textContent = "Joined. A sign-in code is on its way.";
+  });
   const form = document.querySelector("#add-site");
   form?.addEventListener("submit", (e) => {
     e.preventDefault();

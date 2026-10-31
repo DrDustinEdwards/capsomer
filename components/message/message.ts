@@ -9,6 +9,7 @@
 // written), an Undo that failed, or a failure (a refresh, a copy) stays until you dismiss
 // it, whatever happens after it: the missing audit row is the one fact that cannot be
 // found later by looking.
+import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 
 export type ReturnFocus = HTMLElement | (() => HTMLElement | null);
 
@@ -110,7 +111,7 @@ export function isTypingTarget(target: EventTarget | null): boolean {
 
 // `z` alone: no Ctrl, Alt, Meta or Shift, not a held repeat, not typed into a field.
 export function isUndoKey(e: KeyboardEvent): boolean {
-  return e.key === "z" && !e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && !e.repeat && !e.defaultPrevented && !isTypingTarget(e.composedPath()[0] ?? e.target);
+  return e.key === "z" && !singleKeysOff() && !e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && !e.repeat && !e.defaultPrevented && !isTypingTarget(e.composedPath()[0] ?? e.target);
 }
 
 // The message `z` would undo: the newest one with an Undo that is not already running.
@@ -422,8 +423,8 @@ export function runUndo(): Promise<boolean> {
 
 // Attaches to every [data-cap="message"] under root not yet attached: the region is empty
 // and takes the messages said into it, each with its own Undo and Dismiss, and `z` on the
-// document. A region with data-cap-undo-key="off" leaves `z` alone (single-key shortcuts
-// can be switched off). Returns a function that detaches.
+// document. `z` is off while single-key shortcuts are (the shortcuts switch), or for one region
+// with data-cap-undo-key="off". Returns a function that detaches.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='message']:not([data-cap-ready])")) {

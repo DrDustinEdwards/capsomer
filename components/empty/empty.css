@@ -100,16 +100,7 @@
     max-inline-size: var(--measure);
     color: var(--muted);
     line-height: 1.5;
-
-    & a {
-      color: var(--accent-text);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-
-      &:hover {
-        color: var(--accent-hover);
-      }
-    }
+    /* Its links are text links, drawn by css/base.css. */
   }
 
   /* The actions, when there is more than one. */

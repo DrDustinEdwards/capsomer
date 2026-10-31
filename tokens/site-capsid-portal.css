@@ -6,8 +6,8 @@
   @media (max-width: 820px) {
     [data-cap-site="capsid-portal"][data-cap-site],
     [data-cap-site="capsid-portal"][data-cap-site] :is([data-family], [data-density]) {
-      --fs-label: 13px;
-      --fs-detail: 13px;
+      --fs-label: 0.8125rem;
+      --fs-detail: 0.8125rem;
     }
   }
 }

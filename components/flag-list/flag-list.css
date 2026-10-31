@@ -140,6 +140,8 @@
       overflow: visible;
       text-overflow: clip;
       white-space: normal;
+      -webkit-line-clamp: none;
+      line-clamp: none;
     }
     & .cap-row-title > .cap-flag-title {
       display: block;
@@ -168,9 +170,6 @@
     &::after {
       content: " \203A" / "";
     }
-  }
-  .cap-flag .cap-row-title a:hover .cap-flag-goto {
-    text-decoration: underline;
   }
   .cap-flag-title .cap-status {
     margin-inline-start: var(--space-3);

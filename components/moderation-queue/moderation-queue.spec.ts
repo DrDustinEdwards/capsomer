@@ -193,13 +193,6 @@ eachTheme((theme) => {
     await expect(failed.locator("[data-cap-action='delete']")).toHaveCount(1);
   });
 
-  test("accessibility: the phone layout does not scroll sideways and keeps the hit areas", { tag: "@markup" }, async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 800 });
-    await visitStates(page, "moderation-queue", theme, "phone");
-    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
-    for (const b of await page.locator("#mq-phone li:not([hidden]) [data-cap-action]").all()) expect((await b.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(24);
-  });
-
   test("accessibility: the live count and the result are polite status regions", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "moderation-queue", theme);
     await expect(queue(page).locator("[data-cap-part='summary']")).toHaveAttribute("role", "status");

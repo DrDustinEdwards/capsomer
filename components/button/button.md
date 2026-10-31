@@ -9,8 +9,8 @@ added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.btn, .iconbtn, .linkbtn)
 replaces:
-  - 'class="[^"]*\b(btn|iconbtn|linkbtn)\b'
-  - 'className="[^"]*\b(btn|iconbtn|linkbtn)\b'
+  - 'class="(?:[^"]*\s)?(btn|iconbtn|linkbtn)[\s"]'
+  - 'className="(?:[^"]*\s)?(btn|iconbtn|linkbtn)[\s"]'
 ---
 
 # Button

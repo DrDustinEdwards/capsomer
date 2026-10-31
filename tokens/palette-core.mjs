@@ -294,6 +294,25 @@ export function fitNeutrals(t, scheme, level = "standard") {
   return out;
 }
 
+// A visited link (--accent-visited): the link's hue turned 90 degrees toward violet (300), the web's
+// visited color, the shorter way, but kept 30 degrees clear of the error red so a visited link never
+// reads as a failure (purple stops at 355, olive at 57). Chroma 0.14, about accent text's own, from
+// step 11's lightness moved away from the grounds to the link floor: Lc 75 at both contrast levels,
+// since under "increase contrast" a dark theme's Lc 90 leaves no color between a link and the text.
+// apart() holds it clear of accent text and body text.
+const VISITED = { toward: 300, turn: 90, clear: 30, C: 0.14 };
+const hueGap = (a, b) => Math.abs(((a - b + 540) % 360) - 180);
+function visited(t, H, dark) {
+  const way = ((VISITED.toward - H + 540) % 360) - 180 >= 0 ? 1 : -1;
+  let hue = H;
+  for (let turn = VISITED.turn; turn > 0; turn--) {
+    hue = (H + way * turn + 360) % 360;
+    if (hueGap(hue, STATUS.crit) >= VISITED.clear) break;
+  }
+  const ok = readsOn([t.surface, t.ground, t.raised], 4.5, LEVELS.standard.link);
+  return strengthen(oklch(dark ? ROLES.dark[10][0] : ROLES.light[10][0], VISITED.C, hue), ok, dark ? 1 : 0);
+}
+
 // One family's tokens in one theme, at the standard contrast or under prefers-contrast: more.
 export function familyTheme(seed, anchor, scheme, label = "light", level = "standard") {
   const { H } = seedLch(seed);
@@ -330,6 +349,7 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   t.accent = s[8];
   t["accent-hover"] = s[11]; // accent text on hover: step 12
   t["accent-text"] = darkLabel && dark && readsOn([t.surface, t.ground, t.raised], 4.5, L.read)(s[8]) && level === "standard" ? s[8] : s[10];
+  t["accent-visited"] = visited(t, H, dark);
   t["accent-soft"] = s[3];
   t["accent-line"] = strengthen(tune(0.1, H, readsOn([t.sel], CONTROL), dark ? 0.2 : 0.9, dark ? 0.9 : 0.3), readsOn([t.sel], CONTROL, L.border), to);
   t["primary-fg"] = dark || darkLabel ? oklch(0.16, NEUTRAL_CHROMA, H) : t.surface; // the dark ground, in either theme
@@ -388,7 +408,7 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
 
 export const FAMILY_ORDER = [
   "ground", "surface", "raised", "sunken", "line", "line-strong", "text", "muted", "dim",
-  "accent", "accent-hover", "accent-text", "accent-soft", "accent-line", "sel",
+  "accent", "accent-hover", "accent-text", "accent-visited", "accent-soft", "accent-line", "sel",
   "primary", "primary-hover", "primary-fg", "primary-line", "on", "on-hover", "ring",
   "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft", "nodata", "nodata-soft",
   "sign", "on-sign", "sign-edge",
@@ -416,6 +436,7 @@ export function pairs(t, level = "standard") {
     need("text", bg, 4.5, "text", L.body);
     for (const fg of ["muted", "dim", "accent-hover"]) need(fg, bg, 4.5, "text", L.read);
     need("accent-text", bg, 4.5, "accent text", link);
+    need("accent-visited", bg, 4.5, "visited link", LEVELS.standard.link);
     for (const s of Object.keys(STATUS)) need(s, bg, 4.5, "status word", L.read);
     if (L.line) need("line", bg, 1, "divider", L.line);
   }
@@ -444,6 +465,12 @@ export function pairs(t, level = "standard") {
     need(s, "sel", 4.5, "status word on a selected row", L.read);
   }
   need("accent-text", "accent-soft", 4.5, "active item", L.read);
+  // A text link under the pointer and pressed (css/base.css) and a tag pill (components/link), at
+  // the reading floor: a passing state, or a visited color, held to the standard floors at either level.
+  need("accent-hover", "accent-soft", 4.5, "link under the pointer", L.read);
+  need("accent-hover", "accent-5", 4.5, "pressed link", L.read);
+  need("accent-hover", "accent-6", 4.5, "pressed tag", L.read);
+  need("accent-visited", "accent-soft", 4.5, "visited tag", LEVELS.standard.read);
   need("accent-text", "sel", 4.5, "deep accent text", L.read);
   need("primary-fg", "primary", 4.5, "primary button label", L.read);
   need("primary-fg", "primary-hover", 4.5, "primary button label (hover)", L.read);
@@ -453,10 +480,27 @@ export function pairs(t, level = "standard") {
   return out;
 }
 
+// Colors that must look apart, not only read: a visited link against an unvisited one and against
+// body text, as OKLab distance times 100 (about 2 is the smallest difference a person sees side by
+// side; 7 is plain across a page).
+export function apart(t) {
+  const lab = (hex) => rgbToOklab(hexToRgb(hex));
+  const dist = (a, b) => 100 * Math.hypot(...lab(t[a]).map((v, i) => v - lab(t[b])[i]));
+  return [
+    ["accent-visited", "accent-text", 7, "visited link apart from a link"],
+    ["accent-visited", "text", 10, "visited link apart from body text"],
+  ].map(([a, b, min, what]) => ({ a, b, min, what, d: dist(a, b), pass: dist(a, b) >= min }));
+}
+
 export function failures(t, level = "standard") {
-  return pairs(t, level)
-    .filter((p) => !p.pass)
-    .map((p) => `${p.what}: --${p.fg} ${t[p.fg]} on --${p.bg} ${t[p.bg]} is ${p.ratio.toFixed(2)}:1 and Lc ${Math.abs(p.lc).toFixed(1)}, needs ${p.min}:1${p.lcMin ? ` and Lc ${p.lcMin}` : ""}`);
+  return [
+    ...pairs(t, level)
+      .filter((p) => !p.pass)
+      .map((p) => `${p.what}: --${p.fg} ${t[p.fg]} on --${p.bg} ${t[p.bg]} is ${p.ratio.toFixed(2)}:1 and Lc ${Math.abs(p.lc).toFixed(1)}, needs ${p.min}:1${p.lcMin ? ` and Lc ${p.lcMin}` : ""}`),
+    ...apart(t)
+      .filter((x) => !x.pass)
+      .map((x) => `${x.what}: --${x.a} ${t[x.a]} and --${x.b} ${t[x.b]} are ${x.d.toFixed(1)} apart (OKLab x 100), need ${x.min}`),
+  ];
 }
 
 // ---- the files ---------------------------------------------------------------------------
@@ -679,8 +723,8 @@ export function renderEnarratioCss() {
    - a chart's \`colors\` override naming a Capsomer color token (series-1 to series-8, ok, warn,
      crit, info, nodata, accent): the rule Enarratio's colorStyles() would write, with the label's
      ink. Any other override still needs colorStyles(html) in the page's stylesheet.
-   - the figure's links (the source and "Download CSV") in the family's link style, semibold in
-     the link color with no underline, and tick labels in proportional figures (below).
+   - the figure's links (the source and "Download CSV") in the link system, every state of every
+     link, and tick labels in proportional figures (below).
    A site never writes [data-enarratio-colors] rules or sets --enarratio-series-N itself. */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 @import "enarratio/base.css";
@@ -701,21 +745,33 @@ ${pairs}
 }
 
 /* Unlayered, as Enarratio's base rules are, so these win over them (a layered rule never would).
-   Enarratio writes \`.enarratio-source a { color: inherit }\`, which leaves the source and "Download
-   CSV" (and 0.5's "Download SVG" and "Download PNG" buttons) muted and underlined; the family's links are semibold in the link color with no
-   underline, even under the pointer, as "Show data" beside them already is. Its tick labels
-   ask for tabular figures, and the interface face's tabular set gives the comma and the 1 a
-   full figure's width ("1 , 600"); they take --figures, as the page's own numbers do. */
+   A figure's links (the source and "Download CSV", and 0.5's "Download SVG" and "Download PNG"
+   buttons beside them) are links in the link system (css/base.css, components/link/link.md):
+   semibold in the link color with no underline, the hover and pressed tints, the visited color
+   and the focus ring. Enarratio's own rules (\`.enarratio-source a { color: inherit }\`, its
+   underline, a button's focus outline) would beat that layered system, so revert-layer sets
+   aside every unlayered value of these properties, Enarratio's included, and the link system's
+   win. Enarratio's tick labels ask for tabular figures, and the interface face's tabular set gives the
+   comma and the 1 a full figure's width ("1 , 600"); they take --figures, as the page's own
+   numbers do. */
 .enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) :is(a, .enarratio-export) {
-  color: var(--accent-text);
-  font-weight: 600;
-  text-decoration: none;
-}
-.enarratio :is(.enarratio-source, .enarratio-note, .enarratio-caption) :is(a, .enarratio-export):hover {
-  color: var(--accent-hover);
+  color: revert-layer;
+  font-weight: revert-layer;
+  text-decoration: revert-layer;
+  outline: revert-layer;
+  outline-offset: revert-layer;
+  &:is(:hover, :active) {
+    background: revert-layer;
+    box-shadow: revert-layer;
+  }
 }
 .enarratio svg :is([data-enarratio-mark$="tick label"], .enarratio-numeric) {
   font-variant-numeric: var(--figures);
+}
+/* The export buttons beside the CSV link (Download SVG, Download PNG, Copy embed) are full
+   targets, 44px on a touch screen, over Enarratio's 24px minimum. */
+.enarratio .enarratio-source .enarratio-export {
+  min-height: var(--target);
 }
 `;
 }

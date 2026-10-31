@@ -182,7 +182,6 @@
 
     &:hover {
       background: var(--raised);
-      text-decoration: underline;
     }
     &[aria-current="true"] {
       border-color: var(--accent);

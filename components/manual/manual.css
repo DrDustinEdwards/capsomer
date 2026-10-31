@@ -253,7 +253,6 @@
     &:hover .cap-leader-index-name,
     &:focus-visible .cap-leader-index-name {
       color: var(--accent-text);
-      text-decoration: underline;
     }
 
     &[aria-current] .cap-leader-index-name {
@@ -369,7 +368,6 @@
       &:hover,
       &:focus-visible {
         color: var(--accent-text);
-        text-decoration: underline;
       }
     }
   }
@@ -724,12 +722,6 @@
       text-decoration: none;
       overflow-wrap: anywhere;
 
-      &:hover,
-      &:focus-visible {
-        text-decoration: underline;
-        text-underline-offset: 0.2em;
-      }
-
       &:focus-visible {
         outline: 2px solid var(--ring);
         outline-offset: 2px;
@@ -932,6 +924,9 @@
     font-weight: 700;
 
     &:is(a) {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--target);
       color: var(--text);
 
       &:hover,
