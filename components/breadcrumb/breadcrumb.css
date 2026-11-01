@@ -170,6 +170,37 @@
     }
   }
 
+  /* On a phone the trail is one line. The current page leaves the line, since the page's heading
+     names it and it is usually the longest step; it stays in the list for a screen reader. What
+     is still too long scrolls sideways inside the trail, cut at the edge so more is plainly
+     there, instead of wrapping (Baymard, mobile breadcrumbs; GOV.UK breadcrumbs). position:
+     relative keeps the hidden step inside the scroller, so it cannot widen the page. */
+  @media (max-width: 40rem) {
+    .cap-breadcrumb-list {
+      position: relative;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    .cap-breadcrumb-item {
+      flex: none;
+      max-inline-size: none;
+    }
+    .cap-breadcrumb-link {
+      max-inline-size: none;
+      white-space: nowrap;
+    }
+    .cap-breadcrumb-item:has(> [aria-current="page"]) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .cap-breadcrumb-link,
     .cap-breadcrumb-ellipsis,
