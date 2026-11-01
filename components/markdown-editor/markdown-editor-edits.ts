@@ -38,6 +38,13 @@ export interface UploadResult {
   url: string;
 }
 
+// What the person said about an image before it was sent: alt text, or decorative (alt is then
+// ""). The server stores it with the file, so an upload always arrives described.
+export interface ImageDescription {
+  alt: string;
+  decorative: boolean;
+}
+
 export interface MarkdownEditorOptions {
   // The name of the editable surface; defaults to the label's text plus ", markdown".
   label?: string;
@@ -51,11 +58,12 @@ export interface MarkdownEditorOptions {
   scaffolds?: Scaffold[];
   // Pages to offer, or a function that searches them (it may be async; the newest answer wins).
   linkTargets?: LinkTarget[] | ((query: string) => LinkTarget[] | Promise<LinkTarget[]>);
-  // Uploads a pasted, dropped or chosen image and says where it went. Without it, the image
-  // button, the drop hint and the alt prompt are absent.
-  onUpload?: (file: File) => Promise<UploadResult>;
-  // The markdown that goes into the text once the image has its alt text.
-  imageMarkdown?: (image: { url: string; alt: string; name: string }) => string;
+  // Uploads a pasted, dropped or chosen image once the person has described it, and says where it
+  // went. The signal aborts when they cancel while it is on its way. Without it, the image
+  // button, the drop hint and the describe step are absent.
+  onUpload?: (file: File, image: ImageDescription, signal: AbortSignal) => Promise<UploadResult>;
+  // The markdown that goes into the text once the image is uploaded.
+  imageMarkdown?: (image: { url: string; alt: string; decorative: boolean; name: string }) => string;
   // The file chooser's accept list.
   accept?: string;
   onChange?: (value: string) => void;

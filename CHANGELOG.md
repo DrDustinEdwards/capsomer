@@ -6,6 +6,13 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **Displayed math is not clipped under text spacing** (WCAG 1.4.12, area 9). Prose blocks give `.katex-display` half an em above and below instead of a quarter: with the spacing 1.4.12 asks a page to allow, KaTeX's struts no longer hold the glyphs and the formula's bottom edge was cut off (devkit-a11y's live run on Prelum's specimen, 77 of 80 px shown). No class, token or HTML contract changes.
 
+## [0.61.0]
+
+The markdown editor asks for alt text before it uploads an image, and the media library stores nothing undescribed (area 11).
+
+- **Markdown editor: an image is described before it is uploaded** (AI and MCP, area 11; changed contract). The describe step now comes first: a pasted, dropped or chosen image shows a local preview with the alt field, Insert image (once there is alt text) and Insert as decorative, and only then is the file sent. `onUpload(file)` is now `onUpload(file, image, signal)`, where `image` is `{ alt, decorative }` (new type `ImageDescription`; `alt` is `""` when decorative) and `signal` aborts if the person cancels during the upload; `imageMarkdown` also gets `decorative`. An app sends `alt` and `decorative` with the file, so a server that refuses an undescribed upload (site-api 0.19 and later) accepts it, and a cancelled image is never uploaded. A failed upload is an alert inside the step, which keeps the alt text for a retry, instead of closing it. The toolbar hint reads "Asks for alt text, then uploads the file". No class or token changes; `.cap-md-upload-error` now sits inside `.cap-md-upload-fields`.
+- **Media library: nothing is uploaded undescribed** (area 11; changed HTML contract). The upload and import forms' Alt text is `required`, and each gains a second submit, Upload as decorative and Import as decorative (`name="decorative" value="on" formnovalidate`, the picker's pattern), in a new `.cap-media-lib-upload-actions` row; with script, choosing decorative clears any typed alt, since site-api 0.19+ refuses a file that is both and one that is neither. The help no longer says a picture can be stored without alt text. A crop saved as a new file sends the alt text or decorative choice of the file it was cut from, which 0.19+ servers otherwise refused. New class only.
+
 ## [0.60.0]
 
 Each site's footer links its own accessibility statement, and the showcase serves one (links and accessibility, area 9).

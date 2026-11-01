@@ -79,6 +79,14 @@ export interface MediaLibraryProps {
 // Undo, and the confirmation for what cannot be undone. In picker mode, the same grid offers images
 // and asks for the alt text this use needs. Every action is a form post, so it works with no
 // script; `submit` adds the in-place path.
+// Upload or Import as decorative sends no alt text: the site refuses a file that is both, and a person who
+// typed some and then chose decorative has answered. With no script the site's own refusal says so.
+function dropAltIfDecorative(e: FormEvent<HTMLFormElement>) {
+  const submitter = (e.nativeEvent as SubmitEvent).submitter;
+  const alt = e.currentTarget.elements.namedItem("alt");
+  if (submitter instanceof HTMLButtonElement && submitter.name === "decorative" && alt instanceof HTMLInputElement) alt.value = "";
+}
+
 export function MediaLibrary({ data, action, Form = PlainForm, submit, result = null, labels, mode = "library", inspector = "form", onPick, search, shortcuts = true, bytesHref, changes }: MediaLibraryProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const formId = `${uid}-bulk`;
@@ -363,6 +371,11 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
                 if (item.version) form.set("versions", item.version);
               }
               form.set("file", file);
+              // A new file is described as the one it was cut from (site-api 0.19+ refuses an undescribed upload).
+              if (how === "new") {
+                if (item.altState === "decorative") form.set("decorative", "on");
+                else form.set("alt", item.alt);
+              }
               const r = await intents.run(form);
               if (!r?.ok) throw new Error(r?.message ?? "The crop was not saved.");
               const made = how === "new" ? r.outcomes?.find((o) => o.ok)?.id : undefined;
@@ -558,28 +571,33 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
       ) : null}
 
       {canUpload && rules ? (
-        <Form method="post" action={action} encType="multipart/form-data" className="cap-media-lib-upload" aria-label={`Upload a ${nounsOf(labels).noun}`}>
+        <Form method="post" action={action} encType="multipart/form-data" className="cap-media-lib-upload" aria-label={`Upload a ${nounsOf(labels).noun}`} onSubmit={dropAltIfDecorative}>
           <input type="hidden" name="intent" value="upload" />
           <DropZone name="file" accept={rules.accept} maxBytes={offers.upload?.maxBytes} hint={rules.hint} />
           <div className="cap-field">
             <label className="cap-field-label" htmlFor={`${uid}-upalt`}>
               Alt text
             </label>
-            <input className="cap-input" id={`${uid}-upalt`} name="alt" type="text" autoComplete="off" aria-describedby={`${uid}-upalt-help`} />
+            <input className="cap-input" id={`${uid}-upalt`} name="alt" type="text" autoComplete="off" required aria-describedby={`${uid}-upalt-help`} />
             <p className="cap-field-help" id={`${uid}-upalt-help`}>
-              What the picture shows, for a person who cannot see it. A picture without it is flagged No alt text, and every use of it asks for alt text or a decorative choice.
+              What the picture shows, for a person who cannot see it, or Upload as decorative if it adds nothing a reader would miss. The site stores nothing undescribed.
             </p>
           </div>
           {keepSize("up")}
-          <button type="submit" className="cap-btn" data-variant="primary">
-            Upload
-          </button>
+          <div className="cap-media-lib-upload-actions">
+            <button type="submit" className="cap-btn" data-variant="primary">
+              Upload
+            </button>
+            <button type="submit" className="cap-btn" name="decorative" value="on" formNoValidate>
+              Upload as decorative
+            </button>
+          </div>
         </Form>
       ) : null}
 
       {canImport ? (
         <Disclosure summary="Import from a web address">
-        <Form method="post" action={action} className="cap-media-lib-upload" aria-label={`Import a ${nounsOf(labels).noun} from the web`}>
+        <Form method="post" action={action} className="cap-media-lib-upload" aria-label={`Import a ${nounsOf(labels).noun} from the web`} onSubmit={dropAltIfDecorative}>
           <input type="hidden" name="intent" value="import" />
           <div className="cap-field">
             <label className="cap-field-label" htmlFor={`${uid}-import`}>
@@ -594,12 +612,17 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
             <label className="cap-field-label" htmlFor={`${uid}-imalt`}>
               Alt text
             </label>
-            <input className="cap-input" id={`${uid}-imalt`} name="alt" type="text" autoComplete="off" aria-describedby={`${uid}-upalt-help`} />
+            <input className="cap-input" id={`${uid}-imalt`} name="alt" type="text" autoComplete="off" required aria-describedby={`${uid}-upalt-help`} />
           </div>
           {keepSize("im")}
-          <button type="submit" className="cap-btn">
-            Import
-          </button>
+          <div className="cap-media-lib-upload-actions">
+            <button type="submit" className="cap-btn">
+              Import
+            </button>
+            <button type="submit" className="cap-btn" name="decorative" value="on" formNoValidate>
+              Import as decorative
+            </button>
+          </div>
         </Form>
         </Disclosure>
       ) : null}

@@ -139,7 +139,7 @@ eachTheme((theme) => {
         - list "Files"
     `);
     await expect(limited.getByRole("checkbox")).toHaveCount(0);
-    await expect(limited.getByRole("button", { name: "Upload" })).toHaveCount(0);
+    await expect(limited.getByRole("button", { name: "Upload", exact: true })).toHaveCount(0);
   });
 
   test("behavior: with no script, a tile links to its inspector, the bar posts the ticked files, upload is a multipart form, and the inspector's fields are forms", async ({ page }) => {
@@ -184,7 +184,7 @@ eachTheme((theme) => {
     posted = nextPost(page, "#media-static");
     await upload.locator("input[type=file]").setInputFiles({ name: "survey.png", mimeType: "image/png", buffer: Buffer.from("png") });
     await upload.getByRole("textbox", { name: "Alt text" }).fill("Survey sketches");
-    await upload.getByRole("button", { name: "Upload" }).click();
+    await upload.getByRole("button", { name: "Upload", exact: true }).click();
     const sent = await posted;
     expect(sent.enctype).toBe("multipart/form-data");
     expect(sent.fields).toEqual({ intent: ["upload"], file: ["file:survey.png"], alt: ["Survey sketches"] });
@@ -364,8 +364,9 @@ eachTheme((theme) => {
     await lib.locator("summary", { hasText: "Import from a web address" }).click();
     await lib.getByRole("textbox", { name: "Web address" }).fill("https://photos.example.com/r/2");
     await lib.getByRole("checkbox", { name: "Keep it at full size" }).last().check();
-    await lib.getByRole("button", { name: "Import" }).click();
-    expect((await posted).fields).toEqual({ intent: ["import"], url: ["https://photos.example.com/r/2"], alt: [""], resize: ["no"] });
+    // Neither is sent undescribed: alt text is required, and decorative is its own answer.
+    await lib.getByRole("button", { name: "Import as decorative" }).click();
+    expect((await posted).fields).toEqual({ intent: ["import"], url: ["https://photos.example.com/r/2"], alt: [""], resize: ["no"], decorative: ["on"] });
   });
 
   test("behavior: with script, suggestions load when asked and each is applied only when accepted", async ({ page }) => {
@@ -385,7 +386,8 @@ eachTheme((theme) => {
     const lib = page.locator("[data-mount='ideas']");
     const upload = lib.getByRole("form", { name: "Upload a file" });
     await upload.locator("input[type=file]").setInputFiles({ name: "bay-again.png", mimeType: "image/png", buffer: Buffer.from("png") });
-    await upload.getByRole("button", { name: "Upload" }).click();
+    await upload.getByRole("textbox", { name: "Alt text" }).fill("The bay at dusk");
+    await upload.getByRole("button", { name: "Upload", exact: true }).click();
     await expect(lib.getByRole("link", { name: "Open bay-dusk.png, the file already stored" })).toHaveAttribute("href", "/media?inspect=2026%2F10%2Fbay-dusk.png");
     await expect(lib.locator(".cap-media-tile")).toHaveCount(4);
   });
