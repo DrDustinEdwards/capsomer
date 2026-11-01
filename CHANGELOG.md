@@ -4,6 +4,9 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **A scroll region's focus ring sits inside its edge.** `base.css` gives `[role="region"][tabindex="0"]:focus-visible` an inset outline (`outline-offset: calc(var(--focus-width) * -1)`), the table's and dialog's rule, so a code box or wide table inside a box that clips its overflow still shows its whole ring. Prelum's code and table regions get it too. No class, token or HTML contract changes.
+- **Showcase site: every code box can be reached and scrolled with the keyboard** (WCAG 2.1.1, area 9). The install code on the front page, each component page's Installation tabs and examples, the theme builder's output and the doc pages' code are named regions (`tabindex="0" role="region" aria-label="Code: …"`, Prelum's pattern) written by one helper, `codeRegion` in `site/markdown.ts`. The Installation and theme builder tab panels drop their own `tabindex`, since the code inside is now the stop (WAI-ARIA APG, tabs), and a closed example leaves the tab order until View code opens it. The accessibility statement no longer lists the limitation.
+
 - **Showcase site: a breadcrumb list only where a trail shows.** A component page marks up Capsomer > Components > Name, which the visitor sees as Components > Name; Make, Accessibility and Search carry none. Prelum v0.31.4. No class, token or HTML contract changes.
 
 ## [0.62.0]

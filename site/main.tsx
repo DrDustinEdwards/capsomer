@@ -17,7 +17,7 @@ import "./site.css";
 import { AdminShell, FIRST_PAGE, type AdminEntry } from "../components/admin-shell/admin-shell.react.tsx";
 import { BASE, CHANGELOG_MD, COMPONENTS, DEFAULTS_MD, FAMILIES, META, RESULTS_BUILD, fetchResults, type Results } from "./data.ts";
 import { ColorView } from "./color-view.tsx";
-import { renderMarkdown } from "./markdown.ts";
+import { codeRegionProps, renderMarkdown } from "./markdown.ts";
 import { Panel, ResultsContext, TOOL, TestList, Verdict, useResults, when } from "./parts.tsx";
 import { MarkdownView, MotionView, TestsView, TypeView } from "./views.tsx";
 
@@ -141,7 +141,7 @@ function Overview() {
         </div>
       )}
       <Panel title="How an app uses it" id="install">
-        <pre className="site-code">
+        <pre className="site-code" {...codeRegionProps("How an app uses it")}>
           <code>{`"capsomer": "github:DrDustinEdwards/capsomer#v${META.version}"
 
 import "capsomer/tokens.css";        // the layer order and every token

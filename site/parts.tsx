@@ -1,6 +1,7 @@
 // The small parts every view of the site is built from (main.tsx).
 
 import { createContext, useContext, type ReactNode } from "react";
+import { codeRegionProps } from "./markdown.ts";
 import { RESULTS_BUILD, type ComponentDoc, type ComponentResults, type Results } from "./data.ts";
 
 export function Panel({ title, src, flush, children, id }: { title: string; src?: ReactNode; flush?: boolean; children: ReactNode; id?: string }) {
@@ -51,7 +52,7 @@ export function TestList({ rows }: { rows: ComponentResults["tests"] }) {
           <span>
             {t.title}
             {t.theme ? <span className="cap-muted">, {t.theme}</span> : null}
-            {t.error ? <pre className="site-code site-error">{t.error}</pre> : null}
+            {t.error ? <pre className="site-code site-error" {...codeRegionProps("Error")}>{t.error}</pre> : null}
           </span>
         </li>
       ))}

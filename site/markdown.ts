@@ -4,6 +4,15 @@
 
 const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
+/**
+ * Every code box on the site is a named region keyboard users can reach, Prelum's pattern for rendered code: tabindex="0" so a
+ * box that scrolls sideways can be scrolled from the keyboard in every browser (WCAG 2.1.1; axe's scrollable-region-focusable),
+ * role="region" because ARIA prohibits aria-label on a plain pre, and the name "Code: <what it holds>". base.css draws its ring.
+ */
+export const codeRegion = (name: string) => `tabindex="0" role="region" aria-label="${escape(`Code: ${name}`)}"`;
+/** The same three attributes for a React pre. */
+export const codeRegionProps = (name: string) => ({ tabIndex: 0, role: "region", "aria-label": `Code: ${name}` }) as const;
+
 function inline(s: string): string {
   const codes: string[] = [];
   let out = escape(s).replace(/`([^`]+)`/g, (_, c: string) => {
@@ -37,11 +46,12 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
   while (i < lines.length) {
     const line = lines[i] ?? "";
     if (/^```/.test(line)) {
+      const lang = line.slice(3).trim();
       const body: string[] = [];
       i++;
       while (i < lines.length && !/^```/.test(lines[i] ?? "")) body.push(lines[i++] ?? "");
       i++;
-      out.push(`<pre class="site-code" tabindex="0"><code>${escape(body.join("\n"))}</code></pre>`);
+      out.push(`<pre class="site-code" ${codeRegion(lang || "example")}><code>${escape(body.join("\n"))}</code></pre>`);
       continue;
     }
     const h = line.match(/^(#{1,6})\s+(.*)$/);
