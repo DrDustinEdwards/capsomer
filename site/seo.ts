@@ -48,8 +48,20 @@ const head = defineHead({
  */
 export function siteHead(page: "home" | "admin" | { path: string; title: string; description: string; noindex?: boolean }): string {
   // Pages are served at their slash (a bare path redirects to it), so the canonical and the trail keep it.
-  if (typeof page === "object")
-    return headHtml(head({ ...page, keepTrailingSlash: true, breadcrumbs: [{ name: "Capsomer", path: "/" }, { name: page.title, path: page.path }] }));
+  // Only a component page sits inside a section, so only it carries a trail (the visible "Components > Name" one, from the
+  // home page down); Make, Accessibility and Search are top level and carry none.
+  if (typeof page === "object") {
+    const inComponents = page.path.startsWith("/components/");
+    return headHtml(
+      head({
+        ...page,
+        keepTrailingSlash: true,
+        breadcrumbs: inComponents
+          ? [{ name: "Capsomer", path: "/" }, { name: "Components", path: "/#components" }, { name: page.title, path: page.path }]
+          : false,
+      }),
+    );
+  }
   if (page === "admin") return headHtml(head({ path: "/admin/", title: "Capsomer Scaffold", fullTitle: true, description: ADMIN_DESCRIPTION, noindex: true }));
   return headHtml([
     ...head({ path: "/", title: "Capsomer", fullTitle: true, description: DESCRIPTION }),

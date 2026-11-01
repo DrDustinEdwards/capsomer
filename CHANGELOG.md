@@ -9,6 +9,7 @@ Each release names every removed or renamed token or class, and every changed HT
 Capsomer accepts Enarratio 0.7.0 (charts, area 10).
 
 - **Enarratio 0.7.0 as the peer** (`^0.5.0 || ^0.6.0 || ^0.7.0`), and the showcase draws with it: maps (`enarratio/map`), the tactile SVG download and the forced-colors legend swatches. The chart frame's markup and behavior are unchanged. No class, token or HTML contract changes.
+- **Showcase site: a breadcrumb list only where a trail shows.** A component page marks up Capsomer > Components > Name, which the visitor sees as Components > Name; Make, Accessibility and Search carry none. Prelum v0.31.4. No class, token or HTML contract changes.
 
 ## [0.62.0]
 
