@@ -26,7 +26,11 @@ import "capsomer/family-footer.css";
 footer.innerHTML = familyFooterHtml({ site: "capsid", center });
 // On dustinedwards.info itself: its own paths, and the Accessibility link only while that page is published.
 familyFooterHtml({ site: "dustinedwards", origin: "", published: PUBLISHED_PAGES });
+// A site that serves its own accessibility statement: the Site group's Accessibility link goes to it.
+familyFooterHtml({ site: "capsid", center, statement: "/accessibility" });
 ```
+
+A statement speaks for one site, so a site with its own `/accessibility` (Prelum's `accessibilityStatement`) passes `statement`; the other Site links stay dustinedwards.info's.
 
 `center` is the site's own HTML, built from these classes:
 
