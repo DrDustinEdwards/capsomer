@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Showcase site: a breadcrumb list only where a trail shows.** A component page marks up Capsomer > Components > Name, which the visitor sees as Components > Name; Make, Accessibility and Search carry none. Prelum v0.31.4. No class, token or HTML contract changes.
+
 ## [0.62.0]
 
 Nothing scrolls sideways on a 320 px phone (WCAG 1.4.10 Reflow, area 9), breadcrumbs on a phone are one line, and displayed math keeps its spacing.
