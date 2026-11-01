@@ -1,0 +1,377 @@
+// The page's one status region: the result of an action, said where the person is looking
+// and never taking focus. A message with Undo stays until dismissed; `z` runs its Undo.
+// No floating toast (decision, 0.1). No framework; the React wrapper uses the same helpers.
+//
+// What the region holds follows the Capsid Portal's lib/messages.ts (capsid/decisions.md
+// 2026-09-30, "admin panels review adopted", item 3): a performed action's result, with
+// Undo for a reversible change, and every failure that has no place beside its source. A
+// plain result is replaced by the next one. A warning (an audit row naming you was not
+// written), an Undo that failed, or a failure (a refresh, a copy) stays until you dismiss
+// it, whatever happens after it: the missing audit row is the one fact that cannot be
+// found later by looking.
+import { singleKeysOff } from "../shortcuts/shortcuts.js";
+export const CLEARS_AFTER_MS = 4000;
+export function newMessage(id, text, opts = {}) {
+    const warning = opts.warning ?? null;
+    const failure = !!opts.failure;
+    return {
+        id,
+        text,
+        warning,
+        undo: opts.undo ?? null,
+        undone: opts.undone,
+        returnFocus: opts.returnFocus,
+        error: null,
+        busy: false,
+        failure,
+        clears: !!opts.clears && !opts.undo && warning === null && !failure,
+    };
+}
+/** Whether a message stays when the next one arrives. */
+export function lasting(m) {
+    return m.failure || m.warning !== null || m.error !== null;
+}
+/** The region after `m` arrives: it first, then every lasting message before it. */
+export function withMessage(all, m) {
+    return [m, ...all.filter(lasting)];
+}
+export function undoneText(text, undone) {
+    return undone ? `Undone. ${undone}` : `Undone: ${text}`;
+}
+// An Undo that threw: nothing was undone, so Undo stays and this says why.
+export function undoErrorText(err) {
+    const why = err instanceof Error && err.message ? ` ${err.message}` : "";
+    return `Could not undo that.${why} Try again.`;
+}
+export function resolveFocus(f) {
+    const el = typeof f === "function" ? f() : (f ?? null);
+    return el?.isConnected ? el : null;
+}
+const TEXT_INPUT = /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
+// True where a typed z is text, not a command: text inputs, textareas, selects, editable
+// content, and anything that says it is a text box or a combobox.
+export function isTypingTarget(target) {
+    if (!(target instanceof Element))
+        return false;
+    if (target instanceof HTMLInputElement)
+        return TEXT_INPUT.test(target.type || "text");
+    if (target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)
+        return true;
+    if (target instanceof HTMLElement && target.isContentEditable)
+        return true;
+    return !!target.closest("[role='textbox'], [role='combobox'], [role='searchbox']");
+}
+// `z` alone: no Ctrl, Alt, Meta or Shift, not a held repeat, not typed into a field.
+export function isUndoKey(e) {
+    return e.key === "z" && !singleKeysOff() && !e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && !e.repeat && !e.defaultPrevented && !isTypingTarget(e.composedPath()[0] ?? e.target);
+}
+// The message `z` would undo: the newest one with an Undo that is not already running.
+export function currentUndo(all) {
+    return all.find((m) => m.undo && !m.busy);
+}
+export const GLYPHS = {
+    ok: '<path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/>',
+    warning: '<path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/>',
+    failure: '<path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/>',
+};
+// A 16-unit glyph from one of the drawings above (or any inner SVG), hidden from assistive tech:
+// the word beside it says what it means. The moderation queue and the history list draw theirs with it.
+export function glyphSvg(inner, size = 14) {
+    const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    s.setAttribute("viewBox", "0 0 16 16");
+    s.setAttribute("width", String(size));
+    s.setAttribute("height", String(size));
+    s.setAttribute("aria-hidden", "true");
+    s.setAttribute("focusable", "false");
+    s.innerHTML = inner;
+    return s;
+}
+// What a message is, for its glyph and its edge: a failure; a warning or an Undo that
+// failed; otherwise a plain result.
+export function kindOf(m) {
+    return m.failure ? "failure" : m.warning !== null || m.error !== null ? "warning" : "ok";
+}
+const regions = new WeakMap();
+function make(tag, className, part) {
+    const el = document.createElement(tag);
+    if (className)
+        el.className = className;
+    if (part)
+        el.dataset.capPart = part;
+    return el;
+}
+function buildItem() {
+    const el = make("div", "cap-message-item", "item");
+    const glyph = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    glyph.setAttribute("class", "cap-message-glyph");
+    glyph.setAttribute("viewBox", "0 0 16 16");
+    glyph.setAttribute("aria-hidden", "true");
+    glyph.setAttribute("focusable", "false");
+    const text = make("p", "cap-message-text", "text");
+    const said = make("span", undefined, "said");
+    const warn = make("span", "cap-message-warning");
+    warn.hidden = true;
+    const bold = make("b");
+    bold.textContent = "Warning:";
+    const warnText = make("span");
+    warn.append(" ", bold, " ", warnText);
+    const error = make("span", "cap-message-error");
+    error.setAttribute("role", "alert");
+    error.hidden = true;
+    text.append(said, warn, error);
+    const undoBtn = make("button", "cap-link-btn cap-message-undo", "undo");
+    undoBtn.type = "button";
+    const undoLabel = make("span");
+    undoLabel.textContent = "Undo";
+    const kbd = make("kbd");
+    kbd.setAttribute("aria-hidden", "true");
+    kbd.textContent = "z";
+    undoBtn.append(undoLabel, " ", kbd);
+    const dismissBtn = make("button", "cap-btn cap-message-dismiss", "dismiss");
+    dismissBtn.type = "button";
+    dismissBtn.textContent = "Dismiss";
+    el.append(glyph, text, undoBtn, dismissBtn);
+    return { el, glyph, said, warn, warnText, error, undoBtn, undoLabel, dismissBtn };
+}
+function paint(it, m) {
+    it.el.dataset.id = String(m.id);
+    if (lasting(m))
+        it.el.dataset.lasting = "";
+    else
+        delete it.el.dataset.lasting;
+    const kind = kindOf(m);
+    if (it.el.dataset.kind !== kind) {
+        it.el.dataset.kind = kind;
+        it.glyph.innerHTML = GLYPHS[kind];
+    }
+    if (it.said.textContent !== m.text)
+        it.said.textContent = m.text;
+    if (m.failure)
+        it.said.setAttribute("role", "alert");
+    else
+        it.said.removeAttribute("role");
+    it.warn.hidden = m.warning === null;
+    if (it.warnText.textContent !== (m.warning ?? ""))
+        it.warnText.textContent = m.warning ?? "";
+    it.error.hidden = m.error === null;
+    if (it.error.textContent !== (m.error ?? ""))
+        it.error.textContent = m.error ?? "";
+    it.undoBtn.hidden = !m.undo;
+    if (m.busy)
+        it.undoBtn.setAttribute("aria-busy", "true");
+    else
+        it.undoBtn.removeAttribute("aria-busy");
+    it.undoLabel.textContent = m.busy ? "Undoing..." : "Undo";
+    // Every message that stays can be dismissed; one that clears itself has no buttons. While
+    // Undo runs, Dismiss waits, so the answer is not hidden.
+    it.dismissBtn.hidden = m.clears;
+    if (m.busy)
+        it.dismissBtn.setAttribute("aria-disabled", "true");
+    else
+        it.dismissBtn.removeAttribute("aria-disabled");
+}
+// Makes the region's children the messages, in order, newest first. An item that is still
+// there is changed in place, so a button that has focus keeps it and a text is not said twice.
+function render(r) {
+    const live = new Set(r.messages.map((m) => m.id));
+    for (const [id, it] of r.items) {
+        if (!live.has(id)) {
+            it.el.remove();
+            r.items.delete(id);
+        }
+    }
+    let ref = r.el.firstElementChild;
+    for (const m of r.messages) {
+        let it = r.items.get(m.id);
+        const fresh = !it;
+        if (!it) {
+            it = buildItem();
+            r.items.set(m.id, it);
+        }
+        paint(it, m);
+        if (!fresh && it.el === ref)
+            ref = ref.nextElementSibling;
+        else
+            r.el.insertBefore(it.el, ref);
+    }
+}
+function focusInside(r) {
+    return r.el.contains(document.activeElement);
+}
+// After the button that had focus goes away, focus lands somewhere sensible, never on the
+// body: where the caller says, else the region's own Dismiss for that message, else the
+// control that caused the message, else the main region.
+function settleFocus(r, s) {
+    if (s.to)
+        return s.to.focus();
+    const active = document.activeElement;
+    if (active && r.el.contains(active) && active.isConnected && !active.hidden)
+        return;
+    const back = r.origin instanceof HTMLElement && r.origin.isConnected ? r.origin : null;
+    if (s.origin)
+        return (back ?? document.querySelector("main"))?.focus();
+    const own = s.id !== undefined ? r.items.get(s.id)?.dismissBtn : undefined;
+    if (own && !own.hidden)
+        return own.focus();
+    const any = r.el.querySelector("[data-cap-part='dismiss']:not([hidden])");
+    if (any)
+        return any.focus();
+    (back ?? document.querySelector("main"))?.focus();
+}
+function set(r, next, settle = {}) {
+    const hadFocus = focusInside(r);
+    r.messages = next;
+    render(r);
+    const ids = new Set(next.map((m) => m.id));
+    for (const [id, t] of r.timers) {
+        if (!ids.has(id)) {
+            window.clearTimeout(t);
+            r.timers.delete(id);
+        }
+    }
+    for (const m of next) {
+        if (!m.clears || r.timers.has(m.id))
+            continue;
+        const id = m.id;
+        r.timers.set(id, window.setTimeout(() => {
+            r.timers.delete(id);
+            set(r, r.messages.filter((x) => x.id !== id), { origin: true });
+        }, CLEARS_AFTER_MS));
+    }
+    if (settle.to || hadFocus)
+        settleFocus(r, settle);
+}
+function region(el) {
+    let r = regions.get(el);
+    if (r)
+        return r;
+    r = { el, messages: [], items: new Map(), nextId: 1, timers: new Map(), origin: null };
+    regions.set(el, r);
+    return r;
+}
+// The page's region: the first one enhanced, or the first one present.
+function find() {
+    const el = document.querySelector("[data-cap='message'][data-cap-ready]") ?? document.querySelector("[data-cap='message']");
+    if (!el)
+        return null;
+    if (!el.hasAttribute("data-cap-ready"))
+        enhance(el.parentNode ?? document);
+    return region(el);
+}
+// Says a message in the page's region. Does not move focus. A plain result replaces the
+// plain result before it; a warning, a failure and a failed Undo stay.
+export function say(text, opts = {}) {
+    const r = find();
+    if (!r) {
+        console.warn("capsomer message: no [data-cap='message'] region on this page.");
+        return;
+    }
+    const active = document.activeElement;
+    if (active && active !== document.body && !r.el.contains(active))
+        r.origin = active;
+    set(r, withMessage(r.messages, newMessage(r.nextId++, text, opts)));
+}
+// Says that something did not happen. Stays until dismissed.
+export function fail(text) {
+    say(text, { failure: true });
+}
+function clearIn(r, id) {
+    set(r, id === undefined ? [] : r.messages.filter((m) => m.id !== id), { origin: true });
+}
+// Clears the page's region, lasting messages too.
+export function dismiss() {
+    const r = find();
+    if (r)
+        clearIn(r);
+}
+async function undoIn(r, id) {
+    const m = r.messages.find((x) => x.id === id);
+    if (!m?.undo || m.busy)
+        return false;
+    const run = m.undo;
+    set(r, r.messages.map((x) => (x.id === id ? { ...x, busy: true, error: null } : x)));
+    try {
+        await run();
+    }
+    catch (err) {
+        // Nothing was undone, so Undo stays available, and the message says why. It stays too.
+        if (r.messages.some((x) => x.id === id)) {
+            set(r, r.messages.map((x) => (x.id === id ? { ...x, busy: false, error: undoErrorText(err) } : x)));
+        }
+        return false;
+    }
+    const to = resolveFocus(m.returnFocus);
+    // The Undo may have said something itself, which replaced this message: then there is
+    // nothing more to say. Either way it has run.
+    if (!r.messages.some((x) => x.id === id))
+        return true;
+    const said = undoneText(m.text, m.undone);
+    if (m.warning !== null) {
+        // A result that carried a warning keeps it, without its Undo, and the Undo's own result
+        // arrives beside it.
+        const kept = r.messages.map((x) => (x.id === id ? { ...x, undo: null, busy: false, error: null } : x));
+        set(r, withMessage(kept, newMessage(r.nextId++, said)), { to, id });
+    }
+    else {
+        set(r, r.messages.map((x) => (x.id === id ? newMessage(id, said) : x)), { to, id });
+    }
+    return true;
+}
+// Runs the current Undo, once. Returns false when there is nothing to undo.
+export function runUndo() {
+    const r = find();
+    const m = r ? currentUndo(r.messages) : undefined;
+    return r && m ? undoIn(r, m.id) : Promise.resolve(false);
+}
+// Attaches to every [data-cap="message"] under root not yet attached: the region is empty
+// and takes the messages said into it, each with its own Undo and Dismiss, and `z` on the
+// document. `z` is off while single-key shortcuts are (the shortcuts switch), or for one region
+// with data-cap-undo-key="off". Returns a function that detaches.
+export function enhance(root = document) {
+    const undo = [];
+    for (const el of root.querySelectorAll("[data-cap='message']:not([data-cap-ready])")) {
+        el.dataset.capReady = "";
+        if (!el.getAttribute("role"))
+            el.setAttribute("role", "status");
+        if (!el.hasAttribute("aria-label"))
+            el.setAttribute("aria-label", "Results and failures");
+        // A new message is read by itself; the ones before it are not read again.
+        if (!el.hasAttribute("aria-atomic"))
+            el.setAttribute("aria-atomic", "false");
+        // 0.1.0's region held one text and its two buttons directly: items replace them.
+        for (const old of el.querySelectorAll(":scope > [data-cap-part]:not([data-cap-part='item'])"))
+            old.remove();
+        const r = region(el);
+        const onClick = (e) => {
+            const target = e.target;
+            const id = Number(target.closest("[data-cap-part='item']")?.dataset.id);
+            const part = target.closest("[data-cap-part]")?.getAttribute("data-cap-part");
+            if (Number.isNaN(id))
+                return;
+            if (part === "undo")
+                void undoIn(r, id);
+            else if (part === "dismiss" && !r.messages.find((x) => x.id === id)?.busy)
+                clearIn(r, id);
+        };
+        const onKey = (e) => {
+            if (el.dataset.capUndoKey === "off" || !isUndoKey(e))
+                return;
+            const m = currentUndo(r.messages);
+            if (!m)
+                return;
+            e.preventDefault();
+            void undoIn(r, m.id);
+        };
+        el.addEventListener("click", onClick);
+        document.addEventListener("keydown", onKey);
+        undo.push(() => {
+            el.removeEventListener("click", onClick);
+            document.removeEventListener("keydown", onKey);
+            for (const t of r.timers.values())
+                window.clearTimeout(t);
+            r.timers.clear();
+            delete el.dataset.capReady;
+        });
+    }
+    return () => undo.forEach((f) => f());
+}
