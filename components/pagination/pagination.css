@@ -35,8 +35,9 @@
     list-style: none;
   }
 
-  /* One page, one Previous or Next: a link or a button. */
-  .cap-page {
+  /* One page, one Previous or Next: a link or a button. Only inside the pagination: .cap-page alone
+     is also the family page column (css/utilities.css), which these rules must never reach. */
+  :where(.cap-pagination) .cap-page {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -184,7 +185,7 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .cap-page {
+    :where(.cap-pagination) .cap-page {
       transition:
         background-color var(--dur-fast) var(--ease-out),
         border-color var(--dur-fast) var(--ease-out),
@@ -193,13 +194,13 @@
   }
 
   @media (forced-colors: active) {
-    .cap-page[aria-current="page"] {
+    :where(.cap-pagination) .cap-page[aria-current="page"] {
       forced-color-adjust: none;
       border-color: Highlight;
       background: Highlight;
       color: HighlightText;
     }
-    .cap-page[aria-disabled="true"] {
+    :where(.cap-pagination) .cap-page[aria-disabled="true"] {
       color: GrayText;
       border-color: GrayText;
     }
