@@ -78,11 +78,15 @@ const drawings: Record<string, string> = {
     }),
   ),
   bar: drawn("bar", bar("cf-bar"), barOptions("cf-bar")),
-  open: frameHtml(bar("cf-open", { notes: "A job counts on the day it finished.", byline: "Example Co", width: 640, height: 280 }).replace('<details class="enarratio-data">', '<details class="enarratio-data" open>')),
+  open: (() => {
+    const options = barOptions("cf-open", { notes: "A job counts on the day it finished.", byline: "Example Co", width: 640, height: 280 });
+    return drawn("bar", barChart(options), options).replace('<details class="enarratio-data">', '<details class="enarratio-data" open>');
+  })(),
   line: drawn("line", lineChart(lineSpec), lineSpec),
   area: drawn("area", areaChart(areaSpec), areaSpec),
   nodata: noDataHtml("Requests per hour", "The health route has not reported yet, so there is nothing to draw."),
-  narrow: frameHtml(bar("cf-narrow")),
+  // Redrawn at the narrow column's width, as every server chart in a frame should be (C12).
+  narrow: drawn("bar", bar("cf-narrow"), barOptions("cf-narrow")),
   comfortable: frameHtml(sparkline({ ...minutes, id: "cf-comfy" })),
   // What ChartFrame renders on the server, before it measures its column: the page reads with
   // scripts off, and React replaces it when it mounts.
@@ -104,7 +108,10 @@ const drawings: Record<string, string> = {
 const families = ["purple", "fox", "teal", "amber", "navy", "forest", "magenta", "cerulean", "olive", "rose"];
 const eight = ["Builds", "Reviews", "Deploys", "Probes", "Backups", "Imports", "Mail", "Indexing"].flatMap((kind, k) => ["Q1", "Q2", "Q3"].map((q, i) => ({ q, kind, n: 3 + ((k * 7 + i * 3) % 6) })));
 drawings.families = families
-  .map((f) => `<div data-family="${f}" class="cf-family">${frameHtml(barChart({ data: eight, x: "q", y: "n", series: "kind", layout: "stacked", id: `cf-fam-${f}`, title: `Eight series in the ${f} family`, alt: `Every series color in the ${f} family, stacked by quarter.`, xLabel: "Quarter", yLabel: "Jobs", width: 440, height: 240, source, summary: false, onIssue: () => {} }))}${frameHtml(heatStrip({ values: [1, 2, 3, 4, 5], label: `The ramp in the ${f} family`, id: `cf-ramp-${f}`, width: 440, height: 28 }))}</div>`)
+  .map((f) => {
+    const options = { data: eight, x: "q", y: "n", series: "kind", layout: "stacked", id: `cf-fam-${f}`, title: `Eight series in the ${f} family`, alt: `Every series color in the ${f} family, stacked by quarter.`, xLabel: "Quarter", yLabel: "Jobs", width: 440, height: 240, source, summary: false } as const;
+    return `<div data-family="${f}" class="cf-family">${drawn("bar", barChart({ ...options, onIssue: () => {} }), options)}${frameHtml(heatStrip({ values: [1, 2, 3, 4, 5], label: `The ramp in the ${f} family`, id: `cf-ramp-${f}`, width: 440, height: 28 }))}</div>`;
+  })
   .join("");
 
 export default drawings;
