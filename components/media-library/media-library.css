@@ -104,7 +104,7 @@
     list-style: none;
   }
 
-  /* Upload: the drop zone, the alt text for it, and Upload. */
+  /* Upload: the drop zone, the alt text for it, Upload and Upload as decorative. */
   .cap-media-lib-upload {
     display: grid;
     gap: var(--space-3);
@@ -115,6 +115,11 @@
       justify-self: stretch;
       margin: 0;
     }
+  }
+  .cap-media-lib-upload-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
   }
 
   /* The picker's alt step: the image, the alt text it needs here, Insert. */
