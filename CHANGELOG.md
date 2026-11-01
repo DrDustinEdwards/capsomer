@@ -2,12 +2,6 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [Unreleased]
-
-- **Enarratio 0.6 accepted** (shared charts, area 10). The optional `enarratio` peer is `^0.5.0 || ^0.6.0`, so a site on Enarratio 0.6.0 installs Capsomer without an override; the showcase builds against 0.6.0, so its enhanced charts gain Enarratio's Play as sound. No class, token or HTML contract changes.
-- **Chart frame states page: every bar chart redraws to its column** (shared charts, area 10). The narrow column, the open table and the ten family charts carry Enarratio's redraw spec like the bar, line and area specimens, so at 320 px they keep 12 px text instead of scaling to 9.5 px or scrolling (the live chart check's twelve C12 findings). Specimen markup only; no class, token or HTML contract changes.
-- **Embeds keep each player's shape** (writing and rendering, area 4). The player (`capsomer/player.css`) now draws Prelum 0.28's embed card (`.embed-poster`, `.embed-play`, `.embed-label` inside `a.embed-link`) with the same rules as `.cap-player-facade`, and prose blocks size it as the player it becomes, so nothing moves on the click: a video 16:9, a TikTok 9:16, a Google map 4:3, an X, Bluesky or Instagram post 4:5 at most 34rem wide, and a song or a podcast a strip at its player's height (Spotify 152 px for a track or an episode and 352 px for a list, SoundCloud 166, Apple Podcasts 175 for an episode and 450 for a show, Amazon Music 352, the height in its Share > Embed code). The player's iframe takes the same size. A video, map or post with no poster is held at the same size and names the service and title at its center, as click-to-load placeholders do. A link stored before Prelum 0.28 stays the centered card. New class rules only.
-
 ## [0.57.0]
 
 The error page says when the database is down (area 8), and the email-change mails are one template (area 3), images and media (area 6).
@@ -26,6 +20,15 @@ The error page says when the database is down (area 8), and the email-change mai
 Link style as tokens, so a site outside the network sets its own.
 
 - **Link style is five tokens (group `link`).** `--link-weight`, `--link-decoration`, `--link-hover-bg`, `--link-pressed-bg` and `--link-tint-pad`, read by `css/base.css` where it had literals. The defaults are the values it had, so no site changes. A site outside the network sets its own in its `SITES` entry (components/link/link.md, "A site's own links"). Added tokens only; no class or HTML contract changes.
+
+## [0.59.0]
+
+The footer's Lab bench link moves from `/lab` to `/lab-bench`, embeds keep each player's shape (area 4), and the shared charts accept Enarratio 0.6 and redraw on the states page (area 10).
+
+- **Enarratio 0.6 accepted** (shared charts, area 10). The optional `enarratio` peer is `^0.5.0 || ^0.6.0`, so a site on Enarratio 0.6.0 installs Capsomer without an override; the showcase builds against 0.6.0, so its enhanced charts gain Enarratio's Play as sound. No class, token or HTML contract changes.
+- **Chart frame states page: every bar chart redraws to its column** (shared charts, area 10). The narrow column, the open table and the ten family charts carry Enarratio's redraw spec like the bar, line and area specimens, so at 320 px they keep 12 px text instead of scaling to 9.5 px or scrolling (the live chart check's twelve C12 findings). Specimen markup only; no class, token or HTML contract changes.
+- **Embeds keep each player's shape** (writing and rendering, area 4). The player (`capsomer/player.css`) now draws Prelum 0.28's embed card (`.embed-poster`, `.embed-play`, `.embed-label` inside `a.embed-link`) with the same rules as `.cap-player-facade`, and prose blocks size it as the player it becomes, so nothing moves on the click: a video 16:9, a TikTok 9:16, a Google map 4:3, an X, Bluesky or Instagram post 4:5 at most 34rem wide, and a song or a podcast a strip at its player's height (Spotify 152 px for a track or an episode and 352 px for a list, SoundCloud 166, Apple Podcasts 175 for an episode and 450 for a show, Amazon Music 352, the height in its Share > Embed code). The player's iframe takes the same size. A video, map or post with no poster is held at the same size and names the service and title at its center, as click-to-load placeholders do. A link stored before Prelum 0.28 stays the centered card. New class rules only.
+- **Footer: the Lab bench link is `/lab-bench`.** `WORKSPACE_LINKS` points the Lab bench entry at `/lab-bench`, where dustinedwards.info now serves the lab members' workspace, so `/lab` is free for other uses. The path is one exported constant, `LAB_BENCH_PATH` (`capsomer/behavior/family-footer`), which dustinedwards.info imports so the footer and its routes cannot disagree. The link's label, name and icon are unchanged. A changed link target on one footer entry; no token or class is removed or renamed and no HTML contract changes.
 
 ## [0.56.0]
 
