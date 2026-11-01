@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.63.1]
+
+- **Prelum v0.32.1 as the dependency**, whose peer accepts Enarratio 0.7.0. 0.63.0 still depended on Prelum v0.31.4 (peer `^0.5.0 || ^0.6.0`), so an app with Enarratio 0.7.0 and no Prelum of its own (Capsid's dashboard) installed Capsomer with an invalid peer. No class, token or HTML contract changes.
+
 ## [0.63.0]
 
 Capsomer accepts Enarratio 0.7.0 (charts, area 10).
