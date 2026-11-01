@@ -25,6 +25,12 @@ const examples = await generateStates(root);
 const data = readData(root, examples);
 const template = readFileSync(resolve(root, "site/component.html"), "utf8");
 for (const c of data.components) writeFileSync(resolve(root, "components", c.name, "index.html"), template.replace("<!--component-->", `<!--component:${c.name}-->`));
+// The accessibility statement, /accessibility/, is written the same way: site/search.html's head
+// with the home page's script, its body filled from site/accessibility.ts below.
+writeFileSync(
+  resolve(root, "site/accessibility.html"),
+  readFileSync(resolve(root, "site/search.html"), "utf8").replace("./search-main.ts", "./home-main.ts").replace("<!--search-->", "<!--accessibility-->"),
+);
 const pages = Object.fromEntries(data.components.map((c) => [`page-${c.name}`, resolve(root, "components", c.name, "index.html")]));
 const outDir = resolve(root, "site-dist");
 const states = Object.fromEntries(
