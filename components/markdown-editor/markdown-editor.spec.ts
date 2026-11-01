@@ -627,15 +627,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toEqual([{ name: "status-after-fix.png", alt: "The status page, all green", decorative: false }]);
   });
 
-  test("behavior: Insert as decorative uploads the image marked decorative and writes an empty alt", async ({ page }) => {
-    await visitOnly(page, theme, "alt");
-    await page.getByRole("button", { name: "Insert as decorative" }).click();
-    await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
-    await expect(page.locator("textarea")).toHaveValue(/alt=""\}\n:::$/);
-    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toEqual([{ name: "status-after-fix.png", alt: "", decorative: true }]);
-  });
-
-  test("keyboard: Esc or Cancel in the describe step discards the image unsent and returns to the text", async ({ page }) => {
+  test("keyboard: the describe step's other answers: Esc or Cancel discards the image unsent and returns to the text, Insert as decorative sends it marked decorative", async ({ page }) => {
     const surface = await visitOnly(page, theme, "alt");
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
     await page.keyboard.press("Escape");
@@ -648,6 +640,11 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Cancel" }).click();
     await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
     await expect(surfaceOf(page)).toBeFocused();
+    await visitOnly(page, theme, "alt");
+    await page.getByRole("button", { name: "Insert as decorative" }).click();
+    await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
+    await expect(page.locator("textarea")).toHaveValue(/alt=""\}\n:::$/);
+    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toEqual([{ name: "status-after-fix.png", alt: "", decorative: true }]);
   });
 
   test("behavior: an upload in progress is said in a status region, and a failed one is an alert that keeps the description and leaves the text alone", async ({ page }) => {
