@@ -21,6 +21,12 @@ Link style as tokens, so a site outside the network sets its own.
 
 - **Link style is five tokens (group `link`).** `--link-weight`, `--link-decoration`, `--link-hover-bg`, `--link-pressed-bg` and `--link-tint-pad`, read by `css/base.css` where it had literals. The defaults are the values it had, so no site changes. A site outside the network sets its own in its `SITES` entry (components/link/link.md, "A site's own links"). Added tokens only; no class or HTML contract changes.
 
+## [0.59.0]
+
+The footer's Lab bench link moves from `/lab` to `/lab-bench`.
+
+- **Footer: the Lab bench link is `/lab-bench`.** `WORKSPACE_LINKS` points the Lab bench entry at `/lab-bench`, where dustinedwards.info now serves the lab members' workspace, so `/lab` is free for other uses. The path is one exported constant, `LAB_BENCH_PATH` (`capsomer/behavior/family-footer`), which dustinedwards.info imports so the footer and its routes cannot disagree. The link's label, name and icon are unchanged. A changed link target on one footer entry; no token or class is removed or renamed and no HTML contract changes.
+
 ## [0.56.0]
 
 The accessibility release (area 9 of the completeness plan, 2026-10-31).
