@@ -23,8 +23,9 @@ Link style as tokens, so a site outside the network sets its own.
 
 ## [0.59.0]
 
-The footer's Lab bench link moves from `/lab` to `/lab-bench`.
+The footer's Lab bench link moves from `/lab` to `/lab-bench`, and embeds keep each player's shape (area 4).
 
+- **Embeds keep each player's shape** (writing and rendering, area 4). The player (`capsomer/player.css`) now draws Prelum 0.28's embed card (`.embed-poster`, `.embed-play`, `.embed-label` inside `a.embed-link`) with the same rules as `.cap-player-facade`, and prose blocks size it as the player it becomes, so nothing moves on the click: a video 16:9, a TikTok 9:16, a Google map 4:3, an X, Bluesky or Instagram post 4:5 at most 34rem wide, and a song or a podcast a strip at its player's height (Spotify 152 px for a track or an episode and 352 px for a list, SoundCloud 166, Apple Podcasts 175 for an episode and 450 for a show, Amazon Music 352, the height in its Share > Embed code). The player's iframe takes the same size. A video, map or post with no poster is held at the same size and names the service and title at its center, as click-to-load placeholders do. A link stored before Prelum 0.28 stays the centered card. New class rules only.
 - **Footer: the Lab bench link is `/lab-bench`.** `WORKSPACE_LINKS` points the Lab bench entry at `/lab-bench`, where dustinedwards.info now serves the lab members' workspace, so `/lab` is free for other uses. The path is one exported constant, `LAB_BENCH_PATH` (`capsomer/behavior/family-footer`), which dustinedwards.info imports so the footer and its routes cannot disagree. The link's label, name and icon are unchanged. A changed link target on one footer entry; no token or class is removed or renamed and no HTML contract changes.
 
 ## [0.56.0]
