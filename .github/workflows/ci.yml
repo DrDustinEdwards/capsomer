@@ -114,7 +114,7 @@ jobs:
     concurrency:
       group: deploy
       cancel-in-progress: false
-    uses: DrDustinEdwards/devkit/.github/workflows/worker-deploy.yml@fbf3824ab08f76af5befd7471677778e8b132c9b # v0.20.18
+    uses: DrDustinEdwards/devkit/.github/workflows/worker-deploy.yml@454002f526e5e8e645a9c110605880e220b611a0 # v0.21.0
     with:
       worker-name: capsomer
       health-url: https://capsomer.dustinedwards.info/health
