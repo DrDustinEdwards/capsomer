@@ -226,7 +226,7 @@
     }
   }
 
-  /* The alt step: an image is uploaded but is not in the text until it is described. */
+  /* The describe step: an image is not sent or in the text until it is described. */
   .cap-md-upload {
     display: flex;
     flex-wrap: wrap;
@@ -261,7 +261,7 @@
     gap: var(--space-3);
   }
   .cap-md-upload-error {
-    margin-top: var(--space-3);
+    margin: 0;
   }
 
   @media (prefers-reduced-motion: no-preference) {

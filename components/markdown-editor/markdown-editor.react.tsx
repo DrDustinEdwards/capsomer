@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, type ReactNode } from "react";
 
 import type { LinkTarget, MarkdownEditorHandle, MarkdownEditorOptions } from "./markdown-editor.ts";
 
-export type { LinkTarget, MarkdownEditorHandle, MarkdownEditorOptions, Scaffold, UploadResult } from "./markdown-editor.ts";
+export type { ImageDescription, LinkTarget, MarkdownEditorHandle, MarkdownEditorOptions, Scaffold, UploadResult } from "./markdown-editor.ts";
 
 export interface MarkdownEditorProps
   extends Pick<MarkdownEditorOptions, "scaffolds" | "linkTargets" | "onUpload" | "imageMarkdown" | "accept" | "lineNumbers" | "nonce" | "wordsPerMinute" | "onSave"> {
@@ -67,7 +67,7 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
       const { filterLinkTargets } = await import("./markdown-editor.ts");
       return filterLinkTargets((t ?? []) as LinkTarget[], query);
     },
-    onUpload: latest.current.onUpload ? (f) => (latest.current.onUpload as NonNullable<MarkdownEditorOptions["onUpload"]>)(f) : undefined,
+    onUpload: latest.current.onUpload ? (f, image, signal) => (latest.current.onUpload as NonNullable<MarkdownEditorOptions["onUpload"]>)(f, image, signal) : undefined,
     imageMarkdown: latest.current.imageMarkdown ? (i) => (latest.current.imageMarkdown as NonNullable<MarkdownEditorOptions["imageMarkdown"]>)(i) : undefined,
     onChange: (v) => latest.current.onChange?.(v),
     onSave: (v) => latest.current.onSave?.(v),
