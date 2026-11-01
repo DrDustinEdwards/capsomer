@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.62.0]
+
+Capsomer accepts Enarratio 0.7.0 (charts, area 10).
+
+- **Enarratio 0.7.0 as the peer** (`^0.5.0 || ^0.6.0 || ^0.7.0`), and the showcase draws with it: maps (`enarratio/map`), the tactile SVG download and the forced-colors legend swatches. The chart frame's markup and behavior are unchanged. No class, token or HTML contract changes.
 - **Displayed math is not clipped under text spacing** (WCAG 1.4.12, area 9). Prose blocks give `.katex-display` half an em above and below instead of a quarter: with the spacing 1.4.12 asks a page to allow, KaTeX's struts no longer hold the glyphs and the formula's bottom edge was cut off (devkit-a11y's live run on Prelum's specimen, 77 of 80 px shown). No class, token or HTML contract changes.
 - CI: devkit v0.21.0 in every workflow call and in `package.json`, and OpenSSF Scorecard (its scorecard.yml). The release runs devkit's release.yml with `build: true` (the same built release commit as before), which also attests the release's `npm pack` tarball and attaches it to the release. No package changes.
 
