@@ -9,6 +9,10 @@ test("behavior: another site's footer points the family's paths at dustinedwards
   const home = familyFooterHtml({ origin: "", published: [], year: 2026 });
   expect(home).toContain('href="/privacy"');
   expect(home).not.toContain("/accessibility");
+  // A site with its own statement links its own, even where the family's page is unpublished.
+  const own = familyFooterHtml({ statement: "/accessibility", published: [], year: 2026 });
+  expect(own).toContain('href="/accessibility"');
+  expect(own).not.toContain("dustinedwards.info/accessibility");
   expect(familyFooterHtml({ site: "capsid" }).match(/aria-current="page"/g)).toHaveLength(1);
 });
 
