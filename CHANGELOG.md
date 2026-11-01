@@ -2,8 +2,9 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## Unreleased
+## [Unreleased]
 
+- **Displayed math is not clipped under text spacing** (WCAG 1.4.12, area 9). Prose blocks give `.katex-display` half an em above and below instead of a quarter: with the spacing 1.4.12 asks a page to allow, KaTeX's struts no longer hold the glyphs and the formula's bottom edge was cut off (devkit-a11y's live run on Prelum's specimen, 77 of 80 px shown). No class, token or HTML contract changes.
 - CI: OpenSSF Scorecard (devkit 0.20.24 scorecard.yml). The release runs devkit's release.yml with `build: true` (the same built release commit as before), which also attests the release's `npm pack` tarball and attaches it to the release. No package changes.
 
 ## [0.61.0]

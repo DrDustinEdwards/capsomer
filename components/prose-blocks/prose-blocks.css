@@ -610,10 +610,12 @@
       font-family: var(--ui);
       font-weight: 600;
     }
+    /* Half an em above and below: under WCAG 1.4.12's text spacing KaTeX's struts no longer hold the glyphs, and a
+       quarter em clipped a displayed formula's bottom edge (3 px of 80 on Prelum's specimen). */
     & :where(.katex-display) {
       overflow-x: auto;
       overflow-y: hidden;
-      padding-block: 0.25em;
+      padding-block: 0.5em;
     }
 
     @media (forced-colors: active) {
