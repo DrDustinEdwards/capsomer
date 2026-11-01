@@ -48,6 +48,9 @@ export const PROFILE_LINKS: FamilyLink[] = [
 ];
 
 export const WORKSPACE_HEADING = "Workspace";
+
+/** Where the lab members' workspace (the Lab bench) lives on dustinedwards.info. Not /lab, which is kept free. */
+export const LAB_BENCH_PATH = "/lab-bench";
 const SIGN_IN_NOTE = "(requires sign-in)";
 
 /**
@@ -59,7 +62,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { to: "/admin", label: "Admin", name: `Admin, dustinedwards.info ${SIGN_IN_NOTE}`, icon: "gear" },
   { to: "https://portal.dustinedwards.info", label: "Portal", name: `Capsid Portal ${SIGN_IN_NOTE}`, hover: "Capsid Portal", icon: "capsid", external: true },
   { to: "https://desk.dustinedwards.info", label: "Desk", name: `Desk, Carrel's writing app ${SIGN_IN_NOTE}`, hover: "Carrel Desk", icon: "lamp", external: true },
-  { to: "/lab", label: "Lab bench", name: `Lab bench, the members' workspace ${SIGN_IN_NOTE}`, icon: "flask" },
+  { to: LAB_BENCH_PATH, label: "Lab bench", name: `Lab bench, the members' workspace ${SIGN_IN_NOTE}`, icon: "flask" },
 ];
 
 export const SITE_HEADING = "Site";
