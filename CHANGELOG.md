@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## Unreleased
+
+- CI: OpenSSF Scorecard (devkit 0.20.24 scorecard.yml). The release runs devkit's release.yml with `build: true` (the same built release commit as before), which also attests the release's `npm pack` tarball and attaches it to the release. No package changes.
+
 ## [0.60.0]
 
 Each site's footer links its own accessibility statement, and the showcase serves one (links and accessibility, area 9).
