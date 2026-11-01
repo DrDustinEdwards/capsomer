@@ -147,11 +147,17 @@ eachTheme((theme) => {
     }
   });
 
-  test("behavior: in a narrow space the trail wraps onto more lines", async ({ page }) => {
+  test("behavior: a narrow column wraps the trail; a phone keeps it on one line without the current page", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     const tops = await page.locator("#bc-narrow .cap-breadcrumb-item").evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
     expect(new Set(tops).size).toBeGreaterThan(1);
     expect(await page.locator("#bc-narrow").evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    await page.setViewportSize({ width: 320, height: 640 });
+    const phoneTops = await page.locator("#bc-narrow .cap-breadcrumb-item:not(:has([aria-current]))").evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+    expect(new Set(phoneTops).size).toBe(1);
+    expect(await page.locator("#bc-narrow .cap-breadcrumb-item:has([aria-current])").evaluate((el) => el.getBoundingClientRect().width)).toBeLessThanOrEqual(1);
+    await expect(page.locator("#bc-narrow ol")).toContainText("Getting started");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 
   test("behavior: comfortable density makes the links taller", async ({ page }) => {

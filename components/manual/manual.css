@@ -735,6 +735,32 @@
     }
   }
 
+  /* On a phone the sign is one line, as a breadcrumb is (components/breadcrumb): the page you
+     are on leaves the line, since the heading names it, but stays for a screen reader, and a
+     trail still too long scrolls sideways inside the sign rather than wrapping. */
+  @media (max-width: 40rem) {
+    .cap-direction {
+      > ol {
+        position: relative;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+      }
+      li {
+        flex: none;
+        white-space: nowrap;
+      }
+      li:has(> [aria-current]) {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+    }
+  }
+
   @media (forced-colors: active) {
     .cap-direction {
       border: 1px solid CanvasText;

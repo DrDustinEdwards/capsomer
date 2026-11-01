@@ -39,7 +39,7 @@ On a page two or more levels below a hub: a post under Posts under Admin; a job 
 - **A folded trail keeps the first level and the last `max - 1`.** The first level is where the trail starts; the last ones are nearest the current page. Fewer than two levels would fold is not worth a button, so the trail stays whole.
 - **The folded levels are links in a click popover,** not a menu: they are navigation, so they are links (they open in a new tab, they show their address), and the popover is the shared one (Esc, focus return, light dismiss). shadcn uses a dropdown menu of items.
 - **Long names take a second line, then are cut** with an ellipsis: past 24 characters for a link and 36 for the current page. Two lines, not one, so a name that fits still fits with a reader's own text spacing (WCAG 1.4.12). The full name is in the page and in a reader's list; the page's own heading says the current page in full.
-- **It wraps** on a phone: the list is a wrapping flex row, so a long trail takes a second line rather than scrolling.
+- **On a phone it is one line** (up to 40rem wide): the current page leaves the line, since the page's heading names it and it is usually the longest step, and stays in the list for a screen reader; a trail still too long scrolls sideways inside itself, cut at the edge so more is plainly there. Wrapping onto more lines invites mis-taps and clutters the top of the page (Baymard, "Mobile hierarchy breadcrumbs"; GOV.UK Design System, Breadcrumbs; NN/g, "Breadcrumbs: 11 design guidelines"). Replaces 0.3.0's default, which wrapped. In a narrow column on a wider screen the trail still wraps.
 
 ## The shadcn component it matches
 
