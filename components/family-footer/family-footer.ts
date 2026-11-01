@@ -64,13 +64,15 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
 
 export const SITE_HEADING = "Site";
 
+const ACCESSIBILITY = "/accessibility";
+
 const SITE_LINKS_ALL: FamilyLink[] = [
   { to: "/contact", label: "Contact" },
   { to: "/site-map", label: "Site map" },
   { to: "/colophon", label: "Colophon" },
   { to: "/privacy", label: "Privacy" },
   { to: "/terms", label: "Terms" },
-  { to: "/accessibility", label: "Accessibility", page: true },
+  { to: ACCESSIBILITY, label: "Accessibility", page: true },
 ];
 
 /** The Site group: a `page` link only while `published` names its path, every one when it is left out. */
@@ -139,6 +141,12 @@ export interface FamilyFooterOptions {
   origin?: string;
   /** The published prose pages, so a draft's link waits; left out, every page link shows. */
   published?: readonly string[];
+  /**
+   * The path of this site's own accessibility statement (`/accessibility`), when it serves one: the Site group's
+   * Accessibility link goes there, not to dustinedwards.info's, because a statement speaks for one site (W3C WAI,
+   * "Developing an Accessibility Statement"). Left out, the link is the family's.
+   */
+  statement?: string;
   /** The copyright's last year; this year when left out. */
   year?: number;
 }
@@ -184,8 +192,10 @@ const MARKS: Record<SocialLink["mark"], string> = {
  * The footer as HTML: plain string building, so a server, a React page or a static build writes the
  * same markup. Its band is the family's `--on`, so each site's own color draws it.
  */
-export function familyFooterHtml({ site, center = "", origin = FAMILY_ORIGIN, published, year = new Date().getFullYear() }: FamilyFooterOptions = {}): string {
-  const href = (link: FamilyLink) => escapeHtml(link.external ? link.to : `${origin}${link.to}`);
+export function familyFooterHtml({ site, center = "", origin = FAMILY_ORIGIN, published, statement, year = new Date().getFullYear() }: FamilyFooterOptions = {}): string {
+  const own = (link: FamilyLink) => statement !== undefined && link.to === ACCESSIBILITY;
+  const href = (link: FamilyLink) => escapeHtml(own(link) ? (statement ?? "") : link.external ? link.to : `${origin}${link.to}`);
+  const siteGroup = SITE_LINKS_ALL.filter((link) => own(link) || siteLinks(published).includes(link));
   // A profile off the family (Google Scholar, PubMed, ORCID) takes the family arrow, turned out (css/base.css).
   const anchor = (link: FamilyLink) =>
     `<a href="${href(link)}"${link.me ? ' rel="me" class="cap-go" data-go="out"' : ""}>${escapeHtml(link.label)}</a>`;
@@ -202,5 +212,5 @@ export function familyFooterHtml({ site, center = "", origin = FAMILY_ORIGIN, pu
     (s) =>
       `<li data-family-mark="${s.family}"><a href="${escapeHtml(s.id === "dustinedwards" ? `${origin}/` : s.href)}"${s.id === site ? ' aria-current="page"' : ""}><span class="cap-family-footer-site-name">${escapeHtml(s.name)}</span><span class="cap-family-footer-site-role">${escapeHtml(s.role)}</span></a></li>`,
   ).join("");
-  return `<div class="cap-family-footer"><div class="cap-family-footer-local">${center}<nav class="cap-family-footer-sites" aria-labelledby="cap-family-footer-network"><h2 class="cap-family-footer-heading" id="cap-family-footer-network">Network</h2><ul>${sites}</ul></nav></div><div class="cap-livery" aria-hidden="true"></div><div class="cap-letterhead cap-family-footer-head"><div><a href="${escapeHtml(`${origin}/`)}" class="cap-letterhead-logo cap-family-footer-logo"><span>Dustin</span><span>Edwards</span></a><p class="cap-family-footer-note">&copy; 2006&ndash;${year}</p></div><div class="cap-family-footer-columns"><div><ul class="cap-family-footer-social" aria-label="Social media">${social}</ul>${list(PROFILE_LINKS)}</div><nav aria-labelledby="cap-family-footer-workspace"><h2 class="cap-family-footer-heading" id="cap-family-footer-workspace">${WORKSPACE_HEADING}</h2><ul class="cap-family-footer-links">${workspace}</ul></nav><nav aria-labelledby="cap-family-footer-site"><h2 class="cap-family-footer-heading" id="cap-family-footer-site">${SITE_HEADING}</h2>${list(siteLinks(published))}</nav></div></div></div>`;
+  return `<div class="cap-family-footer"><div class="cap-family-footer-local">${center}<nav class="cap-family-footer-sites" aria-labelledby="cap-family-footer-network"><h2 class="cap-family-footer-heading" id="cap-family-footer-network">Network</h2><ul>${sites}</ul></nav></div><div class="cap-livery" aria-hidden="true"></div><div class="cap-letterhead cap-family-footer-head"><div><a href="${escapeHtml(`${origin}/`)}" class="cap-letterhead-logo cap-family-footer-logo"><span>Dustin</span><span>Edwards</span></a><p class="cap-family-footer-note">&copy; 2006&ndash;${year}</p></div><div class="cap-family-footer-columns"><div><ul class="cap-family-footer-social" aria-label="Social media">${social}</ul>${list(PROFILE_LINKS)}</div><nav aria-labelledby="cap-family-footer-workspace"><h2 class="cap-family-footer-heading" id="cap-family-footer-workspace">${WORKSPACE_HEADING}</h2><ul class="cap-family-footer-links">${workspace}</ul></nav><nav aria-labelledby="cap-family-footer-site"><h2 class="cap-family-footer-heading" id="cap-family-footer-site">${SITE_HEADING}</h2>${list(siteGroup)}</nav></div></div></div>`;
 }

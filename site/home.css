@@ -911,6 +911,18 @@ h2.cap-part-title {
   align-items: baseline;
 }
 
+/* The accessibility statement (site/accessibility.ts): Prelum's sections in a reading measure. */
+.statement-page {
+  padding-block: var(--space-6) var(--space-9);
+
+  & > * {
+    max-width: 48rem;
+  }
+}
+.statement-title {
+  margin-block: 0 var(--space-5);
+}
+
 /* The search page (site/search.ts): the form, the count said aloud, then each result's title, the
    heading it matched and the words around the match. */
 .search-page {

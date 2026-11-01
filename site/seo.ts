@@ -79,7 +79,7 @@ export const ICON_TAGS = iconLinks()
 /** The discovery files, by their path in the built site. */
 export function discoveryFiles(components: string[]): Record<string, string> {
   return {
-    "sitemap.xml": sitemapDocument([{ loc: `${ORIGIN}/` }, { loc: `${ORIGIN}/make/` }, ...components.map((name) => ({ loc: `${ORIGIN}/components/${name}/` }))]),
+    "sitemap.xml": sitemapDocument([{ loc: `${ORIGIN}/` }, { loc: `${ORIGIN}/make/` }, { loc: `${ORIGIN}/accessibility/` }, ...components.map((name) => ({ loc: `${ORIGIN}/components/${name}/` }))]),
     ".well-known/security.txt": securityTxt({ origin: ORIGIN, contact: "security@dustinedwards.info", expires: SECURITY_TXT_EXPIRES }),
     [`${INDEXNOW_KEY}.txt`]: INDEXNOW_KEY,
     "robots.txt": robotsDocument({ origin: ORIGIN, notes: [`AI usage policy: ${ORIGIN}/ai.txt`, `LLM guide: ${ORIGIN}/llms.txt`] }),

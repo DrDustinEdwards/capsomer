@@ -8,6 +8,7 @@ import { generateStates } from "../bin/states.mjs";
 import { readData, renderComponent, renderHome } from "./home.ts";
 import { renderMake } from "./make.ts";
 import { SEARCH_PAGE, renderSearch, searchIndexJson } from "./search.ts";
+import { ACCESSIBILITY_PAGE, renderAccessibility } from "./accessibility.ts";
 import { writePreloadFile } from "../scripts/preload.ts";
 import { ICON_TAGS, MAKE_DESCRIPTION, discoveryFiles, siteHead } from "./seo.ts";
 
@@ -46,6 +47,7 @@ export default defineConfig({
         if (ctx.path.endsWith("/site/home.html")) return html.replace("<!--home-->", renderHome(data));
         if (ctx.path.endsWith("/site/make.html")) return html.replace("<!--make-->", renderMake());
         if (ctx.path.endsWith("/site/search.html")) return html.replace("<!--search-->", renderSearch(data));
+        if (ctx.path.endsWith("/site/accessibility.html")) return html.replace("<!--accessibility-->", renderAccessibility(data.version));
         return html.replace(/<!--component:([\w-]+)-->/, (_, name: string) => renderComponent(data, name));
       },
     },
@@ -59,6 +61,8 @@ export default defineConfig({
         if (make) make.fileName = "make/index.html";
         const search = bundle["site/search.html"];
         if (search) search.fileName = "search/index.html";
+        const statement = bundle["site/accessibility.html"];
+        if (statement) statement.fileName = "accessibility/index.html";
         const admin = bundle["site/index.html"];
         if (admin) admin.fileName = "admin/index.html";
       },
@@ -77,6 +81,8 @@ export default defineConfig({
               ? { path: "/make/", title: "Make a theme", description: MAKE_DESCRIPTION }
               : ctx.path.endsWith("/site/search.html")
                 ? { ...SEARCH_PAGE, noindex: true }
+                : ctx.path.endsWith("/site/accessibility.html")
+                ? ACCESSIBILITY_PAGE
                 : c
                 ? { path: `/components/${c.name}/`, title: c.title, description: c.lead }
                 : "admin";
@@ -108,7 +114,7 @@ export default defineConfig({
     // its own origin only.
     assetsInlineLimit: 0,
     emptyOutDir: true,
-    rollupOptions: { input: { home: resolve(root, "site/home.html"), make: resolve(root, "site/make.html"), search: resolve(root, "site/search.html"), site: resolve(root, "site/index.html"), ...states, ...pages } },
+    rollupOptions: { input: { home: resolve(root, "site/home.html"), make: resolve(root, "site/make.html"), search: resolve(root, "site/search.html"), accessibility: resolve(root, "site/accessibility.html"), site: resolve(root, "site/index.html"), ...states, ...pages } },
   },
   preview: { port: 4319, strictPort: true },
 });

@@ -205,7 +205,7 @@ const CENTER = `<div class="cap-family-footer-center">
   <p class="cap-family-footer-stamp"><span>Release ${VERSION}</span></p>
 </div>`;
 export const FOOTER = `<footer class="home-foot">
-  <div class="cap-page">${familyFooterHtml({ site: "capsomer", center: CENTER })}</div>
+  <div class="cap-page">${familyFooterHtml({ site: "capsomer", center: CENTER, statement: "/accessibility/" })}</div>
 </footer>`;
 
 export function renderHome(d: Data): string {
