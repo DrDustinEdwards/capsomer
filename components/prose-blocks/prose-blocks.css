@@ -317,21 +317,78 @@
       }
     }
 
-    /* An embed: no request to the service until the reader asks. Until then a 16:9 card that names
-       the service and the title; render/enhance swaps in the player on a click. */
-    & :where(.embed-link) {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      aspect-ratio: 16 / 9;
-      padding: var(--space-4);
-      border: 1px solid var(--line-strong);
+    /* An embed: no request to the service until the reader asks. Until then a card the size of the
+       player it becomes, so nothing moves on the click: the site's own poster (never the service's
+       thumbnail), a play button for a video or a song, and a bar naming the service and the title,
+       drawn by capsomer/player.css. render/enhance swaps in the player; without script the link
+       opens the service. */
+    & :where(.embed) {
+      /* Each service's player: a screen (16:9), a map (4:3), a post (4:5, about the width the
+         services draw a post at), an upright video, or a strip as tall as the service's own player. */
+      --embed-ratio: 16 / 9;
+      --embed-block: auto;
+      --embed-max: none;
+      margin-inline: 0;
+      & > :where(figcaption) {
+        margin-block-start: var(--space-2);
+      }
+    }
+    & :where(.embed-link, .embed iframe) {
+      inline-size: 100%;
+      max-inline-size: var(--embed-max);
+      aspect-ratio: var(--embed-ratio);
+      block-size: var(--embed-block);
+      margin-inline: auto;
       border-radius: var(--radius-m);
+    }
+    & :where(.embed iframe) {
+      display: block;
+      border: 0;
+      background: var(--sunken);
+    }
+    /* With no poster the box is held at the player's size all the same, so the page does not move on
+       the click, and the service and title sit at its center rather than in a bar along an empty
+       foot, the way click-to-load placeholders name what they will load (Embed Privacy's "content
+       from" placeholder, which keeps the embed's aspect ratio). A song's strip keeps its row. */
+    & :where(.embed:not(.embed-spotify, .embed-soundcloud, .embed-apple-podcasts, .embed-amazon-music) > .embed-link:has(.embed-label):not(:has(img))) {
+      grid-template: 1fr / 1fr;
+      & > :where(.embed-play) {
+        grid-area: 1 / 1;
+        align-self: end;
+        margin-block-end: var(--space-2);
+      }
+      & > :where(.embed-label) {
+        grid-area: 1 / 1;
+        align-self: center;
+        justify-self: center;
+        max-inline-size: 32ch;
+        border-block-start: 0;
+        background: none;
+        text-align: center;
+      }
+      &:has(.embed-play) > :where(.embed-label) {
+        align-self: start;
+        margin-block-start: var(--space-2);
+      }
+      &:has(.embed-play) {
+        grid-template: 1fr 1fr / 1fr;
+        & > :where(.embed-label) {
+          grid-area: 2 / 1;
+        }
+      }
+    }
+    /* HTML stored before Prelum 0.28: the link's text alone, centered, after a play mark. */
+    & :where(.embed-link:not(:has(.embed-label))) {
+      display: flex;
+      border: 1px solid var(--line-strong);
       background: var(--sunken);
       font-family: var(--ui);
+      text-decoration: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
       text-align: center;
       text-wrap: balance;
-      text-decoration: none;
       &::before {
         content: "";
         flex: none;
@@ -341,10 +398,8 @@
         border-block: 0.6em solid transparent;
         border-inline-start: 1em solid currentColor;
       }
-      /* The card keeps the link system's states: the tint under the pointer, a stronger one pressed. */
       &:hover,
       &[data-force="hover"] {
-        border-color: var(--accent);
         background: var(--accent-soft);
       }
       &:active,
@@ -352,12 +407,60 @@
         background: var(--accent-5);
       }
     }
-    & :where(.embed iframe) {
-      display: block;
-      inline-size: 100%;
-      aspect-ratio: 16 / 9;
-      border: 0;
-      border-radius: var(--radius-m);
+
+    /* The shapes. A map is 4:3. A post (X, Bluesky, Instagram) is 4:5 at most 34rem wide, about the
+       width each service draws one at. A TikTok video stands upright at its player's 9:16. */
+    & :where(.embed-google-maps) {
+      --embed-ratio: 4 / 3;
+    }
+    & :where(.embed-x, .embed-bluesky, .embed-instagram) {
+      --embed-ratio: 4 / 5;
+      --embed-max: 34rem;
+    }
+    & :where(.embed-tiktok) {
+      --embed-ratio: 9 / 16;
+      --embed-max: 20rem;
+    }
+    /* A song or a podcast is a strip at the height of the service's own player, in px because the
+       player lays itself out in px: Spotify 152 (a track or an episode) or 352 (a list), SoundCloud
+       166, Apple Podcasts 175 (an episode) or 450 (a show), Amazon Music 352 (the height in its Share >
+       Embed code). On the strip the
+       poster is a square at the start and the play button sits on it. */
+    & :where(.embed-spotify, .embed-soundcloud, .embed-apple-podcasts, .embed-amazon-music) {
+      --embed-ratio: auto;
+      & :where(.embed-link:has(.embed-label)) {
+        grid-template: 1fr auto / auto 1fr;
+        & > :where(picture, img) {
+          grid-area: 1 / 1 / -1 / 2;
+          inline-size: auto;
+          aspect-ratio: 1;
+        }
+        & > :where(.embed-play) {
+          grid-area: 1 / 1 / -1 / 2;
+          margin-inline: var(--space-4);
+        }
+        & > :where(.embed-label) {
+          grid-area: 1 / 2 / -1 / -1;
+          align-self: center;
+          border-block-start: 0;
+          background: none;
+        }
+      }
+    }
+    & :where(.embed-spotify, .embed-amazon-music) {
+      --embed-block: 352px;
+    }
+    & :where(.embed-spotify:has([data-embed-src*="/embed/track/"], [data-embed-src*="/embed/episode/"], iframe[src*="/embed/track/"], iframe[src*="/embed/episode/"])) {
+      --embed-block: 152px;
+    }
+    & :where(.embed-soundcloud) {
+      --embed-block: 166px;
+    }
+    & :where(.embed-apple-podcasts) {
+      --embed-block: 450px;
+    }
+    & :where(.embed-apple-podcasts:has([data-embed-src*="?i="], iframe[src*="?i="])) {
+      --embed-block: 175px;
     }
 
     /* A button link: the family's primary button, at a full control's height. */
