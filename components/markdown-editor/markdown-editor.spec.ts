@@ -610,13 +610,13 @@ eachTheme((theme) => {
   });
 
   // ---- the image step --------------------------------------------------------------------
-  test("keyboard: after an upload focus moves to the alt field, Insert waits for alt text, Enter inserts, focus returns to the text", async ({ page }) => {
+  test("keyboard: an image is described before it is sent: focus moves to the alt field, Insert waits for alt text, Enter uploads with it and inserts", async ({ page }) => {
     const surface = await visitOnly(page, theme, "alt");
     const alt = page.getByRole("textbox", { name: /Alt text/ });
     await expect(alt).toBeFocused();
     const insert = page.getByRole("button", { name: "Insert image" }).last();
     await expect(insert).toBeDisabled();
-    await expect(page.locator(".cap-md-upload .cap-field-help")).toBeVisible();
+    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toBeUndefined();
     await page.keyboard.type("The status page, all green");
     await expect(insert).toBeEnabled();
     await page.keyboard.press("Enter");
@@ -624,15 +624,25 @@ eachTheme((theme) => {
     await expect(surface).toBeFocused();
     await expect(page.locator("textarea")).toHaveValue(/^A screenshot of the status page after the fix\.\n\n:::figure\{src="data:image\/svg\+xml,[^"]+" alt="The status page, all green"\}\n:::$/);
     await expect(page.getByRole("status").filter({ hasText: "Image added" })).toHaveCount(1);
+    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toEqual([{ name: "status-after-fix.png", alt: "The status page, all green", decorative: false }]);
   });
 
-  test("keyboard: Esc or Cancel in the alt step discards the image and returns to the text", async ({ page }) => {
+  test("behavior: Insert as decorative uploads the image marked decorative and writes an empty alt", async ({ page }) => {
+    await visitOnly(page, theme, "alt");
+    await page.getByRole("button", { name: "Insert as decorative" }).click();
+    await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
+    await expect(page.locator("textarea")).toHaveValue(/alt=""\}\n:::$/);
+    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toEqual([{ name: "status-after-fix.png", alt: "", decorative: true }]);
+  });
+
+  test("keyboard: Esc or Cancel in the describe step discards the image unsent and returns to the text", async ({ page }) => {
     const surface = await visitOnly(page, theme, "alt");
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
     await expect(surface).toBeFocused();
     await expect(page.locator("textarea")).toHaveValue("A screenshot of the status page after the fix.");
+    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toBeUndefined();
     await visitOnly(page, theme, "alt");
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
     await page.getByRole("button", { name: "Cancel" }).click();
@@ -640,17 +650,19 @@ eachTheme((theme) => {
     await expect(surfaceOf(page)).toBeFocused();
   });
 
-  test("behavior: an upload in progress is said in a status region, and a failed one is an alert that leaves the text alone", async ({ page }) => {
+  test("behavior: an upload in progress is said in a status region, and a failed one is an alert that keeps the description and leaves the text alone", async ({ page }) => {
     await visitOnly(page, theme, "uploading");
     await expect(page.getByRole("group", { name: "Describe the image" })).toHaveAttribute("aria-busy", "true");
     await expect(page.getByRole("status").filter({ hasText: "Uploading slow.png" })).toHaveCount(1);
     await visitOnly(page, theme, "failed");
     await expect(page.getByRole("alert")).toHaveText("The upload server could not be reached. Nothing was added; try again.");
     await expect(page.locator("textarea")).toHaveValue("The upload failed; the text is untouched.");
-    await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
+    await expect(page.getByRole("group", { name: "Describe the image" })).not.toHaveAttribute("aria-busy");
+    await expect(page.getByRole("textbox", { name: /Alt text/ })).toHaveValue("The status page, all green");
+    await expect(page.getByRole("button", { name: "Insert image" }).last()).toBeEnabled();
   });
 
-  test("behavior: the toolbar's Insert image opens the file chooser, and a pasted or dropped image takes the same alt step", async ({ page }) => {
+  test("behavior: the toolbar's Insert image opens the file chooser, and a pasted or dropped image takes the same describe step", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await page.keyboard.press("Escape");
     const [chooser] = await Promise.all([page.waitForEvent("filechooser"), toolbarOf(page).getByRole("button", { name: "Insert image" }).click()]);

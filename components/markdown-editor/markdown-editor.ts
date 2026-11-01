@@ -16,7 +16,7 @@ import type { Surface } from "./markdown-editor.view.ts";
 
 export { rovingIndex } from "../toolbar/toolbar.ts";
 export { countWords, minutesForWords, looksLikeUrl, filterLinkTargets, lineBounds, wrapEdit, headingEdit, footnoteEdit, blockEdit, slashBlockEdit, scaffoldCursor, linkEdit, defaultImageMarkdown } from "./markdown-editor-edits.ts";
-export type { Edit, LinkTarget, Scaffold, UploadResult, MarkdownEditorOptions, MarkdownEditorHandle } from "./markdown-editor-edits.ts";
+export type { Edit, ImageDescription, LinkTarget, Scaffold, UploadResult, MarkdownEditorOptions, MarkdownEditorHandle } from "./markdown-editor-edits.ts";
 
 // ---- the DOM -------------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
 
   let surface: Surface | null = null;
   let quiet = false; // true while the app itself sets the text: no onChange for that
-  let upload: { token: number; panel: HTMLElement } | null = null;
+  let upload: { token: number; panel: HTMLElement; abort: AbortController | null } | null = null;
   let uploadToken = 0;
   let link: { from: number; to: number; panel: HTMLElement; input: HTMLInputElement; list: HTMLElement; note: HTMLElement; lb: Listbox; matches: LinkTarget[]; ask: number; stop: () => void } | null = null;
   let slash: { from: number; menu: HTMLElement; stop: () => void } | null = null;
@@ -193,7 +193,7 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
       { id: "code", label: "Code", hint: "Ctrl or Cmd + E", keys: "Control+E Meta+E", paths: GLYPH.code, run: commands.code },
       { id: "footnote", label: "Footnote", hint: "A reference and its definition", paths: GLYPH.footnote, run: commands.footnote },
     ];
-    if (o.onUpload) t.push({ id: "image", label: "Insert image", hint: "Uploads a file, then asks for alt text", paths: GLYPH.image, run: () => file.click() });
+    if (o.onUpload) t.push({ id: "image", label: "Insert image", hint: "Asks for alt text, then uploads the file", paths: GLYPH.image, run: () => file.click() });
     return t;
   }
 
@@ -417,73 +417,100 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     dismiss(menu);
   }
 
-  // ---- image upload with a mandatory alt step -------------------------------------------
+  // ---- image upload: described first, then sent ------------------------------------------
+  // The person describes the image before it leaves the browser (ATAG 2.0 B.2.3: the authoring
+  // tool prompts for the text alternative; the server refuses an undescribed upload anyway), so
+  // the file is sent once, with its alt text or its decorative choice, and nothing is uploaded
+  // for an image they cancel.
   function clearUploadError() {
     host.querySelector(".cap-md-upload-error")?.remove();
   }
 
   function cancelUpload(restoreFocus: boolean) {
     if (!upload) return;
-    const { panel } = upload;
+    const { panel, abort } = upload;
     upload = null;
     uploadToken++;
+    abort?.abort();
     panel.remove();
     if (restoreFocus) surface?.focus();
   }
 
-  async function startUpload(f: File): Promise<void> {
-    const send = o.onUpload;
-    if (!send || !surface) return;
+  function startUpload(f: File): void {
+    if (!o.onUpload || !surface) return;
     cancelUpload(false);
     clearUploadError();
     const token = ++uploadToken;
-    const panel = el("div", { class: "cap-md-upload", role: "group", "aria-label": "Describe the image", "aria-busy": "true" }, el("p", { class: "cap-md-upload-wait" }, `Uploading ${f.name}`));
-    upload = { token, panel };
+    const panel = el("div", { class: "cap-md-upload", role: "group", "aria-label": "Describe the image" });
+    upload = { token, panel, abort: null };
     frame.after(panel);
-    say(`Uploading ${f.name}`);
-    try {
-      const result = await send(f);
-      if (!upload || upload.token !== token) return;
-      showAltStep(panel, f.name, result.url);
-    } catch (e) {
-      if (!upload || upload.token !== token) return;
-      panel.remove();
-      upload = null;
-      const err = el("p", { class: "cap-field-error cap-md-upload-error", role: "alert" }, messageOf(e));
-      frame.after(err);
-      say("");
-    }
+    showDescribeStep(panel, f, token);
   }
 
-  function showAltStep(panel: HTMLElement, name: string, url: string) {
-    panel.removeAttribute("aria-busy");
+  function showDescribeStep(panel: HTMLElement, f: File, token: number) {
+    const name = f.name;
     const alt = el("input", { type: "text", class: "cap-input", id: `${uid}-alt`, autocomplete: "off", placeholder: "What the image shows", "aria-describedby": `${uid}-alt-help` });
-    const thumb = el("img", { class: "cap-md-upload-thumb", src: url, alt: "" });
-    const help = el("p", { class: "cap-field-help", id: `${uid}-alt-help` }, "The image is uploaded. It is not in the text until it has alt text.");
+    // A data: URL, not blob:, so the preview needs nothing a site's img-src does not already allow.
+    const thumb = el("img", { class: "cap-md-upload-thumb", alt: "" });
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      if (typeof reader.result === "string") thumb.src = reader.result;
+    });
+    reader.readAsDataURL(f);
+    const help = el("p", { class: "cap-field-help", id: `${uid}-alt-help` }, `Describe ${name} for a person who cannot see it, or insert it as decorative if it adds nothing. It is uploaded when you insert it.`);
+    const wait = el("p", { class: "cap-md-upload-wait", hidden: "" }, `Uploading ${name}`);
     const insert = el("button", { type: "button", class: "cap-btn", "data-variant": "primary" }, "Insert image");
     insert.disabled = true;
+    const decorative = el("button", { type: "button", class: "cap-btn" }, "Insert as decorative");
     const cancel = el("button", { type: "button", class: "cap-btn", "data-variant": "quiet" }, "Cancel");
-    const fields = el("div", { class: "cap-md-upload-fields" }, el("label", { class: "cap-field-label", for: alt.id }, "Alt text ", el("span", { class: "cap-field-required", "aria-hidden": "true" }, "Required")), alt, help, el("div", { class: "cap-md-upload-actions" }, insert, cancel));
+    const fields = el("div", { class: "cap-md-upload-fields" }, el("label", { class: "cap-field-label", for: alt.id }, "Alt text ", el("span", { class: "cap-field-required", "aria-hidden": "true" }, "Required")), alt, help, wait, el("div", { class: "cap-md-upload-actions" }, insert, decorative, cancel));
     panel.replaceChildren(thumb, fields);
-    const go = () => {
-      const text = alt.value.trim();
-      if (!text || !surface) return;
-      const md = (o.imageMarkdown ?? defaultImageMarkdown)({ url, alt: text, name });
-      cancelUpload(false);
-      apply(blockEdit(doc(), sel().from, sel().to, md));
-      say("Image added to the text.");
+    const busy = (on: boolean) => {
+      if (on) panel.setAttribute("aria-busy", "true");
+      else panel.removeAttribute("aria-busy");
+      wait.hidden = !on;
+      alt.readOnly = on;
+      insert.disabled = on || alt.value.trim() === "";
+      decorative.disabled = on;
+    };
+    const go = async (isDecorative: boolean) => {
+      const send = o.onUpload;
+      const text = isDecorative ? "" : alt.value.trim();
+      if (!send || !surface || !upload || upload.token !== token || panel.hasAttribute("aria-busy")) return;
+      if (!isDecorative && !text) return;
+      panel.querySelector(".cap-md-upload-error")?.remove();
+      const abort = new AbortController();
+      upload.abort = abort;
+      busy(true);
+      say(`Uploading ${name}`);
+      try {
+        const result = await send(f, { alt: text, decorative: isDecorative }, abort.signal);
+        if (!upload || upload.token !== token) return;
+        const md = (o.imageMarkdown ?? defaultImageMarkdown)({ url: result.url, alt: text, decorative: isDecorative, name });
+        cancelUpload(false);
+        apply(blockEdit(doc(), sel().from, sel().to, md));
+        say("Image added to the text.");
+      } catch (e) {
+        if (!upload || upload.token !== token) return;
+        upload.abort = null;
+        busy(false);
+        // The step stays, with what was typed, so a retry is one press.
+        fields.append(el("p", { class: "cap-field-error cap-md-upload-error", role: "alert" }, messageOf(e)));
+        say("");
+        (isDecorative ? decorative : insert.disabled ? alt : insert).focus();
+      }
     };
     alt.addEventListener("input", () => {
-      insert.disabled = alt.value.trim() === "";
-      help.hidden = alt.value.trim() !== "";
+      insert.disabled = alt.value.trim() === "" || panel.hasAttribute("aria-busy");
     });
     alt.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        go();
+        void go(false);
       }
     });
-    insert.addEventListener("click", go);
+    insert.addEventListener("click", () => void go(false));
+    decorative.addEventListener("click", () => void go(true));
     cancel.addEventListener("click", () => cancelUpload(true));
     panel.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
@@ -492,10 +519,9 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
         cancelUpload(true);
       }
     });
-    // Focus goes to the alt field once the file is stored: the step is otherwise silent, and
-    // the image cannot go in until it is answered.
+    // Focus goes to the alt field: the image cannot go in until it is answered.
     alt.focus();
-    say("Image uploaded. Describe it to add it to the text.");
+    say(`Describe ${name} to add it to the text.`);
   }
 
   listen(file, "change", () => {
