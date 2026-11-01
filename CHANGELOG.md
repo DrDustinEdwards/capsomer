@@ -2,6 +2,10 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
+## [Unreleased]
+
+- **Displayed math is not clipped under text spacing** (WCAG 1.4.12, area 9). Prose blocks give `.katex-display` half an em above and below instead of a quarter: with the spacing 1.4.12 asks a page to allow, KaTeX's struts no longer hold the glyphs and the formula's bottom edge was cut off (devkit-a11y's live run on Prelum's specimen, 77 of 80 px shown). No class, token or HTML contract changes.
+
 ## [0.60.0]
 
 Each site's footer links its own accessibility statement, and the showcase serves one (links and accessibility, area 9).
