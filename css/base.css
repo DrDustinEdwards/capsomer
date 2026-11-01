@@ -31,6 +31,10 @@
     color: var(--text);
     font: 400 var(--text-size) / var(--leading) var(--face);
     -webkit-font-smoothing: antialiased;
+    /* A word longer than its line (an address written out as a link, a tool's name) breaks
+       rather than pushing a phone's page sideways (WCAG 1.4.10 Reflow). break-word, not
+       anywhere: it changes no box's min-content size, so tables and flex rows lay out as before. */
+    overflow-wrap: break-word;
   }
   /* The reading context sets its own face and size where it is declared, not only on body. */
   /* A density wrapper sets its own reading size (the root keeps rem sizing). */

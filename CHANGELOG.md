@@ -4,6 +4,13 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.62.0]
+
+Nothing scrolls sideways on a 320 px phone (WCAG 1.4.10 Reflow, area 9), and displayed math keeps its spacing.
+
+- **Long words break instead of widening the page.** `body` sets `overflow-wrap: break-word`, so an address written out as a link (github.com/DrDustinEdwards/prelum on Prelum's and Enarratio's 404 pages and Enarratio's /astro) wraps at the column's edge. `break-word` leaves every box's min-content size alone, so no table, grid or flex row lays out differently. No class, token or HTML contract changes.
+- **System map: the view buttons wrap.** `.cap-system-map-views` wraps, since Plain map and Back to all systems side by side were 322 px, which pushed every Capsid system and flow page 26 px past a 320 px screen. No class or HTML contract changes.
+- **Manual direction sign: a long step breaks.** `.cap-direction` sets `overflow-wrap: anywhere`, so the last step of a trail (a tool's snake_case name on Capsid's /tools pages) shrinks and wraps instead of running off the sign. No class or HTML contract changes.
 - **Displayed math is not clipped under text spacing** (WCAG 1.4.12, area 9). Prose blocks give `.katex-display` half an em above and below instead of a quarter: with the spacing 1.4.12 asks a page to allow, KaTeX's struts no longer hold the glyphs and the formula's bottom edge was cut off (devkit-a11y's live run on Prelum's specimen, 77 of 80 px shown). No class, token or HTML contract changes.
 
 ## [0.61.0]

@@ -691,6 +691,8 @@
     background: var(--sign);
     color: var(--on-sign);
     font: 600 0.9375rem / 1.4 var(--ui);
+    /* anywhere, so a long step (a tool's snake_case name) shrinks its flex item and breaks. */
+    overflow-wrap: anywhere;
 
     > ol {
       display: flex;
