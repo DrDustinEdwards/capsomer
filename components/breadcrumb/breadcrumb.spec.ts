@@ -154,6 +154,16 @@ eachTheme((theme) => {
     expect(await page.locator("#bc-narrow").evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
   });
 
+  test("behavior: on a phone the trail is one line without the current page, and never widens the page", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await visitStates(page, "breadcrumb", theme);
+    const tops = await page.locator("#bc-narrow .cap-breadcrumb-item:not(:has([aria-current]))").evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+    expect(new Set(tops).size).toBe(1);
+    expect(await page.locator("#bc-narrow .cap-breadcrumb-item:has([aria-current])").evaluate((el) => el.getBoundingClientRect().width)).toBeLessThanOrEqual(1);
+    await expect(page.locator("#bc-narrow ol")).toContainText("Getting started");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  });
+
   test("behavior: comfortable density makes the links taller", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     const compact = await page.locator("#bc-default .cap-breadcrumb-link").first().evaluate((el) => el.getBoundingClientRect().height);

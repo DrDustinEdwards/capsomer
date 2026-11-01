@@ -691,8 +691,6 @@
     background: var(--sign);
     color: var(--on-sign);
     font: 600 0.9375rem / 1.4 var(--ui);
-    /* anywhere, so a long step (a tool's snake_case name) shrinks its flex item and breaks. */
-    overflow-wrap: anywhere;
 
     > ol {
       display: flex;
@@ -734,6 +732,32 @@
       padding-inline: 0.5em;
       background: var(--on);
       color: var(--primary-fg);
+    }
+  }
+
+  /* On a phone the sign is one line, as a breadcrumb is (components/breadcrumb): the page you
+     are on leaves the line, since the heading names it, but stays for a screen reader, and a
+     trail still too long scrolls sideways inside the sign rather than wrapping. */
+  @media (max-width: 40rem) {
+    .cap-direction {
+      > ol {
+        position: relative;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+      }
+      li {
+        flex: none;
+        white-space: nowrap;
+      }
+      li:has(> [aria-current]) {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
     }
   }
 
