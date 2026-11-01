@@ -346,6 +346,37 @@
       border: 0;
       background: var(--sunken);
     }
+    /* With no poster the box is held at the player's size all the same, so the page does not move on
+       the click, and the service and title sit at its center rather than in a bar along an empty
+       foot, the way click-to-load placeholders name what they will load (Embed Privacy's "content
+       from" placeholder, which keeps the embed's aspect ratio). A song's strip keeps its row. */
+    & :where(.embed:not(.embed-spotify, .embed-soundcloud, .embed-apple-podcasts, .embed-amazon-music) > .embed-link:has(.embed-label):not(:has(img))) {
+      grid-template: 1fr / 1fr;
+      & > :where(.embed-play) {
+        grid-area: 1 / 1;
+        align-self: end;
+        margin-block-end: var(--space-2);
+      }
+      & > :where(.embed-label) {
+        grid-area: 1 / 1;
+        align-self: center;
+        justify-self: center;
+        max-inline-size: 32ch;
+        border-block-start: 0;
+        background: none;
+        text-align: center;
+      }
+      &:has(.embed-play) > :where(.embed-label) {
+        align-self: start;
+        margin-block-start: var(--space-2);
+      }
+      &:has(.embed-play) {
+        grid-template: 1fr 1fr / 1fr;
+        & > :where(.embed-label) {
+          grid-area: 2 / 1;
+        }
+      }
+    }
     /* HTML stored before Prelum 0.28: the link's text alone, centered, after a play mark. */
     & :where(.embed-link:not(:has(.embed-label))) {
       display: flex;
@@ -392,7 +423,8 @@
     }
     /* A song or a podcast is a strip at the height of the service's own player, in px because the
        player lays itself out in px: Spotify 152 (a track or an episode) or 352 (a list), SoundCloud
-       166, Apple Podcasts 175 (an episode) or 450 (a show), Amazon Music 352. On the strip the
+       166, Apple Podcasts 175 (an episode) or 450 (a show), Amazon Music 352 (the height in its Share >
+       Embed code). On the strip the
        poster is a square at the start and the play button sits on it. */
     & :where(.embed-spotify, .embed-soundcloud, .embed-apple-podcasts, .embed-amazon-music) {
       --embed-ratio: auto;
