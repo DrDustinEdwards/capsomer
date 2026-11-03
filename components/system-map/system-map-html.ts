@@ -14,7 +14,9 @@ const head = (id: string, label: string, caption?: string) =>
   `<figcaption class="cap-system-map-head"><span class="cap-system-map-title" id="${e(id)}-title">${e(label)}</span>${caption ? `<p class="cap-system-map-caption">${e(caption)}</p>` : ""}</figcaption>`;
 
 /** A system's name, as a link to its page when it has one. */
-const nameLink = (s: MapSystem) => (s.href ? `<a href="${e(s.href)}">${e(s.name)}</a>` : e(s.name));
+// The class keeps the link out of the heading link's arrow cue (css/utilities.css), whose ::after
+// would take the card's stretched hit area.
+const nameLink = (s: MapSystem) => (s.href ? `<a class="cap-system-map-link" href="${e(s.href)}">${e(s.name)}</a>` : e(s.name));
 
 /**
  * One system as a card on the network: its name (the link, stretched over the card), what it is

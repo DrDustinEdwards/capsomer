@@ -49,7 +49,7 @@ test("a flow is shown on a system it touches, each step lighting only that syste
 
 test("the network and a system are whole HTML, escaped, with a step lit as the script leaves it", () => {
   const net = systemMapHtml(data, { id: "n" });
-  assert.match(net, /<li class="cap-system-map-card" data-id="site" data-uses="kit" data-used-by="core" data-link><h4 class="cap-system-map-card-name"><a href="\/s\/site">Site &lt;one&gt;<\/a><\/h4>/);
+  assert.match(net, /<li class="cap-system-map-card" data-id="site" data-uses="kit" data-used-by="core" data-link><h4 class="cap-system-map-card-name"><a class="cap-system-map-link" href="\/s\/site">Site &lt;one&gt;<\/a><\/h4>/);
   assert.match(net, /data-id="app"[^>]* data-private>.*private<\/span>/);
   assert.equal([...net.matchAll(/class="cap-system-map-card"/g)].length, 4);
   const one = systemMapHtml(data, { id: "s", system: "core", flow: { id: "f", step: 2 } });

@@ -125,16 +125,12 @@
     }
   }
 
+  /* Whole, never clamped: a clamp cuts the words off once a reader widens the spacing (WCAG 1.4.12). */
   .cap-system-map-card-text {
-    display: -webkit-box;
-    overflow: hidden;
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-detail);
     line-height: 1.4;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
   }
 
   .cap-system-map-card-meta {
@@ -216,6 +212,7 @@
   }
 
   .cap-system-map-tie {
+    position: relative;
     display: grid;
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--accent);
@@ -227,8 +224,20 @@
     }
   }
 
+  /* As on a card, the name's link covers the tie, so the whole box is the target (WCAG 2.5.8). */
   .cap-system-map-tie-name {
     font-weight: 600;
+
+    & a {
+      text-decoration: none;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+      }
+    }
   }
 
   .cap-system-map-tie-verbs {
