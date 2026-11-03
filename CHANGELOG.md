@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.64.0]
+
+The direction strip's arrow is a solid triangle, and the changes below, which were waiting under Unreleased.
+
+- **`.cap-direction` marks each step with a solid triangle, not the "→" character.** The `li + li::before` separator is a 0.5em by 0.6em shape (`clip-path`) in the family's color (`--on`), so it is the same on every platform. No class, token or HTML contract changes.
+
 - **A scroll region's focus ring sits inside its edge.** `base.css` gives `[role="region"][tabindex="0"]:focus-visible` an inset outline (`outline-offset: calc(var(--focus-width) * -1)`), the table's and dialog's rule, so a code box or wide table inside a box that clips its overflow still shows its whole ring. Prelum's code and table regions get it too. No class, token or HTML contract changes.
 - **Showcase site: every code box can be reached and scrolled with the keyboard** (WCAG 2.1.1, area 9). The install code on the front page, each component page's Installation tabs and examples, the theme builder's output and the doc pages' code are named regions (`tabindex="0" role="region" aria-label="Code: …"`, Prelum's pattern) written by one helper, `codeRegion` in `site/markdown.ts`. The Installation and theme builder tab panels drop their own `tabindex`, since the code inside is now the stop (WAI-ARIA APG, tabs), and a closed example leaves the tab order until View code opens it. The accessibility statement no longer lists the limitation.
 

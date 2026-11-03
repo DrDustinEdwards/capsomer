@@ -707,11 +707,16 @@
       min-inline-size: 0;
     }
 
+    /* The way forward is a solid triangle drawn as a shape, not a character, so it is the same size and
+       color on every platform (U+25B6 can render as an emoji) and takes the family's color. */
     li + li::before {
-      content: "\2192" / "";
-      margin-inline: 0.6em;
-      color: var(--on);
-      font-weight: 700;
+      content: "";
+      flex: none;
+      inline-size: 0.5em;
+      block-size: 0.6em;
+      margin-inline: 0.8em;
+      background: var(--on);
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
     }
 
     a {
@@ -764,6 +769,11 @@
   @media (forced-colors: active) {
     .cap-direction {
       border: 1px solid CanvasText;
+
+      li + li::before {
+        background: CanvasText;
+        forced-color-adjust: none;
+      }
     }
   }
 }
