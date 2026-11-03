@@ -78,31 +78,27 @@
     }
   }
 
-  /* The two views of the network: the hexagons (the default) and the plain map. With no script
-     both show, one after the other. Where the map is narrower than 44rem the hexagons' names
-     would fall under 12 px, so the plain map shows alone and the switch goes. */
+  /* The two views of the network, as tabs: the hexagons (the default) and the plain map. With no
+     script both panels show, one after the other. Where the map is narrower than 44rem the
+     hexagons' names would fall under 12 px, so the hexagons and the tab list go and the script
+     chooses the plain map. */
+  .cap-system-map-views {
+    display: grid;
+    gap: var(--space-4);
+  }
+
   .cap-system-map-switch {
-    display: flex;
-    gap: var(--space-2);
-    margin: 0;
+    justify-self: start;
 
     &[hidden] {
       display: none;
     }
   }
 
-  .cap-system-map[data-view="hex"] .cap-system-map-network,
-  .cap-system-map[data-view="plain"] .cap-system-map-hex {
-    display: none;
-  }
-
   @container cap-system-map (max-width: 44rem) {
     .cap-system-map .cap-system-map-hex,
     .cap-system-map .cap-system-map-switch {
       display: none;
-    }
-    .cap-system-map[data-view="hex"] .cap-system-map-network {
-      display: block;
     }
   }
 
@@ -115,7 +111,7 @@
   .cap-system-map-comb {
     display: block;
     width: 100%;
-    max-height: min(82vh, 52rem);
+    max-height: min(calc(100svh - 12rem), 52rem);
     overflow: visible;
   }
 

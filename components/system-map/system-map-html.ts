@@ -71,10 +71,17 @@ function networkHtml(data: SystemMapData, options: SystemMapOptions): string {
   return [
     `<figure class="cap-system-map" data-cap="system-map" data-level="network" id="${e(id)}" aria-labelledby="${e(id)}-title">`,
     head(id, label, options.caption),
-    `<p class="cap-system-map-switch" data-cap-part="switch" hidden><button type="button" class="cap-btn" data-size="sm" data-view="hex" aria-pressed="true">Hexagons</button><button type="button" class="cap-btn" data-size="sm" data-view="plain" aria-pressed="false">Plain map</button></p>`,
     `<p class="cap-system-map-detail" data-cap-part="detail" aria-hidden="true" hidden></p>`,
-    `<div class="cap-system-map-hex">${hexSvg(data, hexLayout(data, (s) => s.group ?? names.used), `${id}-title`)}</div>`,
-    `<div class="cap-system-map-network"><div class="cap-system-map-graph">${lanes}</div></div>`,
+    // Two views of one network as tabs (components/tabs): the hexagons first. With no script both
+    // panels show, one after the other, and the tab list stays hidden.
+    `<div class="cap-tabs cap-system-map-views" data-cap="tabs">`,
+    `<div class="cap-tabs-list cap-system-map-switch" data-size="sm" role="tablist" aria-label="${e(label)}: view" hidden>`,
+    `<button type="button" class="cap-tab" role="tab" id="${e(id)}-tab-hex" aria-selected="true" aria-controls="${e(id)}-hex" tabindex="0">Hexagons</button>`,
+    `<button type="button" class="cap-tab" role="tab" id="${e(id)}-tab-plain" aria-selected="false" aria-controls="${e(id)}-plain" tabindex="-1">Plain map</button>`,
+    `</div>`,
+    `<div class="cap-tabs-panel cap-system-map-hex" role="tabpanel" id="${e(id)}-hex" aria-labelledby="${e(id)}-tab-hex">${hexSvg(data, hexLayout(data, (s) => s.group ?? names.used), `${id}-title`)}</div>`,
+    `<div class="cap-tabs-panel cap-system-map-network" role="tabpanel" id="${e(id)}-plain" aria-labelledby="${e(id)}-tab-plain"><div class="cap-system-map-graph">${lanes}</div></div>`,
+    `</div>`,
     `</figure>`,
   ].join("");
 }

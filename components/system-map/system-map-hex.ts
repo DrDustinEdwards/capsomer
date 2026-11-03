@@ -162,55 +162,113 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
   const comb: Axial[] = [];
   for (let k = 0; k <= ok + 1; k++) for (const c of ringCells(k)) if (!taken.has(`${c[0]},${c[1]}`)) comb.push(c);
 
-  // Each line: the straight one if it crosses no other system's cell, else the gentlest bend
-  // (a quadratic curve, its middle pushed sideways) that crosses fewest.
+  // Each line runs through the comb's empty cells, never under another system: the shortest path
+  // over the hex grid whose middle cells are all empty (A cell carrying lines already costs a
+  // little more, so lines spread out), drawn as a smooth curve through those cells' centers. Lines
+  // sharing a cell stand side by side in it. Ties between neighbours are a straight line.
+  const key = (c: Axial) => `${c[0]},${c[1]}`;
+  const ringOf = ([q, r]: Axial) => Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r));
+  const load = new Map<string, number>();
   const at = new Map(cells.map((c) => [c.id, c]));
-  const clear = R * 0.92;
-  const lines = pairs.flatMap(([a, b]) => {
-    const p = at.get(a);
-    const q = at.get(b);
-    if (!p || !q) return [];
-    const mx = (p.x + q.x) / 2;
-    const my = (p.y + q.y) / 2;
-    const len = Math.hypot(q.x - p.x, q.y - p.y) || 1;
-    const nx = -(q.y - p.y) / len;
-    const ny = (q.x - p.x) / len;
-    let best = { hits: Infinity, off: 0 };
-    for (const off of [0, 0.5, -0.5, 1, -1, 1.5, -1.5, 2, -2, 2.6, -2.6, 3.2, -3.2].map((k) => k * R)) {
-      const cx = mx + nx * off * 2;
-      const cy = my + ny * off * 2;
-      let hits = 0;
-      for (const c of cells) {
-        if (c === p || c === q) continue;
-        for (let i = 1; i < 24; i++) {
-          const t = i / 24;
-          const x = (1 - t) * (1 - t) * p.x + 2 * (1 - t) * t * cx + t * t * q.x;
-          const y = (1 - t) * (1 - t) * p.y + 2 * (1 - t) * t * cy + t * t * q.y;
-          if (Math.hypot(x - c.x, y - c.y) < clear) {
-            hits++;
-            break;
-          }
-        }
+  // Dijkstra over (cell, heading): a step costs 1, a turn a little more, so lines run straight
+  // along the comb's channels and bundle there, like tracks, instead of wandering.
+  const route = (from: Axial, to: Axial): Axial[] => {
+    const goal = key(to);
+    const sk0 = `${key(from)}|-1`;
+    const dist = new Map<string, number>([[sk0, 0]]);
+    const prev = new Map<string, string>();
+    const cellOf = new Map<string, Axial>([[sk0, from]]);
+    const open: [number, string][] = [[0, sk0]];
+    let end = "";
+    while (open.length) {
+      open.sort((x, y) => x[0] - y[0]);
+      const [d, st] = open.shift()!;
+      if (d > dist.get(st)!) continue;
+      const c = cellOf.get(st)!;
+      if (key(c) === goal) {
+        end = st;
+        break;
       }
-      if (hits < best.hits) best = { hits, off };
-      if (hits === 0) break;
+      const h = Number(st.split("|")[1]);
+      DIRS.forEach(([dq, dr], di) => {
+        const n: Axial = [c[0] + dq, c[1] + dr];
+        const nk = key(n);
+        if (nk !== goal && (taken.has(nk) || ringOf(n) > ok)) return;
+        const turn = h < 0 || h === di ? 0 : Math.min((h - di + 6) % 6, (di - h + 6) % 6) === 1 ? 0.45 : 1.2;
+        const nd = d + 1 + turn - (nk !== goal && load.has(nk) ? 0.3 : 0);
+        const ns = `${nk}|${di}`;
+        if (nd < (dist.get(ns) ?? Infinity)) {
+          dist.set(ns, nd);
+          prev.set(ns, st);
+          cellOf.set(ns, n);
+          open.push([nd, ns]);
+        }
+      });
     }
-    const f = (n: number) => Math.round(n * 10) / 10;
-    const d = best.off === 0 ? `M${f(p.x)} ${f(p.y)} L${f(q.x)} ${f(q.y)}` : `M${f(p.x)} ${f(p.y)} Q${f(mx + nx * best.off * 2)} ${f(my + ny * best.off * 2)} ${f(q.x)} ${f(q.y)}`;
-    return [{ a, b, d }];
+    if (!end) return [from, to];
+    const path: Axial[] = [];
+    for (let st: string | undefined = end; st; st = prev.get(st)) path.unshift(cellOf.get(st)!);
+    return path;
+  };
+  // Longer ties first, so the short ones fit around them.
+  const ordered = pairs
+    .filter(([a, b]) => at.has(a) && at.has(b))
+    .sort(([a, b], [c, d]) => Math.hypot(at.get(d)!.x - at.get(c)!.x, at.get(d)!.y - at.get(c)!.y) - Math.hypot(at.get(b)!.x - at.get(a)!.x, at.get(b)!.y - at.get(a)!.y));
+  const paths = ordered.map(([a, b]) => {
+    const path = route(at.get(a)!.at, at.get(b)!.at);
+    for (const c of path.slice(1, -1)) load.set(key(c), (load.get(key(c)) ?? 0) + 1);
+    return { a, b, path };
+  });
+  // Where each line stands inside a shared cell: spread across it, in a steady order.
+  const slots = new Map<string, number>();
+  const f = (n: number) => Math.round(n * 10) / 10;
+  const lines = paths.map(({ a, b, path }) => {
+    const pts = path.map((c, i) => {
+      const [x, y] = xy(c);
+      if (i === 0 || i === path.length - 1) return [x, y] as [number, number];
+      const k = key(c);
+      const n = load.get(k)!;
+      const slot = slots.get(k) ?? 0;
+      slots.set(k, slot + 1);
+      const [px, py] = xy(path[i - 1]!);
+      const [nx2, ny2] = xy(path[i + 1]!);
+      const len = Math.hypot(nx2 - px, ny2 - py) || 1;
+      const off = (slot - (n - 1) / 2) * Math.min(3, (R * 0.5) / Math.max(1, n));
+      return [x - ((ny2 - py) / len) * off, y + ((nx2 - px) / len) * off] as [number, number];
+    });
+    // Straight runs joined by rounded corners, as a track is drawn.
+    let d = `M${f(pts[0]![0])} ${f(pts[0]![1])}`;
+    for (let i = 1; i < pts.length - 1; i++) {
+      const [px, py] = pts[i - 1]!;
+      const [x, y] = pts[i]!;
+      const [nx2, ny2] = pts[i + 1]!;
+      const l0 = Math.hypot(x - px, y - py) || 1;
+      const l1 = Math.hypot(nx2 - x, ny2 - y) || 1;
+      const r = Math.min(R * 0.6, l0 / 2, l1 / 2);
+      d += ` L${f(x - ((x - px) / l0) * r)} ${f(y - ((y - py) / l0) * r)} Q${f(x)} ${f(y)} ${f(x + ((nx2 - x) / l1) * r)} ${f(y + ((ny2 - y) / l1) * r)}`;
+    }
+    d += ` L${f(pts[pts.length - 1]![0])} ${f(pts[pts.length - 1]![1])}`;
+    return { a, b, d };
   });
 
-  // Each group's name just outside its run of cells.
-  const outR = R * 1.5 * ok + R * 1.2;
+  // Each group's name in the empty ring just outside it, at the cell nearest its run's middle.
+  const outside = ringCells(ok + 1);
   const labels = groups.map((g, i) => {
     const ang = Math.atan2(
       g.reduce((k, s) => k + Math.sin(angleOf(place.get(s.id)!)), 0),
       g.reduce((k, s) => k + Math.cos(angleOf(place.get(s.id)!)), 0),
     );
-    return { name: groupNames[i]!, x: Math.cos(ang) * outR * 1.08, y: Math.sin(ang) * outR * 1.08 };
+    const cell = outside.reduce((best, c) => (Math.abs(wrap(angleOf(c), ang) - ang) < Math.abs(wrap(angleOf(best), ang) - ang) ? c : best));
+    const [x, y] = xy(cell);
+    return { name: groupNames[i]!, x, y };
   });
-  const extent = R * SQRT3 * (ok + 1.5) + R;
-  return { cells, comb, groups: labels, lines, box: [-extent, -extent * 0.95, extent * 2, extent * 1.9] };
+  // The box: every cell of the comb, with a cell's room around it.
+  const pts = [...comb, ...cells.map((c) => c.at)].map(xy);
+  const x0 = Math.min(...pts.map((p) => p[0])) - R;
+  const x1 = Math.max(...pts.map((p) => p[0])) + R;
+  const y0 = Math.min(...pts.map((p) => p[1])) - R;
+  const y1 = Math.max(...pts.map((p) => p[1])) + R;
+  return { cells, comb, groups: labels, lines, box: [x0, y0, x1 - x0, y1 - y0] };
 }
 
 const hexPoints = (x: number, y: number, r = R * 0.94) =>
@@ -219,13 +277,14 @@ const hexPoints = (x: number, y: number, r = R * 0.94) =>
     return `${Math.round((x + r * Math.cos(t)) * 10) / 10},${Math.round((y + r * Math.sin(t)) * 10) / 10}`;
   }).join(" ");
 
-/** A name in a cell: one line, or two split at a space when it is long. */
+/** A name in a cell: one line, or two split at a space when it is long (the space kept, so the
+ * words read as the name they are). */
 function nameText(name: string, x: number, y: number): string {
   const words = name.split(" ");
   if (name.length <= 9 || words.length < 2) return `<text class="cap-system-map-cell-name" x="${x}" y="${y}" dy="0.35em">${e(name)}</text>`;
   let best = 1;
   for (let i = 1; i < words.length; i++) if (Math.abs(words.slice(0, i).join(" ").length - name.length / 2) < Math.abs(words.slice(0, best).join(" ").length - name.length / 2)) best = i;
-  return `<text class="cap-system-map-cell-name" x="${x}" y="${y}"><tspan x="${x}" dy="-0.2em">${e(words.slice(0, best).join(" "))}</tspan><tspan x="${x}" dy="1.15em">${e(words.slice(best).join(" "))}</tspan></text>`;
+  return `<text class="cap-system-map-cell-name" x="${x}" y="${y}"><tspan x="${x}" dy="-0.2em">${e(words.slice(0, best).join(" "))} </tspan><tspan x="${x}" dy="1.15em">${e(words.slice(best).join(" "))}</tspan></text>`;
 }
 
 /**
@@ -247,7 +306,9 @@ export function hexSvg(data: SystemMapData, layout: HexLayout, labelId: string):
       const y = Math.round(c.y * 10) / 10;
       const inner = `<polygon points="${hexPoints(c.x, c.y, s.ring === "core" ? R * 0.98 : R * 0.94)}"/>${nameText(s.short ?? s.name, x, y)}`;
       const attrs = `class="cap-system-map-cell" data-id="${e(s.id)}" data-ring="${s.ring}"${s.private ? " data-private" : ""}`;
-      return s.href ? `<a ${attrs} href="${e(s.href)}" aria-label="${e(s.name)}">${inner}</a>` : `<g ${attrs} role="img" aria-label="${e(s.name)}">${inner}</g>`;
+      // The name a link is known by starts with the words it shows (WCAG 2.5.3), then the full name.
+      const label = s.short && s.short !== s.name ? `${s.short}, ${s.name}` : s.name;
+      return s.href ? `<a ${attrs} href="${e(s.href)}" aria-label="${e(label)}">${inner}</a>` : `<g ${attrs} role="img" aria-label="${e(label)}">${inner}</g>`;
     })
     .join("");
   return `<svg class="cap-system-map-comb" viewBox="${bx} ${by} ${bw} ${bh}" role="group" aria-labelledby="${e(labelId)}" style="--cap-name-size: ${NAME_SIZE}px; --cap-label-size: ${LABEL_SIZE}px"><g class="cap-system-map-comb-cells" aria-hidden="true">${comb}</g><g class="cap-system-map-comb-lines" aria-hidden="true">${lines}</g><g aria-hidden="true">${groups}</g>${cells}</svg>`;

@@ -8,12 +8,15 @@
 // focusing a card lights what it uses and what uses it and dims the rest; on a system, Back and
 // Next step a flow, lighting the parts each step touches. No framework, no storage.
 
+import { enhance as enhanceTabs, select } from "../tabs/tabs.ts";
 import { stepText } from "./system-map-data.ts";
 import { type Wires, wires } from "./system-map-wires.ts";
 
 export { modelMapData, networkLayout, tiePairs, tiesOf, flowsOver, ownerOf, placeOf, verbOf, count, stepText, VERB, STORE_KINDS, EXTERNAL } from "./system-map-data.ts";
 export type { ModelSystem, SystemModel, MapRing, MapSystem, MapLink, MapContainer, MapFlowStep, MapFlow, SystemMapData, SystemMapOptions, Lane, NetworkBlock, NetworkLane, Tie, Ties, ShownFlow, ShownStep, PartPlace } from "./system-map-data.ts";
 export { escapeHtml, systemMapHtml } from "./system-map-html.ts";
+export { hexLayout } from "./system-map-hex.ts";
+export type { HexCell, HexLayout } from "./system-map-hex.ts";
 
 const READY = "data-cap-ready";
 const ids = (v: string | undefined) => (v ?? "").split(" ").filter(Boolean);
@@ -68,18 +71,31 @@ function network(root: HTMLElement, signal: AbortSignal) {
       if (on) l.parentNode?.append(l);
     }
   };
-  // The switch between the hexagons (the default) and the plain map. Where the map is too narrow
-  // for the hexagons' words, the plain map shows alone (the CSS), whatever the switch says.
-  const switcher = root.querySelector<HTMLElement>("[data-cap-part='switch']");
-  if (switcher) {
-    const buttons = [...switcher.querySelectorAll<HTMLButtonElement>("button[data-view]")];
-    const show = (view: string) => {
-      root.dataset.view = view;
-      for (const b of buttons) b.setAttribute("aria-pressed", String(b.dataset.view === view));
+  // The two views are tabs (components/tabs), the hexagons chosen first. Where the map is too
+  // narrow for the hexagons' words, the plain map shows alone and the tab list goes (the CSS).
+  const views = root.querySelector<HTMLElement>(".cap-system-map-views");
+  const hexTab = views?.querySelector<HTMLElement>("[role='tab']");
+  if (views && hexTab) {
+    views.querySelector<HTMLElement>("[role='tablist']")!.hidden = false;
+    const tabs = [...views.querySelectorAll<HTMLElement>("[role='tab']")];
+    let chosen = hexTab;
+    let narrow = false;
+    // Narrow: the plain map is chosen for the reader (the hexagons and the tab list are hidden by
+    // the CSS); wide again, their own choice comes back.
+    const fit = () => {
+      const rem = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      narrow = root.getBoundingClientRect().width < 44 * rem;
+      select(views, narrow ? tabs[tabs.length - 1]! : chosen, { silent: true });
     };
-    switcher.hidden = false;
-    show(root.dataset.view ?? "hex");
-    for (const b of buttons) b.addEventListener("click", () => show(b.dataset.view!), { signal });
+    views.addEventListener("cap:tabs-change", (e) => {
+      if (!narrow) chosen = (e as CustomEvent<{ tab: HTMLElement }>).detail.tab;
+    }, { signal });
+    const ro = new ResizeObserver(fit);
+    ro.observe(root);
+    signal.addEventListener("abort", () => ro.disconnect());
+    fit();
+    const undo = enhanceTabs(root);
+    signal.addEventListener("abort", undo);
   }
   const nameOf = (c: HTMLElement) => c.querySelector(".cap-system-map-card-name")?.textContent ?? c.dataset.id!;
   const light = (id: string | null) => {

@@ -1,10 +1,10 @@
 // The system map's reading of the data, imported straight from the TypeScript source: the module
 // touches no DOM until a controller is made. Only the tricky parts: a part's line counts as its
 // system's tie, a flow lights only the parts of the system shown, the network's lanes, the wires a
-// system's page draws, and every text is escaped.
+// system's page draws, the honeycomb's lines, and every text is escaped.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { flowsOver, modelMapData, networkLayout, systemMapHtml, tiesOf } from "../../components/system-map/system-map.ts";
+import { flowsOver, hexLayout, modelMapData, networkLayout, systemMapHtml, tiesOf } from "../../components/system-map/system-map.ts";
 
 const data = {
   systems: [
@@ -115,4 +115,26 @@ test("the network's lanes: the shared packages in the middle, each block on the 
   assert.notEqual(side("Websites"), side("Apps"));
   // Within the websites, s1 stands by k2 and s2 by k1: no two ties cross.
   assert.deepEqual(lanes.find((l) => l.lane === side("Websites")).blocks.find((b) => b.name === "Websites").systems.map((s) => s.id), ["s1", "s2"]);
+});
+
+test("the honeycomb's lines never pass under another system's cell", () => {
+  // Every used system ties to every shared package and the core: the straight line between most
+  // pairs crosses another cell, so each has to find its way through the empty ones.
+  const used = Array.from({ length: 10 }, (_, i) => ({ id: `u${i}`, name: `U${i}`, ring: "used", group: i < 5 ? "One" : "Two" }));
+  const shared = Array.from({ length: 4 }, (_, i) => ({ id: `k${i}`, name: `K${i}`, ring: "shared" }));
+  const net = {
+    systems: [{ id: "c", name: "C", ring: "core" }, ...shared, ...used],
+    relationships: used.flatMap((u) => [...shared.map((k) => ({ from: u.id, to: k.id, kind: "installs" })), { from: "c", to: u.id, kind: "coordinates" }]),
+  };
+  const layout = hexLayout(net, (s) => s.group);
+  assert.equal(layout.lines.length, 10 * 5);
+  for (const l of layout.lines) {
+    const pts = [...l.d.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]);
+    for (const [x, y] of pts.slice(1, -1)) {
+      for (const c of layout.cells) {
+        if (c.id === l.a || c.id === l.b) continue;
+        assert.ok(Math.hypot(x - c.x, y - c.y) > 40, `${l.a} to ${l.b} passes under ${c.id}`);
+      }
+    }
+  }
 });

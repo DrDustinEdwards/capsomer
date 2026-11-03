@@ -35,6 +35,7 @@
 </section>
 
 <script type="module">
+  import { select } from "../tabs/tabs.ts";
   import { controller, enhance, systemMapHtml } from "./system-map.ts";
 
   // Sample data in the network's own words. A private system shows in full, only marked private.
@@ -129,5 +130,8 @@
   enhance(document.querySelector("[data-mount='network']"));
   enhance(document.querySelector("[data-mount='system']"));
   enhance(document.querySelector("[data-mount='step']"));
+  // Carrel lit on the plain map, the second view.
+  const views = document.querySelector("#map-lit .cap-system-map-views");
+  select(views, views.querySelector("[role='tab']:last-child"));
   lit.light("carrel");
 </script>
