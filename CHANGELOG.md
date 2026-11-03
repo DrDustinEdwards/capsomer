@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.67.1]
+## [0.67.2]
 
 React's `ChartFrame` gives a primitive's figure no `fit`, so a heat strip or timeline that spreads `fit` into its draw keeps its own height. No new or changed exports, and no class, token or HTML contract changes.
 
