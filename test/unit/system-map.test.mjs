@@ -138,3 +138,7 @@ test("the honeycomb's lines never pass under another system's cell", () => {
     }
   }
 });
+
+test("the map's markup carries no style attribute, so a policy that forbids inline styles draws it whole", () => {
+  for (const html of [systemMapHtml(data, { id: "n", label: "N" }), systemMapHtml(data, { id: "s", label: "S", system: "core" })]) assert.doesNotMatch(html, /\sstyle=/);
+});

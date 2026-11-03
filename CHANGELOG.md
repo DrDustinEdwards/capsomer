@@ -10,6 +10,10 @@ React's `ChartFrame` gives a primitive's figure no `fit`, so a heat strip or tim
 
 - **React's `ChartFrame` no longer fits a primitive to the first drawing's height.** `shownHeight` (so `fit`) is empty for a figure Enarratio marks `data-enarratio-static` (a heat strip, timeline, sparkline, uptime strip or progress ring), and the draw keeps its own height. 0.66.0 scaled every drawing's height with its width, which is a chart's shape but not a primitive's: a heat strip drawn 640 by 20 and shown in a 300 px column would have been redrawn 300 by 9.4, not 300 by 20, and a timeline ignores `height` (its lanes set it) and shows its list, not its SVG, under 30rem. A primitive's draw can now take `fit` like a chart's, `(width, fit) => heatStrip({ ...options, width, ...fit })`, and gets its own height. No class, token or HTML contract changes.
 
+## [0.67.1]
+
+- **The system map draws whole under a Content Security Policy that forbids inline styles.** 0.67.0 set the hexagons' text sizes and the Inside column's lane count in `style` attributes, which such a policy blocks. **Changed HTML contract:** the Inside column carries `data-places="1|2|3"` in place of `style="--cap-places: n"`, and `svg.cap-system-map-comb` no longer carries a `style`; its text sizes are in system-map.css.
+
 ## [0.67.0]
 
 The system map is a connections map (Dustin, 2026-11-03: "i want the actual connections map"). The 0.65.0 cards stay; the rule that no lines are drawn goes, and every tie is a wire.

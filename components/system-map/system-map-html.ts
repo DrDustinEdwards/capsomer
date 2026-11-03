@@ -158,7 +158,7 @@ function systemHtml(data: SystemMapData, options: SystemMapOptions, sid: string)
       return list.length ? `<section class="cap-system-map-place" data-place="${p}">${heading(h + 1, "cap-system-map-place-name", PLACE_NAMES[p])}<ul class="cap-system-map-parts">${list.map(part).join("")}</ul></section>` : "";
     })
     .join("");
-  const inside = `<section class="cap-system-map-column" data-column="inside" style="--cap-places: ${Math.max(1, placeCount)}" aria-labelledby="${e(id)}-inside">${heading(h, "cap-system-map-column-name", `<span${wireAttrs("self", wires)}>Inside ${e(s.name)}</span>`, `${id}-inside`)}${places || `<p class="cap-system-map-none">No parts of its own are mapped.</p>`}</section>`;
+  const inside = `<section class="cap-system-map-column" data-column="inside" data-places="${Math.max(1, placeCount)}" aria-labelledby="${e(id)}-inside">${heading(h, "cap-system-map-column-name", `<span${wireAttrs("self", wires)}>Inside ${e(s.name)}</span>`, `${id}-inside`)}${places || `<p class="cap-system-map-none">No parts of its own are mapped.</p>`}</section>`;
   const tieColumn = (column: "used-by" | "uses", title: string, list: Ties["uses"], none: string) =>
     `<section class="cap-system-map-column" data-column="${column}" aria-labelledby="${e(id)}-${column}">${heading(h, "cap-system-map-column-name", `${title} <span class="cap-system-map-group-count">${list.length}</span>`, `${id}-${column}`)}${list.length ? `<ul class="cap-system-map-ties">${list.map((t) => tieItem(byId.get(t.id)!, t.verbs, `${column}:${t.id}`, wires)).join("")}</ul>` : `<p class="cap-system-map-none">${none}</p>`}</section>`;
   const columns =
