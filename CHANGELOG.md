@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **The showcase draws with Enarratio 0.7.3** (the devDependency, from 0.7.0; the peer range `^0.5.0 || ^0.6.0 || ^0.7.0` is unchanged). Its charts no longer move the page when the enhancement layer loads: the redraw keeps the server drawing's height, a legend entry has its button's box before it is a button, and the figure holds the controls the layer adds, inert until it arrives. `css/enarratio.css` needed no change: it restyles no legend entry or control row, and the pending downloads carry `.enarratio-export`, so they get the same 44 px touch target as the working ones. A page that uses React's `ChartFrame` with `enhance={false}`, or enhance options that turn controls off, draws its figure with Enarratio's `controls: false`. No class, token or HTML contract changes.
+
 ## [0.65.0]
 
 The system map is cards, not a capsid drawing (Dustin, 2026-11-03: yes to the card-and-drill-down design). It replaces answer 3 of capsid/rulings/system-explorer-2026-10-10.md (the hexagon drawing) and the line routing of the seat rulings on #57 and #64; answer 9 (one component for both homes) and the one-tap rule of 2026-10-18 still hold.
