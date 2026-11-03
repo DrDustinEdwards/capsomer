@@ -30,8 +30,7 @@ eachTheme((theme) => {
   test("accessibility: lit and private are marked by more than color, and no text is under 12 px", async ({ page }) => {
     await expect(page.locator("#map-lit [data-id='site'] .cap-system-map-card-tie")).toHaveText("Used by Carrel");
     await expect(page.locator("#map-lit [data-id='capsid'] .cap-system-map-card-tie")).toHaveText("Uses and used by Carrel");
-    const width = (sel: string) => page.locator(sel).evaluate((el) => Number.parseFloat(getComputedStyle(el).borderTopWidth));
-    expect(await width("#map-lit [data-id='carrel']")).toBeGreaterThan(await width("#map [data-id='carrel']"));
+    expect(await page.locator("#map-lit [data-id='carrel']").evaluate((el) => getComputedStyle(el).outlineStyle)).toBe("solid");
     expect(await page.locator("#map [data-id='foxing']").evaluate((el) => getComputedStyle(el).borderTopStyle)).toBe("dashed");
     const smallest = await page.locator(".cap-system-map").evaluateAll((maps) =>
       Math.min(...maps.flatMap((m) => [...m.querySelectorAll("*")].filter((el) => el.childNodes.length && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent!.trim())).map((el) => Number.parseFloat(getComputedStyle(el).fontSize))))

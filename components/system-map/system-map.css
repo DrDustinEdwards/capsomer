@@ -191,10 +191,13 @@
     &[data-tie] {
       border-color: var(--accent);
     }
+    /* The heavier edge is an outline inside the border, so the card keeps its size. */
     &[data-tie="self"] {
-      border-width: 2px;
-      margin: -1px;
       background: var(--accent-soft);
+    }
+    &[data-tie="self"]:not(:focus-within) {
+      outline: 1px solid var(--accent);
+      outline-offset: -2px;
     }
   }
 
@@ -325,8 +328,8 @@
       background: var(--accent-soft);
     }
     &[data-at] {
-      border-width: 2px;
-      margin: -1px;
+      outline: 1px solid var(--accent);
+      outline-offset: -2px;
     }
   }
 
