@@ -14,12 +14,38 @@ export function drawWidth(measured: number, min = MIN_WIDTH): number {
   return Math.max(min, Math.floor(measured));
 }
 
+// What a redraw keeps from the first drawing: the height it showed at the frame's width.
+export interface ChartFit {
+  height?: number;
+}
+
+// A drawing 30rem or wider keeps that width and scrolls under it (Enarratio's .enarratio-frame-wide).
+const WIDE_REM = 30;
+
+// The height the first drawing (`first`, drawn at the server's width) shows at in a frame `width`
+// wide: scaled down to the frame, never up, and not below 30rem for a wide drawing. The redraw
+// draws at this height, so swapping it in after hydration moves nothing under the chart (web.dev,
+// "Optimize CLS"); the rule is enarratio/redraw's own (Enarratio record 0033), for pages drawn
+// without React.
+export function shownHeight(first: string, width: number, rem = 16): number | undefined {
+  const box = /<svg\b[^>]*?\sviewBox="[\d.]+ [\d.]+ ([\d.]+) ([\d.]+)"/.exec(first);
+  const w = Number(box?.[1]);
+  const h = Number(box?.[2]);
+  if (!(w > 0 && h > 0)) return undefined;
+  const shown = first.includes("enarratio-frame-wide") ? Math.max(width, WIDE_REM * rem) : width;
+  return Math.round(((h * Math.min(shown, w)) / w) * 100) / 100;
+}
+
+const rootRem = () => (typeof document === "undefined" ? 16 : Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
+
 export interface ChartFrameProps {
-  // Draws Enarratio's figure at a width, as a string: `(width) => barChart({ ...options, width })`
-  // from enarratio/lite. The server and the first client render draw at `width`, so hydration
-  // matches; then the frame redraws at its own measured width. A throw is shown in the chart's
-  // place, in Enarratio's own words, not the page's.
-  draw?: (width: number) => string;
+  // Draws Enarratio's figure at a width, as a string: `(width, fit) => barChart({ ...options, width,
+  // ...fit })` from enarratio/lite. The server and the first client render draw at `width` with an
+  // empty `fit`, so hydration matches; then the frame redraws at its own measured width, and `fit`
+  // holds the height the first drawing showed at that width, so the page does not move when the
+  // redraw swaps in. A draw that leaves `fit` out keeps its own height. A throw is shown in the
+  // chart's place, in Enarratio's own words, not the page's.
+  draw?: (width: number, fit: ChartFit) => string;
   // Or a figure already drawn (a primitive's figure), placed as it comes and never redrawn.
   chart?: string;
   width?: number;
@@ -50,6 +76,9 @@ export function ChartFrame({ draw, chart, width = DEFAULT_WIDTH, minWidth = MIN_
   const ref = useRef<HTMLDivElement>(null);
   const dataOpen = useRef(false);
   const [drawn, setDrawn] = useState(width);
+  // The drawing at `width` (the server's), which each redraw takes its height from (shownHeight),
+  // and the draw it came from: drawn again when the page passes a new draw, not on a resize.
+  const first = useRef({ draw: undefined as ChartFrameProps["draw"], html: "" });
   const after = useRef(onDraw);
   after.current = onDraw;
   const redraws = draw !== undefined;
@@ -81,7 +110,13 @@ export function ChartFrame({ draw, chart, width = DEFAULT_WIDTH, minWidth = MIN_
   let error = "";
   if (draw) {
     try {
-      html = draw(drawn);
+      if (first.current.draw !== draw) first.current = { draw, html: "" };
+      if (drawn === width) html = first.current.html = draw(width, {});
+      else {
+        first.current.html ||= draw(width, {});
+        const height = shownHeight(first.current.html, drawn, rootRem());
+        html = draw(drawn, height === undefined ? {} : { height });
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : String(err);
     }

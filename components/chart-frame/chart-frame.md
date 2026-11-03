@@ -33,7 +33,7 @@ Any chart a person reads: a bar, line or area chart, a sparkline, an uptime stri
 - **One figure, Enarratio's.** The frame builds no head, sentence or table of its own: Enarratio's figure has them all, in the HTML with scripts off, computed from the same values as the drawing, so the words and the table cannot disagree with the picture, and two copies cannot drift. Pass `title`, `subtitle`, `alt` (the finding), `notes` and `source` to the chart.
 - **The table is in the HTML, behind "Show data"**, closed by default, a native `details` that works without script, opens with find-in-page and prints open. Enarratio labels it "Show data", then "Hide data"; the frame makes the label read as an action, at a full target's height.
 - **No data is a state with its reason**, in the chart's place, with the status glyph and word; there is no empty chart and no table.
-- **Drawn to its width.** A chart drawn at one width and shrunk to a phone shrinks its text. In React, `ChartFrame` draws at 640 on the server and before the first measurement (so hydration matches), then redraws at its own width (whole pixels, at most once a frame), keeping "Show data" open if the reader opened it. A chart Enarratio refuses says why in its place, not the page's.
+- **Drawn to its width.** A chart drawn at one width and shrunk to a phone shrinks its text. In React, `ChartFrame` draws at 640 on the server and before the first measurement (so hydration matches), then redraws at its own width (whole pixels, at most once a frame) and at the height the first drawing showed at that width, so the swap moves nothing on the page (`draw(width, fit)`: spread `fit` into the chart's options), keeping "Show data" open if the reader opened it. A chart Enarratio refuses says why in its place, not the page's.
 - **Enhanced by default.** `ChartFrame` loads `enarratio/enhance` after it mounts and runs it on its figure after each draw (hover details, keyboard reading, legend filters, a sortable table), so every site's charts behave alike; `enhance={false}` opts out. A page drawn on the server imports `capsomer/behavior/chart-enhance` once and gets the same for every `.cap-chart`.
 - **Gridlines are an attribute**, `data-gridlines="none | x | y | both"` on the frame or a wrapper (`gridlines` in React and `frameHtml`); the default is capsomerTheme's `y`.
 - **`data-head="inline"`** puts the subtitle at the end of the title's line, for a figure such as "99.4% up over 7 days".
@@ -80,13 +80,13 @@ In React: `import { ChartFrame } from "capsomer/react/chart-frame"`.
 ```tsx
 import { barChart } from "enarratio/lite/bar";
 
-<ChartFrame draw={(width) => barChart({ ...options, width })} />
+<ChartFrame draw={(width, fit) => barChart({ ...options, width, ...fit })} />
 <ChartFrame draw={draw} enhance={{ url: true }} gridlines="none" />
 <ChartFrame chart={uptimeStrip(options)} inline>{legend}</ChartFrame>
 <ChartFrame noData={{ title: "Requests per hour", reason: "The health route has not reported yet." }} />
 ```
 
-Props: `draw(width)` (redrawn to the frame's width) or `chart` (a figure drawn once), `width` (the server's width, 640), `minWidth` (240), `noData`, `inline`, `enhance` (true, false, or `enarratio/enhance` options), `gridlines`, `onDraw(el)` (after each draw; may return a cleanup), `className`, `children` (after the figure). The frame carries `data-enhance="self"` (or `"off"`), so the page module leaves it to React, and `data-state="refused"` when Enarratio refuses the chart.
+Props: `draw(width, fit)` (redrawn to the frame's width; `fit.height` is the height the first drawing showed at that width, empty on the first draw, and a draw that leaves it out keeps its own height, which moves the page when a narrow column makes the redraw taller) or `chart` (a figure drawn once), `width` (the server's width, 640), `minWidth` (240), `noData`, `inline`, `enhance` (true, false, or `enarratio/enhance` options), `gridlines`, `onDraw(el)` (after each draw; may return a cleanup), `className`, `children` (after the figure). The frame carries `data-enhance="self"` (or `"off"`), so the page module leaves it to React, and `data-state="refused"` when Enarratio refuses the chart.
 
 The page loads `capsomer/tokens.css` and `capsomer/enarratio.css`: one stylesheet for every chart (Enarratio's base rules are in it). A chart with a `colors` override naming a Capsomer token needs nothing more; any other color also needs `colorStyles(html)` in the page's CSS (Enarratio 0.4 writes no `style` attribute).
 
