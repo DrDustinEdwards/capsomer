@@ -4,15 +4,34 @@
    The family's own faces have theirs in fonts.css. */
 @font-face {
   font-family: "DM Sans Fallback";
-  src: local("Arial"), local("Liberation Sans"), local("Arimo");
+  src: local("Arial"), local("Liberation Sans"), local("Arimo Regular");
+  font-weight: 1 549;
   size-adjust: 104.531%;
   ascent-override: 94.9001%;
   descent-override: 29.6563%;
   line-gap-override: 0%;
 }
 @font-face {
+  font-family: "DM Sans Fallback";
+  src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 550 649;
+  size-adjust: 101.0458%;
+  ascent-override: 98.1733%;
+  descent-override: 30.6792%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "DM Sans Fallback";
+  src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 650 1000;
+  size-adjust: 102.7125%;
+  ascent-override: 96.5802%;
+  descent-override: 30.1813%;
+  line-gap-override: 0%;
+}
+@font-face {
   font-family: "DM Mono Fallback";
-  src: local("Courier New"), local("Liberation Mono"), local("Cousine");
+  src: local("Courier New"), local("Liberation Mono"), local("Cousine Regular");
   size-adjust: 99.9837%;
   ascent-override: 99.2161%;
   descent-override: 31.005%;
@@ -20,47 +39,142 @@
 }
 @font-face {
   font-family: "Source Serif 4 Fallback";
-  src: local("Georgia"), local("Gelasio");
+  src: local("Georgia"), local("Gelasio Regular");
+  font-weight: 1 549;
   size-adjust: 100.9419%;
   ascent-override: 102.6332%;
   descent-override: 33.1874%;
   line-gap-override: 0%;
 }
 @font-face {
+  font-family: "Source Serif 4 Fallback";
+  src: local("Georgia Bold"), local("Gelasio Bold");
+  font-weight: 550 649;
+  size-adjust: 88.1296%;
+  ascent-override: 117.5542%;
+  descent-override: 38.0122%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Source Serif 4 Fallback";
+  src: local("Georgia Bold"), local("Gelasio Bold");
+  font-weight: 650 1000;
+  size-adjust: 89.6723%;
+  ascent-override: 115.5318%;
+  descent-override: 37.3582%;
+  line-gap-override: 0%;
+}
+@font-face {
   font-family: "Montserrat Fallback";
-  src: local("Arial"), local("Liberation Sans"), local("Arimo");
+  src: local("Arial"), local("Liberation Sans"), local("Arimo Regular");
+  font-weight: 1 549;
   size-adjust: 112.8307%;
   ascent-override: 85.7923%;
   descent-override: 22.2457%;
   line-gap-override: 0%;
 }
 @font-face {
+  font-family: "Montserrat Fallback";
+  src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 550 649;
+  size-adjust: 108.3377%;
+  ascent-override: 89.3502%;
+  descent-override: 23.1683%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Montserrat Fallback";
+  src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 650 1000;
+  size-adjust: 110.4212%;
+  ascent-override: 87.6644%;
+  descent-override: 22.7312%;
+  line-gap-override: 0%;
+}
+@font-face {
   font-family: "Open Sans Fallback";
-  src: local("Arial"), local("Liberation Sans"), local("Arimo");
+  src: local("Arial"), local("Liberation Sans"), local("Arimo Regular");
+  font-weight: 1 549;
   size-adjust: 105.1479%;
   ascent-override: 101.6519%;
   descent-override: 27.8625%;
   line-gap-override: 0%;
 }
 @font-face {
+  font-family: "Open Sans Fallback";
+  src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 550 649;
+  size-adjust: 101.2208%;
+  ascent-override: 105.5957%;
+  descent-override: 28.9435%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Open Sans Fallback";
+  src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 650 1000;
+  size-adjust: 104.7813%;
+  ascent-override: 102.0075%;
+  descent-override: 27.96%;
+  line-gap-override: 0%;
+}
+@font-face {
   font-family: "Inter Fallback";
-  src: local("Arial"), local("Liberation Sans"), local("Arimo");
+  src: local("Arial"), local("Liberation Sans"), local("Arimo Regular");
+  font-weight: 1 549;
   size-adjust: 107.1194%;
   ascent-override: 90.4365%;
   descent-override: 22.518%;
   line-gap-override: 0%;
 }
 @font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 550 649;
+  size-adjust: 101.5259%;
+  ascent-override: 95.419%;
+  descent-override: 23.7586%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 650 1000;
+  size-adjust: 102.5432%;
+  ascent-override: 94.4723%;
+  descent-override: 23.5229%;
+  line-gap-override: 0%;
+}
+@font-face {
   font-family: "Fraunces Fallback";
-  src: local("Georgia"), local("Gelasio");
+  src: local("Georgia"), local("Gelasio Regular");
+  font-weight: 1 549;
   size-adjust: 104.7553%;
   ascent-override: 93.3604%;
   descent-override: 24.3424%;
   line-gap-override: 0%;
 }
 @font-face {
+  font-family: "Fraunces Fallback";
+  src: local("Georgia Bold"), local("Gelasio Bold");
+  font-weight: 550 649;
+  size-adjust: 93.0471%;
+  ascent-override: 105.1081%;
+  descent-override: 27.4055%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Fraunces Fallback";
+  src: local("Georgia Bold"), local("Gelasio Bold");
+  font-weight: 650 1000;
+  size-adjust: 96.1326%;
+  ascent-override: 101.7345%;
+  descent-override: 26.5259%;
+  line-gap-override: 0%;
+}
+@font-face {
   font-family: "Space Grotesk Fallback";
-  src: local("Arial"), local("Liberation Sans"), local("Arimo");
+  src: local("Arial"), local("Liberation Sans"), local("Arimo Regular");
   size-adjust: 109.6903%;
   ascent-override: 89.7072%;
   descent-override: 26.6204%;
@@ -68,7 +182,7 @@
 }
 @font-face {
   font-family: "JetBrains Mono Fallback";
-  src: local("Courier New"), local("Liberation Mono"), local("Cousine");
+  src: local("Courier New"), local("Liberation Mono"), local("Cousine Regular");
   size-adjust: 99.9837%;
   ascent-override: 102.0166%;
   descent-override: 30.0049%;
