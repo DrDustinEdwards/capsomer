@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.67.1]
+
+- **The system map draws whole under a Content Security Policy that forbids inline styles.** 0.67.0 set the hexagons' text sizes and the Inside column's lane count in `style` attributes, which such a policy blocks. **Changed HTML contract:** the Inside column carries `data-places="1|2|3"` in place of `style="--cap-places: n"`, and `svg.cap-system-map-comb` no longer carries a `style`; its text sizes are in system-map.css.
+
 ## [0.67.0]
 
 The system map is a connections map (Dustin, 2026-11-03: "i want the actual connections map"). The 0.65.0 cards stay; the rule that no lines are drawn goes, and every tie is a wire.
