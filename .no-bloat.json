@@ -1,22 +1,22 @@
 {
   "baseline": {
-    "measured_at": "19bd5c1",
+    "measured_at": "c093c82",
     "knip": {
       "Duplicate exports": 1
     },
     "jscpd": {
       "clones": 143,
       "lines": 1975,
-      "percentage": 1.94
+      "percentage": 1.92
     },
     "tests": {
       "files": 101,
-      "cases": 1485
+      "cases": 1488
     },
     "comments": {
-      "lines": 7904,
-      "code": 78197,
-      "percentage": 9.18
+      "lines": 8070,
+      "code": 79358,
+      "percentage": 9.23
     }
   }
 }
