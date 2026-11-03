@@ -6,7 +6,7 @@ parts: [css, behavior]
 tool: own JavaScript
 states: [the network, a card lit with its wires, one system, a flow at a step, under the pointer, keyboard focus, as delivered with no script]
 added: 0.7.0
-updated: 0.66.0
+updated: 0.67.0
 source: capsid/rulings/system-explorer-2026-10-10.md (answer 9); Dustin, 2026-11-03, "i want the actual connections map", which put the wires back on the 0.65.0 cards in place of its no-lines rule
 replaces:
   - "react-flow"
