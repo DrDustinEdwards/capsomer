@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.66.1]
+
+React's `ChartFrame` gives a primitive's figure no `fit`, so a heat strip or timeline that spreads `fit` into its draw keeps its own height. No new or changed exports, and no class, token or HTML contract changes.
+
 - **React's `ChartFrame` no longer fits a primitive to the first drawing's height.** `shownHeight` (so `fit`) is empty for a figure Enarratio marks `data-enarratio-static` (a heat strip, timeline, sparkline, uptime strip or progress ring), and the draw keeps its own height. 0.66.0 scaled every drawing's height with its width, which is a chart's shape but not a primitive's: a heat strip drawn 640 by 20 and shown in a 300 px column would have been redrawn 300 by 9.4, not 300 by 20, and a timeline ignores `height` (its lanes set it) and shows its list, not its SVG, under 30rem. A primitive's draw can now take `fit` like a chart's, `(width, fit) => heatStrip({ ...options, width, ...fit })`, and gets its own height. No class, token or HTML contract changes.
 
 ## [0.66.0]
