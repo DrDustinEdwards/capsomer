@@ -51,6 +51,36 @@ function network(root: HTMLElement, signal: AbortSignal) {
     else detail.textContent = rest;
   };
   const byId = new Map(cards.map((c) => [c.dataset.id!, c]));
+  // The hexagons: each system's cell, and the comb's lines, lit with the cards.
+  const comb = root.querySelector<SVGElement>(".cap-system-map-comb");
+  const cells = new Map([...root.querySelectorAll<SVGElement>(".cap-system-map-cell[data-id]")].map((c) => [c.getAttribute("data-id")!, c]));
+  const combLines = comb ? [...comb.querySelectorAll<SVGElement>(".cap-system-map-wire")] : [];
+  const lightComb = (id: string | null, ties: Map<string, string>) => {
+    comb?.toggleAttribute("data-lit", !!id);
+    for (const [cid, c] of cells) {
+      const t = ties.get(cid);
+      if (t) c.setAttribute("data-tie", t);
+      else c.removeAttribute("data-tie");
+    }
+    for (const l of combLines) {
+      const on = !!id && (l.dataset.a === id || l.dataset.b === id);
+      l.toggleAttribute("data-on", on);
+      if (on) l.parentNode?.append(l);
+    }
+  };
+  // The switch between the hexagons (the default) and the plain map. Where the map is too narrow
+  // for the hexagons' words, the plain map shows alone (the CSS), whatever the switch says.
+  const switcher = root.querySelector<HTMLElement>("[data-cap-part='switch']");
+  if (switcher) {
+    const buttons = [...switcher.querySelectorAll<HTMLButtonElement>("button[data-view]")];
+    const show = (view: string) => {
+      root.dataset.view = view;
+      for (const b of buttons) b.setAttribute("aria-pressed", String(b.dataset.view === view));
+    };
+    switcher.hidden = false;
+    show(root.dataset.view ?? "hex");
+    for (const b of buttons) b.addEventListener("click", () => show(b.dataset.view!), { signal });
+  }
   const nameOf = (c: HTMLElement) => c.querySelector(".cap-system-map-card-name")?.textContent ?? c.dataset.id!;
   const light = (id: string | null) => {
     const from = id ? byId.get(id) : undefined;
@@ -64,6 +94,7 @@ function network(root: HTMLElement, signal: AbortSignal) {
     if (!from) {
       delete root.dataset.lit;
       lines?.light(null);
+      lightComb(null, new Map());
       return;
     }
     root.dataset.lit = id!;
@@ -72,23 +103,26 @@ function network(root: HTMLElement, signal: AbortSignal) {
     const name = nameOf(from);
     const uses = new Set(ids(from.dataset.uses));
     const usedBy = new Set(ids(from.dataset.usedBy));
+    const ties = new Map([[id!, "self"]]);
     for (const other of new Set([...uses, ...usedBy])) {
+      const both = uses.has(other) && usedBy.has(other);
+      ties.set(other, both ? "both" : uses.has(other) ? "used" : "user");
       const c = byId.get(other);
       if (!c) continue;
-      const both = uses.has(other) && usedBy.has(other);
-      c.dataset.tie = both ? "both" : uses.has(other) ? "used" : "user";
+      c.dataset.tie = ties.get(other)!;
       const tie = c.querySelector<HTMLElement>(".cap-system-map-card-tie");
       if (tie) tie.textContent = both ? `Uses and used by ${name}` : uses.has(other) ? `Used by ${name}` : `Uses ${name}`;
     }
+    lightComb(id, ties);
   };
-  const cardOf = (t: EventTarget | null) => (t instanceof Element ? t.closest<HTMLElement>(".cap-system-map-card[data-id]") : null);
+  const cardOf = (t: EventTarget | null) => (t instanceof Element ? t.closest<HTMLElement>(".cap-system-map-card[data-id], .cap-system-map-cell[data-id]") : null);
   root.addEventListener("pointerover", (ev) => {
     if ((ev as PointerEvent).pointerType !== "mouse") return;
     const c = cardOf(ev.target);
-    if (c) light(c.dataset.id!);
+    if (c) light(c.getAttribute("data-id")!);
   }, { signal });
-  root.addEventListener("pointerleave", () => light(cardOf(document.activeElement)?.dataset.id ?? null), { signal });
-  root.addEventListener("focusin", (ev) => light(cardOf(ev.target)?.dataset.id ?? null), { signal });
+  root.addEventListener("pointerleave", () => light(cardOf(document.activeElement)?.getAttribute("data-id") ?? null), { signal });
+  root.addEventListener("focusin", (ev) => light(cardOf(ev.target)?.getAttribute("data-id") ?? null), { signal });
   root.addEventListener("focusout", (ev) => {
     if (!root.contains((ev as FocusEvent).relatedTarget as Node | null)) light(null);
   }, { signal });

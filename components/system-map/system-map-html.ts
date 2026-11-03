@@ -1,6 +1,7 @@
 // The system map's markup: the whole contract as a string, for a server or a static build (system-map.ts).
 
 import { escapeHtml } from "../email/email.ts";
+import { hexLayout, hexSvg } from "./system-map-hex.ts";
 import { type MapContainer, type MapRing, type NetworkBlock, type MapSystem, type PartPlace, type SystemMapData, type SystemMapOptions, type Ties, count, flowsOver, networkLayout, ownerOf, placeOf, tiesOf, verbOf } from "./system-map-data.ts";
 
 export { escapeHtml };
@@ -70,7 +71,9 @@ function networkHtml(data: SystemMapData, options: SystemMapOptions): string {
   return [
     `<figure class="cap-system-map" data-cap="system-map" data-level="network" id="${e(id)}" aria-labelledby="${e(id)}-title">`,
     head(id, label, options.caption),
+    `<p class="cap-system-map-switch" data-cap-part="switch" hidden><button type="button" class="cap-btn" data-size="sm" data-view="hex" aria-pressed="true">Hexagons</button><button type="button" class="cap-btn" data-size="sm" data-view="plain" aria-pressed="false">Plain map</button></p>`,
     `<p class="cap-system-map-detail" data-cap-part="detail" aria-hidden="true" hidden></p>`,
+    `<div class="cap-system-map-hex">${hexSvg(data, hexLayout(data, (s) => s.group ?? names.used), `${id}-title`)}</div>`,
     `<div class="cap-system-map-network"><div class="cap-system-map-graph">${lanes}</div></div>`,
     `</figure>`,
   ].join("");

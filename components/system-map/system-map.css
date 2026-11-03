@@ -78,6 +78,128 @@
     }
   }
 
+  /* The two views of the network: the hexagons (the default) and the plain map. With no script
+     both show, one after the other. Where the map is narrower than 44rem the hexagons' names
+     would fall under 12 px, so the plain map shows alone and the switch goes. */
+  .cap-system-map-switch {
+    display: flex;
+    gap: var(--space-2);
+    margin: 0;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .cap-system-map[data-view="hex"] .cap-system-map-network,
+  .cap-system-map[data-view="plain"] .cap-system-map-hex {
+    display: none;
+  }
+
+  @container cap-system-map (max-width: 44rem) {
+    .cap-system-map .cap-system-map-hex,
+    .cap-system-map .cap-system-map-switch {
+      display: none;
+    }
+    .cap-system-map[data-view="hex"] .cap-system-map-network {
+      display: block;
+    }
+  }
+
+  /* The honeycomb: as tall as a desktop screen allows, so all of it is in view. */
+  .cap-system-map-hex {
+    display: grid;
+    justify-items: center;
+  }
+
+  .cap-system-map-comb {
+    display: block;
+    width: 100%;
+    max-height: min(82vh, 52rem);
+    overflow: visible;
+  }
+
+  .cap-system-map-comb-cells polygon {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .cap-system-map-comb-group {
+    fill: var(--muted);
+    font: 600 var(--cap-label-size)/1 var(--ui);
+    letter-spacing: 0.08em;
+    text-anchor: middle;
+    text-transform: uppercase;
+  }
+
+  .cap-system-map-comb .cap-system-map-wire {
+    stroke-width: 1.4;
+  }
+
+  .cap-system-map-cell {
+    outline: none;
+
+    & polygon {
+      fill: var(--surface);
+      stroke: var(--line-strong);
+      stroke-width: 1.4;
+    }
+    &[data-ring="shared"] polygon {
+      fill: var(--accent-soft);
+    }
+    &[data-ring="core"] polygon {
+      fill: var(--accent-soft);
+      stroke: var(--accent);
+      stroke-width: 2.5;
+    }
+    &[data-private] polygon {
+      stroke-dasharray: 5 4;
+    }
+    &:hover polygon {
+      stroke: var(--text);
+    }
+    &:focus-visible polygon {
+      stroke: var(--ring);
+      stroke-width: 4;
+    }
+  }
+
+  .cap-system-map-cell-name {
+    fill: var(--text);
+    font: 600 var(--cap-name-size)/1 var(--ui);
+    text-anchor: middle;
+  }
+
+  /* Lit: as on the plain map, the cell's lines accent and on top, its ties' cells with an accent
+     edge (heavier than a plain one, so color is not the only sign), the rest muted. */
+  .cap-system-map-comb[data-lit] {
+    & .cap-system-map-wire:not([data-on]) {
+      stroke: var(--line);
+    }
+    & .cap-system-map-wire[data-on] {
+      stroke: var(--accent);
+      stroke-width: 2.6;
+    }
+    & .cap-system-map-cell:not([data-tie]) {
+      & polygon {
+        fill: var(--ground);
+        stroke: var(--line);
+      }
+      & .cap-system-map-cell-name {
+        fill: var(--muted);
+      }
+    }
+    & .cap-system-map-cell[data-tie] polygon {
+      stroke: var(--accent);
+      stroke-width: 3;
+    }
+    & .cap-system-map-cell[data-tie="self"] polygon {
+      fill: var(--accent-soft);
+      stroke-width: 4.5;
+    }
+  }
+
   .cap-system-map-graph {
     position: relative;
     display: grid;
@@ -556,9 +678,12 @@
       border-color: Highlight;
     }
     .cap-system-map-wire,
-    .cap-system-map-port {
+    .cap-system-map-port,
+    .cap-system-map-cell polygon {
       stroke: CanvasText;
     }
+    .cap-system-map-comb[data-lit] .cap-system-map-wire[data-on],
+    .cap-system-map-comb[data-lit] .cap-system-map-cell[data-tie] polygon,
     .cap-system-map-wires[data-lit] .cap-system-map-wire[data-on],
     .cap-system-map-wires[data-lit] .cap-system-map-port[data-on] {
       stroke: Highlight;
