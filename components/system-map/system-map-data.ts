@@ -242,3 +242,123 @@ export const count = (n: number, one: string, many = `${one}s`): string => `${n}
 
 /** What a step's status line says. */
 export const stepText = (n: number, total: number): string => `Step ${n} of ${total}`;
+
+// ---------------------------------------------------------------------------------------
+// The network's layout. A layered drawing (Sugiyama, Tagawa and Toda 1981), with the layers set by
+// what each system is rather than computed: the shared packages stand in the middle lane, since
+// nearly every tie runs to or from one of them, and each block of the rest (a group of what people
+// use, and the core) stands on the left or the right, whichever leaves the fewest ties crossing
+// the middle and the two sides most even. Then the barycenter heuristic orders each lane's
+// systems, and each lane's blocks, by where their neighbors stand, which is what keeps the wires
+// from crossing.
+
+export type Lane = "left" | "middle" | "right";
+
+export interface NetworkBlock {
+  // The group's name, or the ring's for the shared packages and the core.
+  name: string;
+  ring: MapRing;
+  systems: MapSystem[];
+}
+
+export interface NetworkLane {
+  lane: Lane;
+  blocks: NetworkBlock[];
+}
+
+const LANE_INDEX: Record<Lane, number> = { left: 0, middle: 1, right: 2 };
+
+/** The pairs of systems tied to each other, each pair once. */
+export function tiePairs(data: SystemMapData): [string, string][] {
+  const seen = new Set<string>();
+  const out: [string, string][] = [];
+  for (const [id, t] of tiesOf(data)) {
+    for (const u of t.uses) {
+      const key = id < u.id ? `${id} ${u.id}` : `${u.id} ${id}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push([id, u.id]);
+    }
+  }
+  return out;
+}
+
+/**
+ * The network's lanes: left, middle (the shared packages) and right, each a list of blocks in
+ * the order they stand, each block's systems in order. Pure, so a server lays the map out and the
+ * script only draws the wires between the cards where they landed.
+ */
+export function networkLayout(data: SystemMapData, names: Record<MapRing, string>): NetworkLane[] {
+  const pairs = tiePairs(data);
+  const used = data.systems.filter((s) => s.ring === "used");
+  const blocks: NetworkBlock[] = [...new Set(used.map((s) => s.group ?? names.used))].map((g) => ({ name: g, ring: "used" as MapRing, systems: used.filter((s) => (s.group ?? names.used) === g) }));
+  const core = data.systems.filter((s) => s.ring === "core");
+  if (core.length) blocks.push({ name: names.core, ring: "core", systems: core });
+  const shared = data.systems.filter((s) => s.ring === "shared");
+  const blockOf = new Map<string, number>();
+  blocks.forEach((b, i) => b.systems.forEach((s) => blockOf.set(s.id, i)));
+
+  // Each block left or right: every assignment is tried (a network has a handful of blocks). A
+  // tie that crosses the middle costs most and one inside a lane less, and an uneven pair of sides
+  // costs the square of the cards it puts out of balance, since one long side makes the whole
+  // drawing tall and its wires steep.
+  let best = { cost: Infinity, sides: [] as Lane[] };
+  const n = blocks.length;
+  for (let mask = 0; mask < 1 << n; mask++) {
+    const sides = blocks.map((_, i) => ((mask >> i) & 1 ? "right" : "left") as Lane);
+    const laneOf = (id: string): Lane => (blockOf.has(id) ? sides[blockOf.get(id)!]! : "middle");
+    let cost = 0;
+    for (const [a, b] of pairs) {
+      const span = Math.abs(LANE_INDEX[laneOf(a)] - LANE_INDEX[laneOf(b)]);
+      cost += span === 2 ? 3 : span === 0 ? 1 : 0;
+    }
+    const count = (side: Lane) => blocks.reduce((k, b, i) => k + (sides[i] === side ? b.systems.length : 0), 0);
+    cost += (count("left") - count("right")) ** 2;
+    if (n > 1 && (count("left") === 0 || count("right") === 0)) cost += 1000;
+    if (cost < best.cost) best = { cost, sides };
+  }
+
+  const lanes: NetworkLane[] = [
+    { lane: "left", blocks: blocks.filter((_, i) => best.sides[i] === "left").map((b) => ({ ...b, systems: [...b.systems] })) },
+    { lane: "middle", blocks: shared.length ? [{ name: names.shared, ring: "shared", systems: [...shared] }] : [] },
+    { lane: "right", blocks: blocks.filter((_, i) => best.sides[i] === "right").map((b) => ({ ...b, systems: [...b.systems] })) },
+  ];
+
+  // Barycenter sweeps: a system's place is the mean place of its neighbors in the other lanes,
+  // each lane's places running 0 to 1 from top to bottom so lanes of different lengths compare.
+  // Systems keep their block; blocks move as a whole, by their systems' mean.
+  const neighbors = new Map<string, string[]>(data.systems.map((s) => [s.id, []]));
+  for (const [a, b] of pairs) {
+    neighbors.get(a)?.push(b);
+    neighbors.get(b)?.push(a);
+  }
+  const place = new Map<string, number>();
+  const laneId = new Map<string, Lane>();
+  const measure = () => {
+    for (const l of lanes) {
+      const all = l.blocks.flatMap((b) => b.systems);
+      all.forEach((s, i) => {
+        place.set(s.id, (i + 0.5) / all.length);
+        laneId.set(s.id, l.lane);
+      });
+    }
+  };
+  measure();
+  const bary = (id: string) => {
+    const others = (neighbors.get(id) ?? []).filter((o) => laneId.get(o) !== laneId.get(id));
+    return others.length ? others.reduce((k, o) => k + place.get(o)!, 0) / others.length : place.get(id)!;
+  };
+  for (let sweep = 0; sweep < 8; sweep++) {
+    const order = sweep % 2 ? [...lanes].reverse() : lanes;
+    for (const l of order) {
+      for (const b of l.blocks) {
+        const at = new Map(b.systems.map((s) => [s.id, bary(s.id)]));
+        b.systems.sort((x, y) => at.get(x.id)! - at.get(y.id)!);
+      }
+      const at = new Map(l.blocks.map((b) => [b, b.systems.reduce((k, s) => k + bary(s.id), 0) / b.systems.length]));
+      l.blocks.sort((x, y) => at.get(x)! - at.get(y)!);
+      measure();
+    }
+  }
+  return lanes;
+}

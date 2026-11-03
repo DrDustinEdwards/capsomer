@@ -38,10 +38,13 @@ eachTheme((theme) => {
     expect(smallest).toBeGreaterThanOrEqual(12);
   });
 
-  test("keyboard: Tab reaches each card's link, focus lights its ties, and the rest dim", async ({ page }) => {
+  test("keyboard: Tab reaches each card's link, focus lights its ties and their wires, and the rest dim", async ({ page }) => {
+    // A wire for every pair of tied systems, drawn where the cards landed.
+    await expect(page.locator("#map .cap-system-map-wire")).toHaveCount(await page.locator("#map").evaluate((m) => new Set([...m.querySelectorAll<HTMLElement>("[data-wire]")].flatMap((c) => (c.dataset.wires ?? "").split(" ").filter(Boolean).map((o) => [c.dataset.wire, o].sort().join(" ")))).size));
     const link = page.locator("#map").getByRole("link", { name: "Prelum" });
     await link.focus();
     await expect(page.locator("#map")).toHaveAttribute("data-lit", "prelum");
+    await expect(page.locator("#map .cap-system-map-wire[data-on]")).toHaveCount(1);
     await expect(page.locator("#map [data-id='site']")).toHaveAttribute("data-tie", "user");
     await expect(page.locator("#map [data-id='ledger']")).not.toHaveAttribute("data-tie");
     await page.keyboard.press("Tab");
@@ -67,7 +70,7 @@ eachTheme((theme) => {
     await expect(map.locator("[data-lit]")).toHaveCount(0);
   });
 
-  test("behavior: as delivered with no script every card is a link and each flow a list; on a phone nothing scrolls sideways", async ({ page }) => {
+  test("behavior: as delivered with no script every card is a link and each flow a list; on a phone only the drawing scrolls sideways", async ({ page }) => {
     const plain = page.locator("#map-noscript");
     expect(await plain.getByRole("link").count()).toBe(14);
     await expect(page.locator("#map-step li[aria-current='step']")).toHaveText(/^Merged/);

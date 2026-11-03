@@ -4,6 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.66.0]
+
+The system map is a connections map (Dustin, 2026-11-03: "i want the actual connections map"). The 0.65.0 cards stay; the rule that no lines are drawn goes, and every tie is a wire.
+
+- **System map, level 1: a layered drawing.** Three lanes side by side: the shared packages in the middle, and each block of the rest (a group of what people use, and the core) on the side that leaves the fewest wires crossing the middle with the sides most even. The barycenter heuristic orders each block's cards, and each lane's blocks, so wires cross least. The script draws a wire for every tie between the cards where they landed: one curve between neighboring lanes, through a gap between cards when a wire skips a lane, bowed out to the side within a lane, and spread down each card's side in the order of where they go. Pointing at or focusing a card lights its wires (accent, heavier, on top) and fades the rest. Narrower than 54rem the drawing scrolls sideways inside the map, and a line says so.
+- **System map, level 2: wired lanes.** Used by, Runs, Stores, Outside and Uses side by side (60rem and wider), with a wire for each line: part to part, part to the other system, and the system as a whole from its Inside heading. Pointing at a tie or part, or focusing a tie, lights its wires; a flow's step lights the wires between its parts. Narrower, the columns stack as before and the words carry the ties.
+- **Changed HTML contract.** Level 1: `.cap-system-map-groups` is gone; the network is `.cap-system-map-network` (now the sideways scroller) of `.cap-system-map-graph` of `.cap-system-map-lane[data-lane]`, holding the same groups and bands; new `.cap-system-map-hint`. A card carries `data-wire` and `data-wires`. Level 2: ties, parts and the Inside heading's new `span` carry `data-wire` and `data-wires`; the Inside column carries `--cap-places`; the root carries `data-held`. New with script: `svg.cap-system-map-wires`, `.cap-system-map-wire`, `.cap-system-map-port`. The band's accent top border is gone. **Removed class:** `cap-system-map-groups`. **New:** `networkLayout`, `tiePairs`, and the types `Lane`, `NetworkBlock` and `NetworkLane`.
+
 ## [0.65.0]
 
 The system map is cards, not a capsid drawing (Dustin, 2026-11-03: yes to the card-and-drill-down design). It replaces answer 3 of capsid/rulings/system-explorer-2026-10-10.md (the hexagon drawing) and the line routing of the seat rulings on #57 and #64; answer 9 (one component for both homes) and the one-tap rule of 2026-10-18 still hold.

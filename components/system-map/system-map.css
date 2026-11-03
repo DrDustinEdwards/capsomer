@@ -2,7 +2,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The system map: the network as cards (level 1) and one system as three columns (level 2).
-   No lines are drawn. On the network a lit card is a heavier accent edge, a tint and a line of
+   Wires are drawn by the script under the cards (system-map-wires.ts). On the network a lit card is a heavier accent edge, a tint and a line of
    words; a dimmed card goes muted. On a system, a step's parts are a heavier edge and a tint, the rest
    go muted. Columns come from the space the map has (container queries), so a host's narrow column
    stacks them as a phone does. No text is under 12 px. */
@@ -56,31 +56,97 @@
     list-style: none;
   }
 
-  /* Level 1. The groups are columns side by side where there is room, two at tablet width, one on a
-     phone; the bands below hold their cards in rows. */
+  /* Level 1, a layered drawing: three lanes side by side, the shared packages in the middle, and
+     wide gutters between them where the wires run. A drawing keeps its shape (WCAG 1.4.10 excepts
+     content that needs two dimensions), so a map narrower than the drawing scrolls sideways rather
+     than stacking; every tie is still words on the cards and on each system's page. */
   .cap-system-map-network {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-block: var(--space-2);
+  }
+
+  /* Said only where the drawing is wider than the map, as a phone is. */
+  .cap-system-map-hint {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  @container cap-system-map (min-width: 54rem) {
+    .cap-system-map-hint {
+      display: none;
+    }
+  }
+
+  .cap-system-map-graph {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(14rem, 19rem));
+    justify-content: space-between;
+    align-items: center;
+    column-gap: clamp(4rem, 8cqi, 8rem);
+    min-width: 54rem;
+    padding-inline: var(--space-7);
+  }
+
+  .cap-system-map-lane {
     display: grid;
     gap: var(--space-5);
-  }
-
-  .cap-system-map-groups {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
-    gap: var(--space-5) var(--space-4);
-    align-items: start;
-  }
-
-  .cap-system-map-band {
-    padding-block-start: var(--space-3);
-    border-block-start: 2px solid var(--accent);
+    align-content: center;
 
     & .cap-system-map-cards {
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+      gap: var(--space-4);
+    }
+  }
+
+  /* The wires sit under the cards, so a card is never crossed; the cards' own surfaces cover them. */
+  .cap-system-map-wires {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .cap-system-map-wire {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    stroke-linecap: round;
+  }
+
+  .cap-system-map-port {
+    fill: var(--surface);
+    stroke: var(--line-strong);
+    stroke-width: 1;
+  }
+
+  /* Lit: a card's wires go accent and heavier, on top; the rest fall back to the faint line color,
+     so the one path reads out of the whole network. */
+  .cap-system-map-wires[data-lit] {
+    & .cap-system-map-wire:not([data-on]) {
+      stroke: var(--line);
+    }
+    & .cap-system-map-port:not([data-on]) {
+      stroke: var(--line);
+    }
+    & .cap-system-map-wire[data-on] {
+      stroke: var(--accent);
+      stroke-width: 2;
+    }
+    & .cap-system-map-port[data-on] {
+      fill: var(--accent);
+      stroke: var(--accent);
     }
   }
 
   .cap-system-map-card {
     position: relative;
+    z-index: 1;
     display: grid;
     gap: var(--space-1);
     align-content: start;
@@ -197,18 +263,49 @@
     }
   }
 
-  /* Level 2. Used by, Inside and Uses side by side where there is room; stacked, in that order,
-     where there is not. */
+  /* Level 2. Used by, Inside (what runs, what stores, what is outside, side by side) and Uses
+     where there is room, with the wires in the gutters between; stacked, in that order and with
+     the ties in words alone, where there is not. */
   .cap-system-map-columns {
+    position: relative;
     display: grid;
     gap: var(--space-5);
     align-items: start;
   }
 
-  @container cap-system-map (min-width: 52rem) {
+  @container cap-system-map (min-width: 60rem) {
     .cap-system-map-columns:not([data-only]) {
-      grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr) minmax(10rem, 14rem);
+      grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr) minmax(8rem, 11rem);
+      column-gap: var(--space-9);
+      align-items: center;
     }
+
+    .cap-system-map-column[data-column="inside"] {
+      grid-template-columns: repeat(var(--cap-places, 1), minmax(0, 1fr));
+      column-gap: var(--space-9);
+      align-items: center;
+
+      & > .cap-system-map-column-name,
+      & > .cap-system-map-none {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .cap-system-map-column[data-column="inside"] .cap-system-map-parts {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .cap-system-map-tie,
+  .cap-system-map-part {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* A tie or a part held (pointed at or focused) keeps its wires lit; the step's lighting returns
+     when it is let go. */
+  .cap-system-map-column-name [data-wire] {
+    display: block;
   }
 
   .cap-system-map-tie {
@@ -247,7 +344,7 @@
 
   .cap-system-map-column[data-column="inside"] {
     display: grid;
-    gap: var(--space-4);
+    row-gap: var(--space-4);
     padding: var(--space-4);
     border: 1px solid var(--line);
     border-radius: var(--radius-l);
@@ -414,9 +511,16 @@
   /* In forced colors a tint is gone, so lit and chosen keep their heavier edge in Highlight. */
   @media (forced-colors: active) {
     .cap-system-map[data-lit] .cap-system-map-card[data-tie],
-    .cap-system-map[data-step] .cap-system-map-part[data-lit],
-    .cap-system-map-band {
+    .cap-system-map[data-step] .cap-system-map-part[data-lit] {
       border-color: Highlight;
+    }
+    .cap-system-map-wire,
+    .cap-system-map-port {
+      stroke: CanvasText;
+    }
+    .cap-system-map-wires[data-lit] .cap-system-map-wire[data-on],
+    .cap-system-map-wires[data-lit] .cap-system-map-port[data-on] {
+      stroke: Highlight;
     }
   }
 }
