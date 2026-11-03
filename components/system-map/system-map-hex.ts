@@ -286,7 +286,7 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
     // Each line runs through the comb's empty cells, never under another system: the shortest path
     // over the hex grid whose middle cells are all empty A cell already carrying a line costs a
     // little less, so lines gather into tracks), drawn as straight runs with rounded corners. Lines
-    // sharing a cell stand side by side in it. Ties between neighbours are a straight line.
+    // sharing a cell stand side by side in it. Ties between neighbors are a straight line.
     const key = (c: Axial) => `${c[0]},${c[1]}`;
     const ringOf = ([q, r]: Axial) => Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r));
     const load = new Map<string, number>();
