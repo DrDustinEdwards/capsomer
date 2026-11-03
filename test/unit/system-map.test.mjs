@@ -52,11 +52,13 @@ test("the network and a system are whole HTML, escaped, with a step lit as the s
   const net = systemMapHtml(data, { id: "n" });
   assert.match(net, /<li class="cap-system-map-card" data-id="site" data-wire="site" data-wires="kit core" data-uses="kit" data-used-by="core" data-link><h4 class="cap-system-map-card-name"><a class="cap-system-map-link" href="\/s\/site">Site &lt;one&gt;<\/a><\/h4>/);
   assert.match(net, /data-id="app"[^>]* data-private>.*private<\/span>/);
+  // A card shows its short name; its full name and words stay for screen readers and the detail line.
+  assert.match(systemMapHtml({ systems: [{ id: "x", name: "The long name", short: "Long", ring: "used" }] }), /<h4 class="cap-system-map-card-name">Long<\/h4><span class="cap-system-map-card-about"><span class="cap-system-map-card-full">The long name<\/span>/);
   assert.equal([...net.matchAll(/class="cap-system-map-card"/g)].length, 4);
   const one = systemMapHtml(data, { id: "s", system: "core", flow: { id: "f", step: 2 } });
   assert.match(one, /data-level="system" data-system="core" id="s" aria-labelledby="s-title" data-flow="f" data-step="2">/);
-  assert.match(one, /data-id="w" data-place="runs" data-wire="w" data-wires="uses:site db used-by:app" data-lit data-at>.*writes to store/);
-  assert.match(one, /data-id="gh" data-place="outside" data-lit>/);
+  assert.match(one, /data-id="w" data-place="runs" tabindex="0" data-wire="w" data-wires="uses:site db used-by:app" data-lit data-at>.*writes to store/);
+  assert.match(one, /data-id="gh" data-place="outside" tabindex="0" data-lit>/);
   // A line from the system as a whole starts at its Inside heading; a part's line to another
   // system ends on that system in Uses (or Used by, read from the other end).
   assert.match(one, /<span data-wire="self" data-wires="uses:site">Inside Core<\/span>/);
@@ -76,7 +78,7 @@ test("the public model keeps each part's words, gives what people use its group,
     },
     (id) => `/s/${id}/`
   );
-  assert.deepEqual(out.systems[0], { id: "a", name: "A", ring: "used", private: undefined, group: "Apps", description: undefined, domain: undefined, href: "/s/a/" });
+  assert.deepEqual(out.systems[0], { id: "a", name: "A", short: undefined, ring: "used", private: undefined, group: "Apps", description: undefined, domain: undefined, href: "/s/a/" });
   assert.equal(out.containers?.[0]?.description, "Does it.");
   assert.deepEqual(out.flows?.[0]?.steps, [{ from: "c", to: "a", toward: "a", text: "Serves.", lights: undefined }]);
 });

@@ -10,6 +10,9 @@ export type MapRing = "core" | "shared" | "used";
 export interface MapSystem {
   id: string;
   name: string;
+  // The name a card shows on the network, where room is short ("Site MCP"); the full name stays
+  // in the card's words and on the system's page.
+  short?: string;
   ring: MapRing;
   private?: boolean;
   // What it is for (Websites, Apps): the systems people use stand in a column per group, in the
@@ -66,6 +69,7 @@ export interface SystemMapData {
 export interface ModelSystem {
   id: string;
   name: string;
+  short?: string;
   ring: MapRing;
   private?: boolean;
   family: string;
@@ -104,6 +108,7 @@ export function modelMapData(model: SystemModel, href?: (id: string) => string):
     systems: model.systems.map((s) => ({
       id: s.id,
       name: s.name,
+      short: s.short && s.short !== s.name ? s.short : undefined,
       ring: s.ring,
       private: s.private,
       group: s.ring === "used" ? (FAMILY_GROUP[s.family] ?? s.family) : undefined,

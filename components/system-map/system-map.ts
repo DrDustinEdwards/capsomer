@@ -37,6 +37,19 @@ function network(root: HTMLElement, signal: AbortSignal) {
   const graph = root.querySelector<HTMLElement>(".cap-system-map-graph");
   const lines = graph ? wires(graph, () => [...graph.querySelectorAll<HTMLElement>(".cap-system-map-lane")], signal) : null;
   const cards = [...root.querySelectorAll<HTMLElement>(".cap-system-map-card[data-id]")];
+  // The detail line: the lit system's words, which its small card keeps for screen readers alone.
+  const detail = root.querySelector<HTMLElement>("[data-cap-part='detail']");
+  const rest = "Point at a system, or tab to it, to see what it is and light its ties.";
+  if (detail) {
+    detail.hidden = false;
+    detail.textContent = rest;
+  }
+  const tell = (c: HTMLElement | undefined) => {
+    if (!detail) return;
+    const about = c?.querySelector(".cap-system-map-card-about");
+    if (about) detail.replaceChildren(...[...about.childNodes].map((n) => n.cloneNode(true)));
+    else detail.textContent = rest;
+  };
   const byId = new Map(cards.map((c) => [c.dataset.id!, c]));
   const nameOf = (c: HTMLElement) => c.querySelector(".cap-system-map-card-name")?.textContent ?? c.dataset.id!;
   const light = (id: string | null) => {
@@ -47,6 +60,7 @@ function network(root: HTMLElement, signal: AbortSignal) {
       const tie = c.querySelector<HTMLElement>(".cap-system-map-card-tie");
       if (tie) tie.textContent = "";
     }
+    tell(from);
     if (!from) {
       delete root.dataset.lit;
       lines?.light(null);
@@ -179,12 +193,25 @@ function systemWires(root: HTMLElement, signal: AbortSignal): Wires | null {
       (x, y) => x.getBoundingClientRect().left - y.getBoundingClientRect().left,
     );
   const lines = wires(host, lanes, signal);
+  // The detail line: what a part held is for and its lines in words, which its small box keeps for
+  // screen readers alone.
+  const detail = root.querySelector<HTMLElement>("[data-cap-part='detail']");
+  const rest = "Point at a part, or tab to it, to see what it does and light its wires.";
+  if (detail) {
+    detail.hidden = false;
+    detail.textContent = rest;
+  }
   let held: string | null = null;
   const nodeOf = (t: EventTarget | null) => (t instanceof Element ? t.closest<HTMLElement>("[data-wire]") : null);
   const hold = (key: string | null) => {
     if (key === held) return;
     held = key;
     root.toggleAttribute("data-held", !!key);
+    const about = key ? host.querySelector(`[data-wire="${CSS.escape(key)}"] .cap-system-map-part-about`) : null;
+    if (detail) {
+      if (about) detail.replaceChildren(...[...about.childNodes].map((n) => n.cloneNode(true)));
+      else detail.textContent = rest;
+    }
     if (key) lines.light((a, b) => a === key || b === key);
     // Letting go returns to the flow's step, when one is shown.
     else {

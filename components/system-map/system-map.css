@@ -57,47 +57,88 @@
   }
 
   /* Level 1, a layered drawing: three lanes side by side, the shared packages in the middle, and
-     wide gutters between them where the wires run. A drawing keeps its shape (WCAG 1.4.10 excepts
-     content that needs two dimensions), so a map narrower than the drawing scrolls sideways rather
-     than stacking; every tie is still words on the cards and on each system's page. */
-  .cap-system-map-network {
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    padding-block: var(--space-2);
-  }
-
-  /* Said only where the drawing is wider than the map, as a phone is. */
-  .cap-system-map-hint {
+     gutters between them where the wires run. The cards are small (a short name) so the whole
+     network is in view at once on a desktop and a phone alike, with no scrolling; what each system
+     is shows in the detail line when it is pointed at or focused. */
+  .cap-system-map-detail {
+    min-height: calc(2 * 1.4em);
+    max-width: var(--measure);
     margin: 0;
     color: var(--muted);
     font-size: var(--fs-detail);
-  }
+    line-height: 1.4;
 
-  @container cap-system-map (min-width: 54rem) {
-    .cap-system-map-hint {
+    &[hidden] {
       display: none;
+    }
+    & .cap-system-map-card-full,
+    & .cap-system-map-part-full {
+      color: var(--text);
+      font-weight: 600;
     }
   }
 
   .cap-system-map-graph {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(3, minmax(14rem, 19rem));
+    grid-template-columns: repeat(3, minmax(0, 13rem));
     justify-content: space-between;
     align-items: center;
-    column-gap: clamp(4rem, 8cqi, 8rem);
-    min-width: 54rem;
-    padding-inline: var(--space-7);
+    column-gap: clamp(1.5rem, 10cqi, 10rem);
+    padding-inline: clamp(var(--space-3), 3cqi, var(--space-7));
   }
 
   .cap-system-map-lane {
     display: grid;
-    gap: var(--space-5);
+    gap: var(--space-4);
     align-content: center;
 
-    & .cap-system-map-cards {
-      gap: var(--space-4);
+    & .cap-system-map-group-name {
+      margin-block-end: var(--space-2);
     }
+    & .cap-system-map-cards {
+      gap: var(--space-3);
+    }
+  }
+
+  /* A card on the network: its name alone. Its words are for screen readers here (the detail line
+     shows them), so they are clipped, not removed. */
+  .cap-system-map-network .cap-system-map-card {
+    padding: var(--space-2);
+
+    & .cap-system-map-card-name {
+      font-size: 0.8125rem;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* With room, the cards grow toward a desktop's height, still all in view. */
+  @container cap-system-map (min-width: 44rem) {
+    .cap-system-map-lane {
+      gap: var(--space-5);
+
+      & .cap-system-map-cards {
+        gap: var(--space-4);
+      }
+    }
+
+    .cap-system-map-network .cap-system-map-card {
+      padding: var(--space-3) var(--space-4);
+
+      & .cap-system-map-card-name {
+        font-size: var(--fs-body);
+      }
+    }
+  }
+
+  .cap-system-map-card-about,
+  .cap-system-map-part-about {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   /* The wires sit under the cards, so a card is never crossed; the cards' own surfaces cover them. */
@@ -191,21 +232,13 @@
     }
   }
 
-  /* Whole, never clamped: a clamp cuts the words off once a reader widens the spacing (WCAG 1.4.12). */
-  .cap-system-map-card-text {
-    margin: 0;
-    color: var(--muted);
-    font-size: var(--fs-detail);
-    line-height: 1.4;
-  }
-
+  /* In the detail line: the full name, what it is for, then its address and counts, each whole. */
   .cap-system-map-card-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-3);
-    margin: 0;
     color: var(--muted);
-    font-size: 0.75rem;
+
+    & > span + span::before {
+      content: "· ";
+    }
   }
 
   .cap-system-map-card-domain {
@@ -218,6 +251,13 @@
 
   /* How a lit card is tied, set on its top edge as a label, so lighting never changes a card's size
      and nothing below it moves. */
+  /* Where a card is narrower than its words, the detail line says it alone. */
+  @container cap-system-map (max-width: 44rem) {
+    .cap-system-map-card-tie {
+      display: none;
+    }
+  }
+
   .cap-system-map-card-tie {
     position: absolute;
     inset-block-start: 0;
@@ -250,16 +290,19 @@
         color: var(--muted);
       }
     }
+    /* Tied: an accent edge one pixel heavier (an inset outline, so nothing moves), never color
+       alone. */
     &[data-tie] {
       border-color: var(--accent);
+      outline: 1px solid var(--accent);
+      outline-offset: -2px;
     }
     /* The heavier edge is an outline inside the border, so the card keeps its size. */
     &[data-tie="self"] {
       background: var(--accent-soft);
     }
     &[data-tie="self"]:not(:focus-within) {
-      outline: 1px solid var(--accent);
-      outline-offset: -2px;
+      outline-width: 2px;
     }
   }
 
@@ -310,7 +353,10 @@
 
   .cap-system-map-tie {
     position: relative;
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-3);
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--accent);
     border-radius: var(--radius-m);
@@ -368,11 +414,18 @@
     display: grid;
     gap: var(--space-1);
     align-content: start;
-    padding: var(--space-3);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--line);
     border-radius: var(--radius-m);
     background: var(--ground);
 
+    &:hover {
+      border-color: var(--line-strong);
+    }
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
     &[data-place="stores"] {
       border-radius: var(--radius-l);
     }
@@ -392,22 +445,10 @@
     font: 0.75rem/1.3 var(--mono);
   }
 
-  .cap-system-map-part-text {
-    margin: 0;
-    font-size: var(--fs-detail);
-    line-height: 1.4;
-  }
-
-  /* Each of a part's lines in words, one after another, wrapping whole. */
+  /* In the detail line: the part's full name, what it does, then its lines in words. */
   .cap-system-map-part-lines {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-2);
-    margin: var(--space-1) 0 0;
     color: var(--muted);
-    font-size: 0.75rem;
 
-    /* The dot ends a line rather than starting the next when the lines wrap. */
     & > span:not(:last-child)::after {
       content: " ·";
     }
@@ -425,7 +466,7 @@
       background: transparent;
 
       & .cap-system-map-part-name,
-      & .cap-system-map-part-text {
+      & .cap-system-map-part-kind {
         color: var(--muted);
       }
     }

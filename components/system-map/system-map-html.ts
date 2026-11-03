@@ -19,9 +19,11 @@ const head = (id: string, label: string, caption?: string) =>
 const nameLink = (s: MapSystem) => (s.href ? `<a class="cap-system-map-link" href="${e(s.href)}">${e(s.name)}</a>` : e(s.name));
 
 /**
- * One system as a card on the network: its name (the link, stretched over the card), what it is
- * for, its address, and how many parts it has and systems it uses and is used by. `data-uses` and
- * `data-used-by` carry the ties the script lights.
+ * One system as a card on the network, small enough that the whole network fits on one screen:
+ * its short name (the link, stretched over the card) and, in words a screen reader reads but the
+ * card does not show, its full name, what it is for, its address, and how many parts it has and
+ * systems it uses and is used by. Pointing at the card, or focusing it, shows those words in the
+ * map's detail line. `data-uses` and `data-used-by` carry the ties the script lights.
  */
 function card(s: MapSystem, ties: Ties, parts: number, level: number): string {
   const facts = [count(parts, "part"), `uses ${ties.uses.length}`, `used by ${ties.usedBy.length}`].join(" · ");
@@ -29,10 +31,14 @@ function card(s: MapSystem, ties: Ties, parts: number, level: number): string {
     s.domain ? `<span class="cap-system-map-card-domain">${e(s.domain)}</span>` : "",
     s.private ? `<span class="cap-system-map-card-private">private</span>` : "",
     `<span class="cap-system-map-card-count">${facts}</span>`,
-  ].join("");
+  ]
+    .filter(Boolean)
+    .join(" ");
   const ids = (list: Ties["uses"]) => list.map((t) => t.id).join(" ");
   const all = [...new Set([...ties.uses, ...ties.usedBy].map((t) => t.id))].join(" ");
-  return `<li class="cap-system-map-card" data-id="${e(s.id)}" data-wire="${e(s.id)}" data-wires="${e(all)}" data-uses="${e(ids(ties.uses))}" data-used-by="${e(ids(ties.usedBy))}"${s.private ? " data-private" : ""}${s.href ? " data-link" : ""}>${heading(level, "cap-system-map-card-name", nameLink(s))}${s.description ? `<p class="cap-system-map-card-text">${e(s.description)}</p>` : ""}<p class="cap-system-map-card-meta">${meta}</p><span class="cap-system-map-card-tie" aria-hidden="true"></span></li>`;
+  const shown: MapSystem = { ...s, name: s.short ?? s.name };
+  const about = `<span class="cap-system-map-card-about"><span class="cap-system-map-card-full">${e(s.name)}</span>${s.description ? ` <span class="cap-system-map-card-text">${e(s.description)}</span>` : ""} <span class="cap-system-map-card-meta">${meta}</span></span>`;
+  return `<li class="cap-system-map-card" data-id="${e(s.id)}" data-wire="${e(s.id)}" data-wires="${e(all)}" data-uses="${e(ids(ties.uses))}" data-used-by="${e(ids(ties.usedBy))}"${s.private ? " data-private" : ""}${s.href ? " data-link" : ""}>${heading(level, "cap-system-map-card-name", nameLink(shown))}${about}<span class="cap-system-map-card-tie" aria-hidden="true"></span></li>`;
 }
 
 /**
@@ -64,7 +70,7 @@ function networkHtml(data: SystemMapData, options: SystemMapOptions): string {
   return [
     `<figure class="cap-system-map" data-cap="system-map" data-level="network" id="${e(id)}" aria-labelledby="${e(id)}-title">`,
     head(id, label, options.caption),
-    `<p class="cap-system-map-hint">The map is wider than the screen: scroll sideways to see all of it.</p>`,
+    `<p class="cap-system-map-detail" data-cap-part="detail" aria-hidden="true" hidden></p>`,
     `<div class="cap-system-map-network"><div class="cap-system-map-graph">${lanes}</div></div>`,
     `</figure>`,
   ].join("");
@@ -133,7 +139,7 @@ function systemHtml(data: SystemMapData, options: SystemMapOptions, sid: string)
       .filter((l) => l.from === c.id && nameOf.has(l.to))
       .map((l) => `${verbOf(l.kind)} ${nameOf.get(l.to)}${owner.get(l.to) !== sid && !byId.has(l.to) ? ` (${byId.get(owner.get(l.to)!)?.name ?? ""})` : ""}`);
     const on = lit?.lights.includes(c.id);
-    return `<li class="cap-system-map-part" id="${e(id)}-part-${e(c.id)}" data-id="${e(c.id)}" data-place="${placeOf(c.kind)}"${wireAttrs(c.id, wires)}${on ? " data-lit" : ""}${on && lit!.toward === c.id ? " data-at" : ""}>${heading(h + 2, "cap-system-map-part-name", e(c.name))}${c.technology ? `<p class="cap-system-map-part-kind">${e(c.technology)}</p>` : ""}${c.description ? `<p class="cap-system-map-part-text">${e(c.description)}</p>` : ""}${lines.length ? `<p class="cap-system-map-part-lines">${lines.map((x) => `<span>${e(x)}</span>`).join(" ")}</p>` : ""}</li>`;
+    return `<li class="cap-system-map-part" id="${e(id)}-part-${e(c.id)}" data-id="${e(c.id)}" data-place="${placeOf(c.kind)}" tabindex="0"${wireAttrs(c.id, wires)}${on ? " data-lit" : ""}${on && lit!.toward === c.id ? " data-at" : ""}>${heading(h + 2, "cap-system-map-part-name", e(c.name))}${c.technology ? `<p class="cap-system-map-part-kind">${e(c.technology)}</p>` : ""}${c.description || lines.length ? `<span class="cap-system-map-part-about"><span class="cap-system-map-part-full">${e(c.name)}</span>${c.description ? ` <span class="cap-system-map-part-text">${e(c.description)}</span>` : ""}${lines.length ? ` <span class="cap-system-map-part-lines">${lines.map((x) => `<span>${e(x)}</span>`).join(" ")}</span>` : ""}</span>` : ""}</li>`;
   };
   const placeCount = (["runs", "stores", "outside"] as const).filter((p) => mine.some((c) => placeOf(c.kind) === p)).length;
   const places = (["runs", "stores", "outside"] as const)
@@ -159,6 +165,7 @@ function systemHtml(data: SystemMapData, options: SystemMapOptions, sid: string)
   return [
     `<figure class="cap-system-map" data-cap="system-map" data-level="system" data-system="${e(sid)}" id="${e(id)}" aria-labelledby="${e(id)}-title"${litFlow ? ` data-flow="${e(litFlow.id)}" data-step="${litFlow.step}"` : ""}>`,
     head(id, label, options.caption),
+    `<p class="cap-system-map-detail" data-cap-part="detail" aria-hidden="true" hidden></p>`,
     `<div class="cap-system-map-columns"${options.only ? ` data-only="${options.only}"` : ""}>${columns}</div>`,
     flows ? `<section class="cap-system-map-flows" aria-labelledby="${e(id)}-flows">${heading(h, "cap-system-map-column-name", "Step by step", `${id}-flows`)}${flows}</section>` : "",
     `</figure>`,

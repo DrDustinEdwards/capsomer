@@ -16,13 +16,13 @@ eachTheme((theme) => {
   test("accessibility: a card's words, a tie's line, a part and a lit part reach their contrast", async ({ page }) => {
     await expectContrast(page, [
       { sel: "#map [data-id='carrel'] .cap-system-map-card-name", what: "a card's name" },
-      { sel: "#map [data-id='carrel'] .cap-system-map-card-text", what: "what it is for" },
-      { sel: "#map [data-id='carrel'] .cap-system-map-card-count", what: "its counts" },
-      { sel: "#map [data-id='carrel'] .cap-system-map-card-domain", what: "its address" },
+      { sel: "#map-lit .cap-system-map-detail .cap-system-map-card-text", what: "what the lit system is for, in the detail line" },
+      { sel: "#map-lit .cap-system-map-detail .cap-system-map-card-count", what: "its counts" },
+      { sel: "#map-lit .cap-system-map-detail .cap-system-map-card-domain", what: "its address" },
       { sel: "#map-lit [data-id='carrel'] .cap-system-map-card-name", what: "the lit card's name, on its tint" },
       { sel: "#map-lit [data-id='site'] .cap-system-map-card-tie", what: "how a card is tied" },
       { sel: "#map-system [data-column='used-by'] .cap-system-map-tie-verbs", what: "a tie's verbs" },
-      { sel: "#map-system [data-id='capsid-worker'] .cap-system-map-part-lines", what: "a part's lines" },
+      { sel: "#map-system [data-id='capsid-worker'] .cap-system-map-part-kind", what: "what a part runs on" },
       { sel: "#map-step [data-at] .cap-system-map-part-name", what: "the part a step moves toward, on its tint" },
     ]);
   });
@@ -47,9 +47,12 @@ eachTheme((theme) => {
     await expect(page.locator("#map .cap-system-map-wire[data-on]")).toHaveCount(1);
     await expect(page.locator("#map [data-id='site']")).toHaveAttribute("data-tie", "user");
     await expect(page.locator("#map [data-id='ledger']")).not.toHaveAttribute("data-tie");
+    // Tab goes on in the drawing's order, lighting the card it reaches.
     await page.keyboard.press("Tab");
-    await expect(page.locator("#map")).toHaveAttribute("data-lit", "capsid");
-    await page.locator("#map").getByRole("link", { name: "Capsid" }).blur();
+    const next = await page.evaluate(() => document.activeElement?.closest("[data-id]")?.getAttribute("data-id") ?? "");
+    expect(next).not.toBe("prelum");
+    await expect(page.locator("#map")).toHaveAttribute("data-lit", next);
+    await page.locator(`#map [data-id='${next}'] a`).blur();
     await expect(page.locator("#map")).not.toHaveAttribute("data-lit");
   });
 
@@ -70,11 +73,14 @@ eachTheme((theme) => {
     await expect(map.locator("[data-lit]")).toHaveCount(0);
   });
 
-  test("behavior: as delivered with no script every card is a link and each flow a list; on a phone only the drawing scrolls sideways", async ({ page }) => {
+  test("behavior: as delivered with no script every card is a link and each flow a list; on a phone the whole network is in view, wired", async ({ page }) => {
     const plain = page.locator("#map-noscript");
     expect(await plain.getByRole("link").count()).toBe(14);
     await expect(page.locator("#map-step li[aria-current='step']")).toHaveText(/^Merged/);
     await page.setViewportSize({ width: 320, height: 800 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+    const graph = page.locator("#map .cap-system-map-graph");
+    expect(await graph.evaluate((g) => g.scrollWidth <= g.clientWidth + 1)).toBe(true);
+    await expect(page.locator("#map .cap-system-map-wires")).not.toHaveAttribute("hidden");
   });
 });
