@@ -2,7 +2,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The system map: the network as cards (level 1) and one system as three columns (level 2).
-   No lines are drawn. On the network a lit card is a heavier accent edge, a tint and a line of
+   Wires are drawn by the script under the cards (system-map-wires.ts). On the network a lit card is a heavier accent edge, a tint and a line of
    words; a dimmed card goes muted. On a system, a step's parts are a heavier edge and a tint, the rest
    go muted. Columns come from the space the map has (container queries), so a host's narrow column
    stacks them as a phone does. No text is under 12 px. */
@@ -56,31 +56,256 @@
     list-style: none;
   }
 
-  /* Level 1. The groups are columns side by side where there is room, two at tablet width, one on a
-     phone; the bands below hold their cards in rows. */
-  .cap-system-map-network {
-    display: grid;
-    gap: var(--space-5);
+  /* Level 1, a layered drawing: three lanes side by side, the shared packages in the middle, and
+     gutters between them where the wires run. The cards are small (a short name) so the whole
+     network is in view at once on a desktop and a phone alike, with no scrolling; what each system
+     is shows in the detail line when it is pointed at or focused. */
+  .cap-system-map-detail {
+    min-height: calc(2 * 1.4em);
+    max-width: var(--measure);
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    line-height: 1.4;
+
+    &[hidden] {
+      display: none;
+    }
+    & .cap-system-map-card-full,
+    & .cap-system-map-part-full {
+      color: var(--text);
+      font-weight: 600;
+    }
   }
 
-  .cap-system-map-groups {
+  /* The two views of the network, as tabs: the hexagons (the default) and the plain map. With no
+     script both panels show, one after the other. Where the map is narrower than 44rem the
+     hexagons' names would fall under 12 px, so the hexagons and the tab list go and the script
+     chooses the plain map. */
+  .cap-system-map-views {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
-    gap: var(--space-5) var(--space-4);
-    align-items: start;
+    gap: var(--space-4);
   }
 
-  .cap-system-map-band {
-    padding-block-start: var(--space-3);
-    border-block-start: 2px solid var(--accent);
+  .cap-system-map-switch {
+    justify-self: start;
 
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  @container cap-system-map (max-width: 44rem) {
+    .cap-system-map .cap-system-map-hex,
+    .cap-system-map .cap-system-map-switch {
+      display: none;
+    }
+  }
+
+  /* The honeycomb: as tall as a desktop screen allows, so all of it is in view. */
+  .cap-system-map-hex {
+    display: grid;
+    justify-items: center;
+  }
+
+  .cap-system-map-comb {
+    display: block;
+    width: 100%;
+    max-height: min(calc(100svh - 12rem), 52rem);
+    overflow: visible;
+  }
+
+  .cap-system-map-comb-cells polygon {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .cap-system-map-comb-group {
+    fill: var(--muted);
+    font: 600 var(--cap-label-size)/1 var(--ui);
+    letter-spacing: 0.08em;
+    text-anchor: middle;
+    text-transform: uppercase;
+  }
+
+  .cap-system-map-comb .cap-system-map-wire {
+    stroke-width: 1.4;
+  }
+
+  .cap-system-map-cell {
+    outline: none;
+
+    & polygon {
+      fill: var(--surface);
+      stroke: var(--line-strong);
+      stroke-width: 1.4;
+    }
+    &[data-ring="shared"] polygon {
+      fill: var(--accent-soft);
+    }
+    &[data-ring="core"] polygon {
+      fill: var(--accent-soft);
+      stroke: var(--accent);
+      stroke-width: 2.5;
+    }
+    &[data-private] polygon {
+      stroke-dasharray: 5 4;
+    }
+    &:hover polygon {
+      stroke: var(--text);
+    }
+    &:focus-visible polygon {
+      stroke: var(--ring);
+      stroke-width: 4;
+    }
+  }
+
+  .cap-system-map-cell-name {
+    fill: var(--text);
+    font: 600 var(--cap-name-size)/1 var(--ui);
+    text-anchor: middle;
+  }
+
+  /* Lit: as on the plain map, the cell's lines accent and on top, its ties' cells with an accent
+     edge (heavier than a plain one, so color is not the only sign), the rest muted. */
+  .cap-system-map-comb[data-lit] {
+    & .cap-system-map-wire:not([data-on]) {
+      stroke: var(--line);
+    }
+    & .cap-system-map-wire[data-on] {
+      stroke: var(--accent);
+      stroke-width: 2.6;
+    }
+    & .cap-system-map-cell:not([data-tie]) {
+      & polygon {
+        fill: var(--ground);
+        stroke: var(--line);
+      }
+      & .cap-system-map-cell-name {
+        fill: var(--muted);
+      }
+    }
+    & .cap-system-map-cell[data-tie] polygon {
+      stroke: var(--accent);
+      stroke-width: 3;
+    }
+    & .cap-system-map-cell[data-tie="self"] polygon {
+      fill: var(--accent-soft);
+      stroke-width: 4.5;
+    }
+  }
+
+  .cap-system-map-graph {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 13rem));
+    justify-content: space-between;
+    align-items: center;
+    column-gap: clamp(1.5rem, 10cqi, 10rem);
+    padding-inline: clamp(var(--space-3), 3cqi, var(--space-7));
+  }
+
+  .cap-system-map-lane {
+    display: grid;
+    gap: var(--space-4);
+    align-content: center;
+
+    & .cap-system-map-group-name {
+      margin-block-end: var(--space-2);
+    }
     & .cap-system-map-cards {
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+      gap: var(--space-3);
+    }
+  }
+
+  /* A card on the network: its name alone. Its words are for screen readers here (the detail line
+     shows them), so they are clipped, not removed. */
+  .cap-system-map-network .cap-system-map-card {
+    padding: var(--space-2);
+
+    & .cap-system-map-card-name {
+      font-size: 0.8125rem;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* With room, the cards grow toward a desktop's height, still all in view. */
+  @container cap-system-map (min-width: 44rem) {
+    .cap-system-map-lane {
+      gap: var(--space-5);
+
+      & .cap-system-map-cards {
+        gap: var(--space-4);
+      }
+    }
+
+    .cap-system-map-network .cap-system-map-card {
+      padding: var(--space-3) var(--space-4);
+
+      & .cap-system-map-card-name {
+        font-size: var(--fs-body);
+      }
+    }
+  }
+
+  .cap-system-map-card-about,
+  .cap-system-map-part-about {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* The wires sit under the cards, so a card is never crossed; the cards' own surfaces cover them. */
+  .cap-system-map-wires {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .cap-system-map-wire {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    stroke-linecap: round;
+  }
+
+  .cap-system-map-port {
+    fill: var(--surface);
+    stroke: var(--line-strong);
+    stroke-width: 1;
+  }
+
+  /* Lit: a card's wires go accent and heavier, on top; the rest fall back to the faint line color,
+     so the one path reads out of the whole network. */
+  .cap-system-map-wires[data-lit] {
+    & .cap-system-map-wire:not([data-on]) {
+      stroke: var(--line);
+    }
+    & .cap-system-map-port:not([data-on]) {
+      stroke: var(--line);
+    }
+    & .cap-system-map-wire[data-on] {
+      stroke: var(--accent);
+      stroke-width: 2;
+    }
+    & .cap-system-map-port[data-on] {
+      fill: var(--accent);
+      stroke: var(--accent);
     }
   }
 
   .cap-system-map-card {
     position: relative;
+    z-index: 1;
     display: grid;
     gap: var(--space-1);
     align-content: start;
@@ -125,21 +350,13 @@
     }
   }
 
-  /* Whole, never clamped: a clamp cuts the words off once a reader widens the spacing (WCAG 1.4.12). */
-  .cap-system-map-card-text {
-    margin: 0;
-    color: var(--muted);
-    font-size: var(--fs-detail);
-    line-height: 1.4;
-  }
-
+  /* In the detail line: the full name, what it is for, then its address and counts, each whole. */
   .cap-system-map-card-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-3);
-    margin: 0;
     color: var(--muted);
-    font-size: 0.75rem;
+
+    & > span + span::before {
+      content: "· ";
+    }
   }
 
   .cap-system-map-card-domain {
@@ -152,6 +369,13 @@
 
   /* How a lit card is tied, set on its top edge as a label, so lighting never changes a card's size
      and nothing below it moves. */
+  /* Where a card is narrower than its words, the detail line says it alone. */
+  @container cap-system-map (max-width: 44rem) {
+    .cap-system-map-card-tie {
+      display: none;
+    }
+  }
+
   .cap-system-map-card-tie {
     position: absolute;
     inset-block-start: 0;
@@ -184,36 +408,73 @@
         color: var(--muted);
       }
     }
+    /* Tied: an accent edge one pixel heavier (an inset outline, so nothing moves), never color
+       alone. */
     &[data-tie] {
       border-color: var(--accent);
+      outline: 1px solid var(--accent);
+      outline-offset: -2px;
     }
     /* The heavier edge is an outline inside the border, so the card keeps its size. */
     &[data-tie="self"] {
       background: var(--accent-soft);
     }
     &[data-tie="self"]:not(:focus-within) {
-      outline: 1px solid var(--accent);
-      outline-offset: -2px;
+      outline-width: 2px;
     }
   }
 
-  /* Level 2. Used by, Inside and Uses side by side where there is room; stacked, in that order,
-     where there is not. */
+  /* Level 2. Used by, Inside (what runs, what stores, what is outside, side by side) and Uses
+     where there is room, with the wires in the gutters between; stacked, in that order and with
+     the ties in words alone, where there is not. */
   .cap-system-map-columns {
+    position: relative;
     display: grid;
     gap: var(--space-5);
     align-items: start;
   }
 
-  @container cap-system-map (min-width: 52rem) {
+  @container cap-system-map (min-width: 60rem) {
     .cap-system-map-columns:not([data-only]) {
-      grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr) minmax(10rem, 14rem);
+      grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr) minmax(8rem, 11rem);
+      column-gap: var(--space-9);
+      align-items: center;
     }
+
+    .cap-system-map-column[data-column="inside"] {
+      grid-template-columns: repeat(var(--cap-places, 1), minmax(0, 1fr));
+      column-gap: var(--space-9);
+      align-items: center;
+
+      & > .cap-system-map-column-name,
+      & > .cap-system-map-none {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .cap-system-map-column[data-column="inside"] .cap-system-map-parts {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .cap-system-map-tie,
+  .cap-system-map-part {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* A tie or a part held (pointed at or focused) keeps its wires lit; the step's lighting returns
+     when it is let go. */
+  .cap-system-map-column-name [data-wire] {
+    display: block;
   }
 
   .cap-system-map-tie {
     position: relative;
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-3);
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--accent);
     border-radius: var(--radius-m);
@@ -247,7 +508,7 @@
 
   .cap-system-map-column[data-column="inside"] {
     display: grid;
-    gap: var(--space-4);
+    row-gap: var(--space-4);
     padding: var(--space-4);
     border: 1px solid var(--line);
     border-radius: var(--radius-l);
@@ -271,11 +532,18 @@
     display: grid;
     gap: var(--space-1);
     align-content: start;
-    padding: var(--space-3);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--line);
     border-radius: var(--radius-m);
     background: var(--ground);
 
+    &:hover {
+      border-color: var(--line-strong);
+    }
+    &:focus-visible {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
     &[data-place="stores"] {
       border-radius: var(--radius-l);
     }
@@ -295,22 +563,10 @@
     font: 0.75rem/1.3 var(--mono);
   }
 
-  .cap-system-map-part-text {
-    margin: 0;
-    font-size: var(--fs-detail);
-    line-height: 1.4;
-  }
-
-  /* Each of a part's lines in words, one after another, wrapping whole. */
+  /* In the detail line: the part's full name, what it does, then its lines in words. */
   .cap-system-map-part-lines {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-2);
-    margin: var(--space-1) 0 0;
     color: var(--muted);
-    font-size: 0.75rem;
 
-    /* The dot ends a line rather than starting the next when the lines wrap. */
     & > span:not(:last-child)::after {
       content: " ·";
     }
@@ -328,7 +584,7 @@
       background: transparent;
 
       & .cap-system-map-part-name,
-      & .cap-system-map-part-text {
+      & .cap-system-map-part-kind {
         color: var(--muted);
       }
     }
@@ -414,9 +670,19 @@
   /* In forced colors a tint is gone, so lit and chosen keep their heavier edge in Highlight. */
   @media (forced-colors: active) {
     .cap-system-map[data-lit] .cap-system-map-card[data-tie],
-    .cap-system-map[data-step] .cap-system-map-part[data-lit],
-    .cap-system-map-band {
+    .cap-system-map[data-step] .cap-system-map-part[data-lit] {
       border-color: Highlight;
+    }
+    .cap-system-map-wire,
+    .cap-system-map-port,
+    .cap-system-map-cell polygon {
+      stroke: CanvasText;
+    }
+    .cap-system-map-comb[data-lit] .cap-system-map-wire[data-on],
+    .cap-system-map-comb[data-lit] .cap-system-map-cell[data-tie] polygon,
+    .cap-system-map-wires[data-lit] .cap-system-map-wire[data-on],
+    .cap-system-map-wires[data-lit] .cap-system-map-port[data-on] {
+      stroke: Highlight;
     }
   }
 }
