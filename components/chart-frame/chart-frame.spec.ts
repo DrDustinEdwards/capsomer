@@ -57,11 +57,15 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => getComputedStyle(document.querySelector("#cf-spark svg path[stroke^='var']")!).stroke)).toBe("rgb(255, 0, 0)");
   });
 
-  test("behavior: the React frame redraws to its column's width and shows a refusal in the chart's place", async ({ page }) => {
+  test("behavior: the React frame redraws to its column's width at the height it showed, and shows a refusal in the chart's place", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 800 });
     await visitStates(page, "chart-frame", theme);
     const svg = page.locator("[data-mount='redraw'] svg[viewBox]").first();
     await expect.poll(async () => Number(await svg.getAttribute("width"))).toBeLessThan(400);
+    // At the height the server's 640 by 240 drawing showed in this column (a wide drawing: it kept
+    // 30rem and scrolled), so the swap moves nothing below it.
+    const [shown, column] = await svg.evaluate((el) => [el.getBoundingClientRect().height, el.closest(".cap-chart-figure")!.clientWidth]);
+    expect(Math.abs(shown - (240 * Math.max(column, 480)) / 640)).toBeLessThan(1.5);
     await expect(page.locator("[data-mount='refused']")).toContainText("This chart could not be drawn");
   });
 });
