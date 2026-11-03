@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "measured_at": "c093c82",
+    "measured_at": "e2eb199",
     "knip": {
       "Duplicate exports": 1
     },
@@ -11,11 +11,11 @@
     },
     "tests": {
       "files": 101,
-      "cases": 1488
+      "cases": 1489
     },
     "comments": {
-      "lines": 8070,
-      "code": 79358,
+      "lines": 8073,
+      "code": 79365,
       "percentage": 9.23
     }
   }
