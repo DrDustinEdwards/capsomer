@@ -73,10 +73,19 @@ export interface ModelSystem {
   domain?: string;
 }
 
+// A flow in the model rides its lines by id; the map reads each step as the line's two ends.
+export interface ModelFlow {
+  id: string;
+  name: string;
+  description?: string;
+  steps: readonly { relationship: string; toward: string; text: string; lights?: readonly string[] }[];
+}
+
 export interface SystemModel {
   systems: readonly ModelSystem[];
-  relationships: readonly MapLink[];
+  relationships: readonly (MapLink & { id?: string })[];
   containers: readonly MapContainer[];
+  flows?: readonly ModelFlow[];
 }
 
 // The group a system people use stands in, in a stranger's words (Dustin, 2026-10-23: like goes
@@ -86,9 +95,11 @@ const FAMILY_GROUP: Record<string, string> = { system: "Tools", writing: "Writin
 /**
  * What the map shows from Capsid's public model, the same on every host: each system with, for
  * what people use, its group, every line, and the parts, in the model's order (which sets the
- * groups' order too). `href` is where a system's card goes.
+ * groups' order too), and every flow with each step on the two ends of the line it rides (a step
+ * on a line the model lacks is left out). `href` is where a system's card goes.
  */
 export function modelMapData(model: SystemModel, href?: (id: string) => string): SystemMapData {
+  const lines = new Map(model.relationships.filter((r) => r.id).map((r) => [r.id, r]));
   return {
     systems: model.systems.map((s) => ({
       id: s.id,
@@ -102,6 +113,15 @@ export function modelMapData(model: SystemModel, href?: (id: string) => string):
     })),
     relationships: model.relationships.map(({ from, to, kind }) => ({ from, to, kind })),
     containers: model.containers.map(({ id, system, name, kind, technology, description }) => ({ id, system, name, kind, technology, description })),
+    flows: (model.flows ?? []).map((f) => ({
+      id: f.id,
+      name: f.name,
+      description: f.description,
+      steps: f.steps.flatMap((st) => {
+        const line = lines.get(st.relationship);
+        return line ? [{ from: line.from, to: line.to, toward: st.toward, text: st.text, lights: st.lights }] : [];
+      }),
+    })),
   };
 }
 

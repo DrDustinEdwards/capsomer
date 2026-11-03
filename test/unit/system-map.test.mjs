@@ -61,15 +61,17 @@ test("the network and a system are whole HTML, escaped, with a step lit as the s
   assert.match(one, /publishes to Site &lt;one&gt;/);
 });
 
-test("the public model keeps each part's words and gives what people use its group", () => {
+test("the public model keeps each part's words, gives what people use its group, and sets each flow step on its line's ends", () => {
   const out = modelMapData(
     {
       systems: [{ id: "a", name: "A", ring: "used", family: "product", domain: "" }],
-      relationships: [],
+      relationships: [{ id: "a-c", from: "c", to: "a", kind: "serves" }],
       containers: [{ id: "c", system: "a", name: "C", kind: "worker", technology: "Worker", description: "Does it." }],
+      flows: [{ id: "f", name: "F", steps: [{ relationship: "a-c", toward: "a", text: "Serves." }, { relationship: "gone", toward: "a", text: "Lost." }] }],
     },
     (id) => `/s/${id}/`
   );
   assert.deepEqual(out.systems[0], { id: "a", name: "A", ring: "used", private: undefined, group: "Apps", description: undefined, domain: undefined, href: "/s/a/" });
   assert.equal(out.containers?.[0]?.description, "Does it.");
+  assert.deepEqual(out.flows?.[0]?.steps, [{ from: "c", to: "a", toward: "a", text: "Serves.", lights: undefined }]);
 });
