@@ -27,7 +27,13 @@ const WIDE_REM = 30;
 // draws at this height, so swapping it in after hydration moves nothing under the chart (web.dev,
 // "Optimize CLS"); the rule is enarratio/redraw's own (Enarratio record 0033), for pages drawn
 // without React.
+// A primitive's figure (a heat strip, timeline, sparkline, uptime strip or progress ring; Enarratio
+// marks it `data-enarratio-static`) gets none: its height is its own, not its width's shape. A
+// heat strip keeps the height it is given at any width, so fitting it to a 640 drawing shrunk into
+// 300 px would redraw it 9 px tall, not 20; a timeline's height comes from its lanes and ignores
+// `height`, and under 30rem it shows its list, not the SVG. enarratio/redraw redraws charts only.
 export function shownHeight(first: string, width: number, rem = 16): number | undefined {
+  if (/<figure\b[^>]*\sdata-enarratio-static\b/.test(first)) return undefined;
   const box = /<svg\b[^>]*?\sviewBox="[\d.]+ [\d.]+ ([\d.]+) ([\d.]+)"/.exec(first);
   const w = Number(box?.[1]);
   const h = Number(box?.[2]);
