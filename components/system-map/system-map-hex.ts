@@ -9,12 +9,11 @@ import type { MapSystem, SystemMapData } from "./system-map-data.ts";
 import { tiePairs } from "./system-map-data.ts";
 
 // A cell's radius (center to corner) in the drawing's own units. The drawing scales to its box;
-// the text sizes below are set so that at the narrowest map that shows it (44rem) no text is
-// under 12 px.
+// the text sizes, in the same units, are in system-map.css (18 for a name, 16 for a group), set
+// so that at the narrowest map that shows it (44rem) no text is under 12 px. They are CSS, not a
+// style attribute, so a page whose Content Security Policy forbids inline styles draws it whole.
 const R = 58;
 const SQRT3 = Math.sqrt(3);
-const NAME_SIZE = 18;
-const LABEL_SIZE = 16;
 
 type Axial = [number, number];
 const DIRS: Axial[] = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
@@ -457,5 +456,5 @@ export function hexSvg(data: SystemMapData, layout: HexLayout, labelId: string):
       return s.href ? `<a ${attrs} href="${e(s.href)}" aria-label="${e(label)}">${inner}</a>` : `<g ${attrs} role="img" aria-label="${e(label)}">${inner}</g>`;
     })
     .join("");
-  return `<svg class="cap-system-map-comb" viewBox="${bx} ${by} ${bw} ${bh}" role="group" aria-labelledby="${e(labelId)}" style="--cap-name-size: ${NAME_SIZE}px; --cap-label-size: ${LABEL_SIZE}px"><g class="cap-system-map-comb-cells" aria-hidden="true">${comb}</g><g class="cap-system-map-comb-lines" aria-hidden="true">${lines}</g><g aria-hidden="true">${groups}</g>${cells}</svg>`;
+  return `<svg class="cap-system-map-comb" viewBox="${bx} ${by} ${bw} ${bh}" role="group" aria-labelledby="${e(labelId)}"><g class="cap-system-map-comb-cells" aria-hidden="true">${comb}</g><g class="cap-system-map-comb-lines" aria-hidden="true">${lines}</g><g aria-hidden="true">${groups}</g>${cells}</svg>`;
 }

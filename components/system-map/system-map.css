@@ -123,7 +123,7 @@
 
   .cap-system-map-comb-group {
     fill: var(--muted);
-    font: 600 var(--cap-label-size)/1 var(--ui);
+    font: 600 16px/1 var(--ui);
     letter-spacing: 0.08em;
     text-anchor: middle;
     text-transform: uppercase;
@@ -163,7 +163,7 @@
 
   .cap-system-map-cell-name {
     fill: var(--text);
-    font: 600 var(--cap-name-size)/1 var(--ui);
+    font: 600 18px/1 var(--ui);
     text-anchor: middle;
   }
 
@@ -442,7 +442,7 @@
     }
 
     .cap-system-map-column[data-column="inside"] {
-      grid-template-columns: repeat(var(--cap-places, 1), minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr);
       column-gap: var(--space-9);
       align-items: center;
 
@@ -450,6 +450,15 @@
       & > .cap-system-map-none {
         grid-column: 1 / -1;
       }
+    }
+
+    /* One lane per place (Runs, Stores, Outside), by data-places: an attribute, not a style, so a
+       page that forbids inline styles lays it out the same. */
+    .cap-system-map-column[data-column="inside"][data-places="2"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cap-system-map-column[data-column="inside"][data-places="3"] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .cap-system-map-column[data-column="inside"] .cap-system-map-parts {
