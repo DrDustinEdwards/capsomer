@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **React's `ChartFrame` no longer fits a primitive to the first drawing's height.** `shownHeight` (so `fit`) is empty for a figure Enarratio marks `data-enarratio-static` (a heat strip, timeline, sparkline, uptime strip or progress ring), and the draw keeps its own height. 0.66.0 scaled every drawing's height with its width, which is a chart's shape but not a primitive's: a heat strip drawn 640 by 20 and shown in a 300 px column would have been redrawn 300 by 9.4, not 300 by 20, and a timeline ignores `height` (its lanes set it) and shows its list, not its SVG, under 30rem. A primitive's draw can now take `fit` like a chart's, `(width, fit) => heatStrip({ ...options, width, ...fit })`, and gets its own height. No class, token or HTML contract changes.
+
 ## [0.66.0]
 
 Charts and fonts stop moving the page when they arrive: React's `ChartFrame` redraws at the height its first drawing showed, and each measured fallback font has a bold face per weight range. New exports: `shownHeight` and the type `ChartFit` (`capsomer/react`'s chart frame), and the type `FontWidths` (`capsomer/fonts`); `fallbackFontFace` takes `widths`, `MEASURED` entries carry `widths`, `LOCAL` entries carry `bold`, and `capsomer fallback-font` takes `--weight`. `ChartFrame`'s `draw` gets a second argument, `fit`. No class, token or HTML contract changes; a fallback rule's `local()` names and weight ranges change in `fonts.css` and `fallback-fonts.css`.
