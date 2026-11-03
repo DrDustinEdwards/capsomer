@@ -10,7 +10,7 @@ import { resolve } from "node:path";
 import { familyFooterHtml } from "../components/family-footer/family-footer.ts";
 import { letterheadHtml } from "../components/site-header/site-header.ts";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
-import { renderMarkdown } from "./markdown.ts";
+import { codeRegion, renderMarkdown } from "./markdown.ts";
 
 // Magenta is the public site's own family, on its root; the six are the ones it shows.
 type Family = "purple" | "fox" | "teal" | "amber" | "navy" | "forest" | "magenta";
@@ -353,7 +353,7 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
     ${partTitle("use-h", "5", "Pin a release, import what you use")}
     <p class="home-sub">An app pins a tagged release and imports the tokens, then each component's CSS as it needs it. Every Capsomer rule sits in a <code>cap.*</code> cascade layer, so the app's own CSS still wins while it moves over one screen at a time.</p>
     <div class="home-code-wrap">
-      <pre class="home-code" id="home-install"><code>${esc(install)}</code></pre>
+      <pre class="home-code" id="home-install" ${codeRegion("Install")}><code>${esc(install)}</code></pre>
       <button type="button" class="cap-btn" data-size="sm" data-cap-part="copy" aria-describedby="home-install" hidden>Copy</button>
     </div>
   </div>
@@ -372,7 +372,7 @@ function exampleBlock(c: Component, e: Example, heading: boolean): string {
   <div class="comp-ex-box">
     <iframe class="comp-ex-frame" src="${src}" title="${esc(c.title)}: ${esc(e.title)}" loading="lazy" data-kind="${e.kind}" data-height="${e.height}"></iframe>
     <div class="comp-ex-code" data-cap-part="code">
-      <pre tabindex="0" aria-label="HTML for ${esc(e.title)}"><code>${esc(e.code)}</code></pre>
+      <pre ${codeRegion(`HTML for ${e.title}`)}><code>${esc(e.code)}</code></pre>
       <div class="comp-ex-tools"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="copy-code" hidden>Copy</button></div>
       <button type="button" class="cap-btn" data-size="sm" data-cap-part="show-code" aria-expanded="false" hidden>View code</button>
     </div>
@@ -417,7 +417,7 @@ export function renderComponent(d: Data, name: string): string {
   const tab = (id: string, text: string, on: boolean) =>
     `<button type="button" class="cap-tab" role="tab" id="inst-t-${id}" aria-selected="${on}" aria-controls="inst-p-${id}" tabindex="${on ? 0 : -1}">${text}</button>`;
   const panel = (id: string, code: string, on: boolean) =>
-    `<div class="cap-tabs-panel" role="tabpanel" id="inst-p-${id}" aria-labelledby="inst-t-${id}" tabindex="0"${on ? "" : " hidden"}><div class="comp-ex-code" data-open><pre aria-label="Install"><code>${esc(code)}</code></pre><div class="comp-ex-tools"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="copy-code" hidden>Copy</button></div></div></div>`;
+    `<div class="cap-tabs-panel" role="tabpanel" id="inst-p-${id}" aria-labelledby="inst-t-${id}"${on ? "" : " hidden"}><div class="comp-ex-code" data-open><pre ${codeRegion(`Install, ${id === "react" ? "React" : "HTML and CSS"}`)}><code>${esc(code)}</code></pre><div class="comp-ex-tools"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="copy-code" hidden>Copy</button></div></div></div>`;
   const toc: Array<[string, string, boolean]> = [
     ["install-h", "Installation", false],
     ...(rest.length ? ([["examples-h", "Examples", false], ...rest.map((e) => [`ex-${e.id}`, e.title, true])] as Array<[string, string, boolean]>) : []),

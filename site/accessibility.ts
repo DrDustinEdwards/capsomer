@@ -12,7 +12,6 @@ const STATEMENT = accessibilityStatement({
   capsomer: true,
   links: "marked",
   limitations: [
-    "At phone width, the install code on the front page and on each component's page can scroll sideways, but the box that scrolls cannot be reached with the keyboard.",
     "On the admin shell's page, one example's frame has an accessible name that does not begin with its visible label.",
     "In the theme builder, the corner radius slider shows no visible focus.",
     "The page for an address that does not exist has no skip link as its first Tab stop.",

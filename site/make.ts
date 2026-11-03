@@ -2,6 +2,7 @@
 // whole HTML; site/make-main.ts runs it: it builds the theme from the settings with Capsomer's own
 // generator (tokens/palette-core.mjs), paints the two previews, checks every pair and writes the files.
 import { FOOTER, band, esc, header, runningHead } from "./home.ts";
+import { codeRegion } from "./markdown.ts";
 import { DEFAULT, DISPLAY_FACES, FACES, MONO_FACES, PRESETS, SIZES, TEXT_FACES } from "./make-presets.ts";
 
 const options = (ids: string[], chosen: string) => ids.map((id) => `<option value="${id}"${id === chosen ? " selected" : ""}>${esc(FACES[id]?.name ?? id)}</option>`).join("");
@@ -187,8 +188,8 @@ ${runningHead("6", "Make a theme", "From one color")}
           <button type="button" class="cap-tab" role="tab" id="mk-t-css" aria-selected="true" aria-controls="mk-p-css" tabindex="0">CSS</button>
           <button type="button" class="cap-tab" role="tab" id="mk-t-json" aria-selected="false" aria-controls="mk-p-json" tabindex="-1">Tokens (JSON)</button>
         </div>
-        <div class="cap-tabs-panel" role="tabpanel" id="mk-p-css" aria-labelledby="mk-t-css" tabindex="0"><pre class="home-code make-code" tabindex="0" aria-label="theme.css"><code data-cap-part="css"></code></pre></div>
-        <div class="cap-tabs-panel" role="tabpanel" id="mk-p-json" aria-labelledby="mk-t-json" tabindex="0" hidden><pre class="home-code make-code" tabindex="0" aria-label="tokens.json"><code data-cap-part="json"></code></pre></div>
+        <div class="cap-tabs-panel" role="tabpanel" id="mk-p-css" aria-labelledby="mk-t-css"><pre class="home-code make-code" ${codeRegion("theme.css")}><code data-cap-part="css"></code></pre></div>
+        <div class="cap-tabs-panel" role="tabpanel" id="mk-p-json" aria-labelledby="mk-t-json" hidden><pre class="home-code make-code" ${codeRegion("tokens.json")}><code data-cap-part="json"></code></pre></div>
       </div>
       <div class="make-row make-actions">
         <button type="button" class="cap-btn" data-variant="primary" data-cap-part="download">Download theme.css</button>

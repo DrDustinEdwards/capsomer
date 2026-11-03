@@ -151,10 +151,14 @@ for (const box of document.querySelectorAll<HTMLElement>(".comp-ex-code")) {
     copyButton.addEventListener("click", () => copyText(copyButton, code));
   }
   if (!show || code.split("\n").length <= 4) continue;
+  // Closed, the code cannot scroll and View code is the way in, so the box leaves the tab order until it opens.
+  const pre = box.querySelector("pre");
   box.toggleAttribute("data-closed", true);
+  pre?.setAttribute("tabindex", "-1");
   show.hidden = false;
   show.addEventListener("click", () => {
     const closed = box.toggleAttribute("data-closed");
+    pre?.setAttribute("tabindex", closed ? "-1" : "0");
     show.textContent = closed ? "View code" : "Hide code";
     show.setAttribute("aria-expanded", String(!closed));
   });

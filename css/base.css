@@ -128,6 +128,11 @@
     outline: var(--focus-width) solid var(--ring);
     outline-offset: var(--focus-offset);
   }
+  /* A scroll region (a code box or wide table: tabindex="0", role="region", a name) draws the ring
+     inside its edge, so a parent that clips its overflow cannot hide it (the table's and dialog's rule). */
+  [role="region"][tabindex="0"]:focus-visible {
+    outline-offset: calc(var(--focus-width) * -1);
+  }
   h1,
   h2,
   h3 {
