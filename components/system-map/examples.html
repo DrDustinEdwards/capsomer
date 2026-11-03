@@ -1,92 +1,80 @@
-<section class="cap-specimen" aria-labelledby="s-shell">
-  <h2 id="s-shell">The family as a capsid</h2>
-  <p>Capsid in the middle, the shared parts around it, what people use on the outside. Choose a system to draw its connections; choose Capsid again to go inside. Arrow keys move between neighbors, Escape steps out.</p>
-  <div data-mount="shell"></div>
+<section class="cap-specimen" aria-labelledby="s-network">
+  <h2 id="s-network">The network</h2>
+  <p>Every system is a card: what people use in a column per group, then the shared packages, then the core. Point at a card or tab to it to light what it uses and what uses it; a tap opens it.</p>
+  <div data-mount="network"></div>
 </section>
 
-<section class="cap-specimen" aria-labelledby="s-chosen">
-  <h2 id="s-chosen">A system chosen, its connections drawn</h2>
-  <p>Carrel chosen: its lines run along the seams between capsomers, beneath them, so every name stays readable; solid where it installs or publishes, dashed where Capsid coordinates it, and each system at the far end outlined.</p>
-  <div data-mount="chosen"></div>
+<section class="cap-specimen" aria-labelledby="s-lit">
+  <h2 id="s-lit">A card lit, its ties shown</h2>
+  <p>Carrel lit: the systems it uses and the ones that use it keep their color and say how they are tied; the rest fade. On a shared package this is the impact view: everything a change to it reaches.</p>
+  <div data-mount="lit"></div>
 </section>
 
-<section class="cap-specimen" aria-labelledby="s-inside">
-  <h2 id="s-inside">Inside the core</h2>
-  <p>Capsid's parts within the shell's boundary, the systems around it faded at the rim to shapes only.</p>
-  <div data-mount="inside"></div>
+<section class="cap-specimen" aria-labelledby="s-system">
+  <h2 id="s-system">One system</h2>
+  <p>Capsid: what uses it, its parts by what they do (each with its own lines in words), and what it uses. Below, its flows as ordered steps.</p>
+  <div data-mount="system"></div>
 </section>
 
-<section class="cap-specimen" aria-labelledby="s-flow">
-  <h2 id="s-flow">A flow playing inside the core</h2>
-  <p>A job's life at its sixth step: the line it rides is lit, a token travels it toward the part named, and the parts it touches are tinted. Agents and GitHub sit outside the dashed boundary. Back, Next and Stop step through it; the left and right arrows and the number keys do too.</p>
-  <div data-mount="flow"></div>
-</section>
-
-<section class="cap-specimen" aria-labelledby="s-circles">
-  <h2 id="s-circles">Every system's wiring</h2>
-  <p>With circles drawn at build time, one tap on any system zooms into it: its parts inside, what it works with outside, and the systems it connects to round the rim. A system on the rim is a tap to zoom there; Back to all systems, Escape or a tap outside the circle returns.</p>
-  <div data-mount="circles"></div>
-</section>
-
-<section class="cap-specimen" aria-labelledby="s-zoomed">
-  <h2 id="s-zoomed">Zoomed into one system, as delivered</h2>
-  <p>A shared link to Carrel: the server draws it zoomed in, its lines on, before any script and with none.</p>
-  <div data-mount="zoomed"></div>
-</section>
-
-<section class="cap-specimen" aria-labelledby="s-plain">
-  <h2 id="s-plain">The plain map</h2>
-  <p>The same data as three columns, for a reader who wants the list rather than the drawing.</p>
-  <div data-mount="plain"></div>
+<section class="cap-specimen" aria-labelledby="s-step">
+  <h2 id="s-step">A flow at a step</h2>
+  <p>A job's life at its fifth step: the parts it touches lit, the part it moves toward with the heaviest edge, and the step marked in the list. Back and Next step it; Escape stops.</p>
+  <div data-mount="step"></div>
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-states">
-  <h2 id="s-states">A capsomer under the pointer and with keyboard focus</h2>
+  <h2 id="s-states">A card under the pointer and with keyboard focus</h2>
   <p>Forced states on a map that is not enhanced: Prelum under the pointer, Carrel with the focus ring.</p>
   <div data-mount="states"></div>
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-noscript">
   <h2 id="s-noscript">As delivered with no script</h2>
-  <p>The drawing is a picture with a name, and the list of the same data is open.</p>
+  <p>Every card is a link, every tie and line is words, and each flow is an ordered list.</p>
   <div data-mount="noscript"></div>
 </section>
 
 <script type="module">
   import { controller, enhance, systemMapHtml } from "./system-map.ts";
-  import { circleLayers } from "./system-map-circles.ts";
 
-  // Sample data in the family's own words. Private systems carry a name and an address only.
+  // Sample data in the network's own words. A private system shows in full, only marked private.
   const data = {
     systems: [
+      { id: "site", name: "The website", ring: "used", group: "Websites", description: "The personal site.", domain: "example.com", href: "#site" },
+      { id: "site-mcp", name: "Site connector", ring: "used", group: "Websites", description: "Publishes posts from a chat.", href: "#site-mcp" },
+      { id: "fieldnotes", name: "Fieldnotes", ring: "used", group: "Websites", private: true, description: "A field journal, private for now.", domain: "fieldnotes.example.org", href: "#fieldnotes" },
+      { id: "foxing", name: "Foxing", ring: "used", group: "Apps", private: true, description: "A reading app for public domain books.", domain: "foxing.example", href: "#foxing" },
+      { id: "ledger", name: "Ledger", ring: "used", group: "Apps", description: "Household accounts.", domain: "ledger.example.net", href: "#ledger" },
+      { id: "carrel", name: "Carrel", ring: "used", group: "Writing", description: "The writing desk, where drafts are written, checked and published.", domain: "carrel.example.com", href: "#carrel" },
+      { id: "enarratio", name: "Enarratio", ring: "used", group: "Writing", description: "Charts, as a package.", href: "#enarratio" },
+      { id: "skills", name: "Skills", ring: "used", group: "Tools", description: "Instructions the AI sessions follow.", href: "#skills" },
+      { id: "capsomer", name: "Capsomer", ring: "shared", description: "The design system every app is drawn in.", href: "#capsomer" },
+      { id: "site-runtime", name: "site-runtime", ring: "shared", description: "Security headers, the rate limiter and the health format.", href: "#site-runtime" },
+      { id: "d1-dump", name: "d1-dump", ring: "shared", description: "Per-table backups with a restore drill.", href: "#d1-dump" },
+      { id: "site-api", name: "site-api", ring: "shared", description: "The contract writing is published through.", href: "#site-api" },
+      { id: "prelum", name: "Prelum", ring: "shared", description: "Turns finished writing into pages and feeds.", href: "#prelum" },
       { id: "capsid", name: "Capsid", ring: "core", description: "The knowledge store, work queue and credential boundary.", domain: "mcp.example.com", href: "#capsid" },
-      { id: "capsomer", name: "Capsomer", ring: "shared", tag: "shared", description: "The design system every app is drawn in.", href: "#capsomer" },
-      { id: "site-runtime", name: "site-runtime", short: "Runtime", ring: "shared", tag: "shared", description: "Security headers, the rate limiter and the health format." },
-      { id: "d1-dump", name: "d1-dump", ring: "shared", tag: "shared", description: "Per-table backups with a restore drill." },
-      { id: "devkit", name: "devkit", ring: "shared", tag: "shared", description: "The shared CI workflow and test helpers." },
-      { id: "site-api", name: "site-api", ring: "shared", tag: "shared", description: "The contract writing is published through." },
-      { id: "prelum", name: "Prelum", ring: "shared", tag: "shared", description: "Turns finished writing into pages and feeds." },
-      { id: "carrel", name: "Carrel", ring: "used", tag: "tool", description: "The writing desk.", domain: "carrel.example.com", href: "#carrel" },
-      { id: "enarratio", name: "Enarratio", ring: "used", tag: "tool", description: "Charts, as a package." },
-      { id: "site", name: "The website", short: "Website", ring: "used", tag: "site", description: "The personal site.", domain: "example.com" },
-      { id: "site-mcp", name: "Site connector", short: "Site MCP", ring: "used", tag: "tool", description: "Publishes posts from a chat." },
-      { id: "skills", name: "Skills", ring: "used", tag: "tool", description: "Instructions the AI sessions follow." },
-      { id: "fieldnotes", name: "Fieldnotes", ring: "used", private: true, domain: "fieldnotes.example.org" },
-      { id: "foxing", name: "Foxing", ring: "used", private: true, domain: "foxing.example" },
-      { id: "foxhound", name: "Foxhound", ring: "used", private: true, domain: "foxhound.example" },
-      { id: "ledger", name: "Ledger", ring: "used", private: true, domain: "ledger.example.net" },
     ],
     relationships: [
       { from: "capsid", to: "d1-dump", kind: "installs" },
       { from: "capsid", to: "site-runtime", kind: "installs" },
       { from: "capsid", to: "capsomer", kind: "installs" },
+      { from: "site", to: "capsomer", kind: "installs" },
+      { from: "site", to: "prelum", kind: "installs" },
+      { from: "site", to: "site-runtime", kind: "installs" },
+      { from: "foxing", to: "site-runtime", kind: "installs" },
+      { from: "foxing", to: "d1-dump", kind: "installs" },
+      { from: "ledger", to: "capsomer", kind: "installs" },
       { from: "carrel", to: "site-api", kind: "installs" },
+      { from: "carrel", to: "capsomer", kind: "installs" },
+      { from: "carrel", to: "enarratio", kind: "installs" },
       { from: "carrel", to: "site", kind: "publishes-to" },
       { from: "carrel", to: "fieldnotes", kind: "publishes-to" },
       { from: "site-mcp", to: "site", kind: "publishes-to" },
       { from: "capsid", to: "carrel", kind: "coordinates" },
-      { from: "capsid", to: "foxhound", kind: "coordinates" },
       { from: "capsid", to: "foxing", kind: "coordinates" },
+      { from: "capsid", to: "skills", kind: "watches" },
+      { from: "carrel", to: "capsid-worker", kind: "reads" },
       { from: "capsid-worker", to: "capsid-db", kind: "writes" },
       { from: "capsid-worker", to: "capsid-media", kind: "writes" },
       { from: "capsid-worker", to: "capsid-kv", kind: "writes" },
@@ -98,14 +86,14 @@
       { from: "capsid-github", to: "capsid-worker", kind: "deploys" },
     ],
     containers: [
-      { id: "capsid-worker", system: "capsid", name: "MCP Worker", kind: "worker", technology: "Worker" },
-      { id: "capsid-portal", system: "capsid", name: "Portal", kind: "site", technology: "React" },
-      { id: "capsid-tick", system: "capsid", name: "Five-minute tick", kind: "cron", technology: "Cron" },
-      { id: "capsid-db", system: "capsid", name: "capsid", kind: "database", technology: "D1" },
-      { id: "capsid-media", system: "capsid", name: "capsid-media", kind: "bucket", technology: "R2" },
-      { id: "capsid-kv", system: "capsid", name: "app KV", kind: "kv", technology: "KV" },
-      { id: "capsid-agents", system: "capsid", name: "Agents", kind: "external", technology: "Sessions" },
-      { id: "capsid-github", system: "capsid", name: "GitHub", kind: "external", technology: "Repos, CI" },
+      { id: "capsid-worker", system: "capsid", name: "MCP Worker", kind: "worker", technology: "Cloudflare Worker", description: "Serves the tools over MCP and holds the job queue's rules." },
+      { id: "capsid-portal", system: "capsid", name: "Portal", kind: "site", technology: "React Router", description: "The owner's pages." },
+      { id: "capsid-tick", system: "capsid", name: "Five-minute tick", kind: "cron", technology: "Cron trigger", description: "Expires leases and merges what is green." },
+      { id: "capsid-db", system: "capsid", name: "capsid", kind: "database", technology: "D1", description: "Documents, jobs and the audit log." },
+      { id: "capsid-media", system: "capsid", name: "capsid-media", kind: "bucket", technology: "R2", description: "Files too large for the database." },
+      { id: "capsid-kv", system: "capsid", name: "app KV", kind: "kv", technology: "Workers KV", description: "Sessions and rate-limit state." },
+      { id: "capsid-agents", system: "capsid", name: "Agents", kind: "external", technology: "AI sessions", description: "Every session that calls Capsid." },
+      { id: "capsid-github", system: "capsid", name: "GitHub", kind: "external", technology: "Repos and CI", description: "Where the code and its checks live." },
     ],
     flows: [
       {
@@ -115,44 +103,31 @@
         steps: [
           { from: "capsid-worker", to: "capsid-agents", toward: "capsid-worker", lights: ["capsid-db"], text: "Posted: a session posts a job, and the Worker stores it." },
           { from: "capsid-worker", to: "capsid-agents", toward: "capsid-worker", lights: ["capsid-db"], text: "Claimed: an agent claims it and takes a lease." },
-          { from: "capsid-worker", to: "capsid-agents", toward: "capsid-worker", lights: ["capsid-db"], text: "Worked: the agent sends heartbeats." },
           { from: "capsid-worker", to: "capsid-agents", toward: "capsid-agents", lights: ["capsid-db"], text: "Blocked: the job waits for a person." },
           { from: "capsid-worker", to: "capsid-github", toward: "capsid-github", text: "Pull request: the pull request opens, and CI runs." },
-          { from: "capsid-tick", to: "capsid-github", toward: "capsid-github", text: "Merged: the tick merges it once CI is green." },
+          { from: "capsid-tick", to: "capsid-github", toward: "capsid-github", lights: ["capsid-db"], text: "Merged: the tick merges it once CI is green." },
           { from: "capsid-github", to: "capsid-worker", toward: "capsid-worker", text: "Deployed: GitHub deploys the Worker." },
         ],
       },
     ],
   };
-  const caption = "A capsid is the protein shell of a virus, built from repeated parts called capsomers. This family is built the same way.";
   const mount = (name, options) => {
     const el = document.querySelector(`[data-mount='${name}']`);
     el.innerHTML = systemMapHtml(data, { headingLevel: 3, ...options });
     return el.firstElementChild;
   };
 
-  mount("shell", { id: "map", label: "The family", caption });
-  // A build would draw these once and keep them; the sample family is small enough to draw here.
-  const layers = circleLayers(data);
-  mount("circles", { id: "map-circles", label: "The family, every system's wiring", circles: { layers } });
-  mount("zoomed", { id: "map-zoomed", label: "The family, inside Carrel", circles: { layers: { carrel: layers.carrel }, chosen: "carrel" } });
-  mount("noscript", { id: "map-plain-html", label: "The family, no script" });
-  const states = mount("states", { id: "map-states", label: "The family, forced states" });
-  states.querySelector(".cap-system-map-tile[data-id='prelum']").setAttribute("data-force", "hover");
-  states.querySelector(".cap-system-map-tile[data-id='carrel']").setAttribute("data-force", "focus");
+  mount("network", { id: "map", label: "The network", caption: "Point at a system to light what it uses and what uses it." });
+  const lit = controller(mount("lit", { id: "map-lit", label: "The network, Carrel lit" }));
+  mount("system", { id: "map-system", system: "capsid", label: "Capsid" });
+  mount("step", { id: "map-step", system: "capsid", label: "Capsid: a job's life", only: "inside", flow: { id: "job-life", step: 5 } });
+  mount("noscript", { id: "map-noscript", label: "The network, no script" });
+  const states = mount("states", { id: "map-states", label: "The network, forced states" });
+  states.querySelector(".cap-system-map-card[data-id='prelum']").setAttribute("data-force", "hover");
+  states.querySelector(".cap-system-map-card[data-id='carrel']").setAttribute("data-force", "focus");
 
-  const chosen = controller(mount("chosen", { id: "map-chosen", label: "The family, Carrel chosen" }));
-  const inside = controller(mount("inside", { id: "map-inside", label: "The family, inside Capsid" }));
-  const plain = controller(mount("plain", { id: "map-plain", label: "The family, plain" }));
-  const flow = controller(mount("flow", { id: "map-flow", label: "Capsid: a job's life" }));
-  enhance(document.querySelector("[data-mount='shell']"));
-  enhance(document.querySelector("[data-mount='circles']"));
-  for (const el of document.querySelectorAll("#map-chosen, #map-inside, #map-plain, #map-flow")) el.setAttribute("data-cap-ready", "");
-  chosen.select("carrel");
-  inside.select("capsid");
-  inside.enter();
-  plain.setView("plain");
-  flow.playFlow("job-life", 6);
-  // The specimen above leaves focus where the page put it, not on "Step out".
-  document.activeElement?.blur?.();
+  enhance(document.querySelector("[data-mount='network']"));
+  enhance(document.querySelector("[data-mount='system']"));
+  enhance(document.querySelector("[data-mount='step']"));
+  lit.light("carrel");
 </script>
