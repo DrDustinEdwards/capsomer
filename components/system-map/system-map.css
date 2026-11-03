@@ -1,580 +1,422 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The system map: a family of systems drawn as a capsid. Three stacked drawings share one
-   viewBox (the core, the inner rings, the rim), with the lines and the inside above them,
-   so going inside moves whole layers by transform and opacity alone, which the compositor
-   does without repainting the shell (design section 3, "Rendering"). Chosen is a heavier
-   edge and the tint, never the tint alone; private is a dashed edge and the word. */
+/* The system map: the network as cards (level 1) and one system as three columns (level 2).
+   No lines are drawn. On the network a lit card is a heavier accent edge, a tint and a line of
+   words; a dimmed card goes muted. On a system, a step's parts are a heavier edge and a tint, the rest
+   go muted. Columns come from the space the map has (container queries), so a host's narrow column
+   stacks them as a phone does. No text is under 12 px. */
 @layer cap.components {
   .cap-system-map {
+    container: cap-system-map / inline-size;
     display: grid;
-    gap: var(--space-4);
+    gap: var(--space-5);
     min-width: 0;
     margin: 0;
     color: var(--text);
   }
 
   .cap-system-map-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
   }
 
   .cap-system-map-title {
     font-weight: 600;
   }
 
-  /* Its own row (a max-width here let the next item wrap up beside it and move the map when it
-     loaded); the measure is kept as padding. */
   .cap-system-map-caption {
-    flex-basis: 100%;
-    order: 2;
-    padding-inline-end: max(0px, 100% - var(--measure));
+    max-width: var(--measure);
     margin: 0;
     color: var(--muted);
   }
 
-  /* The view buttons wrap: side by side they were 322 px, wider than a 320 px phone's column. */
-  .cap-system-map-views {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-
-    & button[aria-pressed="true"] {
-      border-color: var(--accent);
-      background: var(--accent-soft);
-      color: var(--accent-text);
-    }
-  }
-
-  /* The core drawing is in the flow and sizes the stage; the others sit on top of it. */
-  .cap-system-map-stage {
-    position: relative;
-    overflow: clip;
-    overflow-clip-margin: var(--space-3);
-    width: 100%;
-    max-width: 36rem;
-    margin-inline: auto;
-  }
-
-  .cap-system-map-layer {
-    display: block;
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    transform-origin: 50% 50%;
-    /* Each drawing covers the whole stage, so the drawing itself takes no pointer: only
-       its capsomers do, or the rim on top would take every click meant for the core. */
-    pointer-events: none;
-
-    &[data-layer="core"] {
-      position: relative;
-      height: auto;
-    }
-    &[data-layer="inside"] {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-  }
-
-  .cap-system-map-tile {
-    outline: none;
-
-    & polygon {
-      fill: var(--surface);
-      stroke: var(--line-strong);
-      stroke-width: 1.2;
-    }
-    &[data-shared] polygon {
-      fill: var(--accent-3);
-      stroke: var(--accent-7);
-    }
-    &[data-core] polygon {
-      fill: var(--accent-soft);
-      stroke: var(--accent);
-      stroke-width: 2;
-    }
-    &[data-private] polygon {
-      stroke-dasharray: 4 3;
-    }
-    &[data-empty] polygon {
-      fill: none;
-      stroke: var(--line);
-      stroke-dasharray: 2 4;
-    }
-    &[role="button"] {
-      cursor: pointer;
-      pointer-events: auto;
-    }
-    &[role="button"]:hover polygon,
-    &[data-force="hover"] polygon {
-      fill: var(--accent-4);
-    }
-    &[data-linked] polygon {
-      stroke: var(--accent);
-      stroke-width: 2;
-    }
-    &[aria-pressed="true"] polygon {
-      fill: var(--accent-5);
-      stroke: var(--accent-text);
-      stroke-width: 2.5;
-    }
-    &:focus-visible polygon,
-    &[data-force="focus"] polygon {
-      stroke: var(--ring);
-      stroke-width: 3.5;
-    }
-  }
-
-  /* A group's name, written beside it on the ground (the systems people use, grouped). */
-  .cap-system-map-group-label {
-    fill: var(--muted);
-    font: 600 11px var(--ui);
+  .cap-system-map-group-name,
+  .cap-system-map-column-name,
+  .cap-system-map-place-name {
+    margin: 0 0 var(--space-3);
+    color: var(--muted);
+    font: 600 0.75rem/1.3 var(--ui);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    text-anchor: middle;
   }
 
-  .cap-system-map-name {
-    fill: var(--text);
-    font: 600 12.5px var(--ui);
-    text-anchor: middle;
-    pointer-events: none;
+  .cap-system-map-group-count {
+    font-weight: 400;
+    letter-spacing: 0;
   }
 
-  .cap-system-map-tile[data-core] .cap-system-map-name {
-    fill: var(--accent-text);
-    font: 600 17px var(--prose);
-  }
-
-  .cap-system-map-tag {
-    fill: var(--muted);
-    font: 500 9.5px var(--ui);
-    letter-spacing: 0.06em;
-    text-anchor: middle;
-    text-transform: uppercase;
-    pointer-events: none;
-  }
-
-  /* A line runs in the seam between capsomers, beneath them: wide enough to fill the
-     seam, so what shows is the gap itself lit up, and no label is ever under it. */
-  .cap-system-map-edge {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0;
-
-    &[data-loose] {
-      stroke-dasharray: 5 4;
-    }
-    &[data-on] {
-      opacity: 1;
-    }
-  }
-
-  .cap-system-map-boundary {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 1.5;
-    stroke-dasharray: 6 5;
-  }
-
-  .cap-system-map-inside-title,
-  .cap-system-map-box-kind {
-    fill: var(--muted);
-    font: 500 9px var(--mono);
-    text-anchor: middle;
-  }
-
-  /* The boundary's name, centered at the circle's foot. */
-  .cap-system-map-inside-title {
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .cap-system-map-wire {
-    fill: none;
-    stroke: var(--line-strong);
-    stroke-width: 1.2;
-    stroke-linejoin: round;
-  }
-
-  .cap-system-map-box {
-    & rect {
-      fill: var(--surface);
-      stroke: var(--accent);
-      stroke-width: 1.4;
-    }
-    &[data-store] rect {
-      fill: var(--accent-3);
-      stroke: var(--accent-7);
-    }
-  }
-
-  /* Outside the boundary (C4's external system): the page's own ground and a plain edge,
-     so it reads as not one of the core's parts by its place, its fill and its edge. */
-  .cap-system-map-box[data-external] rect {
-    fill: var(--ground);
-    stroke: var(--line-strong);
-    stroke-dasharray: none;
-  }
-
-  .cap-system-map-box-name {
-    fill: var(--text);
-    font: 600 11px var(--ui);
-    text-anchor: middle;
-  }
-
-  /* A flow playing: the step's line is heavy and in the accent, the part it moves toward
-     has a heavy edge, and each part it touches is tinted with a heavy edge, never the tint
-     alone. The token travels the line. */
-  .cap-system-map-wire[data-on] {
-    stroke: var(--accent);
-    stroke-width: 3;
-  }
-  .cap-system-map-box[data-lit] rect {
-    fill: var(--accent-5);
-    stroke: var(--accent-text);
-    stroke-width: 2.5;
-  }
-  .cap-system-map-box[data-at] rect {
-    stroke: var(--accent-text);
-    stroke-width: 3;
-  }
-  .cap-system-map-token {
-    fill: var(--accent);
-    stroke: var(--ground);
-    stroke-width: 2;
-    visibility: hidden;
-  }
-  .cap-system-map[data-flow] .cap-system-map-token {
-    visibility: visible;
-  }
-
-  /* Inside: the core and the inner rings fold into the middle, and the rim stays behind the
-     circle as faded shapes (Dustin, 2026-10-13: keep the hexagons in the back). */
-  .cap-system-map[data-entered] {
-    & [data-layer="core"],
-    & [data-layer="inner"] {
-      transform: scale(0.2);
-      opacity: 0;
-      visibility: hidden;
-    }
-    & [data-layer="rim"] {
-      transform: scale(1.3);
-      opacity: 0.18;
-    }
-    & [data-layer="rim"] .cap-system-map-tile {
-      pointer-events: none;
-    }
-    /* The faded rim is shapes only: scaled up and clipped, its names would read as cut. */
-    & [data-layer="rim"] text {
-      visibility: hidden;
-    }
-    & [data-layer="edges"],
-    & [data-layer="labels"] {
-      opacity: 0;
-    }
-    & [data-layer="inside"] {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-
-  /* With circles (system-map-circles.ts) every system has an inside, and only the one zoomed
-     into is drawn: sixteen hidden drawings restyled on every tap made each one slow. The shown
-     one sits in the flow and sizes the stage, so a system with many parts gets the height it
-     needs, no taller than the screen, and it grows out of its capsomer. */
-  .cap-system-map[data-circles] {
-    & [data-layer="inside"]:not([data-shown]) {
-      display: none;
-    }
-    &:not([data-entered]) [data-layer="inside"] {
-      transform: scale(0.3);
-    }
-    &[data-entered] [data-layer="inside"][data-shown] {
-      position: relative;
-      height: auto;
-      max-height: calc(100svh - 4rem);
-    }
-    &[data-entered] [data-layer="core"] {
-      position: absolute;
-      height: 100%;
-    }
-    /* The faded shell is fainter here, where the rim holds boxes of its own. */
-    &[data-entered] [data-layer="rim"] {
-      opacity: 0.07;
-    }
-    /* A part's name a little larger than the core's, for a phone; a line that coordinates or
-       watches is dashed, as on the map, and one from the circle itself is the accent, fainter. */
-    & [data-layer="inside"] .cap-system-map-box-name {
-      font-size: 11.5px;
-    }
-    & .cap-system-map-wire[data-loose] {
-      stroke-dasharray: 4 3;
-    }
-    & .cap-system-map-wire[data-whole] {
-      stroke: var(--accent);
-      stroke-opacity: 0.6;
-    }
-  }
-
-  /* Another system on a circle's rim: the map's capsomer as a pill, and a tap that zooms there. */
-  .cap-system-map-rim {
-    & rect {
-      fill: var(--surface);
-      stroke: var(--accent);
-      stroke-width: 1.4;
-    }
-    &[data-private] rect {
-      stroke-dasharray: 4 3;
-    }
-  }
-
-  .cap-system-map[data-entered] [data-shown] .cap-system-map-rim {
-    cursor: pointer;
-    pointer-events: auto;
-
-    &:hover rect {
-      fill: var(--accent-soft);
-    }
-  }
-
-  .cap-system-map-rim-name {
-    fill: var(--accent-text);
-    font: 600 11px var(--ui);
-    text-anchor: middle;
-  }
-
-  /* A circle with no parts drawn: the system's name in the middle, and what it is. */
-  .cap-system-map-inside-name {
-    fill: var(--accent-text);
-    font: 600 17px var(--prose);
-    text-anchor: middle;
-  }
-
-  .cap-system-map-inside-text {
-    fill: var(--muted);
-    font: 400 11px var(--ui);
-    text-anchor: middle;
-  }
-
-  /* The detail line is a fixed box, so choosing, going inside and stepping out never move the page below it; a longer detail scrolls inside it. The size is !important because an important declaration in a layer beats a host's ordinary unlayered CSS. */
-  .cap-system-map-detail {
+  .cap-system-map-cards,
+  .cap-system-map-ties,
+  .cap-system-map-parts {
     display: grid;
-    align-content: start;
-    gap: var(--space-2);
-    box-sizing: border-box;
-    block-size: 7.5rem !important;
-    overflow-y: auto;
-    padding: var(--pad-y) var(--pad-x);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-l);
-    background: var(--surface);
-
-    &[hidden] {
-      display: none;
-    }
-    @media (max-width: 40rem) {
-      block-size: 12rem !important;
-    }
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  /* The panel's headings are in the page's own face, as the text around them is. */
-  .cap-system-map-detail-name {
-    color: var(--accent-text);
-    font: 600 var(--fs-lead) / 1.3 var(--face);
-  }
-
-  .cap-system-map-detail-text {
-    color: var(--muted);
-  }
-
-  .cap-system-map-detail-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .cap-system-map-list > summary,
-  .cap-system-map-flows > summary {
-    width: fit-content;
-    min-height: var(--target);
-    color: var(--accent-text);
-    cursor: pointer;
+  /* Level 1. The groups are columns side by side where there is room, two at tablet width, one on a
+     phone; the bands below hold their cards in rows. */
+  .cap-system-map-network {
+    display: grid;
+    gap: var(--space-5);
   }
 
   .cap-system-map-groups {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-    gap: var(--space-5);
-    padding-block: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--space-5) var(--space-4);
+    align-items: start;
   }
 
-  .cap-system-map-group {
-    min-width: 0;
+  .cap-system-map-band {
+    padding-block-start: var(--space-3);
+    border-block-start: 2px solid var(--accent);
 
-    & ul {
-      display: grid;
-      gap: var(--space-2);
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    & li {
-      display: grid;
-      gap: var(--space-1);
-      padding: var(--pad-y) var(--pad-x);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-m);
-      background: var(--surface);
+    & .cap-system-map-cards {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
     }
   }
 
-  .cap-system-map-group-name {
-    margin: 0 0 var(--space-3);
+  .cap-system-map-card {
+    position: relative;
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+
+    &[data-private] {
+      border-style: dashed;
+    }
+
+    /* The name's link covers the card, so a tap anywhere on it opens the system. */
+    &[data-link]:hover,
+    &[data-force="hover"] {
+      border-color: var(--line-strong);
+    }
+    &:focus-within,
+    &[data-force="focus"] {
+      outline: var(--focus-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
+  }
+
+  .cap-system-map-card-name {
+    margin: 0;
+    font: 600 var(--fs-lead)/1.3 var(--ui);
+
+    & a {
+      color: inherit;
+      text-decoration: none;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+      }
+      &:focus-visible {
+        outline: none;
+      }
+    }
+  }
+
+  /* Whole, never clamped: a clamp cuts the words off once a reader widens the spacing (WCAG 1.4.12). */
+  .cap-system-map-card-text {
+    margin: 0;
     color: var(--muted);
-    font: 600 var(--fs-label) var(--ui);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: var(--fs-detail);
+    line-height: 1.4;
   }
 
-  .cap-system-map-item-name {
+  .cap-system-map-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+
+  .cap-system-map-card-domain {
+    color: var(--accent-text);
+  }
+
+  .cap-system-map-card-private {
     font-weight: 600;
   }
 
-  .cap-system-map-item-tag,
-  .cap-system-map-item-domain {
-    color: var(--muted);
-    font-size: var(--fs-detail);
-  }
-
-  .cap-system-map-item-text {
-    font-size: var(--fs-detail);
-  }
-
-  .cap-system-map-item-link {
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    min-block-size: var(--target);
+  /* How a lit card is tied, set on its top edge as a label, so lighting never changes a card's size
+     and nothing below it moves. */
+  .cap-system-map-card-tie {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: var(--space-2);
+    translate: 0 -50%;
+    padding-inline: var(--space-1);
+    border-radius: var(--radius-s);
+    background: var(--surface);
     color: var(--accent-text);
-    font-size: var(--fs-detail);
-  }
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.3;
+    pointer-events: none;
 
-  .cap-system-map-flow {
-    max-width: var(--measure);
-    padding-block: var(--space-3);
-
-    & ol {
-      display: grid;
-      gap: var(--space-2);
-      margin: 0;
-      padding-inline-start: var(--space-6);
-    }
-  }
-
-  .cap-system-map-flow-name {
-    margin: 0 0 var(--space-2);
-    font: 600 var(--fs-lead) / 1.3 var(--face);
-  }
-
-  .cap-system-map-flow-text {
-    margin: 0 0 var(--space-3);
-    color: var(--muted);
-  }
-
-  /* The plain map: the list, open, as columns; the drawing steps aside. */
-  .cap-system-map[data-view="plain"] {
-    & .cap-system-map-stage,
-    & .cap-system-map-detail,
-    & .cap-system-map-list > summary {
+    &:empty {
       display: none;
     }
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .cap-system-map-layer {
-      transition:
-        transform var(--dur-slow) var(--ease-in-out),
-        opacity var(--dur-slow) var(--ease-in-out),
-        visibility 0s linear var(--dur-slow);
-    }
-    .cap-system-map[data-entered] [data-layer="inside"],
-    .cap-system-map:not([data-entered]) [data-layer="core"],
-    .cap-system-map:not([data-entered]) [data-layer="inner"] {
-      transition-delay: 0s;
-    }
-    /* A circle keeps drawing while it fades on the way out: display joins the transition. */
-    .cap-system-map[data-circles] [data-layer="inside"] {
-      transition-property: transform, opacity, visibility, display;
-      transition-behavior: allow-discrete;
-    }
-    .cap-system-map[data-circles][data-entered] [data-layer="inside"][data-shown] {
-      @starting-style {
-        opacity: 0;
-        transform: scale(0.3);
+  /* Lit: the card under the pointer or focus, and every card it uses or is used by. */
+  /* Dimmed by color, not opacity, so every card's words keep their contrast (WCAG 1.4.3): the
+     rest lose their surface and their names go muted, while the lit ones keep both. */
+  .cap-system-map[data-lit] .cap-system-map-card {
+    &:not([data-tie]) {
+      border-color: var(--line);
+      background: transparent;
+
+      & .cap-system-map-card-name,
+      & .cap-system-map-card-domain {
+        color: var(--muted);
       }
     }
-    .cap-system-map-edge,
-    .cap-system-map-tile polygon {
-      transition:
-        opacity var(--dur-base) var(--ease-out),
-        fill var(--dur-fast) var(--ease-out);
+    &[data-tie] {
+      border-color: var(--accent);
+    }
+    /* The heavier edge is an outline inside the border, so the card keeps its size. */
+    &[data-tie="self"] {
+      background: var(--accent-soft);
+    }
+    &[data-tie="self"]:not(:focus-within) {
+      outline: 1px solid var(--accent);
+      outline-offset: -2px;
     }
   }
 
-  /* Forced colors: an SVG keeps its own fills and strokes, so the map sets system colors
-     itself. Every shape is the canvas with a text-colored edge; what is chosen, lit or
-     moving is the highlight. */
+  /* Level 2. Used by, Inside and Uses side by side where there is room; stacked, in that order,
+     where there is not. */
+  .cap-system-map-columns {
+    display: grid;
+    gap: var(--space-5);
+    align-items: start;
+  }
+
+  @container cap-system-map (min-width: 52rem) {
+    .cap-system-map-columns:not([data-only]) {
+      grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr) minmax(10rem, 14rem);
+    }
+  }
+
+  .cap-system-map-tie {
+    position: relative;
+    display: grid;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+
+    &[data-private] {
+      border-style: dashed;
+    }
+  }
+
+  /* As on a card, the name's link covers the tie, so the whole box is the target (WCAG 2.5.8). */
+  .cap-system-map-tie-name {
+    font-weight: 600;
+
+    & a {
+      text-decoration: none;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+      }
+    }
+  }
+
+  .cap-system-map-tie-verbs {
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+
+  .cap-system-map-column[data-column="inside"] {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+
+    & > .cap-system-map-column-name {
+      margin: 0;
+    }
+  }
+
+  .cap-system-map-place-name {
+    margin-block-end: var(--space-2);
+    color: var(--accent-text);
+  }
+
+  .cap-system-map-parts {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  }
+
+  .cap-system-map-part {
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--ground);
+
+    &[data-place="stores"] {
+      border-radius: var(--radius-l);
+    }
+    &[data-place="outside"] {
+      border-style: dashed;
+    }
+  }
+
+  .cap-system-map-part-name {
+    margin: 0;
+    font: 600 var(--fs-body)/1.3 var(--ui);
+  }
+
+  .cap-system-map-part-kind {
+    margin: 0;
+    color: var(--muted);
+    font: 0.75rem/1.3 var(--mono);
+  }
+
+  .cap-system-map-part-text {
+    margin: 0;
+    font-size: var(--fs-detail);
+    line-height: 1.4;
+  }
+
+  /* Each of a part's lines in words, one after another, wrapping whole. */
+  .cap-system-map-part-lines {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
+    margin: var(--space-1) 0 0;
+    color: var(--muted);
+    font-size: 0.75rem;
+
+    /* The dot ends a line rather than starting the next when the lines wrap. */
+    & > span:not(:last-child)::after {
+      content: " ·";
+    }
+  }
+
+  .cap-system-map-none {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* A step: its parts lit, the part it moves toward with the heaviest edge, the rest faded. */
+  .cap-system-map[data-step] .cap-system-map-part {
+    &:not([data-lit]) {
+      background: transparent;
+
+      & .cap-system-map-part-name,
+      & .cap-system-map-part-text {
+        color: var(--muted);
+      }
+    }
+    &[data-lit] {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    &[data-at] {
+      outline: 1px solid var(--accent);
+      outline-offset: -2px;
+    }
+  }
+
+  .cap-system-map-flows {
+    display: grid;
+    gap: var(--space-4);
+
+    & > .cap-system-map-column-name {
+      margin: 0;
+    }
+  }
+
+  .cap-system-map-flow {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .cap-system-map-flow-name {
+    margin: 0;
+    font: 600 var(--fs-lead)/1.3 var(--ui);
+  }
+
+  .cap-system-map-flow-text {
+    max-width: var(--measure);
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .cap-system-map-steps {
+    display: grid;
+    gap: var(--space-1);
+    max-width: var(--measure);
+    margin: 0;
+    padding-inline-start: 1.75em;
+
+    & > li[aria-current="step"] {
+      font-weight: 600;
+
+      &::marker {
+        color: var(--accent-text);
+      }
+    }
+  }
+
+  .cap-system-map-flow-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .cap-system-map-flow-status {
+    flex: 1 1 12rem;
+    min-height: 1.4em;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-system-map-card,
+    .cap-system-map-part {
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  /* In forced colors a tint is gone, so lit and chosen keep their heavier edge in Highlight. */
   @media (forced-colors: active) {
-    /* Whatever its state (shared, core, hovered, chosen, a store, lit), a shape is the canvas. */
-    .cap-system-map-tile polygon,
-    .cap-system-map-box rect,
-    .cap-system-map-rim rect {
-      fill: Canvas !important;
-    }
-    .cap-system-map-tile polygon,
-    .cap-system-map-tile[data-shared] polygon,
-    .cap-system-map-tile[data-core] polygon,
-    .cap-system-map-box rect,
-    .cap-system-map-box[data-store] rect,
-    .cap-system-map-box[data-external] rect,
-    .cap-system-map-boundary,
-    .cap-system-map-wire,
-    .cap-system-map-rim rect {
-      stroke: CanvasText;
-    }
-    .cap-system-map-tile[aria-pressed="true"] polygon,
-    .cap-system-map-tile[data-linked] polygon,
-    .cap-system-map-tile:focus-visible polygon,
-    .cap-system-map-edge,
-    .cap-system-map-wire[data-on],
-    .cap-system-map-box[data-lit] rect,
-    .cap-system-map-box[data-at] rect {
-      stroke: Highlight;
-    }
-    .cap-system-map-token {
-      fill: Highlight;
-    }
-    .cap-system-map-name,
-    .cap-system-map-tile[data-core] .cap-system-map-name,
-    .cap-system-map-tag,
-    .cap-system-map-box-name,
-    .cap-system-map-box-kind,
-    .cap-system-map-inside-title,
-    .cap-system-map-rim-name,
-    .cap-system-map-inside-name,
-    .cap-system-map-inside-text {
-      fill: CanvasText;
+    .cap-system-map[data-lit] .cap-system-map-card[data-tie],
+    .cap-system-map[data-step] .cap-system-map-part[data-lit],
+    .cap-system-map-band {
+      border-color: Highlight;
     }
   }
 }

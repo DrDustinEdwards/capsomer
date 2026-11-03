@@ -1,250 +1,137 @@
 // The system map's markup: the whole contract as a string, for a server or a static build (system-map.ts).
 
-import { type Cell, EXTERNAL, LOOSE_KINDS, type Layout, type MapContainer, type MapRing, type MapSystem, R, STORE_KINDS, type SystemMapData, type SystemMapOptions, layoutMap } from "./system-map-data.ts";
-import { BOX_H, insideScene, playableFlows } from "./system-map-inside.ts";
-
-// ---------------------------------------------------------------------------------------
-// Rendering.
-
-const RING_NAMES: Record<MapRing, string> = { core: "Runs everything", shared: "Shared parts", used: "What people use" };
-
 import { escapeHtml } from "../email/email.ts";
+import { type MapContainer, type MapRing, type MapSystem, type PartPlace, type SystemMapData, type SystemMapOptions, type Ties, count, flowsOver, ownerOf, placeOf, tiesOf, verbOf } from "./system-map-data.ts";
 
 export { escapeHtml };
 
-export function hexPoints(x: number, y: number, r: number): string {
-  return Array.from({ length: 6 }, (_, i) => {
-    const a = (Math.PI / 3) * i;
-    return `${(x + r * Math.cos(a)).toFixed(1)},${(y + r * Math.sin(a)).toFixed(1)}`;
-  }).join(" ");
-}
+const RING_NAMES: Record<MapRing, string> = { core: "Core", shared: "Shared packages", used: "What people use" };
+const PLACE_NAMES: Record<PartPlace, string> = { runs: "Runs", stores: "Stores", outside: "Outside" };
 
-function tagOf(s: MapSystem): string {
-  return s.private ? "private" : (s.tag ?? "");
-}
+const e = escapeHtml;
+const heading = (level: number, cls: string, inner: string, id?: string) => `<h${level} class="${cls}"${id ? ` id="${e(id)}"` : ""}>${inner}</h${level}>`;
+const head = (id: string, label: string, caption?: string) =>
+  `<figcaption class="cap-system-map-head"><span class="cap-system-map-title" id="${e(id)}-title">${e(label)}</span>${caption ? `<p class="cap-system-map-caption">${e(caption)}</p>` : ""}</figcaption>`;
 
-function tileSvg(cell: Cell, s: MapSystem | undefined, pressed = false, linked = false): string {
-  const pts = hexPoints(cell.x, cell.y, R - 2.5);
-  if (!s) return `<g class="cap-system-map-tile" data-empty><polygon points="${pts}"/></g>`;
-  const label = escapeHtml(s.short ?? s.name);
-  const tag = tagOf(s);
-  const core = s.ring === "core" && cell.ring === 0;
-  const nameY = core ? cell.y + 5 : tag ? cell.y + 1 : cell.y + 4;
-  const name = `<text class="cap-system-map-name" x="${cell.x}" y="${nameY}">${label}</text>`;
-  // The leading space keeps the two lines apart as words in the tile's text ("Capsomer shared",
-  // matching its name "Capsomer, shared"); SVG drops it when drawing.
-  const sub = tag && !core ? `<text class="cap-system-map-tag" x="${cell.x}" y="${cell.y + 16}"> ${escapeHtml(tag)}</text>` : "";
-  const flags = `${core ? " data-core" : ""}${s.ring === "shared" ? " data-shared" : ""}${s.private ? " data-private" : ""}${pressed ? ` aria-pressed="true"` : linked ? " data-linked" : ""}`;
-  return `<g class="cap-system-map-tile" data-id="${escapeHtml(s.id)}" data-x="${cell.x}" data-y="${cell.y}" data-ring="${cell.ring}"${flags}><polygon points="${pts}"/>${name}${sub}</g>`;
-}
+/** A system's name, as a link to its page when it has one. */
+// The class keeps the link out of the heading link's arrow cue (css/utilities.css), whose ::after
+// would take the card's stretched hit area.
+const nameLink = (s: MapSystem) => (s.href ? `<a class="cap-system-map-link" href="${e(s.href)}">${e(s.name)}</a>` : e(s.name));
 
-// The lines run in the seams between capsomers and are drawn beneath them, so no line
-// ever crosses a label: each is the shortest walk along the hexagons' sides from a corner
-// of one capsomer to a corner of the other (seat ruling on capsomer#57, 2026-10-10). Among
-// walks of the same length the one nearest the straight line between the two wins. The
-// grid is a few dozen corners, so a plain search does it: no layout engine.
-
-const cornerKey = (x: number, y: number) => `${Math.round(x * 10)},${Math.round(y * 10)}`;
-
-function cornersOf(c: Cell): Array<[number, number]> {
-  return Array.from({ length: 6 }, (_, i) => {
-    const a = (Math.PI / 3) * i;
-    return [Math.round((c.x + R * Math.cos(a)) * 100) / 100, Math.round((c.y + R * Math.sin(a)) * 100) / 100] as [number, number];
-  });
-}
-
-/** The walk along the seams from capsomer `a` to capsomer `b`, as the corners it passes.
- *  Neighbors share a side, and their line is that side. */
-export function seamRoute(cells: readonly Cell[], a: Cell, b: Cell): Array<[number, number]> {
-  const at = new Map<string, [number, number]>();
-  const next = new Map<string, Set<string>>();
-  for (const c of cells) {
-    const cs = cornersOf(c);
-    cs.forEach(([x, y], i) => {
-      const k = cornerKey(x, y);
-      const [nx, ny] = cs[(i + 1) % 6]!;
-      const nk = cornerKey(nx, ny);
-      at.set(k, [x, y]);
-      at.set(nk, [nx, ny]);
-      if (!next.has(k)) next.set(k, new Set());
-      if (!next.has(nk)) next.set(nk, new Set());
-      next.get(k)!.add(nk);
-      next.get(nk)!.add(k);
-    });
-  }
-  const starts = new Set(cornersOf(a).map(([x, y]) => cornerKey(x, y)));
-  const ends = new Set(cornersOf(b).map(([x, y]) => cornerKey(x, y)));
-  const shared = [...starts].filter((k) => ends.has(k));
-  if (shared.length >= 2) return shared.slice(0, 2).map((k) => at.get(k)!);
-  // How far a side's middle is from the straight line a-b, as a tie-break well under
-  // the cost of a side.
-  const lx = b.x - a.x;
-  const ly = b.y - a.y;
-  const len = Math.hypot(lx, ly) || 1;
-  const off = (p: [number, number], q: [number, number]) => Math.abs(((p[0] + q[0]) / 2 - a.x) * ly - ((p[1] + q[1]) / 2 - a.y) * lx) / len / (R * 100);
-  const cost = new Map<string, number>([...starts].map((k) => [k, 0]));
-  const from = new Map<string, string>();
-  const done = new Set<string>();
-  for (;;) {
-    let here: string | null = null;
-    for (const [k, v] of cost) if (!done.has(k) && (here === null || v < cost.get(here)!)) here = k;
-    if (here === null) return [];
-    if (ends.has(here)) {
-      const walk = [here];
-      while (from.has(walk[0]!)) walk.unshift(from.get(walk[0]!)!);
-      return walk.map((k) => at.get(k)!);
-    }
-    done.add(here);
-    for (const k of next.get(here) ?? []) {
-      if (done.has(k)) continue;
-      const v = cost.get(here)! + 1 + off(at.get(here)!, at.get(k)!);
-      if (v < (cost.get(k) ?? Number.POSITIVE_INFINITY)) {
-        cost.set(k, v);
-        from.set(k, here);
-      }
-    }
-  }
-}
-
-function edgePath(cells: readonly Cell[], a: Cell, b: Cell): string {
-  const f = (n: number) => n.toFixed(1);
-  return seamRoute(cells, a, b)
-    .map(([x, y], i) => `${i ? "L" : "M"}${f(x)},${f(y)}`)
-    .join(" ");
-}
-
-export interface Box {
-  c: MapContainer;
-  x: number;
-  y: number;
-  w: number;
-}
-
-const f1 = (n: number) => Math.round(n * 10) / 10;
-
-function insideSvg(layout: Layout, core: MapSystem | undefined, data: SystemMapData, playable: boolean): string {
-  const containers = core ? (data.containers ?? []).filter((c) => c.system === core.id) : [];
-  if (!core || containers.length === 0) return "";
-  const scene = insideScene(containers, data.relationships ?? [], layout, `Inside ${core.name}`);
-  const wires = scene.wires
-    .map(({ from, to, route }) => {
-      const pts = route.map(([x, y]) => `${f1(x)},${f1(y)}`);
-      return `<path class="cap-system-map-wire" data-from="${escapeHtml(from)}" data-to="${escapeHtml(to)}" data-route="${pts.join(" ")}" d="M${pts.join(" L")}"/>`;
-    })
-    .join("");
-  const rects = scene.boxes
-    .map(({ c, x, y, w }) => {
-      const store = STORE_KINDS.has(c.kind);
-      const flag = store ? " data-store" : c.kind === EXTERNAL ? " data-external" : "";
-      return `<g class="cap-system-map-box" data-id="${escapeHtml(c.id)}" data-x="${x}" data-y="${y}"${flag}><rect x="${f1(x - w / 2)}" y="${f1(y - BOX_H / 2)}" width="${w}" height="${BOX_H}" rx="${store ? 14 : 6}"/><text class="cap-system-map-box-name" x="${x}" y="${f1(y - 1)}">${escapeHtml(c.name)}</text><text class="cap-system-map-box-kind" x="${x}" y="${f1(y + 11)}">${escapeHtml(c.technology ?? c.kind)}</text></g>`;
-    })
-    .join("");
-  const b = scene.boundary;
-  const [vx, vy, vw, vh] = scene.viewBox;
-  return `<svg class="cap-system-map-layer" data-layer="inside" viewBox="${f1(vx)} ${f1(vy)} ${f1(vw)} ${f1(vh)}" aria-hidden="true" focusable="false"><circle class="cap-system-map-boundary" cx="${f1(b.cx)}" cy="${f1(b.cy)}" r="${f1(b.r)}"/><text class="cap-system-map-inside-title" x="${f1(scene.label.textX)}" y="${f1(scene.label.textY)}"${scene.label.squeeze ? ` textLength="${f1(scene.label.squeeze)}" lengthAdjust="spacingAndGlyphs"` : ""}>${escapeHtml(scene.label.text)}</text>${wires}${rects}${playable ? `<circle class="cap-system-map-token" r="6" cx="0" cy="0"/>` : ""}</svg>`;
+/**
+ * One system as a card on the network: its name (the link, stretched over the card), what it is
+ * for, its address, and how many parts it has and systems it uses and is used by. `data-uses` and
+ * `data-used-by` carry the ties the script lights.
+ */
+function card(s: MapSystem, ties: Ties, parts: number, level: number): string {
+  const facts = [count(parts, "part"), `uses ${ties.uses.length}`, `used by ${ties.usedBy.length}`].join(" · ");
+  const meta = [
+    s.domain ? `<span class="cap-system-map-card-domain">${e(s.domain)}</span>` : "",
+    s.private ? `<span class="cap-system-map-card-private">private</span>` : "",
+    `<span class="cap-system-map-card-count">${facts}</span>`,
+  ].join("");
+  const ids = (list: Ties["uses"]) => list.map((t) => t.id).join(" ");
+  return `<li class="cap-system-map-card" data-id="${e(s.id)}" data-uses="${e(ids(ties.uses))}" data-used-by="${e(ids(ties.usedBy))}"${s.private ? " data-private" : ""}${s.href ? " data-link" : ""}>${heading(level, "cap-system-map-card-name", nameLink(s))}${s.description ? `<p class="cap-system-map-card-text">${e(s.description)}</p>` : ""}<p class="cap-system-map-card-meta">${meta}</p><span class="cap-system-map-card-tie" aria-hidden="true"></span></li>`;
 }
 
 /**
- * The whole map as HTML: the head with the view switch, the stage (the core, the inner
- * rings and the rim as three layers, the lines, and the inside), the detail line, and the
- * same data as a list, grouped by ring (or by group). Every text is escaped. Delivered with no script,
- * the drawing is a picture with a label and the list is open.
+ * Level 1, the network: every system a card, the systems people use in a column per group, then
+ * a band of the shared packages and one of the core. No lines are drawn: hovering over or
+ * focusing a card lights what it uses and what uses it, and a tap opens it.
  */
-export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {}): string {
+function networkHtml(data: SystemMapData, options: SystemMapOptions): string {
   const id = options.id ?? "system-map";
   const label = options.label ?? "System map";
   const names = { ...RING_NAMES, ...options.ringNames };
-  const h = `h${options.headingLevel ?? 3}`;
-  const layout = layoutMap(data.systems);
-  const byId = new Map(data.systems.map((s) => [s.id, s]));
-  const at = new Map(layout.cells.filter((c) => c.id).map((c) => [c.id!, c]));
-  const vb = layout.viewBox.map((n) => n.toFixed(1)).join(" ");
-  // With circles, every system has an inside of its own, and the one chosen is drawn zoomed
-  // into, its lines on and the systems at their far ends linked, as the script leaves it.
-  const circles = options.circles;
-  const chosen = circles?.chosen && at.has(circles.chosen) ? circles.chosen : undefined;
-  const linked = new Set((data.relationships ?? []).flatMap((l) => (chosen && l.from === chosen ? [l.to] : chosen && l.to === chosen ? [l.from] : [])));
-  const layer = (name: string, cells: Cell[]) =>
-    `<svg class="cap-system-map-layer" data-layer="${name}" viewBox="${vb}" aria-hidden="true" focusable="false">${cells.map((c) => tileSvg(c, c.id ? byId.get(c.id) : undefined, c.id === chosen, linked.has(c.id ?? ""))).join("")}</svg>`;
-  const rim = layout.rings;
-  const coreCells = layout.cells.filter((c) => c.ring === 0);
-  // Grouped, the gaps are not drawn, and every group goes behind the circle inside, as the
-  // rim does: the groups are what people use, whatever ring a cell of theirs is on.
-  const drawn = layout.grouped ? layout.cells.filter((c) => c.id) : layout.cells;
-  const outerCell = (c: Cell) => (layout.grouped ? byId.get(c.id!)?.ring === "used" : c.ring === rim);
-  const innerCells = drawn.filter((c) => c.ring > 0 && !outerCell(c));
-  const rimCells = rim > 0 ? drawn.filter((c) => c.ring > 0 && outerCell(c)) : [];
-  const labels = layout.labels
-    .map((l) => `<text class="cap-system-map-group-label" x="${l.x}" y="${l.y}">${escapeHtml(l.text)}</text>`)
-    .join("");
-  const onMap = new Set(at.keys());
-  const edges = (data.relationships ?? [])
-    .filter((l) => onMap.has(l.from) && onMap.has(l.to) && l.from !== l.to)
-    .map((l) => `<path class="cap-system-map-edge" data-from="${escapeHtml(l.from)}" data-to="${escapeHtml(l.to)}" data-kind="${escapeHtml(l.kind)}"${LOOSE_KINDS.has(l.kind) ? " data-loose" : ""}${chosen && (l.from === chosen || l.to === chosen) ? " data-on" : ""} d="${edgePath(layout.cells, at.get(l.from)!, at.get(l.to)!)}"/>`)
-    .join("");
-  const core = data.systems.find((s) => s.ring === "core");
-  const placed = data.systems.filter((s) => onMap.has(s.id));
-  // The list in the map's own sections: the rings, or, grouped, the core, the shared ring
-  // and each group in turn.
-  const sections: Array<[string, MapSystem[]]> = (["core", "shared", "used"] as const).flatMap((ring) => {
-    const items = placed.filter((s) => s.ring === ring);
-    if (ring !== "used" || !layout.grouped) return [[names[ring], items] as [string, MapSystem[]]];
-    return [...new Set(items.map((s) => s.group ?? ""))].map((g) => [g || names.used, items.filter((s) => (s.group ?? "") === g)] as [string, MapSystem[]]);
-  });
-  const list = sections
-    .map(([title, items]) => {
-      if (items.length === 0) return "";
-      const lis = items
-        .map((s) => {
-          const parts = [`<span class="cap-system-map-item-name">${escapeHtml(s.name)}</span>`];
-          if (tagOf(s)) parts.push(`<span class="cap-system-map-item-tag">${escapeHtml(tagOf(s))}</span>`);
-          if (s.description) parts.push(`<span class="cap-system-map-item-text">${escapeHtml(s.description)}</span>`);
-          if (s.domain) parts.push(`<span class="cap-system-map-item-domain">${escapeHtml(s.domain)}</span>`);
-          if (s.href) parts.push(`<a class="cap-system-map-item-link" href="${escapeHtml(s.href)}">${escapeHtml(options.openLabel ?? "Open")}<span class="cap-sr-only"> ${escapeHtml(s.name)}</span></a>`);
-          return `<li data-id="${escapeHtml(s.id)}">${parts.join(" ")}</li>`;
-        })
-        .join("");
-      return `<section class="cap-system-map-group"><${h} class="cap-system-map-group-name">${escapeHtml(title)}</${h}><ul>${lis}</ul></section>`;
+  const h = options.headingLevel ?? 3;
+  const ties = tiesOf(data);
+  const parts = new Map<string, number>();
+  for (const c of data.containers ?? []) if (c.kind !== "external") parts.set(c.system, (parts.get(c.system) ?? 0) + 1);
+  const cards = (list: readonly MapSystem[]) => `<ul class="cap-system-map-cards">${list.map((s) => card(s, ties.get(s.id)!, parts.get(s.id) ?? 0, h + 1)).join("")}</ul>`;
+  const section = (cls: string, attr: string, title: string, list: readonly MapSystem[], n: number) =>
+    list.length ? `<section class="${cls}" ${attr} aria-labelledby="${e(id)}-${n}">${heading(h, "cap-system-map-group-name", `${e(title)} <span class="cap-system-map-group-count">${list.length}</span>`, `${id}-${n}`)}${cards(list)}</section>` : "";
+  const used = data.systems.filter((s) => s.ring === "used");
+  const groups = [...new Set(used.map((s) => s.group ?? names.used))];
+  let n = 0;
+  const columns = groups.map((g) => section("cap-system-map-group", `data-group="${e(g)}"`, g, used.filter((s) => (s.group ?? names.used) === g), n++)).join("");
+  const band = (ring: MapRing) => section("cap-system-map-band", `data-ring="${ring}"`, names[ring], data.systems.filter((s) => s.ring === ring), n++);
+  return [
+    `<figure class="cap-system-map" data-cap="system-map" data-level="network" id="${e(id)}" aria-labelledby="${e(id)}-title">`,
+    head(id, label, options.caption),
+    `<div class="cap-system-map-network">`,
+    columns ? `<div class="cap-system-map-groups">${columns}</div>` : "",
+    band("shared"),
+    band("core"),
+    `</div></figure>`,
+  ].join("");
+}
+
+/** One system in a column of users or uses: its name, linked, and its verbs as text. */
+const tieItem = (s: MapSystem, verbs: string[]) =>
+  `<li class="cap-system-map-tie" data-id="${e(s.id)}"${s.private ? " data-private" : ""}><span class="cap-system-map-tie-name">${nameLink(s)}</span> <span class="cap-system-map-tie-verbs">${e(verbs.join(", "))}</span></li>`;
+
+/**
+ * Level 2, one system: who uses it, its parts (what runs, what stores and what it works with
+ * outside, each part with its own lines in words), what it uses, and the flows over its parts as
+ * ordered steps, which work as a plain list with no script.
+ */
+function systemHtml(data: SystemMapData, options: SystemMapOptions, sid: string): string {
+  const s = data.systems.find((x) => x.id === sid);
+  if (!s) throw new Error(`system-map: no system ${sid}`);
+  const id = options.id ?? "system-map";
+  const label = options.label ?? s.name;
+  const h = options.headingLevel ?? 3;
+  const byId = new Map(data.systems.map((x) => [x.id, x]));
+  const ties = tiesOf(data).get(sid)!;
+  const containers = data.containers ?? [];
+  const nameOf = new Map<string, string>([...data.systems.map((x) => [x.id, x.name] as [string, string]), ...containers.map((c) => [c.id, c.name] as [string, string])]);
+  const owner = ownerOf(data);
+  const mine = containers.filter((c) => c.system === sid);
+  // A step drawn lit, as the script would leave it.
+  const shownFlows = flowsOver(data, sid);
+  const lit = options.flow ? shownFlows.find((f) => f.id === options.flow!.id)?.steps[options.flow.step - 1] : undefined;
+  const litFlow = lit ? options.flow : undefined;
+  const part = (c: MapContainer) => {
+    const lines = (data.relationships ?? [])
+      .filter((l) => l.from === c.id && nameOf.has(l.to))
+      .map((l) => `${verbOf(l.kind)} ${nameOf.get(l.to)}${owner.get(l.to) !== sid && !byId.has(l.to) ? ` (${byId.get(owner.get(l.to)!)?.name ?? ""})` : ""}`);
+    const on = lit?.lights.includes(c.id);
+    return `<li class="cap-system-map-part" id="${e(id)}-part-${e(c.id)}" data-id="${e(c.id)}" data-place="${placeOf(c.kind)}"${on ? " data-lit" : ""}${on && lit!.toward === c.id ? " data-at" : ""}>${heading(h + 2, "cap-system-map-part-name", e(c.name))}${c.technology ? `<p class="cap-system-map-part-kind">${e(c.technology)}</p>` : ""}${c.description ? `<p class="cap-system-map-part-text">${e(c.description)}</p>` : ""}${lines.length ? `<p class="cap-system-map-part-lines">${lines.map((x) => `<span>${e(x)}</span>`).join(" ")}</p>` : ""}</li>`;
+  };
+  const places = (["runs", "stores", "outside"] as const)
+    .map((p) => {
+      const list = mine.filter((c) => placeOf(c.kind) === p);
+      return list.length ? `<section class="cap-system-map-place" data-place="${p}">${heading(h + 1, "cap-system-map-place-name", PLACE_NAMES[p])}<ul class="cap-system-map-parts">${list.map(part).join("")}</ul></section>` : "";
     })
     .join("");
-  const caption = options.caption ? `<p class="cap-system-map-caption">${escapeHtml(options.caption)}</p>` : "";
-  // Each flow as an ordered list, step by step: the whole story with no script, and the
-  // steps the script plays (a step's line, the end it moves toward and what it lights).
-  const playable = playableFlows(data, core, layout);
-  const given = circles?.layers ?? {};
-  // The core's circle first: its flows play on it.
-  const insides = circles
-    ? Object.keys(given)
-        .sort((a, b) => Number(b === core?.id) - Number(a === core?.id))
-        .map((k) => (k === chosen ? given[k]!.replace(`data-system="${escapeHtml(k)}"`, (m) => `${m} data-shown`) : given[k]!))
-        .join("")
-    : insideSvg(layout, core, data, playable.length > 0);
-  const enters = circles ? "zooms into it" : `draws its connections${core ? `; on ${escapeHtml(core.name)}, Enter again goes inside` : ""}`;
-  const flows = playable
+  const inside = `<section class="cap-system-map-column" data-column="inside" aria-labelledby="${e(id)}-inside">${heading(h, "cap-system-map-column-name", `Inside ${e(s.name)}`, `${id}-inside`)}${places || `<p class="cap-system-map-none">No parts of its own are mapped.</p>`}</section>`;
+  const tieColumn = (column: "used-by" | "uses", title: string, list: Ties["uses"], none: string) =>
+    `<section class="cap-system-map-column" data-column="${column}" aria-labelledby="${e(id)}-${column}">${heading(h, "cap-system-map-column-name", `${title} <span class="cap-system-map-group-count">${list.length}</span>`, `${id}-${column}`)}${list.length ? `<ul class="cap-system-map-ties">${list.map((t) => tieItem(byId.get(t.id)!, t.verbs)).join("")}</ul>` : `<p class="cap-system-map-none">${none}</p>`}</section>`;
+  const columns =
+    options.only === "inside" ? inside : `${tieColumn("used-by", "Used by", ties.usedBy, "No system uses it.")}${inside}${tieColumn("uses", "Uses", ties.uses, "It uses no other system.")}`;
+  const flows = shownFlows
     .map((f) => {
+      const on = litFlow?.id === f.id;
       const steps = f.steps
-        .map((st) => `<li data-from="${escapeHtml(st.from)}" data-to="${escapeHtml(st.to)}" data-toward="${escapeHtml(st.toward)}"${st.lights?.length ? ` data-lights="${escapeHtml(st.lights.join(" "))}"` : ""}>${escapeHtml(st.text)}</li>`)
+        .map((st, i) => `<li data-toward="${e(st.toward)}" data-lights="${e(st.lights.join(" "))}"${on && i + 1 === litFlow!.step ? ` aria-current="step"` : ""}>${e(st.text)}</li>`)
         .join("");
-      return `<section class="cap-system-map-flow" data-flow="${escapeHtml(f.id)}"><${h} class="cap-system-map-flow-name">${escapeHtml(f.name)}</${h}>${f.description ? `<p class="cap-system-map-flow-text">${escapeHtml(f.description)}</p>` : ""}<ol>${steps}</ol></section>`;
+      return `<section class="cap-system-map-flow" data-flow="${e(f.id)}" aria-labelledby="${e(id)}-flow-${e(f.id)}">${heading(h + 1, "cap-system-map-flow-name", e(f.name), `${id}-flow-${f.id}`)}${f.description ? `<p class="cap-system-map-flow-text">${e(f.description)}</p>` : ""}<ol class="cap-system-map-steps">${steps}</ol><p class="cap-system-map-flow-controls" data-cap-part="controls" hidden><button type="button" class="cap-btn" data-size="sm" data-cap-part="back">Back</button><button type="button" class="cap-btn" data-size="sm" data-cap-part="next">${on ? "Next" : "Start"}</button><span class="cap-system-map-flow-status" aria-live="polite"></span></p></section>`;
     })
     .join("");
   return [
-    `<figure class="cap-system-map" data-cap="system-map" data-view="shell" id="${escapeHtml(id)}" aria-labelledby="${escapeHtml(id)}-title"${options.openLabel ? ` data-open-label="${escapeHtml(options.openLabel)}"` : ""}${circles ? ` data-circles${circles.src ? ` data-insides="${escapeHtml(circles.src)}"` : ""}` : ""}${chosen ? ` data-selected data-entered data-zoom="${escapeHtml(chosen)}"` : ""}>`,
-    `<figcaption class="cap-system-map-head"><span class="cap-system-map-title" id="${escapeHtml(id)}-title">${escapeHtml(label)}</span>${caption}`,
-    `<span class="cap-system-map-views" role="group" aria-label="View" data-cap-part="views" hidden><button type="button" class="cap-btn" data-view="shell" aria-pressed="true">Capsid</button><button type="button" class="cap-btn" data-view="plain" aria-pressed="false">Plain map</button>${circles ? `<button type="button" class="cap-btn" data-cap-part="out"${chosen ? "" : " hidden"}>Back to all systems</button>` : ""}</span></figcaption>`,
-    `<div class="cap-system-map-stage" data-cap-part="stage" role="img" aria-label="${escapeHtml(label)}: ${placed.length} systems ${layout.grouped ? "in groups" : "in rings"}. The list below holds the same.">`,
-    // The lines first, so every capsomer and its label is painted over them.
-    `<svg class="cap-system-map-layer" data-layer="edges" viewBox="${vb}" aria-hidden="true" focusable="false">${edges}</svg>`,
-    layer("core", coreCells),
-    innerCells.length ? layer("inner", innerCells) : "",
-    rimCells.length ? layer("rim", rimCells) : "",
-    labels ? `<svg class="cap-system-map-layer" data-layer="labels" viewBox="${vb}" aria-hidden="true" focusable="false">${labels}</svg>` : "",
-    insides,
-    `</div>`,
-    `<div class="cap-system-map-detail" data-cap-part="detail" aria-live="polite" hidden></div>`,
-    `<span id="${escapeHtml(id)}-keys" hidden>Arrow keys move between systems. Enter or Space chooses one and ${enters}. Escape steps back out.${flows ? " Playing a flow, the left and right arrows and the number keys move between its steps." : ""}</span>`,
-    `<details class="cap-system-map-list" data-cap-part="list" open><summary>The same map as a list</summary><div class="cap-system-map-groups">${list}</div></details>`,
-    flows ? `<details class="cap-system-map-flows" data-cap-part="flows" open><summary>Inside ${escapeHtml(core?.name ?? "")}, step by step</summary>${flows}</details>` : "",
+    `<figure class="cap-system-map" data-cap="system-map" data-level="system" data-system="${e(sid)}" id="${e(id)}" aria-labelledby="${e(id)}-title"${litFlow ? ` data-flow="${e(litFlow.id)}" data-step="${litFlow.step}"` : ""}>`,
+    head(id, label, options.caption),
+    `<div class="cap-system-map-columns"${options.only ? ` data-only="${options.only}"` : ""}>${columns}</div>`,
+    flows ? `<section class="cap-system-map-flows" aria-labelledby="${e(id)}-flows">${heading(h, "cap-system-map-column-name", "Step by step", `${id}-flows`)}${flows}</section>` : "",
     `</figure>`,
   ].join("");
+}
+
+/**
+ * The map as HTML, every text escaped: the network (level 1), or with `system` one system (level
+ * 2). Delivered with no script it is whole: every card is a link, every tie and line is words, and
+ * every flow is an ordered list.
+ */
+export function systemMapHtml(data: SystemMapData, options: SystemMapOptions = {}): string {
+  return options.system ? systemHtml(data, options, options.system) : networkHtml(data, options);
 }

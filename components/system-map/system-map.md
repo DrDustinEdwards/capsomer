@@ -1,12 +1,13 @@
 ---
 name: system-map
 title: System map
-summary: A family of systems drawn as a capsid, the systems as its capsomers. Choose one to draw its connections; choose the core again to go inside it. The same data is always a list.
+summary: A network of systems as cards, and one system with what uses it, its parts and what it uses. Point at a card to light its ties; a tap opens it. Every tie is words, and every flow a list.
 parts: [css, behavior]
 tool: own JavaScript
-states: [the family as a capsid, a system chosen with its connections drawn, inside the core, a flow playing inside the core, the plain map, under the pointer, keyboard focus, as delivered with no script]
+states: [the network, a card lit with its ties shown, one system, a flow at a step, under the pointer, keyboard focus, as delivered with no script]
 added: 0.7.0
-source: capsid/rulings/system-explorer-2026-10-10.md (answers 3 and 9) and capsid/research/design-system-explorer.md (section 3)
+updated: 0.65.0
+source: capsid/rulings/system-explorer-2026-10-10.md (answer 9) and Dustin's yes of 2026-11-03 to the card design, which replaced the capsid drawing (answer 3) and the line routing of the seat rulings on capsomer#57 and #64
 replaces:
   - "react-flow"
   - "@xyflow/react"
@@ -15,62 +16,46 @@ replaces:
 
 # System map
 
-The family of systems as one drawing: a capsid seen down its three-fold axis, whose hexagonal capsomers are the systems. The system that runs everything sits in the middle, the shared parts every app installs ring it, and the things people use form the outer shell. It is the map on dustinedwards.info and the top of the Capsid explorer, one component in both (answer 9).
+A network of systems at two levels. Level 1 is the network: every system a card, standing in a column with its group (Websites, Apps, Writing, Tools), then a band of the shared packages and a band of the core. Level 2 is one system: what uses it, its parts, and what it uses, with the flows over its parts. It is the map on dustinedwards.info and in the Capsid explorer, one component in both (answer 9).
 
 ## When to use it
 
-- Showing a family of systems as a whole: what is at the center, what is shared, what people use.
-- A page that should let a stranger find their way into deeper views of one system.
+- Showing a network of systems as a whole: what people use, what is shared, what runs everything, and how each ties to the rest.
+- One system's page: who depends on it, what it is made of, what it depends on, and how a process moves through its parts.
 
 ## When not to
 
-- A dependency graph with many lines at once: the map draws one system's lines at a time. Use a chart from Enarratio.
-- A list someone scans for one name: the plain view, or a table.
+- A dependency graph whose shape is the point (cycles, depth): a chart from Enarratio.
+- A list someone sorts and filters: the table.
 - A hierarchy a person opens and closes: the tree.
 
 ## The default and its reason
 
-- **Rings carry the meaning, lines appear on demand.** At rest a stranger reads layers, not wires; neighbors on the shell are not claimed to be connected. Choosing a capsomer draws its lines, solid where it installs or publishes, dashed where it is coordinated or watched.
-- **Lines run in the seams, beneath the capsomers.** A line is the shortest walk along the hexagons' sides between the two capsomers, nearest the straight line among equals, and is drawn under every capsomer, so no line crosses a label (seat ruling on capsomer#57). A seam touches three capsomers at each corner, so the far end of each line is outlined too (`data-linked`). The walk is a small search over a few dozen corners: no layout engine.
-- **Going inside is the zoom.** Choosing the core again folds every ring into the middle, the rim stays behind as faded shapes with no names, and the core's containers appear within a dashed circle, the C4 system boundary, as large as the stage allows, with its name at its foot. The inside drawing is at least 380 units wide, in the stage's own proportions, and is made larger until its rows fit inside the circle, so a small family's map is scaled down rather than crowded. Escape or Step out returns.
-- **What the core works with sits outside it.** A container of kind `external` (the agents that call Capsid, GitHub) is drawn outside the dashed circle, in the stage's corners (top left, top right, bottom left, bottom right; four at most), on the page's ground with a plain edge, and is counted apart from the core's parts (Dustin, 2026-10-11, as C4 draws an external system). Its lines to the core's parts are drawn like any other.
-- **A flow plays over the lines that are there.** A flow is ordered steps, each riding one line between the core's parts toward one end, with a sentence and the parts it lights. Inside the core, Play starts it (the plain view opens the steps as a list): the step's line is lit, a token travels it from just off one box to just off the other (so it never sits on a name), the part it moves toward gets a heavy edge, and the parts it touches are tinted with a heavy edge. The detail line says "Step n of N." and the sentence, with Back, Next and Stop. A flow whose step names a line the data lacks, goes toward neither end, or lights a part outside the core is not offered at all. Under reduced motion the token jumps.
-- **Lines inside the core read as what they are** (seat rulings on capsomer#64). A line that runs under a box, or a bend or crossing beside another line, reads as a connection that is not there (an edge tunnel, Dunne and Shneiderman 2009). So, in `insideScene`:
-  - every box sits inside the boundary, or outside it, with clear space, and the boundary's name is clear of every box;
-  - no line runs under a box it does not end at, or under the boundary's name, and every line keeps `ROUTE_CLEAR` (8 units, over 5 px on a 320 px phone) from every box but its ends;
-  - lines that share a box leave it at their own points (ports), spread along the side that faces their far ends, and two lines running nearly parallel keep `LINE_SEP` apart, so neither reads as one doubled line;
-  - a line never crosses another within `JUNCTION_END` of that line's ends, nor anywhere along a line shorter than `SHORT_LINK`, where a crossing reads as a three-way junction;
-  - no bend sits within `BEND_CLEAR` of another line.
-
-  Lines are routed one at a time, shortest first, each the shortest way between its ports through the corners of what is in its way. Crossing a box or the name is never allowed; the softer rules cost far more than any detour, so a route breaks one only when every way around breaks one too. Capsid's own core keeps every rule; the unit tests also route 100 seeded random cores, far more crowded, where no line crosses a box or the name and each softer rule holds for at least 19 lines in 20. The boxes sit in rows of two (workers, sites, crons) above rows of three (stores), spread along the circle's chords, at least 80 units apart where the drawing allows.
-- **With circles, one tap goes inside any system** (Dustin, 2026-10-18: "it's not intuitive to click twice"). `circleLayers` (`capsomer/system-map-circles`) draws every system's circle at build time: its own parts inside, what it works with outside and every system it connects to round the rim, one wire from the exact part that uses each line, and a line between two systems as wholes from the circle's edge, left out where a part already wires to that system. The places are searched for from fixed seeds, so the same data always draws the same way: no two boxes touch, no wire runs under a box or the name, and no two wires cross where any placement avoids it, curving gently where a straight line cannot. A large family takes minutes, so a host keeps the circles it found (`saved`, under a key of what drew each one) and only a circle whose system, neighbors or the search's own code changed is searched again. `systemMapHtml` takes them as `circles`: the core's inside is its circle, the flows play on it, and one tap on any capsomer zooms into that system's circle, growing out of the capsomer. A system on the rim is a tap that zooms there; Back to all systems (beside the views), Escape anywhere on the page or a tap outside the circle returns, with focus on the capsomer left. Only the circle shown is drawn, and it sizes the stage. `circles.src` names all of them as one JSON object, fetched once the page has loaded, so a page carries none at rest; `circles.chosen` delivers that system zoomed into, so a shared link opens there with no script.
-- **The same data is always a list.** The delivered HTML holds a list grouped by ring with every name, word, address and link, open with no script and behind "The same map as a list" with it. The plain view shows that list as columns. Neither is a second source.
-- **Rendered by `systemMapHtml`**, a pure function, so a server or a static build delivers the whole contract and the script only enhances it. Hex geometry is computed there: no layout engine ships.
-- **Three layers, moved whole.** The core, the inner rings and the rim are separate drawings over one viewBox, and going inside animates only their transform and opacity, which the compositor does without repainting. Nothing moves under reduced motion.
-- **Private is a dashed edge and the word "private".** A private system shows its name and address only, and has nothing to open.
-- **Chosen is a heavier edge and a tint, never the tint alone.** In forced colors an SVG keeps its own colors, so the map sets system colors itself: every capsomer and part, stores included, is Canvas with a CanvasText edge, the lines are CanvasText, and the chosen, focused, lit and moving ones use Highlight.
-- **The panel's headings are in the page's own face** (`--face`), as the text around them is.
-- **The detail line keeps its height**, so choosing never moves what is below the map.
+- **Overview first, then one system, with details on demand** (Shneiderman 1996). The network shows every system at once, and a tap goes inside one (Dustin, 2026-10-18: one tap). The C4 model's levels are the same split, and its advice of about 20 boxes a view is why the parts sit on their system's page, not on the network.
+- **No lines are drawn.** With more than a handful of systems, a drawing of every tie becomes a tangle a reader cannot follow (Ghoniem and others, 2004: node-link drawings lose to a matrix as a graph grows dense). Each card says how many systems it uses and is used by, and pointing at it or focusing it lights exactly those cards and mutes the rest. On a shared package this is the impact view: everything a change to it reaches.
+- **A lit card says how it is tied, in words**: "Used by Carrel", "Uses Carrel", or "Uses and used by Carrel", with an accent edge; the card pointed at has a heavier edge and the tint. Color is never the only sign. Muted cards change color, not opacity, so every word keeps its contrast.
+- **Ties are read between systems.** A line from one system's part to another system or its part is a tie between the two systems, so the counts and the columns hold every connection the data has, each other system once with all its verbs.
+- **A system is three columns**: Used by, Inside, Uses. Each tie is the other system's name, a link to its page, and its verbs as text ("installs", "publishes to"). Inside, the parts stand under Runs, Stores and Outside (what the system works with but does not own, Dustin, 2026-10-11), each with what it runs on, what it does, and its own lines in words ("writes to capsid · serves Portal"). Where the map is narrower than 52rem the columns stack in that order.
+- **Flows are ordered lists** on the page of each system whose parts they touch. With script, Start, Next and Back step one, lighting the parts the step touches (the part it moves toward with the heaviest edge), marking the step `aria-current="step"`, and saying "Step n of N" and the sentence. With no script the list is the whole story. A host can deliver a step already lit (`flow`).
+- **Private is a dashed edge and the word "private"**, and nothing else differs: a private system is shown in full (2026-10-23 ruling).
+- **Rendered by `systemMapHtml`**, a pure function, so a server or a static build delivers the whole map and the script only adds lighting and stepping. No layout engine and no drawing.
+- **The columns follow the map's own width** (a container query), so a host's narrow column stacks them as a phone does. No text is under 12 px.
 
 ## Keyboard
 
 | Key | Does |
 | --- | --- |
-| Tab | Enters the map on the core (one tab stop), and leaves it |
-| Arrow keys | Move to the nearest capsomer in that direction |
-| Home, End | The core, the last capsomer |
-| Enter, Space | Choose the capsomer and draw its connections; on the chosen core, go inside. With circles, go inside any system |
-| Escape | Playing a flow, stop it; inside, step out to the core (with circles, from anywhere on the page, back to the map); otherwise clear the choice |
-| Left, Right arrow | Playing a flow, the step before or after |
-| 1 to 9 | Playing a flow, that step |
+| Tab | Moves between the systems' names (each a link) and, on a system, the flows' buttons. Focusing a card lights its ties |
+| Enter | Opens the system focused; on a flow's button, steps |
+| Escape | Inside a flow, stops it |
 
 ## Accessibility
 
-- Delivered with no script, the stage is one picture (`role="img"`) with a name that points to the list, and the list is open.
-- With script, the stage is a group named by the map's title and described by a line of keys; each capsomer is a button (`aria-pressed`) named by its name and word. One tab stop, roving.
-- The detail line is a polite live region. Inside, the inner drawing is a picture named by its parts, and focus moves to Step out. Playing a flow, each step's sentence is announced there, focus stays on the control pressed (or moves to Next, then Back, when it is disabled), and Stop returns focus to Play. A host's own call (`playFlow`, `step`) leaves focus where it is.
-- Each flow is also an ordered list of its steps, open with no script, behind "Inside Capsid, step by step" with it.
-- Text 4.5:1 on its tile in both themes; edges and the focus ring 3:1.
+- Every card is a list item with its name as a heading and a link stretched over the card, so a tap anywhere opens it and a screen reader hears the name alone as the link.
+- The groups and bands are sections named by their headings; level 2's columns and flows are too.
+- The lighting is a convenience over what the cards already say (each card's counts, and level 2's columns), so the line that says how a card is tied is hidden from assistive technology.
+- A flow's status line is a polite live region; focus stays on the button pressed, or moves to Back when Next ends the flow.
+- Text 4.5:1 on its card in both themes, lit and muted; edges and the focus ring 3:1. In forced colors a lit card's edge is Highlight.
 
 Last checked by hand: not yet (screen readers before release).
 
@@ -79,24 +64,21 @@ Last checked by hand: not yet (screen readers before release).
 Render it; do not write it by hand.
 
 ```ts
-import { enhance, systemMapHtml } from "capsomer/behavior/system-map";
-container.innerHTML = systemMapHtml(data, { id: "family", label: "The family", caption: "..." });
-enhance(container);
+import { enhance, modelMapData, systemMapHtml } from "capsomer/behavior/system-map";
+const data = modelMapData(model, (id) => `/systems/${id}`);
+network.innerHTML = systemMapHtml(data, { id: "network", label: "The network" });
+one.innerHTML = systemMapHtml(data, { id: "system", system: "foxing", label: "Foxing" });
+enhance(document);
 ```
 
-`modelMapData(model, href?)` turns Capsid's public model into `data`, the same on every host: each system's family becomes its word and, for what people use, its group (sites are Websites, products Apps, writing Writing, the rest Tools; an id ending `-mcp` says admin).
+`modelMapData(model, href?)` turns Capsid's public model into `data`, the same on every host: each system people use gets its group from its family (sites are Websites, products Apps, writing Writing, the rest Tools), in the model's order, and each flow step, which rides a line by its id, stands on that line's two ends. `data` is `{ systems, relationships?, containers?, flows? }`: a system is `{ id, name, ring: "core" | "shared" | "used", private?, group?, description?, domain?, href? }`, a relationship `{ from, to, kind }` between any two systems or parts, a container `{ id, system, name, kind, technology?, description? }` (kind `external` stands Outside; `database`, `bucket`, `kv` and `queue` under Stores; the rest under Runs), and a flow `{ id, name, description?, steps: [{ from, to, toward, text, lights? }] }`.
 
-```ts
-// At build time, keeping `saved` in a file beside the build:
-import { circleLayers } from "capsomer/system-map-circles";
-const layers = circleLayers(data, { saved });
-container.innerHTML = systemMapHtml(data, { id: "family", circles: { src: "/insides.json", layers: chosen ? { [chosen]: layers[chosen] } : {}, chosen } });
-```
+Options: `id`, `label`, `caption`, `headingLevel` (2 to 4; the cards, places and parts take the levels below), `ringNames` (the bands' headings; `used` heads what people use when none has a group), and for level 2 `system`, `only: "inside"` (the parts and flows alone) and `flow: { id, step }` (a step delivered lit).
 
-`data` is `{ systems, relationships?, containers?, flows? }`: a flow is `{ id, name, description?, steps: [{ from, to, toward, text, lights? }] }`, a system is `{ id, name, short?, ring: "core" | "shared" | "used", private?, tag?, group?, description?, domain?, href? }`, a relationship `{ from, to, kind }`, a container `{ id, system, name, kind, technology? }`. The first core system takes the middle; shared parts fill ring 1 and spill outward; what people use starts on the next ring. Unused cells of a drawn ring are empty shell. When the systems people use carry a `group` (Websites, Apps), each group is drawn together, its systems chained in the order given so each touches the one before it, apart from every other group, with its name beside it in `text.cap-system-map-group-label` on `svg.cap-system-map-layer[data-layer="labels"]`; the gaps between groups are not drawn, and the list is sectioned by group.
+The contract: `figure.cap-system-map[data-cap="system-map"][data-level="network|system"]` holding `figcaption.cap-system-map-head` (`.cap-system-map-title`, `.cap-system-map-caption`). Level 1: `div.cap-system-map-network` of `div.cap-system-map-groups` of `section.cap-system-map-group[data-group]` and `section.cap-system-map-band[data-ring="shared|core"]`, each a `.cap-system-map-group-name` heading (with `.cap-system-map-group-count`) over `ul.cap-system-map-cards` of `li.cap-system-map-card[data-id][data-uses][data-used-by]` (`data-private`, `data-link`; `data-tie="self|used|user|both"` while lit) holding `.cap-system-map-card-name` (its link, `a.cap-system-map-link`, as is a tie's name), `.cap-system-map-card-text`, `.cap-system-map-card-meta` (`.cap-system-map-card-domain`, `.cap-system-map-card-private`, `.cap-system-map-card-count`) and `.cap-system-map-card-tie`. The root carries `data-lit` (the system lit) while one is. Level 2: the root carries `data-system`, and `data-flow` and `data-step` while a flow is at a step; `div.cap-system-map-columns` (`data-only`) of `section.cap-system-map-column[data-column="used-by|inside|uses"]` with `.cap-system-map-column-name`; the ties `ul.cap-system-map-ties` of `li.cap-system-map-tie[data-id]` (`data-private`) with `.cap-system-map-tie-name` and `.cap-system-map-tie-verbs`; inside, `section.cap-system-map-place[data-place="runs|stores|outside"]` with `.cap-system-map-place-name` over `ul.cap-system-map-parts` of `li.cap-system-map-part[data-id][data-place]` (`data-lit`, `data-at`) holding `.cap-system-map-part-name`, `.cap-system-map-part-kind`, `.cap-system-map-part-text` and `.cap-system-map-part-lines` (a `span` a line); `.cap-system-map-none` where a column is empty; then `section.cap-system-map-flows` of `section.cap-system-map-flow[data-flow]` (`.cap-system-map-flow-name`, `.cap-system-map-flow-text`, `ol.cap-system-map-steps` of `li[data-toward][data-lights]`, `aria-current="step"` on the step shown, and `p.cap-system-map-flow-controls[data-cap-part="controls"]` with `button[data-cap-part="back|next"]` and `.cap-system-map-flow-status`).
 
-The contract: `figure.cap-system-map[data-cap="system-map"][data-view="shell|plain"]` holding `figcaption.cap-system-map-head` (`.cap-system-map-title`, `.cap-system-map-caption`, `.cap-system-map-views` with two `button[data-view]`), `div.cap-system-map-stage` with `svg.cap-system-map-layer[data-layer="core|inner|rim|edges|labels|inside"]`, each capsomer `g.cap-system-map-tile[data-id][data-x][data-y][data-ring]` (`data-core`, `data-shared`, `data-private`, `data-empty`, `data-linked`), each line `path.cap-system-map-edge[data-from][data-to][data-kind]` (`data-loose`, `data-on`), inside, each part `g.cap-system-map-box[data-id][data-x][data-y]` (`data-store`, `data-external`, and while a flow plays `data-lit` and `data-at`), each line between parts `path.cap-system-map-wire[data-from][data-to][data-route]` (`data-on`; in a circle `data-loose` and `data-whole`), whose `data-route` lists its corners from port to port, and `circle.cap-system-map-token` when a flow can play, `div.cap-system-map-detail`, `details.cap-system-map-list` of `section.cap-system-map-group` lists, and `details.cap-system-map-flows` of `section.cap-system-map-flow[data-flow]` (`.cap-system-map-flow-name`, `.cap-system-map-flow-text`, an `ol` whose `li[data-from][data-to][data-toward][data-lights]` are the steps). With circles, the root also carries `data-circles` and `data-insides` (the address of every circle), each circle is `svg.cap-system-map-layer[data-layer="inside"][data-system]` (`data-shown` on the one zoomed into), another system on its rim `g.cap-system-map-rim[data-goto]` (`data-private`) with `text.cap-system-map-rim-name`, a circle with no parts says its name and summary in `text.cap-system-map-inside-name` and `text.cap-system-map-inside-text`, and the views hold `button[data-cap-part="out"]`. The root carries `data-selected`, `data-entered`, with circles `data-zoom` (the system zoomed into) and `data-insides-ready` once every circle is in, and while a flow plays `data-flow` and `data-step`. Events: `cap:system-map-select` (`{ id }`), `cap:system-map-enter` (`{ id }`, the system gone into), `cap:system-map-leave` (`{ id }`, the system left) and `cap:system-map-flow` (`{ id, step }`, and `{ id: null, step: 0 }` whenever a flow stops: Stop, Escape, stepping out, choosing a system, the plain view or `destroy`). The controller adds `playFlow(id, step?)`, `step(n)` and `stopFlow()`; with circles, `enter(id)` zooms into any system.
+Event: `cap:system-map-flow` (`{ id, step }`, and `{ id: null, step: 0 }` when a flow stops). `controller(root)` returns `light(id | null)`, `playFlow(id, step?)`, `step(n)`, `stopFlow()` and `destroy()`; a host's own calls leave focus where it is. Pure functions: `tiesOf`, `flowsOver`, `ownerOf`, `placeOf`, `verbOf`, `count`, `stepText`.
 
 ## Exceptions in production
 
-None. Its homes are dustinedwards.info's `/systems` and the Capsid explorer, both with circles.
+None. Its homes are dustinedwards.info's `/systems` and the Capsid explorer.
