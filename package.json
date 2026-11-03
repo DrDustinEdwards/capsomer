@@ -126,7 +126,6 @@
     "prepare": "npm run build",
     "states": "node bin/capsomer.mjs states",
     "site": "node bin/capsomer.mjs states && node bin/capsomer.mjs site-data && vite build --config site/vite.config.ts && site-runtime-headers --site capsomer --out site-dist/_headers --header \"tdm-reservation: 1\"",
-    "site:release": "node bin/capsomer.mjs states && node bin/capsomer.mjs site-data && vite build --config site/vite.config.ts && site-runtime-headers --site capsomer --out site-dist/_headers --header \"tdm-reservation: 1\"",
     "deploy": "wrangler deploy",
     "e2e": "node bin/capsomer.mjs states && playwright test",
     "palette-report": "node tokens/palette.mjs --report",

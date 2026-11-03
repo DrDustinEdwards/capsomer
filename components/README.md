@@ -55,7 +55,7 @@ A hidden sentence (`.cap-sr-only`) beside an `aria-hidden` drawing is neither: t
 
 ## The states page: examples.html
 
-You write `examples.html`; the generator writes `states.html`. `node bin/capsomer.mjs states` (`npm run states`) builds `components/<name>/states.html` for every component that has an `examples.html` or an `examples.tsx`, from `site/states-template.html` (the head, the specimen script, `<body class="cap-specimens">`, one `<main>` with the `h1` and the intro), the doc page's frontmatter (`title` is the `h1` and the page title, `summary` is the intro) and your examples. It runs at the start of `npm run site`, `npm run site:release` and `npm run e2e`, in the Playwright web server command, and whenever `site/vite.config.ts` loads, so a states page always exists before Vite looks for it. Edit `examples.html`, never `states.html`.
+You write `examples.html`; the generator writes `states.html`. `node bin/capsomer.mjs states` (`npm run states`) builds `components/<name>/states.html` for every component that has an `examples.html` or an `examples.tsx`, from `site/states-template.html` (the head, the specimen script, `<body class="cap-specimens">`, one `<main>` with the `h1` and the intro), the doc page's frontmatter (`title` is the `h1` and the page title, `summary` is the intro) and your examples. It runs at the start of `npm run site` and `npm run e2e`, in the Playwright web server command, and whenever `site/vite.config.ts` loads, so a states page always exists before Vite looks for it. Edit `examples.html`, never `states.html`.
 
 `examples.html` holds the specimens and nothing else: no `<html>`, `<head>`, `<body>`, `<main>` or `<h1>` (the template supplies them; one `h1` and one `main` per page). Inline specimens:
 

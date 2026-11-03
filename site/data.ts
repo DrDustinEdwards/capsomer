@@ -88,11 +88,6 @@ export async function fetchResults(): Promise<Results | null> {
     if (!r.ok) return null;
     const j = (await r.json()) as Results;
     if (!(j && typeof j === "object" && j.components)) return null;
-    // A run written before the move to American spelling names the kind "behaviour". codespell:ignore
-    for (const c of Object.values(j.components) as Array<ComponentResults & { behaviour?: ComponentResults["behavior"] }>) { // codespell:ignore
-      c.behavior ??= c.behaviour ?? { passed: 0, failed: 0 }; // codespell:ignore
-      for (const t of c.tests) if ((t.kind as string) === "behaviour") t.kind = "behavior"; // codespell:ignore
-    }
     return j;
   } catch {
     return null;

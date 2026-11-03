@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Site only: an old root address such as `/#/components/button` no longer forwards to `/admin/`**, and `npm run site:release` is gone (it was `npm run site`; the deploy runs that). The package is unchanged.
+
 ## [0.66.0]
 
 Charts and fonts stop moving the page when they arrive: React's `ChartFrame` redraws at the height its first drawing showed, and each measured fallback font has a bold face per weight range. New exports: `shownHeight` and the type `ChartFit` (`capsomer/react`'s chart frame), and the type `FontWidths` (`capsomer/fonts`); `fallbackFontFace` takes `widths`, `MEASURED` entries carry `widths`, `LOCAL` entries carry `bold`, and `capsomer fallback-font` takes `--weight`. `ChartFrame`'s `draw` gets a second argument, `fit`. No class, token or HTML contract changes; a fallback rule's `local()` names and weight ranges change in `fonts.css` and `fallback-fonts.css`.

@@ -6,8 +6,6 @@ worker/preload.generated.json
 test-results/
 playwright-report/
 site/data/
-
-test-results-knip.json
 components/*/states.html
 components/*/states.css
 coverage/
