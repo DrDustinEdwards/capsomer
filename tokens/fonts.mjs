@@ -14,7 +14,8 @@ const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 
 // The family's metrics are in MEASURED (tokens/fallback-fonts.mjs). The sha256 pins the bytes they
 // were read from: a new file fails --check until it is measured again (`node bin/capsomer.mjs
-// fallback-font fonts/<file>`).
+// fallback-font fonts/<file> --weight 600=<instance> --weight 700=<instance>`, each instance the
+// file cut at that weight with fontTools' varLib.instancer).
 const FACES = [
   {
     family: "Schibsted Grotesk",
