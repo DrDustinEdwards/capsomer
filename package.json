@@ -107,10 +107,6 @@
       "types": "./dist/components/*/*.d.ts",
       "default": "./dist/components/*/*.js"
     },
-    "./behaviour/*": {
-      "types": "./dist/components/*/*.d.ts",
-      "default": "./dist/components/*/*.js"
-    },
     "./react/*": {
       "types": "./dist/components/*/*.react.d.ts",
       "default": "./dist/components/*/*.react.js"

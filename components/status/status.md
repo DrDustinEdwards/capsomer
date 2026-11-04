@@ -96,7 +96,7 @@ A badge with a variant:
 <span class="cap-pill" data-variant="outline" data-tone="ok">[ok glyph]Healthy</span>
 ```
 
-In React, `import { Status, Pill, Badge, Glyph } from "capsomer/react/status"`: `<Status tone="nodata" reason="The uptime checker has not reported since 09:00.">No data</Status>`, `<Status tone="nodata" reason="No Cloudflare token for this site" brief>No data</Status>` for a table cell, `<Pill tone="info" running>Working</Pill>`, `<Badge variant="secondary">Draft</Badge>`, `<Badge variant="outline" href="/mentions">Mentions</Badge>`.
+In React, `import { Status, Pill, Glyph } from "capsomer/react/status"`: `<Status tone="nodata" reason="The uptime checker has not reported since 09:00.">No data</Status>`, `<Status tone="nodata" reason="No Cloudflare token for this site" brief>No data</Status>` for a table cell, `<Pill tone="info" running>Working</Pill>`, `<Pill variant="secondary">Draft</Pill>`, `<Pill variant="outline" href="/mentions">Mentions</Pill>`.
 
 **The shadcn component it matches:** Badge (`badge.tsx`, nova style): 20 px pill, 12 px text, `default`, `secondary`, `outline`, `destructive`, `ghost`, `link`, link badges with hover, focus ring.
 

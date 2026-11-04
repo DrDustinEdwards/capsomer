@@ -7,6 +7,8 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [0.69.0]
 
 - **The hexagons' lit lines say which way each tie runs.** Their dashes move from the system that uses toward the system used, a tie both ways stays solid, and the detail line adds "Uses … Used by …" in words. Reduced motion stills the dashes. The network's detail line keeps four lines of room, so lighting no longer shifts the drawing. **Changed HTML contract:** a lit `path.cap-system-map-wire` in the comb carries `data-both` where the tie runs both ways, and the network's detail line ends with `span.cap-system-map-detail-ways` while a system is lit.
+- **Removed: the `capsomer/behaviour/*` export**, the British-spelling alias of `capsomer/behavior/*`. Import `capsomer/behavior/<name>`.
+- **Removed: `Badge` from `capsomer/react/status`**, the alias of `Pill`. Use `Pill`; it takes the same props.
 
 ## [0.68.0]
 
