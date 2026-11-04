@@ -78,7 +78,7 @@ export const MEASURED = {
   "Open Sans": { metrics: { ascent: 2189, descent: -600, lineGap: 0, unitsPerEm: 2048, xWidthAvg: 960 }, local: "Arial", widths: { 600: 995, 700: 1030 } },
   Inter: { metrics: { ascent: 1984, descent: -494, lineGap: 0, unitsPerEm: 2048, xWidthAvg: 978 }, local: "Arial", widths: { 600: 998, 700: 1008 } },
   Fraunces: { metrics: { ascent: 1956, descent: -510, lineGap: 0, unitsPerEm: 2000, xWidthAvg: 934 }, local: "Georgia", widths: { 600: 965, 700: 997 } },
-  "Space Grotesk": { metrics: { ascent: 984, descent: -292, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 489 }, local: "Arial" },
+  "Space Grotesk": { metrics: { ascent: 984, descent: -292, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 489 }, local: "Arial", widths: { 600: 488, 700: 488 } },
   "JetBrains Mono": { metrics: { ascent: 1020, descent: -300, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 600 }, local: "Courier New" },
 };
 
