@@ -70,7 +70,7 @@ export const LOCAL = {
 // 490), which the synthetic bold keeps too, so they have none.
 // The network's 2026-11-04 faces, read the same way on 2026-11-04 from the files in fonts/: Inter's opsz file
 // (its default instance, wght 400 opsz 14, reads as txasm's Inter did, so the entry stands; 600 and 700
-// instanced at opsz 14), Overpass and Jost (Fontsource 5.3.0, 600 and 700 instanced), Capsomer Drafting and
+// instanced at opsz 14), Overpass (its weight axis cut to 600 to 700, so its default and xWidthAvg are 600's) and Jost (Fontsource 5.3.0, 600 and 700 instanced), Capsomer Drafting and
 // DSEG7 Classic (one weight; DSEG's digits are all one width, so Courier New stands in for it).
 export const MEASURED = {
   "Martian Mono": { metrics: { ascent: 1000, descent: -200, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 700 }, local: "Courier New" },
@@ -83,7 +83,7 @@ export const MEASURED = {
   Fraunces: { metrics: { ascent: 1956, descent: -510, lineGap: 0, unitsPerEm: 2000, xWidthAvg: 934 }, local: "Georgia", widths: { 600: 965, 700: 997 } },
   "Space Grotesk": { metrics: { ascent: 984, descent: -292, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 489 }, local: "Arial", widths: { 600: 490, 700: 490 } },
   "JetBrains Mono": { metrics: { ascent: 1020, descent: -300, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 600 }, local: "Courier New" },
-  Overpass: { metrics: { ascent: 1766, descent: -766, lineGap: 0, unitsPerEm: 2000, xWidthAvg: 898 }, local: "Arial", widths: { 600: 927, 700: 942 } },
+  Overpass: { metrics: { ascent: 1766, descent: -766, lineGap: 0, unitsPerEm: 2000, xWidthAvg: 927 }, local: "Arial", widths: { 600: 927, 700: 942 } },
   Jost: { metrics: { ascent: 1070, descent: -375, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 428 }, local: "Arial", widths: { 600: 458, 700: 472 } },
   "Capsomer Drafting": { metrics: { ascent: 1277, descent: -380, lineGap: 92, unitsPerEm: 1024, xWidthAvg: 475 }, local: "Arial" },
   "DSEG7 Classic": { metrics: { ascent: 1000, descent: 0, lineGap: 90, unitsPerEm: 1000, xWidthAvg: 705 }, local: "Courier New" },

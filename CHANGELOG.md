@@ -4,6 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.74.1]
+
+Smaller font files, for faster pages: dustinedwards.info's /systems went from 2.31 s to 2.60 s Lighthouse LCP (mobile profile, CI) with 0.73.0's larger Inter and the new Overpass, past the 2.5 s limit.
+
+- **Inter** (`fonts/inter-latin-opsz-normal.woff2`): the weight axis is cut to 300 to 800, the weights the network sets (72,920 to 68,948 bytes). Its `@font-face` weight range is now `300 800`. The opsz axis and every kept weight are unchanged.
+- **Overpass** (`fonts/overpass-latin-wght-normal.woff2`): the weight axis is cut to 600 to 700, the two weights wayfinding sets (39,380 to 27,036 bytes). Its `@font-face` weight range is now `600 700`; a 400 request draws 600.
+- `scripts/narrow-font.py` makes both cuts from the Fontsource 5.3.0 files.
+- **Changed token: `--faa-arrow`** is now a `polygon()` clip path, not a `data:` SVG mask image: a page whose Content-Security-Policy says `img-src 'self'` (the Capsid explorer) refused the image, so the direction strip lost its arrows. The direction strip draws it with `clip-path`; a site that used `mask: var(--faa-arrow)` uses `clip-path: var(--faa-arrow)` on a 1em by 0.72em box.
 - `allowScripts` denies esbuild's and workerd's install scripts for npm 12, which asks about each one; both work without them (their binaries come from platform packages). No class, token or HTML contract changes.
 
 ## [0.74.0]
