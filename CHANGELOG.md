@@ -4,6 +4,9 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Removed: the `capsomer/behaviour/*` export**, the British-spelling alias of `capsomer/behavior/*`. Import `capsomer/behavior/<name>`.
+- **Removed: `Badge` from `capsomer/react/status`**, the alias of `Pill`. Use `Pill`; it takes the same props.
+
 ## [0.68.0]
 
 The family's faces load with `font-display: optional` in place of `swap`. No class, token or HTML contract changes.
