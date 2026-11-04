@@ -107,7 +107,8 @@
     }
   }
 
-  /* The honeycomb: as tall as a desktop screen allows, so all of it is in view. */
+  /* The honeycomb: as tall as the screen allows below a site's header and the view tabs, so all of
+     it is in view once the tabs reach the top. */
   .cap-system-map-hex {
     display: grid;
     justify-items: center;
@@ -116,7 +117,7 @@
   .cap-system-map-comb {
     display: block;
     width: 100%;
-    max-height: min(calc(100svh - 12rem), 52rem);
+    max-height: calc(100svh - 8rem);
     overflow: visible;
   }
 
