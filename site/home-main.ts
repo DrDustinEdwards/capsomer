@@ -150,12 +150,11 @@ for (const box of document.querySelectorAll<HTMLElement>(".comp-ex-code")) {
     copyButton.hidden = false;
     copyButton.addEventListener("click", () => copyText(copyButton, code));
   }
-  if (!show || code.split("\n").length <= 4) continue;
-  // Closed, the code cannot scroll and View code is the way in, so the box leaves the tab order until it opens.
+  if (!show) continue;
+  // Closed, the code cannot scroll and View code is the way in, so the box leaves the tab order until it opens. The
+  // server wrote it closed (home.ts), so nothing here changes its size.
   const pre = box.querySelector("pre");
-  box.toggleAttribute("data-closed", true);
   pre?.setAttribute("tabindex", "-1");
-  show.hidden = false;
   show.addEventListener("click", () => {
     const closed = box.toggleAttribute("data-closed");
     pre?.setAttribute("tabindex", closed ? "-1" : "0");
@@ -167,8 +166,10 @@ for (const box of document.querySelectorAll<HTMLElement>(".comp-ex-code")) {
 // Copy page: the component's doc as Markdown, for a note or an assistant.
 const copyPage = document.querySelector<HTMLButtonElement>("[data-cap-part='copy-page']");
 const md = document.querySelector<HTMLTemplateElement>("template[data-cap-part='md']");
+// The server writes the button (home.ts), so the title row does not rewrap as the page loads (D5); a browser
+// without the clipboard loses it.
+if (copyPage && !navigator.clipboard) copyPage.hidden = true;
 if (copyPage && md && navigator.clipboard) {
-  copyPage.hidden = false;
   copyPage.addEventListener("click", () => copyText(copyPage, md.content.textContent ?? ""));
 }
 

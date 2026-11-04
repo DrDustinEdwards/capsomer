@@ -795,7 +795,15 @@ h2:not(.cap-family-footer-heading) {
     border-radius: var(--radius-l);
   }
 }
-/* Closed, the code shows its first lines under a fade, with View code over it (shadcn's preview). */
+/* Closed, the code shows its first lines under a fade, with View code over it (shadcn's preview). The server writes
+   it closed; without scripts nothing can open it, so the code stays open and the page's buttons are hidden. */
+@media (scripting: none) {
+  .comp-ex-code [data-cap-part="show-code"],
+  [data-cap-part="copy-page"] {
+    display: none;
+  }
+}
+@media (scripting: enabled) {
 .comp-ex-code[data-closed] {
   & pre {
     max-block-size: 6.5rem;
@@ -811,6 +819,7 @@ h2:not(.cap-family-footer-heading) {
   & .comp-ex-tools {
     display: none;
   }
+}
 }
 .comp-ex-code [data-cap-part="show-code"] {
   position: absolute;

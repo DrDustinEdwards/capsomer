@@ -7,6 +7,7 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [0.68.0]
 
 - **The hexagons' lit lines say which way each tie runs.** Their dashes move from the system that uses toward the system used, a tie both ways stays solid, and the detail line adds "Uses … Used by …" in words. Reduced motion stills the dashes. The network's detail line keeps four lines of room, so lighting no longer shifts the drawing. **Changed HTML contract:** a lit `path.cap-system-map-wire` in the comb carries `data-both` where the tie runs both ways, and the network's detail line ends with `span.cap-system-map-detail-ways` while a system is lit.
+- **Site only: a component page no longer moves as it loads** (D5; live 0.24 on chart-frame/, 0.15 on stat-tile/ at 320 px). Long example code is written closed under View code, and Copy page is written into the title row, by the page itself instead of its script, so the code box and the title row are their final size from the first paint. Without scripts the code stays open and both buttons are hidden. The package is unchanged.
 - **Site only: an old root address such as `/#/components/button` no longer forwards to `/admin/`**, and `npm run site:release` is gone (it was `npm run site`; the deploy runs that). The package is unchanged.
 
 ## [0.67.2]
