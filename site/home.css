@@ -226,6 +226,11 @@ h2:not(.cap-family-footer-heading) {
     background: var(--primary);
     color: var(--primary-fg);
   }
+  /* The tests tile waits for the last run (site/home-main.ts) in its own cell, unseen, so the three tiles before it
+     keep their width when it lights: hiding it with display none let them span the row and then shrink (CLS 0.019). */
+  & li[data-pending] {
+    visibility: hidden;
+  }
   & b {
     font: 800 clamp(3rem, 6vw, 4.5rem) / 0.9 var(--ui);
     letter-spacing: -0.04em;
