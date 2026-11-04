@@ -411,7 +411,6 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   // Apollo DSKY's green electroluminescent readouts, and the KSC press-site countdown clock's warm
   // incandescent bulbs (NASA photo 05pd1528). Held to 7:1 on the sign.
   const litReads = (c) => contrast(c, t.sign) >= 7.05 && Math.abs(apca(c, t.sign)) >= L.read + MARGIN;
-  t.lit = strengthen(oklch(0.84, 0.15, 152), litReads, 1);
   t["lit-bulb"] = strengthen(oklch(0.93, 0.07, 82), litReads, 1);
   s.forEach((hex, i) => (t[`accent-${i + 1}`] = hex));
   Object.assign(t, elevation(t, scheme));
@@ -424,7 +423,7 @@ export const FAMILY_ORDER = [
   "accent", "accent-hover", "accent-text", "accent-visited", "accent-soft", "accent-line", "sel",
   "primary", "primary-hover", "primary-fg", "primary-line", "on", "on-hover", "ring",
   "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft", "nodata", "nodata-soft",
-  "sign", "on-sign", "sign-edge", "sign-here", "on-sign-here", "lit", "lit-bulb",
+  "sign", "on-sign", "sign-edge", "sign-here", "on-sign-here", "lit-bulb",
   ...Array.from({ length: 12 }, (_, i) => `accent-${i + 1}`),
 ];
 
@@ -491,7 +490,6 @@ export function pairs(t, level = "standard") {
   need("on-sign", "sign", 4.5, "sign type", L.read);
   need("on-sign-here", "sign-here", 7, "the page you are on, in a direction strip (AAA)", L.read);
   need("on-sign", "sign-here", 4.5, "a direction strip's type over the you-are-here box", L.read);
-  need("lit", "sign", 7, "a lit readout on a panel", L.read);
   need("lit-bulb", "sign", 7, "a lit countdown on a panel", L.read);
   for (const bg of ["ground", "surface"]) need("sign-edge", bg, 3, "sign edge against the page");
   return out;

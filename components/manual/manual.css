@@ -179,10 +179,20 @@
     }
   }
 
-  /* A reading: the figure large and bold under its label. */
+  /* A reading: the figure large and bold under its label. The figures of a row share one line at
+     the boxes' foot, so a label that wraps to two lines never pushes its figure below the rest. */
+  .cap-form-boxes:is([data-variant="readings"], [data-variant="tones"], [data-variant="panel"]) .cap-form-boxes-box {
+    display: flex;
+    flex-direction: column;
+
+    > dd {
+      margin-block-start: auto;
+      padding-block-start: var(--space-3);
+    }
+  }
+
   .cap-form-boxes[data-variant="readings"] .cap-form-boxes-box > dd,
   .cap-form-boxes[data-variant="tones"] .cap-form-boxes-box > dd {
-    margin-block-start: var(--space-3);
     font-size: clamp(1.5rem, 3vw, 2.25rem);
     font-weight: 700;
     font-variant-numeric: var(--figures);
@@ -218,7 +228,8 @@
 
   /* Readings as an instrument panel (the Apollo DSKY, study section 7b; Dustin, 2026-11-04): the dark
      sign in both themes, legends in drafting capitals as the DSKY's engraved Gorton markings, and each
-     value lit in seven segments (--readout) in the DSKY's electroluminescent green, with a soft glow.
+     value lit in seven segments (--readout) in the family's light color, the current-page sign's
+     (--on-sign-here), with a soft glow: the site's own hue, not the DSKY's green (Dustin, 2026-11-04).
      DSEG7 draws digits, minus, colon and period only: a value with letters keeps the UI face. */
   .cap-form-boxes[data-variant="panel"] {
     border-color: var(--sign-edge);
@@ -234,10 +245,9 @@
       }
 
       > dd {
-        margin-block-start: var(--space-3);
-        color: var(--lit);
+        color: var(--on-sign-here);
         font: 400 clamp(1.5rem, 3vw, 2.25rem) / 1 var(--readout);
-        text-shadow: 0 0 0.35em color-mix(in srgb, var(--lit) 55%, transparent);
+        text-shadow: 0 0 0.35em color-mix(in srgb, var(--on-sign-here) 55%, transparent);
       }
     }
   }
