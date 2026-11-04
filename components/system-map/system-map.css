@@ -71,6 +71,11 @@
     &[hidden] {
       display: none;
     }
+    /* On the network the line also says what the system uses and what uses it: room for four
+       lines, the most any system needs at the measure, so lighting one moves nothing below. */
+    .cap-system-map[data-level="network"] > & {
+      min-height: calc(4 * 1.4em);
+    }
     & .cap-system-map-card-full,
     & .cap-system-map-part-full {
       color: var(--text);
@@ -176,6 +181,15 @@
     & .cap-system-map-wire[data-on] {
       stroke: var(--accent);
       stroke-width: 2.6;
+      /* Dashes move from the system that uses to the one used (Datadog's service map does the same
+         on hover); a tie both ways stays solid. Still under reduced motion: the detail line says
+         which way each tie runs. */
+      stroke-dasharray: 9 5;
+      animation: cap-system-map-flow 0.9s linear infinite;
+    }
+    & .cap-system-map-wire[data-on][data-both] {
+      stroke-dasharray: none;
+      animation: none;
     }
     & .cap-system-map-cell:not([data-tie]) {
       & polygon {
@@ -193,6 +207,18 @@
     & .cap-system-map-cell[data-tie="self"] polygon {
       fill: var(--accent-soft);
       stroke-width: 4.5;
+    }
+  }
+
+  @keyframes cap-system-map-flow {
+    to {
+      stroke-dashoffset: -14;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cap-system-map-comb[data-lit] .cap-system-map-wire[data-on] {
+      animation: none;
     }
   }
 

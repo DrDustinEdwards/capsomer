@@ -47,11 +47,21 @@ function network(root: HTMLElement, signal: AbortSignal) {
     detail.hidden = false;
     detail.textContent = rest;
   }
+  const shortName = (id: string) => byId.get(id)?.querySelector(".cap-system-map-card-name")?.textContent ?? id;
   const tell = (c: HTMLElement | undefined) => {
     if (!detail) return;
     const about = c?.querySelector(".cap-system-map-card-about");
-    if (about) detail.replaceChildren(...[...about.childNodes].map((n) => n.cloneNode(true)));
-    else detail.textContent = rest;
+    if (!c || !about) {
+      detail.textContent = rest;
+      return;
+    }
+    // Which way each tie runs, in words: the lines' moving dashes show it too.
+    const list = (v: string | undefined) => ids(v).map(shortName).join(", ");
+    const ways = [c.dataset.uses ? `Uses ${list(c.dataset.uses)}.` : "", c.dataset.usedBy ? `Used by ${list(c.dataset.usedBy)}.` : ""].filter(Boolean).join(" ");
+    const span = document.createElement("span");
+    span.className = "cap-system-map-detail-ways";
+    span.textContent = ways;
+    detail.replaceChildren(...[...about.childNodes].map((n) => n.cloneNode(true)), ...(ways ? [". ", span] : []));
   };
   const byId = new Map(cards.map((c) => [c.dataset.id!, c]));
   // The hexagons: each system's cell, and the comb's lines, lit with the cards.
@@ -65,9 +75,12 @@ function network(root: HTMLElement, signal: AbortSignal) {
       if (t) c.setAttribute("data-tie", t);
       else c.removeAttribute("data-tie");
     }
+    // A lit line runs from the system that uses to the one it uses (its data-a to its data-b), so
+    // its dashes move that way; a tie both ways stays still. The detail line says it in words.
     for (const l of combLines) {
       const on = !!id && (l.dataset.a === id || l.dataset.b === id);
       l.toggleAttribute("data-on", on);
+      l.toggleAttribute("data-both", on && ties.get(l.dataset.a === id ? l.dataset.b! : l.dataset.a!) === "both");
       if (on) l.parentNode?.append(l);
     }
   };
