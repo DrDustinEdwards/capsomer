@@ -552,8 +552,9 @@ h2:not(.cap-family-footer-heading) {
     border-top: 4px solid var(--text);
     min-width: 0;
   }
+  /* A component's name is its card's heading: Inter Medium, as the network's headings are. */
   & a {
-    font-weight: 800;
+    font-weight: var(--weight-heading);
     font-size: 1.125rem;
   }
   & span {
