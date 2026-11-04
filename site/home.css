@@ -47,7 +47,7 @@ body {
 }
 /* The family footer and the site header keep their own links (capsomer/family-footer.css,
    capsomer/site-header.css). */
-a:not(.cap-btn, .cap-sign, .cap-family-footer a, .cap-site-header a) {
+a:not(.cap-btn, .cap-sign, .cap-family-footer a, .cap-site-header a, .home-net-bar a) {
   color: var(--accent-text);
 }
 code {
@@ -1004,4 +1004,97 @@ h2.cap-part-title {
   background: none;
   color: inherit;
   font-weight: 700;
+}
+
+/* The network board (site/network-board.ts): one checkerboard after Bridget Riley's Movement in Squares (1961), each
+   network site a stretch in its family's primary, a site in trouble lit amber or red with its columns squeezed, and a
+   bar under each stretch with the site's name. Two rows of three on a narrow page. */
+.home-net {
+  margin-block: var(--space-7) 0;
+}
+.home-net-board {
+  display: block;
+  inline-size: 100%;
+  block-size: clamp(144px, 18vw, 240px);
+
+  & g {
+    fill: var(--primary);
+  }
+  & g[data-state="caution"] {
+    fill: var(--warn);
+  }
+  & g[data-state="warning"] {
+    fill: var(--crit);
+  }
+}
+.home-net-bar {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-2);
+    min-block-size: 56px;
+    padding: var(--space-2) var(--space-3) var(--space-3);
+    background: var(--primary);
+    color: var(--primary-fg);
+  }
+  & li[data-state="caution"] {
+    background: var(--warn);
+    color: var(--surface);
+  }
+  & li[data-state="warning"] {
+    background: var(--crit);
+    color: var(--surface);
+  }
+  & a {
+    color: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  /* The pointer outlines the site's part of the bar, as the footer's site tiles do; no underline in the network. */
+  & li:has(a:hover) {
+    box-shadow: inset 0 0 0 3px currentColor;
+  }
+}
+.home-net-state {
+  padding: 1px 5px;
+  background: var(--surface);
+  color: var(--text);
+  font: 700 0.6875rem / 1.4 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.home-net-narrow {
+  display: none;
+  gap: var(--space-3);
+}
+@media (max-width: 640px) {
+  .home-net-wide {
+    display: none;
+  }
+  .home-net-narrow {
+    display: grid;
+  }
+  .home-net-bar li {
+    padding-inline: var(--space-2);
+    font-size: 0.875rem;
+  }
+}
+/* Forced colors drop the fills: the board goes, and the bar keeps its names and states in system colors. */
+@media (forced-colors: active) {
+  .home-net-board {
+    display: none;
+  }
+  .home-net-bar li {
+    border: 1px solid CanvasText;
+  }
 }

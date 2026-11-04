@@ -12,6 +12,7 @@ Decoration for the manual theme (Dustin, 2026-11-04): the footer band becomes a 
 - **New: `.cap-hold`**, the runway holding position marking (FAA AIM 2-3-5) as a divider in the page's ink, for the end of a post before other sites' responses. Use it on an `hr`.
 - **New: `ul.cap-annunciator`**, a caution and warning panel: `li[data-state="normal" | "caution" | "warning" | "off"]` holding a name and `span.cap-annunciator-state`, on the dark sign panel in both themes, lit amber (`--warn`) or red (`--crit`). Legends use `--drafting` where the site loads it, else `--mono`.
 - **Changed look: family footer site tiles** no longer take the hover tint; the mark's outline alone answers the pointer.
+- Site: the front page has a network board under its figures, after Bridget Riley's Movement in Squares (1961): one checkerboard with a stretch per network site in its family color and a name bar under each. A site whose /health says warn or fail lights amber or red and its columns squeeze. The site's Worker answers `/network.json` from each site's /health, held a minute at the edge.
 
 ## [0.73.0]
 
