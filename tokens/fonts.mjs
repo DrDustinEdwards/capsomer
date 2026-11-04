@@ -39,7 +39,7 @@ function face({ family, file, weight }) {
   font-family: "${family}";
   font-style: normal;
   font-weight: ${weight};
-  font-display: swap;
+  font-display: optional;
   src: url("../fonts/${file}") format("woff2");
   unicode-range: ${UNICODE_RANGE};
 }`;
@@ -52,8 +52,12 @@ function render() {
    bold on every site (Dustin, 2026-10-28: "the footer dustin edwards is not exact in all of the sites";
    sites had each picked their own static weights, and some had no 700). OFL 1.1, fonts/OFL-*.txt. A site
    that inlines this file copies ../fonts/ beside it.
+   font-display: optional (web.dev, "Best practices for fonts": the one value with no font swap): the browser
+   waits about 100ms for a face, and a visit it misses stays in the fallback, so text never reflows once drawn.
+   Even a fallback within 1% of the face's width moves a line break now and then, and the page under it
+   (D5, 2026-11-04). Preload the face a page draws first so it arrives in time; the cache serves it after that.
    Each face has a size-matched fallback, listed second in the font stacks: a local face scaled to its
-   width and line metrics, so the swap from the fallback to the face barely moves the text (Astro's Fonts API). */
+   width and line metrics, so a visit drawn in it looks like the face (Astro's Fonts API). */
 ${FACES.flatMap((f) => [face(f), fallbackFontFace({ family: f.family, ...MEASURED[f.family] })]).join("\n")}
 `;
 }

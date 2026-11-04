@@ -6,6 +6,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **Removed: the `capsomer/behaviour/*` export**, the British-spelling alias of `capsomer/behavior/*`. Import `capsomer/behavior/<name>`.
 - **Removed: `Badge` from `capsomer/react/status`**, the alias of `Pill`. Use `Pill`; it takes the same props.
+
+## [0.68.0]
+
+The family's faces load with `font-display: optional` in place of `swap`. No class, token or HTML contract changes.
+
+- **`fonts.css`: Schibsted Grotesk and Martian Mono no longer swap in after the first paint** (D5). With `swap`, a page painted in the size-matched fallback and then redrew in the face; the two are within about 1% in width, but that was still enough to move a line break and the page under it (germomics' influenza heading 0.060, the Portal's export row 66 to 90 px). With `optional`, the browser waits about 100 ms for the face, and a visit it misses stays in the fallback, so text never moves once drawn (web.dev, "Best practices for fonts"; Lighthouse's font-display audit passes it). **What a site does:** preload the face its pages draw first (site-runtime's `preloads()`), so the first visit gets it in time; the cache serves later visits. A site that doesn't preload shows its first visit in the fallback.
+- **`fallback-fonts.css`: Space Grotesk's fallback has bold rules** (on Arial Bold, measured from the variable font instanced at 600 and 700: Space Grotesk keeps nearly one width at every weight). Its single regular rule set a 600 heading in synthetic bold about 1.5% too wide; it now sets it within a letter.
+- The fallback-font docs (README, `tokens/fallback-fonts.mjs`) describe the fallback as the face a late visit is drawn in, not only a bridge to a swap.
 - **Site only: a component page no longer moves as it loads** (D5; live 0.24 on chart-frame/, 0.15 on stat-tile/ at 320 px). Long example code is written closed under View code, and Copy page is written into the title row, by the page itself instead of its script, so the code box and the title row are their final size from the first paint. Without scripts the code stays open and both buttons are hidden. The package is unchanged.
 - **Site only: an old root address such as `/#/components/button` no longer forwards to `/admin/`**, and `npm run site:release` is gone (it was `npm run site`; the deploy runs that). The package is unchanged.
 
