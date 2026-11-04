@@ -137,24 +137,7 @@
     font-family: var(--wayfinding);
     font-weight: 700;
 
-    /* The panel lamp, as the footer's links (family-footer.css): a small lit square left of the
-       link under the pointer or focus, the words in the accent, no tint and nothing moving. */
-    &::before {
-      content: "";
-      position: absolute;
-      inset-inline-start: -13px;
-      inset-block-start: calc(50% - 3.5px);
-      inline-size: 7px;
-      block-size: 7px;
-      border-radius: 1px;
-      background: var(--on);
-      box-shadow: 0 0 6px var(--on);
-      opacity: 0;
-      pointer-events: none;
-    }
-    &:is(:hover, :focus-visible)::before {
-      opacity: 1;
-    }
+    /* The panel lamp hover (css/utilities.css): the words in the accent, no tint. */
     &:is(:hover, :focus-visible) {
       background: none;
       box-shadow: none;
