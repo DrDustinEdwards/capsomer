@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.74.4]
+
+- **System map headings** (`.cap-system-map-column-name`, `-group-name`, `-place-name`, `-card-name`, `-part-name`, `-flow-name`): `--weight-heading` (Inter Medium), where they were 600, so the map's headings read as the type plan's headings on Capsid, dustinedwards.info and the showcase.
+- **Cue card titles** (`.cap-cue-title`): `--weight-heading`, where they were 700.
+
 ## [0.74.3]
 
 - **Panel and dialog titles** (`.cap-panel` header `h2`/`h3`, `.cap-dialog-title`): `--weight-heading` (Inter Medium), where they were 600 and 800, so they read as the headings the type plan sets in Medium. Smaller UI labels (alert, flag and tray titles) keep 600.

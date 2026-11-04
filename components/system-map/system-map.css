@@ -36,7 +36,7 @@
   .cap-system-map-place-name {
     margin: 0 0 var(--space-3);
     color: var(--muted);
-    font: 600 0.75rem/1.3 var(--ui);
+    font: var(--weight-heading) 0.75rem/1.3 var(--ui);
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -367,7 +367,7 @@
 
   .cap-system-map-card-name {
     margin: 0;
-    font: 600 var(--fs-lead)/1.3 var(--ui);
+    font: var(--weight-heading) var(--fs-lead)/1.3 var(--ui);
 
     & a {
       color: inherit;
@@ -598,7 +598,7 @@
 
   .cap-system-map-part-name {
     margin: 0;
-    font: 600 var(--fs-body)/1.3 var(--ui);
+    font: var(--weight-heading) var(--fs-body)/1.3 var(--ui);
   }
 
   .cap-system-map-part-kind {
@@ -658,7 +658,7 @@
 
   .cap-system-map-flow-name {
     margin: 0;
-    font: 600 var(--fs-lead)/1.3 var(--ui);
+    font: var(--weight-heading) var(--fs-lead)/1.3 var(--ui);
   }
 
   .cap-system-map-flow-text {
