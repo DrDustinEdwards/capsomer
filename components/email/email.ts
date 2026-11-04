@@ -16,11 +16,26 @@ export interface Brand {
 /** A line of the footer slot: plain text, or a text with a link (an unsubscribe link is the product's own). */
 export type FooterLine = string | { text: string; url: string };
 
+/** One piece of a line: plain words, or words in bold. Both are escaped; no markup reaches the HTML. */
+export type Run = string | { bold: string };
+
+/** One line of a paragraph: plain words, or a list of runs. */
+export type Line = string | Run[];
+
+/** Paragraph text: one string, or a list of lines (joined with a line break in the HTML, a newline in the text part). */
+export type Text = string | Line[];
+
 export type Block =
   | { type: "heading"; text: string }
-  | { type: "paragraph"; text: string }
+  /** A section heading below the one h1: an h2 in the HTML, a plain line in the text part. */
+  | { type: "subheading"; text: string }
+  | { type: "paragraph"; text: Text }
   | { type: "button"; label: string; url: string }
   | { type: "code"; text: string }
+  /** Preformatted text, such as a stack excerpt: whitespace and line breaks kept, monospace, in a quiet panel. */
+  | { type: "pre"; text: string }
+  /** Label and value pairs, one ruled row each: the label on the left, the value on the right. Plain strings. */
+  | { type: "rows"; rows: { label: string; value: string }[] }
   | { type: "note"; text: string; level?: AlertLevel }
   | { type: "fine"; text: string };
 
@@ -66,6 +81,9 @@ export const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (
 /** One line: line breaks and runs of space become one space, so a value cannot add a header or a line. */
 const oneLine = (value: string): string => value.replace(/\s+/g, " ").trim();
 
+/** Line breaks as written, whichever way a platform ended them. */
+const crlf = (value: string): string => value.replace(/\r\n?/g, "\n");
+
 /**
  * A link is accepted only as https: or mailto:, with no space or control character in it and no
  * user or password before the host, which would let `https://trusted.example@evil.example/` read as the trusted name.
@@ -108,17 +126,41 @@ function darkRules(d: EmailColors): string {
     `.e-link{color:${d["accent-text"]} !important}`,
     `.e-btn{background-color:${d.primary} !important;color:${d["primary-fg"]} !important}`,
     `.e-rule{border-color:${d.line} !important}`,
+    `.e-pre{background-color:${d.ground} !important;border-color:${d.line} !important}`,
     ...(["crit", "warn", "info"] as const).map((l) => `.e-${l}{background-color:${d[`${l}-soft`]} !important;color:${d[l]} !important}`),
   ].join("\n");
 }
+
+const runText = (r: Run): string => (typeof r === "string" ? r : r.bold);
+const lineText = (l: Line): string => (typeof l === "string" ? l : l.map(runText).join(""));
+const runHtml = (r: Run): string => (typeof r === "string" ? escapeHtml(r) : `<strong>${escapeHtml(r.bold)}</strong>`);
+const lineHtml = (l: Line): string => (typeof l === "string" ? escapeHtml(l) : l.map(runHtml).join(""));
+
+/** A paragraph's words for the text part: bold is only its words, lines end with a newline. */
+const textOf = (t: Text): string => (typeof t === "string" ? t : t.map(lineText).join("\n"));
+const htmlOf = (t: Text): string => (typeof t === "string" ? escapeHtml(t) : t.map(lineHtml).join("<br>"));
 
 function blockHtml(b: Block, c: EmailColors): string {
   const text = `font-family:${FONT};font-size:16px;line-height:24px;color:${c.text};`;
   switch (b.type) {
     case "heading":
       return `<tr><td class="e-text" style="${text}font-size:22px;line-height:30px;font-weight:700;padding:0 0 16px 0;"><h1 style="margin:0;font-size:22px;line-height:30px;font-weight:700;">${escapeHtml(b.text)}</h1></td></tr>`;
+    case "subheading":
+      return `<tr><td class="e-text" style="${text}padding:8px 0 12px 0;"><h2 style="margin:0;font-size:18px;line-height:26px;font-weight:700;">${escapeHtml(b.text)}</h2></td></tr>`;
     case "paragraph":
-      return `<tr><td class="e-text" style="${text}padding:0 0 16px 0;">${escapeHtml(b.text)}</td></tr>`;
+      return `<tr><td class="e-text" style="${text}padding:0 0 16px 0;">${htmlOf(b.text)}</td></tr>`;
+    case "pre":
+      return `<tr><td style="padding:0 0 16px 0;"><div class="e-pre" style="background-color:${c.ground};border:1px solid ${c.line};border-radius:6px;padding:12px 16px;"><pre class="e-text" style="margin:0;font-family:${MONO};font-size:16px;line-height:24px;color:${c.text};white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;">${escapeHtml(crlf(b.text))}</pre></div></td></tr>`;
+    case "rows": {
+      const cell = `font-family:${FONT};font-size:16px;line-height:24px;padding:10px 0;border-bottom:1px solid ${c.line};vertical-align:top;word-break:break-word;`;
+      const rows = b.rows
+        .map(
+          (r) =>
+            `<tr><td class="e-rule e-muted" style="${cell}color:${c.muted};padding-right:12px;">${escapeHtml(oneLine(r.label))}</td><td class="e-rule e-text" align="right" style="${cell}color:${c.text};text-align:right;">${escapeHtml(oneLine(r.value))}</td></tr>`
+        )
+        .join("");
+      return `<tr><td style="padding:0 0 16px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${rows}</table></td></tr>`;
+    }
     case "button": {
       const url = escapeHtml(checkUrl(b.url));
       return `<tr><td style="padding:8px 0 24px 0;"><a class="e-btn" href="${url}" style="display:inline-block;background-color:${c.primary};color:${c["primary-fg"]};font-family:${FONT};font-size:16px;line-height:20px;font-weight:600;text-decoration:none;padding:14px 24px;border-radius:6px;">${escapeHtml(b.label)}</a></td></tr>`;
@@ -148,6 +190,15 @@ function footerHtml(lines: FooterLine[], c: EmailColors): string {
 
 function blockText(b: Block): string {
   switch (b.type) {
+    case "paragraph":
+      return textOf(b.text);
+    case "pre":
+      return crlf(b.text)
+        .split("\n")
+        .map((l) => `    ${l}`)
+        .join("\n");
+    case "rows":
+      return b.rows.map((r) => `${oneLine(r.label)}: ${oneLine(r.value)}`).join("\n");
     case "heading":
       return b.text;
     case "button":
@@ -171,6 +222,12 @@ export function renderEmail<D>(template: Template<D>, data: D & Common): Rendere
   const footer: FooterLine[] = [`This message was sent to ${oneLine(to)}.`, ...(data.footer ?? [])];
 
   const body = blocks.map((b) => blockHtml(b, c)).join("\n");
+  // The document has one h1. A template with no heading block (a resent body, say) gets it from the brand line, which
+  // looks exactly as it did; the text part is unchanged.
+  const brandName = escapeHtml(oneLine(brand.name));
+  const brandLine = blocks.some((b) => b.type === "heading")
+    ? brandName
+    : `<h1 style="margin:0;padding:0;font-family:inherit;font-size:inherit;line-height:inherit;font-weight:inherit;color:inherit;">${brandName}</h1>`;
   const html = `<!doctype html>
 <html lang="${escapeHtml(data.lang ?? "en")}">
 <head>
@@ -190,7 +247,7 @@ ${darkRules(colors.dark)}
 <table role="presentation" class="e-ground" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${c.ground};">
 <tr><td align="center" style="padding:24px 12px;">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
-<tr><td class="e-text" style="font-family:${FONT};font-size:18px;line-height:24px;font-weight:700;color:${c.text};padding:0 4px 16px 4px;">${escapeHtml(oneLine(brand.name))}</td></tr>
+<tr><td class="e-text" style="font-family:${FONT};font-size:18px;line-height:24px;font-weight:700;color:${c.text};padding:0 4px 16px 4px;">${brandLine}</td></tr>
 <tr><td>
 <table role="presentation" class="e-card" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${c.surface};border:1px solid ${c.line};border-radius:8px;">
 <tr><td style="padding:28px 24px 12px 24px;">
@@ -333,7 +390,7 @@ export const emailChange: Template<{ step: "current" | "new"; newEmail?: string;
 };
 
 /** Something needs attention: a health check, a watchdog, a budget. The level is a word, never color alone. */
-export const alert: Template<{ level: AlertLevel; what: string; when: string; details?: string[]; url?: string }> = {
+export const alert: Template<{ level: AlertLevel; what: string; when: string; details?: Text[]; pre?: string; url?: string }> = {
   name: "alert",
   subject: (d) => d.copy?.subject ?? `${LEVEL_WORD[d.level]}: ${d.what}`,
   blocks: (d) => {
@@ -342,6 +399,7 @@ export const alert: Template<{ level: AlertLevel; what: string; when: string; de
       { type: "heading", text: k.heading ?? d.what },
       { type: "note", level: d.level, text: k.intro ?? `${d.what} at ${d.when}.` },
       ...(d.details ?? []).map((text): Block => ({ type: "paragraph", text })),
+      ...(d.pre ? [{ type: "pre", text: d.pre } as const] : []),
     ];
     if (d.url) out.push({ type: "button", label: k.button ?? "Open", url: d.url });
     return out;
@@ -381,7 +439,7 @@ export const securityNotice: Template<{
 };
 
 /** A plain message: a decision, a digest line, a change of terms. */
-export const notice: Template<{ title: string; body: string[]; action?: { label: string; url: string } }> = {
+export const notice: Template<{ title: string; body: Text[]; action?: { label: string; url: string } }> = {
   name: "notice",
   subject: (d) => d.copy?.subject ?? d.title,
   blocks: (d) => {

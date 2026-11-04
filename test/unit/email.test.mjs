@@ -85,6 +85,49 @@ test("every value is escaped in the HTML", () => {
   }
 });
 
+test("a paragraph takes bold runs and lines: escaped, clean in the text part, and a plain string is unchanged", () => {
+  const evil = `<b>x</b> & "q"`;
+  const r = renderEmail(notice, { ...common, title: "Paid", body: [[["Paid ", { bold: evil }, " today."], "Thanks,", "Example Co"], "Plain & simple."] });
+  assert.ok(r.html.includes(`Paid <strong>&lt;b&gt;x&lt;/b&gt; &amp; &quot;q&quot;</strong> today.<br>Thanks,<br>Example Co`));
+  assert.ok(r.html.includes(`padding:0 0 16px 0;">Plain &amp; simple.</td>`), "a string paragraph keeps its markup");
+  assert.ok(r.text.includes(`Paid ${evil} today.\nThanks,\nExample Co\n\nPlain & simple.`), "no asterisks, no markup");
+  assert.ok(!r.html.includes("<b>x"));
+});
+
+test("a mail with no heading block takes its one h1 from the brand line, and the text part is the same", () => {
+  const bare = { name: "bare", subject: () => "s", blocks: () => [{ type: "paragraph", text: "Hello." }] };
+  const withH = { name: "with", subject: () => "s", blocks: () => [{ type: "heading", text: "Hi" }, { type: "paragraph", text: "Hello." }] };
+  const a = renderEmail(bare, common);
+  assert.equal((a.html.match(/<h1\b/g) ?? []).length, 1);
+  assert.match(a.html, /<h1 [^>]*>Example Co<\/h1>/);
+  const b = renderEmail(withH, common);
+  assert.equal((b.html.match(/<h1\b/g) ?? []).length, 1);
+  assert.match(b.html, />Hi<\/h1>/);
+  assert.ok(!/<h1 [^>]*>Example Co/.test(b.html));
+  assert.ok(a.text.startsWith("Example Co\n\nHello."));
+});
+
+test("a section heading, label and value rows and a preformatted block: one h1, escaped, plain in the text part", () => {
+  const t = {
+    name: "digest",
+    subject: () => "s",
+    blocks: () => [
+      { type: "heading", text: "Summary" },
+      { type: "subheading", text: "Disputes <1>" },
+      { type: "rows", rows: [{ label: "Failed <b>", value: "12\n& more" }, { label: "At risk", value: "$1,188.00" }] },
+      { type: "pre", text: "Error: <x>\n    at run (a.js:1)\r\n    at main" },
+    ],
+  };
+  const r = renderEmail(t, common);
+  assert.equal((r.html.match(/<h1\b/g) ?? []).length, 1);
+  assert.match(r.html, /<h2 [^>]*>Disputes &lt;1&gt;<\/h2>/);
+  assert.ok(r.html.includes("Failed &lt;b&gt;") && r.html.includes("12 &amp; more") && !r.html.includes("<b>"));
+  assert.ok(r.html.includes("Error: &lt;x&gt;\n    at run (a.js:1)\n    at main"), "the pre keeps its line breaks and indent");
+  assert.ok(r.text.includes("Disputes <1>\n\nFailed <b>: 12 & more\nAt risk: $1,188.00\n\n    Error: <x>\n        at run (a.js:1)\n        at main"));
+  const a = renderEmail(alert, { ...common, level: "crit", what: "Cron failed", when: "now", pre: "stack line" });
+  assert.ok(a.html.includes(">stack line</pre>"));
+});
+
 test("a security notice says what, when, the device, the place and what to do, and leaves out what it was not given", () => {
   const data = all.find(([t]) => t === securityNotice)[1];
   const r = renderEmail(securityNotice, { ...common, ...data });

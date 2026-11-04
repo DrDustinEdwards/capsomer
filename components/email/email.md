@@ -4,9 +4,9 @@ title: Email templates
 summary: Magic link, verification, reset, email change, alert, notice and security notice mails from one definition, with the HTML and the text made from the same blocks, in the family's colors.
 parts: [ts]
 tool: own JavaScript
-states: [magic link, verification, reset, email change, alert, notice, security notice]
+states: [magic link, verification, reset, email change, alert, notice, digest, security notice]
 added: 0.5.0
-updated: 0.54.0
+updated: 0.72.0
 source: design/email-templates.md (D7.2); the senders in Foxhound, Foxing, TXASM, Carrel and dustinedwards-info are unverified, this driver could not read them
 replaces: []
 ---
@@ -44,6 +44,20 @@ Any transactional mail a product sends: a sign-in link, an address to confirm, a
 | `alert` | `level` (`crit`, `warn`, `info`), `what`, `when`, `details`, `url` | the level as a word, what and when, the detail lines |
 | `notice` | `title`, `body`, `action` | a title and paragraphs, an optional button |
 | `securityNotice` | `title`, `what`, `when`, `secure`, optional `device`, `location`, `url` | what changed and when, the device and place it came from when known, what to do if it was not them, a button to the account page; no link that signs in. site-runtime's `./sign-in` notice `detail` carries these fields |
+
+## Blocks for a product's own template
+
+A product builds its own mail from blocks, so it needs no HTML of its own.
+
+| Block | Takes | HTML | Text part |
+| --- | --- | --- | --- |
+| `heading` | `text` | the mail's `h1` | the text, a rule under it |
+| `subheading` | `text` | an `h2`, 18px on 26px, bold | the text |
+| `paragraph` | `text`: a string, or lines (each a string or runs) | one `p`; lines join with `<br>`; a run `{ bold }` is `<strong>` | lines on their own rows; bold is plain |
+| `rows` | `rows`: `{ label, value }` | a ruled table; label muted on the left, value right | `label: value` per row |
+| `pre` | `text` | a ruled box holding a `pre`, 16px mono, wrapped (never sideways scroll) | every line indented four spaces |
+
+One `h1` per mail: when a template has no `heading` block, the brand name is the `h1`, so a screen reader always has a top heading. `pre` is 16px, not smaller, to stay inside the 16px minimum above; long lines wrap instead of scrolling at 320px. In the dark scheme `pre` takes the ground color and the line border. `alert` takes an optional `pre` and `details` as paragraph text; `notice` bodies take the same paragraph text.
 
 Every template also takes `brand` (`{ name, family }`), `to`, and optionally `copy`, `footer` and `lang`.
 

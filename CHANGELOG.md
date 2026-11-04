@@ -4,6 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.72.0]
+
+Email gains the blocks a product's own mail needs, and Banner takes block content. No token or class is removed or renamed.
+
+- **Email: new blocks** `subheading`, `rows` and `pre`, and a paragraph can hold lines and bold runs (`string | (string | { bold })[][]`). A string paragraph renders as before. **Changed HTML contract:** when a template has no `heading` block, the brand name in the header is an `h1` (it was a plain div), inheriting its font and color. New markup: `h2` for a subheading, a presentation table for rows, `div.e-pre > pre` for preformatted text; `alert` accepts `pre` and `details` text, and `notice` bodies accept the same text. The dark scheme adds `.e-pre` (ground background, line border).
+- **Banner: `body` prop** (React) for block content, rendered in `div.cap-banner-text` inside `.cap-banner-body`, with block rules for `p`, `ul` and `ol` in that div. **Changed behavior:** the React Dismiss moves focus to the main region when focus was inside the banner (the script already did; `focusMain` is now exported from `capsomer/behavior/banner`). `children` is now optional.
+- Site: the email states page has a digest sample at 320 and 600 px.
+
 ## [0.70.0]
 
 - **The hexagons draw larger.** Each group's name stands in the empty cell before its run on the outer ring, so the comb loses the ring it kept for names, and the comb may be as tall as the screen less 8rem (it was the lesser of the screen less 12rem and 52rem). In a 900 px tall window a cell goes from about 72 px wide to about 95. No class, token or HTML contract changes.
