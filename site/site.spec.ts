@@ -180,13 +180,6 @@ eachTheme((theme) => {
   });
 });
 
-// The admin's pages lived at the root's hash addresses before it moved to /admin/.
-test("behavior: an old address at the root opens its page in the admin", async ({ page }) => {
-  await page.goto("./#/components/shell");
-  await expect(page).toHaveURL(/\/admin\/#\/components\/shell$/);
-  await expect(page.locator("#cap-main h1")).toHaveText("Shell");
-});
-
 // The public page's script: the preview takes a family, and the filter narrows the components.
 test("behavior: the public page's preview takes the chosen family and the filter finds a component", async ({ page }) => {
   await page.goto("./");

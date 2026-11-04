@@ -124,7 +124,7 @@ jobs:
         if [ "$code" = 200 ]; then exit 0; elif [ "$code" = 000 ]; then exit 3; else exit 1; fi
       node-version-file: .node-version
       install: npm ci --ignore-scripts
-      pre-deploy: npm run site:release
+      pre-deploy: npm run site
       sha-var: DEPLOY_SHA
     secrets:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

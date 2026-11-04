@@ -10,6 +10,5 @@
     "tokens/*.mjs",
     "test/**/*.{ts,mjs}"
   ],
-  "project": ["**/*.{ts,tsx,mjs}"],
-  "ignoreBinaries": ["playwright"]
+  "project": ["**/*.{ts,tsx,mjs}"]
 }
