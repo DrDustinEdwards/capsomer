@@ -12,7 +12,7 @@
 .cap-specimens h1 {
   margin: 0;
   font-size: var(--fs-h2);
-  font-weight: 800;
+  font-weight: var(--weight-heading);
   letter-spacing: -0.025em;
 }
 .cap-specimens > main > p {
@@ -60,7 +60,7 @@
   & h1 {
     margin: 0 0 var(--space-2);
     font-size: var(--fs-h2);
-    font-weight: 800;
+    font-weight: var(--weight-heading);
     letter-spacing: -0.025em;
   }
   & p {
