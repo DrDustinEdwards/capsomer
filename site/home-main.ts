@@ -101,7 +101,7 @@ if (live) {
       const [n, , note] = live.children;
       if (n) n.textContent = (passed + failed).toLocaleString("en-US");
       if (note) note.textContent = failed ? `${failed} failing on the last run` : "all passed on the last run";
-      live.hidden = false;
+      delete live.dataset.pending;
     })
     .catch(() => {});
 }

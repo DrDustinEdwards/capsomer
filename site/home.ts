@@ -223,7 +223,7 @@ import "capsomer/button.css";       // each component's CSS, as used`;
   if (d.pairs) figures.push(["teal", "Contrast pairs", String(d.pairs.total), d.pairs.failing ? `${d.pairs.failing} failing` : "every one passes WCAG 2.2"]);
   // The test count: the build's own when it has one; otherwise the last run on main, read by
   // site/home-main.ts from the results branch, so the deployed page never claims a number it lacks.
-  const tests = d.tests ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>` : `<li data-family="forest" data-live="tests" hidden><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
+  const tests = d.tests ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>` : `<li data-family="forest" data-live="tests" data-pending><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
   return `${header("")}
 <main id="main" tabindex="-1">
 ${runningHead("1", "Overview", `Release ${d.version}`)}
