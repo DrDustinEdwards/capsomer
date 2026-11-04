@@ -32,6 +32,10 @@ eachTheme((theme) => {
       { sel: "#m-direction [aria-current]", what: "the lit page on the direction strip" },
       { sel: "#m-cue .cap-cue-strip", what: "the cue card's strip" },
       { sel: "#m-cue .cap-cue-value", what: "a cue line's value" },
+      { sel: "#m-annunciator li:nth-child(1)", what: "an unlit annunciator tile" },
+      { sel: "#m-annunciator li:nth-child(2)", what: "a caution tile" },
+      { sel: "#m-annunciator li:nth-child(3)", what: "a warning tile" },
+      { sel: "#m-annunciator li:nth-child(5)", what: "an off tile" },
     ]);
   });
 });

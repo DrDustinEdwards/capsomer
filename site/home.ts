@@ -11,6 +11,7 @@ import { familyFooterHtml } from "../components/family-footer/family-footer.ts";
 import { letterheadHtml } from "../components/site-header/site-header.ts";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 import { codeRegion, renderMarkdown } from "./markdown.ts";
+import { networkBoard } from "./network-board.ts";
 
 // Magenta is the public site's own family, on its root; the six are the ones it shows.
 type Family = "purple" | "fox" | "teal" | "amber" | "navy" | "forest" | "magenta";
@@ -237,6 +238,7 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
     ${figures.map(([f, label, n, note]) => `<li${fam(f)}><b>${esc(n)}</b><span class="home-figure-label">${esc(label)}</span><span>${esc(note)}</span></li>`).join("\n    ")}
     ${tests}
   </ul>
+  <div class="cap-page home-net" data-cap-part="network">${networkBoard()}</div>
 </section>
 
 <section id="color" aria-labelledby="color-h">
