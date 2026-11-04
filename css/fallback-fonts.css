@@ -185,18 +185,18 @@
   font-family: "Space Grotesk Fallback";
   src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
   font-weight: 550 649;
-  size-adjust: 101.6708%;
-  ascent-override: 96.7829%;
-  descent-override: 28.7201%;
+  size-adjust: 102.0875%;
+  ascent-override: 96.3879%;
+  descent-override: 28.6029%;
   line-gap-override: 0%;
 }
 @font-face {
   font-family: "Space Grotesk Fallback";
   src: local("Arial Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
   font-weight: 650 1000;
-  size-adjust: 101.6708%;
-  ascent-override: 96.7829%;
-  descent-override: 28.7201%;
+  size-adjust: 102.0875%;
+  ascent-override: 96.3879%;
+  descent-override: 28.6029%;
   line-gap-override: 0%;
 }
 @font-face {
