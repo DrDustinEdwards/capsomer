@@ -170,15 +170,16 @@ h3 {
   text-wrap: balance;
 }
 h1 {
-  font: 800 clamp(2.4rem, 5vw, 3.75rem) / 1 var(--ui);
-  letter-spacing: -0.035em;
+  font: var(--weight-title) clamp(2.4rem, 5vw, 3.75rem) / 1 var(--ui);
+  /* Light needs less tightening than the 800 it replaced. */
+  letter-spacing: -0.02em;
 }
 h2:not(.cap-family-footer-heading) {
-  font: 800 clamp(1.75rem, 3.4vw, 2.6rem) / 1.05 var(--ui);
+  font: var(--weight-heading) clamp(1.75rem, 3.4vw, 2.6rem) / 1.05 var(--ui);
   letter-spacing: -0.03em;
 }
 h3 {
-  font: 800 1.2rem / 1.2 var(--ui);
+  font: var(--weight-heading) 1.2rem / 1.2 var(--ui);
 }
 h2:not(.cap-family-footer-heading) {
   margin-block-end: var(--space-5);

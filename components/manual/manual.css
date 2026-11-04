@@ -775,6 +775,9 @@
       padding-inline: 0.25em;
       border-radius: var(--radius-s);
       color: var(--on-sign);
+      /* The sign's Overpass Bold: base.css gives a text link --link-weight (600), which would set the
+         ways a step lighter than the page you are on. */
+      font-weight: inherit;
       text-decoration: none;
       overflow-wrap: anywhere;
 
