@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.71.0]
+## [0.73.0]
 
 The network's type (Dustin approved the seven-face set, 2026-11-04): Inter replaces Schibsted Grotesk, and four faces join for jobs the UI face should not do. Sites pin the tag; the faces download only where a page uses them.
 
@@ -20,6 +20,13 @@ The network's type (Dustin approved the seven-face set, 2026-11-04): Inter repla
 - **New: `.cap-form-boxes[data-variant="panel"]`**, readings as an Apollo DSKY panel: the dark sign in both themes, legends in Capsomer Drafting capitals and values lit in DSEG7 in the family's light color (`--on-sign-here`) with a soft glow, so each site's panel is its own hue. For numbers only, since DSEG7 has no letters.
 - `css/fallback-fonts.css` keeps `"Inter Fallback"` for sites that host their own Inter (txasm), and adds nothing for the new faces, whose fallbacks are in `fonts.css`.
 - Site: the home page shows all seven faces, the theme builder offers Inter in place of Schibsted Grotesk (the `@fontsource/inter` static files are gone; it uses Capsomer's own Inter), and the home page preloads Inter.
+## [0.72.0]
+
+Email gains the blocks a product's own mail needs, and Banner takes block content. No token or class is removed or renamed.
+
+- **Email: new blocks** `subheading`, `rows` and `pre`, and a paragraph can hold lines and bold runs (`string | (string | { bold })[][]`). A string paragraph renders as before. **Changed HTML contract:** when a template has no `heading` block, the brand name in the header is an `h1` (it was a plain div), inheriting its font and color. New markup: `h2` for a subheading, a presentation table for rows, `div.e-pre > pre` for preformatted text; `alert` accepts `pre` and `details` text, and `notice` bodies accept the same text. The dark scheme adds `.e-pre` (ground background, line border).
+- **Banner: `body` prop** (React) for block content, rendered in `div.cap-banner-text` inside `.cap-banner-body`, with block rules for `p`, `ul` and `ol` in that div. **Changed behavior:** the React Dismiss moves focus to the main region when focus was inside the banner (the script already did; `focusMain` is now exported from `capsomer/behavior/banner`). `children` is now optional.
+- Site: the email states page has a digest sample at 320 and 600 px.
 
 ## [0.70.0]
 

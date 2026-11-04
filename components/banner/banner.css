@@ -91,6 +91,19 @@
     }
   }
 
+  /* Block content (the React Banner's body): its paragraphs and lists sit flush, a gap apart. */
+  .cap-banner-text > :is(p, ul, ol) {
+    margin: 0;
+  }
+
+  .cap-banner-text > :is(ul, ol) {
+    padding-inline-start: 1.25em;
+  }
+
+  .cap-banner-text > * + * {
+    margin-block-start: var(--space-1);
+  }
+
   /* Inside a body the description does not claim width of its own. */
   :is(.cap-banner-body, .cap-alert-body) > :is(.cap-banner-text, .cap-alert-text) {
     flex: none;

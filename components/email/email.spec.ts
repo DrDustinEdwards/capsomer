@@ -4,9 +4,19 @@ import { eachTheme, expectNoAxeViolations, visitStates } from "../../test/helper
 eachTheme((theme) => {
   test("accessibility: no axe violations, frames included", async ({ page }) => {
     await visitStates(page, "email", theme);
-    await expect(page.locator("iframe[data-email]")).toHaveCount(26);
+    await expect(page.locator("iframe[data-email]")).toHaveCount(28);
     await expect.poll(() => page.locator("iframe[data-email]").evaluateAll((fs) => fs.every((f) => (f as HTMLIFrameElement).contentDocument?.querySelector("h1")))).toBe(true);
     await expectNoAxeViolations(page);
+  });
+
+  test("behavior: a digest with rows, a section heading and a preformatted block does not scroll sideways at 320px", async ({ page }) => {
+    await visitStates(page, "email", theme);
+    const frame = page.locator('iframe[data-email="digest"][data-width="320"]');
+    const doc = await (await frame.elementHandle())?.contentFrame();
+    expect(await doc?.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+    const inner = page.frameLocator('iframe[data-email="digest"][data-width="320"]');
+    await expect(inner.locator("h1")).toHaveCount(1);
+    await expect(inner.locator("h2")).toHaveCount(2);
   });
 
   test("behavior: a mail has a language, a title, one heading and a link button, and no horizontal scroll at 320px", async ({ page }) => {

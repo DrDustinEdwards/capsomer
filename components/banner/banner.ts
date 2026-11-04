@@ -5,11 +5,15 @@
 export function dismissBanner(banner: HTMLElement): void {
   const hadFocus = banner.contains(document.activeElement);
   banner.hidden = true;
-  if (!hadFocus) return;
+  if (hadFocus) focusMain(banner);
+}
+
+// The focus move itself, shared with the React Banner, whose Dismiss removes the banner instead of hiding it.
+export function focusMain(banner: Element): void {
   const main = banner.closest("main") ?? document.querySelector("main");
   if (!main) return;
   if (!main.hasAttribute("tabindex")) main.setAttribute("tabindex", "-1");
-  main.focus();
+  (main as HTMLElement).focus();
 }
 
 // Attaches to every [data-cap="banner"] under root not yet attached. Returns a function
