@@ -101,7 +101,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </div>
 ```
 
-The glyphs are Status's (`.cap-status-glyph`). `import { enhance } from "capsomer/behavior/banner"` wires Dismiss. In React, `import { Banner, Alert } from "capsomer/react/banner"`: `<Banner title="Showing data from 4 minutes ago" tone="warn" actions={<button className="cap-btn" onClick={retry}>Try again</button>}>Could not refresh. Showing data from 4 minutes ago.</Banner>`; pass `onDismiss` for a Dismiss button, and move focus yourself when the banner goes.
+The glyphs are Status's (`.cap-status-glyph`). `import { enhance } from "capsomer/behavior/banner"` wires Dismiss. In React, `import { Banner, Alert } from "capsomer/react/banner"`: `<Banner title="Showing data from 4 minutes ago" tone="warn" actions={<button className="cap-btn" onClick={retry}>Try again</button>}>Could not refresh. Showing data from 4 minutes ago.</Banner>`; pass `onDismiss` for a Dismiss button. Dismiss moves focus to the main region itself when focus was inside the banner, as the script does, so do not move it again. For block content (a list, several paragraphs) use `body` in place of `children`; it sits in a `div.cap-banner-text`, outside any `p`, so a list stays valid HTML.
 
 ## The shadcn component it matches
 
