@@ -4,6 +4,16 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.74.0]
+
+Decoration for the manual theme (Dustin, 2026-11-04): the footer band becomes a cheatline, and two new parts. No token or class is removed or renamed.
+
+- **Changed look: `.cap-livery` is a cheatline.** Three stripes, 22, 8 and 3 px with 6 and 4 px gaps (43 px, was 49), in `--ramp-3`, `--ramp-2` and `--ramp-1` in place of `--on`, so the foot of every manual page shares its tones with the site's sequential charts. The HTML contract is unchanged; `[data-livery]` on a card keeps the family color.
+- **New: `.cap-hold`**, the runway holding position marking (FAA AIM 2-3-5) as a divider in the page's ink, for the end of a post before other sites' responses. Use it on an `hr`.
+- **New: `ul.cap-annunciator`**, a caution and warning panel: `li[data-state="normal" | "caution" | "warning" | "off"]` holding a name and `span.cap-annunciator-state`, on the dark sign panel in both themes, lit amber (`--warn`) or red (`--crit`). Legends use `--drafting` where the site loads it, else `--mono`.
+- **Changed look: family footer site tiles** no longer take the hover tint; the mark's outline alone answers the pointer.
+- Site: the front page has a network board under its figures, after Bridget Riley's Movement in Squares (1961): one checkerboard with a stretch per network site in its family color and a name bar under each. A site whose /health says warn or fail lights amber or red and its columns squeeze. The site's Worker answers `/network.json` from each site's /health, held a minute at the edge.
+
 ## [0.73.0]
 
 The network's type (Dustin approved the seven-face set, 2026-11-04): Inter replaces Schibsted Grotesk, and four faces join for jobs the UI face should not do. Sites pin the tag; the faces download only where a page uses them.
@@ -20,6 +30,7 @@ The network's type (Dustin approved the seven-face set, 2026-11-04): Inter repla
 - **New: `.cap-form-boxes[data-variant="panel"]`**, readings as an Apollo DSKY panel: the dark sign in both themes, legends in Capsomer Drafting capitals and values lit in DSEG7 in the family's light color (`--on-sign-here`) with a soft glow, so each site's panel is its own hue. For numbers only, since DSEG7 has no letters.
 - `css/fallback-fonts.css` keeps `"Inter Fallback"` for sites that host their own Inter (txasm), and adds nothing for the new faces, whose fallbacks are in `fonts.css`.
 - Site: the home page shows all seven faces, the theme builder offers Inter in place of Schibsted Grotesk (the `@fontsource/inter` static files are gone; it uses Capsomer's own Inter), and the home page preloads Inter.
+
 ## [0.72.0]
 
 Email gains the blocks a product's own mail needs, and Banner takes block content. No token or class is removed or renamed.

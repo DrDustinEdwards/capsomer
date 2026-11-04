@@ -120,8 +120,11 @@
       background: linear-gradient(var(--mark), var(--mark)) var(--space-4) 50% / 6px calc(100% - 2 * var(--space-4)) no-repeat;
     }
 
+    /* A site tile answers the pointer with its mark's outline only, no tint behind (Dustin,
+       2026-11-04). */
     & a:hover {
       border-color: var(--mark);
+      background-color: transparent;
     }
 
     & a[aria-current] {
