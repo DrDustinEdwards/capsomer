@@ -254,11 +254,37 @@
     padding: 0;
     list-style: none;
 
+    /* Footer links are wayfinding: the airport sign face (Overpass, --wayfinding) at 600 (Dustin,
+       2026-11-04), hovering as every link does. */
     & a {
       display: inline-flex;
       align-items: center;
       min-block-size: var(--target);
-      font-size: 0.875rem;
+      position: relative;
+      font: 600 0.875rem / 1.5 var(--wayfinding);
+    }
+
+    /* The panel lamp (Dustin, 2026-11-04): under the pointer or focus a small square lamp in the
+       family's color lights just left of the link, and the words and arrow turn to the accent. No
+       tint behind, and the lamp is positioned outside the flow, so nothing moves. */
+    & a::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: -13px;
+      inset-block-start: calc(50% - 3.5px);
+      inline-size: 7px;
+      block-size: 7px;
+      border-radius: 1px;
+      background: var(--on);
+      box-shadow: 0 0 6px var(--on);
+      opacity: 0;
+      pointer-events: none;
+    }
+    & a:is(:hover, :focus-visible)::before {
+      opacity: 1;
+    }
+    & a:hover {
+      background-color: transparent;
     }
   }
 
@@ -294,6 +320,37 @@
   @media (forced-colors: active) {
     .cap-family-footer-sites a[aria-current] {
       border-color: Highlight;
+    }
+  }
+}
+
+/* The footer's outbound arrow as an FAA sign arrow (Dustin, 2026-11-04): the thick shaft and
+   triangular head (--faa-arrow-out), 1.25em, turned up and right. In the utilities layer, where the
+   family arrow it replaces is drawn (css/utilities.css). */
+@layer cap.utilities {
+  .cap-family-footer-links .cap-go[data-go="out"]::after {
+    inline-size: 1.25em;
+    block-size: 1.25em;
+    margin-inline-start: 0.1em;
+    vertical-align: -0.3em;
+    clip-path: var(--faa-arrow-out);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @layer cap.components {
+    .cap-family-footer-links a::before {
+      transition: opacity var(--dur-fast) var(--ease-out);
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  @layer cap.components {
+    .cap-family-footer-links a::before {
+      forced-color-adjust: none;
+      background: Highlight;
+      box-shadow: none;
     }
   }
 }

@@ -88,6 +88,11 @@
   :is(a[data-link="title"], :is(h1, h2, h3, h4) > a:not([class*="cap-"])):not(:hover, :focus-visible, [data-force="hover"])::after {
     opacity: 0;
   }
+  /* "Back" and "next" are wayfinding: the airport sign face (Overpass, --wayfinding), bold. */
+  .cap-go:is([data-go="back"], [data-go="next"]) {
+    font-family: var(--wayfinding);
+    font-weight: 700;
+  }
   .cap-go[data-go="back"] {
     &::after {
       content: none;

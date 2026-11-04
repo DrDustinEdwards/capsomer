@@ -400,6 +400,19 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   t.sign = dark ? t.raised : t.text;
   t["on-sign"] = dark ? t.text : t.ground;
   t["sign-edge"] = dark ? t["line-strong"] : t.text;
+  // The page you are on, in a direction strip (Dustin, 2026-11-04): an FAA location sign, light type
+  // and a light outline on a dark gray box set into the dark strip. The box is a step lighter than the
+  // sign in both themes; the type is the family's hue at a light step, at AAA (7:1) on the box and on
+  // the sign (AC 150/5345-44L: a location sign is outlined, not filled).
+  t["sign-here"] = oklch(dark ? 0.3 : 0.29, 0.02, H);
+  const hereReads = (c) => [t["sign-here"], t.sign].every((bg) => contrast(c, bg) >= 7.05 && Math.abs(apca(c, bg)) >= L.read + MARGIN);
+  t["on-sign-here"] = strengthen(oklch(0.82, 0.1, H), hereReads, 1);
+  // Lit numbers on the dark sign, the same in every family (Dustin approved the set 2026-11-04): the
+  // Apollo DSKY's green electroluminescent readouts, and the KSC press-site countdown clock's warm
+  // incandescent bulbs (NASA photo 05pd1528). Held to 7:1 on the sign.
+  const litReads = (c) => contrast(c, t.sign) >= 7.05 && Math.abs(apca(c, t.sign)) >= L.read + MARGIN;
+  t.lit = strengthen(oklch(0.84, 0.15, 152), litReads, 1);
+  t["lit-bulb"] = strengthen(oklch(0.93, 0.07, 82), litReads, 1);
   s.forEach((hex, i) => (t[`accent-${i + 1}`] = hex));
   Object.assign(t, elevation(t, scheme));
   Object.assign(t, chartTokens(t, scheme, seedLch(seed), level));
@@ -411,7 +424,7 @@ export const FAMILY_ORDER = [
   "accent", "accent-hover", "accent-text", "accent-visited", "accent-soft", "accent-line", "sel",
   "primary", "primary-hover", "primary-fg", "primary-line", "on", "on-hover", "ring",
   "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft", "nodata", "nodata-soft",
-  "sign", "on-sign", "sign-edge",
+  "sign", "on-sign", "sign-edge", "sign-here", "on-sign-here", "lit", "lit-bulb",
   ...Array.from({ length: 12 }, (_, i) => `accent-${i + 1}`),
 ];
 
@@ -476,6 +489,10 @@ export function pairs(t, level = "standard") {
   need("primary-fg", "primary-hover", 4.5, "primary button label (hover)", L.read);
   need("surface", "crit", 4.5, "badge label", L.read);
   need("on-sign", "sign", 4.5, "sign type", L.read);
+  need("on-sign-here", "sign-here", 7, "the page you are on, in a direction strip (AAA)", L.read);
+  need("on-sign", "sign-here", 4.5, "a direction strip's type over the you-are-here box", L.read);
+  need("lit", "sign", 7, "a lit readout on a panel", L.read);
+  need("lit-bulb", "sign", 7, "a lit countdown on a panel", L.read);
   for (const bg of ["ground", "surface"]) need("sign-edge", bg, 3, "sign edge against the page");
   return out;
 }
@@ -557,7 +574,7 @@ const note = (seed, anchor) => {
 
 // The family's font stacks, the one place they are written. Each face's size-matched fallback
 // (tokens/fonts.mjs) comes second, so the swap to the face barely moves the text.
-export const UI_STACK = '"Schibsted Grotesk", "Schibsted Grotesk Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif';
+export const UI_STACK = '"Inter", "Inter Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif';
 export const MONO_STACK = '"Martian Mono", "Martian Mono Fallback", ui-monospace, "Cascadia Mono", Consolas, monospace';
 
 // The default family on the document root: color.css.

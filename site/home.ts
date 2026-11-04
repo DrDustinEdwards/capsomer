@@ -304,11 +304,15 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
 <section id="type" data-family="navy" aria-labelledby="type-h">
   ${band("Type", ["navy"], "section")}
   <div class="cap-page">
-    ${partTitle("type-h", "2", "Three faces, one scale")}
+    ${partTitle("type-h", "2", "Seven faces, one scale")}
     <div class="home-faces">
-      <figure data-face="ui"><p aria-hidden="true">Aa</p><figcaption><b>Schibsted Grotesk</b> for every screen of an app</figcaption></figure>
+      <figure data-face="ui"><p aria-hidden="true">Aa</p><figcaption><b>Inter</b> for every screen of an app, Light for titles, Medium for headings</figcaption></figure>
       <figure data-face="mono"><p aria-hidden="true">Aa</p><figcaption><b>Martian Mono</b> for identifiers and code</figcaption></figure>
       <figure data-face="prose"><p aria-hidden="true">Aa</p><figcaption><b>Source Serif 4</b> for long reading</figcaption></figure>
+      <figure data-face="wayfinding"><p aria-hidden="true">Aa</p><figcaption><b>Overpass</b> for breadcrumbs and footer links, the airport sign face</figcaption></figure>
+      <figure data-face="poster"><p aria-hidden="true">Aa</p><figcaption><b>Jost</b> for share cards, banners and flyers</figcaption></figure>
+      <figure data-face="drafting"><p aria-hidden="true">HTLV-1</p><figcaption><b>Capsomer Drafting</b> for labels in drawings and lit panels</figcaption></figure>
+      <figure data-face="readout"><p aria-hidden="true">12:07</p><figcaption><b>DSEG7 Classic</b> for lit readouts and countdowns</figcaption></figure>
     </div>
     <div class="cap-field home-sample" data-cap-part="sample" hidden>
       <label class="cap-field-label" for="home-sample">Try your own words</label>
