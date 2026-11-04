@@ -4,6 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.73.1]
+
+Smaller font files, for faster pages: dustinedwards.info's /systems went from 2.31 s to 2.60 s Lighthouse LCP (mobile profile, CI) with 0.73.0's larger Inter and the new Overpass, past the 2.5 s limit.
+
+- **Inter** (`fonts/inter-latin-opsz-normal.woff2`): the weight axis is cut to 300 to 800, the weights the network sets (72,920 to 68,948 bytes). Its `@font-face` weight range is now `300 800`. The opsz axis and every kept weight are unchanged.
+- **Overpass** (`fonts/overpass-latin-wght-normal.woff2`): the weight axis is cut to 600 to 700, the two weights wayfinding sets (39,380 to 27,036 bytes). Its `@font-face` weight range is now `600 700`; a 400 request draws 600.
+- `scripts/narrow-font.py` makes both cuts from the Fontsource 5.3.0 files.
+
 ## [0.73.0]
 
 The network's type (Dustin approved the seven-face set, 2026-11-04): Inter replaces Schibsted Grotesk, and four faces join for jobs the UI face should not do. Sites pin the tag; the faces download only where a page uses them.

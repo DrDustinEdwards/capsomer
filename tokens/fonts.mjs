@@ -20,9 +20,9 @@ const FACES = [
   {
     family: "Inter",
     file: "inter-latin-opsz-normal.woff2",
-    sha256: "2c295d99e26dcf357d4d01bcf270fd6924b600c9a13dd8c363ef114f4c6976fa",
-    weight: "100 900",
-    use: "the UI and display face, with its optical size axis (opsz 14 to 32): the browser sets the display cut at large sizes itself (font-optical-sizing: auto), the way Inter Display is drawn for titles. Fontsource 5.3.0's latin opsz file",
+    sha256: "b3fa8fe3f14d30afb898b3a2533f76951faff55a87f24c843cb79f8f9fd6f545",
+    weight: "300 800",
+    use: "the UI and display face, with its optical size axis (opsz 14 to 32): the browser sets the display cut at large sizes itself (font-optical-sizing: auto), the way Inter Display is drawn for titles. Fontsource 5.3.0's latin opsz file, its weight axis cut to 300 to 800, the weights the network sets (scripts/narrow-font.py)",
   },
   {
     family: "Martian Mono",
@@ -34,9 +34,9 @@ const FACES = [
   {
     family: "Overpass",
     file: "overpass-latin-wght-normal.woff2",
-    sha256: "29217ef8adef5f6c059feb461bdb029348205fc233dc9b6ca8604b0d068ac086",
-    weight: "100 900",
-    use: "wayfinding links only (--wayfinding): breadcrumbs, footer links, next and back. Delve Fonts' Highway Gothic, the FHWA sign face FAA AC 150/5345-44L Appendix A sets airport signs in. Fontsource 5.3.0",
+    sha256: "c104845e3d3e8e85b32317955ccecc34ada4e9106d1f5ed93febbb03a7f868b7",
+    weight: "600 700",
+    use: "wayfinding links only (--wayfinding): breadcrumbs, footer links, next and back. Delve Fonts' Highway Gothic, the FHWA sign face FAA AC 150/5345-44L Appendix A sets airport signs in. Fontsource 5.3.0, its weight axis cut to 600 to 700, the two weights wayfinding sets (scripts/narrow-font.py)",
   },
   {
     family: "Jost",
