@@ -4,7 +4,7 @@ title: Manual theme
 summary: The public pages of the dustinedwards.info sites set after the 1976 NASA Graphics Standards Manual, in the page's own family color. Opt-in, for public pages only.
 parts: [css, behavior]
 tool: native + own JavaScript
-states: [running head, running head as a sign, a numbered part with its lead, form boxes as a title block, form boxes as readings on a tone scale, form boxes as an instrument panel, leader index, checklist card, plate, signs, mission patch, letterhead, layout grid, direction strip, livery band and stripe, roll blocks, time line, cue card]
+states: [running head, running head as a sign, a numbered part with its lead, form boxes as a title block, form boxes as readings on a tone scale, form boxes as an instrument panel, leader index, checklist card, plate, signs, mission patch, letterhead, layout grid, direction strip, cheatline and stripe, roll blocks, time line, cue card, holding position marking, annunciator panel]
 added: 0.23.0
 source: capsid explorer/src/explorer.css (the NASA blocks, capsid #560, #562, #583) and pages.mjs (patch)
 replaces:
@@ -41,7 +41,9 @@ On a public page of a dustinedwards.info site: a home page, an index of papers o
 - **Letterhead** (`.cap-letterhead`): the foot of a page, the site's name as the logotype, the address beside it and the folio at the right. Put it in the page's `footer`.
 - **Layout grid** (`.cap-layout-grid`): the head of a page drawn on the manual's layout grid in fine red lines, as the manual prints its grids: twelve columns and a 24px baseline, four columns on a phone, labeled at its foot on the right. The red is the family's `--crit`, faint. Put it on the block that holds the page's `h1`. Forced colors drop it.
 - **Direction strip** (`nav.cap-direction > ol > li`): the trail to a page as an airport's direction signs. A dark band of Overpass Bold (`--wayfinding`, the FAA sign face), a white FAA arrow (`--faa-arrow`) between the ways, and the page you are on (`aria-current="page"`) as a location sign: `--on-sign-here` type and a 2px outline of it on the `--sign-here` box, 3px corners, at AAA. Links hover as every link does, here a white 18% tint on the dark band.
-- **Livery** (`.cap-livery`, `[data-livery]`): a 40px band of the family's color with a pin stripe under it, as NASA painted its cars and aircraft. The band goes across the foot of a page, before the letterhead; `data-livery` on a card gives it a 6px length of the band along its top.
+- **Livery** (`.cap-livery`, `[data-livery]`): an airliner's cheatline, three stripes from wide to thin in the family's chart ramp (steps 3, 2 and 1), so the foot of a page shares its tones with the site's sequential charts. It goes across the foot of a page, before the letterhead; `data-livery` on a card gives it a 6px length of the family color along its top.
+- **Holding position marking** (`hr.cap-hold`): the FAA's runway hold-short marking, two solid lines over two dashed ones, in the page's ink. A divider at the end of a post, before what other sites said. It carries no words; on an element other than `hr`, mark it `aria-hidden="true"`.
+- **Annunciator panel** (`ul.cap-annunciator` of `li[data-state]`, each holding its name and `span.cap-annunciator-state`): a cockpit caution and warning panel, one tile per system, on the dark sign panel. `normal` is unlit, `caution` lights amber (`--warn`), `warning` red (`--crit`), `off` is dark with an outline. Every tile says its state in words. For a site's own health checks, such as its colophon's.
 - **Roll blocks** (`ol.cap-roll` of `li[data-state]`): the blocks painted round a Saturn V, one a step. `done` fills two quarters in the ink, `now` in the family's color, `ahead` is faint. Drawn: mark the list `aria-hidden="true"` and say the step in words beside it.
 - **Time line** (`ol.cap-timeline` of `li` holding `.cap-timeline-mark` and `.cap-timeline-body`): dated steps on the Apollo flight plan's time line, a ticked scale down the left and each step's mark (a year, a time, a number) at its tick. On a phone the mark sits over the step.
 - **Cue card** (`.cap-cue`, `.cap-cue-strip`, `.cap-cue-title`, `ul.cap-cue-lines` of `li` holding `.cap-cue-name` and `.cap-cue-value`): one step as an Apollo cue card. The strip names the procedure and the card; each line has a drawn box, a name, a dotted leader and its value. Roll blocks may sit under the strip. On a phone the value drops under the name.
@@ -60,6 +62,7 @@ Running text stays in the page's reading face (`--prose` on dustinedwards.info),
 - The checklist's box, the leaders and the patch are drawn and hidden from screen readers. The patch says nothing the page does not say beside it.
 - The arrows on the signs are generated content with an empty alternative, so a sign is read as its words. In forced colors they are drawn in `LinkText`.
 - In forced colors the sign panels, the running-head sign and the direction strip keep a border, as their dark fill is dropped, and the layout grid is not drawn.
+- The annunciator's tiles set `--on-sign` on the sign panel, mixed with the status color when lit; the state is a word on every tile, so the color is never alone. The holding marking is drawn; on an `hr` it is a separator, elsewhere it is hidden.
 - The direction strip's page you are on sets `--on-sign-here` on `--sign-here`, checked at 7:1 (AAA) by palette.mjs. The roll blocks, the livery and the layout grid are drawn and say nothing the page does not say in words.
 
 Last checked by hand: not yet. Automated: see the site's Tests page.

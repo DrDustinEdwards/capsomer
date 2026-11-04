@@ -6,6 +6,7 @@ import { staticSearch, type StaticSearchIndex } from "@drdustinedwards/site-help
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTabs } from "../components/tabs/tabs.ts";
 import { effectiveTheme, enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
+import { relight, type NetworkStates } from "./network-board.ts";
 
 // The header's search answers from the same index the search page reads (site/search.ts), loaded
 // once, on the first word typed.
@@ -244,4 +245,16 @@ if (sectionLinks.length && homeLink) {
   }, { passive: true });
   for (const a of sectionLinks) a.addEventListener("click", () => mark(a));
   spy();
+}
+
+// The network board: built with every site normal, then drawn again from each site's /health as the Worker reads it
+// (/network.json, held a minute at the edge). With no answer the board stays as built.
+const net = document.querySelector<HTMLElement>("[data-cap-part='network']");
+if (net) {
+  fetch("/network.json")
+    .then((r) => (r.ok ? (r.json() as Promise<{ sites?: NetworkStates }>) : Promise.reject(new Error(String(r.status)))))
+    .then((body) => {
+      if (body.sites) relight(net, body.sites);
+    })
+    .catch(() => {});
 }
