@@ -206,7 +206,7 @@
   .cap-dialog-title {
     margin: 0;
     font-size: var(--fs-lead);
-    font-weight: 800;
+    font-weight: var(--weight-heading);
     line-height: 1.25;
     letter-spacing: -0.02em;
     text-wrap: balance;
