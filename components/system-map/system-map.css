@@ -181,11 +181,19 @@
     & .cap-system-map-wire[data-on] {
       stroke: var(--accent);
       stroke-width: 2.6;
-      /* Dashes move from the system that uses to the one used (Datadog's service map does the same
-         on hover); a tie both ways stays solid. Still under reduced motion: the detail line says
-         which way each tie runs. */
-      stroke-dasharray: 9 5;
-      animation: cap-system-map-flow 0.9s linear infinite;
+      /* Dashes move from the system that uses to the one used: with tapering, the most readable
+         way to show an edge's direction, and the most accurate (Holten, Isenberg, van Wijk and
+         Fekete 2011). Their pattern: long dashes, short gaps, slow, each line out of step with
+         its neighbors so lines leaving one cell do not pulse together. A tie both ways stays
+         solid. Still under reduced motion: the detail line says which way each tie runs. */
+      stroke-dasharray: 30 5;
+      animation: cap-system-map-flow 2s linear infinite;
+      &:nth-child(3n + 1) {
+        animation-delay: -0.7s;
+      }
+      &:nth-child(3n + 2) {
+        animation-delay: -1.4s;
+      }
     }
     & .cap-system-map-wire[data-on][data-both] {
       stroke-dasharray: none;
@@ -212,7 +220,7 @@
 
   @keyframes cap-system-map-flow {
     to {
-      stroke-dashoffset: -14;
+      stroke-dashoffset: -35;
     }
   }
 
