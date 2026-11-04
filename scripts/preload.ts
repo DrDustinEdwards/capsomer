@@ -1,6 +1,6 @@
 /**
  * The home page's preload `Link` header (site-runtime `./preload`), from the built site: the stylesheet the home page
- * links and the two faces its first screen paints in, Schibsted Grotesk (headings and interface) and Source Serif 4
+ * links and the two faces its first screen paints in, Inter (headings and interface) and Source Serif 4
  * (prose). Vite hashes their names, so they are read from site-dist after each build and written to
  * worker/preload.generated.json, which the Worker bundles. A build missing one of them fails rather than preloading
  * nothing.
@@ -8,7 +8,7 @@
 
 import { preloads } from "@dustinedwards/site-runtime/preload";
 
-const FACES = [/\/assets\/schibsted-grotesk-latin-wght-normal-[\w-]+\.woff2/, /\/assets\/source-serif-4-latin-wght-normal-[\w-]+\.woff2/];
+const FACES = [/\/assets\/inter-latin-opsz-normal-[\w-]+\.woff2/, /\/assets\/source-serif-4-latin-wght-normal-[\w-]+\.woff2/];
 
 /** The `Link` header value for the home page in `outDir`. */
 function homePreloadHeader(outDir: string): string {

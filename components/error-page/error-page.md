@@ -35,7 +35,7 @@ What a React Router site shows when a page is missing, gone or broke: the failed
 - **Never indexed.** `<meta name="robots" content="noindex">` is rendered with the page; React hoists it into the head.
 - **The stack only in development.** `dev` (pass `import.meta.env.DEV`) shows the thrown error's message and stack; off by default, so production never shows one.
 - **The site's frame stays.** `siteHeader` and `siteFooter` are slots: the skip link, the banner and the footer landmark stay on the error page. They must read no loader data, since the error path has none.
-- **main is `#main` with `tabIndex={-1}`**, the skip link's target. The title is the page's `h1` (`Empty`'s `titleAs="h1"`).
+- **main is `#main` with `tabIndex={-1}`**, the skip link's target. The title is the page's `h1` (`Empty`'s `titleAs="h1"`). A 404's title is set in Jost Demibold (`--poster`), a missing page being a standalone poster; every other status keeps the UI face.
 - **A site's own words.** `title`, `text` and `homeLabel` replace the default words for this error, for a site whose copy is edited content (julieedwards.info's 404 is Carrel copy in D1). `as="div"` renders the region as a div when the site's Layout already has the page's one `main`.
 - No router import: a route error is read by its shape (a numeric `status` and a string `statusText`), so the package needs no `react-router`.
 

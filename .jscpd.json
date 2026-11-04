@@ -13,6 +13,8 @@
     "tokens/scale.css",
     "tokens/themes.css",
     "tokens/tokens.json",
+    "css/fonts.css",
+    "css/fallback-fonts.css",
     "test/fixtures/**",
     "**/*.md"
   ],

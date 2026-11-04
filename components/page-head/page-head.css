@@ -25,8 +25,9 @@
     margin: 0;
     font-family: var(--display);
     font-size: var(--fs-h2);
-    font-weight: 800;
-    letter-spacing: -0.025em;
+    /* 22px, a heading's size, so Medium (NASA's Helvetica Medium); Light is for titles from 24px. */
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.01em;
     line-height: 1.2;
     overflow-wrap: anywhere;
     text-wrap: balance;

@@ -10,8 +10,8 @@
 export const capsomerTheme = {
   "name": "capsomer",
   "fonts": {
-    "body": "\"Schibsted Grotesk\", \"Schibsted Grotesk Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
-    "numeric": "\"Schibsted Grotesk\", \"Schibsted Grotesk Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif"
+    "body": "\"Inter\", \"Inter Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
+    "numeric": "\"Inter\", \"Inter Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif"
   },
   "gridlines": "y",
   "light": {
@@ -80,8 +80,8 @@ export const capsomerTheme = {
 export const capsomerMoreTheme = {
   "name": "capsomer-more",
   "fonts": {
-    "body": "\"Schibsted Grotesk\", \"Schibsted Grotesk Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
-    "numeric": "\"Schibsted Grotesk\", \"Schibsted Grotesk Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif"
+    "body": "\"Inter\", \"Inter Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
+    "numeric": "\"Inter\", \"Inter Fallback\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif"
   },
   "gridlines": "y",
   "light": {

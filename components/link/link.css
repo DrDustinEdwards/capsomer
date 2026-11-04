@@ -127,11 +127,22 @@
   a[data-link="xref"] {
     font-style: italic;
   }
-  /* A next link stands alone, so it is a whole target, not a word in a sentence. */
+  /* A next link stands alone, so it is a whole target, not a word in a sentence. It is wayfinding,
+     so it is set in the airport sign face (Overpass, --wayfinding), as breadcrumbs and footer links are. */
   a[data-link="next"] {
     display: inline-flex;
     align-items: center;
     min-block-size: var(--target);
+    position: relative;
+    font-family: var(--wayfinding);
+    font-weight: 700;
+
+    /* The panel lamp hover (css/utilities.css): the words in the accent, no tint. */
+    &:is(:hover, :focus-visible) {
+      background: none;
+      box-shadow: none;
+      color: var(--accent-text);
+    }
   }
   a[data-link="address"] {
     font-family: var(--mono);

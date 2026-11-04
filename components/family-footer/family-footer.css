@@ -254,11 +254,19 @@
     padding: 0;
     list-style: none;
 
+    /* Footer links are wayfinding: the airport sign face (Overpass, --wayfinding) at 600 (Dustin,
+       2026-11-04), hovering as every link does. */
     & a {
       display: inline-flex;
       align-items: center;
       min-block-size: var(--target);
-      font-size: 0.875rem;
+      position: relative;
+      font: 600 0.875rem / 1.5 var(--wayfinding);
+    }
+
+    /* The panel lamp hover (css/utilities.css): no tint behind. */
+    & a:hover {
+      background-color: transparent;
     }
   }
 
@@ -295,5 +303,18 @@
     .cap-family-footer-sites a[aria-current] {
       border-color: Highlight;
     }
+  }
+}
+
+/* The footer's outbound arrow as an FAA sign arrow (Dustin, 2026-11-04): the thick shaft and
+   triangular head (--faa-arrow-out), 1.25em, turned up and right. In the utilities layer, where the
+   family arrow it replaces is drawn (css/utilities.css). */
+@layer cap.utilities {
+  .cap-family-footer-links .cap-go[data-go="out"]::after {
+    inline-size: 1.25em;
+    block-size: 1.25em;
+    margin-inline-start: 0.1em;
+    vertical-align: -0.3em;
+    clip-path: var(--faa-arrow-out);
   }
 }

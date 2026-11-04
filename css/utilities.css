@@ -88,6 +88,11 @@
   :is(a[data-link="title"], :is(h1, h2, h3, h4) > a:not([class*="cap-"])):not(:hover, :focus-visible, [data-force="hover"])::after {
     opacity: 0;
   }
+  /* "Back" and "next" are wayfinding: the airport sign face (Overpass, --wayfinding), bold. */
+  .cap-go:is([data-go="back"], [data-go="next"]) {
+    font-family: var(--wayfinding);
+    font-weight: 700;
+  }
   .cap-go[data-go="back"] {
     &::after {
       content: none;
@@ -127,6 +132,41 @@
     :is(a[data-link="title"], :is(h1, h2, h3, h4) > a:not([class*="cap-"]))::after {
       forced-color-adjust: none;
       background: LinkText;
+    }
+  }
+}
+
+/* The panel lamp (Dustin, 2026-11-04), the hover of wayfinding links (the family footer's link columns and a
+   next link): under the pointer or focus a small square lamp in the family's color lights just left of the
+   link, as a lamp on an instrument panel, while the link's own rules turn its words to the accent. The lamp
+   is positioned outside the flow, so nothing moves; the link sets position: relative. */
+@layer cap.utilities {
+  :is(.cap-family-footer-links a, a[data-link="next"])::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: -13px;
+    inset-block-start: calc(50% - 3.5px);
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 1px;
+    background: var(--on);
+    box-shadow: 0 0 6px var(--on);
+    opacity: 0;
+    pointer-events: none;
+  }
+  :is(.cap-family-footer-links a, a[data-link="next"]):is(:hover, :focus-visible)::before {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :is(.cap-family-footer-links a, a[data-link="next"])::before {
+      transition: opacity var(--dur-fast) var(--ease-out);
+    }
+  }
+  @media (forced-colors: active) {
+    :is(.cap-family-footer-links a, a[data-link="next"])::before {
+      forced-color-adjust: none;
+      background: Highlight;
+      box-shadow: none;
     }
   }
 }

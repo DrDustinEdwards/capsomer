@@ -8,9 +8,8 @@ export type Label = "auto" | "light" | "dark";
 export type Density = "compact" | "comfortable";
 
 export const FACES: Record<string, { name: string; stack: string }> = {
-  schibsted: { name: "Schibsted Grotesk", stack: UI_STACK },
+  inter: { name: "Inter", stack: UI_STACK },
   "dm-sans": { name: "DM Sans", stack: '"DM Sans", system-ui, sans-serif' },
-  inter: { name: "Inter", stack: '"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif' },
   "open-sans": { name: "Open Sans", stack: '"Open Sans", Arial, sans-serif' },
   montserrat: { name: "Montserrat", stack: '"Montserrat", Helvetica, Arial, sans-serif' },
   fraunces: { name: "Fraunces", stack: '"Fraunces", Georgia, serif' },
@@ -20,8 +19,8 @@ export const FACES: Record<string, { name: string; stack: string }> = {
   "dm-mono": { name: "DM Mono", stack: '"DM Mono", ui-monospace, monospace' },
   "system-mono": { name: "The device's own", stack: 'ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace' },
 };
-export const TEXT_FACES = ["schibsted", "dm-sans", "inter", "open-sans", "montserrat", "system"];
-export const DISPLAY_FACES = ["schibsted", "dm-sans", "inter", "open-sans", "montserrat", "fraunces", "source-serif", "system"];
+export const TEXT_FACES = ["inter", "dm-sans", "open-sans", "montserrat", "system"];
+export const DISPLAY_FACES = ["inter", "dm-sans", "open-sans", "montserrat", "fraunces", "source-serif", "system"];
 export const MONO_FACES = ["martian", "dm-mono", "system-mono"];
 export const SIZES = [13, 14, 15, 16];
 
@@ -37,7 +36,7 @@ export interface Settings {
   density: Density;
 }
 
-const base = { anchor: null, label: "auto" as Label, ui: "schibsted", display: "schibsted", mono: "martian", size: 14, radius: 6, density: "compact" as Density };
+const base = { anchor: null, label: "auto" as Label, ui: "inter", display: "inter", mono: "martian", size: 14, radius: 6, density: "compact" as Density };
 const family = (name: keyof typeof FAMILIES): Settings => ({ ...base, seed: FAMILIES[name].seed.toLowerCase(), anchor: FAMILIES[name].anchor?.toLowerCase() ?? null });
 
 export const PRESETS: Array<{ group: string; items: Array<{ id: string; name: string; settings: Settings }> }> = [
