@@ -50,7 +50,7 @@ A site whose theme comes from a cookie or localStorage follows the system with n
 
 ## Fallback fonts for a site's own faces
 
-`capsomer/fonts.css` already gives the family's faces, Schibsted Grotesk and Martian Mono, a size-matched fallback (Astro's Fonts API method): a local face scaled to the face's width and line metrics, listed second in the font stack, so the swap to the real face barely moves the text. A site with its own faces gets the same from `capsomer/fonts`:
+`capsomer/fonts.css` already gives the family's faces, Schibsted Grotesk and Martian Mono, a size-matched fallback (Astro's Fonts API method): a local face scaled to the face's width and line metrics, listed second in the font stack, so a page drawn in it looks like the real face. The faces use `font-display: optional`: a visit whose font is late stays in the fallback, so text never moves once drawn; preload the face each page draws first. A site with its own faces gets the same from `capsomer/fonts`:
 
 ```js
 import { fallbackFontFace, fallbackName, LOCAL, MEASURED } from "capsomer/fonts";
