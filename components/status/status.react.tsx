@@ -127,6 +127,3 @@ export function Pill({ tone, variant, running, children, href, onClick }: PillPr
   if (onClick) return <button type="button" {...common} onClick={onClick}>{inner}</button>;
   return <span {...common}>{inner}</span>;
 }
-
-// The same component under shadcn's name.
-export const Badge = Pill;
