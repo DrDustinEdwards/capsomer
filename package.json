@@ -238,5 +238,9 @@
     "@drdustinedwards/site-helpers": {
       "enarratio": "$enarratio"
     }
+  },
+  "allowScripts": {
+    "esbuild": false,
+    "workerd": false
   }
 }

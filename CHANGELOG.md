@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- `allowScripts` denies esbuild's and workerd's install scripts for npm 12, which asks about each one; both work without them (their binaries come from platform packages). No class, token or HTML contract changes.
+
 ## [0.74.0]
 
 Decoration for the manual theme (Dustin, 2026-11-04): the footer band becomes a cheatline, and two new parts. No token or class is removed or renamed.
