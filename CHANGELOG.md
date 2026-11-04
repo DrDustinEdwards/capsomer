@@ -9,6 +9,7 @@ Each release names every removed or renamed token or class, and every changed HT
 The type plan's weights where they had slipped (verifier, 2026-11-04).
 
 - **Breadcrumb links** (`.cap-direction a`): Overpass Bold, as the sign is. base.css's text-link weight (`--link-weight`, 600) set the ways a step lighter than the page you are on, on every site.
+- **Headings by default** (`css/base.css`): `h1` takes `--weight-title` (Inter Light) and `h2` to `h4` `--weight-heading` (Inter Medium), where the browser drew them bold. Carrel, Prelum's specimen and Enarratio's gallery titles were 700 for want of this. A site's or component's own weight still wins.
 - **Showcase site**: page titles take `--weight-title` (Inter Light) and headings `--weight-heading` (Inter Medium), in place of 800 and 700. The cover band's lettering and the figures stay heavy; they are display type, not titles.
 
 ## [0.74.1]
