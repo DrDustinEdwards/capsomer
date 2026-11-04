@@ -279,8 +279,22 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
       return [{ id: s.id, at, x, y }];
     });
     const taken = new Set(cells.map((c) => `${c.at[0]},${c.at[1]}`));
+    // Each group's name stands in the empty cell just before its run on the outer ring (every group
+    // keeps one there), so the comb needs no ring of its own for names and draws larger. A name's
+    // cell carries no line.
+    const ringAt = new Map(outerRing.map((c, i) => [`${c[0]},${c[1]}`, i]));
+    const labels = groups.flatMap((g, gi) => {
+      const mine = new Set(g.map((x) => ringAt.get(`${place.get(x.id)![0]},${place.get(x.id)![1]}`)));
+      const first = [...mine].find((i) => i !== undefined && !mine.has((i - 1 + outerRing.length) % outerRing.length));
+      if (first === undefined) return [];
+      const cell = outerRing[(first - 1 + outerRing.length) % outerRing.length]!;
+      if (taken.has(`${cell[0]},${cell[1]}`)) return [];
+      taken.add(`${cell[0]},${cell[1]}`);
+      const [x, y] = xy(cell);
+      return [{ name: groupNames[gi]!, x, y }];
+    });
     const comb: Axial[] = [];
-    for (let k = 0; k <= ok + 1; k++) for (const c of ringCells(k)) if (!taken.has(`${c[0]},${c[1]}`)) comb.push(c);
+    for (let k = 0; k <= ok; k++) for (const c of ringCells(k)) if (!cells.some((x) => x.at[0] === c[0] && x.at[1] === c[1])) comb.push(c);
 
     // Each line runs through the comb's empty cells, never under another system: the shortest path
     // over the hex grid whose middle cells are all empty A cell already carrying a line costs a
@@ -381,7 +395,7 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
         if (P.some((_, x) => x > 0 && Q.some((_, y) => y > 0 && cut(P[x - 1]!, P[x]!, Q[y - 1]!, Q[y]!)))) crossings++;
       }
     }
-    return { cells, comb, lines: lines.map(({ a, b, d }) => ({ a, b, d })), crossings };
+    return { cells, comb, labels, lines: lines.map(({ a, b, d }) => ({ a, b, d })), crossings };
   };
   const start = new Map(place);
   let drawn: ReturnType<typeof draw> | null = null;
@@ -394,19 +408,8 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
       for (const [k, v] of tried) place.set(k, v);
     }
   }
-  const { cells, comb, lines } = drawn!;
+  const { cells, comb, labels, lines } = drawn!;
 
-  // Each group's name in the empty ring just outside it, at the cell nearest its run's middle.
-  const outside = ringCells(ok + 1);
-  const labels = groups.map((g, i) => {
-    const ang = Math.atan2(
-      g.reduce((k, s) => k + Math.sin(angleOf(place.get(s.id)!)), 0),
-      g.reduce((k, s) => k + Math.cos(angleOf(place.get(s.id)!)), 0),
-    );
-    const cell = outside.reduce((best, c) => (Math.abs(wrap(angleOf(c), ang) - ang) < Math.abs(wrap(angleOf(best), ang) - ang) ? c : best));
-    const [x, y] = xy(cell);
-    return { name: groupNames[i]!, x, y };
-  });
   // The box: every cell of the comb, with a cell's room around it.
   const pts = [...comb, ...cells.map((c) => c.at)].map(xy);
   const x0 = Math.min(...pts.map((p) => p[0])) - R;

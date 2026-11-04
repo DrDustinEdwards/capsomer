@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.70.0]
+
+- **The hexagons draw larger.** Each group's name stands in the empty cell before its run on the outer ring, so the comb loses the ring it kept for names, and the comb may be as tall as the screen less 8rem (it was the lesser of the screen less 12rem and 52rem). In a 900 px tall window a cell goes from about 72 px wide to about 95. No class, token or HTML contract changes.
+
 ## [0.69.0]
 
 - **The hexagons' lit lines say which way each tie runs.** Their dashes move from the system that uses toward the system used, a tie both ways stays solid, and the detail line adds "Uses … Used by …" in words. Reduced motion stills the dashes. The network's detail line keeps four lines of room, so lighting no longer shifts the drawing. **Changed HTML contract:** a lit `path.cap-system-map-wire` in the comb carries `data-both` where the tie runs both ways, and the network's detail line ends with `span.cap-system-map-detail-ways` while a system is lit.
