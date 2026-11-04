@@ -71,6 +71,11 @@
     &[hidden] {
       display: none;
     }
+    /* On the network the line also says what the system uses and what uses it: room for four
+       lines, the most any system needs at the measure, so lighting one moves nothing below. */
+    .cap-system-map[data-level="network"] > & {
+      min-height: calc(4 * 1.4em);
+    }
     & .cap-system-map-card-full,
     & .cap-system-map-part-full {
       color: var(--text);
@@ -176,6 +181,23 @@
     & .cap-system-map-wire[data-on] {
       stroke: var(--accent);
       stroke-width: 2.6;
+      /* Dashes move from the system that uses to the one used: with tapering, the most readable
+         way to show an edge's direction, and the most accurate (Holten, Isenberg, van Wijk and
+         Fekete 2011). Their pattern: long dashes, short gaps, slow, each line out of step with
+         its neighbors so lines leaving one cell do not pulse together. A tie both ways stays
+         solid. Still under reduced motion: the detail line says which way each tie runs. */
+      stroke-dasharray: 30 5;
+      animation: cap-system-map-flow 2s linear infinite;
+      &:nth-child(3n + 1) {
+        animation-delay: -0.7s;
+      }
+      &:nth-child(3n + 2) {
+        animation-delay: -1.4s;
+      }
+    }
+    & .cap-system-map-wire[data-on][data-both] {
+      stroke-dasharray: none;
+      animation: none;
     }
     & .cap-system-map-cell:not([data-tie]) {
       & polygon {
@@ -193,6 +215,18 @@
     & .cap-system-map-cell[data-tie="self"] polygon {
       fill: var(--accent-soft);
       stroke-width: 4.5;
+    }
+  }
+
+  @keyframes cap-system-map-flow {
+    to {
+      stroke-dashoffset: -35;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cap-system-map-comb[data-lit] .cap-system-map-wire[data-on] {
+      animation: none;
     }
   }
 
