@@ -367,14 +367,17 @@ ${FOOTER}`;
 function exampleBlock(c: Component, e: Example, heading: boolean): string {
   const src = `/components/${esc(c.name)}/states.html?${e.kind}=${encodeURIComponent(e.id)}`;
   const label = heading ? `ex-${esc(e.id)}` : `comp-h`;
+  // Long code starts closed under its View code button, written here rather than by the page's script, so the box is
+  // its final height from the first paint (D5). Without scripts the closed rules do not apply (home.css).
+  const closed = e.code.split("\n").length > 4;
   return `<section class="comp-ex"${heading ? ` aria-labelledby="${label}"` : ` aria-label="${esc(c.title)}, ${esc(e.title)}"`}>
   ${heading ? `<h3 id="${label}">${esc(e.title)}</h3>` : ""}
   <div class="comp-ex-box">
     <iframe class="comp-ex-frame" src="${src}" title="${esc(c.title)}: ${esc(e.title)}" loading="lazy" data-kind="${e.kind}" data-height="${e.height}"></iframe>
-    <div class="comp-ex-code" data-cap-part="code">
+    <div class="comp-ex-code" data-cap-part="code"${closed ? " data-closed" : ""}>
       <pre ${codeRegion(`HTML for ${e.title}`)}><code>${esc(e.code)}</code></pre>
       <div class="comp-ex-tools"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="copy-code" hidden>Copy</button></div>
-      <button type="button" class="cap-btn" data-size="sm" data-cap-part="show-code" aria-expanded="false" hidden>View code</button>
+      ${closed ? `<button type="button" class="cap-btn" data-size="sm" data-cap-part="show-code" aria-expanded="false">View code</button>` : ""}
     </div>
   </div>
 </section>`;
@@ -442,7 +445,7 @@ ${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
   <div class="comp-title">
     <h1 id="comp-h">${esc(c.title)}</h1>
     <div class="comp-title-tools">
-      <button type="button" class="cap-btn" data-size="sm" data-cap-part="copy-page" hidden>Copy page</button>
+      <button type="button" class="cap-btn" data-size="sm" data-cap-part="copy-page">Copy page</button>
       ${prev ? `<a class="cap-btn" data-size="sm" data-icon-only="" href="/components/${esc(prev.name)}/" rel="prev" aria-label="Previous: ${esc(prev.title)}">${ARROW.prev}</a>` : ""}
       ${next ? `<a class="cap-btn" data-size="sm" data-icon-only="" href="/components/${esc(next.name)}/" rel="next" aria-label="Next: ${esc(next.title)}">${ARROW.next}</a>` : ""}
     </div>
