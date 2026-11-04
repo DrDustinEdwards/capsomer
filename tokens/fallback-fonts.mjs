@@ -1,10 +1,11 @@
 // Size-matched fallback faces, for any site's own fonts (`capsomer/fonts`). tokens/fonts.mjs uses it
 // for the family's faces; a site measures its own woff2 with `npx capsomer fallback-font <file>`.
 //
-// With font-display: swap the page first paints in a local face, then swaps to the site's own once
-// it loads, and the text reflows by the difference in their widths and heights. A fallback face
-// scaled to the face's average width, with its ascent, descent and line gap set to match, makes the
-// swap land on (nearly) the same lines. Method from Astro's Fonts API (packages/astro/src/assets/fonts),
+// When the site's face is late, the page paints in a local face: for the whole visit with
+// font-display: optional (the family's), or until the face loads with swap, when the text reflows by
+// the difference in their widths and heights. A fallback face scaled to the face's average width,
+// with its ascent, descent and line gap set to match, keeps that page looking like the face and makes
+// a swap land on (nearly) the same lines. Method from Astro's Fonts API (packages/astro/src/assets/fonts),
 // itself from Capsize and Nuxt Fonts; no code copied.
 
 // The local faces' metrics, from Capsize's collection (@capsizecss/metrics 4.4.0, as Astro carries
