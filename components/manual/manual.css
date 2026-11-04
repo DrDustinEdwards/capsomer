@@ -752,8 +752,9 @@
       min-inline-size: 0;
     }
 
-    /* The way on: the FAA arrow (--faa-arrow, a mask, so it is the same on every platform and takes
-       the type's color, white as the legend is). 1em wide, its shaft Overpass Bold's stem. */
+    /* The way on: the FAA arrow (--faa-arrow, a clip path, so it is the same on every platform, takes
+       the type's color, white as the legend is, and needs no image a CSP could refuse). 1em wide, its
+       shaft Overpass Bold's stem. */
     li + li::before {
       content: "";
       flex: none;
@@ -761,7 +762,7 @@
       block-size: 0.72em;
       margin-inline: 0.6em;
       background: currentColor;
-      mask: var(--faa-arrow) center / contain no-repeat;
+      clip-path: var(--faa-arrow);
     }
     li + li:dir(rtl)::before, :where([dir="rtl"]) & li + li::before {
       rotate: 180deg;
