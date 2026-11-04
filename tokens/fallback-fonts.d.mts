@@ -13,8 +13,9 @@ export const LOCAL: Record<LocalFace, { metrics: FontMetrics; src: readonly stri
 /** A face's average width (xWidthAvg, in its units) at each weight from 550 up, keyed by weight: { 600: 984, 700: 1003 }. */
 export type FontWidths = Readonly<Record<number, number>>;
 export type MeasuredFamily =
-  | "Schibsted Grotesk" | "Martian Mono" | "DM Sans" | "DM Mono" | "Source Serif 4"
-  | "Montserrat" | "Open Sans" | "Inter" | "Fraunces" | "Space Grotesk" | "JetBrains Mono";
+  | "Martian Mono" | "DM Sans" | "DM Mono" | "Source Serif 4"
+  | "Montserrat" | "Open Sans" | "Inter" | "Fraunces" | "Space Grotesk" | "JetBrains Mono"
+  | "Overpass" | "Jost" | "Capsomer Drafting" | "DSEG7 Classic";
 /** Faces already measured, keyed by family. */
 export const MEASURED: Record<MeasuredFamily, { metrics: FontMetrics; local: LocalFace; widths?: FontWidths }>;
 /** `${family} Fallback`. */

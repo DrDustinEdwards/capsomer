@@ -24,7 +24,13 @@
   --fs-prose-h2: clamp(1.375rem, 1.2rem + 1.2vw, 1.875rem);
   --fs-input-coarse: max(1rem, 16px);
   --prose: "Source Serif 4", "Iowan Old Style", Charter, Georgia, serif;
-  --display: "Schibsted Grotesk", "Schibsted Grotesk Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --display: "Inter", "Inter Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --weight-title: 300;
+  --weight-heading: 500;
+  --wayfinding: "Overpass", "Overpass Fallback", "Segoe UI", Arial, sans-serif;
+  --poster: "Jost", "Jost Fallback", Futura, "Century Gothic", sans-serif;
+  --drafting: "Capsomer Drafting", "Capsomer Drafting Fallback", "Segoe UI", Arial, sans-serif;
+  --readout: "DSEG7 Classic", "DSEG7 Classic Fallback", ui-monospace, monospace;
   /* motion */
   --dur-fast: 100ms;
   --dur-base: 200ms;
@@ -51,8 +57,10 @@
   --rail-w: 208px;
   --rail-w-collapsed: 56px;
   --top-h: 44px;
-  --figures: proportional-nums;
+  --figures: tabular-nums;
   --figures-column: tabular-nums;
+  --faa-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 72'%3E%3Cpath d='M0 29.75H52V4L96 36 52 68V42.25H0Z'/%3E%3C/svg%3E");
+  --faa-arrow-out: polygon(6% 38%, 52% 38%, 52% 14%, 92% 50%, 52% 86%, 52% 62%, 6% 62%);
   --header-h: 3.5rem;
   --cap-arrow: polygon(8.3% 41.7%, 59.2% 41.7%, 40% 22.5%, 50% 12.5%, 87.5% 50%, 50% 87.5%, 40% 77.5%, 59.2% 58.3%, 8.3% 58.3%);
   /* link */

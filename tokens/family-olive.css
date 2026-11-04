@@ -38,6 +38,9 @@
   --sign: #191c0c;
   --on-sign: #f9fbf2;
   --sign-edge: #191c0c;
+  --sign-here: #2a2d22;
+  --on-sign-here: #becd82;
+  --lit-bulb: #ffe4b5;
   --accent-1: #fcfdfb;
   --accent-2: #f8faf4;
   --accent-3: #f0f4e6;
@@ -133,6 +136,9 @@
     --sign: #20211b;
     --on-sign: #eeefe9;
     --sign-edge: #7a7d75;
+    --sign-here: #2d2f24;
+    --on-sign-here: #becd82;
+    --lit-bulb: #ffe4b5;
     --accent-1: #0d0e0a;
     --accent-2: #13140f;
     --accent-3: #1e2114;
@@ -230,6 +236,9 @@
   --sign: #20211b;
   --on-sign: #eeefe9;
   --sign-edge: #7a7d75;
+  --sign-here: #2d2f24;
+  --on-sign-here: #becd82;
+  --lit-bulb: #ffe4b5;
   --accent-1: #0d0e0a;
   --accent-2: #13140f;
   --accent-3: #1e2114;
@@ -301,6 +310,7 @@
     --crit: #8f2726;
     --info: #014d9a;
     --nodata: #4c4e43;
+    --on-sign-here: #cbdb8f;
     --accent-11: #384001;
     --series-ink-1: #7748ba;
     --series-ink-2: #a83e01;
@@ -329,6 +339,7 @@
       --info: #b4d5ff;
       --nodata: #ced1c5;
       --sign-edge: #999b93;
+      --on-sign-here: #ccdb8f;
       --accent-10: #c2d469;
       --accent-11: #e1eeb5;
       --series-ink-1: #d9c7fe;
@@ -365,6 +376,7 @@
     --info: #b4d5ff;
     --nodata: #ced1c5;
     --sign-edge: #999b93;
+    --on-sign-here: #ccdb8f;
     --accent-10: #c2d469;
     --accent-11: #e1eeb5;
     --series-ink-1: #d9c7fe;

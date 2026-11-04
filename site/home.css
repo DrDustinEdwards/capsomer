@@ -395,7 +395,7 @@ h2:not(.cap-family-footer-heading) {
   }
   & [data-face="ui"] p {
     font-family: var(--ui);
-    font-weight: 800;
+    font-weight: var(--weight-title);
   }
   & [data-face="mono"] p {
     font-family: var(--mono);
@@ -403,6 +403,28 @@ h2:not(.cap-family-footer-heading) {
   }
   & [data-face="prose"] p {
     font-family: var(--prose);
+  }
+  & [data-face="wayfinding"] p {
+    font-family: var(--wayfinding);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  & [data-face="poster"] p {
+    font-family: var(--poster);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+  & [data-face="drafting"] p,
+  & [data-face="readout"] p {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  & [data-face="drafting"] p {
+    font-family: var(--drafting);
+  }
+  & [data-face="readout"] p {
+    font-family: var(--readout);
   }
   & figcaption {
     color: var(--muted);

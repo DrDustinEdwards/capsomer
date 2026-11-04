@@ -28,6 +28,16 @@
       font-size: var(--fs-h2);
       line-height: 1.25;
     }
+
+    /* A missing page is a standalone poster, so its title is set in Jost (--poster), the free Futura,
+       in its Demibold, as NASA NHB 1430.2 section 5.4 heads Futura (Dustin, 2026-11-04). */
+    &[data-status="404"] h1.cap-empty-title {
+      font-family: var(--poster);
+      font-size: clamp(2rem, 1.6rem + 1.6vw, 2.75rem);
+      font-weight: 600;
+      letter-spacing: 0;
+      line-height: 1.1;
+    }
   }
 
   /* Development only: the thrown error's stack, scrolled inside its box on a phone. */
