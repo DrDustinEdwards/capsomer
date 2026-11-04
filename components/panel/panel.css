@@ -66,7 +66,7 @@
     & :is(h2, h3) {
       margin: 0;
       font-size: var(--fs-body);
-      font-weight: 600;
+      font-weight: var(--weight-heading);
       letter-spacing: -0.01em;
       line-height: var(--leading);
     }

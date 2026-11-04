@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.74.3]
+
+- **Panel and dialog titles** (`.cap-panel` header `h2`/`h3`, `.cap-dialog-title`): `--weight-heading` (Inter Medium), where they were 600 and 800, so they read as the headings the type plan sets in Medium. Smaller UI labels (alert, flag and tray titles) keep 600.
+
 ## [0.74.2]
 
 The type plan's weights where they had slipped (verifier, 2026-11-04).
