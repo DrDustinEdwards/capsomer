@@ -29,7 +29,7 @@ function widths(state: NetworkState): number[] {
 }
 
 /** One site's squares, from the stretch's left edge: x, y, width, height. Its parity follows its place in the row. */
-export function squares(state: NetworkState, place: number): Array<[number, number, number, number]> {
+function squares(state: NetworkState, place: number): Array<[number, number, number, number]> {
   const out: Array<[number, number, number, number]> = [];
   let x = 0;
   widths(state).forEach((w, c) => {
