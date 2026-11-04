@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- `allowScripts` denies esbuild's and workerd's install scripts for npm 12, which asks about each one; both work without them (their binaries come from platform packages). No class, token or HTML contract changes.
+
 ## [0.70.0]
 
 - **The hexagons draw larger.** Each group's name stands in the empty cell before its run on the outer ring, so the comb loses the ring it kept for names, and the comb may be as tall as the screen less 8rem (it was the lesser of the screen less 12rem and 52rem). In a 900 px tall window a cell goes from about 72 px wide to about 95. No class, token or HTML contract changes.
