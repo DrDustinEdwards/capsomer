@@ -1,5 +1,30 @@
 import { expect, test } from "@playwright/test";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+// The wrapper is imported as the package ships it (compiled by npm run build); Playwright rewrites the JSX of any .tsx file a spec imports.
+import { Banner } from "../../dist/components/banner/banner.react.js";
+
+// The specimen has no React page, so the body slot is checked on markup the way a site's server renders it, with the states page's stylesheet.
+test("behavior: the React Banner holds a list in its body, outside any paragraph, inside the banner's width", async ({ page }) => {
+  const states = await (await page.request.get("components/banner/states.html")).text();
+  const links = (states.match(/<link rel="stylesheet"[^>]*>/g) ?? []).join("\n");
+  const item = (text: string) => createElement("li", { key: text }, text);
+  const markup = renderToStaticMarkup(
+    createElement(Banner, { title: "Three sites are slow", body: createElement("ul", null, ["Home page", "Search", "Sign in"].map(item)), onDismiss: () => {} }),
+  );
+  await page.route("**/ssr/banner", (route) =>
+    route.fulfill({ contentType: "text/html", body: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Banner</title>${links}</head><body class="cap-specimens"><main><h1>Banner</h1>${markup}</main></body></html>` }),
+  );
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto("ssr/banner");
+  const banner = page.locator(".cap-banner");
+  await expect(banner.locator("ul > li")).toHaveCount(3);
+  await expect(banner.locator("p ul")).toHaveCount(0);
+  const [box, list] = await Promise.all([banner.boundingBox(), banner.locator("ul").boundingBox()]);
+  expect(list!.x).toBeGreaterThanOrEqual(box!.x);
+  expect(list!.x + list!.width).toBeLessThanOrEqual(box!.x + box!.width + 0.5);
+});
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
