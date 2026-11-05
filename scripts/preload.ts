@@ -8,7 +8,7 @@
 
 import { preloads } from "@dustinedwards/site-runtime/preload";
 
-const FACES = [/\/assets\/inter-latin-opsz-normal-[\w-]+\.woff2/, /\/assets\/source-serif-4-latin-wght-normal-[\w-]+\.woff2/];
+const FACES = [/\/assets\/inter-latin-wght-normal-[\w-]+\.woff2/, /\/assets\/source-serif-4-latin-wght-normal-[\w-]+\.woff2/];
 
 /** The `Link` header value for the home page in `outDir`. */
 function homePreloadHeader(outDir: string): string {

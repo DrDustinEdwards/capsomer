@@ -51,7 +51,7 @@ export const SCALE = {
     ["fs-prose-h2", "clamp(1.375rem, 1.2rem + 1.2vw, 1.875rem)", "a heading in the reading context"],
     ["fs-input-coarse", "max(1rem, 16px)", "a form input on a touch screen, so iOS does not zoom (never under 16px, whatever the default size)"],
     ["prose", '"Source Serif 4", "Iowan Old Style", Charter, Georgia, serif', "long-form text and public headings (decision 5)"],
-    ["display", UI_STACK, "a heading that wants a display face (the page head's title, an app's own headings): Inter, whose optical size axis draws its display cut at large sizes; a site may set its own"],
+    ["display", UI_STACK, "a heading that wants a display face (the page head's title, an app's own headings): Inter, at its text cut (the display cut cost dustinedwards.info /systems its 2.5 s LCP, Dustin 2026-11-05); a site may set its own"],
     ["weight-title", "300", "a page title or a name set at 24px and up: Inter Light, NASA NHB 1430.2's Helvetica Light (section 5.2); never under 24px, where Light thins out"],
     ["weight-heading", "500", "a heading inside a page: Inter Medium, the manual's Helvetica Medium"],
     ["wayfinding", '"Overpass", "Overpass Fallback", "Segoe UI", Arial, sans-serif', "wayfinding links only (breadcrumbs, footer links, next and back): Overpass, the free Highway Gothic of FAA airport signs (AC 150/5345-44L, Appendix A), at 700 (600 in the footer)"],

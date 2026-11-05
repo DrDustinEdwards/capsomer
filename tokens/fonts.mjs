@@ -19,10 +19,10 @@ const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 const FACES = [
   {
     family: "Inter",
-    file: "inter-latin-opsz-normal.woff2",
-    sha256: "b3fa8fe3f14d30afb898b3a2533f76951faff55a87f24c843cb79f8f9fd6f545",
+    file: "inter-latin-wght-normal.woff2",
+    sha256: "de7cb566f4ee4c587818480c3e9a8059fdd93db11ca15f39a77b2e59235f55e4",
     weight: "300 800",
-    use: "the UI and display face, with its optical size axis (opsz 14 to 32): the browser sets the display cut at large sizes itself (font-optical-sizing: auto), the way Inter Display is drawn for titles. Fontsource 5.3.0's latin opsz file, its weight axis cut to 300 to 800, the weights the network sets (scripts/narrow-font.py)",
+    use: "the UI and display face. Fontsource 5.3.0's latin opsz file with its optical size fixed at 14, the text cut, and its weight axis cut to 300 to 800, the weights the network sets (scripts/narrow-font.py): 45.7 KB where the opsz file was 68.9 KB, which put dustinedwards.info's /systems past its 2.5 s LCP limit (Dustin, 2026-11-05)",
   },
   {
     family: "Martian Mono",
@@ -34,9 +34,10 @@ const FACES = [
   {
     family: "Overpass",
     file: "overpass-latin-wght-normal.woff2",
-    sha256: "c104845e3d3e8e85b32317955ccecc34ada4e9106d1f5ed93febbb03a7f868b7",
+    sha256: "1efa0fcc4aa152a2423d9a94cc4c9d4d0b407addfd2f2858035f00354e00e015",
     weight: "600 700",
-    use: "wayfinding links only (--wayfinding): breadcrumbs, footer links, next and back. Delve Fonts' Highway Gothic, the FHWA sign face FAA AC 150/5345-44L Appendix A sets airport signs in. Fontsource 5.3.0, its weight axis cut to 600 to 700, the two weights wayfinding sets (scripts/narrow-font.py)",
+    unicodeRange: "U+0020-007E, U+00A0, U+00B7, U+2013-2014, U+2018-201D, U+2022, U+2026, U+2190-2193",
+    use: "wayfinding links only (--wayfinding): breadcrumbs, footer links, next and back. Delve Fonts' Highway Gothic, the FHWA sign face FAA AC 150/5345-44L Appendix A sets airport signs in. Fontsource 5.3.0, its weight axis cut to 600 to 700, the two weights wayfinding sets, and its characters to plain English text, dashes, quotes and arrows (scripts/narrow-font.py, 14.8 KB): a breadcrumb's accented letter draws in the fallback",
   },
   {
     family: "Jost",
@@ -72,14 +73,14 @@ const FACES = [
 const UNICODE_RANGE =
   "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD";
 
-function face({ family, file, weight, style = "normal" }) {
+function face({ family, file, weight, style = "normal", unicodeRange = UNICODE_RANGE }) {
   return `@font-face {
   font-family: "${family}";
   font-style: ${style};
   font-weight: ${weight};
   font-display: optional;
   src: url("../fonts/${file}") format("woff2");
-  unicode-range: ${UNICODE_RANGE};
+  unicode-range: ${unicodeRange};
 }`;
 }
 

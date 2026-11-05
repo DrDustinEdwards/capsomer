@@ -4,6 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.75.0]
+
+Lighter Inter and Overpass files, so dustinedwards.info's /systems is back under its 2.5 s LCP limit (Dustin, 2026-11-05). On the check's simulated slow phone it went from a steady 2.17 s before 0.73.0 to about 2.5 s (2.6 s in CI), because the preloaded Inter was 22 KB heavier than the face it replaced and Overpass added 27 KB; with both cuts it measured 2.20 s.
+
+- **Renamed file: `fonts/inter-latin-opsz-normal.woff2` is now `fonts/inter-latin-wght-normal.woff2`.** Inter's optical size axis is pinned at 14, its text cut (68,948 to 45,696 bytes); the weight axis stays 300 to 800. Titles no longer switch to the display cut at large sizes. A site that imports or preloads the file by name uses the new name.
+- **Overpass** (`fonts/overpass-latin-wght-normal.woff2`) keeps plain English characters, the no-break space, the middle dot, dashes, curly quotes, the bullet, the ellipsis and arrows, with kerning, ligatures and contextual forms (27,036 to 14,824 bytes). Its `@font-face` `unicode-range` names exactly those, so any other letter (an accented title in a breadcrumb) draws in the Overpass fallback.
+- `scripts/narrow-font.py` makes every cut from the Fontsource 5.3.0 files: it narrows or pins axes and keeps a set of characters. The fallback metrics, measured again, are unchanged.
+
 ## [0.74.4]
 
 - **System map headings** (`.cap-system-map-column-name`, `-group-name`, `-place-name`, `-card-name`, `-part-name`, `-flow-name`): `--weight-heading` (Inter Medium), where they were 600, so the map's headings read as the type plan's headings on Capsid, dustinedwards.info and the showcase.

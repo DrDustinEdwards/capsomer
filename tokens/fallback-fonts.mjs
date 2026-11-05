@@ -68,9 +68,10 @@ export const LOCAL = {
 // latin 600 and 700). The ascent, descent and line gap read the same at every weight. Martian Mono,
 // DM Mono, JetBrains Mono and Space Grotesk keep one width at every weight (Space Grotesk 489, 490,
 // 490), which the synthetic bold keeps too, so they have none.
-// The network's 2026-11-04 faces, read the same way on 2026-11-04 from the files in fonts/: Inter's opsz file
-// (its default instance, wght 400 opsz 14, reads as txasm's Inter did, so the entry stands; 600 and 700
-// instanced at opsz 14), Overpass (its weight axis cut to 600 to 700, so its default and xWidthAvg are 600's) and Jost (Fontsource 5.3.0, 600 and 700 instanced), Capsomer Drafting and
+// The network's 2026-11-04 faces, read the same way on 2026-11-04 from the files in fonts/: Inter (the opsz file pinned
+// at opsz 14, so it reads as txasm's Inter did and the entry stands; 600 and 700 instanced; measured again
+// 2026-11-05, unchanged), Overpass (its weight axis cut to 600 to 700, so its default and xWidthAvg are 600's; cut to plain English
+// characters 2026-11-05 and measured again, unchanged) and Jost (Fontsource 5.3.0, 600 and 700 instanced), Capsomer Drafting and
 // DSEG7 Classic (one weight; DSEG's digits are all one width, so Courier New stands in for it).
 export const MEASURED = {
   "Martian Mono": { metrics: { ascent: 1000, descent: -200, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 700 }, local: "Courier New" },
