@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -14,10 +9,7 @@ eachTheme((theme) => {
 
   test("accessibility: no axe violations with the popup open", async ({ page }) => {
     await visitStates(page, "select", theme);
-    await page
-      .getByRole("combobox", { name: /^Owner/ })
-      .first()
-      .click();
+    await page.getByRole("combobox", { name: /^Owner/ }).first().click();
     await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeVisible();
     await expectNoAxeViolations(page);
   });
@@ -38,9 +30,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the popup's options, check and groups reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the popup's options, check and groups reach their contrast", async ({ page }) => {
     await visitStates(page, "select", theme);
     await page.getByRole("combobox", { name: /^Owner/ }).click();
     await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeVisible();
@@ -57,56 +47,35 @@ eachTheme((theme) => {
     await expect(platform).toHaveText("Cloudflare");
     await expect(platform).toHaveAttribute("aria-haspopup", "listbox");
     await expect(platform).toHaveAttribute("aria-expanded", "false");
-    await expect(page.getByRole("combobox", { name: /^Owner/ })).toHaveAttribute(
-      "aria-required",
-      "true",
-    );
+    await expect(page.getByRole("combobox", { name: /^Owner/ })).toHaveAttribute("aria-required", "true");
     await expect(page.getByRole("combobox", { name: /^Owner/ })).toHaveText("Choose an agent");
-    await expect(page.locator("#sel-invalid")).toHaveAccessibleDescription(
-      "Choose who owns this job. It cannot run without an owner.",
-    );
+    await expect(page.locator("#sel-invalid")).toHaveAccessibleDescription("Choose who owns this job. It cannot run without an owner.");
     await expect(page.locator("#sel-invalid")).toHaveAttribute("aria-invalid", "true");
     await expect(page.locator("#sel-disabled")).toBeDisabled();
-    await expect(page.locator("#sel-disabled")).toHaveAccessibleDescription(
-      "Locked while a deploy is running.",
-    );
+    await expect(page.locator("#sel-disabled")).toHaveAccessibleDescription("Locked while a deploy is running.");
     await expect(page.getByRole("combobox", { name: "Sort by", exact: true })).toBeVisible();
   });
 
-  test(
-    "accessibility: the open list is a named listbox with groups, a chosen option and a disabled one",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "select", theme);
-      const owner = page.getByRole("combobox", { name: /^Owner/ });
-      await owner.click();
-      await expect(owner).toHaveAttribute("aria-expanded", "true");
-      const list = page.getByRole("listbox", { name: /^Owner/ });
-      await expect(list.getByRole("group", { name: "Agents" })).toBeVisible();
-      await expect(list.getByRole("group", { name: "People" })).toBeVisible();
-      await expect(list.getByRole("option", { name: "Choose an agent" })).toHaveAttribute(
-        "aria-selected",
-        "true",
-      );
-      await expect(list.getByRole("option", { name: "seat-start (paused)" })).toHaveAttribute(
-        "aria-disabled",
-        "true",
-      );
-    },
-  );
+  test("accessibility: the open list is a named listbox with groups, a chosen option and a disabled one", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "select", theme);
+    const owner = page.getByRole("combobox", { name: /^Owner/ });
+    await owner.click();
+    await expect(owner).toHaveAttribute("aria-expanded", "true");
+    const list = page.getByRole("listbox", { name: /^Owner/ });
+    await expect(list.getByRole("group", { name: "Agents" })).toBeVisible();
+    await expect(list.getByRole("group", { name: "People" })).toBeVisible();
+    await expect(list.getByRole("option", { name: "Choose an agent" })).toHaveAttribute("aria-selected", "true");
+    await expect(list.getByRole("option", { name: "seat-start (paused)" })).toHaveAttribute("aria-disabled", "true");
+  });
 
   test("keyboard: Tab moves focus to the select and shows a ring", async ({ page }) => {
     await visitStates(page, "select", theme);
     await page.keyboard.press("Tab");
     await expect(page.getByRole("combobox", { name: "Platform" })).toBeFocused();
-    await expectContrast(page, [
-      { sel: "#sel-platform", what: "the focus ring", part: "outline", min: 3 },
-    ]);
+    await expectContrast(page, [{ sel: "#sel-platform", what: "the focus ring", part: "outline", min: 3 }]);
   });
 
-  test("keyboard: Enter, Space and the arrow keys open the list with the chosen option current", async ({
-    page,
-  }) => {
+  test("keyboard: Enter, Space and the arrow keys open the list with the chosen option current", async ({ page }) => {
     await visitStates(page, "select", theme);
     const every = page.getByRole("combobox", { name: "Check every" });
     for (const key of ["Enter", "Space", "ArrowDown", "ArrowUp"]) {
@@ -115,18 +84,13 @@ eachTheme((theme) => {
       const list = page.getByRole("listbox", { name: "Check every" });
       await expect(list, key).toBeVisible();
       await expect(list).toBeFocused();
-      await expect(list.getByRole("option", { name: "5 minutes", exact: true })).toHaveAttribute(
-        "data-active",
-        "",
-      );
+      await expect(list.getByRole("option", { name: "5 minutes", exact: true })).toHaveAttribute("data-active", "");
       await page.keyboard.press("Escape");
       await expect(list).toBeHidden();
     }
   });
 
-  test("keyboard: arrows move, Enter chooses and closes, focus returns, and the native select changes", async ({
-    page,
-  }) => {
+  test("keyboard: arrows move, Enter chooses and closes, focus returns, and the native select changes", async ({ page }) => {
     await visitStates(page, "select", theme);
     const every = page.getByRole("combobox", { name: "Check every" });
     const native = page.locator("#sel-every-native");
@@ -147,9 +111,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => (window as unknown as { changes: number }).changes)).toBe(1);
   });
 
-  test("keyboard: Esc closes without changing and returns focus to the select", async ({
-    page,
-  }) => {
+  test("keyboard: Esc closes without changing and returns focus to the select", async ({ page }) => {
     await visitStates(page, "select", theme);
     const every = page.getByRole("combobox", { name: "Check every" });
     await every.focus();
@@ -162,9 +124,7 @@ eachTheme((theme) => {
     await expect(every).toBeFocused();
   });
 
-  test("keyboard: typing letters on the closed select chooses the first option that starts with them", async ({
-    page,
-  }) => {
+  test("keyboard: typing letters on the closed select chooses the first option that starts with them", async ({ page }) => {
     await visitStates(page, "select", theme);
     const platform = page.getByRole("combobox", { name: "Platform" });
     await platform.focus();
@@ -174,25 +134,17 @@ eachTheme((theme) => {
     await expect(page.getByRole("listbox", { name: "Platform" })).toBeHidden();
   });
 
-  test("keyboard: typing letters in the open list moves to the matching option, Home and End go to the ends", async ({
-    page,
-  }) => {
+  test("keyboard: typing letters in the open list moves to the matching option, Home and End go to the ends", async ({ page }) => {
     await visitStates(page, "select", theme);
     await page.getByRole("combobox", { name: "Platform" }).click();
     const list = page.getByRole("listbox", { name: "Platform" });
     await expect(list).toBeFocused();
     await page.keyboard.type("g");
-    await expect(list.getByRole("option", { name: "GitHub Pages" })).toHaveAttribute(
-      "data-active",
-      "",
-    );
+    await expect(list.getByRole("option", { name: "GitHub Pages" })).toHaveAttribute("data-active", "");
     await page.keyboard.press("End");
     await expect(list.getByRole("option", { name: "Fly.io" })).toHaveAttribute("data-active", "");
     await page.keyboard.press("Home");
-    await expect(list.getByRole("option", { name: "Cloudflare" })).toHaveAttribute(
-      "data-active",
-      "",
-    );
+    await expect(list.getByRole("option", { name: "Cloudflare" })).toHaveAttribute("data-active", "");
     await page.keyboard.press("Enter");
     await expect(page.locator("#sel-platform-native")).toHaveValue("cloudflare");
   });
@@ -203,10 +155,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
-    await expect(page.getByRole("option", { name: "improve-loop" })).toHaveAttribute(
-      "data-active",
-      "",
-    );
+    await expect(page.getByRole("option", { name: "improve-loop" })).toHaveAttribute("data-active", "");
     await page.keyboard.press("ArrowDown");
     await expect(page.getByRole("option", { name: "Alex" })).toHaveAttribute("data-active", "");
   });
@@ -219,9 +168,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("listbox", { name: "Platform" })).toBeHidden();
   });
 
-  test("behavior: a click chooses an option and closes; a disabled option cannot be chosen", async ({
-    page,
-  }) => {
+  test("behavior: a click chooses an option and closes; a disabled option cannot be chosen", async ({ page }) => {
     await visitStates(page, "select", theme);
     const owner = page.getByRole("combobox", { name: /^Owner/ });
     await owner.click();
@@ -234,35 +181,20 @@ eachTheme((theme) => {
     await expect(page.getByRole("listbox", { name: /^Owner/ })).toBeHidden();
   });
 
-  test("behavior: the chosen option shows a check and the popup is at least as wide as the button", async ({
-    page,
-  }) => {
+  test("behavior: the chosen option shows a check and the popup is at least as wide as the button", async ({ page }) => {
     await visitStates(page, "select", theme);
     const platform = page.getByRole("combobox", { name: "Platform" });
     await platform.click();
     const list = page.getByRole("listbox", { name: "Platform" });
-    await expect(
-      list.getByRole("option", { name: "Cloudflare" }).locator(".cap-option-indicator"),
-    ).toBeVisible();
-    await expect(
-      list.getByRole("option", { name: "Vercel" }).locator(".cap-option-indicator"),
-    ).toBeHidden();
+    await expect(list.getByRole("option", { name: "Cloudflare" }).locator(".cap-option-indicator")).toBeVisible();
+    await expect(list.getByRole("option", { name: "Vercel" }).locator(".cap-option-indicator")).toBeHidden();
     // The popup zooms in from 95%: measure once the animation has ended.
-    await page.evaluate(() =>
-      Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-        () => undefined,
-      ),
-    );
-    const [t, p] = await page.evaluate(() => [
-      document.querySelector("#sel-platform")?.getBoundingClientRect().width ?? 0,
-      document.querySelector(".cap-select-popup:popover-open")?.getBoundingClientRect().width ?? 0,
-    ]);
+    await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(() => undefined));
+    const [t, p] = await page.evaluate(() => [document.querySelector("#sel-platform")?.getBoundingClientRect().width ?? 0, document.querySelector(".cap-select-popup:popover-open")?.getBoundingClientRect().width ?? 0]);
     expect(p).toBeGreaterThanOrEqual((t ?? 0) - 2);
   });
 
-  test("behavior: the native select stays in the page with its options and is out of the tab order", async ({
-    page,
-  }) => {
+  test("behavior: the native select stays in the page with its options and is out of the tab order", async ({ page }) => {
     await visitStates(page, "select", theme);
     await expect(page.locator("#sel-platform-native option")).toHaveCount(5);
     await expect(page.locator("#sel-platform-native")).toBeHidden();

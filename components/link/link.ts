@@ -47,10 +47,7 @@ function segments(path: string): string[] {
 export function underPath(path: string, pattern: string): boolean {
   const want = segments(pattern);
   const have = segments(path);
-  return (
-    want.length <= have.length &&
-    want.every((w, i) => w === have[i] || w === "*" || w.startsWith(":"))
-  );
+  return want.length <= have.length && want.every((w, i) => w === have[i] || w === "*" || w.startsWith(":"));
 }
 
 // Whether the link may prefetch. Never for a link that loads a whole document (reloadDocument),

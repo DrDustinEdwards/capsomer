@@ -114,12 +114,7 @@ export async function performBulk(spec: BulkActionSpec): Promise<boolean> {
   try {
     await spec.run(spec.items, spec.value);
   } catch (err) {
-    fail(
-      fillCount(
-        `Could not ${verb.toLowerCase()} {n} item{s}: ${err instanceof Error && err.message ? err.message : "nothing says why"}`,
-        n,
-      ),
-    );
+    fail(fillCount(`Could not ${verb.toLowerCase()} {n} item{s}: ${err instanceof Error && err.message ? err.message : "nothing says why"}`, n));
     return false;
   }
   const undo = spec.undo;
@@ -175,20 +170,13 @@ export function selectedItems(bar: HTMLElement): BulkItem[] {
   const list = listOf(bar);
   if (!list) return [];
   return boxesOf(list)
-    .filter(
-      (b) =>
-        b.checked &&
-        !b.disabled &&
-        visible(b.closest<HTMLElement>("[data-label], li, tr, label") ?? b),
-    )
+    .filter((b) => b.checked && !b.disabled && visible(b.closest<HTMLElement>("[data-label], li, tr, label") ?? b))
     .map((b) => ({ id: b.value, label: labelOf(b) }));
 }
 
 // The selectable items the person can see now (a search or a filter may hide some).
 export function itemsInView(list: ParentNode): HTMLInputElement[] {
-  return boxesOf(list).filter(
-    (b) => !b.disabled && visible(b.closest<HTMLElement>("[data-label], li, tr, label") ?? b),
-  );
+  return boxesOf(list).filter((b) => !b.disabled && visible(b.closest<HTMLElement>("[data-label], li, tr, label") ?? b));
 }
 
 function fire(box: HTMLInputElement): void {
@@ -204,8 +192,7 @@ export function setAllInView(list: ParentNode, on: boolean): void {
   }
 }
 
-const part = <T extends HTMLElement = HTMLElement>(bar: HTMLElement, name: string) =>
-  bar.querySelector<T>(`[data-cap-part='${name}']`);
+const part = <T extends HTMLElement = HTMLElement>(bar: HTMLElement, name: string) => bar.querySelector<T>(`[data-cap-part='${name}']`);
 
 // True while the bar lists outcomes: it stays in view with nothing selected, so the results of
 // the action just run can be read.
@@ -293,13 +280,7 @@ const lastTouched = new WeakMap<HTMLElement, HTMLInputElement>();
 // missed).
 export function refresh(bar: HTMLElement): number {
   const list = listOf(bar);
-  if (!list)
-    return (
-      Number.parseInt(
-        part(bar, "count")?.textContent ?? bar.querySelector(".cap-bulk-count")?.textContent ?? "0",
-        10,
-      ) || 0
-    );
+  if (!list) return Number.parseInt(part(bar, "count")?.textContent ?? bar.querySelector(".cap-bulk-count")?.textContent ?? "0", 10) || 0;
   const items = selectedItems(bar);
   const n = items.length;
   const count = bar.querySelector<HTMLElement>(".cap-bulk-count");
@@ -326,15 +307,11 @@ export function refresh(bar: HTMLElement): number {
     all.textContent = fillCount(all.dataset.capLabel ?? "Select all {n} in view", total);
     all.hidden = total === 0 || n >= total;
   }
-  for (const head of document.querySelectorAll<HTMLInputElement>(
-    `input[data-cap-select-all][data-cap-list='${CSS.escape(list.id)}']`,
-  )) {
+  for (const head of document.querySelectorAll<HTMLInputElement>(`input[data-cap-select-all][data-cap-list='${CSS.escape(list.id)}']`)) {
     head.checked = total > 0 && n >= total;
     head.indeterminate = n > 0 && n < total;
   }
-  bar.dispatchEvent(
-    new CustomEvent("cap-bulk-change", { bubbles: true, detail: { items, count: n } }),
-  );
+  bar.dispatchEvent(new CustomEvent("cap-bulk-change", { bubbles: true, detail: { items, count: n } }));
   return n;
 }
 
@@ -342,9 +319,7 @@ export function refresh(bar: HTMLElement): number {
 // touched, or the first item.
 function returnTarget(bar: HTMLElement): HTMLElement | null {
   const list = listOf(bar);
-  const named = bar.dataset.capReturn
-    ? document.querySelector<HTMLElement>(bar.dataset.capReturn)
-    : null;
+  const named = bar.dataset.capReturn ? document.querySelector<HTMLElement>(bar.dataset.capReturn) : null;
   return named ?? lastTouched.get(bar) ?? (list ? boxesOf(list)[0] : null) ?? null;
 }
 
@@ -395,9 +370,7 @@ export async function invoke(bar: HTMLElement, button: HTMLElement): Promise<boo
     returnTo: returnTarget(bar),
   });
   if (ok) {
-    bar.dispatchEvent(
-      new CustomEvent("cap-bulk-action", { bubbles: true, detail: { action, items, value } }),
-    );
+    bar.dispatchEvent(new CustomEvent("cap-bulk-action", { bubbles: true, detail: { action, items, value } }));
     clearSelection(bar);
   }
   return ok;
@@ -417,12 +390,7 @@ export function attachBulkBar(bar: HTMLElement): () => void {
     list.addEventListener("change", onChange);
     // Items added, removed or hidden (a filter, an upload, a bin) change what can be selected.
     const watch = new MutationObserver(() => refresh(bar));
-    watch.observe(list, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["hidden", "disabled"],
-    });
+    watch.observe(list, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "disabled"] });
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape" || e.defaultPrevented || e.isComposing || bar.hidden) return;
       if (selectedItems(bar).length === 0) return;
@@ -437,9 +405,7 @@ export function attachBulkBar(bar: HTMLElement): () => void {
       () => list.removeEventListener("keydown", onKey),
       () => bar.removeEventListener("keydown", onKey),
     );
-    for (const head of document.querySelectorAll<HTMLInputElement>(
-      `input[data-cap-select-all][data-cap-list='${CSS.escape(list.id)}']`,
-    )) {
+    for (const head of document.querySelectorAll<HTMLInputElement>(`input[data-cap-select-all][data-cap-list='${CSS.escape(list.id)}']`)) {
       const onHead = () => {
         setAllInView(list, head.checked);
         refresh(bar);
@@ -494,8 +460,6 @@ export function attachBulkBar(bar: HTMLElement): () => void {
 // Attaches to every [data-cap="bulk-bar"] under root not yet attached. Returns a function that
 // detaches them all.
 export function enhance(root: ParentNode = document): () => void {
-  const undo = Array.from(
-    root.querySelectorAll<HTMLElement>("[data-cap='bulk-bar']:not([data-cap-ready])"),
-  ).map(attachBulkBar);
+  const undo = Array.from(root.querySelectorAll<HTMLElement>("[data-cap='bulk-bar']:not([data-cap-ready])")).map(attachBulkBar);
   return () => undo.forEach((f) => f());
 }

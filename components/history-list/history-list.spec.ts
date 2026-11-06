@@ -1,66 +1,18 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  focused,
-  visitStates,
-} from "../../test/helpers.ts";
-import {
-  PICK_BLOCKED,
-  PICK_NONE,
-  compareHref,
-  condense,
-  countWords,
-  deltaOf,
-  deltaSign,
-  deltaText,
-  orderPair,
-  pickTwo,
-  pickedText,
-  rangeText,
-  restoredEntry,
-  stamp,
-  wordDelta,
-  type HistoryEntry,
-} from "./history-list.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, focused, visitStates } from "../../test/helpers.ts";
+import { PICK_BLOCKED, PICK_NONE, compareHref, condense, countWords, deltaOf, deltaSign, deltaText, orderPair, pickTwo, pickedText, rangeText, restoredEntry, stamp, wordDelta, type HistoryEntry } from "./history-list.ts";
 
 const at = (t: string) => `2026-10-02T${t}:00Z`;
-const entry = (
-  id: string,
-  kind: HistoryEntry["kind"],
-  t: string,
-  words: number | undefined,
-  extra: Partial<HistoryEntry> = {},
-): HistoryEntry => ({
-  id,
-  kind,
-  who: "Alex Rivera",
-  at: at(t),
-  words,
-  summary: `Version ${id}`,
-  ...extra,
-});
+const entry = (id: string, kind: HistoryEntry["kind"], t: string, words: number | undefined, extra: Partial<HistoryEntry> = {}): HistoryEntry => ({ id, kind, who: "Alex Rivera", at: at(t), words, summary: `Version ${id}`, ...extra });
 
 // The pure helpers need no browser.
 test("behavior: an entry with no word count has no size change, and a run holding one has none either", () => {
-  const list = [
-    entry("c", "edit", "12:00", undefined),
-    entry("b", "autosave", "11:00", 120),
-    entry("a", "autosave", "10:00", 100),
-  ];
+  const list = [entry("c", "edit", "12:00", undefined), entry("b", "autosave", "11:00", 120), entry("a", "autosave", "10:00", 100)];
   expect(deltaOf(list, 0)).toBeUndefined();
   expect(deltaOf(list, 1)).toBe(20);
-  expect(
-    deltaOf([entry("b", "edit", "11:00", 120), entry("a", "edit", "10:00", undefined)], 0),
-  ).toBeUndefined();
+  expect(deltaOf([entry("b", "edit", "11:00", 120), entry("a", "edit", "10:00", undefined)], 0)).toBeUndefined();
   expect(deltaOf([entry("a", "edit", "10:00", 100, { delta: 7 })], 0)).toBe(7);
-  const lines = condense([
-    entry("d", "edit", "13:00", 150),
-    entry("c", "autosave", "12:00", undefined),
-    entry("b", "autosave", "11:00", 120),
-    entry("a", "edit", "10:00", 100),
-  ]);
+  const lines = condense([entry("d", "edit", "13:00", 150), entry("c", "autosave", "12:00", undefined), entry("b", "autosave", "11:00", 120), entry("a", "edit", "10:00", 100)]);
   const run = lines.find((l) => l.type === "run");
   expect(run && run.type === "run" ? run.delta : "none").toBeUndefined();
 });
@@ -93,13 +45,7 @@ test("behavior: condense folds runs of consecutive autosaves and keeps every oth
     entry("g", "publish", "12:00", 78),
   ];
   const lines = condense(list);
-  expect(lines.map((l) => (l.type === "run" ? `run:${l.entries.length}` : l.entry.id))).toEqual([
-    "a",
-    "run:3",
-    "e",
-    "f",
-    "g",
-  ]);
+  expect(lines.map((l) => (l.type === "run" ? `run:${l.entries.length}` : l.entry.id))).toEqual(["a", "run:3", "e", "f", "g"]);
   const run = lines[1];
   if (run?.type !== "run") throw new Error("expected a run");
   expect(run.from).toBe(at("14:02"));
@@ -110,23 +56,10 @@ test("behavior: condense folds runs of consecutive autosaves and keeps every oth
 });
 
 test("behavior: the current version is never folded into a run, and a single autosave is just a line", () => {
-  const list = [
-    entry("a", "autosave", "15:00", 12),
-    entry("b", "autosave", "14:00", 10),
-    entry("c", "autosave", "13:00", 8),
-  ];
+  const list = [entry("a", "autosave", "15:00", 12), entry("b", "autosave", "14:00", 10), entry("c", "autosave", "13:00", 8)];
   const lines = condense(list);
-  expect(lines.map((l) => (l.type === "run" ? `run:${l.entries.length}` : l.entry.id))).toEqual([
-    "a",
-    "run:2",
-  ]);
-  expect(
-    condense([
-      entry("a", "edit", "15:00", 9),
-      entry("b", "autosave", "14:00", 5),
-      entry("c", "edit", "13:00", 3),
-    ]).every((l) => l.type === "entry"),
-  ).toBe(true);
+  expect(lines.map((l) => (l.type === "run" ? `run:${l.entries.length}` : l.entry.id))).toEqual(["a", "run:2"]);
+  expect(condense([entry("a", "edit", "15:00", 9), entry("b", "autosave", "14:00", 5), entry("c", "edit", "13:00", 3)]).every((l) => l.type === "entry")).toBe(true);
   expect(deltaOf(list, 0)).toBe(2);
 });
 
@@ -151,21 +84,12 @@ test("behavior: a restore is a new line with the restored length, never a change
   const current = entry("v-9", "edit", "14:00", 1954);
   const source = entry("v-2", "edit", "09:15", 1742);
   const made = restoredEntry(source, current, "Alex Rivera", "v-2-restored-1", at("15:00"));
-  expect(made).toMatchObject({
-    kind: "restore",
-    words: 1742,
-    delta: -212,
-    restoredFrom: { id: "v-2" },
-  });
-  expect(made.summary).toBe(
-    `Restored the version from ${stamp(source.at, Date.parse(at("15:00")))}`,
-  );
+  expect(made).toMatchObject({ kind: "restore", words: 1742, delta: -212, restoredFrom: { id: "v-2" } });
+  expect(made.summary).toBe(`Restored the version from ${stamp(source.at, Date.parse(at("15:00")))}`);
   expect(source.words).toBe(1742);
 });
 
-test("behavior: the page is delivered with every line, its size change and its state in words", async ({
-  page,
-}) => {
+test("behavior: the page is delivered with every line, its size change and its state in words", async ({ page }) => {
   const html = await (await page.request.get("components/history-list/states.html")).text();
   expect(html).toContain("12 autosaves");
   expect(html).toContain("+58 words");
@@ -191,49 +115,33 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: each text tone and each control boundary reaches its contrast", async ({
-    page,
-  }) => {
+  test("accessibility: each text tone and each control boundary reaches its contrast", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     await expectContrast(page, [
       { sel: "#hist-main .cap-row-title a", what: "a line's summary" },
       { sel: "#hist-main .cap-hist-name", what: "who" },
       { sel: "#hist-main .cap-hist-delta span", what: "the size change" },
-      {
-        sel: "#hist-main .cap-hist-delta svg",
-        what: "the size change's mark",
-        part: "color",
-        min: 3,
-      },
+      { sel: "#hist-main .cap-hist-delta svg", what: "the size change's mark", part: "color", min: 3 },
       { sel: "#hist-main .cap-time", what: "the relative time" },
       { sel: "#hist-main .cap-hist-exact", what: "the exact time" },
       { sel: "#hist-main .cap-row-detail", what: "the kind line" },
       { sel: "#hist-main .cap-hist-picked", what: "the pick bar's line" },
       { sel: "#hist-main [data-cap-part='restore']", what: "Restore" },
       { sel: "#hist-main .cap-row-actions .cap-status", what: "Current" },
-      {
-        sel: "#hist-main [data-kind='publish'] .cap-hist-dest .cap-status[data-tone='ok']",
-        what: "Live",
-      },
-      {
-        sel: "#hist-main [data-kind='publish'] .cap-hist-dest .cap-status[data-tone='crit']",
-        what: "Failed",
-      },
+      { sel: "#hist-main [data-kind='publish'] .cap-hist-dest .cap-status[data-tone='ok']", what: "Live" },
+      { sel: "#hist-main [data-kind='publish'] .cap-hist-dest .cap-status[data-tone='crit']", what: "Failed" },
       { sel: "#hist-main [data-cap-part='pick']", what: "a pick box's edge", part: "border" },
       { sel: "#hist-main .cap-hist-bar", what: "the pick bar's edge", part: "border", min: 1 },
     ]);
   });
 
-  test(
-    "accessibility: the roles and names of the pick bar and the first line",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "history-list", theme);
-      await expect(page.locator("#hist-two .cap-hist-bar")).toMatchAriaSnapshot(`
+  test("accessibility: the roles and names of the pick bar and the first line", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    await expect(page.locator("#hist-two .cap-hist-bar")).toMatchAriaSnapshot(`
       - status: "2 versions picked. Older: Oct 1, 9:00 AM UTC. Newer: Oct 2, 1:30 PM UTC. The older is always first, whichever you picked first."
       - link "Compare 2 versions"
     `);
-      await expect(page.locator("#hist-two")).toMatchAriaSnapshot(`
+    await expect(page.locator("#hist-two")).toMatchAriaSnapshot(`
       - list "History with two picked":
         - listitem:
           - checkbox "Compare this version, Oct 2, 2:52 PM UTC, by Alex Rivera" [disabled]
@@ -252,72 +160,39 @@ eachTheme((theme) => {
           - checkbox "Compare this version, Oct 1, 4:10 PM UTC, by Rosa Park" [disabled]
           - text: \u221230 words
     `);
-    },
-  );
+  });
 
-  test(
-    "accessibility: every pick box and Restore button names its version",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "history-list", theme);
-      const names = await page
-        .locator("#hist-main [data-cap-part='pick']")
-        .evaluateAll((els) => els.map((e) => (e.closest("label")?.textContent ?? "").trim()));
-      expect(names.length).toBeGreaterThanOrEqual(15);
-      expect(new Set(names).size).toBe(names.length);
-      expect(names.every((n) => n.startsWith("Compare this version"))).toBe(true);
-      await expect(
-        main(page)
-          .getByRole("button", { name: /^Restore the version from/ })
-          .first(),
-      ).toBeVisible();
-    },
-  );
+  test("accessibility: every pick box and Restore button names its version", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    const names = await page.locator("#hist-main [data-cap-part='pick']").evaluateAll((els) => els.map((e) => (e.closest("label")?.textContent ?? "").trim()));
+    expect(names.length).toBeGreaterThanOrEqual(15);
+    expect(new Set(names).size).toBe(names.length);
+    expect(names.every((n) => n.startsWith("Compare this version"))).toBe(true);
+    await expect(main(page).getByRole("button", { name: /^Restore the version from/ }).first()).toBeVisible();
+  });
 
-  test(
-    "accessibility: the size change says its sign in text, and a drawn mark repeats it",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "history-list", theme);
-      const m = main(page);
-      await expect(m.locator("[data-sign='plus']").first()).toContainText(/^\+\d+ words$/);
-      await expect(m.locator("[data-sign='minus']").first()).toContainText("−30 words");
-      await expect(m.locator("[data-sign='zero']").first()).toContainText("no change in length");
-      for (const sign of ["plus", "minus", "zero"])
-        await expect(m.locator(`[data-sign='${sign}'] svg`).first()).toHaveAttribute(
-          "aria-hidden",
-          "true",
-        );
-    },
-  );
+  test("accessibility: the size change says its sign in text, and a drawn mark repeats it", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    const m = main(page);
+    await expect(m.locator("[data-sign='plus']").first()).toContainText(/^\+\d+ words$/);
+    await expect(m.locator("[data-sign='minus']").first()).toContainText("−30 words");
+    await expect(m.locator("[data-sign='zero']").first()).toContainText("no change in length");
+    for (const sign of ["plus", "minus", "zero"]) await expect(m.locator(`[data-sign='${sign}'] svg`).first()).toHaveAttribute("aria-hidden", "true");
+  });
 
-  test(
-    "accessibility: a status is a word and a shape, and the avatar is hidden because the name is beside it",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "history-list", theme);
-      const failed = main(page).locator(".cap-hist-dest .cap-status[data-tone='crit']");
-      await expect(failed).toHaveText("Failed");
-      await expect(failed.locator("svg")).toHaveCount(1);
-      await expect(main(page).locator(".cap-hist-who .cap-avatar").first()).toHaveAttribute(
-        "aria-hidden",
-        "true",
-      );
-    },
-  );
+  test("accessibility: a status is a word and a shape, and the avatar is hidden because the name is beside it", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "history-list", theme);
+    const failed = main(page).locator(".cap-hist-dest .cap-status[data-tone='crit']");
+    await expect(failed).toHaveText("Failed");
+    await expect(failed.locator("svg")).toHaveCount(1);
+    await expect(main(page).locator(".cap-hist-who .cap-avatar").first()).toHaveAttribute("aria-hidden", "true");
+  });
 
-  test("keyboard: Tab goes through the pick box, the title and Restore of each line, in order", async ({
-    page,
-  }) => {
+  test("keyboard: Tab goes through the pick box, the title and Restore of each line, in order", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const list = page.locator("#hist-comfy");
     await list.locator("[data-id='v-71'] [data-cap-part='pick']").focus();
-    for (const next of [
-      list.locator("[data-id='v-71'] .cap-row-title a"),
-      list.locator("[data-id='v-70'] [data-cap-part='pick']"),
-      list.locator("[data-id='v-70'] .cap-row-title a"),
-      list.locator("[data-id='v-70'] [data-cap-part='restore']"),
-    ]) {
+    for (const next of [list.locator("[data-id='v-71'] .cap-row-title a"), list.locator("[data-id='v-70'] [data-cap-part='pick']"), list.locator("[data-id='v-70'] .cap-row-title a"), list.locator("[data-id='v-70'] [data-cap-part='restore']")]) {
       await page.keyboard.press("Tab");
       await expect(next).toBeFocused();
     }
@@ -325,9 +200,7 @@ eachTheme((theme) => {
 
   test("keyboard: j and k move focus between the lines' titles", async ({ page }) => {
     await visitStates(page, "history-list", theme);
-    const links = main(page).locator(
-      ".cap-hist-list > .cap-hist-row .cap-row-title :is(a, button)",
-    );
+    const links = main(page).locator(".cap-hist-list > .cap-hist-row .cap-row-title :is(a, button)");
     await page.locator("#hist-main .cap-row-title a").first().focus();
     await page.keyboard.press("j");
     await expect(links.nth(1)).toBeFocused();
@@ -366,9 +239,7 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/version=v-71/);
   });
 
-  test("keyboard: Enter and Space on a run's button open and close the autosaves, and aria-expanded follows", async ({
-    page,
-  }) => {
+  test("keyboard: Enter and Space on a run's button open and close the autosaves, and aria-expanded follows", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const button = main(page).getByRole("button", { name: "12 autosaves" });
     const rows = page.locator(`#${(await button.getAttribute("aria-controls")) ?? ""}`);
@@ -384,9 +255,7 @@ eachTheme((theme) => {
     await expect(rows).toBeHidden();
   });
 
-  test("keyboard: Space on a pick box picks it; two picks enable Compare with an address from the two ids, older first", async ({
-    page,
-  }) => {
+  test("keyboard: Space on a pick box picks it; two picks enable Compare with an address from the two ids, older first", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const m = main(page);
     const compare = m.getByRole("link", { name: "Compare 2 versions" });
@@ -397,22 +266,16 @@ eachTheme((theme) => {
     await newer.focus();
     await page.keyboard.press("Space");
     await expect(newer).toBeChecked();
-    await expect(m.locator("[data-cap-part='picked']")).toHaveText(
-      "1 version picked. Pick one more.",
-    );
+    await expect(m.locator("[data-cap-part='picked']")).toHaveText("1 version picked. Pick one more.");
     await older.focus();
     await page.keyboard.press("Space");
     await expect(older).toBeChecked();
     await expect(compare).toHaveAttribute("href", "/posts/spring-update/compare?from=v-15&to=v-17");
     await expect(compare).not.toHaveAttribute("aria-disabled", "true");
-    await expect(m.locator("[data-cap-part='picked']")).toContainText(
-      "2 versions picked. Older: Oct 1, 9:00 AM UTC. Newer: Oct 2, 1:30 PM UTC.",
-    );
+    await expect(m.locator("[data-cap-part='picked']")).toContainText("2 versions picked. Older: Oct 1, 9:00 AM UTC. Newer: Oct 2, 1:30 PM UTC.");
   });
 
-  test("keyboard: a third pick is refused and said, and unticking one lets another be picked", async ({
-    page,
-  }) => {
+  test("keyboard: a third pick is refused and said, and unticking one lets another be picked", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const m = main(page);
     const box = (id: string) => m.locator(`[data-id='${id}'] [data-cap-part='pick']`);
@@ -427,17 +290,13 @@ eachTheme((theme) => {
     await expect(m.locator("[data-cap-part='picked']")).toHaveText(PICK_BLOCKED);
     await box("v-16").focus();
     await page.keyboard.press("Space");
-    await expect(m.locator("[data-cap-part='picked']")).toHaveText(
-      "1 version picked. Pick one more.",
-    );
+    await expect(m.locator("[data-cap-part='picked']")).toHaveText("1 version picked. Pick one more.");
     await box("v-15").focus();
     await page.keyboard.press("Space");
     await expect(box("v-15")).toBeChecked();
   });
 
-  test("keyboard: Compare does nothing, and says what is missing, until two are picked", async ({
-    page,
-  }) => {
+  test("keyboard: Compare does nothing, and says what is missing, until two are picked", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const compare = main(page).getByRole("link", { name: "Compare 2 versions" });
     await compare.focus();
@@ -446,9 +305,7 @@ eachTheme((theme) => {
     await expect(main(page).locator("[data-cap-part='picked']")).toHaveText(PICK_NONE);
   });
 
-  test("keyboard: Enter on Restore adds a new line on top, marks it Current, and says so with Undo; focus stays", async ({
-    page,
-  }) => {
+  test("keyboard: Enter on Restore adds a new line on top, marks it Current, and says so with Undo; focus stays", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const m = main(page);
     const restore = m.locator("[data-id='v-16'] [data-cap-part='restore']");
@@ -465,18 +322,12 @@ eachTheme((theme) => {
     await expect(m.locator("[data-id='v-31'] [data-cap-part='restore']")).toBeVisible();
     await expect(m.locator(".cap-hist-list > .cap-hist-row[data-id]")).toHaveCount(before + 1);
     await expect(m.locator("[data-id='v-16']")).toHaveCount(1);
-    await expect(page.locator("#hist-results")).toContainText(
-      "Restored version from Oct 1 as a new version.",
-    );
-    await expect(
-      page.locator("#hist-results").getByRole("button", { name: /^Undo/ }),
-    ).toBeVisible();
+    await expect(page.locator("#hist-results")).toContainText("Restored version from Oct 1 as a new version.");
+    await expect(page.locator("#hist-results").getByRole("button", { name: /^Undo/ })).toBeVisible();
     await expect(restore).toBeFocused();
   });
 
-  test("keyboard: z undoes the restore, removes the new line and makes the earlier version current again", async ({
-    page,
-  }) => {
+  test("keyboard: z undoes the restore, removes the new line and makes the earlier version current again", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const m = main(page);
     const restore = m.locator("[data-id='v-16'] [data-cap-part='restore']");
@@ -491,16 +342,12 @@ eachTheme((theme) => {
     await expect(page.locator("#hist-results")).toContainText("Undone.");
   });
 
-  test("behavior: the restored line's size change is the difference from the version it replaced", async ({
-    page,
-  }) => {
+  test("behavior: the restored line's size change is the difference from the version it replaced", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const m = main(page);
     await m.locator("[data-id='v-15'] [data-cap-part='restore']").click();
     // Current was 1954 words; v-15 has 1884.
-    await expect(
-      m.locator(".cap-hist-list > .cap-hist-row").first().locator(".cap-hist-delta"),
-    ).toContainText("−70 words");
+    await expect(m.locator(".cap-hist-list > .cap-hist-row").first().locator(".cap-hist-delta")).toContainText("−70 words");
   });
 
   test("behavior: a restore tells the app, and an Undo tells it again", async ({ page }) => {
@@ -508,16 +355,11 @@ eachTheme((theme) => {
     await page.evaluate(() => {
       const w = window as unknown as { __events: string[] };
       w.__events = [];
-      for (const name of ["cap:history-restored", "cap:history-unrestored"])
-        document.addEventListener(name, (e) =>
-          w.__events.push(`${name}:${(e as CustomEvent).detail.source.id}`),
-        );
+      for (const name of ["cap:history-restored", "cap:history-unrestored"]) document.addEventListener(name, (e) => w.__events.push(`${name}:${(e as CustomEvent).detail.source.id}`));
     });
     await main(page).locator("[data-id='v-16'] [data-cap-part='restore']").click();
     await page.locator("#hist-results").getByRole("button", { name: /^Undo/ }).click();
-    expect(
-      await page.evaluate(() => (window as unknown as { __events: string[] }).__events),
-    ).toEqual(["cap:history-restored:v-16", "cap:history-unrestored:v-16"]);
+    expect(await page.evaluate(() => (window as unknown as { __events: string[] }).__events)).toEqual(["cap:history-restored:v-16", "cap:history-unrestored:v-16"]);
   });
 
   test("behavior: Load older is a link that works as delivered", async ({ page }) => {
@@ -529,9 +371,7 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/before=v-15/);
   });
 
-  test("keyboard: Enter on Load older lets the app take over: the next page joins the list, folded, and the control goes", async ({
-    page,
-  }) => {
+  test("keyboard: Enter on Load older lets the app take over: the next page joins the list, folded, and the control goes", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const list = page.locator("#hist-pages");
     const older = list.getByRole("link", { name: "Load older versions" });
@@ -548,28 +388,20 @@ eachTheme((theme) => {
     await expect(older).toHaveCount(0);
     // A line that came late can be picked and restored like any other.
     await list.locator("[data-id='v-85'] [data-cap-part='pick']").check();
-    await expect(list.locator("[data-cap-part='picked']")).toHaveText(
-      "1 version picked. Pick one more.",
-    );
+    await expect(list.locator("[data-cap-part='picked']")).toHaveText("1 version picked. Pick one more.");
   });
 
   test("behavior: the empty state says what the first save does", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     await expect(page.locator("#hist-empty")).toContainText("No versions yet");
-    await expect(page.locator("#hist-empty")).toContainText(
-      "The first save of this post makes the first version.",
-    );
+    await expect(page.locator("#hist-empty")).toContainText("The first save of this post makes the first version.");
   });
 
-  test("behavior: the React wrapper renders the same contract: lines, a run that opens, and the pick bar", async ({
-    page,
-  }) => {
+  test("behavior: the React wrapper renders the same contract: lines, a run that opens, and the pick bar", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const r = page.locator("#react-history");
     await expect(r.getByRole("checkbox", { name: /^Compare this version/ })).toHaveCount(3);
-    await expect(
-      r.getByRole("link", { name: "Added the 2019 annual report and its caveat" }),
-    ).toBeVisible();
+    await expect(r.getByRole("link", { name: "Added the 2019 annual report and its caveat" })).toBeVisible();
     await expect(r.getByText("+42 words")).toBeVisible();
     const run = r.getByRole("button", { name: "2 autosaves" });
     await expect(run).toHaveAttribute("aria-expanded", "false");
@@ -579,20 +411,13 @@ eachTheme((theme) => {
     const box = (id: string) => r.locator(`li[data-id='${id}'] input[type=checkbox]`);
     await box("r-5").check();
     await box("r-1").check();
-    await expect(r.getByRole("link", { name: "Compare 2 versions" })).toHaveAttribute(
-      "href",
-      "/posts/spring-update/compare?from=r-1&to=r-5",
-    );
+    await expect(r.getByRole("link", { name: "Compare 2 versions" })).toHaveAttribute("href", "/posts/spring-update/compare?from=r-1&to=r-5");
     await box("r-4").click({ force: true });
-    await expect(r.locator("[data-cap-part='picked']")).toHaveText(
-      "Two versions are picked; untick one first.",
-    );
+    await expect(r.locator("[data-cap-part='picked']")).toHaveText("Two versions are picked; untick one first.");
     await expect(box("r-4")).not.toBeChecked();
   });
 
-  test("behavior: the React wrapper restores as a new line with Undo, and z takes it back", async ({
-    page,
-  }) => {
+  test("behavior: the React wrapper restores as a new line with Undo, and z takes it back", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const r = page.locator("#react-history");
     await r.locator("li[data-id='r-1'] [data-cap-part='restore']").click();
@@ -600,22 +425,16 @@ eachTheme((theme) => {
     await expect(top).toHaveAttribute("data-kind", "restore");
     await expect(top).toContainText("Restored the version from Oct 1, 4:10 PM UTC");
     await expect(r.locator("li[data-id='r-5']")).not.toHaveAttribute("data-current", "");
-    await expect(r.locator(".cap-message")).toContainText(
-      "Restored version from Oct 1 as a new version.",
-    );
+    await expect(r.locator(".cap-message")).toContainText("Restored version from Oct 1 as a new version.");
     await page.keyboard.press("z");
     await expect(r.locator("li[data-kind='restore']")).toHaveCount(0);
     await expect(r.locator("li[data-id='r-5']")).toHaveAttribute("data-current", "");
   });
-  test("behavior: load-into-editor mode links to the editor in place of Restore, and the app can take the click", async ({
-    page,
-  }) => {
+  test("behavior: load-into-editor mode links to the editor in place of Restore, and the app can take the click", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const l = page.locator("#hist-load");
     await expect(l.locator("[data-cap-part='restore']")).toHaveCount(0);
-    const load = l.getByRole("link", {
-      name: /^Load into editor the version from Oct 1, 4:10 PM UTC by Rosa Park/,
-    });
+    const load = l.getByRole("link", { name: /^Load into editor the version from Oct 1, 4:10 PM UTC by Rosa Park/ });
     await expect(load).toHaveAttribute("href", "/posts/spring-update/edit?load=v-70");
     // The current version has nothing to load.
     await expect(l.locator("li[data-current] [data-cap-part='load']")).toHaveCount(0);
@@ -637,9 +456,7 @@ eachTheme((theme) => {
     await expect(page).not.toHaveURL(/load=/);
   });
 
-  test("keyboard: the Load into editor link is reached by Tab in line order and works from Enter", async ({
-    page,
-  }) => {
+  test("keyboard: the Load into editor link is reached by Tab in line order and works from Enter", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const l = page.locator("#hist-load");
     await l.locator("li[data-id='v-70'] input[type=checkbox]").focus();
@@ -649,9 +466,7 @@ eachTheme((theme) => {
     expect(await focused(page)).toContain("Load into editor");
   });
 
-  test("behavior: a read-only history has no Restore and no Load, and a line with no word count shows no size change", async ({
-    page,
-  }) => {
+  test("behavior: a read-only history has no Restore and no Load, and a line with no word count shows no size change", async ({ page }) => {
     await visitStates(page, "history-list", theme);
     const r = page.locator("#hist-ro");
     await expect(r.locator('[data-cap-part="restore"], [data-cap-part="load"]')).toHaveCount(0);
@@ -661,10 +476,7 @@ eachTheme((theme) => {
     await expect(r.locator('li[data-id="r-8"] .cap-row-actions')).toBeEmpty();
     await expect(r.locator(".cap-hist-delta")).toHaveCount(2);
     await expect(r.locator(".cap-hist-delta").first()).toBeEmpty();
-    await expect(r.locator('li[data-id="r-8"] .cap-row-title a')).toHaveAttribute(
-      "aria-describedby",
-      "hist-ro-r-8-t",
-    );
+    await expect(r.locator('li[data-id="r-8"] .cap-row-title a')).toHaveAttribute("aria-describedby", "hist-ro-r-8-t");
     // A page the app adds is built the same way: no action, no size change.
     await r.getByRole("link", { name: "Load older versions" }).click();
     const added = r.locator('li[data-id="r-7"]');
@@ -672,17 +484,11 @@ eachTheme((theme) => {
     await expect(added.locator('[data-cap-part="restore"], [data-cap-part="load"]')).toHaveCount(0);
     await expect(added.locator(".cap-row-actions")).toBeEmpty();
     await expect(added.locator(".cap-hist-delta")).toBeEmpty();
-    await expect(added.locator(".cap-row-title a")).toHaveAttribute(
-      "aria-describedby",
-      "hist-ro-r-7-t",
-    );
+    await expect(added.locator(".cap-row-title a")).toHaveAttribute("aria-describedby", "hist-ro-r-7-t");
     await expect(added).not.toHaveAttribute("data-words", /.*/);
     // Picking two still compares them.
     await r.locator("input[name=compare]").first().check();
     await r.locator("input[name=compare]").nth(1).check();
-    await expect(r.getByRole("link", { name: "Compare 2 versions" })).toHaveAttribute(
-      "href",
-      /compare\?from=r-8&to=r-9/,
-    );
+    await expect(r.getByRole("link", { name: "Compare 2 versions" })).toHaveAttribute("href", /compare\?from=r-8&to=r-9/);
   });
 });

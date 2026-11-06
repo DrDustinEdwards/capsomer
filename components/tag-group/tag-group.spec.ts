@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -12,9 +7,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: a tag's name, its remove icon and the empty line reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: a tag's name, its remove icon and the empty line reach their contrast", async ({ page }) => {
     await visitStates(page, "tag-group", theme);
     await expectContrast(page, [
       { sel: "#tags-live .cap-tag-name", what: "a tag's name" },
@@ -23,9 +16,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: one tab stop; arrows move; Delete, Backspace and Enter remove; focus is kept; Undo puts a tag back", async ({
-    page,
-  }) => {
+  test("keyboard: one tab stop; arrows move; Delete, Backspace and Enter remove; focus is kept; Undo puts a tag back", async ({ page }) => {
     await visitStates(page, "tag-group", theme);
     const group = page.getByRole("group", { name: "Tags" });
     const remove = (name: string) => group.getByRole("button", { name: `Remove ${name}` });

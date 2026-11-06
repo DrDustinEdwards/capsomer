@@ -22,35 +22,13 @@ export interface DetailPanelProps {
   children: ReactNode;
 }
 
-export function DetailPanel({
-  open,
-  onClose,
-  id,
-  title,
-  identifier,
-  kind,
-  badge,
-  history = false,
-  closeLabel = "Close",
-  children,
-}: DetailPanelProps) {
+export function DetailPanel({ open, onClose, id, title, identifier, kind, badge, history = false, closeLabel = "Close", children }: DetailPanelProps) {
   // The panel's address is "#detail-<id>"; the shared dialog reads the prefix from the attribute.
   const mark = useCallback((el: HTMLDialogElement | null) => {
     if (el && el.hasAttribute("data-cap-history")) el.dataset.capHistory = "detail";
   }, []);
   return (
-    <Dialog
-      ref={mark}
-      open={open}
-      onOpenChange={() => onClose()}
-      placement="right"
-      size="md"
-      className="cap-detail"
-      id={id}
-      history={history}
-      historyId={id}
-      closeLabel={closeLabel}
-    >
+    <Dialog ref={mark} open={open} onOpenChange={() => onClose()} placement="right" size="md" className="cap-detail" id={id} history={history} historyId={id} closeLabel={closeLabel}>
       <DialogHeader divider>
         <div className="cap-detail-heading">
           {kind ? <p className="cap-detail-kind">{kind}</p> : null}
@@ -85,15 +63,7 @@ export function DetailSection({ title, children }: DetailSectionProps) {
 
 // A command to run, in a sunken mono block, with a Copy button and a line that says
 // whether it was copied.
-export function DetailCommand({
-  text,
-  copyLabel = "Copy command",
-  what = "Command",
-}: {
-  text: string;
-  copyLabel?: string;
-  what?: string;
-}) {
+export function DetailCommand({ text, copyLabel = "Copy command", what = "Command" }: { text: string; copyLabel?: string; what?: string }) {
   const id = useId();
   const [said, setSaid] = useState("");
   const copy = async () => {

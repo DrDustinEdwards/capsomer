@@ -25,13 +25,7 @@ const SERIES: TreeNode[] = [
 ];
 
 const flat = (nodes: TreeNode[]): string =>
-  nodes
-    .map((n) =>
-      n.children
-        ? `${n.label}: ${n.children.map((c) => c.label).join(", ") || "nothing"}`
-        : n.label,
-    )
-    .join(". ");
+  nodes.map((n) => (n.children ? `${n.label}: ${n.children.map((c) => c.label).join(", ") || "nothing"}` : n.label)).join(". ");
 
 function Series() {
   const [nodes, setNodes] = useState(SERIES);

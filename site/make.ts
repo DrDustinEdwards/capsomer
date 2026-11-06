@@ -3,23 +3,9 @@
 // generator (tokens/palette-core.mjs), paints the two previews, checks every pair and writes the files.
 import { FOOTER, band, esc, header, runningHead } from "./home.ts";
 import { codeRegion } from "./markdown.ts";
-import {
-  DEFAULT,
-  DISPLAY_FACES,
-  FACES,
-  MONO_FACES,
-  PRESETS,
-  SIZES,
-  TEXT_FACES,
-} from "./make-presets.ts";
+import { DEFAULT, DISPLAY_FACES, FACES, MONO_FACES, PRESETS, SIZES, TEXT_FACES } from "./make-presets.ts";
 
-const options = (ids: string[], chosen: string) =>
-  ids
-    .map(
-      (id) =>
-        `<option value="${id}"${id === chosen ? " selected" : ""}>${esc(FACES[id]?.name ?? id)}</option>`,
-    )
-    .join("");
+const options = (ids: string[], chosen: string) => ids.map((id) => `<option value="${id}"${id === chosen ? " selected" : ""}>${esc(FACES[id]?.name ?? id)}</option>`).join("");
 const select = (id: string, label: string, body: string) =>
   `<div class="cap-field"><label class="cap-field-label" for="${id}">${label}</label><div class="cap-select-wrap"><select class="cap-select" id="${id}">${body}</select></div></div>`;
 const seg = (name: string, legend: string, items: Array<[string, string]>, chosen: string) =>
@@ -30,8 +16,7 @@ const STATUS_GLYPH: Record<string, string> = {
   warn: "M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z",
   crit: "M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z",
 };
-const glyph = (tone: string) =>
-  `<svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="${STATUS_GLYPH[tone]}"/></svg>`;
+const glyph = (tone: string) => `<svg class="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="${STATUS_GLYPH[tone]}"/></svg>`;
 
 /** One preview: Capsomer's real components, in one theme. Ids carry the theme so both panes can sit on one page. */
 function pane(scheme: "light" | "dark"): string {
@@ -142,28 +127,14 @@ ${runningHead("6", "Make a theme", "From one color")}
         <p class="cap-field-help" id="mk-anchor-h">Step 11, the color of links and accent text in the light theme. Leave it off to have it worked out.</p>
         <div class="make-color" data-cap-part="anchor"${d.anchor ? "" : " hidden"}><input type="color" id="mk-anchor-pick" value="${d.anchor ?? "#4f2d7f"}" aria-label="Text color picker" /><input class="cap-input" id="mk-anchor" value="${d.anchor ?? "#4f2d7f"}" spellcheck="false" autocomplete="off" aria-label="Text color" aria-describedby="mk-anchor-h" /></div>
       </div>
-      ${seg(
-        "mk-label",
-        "Label on buttons",
-        [
-          ["auto", "Best"],
-          ["light", "Light"],
-          ["dark", "Dark"],
-        ],
-        d.label,
-      )}
+      ${seg("mk-label", "Label on buttons", [["auto", "Best"], ["light", "Light"], ["dark", "Dark"]], d.label)}
     </fieldset>
     <fieldset class="make-group">
       <legend>Type</legend>
       ${select("mk-ui", "Text", options(TEXT_FACES, d.ui))}
       ${select("mk-display", "Headings", options(DISPLAY_FACES, d.display))}
       ${select("mk-mono", "Code and numbers", options(MONO_FACES, d.mono))}
-      ${seg(
-        "mk-size",
-        "Text size",
-        SIZES.map((n) => [String(n), `${n}px`]),
-        String(d.size),
-      )}
+      ${seg("mk-size", "Text size", SIZES.map((n) => [String(n), `${n}px`]), String(d.size))}
     </fieldset>
     <fieldset class="make-group">
       <legend>Shape</legend>
@@ -171,15 +142,7 @@ ${runningHead("6", "Make a theme", "From one color")}
         <label class="cap-field-label" for="mk-radius">Corners <output for="mk-radius" id="mk-radius-out">${d.radius}px</output></label>
         <input class="cap-range" id="mk-radius" type="range" min="0" max="16" step="1" value="${d.radius}" />
       </div>
-      ${seg(
-        "mk-density",
-        "Density",
-        [
-          ["compact", "Compact"],
-          ["comfortable", "Comfortable"],
-        ],
-        d.density,
-      )}
+      ${seg("mk-density", "Density", [["compact", "Compact"], ["comfortable", "Comfortable"]], d.density)}
     </fieldset>
   </form>
 
@@ -213,15 +176,7 @@ ${runningHead("6", "Make a theme", "From one color")}
       <h2 id="mk-export-h">Use it</h2>
       <p class="home-sub">With Capsomer, load this after <code>capsomer/tokens.css</code>; every value sits in the <code>cap.tokens</code> layer, so your own CSS still wins. Without Capsomer, the custom properties work in any CSS, and the tokens file is in the W3C design tokens format.</p>
       <div class="make-where">
-        ${seg(
-          "mk-where",
-          "Apply to",
-          [
-            ["root", "The whole page"],
-            ["family", "One element"],
-          ],
-          "root",
-        )}
+        ${seg("mk-where", "Apply to", [["root", "The whole page"], ["family", "One element"]], "root")}
         <div class="cap-field" data-cap-part="name" hidden>
           <label class="cap-field-label" for="mk-name">Name</label>
           <p class="cap-field-help" id="mk-name-h">Put <code>data-family="<span data-cap-part="name-echo">brand</span>"</code> on the element.</p>

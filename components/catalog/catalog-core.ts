@@ -156,72 +156,46 @@ export const RESERVED_PARAMS = ["q", "sort", "page"] as const;
 
 // Folds case and accents, so "Report" matches "report" and "Genève" matches "geneve".
 export function fold(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/\p{M}+/gu, "")
-    .toLowerCase();
+  return text.normalize("NFD").replace(/\p{M}+/gu, "").toLowerCase();
 }
 
 const asList = (v: CatalogValue | readonly CatalogValue[]): string[] =>
-  (Array.isArray(v) ? v : [v])
-    .filter((x): x is string | number | boolean => x !== null && x !== undefined && x !== "")
-    .map(String);
+  (Array.isArray(v) ? v : [v]).filter((x): x is string | number | boolean => x !== null && x !== undefined && x !== "").map(String);
 
 // Checks a declaration once, at definition time, so a mistake is a thrown error where it is made and not a
 // filter that quietly does nothing.
 export function defineCatalog<T>(def: CatalogDefinition<T>): CatalogDefinition<T> {
   const keys = new Set<string>();
   for (const field of def.fields) {
-    if (!/^[a-z][a-z0-9_-]*$/.test(field.key))
-      throw new Error(
-        `catalog ${def.id}: field key "${field.key}" must be lower case letters, digits, - or _`,
-      );
-    if ((RESERVED_PARAMS as readonly string[]).includes(field.key))
-      throw new Error(`catalog ${def.id}: "${field.key}" is a reserved parameter`);
-    if (keys.has(field.key))
-      throw new Error(`catalog ${def.id}: two fields are named "${field.key}"`);
+    if (!/^[a-z][a-z0-9_-]*$/.test(field.key)) throw new Error(`catalog ${def.id}: field key "${field.key}" must be lower case letters, digits, - or _`);
+    if ((RESERVED_PARAMS as readonly string[]).includes(field.key)) throw new Error(`catalog ${def.id}: "${field.key}" is a reserved parameter`);
+    if (keys.has(field.key)) throw new Error(`catalog ${def.id}: two fields are named "${field.key}"`);
     keys.add(field.key);
   }
   if (def.defaultSort !== undefined) {
     const key = def.defaultSort.replace(/^-/, "");
     const field = def.fields.find((f) => f.key === key);
-    if (!field?.sort)
-      throw new Error(
-        `catalog ${def.id}: defaultSort "${def.defaultSort}" is not a sortable field`,
-      );
+    if (!field?.sort) throw new Error(`catalog ${def.id}: defaultSort "${def.defaultSort}" is not a sortable field`);
   }
   if (def.group) {
     const field = def.fields.find((f) => f.key === def.group?.field);
-    if (!field?.sort)
-      throw new Error(
-        `catalog ${def.id}: group field "${def.group.field}" is not a sortable field`,
-      );
+    if (!field?.sort) throw new Error(`catalog ${def.id}: group field "${def.group.field}" is not a sortable field`);
     if (def.defaultSort?.replace(/^-/, "") !== def.group.field) {
-      throw new Error(
-        `catalog ${def.id}: group field "${def.group.field}" must be the field the default sort orders by`,
-      );
+      throw new Error(`catalog ${def.id}: group field "${def.group.field}" must be the field the default sort orders by`);
     }
   }
-  if (!def.basePath.startsWith("/") || def.basePath.includes("?"))
-    throw new Error(`catalog ${def.id}: basePath is a path with no query`);
+  if (!def.basePath.startsWith("/") || def.basePath.includes("?")) throw new Error(`catalog ${def.id}: basePath is a path with no query`);
   return def;
 }
 
-export function parseCatalogParams<T>(
-  def: CatalogDefinition<T>,
-  input: URLSearchParams | string,
-): CatalogState {
+export function parseCatalogParams<T>(def: CatalogDefinition<T>, input: URLSearchParams | string): CatalogState {
   const params = typeof input === "string" ? new URLSearchParams(input) : input;
   const filters: Record<string, string[]> = {};
   for (const field of def.fields) {
     if (!field.facet) continue;
-    const values = params
-      .getAll(field.key)
-      .map((v) => v.trim())
-      .filter(Boolean);
+    const values = params.getAll(field.key).map((v) => v.trim()).filter(Boolean);
     const unique = [...new Set(values)];
-    if (unique.length > 0)
-      filters[field.key] = field.facet.kind === "one" ? unique.slice(0, 1) : unique;
+    if (unique.length > 0) filters[field.key] = field.facet.kind === "one" ? unique.slice(0, 1) : unique;
   }
   const rawSort = params.get("sort") ?? "";
   const sortKey = rawSort.replace(/^-/, "");
@@ -263,11 +237,7 @@ const DIRECTION_WORDS = {
   date: { asc: "oldest first", desc: "newest first" },
 } as const;
 
-function compareValues(
-  a: string | undefined,
-  b: string | undefined,
-  type: "text" | "number" | "date",
-): number {
+function compareValues(a: string | undefined, b: string | undefined, type: "text" | "number" | "date"): number {
   // An item with no value sorts last in either direction: the caller handles that.
   if (type === "number") return Number(a) - Number(b);
   if (type === "date") return (a ?? "") < (b ?? "") ? -1 : (a ?? "") > (b ?? "") ? 1 : 0;
@@ -278,10 +248,7 @@ function compareValues(
 // counts double. null is no match.
 function searchScore<T>(def: CatalogDefinition<T>, item: T, tokens: string[]): number | null {
   const fields = def.fields.filter((f) => f.search);
-  const folded = fields.map((f) => ({
-    weight: f.search === true ? 1 : Number(f.search),
-    text: asList(f.value(item)).map(fold).join(" "),
-  }));
+  const folded = fields.map((f) => ({ weight: f.search === true ? 1 : Number(f.search), text: asList(f.value(item)).map(fold).join(" ") }));
   let total = 0;
   for (const token of tokens) {
     let best = 0;
@@ -296,12 +263,7 @@ function searchScore<T>(def: CatalogDefinition<T>, item: T, tokens: string[]): n
   return total;
 }
 
-function matchesFilters<T>(
-  def: CatalogDefinition<T>,
-  item: T,
-  filters: Record<string, string[]>,
-  except?: string,
-): boolean {
+function matchesFilters<T>(def: CatalogDefinition<T>, item: T, filters: Record<string, string[]>, except?: string): boolean {
   for (const field of def.fields) {
     if (field.key === except) continue;
     const chosen = filters[field.key];
@@ -312,11 +274,7 @@ function matchesFilters<T>(
   return true;
 }
 
-export function queryCatalog<T>(
-  def: CatalogDefinition<T>,
-  items: readonly T[],
-  state: CatalogState,
-): CatalogResult<T> {
+export function queryCatalog<T>(def: CatalogDefinition<T>, items: readonly T[], state: CatalogState): CatalogResult<T> {
   const tokens = fold(state.q).split(" ").filter(Boolean);
   const searching = tokens.length > 0;
   const scores = new Map<string, number>();
@@ -334,7 +292,7 @@ export function queryCatalog<T>(
   const matched = searched.filter((item) => matchesFilters(def, item, state.filters));
 
   // The order. An explicit sort wins; with a search typed and no sort, best match first; else the default.
-  const sortValue = state.sort || (searching ? "" : (def.defaultSort ?? ""));
+  const sortValue = state.sort || (searching ? "" : def.defaultSort ?? "");
   const rank = (item: T) => scores.get(def.itemKey(item)) ?? 0;
   const byField = (value: string) => {
     const key = value.replace(/^-/, "");
@@ -354,13 +312,7 @@ export function queryCatalog<T>(
   };
   const fallback = def.defaultSort ? byField(def.defaultSort) : () => 0;
   const primary = sortValue ? byField(sortValue) : (a: T, b: T) => rank(b) - rank(a);
-  const rows = [...matched].sort(
-    (a, b) =>
-      primary(a, b) ||
-      (searching && !state.sort ? rank(b) - rank(a) : 0) ||
-      fallback(a, b) ||
-      def.itemKey(a).localeCompare(def.itemKey(b)),
-  );
+  const rows = [...matched].sort((a, b) => primary(a, b) || (searching && !state.sort ? rank(b) - rank(a) : 0) || fallback(a, b) || def.itemKey(a).localeCompare(def.itemKey(b)));
 
   const pageSize = def.pageSize ?? 0;
   const pageCount = pageSize > 0 ? Math.max(1, Math.ceil(rows.length / pageSize)) : 1;
@@ -380,32 +332,19 @@ export function queryCatalog<T>(
       const facet = field.facet as CatalogFacet;
       const base = searched.filter((item) => matchesFilters(def, item, state.filters, field.key));
       const counts = new Map<string, number>();
-      for (const item of items)
-        for (const value of asList(field.value(item))) if (!counts.has(value)) counts.set(value, 0);
-      for (const item of base)
-        for (const value of new Set(asList(field.value(item))))
-          counts.set(value, (counts.get(value) ?? 0) + 1);
+      for (const item of items) for (const value of asList(field.value(item))) if (!counts.has(value)) counts.set(value, 0);
+      for (const item of base) for (const value of new Set(asList(field.value(item)))) counts.set(value, (counts.get(value) ?? 0) + 1);
       const chosen = state.filters[field.key] ?? [];
       for (const value of chosen) if (!counts.has(value)) counts.set(value, 0);
       const label = facet.label ?? ((v: string) => v);
       let values = [...counts.keys()];
       if (Array.isArray(facet.order)) {
         const fixed = facet.order as readonly string[];
-        values.sort(
-          (a, b) =>
-            (fixed.indexOf(a) === -1 ? 1e6 : fixed.indexOf(a)) -
-              (fixed.indexOf(b) === -1 ? 1e6 : fixed.indexOf(b)) || a.localeCompare(b),
-        );
+        values.sort((a, b) => (fixed.indexOf(a) === -1 ? 1e6 : fixed.indexOf(a)) - (fixed.indexOf(b) === -1 ? 1e6 : fixed.indexOf(b)) || a.localeCompare(b));
       } else if (facet.order === "alpha") {
-        values.sort((a, b) =>
-          fold(label(a)).localeCompare(fold(label(b)), "en", { numeric: true }),
-        );
+        values.sort((a, b) => fold(label(a)).localeCompare(fold(label(b)), "en", { numeric: true }));
       } else {
-        values.sort(
-          (a, b) =>
-            (counts.get(b) ?? 0) - (counts.get(a) ?? 0) ||
-            fold(label(a)).localeCompare(fold(label(b)), "en", { numeric: true }),
-        );
+        values.sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0) || fold(label(a)).localeCompare(fold(label(b)), "en", { numeric: true }));
       }
       values = values.filter((v) => (counts.get(v) ?? 0) > 0 || chosen.includes(v));
       return {
@@ -414,30 +353,17 @@ export function queryCatalog<T>(
         kind: facet.kind ?? "many",
         general: facet.general === true,
         limit: facet.limit ?? 8,
-        options: values.map((value) => ({
-          value,
-          label: label(value),
-          count: counts.get(value) ?? 0,
-          selected: chosen.includes(value),
-        })),
+        options: values.map((value) => ({ value, label: label(value), count: counts.get(value) ?? 0, selected: chosen.includes(value) })),
         selected: chosen.length,
       };
     })
     // General facets first, the rest in the order they were declared.
     .sort((a, b) => Number(b.general) - Number(a.general));
 
-  const href = (change: Partial<CatalogState> = {}): string =>
-    catalogHref(def, { ...state, ...change });
+  const href = (change: Partial<CatalogState> = {}): string => catalogHref(def, { ...state, ...change });
 
   const chips: CatalogChip[] = [];
-  if (state.q)
-    chips.push({
-      id: "q",
-      field: "q",
-      value: state.q,
-      label: `"${state.q}"`,
-      href: href({ q: "", page: 1 }),
-    });
+  if (state.q) chips.push({ id: "q", field: "q", value: state.q, label: `"${state.q}"`, href: href({ q: "", page: 1 }) });
   for (const facet of facets) {
     for (const option of facet.options.filter((o) => o.selected)) {
       const remaining = (state.filters[facet.key] ?? []).filter((v) => v !== option.value);
@@ -455,9 +381,7 @@ export function queryCatalog<T>(
   if (searching) sorts.push({ value: "", label: "Best match", selected: !state.sort });
   for (const field of def.fields) {
     if (!field.sort) continue;
-    const words =
-      (typeof field.sort === "object" ? field.sort.labels : undefined) ??
-      DIRECTION_WORDS[field.type ?? "text"];
+    const words = (typeof field.sort === "object" ? field.sort.labels : undefined) ?? DIRECTION_WORDS[field.type ?? "text"];
     for (const dir of ["asc", "desc"] as const) {
       const value = dir === "asc" ? field.key : `-${field.key}`;
       sorts.push({ value, label: `${field.label}, ${words[dir]}`, selected: sortValue === value });
@@ -476,8 +400,7 @@ export function queryCatalog<T>(
     to: from === 0 ? 0 : from + slice.length - 1,
     facets,
     chips,
-    clearHref:
-      chips.length > 0 ? catalogHref(def, { q: "", filters: {}, sort: state.sort, page: 1 }) : null,
+    clearHref: chips.length > 0 ? catalogHref(def, { q: "", filters: {}, sort: state.sort, page: 1 }) : null,
     sorts,
     href,
   };
@@ -492,34 +415,20 @@ function groupRows<T>(def: CatalogDefinition<T>, rows: readonly T[]): CatalogRow
     const value = group.value ? group.value(row) : (asList(field.value(row))[0] ?? "");
     const last = groups[groups.length - 1];
     if (last && last.value === value) last.rows.push(row);
-    else
-      groups.push({
-        value,
-        label: value === "" ? "Other" : (group.label?.(value) ?? value),
-        rows: [row],
-      });
+    else groups.push({ value, label: value === "" ? "Other" : (group.label?.(value) ?? value), rows: [row] });
   }
   return groups;
 }
 
 // "3 of 14 articles", "14 articles", "1 article": the live count in words with its total.
-export function countText<T>(
-  def: CatalogDefinition<T>,
-  result: Pick<CatalogResult<T>, "count" | "total">,
-): string {
+export function countText<T>(def: CatalogDefinition<T>, result: Pick<CatalogResult<T>, "count" | "total">): string {
   const noun = (n: number) => (n === 1 ? def.noun[0] : def.noun[1]);
-  return result.count === result.total
-    ? `${result.total} ${noun(result.total)}`
-    : `${result.count} of ${result.total} ${noun(result.total)}`;
+  return result.count === result.total ? `${result.total} ${noun(result.total)}` : `${result.count} of ${result.total} ${noun(result.total)}`;
 }
 
 // The state as a downloadable table: the matching items' columns, so a CSV or JSON export is the same
 // rows the page shows (not a second query).
-export function catalogRecords<T>(
-  def: CatalogDefinition<T>,
-  items: readonly T[],
-  state: CatalogState,
-): Array<Record<string, string>> {
+export function catalogRecords<T>(def: CatalogDefinition<T>, items: readonly T[], state: CatalogState): Array<Record<string, string>> {
   const everything = queryCatalog({ ...def, pageSize: undefined }, items, { ...state, page: 1 });
   return everything.rows.map((item) => {
     const record: Record<string, string> = {};

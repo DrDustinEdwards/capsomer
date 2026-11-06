@@ -1,14 +1,6 @@
 import { useEffect, useId, useState, type ReactNode, useSyncExternalStore } from "react";
 import { Glyph } from "../status/status.react.tsx";
-import {
-  countText,
-  fillCount,
-  orderOutcomes,
-  outcomeSummary,
-  performBulk,
-  type BulkItem,
-  type BulkOutcome,
-} from "./bulk-bar.ts";
+import { countText, fillCount, orderOutcomes, outcomeSummary, performBulk, type BulkItem, type BulkOutcome } from "./bulk-bar.ts";
 
 // For useSyncExternalStore's hydration flag: nothing to subscribe to.
 const noSubscribe = () => () => {};
@@ -68,28 +60,9 @@ export interface BulkBarProps {
   onDismissOutcomes?: () => void;
 }
 
-export function BulkBar({
-  items,
-  actions,
-  onClear,
-  total,
-  onSelectAll,
-  detail,
-  position = "bottom",
-  returnTo,
-  children,
-  label = "Bulk actions",
-  form,
-  prompt,
-  outcomes = [],
-  onDismissOutcomes,
-}: BulkBarProps) {
+export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, position = "bottom", returnTo, children, label = "Bulk actions", form, prompt, outcomes = [], onDismissOutcomes }: BulkBarProps) {
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
   const resultsId = `${useId().replace(/[^a-zA-Z0-9]/g, "")}-results`;
   const showing = outcomes.length > 0;
   const n = items.length;
@@ -129,28 +102,14 @@ export function BulkBar({
 
   return (
     // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
-    <div
-      className="cap-bulk"
-      data-cap="bulk-bar"
-      role="region"
-      aria-label={label}
-      data-position={position === "top" ? "top" : undefined}
-      hidden={(form ? mounted && n === 0 : n === 0) && !showing}
-      onKeyDown={(e) => {
+    <div className="cap-bulk" data-cap="bulk-bar" role="region" aria-label={label} data-position={position === "top" ? "top" : undefined} hidden={(form ? mounted && n === 0 : n === 0) && !showing} onKeyDown={(e) => {
         if (e.key === "Escape" && !e.defaultPrevented && n > 0) {
           e.preventDefault();
           onClear();
         }
-      }}
-    >
+      }}>
       <p className="cap-bulk-count" role="status">
-        {shown > 0
-          ? countText(shown)
-          : !mounted && form && prompt
-            ? prompt
-            : showing && mounted
-              ? "Nothing selected"
-              : ""}
+        {shown > 0 ? countText(shown) : !mounted && form && prompt ? prompt : showing && mounted ? "Nothing selected" : ""}
         {shown > 0 && detail ? (
           <>
             {" "}
@@ -159,62 +118,27 @@ export function BulkBar({
         ) : null}
       </p>
       {onSelectAll && total != null && n < total ? (
-        <button
-          type="button"
-          className="cap-btn"
-          data-variant="quiet"
-          data-cap-part="select-all"
-          onClick={onSelectAll}
-        >
+        <button type="button" className="cap-btn" data-variant="quiet" data-cap-part="select-all" onClick={onSelectAll}>
           {fillCount("Select all {n} in view", total)}
         </button>
       ) : null}
       <div className="cap-bulk-actions">
         {children}
-        {actions.map((a) =>
-          a.submit ? (
-            <button
-              key={a.id}
-              type="submit"
-              form={form}
-              name="intent"
-              value={a.id}
-              className="cap-btn"
-              data-variant={a.destructive ? "danger" : undefined}
-              aria-disabled={a.disabled || undefined}
-            >
-              {a.label}
-            </button>
-          ) : (
-            <button
-              key={a.id}
-              type="button"
-              className="cap-btn"
-              data-variant={a.destructive ? "danger" : undefined}
-              data-cap-bulk-action={a.id}
-              aria-disabled={a.disabled || undefined}
-              onClick={() => (a.disabled ? undefined : void run(a))}
-            >
-              {a.label}
-            </button>
-          ),
-        )}
+        {actions.map((a) => a.submit ? (
+          <button key={a.id} type="submit" form={form} name="intent" value={a.id} className="cap-btn" data-variant={a.destructive ? "danger" : undefined} aria-disabled={a.disabled || undefined}>
+            {a.label}
+          </button>
+        ) : (
+          <button key={a.id} type="button" className="cap-btn" data-variant={a.destructive ? "danger" : undefined} data-cap-bulk-action={a.id} aria-disabled={a.disabled || undefined} onClick={() => (a.disabled ? undefined : void run(a))}>
+            {a.label}
+          </button>
+        ))}
       </div>
-      <button
-        type="button"
-        className="cap-btn cap-bulk-clear"
-        data-variant="quiet"
-        onClick={onClear}
-      >
+      <button type="button" className="cap-btn cap-bulk-clear" data-variant="quiet" onClick={onClear}>
         Clear selection
       </button>
       {showing ? (
-        <div
-          className="cap-bulk-results"
-          data-cap-part="results"
-          role="group"
-          aria-labelledby={resultsId}
-        >
+        <div className="cap-bulk-results" data-cap-part="results" role="group" aria-labelledby={resultsId}>
           <p className="cap-bulk-results-summary" id={resultsId}>
             {outcomeSummary(outcomes)}
           </p>
@@ -243,15 +167,7 @@ export function BulkBar({
             ))}
           </ul>
           {onDismissOutcomes ? (
-            <button
-              type="button"
-              className="cap-btn"
-              data-variant="quiet"
-              data-size="sm"
-              data-cap-part="dismiss-results"
-              hidden={!mounted}
-              onClick={onDismissOutcomes}
-            >
+            <button type="button" className="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="dismiss-results" hidden={!mounted} onClick={onDismissOutcomes}>
               Dismiss results
             </button>
           ) : null}

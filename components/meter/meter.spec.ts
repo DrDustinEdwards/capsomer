@@ -1,10 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import { ratio, toneFor } from "./meter.ts";
 
 // The fill's drawn share of the bar: the x scale of its transform.
@@ -18,13 +13,7 @@ function drawn(page: Page, id: string): Promise<number> {
 
 // A custom property the behavior module set on a bar.
 function barVar(page: Page, id: string, name: string): Promise<string> {
-  return page.evaluate(
-    ([sel, prop]) =>
-      getComputedStyle(document.querySelector(`${sel} .cap-meter-bar`)!)
-        .getPropertyValue(prop as string)
-        .trim(),
-    [`#${id}`, name],
-  );
+  return page.evaluate(([sel, prop]) => getComputedStyle(document.querySelector(`${sel} .cap-meter-bar`)!).getPropertyValue(prop as string).trim(), [`#${id}`, name]);
 }
 
 // The fill against its track, as a boundary (3:1).
@@ -38,12 +27,8 @@ function fillContrast(page: Page, id: string): Promise<number> {
       };
       return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
     };
-    const a = lum(
-      rgb(getComputedStyle(document.querySelector(`${sel} .cap-meter-fill`)!).backgroundColor),
-    );
-    const b = lum(
-      rgb(getComputedStyle(document.querySelector(`${sel} .cap-meter-bar`)!).backgroundColor),
-    );
+    const a = lum(rgb(getComputedStyle(document.querySelector(`${sel} .cap-meter-fill`)!).backgroundColor));
+    const b = lum(rgb(getComputedStyle(document.querySelector(`${sel} .cap-meter-bar`)!).backgroundColor));
     return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   }, `#${id}`);
 }
@@ -54,9 +39,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the label, the number and the note reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the label, the number and the note reach their contrast", async ({ page }) => {
     await visitStates(page, "meter", theme);
     await expectContrast(page, [
       { sel: "#sample-warn .cap-meter-label", what: "meter label" },
@@ -68,87 +51,53 @@ eachTheme((theme) => {
       { sel: "#sample-indeterminate .cap-status", what: "measuring word" },
     ]);
     for (const id of ["sample-low", "sample-warn", "sample-crit"]) {
-      expect(await fillContrast(page, id), `${id} fill against its track`).toBeGreaterThanOrEqual(
-        3,
-      );
+      expect(await fillContrast(page, id), `${id} fill against its track`).toBeGreaterThanOrEqual(3);
     }
   });
 
-  test(
-    "accessibility: the bars are named meters with their values; no data and measuring are not meters",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "meter", theme);
-      await expect(page.locator("#sample-warn")).toMatchAriaSnapshot(`
+  test("accessibility: the bars are named meters with their values; no data and measuring are not meters", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "meter", theme);
+    await expect(page.locator("#sample-warn")).toMatchAriaSnapshot(`
       - meter "Worker requests"
     `);
-      const warn = page.getByRole("meter", { name: "Worker requests" }).first();
-      await expect(warn).toHaveAttribute("aria-valuenow", "78000");
-      await expect(warn).toHaveAttribute("aria-valuemin", "0");
-      await expect(warn).toHaveAttribute("aria-valuemax", "100000");
-      await expect(warn).toHaveAttribute(
-        "aria-valuetext",
-        /78,000 of 100,000 requests today\. Warning/,
-      );
-      // No data is not a meter at zero: no meter role, a hidden bar, a word and a reason.
-      await expect(page.locator("#sample-nodata [role='meter']")).toHaveCount(0);
-      await expect(page.locator("#sample-nodata .cap-meter-bar")).toHaveAttribute(
-        "aria-hidden",
-        "true",
-      );
-      await expect(page.locator("#sample-nodata")).toContainText("No data");
-      await expect(page.locator("#sample-nodata")).toContainText("have not reported since 09:00");
-      await expect(page.locator("#sample-indeterminate [role='meter']")).toHaveCount(0);
-      await expect(page.locator("#sample-indeterminate")).toHaveAttribute("aria-busy", "true");
-      await expect(page.locator("#sample-indeterminate")).toContainText("Measuring");
-    },
-  );
+    const warn = page.getByRole("meter", { name: "Worker requests" }).first();
+    await expect(warn).toHaveAttribute("aria-valuenow", "78000");
+    await expect(warn).toHaveAttribute("aria-valuemin", "0");
+    await expect(warn).toHaveAttribute("aria-valuemax", "100000");
+    await expect(warn).toHaveAttribute("aria-valuetext", /78,000 of 100,000 requests today\. Warning/);
+    // No data is not a meter at zero: no meter role, a hidden bar, a word and a reason.
+    await expect(page.locator("#sample-nodata [role='meter']")).toHaveCount(0);
+    await expect(page.locator("#sample-nodata .cap-meter-bar")).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator("#sample-nodata")).toContainText("No data");
+    await expect(page.locator("#sample-nodata")).toContainText("have not reported since 09:00");
+    await expect(page.locator("#sample-indeterminate [role='meter']")).toHaveCount(0);
+    await expect(page.locator("#sample-indeterminate")).toHaveAttribute("aria-busy", "true");
+    await expect(page.locator("#sample-indeterminate")).toContainText("Measuring");
+  });
 
-  test(
-    "accessibility: a warning or critical tone has a word and a glyph, not only a color",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "meter", theme);
-      for (const [id, word] of [
-        ["sample-warn", "Near the limit"],
-        ["sample-crit", "Almost out"],
-        ["sample-full", "Limit reached"],
-      ] as const) {
-        const status = page.locator(`#${id} .cap-status`);
-        await expect(status).toHaveText(word);
-        await expect(status.locator("svg")).toHaveCount(1);
-      }
-    },
-  );
+  test("accessibility: a warning or critical tone has a word and a glyph, not only a color", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "meter", theme);
+    for (const [id, word] of [["sample-warn", "Near the limit"], ["sample-crit", "Almost out"], ["sample-full", "Limit reached"]] as const) {
+      const status = page.locator(`#${id} .cap-status`);
+      await expect(status).toHaveText(word);
+      await expect(status.locator("svg")).toHaveCount(1);
+    }
+  });
 
-  test(
-    "accessibility: the tick and the projection are said in words, not only drawn",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "meter", theme);
-      await expect(page.locator("#sample-threshold [role=meter]")).toHaveAttribute(
-        "aria-valuetext",
-        /target of 1,600 words/,
-      );
-      await expect(page.locator("#sample-threshold .cap-meter-note")).toContainText(
-        "1,600-word target",
-      );
-      await expect(page.getByRole("meter", { name: "Worker requests" }).nth(1)).toHaveAttribute(
-        "aria-valuetext",
-        /projected 87 percent by the reset/,
-      );
-      await expect(page.locator("#sample-projection .cap-meter-note")).toContainText("hatched");
-    },
-  );
+  test("accessibility: the tick and the projection are said in words, not only drawn", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "meter", theme);
+    await expect(page.locator("#sample-threshold [role=meter]")).toHaveAttribute("aria-valuetext", /target of 1,600 words/);
+    await expect(page.locator("#sample-threshold .cap-meter-note")).toContainText("1,600-word target");
+    await expect(page.getByRole("meter", { name: "Worker requests" }).nth(1)).toHaveAttribute("aria-valuetext", /projected 87 percent by the reset/);
+    await expect(page.locator("#sample-projection .cap-meter-note")).toContainText("hatched");
+  });
 
   test("accessibility: nothing moves under reduced motion", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await visitStates(page, "meter", theme);
     const motion = await page.evaluate(() => {
       const fill = getComputedStyle(document.querySelector("#sample-warn .cap-meter-fill")!);
-      const sweep = getComputedStyle(
-        document.querySelector("#sample-indeterminate .cap-meter-fill")!,
-      );
+      const sweep = getComputedStyle(document.querySelector("#sample-indeterminate .cap-meter-fill")!);
       return { fill: fill.transitionDuration, sweep: sweep.animationName };
     });
     // base.css shortens every duration to 0.01 ms under reduced motion: that is no motion.
@@ -166,51 +115,32 @@ eachTheme((theme) => {
     await expect(page.getByRole("meter").first()).not.toHaveAttribute("tabindex", /.*/);
   });
 
-  test("behavior: the fill's length follows the value, and redraws when it changes", async ({
-    page,
-  }) => {
+  test("behavior: the fill's length follows the value, and redraws when it changes", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await visitStates(page, "meter", theme);
     expect(await drawn(page, "sample-low")).toBeCloseTo(0.12, 2);
     expect(await drawn(page, "sample-warn")).toBeCloseTo(0.78, 2);
     expect(await drawn(page, "sample-full")).toBeCloseTo(1, 2);
-    await page
-      .locator("#sample-warn .cap-meter-bar")
-      .evaluate((m) => m.setAttribute("aria-valuenow", "50000"));
+    await page.locator("#sample-warn .cap-meter-bar").evaluate((m) => m.setAttribute("aria-valuenow", "50000"));
     await expect.poll(() => drawn(page, "sample-warn")).toBeCloseTo(0.5, 2);
   });
 
-  test("behavior: the threshold tick and the projection are placed from their values", async ({
-    page,
-  }) => {
+  test("behavior: the threshold tick and the projection are placed from their values", async ({ page }) => {
     await visitStates(page, "meter", theme);
-    expect(Number(await barVar(page, "sample-threshold", "--cap-meter-threshold"))).toBeCloseTo(
-      0.8,
-      3,
-    );
-    expect(Number(await barVar(page, "sample-projection", "--cap-meter-projected"))).toBeCloseTo(
-      0.86682,
-      4,
-    );
-    expect(Number(await barVar(page, "sample-projection", "--cap-meter-ratio"))).toBeCloseTo(
-      0.614,
-      3,
-    );
+    expect(Number(await barVar(page, "sample-threshold", "--cap-meter-threshold"))).toBeCloseTo(0.8, 3);
+    expect(Number(await barVar(page, "sample-projection", "--cap-meter-projected"))).toBeCloseTo(0.86682, 4);
+    expect(Number(await barVar(page, "sample-projection", "--cap-meter-ratio"))).toBeCloseTo(0.614, 3);
     // A bar with neither has no tick and no projection drawn.
     expect(await barVar(page, "sample-low", "--cap-meter-threshold")).toBe("");
     expect(await barVar(page, "sample-low", "--cap-meter-projected")).toBe("");
-    const tick = await page
-      .locator("#sample-threshold .cap-meter-bar")
-      .evaluate((el) => getComputedStyle(el, "::after").content);
+    const tick = await page.locator("#sample-threshold .cap-meter-bar").evaluate((el) => getComputedStyle(el, "::after").content);
     expect(tick).not.toBe("none");
   });
 
   test("behavior: tones color the fill, and each tone has a word beside it", async ({ page }) => {
     await visitStates(page, "meter", theme);
     const colors = await page.evaluate(() =>
-      ["#sample-low", "#sample-warn", "#sample-crit"].map(
-        (s) => getComputedStyle(document.querySelector(`${s} .cap-meter-fill`)!).backgroundColor,
-      ),
+      ["#sample-low", "#sample-warn", "#sample-crit"].map((s) => getComputedStyle(document.querySelector(`${s} .cap-meter-fill`)!).backgroundColor),
     );
     expect(new Set(colors).size).toBe(3);
     await expect(page.locator("#sample-warn .cap-status")).toHaveText("Near the limit");
@@ -219,11 +149,7 @@ eachTheme((theme) => {
 
   test("behavior: sizes change the bar's height and keep its number in text", async ({ page }) => {
     await visitStates(page, "meter", theme);
-    const heights = await page.evaluate(() =>
-      ["#sample-sm", "#sample-md", "#sample-lg"].map(
-        (s) => document.querySelector(`${s} .cap-meter-bar`)!.getBoundingClientRect().height,
-      ),
-    );
+    const heights = await page.evaluate(() => ["#sample-sm", "#sample-md", "#sample-lg"].map((s) => document.querySelector(`${s} .cap-meter-bar`)!.getBoundingClientRect().height));
     expect(heights[0]).toBeLessThan(heights[1] ?? 0);
     expect(heights[1]).toBeLessThan(heights[2] ?? 0);
     await expect(page.locator("#sample-sm .cap-meter-value")).toHaveText("30 of 100");

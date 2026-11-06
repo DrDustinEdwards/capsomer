@@ -35,12 +35,7 @@ export interface Box {
 // wrapping grid): how many other cards come before the pointer in reading order, that is
 // above its line, or on its line and left of it. Counting the others, never the dragged
 // item, keeps the answer steady as the list rearranges under the pointer.
-export function indexAtPoint(
-  others: readonly Box[],
-  x: number,
-  y: number,
-  layout: Layout = "rows",
-): number {
+export function indexAtPoint(others: readonly Box[], x: number, y: number, layout: Layout = "rows"): number {
   let n = 0;
   for (const b of others) {
     const midY = b.top + b.height / 2;
@@ -57,17 +52,12 @@ export type Layout = "rows" | "cards";
 // What a polite live region says. Positions are one-based here, as people count.
 export const sortText = {
   help: "To move an item with the keyboard, press Space or Enter on its handle, move it with the arrow keys, and press Space or Enter to drop it. Escape puts it back.",
-  lift: (label: string, pos: number, count: number) =>
-    `Picked up ${label}. Position ${pos} of ${count}. Arrow keys move it, Space drops it, Escape puts it back.`,
+  lift: (label: string, pos: number, count: number) => `Picked up ${label}. Position ${pos} of ${count}. Arrow keys move it, Space drops it, Escape puts it back.`,
   over: (label: string, pos: number, count: number) => `${label}: position ${pos} of ${count}.`,
   drop: (label: string, pos: number, count: number, moved: boolean) =>
-    moved
-      ? `Dropped ${label} at position ${pos} of ${count}.`
-      : `Dropped ${label}. It stays at position ${pos} of ${count}.`,
-  cancel: (label: string, pos: number, count: number) =>
-    `Put ${label} back at position ${pos} of ${count}.`,
-  step: (label: string, pos: number, count: number) =>
-    `Moved ${label} to position ${pos} of ${count}.`,
+    moved ? `Dropped ${label} at position ${pos} of ${count}.` : `Dropped ${label}. It stays at position ${pos} of ${count}.`,
+  cancel: (label: string, pos: number, count: number) => `Put ${label} back at position ${pos} of ${count}.`,
+  step: (label: string, pos: number, count: number) => `Moved ${label} to position ${pos} of ${count}.`,
 };
 
 // The position a key moves a lifted item to, or null for a key that does not move it.
@@ -95,11 +85,7 @@ export interface DragHandlers {
 
 export const DRAG_THRESHOLD = 4;
 
-export function startPointerDrag(
-  down: PointerEvent,
-  h: DragHandlers,
-  threshold = DRAG_THRESHOLD,
-): void {
+export function startPointerDrag(down: PointerEvent, h: DragHandlers, threshold = DRAG_THRESHOLD): void {
   if (down.button !== 0) return;
   const x0 = down.clientX;
   const y0 = down.clientY;
@@ -186,18 +172,10 @@ export interface SortableList {
   detach(): void;
 }
 
-const itemsOf = (el: HTMLElement) =>
-  Array.from(el.querySelectorAll<HTMLElement>(":scope > .cap-sortable-item"));
+const itemsOf = (el: HTMLElement) => Array.from(el.querySelectorAll<HTMLElement>(":scope > .cap-sortable-item"));
 const idOf = (item: HTMLElement) => item.dataset.value ?? "";
 const labelOf = (item: HTMLElement) =>
-  (
-    item.dataset.label ??
-    item.querySelector(".cap-sortable-label")?.textContent ??
-    item.textContent ??
-    ""
-  )
-    .trim()
-    .replace(/\s+/g, " ");
+  (item.dataset.label ?? item.querySelector(".cap-sortable-label")?.textContent ?? item.textContent ?? "").trim().replace(/\s+/g, " ");
 
 // Puts `item` at position `to` by moving its neighbors around it, never the item itself,
 // so the handle or button that has focus keeps it.
@@ -248,9 +226,7 @@ export function createSortableList(el: HTMLElement): SortableList {
     const to = posOf(item);
     if (to === from) return;
     const detail: SortChangeDetail = { id: idOf(item), from, to, order: order(), by };
-    const ok = el.dispatchEvent(
-      new CustomEvent("cap:sortable-change", { bubbles: true, cancelable: true, detail }),
-    );
+    const ok = el.dispatchEvent(new CustomEvent("cap:sortable-change", { bubbles: true, cancelable: true, detail }));
     // The host refused it: back where it was.
     if (!ok) placeItem(item, from);
     syncSteps();
@@ -323,9 +299,7 @@ export function createSortableList(el: HTMLElement): SortableList {
 
   // ---- the step buttons
   const onClick = (e: MouseEvent) => {
-    const b = (e.target as Element | null)?.closest<HTMLButtonElement>(
-      "[data-cap-part='up'], [data-cap-part='down']",
-    );
+    const b = (e.target as Element | null)?.closest<HTMLButtonElement>("[data-cap-part='up'], [data-cap-part='down']");
     const item = b?.closest<HTMLElement>(".cap-sortable-item");
     if (!b || !item || item.parentElement !== el) return;
     // With script the move happens here; with none the button posts the form.
@@ -408,9 +382,7 @@ export function createSortableList(el: HTMLElement): SortableList {
 // Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const el of root.querySelectorAll<HTMLElement>(
-    "[data-cap='sortable-list']:not([data-cap-ready])",
-  )) {
+  for (const el of root.querySelectorAll<HTMLElement>("[data-cap='sortable-list']:not([data-cap-ready])")) {
     el.dataset.capReady = "";
     undo.push(createSortableList(el).detach);
   }

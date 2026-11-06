@@ -2,20 +2,7 @@
 // touches no DOM until a controller is made.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  applyMove,
-  branchIds,
-  cannotMoveText,
-  dropMove,
-  findPlace,
-  isWithin,
-  movedText,
-  planMove,
-  reverseMove,
-  treeKey,
-  visibleRows,
-  zoneAt,
-} from "../../components/tree/tree.ts";
+import { applyMove, branchIds, cannotMoveText, dropMove, findPlace, isWithin, movedText, planMove, reverseMove, treeKey, visibleRows, zoneAt } from "../../components/tree/tree.ts";
 
 const book = [
   { id: "book", label: "Paluxy Portal" },
@@ -31,26 +18,12 @@ const book = [
   { id: "ch3", label: "03 Untitled", children: [] },
   { id: "notes", label: "Notes" },
 ];
-const ids = (nodes) =>
-  nodes.map((n) => (n.children ? `${n.id}[${ids(n.children)}]` : n.id)).join(",");
+const ids = (nodes) => nodes.map((n) => (n.children ? `${n.id}[${ids(n.children)}]` : n.id)).join(",");
 
 test("visibleRows: open branches show their children, with level, position and size", () => {
   const rows = visibleRows(book, new Set(["ch1"]));
-  assert.deepEqual(
-    rows.map((r) => r.id),
-    ["book", "ch1", "s1", "s2", "ch2", "ch3", "notes"],
-  );
-  assert.deepEqual(rows[2], {
-    id: "s1",
-    parent: "ch1",
-    level: 2,
-    posinset: 1,
-    setsize: 2,
-    branch: false,
-    expanded: false,
-    disabled: false,
-    label: "01 Low water",
-  });
+  assert.deepEqual(rows.map((r) => r.id), ["book", "ch1", "s1", "s2", "ch2", "ch3", "notes"]);
+  assert.deepEqual(rows[2], { id: "s1", parent: "ch1", level: 2, posinset: 1, setsize: 2, branch: false, expanded: false, disabled: false, label: "01 Low water" });
   assert.equal(rows[5].branch, true, "an empty list of children is still a branch");
   assert.deepEqual(branchIds(book), ["ch1", "ch2", "ch3"]);
 });
@@ -70,34 +43,18 @@ test("treeKey: the tree pattern's keys", () => {
   assert.deepEqual(treeKey(rows, "book", "*"), { expand: ["ch2", "ch3"] });
   assert.deepEqual(treeKey(rows, "s1", " "), { select: "s1" });
   assert.equal(treeKey(rows, "s1", "x"), null);
-  assert.equal(
-    treeKey(rows, "s1", "ArrowUp", { altKey: true }),
-    null,
-    "moving is off unless asked",
-  );
+  assert.equal(treeKey(rows, "s1", "ArrowUp", { altKey: true }), null, "moving is off unless asked");
   assert.deepEqual(treeKey(rows, "s1", "ArrowUp", { altKey: true }, true), { move: "up" });
   assert.equal(treeKey(rows, "s1", "ArrowUp", { ctrlKey: true }, true), null);
 });
 
 test("planMove: up, down, in and out, and where it cannot go", () => {
-  assert.deepEqual(planMove(book, "s2", "up"), {
-    id: "s2",
-    from: { parent: "ch1", index: 1 },
-    to: { parent: "ch1", index: 0 },
-  });
+  assert.deepEqual(planMove(book, "s2", "up"), { id: "s2", from: { parent: "ch1", index: 1 }, to: { parent: "ch1", index: 0 } });
   assert.equal(planMove(book, "s1", "up"), null);
   assert.equal(planMove(book, "s2", "down"), null);
-  assert.deepEqual(planMove(book, "notes", "in"), {
-    id: "notes",
-    from: { parent: null, index: 4 },
-    to: { parent: "ch3", index: 0 },
-  });
+  assert.deepEqual(planMove(book, "notes", "in"), { id: "notes", from: { parent: null, index: 4 }, to: { parent: "ch3", index: 0 } });
   assert.equal(planMove(book, "ch1", "in"), null, "a leaf above cannot hold it");
-  assert.deepEqual(planMove(book, "s3", "out"), {
-    id: "s3",
-    from: { parent: "ch2", index: 0 },
-    to: { parent: null, index: 3 },
-  });
+  assert.deepEqual(planMove(book, "s3", "out"), { id: "s3", from: { parent: "ch2", index: 0 }, to: { parent: null, index: 3 } });
   assert.equal(planMove(book, "book", "out"), null);
 });
 
@@ -134,14 +91,8 @@ test("applyMove and reverseMove: the move made, then undone, without touching th
 
 test("movedText and cannotMoveText: what the live region says", () => {
   const m = planMove(book, "s2", "up");
-  assert.equal(
-    movedText(applyMove(book, m), m),
-    "Moved 02 Tracks to position 1 of 2 in 01 The riverbed.",
-  );
+  assert.equal(movedText(applyMove(book, m), m), "Moved 02 Tracks to position 1 of 2 in 01 The riverbed.");
   const out = planMove(book, "s3", "out");
-  assert.equal(
-    movedText(applyMove(book, out), out),
-    "Moved 01 Rain to position 4 of 6 at the top level.",
-  );
+  assert.equal(movedText(applyMove(book, out), out), "Moved 01 Rain to position 4 of 6 at the top level.");
   assert.equal(cannotMoveText("Notes", "down"), "Notes is already last here.");
 });

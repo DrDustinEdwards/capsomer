@@ -15,30 +15,13 @@ export interface SpinnerProps {
 const Arc = () => (
   <svg className="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
     <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.25" />
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      d="M8 2a6 6 0 0 1 6 6"
-    />
+    <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M8 2a6 6 0 0 1 6 6" />
   </svg>
 );
 
-export function Spinner({
-  label = "Loading",
-  hideLabel,
-  size,
-  layout,
-}: SpinnerProps): ReactElement {
+export function Spinner({ label = "Loading", hideLabel, size, layout }: SpinnerProps): ReactElement {
   return (
-    <span
-      className="cap-spinner"
-      data-label={hideLabel ? "hidden" : undefined}
-      data-size={size}
-      data-layout={layout}
-      role={layout === "page" ? "status" : undefined}
-    >
+    <span className="cap-spinner" data-label={hideLabel ? "hidden" : undefined} data-size={size} data-layout={layout} role={layout === "page" ? "status" : undefined}>
       <Arc />
       <span className="cap-spinner-label">{label}</span>
     </span>
@@ -69,11 +52,5 @@ export interface SkeletonBlockProps {
 // One shape on its own (shadcn's Skeleton): an avatar, a card. Decorative: put it inside a
 // busy region that says "Loading".
 export function SkeletonBlock({ shape = "block" }: SkeletonBlockProps): ReactElement {
-  return (
-    <span
-      className="cap-skeleton-block"
-      data-shape={shape === "block" ? undefined : shape}
-      aria-hidden="true"
-    />
-  );
+  return <span className="cap-skeleton-block" data-shape={shape === "block" ? undefined : shape} aria-hidden="true" />;
 }

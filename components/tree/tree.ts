@@ -7,44 +7,10 @@
 
 import { TYPEAHEAD_MS, type TypeaheadState, nextTypeahead } from "../listbox/listbox.ts";
 import { announcer, startPointerDrag } from "../sortable-list/sortable-list.ts";
-import {
-  type TreeMove,
-  type TreeNodeLike,
-  cannotMoveText,
-  dropMove,
-  findNode,
-  movedText,
-  planMove,
-  treeKey,
-  visibleRows,
-  zoneAt,
-} from "./tree-model.ts";
+import { type TreeMove, type TreeNodeLike, cannotMoveText, dropMove, findNode, movedText, planMove, treeKey, visibleRows, zoneAt } from "./tree-model.ts";
 
-export {
-  visibleRows,
-  branchIds,
-  treeKey,
-  findNode,
-  findPlace,
-  isWithin,
-  planMove,
-  dropMove,
-  zoneAt,
-  applyMove,
-  reverseMove,
-  movedText,
-  cannotMoveText,
-} from "./tree-model.ts";
-export type {
-  TreeNodeLike,
-  VisibleRow,
-  TreeKeyResult,
-  KeyMods,
-  MoveDir,
-  TreePlace,
-  TreeMove,
-  DropZone,
-} from "./tree-model.ts";
+export { visibleRows, branchIds, treeKey, findNode, findPlace, isWithin, planMove, dropMove, zoneAt, applyMove, reverseMove, movedText, cannotMoveText } from "./tree-model.ts";
+export type { TreeNodeLike, VisibleRow, TreeKeyResult, KeyMods, MoveDir, TreePlace, TreeMove, DropZone } from "./tree-model.ts";
 
 // ---------------------------------------------------------------------------------------
 // The controller, over the HTML contract: `[data-cap="tree"]`, a `ul.cap-tree` of
@@ -88,17 +54,10 @@ const partsOf = (li: HTMLElement): Parts => ({
   row: li.querySelector<HTMLElement>(":scope > .cap-tree-row")!,
   group: li.querySelector<HTMLElement>(":scope > .cap-tree-group"),
 });
-const itemsIn = (ul: Element) =>
-  Array.from(ul.querySelectorAll<HTMLElement>(":scope > .cap-tree-item")).filter((li) =>
-    li.querySelector(":scope > .cap-tree-row"),
-  );
-const rowLabel = (row: HTMLElement) =>
-  (row.querySelector(".cap-tree-label")?.textContent ?? row.textContent ?? "")
-    .trim()
-    .replace(/\s+/g, " ");
+const itemsIn = (ul: Element) => Array.from(ul.querySelectorAll<HTMLElement>(":scope > .cap-tree-item")).filter((li) => li.querySelector(":scope > .cap-tree-row"));
+const rowLabel = (row: HTMLElement) => (row.querySelector(".cap-tree-label")?.textContent ?? row.textContent ?? "").trim().replace(/\s+/g, " ");
 
-const TOGGLE =
-  '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg>';
+const TOGGLE = '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg>';
 
 export function createTree(el: HTMLElement): Tree {
   const selection: TreeSelection = (el.dataset.selection as TreeSelection | undefined) ?? "single";
@@ -120,11 +79,7 @@ export function createTree(el: HTMLElement): Tree {
       li.dataset.value ||= uid("cap-tree-item");
       const id = li.dataset.value;
       parts.set(id, p);
-      const node: TreeNodeLike = {
-        id,
-        label: rowLabel(p.row),
-        disabled: p.row.getAttribute("aria-disabled") === "true",
-      };
+      const node: TreeNodeLike = { id, label: rowLabel(p.row), disabled: p.row.getAttribute("aria-disabled") === "true" };
       if (p.group || li.hasAttribute("data-branch")) node.children = p.group ? read(p.group) : [];
       return node;
     });
@@ -147,8 +102,7 @@ export function createTree(el: HTMLElement): Tree {
         r.setAttribute("aria-posinset", String(i + 1));
         r.setAttribute("aria-setsize", String(list.length));
         r.setAttribute("draggable", "false");
-        if (selection !== "none" && !(r.getAttribute("aria-disabled") === "true"))
-          r.setAttribute("aria-selected", String(chosen.has(n.id)));
+        if (selection !== "none" && !(r.getAttribute("aria-disabled") === "true")) r.setAttribute("aria-selected", String(chosen.has(n.id)));
         if (n.children) {
           const isOpen = open.has(n.id);
           r.setAttribute("aria-expanded", String(isOpen));
@@ -198,9 +152,7 @@ export function createTree(el: HTMLElement): Tree {
     const p = parts.get(id)!;
     p.row.setAttribute("aria-expanded", String(isOpen));
     if (p.group) p.group.hidden = !isOpen;
-    el.dispatchEvent(
-      new CustomEvent("cap:tree-toggle", { bubbles: true, detail: { id, expanded: isOpen } }),
-    );
+    el.dispatchEvent(new CustomEvent("cap:tree-toggle", { bubbles: true, detail: { id, expanded: isOpen } }));
   };
 
   const select = (id: string) => {
@@ -211,25 +163,13 @@ export function createTree(el: HTMLElement): Tree {
     const on = selection === "multi" ? !chosen.has(id) : true;
     if (on) chosen.add(id);
     else chosen.delete(id);
-    for (const [k, q] of parts)
-      if (q.row.hasAttribute("aria-selected"))
-        q.row.setAttribute("aria-selected", String(chosen.has(k)));
-    const detail: TreeSelectDetail = {
-      id,
-      label: rowLabel(p.row),
-      selected: on,
-      values: [...chosen],
-    };
+    for (const [k, q] of parts) if (q.row.hasAttribute("aria-selected")) q.row.setAttribute("aria-selected", String(chosen.has(k)));
+    const detail: TreeSelectDetail = { id, label: rowLabel(p.row), selected: on, values: [...chosen] };
     el.dispatchEvent(new CustomEvent("cap:tree-select", { bubbles: true, detail }));
   };
 
   const move = (m: TreeMove): boolean => {
-    if (
-      !el.dispatchEvent(
-        new CustomEvent("cap:tree-move", { bubbles: true, cancelable: true, detail: m }),
-      )
-    )
-      return false;
+    if (!el.dispatchEvent(new CustomEvent("cap:tree-move", { bubbles: true, cancelable: true, detail: m }))) return false;
     const li = parts.get(m.id)?.li;
     if (!li) return false;
     const hadFocus = li.contains(document.activeElement);
@@ -278,13 +218,7 @@ export function createTree(el: HTMLElement): Tree {
       return;
     }
     if (e.key.length === 1 && (e.key !== " " || typing) && !e.altKey && !e.ctrlKey && !e.metaKey) {
-      const res = nextTypeahead(
-        typed,
-        e.key,
-        Date.now(),
-        rows.map((x) => x.label),
-        rows.findIndex((x) => x.id === id),
-      );
+      const res = nextTypeahead(typed, e.key, Date.now(), rows.map((x) => x.label), rows.findIndex((x) => x.id === id));
       typed = res.state;
       const hit = rows[res.index];
       if (hit) {
@@ -299,8 +233,7 @@ export function createTree(el: HTMLElement): Tree {
     const row = (target as Element | null)?.closest<HTMLElement>(".cap-tree-row");
     return row && el.contains(row) ? row : null;
   };
-  const idOfRow = (row: HTMLElement) =>
-    row.closest<HTMLElement>(".cap-tree-item")?.dataset.value ?? "";
+  const idOfRow = (row: HTMLElement) => row.closest<HTMLElement>(".cap-tree-item")?.dataset.value ?? "";
   const onClick = (e: MouseEvent) => {
     const row = rowAt(e.target);
     if (!row) return;
@@ -322,13 +255,7 @@ export function createTree(el: HTMLElement): Tree {
   };
   const onDown = (e: PointerEvent) => {
     const row = rowAt(e.target);
-    if (
-      !movable ||
-      !row ||
-      (e.target as Element).closest(".cap-tree-toggle") ||
-      row.getAttribute("aria-disabled") === "true"
-    )
-      return;
+    if (!movable || !row || (e.target as Element).closest(".cap-tree-toggle") || row.getAttribute("aria-disabled") === "true") return;
     const id = idOfRow(row);
     let plan: TreeMove | null = null;
     startPointerDrag(e, {
@@ -343,12 +270,7 @@ export function createTree(el: HTMLElement): Tree {
         if (!over || over === row) return;
         const target = idOfRow(over);
         const box = over.getBoundingClientRect();
-        const zone = zoneAt(
-          y,
-          box.top,
-          box.height,
-          findNode(model, target)?.children !== undefined,
-        );
+        const zone = zoneAt(y, box.top, box.height, findNode(model, target)?.children !== undefined);
         plan = dropMove(model, id, target, zone);
         if (plan) {
           dropOn = over;

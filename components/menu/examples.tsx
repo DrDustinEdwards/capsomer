@@ -5,15 +5,7 @@ import { createRoot } from "react-dom/client";
 import { Menu, type MenuEntry } from "./menu.react.tsx";
 
 // A menu whose items write what was chosen beside it, so a test can read it.
-function Logged({
-  entries,
-  defaultOpen,
-  label = "Actions",
-}: {
-  entries: (log: (s: string) => void) => MenuEntry[];
-  defaultOpen?: boolean;
-  label?: string;
-}) {
+function Logged({ entries, defaultOpen, label = "Actions" }: { entries: (log: (s: string) => void) => MenuEntry[]; defaultOpen?: boolean; label?: string }) {
   const [last, setLast] = useState("");
   return (
     <>
@@ -40,33 +32,19 @@ const full = (log: (s: string) => void): MenuEntry[] => [
   { label: "Open site", shortcut: "O", onSelect: () => log("Open site") },
   { label: "Duplicate settings", onSelect: () => log("Duplicate settings") },
   "separator",
-  {
-    label: "Archive",
-    disabled: true,
-    reason: "Not while a deploy runs. Try again when it ends.",
-    onSelect: () => log("Archive"),
-  },
+  { label: "Archive", disabled: true, reason: "Not while a deploy runs. Try again when it ends.", onSelect: () => log("Archive") },
   { label: "Run checks now", shortcut: "Shift+R", onSelect: () => log("Run checks now") },
 ];
 
 const disabled = (log: (s: string) => void): MenuEntry[] => [
   { label: "Open site", onSelect: () => log("Open site") },
-  {
-    label: "Archive",
-    disabled: true,
-    reason: "Not while a deploy runs. Try again when it ends.",
-    onSelect: () => log("Archive"),
-  },
+  { label: "Archive", disabled: true, reason: "Not while a deploy runs. Try again when it ends.", onSelect: () => log("Archive") },
   { label: "Run checks now", onSelect: () => log("Run checks now") },
 ];
 
 const danger = (log: (s: string) => void): MenuEntry[] => [
   { label: "Open site", onSelect: () => log("Open site") },
-  {
-    label: "Remove from the watcher",
-    danger: true,
-    onSelect: () => log("Remove from the watcher"),
-  },
+  { label: "Remove from the watcher", danger: true, onSelect: () => log("Remove from the watcher") },
   { label: "Copy address", onSelect: () => log("Copy address") },
   { label: "Delete site", danger: true, onSelect: () => log("Delete site") },
 ];
@@ -79,47 +57,14 @@ const Dot = () => (
   </svg>
 );
 const rich = (log: (s: string) => void): MenuEntry[] => [
-  {
-    type: "group",
-    label: "Site",
-    items: [
-      { label: "Open site", icon: <Dot />, shortcut: "O", onSelect: () => log("Open site") },
-      { label: "Copy address", onSelect: () => log("Copy address") },
-    ],
-  },
+  { type: "group", label: "Site", items: [{ label: "Open site", icon: <Dot />, shortcut: "O", onSelect: () => log("Open site") }, { label: "Copy address", onSelect: () => log("Copy address") }] },
   "separator",
-  {
-    type: "checkbox",
-    label: "Check every minute",
-    defaultChecked: true,
-    onCheckedChange: (on) => log(`Check every minute ${on ? "on" : "off"}`),
-  },
-  {
-    type: "checkbox",
-    label: "Email on failure",
-    onCheckedChange: (on) => log(`Email on failure ${on ? "on" : "off"}`),
-  },
+  { type: "checkbox", label: "Check every minute", defaultChecked: true, onCheckedChange: (on) => log(`Check every minute ${on ? "on" : "off"}`) },
+  { type: "checkbox", label: "Email on failure", onCheckedChange: (on) => log(`Email on failure ${on ? "on" : "off"}`) },
   "separator",
-  {
-    type: "radio-group",
-    label: "Region",
-    defaultValue: "pdx",
-    onValueChange: (v) => log(`Region ${v}`),
-    items: [
-      { value: "fra", label: "Frankfurt" },
-      { value: "pdx", label: "Oregon" },
-      { value: "sin", label: "Singapore", disabled: true },
-    ],
-  },
+  { type: "radio-group", label: "Region", defaultValue: "pdx", onValueChange: (v) => log(`Region ${v}`), items: [{ value: "fra", label: "Frankfurt" }, { value: "pdx", label: "Oregon" }, { value: "sin", label: "Singapore", disabled: true }] },
   "separator",
-  {
-    type: "submenu",
-    label: "Move to",
-    items: [
-      { label: "Live sites", onSelect: () => log("Move to Live sites") },
-      { label: "Previews", onSelect: () => log("Move to Previews") },
-    ],
-  },
+  { type: "submenu", label: "Move to", items: [{ label: "Live sites", onSelect: () => log("Move to Live sites") }, { label: "Previews", onSelect: () => log("Move to Previews") }] },
   { label: "Delete site", danger: true, onSelect: () => log("Delete site") },
 ];
 
@@ -130,9 +75,7 @@ function Highlighted() {
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       const popup = document.querySelector<HTMLElement>(".cap-menu");
-      popup?.dispatchEvent(
-        new KeyboardEvent("keydown", { key: "ArrowDown", code: "ArrowDown", bubbles: true }),
-      );
+      popup?.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", code: "ArrowDown", bubbles: true }));
     });
     return () => cancelAnimationFrame(frame);
   }, []);
@@ -154,8 +97,7 @@ const SPECIMENS: Record<string, () => ReactNode> = {
 };
 
 // The popup is portaled to the body, so the comfortable specimen sets the density there.
-if (new URLSearchParams(location.search).get("only") === "comfortable")
-  document.documentElement.dataset.density = "comfortable";
+if (new URLSearchParams(location.search).get("only") === "comfortable") document.documentElement.dataset.density = "comfortable";
 
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {
   const render = SPECIMENS[el.dataset.mount ?? ""];

@@ -26,37 +26,11 @@ export interface VideoProps {
 }
 
 // A self-hosted video: the native player, its poster, captions, and nothing downloaded before play.
-export function Video({
-  src,
-  title,
-  poster,
-  width,
-  height,
-  captions,
-  transcript,
-  caption,
-}: VideoProps): ReactElement {
+export function Video({ src, title, poster, width, height, captions, transcript, caption }: VideoProps): ReactElement {
   return (
     <figure className="cap-player" data-kind="video">
-      <video
-        src={src}
-        poster={poster}
-        width={width}
-        height={height}
-        controls
-        preload="none"
-        playsInline
-        aria-label={title}
-      >
-        {captions ? (
-          <track
-            kind="captions"
-            src={captions.src}
-            srcLang={captions.lang ?? "en"}
-            label={captions.label ?? "English"}
-            default
-          />
-        ) : null}
+      <video src={src} poster={poster} width={width} height={height} controls preload="none" playsInline aria-label={title}>
+        {captions ? <track kind="captions" src={captions.src} srcLang={captions.lang ?? "en"} label={captions.label ?? "English"} default /> : null}
       </video>
       {transcript ? (
         <p className="cap-player-transcript">
@@ -107,15 +81,7 @@ export interface EmbedProps {
 
 // An embed that makes no request to the service until the reader asks: a link with a poster and a play
 // button, and the player in its place on a click. A click with a modifier stays a link.
-export function Embed({
-  service,
-  href,
-  player,
-  title,
-  action,
-  poster,
-  caption,
-}: EmbedProps): ReactElement {
+export function Embed({ service, href, player, title, action, poster, caption }: EmbedProps): ReactElement {
   const [playing, setPlaying] = useState(false);
   const frame = useRef<HTMLIFrameElement>(null);
   useEffect(() => {
@@ -125,14 +91,7 @@ export function Embed({
   return (
     <figure className="cap-player" data-kind="embed" data-service={service}>
       {playing ? (
-        <iframe
-          ref={frame}
-          src={player}
-          title={title}
-          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-          allowFullScreen
-          referrerPolicy="strict-origin-when-cross-origin"
-        />
+        <iframe ref={frame} src={player} title={title} allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
       ) : (
         <a
           className="cap-player-facade"
@@ -145,19 +104,7 @@ export function Embed({
             setPlaying(true);
           }}
         >
-          {poster ? (
-            <img
-              className="cap-player-poster"
-              src={poster.src}
-              srcSet={poster.srcSet}
-              sizes={poster.sizes}
-              width={poster.width}
-              height={poster.height}
-              alt=""
-              loading="lazy"
-              decoding="async"
-            />
-          ) : null}
+          {poster ? <img className="cap-player-poster" src={poster.src} srcSet={poster.srcSet} sizes={poster.sizes} width={poster.width} height={poster.height} alt="" loading="lazy" decoding="async" /> : null}
           <span className="cap-player-play" aria-hidden="true" />
           <span className="cap-player-label">
             {action}: {title}

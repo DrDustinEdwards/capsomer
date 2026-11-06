@@ -16,14 +16,8 @@ function Demo() {
 const host = document.getElementById("time-hydrate");
 if (host) {
   const errors: string[] = [];
-  (window as unknown as { timeHydration: { errors: string[]; server: string } }).timeHydration = {
-    errors,
-    server: "",
-  };
+  (window as unknown as { timeHydration: { errors: string[]; server: string } }).timeHydration = { errors, server: "" };
   host.innerHTML = renderToString(<Demo />);
-  (window as unknown as { timeHydration: { server: string } }).timeHydration.server =
-    host.textContent ?? "";
-  hydrateRoot(host, <Demo />, {
-    onRecoverableError: (e) => errors.push(String((e as Error).message ?? e)),
-  });
+  (window as unknown as { timeHydration: { server: string } }).timeHydration.server = host.textContent ?? "";
+  hydrateRoot(host, <Demo />, { onRecoverableError: (e) => errors.push(String((e as Error).message ?? e)) });
 }

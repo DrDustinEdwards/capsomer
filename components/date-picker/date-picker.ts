@@ -61,67 +61,27 @@ const ICONS = {
   "next-month": "M6 4l4 4-4 4",
   "next-year": "M3 4l4 4-4 4M7 4l4 4-4 4",
 };
-const NAMES = {
-  "prev-year": "Previous year",
-  "prev-month": "Previous month",
-  "next-month": "Next month",
-  "next-year": "Next year",
-};
+const NAMES = { "prev-year": "Previous year", "prev-month": "Previous month", "next-month": "Next month", "next-year": "Next year" };
 
-function el<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  props: Partial<HTMLElementTagNameMap[K]> = {},
-  attrs: Record<string, string> = {},
-): HTMLElementTagNameMap[K] {
+function el<K extends keyof HTMLElementTagNameMap>(tag: K, props: Partial<HTMLElementTagNameMap[K]> = {}, attrs: Record<string, string> = {}): HTMLElementTagNameMap[K] {
   const node = Object.assign(document.createElement(tag), props);
   for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
   return node;
 }
 
 function navButton(part: keyof typeof ICONS): HTMLButtonElement {
-  const b = el(
-    "button",
-    { type: "button", className: "cap-btn" },
-    {
-      "data-variant": "quiet",
-      "data-icon-only": "",
-      "data-cap-part": part,
-      "aria-label": NAMES[part],
-    },
-  );
+  const b = el("button", { type: "button", className: "cap-btn" }, { "data-variant": "quiet", "data-icon-only": "", "data-cap-part": part, "aria-label": NAMES[part] });
   b.innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${ICONS[part]}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   return b;
 }
 
 // The dialog: the month between its buttons, the grid, Cancel and Choose.
-function build(lang: string): {
-  dialog: HTMLDialogElement;
-  heading: HTMLElement;
-  body: HTMLTableSectionElement;
-} {
-  const dialog = el(
-    "dialog",
-    { className: "cap-dialog cap-date-picker-dialog" },
-    { "data-size": "sm", "aria-label": "Choose a date" },
-  );
+function build(lang: string): { dialog: HTMLDialogElement; heading: HTMLElement; body: HTMLTableSectionElement } {
+  const dialog = el("dialog", { className: "cap-dialog cap-date-picker-dialog" }, { "data-size": "sm", "aria-label": "Choose a date" });
   const head = el("div", { className: "cap-dialog-header cap-date-picker-head" });
-  const heading = el(
-    "h2",
-    { className: "cap-dialog-title", id: uid("cap-date-month") },
-    { "aria-live": "polite" },
-  );
-  head.append(
-    navButton("prev-year"),
-    navButton("prev-month"),
-    heading,
-    navButton("next-month"),
-    navButton("next-year"),
-  );
-  const grid = el(
-    "table",
-    { className: "cap-date-picker-grid" },
-    { role: "grid", "aria-labelledby": heading.id },
-  );
+  const heading = el("h2", { className: "cap-dialog-title", id: uid("cap-date-month") }, { "aria-live": "polite" });
+  head.append(navButton("prev-year"), navButton("prev-month"), heading, navButton("next-month"), navButton("next-year"));
+  const grid = el("table", { className: "cap-date-picker-grid" }, { role: "grid", "aria-labelledby": heading.id });
   const row = el("tr");
   const long = new Intl.DateTimeFormat(lang, { weekday: "long", timeZone: "UTC" });
   const short = new Intl.DateTimeFormat(lang, { weekday: "short", timeZone: "UTC" });
@@ -137,16 +97,8 @@ function build(lang: string): {
   main.append(grid);
   const foot = el("div", { className: "cap-dialog-footer" });
   foot.append(
-    el(
-      "button",
-      { type: "button", className: "cap-btn", textContent: "Cancel" },
-      { "data-cap-part": "cancel" },
-    ),
-    el(
-      "button",
-      { type: "button", className: "cap-btn", textContent: "Choose" },
-      { "data-variant": "primary", "data-cap-part": "choose" },
-    ),
+    el("button", { type: "button", className: "cap-btn", textContent: "Cancel" }, { "data-cap-part": "cancel" }),
+    el("button", { type: "button", className: "cap-btn", textContent: "Choose" }, { "data-variant": "primary", "data-cap-part": "choose" }),
   );
   dialog.append(head, main, foot);
   return { dialog, heading, body };
@@ -161,11 +113,7 @@ export function wirePicker(group: HTMLElement): () => void {
   if (!input || !open) return () => undefined;
   const lang = input.closest("[lang]")?.getAttribute("lang") || "en-US";
   const full = new Intl.DateTimeFormat(lang, { dateStyle: "full", timeZone: "UTC" });
-  const monthName = new Intl.DateTimeFormat(lang, {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+  const monthName = new Intl.DateTimeFormat(lang, { month: "long", year: "numeric", timeZone: "UTC" });
   const min = parseDate(input.dataset.min ?? "");
   const max = parseDate(input.dataset.max ?? "");
   const outside = (d: Date) => (min !== null && d < min) || (max !== null && d > max);
@@ -237,12 +185,7 @@ export function wirePicker(group: HTMLElement): () => void {
     if (cell) return choose(parseDate(cell.dataset.date ?? "") ?? focus);
     const part = t.closest<HTMLElement>("[data-cap-part]")?.dataset.capPart;
     if (part === "choose") return choose(focus);
-    const by = (
-      { "prev-year": -12, "prev-month": -1, "next-month": 1, "next-year": 12 } as Record<
-        string,
-        number
-      >
-    )[part ?? ""];
+    const by = ({ "prev-year": -12, "prev-month": -1, "next-month": 1, "next-year": 12 } as Record<string, number>)[part ?? ""];
     if (by === undefined) return;
     // The heading changes and is said (aria-live); focus stays on the button (APG).
     focus = addMonths(focus, by);
@@ -260,9 +203,7 @@ export function wirePicker(group: HTMLElement): () => void {
     const d = parseDate(input.value);
     focus = d ?? (min && today() < min ? min : max && today() > max ? max : today());
     render(false);
-    openDialog(parts.dialog, open, {
-      focus: parts.body.querySelector<HTMLElement>("[tabindex='0']"),
-    });
+    openDialog(parts.dialog, open, { focus: parts.body.querySelector<HTMLElement>("[tabindex='0']") });
   };
 
   open.hidden = false;
@@ -280,9 +221,7 @@ export function wirePicker(group: HTMLElement): () => void {
 // detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const group of root.querySelectorAll<HTMLElement>(
-    "[data-cap='date-picker']:not([data-cap-ready])",
-  )) {
+  for (const group of root.querySelectorAll<HTMLElement>("[data-cap='date-picker']:not([data-cap-ready])")) {
     group.dataset.capReady = "";
     const off = wirePicker(group);
     undo.push(() => {

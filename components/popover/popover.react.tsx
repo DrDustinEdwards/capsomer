@@ -1,12 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useId,
-  useRef,
-  type ComponentProps,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useId, useRef, type ComponentProps, type ReactNode } from "react";
 import { enhance, type Align, type Side } from "./popover.ts";
 
 // Renders the HTML contract in popover.md: the content is in the markup, hidden by the
@@ -34,29 +26,12 @@ export function Popover({ kind = "dialog", children }: PopoverProps) {
   );
 }
 
-export function PopoverTrigger({
-  className = "cap-btn",
-  type = "button",
-  ...props
-}: ComponentProps<"button">) {
+export function PopoverTrigger({ className = "cap-btn", type = "button", ...props }: ComponentProps<"button">) {
   const { id, kind } = useContext(Ctx);
   return kind === "tooltip" ? (
-    <button
-      type={type}
-      className={className}
-      aria-describedby={id}
-      data-popover-trigger=""
-      {...props}
-    />
+    <button type={type} className={className} aria-describedby={id} data-popover-trigger="" {...props} />
   ) : (
-    <button
-      type={type}
-      className={className}
-      popoverTarget={id}
-      aria-haspopup="dialog"
-      aria-expanded="false"
-      {...props}
-    />
+    <button type={type} className={className} popoverTarget={id} aria-haspopup="dialog" aria-expanded="false" {...props} />
   );
 }
 
@@ -70,16 +45,7 @@ export interface PopoverContentProps extends Omit<ComponentProps<"div">, "popove
   arrow?: boolean;
 }
 
-export function PopoverContent({
-  side,
-  align,
-  offset,
-  size,
-  arrow,
-  className,
-  children,
-  ...props
-}: PopoverContentProps) {
+export function PopoverContent({ side, align, offset, size, arrow, className, children, ...props }: PopoverContentProps) {
   const { id, kind } = useContext(Ctx);
   const tip = kind === "tooltip";
   return (
@@ -103,33 +69,19 @@ export function PopoverContent({
 }
 
 export function PopoverHeader({ className, ...props }: ComponentProps<"div">) {
-  return (
-    <div
-      className={className ? `cap-popover-header ${className}` : "cap-popover-header"}
-      {...props}
-    />
-  );
+  return <div className={className ? `cap-popover-header ${className}` : "cap-popover-header"} {...props} />;
 }
 
 // Names the dialog: PopoverContent points aria-labelledby at it.
 export function PopoverTitle({ className, children, ...props }: ComponentProps<"h2">) {
   const { id } = useContext(Ctx);
   return (
-    <h2
-      className={className ? `cap-popover-title ${className}` : "cap-popover-title"}
-      id={`${id}-title`}
-      {...props}
-    >
+    <h2 className={className ? `cap-popover-title ${className}` : "cap-popover-title"} id={`${id}-title`} {...props}>
       {children}
     </h2>
   );
 }
 
 export function PopoverDescription({ className, ...props }: ComponentProps<"p">) {
-  return (
-    <p
-      className={className ? `cap-popover-description ${className}` : "cap-popover-description"}
-      {...props}
-    />
-  );
+  return <p className={className ? `cap-popover-description ${className}` : "cap-popover-description"} {...props} />;
 }

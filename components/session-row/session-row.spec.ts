@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import { order, spokenCount, type SessionState } from "./session-row.ts";
 
 eachTheme((theme) => {
@@ -13,9 +8,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: every text tone and the ask's edge reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: every text tone and the ask's edge reach their contrast", async ({ page }) => {
     await visitStates(page, "session-row", theme);
     await expectContrast(page, [
       { sel: ".cap-session-agent", what: "the agent's name" },
@@ -32,8 +25,7 @@ eachTheme((theme) => {
 
   test("accessibility: the ask's roles and names", { tag: "@markup" }, async ({ page }) => {
     await visitStates(page, "session-row", theme);
-    await expect(page.locator("#s-needs ~ .cap-session-list .cap-session-ask"))
-      .toMatchAriaSnapshot(`
+    await expect(page.locator("#s-needs ~ .cap-session-list .cap-session-ask")).toMatchAriaSnapshot(`
       - group "Asks to push a branch and open a pull request:":
         - paragraph: "Asks to push a branch and open a pull request:"
         - button "Approve push"
@@ -42,16 +34,12 @@ eachTheme((theme) => {
     await expect(page.getByRole("list", { name: "Agent sessions", exact: true })).toBeVisible();
   });
 
-  test(
-    "accessibility: a collapsed count is spoken in words",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "session-row", theme);
-      const steps = page.locator("#steps-tests");
-      await expect(steps.locator("[aria-hidden='true']").first()).toHaveText(" ×12");
-      await expect(steps.locator(".cap-sr-only").first()).toHaveText(" 12 times");
-    },
-  );
+  test("accessibility: a collapsed count is spoken in words", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "session-row", theme);
+    const steps = page.locator("#steps-tests");
+    await expect(steps.locator("[aria-hidden='true']").first()).toHaveText(" ×12");
+    await expect(steps.locator(".cap-sr-only").first()).toHaveText(" 12 times");
+  });
 
   test("keyboard: Tab reaches each answer button, named for its action", async ({ page }) => {
     await visitStates(page, "session-row", theme);
@@ -80,12 +68,7 @@ eachTheme((theme) => {
   test("behavior: an answer announces which session and which answer", async ({ page }) => {
     await visitStates(page, "session-row", theme);
     const detail = page.evaluate(
-      () =>
-        new Promise((done) =>
-          document.addEventListener("cap-answer", (e) => done((e as CustomEvent).detail), {
-            once: true,
-          }),
-        ),
+      () => new Promise((done) => document.addEventListener("cap-answer", (e) => done((e as CustomEvent).detail), { once: true })),
     );
     await page.getByRole("button", { name: "Keep 0008" }).click();
     expect(await detail).toEqual({ session: "sess_migr", answer: "keep-0008" });
@@ -99,14 +82,10 @@ eachTheme((theme) => {
     }
   });
 
-  test("behavior: only a failed session is marked critical, and it still says Failed in words", async ({
-    page,
-  }) => {
+  test("behavior: only a failed session is marked critical, and it still says Failed in words", async ({ page }) => {
     await visitStates(page, "session-row", theme);
     const critical = page.locator(".cap-session[data-tone='crit']");
-    const failed = page.locator(".cap-session", {
-      has: page.locator(".cap-pill", { hasText: "Failed" }),
-    });
+    const failed = page.locator(".cap-session", { has: page.locator(".cap-pill", { hasText: "Failed" }) });
     await expect(critical).not.toHaveCount(0);
     await expect(critical).toHaveCount(await failed.count());
     await expect(critical.first().locator(".cap-pill")).toContainText("Failed");
@@ -115,24 +94,8 @@ eachTheme((theme) => {
 
 test("behavior: order puts waiting on you first, the longest wait at the top", () => {
   const s = (id: string, state: SessionState, since: number) => ({ id, state, since });
-  const got = order([
-    s("idle", "idle", 50),
-    s("work", "working", 40),
-    s("new-ask", "needs", 90),
-    s("fail", "failed", 10),
-    s("old-ask", "needs", 20),
-    s("stop", "stopped", 99),
-    s("work2", "working", 70),
-  ]);
-  expect(got.map((x) => x.id)).toEqual([
-    "old-ask",
-    "new-ask",
-    "fail",
-    "work2",
-    "work",
-    "idle",
-    "stop",
-  ]);
+  const got = order([s("idle", "idle", 50), s("work", "working", 40), s("new-ask", "needs", 90), s("fail", "failed", 10), s("old-ask", "needs", 20), s("stop", "stopped", 99), s("work2", "working", 70)]);
+  expect(got.map((x) => x.id)).toEqual(["old-ask", "new-ask", "fail", "work2", "work", "idle", "stop"]);
 });
 
 test("behavior: a count is spoken as times", () => {

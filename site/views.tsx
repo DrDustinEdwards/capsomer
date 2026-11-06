@@ -5,20 +5,9 @@ import { COMPONENTS, SCALES } from "./data.ts";
 import { renderMarkdown } from "./markdown.ts";
 import { Panel, TestList, Verdict, paint, useResults } from "./parts.tsx";
 
-function ScaleTable({
-  group,
-  render,
-}: {
-  group: string;
-  render?: (name: string, value: unknown) => ReactNode;
-}) {
+function ScaleTable({ group, render }: { group: string; render?: (name: string, value: unknown) => ReactNode }) {
   const rows = Object.entries(SCALES[group] ?? {});
-  const show = (v: unknown) =>
-    typeof v === "object" && v && "value" in (v as object)
-      ? `${(v as { value: number }).value}${(v as { unit?: string }).unit ?? ""}`
-      : Array.isArray(v)
-        ? `cubic-bezier(${v.join(", ")})`
-        : String(v);
+  const show = (v: unknown) => (typeof v === "object" && v && "value" in (v as object) ? `${(v as { value: number }).value}${(v as { unit?: string }).unit ?? ""}` : Array.isArray(v) ? `cubic-bezier(${v.join(", ")})` : String(v));
   return (
     // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
     <div className="cap-table-wrap" role="region" tabIndex={0} aria-label={`${group} tokens`}>
@@ -51,54 +40,28 @@ export function TypeView() {
     <div className="site-page">
       <div className="site-head">
         <h1>Type and space</h1>
-        <p>
-          Inter for app chrome, Martian Mono for identifiers, Source Serif 4 for long-form text. App
-          body text is 13 px; a reading page's body is 17 to 19 px with a 66-character measure.
-        </p>
+        <p>Inter for app chrome, Martian Mono for identifiers, Source Serif 4 for long-form text. App body text is 13 px; a reading page's body is 17 to 19 px with a 66-character measure.</p>
       </div>
       <Panel title="Type" id="type">
-        <ScaleTable
-          group="type"
-          render={(name) =>
-            name.startsWith("fs-") ? (
-              <span className="site-type-sample" ref={paint("font-size", `var(--${name})`)}>
-                Field notes and the 2026 survey
-              </span>
-            ) : null
-          }
-        />
+        <ScaleTable group="type" render={(name) => (name.startsWith("fs-") ? <span className="site-type-sample" ref={paint("font-size", `var(--${name})`)}>Field notes and the 2026 survey</span> : null)} />
       </Panel>
       <Panel title="Reading context" id="prose">
         <div data-context="prose" className="site-prose-sample">
           <h2>How a survey site is chosen</h2>
           <p>
-            A survey site is not picked at random. In <i>The Field Handbook</i> the choice turns on
-            two questions, access and coverage, each of which limits the other. Small plots beside a
-            road have no such tension. Sample text.
+            A survey site is not picked at random. In <i>The Field Handbook</i> the choice turns on two questions, access and coverage, each of which limits the other. Small plots beside a road have no such tension. Sample text.
           </p>
         </div>
       </Panel>
       <Panel title="Space" id="space">
-        <ScaleTable
-          group="space"
-          render={(name) => <i className="site-space" ref={paint("--w", `var(--${name})`)} />}
-        />
+        <ScaleTable group="space" render={(name) => <i className="site-space" ref={paint("--w", `var(--${name})`)} />} />
       </Panel>
-      <Panel
-        title="Density"
-        id="density"
-        src="data-density on the root or any element; compact is the default"
-      >
+      <Panel title="Density" id="density" src="data-density on the root or any element; compact is the default">
         <ScaleTable group="density-compact" />
         <ScaleTable group="density-comfortable" />
       </Panel>
       <Panel title="Radius, control size, layers, focus, layout" id="other">
-        <ScaleTable
-          group="radius"
-          render={(name) => (
-            <i className="site-radius" ref={paint("border-radius", `var(--${name})`)} />
-          )}
-        />
+        <ScaleTable group="radius" render={(name) => <i className="site-radius" ref={paint("border-radius", `var(--${name})`)} />} />
         <ScaleTable group="control" />
         <ScaleTable group="layer" />
         <ScaleTable group="focus" />
@@ -114,27 +77,9 @@ export function MotionView() {
     <div className="site-page">
       <div className="site-head">
         <h1>Motion</h1>
-        <p>
-          Motion explains a change. Three durations and three easings: things arrive on the long
-          ease-out and leave faster than they came, a press springs back, and pages and themes
-          crossfade. With reduced motion on, the dots below jump instead of traveling, and nothing
-          in Capsomer moves at all.
-        </p>
+        <p>Motion explains a change. Three durations and three easings: things arrive on the long ease-out and leave faster than they came, a press springs back, and pages and themes crossfade. With reduced motion on, the dots below jump instead of traveling, and nothing in Capsomer moves at all.</p>
       </div>
-      <Panel
-        title="Durations"
-        id="durations"
-        src={
-          <button
-            type="button"
-            className="cap-btn"
-            onClick={() => setPlayed((p) => !p)}
-            aria-pressed={played}
-          >
-            Play
-          </button>
-        }
-      >
+      <Panel title="Durations" id="durations" src={<button type="button" className="cap-btn" onClick={() => setPlayed((p) => !p)} aria-pressed={played}>Play</button>}>
         <div className="site-motion" data-played={played ? "" : undefined}>
           {["dur-fast", "dur-base", "dur-slow"].map((d) => (
             <div key={d}>
@@ -155,45 +100,23 @@ export function MotionView() {
 
 export function TestsView() {
   const RESULTS = useResults();
-  const entries = Object.entries(RESULTS.components).sort(
-    ([, a], [, b]) =>
-      b.keyboard.failed +
-      b.accessibility.failed +
-      b.behavior.failed -
-      (a.keyboard.failed + a.accessibility.failed + a.behavior.failed),
-  );
+  const entries = Object.entries(RESULTS.components).sort(([, a], [, b]) => b.keyboard.failed + b.accessibility.failed + b.behavior.failed - (a.keyboard.failed + a.accessibility.failed + a.behavior.failed));
   return (
     <div className="site-page">
       <div className="site-head">
         <h1>Tests</h1>
-        <p>
-          Every component's keyboard, accessibility and behavior tests from the last run, in both
-          themes, failures first. Accessibility and keyboard failures block a merge; nothing about a
-          color or a layout does.
-        </p>
+        <p>Every component's keyboard, accessibility and behavior tests from the last run, in both themes, failures first. Accessibility and keyboard failures block a merge; nothing about a color or a layout does.</p>
       </div>
       {!RESULTS.available ? (
         <div className="cap-empty" data-kind="nothing-yet">
           <b>No test run is recorded in this build</b>
-          <span className="cap-muted">
-            CI runs the tests on every push to main and builds this page from the results.
-          </span>
+          <span className="cap-muted">CI runs the tests on every push to main and builds this page from the results.</span>
         </div>
       ) : (
         entries.map(([name, r]) => {
           const failed = r.keyboard.failed + r.accessibility.failed + r.behavior.failed;
           return (
-            <Panel
-              key={name}
-              title={COMPONENTS.find((c) => c.name === name)?.title ?? name}
-              id={`t-${name}`}
-              src={
-                <Verdict
-                  passed={r.keyboard.passed + r.accessibility.passed + r.behavior.passed}
-                  failed={failed}
-                />
-              }
-            >
+            <Panel key={name} title={COMPONENTS.find((c) => c.name === name)?.title ?? name} id={`t-${name}`} src={<Verdict passed={r.keyboard.passed + r.accessibility.passed + r.behavior.passed} failed={failed} />}>
               {/* Closed while every test passes: 1,800 passing rows bury the one that failed. */}
               <details className="cap-disclosure" open={failed > 0}>
                 <summary>{`Every test: ${r.keyboard.passed + r.keyboard.failed} keyboard, ${r.accessibility.passed + r.accessibility.failed} accessibility, ${r.behavior.passed + r.behavior.failed} behavior`}</summary>
@@ -212,10 +135,8 @@ export function TestsView() {
 export function MarkdownView({ title, md }: { title: string; md: string }) {
   return (
     <div className="site-page">
-      <article
-        className="site-doc"
-        dangerouslySetInnerHTML={{ __html: renderMarkdown(md || `# ${title}\n\nNothing yet.`, 0) }}
-      />
+      <article className="site-doc" dangerouslySetInnerHTML={{ __html: renderMarkdown(md || `# ${title}\n\nNothing yet.`, 0) }} />
     </div>
   );
 }
+

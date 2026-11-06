@@ -78,8 +78,7 @@ export function parsePatch(patch: string): PatchFile[] {
     }
     if (!file) continue;
     if (!hunk) {
-      if (/^(Binary files|GIT binary patch)/.test(raw))
-        file.note = "Binary file changed; no text to show.";
+      if (/^(Binary files|GIT binary patch)/.test(raw)) file.note = "Binary file changed; no text to show.";
       else if (raw.startsWith("rename from ")) file.note = "Renamed.";
       continue;
     }
@@ -113,11 +112,7 @@ export interface PatchCounts {
 }
 
 export function patchCounts(files: readonly PatchFile[]): PatchCounts {
-  return {
-    files: files.length,
-    added: files.reduce((n, f) => n + f.added, 0),
-    removed: files.reduce((n, f) => n + f.removed, 0),
-  };
+  return { files: files.length, added: files.reduce((n, f) => n + f.added, 0), removed: files.reduce((n, f) => n + f.removed, 0) };
 }
 
 export function patchCountsText(c: PatchCounts): string {
@@ -130,10 +125,7 @@ const SIGN_WORD: Record<PatchOp, string> = { same: "", ins: "added", del: "remov
 // A revision label, `id@v1` against `id@v2`: the same thing at two revisions, not a rename.
 // Returns the shared name and the two revisions, or null for any other pair of paths.
 const REVISION = /^(.+)@([^@/]+)$/;
-export function revisionPair(
-  oldPath: string,
-  newPath: string,
-): { name: string; from: string; to: string } | null {
+export function revisionPair(oldPath: string, newPath: string): { name: string; from: string; to: string } | null {
   const a = REVISION.exec(oldPath);
   const b = REVISION.exec(newPath);
   if (!a || !b || a[1] !== b[1] || a[2] === b[2]) return null;
@@ -145,17 +137,12 @@ function patchPath(f: PatchFile): string {
   if (f.newPath === "/dev/null") return f.oldPath;
   const rev = revisionPair(f.oldPath, f.newPath);
   if (rev) return rev.name;
-  return f.oldPath && f.newPath && f.oldPath !== f.newPath
-    ? `${f.oldPath} → ${f.newPath}`
-    : f.newPath || f.oldPath;
+  return f.oldPath && f.newPath && f.oldPath !== f.newPath ? `${f.oldPath} → ${f.newPath}` : f.newPath || f.oldPath;
 }
 
 function patchLine(l: PatchLine): string {
-  const sign =
-    l.op === "same" ? "" : `<span aria-hidden="true">${SIGN[l.op]}</span>${sr(SIGN_WORD[l.op])}`;
-  const eol = l.noEol
-    ? `<span class="cap-patch-eol">${sr("no newline at end of file")}<span aria-hidden="true">∅</span></span>`
-    : "";
+  const sign = l.op === "same" ? "" : `<span aria-hidden="true">${SIGN[l.op]}</span>${sr(SIGN_WORD[l.op])}`;
+  const eol = l.noEol ? `<span class="cap-patch-eol">${sr("no newline at end of file")}<span aria-hidden="true">∅</span></span>` : "";
   return `<tr class="cap-patch-line" data-op="${l.op}"><td class="cap-patch-no">${l.oldNo ?? ""}</td><td class="cap-patch-no">${l.newNo ?? ""}</td><td class="cap-patch-sign">${sign}</td><td class="cap-patch-code"><code>${esc(l.text)}</code>${eol}</td></tr>`;
 }
 
@@ -163,20 +150,10 @@ function patchFile(f: PatchFile, id: string, n: number): string {
   const path = patchPath(f);
   const heading = `${id}-file-${n}`;
   const rev = revisionPair(f.oldPath, f.newPath);
-  const kind =
-    f.oldPath === "/dev/null"
-      ? "new file"
-      : f.newPath === "/dev/null"
-        ? "deleted"
-        : rev
-          ? `${rev.from} to ${rev.to}`
-          : "";
+  const kind = f.oldPath === "/dev/null" ? "new file" : f.newPath === "/dev/null" ? "deleted" : rev ? `${rev.from} to ${rev.to}` : "";
   const counts = `${f.added} added, ${f.removed} removed`;
   const body = f.hunks
-    .map(
-      (h) =>
-        `<tbody class="cap-patch-hunk"><tr class="cap-patch-hunk-head"><th scope="rowgroup" colspan="4"><code>${esc(h.header)}</code></th></tr>${h.lines.map(patchLine).join("")}</tbody>`,
-    )
+    .map((h) => `<tbody class="cap-patch-hunk"><tr class="cap-patch-hunk-head"><th scope="rowgroup" colspan="4"><code>${esc(h.header)}</code></th></tr>${h.lines.map(patchLine).join("")}</tbody>`)
     .join("");
   const table = f.hunks.length
     ? `<div class="cap-patch-scroll" role="region" aria-labelledby="${heading}" tabindex="0"><table class="cap-patch-table"><caption class="cap-sr-only">${esc(path)}, ${counts}</caption>${body}</table></div>`
@@ -193,8 +170,7 @@ export function renderPatch(patch: string, options: PatchOptions = {}): string {
   const files = parsePatch(patch);
   const name = options.title ? `Patch: ${options.title}` : "Patch";
   const attrs = `class="cap-compare cap-patch" data-mode="patch" id="${id}" aria-label="${esc(name)}"`;
-  if (!files.length)
-    return `<section ${attrs}><p class="cap-compare-none" role="status"><strong>No changes.</strong> This patch has no lines to show.</p></section>`;
+  if (!files.length) return `<section ${attrs}><p class="cap-compare-none" role="status"><strong>No changes.</strong> This patch has no lines to show.</p></section>`;
   const key = `<ul class="cap-compare-key" aria-label="Key to the marks"><li><span class="cap-compare-key-mark" data-kind="ins">Added</span> a plus opens the line</li><li><span class="cap-compare-key-mark" data-kind="del">Removed</span> a minus opens the line</li></ul>`;
   return `<section ${attrs}><div class="cap-compare-bar"><div class="cap-compare-legend">${key}<p class="cap-compare-counts">${esc(patchCountsText(patchCounts(files)))}</p></div></div>${files.map((f, i) => patchFile(f, id, i + 1)).join("")}</section>`;
 }

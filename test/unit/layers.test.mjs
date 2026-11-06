@@ -28,10 +28,7 @@ test("every component and base stylesheet states the layer order", () => {
 test("no component stylesheet puts rules outside a cap layer", () => {
   const bad = [];
   for (const f of cssFiles("components")) {
-    const css = readFileSync(f, "utf8")
-      .replace(/\/\*[\s\S]*?\*\//g, "")
-      .replace(ORDER, "")
-      .trim();
+    const css = readFileSync(f, "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(ORDER, "").trim();
     if (!/^@layer cap\.(components|base|utilities) \{/.test(css)) bad.push(f);
   }
   assert.deepEqual(bad, []);

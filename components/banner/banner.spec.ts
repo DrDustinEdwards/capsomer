@@ -1,34 +1,20 @@
 import { expect, test } from "@playwright/test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 // The wrapper is imported as the package ships it (compiled by npm run build); Playwright rewrites the JSX of any .tsx file a spec imports.
 import { Banner } from "../../dist/components/banner/banner.react.js";
 
 // The specimen has no React page, so the body slot is checked on markup the way a site's server renders it, with the states page's stylesheet.
-test("behavior: the React Banner holds a list in its body, outside any paragraph, inside the banner's width", async ({
-  page,
-}) => {
+test("behavior: the React Banner holds a list in its body, outside any paragraph, inside the banner's width", async ({ page }) => {
   const states = await (await page.request.get("components/banner/states.html")).text();
   const links = (states.match(/<link rel="stylesheet"[^>]*>/g) ?? []).join("\n");
   const item = (text: string) => createElement("li", { key: text }, text);
   const markup = renderToStaticMarkup(
-    createElement(Banner, {
-      title: "Three sites are slow",
-      body: createElement("ul", null, ["Home page", "Search", "Sign in"].map(item)),
-      onDismiss: () => {},
-    }),
+    createElement(Banner, { title: "Three sites are slow", body: createElement("ul", null, ["Home page", "Search", "Sign in"].map(item)), onDismiss: () => {} }),
   );
   await page.route("**/ssr/banner", (route) =>
-    route.fulfill({
-      contentType: "text/html",
-      body: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Banner</title>${links}</head><body class="cap-specimens"><main><h1>Banner</h1>${markup}</main></body></html>`,
-    }),
+    route.fulfill({ contentType: "text/html", body: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Banner</title>${links}</head><body class="cap-specimens"><main><h1>Banner</h1>${markup}</main></body></html>` }),
   );
   await page.setViewportSize({ width: 320, height: 640 });
   await page.goto("ssr/banner");
@@ -59,28 +45,20 @@ eachTheme((theme) => {
     ]);
   });
 
-  test(
-    "accessibility: the banner's and the alert's roles and names",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "banner", theme);
-      await expect(page.locator("#sample-warn")).toMatchAriaSnapshot(`
+  test("accessibility: the banner's and the alert's roles and names", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "banner", theme);
+    await expect(page.locator("#sample-warn")).toMatchAriaSnapshot(`
       - status:
         - paragraph: Could not refresh. Showing data from 4 minutes ago.
         - button "Try again"
     `);
-      await expect(page.locator("#sample-alert")).toMatchAriaSnapshot(`
+    await expect(page.locator("#sample-alert")).toMatchAriaSnapshot(`
       - alert: "Could not save the schedule: the server did not answer. Your changes are kept here; save again in a minute."
     `);
-      await expect(page.getByRole("button", { name: "Save schedule" })).toHaveAccessibleDescription(
-        /Could not save the schedule/,
-      );
-    },
-  );
+    await expect(page.getByRole("button", { name: "Save schedule" })).toHaveAccessibleDescription(/Could not save the schedule/);
+  });
 
-  test("accessibility: every tone, the title and the alert tones reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: every tone, the title and the alert tones reach their contrast", async ({ page }) => {
     await visitStates(page, "banner", theme);
     await expectContrast(page, [
       { sel: "#sample-neutral .cap-banner-text", what: "neutral banner text" },
@@ -104,12 +82,9 @@ eachTheme((theme) => {
     ]);
   });
 
-  test(
-    "accessibility: a banner with a title and an alert with a title keep their roles and names",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "banner", theme);
-      await expect(page.locator("#sample-title")).toMatchAriaSnapshot(`
+  test("accessibility: a banner with a title and an alert with a title keep their roles and names", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "banner", theme);
+    await expect(page.locator("#sample-title")).toMatchAriaSnapshot(`
       - status:
         - paragraph: Showing data from 4 minutes ago
         - paragraph:
@@ -117,47 +92,34 @@ eachTheme((theme) => {
           - link "read what the watcher said"
         - button "Try again"
     `);
-      await expect(page.locator("#sample-alert-title")).toMatchAriaSnapshot(`
+    await expect(page.locator("#sample-alert-title")).toMatchAriaSnapshot(`
       - alert:
         - paragraph: Could not save the schedule
         - paragraph: /The cron line has six fields/
         - button "Edit the line"
     `);
-      await expect(page.locator("#sample-ok")).toHaveAttribute("role", "status");
-      await expect(page.locator("#sample-crit")).toHaveAttribute("role", "alert");
-    },
-  );
+    await expect(page.locator("#sample-ok")).toHaveAttribute("role", "status");
+    await expect(page.locator("#sample-crit")).toHaveAttribute("role", "alert");
+  });
 
-  test(
-    "accessibility: every tone has its own glyph shape, hidden from assistive technology",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "banner", theme);
-      const shapes = await page.evaluate(() =>
-        ["#sample-ok", "#sample-warn", "#sample-crit", "#sample-info"].map(
-          (id) => document.querySelector(`${id} > .cap-status-glyph`)!.innerHTML,
-        ),
-      );
-      expect(new Set(shapes).size).toBe(4);
-      const hidden = await page
-        .locator(".cap-banner > .cap-status-glyph, .cap-alert > .cap-status-glyph")
-        .evaluateAll((els) => els.every((e) => e.getAttribute("aria-hidden") === "true"));
-      expect(hidden).toBe(true);
-    },
-  );
+  test("accessibility: every tone has its own glyph shape, hidden from assistive technology", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "banner", theme);
+    const shapes = await page.evaluate(() =>
+      ["#sample-ok", "#sample-warn", "#sample-crit", "#sample-info"].map((id) => document.querySelector(`${id} > .cap-status-glyph`)!.innerHTML),
+    );
+    expect(new Set(shapes).size).toBe(4);
+    const hidden = await page.locator(".cap-banner > .cap-status-glyph, .cap-alert > .cap-status-glyph").evaluateAll((els) => els.every((e) => e.getAttribute("aria-hidden") === "true"));
+    expect(hidden).toBe(true);
+  });
 
   test("keyboard: an action in a titled banner is reachable with Tab", async ({ page }) => {
     await visitStates(page, "banner", theme);
     await page.locator("#sample-title a").focus();
     await page.keyboard.press("Tab");
-    await expect(
-      page.locator("#sample-title").getByRole("button", { name: "Try again" }),
-    ).toBeFocused();
+    await expect(page.locator("#sample-title").getByRole("button", { name: "Try again" })).toBeFocused();
   });
 
-  test("keyboard: Tab reaches the banners' actions in reading order, not the banners", async ({
-    page,
-  }) => {
+  test("keyboard: Tab reaches the banners' actions in reading order, not the banners", async ({ page }) => {
     await visitStates(page, "banner", theme);
     await page.locator("#sample-warn").getByRole("button", { name: "Try again" }).focus();
     await page.keyboard.press("Tab");
@@ -165,9 +127,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-warn")).not.toHaveAttribute("tabindex");
   });
 
-  test("keyboard: Enter on Dismiss hides the banner and focus moves to the page, not nowhere", async ({
-    page,
-  }) => {
+  test("keyboard: Enter on Dismiss hides the banner and focus moves to the page, not nowhere", async ({ page }) => {
     await visitStates(page, "banner", theme);
     const dismiss = page.locator("#sample-dismiss").getByRole("button", { name: "Dismiss" });
     await dismiss.focus();
@@ -179,8 +139,6 @@ eachTheme((theme) => {
   test("behavior: a failed refresh keeps the last good data on screen", async ({ page }) => {
     await visitStates(page, "banner", theme);
     await expect(page.locator("#sample-warn")).toBeVisible();
-    await expect(
-      page.getByRole("list", { name: "Sites, as of 4 minutes ago" }).getByRole("listitem"),
-    ).toHaveCount(3);
+    await expect(page.getByRole("list", { name: "Sites, as of 4 minutes ago" }).getByRole("listitem")).toHaveCount(3);
   });
 });

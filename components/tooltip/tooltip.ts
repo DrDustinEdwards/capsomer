@@ -41,9 +41,7 @@ export function hideTip(trigger: HTMLElement): void {
 // value is the id of its tip. Returns a function that detaches.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const trigger of root.querySelectorAll<HTMLElement>(
-    "[data-cap-tip]:not([data-cap-ready])",
-  )) {
+  for (const trigger of root.querySelectorAll<HTMLElement>("[data-cap-tip]:not([data-cap-ready])")) {
     const tip = document.getElementById(trigger.dataset.capTip ?? "");
     if (!tip) continue;
     trigger.dataset.capReady = "";

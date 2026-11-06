@@ -1,10 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import {
   blockEdit,
   countWords,
@@ -21,8 +16,7 @@ import {
 const NAME = "markdown-editor";
 const section = (page: Page, id: string) => page.locator(`#${id}`);
 const surfaceOf = (scope: Page | Locator) => scope.getByRole("textbox", { name: /, markdown$/ });
-const toolbarOf = (scope: Page | Locator) =>
-  scope.getByRole("toolbar", { name: "Markdown formatting" });
+const toolbarOf = (scope: Page | Locator) => scope.getByRole("toolbar", { name: "Markdown formatting" });
 
 // Waits until the textarea has been upgraded, then returns the editable surface.
 async function ready(page: Page, id: string): Promise<Locator> {
@@ -81,8 +75,7 @@ async function pairRatio(page: Page, fg: string, bg: string): Promise<number> {
       const bgc = px(cs.backgroundColor);
       probeEl.remove();
       const lum = (c: readonly [number, number, number]) => {
-        const k = (v: number) =>
-          v / 255 <= 0.04045 ? v / 255 / 12.92 : Math.pow((v / 255 + 0.055) / 1.055, 2.4);
+        const k = (v: number) => (v / 255 <= 0.04045 ? v / 255 / 12.92 : Math.pow((v / 255 + 0.055) / 1.055, 2.4));
         return 0.2126 * k(c[0]) + 0.7152 * k(c[1]) + 0.0722 * k(c[2]);
       };
       const a = lum(fgc);
@@ -104,9 +97,7 @@ test("behavior: words and reading time count markdown as the site's published ti
 });
 
 test("behavior: a typed address is recognized, and a query filters the pages by title, address and hint", () => {
-  expect(
-    ["https://a.example", "mailto:x@y.example", "/writing/a", "#top"].every(looksLikeUrl),
-  ).toBe(true);
+  expect(["https://a.example", "mailto:x@y.example", "/writing/a", "#top"].every(looksLikeUrl)).toBe(true);
   expect(looksLikeUrl("moving the monitors")).toBe(false);
   const t = [
     { href: "/writing/moving-the-monitors", title: "Moving the monitors" },
@@ -117,20 +108,11 @@ test("behavior: a typed address is recognized, and a query filters the pages by 
   expect(filterLinkTargets(t, "quiet-hours").length).toBe(1);
   expect(filterLinkTargets(t, "notes").length).toBe(1);
   expect(filterLinkTargets(t, "https://x.example")).toEqual([]);
-  expect(
-    filterLinkTargets(
-      Array.from({ length: 20 }, (_, i) => ({ href: `/${i}`, title: `Post ${i}` })),
-      "",
-    ).length,
-  ).toBe(8);
+  expect(filterLinkTargets(Array.from({ length: 20 }, (_, i) => ({ href: `/${i}`, title: `Post ${i}` })), "").length).toBe(8);
 });
 
 test("behavior: the edits wrap, cycle, number, place and link as the site's editor did", () => {
-  expect(wrapEdit("a b", 2, 3, "**")).toEqual({
-    changes: [{ from: 2, to: 3, insert: "**b**" }],
-    anchor: 4,
-    head: 5,
-  });
+  expect(wrapEdit("a b", 2, 3, "**")).toEqual({ changes: [{ from: 2, to: 3, insert: "**b**" }], anchor: 4, head: 5 });
   expect(wrapEdit("", 0, 0, "_").head).toBeUndefined();
   // Heading cycle: none, h2, h3, h4, none.
   const step = (doc: string) => {
@@ -149,42 +131,24 @@ test("behavior: the edits wrap, cycle, number, place and link as the site's edit
   // A block is set apart by a blank line unless the cursor is on one.
   expect(blockEdit("Intro", 5, 5, ":::x:::").changes[0]?.insert).toBe("\n\n:::x:::");
   expect(blockEdit("Intro\n\n", 7, 7, ":::x:::").changes[0]?.insert).toBe(":::x:::");
-  expect(linkEdit(0, 4, "Post", "/writing/p", "A post").changes[0]?.insert).toBe(
-    "[Post](/writing/p)",
-  );
-  expect(linkEdit(0, 0, "", "/writing/p", "A post").changes[0]?.insert).toBe(
-    "[A post](/writing/p)",
-  );
-  expect(
-    scaffoldCursor({
-      id: "f",
-      label: "F",
-      hint: "",
-      text: ':::figure{src="" alt=""}',
-      cursorAfter: 'src="',
-    }),
-  ).toBe(':::figure{src="'.length);
+  expect(linkEdit(0, 4, "Post", "/writing/p", "A post").changes[0]?.insert).toBe("[Post](/writing/p)");
+  expect(linkEdit(0, 0, "", "/writing/p", "A post").changes[0]?.insert).toBe("[A post](/writing/p)");
+  expect(scaffoldCursor({ id: "f", label: "F", hint: "", text: ':::figure{src="" alt=""}', cursorAfter: 'src="' })).toBe(':::figure{src="'.length);
   expect(scaffoldCursor({ id: "f", label: "F", hint: "", text: "abc", cursor: 2 })).toBe(2);
 });
 
 eachTheme((theme) => {
   // ---- accessibility ---------------------------------------------------------------------
-  test(
-    "accessibility: a scroller that overflows is a keyboard stop, one that does not keeps CodeMirror's own -1",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, NAME, theme);
-      await expect(page.locator("#sp-long .cm-editor")).toBeVisible();
-      await expect(page.locator("#sp-long .cm-scroller")).toHaveAttribute("tabindex", "0");
-      await expect(page.locator("#sp-long-disabled .cm-scroller")).toHaveAttribute("tabindex", "0");
-      await expect(page.locator("#sp-default .cm-scroller")).toHaveAttribute("tabindex", "-1");
-      await expect(page.locator("#sp-empty .cm-scroller")).toHaveAttribute("tabindex", "-1");
-    },
-  );
+  test("accessibility: a scroller that overflows is a keyboard stop, one that does not keeps CodeMirror's own -1", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, NAME, theme);
+    await expect(page.locator("#sp-long .cm-editor")).toBeVisible();
+    await expect(page.locator("#sp-long .cm-scroller")).toHaveAttribute("tabindex", "0");
+    await expect(page.locator("#sp-long-disabled .cm-scroller")).toHaveAttribute("tabindex", "0");
+    await expect(page.locator("#sp-default .cm-scroller")).toHaveAttribute("tabindex", "-1");
+    await expect(page.locator("#sp-empty .cm-scroller")).toHaveAttribute("tabindex", "-1");
+  });
 
-  test("keyboard: a disabled editor's text scrolls from the keyboard, by the arrow keys and Page Down on the scroller", async ({
-    page,
-  }) => {
+  test("keyboard: a disabled editor's text scrolls from the keyboard, by the arrow keys and Page Down on the scroller", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const scroller = page.locator("#sp-long-disabled .cm-scroller");
     await expect(scroller).toHaveAttribute("tabindex", "0");
@@ -199,9 +163,7 @@ eachTheme((theme) => {
     await expect.poll(() => scroller.evaluate((el) => el.scrollTop)).toBeGreaterThan(after);
   });
 
-  test("keyboard: in an editable long editor Tab meets the scroller first and the text next, and typing still works", async ({
-    page,
-  }) => {
+  test("keyboard: in an editable long editor Tab meets the scroller first and the text next, and typing still works", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const scroller = page.locator("#sp-long .cm-scroller");
     const content = page.locator("#sp-long .cm-content");
@@ -220,19 +182,15 @@ eachTheme((theme) => {
   for (const id of ["palette", "slash", "alt", "uploading", "failed"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitOnly(page, theme, id);
-      if (id === "palette")
-        await expect(page.getByRole("combobox", { name: "Link to" })).toBeVisible();
-      if (id === "slash")
-        await expect(page.getByRole("list", { name: "Insert a block" })).toBeVisible();
+      if (id === "palette") await expect(page.getByRole("combobox", { name: "Link to" })).toBeVisible();
+      if (id === "slash") await expect(page.getByRole("list", { name: "Insert a block" })).toBeVisible();
       if (id === "alt") await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeVisible();
       if (id === "failed") await expect(page.getByRole("alert")).toBeVisible();
       await expectNoAxeViolations(page);
     });
   }
 
-  test("accessibility: text, placeholder, gutter, syntax tones and the footer reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: text, placeholder, gutter, syntax tones and the footer reach their contrast", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await expect(page.locator(".cm-content")).toHaveCount(11);
     const d = "#sp-default";
@@ -252,12 +210,7 @@ eachTheme((theme) => {
       { sel: `#sp-disabled .cm-line`, what: "disabled text on its sunken ground" },
       { sel: `${d} .cap-md-frame`, what: "the editor's edge", part: "border" },
       { sel: `#sp-invalid .cap-md-frame`, what: "the invalid editor's edge", part: "border" },
-      {
-        sel: `${d} .cap-md-toolbar .cap-md-tool`,
-        what: "a toolbar button's boundary when hovered is not needed; its icon carries it",
-        part: "color",
-        min: 3,
-      },
+      { sel: `${d} .cap-md-toolbar .cap-md-tool`, what: "a toolbar button's boundary when hovered is not needed; its icon carries it", part: "color", min: 3 },
     ]);
     // Each syntax tone, measured on the token itself.
     for (const [text, what] of [
@@ -273,58 +226,29 @@ eachTheme((theme) => {
   test("accessibility: code and link tones reach 4.5:1", async ({ page }) => {
     await visitOnly(page, theme, "palette");
     const surface = surfaceOf(page);
-    await type(
-      page,
-      surface,
-      "A [link](/writing/a) and `code` and **bold** and _italic_.\n\nSee https://example.org/x.",
-    );
-    for (const needle of [
-      "link",
-      "/writing/a",
-      "code",
-      "bold",
-      "italic",
-      "https://example.org/x",
-    ]) {
+    await type(page, surface, "A [link](/writing/a) and `code` and **bold** and _italic_.\n\nSee https://example.org/x.");
+    for (const needle of ["link", "/writing/a", "code", "bold", "italic", "https://example.org/x"]) {
       const sel = await probe(page, "body", needle);
       await expectContrast(page, [{ sel, what: `the token ${needle}` }]);
     }
   });
 
-  test("accessibility: the selection keeps the text readable and shows where it is", async ({
-    page,
-  }) => {
+  test("accessibility: the selection keeps the text readable and shows where it is", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-default");
-    const text = await pairRatio(
-      page,
-      "var(--text)",
-      "color-mix(in srgb, var(--accent) 36%, var(--surface))",
-    );
+    const text = await pairRatio(page, "var(--text)", "color-mix(in srgb, var(--accent) 36%, var(--surface))");
     expect(text).toBeGreaterThanOrEqual(4.5);
     // And it is distinguishable from the unselected surface: 1.4:1 or more.
-    const shows = await pairRatio(
-      page,
-      "color-mix(in srgb, var(--accent) 36%, var(--surface))",
-      "var(--surface)",
-    );
+    const shows = await pairRatio(page, "color-mix(in srgb, var(--accent) 36%, var(--surface))", "var(--surface)");
     expect(shows).toBeGreaterThanOrEqual(1.4);
   });
 
-  test("accessibility: the palette's options, the active option and the slash menu reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the palette's options, the active option and the slash menu reach their contrast", async ({ page }) => {
     await visitOnly(page, theme, "palette");
     await expect(page.getByRole("option").first()).toBeVisible();
     await expectContrast(page, [
-      {
-        sel: ".cap-option[data-active] .cap-option-label",
-        what: "the active option's title on accent-soft",
-      },
-      {
-        sel: ".cap-option[data-active] .cap-md-option-hint",
-        what: "the active option's address on accent-soft",
-      },
+      { sel: ".cap-option[data-active] .cap-option-label", what: "the active option's title on accent-soft" },
+      { sel: ".cap-option[data-active] .cap-md-option-hint", what: "the active option's address on accent-soft" },
       { sel: ".cap-option:not([data-active]) .cap-option-label", what: "an option's title" },
       { sel: ".cap-option:not([data-active]) .cap-md-option-hint", what: "an option's address" },
       { sel: ".cap-md-palette-label", what: "the palette's label" },
@@ -336,18 +260,11 @@ eachTheme((theme) => {
       { sel: ".cap-md-slash-item strong", what: "a block's name" },
       { sel: ".cap-md-slash-hint", what: "a block's hint" },
     ]);
-    await page
-      .getByRole("list", { name: "Insert a block" })
-      .getByRole("button", { name: /Chart/ })
-      .hover();
-    await expectContrast(page, [
-      { sel: ".cap-md-slash-item:hover .cap-md-slash-hint", what: "a hovered block's hint" },
-    ]);
+    await page.getByRole("list", { name: "Insert a block" }).getByRole("button", { name: /Chart/ }).hover();
+    await expectContrast(page, [{ sel: ".cap-md-slash-item:hover .cap-md-slash-hint", what: "a hovered block's hint" }]);
   });
 
-  test("accessibility: the alt step's labels, help and fields reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the alt step's labels, help and fields reach their contrast", async ({ page }) => {
     await visitOnly(page, theme, "alt");
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeVisible();
     await expectContrast(page, [
@@ -360,18 +277,13 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: ".cap-md-upload-wait", what: "the uploading line" }]);
     await visitOnly(page, theme, "failed");
     await expect(page.getByRole("alert")).toBeVisible();
-    await expectContrast(page, [
-      { sel: ".cap-md-upload-error", what: "the failed-upload message" },
-    ]);
+    await expectContrast(page, [{ sel: ".cap-md-upload-error", what: "the failed-upload message" }]);
   });
 
-  test(
-    "accessibility: the toolbar's roles and names, and the surface's name and description",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, NAME, theme);
-      const surface = await ready(page, "sp-default");
-      await expect(toolbarOf(section(page, "sp-default"))).toMatchAriaSnapshot(`
+  test("accessibility: the toolbar's roles and names, and the surface's name and description", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, NAME, theme);
+    const surface = await ready(page, "sp-default");
+    await expect(toolbarOf(section(page, "sp-default"))).toMatchAriaSnapshot(`
       - toolbar "Markdown formatting":
         - button "Bold"
         - button "Italic"
@@ -384,86 +296,48 @@ eachTheme((theme) => {
         - button "Diagram"
         - button "Figure"
     `);
-      await expect(surface).toHaveAccessibleName("Body, markdown");
-      await expect(surface).toHaveAccessibleDescription(
-        /Markdown\. Ctrl or Cmd \+ K links to a page/,
-      );
-      await expect(surface).toHaveAttribute("aria-multiline", "true");
-      // The label the page loaded with still names the field, and the textarea is out of the way.
-      await expect(section(page, "sp-default").locator("textarea")).toBeHidden();
-    },
-  );
+    await expect(surface).toHaveAccessibleName("Body, markdown");
+    await expect(surface).toHaveAccessibleDescription(/Markdown\. Ctrl or Cmd \+ K links to a page/);
+    await expect(surface).toHaveAttribute("aria-multiline", "true");
+    // The label the page loaded with still names the field, and the textarea is out of the way.
+    await expect(section(page, "sp-default").locator("textarea")).toBeHidden();
+  });
 
-  test(
-    "accessibility: the link palette is a labeled combobox over a listbox, the slash menu a named list",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitOnly(page, theme, "palette");
-      const input = page.getByRole("combobox", { name: "Link to" });
-      await expect(input).toHaveAttribute("aria-expanded", "true");
-      await expect(page.getByRole("listbox", { name: "Pages" }).getByRole("option")).toHaveCount(3);
-      await expect(page.getByRole("option").first()).toHaveAttribute("data-active", "");
-      await expect(
-        page.getByRole("option", { name: /Quiet hours, explained.*not live yet \(draft\)/ }),
-      ).toBeVisible();
-      await visitOnly(page, theme, "slash");
-      await expect(
-        page.getByRole("list", { name: "Insert a block" }).getByRole("button"),
-      ).toHaveCount(3);
-    },
-  );
+  test("accessibility: the link palette is a labeled combobox over a listbox, the slash menu a named list", { tag: "@markup" }, async ({ page }) => {
+    await visitOnly(page, theme, "palette");
+    const input = page.getByRole("combobox", { name: "Link to" });
+    await expect(input).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByRole("listbox", { name: "Pages" }).getByRole("option")).toHaveCount(3);
+    await expect(page.getByRole("option").first()).toHaveAttribute("data-active", "");
+    await expect(page.getByRole("option", { name: /Quiet hours, explained.*not live yet \(draft\)/ })).toBeVisible();
+    await visitOnly(page, theme, "slash");
+    await expect(page.getByRole("list", { name: "Insert a block" }).getByRole("button")).toHaveCount(3);
+  });
 
-  test(
-    "accessibility: the states say what they are in words, not only color",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, NAME, theme);
-      await ready(page, "sp-invalid");
-      await expect(surfaceOf(section(page, "sp-invalid"))).toHaveAttribute("aria-invalid", "true");
-      await expect(surfaceOf(section(page, "sp-invalid"))).toHaveAccessibleDescription(
-        /no alt text/,
-      );
-      await expect(section(page, "sp-limit").locator(".cap-md-limit")).toContainText(
-        "over the 60 character limit",
-      );
-      await expect(surfaceOf(section(page, "sp-readonly"))).toHaveAttribute(
-        "aria-readonly",
-        "true",
-      );
-      await expect(surfaceOf(section(page, "sp-disabled"))).toHaveAttribute(
-        "aria-disabled",
-        "true",
-      );
-      await expect(surfaceOf(section(page, "sp-disabled"))).toHaveAccessibleDescription(
-        /Locked while the draft is being published/,
-      );
-    },
-  );
+  test("accessibility: the states say what they are in words, not only color", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, NAME, theme);
+    await ready(page, "sp-invalid");
+    await expect(surfaceOf(section(page, "sp-invalid"))).toHaveAttribute("aria-invalid", "true");
+    await expect(surfaceOf(section(page, "sp-invalid"))).toHaveAccessibleDescription(/no alt text/);
+    await expect(section(page, "sp-limit").locator(".cap-md-limit")).toContainText("over the 60 character limit");
+    await expect(surfaceOf(section(page, "sp-readonly"))).toHaveAttribute("aria-readonly", "true");
+    await expect(surfaceOf(section(page, "sp-disabled"))).toHaveAttribute("aria-disabled", "true");
+    await expect(surfaceOf(section(page, "sp-disabled"))).toHaveAccessibleDescription(/Locked while the draft is being published/);
+  });
 
-  test(
-    "accessibility: the word count is not a live region",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, NAME, theme);
-      await ready(page, "sp-default");
-      const live = await section(page, "sp-default")
-        .locator(".cap-md-stats")
-        .evaluate((n) => !!n.closest("[aria-live], [role='status'], [role='alert'], [role='log']"));
-      expect(live).toBe(false);
-    },
-  );
+  test("accessibility: the word count is not a live region", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, NAME, theme);
+    await ready(page, "sp-default");
+    const live = await section(page, "sp-default").locator(".cap-md-stats").evaluate((n) => !!n.closest("[aria-live], [role='status'], [role='alert'], [role='log']"));
+    expect(live).toBe(false);
+  });
 
-  test("accessibility: forced colors keep the focus ring and the active option visible", async ({
-    page,
-  }) => {
+  test("accessibility: forced colors keep the focus ring and the active option visible", async ({ page }) => {
     await page.emulateMedia({ forcedColors: "active" });
     await visitOnly(page, theme, "palette");
     const option = page.getByRole("option").first();
     await expect(option).toBeVisible();
-    const outline = await option.evaluate((n) => ({
-      style: getComputedStyle(n).outlineStyle,
-      width: getComputedStyle(n).outlineWidth,
-    }));
+    const outline = await option.evaluate((n) => ({ style: getComputedStyle(n).outlineStyle, width: getComputedStyle(n).outlineWidth }));
     expect(outline.style).not.toBe("none");
     expect(parseFloat(outline.width)).toBeGreaterThan(0);
     await visitStates(page, NAME, theme);
@@ -471,43 +345,29 @@ eachTheme((theme) => {
     await surface.focus();
     // CodeMirror marks itself focused (cm-focused, which draws the ring) on a timer after the focus event.
     await expect(section(page, "sp-default").locator(".cm-editor")).toHaveClass(/\bcm-focused\b/);
-    const ring = await section(page, "sp-default")
-      .locator(".cm-editor")
-      .evaluate((n) => getComputedStyle(n).outlineStyle);
+    const ring = await section(page, "sp-default").locator(".cm-editor").evaluate((n) => getComputedStyle(n).outlineStyle);
     expect(ring).not.toBe("none");
   });
 
-  test("accessibility: focus on the surface is a visible ring inside the frame", async ({
-    page,
-  }) => {
+  test("accessibility: focus on the surface is a visible ring inside the frame", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-default");
     await surface.focus();
     // CodeMirror marks itself focused (cm-focused, which draws the ring) on a timer after the focus event.
     await expect(section(page, "sp-default").locator(".cm-editor")).toHaveClass(/\bcm-focused\b/);
-    const ring = await section(page, "sp-default")
-      .locator(".cm-editor")
-      .evaluate((n) => {
-        const cs = getComputedStyle(n);
-        return {
-          style: cs.outlineStyle,
-          width: parseFloat(cs.outlineWidth),
-          offset: parseFloat(cs.outlineOffset),
-        };
-      });
+    const ring = await section(page, "sp-default").locator(".cm-editor").evaluate((n) => {
+      const cs = getComputedStyle(n);
+      return { style: cs.outlineStyle, width: parseFloat(cs.outlineWidth), offset: parseFloat(cs.outlineOffset) };
+    });
     expect(ring.style).toBe("solid");
     expect(ring.width).toBeGreaterThanOrEqual(2);
     // Inset, because the frame clips overflow (WCAG 2.4.7).
     expect(ring.offset).toBeLessThan(0);
-    await expectContrast(page, [
-      { sel: "#sp-default .cm-editor", what: "the focus ring", part: "outline" },
-    ]);
+    await expectContrast(page, [{ sel: "#sp-default .cm-editor", what: "the focus ring", part: "outline" }]);
   });
 
   // ---- keyboard (one per row of the doc page's table) ------------------------------------
-  test("keyboard: Tab enters the toolbar at one stop, the next Tab enters the surface", async ({
-    page,
-  }) => {
+  test("keyboard: Tab enters the toolbar at one stop, the next Tab enters the surface", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-empty");
     // Focus the page's last control before the empty editor, then Tab.
@@ -515,9 +375,7 @@ eachTheme((theme) => {
     await page.keyboard.press("Tab");
     await page.keyboard.press("Tab");
     // Whatever follows #sp-lines, it is not still inside the earlier toolbar's other buttons.
-    const tabbable = await toolbarOf(section(page, "sp-empty"))
-      .locator(".cap-md-tool")
-      .evaluateAll((els) => els.map((e) => (e as HTMLElement).tabIndex));
+    const tabbable = await toolbarOf(section(page, "sp-empty")).locator(".cap-md-tool").evaluateAll((els) => els.map((e) => (e as HTMLElement).tabIndex));
     expect(tabbable.filter((t) => t === 0)).toHaveLength(1);
     expect(tabbable.filter((t) => t === -1).length).toBe(tabbable.length - 1);
     const first = toolbarOf(section(page, "sp-empty")).getByRole("button", { name: "Bold" });
@@ -528,9 +386,7 @@ eachTheme((theme) => {
     await expect(first).toBeFocused();
   });
 
-  test("keyboard: arrows, Home and End move between the toolbar's buttons and wrap", async ({
-    page,
-  }) => {
+  test("keyboard: arrows, Home and End move between the toolbar's buttons and wrap", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-default");
     const bar = toolbarOf(section(page, "sp-default"));
@@ -551,9 +407,7 @@ eachTheme((theme) => {
     await expect(bar.getByRole("button", { name: "Bold" })).toHaveAttribute("tabindex", "-1");
   });
 
-  test("keyboard: Ctrl+B, I and E wrap the selection, and with none put the cursor between the marks", async ({
-    page,
-  }) => {
+  test("keyboard: Ctrl+B, I and E wrap the selection, and with none put the cursor between the marks", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await type(page, surface, "word");
     await page.keyboard.press("Control+a");
@@ -568,9 +422,7 @@ eachTheme((theme) => {
     await expect(page.locator("textarea")).toHaveValue("x`y`");
   });
 
-  test("keyboard: Ctrl+K opens the link palette with the selection as its query", async ({
-    page,
-  }) => {
+  test("keyboard: Ctrl+K opens the link palette with the selection as its query", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await page.keyboard.press("Escape");
     await type(page, surface, "monitors");
@@ -582,18 +434,13 @@ eachTheme((theme) => {
     await expect(page.getByRole("option")).toHaveCount(1);
   });
 
-  test("keyboard: in the link palette arrows choose, Enter links, and the cursor lands after the link", async ({
-    page,
-  }) => {
+  test("keyboard: in the link palette arrows choose, Enter links, and the cursor lands after the link", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await expect(page.getByRole("combobox", { name: "Link to" })).toBeFocused();
     const active = async (i: number) => {
       await expect(page.getByRole("option").nth(i)).toHaveAttribute("data-active", "");
       const id = await page.getByRole("option").nth(i).getAttribute("id");
-      await expect(page.getByRole("combobox")).toHaveAttribute(
-        "aria-activedescendant",
-        id ?? "none",
-      );
+      await expect(page.getByRole("combobox")).toHaveAttribute("aria-activedescendant", id ?? "none");
     };
     await active(0);
     await page.keyboard.press("ArrowDown");
@@ -607,9 +454,7 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(page.getByRole("combobox")).toHaveCount(0);
     await expect(surface).toBeFocused();
-    await expect(page.locator("textarea")).toHaveValue(
-      /Read more: \[The first incident write-up\]\(\/writing\/first-incident\)$/,
-    );
+    await expect(page.locator("textarea")).toHaveValue(/Read more: \[The first incident write-up\]\(\/writing\/first-incident\)$/);
     await page.keyboard.type(" Next.");
     await expect(page.locator("textarea")).toHaveValue(/\(\/writing\/first-incident\) Next\.$/);
   });
@@ -620,14 +465,10 @@ eachTheme((theme) => {
     await expect(page.getByRole("option")).toHaveCount(0);
     await expect(page.locator(".cap-md-palette-note")).toHaveText("Enter to link to this address");
     await page.keyboard.press("Enter");
-    await expect(page.locator("textarea")).toHaveValue(
-      /\[https:\/\/status\.example\.org\]\(https:\/\/status\.example\.org\)$/,
-    );
+    await expect(page.locator("textarea")).toHaveValue(/\[https:\/\/status\.example\.org\]\(https:\/\/status\.example\.org\)$/);
   });
 
-  test("keyboard: Esc closes the link palette and returns to the text with the selection as it was", async ({
-    page,
-  }) => {
+  test("keyboard: Esc closes the link palette and returns to the text with the selection as it was", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await page.keyboard.type("zzz");
     await expect(page.getByRole("option")).toHaveCount(0);
@@ -640,9 +481,7 @@ eachTheme((theme) => {
     await expect(page.locator("textarea")).toHaveValue(/Read more: !$/);
   });
 
-  test("keyboard: a lone / on a line opens the block menu, Down enters it, arrows move, Enter inserts the block in its place", async ({
-    page,
-  }) => {
+  test("keyboard: a lone / on a line opens the block menu, Down enters it, arrows move, Enter inserts the block in its place", async ({ page }) => {
     const surface = await visitOnly(page, theme, "slash");
     const menu = page.getByRole("list", { name: "Insert a block" });
     await expect(menu).toBeVisible();
@@ -681,9 +520,7 @@ eachTheme((theme) => {
     await expect(surface).toBeFocused();
   });
 
-  test("keyboard: a / inside a line or among other text does not open the block menu", async ({
-    page,
-  }) => {
+  test("keyboard: a / inside a line or among other text does not open the block menu", async ({ page }) => {
     const surface = await visitOnly(page, theme, "slash");
     await type(page, surface, "a/b");
     await expect(page.getByRole("list", { name: "Insert a block" })).toHaveCount(0);
@@ -695,21 +532,13 @@ eachTheme((theme) => {
     await expect(page.getByRole("list", { name: "Insert a block" })).toHaveCount(0);
   });
 
-  test("keyboard: Ctrl+S hands the text to the app and does not leave the editor", async ({
-    page,
-  }) => {
+  test("keyboard: Ctrl+S hands the text to the app and does not leave the editor", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-form");
     await type(page, surface, "Draft text");
     let prevented = false;
     await page.exposeFunction("capSawSave", () => (prevented = true));
-    await page.evaluate(() =>
-      document.addEventListener("cap-md-save", (e) =>
-        (window as unknown as { capSawSave: (v: string) => void }).capSawSave(
-          (e as CustomEvent).detail.value,
-        ),
-      ),
-    );
+    await page.evaluate(() => document.addEventListener("cap-md-save", (e) => (window as unknown as { capSawSave: (v: string) => void }).capSawSave((e as CustomEvent).detail.value)));
     await page.keyboard.press("Control+s");
     await expect(page.locator("#saved")).toHaveText("yes");
     expect(prevented).toBe(true);
@@ -729,9 +558,7 @@ eachTheme((theme) => {
     await expect(page.locator("textarea")).toHaveValue("**word**");
   });
 
-  test("keyboard: Tab leaves the surface (no trap), and Esc then Tab does the same after a menu", async ({
-    page,
-  }) => {
+  test("keyboard: Tab leaves the surface (no trap), and Esc then Tab does the same after a menu", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-form");
     await surface.focus();
@@ -760,9 +587,7 @@ eachTheme((theme) => {
     }
   });
 
-  test("keyboard: the toolbar's Footnote button adds a numbered reference and lands in its definition", async ({
-    page,
-  }) => {
+  test("keyboard: the toolbar's Footnote button adds a numbered reference and lands in its definition", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await page.keyboard.press("Escape");
     await type(page, surface, "Claim");
@@ -777,9 +602,7 @@ eachTheme((theme) => {
     await expect(page.locator("textarea")).toHaveValue(/\[\^2\]: $/);
   });
 
-  test("keyboard: a toolbar block button inserts the block set apart by a blank line", async ({
-    page,
-  }) => {
+  test("keyboard: a toolbar block button inserts the block set apart by a blank line", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await page.keyboard.press("Escape");
     await type(page, surface, "Intro");
@@ -791,47 +614,31 @@ eachTheme((theme) => {
   });
 
   // ---- the image step --------------------------------------------------------------------
-  test("keyboard: an image is described before it is sent: focus moves to the alt field, Insert waits for alt text, Enter uploads with it and inserts", async ({
-    page,
-  }) => {
+  test("keyboard: an image is described before it is sent: focus moves to the alt field, Insert waits for alt text, Enter uploads with it and inserts", async ({ page }) => {
     const surface = await visitOnly(page, theme, "alt");
     const alt = page.getByRole("textbox", { name: /Alt text/ });
     await expect(alt).toBeFocused();
     const insert = page.getByRole("button", { name: "Insert image" }).last();
     await expect(insert).toBeDisabled();
-    expect(
-      await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads),
-    ).toBeUndefined();
+    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toBeUndefined();
     await page.keyboard.type("The status page, all green");
     await expect(insert).toBeEnabled();
     await page.keyboard.press("Enter");
     await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
     await expect(surface).toBeFocused();
-    await expect(page.locator("textarea")).toHaveValue(
-      /^A screenshot of the status page after the fix\.\n\n:::figure\{src="data:image\/svg\+xml,[^"]+" alt="The status page, all green"\}\n:::$/,
-    );
+    await expect(page.locator("textarea")).toHaveValue(/^A screenshot of the status page after the fix\.\n\n:::figure\{src="data:image\/svg\+xml,[^"]+" alt="The status page, all green"\}\n:::$/);
     await expect(page.getByRole("status").filter({ hasText: "Image added" })).toHaveCount(1);
-    expect(
-      await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads),
-    ).toEqual([
-      { name: "status-after-fix.png", alt: "The status page, all green", decorative: false },
-    ]);
+    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toEqual([{ name: "status-after-fix.png", alt: "The status page, all green", decorative: false }]);
   });
 
-  test("keyboard: the describe step's other answers: Esc or Cancel discards the image unsent and returns to the text, Insert as decorative sends it marked decorative", async ({
-    page,
-  }) => {
+  test("keyboard: the describe step's other answers: Esc or Cancel discards the image unsent and returns to the text, Insert as decorative sends it marked decorative", async ({ page }) => {
     const surface = await visitOnly(page, theme, "alt");
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
     await expect(surface).toBeFocused();
-    await expect(page.locator("textarea")).toHaveValue(
-      "A screenshot of the status page after the fix.",
-    );
-    expect(
-      await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads),
-    ).toBeUndefined();
+    await expect(page.locator("textarea")).toHaveValue("A screenshot of the status page after the fix.");
+    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toBeUndefined();
     await visitOnly(page, theme, "alt");
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
     await page.getByRole("button", { name: "Cancel" }).click();
@@ -841,70 +648,42 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Insert as decorative" }).click();
     await expect(page.getByRole("group", { name: "Describe the image" })).toHaveCount(0);
     await expect(page.locator("textarea")).toHaveValue(/alt=""\}\n:::$/);
-    expect(
-      await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads),
-    ).toEqual([{ name: "status-after-fix.png", alt: "", decorative: true }]);
+    expect(await page.evaluate(() => (window as unknown as { sentUploads?: unknown[] }).sentUploads)).toEqual([{ name: "status-after-fix.png", alt: "", decorative: true }]);
   });
 
-  test("behavior: an upload in progress is said in a status region, and a failed one is an alert that keeps the description and leaves the text alone", async ({
-    page,
-  }) => {
+  test("behavior: an upload in progress is said in a status region, and a failed one is an alert that keeps the description and leaves the text alone", async ({ page }) => {
     await visitOnly(page, theme, "uploading");
-    await expect(page.getByRole("group", { name: "Describe the image" })).toHaveAttribute(
-      "aria-busy",
-      "true",
-    );
+    await expect(page.getByRole("group", { name: "Describe the image" })).toHaveAttribute("aria-busy", "true");
     await expect(page.getByRole("status").filter({ hasText: "Uploading slow.png" })).toHaveCount(1);
     await visitOnly(page, theme, "failed");
-    await expect(page.getByRole("alert")).toHaveText(
-      "The upload server could not be reached. Nothing was added; try again.",
-    );
+    await expect(page.getByRole("alert")).toHaveText("The upload server could not be reached. Nothing was added; try again.");
     await expect(page.locator("textarea")).toHaveValue("The upload failed; the text is untouched.");
-    await expect(page.getByRole("group", { name: "Describe the image" })).not.toHaveAttribute(
-      "aria-busy",
-    );
-    await expect(page.getByRole("textbox", { name: /Alt text/ })).toHaveValue(
-      "The status page, all green",
-    );
+    await expect(page.getByRole("group", { name: "Describe the image" })).not.toHaveAttribute("aria-busy");
+    await expect(page.getByRole("textbox", { name: /Alt text/ })).toHaveValue("The status page, all green");
     await expect(page.getByRole("button", { name: "Insert image" }).last()).toBeEnabled();
   });
 
-  test("behavior: the toolbar's Insert image opens the file chooser, and a pasted or dropped image takes the same describe step", async ({
-    page,
-  }) => {
+  test("behavior: the toolbar's Insert image opens the file chooser, and a pasted or dropped image takes the same describe step", async ({ page }) => {
     const surface = await visitOnly(page, theme, "palette");
     await page.keyboard.press("Escape");
-    const [chooser] = await Promise.all([
-      page.waitForEvent("filechooser"),
-      toolbarOf(page).getByRole("button", { name: "Insert image" }).click(),
-    ]);
+    const [chooser] = await Promise.all([page.waitForEvent("filechooser"), toolbarOf(page).getByRole("button", { name: "Insert image" }).click()]);
     expect(chooser.isMultiple()).toBe(false);
-    await chooser.setFiles({
-      name: "chosen.png",
-      mimeType: "image/png",
-      buffer: Buffer.from([137, 80, 78, 71]),
-    });
+    await chooser.setFiles({ name: "chosen.png", mimeType: "image/png", buffer: Buffer.from([137, 80, 78, 71]) });
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
     await page.keyboard.press("Escape");
     // A paste carrying an image file.
     await surface.click();
     await surface.evaluate((n) => {
       const dt = new DataTransfer();
-      dt.items.add(
-        new File([new Uint8Array([137, 80, 78, 71])], "pasted.png", { type: "image/png" }),
-      );
-      n.dispatchEvent(
-        new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true }),
-      );
+      dt.items.add(new File([new Uint8Array([137, 80, 78, 71])], "pasted.png", { type: "image/png" }));
+      n.dispatchEvent(new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true }));
     });
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
     await page.keyboard.press("Escape");
     // A drop carrying one.
     await surface.evaluate((n) => {
       const dt = new DataTransfer();
-      dt.items.add(
-        new File([new Uint8Array([137, 80, 78, 71])], "dropped.png", { type: "image/png" }),
-      );
+      dt.items.add(new File([new Uint8Array([137, 80, 78, 71])], "dropped.png", { type: "image/png" }));
       n.dispatchEvent(new DragEvent("drop", { dataTransfer: dt, bubbles: true, cancelable: true }));
     });
     await expect(page.getByRole("textbox", { name: /Alt text/ })).toBeFocused();
@@ -921,9 +700,7 @@ eachTheme((theme) => {
   });
 
   // ---- React -----------------------------------------------------------------------------
-  test("behavior: React: StrictMode leaves exactly one editor, and what is typed reaches React state", async ({
-    page,
-  }) => {
+  test("behavior: React: StrictMode leaves exactly one editor, and what is typed reaches React state", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const s = section(page, "sp-react");
     await expect(s.locator(".cm-content")).toHaveCount(1);
@@ -935,9 +712,7 @@ eachTheme((theme) => {
     await expect(s.locator(".cap-md-stats")).toContainText("14 of 400 characters");
   });
 
-  test("behavior: React: a controlled value set by the app replaces the text and does not echo back as a change", async ({
-    page,
-  }) => {
+  test("behavior: React: a controlled value set by the app replaces the text and does not echo back as a change", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const s = section(page, "sp-react");
     await expect(s.locator(".cm-content")).toHaveCount(1);
@@ -953,49 +728,32 @@ eachTheme((theme) => {
   });
 
   // ---- behavior -------------------------------------------------------------------------
-  test("behavior: the textarea the page loaded with holds the text, is labeled, and is hidden once upgraded", async ({
-    page,
-  }) => {
+  test("behavior: the textarea the page loaded with holds the text, is labeled, and is hidden once upgraded", async ({ page }) => {
     await visitStates(page, NAME, theme);
     await ready(page, "sp-default");
     const ta = section(page, "sp-default").locator("textarea");
     await expect(ta).toHaveValue(/^## Why the checks moved to the edge/);
     await expect(ta).toBeHidden();
-    await expect(surfaceOf(section(page, "sp-default"))).toContainText(
-      "The monitors now run from three regions",
-    );
+    await expect(surfaceOf(section(page, "sp-default"))).toContainText("The monitors now run from three regions");
     await section(page, "sp-default").getByText("Body", { exact: true }).click();
     await expect(surfaceOf(section(page, "sp-default"))).toBeFocused();
   });
 
-  test("behavior: what a person types is kept in the textarea, with an input event, so a form posts it", async ({
-    page,
-  }) => {
+  test("behavior: what a person types is kept in the textarea, with an input event, so a form posts it", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-form");
     await page.evaluate(() => {
       (window as unknown as { capInputs: number }).capInputs = 0;
-      document
-        .getElementById("md-form")
-        ?.addEventListener(
-          "input",
-          () => ((window as unknown as { capInputs: number }).capInputs += 1),
-        );
+      document.getElementById("md-form")?.addEventListener("input", () => ((window as unknown as { capInputs: number }).capInputs += 1));
     });
     await type(page, surface, "## Posted from the editor\n\nTwo lines.");
     await expect(page.locator("#md-form")).toHaveValue("## Posted from the editor\n\nTwo lines.");
-    expect(
-      await page.evaluate(() => (window as unknown as { capInputs: number }).capInputs),
-    ).toBeGreaterThan(0);
+    expect(await page.evaluate(() => (window as unknown as { capInputs: number }).capInputs)).toBeGreaterThan(0);
     await page.getByRole("button", { name: "Save draft" }).click();
-    await expect(page.locator("#posted")).toHaveText(
-      JSON.stringify("## Posted from the editor\n\nTwo lines."),
-    );
+    await expect(page.locator("#posted")).toHaveText(JSON.stringify("## Posted from the editor\n\nTwo lines."));
   });
 
-  test("behavior: saving an empty required editor names the problem, focuses the surface and clears when fixed", async ({
-    page,
-  }) => {
+  test("behavior: saving an empty required editor names the problem, focuses the surface and clears when fixed", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-form");
     await page.getByRole("button", { name: "Save draft" }).click();
@@ -1009,9 +767,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("alert")).toHaveCount(0);
   });
 
-  test("behavior: the word count and reading time follow the text, and the limit is said in words", async ({
-    page,
-  }) => {
+  test("behavior: the word count and reading time follow the text, and the limit is said in words", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-empty");
     const stats = section(page, "sp-empty").locator(".cap-md-stats");
@@ -1020,22 +776,13 @@ eachTheme((theme) => {
     await expect(stats).toHaveText("1 word · 1 min read");
     await type(page, surface, Array.from({ length: 450 }, () => "w").join(" "));
     await expect(stats).toHaveText("450 words · 2 min read");
-    await expect(section(page, "sp-limit").locator(".cap-md-stats")).toContainText(
-      "over the 60 character limit",
-    );
+    await expect(section(page, "sp-limit").locator(".cap-md-stats")).toContainText("over the 60 character limit");
     await type(page, await ready(page, "sp-limit"), "Short.");
-    await expect(section(page, "sp-limit").locator(".cap-md-stats")).toContainText(
-      "6 of 60 characters",
-    );
-    await expect(section(page, "sp-limit").locator(".cap-md-limit")).not.toHaveAttribute(
-      "data-over",
-      "",
-    );
+    await expect(section(page, "sp-limit").locator(".cap-md-stats")).toContainText("6 of 60 characters");
+    await expect(section(page, "sp-limit").locator(".cap-md-limit")).not.toHaveAttribute("data-over", "");
   });
 
-  test("behavior: the placeholder shows while the editor is empty and goes when there is text", async ({
-    page,
-  }) => {
+  test("behavior: the placeholder shows while the editor is empty and goes when there is text", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-empty");
     const ph = section(page, "sp-empty").locator(".cm-placeholder");
@@ -1049,9 +796,7 @@ eachTheme((theme) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-empty");
     await type(page, surface, Array.from({ length: 120 }, () => "wrapping").join(" "));
-    const { scrollW, clientW } = await section(page, "sp-empty")
-      .locator(".cm-scroller")
-      .evaluate((n) => ({ scrollW: n.scrollWidth, clientW: n.clientWidth }));
+    const { scrollW, clientW } = await section(page, "sp-empty").locator(".cm-scroller").evaluate((n) => ({ scrollW: n.scrollWidth, clientW: n.clientWidth }));
     expect(scrollW).toBeLessThanOrEqual(clientW + 1);
   });
 
@@ -1063,32 +808,24 @@ eachTheme((theme) => {
     await expect(section(page, "sp-default").locator(".cm-gutters")).toHaveCount(0);
   });
 
-  test("behavior: read-only keeps focus, selection and scrolling but takes no edits, and its toolbar is off", async ({
-    page,
-  }) => {
+  test("behavior: read-only keeps focus, selection and scrolling but takes no edits, and its toolbar is off", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-readonly");
     await surface.click();
     await expect(surface).toBeFocused();
     await page.keyboard.type("nope");
     await page.keyboard.press("Control+b");
-    await expect(page.locator("#md-readonly")).toHaveValue(
-      /^## Moving the monitors\n\nThree regions, one quiet hour\.$/,
-    );
-    for (const b of await toolbarOf(section(page, "sp-readonly")).getByRole("button").all())
-      await expect(b).toBeDisabled();
+    await expect(page.locator("#md-readonly")).toHaveValue(/^## Moving the monitors\n\nThree regions, one quiet hour\.$/);
+    for (const b of await toolbarOf(section(page, "sp-readonly")).getByRole("button").all()) await expect(b).toBeDisabled();
     await expect(surface).toHaveAttribute("aria-readonly", "true");
   });
 
-  test("behavior: disabled takes no focus, is not posted, and its toolbar is off", async ({
-    page,
-  }) => {
+  test("behavior: disabled takes no focus, is not posted, and its toolbar is off", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-disabled");
     await expect(surface).toHaveAttribute("contenteditable", "false");
     await expect(section(page, "sp-disabled").locator("textarea")).toBeDisabled();
-    for (const b of await toolbarOf(section(page, "sp-disabled")).getByRole("button").all())
-      await expect(b).toBeDisabled();
+    for (const b of await toolbarOf(section(page, "sp-disabled")).getByRole("button").all()) await expect(b).toBeDisabled();
   });
 
   test("behavior: a change to the textarea's attributes reaches the editor", async ({ page }) => {
@@ -1113,16 +850,9 @@ eachTheme((theme) => {
     await expect(section(page, "sp-form").locator(".cm-placeholder")).toBeVisible();
   });
 
-  test("behavior: the handle sets and reads the text without calling onChange, and destroying it gives the textarea back", async ({
-    page,
-  }) => {
+  test("behavior: the handle sets and reads the text without calling onChange, and destroying it gives the textarea back", async ({ page }) => {
     await page.addInitScript(() => {
-      const w = window as unknown as {
-        capHandles: Record<
-          string,
-          { getValue(): string; setValue(v: string): void; destroy(): void }
-        >;
-      };
+      const w = window as unknown as { capHandles: Record<string, { getValue(): string; setValue(v: string): void; destroy(): void }> };
       w.capHandles = {};
       document.addEventListener("cap-md-ready", (e) => {
         const detail = (e as CustomEvent).detail.handle;
@@ -1131,75 +861,40 @@ eachTheme((theme) => {
     });
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-form");
-    await page.evaluate(() =>
-      (
-        window as unknown as { capHandles: Record<string, { setValue(v: string): void }> }
-      ).capHandles["md-form"]?.setValue("Set by the app"),
-    );
+    await page.evaluate(() => (window as unknown as { capHandles: Record<string, { setValue(v: string): void }> }).capHandles["md-form"]?.setValue("Set by the app"));
     await expect(surface).toContainText("Set by the app");
     await expect(page.locator("#md-form")).toHaveValue("Set by the app");
-    expect(
-      await page.evaluate(() =>
-        (window as unknown as { capHandles: Record<string, { getValue(): string }> }).capHandles[
-          "md-form"
-        ]?.getValue(),
-      ),
-    ).toBe("Set by the app");
+    expect(await page.evaluate(() => (window as unknown as { capHandles: Record<string, { getValue(): string }> }).capHandles["md-form"]?.getValue())).toBe("Set by the app");
     // The marker an editor carries: ready, and not upgraded a second time.
     expect(await page.locator("#sp-form [data-cap]").getAttribute("data-cap-md")).toBe("ready");
-    await page.evaluate(() =>
-      (window as unknown as { capHandles: Record<string, { destroy(): void }> }).capHandles[
-        "md-form"
-      ]?.destroy(),
-    );
+    await page.evaluate(() => (window as unknown as { capHandles: Record<string, { destroy(): void }> }).capHandles["md-form"]?.destroy());
     await expect(page.locator("#sp-form .cm-content")).toHaveCount(0);
     await expect(page.locator("#md-form")).toBeVisible();
     await expect(page.locator("#md-form")).toHaveValue("Set by the app");
     await expect(page.locator("#sp-form [data-cap]")).not.toHaveAttribute("data-cap-md", "ready");
   });
 
-  test("behavior: the block menu is the app's data, and with none supplied a lone / is only text", async ({
-    page,
-  }) => {
+  test("behavior: the block menu is the app's data, and with none supplied a lone / is only text", async ({ page }) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-empty");
     await type(page, surface, "/");
     await expect(page.getByRole("list", { name: "Insert a block" })).toHaveCount(0);
-    await expect(
-      toolbarOf(section(page, "sp-empty")).getByRole("button", { name: "Chart" }),
-    ).toHaveCount(0);
+    await expect(toolbarOf(section(page, "sp-empty")).getByRole("button", { name: "Chart" })).toHaveCount(0);
   });
 
-  test("behavior: with a CSP that needs a nonce, the editor's styles carry it and nothing is blocked", async ({
-    page,
-  }) => {
+  test("behavior: with a CSP that needs a nonce, the editor's styles carry it and nothing is blocked", async ({ page }) => {
     const nonce = "n0nc3abc";
     await page.route("**/components/markdown-editor/states.html*", async (route) => {
       const res = await route.fetch();
       const body = (await res.text()).replace("<head>", `<head><script nonce="${nonce}"></script>`);
-      await route.fulfill({
-        response: res,
-        body,
-        headers: {
-          ...res.headers(),
-          "content-security-policy": `style-src 'self' 'nonce-${nonce}'`,
-        },
-      });
+      await route.fulfill({ response: res, body, headers: { ...res.headers(), "content-security-policy": `style-src 'self' 'nonce-${nonce}'` } });
     });
     const violations: string[] = [];
     await page.exposeFunction("capViolation", (v: string) => violations.push(v));
-    await page.addInitScript(() =>
-      document.addEventListener("securitypolicyviolation", (e) =>
-        (window as unknown as { capViolation: (v: string) => void }).capViolation(
-          `${e.violatedDirective} ${e.blockedURI}`,
-        ),
-      ),
-    );
+    await page.addInitScript(() => document.addEventListener("securitypolicyviolation", (e) => (window as unknown as { capViolation: (v: string) => void }).capViolation(`${e.violatedDirective} ${e.blockedURI}`)));
     await visitStates(page, NAME, theme);
     await ready(page, "sp-default");
-    const styled = await page
-      .locator("#sp-default .cm-scroller")
-      .evaluate((n) => getComputedStyle(n).fontFamily);
+    const styled = await page.locator("#sp-default .cm-scroller").evaluate((n) => getComputedStyle(n).fontFamily);
     expect(styled).toContain("Martian Mono");
     expect(await page.locator("style[nonce]").count()).toBeGreaterThan(0);
     expect(violations.filter((v) => v.startsWith("style-src-elem"))).toEqual([]);
@@ -1209,44 +904,30 @@ eachTheme((theme) => {
 // ---- no script: the page as delivered ------------------------------------------------------
 test.describe("without script", () => {
   test.use({ javaScriptEnabled: false });
-  test(
-    "accessibility: the page as delivered has a labeled textarea holding the markdown",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await page.goto(`components/${NAME}/states.html`);
-      const ta = page.getByRole("textbox", { name: "Body" }).first();
-      await expect(ta).toBeVisible();
-      await expect(ta).toHaveValue(/^## Why the checks moved to the edge/);
-      await expect(page.locator("#md-nojs")).toHaveValue(
-        /The monitors now run from three regions\./,
-      );
-      await expect(page.locator(".cm-content")).toHaveCount(0);
-    },
-  );
+  test("accessibility: the page as delivered has a labeled textarea holding the markdown", { tag: "@markup" }, async ({ page }) => {
+    await page.goto(`components/${NAME}/states.html`);
+    const ta = page.getByRole("textbox", { name: "Body" }).first();
+    await expect(ta).toBeVisible();
+    await expect(ta).toHaveValue(/^## Why the checks moved to the edge/);
+    await expect(page.locator("#md-nojs")).toHaveValue(/The monitors now run from three regions\./);
+    await expect(page.locator(".cm-content")).toHaveCount(0);
+  });
 });
 
-test("behavior: the HTML the server sends already contains the text, label and textarea", async ({
-  request,
-}) => {
+test("behavior: the HTML the server sends already contains the text, label and textarea", async ({ request }) => {
   const res = await request.get(`components/${NAME}/states.html`);
   const html = await res.text();
   expect(html).toMatch(/<label[^>]*for="md-default"[^>]*>Body<\/label>/);
-  expect(html).toMatch(
-    /<textarea[^>]*id="md-default"[^>]*>[\s\S]*## Why the checks moved to the edge[\s\S]*<\/textarea>/,
-  );
+  expect(html).toMatch(/<textarea[^>]*id="md-default"[^>]*>[\s\S]*## Why the checks moved to the edge[\s\S]*<\/textarea>/);
   expect(html).toContain("The monitors now run from three regions");
   // The toolbar is made by script: it is not in the HTML.
   expect(html).not.toContain('role="toolbar"');
 });
 
-test("accessibility: React: a server render is the labeled textarea holding the text, with no style attribute", async ({
-  page,
-}) => {
+test("accessibility: React: a server render is the labeled textarea holding the text, with no style attribute", async ({ page }) => {
   await visitStates(page, NAME, "light");
   // states.tsx renders the wrapper with react-dom/server and keeps the HTML it produced.
-  const html = await page.evaluate(
-    () => (window as unknown as { capReactSsr: string }).capReactSsr,
-  );
+  const html = await page.evaluate(() => (window as unknown as { capReactSsr: string }).capReactSsr);
   expect(html).toMatch(/<label[^>]*for="[^"]+"[^>]*>Body/);
   expect(html).toMatch(/<textarea[^>]*name="body"[^>]*>## Server text<\/textarea>/);
   expect(html).toContain('aria-invalid="true"');
@@ -1256,9 +937,7 @@ test("accessibility: React: a server render is the labeled textarea holding the 
   expect(html).not.toContain('role="toolbar"');
 });
 
-test("behavior: CodeMirror is its own chunk: no script the page loads first holds it, and it loads only when an editor mounts", async ({
-  page,
-}) => {
+test("behavior: CodeMirror is its own chunk: no script the page loads first holds it, and it loads only when an editor mounts", async ({ page }) => {
   const loaded: string[] = [];
   page.on("response", (r) => {
     if (r.url().endsWith(".js")) loaded.push(r.url());

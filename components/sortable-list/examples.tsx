@@ -12,30 +12,10 @@ interface Card {
 }
 
 const CARDS: Card[] = [
-  {
-    id: "rain",
-    title: "Rain at Glen Rose",
-    summary: "The forecast turns, and Ines moves the casts above the flood line.",
-    pov: "Ines",
-  },
-  {
-    id: "second",
-    title: "The second set",
-    summary: "Wade finds a trackway nobody has mapped, crossing the first.",
-    pov: "Wade",
-  },
-  {
-    id: "line",
-    title: "The flood line",
-    summary: "The river takes the lower ledge; the notebook goes with it.",
-    pov: "Ines",
-  },
-  {
-    id: "after",
-    title: "After the water",
-    summary: "Mud, a missing cast, and a phone call from the museum.",
-    pov: "Wade",
-  },
+  { id: "rain", title: "Rain at Glen Rose", summary: "The forecast turns, and Ines moves the casts above the flood line.", pov: "Ines" },
+  { id: "second", title: "The second set", summary: "Wade finds a trackway nobody has mapped, crossing the first.", pov: "Wade" },
+  { id: "line", title: "The flood line", summary: "The river takes the lower ledge; the notebook goes with it.", pov: "Ines" },
+  { id: "after", title: "After the water", summary: "Mud, a missing cast, and a phone call from the museum.", pov: "Wade" },
 ];
 
 function Corkboard() {

@@ -1,11 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { FAMILIES, themes } from "../../tokens/palette-core.mjs";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const html = (page: Page) => page.locator("html");
 const radio = (page: Page, name: string) => page.getByRole("radio", { name });
@@ -23,23 +18,17 @@ eachTheme((theme) => {
     });
   }
 
-  test(
-    "accessibility: the switch's roles and names, two choices and no System",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "theme-switch", theme, "light");
-      await expect(page.locator(".cap-theme")).toMatchAriaSnapshot(`
+  test("accessibility: the switch's roles and names, two choices and no System", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "theme-switch", theme, "light");
+    await expect(page.locator(".cap-theme")).toMatchAriaSnapshot(`
       - group "Theme":
         - radio "Light" [checked]
         - radio "Dark"
     `);
-      await expect(radio(page, "System")).toHaveCount(0);
-    },
-  );
+    await expect(radio(page, "System")).toHaveCount(0);
+  });
 
-  test("accessibility: the choices are drawn as one control with an icon each, and reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the choices are drawn as one control with an icon each, and reach their contrast", async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "light");
     await expect(page.locator(".cap-theme-options")).toBeVisible();
     await expect(page.locator(".cap-theme-options svg[aria-hidden='true']")).toHaveCount(2);
@@ -50,31 +39,17 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the states page's hover, disabled and comfortable rows have no violations", async ({
-    page,
-  }) => {
+  test("accessibility: the states page's hover, disabled and comfortable rows have no violations", async ({ page }) => {
     await visitStates(page, "theme-switch", theme);
     await expectNoAxeViolations(page, "section[aria-labelledby='s-states']");
-    await expect(
-      page.locator(
-        "section[aria-labelledby='s-states'] [data-density='comfortable'] .cap-theme-options",
-      ),
-    ).toBeVisible();
+    await expect(page.locator("section[aria-labelledby='s-states'] [data-density='comfortable'] .cap-theme-options")).toBeVisible();
   });
 
-  test("behavior: the chosen choice has one marker, a fill at 3:1 against the page, and no underline", async ({
-    page,
-  }) => {
+  test("behavior: the chosen choice has one marker, a fill at 3:1 against the page, and no underline", async ({ page }) => {
     await visitStates(page, "theme-switch", theme);
     const chosen = page.locator(".cap-theme-options > label:has(input:checked)").first();
     const r = await chosen.evaluate((el) => {
-      return {
-        shadow: getComputedStyle(el).boxShadow,
-        ratio: window.capRatio(
-          getComputedStyle(el).backgroundColor,
-          getComputedStyle(document.body).backgroundColor,
-        ),
-      };
+      return { shadow: getComputedStyle(el).boxShadow, ratio: window.capRatio(getComputedStyle(el).backgroundColor, getComputedStyle(document.body).backgroundColor) };
     });
     expect(r.shadow, "no second marker (an underline)").toBe("none");
     expect(r.ratio).toBeGreaterThanOrEqual(3);
@@ -96,18 +71,14 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => localStorage.getItem("cap-theme-specimen-first"))).toBeNull();
   });
 
-  test("behavior: the light and dark specimens apply their choice to the page", async ({
-    page,
-  }) => {
+  test("behavior: the light and dark specimens apply their choice to the page", async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "light");
     await expect(html(page)).toHaveAttribute("data-theme", "light");
     await visitStates(page, "theme-switch", theme, "dark");
     await expect(html(page)).toHaveAttribute("data-theme", "dark");
   });
 
-  test("keyboard: an arrow key chooses the other theme, and the choice persists across a reload", async ({
-    page,
-  }) => {
+  test("keyboard: an arrow key chooses the other theme, and the choice persists across a reload", async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "first");
     const start = theme === "dark" ? "Dark" : "Light";
     const other = theme === "dark" ? "Light" : "Dark";
@@ -130,9 +101,7 @@ eachTheme((theme) => {
     await expect(radio(page, "Light")).toBeChecked();
   });
 
-  test("accessibility: the button form names what it does, switches, remembers, and shows its name and key on focus", async ({
-    page,
-  }) => {
+  test("accessibility: the button form names what it does, switches, remembers, and shows its name and key on focus", async ({ page }) => {
     await visitStates(page, "theme-switch", theme, "button");
     await expectNoAxeViolations(page);
     const button = page.locator(".cap-theme-button");
@@ -151,43 +120,29 @@ eachTheme((theme) => {
     await expect(button).toHaveAccessibleName(`Switch to ${theme} theme`);
     await page.reload();
     await expect(html(page)).toHaveAttribute("data-theme", other);
-    await expect(page.locator(".cap-theme-button")).toHaveAccessibleName(
-      `Switch to ${theme} theme`,
-    );
+    await expect(page.locator(".cap-theme-button")).toHaveAccessibleName(`Switch to ${theme} theme`);
     // The T key and the button agree.
     await page.keyboard.press("t");
     await expect(html(page)).toHaveAttribute("data-theme", theme);
-    await expect(page.locator(".cap-theme-button")).toHaveAccessibleName(
-      `Switch to ${other} theme`,
-    );
+    await expect(page.locator(".cap-theme-button")).toHaveAccessibleName(`Switch to ${other} theme`);
   });
 });
 
 // The device's "increase contrast" setting turns on the generated stronger set, in the theme the
 // person chose with the switch as well as in the system's (the dark mode plan, 2026-10-29).
 for (const theme of ["light", "dark"] as const) {
-  test(`behavior: prefers-contrast: more applies the stronger ${theme} set, with ${theme} chosen in the switch`, async ({
-    page,
-  }) => {
+  test(`behavior: prefers-contrast: more applies the stronger ${theme} set, with ${theme} chosen in the switch`, async ({ page }) => {
     const other = theme === "dark" ? "light" : "dark";
     await page.emulateMedia({ colorScheme: other, contrast: "more" });
     await visitStates(page, "theme-switch", theme);
-    await page.evaluate(
-      (choice) => document.documentElement.setAttribute("data-theme", choice),
-      theme,
-    );
+    await page.evaluate((choice) => document.documentElement.setAttribute("data-theme", choice), theme);
     const t = themes(FAMILIES.purple);
     const base = t[theme].tokens;
     const more = t[`${theme}More`].tokens;
-    const changed = ["muted", "line-strong", "ring", "accent-text", "line"].filter(
-      (k) => more[k] !== base[k],
-    );
+    const changed = ["muted", "line-strong", "ring", "accent-text", "line"].filter((k) => more[k] !== base[k]);
     expect(changed.length).toBeGreaterThan(0);
     for (const k of changed) {
-      const painted = await page.evaluate(
-        (name) => getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim(),
-        k,
-      );
+      const painted = await page.evaluate((name) => getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim(), k);
       expect(painted, `--${k}`).toBe(more[k]);
     }
   });

@@ -4,14 +4,7 @@
 // the form works with no script, posting `intent=focus` with `x` and `y` in percent (the content kit
 // reads them) or `clear=yes`; the picture and the previews follow them. The point is placed through
 // custom properties set from a ref, never a style attribute in the markup.
-import {
-  type ComponentType,
-  type FormHTMLAttributes,
-  type ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ComponentType, type FormHTMLAttributes, type ReactNode, useEffect, useRef, useState } from "react";
 import { focusPercents } from "./media-crop.ts";
 
 // The crops shown beside the picture, as a site's pages commonly ask for them.
@@ -21,8 +14,7 @@ const PREVIEWS = [
   { label: "Tall", ratio: "4:5" },
 ];
 
-const clamp = (n: number) =>
-  Number.isFinite(n) ? Math.min(100, Math.max(0, Math.round(n * 10) / 10)) : 50;
+const clamp = (n: number) => (Number.isFinite(n) ? Math.min(100, Math.max(0, Math.round(n * 10) / 10)) : 50);
 
 export function focusWords(focus: string | null | undefined): string {
   if (!focus) return "None: the site guesses";
@@ -59,10 +51,7 @@ export function MediaFocus({
   return (
     <Form method="post" action={action} className="cap-media-field-form" aria-label="Focal point">
       {ident}
-      <p className="cap-field-help">
-        The part of the picture the site keeps when it crops it to fit. Click the picture to move
-        it. {focus ? "" : "None yet: the site guesses."}
-      </p>
+      <p className="cap-field-help">The part of the picture the site keeps when it crops it to fit. Click the picture to move it. {focus ? "" : "None yet: the site guesses."}</p>
       <div className="cap-media-focus" ref={frame}>
         <button
           type="button"
@@ -70,19 +59,11 @@ export function MediaFocus({
           aria-label={`Focal point of ${name}: ${point.x}% across, ${point.y}% down. Click the picture, or use the arrow keys, to move it.`}
           onClick={(event) => {
             const box = event.currentTarget.getBoundingClientRect();
-            set(
-              ((event.clientX - box.left) / box.width) * 100,
-              ((event.clientY - box.top) / box.height) * 100,
-            );
+            set(((event.clientX - box.left) / box.width) * 100, ((event.clientY - box.top) / box.height) * 100);
           }}
           onKeyDown={(event) => {
             const step = event.shiftKey ? 10 : 2;
-            const moves: Record<string, [number, number]> = {
-              ArrowLeft: [-step, 0],
-              ArrowRight: [step, 0],
-              ArrowUp: [0, -step],
-              ArrowDown: [0, step],
-            };
+            const moves: Record<string, [number, number]> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
             const move = moves[event.key];
             if (!move) return;
             event.preventDefault();
@@ -108,33 +89,13 @@ export function MediaFocus({
           <label className="cap-field-label" htmlFor={`${base}-fx`}>
             From the left (%)
           </label>
-          <input
-            className="cap-input"
-            id={`${base}-fx`}
-            type="number"
-            name="x"
-            min={0}
-            max={100}
-            step={0.1}
-            value={point.x}
-            onChange={(e) => set(Number(e.target.value), point.y)}
-          />
+          <input className="cap-input" id={`${base}-fx`} type="number" name="x" min={0} max={100} step={0.1} value={point.x} onChange={(e) => set(Number(e.target.value), point.y)} />
         </div>
         <div className="cap-field">
           <label className="cap-field-label" htmlFor={`${base}-fy`}>
             From the top (%)
           </label>
-          <input
-            className="cap-input"
-            id={`${base}-fy`}
-            type="number"
-            name="y"
-            min={0}
-            max={100}
-            step={0.1}
-            value={point.y}
-            onChange={(e) => set(point.x, Number(e.target.value))}
-          />
+          <input className="cap-input" id={`${base}-fy`} type="number" name="y" min={0} max={100} step={0.1} value={point.y} onChange={(e) => set(point.x, Number(e.target.value))} />
         </div>
       </div>
       <div className="cap-media-tool-actions">
@@ -142,14 +103,7 @@ export function MediaFocus({
           Save focal point
         </button>
         {focus ? (
-          <button
-            type="submit"
-            className="cap-btn"
-            data-size="sm"
-            data-variant="quiet"
-            name="clear"
-            value="yes"
-          >
+          <button type="submit" className="cap-btn" data-size="sm" data-variant="quiet" name="clear" value="yes">
             Clear it<span className="cap-sr-only"> and let the site guess</span>
           </button>
         ) : null}

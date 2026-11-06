@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  goToSection,
-  markSections,
-  measureBar,
-  meetsRule,
-  scrollParent,
-  watchSections,
-} from "./anchor-bar.ts";
+import { goToSection, markSections, measureBar, meetsRule, scrollParent, watchSections } from "./anchor-bar.ts";
 
 export interface AnchorBarProps {
   // The view's sections, in order; each id is the id of the block or h2 it links to.
@@ -28,10 +21,7 @@ export function AnchorBar({ sections, always = false, label = "On this page" }: 
     const el = nav.current;
     if (!el) return;
     const scroller = scrollParent(el);
-    const headings = () =>
-      sections
-        .map((s) => document.getElementById(s.id))
-        .filter((h): h is HTMLElement => h !== null);
+    const headings = () => sections.map((s) => document.getElementById(s.id)).filter((h): h is HTMLElement => h !== null);
     // The bar's own height does not count, or showing it could tip the rule.
     const apply = () => setShown(always || meetsRule(headings(), scroller, el.offsetHeight));
     apply();
@@ -40,12 +30,7 @@ export function AnchorBar({ sections, always = false, label = "On this page" }: 
     ro.observe(el);
     const scope = el.closest("main") ?? document.body;
     const mo = new MutationObserver(apply);
-    mo.observe(scope, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["data-section", "id", "hidden"],
-    });
+    mo.observe(scope, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-section", "id", "hidden"] });
     return () => {
       ro.disconnect();
       mo.disconnect();
@@ -59,9 +44,7 @@ export function AnchorBar({ sections, always = false, label = "On this page" }: 
     const el = nav.current;
     if (!el || !shown) return;
     const scroller = scrollParent(el);
-    const headings = sections
-      .map((s) => document.getElementById(s.id))
-      .filter((h): h is HTMLElement => h !== null);
+    const headings = sections.map((s) => document.getElementById(s.id)).filter((h): h is HTMLElement => h !== null);
     markSections(headings);
     // After the next frame, once the bar is shown and has a height.
     const frame = requestAnimationFrame(() => measureBar(el, scroller));

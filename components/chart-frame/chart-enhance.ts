@@ -19,19 +19,10 @@ const PLAIN = `${SELECTOR}:not([${REDRAW_ATTRIBUTE}])`;
 
 // Enhances every frame under root (the document by default), drawing again those that carry a
 // spec (each a RedrawnChart, with the host and destroy()), and returns the charts.
-export function enhanceCharts(
-  root: ParentNode = document,
-  options?: EnhanceOptions,
-): Array<EnhancedChart | RedrawnChart> {
-  const frames = [
-    ...(root instanceof Element && root.matches(PLAIN) ? [root] : []),
-    ...root.querySelectorAll(PLAIN),
-  ];
+export function enhanceCharts(root: ParentNode = document, options?: EnhanceOptions): Array<EnhancedChart | RedrawnChart> {
+  const frames = [...(root instanceof Element && root.matches(PLAIN) ? [root] : []), ...root.querySelectorAll(PLAIN)];
   const spec = `${SELECTOR}[${REDRAW_ATTRIBUTE}]`;
-  const hosts = [
-    ...(root instanceof Element && root.matches(spec) ? [root] : []),
-    ...root.querySelectorAll(spec),
-  ];
+  const hosts = [...(root instanceof Element && root.matches(spec) ? [root] : []), ...root.querySelectorAll(spec)];
   const redrawn = hosts.flatMap((host) => redrawCharts(host, options));
   return [...frames.flatMap((el) => enhance(el, options)), ...redrawn];
 }
@@ -42,8 +33,7 @@ export function watchCharts(options?: EnhanceOptions): () => void {
   const observer = new MutationObserver((records) => {
     for (const r of records) {
       for (const node of r.addedNodes) {
-        if (node instanceof Element && (node.matches(SELECTOR) || node.querySelector(SELECTOR)))
-          enhanceCharts(node, options);
+        if (node instanceof Element && (node.matches(SELECTOR) || node.querySelector(SELECTOR))) enhanceCharts(node, options);
       }
     }
   });
@@ -52,7 +42,6 @@ export function watchCharts(options?: EnhanceOptions): () => void {
 }
 
 if (typeof document !== "undefined" && typeof MutationObserver !== "undefined") {
-  if (document.readyState === "loading")
-    document.addEventListener("DOMContentLoaded", () => watchCharts(), { once: true });
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => watchCharts(), { once: true });
   else watchCharts();
 }

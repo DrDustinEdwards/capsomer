@@ -37,11 +37,7 @@ const ARROW = 4;
 const ARROW_INSET = 12;
 
 export function supportsAnchor(): boolean {
-  return (
-    typeof CSS !== "undefined" &&
-    CSS.supports("position-area: bottom") &&
-    CSS.supports("anchor-name: --x")
-  );
+  return typeof CSS !== "undefined" && CSS.supports("position-area: bottom") && CSS.supports("anchor-name: --x");
 }
 
 const OPPOSITE = { top: "bottom", bottom: "top", left: "right", right: "left" } as const;
@@ -93,12 +89,7 @@ export function place(anchor: Element, popup: HTMLElement, options: PlaceOptions
   const w = popup.offsetWidth;
   const h = popup.offsetHeight;
 
-  const room = {
-    top: r.top - EDGE,
-    bottom: vh - r.bottom - EDGE,
-    left: r.left - EDGE,
-    right: vw - r.right - EDGE,
-  };
+  const room = { top: r.top - EDGE, bottom: vh - r.bottom - EDGE, left: r.left - EDGE, right: vw - r.right - EDGE };
   const need = want === "top" || want === "bottom" ? h + gap : w + gap;
   const opp = OPPOSITE[want];
   const side = room[want] < need && room[opp] > room[want] ? opp : want;
@@ -200,11 +191,8 @@ function bindKey(): void {
 }
 
 function focusables(root: HTMLElement): HTMLElement[] {
-  const sel =
-    'a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"]), [contenteditable=""], [contenteditable="true"]';
-  return [...root.querySelectorAll<HTMLElement>(sel)].filter(
-    (el) => !el.matches(":disabled, [inert] *, [hidden]") && el.getClientRects().length > 0,
-  );
+  const sel = 'a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"]), [contenteditable=""], [contenteditable="true"]';
+  return [...root.querySelectorAll<HTMLElement>(sel)].filter((el) => !el.matches(":disabled, [inert] *, [hidden]") && el.getClientRects().length > 0);
 }
 
 // Moves focus into a click popover: [autofocus], else the first focusable, else the popup.
@@ -221,18 +209,11 @@ function focusInto(popup: HTMLElement): void {
 // unwires it.
 export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
   if (instances.has(popup)) return () => undefined;
-  const tooltip =
-    popup.getAttribute("role") === "tooltip" ||
-    (popup.dataset.variant === "tooltip" && !trigger.hasAttribute("popovertarget"));
+  const tooltip = popup.getAttribute("role") === "tooltip" || (popup.dataset.variant === "tooltip" && !trigger.hasAttribute("popovertarget"));
   if (!popup.hasAttribute("popover")) popup.setAttribute("popover", tooltip ? "manual" : "auto");
   if (!popup.id) popup.id = `cap-popover-${++anchors}`;
   const undo: Array<() => void> = [];
-  const on = <E extends Event>(
-    target: EventTarget,
-    type: string,
-    fn: (e: E) => void,
-    opts?: boolean | AddEventListenerOptions,
-  ) => {
+  const on = <E extends Event>(target: EventTarget, type: string, fn: (e: E) => void, opts?: boolean | AddEventListenerOptions) => {
     target.addEventListener(type, fn as EventListener, opts);
     undo.push(() => target.removeEventListener(type, fn as EventListener, opts));
   };
@@ -280,8 +261,7 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
   if (tooltip) {
     if (!popup.getAttribute("role")) popup.setAttribute("role", "tooltip");
     const described = (trigger.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean);
-    if (!described.includes(popup.id))
-      trigger.setAttribute("aria-describedby", [...described, popup.id].join(" "));
+    if (!described.includes(popup.id)) trigger.setAttribute("aria-describedby", [...described, popup.id].join(" "));
     popup.dataset.variant ??= "tooltip";
     const delay = Number(popup.dataset.delay ?? trigger.dataset.delay ?? SHOW_DELAY_MS);
 
@@ -367,22 +347,14 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
     });
   } else {
     popup.setAttribute("role", popup.getAttribute("role") ?? "dialog");
-    if (
-      popup.getAttribute("role") === "dialog" &&
-      !popup.hasAttribute("aria-label") &&
-      !popup.hasAttribute("aria-labelledby")
-    ) {
+    if (popup.getAttribute("role") === "dialog" && !popup.hasAttribute("aria-label") && !popup.hasAttribute("aria-labelledby")) {
       const title = popup.querySelector<HTMLElement>(".cap-popover-title");
       if (title) {
         if (!title.id) title.id = `${popup.id}-title`;
         popup.setAttribute("aria-labelledby", title.id);
-      } else if (trigger.textContent?.trim())
-        popup.setAttribute("aria-label", trigger.textContent.trim());
+      } else if (trigger.textContent?.trim()) popup.setAttribute("aria-label", trigger.textContent.trim());
     }
-    trigger.setAttribute(
-      "aria-haspopup",
-      popup.getAttribute("role") === "dialog" ? "dialog" : "true",
-    );
+    trigger.setAttribute("aria-haspopup", popup.getAttribute("role") === "dialog" ? "dialog" : "true");
     trigger.setAttribute("aria-expanded", String(isOpen(popup)));
     const native = trigger instanceof HTMLButtonElement || trigger instanceof HTMLInputElement;
     if (native) {
@@ -400,8 +372,7 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
     me = { trigger, popup, show, hide, dismiss: hide };
 
     on(popup, "beforetoggle", (e: Event) => {
-      if ((e as ToggleEvent).newState === "open" && css === false)
-        popup.dataset.placedBy = "pending";
+      if ((e as ToggleEvent).newState === "open" && css === false) popup.dataset.placedBy = "pending";
     });
     on(popup, "toggle", (e: Event) => {
       const opened = (e as ToggleEvent).newState === "open";
@@ -417,20 +388,13 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
         // Focus goes back to the trigger when it was inside the popup (or lost to the page),
         // never taken from a control the person moved on to.
         const active = document.activeElement;
-        if (!active || active === document.body || popup.contains(active))
-          trigger.focus({ preventScroll: true });
+        if (!active || active === document.body || popup.contains(active)) trigger.focus({ preventScroll: true });
       }
     });
     // Moving focus out of the popup (Tab past its last control) closes it, without stealing focus.
     on(popup, "focusout", (e: FocusEvent) => {
       const to = e.relatedTarget as Node | null;
-      if (
-        to &&
-        !popup.contains(to) &&
-        to !== trigger &&
-        !(to as Element).closest?.("[popover]:popover-open")
-      )
-        hide();
+      if (to && !popup.contains(to) && to !== trigger && !(to as Element).closest?.("[popover]:popover-open")) hide();
     });
     on(popup, "click", (e: MouseEvent) => {
       if ((e.target as Element).closest("[data-popover-close]")) hide();
@@ -472,20 +436,14 @@ export function toggle(popup: HTMLElement): void {
 // The trigger of a [data-cap="popover"] root: [data-popover-trigger], else the first
 // child that is not the popup.
 function triggerOf(root: HTMLElement, popup: HTMLElement): HTMLElement | null {
-  return (
-    root.querySelector<HTMLElement>("[data-popover-trigger]") ??
-    [...root.children].find((c): c is HTMLElement => c instanceof HTMLElement && c !== popup) ??
-    null
-  );
+  return root.querySelector<HTMLElement>("[data-popover-trigger]") ?? [...root.children].find((c): c is HTMLElement => c instanceof HTMLElement && c !== popup) ?? null;
 }
 
 // Attaches every [data-cap="popover"] under root not yet attached. Returns a function that
 // detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const el of root.querySelectorAll<HTMLElement>(
-    "[data-cap='popover']:not([data-cap-ready])",
-  )) {
+  for (const el of root.querySelectorAll<HTMLElement>("[data-cap='popover']:not([data-cap-ready])")) {
     const popup = el.querySelector<HTMLElement>(":scope > .cap-popover");
     const trigger = popup && triggerOf(el, popup);
     if (!popup || !trigger) continue;

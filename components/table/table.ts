@@ -36,8 +36,7 @@ export function sortRows(table: HTMLTableElement, index: number, direction: Sort
 // The column a header cell heads, counting the colspans before it.
 export function columnIndex(th: HTMLTableCellElement): number {
   let i = 0;
-  for (let c = th.previousElementSibling; c; c = c.previousElementSibling)
-    i += (c as HTMLTableCellElement).colSpan || 1;
+  for (let c = th.previousElementSibling; c; c = c.previousElementSibling) i += (c as HTMLTableCellElement).colSpan || 1;
   return i;
 }
 
@@ -45,11 +44,9 @@ export function columnIndex(th: HTMLTableCellElement): number {
 // aria-sort at a time (APG sortable table). Returns the new direction.
 export function sortByHeader(th: HTMLTableCellElement, direction?: SortDirection): SortDirection {
   const table = th.closest("table");
-  const next: SortDirection =
-    direction ?? (th.getAttribute("aria-sort") === "ascending" ? "descending" : "ascending");
+  const next: SortDirection = direction ?? (th.getAttribute("aria-sort") === "ascending" ? "descending" : "ascending");
   if (!table) return next;
-  for (const other of Array.from(table.querySelectorAll("thead th[aria-sort]")))
-    if (other !== th) other.removeAttribute("aria-sort");
+  for (const other of Array.from(table.querySelectorAll("thead th[aria-sort]"))) if (other !== th) other.removeAttribute("aria-sort");
   th.setAttribute("aria-sort", next);
   sortRows(table, columnIndex(th), next);
   return next;
@@ -60,9 +57,7 @@ export function sortByHeader(th: HTMLTableCellElement, direction?: SortDirection
 // markup) is expected to arrive in that order; it is not re-sorted on attach.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const wrap of Array.from(
-    root.querySelectorAll<HTMLElement>("[data-cap='table']:not([data-cap-ready])"),
-  )) {
+  for (const wrap of Array.from(root.querySelectorAll<HTMLElement>("[data-cap='table']:not([data-cap-ready])"))) {
     wrap.dataset.capReady = "";
     const onClick = (e: MouseEvent) => {
       const button = (e.target as Element).closest<HTMLButtonElement>(".cap-table-sort");

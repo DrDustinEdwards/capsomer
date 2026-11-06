@@ -32,11 +32,7 @@ export interface Holders {
 export function holdings(m: PermMatrix): Holding[] {
   return m.agents.map((a) => {
     const held = m.permissions.filter((p) => a.holds.includes(p));
-    return {
-      agent: a.name,
-      held,
-      text: held.length ? `Holds: ${held.join(", ")}` : "Holds no permissions",
-    };
+    return { agent: a.name, held, text: held.length ? `Holds: ${held.join(", ")}` : "Holds no permissions" };
   });
 }
 
@@ -44,11 +40,7 @@ export function holdings(m: PermMatrix): Holding[] {
 export function holders(m: PermMatrix): Holders[] {
   return m.permissions.map((p) => {
     const agents = m.agents.filter((a) => a.holds.includes(p)).map((a) => a.name);
-    return {
-      permission: p,
-      agents,
-      text: agents.length ? `Held by: ${agents.join(", ")}` : "Nobody holds this",
-    };
+    return { permission: p, agents, text: agents.length ? `Held by: ${agents.join(", ")}` : "Nobody holds this" };
   });
 }
 
@@ -70,19 +62,14 @@ function isView(v: string): v is PermView {
 // Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const matrix of root.querySelectorAll<HTMLElement>(
-    "[data-cap='permission-matrix']:not([data-cap-ready])",
-  )) {
+  for (const matrix of root.querySelectorAll<HTMLElement>("[data-cap='permission-matrix']:not([data-cap-ready])")) {
     matrix.dataset.capReady = "";
-    const checked = matrix.querySelector<HTMLInputElement>(
-      ".cap-perms-bar input[type='radio']:checked",
-    );
+    const checked = matrix.querySelector<HTMLInputElement>(".cap-perms-bar input[type='radio']:checked");
     if (checked && isView(checked.value)) showView(matrix, checked.value);
 
     const onChange = (e: Event) => {
       const input = e.target as HTMLInputElement;
-      if (input.type !== "radio" || !input.closest(".cap-perms-bar") || !isView(input.value))
-        return;
+      if (input.type !== "radio" || !input.closest(".cap-perms-bar") || !isView(input.value)) return;
       showView(matrix, input.value);
     };
     matrix.addEventListener("change", onChange);

@@ -1,10 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 // Serves the states page with style-src 'self' (no inline styles), as the apps do, and
 // records every violation. Base UI writes positions and visually-hidden styles as React
@@ -13,17 +8,12 @@ import {
 async function strictStyles(page: Page): Promise<void> {
   await page.route(/states\.html/, async (route) => {
     const response = await route.fetch();
-    await route.fulfill({
-      response,
-      headers: { ...response.headers(), "content-security-policy": "style-src 'self'" },
-    });
+    await route.fulfill({ response, headers: { ...response.headers(), "content-security-policy": "style-src 'self'" } });
   });
   await page.addInitScript(() => {
     const w = window as unknown as { __csp: string[] };
     w.__csp = [];
-    document.addEventListener("securitypolicyviolation", (e) =>
-      w.__csp.push(`${e.violatedDirective}: ${e.sample || e.blockedURI}`),
-    );
+    document.addEventListener("securitypolicyviolation", (e) => w.__csp.push(`${e.violatedDirective}: ${e.sample || e.blockedURI}`));
   });
 }
 
@@ -44,9 +34,7 @@ eachTheme((theme) => {
     });
   }
 
-  test("accessibility: label, help, error, value and boundaries reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: label, help, error, value and boundaries reach their contrast", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     await expect(site(page)).toBeVisible();
     await expectContrast(page, [
@@ -55,41 +43,20 @@ eachTheme((theme) => {
       { sel: "[data-mount='chosen'] .cap-combobox-input", what: "the chosen value in the box" },
       { sel: "[data-mount='invalid'] .cap-combobox-error", what: "the error message" },
       { sel: "[data-mount='disabled'] .cap-combobox-help", what: "the disabled box's reason" },
-      {
-        sel: "[data-mount='closed'] .cap-combobox-group",
-        what: "the box's border",
-        part: "border",
-      },
-      {
-        sel: "[data-mount='invalid'] .cap-combobox-group",
-        what: "the invalid box's border",
-        part: "border",
-      },
-      {
-        sel: "[data-mount='closed'] .cap-combobox-trigger",
-        what: "the open button's glyph",
-        min: 3,
-      },
+      { sel: "[data-mount='closed'] .cap-combobox-group", what: "the box's border", part: "border" },
+      { sel: "[data-mount='invalid'] .cap-combobox-group", what: "the invalid box's border", part: "border" },
+      { sel: "[data-mount='closed'] .cap-combobox-trigger", what: "the open button's glyph", min: 3 },
     ]);
   });
 
-  test("accessibility: options, the highlighted option, empty and loading text reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: options, the highlighted option, empty and loading text reach their contrast", async ({ page }) => {
     await visitStates(page, "combobox", theme, "open");
     await expect(page.getByRole("listbox")).toBeVisible();
-    await expectContrast(page, [
-      { sel: ".cap-option:not([data-highlighted]) .cap-option-label", what: "an option" },
-    ]);
+    await expectContrast(page, [{ sel: ".cap-option:not([data-highlighted]) .cap-option-label", what: "an option" }]);
     await page.locator(".cap-combobox-input").focus();
     await page.keyboard.press("ArrowDown");
     await expect(page.locator(".cap-option[data-highlighted]")).toHaveCount(1);
-    await expectContrast(page, [
-      {
-        sel: ".cap-option[data-highlighted] .cap-option-label",
-        what: "the highlighted option on --accent-soft",
-      },
-    ]);
+    await expectContrast(page, [{ sel: ".cap-option[data-highlighted] .cap-option-label", what: "the highlighted option on --accent-soft" }]);
 
     await visitStates(page, "combobox", theme, "no-match");
     await expectContrast(page, [{ sel: ".cap-combobox-empty", what: "the no-match message" }]);
@@ -106,9 +73,7 @@ eachTheme((theme) => {
         - button "Show Site options"
     `);
     await expect(site(page)).toHaveAttribute("aria-expanded", "false");
-    await expect(site(page)).toHaveAccessibleDescription(
-      "Type to filter. Only a listed site can be chosen.",
-    );
+    await expect(site(page)).toHaveAccessibleDescription("Type to filter. Only a listed site can be chosen.");
   });
 
   test("accessibility: the open list's roles and names", { tag: "@markup" }, async ({ page }) => {
@@ -132,10 +97,7 @@ eachTheme((theme) => {
     const highlighted = page.locator(".cap-option[data-highlighted]");
     await expect(highlighted).toHaveCount(1);
     const first = await highlighted.textContent();
-    await expect(input).toHaveAttribute(
-      "aria-activedescendant",
-      (await highlighted.getAttribute("id")) ?? "missing",
-    );
+    await expect(input).toHaveAttribute("aria-activedescendant", (await highlighted.getAttribute("id")) ?? "missing");
     await page.keyboard.press("ArrowDown");
     await expect(highlighted).toHaveCount(1);
     expect(await highlighted.textContent()).not.toBe(first);
@@ -152,10 +114,7 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(page.getByRole("listbox")).toBeHidden();
     await expect(input).toHaveValue(label);
-    await expect(page.locator("[data-mount='closed'] [data-chosen]")).not.toHaveAttribute(
-      "data-chosen",
-      "",
-    );
+    await expect(page.locator("[data-mount='closed'] [data-chosen]")).not.toHaveAttribute("data-chosen", "");
   });
 
   test("keyboard: Esc closes the list and keeps focus in the box", async ({ page }) => {
@@ -190,10 +149,7 @@ eachTheme((theme) => {
     await input.fill("not a site");
     await page.keyboard.press("Tab");
     await expect(input).toHaveValue("Docs");
-    await expect(page.locator("[data-mount='closed'] [data-chosen]")).toHaveAttribute(
-      "data-chosen",
-      "docs",
-    );
+    await expect(page.locator("[data-mount='closed'] [data-chosen]")).toHaveAttribute("data-chosen", "docs");
   });
 
   test("behavior: no match names the typed text", async ({ page }) => {
@@ -213,18 +169,14 @@ eachTheme((theme) => {
     const input = page.getByRole("combobox", { name: "Site to back up" });
     await expect(input).toBeDisabled();
     await expect(input).toHaveValue("Admin portal");
-    await expect(input).toHaveAccessibleDescription(
-      "Locked while the admin portal deploys. It unlocks when the deploy ends.",
-    );
+    await expect(input).toHaveAccessibleDescription("Locked while the admin portal deploys. It unlocks when the deploy ends.");
   });
 
   test("behavior: invalid is marked and described by its message", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const input = page.getByRole("combobox", { name: "Site to watch (required)" });
     await expect(input).toHaveAttribute("aria-invalid", "true");
-    await expect(input).toHaveAccessibleDescription(
-      "Choose a site from the list. The watcher only checks sites it knows.",
-    );
+    await expect(input).toHaveAccessibleDescription("Choose a site from the list. The watcher only checks sites it knows.");
   });
 
   test("accessibility: the grouped list's roles and names", async ({ page }) => {
@@ -236,9 +188,7 @@ eachTheme((theme) => {
     await expectContrast(page, [{ sel: ".cap-listbox-label", what: "a group label" }]);
   });
 
-  test("accessibility: several values, open and closed, have no axe violations and name each remove button", async ({
-    page,
-  }) => {
+  test("accessibility: several values, open and closed, have no axe violations and name each remove button", async ({ page }) => {
     await visitStates(page, "combobox", theme, "open-chips");
     await expect(page.getByRole("listbox")).toBeVisible();
     // While the list is open Base UI hides the rest of the page from assistive technology, so the
@@ -247,15 +197,11 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page, undefined, { baseUi: true });
     await expect(page.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true");
     await visitStates(page, "combobox", theme);
-    await expect(
-      page.locator("[data-mount='chips']").getByRole("button", { name: "Remove Admin portal" }),
-    ).toBeVisible();
+    await expect(page.locator("[data-mount='chips']").getByRole("button", { name: "Remove Admin portal" })).toBeVisible();
     await expectNoAxeViolations(page, undefined, { baseUi: true });
   });
 
-  test("behavior: several values show as chips, and a chip's remove button takes that value away", async ({
-    page,
-  }) => {
+  test("behavior: several values show as chips, and a chip's remove button takes that value away", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const chips = page.locator("[data-mount='chips']");
     await expect(chips.locator(".cap-combobox-chip")).toHaveCount(3);
@@ -264,9 +210,7 @@ eachTheme((theme) => {
     await expect(chips.getByText("shop.example.com", { exact: true })).toHaveCount(0);
   });
 
-  test("keyboard: with several values, Enter adds the highlighted option as a chip and the list stays open", async ({
-    page,
-  }) => {
+  test("keyboard: with several values, Enter adds the highlighted option as a chip and the list stays open", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const chips = page.locator("[data-mount='chips']");
     const input = chips.getByRole("combobox", { name: "Sites to back up" });
@@ -279,9 +223,7 @@ eachTheme((theme) => {
     await expect(input).toBeFocused();
   });
 
-  test("behavior: the clear button empties the chosen value and keeps focus in the box", async ({
-    page,
-  }) => {
+  test("behavior: the clear button empties the chosen value and keeps focus in the box", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='clearable']");
     const input = area.getByRole("combobox", { name: "Primary site" });
@@ -309,9 +251,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("keyboard: in a tag field, typed text and Enter make a new tag, and the box is ready for the next", async ({
-    page,
-  }) => {
+  test("keyboard: in a tag field, typed text and Enter make a new tag, and the box is ready for the next", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='tags']");
     const input = area.getByRole("combobox", { name: "Tags" });
@@ -321,17 +261,12 @@ eachTheme((theme) => {
     await expect(page.getByRole("option", { name: "Create “getting started”" })).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(area.locator(".cap-combobox-chip")).toHaveCount(3);
-    await expect(area.locator("[data-tags]")).toHaveAttribute(
-      "data-tags",
-      "news|annual report|getting started",
-    );
+    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "news|annual report|getting started");
     await expect(input).toHaveValue("");
     await expect(input).toBeFocused();
   });
 
-  test("behavior: in a tag field, text that matches a suggestion picks it, and no tag is made twice", async ({
-    page,
-  }) => {
+  test("behavior: in a tag field, text that matches a suggestion picks it, and no tag is made twice", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='tags']");
     const input = area.getByRole("combobox", { name: "Tags" });
@@ -340,18 +275,13 @@ eachTheme((theme) => {
     // The suggestion matches ignoring case, so there is nothing to create.
     await expect(page.getByRole("option", { name: /^Create/ })).toHaveCount(0);
     await page.keyboard.press("Enter");
-    await expect(area.locator("[data-tags]")).toHaveAttribute(
-      "data-tags",
-      "news|annual report|release",
-    );
+    await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "news|annual report|release");
     // A tag already on the field is not offered again as a new one.
     await page.keyboard.type("Annual  report");
     await expect(page.getByRole("option", { name: /^Create/ })).toHaveCount(0);
   });
 
-  test("behavior: a made tag is a chip with its own remove button, and Backspace takes the last one", async ({
-    page,
-  }) => {
+  test("behavior: a made tag is a chip with its own remove button, and Backspace takes the last one", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='tags']");
     await area.getByRole("button", { name: "Remove annual report" }).click();
@@ -362,9 +292,7 @@ eachTheme((theme) => {
     await expect(area.locator("[data-tags]")).toHaveAttribute("data-tags", "");
   });
 
-  test("behavior: the tag field posts every tag, made or listed, under its name", async ({
-    page,
-  }) => {
+  test("behavior: the tag field posts every tag, made or listed, under its name", async ({ page }) => {
     await visitStates(page, "combobox", theme);
     const area = page.locator("[data-mount='tags']");
     await expect(area.locator("input[name='tags']")).toHaveCount(2);

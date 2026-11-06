@@ -21,9 +21,7 @@ export function formHref(form: HTMLFormElement): string {
     if (typeof value === "string" && value.trim() !== "") params.append(name, value.trim());
   }
   const query = params.toString();
-  return query
-    ? `${form.getAttribute("action") ?? ""}?${query}`
-    : (form.getAttribute("action") ?? "");
+  return query ? `${form.getAttribute("action") ?? ""}?${query}` : (form.getAttribute("action") ?? "");
 }
 
 function region(root: ParentNode, name: string): HTMLElement | null {
@@ -38,9 +36,7 @@ function swapFilters(current: HTMLElement, next: HTMLElement): void {
     return;
   }
   for (const input of Array.from(next.querySelectorAll<HTMLInputElement>("input[name]"))) {
-    const mine = Array.from(
-      current.querySelectorAll<HTMLInputElement>(`input[name="${CSS.escape(input.name)}"]`),
-    ).find((i) => i.value === input.value);
+    const mine = Array.from(current.querySelectorAll<HTMLInputElement>(`input[name="${CSS.escape(input.name)}"]`)).find((i) => i.value === input.value);
     const count = input.closest("label")?.querySelector(".cap-catalog-n")?.textContent;
     const where = mine?.closest("label")?.querySelector(".cap-catalog-n");
     if (where && count !== undefined && count !== null) where.textContent = count;
@@ -70,16 +66,10 @@ export function attachCatalog(form: HTMLFormElement): () => void {
     const results = region(form, "results");
     results?.setAttribute("aria-busy", "true");
     try {
-      const res = await fetch(href, {
-        headers: { Accept: "text/html" },
-        signal: mine.signal,
-        credentials: "same-origin",
-      });
+      const res = await fetch(href, { headers: { Accept: "text/html" }, signal: mine.signal, credentials: "same-origin" });
       if (!res.ok) throw new Error(`catalog: ${href} answered ${res.status}`);
       const doc = new DOMParser().parseFromString(await res.text(), "text/html");
-      const next = doc.querySelector<HTMLFormElement>(
-        `form[data-catalog="${CSS.escape(form.dataset.catalog ?? "")}"]`,
-      );
+      const next = doc.querySelector<HTMLFormElement>(`form[data-catalog="${CSS.escape(form.dataset.catalog ?? "")}"]`);
       if (!next) throw new Error(`catalog: ${href} has no catalog "${form.dataset.catalog}"`);
       for (const name of REGIONS) {
         const mineRegion = region(form, name);
@@ -140,8 +130,7 @@ export function attachCatalog(form: HTMLFormElement): () => void {
     void go(formHref(form), true);
   };
   const onClick = (e: MouseEvent) => {
-    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
-      return;
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     const target = e.target as Element | null;
     const tray = target?.closest<HTMLElement>("[data-catalog-tray]");
     if (tray && form.contains(tray)) {
@@ -153,20 +142,9 @@ export function attachCatalog(form: HTMLFormElement): () => void {
       return;
     }
     const link = target?.closest<HTMLAnchorElement>("a[href]");
-    if (
-      !link ||
-      !form.contains(link) ||
-      !link.matches(
-        ".cap-catalog-chip, .cap-catalog-clear, .cap-page, .cap-table-sort, [data-catalog-link]",
-      )
-    )
-      return;
+    if (!link || !form.contains(link) || !link.matches(".cap-catalog-chip, .cap-catalog-clear, .cap-page, .cap-table-sort, [data-catalog-link]")) return;
     const url = new URL(link.href, location.href);
-    if (
-      url.origin !== location.origin ||
-      url.pathname !== new URL(form.action, location.href).pathname
-    )
-      return;
+    if (url.origin !== location.origin || url.pathname !== new URL(form.action, location.href).pathname) return;
     e.preventDefault();
     void go(`${url.pathname}${url.search}`, true);
   };
@@ -205,8 +183,6 @@ export function attachCatalog(form: HTMLFormElement): () => void {
 
 // Attaches to every catalog under root that is not attached yet. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
-  const undo = Array.from(
-    root.querySelectorAll<HTMLFormElement>("form[data-cap='catalog']:not([data-cap-ready])"),
-  ).map(attachCatalog);
+  const undo = Array.from(root.querySelectorAll<HTMLFormElement>("form[data-cap='catalog']:not([data-cap-ready])")).map(attachCatalog);
   return () => undo.forEach((f) => f());
 }

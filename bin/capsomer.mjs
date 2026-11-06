@@ -33,18 +33,7 @@ const readJson = (p) => JSON.parse(readFileSync(p, "utf8").replace(/^\uFEFF/, ""
 
 // ---- shared ------------------------------------------------------------------------------
 
-const SKIP_DIRS = new Set([
-  "node_modules",
-  ".git",
-  "dist",
-  "build",
-  "site-dist",
-  "test-results",
-  "playwright-report",
-  ".wrangler",
-  ".react-router",
-  "coverage",
-]);
+const SKIP_DIRS = new Set(["node_modules", ".git", "dist", "build", "site-dist", "test-results", "playwright-report", ".wrangler", ".react-router", "coverage"]);
 
 function walk(dir, exts, out = []) {
   let entries = [];
@@ -71,25 +60,14 @@ function components(root) {
     .map((d) => {
       const css = join(dir, d.name, `${d.name}.css`);
       // The component's root class is the first cap- class its CSS styles.
-      const rootClass = existsSync(css)
-        ? (readFileSync(css, "utf8").match(/\.(cap-[\w-]+)/)?.[1] ?? null)
-        : null;
-      return {
-        name: d.name,
-        dir: join(dir, d.name),
-        rootClass,
-        ...frontmatter(readFileSync(join(dir, d.name, `${d.name}.md`), "utf8")).data,
-      };
+      const rootClass = existsSync(css) ? (readFileSync(css, "utf8").match(/\.(cap-[\w-]+)/)?.[1] ?? null) : null;
+      return { name: d.name, dir: join(dir, d.name), rootClass, ...frontmatter(readFileSync(join(dir, d.name, `${d.name}.md`), "utf8")).data };
     });
 }
 
 function git(argsList, cwd) {
   try {
-    return execFileSync("git", argsList, {
-      cwd,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    }).trim();
+    return execFileSync("git", argsList, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
   } catch {
     return null;
   }
@@ -100,10 +78,7 @@ function git(argsList, cwd) {
 function lightTokens() {
   const css = readFileSync(join(PKG, "tokens", "color.css"), "utf8");
   const root = css.slice(css.indexOf(":root {"), css.indexOf("}"));
-  return [...root.matchAll(/--([\w-]+):\s*(#[0-9a-f]{6})/gi)].map((m) => ({
-    name: m[1],
-    hex: m[2].toLowerCase(),
-  }));
+  return [...root.matchAll(/--([\w-]+):\s*(#[0-9a-f]{6})/gi)].map((m) => ({ name: m[1], hex: m[2].toLowerCase() }));
 }
 
 const SPACES = [2, 4, 8, 12, 16, 24, 32, 48, 64];
@@ -117,11 +92,9 @@ const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 // files and Capsomer's own token files are skipped.
 export function tokenCheck(root, paths) {
   const tokens = lightTokens();
-  const files = (
-    paths.length
-      ? paths.flatMap((p) => (statSync(p).isDirectory() ? walk(p, [".css"]) : [p]))
-      : walk(root, [".css"])
-  ).filter((f) => !/[\\/](tokens|site-dist)[\\/]/.test(f) && !/capsomer[\\/]tokens/.test(f));
+  const files = (paths.length ? paths.flatMap((p) => (statSync(p).isDirectory() ? walk(p, [".css"]) : [p])) : walk(root, [".css"])).filter(
+    (f) => !/[\\/](tokens|site-dist)[\\/]/.test(f) && !/capsomer[\\/]tokens/.test(f),
+  );
   const items = [];
   for (const file of files) {
     const lines = readFileSync(file, "utf8").split(/\r?\n/);
@@ -130,31 +103,15 @@ export function tokenCheck(root, paths) {
       if (/^\s*--[\w-]+\s*:/.test(code)) return; // defining a token is the fix, not the fault
       for (const m of code.matchAll(/#[0-9a-f]{6}\b|#[0-9a-f]{3}\b/gi)) {
         const rgb = hexRgb(m[0].toLowerCase());
-        const near = tokens.reduce((a, t) =>
-          dist(hexRgb(t.hex), rgb) < dist(hexRgb(a.hex), rgb) ? t : a,
-        );
-        items.push({
-          file: relative(root, file).replace(/\\/g, "/"),
-          line: i + 1,
-          text: m[0],
-          kind: "color",
-          suggestion: `var(--${near.name})`,
-        });
+        const near = tokens.reduce((a, t) => (dist(hexRgb(t.hex), rgb) < dist(hexRgb(a.hex), rgb) ? t : a));
+        items.push({ file: relative(root, file).replace(/\\/g, "/"), line: i + 1, text: m[0], kind: "color", suggestion: `var(--${near.name})` });
       }
-      for (const m of code.matchAll(
-        /\b(?:margin|padding|gap|row-gap|column-gap|inset|top|left|right|bottom)[\w-]*\s*:\s*([^;]+)/g,
-      )) {
+      for (const m of code.matchAll(/\b(?:margin|padding|gap|row-gap|column-gap|inset|top|left|right|bottom)[\w-]*\s*:\s*([^;]+)/g)) {
         for (const px of m[1].matchAll(/(?<![\w.-])(\d+(?:\.\d+)?)px\b/g)) {
           const n = Number(px[1]);
           if (n === 0 || n === 1 || SPACES.includes(n)) continue;
           const near = SPACES.reduce((a, s) => (Math.abs(s - n) < Math.abs(a - n) ? s : a));
-          items.push({
-            file: relative(root, file).replace(/\\/g, "/"),
-            line: i + 1,
-            text: `${n}px`,
-            kind: "space",
-            suggestion: `var(--space-${SPACES.indexOf(near) + 1}) (${near}px)`,
-          });
+          items.push({ file: relative(root, file).replace(/\\/g, "/"), line: i + 1, text: `${n}px`, kind: "space", suggestion: `var(--space-${SPACES.indexOf(near) + 1}) (${near}px)` });
         }
       }
     });
@@ -182,13 +139,7 @@ function installedVersion(root) {
 }
 
 function a11yFrom(reportPath) {
-  if (!reportPath || !existsSync(reportPath))
-    return {
-      passed: null,
-      failed: null,
-      source: null,
-      note: "No Playwright report given (--a11y <path>).",
-    };
+  if (!reportPath || !existsSync(reportPath)) return { passed: null, failed: null, source: null, note: "No Playwright report given (--a11y <path>)." };
   const r = readJson(reportPath);
   let passed = 0;
   let failed = 0;
@@ -207,22 +158,9 @@ function a11yFrom(reportPath) {
 }
 
 export function report(root) {
-  const lib = existsSync(join(root, "node_modules", "capsomer"))
-    ? join(root, "node_modules", "capsomer")
-    : PKG;
+  const lib = existsSync(join(root, "node_modules", "capsomer")) ? join(root, "node_modules", "capsomer") : PKG;
   const catalog = components(lib);
-  const files = walk(root, [
-    ".ts",
-    ".tsx",
-    ".js",
-    ".jsx",
-    ".mjs",
-    ".css",
-    ".html",
-    ".astro",
-  ]).filter(
-    (f) => !f.includes(`${join("node_modules", "capsomer")}`) && !/\.min\.[cm]?js$/.test(f),
-  );
+  const files = walk(root, [".ts", ".tsx", ".js", ".jsx", ".mjs", ".css", ".html", ".astro"]).filter((f) => !f.includes(`${join("node_modules", "capsomer")}`) && !/\.min\.[cm]?js$/.test(f));
   const used = new Set();
   const own = [];
   let keep = [];
@@ -231,19 +169,13 @@ export function report(root) {
   } catch {
     keep = [];
   }
-  const kept = (component, file) =>
-    keep.find(
-      (k) =>
-        k.component === component &&
-        (k.file === file || (k.file.endsWith("/") && file.startsWith(k.file))),
-    );
+  const kept = (component, file) => keep.find((k) => k.component === component && (k.file === file || (k.file.endsWith("/") && file.startsWith(k.file))));
   const keptHits = [];
   for (const file of files) {
     const rel = relative(root, file).replace(/\\/g, "/");
     const text = readFileSync(file, "utf8");
     const lines = text.split(/\r?\n/);
-    for (const m of text.matchAll(/capsomer\/(?:react\/|behavior\/)?([\w-]+)(?:\.css)?/g))
-      if (catalog.some((c) => c.name === m[1])) used.add(m[1]);
+    for (const m of text.matchAll(/capsomer\/(?:react\/|behavior\/)?([\w-]+)(?:\.css)?/g)) if (catalog.some((c) => c.name === m[1])) used.add(m[1]);
     for (const c of catalog) {
       if (c.rootClass && new RegExp(`\\b${c.rootClass}\\b`).test(text)) used.add(c.name);
       for (const signal of [].concat(c.replaces ?? [])) {
@@ -265,16 +197,13 @@ export function report(root) {
     }
   }
   const tc = tokenCheck(root, []);
-  const name = flag(
-    "app",
-    (() => {
-      try {
-        return JSON.parse(readFileSync(join(root, "package.json"), "utf8")).name;
-      } catch {
-        return basename(root);
-      }
-    })(),
-  );
+  const name = flag("app", (() => {
+    try {
+      return JSON.parse(readFileSync(join(root, "package.json"), "utf8")).name;
+    } catch {
+      return basename(root);
+    }
+  })());
   return {
     schema: 1,
     app: name,
@@ -308,24 +237,12 @@ async function size() {
       rows.push(["app css", relative(distDir, f), gz(buf)]);
     }
     rows.push(["app css", "TOTAL with Capsomer", total]);
-    if (total > BUDGET.css * 2)
-      warn.push(
-        `CSS carrying Capsomer is ${kb(total)} gzip; Capsomer's own share should stay near ${kb(BUDGET.css)}.`,
-      );
+    if (total > BUDGET.css * 2) warn.push(`CSS carrying Capsomer is ${kb(total)} gzip; Capsomer's own share should stay near ${kb(BUDGET.css)}.`);
   } else {
     const read = (...p) => readFileSync(join(PKG, ...p));
-    const base = gz(
-      Buffer.concat([
-        read("css", "layers.css"),
-        read("tokens", "color.css"),
-        read("tokens", "scale.css"),
-        read("css", "base.css"),
-        read("css", "utilities.css"),
-      ]),
-    );
+    const base = gz(Buffer.concat([read("css", "layers.css"), read("tokens", "color.css"), read("tokens", "scale.css"), read("css", "base.css"), read("css", "utilities.css")]));
     rows.push(["base", "layers, tokens, base", base]);
-    if (base > BUDGET.base)
-      warn.push(`Tokens, layers and base are ${kb(base)} gzip, over ${kb(BUDGET.base)}.`);
+    if (base > BUDGET.base) warn.push(`Tokens, layers and base are ${kb(base)} gzip, over ${kb(BUDGET.base)}.`);
     let all = base;
     for (const c of components(PKG)) {
       const f = join(c.dir, `${c.name}.css`);
@@ -344,36 +261,16 @@ async function size() {
       js += n;
       rows.push(["behavior", c.name, n]);
     }
-    rows.push([
-      "behavior",
-      existsSync(join(PKG, "dist")) ? "TOTAL, every module" : "TOTAL (run npm run build first)",
-      js,
-    ]);
-    if (js > BUDGET.behavior)
-      warn.push(
-        `Every behavior module together is ${kb(js)} gzip, over ${kb(BUDGET.behavior)}; a page loads only the ones it uses.`,
-      );
+    rows.push(["behavior", existsSync(join(PKG, "dist")) ? "TOTAL, every module" : "TOTAL (run npm run build first)", js]);
+    if (js > BUDGET.behavior) warn.push(`Every behavior module together is ${kb(js)} gzip, over ${kb(BUDGET.behavior)}; a page loads only the ones it uses.`);
     for (const [name, n] of await baseUiSizes()) rows.push(["base ui", name, n]);
   }
   const w = Math.max(...rows.map((r) => r[1].length), 10);
   console.log(`${"kind".padEnd(10)}  ${"part".padEnd(w)}  ${"gzip".padStart(9)}`);
-  for (const r of rows)
-    console.log(`${r[0].padEnd(10)}  ${r[1].padEnd(w)}  ${kb(r[2]).padStart(9)}`);
+  for (const r of rows) console.log(`${r[0].padEnd(10)}  ${r[1].padEnd(w)}  ${kb(r[2]).padStart(9)}`);
   for (const m of warn) console.warn(`size: warning: ${m}`);
-  console.log(
-    warn.length
-      ? `size: ${warn.length} warning(s); size never fails a build`
-      : "size: within every budget",
-  );
-  if (flag("json"))
-    writeFileSync(
-      flag("json"),
-      JSON.stringify(
-        { rows: rows.map(([kind, part, gzip]) => ({ kind, part, gzip })), warnings: warn },
-        null,
-        2,
-      ),
-    );
+  console.log(warn.length ? `size: ${warn.length} warning(s); size never fails a build` : "size: within every budget");
+  if (flag("json")) writeFileSync(flag("json"), JSON.stringify({ rows: rows.map(([kind, part, gzip]) => ({ kind, part, gzip })), warnings: warn }, null, 2));
   if (!distDir) writeComponentSizes();
 }
 
@@ -386,27 +283,18 @@ function writeComponentSizes() {
     const built = join(PKG, "dist", "components", c.name, `${c.name}.js`);
     const src = join(c.dir, `${c.name}.ts`);
     const js = existsSync(built) ? built : existsSync(src) ? src : null;
-    const entry = {
-      css: existsSync(css) ? gz(readFileSync(css)) : 0,
-      js: js ? gz(readFileSync(js)) : 0,
-      jsFrom: js ? (js === built ? "dist" : "source") : null,
-    };
+    const entry = { css: existsSync(css) ? gz(readFileSync(css)) : 0, js: js ? gz(readFileSync(js)) : 0, jsFrom: js ? (js === built ? "dist" : "source") : null };
     out[c.name] = { ...entry, total: entry.css + entry.js };
   }
   mkdirSync(join(PKG, "test-results"), { recursive: true });
-  writeFileSync(
-    join(PKG, "test-results", "size.json"),
-    JSON.stringify({ unit: "bytes, gzip level 9", components: out }, null, 2),
-  );
+  writeFileSync(join(PKG, "test-results", "size.json"), JSON.stringify({ unit: "bytes, gzip level 9", components: out }, null, 2));
   console.log("size: wrote test-results/size.json (per component, information only)");
 }
 
 // Each Base UI-backed wrapper bundled on its own with React left out, as an app would ship
 // it: the honest per-component cost Base UI does not publish.
 async function baseUiSizes() {
-  const wrappers = components(PKG).filter(
-    (c) => /base ui/i.test(String(c.tool ?? "")) && existsSync(join(c.dir, `${c.name}.react.tsx`)),
-  );
+  const wrappers = components(PKG).filter((c) => /base ui/i.test(String(c.tool ?? "")) && existsSync(join(c.dir, `${c.name}.react.tsx`)));
   if (!wrappers.length) return [];
   let build;
   try {
@@ -424,9 +312,7 @@ async function baseUiSizes() {
         outDir,
         emptyOutDir: true,
         lib: { entry: join(c.dir, `${c.name}.react.tsx`), formats: ["es"], fileName: "bundle" },
-        rollupOptions: {
-          external: ["react", "react-dom", "react/jsx-runtime", "react-dom/client"],
-        },
+        rollupOptions: { external: ["react", "react-dom", "react/jsx-runtime", "react-dom/client"] },
         minify: true,
       },
     });
@@ -443,46 +329,15 @@ async function siteData() {
   mkdirSync(dataDir, { recursive: true });
   const pal = await import(pathToFileURL(join(PKG, "tokens", "palette.mjs")).href);
   // The committed colors (the purple family), and every family's pairs for the contrast report.
-  writeFileSync(
-    join(dataDir, "palette.json"),
-    JSON.stringify(pal.themes(pal.FAMILIES.purple), null, 2),
-  );
-  const scales = Object.fromEntries(
-    Object.entries(pal.FAMILIES).map(([n, f]) => [
-      n,
-      { light: pal.scale(f.seed, f.anchor, "light"), dark: pal.scale(f.seed, f.anchor, "dark") },
-    ]),
-  );
-  writeFileSync(
-    join(dataDir, "families.json"),
-    JSON.stringify({ families: pal.FAMILIES, pairs: pal.report(), scales }, null, 2),
-  );
+  writeFileSync(join(dataDir, "palette.json"), JSON.stringify(pal.themes(pal.FAMILIES.purple), null, 2));
+  const scales = Object.fromEntries(Object.entries(pal.FAMILIES).map(([n, f]) => [n, { light: pal.scale(f.seed, f.anchor, "light"), dark: pal.scale(f.seed, f.anchor, "dark") }]));
+  writeFileSync(join(dataDir, "families.json"), JSON.stringify({ families: pal.FAMILIES, pairs: pal.report(), scales }, null, 2));
   const pj = JSON.parse(readFileSync(join(PKG, "package.json"), "utf8"));
-  const runUrl = process.env.GITHUB_RUN_ID
-    ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
-    : null;
-  writeFileSync(
-    join(dataDir, "meta.json"),
-    JSON.stringify(
-      {
-        version: pj.version,
-        commit: git(["rev-parse", "--short", "HEAD"], PKG),
-        branch: git(["branch", "--show-current"], PKG),
-        built: new Date().toISOString(),
-        runUrl,
-      },
-      null,
-      2,
-    ),
-  );
+  const runUrl = process.env.GITHUB_RUN_ID ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}` : null;
+  writeFileSync(join(dataDir, "meta.json"), JSON.stringify({ version: pj.version, commit: git(["rev-parse", "--short", "HEAD"], PKG), branch: git(["branch", "--show-current"], PKG), built: new Date().toISOString(), runUrl }, null, 2));
 
   const src = join(PKG, "test-results", "results.json");
-  const results = {
-    available: false,
-    ran: null,
-    components: {},
-    totals: { passed: 0, failed: 0, skipped: 0 },
-  };
+  const results = { available: false, ran: null, components: {}, totals: { passed: 0, failed: 0, skipped: 0 } };
   if (existsSync(src)) {
     const r = readJson(src);
     results.available = true;
@@ -500,35 +355,12 @@ async function siteData() {
         const comp = m?.[1] ?? g ?? "site";
         const kind = /^(keyboard|accessibility|behavior):/.exec(spec.title)?.[1] ?? "behavior";
         for (const t of spec.tests ?? []) {
-          const status =
-            t.status === "expected" || t.status === "flaky"
-              ? "passed"
-              : t.status === "skipped"
-                ? "skipped"
-                : "failed";
-          const err =
-            (t.results?.at(-1)?.error?.message
-              ? stripVTControlCharacters(t.results.at(-1).error.message)
-              : undefined
-            )
-              ?.split("\n")
-              .slice(0, 6)
-              .join("\n") ?? null;
-          const entry = (results.components[comp] ??= {
-            keyboard: { passed: 0, failed: 0 },
-            accessibility: { passed: 0, failed: 0 },
-            behavior: { passed: 0, failed: 0 },
-            tests: [],
-          });
+          const status = t.status === "expected" || t.status === "flaky" ? "passed" : t.status === "skipped" ? "skipped" : "failed";
+          const err = (t.results?.at(-1)?.error?.message ? stripVTControlCharacters(t.results.at(-1).error.message) : undefined)?.split("\n").slice(0, 6).join("\n") ?? null;
+          const entry = (results.components[comp] ??= { keyboard: { passed: 0, failed: 0 }, accessibility: { passed: 0, failed: 0 }, behavior: { passed: 0, failed: 0 }, tests: [] });
           if (status !== "skipped") entry[kind][status]++;
           results.totals[status]++;
-          entry.tests.push({
-            title: spec.title,
-            theme: th ?? null,
-            kind,
-            status,
-            error: status === "failed" ? err : null,
-          });
+          entry.tests.push({ title: spec.title, theme: th ?? null, kind, status, error: status === "failed" ? err : null });
         }
       }
       for (const s of suite.suites ?? []) visit(s, f, th, g);
@@ -537,18 +369,8 @@ async function siteData() {
   }
   writeFileSync(join(dataDir, "results.json"), JSON.stringify(results, null, 2));
   const resultsOut = flag("results-out");
-  if (resultsOut)
-    writeFileSync(
-      resultsOut,
-      JSON.stringify(
-        { ...results, commit: git(["rev-parse", "--short", "HEAD"], PKG), runUrl },
-        null,
-        2,
-      ),
-    );
-  console.log(
-    `site-data: wrote site/data (palette, meta, results${results.available ? `: ${results.totals.passed} passed, ${results.totals.failed} failed` : ": no test run found"})`,
-  );
+  if (resultsOut) writeFileSync(resultsOut, JSON.stringify({ ...results, commit: git(["rev-parse", "--short", "HEAD"], PKG), runUrl }, null, 2));
+  console.log(`site-data: wrote site/data (palette, meta, results${results.available ? `: ${results.totals.passed} passed, ${results.totals.failed} failed` : ": no test run found"})`);
 }
 
 // ---- weight and loc (the no-bloat baseline) ------------------------------------------------
@@ -584,13 +406,7 @@ function weight(root) {
       else continue;
       files.push(relative(dist, file).replace(/\\/g, "/"));
     }
-    routes.push({
-      route: "/" + relative(dist, page).replace(/\\/g, "/"),
-      js,
-      css,
-      total: js + css,
-      files: files.length,
-    });
+    routes.push({ route: "/" + relative(dist, page).replace(/\\/g, "/"), js, css, total: js + css, files: files.length });
   }
   routes.sort((a, b) => b.total - a.total);
   const fonts = walk(dist, [".woff2", ".woff"]).reduce((n, f) => n + statSync(f).size, 0);
@@ -600,24 +416,10 @@ function weight(root) {
 // Lines of code by language, over tracked files (so generated and vendored files are out).
 function loc(root) {
   const files = (git(["ls-files"], root) ?? "").split("\n").filter(Boolean);
-  const lang = {
-    ".ts": "TypeScript",
-    ".tsx": "TypeScript (React)",
-    ".mjs": "JavaScript",
-    ".js": "JavaScript",
-    ".css": "CSS",
-    ".html": "HTML",
-    ".md": "Markdown",
-    ".json": "JSON",
-    ".yml": "YAML",
-    ".jsonc": "JSON",
-  };
+  const lang = { ".ts": "TypeScript", ".tsx": "TypeScript (React)", ".mjs": "JavaScript", ".js": "JavaScript", ".css": "CSS", ".html": "HTML", ".md": "Markdown", ".json": "JSON", ".yml": "YAML", ".jsonc": "JSON" };
   const out = {};
   for (const f of files) {
-    if (
-      /(^|\/)(package-lock\.json|tokens\/(color|scale|themes)\.css|tokens\/tokens\.json)$/.test(f)
-    )
-      continue;
+    if (/(^|\/)(package-lock\.json|tokens\/(color|scale|themes)\.css|tokens\/tokens\.json)$/.test(f)) continue;
     const l = lang[extname(f)];
     if (!l) continue;
     const text = readFileSync(join(root, f), "utf8");
@@ -630,80 +432,42 @@ function loc(root) {
 
 function deps(root) {
   const p = readJson(join(root, "package.json"));
-  const lock = existsSync(join(root, "package-lock.json"))
-    ? readJson(join(root, "package-lock.json"))
-    : null;
+  const lock = existsSync(join(root, "package-lock.json")) ? readJson(join(root, "package-lock.json")) : null;
   return {
     dependencies: Object.keys(p.dependencies ?? {}).length,
     devDependencies: Object.keys(p.devDependencies ?? {}).length,
     peerDependencies: Object.keys(p.peerDependencies ?? {}).length,
-    installedPackages: lock
-      ? Object.keys(lock.packages ?? {}).filter((k) => k.startsWith("node_modules/")).length
-      : null,
+    installedPackages: lock ? Object.keys(lock.packages ?? {}).filter((k) => k.startsWith("node_modules/")).length : null,
   };
 }
 // The no-bloat summary for a pull request: Knip's findings, jscpd's duplication and the page
 // weight, each against the baseline in no-bloat/baseline.json. Markdown on stdout, for the job
 // summary. Warn-only: it reports and always exits 0 (defaults, not laws).
 function bloat(root) {
-  const base = existsSync(resolve(root, "no-bloat/baseline.json"))
-    ? readJson(resolve(root, "no-bloat/baseline.json"))
-    : null;
+  const base = existsSync(resolve(root, "no-bloat/baseline.json")) ? readJson(resolve(root, "no-bloat/baseline.json")) : null;
   const out = ["## No-bloat report (warn only)", ""];
-  const delta = (now, then, unit = "") =>
-    then == null
-      ? `${now}${unit}`
-      : `${now}${unit} (baseline ${then}${unit}, ${now - then >= 0 ? "+" : ""}${Math.round((now - then) * 100) / 100}${unit})`;
+  const delta = (now, then, unit = "") => (then == null ? `${now}${unit}` : `${now}${unit} (baseline ${then}${unit}, ${now - then >= 0 ? "+" : ""}${Math.round((now - then) * 100) / 100}${unit})`);
   const knipFile = flag("knip");
   if (knipFile && existsSync(knipFile)) {
     const j = readJson(knipFile);
     const c = {};
-    for (const i of j.issues ?? [])
-      for (const [k, v] of Object.entries(i))
-        if (Array.isArray(v) && v.length) c[k] = (c[k] ?? 0) + v.length;
+    for (const i of j.issues ?? []) for (const [k, v] of Object.entries(i)) if (Array.isArray(v) && v.length) c[k] = (c[k] ?? 0) + v.length;
     const total = Object.values(c).reduce((n, x) => n + x, 0);
-    out.push(
-      `**Knip** (public API as entry points): ${delta(total, base?.knip?.total)} findings`,
-      `- ${
-        Object.entries(c)
-          .map(([k, v]) => `${k} ${v}`)
-          .join(", ") || "none"
-      }`,
-      "",
-    );
+    out.push(`**Knip** (public API as entry points): ${delta(total, base?.knip?.total)} findings`, `- ${Object.entries(c).map(([k, v]) => `${k} ${v}`).join(", ") || "none"}`, "");
   } else out.push("**Knip:** no report found.", "");
   const jf = flag("jscpd");
   if (jf && existsSync(jf)) {
     const t = readJson(jf).statistics.total;
-    out.push(
-      `**jscpd:** ${delta(Math.round(t.percentage * 100) / 100, base?.jscpd?.percentage, "%")} duplicated lines, ${delta(t.clones, base?.jscpd?.clones)} clones over ${t.sources} files`,
-      "",
-    );
+    out.push(`**jscpd:** ${delta(Math.round(t.percentage * 100) / 100, base?.jscpd?.percentage, "%")} duplicated lines, ${delta(t.clones, base?.jscpd?.clones)} clones over ${t.sources} files`, "");
   } else out.push("**jscpd:** no report found.", "");
   const w = weight(root);
   if (w.routes?.length) {
     const top = w.routes.slice(0, 5);
     const bw = base?.weight?.largestRouteTotal;
-    out.push(
-      `**Page weight (gzip JS + CSS):** largest route ${top[0].route} ${(top[0].total / KB).toFixed(1)} KB${bw ? ` (baseline ${(bw / KB).toFixed(1)} KB)` : ""}`,
-      "",
-      "| route | js | css | total |",
-      "| --- | ---: | ---: | ---: |",
-      ...top.map(
-        (r) =>
-          `| ${r.route} | ${(r.js / KB).toFixed(1)} KB | ${(r.css / KB).toFixed(1)} KB | ${(r.total / KB).toFixed(1)} KB |`,
-      ),
-      "",
-    );
+    out.push(`**Page weight (gzip JS + CSS):** largest route ${top[0].route} ${(top[0].total / KB).toFixed(1)} KB${bw ? ` (baseline ${(bw / KB).toFixed(1)} KB)` : ""}`, "", "| route | js | css | total |", "| --- | ---: | ---: | ---: |", ...top.map((r) => `| ${r.route} | ${(r.js / KB).toFixed(1)} KB | ${(r.css / KB).toFixed(1)} KB | ${(r.total / KB).toFixed(1)} KB |`), "");
   }
   const l = loc(root);
-  out.push(
-    `**Lines:** ${delta(
-      Object.values(l).reduce((n, r) => n + r.lines, 0),
-      base?.loc?.total,
-    )} across ${Object.keys(l).length} languages`,
-    "",
-  );
+  out.push(`**Lines:** ${delta(Object.values(l).reduce((n, r) => n + r.lines, 0), base?.loc?.total)} across ${Object.keys(l).length} languages`, "");
   console.log(out.join("\n"));
 }
 // ---- fallback-font ------------------------------------------------------------------------
@@ -711,9 +475,7 @@ function bloat(root) {
 async function fallbackFont() {
   const file = args[1];
   if (!file || file.startsWith("--")) {
-    console.error(
-      'usage: capsomer fallback-font <file.woff2> [--family name] [--local Arial|"Courier New"|"Times New Roman"|Georgia] [--weight 700=<file.woff2> ...]',
-    );
+    console.error('usage: capsomer fallback-font <file.woff2> [--family name] [--local Arial|"Courier New"|"Times New Roman"|Georgia] [--weight 700=<file.woff2> ...]');
     process.exit(1);
   }
   let fromBuffer;
@@ -725,22 +487,14 @@ async function fallbackFont() {
   }
   const { fallbackFontFace, LOCAL } = await import("../tokens/fallback-fonts.mjs");
   if (flag("local") && !LOCAL[flag("local")]) {
-    console.error(
-      `fallback-font: no local face "${flag("local")}"; use one of ${Object.keys(LOCAL).join(", ")}`,
-    );
+    console.error(`fallback-font: no local face "${flag("local")}"; use one of ${Object.keys(LOCAL).join(", ")}`);
     process.exit(1);
   }
   const m = await fromBuffer(readFileSync(file));
   const family = flag("family", m.familyName);
   // A monospaced face falls back to Courier New, anything else to Arial, unless --local says otherwise.
   const local = flag("local", /mono/i.test(family) ? "Courier New" : "Arial");
-  const metrics = {
-    ascent: m.ascent,
-    descent: m.descent,
-    lineGap: m.lineGap,
-    unitsPerEm: m.unitsPerEm,
-    xWidthAvg: m.xWidthAvg,
-  };
+  const metrics = { ascent: m.ascent, descent: m.descent, lineGap: m.lineGap, unitsPerEm: m.unitsPerEm, xWidthAvg: m.xWidthAvg };
   // Each --weight <n>=<file> is the same face at a heavier weight (a static file, or a variable one
   // instanced there), whose average width the bold fallback rules are scaled to.
   const widths = {};
@@ -748,17 +502,13 @@ async function fallbackFont() {
     if (args[i] !== "--weight") continue;
     const [weight, path] = (args[i + 1] ?? "").split(/=(.*)/s);
     if (!/^\d+$/.test(weight) || !path) {
-      console.error(
-        "fallback-font: --weight takes <weight>=<file>, for example --weight 700=bold.woff2",
-      );
+      console.error("fallback-font: --weight takes <weight>=<file>, for example --weight 700=bold.woff2");
       process.exit(1);
     }
     widths[weight] = (await fromBuffer(readFileSync(path))).xWidthAvg;
   }
   const measured = Object.keys(widths).length ? { metrics, widths } : { metrics };
-  console.log(
-    `/* ${basename(file)}, measured with @capsizecss/unpack: ${JSON.stringify(measured)} */`,
-  );
+  console.log(`/* ${basename(file)}, measured with @capsizecss/unpack: ${JSON.stringify(measured)} */`);
   console.log(fallbackFontFace({ family, local, ...measured }));
 }
 
@@ -768,50 +518,29 @@ if (cmd === "report") {
   const out = flag("out", "capsomer-report.json");
   const r = report(process.cwd());
   writeFileSync(out, JSON.stringify(r, null, 2) + "\n");
-  console.log(
-    `report: ${r.app} uses Capsomer ${r.capsomer.version ?? "(not installed)"}: ${r.components.count} components, ${r.ownCopies.count} own copies left, ${r.tokenWarnings.count} token warnings. Wrote ${out}.`,
-  );
+  console.log(`report: ${r.app} uses Capsomer ${r.capsomer.version ?? "(not installed)"}: ${r.components.count} components, ${r.ownCopies.count} own copies left, ${r.tokenWarnings.count} token warnings. Wrote ${out}.`);
 } else if (cmd === "token-check") {
-  const r = tokenCheck(
-    process.cwd(),
-    args.slice(1).filter((a) => !a.startsWith("--")),
-  );
-  for (const it of r.items.slice(0, 200))
-    console.warn(`${it.file}:${it.line}: ${it.kind} ${it.text}; nearest token ${it.suggestion}`);
-  console.log(
-    r.count
-      ? `token-check: ${r.count} warning(s). Warnings never fail a build; adding a token is the normal fix.`
-      : "token-check: no raw colors or off-scale spacing found",
-  );
+  const r = tokenCheck(process.cwd(), args.slice(1).filter((a) => !a.startsWith("--")));
+  for (const it of r.items.slice(0, 200)) console.warn(`${it.file}:${it.line}: ${it.kind} ${it.text}; nearest token ${it.suggestion}`);
+  console.log(r.count ? `token-check: ${r.count} warning(s). Warnings never fail a build; adding a token is the normal fix.` : "token-check: no raw colors or off-scale spacing found");
 } else if (cmd === "size") {
   await size();
 } else if (cmd === "weight") {
   const w = weight(process.cwd());
   const k = (n) => `${(n / KB).toFixed(1)} KB`;
-  console.log(
-    `${"route".padEnd(44)} ${"js".padStart(10)} ${"css".padStart(10)} ${"total".padStart(10)}`,
-  );
-  for (const r of w.routes)
-    console.log(
-      `${r.route.padEnd(44)} ${k(r.js).padStart(10)} ${k(r.css).padStart(10)} ${k(r.total).padStart(10)}`,
-    );
+  console.log(`${"route".padEnd(44)} ${"js".padStart(10)} ${"css".padStart(10)} ${"total".padStart(10)}`);
+  for (const r of w.routes) console.log(`${r.route.padEnd(44)} ${k(r.js).padStart(10)} ${k(r.css).padStart(10)} ${k(r.total).padStart(10)}`);
   if (w.fontsRaw !== undefined) console.log(`fonts (raw, not budgeted): ${k(w.fontsRaw)}`);
   if (flag("json")) writeFileSync(flag("json"), JSON.stringify(w, null, 2));
   console.log("weight: reported, never a failure");
 } else if (cmd === "loc") {
   const l = loc(process.cwd());
   const total = Object.values(l).reduce((n, r) => n + r.lines, 0);
-  for (const [name, r] of Object.entries(l).sort((a, b) => b[1].lines - a[1].lines))
-    console.log(
-      `${name.padEnd(22)} ${String(r.files).padStart(5)} files ${String(r.lines).padStart(8)} lines`,
-    );
+  for (const [name, r] of Object.entries(l).sort((a, b) => b[1].lines - a[1].lines)) console.log(`${name.padEnd(22)} ${String(r.files).padStart(5)} files ${String(r.lines).padStart(8)} lines`);
   console.log(`${"Total".padEnd(22)} ${"".padStart(11)} ${String(total).padStart(8)} lines`);
   const d = deps(process.cwd());
-  console.log(
-    `dependencies ${d.dependencies}, dev ${d.devDependencies}, peer ${d.peerDependencies}, installed packages in the lockfile ${d.installedPackages}`,
-  );
-  if (flag("json"))
-    writeFileSync(flag("json"), JSON.stringify({ loc: l, total, deps: d }, null, 2));
+  console.log(`dependencies ${d.dependencies}, dev ${d.devDependencies}, peer ${d.peerDependencies}, installed packages in the lockfile ${d.installedPackages}`);
+  if (flag("json")) writeFileSync(flag("json"), JSON.stringify({ loc: l, total, deps: d }, null, 2));
 } else if (cmd === "bloat") {
   bloat(process.cwd());
 } else if (cmd === "states") {
@@ -819,16 +548,12 @@ if (cmd === "report") {
   // commands an app runs from the installed package (report, token-check) must not.
   const { generateStates } = await import("./states.mjs");
   const written = await generateStates(PKG);
-  console.log(
-    `states: wrote ${written.size} states pages (components/<name>/states.html, generated, gitignored)`,
-  );
+  console.log(`states: wrote ${written.size} states pages (components/<name>/states.html, generated, gitignored)`);
 } else if (cmd === "site-data") {
   await siteData();
 } else if (cmd === "fallback-font") {
   await fallbackFont();
 } else {
-  console.log(
-    "usage: capsomer report | token-check [paths] | size [--dist dir] [--json out] | weight [--dist dir] [--json out] | loc [--json out] | bloat --knip f --jscpd f | states | site-data | fallback-font <file.woff2> [--family name] [--local face] [--weight 700=<file.woff2>]",
-  );
+  console.log("usage: capsomer report | token-check [paths] | size [--dist dir] [--json out] | weight [--dist dir] [--json out] | loc [--json out] | bloat --knip f --jscpd f | states | site-data | fallback-font <file.woff2> [--family name] [--local face] [--weight 700=<file.woff2>]");
   process.exit(cmd ? 1 : 0);
 }

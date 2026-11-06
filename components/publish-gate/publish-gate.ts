@@ -12,54 +12,11 @@ import { statusEl } from "../flag-list/flag-list.ts";
 import { fail, say } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
 import { enhance as enhanceTime } from "../time/time.ts";
-import {
-  type CheckState,
-  type GateCheck,
-  type GateHold,
-  type GatePublished,
-  type GateSite,
-  type GateState,
-  WORD,
-  advisoryHeading,
-  appliesTo,
-  checkState,
-  countChecks,
-  describeGate,
-  holdText,
-  passedHeading,
-  requiredHeading,
-  siteDetail,
-  siteState,
-} from "./publish-gate-model.ts";
+import { type CheckState, type GateCheck, type GateHold, type GatePublished, type GateSite, type GateState, WORD, advisoryHeading, appliesTo, checkState, countChecks, describeGate, holdText, passedHeading, requiredHeading, siteDetail, siteState } from "./publish-gate-model.ts";
 import { FIRST_PUBLICATION_NOTE, PUBLISH_CONFIRMED_INTENT } from "./publish-transition.ts";
 
-export {
-  checkState,
-  sortChecks,
-  gateState,
-  appliesTo,
-  siteState,
-  worstState,
-  countChecks,
-  requiredHeading,
-  advisoryHeading,
-  passedHeading,
-  holdText,
-  nameList,
-  stateWord,
-  describeGate,
-  siteDetail,
-} from "./publish-gate-model.ts";
-export type {
-  GateState,
-  CheckState,
-  GateCheck,
-  GateHold,
-  GatePublished,
-  GateSite,
-  GateCounts,
-  GateReading,
-} from "./publish-gate-model.ts";
+export { checkState, sortChecks, gateState, appliesTo, siteState, worstState, countChecks, requiredHeading, advisoryHeading, passedHeading, holdText, nameList, stateWord, describeGate, siteDetail } from "./publish-gate-model.ts";
+export type { GateState, CheckState, GateCheck, GateHold, GatePublished, GateSite, GateCounts, GateReading } from "./publish-gate-model.ts";
 
 export { FIRST_PUBLICATION_NOTE };
 
@@ -67,32 +24,17 @@ export { FIRST_PUBLICATION_NOTE };
 // The page.
 
 const READY = "data-cap-ready";
-const part = <T extends HTMLElement = HTMLElement>(el: ParentNode, name: string) =>
-  el.querySelector<T>(`[data-cap-part='${name}']`);
+const part = <T extends HTMLElement = HTMLElement>(el: ParentNode, name: string) => el.querySelector<T>(`[data-cap-part='${name}']`);
 
-function h<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  className?: string,
-  text?: string,
-): HTMLElementTagNameMap[K] {
+function h<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
   if (className) e.className = className;
   if (text !== undefined) e.textContent = text;
   return e;
 }
 
-const TONE: Record<GateState, "crit" | "info" | "ok"> = {
-  blocked: "crit",
-  held: "info",
-  ready: "ok",
-  published: "ok",
-};
-const GLYPH: Record<GateState, string> = {
-  blocked: "crit",
-  held: "info",
-  ready: "ok",
-  published: "ok",
-};
+const TONE: Record<GateState, "crit" | "info" | "ok"> = { blocked: "crit", held: "info", ready: "ok", published: "ok" };
+const GLYPH: Record<GateState, string> = { blocked: "crit", held: "info", ready: "ok", published: "ok" };
 
 export function stateStatus(s: GateState): HTMLSpanElement {
   return statusEl(TONE[s], WORD[s], GLYPH[s]);
@@ -117,8 +59,7 @@ export function readCheck(li: HTMLElement): GateCheck {
 export function readSite(li: HTMLElement): GateSite {
   const s: GateSite = { id: li.dataset.site ?? li.id, name: li.dataset.name ?? "" };
   if (li.dataset.holdText) s.hold = { text: li.dataset.holdText, note: li.dataset.holdNote };
-  if (li.dataset.publishedAt && li.dataset.publishedUrl)
-    s.published = { at: li.dataset.publishedAt, url: li.dataset.publishedUrl };
+  if (li.dataset.publishedAt && li.dataset.publishedUrl) s.published = { at: li.dataset.publishedAt, url: li.dataset.publishedUrl };
   if (li.hasAttribute("data-first")) s.first = true;
   return s;
 }
@@ -150,19 +91,14 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
   const busy = new Set<string>();
   let previous = "";
 
-  const sectionRows = (name: string) =>
-    region.querySelector<HTMLElement>(
-      `.cap-gate-section[data-section='${name}'] .cap-gate-section-rows`,
-    );
+  const sectionRows = (name: string) => region.querySelector<HTMLElement>(`.cap-gate-section[data-section='${name}'] .cap-gate-section-rows`);
   const checkRows = () => Array.from(region.querySelectorAll<HTMLElement>("li.cap-check"));
   const siteRows = () => Array.from(region.querySelectorAll<HTMLElement>("li.cap-gate-site"));
 
   // The containers that hold a destination's buttons: inside its row, or anywhere on the page
   // that names this gate and site (the editor bar's own publish button).
   const containers = (siteId: string) => {
-    const all = Array.from(document.querySelectorAll<HTMLElement>("[data-cap-actions]")).filter(
-      (c) => c.dataset.site === siteId && (c.dataset.gate === region.id || region.contains(c)),
-    );
+    const all = Array.from(document.querySelectorAll<HTMLElement>("[data-cap-actions]")).filter((c) => c.dataset.site === siteId && (c.dataset.gate === region.id || region.contains(c)));
     return all;
   };
 
@@ -171,14 +107,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     const c = readCheck(li);
     const st = checkState(c);
     const status = li.querySelector<HTMLElement>(".cap-row-status");
-    if (status)
-      status.replaceChildren(
-        st === "failing"
-          ? statusEl("crit", "Failing")
-          : st === "advisory"
-            ? statusEl("warn", "Advisory")
-            : statusEl("ok", "Passed"),
-      );
+    if (status) status.replaceChildren(st === "failing" ? statusEl("crit", "Failing") : st === "advisory" ? statusEl("warn", "Advisory") : statusEl("ok", "Passed"));
     if (st === "failing") li.dataset.tone = "crit";
     else delete li.dataset.tone;
     const words = c.ok ? (c.pass ?? `${c.name}: passing`) : c.cause;
@@ -189,10 +118,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
         a.href = c.href;
         a.setAttribute("aria-describedby", `${li.id}-s ${li.id}-d`);
         title.replaceChildren(a);
-      } else
-        title.replaceChildren(
-          Object.assign(h("span", "cap-gate-title-text"), { textContent: words }),
-        );
+      } else title.replaceChildren(Object.assign(h("span", "cap-gate-title-text"), { textContent: words }));
     }
     const detail = li.querySelector<HTMLElement>(".cap-row-detail");
     if (detail) {
@@ -201,9 +127,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     }
     const meta = li.querySelector<HTMLElement>(".cap-row-meta");
     if (meta) {
-      const siteName = c.site
-        ? siteRows().find((r) => r.dataset.site === c.site)?.dataset.name
-        : undefined;
+      const siteName = c.site ? siteRows().find((r) => r.dataset.site === c.site)?.dataset.name : undefined;
       meta.replaceChildren(...(siteName ? [document.createTextNode(`on ${siteName}`)] : []));
     }
   };
@@ -250,13 +174,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
         box.replaceChildren(b);
       }
       const isBusy = busy.has(site.id);
-      const label = isBusy
-        ? "Publishing..."
-        : state === "blocked"
-          ? "Publish blocked"
-          : state === "held"
-            ? "Publish held"
-            : "Publish";
+      const label = isBusy ? "Publishing..." : state === "blocked" ? "Publish blocked" : state === "held" ? "Publish held" : "Publish";
       b.dataset.variant = state === "ready" || isBusy ? "primary" : "secondary";
       if (state === "ready" && !isBusy) b.removeAttribute("aria-disabled");
       else b.setAttribute("aria-disabled", "true");
@@ -280,11 +198,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
       if (!li.dataset.order) li.dataset.order = String(order.get(li));
       renderCheck(li);
     }
-    const targets: Record<CheckState, HTMLElement | null> = {
-      failing: sectionRows("required"),
-      advisory: sectionRows("advisory"),
-      passed: sectionRows("passed"),
-    };
+    const targets: Record<CheckState, HTMLElement | null> = { failing: sectionRows("required"), advisory: sectionRows("advisory"), passed: sectionRows("passed") };
     const bucket: Record<CheckState, HTMLElement[]> = { failing: [], advisory: [], passed: [] };
     for (const li of checks) bucket[checkState(readCheck(li))].push(li);
     for (const k of ["failing", "advisory", "passed"] as const) {
@@ -310,8 +224,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     if (passedSec) {
       passedSec.hidden = counts.passed === 0;
       const sum = passedSec.querySelector("summary");
-      if (sum && sum.textContent !== passedHeading(counts.passed))
-        sum.textContent = passedHeading(counts.passed);
+      if (sum && sum.textContent !== passedHeading(counts.passed)) sum.textContent = passedHeading(counts.passed);
     }
     const clear = part(region, "clear");
     if (clear) clear.hidden = counts.requiredFailing + counts.advisoryFailing > 0;
@@ -354,19 +267,9 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     if (summary) {
       // Only a changed sentence is written, so a polite region does not repeat itself.
       const words = `${WORD[reading.state]}${reading.rest}`;
-      if (summary.textContent !== words)
-        summary.replaceChildren(stateStatus(reading.state), reading.rest);
+      if (summary.textContent !== words) summary.replaceChildren(stateStatus(reading.state), reading.rest);
     }
-    if (previous && previous !== reading.state)
-      region.dispatchEvent(
-        new CustomEvent("cap:gate-state", {
-          bubbles: true,
-          detail: {
-            state: reading.state,
-            sites: Object.fromEntries(sites.map((li) => [li.dataset.site, li.dataset.state])),
-          },
-        }),
-      );
+    if (previous && previous !== reading.state) region.dispatchEvent(new CustomEvent("cap:gate-state", { bubbles: true, detail: { state: reading.state, sites: Object.fromEntries(sites.map((li) => [li.dataset.site, li.dataset.state])) } }));
     previous = reading.state;
   };
 
@@ -434,20 +337,12 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
       await hk.publish?.([site.id]);
     } catch (err) {
       setBusy(site.id, false);
-      problem(
-        `Could not publish to ${site.name}: ${err instanceof Error ? err.message : String(err)}`,
-      );
-      (button?.isConnected
-        ? button
-        : containers(site.id)[0]?.querySelector<HTMLElement>("button")
-      )?.focus();
+      problem(`Could not publish to ${site.name}: ${err instanceof Error ? err.message : String(err)}`);
+      (button?.isConnected ? button : containers(site.id)[0]?.querySelector<HTMLElement>("button"))?.focus();
       return;
     }
     busy.delete(site.id);
-    setPublished(site.id, {
-      at: new Date().toISOString(),
-      url: siteRow(site.id)?.dataset.liveUrl ?? "#",
-    });
+    setPublished(site.id, { at: new Date().toISOString(), url: siteRow(site.id)?.dataset.liveUrl ?? "#" });
     announce(`Published to ${site.name}.`);
     containers(site.id)[0]?.querySelector<HTMLElement>("a, button")?.focus();
   };
@@ -482,9 +377,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     try {
       await hk.unpublish?.([id]);
     } catch (err) {
-      return problem(
-        `Could not unpublish from ${site.name}: ${err instanceof Error ? err.message : String(err)}`,
-      );
+      return problem(`Could not unpublish from ${site.name}: ${err instanceof Error ? err.message : String(err)}`);
     }
     void button;
     setPublished(id, null);
@@ -500,9 +393,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
   };
 
   const onClick = (e: MouseEvent) => {
-    const btn = (e.target as Element).closest<HTMLElement>(
-      "[data-cap-part='publish'], [data-cap-part='unpublish']",
-    );
+    const btn = (e.target as Element).closest<HTMLElement>("[data-cap-part='publish'], [data-cap-part='unpublish']");
     if (!btn) return;
     const box = btn.closest<HTMLElement>("[data-cap-actions]");
     if (!box || !(box.dataset.gate === region.id || region.contains(box))) return;
@@ -516,14 +407,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     const li = siteRow(id);
     const hk = hooksFor.get(region) ?? {};
     // With no hook and a form, a republication posts natively; a first one is previewed first.
-    if (
-      !hk.publish &&
-      btn instanceof HTMLButtonElement &&
-      btn.form &&
-      li &&
-      !li.hasAttribute("data-first")
-    )
-      return;
+    if (!hk.publish && btn instanceof HTMLButtonElement && btn.form && li && !li.hasAttribute("data-first")) return;
     e.preventDefault();
     void publish(id, btn);
   };
@@ -531,18 +415,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
 
   // Any change to a check, a hold or a publication redraws; an app only flips the data.
   const mo = new MutationObserver(() => refresh());
-  mo.observe(region, {
-    subtree: true,
-    attributes: true,
-    attributeFilter: [
-      "data-ok",
-      "data-cause",
-      "data-hold-text",
-      "data-hold-note",
-      "data-published-at",
-      "data-published-url",
-    ],
-  });
+  mo.observe(region, { subtree: true, attributes: true, attributeFilter: ["data-ok", "data-cause", "data-hold-text", "data-hold-note", "data-published-at", "data-published-url"] });
 
   refresh();
   return {
@@ -565,9 +438,7 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
 // publication is previewed first. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document, hooks?: GateHooks): () => void {
   const handles: GateHandle[] = [];
-  for (const el of root.querySelectorAll<HTMLElement>(
-    "[data-cap='publish-gate']:not([data-cap-ready])",
-  )) {
+  for (const el of root.querySelectorAll<HTMLElement>("[data-cap='publish-gate']:not([data-cap-ready])")) {
     el.setAttribute(READY, "");
     handles.push(attachPublishGate(el, hooks));
   }

@@ -14,13 +14,7 @@ export type Activation = "automatic" | "manual";
 // tab. Left and Right move a horizontal list (swapped in a right-to-left page), Up and Down
 // a vertical one; Home and End go to the ends; the ends wrap. Returns the position to focus,
 // or null when the key is not one of these.
-export function nextTab(
-  enabled: number[],
-  current: number,
-  key: string,
-  orientation: Orientation = "horizontal",
-  rtl = false,
-): number | null {
+export function nextTab(enabled: number[], current: number, key: string, orientation: Orientation = "horizontal", rtl = false): number | null {
   if (enabled.length === 0) return null;
   const forward = orientation === "vertical" ? "ArrowDown" : rtl ? "ArrowLeft" : "ArrowRight";
   const back = orientation === "vertical" ? "ArrowUp" : rtl ? "ArrowRight" : "ArrowLeft";
@@ -32,11 +26,7 @@ export function nextTab(
   const step = key === forward ? 1 : -1;
   if (at === -1) {
     const after = enabled.filter((i) => (step === 1 ? i > current : i < current));
-    return (
-      (step === 1 ? after[0] : after[after.length - 1]) ??
-      (step === 1 ? enabled[0] : enabled[enabled.length - 1]) ??
-      null
-    );
+    return (step === 1 ? after[0] : after[after.length - 1]) ?? (step === 1 ? enabled[0] : enabled[enabled.length - 1]) ?? null;
   }
   return enabled[(at + step + enabled.length) % enabled.length] ?? null;
 }
@@ -52,27 +42,17 @@ export function tabsOf(root: HTMLElement): HTMLElement[] {
 export function panelOf(root: HTMLElement, tab: HTMLElement): HTMLElement | null {
   const id = tab.getAttribute("aria-controls");
   if (!id) return null;
-  return (
-    [...root.querySelectorAll<HTMLElement>(":scope > [role='tabpanel']")].find(
-      (p) => p.id === id,
-    ) ?? null
-  );
+  return [...root.querySelectorAll<HTMLElement>(":scope > [role='tabpanel']")].find((p) => p.id === id) ?? null;
 }
 
 function isDisabled(tab: HTMLElement): boolean {
-  return (
-    tab.getAttribute("aria-disabled") === "true" || (tab as HTMLButtonElement).disabled === true
-  );
+  return tab.getAttribute("aria-disabled") === "true" || (tab as HTMLButtonElement).disabled === true;
 }
 
 // Chooses a tab: it becomes the one tab stop, its panel shows, the others hide. A disabled
 // tab is not chosen. Tells the page with a `cap:tabs-change` event (bubbles) carrying the
 // tab and its panel. Returns whether the tab was chosen.
-export function select(
-  root: HTMLElement,
-  tab: HTMLElement,
-  options: { focus?: boolean; silent?: boolean } = {},
-): boolean {
+export function select(root: HTMLElement, tab: HTMLElement, options: { focus?: boolean; silent?: boolean } = {}): boolean {
   if (isDisabled(tab)) return false;
   const tabs = tabsOf(root);
   if (!tabs.includes(tab)) return false;
@@ -87,13 +67,7 @@ export function select(
   if (options.focus) tab.focus();
   // A long list scrolls the chosen tab into view, the least distance that shows it.
   tab.scrollIntoView?.({ block: "nearest", inline: "nearest" });
-  if (changed && !options.silent)
-    tab.dispatchEvent(
-      new CustomEvent("cap:tabs-change", {
-        bubbles: true,
-        detail: { tab, panel: panelOf(root, tab) },
-      }),
-    );
+  if (changed && !options.silent) tab.dispatchEvent(new CustomEvent("cap:tabs-change", { bubbles: true, detail: { tab, panel: panelOf(root, tab) } }));
   return true;
 }
 
@@ -105,10 +79,7 @@ function attach(root: HTMLElement): () => void {
     list.addEventListener(type, fn as EventListener);
     undo.push(() => list.removeEventListener(type, fn as EventListener));
   };
-  const orientation = (): Orientation =>
-    list.getAttribute("aria-orientation") === "vertical" || root.dataset.orientation === "vertical"
-      ? "vertical"
-      : "horizontal";
+  const orientation = (): Orientation => (list.getAttribute("aria-orientation") === "vertical" || root.dataset.orientation === "vertical" ? "vertical" : "horizontal");
   const manual = () => root.dataset.activation === "manual";
   const hashed = () => root.dataset.sync === "hash";
 

@@ -16,11 +16,7 @@ import { appendFileSync, existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 // Paths no browser test reads. Anything not named here or under components/<name>/ runs everything.
-const UNTESTED = [
-  /^(docs|design|no-bloat|worker|\.claude)\//,
-  /^scripts\/.*\.py$/,
-  /^(LICENSE|renovate\.json|knip(\.internal)?\.json|\.jscpd\.json|\.no-bloat\.json|\.gitattributes|tsconfig\.code-map\.json|wrangler\.jsonc|components\/README\.md)$/,
-];
+const UNTESTED = [/^(docs|design|no-bloat|worker|\.claude)\//, /^scripts\/.*\.py$/, /^(LICENSE|renovate\.json|knip(\.internal)?\.json|\.jscpd\.json|\.no-bloat\.json|\.gitattributes|tsconfig\.code-map\.json|wrangler\.jsonc|components\/README\.md)$/];
 // The showcase reads the root Markdown files (site/data.ts, site/home.ts): only the site's spec.
 const SITE_ONLY = /^[^/]+\.md$/;
 const SITE_SPEC = "site/site.spec.ts";
@@ -31,10 +27,8 @@ const COMPONENTS = readdirSync("components", { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name)
   .sort();
-const filesOf = (name) =>
-  readdirSync(join("components", name)).filter((f) => /\.(html|ts|tsx|css)$/.test(f));
-const cssOf = (name) =>
-  read(join("components", name, `${name}.css`)).replace(/\/\*[\s\S]*?\*\//g, "");
+const filesOf = (name) => readdirSync(join("components", name)).filter((f) => /\.(html|ts|tsx|css)$/.test(f));
+const cssOf = (name) => read(join("components", name, `${name}.css`)).replace(/\/\*[\s\S]*?\*\//g, "");
 
 // A selector list's parts, split at the commas outside any brackets.
 const topLevel = (sel) => {
@@ -62,11 +56,7 @@ function reachesPast(css) {
     }
     const sel = (m[1] ?? "").trim();
     stack.push(scoped);
-    if (
-      scoped ||
-      sel.startsWith("@") ||
-      /^(from|to|[\d.]+%)(\s*,\s*(from|to|[\d.]+%))*$/.test(sel)
-    ) {
+    if (scoped || sel.startsWith("@") || /^(from|to|[\d.]+%)(\s*,\s*(from|to|[\d.]+%))*$/.test(sel)) {
       if (sel.startsWith("@keyframes")) scoped = true;
       continue;
     }
@@ -82,10 +72,8 @@ function owners() {
   const best = new Map();
   for (const name of COMPONENTS) {
     const counts = new Map();
-    for (const m of cssOf(name).matchAll(/\.(cap-[\w-]+)/g))
-      counts.set(m[1], (counts.get(m[1]) ?? 0) + 1);
-    for (const [cls, n] of counts)
-      if (!best.has(cls) || n > best.get(cls).n) best.set(cls, { name, n });
+    for (const m of cssOf(name).matchAll(/\.(cap-[\w-]+)/g)) counts.set(m[1], (counts.get(m[1]) ?? 0) + 1);
+    for (const [cls, n] of counts) if (!best.has(cls) || n > best.get(cls).n) best.set(cls, { name, n });
   }
   const own = new Map(COMPONENTS.map((n) => [n, []]));
   for (const [cls, { name }] of best) own.get(name).push(cls);
@@ -96,14 +84,7 @@ function owners() {
 // writes one of x's classes in its own markup or wrapper (and so shows x's CSS).
 function users() {
   const own = owners();
-  const text = new Map(
-    COMPONENTS.map((n) => [
-      n,
-      filesOf(n)
-        .map((f) => read(join("components", n, f)))
-        .join("\n"),
-    ]),
-  );
+  const text = new Map(COMPONENTS.map((n) => [n, filesOf(n).map((f) => read(join("components", n, f))).join("\n")]));
   const words = new Map(COMPONENTS.map((n) => [n, new Set(text.get(n).match(/cap-[\w-]+/g))]));
   const importers = new Map(COMPONENTS.map((n) => [n, []]));
   const writers = new Map(COMPONENTS.map((n) => [n, []]));
@@ -124,16 +105,12 @@ function pick(changed) {
   for (const path of changed) {
     const m = /^components\/([^/]+)\/./.exec(path);
     if (m && m[1] !== "README.md") {
-      if (!existsSync(join("components", m[1])))
-        return { mode: "full", why: `${path}: a removed component` };
+      if (!existsSync(join("components", m[1]))) return { mode: "full", why: `${path}: a removed component` };
       touched.add(m[1]);
     } else if (SITE_ONLY.test(path)) site = true;
-    else if (!UNTESTED.some((re) => re.test(path)))
-      return { mode: "full", why: `${path} is shared` };
+    else if (!UNTESTED.some((re) => re.test(path))) return { mode: "full", why: `${path} is shared` };
   }
-  for (const name of touched)
-    if (reachesPast(cssOf(name)))
-      return { mode: "full", why: `${name}'s CSS styles more than its own classes` };
+  for (const name of touched) if (reachesPast(cssOf(name))) return { mode: "full", why: `${name}'s CSS styles more than its own classes` };
   const all = new Set(touched);
   if (touched.size) {
     // A writer of a changed component's classes is added; an importer of anything added is
@@ -154,39 +131,22 @@ function pick(changed) {
         }
   }
   const names = [...all].sort();
-  const specs = names.flatMap((n) =>
-    readdirSync(join("components", n))
-      .filter((f) => f.endsWith(".spec.ts"))
-      .map((f) => `components/${n}/${f}`),
-  );
+  const specs = names.flatMap((n) => readdirSync(join("components", n)).filter((f) => f.endsWith(".spec.ts")).map((f) => `components/${n}/${f}`));
   const sweep = names.filter((n) => existsSync(join("components", n, "examples.html")));
   if (sweep.length) specs.push(SWEEP_SPEC);
   // The site's spec visits a few components' public pages by name (components/button/).
   if (site || names.some((n) => read(SITE_SPEC).includes(`components/${n}`))) specs.push(SITE_SPEC);
   if (!specs.length) return { mode: "none", why: "no browser test reads the change" };
-  return {
-    mode: "some",
-    why: `${touched.size} changed, ${names.length} with their users`,
-    specs,
-    sweep,
-  };
+  return { mode: "some", why: `${touched.size} changed, ${names.length} with their users`, specs, sweep };
 }
 
 {
   const args = process.argv.slice(2);
   const at = args.indexOf("--base");
   const base = at >= 0 ? args.splice(at, 2)[1] : "HEAD^1";
-  const changed = args.length
-    ? args
-    : execFileSync("git", ["diff", "--name-only", base, "HEAD"], { encoding: "utf8" })
-        .split("\n")
-        .filter(Boolean);
+  const changed = args.length ? args : execFileSync("git", ["diff", "--name-only", base, "HEAD"], { encoding: "utf8" }).split("\n").filter(Boolean);
   const r = pick(changed);
-  const lines = [
-    `mode=${r.mode}`,
-    `specs=${(r.specs ?? []).join(" ")}`,
-    `sweep=${(r.sweep ?? []).join(",")}`,
-  ];
+  const lines = [`mode=${r.mode}`, `specs=${(r.specs ?? []).join(" ")}`, `sweep=${(r.sweep ?? []).join(",")}`];
   console.log(`${r.why}\n${lines.join("\n")}`);
   if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `${lines.join("\n")}\n`);
 }

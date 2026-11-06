@@ -12,37 +12,10 @@ import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { type SayOptions, fail, say } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
 import { enhance as enhanceTime, parse as parseTime, text as timeText } from "../time/time.ts";
-import {
-  type Flag,
-  type FlagState,
-  type Resolution,
-  anchorStatus,
-  appliable,
-  applySuggestion,
-  countFlags,
-  revertSuggestion,
-  summaryLine,
-} from "./flag-list-model.ts";
+import { type Flag, type FlagState, type Resolution, anchorStatus, appliable, applySuggestion, countFlags, revertSuggestion, summaryLine } from "./flag-list-model.ts";
 
-export {
-  groupFlags,
-  countFlags,
-  summaryLine,
-  anchorStatus,
-  applySuggestion,
-  revertSuggestion,
-  appliable,
-} from "./flag-list-model.ts";
-export type {
-  FlagKind,
-  FlagState,
-  Resolution,
-  AnchorStatus,
-  FlagAnchor,
-  FlagSuggestion,
-  Flag,
-  FlagCounts,
-} from "./flag-list-model.ts";
+export { groupFlags, countFlags, summaryLine, anchorStatus, applySuggestion, revertSuggestion, appliable } from "./flag-list-model.ts";
+export type { FlagKind, FlagState, Resolution, AnchorStatus, FlagAnchor, FlagSuggestion, Flag, FlagCounts } from "./flag-list-model.ts";
 
 // ---------------------------------------------------------------------------------------
 // The page.
@@ -53,10 +26,8 @@ const GLYPHS: Record<string, string> = {
   warn: '<path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/>',
   info: '<rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/>',
   ok: '<path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/>',
-  nodata:
-    '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
-  running:
-    '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2"/>',
+  nodata: '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  running: '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2"/>',
 };
 
 // The status component's glyph, the same drawing (components/status).
@@ -71,11 +42,7 @@ export function glyph(name: keyof typeof GLYPHS | (string & {})): SVGSVGElement 
 }
 
 // A status: glyph, word, color.
-export function statusEl(
-  tone: "crit" | "warn" | "ok" | "info" | "nodata",
-  word: string,
-  glyphName: string = tone,
-): HTMLSpanElement {
+export function statusEl(tone: "crit" | "warn" | "ok" | "info" | "nodata", word: string, glyphName: string = tone): HTMLSpanElement {
   const s = document.createElement("span");
   s.className = "cap-status";
   s.dataset.tone = tone;
@@ -84,14 +51,9 @@ export function statusEl(
 }
 
 const READY = "data-cap-ready";
-const part = <T extends HTMLElement = HTMLElement>(el: ParentNode, name: string) =>
-  el.querySelector<T>(`[data-cap-part='${name}']`);
+const part = <T extends HTMLElement = HTMLElement>(el: ParentNode, name: string) => el.querySelector<T>(`[data-cap-part='${name}']`);
 
-function el<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  className?: string,
-  text?: string,
-): HTMLElementTagNameMap[K] {
+function el<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
   if (className) e.className = className;
   if (text !== undefined) e.textContent = text;
@@ -132,18 +94,9 @@ export function readFlags(root: ParentNode): Flag[] {
   return flagRows(root).map(readFlag);
 }
 
-const WORDS: Record<Resolution, string> = {
-  resolved: "Resolved",
-  dismissed: "Dismissed",
-  applied: "Applied",
-};
+const WORDS: Record<Resolution, string> = { resolved: "Resolved", dismissed: "Dismissed", applied: "Applied" };
 
-function actionButton(
-  kind: string,
-  label: string,
-  message: string,
-  variant?: string,
-): HTMLButtonElement {
+function actionButton(kind: string, label: string, message: string, variant?: string): HTMLButtonElement {
   const b = el("button", "cap-btn");
   b.type = "button";
   b.dataset.size = "sm";
@@ -171,9 +124,7 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
   // Title: the link while the passage is found; plain words and "Anchor lost" otherwise.
   const title = li.querySelector<HTMLElement>(".cap-row-title");
   if (title && flag.anchor) {
-    const describedby =
-      li.querySelector(".cap-row-title [aria-describedby]")?.getAttribute("aria-describedby") ??
-      `${li.id}-s ${li.id}-d`;
+    const describedby = li.querySelector(".cap-row-title [aria-describedby]")?.getAttribute("aria-describedby") ?? `${li.id}-s ${li.id}-d`;
     const message = el("span", "cap-flag-message", flag.message);
     if (status === "found") {
       const a = el("a");
@@ -200,22 +151,14 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
   // The actions.
   const actions = li.querySelector<HTMLElement>(".cap-row-actions");
   if (actions) {
-    actions.replaceChildren(
-      ...(flag.state === "open"
-        ? [
-            actionButton("resolve", "Resolve", flag.message),
-            actionButton("dismiss", "Dismiss", flag.message, "quiet"),
-          ]
-        : [actionButton("reopen", "Reopen", flag.message)]),
-    );
+    actions.replaceChildren(...(flag.state === "open" ? [actionButton("resolve", "Resolve", flag.message), actionButton("dismiss", "Dismiss", flag.message, "quiet")] : [actionButton("reopen", "Reopen", flag.message)]));
   }
 
   // The quote's note and the suggestion's footer.
   const quoteNote = part(li, "anchor-note");
   if (quoteNote) {
     quoteNote.replaceChildren();
-    if (status === "lost")
-      quoteNote.append("The text this flag was raised on changed or was removed. Last known text:");
+    if (status === "lost") quoteNote.append("The text this flag was raised on changed or was removed. Last known text:");
     else if (status === "found") quoteNote.append("Raised on this passage:");
     quoteNote.hidden = quoteNote.childNodes.length === 0;
   }
@@ -227,38 +170,17 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
     if (foot) {
       foot.replaceChildren();
       if (applied) foot.append(el("p", "cap-flag-note", "Applied to the draft."));
-      else if (flag.state === "resolved")
-        foot.append(el("p", "cap-flag-note", "Not applied. Reopen the flag to apply it."));
-      else if (status !== "found")
-        foot.append(
-          el(
-            "p",
-            "cap-flag-note",
-            "Cannot be applied: the passage it replaces has changed or gone.",
-          ),
-        );
+      else if (flag.state === "resolved") foot.append(el("p", "cap-flag-note", "Not applied. Reopen the flag to apply it."));
+      else if (status !== "found") foot.append(el("p", "cap-flag-note", "Cannot be applied: the passage it replaces has changed or gone."));
       else if (ctx.owner) {
         const b = el("button", "cap-btn");
         b.type = "button";
         b.dataset.size = "sm";
         b.dataset.variant = "primary";
         b.dataset.capPart = "apply";
-        b.append(
-          "Apply",
-          Object.assign(el("span", "cap-sr-only"), { textContent: ` suggestion: ${flag.message}` }),
-        );
-        foot.append(
-          b,
-          el("span", "cap-flag-note", "Nothing changes in the draft until you apply it."),
-        );
-      } else
-        foot.append(
-          el(
-            "p",
-            "cap-flag-note",
-            `Only the owner${ctx.ownerName ? `, ${ctx.ownerName},` : ""} can apply this. The draft stays as it is until they do.`,
-          ),
-        );
+        b.append("Apply", Object.assign(el("span", "cap-sr-only"), { textContent: ` suggestion: ${flag.message}` }));
+        foot.append(b, el("span", "cap-flag-note", "Nothing changes in the draft until you apply it."));
+      } else foot.append(el("p", "cap-flag-note", `Only the owner${ctx.ownerName ? `, ${ctx.ownerName},` : ""} can apply this. The draft stays as it is until they do.`));
     }
   }
 
@@ -267,9 +189,7 @@ export function renderFlag(li: HTMLElement, ctx: Ctx): void {
   body?.querySelector(".cap-flag-resolution")?.remove();
   if (body && flag.state === "resolved") {
     const p = el("p", "cap-flag-resolution");
-    p.append(
-      `${WORDS[flag.resolution ?? "resolved"]}${flag.resolvedBy ? ` by ${flag.resolvedBy}` : ""}`,
-    );
+    p.append(`${WORDS[flag.resolution ?? "resolved"]}${flag.resolvedBy ? ` by ${flag.resolvedBy}` : ""}`);
     if (flag.resolvedAt) {
       const t = el("time", "cap-time");
       t.dataset.cap = "time";
@@ -304,9 +224,7 @@ function ioFor(selector: string | undefined): FlagTextIO | undefined {
   return {
     getText: () => {
       const e = find();
-      return e instanceof HTMLTextAreaElement || e instanceof HTMLInputElement
-        ? e.value
-        : (e?.textContent ?? "");
+      return e instanceof HTMLTextAreaElement || e instanceof HTMLInputElement ? e.value : (e?.textContent ?? "");
     },
     setText: (t) => {
       const e = find();
@@ -319,8 +237,7 @@ function ioFor(selector: string | undefined): FlagTextIO | undefined {
 }
 
 function setCount(root: HTMLElement, name: string, n: number): void {
-  for (const c of root.querySelectorAll<HTMLElement>(`[data-count='${name}']`))
-    c.textContent = String(n);
+  for (const c of root.querySelectorAll<HTMLElement>(`[data-count='${name}']`)) c.textContent = String(n);
 }
 
 export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHandle {
@@ -350,18 +267,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
 
   const emit = (li: HTMLElement) => {
     const f = readFlag(li);
-    root.dispatchEvent(
-      new CustomEvent("cap:flag-change", {
-        bubbles: true,
-        detail: {
-          id: f.id,
-          state: f.state,
-          resolution: f.resolution ?? null,
-          resolvedBy: f.resolvedBy ?? null,
-          resolvedAt: f.resolvedAt ?? null,
-        },
-      }),
-    );
+    root.dispatchEvent(new CustomEvent("cap:flag-change", { bubbles: true, detail: { id: f.id, state: f.state, resolution: f.resolution ?? null, resolvedBy: f.resolvedBy ?? null, resolvedAt: f.resolvedAt ?? null } }));
   };
 
   // Group headings, the summary, the filter's counts and the batch button follow the rows.
@@ -376,9 +282,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     for (const kind of ["blocking", "advisory"] as const) {
       const mine = flags.filter((f) => f.kind === kind);
       const open = mine.filter((f) => f.state === "open").length;
-      const head = root.querySelector<HTMLElement>(
-        `.cap-flag-group[data-group='${kind}'] .cap-flag-group-count`,
-      );
+      const head = root.querySelector<HTMLElement>(`.cap-flag-group[data-group='${kind}'] .cap-flag-group-count`);
       if (head) head.textContent = `${open} open, ${mine.length - open} resolved`;
     }
     const text = io?.getText();
@@ -396,15 +300,10 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
   const order = () => {
     if (!list) return;
     for (const kind of ["blocking", "advisory"] as const) {
-      const group = list.querySelector<HTMLElement>(
-        `.cap-flag-group[data-group='${kind}'] .cap-flag-group-rows`,
-      );
+      const group = list.querySelector<HTMLElement>(`.cap-flag-group[data-group='${kind}'] .cap-flag-group-rows`);
       if (!group) continue;
       const rows = flagRows(group);
-      const sorted = [
-        ...rows.filter((r) => r.dataset.state === "open"),
-        ...rows.filter((r) => r.dataset.state === "resolved"),
-      ];
+      const sorted = [...rows.filter((r) => r.dataset.state === "open"), ...rows.filter((r) => r.dataset.state === "resolved")];
       sorted.forEach((r, i) => {
         if (group.children[i] !== r) group.insertBefore(r, group.children[i] ?? null);
       });
@@ -441,11 +340,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
   const settle = (li: HTMLElement, hadFocus: boolean, heir: HTMLElement | null) => {
     if (!hadFocus) return;
     const visible = (e: HTMLElement) => e.getClientRects().length > 0;
-    const first = (row: HTMLElement) =>
-      [
-        ...row.querySelectorAll<HTMLElement>(".cap-row-actions button"),
-        ...row.querySelectorAll<HTMLElement>(".cap-row-title a"),
-      ].find(visible);
+    const first = (row: HTMLElement) => [...row.querySelectorAll<HTMLElement>(".cap-row-actions button"), ...row.querySelectorAll<HTMLElement>(".cap-row-title a")].find(visible);
     const target = first(li) ?? (heir ? first(heir) : undefined);
     if (target) {
       target.focus();
@@ -468,35 +363,18 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     }
   };
 
-  const snapshot = (li: HTMLElement) => ({
-    state: li.dataset.state as FlagState,
-    resolution: li.dataset.resolution as Resolution | undefined,
-    by: li.dataset.resolvedBy,
-    at: li.dataset.resolvedAt,
-  });
+  const snapshot = (li: HTMLElement) => ({ state: li.dataset.state as FlagState, resolution: li.dataset.resolution as Resolution | undefined, by: li.dataset.resolvedBy, at: li.dataset.resolvedAt });
   const restore = (li: HTMLElement, s: ReturnType<typeof snapshot>) => {
     li.dataset.state = s.state;
-    for (const [k, v] of [
-      ["resolution", s.resolution],
-      ["resolvedBy", s.by],
-      ["resolvedAt", s.at],
-    ] as const) {
+    for (const [k, v] of [["resolution", s.resolution], ["resolvedBy", s.by], ["resolvedAt", s.at]] as const) {
       if (v) li.dataset[k] = v;
       else delete li.dataset[k];
     }
   };
 
-  const primary = (li: HTMLElement) => () =>
-    li.querySelector<HTMLElement>(".cap-row-actions button") ??
-    li.querySelector<HTMLElement>(".cap-row-title a");
+  const primary = (li: HTMLElement) => () => li.querySelector<HTMLElement>(".cap-row-actions button") ?? li.querySelector<HTMLElement>(".cap-row-title a");
 
-  const change = (
-    li: HTMLElement,
-    state: FlagState,
-    resolution: Resolution | undefined,
-    said: string,
-    undone: string,
-  ) => {
+  const change = (li: HTMLElement, state: FlagState, resolution: Resolution | undefined, said: string, undone: string) => {
     const hadFocus = li.contains(document.activeElement);
     const heir = heirOf(li);
     const before = snapshot(li);
@@ -543,10 +421,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     announce("Suggestion applied to the draft.", {
       undo: () => {
         const back = revertSuggestion(io.getText(), flag);
-        if (back === null)
-          throw new Error(
-            "The draft has changed around that passage since. Undo the edit in the editor instead.",
-          );
+        if (back === null) throw new Error("The draft has changed around that passage since. Undo the edit in the editor instead.");
         io.setText(back);
         restore(li, before);
         renderFlag(li, ctx);
@@ -563,12 +438,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
   const applyAll = async () => {
     if (!io || !owner) return;
     const rows = flagRows(root);
-    const todo = rows.filter(
-      (li) =>
-        li.dataset.state === "open" &&
-        li.querySelector(".cap-flag-after-text") &&
-        li.dataset.anchor === "found",
-    );
+    const todo = rows.filter((li) => li.dataset.state === "open" && li.querySelector(".cap-flag-after-text") && li.dataset.anchor === "found");
     if (todo.length === 0) return;
     const flags = todo.map(readFlag);
     const quoted = (s: string) => `“${s}”`;
@@ -576,13 +446,9 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     await confirm({
       title: `Apply ${todo.length} suggestion${todo.length === 1 ? "" : "s"}?`,
       lead: "This rewrites the draft. Each replacement is listed; nothing else changes.",
-      body: flags.map(
-        (f) =>
-          `${quoted(f.anchor?.quote ?? "")} becomes ${quoted(f.suggestion?.replacement ?? "")}`,
-      ),
+      body: flags.map((f) => `${quoted(f.anchor?.quote ?? "")} becomes ${quoted(f.suggestion?.replacement ?? "")}`),
       action: `Apply ${todo.length} suggestion${todo.length === 1 ? "" : "s"}`,
-      returnTo:
-        part<HTMLElement>(root, "filter")?.querySelector<HTMLElement>("input:checked") ?? null,
+      returnTo: part<HTMLElement>(root, "filter")?.querySelector<HTMLElement>("input:checked") ?? null,
       perform: async () => {
         const text = io.getText();
         let next = text;
@@ -605,36 +471,26 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
         order();
         for (const i of done) emit(todo[i] as HTMLElement);
         const skipped = flags.length - done.length;
-        announce(
-          `Applied ${done.length} suggestion${done.length === 1 ? "" : "s"} to the draft.${skipped ? ` ${skipped} skipped: the passage changed.` : ""}`,
-          {
-            undo: () => {
-              let back = io.getText();
-              for (const i of [...done].reverse()) {
-                const out = revertSuggestion(back, flags[i] as Flag);
-                if (out === null)
-                  throw new Error(
-                    "The draft has changed around those passages since. Undo the edits in the editor instead.",
-                  );
-                back = out;
-              }
-              io.setText(back);
-              done.forEach((i, k) => {
-                restore(todo[i] as HTMLElement, before[k] as ReturnType<typeof snapshot>);
-                renderFlag(todo[i] as HTMLElement, ctx);
-              });
-              refresh();
-              order();
-              for (const i of done) emit(todo[i] as HTMLElement);
-            },
-            undone: "Suggestions taken back. The passages are as they were.",
-            returnFocus: () =>
-              opener && !opener.hidden
-                ? opener
-                : (part<HTMLElement>(root, "filter")?.querySelector<HTMLElement>("input:checked") ??
-                  null),
+        announce(`Applied ${done.length} suggestion${done.length === 1 ? "" : "s"} to the draft.${skipped ? ` ${skipped} skipped: the passage changed.` : ""}`, {
+          undo: () => {
+            let back = io.getText();
+            for (const i of [...done].reverse()) {
+              const out = revertSuggestion(back, flags[i] as Flag);
+              if (out === null) throw new Error("The draft has changed around those passages since. Undo the edits in the editor instead.");
+              back = out;
+            }
+            io.setText(back);
+            done.forEach((i, k) => {
+              restore(todo[i] as HTMLElement, before[k] as ReturnType<typeof snapshot>);
+              renderFlag(todo[i] as HTMLElement, ctx);
+            });
+            refresh();
+            order();
+            for (const i of done) emit(todo[i] as HTMLElement);
           },
-        );
+          undone: "Suggestions taken back. The passages are as they were.",
+          returnFocus: () => (opener && !opener.hidden ? opener : (part<HTMLElement>(root, "filter")?.querySelector<HTMLElement>("input:checked") ?? null)),
+        });
       },
     });
   };
@@ -647,10 +503,8 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     if (kind === "apply-all") return void applyAll();
     if (!li) return;
     if (kind === "resolve") change(li, "resolved", "resolved", "Flag resolved.", "Flag reopened.");
-    else if (kind === "dismiss")
-      change(li, "resolved", "dismissed", "Flag dismissed.", "Flag reopened.");
-    else if (kind === "reopen")
-      change(li, "open", undefined, "Flag reopened.", "Flag closed again.");
+    else if (kind === "dismiss") change(li, "resolved", "dismissed", "Flag dismissed.", "Flag reopened.");
+    else if (kind === "reopen") change(li, "open", undefined, "Flag reopened.", "Flag closed again.");
     else if (kind === "apply") applyOne(li);
   };
   root.addEventListener("click", onClick);
@@ -678,9 +532,7 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
 // text). Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const handles: FlagListHandle[] = [];
-  for (const el of root.querySelectorAll<HTMLElement>(
-    "[data-cap='flag-list']:not([data-cap-ready])",
-  )) {
+  for (const el of root.querySelectorAll<HTMLElement>("[data-cap='flag-list']:not([data-cap-ready])")) {
     el.setAttribute(READY, "");
     handles.push(attachFlagList(el, ioFor(el.dataset.textSource)));
   }

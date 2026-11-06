@@ -1,10 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const bar = (page: Page) => page.getByRole("navigation", { name: "On this page" });
 const link = (page: Page, name: string) => bar(page).getByRole("link", { name });
@@ -32,9 +27,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the current link is accent text, and the states reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the current link is accent text, and the states reach their contrast", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme);
     await expectContrast(page, [
       { sel: "#anchor-states a[aria-current='location']", what: "the current link in accent text" },
@@ -45,8 +38,7 @@ eachTheme((theme) => {
 
   test("behavior: the current link shows a bar, not color alone", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme);
-    const bar = (sel: string) =>
-      page.locator(sel).evaluate((el) => getComputedStyle(el, "::after").opacity);
+    const bar = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el, "::after").opacity);
     expect(await bar("#anchor-states a[aria-current='location']")).toBe("1");
     expect(await bar("#anchor-states li:first-child a")).toBe("0");
   });
@@ -67,18 +59,14 @@ eachTheme((theme) => {
     `);
   });
 
-  test("behavior: scrolled into the third section, its link is the current one", async ({
-    page,
-  }) => {
+  test("behavior: scrolled into the third section, its link is the current one", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "third");
     await expect(link(page, "When it alerts")).toHaveAttribute("aria-current", "location");
     await expect(bar(page).locator("[aria-current]")).toHaveCount(1);
     await expect(bar(page)).toBeInViewport();
   });
 
-  test("keyboard: Enter on a link moves focus to its section's heading, below the bar", async ({
-    page,
-  }) => {
+  test("keyboard: Enter on a link moves focus to its section's heading, below the bar", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "top");
     await link(page, "What it keeps").focus();
     await page.keyboard.press("Enter");
@@ -95,9 +83,7 @@ eachTheme((theme) => {
       .toBe(true);
   });
 
-  test("keyboard: following a link replaces the address's hash and adds no history entry", async ({
-    page,
-  }) => {
+  test("keyboard: following a link replaces the address's hash and adds no history entry", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "top");
     const before = await page.evaluate(() => history.length);
     await link(page, "Thresholds").focus();
@@ -106,9 +92,7 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => history.length)).toBe(before);
   });
 
-  test("behavior: a bar built from data-section blocks shows when the page grows past two screens, and goes when it shrinks", async ({
-    page,
-  }) => {
+  test("behavior: a bar built from data-section blocks shows when the page grows past two screens, and goes when it shrinks", async ({ page }) => {
     await visitStates(page, "anchor-bar", theme, "blocks");
     await expect(bar(page)).toBeHidden();
     // Content that arrives late (a panel with its data) is what the measuring is for.

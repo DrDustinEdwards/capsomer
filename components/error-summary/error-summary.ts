@@ -92,8 +92,6 @@ export function hideSummary(summary: HTMLElement): void {
 
 // Wires every [data-cap="error-summary"] under root not yet wired (one the server rendered).
 export function enhance(root: ParentNode = document): () => void {
-  const undo = [
-    ...root.querySelectorAll<HTMLElement>("[data-cap='error-summary']:not([data-cap-ready])"),
-  ].map(wireSummary);
+  const undo = [...root.querySelectorAll<HTMLElement>("[data-cap='error-summary']:not([data-cap-ready])")].map(wireSummary);
   return () => undo.forEach((f) => f());
 }

@@ -34,17 +34,7 @@ export function Tooltip({ tip, children, side = "top", align, arrow = true }: To
   return (
     <>
       {children({ ref, "aria-describedby": id })}
-      <div
-        className="cap-popover"
-        data-cap="tooltip"
-        data-variant="tooltip"
-        data-side={side}
-        data-align={align}
-        id={id}
-        role="tooltip"
-        popover="manual"
-        ref={tipRef}
-      >
+      <div className="cap-popover" data-cap="tooltip" data-variant="tooltip" data-side={side} data-align={align} id={id} role="tooltip" popover="manual" ref={tipRef}>
         {tip}
         {arrow ? <span className="cap-popover-arrow" aria-hidden="true" /> : null}
       </div>

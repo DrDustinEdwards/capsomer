@@ -1,31 +1,10 @@
 import { Fragment, useCallback, useEffect, useId, useRef, useState, useLayoutEffect } from "react";
-import {
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../dialog/dialog.react.tsx";
-import {
-  SINGLE_KEYS_NOTE,
-  capName,
-  grouped,
-  keyCaps,
-  modifiedShortcutFor,
-  register,
-  setSheetOpener,
-  setSingleKeys,
-  singleKeysOn,
-  type Shortcut,
-} from "./shortcuts.ts";
+import { Dialog, DialogBody, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
+import { SINGLE_KEYS_NOTE, capName, grouped, keyCaps, modifiedShortcutFor, register, setSheetOpener, setSingleKeys, singleKeysOn, type Shortcut } from "./shortcuts.ts";
 
 // Registers a shortcut while the component is mounted. The latest `run` is always the one
 // called, so passing a new function each render does not re-register.
-export function useShortcut(
-  key: string | string[],
-  run: (e: KeyboardEvent) => void,
-  opts: { label?: string; about?: string; group?: string; when?: () => boolean } = {},
-): void {
+export function useShortcut(key: string | string[], run: (e: KeyboardEvent) => void, opts: { label?: string; about?: string; group?: string; when?: () => boolean } = {}): void {
   const latest = useRef(run);
   useLayoutEffect(() => {
     latest.current = run;
@@ -164,15 +143,8 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
       <DialogFooter align="start">
         <div className="cap-keys-foot">
           <label className="cap-switch">
-            <input
-              type="checkbox"
-              // oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked
-              role="switch"
-              data-cap-part="single-keys"
-              aria-describedby={`${id}-note`}
-              checked={single}
-              onChange={(e) => setSingleKeys(e.target.checked)}
-            />
+            {/* oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked */}
+            <input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby={`${id}-note`} checked={single} onChange={(e) => setSingleKeys(e.target.checked)} />
             <span>Single-key shortcuts</span>
             <span className="cap-switch-state" aria-hidden="true">
               {single ? "On" : "Off"}

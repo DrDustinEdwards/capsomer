@@ -368,10 +368,7 @@ export interface MediaData {
   suggestions?: MediaSuggestions | null;
   // Per-site additions, already rendered to data: lenses (dustinedwards.info's unattached,
   // duplicates, no alt), and toolbar actions.
-  extra?: {
-    lenses?: Array<{ id: string; label: string; count?: number }>;
-    toolbar?: ExtraAction[];
-  };
+  extra?: { lenses?: Array<{ id: string; label: string; count?: number }>; toolbar?: ExtraAction[] };
 }
 
 // What the picker gives the host: the file and the alt text the person wrote for this use ("" when
@@ -431,11 +428,7 @@ export interface MentionsData {
 // value as one field per item.
 // A list's address with a query, its keys in one fixed order and the empty ones left out, so the
 // same view is always the same address. `base` is the route (any query on it is dropped).
-export function queryHref<Q extends object>(
-  base: string,
-  q: Q,
-  order: ReadonlyArray<keyof Q>,
-): string {
+export function queryHref<Q extends object>(base: string, q: Q, order: ReadonlyArray<keyof Q>): string {
   const params = new URLSearchParams();
   for (const k of order) {
     const v = q[k];
@@ -458,10 +451,7 @@ export function intentForm(intent: string, fields: IntentFields = {}): FormData 
 
 // A result's outcomes as the bulk bar lists them, each named as the person knows it. An item that
 // is gone (deleted) keeps the name it had when the form was posted.
-export function outcomesOf(
-  result: Pick<IntentResult, "outcomes">,
-  names: ReadonlyMap<string, string>,
-): BulkOutcome[] {
+export function outcomesOf(result: Pick<IntentResult, "outcomes">, names: ReadonlyMap<string, string>): BulkOutcome[] {
   return (result.outcomes ?? []).map((o) => ({
     id: o.id,
     label: names.get(o.id) ?? o.id,

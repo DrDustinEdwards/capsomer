@@ -1,13 +1,5 @@
 import { useEffect, useId, useRef, useState, type ReactNode, useLayoutEffect } from "react";
-import {
-  acceptedText,
-  dragHasFiles,
-  formatBytes,
-  rejectedLead,
-  setInputFiles,
-  validateFiles,
-  type Rejection,
-} from "./drop-zone.ts";
+import { acceptedText, dragHasFiles, formatBytes, rejectedLead, setInputFiles, validateFiles, type Rejection } from "./drop-zone.ts";
 
 export interface DropZoneProps {
   // The same list an input's accept attribute takes: "image/*,.pdf".
@@ -38,22 +30,7 @@ export interface DropZoneProps {
 
 const CRIT = "M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z";
 
-export function DropZone({
-  accept,
-  maxBytes,
-  maxFiles,
-  multiple = false,
-  name,
-  disabled,
-  scope = "zone",
-  paste,
-  title,
-  hint,
-  acceptedList = true,
-  onAccepted,
-  onRejected,
-  id,
-}: DropZoneProps) {
+export function DropZone({ accept, maxBytes, maxFiles, multiple = false, name, disabled, scope = "zone", paste, title, hint, acceptedList = true, onAccepted, onRejected, id }: DropZoneProps) {
   const own = useId();
   const base = id ?? own;
   const input = useRef<HTMLInputElement>(null);
@@ -72,14 +49,9 @@ export function DropZone({
     if (!el) return;
     const take = (files: ArrayLike<File>, fromInput = false) => {
       const l = latest.current;
-      const rules = {
-        accept: l.accept,
-        maxBytes: l.maxBytes,
-        maxFiles: l.maxFiles ?? (l.multiple ? undefined : 1),
-      };
+      const rules = { accept: l.accept, maxBytes: l.maxBytes, maxFiles: l.maxFiles ?? (l.multiple ? undefined : 1) };
       const result = validateFiles(Array.from(files), rules);
-      if (input.current && (!fromInput || result.rejected.length > 0))
-        setInputFiles(input.current, result.accepted);
+      if (input.current && (!fromInput || result.rejected.length > 0)) setInputFiles(input.current, result.accepted);
       setAccepted(result.accepted);
       setRejected(result.rejected);
       if (result.accepted.length > 0) l.onAccepted?.(result.accepted, result.rejected);
@@ -109,9 +81,7 @@ export function DropZone({
       if (ev.defaultPrevented) return;
       const files = ev.dataTransfer?.files;
       if (!files || files.length === 0) {
-        const editable =
-          ev.target instanceof Element &&
-          ev.target.closest("input, textarea, [contenteditable='true']");
+        const editable = ev.target instanceof Element && ev.target.closest("input, textarea, [contenteditable='true']");
         if (page && !editable) ev.preventDefault();
         return;
       }
@@ -149,34 +119,11 @@ export function DropZone({
 
   const state = over ? "over" : rejected.length > 0 ? "rejected" : "idle";
   return (
-    <div
-      ref={root}
-      className="cap-drop"
-      data-state={state}
-      data-scope={scope === "page" ? "page" : undefined}
-      data-accepted-list={acceptedList ? undefined : "off"}
-    >
+    <div ref={root} className="cap-drop" data-state={state} data-scope={scope === "page" ? "page" : undefined} data-accepted-list={acceptedList ? undefined : "off"}>
       <label className="cap-drop-label">
-        <input
-          ref={input}
-          className="cap-drop-input"
-          type="file"
-          name={name}
-          multiple={multiple || (maxFiles ?? 1) > 1}
-          accept={accept}
-          disabled={disabled}
-          aria-labelledby={`${base}-title`}
-          aria-describedby={`${base}-hint`}
-        />
+        <input ref={input} className="cap-drop-input" type="file" name={name} multiple={multiple || (maxFiles ?? 1) > 1} accept={accept} disabled={disabled} aria-labelledby={`${base}-title`} aria-describedby={`${base}-hint`} />
         <span className="cap-drop-icon" aria-hidden="true">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
           </svg>
         </span>
@@ -216,12 +163,7 @@ export function DropZone({
         {rejected.length > 0 ? (
           <>
             <p className="cap-drop-lead" data-tone="crit">
-              <svg
-                className="cap-status-glyph"
-                viewBox="0 0 16 16"
-                aria-hidden="true"
-                focusable="false"
-              >
+              <svg className="cap-status-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                 <path fill="currentColor" fillRule="evenodd" d={CRIT} />
               </svg>
               {rejectedLead(rejected.length)}

@@ -1,43 +1,9 @@
-import {
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type MouseEvent,
-  type PointerEvent,
-  type ReactNode,
-} from "react";
+import { useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent, type ReactNode } from "react";
 import { nextTypeahead, TYPEAHEAD_MS, type TypeaheadState } from "../listbox/listbox.ts";
 import { startPointerDrag } from "../sortable-list/sortable-list.ts";
-import {
-  cannotMoveText,
-  dropMove,
-  findNode,
-  movedText,
-  applyMove,
-  planMove,
-  treeKey,
-  visibleRows,
-  zoneAt,
-  type DropZone,
-  type TreeMove,
-  type TreeSelection,
-} from "./tree.ts";
+import { cannotMoveText, dropMove, findNode, movedText, applyMove, planMove, treeKey, visibleRows, zoneAt, type DropZone, type TreeMove, type TreeSelection } from "./tree.ts";
 
-export {
-  applyMove,
-  branchIds,
-  dropMove,
-  findNode,
-  findPlace,
-  movedText,
-  planMove,
-  reverseMove,
-  treeKey,
-  visibleRows,
-} from "./tree.ts";
+export { applyMove, branchIds, dropMove, findNode, findPlace, movedText, planMove, reverseMove, treeKey, visibleRows } from "./tree.ts";
 export type { DropZone, MoveDir, TreeMove, TreePlace, TreeSelection, VisibleRow } from "./tree.ts";
 
 // The tree's HTML contract, rendered from props, with the roles and states the behavior
@@ -80,26 +46,12 @@ export interface TreeProps {
 }
 
 const Chevron = () => (
-  <svg
-    viewBox="0 0 16 16"
-    width="16"
-    height="16"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    focusable="false"
-  >
+  <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" focusable="false">
     <path d="M6 3.5 10.5 8 6 12.5" />
   </svg>
 );
 
-function useControllable<T>(
-  value: T | undefined,
-  initial: T,
-  onChange?: (v: T) => void,
-): [T, (v: T) => void] {
+function useControllable<T>(value: T | undefined, initial: T, onChange?: (v: T) => void): [T, (v: T) => void] {
   const [own, setOwn] = useState(initial);
   const v = value ?? own;
   return [
@@ -111,21 +63,7 @@ function useControllable<T>(
   ];
 }
 
-export function Tree({
-  nodes,
-  selection = "single",
-  selected,
-  defaultSelected = [],
-  onSelectedChange,
-  expanded,
-  defaultExpanded = [],
-  onExpandedChange,
-  onMove,
-  canMove,
-  variant,
-  className,
-  ...name
-}: TreeProps) {
+export function Tree({ nodes, selection = "single", selected, defaultSelected = [], onSelectedChange, expanded, defaultExpanded = [], onExpandedChange, onMove, canMove, variant, className, ...name }: TreeProps) {
   const [open, setOpen] = useControllable(expanded, defaultExpanded, onExpandedChange);
   const [chosen, setChosenRaw] = useState(defaultSelected);
   const picked = selected ?? chosen;
@@ -142,9 +80,7 @@ export function Tree({
   const movable = !!onMove;
 
   // The tab stop: the focused row, else the chosen one that shows, else the first.
-  const stop = rows.some((r) => r.id === current)
-    ? current
-    : (rows.find((r) => picked.includes(r.id))?.id ?? rows[0]?.id ?? null);
+  const stop = rows.some((r) => r.id === current) ? current : (rows.find((r) => picked.includes(r.id))?.id ?? rows[0]?.id ?? null);
 
   useLayoutEffect(() => {
     if (!wantFocus.current) return;
@@ -165,12 +101,7 @@ export function Tree({
   };
   const choose = (node: TreeNode) => {
     if (selection === "none" || node.disabled) return;
-    const next =
-      selection === "single"
-        ? [node.id]
-        : picked.includes(node.id)
-          ? picked.filter((x) => x !== node.id)
-          : [...picked, node.id];
+    const next = selection === "single" ? [node.id] : picked.includes(node.id) ? picked.filter((x) => x !== node.id) : [...picked, node.id];
     if (selected === undefined) setChosenRaw(next);
     onSelectedChange?.(next, node);
   };
@@ -189,8 +120,7 @@ export function Tree({
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLUListElement>) => {
-    const id =
-      (e.target as HTMLElement).closest<HTMLElement>("[data-cap-id]")?.dataset.capId ?? null;
+    const id = (e.target as HTMLElement).closest<HTMLElement>("[data-cap-id]")?.dataset.capId ?? null;
     if (!id || e.nativeEvent.isComposing) return;
     const row = e.target as HTMLElement;
     if (e.key === "Enter" && row.matches("a[href]")) return;
@@ -209,13 +139,7 @@ export function Tree({
       return;
     }
     if (e.key.length === 1 && (e.key !== " " || typing) && !e.altKey && !e.ctrlKey && !e.metaKey) {
-      const res = nextTypeahead(
-        typed.current,
-        e.key,
-        Date.now(),
-        rows.map((x) => x.label),
-        rows.findIndex((x) => x.id === id),
-      );
+      const res = nextTypeahead(typed.current, e.key, Date.now(), rows.map((x) => x.label), rows.findIndex((x) => x.id === id));
       typed.current = res.state;
       const hit = rows[res.index];
       if (hit) {
@@ -245,15 +169,9 @@ export function Tree({
         plan = null;
         const over = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-cap-id]");
         const target = over?.dataset.capId;
-        if (!over || !target || target === node.id || !rowEls.current.has(target))
-          return setDrop(null);
+        if (!over || !target || target === node.id || !rowEls.current.has(target)) return setDrop(null);
         const box = over.getBoundingClientRect();
-        const zone = zoneAt(
-          y,
-          box.top,
-          box.height,
-          findNode(nodes, target)?.children !== undefined,
-        );
+        const zone = zoneAt(y, box.top, box.height, findNode(nodes, target)?.children !== undefined);
         const m = dropMove(nodes, node.id, target, zone);
         plan = m && (!canMove || canMove(m)) ? m : null;
         setDrop(plan ? { id: target, zone } : null);
@@ -294,9 +212,7 @@ export function Tree({
             aria-setsize={list.length}
             aria-expanded={branch ? isOpen : undefined}
             aria-owns={branch && node.children!.length > 0 ? groupId : undefined}
-            aria-selected={
-              selection === "none" || node.disabled ? undefined : picked.includes(node.id)
-            }
+            aria-selected={selection === "none" || node.disabled ? undefined : picked.includes(node.id)}
             aria-disabled={node.disabled ? true : undefined}
             data-cap-id={node.id}
             data-drop={drop?.id === node.id ? drop.zone : undefined}

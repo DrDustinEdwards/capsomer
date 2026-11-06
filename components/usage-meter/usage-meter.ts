@@ -93,8 +93,7 @@ export function assess(input: UsageInput): UsageAssessment {
     projectedAtReset = used + rate * (resetsAt - now);
     if (projectedAtReset >= limit && rate > 0 && used < limit) fullAt = now + (limit - used) / rate;
   }
-  const projectedPct =
-    projectedAtReset == null ? null : Math.round((projectedAtReset / limit) * 100);
+  const projectedPct = projectedAtReset == null ? null : Math.round((projectedAtReset / limit) * 100);
   const noProjection =
     resetsAt == null
       ? enoughHistory
@@ -133,21 +132,11 @@ export function assess(input: UsageInput): UsageAssessment {
   }
   if (fullAt != null && resetsAt != null && fullAt < resetsAt) {
     const lead = `Full in about ${duration(fullAt - now)}`;
-    return out(
-      "warn",
-      "Runs out before the reset",
-      lead,
-      `${lead}, ${duration(resetsAt - fullAt)} before the reset.${atLimitSentence}`,
-    );
+    return out("warn", "Runs out before the reset", lead, `${lead}, ${duration(resetsAt - fullAt)} before the reset.${atLimitSentence}`);
   }
   if (projectedAtReset == null || resetsAt == null) {
     const lead = resetsAt == null && enoughHistory ? "Does not reset" : "No projection";
-    return out(
-      frac >= WARN_AT ? "warn" : "ok",
-      frac >= WARN_AT ? "Over 75% used" : "No projection yet",
-      lead,
-      noProjection,
-    );
+    return out(frac >= WARN_AT ? "warn" : "ok", frac >= WARN_AT ? "Over 75% used" : "No projection yet", lead, noProjection);
   }
   const by = `about ${projectedPct}% by the reset at ${utcClock(resetsAt)}, in ${duration(resetsAt - now)}.`;
   if (frac >= WARN_AT) {
@@ -159,11 +148,7 @@ export function assess(input: UsageInput): UsageAssessment {
 
 // The bar's widths, as percentages of the limit, clamped to the bar. The meter draws the
 // same shares as 0 to 1 ratios; these stay for apps that size their own marks.
-export function widths(
-  used: number,
-  limit: number,
-  projected: number | null,
-): { used: number; projected: number } {
+export function widths(used: number, limit: number, projected: number | null): { used: number; projected: number } {
   const pct = (v: number) => (limit > 0 ? Math.min(100, Math.max(0, (v * 100) / limit)) : 100);
   const u = pct(used);
   return { used: u, projected: projected == null ? u : Math.max(u, pct(projected)) };
@@ -171,22 +156,13 @@ export function widths(
 
 // The rows as a table, Enarratio's DataTable shape (the first column holds the row headers), for
 // its dataTableBlock(): the meter is the picture, and this is its numbers as text (B30).
-export function usageTable(items: Array<UsageInput & { name: string }>): {
-  columns: string[];
-  rows: string[][];
-} {
+export function usageTable(items: Array<UsageInput & { name: string }>): { columns: string[]; rows: string[][] } {
   const n = (v: number) => Math.round(v).toLocaleString("en-US");
   return {
     columns: ["Measure", "Used", "Limit", "Percent used", "Projected at the reset"],
     rows: items.map((item) => {
       const a = assess(item);
-      return [
-        item.name,
-        n(item.used),
-        n(item.limit),
-        `${a.percent}%`,
-        a.projectedAtReset == null ? "no projection" : n(a.projectedAtReset),
-      ];
+      return [item.name, n(item.used), n(item.limit), `${a.percent}%`, a.projectedAtReset == null ? "no projection" : n(a.projectedAtReset)];
     }),
   };
 }
@@ -199,9 +175,7 @@ export const sizeBar: (bar: HTMLElement) => void = drawBar;
 // its rows' bars (each row is a [data-cap="meter"]). Returns a function that detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const meter of root.querySelectorAll<HTMLElement>(
-    "[data-cap='usage-meter']:not([data-cap-ready])",
-  )) {
+  for (const meter of root.querySelectorAll<HTMLElement>("[data-cap='usage-meter']:not([data-cap-ready])")) {
     meter.dataset.capReady = "";
     undo.push(enhanceMeter(meter));
     undo.push(() => {

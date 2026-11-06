@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -43,9 +38,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("keyboard: Enter and Space on a group row toggle aria-expanded and the rows", async ({
-    page,
-  }) => {
+  test("keyboard: Enter and Space on a group row toggle aria-expanded and the rows", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
     const btn = page.getByRole("button", { name: /^Notices\s*,\s*4$/ });
     const rows = page.locator("#notices-rows");
@@ -68,26 +61,18 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(inner).toHaveAttribute("aria-expanded", "true");
     await expect(page.locator("#docs-updates")).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /^Dependency updates\s*,\s*5$/ }),
-    ).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByRole("button", { name: /^Dependency updates\s*,\s*5$/ })).toHaveAttribute("aria-expanded", "true");
   });
 
-  test(
-    "accessibility: a group row in a heading is found by heading and still toggles by key",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "disclosure", theme);
-      await expect(
-        page.getByRole("heading", { name: /^Finished jobs\s*,\s*12$/, level: 3 }),
-      ).toBeVisible();
-      const btn = page.getByRole("button", { name: /^Finished jobs\s*,\s*12$/ });
-      await btn.focus();
-      await page.keyboard.press("Enter");
-      await expect(btn).toHaveAttribute("aria-expanded", "true");
-      await expect(page.locator("#queue-done-rows")).toBeVisible();
-    },
-  );
+  test("accessibility: a group row in a heading is found by heading and still toggles by key", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "disclosure", theme);
+    await expect(page.getByRole("heading", { name: /^Finished jobs\s*,\s*12$/, level: 3 })).toBeVisible();
+    const btn = page.getByRole("button", { name: /^Finished jobs\s*,\s*12$/ });
+    await btn.focus();
+    await page.keyboard.press("Enter");
+    await expect(btn).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator("#queue-done-rows")).toBeVisible();
+  });
 
   test("keyboard: Enter on a summary opens and closes its section", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
@@ -111,9 +96,7 @@ eachTheme((theme) => {
     await expect(first).not.toHaveAttribute("open", "");
   });
 
-  test("keyboard: an accordion-variant section opens and closes with Enter, one at a time", async ({
-    page,
-  }) => {
+  test("keyboard: an accordion-variant section opens and closes with Enter, one at a time", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
     const items = page.locator("#accordion-specimen details");
     await expect(items.nth(0)).toHaveAttribute("open", "");
@@ -123,29 +106,20 @@ eachTheme((theme) => {
     await expect(items.nth(0)).not.toHaveAttribute("open", "");
   });
 
-  test("accessibility: a summary in the accordion variant and a pressed one keep their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: a summary in the accordion variant and a pressed one keep their contrast", async ({ page }) => {
     await visitStates(page, "disclosure", theme);
     await expectContrast(page, [
       { sel: "#accordion-specimen summary", what: "an accordion summary" },
-      {
-        sel: "#accordion-specimen details[open] .cap-disclosure-body p",
-        what: "an accordion panel's text",
-      },
+      { sel: "#accordion-specimen details[open] .cap-disclosure-body p", what: "an accordion panel's text" },
       { sel: "summary[data-force='pressed']", what: "a pressed summary" },
       { sel: ".cap-group-toggle[data-force='pressed']", what: "a pressed group row" },
     ]);
   });
 
-  test(
-    "accessibility: a disabled group row is not operable and keeps its state",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "disclosure", theme);
-      const btn = page.getByRole("button", { name: /^Archived/ });
-      await expect(btn).toBeDisabled();
-      await expect(btn).toHaveAttribute("aria-expanded", "false");
-    },
-  );
+  test("accessibility: a disabled group row is not operable and keeps its state", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "disclosure", theme);
+    const btn = page.getByRole("button", { name: /^Archived/ });
+    await expect(btn).toBeDisabled();
+    await expect(btn).toHaveAttribute("aria-expanded", "false");
+  });
 });

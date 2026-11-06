@@ -1,26 +1,13 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import { patchSvg } from "./manual.ts";
 
 test("behavior: a patch escapes its words and draws one dot per thing counted, at most 24", () => {
-  const svg = patchSvg({
-    id: "a&b",
-    name: "<The desk>",
-    foot: "example.com",
-    count: 6,
-    unit: "sites",
-  });
+  const svg = patchSvg({ id: "a&b", name: "<The desk>", foot: "example.com", count: 6, unit: "sites" });
   expect(svg).not.toContain("<The desk>");
   expect(svg).toContain("&lt;THE DESK&gt;");
   expect(svg.match(/cap-patch-dot/g)).toHaveLength(6);
-  expect(
-    patchSvg({ id: "x", name: "x", foot: "x", count: 80, unit: "x" }).match(/cap-patch-dot/g),
-  ).toHaveLength(24);
+  expect(patchSvg({ id: "x", name: "x", foot: "x", count: 80, unit: "x" }).match(/cap-patch-dot/g)).toHaveLength(24);
 });
 
 eachTheme((theme) => {
@@ -29,9 +16,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: labels, values and the light type on dark panels reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: labels, values and the light type on dark panels reach their contrast", async ({ page }) => {
     await visitStates(page, "manual", theme);
     await expectContrast(page, [
       { sel: "#m-sign-head .cap-running-head-name", what: "a sign head's name" },

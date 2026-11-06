@@ -14,22 +14,8 @@ import "../tokens/family-magenta.css";
 import "../css/prose.css";
 import "../tokens/themes.css";
 import "./site.css";
-import {
-  AdminShell,
-  FIRST_PAGE,
-  type AdminEntry,
-} from "../components/admin-shell/admin-shell.react.tsx";
-import {
-  BASE,
-  CHANGELOG_MD,
-  COMPONENTS,
-  DEFAULTS_MD,
-  FAMILIES,
-  META,
-  RESULTS_BUILD,
-  fetchResults,
-  type Results,
-} from "./data.ts";
+import { AdminShell, FIRST_PAGE, type AdminEntry } from "../components/admin-shell/admin-shell.react.tsx";
+import { BASE, CHANGELOG_MD, COMPONENTS, DEFAULTS_MD, FAMILIES, META, RESULTS_BUILD, fetchResults, type Results } from "./data.ts";
 import { ColorView } from "./color-view.tsx";
 import { codeRegionProps, renderMarkdown } from "./markdown.ts";
 import { Panel, ResultsContext, TOOL, TestList, Verdict, useResults, when } from "./parts.tsx";
@@ -37,59 +23,16 @@ import { MarkdownView, MotionView, TestsView, TypeView } from "./views.tsx";
 
 import.meta.glob("../components/*/*.css", { eager: true });
 
-type View =
-  | "overview"
-  | "components"
-  | "color"
-  | "type"
-  | "motion"
-  | "tests"
-  | "defaults"
-  | "changes";
+type View = "overview" | "components" | "color" | "type" | "motion" | "tests" | "defaults" | "changes";
 const VIEWS: Array<{ id: View; label: string; icon: ReactNode; group: string }> = [
-  {
-    id: "overview",
-    label: FIRST_PAGE,
-    icon: <Icon d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" />,
-    group: "Design system",
-  },
-  {
-    id: "components",
-    label: "Components",
-    icon: <Icon d="M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z" />,
-    group: "Design system",
-  },
-  {
-    id: "color",
-    label: "Color and contrast",
-    icon: <Icon d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 3v18" />,
-    group: "Design system",
-  },
-  {
-    id: "type",
-    label: "Type and space",
-    icon: <Icon d="M4.5 4.5h15M12 4.5v15M8.5 19.5h7" />,
-    group: "Design system",
-  },
-  {
-    id: "motion",
-    label: "Motion",
-    icon: <Icon d="M3 12h4.5l3-6 3 12 3-6H21" />,
-    group: "Design system",
-  },
+  { id: "overview", label: FIRST_PAGE, icon: <Icon d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" />, group: "Design system" },
+  { id: "components", label: "Components", icon: <Icon d="M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z" />, group: "Design system" },
+  { id: "color", label: "Color and contrast", icon: <Icon d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 3v18" />, group: "Design system" },
+  { id: "type", label: "Type and space", icon: <Icon d="M4.5 4.5h15M12 4.5v15M8.5 19.5h7" />, group: "Design system" },
+  { id: "motion", label: "Motion", icon: <Icon d="M3 12h4.5l3-6 3 12 3-6H21" />, group: "Design system" },
   { id: "tests", label: "Tests", icon: <Icon d="m5 12.5 4.5 4.5L19 7" />, group: "Records" },
-  {
-    id: "defaults",
-    label: "Defaults",
-    icon: <Icon d="M5 3.5h14v17H5zM8.5 8h7M8.5 12h7M8.5 16h4.5" />,
-    group: "Records",
-  },
-  {
-    id: "changes",
-    label: "Changes",
-    icon: <Icon d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 7v5l3.5 2.5" />,
-    group: "Records",
-  },
+  { id: "defaults", label: "Defaults", icon: <Icon d="M5 3.5h14v17H5zM8.5 8h7M8.5 12h7M8.5 16h4.5" />, group: "Records" },
+  { id: "changes", label: "Changes", icon: <Icon d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18zM12 7v5l3.5 2.5" />, group: "Records" },
 ];
 
 function Icon({ d }: { d: string }) {
@@ -133,33 +76,20 @@ function useRoute(): { view: View; detail: string | null } {
 
 // Unreleased work and the last three releases; the whole changelog is a link, not 40,000px of page.
 const recentChanges = (md: string) =>
-  `${md
-    .split(/\n(?=## \[)/)
-    .slice(0, 4)
-    .join(
-      "\n",
-    )}\n\nOlder releases: [the whole changelog](https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md).`;
+  `${md.split(/\n(?=## \[)/).slice(0, 4).join("\n")}\n\nOlder releases: [the whole changelog](https://github.com/DrDustinEdwards/capsomer/blob/main/CHANGELOG.md).`;
 
-const href = (view: View, detail?: string) =>
-  `#/${view}${detail ? `/${encodeURIComponent(detail)}` : ""}`;
+const href = (view: View, detail?: string) => `#/${view}${detail ? `/${encodeURIComponent(detail)}` : ""}`;
 
 // ---- views ---------------------------------------------------------------------------------
 
 function Overview() {
   const res = useResults();
-  const failing = Object.entries(res.components).filter(
-    ([, r]) => r.keyboard.failed + r.accessibility.failed + r.behavior.failed > 0,
-  );
+  const failing = Object.entries(res.components).filter(([, r]) => r.keyboard.failed + r.accessibility.failed + r.behavior.failed > 0);
   return (
     <div className="site-page">
       <div className="site-head">
         <h1>Capsomer</h1>
-        <p>
-          The shared design system for every one of Dustin Edwards's apps: one palette from one
-          seed, one set of components, and the tests that keep them accessible. Every rule is a
-          default with its reason; CI blocks only on accessibility, security, privacy and
-          correctness.
-        </p>
+        <p>The shared design system for every one of Dustin Edwards's apps: one palette from one seed, one set of components, and the tests that keep them accessible. Every rule is a default with its reason; CI blocks only on accessibility, security, privacy and correctness.</p>
       </div>
       <div className="site-figures">
         <a className="site-figure" href={href("components")}>
@@ -169,9 +99,7 @@ function Overview() {
         </a>
         <a className="site-figure" href={href("tests")}>
           <span className="cap-label">Tests</span>
-          <b className="cap-num">
-            {res.available ? res.totals.passed + res.totals.failed : "No data"}
-          </b>
+          <b className="cap-num">{res.available ? res.totals.passed + res.totals.failed : "No data"}</b>
           {/* The number is said once, above: this line says only how the run went. */}
           <span>
             {res.available ? (
@@ -190,13 +118,8 @@ function Overview() {
             <>
               <span className="cap-muted">{`${Object.keys(FAMILIES.families).length} color families in 2 themes`}</span>
               <span>
-                <span
-                  className="cap-status"
-                  data-tone={FAMILIES.pairs.some((p) => !p.pass) ? "crit" : "ok"}
-                >
-                  {FAMILIES.pairs.some((p) => !p.pass)
-                    ? `${FAMILIES.pairs.filter((p) => !p.pass).length} failing`
-                    : "None failing"}
+                <span className="cap-status" data-tone={FAMILIES.pairs.some((p) => !p.pass) ? "crit" : "ok"}>
+                  {FAMILIES.pairs.some((p) => !p.pass) ? `${FAMILIES.pairs.filter((p) => !p.pass).length} failing` : "None failing"}
                 </span>
               </span>
             </>
@@ -207,11 +130,7 @@ function Overview() {
       </div>
       {failing.length > 0 && (
         <div className="cap-banner" data-tone="crit" role="alert">
-          <b>
-            {failing.length === 1
-              ? "One component is failing its tests: "
-              : `${failing.length} components are failing their tests: `}
-          </b>
+          <b>{failing.length === 1 ? "One component is failing its tests: " : `${failing.length} components are failing their tests: `}</b>
           {failing.map(([n], i) => (
             <span key={n}>
               {i ? ", " : ""}
@@ -242,10 +161,7 @@ import { AdminShell, FIRST_PAGE } from "capsomer/react/admin-shell";
   <div className="cap-admin-page">…</div>
 </AdminShell>`}</code>
         </pre>
-        <p className="cap-muted">
-          Every Capsomer rule sits in a cap.* cascade layer, so an app's own CSS wins while it moves
-          over one screen at a time.
-        </p>
+        <p className="cap-muted">Every Capsomer rule sits in a cap.* cascade layer, so an app's own CSS wins while it moves over one screen at a time.</p>
       </Panel>
       <p className="cap-muted site-built">
         Built {when(META.built)} from {META.commit ?? "a working copy"}. Tests ran {when(res.ran)}.
@@ -266,18 +182,10 @@ function ComponentsView() {
     <div className="site-page">
       <div className="site-head">
         <h1>Components</h1>
-        <p>
-          Every component, how it is built, and its tests from the last run. Open one to see every
-          state in both themes.
-        </p>
+        <p>Every component, how it is built, and its tests from the last run. Open one to see every state in both themes.</p>
       </div>
-      <div
-        className="cap-table-wrap"
-        role="region"
-        aria-labelledby="components-caption"
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
-        tabIndex={0}
-      >
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
+      <div className="cap-table-wrap" role="region" aria-labelledby="components-caption" tabIndex={0}>
         <table className="cap-table">
           <caption id="components-caption" className="cap-sr-only">
             Components and their test results
@@ -307,10 +215,7 @@ function ComponentsView() {
                     <Verdict passed={r?.keyboard.passed ?? 0} failed={r?.keyboard.failed ?? 0} />
                   </td>
                   <td>
-                    <Verdict
-                      passed={r?.accessibility.passed ?? 0}
-                      failed={r?.accessibility.failed ?? 0}
-                    />
+                    <Verdict passed={r?.accessibility.passed ?? 0} failed={r?.accessibility.failed ?? 0} />
                   </td>
                   <td className="cap-mono">{c.added || "0.1.0"}</td>
                 </tr>
@@ -368,12 +273,7 @@ function ComponentPage({ name }: { name: string }) {
           {(["light", "dark"] as const).map((t) => (
             <figure key={t}>
               <figcaption className="cap-label">{t === "light" ? "Light" : "Dark"}</figcaption>
-              <iframe
-                className="site-frame"
-                src={`${states}?theme=${t}`}
-                title={`${c.title} states, ${t} theme`}
-                loading="lazy"
-              />
+              <iframe className="site-frame" src={`${states}?theme=${t}`} title={`${c.title} states, ${t} theme`} loading="lazy" />
             </figure>
           ))}
         </div>
@@ -381,17 +281,11 @@ function ComponentPage({ name }: { name: string }) {
           <a href={states}>Open the states page on its own</a>.
         </p>
       </Panel>
-      <Panel
-        title="Tests"
-        id="tests"
-        src={RESULTS.available ? `Ran ${when(RESULTS.ran)}` : "No run recorded in this build"}
-      >
+      <Panel title="Tests" id="tests" src={RESULTS.available ? `Ran ${when(RESULTS.ran)}` : "No run recorded in this build"}>
         {r ? (
           <>
             <p className="site-verdicts">
-              Keyboard <Verdict passed={r.keyboard.passed} failed={r.keyboard.failed} />{" "}
-              Accessibility{" "}
-              <Verdict passed={r.accessibility.passed} failed={r.accessibility.failed} /> Behavior{" "}
+              Keyboard <Verdict passed={r.keyboard.passed} failed={r.keyboard.failed} /> Accessibility <Verdict passed={r.accessibility.passed} failed={r.accessibility.failed} /> Behavior{" "}
               <Verdict passed={r.behavior.passed} failed={r.behavior.failed} />
             </p>
             <TestList rows={r.tests} />
@@ -403,10 +297,7 @@ function ComponentPage({ name }: { name: string }) {
           </div>
         )}
       </Panel>
-      <article
-        className="site-doc"
-        dangerouslySetInnerHTML={{ __html: renderMarkdown(c.body.replace(/^#\s+.*\n/, ""), 1) }}
-      />
+      <article className="site-doc" dangerouslySetInnerHTML={{ __html: renderMarkdown(c.body.replace(/^#\s+.*\n/, ""), 1) }} />
     </div>
   );
 }
@@ -436,9 +327,7 @@ function App() {
         group: v.group,
         current: view === v.id,
         ...(v.id === "components" ? { count: COMPONENTS.length } : {}),
-        ...(v.id === "tests" && failed
-          ? { count: failed, countNote: "failing", tone: "crit" as const }
-          : {}),
+        ...(v.id === "tests" && failed ? { count: failed, countNote: "failing", tone: "crit" as const } : {}),
       })),
     [view, failed],
   );
@@ -447,19 +336,13 @@ function App() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "[" || e.ctrlKey || e.metaKey || e.altKey) return;
-      if (
-        (e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")
-      )
-        return;
+      if ((e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")) return;
       document.querySelector<HTMLButtonElement>("[data-cap-part='menu-toggle']")?.click();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
-  const pageName =
-    view === "components" && detail
-      ? (COMPONENTS.find((c) => c.name === detail)?.title ?? detail)
-      : (VIEWS.find((x) => x.id === view)?.label ?? FIRST_PAGE);
+  const pageName = view === "components" && detail ? (COMPONENTS.find((c) => c.name === detail)?.title ?? detail) : (VIEWS.find((x) => x.id === view)?.label ?? FIRST_PAGE);
 
   let page: ReactNode;
   if (view === "components" && detail) page = <ComponentPage name={detail} />;
@@ -469,8 +352,7 @@ function App() {
   else if (view === "motion") page = <MotionView />;
   else if (view === "tests") page = <TestsView />;
   else if (view === "defaults") page = <MarkdownView title="Defaults" md={DEFAULTS_MD} />;
-  else if (view === "changes")
-    page = <MarkdownView title="Changes" md={recentChanges(CHANGELOG_MD)} />;
+  else if (view === "changes") page = <MarkdownView title="Changes" md={recentChanges(CHANGELOG_MD)} />;
   else page = <Overview />;
 
   return (
@@ -483,11 +365,7 @@ function App() {
         nav={nav}
         tabs={tabs}
         page={pageName}
-        trail={
-          view === "components" && detail
-            ? [{ label: "Components", href: href("components") }]
-            : undefined
-        }
+        trail={view === "components" && detail ? [{ label: "Components", href: href("components") }] : undefined}
         updated={{ at: RESULTS.ran ?? META.built }}
         prefKey="cap-site-rail"
       >

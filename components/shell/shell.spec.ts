@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, expanded", async ({ page }) => {
@@ -20,9 +15,7 @@ eachTheme((theme) => {
   test("accessibility: no axe violations, collapsed with a name shown", async ({ page }) => {
     await visitStates(page, "shell", theme, "collapsed-tip");
     await expectNoAxeViolations(page);
-    await expectContrast(page, [
-      { sel: ".cap-shell-rail a[data-force='hover'] .cap-shell-label", what: "the shown name" },
-    ]);
+    await expectContrast(page, [{ sel: ".cap-shell-rail a[data-force='hover'] .cap-shell-label", what: "the shown name" }]);
   });
 
   test("accessibility: no axe violations at phone width", async ({ page }) => {
@@ -41,9 +34,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: the tab bar's current and More states reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the tab bar's current and More states reach their contrast", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "shell", theme, "phone");
     await expectContrast(page, [
@@ -53,31 +44,15 @@ eachTheme((theme) => {
     ]);
     await visitStates(page, "shell", theme, "phone-more-current");
     await expectNoAxeViolations(page);
-    await expect(page.getByRole("button", { name: "More" })).toHaveAttribute(
-      "aria-current",
-      "true",
-    );
-    await expectContrast(page, [
-      { sel: ".cap-shell-tabs button[aria-current]", what: "the current More tab" },
-    ]);
+    await expect(page.getByRole("button", { name: "More" })).toHaveAttribute("aria-current", "true");
+    await expectContrast(page, [{ sel: ".cap-shell-tabs button[aria-current]", what: "the current More tab" }]);
   });
 
-  test("accessibility: the top bar's Settings link is named, current on its view, after the theme switch and before Sign out", async ({
-    page,
-  }) => {
+  test("accessibility: the top bar's Settings link is named, current on its view, after the theme switch and before Sign out", async ({ page }) => {
     await visitStates(page, "shell", theme, "collapsed");
     const top = page.locator(".cap-shell-top");
-    await expect(top.getByRole("link", { name: "Settings" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-    await expectContrast(page, [
-      {
-        sel: ".cap-shell-settings[aria-current='page']",
-        what: "the current Settings button's edge",
-        part: "border",
-      },
-    ]);
+    await expect(top.getByRole("link", { name: "Settings" })).toHaveAttribute("aria-current", "page");
+    await expectContrast(page, [{ sel: ".cap-shell-settings[aria-current='page']", what: "the current Settings button's edge", part: "border" }]);
     await visitStates(page, "shell", theme, "expanded");
     // Document order: the theme switch, then Settings, then Sign out.
     const order = await top.evaluate((el) => {
@@ -91,15 +66,10 @@ eachTheme((theme) => {
     expect(order[1]).toBeGreaterThan(order[0]!);
     expect(order[2]).toBeGreaterThan(order[1]!);
     await expect(top.getByRole("button", { name: "Sign out" })).toBeVisible();
-    await expect(top.getByRole("link", { name: "Settings" })).not.toHaveAttribute(
-      "aria-current",
-      "page",
-    );
+    await expect(top.getByRole("link", { name: "Settings" })).not.toHaveAttribute("aria-current", "page");
   });
 
-  test("keyboard: More opens the sheet, Esc closes it and focus returns to More", async ({
-    page,
-  }) => {
+  test("keyboard: More opens the sheet, Esc closes it and focus returns to More", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "shell", theme, "phone");
     const more = page.getByRole("button", { name: "More" });
@@ -139,9 +109,7 @@ eachTheme((theme) => {
     await expect(more).toBeFocused();
   });
 
-  test("behavior: a link in the More sheet closes it, and so does a press on the backdrop", async ({
-    page,
-  }) => {
+  test("behavior: a link in the More sheet closes it, and so does a press on the backdrop", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "shell", theme, "phone");
     const more = page.getByRole("button", { name: "More" });
@@ -158,10 +126,7 @@ eachTheme((theme) => {
   test("accessibility: menu text and counts reach their contrast", async ({ page }) => {
     await visitStates(page, "shell", theme, "expanded");
     await expectContrast(page, [
-      {
-        sel: ".cap-shell-rail a:not([aria-current]) .cap-shell-label",
-        what: "an inactive menu entry",
-      },
+      { sel: ".cap-shell-rail a:not([aria-current]) .cap-shell-label", what: "an inactive menu entry" },
       { sel: ".cap-shell-rail a[aria-current] .cap-shell-label", what: "the current menu entry" },
       { sel: ".cap-shell-count[data-tone='crit']", what: "a critical count" },
       { sel: ".cap-shell-count[data-tone='warn']", what: "a warning count" },
@@ -186,23 +151,16 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: the current entry is told by more than color, and a hovered one has contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the current entry is told by more than color, and a hovered one has contrast", async ({ page }) => {
     await visitStates(page, "shell", theme, "expanded");
-    await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
+    await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
     await expectContrast(page, [
       { sel: ".cap-shell-rail a[data-force='hover'] .cap-shell-label", what: "a hovered entry" },
       { sel: ".cap-shell-group-label", what: "a group label" },
     ]);
   });
 
-  test("keyboard: Tab reaches every entry of the menu in order, with a visible focus", async ({
-    page,
-  }) => {
+  test("keyboard: Tab reaches every entry of the menu in order, with a visible focus", async ({ page }) => {
     await visitStates(page, "shell", theme, "expanded");
     const link = page.getByRole("link", { name: "Sites, 2 down or degraded" });
     await link.focus();
@@ -231,9 +189,7 @@ eachTheme((theme) => {
     await expect(page.locator("#cap-main")).toBeFocused();
   });
 
-  test("keyboard: the collapse button collapses and expands the menu, and the names stay", async ({
-    page,
-  }) => {
+  test("keyboard: the collapse button collapses and expands the menu, and the names stay", async ({ page }) => {
     await visitStates(page, "shell", theme, "expanded");
     const toggle = page.locator("[data-cap-part='rail-toggle']");
     await toggle.focus();
@@ -247,17 +203,13 @@ eachTheme((theme) => {
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
   });
 
-  test("keyboard: a collapsed entry shows its name on focus, and Esc hides it", async ({
-    page,
-  }) => {
+  test("keyboard: a collapsed entry shows its name on focus, and Esc hides it", async ({ page }) => {
     await visitStates(page, "shell", theme, "collapsed");
     const link = page.getByRole("link", { name: "Components" });
     await link.focus();
     const label = link.locator(".cap-shell-label");
     await expect(label).toHaveCSS("opacity", "1");
-    await expectContrast(page, [
-      { sel: ".cap-shell-rail a:focus-visible .cap-shell-label", what: "the shown name" },
-    ]);
+    await expectContrast(page, [{ sel: ".cap-shell-rail a:focus-visible .cap-shell-label", what: "the shown name" }]);
     await page.keyboard.press("Escape");
     await expect(label).toHaveCSS("opacity", "0");
   });
@@ -267,10 +219,7 @@ eachTheme((theme) => {
     await page.locator("[data-cap-part='rail-toggle']").click();
     await page.reload();
     await expect(page.locator(".cap-shell")).toHaveAttribute("data-rail", "collapsed");
-    await expect(page.locator("[data-cap-part='rail-toggle']")).toHaveAttribute(
-      "aria-expanded",
-      "false",
-    );
+    await expect(page.locator("[data-cap-part='rail-toggle']")).toHaveAttribute("aria-expanded", "false");
   });
   for (const id of ["logo", "logo-only"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
@@ -279,24 +228,15 @@ eachTheme((theme) => {
     });
   }
 
-  test(
-    "accessibility: the logo is decorative, and the brand link is named by the name or by brandLabel",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "shell", theme, "logo");
-      await expect(page.locator(".cap-shell-brand .cap-shell-logo")).toHaveAttribute(
-        "aria-hidden",
-        "true",
-      );
-      await expect(page.getByRole("link", { name: /^example\.org/ })).toBeVisible();
-      await visitStates(page, "shell", theme, "logo-only");
-      await expect(page.getByRole("link", { name: "example.org", exact: true })).toBeVisible();
-    },
-  );
+  test("accessibility: the logo is decorative, and the brand link is named by the name or by brandLabel", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "shell", theme, "logo");
+    await expect(page.locator(".cap-shell-brand .cap-shell-logo")).toHaveAttribute("aria-hidden", "true");
+    await expect(page.getByRole("link", { name: /^example\.org/ })).toBeVisible();
+    await visitStates(page, "shell", theme, "logo-only");
+    await expect(page.getByRole("link", { name: "example.org", exact: true })).toBeVisible();
+  });
 
-  test("behavior: the logo is held to the bar's height and kept in proportion, never stretched", async ({
-    page,
-  }) => {
+  test("behavior: the logo is held to the bar's height and kept in proportion, never stretched", async ({ page }) => {
     await visitStates(page, "shell", theme, "logo-only");
     const logo = page.locator(".cap-shell-brand .cap-shell-logo");
     const box = (await logo.boundingBox())!;

@@ -2,30 +2,10 @@
 // the html the renderer writes. Correctness only; nothing here pins a design value.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  analyze,
-  commonSubsequence,
-  countWords,
-  countsText,
-  diffSentences,
-  diffWords,
-  parsePatch,
-  patchCounts,
-  renderCompare,
-  renderPatch,
-  splitSentences,
-} from "../../components/draft-compare/draft-compare.ts";
+import { analyze, commonSubsequence, countWords, countsText, diffSentences, diffWords, parsePatch, patchCounts, renderCompare, renderPatch, splitSentences } from "../../components/draft-compare/draft-compare.ts";
 
-const side = (s) =>
-  s
-    .filter((p) => p.op !== "ins")
-    .map((p) => p.text)
-    .join("");
-const other = (s) =>
-  s
-    .filter((p) => p.op !== "del")
-    .map((p) => p.text)
-    .join("");
+const side = (s) => s.filter((p) => p.op !== "ins").map((p) => p.text).join("");
+const other = (s) => s.filter((p) => p.op !== "del").map((p) => p.text).join("");
 const norm = (s) => s.replace(/\s+/g, " ").trim();
 
 test("commonSubsequence: finds the longest common run, in order", () => {
@@ -55,11 +35,7 @@ test("diffWords: marks the words that changed and keeps the rest", () => {
   const parts = diffWords("The quick brown fox", "The slow brown fox jumps");
   assert.deepEqual(
     parts.filter((p) => p.op !== "same").map((p) => [p.op, p.text.trim()]),
-    [
-      ["del", "quick"],
-      ["ins", "slow"],
-      ["ins", "jumps"],
-    ],
+    [["del", "quick"], ["ins", "slow"], ["ins", "jumps"]],
   );
   assert.equal(norm(side(parts)), "The quick brown fox");
   assert.equal(norm(other(parts)), "The slow brown fox jumps");
@@ -97,10 +73,7 @@ test("diffWords: a space that opens a change stays outside the mark", () => {
 
 test("diffWords: a punctuation mark is a word of its own", () => {
   const parts = diffWords("It ended.", "It ended");
-  assert.deepEqual(
-    parts.filter((p) => p.op !== "same"),
-    [{ op: "del", text: "." }],
-  );
+  assert.deepEqual(parts.filter((p) => p.op !== "same"), [{ op: "del", text: "." }]);
   assert.equal(countWords("It ended."), 2);
 });
 
@@ -109,23 +82,12 @@ test("diffWords: apostrophes and hyphens stay inside a word", () => {
 });
 
 test("splitSentences: splits at sentence ends, not at abbreviations or lowercase", () => {
-  const s = splitSentences(
-    "Dr. Park wrote this. It was good, e.g. very good! Was it? Yes.\n\nNew paragraph here.",
-  );
+  const s = splitSentences("Dr. Park wrote this. It was good, e.g. very good! Was it? Yes.\n\nNew paragraph here.");
   assert.deepEqual(
     s.map((x) => x.text),
-    [
-      "Dr. Park wrote this.",
-      "It was good, e.g. very good!",
-      "Was it?",
-      "Yes.",
-      "New paragraph here.",
-    ],
+    ["Dr. Park wrote this.", "It was good, e.g. very good!", "Was it?", "Yes.", "New paragraph here."],
   );
-  assert.deepEqual(
-    s.map((x) => x.para),
-    [true, false, false, false, true],
-  );
+  assert.deepEqual(s.map((x) => x.para), [true, false, false, false, true]);
 });
 
 test("splitSentences: offsets point at the sentence in the source", () => {
@@ -146,10 +108,7 @@ test("diffSentences: unchanged sentences are anchors, an edited one is paired, t
 });
 
 test("diffSentences: unrelated sentences are one removed and one added, not an edit", () => {
-  const ops = diffSentences(
-    "Alpha beta gamma delta.",
-    "Completely different words entirely here.",
-  ).map((e) => e.op);
+  const ops = diffSentences("Alpha beta gamma delta.", "Completely different words entirely here.").map((e) => e.op);
   assert.deepEqual(ops, ["del", "ins"]);
 });
 
@@ -166,32 +125,16 @@ test("analyze: counts words added and removed and groups the changes", () => {
 
 test("analyze: identical texts are identical, even with different spacing", () => {
   assert.equal(analyze("Same text.  Here.", "Same text. Here.").identical, true);
-  assert.equal(
-    countsText({ added: 1, removed: 1, changes: 1 }),
-    "1 word added, 1 removed, 1 change",
-  );
+  assert.equal(countsText({ added: 1, removed: 1, changes: 1 }), "1 word added, 1 removed, 1 change");
 });
 
-const before = {
-  title: "Draft 3",
-  who: "Rosa Park",
-  time: "2026-09-14T09:12:00Z",
-  text: "A. B.\n\nThe launch is in May. We will tell no one. Middle one. Middle two. Middle three. Middle four. Ends here.",
-};
-const after = {
-  title: "Draft 4",
-  who: "Alex Rivera",
-  time: "2026-09-15T16:40:00Z",
-  text: "A. B.\n\nThe launch is in June. We will tell everyone. Middle one. Middle two. Middle three. Middle four. Ends here.",
-};
+const before = { title: "Draft 3", who: "Rosa Park", time: "2026-09-14T09:12:00Z", text: "A. B.\n\nThe launch is in May. We will tell no one. Middle one. Middle two. Middle three. Middle four. Ends here." };
+const after = { title: "Draft 4", who: "Alex Rivera", time: "2026-09-15T16:40:00Z", text: "A. B.\n\nThe launch is in June. We will tell everyone. Middle one. Middle two. Middle three. Middle four. Ends here." };
 
 test("renderCompare: all three views are in the html, with ins and del carrying hidden text", () => {
   const html = renderCompare(before, after, { id: "t" });
   for (const v of ["side", "inline", "changes"]) assert.match(html, new RegExp(`data-view="${v}"`));
-  assert.match(
-    html,
-    /<ins class="cap-ins"><span class="cap-sr-only"> insertion start <\/span>June<span class="cap-sr-only"> insertion end <\/span><\/ins>/,
-  );
+  assert.match(html, /<ins class="cap-ins"><span class="cap-sr-only"> insertion start <\/span>June<span class="cap-sr-only"> insertion end <\/span><\/ins>/);
   assert.match(html, /<del class="cap-del"><span class="cap-sr-only"> deletion start <\/span>May/);
   assert.match(html, /Change 1 of 1/);
   assert.match(html, /\d+ words? added, \d+ removed, 1 change/);
@@ -208,47 +151,32 @@ test("renderCompare: ids are on the shown view only, so none repeats", () => {
 });
 
 test("renderCompare: escapes the text it is given", () => {
-  const html = renderCompare(
-    { title: "<b>x</b>", text: "One <script>alert(1)</script> here." },
-    { title: "y", text: "One here." },
-  );
+  const html = renderCompare({ title: "<b>x</b>", text: "One <script>alert(1)</script> here." }, { title: "y", text: "One here." });
   assert.ok(!html.includes("<script>"));
   assert.ok(!html.includes("<b>x"));
 });
 
 test("renderCompare: no differences is a status naming both versions, not a diff", () => {
-  const html = renderCompare(
-    { ...before, text: "Same." },
-    { ...after, text: "Same." },
-    { id: "t" },
-  );
+  const html = renderCompare({ ...before, text: "Same." }, { ...after, text: "Same." }, { id: "t" });
   assert.match(html, /role="status"><strong>No differences\.<\/strong> “Draft 3”/);
   assert.match(html, /“Draft 4”/);
   assert.ok(!html.includes('type="radio"'));
 });
 
 test("renderCompare: runs mark each sentence with who wrote it", () => {
-  const html = renderCompare(before, after, {
-    id: "t",
-    runs: { after: [{ from: 0, to: 4, kind: "ai" }] },
-  });
+  const html = renderCompare(before, after, { id: "t", runs: { after: [{ from: 0, to: 4, kind: "ai" }] } });
   assert.match(html, /class="cap-run" data-kind="ai"/);
   assert.match(html, /<span class="cap-run-label">AI<\/span>/);
 });
 
 test("commonSubsequence: agrees with a plain dynamic-programming length on random lists", () => {
   let seed = 7;
-  const rnd = (n) => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) % n;
+  const rnd = (n) => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) % n);
   for (let round = 0; round < 60; round++) {
     const a = Array.from({ length: rnd(25) }, () => String(rnd(5)));
     const b = Array.from({ length: rnd(25) }, () => String(rnd(5)));
-    const dp = Array.from({ length: a.length + 1 }, () =>
-      Array.from({ length: b.length + 1 }, () => 0),
-    );
-    for (let i = 1; i <= a.length; i++)
-      for (let j = 1; j <= b.length; j++)
-        dp[i][j] =
-          a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+    const dp = Array.from({ length: a.length + 1 }, () => Array.from({ length: b.length + 1 }, () => 0));
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
     const pairs = commonSubsequence(a, b);
     assert.equal(pairs.length, dp[a.length][b.length]);
     for (const [i, j] of pairs) assert.equal(a[i], b[j]);
@@ -286,25 +214,9 @@ const PATCH = [
 test("parsePatch: files, hunks, counts and line numbers, skipping commit headers", () => {
   const files = parsePatch(PATCH);
   assert.equal(files.length, 3);
-  assert.deepEqual(
-    files.map((f) => [f.newPath, f.added, f.removed]),
-    [
-      ["app/queue.ts", 2, 1],
-      ["new.txt", 1, 0],
-      ["logo.png", 0, 0],
-    ],
-  );
+  assert.deepEqual(files.map((f) => [f.newPath, f.added, f.removed]), [["app/queue.ts", 2, 1], ["new.txt", 1, 0], ["logo.png", 0, 0]]);
   const lines = files[0].hunks[0].lines;
-  assert.deepEqual(
-    lines.map((l) => [l.op, l.oldNo, l.newNo]),
-    [
-      ["same", 10, 10],
-      ["del", 11, null],
-      ["ins", null, 11],
-      ["ins", null, 12],
-      ["same", 12, 13],
-    ],
-  );
+  assert.deepEqual(lines.map((l) => [l.op, l.oldNo, l.newNo]), [["same", 10, 10], ["del", 11, null], ["ins", null, 11], ["ins", null, 12], ["same", 12, 13]]);
   assert.equal(lines[4].noEol, true);
   assert.equal(files[0].hunks[0].context, "export function sortQueue() {");
   assert.equal(files[1].oldPath, "/dev/null");
@@ -315,13 +227,7 @@ test("parsePatch: files, hunks, counts and line numbers, skipping commit headers
 test("parsePatch: a bare ---/+++ patch with no diff --git line is read, and CRLF is not a difference", () => {
   const files = parsePatch("--- a/x\r\n+++ b/x\r\n@@ -1 +1 @@\r\n-a\r\n+b\r\n");
   assert.equal(files.length, 1);
-  assert.deepEqual(
-    files[0].hunks[0].lines.map((l) => [l.op, l.text]),
-    [
-      ["del", "a"],
-      ["ins", "b"],
-    ],
-  );
+  assert.deepEqual(files[0].hunks[0].lines.map((l) => [l.op, l.text]), [["del", "a"], ["ins", "b"]]);
 });
 
 test("parsePatch: nothing that is not a patch gives no files", () => {
@@ -333,14 +239,8 @@ test("renderPatch: a literal sign and a word on each changed line, text escaped,
   const html = renderPatch(PATCH, { id: "p1", title: "Subject" });
   assert.match(html, /aria-label="Patch: Subject"/);
   assert.match(html, /3 files changed, 3 lines added, 1 removed/);
-  assert.match(
-    html,
-    /data-op="ins"[^]*?<span aria-hidden="true">\+<\/span><span class="cap-sr-only"> added <\/span>/,
-  );
-  assert.match(
-    html,
-    /data-op="del"[^]*?<span aria-hidden="true">−<\/span><span class="cap-sr-only"> removed <\/span>/,
-  );
+  assert.match(html, /data-op="ins"[^]*?<span aria-hidden="true">\+<\/span><span class="cap-sr-only"> added <\/span>/);
+  assert.match(html, /data-op="del"[^]*?<span aria-hidden="true">−<\/span><span class="cap-sr-only"> removed <\/span>/);
   assert.ok(html.includes("extra &lt;b&gt;line&lt;/b&gt;"));
   assert.ok(!html.includes("<b>line</b>"));
   assert.match(html, /role="region" aria-labelledby="p1-file-1" tabindex="0"/);

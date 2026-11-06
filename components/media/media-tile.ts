@@ -2,16 +2,7 @@
 // its data attributes, so the page, the filters and the inspector read one thing.
 
 import { enhance as enhanceMeters } from "../meter/meter.ts";
-import {
-  byteSize,
-  describeRecord,
-  flagsFor,
-  parseTags,
-  type AltState,
-  type Flag,
-  type MediaRecord,
-  type UsedIn,
-} from "./media-record.ts";
+import { byteSize, describeRecord, flagsFor, parseTags, type AltState, type Flag, type MediaRecord, type UsedIn } from "./media-record.ts";
 
 const NS = "http://www.w3.org/2000/svg";
 const GLYPHS: Record<string, string[]> = {
@@ -33,53 +24,16 @@ export function glyph(kind: "crit" | "warn" | "info" | "ok" | "nodata" | "runnin
     svg.append(el);
   };
   const paths = GLYPHS[kind];
-  if (paths)
-    for (const d of paths) add("path", { fill: "currentColor", "fill-rule": "evenodd", d });
+  if (paths) for (const d of paths) add("path", { fill: "currentColor", "fill-rule": "evenodd", d });
   else if (kind === "info") {
-    add("rect", {
-      x: "1.5",
-      y: "1.5",
-      width: "13",
-      height: "13",
-      rx: "2",
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.6",
-    });
+    add("rect", { x: "1.5", y: "1.5", width: "13", height: "13", rx: "2", fill: "none", stroke: "currentColor", "stroke-width": "1.6" });
     add("path", { fill: "currentColor", d: "M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" });
   } else if (kind === "nodata") {
-    add("circle", {
-      cx: "8",
-      cy: "8",
-      r: "6.2",
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.6",
-    });
-    add("path", {
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.6",
-      "stroke-linecap": "round",
-      d: "M5 8h6",
-    });
+    add("circle", { cx: "8", cy: "8", r: "6.2", fill: "none", stroke: "currentColor", "stroke-width": "1.6" });
+    add("path", { fill: "none", stroke: "currentColor", "stroke-width": "1.6", "stroke-linecap": "round", d: "M5 8h6" });
   } else {
-    add("circle", {
-      cx: "8",
-      cy: "8",
-      r: "6.2",
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.6",
-      opacity: "0.35",
-    });
-    add("path", {
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": "1.8",
-      "stroke-linecap": "round",
-      d: "M8 1.8a6.2 6.2 0 0 1 6.2 6.2",
-    });
+    add("circle", { cx: "8", cy: "8", r: "6.2", fill: "none", stroke: "currentColor", "stroke-width": "1.6", opacity: "0.35" });
+    add("path", { fill: "none", stroke: "currentColor", "stroke-width": "1.8", "stroke-linecap": "round", d: "M8 1.8a6.2 6.2 0 0 1 6.2 6.2" });
   }
   return svg;
 }
@@ -116,8 +70,7 @@ function checkBox(): HTMLElement[] {
   return [box, word];
 }
 
-export const part = <T extends HTMLElement = HTMLElement>(root: ParentNode, name: string) =>
-  root.querySelector<T>(`[data-cap-part='${name}']`);
+export const part = <T extends HTMLElement = HTMLElement>(root: ParentNode, name: string) => root.querySelector<T>(`[data-cap-part='${name}']`);
 
 // ---------------------------------------------------------------------------------------
 // Tiles. A tile's facts are its data attributes, so the page, the filters and the inspector read
@@ -128,14 +81,7 @@ export function recordOf(tile: HTMLElement): MediaRecord {
   let used: UsedIn[] = [];
   try {
     const parsed: unknown = JSON.parse(d.usedIn ?? "[]");
-    if (Array.isArray(parsed))
-      used = parsed.filter(
-        (u): u is UsedIn =>
-          !!u &&
-          typeof u === "object" &&
-          typeof (u as UsedIn).title === "string" &&
-          typeof (u as UsedIn).href === "string",
-      );
+    if (Array.isArray(parsed)) used = parsed.filter((u): u is UsedIn => !!u && typeof u === "object" && typeof (u as UsedIn).title === "string" && typeof (u as UsedIn).href === "string");
   } catch {
     used = [];
   }
@@ -166,8 +112,7 @@ export function recordOf(tile: HTMLElement): MediaRecord {
     caption: d.caption ?? "",
     tags: parseTags(d.tags ?? ""),
     used,
-    state:
-      d.state === "uploading" || d.state === "failed" || d.state === "binned" ? d.state : "ready",
+    state: d.state === "uploading" || d.state === "failed" || d.state === "binned" ? d.state : "ready",
     suggestedTags: suggested,
     progress: num(d.progress),
     error: d.error,
@@ -208,13 +153,7 @@ export function syncTile(tile: HTMLElement): void {
   tile.dataset.used = String(r.used.length);
   const open = tile.querySelector<HTMLElement>(".cap-media-open");
   const meta = tile.querySelector<HTMLElement>(".cap-media-meta");
-  if (meta)
-    meta.textContent =
-      r.state === "uploading"
-        ? "Uploading"
-        : r.state === "failed"
-          ? "Not uploaded"
-          : [r.type.split("/").pop()?.toUpperCase(), byteSize(r.bytes)].filter(Boolean).join(" · ");
+  if (meta) meta.textContent = r.state === "uploading" ? "Uploading" : r.state === "failed" ? "Not uploaded" : [r.type.split("/").pop()?.toUpperCase(), byteSize(r.bytes)].filter(Boolean).join(" · ");
   let flags = tile.querySelector<HTMLElement>(".cap-media-flags");
   if (!flags) {
     flags = document.createElement("span");
@@ -239,8 +178,7 @@ export function syncTile(tile: HTMLElement): void {
   flags.replaceChildren(...items);
   if (open) {
     if (flags.id) open.setAttribute("aria-describedby", flags.id);
-    if (r.state === "uploading" || r.state === "failed")
-      open.setAttribute("aria-description", describeRecord(r));
+    if (r.state === "uploading" || r.state === "failed") open.setAttribute("aria-description", describeRecord(r));
     else open.removeAttribute("aria-description");
   }
   for (const old of tile.querySelectorAll(".cap-media-state")) old.remove();
@@ -354,3 +292,4 @@ export function buildTile(r: MediaRecord): HTMLLIElement {
   syncTile(li);
   return li;
 }
+

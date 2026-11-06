@@ -48,76 +48,24 @@ export const SCALE = {
     ["fs-h3", "1.125rem", "a panel or dialog title"],
     ["fs-h2", "1.375rem", "a page title in the app"],
     ["fs-prose", "clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem)", "body text in the reading context"],
-    [
-      "fs-prose-h2",
-      "clamp(1.375rem, 1.2rem + 1.2vw, 1.875rem)",
-      "a heading in the reading context",
-    ],
-    [
-      "fs-input-coarse",
-      "max(1rem, 16px)",
-      "a form input on a touch screen, so iOS does not zoom (never under 16px, whatever the default size)",
-    ],
-    [
-      "prose",
-      '"Source Serif 4", "Iowan Old Style", Charter, Georgia, serif',
-      "long-form text and public headings (decision 5)",
-    ],
-    [
-      "display",
-      UI_STACK,
-      "a heading that wants a display face (the page head's title, an app's own headings): Inter, at its text cut (the display cut cost dustinedwards.info /systems its 2.5 s LCP, Dustin 2026-11-05); a site may set its own",
-    ],
-    [
-      "weight-title",
-      "300",
-      "a page title or a name set at 24px and up: Inter Light, NASA NHB 1430.2's Helvetica Light (section 5.2); never under 24px, where Light thins out",
-    ],
-    [
-      "weight-heading",
-      "500",
-      "a heading inside a page: Inter Medium, the manual's Helvetica Medium",
-    ],
-    [
-      "wayfinding",
-      '"Overpass", "Overpass Fallback", "Segoe UI", Arial, sans-serif',
-      "wayfinding links only (breadcrumbs, footer links, next and back): Overpass, the free Highway Gothic of FAA airport signs (AC 150/5345-44L, Appendix A), at 700 (600 in the footer)",
-    ],
-    [
-      "poster",
-      '"Jost", "Jost Fallback", Futura, "Century Gothic", sans-serif',
-      "a standalone piece with lettering (a share card, a title image, a banner, a flyer, a 404 title): Jost, the free Futura (NASA NHB 1430.2 section 5.4); never text under an Inter heading",
-    ],
-    [
-      "drafting",
-      '"Capsomer Drafting", "Capsomer Drafting Fallback", "Segoe UI", Arial, sans-serif',
-      "labels in a line drawing or plate and words on a lit panel: Leroy lettering, in capitals (ASME Y14.2 4.3) with lowercase only for units and gene names",
-    ],
-    [
-      "readout",
-      '"DSEG7 Classic", "DSEG7 Classic Fallback", ui-monospace, monospace',
-      "a lit instrument number (a reading, a stat on a panel): the Apollo DSKY's seven segments, upright 400; a countdown or elapsed time takes the same family in italic 300, the KSC press-site clock; digits, minus, colon and period only",
-    ],
+    ["fs-prose-h2", "clamp(1.375rem, 1.2rem + 1.2vw, 1.875rem)", "a heading in the reading context"],
+    ["fs-input-coarse", "max(1rem, 16px)", "a form input on a touch screen, so iOS does not zoom (never under 16px, whatever the default size)"],
+    ["prose", '"Source Serif 4", "Iowan Old Style", Charter, Georgia, serif', "long-form text and public headings (decision 5)"],
+    ["display", UI_STACK, "a heading that wants a display face (the page head's title, an app's own headings): Inter, at its text cut (the display cut cost dustinedwards.info /systems its 2.5 s LCP, Dustin 2026-11-05); a site may set its own"],
+    ["weight-title", "300", "a page title or a name set at 24px and up: Inter Light, NASA NHB 1430.2's Helvetica Light (section 5.2); never under 24px, where Light thins out"],
+    ["weight-heading", "500", "a heading inside a page: Inter Medium, the manual's Helvetica Medium"],
+    ["wayfinding", '"Overpass", "Overpass Fallback", "Segoe UI", Arial, sans-serif', "wayfinding links only (breadcrumbs, footer links, next and back): Overpass, the free Highway Gothic of FAA airport signs (AC 150/5345-44L, Appendix A), at 700 (600 in the footer)"],
+    ["poster", '"Jost", "Jost Fallback", Futura, "Century Gothic", sans-serif', "a standalone piece with lettering (a share card, a title image, a banner, a flyer, a 404 title): Jost, the free Futura (NASA NHB 1430.2 section 5.4); never text under an Inter heading"],
+    ["drafting", '"Capsomer Drafting", "Capsomer Drafting Fallback", "Segoe UI", Arial, sans-serif', "labels in a line drawing or plate and words on a lit panel: Leroy lettering, in capitals (ASME Y14.2 4.3) with lowercase only for units and gene names"],
+    ["readout", '"DSEG7 Classic", "DSEG7 Classic Fallback", ui-monospace, monospace', "a lit instrument number (a reading, a stat on a panel): the Apollo DSKY's seven segments, upright 400; a countdown or elapsed time takes the same family in italic 300, the KSC press-site clock; digits, minus, colon and period only"],
   ],
   motion: [
-    [
-      "dur-fast",
-      "100ms",
-      "feedback (hover, press) and every exit: what leaves goes faster than it came",
-    ],
+    ["dur-fast", "100ms", "feedback (hover, press) and every exit: what leaves goes faster than it came"],
     ["dur-base", "200ms", "an overlay or a page arriving"],
     ["dur-slow", "400ms", "a spring settling (with --ease-spring); a page-level change"],
-    [
-      "ease-out",
-      "cubic-bezier(0.16, 1, 0.3, 1)",
-      "things arriving and leaving: a fast start and a long soft stop (Radix Themes, Arc)",
-    ],
+    ["ease-out", "cubic-bezier(0.16, 1, 0.3, 1)", "things arriving and leaving: a fast start and a long soft stop (Radix Themes, Arc)"],
     ["ease-in-out", "cubic-bezier(0.65, 0, 0.35, 1)", "things moving within the page"],
-    [
-      "ease-spring",
-      "linear(0, 0.005 1%, 0.028 2.5%, 0.117 5.5%, 0.572 16%, 0.77 21.5%, 0.839 24%, 0.906 27%, 0.956 30%, 0.992 33%, 1.012 35.5%, 1.026 38%, 1.035 41%, 1.038 44.5%, 1.035 49.5%, 1.012 63.5%, 1.003 72.5%, 0.999 84.5%, 1)",
-      "a release or a thumb settling: a damped spring, 95% at 30% of the time, 4% past; transform only, with --dur-slow",
-    ],
+    ["ease-spring", "linear(0, 0.005 1%, 0.028 2.5%, 0.117 5.5%, 0.572 16%, 0.77 21.5%, 0.839 24%, 0.906 27%, 0.956 30%, 0.992 33%, 1.012 35.5%, 1.026 38%, 1.035 41%, 1.038 44.5%, 1.035 49.5%, 1.012 63.5%, 1.003 72.5%, 0.999 84.5%, 1)", "a release or a thumb settling: a damped spring, 95% at 30% of the time, 4% past; transform only, with --dur-slow"],
   ],
   layer: [
     ["z-base", "0", "the page"],
@@ -128,156 +76,60 @@ export const SCALE = {
     ["z-tip", "80", "a tooltip"],
   ],
   focus: [
-    [
-      "focus-width",
-      "2px",
-      "the focus outline, WCAG 2.4.13's 2 px perimeter; its color is --ring, checked at 3:1 by palette.mjs",
-    ],
+    ["focus-width", "2px", "the focus outline, WCAG 2.4.13's 2 px perimeter; its color is --ring, checked at 3:1 by palette.mjs"],
     ["focus-offset", "2px", "space between the control and its ring"],
-    [
-      "ring-width",
-      "3px",
-      "the soft glow around a focused field (shadcn's ring-3); the 2 px outline stays the focus indicator",
-    ],
+    ["ring-width", "3px", "the soft glow around a focused field (shadcn's ring-3); the 2 px outline stays the focus indicator"],
   ],
   layout: [
-    [
-      "measure",
-      "80ch",
-      "a reading line: WCAG 1.4.8's 80-character ceiling, about two-thirds of the family page's column at the 17px body (Dustin, 2026-10-28: the 66-character line was too narrow on the wider page)",
-    ],
-    [
-      "page-max",
-      "1280px",
-      'the family page width, gutters included (a 1248px column): every site\'s letterhead, content and footer line up on it (.cap-page). Running text keeps --measure inside it; grids, maps and tables use the rest (Dustin, 2026-10-28: "it can be wider")',
-    ],
-    [
-      "fs-page",
-      "1.0625rem",
-      "the family page's body text (.cap-page), the same on every site; an app's rows keep --fs-body",
-    ],
-    [
-      "page-gutter",
-      "16px",
-      "the page's side margin inside --page-max, and the least margin at any width",
-    ],
+    ["measure", "80ch", "a reading line: WCAG 1.4.8's 80-character ceiling, about two-thirds of the family page's column at the 17px body (Dustin, 2026-10-28: the 66-character line was too narrow on the wider page)"],
+    ["page-max", "1280px", "the family page width, gutters included (a 1248px column): every site's letterhead, content and footer line up on it (.cap-page). Running text keeps --measure inside it; grids, maps and tables use the rest (Dustin, 2026-10-28: \"it can be wider\")"],
+    ["fs-page", "1.0625rem", "the family page's body text (.cap-page), the same on every site; an app's rows keep --fs-body"],
+    ["page-gutter", "16px", "the page's side margin inside --page-max, and the least margin at any width"],
     ["rail-w", "208px", "the shell's left menu, expanded"],
     ["rail-w-collapsed", "56px", "the shell's left menu, collapsed to icons"],
     ["top-h", "44px", "the shell's top bar (the Portal's, #215)"],
-    [
-      "figures",
-      "tabular-nums",
-      "a number on its own (a count, a tile's figure, a percent, a time): Inter's tabular set keeps the comma and period narrow (0.269 em), so a tile's figures hold their width as they change without a gap at the comma",
-    ],
-    [
-      "figures-column",
-      "tabular-nums",
-      "numbers down a column (a table's data-num cells, .cap-num), where the digits must line up and a wide comma lines up too",
-    ],
-    [
-      "faa-arrow",
-      "polygon(0% 41.32%, 52% 41.32%, 52% 5.56%, 96% 50%, 52% 94.44%, 52% 58.68%, 0% 58.68%)",
-      "the wayfinding arrow, an FAA airport sign's (AC 150/5345-44L, Fig. A-5): a clip path for a box 1em wide and 0.72em tall, whose shaft is 0.125em, Overpass Bold's stem, as Note 1 sets the shaft to the legend's stroke, and a triangular head; drawn in the text's color (a currentColor background), since Overpass has no arrows. A clip path, not a data: image, so a strict Content-Security-Policy (img-src 'self') never blocks it",
-    ],
-    [
-      "faa-arrow-out",
-      "polygon(6% 38%, 52% 38%, 52% 14%, 92% 50%, 52% 86%, 52% 62%, 6% 62%)",
-      "the footer's outbound arrow, the FAA arrow's thick shaft and head as a clip path, turned 45 degrees up and right",
-    ],
-    [
-      "header-h",
-      "3.5rem",
-      "the site header, 56px on every site and surface (docs/design/design-site-header.md, answer 6)",
-    ],
-    [
-      "cap-arrow",
-      "polygon(8.3% 41.7%, 59.2% 41.7%, 40% 22.5%, 50% 12.5%, 87.5% 50%, 50% 87.5%, 40% 77.5%, 59.2% 58.3%, 8.3% 58.3%)",
-      "the family arrow's shape, a clip path (css/base.css): a token so a page without base.css, such as the Portal, still draws the header's arrows",
-    ],
+    ["figures", "tabular-nums", "a number on its own (a count, a tile's figure, a percent, a time): Inter's tabular set keeps the comma and period narrow (0.269 em), so a tile's figures hold their width as they change without a gap at the comma"],
+    ["figures-column", "tabular-nums", "numbers down a column (a table's data-num cells, .cap-num), where the digits must line up and a wide comma lines up too"],
+    ["faa-arrow", "polygon(0% 41.32%, 52% 41.32%, 52% 5.56%, 96% 50%, 52% 94.44%, 52% 58.68%, 0% 58.68%)", "the wayfinding arrow, an FAA airport sign's (AC 150/5345-44L, Fig. A-5): a clip path for a box 1em wide and 0.72em tall, whose shaft is 0.125em, Overpass Bold's stem, as Note 1 sets the shaft to the legend's stroke, and a triangular head; drawn in the text's color (a currentColor background), since Overpass has no arrows. A clip path, not a data: image, so a strict Content-Security-Policy (img-src 'self') never blocks it"],
+    ["faa-arrow-out", "polygon(6% 38%, 52% 38%, 52% 14%, 92% 50%, 52% 86%, 52% 62%, 6% 62%)", "the footer's outbound arrow, the FAA arrow's thick shaft and head as a clip path, turned 45 degrees up and right"],
+    ["header-h", "3.5rem", "the site header, 56px on every site and surface (docs/design/design-site-header.md, answer 6)"],
+    ["cap-arrow", "polygon(8.3% 41.7%, 59.2% 41.7%, 40% 22.5%, 50% 12.5%, 87.5% 50%, 50% 87.5%, 40% 77.5%, 59.2% 58.3%, 8.3% 58.3%)", "the family arrow's shape, a clip path (css/base.css): a token so a page without base.css, such as the Portal, still draws the header's arrows"],
   ],
   // How a text link looks (css/base.css), so a site that wants its own links sets these in its SITES entry
   // instead of writing CSS over the base. The defaults are the network's look: semibold, no line, a soft
   // tint under the pointer. A site can use weight "inherit", decoration "underline", tints "transparent".
   link: [
     ["link-weight", "600", "a text link's weight; \"inherit\" draws it at the text's own weight"],
-    [
-      "link-decoration",
-      "none",
-      'a text link\'s line at rest, hover and focus; "underline" for a site that wants one',
-    ],
-    ["link-hover-bg", "var(--accent-soft)", 'the tint under the pointer; "transparent" for none'],
-    ["link-pressed-bg", "var(--accent-5)", 'the tint while pressed; "transparent" for none'],
-    [
-      "link-tint-pad",
-      "2px",
-      "how far the tint reaches past the text, in a shadow of the tint's color; 0px for none",
-    ],
+    ["link-decoration", "none", "a text link's line at rest, hover and focus; \"underline\" for a site that wants one"],
+    ["link-hover-bg", "var(--accent-soft)", "the tint under the pointer; \"transparent\" for none"],
+    ["link-pressed-bg", "var(--accent-5)", "the tint while pressed; \"transparent\" for none"],
+    ["link-tint-pad", "2px", "how far the tint reaches past the text, in a shadow of the tint's color; 0px for none"],
   ],
   // The hover touches a site may turn on in its SITES entry (tokens/sites.mjs); the defaults are off.
   touch: [
-    [
-      "link-rule",
-      "0px",
-      "the site header's section links: an underline that grows in under the pointer; 0 draws none",
-    ],
-    [
-      "icon-radius",
-      "6px",
-      "the site header's icon controls and the theme button (--radius-m; 999px for a circle)",
-    ],
+    ["link-rule", "0px", "the site header's section links: an underline that grows in under the pointer; 0 draws none"],
+    ["icon-radius", "6px", "the site header's icon controls and the theme button (--radius-m; 999px for a circle)"],
     ["icon-border", "0px", "their outline's width, in the band's line"],
     ["theme-turn", "0deg", "the theme button turns this far under the pointer"],
     ["arrow-rest", "1", "a .cap-arrow's opacity at rest; 0 lets it slide in under the pointer"],
     ["arrow-shift", "0px", "how far back a .cap-arrow sits at rest"],
-    [
-      "card-lift",
-      "0px",
-      "how far a linked panel (a.cap-panel) rises under the pointer; a negative length lifts it",
-    ],
-    [
-      "card-edge",
-      "0",
-      "a linked panel's edge under the pointer: 0 the strong line, 1 the accent, between them a mix",
-    ],
+    ["card-lift", "0px", "how far a linked panel (a.cap-panel) rises under the pointer; a negative length lifts it"],
+    ["card-edge", "0", "a linked panel's edge under the pointer: 0 the strong line, 1 the accent, between them a mix"],
     ["card-shadow", "none", "a panel's resting shadow"],
-    [
-      "btn-sweep",
-      "0",
-      "the default button fills with the primary color from the left under the pointer: 0 off, 1 on",
-    ],
+    ["btn-sweep", "0", "the default button fills with the primary color from the left under the pointer: 0 off, 1 on"],
   ],
 };
 
 // Density: [name, compact, comfortable, what it is for]. `control` and `control-h` are the
 // same height (control-h is kept from 0.1). Touch raises control and target to 44 px in both.
 export const DENSITY = [
-  [
-    "control",
-    "34px",
-    "36px",
-    "a control's height with a fine pointer (one step above the Portal's 32; shadcn vega's h-9)",
-  ],
+  ["control", "34px", "36px", "a control's height with a fine pointer (one step above the Portal's 32; shadcn vega's h-9)"],
   ["control-h", "34px", "36px", "alias of --control, kept from 0.1"],
   ["target", "24px", "28px", "the smallest hit area (WCAG 2.5.8 asks 24)"],
   ["pad-x", "12px", "12px", "a control's inline padding (vega's px-3)"],
-  [
-    "pad-y",
-    "7px",
-    "8px",
-    "a control's block padding where it is not a fixed height (a textarea, a menu item)",
-  ],
-  [
-    "pad-card",
-    "20px",
-    "24px",
-    "a card or panel's padding (shadcn's card spacing, nova 16 and vega 24)",
-  ],
-  [
-    "fs-label",
-    "0.6875rem",
-    "0.75rem",
-    "column labels and section titles, uppercase; nothing is set smaller",
-  ],
+  ["pad-y", "7px", "8px", "a control's block padding where it is not a fixed height (a textarea, a menu item)"],
+  ["pad-card", "20px", "24px", "a card or panel's padding (shadcn's card spacing, nova 16 and vega 24)"],
+  ["fs-label", "0.6875rem", "0.75rem", "column labels and section titles, uppercase; nothing is set smaller"],
   ["fs-detail", "0.8125rem", "0.8125rem", "the line under a row title"],
   ["fs-body", "0.875rem", "0.875rem", "app body and rows (vega's text-sm)"],
   ["fs-lead", "0.9375rem", "1rem", "a page's lead line"],
@@ -288,12 +140,7 @@ const LEADING = ["leading", "1.5", "1.5"];
 // The alias components read for the reading size; it follows density.
 const TEXT_SIZE = ["text-size", "var(--fs-body)"];
 // Touch: the height a thumb needs wins over density.
-const COARSE = [
-  ["control", "var(--control-h-coarse)"],
-  ["control-h", "var(--control-h-coarse)"],
-  ["target", "44px"],
-  ["row-h", "44px"],
-];
+const COARSE = [["control", "var(--control-h-coarse)"], ["control-h", "var(--control-h-coarse)"], ["target", "44px"], ["row-h", "44px"]];
 
 // The reading context (design 1.4): one attribute on a region switches from dense app UI to
 // a reading page. It overrides density on the same element.
@@ -316,8 +163,7 @@ export function renderScale() {
     for (const [name, value] of rows) lines.push(`  --${name}: ${value};`);
   }
   const set = (col) => DENSITY.map(([n, c, k]) => `  --${n}: ${col === 0 ? c : k};`).join("\n");
-  const rest = (col) =>
-    `  --${TEXT_SIZE[0]}: ${TEXT_SIZE[1]};\n  --${LEADING[0]}: ${LEADING[col + 1]};`;
+  const rest = (col) => `  --${TEXT_SIZE[0]}: ${TEXT_SIZE[1]};\n  --${LEADING[0]}: ${LEADING[col + 1]};`;
   return `${HEADER("space, radius, type, density, motion, layers, focus, layout")}:root {
 ${lines.join("\n")}
   --control-h-coarse: 44px;
@@ -357,8 +203,7 @@ export function renderThemes() {
   const block = (name) =>
     `[data-cap-theme="${name}"] {\n${[...t.order, ...ELEVATION_ORDER].map((k) => `  --${k}: ${t[name].tokens[k]};`).join("\n")}\n  color-scheme: ${name};\n  color: var(--text);\n  background: var(--ground);\n}`;
   // The viewer's "increase contrast" setting on a pinned element: only the tokens it changes.
-  const more = (name) =>
-    `  [data-cap-theme="${name}"] {\n${moreLines(t[name].tokens, t[`${name}More`].tokens, "    ")}\n  }`;
+  const more = (name) => `  [data-cap-theme="${name}"] {\n${moreLines(t[name].tokens, t[`${name}More`].tokens, "    ")}\n  }`;
   return `${HEADER(`both themes pinned to an element, from the seed ${t.seed}`)}${block("light")}\n${block("dark")}\n@media (prefers-contrast: more) {\n${more("light")}\n${more("dark")}\n}\n`;
 }
 
@@ -366,46 +211,21 @@ export function renderThemes() {
 // read it. The CSS is the contract; nothing in Capsomer reads this file (decision 15).
 export function renderJson() {
   const t = themes(FAMILIES.purple);
-  const out = {
-    $description:
-      "Capsomer tokens. Generated by tokens/scale.mjs; the CSS files are the contract. type and control show the compact density; density-compact and density-comfortable hold both sets.",
-  };
-  const typeOf = (group) =>
-    ({
-      space: "dimension",
-      radius: "dimension",
-      control: "dimension",
-      "density-compact": "dimension",
-      "density-comfortable": "dimension",
-      motion: undefined,
-      layer: "number",
-      focus: undefined,
-      layout: undefined,
-      type: undefined,
-    })[group];
+  const out = { $description: "Capsomer tokens. Generated by tokens/scale.mjs; the CSS files are the contract. type and control show the compact density; density-compact and density-comfortable hold both sets." };
+  const typeOf = (group) => ({ space: "dimension", radius: "dimension", control: "dimension", "density-compact": "dimension", "density-comfortable": "dimension", motion: undefined, layer: "number", focus: undefined, layout: undefined, type: undefined })[group];
   const groups = { ...SCALE };
   const compact = DENSITY.map(([n, c, , why]) => [n, c, why]);
   const fs = compact.filter(([n]) => n.startsWith("fs-"));
   groups.type = [...fs, ...groups.type];
-  groups.control = [
-    ...compact.filter(([n]) => ["control", "control-h", "target"].includes(n)),
-    ["control-h-coarse", "44px", "a control's height with a coarse pointer"],
-  ];
+  groups.control = [...compact.filter(([n]) => ["control", "control-h", "target"].includes(n)), ["control-h-coarse", "44px", "a control's height with a coarse pointer"]];
   groups["density-compact"] = compact;
   groups["density-comfortable"] = DENSITY.map(([n, , k, why]) => [n, k, why]);
   for (const [group, rows] of Object.entries(groups)) {
     out[group] = {};
     for (const [name, value, why] of rows) {
-      const ty = name.startsWith("dur-")
-        ? "duration"
-        : value.startsWith("cubic-bezier(")
-          ? "cubicBezier"
-          : name.startsWith("fs-") && group.startsWith("density")
-            ? "dimension"
-            : typeOf(group);
+      const ty = name.startsWith("dur-") ? "duration" : value.startsWith("cubic-bezier(") ? "cubicBezier" : name.startsWith("fs-") && group.startsWith("density") ? "dimension" : typeOf(group);
       let v = value;
-      if (ty === "dimension" && /^[\d.]+(px|rem)$/.test(value))
-        v = { value: Number.parseFloat(value), unit: value.endsWith("rem") ? "rem" : "px" };
+      if (ty === "dimension" && /^[\d.]+(px|rem)$/.test(value)) v = { value: Number.parseFloat(value), unit: value.endsWith("rem") ? "rem" : "px" };
       else if (ty === "duration") v = { value: Number(value.slice(0, -2)), unit: "ms" };
       else if (ty === "cubicBezier") v = value.match(/[\d.]+/g).map(Number);
       else if (ty === "number") v = Number(value);
@@ -414,8 +234,7 @@ export function renderJson() {
   }
   for (const scheme of ["light", "dark"]) {
     out[`color-${scheme}`] = {};
-    for (const k of t.order)
-      out[`color-${scheme}`][k] = { $type: "color", $value: t[scheme].tokens[k] };
+    for (const k of t.order) out[`color-${scheme}`][k] = { $type: "color", $value: t[scheme].tokens[k] };
   }
   return JSON.stringify(out, null, 2) + "\n";
 }
@@ -436,18 +255,12 @@ export function check() {
       problems.push(`tokens/${file} is missing; run npm run tokens`);
       continue;
     }
-    if (committed !== make())
-      problems.push(`tokens/${file} differs from what tokens/scale.mjs writes; run npm run tokens`);
+    if (committed !== make()) problems.push(`tokens/${file} differs from what tokens/scale.mjs writes; run npm run tokens`);
   }
   return problems;
 }
 
-if (
-  process.argv[1] &&
-  fileURLToPath(import.meta.url)
-    .replace(/\\/g, "/")
-    .toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase()
-) {
+if (process.argv[1] && fileURLToPath(import.meta.url).replace(/\\/g, "/").toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase()) {
   if (process.argv.includes("--check")) {
     const problems = check();
     if (problems.length) {

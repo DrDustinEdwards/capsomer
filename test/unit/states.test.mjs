@@ -2,14 +2,7 @@
 // main, keeps its <template data-specimen> blocks, and hoists links and scripts. Correctness
 // only; nothing here pins a design value.
 import assert from "node:assert/strict";
-import {
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  readdirSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
@@ -41,13 +34,7 @@ const EXAMPLES = `<link rel="stylesheet" href="./specimen/x.css" />
 `;
 
 test("renderStates: one h1, one main, escaped title and summary", () => {
-  const html = renderStates({
-    template,
-    title: "Tom & <Jerry>",
-    summary: 'It\'s "quoted" & <b>',
-    examples: EXAMPLES,
-    hasTsx: false,
-  });
+  const html = renderStates({ template, title: "Tom & <Jerry>", summary: "It's \"quoted\" & <b>", examples: EXAMPLES, hasTsx: false });
   assert.match(html, /^<!doctype html>/i);
   assert.equal(count(html, /<h1\b/g), 1);
   assert.equal(count(html, /<main\b/g), 1);
@@ -58,18 +45,9 @@ test("renderStates: one h1, one main, escaped title and summary", () => {
 });
 
 test("renderStates: keeps template specimens untouched, hoists links and scripts", () => {
-  const html = renderStates({
-    template,
-    title: "X",
-    summary: "y",
-    examples: EXAMPLES,
-    hasTsx: true,
-  });
+  const html = renderStates({ template, title: "X", summary: "y", examples: EXAMPLES, hasTsx: true });
   assert.ok(html.includes('<template data-specimen="page" data-title="Page" data-height="300">'));
-  assert.ok(
-    html.includes("<h1>Inside</h1><script>window.inTemplate = 1;</script>"),
-    "template content is unchanged",
-  );
+  assert.ok(html.includes("<h1>Inside</h1><script>window.inTemplate = 1;</script>"), "template content is unchanged");
   assert.ok(html.includes("  keep\n    this"), "pre-formatted text is unchanged");
   const head = html.slice(0, html.indexOf("</head>"));
   assert.ok(head.includes('href="./specimen/x.css"'), "a link goes to the head");
@@ -84,7 +62,7 @@ test("splitExamples: only what is outside a template moves", () => {
   const { body, head, scripts } = splitExamples(EXAMPLES);
   assert.equal(head.length, 1);
   assert.equal(scripts.length, 1);
-  assert.ok(body.includes("window.inTemplate = 1;"));
+  assert.ok(body.includes('window.inTemplate = 1;'));
   assert.ok(!body.includes("window.ran"));
 });
 
@@ -92,33 +70,16 @@ test("generateStates: writes a page for each component with examples, none witho
   const dir = mkdtempSync(join(tmpdir(), "cap-states-"));
   mkdirSync(join(dir, "site"));
   writeFileSync(join(dir, "site", "states-template.html"), template);
-  for (const name of ["alpha", "beta", "gamma"])
-    mkdirSync(join(dir, "components", name), { recursive: true });
-  writeFileSync(
-    join(dir, "components", "alpha", "alpha.md"),
-    "---\nname: alpha\ntitle: Alpha part\nsummary: 'The alpha''s job.'\n---\nBody\n",
-  );
-  writeFileSync(
-    join(dir, "components", "alpha", "examples.html"),
-    `${EXAMPLES}<!-- build:chart -->\n`,
-  );
-  writeFileSync(
-    join(dir, "components", "alpha", "examples.build.ts"),
-    'export default { chart: "<figure class=\\"built\\"></figure>" };\n',
-  );
+  for (const name of ["alpha", "beta", "gamma"]) mkdirSync(join(dir, "components", name), { recursive: true });
+  writeFileSync(join(dir, "components", "alpha", "alpha.md"), "---\nname: alpha\ntitle: Alpha part\nsummary: 'The alpha''s job.'\n---\nBody\n");
+  writeFileSync(join(dir, "components", "alpha", "examples.html"), `${EXAMPLES}<!-- build:chart -->\n`);
+  writeFileSync(join(dir, "components", "alpha", "examples.build.ts"), 'export default { chart: "<figure class=\\"built\\"></figure>" };\n');
   writeFileSync(join(dir, "components", "beta", "examples.tsx"), "export {};\n");
   writeFileSync(join(dir, "components", "gamma", "gamma.md"), "---\nname: gamma\n---\n");
   assert.deepEqual([...(await generateStates(dir)).keys()].sort(), ["alpha", "beta"]);
   const alpha = readFileSync(join(dir, "components", "alpha", "states.html"), "utf8");
-  assert.ok(
-    alpha.includes('<figure class="built"></figure>') && !alpha.includes("build:chart"),
-    "a build marker is the module's markup",
-  );
-  assert.match(
-    alpha,
-    /<h1>Alpha part<\/h1>\s*<p>The alpha&#39;s job\.<\/p>/,
-    "the YAML's doubled quote is one apostrophe, escaped",
-  );
+  assert.ok(alpha.includes('<figure class="built"></figure>') && !alpha.includes("build:chart"), "a build marker is the module's markup");
+  assert.match(alpha, /<h1>Alpha part<\/h1>\s*<p>The alpha&#39;s job\.<\/p>/, "the YAML's doubled quote is one apostrophe, escaped");
   const beta = readFileSync(join(dir, "components", "beta", "states.html"), "utf8");
   assert.match(beta, /<h1>beta<\/h1>/, "falls back to the folder name without a doc page");
   assert.ok(beta.includes('src="./examples.tsx"'));
@@ -126,28 +87,16 @@ test("generateStates: writes a page for each component with examples, none witho
 });
 
 test("every component's examples.html makes a valid page: one h1, one main, a heading per specimen", () => {
-  const names = readdirSync(join(ROOT, "components"), { withFileTypes: true }).filter(
-    (d) => d.isDirectory() && existsSync(join(ROOT, "components", d.name, "examples.html")),
-  );
+  const names = readdirSync(join(ROOT, "components"), { withFileTypes: true }).filter((d) => d.isDirectory() && existsSync(join(ROOT, "components", d.name, "examples.html")));
   assert.ok(names.length > 0);
   for (const d of names) {
     const examples = readFileSync(join(ROOT, "components", d.name, "examples.html"), "utf8");
-    assert.ok(
-      !/<(?:html|head|body)\b/i.test(outsideTemplates(examples)),
-      `${d.name}: examples.html is inner markup only`,
-    );
-    assert.ok(
-      !/<h1\b/i.test(outsideTemplates(examples)) && !/<main\b/i.test(outsideTemplates(examples)),
-      `${d.name}: the template supplies the h1 and the main`,
-    );
+    assert.ok(!/<(?:html|head|body)\b/i.test(outsideTemplates(examples)), `${d.name}: examples.html is inner markup only`);
+    assert.ok(!/<h1\b/i.test(outsideTemplates(examples)) && !/<main\b/i.test(outsideTemplates(examples)), `${d.name}: the template supplies the h1 and the main`);
     const html = renderStates({ template, title: d.name, summary: "s", examples, hasTsx: false });
     assert.equal(count(html, /<h1\b/g), 1, `${d.name}: one h1`);
     assert.equal(count(html, /<main\b/g), 1, `${d.name}: one main`);
     const templates = (examples.match(/<template\b/g) ?? []).length;
-    assert.equal(
-      (html.match(/<template\b/g) ?? []).length,
-      templates,
-      `${d.name}: every template specimen kept`,
-    );
+    assert.equal((html.match(/<template\b/g) ?? []).length, templates, `${d.name}: every template specimen kept`);
   }
 });

@@ -59,14 +59,7 @@ function UsageRow({ item, a, stale }: { item: UsageItem; a: UsageAssessment; sta
   );
 }
 
-export function UsageMeter({
-  items,
-  now: nowProp,
-  freshness,
-  stale = false,
-  legend = true,
-  tableLabel = "Usage against free limits",
-}: UsageMeterProps) {
+export function UsageMeter({ items, now: nowProp, freshness, stale = false, legend = true, tableLabel = "Usage against free limits" }: UsageMeterProps) {
   // The time the meter was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
   const now = nowProp ?? drawnAt;
@@ -85,20 +78,7 @@ export function UsageMeter({
       )}
       <ul className="cap-usage-list">
         {items.map((item) => (
-          <UsageRow
-            key={item.id}
-            item={item}
-            stale={stale}
-            a={assess({
-              used: item.used,
-              limit: item.limit,
-              history: item.history,
-              resetsAt: item.resetsAt,
-              now,
-              unit: item.unit,
-              atLimit: item.atLimit,
-            })}
-          />
+          <UsageRow key={item.id} item={item} stale={stale} a={assess({ used: item.used, limit: item.limit, history: item.history, resetsAt: item.resetsAt, now, unit: item.unit, atLimit: item.atLimit })} />
         ))}
       </ul>
       {legend && (
@@ -113,12 +93,7 @@ export function UsageMeter({
           </li>
         </ul>
       )}
-      <div
-        className="cap-data"
-        dangerouslySetInnerHTML={{
-          __html: dataTableBlock(usageTable(items.map((item) => ({ ...item, now }))), tableLabel),
-        }}
-      />
+      <div className="cap-data" dangerouslySetInnerHTML={{ __html: dataTableBlock(usageTable(items.map((item) => ({ ...item, now }))), tableLabel) }} />
     </div>
   );
 }

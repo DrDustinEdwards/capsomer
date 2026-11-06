@@ -1,12 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useId,
-  useState,
-  type ComponentProps,
-  type KeyboardEvent,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useId, useState, type ComponentProps, type KeyboardEvent, type ReactNode } from "react";
 import { nextTab, type Activation, type Orientation } from "./tabs.ts";
 
 // Renders the HTML contract in tabs.md. The chosen tab, the roving tabindex and the hidden
@@ -40,16 +32,7 @@ export interface TabsProps extends Omit<ComponentProps<"div">, "onChange" | "def
   activation?: Activation;
 }
 
-export function Tabs({
-  value,
-  defaultValue = "",
-  onValueChange,
-  orientation = "horizontal",
-  activation = "automatic",
-  className,
-  children,
-  ...props
-}: TabsProps) {
+export function Tabs({ value, defaultValue = "", onValueChange, orientation = "horizontal", activation = "automatic", className, children, ...props }: TabsProps) {
   const base = useId();
   const [own, setOwn] = useState(defaultValue);
   const chosen = value ?? own;
@@ -60,23 +43,8 @@ export function Tabs({
     if (v !== chosen) onValueChange?.(v);
   };
   return (
-    <Ctx.Provider
-      value={{
-        base,
-        value: chosen,
-        stop: moved ?? chosen,
-        orientation,
-        activation,
-        choose,
-        setStop: setMoved,
-      }}
-    >
-      <div
-        className={className ? `cap-tabs ${className}` : "cap-tabs"}
-        data-orientation={orientation === "vertical" ? "vertical" : undefined}
-        data-activation={activation === "manual" ? "manual" : undefined}
-        {...props}
-      >
+    <Ctx.Provider value={{ base, value: chosen, stop: moved ?? chosen, orientation, activation, choose, setStop: setMoved }}>
+      <div className={className ? `cap-tabs ${className}` : "cap-tabs"} data-orientation={orientation === "vertical" ? "vertical" : undefined} data-activation={activation === "manual" ? "manual" : undefined} {...props}>
         {children}
       </div>
     </Ctx.Provider>
@@ -91,16 +59,7 @@ export interface TabsListProps extends ComponentProps<"div"> {
   fill?: boolean;
 }
 
-export function TabsList({
-  variant = "default",
-  size = "default",
-  fill,
-  className,
-  onKeyDown,
-  onBlur,
-  children,
-  ...props
-}: TabsListProps) {
+export function TabsList({ variant = "default", size = "default", fill, className, onKeyDown, onBlur, children, ...props }: TabsListProps) {
   const c = useTabs();
   const keys = (e: KeyboardEvent<HTMLDivElement>) => {
     onKeyDown?.(e);
@@ -108,13 +67,7 @@ export function TabsList({
     const tabs = [...e.currentTarget.querySelectorAll<HTMLElement>(":scope > [role='tab']")];
     const enabled = tabs.flatMap((t, i) => (t.getAttribute("aria-disabled") === "true" ? [] : [i]));
     const current = tabs.findIndex((t) => t === document.activeElement);
-    const to = nextTab(
-      enabled,
-      current,
-      e.key,
-      c.orientation,
-      getComputedStyle(e.currentTarget).direction === "rtl",
-    );
+    const to = nextTab(enabled, current, e.key, c.orientation, getComputedStyle(e.currentTarget).direction === "rtl");
     const target = to === null ? undefined : tabs[to];
     if (!target) return;
     e.preventDefault();
@@ -150,15 +103,7 @@ export interface TabsTriggerProps extends Omit<ComponentProps<"button">, "value"
   disabled?: boolean;
 }
 
-export function TabsTrigger({
-  value,
-  count,
-  disabled,
-  className,
-  onClick,
-  children,
-  ...props
-}: TabsTriggerProps) {
+export function TabsTrigger({ value, count, disabled, className, onClick, children, ...props }: TabsTriggerProps) {
   const c = useTabs();
   const on = c.value === value;
   return (
@@ -183,23 +128,10 @@ export function TabsTrigger({
   );
 }
 
-export function TabsContent({
-  value,
-  className,
-  children,
-  ...props
-}: ComponentProps<"div"> & { value: string }) {
+export function TabsContent({ value, className, children, ...props }: ComponentProps<"div"> & { value: string }) {
   const c = useTabs();
   return (
-    <div
-      role="tabpanel"
-      id={`${c.base}-panel-${value}`}
-      aria-labelledby={`${c.base}-tab-${value}`}
-      tabIndex={0}
-      hidden={c.value !== value}
-      className={className ? `cap-tabs-panel ${className}` : "cap-tabs-panel"}
-      {...props}
-    >
+    <div role="tabpanel" id={`${c.base}-panel-${value}`} aria-labelledby={`${c.base}-tab-${value}`} tabIndex={0} hidden={c.value !== value} className={className ? `cap-tabs-panel ${className}` : "cap-tabs-panel"} {...props}>
       {children}
     </div>
   );
@@ -223,23 +155,9 @@ export interface TabsNavProps extends ComponentProps<"nav"> {
   renderLink?: RenderTabLink;
 }
 
-export function TabsNav({
-  variant = "default",
-  size = "default",
-  fill,
-  className,
-  children,
-  renderLink,
-  ...props
-}: TabsNavProps) {
+export function TabsNav({ variant = "default", size = "default", fill, className, children, renderLink, ...props }: TabsNavProps) {
   const nav = (
-    <nav
-      className={className ? `cap-tabs-list ${className}` : "cap-tabs-list"}
-      data-variant={variant === "line" ? "line" : undefined}
-      data-size={size === "default" ? undefined : size}
-      data-fill={fill ? "" : undefined}
-      {...props}
-    >
+    <nav className={className ? `cap-tabs-list ${className}` : "cap-tabs-list"} data-variant={variant === "line" ? "line" : undefined} data-size={size === "default" ? undefined : size} data-fill={fill ? "" : undefined} {...props}>
       {children}
     </nav>
   );
@@ -255,14 +173,7 @@ export interface TabLinkProps extends Omit<ComponentProps<"a">, "href"> {
   renderLink?: RenderTabLink;
 }
 
-export function TabLink({
-  current,
-  count,
-  className,
-  children,
-  renderLink,
-  ...props
-}: TabLinkProps) {
+export function TabLink({ current, count, className, children, renderLink, ...props }: TabLinkProps) {
   const inherited = useContext(NavLinks);
   const draw = renderLink ?? inherited;
   const inner = (
@@ -271,11 +182,6 @@ export function TabLink({
       {count != null ? <span className="cap-tab-count">{count}</span> : null}
     </>
   );
-  const linkProps = {
-    className: className ? `cap-tab ${className}` : "cap-tab",
-    "aria-current": current ? ("page" as const) : undefined,
-    ...props,
-    children: inner,
-  };
+  const linkProps = { className: className ? `cap-tab ${className}` : "cap-tab", "aria-current": current ? ("page" as const) : undefined, ...props, children: inner };
   return draw ? <>{draw(linkProps)}</> : <a {...linkProps}>{inner}</a>;
 }

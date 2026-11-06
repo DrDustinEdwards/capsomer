@@ -1,27 +1,10 @@
 // Sample mails for the states page. Invented, with an obviously fake token. Each frame is the
 // real renderEmail output in an iframe. A frame forced to light drops the dark rules; one forced
 // to dark applies them whatever the page's own scheme, so both show on one page.
-import {
-  alert,
-  emailChange,
-  magicLink,
-  notice,
-  renderEmail,
-  reset,
-  securityNotice,
-  verification,
-  type Common,
-  type Template,
-} from "../email.ts";
+import { alert, emailChange, magicLink, notice, renderEmail, reset, securityNotice, verification, type Common, type Template } from "../email.ts";
 
-const common: Common = {
-  brand: { name: "Example Co", family: "purple" },
-  to: "reader@example.com",
-};
-const link = {
-  url: "https://app.example.com/auth/verify?t=EXAMPLE-NOT-A-TOKEN",
-  expiresIn: "15 minutes",
-};
+const common: Common = { brand: { name: "Example Co", family: "purple" }, to: "reader@example.com" };
+const link = { url: "https://app.example.com/auth/verify?t=EXAMPLE-NOT-A-TOKEN", expiresIn: "15 minutes" };
 
 // A product's own template from the same blocks: a digest with a section heading, ruled rows, a bold figure, a
 // sign-off in two lines and a preformatted excerpt.
@@ -30,10 +13,7 @@ const digest: Template<{ week: string }> = {
   subject: (d) => `Your weekly summary, ${d.week}`,
   blocks: (d) => [
     { type: "heading", text: "Your weekly summary" },
-    {
-      type: "paragraph",
-      text: [["You kept ", { bold: "12 readers" }, ` in the week of ${d.week}.`]],
-    },
+    { type: "paragraph", text: [["You kept ", { bold: "12 readers" }, ` in the week of ${d.week}.`]] },
     { type: "subheading", text: "Readers" },
     {
       type: "rows",
@@ -44,10 +24,7 @@ const digest: Template<{ week: string }> = {
       ],
     },
     { type: "subheading", text: "Last error" },
-    {
-      type: "pre",
-      text: "Error: mail to reader@example.com was refused\n    at send (mail.js:41)\n    at run (cron.js:9)",
-    },
+    { type: "pre", text: "Error: mail to reader@example.com was refused\n    at send (mail.js:41)\n    at run (cron.js:9)" },
     { type: "paragraph", text: ["Thanks,", "Example Co"] },
   ],
 };
@@ -59,21 +36,9 @@ const SAMPLES: Record<string, () => string> = {
   verification: () => renderEmail(verification, { ...common, ...link }).html,
   reset: () => renderEmail(reset, { ...common, ...link }).html,
   emailChangeCurrent: () =>
-    renderEmail(emailChange, {
-      ...common,
-      url: link.url,
-      expiresIn: "1 hour",
-      step: "current",
-      newEmail: "new-reader@example.com",
-    }).html,
+    renderEmail(emailChange, { ...common, url: link.url, expiresIn: "1 hour", step: "current", newEmail: "new-reader@example.com" }).html,
   emailChangeNew: () =>
-    renderEmail(emailChange, {
-      ...common,
-      to: "new-reader@example.com",
-      url: link.url,
-      expiresIn: "1 hour",
-      step: "new",
-    }).html,
+    renderEmail(emailChange, { ...common, to: "new-reader@example.com", url: link.url, expiresIn: "1 hour", step: "new" }).html,
   alert: () =>
     renderEmail(alert, {
       ...common,
@@ -87,10 +52,7 @@ const SAMPLES: Record<string, () => string> = {
     renderEmail(notice, {
       ...common,
       title: "Your drafts moved",
-      body: [
-        "Drafts now live under Writing in the sidebar.",
-        "Nothing was deleted, and the links you shared still work.",
-      ],
+      body: ["Drafts now live under Writing in the sidebar.", "Nothing was deleted, and the links you shared still work."],
       action: { label: "Open Writing", url: "https://app.example.com/writing" },
     }).html,
   securityNotice: () =>
@@ -100,8 +62,7 @@ const SAMPLES: Record<string, () => string> = {
       when: "October 31, 2026 at 1:52 AM UTC",
       device: "Safari on iPhone",
       location: "Portland, Oregon, United States",
-      secure:
-        "If this was not you, sign in now, remove any passkey or sign-in method you do not recognize, and sign out of every other device.",
+      secure: "If this was not you, sign in now, remove any passkey or sign-in method you do not recognize, and sign out of every other device.",
       url: "https://app.example.com/account",
     }).html,
 };
@@ -113,9 +74,6 @@ export function renderSamples(root: ParentNode = document): void {
     const html = SAMPLES[frame.dataset.email ?? ""]?.();
     if (html === undefined) throw new Error(`no sample for ${frame.dataset.email}`);
     frame.style.setProperty("inline-size", `${frame.dataset.width ?? "600"}px`);
-    frame.srcdoc =
-      frame.dataset.scheme === "light"
-        ? html.replace(DARK_RULES, "")
-        : html.replace("@media (prefers-color-scheme: dark)", "@media all");
+    frame.srcdoc = frame.dataset.scheme === "light" ? html.replace(DARK_RULES, "") : html.replace("@media (prefers-color-scheme: dark)", "@media all");
   }
 }

@@ -118,8 +118,7 @@ export function arrange(items: readonly AttentionItem[], options: ArrangeOptions
   const noticeItems = sorted.filter((it) => isNotice(it.tone));
 
   const size = new Map<string, number>();
-  for (const it of problemItems)
-    if (it.group && it.tone !== "crit") size.set(it.group, (size.get(it.group) ?? 0) + 1);
+  for (const it of problemItems) if (it.group && it.tone !== "crit") size.set(it.group, (size.get(it.group) ?? 0) + 1);
   const entries: AttentionEntry[] = [];
   const open = new Map<string, AttentionGroupEntry>();
   for (const item of problemItems) {
@@ -131,17 +130,7 @@ export function arrange(items: readonly AttentionItem[], options: ArrangeOptions
     let g = open.get(item.group);
     if (!g) {
       const info = groups[item.group];
-      g = {
-        kind: "group",
-        key: item.group,
-        label: groupTitle(item.group, n, info),
-        detail: info?.detail,
-        when: info?.when ?? item.when,
-        tone: item.tone,
-        items: [],
-        total: n,
-        view: info?.view,
-      };
+      g = { kind: "group", key: item.group, label: groupTitle(item.group, n, info), detail: info?.detail, when: info?.when ?? item.when, tone: item.tone, items: [], total: n, view: info?.view };
       open.set(item.group, g);
       entries.push(g);
     }
@@ -155,8 +144,7 @@ export function arrange(items: readonly AttentionItem[], options: ArrangeOptions
   const problems = [...crit, ...(hidden.length ? warn.slice(0, room) : warn)];
 
   const noticeSize = new Map<string, number>();
-  for (const it of noticeItems)
-    if (it.group) noticeSize.set(it.group, (noticeSize.get(it.group) ?? 0) + 1);
+  for (const it of noticeItems) if (it.group) noticeSize.set(it.group, (noticeSize.get(it.group) ?? 0) + 1);
   const notices: AttentionItem[] = [];
   const folded = new Set<string>();
   for (const item of noticeItems) {
@@ -168,14 +156,7 @@ export function arrange(items: readonly AttentionItem[], options: ArrangeOptions
     if (folded.has(item.group)) continue;
     folded.add(item.group);
     const info = groups[item.group];
-    notices.push({
-      id: `group:${item.group}`,
-      tone: item.tone,
-      title: groupTitle(item.group, n, info),
-      detail: info?.detail ?? item.detail,
-      when: info?.when ?? item.when,
-      href: info?.view?.href ?? item.href,
-    });
+    notices.push({ id: `group:${item.group}`, tone: item.tone, title: groupTitle(item.group, n, info), detail: info?.detail ?? item.detail, when: info?.when ?? item.when, href: info?.view?.href ?? item.href });
   }
   return { problems, more: hidden, notices, noticeCount: noticeItems.length };
 }
@@ -188,11 +169,7 @@ export function problemCount(a: Arranged): string {
 
 // "All 7 in CI and merges" when the group holds more than it shows, else "Open CI and merges".
 export function viewLinkText(g: AttentionGroupEntry): string {
-  return g.view
-    ? g.total > g.items.length
-      ? `All ${g.total} in ${g.view.label}`
-      : `Open ${g.view.label}`
-    : "";
+  return g.view ? (g.total > g.items.length ? `All ${g.total} in ${g.view.label}` : `Open ${g.view.label}`) : "";
 }
 
 // Shows or hides what one button controls (a group's rows, the warnings past the cap, the
@@ -202,8 +179,7 @@ export function setGroup(button: HTMLElement, open: boolean): void {
   button.setAttribute("aria-expanded", String(open));
   const openLabel = button.dataset.openLabel;
   if (openLabel) {
-    if (button.dataset.closedLabel === undefined)
-      button.dataset.closedLabel = button.textContent ?? "";
+    if (button.dataset.closedLabel === undefined) button.dataset.closedLabel = button.textContent ?? "";
     button.textContent = open ? openLabel : button.dataset.closedLabel;
   }
   const id = button.getAttribute("aria-controls");
@@ -220,14 +196,10 @@ export function toggleGroup(button: HTMLElement): void {
 // call is enough). Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const list of root.querySelectorAll<HTMLElement>(
-    "[data-cap='attention-list']:not([data-cap-ready])",
-  )) {
+  for (const list of root.querySelectorAll<HTMLElement>("[data-cap='attention-list']:not([data-cap-ready])")) {
     list.dataset.capReady = "";
     const onClick = (e: MouseEvent) => {
-      const button = (e.target as Element).closest<HTMLElement>(
-        "button[aria-expanded][aria-controls]",
-      );
+      const button = (e.target as Element).closest<HTMLElement>("button[aria-expanded][aria-controls]");
       if (button && list.contains(button)) toggleGroup(button);
     };
     list.addEventListener("click", onClick);
@@ -235,8 +207,7 @@ export function enhance(root: ParentNode = document): () => void {
       list.removeEventListener("click", onClick);
       delete list.dataset.capReady;
     });
-    for (const rows of list.querySelectorAll<HTMLElement>("[data-cap='row-list']"))
-      undo.push(attachRowList(rows));
+    for (const rows of list.querySelectorAll<HTMLElement>("[data-cap='row-list']")) undo.push(attachRowList(rows));
   }
   return () => undo.forEach((f) => f());
 }

@@ -1,16 +1,7 @@
 // Draft compare's renderer: renderCompare returns the HTML string for every view (draft-compare.ts).
 
 import { exact, parse } from "../time/time.ts";
-import {
-  type Analysis,
-  type Counts,
-  type Entry,
-  type Sentence,
-  type SentenceOptions,
-  type WordPart,
-  analyze,
-  countsText,
-} from "./draft-compare-diff.ts";
+import { type Analysis, type Counts, type Entry, type Sentence, type SentenceOptions, type WordPart, analyze, countsText } from "./draft-compare-diff.ts";
 
 // ---------------------------------------------------------------------------------------
 // The renderer
@@ -78,10 +69,8 @@ function markup(parts: WordPart[], show: "before" | "after" | "both"): string {
     const gap = /^\s*/.exec(p.text)?.[0] ?? "";
     const text = p.text.slice(gap.length);
     if (p.op === "same") out += esc(p.text);
-    else if (p.op === "ins" && show !== "before")
-      out += `${gap}<ins class="cap-ins">${sr("insertion start")}${esc(text)}${sr("insertion end")}</ins>`;
-    else if (p.op === "del" && show !== "after")
-      out += `${gap}<del class="cap-del">${sr("deletion start")}${esc(text)}${sr("deletion end")}</del>`;
+    else if (p.op === "ins" && show !== "before") out += `${gap}<ins class="cap-ins">${sr("insertion start")}${esc(text)}${sr("insertion end")}</ins>`;
+    else if (p.op === "del" && show !== "after") out += `${gap}<del class="cap-del">${sr("deletion start")}${esc(text)}${sr("deletion end")}</del>`;
   }
   return out;
 }
@@ -128,9 +117,7 @@ function timeHtml(iso: string): string {
 }
 
 function sideHead(role: string, s: CompareSide, which: "before" | "after"): string {
-  const meta = [s.who ? esc(s.who) : "", s.time ? timeHtml(s.time) : ""]
-    .filter(Boolean)
-    .join(" · ");
+  const meta = [s.who ? esc(s.who) : "", s.time ? timeHtml(s.time) : ""].filter(Boolean).join(" · ");
   return `<div class="cap-compare-side" data-side="${which}"><span class="cap-compare-side-role">${esc(role)}</span><span class="cap-compare-side-title">${esc(s.title)}</span>${meta ? `<span class="cap-compare-side-meta">${meta}</span>` : ""}</div>`;
 }
 
@@ -176,24 +163,13 @@ function changeAttrs(ctx: Ctx, n: number, withId: boolean): string {
 }
 
 // A sentence wrapped in its author's run, with the label where the kind changes.
-function runWrap(
-  kind: RunKind | null,
-  prev: RunKind | null,
-  html: string,
-  tag: "div" | "span",
-): string {
+function runWrap(kind: RunKind | null, prev: RunKind | null, html: string, tag: "div" | "span"): string {
   if (!kind) return html;
   const label = kind !== prev ? `<span class="cap-run-label">${RUN_LABEL[kind]}</span>` : "";
   return `<${tag} class="cap-run" data-kind="${kind}">${label}${html}</${tag}>`;
 }
 
-function renderSideRows(
-  ctx: Ctx,
-  from: number,
-  to: number,
-  withIds: boolean,
-  last: { before: RunKind | null; after: RunKind | null },
-): string {
+function renderSideRows(ctx: Ctx, from: number, to: number, withIds: boolean, last: { before: RunKind | null; after: RunKind | null }): string {
   const { an, opts } = ctx;
   let out = "";
   for (let i = from; i < to; i++) {
@@ -239,21 +215,13 @@ function renderSide(ctx: Ctx, withIds: boolean): string {
   let rows = "";
   for (const seg of segments(ctx)) {
     const inner = renderSideRows(ctx, seg.from, seg.to, withIds, last);
-    rows += seg.hidden
-      ? `<li class="cap-compare-gapitem">${gapDetails(seg.to - seg.from, `<ol class="cap-compare-rows cap-compare-gap-rows">${inner}</ol>`)}</li>`
-      : inner;
+    rows += seg.hidden ? `<li class="cap-compare-gapitem">${gapDetails(seg.to - seg.from, `<ol class="cap-compare-rows cap-compare-gap-rows">${inner}</ol>`)}</li>` : inner;
   }
   return `<ol class="cap-compare-rows">${rows}</ol>`;
 }
 
 // The inline and changes views build paragraphs: entries between paragraph openers.
-function paragraphs(
-  ctx: Ctx,
-  from: number,
-  to: number,
-  withIds: boolean,
-  last: { k: RunKind | null },
-): string {
+function paragraphs(ctx: Ctx, from: number, to: number, withIds: boolean, last: { k: RunKind | null }): string {
   const { an, opts } = ctx;
   let out = "";
   let open = false;
@@ -265,7 +233,7 @@ function paragraphs(
   for (let i = from; i < to; i++) {
     const e = an.entries[i] as Entry;
     const g = an.group[i] as number;
-    const para = (e.a?.para ?? false) || (e.b?.para ?? false);
+    const para = ((e.a?.para ?? false) || (e.b?.para ?? false));
     if (!open || para) {
       closeChange();
       if (open) out += "</p>";
@@ -295,9 +263,7 @@ function renderInline(ctx: Ctx, withIds: boolean): string {
   let out = "";
   for (const seg of segments(ctx)) {
     const inner = paragraphs(ctx, seg.from, seg.to, withIds, last);
-    out += seg.hidden
-      ? gapDetails(seg.to - seg.from, `<div class="cap-compare-gap-rows">${inner}</div>`)
-      : inner;
+    out += seg.hidden ? gapDetails(seg.to - seg.from, `<div class="cap-compare-gap-rows">${inner}</div>`) : inner;
   }
   return `<div class="cap-compare-flow">${out}</div>`;
 }
@@ -329,18 +295,13 @@ function renderChanges(ctx: Ctx, withIds: boolean): string {
   return `<div class="cap-compare-flow">${out}</div>`;
 }
 
-const VIEW_NAMES: Record<CompareView, string> = {
-  side: "Side by side",
-  inline: "Inline",
-  changes: "Changes only",
-};
+const VIEW_NAMES: Record<CompareView, string> = { side: "Side by side", inline: "Inline", changes: "Changes only" };
 
 function viewRegion(view: CompareView, label: string, inner: string): string {
   return `<div class="cap-compare-view" data-view="${view}" role="region" aria-label="${esc(label)}" tabindex="0">${inner}</div>`;
 }
 
-const fmtCounts = (c: Counts) =>
-  `<p class="cap-compare-counts" data-cap-part="counts">${esc(countsText(c))}</p>`;
+const fmtCounts = (c: Counts) => `<p class="cap-compare-counts" data-cap-part="counts">${esc(countsText(c))}</p>`;
 
 // The legend, on one line: the counts, then the key to the marks. What each view does is the
 // view switch's description (viewSwitch), for a screen reader; its labels say it to the eye.
@@ -369,10 +330,7 @@ function jump(id: string, total: number): string {
 }
 
 function viewSwitch(id: string, view: CompareView): string {
-  const radios = VIEWS.map(
-    (v) =>
-      `<label><input type="radio" name="${id}-view" value="${v}"${v === view ? " checked" : ""} /> ${VIEW_NAMES[v]}</label>`,
-  ).join("");
+  const radios = VIEWS.map((v) => `<label><input type="radio" name="${id}-view" value="${v}"${v === view ? " checked" : ""} /> ${VIEW_NAMES[v]}</label>`).join("");
   return `<fieldset class="cap-seg" aria-describedby="${id}-views"><legend class="cap-sr-only">View</legend><div class="cap-seg-options" data-size="sm">${radios}</div><p class="cap-sr-only" id="${id}-views">Side by side: before on the left, after on the right, sentence by sentence. Inline: one column, with each removal and addition where it happened. Changes only: just the changed sentences.</p></fieldset>`;
 }
 
@@ -380,37 +338,24 @@ function viewSwitch(id: string, view: CompareView): string {
 // views, a legend with the counts, jump links to each change, and all three views in full.
 // Safe to call on a server; the string needs no script to read. Call enhance() in the page
 // for the jump keys, the remembered view and "expand all".
-export function renderCompare(
-  before: CompareSide,
-  after: CompareSide,
-  options: CompareOptions = {},
-): string {
+export function renderCompare(before: CompareSide, after: CompareSide, options: CompareOptions = {}): string {
   const id = options.id ?? "compare";
   const view = options.view ?? "side";
   const labels: CompareLabels = { before: "Before", after: "After", ...options.labels };
   const an = analyze(before.text, after.text, options);
   const name = `Compare ${before.title} with ${after.title}`;
   const attrs = `class="cap-compare" data-cap="draft-compare" id="${id}" aria-label="${esc(name)}"${options.remember === false ? ' data-remember="off"' : ""}`;
-  const head =
-    options.heads === false
-      ? ""
-      : `<div class="cap-compare-head">${sideHead(labels.before, before, "before")}${sideHead(labels.after, after, "after")}</div>`;
+  const head = options.heads === false ? "" : `<div class="cap-compare-head">${sideHead(labels.before, before, "before")}${sideHead(labels.after, after, "after")}</div>`;
 
   if (an.identical) {
-    const words = (s: CompareSide) =>
-      `“${esc(s.title)}”${s.who || s.time ? ` (${[s.who ? esc(s.who) : "", s.time ? timeHtml(s.time) : ""].filter(Boolean).join(", ")})` : ""}`;
+    const words = (s: CompareSide) => `“${esc(s.title)}”${s.who || s.time ? ` (${[s.who ? esc(s.who) : "", s.time ? timeHtml(s.time) : ""].filter(Boolean).join(", ")})` : ""}`;
     const ctx: Ctx = { id, an, opts: options, total: 0, labels };
     const flow = `<div class="cap-compare-flow">${paragraphs(ctx, 0, an.entries.length, false, { k: null })}</div>`;
     return `<section ${attrs}>${head}<p class="cap-compare-none" role="status"><strong>No differences.</strong> ${words(before)} and ${words(after)} read the same, word for word.</p>${an.entries.length ? `<div class="cap-compare-view" data-view="same" role="region" aria-label="The text, the same on both sides" tabindex="0">${flow}</div>` : ""}</section>`;
   }
 
   const ctx: Ctx = { id, an, opts: options, total: an.counts.changes, labels };
-  const body = (v: CompareView) =>
-    v === "side"
-      ? renderSide(ctx, v === view)
-      : v === "inline"
-        ? renderInline(ctx, v === view)
-        : renderChanges(ctx, v === view);
+  const body = (v: CompareView) => (v === "side" ? renderSide(ctx, v === view) : v === "inline" ? renderInline(ctx, v === view) : renderChanges(ctx, v === view));
   const views = VIEWS.map((v) => viewRegion(v, `${VIEW_NAMES[v]}, ${name}`, body(v))).join("");
   return `<section ${attrs}>${head}<div class="cap-compare-bar">${viewSwitch(id, view)}${legend(an.counts)}${jump(id, an.counts.changes)}</div><p class="cap-sr-only" role="status" data-cap-part="live"></p><div class="cap-compare-views">${views}</div></section>`;
 }

@@ -24,13 +24,7 @@ function plural(n: number, unit: string): string {
   return `${n} ${unit}${n === 1 ? "" : "s"}`;
 }
 
-const dayKey = (zone?: string) =>
-  new Intl.DateTimeFormat("en-CA", {
-    timeZone: zone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
+const dayKey = (zone?: string) => new Intl.DateTimeFormat("en-CA", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit" });
 
 // Whole calendar days from `t` to `now` in the zone: 1 is yesterday, -1 tomorrow.
 export function calendarDays(t: number, now: number, zone?: string): number {
@@ -45,14 +39,8 @@ export function calendarDays(t: number, now: number, zone?: string): number {
 // "September 12", or "September 12, 2025" when the year is not this one: American English,
 // the family's (Dustin, 2026-10-25).
 export function day(t: number, now: number = Date.now(), zone?: string): string {
-  const year = (x: number) =>
-    new Intl.DateTimeFormat("en-US", { timeZone: zone, year: "numeric" }).format(x);
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: zone,
-    day: "numeric",
-    month: "long",
-    year: year(t) === year(now) ? undefined : "numeric",
-  }).format(t);
+  const year = (x: number) => new Intl.DateTimeFormat("en-US", { timeZone: zone, year: "numeric" }).format(x);
+  return new Intl.DateTimeFormat("en-US", { timeZone: zone, day: "numeric", month: "long", year: year(t) === year(now) ? undefined : "numeric" }).format(t);
 }
 
 // Relative, spelled out: "just now", "less than a minute ago", "5 minutes ago",
@@ -98,9 +86,7 @@ function parts(t: number, zone: string | undefined): Record<string, string> {
 }
 
 const zoneWord = (locale: string, t: number, zone?: string) =>
-  new Intl.DateTimeFormat(locale, { timeZone: zone, timeZoneName: "short" })
-    .formatToParts(t)
-    .find((p) => p.type === "timeZoneName")?.value ?? "";
+  new Intl.DateTimeFormat(locale, { timeZone: zone, timeZoneName: "short" }).formatToParts(t).find((p) => p.type === "timeZoneName")?.value ?? "";
 
 // The zone's short name as an American reader knows it: "CST", "CDT", "EST", "PDT".
 // en-US has names only for the American zones and writes "GMT+1" for the rest, so a zone it
@@ -133,10 +119,7 @@ export function exactParts(t: number, zone?: string): { local: string; utc: stri
   if (isUtc(zone)) return { local: `${uDate}, ${uTime}`, utc: null };
   const l = parts(t, zone);
   const lDate = `${l.month} ${l.day}, ${l.year}`;
-  return {
-    local: `${lDate}, ${l.hour}:${l.minute} ${l.dayPeriod} ${zoneName(t, zone)}`,
-    utc: `(${lDate === uDate ? uTime : `${uDate}, ${uTime}`})`,
-  };
+  return { local: `${lDate}, ${l.hour}:${l.minute} ${l.dayPeriod} ${zoneName(t, zone)}`, utc: `(${lDate === uDate ? uTime : `${uDate}, ${uTime}`})` };
 }
 
 // "November 3, 2026, 8:00 AM CST (2:00 PM UTC)".
@@ -148,12 +131,7 @@ export function exact(t: number, zone?: string): string {
 export type TimeFormat = "relative" | "exact";
 
 // The text a <time class="cap-time"> shows.
-export function text(
-  t: number,
-  format: TimeFormat,
-  now: number = Date.now(),
-  zone?: string,
-): string {
+export function text(t: number, format: TimeFormat, now: number = Date.now(), zone?: string): string {
   if (!Number.isFinite(t)) return UNREADABLE;
   return format === "exact" ? exact(t, zone) : relative(t, now, zone);
 }

@@ -1,22 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const grid = "section[aria-labelledby='s-grid']";
 
 // The distinct vertical positions of the tiles in a list: how many rows they sit on.
 function rowTops(page: Page, sel: string): Promise<number[]> {
-  return page
-    .locator(sel)
-    .evaluate((list) =>
-      Array.from(list.querySelectorAll(".cap-tile")).map((t) =>
-        Math.round(t.getBoundingClientRect().top),
-      ),
-    );
+  return page.locator(sel).evaluate((list) => Array.from(list.querySelectorAll(".cap-tile")).map((t) => Math.round(t.getBoundingClientRect().top)));
 }
 
 eachTheme((theme) => {
@@ -44,30 +33,16 @@ eachTheme((theme) => {
       { sel: "section[aria-labelledby='s-crit'] .cap-tile-word", what: "a critical word" },
       { sel: "section[aria-labelledby='s-nodata'] .cap-tile-figure", what: "a no-data figure" },
       { sel: "section[aria-labelledby='s-nodata'] .cap-tile-detail", what: "a detail line" },
-      {
-        sel: "section[aria-labelledby='s-force'] [data-force='hover'] .cap-tile-detail",
-        what: "a detail line on a hovered tile",
-      },
-      {
-        sel: "section[aria-labelledby='s-force'] [data-force='hover'] .cap-tile-label",
-        what: "a label on a hovered tile",
-      },
-      {
-        sel: "section[aria-labelledby='s-force'] [data-force='pressed'] .cap-tile-detail",
-        what: "a detail line on a pressed tile",
-      },
+      { sel: "section[aria-labelledby='s-force'] [data-force='hover'] .cap-tile-detail", what: "a detail line on a hovered tile" },
+      { sel: "section[aria-labelledby='s-force'] [data-force='hover'] .cap-tile-label", what: "a label on a hovered tile" },
+      { sel: "section[aria-labelledby='s-force'] [data-force='pressed'] .cap-tile-detail", what: "a detail line on a pressed tile" },
     ]);
   });
 
   test("accessibility: the focus ring reaches its contrast", async ({ page }) => {
     await visitStates(page, "stat-tile", theme);
-    await page
-      .locator(grid)
-      .getByRole("link", { name: /Sites up/ })
-      .focus();
-    await expectContrast(page, [
-      { sel: `${grid} .cap-tile:focus-visible`, what: "a focused tile's ring", part: "outline" },
-    ]);
+    await page.locator(grid).getByRole("link", { name: /Sites up/ }).focus();
+    await expectContrast(page, [{ sel: `${grid} .cap-tile:focus-visible`, what: "a focused tile's ring", part: "outline" }]);
   });
 
   test("accessibility: the tiles' roles and names", { tag: "@markup" }, async ({ page }) => {
@@ -88,11 +63,7 @@ eachTheme((theme) => {
           - link /^0 Open findings None open/
     `);
     // The sparkline is an inline primitive: an image named by its numbers, read with the tile.
-    await expect(
-      page.locator(grid).getByRole("link", { name: /Actions minutes/ }),
-    ).toHaveAccessibleName(
-      /Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340\.$/,
-    );
+    await expect(page.locator(grid).getByRole("link", { name: /Actions minutes/ })).toHaveAccessibleName(/Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340\.$/);
   });
 
   test("keyboard: Tab reaches every tile in order", async ({ page }) => {
@@ -103,18 +74,14 @@ eachTheme((theme) => {
     for (let i = 1; i < count; i++) {
       await page.keyboard.press("Tab");
       // A tile with its numbers has one more stop after it: its "Show data".
-      if (await page.locator(".enarratio-data > summary:focus").count())
-        await page.keyboard.press("Tab");
+      if (await page.locator(".enarratio-data > summary:focus").count()) await page.keyboard.press("Tab");
       await expect(tiles.nth(i)).toBeFocused();
     }
   });
 
   test("keyboard: Enter on a link tile follows it", async ({ page }) => {
     await visitStates(page, "stat-tile", theme);
-    await page
-      .locator(grid)
-      .getByRole("link", { name: /Actions minutes/ })
-      .focus();
+    await page.locator(grid).getByRole("link", { name: /Actions minutes/ }).focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/#budget$/);
   });
@@ -122,26 +89,20 @@ eachTheme((theme) => {
   test("keyboard: Enter on a button tile activates it", async ({ page }) => {
     await visitStates(page, "stat-tile", theme);
     const button = page.locator(grid).getByRole("button", { name: /Blocked on you/ });
-    await button.evaluate((el) =>
-      el.addEventListener("click", () => el.setAttribute("data-clicked", "yes")),
-    );
+    await button.evaluate((el) => el.addEventListener("click", () => el.setAttribute("data-clicked", "yes")));
     await button.focus();
     await page.keyboard.press("Enter");
     await expect(button).toHaveAttribute("data-clicked", "yes");
   });
 
-  test("behavior: the row wraps onto more rows at phone width, and no tile runs out of its row", async ({
-    page,
-  }) => {
+  test("behavior: the row wraps onto more rows at phone width, and no tile runs out of its row", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 760 });
     await visitStates(page, "stat-tile", theme, "phone");
     const rows = await rowTops(page, ".cap-tiles-list");
     expect(new Set(rows).size, "tiles on more than one row").toBeGreaterThan(1);
     const spill = await page.locator(".cap-tiles-list").evaluate((list) => {
       const edge = list.getBoundingClientRect().right + 1;
-      return Array.from(list.querySelectorAll(".cap-tile")).filter(
-        (t) => t.getBoundingClientRect().right > edge,
-      ).length;
+      return Array.from(list.querySelectorAll(".cap-tile")).filter((t) => t.getBoundingClientRect().right > edge).length;
     });
     expect(spill).toBe(0);
   });
@@ -150,16 +111,9 @@ eachTheme((theme) => {
     for (const width of [390, 760, 1280]) {
       await page.setViewportSize({ width, height: 900 });
       await visitStates(page, "stat-tile", theme);
-      const cut = await page
-        .locator(`${grid} .cap-tile`)
-        .evaluateAll(
-          (tiles) =>
-            tiles.filter((t) =>
-              Array.from(t.querySelectorAll<HTMLElement>(".cap-tile-line, .cap-tile-detail")).some(
-                (el) => el.scrollWidth > el.clientWidth + 1,
-              ),
-            ).length,
-        );
+      const cut = await page.locator(`${grid} .cap-tile`).evaluateAll((tiles) =>
+        tiles.filter((t) => Array.from(t.querySelectorAll<HTMLElement>(".cap-tile-line, .cap-tile-detail")).some((el) => el.scrollWidth > el.clientWidth + 1)).length,
+      );
       expect(cut, `tiles with cut text at ${width} px`).toBe(0);
     }
   });
@@ -172,18 +126,14 @@ eachTheme((theme) => {
     }
   });
 
-  test("behavior: a tile with its numbers has Show data under it, outside the link", async ({
-    page,
-  }) => {
+  test("behavior: a tile with its numbers has Show data under it, outside the link", async ({ page }) => {
     await visitStates(page, "stat-tile", theme);
     const frame = page.locator("#grid-sites-data");
     await expect(frame.locator("a.cap-tile")).toHaveCount(1);
     await expect(frame.locator("a.cap-tile details, a.cap-tile summary")).toHaveCount(0);
     await expect(frame.getByText("Show data")).toBeVisible();
     // The sparkline is an inline primitive: an image named by its numbers, no frame of its own.
-    await expect(
-      frame.getByRole("img", { name: "Sites up, last 7 days: 6 of 6 every day." }),
-    ).toHaveCount(1);
+    await expect(frame.getByRole("img", { name: "Sites up, last 7 days: 6 of 6 every day." })).toHaveCount(1);
     await expect(frame.locator(".cap-chart")).toHaveCount(0);
     await frame.locator("summary").focus();
     await page.keyboard.press("Enter");

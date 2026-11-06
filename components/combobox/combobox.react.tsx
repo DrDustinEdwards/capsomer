@@ -1,15 +1,5 @@
 import { Combobox as Base } from "@base-ui/react/combobox";
-import {
-  Fragment,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-  type RefObject,
-  useLayoutEffect,
-} from "react";
+import { Fragment, useEffect, useId, useMemo, useRef, useState, type ReactNode, type RefObject, useLayoutEffect } from "react";
 
 export interface ComboboxOption {
   value: string;
@@ -81,39 +71,19 @@ const tidy = (text: string) => text.trim().replace(/\s+/g, " ");
 
 const Check = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m3.5 8.5 3 3 6-7"
-    />
+    <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="m3.5 8.5 3 3 6-7" />
   </svg>
 );
 
 const Chevron = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m3.5 6 4.5 4.5L12.5 6"
-    />
+    <path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="m3.5 6 4.5 4.5L12.5 6" />
   </svg>
 );
 
 const Cross = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      d="M4 4l8 8M12 4l-8 8"
-    />
+    <path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M4 4l8 8M12 4l-8 8" />
   </svg>
 );
 
@@ -124,10 +94,7 @@ const ErrorGlyph = () => (
   </svg>
 );
 
-const defaultEmpty = (query: string): ReactNode =>
-  query.trim()
-    ? `No match for “${query.trim()}”. Check the spelling, or clear the box to see every option.`
-    : "Nothing to choose from yet.";
+const defaultEmpty = (query: string): ReactNode => (query.trim() ? `No match for “${query.trim()}”. Check the spelling, or clear the box to see every option.` : "Nothing to choose from yet.");
 
 // Options with a `group` are listed under that heading, in the order each heading first
 // appears; the rest come first, with no heading. With no group anywhere the list is flat.
@@ -161,31 +128,10 @@ function Option({ item }: { item: ComboboxOption }) {
 
 // The popup: the shared popover surface around the shared listbox, with the loading and
 // empty messages in Base UI's own regions so a change is announced.
-function Popup({
-  isGrouped,
-  loading,
-  loadingText,
-  empty,
-  container,
-  anchor,
-  multiple,
-}: {
-  isGrouped: boolean;
-  loading: boolean;
-  loadingText: string;
-  empty: ReactNode;
-  container?: HTMLElement | null;
-  anchor?: RefObject<HTMLElement | null>;
-  multiple: boolean;
-}) {
+function Popup({ isGrouped, loading, loadingText, empty, container, anchor, multiple }: { isGrouped: boolean; loading: boolean; loadingText: string; empty: ReactNode; container?: HTMLElement | null; anchor?: RefObject<HTMLElement | null>; multiple: boolean }) {
   return (
     <Base.Portal container={container ?? undefined}>
-      <Base.Positioner
-        className="cap-combobox-positioner"
-        sideOffset={4}
-        align="start"
-        anchor={anchor}
-      >
+      <Base.Positioner className="cap-combobox-positioner" sideOffset={4} align="start" anchor={anchor}>
         <Base.Popup className="cap-popover cap-combobox-popup" data-flush="">
           <Base.Status className="cap-combobox-status">
             {loading ? (
@@ -195,27 +141,13 @@ function Popup({
               </>
             ) : null}
           </Base.Status>
-          <Base.Empty className="cap-listbox-empty cap-combobox-empty">
-            {loading ? null : empty}
-          </Base.Empty>
-          <Base.List
-            className="cap-listbox cap-combobox-list"
-            data-controlled=""
-            data-selection={multiple ? "multi" : "single"}
-          >
+          <Base.Empty className="cap-listbox-empty cap-combobox-empty">{loading ? null : empty}</Base.Empty>
+          <Base.List className="cap-listbox cap-combobox-list" data-controlled="" data-selection={multiple ? "multi" : "single"}>
             {isGrouped
               ? (group: Group) => (
-                  <Base.Group
-                    key={group.value || "none"}
-                    items={group.items}
-                    className="cap-listbox-group"
-                  >
-                    {group.value ? (
-                      <Base.GroupLabel className="cap-listbox-label">{group.value}</Base.GroupLabel>
-                    ) : null}
-                    <Base.Collection>
-                      {(item: ComboboxOption) => <Option key={item.value} item={item} />}
-                    </Base.Collection>
+                  <Base.Group key={group.value || "none"} items={group.items} className="cap-listbox-group">
+                    {group.value ? <Base.GroupLabel className="cap-listbox-label">{group.value}</Base.GroupLabel> : null}
+                    <Base.Collection>{(item: ComboboxOption) => <Option key={item.value} item={item} />}</Base.Collection>
                   </Base.Group>
                 )
               : (item: ComboboxOption) => <Option key={item.value} item={item} />}
@@ -226,27 +158,7 @@ function Popup({
   );
 }
 
-function Field({
-  label,
-  labelId,
-  inputId,
-  required,
-  help,
-  helpId,
-  error,
-  errorId,
-  children,
-}: {
-  label: string;
-  labelId: string;
-  inputId: string;
-  required: boolean;
-  help?: ReactNode;
-  helpId: string;
-  error?: ReactNode;
-  errorId: string;
-  children: ReactNode;
-}) {
+function Field({ label, labelId, inputId, required, help, helpId, error, errorId, children }: { label: string; labelId: string; inputId: string; required: boolean; help?: ReactNode; helpId: string; error?: ReactNode; errorId: string; children: ReactNode }) {
   return (
     <div className="cap-combobox" data-cap="combobox">
       <label className="cap-combobox-label" id={labelId} htmlFor={inputId}>
@@ -273,23 +185,7 @@ function Field({
 // chosen. Typed text that matches nothing is not kept: when the list closes, the box shows
 // the chosen value's label again (or nothing).
 export function Combobox(props: ComboboxProps) {
-  const {
-    label,
-    items,
-    placeholder,
-    emptyText,
-    loading = false,
-    loadingText = "Loading",
-    help,
-    error,
-    disabled = false,
-    required = false,
-    name,
-    container,
-    defaultOpen,
-    defaultInputValue,
-    clearable = false,
-  } = props;
+  const { label, items, placeholder, emptyText, loading = false, loadingText = "Loading", help, error, disabled = false, required = false, name, container, defaultOpen, defaultInputValue, clearable = false } = props;
   const autoId = useId();
   const inputId = props.id ?? `${autoId}-input`;
   const helpId = `${autoId}-help`;
@@ -321,23 +217,11 @@ export function Combobox(props: ComboboxProps) {
 
   const list = useMemo(() => grouped(items), [items]);
   const isGrouped = items.some((i) => i.group);
-  const describedBy =
-    [help != null ? helpId : "", error != null ? errorId : ""].filter(Boolean).join(" ") ||
-    undefined;
-  const empty =
-    typeof emptyText === "function" ? emptyText(query) : (emptyText ?? defaultEmpty(query));
+  const describedBy = [help != null ? helpId : "", error != null ? errorId : ""].filter(Boolean).join(" ") || undefined;
+  const empty = typeof emptyText === "function" ? emptyText(query) : (emptyText ?? defaultEmpty(query));
 
   return (
-    <Field
-      label={label}
-      labelId={labelId}
-      inputId={inputId}
-      required={required}
-      help={help}
-      helpId={helpId}
-      error={error}
-      errorId={errorId}
-    >
+    <Field label={label} labelId={labelId} inputId={inputId} required={required} help={help} helpId={helpId} error={error} errorId={errorId}>
       <Base.Root<ComboboxOption, false>
         items={list}
         value={selected}
@@ -362,15 +246,7 @@ export function Combobox(props: ComboboxProps) {
         defaultOpen={defaultOpen}
       >
         <Base.InputGroup className="cap-combobox-group">
-          <Base.Input
-            id={inputId}
-            className="cap-combobox-input"
-            aria-labelledby={labelId}
-            placeholder={placeholder}
-            aria-invalid={error != null ? true : undefined}
-            aria-describedby={describedBy}
-            autoComplete="off"
-          />
+          <Base.Input id={inputId} className="cap-combobox-input" aria-labelledby={labelId} placeholder={placeholder} aria-invalid={error != null ? true : undefined} aria-describedby={describedBy} autoComplete="off" />
           {clearable && (
             <Base.Clear className="cap-combobox-clear" aria-label={`Clear ${label}`}>
               <Cross />
@@ -380,14 +256,7 @@ export function Combobox(props: ComboboxProps) {
             <Chevron />
           </Base.Trigger>
         </Base.InputGroup>
-        <Popup
-          isGrouped={isGrouped}
-          loading={loading}
-          loadingText={loadingText}
-          empty={empty}
-          container={container}
-          multiple={false}
-        />
+        <Popup isGrouped={isGrouped} loading={loading} loadingText={loadingText} empty={empty} container={container} multiple={false} />
       </Base.Root>
     </Field>
   );
@@ -396,22 +265,7 @@ export function Combobox(props: ComboboxProps) {
 // Several values: each chosen option is a chip in the box with its own remove button, and
 // the input follows the chips. The list stays open after a choice, so more can be added.
 export function ComboboxMultiple(props: ComboboxMultipleProps) {
-  const {
-    label,
-    items,
-    placeholder,
-    emptyText,
-    loading = false,
-    loadingText = "Loading",
-    help,
-    error,
-    disabled = false,
-    required = false,
-    name,
-    container,
-    defaultOpen,
-    defaultInputValue,
-  } = props;
+  const { label, items, placeholder, emptyText, loading = false, loadingText = "Loading", help, error, disabled = false, required = false, name, container, defaultOpen, defaultInputValue } = props;
   const autoId = useId();
   const inputId = props.id ?? `${autoId}-input`;
   const helpId = `${autoId}-help`;
@@ -428,44 +282,22 @@ export function ComboboxMultiple(props: ComboboxMultipleProps) {
   const known = useMemo(() => {
     const out = [...items];
     for (const m of made) if (!out.some((i) => i.value === m.value)) out.push(m);
-    if (creatable)
-      for (const v of current)
-        if (!out.some((i) => i.value === v)) out.push({ value: v, label: v });
+    if (creatable) for (const v of current) if (!out.some((i) => i.value === v)) out.push({ value: v, label: v });
     return out;
   }, [items, made, creatable, current]);
-  const selected = useMemo(
-    () =>
-      current.map((v) => known.find((i) => i.value === v)).filter((i): i is ComboboxOption => !!i),
-    [current, known],
-  );
+  const selected = useMemo(() => current.map((v) => known.find((i) => i.value === v)).filter((i): i is ComboboxOption => !!i), [current, known]);
   const [query, setQuery] = useState(defaultInputValue ?? "");
 
   const typed = tidy(query);
-  const makeable =
-    creatable && typed !== "" && !known.some((i) => i.label.toLowerCase() === typed.toLowerCase());
-  const options = useMemo(
-    () => (makeable ? [{ value: `${MAKE}${typed}`, label: createLabel(typed) }, ...known] : known),
-    [makeable, typed, known, createLabel],
-  );
+  const makeable = creatable && typed !== "" && !known.some((i) => i.label.toLowerCase() === typed.toLowerCase());
+  const options = useMemo(() => (makeable ? [{ value: `${MAKE}${typed}`, label: createLabel(typed) }, ...known] : known), [makeable, typed, known, createLabel]);
   const list = useMemo(() => grouped(options), [options]);
   const isGrouped = options.some((i) => i.group);
-  const describedBy =
-    [help != null ? helpId : "", error != null ? errorId : ""].filter(Boolean).join(" ") ||
-    undefined;
-  const empty =
-    typeof emptyText === "function" ? emptyText(query) : (emptyText ?? defaultEmpty(query));
+  const describedBy = [help != null ? helpId : "", error != null ? errorId : ""].filter(Boolean).join(" ") || undefined;
+  const empty = typeof emptyText === "function" ? emptyText(query) : (emptyText ?? defaultEmpty(query));
 
   return (
-    <Field
-      label={label}
-      labelId={labelId}
-      inputId={inputId}
-      required={required}
-      help={help}
-      helpId={helpId}
-      error={error}
-      errorId={errorId}
-    >
+    <Field label={label} labelId={labelId} inputId={inputId} required={required} help={help} helpId={helpId} error={error} errorId={errorId}>
       <Base.Root<ComboboxOption, true>
         multiple
         items={list}
@@ -493,56 +325,31 @@ export function ComboboxMultiple(props: ComboboxMultipleProps) {
         onInputValueChange={(next: string) => setQuery(next)}
         autoHighlight={creatable}
         isItemEqualToValue={(a: ComboboxOption, b: ComboboxOption) => a.value === b.value}
-        itemToStringLabel={(item: ComboboxOption) =>
-          item.value.startsWith(MAKE) ? typed : item.label
-        }
+        itemToStringLabel={(item: ComboboxOption) => (item.value.startsWith(MAKE) ? typed : item.label)}
         itemToStringValue={(item: ComboboxOption) => item.value}
         disabled={disabled}
         required={required}
         name={name}
         defaultOpen={defaultOpen}
       >
-        <Base.Chips
-          className="cap-combobox-chips"
-          ref={anchor}
-          data-disabled={disabled ? "" : undefined}
-        >
+        <Base.Chips className="cap-combobox-chips" ref={anchor} data-disabled={disabled ? "" : undefined}>
           <Base.Value>
             {(value: ComboboxOption[]) => (
               <Fragment>
                 {value.map((item) => (
                   <Base.Chip key={item.value} className="cap-combobox-chip">
                     {item.label}
-                    <Base.ChipRemove
-                      className="cap-combobox-chip-remove"
-                      aria-label={`Remove ${item.label}`}
-                    >
+                    <Base.ChipRemove className="cap-combobox-chip-remove" aria-label={`Remove ${item.label}`}>
                       <Cross size={12} />
                     </Base.ChipRemove>
                   </Base.Chip>
                 ))}
-                <Base.Input
-                  id={inputId}
-                  className="cap-combobox-input"
-                  aria-labelledby={labelId}
-                  placeholder={value.length ? undefined : placeholder}
-                  aria-invalid={error != null ? true : undefined}
-                  aria-describedby={describedBy}
-                  autoComplete="off"
-                />
+                <Base.Input id={inputId} className="cap-combobox-input" aria-labelledby={labelId} placeholder={value.length ? undefined : placeholder} aria-invalid={error != null ? true : undefined} aria-describedby={describedBy} autoComplete="off" />
               </Fragment>
             )}
           </Base.Value>
         </Base.Chips>
-        <Popup
-          isGrouped={isGrouped}
-          loading={loading}
-          loadingText={loadingText}
-          empty={empty}
-          container={container}
-          anchor={anchor}
-          multiple
-        />
+        <Popup isGrouped={isGrouped} loading={loading} loadingText={loadingText} empty={empty} container={container} anchor={anchor} multiple />
       </Base.Root>
     </Field>
   );

@@ -38,9 +38,7 @@ export function stepIndex(count: number, at: number, key: string): number | null
 
 // The items a panel holds that a person can reach: links and enabled buttons that are drawn.
 export function panelItems(panel: HTMLElement): HTMLElement[] {
-  return [...panel.querySelectorAll<HTMLElement>("a[href], button:not(:disabled)")].filter(
-    (el) => el.getClientRects().length > 0,
-  );
+  return [...panel.querySelectorAll<HTMLElement>("a[href], button:not(:disabled)")].filter((el) => el.getClientRects().length > 0);
 }
 
 const isOpen = (panel: HTMLElement): boolean => {
@@ -64,11 +62,7 @@ export function placePanel(trigger: HTMLElement, panel: HTMLElement): void {
   const bar = trigger.closest(".cap-site-header")?.getBoundingClientRect();
   const t = trigger.getBoundingClientRect();
   const offset = bar ? Math.max(4, Math.round(bar.bottom - t.bottom) + 4) : 4;
-  place(trigger, panel, {
-    side: "bottom",
-    align: panel.dataset.align === "end" ? "end" : "start",
-    offset,
-  });
+  place(trigger, panel, { side: "bottom", align: panel.dataset.align === "end" ? "end" : "start", offset });
 }
 
 let escBound = false;
@@ -85,12 +79,7 @@ function onEsc(e: KeyboardEvent): void {
 
 // Wires one disclosure button to its panel. Returns a function that unwires it.
 // Adds a listener and keeps its removal (wirePanel, wireSearch).
-type On = <E extends Event>(
-  target: EventTarget,
-  type: string,
-  fn: (e: E) => void,
-  opts?: boolean | AddEventListenerOptions,
-) => void;
+type On = <E extends Event>(target: EventTarget, type: string, fn: (e: E) => void, opts?: boolean | AddEventListenerOptions) => void;
 
 // Focus leaving an open panel for anything but its button closes it, as does a press outside both.
 function dismissOutside(on: On, trigger: HTMLElement, panel: HTMLElement, close: () => void): void {
@@ -112,12 +101,7 @@ export function wirePanel(trigger: HTMLElement, panel: HTMLElement): () => void 
   let mode: "hover" | "held" = "held";
   let timer: number | undefined;
   const undo: Array<() => void> = [];
-  const on = <E extends Event>(
-    target: EventTarget,
-    type: string,
-    fn: (e: E) => void,
-    opts?: boolean | AddEventListenerOptions,
-  ) => {
+  const on = <E extends Event>(target: EventTarget, type: string, fn: (e: E) => void, opts?: boolean | AddEventListenerOptions) => {
     target.addEventListener(type, fn as EventListener, opts);
     undo.push(() => target.removeEventListener(type, fn as EventListener, opts));
   };
@@ -153,8 +137,7 @@ export function wirePanel(trigger: HTMLElement, panel: HTMLElement): () => void 
     if (!opened) {
       // Focus left inside a closed panel (or lost to the page) goes back to its button.
       const active = document.activeElement;
-      if (!active || active === document.body || panel.contains(active))
-        trigger.focus({ preventScroll: true });
+      if (!active || active === document.body || panel.contains(active)) trigger.focus({ preventScroll: true });
     }
   });
   // A click, Enter or Space toggles. A panel opened by hover is held open by a click rather than
@@ -185,11 +168,7 @@ export function wirePanel(trigger: HTMLElement, panel: HTMLElement): () => void 
   on(panel, "pointerleave", leave);
   on(panel, "keydown", (e: KeyboardEvent) => {
     const items = panelItems(panel);
-    const next = stepIndex(
-      items.length,
-      items.indexOf(document.activeElement as HTMLElement),
-      e.key,
-    );
+    const next = stepIndex(items.length, items.indexOf(document.activeElement as HTMLElement), e.key);
     if (next === null) return;
     e.preventDefault();
     items[next]?.focus();
@@ -214,9 +193,7 @@ export function openSheet(header: HTMLElement): void {
   const button = header.querySelector<HTMLButtonElement>(".cap-site-header-menu");
   const sheet = header.querySelector<HTMLDialogElement>("dialog.cap-site-header-sheet");
   if (!sheet || sheet.open) return;
-  openDialog(sheet, button, {
-    focus: sheet.querySelector<HTMLElement>(".cap-site-header-sheet-title"),
-  });
+  openDialog(sheet, button, { focus: sheet.querySelector<HTMLElement>(".cap-site-header-sheet-title") });
   button?.setAttribute("aria-expanded", "true");
 }
 
@@ -228,14 +205,9 @@ export function closeSheet(header: HTMLElement): void {
 // Attaches to every [data-cap="site-header"] under root not yet attached: each panel, each
 // icon control's tip, search (answered by `suggest`, the site's own), the menu button and its
 // sheet. Returns a function that detaches them all.
-export function enhance(
-  root: ParentNode = document,
-  { suggest }: { suggest?: Suggest } = {},
-): () => void {
+export function enhance(root: ParentNode = document, { suggest }: { suggest?: Suggest } = {}): () => void {
   const undo: Array<() => void> = [];
-  for (const header of root.querySelectorAll<HTMLElement>(
-    "[data-cap='site-header']:not([data-cap-ready])",
-  )) {
+  for (const header of root.querySelectorAll<HTMLElement>("[data-cap='site-header']:not([data-cap-ready])")) {
     header.dataset.capReady = "";
     const parts: Array<() => void> = [];
     for (const trigger of header.querySelectorAll<HTMLElement>("[data-cap-part='panel-trigger']")) {
@@ -301,11 +273,7 @@ let searchCount = 0;
  * form) to open from the icon or "/", and, given `suggest`, to show matches as the person types.
  * Returns a function that unwires it.
  */
-export function wireSearch(
-  search: HTMLElement,
-  suggest?: Suggest,
-  { limit = 6 }: { limit?: number } = {},
-): () => void {
+export function wireSearch(search: HTMLElement, suggest?: Suggest, { limit = 6 }: { limit?: number } = {}): () => void {
   const trigger = search.querySelector<HTMLElement>("[data-cap-part='search-trigger']");
   const panel = search.querySelector<HTMLElement>(".cap-site-header-search-panel");
   const form = panel?.querySelector<HTMLFormElement>("form");
@@ -376,12 +344,8 @@ export function wireSearch(
     const top = hits.slice(0, limit);
     list.innerHTML = `${top.map(row).join("")}<a role="option" id="${id}-all" href="${escapeHtml(fullUrl(query))}" tabindex="-1" class="cap-site-header-result-all">All results for “${escapeHtml(query)}”</a>`;
     empty.hidden = top.length > 0;
-    empty.textContent = top.length
-      ? ""
-      : `No match for “${query}”. Try fewer words, or open all results.`;
-    status.textContent = top.length
-      ? `${hits.length} ${hits.length === 1 ? "match" : "matches"}`
-      : "No match";
+    empty.textContent = top.length ? "" : `No match for “${query}”. Try fewer words, or open all results.`;
+    status.textContent = top.length ? `${hits.length} ${hits.length === 1 ? "match" : "matches"}` : "No match";
     mark(-1);
     results.hidden = false;
     input.setAttribute("aria-expanded", "true");
@@ -403,12 +367,7 @@ export function wireSearch(
   };
 
   const undo: Array<() => void> = [];
-  const on = <E extends Event>(
-    target: EventTarget,
-    type: string,
-    fn: (e: E) => void,
-    opts?: boolean | AddEventListenerOptions,
-  ) => {
+  const on = <E extends Event>(target: EventTarget, type: string, fn: (e: E) => void, opts?: boolean | AddEventListenerOptions) => {
     target.addEventListener(type, fn as EventListener, opts);
     undo.push(() => target.removeEventListener(type, fn as EventListener, opts));
   };
@@ -426,10 +385,7 @@ export function wireSearch(
   // "/" opens search from anywhere, but not while a person types in a field.
   on(document, "keydown", (e: KeyboardEvent) => {
     if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
-    if (
-      (e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")
-    )
-      return;
+    if ((e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")) return;
     e.preventDefault();
     open();
   });
@@ -460,13 +416,7 @@ export function wireSearch(
     }
     e.preventDefault();
     const all = rows();
-    mark(
-      active < 0
-        ? e.key === "ArrowDown"
-          ? 0
-          : all.length - 1
-        : (active + (e.key === "ArrowDown" ? 1 : all.length - 1)) % all.length,
-    );
+    mark(active < 0 ? (e.key === "ArrowDown" ? 0 : all.length - 1) : (active + (e.key === "ArrowDown" ? 1 : all.length - 1)) % all.length);
   });
   // Focus leaving the panel for anything but its icon closes it; so does a press outside both.
   dismissOutside(on, trigger, panel, close);
@@ -478,14 +428,7 @@ export function wireSearch(
     close();
     undo.forEach((f) => f());
     results.remove();
-    for (const a of [
-      "role",
-      "aria-autocomplete",
-      "aria-controls",
-      "aria-expanded",
-      "aria-activedescendant",
-    ])
-      input.removeAttribute(a);
+    for (const a of ["role", "aria-autocomplete", "aria-controls", "aria-expanded", "aria-activedescendant"]) input.removeAttribute(a);
   };
 }
 
@@ -510,8 +453,7 @@ export interface LetterheadOptions {
   theme?: boolean;
 }
 
-const SEARCH_GLYPH =
-  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM20 20l-3.2-3.2" /></svg>';
+const SEARCH_GLYPH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM20 20l-3.2-3.2" /></svg>';
 const THEME_BUTTON = `<button type="button" class="cap-theme-button cap-site-header-icon cap-site-header-theme" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
 <svg class="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
 <svg class="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
@@ -519,15 +461,7 @@ const THEME_BUTTON = `<button type="button" class="cap-theme-button cap-site-hea
 </button>`;
 
 /** The search icon and its panel, as `letterheadHtml` writes them and the React header draws them. */
-export function searchHtml({
-  action,
-  label,
-  name = "q",
-}: {
-  action: string;
-  label: string;
-  name?: string;
-}): string {
+export function searchHtml({ action, label, name = "q" }: { action: string; label: string; name?: string }): string {
   return `<div class="cap-site-header-search" data-cap-part="search"><a class="cap-site-header-icon cap-site-header-search-button" href="${escapeHtml(action)}" aria-label="${escapeHtml(label)}" data-cap-part="search-trigger">${SEARCH_GLYPH}<span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">${escapeHtml(label)}</span><kbd>/</kbd></span></a><div class="cap-site-header-search-panel" data-align="end"><form role="search" aria-label="Site" action="${escapeHtml(action)}" method="get">${SEARCH_GLYPH}<input type="search" name="${escapeHtml(name)}" placeholder="${escapeHtml(label)}" aria-label="${escapeHtml(label)}" autocomplete="off" enterkeyhint="search" /></form></div></div>`;
 }
 
@@ -535,29 +469,13 @@ export function searchHtml({
  * A public page's letterhead as HTML: plain string building, so a static build or a server writes
  * the same markup as the React header (Dustin, 2026-10-27). `enhance` and the theme switch wire it.
  */
-export function letterheadHtml({
-  name,
-  agency = "Dustin Edwards",
-  home = "/",
-  mark,
-  links,
-  current,
-  search,
-  skipTo = "#main",
-  theme = true,
-}: LetterheadOptions): string {
+export function letterheadHtml({ name, agency = "Dustin Edwards", home = "/", mark, links, current, search, skipTo = "#main", theme = true }: LetterheadOptions): string {
   const label = [agency, name].filter(Boolean).join(" ");
-  const names = [
-    agency && `<span class="cap-site-header-agency">${escapeHtml(agency)}</span>`,
-    name && `<span class="cap-site-header-name">${escapeHtml(name)}</span>`,
-  ]
+  const names = [agency && `<span class="cap-site-header-agency">${escapeHtml(agency)}</span>`, name && `<span class="cap-site-header-name">${escapeHtml(name)}</span>`]
     .filter(Boolean)
     .join(" ");
   const items = links
-    .map(
-      ([href, text]) =>
-        `<li><a class="cap-site-header-link" href="${escapeHtml(href)}"${text === current ? ' aria-current="page"' : ""}>${escapeHtml(text)}</a></li>`,
-    )
+    .map(([href, text]) => `<li><a class="cap-site-header-link" href="${escapeHtml(href)}"${text === current ? ' aria-current="page"' : ""}>${escapeHtml(text)}</a></li>`)
     .join("");
   const field = search ? searchHtml(search) : "";
   return `<header class="cap-site-header" data-cap="site-header" data-variant="letterhead" data-markup="">

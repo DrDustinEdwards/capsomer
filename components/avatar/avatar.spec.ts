@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -20,19 +15,13 @@ eachTheme((theme) => {
     ]);
   });
 
-  test(
-    "accessibility: each avatar is one image named for the person",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "avatar", theme);
-      await expect(
-        page.getByRole("img", { name: "Alex Rivera", exact: true }).first(),
-      ).toBeVisible();
-      await expect(page.getByRole("img", { name: "Alex Rivera, online" })).toBeVisible();
-      await expect(page.getByRole("group", { name: "Contributors" })).toBeVisible();
-      await expect(page.getByRole("img", { name: "and 3 more" })).toBeVisible();
-    },
-  );
+  test("accessibility: each avatar is one image named for the person", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "avatar", theme);
+    await expect(page.getByRole("img", { name: "Alex Rivera", exact: true }).first()).toBeVisible();
+    await expect(page.getByRole("img", { name: "Alex Rivera, online" })).toBeVisible();
+    await expect(page.getByRole("group", { name: "Contributors" })).toBeVisible();
+    await expect(page.getByRole("img", { name: "and 3 more" })).toBeVisible();
+  });
 
   test("behavior: a picture that fails to load gives way to the initials", async ({ page }) => {
     await visitStates(page, "avatar", theme);

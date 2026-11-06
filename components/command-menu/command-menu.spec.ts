@@ -1,10 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const menu = (page: Page) => page.getByRole("dialog", { name: "Command menu" });
 const box = (page: Page) => page.getByRole("combobox", { name: "Search commands" });
@@ -14,9 +9,7 @@ async function activeName(page: Page): Promise<string> {
   return page.evaluate(() => {
     const input = document.querySelector("[role='combobox']");
     const id = input?.getAttribute("aria-activedescendant");
-    return (
-      (id && document.getElementById(id)?.querySelector(".cap-option-label")?.textContent) || ""
-    );
+    return (id && document.getElementById(id)?.querySelector(".cap-option-label")?.textContent) || "";
   });
 }
 
@@ -35,32 +28,18 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of [
-    "closed",
-    "open",
-    "comfortable",
-    "filtered",
-    "stops",
-    "nomatch",
-    "active",
-    "live",
-  ]) {
+  for (const id of ["closed", "open", "comfortable", "filtered", "stops", "nomatch", "active", "live"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "command-menu", theme, id);
       await expectNoAxeViolations(page);
     });
   }
 
-  test("accessibility: options, the active option, key caps and the label reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: options, the active option, key caps and the label reach their contrast", async ({ page }) => {
     await visitStates(page, "command-menu", theme, "active");
     await expect(menu(page)).toBeVisible();
     await expectContrast(page, [
-      {
-        sel: ".cap-option[data-active] .cap-option-label",
-        what: "the active option on accent-soft",
-      },
+      { sel: ".cap-option[data-active] .cap-option-label", what: "the active option on accent-soft" },
       { sel: ".cap-option:not([data-active]) .cap-option-label", what: "an option" },
       { sel: ".cap-option[data-active] kbd", what: "a key cap in the active option" },
       { sel: ".cap-option:not([data-active]) kbd", what: "a key cap" },
@@ -97,9 +76,7 @@ eachTheme((theme) => {
     `);
   });
 
-  test("keyboard: Ctrl K (Cmd K on a Mac) opens the menu with focus in the search", async ({
-    page,
-  }) => {
+  test("keyboard: Ctrl K (Cmd K on a Mac) opens the menu with focus in the search", async ({ page }) => {
     await visitStates(page, "command-menu", theme, "closed");
     await page.keyboard.press("ControlOrMeta+k");
     await expect(menu(page)).toBeVisible();
@@ -165,19 +142,13 @@ eachTheme((theme) => {
     await expect(box(page)).not.toHaveAttribute("aria-activedescendant", /.+/);
   });
 
-  test("keyboard: typing stop, or pause, lists the stops, each saying what it asks, and running one only opens its control", async ({
-    page,
-  }) => {
+  test("keyboard: typing stop, or pause, lists the stops, each saying what it asks, and running one only opens its control", async ({ page }) => {
     await openFromButton(page, theme);
     await page.keyboard.type("stop");
     await expect(shownOptions(page)).toHaveCount(2);
     await expect(page.getByRole("group", { name: "Stop" })).toBeVisible();
-    await expect(
-      page.getByRole("option", { name: /Pause capsomer\s*,\s*asks a reason/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("option", { name: /Revoke deploy-agent\s*,\s*preview first/ }),
-    ).toBeVisible();
+    await expect(page.getByRole("option", { name: /Pause capsomer\s*,\s*asks a reason/ })).toBeVisible();
+    await expect(page.getByRole("option", { name: /Revoke deploy-agent\s*,\s*preview first/ })).toBeVisible();
     // No command stops everything.
     await box(page).fill("all");
     await expect(page.getByRole("option", { name: /Stop|Pause|Revoke/ })).toHaveCount(0);
@@ -210,14 +181,10 @@ eachTheme((theme) => {
     await expect(box(page)).toHaveValue("ck");
     await expect(shownOptions(page)).toHaveCount(3);
     await visitStates(page, "command-menu", theme, "nomatch");
-    await expect(menu(page).locator(".cap-listbox-empty")).toHaveText(
-      "No commands match “deploy to vercel”",
-    );
+    await expect(menu(page).locator(".cap-listbox-empty")).toHaveText("No commands match “deploy to vercel”");
   });
 
-  test("behavior: a live search answers as the person types; Enter runs a result", async ({
-    page,
-  }) => {
+  test("behavior: a live search answers as the person types; Enter runs a result", async ({ page }) => {
     await visitStates(page, "command-menu", theme, "live");
     const input = page.getByRole("combobox", { name: "Search articles" });
     await expect(input).toBeFocused();
@@ -226,8 +193,6 @@ eachTheme((theme) => {
     await expect(page.getByRole("option", { name: "Your workspace" })).toHaveCount(0);
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
-    await expect(page.locator("[data-specimen-part='said']")).toHaveText(
-      "Ran: Release notes for version 4",
-    );
+    await expect(page.locator("[data-specimen-part='said']")).toHaveText("Ran: Release notes for version 4");
   });
 });

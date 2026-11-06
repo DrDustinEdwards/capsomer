@@ -107,8 +107,7 @@ const SITES = {
       line: "#2a2b28",
       "line-strong": "#7b7e75",
       // Recova's card-elevated: a lit top edge over a drop shadow in dark, the drop shadow alone in light.
-      "card-shadow":
-        "0 1px 0 0 rgb(255 255 255 / 6%) inset, 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%)",
+      "card-shadow": "0 1px 0 0 rgb(255 255 255 / 6%) inset, 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%)",
     },
     light: {
       ground: "#f7f6f2",
@@ -171,34 +170,10 @@ const SITES = {
     },
     // Rule 05's sky blue #43a1d8 is 2.7:1 on the cream ground, under the 3:1 a checked box needs,
     // so the light theme takes Foxing's own hover blue for the fill and a step darker for hover.
-    light: {
-      ground: "#faf6ee",
-      surface: "#ffffff",
-      raised: "#ffffff",
-      sunken: "#f2ead8",
-      text: "#16100b",
-      muted: "#3e3028",
-      dim: "#815e41",
-      line: "#e5d8bf",
-      "line-strong": "#815e41",
-      on: "#2b87bc",
-      "on-hover": "#1f7fb8",
-    },
+    light: { ground: "#faf6ee", surface: "#ffffff", raised: "#ffffff", sunken: "#f2ead8", text: "#16100b", muted: "#3e3028", dim: "#815e41", line: "#e5d8bf", "line-strong": "#815e41", on: "#2b87bc", "on-hover": "#1f7fb8" },
     // Dark muted and dim are Foxing's hues lifted to Capsomer's APCA text floor (the dark mode
     // plan, 2026-10-29); they were #c4ae96 and #a28269 (Lc 58 and 36 on the raised surface).
-    dark: {
-      ground: "#16100b",
-      surface: "#1f1710",
-      raised: "#2a1f16",
-      sunken: "#100d08",
-      text: "#f5edde",
-      muted: "#c9b39a",
-      dim: "#d1b095",
-      line: "#3a2c22",
-      "line-strong": "#a28269",
-      on: "#43a1d8",
-      "on-hover": "#5aafe0",
-    },
+    dark: { ground: "#16100b", surface: "#1f1710", raised: "#2a1f16", sunken: "#100d08", text: "#f5edde", muted: "#c9b39a", dim: "#d1b095", line: "#3a2c22", "line-strong": "#a28269", on: "#43a1d8", "on-hover": "#5aafe0" },
   },
   julieedwards: {
     family: "forest",
@@ -228,9 +203,7 @@ function selectors(name, prefixes, indent) {
 }
 
 function block(name, values, prefixes, indent) {
-  const body = Object.entries(values)
-    .map(([k, v]) => `${indent}  --${k}: ${v};`)
-    .join("\n");
+  const body = Object.entries(values).map(([k, v]) => `${indent}  --${k}: ${v};`).join("\n");
   return `${indent}${selectors(name, prefixes, indent)} {\n${body}\n${indent}}\n`;
 }
 
@@ -244,8 +217,7 @@ function moreValues(site) {
   for (const scheme of ["light", "dark"]) {
     const own = { ...site.all, ...site[scheme] };
     const merged = { ...t[`${scheme}More`].tokens, ...own };
-    for (const [k, v] of Object.entries(fitNeutrals(merged, scheme, "more")))
-      if (k in own && v !== own[k]) out[scheme][k] = v;
+    for (const [k, v] of Object.entries(fitNeutrals(merged, scheme, "more"))) if (k in own && v !== own[k]) out[scheme][k] = v;
   }
   return out;
 }
@@ -272,13 +244,7 @@ function renderSite(name, site) {
       m += `    @media (prefers-color-scheme: dark) {\n${block(name, more.dark, [':root:not([data-theme="light"])'], "      ")}    }\n`;
       m += block(name, more.dark, [':root[data-theme="dark"]', '[data-cap-theme="dark"]'], "    ");
     }
-    if (darkFirst && Object.keys(more.light).length)
-      m += block(
-        name,
-        more.light,
-        [':root[data-theme="light"]', '[data-cap-theme="light"]'],
-        "    ",
-      );
+    if (darkFirst && Object.keys(more.light).length) m += block(name, more.light, [':root[data-theme="light"]', '[data-cap-theme="light"]'], "    ");
     css += `  @media (prefers-contrast: more) {\n${m}  }\n`;
   }
   // A site that sets a control size gives the touch size back under a coarse pointer, since its
@@ -303,19 +269,14 @@ function renderBarrel() {
    Import after tokens.css and families.css: \`import "capsomer/sites.css"\`. Or take one:
    "capsomer/site-<name>.css". Do not edit: change SITES in tokens/sites.mjs. */
 @import "./layers.css";
-${Object.keys(SITES)
-  .map((n) => `@import "../tokens/site-${n}.css";`)
-  .join("\n")}
+${Object.keys(SITES).map((n) => `@import "../tokens/site-${n}.css";`).join("\n")}
 ${ORDER}
 `;
 }
 
 // The files this script owns: [path relative to the package root, text].
 function files() {
-  return [
-    ...Object.entries(SITES).map(([n, s]) => [`tokens/site-${n}.css`, renderSite(n, s)]),
-    ["css/sites.css", renderBarrel()],
-  ];
+  return [...Object.entries(SITES).map(([n, s]) => [`tokens/site-${n}.css`, renderSite(n, s)]), ["css/sites.css", renderBarrel()]];
 }
 
 const path = (rel) => fileURLToPath(new URL(`../${rel}`, import.meta.url));
@@ -323,35 +284,17 @@ const path = (rel) => fileURLToPath(new URL(`../${rel}`, import.meta.url));
 function check() {
   const problems = [];
   const exports = JSON.parse(readFileSync(path("package.json"), "utf8")).exports;
-  if (exports["./sites.css"] !== "./css/sites.css")
-    problems.push(`package.json needs "./sites.css": "./css/sites.css" in exports`);
+  if (exports["./sites.css"] !== "./css/sites.css") problems.push(`package.json needs "./sites.css": "./css/sites.css" in exports`);
   for (const [name, site] of Object.entries(SITES)) {
     const family = FAMILIES[site.family];
     if (!family) problems.push(`${name}: family "${site.family}" is not in FAMILIES`);
-    for (const [k, v] of Object.entries({
-      ...site.all,
-      ...site.light,
-      ...site.dark,
-      ...site.phone,
-      ...site.coarse,
-    })) {
-      if (BRAND.test(k))
-        problems.push(`${name}: --${k} is a brand color; add a family in palette.mjs instead`);
+    for (const [k, v] of Object.entries({ ...site.all, ...site.light, ...site.dark, ...site.phone, ...site.coarse })) {
+      if (BRAND.test(k)) problems.push(`${name}: --${k} is a brand color; add a family in palette.mjs instead`);
       if (/var\(/.test(v)) problems.push(`${name}: --${k} must be a literal, not ${v}`);
     }
-    for (const k of Object.keys(site.light ?? {}))
-      if (!(k in (site.dark ?? {})))
-        problems.push(`${name}: --${k} is set for light only; give its dark value too`);
-    if (site.defaultTheme === "dark")
-      for (const k of Object.keys(site.dark ?? {}))
-        if (!(k in (site.light ?? {})))
-          problems.push(
-            `${name}: --${k} is set for dark only on a dark-first site; give its light value too`,
-          );
-    if (exports[`./site-${name}.css`] !== `./tokens/site-${name}.css`)
-      problems.push(
-        `package.json needs "./site-${name}.css": "./tokens/site-${name}.css" in exports`,
-      );
+    for (const k of Object.keys(site.light ?? {})) if (!(k in (site.dark ?? {}))) problems.push(`${name}: --${k} is set for light only; give its dark value too`);
+    if (site.defaultTheme === "dark") for (const k of Object.keys(site.dark ?? {})) if (!(k in (site.light ?? {}))) problems.push(`${name}: --${k} is set for dark only on a dark-first site; give its light value too`);
+    if (exports[`./site-${name}.css`] !== `./tokens/site-${name}.css`) problems.push(`package.json needs "./site-${name}.css": "./tokens/site-${name}.css" in exports`);
     if (!family) continue;
     const t = themes(family);
     for (const scheme of ["light", "dark"]) {
@@ -360,20 +303,9 @@ function check() {
       const fails = failures(merged);
       const waived = (f) => waivers.some((w) => f.startsWith(`${w.what}: --${w.fg} `));
       problems.push(...fails.filter((f) => !waived(f)).map((p) => `${name} ${scheme}: ${p}`));
-      for (const w of waivers)
-        if (!fails.some((f) => f.startsWith(`${w.what}: --${w.fg} `)))
-          problems.push(
-            `${name} ${scheme}: the waiver for ${w.what} --${w.fg} matches no failure; remove it`,
-          );
-      const mergedMore = {
-        ...t[`${scheme}More`].tokens,
-        ...site.all,
-        ...site[scheme],
-        ...moreValues(site)[scheme],
-      };
-      problems.push(
-        ...failures(mergedMore, "more").map((p) => `${name} ${scheme} (more contrast): ${p}`),
-      );
+      for (const w of waivers) if (!fails.some((f) => f.startsWith(`${w.what}: --${w.fg} `))) problems.push(`${name} ${scheme}: the waiver for ${w.what} --${w.fg} matches no failure; remove it`);
+      const mergedMore = { ...t[`${scheme}More`].tokens, ...site.all, ...site[scheme], ...moreValues(site)[scheme] };
+      problems.push(...failures(mergedMore, "more").map((p) => `${name} ${scheme} (more contrast): ${p}`));
     }
   }
   for (const f of readdirSync(path("tokens")).filter((f) => /^site-.+\.css$/.test(f))) {
@@ -386,17 +318,12 @@ function check() {
     } catch {
       problems.push(`${rel} is missing; run npm run tokens`);
     }
-    if (committed !== null && committed !== want)
-      problems.push(`${rel} differs from what tokens/sites.mjs writes; run npm run tokens`);
+    if (committed !== null && committed !== want) problems.push(`${rel} differs from what tokens/sites.mjs writes; run npm run tokens`);
   }
   return problems;
 }
 
-const invoked =
-  process.argv[1] &&
-  fileURLToPath(import.meta.url)
-    .replace(/\\/g, "/")
-    .toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase();
+const invoked = process.argv[1] && fileURLToPath(import.meta.url).replace(/\\/g, "/").toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase();
 if (invoked) {
   if (process.argv.includes("--check")) {
     const problems = check();
@@ -404,19 +331,9 @@ if (invoked) {
       console.error(`sites: ${problems.length} problem(s)\n  ${problems.join("\n  ")}`);
       process.exit(1);
     }
-    console.log(
-      `sites: ${files()
-        .map(([r]) => r)
-        .join(
-          ", ",
-        )} match the script and every pair meets WCAG 2.2 and its APCA floor in both themes, at both contrast levels`,
-    );
+    console.log(`sites: ${files().map(([r]) => r).join(", ")} match the script and every pair meets WCAG 2.2 and its APCA floor in both themes, at both contrast levels`);
   } else {
     for (const [rel, text] of files()) writeFileSync(path(rel), text);
-    console.log(
-      `sites: wrote ${files()
-        .map(([r]) => r)
-        .join(", ")}`,
-    );
+    console.log(`sites: wrote ${files().map(([r]) => r).join(", ")}`);
   }
 }

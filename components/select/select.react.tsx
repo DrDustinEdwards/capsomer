@@ -11,10 +11,7 @@ export interface SelectGroupOption {
   options: SelectOption[];
 }
 
-export interface SelectProps extends Omit<
-  SelectHTMLAttributes<HTMLSelectElement>,
-  "style" | "children" | "className" | "size"
-> {
+export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "style" | "children" | "className" | "size"> {
   // Options and groups: the same list the native select holds. Plain strings are fine for the label.
   options: Array<SelectOption | SelectGroupOption>;
   size?: "sm" | "default";
@@ -42,18 +39,8 @@ export function Select(props: SelectProps) {
     </option>
   );
   return (
-    <div
-      className="cap-select-wrap"
-      data-cap="select"
-      data-native={native ? "" : undefined}
-      ref={ref}
-    >
-      <select
-        {...rest}
-        id={selectId}
-        className="cap-select"
-        data-size={size === "default" ? undefined : size}
-      >
+    <div className="cap-select-wrap" data-cap="select" data-native={native ? "" : undefined} ref={ref}>
+      <select {...rest} id={selectId} className="cap-select" data-size={size === "default" ? undefined : size}>
         {options.map((o) =>
           "group" in o ? (
             <optgroup key={o.group} label={o.group}>

@@ -2,19 +2,16 @@
 // tables, fenced code, inline code, bold, italics and links. Every character is escaped
 // first, so the output holds only the markup this file writes.
 
-const escape = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /**
  * Every code box on the site is a named region keyboard users can reach, Prelum's pattern for rendered code: tabindex="0" so a
  * box that scrolls sideways can be scrolled from the keyboard in every browser (WCAG 2.1.1; axe's scrollable-region-focusable),
  * role="region" because ARIA prohibits aria-label on a plain pre, and the name "Code: <what it holds>". base.css draws its ring.
  */
-export const codeRegion = (name: string) =>
-  `tabindex="0" role="region" aria-label="${escape(`Code: ${name}`)}"`;
+export const codeRegion = (name: string) => `tabindex="0" role="region" aria-label="${escape(`Code: ${name}`)}"`;
 /** The same three attributes for a React pre. */
-export const codeRegionProps = (name: string) =>
-  ({ tabIndex: 0, role: "region", "aria-label": `Code: ${name}` }) as const;
+export const codeRegionProps = (name: string) => ({ tabIndex: 0, role: "region", "aria-label": `Code: ${name}` }) as const;
 
 function inline(s: string): string {
   const codes: string[] = [];
@@ -28,8 +25,7 @@ function inline(s: string): string {
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text: string, href: string) => {
       const safe = /^(https?:|#|\.{0,2}\/)/.test(href) ? href : "#";
       // Another site takes the link system's away contract (components/link/link.md).
-      if (/^https?:/.test(safe))
-        return `<a href="${safe}" data-link="away" rel="external">${text}<span class="cap-sr-only"> (opens another site)</span></a>`;
+      if (/^https?:/.test(safe)) return `<a href="${safe}" data-link="away" rel="external">${text}<span class="cap-sr-only"> (opens another site)</span></a>`;
       return `<a href="${safe}">${text}</a>`;
     });
   return out.replace(/\uE000(\d+)\uE000/g, (_, i: string) => codes[Number(i)] ?? "");
@@ -55,19 +51,14 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
       i++;
       while (i < lines.length && !(lines[i] ?? "").startsWith("```")) body.push(lines[i++] ?? "");
       i++;
-      out.push(
-        `<pre class="site-code" ${codeRegion(lang || "example")}><code>${escape(body.join("\n"))}</code></pre>`,
-      );
+      out.push(`<pre class="site-code" ${codeRegion(lang || "example")}><code>${escape(body.join("\n"))}</code></pre>`);
       continue;
     }
     const h = line.match(/^(#{1,6})\s+(.*)$/);
     if (h) {
       const level = Math.min(6, (h[1]?.length ?? 1) + headingOffset);
       const text = h[2] ?? "";
-      const id = text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
+      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       out.push(`<h${level} id="doc-${id}">${inline(text)}</h${level}>`);
       i++;
       continue;
@@ -76,8 +67,7 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
       const head = cells(line);
       i += 2;
       const rows: string[][] = [];
-      while (i < lines.length && (lines[i] ?? "").startsWith("|"))
-        rows.push(cells(lines[i++] ?? ""));
+      while (i < lines.length && (lines[i] ?? "").startsWith("|")) rows.push(cells(lines[i++] ?? ""));
       out.push(
         `<div class="cap-table-wrap" role="region" tabindex="0" aria-label="Table"><table class="cap-table"><thead><tr>${head.map((c) => `<th scope="col">${inline(c)}</th>`).join("")}</tr></thead><tbody>${rows
           .map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`)
@@ -88,15 +78,9 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
     if (/^\s*[-*]\s+/.test(line) || /^\s*\d+\.\s+/.test(line)) {
       const ordered = /^\s*\d+\./.test(line);
       const items: string[] = [];
-      while (
-        i < lines.length &&
-        (/^\s*[-*]\s+/.test(lines[i] ?? "") ||
-          /^\s*\d+\.\s+/.test(lines[i] ?? "") ||
-          /^\s{2,}\S/.test(lines[i] ?? ""))
-      ) {
+      while (i < lines.length && (/^\s*[-*]\s+/.test(lines[i] ?? "") || /^\s*\d+\.\s+/.test(lines[i] ?? "") || /^\s{2,}\S/.test(lines[i] ?? ""))) {
         const l = lines[i++] ?? "";
-        if (/^\s{2,}\S/.test(l) && !/^\s*([-*]|\d+\.)\s+/.test(l) && items.length)
-          items[items.length - 1] += " " + l.trim();
+        if (/^\s{2,}\S/.test(l) && !/^\s*([-*]|\d+\.)\s+/.test(l) && items.length) items[items.length - 1] += " " + l.trim();
         else items.push(l.replace(/^\s*([-*]|\d+\.)\s+/, ""));
       }
       const tag = ordered ? "ol" : "ul";
@@ -108,12 +92,7 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
       continue;
     }
     const para: string[] = [];
-    while (
-      i < lines.length &&
-      (lines[i] ?? "").trim() !== "" &&
-      !/^(#{1,6}\s|```|\||\s*[-*]\s|\s*\d+\.\s)/.test(lines[i] ?? "")
-    )
-      para.push(lines[i++] ?? "");
+    while (i < lines.length && (lines[i] ?? "").trim() !== "" && !/^(#{1,6}\s|```|\||\s*[-*]\s|\s*\d+\.\s)/.test(lines[i] ?? "")) para.push(lines[i++] ?? "");
     out.push(`<p>${inline(para.join(" "))}</p>`);
   }
   return out.join("\n");

@@ -20,15 +20,7 @@ export function ErrorSummary({ errors, title = "There is a problem" }: ErrorSumm
     return () => setTitleError(false);
   }, [errors]);
   return (
-    <div
-      className="cap-error-summary"
-      data-cap="error-summary"
-      tabIndex={-1}
-      role="alert"
-      aria-labelledby={titleId}
-      hidden={errors.length === 0}
-      ref={ref}
-    >
+    <div className="cap-error-summary" data-cap="error-summary" tabIndex={-1} role="alert" aria-labelledby={titleId} hidden={errors.length === 0} ref={ref}>
       <h2 className="cap-error-summary-title" id={titleId}>
         {title}
       </h2>

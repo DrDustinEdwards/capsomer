@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -12,9 +7,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: words and the track reach their contrast in both states", async ({
-    page,
-  }) => {
+  test("accessibility: words and the track reach their contrast in both states", async ({ page }) => {
     await visitStates(page, "switch", theme);
     await expectContrast(page, [
       { sel: "#sw-on", what: "a switch's label" },
@@ -40,18 +33,14 @@ eachTheme((theme) => {
     `);
     await expect(page.getByRole("switch", { name: "Compact rows" })).not.toBeChecked();
     await expect(page.getByRole("switch", { name: "Email alerts" })).toBeDisabled();
-    await expect(page.getByRole("switch", { name: "Email alerts" })).toHaveAccessibleDescription(
-      "Add an email address in Settings first.",
-    );
+    await expect(page.getByRole("switch", { name: "Email alerts" })).toHaveAccessibleDescription("Add an email address in Settings first.");
   });
 
   test("keyboard: Tab moves to the switch", async ({ page }) => {
     await visitStates(page, "switch", theme);
     await page.keyboard.press("Tab");
     await expect(page.getByRole("switch", { name: "Single-key shortcuts" })).toBeFocused();
-    await expectContrast(page, [
-      { sel: "#sw-on input", what: "the focus ring", part: "outline", min: 3 },
-    ]);
+    await expectContrast(page, [{ sel: "#sw-on input", what: "the focus ring", part: "outline", min: 3 }]);
   });
 
   test("keyboard: Space turns it on or off at once, and the word follows", async ({ page }) => {
@@ -67,9 +56,7 @@ eachTheme((theme) => {
     await expect(word).toHaveText("Off");
   });
 
-  test("behavior: a click on the label turns it on; the name stays a fixed noun", async ({
-    page,
-  }) => {
+  test("behavior: a click on the label turns it on; the name stays a fixed noun", async ({ page }) => {
     await visitStates(page, "switch", theme);
     await page.getByText("Compact rows").click();
     const sw = page.getByRole("switch", { name: "Compact rows" });
@@ -78,9 +65,7 @@ eachTheme((theme) => {
     await expect(sw).toHaveAccessibleName("Compact rows");
   });
 
-  test("behavior: a pending switch says so, is not disabled, and keeps its name", async ({
-    page,
-  }) => {
+  test("behavior: a pending switch says so, is not disabled, and keeps its name", async ({ page }) => {
     await visitStates(page, "switch", theme);
     const sw = page.getByRole("switch", { name: "Nightly export" });
     await expect(sw).toHaveAttribute("aria-busy", "true");
@@ -96,26 +81,18 @@ eachTheme((theme) => {
     await expect(page.getByRole("switch", { name: "Email alerts" })).not.toBeChecked();
   });
 
-  test(
-    "accessibility: an invalid switch exposes aria-invalid and its message",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "switch", theme);
-      const sw = page.getByRole("switch", { name: "Public status page" });
-      await expect(sw).toHaveAttribute("aria-invalid", "true");
-      await expect(sw).toHaveAccessibleDescription("Verify the domain before publishing.");
-    },
-  );
+  test("accessibility: an invalid switch exposes aria-invalid and its message", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "switch", theme);
+    const sw = page.getByRole("switch", { name: "Public status page" });
+    await expect(sw).toHaveAttribute("aria-invalid", "true");
+    await expect(sw).toHaveAccessibleDescription("Verify the domain before publishing.");
+  });
 
-  test(
-    "accessibility: a small switch keeps a 24 px hit area",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "switch", theme);
-      const box = await page.locator("#sw-sm").boundingBox();
-      expect(box?.height).toBeGreaterThanOrEqual(24);
-    },
-  );
+  test("accessibility: a small switch keeps a 24 px hit area", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "switch", theme);
+    const box = await page.locator("#sw-sm").boundingBox();
+    expect(box?.height).toBeGreaterThanOrEqual(24);
+  });
 
   test("keyboard: Space toggles a small switch", async ({ page }) => {
     await visitStates(page, "switch", theme);

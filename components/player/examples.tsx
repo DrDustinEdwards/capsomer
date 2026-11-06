@@ -12,11 +12,7 @@ if (host) {
       player="about:blank"
       title="A keynote on publishing with Prelum"
       action="Watch on YouTube"
-      poster={{
-        src: new URL("./specimen/poster.svg", import.meta.url).href,
-        width: 1280,
-        height: 720,
-      }}
+      poster={{ src: new URL("./specimen/poster.svg", import.meta.url).href, width: 1280, height: 720 }}
     />,
   );
 }

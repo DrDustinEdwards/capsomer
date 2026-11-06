@@ -61,13 +61,7 @@ export interface MenuSubmenu {
 }
 
 // A separator between groups of ordinary items.
-export type MenuEntry =
-  | MenuAction
-  | MenuCheckbox
-  | MenuRadioGroup
-  | MenuGroup
-  | MenuSubmenu
-  | "separator";
+export type MenuEntry = MenuAction | MenuCheckbox | MenuRadioGroup | MenuGroup | MenuSubmenu | "separator";
 
 export interface MenuProps {
   // The trigger's visible label: what the menu acts on ("Actions", "More for capsid").
@@ -84,45 +78,23 @@ export interface MenuProps {
 
 const Chevron = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m3.5 6 4.5 4.5L12.5 6"
-    />
+    <path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="m3.5 6 4.5 4.5L12.5 6" />
   </svg>
 );
 
 const ChevronEnd = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m6 3.5 4.5 4.5L6 12.5"
-    />
+    <path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="m6 3.5 4.5 4.5L6 12.5" />
   </svg>
 );
 
 const Check = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M3.5 8.5 6.5 11.5 12.5 4.5"
-    />
+    <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M3.5 8.5 6.5 11.5 12.5 4.5" />
   </svg>
 );
 
-const isAction = (e: MenuEntry): e is MenuAction =>
-  e !== "separator" && (e.type === undefined || e.type === "item");
+const isAction = (e: MenuEntry): e is MenuAction => e !== "separator" && (e.type === undefined || e.type === "item");
 
 // Ordinary entries first, in their order, with no leading, trailing or doubled separator;
 // then the danger items, after one separator.
@@ -135,9 +107,7 @@ export function arrangeEntries(items: MenuEntry[]): MenuEntry[] {
   }
   if (plain[plain.length - 1] === "separator") plain.pop();
   const danger = items.filter((e): e is MenuAction => isAction(e) && e.danger === true);
-  return danger.length > 0 && plain.length > 0
-    ? [...plain, "separator", ...danger]
-    : [...plain, ...danger];
+  return danger.length > 0 && plain.length > 0 ? [...plain, "separator", ...danger] : [...plain, ...danger];
 }
 
 // The caps of a shortcut: "Shift+R" is two, aria-hidden (the name stays the action, and
@@ -155,26 +125,12 @@ function Keys({ shortcut }: { shortcut: string }) {
   );
 }
 
-function Entries({
-  entries,
-  id,
-  container,
-}: {
-  entries: MenuEntry[];
-  id: string;
-  container?: HTMLElement | null;
-}) {
+function Entries({ entries, id, container }: { entries: MenuEntry[]; id: string; container?: HTMLElement | null }) {
   return (
     <>
       {entries.map((e, i) => {
         const key = `${i}`;
-        if (e === "separator")
-          return (
-            <Base.Separator
-              key={`sep-${key}`}
-              className="cap-listbox-separator cap-menu-separator"
-            />
-          );
+        if (e === "separator") return <Base.Separator key={`sep-${key}`} className="cap-listbox-separator cap-menu-separator" />;
         if (isAction(e)) {
           return (
             <Base.Item
@@ -201,16 +157,7 @@ function Entries({
         }
         if (e.type === "checkbox") {
           return (
-            <Base.CheckboxItem
-              key={`${e.label}-${key}`}
-              className="cap-option cap-menu-item"
-              label={e.label}
-              checked={e.checked}
-              defaultChecked={e.defaultChecked}
-              onCheckedChange={e.onCheckedChange}
-              disabled={e.disabled}
-              aria-keyshortcuts={e.shortcut}
-            >
+            <Base.CheckboxItem key={`${e.label}-${key}`} className="cap-option cap-menu-item" label={e.label} checked={e.checked} defaultChecked={e.defaultChecked} onCheckedChange={e.onCheckedChange} disabled={e.disabled} aria-keyshortcuts={e.shortcut}>
               <span className="cap-option-label">{e.label}</span>
               {e.shortcut && <Keys shortcut={e.shortcut} />}
               <span className="cap-option-indicator" aria-hidden="true">
@@ -223,21 +170,9 @@ function Entries({
         }
         if (e.type === "radio-group") {
           const group = (
-            <Base.RadioGroup
-              value={e.value}
-              defaultValue={e.defaultValue}
-              onValueChange={
-                e.onValueChange ? (v: unknown) => e.onValueChange?.(String(v)) : undefined
-              }
-            >
+            <Base.RadioGroup value={e.value} defaultValue={e.defaultValue} onValueChange={e.onValueChange ? (v: unknown) => e.onValueChange?.(String(v)) : undefined}>
               {e.items.map((r) => (
-                <Base.RadioItem
-                  key={r.value}
-                  value={r.value}
-                  label={r.label}
-                  disabled={r.disabled}
-                  className="cap-option cap-menu-item"
-                >
+                <Base.RadioItem key={r.value} value={r.value} label={r.label} disabled={r.disabled} className="cap-option cap-menu-item">
                   <span className="cap-option-label">{r.label}</span>
                   <span className="cap-option-indicator" aria-hidden="true">
                     <Base.RadioItemIndicator>
@@ -267,11 +202,7 @@ function Entries({
         }
         return (
           <Base.SubmenuRoot key={`${e.label}-${key}`}>
-            <Base.SubmenuTrigger
-              className="cap-option cap-menu-item"
-              label={e.label}
-              disabled={e.disabled}
-            >
+            <Base.SubmenuTrigger className="cap-option cap-menu-item" label={e.label} disabled={e.disabled}>
               {e.icon ? <span className="cap-option-icon">{e.icon}</span> : null}
               <span className="cap-option-label">{e.label}</span>
               <span className="cap-menu-chevron" aria-hidden="true">
@@ -279,13 +210,7 @@ function Entries({
               </span>
             </Base.SubmenuTrigger>
             <Base.Portal container={container ?? undefined}>
-              <Base.Positioner
-                className="cap-menu-positioner"
-                side="right"
-                align="start"
-                sideOffset={0}
-                alignOffset={-4}
-              >
+              <Base.Positioner className="cap-menu-positioner" side="right" align="start" sideOffset={0} alignOffset={-4}>
                 <Base.Popup className="cap-popover cap-menu" data-submenu="">
                   <Entries entries={e.items} id={`${id}-s${key}`} container={container} />
                 </Base.Popup>
@@ -298,14 +223,7 @@ function Entries({
   );
 }
 
-export function Menu({
-  label,
-  items,
-  disabled = false,
-  container,
-  defaultOpen,
-  ...rest
-}: MenuProps) {
+export function Menu({ label, items, disabled = false, container, defaultOpen, ...rest }: MenuProps) {
   const id = useId();
   const entries = arrangeEntries(items);
   return (
@@ -365,15 +283,7 @@ export interface FormMenuProps {
 
 // The row-actions menu with no script: a <details> of submit buttons. Pure markup, so a server
 // renders what the browser shows; `enhance` adds Esc, arrow keys and closing on an outside press.
-export function FormMenu({
-  label,
-  action,
-  method = "post",
-  items,
-  name = "intent",
-  hidden,
-  ...rest
-}: FormMenuProps) {
+export function FormMenu({ label, action, method = "post", items, name = "intent", hidden, ...rest }: FormMenuProps) {
   const ref = useRef<HTMLDetailsElement>(null);
   useEffect(() => (ref.current ? enhance(ref.current.parentNode ?? document) : undefined), []);
   const ordinary = items.filter((i) => !i.danger);
@@ -384,31 +294,16 @@ export function FormMenu({
     if (ref.current) ref.current.open = false;
     i.onSelect();
   };
-  const button = (i: FormMenuItem) =>
-    i.href && (!i.danger || i.onSelect) ? (
-      <a
-        key={i.value}
-        className="cap-option cap-menu-item"
-        href={i.href}
-        onClick={select(i)}
-        data-tone={i.danger ? "crit" : undefined}
-      >
-        <span className="cap-option-label">{i.label}</span>
-      </a>
-    ) : (
-      <button
-        key={i.value}
-        type="submit"
-        className="cap-option cap-menu-item"
-        name={name}
-        value={i.value}
-        disabled={i.disabled}
-        data-tone={i.danger ? "crit" : undefined}
-      >
-        <span className="cap-option-label">{i.label}</span>
-        {i.reason ? <span className="cap-menu-reason">{i.reason}</span> : null}
-      </button>
-    );
+  const button = (i: FormMenuItem) => i.href && (!i.danger || i.onSelect) ? (
+    <a key={i.value} className="cap-option cap-menu-item" href={i.href} onClick={select(i)} data-tone={i.danger ? "crit" : undefined}>
+      <span className="cap-option-label">{i.label}</span>
+    </a>
+  ) : (
+    <button key={i.value} type="submit" className="cap-option cap-menu-item" name={name} value={i.value} disabled={i.disabled} data-tone={i.danger ? "crit" : undefined}>
+      <span className="cap-option-label">{i.label}</span>
+      {i.reason ? <span className="cap-menu-reason">{i.reason}</span> : null}
+    </button>
+  );
   return (
     <details className="cap-menu-form" data-cap="menu-form" ref={ref}>
       <summary className="cap-btn cap-menu-trigger" aria-label={rest["aria-label"]}>
@@ -420,9 +315,7 @@ export function FormMenu({
           <input key={k} type="hidden" name={k} value={v} />
         ))}
         {ordinary.map(button)}
-        {danger.length && ordinary.length ? (
-          <hr className="cap-listbox-separator cap-menu-separator" />
-        ) : null}
+        {danger.length && ordinary.length ? <hr className="cap-listbox-separator cap-menu-separator" /> : null}
         {danger.map(button)}
       </form>
     </details>

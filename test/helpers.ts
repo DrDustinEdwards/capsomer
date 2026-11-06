@@ -35,9 +35,7 @@ function installRatio(): void {
     const x = document.createElement("canvas").getContext("2d")!;
     x.fillStyle = c;
     x.fillRect(0, 0, 1, 1);
-    const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data]
-      .map((v) => v / 255)
-      .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+    const [r, g, b] = [...x.getImageData(0, 0, 1, 1).data].map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
     return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
   };
   window.capRatio = (a, b) => {
@@ -48,12 +46,7 @@ function installRatio(): void {
 
 // Opens a component's states page in the given theme and waits for its fonts and its frames.
 // With `only`, opens one page-level specimen (a <template data-specimen>) as the whole page.
-export async function visitStates(
-  page: Page,
-  name: string,
-  theme: Theme,
-  only?: string,
-): Promise<void> {
+export async function visitStates(page: Page, name: string, theme: Theme, only?: string): Promise<void> {
   const q = new URLSearchParams({ theme });
   if (only) q.set("only", only);
   await page.goto(`components/${name}/states.html?${q}`);
@@ -63,11 +56,7 @@ export async function visitStates(
   await expect(page.locator("h1").first()).toBeVisible();
   // A specimen frame whose demo sets itself up after load (the markdown editor's open palette) takes
   // focus when it does, and focus in a frame leaves the page under test: wait for every frame to finish.
-  await page.waitForFunction(() =>
-    [...document.querySelectorAll<HTMLIFrameElement>("iframe.cap-specimen-frame")].every((f) =>
-      f.contentDocument?.documentElement.hasAttribute("data-specimen-ready"),
-    ),
-  );
+  await page.waitForFunction(() => [...document.querySelectorAll<HTMLIFrameElement>("iframe.cap-specimen-frame")].every((f) => f.contentDocument?.documentElement.hasAttribute("data-specimen-ready")));
 }
 
 // The automated scan, against WCAG 2.2 A and AA. Any violation fails, with its rule, its
@@ -77,18 +66,8 @@ export async function visitStates(
 // them; `baseUi: true` leaves exactly those elements out of the scan and nothing else.
 // `exclude` leaves one element out, for a state the scan misreads; `disableRules` turns rules
 // off for a mode they misread. Say why where either is used.
-export async function expectNoAxeViolations(
-  page: Page,
-  include?: string,
-  options: { baseUi?: boolean; exclude?: string; disableRules?: string[] } = {},
-): Promise<void> {
-  let builder = new AxeBuilder({ page }).withTags([
-    "wcag2a",
-    "wcag2aa",
-    "wcag21a",
-    "wcag21aa",
-    "wcag22aa",
-  ]);
+export async function expectNoAxeViolations(page: Page, include?: string, options: { baseUi?: boolean; exclude?: string; disableRules?: string[] } = {}): Promise<void> {
+  let builder = new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]);
   if (include) builder = builder.include(include);
   // A states page that shows open popups in <iframe> frames is scanned frame by frame, by the
   // tests that visit each frame on its own, so those frames are left out of the page scan.
@@ -100,10 +79,7 @@ export async function expectNoAxeViolations(
   // first (the first CI run caught a danger button at 4.18:1 for this reason).
   await settled(page);
   const { violations } = await builder.analyze();
-  const found = violations.map(
-    (v) =>
-      `${v.id} (${v.impact}): ${v.help}. First at ${v.nodes[0]?.target.join(" ")} (${v.nodes.length} nodes). ${(v.nodes[0]?.failureSummary ?? "").replace(/\s+/g, " ").trim()}`,
-  );
+  const found = violations.map((v) => `${v.id} (${v.impact}): ${v.help}. First at ${v.nodes[0]?.target.join(" ")} (${v.nodes.length} nodes). ${(v.nodes[0]?.failureSummary ?? "").replace(/\s+/g, " ").trim()}`);
   expect(found, "axe violations").toEqual([]);
 }
 
@@ -130,11 +106,7 @@ export interface Reading {
 // against the first opaque background behind it, compositing translucent layers. From the
 // Capsid Portal's contrast spec, where it caught a selected row at 1.06:1. A selector ending in
 // ::before or ::after reads that pseudo-element (a sliding highlight's edge), on its element.
-export function paintedContrast(
-  page: Page,
-  selector: string,
-  part: "color" | "border" | "outline" = "color",
-): Promise<Reading | null> {
+export function paintedContrast(page: Page, selector: string, part: "color" | "border" | "outline" = "color"): Promise<Reading | null> {
   return page.evaluate(
     ([full, which]) => {
       const [sel = full, pseudo] = full.split(/(?=::)/);
@@ -144,50 +116,27 @@ export function paintedContrast(
         // A color-mix() computes to color(srgb r g b / a), its channels from 0 to 1.
         const srgb = s.match(/color\(srgb ([^)]+)\)/)?.[1];
         if (srgb) {
-          const q = srgb
-            .split(/[\s/]+/)
-            .filter(Boolean)
-            .map(Number);
-          return [
-            Math.round((q[0] ?? 0) * 255),
-            Math.round((q[1] ?? 0) * 255),
-            Math.round((q[2] ?? 0) * 255),
-            q.length > 3 ? (q[3] ?? 1) : 1,
-          ];
+          const q = srgb.split(/[\s/]+/).filter(Boolean).map(Number);
+          return [Math.round((q[0] ?? 0) * 255), Math.round((q[1] ?? 0) * 255), Math.round((q[2] ?? 0) * 255), q.length > 3 ? (q[3] ?? 1) : 1];
         }
         const m = s.match(/rgba?\(([^)]+)\)/);
         const inner = m?.[1];
         if (!inner) return [0, 0, 0, 0];
-        const p = inner
-          .split(/[\s,/]+/)
-          .filter(Boolean)
-          .map(Number);
+        const p = inner.split(/[\s,/]+/).filter(Boolean).map(Number);
         return [p[0] ?? 0, p[1] ?? 0, p[2] ?? 0, p.length > 3 ? (p[3] ?? 1) : 1];
       };
-      const over = (
-        top: [number, number, number, number],
-        under: [number, number, number],
-      ): [number, number, number] => {
+      const over = (top: [number, number, number, number], under: [number, number, number]): [number, number, number] => {
         const a = top[3];
-        return [
-          Math.round(top[0] * a + under[0] * (1 - a)),
-          Math.round(top[1] * a + under[1] * (1 - a)),
-          Math.round(top[2] * a + under[2] * (1 - a)),
-        ];
+        return [Math.round(top[0] * a + under[0] * (1 - a)), Math.round(top[1] * a + under[1] * (1 - a)), Math.round(top[2] * a + under[2] * (1 - a))];
       };
       let bg: [number, number, number] = [255, 255, 255];
       const layers: [number, number, number, number][] = [];
-      for (
-        let n: HTMLElement | null = which === "color" || pseudo ? el : el.parentElement;
-        n;
-        n = n.parentElement
-      ) {
+      for (let n: HTMLElement | null = which === "color" || pseudo ? el : el.parentElement; n; n = n.parentElement) {
         const c = parse(getComputedStyle(n).backgroundColor);
         if (c[3] > 0) layers.unshift(c);
         if (c[3] >= 1) break;
       }
-      if (layers.length === 0 || (layers[0]?.[3] ?? 0) < 1)
-        layers.unshift(parse(getComputedStyle(document.body).backgroundColor));
+      if (layers.length === 0 || (layers[0]?.[3] ?? 0) < 1) layers.unshift(parse(getComputedStyle(document.body).backgroundColor));
       // SVG text is painted with fill, on the shape drawn before it in its group (a tile's
       // polygon, a box's rect), not on a CSS background.
       const svgText = which === "color" && (el as Element) instanceof SVGTextElement;
@@ -198,15 +147,7 @@ export function paintedContrast(
       }
       for (const l of layers) bg = over(l, bg);
       const cs = getComputedStyle(el, pseudo ?? null);
-      const fgRaw = parse(
-        svgText
-          ? cs.fill
-          : which === "color"
-            ? cs.color
-            : which === "border"
-              ? cs.borderTopColor
-              : cs.outlineColor,
-      );
+      const fgRaw = parse(svgText ? cs.fill : which === "color" ? cs.color : which === "border" ? cs.borderTopColor : cs.outlineColor);
       const fg = over(fgRaw, bg);
       const lum = (c: [number, number, number]) => {
         const f = (v: number) => {
@@ -217,8 +158,7 @@ export function paintedContrast(
       };
       const a = lum(fg);
       const b = lum(bg);
-      const hex = (c: [number, number, number]) =>
-        "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
+      const hex = (c: [number, number, number]) => "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
       return { fg: hex(fg), bg: hex(bg), ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
     },
     [selector, part] as const,
@@ -227,17 +167,13 @@ export function paintedContrast(
 
 // Every selector must match and reach its bar. A missing element fails rather than
 // passing vacuously.
-export async function expectContrast(
-  page: Page,
-  checks: Array<{ sel: string; what: string; part?: "color" | "border" | "outline"; min?: number }>,
-): Promise<void> {
+export async function expectContrast(page: Page, checks: Array<{ sel: string; what: string; part?: "color" | "border" | "outline"; min?: number }>): Promise<void> {
   const low: string[] = [];
   for (const c of checks) {
     const r = await paintedContrast(page, c.sel, c.part ?? "color");
     expect(r, `${c.what} (${c.sel}) is on the page`).not.toBeNull();
     const min = c.min ?? (c.part && c.part !== "color" ? 3 : 4.5);
-    if (r && r.ratio < min)
-      low.push(`${c.what}: ${r.fg} on ${r.bg} is ${r.ratio.toFixed(2)}:1, needs ${min}:1`);
+    if (r && r.ratio < min) low.push(`${c.what}: ${r.fg} on ${r.bg} is ${r.ratio.toFixed(2)}:1, needs ${min}:1`);
   }
   expect(low).toEqual([]);
 }
@@ -255,10 +191,7 @@ export function focused(page: Page): Promise<string> {
 // Catches the next submit of a form under `root` (a selector), stops it, and resolves with what the
 // browser would have posted: the method, the encoding and every field, a file as "file:<name>". For
 // a spec that checks a component's forms work with no script.
-export function nextPost(
-  page: Page,
-  root: string,
-): Promise<{ method: string; enctype: string; fields: Record<string, string[]> }> {
+export function nextPost(page: Page, root: string): Promise<{ method: string; enctype: string; fields: Record<string, string[]> }> {
   return page.evaluate(
     (sel) =>
       new Promise<{ method: string; enctype: string; fields: Record<string, string[]> }>((done) => {
@@ -269,8 +202,7 @@ export function nextPost(
             const form = e.target as HTMLFormElement;
             const data = new FormData(form, (e as SubmitEvent).submitter);
             const fields: Record<string, string[]> = {};
-            for (const k of new Set(data.keys()))
-              fields[k] = data.getAll(k).map((v) => (typeof v === "string" ? v : `file:${v.name}`));
+            for (const k of new Set(data.keys())) fields[k] = data.getAll(k).map((v) => (typeof v === "string" ? v : `file:${v.name}`));
             done({ method: form.method, enctype: form.enctype, fields });
           },
           { capture: true, once: true },
@@ -283,10 +215,7 @@ export function nextPost(
 // A focused row's ring is an inset outline over the row's own --sel tint, so its contrast is the
 // outline color against the row's background (paintedContrast measures an outline against the
 // parent's background, which is not what the eye sees there).
-export function ringContrast(
-  page: Page,
-  sel: string,
-): Promise<{ ring: string; bg: string; ratio: number; width: string } | null> {
+export function ringContrast(page: Page, sel: string): Promise<{ ring: string; bg: string; ratio: number; width: string } | null> {
   return page.evaluate((s) => {
     const el = document.querySelector<HTMLElement>(s);
     if (!el) return null;
@@ -301,12 +230,7 @@ export function ringContrast(
     };
     const a = lum(rgb(cs.outlineColor));
     const b = lum(rgb(cs.backgroundColor));
-    return {
-      ring: cs.outlineColor,
-      bg: cs.backgroundColor,
-      width: cs.outlineWidth,
-      ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05),
-    };
+    return { ring: cs.outlineColor, bg: cs.backgroundColor, width: cs.outlineWidth, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
   }, sel);
 }
 
@@ -320,12 +244,10 @@ export function rowOverflow(page: Page): Promise<string[]> {
       for (const el of row.querySelectorAll<HTMLElement>("*")) {
         const b = el.getBoundingClientRect();
         if (b.width === 0 || b.height === 0 || el.closest("[hidden], .cap-sr-only")) continue;
-        if (b.right > r.right + 1 || b.left < r.left - 1)
-          out.push(`${row.id} ${el.className || el.tagName} sticks out of its row`);
+        if (b.right > r.right + 1 || b.left < r.left - 1) out.push(`${row.id} ${el.className || el.tagName} sticks out of its row`);
       }
       const t = row.querySelector<HTMLElement>(".cap-row-title");
-      if (t && t.getBoundingClientRect().width < 100)
-        out.push(`${row.id} title is ${Math.round(t.getBoundingClientRect().width)}px wide`);
+      if (t && t.getBoundingClientRect().width < 100) out.push(`${row.id} title is ${Math.round(t.getBoundingClientRect().width)}px wide`);
     }
     return out;
   });

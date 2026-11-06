@@ -1,23 +1,6 @@
-import {
-  Children,
-  isValidElement,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { Children, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
 import { Switch } from "../switch/switch.react.tsx";
-import {
-  KINDS,
-  KIND_LABEL,
-  STORAGE_KEY,
-  summarize,
-  type Kind,
-  type RunInput,
-  type Summary,
-} from "./authorship.ts";
+import { KINDS, KIND_LABEL, STORAGE_KEY, summarize, type Kind, type RunInput, type Summary } from "./authorship.ts";
 
 export type { Kind };
 
@@ -80,12 +63,7 @@ function Meter({ summary }: { summary: Summary }) {
       </span>
       <span className="cap-meter-bar" aria-hidden="true" ref={bar}>
         {summary.shares.map((s) => (
-          <span
-            key={s.kind}
-            className="cap-authorship-seg"
-            data-kind={s.kind}
-            data-share={s.percent}
-          />
+          <span key={s.kind} className="cap-authorship-seg" data-kind={s.kind} data-share={s.percent} />
         ))}
       </span>
       <span className="cap-meter-note" data-cap-part="notes">
@@ -93,8 +71,7 @@ function Meter({ summary }: { summary: Summary }) {
           .filter((s) => s.words > 0)
           .map((s) => (
             <span key={s.kind}>
-              {KIND_LABEL[s.kind]}: {s.words.toLocaleString("en")}{" "}
-              {s.words === 1 ? "word" : "words"}
+              {KIND_LABEL[s.kind]}: {s.words.toLocaleString("en")} {s.words === 1 ? "word" : "words"}
             </span>
           ))}
       </span>
@@ -115,13 +92,7 @@ export interface AuthorshipProps {
 }
 
 // The switch, the summary and the marked text. The summary counts the words under each Run.
-export function Authorship({
-  shown,
-  onShownChange,
-  defaultShown = true,
-  remember = true,
-  children,
-}: AuthorshipProps) {
+export function Authorship({ shown, onShownChange, defaultShown = true, remember = true, children }: AuthorshipProps) {
   const [own, setOwn] = useState(defaultShown);
   const on = shown ?? own;
   const keep = remember && shown === undefined;

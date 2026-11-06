@@ -48,10 +48,7 @@ export function parseAccept(accept: string | null | undefined): string[] {
 }
 
 // The platform's rule for accept: an extension, a type with a wildcard, or an exact type.
-export function matchesAccept(
-  file: Pick<FileLike, "name" | "type">,
-  accept: string | null | undefined,
-): boolean {
+export function matchesAccept(file: Pick<FileLike, "name" | "type">, accept: string | null | undefined): boolean {
   const list = parseAccept(accept);
   if (list.length === 0) return true;
   const name = file.name.toLowerCase();
@@ -99,10 +96,8 @@ export function formatBytes(size: number): string {
 }
 
 export function rejectionMessage(file: FileLike, reason: RejectReason, rules: DropRules): string {
-  if (reason === "type")
-    return `${file.name}: type not allowed. This takes ${acceptLabel(rules.accept)}.`;
-  if (reason === "size")
-    return `${file.name}: too big at ${formatBytes(file.size)}. The limit is ${formatBytes(rules.maxBytes ?? 0)}.`;
+  if (reason === "type") return `${file.name}: type not allowed. This takes ${acceptLabel(rules.accept)}.`;
+  if (reason === "size") return `${file.name}: too big at ${formatBytes(file.size)}. The limit is ${formatBytes(rules.maxBytes ?? 0)}.`;
   const n = rules.maxFiles ?? 0;
   return `${file.name}: too many files. The limit is ${n} ${n === 1 ? "file" : "files"} at a time, so this one was left out.`;
 }
@@ -110,19 +105,14 @@ export function rejectionMessage(file: FileLike, reason: RejectReason, rules: Dr
 // Checks every file, in order. A file is refused for its type first, then its size; the files
 // that pass are counted, and any beyond maxFiles are refused as too many. Nothing is dropped
 // silently: every refusal comes back with a sentence that names the file.
-export function validateFiles<F extends FileLike>(
-  files: Iterable<F> | ArrayLike<F>,
-  rules: DropRules = {},
-): Validation<F> {
+export function validateFiles<F extends FileLike>(files: Iterable<F> | ArrayLike<F>, rules: DropRules = {}): Validation<F> {
   const accepted: F[] = [];
   const rejected: Array<Rejection<F>> = [];
-  const refuse = (file: F, reason: RejectReason) =>
-    rejected.push({ file, reason, message: rejectionMessage(file, reason, rules) });
+  const refuse = (file: F, reason: RejectReason) => rejected.push({ file, reason, message: rejectionMessage(file, reason, rules) });
   for (const file of Array.from(files as ArrayLike<F>)) {
     if (!matchesAccept(file, rules.accept)) refuse(file, "type");
     else if (rules.maxBytes && file.size > rules.maxBytes) refuse(file, "size");
-    else if (rules.maxFiles != null && rules.maxFiles > 0 && accepted.length >= rules.maxFiles)
-      refuse(file, "count");
+    else if (rules.maxFiles != null && rules.maxFiles > 0 && accepted.length >= rules.maxFiles) refuse(file, "count");
     else accepted.push(file);
   }
   return { accepted, rejected };
@@ -183,8 +173,7 @@ function glyph(): SVGSVGElement {
   return svg;
 }
 
-const part = <T extends HTMLElement = HTMLElement>(zone: HTMLElement, name: string) =>
-  zone.querySelector<T>(`[data-cap-part='${name}']`);
+const part = <T extends HTMLElement = HTMLElement>(zone: HTMLElement, name: string) => zone.querySelector<T>(`[data-cap-part='${name}']`);
 
 // The rules a zone states: accept from its input, limits from its data attributes. A zone
 // that takes one file (no multiple attribute) takes at most one.
@@ -260,29 +249,19 @@ function setState(zone: HTMLElement, state: ZoneState): void {
 
 // Checks files against the zone's rules, shows the result, puts the accepted files in the
 // input, and tells the page with cap-drop-accepted and cap-drop-rejected. Returns the result.
-export function acceptFiles(
-  zone: HTMLElement,
-  files: Iterable<File> | ArrayLike<File>,
-  opts: { fromInput?: boolean } = {},
-): Validation {
+export function acceptFiles(zone: HTMLElement, files: Iterable<File> | ArrayLike<File>, opts: { fromInput?: boolean } = {}): Validation {
   const result = validateFiles(files, rulesOf(zone));
   const input = part<HTMLInputElement>(zone, "input");
-  if (input && (!opts.fromInput || result.rejected.length > 0))
-    setInputFiles(input, result.accepted);
+  if (input && (!opts.fromInput || result.rejected.length > 0)) setInputFiles(input, result.accepted);
   render(zone, result);
   const detail: DropDetail = { accepted: result.accepted, rejected: result.rejected };
-  if (result.accepted.length > 0)
-    zone.dispatchEvent(new CustomEvent("cap-drop-accepted", { bubbles: true, detail }));
-  if (result.rejected.length > 0)
-    zone.dispatchEvent(new CustomEvent("cap-drop-rejected", { bubbles: true, detail }));
+  if (result.accepted.length > 0) zone.dispatchEvent(new CustomEvent("cap-drop-accepted", { bubbles: true, detail }));
+  if (result.rejected.length > 0) zone.dispatchEvent(new CustomEvent("cap-drop-rejected", { bubbles: true, detail }));
   return result;
 }
 
 function isEditable(target: EventTarget | null): boolean {
-  return (
-    target instanceof Element &&
-    target.closest("input, textarea, [contenteditable='true']") !== null
-  );
+  return target instanceof Element && target.closest("input, textarea, [contenteditable='true']") !== null;
 }
 
 // Attaches one zone. Returns a function that detaches it.
@@ -346,11 +325,7 @@ export function attachDropZone(zone: HTMLElement): () => void {
   target.addEventListener("dragleave", onLeave);
   target.addEventListener("drop", onDrop);
   input?.addEventListener("change", onChange);
-  const pasteTarget: EventTarget | null = zone.hasAttribute("data-paste")
-    ? page
-      ? document
-      : zone
-    : null;
+  const pasteTarget: EventTarget | null = zone.hasAttribute("data-paste") ? (page ? document : zone) : null;
   pasteTarget?.addEventListener("paste", onPaste);
   return () => {
     target.removeEventListener("dragenter", onEnter);
@@ -366,8 +341,6 @@ export function attachDropZone(zone: HTMLElement): () => void {
 // Attaches to every [data-cap="drop-zone"] under root not yet attached. Returns a function
 // that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
-  const undo = Array.from(
-    root.querySelectorAll<HTMLElement>("[data-cap='drop-zone']:not([data-cap-ready])"),
-  ).map(attachDropZone);
+  const undo = Array.from(root.querySelectorAll<HTMLElement>("[data-cap='drop-zone']:not([data-cap-ready])")).map(attachDropZone);
   return () => undo.forEach((f) => f());
 }

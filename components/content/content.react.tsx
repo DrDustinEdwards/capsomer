@@ -1,27 +1,10 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ComponentType,
-  type FormEvent,
-  type FormHTMLAttributes,
-  type ReactNode,
-  useLayoutEffect,
-  useSyncExternalStore,
-} from "react";
+import { useCallback, useEffect, useRef, useState, type ComponentType, type FormEvent, type FormHTMLAttributes, type ReactNode, useLayoutEffect, useSyncExternalStore } from "react";
 import { BulkBar } from "../bulk-bar/bulk-bar.react.tsx";
 import type { BulkItem, BulkOutcome } from "../bulk-bar/bulk-bar.ts";
 import { ConfirmDialog, ConfirmPage } from "../confirm-dialog/confirm-dialog.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { GLYPHS, isUndoKey } from "../message/message.ts";
-import {
-  intentForm,
-  outcomesOf,
-  type ConfirmRequest,
-  type IntentResult,
-  type SubmitIntent,
-} from "./content.ts";
+import { intentForm, outcomesOf, type ConfirmRequest, type IntentResult, type SubmitIntent } from "./content.ts";
 
 // For useSyncExternalStore's hydration flag: nothing to subscribe to.
 const noSubscribe = () => () => {};
@@ -34,47 +17,19 @@ const noSubscribe = () => () => {};
 
 // The host router's form (React Router's <Form>), so a filter or a post stays in the app. Given
 // the props a plain <form> takes.
-export type FormComponent = ComponentType<
-  FormHTMLAttributes<HTMLFormElement> & { method?: "get" | "post" }
->;
+export type FormComponent = ComponentType<FormHTMLAttributes<HTMLFormElement> & { method?: "get" | "post" }>;
 
 export const PlainForm: FormComponent = (props) => <form {...props} />;
 
 // The result of the last action, in the page: the sentence, and Undo as a form that posts the
 // inverse, so it works with no script. With script the list's submit handler catches that post.
-export function ResultBox({
-  result,
-  action,
-  Form,
-  keyHint,
-}: {
-  result: IntentResult | null;
-  action: string;
-  Form: FormComponent;
-  keyHint: boolean;
-}) {
+export function ResultBox({ result, action, Form, keyHint }: { result: IntentResult | null; action: string; Form: FormComponent; keyHint: boolean }) {
   const kind = result ? (result.ok ? "ok" : "failure") : null;
   return (
-    <div
-      className="cap-message cap-content-result"
-      role="status"
-      aria-label="Results and failures"
-      aria-atomic="false"
-    >
+    <div className="cap-message cap-content-result" role="status" aria-label="Results and failures" aria-atomic="false">
       {result && kind ? (
-        <div
-          className="cap-message-item"
-          data-cap-part="item"
-          data-kind={kind}
-          data-lasting={result.ok ? undefined : ""}
-        >
-          <svg
-            className="cap-message-glyph"
-            viewBox="0 0 16 16"
-            aria-hidden="true"
-            focusable="false"
-            dangerouslySetInnerHTML={{ __html: GLYPHS[kind] }}
-          />
+        <div className="cap-message-item" data-cap-part="item" data-kind={kind} data-lasting={result.ok ? undefined : ""}>
+          <svg className="cap-message-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false" dangerouslySetInnerHTML={{ __html: GLYPHS[kind] }} />
           <p className="cap-message-text" data-cap-part="text">
             <span data-cap-part="said" role={result.ok ? undefined : "alert"}>
               {result.message}
@@ -82,20 +37,8 @@ export function ResultBox({
           </p>
           {result.undo ? (
             <Form method="post" action={action} className="cap-content-undo">
-              {Object.entries(result.undo.fields).flatMap(([k, v]) =>
-                k === "intent"
-                  ? []
-                  : (typeof v === "string" ? [v] : v).map((one, i) => (
-                      <input key={`${k}-${i}`} type="hidden" name={k} value={one} />
-                    )),
-              )}
-              <button
-                type="submit"
-                className="cap-link-btn cap-message-undo"
-                data-cap-part="undo"
-                name="intent"
-                value={result.undo.intent}
-              >
+              {Object.entries(result.undo.fields).flatMap(([k, v]) => (k === "intent" ? [] : (typeof v === "string" ? [v] : v).map((one, i) => <input key={`${k}-${i}`} type="hidden" name={k} value={one} />)))}
+              <button type="submit" className="cap-link-btn cap-message-undo" data-cap-part="undo" name="intent" value={result.undo.intent}>
                 <span>Undo</span>
                 {keyHint ? (
                   <>
@@ -152,29 +95,15 @@ export interface Intents {
   run: (form: FormData) => Promise<IntentResult | null>;
 }
 
-export function useIntents({
-  action,
-  Form,
-  submit,
-  result = null,
-  names,
-  cancelHref,
-  onDone,
-}: IntentsOptions): Intents {
+export function useIntents({ action, Form, submit, result = null, names, cancelHref, onDone }: IntentsOptions): Intents {
   const message = useOptionalMessage();
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
   const namesRef = useRef(names);
   useLayoutEffect(() => {
     namesRef.current = names;
   });
-  const [outcomes, setOutcomes] = useState<BulkOutcome[]>(() =>
-    result ? outcomesOf(result, names) : [],
-  );
+  const [outcomes, setOutcomes] = useState<BulkOutcome[]>(() => (result ? outcomesOf(result, names) : []));
   // The last result the script path got. It replaces `result` (which came with the page) until
   // the page brings a new one.
   const [settled, setSettled] = useState<IntentResult | null>(null);
@@ -242,13 +171,7 @@ export function useIntents({
   // before.
   const onSubmit = (e: FormEvent<HTMLElement>) => {
     // A form the host's own Form already sent (a router's <Form> prevents the default first) is not posted twice.
-    if (
-      !submit ||
-      e.defaultPrevented ||
-      !(e.target instanceof HTMLFormElement) ||
-      e.target.method.toLowerCase() !== "post"
-    )
-      return;
+    if (!submit || e.defaultPrevented || !(e.target instanceof HTMLFormElement) || e.target.method.toLowerCase() !== "post") return;
     e.preventDefault();
     const form = e.target;
     const submitter = (e.nativeEvent as SubmitEvent).submitter;
@@ -264,9 +187,7 @@ export function useIntents({
     if (!keyHint) return;
     const onKey = (e: globalThis.KeyboardEvent) => {
       if (e.defaultPrevented || !isUndoKey(e)) return;
-      const button = rootRef.current?.querySelector<HTMLButtonElement>(
-        ".cap-content-undo [data-cap-part='undo']",
-      );
+      const button = rootRef.current?.querySelector<HTMLButtonElement>(".cap-content-undo [data-cap-part='undo']");
       if (!button) return;
       e.preventDefault();
       button.form?.requestSubmit(button);
@@ -279,17 +200,7 @@ export function useIntents({
   // intent is confirmed. With script the same form posts through `submit`.
   const pageAsks = !settled && result?.confirm ? result.confirm : null;
   const confirmPage = pageAsks ? (
-    <ConfirmPage
-      action={action}
-      hidden={{ intent: pageAsks.intent, ...pageAsks.fields }}
-      title={pageAsks.title}
-      lead={pageAsks.lead}
-      body={pageAsks.items}
-      action_label={pageAsks.action}
-      cancelHref={cancelHref}
-      typeToConfirm={pageAsks.typeToConfirm}
-      headingLevel="h2"
-    />
+    <ConfirmPage action={action} hidden={{ intent: pageAsks.intent, ...pageAsks.fields }} title={pageAsks.title} lead={pageAsks.lead} body={pageAsks.items} action_label={pageAsks.action} cancelHref={cancelHref} typeToConfirm={pageAsks.typeToConfirm} headingLevel="h2" />
   ) : null;
 
   const confirmDialog = asking ? (
@@ -304,9 +215,7 @@ export function useIntents({
       perform={async () => {
         if (!submit) return;
         const at = new Map(namesRef.current);
-        const fields = asking.typeToConfirm
-          ? { ...asking.fields, confirm: asking.typeToConfirm }
-          : asking.fields;
+        const fields = asking.typeToConfirm ? { ...asking.fields, confirm: asking.typeToConfirm } : asking.fields;
         const r = await submit(intentForm(asking.intent, fields));
         // Nothing done at all stays in the dialog with the reason and Try again.
         if (!r.ok && !(r.outcomes ?? []).some((o) => o.ok)) throw new Error(r.message);
@@ -322,10 +231,7 @@ export function useIntents({
     setRoot,
     outcomes,
     dismissOutcomes: () => setOutcomes([]),
-    resultBox:
-      !message || box ? (
-        <ResultBox result={box} action={action} Form={Form} keyHint={keyHint} />
-      ) : null,
+    resultBox: !message || box ? <ResultBox result={box} action={action} Form={Form} keyHint={keyHint} /> : null,
     confirmPage,
     confirmDialog,
     latest: settled ?? result,
@@ -358,21 +264,7 @@ export interface ContentBulkBarProps {
 
 // The content components' bulk bar: an empty form the boxes post through, and the bar in form mode
 // with its actions as submit buttons, the optional Tag field, and each item's outcome.
-export function ContentBulkBar({
-  formId,
-  action,
-  Form,
-  formClass,
-  items,
-  total,
-  onSelectAll,
-  onClear,
-  plural,
-  actions,
-  tag,
-  tagName = "tag",
-  intents,
-}: ContentBulkBarProps) {
+export function ContentBulkBar({ formId, action, Form, formClass, items, total, onSelectAll, onClear, plural, actions, tag, tagName = "tag", intents }: ContentBulkBarProps) {
   return (
     <>
       <Form id={formId} method="post" action={action} className={formClass} />
@@ -385,25 +277,14 @@ export function ContentBulkBar({
         onClear={onClear}
         label={`Bulk actions on ${plural}`}
         prompt={`Tick the ${plural} to act on`}
-        actions={actions.map((a) => ({
-          id: a.intent,
-          label: a.label,
-          destructive: a.destructive,
-          submit: true,
-        }))}
+        actions={actions.map((a) => ({ id: a.intent, label: a.label, destructive: a.destructive, submit: true }))}
         outcomes={intents.outcomes}
         onDismissOutcomes={intents.dismissOutcomes}
       >
         {tag ? (
           <span className="cap-bulk-field">
             <label htmlFor={`${formId}-tag`}>Tag</label>
-            <input
-              className="cap-input"
-              id={`${formId}-tag`}
-              name={tagName}
-              form={formId}
-              autoComplete="off"
-            />
+            <input className="cap-input" id={`${formId}-tag`} name={tagName} form={formId} autoComplete="off" />
           </span>
         ) : null}
       </BulkBar>

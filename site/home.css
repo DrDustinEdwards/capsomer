@@ -308,42 +308,18 @@ h2:not(.cap-family-footer-heading) {
   font-weight: 600;
   font-size: 0.875rem;
 }
-[data-step="1"] {
-  --swatch: var(--accent-1);
-}
-[data-step="2"] {
-  --swatch: var(--accent-2);
-}
-[data-step="3"] {
-  --swatch: var(--accent-3);
-}
-[data-step="4"] {
-  --swatch: var(--accent-4);
-}
-[data-step="5"] {
-  --swatch: var(--accent-5);
-}
-[data-step="6"] {
-  --swatch: var(--accent-6);
-}
-[data-step="7"] {
-  --swatch: var(--accent-7);
-}
-[data-step="8"] {
-  --swatch: var(--accent-8);
-}
-[data-step="9"] {
-  --swatch: var(--accent-9);
-}
-[data-step="10"] {
-  --swatch: var(--accent-10);
-}
-[data-step="11"] {
-  --swatch: var(--accent-11);
-}
-[data-step="12"] {
-  --swatch: var(--accent-12);
-}
+[data-step="1"] { --swatch: var(--accent-1); }
+[data-step="2"] { --swatch: var(--accent-2); }
+[data-step="3"] { --swatch: var(--accent-3); }
+[data-step="4"] { --swatch: var(--accent-4); }
+[data-step="5"] { --swatch: var(--accent-5); }
+[data-step="6"] { --swatch: var(--accent-6); }
+[data-step="7"] { --swatch: var(--accent-7); }
+[data-step="8"] { --swatch: var(--accent-8); }
+[data-step="9"] { --swatch: var(--accent-9); }
+[data-step="10"] { --swatch: var(--accent-10); }
+[data-step="11"] { --swatch: var(--accent-11); }
+[data-step="12"] { --swatch: var(--accent-12); }
 
 /* Albers squares: each family's steps nested, the inner square set low, as in Homage to the
    Square; under each, the ratio of its accent text on its page. */
@@ -498,32 +474,14 @@ h2:not(.cap-family-footer-heading) {
   min-width: 0;
   overflow-wrap: anywhere;
 }
-[data-fs="fs-label"] {
-  font-size: var(--fs-label);
-}
-[data-fs="fs-detail"] {
-  font-size: var(--fs-detail);
-}
-[data-fs="fs-body"] {
-  font-size: var(--fs-body);
-}
-[data-fs="fs-lead"] {
-  font-size: var(--fs-lead);
-}
-[data-fs="fs-h3"] {
-  font-size: var(--fs-h3);
-}
-[data-fs="fs-h2"] {
-  font-size: var(--fs-h2);
-}
-[data-fs="fs-prose"] {
-  font-size: var(--fs-prose);
-  font-family: var(--prose);
-}
-[data-fs="fs-prose-h2"] {
-  font-size: var(--fs-prose-h2);
-  font-family: var(--prose);
-}
+[data-fs="fs-label"] { font-size: var(--fs-label); }
+[data-fs="fs-detail"] { font-size: var(--fs-detail); }
+[data-fs="fs-body"] { font-size: var(--fs-body); }
+[data-fs="fs-lead"] { font-size: var(--fs-lead); }
+[data-fs="fs-h3"] { font-size: var(--fs-h3); }
+[data-fs="fs-h2"] { font-size: var(--fs-h2); }
+[data-fs="fs-prose"] { font-size: var(--fs-prose); font-family: var(--prose); }
+[data-fs="fs-prose-h2"] { font-size: var(--fs-prose-h2); font-family: var(--prose); }
 
 /* Your own words in every size of the scale: a script turns it on. */
 .home-sample {
@@ -573,6 +531,7 @@ h2:not(.cap-family-footer-heading) {
   gap: var(--space-1);
   max-width: 24rem;
   margin-block-end: var(--space-6);
+
 }
 
 /* Components: every one, linked to its own page. On a phone, names only in two columns: the
@@ -874,22 +833,22 @@ h2:not(.cap-family-footer-heading) {
   }
 }
 @media (scripting: enabled) {
-  .comp-ex-code[data-closed] {
-    & pre {
-      max-block-size: 6.5rem;
-      overflow: hidden;
-    }
-    &::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, var(--sunken) 15%, transparent);
-      pointer-events: none;
-    }
-    & .comp-ex-tools {
-      display: none;
-    }
+.comp-ex-code[data-closed] {
+  & pre {
+    max-block-size: 6.5rem;
+    overflow: hidden;
   }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--sunken) 15%, transparent);
+    pointer-events: none;
+  }
+  & .comp-ex-tools {
+    display: none;
+  }
+}
 }
 .comp-ex-code [data-cap-part="show-code"] {
   position: absolute;
@@ -954,27 +913,13 @@ h2:not(.cap-family-footer-heading) {
   .home-band[data-size="cover"] .home-band-word span {
     animation: home-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 
-    &:nth-child(2) {
-      animation-delay: 60ms;
-    }
-    &:nth-child(3) {
-      animation-delay: 120ms;
-    }
-    &:nth-child(4) {
-      animation-delay: 180ms;
-    }
-    &:nth-child(5) {
-      animation-delay: 240ms;
-    }
-    &:nth-child(6) {
-      animation-delay: 300ms;
-    }
-    &:nth-child(7) {
-      animation-delay: 360ms;
-    }
-    &:nth-child(8) {
-      animation-delay: 420ms;
-    }
+    &:nth-child(2) { animation-delay: 60ms; }
+    &:nth-child(3) { animation-delay: 120ms; }
+    &:nth-child(4) { animation-delay: 180ms; }
+    &:nth-child(5) { animation-delay: 240ms; }
+    &:nth-child(6) { animation-delay: 300ms; }
+    &:nth-child(7) { animation-delay: 360ms; }
+    &:nth-child(8) { animation-delay: 420ms; }
   }
   @supports ((animation-timeline: view()) and (animation-range: entry)) {
     .home-band[data-size="section"] {
@@ -985,12 +930,8 @@ h2:not(.cap-family-footer-heading) {
       animation-timeline: --home-band;
       animation-range: entry 20% cover 35%;
 
-      &:nth-child(2n) {
-        animation-range: entry 30% cover 40%;
-      }
-      &:nth-child(3n) {
-        animation-range: entry 40% cover 45%;
-      }
+      &:nth-child(2n) { animation-range: entry 30% cover 40%; }
+      &:nth-child(3n) { animation-range: entry 40% cover 45%; }
     }
   }
   /* The family preview crossfades to the chosen family (site/home-main.ts). */

@@ -88,17 +88,11 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
   const draw = () => {
     svg.replaceChildren();
     const H = host.getBoundingClientRect();
-    const rel = (r: DOMRect): Box => ({
-      l: r.left - H.left,
-      r: r.right - H.left,
-      t: r.top - H.top,
-      b: r.bottom - H.top,
-    });
+    const rel = (r: DOMRect): Box => ({ l: r.left - H.left, r: r.right - H.left, t: r.top - H.top, b: r.bottom - H.top });
     const laneEls = lanes();
     const laneBoxes = laneEls.map((l) => rel(l.getBoundingClientRect()));
     // Stacked (a narrow map): the lanes overlap side to side, and the words carry the ties alone.
-    const sideBySide =
-      laneBoxes.length > 1 && laneBoxes.every((b, i) => i === 0 || b.l >= laneBoxes[i - 1]!.r - 1);
+    const sideBySide = laneBoxes.length > 1 && laneBoxes.every((b, i) => i === 0 || b.l >= laneBoxes[i - 1]!.r - 1);
     svg.toggleAttribute("hidden", !sideBySide);
     if (!sideBySide) return;
 
@@ -106,12 +100,7 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
     for (const el of host.querySelectorAll<HTMLElement>("[data-wire]")) {
       if (!el.getClientRects().length) continue;
       const lane = laneEls.findIndex((l) => l.contains(el));
-      nodes.set(el.dataset.wire!, {
-        key: el.dataset.wire!,
-        el,
-        box: rel(el.getBoundingClientRect()),
-        lane,
-      });
+      nodes.set(el.dataset.wire!, { key: el.dataset.wire!, el, box: rel(el.getBoundingClientRect()), lane });
     }
     const edges: [Node, Node][] = [];
     const seen = new Set<string>();
@@ -130,16 +119,8 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
     const all = [...nodes.values()];
     const top = Math.min(...all.map((n) => n.box.t)) - 20;
     const bottom = Math.max(...all.map((n) => n.box.b)) + 20;
-    const headings = [...host.querySelectorAll<HTMLElement>("h2, h3, h4, h5, h6")].map((h) =>
-      rel(h.getBoundingClientRect()),
-    );
-    const gaps = laneBoxes.map((lb) =>
-      gapsOf(
-        [...all.map((n) => n.box), ...headings].filter((o) => o.r > lb.l + 1 && o.l < lb.r - 1),
-        top,
-        bottom,
-      ),
-    );
+    const headings = [...host.querySelectorAll<HTMLElement>("h2, h3, h4, h5, h6")].map((h) => rel(h.getBoundingClientRect()));
+    const gaps = laneBoxes.map((lb) => gapsOf([...all.map((n) => n.box), ...headings].filter((o) => o.r > lb.l + 1 && o.l < lb.r - 1), top, bottom));
     const gutter = (lane: number, side: "l" | "r") => {
       const next = side === "r" ? laneBoxes[lane + 1] : laneBoxes[lane - 1];
       const here = laneBoxes[lane]!;
@@ -158,14 +139,7 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
     }
     const routes: Route[] = edges.map(([a, b]) => {
       // To a wide node, straight across to its near edge: the node is a heading over the lanes.
-      if (b.lane === -1)
-        return {
-          a,
-          b,
-          sa: a.box.r <= b.box.l + 1 ? "r" : "l",
-          sb: a.box.r <= b.box.l + 1 ? "l" : "r",
-          via: [],
-        };
+      if (b.lane === -1) return { a, b, sa: a.box.r <= b.box.l + 1 ? "r" : "l", sb: a.box.r <= b.box.l + 1 ? "l" : "r", via: [] };
       if (a.lane === b.lane) {
         const s = a.lane === 0 && laneBoxes.length > 1 ? "l" : "r";
         return { a, b, sa: s, sb: s, via: [] };
@@ -193,9 +167,7 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
 
     // Wires through one gap keep their order and stay 5 px apart, inside the gap.
     const byGap = new Map<string, Route["via"]>();
-    for (const r of routes)
-      for (const v of r.via)
-        byGap.set(`${v.lane} ${v.gap}`, [...(byGap.get(`${v.lane} ${v.gap}`) ?? []), v]);
+    for (const r of routes) for (const v of r.via) byGap.set(`${v.lane} ${v.gap}`, [...(byGap.get(`${v.lane} ${v.gap}`) ?? []), v]);
     for (const [key, list] of byGap) {
       const [lane, gi] = key.split(" ").map(Number);
       const [g0, g1] = gaps[lane!]![gi!] ?? [top, bottom];
@@ -214,8 +186,7 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
 
     // Ports: each card's wires on one side, spread down that side in the order of where they go.
     const ports = new Map<string, { r: Route; end: "a" | "b"; key: number }[]>();
-    const toward = (r: Route, end: "a" | "b") =>
-      end === "a" ? (r.via[0]?.y ?? mid(r.b.box)) : (r.via[r.via.length - 1]?.y ?? mid(r.a.box));
+    const toward = (r: Route, end: "a" | "b") => (end === "a" ? (r.via[0]?.y ?? mid(r.b.box)) : (r.via[r.via.length - 1]?.y ?? mid(r.a.box)));
     for (const r of routes) {
       for (const end of ["a", "b"] as const) {
         const n = r[end];
@@ -230,10 +201,7 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
       list.forEach((p, i) => {
         const box = p.r[p.end].box;
         // A wide node (a heading) takes its wires at its middle; a card spreads them down its side.
-        const y =
-          p.r[p.end].lane === -1
-            ? mid(box)
-            : box.t + (box.b - box.t) * (0.2 + (0.6 * (i + 0.5)) / list.length);
+        const y = p.r[p.end].lane === -1 ? mid(box) : box.t + (box.b - box.t) * (0.2 + (0.6 * (i + 0.5)) / list.length);
         p.r[p.end === "a" ? "pa" : "pb"] = { x: side === "r" ? box.r : box.l, y };
       });
     }
@@ -247,8 +215,7 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
         d += curve(pa.x, pa.y, pb.x, pb.y);
       } else if (r.a.lane === r.b.lane) {
         const out = r.sa === "r" ? 1 : -1;
-        const bow =
-          Math.min(gutter(r.a.lane, r.sa) * 0.45, 14 + Math.abs(pb.y - pa.y) * 0.12) * out;
+        const bow = Math.min(gutter(r.a.lane, r.sa) * 0.45, 14 + Math.abs(pb.y - pa.y) * 0.12) * out;
         d += `C ${pa.x + bow} ${pa.y} ${pb.x + bow} ${pb.y} ${pb.x} ${pb.y}`;
       } else {
         let x = pa.x;
@@ -269,10 +236,7 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
       frag.append(path);
     }
     for (const r of routes) {
-      for (const [p, n] of [
-        [r.pa!, r.a],
-        [r.pb!, r.b],
-      ] as const) {
+      for (const [p, n] of [[r.pa!, r.a], [r.pb!, r.b]] as const) {
         const dot = document.createElementNS(SVG, "circle");
         dot.setAttribute("class", "cap-system-map-port");
         dot.setAttribute("cx", String(p.x));

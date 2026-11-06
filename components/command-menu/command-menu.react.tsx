@@ -3,14 +3,7 @@ import { Dialog } from "../dialog/dialog.react.tsx";
 import { Listbox, ListboxEmpty, Option, OptionGroup } from "../listbox/listbox.react.tsx";
 import { register } from "../shortcuts/shortcuts.ts";
 import { Keys } from "../shortcuts/shortcuts.react.tsx";
-import {
-  emptyText,
-  filterCommands,
-  groupCommands,
-  SEARCHING,
-  step,
-  type Command,
-} from "./command-menu.ts";
+import { emptyText, filterCommands, groupCommands, SEARCHING, step, type Command } from "./command-menu.ts";
 
 export type { Command } from "./command-menu.ts";
 export { SEARCHING, STOP_GROUP, STOP_HINTS, stopCommand } from "./command-menu.ts";
@@ -43,24 +36,9 @@ function Caps({ spec }: { spec: string | string[] }) {
   );
 }
 
-const SEARCH_ICON = (
-  <path
-    fill="currentColor"
-    fillRule="evenodd"
-    d="M7 2.5a4.5 4.5 0 1 0 2.7 8.1l3 3 1.1-1.1-3-3A4.5 4.5 0 0 0 7 2.5zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"
-  />
-);
+const SEARCH_ICON = <path fill="currentColor" fillRule="evenodd" d="M7 2.5a4.5 4.5 0 1 0 2.7 8.1l3 3 1.1-1.1-3-3A4.5 4.5 0 0 0 7 2.5zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />;
 
-export function CommandMenu({
-  open,
-  onOpenChange,
-  commands,
-  label = "Search commands",
-  placeholder = "Search commands",
-  bindKeys = true,
-  search,
-  searchDelay = 180,
-}: CommandMenuProps) {
+export function CommandMenu({ open, onOpenChange, commands, label = "Search commands", placeholder = "Search commands", bindKeys = true, search, searchDelay = 180 }: CommandMenuProps) {
   const id = useId();
   const dlg = useRef<HTMLDialogElement | null>(null);
   const input = useRef<HTMLInputElement | null>(null);
@@ -68,10 +46,7 @@ export function CommandMenu({
   const [active, setActive] = useState(0);
   const [found, setFound] = useState<Command[]>([]);
   const [busy, setBusy] = useState(false);
-  const shown = useMemo(
-    () => [...filterCommands(commands, query), ...found],
-    [commands, query, found],
-  );
+  const shown = useMemo(() => [...filterCommands(commands, query), ...found], [commands, query, found]);
   const groups = useMemo(() => groupCommands(shown), [shown]);
   const cur = shown.length ? Math.min(active, shown.length - 1) : -1;
   const optionId = (c: Command) => `${id}-o-${c.id}`;
@@ -79,12 +54,7 @@ export function CommandMenu({
 
   useEffect(() => {
     if (!bindKeys) return;
-    return register({
-      key: ["Mod+k", "/"],
-      label: "Open the command menu",
-      group: "General",
-      run: () => onOpenChange(true),
-    });
+    return register({ key: ["Mod+k", "/"], label: "Open the command menu", group: "General", run: () => onOpenChange(true) });
   }, [bindKeys, onOpenChange]);
 
   // A fresh menu each time it opens: nothing typed, the first command active.
@@ -130,8 +100,7 @@ export function CommandMenu({
   }, [live, searchDelay, open, q]);
 
   useEffect(() => {
-    if (activeCommand)
-      document.getElementById(optionId(activeCommand))?.scrollIntoView({ block: "nearest" });
+    if (activeCommand) document.getElementById(optionId(activeCommand))?.scrollIntoView({ block: "nearest" });
     // oxlint-disable-next-line react/exhaustive-deps -- optionId only formats ids from this menu's useId
   }, [activeCommand]);
 
@@ -146,17 +115,7 @@ export function CommandMenu({
   };
 
   return (
-    <Dialog
-      ref={setRef}
-      className="cap-cmd"
-      open={open}
-      onOpenChange={onOpenChange}
-      placement="top"
-      size="lg"
-      closeButton={false}
-      initialFocus={input}
-      aria-label="Command menu"
-    >
+    <Dialog ref={setRef} className="cap-cmd" open={open} onOpenChange={onOpenChange} placement="top" size="lg" closeButton={false} initialFocus={input} aria-label="Command menu">
       <div className="cap-cmd-search">
         <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
           {SEARCH_ICON}
@@ -199,15 +158,7 @@ export function CommandMenu({
           }}
         />
       </div>
-      <Listbox
-        id={`${id}-list`}
-        className="cap-cmd-list"
-        mode="input"
-        controlled
-        aria-label="Commands"
-        aria-busy={busy || undefined}
-        hidden={shown.length === 0}
-      >
+      <Listbox id={`${id}-list`} className="cap-cmd-list" mode="input" controlled aria-label="Commands" aria-busy={busy || undefined} hidden={shown.length === 0}>
         {groups.map((g) => (
           <OptionGroup label={g.group} key={g.group}>
             {g.items.map((c) => (

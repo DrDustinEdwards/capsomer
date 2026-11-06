@@ -51,51 +51,23 @@ const paths: Record<FeedTone | "dot", ReactNode> = {
   ),
   info: (
     <>
-      <rect
-        x="1.5"
-        y="1.5"
-        width="13"
-        height="13"
-        rx="2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
+      <rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
       <path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" />
     </>
   ),
   ok: (
     <>
       <circle cx="8" cy="8" r="7" fill="currentColor" />
-      <path
-        fill="none"
-        stroke="var(--surface)"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m4.6 8.3 2.3 2.3 4.5-4.9"
-      />
+      <path fill="none" stroke="var(--surface)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="m4.6 8.3 2.3 2.3 4.5-4.9" />
     </>
   ),
-  nodata: (
-    <>
-      <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </>
-  ),
+  nodata: <><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></>,
   dot: <circle cx="8" cy="8" r="3.2" fill="currentColor" />,
 };
 
 function Glyph({ kind }: { kind: FeedTone | "dot" }) {
   return (
-    <svg
-      className="cap-feed-glyph"
-      width="14"
-      height="14"
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-      focusable="false"
-    >
+    <svg className="cap-feed-glyph" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
       {paths[kind]}
     </svg>
   );
@@ -111,29 +83,16 @@ export function Feed({ days, headingLevel = 4 }: FeedProps) {
         const headId = `${prefix}-${day.id}`;
         return (
           <div className="cap-feed-day" key={day.id}>
-            {createElement(
-              `h${headingLevel}`,
-              { className: "cap-feed-day-title", id: headId },
-              day.label,
-            )}
+            {createElement(`h${headingLevel}`, { className: "cap-feed-day-title", id: headId }, day.label)}
             <ol className="cap-feed-list" aria-labelledby={headId}>
               {day.events.map((e) => {
                 const kind = e.kind ?? "event";
                 return (
-                  <li
-                    className="cap-feed-row"
-                    data-tone={e.tone}
-                    data-kind={kind === "event" ? undefined : kind}
-                    key={e.id}
-                  >
+                  <li className="cap-feed-row" data-tone={e.tone} data-kind={kind === "event" ? undefined : kind} key={e.id}>
                     <Glyph kind={kind === "condensed" ? "dot" : e.tone} />
                     <div className="cap-feed-what">
                       {kind === "marker" ? (
-                        <a
-                          className="cap-feed-marker-link"
-                          href={e.href}
-                          aria-describedby={e.about ? whatId(e.about) : undefined}
-                        >
+                        <a className="cap-feed-marker-link" href={e.href} aria-describedby={e.about ? whatId(e.about) : undefined}>
                           {e.what}
                         </a>
                       ) : (

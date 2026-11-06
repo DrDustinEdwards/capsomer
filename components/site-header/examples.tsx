@@ -4,20 +4,8 @@
 // specimens mount the same surfaces in a 390px frame. Names, numbers and accounts are samples.
 import { StrictMode, useEffect, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  AdminShell,
-  FAMILY_APPS,
-  FIRST_PAGE,
-  type AdminEntry,
-  type AdminShellProps,
-} from "../admin-shell/admin-shell.react.tsx";
-import {
-  SiteHeader,
-  SiteTabs,
-  type HeaderAccount,
-  type HeaderSection,
-  type SiteHeaderProps,
-} from "./site-header.react.tsx";
+import { AdminShell, FAMILY_APPS, FIRST_PAGE, type AdminEntry, type AdminShellProps } from "../admin-shell/admin-shell.react.tsx";
+import { SiteHeader, SiteTabs, type HeaderAccount, type HeaderSection, type SiteHeaderProps } from "./site-header.react.tsx";
 
 const icon = (d: string, cls = "cap-admin-icon") => (
   <svg className={cls} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -37,8 +25,7 @@ const D = {
   clock: "M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16zM12 8v4l3 2",
   gauge: "M4 17a8 8 0 1 1 16 0M12 17l4-5",
   store: "M4 9h16l-1-4H5zM5 9v11h14V9M9 20v-6h6v6",
-  people:
-    "M9 4.8a3.2 3.2 0 1 0 0 6.4a3.2 3.2 0 1 0 0-6.4zM3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5M16 5.2a3 3 0 0 1 0 5.6M18 15c1.6.6 2.6 2.2 3 5",
+  people: "M9 4.8a3.2 3.2 0 1 0 0 6.4a3.2 3.2 0 1 0 0-6.4zM3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5M16 5.2a3 3 0 0 1 0 5.6M18 15c1.6.6 2.6 2.2 3 5",
   hook: "M9 4v7a3 3 0 0 0 6 0M15 11V9M6 20h12M12 14v6",
   brake: "M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16zM12 8v5M12 16v.5",
   book: "M4 5c3-1 6-1 8 1 2-2 5-2 8-1v14c-3-1-6-1-8 1-2-2-5-2-8-1zM12 6v14",
@@ -58,13 +45,7 @@ const Hero = ({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: 
     <div className="sh-filler" aria-hidden="true" />
   </main>
 );
-const Tiles = ({
-  tiles,
-  rows,
-}: {
-  tiles: Array<[string, string, string]>;
-  rows: Array<[string, string]>;
-}) => (
+const Tiles = ({ tiles, rows }: { tiles: Array<[string, string, string]>; rows: Array<[string, string]> }) => (
   <div className="cap-admin-page">
     <h1>{FIRST_PAGE}</h1>
     <ul className="sh-tiles">
@@ -89,28 +70,8 @@ const Tiles = ({
 
 // The amber site: Foxhound's look, its wordmark in the mono face with the x in the accent, on a band
 // that is dark in both themes, its section links on the right before a thin divider.
-const FH_LOGO = {
-  href: "#home",
-  label: "Foxhound",
-  wordmark: (
-    <span className="sh-fh-wordmark" aria-hidden="true">
-      fo<em>x</em>hound
-    </span>
-  ),
-};
-const fhSections: HeaderSection[] = [
-  "Products",
-  "Pricing",
-  "Demos",
-  "Features",
-  "Docs",
-  "Blog",
-].map((label) => ({
-  id: label.toLowerCase(),
-  label,
-  href: `#${label.toLowerCase()}`,
-  current: label === "Pricing",
-}));
+const FH_LOGO = { href: "#home", label: "Foxhound", wordmark: <span className="sh-fh-wordmark" aria-hidden="true">fo<em>x</em>hound</span> };
+const fhSections: HeaderSection[] = ["Products", "Pricing", "Demos", "Features", "Docs", "Blog"].map((label) => ({ id: label.toLowerCase(), label, href: `#${label.toLowerCase()}`, current: label === "Pricing" }));
 const fhPublic: SiteHeaderProps = {
   logo: FH_LOGO,
   band: "dark",
@@ -128,17 +89,7 @@ const fhAccount: Required<AdminShellProps>["account"] = {
   initials: "SR",
   email: "sam@example.com",
   appLabel: "Acme Supply Co.",
-  appLinks: [
-    "Settings",
-    "Billing",
-    "Team",
-    "Audit settings",
-    "Audit history",
-    "Email settings",
-    "Alerts",
-    "API keys",
-    "Brand voice",
-  ].map((l) => ({ label: l, href: `#${l.toLowerCase().replace(/ /g, "-")}` })),
+  appLinks: ["Settings", "Billing", "Team", "Audit settings", "Audit history", "Email settings", "Alerts", "API keys", "Brand voice"].map((l) => ({ label: l, href: `#${l.toLowerCase().replace(/ /g, "-")}` })),
   onSignOut: () => undefined,
 };
 const fhDashboard: AdminShellProps = {
@@ -147,38 +98,8 @@ const fhDashboard: AdminShellProps = {
   logo: FH_LOGO,
   band: "dark",
   switchers: [
-    {
-      id: "business",
-      label: "Acme Supply Co.",
-      name: "Business: Acme Supply Co.",
-      tile: "A",
-      sheetLabel: "Businesses",
-      groups: [
-        {
-          label: "Businesses",
-          links: [
-            { label: "Acme Supply Co.", href: "#acme", current: true },
-            { label: "Northwind Goods", href: "#northwind" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "product",
-      label: "Recovery",
-      name: "Product: Recovery",
-      sheetLabel: "Products",
-      groups: [
-        {
-          label: "Products",
-          links: ["Console", "Audit", "Recovery", "Disputes", "Intelligence"].map((p) => ({
-            label: p,
-            href: `#${p.toLowerCase()}`,
-            current: p === "Recovery",
-          })),
-        },
-      ],
-    },
+    { id: "business", label: "Acme Supply Co.", name: "Business: Acme Supply Co.", tile: "A", sheetLabel: "Businesses", groups: [{ label: "Businesses", links: [{ label: "Acme Supply Co.", href: "#acme", current: true }, { label: "Northwind Goods", href: "#northwind" }] }] },
+    { id: "product", label: "Recovery", name: "Product: Recovery", sheetLabel: "Products", groups: [{ label: "Products", links: ["Console", "Audit", "Recovery", "Disputes", "Intelligence"].map((p) => ({ label: p, href: `#${p.toLowerCase()}`, current: p === "Recovery" })) }] },
   ],
   account: fhAccount,
   onHelp: () => undefined,
@@ -200,12 +121,7 @@ const fhDashboard: AdminShellProps = {
 const ownerBase = (app: "foxhound" | "foxing" | "portal", nav: AdminEntry[]): AdminShellProps => ({
   app,
   variant: "owner",
-  badges: {
-    portal: { count: 2 },
-    carrel: { count: 3, countNote: "AI drafts waiting" },
-    info: { count: 1 },
-    ...(app === "foxhound" ? { foxing: { count: 1 } } : { foxhound: { count: 1 } }),
-  },
+  badges: { portal: { count: 2 }, carrel: { count: 3, countNote: "AI drafts waiting" }, info: { count: 1 }, ...(app === "foxhound" ? { foxing: { count: 1 } } : { foxhound: { count: 1 } }) },
   onSearch: () => undefined,
   inbox: { count: 4, href: "#inbox" },
   onHelp: () => undefined,
@@ -220,47 +136,13 @@ const ownerBase = (app: "foxhound" | "foxing" | "portal", nav: AdminEntry[]): Ad
 const fhAdmin: AdminShellProps = {
   ...ownerBase("foxhound", [
     { id: "overview", label: FIRST_PAGE, href: "#overview", icon: icon(D.grid), current: true },
-    {
-      id: "merchants",
-      label: "Merchants",
-      href: "#merchants",
-      icon: icon(D.store),
-      group: "Customers",
-    },
+    { id: "merchants", label: "Merchants", href: "#merchants", icon: icon(D.store), group: "Customers" },
     { id: "users", label: "Users", href: "#users", icon: icon(D.people), group: "Customers" },
-    {
-      id: "operations",
-      label: "Operations",
-      href: "#operations",
-      icon: icon(D.gauge),
-      group: "Platform",
-    },
-    {
-      id: "crons",
-      label: "Crons",
-      href: "#crons",
-      icon: icon(D.clock),
-      count: 1,
-      countNote: "failing",
-      tone: "need",
-      group: "Platform",
-    },
+    { id: "operations", label: "Operations", href: "#operations", icon: icon(D.gauge), group: "Platform" },
+    { id: "crons", label: "Crons", href: "#crons", icon: icon(D.clock), count: 1, countNote: "failing", tone: "need", group: "Platform" },
     { id: "webhooks", label: "Webhooks", href: "#webhooks", icon: icon(D.hook), group: "Platform" },
-    {
-      id: "brake",
-      label: "Emergency brake",
-      href: "#brake",
-      icon: icon(D.brake),
-      group: "Controls",
-    },
-    {
-      id: "staged",
-      label: "Staged changes",
-      href: "#staged",
-      icon: icon(D.stack),
-      count: 2,
-      group: "Controls",
-    },
+    { id: "brake", label: "Emergency brake", href: "#brake", icon: icon(D.brake), group: "Controls" },
+    { id: "staged", label: "Staged changes", href: "#staged", icon: icon(D.stack), count: 2, group: "Controls" },
   ]),
   logo: FH_LOGO,
   band: "dark",
@@ -270,16 +152,7 @@ const fhAdmin: AdminShellProps = {
 // in the page's ground, its section links centered. Books and Celebrity Picks open Foxing's own
 // panels, laid out as Foxing draws them.
 const FOX_MARK = FAMILY_APPS.find((a) => a.id === "foxing")?.logo;
-const FX_LOGO = {
-  href: "#home",
-  label: "Foxing",
-  mark: FOX_MARK,
-  wordmark: (
-    <span className="sh-fx-wordmark" aria-hidden="true">
-      Foxing
-    </span>
-  ),
-};
+const FX_LOGO = { href: "#home", label: "Foxing", mark: FOX_MARK, wordmark: <span className="sh-fx-wordmark" aria-hidden="true">Foxing</span> };
 const booksPanel = (
   <div className="sh-mega">
     <div>
@@ -323,44 +196,13 @@ const picksPanel = (
   </div>
 );
 const fxSections: HeaderSection[] = [
-  {
-    id: "books",
-    label: "Books",
-    current: true,
-    panel: booksPanel,
-    groups: [
-      {
-        links: [
-          { label: "All books", href: "#books" },
-          { label: "Award winners", href: "#awards" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "picks",
-    label: "Celebrity Picks",
-    panel: picksPanel,
-    groups: [
-      {
-        links: [
-          { label: "This month's pick", href: "#pick" },
-          { label: "All picks", href: "#picks" },
-        ],
-      },
-    ],
-  },
+  { id: "books", label: "Books", current: true, panel: booksPanel, groups: [{ links: [{ label: "All books", href: "#books" }, { label: "Award winners", href: "#awards" }] }] },
+  { id: "picks", label: "Celebrity Picks", panel: picksPanel, groups: [{ links: [{ label: "This month's pick", href: "#pick" }, { label: "All picks", href: "#picks" }] }] },
   { id: "clubs", label: "Clubs", href: "#clubs" },
   { id: "people", label: "People", href: "#people" },
   { id: "journal", label: "Journal", href: "#journal" },
 ];
-const fxSearch = {
-  id: "search",
-  label: "Search",
-  icon: hd(D.search),
-  onClick: () => undefined,
-  keys: "/",
-};
+const fxSearch = { id: "search", label: "Search", icon: hd(D.search), onClick: () => undefined, keys: "/" };
 const fxPublic: SiteHeaderProps = {
   logo: FX_LOGO,
   translucent: true,
@@ -377,16 +219,8 @@ const fxAccount: HeaderAccount = {
   name: "Sam Rivera",
   initials: "SR",
   // A picture, drawn over the initials (a sample: a fox-orange head and shoulders).
-  avatar:
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' fill='%23f5c9a8'/%3E%3Ccircle cx='4' cy='3' r='1.6' fill='%23b64404'/%3E%3Cpath d='M1 8a3 3 0 0 1 6 0z' fill='%23b64404'/%3E%3C/svg%3E",
-  groups: [
-    {
-      links: ["Reading stats", "Library", "Diary", "Profile", "Settings"].map((l) => ({
-        label: l,
-        href: `#${l.toLowerCase().replace(/ /g, "-")}`,
-      })),
-    },
-  ],
+  avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' fill='%23f5c9a8'/%3E%3Ccircle cx='4' cy='3' r='1.6' fill='%23b64404'/%3E%3Cpath d='M1 8a3 3 0 0 1 6 0z' fill='%23b64404'/%3E%3C/svg%3E",
+  groups: [{ links: ["Reading stats", "Library", "Diary", "Profile", "Settings"].map((l) => ({ label: l, href: `#${l.toLowerCase().replace(/ /g, "-")}` })) }],
   onSignOut: () => undefined,
   panel: (
     <div className="sh-fx-account">
@@ -426,17 +260,7 @@ const fxAccount: HeaderAccount = {
 const fxReader: SiteHeaderProps = {
   ...fxPublic,
   sections: fxSections.map((s) => ({ ...s, current: false })),
-  extras: [
-    fxSearch,
-    {
-      id: "bell",
-      label: "Notifications",
-      icon: hd(D.bell),
-      href: "#notifications",
-      count: 3,
-      countNote: "new",
-    },
-  ],
+  extras: [fxSearch, { id: "bell", label: "Notifications", icon: hd(D.bell), href: "#notifications", count: 3, countNote: "new" }],
   signIn: undefined,
   account: fxAccount,
 };
@@ -453,32 +277,9 @@ const fxAdmin: AdminShellProps = {
     { id: "books", label: "Books", href: "#books", icon: icon(D.book), group: "Catalog" },
     { id: "picks", label: "Picks", href: "#picks", icon: icon(D.star), group: "Catalog" },
     { id: "clubs", label: "Clubs", href: "#clubs", icon: icon(D.people), group: "Catalog" },
-    {
-      id: "journal",
-      label: "Journal",
-      href: "#journal",
-      icon: icon(D.pen),
-      count: 2,
-      countNote: "drafts",
-      group: "Content",
-    },
-    {
-      id: "notifications",
-      label: "Notifications",
-      href: "#notifications",
-      icon: icon(D.bell),
-      group: "Content",
-    },
-    {
-      id: "users",
-      label: "Users",
-      href: "#users",
-      icon: icon(D.people),
-      count: 1,
-      countNote: "reported",
-      tone: "need",
-      group: "People",
-    },
+    { id: "journal", label: "Journal", href: "#journal", icon: icon(D.pen), count: 2, countNote: "drafts", group: "Content" },
+    { id: "notifications", label: "Notifications", href: "#notifications", icon: icon(D.bell), group: "Content" },
+    { id: "users", label: "Users", href: "#users", icon: icon(D.people), count: 1, countNote: "reported", tone: "need", group: "People" },
   ]),
   logo: FX_LOGO,
   translucent: true,
@@ -512,11 +313,7 @@ function Hold({ press, children }: { press?: string; children: ReactNode }) {
   useEffect(() => {
     if (!press) return;
     // A pointer's click (detail 1), so the picture shows the panel without a keyboard's focus ring.
-    const frame = requestAnimationFrame(() =>
-      document
-        .querySelector<HTMLElement>(press)
-        ?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, detail: 1 })),
-    );
+    const frame = requestAnimationFrame(() => document.querySelector<HTMLElement>(press)?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, detail: 1 })));
     return () => cancelAnimationFrame(frame);
   }, [press]);
   return <>{children}</>;
@@ -534,36 +331,18 @@ const PAGES = ["Systems", "Flows", "Tools", "Numbers", "Code", "Backups", "Sessi
 const lhSearch = {
   action: "#search",
   label: "Search Capsid",
-  suggest: (q: string) =>
-    PAGES.filter((p) => p.toLowerCase().includes(q.toLowerCase())).map((p) => ({
-      url: `#${p.toLowerCase()}`,
-      title: p,
-      kind: "Page",
-      detail: `Every ${p.toLowerCase()} on the site`,
-    })),
+  suggest: (q: string) => PAGES.filter((p) => p.toLowerCase().includes(q.toLowerCase())).map((p) => ({ url: `#${p.toLowerCase()}`, title: p, kind: "Page", detail: `Every ${p.toLowerCase()} on the site` })),
 };
 const lhPublic: SiteHeaderProps = {
   variant: "letterhead",
   logo: { href: "#home", label: "Capsid", agency: "Dustin Edwards", mark: HEX },
-  sections: ["Home", "Systems", "Flows", "Tools", "Numbers", "Code"].map((label, i) => ({
-    id: label.toLowerCase(),
-    label,
-    href: `#${label.toLowerCase()}`,
-    current: i === 0,
-  })),
+  sections: ["Home", "Systems", "Flows", "Tools", "Numbers", "Code"].map((label, i) => ({ id: label.toLowerCase(), label, href: `#${label.toLowerCase()}`, current: i === 0 })),
   search: lhSearch,
   skipTo: "#main",
 };
 const lhAdmin: AdminShellProps = {
   ...ownerBase("portal", [
-    {
-      id: "overview",
-      label: FIRST_PAGE,
-      href: "#overview",
-      icon: icon(D.grid),
-      current: true,
-      group: "Watch",
-    },
+    { id: "overview", label: FIRST_PAGE, href: "#overview", icon: icon(D.grid), current: true, group: "Watch" },
     { id: "queue", label: "Queue", href: "#queue", icon: icon(D.list), count: 5, group: "Work" },
   ]),
   letterhead: true,
@@ -577,12 +356,7 @@ const Site = ({ family, children }: { family: "amber" | "fox" | "teal"; children
   </div>
 );
 
-const admin = (
-  p: AdminShellProps,
-  key: string,
-  tiles: Array<[string, string, string]>,
-  rows: Array<[string, string]>,
-) => (
+const admin = (p: AdminShellProps, key: string, tiles: Array<[string, string, string]>, rows: Array<[string, string]>) => (
   <AdminShell {...p} prefKey={`cap-site-header-specimen-${key}`}>
     <Tiles tiles={tiles} rows={rows} />
   </AdminShell>
@@ -592,61 +366,39 @@ const SURFACES: Record<string, () => ReactNode> = {
   "lh-public": () => (
     <Site family="teal">
       <SiteHeader {...lhPublic} />
-      <Hero
-        eyebrow="Sample"
-        title="AI agents say it's done. Capsid checks."
-        lead="A public page under the family letterhead: the names beside the mark, the links in a second row."
-      />
+      <Hero eyebrow="Sample" title="AI agents say it's done. Capsid checks." lead="A public page under the family letterhead: the names beside the mark, the links in a second row." />
     </Site>
   ),
   "lh-admin": () => <Site family="teal">{admin(lhAdmin, "lh-admin", FH_TILES, FH_ROWS)}</Site>,
   "fh-public": () => (
     <Site family="amber">
       <SiteHeader {...fhPublic} />
-      <Hero
-        eyebrow="Revenue recovery for Stripe"
-        title="Get back the payments your customers meant to make."
-        lead="Foxhound retries failed charges at the right moment and writes the emails that bring card holders back."
-      />
+      <Hero eyebrow="Revenue recovery for Stripe" title="Get back the payments your customers meant to make." lead="Foxhound retries failed charges at the right moment and writes the emails that bring card holders back." />
     </Site>
   ),
-  "fh-dashboard": () => (
-    <Site family="amber">{admin(fhDashboard, "fh-dashboard", FH_TILES, FH_ROWS)}</Site>
-  ),
+  "fh-dashboard": () => <Site family="amber">{admin(fhDashboard, "fh-dashboard", FH_TILES, FH_ROWS)}</Site>,
   "fh-dashboard-account": () => (
     <Site family="amber">
-      <Hold press=".cap-site-header-avatar">
-        {admin(fhDashboard, "fh-dashboard-account", FH_TILES, FH_ROWS)}
-      </Hold>
+      <Hold press=".cap-site-header-avatar">{admin(fhDashboard, "fh-dashboard-account", FH_TILES, FH_ROWS)}</Hold>
     </Site>
   ),
   "fh-dashboard-switcher": () => (
     <Site family="amber">
-      <Hold press=".cap-site-header-switch">
-        {admin(fhDashboard, "fh-dashboard-switcher", FH_TILES, FH_ROWS)}
-      </Hold>
+      <Hold press=".cap-site-header-switch">{admin(fhDashboard, "fh-dashboard-switcher", FH_TILES, FH_ROWS)}</Hold>
     </Site>
   ),
   "fh-admin": () => <Site family="amber">{admin(fhAdmin, "fh-admin", FH_TILES, FH_ROWS)}</Site>,
   "fx-public": () => (
     <Site family="fox">
       <SiteHeader {...fxPublic} />
-      <Hero
-        eyebrow="Book of the month"
-        title="Find the next book you cannot put down."
-        lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page."
-      />
+      <Hero eyebrow="Book of the month" title="Find the next book you cannot put down." lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page." />
     </Site>
   ),
   "fx-books": () => (
     <Site family="fox">
       <Hold press=".cap-site-header-sections .cap-site-header-link">
         <SiteHeader {...fxPublic} />
-        <Hero
-          eyebrow="Book of the month"
-          title="Find the next book you cannot put down."
-          lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page."
-        />
+        <Hero eyebrow="Book of the month" title="Find the next book you cannot put down." lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page." />
       </Hold>
     </Site>
   ),
@@ -690,11 +442,7 @@ const SURFACES: Record<string, () => ReactNode> = {
     <Site family="fox">
       <Hold press=".cap-site-header-menu">
         <SiteHeader {...fxPublic} />
-        <Hero
-          eyebrow="Book of the month"
-          title="Find the next book you cannot put down."
-          lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page."
-        />
+        <Hero eyebrow="Book of the month" title="Find the next book you cannot put down." lead="Picks from readers you trust, clubs that actually meet, and a diary that remembers every page." />
       </Hold>
     </Site>
   ),

@@ -11,24 +11,12 @@ import { openDialog, wireDialog } from "../dialog/dialog.ts";
 import { fail } from "../message/message.ts";
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { performBulk, type BulkHandler, type BulkItem } from "../bulk-bar/bulk-bar.ts";
-import {
-  altStateOf,
-  describeRecord,
-  LARGE_BYTES,
-  parseTags,
-  type MediaFields,
-  type MediaRecord,
-} from "./media-record.ts";
+import { altStateOf, describeRecord, LARGE_BYTES, parseTags, type MediaFields, type MediaRecord } from "./media-record.ts";
 import { bands, nextTile, type Direction } from "./media-grid.ts";
 import { createAutosave, type Autosave, type SaveState } from "./media-autosave.ts";
 import { applyBulkTag, COPIED_MS, COPY_FAILED_MS, copyText } from "./media-actions.ts";
 import { buildTile, glyph, part, recordOf, syncTile, writeRecord } from "./media-tile.ts";
-import {
-  fillInspector,
-  readFields,
-  renderSave as renderSaveState,
-  renderTags,
-} from "./media-inspector.ts";
+import { fillInspector, readFields, renderSave as renderSaveState, renderTags } from "./media-inspector.ts";
 
 export * from "./media-record.ts";
 export * from "./media-grid.ts";
@@ -86,36 +74,21 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   const tiles = () => Array.from(root.querySelectorAll<HTMLElement>(".cap-media-tile"));
   const shown = () => tiles().filter((t) => !t.hidden && !t.closest("[hidden]"));
   const cleanups: Array<() => void> = [];
-  const listen = <K extends keyof HTMLElementEventMap>(
-    el: HTMLElement | Document | Window,
-    type: K | string,
-    fn: (e: never) => void,
-    opts?: AddEventListenerOptions,
-  ) => {
+  const listen = <K extends keyof HTMLElementEventMap>(el: HTMLElement | Document | Window, type: K | string, fn: (e: never) => void, opts?: AddEventListenerOptions) => {
     el.addEventListener(type, fn as EventListener, opts);
     cleanups.push(() => el.removeEventListener(type, fn as EventListener, opts));
   };
 
-  let active: HTMLElement | null =
-    root.querySelector<HTMLElement>(".cap-media-tile[data-active]") ?? shown()[0] ?? null;
+  let active: HTMLElement | null = root.querySelector<HTMLElement>(".cap-media-tile[data-active]") ?? shown()[0] ?? null;
   let anchor: HTMLElement | null = null;
   let unwire: (() => void) | null = null;
   const tileOf = (el: Element | null) => el?.closest<HTMLElement>(".cap-media-tile") ?? null;
   const byKey = (key: string) => tiles().find((t) => t.dataset.key === key) ?? null;
-  const modeOf = () =>
-    getComputedStyle(layout).getPropertyValue("--cap-media-mode").trim() === "pane"
-      ? "pane"
-      : "sheet";
-  const openLink = (t: HTMLElement | null) =>
-    t?.querySelector<HTMLElement>(".cap-media-open") ?? null;
+  const modeOf = () => (getComputedStyle(layout).getPropertyValue("--cap-media-mode").trim() === "pane" ? "pane" : "sheet");
+  const openLink = (t: HTMLElement | null) => t?.querySelector<HTMLElement>(".cap-media-open") ?? null;
 
   // ---- roving focus: one tile's controls take Tab, the arrows move between tiles.
-  const controlsOf = (t: HTMLElement) =>
-    Array.from(
-      t.querySelectorAll<HTMLElement>(
-        ".cap-media-open, .cap-media-check > input, [data-cap-part='retry'], [data-cap-part='restore']",
-      ),
-    );
+  const controlsOf = (t: HTMLElement) => Array.from(t.querySelectorAll<HTMLElement>(".cap-media-open, .cap-media-check > input, [data-cap-part='retry'], [data-cap-part='restore']"));
   const syncRoving = () => {
     for (const t of tiles()) {
       const on = t === active;
@@ -157,10 +130,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     if (box?.checked) t.setAttribute("data-selected", "");
     else t.removeAttribute("data-selected");
   };
-  const selectedKeys = () =>
-    tiles()
-      .filter((t) => boxOf(t)?.checked)
-      .map((t) => t.dataset.key ?? "");
+  const selectedKeys = () => tiles().filter((t) => boxOf(t)?.checked).map((t) => t.dataset.key ?? "");
   const toggle = (t: HTMLElement) => {
     const box = boxOf(t);
     if (box && !box.disabled) box.click();
@@ -181,8 +151,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   let session = 0;
   const drafts = new Map<string, MediaFields>();
   let autosave: Autosave | null = null;
-  const ins = <T extends HTMLElement = HTMLElement>(name: string) =>
-    inspector ? part<T>(inspector, name) : null;
+  const ins = <T extends HTMLElement = HTMLElement>(name: string) => (inspector ? part<T>(inspector, name) : null);
 
   const renderSave = (state: SaveState, error?: string) => renderSaveState(inspector, state, error);
 
@@ -202,24 +171,14 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     if (!form) return;
     const body = new FormData(form);
     body.set("key", key);
-    const res = await fetch(form.getAttribute("action") || location.href, {
-      method: (form.getAttribute("method") || "post").toUpperCase(),
-      body,
-      headers: { accept: "application/json" },
-    });
+    const res = await fetch(form.getAttribute("action") || location.href, { method: (form.getAttribute("method") || "post").toUpperCase(), body, headers: { accept: "application/json" } });
     if (!res.ok) throw new Error(`The server answered ${res.status}.`);
     void fields;
   };
 
   // Applies saved fields to the tile, so the grid, the filters and the next open read them.
   const applySaved = (tile: HTMLElement, f: MediaFields) => {
-    writeRecord(tile, {
-      altState: altStateOf(f.alt, f.decorative),
-      alt: f.alt,
-      title: f.title,
-      caption: f.caption,
-      tags: f.tags,
-    });
+    writeRecord(tile, { altState: altStateOf(f.alt, f.decorative), alt: f.alt, title: f.title, caption: f.caption, tags: f.tags });
     syncTile(tile);
     applyFilters(false);
     updateCounts();
@@ -250,10 +209,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
           },
           onState: (s, err) => {
             if (mine === session) renderSave(s, err);
-            else if (s === "failed")
-              fail(
-                `Could not save the changes to ${tile.dataset.label ?? "a file"}: ${err ?? "nothing says why"}. Open it again to retry.`,
-              );
+            else if (s === "failed") fail(`Could not save the changes to ${tile.dataset.label ?? "a file"}: ${err ?? "nothing says why"}. Open it again to retry.`);
           },
         })
       : null;
@@ -309,21 +265,12 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   };
 
   // ---- filters, search, view, size, counts.
-  const view = () =>
-    root.querySelector<HTMLInputElement>("[data-cap-part='view'] input:checked")?.value ??
-    "library";
-  const query = () =>
-    (root.querySelector<HTMLInputElement>("[data-cap-part='search']")?.value ?? "")
-      .trim()
-      .toLowerCase();
+  const view = () => root.querySelector<HTMLInputElement>("[data-cap-part='view'] input:checked")?.value ?? "library";
+  const query = () => (root.querySelector<HTMLInputElement>("[data-cap-part='search']")?.value ?? "").trim().toLowerCase();
   const chipsGroup = () => root.querySelector<HTMLElement>("[data-cap-part='filters']");
   const pressed = () => {
     const g = chipsGroup();
-    return g
-      ? Array.from(g.querySelectorAll<HTMLElement>(".cap-chip[aria-pressed='true']")).map(
-          (c) => c.dataset.value ?? "",
-        )
-      : [];
+    return g ? Array.from(g.querySelectorAll<HTMLElement>(".cap-chip[aria-pressed='true']")).map((c) => c.dataset.value ?? "") : [];
   };
   const matchesFilter = (t: HTMLElement, name: string): boolean => {
     const r = recordOf(t);
@@ -332,32 +279,16 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     if (name === "large") return r.bytes > LARGE_BYTES;
     return true;
   };
-  const haystack = (t: HTMLElement) =>
-    [
-      t.dataset.label,
-      t.dataset.altText,
-      t.dataset.title,
-      t.dataset.caption,
-      t.dataset.tags,
-      t.dataset.key,
-    ]
-      .join(" ")
-      .toLowerCase();
+  const haystack = (t: HTMLElement) => [t.dataset.label, t.dataset.altText, t.dataset.title, t.dataset.caption, t.dataset.tags, t.dataset.key].join(" ").toLowerCase();
 
   // Where the active tile goes when it leaves the view (binned, filtered out): the next file that can be
   // opened, else the one before it. An upload in progress is not a file to look at yet.
   const settled = (t: HTMLElement) => t.dataset.state === "ready" || t.dataset.state === "binned";
   const successor = (from: HTMLElement): HTMLElement | null => {
     const list = shown();
-    const after = list.find(
-      (t) => settled(t) && from.compareDocumentPosition(t) & Node.DOCUMENT_POSITION_FOLLOWING,
-    );
+    const after = list.find((t) => settled(t) && from.compareDocumentPosition(t) & Node.DOCUMENT_POSITION_FOLLOWING);
     if (after) return after;
-    const before = [...list]
-      .reverse()
-      .find(
-        (t) => settled(t) && from.compareDocumentPosition(t) & Node.DOCUMENT_POSITION_PRECEDING,
-      );
+    const before = [...list].reverse().find((t) => settled(t) && from.compareDocumentPosition(t) & Node.DOCUMENT_POSITION_PRECEDING);
     return before ?? list.find(settled) ?? list[0] ?? null;
   };
 
@@ -392,38 +323,19 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       if (show) visible += 1;
       if (show && settled) matchable += 1;
     }
-    for (const g of root.querySelectorAll<HTMLElement>(".cap-media-group"))
-      g.hidden = !g.querySelector(".cap-media-tile:not([hidden])");
+    for (const g of root.querySelectorAll<HTMLElement>(".cap-media-group")) g.hidden = !g.querySelector(".cap-media-tile:not([hidden])");
     const empty = root.querySelector<HTMLElement>(".cap-media-empty");
     if (empty) {
       const narrowed = !!q || names.length > 0;
       const none = visible === 0 || (matchable === 0 && narrowed && v === "library");
-      const cause = !none
-        ? ""
-        : v === "bin"
-          ? "bin"
-          : q
-            ? "search"
-            : names.length
-              ? "filter"
-              : library === 0
-                ? "library"
-                : "library";
+      const cause = !none ? "" : v === "bin" ? "bin" : q ? "search" : names.length ? "filter" : library === 0 ? "library" : "library";
       empty.hidden = !none;
-      for (const child of empty.querySelectorAll<HTMLElement>("[data-cap-empty]"))
-        child.hidden = child.dataset.capEmpty !== cause;
+      for (const child of empty.querySelectorAll<HTMLElement>("[data-cap-empty]")) child.hidden = child.dataset.capEmpty !== cause;
     }
     const count = countEl();
     if (count && announce) {
-      const total = tiles().filter((t) =>
-        v === "bin" ? t.dataset.state === "binned" : t.dataset.state === "ready",
-      ).length;
-      count.textContent =
-        v === "bin"
-          ? `${matchable} in Trash`
-          : matchable === total
-            ? `${matchable} ${matchable === 1 ? "file" : "files"}`
-            : `${matchable} of ${total} files`;
+      const total = tiles().filter((t) => (v === "bin" ? t.dataset.state === "binned" : t.dataset.state === "ready")).length;
+      count.textContent = v === "bin" ? `${matchable} in Trash` : matchable === total ? `${matchable} ${matchable === 1 ? "file" : "files"}` : `${matchable} of ${total} files`;
     }
     if (active && (active.hidden || active.closest("[hidden]"))) {
       const first = successor(active);
@@ -449,43 +361,32 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     }
     const nLib = tiles().filter((t) => t.dataset.state === "ready").length;
     const nBin = tiles().filter((t) => t.dataset.state === "binned").length;
-    for (const el of root.querySelectorAll<HTMLElement>("[data-cap-count='library']"))
-      el.textContent = String(nLib);
-    for (const el of root.querySelectorAll<HTMLElement>("[data-cap-count='bin']"))
-      el.textContent = String(nBin);
+    for (const el of root.querySelectorAll<HTMLElement>("[data-cap-count='library']")) el.textContent = String(nLib);
+    for (const el of root.querySelectorAll<HTMLElement>("[data-cap-count='bin']")) el.textContent = String(nBin);
   };
 
   // ---- order: within each group, as the sort says. An upload in progress or a failed one stays first.
-  const sortBy = () =>
-    root.querySelector<HTMLInputElement>("[data-cap-part='sort'] input:checked")?.value ?? "";
+  const sortBy = () => root.querySelector<HTMLInputElement>("[data-cap-part='sort'] input:checked")?.value ?? "";
   const applySort = () => {
     const by = sortBy();
     if (!by) return;
     const focused = document.activeElement;
-    const settledFirst = (t: HTMLElement) =>
-      t.dataset.state === "uploading" || t.dataset.state === "failed" ? 0 : 1;
+    const settledFirst = (t: HTMLElement) => (t.dataset.state === "uploading" || t.dataset.state === "failed" ? 0 : 1);
     const cmp = (a: HTMLElement, b: HTMLElement): number => {
       const pending = settledFirst(a) - settledFirst(b);
       if (pending !== 0) return pending;
-      if (by === "name")
-        return (a.dataset.label ?? "").localeCompare(b.dataset.label ?? "", undefined, {
-          numeric: true,
-          sensitivity: "base",
-        });
+      if (by === "name") return (a.dataset.label ?? "").localeCompare(b.dataset.label ?? "", undefined, { numeric: true, sensitivity: "base" });
       if (by === "size") return Number(b.dataset.bytes ?? 0) - Number(a.dataset.bytes ?? 0);
       return (b.dataset.uploaded ?? "").localeCompare(a.dataset.uploaded ?? "");
     };
     for (const grid of root.querySelectorAll<HTMLElement>(".cap-media-grid")) {
-      const list = Array.from(grid.children).filter(
-        (c): c is HTMLElement => c instanceof HTMLElement && c.classList.contains("cap-media-tile"),
-      );
+      const list = Array.from(grid.children).filter((c): c is HTMLElement => c instanceof HTMLElement && c.classList.contains("cap-media-tile"));
       const sorted = list.slice().sort(cmp);
       if (sorted.every((t, i) => t === list[i])) continue;
       grid.append(...sorted);
     }
     // Moving a node can drop focus; put it back.
-    if (focused instanceof HTMLElement && focused.isConnected && document.activeElement !== focused)
-      focused.focus({ preventScroll: true });
+    if (focused instanceof HTMLElement && focused.isConnected && document.activeElement !== focused) focused.focus({ preventScroll: true });
   };
 
   // ---- Trash.
@@ -514,20 +415,15 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       throw err;
     }
   };
-  const itemsOf = (keys: string[]): BulkItem[] =>
-    keys.map((k) => ({ id: k, label: byKey(k)?.dataset.label ?? k }));
+  const itemsOf = (keys: string[]): BulkItem[] => keys.map((k) => ({ id: k, label: byKey(k)?.dataset.label ?? k }));
   const bin = (keys: string[]) =>
     performBulk({
       action: "bin",
       items: itemsOf(keys),
       run: () => rawBin(keys, "binned"),
       undo: () => rawBin(keys, "ready"),
-      said:
-        keys.length === 1
-          ? `Moved ${byKey(keys[0] ?? "")?.dataset.label ?? "the file"} to Trash.`
-          : "Moved {n} files to Trash.",
-      undone:
-        keys.length === 1 ? "Put it back in the library." : "Put {n} files back in the library.",
+      said: keys.length === 1 ? `Moved ${byKey(keys[0] ?? "")?.dataset.label ?? "the file"} to Trash.` : "Moved {n} files to Trash.",
+      undone: keys.length === 1 ? "Put it back in the library." : "Put {n} files back in the library.",
       returnTo: openLink(active),
     });
   const restore = (keys: string[]) =>
@@ -536,10 +432,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       items: itemsOf(keys),
       run: () => rawBin(keys, "ready"),
       undo: () => rawBin(keys, "binned"),
-      said:
-        keys.length === 1
-          ? `Restored ${byKey(keys[0] ?? "")?.dataset.label ?? "the file"} to the library.`
-          : "Restored {n} files to the library.",
+      said: keys.length === 1 ? `Restored ${byKey(keys[0] ?? "")?.dataset.label ?? "the file"} to the library.` : "Restored {n} files to the library.",
       undone: keys.length === 1 ? "Put it back in Trash." : "Put {n} files back in Trash.",
       returnTo: openLink(active),
     });
@@ -587,13 +480,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   listen(root, "input", (e: Event) => {
     const t = e.target;
     if (!(t instanceof HTMLElement)) return;
-    if (
-      inspector?.contains(t) &&
-      (t.dataset.capPart === "alt" ||
-        t.dataset.capPart === "title-field" ||
-        t.dataset.capPart === "caption")
-    )
-      autosave?.schedule();
+    if (inspector?.contains(t) && (t.dataset.capPart === "alt" || t.dataset.capPart === "title-field" || t.dataset.capPart === "caption")) autosave?.schedule();
     else if (t.dataset.capPart === "search") applyFilters();
   });
 
@@ -602,13 +489,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   listen(root, "focusout", (e: FocusEvent) => {
     const t = e.target;
     // A field that loses focus saves what was typed in it.
-    if (
-      t instanceof HTMLElement &&
-      inspector?.contains(t) &&
-      /^(INPUT|TEXTAREA)$/.test(t.tagName) &&
-      t.dataset.capPart !== "tag-input"
-    )
-      void autosave?.flush();
+    if (t instanceof HTMLElement && inspector?.contains(t) && /^(INPUT|TEXTAREA)$/.test(t.tagName) && t.dataset.capPart !== "tag-input") void autosave?.flush();
     if (t instanceof HTMLElement && t.dataset.capPart === "tag-input") {
       const input = t as HTMLInputElement;
       if (input.value.trim()) addTagFrom(input);
@@ -630,13 +511,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     if (!tile || inspector?.contains(t)) return;
     if (tile !== active) setActive(tile);
     // The inspector follows the tile that has focus; focus stays where it is.
-    if (
-      inspector?.open &&
-      !inspector.matches(":modal") &&
-      current !== tile &&
-      tile.dataset.state !== "uploading" &&
-      tile.dataset.state !== "failed"
-    ) {
+    if (inspector?.open && !inspector.matches(":modal") && current !== tile && tile.dataset.state !== "uploading" && tile.dataset.state !== "failed") {
       closePending();
       fill(tile);
     }
@@ -718,12 +593,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     if (status) {
       if (ok) status.replaceChildren(glyph("ok"), document.createTextNode(`Copied the ${what}.`));
       else {
-        status.replaceChildren(
-          glyph("crit"),
-          document.createTextNode(
-            "Could not copy. The address is selected: press Ctrl+C or Cmd+C.",
-          ),
-        );
+        status.replaceChildren(glyph("crit"), document.createTextNode("Could not copy. The address is selected: press Ctrl+C or Cmd+C."));
         ins<HTMLInputElement>("address")?.select();
       }
       copiedTimer = setTimeout(() => status.replaceChildren(), ok ? COPIED_MS : COPY_FAILED_MS);
@@ -742,12 +612,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
         return;
       }
       if (e.altKey && !e.ctrlKey && !e.metaKey && current) {
-        const dir: Direction | null =
-          e.key === "ArrowLeft" || e.key === "ArrowUp"
-            ? "prev"
-            : e.key === "ArrowRight" || e.key === "ArrowDown"
-              ? "next"
-              : null;
+        const dir: Direction | null = e.key === "ArrowLeft" || e.key === "ArrowUp" ? "prev" : e.key === "ArrowRight" || e.key === "ArrowDown" ? "next" : null;
         if (dir) {
           e.preventDefault();
           const next = move(current, dir);
@@ -770,18 +635,9 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     // Keys on a tile's own controls.
     const tile = tileOf(t);
     if (!tile || e.ctrlKey || e.metaKey || e.altKey) return;
-    const isControl = t.matches(
-      ".cap-media-open, .cap-media-check > input, [data-cap-part='retry'], [data-cap-part='restore']",
-    );
+    const isControl = t.matches(".cap-media-open, .cap-media-check > input, [data-cap-part='retry'], [data-cap-part='restore']");
     if (!isControl) return;
-    const dirs: Record<string, Direction> = {
-      ArrowLeft: "left",
-      ArrowRight: "right",
-      ArrowUp: "up",
-      ArrowDown: "down",
-      Home: "first",
-      End: "last",
-    };
+    const dirs: Record<string, Direction> = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down", Home: "first", End: "last" };
     const dir = dirs[e.key];
     if (dir) {
       e.preventDefault();
@@ -870,9 +726,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
         grid.className = "cap-media-grid";
         grid.setAttribute("role", "list");
         grid.setAttribute("aria-label", "Files");
-        (root.querySelector(".cap-media-empty") ?? root.querySelector(".cap-media-main"))?.before(
-          grid,
-        );
+        (root.querySelector(".cap-media-empty") ?? root.querySelector(".cap-media-main"))?.before(grid);
       }
       grid.prepend(t);
       applySort();
@@ -901,10 +755,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
         const pct = Math.max(0, Math.min(100, Math.round(patch.progress)));
         if (bar) {
           bar.setAttribute("aria-valuenow", String(pct));
-          bar.setAttribute(
-            "aria-valuetext",
-            `${pct} percent of ${t.dataset.label ?? "the file"} uploaded`,
-          );
+          bar.setAttribute("aria-valuetext", `${pct} percent of ${t.dataset.label ?? "the file"} uploaded`);
           const value = t.querySelector<HTMLElement>(".cap-meter-value");
           if (value) value.textContent = `${pct}%`;
           const open = openLink(t);
@@ -919,39 +770,12 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
     bin,
     restore,
     bulkHandlers: () => ({
-      bin: {
-        run: (items) =>
-          rawBin(
-            items.map((i) => i.id),
-            "binned",
-          ),
-        undo: (items) =>
-          rawBin(
-            items.map((i) => i.id),
-            "ready",
-          ),
-        said: "Moved {n} file{s} to Trash.",
-        undone: "Put {n} file{s} back in the library.",
-      },
-      restore: {
-        run: (items) =>
-          rawBin(
-            items.map((i) => i.id),
-            "ready",
-          ),
-        undo: (items) =>
-          rawBin(
-            items.map((i) => i.id),
-            "binned",
-          ),
-        said: "Restored {n} file{s} to the library.",
-        undone: "Put {n} file{s} back in Trash.",
-      },
+      bin: { run: (items) => rawBin(items.map((i) => i.id), "binned"), undo: (items) => rawBin(items.map((i) => i.id), "ready"), said: "Moved {n} file{s} to Trash.", undone: "Put {n} file{s} back in the library." },
+      restore: { run: (items) => rawBin(items.map((i) => i.id), "ready"), undo: (items) => rawBin(items.map((i) => i.id), "binned"), said: "Restored {n} file{s} to the library.", undone: "Put {n} file{s} back in Trash." },
       copy: {
         run: async (items) => {
           const urls = items.map((i) => byKey(i.id)?.dataset.url ?? "").filter(Boolean);
-          if (!(await copyText(urls.join("\n"))))
-            throw new Error("the browser refused the clipboard");
+          if (!(await copyText(urls.join("\n")))) throw new Error("the browser refused the clipboard");
         },
         said: "Copied the address of {n} file{s}.",
       },
@@ -1008,11 +832,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
       run: (items, value) => apply(items, value, adding),
       undo: async (items, value) => {
         const did = changed.get(items) ?? [];
-        await apply(
-          items.filter((i) => did.includes(i.id)),
-          value,
-          !adding,
-        );
+        await apply(items.filter((i) => did.includes(i.id)), value, !adding);
       },
       said: adding ? "Added the tag to {n} file{s}." : "Removed the tag from {n} file{s}.",
       undone: adding ? "Took the tag off {n} file{s}." : "Put the tag back on {n} file{s}.",
@@ -1020,13 +840,7 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
   }
   const recordFields = (t: HTMLElement): MediaFields => {
     const r = recordOf(t);
-    return {
-      alt: r.alt,
-      decorative: r.altState === "decorative",
-      title: r.title,
-      caption: r.caption,
-      tags: r.tags,
-    };
+    return { alt: r.alt, decorative: r.altState === "decorative", title: r.title, caption: r.caption, tags: r.tags };
   };
 
   controllers.set(root, controller);
@@ -1036,8 +850,6 @@ export function attachMedia(root: HTMLElement, options: MediaOptions = {}): Medi
 // Attaches to every [data-cap="media"] under root not yet attached (with the default save, a POST
 // of the inspector's form). Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
-  const undo = Array.from(
-    root.querySelectorAll<HTMLElement>("[data-cap='media']:not([data-cap-ready])"),
-  ).map((el) => attachMedia(el).detach);
+  const undo = Array.from(root.querySelectorAll<HTMLElement>("[data-cap='media']:not([data-cap-ready])")).map((el) => attachMedia(el).detach);
   return () => undo.forEach((f) => f());
 }

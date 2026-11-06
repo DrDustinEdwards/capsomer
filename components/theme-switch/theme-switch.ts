@@ -7,13 +7,7 @@
 // the React wrapper uses the same functions.
 import { readPref, writePref } from "../shell/shell.ts";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
-import {
-  isThemeChoice as isChoice,
-  THEME_COOKIE,
-  THEME_PREF,
-  themeCookie,
-  type ThemeChoice,
-} from "./theme-server.ts";
+import { isThemeChoice as isChoice, THEME_COOKIE, THEME_PREF, themeCookie, type ThemeChoice } from "./theme-server.ts";
 
 export { THEME_PREF, type ThemeChoice };
 
@@ -30,10 +24,7 @@ let pending: ThemeChoice | null = null;
 // Sets data-theme, remembers the choice unless told not to, and tells every switch on the page.
 // A person's choice (one it remembers) crossfades the page in a view transition (css/base.css),
 // where the browser has one and motion is allowed; a restored or synced choice paints at once.
-export function applyTheme(
-  choice: ThemeChoice,
-  opts: { key?: string; remember?: boolean } = {},
-): void {
+export function applyTheme(choice: ThemeChoice, opts: { key?: string; remember?: boolean } = {}): void {
   const paint = () => {
     pending = null;
     document.documentElement.setAttribute("data-theme", choice);
@@ -80,8 +71,7 @@ export function toggleTheme(key = THEME_PREF): ThemeChoice {
 }
 
 function check(el: HTMLElement, choice: ThemeChoice): void {
-  for (const r of el.querySelectorAll<HTMLInputElement>("input[type='radio']"))
-    r.checked = r.value === choice;
+  for (const r of el.querySelectorAll<HTMLInputElement>("input[type='radio']")) r.checked = r.value === choice;
 }
 
 // The button form says what it does, never what is showing: "Switch to dark theme" while the
@@ -91,10 +81,7 @@ export function themeButtonLabel(showing: ThemeChoice): string {
 }
 
 // Keeps a theme button's name and its tip's words in step with the theme that is showing.
-export function syncThemeButton(
-  button: HTMLElement,
-  showing: ThemeChoice = effectiveTheme(),
-): void {
+export function syncThemeButton(button: HTMLElement, showing: ThemeChoice = effectiveTheme()): void {
   const label = themeButtonLabel(showing);
   button.setAttribute("aria-label", label);
   const text = button.querySelector(".cap-theme-tip-text");
@@ -112,11 +99,7 @@ function wireButton(el: HTMLElement, key: string): () => void {
   const detachTip = tip ? attachTip(el, tip) : null;
   el.removeAttribute("aria-describedby");
   const onClick = () => toggleTheme(key);
-  const onTheme = (e: Event) =>
-    syncThemeButton(
-      el,
-      (e as CustomEvent<{ choice: ThemeChoice }>).detail?.choice ?? effectiveTheme(),
-    );
+  const onTheme = (e: Event) => syncThemeButton(el, (e as CustomEvent<{ choice: ThemeChoice }>).detail?.choice ?? effectiveTheme());
   const onStorage = (e: StorageEvent) => {
     if (e.key === key && isChoice(e.newValue)) applyTheme(e.newValue, { key, remember: false });
   };
@@ -157,15 +140,9 @@ function wireForm(form: HTMLFormElement): () => void {
     const had = form.contains(document.activeElement);
     applyTheme(choice, { remember: false });
     if (form.dataset.capPref) writePref(form.dataset.capPref, choice);
-    document.cookie = themeCookie(choice, {
-      name: form.dataset.capCookie ?? THEME_COOKIE,
-      secure: location.protocol === "https:",
-    });
+    document.cookie = themeCookie(choice, { name: form.dataset.capCookie ?? THEME_COOKIE, secure: location.protocol === "https:" });
     // preventScroll: Chrome scrolls a focused sticky-header control toward where it would sit unstuck.
-    if (had)
-      [...form.querySelectorAll<HTMLElement>("button[value]")]
-        .find((b) => b.offsetParent !== null)
-        ?.focus({ preventScroll: true });
+    if (had) [...form.querySelectorAll<HTMLElement>("button[value]")].find((b) => b.offsetParent !== null)?.focus({ preventScroll: true });
   };
   form.addEventListener("submit", onSubmit);
   return () => {
@@ -182,9 +159,7 @@ function wireForm(form: HTMLFormElement): () => void {
 // other tabs and the system.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const el of root.querySelectorAll<HTMLElement>(
-    "[data-cap='theme-switch']:not([data-cap-ready])",
-  )) {
+  for (const el of root.querySelectorAll<HTMLElement>("[data-cap='theme-switch']:not([data-cap-ready])")) {
     el.dataset.capReady = "";
     const key = el.dataset.capPref ?? THEME_PREF;
     if (el.dataset.variant === "form" && el instanceof HTMLFormElement) {

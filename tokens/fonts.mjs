@@ -36,8 +36,7 @@ const FACES = [
     file: "overpass-latin-wght-normal.woff2",
     sha256: "1efa0fcc4aa152a2423d9a94cc4c9d4d0b407addfd2f2858035f00354e00e015",
     weight: "600 700",
-    unicodeRange:
-      "U+0020-007E, U+00A0, U+00B7, U+2013-2014, U+2018-201D, U+2022, U+2026, U+2190-2193",
+    unicodeRange: "U+0020-007E, U+00A0, U+00B7, U+2013-2014, U+2018-201D, U+2022, U+2026, U+2190-2193",
     use: "wayfinding links only (--wayfinding): breadcrumbs, footer links, next and back. Delve Fonts' Highway Gothic, the FHWA sign face FAA AC 150/5345-44L Appendix A sets airport signs in. Fontsource 5.3.0, its weight axis cut to 600 to 700, the two weights wayfinding sets, and its characters to plain English text, dashes, quotes and arrows (scripts/narrow-font.py, 14.8 KB): a breadcrumb's accented letter draws in the fallback",
   },
   {
@@ -89,8 +88,7 @@ function render() {
   const seen = new Set();
   const rules = FACES.flatMap((f) => {
     const out = [face(f)];
-    if (!seen.has(f.family))
-      out.push(fallbackFontFace({ family: f.family, ...MEASURED[f.family] }));
+    if (!seen.has(f.family)) out.push(fallbackFontFace({ family: f.family, ...MEASURED[f.family] }));
     seen.add(f.family);
     return out;
   });
@@ -133,28 +131,15 @@ const FALLBACKS_OUT = here("../css/fallback-fonts.css");
 function check() {
   const problems = [];
   for (const f of FACES) {
-    const sha = createHash("sha256")
-      .update(readFileSync(here(`../fonts/${f.file}`)))
-      .digest("hex");
-    if (sha !== f.sha256)
-      problems.push(
-        `fonts/${f.file} changed since its metrics were measured: measure it again (see tokens/fonts.mjs) and update MEASURED`,
-      );
+    const sha = createHash("sha256").update(readFileSync(here(`../fonts/${f.file}`))).digest("hex");
+    if (sha !== f.sha256) problems.push(`fonts/${f.file} changed since its metrics were measured: measure it again (see tokens/fonts.mjs) and update MEASURED`);
   }
-  if (readFileSync(OUT, "utf8") !== render())
-    problems.push("css/fonts.css differs from what tokens/fonts.mjs writes; run npm run tokens");
-  if (readFileSync(FALLBACKS_OUT, "utf8") !== renderFallbacks())
-    problems.push(
-      "css/fallback-fonts.css differs from what tokens/fonts.mjs writes; run npm run tokens",
-    );
+  if (readFileSync(OUT, "utf8") !== render()) problems.push("css/fonts.css differs from what tokens/fonts.mjs writes; run npm run tokens");
+  if (readFileSync(FALLBACKS_OUT, "utf8") !== renderFallbacks()) problems.push("css/fallback-fonts.css differs from what tokens/fonts.mjs writes; run npm run tokens");
   return problems;
 }
 
-const invoked =
-  process.argv[1] &&
-  fileURLToPath(import.meta.url)
-    .replace(/\\/g, "/")
-    .toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase();
+const invoked = process.argv[1] && fileURLToPath(import.meta.url).replace(/\\/g, "/").toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase();
 if (invoked) {
   if (process.argv.includes("--check")) {
     const problems = check();

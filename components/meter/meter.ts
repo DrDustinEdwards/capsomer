@@ -15,11 +15,7 @@ export function ratio(value: number, max: number, min = 0): number {
 // The tone a value earns by threshold: warning from `warnAt` of the span, critical from
 // `critAt` (both 0 to 1; the defaults are the usage meter's 75% and 90%). The caller still
 // writes the status word beside it: a tone is a word, a shape and a color, never color.
-export function toneFor(
-  value: number,
-  max: number,
-  options: { min?: number; warnAt?: number; critAt?: number } = {},
-): MeterTone {
+export function toneFor(value: number, max: number, options: { min?: number; warnAt?: number; critAt?: number } = {}): MeterTone {
   const { min = 0, warnAt = 0.75, critAt = 0.9 } = options;
   const r = ratio(value, max, min);
   return r >= critAt ? "crit" : r >= warnAt ? "warn" : "ok";
@@ -44,11 +40,7 @@ export function setBar(bar: HTMLElement, v: BarValues): void {
   const min = v.min ?? 0;
   bar.style.setProperty("--cap-meter-ratio", String(ratio(v.value, v.max, min)));
   if (v.projected == null) bar.style.removeProperty("--cap-meter-projected");
-  else
-    bar.style.setProperty(
-      "--cap-meter-projected",
-      String(Math.max(ratio(v.value, v.max, min), ratio(v.projected, v.max, min))),
-    );
+  else bar.style.setProperty("--cap-meter-projected", String(Math.max(ratio(v.value, v.max, min), ratio(v.projected, v.max, min))));
   if (v.threshold == null) bar.style.removeProperty("--cap-meter-threshold");
   else bar.style.setProperty("--cap-meter-threshold", String(ratio(v.threshold, v.max, min)));
 }
@@ -68,21 +60,14 @@ export function update(bar: HTMLElement): void {
   });
 }
 
-const WATCHED = [
-  "aria-valuenow",
-  "aria-valuemax",
-  "aria-valuemin",
-  "data-projected",
-  "data-threshold",
-];
+const WATCHED = ["aria-valuenow", "aria-valuemax", "aria-valuemin", "data-projected", "data-threshold"];
 
 // Attaches to every [data-cap="meter"] under root (or root itself) not yet attached, draws
 // its bar, and redraws it whenever a value changes. Returns a function that detaches.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
   const found = [...root.querySelectorAll<HTMLElement>("[data-cap='meter']:not([data-cap-ready])")];
-  if (root instanceof HTMLElement && root.matches("[data-cap='meter']:not([data-cap-ready])"))
-    found.unshift(root);
+  if (root instanceof HTMLElement && root.matches("[data-cap='meter']:not([data-cap-ready])")) found.unshift(root);
   for (const meter of found) {
     meter.dataset.capReady = "";
     const bar = meter.querySelector<HTMLElement>(".cap-meter-bar");

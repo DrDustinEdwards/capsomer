@@ -34,11 +34,7 @@ export async function applyBulkTag<T>({
         skipped.push(id);
         continue;
       }
-      await write(
-        id,
-        found.item,
-        adding ? [...found.tags, wanted] : found.tags.filter((t) => t !== wanted),
-      );
+      await write(id, found.item, adding ? [...found.tags, wanted] : found.tags.filter((t) => t !== wanted));
       done.push(id);
     } catch (error) {
       failed.push(`${id}: ${error instanceof Error ? error.message : "failed"}`);
@@ -78,3 +74,4 @@ export async function copyText(text: string): Promise<boolean> {
     return false;
   }
 }
+

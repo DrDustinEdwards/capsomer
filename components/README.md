@@ -2,15 +2,15 @@
 
 Every component lives in `components/<name>/` and has the parts it needs, no more. `shell/` is the worked example: copy its shape.
 
-| File               | What it is                                                                                                                          | When                                                 |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `<name>.css`       | The component's CSS, the contract's look                                                                                            | Always                                               |
-| `<name>.md`        | The doc page                                                                                                                        | Always                                               |
-| `examples.html`    | Every state as a live specimen: the inner sections and `<template data-specimen>` blocks only. The states page is generated from it | Always (React-rendered ones: `examples.tsx` as well) |
-| `states.html`      | The generated states page (the test target and the site's source). Never edited, never committed (gitignored)                       | Generated                                            |
-| `<name>.spec.ts`   | Keyboard, accessibility and behavior tests                                                                                          | Always                                               |
-| `<name>.ts`        | The behavior module: plain TypeScript, no framework                                                                                 | When it does something CSS cannot                    |
-| `<name>.react.tsx` | The React wrapper                                                                                                                   | When a React app should not hand-write the markup    |
+| File | What it is | When |
+| --- | --- | --- |
+| `<name>.css` | The component's CSS, the contract's look | Always |
+| `<name>.md` | The doc page | Always |
+| `examples.html` | Every state as a live specimen: the inner sections and `<template data-specimen>` blocks only. The states page is generated from it | Always (React-rendered ones: `examples.tsx` as well) |
+| `states.html` | The generated states page (the test target and the site's source). Never edited, never committed (gitignored) | Generated |
+| `<name>.spec.ts` | Keyboard, accessibility and behavior tests | Always |
+| `<name>.ts` | The behavior module: plain TypeScript, no framework | When it does something CSS cannot |
+| `<name>.react.tsx` | The React wrapper | When a React app should not hand-write the markup |
 
 ## CSS
 

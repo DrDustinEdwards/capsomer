@@ -5,10 +5,7 @@
 import { staticSearch, type StaticSearchIndex } from "@drdustinedwards/site-helpers/search";
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTabs } from "../components/tabs/tabs.ts";
-import {
-  effectiveTheme,
-  enhance as enhanceTheme,
-} from "../components/theme-switch/theme-switch.ts";
+import { effectiveTheme, enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
 import { relight, type NetworkStates } from "./network-board.ts";
 
 // The header's search answers from the same index the search page reads (site/search.ts), loaded
@@ -16,15 +13,9 @@ import { relight, type NetworkStates } from "./network-board.ts";
 let index: Promise<StaticSearchIndex> | undefined;
 enhanceHeader(document, {
   suggest: async (query) => {
-    index ??= fetch("/search.json").then((r) =>
-      r.ok ? (r.json() as Promise<StaticSearchIndex>) : Promise.reject(new Error(String(r.status))),
-    );
+    index ??= fetch("/search.json").then((r) => (r.ok ? (r.json() as Promise<StaticSearchIndex>) : Promise.reject(new Error(String(r.status)))));
     index.catch(() => (index = undefined));
-    return staticSearch(await index, query).map((r) => ({
-      url: r.url,
-      title: r.heading ? `${r.title}: ${r.heading}` : r.title,
-      detail: r.snippet,
-    }));
+    return staticSearch(await index, query).map((r) => ({ url: r.url, title: r.heading ? `${r.title}: ${r.heading}` : r.title, detail: r.snippet }));
   },
 });
 enhanceTheme();
@@ -45,9 +36,7 @@ for (const input of document.querySelectorAll<HTMLInputElement>("input[name='hom
 }
 // The preview's chips and switch respond, so the panel behaves like the components it shows.
 for (const chip of document.querySelectorAll<HTMLButtonElement>(".home-try .cap-chip")) {
-  chip.addEventListener("click", () =>
-    chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true")),
-  );
+  chip.addEventListener("click", () => chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true")));
 }
 for (const sw of document.querySelectorAll<HTMLInputElement>(".home-try .cap-switch input")) {
   sw.addEventListener("change", () => {
@@ -82,10 +71,7 @@ if (find) {
       li.hidden = !hit;
       if (hit) shown++;
     }
-    if (count)
-      count.textContent = q
-        ? `${shown} of ${parts.length} components`
-        : `${parts.length} components`;
+    if (count) count.textContent = q ? `${shown} of ${parts.length} components` : `${parts.length} components`;
   });
 }
 
@@ -95,9 +81,7 @@ if (copy && navigator.clipboard) {
   copy.hidden = false;
   const copyInstall = async () => {
     try {
-      await navigator.clipboard.writeText(
-        document.getElementById("home-install")?.textContent ?? "",
-      );
+      await navigator.clipboard.writeText(document.getElementById("home-install")?.textContent ?? "");
       copy.textContent = "Copied";
     } catch {
       copy.textContent = "Copy failed";
@@ -110,19 +94,14 @@ if (copy && navigator.clipboard) {
 // The last run on main, from the results branch CI writes (the admin reads the same file).
 const live = document.querySelector<HTMLElement>("[data-live='tests']");
 if (live) {
-  fetch("https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json", {
-    cache: "no-cache",
-  })
+  fetch("https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json", { cache: "no-cache" })
     .then((r) => (r.ok ? r.json() : null))
     .then((j: { totals?: { passed: number; failed: number } } | null) => {
       if (!j?.totals) return;
       const { passed, failed } = j.totals;
       const [n, , note] = live.children;
       if (n) n.textContent = (passed + failed).toLocaleString("en-US");
-      if (note)
-        note.textContent = failed
-          ? `${failed} failing on the last run`
-          : "all passed on the last run";
+      if (note) note.textContent = failed ? `${failed} failing on the last run` : "all passed on the last run";
       delete live.dataset.pending;
     })
     .catch(() => {});
@@ -139,26 +118,19 @@ const syncFrame = (frame: HTMLIFrameElement) => {
   doc.documentElement.dataset.theme = effectiveTheme();
   // An example's own height: its section plus the page's padding (scrollHeight never drops below the frame).
   const shown = doc.querySelector(".cap-specimen-shown");
-  const tall =
-    frame.dataset.kind === "only" || !shown
-      ? Number(frame.dataset.height) || 360
-      : Math.max(140, Math.ceil(shown.getBoundingClientRect().height) + 48);
+  const tall = frame.dataset.kind === "only" || !shown ? Number(frame.dataset.height) || 360 : Math.max(140, Math.ceil(shown.getBoundingClientRect().height) + 48);
   frame.style.setProperty("block-size", `${tall}px`);
 };
 for (const frame of frames) {
   frame.addEventListener("load", () => {
     syncFrame(frame);
     const shown = frame.contentDocument?.querySelector(".cap-specimen-shown");
-    if (shown && frame.dataset.kind !== "only")
-      new ResizeObserver(() => syncFrame(frame)).observe(shown);
+    if (shown && frame.dataset.kind !== "only") new ResizeObserver(() => syncFrame(frame)).observe(shown);
   });
   syncFrame(frame);
 }
 const resync = () => frames.forEach(syncFrame);
-new MutationObserver(resync).observe(document.documentElement, {
-  attributes: true,
-  attributeFilter: ["data-theme"],
-});
+new MutationObserver(resync).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", resync);
 
 // An example's code starts closed to its first lines, with View code over it; install code stays open.
@@ -211,8 +183,7 @@ if (sideFind) {
   const items = [...document.querySelectorAll<HTMLLIElement>(".comp-side li")];
   input?.addEventListener("input", () => {
     const q = input.value.trim().toLowerCase();
-    for (const li of items)
-      li.hidden = Boolean(q) && !(li.textContent ?? "").toLowerCase().includes(q);
+    for (const li of items) li.hidden = Boolean(q) && !(li.textContent ?? "").toLowerCase().includes(q);
   });
   // The current component in view in the list.
   const side = document.querySelector<HTMLElement>(".comp-side");
@@ -249,9 +220,7 @@ if (tocLinks.length && "IntersectionObserver" in window) {
 // The front page's header links go to its own sections, so the underline follows the section being
 // read (Home above the first), and moves at once on a click. The section counts as read once its
 // top passes a third of the way down the window.
-const headerLinks = [
-  ...document.querySelectorAll<HTMLAnchorElement>(".cap-site-header-sections a"),
-];
+const headerLinks = [...document.querySelectorAll<HTMLAnchorElement>(".cap-site-header-sections a")];
 const sectionLinks = headerLinks.filter((a) => a.pathname === location.pathname && a.hash);
 const homeLink = headerLinks.find((a) => a.getAttribute("aria-current") === "page");
 if (sectionLinks.length && homeLink) {
@@ -277,14 +246,10 @@ if (sectionLinks.length && homeLink) {
     }
     mark(on);
   };
-  addEventListener(
-    "scroll",
-    () => {
-      if (!queued) requestAnimationFrame(spy);
-      queued = true;
-    },
-    { passive: true },
-  );
+  addEventListener("scroll", () => {
+    if (!queued) requestAnimationFrame(spy);
+    queued = true;
+  }, { passive: true });
   for (const a of sectionLinks) a.addEventListener("click", () => mark(a));
   spy();
 }
@@ -294,11 +259,7 @@ if (sectionLinks.length && homeLink) {
 const net = document.querySelector<HTMLElement>("[data-cap-part='network']");
 if (net) {
   fetch("/network.json")
-    .then((r) =>
-      r.ok
-        ? (r.json() as Promise<{ sites?: NetworkStates }>)
-        : Promise.reject(new Error(String(r.status))),
-    )
+    .then((r) => (r.ok ? (r.json() as Promise<{ sites?: NetworkStates }>) : Promise.reject(new Error(String(r.status)))))
     .then((body) => {
       if (body.sites) relight(net, body.sites);
     })

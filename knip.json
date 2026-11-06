@@ -8,11 +8,8 @@
     "components/*/specimen/*.ts",
     "components/*/*.spec.ts",
     "site/main.tsx",
-    "site/home-main.ts",
-    "site/make-main.ts",
-    "site/search-main.ts",
-    "site/specimen.ts",
-    "site/charts.ts",
+    "site/home-main.ts", "site/make-main.ts", "site/search-main.ts",
+    "site/specimen.ts", "site/charts.ts",
     "site/*.spec.ts",
     "tokens/*.mjs",
     "test/**/*.{ts,mjs}"

@@ -55,12 +55,7 @@ const GLYPH: Record<"warn" | "crit" | "nodata", ReactNode> = {
       <path fill="var(--surface)" d="M7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z" />
     </>
   ),
-  nodata: (
-    <>
-      <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </>
-  ),
+  nodata: <><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></>,
 };
 
 function Glyph({ tone }: { tone: "warn" | "crit" | "nodata" }) {
@@ -74,18 +69,7 @@ function Glyph({ tone }: { tone: "warn" | "crit" | "nodata" }) {
 const plainLink = ({ children, ...props }: StatTileLinkProps) => <a {...props}>{children}</a>;
 
 export function StatTile(props: StatTileProps) {
-  const {
-    label,
-    tone,
-    word,
-    chart,
-    chartSummary,
-    chartTable,
-    chartTableLabel,
-    href,
-    onClick,
-    renderLink = plainLink,
-  } = props;
+  const { label, tone, word, chart, chartSummary, chartTable, chartTableLabel, href, onClick, renderLink = plainLink } = props;
   const nodata = props.tone === "nodata";
   const hasChart = Boolean(chart) && !nodata;
 
@@ -108,12 +92,7 @@ export function StatTile(props: StatTileProps) {
         <span className="cap-tile-line">
           <span className="cap-tile-figure">
             {props.figure}
-            {props.unit ? (
-              <>
-                {" "}
-                <small>{props.unit}</small>
-              </>
-            ) : null}
+            {props.unit ? <> <small>{props.unit}</small></> : null}
           </span>
           <span className="cap-tile-label">{label}</span>
           {word ? (
@@ -124,13 +103,7 @@ export function StatTile(props: StatTileProps) {
           ) : null}
         </span>
         {props.detail ? <span className="cap-tile-detail">{props.detail}</span> : null}
-        {chart ? (
-          <span
-            className="cap-tile-chart"
-            {...(chartSummary ? { role: "img", "aria-label": chartSummary } : {})}
-            dangerouslySetInnerHTML={{ __html: chart }}
-          />
-        ) : null}
+        {chart ? <span className="cap-tile-chart" {...(chartSummary ? { role: "img", "aria-label": chartSummary } : {})} dangerouslySetInnerHTML={{ __html: chart }} /> : null}
       </>
     );
 
@@ -148,11 +121,7 @@ export function StatTile(props: StatTileProps) {
     return (
       <div className="cap-data">
         {tile}
-        <div
-          dangerouslySetInnerHTML={{
-            __html: dataTableBlock(chartTable, chartTableLabel ?? `${label}, by period`),
-          }}
-        />
+        <div dangerouslySetInnerHTML={{ __html: dataTableBlock(chartTable, chartTableLabel ?? `${label}, by period`) }} />
       </div>
     );
   }

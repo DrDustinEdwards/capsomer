@@ -36,9 +36,7 @@ export function setBusy(label: Element, busy: boolean): void {
 // function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const label of root.querySelectorAll<HTMLElement>(
-    "[data-cap='switch']:not([data-cap-ready])",
-  )) {
+  for (const label of root.querySelectorAll<HTMLElement>("[data-cap='switch']:not([data-cap-ready])")) {
     label.dataset.capReady = "";
     syncWord(label);
     const onChange = () => syncWord(label);

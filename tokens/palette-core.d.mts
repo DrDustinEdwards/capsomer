@@ -11,19 +11,7 @@ export interface Family {
   defaultTheme: Scheme;
   note: string;
 }
-export declare const FAMILIES: Record<
-  | "purple"
-  | "fox"
-  | "teal"
-  | "amber"
-  | "navy"
-  | "forest"
-  | "magenta"
-  | "cerulean"
-  | "olive"
-  | "rose",
-  Family
->;
+export declare const FAMILIES: Record<"purple" | "fox" | "teal" | "amber" | "navy" | "forest" | "magenta" | "cerulean" | "olive" | "rose", Family>;
 /** The family font stacks, each face with its size-matched fallback second (tokens/fonts.mjs). */
 export declare const UI_STACK: string;
 export declare const MONO_STACK: string;
@@ -49,10 +37,7 @@ export interface Pair {
 }
 
 /** APCA floors (|Lc|) per role at each level. */
-export declare const LEVELS: Record<
-  Level,
-  { body: number; link: number; read: number; ring: number; border: number; line: number }
->;
+export declare const LEVELS: Record<Level, { body: number; link: number; read: number; ring: number; border: number; line: number }>;
 
 export declare function oklch(L: number, C: number, H: number): string;
 export declare function contrast(a: string, b: string): number;
@@ -69,27 +54,16 @@ export declare function seedLch(hex: string): { L: number; C: number; H: number 
 export declare function lightStep9(seed: string): string;
 export declare function darkStep9(seed: string): string;
 export declare function scale(seed: string, anchor?: string | null, scheme?: Scheme): string[];
-export declare function familyTheme(
-  seed: string,
-  anchor: string | null,
-  scheme: Scheme,
-  label?: Label,
-  level?: Level,
-): Tokens;
+export declare function familyTheme(seed: string, anchor: string | null, scheme: Scheme, label?: Label, level?: Level): Tokens;
 export declare function pairs(t: Tokens, level?: Level): Pair[];
 /** Colors that must look apart: the visited link against accent text and body text, as OKLab distance x 100. */
-export declare function apart(
-  t: Tokens,
-): { a: string; b: string; min: number; what: string; d: number; pass: boolean }[];
+export declare function apart(t: Tokens): { a: string; b: string; min: number; what: string; d: number; pass: boolean }[];
 export declare function failures(t: Tokens, level?: Level): string[];
 export declare const FAMILY_ORDER: string[];
 export declare const CHART_ORDER: string[];
 export declare const ELEVATION_ORDER: string[];
 export declare function renderFamily(seed: string, anchor?: string | null, label?: Label): string;
-export declare function renderScoped(
-  name: string,
-  family: { seed: string; anchor?: string | null; label?: Label },
-): string;
+export declare function renderScoped(name: string, family: { seed: string; anchor?: string | null; label?: Label }): string;
 export declare function renderMarks(): string;
 export declare function themes(family: { seed: string; anchor?: string | null; label?: Label }): {
   seed: string;

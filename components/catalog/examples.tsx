@@ -14,46 +14,23 @@ function Demo({ id, query }: { id: string; query: string }) {
       definition={{ ...def, id }}
       result={result}
       labelledBy={id === "wide" ? "s-wide" : "s-narrow"}
-      title={(p) => (
-        <a className="cap-table-open" href={`#${p.id}`}>
-          {p.title}
-        </a>
-      )}
-      cells={{
-        size: (p) =>
-          p.size === null ? <span className="cap-sr-only">No data</span> : String(p.size),
-      }}
-      actions={
-        <a className="cap-btn" href="#download">
-          Download CSV
-        </a>
-      }
+      title={(p) => <a className="cap-table-open" href={`#${p.id}`}>{p.title}</a>}
+      cells={{ size: (p) => (p.size === null ? <span className="cap-sr-only">No data</span> : String(p.size)) }}
+      actions={<a className="cap-btn" href="#download">Download CSV</a>}
     />
   );
 }
 
 const original = window.fetch.bind(window);
 window.fetch = (input, init) => {
-  const url = new URL(
-    typeof input === "string" ? input : input instanceof URL ? input.href : input.url,
-    location.href,
-  );
+  const url = new URL(typeof input === "string" ? input : input instanceof URL ? input.href : input.url, location.href);
   if (url.pathname !== def.basePath) return original(input, init);
   // The behavior asks for the catalog whose form it holds; both demos answer.
-  const html = ["wide", "narrow"]
-    .map((id) => renderToString(<Demo id={id} query={url.search} />))
-    .join("");
-  return Promise.resolve(
-    new Response(`<!doctype html><body>${html}</body>`, {
-      headers: { "content-type": "text/html" },
-    }),
-  );
+  const html = ["wide", "narrow"].map((id) => renderToString(<Demo id={id} query={url.search} />)).join("");
+  return Promise.resolve(new Response(`<!doctype html><body>${html}</body>`, { headers: { "content-type": "text/html" } }));
 };
 
-for (const [id, root] of [
-  ["wide", "catalog-wide"],
-  ["narrow", "catalog-narrow"],
-] as const) {
+for (const [id, root] of [["wide", "catalog-wide"], ["narrow", "catalog-narrow"]] as const) {
   const el = document.getElementById(root);
   if (el) createRoot(el).render(<Demo id={id} query={location.search} />);
 }

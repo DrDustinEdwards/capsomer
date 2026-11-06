@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, the stack included", async ({ page }) => {
@@ -23,9 +18,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behavior: each status says its own words, is never indexed, and shows no stack outside development", async ({
-    page,
-  }) => {
+  test("behavior: each status says its own words, is never indexed, and shows no stack outside development", async ({ page }) => {
     const cases = [
       { only: "not-found", title: "Page not found", retry: 0 },
       { only: "gone", title: "This page is gone", retry: 0 },
@@ -37,10 +30,7 @@ eachTheme((theme) => {
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(c.title);
       await expect(page.locator('head meta[name="robots"][content="noindex"]')).toHaveCount(1);
       await expect(page.getByRole("link", { name: "Try again" })).toHaveCount(c.retry);
-      await expect(page.getByRole("link", { name: "Go to the home page" })).toHaveAttribute(
-        "href",
-        "#home",
-      );
+      await expect(page.getByRole("link", { name: "Go to the home page" })).toHaveAttribute("href", "#home");
       await expect(page.locator(".cap-error-page-stack")).toHaveCount(0);
     }
     // A thrown error's message never reaches the page outside development.

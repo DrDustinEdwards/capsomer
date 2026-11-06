@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const SUMMARY = "35% you, 40% AI, 25% quoted by words";
 
@@ -20,9 +15,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: labels and the summary reach their contrast, and each rule reaches 3:1", async ({
-    page,
-  }) => {
+  test("accessibility: labels and the summary reach their contrast, and each rule reaches 3:1", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     await expectContrast(page, [
       { sel: "#au-on .cap-run[data-kind='you'] > .cap-run-label", what: "the You label" },
@@ -32,30 +25,13 @@ eachTheme((theme) => {
       { sel: "#au-on .cap-meter-label", what: "the summary's name" },
       { sel: "#au-on .cap-meter-note", what: "the word counts" },
       { sel: "#au-on .cap-authorship-text", what: "the prose" },
-      {
-        sel: "#au-on div.cap-run[data-kind='you']",
-        what: "the rule for your writing",
-        part: "border",
-        min: 3,
-      },
-      {
-        sel: "#au-on div.cap-run[data-kind='ai']",
-        what: "the rule for AI",
-        part: "border",
-        min: 3,
-      },
-      {
-        sel: "#au-on div.cap-run[data-kind='quoted']",
-        what: "the rule for quoted text",
-        part: "border",
-        min: 3,
-      },
+      { sel: "#au-on div.cap-run[data-kind='you']", what: "the rule for your writing", part: "border", min: 3 },
+      { sel: "#au-on div.cap-run[data-kind='ai']", what: "the rule for AI", part: "border", min: 3 },
+      { sel: "#au-on div.cap-run[data-kind='quoted']", what: "the rule for quoted text", part: "border", min: 3 },
     ]);
   });
 
-  test("accessibility: each kind has its own pattern as well as its own color", async ({
-    page,
-  }) => {
+  test("accessibility: each kind has its own pattern as well as its own color", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const read = (kind: string) =>
       page.locator(`#au-on div.cap-run[data-kind='${kind}']`).evaluate((el) => {
@@ -72,62 +48,46 @@ eachTheme((theme) => {
     expect(parseFloat(you.width)).toBeGreaterThan(0);
   });
 
-  test(
-    "accessibility: shown, the labels are read; hidden, the prose is plain with no extra words",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "authorship", theme);
-      const on = await page.locator("#au-on").ariaSnapshot();
-      expect(on).toContain("You");
-      expect(on).toContain("AI");
-      expect(on).toContain("Quoted");
-      expect(on).toContain(SUMMARY);
-      const off = await page.locator("#au-off").ariaSnapshot();
-      expect(off).not.toMatch(/\b(You|AI|Quoted)\b/);
-      expect(off).not.toContain("by words");
-      // The prose is still there.
-      expect(off).toContain("I wrote the queue first and the rest second.");
-      await expect(page.locator("#au-off .cap-run-label").first()).toBeHidden();
-      await expect(page.locator("#au-off .cap-authorship-summary")).toBeHidden();
-    },
-  );
+  test("accessibility: shown, the labels are read; hidden, the prose is plain with no extra words", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "authorship", theme);
+    const on = await page.locator("#au-on").ariaSnapshot();
+    expect(on).toContain("You");
+    expect(on).toContain("AI");
+    expect(on).toContain("Quoted");
+    expect(on).toContain(SUMMARY);
+    const off = await page.locator("#au-off").ariaSnapshot();
+    expect(off).not.toMatch(/\b(You|AI|Quoted)\b/);
+    expect(off).not.toContain("by words");
+    // The prose is still there.
+    expect(off).toContain("I wrote the queue first and the rest second.");
+    await expect(page.locator("#au-off .cap-run-label").first()).toBeHidden();
+    await expect(page.locator("#au-off .cap-authorship-summary")).toBeHidden();
+  });
 
-  test(
-    "accessibility: the switch and the shown specimen have roles and names",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "authorship", theme);
-      await expect(page.locator("#au-on")).toMatchAriaSnapshot(`
+  test("accessibility: the switch and the shown specimen have roles and names", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "authorship", theme);
+    await expect(page.locator("#au-on")).toMatchAriaSnapshot(`
       - /children: contain
       - switch "Show authorship" [checked]
       - text: /Authorship 35% you, 40% AI, 25% quoted by words/
       - paragraph: /^I wrote the queue first and the rest second/
       - paragraph: /^You I ask the agent for a suggested order, AI and it explains/
     `);
-      await expect(
-        page.locator("#au-off").getByRole("switch", { name: "Show authorship" }),
-      ).not.toBeChecked();
-    },
-  );
+    await expect(page.locator("#au-off").getByRole("switch", { name: "Show authorship" })).not.toBeChecked();
+  });
 
-  test(
-    "accessibility: an avatar in a label is not read a second time",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "authorship", theme);
-      const label = page.locator("#au-avatar div.cap-run[data-kind='ai'] > .cap-run-label");
-      await expect(label).toBeVisible();
-      await expect(label.getByRole("img")).toHaveCount(0);
-      expect((await label.textContent())?.replace(/\s+/g, "")).toBe("AIAI");
-      const tree = await page.locator("#au-avatar").ariaSnapshot();
-      expect(tree.match(/\bAI\b/g)?.length).toBeGreaterThan(0);
-      expect(tree).not.toContain('img "AI"');
-    },
-  );
+  test("accessibility: an avatar in a label is not read a second time", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "authorship", theme);
+    const label = page.locator("#au-avatar div.cap-run[data-kind='ai'] > .cap-run-label");
+    await expect(label).toBeVisible();
+    await expect(label.getByRole("img")).toHaveCount(0);
+    expect((await label.textContent())?.replace(/\s+/g, "")).toBe("AIAI");
+    const tree = await page.locator("#au-avatar").ariaSnapshot();
+    expect(tree.match(/\bAI\b/g)?.length).toBeGreaterThan(0);
+    expect(tree).not.toContain('img "AI"');
+  });
 
-  test("keyboard: the switch is reached by Tab and Space turns the marks off and on", async ({
-    page,
-  }) => {
+  test("keyboard: the switch is reached by Tab and Space turns the marks off and on", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const sw = page.locator("#au-on").getByRole("switch", { name: "Show authorship" });
     await sw.focus();
@@ -145,9 +105,7 @@ eachTheme((theme) => {
     await expect(page.locator("#au-on .cap-switch-state")).toHaveText("On");
   });
 
-  test("keyboard: Tab does not stop on a run, a label or the bar: the switch is the one stop", async ({
-    page,
-  }) => {
+  test("keyboard: Tab does not stop on a run, a label or the bar: the switch is the one stop", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     await page.locator("#au-on").getByRole("switch").focus();
     await page.keyboard.press("Tab");
@@ -155,26 +113,18 @@ eachTheme((theme) => {
     expect(inside).toBe(false);
   });
 
-  test("behavior: the summary says the percentages and the words, and matches what the html said", async ({
-    page,
-  }) => {
+  test("behavior: the summary says the percentages and the words, and matches what the html said", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     await expect(page.locator("#au-on [data-cap-part='text']")).toHaveText(SUMMARY);
     const notes = await page.locator("#au-on [data-cap-part='notes'] span").allTextContents();
     expect(notes).toEqual(["You: 37 words", "AI: 42 words", "Quoted: 26 words"]);
   });
 
-  test("behavior: the bar's three segments take their share of the width, each in its own pattern", async ({
-    page,
-  }) => {
+  test("behavior: the bar's three segments take their share of the width, each in its own pattern", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const m = await page.locator("#au-on .cap-meter-bar").evaluate((bar) => {
       const total = bar.getBoundingClientRect().width;
-      const segs = [...bar.querySelectorAll<HTMLElement>(".cap-authorship-seg")].map((s) => ({
-        kind: s.dataset.kind,
-        w: s.getBoundingClientRect().width / total,
-        bg: getComputedStyle(s).backgroundImage,
-      }));
+      const segs = [...bar.querySelectorAll<HTMLElement>(".cap-authorship-seg")].map((s) => ({ kind: s.dataset.kind, w: s.getBoundingClientRect().width / total, bg: getComputedStyle(s).backgroundImage }));
       return segs;
     });
     const share = Object.fromEntries(m.map((s) => [s.kind, s.w]));
@@ -193,9 +143,7 @@ eachTheme((theme) => {
     await box.getByRole("switch", { name: "Show authorship" }).uncheck();
     await expect(box).toHaveAttribute("data-authorship", "off");
     await page.reload();
-    await expect(
-      page.locator("#au-remember").getByRole("switch", { name: "Show authorship" }),
-    ).not.toBeChecked();
+    await expect(page.locator("#au-remember").getByRole("switch", { name: "Show authorship" })).not.toBeChecked();
     await expect(page.locator("#au-remember")).toHaveAttribute("data-authorship", "off");
     await expect(page.locator("#au-remember .cap-run-label").first()).toBeHidden();
     // The specimens that do not remember are untouched.
@@ -219,9 +167,7 @@ eachTheme((theme) => {
     expect(errors).toEqual([]);
   });
 
-  test("behavior: on a wide container the labels sit in the margin, left of the rule; on a narrow one above the text", async ({
-    page,
-  }) => {
+  test("behavior: on a wide container the labels sit in the margin, left of the rule; on a narrow one above the text", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const wide = await page.locator("#au-on div.cap-run[data-kind='ai']").evaluate((run) => {
       const l = run.querySelector(".cap-run-label")?.getBoundingClientRect();
@@ -237,18 +183,14 @@ eachTheme((theme) => {
       const l = run.querySelector(".cap-run-label")?.getBoundingClientRect();
       const p = run.querySelector("p")?.getBoundingClientRect();
       const r = run.getBoundingClientRect();
-      return l && p
-        ? { labelBottom: l.bottom, textTop: p.top, labelLeft: l.left, runLeft: r.left }
-        : null;
+      return l && p ? { labelBottom: l.bottom, textTop: p.top, labelLeft: l.left, runLeft: r.left } : null;
     });
     expect(narrow).not.toBeNull();
     expect((narrow?.labelBottom ?? 0) <= (narrow?.textTop ?? 0) + 1).toBe(true);
     expect((narrow?.labelLeft ?? 0) >= (narrow?.runLeft ?? 0)).toBe(true);
   });
 
-  test("behavior: a run inside a paragraph is a span with a label at its start", async ({
-    page,
-  }) => {
+  test("behavior: a run inside a paragraph is a span with a label at its start", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const inline = page.locator("#au-on p > span.cap-run");
     await expect(inline).toHaveCount(3);
@@ -257,14 +199,10 @@ eachTheme((theme) => {
     expect(text).toContain("A suggestion is a note beside the mention");
   });
 
-  test("behavior: the React Authorship counts its Runs and the switch hides them", async ({
-    page,
-  }) => {
+  test("behavior: the React Authorship counts its Runs and the switch hides them", async ({ page }) => {
     await visitStates(page, "authorship", theme);
     const box = page.locator("[data-mount='react'] .cap-authorship");
-    await expect(box.locator("[data-cap-part='text']")).toHaveText(
-      "55% you, 20% AI, 25% quoted by words",
-    );
+    await expect(box.locator("[data-cap-part='text']")).toHaveText("55% you, 20% AI, 25% quoted by words");
     await expect(box.locator(".cap-run-label").first()).toBeVisible();
     await box.getByRole("switch", { name: "Show authorship" }).uncheck();
     await expect(box).toHaveAttribute("data-authorship", "off");
@@ -273,9 +211,7 @@ eachTheme((theme) => {
   });
 });
 
-test("behavior: the delivered html has the labels, the summary and the prose with no script", async ({
-  page,
-}) => {
+test("behavior: the delivered html has the labels, the summary and the prose with no script", async ({ page }) => {
   const html = await (await page.request.get("components/authorship/states.html")).text();
   expect(html).toContain('<span class="cap-run-label">AI</span>');
   expect(html).toContain('<span class="cap-run-label">Quoted</span>');

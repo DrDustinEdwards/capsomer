@@ -37,20 +37,8 @@ export const COMPANIONS = [
 // found without an outline; the ramp spans the rest of the lightness range from there.
 // [lightness, share of the seed chroma].
 const RAMP = {
-  light: [
-    [0.63, 0.7],
-    [0.555, 0.85],
-    [0.48, 0.95],
-    [0.405, 0.9],
-    [0.33, 0.8],
-  ],
-  dark: [
-    [0.585, 0.75],
-    [0.67, 0.8],
-    [0.755, 0.7],
-    [0.84, 0.55],
-    [0.925, 0.35],
-  ],
+  light: [[0.63, 0.7], [0.555, 0.85], [0.48, 0.95], [0.405, 0.9], [0.33, 0.8]],
+  dark: [[0.585, 0.75], [0.67, 0.8], [0.755, 0.7], [0.84, 0.55], [0.925, 0.35]],
 };
 
 export function rampColors(seedHue, seedChroma, scheme) {
@@ -70,3 +58,4 @@ export function labelOn(fill, text, surface) {
   const themed = best(text, surface);
   return contrast(fill, themed) >= 4.5 ? themed : best("#000000", "#ffffff");
 }
+

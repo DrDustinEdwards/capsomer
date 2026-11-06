@@ -26,15 +26,7 @@ export interface EmptyProps {
   titleAs?: "p" | "h1" | "h2" | "h3";
 }
 
-export function Empty({
-  kind,
-  title,
-  children,
-  action,
-  icon,
-  flush,
-  titleAs: Title = "p",
-}: EmptyProps) {
+export function Empty({ kind, title, children, action, icon, flush, titleAs: Title = "p" }: EmptyProps) {
   let head: ReactNode;
   if (kind === "all-clear") {
     head = (
@@ -54,12 +46,7 @@ export function Empty({
     head = title;
   }
   return (
-    <div
-      className="cap-empty"
-      data-kind={kind}
-      data-flush={flush ? "" : undefined}
-      role={kind === "failed" ? "alert" : undefined}
-    >
+    <div className="cap-empty" data-kind={kind} data-flush={flush ? "" : undefined} role={kind === "failed" ? "alert" : undefined}>
       {icon ? (
         <div className="cap-empty-media" data-variant="icon" aria-hidden="true">
           {icon}

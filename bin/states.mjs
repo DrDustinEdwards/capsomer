@@ -30,10 +30,7 @@ export function splitExamples(src) {
       if (i % 2 === 1) return part;
       return part
         .replace(/^[ \t]*<link\b[^>]*>[ \t]*\n?/gm, (m) => (head.push(m.trim()), ""))
-        .replace(
-          /^[ \t]*<script\b[\s\S]*?<\/script>[ \t]*\n?/gm,
-          (m) => (scripts.push(m.replace(/\s+$/, "")), ""),
-        );
+        .replace(/^[ \t]*<script\b[\s\S]*?<\/script>[ \t]*\n?/gm, (m) => (scripts.push(m.replace(/\s+$/, "")), ""));
     })
     .join("")
     .replace(/\n{3,}/g, "\n\n")
@@ -58,10 +55,7 @@ export function renderStates({ template, title, summary, examples, hasTsx, css =
   const { body } = split;
   const head = css ? [...split.head, '<link rel="stylesheet" href="./states.css" />'] : split.head;
   const { scripts } = split;
-  const after = [
-    ...scripts.map((s) => s.replace(/^\s+/, "")),
-    ...(hasTsx ? ['<script type="module" src="./examples.tsx"></script>'] : []),
-  ];
+  const after = [...scripts.map((s) => s.replace(/^\s+/, "")), ...(hasTsx ? ['<script type="module" src="./examples.tsx"></script>'] : [])];
   const fill = {
     title: escapeHtml(title),
     summary: escapeHtml(summary),
@@ -74,9 +68,7 @@ export function renderStates({ template, title, summary, examples, hasTsx, css =
 
 // A component's examples.html with every <!-- build:name --> filled from its examples.build.ts.
 async function loadExamples(base) {
-  const html = existsSync(join(base, "examples.html"))
-    ? readFileSync(join(base, "examples.html"), "utf8")
-    : "";
+  const html = existsSync(join(base, "examples.html")) ? readFileSync(join(base, "examples.html"), "utf8") : "";
   const build = join(base, "examples.build.ts");
   if (!existsSync(build)) return html;
   const parts = (await import(pathToFileURL(build).href)).default;
@@ -98,24 +90,11 @@ export async function generateStates(root = PKG) {
     const tsx = join(base, "examples.tsx");
     if (!existsSync(join(base, "examples.html")) && !existsSync(tsx)) continue;
     const mdPath = join(base, `${d.name}.md`);
-    const { title, summary } = docMeta(
-      existsSync(mdPath) ? readFileSync(mdPath, "utf8") : "",
-      d.name,
-    );
+    const { title, summary } = docMeta(existsSync(mdPath) ? readFileSync(mdPath, "utf8") : "", d.name);
     const examples = await loadExamples(base);
     const lifted = liftStyles(examples);
     if (lifted.css) writeFileSync(join(base, "states.css"), `${lifted.css}\n`);
-    writeFileSync(
-      join(base, "states.html"),
-      renderStates({
-        template,
-        title,
-        summary,
-        examples: lifted.body,
-        hasTsx: existsSync(tsx),
-        css: lifted.css,
-      }),
-    );
+    writeFileSync(join(base, "states.html"), renderStates({ template, title, summary, examples: lifted.body, hasTsx: existsSync(tsx), css: lifted.css }));
     written.set(d.name, examples);
   }
   return written;

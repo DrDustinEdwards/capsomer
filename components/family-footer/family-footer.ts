@@ -41,18 +41,8 @@ export const SOCIAL_LINKS: SocialLink[] = [
 
 /** Scholar, PubMed, ORCID, then the posts' feed. */
 export const PROFILE_LINKS: FamilyLink[] = [
-  {
-    to: "https://scholar.google.com/citations?user=lfzCCXwAAAAJ",
-    label: "Google Scholar",
-    external: true,
-    me: true,
-  },
-  {
-    to: "https://pubmed.ncbi.nlm.nih.gov/?term=Edwards+Dustin%5BAuthor%5D&sort=date",
-    label: "PubMed",
-    external: true,
-    me: true,
-  },
+  { to: "https://scholar.google.com/citations?user=lfzCCXwAAAAJ", label: "Google Scholar", external: true, me: true },
+  { to: "https://pubmed.ncbi.nlm.nih.gov/?term=Edwards+Dustin%5BAuthor%5D&sort=date", label: "PubMed", external: true, me: true },
   { to: "https://orcid.org/0000-0001-6409-8041", label: "ORCID", external: true, me: true },
   { to: "/writing/rss.xml", label: "RSS" },
 ];
@@ -70,28 +60,9 @@ const SIGN_IN_NOTE = "(requires sign-in)";
  */
 export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { to: "/admin", label: "Admin", name: `Admin, dustinedwards.info ${SIGN_IN_NOTE}`, icon: "gear" },
-  {
-    to: "https://portal.dustinedwards.info",
-    label: "Portal",
-    name: `Capsid Portal ${SIGN_IN_NOTE}`,
-    hover: "Capsid Portal",
-    icon: "capsid",
-    external: true,
-  },
-  {
-    to: "https://desk.dustinedwards.info",
-    label: "Desk",
-    name: `Desk, Carrel's writing app ${SIGN_IN_NOTE}`,
-    hover: "Carrel Desk",
-    icon: "lamp",
-    external: true,
-  },
-  {
-    to: LAB_BENCH_PATH,
-    label: "Lab bench",
-    name: `Lab bench, the members' workspace ${SIGN_IN_NOTE}`,
-    icon: "flask",
-  },
+  { to: "https://portal.dustinedwards.info", label: "Portal", name: `Capsid Portal ${SIGN_IN_NOTE}`, hover: "Capsid Portal", icon: "capsid", external: true },
+  { to: "https://desk.dustinedwards.info", label: "Desk", name: `Desk, Carrel's writing app ${SIGN_IN_NOTE}`, hover: "Carrel Desk", icon: "lamp", external: true },
+  { to: LAB_BENCH_PATH, label: "Lab bench", name: `Lab bench, the members' workspace ${SIGN_IN_NOTE}`, icon: "flask" },
 ];
 
 export const SITE_HEADING = "Site";
@@ -129,48 +100,12 @@ export interface FamilySite {
 }
 
 export const FAMILY_SITES: FamilySite[] = [
-  {
-    id: "dustinedwards",
-    name: "dustinedwards.info",
-    href: FAMILY_ORIGIN,
-    role: "Research",
-    family: "purple",
-  },
-  {
-    id: "capsid",
-    name: "Capsid",
-    href: "https://capsid.dustinedwards.info",
-    role: "Agent memory",
-    family: "teal",
-  },
-  {
-    id: "capsomer",
-    name: "Capsomer",
-    href: "https://capsomer.dustinedwards.info",
-    role: "Design system",
-    family: "magenta",
-  },
-  {
-    id: "prelum",
-    name: "Prelum",
-    href: "https://prelum.dustinedwards.info",
-    role: "Publishing",
-    family: "cerulean",
-  },
-  {
-    id: "carrel",
-    name: "Carrel",
-    href: "https://carrel.dustinedwards.info",
-    role: "Writing",
-    family: "olive",
-  },
-  {
-    id: "enarratio",
-    name: "Enarratio",
-    href: "https://enarratio.dustinedwards.info",
-    role: "Charts",
-    family: "rose",
-  },
+  { id: "dustinedwards", name: "dustinedwards.info", href: FAMILY_ORIGIN, role: "Research", family: "purple" },
+  { id: "capsid", name: "Capsid", href: "https://capsid.dustinedwards.info", role: "Agent memory", family: "teal" },
+  { id: "capsomer", name: "Capsomer", href: "https://capsomer.dustinedwards.info", role: "Design system", family: "magenta" },
+  { id: "prelum", name: "Prelum", href: "https://prelum.dustinedwards.info", role: "Publishing", family: "cerulean" },
+  { id: "carrel", name: "Carrel", href: "https://carrel.dustinedwards.info", role: "Writing", family: "olive" },
+  { id: "enarratio", name: "Enarratio", href: "https://enarratio.dustinedwards.info", role: "Charts", family: "rose" },
 ];
 
 /**
@@ -224,11 +159,7 @@ const svg = (cls: string, viewBox: string, body: string, size = 'width="16" heig
 
 /** Line drawings on a 24-unit grid, one stroke weight, in currentColor so the link's hover reaches them. */
 const line = (cls: string, body: string, stroke = 1.5) =>
-  svg(
-    cls,
-    "0 0 24 24",
-    `<g fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">${body}</g>`,
-  );
+  svg(cls, "0 0 24 24", `<g fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">${body}</g>`);
 
 const ICONS: Record<WorkspaceLink["icon"], string> = {
   // Desk: a desk lamp, the study-carrel light.
@@ -236,19 +167,13 @@ const ICONS: Record<WorkspaceLink["icon"], string> = {
   // Admin: a gear, eight teeth.
   gear: '<path d="M18.85 9.78L21.28 9.96L21.28 14.04L18.85 14.22L18.42 15.27L20 17.12L17.12 20L15.27 18.42L14.22 18.85L14.04 21.28L9.96 21.28L9.78 18.85L8.73 18.42L6.88 20L4 17.12L5.58 15.27L5.15 14.22L2.72 14.04L2.72 9.96L5.15 9.78L5.58 8.73L4 6.88L6.88 4L8.73 5.58L9.78 5.15L9.96 2.72L14.04 2.72L14.22 5.15L15.27 5.58L17.12 4L20 6.88L18.42 8.73z"/><circle cx="12" cy="12" r="3"/>',
   // Portal: an icosahedron in outline, the shape of a phage capsid.
-  capsid:
-    '<path d="M12 2.5l8.2 4.75v9.5L12 21.5l-8.2-4.75v-9.5z"/><path d="M12 2.5L7.5 9.5h9zM7.5 9.5L3.8 16.75M16.5 9.5l3.7 7.25M7.5 9.5L12 16.5l4.5-7M12 16.5v5M12 16.5l-8.2.25M12 16.5l8.2.25"/>',
+  capsid: '<path d="M12 2.5l8.2 4.75v9.5L12 21.5l-8.2-4.75v-9.5z"/><path d="M12 2.5L7.5 9.5h9zM7.5 9.5L3.8 16.75M16.5 9.5l3.7 7.25M7.5 9.5L12 16.5l4.5-7M12 16.5v5M12 16.5l-8.2.25M12 16.5l8.2.25"/>',
   // Lab: a conical flask, the bench.
-  flask:
-    '<path d="M9 3h6"/><path d="M10 3v6.5L4.6 18.6A1.6 1.6 0 0 0 6 21h12a1.6 1.6 0 0 0 1.4-2.4L14 9.5V3"/><path d="M7.2 15h9.6"/>',
+  flask: '<path d="M9 3h6"/><path d="M10 3v6.5L4.6 18.6A1.6 1.6 0 0 0 6 21h12a1.6 1.6 0 0 0 1.4-2.4L14 9.5V3"/><path d="M7.2 15h9.6"/>',
 };
 
 // The sign-in lock, drawn smaller, so its stroke is 2: at 12px the same 1px line the 16px marks draw.
-const LOCK = line(
-  "cap-family-footer-lock",
-  '<rect x="5" y="11" width="14" height="10" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><path d="M12 15v2"/>',
-  2,
-);
+const LOCK = line("cap-family-footer-lock", '<rect x="5" y="11" width="14" height="10" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><path d="M12 15v2"/>', 2);
 
 // X's own logo path, unaltered; the Germomics hexagon with its G knocked out to the footer's ground.
 const MARKS: Record<SocialLink["mark"], string> = {
@@ -270,20 +195,10 @@ const MARKS: Record<SocialLink["mark"], string> = {
  * The footer as HTML: plain string building, so a server, a React page or a static build writes the
  * same markup. Its band is the family's `--on`, so each site's own color draws it.
  */
-export function familyFooterHtml({
-  site,
-  center = "",
-  origin = FAMILY_ORIGIN,
-  published,
-  statement,
-  year = new Date().getFullYear(),
-}: FamilyFooterOptions = {}): string {
+export function familyFooterHtml({ site, center = "", origin = FAMILY_ORIGIN, published, statement, year = new Date().getFullYear() }: FamilyFooterOptions = {}): string {
   const own = (link: FamilyLink) => statement !== undefined && link.to === ACCESSIBILITY;
-  const href = (link: FamilyLink) =>
-    escapeHtml(own(link) ? (statement ?? "") : link.external ? link.to : `${origin}${link.to}`);
-  const siteGroup = SITE_LINKS_ALL.filter(
-    (link) => own(link) || siteLinks(published).includes(link),
-  );
+  const href = (link: FamilyLink) => escapeHtml(own(link) ? (statement ?? "") : link.external ? link.to : `${origin}${link.to}`);
+  const siteGroup = SITE_LINKS_ALL.filter((link) => own(link) || siteLinks(published).includes(link));
   // A profile off the family (Google Scholar, PubMed, ORCID) takes the family arrow, turned out (css/base.css).
   const anchor = (link: FamilyLink) =>
     `<a href="${href(link)}"${link.me ? ' rel="me" class="cap-go" data-go="out"' : ""}>${escapeHtml(link.label)}</a>`;
@@ -295,8 +210,7 @@ export function familyFooterHtml({
     (link) =>
       `<li><a href="${href(link)}" rel="nofollow" class="cap-family-footer-private" aria-label="${escapeHtml(link.name)}"${link.hover ? ` title="${escapeHtml(link.hover)}"` : ""}>${line("cap-family-footer-icon", ICONS[link.icon])}<span class="cap-family-footer-label">${escapeHtml(link.label)}</span>${LOCK}</a></li>`,
   ).join("");
-  const list = (links: FamilyLink[]) =>
-    `<ul class="cap-family-footer-links">${links.map((link) => `<li>${anchor(link)}</li>`).join("")}</ul>`;
+  const list = (links: FamilyLink[]) => `<ul class="cap-family-footer-links">${links.map((link) => `<li>${anchor(link)}</li>`).join("")}</ul>`;
   const sites = FAMILY_SITES.map(
     (s) =>
       `<li data-family-mark="${s.family}"><a href="${escapeHtml(s.id === "dustinedwards" ? `${origin}/` : s.href)}"${s.id === site ? ' aria-current="page"' : ""}><span class="cap-family-footer-site-name">${escapeHtml(s.name)}</span><span class="cap-family-footer-site-role">${escapeHtml(s.role)}</span></a></li>`,

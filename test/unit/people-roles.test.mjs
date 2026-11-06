@@ -2,19 +2,7 @@
 // the module touches no DOM until enhance() or a confirm runs.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  accessText,
-  actionText,
-  cloudflareText,
-  dayText,
-  daysLeft,
-  endHelp,
-  endsSoon,
-  rowActions,
-  syncText,
-  tallyText,
-  timeText,
-} from "../../components/people-roles/people-roles.ts";
+import { accessText, actionText, cloudflareText, dayText, daysLeft, endHelp, endsSoon, rowActions, syncText, tallyText, timeText } from "../../components/people-roles/people-roles.ts";
 
 const NOW = Date.parse("2026-11-30T15:00:00Z");
 
@@ -50,34 +38,19 @@ test("the Cloudflare column never says ready before the allow list matches", () 
   assert.equal(syncText({ sync: "ready", status: "removed" }), "Ready: signed out");
   assert.equal(syncText({ sync: "waiting", status: "active" }), "Waiting for Cloudflare");
   assert.equal(syncText({ sync: "failed", status: "active" }), "Cloudflare refused");
-  assert.equal(
-    cloudflareText({ cloudflare: "failed", cloudflareError: "rate limited" }),
-    "Cloudflare refused: rate limited",
-  );
+  assert.equal(cloudflareText({ cloudflare: "failed", cloudflareError: "rate limited" }), "Cloudflare refused: rate limited");
   assert.equal(cloudflareText({ cloudflare: "accepted" }), "Cloudflare accepted");
 });
 
 test("history lines say what changed", () => {
-  assert.equal(
-    actionText({ action: "add", toTitle: "Lab worker", endDate: "2026-12-18" }),
-    "Added as Lab worker, until Dec 18, 2026",
-  );
-  assert.equal(
-    actionText({ action: "change_title", fromTitle: "Lab worker", toTitle: "Safety officer" }),
-    "Title changed from Lab worker to Safety officer",
-  );
-  assert.equal(
-    actionText({ action: "renew", endDate: "2027-05-14" }),
-    "Renewed, until May 14, 2027",
-  );
+  assert.equal(actionText({ action: "add", toTitle: "Lab worker", endDate: "2026-12-18" }), "Added as Lab worker, until Dec 18, 2026");
+  assert.equal(actionText({ action: "change_title", fromTitle: "Lab worker", toTitle: "Safety officer" }), "Title changed from Lab worker to Safety officer");
+  assert.equal(actionText({ action: "renew", endDate: "2027-05-14" }), "Renewed, until May 14, 2027");
   assert.equal(actionText({ action: "expire" }), "Access ended on the end date");
 });
 
 test("the add form's end date help and the review tally", () => {
-  assert.equal(
-    endHelp("2026-12-18"),
-    "Defaults to the end of the term, Dec 18, 2026. You can choose an earlier date.",
-  );
+  assert.equal(endHelp("2026-12-18"), "Defaults to the end of the term, Dec 18, 2026. You can choose an earlier date.");
   assert.equal(endHelp(null), "This title does not expire.");
   assert.equal(tallyText(1, 0, 2), "1 to keep, 0 to remove, 2 not answered.");
   assert.equal(tallyText(2, 1, 0), "2 to keep, 1 to remove.");
@@ -94,25 +67,10 @@ test("row actions: Retry first while Cloudflare lags, Renew otherwise, nothing f
   assert.deepEqual(values(r), ["renew", "change", "history", "remove"]);
   r = rowActions({ ...base, status: "removed" }, true, "?change=a", "?person=a");
   assert.equal(r.primary, null);
-  assert.deepEqual(
-    values(r),
-    ["history"],
-    "a removed person is added again, not renewed or removed",
-  );
-  r = rowActions(
-    { ...base, status: "expired", renewTo: "2026-12-18" },
-    true,
-    "?change=a",
-    "?person=a",
-  );
+  assert.deepEqual(values(r), ["history"], "a removed person is added again, not renewed or removed");
+  r = rowActions({ ...base, status: "expired", renewTo: "2026-12-18" }, true, "?change=a", "?person=a");
   assert.equal(r.primary?.intent, "renew");
   assert.deepEqual(values(r), ["history", "remove"], "no title change for an expired person");
-  assert.deepEqual(rowActions({ ...base, manageable: false }, true, "", ""), {
-    primary: null,
-    items: [],
-  });
-  assert.equal(
-    rowActions(base, true, "", "").items.find((i) => i.value === "remove")?.danger,
-    true,
-  );
+  assert.deepEqual(rowActions({ ...base, manageable: false }, true, "", ""), { primary: null, items: [] });
+  assert.equal(rowActions(base, true, "", "").items.find((i) => i.value === "remove")?.danger, true);
 });

@@ -74,16 +74,7 @@ export interface HistoryListProps {
   empty?: ReactNode;
 }
 
-const Glyph = ({ d, size = 14 }: { d: string; size?: number }) => (
-  <svg
-    viewBox="0 0 16 16"
-    width={size}
-    height={size}
-    aria-hidden="true"
-    focusable="false"
-    dangerouslySetInnerHTML={{ __html: d }}
-  />
-);
+const Glyph = ({ d, size = 14 }: { d: string; size?: number }) => <svg viewBox="0 0 16 16" width={size} height={size} aria-hidden="true" focusable="false" dangerouslySetInnerHTML={{ __html: d }} />;
 
 function Status({ tone, glyph, word }: { tone: string; glyph: string; word: string }) {
   return (
@@ -97,15 +88,8 @@ function Status({ tone, glyph, word }: { tone: string; glyph: string; word: stri
 function Who({ id, name, ai }: { id: string; name: string; ai?: boolean }) {
   return (
     <span className="cap-hist-who" id={id}>
-      <span
-        className="cap-avatar"
-        data-size="sm"
-        data-kind={ai ? "ai" : undefined}
-        aria-hidden="true"
-      >
-        <span className="cap-avatar-fallback">
-          {ai ? "AI" : initials(name.split(" and ")[0] ?? name)}
-        </span>
+      <span className="cap-avatar" data-size="sm" data-kind={ai ? "ai" : undefined} aria-hidden="true">
+        <span className="cap-avatar-fallback">{ai ? "AI" : initials(name.split(" and ")[0] ?? name)}</span>
       </span>
       <span className="cap-hist-name">{name}</span>
     </span>
@@ -113,8 +97,7 @@ function Who({ id, name, ai }: { id: string; name: string; ai?: boolean }) {
 }
 
 function Delta({ id, n }: { id: string; n: number | undefined }) {
-  if (n === undefined)
-    return <span className="cap-hist-delta" data-sign="none" aria-hidden="true" />;
+  if (n === undefined) return <span className="cap-hist-delta" data-sign="none" aria-hidden="true" />;
   const sign = deltaSign(n);
   return (
     <span className="cap-hist-delta" id={id} data-sign={sign}>
@@ -124,17 +107,7 @@ function Delta({ id, n }: { id: string; n: number | undefined }) {
   );
 }
 
-function When({
-  id,
-  iso,
-  now,
-  chevron,
-}: {
-  id: string;
-  iso: string;
-  now?: number;
-  chevron?: boolean;
-}) {
+function When({ id, iso, now, chevron }: { id: string; iso: string; now?: number; chevron?: boolean }) {
   return (
     <span className="cap-row-meta" id={id}>
       <span className="cap-hist-when">
@@ -164,49 +137,16 @@ interface LineProps {
   readOnly?: boolean;
 }
 
-function Line({
-  entry: e,
-  delta,
-  prefix,
-  current,
-  picked,
-  pickDisabled,
-  now,
-  href,
-  onPick,
-  onRestore,
-  loadHref,
-  onLoad,
-  readOnly,
-}: LineProps) {
+function Line({ entry: e, delta, prefix, current, picked, pickDisabled, now, href, onPick, onRestore, loadHref, onLoad, readOnly }: LineProps) {
   const p = `${prefix}-${e.id}`;
   const stampText = stamp(e.at, now);
   const hasDetail = e.kind !== "edit";
-  const described = [hasDetail ? `${p}-d` : "", delta === undefined ? "" : `${p}-w`, `${p}-t`]
-    .filter(Boolean)
-    .join(" ");
+  const described = [hasDetail ? `${p}-d` : "", delta === undefined ? "" : `${p}-w`, `${p}-t`].filter(Boolean).join(" ");
   return (
-    <li
-      className="cap-row cap-hist-row"
-      data-kind={e.kind}
-      data-id={e.id}
-      data-at={e.at}
-      data-words={e.words}
-      data-who={e.who}
-      data-current={current ? "" : undefined}
-    >
+    <li className="cap-row cap-hist-row" data-kind={e.kind} data-id={e.id} data-at={e.at} data-words={e.words} data-who={e.who} data-current={current ? "" : undefined}>
       <span className="cap-hist-pick">
         <label className="cap-check">
-          <input
-            type="checkbox"
-            name="compare"
-            value={e.id}
-            data-cap-part="pick"
-            checked={picked}
-            aria-disabled={pickDisabled ? "true" : undefined}
-            onChange={(ev) => onPick(e.id, ev.currentTarget)}
-            onClick={(ev) => pickDisabled && ev.preventDefault()}
-          />
+          <input type="checkbox" name="compare" value={e.id} data-cap-part="pick" checked={picked} aria-disabled={pickDisabled ? "true" : undefined} onChange={(ev) => onPick(e.id, ev.currentTarget)} onClick={(ev) => pickDisabled && ev.preventDefault()} />
           <span className="cap-sr-only">
             Compare this version, {stampText}, by {e.who}
           </span>
@@ -227,12 +167,7 @@ function Line({
           Published to{" "}
           {(e.destinations ?? []).map((d) => (
             <span key={d.name} className="cap-hist-dest">
-              <Status
-                tone={destinationTone(d.status)}
-                glyph={destinationGlyph(d.status)}
-                word={destinationWord(d.status)}
-              />{" "}
-              {d.name}{" "}
+              <Status tone={destinationTone(d.status)} glyph={destinationGlyph(d.status)} word={destinationWord(d.status)} /> {d.name}{" "}
             </span>
           ))}
         </p>
@@ -260,27 +195,11 @@ function Line({
             href={loadHref(e.id)}
             onClick={onLoad ? (ev) => (ev.preventDefault(), onLoad(e)) : undefined}
           >
-            Load into editor
-            <span className="cap-sr-only">
-              {" "}
-              the version from {stampText} by {e.who}
-            </span>
+            Load into editor<span className="cap-sr-only"> the version from {stampText} by {e.who}</span>
           </a>
         ) : (
-          <button
-            type="button"
-            className="cap-btn"
-            data-variant="quiet"
-            data-size="sm"
-            data-cap-part="restore"
-            data-version={e.id}
-            onClick={(ev) => onRestore(e, ev.currentTarget)}
-          >
-            Restore
-            <span className="cap-sr-only">
-              {" "}
-              the version from {stampText} by {e.who}
-            </span>
+          <button type="button" className="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="restore" data-version={e.id} onClick={(ev) => onRestore(e, ev.currentTarget)}>
+            Restore<span className="cap-sr-only"> the version from {stampText} by {e.who}</span>
           </button>
         )}
       </div>
@@ -288,28 +207,11 @@ function Line({
   );
 }
 
-function RunLines({
-  run,
-  deltas,
-  prefix,
-  now,
-  open,
-  onToggle,
-  children,
-}: {
-  run: Run;
-  deltas: (number | undefined)[];
-  prefix: string;
-  now?: number;
-  open: boolean;
-  onToggle: () => void;
-  children: ReactNode;
-}) {
+function RunLines({ run, deltas, prefix, now, open, onToggle, children }: { run: Run; deltas: (number | undefined)[]; prefix: string; now?: number; open: boolean; onToggle: () => void; children: ReactNode }) {
   const first = run.entries[0] as HistoryEntry;
   const p = `${prefix}-run-${first.id}`;
   const title = runTitle(run);
-  const names =
-    run.who.length > 1 ? `${run.who[0]} and ${run.who.length - 1} more` : (run.who[0] ?? "");
+  const names = run.who.length > 1 ? `${run.who[0]} and ${run.who.length - 1} more` : (run.who[0] ?? "");
   void deltas;
   return (
     <>
@@ -317,13 +219,7 @@ function RunLines({
         <span className="cap-hist-pick" />
         <Who id={`${p}-who`} name={names} />
         <div className="cap-row-title">
-          <button
-            type="button"
-            aria-expanded={open}
-            aria-controls={`${p}-rows`}
-            aria-describedby={`${p}-d ${p}-w ${p}-t`}
-            onClick={onToggle}
-          >
+          <button type="button" aria-expanded={open} aria-controls={`${p}-rows`} aria-describedby={`${p}-d ${p}-w ${p}-t`} onClick={onToggle}>
             {title}
           </button>
         </div>
@@ -344,25 +240,7 @@ function RunLines({
   );
 }
 
-export function HistoryList({
-  entries,
-  labelledBy,
-  label,
-  user,
-  compareBase = "",
-  versionHref,
-  loadHref,
-  onLoad,
-  readOnly,
-  onRestore,
-  onUndoRestore,
-  now,
-  olderHref,
-  onLoadOlder,
-  loadingOlder,
-  primary,
-  empty,
-}: HistoryListProps) {
+export function HistoryList({ entries, labelledBy, label, user, compareBase = "", versionHref, loadHref, onLoad, readOnly, onRestore, onUndoRestore, now, olderHref, onLoadOlder, loadingOlder, primary, empty }: HistoryListProps) {
   const prefix = useId();
   const listRef = useRef<HTMLUListElement>(null);
   const [picked, setPicked] = useState<string[]>([]);
@@ -381,15 +259,7 @@ export function HistoryList({
   const lines = useMemo(() => condense(entries), [entries]);
   const at = (id: string) => parse(entries.find((e) => e.id === id)?.at ?? "");
   const pair = orderPair(picked, at);
-  const text =
-    note ??
-    (pair
-      ? pickedText(
-          2,
-          stamp(entries.find((e) => e.id === pair[0])?.at ?? "", now),
-          stamp(entries.find((e) => e.id === pair[1])?.at ?? "", now),
-        )
-      : pickedText(picked.length));
+  const text = note ?? (pair ? pickedText(2, stamp(entries.find((e) => e.id === pair[0])?.at ?? "", now), stamp(entries.find((e) => e.id === pair[1])?.at ?? "", now)) : pickedText(picked.length));
   const href = versionHref ?? ((id: string) => `?version=${encodeURIComponent(id)}`);
 
   const pick = (id: string) => {
@@ -402,14 +272,7 @@ export function HistoryList({
     const current = entries[0];
     if (!current) return;
     const at = new Date(now ?? Date.now()).toISOString();
-    const entry = restoredEntry(
-      source,
-      current,
-      user,
-      `${source.id}-restored-${entries.filter((e) => e.kind === "restore").length + 1}`,
-      at,
-      now,
-    );
+    const entry = restoredEntry(source, current, user, `${source.id}-restored-${entries.filter((e) => e.kind === "restore").length + 1}`, at, now);
     const event = { source, entry };
     await onRestore?.(event);
     say(restoredMessage(source, now), {
@@ -431,68 +294,27 @@ export function HistoryList({
     index += line.type === "entry" ? 1 : line.entries.length;
   }
   return (
-    <section
-      className="cap-hist"
-      aria-labelledby={labelledBy}
-      aria-label={labelledBy ? undefined : label}
-      data-picked={picked.length}
-      data-readonly={readOnly ? "" : undefined}
-    >
+    <section className="cap-hist" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-picked={picked.length} data-readonly={readOnly ? "" : undefined}>
       <div className="cap-hist-bar">
         <p className="cap-hist-picked" role="status" data-cap-part="picked">
           {text}
         </p>
         {pair ? (
-          <a
-            className="cap-btn"
-            data-variant="primary"
-            data-cap-part="compare"
-            href={compareHref(compareBase, pair[0], pair[1])}
-          >
+          <a className="cap-btn" data-variant="primary" data-cap-part="compare" href={compareHref(compareBase, pair[0], pair[1])}>
             Compare 2 versions
           </a>
         ) : (
-          // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- an <a> with no href has no link role; this disabled link keeps it
-          <a
-            className="cap-btn"
-            data-variant="primary"
-            data-cap-part="compare"
-            // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- an <a> with no href has no link role; this disabled link keeps it
-            role="link"
-            aria-disabled="true"
-            tabIndex={0}
-          >
+          // oxlint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-redundant-roles -- an <a> with no href has no link role; this disabled link keeps it
+          <a className="cap-btn" data-variant="primary" data-cap-part="compare" role="link" aria-disabled="true" tabIndex={0}>
             Compare 2 versions
           </a>
         )}
       </div>
-      <ul
-        ref={listRef}
-        className="cap-rows cap-hist-list"
-        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
-        role="list"
-        aria-labelledby={labelledBy}
-        aria-label={labelledBy ? undefined : label}
-        data-cap-primary={primary ? "" : undefined}
-      >
+      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
+      <ul ref={listRef} className="cap-rows cap-hist-list" role="list" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-cap-primary={primary ? "" : undefined}>
         {lines.map((line, li) => {
           const common = (e: HistoryEntry, i: number) => (
-            <Line
-              key={e.id}
-              entry={e}
-              delta={deltaOf(entries, i)}
-              prefix={prefix}
-              current={i === 0}
-              picked={picked.includes(e.id)}
-              pickDisabled={picked.length >= 2 && !picked.includes(e.id)}
-              now={now}
-              href={href}
-              onPick={pick}
-              onRestore={(en, el) => void restore(en, el)}
-              loadHref={loadHref}
-              onLoad={onLoad}
-              readOnly={readOnly}
-            />
+            <Line key={e.id} entry={e} delta={deltaOf(entries, i)} prefix={prefix} current={i === 0} picked={picked.includes(e.id)} pickDisabled={picked.length >= 2 && !picked.includes(e.id)} now={now} href={href} onPick={pick} onRestore={(en, el) => void restore(en, el)} loadHref={loadHref} onLoad={onLoad} readOnly={readOnly} />
           );
           if (line.type === "entry") {
             return common(line.entry, starts[li] ?? 0);
@@ -518,25 +340,11 @@ export function HistoryList({
       {olderHref || onLoadOlder ? (
         <div className="cap-hist-foot">
           {olderHref ? (
-            <a
-              className="cap-btn"
-              data-variant="quiet"
-              data-cap-part="older"
-              href={olderHref}
-              aria-busy={loadingOlder || undefined}
-              onClick={onLoadOlder ? (e) => (e.preventDefault(), onLoadOlder()) : undefined}
-            >
+            <a className="cap-btn" data-variant="quiet" data-cap-part="older" href={olderHref} aria-busy={loadingOlder || undefined} onClick={onLoadOlder ? (e) => (e.preventDefault(), onLoadOlder()) : undefined}>
               Load older versions
             </a>
           ) : (
-            <button
-              type="button"
-              className="cap-btn"
-              data-variant="quiet"
-              data-cap-part="older"
-              aria-busy={loadingOlder || undefined}
-              onClick={onLoadOlder}
-            >
+            <button type="button" className="cap-btn" data-variant="quiet" data-cap-part="older" aria-busy={loadingOlder || undefined} onClick={onLoadOlder}>
               Load older versions
             </button>
           )}

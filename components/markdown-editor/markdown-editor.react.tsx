@@ -2,27 +2,10 @@ import { useEffect, useId, useRef, type ReactNode, useLayoutEffect } from "react
 
 import type { LinkTarget, MarkdownEditorHandle, MarkdownEditorOptions } from "./markdown-editor.ts";
 
-export type {
-  ImageDescription,
-  LinkTarget,
-  MarkdownEditorHandle,
-  MarkdownEditorOptions,
-  Scaffold,
-  UploadResult,
-} from "./markdown-editor.ts";
+export type { ImageDescription, LinkTarget, MarkdownEditorHandle, MarkdownEditorOptions, Scaffold, UploadResult } from "./markdown-editor.ts";
 
-export interface MarkdownEditorProps extends Pick<
-  MarkdownEditorOptions,
-  | "scaffolds"
-  | "linkTargets"
-  | "onUpload"
-  | "imageMarkdown"
-  | "accept"
-  | "lineNumbers"
-  | "nonce"
-  | "wordsPerMinute"
-  | "onSave"
-> {
+export interface MarkdownEditorProps
+  extends Pick<MarkdownEditorOptions, "scaffolds" | "linkTargets" | "onUpload" | "imageMarkdown" | "accept" | "lineNumbers" | "nonce" | "wordsPerMinute" | "onSave"> {
   // The visible label above the editor.
   label: ReactNode;
   // The surface's accessible name; defaults to the label's text plus ", markdown".
@@ -53,27 +36,13 @@ export interface MarkdownEditorProps extends Pick<
 // loads the behavior module and CodeMirror with import(), so they are their own chunks and
 // never reach a bundle that renders no editor, and upgrades the textarea in place.
 export function MarkdownEditor(props: MarkdownEditorProps) {
-  const {
-    label,
-    ariaLabel,
-    name,
-    value,
-    defaultValue,
-    placeholder,
-    readOnly,
-    disabled,
-    required,
-    maxLength,
-    help,
-    error,
-  } = props;
+  const { label, ariaLabel, name, value, defaultValue, placeholder, readOnly, disabled, required, maxLength, help, error } = props;
   const base = useId();
   const id = props.id ?? `${base}-md`;
   const helpId = `${base}-help`;
   const errorId = `${base}-error`;
   const hasError = error != null && error !== false && error !== "";
-  const describedBy =
-    [hasError ? errorId : null, help ? helpId : null].filter(Boolean).join(" ") || undefined;
+  const describedBy = [hasError ? errorId : null, help ? helpId : null].filter(Boolean).join(" ") || undefined;
 
   const rootRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<MarkdownEditorHandle | null>(null);
@@ -100,18 +69,8 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
       const { filterLinkTargets } = await import("./markdown-editor.ts");
       return filterLinkTargets((t ?? []) as LinkTarget[], query);
     },
-    onUpload: latest.current.onUpload
-      ? (f, image, signal) =>
-          (latest.current.onUpload as NonNullable<MarkdownEditorOptions["onUpload"]>)(
-            f,
-            image,
-            signal,
-          )
-      : undefined,
-    imageMarkdown: latest.current.imageMarkdown
-      ? (i) =>
-          (latest.current.imageMarkdown as NonNullable<MarkdownEditorOptions["imageMarkdown"]>)(i)
-      : undefined,
+    onUpload: latest.current.onUpload ? (f, image, signal) => (latest.current.onUpload as NonNullable<MarkdownEditorOptions["onUpload"]>)(f, image, signal) : undefined,
+    imageMarkdown: latest.current.imageMarkdown ? (i) => (latest.current.imageMarkdown as NonNullable<MarkdownEditorOptions["imageMarkdown"]>)(i) : undefined,
     onChange: (v) => latest.current.onChange?.(v),
     onSave: (v) => latest.current.onSave?.(v),
   });
@@ -158,12 +117,7 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
   // The toolbar and the slash menu are rebuilt only when what they list changes, not each render.
   useEffect(() => {
     const o = options();
-    handleRef.current?.update({
-      scaffolds: o.scaffolds,
-      onUpload: o.onUpload,
-      imageMarkdown: o.imageMarkdown,
-      label: ariaLabel,
-    });
+    handleRef.current?.update({ scaffolds: o.scaffolds, onUpload: o.onUpload, imageMarkdown: o.imageMarkdown, label: ariaLabel });
   }, [scaffoldsKey, hasUpload, ariaLabel]);
 
   return (

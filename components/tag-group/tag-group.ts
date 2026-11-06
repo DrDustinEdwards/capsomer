@@ -21,23 +21,12 @@ const nameOf = (tag: HTMLElement) => tag.querySelector(".cap-tag-name")?.textCon
 export function removeTag(group: HTMLElement, tag: HTMLElement): boolean {
   const label = nameOf(tag);
   const value = tag.dataset.value ?? label;
-  if (
-    !group.dispatchEvent(
-      new CustomEvent<TagRemoved>("cap-tag-remove", {
-        bubbles: true,
-        cancelable: true,
-        detail: { value, label },
-      }),
-    )
-  )
-    return false;
+  if (!group.dispatchEvent(new CustomEvent<TagRemoved>("cap-tag-remove", { bubbles: true, cancelable: true, detail: { value, label } }))) return false;
   const list = tag.parentElement;
   const next = tag.nextElementSibling;
   const to = (next ?? tag.previousElementSibling)?.querySelector<HTMLElement>(REMOVE);
   tag.remove();
-  const then = group.dataset.capThen
-    ? document.querySelector<HTMLElement>(group.dataset.capThen)
-    : null;
+  const then = group.dataset.capThen ? document.querySelector<HTMLElement>(group.dataset.capThen) : null;
   if (to) to.focus();
   else if (then) then.focus();
   else {
@@ -49,12 +38,7 @@ export function removeTag(group: HTMLElement, tag: HTMLElement): boolean {
       undone: `${label} is back.`,
       undo: () => {
         list.insertBefore(tag, next && next.parentElement === list ? next : null);
-        group.dispatchEvent(
-          new CustomEvent<TagRemoved>("cap-tag-restore", {
-            bubbles: true,
-            detail: { value, label },
-          }),
-        );
+        group.dispatchEvent(new CustomEvent<TagRemoved>("cap-tag-restore", { bubbles: true, detail: { value, label } }));
       },
       returnFocus: () => tag.querySelector<HTMLElement>(REMOVE),
     });
@@ -66,9 +50,7 @@ export function removeTag(group: HTMLElement, tag: HTMLElement): boolean {
 // detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const group of root.querySelectorAll<HTMLElement>(
-    "[data-cap='tag-group']:not([data-cap-ready])",
-  )) {
+  for (const group of root.querySelectorAll<HTMLElement>("[data-cap='tag-group']:not([data-cap-ready])")) {
     group.dataset.capReady = "";
     const detachRoving = attachToolbar(group, REMOVE);
     const act = (e: Event) => {

@@ -1,10 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 
 const calendar = (page: Page) => page.getByRole("dialog", { name: "Choose a date" });
 const day = (page: Page, iso: string) => calendar(page).locator(`td[data-date='${iso}']`);
@@ -18,9 +13,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: days, the chosen day and the month reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: days, the chosen day and the month reach their contrast", async ({ page }) => {
     await visitStates(page, "date-picker", theme, "open");
     await expect(day(page, "2026-11-14")).toBeFocused();
     await expectContrast(page, [
@@ -29,22 +22,13 @@ eachTheme((theme) => {
       { sel: "td[data-date='2026-11-20']", what: "a day" },
       { sel: "td[aria-selected='true']", what: "the chosen day" },
       { sel: "td[aria-disabled='true']", what: "a day that cannot be chosen" },
-      {
-        sel: "td[data-date='2026-11-14']",
-        what: "the focused day's ring",
-        part: "outline",
-        min: 3,
-      },
+      { sel: "td[data-date='2026-11-14']", what: "the focused day's ring", part: "outline", min: 3 },
     ]);
   });
 
-  test("keyboard: the calendar opens on the input's date and the APG keys move the day", async ({
-    page,
-  }) => {
+  test("keyboard: the calendar opens on the input's date and the APG keys move the day", async ({ page }) => {
     await visitStates(page, "date-picker", theme);
-    await page
-      .getByRole("button", { name: "Change date, Saturday, November 14, 2026" })
-      .press("Enter");
+    await page.getByRole("button", { name: "Change date, Saturday, November 14, 2026" }).press("Enter");
     await expect(day(page, "2026-11-14")).toBeFocused();
     await expect(day(page, "2026-11-14")).toHaveAttribute("aria-selected", "true");
     await expect(calendar(page).getByRole("grid", { name: "November 2026" })).toBeVisible();
@@ -68,14 +52,10 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(calendar(page)).toBeHidden();
     await expect(page.locator("#dp-due")).toHaveValue("2026-11-15");
-    await expect(
-      page.getByRole("button", { name: "Change date, Sunday, November 15, 2026" }),
-    ).toBeFocused();
+    await expect(page.getByRole("button", { name: "Change date, Sunday, November 15, 2026" })).toBeFocused();
   });
 
-  test("keyboard: Esc closes with nothing changed; the month buttons keep focus; Tab stays inside", async ({
-    page,
-  }) => {
+  test("keyboard: Esc closes with nothing changed; the month buttons keep focus; Tab stays inside", async ({ page }) => {
     await visitStates(page, "date-picker", theme);
     const open = page.locator("#dp-due").locator("xpath=..").getByRole("button");
     await open.press("Enter");
@@ -103,9 +83,7 @@ eachTheme((theme) => {
     await expect(open).toBeFocused();
   });
 
-  test("keyboard: a day before the minimum cannot be chosen; Choose takes the focused day", async ({
-    page,
-  }) => {
+  test("keyboard: a day before the minimum cannot be chosen; Choose takes the focused day", async ({ page }) => {
     await visitStates(page, "date-picker", theme, "open");
     await page.keyboard.press("Home");
     await page.keyboard.press("ArrowUp");
@@ -130,13 +108,9 @@ eachTheme((theme) => {
 
 test.describe("with no script", () => {
   test.use({ javaScriptEnabled: false });
-  test("behavior: the input alone takes the date, and the button that needs script is hidden", async ({
-    page,
-  }) => {
+  test("behavior: the input alone takes the date, and the button that needs script is hidden", async ({ page }) => {
     await page.goto("components/date-picker/states.html");
     await expect(page.locator("#dp-due")).toBeEditable();
-    await expect(
-      page.locator("#dp-due").locator("xpath=..").locator("[data-cap-part='open']"),
-    ).toBeHidden();
+    await expect(page.locator("#dp-due").locator("xpath=..").locator("[data-cap-part='open']")).toBeHidden();
   });
 });

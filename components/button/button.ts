@@ -4,8 +4,7 @@
 // reduced motion, or with no `.cap-btn-label`, the label just changes. The leaving words are a
 // copy hidden from assistive technology, so the button's name is only ever the new label.
 
-const reduced = () =>
-  typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reduced = () => typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Animates a label that has already changed, from the button's width before the change and a
 // copy of the old label. The React wrapper calls it after React has written the new label.
@@ -19,26 +18,15 @@ export function morphFrom(button: HTMLElement, from: number, old: HTMLElement): 
   if (!label || reduced() || typeof button.animate !== "function") return to;
   const css = getComputedStyle(button);
   const ms = (name: string, fallback: number) => parseFloat(css.getPropertyValue(name)) || fallback;
-  const timing = {
-    duration: ms("--dur-base", 200),
-    easing: css.getPropertyValue("--ease-out").trim() || "ease-out",
-  };
+  const timing = { duration: ms("--dur-base", 200), easing: css.getPropertyValue("--ease-out").trim() || "ease-out" };
   old.dataset.leaving = "";
   old.setAttribute("aria-hidden", "true");
   button.append(old);
-  if (Math.abs(to - from) > 0.5)
-    button.animate(
-      { width: [`${from}px`, `${to}px`], overflow: ["clip", "clip"] },
-      { ...timing, id: "cap-morph" },
-    );
-  const out = old.animate(
-    { opacity: [1, 0], filter: ["blur(0)", "blur(4px)"] },
-    { ...timing, duration: ms("--dur-fast", 100), fill: "forwards" },
-  );
+  if (Math.abs(to - from) > 0.5) button.animate({ width: [`${from}px`, `${to}px`], overflow: ["clip", "clip"] }, { ...timing, id: "cap-morph" });
+  const out = old.animate({ opacity: [1, 0], filter: ["blur(0)", "blur(4px)"] }, { ...timing, duration: ms("--dur-fast", 100), fill: "forwards" });
   out.onfinish = out.oncancel = () => old.remove();
   // A pending button hides its label under the spinner; its own fade must not show it.
-  if (button.getAttribute("aria-busy") !== "true")
-    label.animate({ opacity: [0, 1], filter: ["blur(4px)", "blur(0)"] }, timing);
+  if (button.getAttribute("aria-busy") !== "true") label.animate({ opacity: [0, 1], filter: ["blur(4px)", "blur(0)"] }, timing);
   return to;
 }
 

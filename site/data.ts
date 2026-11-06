@@ -16,11 +16,7 @@ export interface ComponentDoc {
   body: string;
 }
 
-const docs = import.meta.glob("../components/*/*.md", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-}) as Record<string, string>;
+const docs = import.meta.glob("../components/*/*.md", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
 
 export const COMPONENTS: ComponentDoc[] = Object.entries(docs)
   .filter(([path]) => {
@@ -31,19 +27,8 @@ export const COMPONENTS: ComponentDoc[] = Object.entries(docs)
     const { data, body } = frontmatter(src);
     const name = /components\/([\w-]+)\//.exec(path)?.[1] ?? path;
     const str = (k: string) => (typeof data[k] === "string" ? (data[k] as string) : "");
-    const list = (k: string) =>
-      Array.isArray(data[k]) ? (data[k] as string[]) : str(k) ? [str(k)] : [];
-    return {
-      name,
-      title: str("title") || name,
-      summary: str("summary"),
-      tool: str("tool"),
-      parts: list("parts"),
-      states: list("states"),
-      added: str("added"),
-      source: str("source"),
-      body,
-    };
+    const list = (k: string) => (Array.isArray(data[k]) ? (data[k] as string[]) : str(k) ? [str(k)] : []);
+    return { name, title: str("title") || name, summary: str("summary"), tool: str("tool"), parts: list("parts"), states: list("states"), added: str("added"), source: str("source"), body };
   })
   .sort((a, b) => a.title.localeCompare(b.title));
 
@@ -89,22 +74,13 @@ export interface Meta {
   runUrl: string | null;
 }
 
-const data = import.meta.glob("./data/*.json", { import: "default", eager: true }) as Record<
-  string,
-  unknown
->;
+const data = import.meta.glob("./data/*.json", { import: "default", eager: true }) as Record<string, unknown>;
 export const PALETTE = (data["./data/palette.json"] ?? null) as Palette | null;
 // The results this build was made with. The deployed site then reads the last run on main
 // from the repo's results branch, which CI writes after every run (see .github/workflows),
 // so the site never waits for a redeploy to show a new result.
-export const RESULTS_BUILD = (data["./data/results.json"] ?? {
-  available: false,
-  ran: null,
-  components: {},
-  totals: { passed: 0, failed: 0, skipped: 0 },
-}) as Results;
-const RESULTS_URL =
-  "https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json";
+export const RESULTS_BUILD = (data["./data/results.json"] ?? { available: false, ran: null, components: {}, totals: { passed: 0, failed: 0, skipped: 0 } }) as Results;
+const RESULTS_URL = "https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json";
 
 export async function fetchResults(): Promise<Results | null> {
   try {
@@ -126,30 +102,17 @@ interface FamilyPair extends Pair {
   bgHex: string;
 }
 export interface Families {
-  families: Record<
-    string,
-    { seed: string; anchor: string | null; defaultTheme: "light" | "dark"; note: string }
-  >;
+  families: Record<string, { seed: string; anchor: string | null; defaultTheme: "light" | "dark"; note: string }>;
   pairs: FamilyPair[];
   scales?: Record<string, { light: string[]; dark: string[] }>;
 }
 export const FAMILIES = (data["./data/families.json"] ?? null) as Families | null;
-export const META = (data["./data/meta.json"] ?? {
-  version: "0.1.0",
-  commit: null,
-  branch: null,
-  built: "",
-  runUrl: null,
-}) as Meta;
+export const META = (data["./data/meta.json"] ?? { version: "0.1.0", commit: null, branch: null, built: "", runUrl: null }) as Meta;
 
 type TokenGroup = Record<string, { $value: unknown; $description?: string }>;
 export const SCALES = tokensJson as unknown as Record<string, TokenGroup>;
 
-const pages = import.meta.glob("../*.md", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-}) as Record<string, string>;
+const pages = import.meta.glob("../*.md", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
 export const DEFAULTS_MD = pages["../DEFAULTS.md"] ?? "";
 export const CHANGELOG_MD = pages["../CHANGELOG.md"] ?? "";
 

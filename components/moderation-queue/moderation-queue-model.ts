@@ -45,21 +45,9 @@ export interface Mention {
 
 export const VIEWS: readonly ModView[] = ["pending", "failed", "approved", "rejected", "all"];
 
-export const VIEW_LABEL: Record<ModView, string> = {
-  pending: "Waiting",
-  failed: "Source not found",
-  approved: "Approved",
-  rejected: "Rejected",
-  all: "All",
-};
+export const VIEW_LABEL: Record<ModView, string> = { pending: "Waiting", failed: "Source not found", approved: "Approved", rejected: "Rejected", all: "All" };
 
-export const STATE_LABEL: Record<ModState, string> = {
-  unverified: "Not yet checked",
-  pending: "Waiting",
-  approved: "Approved",
-  rejected: "Rejected",
-  failed: "Source not found",
-};
+export const STATE_LABEL: Record<ModState, string> = { unverified: "Not yet checked", pending: "Waiting", approved: "Approved", rejected: "Rejected", failed: "Source not found" };
 
 export const ACTIONS: readonly ModAction[] = ["approve", "reject", "reset"];
 
@@ -129,10 +117,8 @@ export interface Status {
   glyph: string;
 }
 
-const NOTICE_GLYPH =
-  '<rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/>';
-const NODATA_GLYPH =
-  '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
+const NOTICE_GLYPH = '<rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z"/>';
+const NODATA_GLYPH = '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
 
 // A status is a shape, a word and a color.
 export function statusOf(state: ModState): Status {
@@ -151,11 +137,7 @@ export function statusOf(state: ModState): Status {
   }
 }
 
-export const ACTION_LABEL: Record<ModAction, string> = {
-  approve: "Approve",
-  reject: "Reject",
-  reset: "Back to waiting",
-};
+export const ACTION_LABEL: Record<ModAction, string> = { approve: "Approve", reject: "Reject", reset: "Back to waiting" };
 
 // What a decision says: "Rejected the mention from Rosa Park."
 export function decidedText(action: ModAction, who: string[]): string {
@@ -171,9 +153,7 @@ export function decidedText(action: ModAction, who: string[]): string {
 }
 
 export function undoneText(who: string[]): string {
-  return who.length === 1
-    ? `The mention from ${who[0]} is back where it was.`
-    : `${who.length} mentions are back where they were.`;
+  return who.length === 1 ? `The mention from ${who[0]} is back where it was.` : `${who.length} mentions are back where they were.`;
 }
 
 // The decision that puts a mention back in `from`: the opposite decision between approved and
@@ -187,8 +167,7 @@ export function undoAction(from: ModState, reset = false): ModAction | null {
 }
 
 // Said after a decision on a waiting mention, on a site that cannot put one back to waiting.
-export const NO_UNDO_TEXT =
-  "This site cannot put a mention back to waiting, so there is no Undo; the other decision is one key away.";
+export const NO_UNDO_TEXT = "This site cannot put a mention back to waiting, so there is no Undo; the other decision is one key away.";
 
 // What one decision changed, so it can be reversed.
 export interface UndoEntry {
@@ -244,20 +223,11 @@ export function mentionsWord(n: number): string {
 }
 
 export const EMPTY_TEXT: Record<ModView, { title: string; text: string }> = {
-  pending: {
-    title: "All clear",
-    text: "No mentions are waiting. Approved and rejected are one filter away.",
-  },
+  pending: { title: "All clear", text: "No mentions are waiting. Approved and rejected are one filter away." },
   failed: { title: "No missing sources", text: "Every mention's source page was found." },
   approved: { title: "Nothing approved yet", text: "Approved mentions show on their post." },
-  rejected: {
-    title: "Nothing rejected",
-    text: "Rejected mentions wait here until the site's retention removes them.",
-  },
-  all: {
-    title: "No mentions yet",
-    text: "When another site links to a post, its mention arrives here.",
-  },
+  rejected: { title: "Nothing rejected", text: "Rejected mentions wait here until the site's retention removes them." },
+  all: { title: "No mentions yet", text: "When another site links to a post, its mention arrives here." },
 };
 
 // ---------------------------------------------------------------------------------------
@@ -265,11 +235,7 @@ export const EMPTY_TEXT: Record<ModView, { title: string; text: string }> = {
 
 type Attrs = Record<string, string | boolean | undefined>;
 
-export function h<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  attrs: Attrs = {},
-  ...kids: Array<Node | string>
-): HTMLElementTagNameMap[K] {
+export function h<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = {}, ...kids: Array<Node | string>): HTMLElementTagNameMap[K] {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
     if (v === undefined || v === false) continue;
@@ -285,21 +251,10 @@ export function statusEl(state: ModState): HTMLElement {
 }
 
 // A decision's button: a real button with its key shown and announced (aria-keyshortcuts).
-export function actionButton(
-  action: ModAction | "delete",
-  who: string,
-  opts: { bar?: boolean } = {},
-): HTMLButtonElement {
+export function actionButton(action: ModAction | "delete", who: string, opts: { bar?: boolean } = {}): HTMLButtonElement {
   const key = action === "delete" ? DELETE_KEY : ACTION_KEY[action];
   const label = action === "delete" ? "Delete" : ACTION_LABEL[action];
-  const b = h("button", {
-    type: "button",
-    class: "cap-btn",
-    "data-variant": action === "delete" ? "danger" : "quiet",
-    "data-size": "sm",
-    "data-cap-action": action,
-    "aria-keyshortcuts": key,
-  });
+  const b = h("button", { type: "button", class: "cap-btn", "data-variant": action === "delete" ? "danger" : "quiet", "data-size": "sm", "data-cap-action": action, "aria-keyshortcuts": key });
   b.append(label);
   if (!opts.bar) b.append(h("span", { class: "cap-sr-only" }, ` the mention from ${who}`));
   if (key) b.append(h("kbd", { class: "cap-kbd", "aria-hidden": "true" }, key));

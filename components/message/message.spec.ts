@@ -1,11 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  focused,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, focused, visitStates } from "../../test/helpers.ts";
 
 const AUDIT = "the audit row naming access:alex@example.com was not written: D1 is unavailable";
 
@@ -18,25 +12,19 @@ eachTheme((theme) => {
     });
   }
 
-  test(
-    "accessibility: the empty region is present and shows nothing",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "message", theme, "empty");
-      // Present for the next message, and showing nothing.
-      await expect(page.getByRole("status")).toHaveCount(1);
-      await expect(page.locator(".cap-message-item")).toHaveCount(0);
-    },
-  );
+  test("accessibility: the empty region is present and shows nothing", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "message", theme, "empty");
+    // Present for the next message, and showing nothing.
+    await expect(page.getByRole("status")).toHaveCount(1);
+    await expect(page.locator(".cap-message-item")).toHaveCount(0);
+  });
 
   test("accessibility: no axe violations, states page", async ({ page }) => {
     await visitStates(page, "message", theme);
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: message text reaches its contrast, and the message its boundary", async ({
-    page,
-  }) => {
+  test("accessibility: message text reaches its contrast, and the message its boundary", async ({ page }) => {
     await visitStates(page, "message", theme, "undo");
     await expect(page.locator(".cap-message-text")).toBeVisible();
     await expectContrast(page, [
@@ -45,9 +33,7 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: a message that stays reaches its contrast, edge and failed Undo included", async ({
-    page,
-  }) => {
+  test("accessibility: a message that stays reaches its contrast, edge and failed Undo included", async ({ page }) => {
     await visitStates(page, "message", theme, "warning");
     await expect(page.locator(".cap-message-warning")).toBeVisible();
     await expectContrast(page, [
@@ -69,33 +55,21 @@ eachTheme((theme) => {
     `);
   });
 
-  test(
-    "accessibility: a warning is a word as well as an edge, and a failure is an alert",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "message", theme, "warning");
-      await expect(page.locator(".cap-message-text")).toContainText(
-        `Seat start is on. Warning: ${AUDIT}`,
-      );
-      await visitStates(page, "message", theme, "failure");
-      await expect(page.getByRole("alert")).toContainText(
-        "Refresh failed: the watcher pass failed",
-      );
-      await visitStates(page, "message", theme, "undo-failed");
-      await expect(page.getByRole("alert")).toHaveText(
-        "Could not undo that. The server did not answer. Try again.",
-      );
-    },
-  );
+  test("accessibility: a warning is a word as well as an edge, and a failure is an alert", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "message", theme, "warning");
+    await expect(page.locator(".cap-message-text")).toContainText(`Seat start is on. Warning: ${AUDIT}`);
+    await visitStates(page, "message", theme, "failure");
+    await expect(page.getByRole("alert")).toContainText("Refresh failed: the watcher pass failed");
+    await visitStates(page, "message", theme, "undo-failed");
+    await expect(page.getByRole("alert")).toHaveText("Could not undo that. The server did not answer. Try again.");
+  });
 
   test("keyboard: a message appears without moving focus", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     const bin = page.locator("#sample-bin");
     await bin.focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("status")).toContainText(
-      "Moved the mention from fieldnotes.example to Trash.",
-    );
+    await expect(page.getByRole("status")).toContainText("Moved the mention from fieldnotes.example to Trash.");
     await expect(bin, await focused(page)).toBeFocused();
   });
 
@@ -106,9 +80,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-state")).toHaveText("In Trash");
     await page.keyboard.press("z");
     await expect(page.locator("#sample-state")).toHaveText("Waiting");
-    await expect(page.getByRole("status")).toContainText(
-      "Undone. The mention from fieldnotes.example is waiting again.",
-    );
+    await expect(page.getByRole("status")).toContainText("Undone. The mention from fieldnotes.example is waiting again.");
     await expect(page.getByRole("button", { name: "Undo" })).toBeHidden();
     await page.keyboard.press("z");
     await expect(page.locator("#sample-row")).toHaveAttribute("data-undos", "1");
@@ -143,9 +115,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Dismiss" })).toBeFocused();
   });
 
-  test("keyboard: Enter on Undo returns focus to the control it undid, when the app says which", async ({
-    page,
-  }) => {
+  test("keyboard: Enter on Undo returns focus to the control it undid, when the app says which", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-bin-warned").click();
     await page.getByRole("button", { name: "Undo" }).focus();
@@ -154,9 +124,7 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-bin")).toBeFocused();
   });
 
-  test("keyboard: Dismiss clears the message and focus returns to the control that caused it", async ({
-    page,
-  }) => {
+  test("keyboard: Dismiss clears the message and focus returns to the control that caused it", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-bin").focus();
     await page.keyboard.press("Enter");
@@ -177,9 +145,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toContainText("Moved the mention");
   });
 
-  test("behavior: a plain confirmation that asks to clear goes after 4 seconds, with no buttons", async ({
-    page,
-  }) => {
+  test("behavior: a plain confirmation that asks to clear goes after 4 seconds, with no buttons", async ({ page }) => {
     await page.clock.install();
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-copy").click();
@@ -205,9 +171,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toContainText("Moved the mention");
   });
 
-  test("behavior: a warning stays through the next result and for as long as nobody dismisses it", async ({
-    page,
-  }) => {
+  test("behavior: a warning stays through the next result and for as long as nobody dismisses it", async ({ page }) => {
     await page.clock.install();
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-bin-warned").click();
@@ -224,9 +188,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-message-item")).toHaveCount(0);
   });
 
-  test("behavior: Undo on a message with a warning keeps the warning, without Undo, and says what was undone beside it", async ({
-    page,
-  }) => {
+  test("behavior: Undo on a message with a warning keeps the warning, without Undo, and says what was undone beside it", async ({ page }) => {
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-bin-warned").click();
     await page.keyboard.press("z");
@@ -239,9 +201,7 @@ eachTheme((theme) => {
     await expect(items.nth(1).getByRole("button", { name: "Dismiss" })).toBeVisible();
   });
 
-  test("behavior: a failure with no control beside it is an alert and stays until dismissed", async ({
-    page,
-  }) => {
+  test("behavior: a failure with no control beside it is an alert and stays until dismissed", async ({ page }) => {
     await page.clock.install();
     await visitStates(page, "message", theme, "try");
     await page.locator("#sample-refresh").focus();
@@ -255,15 +215,11 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-refresh")).toBeFocused();
   });
 
-  test("behavior: an Undo that could not run keeps its message and its Undo, and says why", async ({
-    page,
-  }) => {
+  test("behavior: an Undo that could not run keeps its message and its Undo, and says why", async ({ page }) => {
     await visitStates(page, "message", theme, "undo-failed");
     const item = page.locator(".cap-message-item");
     await expect(item).toContainText("Moved the mention from fieldnotes.example to Trash.");
-    await expect(item.getByRole("alert")).toHaveText(
-      "Could not undo that. The server did not answer. Try again.",
-    );
+    await expect(item.getByRole("alert")).toHaveText("Could not undo that. The server did not answer. Try again.");
     await expect(item.getByRole("button", { name: "Undo" })).toBeVisible();
     await expect(item).toHaveAttribute("data-lasting", "");
   });
@@ -276,45 +232,21 @@ eachTheme((theme) => {
     await expect(items.nth(1)).toContainText(`Warning: ${AUDIT}`);
   });
 
-  test("accessibility: the leading glyph is hidden, differs by kind, and reaches 3:1", async ({
-    page,
-  }) => {
+  test("accessibility: the leading glyph is hidden, differs by kind, and reaches 3:1", async ({ page }) => {
     await visitStates(page, "message", theme, "stack");
     const items = page.locator(".cap-message-item");
     await expect(items).toHaveCount(2);
-    await expect(items.locator(".cap-message-glyph").first()).toHaveAttribute(
-      "aria-hidden",
-      "true",
-    );
+    await expect(items.locator(".cap-message-glyph").first()).toHaveAttribute("aria-hidden", "true");
     await expectContrast(page, [
-      {
-        sel: ".cap-message-item[data-kind='ok'] .cap-message-glyph",
-        what: "a result's glyph",
-        min: 3,
-      },
-      {
-        sel: ".cap-message-item[data-kind='warning'] .cap-message-glyph",
-        what: "a warning's glyph",
-        min: 3,
-      },
+      { sel: ".cap-message-item[data-kind='ok'] .cap-message-glyph", what: "a result's glyph", min: 3 },
+      { sel: ".cap-message-item[data-kind='warning'] .cap-message-glyph", what: "a warning's glyph", min: 3 },
     ]);
     await visitStates(page, "message", theme, "failure");
     await expectContrast(page, [
-      {
-        sel: ".cap-message-item[data-kind='failure'] .cap-message-glyph",
-        what: "a failure's glyph",
-        min: 3,
-      },
-      {
-        sel: ".cap-message-item[data-kind='failure']",
-        what: "a failure's edge",
-        part: "border",
-        min: 3,
-      },
+      { sel: ".cap-message-item[data-kind='failure'] .cap-message-glyph", what: "a failure's glyph", min: 3 },
+      { sel: ".cap-message-item[data-kind='failure']", what: "a failure's edge", part: "border", min: 3 },
     ]);
-    const shapes = await page.evaluate(() =>
-      [...document.querySelectorAll(".cap-message-glyph")].map((g) => g.innerHTML),
-    );
+    const shapes = await page.evaluate(() => [...document.querySelectorAll(".cap-message-glyph")].map((g) => g.innerHTML));
     expect(shapes.length).toBeGreaterThan(0);
   });
 });

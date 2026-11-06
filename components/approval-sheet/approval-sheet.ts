@@ -21,8 +21,7 @@ export interface GateChoice {
   comment: string;
 }
 
-const part = <T extends Element = HTMLElement>(dialog: Element, name: string) =>
-  dialog.querySelector<T>(`[data-cap-part='${name}']`);
+const part = <T extends Element = HTMLElement>(dialog: Element, name: string) => dialog.querySelector<T>(`[data-cap-part='${name}']`);
 
 // The gates checked in a sheet, each with its comment (trimmed; empty when none).
 export function selection(dialog: Element): GateChoice[] {
@@ -30,19 +29,12 @@ export function selection(dialog: Element): GateChoice[] {
     .filter((i) => i.checked)
     .map((i) => ({
       id: i.value,
-      comment:
-        i
-          .closest("fieldset")
-          ?.querySelector<HTMLTextAreaElement>("[data-cap-part='comment']")
-          ?.value.trim() ?? "",
+      comment: i.closest("fieldset")?.querySelector<HTMLTextAreaElement>("[data-cap-part='comment']")?.value.trim() ?? "",
     }));
 }
 
 export function isPending(dialog: Element): boolean {
-  return (
-    dialog.getAttribute("aria-busy") === "true" ||
-    part(dialog, "approve")?.getAttribute("aria-busy") === "true"
-  );
+  return dialog.getAttribute("aria-busy") === "true" || part(dialog, "approve")?.getAttribute("aria-busy") === "true";
 }
 
 // Brings the Approve button's label, its disabled-with-reason state and the reason in
@@ -84,8 +76,7 @@ export function setPending(dialog: Element, on: boolean): void {
       approve.querySelector(".cap-btn-spinner")?.remove();
     }
   }
-  for (const gate of dialog.querySelectorAll<HTMLFieldSetElement>("fieldset.cap-approval-gate"))
-    gate.disabled = on;
+  for (const gate of dialog.querySelectorAll<HTMLFieldSetElement>("fieldset.cap-approval-gate")) gate.disabled = on;
   if (on) setError(dialog, null);
   update(dialog);
 }
@@ -121,9 +112,7 @@ function attach(dialog: HTMLDialogElement): () => void {
     e.preventDefault();
     const gates = selection(dialog);
     if (gates.length === 0 || isPending(dialog) || isBusy(dialog)) return;
-    dialog.dispatchEvent(
-      new CustomEvent<ApproveDetail>("cap-approve", { bubbles: true, detail: { gates } }),
-    );
+    dialog.dispatchEvent(new CustomEvent<ApproveDetail>("cap-approve", { bubbles: true, detail: { gates } }));
   };
   const form = dialog.querySelector("form");
   dialog.addEventListener("change", onChange);
@@ -157,9 +146,7 @@ export function close(dialog: HTMLDialogElement): void {
 // or calls setError(dialog, "...") and setPending(dialog, false).
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const dialog of root.querySelectorAll<HTMLDialogElement>(
-    "dialog[data-cap='approval-sheet']",
-  )) {
+  for (const dialog of root.querySelectorAll<HTMLDialogElement>("dialog[data-cap='approval-sheet']")) {
     if (!attached.has(dialog)) undo.push(attach(dialog));
   }
 
@@ -167,8 +154,7 @@ export function enhance(root: ParentNode = document): () => void {
     const btn = (e.target as Element).closest<HTMLElement>("[data-cap-opens]");
     if (!btn) return;
     const dialog = document.getElementById(btn.dataset.capOpens ?? "");
-    if (dialog instanceof HTMLDialogElement && dialog.dataset.cap === "approval-sheet")
-      open(dialog, btn);
+    if (dialog instanceof HTMLDialogElement && dialog.dataset.cap === "approval-sheet") open(dialog, btn);
   };
   document.addEventListener("click", onOpen);
   undo.push(() => document.removeEventListener("click", onOpen));

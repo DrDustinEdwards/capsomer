@@ -1,13 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import {
-  Dialog,
-  DialogBody,
-  DialogClose,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../dialog/dialog.react.tsx";
+import { Dialog, DialogBody, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 import { approveLabel, titleText, type GateChoice } from "./approval-sheet.ts";
 
 export type { GateChoice } from "./approval-sheet.ts";
@@ -35,13 +27,7 @@ export interface ApprovalSheetProps {
   lead?: string;
 }
 
-export function ApprovalSheet({
-  open,
-  gates,
-  onApprove,
-  onClose,
-  lead = "Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting.",
-}: ApprovalSheetProps) {
+export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each command runs once, when approved. Uncheck a gate you are not ready for; it stays waiting." }: ApprovalSheetProps) {
   const id = useId();
   const ref = useRef<HTMLDialogElement>(null);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
@@ -59,9 +45,7 @@ export function ApprovalSheet({
     // oxlint-disable-next-line react/exhaustive-deps -- a sheet starts fresh when it opens, not when the gates change while it is open
   }, [open]);
 
-  const chosen: GateChoice[] = gates
-    .filter((g) => checked[g.id] ?? g.include ?? true)
-    .map((g) => ({ id: g.id, comment: (comments[g.id] ?? "").trim() }));
+  const chosen: GateChoice[] = gates.filter((g) => checked[g.id] ?? g.include ?? true).map((g) => ({ id: g.id, comment: (comments[g.id] ?? "").trim() }));
   const n = chosen.length;
   const noneId = `${id}-none`;
 
@@ -79,40 +63,20 @@ export function ApprovalSheet({
       ref.current?.close();
     } catch (err) {
       setPending(false);
-      setError(
-        err instanceof Error && err.message
-          ? err.message
-          : "Could not approve. Nothing was approved. Try again.",
-      );
+      setError(err instanceof Error && err.message ? err.message : "Could not approve. Nothing was approved. Try again.");
     }
   };
 
   // The shared Dialog does the opening, focus (on Cancel, as the sheet is destructive), the
   // return of focus, Esc and Cancel being held while busy, and the locked backdrop.
   return (
-    <Dialog
-      ref={ref}
-      className="cap-approval"
-      size="lg"
-      open={open}
-      onOpenChange={(o) => !o && onClose()}
-      modalLock
-      destructive
-      busy={pending}
-      closeButton={false}
-      described
-    >
+    <Dialog ref={ref} className="cap-approval" size="lg" open={open} onOpenChange={(o) => !o && onClose()} modalLock destructive busy={pending} closeButton={false} described>
       <form className="cap-approval-form" onSubmit={(e) => void submit(e)}>
         <DialogHeader>
           <DialogTitle>{titleText(gates.length)}</DialogTitle>
           <DialogDescription>{lead}</DialogDescription>
         </DialogHeader>
-        <DialogBody
-          className="cap-approval-gates"
-          flush
-          role="group"
-          aria-label="Gates waiting for approval"
-        >
+        <DialogBody className="cap-approval-gates" flush role="group" aria-label="Gates waiting for approval">
           {gates.map((g, i) => (
             <fieldset className="cap-approval-gate" key={g.id} disabled={pending}>
               <legend className="cap-approval-job">{g.title}</legend>
@@ -135,14 +99,7 @@ export function ApprovalSheet({
                 <label className="cap-field-label" htmlFor={`${id}-c${i}`}>
                   Comment (optional)
                 </label>
-                <textarea
-                  className="cap-input"
-                  id={`${id}-c${i}`}
-                  data-cap-part="comment"
-                  rows={2}
-                  value={comments[g.id] ?? ""}
-                  onChange={(e) => setComments((c) => ({ ...c, [g.id]: e.target.value }))}
-                />
+                <textarea className="cap-input" id={`${id}-c${i}`} data-cap-part="comment" rows={2} value={comments[g.id] ?? ""} onChange={(e) => setComments((c) => ({ ...c, [g.id]: e.target.value }))} />
               </div>
             </fieldset>
           ))}
@@ -159,15 +116,7 @@ export function ApprovalSheet({
           <p className="cap-approval-none" id={noneId} data-cap-part="none" hidden={n !== 0}>
             Choose at least one gate.
           </p>
-          <button
-            type="submit"
-            className="cap-btn"
-            data-variant="primary"
-            data-cap-part="approve"
-            aria-busy={pending ? "true" : undefined}
-            aria-disabled={n === 0 ? "true" : undefined}
-            aria-describedby={n === 0 ? noneId : undefined}
-          >
+          <button type="submit" className="cap-btn" data-variant="primary" data-cap-part="approve" aria-busy={pending ? "true" : undefined} aria-disabled={n === 0 ? "true" : undefined} aria-describedby={n === 0 ? noneId : undefined}>
             {pending && <span className="cap-btn-spinner" aria-hidden="true" />}
             <span data-cap-part="approve-label">{approveLabel(n, pending)}</span>
           </button>

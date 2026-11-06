@@ -30,43 +30,15 @@ const DATABASE_DOWN = /database/i;
 /** What the page says for an error: its status, a title and one plain sentence. */
 export function errorWords(error: unknown): ErrorWords {
   const status = statusOf(error);
-  if (status === 404)
-    return {
-      status,
-      title: "Page not found",
-      text: "There is nothing at this address. Check it for a typo, or start again from the home page.",
-    };
-  if (status === 410)
-    return {
-      status,
-      title: "This page is gone",
-      text: "It was taken down on purpose and is not coming back.",
-    };
-  if (status !== null && status < 500)
-    return {
-      status,
-      title: "This page cannot be shown",
-      text: `The request was refused (${status}). Start again from the home page.`,
-    };
+  if (status === 404) return { status, title: "Page not found", text: "There is nothing at this address. Check it for a typo, or start again from the home page." };
+  if (status === 410) return { status, title: "This page is gone", text: "It was taken down on purpose and is not coming back." };
+  if (status !== null && status < 500) return { status, title: "This page cannot be shown", text: `The request was refused (${status}). Start again from the home page.` };
   if (status === 503) {
     const { statusText } = error as { statusText: string };
-    if (DATABASE_DOWN.test(statusText))
-      return {
-        status,
-        title: "The site's data is unavailable",
-        text: "Its database is not answering for the moment. Nothing you did caused this; try again in a few minutes.",
-      };
-    return {
-      status,
-      title: "This page is unavailable for now",
-      text: "The site is busy or being updated. Try again in a few minutes.",
-    };
+    if (DATABASE_DOWN.test(statusText)) return { status, title: "The site's data is unavailable", text: "Its database is not answering for the moment. Nothing you did caused this; try again in a few minutes." };
+    return { status, title: "This page is unavailable for now", text: "The site is busy or being updated. Try again in a few minutes." };
   }
-  return {
-    status: status ?? 500,
-    title: "Something went wrong",
-    text: "The page could not be shown. It is not something you did; try again in a moment.",
-  };
+  return { status: status ?? 500, title: "Something went wrong", text: "The page could not be shown. It is not something you did; try again in a moment." };
 }
 
 /** The title for the root `meta` on the error path: "Page not found | Site name". */
@@ -141,12 +113,7 @@ export function ErrorPage({
       {/* React hoists it into head: an error page is never indexed. */}
       <meta name="robots" content="noindex" />
       {siteHeader}
-      <Region
-        id={Region === "main" ? mainId : undefined}
-        tabIndex={Region === "main" ? -1 : undefined}
-        className={className ? `cap-error-page ${className}` : "cap-error-page"}
-        data-status={words.status}
-      >
+      <Region id={Region === "main" ? mainId : undefined} tabIndex={Region === "main" ? -1 : undefined} className={className ? `cap-error-page ${className}` : "cap-error-page"} data-status={words.status}>
         <Empty kind="failed" titleAs="h1" title={words.title} action={action}>
           {thrown ? thrown.message : words.text}
         </Empty>

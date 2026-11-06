@@ -64,32 +64,16 @@ export const REASON_MISSING = "Type a reason. It is recorded with the change.";
 
 // "Dec 18, 2026", from a YYYY-MM-DD date, in UTC: American English, as the family writes dates.
 export function dayText(date: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(`${date}T00:00:00Z`));
+  return new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" }).format(new Date(`${date}T00:00:00Z`));
 }
 
 // "Oct 2, 2026, 2:52 PM UTC", from an ISO time.
 export function timeText(iso: string): string {
   const t = new Date(iso);
-  const day = new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(t);
+  const day = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" }).format(t);
   // From the parts: some engines put a narrow no-break space before AM and PM.
   const p: Record<string, string> = {};
-  for (const x of new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).formatToParts(t))
-    p[x.type] = x.value;
+  for (const x of new Intl.DateTimeFormat("en-US", { timeZone: "UTC", hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(t)) p[x.type] = x.value;
   return `${day}, ${p.hour}:${p.minute} ${p.dayPeriod} UTC`;
 }
 
@@ -99,17 +83,13 @@ export function daysLeft(endDate: string, now: number): number {
 }
 
 // The Access column's words.
-export function accessText(
-  p: Pick<PersonRow, "endDate" | "status" | "endedOn">,
-  now: number,
-): string {
+export function accessText(p: Pick<PersonRow, "endDate" | "status" | "endedOn">, now: number): string {
   if (p.status === "removed") return p.endedOn ? `Removed ${dayText(p.endedOn)}` : "Removed";
   if (p.status === "expired") return `Ended ${dayText(p.endedOn ?? (p.endDate as string))}`;
   if (p.endDate === null) return "Does not expire";
   const left = daysLeft(p.endDate, now);
   if (left === 0) return `Ends today, ${dayText(p.endDate)}`;
-  if (left <= SOON_DAYS)
-    return `Ends ${dayText(p.endDate)}, in ${left} day${left === 1 ? "" : "s"}`;
+  if (left <= SOON_DAYS) return `Ends ${dayText(p.endDate)}, in ${left} day${left === 1 ? "" : "s"}`;
   return `Ends ${dayText(p.endDate)}`;
 }
 
@@ -153,9 +133,7 @@ export function cloudflareText(e: Pick<HistoryEntry, "cloudflare" | "cloudflareE
 
 // The add form's help line under the end date.
 export function endHelp(defaultEnd: string | null): string {
-  return defaultEnd
-    ? `Defaults to the end of the term, ${dayText(defaultEnd)}. You can choose an earlier date.`
-    : "This title does not expire.";
+  return defaultEnd ? `Defaults to the end of the term, ${dayText(defaultEnd)}. You can choose an earlier date.` : "This title does not expire.";
 }
 
 // The review's running count.
@@ -167,21 +145,13 @@ export function tallyText(keep: number, remove: number, open: number): string {
 
 // The removal's confirm, from the server's own words: who, and what follows.
 export function removeBody(name: string, email: string): string[] {
-  return [
-    `${name} is refused on their next request.`,
-    `${email} comes off the allow list and their Cloudflare seat is freed.`,
-    "Their row stays, marked removed, so their work keeps their name.",
-  ];
+  return [`${name} is refused on their next request.`, `${email} comes off the allow list and their Cloudflare seat is freed.`, "Their row stays, marked removed, so their work keeps their name."];
 }
 
 // Who a removal is for, from the row the form sits in (or the form's own data).
 export function removeTarget(form: HTMLFormElement): { name: string; email: string } {
   const row = form.closest<HTMLElement>("tr[data-email]");
-  const email =
-    row?.dataset.email ??
-    form.dataset.email ??
-    (form.elements.namedItem("email") as HTMLInputElement | null)?.value ??
-    "";
+  const email = row?.dataset.email ?? form.dataset.email ?? (form.elements.namedItem("email") as HTMLInputElement | null)?.value ?? "";
   return { name: row?.dataset.name ?? form.dataset.name ?? email, email };
 }
 
@@ -230,16 +200,12 @@ export function rowActions(
   historyHref: string,
 ): { primary: { intent: string; label: string } | null; items: RowAction[] } {
   if (!p.manageable) return { primary: null, items: [] };
-  const renew =
-    p.status !== "removed" && p.renewTo
-      ? { intent: "renew", label: `Renew to ${dayText(p.renewTo)}` }
-      : null;
+  const renew = p.status !== "removed" && p.renewTo ? { intent: "renew", label: `Renew to ${dayText(p.renewTo)}` } : null;
   const retry = p.sync !== "ready" ? { intent: "retry", label: "Retry" } : null;
   const primary = retry ?? renew;
   const items: RowAction[] = [];
   if (renew && primary !== renew) items.push({ value: renew.intent, label: renew.label });
-  if (p.status === "active" && canChangeTitle)
-    items.push({ value: "change", label: "Change title", href: changeHref });
+  if (p.status === "active" && canChangeTitle) items.push({ value: "change", label: "Change title", href: changeHref });
   items.push({ value: "history", label: "History", href: historyHref });
   if (p.status !== "removed") items.push({ value: "remove", label: "Remove", danger: true });
   return { primary, items };
@@ -289,18 +255,14 @@ export function updateTally(form: HTMLFormElement): void {
 // function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const el of root.querySelectorAll<HTMLElement>(
-    "[data-cap='people-roles']:not([data-cap-ready])",
-  )) {
+  for (const el of root.querySelectorAll<HTMLElement>("[data-cap='people-roles']:not([data-cap-ready])")) {
     el.dataset.capReady = "";
     // The add and change-title forms check their own fields (a required reason, an email).
     const fieldsOff = enhanceFields(el);
     // Each row's Actions menu: Esc, the arrow keys, closing on a press outside.
     const menusOff = enhanceMenus(el);
-    for (const form of el.querySelectorAll<HTMLFormElement>("form.cap-people-add"))
-      followTitle(form);
-    for (const form of el.querySelectorAll<HTMLFormElement>("form.cap-people-review"))
-      updateTally(form);
+    for (const form of el.querySelectorAll<HTMLFormElement>("form.cap-people-add")) followTitle(form);
+    for (const form of el.querySelectorAll<HTMLFormElement>("form.cap-people-review")) updateTally(form);
 
     const onSubmit = (e: SubmitEvent) => {
       const by = e.submitter as HTMLButtonElement | null;

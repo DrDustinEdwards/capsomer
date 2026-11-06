@@ -22,13 +22,7 @@ export interface OgCardPreviewProps {
 }
 
 // The HTML contract in share-preview.md. The app cuts the text to its limits before it passes it.
-export function SerpPreview({
-  url,
-  title,
-  description,
-  note,
-  label = "Search result preview",
-}: SerpPreviewProps) {
+export function SerpPreview({ url, title, description, note, label = "Search result preview" }: SerpPreviewProps) {
   return (
     <div className="cap-serp" role="group" aria-label={label}>
       <p className="cap-serp-url">{url}</p>
@@ -39,14 +33,7 @@ export function SerpPreview({
   );
 }
 
-export function OgCardPreview({
-  image,
-  host,
-  title,
-  description,
-  note,
-  label = "Social card preview",
-}: OgCardPreviewProps) {
+export function OgCardPreview({ image, host, title, description, note, label = "Social card preview" }: OgCardPreviewProps) {
   return (
     <div className="cap-og-card" role="group" aria-label={label}>
       <div className="cap-og-card-image">{image}</div>

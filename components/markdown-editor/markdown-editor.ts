@@ -11,64 +11,19 @@
 import { type Listbox, createListbox } from "../listbox/listbox.ts";
 import { place } from "../popover/popover.ts";
 import { attachToolbar, rovingIndex } from "../toolbar/toolbar.ts";
-import {
-  type Edit,
-  LINK_RESULT_LIMIT,
-  type LinkTarget,
-  type MarkdownEditorHandle,
-  type MarkdownEditorOptions,
-  type Scaffold,
-  blockEdit,
-  countWords,
-  defaultImageMarkdown,
-  filterLinkTargets,
-  footnoteEdit,
-  headingEdit,
-  linkEdit,
-  looksLikeUrl,
-  minutesForWords,
-  scaffoldCursor,
-  slashBlockEdit,
-  wrapEdit,
-} from "./markdown-editor-edits.ts";
+import { type Edit, LINK_RESULT_LIMIT, type LinkTarget, type MarkdownEditorHandle, type MarkdownEditorOptions, type Scaffold, blockEdit, countWords, defaultImageMarkdown, filterLinkTargets, footnoteEdit, headingEdit, linkEdit, looksLikeUrl, minutesForWords, scaffoldCursor, slashBlockEdit, wrapEdit } from "./markdown-editor-edits.ts";
 import type { Surface } from "./markdown-editor.view.ts";
 
 export { rovingIndex } from "../toolbar/toolbar.ts";
-export {
-  countWords,
-  minutesForWords,
-  looksLikeUrl,
-  filterLinkTargets,
-  lineBounds,
-  wrapEdit,
-  headingEdit,
-  footnoteEdit,
-  blockEdit,
-  slashBlockEdit,
-  scaffoldCursor,
-  linkEdit,
-  defaultImageMarkdown,
-} from "./markdown-editor-edits.ts";
-export type {
-  Edit,
-  ImageDescription,
-  LinkTarget,
-  Scaffold,
-  UploadResult,
-  MarkdownEditorOptions,
-  MarkdownEditorHandle,
-} from "./markdown-editor-edits.ts";
+export { countWords, minutesForWords, looksLikeUrl, filterLinkTargets, lineBounds, wrapEdit, headingEdit, footnoteEdit, blockEdit, slashBlockEdit, scaffoldCursor, linkEdit, defaultImageMarkdown } from "./markdown-editor-edits.ts";
+export type { Edit, ImageDescription, LinkTarget, Scaffold, UploadResult, MarkdownEditorOptions, MarkdownEditorHandle } from "./markdown-editor-edits.ts";
 
 // ---- the DOM -------------------------------------------------------------------------------
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 let serial = 0;
 
-function el<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  props: Record<string, string> = {},
-  ...kids: Array<Node | string>
-): HTMLElementTagNameMap[K] {
+function el<K extends keyof HTMLElementTagNameMap>(tag: K, props: Record<string, string> = {}, ...kids: Array<Node | string>): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
   for (const [k, v] of Object.entries(props)) node.setAttribute(k, v);
   node.append(...kids);
@@ -77,18 +32,7 @@ function el<K extends keyof HTMLElementTagNameMap>(
 
 function icon(paths: string[]): SVGSVGElement {
   const svg = document.createElementNS(SVG_NS, "svg");
-  for (const [k, v] of Object.entries({
-    width: "16",
-    height: "16",
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    "stroke-width": "2",
-    "stroke-linecap": "round",
-    "stroke-linejoin": "round",
-    "aria-hidden": "true",
-    focusable: "false",
-  })) {
+  for (const [k, v] of Object.entries({ width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true", focusable: "false" })) {
     svg.setAttribute(k, v);
   }
   for (const d of paths) {
@@ -102,18 +46,11 @@ function icon(paths: string[]): SVGSVGElement {
 const GLYPH = {
   bold: ["M6 4h7a4 4 0 0 1 0 8H6zM6 12h8a4 4 0 0 1 0 8H6z"],
   italic: ["M15 4h-5M14 20H9M14 4 10 20"],
-  link: [
-    "M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1",
-    "M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1",
-  ],
+  link: ["M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1", "M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"],
   heading: ["M6 4v16M18 4v16M6 12h12"],
   code: ["m8 6-6 6 6 6M16 6l6 6-6 6"],
   footnote: ["M4 6h10M4 12h10M4 18h7", "M18 5v6M21 8h-6"],
-  image: [
-    "M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",
-    "m3 16 5-5 5 5",
-    "M15.5 8.5h.01",
-  ],
+  image: ["M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", "m3 16 5-5 5 5", "M15.5 8.5h.01"],
 };
 
 function nonceFromPage(): string {
@@ -139,10 +76,7 @@ interface Tool {
 // Upgrades one editor: the element carrying data-cap="markdown-editor", holding a label and a
 // textarea. Resolves once CodeMirror has loaded and the surface is mounted; if it cannot
 // load, the textarea simply stays, and the promise rejects.
-export async function mountMarkdownEditor(
-  host: HTMLElement,
-  options: MarkdownEditorOptions = {},
-): Promise<MarkdownEditorHandle> {
+export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEditorOptions = {}): Promise<MarkdownEditorHandle> {
   const found = host.querySelector("textarea");
   if (!found) throw new Error("markdown-editor: no <textarea> inside the element");
   const ta: HTMLTextAreaElement = found;
@@ -155,12 +89,7 @@ export async function mountMarkdownEditor(
   const o: MarkdownEditorOptions = { ...options };
   const uid = `cap-md-${++serial}`;
   const cleanups: Array<() => void> = [];
-  const listen = <T extends EventTarget>(
-    t: T,
-    type: string,
-    fn: (e: never) => void,
-    opt?: AddEventListenerOptions | boolean,
-  ) => {
+  const listen = <T extends EventTarget>(t: T, type: string, fn: (e: never) => void, opt?: AddEventListenerOptions | boolean) => {
     t.addEventListener(type, fn as EventListener, opt);
     cleanups.push(() => t.removeEventListener(type, fn as EventListener, opt));
   };
@@ -169,30 +98,16 @@ export async function mountMarkdownEditor(
   let quiet = false; // true while the app itself sets the text: no onChange for that
   let upload: { token: number; panel: HTMLElement; abort: AbortController | null } | null = null;
   let uploadToken = 0;
-  let link: {
-    from: number;
-    to: number;
-    panel: HTMLElement;
-    input: HTMLInputElement;
-    list: HTMLElement;
-    note: HTMLElement;
-    lb: Listbox;
-    matches: LinkTarget[];
-    ask: number;
-    stop: () => void;
-  } | null = null;
+  let link: { from: number; to: number; panel: HTMLElement; input: HTMLInputElement; list: HTMLElement; note: HTMLElement; lb: Listbox; matches: LinkTarget[]; ask: number; stop: () => void } | null = null;
   let slash: { from: number; menu: HTMLElement; stop: () => void } | null = null;
   let requiredMessage: HTMLElement | null = null;
 
   // ---- what the textarea says -----------------------------------------------------------
   const readOnly = () => o.readOnly ?? ta.readOnly;
   const disabled = () => o.disabled ?? ta.disabled;
-  const placeholder = () =>
-    o.placeholder ?? (ta.getAttribute("placeholder") || "Write in markdown.");
+  const placeholder = () => o.placeholder ?? (ta.getAttribute("placeholder") || "Write in markdown.");
   const maxLength = () => o.maxLength ?? (ta.maxLength > 0 ? ta.maxLength : undefined);
-  const labelText = () =>
-    o.label ??
-    `${(labelEl?.textContent ?? "Body").replace(/\s*Required\s*$/i, "").trim() || "Body"}, markdown`;
+  const labelText = () => o.label ?? `${(labelEl?.textContent ?? "Body").replace(/\s*Required\s*$/i, "").trim() || "Body"}, markdown`;
   const attrs = (): Record<string, string> => {
     const a: Record<string, string> = { "aria-label": labelText() };
     if (ta.getAttribute("aria-invalid") === "true") a["aria-invalid"] = "true";
@@ -206,19 +121,10 @@ export async function mountMarkdownEditor(
 
   // ---- the chrome -----------------------------------------------------------------------
   const frame = el("div", { class: "cap-md-frame" });
-  const toolbar = el("div", {
-    class: "cap-md-toolbar",
-    role: "toolbar",
-    "aria-label": "Markdown formatting",
-  });
+  const toolbar = el("div", { class: "cap-md-toolbar", role: "toolbar", "aria-label": "Markdown formatting" });
   const surfaceEl = el("div", { class: "cap-md-surface" });
   const foot = el("div", { class: "cap-md-foot" });
-  const hint = el(
-    "p",
-    { class: "cap-md-hint", "aria-hidden": "true" },
-    icon(GLYPH.image),
-    "Drop or paste an image to upload it",
-  );
+  const hint = el("p", { class: "cap-md-hint", "aria-hidden": "true" }, icon(GLYPH.image), "Drop or paste an image to upload it");
   const stats = el("p", { class: "cap-md-stats" });
   const statsCount = el("span", { class: "cap-md-count" });
   const statsLimit = el("span", { class: "cap-md-limit" });
@@ -280,103 +186,36 @@ export async function mountMarkdownEditor(
   const TOOLS = ".cap-md-tool:not(:disabled)";
   function tools(): Tool[] {
     const t: Tool[] = [
-      {
-        id: "bold",
-        label: "Bold",
-        hint: "Ctrl or Cmd + B",
-        keys: "Control+B Meta+B",
-        paths: GLYPH.bold,
-        run: commands.bold,
-      },
-      {
-        id: "italic",
-        label: "Italic",
-        hint: "Ctrl or Cmd + I",
-        keys: "Control+I Meta+I",
-        paths: GLYPH.italic,
-        run: commands.italic,
-      },
-      {
-        id: "link",
-        label: "Link",
-        hint: "Ctrl or Cmd + K, searches pages",
-        keys: "Control+K Meta+K",
-        paths: GLYPH.link,
-        run: openLink,
-      },
-      {
-        id: "heading",
-        label: "Heading level",
-        hint: "Cycles h2, h3, h4, none",
-        paths: GLYPH.heading,
-        run: commands.heading,
-      },
-      {
-        id: "code",
-        label: "Code",
-        hint: "Ctrl or Cmd + E",
-        keys: "Control+E Meta+E",
-        paths: GLYPH.code,
-        run: commands.code,
-      },
-      {
-        id: "footnote",
-        label: "Footnote",
-        hint: "A reference and its definition",
-        paths: GLYPH.footnote,
-        run: commands.footnote,
-      },
+      { id: "bold", label: "Bold", hint: "Ctrl or Cmd + B", keys: "Control+B Meta+B", paths: GLYPH.bold, run: commands.bold },
+      { id: "italic", label: "Italic", hint: "Ctrl or Cmd + I", keys: "Control+I Meta+I", paths: GLYPH.italic, run: commands.italic },
+      { id: "link", label: "Link", hint: "Ctrl or Cmd + K, searches pages", keys: "Control+K Meta+K", paths: GLYPH.link, run: openLink },
+      { id: "heading", label: "Heading level", hint: "Cycles h2, h3, h4, none", paths: GLYPH.heading, run: commands.heading },
+      { id: "code", label: "Code", hint: "Ctrl or Cmd + E", keys: "Control+E Meta+E", paths: GLYPH.code, run: commands.code },
+      { id: "footnote", label: "Footnote", hint: "A reference and its definition", paths: GLYPH.footnote, run: commands.footnote },
     ];
-    if (o.onUpload)
-      t.push({
-        id: "image",
-        label: "Insert image",
-        hint: "Asks for alt text, then uploads the file",
-        paths: GLYPH.image,
-        run: () => file.click(),
-      });
+    if (o.onUpload) t.push({ id: "image", label: "Insert image", hint: "Asks for alt text, then uploads the file", paths: GLYPH.image, run: () => file.click() });
     return t;
   }
 
   function buildToolbar() {
     const main = tools();
-    const blocks: Tool[] = (o.scaffolds ?? []).map((s) => ({
-      id: `scaffold-${s.id}`,
-      label: s.label,
-      hint: s.hint,
-      paths: s.icon ? [s.icon] : [],
-      glyph: s.label.slice(0, 1).toUpperCase(),
-      run: () => insertScaffold(s),
-    }));
+    const blocks: Tool[] = (o.scaffolds ?? []).map((s) => ({ id: `scaffold-${s.id}`, label: s.label, hint: s.hint, paths: s.icon ? [s.icon] : [], glyph: s.label.slice(0, 1).toUpperCase(), run: () => insertScaffold(s) }));
     const all = [...main, ...blocks];
     // A rebuilt bar keeps its tab stop where it was.
-    const was = [...toolbar.querySelectorAll(".cap-md-tool")].findIndex(
-      (b) => b.getAttribute("tabindex") === "0",
-    );
+    const was = [...toolbar.querySelectorAll(".cap-md-tool")].findIndex((b) => b.getAttribute("tabindex") === "0");
     const activeTool = Math.min(Math.max(0, was), Math.max(0, all.length - 1));
     const nodes: Node[] = [];
     all.forEach((t, i) => {
-      if (i === main.length && blocks.length > 0)
-        nodes.push(el("span", { class: "cap-md-sep", "aria-hidden": "true" }));
-      const b = el("button", {
-        type: "button",
-        class: "cap-md-tool",
-        "aria-label": t.label,
-        title: `${t.label}. ${t.hint}`,
-      });
+      if (i === main.length && blocks.length > 0) nodes.push(el("span", { class: "cap-md-sep", "aria-hidden": "true" }));
+      const b = el("button", { type: "button", class: "cap-md-tool", "aria-label": t.label, title: `${t.label}. ${t.hint}` });
       if (t.keys) b.setAttribute("aria-keyshortcuts", t.keys);
       b.tabIndex = i === activeTool ? 0 : -1;
       b.disabled = disabled() || readOnly();
-      b.append(
-        t.paths.length > 0
-          ? icon(t.paths)
-          : el("span", { class: "cap-md-tool-glyph", "aria-hidden": "true" }, t.glyph ?? ""),
-      );
+      b.append(t.paths.length > 0 ? icon(t.paths) : el("span", { class: "cap-md-tool-glyph", "aria-hidden": "true" }, t.glyph ?? ""));
       b.addEventListener("click", () => t.run());
       nodes.push(b);
     });
-    if (blocks.length > 0)
-      nodes.push(el("span", { class: "cap-md-toolbar-hint" }, "Type / on an empty line"));
+    if (blocks.length > 0) nodes.push(el("span", { class: "cap-md-toolbar-hint" }, "Type / on an empty line"));
     toolbar.replaceChildren(...nodes);
     // With every button disabled there is no tab stop, and the toolbar says so by being empty of focus.
     hint.hidden = !o.onUpload;
@@ -439,21 +278,8 @@ export async function mountMarkdownEditor(
     const url = looksLikeUrl(typed);
     l.list.replaceChildren(
       ...l.matches.map((t) => {
-        const opt = el("div", {
-          class: "cap-option",
-          role: "option",
-          "data-value": t.href,
-          "data-label": t.title,
-        });
-        opt.append(
-          el("span", { class: "cap-option-label" }, t.title),
-          el(
-            "span",
-            { class: "cap-md-option-hint" },
-            t.hint ?? t.href,
-            t.note ? el("span", { class: "cap-md-option-note" }, ` ${t.note}`) : "",
-          ),
-        );
+        const opt = el("div", { class: "cap-option", role: "option", "data-value": t.href, "data-label": t.title });
+        opt.append(el("span", { class: "cap-option-label" }, t.title), el("span", { class: "cap-md-option-hint" }, t.hint ?? t.href, t.note ? el("span", { class: "cap-md-option-note" }, ` ${t.note}`) : ""));
         return opt;
       }),
     );
@@ -485,36 +311,11 @@ export async function mountMarkdownEditor(
     closeSlash();
     const { from, to } = surface.selection();
     const selected = doc().slice(from, to);
-    const panel = el("div", {
-      class: "cap-popover cap-md-palette",
-      popover: "manual",
-      role: "group",
-      "aria-label": "Insert a link",
-      "data-size": "lg",
-      "data-side": "bottom",
-      "data-align": "start",
-    });
-    const input = el("input", {
-      type: "text",
-      class: "cap-input",
-      id: `${uid}-link`,
-      role: "combobox",
-      "aria-autocomplete": "list",
-      "aria-expanded": "false",
-      "aria-controls": `${uid}-list`,
-      autocomplete: "off",
-      spellcheck: "false",
-      placeholder: "Search pages, or type a URL",
-    });
+    const panel = el("div", { class: "cap-popover cap-md-palette", popover: "manual", role: "group", "aria-label": "Insert a link", "data-size": "lg", "data-side": "bottom", "data-align": "start" });
+    const input = el("input", { type: "text", class: "cap-input", id: `${uid}-link`, role: "combobox", "aria-autocomplete": "list", "aria-expanded": "false", "aria-controls": `${uid}-list`, autocomplete: "off", spellcheck: "false", placeholder: "Search pages, or type a URL" });
     input.value = selected;
     const label = el("label", { class: "cap-md-palette-label", for: input.id }, "Link to");
-    const list = el("div", {
-      class: "cap-listbox",
-      role: "listbox",
-      id: `${uid}-list`,
-      "aria-label": "Pages",
-      "data-wrap": "",
-    });
+    const list = el("div", { class: "cap-listbox", role: "listbox", id: `${uid}-list`, "aria-label": "Pages", "data-wrap": "" });
     const note = el("p", { class: "cap-md-palette-note", role: "status" });
     panel.append(label, input, list, note);
     host.append(panel);
@@ -533,16 +334,8 @@ export async function mountMarkdownEditor(
         closeLink(true);
       }
     });
-    const lb = createListbox(list, {
-      input,
-      selection: "none",
-      wrap: true,
-      status: note,
-      hideWhenEmpty: false,
-    });
-    list.addEventListener("cap:option-select", ((
-      e: CustomEvent<{ value: string; label: string }>,
-    ) => insertLink(e.detail.value, e.detail.label)) as EventListener);
+    const lb = createListbox(list, { input, selection: "none", wrap: true, status: note, hideWhenEmpty: false });
+    list.addEventListener("cap:option-select", ((e: CustomEvent<{ value: string; label: string }>) => insertLink(e.detail.value, e.detail.label)) as EventListener);
     panel.addEventListener("focusout", (e) => {
       const to = e.relatedTarget;
       if (to instanceof Node && panel.contains(to)) return;
@@ -550,18 +343,7 @@ export async function mountMarkdownEditor(
       if (to === null && !document.hasFocus()) return;
       closeLink(to === null);
     });
-    link = {
-      from,
-      to,
-      panel,
-      input,
-      list,
-      note,
-      lb,
-      matches: [],
-      ask: 0,
-      stop: floating(panel, from),
-    };
+    link = { from, to, panel, input, list, note, lb, matches: [], ask: 0, stop: floating(panel, from) };
     input.focus();
     renderLink();
     void refreshLink();
@@ -598,23 +380,9 @@ export async function mountMarkdownEditor(
     const c = surface.caret();
     if (c.lineText !== "/" || c.head !== c.lineTo) return closeSlash();
     if (!slash) {
-      const menu = el("ul", {
-        class: "cap-popover cap-md-slash",
-        popover: "manual",
-        role: "list",
-        "aria-label": "Insert a block",
-        "data-flush": "",
-        "data-size": "auto",
-        "data-side": "bottom",
-        "data-align": "start",
-      });
+      const menu = el("ul", { class: "cap-popover cap-md-slash", popover: "manual", role: "list", "aria-label": "Insert a block", "data-flush": "", "data-size": "auto", "data-side": "bottom", "data-align": "start" });
       for (const s of o.scaffolds) {
-        const b = el(
-          "button",
-          { type: "button", class: "cap-md-slash-item" },
-          el("strong", {}, s.label),
-          el("span", { class: "cap-md-slash-hint" }, s.hint),
-        );
+        const b = el("button", { type: "button", class: "cap-md-slash-item" }, el("strong", {}, s.label), el("span", { class: "cap-md-slash-hint" }, s.hint));
         b.tabIndex = -1;
         b.addEventListener("click", () => insertScaffold(s, true));
         menu.append(el("li", {}, b));
@@ -628,12 +396,7 @@ export async function mountMarkdownEditor(
           return;
         }
         const items = [...menu.querySelectorAll<HTMLElement>(".cap-md-slash-item")];
-        const next = rovingIndex(
-          e.key,
-          items.findIndex((i) => i === document.activeElement),
-          items.length,
-          "vertical",
-        );
+        const next = rovingIndex(e.key, items.findIndex((i) => i === document.activeElement), items.length, "vertical");
         if (next === null) return;
         e.preventDefault();
         items[next]?.focus();
@@ -678,11 +441,7 @@ export async function mountMarkdownEditor(
     cancelUpload(false);
     clearUploadError();
     const token = ++uploadToken;
-    const panel = el("div", {
-      class: "cap-md-upload",
-      role: "group",
-      "aria-label": "Describe the image",
-    });
+    const panel = el("div", { class: "cap-md-upload", role: "group", "aria-label": "Describe the image" });
     upload = { token, panel, abort: null };
     frame.after(panel);
     showDescribeStep(panel, f, token);
@@ -690,14 +449,7 @@ export async function mountMarkdownEditor(
 
   function showDescribeStep(panel: HTMLElement, f: File, token: number) {
     const name = f.name;
-    const alt = el("input", {
-      type: "text",
-      class: "cap-input",
-      id: `${uid}-alt`,
-      autocomplete: "off",
-      placeholder: "What the image shows",
-      "aria-describedby": `${uid}-alt-help`,
-    });
+    const alt = el("input", { type: "text", class: "cap-input", id: `${uid}-alt`, autocomplete: "off", placeholder: "What the image shows", "aria-describedby": `${uid}-alt-help` });
     // A data: URL, not blob:, so the preview needs nothing a site's img-src does not already allow.
     const thumb = el("img", { class: "cap-md-upload-thumb", alt: "" });
     const reader = new FileReader();
@@ -705,38 +457,13 @@ export async function mountMarkdownEditor(
       if (typeof reader.result === "string") thumb.src = reader.result;
     });
     reader.readAsDataURL(f);
-    const help = el(
-      "p",
-      { class: "cap-field-help", id: `${uid}-alt-help` },
-      `Describe ${name} for a person who cannot see it, or insert it as decorative if it adds nothing. It is uploaded when you insert it.`,
-    );
+    const help = el("p", { class: "cap-field-help", id: `${uid}-alt-help` }, `Describe ${name} for a person who cannot see it, or insert it as decorative if it adds nothing. It is uploaded when you insert it.`);
     const wait = el("p", { class: "cap-md-upload-wait", hidden: "" }, `Uploading ${name}`);
-    const insert = el(
-      "button",
-      { type: "button", class: "cap-btn", "data-variant": "primary" },
-      "Insert image",
-    );
+    const insert = el("button", { type: "button", class: "cap-btn", "data-variant": "primary" }, "Insert image");
     insert.disabled = true;
     const decorative = el("button", { type: "button", class: "cap-btn" }, "Insert as decorative");
-    const cancel = el(
-      "button",
-      { type: "button", class: "cap-btn", "data-variant": "quiet" },
-      "Cancel",
-    );
-    const fields = el(
-      "div",
-      { class: "cap-md-upload-fields" },
-      el(
-        "label",
-        { class: "cap-field-label", for: alt.id },
-        "Alt text ",
-        el("span", { class: "cap-field-required", "aria-hidden": "true" }, "Required"),
-      ),
-      alt,
-      help,
-      wait,
-      el("div", { class: "cap-md-upload-actions" }, insert, decorative, cancel),
-    );
+    const cancel = el("button", { type: "button", class: "cap-btn", "data-variant": "quiet" }, "Cancel");
+    const fields = el("div", { class: "cap-md-upload-fields" }, el("label", { class: "cap-field-label", for: alt.id }, "Alt text ", el("span", { class: "cap-field-required", "aria-hidden": "true" }, "Required")), alt, help, wait, el("div", { class: "cap-md-upload-actions" }, insert, decorative, cancel));
     panel.replaceChildren(thumb, fields);
     const busy = (on: boolean) => {
       if (on) panel.setAttribute("aria-busy", "true");
@@ -749,8 +476,7 @@ export async function mountMarkdownEditor(
     const go = async (isDecorative: boolean) => {
       const send = o.onUpload;
       const text = isDecorative ? "" : alt.value.trim();
-      if (!send || !surface || !upload || upload.token !== token || panel.hasAttribute("aria-busy"))
-        return;
+      if (!send || !surface || !upload || upload.token !== token || panel.hasAttribute("aria-busy")) return;
       if (!isDecorative && !text) return;
       panel.querySelector(".cap-md-upload-error")?.remove();
       const abort = new AbortController();
@@ -760,12 +486,7 @@ export async function mountMarkdownEditor(
       try {
         const result = await send(f, { alt: text, decorative: isDecorative }, abort.signal);
         if (!upload || upload.token !== token) return;
-        const md = (o.imageMarkdown ?? defaultImageMarkdown)({
-          url: result.url,
-          alt: text,
-          decorative: isDecorative,
-          name,
-        });
+        const md = (o.imageMarkdown ?? defaultImageMarkdown)({ url: result.url, alt: text, decorative: isDecorative, name });
         cancelUpload(false);
         apply(blockEdit(doc(), sel().from, sel().to, md));
         say("Image added to the text.");
@@ -774,9 +495,7 @@ export async function mountMarkdownEditor(
         upload.abort = null;
         busy(false);
         // The step stays, with what was typed, so a retry is one press.
-        fields.append(
-          el("p", { class: "cap-field-error cap-md-upload-error", role: "alert" }, messageOf(e)),
-        );
+        fields.append(el("p", { class: "cap-field-error cap-md-upload-error", role: "alert" }, messageOf(e)));
         say("");
         (isDecorative ? decorative : insert.disabled ? alt : insert).focus();
       }
@@ -813,14 +532,8 @@ export async function mountMarkdownEditor(
 
   // ---- sync with the textarea and the page ------------------------------------------------
   function syncState() {
-    surface?.configure({
-      placeholder: placeholder(),
-      readOnly: readOnly(),
-      disabled: disabled(),
-      attrs: attrs(),
-    });
-    for (const b of toolbar.querySelectorAll<HTMLButtonElement>(".cap-md-tool"))
-      b.disabled = disabled() || readOnly();
+    surface?.configure({ placeholder: placeholder(), readOnly: readOnly(), disabled: disabled(), attrs: attrs() });
+    for (const b of toolbar.querySelectorAll<HTMLButtonElement>(".cap-md-tool")) b.disabled = disabled() || readOnly();
     file.accept = o.accept ?? "image/*";
     updateStats(doc());
     if (disabled() || readOnly()) {
@@ -841,14 +554,7 @@ export async function mountMarkdownEditor(
   function clearRequired() {
     ta.removeAttribute("aria-invalid");
     const id = requiredMessage?.id;
-    if (id)
-      ta.setAttribute(
-        "aria-describedby",
-        (ta.getAttribute("aria-describedby") ?? "")
-          .split(/\s+/)
-          .filter((x) => x && x !== id)
-          .join(" "),
-      );
+    if (id) ta.setAttribute("aria-describedby", (ta.getAttribute("aria-describedby") ?? "").split(/\s+/).filter((x) => x && x !== id).join(" "));
     if (!ta.getAttribute("aria-describedby")) ta.removeAttribute("aria-describedby");
     requiredMessage?.remove();
     requiredMessage = null;
@@ -860,16 +566,9 @@ export async function mountMarkdownEditor(
   listen(ta, "invalid", (e: Event) => {
     e.preventDefault();
     if (!requiredMessage) {
-      requiredMessage = el(
-        "p",
-        { class: "cap-field-error", id: `${uid}-required`, role: "alert" },
-        ta.dataset.errorValueMissing ?? "Write something before saving.",
-      );
+      requiredMessage = el("p", { class: "cap-field-error", id: `${uid}-required`, role: "alert" }, ta.dataset.errorValueMissing ?? "Write something before saving.");
       ta.after(requiredMessage);
-      ta.setAttribute(
-        "aria-describedby",
-        [`${uid}-required`, ta.getAttribute("aria-describedby")].filter(Boolean).join(" "),
-      );
+      ta.setAttribute("aria-describedby", [`${uid}-required`, ta.getAttribute("aria-describedby")].filter(Boolean).join(" "));
     }
     ta.setAttribute("aria-invalid", "true");
     syncState();
@@ -881,27 +580,11 @@ export async function mountMarkdownEditor(
   // Focus leaving the editor closes the slash menu; a click into the menu is not leaving.
   listen(host, "focusout", (e: FocusEvent) => {
     const to = e.relatedTarget;
-    if (
-      slash &&
-      !(to instanceof Node && slash.menu.contains(to)) &&
-      !(to instanceof Node && frame.contains(to))
-    )
-      closeSlash();
+    if (slash && !(to instanceof Node && slash.menu.contains(to)) && !(to instanceof Node && frame.contains(to))) closeSlash();
   });
 
   const watch = new MutationObserver(syncState);
-  watch.observe(ta, {
-    attributes: true,
-    attributeFilter: [
-      "readonly",
-      "disabled",
-      "aria-invalid",
-      "aria-describedby",
-      "placeholder",
-      "maxlength",
-      "required",
-    ],
-  });
+  watch.observe(ta, { attributes: true, attributeFilter: ["readonly", "disabled", "aria-invalid", "aria-describedby", "placeholder", "maxlength", "required"] });
 
   // ---- mount ----------------------------------------------------------------------------
   buildToolbar();
@@ -937,11 +620,7 @@ export async function mountMarkdownEditor(
           return true;
         case "save": {
           const value = doc();
-          const ev = new CustomEvent("cap-md-save", {
-            bubbles: true,
-            cancelable: true,
-            detail: { value },
-          });
+          const ev = new CustomEvent("cap-md-save", { bubbles: true, cancelable: true, detail: { value } });
           host.dispatchEvent(ev);
           o.onSave?.(value);
           return true;
@@ -1028,14 +707,9 @@ export function getMarkdownEditor(host: Element): MarkdownEditorHandle | undefin
 // Upgrades every [data-cap="markdown-editor"] under root not yet upgraded. The textarea is
 // the editor until CodeMirror has loaded, and again if it cannot. `options` apply to each one;
 // to give editors different options, pass a narrower `root`. Returns a function that undoes it.
-export function enhance(
-  root: ParentNode = document,
-  options: MarkdownEditorOptions = {},
-): () => void {
+export function enhance(root: ParentNode = document, options: MarkdownEditorOptions = {}): () => void {
   const undo: Array<() => void> = [];
-  for (const host of root.querySelectorAll<HTMLElement>(
-    "[data-cap='markdown-editor']:not([data-cap-ready])",
-  )) {
+  for (const host of root.querySelectorAll<HTMLElement>("[data-cap='markdown-editor']:not([data-cap-ready])")) {
     host.dataset.capReady = "";
     let gone = false;
     let mounted: MarkdownEditorHandle | null = null;

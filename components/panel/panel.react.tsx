@@ -35,34 +35,10 @@ export interface PanelProps {
 
 // A panel is a plain <section> with a heading, not a named region, unless it is given a
 // headingId: a page of panels would otherwise fill the landmark list.
-export function Panel({
-  title,
-  level = 2,
-  count,
-  src,
-  more,
-  description,
-  actions,
-  footer,
-  size,
-  headingId,
-  ref,
-  flush = false,
-  id,
-  section,
-  className,
-  children,
-}: PanelProps) {
+export function Panel({ title, level = 2, count, src, more, description, actions, footer, size, headingId, ref, flush = false, id, section, className, children }: PanelProps) {
   const Heading = level === 3 ? "h3" : "h2";
   return (
-    <section
-      ref={ref}
-      className={className ? `cap-panel ${className}` : "cap-panel"}
-      id={id}
-      data-section={section}
-      data-size={size}
-      aria-labelledby={headingId}
-    >
+    <section ref={ref} className={className ? `cap-panel ${className}` : "cap-panel"} id={id} data-section={section} data-size={size} aria-labelledby={headingId}>
       <header className="cap-panel-head">
         <Heading id={headingId}>{title}</Heading>
         {count != null && <span className="cap-panel-count">{count}</span>}

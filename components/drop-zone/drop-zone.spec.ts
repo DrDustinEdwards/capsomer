@@ -1,10 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import { acceptLabel, formatBytes, matchesAccept, validateFiles } from "./drop-zone.ts";
 
 interface Sample {
@@ -14,26 +9,16 @@ interface Sample {
 }
 
 // A drag carrying files, dispatched on an element: the platform gives a test no real drag.
-async function drag(
-  page: Page,
-  selector: string,
-  type: "dragenter" | "dragover" | "dragleave" | "drop",
-  files: Sample[] = [{ name: "a.png", type: "image/png" }],
-) {
+async function drag(page: Page, selector: string, type: "dragenter" | "dragover" | "dragleave" | "drop", files: Sample[] = [{ name: "a.png", type: "image/png" }]) {
   const dt = await page.evaluateHandle((list) => {
     const t = new DataTransfer();
-    for (const f of list)
-      t.items.add(new File([new Uint8Array(f.size ?? 4)], f.name, { type: f.type }));
+    for (const f of list) t.items.add(new File([new Uint8Array(f.size ?? 4)], f.name, { type: f.type }));
     return t;
   }, files);
   await page.dispatchEvent(selector, type, { dataTransfer: dt });
 }
 
-const png = (name: string, size = 2000) => ({
-  name,
-  mimeType: "image/png",
-  buffer: Buffer.alloc(size, 1),
-});
+const png = (name: string, size = 2000) => ({ name, mimeType: "image/png", buffer: Buffer.alloc(size, 1) });
 
 // The pure rules run in node, with no page.
 test("behavior: validateFiles checks type, then size, then the count, and names every refusal", () => {
@@ -44,11 +29,7 @@ test("behavior: validateFiles checks type, then size, then the count, and names 
     { name: "two.png", type: "image/png", size: 10 },
     { name: "three.png", type: "image/png", size: 10 },
   ];
-  const r = validateFiles(files, {
-    accept: "image/*,.pdf",
-    maxBytes: 5 * 1024 * 1024,
-    maxFiles: 2,
-  });
+  const r = validateFiles(files, { accept: "image/*,.pdf", maxBytes: 5 * 1024 * 1024, maxFiles: 2 });
   expect(r.accepted.map((f) => f.name)).toEqual(["hero.jpg", "two.png"]);
   expect(r.rejected.map((x) => [x.file.name, x.reason])).toEqual([
     ["notes.txt", "type"],
@@ -81,9 +62,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the title, the hint and every state's words reach their contrast", async ({
-    page,
-  }) => {
+  test("accessibility: the title, the hint and every state's words reach their contrast", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await expectContrast(page, [
       { sel: "#dz-idle .cap-drop-title", what: "the idle title" },
@@ -110,31 +89,20 @@ eachTheme((theme) => {
     ]);
   });
 
-  test(
-    "accessibility: the control is one named input described by the rules",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "drop-zone", theme);
-      const input = page.getByLabel("Drop files here, or browse").first();
-      await expect(input).toHaveAttribute("type", "file");
-      await expect(input).toHaveAccessibleDescription(
-        "Images and PDF, up to 5 MB each, up to 4 at a time.",
-      );
-      await expect(page.locator("#dz-over input")).toHaveAccessibleName("Drop to upload");
-      await expect(page.locator("#dz-single input")).toHaveAccessibleName(
-        "Drop a profile picture, or browse",
-      );
-    },
-  );
+  test("accessibility: the control is one named input described by the rules", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "drop-zone", theme);
+    const input = page.getByLabel("Drop files here, or browse").first();
+    await expect(input).toHaveAttribute("type", "file");
+    await expect(input).toHaveAccessibleDescription("Images and PDF, up to 5 MB each, up to 4 at a time.");
+    await expect(page.locator("#dz-over input")).toHaveAccessibleName("Drop to upload");
+    await expect(page.locator("#dz-single input")).toHaveAccessibleName("Drop a profile picture, or browse");
+  });
 
-  test(
-    "accessibility: results are a status and refusals an alert, both present before anything is chosen",
-    { tag: "@markup" },
-    async ({ page }) => {
-      await visitStates(page, "drop-zone", theme);
-      await expect(page.locator("#dz-idle [role=status]")).toBeAttached();
-      await expect(page.locator("#dz-idle [role=alert]")).toBeAttached();
-      await expect(page.locator("#dz-rejected")).toMatchAriaSnapshot(`
+  test("accessibility: results are a status and refusals an alert, both present before anything is chosen", { tag: "@markup" }, async ({ page }) => {
+    await visitStates(page, "drop-zone", theme);
+    await expect(page.locator("#dz-idle [role=status]")).toBeAttached();
+    await expect(page.locator("#dz-idle [role=alert]")).toBeAttached();
+    await expect(page.locator("#dz-rejected")).toMatchAriaSnapshot(`
       - alert:
         - paragraph: 3 files were not added
         - list:
@@ -142,7 +110,7 @@ eachTheme((theme) => {
           - listitem: "site-recording.pdf: too big at 8.4 MB. The limit is 5 MB."
           - listitem: "logo-variant-5.png: too many files. The limit is 4 files at a time, so this one was left out."
     `);
-      await expect(page.locator("#dz-accepted")).toMatchAriaSnapshot(`
+    await expect(page.locator("#dz-accepted")).toMatchAriaSnapshot(`
       - status:
         - paragraph: 3 files are ready to upload.
         - list:
@@ -150,24 +118,17 @@ eachTheme((theme) => {
           - listitem: uptime-report-september.pdf 1.8 MB
           - listitem: annual-report-chart.png 96 kB
     `);
-    },
-  );
+  });
 
-  test(
-    "accessibility: every state is in the delivered HTML",
-    { tag: "@markup" },
-    async ({ page }) => {
-      const html = await (await page.request.get("components/drop-zone/states.html")).text();
-      expect(html).toContain("3 files were not added");
-      expect(html).toContain("fieldnotes-scan.heic: type not allowed");
-      expect(html).toContain("3 files are ready to upload.");
-      expect(html).toContain('data-state="over"');
-    },
-  );
+  test("accessibility: every state is in the delivered HTML", { tag: "@markup" }, async ({ page }) => {
+    const html = await (await page.request.get("components/drop-zone/states.html")).text();
+    expect(html).toContain("3 files were not added");
+    expect(html).toContain("fieldnotes-scan.heic: type not allowed");
+    expect(html).toContain("3 files are ready to upload.");
+    expect(html).toContain('data-state="over"');
+  });
 
-  test("keyboard: Tab reaches the zone as one stop, with a visible focus ring", async ({
-    page,
-  }) => {
+  test("keyboard: Tab reaches the zone as one stop, with a visible focus ring", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await page.locator("h1").click();
     await page.keyboard.press("Tab");
@@ -202,131 +163,70 @@ eachTheme((theme) => {
     await page.evaluate(() => {
       const t = new DataTransfer();
       t.items.add(new File([new Uint8Array(8)], "pasted-screenshot.png", { type: "image/png" }));
-      document
-        .querySelector("#dz-idle input")!
-        .dispatchEvent(
-          new ClipboardEvent("paste", { clipboardData: t, bubbles: true, cancelable: true }),
-        );
+      document.querySelector("#dz-idle input")!.dispatchEvent(new ClipboardEvent("paste", { clipboardData: t, bubbles: true, cancelable: true }));
     });
-    await expect(page.locator("#dz-idle [role=status]")).toHaveText(
-      /pasted-screenshot\.png is ready to upload/,
-    );
+    await expect(page.locator("#dz-idle [role=status]")).toHaveText(/pasted-screenshot\.png is ready to upload/);
   });
 
   test("behavior: browsing a file says it is ready and tells the page", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await page.evaluate(() => {
       (window as unknown as { heard: unknown[] }).heard = [];
-      document
-        .querySelector("#dz-idle")!
-        .addEventListener("cap-drop-accepted", (e) =>
-          (window as unknown as { heard: unknown[] }).heard.push(
-            (e as CustomEvent).detail.accepted.map((f: File) => f.name),
-          ),
-        );
+      document.querySelector("#dz-idle")!.addEventListener("cap-drop-accepted", (e) => (window as unknown as { heard: unknown[] }).heard.push((e as CustomEvent).detail.accepted.map((f: File) => f.name)));
     });
     await page.locator("#dz-idle input").setInputFiles([png("spring-hero.png"), png("uptime.png")]);
-    await expect(page.locator("#dz-idle [role=status]")).toContainText(
-      "2 files are ready to upload.",
-    );
+    await expect(page.locator("#dz-idle [role=status]")).toContainText("2 files are ready to upload.");
     await expect(page.locator("#dz-idle [role=status] li")).toHaveCount(2);
     await expect(page.locator("#dz-idle [role=alert]")).toBeEmpty();
-    expect(await page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual([
-      ["spring-hero.png", "uptime.png"],
-    ]);
+    expect(await page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual([["spring-hero.png", "uptime.png"]]);
   });
 
-  test("behavior: a file of the wrong type is named with the types the zone takes", async ({
-    page,
-  }) => {
+  test("behavior: a file of the wrong type is named with the types the zone takes", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
-    await page
-      .locator("#dz-idle input")
-      .setInputFiles([
-        { name: "fieldnotes.heic", mimeType: "image/heic", buffer: Buffer.alloc(10) },
-        { name: "notes.txt", mimeType: "text/plain", buffer: Buffer.alloc(10) },
-        png("ok.png"),
-      ]);
+    await page.locator("#dz-idle input").setInputFiles([{ name: "fieldnotes.heic", mimeType: "image/heic", buffer: Buffer.alloc(10) }, { name: "notes.txt", mimeType: "text/plain", buffer: Buffer.alloc(10) }, png("ok.png")]);
     const alert = page.locator("#dz-idle [role=alert]");
     await expect(alert).toContainText("1 file was not added");
     await expect(alert).toContainText("notes.txt: type not allowed. This takes images and PDF.");
     await expect(page.locator("#dz-idle")).toHaveAttribute("data-state", "rejected");
-    await expect(page.locator("#dz-idle [role=status]")).toContainText(
-      "2 files are ready to upload.",
-    );
+    await expect(page.locator("#dz-idle [role=status]")).toContainText("2 files are ready to upload.");
   });
 
-  test("behavior: a file over the size limit is named with its size and the limit", async ({
-    page,
-  }) => {
+  test("behavior: a file over the size limit is named with its size and the limit", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await page.locator("#dz-single input").setInputFiles(png("big.png", 2 * 1024 * 1024));
-    await expect(page.locator("#dz-single [role=alert]")).toContainText(
-      "big.png: too big at 2 MB. The limit is 1 MB.",
-    );
+    await expect(page.locator("#dz-single [role=alert]")).toContainText("big.png: too big at 2 MB. The limit is 1 MB.");
     await expect(page.locator("#dz-single [role=status]")).toBeEmpty();
   });
 
-  test("behavior: files beyond the count are named as too many, and the input holds only the accepted", async ({
-    page,
-  }) => {
+  test("behavior: files beyond the count are named as too many, and the input holds only the accepted", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     const names = ["a.png", "b.png", "c.png", "d.png", "e.png", "f.png"];
     await page.locator("#dz-idle input").setInputFiles(names.map((n) => png(n)));
     await expect(page.locator("#dz-idle [role=alert]")).toContainText("2 files were not added");
-    await expect(page.locator("#dz-idle [role=alert]")).toContainText(
-      "e.png: too many files. The limit is 4 files at a time",
-    );
-    expect(
-      await page
-        .locator("#dz-idle input")
-        .evaluate((el: HTMLInputElement) => Array.from(el.files ?? []).map((f) => f.name)),
-    ).toEqual(["a.png", "b.png", "c.png", "d.png"]);
+    await expect(page.locator("#dz-idle [role=alert]")).toContainText("e.png: too many files. The limit is 4 files at a time");
+    expect(await page.locator("#dz-idle input").evaluate((el: HTMLInputElement) => Array.from(el.files ?? []).map((f) => f.name))).toEqual(["a.png", "b.png", "c.png", "d.png"]);
   });
 
-  test("behavior: with its list off, the zone says nothing of the files it took but still tells the page and names refusals", async ({
-    page,
-  }) => {
+  test("behavior: with its list off, the zone says nothing of the files it took but still tells the page and names refusals", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await page.evaluate(() => {
       (window as unknown as { heard: unknown[] }).heard = [];
-      document
-        .querySelector("#dz-own-list")!
-        .addEventListener("cap-drop-accepted", (e) =>
-          (window as unknown as { heard: unknown[] }).heard.push(
-            (e as CustomEvent).detail.accepted.map((f: File) => f.name),
-          ),
-        );
+      document.querySelector("#dz-own-list")!.addEventListener("cap-drop-accepted", (e) => (window as unknown as { heard: unknown[] }).heard.push((e as CustomEvent).detail.accepted.map((f: File) => f.name)));
     });
-    await page
-      .locator("#dz-own-list input")
-      .setInputFiles([
-        png("cover.png"),
-        { name: "notes.txt", mimeType: "text/plain", buffer: Buffer.alloc(10) },
-      ]);
-    await expect(page.locator("#dz-own-list [role=alert]")).toContainText(
-      "notes.txt: type not allowed.",
-    );
+    await page.locator("#dz-own-list input").setInputFiles([png("cover.png"), { name: "notes.txt", mimeType: "text/plain", buffer: Buffer.alloc(10) }]);
+    await expect(page.locator("#dz-own-list [role=alert]")).toContainText("notes.txt: type not allowed.");
     await expect(page.locator("#dz-own-list")).not.toContainText("ready to upload");
-    expect(await page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual([
-      ["cover.png"],
-    ]);
+    expect(await page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual([["cover.png"]]);
   });
 
-  test("behavior: a zone without multiple takes one file and names the others", async ({
-    page,
-  }) => {
+  test("behavior: a zone without multiple takes one file and names the others", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await drag(page, "#dz-single", "drop", [
       { name: "me.png", type: "image/png" },
       { name: "me-too.png", type: "image/png" },
     ]);
-    await expect(page.locator("#dz-single [role=status]")).toContainText(
-      "me.png is ready to upload.",
-    );
-    await expect(page.locator("#dz-single [role=alert]")).toContainText(
-      "me-too.png: too many files. The limit is 1 file at a time",
-    );
+    await expect(page.locator("#dz-single [role=status]")).toContainText("me.png is ready to upload.");
+    await expect(page.locator("#dz-single [role=alert]")).toContainText("me-too.png: too many files. The limit is 1 file at a time");
   });
 
   test("behavior: a drop is checked, shown, and put in the input", async ({ page }) => {
@@ -335,20 +235,12 @@ eachTheme((theme) => {
       { name: "dropped.png", type: "image/png" },
       { name: "dropped.zip", type: "application/zip" },
     ]);
-    await expect(page.locator("#dz-idle [role=status]")).toContainText(
-      "dropped.png is ready to upload.",
-    );
-    await expect(page.locator("#dz-idle [role=alert]")).toContainText(
-      "dropped.zip: type not allowed",
-    );
-    expect(
-      await page.locator("#dz-idle input").evaluate((el: HTMLInputElement) => el.files?.length),
-    ).toBe(1);
+    await expect(page.locator("#dz-idle [role=status]")).toContainText("dropped.png is ready to upload.");
+    await expect(page.locator("#dz-idle [role=alert]")).toContainText("dropped.zip: type not allowed");
+    expect(await page.locator("#dz-idle input").evaluate((el: HTMLInputElement) => el.files?.length)).toBe(1);
   });
 
-  test("behavior: files over the zone say Drop to upload, and leaving puts it back", async ({
-    page,
-  }) => {
+  test("behavior: files over the zone say Drop to upload, and leaving puts it back", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
     await drag(page, "#dz-idle", "dragenter");
     await expect(page.locator("#dz-idle")).toHaveAttribute("data-state", "over");
@@ -381,9 +273,7 @@ eachTheme((theme) => {
     await expect(page.locator("#dz-idle")).not.toHaveAttribute("data-state", "over");
   });
 
-  test("behavior: the drop anywhere panel covers the window while files are over it", async ({
-    page,
-  }) => {
+  test("behavior: the drop anywhere panel covers the window while files are over it", async ({ page }) => {
     await visitStates(page, "drop-zone", theme, "page");
     const zone = page.locator("#dz-page");
     await expect(zone).toHaveAttribute("data-state", "over");
@@ -392,14 +282,10 @@ eachTheme((theme) => {
     await drag(page, "body", "drop", [{ name: "anywhere.png", type: "image/png" }]);
     await expect(zone).toHaveAttribute("data-state", "idle");
     await expect(page.locator("#dz-page .cap-drop-overlay")).toBeHidden();
-    await expect(page.locator("#dz-page [role=status]")).toContainText(
-      "anywhere.png is ready to upload.",
-    );
+    await expect(page.locator("#dz-page [role=status]")).toContainText("anywhere.png is ready to upload.");
   });
 
-  test("behavior: in page mode a dragged file over the window opens the panel and leaving closes it", async ({
-    page,
-  }) => {
+  test("behavior: in page mode a dragged file over the window opens the panel and leaving closes it", async ({ page }) => {
     await visitStates(page, "drop-zone", theme, "page");
     await drag(page, "body", "drop", [{ name: "x.png", type: "image/png" }]);
     await drag(page, "body", "dragenter");

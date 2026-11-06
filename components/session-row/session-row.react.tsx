@@ -63,43 +63,15 @@ const glyphs: Record<string, ReactNode> = {
   ),
   run: (
     <>
-      <circle
-        cx="8"
-        cy="8"
-        r="6.2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        opacity="0.35"
-      />
-      <path
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2"
-      />
+      <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" opacity="0.35" />
+      <path fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" d="M8 1.8a6.2 6.2 0 0 1 6.2 6.2" />
     </>
   ),
-  none: (
-    <>
-      <circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </>
-  ),
+  none: <><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M5 8h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></>,
   stop: <rect x="3" y="3" width="10" height="10" rx="1.5" fill="currentColor" />,
   info: (
     <>
-      <rect
-        x="1.5"
-        y="1.5"
-        width="13"
-        height="13"
-        rx="2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
+      <rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
       <path fill="currentColor" d="M7.2 7h1.6v5H7.2zM7.2 4h1.6v1.7H7.2z" />
     </>
   ),
@@ -134,11 +106,7 @@ function Row({ s, onAnswer }: { s: Session; onAnswer?: SessionListProps["onAnswe
   const qid = useId();
   const st = STATES[s.state];
   return (
-    <li
-      className="cap-session"
-      data-session={s.id}
-      data-tone={st.tone === "crit" ? "crit" : undefined}
-    >
+    <li className="cap-session" data-session={s.id} data-tone={st.tone === "crit" ? "crit" : undefined}>
       <div className="cap-session-head">
         <span className="cap-pill" data-tone={st.tone}>
           <Glyph kind={st.glyph} />
@@ -195,12 +163,7 @@ function Row({ s, onAnswer }: { s: Session; onAnswer?: SessionListProps["onAnswe
 // the freshness: "Waiting on you first. Updates every 15 seconds".
 export function SessionList({ sessions, label, labelledBy, onAnswer }: SessionListProps) {
   return (
-    <ul
-      className="cap-session-list"
-      data-cap="session-row"
-      aria-label={labelledBy ? undefined : label}
-      aria-labelledby={labelledBy}
-    >
+    <ul className="cap-session-list" data-cap="session-row" aria-label={labelledBy ? undefined : label} aria-labelledby={labelledBy}>
       {order(sessions).map((s) => (
         <Row key={s.id} s={s} onAnswer={onAnswer} />
       ))}

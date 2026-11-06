@@ -1,10 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import {
-  eachTheme,
-  expectContrast,
-  expectNoAxeViolations,
-  visitStates,
-} from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import { approveLabel, titleText } from "./approval-sheet.ts";
 
 const sheet = (page: Page) => page.getByRole("dialog");
@@ -55,9 +50,7 @@ eachTheme((theme) => {
 
   test("keyboard: Space on a gate's checkbox changes the count", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "two");
-    const second = page
-      .getByRole("group", { name: "Run the docs migration 0008" })
-      .getByRole("checkbox");
+    const second = page.getByRole("group", { name: "Run the docs migration 0008" }).getByRole("checkbox");
     await second.focus();
     await page.keyboard.press("Space");
     await expect(approveBtn(page)).toHaveAccessibleName("Approve 1 gate");
@@ -68,26 +61,20 @@ eachTheme((theme) => {
   test("keyboard: with no gate chosen, Approve says why and does nothing", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "one-unchecked");
     await expect(approveBtn(page)).toHaveAccessibleName("Approve 1 gate");
-    const first = page
-      .getByRole("group", { name: "Deploy web to production" })
-      .getByRole("checkbox");
+    const first = page.getByRole("group", { name: "Deploy web to production" }).getByRole("checkbox");
     await first.focus();
     await page.keyboard.press("Space");
     await expect(approveBtn(page)).toHaveAccessibleName("Approve 0 gates");
     await expect(approveBtn(page)).toHaveAttribute("aria-disabled", "true");
     await expect(approveBtn(page)).toHaveAccessibleDescription("Choose at least one gate.");
-    await expectContrast(page, [
-      { sel: ".cap-approval-none", what: "the reason Approve is disabled" },
-    ]);
+    await expectContrast(page, [{ sel: ".cap-approval-none", what: "the reason Approve is disabled" }]);
     await approveBtn(page).focus();
     await page.keyboard.press("Enter");
     await expect(approveBtn(page)).not.toHaveAttribute("aria-busy", "true");
     await expect(sheet(page)).toBeVisible();
   });
 
-  test("keyboard: Enter on Approve sends the approval and holds the sheet pending", async ({
-    page,
-  }) => {
+  test("keyboard: Enter on Approve sends the approval and holds the sheet pending", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "two");
     await approveBtn(page).focus();
     await page.keyboard.press("Enter");
@@ -125,9 +112,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Review 2 gates" })).toBeFocused();
   });
 
-  test("keyboard: Enter on Cancel closes the sheet and focus returns to its button", async ({
-    page,
-  }) => {
+  test("keyboard: Enter on Cancel closes the sheet and focus returns to its button", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "two");
     await page.keyboard.press("Enter");
     await expect(sheet(page)).toBeHidden();
@@ -156,17 +141,10 @@ eachTheme((theme) => {
   test("behavior: the approval names the chosen gates and their comments", async ({ page }) => {
     await visitStates(page, "approval-sheet", theme, "one-unchecked");
     const detail = page.evaluate(
-      () =>
-        new Promise((done) =>
-          document.addEventListener("cap-approve", (e) => done((e as CustomEvent).detail), {
-            once: true,
-          }),
-        ),
+      () => new Promise((done) => document.addEventListener("cap-approve", (e) => done((e as CustomEvent).detail), { once: true })),
     );
     await approveBtn(page).click();
-    expect(await detail).toEqual({
-      gates: [{ id: "job_8c21", comment: "Checked the preview at a91c4e0." }],
-    });
+    expect(await detail).toEqual({ gates: [{ id: "job_8c21", comment: "Checked the preview at a91c4e0." }] });
   });
 
   test("behavior: a failed approval says what happened beside the buttons", async ({ page }) => {
