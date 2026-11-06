@@ -1,0 +1,3 @@
+# Formatting-only commits, which GitHub blame skips.
+# Format with the shared Oxfmt config.
+4f27e26c95f1c11b87ca8956442e62011f6fa072
