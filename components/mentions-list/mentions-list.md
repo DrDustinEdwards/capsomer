@@ -112,7 +112,9 @@ Props: `data` (`MentionsData` from `capsomer/content`), `action`, `Form`, `submi
 
 The intents it posts, each with `ids`: `approve`, `reject` and `reset` (with `version` from a row), `delete` (answered with `result.confirm`, then posted again with `confirm`, the typed count), `sweep` (answered with `result.confirm`, then posted again with its `fields`), and whatever `result.undo` names.
 
-`import { mentionsHref, currentView, mentionActions } from "capsomer/behavior/mentions-list"`: the pure helpers. The states, their words and the decision table are the queue's (`capsomer/behavior/moderation-queue`: `decide`, `actionsFor`, `undoAction`, `STATE_LABEL`).
+`import { mentionsHref, currentView, mentionActions, kitMentionsSearch, mentionsDataOfKit } from "capsomer/behavior/mentions-list"`: the pure helpers. The states, their words and the decision table are the queue's (`capsomer/behavior/moderation-queue`: `decide`, `actionsFor`, `undoAction`, `STATE_LABEL`).
+
+**From the kit.** A host reads the kit's query with `readMentionsQuery(kitMentionsSearch(searchParams))` (the list's tab is `view`, the kit's filter `status`) and turns site-api's `loadMentions` answer into `data` with `mentionsDataOfKit(kit, searchParams)`, so every host draws a mention the same way: the sender's name or "An unnamed sender", the source's host as text, the post and its editor link, and the counts with All. The kit (site-api v0.26.0) asks before a delete or a sweep and reads the versions and states a form did not post, so the host passes each posted form to `runMentionsIntent` as it came.
 
 **Dependencies.** It needs the stylesheets of the parts it composes: moderation-queue, row-list, tabs, status, avatar, time, bulk-bar, message, empty, dialog, confirm-dialog and content (the shared result box), with this one.
 
