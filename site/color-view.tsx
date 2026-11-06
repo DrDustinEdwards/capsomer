@@ -36,10 +36,10 @@ function ThemeColumn({ scheme }: { scheme: "light" | "dark" }) {
           </li>
         ))}
       </ul>
-      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
       <div
         className="cap-table-wrap"
         role="region"
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
         tabIndex={0}
         aria-label={`${scheme === "light" ? "Light" : "Dark"} theme contrast grid`}
       >
@@ -151,10 +151,10 @@ function FamilyScales() {
               )}
             </p>
             {failing.length > 0 && (
-              // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
               <div
                 className="cap-table-wrap"
                 role="region"
+                // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
                 tabIndex={0}
                 aria-label={`${n} failing pairs`}
               >

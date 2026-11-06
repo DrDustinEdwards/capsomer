@@ -797,12 +797,13 @@ export function PostsList({
           {words.text}
         </Empty>
       ) : (
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex -- delegates the events of the controls inside it
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
         <div
           className="cap-table-wrap cap-posts-wrap"
           data-reflow=""
           role="region"
           aria-labelledby={`${uid}-cap`}
+          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- delegates the events of the controls inside it
           tabIndex={0}
           onKeyDown={onTableKey}
         >

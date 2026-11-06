@@ -51,7 +51,9 @@ test("/admin prefetches only from inside /admin; the app's own exclusions hold e
 test("every family link site has its icon in link.css, and link.css draws no other", () => {
   const css = readFileSync(new URL("../../components/link/link.css", import.meta.url), "utf8");
   const drawn = [
-    ...css.matchAll(/\[data-site="([\w-]+)"\]::before \{ mask-image: url\("data:image\/svg\+xml,/g),
+    ...css.matchAll(
+      /\[data-site="([\w-]+)"\]::before \{\s*mask-image: url\("data:image\/svg\+xml,/g,
+    ),
   ]
     .map((m) => m[1])
     .sort();

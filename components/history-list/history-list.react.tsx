@@ -452,11 +452,12 @@ export function HistoryList({
             Compare 2 versions
           </a>
         ) : (
-          // oxlint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-redundant-roles -- an <a> with no href has no link role; this disabled link keeps it
+          // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- an <a> with no href has no link role; this disabled link keeps it
           <a
             className="cap-btn"
             data-variant="primary"
             data-cap-part="compare"
+            // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- an <a> with no href has no link role; this disabled link keeps it
             role="link"
             aria-disabled="true"
             tabIndex={0}
@@ -465,10 +466,10 @@ export function HistoryList({
           </a>
         )}
       </div>
-      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul
         ref={listRef}
         className="cap-rows cap-hist-list"
+        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         role="list"
         aria-labelledby={labelledBy}
         aria-label={labelledBy ? undefined : label}

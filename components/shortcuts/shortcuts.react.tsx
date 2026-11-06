@@ -164,9 +164,9 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
       <DialogFooter align="start">
         <div className="cap-keys-foot">
           <label className="cap-switch">
-            {/* oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked */}
             <input
               type="checkbox"
+              // oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked
               role="switch"
               data-cap-part="single-keys"
               aria-describedby={`${id}-note`}

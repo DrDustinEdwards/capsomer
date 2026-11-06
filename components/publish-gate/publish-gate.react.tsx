@@ -354,11 +354,11 @@ export function PublishGate({
           {reading.rest}
         </p>
       </header>
-      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul
         ref={rows}
         className="cap-rows cap-gate-all"
         data-cap="row-list"
+        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         role="list"
         aria-labelledby={headingId}
         data-cap-primary={primary ? "" : undefined}

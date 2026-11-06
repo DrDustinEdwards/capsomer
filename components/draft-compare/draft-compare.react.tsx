@@ -63,7 +63,6 @@ export function DraftCompare({
   ]);
   // The view is not part of the html's identity: the radios hold it, in CSS, so choosing one
   // does not rebuild the page's folds and focus.
-  // oxlint-disable-next-line react/exhaustive-deps -- key holds every input that changes the html; the view is held by the radios
   const html = useMemo(
     () =>
       renderCompare(before, after, {
@@ -76,6 +75,7 @@ export function DraftCompare({
         remember: !controlled,
         heads,
       }),
+    // oxlint-disable-next-line react/exhaustive-deps -- key holds every input that changes the html; the view is held by the radios
     [key, own],
   );
 

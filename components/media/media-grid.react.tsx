@@ -138,12 +138,12 @@ export function MediaTile({
           {body}
         </a>
       ) : (
-        // oxlint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-description is a global attribute (ARIA 1.3)
         <button
           type="button"
           className="cap-media-open"
           aria-disabled="true"
           aria-describedby={`${id}-flags`}
+          // oxlint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-description is a global attribute (ARIA 1.3)
           aria-description={describeRecord(item)}
           tabIndex={tab}
         >

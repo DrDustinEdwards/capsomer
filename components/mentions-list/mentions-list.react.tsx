@@ -337,9 +337,9 @@ export function MentionsList({
           {words.text}
         </Empty>
       ) : (
-        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         <ul
           className="cap-rows cap-mq-list"
+          // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
           role="list"
           aria-labelledby={`${uid}-h`}
           data-cap-primary=""

@@ -325,11 +325,11 @@ export function FlagList({
   };
   const patch = (list: FlagData[], id: string, to: Partial<FlagData>): FlagData[] =>
     list.map((f) => (f.id === id ? { ...f, ...to } : f));
-  // oxlint-disable-next-line react/purity -- called from the resolve handlers only, never while rendering
   const close = (f: FlagData, resolution: Resolution): Partial<FlagData> => ({
     state: "resolved",
     resolution,
     resolvedBy: viewer,
+    // oxlint-disable-next-line react/purity -- called from the resolve handlers only, never while rendering
     resolvedAt: new Date().toISOString(),
   });
   const reopened: Partial<FlagData> = {
@@ -553,11 +553,11 @@ export function FlagList({
           </p>
         </div>
       </header>
-      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul
         ref={rows}
         className="cap-rows cap-flags-list"
         data-cap="row-list"
+        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         role="list"
         aria-labelledby={headingId}
         data-cap-primary={primary ? "" : undefined}

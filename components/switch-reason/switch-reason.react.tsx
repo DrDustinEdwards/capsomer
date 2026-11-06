@@ -224,11 +224,11 @@ export function SwitchWithReason({
     <div className="cap-switch-reason" ref={formRef}>
       <label className="cap-switch">
         {/* Controlled: a click or Space asks why, and React keeps the switch where it was. */}
-        {/* oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked */}
         <input
           ref={switchRef}
           id={id}
           type="checkbox"
+          // oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked
           role="switch"
           aria-busy={pending || undefined}
           checked={on}

@@ -60,13 +60,13 @@ export function Segmented<V extends string>({
       >
         {options.map((o) => (
           <label key={o.value} data-tone={o.tone}>
-            {/* oxlint-disable-next-line jsx-a11y/role-supports-aria-props -- the group has no element of its own, so each radio carries the invalid state */}
             <input
               type="radio"
               name={name ?? own}
               value={o.value}
               checked={value === o.value}
               disabled={o.disabled}
+              // oxlint-disable-next-line jsx-a11y/role-supports-aria-props -- the group has no element of its own, so each radio carries the invalid state
               aria-invalid={invalid || undefined}
               onChange={() => onChange(o.value)}
             />{" "}
