@@ -3,10 +3,7 @@
   <details class="cap-disclosure">
     <summary>Why is example.com marked degraded?</summary>
     <div class="cap-disclosure-body">
-      <p>
-        Its median response over the last hour is 2.4 seconds, more than three times its median over
-        the week (0.6 seconds).
-      </p>
+      <p>Its median response over the last hour is 2.4 seconds, more than three times its median over the week (0.6 seconds).</p>
     </div>
   </details>
 </section>
@@ -16,14 +13,8 @@
   <details class="cap-disclosure" open>
     <summary>What the watcher checks</summary>
     <div class="cap-disclosure-body">
-      <p>
-        Every five minutes it asks each site's health route for its commit, and whether its database
-        and queue respond.
-      </p>
-      <p>
-        A site with no health route is asked for its home page; a 200 from there counts as alive and
-        nothing more.
-      </p>
+      <p>Every five minutes it asks each site's health route for its commit, and whether its database and queue respond.</p>
+      <p>A site with no health route is asked for its home page; a 200 from there counts as alive and nothing more.</p>
     </div>
   </details>
 </section>
@@ -32,36 +23,22 @@
   <h2 id="s-exclusive">Sections that open one at a time</h2>
   <details class="cap-disclosure" name="limits" open>
     <summary>Worker requests</summary>
-    <div class="cap-disclosure-body">
-      <p>100,000 a day on the free plan. Resets at 00:00 UTC.</p>
-    </div>
+    <div class="cap-disclosure-body"><p>100,000 a day on the free plan. Resets at 00:00 UTC.</p></div>
   </details>
   <details class="cap-disclosure" name="limits">
     <summary>D1 rows read</summary>
-    <div class="cap-disclosure-body">
-      <p>5 million a day on the free plan. At the limit, reads fail until the reset.</p>
-    </div>
+    <div class="cap-disclosure-body"><p>5 million a day on the free plan. At the limit, reads fail until the reset.</p></div>
   </details>
   <details class="cap-disclosure" name="limits">
     <summary>KV writes</summary>
-    <div class="cap-disclosure-body">
-      <p>1,000 a day on the free plan. At the limit, the watcher cannot save its pass.</p>
-    </div>
+    <div class="cap-disclosure-body"><p>1,000 a day on the free plan. At the limit, the watcher cannot save its pass.</p></div>
   </details>
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-collapsed">
   <h2 id="s-collapsed">Group row, collapsed, with its count</h2>
   <div class="cap-group" data-cap="disclosure">
-    <button
-      type="button"
-      class="cap-group-toggle"
-      aria-expanded="false"
-      aria-controls="notices-rows"
-    >
-      <span class="cap-group-label">Notices</span><span class="cap-sr-only">, </span
-      ><span class="cap-group-count">4</span>
-    </button>
+    <button type="button" class="cap-group-toggle" aria-expanded="false" aria-controls="notices-rows"><span class="cap-group-label">Notices</span><span class="cap-sr-only">, </span><span class="cap-group-count">4</span></button>
     <ul class="cap-group-rows" id="notices-rows" hidden>
       <li>api: 3 dependency updates waiting, none urgent</li>
       <li>docs: a reviewer's flag has waited 2 days</li>
@@ -74,29 +51,13 @@
 <section class="cap-specimen" aria-labelledby="s-expanded">
   <h2 id="s-expanded">Group row, expanded, two levels</h2>
   <div class="cap-group" data-cap="disclosure">
-    <button
-      type="button"
-      class="cap-group-toggle"
-      aria-expanded="true"
-      aria-controls="updates-rows"
-    >
-      <span class="cap-group-label">Dependency updates</span><span class="cap-sr-only">, </span
-      ><span class="cap-group-count">5</span>
-    </button>
+    <button type="button" class="cap-group-toggle" aria-expanded="true" aria-controls="updates-rows"><span class="cap-group-label">Dependency updates</span><span class="cap-sr-only">, </span><span class="cap-group-count">5</span></button>
     <ul class="cap-group-rows" id="updates-rows">
       <li>api: vite 8.3.1 to 8.4.0</li>
       <li>api: wrangler 4.40.0 to 4.41.2</li>
       <li class="cap-group-nest">
         <div class="cap-group" data-cap="disclosure">
-          <button
-            type="button"
-            class="cap-group-toggle"
-            aria-expanded="false"
-            aria-controls="docs-updates"
-          >
-            <span class="cap-group-label">docs</span><span class="cap-sr-only">, </span
-            ><span class="cap-group-count">3</span>
-          </button>
+          <button type="button" class="cap-group-toggle" aria-expanded="false" aria-controls="docs-updates"><span class="cap-group-label">docs</span><span class="cap-sr-only">, </span><span class="cap-group-count">3</span></button>
           <ul class="cap-group-rows" id="docs-updates" hidden>
             <li>react 19.3.0 to 19.3.1</li>
             <li>react-dom 19.3.0 to 19.3.1</li>
@@ -110,17 +71,7 @@
 <section class="cap-specimen" aria-labelledby="s-heading">
   <h2 id="s-heading">Group row in a heading</h2>
   <div class="cap-group" data-cap="disclosure">
-    <h3 class="cap-group-heading">
-      <button
-        type="button"
-        class="cap-group-toggle"
-        aria-expanded="false"
-        aria-controls="queue-done-rows"
-      >
-        <span class="cap-group-label">Finished jobs</span><span class="cap-sr-only">, </span
-        ><span class="cap-group-count">12</span>
-      </button>
-    </h3>
+    <h3 class="cap-group-heading"><button type="button" class="cap-group-toggle" aria-expanded="false" aria-controls="queue-done-rows"><span class="cap-group-label">Finished jobs</span><span class="cap-sr-only">, </span><span class="cap-group-count">12</span></button></h3>
     <ul class="cap-group-rows" id="queue-done-rows" hidden>
       <li>Run the browser tests for capsomer</li>
       <li>Refresh the uptime strip fixtures</li>
@@ -145,18 +96,11 @@
   <div data-density="comfortable" id="accordion-specimen">
     <details class="cap-disclosure" data-variant="accordion" name="faq" open>
       <summary>Is it accessible?</summary>
-      <div class="cap-disclosure-body">
-        <p>Yes. It is a native details element, so it works with a keyboard and a screen reader.</p>
-      </div>
+      <div class="cap-disclosure-body"><p>Yes. It is a native details element, so it works with a keyboard and a screen reader.</p></div>
     </details>
     <details class="cap-disclosure" data-variant="accordion" name="faq">
       <summary data-force="hover">Is it animated?</summary>
-      <div class="cap-disclosure-body">
-        <p>
-          The panel grows and shrinks where the browser can animate to auto height, and only when
-          motion is allowed.
-        </p>
-      </div>
+      <div class="cap-disclosure-body"><p>The panel grows and shrinks where the browser can animate to auto height, and only when motion is allowed.</p></div>
     </details>
     <details class="cap-disclosure" data-variant="accordion" name="faq">
       <summary>Can it be styled?</summary>
@@ -170,15 +114,11 @@
   <div id="accordion-headings-specimen">
     <details class="cap-disclosure" data-variant="accordion" name="setup" open>
       <summary><h3>Connect a site</h3></summary>
-      <div class="cap-disclosure-body">
-        <p>Add the site's address and the token from its admin page.</p>
-      </div>
+      <div class="cap-disclosure-body"><p>Add the site's address and the token from its admin page.</p></div>
     </details>
     <details class="cap-disclosure" data-variant="accordion" name="setup">
       <summary><h3>Choose who is told</h3></summary>
-      <div class="cap-disclosure-body">
-        <p>Failures go to the site's owner; a warning waits for the morning digest.</p>
-      </div>
+      <div class="cap-disclosure-body"><p>Failures go to the site's owner; a warning waits for the morning digest.</p></div>
     </details>
   </div>
 </section>
@@ -186,50 +126,25 @@
 <section class="cap-specimen" aria-labelledby="s-card">
   <h2 id="s-card">Card variant (a questions list), one open at a time</h2>
   <ul id="card-specimen" style="display: grid; gap: 12px; margin: 0; padding: 0; list-style: none">
-    <li>
-      <details class="cap-disclosure" data-variant="card" name="card-faq" open>
-        <summary>Does it change my billing settings?</summary>
-        <div class="cap-disclosure-body"><p>No. It reads the account and changes nothing.</p></div>
-      </details>
-    </li>
-    <li>
-      <details class="cap-disclosure" data-variant="card" name="card-faq">
-        <summary data-force="hover">Can I cancel anytime?</summary>
-        <div class="cap-disclosure-body"><p>Yes, from the settings page.</p></div>
-      </details>
-    </li>
+    <li><details class="cap-disclosure" data-variant="card" name="card-faq" open>
+      <summary>Does it change my billing settings?</summary>
+      <div class="cap-disclosure-body"><p>No. It reads the account and changes nothing.</p></div>
+    </details></li>
+    <li><details class="cap-disclosure" data-variant="card" name="card-faq">
+      <summary data-force="hover">Can I cancel anytime?</summary>
+      <div class="cap-disclosure-body"><p>Yes, from the settings page.</p></div>
+    </details></li>
   </ul>
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-disabled">
   <h2 id="s-disabled">Group row, pressed and disabled</h2>
   <div class="cap-group" data-cap="disclosure">
-    <button
-      type="button"
-      class="cap-group-toggle"
-      data-force="pressed"
-      aria-expanded="false"
-      aria-controls="pressed-rows"
-    >
-      <span class="cap-group-label">Pressed</span><span class="cap-sr-only">, </span
-      ><span class="cap-group-count">2</span>
-    </button>
-    <ul class="cap-group-rows" id="pressed-rows" hidden>
-      <li>One</li>
-      <li>Two</li>
-    </ul>
+    <button type="button" class="cap-group-toggle" data-force="pressed" aria-expanded="false" aria-controls="pressed-rows"><span class="cap-group-label">Pressed</span><span class="cap-sr-only">, </span><span class="cap-group-count">2</span></button>
+    <ul class="cap-group-rows" id="pressed-rows" hidden><li>One</li><li>Two</li></ul>
   </div>
   <div class="cap-group" data-cap="disclosure">
-    <button
-      type="button"
-      class="cap-group-toggle"
-      disabled
-      aria-expanded="false"
-      aria-controls="disabled-rows"
-    >
-      <span class="cap-group-label">Archived</span><span class="cap-sr-only">, </span
-      ><span class="cap-group-count">0</span>
-    </button>
+    <button type="button" class="cap-group-toggle" disabled aria-expanded="false" aria-controls="disabled-rows"><span class="cap-group-label">Archived</span><span class="cap-sr-only">, </span><span class="cap-group-count">0</span></button>
     <ul class="cap-group-rows" id="disabled-rows" hidden></ul>
   </div>
 </section>

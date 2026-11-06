@@ -1,20 +1,9 @@
 <section class="cap-specimen" aria-labelledby="s-live">
   <h2 id="s-live">None pressed (live)</h2>
-  <div
-    class="cap-chips"
-    data-cap="chips"
-    data-param="status"
-    role="group"
-    aria-labelledby="chips-live-l"
-    id="chips-live"
-  >
+  <div class="cap-chips" data-cap="chips" data-param="status" role="group" aria-labelledby="chips-live-l" id="chips-live">
     <span class="cap-chips-label" id="chips-live-l">Status</span>
-    <button type="button" class="cap-chip" aria-pressed="false" data-value="blocked">
-      Blocked
-    </button>
-    <button type="button" class="cap-chip" aria-pressed="false" data-value="running">
-      Running
-    </button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="blocked">Blocked</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="running">Running</button>
     <button type="button" class="cap-chip" aria-pressed="false" data-value="queued">Queued</button>
     <button type="button" class="cap-chip" aria-pressed="false" data-value="done">Done</button>
     <button type="button" class="cap-link-btn" data-cap-part="clear" hidden>Clear</button>
@@ -30,25 +19,9 @@
   <h2 id="s-some">Some pressed, with the count</h2>
   <div class="cap-chips" role="group" aria-labelledby="chips-some-l" id="chips-some">
     <span class="cap-chips-label" id="chips-some-l">Status</span>
-    <button
-      type="button"
-      class="cap-chip"
-      aria-pressed="true"
-      data-value="blocked"
-      id="chip-pressed"
-    >
-      Blocked
-    </button>
+    <button type="button" class="cap-chip" aria-pressed="true" data-value="blocked" id="chip-pressed">Blocked</button>
     <button type="button" class="cap-chip" aria-pressed="true" data-value="running">Running</button>
-    <button
-      type="button"
-      class="cap-chip"
-      aria-pressed="false"
-      data-value="queued"
-      id="chip-unpressed"
-    >
-      Queued
-    </button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="queued" id="chip-unpressed">Queued</button>
     <button type="button" class="cap-chip" aria-pressed="false" data-value="done">Done</button>
     <button type="button" class="cap-link-btn" id="chips-some-clear">Clear</button>
     <span class="cap-chips-count" role="status" id="chips-some-count">5 of 14 jobs</span>
@@ -60,16 +33,8 @@
   <nav aria-label="Tags" id="chips-links">
     <ul class="cap-chips">
       <li><a class="cap-chip" href="?">Any tag</a></li>
-      <li>
-        <a class="cap-chip" href="?tag=release" aria-current="true" id="chip-link-current"
-          >release <span class="cap-chip-count">4</span></a
-        >
-      </li>
-      <li>
-        <a class="cap-chip" href="?tag=capsid" id="chip-link"
-          >capsid <span class="cap-chip-count">7</span></a
-        >
-      </li>
+      <li><a class="cap-chip" href="?tag=release" aria-current="true" id="chip-link-current">release <span class="cap-chip-count">4</span></a></li>
+      <li><a class="cap-chip" href="?tag=capsid" id="chip-link">capsid <span class="cap-chip-count">7</span></a></li>
     </ul>
   </nav>
 </section>
@@ -80,9 +45,7 @@
   <div class="cap-chips" role="group" aria-labelledby="chips-focus-l">
     <span class="cap-chips-label" id="chips-focus-l">Kind</span>
     <button type="button" class="cap-chip" aria-pressed="false">Reply</button>
-    <button type="button" class="cap-chip" aria-pressed="false" data-force="hover" id="chip-hover">
-      Link
-    </button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-force="hover" id="chip-hover">Link</button>
     <button type="button" class="cap-chip" aria-pressed="false">Like</button>
     <span class="cap-chips-count" role="status">23 mentions</span>
   </div>
@@ -102,47 +65,19 @@
     <p id="empty-text">No jobs match "Blocked". 14 jobs are hidden by this filter.</p>
     <button type="button" class="cap-btn">Clear filter</button>
   </div>
-  <p class="cap-muted">
-    In an app this is the empty component's no-match kind, which names the filter and offers Clear.
-  </p>
+  <p class="cap-muted">In an app this is the empty component's no-match kind, which names the filter and offers Clear.</p>
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-more">
   <h2 id="s-more">Pressed and hovered, small and large, disabled, with a count and an icon</h2>
   <div class="cap-chips" role="group" aria-labelledby="chips-more-l" id="chips-more">
     <span class="cap-chips-label" id="chips-more-l">States</span>
-    <button
-      type="button"
-      class="cap-chip"
-      aria-pressed="true"
-      data-force="hover"
-      id="chip-pressed-hover"
-    >
-      Blocked
-    </button>
-    <button type="button" class="cap-chip" aria-pressed="false" data-size="sm" id="chip-sm">
-      Small
-    </button>
-    <button type="button" class="cap-chip" aria-pressed="false" data-size="lg" id="chip-lg">
-      Large
-    </button>
-    <button
-      type="button"
-      class="cap-chip"
-      aria-pressed="false"
-      aria-disabled="true"
-      id="chip-disabled"
-    >
-      Archived
-    </button>
-    <button type="button" class="cap-chip" aria-pressed="false" id="chip-count">
-      Failed <span class="cap-chip-count">3</span>
-    </button>
-    <button type="button" class="cap-chip" aria-pressed="true" id="chip-icon">
-      <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-        <circle cx="8" cy="8" r="5" fill="currentColor" /></svg
-      >Live
-    </button>
+    <button type="button" class="cap-chip" aria-pressed="true" data-force="hover" id="chip-pressed-hover">Blocked</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-size="sm" id="chip-sm">Small</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-size="lg" id="chip-lg">Large</button>
+    <button type="button" class="cap-chip" aria-pressed="false" aria-disabled="true" id="chip-disabled">Archived</button>
+    <button type="button" class="cap-chip" aria-pressed="false" id="chip-count">Failed <span class="cap-chip-count">3</span></button>
+    <button type="button" class="cap-chip" aria-pressed="true" id="chip-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5" fill="currentColor" /></svg>Live</button>
   </div>
 </section>
 
@@ -167,8 +102,7 @@
     const n = values.length ? values.reduce((sum, v) => sum + (jobs[v] ?? 0), 0) : total;
     setCount(live, values.length ? `${n} of ${total} jobs` : `${total} jobs`);
     empty.hidden = !(values.length && n === 0);
-    document.querySelector("#live-empty-text").textContent =
-      `No jobs match ${values.map((v) => `"${names[v]}"`).join(" or ")}.`;
+    document.querySelector("#live-empty-text").textContent = `No jobs match ${values.map((v) => `"${names[v]}"`).join(" or ")}.`;
   };
   enhance();
   render();
@@ -178,25 +112,9 @@
 
 <section class="cap-specimen" aria-labelledby="s-solid">
   <h2 id="s-solid">Solid, one of a few with All</h2>
-  <div
-    class="cap-chips"
-    data-variant="solid"
-    role="group"
-    aria-label="Filter features by product"
-    id="chips-solid"
-  >
+  <div class="cap-chips" data-variant="solid" role="group" aria-label="Filter features by product" id="chips-solid">
     <button type="button" class="cap-chip" aria-pressed="true" data-value="All">All</button>
-    <button
-      type="button"
-      class="cap-chip"
-      aria-pressed="false"
-      data-value="Reports"
-      data-force="hover"
-    >
-      Reports
-    </button>
-    <button type="button" class="cap-chip" aria-pressed="false" data-value="Invoices">
-      Invoices
-    </button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="Reports" data-force="hover">Reports</button>
+    <button type="button" class="cap-chip" aria-pressed="false" data-value="Invoices">Invoices</button>
   </div>
 </section>

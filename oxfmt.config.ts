@@ -18,5 +18,7 @@ export default defineConfig({
     "css/fonts.css",
     "css/fallback-fonts.css",
     "components/email/colors.ts",
+    // The components' hand-written example markup: the browser specs assert on the delivered HTML byte for byte.
+    "components/*/examples.html",
   ],
 });

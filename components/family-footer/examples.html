@@ -17,25 +17,11 @@
 
 <template id="center-capsid">
   <div class="cap-family-footer-center">
-    <div>
-      <p class="cap-family-footer-center-name">Capsid</p>
-      <p class="cap-family-footer-about">Shared memory and checks for AI coding agents.</p>
-    </div>
+    <div><p class="cap-family-footer-center-name">Capsid</p><p class="cap-family-footer-about">Shared memory and checks for AI coding agents.</p></div>
     <div class="cap-family-footer-columns">
-      <ul class="cap-family-footer-links">
-        <li><a href="#">Overview</a></li>
-        <li><a href="#">Systems</a></li>
-        <li><a href="#">Flows</a></li>
-      </ul>
-      <ul class="cap-family-footer-links">
-        <li><a href="#">Tools</a></li>
-        <li><a href="#">Numbers</a></li>
-        <li><a href="#">Code</a></li>
-      </ul>
-      <ul class="cap-family-footer-links">
-        <li><a href="#">Source</a></li>
-        <li><a href="#">Install</a></li>
-      </ul>
+      <ul class="cap-family-footer-links"><li><a href="#">Overview</a></li><li><a href="#">Systems</a></li><li><a href="#">Flows</a></li></ul>
+      <ul class="cap-family-footer-links"><li><a href="#">Tools</a></li><li><a href="#">Numbers</a></li><li><a href="#">Code</a></li></ul>
+      <ul class="cap-family-footer-links"><li><a href="#">Source</a></li><li><a href="#">Install</a></li></ul>
     </div>
     <p class="cap-family-footer-stamp"><span>Data as of 2026-10-26</span><span>125 pages</span></p>
   </div>
@@ -43,22 +29,11 @@
 
 <template id="center-capsomer">
   <div class="cap-family-footer-center">
-    <div>
-      <p class="cap-family-footer-center-name">Capsomer</p>
-      <p class="cap-family-footer-about">The family design system. Plain CSS, MIT licensed.</p>
-    </div>
+    <div><p class="cap-family-footer-center-name">Capsomer</p><p class="cap-family-footer-about">The family design system. Plain CSS, MIT licensed.</p></div>
     <div class="cap-family-footer-columns">
-      <ul class="cap-family-footer-links">
-        <li><a href="#">Components</a></li>
-        <li><a href="#">Theme builder</a></li>
-      </ul>
-      <ul class="cap-family-footer-links">
-        <li><a href="#">Source</a></li>
-        <li><a href="#">Changes</a></li>
-      </ul>
-      <ul class="cap-family-footer-links">
-        <li><a href="#">Admin</a></li>
-      </ul>
+      <ul class="cap-family-footer-links"><li><a href="#">Components</a></li><li><a href="#">Theme builder</a></li></ul>
+      <ul class="cap-family-footer-links"><li><a href="#">Source</a></li><li><a href="#">Changes</a></li></ul>
+      <ul class="cap-family-footer-links"><li><a href="#">Admin</a></li></ul>
     </div>
     <p class="cap-family-footer-stamp"><span>Version 0.26.0</span></p>
   </div>
@@ -68,11 +43,6 @@
   import { familyFooterHtml } from "./family-footer.ts";
   for (const el of document.querySelectorAll("#m-purple, #m-teal, #m-magenta")) {
     const center = document.getElementById(`center-${el.dataset.site}`)?.innerHTML ?? "";
-    el.innerHTML = familyFooterHtml({
-      origin: el.dataset.origin,
-      site: el.dataset.site,
-      center,
-      year: 2026,
-    });
+    el.innerHTML = familyFooterHtml({ origin: el.dataset.origin, site: el.dataset.site, center, year: 2026 });
   }
 </script>
