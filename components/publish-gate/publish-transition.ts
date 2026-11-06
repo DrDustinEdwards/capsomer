@@ -14,9 +14,21 @@ export interface Transition {
   danger: boolean;
 }
 
-const SAVE_DRAFT: Transition = { id: "save-draft", label: "Save draft", wantsDraft: true, ceremony: false, danger: false };
+const SAVE_DRAFT: Transition = {
+  id: "save-draft",
+  label: "Save draft",
+  wantsDraft: true,
+  ceremony: false,
+  danger: false,
+};
 
-const SAVE_CHANGES: Transition = { id: "save", label: "Update", wantsDraft: false, ceremony: false, danger: false };
+const SAVE_CHANGES: Transition = {
+  id: "save",
+  label: "Update",
+  wantsDraft: false,
+  ceremony: false,
+  danger: false,
+};
 
 const UNPUBLISH: Transition = {
   id: "unpublish",
@@ -27,7 +39,10 @@ const UNPUBLISH: Transition = {
   danger: true,
 };
 
-export function transitionsFor(state: PostState, everPublished: boolean): [Transition, ...Transition[]] {
+export function transitionsFor(
+  state: PostState,
+  everPublished: boolean,
+): [Transition, ...Transition[]] {
   if (state === "draft") {
     return [
       {
@@ -49,14 +64,22 @@ export function transitionsFor(state: PostState, everPublished: boolean): [Trans
 export const PUBLISH_CONFIRMED_INTENT = "publish-confirmed";
 
 /** What the first-publication confirmation says, with or without script. */
-export const FIRST_PUBLICATION_NOTE = "It has never been public. Publishing puts it on the blog, in the feed, the sitemap, the search index and the AI answer layer.";
+export const FIRST_PUBLICATION_NOTE =
+  "It has never been public. Publishing puts it on the blog, in the feed, the sitemap, the search index and the AI answer layer.";
 
 // No prototype, so an intent such as "constructor" is unknown here too, not Object.prototype's.
 export const DRAFT_BY_INTENT: Readonly<Record<string, boolean>> = Object.freeze(
-  Object.assign(Object.create(null) as Record<string, boolean>, Object.fromEntries([
-    ...[...transitionsFor("draft", false), ...transitionsFor("draft", true), ...transitionsFor("published", true)].map((t) => [t.id, t.wantsDraft]),
-    [PUBLISH_CONFIRMED_INTENT, false],
-  ])),
+  Object.assign(
+    Object.create(null) as Record<string, boolean>,
+    Object.fromEntries([
+      ...[
+        ...transitionsFor("draft", false),
+        ...transitionsFor("draft", true),
+        ...transitionsFor("published", true),
+      ].map((t) => [t.id, t.wantsDraft]),
+      [PUBLISH_CONFIRMED_INTENT, false],
+    ]),
+  ),
 );
 
 /** Fails closed: an unknown intent is a draft, so the failure mode is a post that stays private. */

@@ -8,22 +8,40 @@ import { fallbackFontFace, LOCAL } from "../../tokens/fallback-fonts.mjs";
 
 const metrics = { ascent: 1000, descent: -250, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 450 };
 const rules = (css) =>
-  css.split("@font-face").slice(1).map((r) => {
-    const [lo, hi] = r.match(/font-weight: (\d+) (\d+);/).slice(1).map(Number);
-    return { lo, hi, size: Number.parseFloat(r.match(/size-adjust: ([\d.]+)%/)[1]), bold: r.includes(`local("${LOCAL.Arial.bold.src[0]}")`) };
-  });
+  css
+    .split("@font-face")
+    .slice(1)
+    .map((r) => {
+      const [lo, hi] = r
+        .match(/font-weight: (\d+) (\d+);/)
+        .slice(1)
+        .map(Number);
+      return {
+        lo,
+        hi,
+        size: Number.parseFloat(r.match(/size-adjust: ([\d.]+)%/)[1]),
+        bold: r.includes(`local("${LOCAL.Arial.bold.src[0]}")`),
+      };
+    });
 
 test("fallbackFontFace with widths: the weight ranges cover 1 to 1000 once, and each measured weight gets its own width", () => {
   for (const widths of [{ 700: 470 }, { 600: 460, 700: 470 }, { 600: 460, 700: 470, 800: 480 }]) {
     const r = rules(fallbackFontFace({ family: "Sample", metrics, widths }));
     assert.equal(r[0].lo, 1);
     assert.equal(r.at(-1).hi, 1000);
-    for (let i = 1; i < r.length; i++) assert.equal(r[i].lo, r[i - 1].hi + 1, "ranges touch with no gap or overlap");
+    for (let i = 1; i < r.length; i++)
+      assert.equal(r[i].lo, r[i - 1].hi + 1, "ranges touch with no gap or overlap");
     const at = (w) => r.find((x) => x.lo <= w && w <= x.hi);
     assert.equal(at(400).bold, false);
-    assert.equal(at(500).bold, false, "500 stays on the regular face, as the browser's own matching does");
+    assert.equal(
+      at(500).bold,
+      false,
+      "500 stays on the regular face, as the browser's own matching does",
+    );
     for (const [w, x] of Object.entries(widths)) {
-      const expected = Number.parseFloat(((x / 1000 / (LOCAL.Arial.bold.xWidthAvg / 2048)) * 100).toFixed(4));
+      const expected = Number.parseFloat(
+        ((x / 1000 / (LOCAL.Arial.bold.xWidthAvg / 2048)) * 100).toFixed(4),
+      );
       assert.equal(at(Number(w)).bold, true);
       assert.equal(at(Number(w)).size, expected, `weight ${w} is scaled to its own width`);
     }

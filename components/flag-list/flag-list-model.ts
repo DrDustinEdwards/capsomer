@@ -48,7 +48,8 @@ export interface Flag {
 // ---------------------------------------------------------------------------------------
 // Pure helpers.
 
-const byState = (a: Flag, b: Flag) => Number(a.state === "resolved") - Number(b.state === "resolved");
+const byState = (a: Flag, b: Flag) =>
+  Number(a.state === "resolved") - Number(b.state === "resolved");
 
 // Blocking first, then advisory; within each, open flags before resolved ones, in the order given.
 export function groupFlags(flags: readonly Flag[]): { blocking: Flag[]; advisory: Flag[] } {
@@ -73,7 +74,13 @@ export interface FlagCounts {
 export function countFlags(flags: readonly Flag[]): FlagCounts {
   const open = flags.filter((f) => f.state === "open");
   const blocking = open.filter((f) => f.kind === "blocking").length;
-  return { blocking, advisory: open.length - blocking, open: open.length, resolved: flags.length - open.length, total: flags.length };
+  return {
+    blocking,
+    advisory: open.length - blocking,
+    open: open.length,
+    resolved: flags.length - open.length,
+    total: flags.length,
+  };
 }
 
 // "2 blocking, 3 advisory, 4 resolved". With nothing open it says so.
@@ -94,7 +101,12 @@ function occurrences(text: string, quote: string): number[] {
 // The occurrence the flag means: the one whose neighbors match the recorded context, else the first.
 function pick(text: string, a: FlagAnchor, hits: number[]): number {
   if (hits.length > 1 && (a.before || a.after)) {
-    const fit = hits.find((i) => (!a.before || text.slice(Math.max(0, i - a.before.length), i) === a.before) && (!a.after || text.slice(i + a.quote.length, i + a.quote.length + a.after.length) === a.after));
+    const fit = hits.find(
+      (i) =>
+        (!a.before || text.slice(Math.max(0, i - a.before.length), i) === a.before) &&
+        (!a.after ||
+          text.slice(i + a.quote.length, i + a.quote.length + a.after.length) === a.after),
+    );
     if (fit !== undefined) return fit;
   }
   return hits[0] ?? -1;
@@ -111,7 +123,10 @@ export function anchorStatus(flag: Pick<Flag, "anchor">, text?: string): AnchorS
 
 // The text with the suggestion put in place of the quoted passage; null when the flag has no
 // suggestion or its anchor has gone. Pure: it never touches the page.
-export function applySuggestion(text: string, flag: Pick<Flag, "anchor" | "suggestion">): string | null {
+export function applySuggestion(
+  text: string,
+  flag: Pick<Flag, "anchor" | "suggestion">,
+): string | null {
   const a = flag.anchor;
   if (!a || !flag.suggestion) return null;
   const i = pick(text, a, occurrences(text, a.quote));
@@ -121,7 +136,10 @@ export function applySuggestion(text: string, flag: Pick<Flag, "anchor" | "sugge
 
 // The inverse, for Undo: puts the quote back where the replacement now is. null when the
 // replacement is not there any more (the draft was edited since).
-export function revertSuggestion(text: string, flag: Pick<Flag, "anchor" | "suggestion">): string | null {
+export function revertSuggestion(
+  text: string,
+  flag: Pick<Flag, "anchor" | "suggestion">,
+): string | null {
   const a = flag.anchor;
   const s = flag.suggestion;
   if (!a || !s || !s.replacement) return null;
@@ -132,5 +150,7 @@ export function revertSuggestion(text: string, flag: Pick<Flag, "anchor" | "sugg
 
 // The flags whose suggestion can be applied now: open, with a suggestion, and the passage still there.
 export function appliable(flags: readonly Flag[], text?: string): Flag[] {
-  return flags.filter((f) => f.state === "open" && f.suggestion && anchorStatus(f, text) === "found");
+  return flags.filter(
+    (f) => f.state === "open" && f.suggestion && anchorStatus(f, text) === "found",
+  );
 }

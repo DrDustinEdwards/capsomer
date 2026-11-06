@@ -1,8 +1,19 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, ringContrast, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  ringContrast,
+  visitStates,
+} from "../../test/helpers.ts";
 
 const firstColumn = (page: Page, table: string, col: number) =>
-  page.locator(`${table} tbody tr`).evaluateAll((rows, c) => rows.map((r) => (r as HTMLTableRowElement).cells[c]?.textContent?.trim() ?? ""), col);
+  page
+    .locator(`${table} tbody tr`)
+    .evaluateAll(
+      (rows, c) => rows.map((r) => (r as HTMLTableRowElement).cells[c]?.textContent?.trim() ?? ""),
+      col,
+    );
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -21,7 +32,9 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: a column note, small print and the foot link reach their contrast", async ({ page }) => {
+  test("accessibility: a column note, small print and the foot link reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "table", theme);
     await expectContrast(page, [
       { sel: "#t5 thead .cap-table-note", what: "a note under a column's name" },
@@ -30,11 +43,16 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: headers, cells, links and the sort glyph reach their contrast", async ({ page }) => {
+  test("accessibility: headers, cells, links and the sort glyph reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "table", theme);
     await expectContrast(page, [
       { sel: "#t1 thead th:nth-child(2)", what: "a column header" },
-      { sel: "#t1 thead th:first-child .cap-table-sort", what: "a sortable column header (and its glyph, at 4.5:1)" },
+      {
+        sel: "#t1 thead th:first-child .cap-table-sort",
+        what: "a sortable column header (and its glyph, at 4.5:1)",
+      },
       { sel: "#t2 thead th[aria-sort] .cap-table-sort", what: "the sorted column's header" },
       { sel: "#t1 tbody td[data-num]", what: "a number cell" },
       { sel: "#t1 tbody .cap-table-open", what: "a row's link" },
@@ -45,7 +63,9 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: selected rows, the footer and the empty cell reach their contrast", async ({ page }) => {
+  test("accessibility: selected rows, the footer and the empty cell reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "table", theme);
     await expectContrast(page, [
       { sel: "#t6 #t6-selected th", what: "a selected row's header cell on --sel" },
@@ -58,7 +78,9 @@ eachTheme((theme) => {
 
   test("behavior: a selected row says so with more than color", async ({ page }) => {
     await visitStates(page, "table", theme);
-    const bar = await page.locator("#t6-selected > :first-child").evaluate((el) => getComputedStyle(el).boxShadow);
+    const bar = await page
+      .locator("#t6-selected > :first-child")
+      .evaluate((el) => getComputedStyle(el).boxShadow);
     expect(bar).not.toBe("none");
     await expect(page.getByRole("checkbox", { name: "Select INV002" })).toBeChecked();
   });
@@ -86,35 +108,41 @@ eachTheme((theme) => {
     await visitStates(page, "table", theme, "reflow");
     // The column name is a ::before, which the shared helper cannot select: measured here,
     // its color against the first opaque background behind its cell.
-    const label = await page.locator("#t-reflow td[data-label='Status']").first().evaluate((el) => {
-      const rgb = (v: string) => (v.match(/[\d.]+/g) ?? []).map(Number);
-      const lum = (c: number[]) => {
-        const f = (x: number) => {
-          const t = x / 255;
-          return t <= 0.04045 ? t / 12.92 : Math.pow((t + 0.055) / 1.055, 2.4);
+    const label = await page
+      .locator("#t-reflow td[data-label='Status']")
+      .first()
+      .evaluate((el) => {
+        const rgb = (v: string) => (v.match(/[\d.]+/g) ?? []).map(Number);
+        const lum = (c: number[]) => {
+          const f = (x: number) => {
+            const t = x / 255;
+            return t <= 0.04045 ? t / 12.92 : Math.pow((t + 0.055) / 1.055, 2.4);
+          };
+          return 0.2126 * f(c[0] ?? 0) + 0.7152 * f(c[1] ?? 0) + 0.0722 * f(c[2] ?? 0);
         };
-        return 0.2126 * f(c[0] ?? 0) + 0.7152 * f(c[1] ?? 0) + 0.0722 * f(c[2] ?? 0);
-      };
-      let bg = [255, 255, 255];
-      for (let n: Element | null = el; n; n = n.parentElement) {
-        const c = rgb(getComputedStyle(n).backgroundColor);
-        if ((c[3] ?? 1) >= 1 && c.length >= 3) {
-          bg = c;
-          break;
+        let bg = [255, 255, 255];
+        for (let n: Element | null = el; n; n = n.parentElement) {
+          const c = rgb(getComputedStyle(n).backgroundColor);
+          if ((c[3] ?? 1) >= 1 && c.length >= 3) {
+            bg = c;
+            break;
+          }
         }
-      }
-      const cs = getComputedStyle(el, "::before");
-      const a = lum(rgb(cs.color));
-      const b = lum(bg);
-      return { content: cs.content, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
-    });
+        const cs = getComputedStyle(el, "::before");
+        const a = lum(rgb(cs.color));
+        const b = lum(bg);
+        return { content: cs.content, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
+      });
     expect(label.content).toBe('"Status"');
     expect(label.ratio).toBeGreaterThanOrEqual(4.5);
   });
 
-  test("accessibility: the region, table and headers' roles and names", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "table", theme);
-    await expect(page.locator("#t2")).toMatchAriaSnapshot(`
+  test(
+    "accessibility: the region, table and headers' roles and names",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "table", theme);
+      await expect(page.locator("#t2")).toMatchAriaSnapshot(`
       - region "Worker requests by site, today":
         - table "Worker requests by site, today":
           - rowgroup:
@@ -128,8 +156,9 @@ eachTheme((theme) => {
             - row:
               - rowheader "example.net"
     `);
-    await expect(page.locator("#t2 th[aria-sort='ascending']")).toHaveCount(1);
-  });
+      await expect(page.locator("#t2 th[aria-sort='ascending']")).toHaveCount(1);
+    },
+  );
 
   test("keyboard: the scroll region is focusable and arrow keys scroll it", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 700 });
@@ -162,10 +191,17 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "App" }).focus();
     await page.keyboard.press("Space");
     await expect(page.locator("#t1 thead th").first()).toHaveAttribute("aria-sort", "ascending");
-    expect(await firstColumn(page, "#t1", 0)).toEqual(["Admin", "Docs", "example.com", "Storefront"]);
+    expect(await firstColumn(page, "#t1", 0)).toEqual([
+      "Admin",
+      "Docs",
+      "example.com",
+      "Storefront",
+    ]);
   });
 
-  test("keyboard: a row that opens a detail is one tab stop, and Enter follows it", async ({ page }) => {
+  test("keyboard: a row that opens a detail is one tab stop, and Enter follows it", async ({
+    page,
+  }) => {
     await visitStates(page, "table", theme);
     await page.getByRole("link", { name: "Docs" }).focus();
     await page.keyboard.press("Tab");
@@ -180,7 +216,12 @@ eachTheme((theme) => {
     await page.getByRole("button", { name: "Reported" }).click();
     await expect(page.locator("#t1 thead th[aria-sort]")).toHaveCount(1);
     await expect(page.locator("#t1 thead th").nth(5)).toHaveAttribute("aria-sort", "ascending");
-    expect(await firstColumn(page, "#t1", 0)).toEqual(["Storefront", "example.com", "Docs", "Admin"]);
+    expect(await firstColumn(page, "#t1", 0)).toEqual([
+      "Storefront",
+      "example.com",
+      "Docs",
+      "Admin",
+    ]);
   });
 
   test("behavior: data-sort orders a cell whose text does not sort", async ({ page }) => {
@@ -196,16 +237,22 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/#app-site$/);
   });
 
-  test("behavior: reflow fits the region without scrolling and keeps the header row", async ({ page }) => {
+  test("behavior: reflow fits the region without scrolling and keeps the header row", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 390, height: 700 });
     await visitStates(page, "table", theme, "reflow");
     // The header row stays in the accessibility tree (clipped, not removed).
     await expect(page.locator("#t-reflow thead")).toBeAttached();
-    const overflows = await page.locator("#t-reflow").evaluate((el) => el.scrollWidth > el.clientWidth);
+    const overflows = await page
+      .locator("#t-reflow")
+      .evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(overflows).toBe(false);
   });
 
-  test("behavior: columns marked to drop are shown in a wide region and go, in order, as it narrows", async ({ page }) => {
+  test("behavior: columns marked to drop are shown in a wide region and go, in order, as it narrows", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1400, height: 900 });
     await visitStates(page, "table", theme);
     const width = await page.locator("#t5").evaluate((el) => el.clientWidth);
@@ -224,14 +271,18 @@ eachTheme((theme) => {
     expect(scrolls).toBe(false);
   });
 
-  test("behavior: no data in a cell says its reason to a screen reader, in two words to the eye", async ({ page }) => {
+  test("behavior: no data in a cell says its reason to a screen reader, in two words to the eye", async ({
+    page,
+  }) => {
     await visitStates(page, "table", theme);
     const cell = page.locator("#t5 tbody tr").nth(2).locator("td").nth(2);
     await expect(cell).toContainText("No data");
     await expect(cell.locator(".cap-sr-only")).toHaveText(": no Cloudflare token for this site");
   });
 
-  test("behavior: a row checkbox is above the row link: it ticks, and the row does not open", async ({ page }) => {
+  test("behavior: a row checkbox is above the row link: it ticks, and the row does not open", async ({
+    page,
+  }) => {
     await visitStates(page, "table", theme);
     const label = page.locator("#t-rowcheck tbody tr").first().locator(".cap-check");
     await label.click();

@@ -42,9 +42,9 @@ A reversible on or off preference that applies immediately: single-key shortcuts
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | Moves to the switch |
+| Key   | Does                                          |
+| ----- | --------------------------------------------- |
+| Tab   | Moves to the switch                           |
 | Space | Turns it on or off, at once; the word follows |
 
 ## Accessibility

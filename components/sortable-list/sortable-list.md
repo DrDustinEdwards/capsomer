@@ -4,7 +4,17 @@ title: Sortable list
 summary: Rows or cards a person puts in order, by dragging a grip, by the keyboard or by Move up and Move down, announcing each move and handing the new order to the host.
 parts: [css, behavior, react]
 tool: own JavaScript
-states: [rows, cards, an item up by keyboard, an item under the pointer, a grip under the pointer, the ends' buttons disabled, as delivered with no script inside a form, in React inside a form]
+states:
+  [
+    rows,
+    cards,
+    an item up by keyboard,
+    an item under the pointer,
+    a grip under the pointer,
+    the ends' buttons disabled,
+    as delivered with no script inside a form,
+    in React inside a form,
+  ]
 added: 0.7.0
 source: carrel/research/design-writing-tools.md (4.2, the corkboard) and carrel/rulings/writing-tools-2026-10-10.md (point 7)
 replaces:
@@ -42,14 +52,14 @@ One list whose order is the point: the scenes of a chapter, a corkboard of cards
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Space, Enter on a grip | Picks the item up; again, drops it where it is |
-| Up arrow, Left arrow | While up: one place earlier |
-| Down arrow, Right arrow | While up: one place later |
-| Home, End | While up: to the start, to the end |
-| Escape | While up: puts it back where it was |
-| Tab | Grip, then Move up, then Move down, then the next item |
+| Key                     | Does                                                   |
+| ----------------------- | ------------------------------------------------------ |
+| Space, Enter on a grip  | Picks the item up; again, drops it where it is         |
+| Up arrow, Left arrow    | While up: one place earlier                            |
+| Down arrow, Right arrow | While up: one place later                              |
+| Home, End               | While up: to the start, to the end                     |
+| Escape                  | While up: puts it back where it was                    |
+| Tab                     | Grip, then Move up, then Move down, then the next item |
 
 ## Accessibility
 
@@ -65,16 +75,46 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ```html
 <ol class="cap-sortable" data-cap="sortable-list" aria-label="Scenes in 01 The riverbed">
   <li class="cap-sortable-item" data-value="low-water">
-    <button type="button" class="cap-sortable-handle" aria-describedby="sort-help"><svg aria-hidden="true">...</svg><span class="cap-sr-only">Move Low water</span></button>
-    <div class="cap-sortable-body"><span class="cap-sortable-label">Low water</span><span class="cap-sortable-detail">Ines, 2,140 words</span></div>
+    <button type="button" class="cap-sortable-handle" aria-describedby="sort-help">
+      <svg aria-hidden="true">...</svg><span class="cap-sr-only">Move Low water</span>
+    </button>
+    <div class="cap-sortable-body">
+      <span class="cap-sortable-label">Low water</span
+      ><span class="cap-sortable-detail">Ines, 2,140 words</span>
+    </div>
     <span class="cap-sortable-steps">
-      <button type="submit" name="up" value="low-water" class="cap-btn" data-variant="quiet" data-size="sm" data-icon-only data-cap-part="up" disabled>...<span class="cap-sr-only">Move Low water up</span></button>
-      <button type="submit" name="down" value="low-water" class="cap-btn" data-variant="quiet" data-size="sm" data-icon-only data-cap-part="down">...<span class="cap-sr-only">Move Low water down</span></button>
+      <button
+        type="submit"
+        name="up"
+        value="low-water"
+        class="cap-btn"
+        data-variant="quiet"
+        data-size="sm"
+        data-icon-only
+        data-cap-part="up"
+        disabled
+      >
+        ...<span class="cap-sr-only">Move Low water up</span>
+      </button>
+      <button
+        type="submit"
+        name="down"
+        value="low-water"
+        class="cap-btn"
+        data-variant="quiet"
+        data-size="sm"
+        data-icon-only
+        data-cap-part="down"
+      >
+        ...<span class="cap-sr-only">Move Low water down</span>
+      </button>
     </span>
     <input type="hidden" name="order" value="low-water" />
   </li>
 </ol>
-<p class="cap-sr-only" id="sort-help">To move an item with the keyboard, press Space or Enter on its handle, ...</p>
+<p class="cap-sr-only" id="sort-help">
+  To move an item with the keyboard, press Space or Enter on its handle, ...
+</p>
 ```
 
 Hooks: `data-layout="cards"` (a wrapping grid of cards; rows by default), `data-value` (the id the event names), `data-label` on an item (otherwise `.cap-sortable-label`'s text), `.cap-sortable-label` and `.cap-sortable-detail` for the content. Specimen hooks: `data-lifted`, `data-dragging`, `data-force="lifted"`, and `data-force="hover"` on a grip. With no script, a list outside a form leaves out the grips and the steps.

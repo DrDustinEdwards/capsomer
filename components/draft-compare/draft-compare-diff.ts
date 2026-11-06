@@ -48,7 +48,11 @@ const DEFAULT_MAX_EDITS = 2000;
 // The longest common subsequence of two lists of strings, as index pairs, by Myers' O(ND)
 // algorithm. Equal runs at either end are taken first. Returns null when more than
 // `maxEdits` edits would be needed.
-export function commonSubsequence(a: readonly string[], b: readonly string[], maxEdits = DEFAULT_MAX_EDITS): Array<[number, number]> | null {
+export function commonSubsequence(
+  a: readonly string[],
+  b: readonly string[],
+  maxEdits = DEFAULT_MAX_EDITS,
+): Array<[number, number]> | null {
   let lo = 0;
   while (lo < a.length && lo < b.length && a[lo] === b[lo]) lo++;
   let ea = a.length;
@@ -66,7 +70,11 @@ export function commonSubsequence(a: readonly string[], b: readonly string[], ma
   return out;
 }
 
-function middle(a: readonly string[], b: readonly string[], maxEdits: number): Array<[number, number]> | null {
+function middle(
+  a: readonly string[],
+  b: readonly string[],
+  maxEdits: number,
+): Array<[number, number]> | null {
   const n = a.length;
   const m = b.length;
   if (n === 0 || m === 0) return [];
@@ -79,7 +87,10 @@ function middle(a: readonly string[], b: readonly string[], maxEdits: number): A
   for (let d = 0; d <= limit && found < 0; d++) {
     trace.push(v.slice(off - d - 1, off + d + 2));
     for (let k = -d; k <= d; k += 2) {
-      let x = k === -d || (k !== d && (v[off + k - 1] ?? 0) < (v[off + k + 1] ?? 0)) ? (v[off + k + 1] ?? 0) : (v[off + k - 1] ?? 0) + 1;
+      let x =
+        k === -d || (k !== d && (v[off + k - 1] ?? 0) < (v[off + k + 1] ?? 0))
+          ? (v[off + k + 1] ?? 0)
+          : (v[off + k - 1] ?? 0) + 1;
       let y = x - k;
       while (x < n && y < m && a[x] === b[y]) {
         x++;
@@ -99,7 +110,10 @@ function middle(a: readonly string[], b: readonly string[], maxEdits: number): A
   for (let d = found; d > 0; d--) {
     const snap = trace[d] as Int32Array;
     const k = x - y;
-    const prevK = k === -d || (k !== d && (snap[k - 1 + d + 1] ?? 0) < (snap[k + 1 + d + 1] ?? 0)) ? k + 1 : k - 1;
+    const prevK =
+      k === -d || (k !== d && (snap[k - 1 + d + 1] ?? 0) < (snap[k + 1 + d + 1] ?? 0))
+        ? k + 1
+        : k - 1;
     const prevX = snap[prevK + d + 1] ?? 0;
     const prevY = prevX - prevK;
     while (x > prevX && y > prevY) {
@@ -198,7 +212,8 @@ export interface Sentence {
   para: boolean;
 }
 
-const ABBREVIATION = /(?:\b(?:Dr|Mr|Mrs|Ms|Prof|St|vs|Fig|No|Inc|Ltd|Jr|Sr|e\.g|i\.e|cf)|\b\p{Lu})\.$/u;
+const ABBREVIATION =
+  /(?:\b(?:Dr|Mr|Mrs|Ms|Prof|St|vs|Fig|No|Inc|Ltd|Jr|Sr|e\.g|i\.e|cf)|\b\p{Lu})\.$/u;
 const BOUNDARY = /[.!?]+["'”’)\]]*(\s+)(?=["'“‘([]?[\p{Lu}\p{N}])/gu;
 
 // Splits text into sentences. Each line is its own set of sentences (a heading, a list item
@@ -275,12 +290,18 @@ function align(as: Sentence[], bs: Sentence[], threshold: number): Entry[] {
     return out;
   }
   const sim: number[][] = as.map((a) => bs.map((b) => similarity(a.text, b.text)));
-  const best: number[][] = Array.from({ length: n + 1 }, () => Array.from({ length: m + 1 }, () => 0));
+  const best: number[][] = Array.from({ length: n + 1 }, () =>
+    Array.from({ length: m + 1 }, () => 0),
+  );
   for (let i = n - 1; i >= 0; i--) {
     for (let j = m - 1; j >= 0; j--) {
       const s = (sim[i] as number[])[j] as number;
       const pair = s >= threshold ? s + ((best[i + 1] as number[])[j + 1] as number) : -1;
-      (best[i] as number[])[j] = Math.max(pair, (best[i + 1] as number[])[j] as number, (best[i] as number[])[j + 1] as number);
+      (best[i] as number[])[j] = Math.max(
+        pair,
+        (best[i + 1] as number[])[j] as number,
+        (best[i] as number[])[j + 1] as number,
+      );
     }
   }
   const out: Entry[] = [];
@@ -292,7 +313,10 @@ function align(as: Sentence[], bs: Sentence[], threshold: number): Entry[] {
     if (a && b) {
       const s = (sim[i] as number[])[j] as number;
       const here = (best[i] as number[])[j] as number;
-      if (s >= threshold && Math.abs(here - (s + ((best[i + 1] as number[])[j + 1] as number))) < 1e-9) {
+      if (
+        s >= threshold &&
+        Math.abs(here - (s + ((best[i + 1] as number[])[j + 1] as number))) < 1e-9
+      ) {
         out.push({ op: "change", a, b, parts: diffWords(a.text, b.text) });
         i++;
         j++;
@@ -329,13 +353,19 @@ export function diffSentences(a: string, b: string, options: SentenceOptions = {
   const A = splitSentences(a);
   const B = splitSentences(b);
   const threshold = options.similarity ?? 0.4;
-  const pairs = commonSubsequence(A.map((s) => squash(s.text)), B.map((s) => squash(s.text)), options.maxEdits) ?? [];
+  const pairs =
+    commonSubsequence(
+      A.map((s) => squash(s.text)),
+      B.map((s) => squash(s.text)),
+      options.maxEdits,
+    ) ?? [];
   const out: Entry[] = [];
   let i = 0;
   let j = 0;
   for (const [mi, mj] of [...pairs, [A.length, B.length] as [number, number]]) {
     out.push(...align(A.slice(i, mi), B.slice(j, mj), threshold));
-    if (mi < A.length && mj < B.length) out.push({ op: "same", a: A[mi] as Sentence, b: B[mj] as Sentence });
+    if (mi < A.length && mj < B.length)
+      out.push({ op: "same", a: A[mi] as Sentence, b: B[mj] as Sentence });
     i = mi + 1;
     j = mj + 1;
   }
@@ -364,18 +394,21 @@ export interface Analysis {
   identical: boolean;
 }
 
-const wordsOf = (parts: WordPart[], op: Op) => parts.reduce((n, p) => (p.op === op ? n + countWords(p.text) : n), 0);
+const wordsOf = (parts: WordPart[], op: Op) =>
+  parts.reduce((n, p) => (p.op === op ? n + countWords(p.text) : n), 0);
 
 // Counts what an entry adds and removes, in words.
 function entryWords(e: Entry): { added: number; removed: number } {
   if (e.op === "ins") return { added: countWords(e.b.text), removed: 0 };
   if (e.op === "del") return { added: 0, removed: countWords(e.a.text) };
-  if (e.op === "change") return { added: wordsOf(e.parts, "ins"), removed: wordsOf(e.parts, "del") };
+  if (e.op === "change")
+    return { added: wordsOf(e.parts, "ins"), removed: wordsOf(e.parts, "del") };
   return { added: 0, removed: 0 };
 }
 
 /** @deprecated The British spelling, kept so existing imports work; use `analyze`. */
-export const analyse = (before: string, after: string, options: SentenceOptions = {}): Analysis => analyze(before, after, options); // codespell:ignore
+export const analyse = (before: string, after: string, options: SentenceOptions = {}): Analysis =>
+  analyze(before, after, options); // codespell:ignore
 
 export function analyze(before: string, after: string, options: SentenceOptions = {}): Analysis {
   const entries = diffSentences(before, after, options);

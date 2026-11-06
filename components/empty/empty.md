@@ -4,13 +4,14 @@ title: Empty
 summary: Which kind of empty an area is, and what a long wait says. The skeleton and the spinner live in their own component.
 parts: [css, react]
 tool: native
-states: [nothing yet, no match, all clear, could not load, with an icon, flush, long wait, comfortable]
+states:
+  [nothing yet, no match, all clear, could not load, with an icon, flush, long wait, comfortable]
 added: 0.1.0
 updated: 0.2.0
 source: Capsomer mockup (design/mockup.html, "Empty, loading and error")
 replaces:
   - 'class="(empty|empty-state)[ "]'
-  - "className=\"(empty|empty-state)[ \"]"
+  - 'className="(empty|empty-state)[ "]'
 ---
 
 # Empty
@@ -43,8 +44,8 @@ What an area shows when it has nothing to show. Loading is the [Skeleton and spi
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
+| Key | Does                                                                         |
+| --- | ---------------------------------------------------------------------------- |
 | Tab | Reaches the kind's action (Add, Clear filter, Try again); all clear has none |
 
 ## Accessibility
@@ -65,7 +66,9 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     <p class="cap-empty-title">No sites are watched yet</p>
     <p class="cap-empty-text">Add the first one and its checks start on the next pass.</p>
   </div>
-  <div class="cap-empty-content"><button type="button" class="cap-btn" data-variant="primary">Add a site</button></div>
+  <div class="cap-empty-content">
+    <button type="button" class="cap-btn" data-variant="primary">Add a site</button>
+  </div>
 </div>
 
 <div class="cap-empty" data-kind="no-match" data-flush>
@@ -78,7 +81,9 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 <div class="cap-empty" data-kind="all-clear">
   <div class="cap-empty-header">
-    <p class="cap-empty-title"><span class="cap-status" data-tone="ok">[ok glyph]All clear</span></p>
+    <p class="cap-empty-title">
+      <span class="cap-status" data-tone="ok">[ok glyph]All clear</span>
+    </p>
     <p class="cap-empty-text">No mentions are waiting.</p>
   </div>
 </div>
@@ -86,7 +91,9 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <div class="cap-empty" data-kind="failed" role="alert">
   <div class="cap-empty-header">
     <p class="cap-empty-title">[critical glyph]Could not load the queue</p>
-    <p class="cap-empty-text">The server answered with an error (502). Nothing changed on your side.</p>
+    <p class="cap-empty-text">
+      The server answered with an error (502). Nothing changed on your side.
+    </p>
   </div>
   <div class="cap-empty-content"><button type="button" class="cap-btn">Try again</button></div>
 </div>

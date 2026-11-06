@@ -229,21 +229,35 @@
   }
 
   /* The default look has the quiet shadow shadcn's outline button has in its roomy style. */
-  .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(:disabled, [aria-disabled="true"]) {
+  .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(
+      :disabled,
+      [aria-disabled="true"]
+    ) {
     box-shadow: var(--shadow-xs);
   }
 
   /* A site's sweep (--btn-sweep, off by default): under the pointer the default button fills with
      the primary color from the left and its label and edge turn to match, as Recova's ghost
      button did. Off, the fill has no width and nothing changes. */
-  .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(:disabled, [aria-disabled="true"]) {
+  .cap-btn:where(:not([data-variant]), [data-variant="default"]):not(
+      :disabled,
+      [aria-disabled="true"]
+    ) {
     background-image: linear-gradient(var(--primary), var(--primary));
     background-repeat: no-repeat;
     background-size: 0% 100%;
 
     &:is(:hover, [data-force="hover"]) {
-      --cap-btn-fg: color-mix(in srgb, var(--primary-fg) calc(var(--btn-sweep) * 100%), var(--text));
-      --cap-btn-line: color-mix(in srgb, var(--primary-line) calc(var(--btn-sweep) * 100%), var(--line-strong));
+      --cap-btn-fg: color-mix(
+        in srgb,
+        var(--primary-fg) calc(var(--btn-sweep) * 100%),
+        var(--text)
+      );
+      --cap-btn-line: color-mix(
+        in srgb,
+        var(--primary-line) calc(var(--btn-sweep) * 100%),
+        var(--line-strong)
+      );
       background-size: calc(var(--btn-sweep) * 100%) 100%;
     }
   }
@@ -355,7 +369,9 @@
     /* The press: down to 97% at once, back on a spring when released (Emil Kowalski's 0.97, Arc's
        quick press and spring release). Not on a button that owns a popup: it anchors the popup,
        which must not measure a shrunken trigger. */
-    .cap-btn:is(:active, [data-force="pressed"]):not([aria-haspopup]):not([aria-disabled="true"]):not(:disabled) {
+    .cap-btn:is(:active, [data-force="pressed"]):not([aria-haspopup]):not(
+        [aria-disabled="true"]
+      ):not(:disabled) {
       scale: 0.97;
       transition-duration: var(--dur-fast);
       transition-timing-function: var(--ease-out);

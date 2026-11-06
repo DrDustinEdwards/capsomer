@@ -1,7 +1,16 @@
 import { Fragment, useId, type HTMLAttributes, type ReactNode } from "react";
 import { resultsText, type ListboxMode, type Selection } from "./listbox.ts";
 
-export { emptyText, filterCommands, groupBy, matchesQuery, nextTypeahead, resultsText, step, stepEnabled } from "./listbox.ts";
+export {
+  emptyText,
+  filterCommands,
+  groupBy,
+  matchesQuery,
+  nextTypeahead,
+  resultsText,
+  step,
+  stepEnabled,
+} from "./listbox.ts";
 export type { ListboxMode, Selection } from "./listbox.ts";
 
 // The listbox's HTML contract, rendered from props. The state that changes (which option is
@@ -21,7 +30,15 @@ export interface ListboxProps extends Omit<HTMLAttributes<HTMLDivElement>, "role
   controlled?: boolean;
 }
 
-export function Listbox({ selection = "none", mode = "descendant", variant, controlled, className, children, ...rest }: ListboxProps) {
+export function Listbox({
+  selection = "none",
+  mode = "descendant",
+  variant,
+  controlled,
+  className,
+  children,
+  ...rest
+}: ListboxProps) {
   return (
     <div
       tabIndex={mode === "descendant" ? 0 : undefined}
@@ -40,7 +57,18 @@ export function Listbox({ selection = "none", mode = "descendant", variant, cont
 }
 
 const Check = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
     <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
   </svg>
 );
@@ -64,7 +92,21 @@ export interface OptionProps extends Omit<HTMLAttributes<HTMLDivElement>, "role"
   keys?: readonly string[] | ReactNode;
 }
 
-export function Option({ id, value, selected, active, disabled, tone, keywords, icon, hint, keys, className, children, ...rest }: OptionProps) {
+export function Option({
+  id,
+  value,
+  selected,
+  active,
+  disabled,
+  tone,
+  keywords,
+  icon,
+  hint,
+  keys,
+  className,
+  children,
+  ...rest
+}: OptionProps) {
   const caps = Array.isArray(keys) ? (keys as readonly string[]) : null;
   const hasKeys = hint != null || (caps ? caps.length > 0 : keys != null);
   return (
@@ -121,7 +163,12 @@ export interface OptionGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, "
 export function OptionGroup({ label, className, children, ...rest }: OptionGroupProps) {
   const labelId = useId();
   return (
-    <div {...rest} role="group" aria-labelledby={labelId} className={className ? `cap-listbox-group ${className}` : "cap-listbox-group"}>
+    <div
+      {...rest}
+      role="group"
+      aria-labelledby={labelId}
+      className={className ? `cap-listbox-group ${className}` : "cap-listbox-group"}
+    >
       <div className="cap-listbox-label" id={labelId} role="presentation">
         {label}
       </div>

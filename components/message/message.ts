@@ -97,7 +97,8 @@ export function resolveFocus(f: ReturnFocus | undefined): HTMLElement | null {
   return el?.isConnected ? el : null;
 }
 
-const TEXT_INPUT = /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
+const TEXT_INPUT =
+  /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
 
 // True where a typed z is text, not a command: text inputs, textareas, selects, editable
 // content, and anything that says it is a text box or a combobox.
@@ -111,7 +112,17 @@ export function isTypingTarget(target: EventTarget | null): boolean {
 
 // `z` alone: no Ctrl, Alt, Meta or Shift, not a held repeat, not typed into a field.
 export function isUndoKey(e: KeyboardEvent): boolean {
-  return e.key === "z" && !singleKeysOff() && !e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && !e.repeat && !e.defaultPrevented && !isTypingTarget(e.composedPath()[0] ?? e.target);
+  return (
+    e.key === "z" &&
+    !singleKeysOff() &&
+    !e.ctrlKey &&
+    !e.altKey &&
+    !e.metaKey &&
+    !e.shiftKey &&
+    !e.repeat &&
+    !e.defaultPrevented &&
+    !isTypingTarget(e.composedPath()[0] ?? e.target)
+  );
 }
 
 // The message `z` would undo: the newest one with an Undo that is not already running.
@@ -125,8 +136,10 @@ export type MessageKind = "ok" | "warning" | "failure";
 
 export const GLYPHS: Record<MessageKind, string> = {
   ok: '<path fill="currentColor" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 1 0 8 1zM3.9 9l3 3 5.2-5.6-1.4-1.4-3.8 4.2-1.6-1.6z"/>',
-  warning: '<path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/>',
-  failure: '<path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/>',
+  warning:
+    '<path fill="currentColor" fill-rule="evenodd" d="M8 1.2 15.4 14H.6zM7.3 6h1.4v4H7.3zM7.3 11h1.4v1.4H7.3z"/>',
+  failure:
+    '<path fill="currentColor" fill-rule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4h1.6v5H7.2zM7.2 10.4h1.6V12H7.2z"/>',
 };
 
 // A 16-unit glyph from one of the drawings above (or any inner SVG), hidden from assistive tech:
@@ -287,7 +300,8 @@ function focusInside(r: Region): boolean {
 function settleFocus(r: Region, s: Settle): void {
   if (s.to) return s.to.focus();
   const active = document.activeElement;
-  if (active && r.el.contains(active) && active.isConnected && !(active as HTMLElement).hidden) return;
+  if (active && r.el.contains(active) && active.isConnected && !(active as HTMLElement).hidden)
+    return;
   const back = r.origin instanceof HTMLElement && r.origin.isConnected ? r.origin : null;
   if (s.origin) return (back ?? document.querySelector<HTMLElement>("main"))?.focus();
   const own = s.id !== undefined ? r.items.get(s.id)?.dismissBtn : undefined;
@@ -336,7 +350,9 @@ function region(el: HTMLElement): Region {
 
 // The page's region: the first one enhanced, or the first one present.
 function find(): Region | null {
-  const el = document.querySelector<HTMLElement>("[data-cap='message'][data-cap-ready]") ?? document.querySelector<HTMLElement>("[data-cap='message']");
+  const el =
+    document.querySelector<HTMLElement>("[data-cap='message'][data-cap-ready]") ??
+    document.querySelector<HTMLElement>("[data-cap='message']");
   if (!el) return null;
   if (!el.hasAttribute("data-cap-ready")) enhance(el.parentNode ?? document);
   return region(el);
@@ -361,11 +377,7 @@ export function fail(text: string): void {
 }
 
 function clearIn(r: Region, id?: number): void {
-  set(
-    r,
-    id === undefined ? [] : r.messages.filter((m) => m.id !== id),
-    { origin: true },
-  );
+  set(r, id === undefined ? [] : r.messages.filter((m) => m.id !== id), { origin: true });
 }
 
 // Clears the page's region, lasting messages too.
@@ -402,7 +414,9 @@ async function undoIn(r: Region, id: number): Promise<boolean> {
   if (m.warning !== null) {
     // A result that carried a warning keeps it, without its Undo, and the Undo's own result
     // arrives beside it.
-    const kept = r.messages.map((x) => (x.id === id ? { ...x, undo: null, busy: false, error: null } : x));
+    const kept = r.messages.map((x) =>
+      x.id === id ? { ...x, undo: null, busy: false, error: null } : x,
+    );
     set(r, withMessage(kept, newMessage(r.nextId++, said)), { to, id });
   } else {
     set(
@@ -427,14 +441,17 @@ export function runUndo(): Promise<boolean> {
 // with data-cap-undo-key="off". Returns a function that detaches.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const el of root.querySelectorAll<HTMLElement>("[data-cap='message']:not([data-cap-ready])")) {
+  for (const el of root.querySelectorAll<HTMLElement>(
+    "[data-cap='message']:not([data-cap-ready])",
+  )) {
     el.dataset.capReady = "";
     if (!el.getAttribute("role")) el.setAttribute("role", "status");
     if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Results and failures");
     // A new message is read by itself; the ones before it are not read again.
     if (!el.hasAttribute("aria-atomic")) el.setAttribute("aria-atomic", "false");
     // 0.1.0's region held one text and its two buttons directly: items replace them.
-    for (const old of el.querySelectorAll(":scope > [data-cap-part]:not([data-cap-part='item'])")) old.remove();
+    for (const old of el.querySelectorAll(":scope > [data-cap-part]:not([data-cap-part='item'])"))
+      old.remove();
     const r = region(el);
     const onClick = (e: MouseEvent) => {
       const target = e.target as Element;

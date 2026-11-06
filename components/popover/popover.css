@@ -86,11 +86,19 @@
     --_ty: 4px;
     --_origin: bottom;
   }
-  .cap-popover:is([data-side="left"]:not([data-placed]), [data-side="inline-start"]:not([data-placed]), [data-placed="left"]) {
+  .cap-popover:is(
+    [data-side="left"]:not([data-placed]),
+    [data-side="inline-start"]:not([data-placed]),
+    [data-placed="left"]
+  ) {
     --_tx: 4px;
     --_origin: right;
   }
-  .cap-popover:is([data-side="right"]:not([data-placed]), [data-side="inline-end"]:not([data-placed]), [data-placed="right"]) {
+  .cap-popover:is(
+    [data-side="right"]:not([data-placed]),
+    [data-side="inline-end"]:not([data-placed]),
+    [data-placed="right"]
+  ) {
     --_tx: -4px;
     --_origin: left;
   }
@@ -124,7 +132,8 @@
     rotate: 45deg;
     pointer-events: none;
   }
-  .cap-popover:is([data-side="bottom"]:not([data-placed]), [data-placed="bottom"]) > .cap-popover-arrow {
+  .cap-popover:is([data-side="bottom"]:not([data-placed]), [data-placed="bottom"])
+    > .cap-popover-arrow {
     top: -5px;
     left: var(--cap-arrow-x, 50%);
     translate: -50% 0;
@@ -136,13 +145,23 @@
     translate: -50% 0;
     border-color: transparent var(--_line) var(--_line) transparent;
   }
-  .cap-popover:is([data-side="left"]:not([data-placed]), [data-side="inline-start"]:not([data-placed]), [data-placed="left"]) > .cap-popover-arrow {
+  .cap-popover:is(
+      [data-side="left"]:not([data-placed]),
+      [data-side="inline-start"]:not([data-placed]),
+      [data-placed="left"]
+    )
+    > .cap-popover-arrow {
     right: -5px;
     top: var(--cap-arrow-y, 50%);
     translate: 0 -50%;
     border-color: var(--_line) var(--_line) transparent transparent;
   }
-  .cap-popover:is([data-side="right"]:not([data-placed]), [data-side="inline-end"]:not([data-placed]), [data-placed="right"]) > .cap-popover-arrow {
+  .cap-popover:is(
+      [data-side="right"]:not([data-placed]),
+      [data-side="inline-end"]:not([data-placed]),
+      [data-placed="right"]
+    )
+    > .cap-popover-arrow {
     left: -5px;
     top: var(--cap-arrow-y, 50%);
     translate: 0 -50%;
@@ -293,7 +312,8 @@
         translate: var(--_tx) var(--_ty);
       }
       &:is([popover]:popover-open, :not([popover], [data-ending-style])) {
-        transition-duration: var(--dur-fast), var(--_in), var(--_in), var(--dur-fast), var(--dur-fast);
+        transition-duration:
+          var(--dur-fast), var(--_in), var(--_in), var(--dur-fast), var(--dur-fast);
       }
       &[popover]:popover-open {
         opacity: 1;

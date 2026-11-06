@@ -22,7 +22,11 @@ const paramOf = (dialog: HTMLDialogElement) => dialog.dataset.capDetailParam ?? 
 const idOf = (dialog: HTMLDialogElement) => dialog.dataset.capDetailId ?? dialog.id;
 
 // The address with the panel's parameter set (open) or removed (closed).
-export function detailUrl(dialog: HTMLDialogElement, open: boolean, from: string = location.href): string {
+export function detailUrl(
+  dialog: HTMLDialogElement,
+  open: boolean,
+  from: string = location.href,
+): string {
   const url = new URL(from);
   const param = paramOf(dialog);
   if (!param) return url.toString();
@@ -54,7 +58,8 @@ export function wireDetail(dialog: HTMLDialogElement): () => void {
   const had = wired.get(dialog);
   if (had) return had;
   // The panel's address is "#detail-<id>"; the shared dialog reads its prefix from the attribute.
-  if (dialog.hasAttribute("data-cap-history") && !dialog.dataset.capHistory) dialog.dataset.capHistory = "detail";
+  if (dialog.hasAttribute("data-cap-history") && !dialog.dataset.capHistory)
+    dialog.dataset.capHistory = "detail";
   const unwireBase = wireDialog(dialog);
   const onClick = (e: MouseEvent) => {
     const copy = (e.target as Element).closest<HTMLElement>("[data-cap-copy]");
@@ -104,9 +109,14 @@ export function wireDetail(dialog: HTMLDialogElement): () => void {
 
 // Opens a panel from the control that asked for it (the row's link). Focus goes to the first
 // control inside, or to Close when there is none.
-export function openDetail(dialog: HTMLDialogElement, opener: Element | null = document.activeElement, opts: DetailOptions = {}): void {
+export function openDetail(
+  dialog: HTMLDialogElement,
+  opener: Element | null = document.activeElement,
+  opts: DetailOptions = {},
+): void {
   if (dialog.open) return;
-  if (opts.history && !dialog.hasAttribute("data-cap-history")) dialog.dataset.capHistory = "detail";
+  if (opts.history && !dialog.hasAttribute("data-cap-history"))
+    dialog.dataset.capHistory = "detail";
   if (!wired.has(dialog)) wireDetail(dialog);
   openDialog(dialog, opener, opts.history === undefined ? {} : { history: opts.history });
 }
@@ -118,7 +128,10 @@ export function closeDetail(dialog: HTMLDialogElement): void {
 // Copies the text of the element a Copy button names (data-cap-copy="<id>"), and says what
 // happened in the panel's status line. Where the clipboard is refused, it selects the text
 // and says how to copy it.
-export async function copyFrom(button: HTMLElement, scope: ParentNode = document): Promise<boolean> {
+export async function copyFrom(
+  button: HTMLElement,
+  scope: ParentNode = document,
+): Promise<boolean> {
   const source = document.getElementById(button.dataset.capCopy ?? "");
   const status = (button.closest("dialog") ?? scope).querySelector("[data-cap-part='status']");
   const what = button.dataset.capCopyWhat ?? "Text";
@@ -134,7 +147,8 @@ export async function copyFrom(button: HTMLElement, scope: ParentNode = document
     const sel = window.getSelection();
     sel?.removeAllRanges();
     sel?.addRange(range);
-    if (status) status.textContent = `Could not reach the clipboard. ${what} is selected: copy it with Ctrl C or ⌘ C.`;
+    if (status)
+      status.textContent = `Could not reach the clipboard. ${what} is selected: copy it with Ctrl C or ⌘ C.`;
     return false;
   }
 }
@@ -143,7 +157,9 @@ export async function copyFrom(button: HTMLElement, scope: ParentNode = document
 // A trigger that is a link keeps its href for a new tab; a plain click opens the panel.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const dialog of root.querySelectorAll<HTMLDialogElement>("dialog.cap-detail[data-cap='detail-panel']:not([data-cap-ready])")) {
+  for (const dialog of root.querySelectorAll<HTMLDialogElement>(
+    "dialog.cap-detail[data-cap='detail-panel']:not([data-cap-ready])",
+  )) {
     undo.push(wireDetail(dialog));
     // The address names this panel (a load, a shared link, a plain link followed with no script):
     // the server may have rendered it `open` and not modal, so take that away and open it as the modal.
@@ -152,7 +168,9 @@ export function enhance(root: ParentNode = document): () => void {
       openDetail(dialog, null);
     }
   }
-  for (const trigger of root.querySelectorAll<HTMLElement>("[data-cap-detail-open]:not([data-cap-ready])")) {
+  for (const trigger of root.querySelectorAll<HTMLElement>(
+    "[data-cap-detail-open]:not([data-cap-ready])",
+  )) {
     trigger.dataset.capReady = "";
     if (!trigger.hasAttribute("aria-haspopup")) trigger.setAttribute("aria-haspopup", "dialog");
     const onClick = (e: MouseEvent) => {

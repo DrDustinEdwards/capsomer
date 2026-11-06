@@ -4,7 +4,19 @@ title: Tabs
 summary: A list of tabs that show one panel at a time, or the same list as links to other pages.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [default tray, line variant, vertical, count, disabled tab, manual activation, address follows the tab, links with the current page, narrow list scrolls, comfortable density]
+states:
+  [
+    default tray,
+    line variant,
+    vertical,
+    count,
+    disabled tab,
+    manual activation,
+    address follows the tab,
+    links with the current page,
+    narrow list scrolls,
+    comfortable density,
+  ]
 added: 0.3.0
 source: The site admin's status tabs (app/components/admin/posts-filters.tsx, .posts-tab) and mention filters (app/routes/admin.mentions.tsx, .admin-chip); shadcn/ui Tabs for the panel form
 replaces:
@@ -55,21 +67,21 @@ Tabs (`tabs.tsx`: Tabs, TabsList, TabsTrigger, TabsContent), Base UI flavor, nov
 
 Panels:
 
-| Key | Does |
-| --- | --- |
-| Tab | Enters the list on the chosen tab, then moves on to the panel |
+| Key                     | Does                                                                                                                                                                        |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tab                     | Enters the list on the chosen tab, then moves on to the panel                                                                                                               |
 | Right arrow, Left arrow | Moves to the next or previous tab and, with automatic activation, chooses it. At the ends it wraps. Down and Up in a vertical list. In a right-to-left page the arrows swap |
-| Home, End | First or last tab |
-| Enter, Space | Chooses the focused tab (manual activation) |
+| Home, End               | First or last tab                                                                                                                                                           |
+| Enter, Space            | Chooses the focused tab (manual activation)                                                                                                                                 |
 
 A disabled tab is skipped by every key above.
 
 Links:
 
-| Key | Does |
-| --- | --- |
-| Tab | Each link is a tab stop |
-| Enter | Follows the link |
+| Key   | Does                    |
+| ----- | ----------------------- |
+| Tab   | Each link is a tab stop |
+| Enter | Follows the link        |
 
 ## Accessibility
 
@@ -86,16 +98,57 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ```html
 <div class="cap-tabs" data-cap="tabs">
   <div class="cap-tabs-list" role="tablist" aria-label="Site sections">
-    <button type="button" class="cap-tab" role="tab" id="t-overview" aria-selected="true" aria-controls="p-overview" tabindex="0">Overview</button>
-    <button type="button" class="cap-tab" role="tab" id="t-runs" aria-selected="false" aria-controls="p-runs" tabindex="-1">Runs<span class="cap-tab-count">24</span></button>
+    <button
+      type="button"
+      class="cap-tab"
+      role="tab"
+      id="t-overview"
+      aria-selected="true"
+      aria-controls="p-overview"
+      tabindex="0"
+    >
+      Overview
+    </button>
+    <button
+      type="button"
+      class="cap-tab"
+      role="tab"
+      id="t-runs"
+      aria-selected="false"
+      aria-controls="p-runs"
+      tabindex="-1"
+    >
+      Runs<span class="cap-tab-count">24</span>
+    </button>
   </div>
-  <div class="cap-tabs-panel" role="tabpanel" id="p-overview" aria-labelledby="t-overview" tabindex="0">...</div>
-  <div class="cap-tabs-panel" role="tabpanel" id="p-runs" aria-labelledby="t-runs" tabindex="0" hidden>...</div>
+  <div
+    class="cap-tabs-panel"
+    role="tabpanel"
+    id="p-overview"
+    aria-labelledby="t-overview"
+    tabindex="0"
+  >
+    ...
+  </div>
+  <div
+    class="cap-tabs-panel"
+    role="tabpanel"
+    id="p-runs"
+    aria-labelledby="t-runs"
+    tabindex="0"
+    hidden
+  >
+    ...
+  </div>
 </div>
 
 <nav class="cap-tabs-list" data-variant="line" aria-label="Filter posts by status">
-  <a class="cap-tab" href="/admin/posts" aria-current="page">All<span class="cap-tab-count">312</span></a>
-  <a class="cap-tab" href="/admin/posts?status=draft">Drafts<span class="cap-tab-count">21</span></a>
+  <a class="cap-tab" href="/admin/posts" aria-current="page"
+    >All<span class="cap-tab-count">312</span></a
+  >
+  <a class="cap-tab" href="/admin/posts?status=draft"
+    >Drafts<span class="cap-tab-count">21</span></a
+  >
 </nav>
 ```
 
@@ -128,10 +181,17 @@ A router link in React:
 import { TabsNav, TabLink } from "capsomer/react/tabs";
 import { Link } from "react-router";
 
-<TabsNav aria-label="Filter mentions by status" renderLink={({ href, ...props }) => <Link to={href} {...props} />}>
-  <TabLink href="/mentions/all" current={status === "all"} count={24}>All</TabLink>
-  <TabLink href="/mentions/waiting" current={status === "waiting"} count={5}>Waiting</TabLink>
-</TabsNav>
+<TabsNav
+  aria-label="Filter mentions by status"
+  renderLink={({ href, ...props }) => <Link to={href} {...props} />}
+>
+  <TabLink href="/mentions/all" current={status === "all"} count={24}>
+    All
+  </TabLink>
+  <TabLink href="/mentions/waiting" current={status === "waiting"} count={5}>
+    Waiting
+  </TabLink>
+</TabsNav>;
 ```
 
 ## Deliberately different

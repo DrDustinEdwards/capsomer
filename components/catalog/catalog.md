@@ -4,7 +4,18 @@ title: Catalog
 summary: A searchable, filterable, sortable collection with counts, removable filter chips, a table that becomes cards on a phone, and a filter tray; its state is in the address and it works with no script.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [full width, a phone's width, tray open, filters chosen with chips, search with best match, no match, nothing yet, paged, no script]
+states:
+  [
+    full width,
+    a phone's width,
+    tray open,
+    filters chosen with chips,
+    search with best match,
+    no match,
+    nothing yet,
+    paged,
+    no script,
+  ]
 added: 0.4.0
 source: The site's publications filters and phage table (app/routes/publications.tsx, app/enhance/phages.ts in dustinedwards-info), generalized; Capsomer's chips, table, pagination and empty components underneath.
 replaces:
@@ -51,13 +62,13 @@ A collection of dozens to thousands of items that share fields, where a person n
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | Search, sort, Filters (on a phone), each facet's options, then the chips, the results and the pages |
-| Type in search | Updates the results after a short pause; Enter updates at once |
-| Space on a check or radio | Chooses it; the results, counts and chips follow |
-| Enter on a chip or Clear all | Removes that filter, or all; focus moves to the count |
-| Escape, with the tray open | Closes it and returns focus to "Filters" |
+| Key                          | Does                                                                                                |
+| ---------------------------- | --------------------------------------------------------------------------------------------------- |
+| Tab                          | Search, sort, Filters (on a phone), each facet's options, then the chips, the results and the pages |
+| Type in search               | Updates the results after a short pause; Enter updates at once                                      |
+| Space on a check or radio    | Chooses it; the results, counts and chips follow                                                    |
+| Enter on a chip or Clear all | Removes that filter, or all; focus moves to the count                                               |
+| Escape, with the tray open   | Closes it and returns focus to "Filters"                                                            |
 
 ## Accessibility
 
@@ -70,7 +81,14 @@ A collection of dozens to thousands of items that share fields, where a person n
 ## Markup
 
 ```html
-<form class="cap-catalog" data-cap="catalog" data-catalog="articles" method="get" action="/library/articles" aria-labelledby="h">
+<form
+  class="cap-catalog"
+  data-cap="catalog"
+  data-catalog="articles"
+  method="get"
+  action="/library/articles"
+  aria-labelledby="h"
+>
   <div class="cap-catalog-bar">
     <div class="cap-field cap-catalog-search">
       <label class="cap-field-label" for="articles-q">Search articles</label>
@@ -78,24 +96,43 @@ A collection of dozens to thousands of items that share fields, where a person n
     </div>
     <div class="cap-field cap-catalog-sort">
       <label class="cap-field-label" for="articles-sort">Sort</label>
-      <select class="cap-input" id="articles-sort" name="sort">...</select>
+      <select class="cap-input" id="articles-sort" name="sort">
+        ...
+      </select>
     </div>
     <button type="submit" class="cap-btn cap-catalog-apply" data-variant="primary">Apply</button>
-    <a class="cap-btn cap-catalog-tray-open" href="#articles-filters" data-catalog-tray="open">Filters</a>
+    <a class="cap-btn cap-catalog-tray-open" href="#articles-filters" data-catalog-tray="open"
+      >Filters</a
+    >
   </div>
   <div class="cap-catalog-body">
-    <div class="cap-catalog-filters" id="articles-filters" role="group" aria-label="Filters" data-catalog-region="filters">
+    <div
+      class="cap-catalog-filters"
+      id="articles-filters"
+      role="group"
+      aria-label="Filters"
+      data-catalog-region="filters"
+    >
       <fieldset class="cap-field cap-catalog-facet">
         <legend class="cap-field-label">Topic</legend>
         <div class="cap-field-options">
-          <label class="cap-check"><input type="checkbox" name="topic" value="pricing" /><span>Pricing</span> <span class="cap-catalog-n">4</span></label>
+          <label class="cap-check"
+            ><input type="checkbox" name="topic" value="pricing" /><span>Pricing</span>
+            <span class="cap-catalog-n">4</span></label
+          >
         </div>
       </fieldset>
     </div>
     <div class="cap-catalog-main">
       <p class="cap-catalog-count" role="status" data-catalog-region="count">3 of 14 articles</p>
-      <div data-catalog-region="chips"><ul class="cap-catalog-chips">...</ul></div>
-      <div id="articles-results" data-catalog-region="results" aria-busy="false">[the table, or the empty state]</div>
+      <div data-catalog-region="chips">
+        <ul class="cap-catalog-chips">
+          ...
+        </ul>
+      </div>
+      <div id="articles-results" data-catalog-region="results" aria-busy="false">
+        [the table, or the empty state]
+      </div>
       <div data-catalog-region="pages">[the pagination]</div>
     </div>
   </div>
@@ -108,9 +145,24 @@ Use it from React (the server renders it; `queryCatalog` is the same function th
 import { Catalog } from "capsomer/react/catalog";
 import { defineCatalog, parseCatalogParams, queryCatalog } from "capsomer/behavior/catalog";
 
-const def = defineCatalog({ id: "articles", noun: ["article", "articles"], basePath: "/library/articles", itemKey: (p) => p.id, fields: [/* ... */] });
+const def = defineCatalog({
+  id: "articles",
+  noun: ["article", "articles"],
+  basePath: "/library/articles",
+  itemKey: (p) => p.id,
+  fields: [/* ... */],
+});
 // in the loader: queryCatalog(def, items, parseCatalogParams(def, new URL(request.url).searchParams))
-<Catalog definition={def} result={result} labelledBy="page-title" title={(p) => <a className="cap-table-open" href={p.path}>{p.title}</a>} />
+<Catalog
+  definition={def}
+  result={result}
+  labelledBy="page-title"
+  title={(p) => (
+    <a className="cap-table-open" href={p.path}>
+      {p.title}
+    </a>
+  )}
+/>;
 ```
 
 **Provenance.** MIXED. EXTRACTED from the dustinedwards.info publications list and phage table (filter by address, a count line, a sortable table) and rewritten as one component with the fields declared once. The facet counts, the ranking and the address rules are new.

@@ -42,11 +42,11 @@ Extra detail a person may want and can do without: what a button will do in this
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab to the trigger | Shows the tip at once |
-| Esc | Hides the tip; focus stays on the trigger |
-| Tab away (blur) | Hides the tip |
+| Key                | Does                                      |
+| ------------------ | ----------------------------------------- |
+| Tab to the trigger | Shows the tip at once                     |
+| Esc                | Hides the tip; focus stays on the trigger |
+| Tab away (blur)    | Hides the tip                             |
 
 ## Accessibility
 
@@ -61,7 +61,18 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```html
 <button type="button" class="cap-btn" data-cap-tip="tip-retry">Retry job</button>
-<div class="cap-popover" data-cap="tooltip" id="tip-retry" popover="manual" role="tooltip" data-variant="tooltip" data-side="top">Runs job_7c21 again with the same inputs. <kbd>R</kbd><span class="cap-popover-arrow" aria-hidden="true"></span></div>
+<div
+  class="cap-popover"
+  data-cap="tooltip"
+  id="tip-retry"
+  popover="manual"
+  role="tooltip"
+  data-variant="tooltip"
+  data-side="top"
+>
+  Runs job_7c21 again with the same inputs. <kbd>R</kbd
+  ><span class="cap-popover-arrow" aria-hidden="true"></span>
+</div>
 ```
 
 The tip is the popover's `.cap-popover`; `data-side`, `data-align`, `data-offset` and `data-delay` are the popover's options. The arrow and the key cap are optional.
@@ -70,7 +81,11 @@ The tip is the popover's `.cap-popover`; `data-side`, `data-align`, `data-offset
 
 ```tsx
 <Tooltip tip="Runs job_7c21 again with the same inputs." side="top" arrow>
-  {(t) => <button type="button" className="cap-btn" {...t}>Retry job</button>}
+  {(t) => (
+    <button type="button" className="cap-btn" {...t}>
+      Retry job
+    </button>
+  )}
 </Tooltip>
 ```
 

@@ -4,12 +4,23 @@ title: Avatar
 summary: A person, an agent or a source as a round picture or its initials, with a corner badge, and a group that overlaps.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [initials, picture, picture that fails to load, sizes, square, agent, badge, group with a count, comfortable density]
+states:
+  [
+    initials,
+    picture,
+    picture that fails to load,
+    sizes,
+    square,
+    agent,
+    badge,
+    group with a count,
+    comfortable density,
+  ]
 added: 0.3.0
 source: shadcn/ui Avatar (Base UI flavor, nova style, commit d75a96ab787f); the history list and the authorship marks needed a "who"
 replaces:
   - 'class="(avatar|user-avatar|initials)[ "]'
-  - "className=\"(avatar|user-avatar)[ \""
+  - 'className="(avatar|user-avatar)[ "'
 ---
 
 # Avatar

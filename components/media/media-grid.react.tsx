@@ -1,9 +1,24 @@
 // The media library's React grid: MediaTile and MediaGrid (media.react.tsx).
 
-import { type KeyboardEvent, type ReactNode, useCallback, useId, useLayoutEffect, useRef } from "react";
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useCallback,
+  useId,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { Glyph } from "../status/status.react.tsx";
-import { type Direction, type MediaRecord, bands, byteSize, describeRecord, flagsFor, nextTile } from "./media.ts";
+import {
+  type Direction,
+  type MediaRecord,
+  bands,
+  byteSize,
+  describeRecord,
+  flagsFor,
+  nextTile,
+} from "./media.ts";
 
 // ---------------------------------------------------------------------------------------
 // MediaTile: one file. Renders exactly the contract in the doc page: the open link (the tile's
@@ -35,18 +50,42 @@ function slug(key: string): string {
   return key.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
 }
 
-export function MediaTile({ item, active, selected, inspecting, tabStop = true, href, onOpen, onSelect, onRetry, onRestore, selectForm, selectable: canSelect = true }: MediaTileProps) {
+export function MediaTile({
+  item,
+  active,
+  selected,
+  inspecting,
+  tabStop = true,
+  href,
+  onOpen,
+  onSelect,
+  onRetry,
+  onRestore,
+  selectForm,
+  selectable: canSelect = true,
+}: MediaTileProps) {
   const id = `tile-${slug(item.key)}`;
   const flags = flagsFor(item);
   const selectable = item.state === "ready" || item.state === "binned";
   const checkable = selectable && canSelect;
   const tab = tabStop ? 0 : -1;
   const kind = item.type.split("/").pop()?.toUpperCase() ?? "";
-  const meta = item.state === "uploading" ? "Uploading" : item.state === "failed" ? "Not uploaded" : [kind, byteSize(item.bytes)].filter(Boolean).join(" · ");
+  const meta =
+    item.state === "uploading"
+      ? "Uploading"
+      : item.state === "failed"
+        ? "Not uploaded"
+        : [kind, byteSize(item.bytes)].filter(Boolean).join(" · ");
   const body = (
     <>
       <span className="cap-media-thumb">
-        {item.kind === "image" && item.thumb ? <img src={item.thumb} alt="" loading="lazy" decoding="async" width={320} height={320} /> : <span className="cap-media-doc" aria-hidden="true">{(item.name.split(".").pop() ?? "file").slice(0, 5).toUpperCase()}</span>}
+        {item.kind === "image" && item.thumb ? (
+          <img src={item.thumb} alt="" loading="lazy" decoding="async" width={320} height={320} />
+        ) : (
+          <span className="cap-media-doc" aria-hidden="true">
+            {(item.name.split(".").pop() ?? "file").slice(0, 5).toUpperCase()}
+          </span>
+        )}
       </span>
       <span className="cap-media-name" title={item.key}>
         {item.name}
@@ -100,7 +139,14 @@ export function MediaTile({ item, active, selected, inspecting, tabStop = true, 
         </a>
       ) : (
         // oxlint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-description is a global attribute (ARIA 1.3)
-        <button type="button" className="cap-media-open" aria-disabled="true" aria-describedby={`${id}-flags`} aria-description={describeRecord(item)} tabIndex={tab}>
+        <button
+          type="button"
+          className="cap-media-open"
+          aria-disabled="true"
+          aria-describedby={`${id}-flags`}
+          aria-description={describeRecord(item)}
+          tabIndex={tab}
+        >
           {body}
         </button>
       )}
@@ -112,17 +158,41 @@ export function MediaTile({ item, active, selected, inspecting, tabStop = true, 
           </span>
         ))}
         {item.state === "binned" && onRestore ? (
-          <button type="button" className="cap-btn" data-size="xs" data-cap-part="restore" tabIndex={tab} onClick={() => onRestore?.(item.key)}>
+          <button
+            type="button"
+            className="cap-btn"
+            data-size="xs"
+            data-cap-part="restore"
+            tabIndex={tab}
+            onClick={() => onRestore?.(item.key)}
+          >
             Restore<span className="cap-sr-only"> {item.name}</span>
           </button>
         ) : null}
       </span>
       {checkable ? (
         <label className="cap-media-check">
-          <input type="checkbox" name={selectForm ? "ids" : undefined} form={selectForm} value={item.key} data-cap-select="" aria-label={`Select ${item.name}`} checked={!!selected} tabIndex={tab} onChange={() => onSelect?.(item.key, "toggle")} />
+          <input
+            type="checkbox"
+            name={selectForm ? "ids" : undefined}
+            form={selectForm}
+            value={item.key}
+            data-cap-select=""
+            aria-label={`Select ${item.name}`}
+            checked={!!selected}
+            tabIndex={tab}
+            onChange={() => onSelect?.(item.key, "toggle")}
+          />
           <span className="cap-media-check-box" aria-hidden="true">
             <svg viewBox="0 0 16 16">
-              <path fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" d="M3.5 8.5l3 3 6-7" />
+              <path
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.5 8.5l3 3 6-7"
+              />
             </svg>
           </span>
           <span className="cap-media-check-word" aria-hidden="true">
@@ -132,7 +202,9 @@ export function MediaTile({ item, active, selected, inspecting, tabStop = true, 
       ) : null}
       {/* The version this page saw, under the file's id: a form with no script cannot line a list of versions up
           with the boxes ticked, so the content kit reads each ticked id's own (site-api: version:<id>). */}
-      {checkable && selectForm && item.version ? <input type="hidden" name={`version:${item.key}`} form={selectForm} value={item.version} /> : null}
+      {checkable && selectForm && item.version ? (
+        <input type="hidden" name={`version:${item.key}`} form={selectForm} value={item.version} />
+      ) : null}
       {item.state === "uploading" ? (
         <div className="cap-media-state">
           <div className="cap-meter" data-cap="meter">
@@ -151,7 +223,14 @@ export function MediaTile({ item, active, selected, inspecting, tabStop = true, 
             Upload failed
           </p>
           <p className="cap-media-reason">{item.error ?? "The server did not say why."}</p>
-          <button type="button" className="cap-btn" data-size="sm" data-cap-part="retry" tabIndex={tab} onClick={() => onRetry?.(item.key)}>
+          <button
+            type="button"
+            className="cap-btn"
+            data-size="sm"
+            data-cap-part="retry"
+            tabIndex={tab}
+            onClick={() => onRetry?.(item.key)}
+          >
             Retry<span className="cap-sr-only"> uploading {item.name}</span>
           </button>
         </div>
@@ -167,7 +246,16 @@ function ProgressBar({ labelId, pct, name }: { labelId: string; pct: number; nam
     bar.current?.style.setProperty("--cap-meter-ratio", String(pct / 100));
   }, [pct]);
   return (
-    <span ref={bar} className="cap-meter-bar" role="progressbar" aria-labelledby={labelId} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-valuetext={`${pct} percent of ${name} uploaded`}>
+    <span
+      ref={bar}
+      className="cap-meter-bar"
+      role="progressbar"
+      aria-labelledby={labelId}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={pct}
+      aria-valuetext={`${pct} percent of ${name} uploaded`}
+    >
       <span className="cap-meter-fill" />
     </span>
   );
@@ -205,12 +293,30 @@ export interface MediaGridProps {
   selectable?: boolean;
 }
 
-export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, onSelectedChange, onOpen, inspecting, onRetry, onRestore, label = "Files", hrefFor, selectForm, selectable = true }: MediaGridProps) {
+export function MediaGrid({
+  items,
+  groups,
+  activeKey,
+  onActiveChange,
+  selected,
+  onSelectedChange,
+  onOpen,
+  inspecting,
+  onRetry,
+  onRestore,
+  label = "Files",
+  hrefFor,
+  selectForm,
+  selectable = true,
+}: MediaGridProps) {
   const root = useRef<HTMLDivElement>(null);
   const all = groups ? groups.flatMap((g) => g.items) : (items ?? []);
   const anchor = useRef<string>(activeKey);
 
-  const toggle = (key: string) => onSelectedChange(selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key]);
+  const toggle = (key: string) =>
+    onSelectedChange(
+      selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key],
+    );
   const select = (key: string, how: "toggle" | "range") => {
     if (how === "range") {
       const keys = all.filter((i) => i.state === "ready" || i.state === "binned").map((i) => i.key);
@@ -229,7 +335,9 @@ export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, 
   const focusKey = useCallback(
     (key: string) => {
       onActiveChange(key);
-      const link = root.current?.querySelector<HTMLElement>(`[data-key="${CSS.escape(key)}"] .cap-media-open`);
+      const link = root.current?.querySelector<HTMLElement>(
+        `[data-key="${CSS.escape(key)}"] .cap-media-open`,
+      );
       link?.focus();
       link?.scrollIntoView({ block: "nearest" });
     },
@@ -242,11 +350,20 @@ export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, 
     const tile = t.closest<HTMLElement>(".cap-media-tile");
     if (!tile || !t.matches(".cap-media-open, .cap-media-check > input, .cap-btn")) return;
     const here = tile.dataset.key ?? "";
-    const dirs: Record<string, Direction> = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down", Home: "first", End: "last" };
+    const dirs: Record<string, Direction> = {
+      ArrowLeft: "left",
+      ArrowRight: "right",
+      ArrowUp: "up",
+      ArrowDown: "down",
+      Home: "first",
+      End: "last",
+    };
     const dir = dirs[e.key];
     if (dir) {
       e.preventDefault();
-      const boxes = Array.from(root.current?.querySelectorAll<HTMLElement>(".cap-media-tile") ?? []).map((el) => {
+      const boxes = Array.from(
+        root.current?.querySelectorAll<HTMLElement>(".cap-media-tile") ?? [],
+      ).map((el) => {
         const r = el.getBoundingClientRect();
         return { id: el.dataset.key ?? "", top: r.top, left: r.left, width: r.width };
       });
@@ -287,13 +404,22 @@ export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, 
 
   return (
     // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- delegates the events of the controls inside it
-    <div ref={root} onKeyDown={onKeyDown} onFocus={(e) => {
+    <div
+      ref={root}
+      onKeyDown={onKeyDown}
+      onFocus={(e) => {
         const k = (e.target as HTMLElement).closest<HTMLElement>(".cap-media-tile")?.dataset.key;
         if (k && k !== activeKey) onActiveChange(k);
-      }}>
+      }}
+    >
       {groups ? (
         groups.map((g) => (
-          <GroupSection key={g.label} label={g.label} count={g.items.length} listLabel={`${label}, ${g.label}`}>
+          <GroupSection
+            key={g.label}
+            label={g.label}
+            count={g.items.length}
+            listLabel={`${label}, ${g.label}`}
+          >
             {tiles(g.items)}
           </GroupSection>
         ))
@@ -307,7 +433,17 @@ export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, 
   );
 }
 
-function GroupSection({ label, count, listLabel, children }: { label: string; count: number; listLabel: string; children: ReactNode }) {
+function GroupSection({
+  label,
+  count,
+  listLabel,
+  children,
+}: {
+  label: string;
+  count: number;
+  listLabel: string;
+  children: ReactNode;
+}) {
   const id = useId();
   return (
     <section className="cap-media-group" aria-labelledby={id}>

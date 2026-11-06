@@ -4,13 +4,30 @@ title: Menu
 summary: A button that opens a list of actions, with danger items last after a separator. Base UI underneath, React only.
 parts: [css, behavior, react]
 tool: Base UI
-states: [form menu closed, form menu open, form menu link item, closed, trigger hover, trigger keyboard focus, open, item highlighted, disabled item with its reason, danger item, shortcut shown, checkbox and radio items, submenu, group labels, comfortable density]
+states:
+  [
+    form menu closed,
+    form menu open,
+    form menu link item,
+    closed,
+    trigger hover,
+    trigger keyboard focus,
+    open,
+    item highlighted,
+    disabled item with its reason,
+    danger item,
+    shortcut shown,
+    checkbox and radio items,
+    submenu,
+    group labels,
+    comfortable density,
+  ]
 added: 0.1.0
 updated: 0.2.0
 source: none (new in Capsomer)
 replaces:
-  - "role=\"menu\""
-  - "from \"@base-ui/react/menu\""
+  - 'role="menu"'
+  - 'from "@base-ui/react/menu"'
 ---
 
 # Menu
@@ -39,17 +56,17 @@ One or two actions: show them as buttons (`.cap-btn`). Moving between pages: lin
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Enter, Space or ArrowDown on the trigger | Opens the menu with its first item focused |
-| ArrowDown, ArrowUp | Move between items, skipping separators, wrapping at the ends |
-| ArrowRight on a submenu item | Opens the submenu on its first item |
-| ArrowLeft, or Esc, in a submenu | Closes the submenu; focus returns to its item |
-| Space or Enter on a checkbox or radio item | Toggles or chooses it |
-| A letter | Moves to the next item that starts with it |
-| Enter or Space on an item | Runs it and closes the menu; focus returns to the trigger |
-| Esc | Closes the menu; focus returns to the trigger |
-| Tab | Closes the menu and moves on |
+| Key                                        | Does                                                          |
+| ------------------------------------------ | ------------------------------------------------------------- |
+| Enter, Space or ArrowDown on the trigger   | Opens the menu with its first item focused                    |
+| ArrowDown, ArrowUp                         | Move between items, skipping separators, wrapping at the ends |
+| ArrowRight on a submenu item               | Opens the submenu on its first item                           |
+| ArrowLeft, or Esc, in a submenu            | Closes the submenu; focus returns to its item                 |
+| Space or Enter on a checkbox or radio item | Toggles or chooses it                                         |
+| A letter                                   | Moves to the next item that starts with it                    |
+| Enter or Space on an item                  | Runs it and closes the menu; focus returns to the trigger     |
+| Esc                                        | Closes the menu; focus returns to the trigger                 |
+| Tab                                        | Closes the menu and moves on                                  |
 
 ## Accessibility
 
@@ -64,14 +81,14 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 The apps keep `style-src 'self'`; some allow inline style attributes (`style-src-attr`) and some do not. Base UI 1.8.0 writes these inline styles for a menu (read from its source in `node_modules/@base-ui/react`):
 
-| Part | Where | What |
-| --- | --- | --- |
-| `Menu.Positioner`, while mounted | `utils/usePositioner.js` with `internals/useAnchorPositioning.js` | `style` prop: Floating UI's position (`position`, `top`, `left`, `transform`); `pointer-events: none` while closing; `transition: none` while starting |
-| `Menu.Popup`, while starting | `internals/getDisabledMountTransitionStyles.js` | `style` prop: `transition: none` |
-| Focus guards beside the trigger while open, and around the portal | `menu/trigger/MenuTrigger.js`, `utils/FocusGuard.js`, `floating-ui-react/components/FloatingPortal.js` | `style` prop: `visuallyHidden`; the portal's `aria-owns` span: `ownerVisuallyHidden` |
-| Modal menu (Base UI's default; this wrapper sets `modal={false}`) | `utils/InternalBackdrop.js`, `@base-ui/utils/useScrollLock.js` | `style` prop on a full-screen backdrop with a `clip-path`; scroll lock writes `html` and `body` styles through the CSSOM |
-| Open on hover (not used here) | `floating-ui-react/hooks/useHover.js` | `pointer-events` on `body` and the popup through the CSSOM |
-| Positioner CSS variables | `internals/useAnchorPositioning.js`, `utils/usePopupAutoResize.js` | `--available-*`, `--anchor-*`, `--transform-origin`, `--positioner-*`, `--popup-*` through `style.setProperty` (CSSOM) |
+| Part                                                              | Where                                                                                                  | What                                                                                                                                                   |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Menu.Positioner`, while mounted                                  | `utils/usePositioner.js` with `internals/useAnchorPositioning.js`                                      | `style` prop: Floating UI's position (`position`, `top`, `left`, `transform`); `pointer-events: none` while closing; `transition: none` while starting |
+| `Menu.Popup`, while starting                                      | `internals/getDisabledMountTransitionStyles.js`                                                        | `style` prop: `transition: none`                                                                                                                       |
+| Focus guards beside the trigger while open, and around the portal | `menu/trigger/MenuTrigger.js`, `utils/FocusGuard.js`, `floating-ui-react/components/FloatingPortal.js` | `style` prop: `visuallyHidden`; the portal's `aria-owns` span: `ownerVisuallyHidden`                                                                   |
+| Modal menu (Base UI's default; this wrapper sets `modal={false}`) | `utils/InternalBackdrop.js`, `@base-ui/utils/useScrollLock.js`                                         | `style` prop on a full-screen backdrop with a `clip-path`; scroll lock writes `html` and `body` styles through the CSSOM                               |
+| Open on hover (not used here)                                     | `floating-ui-react/hooks/useHover.js`                                                                  | `pointer-events` on `body` and the popup through the CSSOM                                                                                             |
+| Positioner CSS variables                                          | `internals/useAnchorPositioning.js`, `utils/usePopupAutoResize.js`                                     | `--available-*`, `--anchor-*`, `--transform-origin`, `--positioner-*`, `--popup-*` through `style.setProperty` (CSSOM)                                 |
 
 On the client, React applies a `style` prop through the CSSOM, which CSP does not block, so a client-rendered app works under `style-src 'self'`; the spec checks this with the policy applied and no violation recorded. Nothing in a closed menu carries a style, so a server-rendered closed menu has no style attribute in its HTML; a menu rendered open on the server would. `CSPProvider` (Base UI) covers inline `<style>` and `<script>` elements, which Menu does not use; it does not cover style attributes.
 
@@ -91,19 +108,35 @@ import { Menu } from "capsomer/react/menu";
     { label: "Archive", disabled: true, reason: "Not while a deploy runs." },
     { label: "Delete site", danger: true, onSelect: confirmDelete },
   ]}
-/>
+/>;
 ```
 
 More than actions:
 
 ```tsx
-<Menu label="Site options" items={[
-  { type: "group", label: "Site", items: [{ label: "Open site", icon: <OpenIcon />, shortcut: "O" }] },
-  { type: "checkbox", label: "Check every minute", checked, onCheckedChange },
-  { type: "radio-group", label: "Region", value, onValueChange, items: [{ value: "fra", label: "Frankfurt" }, { value: "pdx", label: "Oregon" }] },
-  { type: "submenu", label: "Move to", items: [{ label: "Live sites" }, { label: "Previews" }] },
-  { label: "Delete site", danger: true },
-]} />
+<Menu
+  label="Site options"
+  items={[
+    {
+      type: "group",
+      label: "Site",
+      items: [{ label: "Open site", icon: <OpenIcon />, shortcut: "O" }],
+    },
+    { type: "checkbox", label: "Check every minute", checked, onCheckedChange },
+    {
+      type: "radio-group",
+      label: "Region",
+      value,
+      onValueChange,
+      items: [
+        { value: "fra", label: "Frankfurt" },
+        { value: "pdx", label: "Oregon" },
+      ],
+    },
+    { type: "submenu", label: "Move to", items: [{ label: "Live sites" }, { label: "Previews" }] },
+    { label: "Delete site", danger: true },
+  ]}
+/>
 ```
 
 It renders `button.cap-btn.cap-menu-trigger`; portaled: `.cap-menu-positioner` > `.cap-popover.cap-menu` (role `menu`) > `.cap-option.cap-menu-item` (`.cap-option-icon`, `.cap-option-label`, `.cap-option-keys` with `kbd.cap-menu-kbd`, `.cap-option-indicator`, `.cap-menu-chevron`, `.cap-menu-reason`; `data-tone="crit"` on a danger item), `.cap-listbox-label` and `.cap-listbox-separator`. Danger items are moved to the end of the top-level menu.
@@ -112,13 +145,28 @@ A form menu, with no script (HTML, or React `FormMenu` which renders exactly thi
 
 ```html
 <details class="cap-menu-form" data-cap="menu-form">
-  <summary class="cap-btn cap-menu-trigger">Actions for example.org <svg aria-hidden="true">...</svg></summary>
+  <summary class="cap-btn cap-menu-trigger">
+    Actions for example.org <svg aria-hidden="true">...</svg>
+  </summary>
   <form class="cap-popover cap-menu" action="/admin/sites/example-org" method="post">
     <input type="hidden" name="site" value="example-org" />
-    <a class="cap-option cap-menu-item" href="/sites/example-org"><span class="cap-option-label">Open site</span></a>
-    <button type="submit" class="cap-option cap-menu-item" name="intent" value="archive" disabled><span class="cap-option-label">Archive</span><span class="cap-menu-reason">Not while a deploy runs.</span></button>
+    <a class="cap-option cap-menu-item" href="/sites/example-org"
+      ><span class="cap-option-label">Open site</span></a
+    >
+    <button type="submit" class="cap-option cap-menu-item" name="intent" value="archive" disabled>
+      <span class="cap-option-label">Archive</span
+      ><span class="cap-menu-reason">Not while a deploy runs.</span>
+    </button>
     <hr class="cap-listbox-separator cap-menu-separator" />
-    <button type="submit" class="cap-option cap-menu-item" data-tone="crit" name="intent" value="delete"><span class="cap-option-label">Delete site</span></button>
+    <button
+      type="submit"
+      class="cap-option cap-menu-item"
+      data-tone="crit"
+      name="intent"
+      value="delete"
+    >
+      <span class="cap-option-label">Delete site</span>
+    </button>
   </form>
 </details>
 ```

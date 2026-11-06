@@ -10,7 +10,14 @@
 // Foxhound's mark until Dustin picks one of the two alternatives in FOXHOUND_MARKS.
 import type { ReactNode } from "react";
 
-export type FamilyAppId = "portal" | "carrel" | "info" | "germomics" | "foxhound" | "foxing" | "capsomer";
+export type FamilyAppId =
+  | "portal"
+  | "carrel"
+  | "info"
+  | "germomics"
+  | "foxhound"
+  | "foxing"
+  | "capsomer";
 
 export interface FamilyApp {
   id: FamilyAppId;
@@ -36,7 +43,10 @@ const PORTAL = mark(
   "0 0 24 24",
   <g fill="none" stroke="currentColor" strokeLinejoin="round">
     <path strokeWidth="1.7" d="M12 1.8 21.4 7.2v9.6L12 22.2 2.6 16.8V7.2z" />
-    <path strokeWidth="1.2" d="M12 1.8v6.6l9.4-1.2M12 8.4 2.6 7.2M6.8 14.6 2.6 16.8M17.2 14.6l4.2 2.2M6.8 14.6 12 22.2l5.2-7.6" />
+    <path
+      strokeWidth="1.2"
+      d="M12 1.8v6.6l9.4-1.2M12 8.4 2.6 7.2M6.8 14.6 2.6 16.8M17.2 14.6l4.2 2.2M6.8 14.6 12 22.2l5.2-7.6"
+    />
     <path strokeWidth="1.2" fill="currentColor" fillOpacity="0.25" d="M12 8.4l5.2 6.2H6.8z" />
   </g>,
 );
@@ -75,7 +85,13 @@ const GERMOMICS = mark(
 // stays until Dustin picks one of FOXHOUND_MARKS. No choice is shipped.
 const FOXHOUND = mark(
   "0 0 24 24",
-  <path fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" d="M7.5 9 16.5 18M16.5 9 7.5 18" />,
+  <path
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.6"
+    strokeLinecap="round"
+    d="M7.5 9 16.5 18M16.5 9 7.5 18"
+  />,
 );
 
 // Two alternatives to Foxhound's x (which reads as close or delete), each drawn on the 24 grid
@@ -116,22 +132,57 @@ const FOXING = mark(
 
 const CAPSOMER = mark(
   "0 0 20 20",
-  <path fill="currentColor" fillRule="evenodd" d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9zM10 5.4 6 7.7v4.6l4 2.3 4-2.3V7.7z" />,
+  <path
+    fill="currentColor"
+    fillRule="evenodd"
+    d="M10 1 17.8 5.5v9L10 19l-7.8-4.5v-9zM10 5.4 6 7.7v4.6l4 2.3 4-2.3V7.7z"
+  />,
 );
 
 // The order every strip shows, whichever app it is in.
 export const FAMILY_APPS: readonly FamilyApp[] = [
-  { id: "portal", label: "Capsid Portal", href: "https://portal.dustinedwards.info/", logo: PORTAL, names: ["Capsid", "Portal"] },
+  {
+    id: "portal",
+    label: "Capsid Portal",
+    href: "https://portal.dustinedwards.info/",
+    logo: PORTAL,
+    names: ["Capsid", "Portal"],
+  },
   // Carrel's signed-in app is Desk (Dustin, 2026-10-26); carrel.dustinedwards.info is its public site.
-  { id: "carrel", label: "Carrel Desk", href: "https://desk.dustinedwards.info/", logo: CARREL, names: ["Carrel", "Desk"] },
-  { id: "info", label: "dustinedwards.info", href: "https://dustinedwards.info/admin", logo: INFO, names: ["Dustin Edwards", "Admin"] },
+  {
+    id: "carrel",
+    label: "Carrel Desk",
+    href: "https://desk.dustinedwards.info/",
+    logo: CARREL,
+    names: ["Carrel", "Desk"],
+  },
+  {
+    id: "info",
+    label: "dustinedwards.info",
+    href: "https://dustinedwards.info/admin",
+    logo: INFO,
+    names: ["Dustin Edwards", "Admin"],
+  },
   { id: "germomics", label: "germomics", href: "https://germomics.com/admin", logo: GERMOMICS },
   // The x from its favicon stays until Dustin picks one of FOXHOUND_MARKS.
-  { id: "foxhound", label: "Foxhound", href: "https://foxhoundapp.com/admin", logo: FOXHOUND, names: ["Foxhound", "Admin"], standalone: true },
+  {
+    id: "foxhound",
+    label: "Foxhound",
+    href: "https://foxhoundapp.com/admin",
+    logo: FOXHOUND,
+    names: ["Foxhound", "Admin"],
+    standalone: true,
+  },
   // Foxing joins the family's admin apps in 0.9.0, seventh, before Capsomer; its mark is a
   // placeholder until Dustin picks one.
   { id: "foxing", label: "Foxing", href: "https://foxing.app/admin", logo: FOXING },
-  { id: "capsomer", label: "Capsomer Scaffold", href: "https://capsomer.dustinedwards.info/admin/", logo: CAPSOMER, names: ["Capsomer", "Scaffold"] },
+  {
+    id: "capsomer",
+    label: "Capsomer Scaffold",
+    href: "https://capsomer.dustinedwards.info/admin/",
+    logo: CAPSOMER,
+    names: ["Capsomer", "Scaffold"],
+  },
 ];
 
 // The one account every admin area is signed in as, and its avatar.

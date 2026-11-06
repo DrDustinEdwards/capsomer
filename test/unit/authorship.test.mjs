@@ -24,20 +24,42 @@ test("summarize: reads words from text when no count is given, and adds runs of 
   ]);
   assert.deepEqual(
     s.shares.map((x) => [x.kind, x.words]),
-    [["you", 5], ["ai", 2], ["quoted", 0]],
+    [
+      ["you", 5],
+      ["ai", 2],
+      ["quoted", 0],
+    ],
   );
 });
 
 test("summarize: the percentages are whole numbers that always add up to 100", () => {
-  for (const [a, b, c] of [[1, 1, 1], [1, 2, 4], [33, 33, 34], [7, 0, 0], [1, 1, 0], [5, 3, 1], [999, 1, 1]]) {
-    const s = summarize([{ kind: "you", words: a }, { kind: "ai", words: b }, { kind: "quoted", words: c }]);
+  for (const [a, b, c] of [
+    [1, 1, 1],
+    [1, 2, 4],
+    [33, 33, 34],
+    [7, 0, 0],
+    [1, 1, 0],
+    [5, 3, 1],
+    [999, 1, 1],
+  ]) {
+    const s = summarize([
+      { kind: "you", words: a },
+      { kind: "ai", words: b },
+      { kind: "quoted", words: c },
+    ]);
     assert.equal(total(s), 100, JSON.stringify([a, b, c]));
     for (const x of s.shares) assert.ok(Number.isInteger(x.percent));
   }
 });
 
 test("summarize: a kind with no words is left out of the sentence, and no words at all says so", () => {
-  assert.equal(summarize([{ kind: "you", words: 9 }, { kind: "quoted", words: 1 }]).text, "90% you, 10% quoted by words");
+  assert.equal(
+    summarize([
+      { kind: "you", words: 9 },
+      { kind: "quoted", words: 1 },
+    ]).text,
+    "90% you, 10% quoted by words",
+  );
   const none = summarize([]);
   assert.equal(none.text, "No marked passages");
   assert.equal(total(none), 0);
@@ -45,12 +67,21 @@ test("summarize: a kind with no words is left out of the sentence, and no words 
 });
 
 test("summarize: ignores a kind it does not know", () => {
-  const s = summarize([{ kind: "robot", words: 50 }, { kind: "you", words: 5 }]);
+  const s = summarize([
+    { kind: "robot", words: 50 },
+    { kind: "you", words: 5 },
+  ]);
   assert.equal(s.total, 5);
 });
 
 test("summaryHtml: the line and the word counts are text; the bar is hidden from a screen reader", () => {
-  const html = summaryHtml(summarize([{ kind: "you", words: 62 }, { kind: "ai", words: 31 }, { kind: "quoted", words: 7 }]));
+  const html = summaryHtml(
+    summarize([
+      { kind: "you", words: 62 },
+      { kind: "ai", words: 31 },
+      { kind: "quoted", words: 7 },
+    ]),
+  );
   assert.match(html, /62% you, 31% AI, 7% quoted by words/);
   assert.match(html, /You: 62 words/);
   assert.match(html, /Quoted: 7 words/);

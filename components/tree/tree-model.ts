@@ -25,13 +25,26 @@ export interface VisibleRow {
 }
 
 // The rows a person can reach, in order: every top node, and the children of each open branch.
-export function visibleRows(nodes: readonly TreeNodeLike[], expanded: ReadonlySet<string>): VisibleRow[] {
+export function visibleRows(
+  nodes: readonly TreeNodeLike[],
+  expanded: ReadonlySet<string>,
+): VisibleRow[] {
   const out: VisibleRow[] = [];
   const walk = (list: readonly TreeNodeLike[], parent: string | null, level: number) => {
     list.forEach((n, i) => {
       const branch = n.children !== undefined;
       const open = branch && expanded.has(n.id);
-      out.push({ id: n.id, parent, level, posinset: i + 1, setsize: list.length, branch, expanded: open, disabled: !!n.disabled, label: n.label ?? n.id });
+      out.push({
+        id: n.id,
+        parent,
+        level,
+        posinset: i + 1,
+        setsize: list.length,
+        branch,
+        expanded: open,
+        disabled: !!n.disabled,
+        label: n.label ?? n.id,
+      });
       if (open) walk(n.children ?? [], n.id, level + 1);
     });
   };
@@ -75,14 +88,25 @@ export interface KeyMods {
 // branch or goes to the parent; Home and End go to the first and last row; `*` opens every
 // sibling branch; Enter and Space choose. With `movable`, Alt with an arrow moves the row.
 // Letters (typeahead) are the caller's, with the listbox's `nextTypeahead`.
-export function treeKey(rows: readonly VisibleRow[], current: string | null, key: string, mods: KeyMods = {}, movable = false): TreeKeyResult | null {
+export function treeKey(
+  rows: readonly VisibleRow[],
+  current: string | null,
+  key: string,
+  mods: KeyMods = {},
+  movable = false,
+): TreeKeyResult | null {
   if (rows.length === 0) return null;
-  const i = Math.max(0, rows.findIndex((r) => r.id === current));
+  const i = Math.max(
+    0,
+    rows.findIndex((r) => r.id === current),
+  );
   const row = rows[i]!;
   if (mods.ctrlKey || mods.metaKey) return null;
   if (mods.altKey) {
     if (!movable || row.disabled) return null;
-    const dir = ({ ArrowUp: "up", ArrowDown: "down", ArrowRight: "in", ArrowLeft: "out" } as const)[key as "ArrowUp"];
+    const dir = ({ ArrowUp: "up", ArrowDown: "down", ArrowRight: "in", ArrowLeft: "out" } as const)[
+      key as "ArrowUp"
+    ];
     return dir ? { move: dir } : null;
   }
   switch (key) {
@@ -102,7 +126,11 @@ export function treeKey(rows: readonly VisibleRow[], current: string | null, key
     case "End":
       return { focus: rows[rows.length - 1]!.id };
     case "*":
-      return { expand: rows.filter((r) => r.parent === row.parent && r.branch && !r.expanded).map((r) => r.id) };
+      return {
+        expand: rows
+          .filter((r) => r.parent === row.parent && r.branch && !r.expanded)
+          .map((r) => r.id),
+      };
     case "Enter":
     case " ":
       return row.disabled ? {} : { select: row.id };
@@ -129,7 +157,10 @@ export interface TreeMove {
   to: TreePlace;
 }
 
-const childrenOf = (nodes: readonly TreeNodeLike[], parent: string | null): readonly TreeNodeLike[] | undefined =>
+const childrenOf = (
+  nodes: readonly TreeNodeLike[],
+  parent: string | null,
+): readonly TreeNodeLike[] | undefined =>
   parent === null ? nodes : findNode(nodes, parent)?.children;
 
 export function findNode<T extends TreeNodeLike>(nodes: readonly T[], id: string): T | undefined {
@@ -141,7 +172,11 @@ export function findNode<T extends TreeNodeLike>(nodes: readonly T[], id: string
   return undefined;
 }
 
-export function findPlace(nodes: readonly TreeNodeLike[], id: string, parent: string | null = null): TreePlace | null {
+export function findPlace(
+  nodes: readonly TreeNodeLike[],
+  id: string,
+  parent: string | null = null,
+): TreePlace | null {
   const i = nodes.findIndex((n) => n.id === id);
   if (i >= 0) return { parent, index: i };
   for (const n of nodes) {
@@ -161,12 +196,20 @@ export function isWithin(nodes: readonly TreeNodeLike[], id: string, ancestor: s
 // A keyboard move: up and down among its siblings; in, to the end of the branch just above
 // it; out, to just after its parent. Null where it cannot go (the first row up, a row with
 // no branch above it in).
-export function planMove(nodes: readonly TreeNodeLike[], id: string, dir: MoveDir): TreeMove | null {
+export function planMove(
+  nodes: readonly TreeNodeLike[],
+  id: string,
+  dir: MoveDir,
+): TreeMove | null {
   const from = findPlace(nodes, id);
   if (!from) return null;
   const siblings = childrenOf(nodes, from.parent) ?? [];
-  if (dir === "up") return from.index > 0 ? { id, from, to: { parent: from.parent, index: from.index - 1 } } : null;
-  if (dir === "down") return from.index < siblings.length - 1 ? { id, from, to: { parent: from.parent, index: from.index + 1 } } : null;
+  if (dir === "up")
+    return from.index > 0 ? { id, from, to: { parent: from.parent, index: from.index - 1 } } : null;
+  if (dir === "down")
+    return from.index < siblings.length - 1
+      ? { id, from, to: { parent: from.parent, index: from.index + 1 } }
+      : null;
   if (dir === "in") {
     const above = siblings[from.index - 1];
     if (!above?.children) return null;
@@ -181,7 +224,12 @@ export type DropZone = "before" | "after" | "inside";
 
 // A drop of `id` on `target`: before it, after it, or inside it (at the end; a branch only).
 // Null for a drop on itself or anywhere under itself, and for one that changes nothing.
-export function dropMove(nodes: readonly TreeNodeLike[], id: string, target: string, zone: DropZone): TreeMove | null {
+export function dropMove(
+  nodes: readonly TreeNodeLike[],
+  id: string,
+  target: string,
+  zone: DropZone,
+): TreeMove | null {
   const from = findPlace(nodes, id);
   const at = findPlace(nodes, target);
   if (!from || !at || isWithin(nodes, target, id)) return null;
@@ -212,14 +260,20 @@ export function applyMove<T extends TreeNodeLike>(nodes: readonly T[], move: Tre
   const node = findNode(nodes, move.id);
   if (!node) return [...nodes];
   const without = (list: readonly T[]): T[] =>
-    list.filter((n) => n.id !== move.id).map((n) => (n.children ? ({ ...n, children: without(n.children as readonly T[]) } as T) : n));
+    list
+      .filter((n) => n.id !== move.id)
+      .map((n) =>
+        n.children ? ({ ...n, children: without(n.children as readonly T[]) } as T) : n,
+      );
   const insert = (list: readonly T[], parent: string | null): T[] => {
     if (parent === move.to.parent) {
       const out = [...list];
       out.splice(Math.max(0, Math.min(out.length, move.to.index)), 0, node);
       return out;
     }
-    return list.map((n) => (n.children ? ({ ...n, children: insert(n.children as readonly T[], n.id) } as T) : n));
+    return list.map((n) =>
+      n.children ? ({ ...n, children: insert(n.children as readonly T[], n.id) } as T) : n,
+    );
   };
   return insert(without(nodes), null);
 }

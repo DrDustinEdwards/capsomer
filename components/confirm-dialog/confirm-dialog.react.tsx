@@ -1,9 +1,29 @@
 import { useEffect, useId, useRef, useState, type ReactElement, type ReactNode } from "react";
-import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogMedia, DialogTitle, DialogBody } from "../dialog/dialog.react.tsx";
+import {
+  Dialog,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogMedia,
+  DialogTitle,
+  DialogBody,
+} from "../dialog/dialog.react.tsx";
 import { errorText, wordMatches, wordPattern } from "./confirm-dialog.ts";
 
-const ERROR_GLYPH = <path fill="currentColor" fillRule="evenodd" d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4v5h1.6V4zM7.2 10.4V12h1.6v-1.6z" />;
-const MEDIA_GLYPH = <path fill="currentColor" fillRule="evenodd" d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z" />;
+const ERROR_GLYPH = (
+  <path
+    fill="currentColor"
+    fillRule="evenodd"
+    d="M5 1h6l4 4v6l-4 4H5l-4-4V5zM7.2 4v5h1.6V4zM7.2 10.4V12h1.6v-1.6z"
+  />
+);
+const MEDIA_GLYPH = (
+  <path
+    fill="currentColor"
+    fillRule="evenodd"
+    d="M8 1.5l7 12.5H1zM7.2 6v4h1.6V6zM7.2 10.8v1.4h1.6v-1.4z"
+  />
+);
 
 export interface ConfirmDialogProps {
   open: boolean;
@@ -32,7 +52,20 @@ export interface ConfirmDialogProps {
 type Failure = { text: string; field: boolean };
 
 export function ConfirmDialog(props: ConfirmDialogProps) {
-  const { open, title, lead, body, action, typeToConfirm, reason: reasonOpt, perform, onClose, cancelLabel = "Cancel", returnTo, media = true } = props;
+  const {
+    open,
+    title,
+    lead,
+    body,
+    action,
+    typeToConfirm,
+    reason: reasonOpt,
+    perform,
+    onClose,
+    cancelLabel = "Cancel",
+    returnTo,
+    media = true,
+  } = props;
   const id = useId();
   const dlg = useRef<HTMLDialogElement>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
@@ -71,7 +104,10 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
     // an input event still counts.
     const why = (reasonRef.current?.value ?? reason).trim();
     if (reasonOpt && !why) {
-      setError({ text: "Type what you are doing and why, then try again. Nothing was changed.", field: true });
+      setError({
+        text: "Type what you are doing and why, then try again. Nothing was changed.",
+        field: true,
+      });
       reasonRef.current?.focus();
       return;
     }
@@ -92,7 +128,9 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
   const guardOff = !!typeToConfirm && !matched;
   const failed = error != null && !error.field;
   const hasBody = body.length > 0 || !!reasonOpt || !!typeToConfirm;
-  const described = [lead ? `${id}-desc` : null, body.length > 0 ? `${id}-list` : null].filter(Boolean).join(" ") || undefined;
+  const described =
+    [lead ? `${id}-desc` : null, body.length > 0 ? `${id}-list` : null].filter(Boolean).join(" ") ||
+    undefined;
 
   return (
     <Dialog
@@ -141,7 +179,9 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
                 rows={3}
                 aria-required="true"
                 aria-invalid={error?.field || undefined}
-                aria-describedby={error?.field ? `${id}-error ${id}-reason-note` : `${id}-reason-note`}
+                aria-describedby={
+                  error?.field ? `${id}-error ${id}-reason-note` : `${id}-reason-note`
+                }
                 readOnly={busy}
                 data-cap-part="reason"
                 value={reason}
@@ -201,7 +241,13 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         )}
       </div>
       <DialogFooter align="between">
-        <button ref={cancelRef} type="button" className="cap-btn" data-cap-part="cancel" aria-disabled={busy || undefined}>
+        <button
+          ref={cancelRef}
+          type="button"
+          className="cap-btn"
+          data-cap-part="cancel"
+          aria-disabled={busy || undefined}
+        >
           {cancelLabel}
         </button>
         <button
@@ -274,14 +320,38 @@ export interface ConfirmPageProps {
 
 // The confirmation as a form in the page, for a server that answers a destructive request with
 // its own page and works with no script. Pure markup, so a server render and the browser agree.
-export function ConfirmPage({ action, method = "post", hidden, title, lead, body = [], action_label = "Confirm", cancelHref, cancelLabel = "Cancel", typeToConfirm, reason, error, media = true, headingLevel = "h1", children, onCancel, renderForm }: ConfirmPageProps) {
+export function ConfirmPage({
+  action,
+  method = "post",
+  hidden,
+  title,
+  lead,
+  body = [],
+  action_label = "Confirm",
+  cancelHref,
+  cancelLabel = "Cancel",
+  typeToConfirm,
+  reason,
+  error,
+  media = true,
+  headingLevel = "h1",
+  children,
+  onCancel,
+  renderForm,
+}: ConfirmPageProps) {
   const id = useId().replace(/[^a-zA-Z0-9]/g, "");
   const Heading = headingLevel;
-  const described = [lead ? `${id}-desc` : null, body.length ? `${id}-list` : null].filter(Boolean).join(" ") || undefined;
+  const described =
+    [lead ? `${id}-desc` : null, body.length ? `${id}-list` : null].filter(Boolean).join(" ") ||
+    undefined;
   const hasBody = body.length > 0 || !!reason || !!typeToConfirm;
   const parts = (
     <>
-      {Object.entries(hidden ?? {}).flatMap(([k, v]) => (typeof v === "string" ? [v] : v).map((one, i) => <input key={`${k}-${i}`} type="hidden" name={k} value={one} />))}
+      {Object.entries(hidden ?? {}).flatMap(([k, v]) =>
+        (typeof v === "string" ? [v] : v).map((one, i) => (
+          <input key={`${k}-${i}`} type="hidden" name={k} value={one} />
+        )),
+      )}
       <div className="cap-dialog-header">
         {media ? (
           <div className="cap-dialog-media" data-tone="crit" aria-hidden="true">
@@ -317,7 +387,14 @@ export function ConfirmPage({ action, method = "post", hidden, title, lead, body
           {reason ? (
             <div className="cap-confirm-reason">
               <label htmlFor={`${id}-reason`}>{reason.label ?? "Reason (required)"}</label>
-              <textarea className="cap-input" id={`${id}-reason`} name="reason" rows={3} required aria-describedby={`${id}-reason-note`} />
+              <textarea
+                className="cap-input"
+                id={`${id}-reason`}
+                name="reason"
+                rows={3}
+                required
+                aria-describedby={`${id}-reason-note`}
+              />
               <p className="cap-confirm-note" id={`${id}-reason-note`}>
                 {reason.note ?? "Recorded with the change."}
               </p>
@@ -328,7 +405,16 @@ export function ConfirmPage({ action, method = "post", hidden, title, lead, body
               <label htmlFor={`${id}-typed`}>
                 Type <b>{typeToConfirm}</b> to confirm
               </label>
-              <input className="cap-input" id={`${id}-typed`} name="confirm" required pattern={wordPattern(typeToConfirm)} title={`Type ${typeToConfirm}`} autoComplete="off" spellCheck={false} />
+              <input
+                className="cap-input"
+                id={`${id}-typed`}
+                name="confirm"
+                required
+                pattern={wordPattern(typeToConfirm)}
+                title={`Type ${typeToConfirm}`}
+                autoComplete="off"
+                spellCheck={false}
+              />
             </div>
           ) : null}
         </div>
@@ -361,7 +447,16 @@ export function ConfirmPage({ action, method = "post", hidden, title, lead, body
       </div>
     </>
   );
-  const formProps: ConfirmFormProps = { className: "cap-confirm-page", "data-cap": "confirm-page", action, method, role: "group", "aria-labelledby": `${id}-title`, "aria-describedby": described, children: parts };
+  const formProps: ConfirmFormProps = {
+    className: "cap-confirm-page",
+    "data-cap": "confirm-page",
+    action,
+    method,
+    role: "group",
+    "aria-labelledby": `${id}-title`,
+    "aria-describedby": described,
+    children: parts,
+  };
   return renderForm ? renderForm(formProps) : <form {...formProps} />;
 }
 
@@ -385,13 +480,21 @@ export function ConfirmModal(props: ConfirmModalProps) {
     const d = ref.current;
     if (d && !d.open) d.showModal();
     // The typed word or the reason when there is one, else Cancel, as an alert dialog's.
-    d?.querySelector<HTMLElement>(".cap-confirm-typed input, .cap-confirm-reason textarea, .cap-dialog-footer .cap-btn")?.focus();
+    d?.querySelector<HTMLElement>(
+      ".cap-confirm-typed input, .cap-confirm-reason textarea, .cap-dialog-footer .cap-btn",
+    )?.focus();
     return () => {
       // Deferred, so the page Cancel returns to has rendered.
       window.setTimeout(() => {
         if (document.activeElement && document.activeElement !== document.body) return;
         const panel = origin?.closest<HTMLElement>("[popover]");
-        const candidates = [origin, panel?.id ? document.querySelector<HTMLElement>(`[popovertarget="${CSS.escape(panel.id)}"]`) : null, document.querySelector<HTMLElement>("main")];
+        const candidates = [
+          origin,
+          panel?.id
+            ? document.querySelector<HTMLElement>(`[popovertarget="${CSS.escape(panel.id)}"]`)
+            : null,
+          document.querySelector<HTMLElement>("main"),
+        ];
         for (const back of candidates) {
           if (!back?.isConnected) continue;
           back.focus({ preventScroll: true });

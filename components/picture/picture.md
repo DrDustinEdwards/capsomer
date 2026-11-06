@@ -4,7 +4,15 @@ title: Picture
 summary: What a stored image shows while it loads (its placeholder and main color), and the pause control an animated image needs, for site-runtime's pictureProps and Prelum's images alike.
 parts: [css]
 tool: native
-states: [placeholder while loading, loaded, main color only, animated and playing, animated and paused, reduced motion]
+states:
+  [
+    placeholder while loading,
+    loaded,
+    main color only,
+    animated and playing,
+    animated and paused,
+    reduced motion,
+  ]
 added: 0.56.0
 source: dustinedwards.info's prose.css (img.has-lqip, the placeholder Prelum writes); WCAG 2.2.2 Pause, Stop, Hide
 replaces:
@@ -34,9 +42,9 @@ Every image a site serves from its library, on any page: a cover, a body image, 
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | Reaches Pause |
+| Key            | Does                                                        |
+| -------------- | ----------------------------------------------------------- |
+| Tab            | Reaches Pause                                               |
 | Space on Pause | Stops the animation and shows the still, or starts it again |
 
 ## Accessibility
@@ -51,9 +59,18 @@ Every image a site serves from its library, on any page: a cover, a body image, 
 A stored image with its placeholder (`pictureProps` with the file's `placeholder` and `color`; Prelum writes the same from the resolver's):
 
 ```html
-<img class="has-lqip" src="/media/a.jpg?w=704" srcset="…" sizes="…" width="704" height="469" alt="…"
-  loading="lazy" decoding="async"
-  style="background-image:url(&quot;data:image/webp;base64,…&quot;);background-color:#3a5f6b">
+<img
+  class="has-lqip"
+  src="/media/a.jpg?w=704"
+  srcset="…"
+  sizes="…"
+  width="704"
+  height="469"
+  alt="…"
+  loading="lazy"
+  decoding="async"
+  style='background-image:url("data:image/webp;base64,…");background-color:#3a5f6b'
+/>
 ```
 
 An animated image (a GIF): the `<picture>` `pictureProps` writes, the still at the same size, and the control. In a post the wrapper holds the image link, and the label sits outside it.
@@ -61,13 +78,37 @@ An animated image (a GIF): the `<picture>` `pictureProps` writes, the still at t
 ```html
 <span class="cap-motion">
   <picture>
-    <source type="image/avif" srcset="/media/a.gif?w=704&f=avif&still=1 704w" media="(prefers-reduced-motion: reduce)">
-    <source type="image/webp" srcset="/media/a.gif?w=704&still=1 704w" media="(prefers-reduced-motion: reduce)">
-    <source type="image/webp" srcset="/media/a.gif?w=704 704w">
-    <img src="/media/a.gif?w=704" width="704" height="396" alt="…" loading="lazy" decoding="async">
+    <source
+      type="image/avif"
+      srcset="/media/a.gif?w=704&f=avif&still=1 704w"
+      media="(prefers-reduced-motion: reduce)"
+    />
+    <source
+      type="image/webp"
+      srcset="/media/a.gif?w=704&still=1 704w"
+      media="(prefers-reduced-motion: reduce)"
+    />
+    <source type="image/webp" srcset="/media/a.gif?w=704 704w" />
+    <img
+      src="/media/a.gif?w=704"
+      width="704"
+      height="396"
+      alt="…"
+      loading="lazy"
+      decoding="async"
+    />
   </picture>
-  <img class="cap-motion-still" src="/media/a.gif?w=704&still=1" srcset="/media/a.gif?w=704&still=1 704w" width="704" height="396" alt="…" loading="lazy" decoding="async">
-  <label class="cap-motion-toggle"><input type="checkbox" class="cap-motion-pause"> Pause</label>
+  <img
+    class="cap-motion-still"
+    src="/media/a.gif?w=704&still=1"
+    srcset="/media/a.gif?w=704&still=1 704w"
+    width="704"
+    height="396"
+    alt="…"
+    loading="lazy"
+    decoding="async"
+  />
+  <label class="cap-motion-toggle"><input type="checkbox" class="cap-motion-pause" /> Pause</label>
 </span>
 ```
 

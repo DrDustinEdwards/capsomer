@@ -9,7 +9,14 @@
 // The generic overlay helpers moved to the shared dialog (components/dialog/dialog.ts). They
 // are re-exported here, so what imported them from this module keeps working.
 import { errorText, isBusy, openDialog, setDialogBusy, uid, wireDialog } from "../dialog/dialog.ts";
-export { errorText, isBackdropClick, isBusy, rememberOpener, returnFocus, uid } from "../dialog/dialog.ts";
+export {
+  errorText,
+  isBackdropClick,
+  isBusy,
+  rememberOpener,
+  returnFocus,
+  uid,
+} from "../dialog/dialog.ts";
 
 // The typed-word guard: case-insensitive, surrounding spaces ignored. No word, no guard.
 export function wordMatches(typed: string, word: string | undefined): boolean {
@@ -24,7 +31,11 @@ export function wordMatches(typed: string, word: string | undefined): boolean {
 // server must still check the word, because markup is not a guard.
 export function wordPattern(word: string): string {
   return Array.from(word.trim())
-    .map((ch) => (/[a-z]/i.test(ch) ? `[${ch.toUpperCase()}${ch.toLowerCase()}]` : ch.replace(/[\^$.*+?()[\]{}|/-]/g, "\\$&")))
+    .map((ch) =>
+      /[a-z]/i.test(ch)
+        ? `[${ch.toUpperCase()}${ch.toLowerCase()}]`
+        : ch.replace(/[\^$.*+?()[\]{}|/-]/g, "\\$&"),
+    )
     .join("");
 }
 
@@ -36,7 +47,8 @@ type Perform = (reason: string) => Promise<void>;
 const performs = new WeakMap<HTMLDialogElement, Perform>();
 const performedFlags = new WeakSet<HTMLDialogElement>();
 
-const part = <T extends HTMLElement = HTMLElement>(dialog: HTMLDialogElement, name: string) => dialog.querySelector<T>(`[data-cap-part='${name}']`);
+const part = <T extends HTMLElement = HTMLElement>(dialog: HTMLDialogElement, name: string) =>
+  dialog.querySelector<T>(`[data-cap-part='${name}']`);
 
 // The reason is read from the field itself, not from a copy of its value, so text the
 // browser filled in without an input event still counts.
@@ -158,7 +170,10 @@ export function bindPerform(dialog: HTMLDialogElement, perform: Perform): void {
 }
 
 // Opens a confirm dialog, remembering the opener. Focus starts on Cancel.
-export function openConfirm(dialog: HTMLDialogElement, opener: Element | null = document.activeElement): void {
+export function openConfirm(
+  dialog: HTMLDialogElement,
+  opener: Element | null = document.activeElement,
+): void {
   if (dialog.open) return;
   if (!wired.has(dialog)) wire(dialog);
   performedFlags.delete(dialog);
@@ -448,10 +463,14 @@ export function confirm(o: ConfirmOptions): Promise<boolean> {
 // [data-cap-confirm-open="<dialog id>"]. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const dialog of root.querySelectorAll<HTMLDialogElement>("dialog[data-cap='confirm-dialog']:not([data-cap-ready])")) {
+  for (const dialog of root.querySelectorAll<HTMLDialogElement>(
+    "dialog[data-cap='confirm-dialog']:not([data-cap-ready])",
+  )) {
     undo.push(wire(dialog));
   }
-  for (const trigger of root.querySelectorAll<HTMLElement>("[data-cap-confirm-open]:not([data-cap-ready])")) {
+  for (const trigger of root.querySelectorAll<HTMLElement>(
+    "[data-cap-confirm-open]:not([data-cap-ready])",
+  )) {
     trigger.dataset.capReady = "";
     const onClick = (e: Event) => {
       const dialog = document.getElementById(trigger.dataset.capConfirmOpen ?? "");

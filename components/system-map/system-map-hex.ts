@@ -16,7 +16,14 @@ const R = 58;
 const SQRT3 = Math.sqrt(3);
 
 type Axial = [number, number];
-const DIRS: Axial[] = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+const DIRS: Axial[] = [
+  [1, 0],
+  [1, -1],
+  [0, -1],
+  [-1, 0],
+  [-1, 1],
+  [0, 1],
+];
 
 /** The cells of ring k around the center, in order around it. */
 export function ringCells(k: number): Axial[] {
@@ -41,7 +48,8 @@ const angleOf = (c: Axial) => {
 };
 // Angles measured clockwise from the top, 0 to 2π, so rings read from twelve o'clock.
 const fromTop = (a: number) => (a + Math.PI / 2 + 4 * Math.PI) % (2 * Math.PI);
-const byAngle = (cells: Axial[]) => [...cells].sort((a, b) => fromTop(angleOf(a)) - fromTop(angleOf(b)));
+const byAngle = (cells: Axial[]) =>
+  [...cells].sort((a, b) => fromTop(angleOf(a)) - fromTop(angleOf(b)));
 const wrap = (a: number, around: number) => {
   let x = a;
   while (x < around - Math.PI) x += 2 * Math.PI;
@@ -66,7 +74,8 @@ export interface HexLayout {
 }
 
 // The number of steps between two cells of the grid.
-const hexDist = (a: Axial, b: Axial) => (Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[0] + a[1] - b[0] - b[1])) / 2;
+const hexDist = (a: Axial, b: Axial) =>
+  (Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[0] + a[1] - b[0] - b[1])) / 2;
 
 // A small seeded random source (mulberry32), so the same network always lays out the same way.
 function random(seed: number) {
@@ -91,7 +100,14 @@ function random(seed: number) {
  */
 function search(
   place: Map<string, Axial>,
-  net: { groups: MapSystem[][]; shared: MapSystem[]; outerRing: Axial[]; sharedRing: Axial[]; sharedStep: number; pairs: [string, string][] },
+  net: {
+    groups: MapSystem[][];
+    shared: MapSystem[];
+    outerRing: Axial[];
+    sharedRing: Axial[];
+    sharedStep: number;
+    pairs: [string, string][];
+  },
   seed: number,
 ) {
   const { groups, shared, outerRing, sharedRing, sharedStep, pairs } = net;
@@ -108,14 +124,26 @@ function search(
     sTurn: number;
   }
   // The start: what the barycenter left.
-  const turnOf = (c: Axial | undefined, ring: Axial[]) => Math.max(0, ring.findIndex((r) => c && r[0] === c[0] && r[1] === c[1]));
-  const sStart = shared.length ? Math.min(...shared.map((x) => turnOf(place.get(x.id), sharedRing))) : 0;
+  const turnOf = (c: Axial | undefined, ring: Axial[]) =>
+    Math.max(
+      0,
+      ring.findIndex((r) => c && r[0] === c[0] && r[1] === c[1]),
+    );
+  const sStart = shared.length
+    ? Math.min(...shared.map((x) => turnOf(place.get(x.id), sharedRing)))
+    : 0;
   let state: State = {
     order: groups.map((_, i) => i),
-    gaps: groups.map((_, i) => Math.floor(spare / Math.max(1, G)) + (i < spare % Math.max(1, G) ? 1 : 0)),
+    gaps: groups.map(
+      (_, i) => Math.floor(spare / Math.max(1, G)) + (i < spare % Math.max(1, G) ? 1 : 0),
+    ),
     members: groups.map((g) => [...g]),
     turn: 0,
-    sOrder: [...shared].sort((a, b) => ((turnOf(place.get(a.id), sharedRing) - sStart + sharedRing.length) % sharedRing.length) - ((turnOf(place.get(b.id), sharedRing) - sStart + sharedRing.length) % sharedRing.length)),
+    sOrder: [...shared].sort(
+      (a, b) =>
+        ((turnOf(place.get(a.id), sharedRing) - sStart + sharedRing.length) % sharedRing.length) -
+        ((turnOf(place.get(b.id), sharedRing) - sStart + sharedRing.length) % sharedRing.length),
+    ),
     sTurn: sStart,
   };
   const apply = (st: State) => {
@@ -124,7 +152,9 @@ function search(
       for (const x of st.members[gi]!) place.set(x.id, outerRing[i++ % outerRing.length]!);
       i += st.gaps[gi]!;
     }
-    st.sOrder.forEach((x, k) => place.set(x.id, sharedRing[(st.sTurn + k * sharedStep) % sharedRing.length]!));
+    st.sOrder.forEach((x, k) =>
+      place.set(x.id, sharedRing[(st.sTurn + k * sharedStep) % sharedRing.length]!),
+    );
   };
   const cost = (st: State) => {
     apply(st);
@@ -138,7 +168,14 @@ function search(
   };
   const rnd = random(seed);
   const pick = (n: number) => Math.floor(rnd() * n);
-  const clone = (st: State): State => ({ order: [...st.order], gaps: [...st.gaps], members: st.members.map((m) => [...m]), turn: st.turn, sOrder: [...st.sOrder], sTurn: st.sTurn });
+  const clone = (st: State): State => ({
+    order: [...st.order],
+    gaps: [...st.gaps],
+    members: st.members.map((m) => [...m]),
+    turn: st.turn,
+    sOrder: [...st.sOrder],
+    sTurn: st.sTurn,
+  });
   const move = (st: State) => {
     const n = clone(st);
     const kind = pick(6);
@@ -158,7 +195,8 @@ function search(
         n.gaps[to]!++;
       }
     } else if (kind === 2) swap(n.members[pick(Math.max(1, G))] ?? []);
-    else if (kind === 3) n.turn = (n.turn + (rnd() < 0.5 ? 1 : outerRing.length - 1)) % outerRing.length;
+    else if (kind === 3)
+      n.turn = (n.turn + (rnd() < 0.5 ? 1 : outerRing.length - 1)) % outerRing.length;
     else if (kind === 4) swap(n.sOrder);
     else n.sTurn = (n.sTurn + (rnd() < 0.5 ? 1 : sharedRing.length - 1)) % sharedRing.length;
     return n;
@@ -223,7 +261,10 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
       i += Math.floor(spare / groups.length) + (gi < spare % groups.length ? 1 : 0);
     });
   };
-  const placeShared = (order: MapSystem[], start: number) => order.forEach((s, i) => place.set(s.id, sharedRing[(start + i * sharedStep) % sharedRing.length]!));
+  const placeShared = (order: MapSystem[], start: number) =>
+    order.forEach((s, i) =>
+      place.set(s.id, sharedRing[(start + i * sharedStep) % sharedRing.length]!),
+    );
   placeOuter();
   placeShared(shared, 0);
 
@@ -243,7 +284,12 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
   const isShared = new Set(shared.map((s) => s.id));
   for (let sweep = 0; sweep < 6; sweep++) {
     // Shared packages in the order of where their users stand; the ring turned to fit the first.
-    const want = new Map(shared.map((s) => [s.id, fromTop(mean(s.id, (o) => isUsed.has(o), angleOf(place.get(s.id)!)))]));
+    const want = new Map(
+      shared.map((s) => [
+        s.id,
+        fromTop(mean(s.id, (o) => isUsed.has(o), angleOf(place.get(s.id)!))),
+      ]),
+    );
     const order = [...shared].sort((a, b) => want.get(a.id)! - want.get(b.id)!);
     let start = 0;
     let best = Infinity;
@@ -262,7 +308,18 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
     placeShared(order, start);
     for (const g of groups) {
       const mid = g.reduce((k, s) => k + fromTop(angleOf(place.get(s.id)!)), 0) / g.length;
-      const at = new Map(g.map((s) => [s.id, fromTop(mean(s.id, (o) => isShared.has(o) || core.some((c) => c.id === o), angleOf(place.get(s.id)!)))]));
+      const at = new Map(
+        g.map((s) => [
+          s.id,
+          fromTop(
+            mean(
+              s.id,
+              (o) => isShared.has(o) || core.some((c) => c.id === o),
+              angleOf(place.get(s.id)!),
+            ),
+          ),
+        ]),
+      );
       const key = (s: MapSystem) => wrap(at.get(s.id)!, mid);
       g.sort((a, b) => key(a) - key(b));
     }
@@ -284,8 +341,12 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
     // cell carries no line.
     const ringAt = new Map(outerRing.map((c, i) => [`${c[0]},${c[1]}`, i]));
     const labels = groups.flatMap((g, gi) => {
-      const mine = new Set(g.map((x) => ringAt.get(`${place.get(x.id)![0]},${place.get(x.id)![1]}`)));
-      const first = [...mine].find((i) => i !== undefined && !mine.has((i - 1 + outerRing.length) % outerRing.length));
+      const mine = new Set(
+        g.map((x) => ringAt.get(`${place.get(x.id)![0]},${place.get(x.id)![1]}`)),
+      );
+      const first = [...mine].find(
+        (i) => i !== undefined && !mine.has((i - 1 + outerRing.length) % outerRing.length),
+      );
       if (first === undefined) return [];
       const cell = outerRing[(first - 1 + outerRing.length) % outerRing.length]!;
       if (taken.has(`${cell[0]},${cell[1]}`)) return [];
@@ -294,7 +355,9 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
       return [{ name: groupNames[gi]!, x, y }];
     });
     const comb: Axial[] = [];
-    for (let k = 0; k <= ok; k++) for (const c of ringCells(k)) if (!cells.some((x) => x.at[0] === c[0] && x.at[1] === c[1])) comb.push(c);
+    for (let k = 0; k <= ok; k++)
+      for (const c of ringCells(k))
+        if (!cells.some((x) => x.at[0] === c[0] && x.at[1] === c[1])) comb.push(c);
 
     // Each line runs through the comb's empty cells, never under another system: the shortest path
     // over the hex grid whose middle cells are all empty A cell already carrying a line costs a
@@ -328,7 +391,8 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
           const n: Axial = [c[0] + dq, c[1] + dr];
           const nk = key(n);
           if (nk !== goal && (taken.has(nk) || ringOf(n) > ok)) return;
-          const turn = h < 0 || h === di ? 0 : Math.min((h - di + 6) % 6, (di - h + 6) % 6) === 1 ? 0.45 : 1.2;
+          const turn =
+            h < 0 || h === di ? 0 : Math.min((h - di + 6) % 6, (di - h + 6) % 6) === 1 ? 0.45 : 1.2;
           const nd = d + 1 + turn - (nk !== goal && load.has(nk) ? 0.3 : 0);
           const ns = `${nk}|${di}`;
           if (nd < (dist.get(ns) ?? Infinity)) {
@@ -347,7 +411,11 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
     // Longer ties first, so the short ones fit around them.
     const ordered = pairs
       .filter(([a, b]) => at.has(a) && at.has(b))
-      .sort(([a, b], [c, d]) => Math.hypot(at.get(d)!.x - at.get(c)!.x, at.get(d)!.y - at.get(c)!.y) - Math.hypot(at.get(b)!.x - at.get(a)!.x, at.get(b)!.y - at.get(a)!.y));
+      .sort(
+        ([a, b], [c, d]) =>
+          Math.hypot(at.get(d)!.x - at.get(c)!.x, at.get(d)!.y - at.get(c)!.y) -
+          Math.hypot(at.get(b)!.x - at.get(a)!.x, at.get(b)!.y - at.get(a)!.y),
+      );
     const paths = ordered.map(([a, b]) => {
       const path = route(at.get(a)!.at, at.get(b)!.at);
       for (const c of path.slice(1, -1)) load.set(key(c), (load.get(key(c)) ?? 0) + 1);
@@ -386,13 +454,24 @@ export function hexLayout(data: SystemMapData, groupOf: (s: MapSystem) => string
     });
     // How many pairs of lines cross, counted on the routes as drawn.
     let crossings = 0;
-    const o = (p: [number, number], q: [number, number], r: [number, number]) => Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]));
-    const cut = (p: [number, number], q: [number, number], r: [number, number], t: [number, number]) => o(p, q, r) * o(p, q, t) < 0 && o(r, t, p) * o(r, t, q) < 0;
+    const o = (p: [number, number], q: [number, number], r: [number, number]) =>
+      Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]));
+    const cut = (
+      p: [number, number],
+      q: [number, number],
+      r: [number, number],
+      t: [number, number],
+    ) => o(p, q, r) * o(p, q, t) < 0 && o(r, t, p) * o(r, t, q) < 0;
     for (let i = 0; i < lines.length; i++) {
       for (let j = i + 1; j < lines.length; j++) {
         const P = lines[i]!.pts;
         const Q = lines[j]!.pts;
-        if (P.some((_, x) => x > 0 && Q.some((_, y) => y > 0 && cut(P[x - 1]!, P[x]!, Q[y - 1]!, Q[y]!)))) crossings++;
+        if (
+          P.some(
+            (_, x) => x > 0 && Q.some((_, y) => y > 0 && cut(P[x - 1]!, P[x]!, Q[y - 1]!, Q[y]!)),
+          )
+        )
+          crossings++;
       }
     }
     return { cells, comb, labels, lines: lines.map(({ a, b, d }) => ({ a, b, d })), crossings };
@@ -429,9 +508,15 @@ const hexPoints = (x: number, y: number, r = R * 0.94) =>
  * words read as the name they are). */
 function nameText(name: string, x: number, y: number): string {
   const words = name.split(" ");
-  if (name.length <= 9 || words.length < 2) return `<text class="cap-system-map-cell-name" x="${x}" y="${y}" dy="0.35em">${e(name)}</text>`;
+  if (name.length <= 9 || words.length < 2)
+    return `<text class="cap-system-map-cell-name" x="${x}" y="${y}" dy="0.35em">${e(name)}</text>`;
   let best = 1;
-  for (let i = 1; i < words.length; i++) if (Math.abs(words.slice(0, i).join(" ").length - name.length / 2) < Math.abs(words.slice(0, best).join(" ").length - name.length / 2)) best = i;
+  for (let i = 1; i < words.length; i++)
+    if (
+      Math.abs(words.slice(0, i).join(" ").length - name.length / 2) <
+      Math.abs(words.slice(0, best).join(" ").length - name.length / 2)
+    )
+      best = i;
   return `<text class="cap-system-map-cell-name" x="${x}" y="${y}"><tspan x="${x}" dy="-0.2em">${e(words.slice(0, best).join(" "))} </tspan><tspan x="${x}" dy="1.15em">${e(words.slice(best).join(" "))}</tspan></text>`;
 }
 
@@ -445,8 +530,17 @@ export function hexSvg(data: SystemMapData, layout: HexLayout, labelId: string):
   const byId = new Map(data.systems.map((s) => [s.id, s]));
   const [bx, by, bw, bh] = layout.box.map((n) => Math.round(n));
   const comb = layout.comb.map((c) => `<polygon points="${hexPoints(...xy(c))}"/>`).join("");
-  const lines = layout.lines.map((l) => `<path class="cap-system-map-wire" data-a="${e(l.a)}" data-b="${e(l.b)}" d="${l.d}"/>`).join("");
-  const groups = layout.groups.map((g) => `<text class="cap-system-map-comb-group" x="${Math.round(g.x)}" y="${Math.round(g.y)}" dy="0.35em">${e(g.name)}</text>`).join("");
+  const lines = layout.lines
+    .map(
+      (l) => `<path class="cap-system-map-wire" data-a="${e(l.a)}" data-b="${e(l.b)}" d="${l.d}"/>`,
+    )
+    .join("");
+  const groups = layout.groups
+    .map(
+      (g) =>
+        `<text class="cap-system-map-comb-group" x="${Math.round(g.x)}" y="${Math.round(g.y)}" dy="0.35em">${e(g.name)}</text>`,
+    )
+    .join("");
   const cells = layout.cells
     .map((c) => {
       const s = byId.get(c.id)!;
@@ -456,7 +550,9 @@ export function hexSvg(data: SystemMapData, layout: HexLayout, labelId: string):
       const attrs = `class="cap-system-map-cell" data-id="${e(s.id)}" data-ring="${s.ring}"${s.private ? " data-private" : ""}`;
       // The name a link is known by starts with the words it shows (WCAG 2.5.3), then the full name.
       const label = s.short && s.short !== s.name ? `${s.short}, ${s.name}` : s.name;
-      return s.href ? `<a ${attrs} href="${e(s.href)}" aria-label="${e(label)}">${inner}</a>` : `<g ${attrs} role="img" aria-label="${e(label)}">${inner}</g>`;
+      return s.href
+        ? `<a ${attrs} href="${e(s.href)}" aria-label="${e(label)}">${inner}</a>`
+        : `<g ${attrs} role="img" aria-label="${e(label)}">${inner}</g>`;
     })
     .join("");
   return `<svg class="cap-system-map-comb" viewBox="${bx} ${by} ${bw} ${bh}" role="group" aria-labelledby="${e(labelId)}"><g class="cap-system-map-comb-cells" aria-hidden="true">${comb}</g><g class="cap-system-map-comb-lines" aria-hidden="true">${lines}</g><g aria-hidden="true">${groups}</g>${cells}</svg>`;

@@ -4,12 +4,30 @@ title: Site header
 summary: One header across the top of every public, app and admin page in the family, 56px and sticky, with the logo, the switcher and the section links on the left and the extras, the theme and the account on the right.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [public signed out, signed in, user's dashboard, your admin, links on the right with a divider, links centered, dark band, translucent band, switcher open, section panel open, account menu open, the site's own panel, phone row, phone sheet, phone bottom bar, written by hand]
+states:
+  [
+    public signed out,
+    signed in,
+    user's dashboard,
+    your admin,
+    links on the right with a divider,
+    links centered,
+    dark band,
+    translucent band,
+    switcher open,
+    section panel open,
+    account menu open,
+    the site's own panel,
+    phone row,
+    phone sheet,
+    phone bottom bar,
+    written by hand,
+  ]
 added: 0.9.0
 source: docs/design/design-site-header.md and its mockup; Dustin's ten answers of 2026-10-13; Foxhound's header.tsx and Foxing's page-shell.tsx
 replaces:
   - 'class="(site-header|header|topbar|navbar)"'
-  - "className=\"(site-header|header|topbar|navbar)"
+  - 'className="(site-header|header|topbar|navbar)'
 ---
 
 # Site header
@@ -41,23 +59,23 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 
 ## What each site owns
 
-| Slot | The site gives |
-| --- | --- |
-| Logo | An SVG or image at most 24px tall and 160px wide, and its name (`logo`) |
-| Accent | Its color family (`data-family` on the page) |
-| Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at 85%, blurred) |
-| UI face | `--font-ui` |
-| Extras | Up to two icon controls and one button (`extras`) |
-| Section links' place | `data-links="left"`, `"center"` or `"right"` (before the extras, after a thin divider) |
-| Panels | What each menu holds and its layout (`panel`, else the default list from `groups`) |
+| Slot                 | The site gives                                                                                                                                                     |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Logo                 | An SVG or image at most 24px tall and 160px wide, and its name (`logo`)                                                                                            |
+| Accent               | Its color family (`data-family` on the page)                                                                                                                       |
+| Band                 | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at 85%, blurred) |
+| UI face              | `--font-ui`                                                                                                                                                        |
+| Extras               | Up to two icon controls and one button (`extras`)                                                                                                                  |
+| Section links' place | `data-links="left"`, `"center"` or `"right"` (before the extras, after a thin divider)                                                                             |
+| Panels               | What each menu holds and its layout (`panel`, else the default list from `groups`)                                                                                 |
 
 ## What each slot holds, by surface
 
-| | Switcher | Section links | Extras | Account |
-| --- | --- | --- | --- | --- |
-| Public, signed out | none | the site's sections | the site's | **Sign in**, a text link |
-| Public and app, signed in | the business (a square tile), then the product | public: the sections; a dashboard: none | the site's | the avatar menu |
-| Your admin | none: the strip lists the family's apps | none | Search, Inbox | the avatar menu |
+|                           | Switcher                                       | Section links                           | Extras        | Account                  |
+| ------------------------- | ---------------------------------------------- | --------------------------------------- | ------------- | ------------------------ |
+| Public, signed out        | none                                           | the site's sections                     | the site's    | **Sign in**, a text link |
+| Public and app, signed in | the business (a square tile), then the product | public: the sections; a dashboard: none | the site's    | the avatar menu          |
+| Your admin                | none: the strip lists the family's apps        | none                                    | Search, Inbox | the avatar menu          |
 
 The account menu is the same shape everywhere: who you are; the site's own rows (a business's settings under the business's name); Admin for an admin; in an admin, View site and Help; Sign out last.
 
@@ -70,14 +88,14 @@ The account menu is the same shape everywhere: who you are; the site's own rows 
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | The skip link, the logo, the switcher, the section links, the extras, the theme, the account; then (in your admin) the strip, the menu, the page |
-| Enter or Space on the switcher, a section with children or the account | Opens its panel; focus moves to its first item |
-| Up and Down in a panel | Move between items (they wrap); Home and End go to the ends |
-| Esc | Closes the panel; focus returns to its button. Closes the sheet; focus returns to the menu button |
-| Tab past a panel's last item | Closes the panel and goes on |
-| T | Switches the theme, where the site binds single keys (`themeKey`); off with the shortcuts switch |
+| Key                                                                    | Does                                                                                                                                             |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Tab                                                                    | The skip link, the logo, the switcher, the section links, the extras, the theme, the account; then (in your admin) the strip, the menu, the page |
+| Enter or Space on the switcher, a section with children or the account | Opens its panel; focus moves to its first item                                                                                                   |
+| Up and Down in a panel                                                 | Move between items (they wrap); Home and End go to the ends                                                                                      |
+| Esc                                                                    | Closes the panel; focus returns to its button. Closes the sheet; focus returns to the menu button                                                |
+| Tab past a panel's last item                                           | Closes the panel and goes on                                                                                                                     |
+| T                                                                      | Switches the theme, where the site binds single keys (`themeKey`); off with the shortcuts switch                                                 |
 
 ## Accessibility
 
@@ -110,44 +128,172 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
   <a class="cap-site-header-skip" href="#main">Skip to content</a>
   <a class="cap-site-header-logo" href="/" aria-label="Foxhound">[mark, wordmark]</a>
   <div class="cap-site-header-switcher">
-    <button type="button" class="cap-site-header-switch" data-cap-part="panel-trigger" aria-expanded="false" aria-controls="sw-business" aria-label="Business: Acme Supply Co."><span class="cap-site-header-switch-tile" data-tile="A" aria-hidden="true"></span><span>Acme Supply Co.</span>[chevron]</button>
-    <div class="cap-site-header-panel" id="sw-business" popover="manual" role="group" aria-label="Businesses">[the site's panel]</div>
+    <button
+      type="button"
+      class="cap-site-header-switch"
+      data-cap-part="panel-trigger"
+      aria-expanded="false"
+      aria-controls="sw-business"
+      aria-label="Business: Acme Supply Co."
+    >
+      <span class="cap-site-header-switch-tile" data-tile="A" aria-hidden="true"></span
+      ><span>Acme Supply Co.</span>[chevron]
+    </button>
+    <div
+      class="cap-site-header-panel"
+      id="sw-business"
+      popover="manual"
+      role="group"
+      aria-label="Businesses"
+    >
+      [the site's panel]
+    </div>
     <span class="cap-site-header-sep" aria-hidden="true">/</span>
     [the product's button and panel]
   </div>
   <nav class="cap-site-header-sections" aria-label="Site">
     <ul>
       <li><a class="cap-site-header-link" href="/pricing" aria-current="page">Pricing</a></li>
-      <li><button type="button" class="cap-site-header-link" data-cap-part="panel-trigger" aria-expanded="false" aria-controls="books">Books[chevron]</button><div class="cap-site-header-panel" id="books" popover="manual" role="group" aria-label="Books">…</div></li>
+      <li>
+        <button
+          type="button"
+          class="cap-site-header-link"
+          data-cap-part="panel-trigger"
+          aria-expanded="false"
+          aria-controls="books"
+        >
+          Books[chevron]
+        </button>
+        <div
+          class="cap-site-header-panel"
+          id="books"
+          popover="manual"
+          role="group"
+          aria-label="Books"
+        >
+          …
+        </div>
+      </li>
     </ul>
   </nav>
   <div class="cap-site-header-tools">
-    <div class="cap-site-header-search" data-cap-part="search"><a class="cap-site-header-icon cap-site-header-search-button" href="/search" aria-label="Search" data-cap-part="search-trigger">[glyph][tip]</a><div class="cap-site-header-search-panel" data-align="end"><form role="search" aria-label="Site" action="/search" method="get">[glyph]<input type="search" name="q" placeholder="Search" aria-label="Search" autocomplete="off" enterkeyhint="search"></form></div></div>
+    <div class="cap-site-header-search" data-cap-part="search">
+      <a
+        class="cap-site-header-icon cap-site-header-search-button"
+        href="/search"
+        aria-label="Search"
+        data-cap-part="search-trigger"
+        >[glyph][tip]</a
+      >
+      <div class="cap-site-header-search-panel" data-align="end">
+        <form role="search" aria-label="Site" action="/search" method="get">
+          [glyph]<input
+            type="search"
+            name="q"
+            placeholder="Search"
+            aria-label="Search"
+            autocomplete="off"
+            enterkeyhint="search"
+          />
+        </form>
+      </div>
+    </div>
     <div class="cap-site-header-extras">
-      <button type="button" class="cap-site-header-icon" aria-label="Inbox, 4 need you">[18px glyph] <span class="cap-site-header-badge" aria-hidden="true">4</span><span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">Inbox</span></span></button>
+      <button type="button" class="cap-site-header-icon" aria-label="Inbox, 4 need you">
+        [18px glyph] <span class="cap-site-header-badge" aria-hidden="true">4</span
+        ><span
+          class="cap-site-header-tip cap-popover"
+          data-variant="tooltip"
+          data-side="bottom"
+          data-offset="6"
+          popover="manual"
+          role="tooltip"
+          aria-hidden="true"
+          ><span class="cap-site-header-tip-text">Inbox</span></span
+        >
+      </button>
       <a class="cap-site-header-cta" href="/audit">Free audit</a>
     </div>
     [the theme button: theme-switch's button form, with the class cap-site-header-icon]
     <div class="cap-site-header-account">
-      <button type="button" class="cap-site-header-icon cap-site-header-avatar" data-cap-part="panel-trigger" aria-expanded="false" aria-controls="account" aria-label="Your account"><span class="cap-site-header-initials" data-initials="SR" aria-hidden="true"><img class="cap-site-header-avatar-image" src="/avatars/sam.jpg" alt=""></span>[tip]</button>
-      <div class="cap-site-header-panel" id="account" popover="manual" data-align="end" role="group" aria-label="Your account">
-        <div class="cap-site-header-who"><strong>Sam Rivera</strong><small>sam@example.com</small></div>
-        <hr><div class="cap-site-header-panel-label">Acme Supply Co.</div><ul class="cap-site-header-panel-list">[links]</ul>
-        <hr><ul class="cap-site-header-panel-list"><li><button type="button" data-panel-close>Sign out</button></li></ul>
+      <button
+        type="button"
+        class="cap-site-header-icon cap-site-header-avatar"
+        data-cap-part="panel-trigger"
+        aria-expanded="false"
+        aria-controls="account"
+        aria-label="Your account"
+      >
+        <span class="cap-site-header-initials" data-initials="SR" aria-hidden="true"
+          ><img class="cap-site-header-avatar-image" src="/avatars/sam.jpg" alt="" /></span
+        >[tip]
+      </button>
+      <div
+        class="cap-site-header-panel"
+        id="account"
+        popover="manual"
+        data-align="end"
+        role="group"
+        aria-label="Your account"
+      >
+        <div class="cap-site-header-who">
+          <strong>Sam Rivera</strong><small>sam@example.com</small>
+        </div>
+        <hr />
+        <div class="cap-site-header-panel-label">Acme Supply Co.</div>
+        <ul class="cap-site-header-panel-list">
+          [links]
+        </ul>
+        <hr />
+        <ul class="cap-site-header-panel-list">
+          <li><button type="button" data-panel-close>Sign out</button></li>
+        </ul>
       </div>
-      [signed out: <a class="cap-site-header-signin" href="/sign-in">[person glyph]<span class="cap-site-header-signin-text">Sign in</span></a>]
+      [signed out:
+      <a class="cap-site-header-signin" href="/sign-in"
+        >[person glyph]<span class="cap-site-header-signin-text">Sign in</span></a
+      >]
     </div>
-    <button type="button" class="cap-site-header-icon cap-site-header-menu" aria-label="Menu" aria-haspopup="dialog" aria-expanded="false" aria-controls="sheet">[glyph]</button>
+    <button
+      type="button"
+      class="cap-site-header-icon cap-site-header-menu"
+      aria-label="Menu"
+      aria-haspopup="dialog"
+      aria-expanded="false"
+      aria-controls="sheet"
+    >
+      [glyph]
+    </button>
   </div>
-  <dialog class="cap-dialog cap-site-header-sheet" data-cap="dialog" data-placement="bottom" id="sheet" aria-labelledby="sheet-title">
-    <div class="cap-dialog-header"><h2 id="sheet-title" class="cap-dialog-title cap-site-header-sheet-title" tabindex="-1">Foxhound menu</h2></div>
-    <div class="cap-dialog-body"><nav aria-labelledby="sheet-title">[.cap-site-header-sheet-label, ul.cap-site-header-sheet-list of rows: .cap-site-header-sheet-icon, .cap-site-header-sheet-name, .cap-site-header-count] [a.cap-site-header-sheet-cta]</nav></div>
-    <nav class="cap-site-header-sheet-account" aria-label="Account">[ul.cap-site-header-sheet-list]</nav>
+  <dialog
+    class="cap-dialog cap-site-header-sheet"
+    data-cap="dialog"
+    data-placement="bottom"
+    id="sheet"
+    aria-labelledby="sheet-title"
+  >
+    <div class="cap-dialog-header">
+      <h2 id="sheet-title" class="cap-dialog-title cap-site-header-sheet-title" tabindex="-1">
+        Foxhound menu
+      </h2>
+    </div>
+    <div class="cap-dialog-body">
+      <nav aria-labelledby="sheet-title">
+        [.cap-site-header-sheet-label, ul.cap-site-header-sheet-list of rows:
+        .cap-site-header-sheet-icon, .cap-site-header-sheet-name, .cap-site-header-count]
+        [a.cap-site-header-sheet-cta]
+      </nav>
+    </div>
+    <nav class="cap-site-header-sheet-account" aria-label="Account">
+      [ul.cap-site-header-sheet-list]
+    </nav>
     [the dialog's Close button]
   </dialog>
 </header>
 [the page]
-<nav class="cap-site-tabs" aria-label="Your reading">[up to five links: icon, label, .cap-site-header-badge]</nav>
+<nav class="cap-site-tabs" aria-label="Your reading">
+  [up to five links: icon, label, .cap-site-header-badge]
+</nav>
 ```
 
 `import { enhance, wirePanel, openSheet, closeSheet, stepIndex, badgeText } from "capsomer/behavior/site-header"` wires markup written by hand: each `[data-cap-part="panel-trigger"]` to the panel its `aria-controls` names, each tip, the menu button and its sheet. The theme button is theme-switch's (`enhance` from `capsomer/behavior/theme-switch`). In React, `import { SiteHeader, SiteTabs } from "capsomer/react/site-header"`:

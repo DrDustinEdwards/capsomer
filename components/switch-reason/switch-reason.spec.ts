@@ -1,5 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 interface Applied {
   checked: boolean;
@@ -45,7 +50,11 @@ eachTheme((theme) => {
       { sel: "#sr-miss-why", what: "an invalid reason field's edge", part: "border" },
       { sel: "#sr-loop input[role='switch']", what: "the track's edge, on", part: "border" },
       { sel: "#sr-backups input[role='switch']", what: "the track's edge, off", part: "border" },
-      { sel: "[aria-labelledby='s-pending'] input[role='switch']", what: "the pending switch's outline", part: "outline" },
+      {
+        sel: "[aria-labelledby='s-pending'] input[role='switch']",
+        what: "the pending switch's outline",
+        part: "outline",
+      },
     ]);
   });
 
@@ -55,20 +64,33 @@ eachTheme((theme) => {
       - switch "Improve loop" [checked]
     `);
     await expect(page.locator("#sr-loop form")).toBeHidden();
-    await expect(page.locator("#sr-miss-why")).toHaveAccessibleName("Turning mention sync on. Reason:");
-    await expect(page.locator("#sr-miss-why")).toHaveAccessibleDescription(`${MISSING} Enter applies, Esc cancels. The reason is recorded with the change.`);
+    await expect(page.locator("#sr-miss-why")).toHaveAccessibleName(
+      "Turning mention sync on. Reason:",
+    );
+    await expect(page.locator("#sr-miss-why")).toHaveAccessibleDescription(
+      `${MISSING} Enter applies, Esc cancels. The reason is recorded with the change.`,
+    );
   });
 
-  test("accessibility: while the change is sent, the switch and the form say they are busy, and the switch keeps its name", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "switch-reason", theme);
-    const sw = page.locator("[aria-labelledby='s-pending'] input[role='switch']");
-    await expect(sw).toHaveAttribute("aria-busy", "true");
-    await expect(sw).toHaveAccessibleName("Agent access for billing-driver");
-    await expect(page.locator("[aria-labelledby='s-pending'] form")).toHaveAttribute("aria-busy", "true");
-    await expect(page.locator("#sr-pend-apply")).toHaveAttribute("aria-busy", "true");
-  });
+  test(
+    "accessibility: while the change is sent, the switch and the form say they are busy, and the switch keeps its name",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "switch-reason", theme);
+      const sw = page.locator("[aria-labelledby='s-pending'] input[role='switch']");
+      await expect(sw).toHaveAttribute("aria-busy", "true");
+      await expect(sw).toHaveAccessibleName("Agent access for billing-driver");
+      await expect(page.locator("[aria-labelledby='s-pending'] form")).toHaveAttribute(
+        "aria-busy",
+        "true",
+      );
+      await expect(page.locator("#sr-pend-apply")).toHaveAttribute("aria-busy", "true");
+    },
+  );
 
-  test("keyboard: Space on the switch asks why beside it and does not move it", async ({ page }) => {
+  test("keyboard: Space on the switch asks why beside it and does not move it", async ({
+    page,
+  }) => {
     await visitStates(page, "switch-reason", theme);
     const sw = page.getByRole("switch", { name: "Improve loop" });
     await expect(page.locator("#sr-loop-note")).toBeVisible();
@@ -83,7 +105,9 @@ eachTheme((theme) => {
     await expect(page.locator("#sr-loop-note")).toBeHidden();
   });
 
-  test("keyboard: Enter with no reason shows an error beside the field and the switch stays", async ({ page }) => {
+  test("keyboard: Enter with no reason shows an error beside the field and the switch stays", async ({
+    page,
+  }) => {
     await visitStates(page, "switch-reason", theme);
     await recordApplied(page);
     const sw = page.getByRole("switch", { name: "Improve loop" });
@@ -94,13 +118,17 @@ eachTheme((theme) => {
     await expect(err).toHaveText(MISSING);
     await expect(err).toHaveAttribute("role", "alert");
     await expect(page.locator("#sr-loop-why")).toHaveAttribute("aria-invalid", "true");
-    expect((await page.locator("#sr-loop-why").getAttribute("aria-describedby"))?.split(" ")).toContain("sr-loop-err");
+    expect(
+      (await page.locator("#sr-loop-why").getAttribute("aria-describedby"))?.split(" "),
+    ).toContain("sr-loop-err");
     await expect(page.locator("#sr-loop-why")).toBeFocused();
     await expect(sw).toBeChecked();
     expect(await page.evaluate(() => (window as Win).applied)).toEqual([]);
   });
 
-  test("keyboard: Enter with a reason applies: the switch moves, the event carries the reason, focus returns", async ({ page }) => {
+  test("keyboard: Enter with a reason applies: the switch moves, the event carries the reason, focus returns", async ({
+    page,
+  }) => {
     await visitStates(page, "switch-reason", theme);
     await recordApplied(page);
     const sw = page.getByRole("switch", { name: "Improve loop" });
@@ -112,7 +140,9 @@ eachTheme((theme) => {
     await expect(page.locator("#sr-loop .cap-switch-state")).toHaveText("Off");
     await expect(page.locator("#sr-loop form")).toBeHidden();
     await expect(sw).toBeFocused();
-    expect(await page.evaluate(() => (window as Win).applied)).toEqual([{ checked: false, reason: "Pausing during the migration" }]);
+    expect(await page.evaluate(() => (window as Win).applied)).toEqual([
+      { checked: false, reason: "Pausing during the migration" },
+    ]);
 
     const said = page.locator("#sr-loop-said");
     await expect(said).toContainText('Improve loop turned off: "Pausing during the migration".');
@@ -121,7 +151,9 @@ eachTheme((theme) => {
     await expect(page.locator("#sr-loop .cap-switch-state")).toHaveText("On");
   });
 
-  test("keyboard: Esc cancels and returns focus to the switch, which has not moved", async ({ page }) => {
+  test("keyboard: Esc cancels and returns focus to the switch, which has not moved", async ({
+    page,
+  }) => {
     await visitStates(page, "switch-reason", theme);
     const sw = page.getByRole("switch", { name: "Improve loop" });
     await sw.focus();
@@ -135,7 +167,9 @@ eachTheme((theme) => {
     await expect(page.locator("#sr-loop-why")).toHaveValue("");
   });
 
-  test("keyboard: Esc in the reason does not reach a panel the switch sits in", async ({ page }) => {
+  test("keyboard: Esc in the reason does not reach a panel the switch sits in", async ({
+    page,
+  }) => {
     await visitStates(page, "switch-reason", theme);
     await page.evaluate(() => {
       const w = window as Win;
@@ -156,13 +190,17 @@ eachTheme((theme) => {
     const sw = page.getByRole("switch", { name: "Nightly backups" });
     await sw.click();
     await expect(sw).not.toBeChecked();
-    await expect(page.getByRole("textbox", { name: "Enabling nightly backups. Reason:" })).toBeFocused();
+    await expect(
+      page.getByRole("textbox", { name: "Enabling nightly backups. Reason:" }),
+    ).toBeFocused();
     await page.locator("#sr-backups").getByRole("button", { name: "Cancel" }).click();
     await expect(page.locator("#sr-backups form")).toBeHidden();
     await expect(sw).toBeFocused();
   });
 
-  test("behavior: a click on the switch while the reason is open goes back to the reason and keeps what was typed", async ({ page }) => {
+  test("behavior: a click on the switch while the reason is open goes back to the reason and keeps what was typed", async ({
+    page,
+  }) => {
     await visitStates(page, "switch-reason", theme);
     const sw = page.getByRole("switch", { name: "Nightly backups" });
     await sw.click();
@@ -172,7 +210,9 @@ eachTheme((theme) => {
     await expect(page.locator("#sr-backups-why")).toHaveValue("The storage move is done");
   });
 
-  test("behavior: the state asked for is fixed when the reason opens, whatever the switch does meanwhile", async ({ page }) => {
+  test("behavior: the state asked for is fixed when the reason opens, whatever the switch does meanwhile", async ({
+    page,
+  }) => {
     await visitStates(page, "switch-reason", theme);
     await recordApplied(page);
     const sw = page.getByRole("switch", { name: "Improve loop" });
@@ -185,10 +225,14 @@ eachTheme((theme) => {
     });
     await page.keyboard.type("The poll got there first");
     await page.keyboard.press("Enter");
-    expect(await page.evaluate(() => (window as Win).applied)).toEqual([{ checked: false, reason: "The poll got there first" }]);
+    expect(await page.evaluate(() => (window as Win).applied)).toEqual([
+      { checked: false, reason: "The poll got there first" },
+    ]);
   });
 
-  test("behavior: while the app saves, the switch and Apply are pending and Esc is held; a failure keeps the form with its message", async ({ page }) => {
+  test("behavior: while the app saves, the switch and Apply are pending and Esc is held; a failure keeps the form with its message", async ({
+    page,
+  }) => {
     await visitStates(page, "switch-reason", theme);
     await page.evaluate(() => {
       const w = window as Win;
@@ -216,7 +260,9 @@ eachTheme((theme) => {
 
     await page.evaluate(() => (window as Win).settle?.rej(new Error("The Portal did not answer.")));
     const err = page.locator("#sr-backups-err");
-    await expect(err).toHaveText("Could not turn nightly backups on. The Portal did not answer. Try again, or press Esc to cancel.");
+    await expect(err).toHaveText(
+      "Could not turn nightly backups on. The Portal did not answer. Try again, or press Esc to cancel.",
+    );
     await expect(err).toHaveAttribute("role", "alert");
     await expect(apply).not.toHaveAttribute("aria-busy", "true");
     await expect(sw).not.toHaveAttribute("aria-busy", "true");

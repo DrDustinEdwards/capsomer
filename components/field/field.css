@@ -414,7 +414,11 @@
      20px disc ringed in the ground, which grows a soft ring under the pointer and shrinks a
      little while held. Recova's calculator slider. */
   .cap-range {
-    --cap-range-track: linear-gradient(to right, var(--primary) var(--cap-range-fill, 0%), var(--line-strong) 0);
+    --cap-range-track: linear-gradient(
+      to right,
+      var(--primary) var(--cap-range-fill, 0%),
+      var(--line-strong) 0
+    );
     display: block;
     inline-size: 100%;
     block-size: max(var(--target), 24px);
@@ -452,19 +456,27 @@
       box-shadow: 0 0 0 2px var(--ground);
     }
     &:is(:hover, [data-force="hover"])::-webkit-slider-thumb {
-      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+      box-shadow:
+        0 0 0 2px var(--ground),
+        0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
     }
     &:is(:hover, [data-force="hover"])::-moz-range-thumb {
-      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+      box-shadow:
+        0 0 0 2px var(--ground),
+        0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
     }
     &:focus-visible {
       outline: none;
     }
     &:focus-visible::-webkit-slider-thumb {
-      box-shadow: 0 0 0 2px var(--ground), 0 0 0 calc(2px + var(--focus-width)) var(--ring);
+      box-shadow:
+        0 0 0 2px var(--ground),
+        0 0 0 calc(2px + var(--focus-width)) var(--ring);
     }
     &:focus-visible::-moz-range-thumb {
-      box-shadow: 0 0 0 2px var(--ground), 0 0 0 calc(2px + var(--focus-width)) var(--ring);
+      box-shadow:
+        0 0 0 2px var(--ground),
+        0 0 0 calc(2px + var(--focus-width)) var(--ring);
     }
     &:active::-webkit-slider-thumb {
       scale: 0.9;
@@ -479,10 +491,14 @@
   }
   @media (prefers-reduced-motion: no-preference) {
     .cap-range::-webkit-slider-thumb {
-      transition: box-shadow var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-out);
+      transition:
+        box-shadow var(--dur-fast) var(--ease-out),
+        scale var(--dur-fast) var(--ease-out);
     }
     .cap-range::-moz-range-thumb {
-      transition: box-shadow var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-out);
+      transition:
+        box-shadow var(--dur-fast) var(--ease-out),
+        scale var(--dur-fast) var(--ease-out);
     }
   }
   /* Forced colors drop the drawn track: the browser's own slider comes back. */

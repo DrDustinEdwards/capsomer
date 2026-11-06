@@ -7,7 +7,10 @@ import { FOOTER, header, runningHead } from "./home.ts";
 
 const STATEMENT = accessibilityStatement({
   siteName: "Capsomer's site",
-  contact: { href: "https://dustinedwards.info/contact", label: "the contact page on dustinedwards.info" },
+  contact: {
+    href: "https://dustinedwards.info/contact",
+    label: "the contact page on dustinedwards.info",
+  },
   date: "2026-11-01",
   capsomer: true,
   links: "marked",
@@ -18,7 +21,11 @@ const STATEMENT = accessibilityStatement({
   ],
 });
 
-export const ACCESSIBILITY_PAGE = { path: "/accessibility/", title: STATEMENT.title, description: STATEMENT.description };
+export const ACCESSIBILITY_PAGE = {
+  path: "/accessibility/",
+  title: STATEMENT.title,
+  description: STATEMENT.description,
+};
 
 /** The statement in the site's letterhead, running head and footer. */
 export function renderAccessibility(version: string): string {

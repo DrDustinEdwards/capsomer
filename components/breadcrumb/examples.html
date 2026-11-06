@@ -5,7 +5,11 @@
     <ol class="cap-breadcrumb-list">
       <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
       <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#posts">Posts</a></li>
-      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Why the spring update took so long</span></li>
+      <li class="cap-breadcrumb-item">
+        <span class="cap-breadcrumb-page" aria-current="page"
+          >Why the spring update took so long</span
+        >
+      </li>
     </ol>
   </nav>
 </section>
@@ -14,8 +18,12 @@
   <h2 id="s-two">Two levels, and hover on a link</h2>
   <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-two">
     <ol class="cap-breadcrumb-list">
-      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" data-force="hover" href="#sites">Sites</a></li>
-      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">example.com</span></li>
+      <li class="cap-breadcrumb-item">
+        <a class="cap-breadcrumb-link" data-force="hover" href="#sites">Sites</a>
+      </li>
+      <li class="cap-breadcrumb-item">
+        <span class="cap-breadcrumb-page" aria-current="page">example.com</span>
+      </li>
     </ol>
   </nav>
 </section>
@@ -24,9 +32,20 @@
   <h2 id="s-long">Long names are cut with an ellipsis</h2>
   <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-long">
     <ol class="cap-breadcrumb-list">
-      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#media">Media library</a></li>
-      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#campaign" id="bc-long-link">Autumn 2026 community garden field survey photographs from the east park sites</a></li>
-      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page" id="bc-long-page">IMG_4821 north bed of the community garden at dawn, plot 3 of 12, photographed after eighteen hours of steady rain, the second visit of the spring survey</span></li>
+      <li class="cap-breadcrumb-item">
+        <a class="cap-breadcrumb-link" href="#media">Media library</a>
+      </li>
+      <li class="cap-breadcrumb-item">
+        <a class="cap-breadcrumb-link" href="#campaign" id="bc-long-link"
+          >Autumn 2026 community garden field survey photographs from the east park sites</a
+        >
+      </li>
+      <li class="cap-breadcrumb-item">
+        <span class="cap-breadcrumb-page" aria-current="page" id="bc-long-page"
+          >IMG_4821 north bed of the community garden at dawn, plot 3 of 12, photographed after
+          eighteen hours of steady rain, the second visit of the spring survey</span
+        >
+      </li>
     </ol>
   </nav>
 </section>
@@ -38,8 +57,31 @@
       <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
       <li class="cap-breadcrumb-item" data-collapsed>
         <span data-cap="popover">
-          <button type="button" class="cap-breadcrumb-ellipsis" popovertarget="bc-folded-more" aria-haspopup="dialog" aria-expanded="false" aria-label="Show 2 more levels"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="3" cy="8" r="1.4" fill="currentColor" /><circle cx="8" cy="8" r="1.4" fill="currentColor" /><circle cx="13" cy="8" r="1.4" fill="currentColor" /></svg></button>
-          <div class="cap-popover" id="bc-folded-more" popover="auto" role="dialog" aria-label="More levels" data-side="bottom" data-align="start" data-size="auto" data-flush>
+          <button
+            type="button"
+            class="cap-breadcrumb-ellipsis"
+            popovertarget="bc-folded-more"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-label="Show 2 more levels"
+          >
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <circle cx="3" cy="8" r="1.4" fill="currentColor" />
+              <circle cx="8" cy="8" r="1.4" fill="currentColor" />
+              <circle cx="13" cy="8" r="1.4" fill="currentColor" />
+            </svg>
+          </button>
+          <div
+            class="cap-popover"
+            id="bc-folded-more"
+            popover="auto"
+            role="dialog"
+            aria-label="More levels"
+            data-side="bottom"
+            data-align="start"
+            data-size="auto"
+            data-flush
+          >
             <ul class="cap-breadcrumb-more">
               <li><a class="cap-breadcrumb-more-link" href="#sites">Sites</a></li>
               <li><a class="cap-breadcrumb-more-link" href="#example">example.com</a></li>
@@ -48,32 +90,58 @@
         </span>
       </li>
       <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#runs">Runs</a></li>
-      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">job_7c21</span></li>
+      <li class="cap-breadcrumb-item">
+        <span class="cap-breadcrumb-page" aria-current="page">job_7c21</span>
+      </li>
     </ol>
   </nav>
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-auto">
   <h2 id="s-auto">The whole trail in the HTML; script folds it (data-max-items="4")</h2>
-  <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-auto" data-cap="breadcrumb" data-max-items="4">
+  <nav
+    class="cap-breadcrumb"
+    aria-label="Breadcrumb"
+    id="bc-auto"
+    data-cap="breadcrumb"
+    data-max-items="4"
+  >
     <ol class="cap-breadcrumb-list">
       <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
-      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#media">Media library</a></li>
+      <li class="cap-breadcrumb-item">
+        <a class="cap-breadcrumb-link" href="#media">Media library</a>
+      </li>
       <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#2026">2026</a></li>
-      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#september">September</a></li>
-      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#field-survey">Field survey</a></li>
-      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Photo 3</span></li>
+      <li class="cap-breadcrumb-item">
+        <a class="cap-breadcrumb-link" href="#september">September</a>
+      </li>
+      <li class="cap-breadcrumb-item">
+        <a class="cap-breadcrumb-link" href="#field-survey">Field survey</a>
+      </li>
+      <li class="cap-breadcrumb-item">
+        <span class="cap-breadcrumb-page" aria-current="page">Photo 3</span>
+      </li>
     </ol>
   </nav>
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-short">
   <h2 id="s-short">A trail that is not longer than the limit stays whole</h2>
-  <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-short" data-cap="breadcrumb" data-max-items="4">
+  <nav
+    class="cap-breadcrumb"
+    aria-label="Breadcrumb"
+    id="bc-short"
+    data-cap="breadcrumb"
+    data-max-items="4"
+  >
     <ol class="cap-breadcrumb-list">
       <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
-      <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#mentions">Mentions</a></li>
-      <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Unverified</span></li>
+      <li class="cap-breadcrumb-item">
+        <a class="cap-breadcrumb-link" href="#mentions">Mentions</a>
+      </li>
+      <li class="cap-breadcrumb-item">
+        <span class="cap-breadcrumb-page" aria-current="page">Unverified</span>
+      </li>
     </ol>
   </nav>
 </section>
@@ -84,9 +152,13 @@
     <nav class="cap-breadcrumb" aria-label="Breadcrumb" id="bc-narrow">
       <ol class="cap-breadcrumb-list">
         <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
-        <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#guides">Guides</a></li>
+        <li class="cap-breadcrumb-item">
+          <a class="cap-breadcrumb-link" href="#guides">Guides</a>
+        </li>
         <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#setup">Setup</a></li>
-        <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Getting started</span></li>
+        <li class="cap-breadcrumb-item">
+          <span class="cap-breadcrumb-page" aria-current="page">Getting started</span>
+        </li>
       </ol>
     </nav>
   </div>
@@ -98,7 +170,9 @@
     <nav class="cap-breadcrumb" aria-label="Density sample" id="bc-comfortable">
       <ol class="cap-breadcrumb-list">
         <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
-        <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Posts</span></li>
+        <li class="cap-breadcrumb-item">
+          <span class="cap-breadcrumb-page" aria-current="page">Posts</span>
+        </li>
       </ol>
     </nav>
   </div>
@@ -112,8 +186,31 @@
         <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#admin">Admin</a></li>
         <li class="cap-breadcrumb-item" data-collapsed>
           <span data-cap="popover" data-specimen-open>
-            <button type="button" class="cap-breadcrumb-ellipsis" popovertarget="bc-open-more" aria-haspopup="dialog" aria-expanded="false" aria-label="Show 2 more levels"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="3" cy="8" r="1.4" fill="currentColor" /><circle cx="8" cy="8" r="1.4" fill="currentColor" /><circle cx="13" cy="8" r="1.4" fill="currentColor" /></svg></button>
-            <div class="cap-popover" id="bc-open-more" popover="manual" role="dialog" aria-label="More levels" data-side="bottom" data-align="start" data-size="auto" data-flush>
+            <button
+              type="button"
+              class="cap-breadcrumb-ellipsis"
+              popovertarget="bc-open-more"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+              aria-label="Show 2 more levels"
+            >
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <circle cx="3" cy="8" r="1.4" fill="currentColor" />
+                <circle cx="8" cy="8" r="1.4" fill="currentColor" />
+                <circle cx="13" cy="8" r="1.4" fill="currentColor" />
+              </svg>
+            </button>
+            <div
+              class="cap-popover"
+              id="bc-open-more"
+              popover="manual"
+              role="dialog"
+              aria-label="More levels"
+              data-side="bottom"
+              data-align="start"
+              data-size="auto"
+              data-flush
+            >
               <ul class="cap-breadcrumb-more">
                 <li><a class="cap-breadcrumb-more-link" href="#sites">Sites</a></li>
                 <li><a class="cap-breadcrumb-more-link" href="#example">example.com</a></li>
@@ -122,7 +219,9 @@
           </span>
         </li>
         <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="#runs">Runs</a></li>
-        <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">job_7c21</span></li>
+        <li class="cap-breadcrumb-item">
+          <span class="cap-breadcrumb-page" aria-current="page">job_7c21</span>
+        </li>
       </ol>
     </nav>
   </main>

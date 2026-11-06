@@ -43,11 +43,14 @@ The first thing in every view of an app inside the shell: a list, a detail, an e
 ```html
 <header class="cap-page-head">
   <div class="cap-page-head-text">
-    <nav class="cap-breadcrumb" aria-label="Breadcrumb">...</nav>   <!-- optional, two or more levels -->
+    <nav class="cap-breadcrumb" aria-label="Breadcrumb">...</nav>
+    <!-- optional, two or more levels -->
     <h1 class="cap-page-head-title">Title</h1>
-    <p class="cap-page-head-lead">One line saying what the page is for.</p>   <!-- optional -->
+    <p class="cap-page-head-lead">One line saying what the page is for.</p>
+    <!-- optional -->
   </div>
-  <div class="cap-page-head-actions">[buttons and links]</div>   <!-- optional -->
+  <div class="cap-page-head-actions">[buttons and links]</div>
+  <!-- optional -->
 </header>
 ```
 
@@ -55,8 +58,8 @@ React: `PageHead` from `capsomer/react/page-head` takes `crumbs`, `renderLink`, 
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
+| Key | Does                                                                |
+| --- | ------------------------------------------------------------------- |
 | Tab | Moves through the trail's links, then the actions, in reading order |
 
 ## Accessibility

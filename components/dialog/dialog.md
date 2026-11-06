@@ -52,14 +52,14 @@ Anything that must be dealt with before the page is used again: a short form, a 
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| (on open) | Focus is on the `autofocus` element, Cancel for an alert dialog, otherwise the first control |
-| Tab, Shift Tab | Moves between the controls and stays inside the dialog; the page behind is inert |
-| Esc | Closes the dialog and returns focus to the opener, unless it is busy |
-| Enter or Space on Close or Cancel | Closes it |
-| Arrow keys, Page Up, Page Down on a scrolling body | Scroll it |
-| Back (browser), where `data-cap-history` is set | Closes it |
+| Key                                                | Does                                                                                         |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| (on open)                                          | Focus is on the `autofocus` element, Cancel for an alert dialog, otherwise the first control |
+| Tab, Shift Tab                                     | Moves between the controls and stays inside the dialog; the page behind is inert             |
+| Esc                                                | Closes the dialog and returns focus to the opener, unless it is busy                         |
+| Enter or Space on Close or Cancel                  | Closes it                                                                                    |
+| Arrow keys, Page Up, Page Down on a scrolling body | Scroll it                                                                                    |
+| Back (browser), where `data-cap-history` is set    | Closes it                                                                                    |
 
 ## Accessibility
 
@@ -75,8 +75,15 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ## Markup
 
 ```html
-<dialog class="cap-dialog" data-cap="dialog" data-placement="center" data-size="md"
-        id="rename" aria-labelledby="rename-title" aria-describedby="rename-desc">
+<dialog
+  class="cap-dialog"
+  data-cap="dialog"
+  data-placement="center"
+  data-size="md"
+  id="rename"
+  aria-labelledby="rename-title"
+  aria-describedby="rename-desc"
+>
   <div class="cap-dialog-header">
     <h2 class="cap-dialog-title" id="rename-title">Rename the site</h2>
     <p class="cap-dialog-description" id="rename-desc">Visitors keep the old address.</p>
@@ -86,8 +93,16 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
     <button type="button" class="cap-btn" data-variant="primary">Save name</button>
   </div>
-  <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only
-          data-cap-part="close" aria-label="Close">…</button>
+  <button
+    type="button"
+    class="cap-btn cap-dialog-close"
+    data-variant="quiet"
+    data-icon-only
+    data-cap-part="close"
+    aria-label="Close"
+  >
+    …
+  </button>
 </dialog>
 <button type="button" class="cap-btn" data-cap-dialog-open="rename">Rename…</button>
 ```
@@ -98,10 +113,23 @@ In the page until script opens it:
 
 ```html
 <p><a class="cap-btn" href="#rename" data-cap-dialog-open="rename">Rename the site…</a></p>
-<dialog class="cap-dialog" data-cap="dialog" data-cap-inline open data-placement="center" data-size="md" id="rename" aria-labelledby="rename-title">
+<dialog
+  class="cap-dialog"
+  data-cap="dialog"
+  data-cap-inline
+  open
+  data-placement="center"
+  data-size="md"
+  id="rename"
+  aria-labelledby="rename-title"
+>
   <form method="post" action="/admin/sites/example/rename">
-    <div class="cap-dialog-header"><h2 class="cap-dialog-title" id="rename-title">Rename the site</h2></div>
-    <div class="cap-dialog-body"><label for="name">Site name</label><input class="cap-input" id="name" name="name" /></div>
+    <div class="cap-dialog-header">
+      <h2 class="cap-dialog-title" id="rename-title">Rename the site</h2>
+    </div>
+    <div class="cap-dialog-body">
+      <label for="name">Site name</label><input class="cap-input" id="name" name="name" />
+    </div>
     <div class="cap-dialog-footer">
       <a class="cap-btn" href="/admin/sites/example" data-cap-part="cancel">Cancel</a>
       <button type="submit" class="cap-btn" data-variant="primary">Save name</button>

@@ -18,7 +18,16 @@ export function RowList({ labelledBy, label, primary = false, gap, children }: R
   return (
     // role="list" keeps list semantics in Safari, which drops them from a list-style: none list.
     // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
-    <ul ref={ref} className="cap-rows" data-cap="row-list" role="list" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-cap-primary={primary ? "" : undefined} data-gap={gap === undefined ? undefined : gap === "default" ? "" : gap}>
+    <ul
+      ref={ref}
+      className="cap-rows"
+      data-cap="row-list"
+      role="list"
+      aria-labelledby={labelledBy}
+      aria-label={labelledBy ? undefined : label}
+      data-cap-primary={primary ? "" : undefined}
+      data-gap={gap === undefined ? undefined : gap === "default" ? "" : gap}
+    >
       {children}
     </ul>
   );
@@ -62,13 +71,38 @@ export interface RowProps {
 
 const plainLink = ({ children, ...props }: RowLinkProps) => <a {...props}>{children}</a>;
 
-export function Row({ title, href, onOpen, status, detail, meta, actions, tone, variant, size, media, mediaVariant, expanded, controls, className, renderLink = plainLink }: RowProps) {
+export function Row({
+  title,
+  href,
+  onOpen,
+  status,
+  detail,
+  meta,
+  actions,
+  tone,
+  variant,
+  size,
+  media,
+  mediaVariant,
+  expanded,
+  controls,
+  className,
+  renderLink = plainLink,
+}: RowProps) {
   const id = useId();
   // The link's name is the title; the status and the detail are its description, so a
   // screen reader moving by link still hears "Critical" and why.
-  const described = [status != null ? `${id}-status` : "", detail != null ? `${id}-detail` : ""].filter(Boolean).join(" ") || undefined;
+  const described =
+    [status != null ? `${id}-status` : "", detail != null ? `${id}-detail` : ""]
+      .filter(Boolean)
+      .join(" ") || undefined;
   return (
-    <li className={className ? `cap-row ${className}` : "cap-row"} data-tone={tone} data-variant={variant} data-size={size}>
+    <li
+      className={className ? `cap-row ${className}` : "cap-row"}
+      data-tone={tone}
+      data-variant={variant}
+      data-size={size}
+    >
       {media != null && (
         <span className="cap-row-media" data-variant={mediaVariant}>
           {media}
@@ -83,7 +117,13 @@ export function Row({ title, href, onOpen, status, detail, meta, actions, tone, 
         {href != null ? (
           renderLink({ href, "aria-describedby": described, children: title })
         ) : (
-          <button type="button" aria-describedby={described} aria-expanded={expanded} aria-controls={expanded === undefined ? undefined : controls} onClick={onOpen}>
+          <button
+            type="button"
+            aria-describedby={described}
+            aria-expanded={expanded}
+            aria-controls={expanded === undefined ? undefined : controls}
+            onClick={onOpen}
+          >
             {title}
           </button>
         )}

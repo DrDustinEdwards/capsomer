@@ -52,13 +52,13 @@ Email clients ignore most of what the components rely on, so the email layer is 
 
 ## The template list
 
-| Template | Purpose | Data it takes |
-| --- | --- | --- |
-| `magicLink` | Sign in with one link | url, expiresIn |
-| `verification` | Confirm an address | url, expiresIn |
-| `reset` | Reset a password | url, expiresIn, ignoreNote |
-| `alert` | Something needs attention (a health check, a watchdog, an AI budget) | level (`crit`, `warn`, `info`), what, when, detail lines, optional url |
-| `notice` | A plain message (a decision, a digest line, a change of terms) | title, body paragraphs, optional action |
+| Template       | Purpose                                                              | Data it takes                                                          |
+| -------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `magicLink`    | Sign in with one link                                                | url, expiresIn                                                         |
+| `verification` | Confirm an address                                                   | url, expiresIn                                                         |
+| `reset`        | Reset a password                                                     | url, expiresIn, ignoreNote                                             |
+| `alert`        | Something needs attention (a health check, a watchdog, an AI budget) | level (`crit`, `warn`, `info`), what, when, detail lines, optional url |
+| `notice`       | A plain message (a decision, a digest line, a change of terms)       | title, body paragraphs, optional action                                |
 
 Security rules for the first three: say who asked, say the link expires and works once, say what to do if it was not you, and never show the token anywhere except inside the one link. A fixture and a screenshot use an obviously fake token, for example `EXAMPLE-NOT-A-TOKEN`.
 

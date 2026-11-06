@@ -1,11 +1,77 @@
 <section class="cap-specimen" aria-labelledby="s-live">
   <h2 id="s-live">A draft's tags, removable (live, with Undo)</h2>
-  <form class="cap-tags" data-cap="tag-group" role="group" aria-labelledby="tags-live-l" data-cap-then="#tags-add" id="tags-live" action="#" method="post">
+  <form
+    class="cap-tags"
+    data-cap="tag-group"
+    role="group"
+    aria-labelledby="tags-live-l"
+    data-cap-then="#tags-add"
+    id="tags-live"
+    action="#"
+    method="post"
+  >
     <span class="cap-tags-label" id="tags-live-l">Tags</span>
     <ul class="cap-tags-list">
-      <li class="cap-tag" data-value="field-notes"><span class="cap-tag-name">field notes</span><button type="submit" name="remove-tag" value="field-notes" class="cap-tag-remove" aria-label="Remove field notes"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button></li>
-      <li class="cap-tag" data-value="monitoring"><span class="cap-tag-name">monitoring</span><button type="submit" name="remove-tag" value="monitoring" class="cap-tag-remove" aria-label="Remove monitoring"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button></li>
-      <li class="cap-tag" data-value="quiet-hours"><span class="cap-tag-name">quiet hours</span><button type="submit" name="remove-tag" value="quiet-hours" class="cap-tag-remove" aria-label="Remove quiet hours"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button></li>
+      <li class="cap-tag" data-value="field-notes">
+        <span class="cap-tag-name">field notes</span
+        ><button
+          type="submit"
+          name="remove-tag"
+          value="field-notes"
+          class="cap-tag-remove"
+          aria-label="Remove field notes"
+        >
+          <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path
+              d="M4 4l8 8M12 4l-8 8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </li>
+      <li class="cap-tag" data-value="monitoring">
+        <span class="cap-tag-name">monitoring</span
+        ><button
+          type="submit"
+          name="remove-tag"
+          value="monitoring"
+          class="cap-tag-remove"
+          aria-label="Remove monitoring"
+        >
+          <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path
+              d="M4 4l8 8M12 4l-8 8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </li>
+      <li class="cap-tag" data-value="quiet-hours">
+        <span class="cap-tag-name">quiet hours</span
+        ><button
+          type="submit"
+          name="remove-tag"
+          value="quiet-hours"
+          class="cap-tag-remove"
+          aria-label="Remove quiet hours"
+        >
+          <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path
+              d="M4 4l8 8M12 4l-8 8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </li>
     </ul>
     <span class="cap-tags-empty">No tags yet.</span>
   </form>
@@ -13,7 +79,13 @@
     <label class="cap-label" for="tags-add">Add a tag</label>
     <input class="cap-input" id="tags-add" type="text" autocomplete="off" />
   </div>
-  <div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+  <div
+    class="cap-message"
+    data-cap="message"
+    role="status"
+    aria-label="Results and failures"
+    aria-atomic="false"
+  ></div>
 </section>
 
 <section class="cap-specimen" aria-labelledby="s-hover">
@@ -21,8 +93,34 @@
   <div class="cap-tags" role="group" aria-labelledby="tags-hover-l">
     <span class="cap-tags-label" id="tags-hover-l">Topics</span>
     <ul class="cap-tags-list">
-      <li class="cap-tag" data-value="uptime"><span class="cap-tag-name">uptime</span><button type="button" class="cap-tag-remove" aria-label="Remove uptime" data-force="hover"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button></li>
-      <li class="cap-tag" data-value="webmentions"><span class="cap-tag-name">webmentions</span><button type="button" class="cap-tag-remove" aria-label="Remove webmentions"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button></li>
+      <li class="cap-tag" data-value="uptime">
+        <span class="cap-tag-name">uptime</span
+        ><button type="button" class="cap-tag-remove" aria-label="Remove uptime" data-force="hover">
+          <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path
+              d="M4 4l8 8M12 4l-8 8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </li>
+      <li class="cap-tag" data-value="webmentions">
+        <span class="cap-tag-name">webmentions</span
+        ><button type="button" class="cap-tag-remove" aria-label="Remove webmentions">
+          <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path
+              d="M4 4l8 8M12 4l-8 8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </li>
     </ul>
   </div>
   <div class="cap-tags" role="group" aria-labelledby="tags-empty-l" id="tags-empty">
@@ -38,8 +136,34 @@
     <div class="cap-tags" role="group" aria-labelledby="tags-comf-l">
       <span class="cap-tags-label" id="tags-comf-l">Sites</span>
       <ul class="cap-tags-list">
-        <li class="cap-tag" data-value="example-com"><span class="cap-tag-name">example.com</span><button type="button" class="cap-tag-remove" aria-label="Remove example.com"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button></li>
-        <li class="cap-tag" data-value="fieldnotes"><span class="cap-tag-name">fieldnotes.example</span><button type="button" class="cap-tag-remove" aria-label="Remove fieldnotes.example"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button></li>
+        <li class="cap-tag" data-value="example-com">
+          <span class="cap-tag-name">example.com</span
+          ><button type="button" class="cap-tag-remove" aria-label="Remove example.com">
+            <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path
+                d="M4 4l8 8M12 4l-8 8"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </li>
+        <li class="cap-tag" data-value="fieldnotes">
+          <span class="cap-tag-name">fieldnotes.example</span
+          ><button type="button" class="cap-tag-remove" aria-label="Remove fieldnotes.example">
+            <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path
+                d="M4 4l8 8M12 4l-8 8"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </li>
       </ul>
     </div>
   </div>

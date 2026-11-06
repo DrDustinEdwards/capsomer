@@ -31,7 +31,21 @@
 // so a family on a wrapper does not inherit the root family's already-resolved values.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { ELEVATION_ORDER, FAMILIES, FAMILY_ORDER, apart, contrast, failures, renderEmailColors, renderEnarratioCss, renderEnarratioTheme, renderFamily, renderMarks, renderScoped, themes as coreThemes } from "./palette-core.mjs";
+import {
+  ELEVATION_ORDER,
+  FAMILIES,
+  FAMILY_ORDER,
+  apart,
+  contrast,
+  failures,
+  renderEmailColors,
+  renderEnarratioCss,
+  renderEnarratioTheme,
+  renderFamily,
+  renderMarks,
+  renderScoped,
+  themes as coreThemes,
+} from "./palette-core.mjs";
 
 // The color math, the families and the renderers live in palette-core.mjs; this module adds the
 // command line, the files it owns and the checks, and re-exports the rest.
@@ -40,11 +54,13 @@ export * from "./palette-core.mjs";
 const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
 const hexArg = (name) => {
   const v = arg(name);
-  if (v !== undefined && !/^#[0-9a-f]{6}$/i.test(v)) throw new Error(`--${name} must be #RRGGBB, got ${v}`);
+  if (v !== undefined && !/^#[0-9a-f]{6}$/i.test(v))
+    throw new Error(`--${name} must be #RRGGBB, got ${v}`);
   return v;
 };
 const familyArg = arg("family");
-if (familyArg !== undefined && !FAMILIES[familyArg]) throw new Error(`--family must be one of ${Object.keys(FAMILIES).join(", ")}`);
+if (familyArg !== undefined && !FAMILIES[familyArg])
+  throw new Error(`--family must be one of ${Object.keys(FAMILIES).join(", ")}`);
 const seedArg = hexArg("seed");
 const anchorArg = hexArg("anchor");
 const outArg = arg("out");
@@ -81,7 +97,12 @@ export function files() {
 }
 
 // The four themes a family has: [key in themes(), contrast level].
-const THEME_KEYS = [["light", "standard"], ["dark", "standard"], ["lightMore", "more"], ["darkMore", "more"]];
+const THEME_KEYS = [
+  ["light", "standard"],
+  ["dark", "standard"],
+  ["lightMore", "more"],
+  ["darkMore", "more"],
+];
 
 const target = (rel) => (outArg ? outArg : fileURLToPath(new URL(`./${rel}`, import.meta.url)));
 
@@ -91,7 +112,8 @@ export async function check() {
   // Every family, both themes, at the standard contrast and under prefers-contrast: more.
   for (const [name, f] of Object.entries(FAMILIES)) {
     const ft = themes(f);
-    for (const [key, level] of THEME_KEYS) problems.push(...failures(ft[key].tokens, level).map((p) => `${name} ${key}: ${p}`));
+    for (const [key, level] of THEME_KEYS)
+      problems.push(...failures(ft[key].tokens, level).map((p) => `${name} ${key}: ${p}`));
   }
   // The chart palette, for every family and both themes (tokens/chart-checks.mjs): contrast against
   // the chart's background, every pair apart under the color-vision deficiencies, clear of
@@ -99,7 +121,10 @@ export async function check() {
   for (const [name, f] of Object.entries(FAMILIES)) {
     const ft = themes(f);
     for (const scheme of ["light", "dark"]) {
-      for (const c of chartChecks(ft[scheme].tokens, contrast).filter((x) => !x.pass)) problems.push(`${name} ${scheme} chart: ${c.what} is ${c.value.toFixed(2)}, needs ${c.min} (${c.detail})`);
+      for (const c of chartChecks(ft[scheme].tokens, contrast).filter((x) => !x.pass))
+        problems.push(
+          `${name} ${scheme} chart: ${c.what} is ${c.value.toFixed(2)}, needs ${c.min} (${c.detail})`,
+        );
     }
   }
   for (const [rel, want] of files()) {
@@ -107,13 +132,17 @@ export async function check() {
     try {
       committed = readFileSync(target(rel), "utf8");
     } catch (e) {
-      problems.push(`tokens/${rel} cannot be read (${e instanceof Error ? e.message : String(e)}); run npm run tokens`);
+      problems.push(
+        `tokens/${rel} cannot be read (${e instanceof Error ? e.message : String(e)}); run npm run tokens`,
+      );
     }
     if (committed !== null && committed !== want) {
       const a = committed.split("\n");
       const b = want.split("\n");
       const i = a.findIndex((line, n) => line !== b[n]);
-      problems.push(`tokens/${rel} differs from what the script writes at line ${i + 1}: "${a[i] ?? ""}" (committed) vs "${b[i] ?? ""}" (script); run npm run tokens`);
+      problems.push(
+        `tokens/${rel} differs from what the script writes at line ${i + 1}: "${a[i] ?? ""}" (committed) vs "${b[i] ?? ""}" (script); run npm run tokens`,
+      );
     }
   }
   return problems;
@@ -124,14 +153,37 @@ export function report() {
   const rows = [];
   for (const [name, f] of Object.entries(FAMILIES)) {
     const t = themes(f);
-    const schemes = f.defaultTheme === "dark" ? ["dark", "light", "darkMore", "lightMore"] : ["light", "dark", "lightMore", "darkMore"];
-    for (const scheme of schemes) for (const p of t[scheme].pairs) rows.push({ family: name, scheme, isDefault: scheme === f.defaultTheme, ...p, fgHex: t[scheme].tokens[p.fg], bgHex: t[scheme].tokens[p.bg] });
+    const schemes =
+      f.defaultTheme === "dark"
+        ? ["dark", "light", "darkMore", "lightMore"]
+        : ["light", "dark", "lightMore", "darkMore"];
+    for (const scheme of schemes)
+      for (const p of t[scheme].pairs)
+        rows.push({
+          family: name,
+          scheme,
+          isDefault: scheme === f.defaultTheme,
+          ...p,
+          fgHex: t[scheme].tokens[p.fg],
+          bgHex: t[scheme].tokens[p.bg],
+        });
   }
   // Each family in turn, its default theme first, failures first within each theme.
-  return rows.map((r, i) => ({ r, i })).sort((a, b) => (a.r.family === b.r.family && a.r.scheme === b.r.scheme ? Number(a.r.pass) - Number(b.r.pass) || a.i - b.i : a.i - b.i)).map((x) => x.r);
+  return rows
+    .map((r, i) => ({ r, i }))
+    .sort((a, b) =>
+      a.r.family === b.r.family && a.r.scheme === b.r.scheme
+        ? Number(a.r.pass) - Number(b.r.pass) || a.i - b.i
+        : a.i - b.i,
+    )
+    .map((x) => x.r);
 }
 
-const invoked = process.argv[1] && fileURLToPath(import.meta.url).replace(/\\/g, "/").toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase();
+const invoked =
+  process.argv[1] &&
+  fileURLToPath(import.meta.url)
+    .replace(/\\/g, "/")
+    .toLowerCase() === process.argv[1].replace(/\\/g, "/").toLowerCase();
 if (invoked) {
   if (process.argv.includes("--check")) {
     const problems = await check();
@@ -139,36 +191,62 @@ if (invoked) {
       console.error(`palette: ${problems.length} problem(s)\n  ${problems.join("\n  ")}`);
       process.exit(1);
     }
-    console.log(`palette: ${files().map(([r]) => `tokens/${r}`).join(", ")} match the script and every pair meets WCAG 2.2 and its APCA floor in both themes, at both contrast levels`);
+    console.log(
+      `palette: ${files()
+        .map(([r]) => `tokens/${r}`)
+        .join(
+          ", ",
+        )} match the script and every pair meets WCAG 2.2 and its APCA floor in both themes, at both contrast levels`,
+    );
   } else if (process.argv.includes("--report")) {
     const rows = report();
     const failed = rows.filter((r) => !r.pass);
-    for (const r of process.argv.includes("--summary") ? failed : rows) console.log(`${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${(r.scheme + (r.isDefault ? "*" : "")).padEnd(10)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 Lc ${Math.abs(r.lc).toFixed(1)} (needs ${r.min}${r.lcMin ? `, Lc ${r.lcMin}` : ""})`);
+    for (const r of process.argv.includes("--summary") ? failed : rows)
+      console.log(
+        `${r.pass ? "pass" : "FAIL"}  ${r.family.padEnd(6)} ${(r.scheme + (r.isDefault ? "*" : "")).padEnd(10)} ${r.what.padEnd(32)} --${r.fg} ${r.fgHex} on --${r.bg} ${r.bgHex}  ${r.ratio.toFixed(2)}:1 Lc ${Math.abs(r.lc).toFixed(1)} (needs ${r.min}${r.lcMin ? `, Lc ${r.lcMin}` : ""})`,
+      );
     // The visited link, against a link and body text (apart() in palette-core.mjs).
-    const far = Object.entries(FAMILIES).flatMap(([name, f]) => THEME_KEYS.flatMap(([k]) => apart(themes(f)[k].tokens).map((x) => ({ name, k, ...x }))));
-    for (const x of process.argv.includes("--summary") ? far.filter((x) => !x.pass) : far) console.log(`${x.pass ? "pass" : "FAIL"}  ${x.name.padEnd(6)} ${x.k.padEnd(10)} ${x.what.padEnd(32)} --${x.a} and --${x.b} ${x.d.toFixed(1)} apart (needs ${x.min})`);
+    const far = Object.entries(FAMILIES).flatMap(([name, f]) =>
+      THEME_KEYS.flatMap(([k]) => apart(themes(f)[k].tokens).map((x) => ({ name, k, ...x }))),
+    );
+    for (const x of process.argv.includes("--summary") ? far.filter((x) => !x.pass) : far)
+      console.log(
+        `${x.pass ? "pass" : "FAIL"}  ${x.name.padEnd(6)} ${x.k.padEnd(10)} ${x.what.padEnd(32)} --${x.a} and --${x.b} ${x.d.toFixed(1)} apart (needs ${x.min})`,
+      );
     console.log("(* the family's default theme, checked first)");
-    console.log(`palette: ${rows.length} pairs across ${Object.keys(FAMILIES).length} families, both themes and both contrast levels; ${failed.length} fail`);
+    console.log(
+      `palette: ${rows.length} pairs across ${Object.keys(FAMILIES).length} families, both themes and both contrast levels; ${failed.length} fail`,
+    );
     if (failed.length || far.some((x) => !x.pass)) process.exit(1);
   } else if (process.argv.includes("--table")) {
-    for (const [name, t] of Object.entries(themes())) if (name === "light" || name === "dark") {
-      console.log(`\n${name}`);
-      for (const k of [...FAMILY_ORDER, ...ELEVATION_ORDER]) console.log(`  --${k}: ${t.tokens[k]}`);
-    }
+    for (const [name, t] of Object.entries(themes()))
+      if (name === "light" || name === "dark") {
+        console.log(`\n${name}`);
+        for (const k of [...FAMILY_ORDER, ...ELEVATION_ORDER])
+          console.log(`  --${k}: ${t.tokens[k]}`);
+      }
   } else if (process.argv.includes("--chart")) {
     const { chartChecks } = await import("./chart-checks.mjs");
     for (const [name, f] of Object.entries(FAMILIES)) {
       const ft = themes(f);
       for (const scheme of ["light", "dark"]) {
         const rows = chartChecks(ft[scheme].tokens, contrast);
-        const worst = rows.filter((r) => r.what.includes("differ")).sort((a, b) => a.value - b.value)[0];
-        console.log(`${name} ${scheme}: ${rows.length} checks, ${rows.filter((r) => !r.pass).length} fail; closest pair ${worst?.value.toFixed(1)} (${worst?.what})`);
+        const worst = rows
+          .filter((r) => r.what.includes("differ"))
+          .sort((a, b) => a.value - b.value)[0];
+        console.log(
+          `${name} ${scheme}: ${rows.length} checks, ${rows.filter((r) => !r.pass).length} fail; closest pair ${worst?.value.toFixed(1)} (${worst?.what})`,
+        );
       }
     }
   } else if (process.argv.includes("--pairs")) {
     console.log(JSON.stringify(themes(), null, 2));
   } else {
     for (const [rel, text] of files()) writeFileSync(target(rel), text);
-    console.log(`palette: wrote ${files().map(([r]) => `tokens/${r}`).join(", ")}`);
+    console.log(
+      `palette: wrote ${files()
+        .map(([r]) => `tokens/${r}`)
+        .join(", ")}`,
+    );
   }
 }

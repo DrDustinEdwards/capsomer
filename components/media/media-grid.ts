@@ -78,4 +78,3 @@ export function nextTile(rows: Band[], active: string, dir: Direction): string |
   }
   return best?.id ?? null;
 }
-

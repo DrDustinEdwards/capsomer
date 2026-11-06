@@ -6,7 +6,11 @@ import { staticSearchIndex } from "@drdustinedwards/site-helpers/search";
 import { FOOTER, header, runningHead, type Data } from "./home.ts";
 import { MAKE_DESCRIPTION } from "./seo.ts";
 
-const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const slug = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 
 /** Markdown as plain words: no code fences, table rules, link targets or markup. */
 const plain = (md: string) =>
@@ -29,12 +33,43 @@ export function searchIndexJson(d: Data): string {
     text: plain(c.body),
   }));
   const parts = [
-    { url: "/#color", title: "Color", summary: "Six families from six seeds, each 12 steps in light and dark, every pair checked against WCAG 2.2.", text: "palette family families seed scale contrast accent" },
-    { url: "/#type", title: "Type", summary: "Three faces, one scale.", text: `typography font fonts ${d.type.map(([name, value, about]) => `${name} ${value} ${about}`).join(" ")}` },
-    { url: "/#components", title: "Components", summary: `All ${d.components.length} components, every state on show.`, text: d.components.map((c) => c.title).join(" ") },
-    { url: "/#defaults", title: "Defaults", summary: "Defaults, each with its reason.", text: plain(d.defaults.map((t) => `${t.lead}. ${t.reason}`).join(" ")) },
-    { url: "/#use", title: "Install", summary: "Pin a release, import what you use.", text: "install package npm import tokens css cascade layer release tag" },
-    { url: "/make/", title: "Make a theme", summary: MAKE_DESCRIPTION, text: "theme builder brand color scale export css tokens" },
+    {
+      url: "/#color",
+      title: "Color",
+      summary:
+        "Six families from six seeds, each 12 steps in light and dark, every pair checked against WCAG 2.2.",
+      text: "palette family families seed scale contrast accent",
+    },
+    {
+      url: "/#type",
+      title: "Type",
+      summary: "Three faces, one scale.",
+      text: `typography font fonts ${d.type.map(([name, value, about]) => `${name} ${value} ${about}`).join(" ")}`,
+    },
+    {
+      url: "/#components",
+      title: "Components",
+      summary: `All ${d.components.length} components, every state on show.`,
+      text: d.components.map((c) => c.title).join(" "),
+    },
+    {
+      url: "/#defaults",
+      title: "Defaults",
+      summary: "Defaults, each with its reason.",
+      text: plain(d.defaults.map((t) => `${t.lead}. ${t.reason}`).join(" ")),
+    },
+    {
+      url: "/#use",
+      title: "Install",
+      summary: "Pin a release, import what you use.",
+      text: "install package npm import tokens css cascade layer release tag",
+    },
+    {
+      url: "/make/",
+      title: "Make a theme",
+      summary: MAKE_DESCRIPTION,
+      text: "theme builder brand color scale export css tokens",
+    },
   ];
   return JSON.stringify(staticSearchIndex([...parts, ...components]));
 }
@@ -60,4 +95,8 @@ ${runningHead("", "Search", `Release ${d.version}`)}
 ${FOOTER}`;
 }
 
-export const SEARCH_PAGE = { path: "/search/", title: "Search", description: "Search Capsomer's components, their docs and the defaults." };
+export const SEARCH_PAGE = {
+  path: "/search/",
+  title: "Search",
+  description: "Search Capsomer's components, their docs and the defaults.",
+};

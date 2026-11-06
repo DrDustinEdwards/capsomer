@@ -1,5 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 const TITLE = "Push the capsomer branch and open a pull request";
 const panel = (page: Page) => page.getByRole("dialog", { name: TITLE });
@@ -64,7 +69,9 @@ eachTheme((theme) => {
     `);
   });
 
-  test("keyboard: Enter on a row's link opens the panel with focus on its first control", async ({ page }) => {
+  test("keyboard: Enter on a row's link opens the panel with focus on its first control", async ({
+    page,
+  }) => {
     await visitStates(page, "detail-panel", theme, "rows");
     await rowLink(page).focus();
     await page.keyboard.press("Enter");
@@ -75,7 +82,11 @@ eachTheme((theme) => {
   test("keyboard: a panel with nothing to press opens with focus on Close", async ({ page }) => {
     await visitStates(page, "detail-panel", theme, "rows");
     await page.getByRole("link", { name: "Rotate the watcher's Cloudflare token" }).click();
-    await expect(page.getByRole("dialog", { name: "Rotate the watcher's Cloudflare token" }).getByRole("button", { name: "Close" })).toBeFocused();
+    await expect(
+      page
+        .getByRole("dialog", { name: "Rotate the watcher's Cloudflare token" })
+        .getByRole("button", { name: "Close" }),
+    ).toBeFocused();
   });
 
   test("keyboard: Esc closes the panel and focus returns to the row's link", async ({ page }) => {
@@ -90,7 +101,9 @@ eachTheme((theme) => {
     await expect(page).not.toHaveURL(/#detail-/);
   });
 
-  test("keyboard: Enter on Close closes the panel and focus returns to the row's link", async ({ page }) => {
+  test("keyboard: Enter on Close closes the panel and focus returns to the row's link", async ({
+    page,
+  }) => {
     await visitStates(page, "detail-panel", theme, "rows");
     const other = page.getByRole("link", { name: "Rotate the watcher's Cloudflare token" });
     await other.focus();
@@ -130,7 +143,9 @@ eachTheme((theme) => {
     await expect(panel(page)).toBeHidden();
   });
 
-  test("keyboard: Tab stays inside the open panel and never reaches the page behind", async ({ page }) => {
+  test("keyboard: Tab stays inside the open panel and never reaches the page behind", async ({
+    page,
+  }) => {
     await visitStates(page, "detail-panel", theme, "rows");
     await rowLink(page).focus();
     await page.keyboard.press("Enter");
@@ -152,29 +167,41 @@ eachTheme((theme) => {
   test("behavior: Copy says what happened", async ({ page }) => {
     await visitStates(page, "detail-panel", theme, "open");
     await page.getByRole("button", { name: "Copy command" }).click();
-    await expect(panel(page).getByRole("status")).toHaveText(/Command copied\.|Command is selected/);
+    await expect(panel(page).getByRole("status")).toHaveText(
+      /Command copied\.|Command is selected/,
+    );
   });
   // ---- driven by the address (?inspect=) ------------------------------------------------------
   const MENTION = "A reply from rosa.example about the annual report";
   const mention = (page: Page) => page.getByRole("dialog", { name: MENTION });
   const visitUrl = async (page: Page, inspect?: string) => {
-    await page.goto(`components/detail-panel/states.html?theme=${theme}&only=url${inspect ? `&inspect=${inspect}` : ""}`);
+    await page.goto(
+      `components/detail-panel/states.html?theme=${theme}&only=url${inspect ? `&inspect=${inspect}` : ""}`,
+    );
     await page.evaluate(() => document.fonts.ready.then(() => undefined));
   };
 
-  test("behavior: a link to ?inspect= opens the panel as the modal and puts the id in the address, other parts kept", async ({ page }) => {
+  test("behavior: a link to ?inspect= opens the panel as the modal and puts the id in the address, other parts kept", async ({
+    page,
+  }) => {
     await visitUrl(page);
     await expect(mention(page)).toBeHidden();
     await page.locator("#open-mention-41").click();
     await expect(mention(page)).toBeVisible();
-    expect(await page.locator("#mention-41").evaluate((el) => (el as HTMLDialogElement).matches(":modal"))).toBe(true);
+    expect(
+      await page
+        .locator("#mention-41")
+        .evaluate((el) => (el as HTMLDialogElement).matches(":modal")),
+    ).toBe(true);
     const url = new URL(page.url());
     expect(url.searchParams.get("inspect")).toBe("mention-41");
     expect(url.searchParams.get("theme")).toBe(theme);
     expect(url.searchParams.get("only")).toBe("url");
   });
 
-  test("keyboard: Esc closes the address-driven panel, takes its entry back, and focus returns to the link", async ({ page }) => {
+  test("keyboard: Esc closes the address-driven panel, takes its entry back, and focus returns to the link", async ({
+    page,
+  }) => {
     await visitUrl(page);
     const before = await page.evaluate(() => history.length);
     await page.locator("#open-mention-41").focus();
@@ -189,7 +216,9 @@ eachTheme((theme) => {
     expect(new URL(page.url()).searchParams.get("only")).toBe("url");
   });
 
-  test("behavior: Back closes the address-driven panel and Forward opens it again", async ({ page }) => {
+  test("behavior: Back closes the address-driven panel and Forward opens it again", async ({
+    page,
+  }) => {
     await visitUrl(page);
     await page.locator("#open-mention-41").click();
     await expect(mention(page)).toBeVisible();
@@ -201,10 +230,16 @@ eachTheme((theme) => {
     expect(new URL(page.url()).searchParams.get("inspect")).toBe("mention-41");
   });
 
-  test("behavior: a page loaded with ?inspect= has the panel open, and closing it rewrites the address without a new entry", async ({ page }) => {
+  test("behavior: a page loaded with ?inspect= has the panel open, and closing it rewrites the address without a new entry", async ({
+    page,
+  }) => {
     await visitUrl(page, "mention-41");
     await expect(mention(page)).toBeVisible();
-    expect(await page.locator("#mention-41").evaluate((el) => (el as HTMLDialogElement).matches(":modal"))).toBe(true);
+    expect(
+      await page
+        .locator("#mention-41")
+        .evaluate((el) => (el as HTMLDialogElement).matches(":modal")),
+    ).toBe(true);
     const before = await page.evaluate(() => history.length);
     await page.keyboard.press("Escape");
     await expect(mention(page)).toBeHidden();
@@ -212,7 +247,9 @@ eachTheme((theme) => {
     expect(await page.evaluate(() => history.length)).toBe(before);
   });
 
-  test("behavior: the plain form inside posts its fields and the pressed button, with no script of ours", async ({ page }) => {
+  test("behavior: the plain form inside posts its fields and the pressed button, with no script of ours", async ({
+    page,
+  }) => {
     await visitUrl(page, "mention-41");
     const posted = page.evaluate(
       () =>
@@ -224,9 +261,15 @@ eachTheme((theme) => {
           });
         }),
     );
-    await mention(page).getByRole("textbox", { name: "Note, kept with the decision" }).fill("Looks like a real reply.");
+    await mention(page)
+      .getByRole("textbox", { name: "Note, kept with the decision" })
+      .fill("Looks like a real reply.");
     await mention(page).getByRole("button", { name: "Approve" }).click();
-    expect(await posted).toEqual({ id: "mention-41", note: "Looks like a real reply.", intent: "approve" });
+    expect(await posted).toEqual({
+      id: "mention-41",
+      note: "Looks like a real reply.",
+      intent: "approve",
+    });
   });
 
   test("accessibility: the address-driven panel, open, has no axe violations", async ({ page }) => {

@@ -1,5 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 interface Change {
   param: string | null;
@@ -45,12 +50,15 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behavior: a current link chip wears the pressed look, at contrast, and the others do not", async ({ page }) => {
+  test("behavior: a current link chip wears the pressed look, at contrast, and the others do not", async ({
+    page,
+  }) => {
     await visitStates(page, "chips", theme);
-    const look = (sel: string) => page.locator(sel).evaluate((el) => {
-      const cs = getComputedStyle(el);
-      return [cs.borderColor, cs.backgroundColor, getComputedStyle(el, "::before").content];
-    });
+    const look = (sel: string) =>
+      page.locator(sel).evaluate((el) => {
+        const cs = getComputedStyle(el);
+        return [cs.borderColor, cs.backgroundColor, getComputedStyle(el, "::before").content];
+      });
     expect(await look("#chip-link-current")).toEqual(await look("#chip-pressed"));
     expect(await look("#chip-link")).toEqual(await look("#chip-unpressed"));
     await expectContrast(page, [
@@ -80,7 +88,9 @@ eachTheme((theme) => {
     `);
   });
 
-  test("keyboard: Tab moves through the chips, then Clear while any is pressed", async ({ page }) => {
+  test("keyboard: Tab moves through the chips, then Clear while any is pressed", async ({
+    page,
+  }) => {
     await visitStates(page, "chips", theme);
     const live = page.locator("#chips-live");
     await page.keyboard.press("Tab");
@@ -96,10 +106,19 @@ eachTheme((theme) => {
     await live.getByRole("button", { name: "Done" }).focus();
     await page.keyboard.press("Tab");
     await expect(live.getByRole("button", { name: "Clear" })).toBeFocused();
-    await expectContrast(page, [{ sel: "#chips-live [data-cap-part='clear']", what: "the focus ring", part: "outline", min: 3 }]);
+    await expectContrast(page, [
+      {
+        sel: "#chips-live [data-cap-part='clear']",
+        what: "the focus ring",
+        part: "outline",
+        min: 3,
+      },
+    ]);
   });
 
-  test("keyboard: Enter or Space presses or releases a chip; the count and the address follow", async ({ page }) => {
+  test("keyboard: Enter or Space presses or releases a chip; the count and the address follow", async ({
+    page,
+  }) => {
     await visitStates(page, "chips", theme);
     await recordChanges(page);
     const live = page.locator("#chips-live");
@@ -133,7 +152,9 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: Enter on Clear releases every chip and moves focus to the first", async ({ page }) => {
+  test("keyboard: Enter on Clear releases every chip and moves focus to the first", async ({
+    page,
+  }) => {
     await visitStates(page, "chips", theme);
     const live = page.locator("#chips-live");
     await live.getByRole("button", { name: "Blocked" }).click();
@@ -152,14 +173,25 @@ eachTheme((theme) => {
     await page.goto(`components/chips/states.html?theme=${theme}&status=running,queued`);
     await expect(page.locator("h1").first()).toBeVisible();
     const live = page.locator("#chips-live");
-    await expect(live.getByRole("button", { name: "Running" })).toHaveAttribute("aria-pressed", "true");
-    await expect(live.getByRole("button", { name: "Queued" })).toHaveAttribute("aria-pressed", "true");
-    await expect(live.getByRole("button", { name: "Blocked" })).toHaveAttribute("aria-pressed", "false");
+    await expect(live.getByRole("button", { name: "Running" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(live.getByRole("button", { name: "Queued" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(live.getByRole("button", { name: "Blocked" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
     await expect(live.getByRole("button", { name: "Clear" })).toBeVisible();
     await expect(live.locator(".cap-chips-count")).toHaveText("11 of 14 jobs");
   });
 
-  test("behavior: a value from the address that no chip carries still shows, pressed, and can be released", async ({ page }) => {
+  test("behavior: a value from the address that no chip carries still shows, pressed, and can be released", async ({
+    page,
+  }) => {
     await page.goto(`components/chips/states.html?theme=${theme}&status=archived`);
     await expect(page.locator("h1").first()).toBeVisible();
     const live = page.locator("#chips-live");
@@ -171,7 +203,9 @@ eachTheme((theme) => {
     await expect(page).not.toHaveURL(/status=/);
   });
 
-  test("behavior: an empty result names the filter and Clear filter brings the list back", async ({ page }) => {
+  test("behavior: an empty result names the filter and Clear filter brings the list back", async ({
+    page,
+  }) => {
     await visitStates(page, "chips", theme);
     const live = page.locator("#chips-live");
     await live.getByRole("button", { name: "Done" }).click();
@@ -183,13 +217,19 @@ eachTheme((theme) => {
     await expect(live.getByRole("button", { name: "Blocked" })).toBeFocused();
   });
 
-  test("keyboard: arrow keys, Home and End move focus between chips without pressing one", async ({ page }) => {
+  test("keyboard: arrow keys, Home and End move focus between chips without pressing one", async ({
+    page,
+  }) => {
     await visitStates(page, "chips", theme);
     const blocked = page.locator("#chips-live").getByRole("button", { name: "Blocked" });
     await blocked.focus();
     await page.keyboard.press("ArrowRight");
-    await expect(page.locator("#chips-live").getByRole("button", { name: "Running" })).toBeFocused();
-    await expect(page.locator("#chips-live").getByRole("button", { name: "Running" })).toHaveAttribute("aria-pressed", "false");
+    await expect(
+      page.locator("#chips-live").getByRole("button", { name: "Running" }),
+    ).toBeFocused();
+    await expect(
+      page.locator("#chips-live").getByRole("button", { name: "Running" }),
+    ).toHaveAttribute("aria-pressed", "false");
     await page.keyboard.press("End");
     await expect(page.locator("#chips-live").getByRole("button", { name: "Done" })).toBeFocused();
     await page.keyboard.press("ArrowRight");
@@ -206,15 +246,21 @@ eachTheme((theme) => {
     await page.keyboard.press("Tab");
     await page.keyboard.press("Shift+Tab");
     await expect(page.locator("#chip-unpressed")).toBeFocused();
-    await expectContrast(page, [{ sel: "#chip-unpressed", what: "the focus ring", part: "outline", min: 3 }]);
+    await expectContrast(page, [
+      { sel: "#chip-unpressed", what: "the focus ring", part: "outline", min: 3 },
+    ]);
   });
 
-  test("accessibility: a disabled chip keeps its name and says so", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "chips", theme);
-    await expect(page.locator("#chip-disabled")).toHaveAttribute("aria-disabled", "true");
-    await expect(page.getByRole("button", { name: "Archived" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Failed 3" })).toBeVisible();
-    const box = await page.locator("#chip-sm").boundingBox();
-    expect(box?.height).toBeGreaterThanOrEqual(24);
-  });
+  test(
+    "accessibility: a disabled chip keeps its name and says so",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "chips", theme);
+      await expect(page.locator("#chip-disabled")).toHaveAttribute("aria-disabled", "true");
+      await expect(page.getByRole("button", { name: "Archived" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Failed 3" })).toBeVisible();
+      const box = await page.locator("#chip-sm").boundingBox();
+      expect(box?.height).toBeGreaterThanOrEqual(24);
+    },
+  );
 });

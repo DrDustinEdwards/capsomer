@@ -13,18 +13,49 @@ const jobs = days.flatMap((day, i) => [
   { day, kind: "Reviews", n: [6, 8, 3, 2, 9, 11, 10][i] ?? 0 },
   { day, kind: "Deploys", n: [3, 4, 1, 0, 5, 4, 6][i] ?? 0 },
 ]);
-const minutes = { values: [260, 280, 310, 300, 330, 320, 340], label: "Actions minutes per day, last 7 days", id: "cf-spark", width: 320, height: 56 };
+const minutes = {
+  values: [260, 280, 310, 300, 330, 320, 340],
+  label: "Actions minutes per day, last 7 days",
+  id: "cf-spark",
+  width: 320,
+  height: 56,
+};
 const source = { name: "The job log", href: "https://example.com/jobs" };
 
 const barOptions = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[number]>> = {}) =>
-  ({ data: jobs, x: "day", y: "n", series: "kind", layout: "stacked", id, title: "Jobs run per day", subtitle: "Last 7 days, by kind", alt: "Jobs rose through the week to 39 on Wednesday, most of them builds.", xLabel: "Day", yLabel: "Jobs", source, width: 440, height: 240, ...extra }) as BarChartOptions<(typeof jobs)[number]>;
-const bar = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[number]>> = {}) => barChart(barOptions(id, extra));
+  ({
+    data: jobs,
+    x: "day",
+    y: "n",
+    series: "kind",
+    layout: "stacked",
+    id,
+    title: "Jobs run per day",
+    subtitle: "Last 7 days, by kind",
+    alt: "Jobs rose through the week to 39 on Wednesday, most of them builds.",
+    xLabel: "Day",
+    yLabel: "Jobs",
+    source,
+    width: 440,
+    height: 240,
+    ...extra,
+  }) as BarChartOptions<(typeof jobs)[number]>;
+const bar = (id: string, extra: Partial<BarChartOptions<(typeof jobs)[number]>> = {}) =>
+  barChart(barOptions(id, extra));
 // A light chart in the frame with the spec behavior/chart-enhance draws it again from at its width.
 const drawn = (chart: "bar" | "line" | "area", html: string, options: object) =>
   frameHtml(html, { redraw: { chart, options: options as Record<string, unknown> } });
 
 const lineSpec = {
-  data: ["2026-10-24", "2026-10-25", "2026-10-26", "2026-10-27", "2026-10-28", "2026-10-29", "2026-10-30"].flatMap((x, i) => [
+  data: [
+    "2026-10-24",
+    "2026-10-25",
+    "2026-10-26",
+    "2026-10-27",
+    "2026-10-28",
+    "2026-10-29",
+    "2026-10-30",
+  ].flatMap((x, i) => [
     { x, site: "example.net", ms: [212, 220, 205, 260, 240, 231, 225][i] ?? 0 },
     { x, site: "example.com", ms: [180, 175, 190, 185, 310, 200, 195][i] ?? 0 },
   ]),
@@ -58,9 +89,30 @@ const areaSpec = {
 } as const;
 const drawings: Record<string, string> = {
   spark: frameHtml(sparkline(minutes)),
-  uptime: frameHtml(uptimeStrip({ slots: ["up", "up", "degraded", "up", "down", "unknown", "up"], label: "Uptime of example.edu", subtitle: "83% up over 7 days", id: "cf-up", width: 480, height: 28, dataTable: "details" }), { inline: true }),
-  ring: frameHtml(progressRing({ value: 0.72, label: "Nightly backups verified", id: "cf-ring", size: 96 })),
-  heat: frameHtml(heatStrip({ values: [3, 5, 8, 12, null, 19, 22, 17, 11, 6, 4, 3], label: "Requests per hour, last 12 hours", id: "cf-heat", width: 480, height: 28 })),
+  uptime: frameHtml(
+    uptimeStrip({
+      slots: ["up", "up", "degraded", "up", "down", "unknown", "up"],
+      label: "Uptime of example.edu",
+      subtitle: "83% up over 7 days",
+      id: "cf-up",
+      width: 480,
+      height: 28,
+      dataTable: "details",
+    }),
+    { inline: true },
+  ),
+  ring: frameHtml(
+    progressRing({ value: 0.72, label: "Nightly backups verified", id: "cf-ring", size: 96 }),
+  ),
+  heat: frameHtml(
+    heatStrip({
+      values: [3, 5, 8, 12, null, 19, 22, 17, 11, 6, 4, 3],
+      label: "Requests per hour, last 12 hours",
+      id: "cf-heat",
+      width: 480,
+      height: 28,
+    }),
+  ),
   timeline: frameHtml(
     timeline({
       label: "Deploys and downtime, today",
@@ -71,20 +123,43 @@ const drawings: Record<string, string> = {
       end: "2026-10-30T24:00:00Z",
       events: [
         { lane: "example.net", label: "Deploy 412", status: "ok", at: "2026-10-30T09:12:00Z" },
-        { lane: "example.net", label: "Probe failing", status: "error", from: "2026-10-30T13:40:00Z", to: "2026-10-30T14:05:00Z" },
+        {
+          lane: "example.net",
+          label: "Probe failing",
+          status: "error",
+          from: "2026-10-30T13:40:00Z",
+          to: "2026-10-30T14:05:00Z",
+        },
         { lane: "example.com", label: "Deploy 87", status: "ok", at: "2026-10-30T11:30:00Z" },
-        { lane: "example.com", label: "Slow responses", status: "warning", from: "2026-10-30T18:00:00Z", to: "2026-10-30T19:20:00Z" },
+        {
+          lane: "example.com",
+          label: "Slow responses",
+          status: "warning",
+          from: "2026-10-30T18:00:00Z",
+          to: "2026-10-30T19:20:00Z",
+        },
       ],
     }),
   ),
   bar: drawn("bar", bar("cf-bar"), barOptions("cf-bar")),
   open: (() => {
-    const options = barOptions("cf-open", { notes: "A job counts on the day it finished.", byline: "Example Co", width: 640, height: 280 });
-    return drawn("bar", barChart(options), options).replace('<details class="enarratio-data">', '<details class="enarratio-data" open>');
+    const options = barOptions("cf-open", {
+      notes: "A job counts on the day it finished.",
+      byline: "Example Co",
+      width: 640,
+      height: 280,
+    });
+    return drawn("bar", barChart(options), options).replace(
+      '<details class="enarratio-data">',
+      '<details class="enarratio-data" open>',
+    );
   })(),
   line: drawn("line", lineChart(lineSpec), lineSpec),
   area: drawn("area", areaChart(areaSpec), areaSpec),
-  nodata: noDataHtml("Requests per hour", "The health route has not reported yet, so there is nothing to draw."),
+  nodata: noDataHtml(
+    "Requests per hour",
+    "The health route has not reported yet, so there is nothing to draw.",
+  ),
   // Redrawn at the narrow column's width, as every server chart in a frame should be (C12).
   narrow: drawn("bar", bar("cf-narrow"), barOptions("cf-narrow")),
   comfortable: frameHtml(sparkline({ ...minutes, id: "cf-comfy" })),
@@ -105,11 +180,48 @@ const drawings: Record<string, string> = {
 
 // The same chart in every family, for the palette: series 1 to 8 on each family's surface (the
 // same eight in every family, DEFAULTS.md), then the five-step ramp, which is in the family's hue.
-const families = ["purple", "fox", "teal", "amber", "navy", "forest", "magenta", "cerulean", "olive", "rose"];
-const eight = ["Builds", "Reviews", "Deploys", "Probes", "Backups", "Imports", "Mail", "Indexing"].flatMap((kind, k) => ["Q1", "Q2", "Q3"].map((q, i) => ({ q, kind, n: 3 + ((k * 7 + i * 3) % 6) })));
+const families = [
+  "purple",
+  "fox",
+  "teal",
+  "amber",
+  "navy",
+  "forest",
+  "magenta",
+  "cerulean",
+  "olive",
+  "rose",
+];
+const eight = [
+  "Builds",
+  "Reviews",
+  "Deploys",
+  "Probes",
+  "Backups",
+  "Imports",
+  "Mail",
+  "Indexing",
+].flatMap((kind, k) =>
+  ["Q1", "Q2", "Q3"].map((q, i) => ({ q, kind, n: 3 + ((k * 7 + i * 3) % 6) })),
+);
 drawings.families = families
   .map((f) => {
-    const options = { data: eight, x: "q", y: "n", series: "kind", layout: "stacked", id: `cf-fam-${f}`, title: `Eight series in the ${f} family`, alt: `Every series color in the ${f} family, stacked by quarter.`, xLabel: "Quarter", yLabel: "Jobs", width: 440, height: 240, source, summary: false } as const;
+    const options = {
+      data: eight,
+      x: "q",
+      y: "n",
+      series: "kind",
+      layout: "stacked",
+      id: `cf-fam-${f}`,
+      title: `Eight series in the ${f} family`,
+      alt: `Every series color in the ${f} family, stacked by quarter.`,
+      xLabel: "Quarter",
+      yLabel: "Jobs",
+      width: 440,
+      height: 240,
+      source,
+      summary: false,
+    } as const;
     return `<div data-family="${f}" class="cf-family">${drawn("bar", barChart({ ...options, onIssue: () => {} }), options)}${frameHtml(heatStrip({ values: [1, 2, 3, 4, 5], label: `The ramp in the ${f} family`, id: `cf-ramp-${f}`, width: 440, height: 28 }))}</div>`;
   })
   .join("");

@@ -13,12 +13,51 @@
 import { singleKeysOff } from "../row-list/row-list.ts";
 import { type CompareView, STORAGE_KEY, VIEWS } from "./draft-compare-render.ts";
 
-export { tokenize, countWords, commonSubsequence, diffWords, splitSentences, diffSentences, analyze, analyse, countsText } from "./draft-compare-diff.ts"; // codespell:ignore
-export type { Op, WordPart, DiffOptions, Sentence, Entry, SentenceOptions, Counts, Analysis } from "./draft-compare-diff.ts";
+export {
+  tokenize,
+  countWords,
+  commonSubsequence,
+  diffWords,
+  splitSentences,
+  diffSentences,
+  analyze,
+  analyse,
+  countsText,
+} from "./draft-compare-diff.ts"; // codespell:ignore
+export type {
+  Op,
+  WordPart,
+  DiffOptions,
+  Sentence,
+  Entry,
+  SentenceOptions,
+  Counts,
+  Analysis,
+} from "./draft-compare-diff.ts";
 export { VIEWS, STORAGE_KEY, esc, renderCompare } from "./draft-compare-render.ts";
-export type { CompareView, CompareSide, RunKind, RunSpan, CompareLabels, CompareOptions } from "./draft-compare-render.ts";
-export { parsePatch, patchCounts, patchCountsText, revisionPair, renderPatch } from "./draft-compare-patch.ts";
-export type { PatchOp, PatchLine, PatchHunk, PatchFile, PatchOptions, PatchCounts } from "./draft-compare-patch.ts";
+export type {
+  CompareView,
+  CompareSide,
+  RunKind,
+  RunSpan,
+  CompareLabels,
+  CompareOptions,
+} from "./draft-compare-render.ts";
+export {
+  parsePatch,
+  patchCounts,
+  patchCountsText,
+  revisionPair,
+  renderPatch,
+} from "./draft-compare-patch.ts";
+export type {
+  PatchOp,
+  PatchLine,
+  PatchHunk,
+  PatchFile,
+  PatchOptions,
+  PatchCounts,
+} from "./draft-compare-patch.ts";
 
 // ---------------------------------------------------------------------------------------
 // The behavior
@@ -45,13 +84,17 @@ function writeView(v: CompareView): void {
 
 // The view the radios show now.
 export function currentView(root: Element): CompareView {
-  const v = root.querySelector<HTMLInputElement>(".cap-compare-bar input[type='radio']:checked")?.value;
+  const v = root.querySelector<HTMLInputElement>(
+    ".cap-compare-bar input[type='radio']:checked",
+  )?.value;
   return v && (VIEWS as readonly string[]).includes(v) ? (v as CompareView) : "side";
 }
 
 // Chooses a view (the radio the CSS reads). Fires no event.
 export function setView(root: Element, view: CompareView): void {
-  const radio = root.querySelector<HTMLInputElement>(`.cap-compare-bar input[type='radio'][value='${view}']`);
+  const radio = root.querySelector<HTMLInputElement>(
+    `.cap-compare-bar input[type='radio'][value='${view}']`,
+  );
   if (radio) radio.checked = true;
 }
 
@@ -59,7 +102,12 @@ const isTextEntry = (e: KeyboardEvent): boolean => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return true;
   const t = e.target as HTMLElement | null;
   if (!t) return false;
-  if (t.isContentEditable || /^(TEXTAREA|SELECT)$/.test(t.tagName) || t.closest("[role='combobox'], [role='textbox']")) return true;
+  if (
+    t.isContentEditable ||
+    /^(TEXTAREA|SELECT)$/.test(t.tagName) ||
+    t.closest("[role='combobox'], [role='textbox']")
+  )
+    return true;
   return t.tagName === "INPUT" && !/^(radio|checkbox|button)$/.test((t as HTMLInputElement).type);
 };
 
@@ -69,7 +117,10 @@ function attach(root: HTMLElement): () => void {
   let current = 0;
   const undo: Array<() => void> = [];
 
-  for (const b of root.querySelectorAll<HTMLElement>("[data-cap-part='prev'], [data-cap-part='next']")) b.hidden = total === 0;
+  for (const b of root.querySelectorAll<HTMLElement>(
+    "[data-cap-part='prev'], [data-cap-part='next']",
+  ))
+    b.hidden = total === 0;
 
   // The remembered view.
   const remember = root.dataset.remember !== "off";
@@ -85,7 +136,9 @@ function attach(root: HTMLElement): () => void {
   undo.push(() => root.querySelector(".cap-compare-bar")?.removeEventListener("change", onView));
 
   const target = (n: number): HTMLElement | null => {
-    const view = root.querySelector<HTMLElement>(`.cap-compare-view[data-view='${currentView(root)}']`);
+    const view = root.querySelector<HTMLElement>(
+      `.cap-compare-view[data-view='${currentView(root)}']`,
+    );
     return view?.querySelector<HTMLElement>(`[data-change='${n}']`) ?? null;
   };
 
@@ -104,7 +157,8 @@ function attach(root: HTMLElement): () => void {
     if (!el) return;
     el.focus();
     el.scrollIntoView({ block: "center" });
-    if (live) live.textContent = `Change ${current} of ${total}: ${el.dataset.added ?? 0} words added, ${el.dataset.removed ?? 0} removed.`;
+    if (live)
+      live.textContent = `Change ${current} of ${total}: ${el.dataset.added ?? 0} words added, ${el.dataset.removed ?? 0} removed.`;
   };
 
   const onClick = (e: Event) => {
@@ -129,7 +183,10 @@ function attach(root: HTMLElement): () => void {
     if (e.defaultPrevented || (e.key !== "n" && e.key !== "p")) return;
     if (isTextEntry(e) || singleKeysOff() || total === 0) return;
     const active = document.activeElement;
-    const owns = (active && root.contains(active)) || (root.hasAttribute("data-cap-primary") && !active?.closest("dialog[open], [role='dialog'], [role='menu'], [role='listbox']"));
+    const owns =
+      (active && root.contains(active)) ||
+      (root.hasAttribute("data-cap-primary") &&
+        !active?.closest("dialog[open], [role='dialog'], [role='menu'], [role='listbox']"));
     if (!owns) return;
     e.preventDefault();
     if (e.key === "n") goTo(current + 1);
@@ -166,8 +223,14 @@ export function toggleAll(root: Element): void {
 // Attaches to every [data-cap="draft-compare"] under root (or root itself) not yet attached.
 // Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
-  const found = [...root.querySelectorAll<HTMLElement>("[data-cap='draft-compare']:not([data-cap-ready])")];
-  if (root instanceof HTMLElement && root.matches("[data-cap='draft-compare']:not([data-cap-ready])")) found.unshift(root);
+  const found = [
+    ...root.querySelectorAll<HTMLElement>("[data-cap='draft-compare']:not([data-cap-ready])"),
+  ];
+  if (
+    root instanceof HTMLElement &&
+    root.matches("[data-cap='draft-compare']:not([data-cap-ready])")
+  )
+    found.unshift(root);
   const undo: Array<() => void> = [];
   for (const el of found) {
     el.setAttribute(READY, "");

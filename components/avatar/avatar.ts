@@ -42,6 +42,9 @@ export function initials(name: string): string {
 
 /** A word's first user-perceived character (an emoji with its modifiers, a letter with its accents). */
 function firstGrapheme(word: string): string {
-  for (const { segment } of new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(word)) return segment;
+  for (const { segment } of new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(
+    word,
+  ))
+    return segment;
   return "";
 }

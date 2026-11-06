@@ -23,7 +23,11 @@ export function pageItems(page: number, count: number): PageItem[] {
 }
 
 // The first and last item on `page`, counted from 1.
-export function showingRange(page: number, perPage: number, total: number): { from: number; to: number } {
+export function showingRange(
+  page: number,
+  perPage: number,
+  total: number,
+): { from: number; to: number } {
   if (total <= 0 || perPage <= 0) return { from: 0, to: 0 };
   const from = (page - 1) * perPage + 1;
   return { from: Math.min(from, total), to: Math.min(page * perPage, total) };
@@ -33,14 +37,20 @@ export function showingRange(page: number, perPage: number, total: number): { fr
 export function statusText(page: number, perPage: number, total: number, noun = "items"): string {
   const { from, to } = showingRange(page, perPage, total);
   if (total <= 0) return `No ${noun}`;
-  return from === to ? `Showing ${from} of ${total} ${noun}` : `Showing ${from} to ${to} of ${total} ${noun}`;
+  return from === to
+    ? `Showing ${from} of ${total} ${noun}`
+    : `Showing ${from} to ${to} of ${total} ${noun}`;
 }
 
 export function pageCountOf(total: number, perPage: number): number {
   return perPage > 0 ? Math.max(1, Math.ceil(total / perPage)) : 1;
 }
 
-function el<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string): HTMLElementTagNameMap[K] {
+function el<K extends keyof HTMLElementTagNameMap>(
+  tag: K,
+  className?: string,
+  text?: string,
+): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
   if (className) node.className = className;
   if (text !== undefined) node.textContent = text;
@@ -111,7 +121,11 @@ export function render(nav: HTMLElement): void {
 
 // Goes to a page from script. Draws again, keeps focus on the control that had it (or on the
 // current page when that control is gone), and tells the page. Returns whether the page changed.
-export function setPage(nav: HTMLElement, page: number, options: { silent?: boolean } = {}): boolean {
+export function setPage(
+  nav: HTMLElement,
+  page: number,
+  options: { silent?: boolean } = {},
+): boolean {
   const count = numberOf(nav.dataset.pageCount, 1);
   const to = Math.min(Math.max(1, Math.floor(page)), count);
   if (to === numberOf(nav.dataset.page, 1)) return false;
@@ -120,10 +134,13 @@ export function setPage(nav: HTMLElement, page: number, options: { silent?: bool
   nav.dataset.page = String(to);
   render(nav);
   if (had) {
-    const again = kind ? nav.querySelector<HTMLElement>(`.cap-page[data-kind="${kind}"]:not([aria-disabled="true"])`) : null;
+    const again = kind
+      ? nav.querySelector<HTMLElement>(`.cap-page[data-kind="${kind}"]:not([aria-disabled="true"])`)
+      : null;
     (again ?? nav.querySelector<HTMLElement>('.cap-page[aria-current="page"]'))?.focus();
   }
-  if (!options.silent) nav.dispatchEvent(new CustomEvent("cap:page-change", { bubbles: true, detail: { page: to } }));
+  if (!options.silent)
+    nav.dispatchEvent(new CustomEvent("cap:page-change", { bubbles: true, detail: { page: to } }));
   return true;
 }
 

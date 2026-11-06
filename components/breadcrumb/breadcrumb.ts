@@ -70,8 +70,12 @@ export function collapse(nav: HTMLElement, max: number): (() => void) | null {
   const list = nav.querySelector<HTMLElement>(".cap-breadcrumb-list");
   if (!list) return null;
   const items = [...list.querySelectorAll<HTMLLIElement>(":scope > .cap-breadcrumb-item")];
-  const folded = foldedLevels(items.length, max).map((i) => items[i]).filter((li): li is HTMLLIElement => !!li);
-  const links = folded.map((li) => li.querySelector<HTMLAnchorElement>("a")).filter((a): a is HTMLAnchorElement => !!a);
+  const folded = foldedLevels(items.length, max)
+    .map((i) => items[i])
+    .filter((li): li is HTMLLIElement => !!li);
+  const links = folded
+    .map((li) => li.querySelector<HTMLAnchorElement>("a"))
+    .filter((a): a is HTMLAnchorElement => !!a);
   if (folded.length === 0 || links.length !== folded.length) return null;
   const item = foldedItem(links);
   folded[0]?.before(item);

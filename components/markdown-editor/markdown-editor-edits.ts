@@ -63,7 +63,12 @@ export interface MarkdownEditorOptions {
   // button, the drop hint and the describe step are absent.
   onUpload?: (file: File, image: ImageDescription, signal: AbortSignal) => Promise<UploadResult>;
   // The markdown that goes into the text once the image is uploaded.
-  imageMarkdown?: (image: { url: string; alt: string; decorative: boolean; name: string }) => string;
+  imageMarkdown?: (image: {
+    url: string;
+    alt: string;
+    decorative: boolean;
+    name: string;
+  }) => string;
   // The file chooser's accept list.
   accept?: string;
   onChange?: (value: string) => void;
@@ -108,11 +113,17 @@ export function looksLikeUrl(text: string): boolean {
 
 // The targets whose title, address or hint holds the query; all of them for an empty query.
 // A typed address matches nothing: it is committed as itself.
-export function filterLinkTargets(targets: LinkTarget[], query: string, limit = LINK_RESULT_LIMIT): LinkTarget[] {
+export function filterLinkTargets(
+  targets: LinkTarget[],
+  query: string,
+  limit = LINK_RESULT_LIMIT,
+): LinkTarget[] {
   const needle = query.trim().toLowerCase();
   if (looksLikeUrl(needle)) return [];
   const pool = needle
-    ? targets.filter((t) => [t.title, t.href, t.hint ?? ""].some((s) => s.toLowerCase().includes(needle)))
+    ? targets.filter((t) =>
+        [t.title, t.href, t.hint ?? ""].some((s) => s.toLowerCase().includes(needle)),
+      )
     : targets;
   return pool.slice(0, limit);
 }
@@ -125,7 +136,13 @@ export function lineBounds(doc: string, pos: number): { from: number; to: number
 }
 
 // Marks around the selection; with none selected, the cursor lands between the marks.
-export function wrapEdit(doc: string, from: number, to: number, before: string, after = before): Edit {
+export function wrapEdit(
+  doc: string,
+  from: number,
+  to: number,
+  before: string,
+  after = before,
+): Edit {
   const selected = doc.slice(from, to);
   return {
     changes: [{ from, to, insert: `${before}${selected}${after}` }],
@@ -168,7 +185,13 @@ export function footnoteEdit(doc: string, from: number, to: number): Edit {
 
 // A block of text at the cursor, set apart by a blank line before it unless the cursor is on
 // one, and after it when text follows on the same line.
-export function blockEdit(doc: string, from: number, to: number, text: string, cursor?: number): Edit {
+export function blockEdit(
+  doc: string,
+  from: number,
+  to: number,
+  text: string,
+  cursor?: number,
+): Edit {
   const line = lineBounds(doc, from);
   const onBlank = line.from === from && doc.slice(line.from, line.to).trim() === "";
   const prefix = onBlank ? "" : "\n\n";
@@ -181,8 +204,16 @@ export function blockEdit(doc: string, from: number, to: number, text: string, c
 }
 
 // The slash line becomes the block, in its place.
-export function slashBlockEdit(lineFrom: number, lineTo: number, text: string, cursor?: number): Edit {
-  return { changes: [{ from: lineFrom, to: lineTo, insert: text }], anchor: lineFrom + (cursor ?? text.length) };
+export function slashBlockEdit(
+  lineFrom: number,
+  lineTo: number,
+  text: string,
+  cursor?: number,
+): Edit {
+  return {
+    changes: [{ from: lineFrom, to: lineTo, insert: text }],
+    anchor: lineFrom + (cursor ?? text.length),
+  };
 }
 
 export function scaffoldCursor(s: Scaffold): number | undefined {
@@ -195,7 +226,13 @@ export function scaffoldCursor(s: Scaffold): number | undefined {
 
 // A link at the selection, the cursor after it: the next keystroke is almost always the
 // sentence going on.
-export function linkEdit(from: number, to: number, selected: string, href: string, fallbackLabel: string): Edit {
+export function linkEdit(
+  from: number,
+  to: number,
+  selected: string,
+  href: string,
+  fallbackLabel: string,
+): Edit {
   const markdown = `[${selected || fallbackLabel || href}](${href})`;
   return { changes: [{ from, to, insert: markdown }], anchor: from + markdown.length };
 }
@@ -204,6 +241,9 @@ export function linkEdit(from: number, to: number, selected: string, href: strin
 // picker asks for alt text or decorative, so an empty alt is a decorative pick: Prelum reads
 // ![""](x) as decorative and refuses ![](x) as missing.
 export function defaultImageMarkdown({ url, alt }: { url: string; alt: string }): string {
-  const text = alt.replace(/[[\]\n]/g, " ").replace(/\s+/g, " ").trim();
+  const text = alt
+    .replace(/[[\]\n]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
   return `![${text || '""'}](${url})`;
 }

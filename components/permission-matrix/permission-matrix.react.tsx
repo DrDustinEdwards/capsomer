@@ -16,7 +16,14 @@ const Check = ({ held }: { held: boolean }) => (
   <span className="cap-perms-check" aria-hidden="true">
     {held ? (
       <svg viewBox="0 0 16 16" focusable="false">
-        <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="m3.5 8.5 3 3 6-7" />
+        <path
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="m3.5 8.5 3 3 6-7"
+        />
       </svg>
     ) : null}
   </span>
@@ -55,7 +62,13 @@ export function PermissionMatrix(props: PermissionMatrixProps) {
           <div className="cap-seg-options">
             {(["agent", "permission"] as const).map((v) => (
               <label key={v}>
-                <input type="radio" name={`${id}-view`} value={v} checked={view === v} onChange={() => choose(v)} />
+                <input
+                  type="radio"
+                  name={`${id}-view`}
+                  value={v}
+                  checked={view === v}
+                  onChange={() => choose(v)}
+                />
                 {v === "agent" ? "By agent" : "By permission"}
               </label>
             ))}
