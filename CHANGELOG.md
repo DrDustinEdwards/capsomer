@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **System map wires** (`.cap-system-map-wires`): the layer is sized by the map in CSS (`inline-size` and `block-size` 100%) where the script set a pixel width. After a resize the old drawing stood one frame at its old width and widened the page, so a phone could flash a sideways scrollbar.
 - **Development: quicker CI browser tests** (no package change). Tests, not files, are shared over the workers (`fullyParallel`), so the sweep no longer holds one worker for nearly the whole run; CI records no traces; only Chromium's headless shell is installed. A pull request runs the specs and sweep entries of the components it touches and of every component that shows them (`scripts/ci-specs.mjs`, `CAPSOMER_SWEEP`); a shared change, a version bump and every push to main run the whole suite.
 
 ## [0.76.0]

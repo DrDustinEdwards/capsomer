@@ -295,9 +295,13 @@
   }
 
   /* The wires sit under the cards, so a card is never crossed; the cards' own surfaces cover them. */
+  /* Sized by the map, never by a drawn width, so between a resize and the next redraw the old
+     drawing can paint past the edge but never widen the page. */
   .cap-system-map-wires {
     position: absolute;
     inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
     overflow: visible;
     pointer-events: none;
 
