@@ -179,6 +179,11 @@
     stroke-linecap: round;
     stroke-linejoin: round;
   }
+  /* An open panel turns its chevron up, as the combobox's does (combobox.css): the button's
+     aria-expanded, which wirePanel keeps in step with the panel, is the one state it reads. */
+  [aria-expanded="true"] > .cap-site-header-chev {
+    rotate: 180deg;
+  }
 
   /* The section links: 24px after the switcher (left), centered in the header, or on the right
      before the extras after a thin divider; 20px apart. The current page is weight 500 with a 2px
@@ -1336,6 +1341,9 @@
     }
     .cap-site-header-link::after {
       transition: inline-size var(--dur-base) var(--ease-out);
+    }
+    .cap-site-header-chev {
+      transition: rotate var(--dur-fast) var(--ease-out);
     }
     :is(.cap-site-header-panel, .cap-site-header-search-panel) {
       transition:
