@@ -4,6 +4,9 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.77.0]
+
+- **Mentions list: `mentionsDataOfKit` and `kitMentionsSearch`** (`capsomer/behavior/mentions-list`), with `KitMentionsData` and `KitMentionRow` typed by shape. They turn site-api's `loadMentions` answer into the list's `data` and read the kit's query from the list's address, as `mediaDataOfKit` does for the library. Carrel had them as its own; they move here so dustinedwards.info's admin draws the same page. Additive; no class, token or HTML contract changes.
 - Tabs: a malformed link fragment (like `#%`) no longer throws during setup and leaves every later tab set on the page dead; the fragment falls back to its raw text, as the link component already does. No class, token or HTML contract changes.
 - Popover: a tooltip removed from the page while open no longer swallows the next Esc, so a dialog around it closes by keyboard again. The Popover API hides a removed popover without a toggle event, so Esc now forgets any recorded popup that is no longer open. No class, token or HTML contract changes.
 - **System map wires** (`.cap-system-map-wires`): the layer is sized by the map in CSS (`inline-size` and `block-size` 100%) where the script set a pixel width. After a resize the old drawing stood one frame at its old width and widened the page, so a phone could flash a sideways scrollbar.
