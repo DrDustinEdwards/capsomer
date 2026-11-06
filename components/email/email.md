@@ -35,27 +35,27 @@ Any transactional mail a product sends: a sign-in link, an address to confirm, a
 
 ## The templates
 
-| Template         | Takes                                                                    | Says                                                                                                                                                                                                                                         |
-| ---------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `magicLink`      | `url`, `expiresIn`, optional `code`                                      | who asked, works once, expires, ignore if not you; with `code`, the code to type into the page that asked, under the button                                                                                                                  |
-| `verification`   | `url`, `expiresIn`                                                       | the same, for confirming an address                                                                                                                                                                                                          |
-| `reset`          | `url`, `expiresIn`                                                       | the same, for a password                                                                                                                                                                                                                     |
-| `emailChange`    | `step` (`current`, `new`), `url`, `expiresIn`; `newEmail` with `current` | to the current address: who asked, the new address, approve then confirm from the new one; to the new address: confirm to finish. When the link expires, never "once" (Better Auth's change links work until they expire); ignore if not you |
-| `alert`          | `level` (`crit`, `warn`, `info`), `what`, `when`, `details`, `url`       | the level as a word, what and when, the detail lines                                                                                                                                                                                         |
-| `notice`         | `title`, `body`, `action`                                                | a title and paragraphs, an optional button                                                                                                                                                                                                   |
-| `securityNotice` | `title`, `what`, `when`, `secure`, optional `device`, `location`, `url`  | what changed and when, the device and place it came from when known, what to do if it was not them, a button to the account page; no link that signs in. site-runtime's `./sign-in` notice `detail` carries these fields                     |
+| Template | Takes | Says |
+| --- | --- | --- |
+| `magicLink` | `url`, `expiresIn`, optional `code` | who asked, works once, expires, ignore if not you; with `code`, the code to type into the page that asked, under the button |
+| `verification` | `url`, `expiresIn` | the same, for confirming an address |
+| `reset` | `url`, `expiresIn` | the same, for a password |
+| `emailChange` | `step` (`current`, `new`), `url`, `expiresIn`; `newEmail` with `current` | to the current address: who asked, the new address, approve then confirm from the new one; to the new address: confirm to finish. When the link expires, never "once" (Better Auth's change links work until they expire); ignore if not you |
+| `alert` | `level` (`crit`, `warn`, `info`), `what`, `when`, `details`, `url` | the level as a word, what and when, the detail lines |
+| `notice` | `title`, `body`, `action` | a title and paragraphs, an optional button |
+| `securityNotice` | `title`, `what`, `when`, `secure`, optional `device`, `location`, `url` | what changed and when, the device and place it came from when known, what to do if it was not them, a button to the account page; no link that signs in. site-runtime's `./sign-in` notice `detail` carries these fields |
 
 ## Blocks for a product's own template
 
 A product builds its own mail from blocks, so it needs no HTML of its own.
 
-| Block        | Takes                                              | HTML                                                                    | Text part                              |
-| ------------ | -------------------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------- |
-| `heading`    | `text`                                             | the mail's `h1`                                                         | the text, a rule under it              |
-| `subheading` | `text`                                             | an `h2`, 18px on 26px, bold                                             | the text                               |
-| `paragraph`  | `text`: a string, or lines (each a string or runs) | one `p`; lines join with `<br>`; a run `{ bold }` is `<strong>`         | lines on their own rows; bold is plain |
-| `rows`       | `rows`: `{ label, value }`                         | a ruled table; label muted on the left, value right                     | `label: value` per row                 |
-| `pre`        | `text`                                             | a ruled box holding a `pre`, 16px mono, wrapped (never sideways scroll) | every line indented four spaces        |
+| Block | Takes | HTML | Text part |
+| --- | --- | --- | --- |
+| `heading` | `text` | the mail's `h1` | the text, a rule under it |
+| `subheading` | `text` | an `h2`, 18px on 26px, bold | the text |
+| `paragraph` | `text`: a string, or lines (each a string or runs) | one `p`; lines join with `<br>`; a run `{ bold }` is `<strong>` | lines on their own rows; bold is plain |
+| `rows` | `rows`: `{ label, value }` | a ruled table; label muted on the left, value right | `label: value` per row |
+| `pre` | `text` | a ruled box holding a `pre`, 16px mono, wrapped (never sideways scroll) | every line indented four spaces |
 
 One `h1` per mail: when a template has no `heading` block, the brand name is the `h1`, so a screen reader always has a top heading. `pre` is 16px, not smaller, to stay inside the 16px minimum above; long lines wrap instead of scrolling at 320px. In the dark scheme `pre` takes the ground color and the line border. `alert` takes an optional `pre` and `details` as paragraph text; `notice` bodies take the same paragraph text.
 

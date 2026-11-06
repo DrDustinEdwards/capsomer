@@ -4,33 +4,7 @@ title: Field
 summary: A labeled input, textarea, file input, checkbox, radio or input group, with help outside it and an error beside it, checked on leave and on submit; with a password, character count, one-time code, number, search and date input built on it.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states:
-  [
-    default,
-    keyboard focus,
-    hover,
-    filled,
-    help text,
-    required,
-    invalid with its message,
-    disabled,
-    read-only,
-    file input,
-    input group,
-    checkbox checked,
-    unchecked,
-    mixed and invalid,
-    radio checked and unchecked,
-    choice card,
-    slider,
-    password shown and hidden,
-    one-time code,
-    character count under and over,
-    number with steppers,
-    search with Clear,
-    date input with a part in error,
-    two or more errors in the error summary,
-  ]
+states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary]
 added: 0.1.0
 updated: 0.56.0
 source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
@@ -84,38 +58,38 @@ Any form: a site's settings, a new job, a post's metadata, the one-line reason o
 
 WCAG 1.3.5: a field that asks for the person's own details says which detail it is, so the browser can fill it and assistive tools can mark it. Use the token that fits; `autocomplete="off"` only for a field that is not about the person (a site name, a search of the app's own data).
 
-| Asks for                        | `autocomplete`                                                     | Also                                                               |
-| ------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| Full name                       | `name`                                                             | One field, not first and last, unless the service needs them apart |
-| Given name, family name         | `given-name`, `family-name`                                        |                                                                    |
-| Email                           | `email`                                                            | `type="email"`, `spellcheck="false"`                               |
-| Phone                           | `tel`                                                              | `type="tel"`; one field for the whole number                       |
-| Street address                  | `street-address` (a textarea), or `address-line1`, `address-line2` |                                                                    |
-| City, state, ZIP or postal code | `address-level2`, `address-level1`, `postal-code`                  |                                                                    |
-| Country                         | `country-name` (text) or `country` (a code in a select)            |                                                                    |
-| Organization, job title         | `organization`, `organization-title`                               |                                                                    |
-| Date of birth                   | `bday`, or `bday-day`, `bday-month`, `bday-year` in a date input   |                                                                    |
-| Username or email to sign in    | `username`                                                         | Even when it is an email                                           |
-| Password to sign in             | `current-password`                                                 | Show and Hide; paste allowed                                       |
-| New password                    | `new-password`                                                     | The browser offers a strong one                                    |
-| One-time code                   | `one-time-code`                                                    | `inputmode="numeric"`, one input                                   |
+| Asks for | `autocomplete` | Also |
+| --- | --- | --- |
+| Full name | `name` | One field, not first and last, unless the service needs them apart |
+| Given name, family name | `given-name`, `family-name` | |
+| Email | `email` | `type="email"`, `spellcheck="false"` |
+| Phone | `tel` | `type="tel"`; one field for the whole number |
+| Street address | `street-address` (a textarea), or `address-line1`, `address-line2` | |
+| City, state, ZIP or postal code | `address-level2`, `address-level1`, `postal-code` | |
+| Country | `country-name` (text) or `country` (a code in a select) | |
+| Organization, job title | `organization`, `organization-title` | |
+| Date of birth | `bday`, or `bday-day`, `bday-month`, `bday-year` in a date input | |
+| Username or email to sign in | `username` | Even when it is an email |
+| Password to sign in | `current-password` | Show and Hide; paste allowed |
+| New password | `new-password` | The browser offers a strong one |
+| One-time code | `one-time-code` | `inputmode="numeric"`, one input |
 
 A sign-in form is `username` then `current-password`, each with a visible label, in a form with a submit button, so a password manager finds them; never ask for the same detail twice in one session (WCAG 3.3.7).
 
 ## Keyboard
 
-| Key                            | Does                                                                                                                             |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| Tab                            | Moves to the next field; leaving a field you changed checks it                                                                   |
-| Space                          | Checks or unchecks a checkbox; selects a radio                                                                                   |
-| Arrow keys                     | Move between the radios of a group, selecting as they go                                                                         |
-| Enter in a one-line field      | Submits the form. One field wrong: focus moves to it and its message is announced. Two or more: focus moves to the error summary |
-| Enter or Space on Show         | Shows the password as text (the button becomes Hide); again hides it                                                             |
-| Up and Down arrows in a number | Step the value by one step (the browser's own)                                                                                   |
-| Page Up, Page Down in a number | Step it by ten steps, within min and max                                                                                         |
-| Home, End in a number          | Go to min and to max, when they are set                                                                                          |
-| Esc in a search with text      | Clears it; focus stays in the field                                                                                              |
-| Enter or Space on Clear        | Clears the search and puts focus back in the field                                                                               |
+| Key | Does |
+| --- | --- |
+| Tab | Moves to the next field; leaving a field you changed checks it |
+| Space | Checks or unchecks a checkbox; selects a radio |
+| Arrow keys | Move between the radios of a group, selecting as they go |
+| Enter in a one-line field | Submits the form. One field wrong: focus moves to it and its message is announced. Two or more: focus moves to the error summary |
+| Enter or Space on Show | Shows the password as text (the button becomes Hide); again hides it |
+| Up and Down arrows in a number | Step the value by one step (the browser's own) |
+| Page Up, Page Down in a number | Step it by ten steps, within min and max |
+| Home, End in a number | Go to min and to max, when they are set |
+| Esc in a search with text | Clears it; focus stays in the field |
+| Enter or Space on Clear | Clears the search and puts focus back in the field |
 
 ## Accessibility
 
@@ -136,26 +110,16 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ```html
 <form data-cap="field">
   <div class="cap-field">
-    <label class="cap-field-label" for="url"
-      >Site address <span class="cap-field-required" aria-hidden="true">Required</span></label
-    >
+    <label class="cap-field-label" for="url">Site address <span class="cap-field-required" aria-hidden="true">Required</span></label>
     <p class="cap-field-help" id="url-h">Starts with https:// and has no path.</p>
-    <input
-      class="cap-input"
-      id="url"
-      type="url"
-      required
-      aria-describedby="url-e url-h"
-      data-error-type-mismatch="Enter a full address, starting with https://."
-    />
+    <input class="cap-input" id="url" type="url" required aria-describedby="url-e url-h"
+      data-error-type-mismatch="Enter a full address, starting with https://." />
     <p class="cap-field-error" id="url-e" hidden></p>
   </div>
   <fieldset class="cap-field">
     <legend class="cap-field-label">Check every</legend>
     <div class="cap-field-options">
-      <label class="cap-check"
-        ><input type="radio" name="every" value="5" checked /> 5 minutes</label
-      >
+      <label class="cap-check"><input type="radio" name="every" value="5" checked /> 5 minutes</label>
       <label class="cap-check"><input type="radio" name="every" value="15" /> 15 minutes</label>
     </div>
   </fieldset>
@@ -172,87 +136,26 @@ The parts:
 <div class="cap-field">
   <label class="cap-field-label" for="pw">Password</label>
   <div class="cap-input-group">
-    <input
-      class="cap-input"
-      id="pw"
-      name="password"
-      type="password"
-      autocomplete="current-password"
-      spellcheck="false"
-      autocapitalize="none"
-    />
+    <input class="cap-input" id="pw" name="password" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" />
     <div class="cap-input-addon" data-align="inline-end">
-      <button
-        type="button"
-        class="cap-btn"
-        data-size="xs"
-        data-variant="quiet"
-        data-cap-part="reveal"
-        aria-controls="pw"
-        aria-label="Show password"
-        hidden
-      >
-        Show
-      </button>
+      <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="reveal" aria-controls="pw" aria-label="Show password" hidden>Show</button>
     </div>
   </div>
 </div>
 
 <div class="cap-field">
   <label class="cap-field-label" for="sum">Summary</label>
-  <textarea
-    class="cap-input"
-    id="sum"
-    name="summary"
-    data-maxlength="120"
-    aria-describedby="sum-c"
-  ></textarea>
+  <textarea class="cap-input" id="sum" name="summary" data-maxlength="120" aria-describedby="sum-c"></textarea>
   <p class="cap-field-count" id="sum-c">You can enter up to 120 characters</p>
   <p class="cap-field-error" hidden></p>
 </div>
 
-<input
-  class="cap-input"
-  data-variant="code"
-  id="code"
-  name="code"
-  autocomplete="one-time-code"
-  inputmode="numeric"
-  spellcheck="false"
-/>
+<input class="cap-input" data-variant="code" id="code" name="code" autocomplete="one-time-code" inputmode="numeric" spellcheck="false" />
 
 <div class="cap-input-group">
-  <div class="cap-input-addon" data-align="inline-start">
-    <button
-      type="button"
-      class="cap-btn"
-      data-size="xs"
-      data-variant="quiet"
-      data-icon-only
-      data-cap-part="step-down"
-      tabindex="-1"
-      aria-label="Decrease retries"
-      hidden
-    >
-      &minus;
-    </button>
-  </div>
+  <div class="cap-input-addon" data-align="inline-start"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="step-down" tabindex="-1" aria-label="Decrease retries" hidden>&minus;</button></div>
   <input class="cap-input" id="retries" name="retries" type="number" min="0" max="10" value="3" />
-  <div class="cap-input-addon" data-align="inline-end">
-    <button
-      type="button"
-      class="cap-btn"
-      data-size="xs"
-      data-variant="quiet"
-      data-icon-only
-      data-cap-part="step-up"
-      tabindex="-1"
-      aria-label="Increase retries"
-      hidden
-    >
-      +
-    </button>
-  </div>
+  <div class="cap-input-addon" data-align="inline-end"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="step-up" tabindex="-1" aria-label="Increase retries" hidden>+</button></div>
 </div>
 
 <form class="cap-search" role="search" aria-label="Posts" action="/search">
@@ -261,20 +164,7 @@ The parts:
     <div class="cap-input-group">
       <div class="cap-input-addon" data-align="inline-start">[search icon]</div>
       <input class="cap-input" id="q" name="q" type="search" enterkeyhint="search" />
-      <div class="cap-input-addon" data-align="inline-end">
-        <button
-          type="button"
-          class="cap-btn"
-          data-size="xs"
-          data-variant="quiet"
-          data-icon-only
-          data-cap-part="clear"
-          aria-label="Clear search"
-          hidden
-        >
-          [x icon]
-        </button>
-      </div>
+      <div class="cap-input-addon" data-align="inline-end"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="clear" aria-label="Clear search" hidden>[x icon]</button></div>
     </div>
   </div>
 </form>
@@ -283,42 +173,9 @@ The parts:
   <legend class="cap-field-label">Date of birth</legend>
   <p class="cap-field-help" id="dob-h">For example, 27 3 1990.</p>
   <div class="cap-date-input" data-error-date="Date of birth must be a real date.">
-    <div class="cap-date-input-part">
-      <label for="dob-d">Day</label
-      ><input
-        class="cap-input"
-        id="dob-d"
-        name="dob-day"
-        data-cap-part="day"
-        inputmode="numeric"
-        pattern="[0-9]{1,2}"
-        autocomplete="bday-day"
-      />
-    </div>
-    <div class="cap-date-input-part">
-      <label for="dob-m">Month</label
-      ><input
-        class="cap-input"
-        id="dob-m"
-        name="dob-month"
-        data-cap-part="month"
-        inputmode="numeric"
-        pattern="[0-9]{1,2}"
-        autocomplete="bday-month"
-      />
-    </div>
-    <div class="cap-date-input-part">
-      <label for="dob-y">Year</label
-      ><input
-        class="cap-input"
-        id="dob-y"
-        name="dob-year"
-        data-cap-part="year"
-        inputmode="numeric"
-        pattern="[0-9]{4}"
-        autocomplete="bday-year"
-      />
-    </div>
+    <div class="cap-date-input-part"><label for="dob-d">Day</label><input class="cap-input" id="dob-d" name="dob-day" data-cap-part="day" inputmode="numeric" pattern="[0-9]{1,2}" autocomplete="bday-day" /></div>
+    <div class="cap-date-input-part"><label for="dob-m">Month</label><input class="cap-input" id="dob-m" name="dob-month" data-cap-part="month" inputmode="numeric" pattern="[0-9]{1,2}" autocomplete="bday-month" /></div>
+    <div class="cap-date-input-part"><label for="dob-y">Year</label><input class="cap-input" id="dob-y" name="dob-year" data-cap-part="year" inputmode="numeric" pattern="[0-9]{4}" autocomplete="bday-year" /></div>
   </div>
   <p class="cap-field-error" hidden></p>
 </fieldset>
@@ -327,13 +184,7 @@ The parts:
 In React, `import { Field } from "capsomer/react/field"`:
 
 ```tsx
-<Field
-  label="Site address"
-  help="Starts with https:// and has no path."
-  error={errors.url}
-  announce={submitted}
-  required
->
+<Field label="Site address" help="Starts with https:// and has no path." error={errors.url} announce={submitted} required>
   <input className="cap-input" type="url" value={url} onChange={(e) => setUrl(e.target.value)} />
 </Field>
 ```
@@ -354,17 +205,11 @@ Fields in an input group, a choice card and horizontal fields:
 
 ```html
 <div class="cap-input-group" role="group" aria-label="Site address">
-  <div class="cap-input-addon" data-align="inline-start">
-    <span class="cap-input-group-text">https://</span>
-  </div>
+  <div class="cap-input-addon" data-align="inline-start"><span class="cap-input-group-text">https://</span></div>
   <input class="cap-input" id="u" />
-  <div class="cap-input-addon" data-align="inline-end">
-    <button type="button" class="cap-btn" data-size="xs" data-variant="quiet">Paste</button>
-  </div>
+  <div class="cap-input-addon" data-align="inline-end"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet">Paste</button></div>
 </div>
-<label class="cap-check" data-variant="card"
-  ><input type="radio" name="plan" checked /> <span>Free</span></label
->
+<label class="cap-check" data-variant="card"><input type="radio" name="plan" checked /> <span>Free</span></label>
 <div class="cap-field" data-orientation="horizontal">...</div>
 <div class="cap-field-group">...fields, with .cap-field-separator between groups...</div>
 ```

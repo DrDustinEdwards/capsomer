@@ -104,9 +104,7 @@
     }
     @media (prefers-reduced-motion: no-preference) {
       & > :where(.cap-player-play, .embed-play) {
-        transition:
-          scale var(--dur-fast) var(--ease-out),
-          background-color var(--dur-fast) var(--ease-out);
+        transition: scale var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
       }
       &:hover > :where(.cap-player-play, .embed-play) {
         scale: 1.06;

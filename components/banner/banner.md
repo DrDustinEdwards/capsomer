@@ -47,10 +47,10 @@ Two ways to say something went wrong or needs attention, by where it belongs.
 
 ## Keyboard
 
-| Key              | Does                                                                            |
-| ---------------- | ------------------------------------------------------------------------------- |
-| Tab              | Reaches the banner's actions in reading order; the banner itself takes no focus |
-| Enter on Dismiss | Hides the banner; focus moves to the main region                                |
+| Key | Does |
+| --- | --- |
+| Tab | Reaches the banner's actions in reading order; the banner itself takes no focus |
+| Enter on Dismiss | Hides the banner; focus moves to the main region |
 
 ## Accessibility
 
@@ -82,19 +82,13 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <div class="cap-banner" data-tone="warn" role="status" data-cap="banner">
   [warning glyph]
   <p class="cap-banner-text">The usage numbers for D1 are a day behind.</p>
-  <div class="cap-banner-actions">
-    <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="dismiss">
-      Dismiss
-    </button>
-  </div>
+  <div class="cap-banner-actions"><button type="button" class="cap-btn" data-variant="quiet" data-cap-part="dismiss">Dismiss</button></div>
 </div>
 
 <button type="button" class="cap-btn" aria-describedby="save-error">Save schedule</button>
 <div class="cap-alert" role="alert" id="save-error">
   [critical glyph]
-  <span class="cap-alert-text"
-    >Could not save the schedule: the server did not answer. Save again in a minute.</span
-  >
+  <span class="cap-alert-text">Could not save the schedule: the server did not answer. Save again in a minute.</span>
 </div>
 
 <div class="cap-alert" data-tone="warn" role="alert">
@@ -103,9 +97,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     <p class="cap-alert-title">This token expires in 3 days</p>
     <p class="cap-alert-text">Replace it in Settings before then.</p>
   </div>
-  <div class="cap-alert-action">
-    <button type="button" class="cap-btn" data-variant="quiet">Open Settings</button>
-  </div>
+  <div class="cap-alert-action"><button type="button" class="cap-btn" data-variant="quiet">Open Settings</button></div>
 </div>
 ```
 

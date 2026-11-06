@@ -4,20 +4,7 @@ title: Select
 summary: Choose one of up to about 15 options. A real select stays in the page; with one line of script it opens a popup built from the shared listbox and popover.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states:
-  [
-    default,
-    keyboard focus,
-    hover,
-    open,
-    groups,
-    placeholder,
-    a disabled option,
-    invalid with its message,
-    disabled with its reason,
-    small,
-    native without enhancement,
-  ]
+states: [default, keyboard focus, hover, open, groups, placeholder, a disabled option, invalid with its message, disabled with its reason, small, native without enhancement]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (select.field, select.search)
@@ -54,17 +41,17 @@ Choosing one value from a fixed list of about 6 to 15: a platform, a region, an 
 
 ## Keyboard
 
-| Key                                | Does                                                               |
-| ---------------------------------- | ------------------------------------------------------------------ |
-| Tab                                | Moves focus to the select                                          |
-| Enter, Space, Down arrow, Up arrow | Opens the list with the chosen option current                      |
-| Letters (closed)                   | Chooses the first option that starts with them, without opening    |
-| Down arrow, Up arrow (open)        | Moves the current option, skipping disabled ones                   |
-| Home, End (open)                   | First, last option                                                 |
-| Letters (open)                     | Moves to the next option starting with them                        |
-| Enter or Space (open)              | Chooses the current option and closes; focus returns to the button |
-| Esc (open)                         | Closes without changing; focus returns to the button               |
-| Tab (open)                         | Closes the list and moves on                                       |
+| Key | Does |
+| --- | --- |
+| Tab | Moves focus to the select |
+| Enter, Space, Down arrow, Up arrow | Opens the list with the chosen option current |
+| Letters (closed) | Chooses the first option that starts with them, without opening |
+| Down arrow, Up arrow (open) | Moves the current option, skipping disabled ones |
+| Home, End (open) | First, last option |
+| Letters (open) | Moves to the next option starting with them |
+| Enter or Space (open) | Chooses the current option and closes; focus returns to the button |
+| Esc (open) | Closes without changing; focus returns to the button |
+| Tab (open) | Closes the list and moves on |
 
 ## Accessibility
 
@@ -81,9 +68,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```html
 <div class="cap-field">
-  <label class="cap-field-label" for="owner"
-    >Owner <span class="cap-field-required" aria-hidden="true">Required</span></label
-  >
+  <label class="cap-field-label" for="owner">Owner <span class="cap-field-required" aria-hidden="true">Required</span></label>
   <div class="cap-select-wrap" data-cap="select">
     <select class="cap-select" id="owner" name="owner" required aria-describedby="owner-e">
       <option value="" selected>Choose an agent</option>
@@ -105,17 +90,8 @@ enhance(); // every [data-cap="select"] not marked data-native
 `createSelect(wrap, select)` returns `{ select, trigger, popup, sync, open, close, detach }`; `sync()` re-reads the native select after the app set `select.value` from code. `data-size="sm"` on the select makes both forms smaller. In React, `import { Select } from "capsomer/react/select"` renders the wrapper and a native select, then enhances it:
 
 ```tsx
-<Select
-  id="owner"
-  name="owner"
-  required
-  value={owner}
-  onChange={(e) => setOwner(e.target.value)}
-  options={[
-    { value: "", label: "Choose an agent" },
-    { group: "Agents", options: [{ value: "driver", label: "capsid-driver" }] },
-  ]}
-/>
+<Select id="owner" name="owner" required value={owner} onChange={(e) => setOwner(e.target.value)}
+  options={[{ value: "", label: "Choose an agent" }, { group: "Agents", options: [{ value: "driver", label: "capsid-driver" }] }]} />
 ```
 
 ## Matches

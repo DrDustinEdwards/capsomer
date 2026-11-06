@@ -37,11 +37,11 @@ Any form whose submit finds two or more fields in error, and any page the server
 
 ## Keyboard
 
-| Key                                          | Does                                                     |
-| -------------------------------------------- | -------------------------------------------------------- |
+| Key | Does |
+| --- | --- |
 | (a submit finds two or more fields in error) | Focus moves to the summary; its title and links are read |
-| Tab                                          | Moves through the links, then on into the form           |
-| Enter on a link                              | Puts focus in that field, with its label in view         |
+| Tab | Moves through the links, then on into the form |
+| Enter on a link | Puts focus in that field, with its label in view |
 
 ## Accessibility
 
@@ -57,14 +57,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```html
 <form data-cap="field" method="post">
-  <div
-    class="cap-error-summary"
-    data-cap="error-summary"
-    tabindex="-1"
-    role="alert"
-    aria-labelledby="es-t"
-    autofocus
-  >
+  <div class="cap-error-summary" data-cap="error-summary" tabindex="-1" role="alert" aria-labelledby="es-t" autofocus>
     <h2 class="cap-error-summary-title" id="es-t">There is a problem</h2>
     <ul class="cap-error-summary-list">
       <li><a href="#name">Give the job a name, such as Nightly backup.</a></li>
@@ -84,7 +77,7 @@ import { ErrorSummary } from "capsomer/react/error-summary";
 <form onSubmit={check}>
   <ErrorSummary errors={[{ id: "name", text: "Give the job a name, such as Nightly backup." }]} />
   ...
-</form>;
+</form>
 ```
 
 A new `errors` list takes focus and puts "Error: " on the title; an empty list leaves the summary hidden.

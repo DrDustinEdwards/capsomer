@@ -12,18 +12,13 @@
 @layer cap.components {
   .cap-dialog {
     --cap-dialog-w: 30rem;
-    --cap-dialog-gap: max(
-      var(--space-5),
-      env(safe-area-inset-top, 0px),
-      env(safe-area-inset-bottom, 0px)
-    );
+    --cap-dialog-gap: max(var(--space-5), env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px));
     --cap-dialog-top: max(var(--space-5), 10dvh);
     --cap-dialog-from: translateY(8px) scale(0.96);
     --cap-dialog-to: translateY(4px) scale(0.98);
     /* Side sheets are logical (right is the inline end): in right-to-left they sit and slide mirrored. */
     --cap-dialog-dir: 1;
-    &:dir(rtl),
-    :where([dir="rtl"]) & {
+    &:dir(rtl), :where([dir="rtl"]) & {
       --cap-dialog-dir: -1;
     }
 
@@ -283,8 +278,7 @@
     border-block-start: 1px solid var(--line);
     background: var(--sunken);
 
-    .cap-dialog:is([data-placement="right"], [data-placement="left"], [data-placement="bottom"])
-      > & {
+    .cap-dialog:is([data-placement="right"], [data-placement="left"], [data-placement="bottom"]) > & {
       background: transparent;
     }
     .cap-dialog[data-size="sm"] > & {
@@ -360,21 +354,12 @@
     }
     /* Drag to dismiss (dialog.ts): a sheet's header is its handle, once script has wired it;
        the backdrop thins as the sheet goes. A bottom sheet shows a grab bar. */
-    .cap-dialog:is(
-        [data-placement="bottom"],
-        [data-placement="right"],
-        [data-placement="left"]
-      )[data-cap-wired]:not([data-cap-modal-lock], [role="alertdialog"])
-      > .cap-dialog-header {
+    .cap-dialog:is([data-placement="bottom"], [data-placement="right"], [data-placement="left"])[data-cap-wired]:not([data-cap-modal-lock], [role="alertdialog"]) > .cap-dialog-header {
       touch-action: none;
       -webkit-user-select: none;
       user-select: none;
     }
-    .cap-dialog[data-placement="bottom"][data-cap-wired]:not(
-        [data-cap-modal-lock],
-        [role="alertdialog"]
-      )
-      > .cap-dialog-header::before {
+    .cap-dialog[data-placement="bottom"][data-cap-wired]:not([data-cap-modal-lock], [role="alertdialog"]) > .cap-dialog-header::before {
       content: "";
       align-self: center;
       inline-size: 2.25rem;

@@ -44,11 +44,7 @@
 
     &:hover,
     &[data-force="hover"] {
-      border-color: color-mix(
-        in srgb,
-        var(--primary) calc(var(--card-edge) * 100%),
-        var(--line-strong)
-      );
+      border-color: color-mix(in srgb, var(--primary) calc(var(--card-edge) * 100%), var(--line-strong));
       translate: 0 var(--card-lift);
     }
     &:hover,
