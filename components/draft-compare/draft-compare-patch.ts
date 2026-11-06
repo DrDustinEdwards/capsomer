@@ -79,7 +79,7 @@ export function parsePatch(patch: string): PatchFile[] {
     if (!file) continue;
     if (!hunk) {
       if (/^(Binary files|GIT binary patch)/.test(raw)) file.note = "Binary file changed; no text to show.";
-      else if (/^rename from /.test(raw)) file.note = "Renamed.";
+      else if (raw.startsWith("rename from ")) file.note = "Renamed.";
       continue;
     }
     if (raw.startsWith("\\")) {

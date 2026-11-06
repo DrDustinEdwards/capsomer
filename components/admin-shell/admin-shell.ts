@@ -30,7 +30,10 @@ export function pageTransitionsOn(shell: HTMLElement | null = document.querySele
 }
 
 export async function startPageTransition(update: () => void | Promise<void>, shell?: HTMLElement | null): Promise<void> {
-  if (!pageTransitionsOn(shell)) return void (await update());
+  if (!pageTransitionsOn(shell)) {
+    await update();
+    return;
+  }
   try {
     await (document as unknown as Required<Transitioner>).startViewTransition(update).finished;
   } catch {

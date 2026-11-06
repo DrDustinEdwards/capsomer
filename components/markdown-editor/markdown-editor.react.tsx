@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode, useLayoutEffect } from "react";
 
 import type { LinkTarget, MarkdownEditorHandle, MarkdownEditorOptions } from "./markdown-editor.ts";
 
@@ -48,7 +48,9 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
   const handleRef = useRef<MarkdownEditorHandle | null>(null);
   // What the latest render said, read by the callbacks the editor was mounted with.
   const latest = useRef(props);
-  latest.current = props;
+  useLayoutEffect(() => {
+    latest.current = props;
+  });
 
   const hasUpload = !!props.onUpload;
   const scaffoldsKey = JSON.stringify(props.scaffolds ?? null);
@@ -98,7 +100,6 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
       handleRef.current = null;
     };
     // Mounted once; later renders reach the editor through `latest` and the effects below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // A controlled value: set only when it differs, or each keystroke would round-trip and reset the cursor.
@@ -117,7 +118,6 @@ export function MarkdownEditor(props: MarkdownEditorProps) {
   useEffect(() => {
     const o = options();
     handleRef.current?.update({ scaffolds: o.scaffolds, onUpload: o.onUpload, imageMarkdown: o.imageMarkdown, label: ariaLabel });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scaffoldsKey, hasUpload, ariaLabel]);
 
   return (

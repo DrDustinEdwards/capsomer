@@ -265,7 +265,7 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
     svg.remove();
   });
   // Web fonts change the cards' heights once they load.
-  document.fonts?.ready.then(() => !signal.aborted && later());
+  void document.fonts?.ready.then(() => !signal.aborted && later());
   draw();
 
   return {

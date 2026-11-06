@@ -186,11 +186,12 @@ const fileWord = (n: number) => (n === 1 ? "file" : "files");
 // The in-memory site: what the content kit would do through site-api.
 let written = 1;
 function useSite(initial: MediaRecord[] = FILES, keepsSize = false) {
-  const live = useRef(initial.map((f) => ({ ...f })));
-  const [, setTick] = useState(0);
+  // The files as drawn, and the same list in a ref for an intent that reads it after an await.
+  const [files, setFiles] = useState(() => initial.map((f) => ({ ...f })));
+  const live = useRef(files);
   const change = (f: (fs: MediaRecord[]) => MediaRecord[]) => {
     live.current = f(live.current);
-    setTick((t) => t + 1);
+    setFiles(live.current);
   };
   const submit = async (form: FormData): Promise<IntentResult> => {
     const entry: Record<string, string | string[]> = {};
@@ -332,7 +333,7 @@ function useSite(initial: MediaRecord[] = FILES, keepsSize = false) {
         return { ok: false, message: `Nothing here runs “${intent}”.` };
     }
   };
-  return { files: live.current, submit, change };
+  return { files, submit, change };
 }
 
 function Editor() {

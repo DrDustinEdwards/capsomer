@@ -184,6 +184,7 @@ function ComponentsView() {
         <h1>Components</h1>
         <p>Every component, how it is built, and its tests from the last run. Open one to see every state in both themes.</p>
       </div>
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
       <div className="cap-table-wrap" role="region" aria-labelledby="components-caption" tabIndex={0}>
         <table className="cap-table">
           <caption id="components-caption" className="cap-sr-only">

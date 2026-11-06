@@ -98,6 +98,7 @@ export function ErrorPage({
     <>
       {server ? (
         // An empty href is this address: a reload that works before the page hydrates, and with no script.
+        // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- an empty href reloads this address, with no script too
         <a className="cap-btn" data-variant="primary" href="">
           Try again
         </a>
@@ -119,6 +120,7 @@ export function ErrorPage({
         {children}
         {thrown?.stack ? (
           // Focusable and named: a region that scrolls must be reachable by keyboard.
+          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
           <pre className="cap-error-page-stack" tabIndex={0} role="region" aria-label="Stack trace">
             <code>{thrown.stack}</code>
           </pre>

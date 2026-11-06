@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode, useLayoutEffect } from "react";
 import { acceptedText, dragHasFiles, formatBytes, rejectedLead, setInputFiles, validateFiles, type Rejection } from "./drop-zone.ts";
 
 export interface DropZoneProps {
@@ -40,7 +40,9 @@ export function DropZone({ accept, maxBytes, maxFiles, multiple = false, name, d
   const [rejected, setRejected] = useState<Rejection[]>([]);
   // The handlers read the latest props through a ref, so the listeners attach once.
   const latest = useRef({ accept, maxBytes, maxFiles, multiple, disabled, onAccepted, onRejected });
-  latest.current = { accept, maxBytes, maxFiles, multiple, disabled, onAccepted, onRejected };
+  useLayoutEffect(() => {
+    latest.current = { accept, maxBytes, maxFiles, multiple, disabled, onAccepted, onRejected };
+  });
 
   useEffect(() => {
     const el = root.current;

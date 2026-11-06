@@ -534,7 +534,7 @@ eachTheme((theme) => {
         [r.right - k, r.bottom - k],
         [r.left + r.width / 2, r.top + r.height / 2],
       ];
-      const opaque = /^rgb\(/.test(cs.backgroundColor) && cs.opacity === "1";
+      const opaque = cs.backgroundColor.startsWith("rgb(") && cs.opacity === "1";
       const hit = pts.every(([x, y]) => el.contains(document.elementFromPoint(x!, y!)));
       // What the tip must not cover: its own control (and the control's badge), and the controls
       // just above and below it.

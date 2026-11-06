@@ -9,6 +9,7 @@ function ScaleTable({ group, render }: { group: string; render?: (name: string, 
   const rows = Object.entries(SCALES[group] ?? {});
   const show = (v: unknown) => (typeof v === "object" && v && "value" in (v as object) ? `${(v as { value: number }).value}${(v as { unit?: string }).unit ?? ""}` : Array.isArray(v) ? `cubic-bezier(${v.join(", ")})` : String(v));
   return (
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
     <div className="cap-table-wrap" role="region" tabIndex={0} aria-label={`${group} tokens`}>
       <table className="cap-table">
         <thead>

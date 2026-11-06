@@ -65,11 +65,12 @@ function useRouter(initial: MentionsQuery) {
 // The in-memory site: what the content kit would do through site-api, one decide per mention in
 // order, as Carrel's does.
 function useSite(offers: MentionOffers) {
-  const live = useRef(MENTIONS.map((m) => ({ ...m })));
-  const [, redraw] = useState(0);
+  // The mentions as drawn, and the same list in a ref for an intent that reads it after an await.
+  const [mentions, setMentions] = useState(() => MENTIONS.map((m) => ({ ...m })));
+  const live = useRef(mentions);
   const set = (next: Mention[]) => {
     live.current = next;
-    redraw((n) => n + 1);
+    setMentions(next);
   };
   const submit = async (form: FormData): Promise<IntentResult> => {
     const entry: Record<string, string | string[]> = {};
@@ -138,7 +139,7 @@ function useSite(offers: MentionOffers) {
         return { ok: false, message: `Nothing here runs “${intent}”.` };
     }
   };
-  return { mentions: live.current, submit };
+  return { mentions, submit };
 }
 
 function Owner({ offers }: { offers: MentionOffers }) {

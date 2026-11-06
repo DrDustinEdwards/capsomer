@@ -199,7 +199,7 @@ export interface Sentence {
 }
 
 const ABBREVIATION = /(?:\b(?:Dr|Mr|Mrs|Ms|Prof|St|vs|Fig|No|Inc|Ltd|Jr|Sr|e\.g|i\.e|cf)|\b\p{Lu})\.$/u;
-const BOUNDARY = /[.!?]+["'”’)\]]*(\s+)(?=["'“‘(\[]?[\p{Lu}\p{N}])/gu;
+const BOUNDARY = /[.!?]+["'”’)\]]*(\s+)(?=["'“‘([]?[\p{Lu}\p{N}])/gu;
 
 // Splits text into sentences. Each line is its own set of sentences (a heading, a list item
 // or a paragraph line), a full stop, question mark or exclamation mark ends one when a capital
@@ -275,7 +275,7 @@ function align(as: Sentence[], bs: Sentence[], threshold: number): Entry[] {
     return out;
   }
   const sim: number[][] = as.map((a) => bs.map((b) => similarity(a.text, b.text)));
-  const best: number[][] = Array.from({ length: n + 1 }, () => new Array<number>(m + 1).fill(0));
+  const best: number[][] = Array.from({ length: n + 1 }, () => Array.from({ length: m + 1 }, () => 0));
   for (let i = n - 1; i >= 0; i--) {
     for (let j = m - 1; j >= 0; j--) {
       const s = (sim[i] as number[])[j] as number;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, useLayoutEffect } from "react";
 import { Dialog } from "../dialog/dialog.react.tsx";
 import { Listbox, ListboxEmpty, Option, OptionGroup } from "../listbox/listbox.react.tsx";
 import { register } from "../shortcuts/shortcuts.ts";
@@ -68,7 +68,9 @@ export function CommandMenu({ open, onOpenChange, commands, label = "Search comm
   // a ref, so an inline function does not start a search on every render.
   const q = query.trim();
   const searchRef = useRef(search);
-  searchRef.current = search;
+  useLayoutEffect(() => {
+    searchRef.current = search;
+  });
   const live = search != null;
   useEffect(() => {
     const run = searchRef.current;
@@ -99,6 +101,7 @@ export function CommandMenu({ open, onOpenChange, commands, label = "Search comm
 
   useEffect(() => {
     if (activeCommand) document.getElementById(optionId(activeCommand))?.scrollIntoView({ block: "nearest" });
+    // oxlint-disable-next-line react/exhaustive-deps -- optionId only formats ids from this menu's useId
   }, [activeCommand]);
 
   const setRef = useCallback((el: HTMLDialogElement | null) => {

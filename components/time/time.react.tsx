@@ -20,6 +20,7 @@ function useClock(enabled: boolean): number {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (!enabled) return;
+    // oxlint-disable-next-line react/set-state-in-effect -- the clock restarts from now when a relative time starts showing
     setNow(Date.now());
     const t = window.setInterval(() => setNow(Date.now()), REFRESH_MS);
     return () => window.clearInterval(t);

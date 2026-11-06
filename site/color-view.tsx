@@ -35,6 +35,7 @@ function ThemeColumn({ scheme }: { scheme: "light" | "dark" }) {
           </li>
         ))}
       </ul>
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
       <div className="cap-table-wrap" role="region" tabIndex={0} aria-label={`${scheme === "light" ? "Light" : "Dark"} theme contrast grid`}>
         <table className="cap-table site-grid">
           <thead>
@@ -131,6 +132,7 @@ function FamilyScales() {
               )}
             </p>
             {failing.length > 0 && (
+              // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
               <div className="cap-table-wrap" role="region" tabIndex={0} aria-label={`${n} failing pairs`}>
                 <table className="cap-table">
                   <thead>
@@ -193,6 +195,7 @@ export function ColorView() {
         <ThemeColumn scheme="dark" />
       </div>
       <Panel title="Every asserted pair of the committed palette" id="pairs" src={`${all.length} pairs, both themes. The families above have ${FAMILIES?.pairs.length ?? 0} in all`} flush>
+        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
         <div className="cap-table-wrap" role="region" tabIndex={0} aria-labelledby="pairs-h">
           <table className="cap-table">
             <thead>

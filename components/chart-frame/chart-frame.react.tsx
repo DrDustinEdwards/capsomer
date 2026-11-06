@@ -1,5 +1,5 @@
 import type { EnhanceOptions } from "enarratio/enhance";
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Gridlines } from "./chart-frame.ts";
 import { Glyph } from "../status/status.react.tsx";
 
@@ -84,9 +84,18 @@ export function ChartFrame({ draw, chart, width = DEFAULT_WIDTH, minWidth = MIN_
   const [drawn, setDrawn] = useState(width);
   // The drawing at `width` (the server's), which each redraw takes its height from (shownHeight),
   // and the draw it came from: drawn again when the page passes a new draw, not on a resize.
-  const first = useRef({ draw: undefined as ChartFrameProps["draw"], html: "" });
+  const first = useMemo(() => {
+    if (!draw) return { html: "", error: "" };
+    try {
+      return { html: draw(width, {}), error: "" };
+    } catch (err) {
+      return { html: "", error: err instanceof Error ? err.message : String(err) };
+    }
+  }, [draw, width]);
   const after = useRef(onDraw);
-  after.current = onDraw;
+  useLayoutEffect(() => {
+    after.current = onDraw;
+  });
   const redraws = draw !== undefined;
 
   useEffect(() => {
@@ -113,14 +122,12 @@ export function ChartFrame({ draw, chart, width = DEFAULT_WIDTH, minWidth = MIN_
   }, [redraws, minWidth]);
 
   let html = chart ?? "";
-  let error = "";
-  if (draw) {
+  let error = first.error;
+  if (draw && !error) {
     try {
-      if (first.current.draw !== draw) first.current = { draw, html: "" };
-      if (drawn === width) html = first.current.html = draw(width, {});
+      if (drawn === width) html = first.html;
       else {
-        first.current.html ||= draw(width, {});
-        const height = shownHeight(first.current.html, drawn, rootRem());
+        const height = shownHeight(first.html, drawn, rootRem());
         html = draw(drawn, height === undefined ? {} : { height });
       }
     } catch (err) {
@@ -139,7 +146,9 @@ export function ChartFrame({ draw, chart, width = DEFAULT_WIDTH, minWidth = MIN_
   const options = typeof enhance === "object" ? enhance : undefined;
   const optionsKey = options ? JSON.stringify(options) : String(enhance);
   const enhanceOptions = useRef(options);
-  enhanceOptions.current = options;
+  useLayoutEffect(() => {
+    enhanceOptions.current = options;
+  });
   useEffect(() => {
     const el = ref.current;
     if (!el || !html || enhance === false) return;
@@ -156,6 +165,7 @@ export function ChartFrame({ draw, chart, width = DEFAULT_WIDTH, minWidth = MIN_
       live = false;
       for (const c of charts) c.destroy();
     };
+    // oxlint-disable-next-line react/exhaustive-deps -- optionsKey stands for enhance, so a new options object with the same values does not re-enhance
   }, [html, optionsKey]);
 
   const cls = className ? `cap-chart ${className}` : "cap-chart";

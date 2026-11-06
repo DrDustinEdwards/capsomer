@@ -633,7 +633,7 @@ ${moreBlocks(th, (k) =>
 export function renderMarks() {
   const marks = (scheme, indent) =>
     Object.entries(FAMILIES)
-      .map(([name, { seed, anchor = null, label = "light" }]) => {
+      .map(([name, { seed, anchor, label = "light" }]) => {
         const t = familyTheme(seed, anchor, scheme, label);
         return `${indent}--family-${name}: ${t.on};`;
       })

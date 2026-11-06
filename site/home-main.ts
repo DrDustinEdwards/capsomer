@@ -79,7 +79,7 @@ if (find) {
 const copy = document.querySelector<HTMLButtonElement>("[data-cap-part='copy']");
 if (copy && navigator.clipboard) {
   copy.hidden = false;
-  copy.addEventListener("click", async () => {
+  const copyInstall = async () => {
     try {
       await navigator.clipboard.writeText(document.getElementById("home-install")?.textContent ?? "");
       copy.textContent = "Copied";
@@ -87,7 +87,8 @@ if (copy && navigator.clipboard) {
       copy.textContent = "Copy failed";
     }
     setTimeout(() => (copy.textContent = "Copy"), 2000);
-  });
+  };
+  copy.addEventListener("click", () => void copyInstall());
 }
 
 // The last run on main, from the results branch CI writes (the admin reads the same file).
@@ -149,7 +150,7 @@ for (const box of document.querySelectorAll<HTMLElement>(".comp-ex-code")) {
   const code = box.querySelector("code")?.textContent ?? "";
   if (copyButton && navigator.clipboard) {
     copyButton.hidden = false;
-    copyButton.addEventListener("click", () => copyText(copyButton, code));
+    copyButton.addEventListener("click", () => void copyText(copyButton, code));
   }
   if (!show) continue;
   // Closed, the code cannot scroll and View code is the way in, so the box leaves the tab order until it opens. The
@@ -171,7 +172,7 @@ const md = document.querySelector<HTMLTemplateElement>("template[data-cap-part='
 // without the clipboard loses it.
 if (copyPage && !navigator.clipboard) copyPage.hidden = true;
 if (copyPage && md && navigator.clipboard) {
-  copyPage.addEventListener("click", () => copyText(copyPage, md.content.textContent ?? ""));
+  copyPage.addEventListener("click", () => void copyText(copyPage, md.content.textContent ?? ""));
 }
 
 // The component list's filter.
@@ -197,10 +198,16 @@ if (tocLinks.length && "IntersectionObserver" in window) {
   const seen = new Set<string>();
   const io = new IntersectionObserver(
     (entries) => {
-      for (const e of entries) e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id);
+      for (const e of entries) {
+        if (e.isIntersecting) seen.add(e.target.id);
+        else seen.delete(e.target.id);
+      }
       const first = [...byId.keys()].find((id) => seen.has(id));
       if (!first) return;
-      for (const [id, a] of byId) id === first ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current");
+      for (const [id, a] of byId) {
+        if (id === first) a.setAttribute("aria-current", "true");
+        else a.removeAttribute("aria-current");
+      }
     },
     { rootMargin: "-10% 0px -70% 0px" },
   );

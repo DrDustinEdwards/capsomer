@@ -101,6 +101,7 @@ export function Authorship({ shown, onShownChange, defaultShown = true, remember
     if (!keep) return;
     try {
       const v = localStorage.getItem(STORAGE_KEY);
+      // oxlint-disable-next-line react/set-state-in-effect -- the remembered choice is read after mount, so the server and the first client render agree
       if (v === "on" || v === "off") setOwn(v === "on");
     } catch {
       // Storage blocked: the default stands.

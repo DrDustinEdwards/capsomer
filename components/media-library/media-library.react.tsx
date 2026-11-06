@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type KeyboardEvent, useLayoutEffect, useSyncExternalStore } from "react";
 import { CommandMenu, type Command } from "../command-menu/command-menu.react.tsx";
 import type { ContentLabels, IntentResult, MediaData, MediaQuery, PickedMedia, SubmitIntent } from "../content/content.ts";
 import { ContentBulkBar, PlainForm, useIntents, type FormComponent } from "../content/content.react.tsx";
@@ -13,6 +13,9 @@ import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
 import { MediaMore } from "./media-library-more.react.tsx";
 import { applyChanges, countLine, dirOf, emptyWords, filesToOpen, groupRows, inspectorOffers, KIND_WORDS, lensChips, mediaActions, mediaHref, nounsOf, ORIENTATION_WORDS, oversized, pickable, recordOfKit, SORT_DIR, uploadRules, withMedia, type KitMediaChanges, type MediaSort } from "./media-library.ts";
+
+// For useSyncExternalStore's hydration flag: nothing to subscribe to.
+const noSubscribe = () => () => {};
 
 // The viewer's last layout and tile size, remembered in this browser (shell.ts readPref).
 const LAYOUT_PREF = "cap-media-layout";
@@ -92,8 +95,8 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   const formId = `${uid}-bulk`;
   const { plural } = nounsOf(labels);
   const title = mode === "picker" ? "Choose an image" : plural.charAt(0).toUpperCase() + plural.slice(1);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // False on the server and while hydrating, true once hydrated.
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
   const { query, page, offers, can } = data;
   const path = action.split("?")[0] ?? action;
   const href = (q: MediaQuery) => mediaHref(path, q);
@@ -102,14 +105,19 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   // Live: what others changed, put over the page's rows until the page itself is loaded again.
   const [changed, setChanged] = useState<ReadonlyMap<string, MediaRecord | null>>(new Map());
   const [stale, setStale] = useState(false);
-  useEffect(() => {
+  // A page load replaces what others changed, in the same render.
+  const [loadedRows, setLoadedRows] = useState(data.rows);
+  if (data.rows !== loadedRows) {
+    setLoadedRows(data.rows);
     setChanged(new Map());
     setStale(false);
-  }, [data.rows]);
+  }
   const cursor = page.changeCursor;
   const polling = !!changes && !!offers.live && !!cursor && !picker;
   const changesRef = useRef(changes);
-  changesRef.current = changes;
+  useLayoutEffect(() => {
+    changesRef.current = changes;
+  });
   useEffect(() => {
     if (!polling || !cursor) return;
     const stop = new AbortController();
@@ -154,14 +162,27 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   const names = useMemo(() => new Map(rows.map((r) => [r.key, r.name])), [rows]);
 
   const [selected, setSelected] = useState<string[]>([]);
-  useEffect(() => setSelected((s) => s.filter((k) => names.has(k))), [names]);
+  // New rows keep only the picks still in them, in the same render.
+  const [pickedFrom, setPickedFrom] = useState(names);
+  if (names !== pickedFrom) {
+    setPickedFrom(names);
+    setSelected((s) => s.filter((k) => names.has(k)));
+  }
   const [active, setActive] = useState(query.inspect ?? query.pick ?? shown[0]?.key ?? "");
   const [chosen, setChosen] = useState<string | undefined>(query.pick);
-  useEffect(() => setChosen(query.pick), [query.pick]);
+  const [askedPick, setAskedPick] = useState(query.pick);
+  if (query.pick !== askedPick) {
+    setAskedPick(query.pick);
+    setChosen(query.pick);
+  }
   // The last result the script path got, for the links to what an upload, an import or a turn left
   // to open; the page's own result otherwise.
   const [last, setLast] = useState<IntentResult | null>(null);
-  useEffect(() => setLast(null), [result]);
+  const [pageResult, setPageResult] = useState(result);
+  if (result !== pageResult) {
+    setPageResult(result);
+    setLast(null);
+  }
   const tracked: SubmitIntent | undefined = submit
     ? async (form) => {
         const r = await submit(form);
@@ -206,6 +227,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   useEffect(() => {
     const l = readPref(LAYOUT_PREF);
     const z = readPref(SIZE_PREF);
+    // oxlint-disable-next-line react/set-state-in-effect -- the stored choice is read after mount, so the server's HTML and the first paint agree
     setPref({ ...(l === "grid" || l === "list" ? { layout: l } : {}), ...(z === "s" || z === "m" || z === "l" ? { size: z } : {}) });
   }, []);
   const remember = (change: Pick<MediaQuery, "layout" | "size">) => {
@@ -407,7 +429,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
   );
 
   return (
-    <section className="cap-media-lib" data-cap="media-library" data-mode={picker ? "picker" : undefined} aria-label={title} ref={(el) => void (intents.rootRef.current = el)} onSubmit={onSubmit}>
+    <section className="cap-media-lib" data-cap="media-library" data-mode={picker ? "picker" : undefined} aria-label={title} ref={intents.setRoot} onSubmit={onSubmit}>
       <div ref={goRef} hidden>
         <Form method="get" action={path}>
           {[...new URLSearchParams(mediaHref("", goTo ?? {}).split("?")[1] ?? "")].map(([k, v]) => (
@@ -627,6 +649,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
         </Disclosure>
       ) : null}
 
+      {/* oxlint-disable-next-line react/refs -- intents holds the root ref for its handlers; rendering reads none of it */}
       {intents.resultBox}
       {toOpen.length > 0 ? (
         <ul className="cap-media-lib-opened" aria-label="Files to open">
@@ -660,6 +683,7 @@ export function MediaLibrary({ data, action, Form = PlainForm, submit, result = 
 
       <div className="cap-media" data-size={tileSize} data-view={layout === "list" ? "list" : undefined}>
         <div className="cap-media-layout" ref={layoutRef}>
+          {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- delegates the events of the controls inside it */}
           <div className="cap-media-main" onKeyDown={onGridKey}>
             {shown.length === 0 ? (
               <Empty

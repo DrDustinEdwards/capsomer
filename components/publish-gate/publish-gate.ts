@@ -400,7 +400,10 @@ export function attachPublishGate(region: HTMLElement, hooks: GateHooks = {}): G
     const id = box.dataset.site ?? "";
     if (btn.dataset.capPart === "unpublish") return void unpublish(id, btn);
     // A blocked or held button is focusable so its reason can be heard; pressing it does nothing.
-    if (btn.getAttribute("aria-disabled") === "true") return void e.preventDefault();
+    if (btn.getAttribute("aria-disabled") === "true") {
+      e.preventDefault();
+      return;
+    }
     const li = siteRow(id);
     const hk = hooksFor.get(region) ?? {};
     // With no hook and a form, a republication posts natively; a first one is previewed first.

@@ -37,5 +37,11 @@ export function initials(name: string): string {
   if (words.length === 0) return "";
   const first = words[0] ?? "";
   const last = words.length > 1 ? (words[words.length - 1] ?? "") : "";
-  return `${[...first][0] ?? ""}${[...last][0] ?? ""}`;
+  return `${firstGrapheme(first)}${firstGrapheme(last)}`;
+}
+
+/** A word's first user-perceived character (an emoji with its modifiers, a letter with its accents). */
+function firstGrapheme(word: string): string {
+  for (const { segment } of new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(word)) return segment;
+  return "";
 }

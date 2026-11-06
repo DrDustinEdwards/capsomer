@@ -1,6 +1,9 @@
-import { useEffect, useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode, useSyncExternalStore } from "react";
 import { Glyph } from "../status/status.react.tsx";
 import { countText, fillCount, orderOutcomes, outcomeSummary, performBulk, type BulkItem, type BulkOutcome } from "./bulk-bar.ts";
+
+// For useSyncExternalStore's hydration flag: nothing to subscribe to.
+const noSubscribe = () => () => {};
 
 export type { BulkOutcome };
 
@@ -58,16 +61,17 @@ export interface BulkBarProps {
 }
 
 export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, position = "bottom", returnTo, children, label = "Bulk actions", form, prompt, outcomes = [], onDismissOutcomes }: BulkBarProps) {
-  const [mounted, setMounted] = useState(false);
+  // False on the server and while hydrating, true once hydrated.
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
   const resultsId = `${useId().replace(/[^a-zA-Z0-9]/g, "")}-results`;
   const showing = outcomes.length > 0;
-  useEffect(() => setMounted(true), []);
   const n = items.length;
   // A status region that is shown and filled in one step is often missed: the count is written
   // a frame after the bar appears.
   const [shown, setShown] = useState(n);
   useEffect(() => {
     if (n === 0) {
+      // oxlint-disable-next-line react/set-state-in-effect -- the count is written a frame after the bar appears, so screen readers hear it
       setShown(0);
       return;
     }
@@ -97,6 +101,7 @@ export function BulkBar({ items, actions, onClear, total, onSelectAll, detail, p
   };
 
   return (
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
     <div className="cap-bulk" data-cap="bulk-bar" role="region" aria-label={label} data-position={position === "top" ? "top" : undefined} hidden={(form ? mounted && n === 0 : n === 0) && !showing} onKeyDown={(e) => {
         if (e.key === "Escape" && !e.defaultPrevented && n > 0) {
           e.preventDefault();

@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, paintedContrast, visitStates } from "../../test/helpers.ts";
+import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
 import {
   blockEdit,
   countWords,

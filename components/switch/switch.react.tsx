@@ -24,6 +24,7 @@ export function Switch(props: SwitchProps) {
       <input
         {...rest}
         type="checkbox"
+        // oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked
         role="switch"
         aria-busy={busy || undefined}
         checked={on}

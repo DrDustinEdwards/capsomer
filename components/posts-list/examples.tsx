@@ -228,7 +228,7 @@ function UpdateView() {
       return { ok: true, message: "Canceled the scheduled update; the live post stays as it is." };
     }
     const at = String(form.get("publishAt") ?? "");
-    if (!/Z$/.test(at)) return { ok: false, message: "Choose the new time, with its time zone." };
+    if (!at.endsWith("Z")) return { ok: false, message: "Choose the new time, with its time zone." };
     const when = `${at.slice(0, 16).replace("T", " ")} UTC`;
     setData((d) => (d ? { ...d, publishAt: at, when } : d));
     return { ok: true, message: `Rescheduled for ${when}.` };

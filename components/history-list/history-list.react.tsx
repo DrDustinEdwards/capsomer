@@ -231,6 +231,7 @@ function RunLines({ run, deltas, prefix, now, open, onToggle, children }: { run:
         <div className="cap-row-actions" />
       </li>
       <li className="cap-hist-region" id={`${p}-rows`} hidden={!open}>
+        {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
         <ul role="list" aria-label={title}>
           {children}
         </ul>
@@ -246,9 +247,14 @@ export function HistoryList({ entries, labelledBy, label, user, compareBase = ""
   const [note, setNote] = useState<string | null>(null);
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const { say } = useMessage();
-  useEffect(() => (listRef.current ? attachListKeys(listRef.current) : undefined), [entries.length === 0]);
-  // A pick that is no longer in the list (an Undo removed it) is dropped.
-  useEffect(() => setPicked((p) => p.filter((id) => entries.some((e) => e.id === id))), [entries]);
+  const noEntries = entries.length === 0;
+  useEffect(() => (listRef.current ? attachListKeys(listRef.current) : undefined), [noEntries]);
+  // A pick that is no longer in the list (an Undo removed it) is dropped, in the same render.
+  const [pickedFrom, setPickedFrom] = useState(entries);
+  if (entries !== pickedFrom) {
+    setPickedFrom(entries);
+    setPicked((p) => p.filter((id) => entries.some((e) => e.id === id)));
+  }
 
   const lines = useMemo(() => condense(entries), [entries]);
   const at = (id: string) => parse(entries.find((e) => e.id === id)?.at ?? "");
@@ -280,7 +286,13 @@ export function HistoryList({ entries, labelledBy, label, user, compareBase = ""
 
   if (entries.length === 0) return <div className="cap-hist">{empty}</div>;
 
+  // Where each line's first entry sits in `entries`.
+  const starts: number[] = [];
   let index = 0;
+  for (const line of lines) {
+    starts.push(index);
+    index += line.type === "entry" ? 1 : line.entries.length;
+  }
   return (
     <section className="cap-hist" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-picked={picked.length} data-readonly={readOnly ? "" : undefined}>
       <div className="cap-hist-bar">
@@ -292,23 +304,22 @@ export function HistoryList({ entries, labelledBy, label, user, compareBase = ""
             Compare 2 versions
           </a>
         ) : (
+          // oxlint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-redundant-roles -- an <a> with no href has no link role; this disabled link keeps it
           <a className="cap-btn" data-variant="primary" data-cap-part="compare" role="link" aria-disabled="true" tabIndex={0}>
             Compare 2 versions
           </a>
         )}
       </div>
+      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul ref={listRef} className="cap-rows cap-hist-list" role="list" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-cap-primary={primary ? "" : undefined}>
-        {lines.map((line) => {
+        {lines.map((line, li) => {
           const common = (e: HistoryEntry, i: number) => (
             <Line key={e.id} entry={e} delta={deltaOf(entries, i)} prefix={prefix} current={i === 0} picked={picked.includes(e.id)} pickDisabled={picked.length >= 2 && !picked.includes(e.id)} now={now} href={href} onPick={pick} onRestore={(en, el) => void restore(en, el)} loadHref={loadHref} onLoad={onLoad} readOnly={readOnly} />
           );
           if (line.type === "entry") {
-            const node = common(line.entry, index);
-            index += 1;
-            return node;
+            return common(line.entry, starts[li] ?? 0);
           }
-          const start = index;
-          index += line.entries.length;
+          const start = starts[li] ?? 0;
           const id = `${prefix}-run-${(line.entries[0] as HistoryEntry).id}`;
           const isOpen = open[id] === true;
           return (

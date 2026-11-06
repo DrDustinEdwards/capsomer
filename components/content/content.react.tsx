@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState, type ComponentType, type FormEvent, type FormHTMLAttributes, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ComponentType, type FormEvent, type FormHTMLAttributes, type ReactNode, useLayoutEffect, useSyncExternalStore } from "react";
 import { BulkBar } from "../bulk-bar/bulk-bar.react.tsx";
 import type { BulkItem, BulkOutcome } from "../bulk-bar/bulk-bar.ts";
 import { ConfirmDialog, ConfirmPage } from "../confirm-dialog/confirm-dialog.react.tsx";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { GLYPHS, isUndoKey } from "../message/message.ts";
 import { intentForm, outcomesOf, type ConfirmRequest, type IntentResult, type SubmitIntent } from "./content.ts";
+
+// For useSyncExternalStore's hydration flag: nothing to subscribe to.
+const noSubscribe = () => () => {};
 
 // The loop every shared content component runs (posts, media, mentions): a post from inside the
 // list goes through the host's `submit` when there is one, or the browser's own form post when
@@ -71,6 +74,8 @@ export interface Intents {
   // Put on the list's root element: catches every post from inside it.
   onSubmit: (e: FormEvent<HTMLElement>) => void;
   rootRef: { current: HTMLElement | null };
+  // The same, as a callback ref, for a root that also keeps its own ref.
+  setRoot: (el: HTMLElement | null) => void;
   outcomes: BulkOutcome[];
   dismissOutcomes: () => void;
   // The list's own result box, where it has one (no message region, or a result from the page).
@@ -92,20 +97,27 @@ export interface Intents {
 
 export function useIntents({ action, Form, submit, result = null, names, cancelHref, onDone }: IntentsOptions): Intents {
   const message = useOptionalMessage();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // False on the server and while hydrating, true once hydrated.
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
   const namesRef = useRef(names);
-  namesRef.current = names;
+  useLayoutEffect(() => {
+    namesRef.current = names;
+  });
   const [outcomes, setOutcomes] = useState<BulkOutcome[]>(() => (result ? outcomesOf(result, names) : []));
   // The last result the script path got. It replaces `result` (which came with the page) until
   // the page brings a new one.
   const [settled, setSettled] = useState<IntentResult | null>(null);
-  useEffect(() => {
+  const [pageResult, setPageResult] = useState(result);
+  if (result !== pageResult) {
+    setPageResult(result);
     setSettled(null);
-    setOutcomes(result ? outcomesOf(result, namesRef.current) : []);
-  }, [result]);
+    setOutcomes(result ? outcomesOf(result, names) : []);
+  }
   const [asking, setAsking] = useState<ConfirmRequest | null>(null);
   const rootRef = useRef<HTMLElement | null>(null);
+  const setRoot = useCallback((el: HTMLElement | null) => {
+    rootRef.current = el;
+  }, []);
   // What the list's own result box says: the page's result, or with no message region on the
   // page, the script path's too.
   const box = settled ? (message ? null : settled) : result;
@@ -216,6 +228,7 @@ export function useIntents({ action, Form, submit, result = null, names, cancelH
   return {
     onSubmit,
     rootRef,
+    setRoot,
     outcomes,
     dismissOutcomes: () => setOutcomes([]),
     resultBox: !message || box ? <ResultBox result={box} action={action} Form={Form} keyHint={keyHint} /> : null,

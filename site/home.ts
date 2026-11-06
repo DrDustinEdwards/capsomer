@@ -162,7 +162,7 @@ export function readData(root: string, examples: Map<string, string>): Data {
 /** A word in letter tiles over a stripe, hidden from assistive technology: the heading says it. */
 export function band(word: string, families: Family[], size: "cover" | "section") {
   const one = families.length === 1;
-  const tiles = [...word].map((c, i) => `<span${one ? "" : fam(families[i % families.length] as Family)}>${esc(c)}</span>`).join("");
+  const tiles = Array.from(new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(word), (s) => s.segment).map((c, i) => `<span${one ? "" : fam(families[i % families.length] as Family)}>${esc(c)}</span>`).join("");
   const stripe = (one ? ["ink", "solid", "pale"] : families).map((f) => `<i${one ? ` data-role="${f}"` : fam(f as Family)}></i>`).join("");
   return `<div class="home-band" data-size="${size}"${one ? fam(families[0] as Family) : " data-mix"} aria-hidden="true"><p class="home-band-word">${tiles}</p><p class="home-band-stripe">${stripe}</p></div>`;
 }

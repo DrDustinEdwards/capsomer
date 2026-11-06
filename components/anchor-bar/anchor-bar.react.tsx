@@ -36,6 +36,7 @@ export function AnchorBar({ sections, always = false, label = "On this page" }: 
       mo.disconnect();
     };
     // The section ids identify what to watch.
+    // oxlint-disable-next-line react/exhaustive-deps -- the section ids identify what to watch
   }, [ids, always]);
 
   // While the bar shows: stop each section below it, and mark the current one.
@@ -52,6 +53,7 @@ export function AnchorBar({ sections, always = false, label = "On this page" }: 
       stop();
       cancelAnimationFrame(frame);
     };
+    // oxlint-disable-next-line react/exhaustive-deps -- the section ids identify what to watch
   }, [ids, shown]);
 
   return (

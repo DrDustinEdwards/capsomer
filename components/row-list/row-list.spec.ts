@@ -70,7 +70,7 @@ eachTheme((theme) => {
         - listitem:
           - link "2 jobs are waiting for approval"
         - listitem:
-          - link /example\.net/
+          - link /example\\.net/
         - listitem:
           - link "4 notices"
     `);

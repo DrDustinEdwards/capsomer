@@ -99,6 +99,7 @@ export function MediaTile({ item, active, selected, inspecting, tabStop = true, 
           {body}
         </a>
       ) : (
+        // oxlint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-description is a global attribute (ARIA 1.3)
         <button type="button" className="cap-media-open" aria-disabled="true" aria-describedby={`${id}-flags`} aria-description={describeRecord(item)} tabIndex={tab}>
           {body}
         </button>
@@ -285,6 +286,7 @@ export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, 
     ));
 
   return (
+    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- delegates the events of the controls inside it
     <div ref={root} onKeyDown={onKeyDown} onFocus={(e) => {
         const k = (e.target as HTMLElement).closest<HTMLElement>(".cap-media-tile")?.dataset.key;
         if (k && k !== activeKey) onActiveChange(k);
@@ -296,6 +298,7 @@ export function MediaGrid({ items, groups, activeKey, onActiveChange, selected, 
           </GroupSection>
         ))
       ) : (
+        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         <ul className="cap-media-grid" role="list" aria-label={label}>
           {tiles(items ?? [])}
         </ul>
@@ -311,6 +314,7 @@ function GroupSection({ label, count, listLabel, children }: { label: string; co
       <h2 className="cap-media-group-title" id={id}>
         {label} <span className="cap-media-group-count">{count} on this page</span>
       </h2>
+      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul className="cap-media-grid" role="list" aria-label={listLabel}>
         {children}
       </ul>

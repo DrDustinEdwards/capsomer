@@ -76,6 +76,7 @@ export function TabsList({ variant = "default", size = "default", fill, classNam
     else c.setStop(target.id.slice(`${c.base}-tab-`.length));
   };
   return (
+    // oxlint-disable-next-line jsx-a11y/interactive-supports-focus -- focus goes to the tabs inside (roving tabindex), not the list
     <div
       role="tablist"
       aria-orientation={c.orientation === "vertical" ? "vertical" : undefined}
@@ -182,5 +183,5 @@ export function TabLink({ current, count, className, children, renderLink, ...pr
     </>
   );
   const linkProps = { className: className ? `cap-tab ${className}` : "cap-tab", "aria-current": current ? ("page" as const) : undefined, ...props, children: inner };
-  return draw ? <>{draw(linkProps)}</> : <a {...linkProps} />;
+  return draw ? <>{draw(linkProps)}</> : <a {...linkProps}>{inner}</a>;
 }

@@ -49,12 +49,17 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
 
   // A fresh dialog each time it opens.
   useEffect(() => {
-    if (!open) return;
-    performed.current = false;
-    setError(null);
-    setTyped("");
-    setReason("");
+    if (open) performed.current = false;
   }, [open]);
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) {
+      setError(null);
+      setTyped("");
+      setReason("");
+    }
+  }
 
   const run = async () => {
     if (busy) return;
@@ -372,6 +377,7 @@ export function ConfirmModal(props: ConfirmModalProps) {
   const [ready, setReady] = useState(false);
   const cancel = () => (props.onCancel ? props.onCancel() : location.assign(props.cancelHref));
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- ready marks the dialog as opened by script, after showModal() below
     setReady(true);
     // Read before showModal() moves focus: the control that opened it, or nothing on a page load.
     const active = document.activeElement;

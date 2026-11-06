@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Development: Oxlint** (devkit's shared config, `oxlint.config.ts`, `npm run lint`, a Lint step in CI; not in the package files). Fixes from its first run: hydration flags read `useSyncExternalStore`, so a part drawn after hydration starts in its scripted form; state that follows a prop resets in the same render instead of an effect after paint; latest-value refs are written in layout effects; `Intents` gains `setRoot`, a callback ref for the list's root (additive); avatar initials take a word's first grapheme (`Intl.Segmenter`), so a flag or an accented capital stays whole. No class, token or HTML contract changes.
+
 ## [0.77.0]
 
 - **Mentions list: `mentionsDataOfKit` and `kitMentionsSearch`** (`capsomer/behavior/mentions-list`), with `KitMentionsData` and `KitMentionRow` typed by shape. They turn site-api's `loadMentions` answer into the list's `data` and read the kit's query from the list's address, as `mediaDataOfKit` does for the library. Carrel had them as its own; they move here so dustinedwards.info's admin draws the same page. Additive; no class, token or HTML contract changes.

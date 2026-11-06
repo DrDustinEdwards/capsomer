@@ -52,6 +52,9 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
       - name: Palette, scales, unit tests, types
         run: npm run check
+      # Oxlint with devkit's shared config (oxlint.config.ts), type-aware.
+      - name: Lint
+        run: npm run lint
       - name: Every family's contrast pairs, both themes (blocking, rule 18)
         run: npm run palette-report -- --summary
       - name: Build the behavior modules and wrappers

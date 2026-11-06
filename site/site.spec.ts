@@ -21,7 +21,7 @@ const PAGE_HEADERS = Object.fromEntries(
 );
 const CSP = PAGE_HEADERS["content-security-policy"] ?? "";
 
-eachTheme((theme) => {
+eachTheme(() => {
   test("accessibility: the public page has no axe violations", async ({ page }) => {
     await page.goto("./");
     await expect(page.locator("h1")).toHaveText("One design system for every site and app");

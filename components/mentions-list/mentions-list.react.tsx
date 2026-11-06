@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type MouseEvent, useLayoutEffect, useSyncExternalStore } from "react";
 import type { IntentResult, MentionsData, SubmitIntent } from "../content/content.ts";
 import { ContentBulkBar, PlainForm, useIntents, type FormComponent } from "../content/content.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
@@ -8,6 +8,9 @@ import { Pill } from "../status/status.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
 import { Time } from "../time/time.react.tsx";
 import { countLine, currentView, emptyWords, mentionActions, mentionsHref, sweepLabel, withMentions } from "./mentions-list.ts";
+
+// For useSyncExternalStore's hydration flag: nothing to subscribe to.
+const noSubscribe = () => () => {};
 
 export type { FormComponent, IntentResult, Mention, MentionsData, SubmitIntent };
 
@@ -54,8 +57,8 @@ const initials = (name: string) =>
 export function MentionsList({ data, action, Form = PlainForm, submit, result = null, now }: MentionsListProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const formId = `${uid}-bulk`;
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // False on the server and while hydrating, true once hydrated.
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
 
   const { rows, query, page, offers, can, counts } = data;
   const view = currentView(data);
@@ -65,10 +68,19 @@ export function MentionsList({ data, action, Form = PlainForm, submit, result = 
   const href = (q: typeof query) => mentionsHref(action, q);
 
   const [selected, setSelected] = useState<string[]>([]);
-  useEffect(() => setSelected((s) => s.filter((id) => names.has(id))), [names]);
+  // New rows keep only the picks still in them, in the same render.
+  const [pickedFrom, setPickedFrom] = useState(names);
+  if (names !== pickedFrom) {
+    setPickedFrom(names);
+    setSelected((s) => s.filter((id) => names.has(id)));
+  }
   // With script a row opens in place; without, its link opens it through the address.
   const [opened, setOpened] = useState<string[]>(query.open ? [query.open] : []);
-  useEffect(() => setOpened(query.open ? [query.open] : []), [query.open]);
+  const [askedOpen, setAskedOpen] = useState(query.open);
+  if (query.open !== askedOpen) {
+    setAskedOpen(query.open);
+    setOpened(query.open ? [query.open] : []);
+  }
 
   const rootRef = useRef<HTMLElement | null>(null);
   // Where focus goes once a decided row leaves the page: the next row's title, or the empty state.
@@ -88,7 +100,9 @@ export function MentionsList({ data, action, Form = PlainForm, submit, result = 
   // selects. A key acts on the whole selection when the focused row is part of it.
   const keys = mounted && can.decideMentions;
   const stateRef = useRef({ selected, rows, formId });
-  stateRef.current = { selected, rows, formId };
+  useLayoutEffect(() => {
+    stateRef.current = { selected, rows, formId };
+  });
   useEffect(() => {
     if (!keys) return;
     const onKey = (e: KeyboardEvent) => {
@@ -161,7 +175,7 @@ export function MentionsList({ data, action, Form = PlainForm, submit, result = 
       aria-labelledby={`${uid}-h`}
       ref={(el) => {
         rootRef.current = el;
-        intents.rootRef.current = el;
+        intents.setRoot(el);
       }}
       onSubmit={intents.onSubmit}
     >
@@ -207,6 +221,7 @@ export function MentionsList({ data, action, Form = PlainForm, submit, result = 
           {words.text}
         </Empty>
       ) : (
+        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         <ul className="cap-rows cap-mq-list" role="list" aria-labelledby={`${uid}-h`} data-cap-primary="">
           {rows.map((m) => {
             const p = `${uid}-${m.id}`;

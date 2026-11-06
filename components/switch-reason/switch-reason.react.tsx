@@ -45,11 +45,16 @@ export function ReasonForm({ open, verb, onApply, onCancel, failed = ownMessage,
   }, []);
   useEffect(() => {
     if (open) reasonRef.current?.focus();
-    else {
+  }, [open]);
+  // Closing clears the reason and the error, in the same render.
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (!open) {
       setReason("");
       setError(null);
     }
-  }, [open]);
+  }
 
   const setPending = (p: boolean) => {
     setPendingState(p);
@@ -88,7 +93,8 @@ export function ReasonForm({ open, verb, onApply, onCancel, failed = ownMessage,
   };
 
   return (
-    <form className="cap-switch-reason-form" hidden={!open} noValidate aria-busy={pending || undefined} onSubmit={submit} onKeyDown={onKey}>
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
+    <form className="cap-switch-reason-form" hidden={!open} noValidate aria-busy={pending || undefined} onSubmit={(e) => void submit(e)} onKeyDown={onKey}>
       <div className="cap-field">
         <label className="cap-switch-reason-label" htmlFor={reasonId}>
           {reasonLabel(verb)}
@@ -156,7 +162,11 @@ export function SwitchWithReason({ label, name, verb, checked, onApply, placehol
   const formRef = useRef<HTMLDivElement>(null);
   const next = asking ? target : !on;
 
-  useEffect(() => setOn(checked), [checked]);
+  const [given, setGiven] = useState(checked);
+  if (checked !== given) {
+    setGiven(checked);
+    setOn(checked);
+  }
 
   const ask = () => {
     if (asking) {
@@ -175,6 +185,7 @@ export function SwitchWithReason({ label, name, verb, checked, onApply, placehol
     <div className="cap-switch-reason" ref={formRef}>
       <label className="cap-switch">
         {/* Controlled: a click or Space asks why, and React keeps the switch where it was. */}
+        {/* oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked */}
         <input ref={switchRef} id={id} type="checkbox" role="switch" aria-busy={pending || undefined} checked={on} onChange={ask} />{" "}
         {label}{" "}
         <span className="cap-switch-state" aria-hidden="true">
