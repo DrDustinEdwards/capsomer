@@ -76,9 +76,13 @@ import { UsageMeter } from "../dist/components/usage-meter/usage-meter.react.js"
 // the light theme (playwright.config.ts, grepInvert).
 
 type Spot = { name: string; only?: string };
+// CAPSOMER_SWEEP=button,menu sweeps only those: CI on a pull request names the components it
+// touched (scripts/ci-specs.mjs). Unset or empty, every component.
+const ONLY = (process.env.CAPSOMER_SWEEP ?? "").split(",").filter(Boolean);
 const NAMES = readdirSync("components", { withFileTypes: true })
   .filter((d) => d.isDirectory() && existsSync(`components/${d.name}/examples.html`))
-  .map((d) => d.name);
+  .map((d) => d.name)
+  .filter((name) => !ONLY.length || ONLY.includes(name));
 function spots(name: string): Spot[] {
   const html = readFileSync(`components/${name}/examples.html`, "utf8");
   return [{ name }, ...[...html.matchAll(/<template\b[^>]*\bdata-specimen="([^"]+)"/g)].map((m) => ({ name, only: m[1] }))];
