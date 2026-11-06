@@ -258,13 +258,19 @@
     list-style: none;
 
     /* Footer links are wayfinding: the airport sign face (Overpass, --wayfinding) at 600 (Dustin,
-       2026-11-04), hovering as every link does. */
+       2026-11-04), hovering as every link does. The words' box is trimmed to the capitals, top to
+       baseline (text-box, Baseline 2026), and padded back out to the target (with the target as a floor,
+       since the trimmed box can round a hair under the capitals), so the box's middle is
+       the capitals' middle and the panel lamp and arrow center on the letters. Centering the line
+       box instead put the letters about 1.5px high: Overpass's ascent (0.883em) sits far above its
+       capitals (0.7em) while its descent is 0.383em, so its line box's middle is 0.1em under theirs. */
     & a {
-      display: inline-flex;
-      align-items: center;
+      display: inline-block;
+      padding-block: calc((var(--target) - 1cap) / 2);
       min-block-size: var(--target);
       position: relative;
       font: 600 0.875rem / 1.5 var(--wayfinding);
+      text-box: trim-both cap alphabetic;
     }
 
     /* The panel lamp hover (css/utilities.css): no tint behind. */
@@ -273,8 +279,18 @@
     }
   }
 
-  .cap-family-footer-private {
+  /* A login: its icon, word and lock in a row, centered on the word's capitals (the word's own box
+     is trimmed to them, as above), so the lamp, icon, word and lock share one middle. */
+  .cap-family-footer-links .cap-family-footer-private {
+    display: inline-flex;
+    align-items: center;
     gap: var(--space-3);
+    min-block-size: var(--target);
+    padding-block: 0;
+  }
+
+  .cap-family-footer-label {
+    text-box: trim-both cap alphabetic;
   }
 
   .cap-family-footer-icon {

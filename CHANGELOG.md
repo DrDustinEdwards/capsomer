@@ -4,6 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.76.0]
+
+Wayfinding links line up with their lamp, icons and arrows, and the header's chevrons turn up when their panel opens (Dustin, 2026-11-06).
+
+- **Changed HTML: a workspace login's word is now `<span class="cap-family-footer-label">`** (`familyFooterHtml`), between its icon and its lock. Its box is trimmed to the capitals (`text-box: trim-both cap alphabetic`), so the row centers on the letters.
+- **Footer links and next links** (`.cap-family-footer-links a`, `a[data-link="next"]`): `display: inline-block` with the same trim, padded back out to `--target`, where they were `inline-flex` around the line box. Overpass's ascent (0.883em) stands far above its capitals (0.7em), so the line box's middle sat 0.1em under the letters' and the panel lamp, the login icons and locks, and the outbound arrow all hung about 1.5px low against the words. A site's own footer links (`center`) take the fix with no markup change.
+- **Header chevrons** (`.cap-site-header-chev`): turn 180 degrees while their button is `aria-expanded="true"`, as the combobox's do, with the turn animated unless motion is reduced.
+
 ## [0.75.1]
 
 No token, class or HTML change. The package depends on Prelum (`@drdustinedwards/site-helpers`) 0.33.0; the 0.75.0 tag still pinned 0.32.1, so an app that took it carried the old Prelum beside its own. An app on this tag resolves one Prelum.

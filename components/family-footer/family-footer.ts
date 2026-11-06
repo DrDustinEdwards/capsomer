@@ -208,7 +208,7 @@ export function familyFooterHtml({ site, center = "", origin = FAMILY_ORIGIN, pu
   ).join("");
   const workspace = WORKSPACE_LINKS.map(
     (link) =>
-      `<li><a href="${href(link)}" rel="nofollow" class="cap-family-footer-private" aria-label="${escapeHtml(link.name)}"${link.hover ? ` title="${escapeHtml(link.hover)}"` : ""}>${line("cap-family-footer-icon", ICONS[link.icon])}${escapeHtml(link.label)}${LOCK}</a></li>`,
+      `<li><a href="${href(link)}" rel="nofollow" class="cap-family-footer-private" aria-label="${escapeHtml(link.name)}"${link.hover ? ` title="${escapeHtml(link.hover)}"` : ""}>${line("cap-family-footer-icon", ICONS[link.icon])}<span class="cap-family-footer-label">${escapeHtml(link.label)}</span>${LOCK}</a></li>`,
   ).join("");
   const list = (links: FamilyLink[]) => `<ul class="cap-family-footer-links">${links.map((link) => `<li>${anchor(link)}</li>`).join("")}</ul>`;
   const sites = FAMILY_SITES.map(

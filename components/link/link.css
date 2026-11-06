@@ -128,11 +128,14 @@
     font-style: italic;
   }
   /* A next link stands alone, so it is a whole target, not a word in a sentence. It is wayfinding,
-     so it is set in the airport sign face (Overpass, --wayfinding), as breadcrumbs and footer links are. */
+     so it is set in the airport sign face (Overpass, --wayfinding), as breadcrumbs and footer links are.
+     Its box is trimmed to the capitals and padded back out to the target, so the panel lamp centers
+     on the letters (family-footer.css says why). */
   a[data-link="next"] {
-    display: inline-flex;
-    align-items: center;
+    display: inline-block;
+    padding-block: calc((var(--target) - 1cap) / 2);
     min-block-size: var(--target);
+    text-box: trim-both cap alphabetic;
     position: relative;
     font-family: var(--wayfinding);
     font-weight: 700;
