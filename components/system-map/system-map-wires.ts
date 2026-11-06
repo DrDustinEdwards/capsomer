@@ -95,8 +95,6 @@ export function wires(host: HTMLElement, lanes: () => HTMLElement[], signal: Abo
     const sideBySide = laneBoxes.length > 1 && laneBoxes.every((b, i) => i === 0 || b.l >= laneBoxes[i - 1]!.r - 1);
     svg.toggleAttribute("hidden", !sideBySide);
     if (!sideBySide) return;
-    svg.setAttribute("width", String(H.width));
-    svg.setAttribute("height", String(H.height));
 
     const nodes = new Map<string, Node>();
     for (const el of host.querySelectorAll<HTMLElement>("[data-wire]")) {

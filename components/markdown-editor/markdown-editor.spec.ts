@@ -343,6 +343,8 @@ eachTheme((theme) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-default");
     await surface.focus();
+    // CodeMirror marks itself focused (cm-focused, which draws the ring) on a timer after the focus event.
+    await expect(section(page, "sp-default").locator(".cm-editor")).toHaveClass(/\bcm-focused\b/);
     const ring = await section(page, "sp-default").locator(".cm-editor").evaluate((n) => getComputedStyle(n).outlineStyle);
     expect(ring).not.toBe("none");
   });
@@ -351,6 +353,8 @@ eachTheme((theme) => {
     await visitStates(page, NAME, theme);
     const surface = await ready(page, "sp-default");
     await surface.focus();
+    // CodeMirror marks itself focused (cm-focused, which draws the ring) on a timer after the focus event.
+    await expect(section(page, "sp-default").locator(".cm-editor")).toHaveClass(/\bcm-focused\b/);
     const ring = await section(page, "sp-default").locator(".cm-editor").evaluate((n) => {
       const cs = getComputedStyle(n);
       return { style: cs.outlineStyle, width: parseFloat(cs.outlineWidth), offset: parseFloat(cs.outlineOffset) };

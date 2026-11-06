@@ -36,7 +36,7 @@ The monitors now run from three regions, so one slow network no longer pages any
   </div>
 </section>
 
-<template data-specimen="palette" data-title="Link palette open (Ctrl or Cmd + K, arrows, Enter, Esc)" data-height="420">
+<template data-specimen="palette" data-ready="script" data-title="Link palette open (Ctrl or Cmd + K, arrows, Enter, Esc)" data-height="420">
   <main class="specimen-page" tabindex="-1">
     <h1>Draft</h1>
     <div class="cap-md cap-field" data-cap="markdown-editor">
@@ -48,7 +48,7 @@ Read more: </textarea>
   </main>
 </template>
 
-<template data-specimen="slash" data-title="Slash menu open (a lone / on a line)" data-height="400">
+<template data-specimen="slash" data-ready="script" data-title="Slash menu open (a lone / on a line)" data-height="400">
   <main class="specimen-page" tabindex="-1">
     <h1>Draft</h1>
     <div class="cap-md cap-field" data-cap="markdown-editor">
@@ -60,7 +60,7 @@ Read more: </textarea>
   </main>
 </template>
 
-<template data-specimen="alt" data-title="Image uploaded, waiting for alt text" data-height="520">
+<template data-specimen="alt" data-ready="script" data-title="Image uploaded, waiting for alt text" data-height="520">
   <main class="specimen-page" tabindex="-1">
     <h1>Draft</h1>
     <div class="cap-md cap-field" data-cap="markdown-editor">
@@ -70,7 +70,7 @@ Read more: </textarea>
   </main>
 </template>
 
-<template data-specimen="uploading" data-title="Image uploading" data-height="480">
+<template data-specimen="uploading" data-ready="script" data-title="Image uploading" data-height="480">
   <main class="specimen-page" tabindex="-1">
     <h1>Draft</h1>
     <div class="cap-md cap-field" data-cap="markdown-editor">
@@ -80,7 +80,7 @@ Read more: </textarea>
   </main>
 </template>
 
-<template data-specimen="failed" data-title="Image upload failed" data-height="480">
+<template data-specimen="failed" data-ready="script" data-title="Image upload failed" data-height="480">
   <main class="specimen-page" tabindex="-1">
     <h1>Draft</h1>
     <div class="cap-md cap-field" data-cap="markdown-editor">
@@ -477,6 +477,12 @@ The monitors now run from three regions.</textarea>
       };
       if (only === "uploading") describeAndInsert("slow.png");
       if (only === "failed") describeAndInsert("broken.png");
+      // Finished (data-ready="script" on the templates): the failed state moves focus once its
+      // upload is refused, which is when its error shows.
+      const finished = () => (document.documentElement.dataset.specimenReady = "");
+      if (only !== "failed") return finished();
+      const seen = new MutationObserver(() => root.querySelector(".cap-md-upload-error") && (seen.disconnect(), finished()));
+      seen.observe(root, { childList: true, subtree: true });
     });
   } else {
     const sections = {

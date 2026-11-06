@@ -66,7 +66,7 @@ You write `examples.html`; the generator writes `states.html`. `node bin/capsome
 </section>
 ```
 
-A page-level specimen (one that has a `main`, a skip link, or fills the window) goes in `<template data-specimen="id" data-title="Title" data-height="420">`; the page shows it in its own frame, and a spec visits it with `visitStates(page, name, theme, "id")`. Templates are kept exactly as written.
+A page-level specimen (one that has a `main`, a skip link, or fills the window) goes in `<template data-specimen="id" data-title="Title" data-height="420">`; the page shows it in its own frame, and a spec visits it with `visitStates(page, name, theme, "id")`, which waits for every frame on the states page to finish first. A frame is finished at load; a template whose script sets its demo up after load (opens a popup once a module has loaded) adds `data-ready="script"` and the script sets `data-specimen-ready` on `<html>` when it is done. Templates are kept exactly as written.
 
 Three things in `examples.html` are moved for you, from outside any `<template>`: a `<link rel="stylesheet" href="./specimen/x.css">` goes to the head, and a `<script type="module">` (the component's `enhance()` call) goes after the `main`. A React-rendered component (combobox, menu) adds `examples.tsx`; the generator adds `<script type="module" src="./examples.tsx">` for it, and `examples.html` holds the mount points (`<div data-mount="closed"></div>`). Anything a specimen needs of its own (a stylesheet for sample layout) lives in `components/<name>/specimen/`.
 

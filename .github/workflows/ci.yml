@@ -1,4 +1,4 @@
-# Capsomer's CI. The repo is public, so these minutes are free (rulings.md, rule 11).
+# Capsomer's CI.
 #
 # Blocking: the palette and scale checks (correctness, and contrast in both themes), the
 # unit tests, the type check, the build, every component's keyboard and accessibility
@@ -6,6 +6,10 @@
 # spacing, touch targets, forced colors and React parity over every states page). Never
 # blocking: the token check and the size report (rule 1, decision 12). The sweep also
 # writes forced-colors screenshots to test-results/forced-colors/, kept with the run for review.
+#
+# A pull request runs the browser tests for the components it touches and for every component that
+# shows them (scripts/ci-specs.mjs); anything shared (css/, tokens/, fonts/, test/, site/, bin/, scripts/, the
+# package files, this workflow) runs them all, and so does every push to main.
 #
 # On main, once the checks pass, the `deploy` job ships the site through devkit's shared deploy
 # (DEPLOY.md, rule 16). On main, this workflow also writes the run's test results to the `results` branch, even when a test
@@ -29,12 +33,13 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    # 0.3 has about 1,700 browser tests; they are independent pages, so they run on four workers.
-    timeout-minutes: 60
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
+          # The merge commit and its base-branch parent, which scripts/ci-specs.mjs diffs.
+          fetch-depth: 2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .node-version
@@ -53,10 +58,32 @@ jobs:
         run: npm run build
       - name: Build the site and every states page
         run: npm run site
+      - name: Pick the browser tests
+        id: pick
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then node scripts/ci-specs.mjs; else echo "mode=full" | tee -a "$GITHUB_OUTPUT"; fi
+      # Headless runs use Chromium's headless shell, so only it is installed (playwright.dev/docs/browsers,
+      # --only-shell). Not cached and no container: Playwright's CI guide advises against caching the
+      # browsers (restoring takes about as long as downloading, and the system dependencies cannot be
+      # cached), and its image (mcr.microsoft.com/playwright, about 950 MB compressed, every browser)
+      # pulls slower than this step's 17 s download.
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        if: steps.pick.outputs.mode != 'none'
+        run: npx playwright install --with-deps --only-shell chromium
+      # One worker per vCPU, with tests, not files, shared out (fullyParallel, playwright.config.ts).
+      # Not sharded (playwright.dev/docs/test-sharding): each shard would repeat about a minute of
+      # setup (install, build, browser) and a merge job, for a full run now estimated at 10 to 13 minutes.
       - name: Keyboard and accessibility tests and the sweep, both themes
-        run: npx playwright test --workers=4
+        if: steps.pick.outputs.mode != 'none'
+        env:
+          SPECS: ${{ steps.pick.outputs.specs }}
+          CAPSOMER_SWEEP: ${{ steps.pick.outputs.sweep }}
+        run: |
+          # SPECS is a space-separated list of paths (empty runs every spec), split on purpose.
+          # shellcheck disable=SC2086
+          npx playwright test --workers=100% $SPECS
       - name: Size (warns only)
         if: always()
         run: npm run size
