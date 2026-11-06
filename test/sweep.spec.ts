@@ -479,6 +479,22 @@ async function open(page: Page, s: Spot, theme: (typeof THEMES)[number] = "light
   await settled(page);
   await page.evaluate(install);
 }
+// Resolves once nothing on the page moves: no finite animation runs, two frames on. A resize can
+// set off a chain (the media library's inspector leaves the page as a pane, then comes back as a
+// sheet), each step starting after the one before, so one wait for the running animations is not enough.
+function still(page: Page): Promise<void> {
+  return page.evaluate(async () => {
+    const frames = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    for (;;) {
+      await frames();
+      const moving = document.getAnimations().filter((a) => a.playState === "running" && Number.isFinite(a.effect?.getComputedTiming().endTime ?? Infinity));
+      if (moving.length === 0) return;
+      await Promise.all(moving.map((a) => a.finished.catch(() => undefined)));
+    }
+  });
+}
+// Left to right, then right to left, from the same moment.
+const rtl = (page: Page) => page.evaluate(() => (window.__sweep.rtl("ltr"), window.__sweep.rtl("rtl")));
 const tag = (s: Spot, found: string[]) => found.map((f) => `${where(s)}: ${f}`);
 
 for (const name of NAMES) {
@@ -491,13 +507,11 @@ for (const name of NAMES) {
       for (const s of pages) {
         await page.setViewportSize({ width: 1280, height: 800 });
         await open(page, s);
-        await page.evaluate(() => window.__sweep.rtl("ltr"));
-        found.push(...tag(s, await page.evaluate(() => window.__sweep.rtl("rtl"))));
+        found.push(...tag(s, await rtl(page)));
         await page.setViewportSize({ width: 320, height: 640 });
-        await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+        await still(page);
         found.push(...tag(s, await page.evaluate(() => window.__sweep.reflow())));
-        await page.evaluate(() => window.__sweep.rtl("ltr"));
-        found.push(...tag(s, await page.evaluate(() => window.__sweep.rtl("rtl"))));
+        found.push(...tag(s, await rtl(page)));
       }
       expect(found).toEqual([]);
     });

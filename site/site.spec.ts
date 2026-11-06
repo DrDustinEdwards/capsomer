@@ -200,8 +200,9 @@ test("behavior: the theme builder makes a theme from a brand color and a link re
   await expect(page.locator("[data-cap-part='css']")).toContainText("--accent: #0b6e4f;");
   await page.getByLabel("Start from").selectOption("foxing");
   await expect(page.getByLabel("Headings")).toHaveValue("fraunces");
+  // The address is rewritten with the rebuild, on the next frame.
+  await expect(page).toHaveURL(/h=fraunces/);
   const url = page.url();
-  expect(url).toContain("h=fraunces");
   await page.goto("about:blank");
   await page.goto(url);
   await expect(page.getByLabel("Start from")).toHaveValue("foxing");
