@@ -21,15 +21,22 @@ export const ADMIN_PREF = DEFAULT_PREF;
 // the state change in flushSync). It runs `update` straight away, with no animation and no
 // error, when the browser has no document.startViewTransition, when a person asked for reduced
 // motion, or when the shell has not opted in. Resolves when the update has been shown.
-type Transitioner = { startViewTransition?: (update: () => void | Promise<void>) => { finished: Promise<void> } };
+type Transitioner = {
+  startViewTransition?: (update: () => void | Promise<void>) => { finished: Promise<void> };
+};
 
-export function pageTransitionsOn(shell: HTMLElement | null = document.querySelector("[data-cap='admin-shell']")): boolean {
+export function pageTransitionsOn(
+  shell: HTMLElement | null = document.querySelector("[data-cap='admin-shell']"),
+): boolean {
   if (!shell || shell.dataset.transition !== "page") return false;
   if (typeof (document as unknown as Transitioner).startViewTransition !== "function") return false;
   return !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 }
 
-export async function startPageTransition(update: () => void | Promise<void>, shell?: HTMLElement | null): Promise<void> {
+export async function startPageTransition(
+  update: () => void | Promise<void>,
+  shell?: HTMLElement | null,
+): Promise<void> {
   if (!pageTransitionsOn(shell)) {
     await update();
     return;
@@ -49,9 +56,13 @@ export function setMenu(shell: HTMLElement, collapsed: boolean, remember = true)
     const name = collapsed ? "Expand menu" : "Collapse menu";
     toggle.setAttribute("aria-expanded", String(!collapsed));
     toggle.setAttribute("aria-label", name);
-    for (const text of toggle.querySelectorAll(":scope > .cap-admin-label, .cap-admin-tip .cap-admin-tip-text")) text.textContent = name;
+    for (const text of toggle.querySelectorAll(
+      ":scope > .cap-admin-label, .cap-admin-tip .cap-admin-tip-text",
+    ))
+      text.textContent = name;
   }
-  if (remember) writePref(shell.dataset.capPref ?? ADMIN_PREF, collapsed ? "collapsed" : "expanded");
+  if (remember)
+    writePref(shell.dataset.capPref ?? ADMIN_PREF, collapsed ? "collapsed" : "expanded");
 }
 
 export function toggleMenu(shell: HTMLElement): void {
@@ -63,7 +74,12 @@ export function toggleMenu(shell: HTMLElement): void {
 // address, or null: the key is not part of a jump, the number has no app, that app is already
 // open, the person is typing in a field, or single-key shortcuts are off (the shortcuts switch).
 export const JUMP_WINDOW_MS = 1200;
-export function jumpTarget(armed: { at: number }, e: Pick<KeyboardEvent, "key" | "ctrlKey" | "metaKey" | "altKey" | "target">, apps: ReadonlyArray<{ href: string; current?: boolean }>, now = Date.now()): string | null {
+export function jumpTarget(
+  armed: { at: number },
+  e: Pick<KeyboardEvent, "key" | "ctrlKey" | "metaKey" | "altKey" | "target">,
+  apps: ReadonlyArray<{ href: string; current?: boolean }>,
+  now = Date.now(),
+): string | null {
   if (e.ctrlKey || e.metaKey || e.altKey || singleKeysOff()) return null;
   const t = e.target as Element | null;
   if (t?.closest?.("input, textarea, select, [contenteditable='true']")) return null;
@@ -78,7 +94,9 @@ export function jumpTarget(armed: { at: number }, e: Pick<KeyboardEvent, "key" |
 // function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const shell of root.querySelectorAll<HTMLElement>("[data-cap='admin-shell']:not([data-cap-ready])")) {
+  for (const shell of root.querySelectorAll<HTMLElement>(
+    "[data-cap='admin-shell']:not([data-cap-ready])",
+  )) {
     shell.dataset.capReady = "";
     const pref = readPref(shell.dataset.capPref ?? ADMIN_PREF);
     if (pref) setMenu(shell, pref === "collapsed", false);
@@ -104,7 +122,10 @@ export function enhance(root: ParentNode = document): () => void {
     };
     const armed = { at: 0 };
     const onKey = (e: KeyboardEvent) => {
-      const apps = [...shell.querySelectorAll<HTMLAnchorElement>(".cap-admin-tile")].map((a) => ({ href: a.href, current: a.getAttribute("aria-current") === "true" }));
+      const apps = [...shell.querySelectorAll<HTMLAnchorElement>(".cap-admin-tile")].map((a) => ({
+        href: a.href,
+        current: a.getAttribute("aria-current") === "true",
+      }));
       const to = jumpTarget(armed, e, apps);
       if (to) {
         e.preventDefault();

@@ -42,8 +42,8 @@ What loading looks like, by how long it takes. In 0.1 these lived in the Empty c
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
+| Key  | Does                                                              |
+| ---- | ----------------------------------------------------------------- |
 | None | A skeleton and a spinner are not interactive. They take no focus. |
 
 ## Accessibility
@@ -70,12 +70,23 @@ What loading looks like, by how long it takes. In 0.1 these lived in the Empty c
 </div>
 
 <span class="cap-spinner">
-  <svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2a6 6 0 0 1 6 6"/></svg>
+  <svg class="cap-spinner-arc" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25" />
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      d="M8 2a6 6 0 0 1 6 6"
+    />
+  </svg>
   <span class="cap-spinner-label">Loading</span>
 </span>
 
 <main aria-busy="true">
-  <span class="cap-spinner" data-layout="page" role="status">[arc]<span class="cap-spinner-label">Loading the Portal</span></span>
+  <span class="cap-spinner" data-layout="page" role="status"
+    >[arc]<span class="cap-spinner-label">Loading the Portal</span></span
+  >
 </main>
 ```
 

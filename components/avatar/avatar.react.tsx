@@ -19,14 +19,34 @@ export interface AvatarProps {
   badgeTone?: "ok" | "crit" | "nodata";
 }
 
-export function Avatar({ name, src, fallback, size = "default", shape = "circle", kind = "person", badge, badgeLabel, badgeTone }: AvatarProps) {
+export function Avatar({
+  name,
+  src,
+  fallback,
+  size = "default",
+  shape = "circle",
+  kind = "person",
+  badge,
+  badgeLabel,
+  badgeTone,
+}: AvatarProps) {
   const [failed, setFailed] = useState(false);
   return (
-    <span className="cap-avatar" role="img" aria-label={badge != null && badgeLabel ? `${name}, ${badgeLabel}` : name} data-size={size === "default" ? undefined : size} data-shape={shape === "square" ? "square" : undefined} data-kind={kind === "ai" ? "ai" : undefined} data-state={failed ? "error" : undefined}>
+    <span
+      className="cap-avatar"
+      role="img"
+      aria-label={badge != null && badgeLabel ? `${name}, ${badgeLabel}` : name}
+      data-size={size === "default" ? undefined : size}
+      data-shape={shape === "square" ? "square" : undefined}
+      data-kind={kind === "ai" ? "ai" : undefined}
+      data-state={failed ? "error" : undefined}
+    >
       <span className="cap-avatar-fallback" aria-hidden="true">
         {fallback ?? initials(name)}
       </span>
-      {src && !failed ? <img className="cap-avatar-image" src={src} alt="" onError={() => setFailed(true)} /> : null}
+      {src && !failed ? (
+        <img className="cap-avatar-image" src={src} alt="" onError={() => setFailed(true)} />
+      ) : null}
       {badge != null ? (
         <span className="cap-avatar-badge" data-tone={badgeTone} aria-hidden="true">
           {badge}
@@ -36,7 +56,15 @@ export function Avatar({ name, src, fallback, size = "default", shape = "circle"
   );
 }
 
-export function AvatarGroup({ label, children, extra }: { label: string; children: ReactNode; extra?: number }) {
+export function AvatarGroup({
+  label,
+  children,
+  extra,
+}: {
+  label: string;
+  children: ReactNode;
+  extra?: number;
+}) {
   return (
     <span className="cap-avatar-group" role="group" aria-label={label}>
       {children}

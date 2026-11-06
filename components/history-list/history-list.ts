@@ -9,12 +9,60 @@ import { toggleGroup } from "../disclosure/disclosure.ts";
 import { GLYPHS, enhance as enhanceMessage, say } from "../message/message.ts";
 import { isTypingKey, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
 import { enhance as enhanceTime, parse } from "../time/time.ts";
-import { type HistoryEntry, type HistoryKind, PICK_BLOCKED, PICK_NONE, compareHref, condense, deltaOf, orderPair, pickedText, restoredEntry, restoredMessage, stamp } from "./history-list-model.ts";
+import {
+  type HistoryEntry,
+  type HistoryKind,
+  PICK_BLOCKED,
+  PICK_NONE,
+  compareHref,
+  condense,
+  deltaOf,
+  orderPair,
+  pickedText,
+  restoredEntry,
+  restoredMessage,
+  stamp,
+} from "./history-list-model.ts";
 import { actionFor, buildRow, buildRun, h, statusEl } from "./history-list-rows.ts";
 
-export { countWords, wordDelta, deltaSign, deltaText, deltaOf, condense, stamp, dayOf, rangeText, runTitle, pickTwo, orderPair, compareHref, PICK_NONE, PICK_BLOCKED, pickedText, restoredEntry, restoredMessage, destinationWord } from "./history-list-model.ts";
-export type { HistoryKind, Destination, HistoryEntry, Run, Single, Line, Sign, Picks } from "./history-list-model.ts";
-export { SIGN_GLYPH, destinationGlyph, destinationTone, buildRow, buildRun } from "./history-list-rows.ts";
+export {
+  countWords,
+  wordDelta,
+  deltaSign,
+  deltaText,
+  deltaOf,
+  condense,
+  stamp,
+  dayOf,
+  rangeText,
+  runTitle,
+  pickTwo,
+  orderPair,
+  compareHref,
+  PICK_NONE,
+  PICK_BLOCKED,
+  pickedText,
+  restoredEntry,
+  restoredMessage,
+  destinationWord,
+} from "./history-list-model.ts";
+export type {
+  HistoryKind,
+  Destination,
+  HistoryEntry,
+  Run,
+  Single,
+  Line,
+  Sign,
+  Picks,
+} from "./history-list-model.ts";
+export {
+  SIGN_GLYPH,
+  destinationGlyph,
+  destinationTone,
+  buildRow,
+  buildRun,
+} from "./history-list-rows.ts";
 export type { BuildOptions } from "./history-list-rows.ts";
 
 export { isTypingKey };
@@ -39,7 +87,8 @@ export function attachListKeys(list: HTMLElement): () => void {
   const onKey = (e: KeyboardEvent) => {
     if (e.defaultPrevented || (e.key !== "j" && e.key !== "k")) return;
     if (isTypingKey(e) || singleKeysOff() || !listOwnsKeys(list)) return;
-    if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement)) e.preventDefault();
+    if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement))
+      e.preventDefault();
   };
   document.addEventListener("keydown", onKey);
   return () => {
@@ -47,20 +96,35 @@ export function attachListKeys(list: HTMLElement): () => void {
     delete list.dataset.capKeys;
   };
 }
-const lineRows = (root: HTMLElement) => Array.from(root.querySelectorAll<HTMLLIElement>(".cap-hist-row[data-id]"));
-const rowById = (root: HTMLElement, id: string) => lineRows(root).find((r) => r.dataset.id === id) ?? null;
+const lineRows = (root: HTMLElement) =>
+  Array.from(root.querySelectorAll<HTMLLIElement>(".cap-hist-row[data-id]"));
+const rowById = (root: HTMLElement, id: string) =>
+  lineRows(root).find((r) => r.dataset.id === id) ?? null;
 
 // The status region for results and Undo is the page's one; where the page has none yet,
 // one is placed after the list.
 function ensureRegion(after: Element): void {
   if (document.querySelector("[data-cap='message']")) return;
-  const region = h("div", { class: "cap-message", "data-cap": "message", role: "status", "aria-label": "Results and failures", "aria-atomic": "false" });
+  const region = h("div", {
+    class: "cap-message",
+    "data-cap": "message",
+    role: "status",
+    "aria-label": "Results and failures",
+    "aria-atomic": "false",
+  });
   after.after(region);
   enhanceMessage(region.parentNode ?? document);
 }
 
 function entryOf(row: HTMLElement): HistoryEntry {
-  return { id: row.dataset.id ?? "", kind: (row.dataset.kind ?? "edit") as HistoryKind, who: row.dataset.who ?? "", at: row.dataset.at ?? "", ...(row.dataset.words !== undefined ? { words: Number(row.dataset.words) } : {}), summary: row.querySelector(".cap-row-title a")?.textContent ?? "" };
+  return {
+    id: row.dataset.id ?? "",
+    kind: (row.dataset.kind ?? "edit") as HistoryKind,
+    who: row.dataset.who ?? "",
+    at: row.dataset.at ?? "",
+    ...(row.dataset.words !== undefined ? { words: Number(row.dataset.words) } : {}),
+    summary: row.querySelector(".cap-row-title a")?.textContent ?? "",
+  };
 }
 
 function setCurrent(root: HTMLElement, row: HTMLLIElement, current: boolean): void {
@@ -73,7 +137,15 @@ function setCurrent(root: HTMLElement, row: HTMLLIElement, current: boolean): vo
     actions.replaceChildren(statusEl("ok", GLYPHS.ok, "Current"));
   } else {
     delete row.dataset.current;
-    actions.replaceChildren(...[actionFor(entry, now, { prefix: "", loadHref: root.dataset.loadHref, readOnly: root.dataset.readonly !== undefined })].filter((a): a is HTMLElement => a !== null));
+    actions.replaceChildren(
+      ...[
+        actionFor(entry, now, {
+          prefix: "",
+          loadHref: root.dataset.loadHref,
+          readOnly: root.dataset.readonly !== undefined,
+        }),
+      ].filter((a): a is HTMLElement => a !== null),
+    );
   }
 }
 
@@ -104,12 +176,31 @@ export function restoreVersion(root: HTMLElement, id: string): HTMLLIElement | n
   const now = nowOf(root);
   const prefix = root.id || "cap-hist";
   const source = entryOf(sourceRow);
-  const entry = restoredEntry(source, entryOf(previous), root.dataset.user || "You", `${id}-restored-${list.querySelectorAll("[data-kind='restore']").length + 1}`, new Date(now).toISOString(), now);
-  const row = buildRow(entry, entry.delta, { prefix, current: true, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref, readOnly: root.dataset.readonly !== undefined });
+  const entry = restoredEntry(
+    source,
+    entryOf(previous),
+    root.dataset.user || "You",
+    `${id}-restored-${list.querySelectorAll("[data-kind='restore']").length + 1}`,
+    new Date(now).toISOString(),
+    now,
+  );
+  const row = buildRow(entry, entry.delta, {
+    prefix,
+    current: true,
+    now,
+    versionHref: root.dataset.versionHref,
+    loadHref: root.dataset.loadHref,
+    readOnly: root.dataset.readonly !== undefined,
+  });
   setCurrent(root, previous, false);
   list.prepend(row);
   enhanceTime(row);
-  root.dispatchEvent(new CustomEvent<RestoreDetail>("cap:history-restored", { bubbles: true, detail: { source, entry } }));
+  root.dispatchEvent(
+    new CustomEvent<RestoreDetail>("cap:history-restored", {
+      bubbles: true,
+      detail: { source, entry },
+    }),
+  );
   ensureRegion(root);
   const opener = sourceRow.querySelector<HTMLElement>("[data-cap-part='restore']");
   say(restoredMessage(source, now), {
@@ -117,10 +208,18 @@ export function restoreVersion(root: HTMLElement, id: string): HTMLLIElement | n
       row.remove();
       setCurrent(root, previous, true);
       syncPicks(root);
-      root.dispatchEvent(new CustomEvent<RestoreDetail>("cap:history-unrestored", { bubbles: true, detail: { source, entry } }));
+      root.dispatchEvent(
+        new CustomEvent<RestoreDetail>("cap:history-unrestored", {
+          bubbles: true,
+          detail: { source, entry },
+        }),
+      );
     },
     undone: "The restored copy was removed. The earlier version is current again.",
-    returnFocus: () => (opener?.isConnected ? opener : (previous.querySelector<HTMLElement>(".cap-row-title a") ?? null)),
+    returnFocus: () =>
+      opener?.isConnected
+        ? opener
+        : (previous.querySelector<HTMLElement>(".cap-row-title a") ?? null),
   });
   return row;
 }
@@ -128,7 +227,11 @@ export function restoreVersion(root: HTMLElement, id: string): HTMLLIElement | n
 // Adds older lines at the foot (a page of history the app fetched). `more: false` removes
 // the Load older control, because there is nothing older. A page should start on a line
 // that is not an autosave, or a run is split in two at the join.
-export function appendEntries(root: HTMLElement, entries: readonly HistoryEntry[], opts: { more?: boolean } = {}): void {
+export function appendEntries(
+  root: HTMLElement,
+  entries: readonly HistoryEntry[],
+  opts: { more?: boolean } = {},
+): void {
   const list = rowsOf(root);
   if (!list) return;
   const now = nowOf(root);
@@ -137,11 +240,27 @@ export function appendEntries(root: HTMLElement, entries: readonly HistoryEntry[
   let index = 0;
   for (const line of lines) {
     if (line.type === "entry") {
-      list.append(buildRow(line.entry, deltaOf(entries, index), { prefix, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref, readOnly: root.dataset.readonly !== undefined }));
+      list.append(
+        buildRow(line.entry, deltaOf(entries, index), {
+          prefix,
+          now,
+          versionHref: root.dataset.versionHref,
+          loadHref: root.dataset.loadHref,
+          readOnly: root.dataset.readonly !== undefined,
+        }),
+      );
       index += 1;
     } else {
       const deltas = line.entries.map((_e, k) => deltaOf(entries, index + k));
-      list.append(...buildRun(line, deltas, { prefix, now, versionHref: root.dataset.versionHref, loadHref: root.dataset.loadHref, readOnly: root.dataset.readonly !== undefined }));
+      list.append(
+        ...buildRun(line, deltas, {
+          prefix,
+          now,
+          versionHref: root.dataset.versionHref,
+          loadHref: root.dataset.loadHref,
+          readOnly: root.dataset.readonly !== undefined,
+        }),
+      );
       index += line.entries.length;
     }
   }
@@ -150,7 +269,9 @@ export function appendEntries(root: HTMLElement, entries: readonly HistoryEntry[
   if (more) {
     more.removeAttribute("aria-busy");
     if (opts.more === false) more.remove();
-    else (more as HTMLAnchorElement).href = `?before=${encodeURIComponent((entries[entries.length - 1] as HistoryEntry).id)}`;
+    else
+      (more as HTMLAnchorElement).href =
+        `?before=${encodeURIComponent((entries[entries.length - 1] as HistoryEntry).id)}`;
   }
   syncPicks(root);
 }
@@ -169,7 +290,13 @@ export function syncPicks(root: HTMLElement, blocked = false): string[] {
   const now = nowOf(root);
   const status = root.querySelector<HTMLElement>("[data-cap-part='picked']");
   if (status) {
-    const text = pair ? pickedText(2, stamp(rowById(root, pair[0])?.dataset.at ?? "", now), stamp(rowById(root, pair[1])?.dataset.at ?? "", now)) : pickedText(picked.length);
+    const text = pair
+      ? pickedText(
+          2,
+          stamp(rowById(root, pair[0])?.dataset.at ?? "", now),
+          stamp(rowById(root, pair[1])?.dataset.at ?? "", now),
+        )
+      : pickedText(picked.length);
     status.textContent = blocked ? PICK_BLOCKED : text;
   }
   const link = root.querySelector<HTMLAnchorElement>("[data-cap-part='compare']");
@@ -220,7 +347,17 @@ export function enhance(root: ParentNode = document): () => void {
         // The app may load the text into its own editor: cancel the event and do it. Without
         // a listener the link is followed, so the page works as delivered.
         const row = load.closest<HTMLElement>(".cap-hist-row");
-        if (row && !el.dispatchEvent(new CustomEvent<LoadDetail>("cap:history-load", { bubbles: true, cancelable: true, detail: { entry: entryOf(row) } }))) e.preventDefault();
+        if (
+          row &&
+          !el.dispatchEvent(
+            new CustomEvent<LoadDetail>("cap:history-load", {
+              bubbles: true,
+              cancelable: true,
+              detail: { entry: entryOf(row) },
+            }),
+          )
+        )
+          e.preventDefault();
         return;
       }
       const compare = t.closest<HTMLElement>("[data-cap-part='compare']");
@@ -235,7 +372,13 @@ export function enhance(root: ParentNode = document): () => void {
         // The app may fetch the page itself: cancel the event and call appendEntries. Without
         // a listener the link is followed, so the page works as delivered.
         const last = lineRows(el).at(-1)?.dataset.id ?? "";
-        const handled = !el.dispatchEvent(new CustomEvent("cap:history-older", { bubbles: true, cancelable: true, detail: { before: last } }));
+        const handled = !el.dispatchEvent(
+          new CustomEvent("cap:history-older", {
+            bubbles: true,
+            cancelable: true,
+            detail: { before: last },
+          }),
+        );
         if (handled) {
           e.preventDefault();
           older.setAttribute("aria-busy", "true");

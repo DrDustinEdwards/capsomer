@@ -19,8 +19,12 @@ export function isThemeChoice(value: unknown): value is ThemeChoice {
 
 // The person's remembered choice from a Cookie header (or the request carrying one), or null when they never chose,
 // so the page follows the system. Anything unreadable is null too: a bad cookie costs the default theme, never a 500.
-export function readThemeCookie(source: Request | string | null | undefined, name = THEME_COOKIE): ThemeChoice | null {
-  const header = typeof source === "string" || source == null ? source : source.headers.get("cookie");
+export function readThemeCookie(
+  source: Request | string | null | undefined,
+  name = THEME_COOKIE,
+): ThemeChoice | null {
+  const header =
+    typeof source === "string" || source == null ? source : source.headers.get("cookie");
   if (!header) return null;
   for (const part of header.split(";")) {
     const at = part.indexOf("=");
@@ -37,7 +41,10 @@ export function readThemeCookie(source: Request | string | null | undefined, nam
 
 // The Set-Cookie value that remembers a choice: a year, the whole site, SameSite=Lax and Secure. A local http dev
 // server passes secure: false.
-export function themeCookie(choice: ThemeChoice, opts: { name?: string; maxAge?: number; secure?: boolean } = {}): string {
+export function themeCookie(
+  choice: ThemeChoice,
+  opts: { name?: string; maxAge?: number; secure?: boolean } = {},
+): string {
   const { name = THEME_COOKIE, maxAge = THEME_COOKIE_MAX_AGE, secure = true } = opts;
   return `${name}=${choice}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure ? "; Secure" : ""}`;
 }
@@ -59,15 +66,28 @@ export interface ThemeColorTag {
   media?: string;
 }
 
-export function themeColorTags(choice: ThemeChoice | null, ground: { light: string; dark: string }): ThemeColorTag[] {
+export function themeColorTags(
+  choice: ThemeChoice | null,
+  ground: { light: string; dark: string },
+): ThemeColorTag[] {
   if (choice) return [{ name: "theme-color", content: ground[choice] }];
-  return (["light", "dark"] as const).map((s) => ({ name: "theme-color", content: ground[s], media: `(prefers-color-scheme: ${s})` }));
+  return (["light", "dark"] as const).map((s) => ({
+    name: "theme-color",
+    content: ground[s],
+    media: `(prefers-color-scheme: ${s})`,
+  }));
 }
 
 // The same tags as an HTML string, for a site that writes its head as text.
-export function themeColorMeta(choice: ThemeChoice | null, ground: { light: string; dark: string }): string {
+export function themeColorMeta(
+  choice: ThemeChoice | null,
+  ground: { light: string; dark: string },
+): string {
   return themeColorTags(choice, ground)
-    .map((t) => `<meta name="theme-color"${t.media ? ` media="${t.media}"` : ""} content="${t.content}">`)
+    .map(
+      (t) =>
+        `<meta name="theme-color"${t.media ? ` media="${t.media}"` : ""} content="${t.content}">`,
+    )
     .join("");
 }
 

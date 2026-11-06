@@ -22,7 +22,8 @@ export interface Shortcut {
 
 export const SINGLE_KEYS_PREF = "cap-single-keys";
 // The line under the switch, shared by the built sheet and the React one.
-export const SINGLE_KEYS_NOTE = "Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.";
+export const SINGLE_KEYS_NOTE =
+  "Turn these off if they clash with a screen reader or speech input. It applies at once. Shortcuts with Ctrl or ⌘ keep working.";
 export const SEQUENCE_MS = 1200;
 
 const entries: Shortcut[] = [];
@@ -82,7 +83,9 @@ function matchesStep(step: string, e: KeyboardEvent): boolean {
 }
 
 export function singleKeysOn(): boolean {
-  return typeof document === "undefined" || document.documentElement.dataset.capSingleKeys !== "off";
+  return (
+    typeof document === "undefined" || document.documentElement.dataset.capSingleKeys !== "off"
+  );
 }
 
 export function singleKeysOff(): boolean {
@@ -100,13 +103,27 @@ export function setSingleKeys(on: boolean, opts: { remember?: boolean } = {}): v
 }
 
 // The remembered choice reaches <html> as soon as any component that has single keys loads.
-if (typeof document !== "undefined" && !document.documentElement.dataset.capSingleKeys && readPref(SINGLE_KEYS_PREF) === "off") {
+if (
+  typeof document !== "undefined" &&
+  !document.documentElement.dataset.capSingleKeys &&
+  readPref(SINGLE_KEYS_PREF) === "off"
+) {
   document.documentElement.dataset.capSingleKeys = "off";
 }
 
 // Keys typed into a field belong to the field. Checkboxes, radios and buttons are not
 // typing, so shortcuts still work while one has focus.
-const NOT_TYPING = new Set(["checkbox", "radio", "button", "submit", "reset", "range", "color", "file", "image"]);
+const NOT_TYPING = new Set([
+  "checkbox",
+  "radio",
+  "button",
+  "submit",
+  "reset",
+  "range",
+  "color",
+  "file",
+  "image",
+]);
 export function isTyping(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) return false;
   if (target instanceof HTMLInputElement) return !NOT_TYPING.has(target.type);
@@ -147,7 +164,13 @@ function onKeyDown(e: KeyboardEvent): void {
     for (const s of entries) {
       for (const spec of specsOf(s)) {
         const steps = stepsOf(spec);
-        if (steps.length === 2 && steps[0] === before.step && matchesStep(steps[1] ?? "", e) && fire(s, e)) return;
+        if (
+          steps.length === 2 &&
+          steps[0] === before.step &&
+          matchesStep(steps[1] ?? "", e) &&
+          fire(s, e)
+        )
+          return;
       }
     }
   }
@@ -179,7 +202,12 @@ export function start(): void {
   if (installed || typeof document === "undefined") return;
   installed = true;
   document.addEventListener("keydown", onKeyDown);
-  entries.unshift({ key: "?", label: "Show keyboard shortcuts", group: "General", run: () => sheetOpener() });
+  entries.unshift({
+    key: "?",
+    label: "Show keyboard shortcuts",
+    group: "General",
+    run: () => sheetOpener(),
+  });
 }
 
 // The registered shortcut with Ctrl, Cmd or Alt that this key event matches, if any, and
@@ -234,8 +262,19 @@ export function grouped(): Array<{ group: string; items: Shortcut[] }> {
 }
 
 // Keys whose cap is a symbol or a short word, with the name a screen reader says for the symbols.
-const CAPS: Record<string, string> = { ArrowLeft: "←", ArrowRight: "→", ArrowUp: "↑", ArrowDown: "↓", Escape: "Esc" };
-const CAP_NAMES: Record<string, string> = { "←": "Left arrow", "→": "Right arrow", "↑": "Up arrow", "↓": "Down arrow" };
+const CAPS: Record<string, string> = {
+  ArrowLeft: "←",
+  ArrowRight: "→",
+  ArrowUp: "↑",
+  ArrowDown: "↓",
+  Escape: "Esc",
+};
+const CAP_NAMES: Record<string, string> = {
+  "←": "Left arrow",
+  "→": "Right arrow",
+  "↑": "Up arrow",
+  "↓": "Down arrow",
+};
 
 // The spoken name of a key cap drawn as a symbol (an arrow); undefined for a cap that reads as it is.
 export function capName(cap: string): string | undefined {
@@ -441,7 +480,9 @@ export function wireSheet(sheet: HTMLDialogElement): () => void {
 }
 
 // Opens the sheet: the one in the page's markup, or one built on first use.
-export function openShortcutSheet(opener: Element | null = document.activeElement): HTMLDialogElement {
+export function openShortcutSheet(
+  opener: Element | null = document.activeElement,
+): HTMLDialogElement {
   let sheet = document.querySelector<HTMLDialogElement>("dialog.cap-keys[data-cap='shortcuts']");
   if (!sheet) {
     sheet = buildSheet();
@@ -453,7 +494,10 @@ export function openShortcutSheet(opener: Element | null = document.activeElemen
   syncSwitch(sheet);
   // Focus starts on Close, so Esc and Enter are one key from leaving and nothing is changed by
   // arriving.
-  if (!sheet.open) openDialog(sheet, opener, { focus: sheet.querySelector<HTMLElement>("[data-cap-part='close']") });
+  if (!sheet.open)
+    openDialog(sheet, opener, {
+      focus: sheet.querySelector<HTMLElement>("[data-cap-part='close']"),
+    });
   return sheet;
 }
 
@@ -462,10 +506,14 @@ export function openShortcutSheet(opener: Element | null = document.activeElemen
 export function enhance(root: ParentNode = document): () => void {
   start();
   const undo: Array<() => void> = [];
-  for (const sheet of root.querySelectorAll<HTMLDialogElement>("dialog.cap-keys[data-cap='shortcuts']:not([data-cap-ready])")) {
+  for (const sheet of root.querySelectorAll<HTMLDialogElement>(
+    "dialog.cap-keys[data-cap='shortcuts']:not([data-cap-ready])",
+  )) {
     undo.push(wireSheet(sheet));
   }
-  for (const btn of root.querySelectorAll<HTMLElement>("[data-cap-keys-open]:not([data-cap-ready])")) {
+  for (const btn of root.querySelectorAll<HTMLElement>(
+    "[data-cap-keys-open]:not([data-cap-ready])",
+  )) {
     btn.dataset.capReady = "";
     const onClick = () => openShortcutSheet(btn);
     btn.addEventListener("click", onClick);

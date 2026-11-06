@@ -10,10 +10,22 @@ import { test } from "node:test";
 // export map names. It builds inside the repo so the built file finds the peers in node_modules.
 const root = resolve(import.meta.dirname, "../..");
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
-const NAMES = ["THEMES", "eachTheme", "visitStates", "expectNoAxeViolations", "paintedContrast", "expectContrast", "focused", "nextPost"];
+const NAMES = [
+  "THEMES",
+  "eachTheme",
+  "visitStates",
+  "expectNoAxeViolations",
+  "paintedContrast",
+  "expectContrast",
+  "focused",
+  "nextPost",
+];
 
 test("package.json exports ./testing, with types", () => {
-  assert.deepEqual(pkg.exports["./testing"], { types: "./dist/test/helpers.d.ts", default: "./dist/test/helpers.js" });
+  assert.deepEqual(pkg.exports["./testing"], {
+    types: "./dist/test/helpers.d.ts",
+    default: "./dist/test/helpers.js",
+  });
 });
 
 test("the axe and contrast helpers are playwright peers, optional", () => {
@@ -26,7 +38,17 @@ test("the axe and contrast helpers are playwright peers, optional", () => {
 test("the build emits the export and it carries every helper", async () => {
   const out = join(root, "test-results/testing-build");
   rmSync(out, { recursive: true, force: true });
-  execFileSync(process.execPath, [join(root, "node_modules/typescript/lib/tsc.js"), "-p", "tsconfig.build.json", "--outDir", out], { cwd: root });
+  execFileSync(
+    process.execPath,
+    [
+      join(root, "node_modules/typescript/lib/tsc.js"),
+      "-p",
+      "tsconfig.build.json",
+      "--outDir",
+      out,
+    ],
+    { cwd: root },
+  );
   assert.ok(existsSync(join(out, "test/helpers.d.ts")), "declarations are emitted");
   const mod = await import(pathToFileURL(join(out, "test/helpers.js")).href);
   for (const name of NAMES) assert.ok(name in mod, `${name} is exported`);

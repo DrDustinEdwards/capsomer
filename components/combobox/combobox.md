@@ -4,14 +4,32 @@ title: Combobox
 summary: A labeled text box that filters a list, where only a listed value can be chosen. Base UI underneath, React only.
 parts: [css, react]
 tool: Base UI
-states: [a tag field, typing a new tag, closed, closed with a value, with a clear button, several values as chips, comfortable density, open, open with chips, open with group labels, filtered, no match, option highlighted, loading, disabled with its reason, invalid with its message]
+states:
+  [
+    a tag field,
+    typing a new tag,
+    closed,
+    closed with a value,
+    with a clear button,
+    several values as chips,
+    comfortable density,
+    open,
+    open with chips,
+    open with group labels,
+    filtered,
+    no match,
+    option highlighted,
+    loading,
+    disabled with its reason,
+    invalid with its message,
+  ]
 added: 0.1.0
 updated: 0.2.0
 source: none (new in Capsomer; the Portal's command palette is the command menu, not this)
 replaces:
   - "<datalist"
-  - "role=\"combobox\""
-  - "from \"@base-ui/react/combobox\""
+  - 'role="combobox"'
+  - 'from "@base-ui/react/combobox"'
 ---
 
 # Combobox
@@ -42,14 +60,14 @@ Two to five values: a radio group or the segmented control. Up to about fifteen:
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| ArrowDown | Opens the list; then moves the highlight down |
-| ArrowUp | Moves the highlight up |
-| Typing | Filters the list |
-| Enter | Chooses the highlighted option and closes the list |
-| Esc | Closes the list; the box keeps focus and shows the chosen value |
-| Tab | Leaves the box; the list closes |
+| Key       | Does                                                            |
+| --------- | --------------------------------------------------------------- |
+| ArrowDown | Opens the list; then moves the highlight down                   |
+| ArrowUp   | Moves the highlight up                                          |
+| Typing    | Filters the list                                                |
+| Enter     | Chooses the highlighted option and closes the list              |
+| Esc       | Closes the list; the box keeps focus and shows the chosen value |
+| Tab       | Leaves the box; the list closes                                 |
 
 ## Accessibility
 
@@ -64,15 +82,15 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 The apps keep `style-src 'self'`; some allow inline style attributes (`style-src-attr`) and some do not. Base UI 1.8.0 writes these inline styles for a combobox (read from its source in `node_modules/@base-ui/react`):
 
-| Part | Where | What |
-| --- | --- | --- |
-| Hidden input, always rendered with `Combobox.Root` | `combobox/root/AriaCombobox.js` | `style` prop: `visuallyHidden` (or `visuallyHiddenInput` with `name`), from `@base-ui/utils/visuallyHidden` |
-| `Combobox.Positioner`, while mounted | `utils/usePositioner.js` with `internals/useAnchorPositioning.js` | `style` prop: Floating UI's position (`position`, `top`, `left`, `transform`); `pointer-events: none` while closing; `transition: none` while starting |
-| `Combobox.Popup`, while starting | `internals/getDisabledMountTransitionStyles.js` | `style` prop: `transition: none` |
-| Focus guards around the popup | `utils/FocusGuard.js`, `floating-ui-react/components/FloatingPortal.js` | `style` prop: `visuallyHidden`; the portal's `aria-owns` span: `ownerVisuallyHidden` |
-| Internal dismiss button | `combobox/utils/ComboboxInternalDismissButton.js` | `style` prop: `visuallyHiddenInput` |
-| Modal combobox only (`modal`, not used here) | `utils/InternalBackdrop.js`, `@base-ui/utils/useScrollLock.js` | `style` prop on a full-screen backdrop; scroll lock writes `html` and `body` styles through the CSSOM |
-| Positioner CSS variables | `internals/useAnchorPositioning.js` | `--available-width`, `--available-height`, `--anchor-width`, `--anchor-height`, `--transform-origin` through `style.setProperty` (CSSOM) |
+| Part                                               | Where                                                                   | What                                                                                                                                                   |
+| -------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Hidden input, always rendered with `Combobox.Root` | `combobox/root/AriaCombobox.js`                                         | `style` prop: `visuallyHidden` (or `visuallyHiddenInput` with `name`), from `@base-ui/utils/visuallyHidden`                                            |
+| `Combobox.Positioner`, while mounted               | `utils/usePositioner.js` with `internals/useAnchorPositioning.js`       | `style` prop: Floating UI's position (`position`, `top`, `left`, `transform`); `pointer-events: none` while closing; `transition: none` while starting |
+| `Combobox.Popup`, while starting                   | `internals/getDisabledMountTransitionStyles.js`                         | `style` prop: `transition: none`                                                                                                                       |
+| Focus guards around the popup                      | `utils/FocusGuard.js`, `floating-ui-react/components/FloatingPortal.js` | `style` prop: `visuallyHidden`; the portal's `aria-owns` span: `ownerVisuallyHidden`                                                                   |
+| Internal dismiss button                            | `combobox/utils/ComboboxInternalDismissButton.js`                       | `style` prop: `visuallyHiddenInput`                                                                                                                    |
+| Modal combobox only (`modal`, not used here)       | `utils/InternalBackdrop.js`, `@base-ui/utils/useScrollLock.js`          | `style` prop on a full-screen backdrop; scroll lock writes `html` and `body` styles through the CSSOM                                                  |
+| Positioner CSS variables                           | `internals/useAnchorPositioning.js`                                     | `--available-width`, `--available-height`, `--anchor-width`, `--anchor-height`, `--transform-origin` through `style.setProperty` (CSSOM)               |
 
 On the client, React applies a `style` prop through the CSSOM (`style.setProperty`), which CSP does not block, so a client-rendered app works under `style-src 'self'`; the spec checks this with the policy applied and no violation recorded. A server-rendered page is different: the hidden input's `style` is in the HTML, the browser drops it under `style-src 'self'` without `style-src-attr`, and the hidden input shows as a visible text box (hydration does not repair a dropped style, and later renders only write styles that change). Render a combobox on the client only, or allow `style-src-attr` in that app. `CSPProvider` (Base UI) covers inline `<style>` and `<script>` elements, which Combobox does not use; it does not cover style attributes.
 
@@ -85,19 +103,22 @@ import { Combobox } from "capsomer/react/combobox";
 
 <Combobox
   label="Site"
-  items={[{ value: "docs", label: "Docs" }, { value: "shop", label: "shop.example.com" }]}
+  items={[
+    { value: "docs", label: "Docs" },
+    { value: "shop", label: "shop.example.com" },
+  ]}
   value={site}
   onValueChange={setSite}
   placeholder="For example: docs"
   help="Only a listed site can be chosen."
-/>
+/>;
 ```
 
 Several values:
 
 ```tsx
 import { ComboboxMultiple } from "capsomer/react/combobox";
-<ComboboxMultiple label="Sites to back up" items={sites} values={ids} onValuesChange={setIds} />
+<ComboboxMultiple label="Sites to back up" items={sites} values={ids} onValuesChange={setIds} />;
 ```
 
 `ComboboxProps` adds `clearable`; an option may carry `group`.

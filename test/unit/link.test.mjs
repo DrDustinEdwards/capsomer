@@ -13,7 +13,19 @@ test("an ordinary in-app link prefetches, query and hash included", () => {
 });
 
 test("never-prefetch paths, files, other documents and other sites do not", () => {
-  for (const href of ["/logout", "/sign-out", "/api/auth/session", "/auth/google/start", "/Admin/posts", "/admin", "/feed.RSS", "/paper.pdf?x=1", "https://example.com/", "//example.com/x", "mailto:a@example.com"]) {
+  for (const href of [
+    "/logout",
+    "/sign-out",
+    "/api/auth/session",
+    "/auth/google/start",
+    "/Admin/posts",
+    "/admin",
+    "/feed.RSS",
+    "/paper.pdf?x=1",
+    "https://example.com/",
+    "//example.com/x",
+    "mailto:a@example.com",
+  ]) {
     assert.equal(mayPrefetch({ href, from }), false, href);
   }
   assert.equal(mayPrefetch({ href: "/administer", from }), true, "a prefix is a whole segment");
@@ -28,13 +40,27 @@ test("/admin prefetches only from inside /admin; the app's own exclusions hold e
   const exclude = ["/b/:project/export", "/admin/view-as"];
   assert.equal(mayPrefetch({ href: "/b/handbook/export/epub", from, exclude }), false);
   assert.equal(mayPrefetch({ href: "/b/handbook/outliner", from, exclude }), true);
-  assert.equal(mayPrefetch({ href: "/admin/view-as/stop", from: "/admin/customers", exclude }), false);
+  assert.equal(
+    mayPrefetch({ href: "/admin/view-as/stop", from: "/admin/customers", exclude }),
+    false,
+  );
 });
 
 // One list of family sites: every site a family link can name has its icon in link.css (or is
 // marked as having none), and link.css draws no site the list does not name.
 test("every family link site has its icon in link.css, and link.css draws no other", () => {
   const css = readFileSync(new URL("../../components/link/link.css", import.meta.url), "utf8");
-  const drawn = [...css.matchAll(/\[data-site="([\w-]+)"\]::before \{ mask-image: url\("data:image\/svg\+xml,/g)].map((m) => m[1]).sort();
-  assert.deepEqual(drawn, FAMILY_LINK_SITES.filter((s) => s.icon).map((s) => s.id).sort());
+  const drawn = [
+    ...css.matchAll(
+      /\[data-site="([\w-]+)"\]::before \{\s*mask-image: url\("data:image\/svg\+xml,/g,
+    ),
+  ]
+    .map((m) => m[1])
+    .sort();
+  assert.deepEqual(
+    drawn,
+    FAMILY_LINK_SITES.filter((s) => s.icon)
+      .map((s) => s.id)
+      .sort(),
+  );
 });

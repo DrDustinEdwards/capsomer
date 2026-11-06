@@ -1,7 +1,18 @@
-import { useId, useLayoutEffect, useRef, type ButtonHTMLAttributes, type MouseEvent, type ReactNode, type Ref } from "react";
+import {
+  useId,
+  useLayoutEffect,
+  useRef,
+  type ButtonHTMLAttributes,
+  type MouseEvent,
+  type ReactNode,
+  type Ref,
+} from "react";
 import { morphFrom } from "./button.ts";
 
-export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "style"> {
+export interface ButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "disabled" | "style"
+> {
   variant?: "default" | "primary" | "secondary" | "danger" | "quiet" | "link";
   size?: "xs" | "sm" | "default" | "lg";
   // In flight: the label stays (so the width and the name stay) and a spinner covers it.
@@ -22,11 +33,26 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
 }
 
 export function Button(props: ButtonProps) {
-  const { variant = "default", size = "default", pending = false, disabledReason, iconOnly = false, label, morph = false, children, type = "button", onClick, className, ...rest } = props;
+  const {
+    variant = "default",
+    size = "default",
+    pending = false,
+    disabledReason,
+    iconOnly = false,
+    label,
+    morph = false,
+    children,
+    type = "button",
+    onClick,
+    className,
+    ...rest
+  } = props;
   const reasonId = useId();
   const disabled = disabledReason != null && disabledReason !== false;
-  const describedBy = [rest["aria-describedby"], disabled ? reasonId : null].filter(Boolean).join(" ") || undefined;
-  if (iconOnly && !label && !rest["aria-label"]) console.warn("Button: an icon-only button needs a label.");
+  const describedBy =
+    [rest["aria-describedby"], disabled ? reasonId : null].filter(Boolean).join(" ") || undefined;
+  if (iconOnly && !label && !rest["aria-label"])
+    console.warn("Button: an icon-only button needs a label.");
 
   // The morph: after React writes a new label, animate from the last width and a copy of the
   // last label (button.ts).
@@ -38,7 +64,8 @@ export function Button(props: ButtonProps) {
     if (!morph || !el || !button) return;
     const prev = last.current;
     const text = el.textContent ?? "";
-    const width = prev && prev.text !== text ? morphFrom(button, prev.width, prev.copy) : button.offsetWidth;
+    const width =
+      prev && prev.text !== text ? morphFrom(button, prev.width, prev.copy) : button.offsetWidth;
     last.current = { text, width, copy: el.cloneNode(true) as HTMLElement };
   });
 
@@ -87,10 +114,20 @@ export function Button(props: ButtonProps) {
 }
 
 // Buttons sharing one edge. `orientation` is horizontal unless set.
-export function ButtonGroup(props: { label?: string; orientation?: "horizontal" | "vertical"; children?: ReactNode; className?: string }) {
+export function ButtonGroup(props: {
+  label?: string;
+  orientation?: "horizontal" | "vertical";
+  children?: ReactNode;
+  className?: string;
+}) {
   const { label, orientation = "horizontal", children, className } = props;
   return (
-    <div role="group" aria-label={label} className={className ? `cap-btn-group ${className}` : "cap-btn-group"} data-orientation={orientation === "vertical" ? "vertical" : undefined}>
+    <div
+      role="group"
+      aria-label={label}
+      className={className ? `cap-btn-group ${className}` : "cap-btn-group"}
+      data-orientation={orientation === "vertical" ? "vertical" : undefined}
+    >
       {children}
     </div>
   );

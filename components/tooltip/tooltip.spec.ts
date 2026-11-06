@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations, with tips shown", async ({ page }) => {
@@ -8,7 +13,9 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: tip text and the key cap in a tip reach their contrast", async ({ page }) => {
+  test("accessibility: tip text and the key cap in a tip reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "tooltip", theme);
     await expect(page.locator("#tip-copy")).toBeVisible();
     await expectContrast(page, [
@@ -17,15 +24,21 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the trigger keeps its own name, and the tip is its description", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "tooltip", theme);
-    const retry = page.getByRole("button", { name: "Retry job" });
-    await expect(retry).toHaveAccessibleName("Retry job");
-    await expect(retry).toHaveAccessibleDescription("Runs job_7c21 again with the same inputs. Its last run failed at 14:02.");
-    await expect(page.locator("#tip-copy")).toMatchAriaSnapshot(`
+  test(
+    "accessibility: the trigger keeps its own name, and the tip is its description",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "tooltip", theme);
+      const retry = page.getByRole("button", { name: "Retry job" });
+      await expect(retry).toHaveAccessibleName("Retry job");
+      await expect(retry).toHaveAccessibleDescription(
+        "Runs job_7c21 again with the same inputs. Its last run failed at 14:02.",
+      );
+      await expect(page.locator("#tip-copy")).toMatchAriaSnapshot(`
       - tooltip "Copies 366b902 to the clipboard."
     `);
-  });
+    },
+  );
 
   test("keyboard: focus on the trigger shows the tip at once", async ({ page }) => {
     await visitStates(page, "tooltip", theme);
@@ -54,17 +67,30 @@ eachTheme((theme) => {
     await expect(page.locator("#tip-retry")).toBeHidden();
   });
 
-  test("behavior: hover shows the tip after a short delay, without covering its trigger", async ({ page }) => {
+  test("behavior: hover shows the tip after a short delay, without covering its trigger", async ({
+    page,
+  }) => {
     await visitStates(page, "tooltip", theme);
     await page.locator("#sample-retry").hover();
     const tip = page.locator("#tip-retry");
     await expect(tip).toBeVisible();
-    const [t, b] = await Promise.all([tip.boundingBox(), page.locator("#sample-retry").boundingBox()]);
-    const apart = !!t && !!b && (t.y + t.height <= b.y || t.y >= b.y + b.height || t.x + t.width <= b.x || t.x >= b.x + b.width);
+    const [t, b] = await Promise.all([
+      tip.boundingBox(),
+      page.locator("#sample-retry").boundingBox(),
+    ]);
+    const apart =
+      !!t &&
+      !!b &&
+      (t.y + t.height <= b.y ||
+        t.y >= b.y + b.height ||
+        t.x + t.width <= b.x ||
+        t.x >= b.x + b.width);
     expect(apart).toBe(true);
   });
 
-  test("behavior: the tip is the shared popover's tooltip variant, a manual popover with role tooltip", async ({ page }) => {
+  test("behavior: the tip is the shared popover's tooltip variant, a manual popover with role tooltip", async ({
+    page,
+  }) => {
     await visitStates(page, "tooltip", theme);
     const tip = page.locator("#tip-retry");
     await expect(tip).toHaveAttribute("popover", "manual");
@@ -72,7 +98,9 @@ eachTheme((theme) => {
     await expect(tip).toHaveClass(/cap-popover/);
   });
 
-  test("keyboard: Esc hides the tip while the pointer is still over the trigger, until the pointer leaves", async ({ page }) => {
+  test("keyboard: Esc hides the tip while the pointer is still over the trigger, until the pointer leaves", async ({
+    page,
+  }) => {
     await visitStates(page, "tooltip", theme);
     await page.locator("#sample-retry").hover();
     const tip = page.locator("#tip-retry");
@@ -83,7 +111,9 @@ eachTheme((theme) => {
     await expect(tip).toBeHidden();
   });
 
-  test("behavior: the pointer can move onto the tip without it closing, and leaving hides it", async ({ page }) => {
+  test("behavior: the pointer can move onto the tip without it closing, and leaving hides it", async ({
+    page,
+  }) => {
     await visitStates(page, "tooltip", theme);
     await page.locator("#sample-retry").hover();
     const tip = page.locator("#tip-retry");

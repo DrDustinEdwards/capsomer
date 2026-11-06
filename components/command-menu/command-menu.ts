@@ -5,7 +5,14 @@
 // shortcut registry. Every command shows its shortcut. No framework; the React wrapper uses
 // the same pure functions.
 import { closeDialog, openDialog, uid, wireDialog } from "../dialog/dialog.ts";
-import { createListbox, filterCommands as filterItems, groupBy, matchesQuery as matches, step as stepIndex, type Listbox } from "../listbox/listbox.ts";
+import {
+  createListbox,
+  filterCommands as filterItems,
+  groupBy,
+  matchesQuery as matches,
+  step as stepIndex,
+  type Listbox,
+} from "../listbox/listbox.ts";
 import { keysFragment, register } from "../shortcuts/shortcuts.ts";
 
 export interface Command {
@@ -31,8 +38,21 @@ export const STOP_HINTS = { reason: "asks a reason", preview: "preview first" } 
 
 // A stop command: group Stop, found by "stop" and "pause", its hint saying what opening it
 // will ask for. `run` must only open the control.
-export function stopCommand(o: { id: string; label: string; ask: keyof typeof STOP_HINTS; keywords?: string[]; run: () => void }): Command {
-  return { id: o.id, label: o.label, group: STOP_GROUP, keywords: ["stop", "pause", ...(o.keywords ?? [])], hint: STOP_HINTS[o.ask], run: o.run };
+export function stopCommand(o: {
+  id: string;
+  label: string;
+  ask: keyof typeof STOP_HINTS;
+  keywords?: string[];
+  run: () => void;
+}): Command {
+  return {
+    id: o.id,
+    label: o.label,
+    group: STOP_GROUP,
+    keywords: ["stop", "pause", ...(o.keywords ?? [])],
+    hint: STOP_HINTS[o.ask],
+    run: o.run,
+  };
 }
 
 // The listbox's own filtering, grouping and stepping, under the names this module has always
@@ -43,7 +63,9 @@ export const filterCommands = filterItems;
 export const step = stepIndex;
 
 // Commands by group, in the order each group first appears.
-export function groupCommands<T extends { group: string }>(commands: T[]): Array<{ group: string; items: T[] }> {
+export function groupCommands<T extends { group: string }>(
+  commands: T[],
+): Array<{ group: string; items: T[] }> {
   return groupBy(commands, (c) => c.group);
 }
 
@@ -61,7 +83,8 @@ export interface MenuOptions {
   placeholder?: string;
 }
 
-const SEARCH_ICON = "M7 2.5a4.5 4.5 0 1 0 2.7 8.1l3 3 1.1-1.1-3-3A4.5 4.5 0 0 0 7 2.5zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z";
+const SEARCH_ICON =
+  "M7 2.5a4.5 4.5 0 1 0 2.7 8.1l3 3 1.1-1.1-3-3A4.5 4.5 0 0 0 7 2.5zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z";
 
 // Builds the dialog's markup, exactly the contract on the doc page.
 export function buildMenu(commands: Command[], opts: MenuOptions = {}): HTMLDialogElement {
@@ -270,7 +293,12 @@ let unregisterKeys: (() => void) | null = null;
 
 function ensureShortcut(): void {
   if (unregisterKeys) return;
-  unregisterKeys = register({ key: ["Mod+k", "/"], label: "Open the command menu", group: "General", run: () => openCommandMenu() });
+  unregisterKeys = register({
+    key: ["Mod+k", "/"],
+    label: "Open the command menu",
+    group: "General",
+    run: () => openCommandMenu(),
+  });
 }
 
 export function openCommandMenu(query = ""): void {
@@ -306,16 +334,26 @@ export function createCommandMenu(commands: Command[], opts: MenuOptions = {}): 
 // [data-cap-command-open] button under root, and binds the keys.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const dialog of root.querySelectorAll<HTMLDialogElement>("dialog.cap-cmd[data-cap='command-menu']:not([data-cap-ready])")) {
+  for (const dialog of root.querySelectorAll<HTMLDialogElement>(
+    "dialog.cap-cmd[data-cap='command-menu']:not([data-cap-ready])",
+  )) {
     const a = attach(dialog, (o) => {
       const href = o.dataset.href;
       if (href) location.assign(href);
-      else dialog.dispatchEvent(new CustomEvent("cap-command", { bubbles: true, detail: { id: o.dataset.capCommand ?? o.id } }));
+      else
+        dialog.dispatchEvent(
+          new CustomEvent("cap-command", {
+            bubbles: true,
+            detail: { id: o.dataset.capCommand ?? o.id },
+          }),
+        );
     });
     current = a;
     undo.push(a.detach);
   }
-  for (const btn of root.querySelectorAll<HTMLElement>("[data-cap-command-open]:not([data-cap-ready])")) {
+  for (const btn of root.querySelectorAll<HTMLElement>(
+    "[data-cap-command-open]:not([data-cap-ready])",
+  )) {
     btn.dataset.capReady = "";
     const onClick = () => current?.open("", btn);
     btn.addEventListener("click", onClick);

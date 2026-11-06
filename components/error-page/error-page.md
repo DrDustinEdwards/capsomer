@@ -41,10 +41,10 @@ What a React Router site shows when a page is missing, gone or broke: the failed
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | The header's skip link first, then the header, then Try again (server errors) and Go to the home page |
-| Enter on the skip link | Moves to main |
+| Key                    | Does                                                                                                  |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| Tab                    | The header's skip link first, then the header, then Try again (server errors) and Go to the home page |
+| Enter on the skip link | Moves to main                                                                                         |
 
 ## Accessibility
 
@@ -66,22 +66,34 @@ export function meta({ error }: Route.MetaArgs) {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  return <ErrorPage error={error} home="/" siteHeader={<SiteHeader />} siteFooter={<SiteFooter />} dev={import.meta.env.DEV} />;
+  return (
+    <ErrorPage
+      error={error}
+      home="/"
+      siteHeader={<SiteHeader />}
+      siteFooter={<SiteFooter />}
+      dev={import.meta.env.DEV}
+    />
+  );
 }
 ```
 
 It renders:
 
 ```html
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex" />
 [the site header, with its skip link]
 <main id="main" tabindex="-1" class="cap-error-page" data-status="404">
   <div class="cap-empty" data-kind="failed" role="alert">
     <div class="cap-empty-header">
       <h1 class="cap-empty-title">[critical glyph]Page not found</h1>
-      <p class="cap-empty-text">There is nothing at this address. Check it for a typo, or start again from the home page.</p>
+      <p class="cap-empty-text">
+        There is nothing at this address. Check it for a typo, or start again from the home page.
+      </p>
     </div>
-    <div class="cap-empty-content"><a class="cap-btn" data-variant="primary" href="/">Go to the home page</a></div>
+    <div class="cap-empty-content">
+      <a class="cap-btn" data-variant="primary" href="/">Go to the home page</a>
+    </div>
   </div>
   [children]
 </main>

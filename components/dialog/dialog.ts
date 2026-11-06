@@ -12,7 +12,10 @@
 const openers = new WeakMap<HTMLDialogElement, Element | null>();
 
 // Remembers what had focus before the dialog opened, to hand focus back on close.
-export function rememberOpener(dialog: HTMLDialogElement, opener: Element | null = document.activeElement): void {
+export function rememberOpener(
+  dialog: HTMLDialogElement,
+  opener: Element | null = document.activeElement,
+): void {
   openers.set(dialog, opener);
 }
 
@@ -26,7 +29,9 @@ function fallbackFor(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
   for (const d of document.querySelectorAll<HTMLDialogElement>("dialog[open]")) {
     if (d !== dialog) behind = d.querySelector<HTMLElement>("[data-cap-part='close']") ?? behind;
   }
-  return [named, fallback ?? null, behind, document.querySelector<HTMLElement>("main")].filter((x): x is HTMLElement => !!x);
+  return [named, fallback ?? null, behind, document.querySelector<HTMLElement>("main")].filter(
+    (x): x is HTMLElement => !!x,
+  );
 }
 
 // Hands focus back after a dialog closes. After the next frame, so whatever the action
@@ -41,7 +46,8 @@ export function returnFocus(dialog: HTMLDialogElement, fallback?: HTMLElement | 
     const lost = !now || now === document.body || !now.isConnected || dialog.contains(now);
     if (!lost) return;
     const candidates: HTMLElement[] = [];
-    if (from instanceof HTMLElement && from.isConnected && from !== document.body) candidates.push(from);
+    if (from instanceof HTMLElement && from.isConnected && from !== document.body)
+      candidates.push(from);
     candidates.push(...fallbackFor(dialog, fallback));
     for (const el of candidates) {
       el.focus();
@@ -79,7 +85,9 @@ export function isBusy(dialog: HTMLDialogElement): boolean {
 // Sets or clears busy. The Close and Cancel parts say so with aria-disabled (not disabled, so
 // focus stays where it was).
 export function setDialogBusy(dialog: HTMLDialogElement, on: boolean): void {
-  for (const el of dialog.querySelectorAll<HTMLElement>("[data-cap-part='close'], [data-cap-part='cancel']")) {
+  for (const el of dialog.querySelectorAll<HTMLElement>(
+    "[data-cap-part='close'], [data-cap-part='cancel']",
+  )) {
     if (on) el.setAttribute("aria-disabled", "true");
     else el.removeAttribute("aria-disabled");
   }
@@ -90,7 +98,11 @@ export function setDialogBusy(dialog: HTMLDialogElement, on: boolean): void {
 // True when a click outside the dialog must not close it: it is locked, it is an alert
 // dialog (one that asks a question the person must answer), or it is busy.
 export function isLocked(dialog: HTMLDialogElement): boolean {
-  return dialog.hasAttribute("data-cap-modal-lock") || dialog.getAttribute("role") === "alertdialog" || isBusy(dialog);
+  return (
+    dialog.hasAttribute("data-cap-modal-lock") ||
+    dialog.getAttribute("role") === "alertdialog" ||
+    isBusy(dialog)
+  );
 }
 
 // ---------------------------------------------------------------------------------------
@@ -106,7 +118,18 @@ function dragDismisses(moved: number, size: number, velocity: number): boolean {
 }
 
 function wireDrag(dialog: HTMLDialogElement): () => void {
-  let drag: { id: number; head: HTMLElement; x: number; y: number; dir: [number, number]; size: number; moved: number; t: number; v: number; on: boolean } | null = null;
+  let drag: {
+    id: number;
+    head: HTMLElement;
+    x: number;
+    y: number;
+    dir: [number, number];
+    size: number;
+    moved: number;
+    t: number;
+    v: number;
+    on: boolean;
+  } | null = null;
   const place = (px: number, dir: [number, number]) => {
     dialog.style.translate = `${px * dir[0]}px ${px * dir[1]}px`;
     dialog.style.setProperty("--cap-drag", String(drag ? Math.min(1, px / drag.size) : 0));
@@ -115,12 +138,30 @@ function wireDrag(dialog: HTMLDialogElement): () => void {
     const placement = dialog.dataset.placement;
     const head = (e.target as Element).closest?.<HTMLElement>(".cap-dialog-header");
     if (e.button !== 0 || !head || head.closest("dialog") !== dialog || !dialog.open) return;
-    if (!["bottom", "right", "left"].includes(placement ?? "") || isLocked(dialog) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if ((e.target as Element).closest("a, button, input, select, textarea, [contenteditable]")) return;
+    if (
+      !["bottom", "right", "left"].includes(placement ?? "") ||
+      isLocked(dialog) ||
+      matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    if ((e.target as Element).closest("a, button, input, select, textarea, [contenteditable]"))
+      return;
     const r = dialog.getBoundingClientRect();
     // Toward the edge it sits on, whatever the writing direction.
-    const dir: [number, number] = placement === "bottom" ? [0, 1] : r.left < innerWidth - r.right ? [-1, 0] : [1, 0];
-    drag = { id: e.pointerId, head, x: e.clientX, y: e.clientY, dir, size: placement === "bottom" ? r.height : r.width, moved: 0, t: e.timeStamp, v: 0, on: false };
+    const dir: [number, number] =
+      placement === "bottom" ? [0, 1] : r.left < innerWidth - r.right ? [-1, 0] : [1, 0];
+    drag = {
+      id: e.pointerId,
+      head,
+      x: e.clientX,
+      y: e.clientY,
+      dir,
+      size: placement === "bottom" ? r.height : r.width,
+      moved: 0,
+      t: e.timeStamp,
+      v: 0,
+      on: false,
+    };
     head.setPointerCapture(e.pointerId);
   };
   const onMove = (e: PointerEvent) => {
@@ -153,11 +194,24 @@ function wireDrag(dialog: HTMLDialogElement): () => void {
     const v = e.timeStamp - d.t > 100 ? 0 : d.v;
     if (e.type === "pointerup" && dragDismisses(d.moved, d.size, v)) {
       // On out of the edge while it fades, then gone; the close is Close's, so focus returns.
-      const off = dialog.animate({ translate: [from, `${d.size * d.dir[0]}px ${d.size * d.dir[1]}px`] }, { duration: parseFloat(css.getPropertyValue("--dur-fast")) || 100, easing: ease("--ease-out"), fill: "forwards" });
+      const off = dialog.animate(
+        { translate: [from, `${d.size * d.dir[0]}px ${d.size * d.dir[1]}px`] },
+        {
+          duration: parseFloat(css.getPropertyValue("--dur-fast")) || 100,
+          easing: ease("--ease-out"),
+          fill: "forwards",
+        },
+      );
       off.onfinish = () => off.cancel();
       dialog.close("drag");
     } else {
-      dialog.animate({ translate: [from, "0px 0px"] }, { duration: parseFloat(css.getPropertyValue("--dur-slow")) || 400, easing: ease("--ease-spring") });
+      dialog.animate(
+        { translate: [from, "0px 0px"] },
+        {
+          duration: parseFloat(css.getPropertyValue("--dur-slow")) || 400,
+          easing: ease("--ease-spring"),
+        },
+      );
     }
   };
   dialog.addEventListener("pointerdown", onDown);
@@ -211,7 +265,8 @@ export function historyHash(dialog: HTMLDialogElement): string {
   return `#${prefix}-${dialog.dataset.capHistoryId ?? dialog.dataset.capDetailId ?? dialog.id}`;
 }
 
-const FOCUSABLE = "a[href], button, input:not([type='hidden']), select, textarea, summary, [tabindex]";
+const FOCUSABLE =
+  "a[href], button, input:not([type='hidden']), select, textarea, summary, [tabindex]";
 
 function canFocus(el: HTMLElement): boolean {
   if (el.matches(":disabled") || el.closest("[hidden], [inert]")) return false;
@@ -225,9 +280,12 @@ function canFocus(el: HTMLElement): boolean {
 // the dialog itself.
 export function focusInitial(dialog: HTMLDialogElement, target?: HTMLElement | null): void {
   const cancel = dialog.querySelector<HTMLElement>("[data-cap-part='cancel']");
-  const destructive = dialog.getAttribute("role") === "alertdialog" || dialog.hasAttribute("data-cap-destructive");
+  const destructive =
+    dialog.getAttribute("role") === "alertdialog" || dialog.hasAttribute("data-cap-destructive");
   const all = [...dialog.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(canFocus);
-  const plain = all.filter((el) => el.dataset.capPart !== "close" && !el.hasAttribute("data-cap-scroll"));
+  const plain = all.filter(
+    (el) => el.dataset.capPart !== "close" && !el.hasAttribute("data-cap-scroll"),
+  );
   const choice =
     target ??
     dialog.querySelector<HTMLElement>("[autofocus]") ??
@@ -261,10 +319,12 @@ export function syncScroll(dialog: HTMLDialogElement): void {
 export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}): () => void {
   const s = stateOf(dialog);
   s.opts = { ...s.opts, ...opts };
-  if (dialog.dataset.capReady !== undefined && dialog.dataset.capWired !== undefined) return () => undefined;
+  if (dialog.dataset.capReady !== undefined && dialog.dataset.capWired !== undefined)
+    return () => undefined;
   dialog.dataset.capReady = "";
   dialog.dataset.capWired = "";
-  if (dialog.hasAttribute("data-cap-alert") && !dialog.hasAttribute("role")) dialog.setAttribute("role", "alertdialog");
+  if (dialog.hasAttribute("data-cap-alert") && !dialog.hasAttribute("role"))
+    dialog.setAttribute("role", "alertdialog");
 
   // A press that starts inside the dialog and ends on the backdrop (selecting text) is not a
   // click on the backdrop.
@@ -275,7 +335,10 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
   };
   const onClick = (e: MouseEvent) => {
     const t = e.target;
-    const closer = t instanceof Element ? t.closest<HTMLElement>("[data-cap-part='close'], [data-cap-part='cancel']") : null;
+    const closer =
+      t instanceof Element
+        ? t.closest<HTMLElement>("[data-cap-part='close'], [data-cap-part='cancel']")
+        : null;
     if (closer && dialog.contains(closer)) {
       if (isBusy(dialog)) return;
       // A Cancel that is a link (so it works with no script) closes the modal instead of leaving.
@@ -311,7 +374,8 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
   };
   // A <form method="dialog"> closes natively; while busy it must not.
   const onSubmit = (e: SubmitEvent) => {
-    if (isBusy(dialog) && (e.target as HTMLFormElement | null)?.method === "dialog") e.preventDefault();
+    if (isBusy(dialog) && (e.target as HTMLFormElement | null)?.method === "dialog")
+      e.preventDefault();
   };
   const onClose = () => {
     // A close event queued before the dialog was opened again is stale.
@@ -353,7 +417,11 @@ export function wireDialog(dialog: HTMLDialogElement, opts: DialogOptions = {}):
 
 // Opens a dialog from the control that asked for it, remembering that control. Focus is
 // placed (see focusInitial); with history, "#<prefix>-<id>" is pushed so Back closes it.
-export function openDialog(dialog: HTMLDialogElement, opener: Element | null = document.activeElement, opts: DialogOptions = {}): void {
+export function openDialog(
+  dialog: HTMLDialogElement,
+  opener: Element | null = document.activeElement,
+  opts: DialogOptions = {},
+): void {
   if (dialog.open && dialog.matches(":modal")) return;
   wireDialog(dialog, opts);
   const s = stateOf(dialog);
@@ -373,7 +441,11 @@ export function openDialog(dialog: HTMLDialogElement, opener: Element | null = d
   }
   const useHistory = s.opts.history ?? dialog.hasAttribute("data-cap-history");
   if (!useHistory) return;
-  history.pushState({ capDialog: dialog.dataset.capHistoryId ?? dialog.dataset.capDetailId ?? dialog.id }, "", historyHash(dialog));
+  history.pushState(
+    { capDialog: dialog.dataset.capHistoryId ?? dialog.dataset.capDetailId ?? dialog.id },
+    "",
+    historyHash(dialog),
+  );
   s.pushed = true;
   s.onPop = () => {
     // Back: the entry is already gone, so closing must not go back again.
@@ -394,14 +466,20 @@ export function closeDialog(dialog: HTMLDialogElement, returnValue?: string): vo
 // click opens the dialog. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const dialog of root.querySelectorAll<HTMLDialogElement>("dialog[data-cap='dialog']:not([data-cap-ready])")) {
+  for (const dialog of root.querySelectorAll<HTMLDialogElement>(
+    "dialog[data-cap='dialog']:not([data-cap-ready])",
+  )) {
     // Shown in the page with no script (`open`, `data-cap-inline`): script takes it over, so it
     // is closed until a trigger opens it as the modal.
-    if (dialog.hasAttribute("data-cap-inline") && dialog.open && !dialog.matches(":modal")) dialog.removeAttribute("open");
+    if (dialog.hasAttribute("data-cap-inline") && dialog.open && !dialog.matches(":modal"))
+      dialog.removeAttribute("open");
     undo.push(wireDialog(dialog));
-    if (dialog.hasAttribute("data-cap-open") || dialog.hasAttribute("data-specimen-open")) openDialog(dialog, null);
+    if (dialog.hasAttribute("data-cap-open") || dialog.hasAttribute("data-specimen-open"))
+      openDialog(dialog, null);
   }
-  for (const trigger of root.querySelectorAll<HTMLElement>("[data-cap-dialog-open]:not([data-cap-ready])")) {
+  for (const trigger of root.querySelectorAll<HTMLElement>(
+    "[data-cap-dialog-open]:not([data-cap-ready])",
+  )) {
     trigger.dataset.capReady = "";
     if (!trigger.hasAttribute("aria-haspopup")) trigger.setAttribute("aria-haspopup", "dialog");
     const onClick = (e: MouseEvent) => {

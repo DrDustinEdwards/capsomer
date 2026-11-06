@@ -1,9 +1,26 @@
-import { Fragment, useEffect, useId, useRef, type ComponentPropsWithRef, type ReactNode, useLayoutEffect } from "react";
+import {
+  Fragment,
+  useEffect,
+  useId,
+  useRef,
+  type ComponentPropsWithRef,
+  type ReactNode,
+  useLayoutEffect,
+} from "react";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 import { Time } from "../time/time.react.tsx";
 import { DEFAULT_PREF } from "../shell/shell.ts";
 import { groups, plainLink, useCollapsedPref, type LinkProps } from "../shell/shell.react.tsx";
-import { SheetGroup, SiteHeader, SiteTabs, type HeaderAccount, type HeaderExtra, type HeaderLink, type HeaderLogo, type HeaderSwitcher } from "../site-header/site-header.react.tsx";
+import {
+  SheetGroup,
+  SiteHeader,
+  SiteTabs,
+  type HeaderAccount,
+  type HeaderExtra,
+  type HeaderLink,
+  type HeaderLogo,
+  type HeaderSwitcher,
+} from "../site-header/site-header.react.tsx";
 import { countName as headerCountName, TipKeys } from "../site-header/site-header-parts.react.tsx";
 import { applyStoredTheme, THEME_PREF } from "../theme-switch/theme-switch.ts";
 import type { Suggest } from "../site-header/site-header.ts";
@@ -124,7 +141,13 @@ export interface AdminShellProps {
   extras?: HeaderExtra[];
   onSearch?: () => void;
   searchShortcut?: string;
-  inbox?: { count?: number; countNote?: string; href?: string; onOpen?: () => void; shortcut?: string };
+  inbox?: {
+    count?: number;
+    countNote?: string;
+    href?: string;
+    onOpen?: () => void;
+    shortcut?: string;
+  };
   onHelp?: () => void;
   // The account menu's View site row.
   viewSite?: string;
@@ -181,8 +204,8 @@ const SEARCH_D = "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM21 21l-5-5";
 const INBOX_D = "M3 13h5l1 3h6l1-3h5M5 5h14l2 8v6H3v-6z";
 const REFRESH_D = "M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5";
 
-const countName = (label: string, count?: number, note?: string) => (count ? headerCountName(label, count, note) : undefined);
-
+const countName = (label: string, count?: number, note?: string) =>
+  count ? headerCountName(label, count, note) : undefined;
 
 // A control's name, shown beside it on hover and keyboard focus: Capsomer's one tooltip (the
 // shared popover's tooltip variant, in the top layer, so it is above every panel, tile and
@@ -190,7 +213,19 @@ const countName = (label: string, count?: number, note?: string) => (count ? hea
 // `describe` false leaves the control's description alone, where the tip repeats its name.
 // `offset` clears what sits beside the control: a strip tip starts past the strip's edge (and so
 // past the control's own badge), a menu tip past the menu's.
-function Tip({ text, keys, side = "right", offset = 20, describe = true }: { text: string; keys?: string; side?: "right" | "bottom"; offset?: number; describe?: boolean }) {
+function Tip({
+  text,
+  keys,
+  side = "right",
+  offset = 20,
+  describe = true,
+}: {
+  text: string;
+  keys?: string;
+  side?: "right" | "bottom";
+  offset?: number;
+  describe?: boolean;
+}) {
   const tip = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const el = tip.current;
@@ -208,7 +243,16 @@ function Tip({ text, keys, side = "right", offset = 20, describe = true }: { tex
     };
   }, [describe]);
   return (
-    <span ref={tip} className="cap-admin-tip cap-popover" data-variant="tooltip" data-side={side} data-offset={offset} popover="manual" role="tooltip" aria-hidden="true">
+    <span
+      ref={tip}
+      className="cap-admin-tip cap-popover"
+      data-variant="tooltip"
+      data-side={side}
+      data-offset={offset}
+      popover="manual"
+      role="tooltip"
+      aria-hidden="true"
+    >
       <span className="cap-admin-tip-text">{text}</span>
       <TipKeys keys={keys} />
     </span>
@@ -216,9 +260,20 @@ function Tip({ text, keys, side = "right", offset = 20, describe = true }: { tex
 }
 
 // The strip: the family's apps in their one order, this one marked, others with their badges.
-function stripApps(app: FamilyAppId | undefined, badges: AdminShellProps["badges"], apps: AdminApp[] | undefined): AdminApp[] {
+function stripApps(
+  app: FamilyAppId | undefined,
+  badges: AdminShellProps["badges"],
+  apps: AdminApp[] | undefined,
+): AdminApp[] {
   if (apps) return apps;
-  return FAMILY_APPS.map((a) => ({ ...badges?.[a.id], id: a.id, label: a.label, href: a.href, logo: a.logo, current: a.id === app }));
+  return FAMILY_APPS.map((a) => ({
+    ...badges?.[a.id],
+    id: a.id,
+    label: a.label,
+    href: a.href,
+    logo: a.logo,
+    current: a.id === app,
+  }));
 }
 
 const Badge = ({ count }: { count?: number }) =>
@@ -228,7 +283,8 @@ const Badge = ({ count }: { count?: number }) =>
     </span>
   ) : null;
 
-const mark = (a: AdminApp) => a.logo ?? <span aria-hidden="true">{a.mono ?? a.label.slice(0, 1)}</span>;
+const mark = (a: AdminApp) =>
+  a.logo ?? <span aria-hidden="true">{a.mono ?? a.label.slice(0, 1)}</span>;
 
 export function AdminShell(props: AdminShellProps) {
   const {
@@ -264,7 +320,11 @@ export function AdminShell(props: AdminShellProps) {
   const title = props.title ?? family?.label ?? apps.find((a) => a.current)?.label ?? "";
   const root = useRef<HTMLDivElement>(null);
   const groupId = useId();
-  const [collapsed, setCollapsed] = useCollapsedPref(prefKey, props.collapsed, props.onCollapsedChange);
+  const [collapsed, setCollapsed] = useCollapsedPref(
+    prefKey,
+    props.collapsed,
+    props.onCollapsedChange,
+  );
 
   // The tab says the page, then the app: "Queue · Capsid Portal".
   // An app whose routes set their own titles turns this off with documentTitle={false}.
@@ -326,11 +386,45 @@ export function AdminShell(props: AdminShellProps) {
   // own), the theme, and the account menu last.
   // In the letterhead the names stack as on the public pages: the agency over the site, then the app.
   // The mark is the current app's in the strip, so an app that draws its own strip mark shows it here too.
-  const stacked = props.letterhead && family?.names ? { agency: family.standalone || family.names[0] === OWNER.name ? undefined : OWNER.name, label: family.names[0], app: family.names[1] } : { label: title };
-  const logo: HeaderLogo = props.logo ?? { href: family?.href ?? apps.find((a) => a.current)?.href ?? "/", ...stacked, mark: apps.find((a) => a.current)?.logo ?? family?.logo };
+  const stacked =
+    props.letterhead && family?.names
+      ? {
+          agency: family.standalone || family.names[0] === OWNER.name ? undefined : OWNER.name,
+          label: family.names[0],
+          app: family.names[1],
+        }
+      : { label: title };
+  const logo: HeaderLogo = props.logo ?? {
+    href: family?.href ?? apps.find((a) => a.current)?.href ?? "/",
+    ...stacked,
+    mark: apps.find((a) => a.current)?.logo ?? family?.logo,
+  };
   const extras: HeaderExtra[] = [
-    ...(onSearch && !props.search ? [{ id: "search", label: "Search everything", icon: <HeaderIcon d={SEARCH_D} />, onClick: onSearch, keys: searchShortcut }] : []),
-    ...(inbox ? [{ id: "inbox", label: "Inbox", icon: <HeaderIcon d={INBOX_D} />, href: inbox.href, onClick: inbox.onOpen, count: inbox.count, countNote: inbox.countNote ?? "need you", keys: inbox.shortcut }] : []),
+    ...(onSearch && !props.search
+      ? [
+          {
+            id: "search",
+            label: "Search everything",
+            icon: <HeaderIcon d={SEARCH_D} />,
+            onClick: onSearch,
+            keys: searchShortcut,
+          },
+        ]
+      : []),
+    ...(inbox
+      ? [
+          {
+            id: "inbox",
+            label: "Inbox",
+            icon: <HeaderIcon d={INBOX_D} />,
+            href: inbox.href,
+            onClick: inbox.onOpen,
+            count: inbox.count,
+            countNote: inbox.countNote ?? "need you",
+            keys: inbox.shortcut,
+          },
+        ]
+      : []),
     ...(props.extras ?? []),
   ];
   const accountProps = props.account;
@@ -341,8 +435,19 @@ export function AdminShell(props: AdminShellProps) {
         avatar: accountProps.avatar,
         detail: [accountProps.role, accountProps.email].filter(Boolean).join(" · ") || undefined,
         groups: [
-          ...(accountProps.appLinks?.length ? [{ label: accountProps.appLabel ?? "This app", links: accountProps.appLinks }] : []),
-          ...(props.viewSite || onHelp ? [{ links: [...(props.viewSite ? [{ label: "View site", href: props.viewSite }] : []), ...(onHelp ? [{ label: "Help and shortcuts", onClick: onHelp }] : [])] }] : []),
+          ...(accountProps.appLinks?.length
+            ? [{ label: accountProps.appLabel ?? "This app", links: accountProps.appLinks }]
+            : []),
+          ...(props.viewSite || onHelp
+            ? [
+                {
+                  links: [
+                    ...(props.viewSite ? [{ label: "View site", href: props.viewSite }] : []),
+                    ...(onHelp ? [{ label: "Help and shortcuts", onClick: onHelp }] : []),
+                  ],
+                },
+              ]
+            : []),
         ],
         onSignOut: accountProps.onSignOut,
         signOutDisabled: accountProps.signOutDisabled,
@@ -357,10 +462,26 @@ export function AdminShell(props: AdminShellProps) {
     ...(trail?.length ? trail : here?.group ? [{ label: here.group }] : []),
     ...(heading ? [{ label: heading, current: true }] : []),
   ];
-  const toSheet = (e: AdminEntry): HeaderLink => ({ id: e.id, label: e.label, href: e.href, current: e.current, icon: e.icon, count: e.count, countNote: e.countNote });
+  const toSheet = (e: AdminEntry): HeaderLink => ({
+    id: e.id,
+    label: e.label,
+    href: e.href,
+    current: e.current,
+    icon: e.icon,
+    count: e.count,
+    countNote: e.countNote,
+  });
 
   return (
-    <div ref={root} className="cap-admin" data-cap="admin-shell" data-variant={variant} data-standalone={family?.standalone ? "" : undefined} data-menu={collapsed ? "collapsed" : undefined} data-transition={props.transition ? "page" : undefined}>
+    <div
+      ref={root}
+      className="cap-admin"
+      data-cap="admin-shell"
+      data-variant={variant}
+      data-standalone={family?.standalone ? "" : undefined}
+      data-menu={collapsed ? "collapsed" : undefined}
+      data-transition={props.transition ? "page" : undefined}
+    >
       <SiteHeader
         logo={logo}
         variant={props.letterhead ? "letterhead" : undefined}
@@ -387,7 +508,9 @@ export function AdminShell(props: AdminShellProps) {
                         {renderLink({
                           href: a.href,
                           "aria-current": a.current ? "true" : undefined,
-                          "aria-label": a.current ? undefined : countName(a.label, a.count, a.countNote ?? "need you"),
+                          "aria-label": a.current
+                            ? undefined
+                            : countName(a.label, a.count, a.countNote ?? "need you"),
                           onClick: close,
                           children: (
                             <>
@@ -411,7 +534,17 @@ export function AdminShell(props: AdminShellProps) {
               )
             : undefined
         }
-        sheetEnd={(close) => groups(nav).map((g, i) => <SheetGroup key={g.label ?? `g${i}`} label={g.label ?? title} links={g.entries.map(toSheet)} renderLink={renderLink} onClose={close} />)}
+        sheetEnd={(close) =>
+          groups(nav).map((g, i) => (
+            <SheetGroup
+              key={g.label ?? `g${i}`}
+              label={g.label ?? title}
+              links={g.entries.map(toSheet)}
+              renderLink={renderLink}
+              onClose={close}
+            />
+          ))
+        }
       />
       {owner ? (
         <nav className="cap-admin-strip" aria-label="Apps">
@@ -422,7 +555,9 @@ export function AdminShell(props: AdminShellProps) {
                   href: a.href,
                   className: "cap-admin-tile",
                   "aria-current": a.current ? "true" : undefined,
-                  "aria-label": a.current ? a.label : (countName(a.label, a.count, a.countNote ?? "need you") ?? a.label),
+                  "aria-label": a.current
+                    ? a.label
+                    : (countName(a.label, a.count, a.countNote ?? "need you") ?? a.label),
                   children: (
                     <>
                       {mark(a)}
@@ -453,11 +588,21 @@ export function AdminShell(props: AdminShellProps) {
           <span className="cap-keys" aria-hidden="true">
             <kbd>{collapseKey}</kbd>
           </span>
-          <Tip text={collapsed ? "Expand menu" : "Collapse menu"} keys={collapseKey} offset={12} describe={false} />
+          <Tip
+            text={collapsed ? "Expand menu" : "Collapse menu"}
+            keys={collapseKey}
+            offset={12}
+            describe={false}
+          />
         </button>
         {groups(nav).map((g, i) =>
           g.label ? (
-            <div key={`g${i}`} className="cap-admin-group" role="group" aria-labelledby={`${groupId}-${i}`}>
+            <div
+              key={`g${i}`}
+              className="cap-admin-group"
+              role="group"
+              aria-labelledby={`${groupId}-${i}`}
+            >
               <div className="cap-admin-group-label" id={`${groupId}-${i}`}>
                 {g.label}
               </div>
@@ -497,7 +642,14 @@ export function AdminShell(props: AdminShellProps) {
             <div className="cap-admin-actions">
               {actions}
               {onRefresh && (
-                <button type="button" className="cap-admin-btn" data-cap-part="refresh" aria-label="Refresh" aria-busy={refreshing || undefined} onClick={onRefresh}>
+                <button
+                  type="button"
+                  className="cap-admin-btn"
+                  data-cap-part="refresh"
+                  aria-label="Refresh"
+                  aria-busy={refreshing || undefined}
+                  onClick={onRefresh}
+                >
                   <Icon d={REFRESH_D} />
                   <Tip text="Refresh" keys={refreshShortcut} side="bottom" offset={6} />
                 </button>

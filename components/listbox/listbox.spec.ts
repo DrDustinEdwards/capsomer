@@ -1,10 +1,19 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 // The ids are the examples' own (examples.html): #r-* a single-select list, #n-* multi,
 // #g-* grouped, #f-* an input-driven filtered list, #i-* roving.
-const activeOf = (page: Page, list: string) => page.locator(list).evaluate((el) => el.getAttribute("aria-activedescendant"));
-const selectedIds = (page: Page, list: string) => page.locator(`${list} [role='option'][aria-selected='true']`).evaluateAll((els) => els.map((e) => e.id));
+const activeOf = (page: Page, list: string) =>
+  page.locator(list).evaluate((el) => el.getAttribute("aria-activedescendant"));
+const selectedIds = (page: Page, list: string) =>
+  page
+    .locator(`${list} [role='option'][aria-selected='true']`)
+    .evaluateAll((els) => els.map((e) => e.id));
 const focusedId = (page: Page) => page.evaluate(() => document.activeElement?.id ?? "");
 
 // Records the cap:option-select events a list emits.
@@ -12,7 +21,9 @@ async function recordSelects(page: Page, list: string) {
   await page.locator(list).evaluate((el) => {
     const w = window as unknown as { __selects: unknown[] };
     w.__selects = [];
-    el.addEventListener("cap:option-select", (e) => w.__selects.push((e as CustomEvent).detail.value));
+    el.addEventListener("cap:option-select", (e) =>
+      w.__selects.push((e as CustomEvent).detail.value),
+    );
   });
   return () => page.evaluate(() => (window as unknown as { __selects: unknown[] }).__selects);
 }
@@ -26,7 +37,9 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: text, the current option, key caps, the check and the group label reach their contrast", async ({ page }) => {
+  test("accessibility: text, the current option, key caps, the check and the group label reach their contrast", async ({
+    page,
+  }) => {
     await expectContrast(page, [
       { sel: "#r-fra .cap-option-label", what: "an option" },
       { sel: "#v-jobs .cap-option-label", what: "the current option on its tint" },
@@ -41,24 +54,49 @@ eachTheme((theme) => {
   });
 
   test("accessibility: the current option is marked by more than its color", async ({ page }) => {
-    const mark = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el).boxShadow);
+    const mark = (sel: string) =>
+      page.locator(sel).evaluate((el) => getComputedStyle(el).boxShadow);
     expect(await mark("#v-jobs")).not.toBe("none");
     expect(await mark("#v-agents")).toBe("none");
   });
 
-  test("accessibility: roles, names, groups and selection state", { tag: "@markup" }, async ({ page }) => {
-    const grouped = page.getByRole("listbox", { name: "Commands, grouped" });
-    await expect(grouped.getByRole("group", { name: "Go to" }).getByRole("option")).toHaveCount(2);
-    await expect(grouped.getByRole("group", { name: "Actions" }).getByRole("option")).toHaveCount(2);
-    await expect(grouped.getByRole("option", { name: /Overview/ })).toHaveAccessibleName(/Overview.*shortcut g o/);
-    const region = page.getByRole("listbox", { name: "Region" });
-    await expect(region.getByRole("option", { name: "Oregon" })).toHaveAttribute("aria-selected", "true");
-    await expect(region.getByRole("option", { name: "Frankfurt" })).toHaveAttribute("aria-selected", "false");
-    await expect(region.getByRole("option", { name: /Sydney/ })).toHaveAttribute("aria-disabled", "true");
-    await expect(page.getByRole("listbox", { name: "Notify me about" })).toHaveAttribute("aria-multiselectable", "true");
-  });
+  test(
+    "accessibility: roles, names, groups and selection state",
+    { tag: "@markup" },
+    async ({ page }) => {
+      const grouped = page.getByRole("listbox", { name: "Commands, grouped" });
+      await expect(grouped.getByRole("group", { name: "Go to" }).getByRole("option")).toHaveCount(
+        2,
+      );
+      await expect(grouped.getByRole("group", { name: "Actions" }).getByRole("option")).toHaveCount(
+        2,
+      );
+      await expect(grouped.getByRole("option", { name: /Overview/ })).toHaveAccessibleName(
+        /Overview.*shortcut g o/,
+      );
+      const region = page.getByRole("listbox", { name: "Region" });
+      await expect(region.getByRole("option", { name: "Oregon" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      await expect(region.getByRole("option", { name: "Frankfurt" })).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+      await expect(region.getByRole("option", { name: /Sydney/ })).toHaveAttribute(
+        "aria-disabled",
+        "true",
+      );
+      await expect(page.getByRole("listbox", { name: "Notify me about" })).toHaveAttribute(
+        "aria-multiselectable",
+        "true",
+      );
+    },
+  );
 
-  test("keyboard: arrows move the active descendant and skip a disabled option", async ({ page }) => {
+  test("keyboard: arrows move the active descendant and skip a disabled option", async ({
+    page,
+  }) => {
     const list = page.getByRole("listbox", { name: "Region" });
     await list.focus();
     // Focus lands on the chosen option.
@@ -66,7 +104,10 @@ eachTheme((theme) => {
     await page.keyboard.press("ArrowDown");
     expect(await activeOf(page, "[aria-label='Region']")).toBe("r-sin");
     await page.keyboard.press("ArrowDown");
-    expect(await activeOf(page, "[aria-label='Region']"), "Sydney is disabled and the list does not wrap").toBe("r-sin");
+    expect(
+      await activeOf(page, "[aria-label='Region']"),
+      "Sydney is disabled and the list does not wrap",
+    ).toBe("r-sin");
     await page.keyboard.press("ArrowUp");
     await page.keyboard.press("ArrowUp");
     expect(await activeOf(page, "[aria-label='Region']")).toBe("r-fra");
@@ -88,10 +129,15 @@ eachTheme((theme) => {
     expect(await activeOf(page, "[aria-label='Region']")).toBe("r-fra");
   });
 
-  test("keyboard: typeahead moves to the option that starts with the letters, skipping a disabled one", async ({ page }) => {
+  test("keyboard: typeahead moves to the option that starts with the letters, skipping a disabled one", async ({
+    page,
+  }) => {
     await page.getByRole("listbox", { name: "Region" }).focus();
     await page.keyboard.press("s");
-    expect(await activeOf(page, "[aria-label='Region']"), "S finds Singapore, not the disabled Sydney").toBe("r-sin");
+    expect(
+      await activeOf(page, "[aria-label='Region']"),
+      "S finds Singapore, not the disabled Sydney",
+    ).toBe("r-sin");
     await page.waitForTimeout(800);
     await page.keyboard.press("f");
     expect(await activeOf(page, "[aria-label='Region']")).toBe("r-fra");
@@ -100,7 +146,9 @@ eachTheme((theme) => {
     expect(await activeOf(page, "[aria-label='Region']")).toBe("r-pdx");
   });
 
-  test("keyboard: Enter and Space choose the active option, once, and emit cap:option-select", async ({ page }) => {
+  test("keyboard: Enter and Space choose the active option, once, and emit cap:option-select", async ({
+    page,
+  }) => {
     const selects = await recordSelects(page, "[aria-label='Region']");
     await page.getByRole("listbox", { name: "Region" }).focus();
     await page.keyboard.press("ArrowDown");
@@ -112,17 +160,25 @@ eachTheme((theme) => {
     expect(await selects()).toEqual(["r-sin", "r-fra"]);
   });
 
-  test("keyboard: a multiple list toggles with Space and keeps every chosen option", async ({ page }) => {
+  test("keyboard: a multiple list toggles with Space and keeps every chosen option", async ({
+    page,
+  }) => {
     await page.getByRole("listbox", { name: "Notify me about" }).focus();
     expect(await selectedIds(page, "[aria-label='Notify me about']")).toEqual(["n-fail", "n-done"]);
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Space");
-    expect(await selectedIds(page, "[aria-label='Notify me about']")).toEqual(["n-fail", "n-pause", "n-done"]);
+    expect(await selectedIds(page, "[aria-label='Notify me about']")).toEqual([
+      "n-fail",
+      "n-pause",
+      "n-done",
+    ]);
     await page.keyboard.press("Space");
     expect(await selectedIds(page, "[aria-label='Notify me about']")).toEqual(["n-fail", "n-done"]);
   });
 
-  test("keyboard: with focus in an input, the arrows move the active descendant and Enter chooses; focus stays in the input", async ({ page }) => {
+  test("keyboard: with focus in an input, the arrows move the active descendant and Enter chooses; focus stays in the input", async ({
+    page,
+  }) => {
     const input = page.getByRole("combobox", { name: "Find a site" });
     const selects = await recordSelects(page, "#f-list");
     await input.focus();
@@ -149,14 +205,19 @@ eachTheme((theme) => {
     await expect(page.locator("#i-5")).toHaveAttribute("tabindex", "-1");
   });
 
-  test("behavior: typing filters by label and keyword, announces the count, and says when nothing matches", async ({ page }) => {
+  test("behavior: typing filters by label and keyword, announces the count, and says when nothing matches", async ({
+    page,
+  }) => {
     const input = page.getByRole("combobox", { name: "Find a site" });
     const status = page.locator("section:has(#f-a) [data-cap-part='count']");
     await input.fill("blog");
     await expect(page.locator("#f-a")).toBeVisible();
     await expect(page.locator("#f-b")).toBeHidden();
     await expect(status).toHaveText("1 result");
-    expect(await input.getAttribute("aria-activedescendant"), "the first match becomes active").toBe("f-a");
+    expect(
+      await input.getAttribute("aria-activedescendant"),
+      "the first match becomes active",
+    ).toBe("f-a");
     await input.fill("ap");
     await expect(status).toHaveText("2 results");
     await input.fill("zebra");
@@ -169,19 +230,26 @@ eachTheme((theme) => {
     await expect(page.locator("#f-list ~ .cap-listbox-empty")).toBeHidden();
   });
 
-  test("behavior: the pointer moves the active option, and clicking chooses it", async ({ page }) => {
+  test("behavior: the pointer moves the active option, and clicking chooses it", async ({
+    page,
+  }) => {
     const selects = await recordSelects(page, "[aria-label='Region']");
     await page.locator("#r-sin").hover();
     expect(await activeOf(page, "[aria-label='Region']")).toBe("r-sin");
     await page.locator("#r-syd").hover();
-    expect(await activeOf(page, "[aria-label='Region']"), "a disabled option is not made active").toBe("r-sin");
+    expect(
+      await activeOf(page, "[aria-label='Region']"),
+      "a disabled option is not made active",
+    ).toBe("r-sin");
     await page.locator("#r-fra").click();
     expect(await selectedIds(page, "[aria-label='Region']")).toEqual(["r-fra"]);
     await page.locator("#r-syd").click({ force: true });
     expect(await selects()).toEqual(["r-fra"]);
   });
 
-  test("behavior: a group hides with its last option, a separator only shows between two shown groups, a group name finds its options", async ({ page }) => {
+  test("behavior: a group hides with its last option, a separator only shows between two shown groups, a group name finds its options", async ({
+    page,
+  }) => {
     const input = page.getByRole("combobox", { name: "Find a site" });
     await input.fill("blog");
     await expect(page.getByRole("group", { name: "Tools" })).toBeHidden();

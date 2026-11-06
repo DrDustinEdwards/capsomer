@@ -2,7 +2,16 @@
 // touches no DOM until a controller is made.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { emptyText, filterCommands, groupBy, matchesQuery, nextTypeahead, resultsText, step, stepEnabled } from "../../components/listbox/listbox.ts";
+import {
+  emptyText,
+  filterCommands,
+  groupBy,
+  matchesQuery,
+  nextTypeahead,
+  resultsText,
+  step,
+  stepEnabled,
+} from "../../components/listbox/listbox.ts";
 
 const items = [
   { label: "Overview", group: "Go to", keywords: ["home"] },
@@ -21,16 +30,37 @@ test("matchesQuery: case-insensitive substring over group, label and keywords", 
 });
 
 test("filterCommands: keeps order, or ranks when a hook is given", () => {
-  assert.deepEqual(filterCommands(items, "go").map((i) => i.label), ["Overview", "Jobs"]);
+  assert.deepEqual(
+    filterCommands(items, "go").map((i) => i.label),
+    ["Overview", "Jobs"],
+  );
   assert.deepEqual(filterCommands(items, "").length, 4);
-  const rank = (i, needle) => (i.label.toLowerCase().startsWith(needle) ? 2 : i.label.toLowerCase().includes(needle) ? 1 : null);
-  assert.deepEqual(filterCommands(items, "r", rank).map((i) => i.label), ["Refresh now", "Overview", "Pause capsomer"]);
+  const rank = (i, needle) =>
+    i.label.toLowerCase().startsWith(needle)
+      ? 2
+      : i.label.toLowerCase().includes(needle)
+        ? 1
+        : null;
+  assert.deepEqual(
+    filterCommands(items, "r", rank).map((i) => i.label),
+    ["Refresh now", "Overview", "Pause capsomer"],
+  );
   assert.deepEqual(filterCommands(items, "", rank).length, 4);
 });
 
 test("groupBy: groups in order of first appearance; no group falls under an empty name", () => {
-  assert.deepEqual(groupBy(items).map((g) => [g.group, g.items.length]), [["Go to", 2], ["Stop", 1], ["Actions", 1]]);
-  assert.deepEqual(groupBy([{ n: 1 }, { n: 2 }], () => undefined).map((g) => g.group), [""]);
+  assert.deepEqual(
+    groupBy(items).map((g) => [g.group, g.items.length]),
+    [
+      ["Go to", 2],
+      ["Stop", 1],
+      ["Actions", 1],
+    ],
+  );
+  assert.deepEqual(
+    groupBy([{ n: 1 }, { n: 2 }], () => undefined).map((g) => g.group),
+    [""],
+  );
 });
 
 test("step: stops at the ends, or wraps", () => {

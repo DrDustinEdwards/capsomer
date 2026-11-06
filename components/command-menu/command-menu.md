@@ -4,7 +4,17 @@ title: Command menu
 summary: Every view, action and shortcut in one searchable list, opened with Ctrl K.
 parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog and listbox)
-states: [closed with its button, open with every group, filtered, stops found by typing stop, no match, an option active, comfortable density, live results]
+states:
+  [
+    closed with its button,
+    open with every group,
+    filtered,
+    stops found by typing stop,
+    no match,
+    an option active,
+    comfortable density,
+    live results,
+  ]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/CommandMenu.tsx, lib/stops.ts and styles.css (.palette), as of capsid master 2026-10-01
@@ -43,15 +53,15 @@ It is never the only way to reach something: every command is also a control on 
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Ctrl K, Cmd K, `/` | Opens the menu, focus in the field |
-| Typing | Filters the list by group, label and keywords (typing `stop` lists every stop); the first match becomes active |
-| Down arrow, Up arrow | Moves the active option, stopping at the ends |
-| Home, End | First, last command |
-| Page Down, Page Up | About a screenful |
-| Enter | Runs the active command and closes the menu |
-| Esc, or Ctrl K | Closes the menu; focus returns to what opened it |
+| Key                  | Does                                                                                                           |
+| -------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Ctrl K, Cmd K, `/`   | Opens the menu, focus in the field                                                                             |
+| Typing               | Filters the list by group, label and keywords (typing `stop` lists every stop); the first match becomes active |
+| Down arrow, Up arrow | Moves the active option, stopping at the ends                                                                  |
+| Home, End            | First, last command                                                                                            |
+| Page Down, Page Up   | About a screenful                                                                                              |
+| Enter                | Runs the active command and closes the menu                                                                    |
+| Esc, or Ctrl K       | Closes the menu; focus returns to what opened it                                                               |
 
 ## Accessibility
 
@@ -67,24 +77,60 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 The behavior module builds this from a list of commands; write it by hand only for a menu rendered on the server.
 
 ```html
-<dialog class="cap-dialog cap-cmd" data-cap="command-menu" data-placement="top" data-size="lg" aria-label="Command menu">
+<dialog
+  class="cap-dialog cap-cmd"
+  data-cap="command-menu"
+  data-placement="top"
+  data-size="lg"
+  aria-label="Command menu"
+>
   <div class="cap-cmd-search">
     <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">…</svg>
     <label class="cap-sr-only" for="cmd-input">Search commands</label>
-    <input class="cap-cmd-input" id="cmd-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search commands"
-      role="combobox" aria-expanded="true" aria-controls="cmd-list" aria-autocomplete="list" aria-activedescendant="cmd-o-overview">
+    <input
+      class="cap-cmd-input"
+      id="cmd-input"
+      type="text"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="Search commands"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="cmd-list"
+      aria-autocomplete="list"
+      aria-activedescendant="cmd-o-overview"
+    />
   </div>
-  <div class="cap-listbox cap-cmd-list" id="cmd-list" role="listbox" aria-label="Commands" data-controlled>
+  <div
+    class="cap-listbox cap-cmd-list"
+    id="cmd-list"
+    role="listbox"
+    aria-label="Commands"
+    data-controlled
+  >
     <div class="cap-listbox-group" role="group" aria-labelledby="cmd-g0">
       <div class="cap-listbox-label" id="cmd-g0" role="presentation">Go to</div>
-      <div class="cap-option" id="cmd-o-overview" role="option" data-active data-cap-command="overview" data-href="/" data-keywords="home,dashboard">
+      <div
+        class="cap-option"
+        id="cmd-o-overview"
+        role="option"
+        data-active
+        data-cap-command="overview"
+        data-href="/"
+        data-keywords="home,dashboard"
+      >
         <span class="cap-option-label">Overview</span>
-        <span class="cap-option-keys"><span class="cap-sr-only">, shortcut </span><kbd>g</kbd> <kbd>o</kbd></span>
+        <span class="cap-option-keys"
+          ><span class="cap-sr-only">, shortcut </span><kbd>g</kbd> <kbd>o</kbd></span
+        >
       </div>
     </div>
   </div>
   <p class="cap-listbox-empty" role="status" data-cap-part="empty"></p>
-  <div class="cap-cmd-foot" aria-hidden="true"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>Enter</kbd> run</span><span><kbd>Esc</kbd> close</span></div>
+  <div class="cap-cmd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>Enter</kbd> run</span
+    ><span><kbd>Esc</kbd> close</span>
+  </div>
 </dialog>
 <button type="button" class="cap-btn" data-cap-command-open>Commands <kbd>Ctrl K</kbd></button>
 ```
@@ -94,14 +140,32 @@ Everything but `.cap-cmd-search`, `.cap-cmd-input`, `.cap-cmd-list` and `.cap-cm
 ```js
 import { createCommandMenu, stopCommand } from "capsomer/behavior/command-menu";
 createCommandMenu([
-  { id: "overview", label: "Overview", group: "Go to", keywords: ["home"], shortcut: "g o", run: () => go("/") },
-  stopCommand({ id: "pause-capsomer", label: "Pause capsomer", ask: "reason", run: () => openReasonFor("capsomer") }),
-  stopCommand({ id: "revoke-driver", label: "Revoke deploy-agent", ask: "preview", keywords: ["revoke"], run: () => confirmRevoke("deploy-agent") }),
+  {
+    id: "overview",
+    label: "Overview",
+    group: "Go to",
+    keywords: ["home"],
+    shortcut: "g o",
+    run: () => go("/"),
+  },
+  stopCommand({
+    id: "pause-capsomer",
+    label: "Pause capsomer",
+    ask: "reason",
+    run: () => openReasonFor("capsomer"),
+  }),
+  stopCommand({
+    id: "revoke-driver",
+    label: "Revoke deploy-agent",
+    ask: "preview",
+    keywords: ["revoke"],
+    run: () => confirmRevoke("deploy-agent"),
+  }),
   { id: "refresh", label: "Refresh now", group: "Actions", shortcut: "r", run: refresh },
 ]);
 ```
 
-`openCommandMenu(query?)` opens it from anywhere. A menu written in markup is wired by `enhance()`: an option with `data-href` navigates, any other dispatches a `cap-command` event with its id. A command's `shortcut` is only shown; register the key itself with the shortcut registry. In React, `<CommandMenu open onOpenChange commands>`, and `` search={(q, signal) => fetch(`/search/suggest?q=${encodeURIComponent(q)}`, { signal }).then(toCommands)} `` for live results (React only).
+`openCommandMenu(query?)` opens it from anywhere. A menu written in markup is wired by `enhance()`: an option with `data-href` navigates, any other dispatches a `cap-command` event with its id. A command's `shortcut` is only shown; register the key itself with the shortcut registry. In React, `<CommandMenu open onOpenChange commands>`, and ``search={(q, signal) => fetch(`/search/suggest?q=${encodeURIComponent(q)}`, { signal }).then(toCommands)}`` for live results (React only).
 
 ## Matches shadcn
 

@@ -76,8 +76,10 @@
   .cap-flags:has(.cap-flags-filter input[value="resolved"]:checked) .cap-flag[data-state="open"] {
     display: none;
   }
-  .cap-flags:has(.cap-flags-filter input[value="open"]:checked) .cap-flag-group:not(:has(.cap-flag[data-state="open"])),
-  .cap-flags:has(.cap-flags-filter input[value="resolved"]:checked) .cap-flag-group:not(:has(.cap-flag[data-state="resolved"])) {
+  .cap-flags:has(.cap-flags-filter input[value="open"]:checked)
+    .cap-flag-group:not(:has(.cap-flag[data-state="open"])),
+  .cap-flags:has(.cap-flags-filter input[value="resolved"]:checked)
+    .cap-flag-group:not(:has(.cap-flag[data-state="resolved"])) {
     display: none;
   }
 
@@ -126,9 +128,16 @@
     color: var(--muted);
     font-size: var(--fs-detail);
   }
-  .cap-flags:has(.cap-flags-filter input[value="open"]:checked):not(:has(.cap-flag[data-state="open"])) .cap-flags-empty[data-for="open"],
-  .cap-flags:has(.cap-flags-filter input[value="resolved"]:checked):not(:has(.cap-flag[data-state="resolved"])) .cap-flags-empty[data-for="resolved"],
-  .cap-flags:has(.cap-flags-filter input[value="all"]:checked):not(:has(.cap-flag)) .cap-flags-empty[data-for="all"] {
+  .cap-flags:has(.cap-flags-filter input[value="open"]:checked):not(
+      :has(.cap-flag[data-state="open"])
+    )
+    .cap-flags-empty[data-for="open"],
+  .cap-flags:has(.cap-flags-filter input[value="resolved"]:checked):not(
+      :has(.cap-flag[data-state="resolved"])
+    )
+    .cap-flags-empty[data-for="resolved"],
+  .cap-flags:has(.cap-flags-filter input[value="all"]:checked):not(:has(.cap-flag))
+    .cap-flags-empty[data-for="all"] {
     display: block;
   }
 

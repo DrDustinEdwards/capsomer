@@ -68,15 +68,26 @@
     padding-inline: calc(var(--pad-x) - 1px) 2.25rem;
     text-overflow: ellipsis;
     background-image:
-      linear-gradient(to top right, transparent calc(50% - 0.8px), var(--muted) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px)),
-      linear-gradient(to top left, transparent calc(50% - 0.8px), var(--muted) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+      linear-gradient(
+        to top right,
+        transparent calc(50% - 0.8px),
+        var(--muted) calc(50% - 0.8px) calc(50% + 0.8px),
+        transparent calc(50% + 0.8px)
+      ),
+      linear-gradient(
+        to top left,
+        transparent calc(50% - 0.8px),
+        var(--muted) calc(50% - 0.8px) calc(50% + 0.8px),
+        transparent calc(50% + 0.8px)
+      );
     background-repeat: no-repeat;
     background-size: 6px 6px;
     background-position:
       right 1.15rem top 50%,
       right 0.8rem top 50%;
 
-    &:dir(rtl), :where([dir="rtl"]) & {
+    &:dir(rtl),
+    :where([dir="rtl"]) & {
       background-position:
         left 0.8rem top 50%,
         left 1.15rem top 50%;
@@ -88,8 +99,18 @@
     }
     &:disabled {
       background-image:
-        linear-gradient(to top right, transparent calc(50% - 0.8px), var(--dim) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px)),
-        linear-gradient(to top left, transparent calc(50% - 0.8px), var(--dim) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+        linear-gradient(
+          to top right,
+          transparent calc(50% - 0.8px),
+          var(--dim) calc(50% - 0.8px) calc(50% + 0.8px),
+          transparent calc(50% + 0.8px)
+        ),
+        linear-gradient(
+          to top left,
+          transparent calc(50% - 0.8px),
+          var(--dim) calc(50% - 0.8px) calc(50% + 0.8px),
+          transparent calc(50% + 0.8px)
+        );
     }
   }
 

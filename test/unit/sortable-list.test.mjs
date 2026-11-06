@@ -1,7 +1,12 @@
 // The sortable list's pure functions, imported straight from the TypeScript source.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { indexAtPoint, keyTarget, moveId, sortText } from "../../components/sortable-list/sortable-list.ts";
+import {
+  indexAtPoint,
+  keyTarget,
+  moveId,
+  sortText,
+} from "../../components/sortable-list/sortable-list.ts";
 
 test("moveId: moves one id, clamps to the ends, leaves the input alone", () => {
   const order = ["a", "b", "c", "d"];
@@ -46,8 +51,14 @@ test("indexAtPoint: cards count those above the pointer's line, and those left o
 });
 
 test("sortText: what the live region says, positions counted from one", () => {
-  assert.equal(sortText.lift("Low water", 1, 4), "Picked up Low water. Position 1 of 4. Arrow keys move it, Space drops it, Escape puts it back.");
+  assert.equal(
+    sortText.lift("Low water", 1, 4),
+    "Picked up Low water. Position 1 of 4. Arrow keys move it, Space drops it, Escape puts it back.",
+  );
   assert.equal(sortText.drop("Low water", 3, 4, true), "Dropped Low water at position 3 of 4.");
-  assert.equal(sortText.drop("Low water", 3, 4, false), "Dropped Low water. It stays at position 3 of 4.");
+  assert.equal(
+    sortText.drop("Low water", 3, 4, false),
+    "Dropped Low water. It stays at position 3 of 4.",
+  );
   assert.equal(sortText.cancel("Low water", 1, 4), "Put Low water back at position 1 of 4.");
 });

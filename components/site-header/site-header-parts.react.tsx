@@ -172,7 +172,8 @@ export const PERSON_ICON = svg(
 // so the name starts with what is seen and keeps the real count: "Inbox 99+, 120 need you". The
 // visible label and count must be words of the name in that order (WCAG 2.5.3; axe-core 4.14's
 // label-content-name-mismatch reads aria-hidden text too).
-export const countName = (label: string, count?: number, note?: string): string => (count ? `${label}${count > 99 ? " 99+" : ""}, ${count}${note ? ` ${note}` : ""}` : label);
+export const countName = (label: string, count?: number, note?: string): string =>
+  count ? `${label}${count > 99 ? " 99+" : ""}, ${count}${note ? ` ${note}` : ""}` : label;
 
 // A tip's key caps ("G 2"), after its words.
 export function TipKeys({ keys }: { keys?: string }) {
@@ -204,7 +205,16 @@ export function HeaderTip({ text, keys }: { text: string; keys?: string }) {
     };
   }, []);
   return (
-    <span ref={tip} className="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true">
+    <span
+      ref={tip}
+      className="cap-site-header-tip cap-popover"
+      data-variant="tooltip"
+      data-side="bottom"
+      data-offset="6"
+      popover="manual"
+      role="tooltip"
+      aria-hidden="true"
+    >
       <span className="cap-site-header-tip-text">{text}</span>
       <TipKeys keys={keys} />
     </span>
@@ -213,7 +223,25 @@ export function HeaderTip({ text, keys }: { text: string; keys?: string }) {
 
 // A disclosure button and its panel, wired by the behavior module (the open state is the
 // platform's popover state, not React's).
-export function Disclosure({ id, className, label, name, current, align, children, button }: { id: string; className: string; label?: string; name?: string; current?: boolean; align?: "end"; children: ReactNode; button: ReactNode }) {
+export function Disclosure({
+  id,
+  className,
+  label,
+  name,
+  current,
+  align,
+  children,
+  button,
+}: {
+  id: string;
+  className: string;
+  label?: string;
+  name?: string;
+  current?: boolean;
+  align?: "end";
+  children: ReactNode;
+  button: ReactNode;
+}) {
   const trigger = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -221,17 +249,40 @@ export function Disclosure({ id, className, label, name, current, align, childre
   }, []);
   return (
     <>
-      <button ref={trigger} type="button" className={className} data-cap-part="panel-trigger" data-current={current ? "" : undefined} aria-expanded="false" aria-controls={id} aria-label={name}>
+      <button
+        ref={trigger}
+        type="button"
+        className={className}
+        data-cap-part="panel-trigger"
+        data-current={current ? "" : undefined}
+        aria-expanded="false"
+        aria-controls={id}
+        aria-label={name}
+      >
         {button}
       </button>
-      <div ref={panel} id={id} className="cap-site-header-panel" popover="manual" data-align={align} role="group" aria-label={label}>
+      <div
+        ref={panel}
+        id={id}
+        className="cap-site-header-panel"
+        popover="manual"
+        data-align={align}
+        role="group"
+        aria-label={label}
+      >
         {children}
       </div>
     </>
   );
 }
 
-export function GroupList({ groups, renderLink }: { groups: HeaderGroup[]; renderLink: (p: LinkProps) => ReactNode }) {
+export function GroupList({
+  groups,
+  renderLink,
+}: {
+  groups: HeaderGroup[];
+  renderLink: (p: LinkProps) => ReactNode;
+}) {
   return (
     <>
       {groups.map((g, i) => (
@@ -247,10 +298,18 @@ export function GroupList({ groups, renderLink }: { groups: HeaderGroup[]; rende
                   "aria-label": l.count ? countName(l.label, l.count, l.countNote) : undefined,
                   children: (
                     <>
-                      {l.icon ? <span className="cap-site-header-mark" aria-hidden="true">{l.icon}</span> : null}
+                      {l.icon ? (
+                        <span className="cap-site-header-mark" aria-hidden="true">
+                          {l.icon}
+                        </span>
+                      ) : null}
                       {l.label}
                       {l.count ? " " : null}
-                      {l.count ? <span className="cap-site-header-count" aria-hidden="true">{badgeText(l.count)}</span> : null}
+                      {l.count ? (
+                        <span className="cap-site-header-count" aria-hidden="true">
+                          {badgeText(l.count)}
+                        </span>
+                      ) : null}
                     </>
                   ),
                 })}
@@ -263,7 +322,15 @@ export function GroupList({ groups, renderLink }: { groups: HeaderGroup[]; rende
   );
 }
 
-function SheetList({ links, renderLink, onClose }: { links: HeaderLink[]; renderLink: (p: LinkProps) => ReactNode; onClose: () => void }) {
+function SheetList({
+  links,
+  renderLink,
+  onClose,
+}: {
+  links: HeaderLink[];
+  renderLink: (p: LinkProps) => ReactNode;
+  onClose: () => void;
+}) {
   return (
     <ul className="cap-site-header-sheet-list">
       {links.map((l) => (
@@ -295,7 +362,17 @@ function SheetList({ links, renderLink, onClose }: { links: HeaderLink[]; render
 }
 
 // A labeled group of rows in the sheet, for a site's own rows (your admin's apps, its menu).
-export function SheetGroup({ label, links, renderLink = plainLink, onClose }: { label?: string; links: HeaderLink[]; renderLink?: (p: LinkProps) => ReactNode; onClose: () => void }) {
+export function SheetGroup({
+  label,
+  links,
+  renderLink = plainLink,
+  onClose,
+}: {
+  label?: string;
+  links: HeaderLink[];
+  renderLink?: (p: LinkProps) => ReactNode;
+  onClose: () => void;
+}) {
   return (
     <>
       {label ? <div className="cap-site-header-sheet-label">{label}</div> : null}

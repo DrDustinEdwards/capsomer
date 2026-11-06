@@ -148,14 +148,16 @@
 
   /* No pointer-driven highlight of its own once the controller (or Base UI) owns the
      current option: the mouse then moves it, and two rows would look current at once. */
-  .cap-listbox:not([data-cap-ready], [data-controlled]) .cap-option:not([aria-disabled="true"], [data-disabled]):hover,
+  .cap-listbox:not([data-cap-ready], [data-controlled])
+    .cap-option:not([aria-disabled="true"], [data-disabled]):hover,
   .cap-option[data-force="hover"] {
     background: var(--accent-soft);
     box-shadow: inset 3px 0 0 var(--accent);
   }
 
   /* A list that takes focus as a whole shows its current option only while it has focus. */
-  .cap-listbox:is([data-mode="roving"], [data-mode="descendant"]):not(:focus-within) .cap-option[data-active]:not([data-force]):not(:hover) {
+  .cap-listbox:is([data-mode="roving"], [data-mode="descendant"]):not(:focus-within)
+    .cap-option[data-active]:not([data-force]):not(:hover) {
     background: none;
     box-shadow: none;
   }
@@ -210,7 +212,8 @@
       display: block;
     }
   }
-  .cap-option:is([aria-selected="false"], [aria-checked="false"], [data-unchecked]) > .cap-option-indicator {
+  .cap-option:is([aria-selected="false"], [aria-checked="false"], [data-unchecked])
+    > .cap-option-indicator {
     display: none;
   }
 

@@ -1,7 +1,16 @@
 import { Fragment, useId, useState, type ReactNode } from "react";
 import { Row, RowList, type RowLinkProps } from "../row-list/row-list.react.tsx";
 import { Status } from "../status/status.react.tsx";
-import { TONE_WORD, arrange, problemCount, viewLinkText, type AttentionEntry, type AttentionGroupEntry, type AttentionGroupInfo, type AttentionItem } from "./attention-list.ts";
+import {
+  TONE_WORD,
+  arrange,
+  problemCount,
+  viewLinkText,
+  type AttentionEntry,
+  type AttentionGroupEntry,
+  type AttentionGroupInfo,
+  type AttentionItem,
+} from "./attention-list.ts";
 
 export type { AttentionGroupInfo, AttentionItem, AttentionTone } from "./attention-list.ts";
 
@@ -32,13 +41,31 @@ export interface AttentionListProps {
 const plainLink = ({ children, ...props }: RowLinkProps) => <a {...props}>{children}</a>;
 
 function whenOf(when: AttentionItem["when"]): ReactNode {
-  return typeof when === "string" ? when : when ? <time className="cap-time" dateTime={when.datetime}>{when.text}</time> : null;
+  return typeof when === "string" ? (
+    when
+  ) : when ? (
+    <time className="cap-time" dateTime={when.datetime}>
+      {when.text}
+    </time>
+  ) : null;
 }
 
 // No data-cap here: React owns the open and closed state, so the behavior module must not
 // attach (it would toggle twice).
 export function AttentionList(props: AttentionListProps) {
-  const { items, title = "Needs attention", read, headingLevel = 2, clearText = "Nothing needs you.", noticesDetail = "Nothing to act on now", groups, problemRows, groupRows, primary = true, renderLink = plainLink } = props;
+  const {
+    items,
+    title = "Needs attention",
+    read,
+    headingLevel = 2,
+    clearText = "Nothing needs you.",
+    noticesDetail = "Nothing to act on now",
+    groups,
+    problemRows,
+    groupRows,
+    primary = true,
+    renderLink = plainLink,
+  } = props;
   const id = useId();
   const [open, setOpen] = useState<ReadonlySet<string>>(() => new Set());
   const arranged = arrange(items, { rows: problemRows, children: groupRows, groups });
@@ -55,7 +82,18 @@ export function AttentionList(props: AttentionListProps) {
   const entry = (e: AttentionEntry) => {
     if (e.kind === "row") {
       const { item } = e;
-      return <Row key={item.id} tone={item.tone === "crit" ? "crit" : undefined} status={<Status tone={item.tone}>{TONE_WORD[item.tone]}</Status>} title={item.title} href={item.href} detail={item.detail} meta={whenOf(item.when)} renderLink={renderLink} />;
+      return (
+        <Row
+          key={item.id}
+          tone={item.tone === "crit" ? "crit" : undefined}
+          status={<Status tone={item.tone}>{TONE_WORD[item.tone]}</Status>}
+          title={item.title}
+          href={item.href}
+          detail={item.detail}
+          meta={whenOf(item.when)}
+          renderLink={renderLink}
+        />
+      );
     }
     return group(e);
   };
@@ -68,12 +106,28 @@ export function AttentionList(props: AttentionListProps) {
     const link = viewLinkText(g);
     return (
       <Fragment key={`group-${g.key}`}>
-        <Row status={<Status tone={g.tone}>{TONE_WORD[g.tone]}</Status>} title={g.label} onOpen={() => toggle(`group-${g.key}`)} expanded={isOpen} controls={rid} detail={g.detail} meta={whenOf(g.when)} />
+        <Row
+          status={<Status tone={g.tone}>{TONE_WORD[g.tone]}</Status>}
+          title={g.label}
+          onOpen={() => toggle(`group-${g.key}`)}
+          expanded={isOpen}
+          controls={rid}
+          detail={g.detail}
+          meta={whenOf(g.when)}
+        />
         <li className="cap-attention-region" id={rid} hidden={!isOpen}>
           {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
           <ul role="list" aria-label={g.label}>
             {g.items.map((item) => (
-              <Row key={item.id} className="cap-attention-child" title={item.title} href={item.href} detail={item.detail} meta={whenOf(item.when)} renderLink={renderLink} />
+              <Row
+                key={item.id}
+                className="cap-attention-child"
+                title={item.title}
+                href={item.href}
+                detail={item.detail}
+                meta={whenOf(item.when)}
+                renderLink={renderLink}
+              />
             ))}
             {g.view && link ? (
               <li className="cap-attention-link">
@@ -98,9 +152,7 @@ export function AttentionList(props: AttentionListProps) {
           {title}
         </Heading>
         <span className="cap-attention-count">{problemCount(arranged)}</span>
-        <span className="cap-attention-src">
-          Worst first.{read ? <> {read}</> : null}
-        </span>
+        <span className="cap-attention-src">Worst first.{read ? <> {read}</> : null}</span>
       </header>
       {empty ? (
         <p className="cap-attention-clear">
@@ -114,8 +166,15 @@ export function AttentionList(props: AttentionListProps) {
           {arranged.more.length ? (
             <>
               <li className="cap-attention-link">
-                <button type="button" aria-expanded={moreOpen} aria-controls={regionId("more")} onClick={() => toggle("more")}>
-                  {moreOpen ? "Fewer warnings" : `${arranged.more.length} more ${arranged.more.length === 1 ? "warning" : "warnings"}`}
+                <button
+                  type="button"
+                  aria-expanded={moreOpen}
+                  aria-controls={regionId("more")}
+                  onClick={() => toggle("more")}
+                >
+                  {moreOpen
+                    ? "Fewer warnings"
+                    : `${arranged.more.length} more ${arranged.more.length === 1 ? "warning" : "warnings"}`}
                 </button>
               </li>
               <li className="cap-attention-region" id={regionId("more")} hidden={!moreOpen}>
@@ -141,7 +200,15 @@ export function AttentionList(props: AttentionListProps) {
                 {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
                 <ul role="list" aria-label="Notices">
                   {arranged.notices.map((item) => (
-                    <Row key={item.id} className="cap-attention-child" title={item.title} href={item.href} detail={[TONE_WORD[item.tone], item.detail].filter(Boolean).join(" · ")} meta={whenOf(item.when)} renderLink={renderLink} />
+                    <Row
+                      key={item.id}
+                      className="cap-attention-child"
+                      title={item.title}
+                      href={item.href}
+                      detail={[TONE_WORD[item.tone], item.detail].filter(Boolean).join(" · ")}
+                      meta={whenOf(item.when)}
+                      renderLink={renderLink}
+                    />
                   ))}
                 </ul>
               </li>

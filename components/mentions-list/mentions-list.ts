@@ -3,8 +3,23 @@
 // state. The states, their words and the decisions are the moderation queue's (moderation-queue.ts),
 // which the list is built from. No DOM; the React component and a server render use the same
 // functions.
-import { queryHref, type ContentCan, type MentionCounts, type MentionsData, type MentionsQuery, type MentionStatus, type PageInfo } from "../content/content.ts";
-import { EMPTY_TEXT, VIEWS, bulkActionsFor, mentionsWord, type ModAction, type ModView } from "../moderation-queue/moderation-queue.ts";
+import {
+  queryHref,
+  type ContentCan,
+  type MentionCounts,
+  type MentionsData,
+  type MentionsQuery,
+  type MentionStatus,
+  type PageInfo,
+} from "../content/content.ts";
+import {
+  EMPTY_TEXT,
+  VIEWS,
+  bulkActionsFor,
+  mentionsWord,
+  type ModAction,
+  type ModView,
+} from "../moderation-queue/moderation-queue.ts";
 
 // ---------------------------------------------------------------------------------------
 // Addresses.
@@ -24,7 +39,8 @@ export function withMentions(q: MentionsQuery, change: Partial<MentionsQuery>): 
     delete next.cursor;
     delete next.open;
   }
-  for (const k of Object.keys(change) as Array<keyof MentionsQuery>) if (change[k] === undefined) delete next[k];
+  for (const k of Object.keys(change) as Array<keyof MentionsQuery>)
+    if (change[k] === undefined) delete next[k];
   return next;
 }
 
@@ -47,21 +63,39 @@ export interface OfferedAction {
   destructive?: boolean;
 }
 
-const BULK_LABEL: Record<MentionIntent, string> = { approve: "Approve", reject: "Reject", reset: "Back to waiting", delete: "Delete" };
+const BULK_LABEL: Record<MentionIntent, string> = {
+  approve: "Approve",
+  reject: "Reject",
+  reset: "Back to waiting",
+  delete: "Delete",
+};
 
 // The bulk actions this person may run on this tab of this site, in the bar's order, and a
 // sentence for each one held back.
-export function mentionActions(data: Pick<MentionsData, "offers" | "can" | "query" | "counts">): { bulk: OfferedAction[]; withheld: string[] } {
+export function mentionActions(data: Pick<MentionsData, "offers" | "can" | "query" | "counts">): {
+  bulk: OfferedAction[];
+  withheld: string[];
+} {
   const { offers, can } = data;
   const view = currentView(data);
   const bulk: OfferedAction[] = [];
   const withheld: string[] = [];
-  if (can.decideMentions) for (const a of bulkActionsFor(view, offers.reset)) bulk.push({ intent: a, label: BULK_LABEL[a] });
-  if (can.decideMentions && offers.delete) bulk.push({ intent: "delete", label: "Delete", destructive: true });
-  if (!can.decideMentions) withheld.push("You can read these mentions. Deciding them needs the site owner's role.");
+  if (can.decideMentions)
+    for (const a of bulkActionsFor(view, offers.reset))
+      bulk.push({ intent: a, label: BULK_LABEL[a] });
+  if (can.decideMentions && offers.delete)
+    bulk.push({ intent: "delete", label: "Delete", destructive: true });
+  if (!can.decideMentions)
+    withheld.push("You can read these mentions. Deciding them needs the site owner's role.");
   else {
-    if (!offers.delete) withheld.push("Delete is not offered: this site keeps every mention. Reject one to keep it off its post.");
-    if (!offers.reset) withheld.push("Back to waiting is not offered by this site, so a decision on a waiting mention has no Undo.");
+    if (!offers.delete)
+      withheld.push(
+        "Delete is not offered: this site keeps every mention. Reject one to keep it off its post.",
+      );
+    if (!offers.reset)
+      withheld.push(
+        "Back to waiting is not offered by this site, so a decision on a waiting mention has no Undo.",
+      );
   }
   return { bulk, withheld };
 }
@@ -76,7 +110,11 @@ export function countLine(data: Pick<MentionsData, "rows" | "query" | "counts">)
   return total > n ? `Showing ${n} of ${total} ${mentionsWord(total)}` : `${n} ${mentionsWord(n)}`;
 }
 
-export function emptyWords(view: ModView): { kind: "all-clear" | "nothing-yet"; title: string; text: string } {
+export function emptyWords(view: ModView): {
+  kind: "all-clear" | "nothing-yet";
+  title: string;
+  text: string;
+} {
   return { kind: view === "pending" ? "all-clear" : "nothing-yet", ...EMPTY_TEXT[view] };
 }
 
@@ -131,10 +169,16 @@ export function kitMentionsSearch(search: URLSearchParams): URLSearchParams {
 // each site's own admin draw the same page from it.
 export function mentionsDataOfKit(kit: KitMentionsData, search: URLSearchParams): MentionsData {
   const open = search.get("open");
-  const view: ModView = (VIEWS as readonly string[]).includes(kit.filter) ? (kit.filter as ModView) : "all";
+  const view: ModView = (VIEWS as readonly string[]).includes(kit.filter)
+    ? (kit.filter as ModView)
+    : "all";
   return {
     site: { name: kit.site.name },
-    query: { view, ...(kit.query.cursor ? { cursor: kit.query.cursor } : {}), ...(open ? { open } : {}) },
+    query: {
+      view,
+      ...(kit.query.cursor ? { cursor: kit.query.cursor } : {}),
+      ...(open ? { open } : {}),
+    },
     rows: kit.rows.map((m) => ({
       id: m.id,
       author: m.authorName ?? "An unnamed sender",

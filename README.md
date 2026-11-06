@@ -1,4 +1,5 @@
 # capsomer
+
 Capsomer: the shared design system for Dustin Edwards's apps: tokens, components and patterns.
 
 Components live in `components/<name>/`; how one is built, including its `examples.html` (the generated states page's source) and the shared dialog, listbox, popover and meter blocks, is in `components/README.md`. Tokens, density and the color families are in `tokens/`. Each release's breaking changes are in `CHANGELOG.md`; the defaults and their reasons are in `DEFAULTS.md`.
@@ -8,7 +9,7 @@ Components live in `components/<name>/`; how one is built, including its `exampl
 There is one way to theme and enhance charts. Enarratio draws every chart; Capsomer gives it the family's look and behavior:
 
 ```js
-import "capsomer/tokens.css";   // already on every Capsomer page
+import "capsomer/tokens.css"; // already on every Capsomer page
 import "capsomer/enarratio.css"; // every chart's look: Enarratio's base rules, the token mapping, gridlines, each series' ink and the color pairs
 ```
 
@@ -56,7 +57,11 @@ A site whose theme comes from a cookie or localStorage follows the system with n
 import { fallbackFontFace, fallbackName, LOCAL, MEASURED } from "capsomer/fonts";
 
 fallbackFontFace({ family: "DM Sans", ...MEASURED["DM Sans"] }); // the @font-face rule, as a string
-fallbackFontFace({ family: "Brand Serif", metrics: { ascent: 1000, descent: -250, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 470 }, local: "Georgia" });
+fallbackFontFace({
+  family: "Brand Serif",
+  metrics: { ascent: 1000, descent: -250, lineGap: 0, unitsPerEm: 1000, xWidthAvg: 470 },
+  local: "Georgia",
+});
 fallbackName("DM Sans"); // "DM Sans Fallback", the name the stack lists second
 ```
 

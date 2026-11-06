@@ -6,9 +6,9 @@ import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 
 // Every row's one link or button, in order, skipping rows hidden or disabled.
 export function rowTargets(list: ParentNode): HTMLElement[] {
-  return Array.from(list.querySelectorAll<HTMLElement>(".cap-row-title :is(a[href], button:not([disabled]))")).filter(
-    (el) => el.getClientRects().length > 0,
-  );
+  return Array.from(
+    list.querySelectorAll<HTMLElement>(".cap-row-title :is(a[href], button:not([disabled]))"),
+  ).filter((el) => el.getClientRects().length > 0);
 }
 
 // Moves focus to the next (1) or previous (-1) row's title. From outside the list, j starts
@@ -21,7 +21,9 @@ export function moveRowFocus(list: ParentNode, step: 1 | -1): HTMLElement | null
   const targets = rowTargets(list);
   if (targets.length === 0) return null;
   const active = document.activeElement;
-  const current = targets.findIndex((el) => el === active || el.closest(".cap-row")?.contains(active));
+  const current = targets.findIndex(
+    (el) => el === active || el.closest(".cap-row")?.contains(active),
+  );
   const next = current === -1 ? (step === 1 ? 0 : targets.length - 1) : current + step;
   const el = targets[next];
   if (!el || next === current) return null;
@@ -35,19 +37,28 @@ export function isTyping(e: KeyboardEvent): boolean {
   if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return true;
   const t = e.target as HTMLElement | null;
   if (!t) return false;
-  return t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.closest("[role='combobox'], [role='textbox']") !== null;
+  return (
+    t.isContentEditable ||
+    /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) ||
+    t.closest("[role='combobox'], [role='textbox']") !== null
+  );
 }
 
 // The same check for a list whose rows hold their own checkboxes (the moderation queue, the
 // history list): a checkbox, a radio or a button is not typing, so a list key works from a box
 // a person has just ticked.
-const TEXT_INPUT = /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
+const TEXT_INPUT =
+  /^(text|search|email|url|tel|password|number|date|datetime-local|month|week|time)$/;
 export function isTypingKey(e: KeyboardEvent): boolean {
   if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return true;
   const t = e.target as HTMLElement | null;
   if (!t) return false;
   if (t instanceof HTMLInputElement) return TEXT_INPUT.test(t.type || "text");
-  return t.isContentEditable || /^(TEXTAREA|SELECT)$/.test(t.tagName) || t.closest("[role='combobox'], [role='textbox']") !== null;
+  return (
+    t.isContentEditable ||
+    /^(TEXTAREA|SELECT)$/.test(t.tagName) ||
+    t.closest("[role='combobox'], [role='textbox']") !== null
+  );
 }
 
 // Single-key shortcuts can be switched off (DEFAULTS.md): the shortcuts switch is the one source.
@@ -60,7 +71,8 @@ export function listOwnsKeys(list: HTMLElement): boolean {
   if (active && list.contains(active)) return true;
   if (!list.hasAttribute("data-cap-primary")) return false;
   if (active?.closest("[data-cap='row-list']")) return false;
-  if (active?.closest("dialog[open], [role='dialog'], [role='menu'], [role='listbox']")) return false;
+  if (active?.closest("dialog[open], [role='dialog'], [role='menu'], [role='listbox']"))
+    return false;
   return !list.closest("[inert]");
 }
 
@@ -72,7 +84,8 @@ export function attachRowList(list: HTMLElement): () => void {
   const onKey = (e: KeyboardEvent) => {
     if (e.defaultPrevented || (e.key !== "j" && e.key !== "k")) return;
     if (isTyping(e) || singleKeysOff() || !listOwnsKeys(list)) return;
-    if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement)) e.preventDefault();
+    if (moveRowFocus(list, e.key === "j" ? 1 : -1) || list.contains(document.activeElement))
+      e.preventDefault();
   };
   document.addEventListener("keydown", onKey);
   return () => {
@@ -84,6 +97,8 @@ export function attachRowList(list: HTMLElement): () => void {
 // Attaches to every [data-cap="row-list"] under root that is not attached yet. Returns a
 // function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
-  const undo = Array.from(root.querySelectorAll<HTMLElement>("[data-cap='row-list']:not([data-cap-ready])")).map(attachRowList);
+  const undo = Array.from(
+    root.querySelectorAll<HTMLElement>("[data-cap='row-list']:not([data-cap-ready])"),
+  ).map(attachRowList);
   return () => undo.forEach((f) => f());
 }

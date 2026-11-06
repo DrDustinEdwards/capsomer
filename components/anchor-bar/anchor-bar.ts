@@ -12,7 +12,11 @@
 
 // The nearest ancestor that scrolls, or null for the window.
 export function scrollParent(el: Element | null | undefined): HTMLElement | null {
-  for (let n = el?.parentElement ?? null; n && n !== document.body && n !== document.documentElement; n = n.parentElement) {
+  for (
+    let n = el?.parentElement ?? null;
+    n && n !== document.body && n !== document.documentElement;
+    n = n.parentElement
+  ) {
     const o = getComputedStyle(n).overflowY;
     if (o === "auto" || o === "scroll") return n;
   }
@@ -32,31 +36,46 @@ export function sectionLabel(section: HTMLElement): string {
 
 // The rule: three or more sections, and a view taller than two screens. The bar's own height
 // does not count (`barHeight`), or showing it could tip the rule it was shown by.
-export function meetsRule(headings: Element[], scroller: HTMLElement | null, barHeight = 0): boolean {
+export function meetsRule(
+  headings: Element[],
+  scroller: HTMLElement | null,
+  barHeight = 0,
+): boolean {
   if (headings.length < 3) return false;
-  const total = (scroller ? scroller.scrollHeight : document.documentElement.scrollHeight) - barHeight;
+  const total =
+    (scroller ? scroller.scrollHeight : document.documentElement.scrollHeight) - barHeight;
   const screen = scroller ? scroller.clientHeight : window.innerHeight;
   return total > 2 * screen;
 }
 
 // The current section: the last heading above a line 35% down the view, or the last
 // heading once the view is scrolled to its end.
-export function currentSection(headings: HTMLElement[], scroller: HTMLElement | null, line = 0.35): HTMLElement | null {
+export function currentSection(
+  headings: HTMLElement[],
+  scroller: HTMLElement | null,
+  line = 0.35,
+): HTMLElement | null {
   const top = scroller ? scroller.getBoundingClientRect().top : 0;
   const height = scroller ? scroller.clientHeight : window.innerHeight;
   const y = top + height * line;
   let cur: HTMLElement | null = null;
   for (const h of headings) if (h.getBoundingClientRect().top <= y) cur = h;
   const atEnd = scroller
-    ? scroller.scrollTop > 0 && scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2
-    : window.scrollY > 0 && window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+    ? scroller.scrollTop > 0 &&
+      scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2
+    : window.scrollY > 0 &&
+      window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
   if (atEnd) cur = headings.at(-1) ?? cur;
   return cur;
 }
 
 // Calls onChange with the current section's id whenever it changes. Returns a function
 // that stops watching.
-export function watchSections(headings: HTMLElement[], onChange: (id: string | null) => void, scroller: HTMLElement | null = scrollParent(headings[0])): () => void {
+export function watchSections(
+  headings: HTMLElement[],
+  onChange: (id: string | null) => void,
+  scroller: HTMLElement | null = scrollParent(headings[0]),
+): () => void {
   let last: string | null | undefined;
   const update = () => {
     const id = currentSection(headings, scroller)?.id ?? null;
@@ -66,7 +85,11 @@ export function watchSections(headings: HTMLElement[], onChange: (id: string | n
     }
   };
   // A heading crossing the 35% line is what changes the answer.
-  const io = new IntersectionObserver(update, { root: scroller, rootMargin: "0px 0px -65% 0px", threshold: [0, 1] });
+  const io = new IntersectionObserver(update, {
+    root: scroller,
+    rootMargin: "0px 0px -65% 0px",
+    threshold: [0, 1],
+  });
   for (const h of headings) io.observe(h);
   // The end of the view, where the last heading may never reach the line.
   const target: EventTarget = scroller ?? window;
@@ -94,7 +117,10 @@ export function goToSection(heading: HTMLElement, opts: { push?: boolean } = {})
 
 // Tells the page how tall the bar is, so a section scrolled to sits below it.
 export function measureBar(nav: HTMLElement, scroller: HTMLElement | null): void {
-  (scroller ?? document.documentElement).style.setProperty("--cap-anchors-h", `${Math.ceil(nav.getBoundingClientRect().height)}px`);
+  (scroller ?? document.documentElement).style.setProperty(
+    "--cap-anchors-h",
+    `${Math.ceil(nav.getBoundingClientRect().height)}px`,
+  );
 }
 
 // Marks the sections the bar links to, so each stops below the bar when scrolled to.
@@ -110,9 +136,13 @@ export function markSections(headings: HTMLElement[]): void {
 // Returns a function that detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const nav of root.querySelectorAll<HTMLElement>("[data-cap='anchor-bar']:not([data-cap-ready])")) {
+  for (const nav of root.querySelectorAll<HTMLElement>(
+    "[data-cap='anchor-bar']:not([data-cap-ready])",
+  )) {
     nav.dataset.capReady = "";
-    const scope = (nav.dataset.capScope ? document.querySelector(nav.dataset.capScope) : nav.closest("main")) ?? document.body;
+    const scope =
+      (nav.dataset.capScope ? document.querySelector(nav.dataset.capScope) : nav.closest("main")) ??
+      document.body;
     const scroller = scrollParent(nav);
     const always = nav.hasAttribute("data-always");
     let list = nav.querySelector("ul");
@@ -188,7 +218,12 @@ export function enhance(root: ParentNode = document): () => void {
     ro.observe(scroller ?? document.documentElement);
     ro.observe(nav);
     const mo = new MutationObserver(apply);
-    mo.observe(scope, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-section", "id", "hidden"] });
+    mo.observe(scope, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-section", "id", "hidden"],
+    });
     apply();
 
     const onClick = (e: MouseEvent) => {

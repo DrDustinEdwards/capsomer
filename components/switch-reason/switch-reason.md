@@ -45,11 +45,11 @@ Anything that starts or stops work no one is watching: the improve loop, a sched
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Space on the switch | Opens the reason beside it and moves focus into it; the switch does not move |
+| Key                 | Does                                                                                                 |
+| ------------------- | ---------------------------------------------------------------------------------------------------- |
+| Space on the switch | Opens the reason beside it and moves focus into it; the switch does not move                         |
 | Enter in the reason | Applies: the switch moves and focus returns to it. With no reason, an error appears beside the field |
-| Esc in the form | Cancels and returns focus to the switch, which has not moved. Held while the request runs |
+| Esc in the form     | Cancels and returns focus to the switch, which has not moved. Held while the request runs            |
 
 ## Accessibility
 
@@ -64,19 +64,36 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```html
 <div class="cap-switch-reason" data-cap="switch-reason" data-name="the improve loop">
-  <label class="cap-switch"><input type="checkbox" role="switch" checked /> Improve loop <span class="cap-switch-state" aria-hidden="true">On</span></label>
+  <label class="cap-switch"
+    ><input type="checkbox" role="switch" checked /> Improve loop
+    <span class="cap-switch-state" aria-hidden="true">On</span></label
+  >
   <span class="cap-switch-reason-note">Runs on the subscription.</span>
   <form class="cap-switch-reason-form" hidden>
     <div class="cap-field">
-      <label class="cap-switch-reason-label" for="loop-why">Turning the improve loop off. Reason:</label>
-      <input class="cap-input" id="loop-why" autocomplete="off" required aria-describedby="loop-why-keys" />
+      <label class="cap-switch-reason-label" for="loop-why"
+        >Turning the improve loop off. Reason:</label
+      >
+      <input
+        class="cap-input"
+        id="loop-why"
+        autocomplete="off"
+        required
+        aria-describedby="loop-why-keys"
+      />
       <p class="cap-field-error" id="loop-why-e" hidden></p>
     </div>
     <div class="cap-switch-reason-actions">
-      <button type="submit" class="cap-btn" data-variant="primary"><span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Apply</span></button>
+      <button type="submit" class="cap-btn" data-variant="primary">
+        <span class="cap-btn-spinner" aria-hidden="true"></span
+        ><span class="cap-btn-label">Apply</span>
+      </button>
       <button type="button" class="cap-btn" data-cap-part="cancel">Cancel</button>
     </div>
-    <span class="cap-switch-reason-keys" id="loop-why-keys"><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels. The reason is recorded with the change.</span>
+    <span class="cap-switch-reason-keys" id="loop-why-keys"
+      ><kbd>Enter</kbd> applies, <kbd>Esc</kbd> cancels. The reason is recorded with the
+      change.</span
+    >
   </form>
 </div>
 ```
@@ -88,7 +105,11 @@ enhance();
 loop.addEventListener("cap:switch-applied", (e) => {
   e.detail.waitUntil(
     api.setLoop(e.detail.checked, e.detail.reason).then((result) =>
-      say(result.summary, { warning: result.warning, undo: () => api.undoLoop(), returnFocus: loop.querySelector("input") }),
+      say(result.summary, {
+        warning: result.warning,
+        undo: () => api.undoLoop(),
+        returnFocus: loop.querySelector("input"),
+      }),
     ),
   );
 });
@@ -99,7 +120,13 @@ loop.addEventListener("cap:switch-applied", (e) => {
 In React, `import { SwitchWithReason } from "capsomer/react/switch-reason"`:
 
 ```tsx
-<SwitchWithReason label="Improve loop" name="the improve loop" checked={loopOn} onApply={(on, why) => api.setLoop(on, why)} note="Runs on the subscription." />
+<SwitchWithReason
+  label="Improve loop"
+  name="the improve loop"
+  checked={loopOn}
+  onApply={(on, why) => api.setLoop(on, why)}
+  note="Runs on the subscription."
+/>
 ```
 
 Give it an `id` when the app focuses the switch again (after an Undo) or presses it from a command (0.22.0).
@@ -107,7 +134,12 @@ Give it an `id` when the app focuses the switch again (after an Undo) or presses
 `ReasonForm` (0.22.0) is the reason on its own, for a change made by a control that is not a switch, such as a radio group. It is hidden until `open`, and rejecting `onApply` keeps it open with the error:
 
 ```tsx
-<ReasonForm open={pending != null} verb={`Changing the overnight run to run on ${pending}`} onApply={(why) => api.setRunsOn(pending, why)} onCancel={() => setPending(null)} />
+<ReasonForm
+  open={pending != null}
+  verb={`Changing the overnight run to run on ${pending}`}
+  onApply={(why) => api.setRunsOn(pending, why)}
+  onCancel={() => setPending(null)}
+/>
 ```
 
 ## Exceptions in production

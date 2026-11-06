@@ -9,7 +9,7 @@ added: 0.56.0
 source: WAI-ARIA APG Date picker dialog example (https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/), built on Capsomer's Dialog
 replaces:
   - 'type="date"'
-  - '(react-datepicker|react-day-picker|flatpickr|pikaday)'
+  - "(react-datepicker|react-day-picker|flatpickr|pikaday)"
 ---
 
 # Date picker
@@ -38,20 +38,20 @@ A date near today that is easier to find on a calendar: when to publish a post, 
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Enter or Space on the calendar button | Opens the calendar, with focus on the input's date (or today) |
-| Esc | Closes the calendar with nothing changed; focus goes back to the button |
-| Tab, Shift Tab | Move between the month and year buttons, the grid, Cancel and Choose; focus stays in the calendar |
-| Enter or Space on Previous or Next month, Previous or Next year | Shows that month; the focused day moves with it |
-| Right arrow, Left arrow | The next day, the day before |
-| Down arrow, Up arrow | The same day next week, last week |
-| Home, End | The first day of the week (Sunday), the last (Saturday) |
-| Page Up, Page Down | The same day last month, next month (the last day of a shorter month) |
-| Shift Page Up, Shift Page Down | The same day last year, next year |
-| Enter or Space on a day | Chooses it and closes the calendar; focus goes back to the button |
-| Enter or Space on Choose | Chooses the focused day and closes the calendar |
-| Enter or Space on Cancel | Closes the calendar with nothing changed |
+| Key                                                             | Does                                                                                              |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Enter or Space on the calendar button                           | Opens the calendar, with focus on the input's date (or today)                                     |
+| Esc                                                             | Closes the calendar with nothing changed; focus goes back to the button                           |
+| Tab, Shift Tab                                                  | Move between the month and year buttons, the grid, Cancel and Choose; focus stays in the calendar |
+| Enter or Space on Previous or Next month, Previous or Next year | Shows that month; the focused day moves with it                                                   |
+| Right arrow, Left arrow                                         | The next day, the day before                                                                      |
+| Down arrow, Up arrow                                            | The same day next week, last week                                                                 |
+| Home, End                                                       | The first day of the week (Sunday), the last (Saturday)                                           |
+| Page Up, Page Down                                              | The same day last month, next month (the last day of a shorter month)                             |
+| Shift Page Up, Shift Page Down                                  | The same day last year, next year                                                                 |
+| Enter or Space on a day                                         | Chooses it and closes the calendar; focus goes back to the button                                 |
+| Enter or Space on Choose                                        | Chooses the focused day and closes the calendar                                                   |
+| Enter or Space on Cancel                                        | Closes the calendar with nothing changed                                                          |
 
 ## Accessibility
 
@@ -71,10 +71,30 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   <p class="cap-field-help" id="due-h">Year, month and day, for example 2026-11-14.</p>
   <div class="cap-date-picker" data-cap="date-picker">
     <div class="cap-input-group">
-      <input class="cap-input" id="due" name="publish" pattern="\d{4}-\d{1,2}-\d{1,2}" autocomplete="off" aria-describedby="due-h"
-        data-min="2026-10-01" data-max="2027-12-31" data-error-date="Enter a date that exists." />
+      <input
+        class="cap-input"
+        id="due"
+        name="publish"
+        pattern="\d{4}-\d{1,2}-\d{1,2}"
+        autocomplete="off"
+        aria-describedby="due-h"
+        data-min="2026-10-01"
+        data-max="2027-12-31"
+        data-error-date="Enter a date that exists."
+      />
       <div class="cap-input-addon" data-align="inline-end">
-        <button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="open" aria-label="Choose date" hidden>[calendar icon]</button>
+        <button
+          type="button"
+          class="cap-btn"
+          data-size="xs"
+          data-variant="quiet"
+          data-icon-only
+          data-cap-part="open"
+          aria-label="Choose date"
+          hidden
+        >
+          [calendar icon]
+        </button>
       </div>
     </div>
   </div>
@@ -86,7 +106,14 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```tsx
 import { DatePicker } from "capsomer/react/date-picker";
-<DatePicker label="Publish on" help="Year, month and day, for example 2026-11-14." name="publish" min="2026-10-01" value={date} onChange={(e) => setDate(e.target.value)} />
+<DatePicker
+  label="Publish on"
+  help="Year, month and day, for example 2026-11-14."
+  name="publish"
+  min="2026-10-01"
+  value={date}
+  onChange={(e) => setDate(e.target.value)}
+/>;
 ```
 
 ## Deliberate differences

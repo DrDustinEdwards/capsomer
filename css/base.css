@@ -62,7 +62,9 @@
       font-weight: var(--link-weight);
     }
     /* Not in a nav: a menu is told by its place, and draws its own tint (link.md). */
-    &:is([href], .enarratio-export):is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a) {
+    &:is([href], .enarratio-export):is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(
+        nav a
+      ) {
       border-radius: 3px;
       -webkit-box-decoration-break: clone;
       box-decoration-break: clone;
@@ -211,4 +213,3 @@
     }
   }
 }
-

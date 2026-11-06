@@ -4,15 +4,35 @@ title: Table
 summary: A native data table in a labeled, focusable scroll region, with rules between rows, tabular numbers, sortable columns and an opt-in card reflow.
 parts: [css, behavior]
 tool: native + own JavaScript
-states: [default, row hover, selected row, footer, caption underneath, sticky header, empty, comfortable density, sorted ascending, sorted descending, sort button hover, row hover, row focused, region focused, narrow and scrolling, reflowed to cards, columns that drop as the region narrows, a row checkbox above the row link]
+states:
+  [
+    default,
+    row hover,
+    selected row,
+    footer,
+    caption underneath,
+    sticky header,
+    empty,
+    comfortable density,
+    sorted ascending,
+    sorted descending,
+    sort button hover,
+    row hover,
+    row focused,
+    region focused,
+    narrow and scrolling,
+    reflowed to cards,
+    columns that drop as the region narrows,
+    a row checkbox above the row link,
+  ]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (table.list, table.fleet, .scroll-x, .reflow) and dashboard/src/views/shared.tsx (FleetTable)
 replaces:
   - '<table class="(list|fleet)'
-  - "<table className=\"(list|fleet)"
+  - '<table className="(list|fleet)'
   - 'class="scroll-x'
-  - "className=\"scroll-x"
+  - 'className="scroll-x'
 ---
 
 # Table
@@ -55,12 +75,12 @@ Different on purpose: the header is small, upper-case and muted (the Portal's lo
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | Reaches the scroll region, then each sort button, then each row's link |
-| Arrow keys, on the focused region | Scroll the table |
-| Enter or Space on a sort button | Sorts by that column, ascending first, then toggling |
-| Enter on a row's link | Opens the row's detail |
+| Key                               | Does                                                                   |
+| --------------------------------- | ---------------------------------------------------------------------- |
+| Tab                               | Reaches the scroll region, then each sort button, then each row's link |
+| Arrow keys, on the focused region | Scroll the table                                                       |
+| Enter or Space on a sort button   | Sorts by that column, ascending first, then toggling                   |
+| Enter on a row's link             | Opens the row's detail                                                 |
 
 ## Accessibility
 
@@ -76,11 +96,21 @@ Last checked by hand: not yet. Reflow with a screen reader: not yet, so no app u
 ```html
 <div class="cap-table-wrap" data-cap="table" role="region" aria-labelledby="apps-cap" tabindex="0">
   <table class="cap-table">
-    <caption id="apps-cap">Capsomer across the apps</caption>
+    <caption id="apps-cap">
+      Capsomer across the apps
+    </caption>
     <thead>
       <tr>
-        <th scope="col" aria-sort="ascending"><button type="button" class="cap-table-sort">App<svg aria-hidden="true">[up and down arrows: .cap-table-sort-up, .cap-table-sort-down]</svg></button></th>
-        <th scope="col" data-num><button type="button" class="cap-table-sort">Components used[glyph]</button></th>
+        <th scope="col" aria-sort="ascending">
+          <button type="button" class="cap-table-sort">
+            App<svg aria-hidden="true">
+              [up and down arrows: .cap-table-sort-up, .cap-table-sort-down]
+            </svg>
+          </button>
+        </th>
+        <th scope="col" data-num>
+          <button type="button" class="cap-table-sort">Components used[glyph]</button>
+        </th>
         <th scope="col">Reported</th>
       </tr>
     </thead>

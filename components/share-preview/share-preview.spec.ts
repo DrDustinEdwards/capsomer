@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -21,16 +26,29 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names: each preview is a named group, and nothing in it takes focus", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "share-preview", theme);
-    await expect(page.getByRole("group", { name: "Search result preview" })).toHaveCount(2);
-    await expect(page.getByRole("group", { name: "Social card preview" })).toHaveCount(2);
-    await expect(page.getByRole("img", { name: "The post's cover: a rising line over a grid" })).toBeVisible();
-    const focusable = await page.locator(".cap-serp, .cap-og-card").evaluateAll((els) => els.flatMap((el) => [...el.querySelectorAll("a, button, input, [tabindex]")]).length);
-    expect(focusable).toBe(0);
-  });
+  test(
+    "accessibility: roles and names: each preview is a named group, and nothing in it takes focus",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "share-preview", theme);
+      await expect(page.getByRole("group", { name: "Search result preview" })).toHaveCount(2);
+      await expect(page.getByRole("group", { name: "Social card preview" })).toHaveCount(2);
+      await expect(
+        page.getByRole("img", { name: "The post's cover: a rising line over a grid" }),
+      ).toBeVisible();
+      const focusable = await page
+        .locator(".cap-serp, .cap-og-card")
+        .evaluateAll(
+          (els) =>
+            els.flatMap((el) => [...el.querySelectorAll("a, button, input, [tabindex]")]).length,
+        );
+      expect(focusable).toBe(0);
+    },
+  );
 
-  test("behavior: the card's image box keeps the 1200 x 630 shape, and the card stays inside a narrow space", async ({ page }) => {
+  test("behavior: the card's image box keeps the 1200 x 630 shape, and the card stays inside a narrow space", async ({
+    page,
+  }) => {
     await visitStates(page, "share-preview", theme);
     const box = await page.locator("#sp-og-note .cap-og-card-image").evaluate((el) => {
       const r = el.getBoundingClientRect();
