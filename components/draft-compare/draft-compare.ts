@@ -21,9 +21,9 @@ export {
   splitSentences,
   diffSentences,
   analyze,
-  analyse,
+  analyse, // codespell:ignore
   countsText,
-} from "./draft-compare-diff.ts"; // codespell:ignore
+} from "./draft-compare-diff.ts";
 export type {
   Op,
   WordPart,
