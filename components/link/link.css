@@ -134,6 +134,7 @@
   a[data-link="next"] {
     display: inline-block;
     padding-block: calc((var(--target) - 1cap) / 2);
+    min-block-size: var(--target);
     text-box: trim-both cap alphabetic;
     position: relative;
     font-family: var(--wayfinding);
