@@ -231,6 +231,7 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
       <h3 className="cap-gate-group-title" id={headId}>
         {heading}
       </h3>
+      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul className="cap-gate-section-rows" role="list" aria-labelledby={headId}>
         {list.map(checkRow)}
       </ul>
@@ -249,11 +250,13 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
           {reading.rest}
         </p>
       </header>
+      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul ref={rows} className="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby={headingId} data-cap-primary={primary ? "" : undefined}>
         <li className="cap-gate-section" data-section="sites">
           <h3 className="cap-gate-group-title" id={`${gateId}-g-sites`}>
             {sites.length === 1 ? "Destination" : "Destinations"}
           </h3>
+          {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
           <ul className="cap-gate-section-rows" role="list" aria-labelledby={`${gateId}-g-sites`}>
             {reading.sites.map(({ site, state, failing }) => {
               const adv = checks.filter((c) => appliesTo(c, site.id) && !c.required && !c.ok).length;
@@ -282,6 +285,7 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
           <details className="cap-disclosure">
             <summary>{passedHeading(counts.passed)}</summary>
             <div className="cap-disclosure-body">
+              {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
               <ul className="cap-gate-section-rows" role="list" aria-label="Passing checks">
                 {passed.map(checkRow)}
               </ul>

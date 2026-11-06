@@ -157,8 +157,11 @@ export function MediaInspector(props: MediaInspectorProps) {
 function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattached, onStep, base, titleId, firstRef, show = {}, saving = "auto", action, Form: F = PlainForm, closeHref, can = {}, tools = {}, onTool, more }: MediaInspectorProps & { item: MediaRecord; base: string; titleId: string; firstRef: { current: HTMLElement | null } }) {
   const formMode = saving === "form" && !!action;
   const toolRef = useRef(onTool);
-  toolRef.current = onTool;
+  useLayoutEffect(() => {
+    toolRef.current = onTool;
+  });
   // One component for the inspector's life, so a re-render never remounts a tool and loses its state.
+  // oxlint-disable-next-line react/refs -- nestedTool keeps the ref and reads it only when the tool runs, never while rendering
   const [Nested] = useState(() => nestedTool(toolRef));
   const Tool = formMode ? F : Nested;
   const shows = { alt: show.alt ?? true, title: show.title ?? true, caption: show.caption ?? true, tags: show.tags ?? true };
@@ -170,12 +173,17 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
   const [error, setError] = useState<string | undefined>(draft ? "the last save did not go through" : undefined);
   const [copied, setCopied] = useState<ReactNode>(null);
   const latest = useRef(fields);
-  latest.current = fields;
+  useLayoutEffect(() => {
+    latest.current = fields;
+  });
   const onSaveRef = useRef(onSave);
-  onSaveRef.current = onSave;
-  const saver = useRef<Autosave | null>(null);
-  if (!saver.current) {
-    saver.current = createAutosave({
+  useLayoutEffect(() => {
+    onSaveRef.current = onSave;
+  });
+  // One autosave for the inspector's life, made on the first render.
+  // oxlint-disable-next-line react/refs -- the autosave keeps the refs and reads them only when it saves, never while rendering
+  const [saver] = useState<Autosave>(() =>
+    createAutosave({
       save: () => {
         const f = latest.current;
         const clean: MediaFields = { alt: f.decorative ? "" : f.alt.trim(), decorative: f.decorative, title: f.title.trim(), caption: f.caption.trim(), tags: f.tags };
@@ -191,14 +199,14 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
         setState(s);
         setError(e);
       },
-    });
-  }
+    }),
+  );
   // Leaving this file saves what is unsaved first.
   useEffect(
     () => () => {
-      void saver.current?.flush();
+      void saver.flush();
     },
-    [],
+    [saver],
   );
   const edit = (patch: Partial<MediaFields>, now = false) => {
     const next = { ...latest.current, ...patch };
@@ -206,8 +214,8 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
     setFields(next);
     // In form mode each form's own Save button sends it.
     if (formMode) return;
-    saver.current?.schedule();
-    if (now) void saver.current?.flush();
+    saver.schedule();
+    if (now) void saver.flush();
   };
 
   const img = item.kind === "image";
@@ -240,7 +248,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
   const onKeyDown = (e: KeyboardEvent<HTMLElement>) => {
     if (e.altKey && !e.ctrlKey && !e.metaKey && (e.key === "ArrowLeft" || e.key === "ArrowUp" || e.key === "ArrowRight" || e.key === "ArrowDown")) {
       e.preventDefault();
-      void saver.current?.flush();
+      void saver.flush();
       onStep?.(e.key === "ArrowLeft" || e.key === "ArrowUp" ? "prev" : "next");
     }
   };
@@ -267,11 +275,11 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
               onKeyDown,
               onSubmit: (e: { preventDefault: () => void }) => {
                 e.preventDefault();
-                void saver.current?.flush();
+                void saver.flush();
               },
               onBlur: (e: { target: EventTarget }) => {
                 const t = e.target as HTMLElement;
-                if (/^(INPUT|TEXTAREA)$/.test(t.tagName) && t.dataset.capPart !== "tag-input") void saver.current?.flush();
+                if (/^(INPUT|TEXTAREA)$/.test(t.tagName) && t.dataset.capPart !== "tag-input") void saver.flush();
               },
             })}
       >
@@ -478,7 +486,7 @@ function InspectorBody({ item, onSave, onClose, onBin, onRestore, onShowUnattach
               </>
             ) : null}
           </p>
-          <button type="button" className="cap-btn" data-size="sm" data-cap-part="retry-save" hidden={state !== "failed"} onClick={() => void saver.current?.retry()}>
+          <button type="button" className="cap-btn" data-size="sm" data-cap-part="retry-save" hidden={state !== "failed"} onClick={() => void saver.retry()}>
             Retry
           </button>
         </div>

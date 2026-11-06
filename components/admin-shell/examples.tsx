@@ -161,6 +161,7 @@ function Transitioning() {
       transition
       prefKey={key("transition")}
       renderLink={({ children, ...rest }) => (
+        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- the link's href comes in rest
         <a
           {...rest}
           onClick={(e) => {
@@ -230,7 +231,9 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   trail: () => <Shell name="trail" nav={nav.map((e) => ({ ...e, current: e.id === "sites" }))} page="fieldnotes.example" trail={[{ label: "Sites", href: "#sites" }]} />,
   account: () => <AccountOpen />,
   reader: () => (
-    <AdminShell {...base} {...reader} prefKey={key("reader")} children={<div className="cap-admin-page" data-measure="reading"><h1>Articles</h1><p>A reading column holds a comfortable line length.</p></div>} />
+    <AdminShell {...base} {...reader} prefKey={key("reader")}>
+      <div className="cap-admin-page" data-measure="reading"><h1>Articles</h1><p>A reading column holds a comfortable line length.</p></div>
+    </AdminShell>
   ),
   user: () => <Shell name="user" {...dashboard} />,
   "user-collapsed": () => <Shell name="user-collapsed" collapsed {...dashboard} />,

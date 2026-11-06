@@ -418,7 +418,10 @@ export function attachBulkBar(bar: HTMLElement): () => void {
     const target = e.target instanceof Element ? e.target : null;
     const button = target?.closest<HTMLElement>("button, [data-cap-bulk-action]");
     if (!button || !bar.contains(button) || button.getAttribute("aria-disabled") === "true") return;
-    if (button.classList.contains("cap-bulk-clear")) return void clearSelection(bar);
+    if (button.classList.contains("cap-bulk-clear")) {
+      clearSelection(bar);
+      return;
+    }
     if (button.dataset.capPart === "dismiss-results") {
       const had = bar.contains(document.activeElement);
       showOutcomes(bar, []);

@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { enhance, renderCompare, renderPatch, setView, VIEWS, type CompareLabels, type CompareSide, type CompareView, type RunSpan } from "./draft-compare.ts";
 
 export interface DraftCompareProps {
@@ -27,12 +27,13 @@ export interface DraftCompareProps {
 export function DraftCompare({ before, after, labels, view, onViewChange, context, runs, similarity, id, heads }: DraftCompareProps) {
   const own = useId().replace(/[^a-zA-Z0-9]/g, "");
   const host = useRef<HTMLDivElement>(null);
-  const first = useRef<CompareView>(view ?? "side");
+  const [first] = useState<CompareView>(view ?? "side");
   const controlled = view !== undefined;
   const key = JSON.stringify([before, after, labels, runs, context, similarity, id, controlled, heads]);
   // The view is not part of the html's identity: the radios hold it, in CSS, so choosing one
   // does not rebuild the page's folds and focus.
-  const html = useMemo(() => renderCompare(before, after, { id: id ?? `compare-${own}`, view: first.current, context, labels, runs, similarity, remember: !controlled, heads }), [key, own]);
+  // oxlint-disable-next-line react/exhaustive-deps -- key holds every input that changes the html; the view is held by the radios
+  const html = useMemo(() => renderCompare(before, after, { id: id ?? `compare-${own}`, view: first, context, labels, runs, similarity, remember: !controlled, heads }), [key, own]);
 
   useEffect(() => {
     const el = host.current;

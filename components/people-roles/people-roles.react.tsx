@@ -76,7 +76,10 @@ function Hidden({ fields }: { fields: Record<string, string> }) {
   );
 }
 
-export function PeopleRoles({ data, action, now = Date.now(), hrefFor = defaultHref, closeHref = "?", onIntent, headingLevel = 2 }: PeopleRolesProps) {
+export function PeopleRoles({ data, action, now: nowProp, hrefFor = defaultHref, closeHref = "?", onIntent, headingLevel = 2 }: PeopleRolesProps) {
+  // The time the page was drawn, when the page does not pass one.
+  const [drawnAt] = useState(() => Date.now());
+  const now = nowProp ?? drawnAt;
   const id = useId().replace(/[^a-zA-Z0-9]/g, "");
   const H = `h${headingLevel}` as "h2" | "h3";
   const Sub = `h${headingLevel + 1}` as "h3" | "h4";
@@ -125,6 +128,7 @@ export function PeopleRoles({ data, action, now = Date.now(), hrefFor = defaultH
 
       {data.review && data.review.people.length ? <Review id={id} Sub={Sub} review={data.review} action={action} /> : null}
 
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
       <div className="cap-table-wrap" role="region" aria-labelledby={`${id}-h`} tabIndex={0}>
         <table className="cap-table cap-people-table">
           <thead>
@@ -375,6 +379,7 @@ function AddForm({ id, Sub, titles, action }: { id: string; Sub: "h3" | "h4"; ti
   const [end, setEnd] = useState(chosen?.defaultEnd ?? "");
   useEffect(() => {
     if (!chosen?.defaultEnd) return;
+    // oxlint-disable-next-line react/set-state-in-effect -- a new title clamps the end date someone typed to its default
     setEnd((v) => (!v || v > (chosen.defaultEnd as string) ? (chosen.defaultEnd as string) : v));
   }, [chosen?.defaultEnd]);
   const expires = !!chosen?.defaultEnd;

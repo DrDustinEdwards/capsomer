@@ -17,6 +17,7 @@ export function RowList({ labelledBy, label, primary = false, gap, children }: R
   useEffect(() => (ref.current ? attachRowList(ref.current) : undefined), []);
   return (
     // role="list" keeps list semantics in Safari, which drops them from a list-style: none list.
+    // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
     <ul ref={ref} className="cap-rows" data-cap="row-list" role="list" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} data-cap-primary={primary ? "" : undefined} data-gap={gap === undefined ? undefined : gap === "default" ? "" : gap}>
       {children}
     </ul>

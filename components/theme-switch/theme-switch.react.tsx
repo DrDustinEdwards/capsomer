@@ -36,6 +36,7 @@ export function ThemeSwitch({ prefKey = THEME_PREF, legend = "Theme", initial }:
 
   useEffect(() => {
     // Remembered, else what the page shows: the system's theme on a first visit.
+    // oxlint-disable-next-line react/set-state-in-effect -- the stored and shown theme are read after mount, so the server and the first client render agree
     setChoice(readTheme(prefKey) ?? effectiveTheme());
     const onTheme = (e: Event) => {
       const c = (e as CustomEvent<{ choice: ThemeChoice }>).detail?.choice;
@@ -121,6 +122,7 @@ export function ThemeButton({ prefKey = THEME_PREF, shortcut, className, initial
   useEffect(() => {
     const t = readTheme(prefKey);
     if (t) applyTheme(t, { key: prefKey, remember: false });
+    // oxlint-disable-next-line react/set-state-in-effect -- the shown theme is read from the page after mount, so the server and the first client render agree
     setShowing(effectiveTheme());
     const onTheme = (e: Event) => setShowing((e as CustomEvent<{ choice: ThemeChoice }>).detail?.choice ?? effectiveTheme());
     const media = window.matchMedia("(prefers-color-scheme: dark)");

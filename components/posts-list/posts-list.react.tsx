@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type FocusEvent, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type FocusEvent, type FormEvent, type KeyboardEvent, useSyncExternalStore } from "react";
 import type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent } from "../content/content.ts";
 import { ContentBulkBar, PlainForm, useIntents, type FormComponent } from "../content/content.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
@@ -12,6 +12,9 @@ import { PageHead } from "../page-head/page-head.react.tsx";
 import { copyText } from "../media/media-actions.ts";
 import { NO_FILTERS, SORTS, STATUS_TABS, authorLine, contentStatus, countLine, emptyWords, filtered, inDays, isoFromLocal, localInputValue, nounsOf, postActions, postsHref, rowActions, rowStatus, trashLine, withFilter, type RowAction } from "./posts-list.ts";
 import type { ConfirmRequest } from "../content/content.ts";
+
+// For useSyncExternalStore's hydration flag: nothing to subscribe to.
+const noSubscribe = () => () => {};
 
 export { contentStatus };
 export type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent };
@@ -54,6 +57,7 @@ function HeadCheck({ checked, mixed, label, onChange }: { checked: boolean; mixe
 // at the time it moves from, since a form with no script cannot add the zone the site needs.
 function RescheduleField({ id, at }: { id: string; at: string }) {
   const [local, setLocal] = useState<string | null>(null);
+  // oxlint-disable-next-line react/set-state-in-effect -- the person's own zone is known only in the browser, after hydration
   useEffect(() => setLocal(localInputValue(at)), [at]);
   if (local === null) {
     return (
@@ -92,7 +96,7 @@ interface Moving {
 
 // The small dialog Reschedule… opens: the time field and Reschedule. Its form posts inside the
 // list (or the update page), so the script path runs it like any other intent.
-function RescheduleDialog({ moving, action, Form, onClose, now }: { moving: Moving | null; action: string; Form: FormComponent; onClose: () => void; now?: number }) {
+function RescheduleDialog({ moving, action, Form, onClose }: { moving: Moving | null; action: string; Form: FormComponent; onClose: () => void }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   return (
     <Dialog open={!!moving} onOpenChange={(open) => (open ? undefined : onClose())} size="sm" described>
@@ -182,7 +186,11 @@ function RenameDialog({ renaming, action, Form, onClose }: { renaming: Renaming 
 function PreviewLinkBox({ link, name, noun, scripted }: { link: { url: string; expiresAt: string } | undefined; name?: string; noun: string; scripted: boolean }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const [copied, setCopied] = useState("");
-  useEffect(() => setCopied(""), [link?.url]);
+  const [copiedFor, setCopiedFor] = useState(link?.url);
+  if (link?.url !== copiedFor) {
+    setCopiedFor(link?.url);
+    setCopied("");
+  }
   return (
     <div className="cap-posts-preview" role="status" aria-label="Preview link">
       {link ? (
@@ -193,7 +201,7 @@ function PreviewLinkBox({ link, name, noun, scripted }: { link: { url: string; e
           <div className="cap-posts-preview-row">
             <input className="cap-input" id={`${uid}-url`} value={link.url} readOnly onFocus={(e) => e.currentTarget.select()} aria-describedby={`${uid}-until`} />
             {scripted ? (
-              <button type="button" className="cap-btn" onClick={async () => setCopied((await copyText(link.url)) ? "Copied." : "Could not copy. Select the address and copy it.")}>
+              <button type="button" className="cap-btn" onClick={() => void copyText(link.url).then((ok) => setCopied(ok ? "Copied." : "Could not copy. Select the address and copy it."))}>
                 Copy
               </button>
             ) : null}
@@ -227,9 +235,11 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const formId = `${uid}-bulk`;
   const { noun, plural } = nounsOf(labels);
   const title = plural.charAt(0).toUpperCase() + plural.slice(1);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const clock = now ?? Date.now();
+  // False on the server and while hydrating, true once hydrated.
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
+  // The time the list was drawn, when the page does not pass one.
+  const [drawnAt] = useState(() => Date.now());
+  const clock = now ?? drawnAt;
 
   const { rows, query, page, offers, can } = data;
   const { bulk, withheld } = postActions(data, labels);
@@ -242,8 +252,12 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const withMenus = rows.some((r) => rowActions(r, data).length > 0);
 
   const [selected, setSelected] = useState<string[]>([]);
-  // A new page or filter keeps only what is still in view.
-  useEffect(() => setSelected((s) => s.filter((id) => names.has(id))), [names]);
+  // A new page or filter keeps only what is still in view, in the same render.
+  const [pickedFrom, setPickedFrom] = useState(names);
+  if (names !== pickedFrom) {
+    setPickedFrom(names);
+    setSelected((s) => s.filter((id) => names.has(id)));
+  }
   const href = (q: typeof query) => postsHref(action, q);
   const intents = useIntents({ action, Form, submit, result, names, cancelHref: href(query), onDone: () => setSelected([]) });
   const [moving, setMoving] = useState<Moving | null>(null);
@@ -308,7 +322,8 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const extraColumns = data.extra?.columns ?? [];
 
   return (
-    <section className="cap-posts" data-cap="posts-list" aria-label={title} ref={(el) => void (intents.rootRef.current = el)} onSubmit={onSubmit} onFocus={onFocus}>
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
+    <section className="cap-posts" data-cap="posts-list" aria-label={title} ref={intents.setRoot} onSubmit={onSubmit} onFocus={onFocus}>
       <TabsNav aria-label={`${title} by status`} className="cap-posts-tabs">
         {STATUS_TABS.map((t) => (
           <TabLink key={t.label} href={href(withFilter(query, { status: t.status, trashed: undefined }))} current={!query.trashed && query.status === t.status} count={count(t.status)}>
@@ -452,6 +467,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         </ul>
       ) : null}
 
+      {/* oxlint-disable-next-line react/refs -- intents holds the root ref for its handlers; rendering reads none of it */}
       {intents.resultBox}
       {offers.previewLinks ? <PreviewLinkBox link={linked} name={linkedId ? names.get(linkedId) : undefined} noun={noun} scripted={mounted} /> : null}
 
@@ -478,6 +494,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
           {words.text}
         </Empty>
       ) : (
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex -- delegates the events of the controls inside it
         <div className="cap-table-wrap cap-posts-wrap" data-reflow="" role="region" aria-labelledby={`${uid}-cap`} tabIndex={0} onKeyDown={onTableKey}>
           <table className="cap-table cap-posts-table">
             <caption id={`${uid}-cap`} className="cap-sr-only">
@@ -584,7 +601,7 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         </nav>
       ) : null}
 
-      <RescheduleDialog moving={moving} action={action} Form={Form} onClose={() => setMoving(null)} now={now} />
+      <RescheduleDialog moving={moving} action={action} Form={Form} onClose={() => setMoving(null)} />
       <RenameDialog renaming={renaming} action={action} Form={Form} onClose={() => setRenaming(null)} />
       {intents.confirmDialog}
     </section>
@@ -621,10 +638,12 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
   const name = data.title || "Untitled";
   const names = useMemo(() => new Map([[data.id, name]]), [data.id, name]);
   const intents = useIntents({ action, Form, submit, result, names, cancelHref: action });
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // False on the server and while hydrating, true once hydrated.
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
   const [moving, setMoving] = useState<Moving | null>(null);
-  const clock = now ?? Date.now();
+  // The time the list was drawn, when the page does not pass one.
+  const [drawnAt] = useState(() => Date.now());
+  const clock = now ?? drawnAt;
   const scripted = mounted && !!submit;
   const Side = headingLevel === "h3" ? "h4" : headingLevel === "h2" ? "h3" : "h2";
   const may = data.can.publish;
@@ -653,7 +672,11 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
     </>
   );
   return (
-    <section className="cap-posts-update-view" data-cap="posts-list" aria-labelledby={`${uid}-h`} ref={(el) => void (intents.rootRef.current = el)} onSubmit={intents.onSubmit}>
+    <section className="cap-posts-update-view" data-cap="posts-list" aria-labelledby={`${uid}-h`}
+      ref={intents.setRoot}
+      // oxlint-disable-next-line react/refs -- intents holds the root ref for its handlers; rendering reads none of it
+      onSubmit={intents.onSubmit}
+    >
       <PageHead
         crumbs={crumbs}
         headingLevel={headingLevel}
@@ -711,7 +734,7 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
         <DraftPatch patch={data.patch} title={`The scheduled update to ${name}`} id={`${uid}-patch`} />
       </details>
 
-      <RescheduleDialog moving={moving} action={action} Form={Form} onClose={() => setMoving(null)} now={now} />
+      <RescheduleDialog moving={moving} action={action} Form={Form} onClose={() => setMoving(null)} />
       {intents.confirmDialog}
     </section>
   );

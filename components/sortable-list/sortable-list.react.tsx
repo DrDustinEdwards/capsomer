@@ -58,7 +58,9 @@ export function SortableList<T>({ items, getId, getLabel, renderItem, onReorder,
   const itemEls = useRef(new Map<string, HTMLElement>());
   const wantFocus = useRef<{ id: string; part: "handle" | "up" | "down" } | null>(null);
   const live = useRef<string[]>(order);
-  live.current = order;
+  useLayoutEffect(() => {
+    live.current = order;
+  });
 
   // React may move the focused element when it reorders: put focus back where it was.
   useLayoutEffect(() => {
@@ -165,6 +167,7 @@ export function SortableList<T>({ items, getId, getLabel, renderItem, onReorder,
 
   return (
     <>
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it */}
       <ol
         {...label}
         className={className ? `cap-sortable ${className}` : "cap-sortable"}

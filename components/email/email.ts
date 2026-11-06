@@ -91,7 +91,7 @@ const crlf = (value: string): string => value.replace(/\r\n?/g, "\n");
  * a token in the address is never rewritten.
  */
 export function checkUrl(url: string): string {
-  if (/[\u0000- \u007f-\u009f"<>\\^`{|}]/.test(url)) throw new Error("email: a link may not hold a space, a control character or any of \" < > \\ ^ ` { | }");
+  if (/[\p{Cc} "<>\\^`{|}]/u.test(url)) throw new Error("email: a link may not hold a space, a control character or any of \" < > \\ ^ ` { | }");
   let parsed: URL;
   try {
     parsed = new URL(url);

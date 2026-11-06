@@ -132,9 +132,13 @@ export function DialogHeader({ className, divider, ...rest }: HTMLAttributes<HTM
   return <div {...rest} className={className ? `cap-dialog-header ${className}` : "cap-dialog-header"} data-divider={divider ? "" : undefined} />;
 }
 
-export function DialogTitle({ className, ...rest }: HTMLAttributes<HTMLHeadingElement>) {
+export function DialogTitle({ className, children, ...rest }: HTMLAttributes<HTMLHeadingElement>) {
   const ids = useContext(Ctx);
-  return <h2 id={ids?.title} {...rest} className={className ? `cap-dialog-title ${className}` : "cap-dialog-title"} />;
+  return (
+    <h2 id={ids?.title} {...rest} className={className ? `cap-dialog-title ${className}` : "cap-dialog-title"}>
+      {children}
+    </h2>
+  );
 }
 
 export function DialogDescription({ className, ...rest }: HTMLAttributes<HTMLParagraphElement>) {

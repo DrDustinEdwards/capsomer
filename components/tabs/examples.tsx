@@ -6,7 +6,7 @@ import { TabLink, TabsNav, type RenderTabLink } from "./tabs.react.tsx";
 
 // A stand-in for a router's link: it keeps the tab's class and aria-current it is given, and
 // navigates without a page load (a click is handed to the router, which says where it went).
-function RouterLink({ to, onNavigate, ...rest }: ComponentProps<"a"> & { to: string; onNavigate: (to: string) => void }) {
+function RouterLink({ to, onNavigate, children, ...rest }: ComponentProps<"a"> & { to: string; onNavigate: (to: string) => void }) {
   return (
     <a
       {...rest}
@@ -17,7 +17,9 @@ function RouterLink({ to, onNavigate, ...rest }: ComponentProps<"a"> & { to: str
         e.preventDefault();
         onNavigate(to);
       }}
-    />
+    >
+      {children}
+    </a>
   );
 }
 

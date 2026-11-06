@@ -37,7 +37,6 @@ import { ELEVATION_ORDER, FAMILIES, FAMILY_ORDER, apart, contrast, failures, ren
 // command line, the files it owns and the checks, and re-exports the rest.
 export * from "./palette-core.mjs";
 
-const OUT = fileURLToPath(new URL("./color.css", import.meta.url));
 const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
 const hexArg = (name) => {
   const v = arg(name);

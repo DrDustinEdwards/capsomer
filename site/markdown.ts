@@ -17,7 +17,7 @@ function inline(s: string): string {
   const codes: string[] = [];
   let out = escape(s).replace(/`([^`]+)`/g, (_, c: string) => {
     codes.push(`<code>${c}</code>`);
-    return `\u0000${codes.length - 1}\u0000`;
+    return `\uE000${codes.length - 1}\uE000`;
   });
   out = out
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
@@ -28,7 +28,7 @@ function inline(s: string): string {
       if (/^https?:/.test(safe)) return `<a href="${safe}" data-link="away" rel="external">${text}<span class="cap-sr-only"> (opens another site)</span></a>`;
       return `<a href="${safe}">${text}</a>`;
     });
-  return out.replace(/\u0000(\d+)\u0000/g, (_, i: string) => codes[Number(i)] ?? "");
+  return out.replace(/\uE000(\d+)\uE000/g, (_, i: string) => codes[Number(i)] ?? "");
 }
 
 const cells = (row: string) =>
@@ -45,11 +45,11 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
   let i = 0;
   while (i < lines.length) {
     const line = lines[i] ?? "";
-    if (/^```/.test(line)) {
+    if (line.startsWith("```")) {
       const lang = line.slice(3).trim();
       const body: string[] = [];
       i++;
-      while (i < lines.length && !/^```/.test(lines[i] ?? "")) body.push(lines[i++] ?? "");
+      while (i < lines.length && !(lines[i] ?? "").startsWith("```")) body.push(lines[i++] ?? "");
       i++;
       out.push(`<pre class="site-code" ${codeRegion(lang || "example")}><code>${escape(body.join("\n"))}</code></pre>`);
       continue;
@@ -63,11 +63,11 @@ export function renderMarkdown(src: string, headingOffset = 1): string {
       i++;
       continue;
     }
-    if (/^\|/.test(line) && /^\|?\s*:?-{3,}/.test(lines[i + 1] ?? "")) {
+    if (line.startsWith("|") && /^\|?\s*:?-{3,}/.test(lines[i + 1] ?? "")) {
       const head = cells(line);
       i += 2;
       const rows: string[][] = [];
-      while (i < lines.length && /^\|/.test(lines[i] ?? "")) rows.push(cells(lines[i++] ?? ""));
+      while (i < lines.length && (lines[i] ?? "").startsWith("|")) rows.push(cells(lines[i++] ?? ""));
       out.push(
         `<div class="cap-table-wrap" role="region" tabindex="0" aria-label="Table"><table class="cap-table"><thead><tr>${head.map((c) => `<th scope="col">${inline(c)}</th>`).join("")}</tr></thead><tbody>${rows
           .map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`)

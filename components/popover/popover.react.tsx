@@ -73,9 +73,13 @@ export function PopoverHeader({ className, ...props }: ComponentProps<"div">) {
 }
 
 // Names the dialog: PopoverContent points aria-labelledby at it.
-export function PopoverTitle({ className, ...props }: ComponentProps<"h2">) {
+export function PopoverTitle({ className, children, ...props }: ComponentProps<"h2">) {
   const { id } = useContext(Ctx);
-  return <h2 className={className ? `cap-popover-title ${className}` : "cap-popover-title"} id={`${id}-title`} {...props} />;
+  return (
+    <h2 className={className ? `cap-popover-title ${className}` : "cap-popover-title"} id={`${id}-title`} {...props}>
+      {children}
+    </h2>
+  );
 }
 
 export function PopoverDescription({ className, ...props }: ComponentProps<"p">) {

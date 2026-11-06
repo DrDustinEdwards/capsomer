@@ -1,6 +1,9 @@
-import { cloneElement, useEffect, useId, useRef, useState, type InputHTMLAttributes, type KeyboardEvent, type ReactElement, type ReactNode, type TextareaHTMLAttributes } from "react";
+import { cloneElement, useEffect, useId, useRef, useState, type InputHTMLAttributes, type KeyboardEvent, type ReactElement, type ReactNode, type TextareaHTMLAttributes, useSyncExternalStore } from "react";
 import { useOptionalMessage } from "../message/message.react.tsx";
 import { countText, keyValue, revealedText, stepValue } from "./field.ts";
+
+// For useSyncExternalStore's hydration flag: nothing to subscribe to.
+const noSubscribe = () => () => {};
 
 // The props Field passes to its control. Any input, textarea or select (or a component
 // that forwards these to one) will do.
@@ -108,6 +111,7 @@ export function InputGroup(props: { label?: string; children?: ReactNode }) {
 
 export function InputGroupAddon(props: { align?: "inline-start" | "inline-end" | "block-start" | "block-end"; children?: ReactNode }) {
   return (
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- a click on the addon focuses its input; the input takes the keyboard itself
     <div
       className="cap-input-addon"
       data-align={props.align ?? "inline-start"}
@@ -127,9 +131,7 @@ type FieldText = Pick<FieldProps, "label" | "help" | "error" | "announce" | "req
 // False on the server and in the first render, so a button that needs script is `hidden` in
 // the HTML a page with no script shows, as in the markup on the doc page.
 function useMounted(): boolean {
-  const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
-  return ready;
+  return useSyncExternalStore(noSubscribe, () => true, () => false);
 }
 
 // A password with Show and Hide (GOV.UK Password input). The change is said in the status

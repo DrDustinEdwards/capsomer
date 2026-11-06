@@ -527,7 +527,7 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
   listen(file, "change", () => {
     const f = file.files?.[0];
     file.value = "";
-    if (f) void startUpload(f);
+    if (f) startUpload(f);
   });
 
   // ---- sync with the textarea and the page ------------------------------------------------
@@ -601,7 +601,7 @@ export async function mountMarkdownEditor(host: HTMLElement, options: MarkdownEd
     onCaret: syncSlash,
     onFile: (f) => {
       if (!o.onUpload) return false;
-      void startUpload(f);
+      startUpload(f);
       return true;
     },
     onKey(name) {

@@ -173,6 +173,7 @@ export function Catalog<T>({ definition: def, result, title, cells, labelledBy, 
                 </Empty>
               )
             ) : (
+              // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
               <div className="cap-table-wrap" data-cap="table" data-reflow="" role="region" aria-labelledby={labelledBy} tabIndex={0}>
                 <table className="cap-table">
                   <thead>

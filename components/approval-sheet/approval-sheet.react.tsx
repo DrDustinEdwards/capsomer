@@ -42,6 +42,7 @@ export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each co
     setComments({});
     setError(null);
     setPending(false);
+    // oxlint-disable-next-line react/exhaustive-deps -- a sheet starts fresh when it opens, not when the gates change while it is open
   }, [open]);
 
   const chosen: GateChoice[] = gates.filter((g) => checked[g.id] ?? g.include ?? true).map((g) => ({ id: g.id, comment: (comments[g.id] ?? "").trim() }));
@@ -70,7 +71,7 @@ export function ApprovalSheet({ open, gates, onApprove, onClose, lead = "Each co
   // return of focus, Esc and Cancel being held while busy, and the locked backdrop.
   return (
     <Dialog ref={ref} className="cap-approval" size="lg" open={open} onOpenChange={(o) => !o && onClose()} modalLock destructive busy={pending} closeButton={false} described>
-      <form className="cap-approval-form" onSubmit={submit}>
+      <form className="cap-approval-form" onSubmit={(e) => void submit(e)}>
         <DialogHeader>
           <DialogTitle>{titleText(gates.length)}</DialogTitle>
           <DialogDescription>{lead}</DialogDescription>

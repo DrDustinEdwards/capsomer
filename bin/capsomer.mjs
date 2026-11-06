@@ -15,6 +15,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { stripVTControlCharacters } from "node:util";
 import { gzipSync } from "node:zlib";
 import { frontmatter } from "@drdustinedwards/site-helpers/frontmatter";
 
@@ -145,7 +146,10 @@ function a11yFrom(reportPath) {
   const visit = (s) => {
     for (const spec of s.specs ?? []) {
       if (!/accessib|axe|contrast/i.test(spec.title)) continue;
-      for (const t of spec.tests ?? []) (t.status === "expected" || t.status === "flaky" ? passed++ : t.status === "skipped" ? 0 : failed++);
+      for (const t of spec.tests ?? []) {
+        if (t.status === "expected" || t.status === "flaky") passed++;
+        else if (t.status !== "skipped") failed++;
+      }
     }
     for (const c of s.suites ?? []) visit(c);
   };
@@ -352,7 +356,7 @@ async function siteData() {
         const kind = /^(keyboard|accessibility|behavior):/.exec(spec.title)?.[1] ?? "behavior";
         for (const t of spec.tests ?? []) {
           const status = t.status === "expected" || t.status === "flaky" ? "passed" : t.status === "skipped" ? "skipped" : "failed";
-          const err = t.results?.at(-1)?.error?.message?.replace(/\u001b\[[0-9;]*m/g, "").split("\n").slice(0, 6).join("\n") ?? null;
+          const err = (t.results?.at(-1)?.error?.message ? stripVTControlCharacters(t.results.at(-1).error.message) : undefined)?.split("\n").slice(0, 6).join("\n") ?? null;
           const entry = (results.components[comp] ??= { keyboard: { passed: 0, failed: 0 }, accessibility: { passed: 0, failed: 0 }, behavior: { passed: 0, failed: 0 }, tests: [] });
           if (status !== "skipped") entry[kind][status]++;
           results.totals[status]++;
@@ -397,7 +401,7 @@ function weight(root) {
       const file = resolve(dist, ref.replace(/^\//, ""));
       if (!existsSync(file)) continue;
       const n = gz(readFileSync(file));
-      if (/\.css$/.test(file)) css += n;
+      if (file.endsWith(".css")) css += n;
       else if (/\.m?js$/.test(file)) js += n;
       else continue;
       files.push(relative(dist, file).replace(/\\/g, "/"));

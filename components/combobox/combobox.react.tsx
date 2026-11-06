@@ -1,5 +1,5 @@
 import { Combobox as Base } from "@base-ui/react/combobox";
-import { Fragment, useEffect, useId, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
+import { Fragment, useEffect, useId, useMemo, useRef, useState, type ReactNode, type RefObject, useLayoutEffect } from "react";
 
 export interface ComboboxOption {
   value: string;
@@ -199,7 +199,9 @@ export function Combobox(props: ComboboxProps) {
   // The input's text is held here so that unlisted text never outlives the open list.
   const [query, setQuery] = useState<string>(defaultInputValue ?? selected?.label ?? "");
   const chosen = useRef<ComboboxOption | null>(selected);
-  chosen.current = selected;
+  useLayoutEffect(() => {
+    chosen.current = selected;
+  });
   const open = useRef<boolean>(defaultOpen ?? false);
 
   // Items that arrive after the value (loading, then loaded) bring the chosen label with

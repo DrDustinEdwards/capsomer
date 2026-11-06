@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode, useLayoutEffect } from "react";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { fail as plainFail, say as plainSay, type SayOptions } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
@@ -201,7 +201,12 @@ export function Flag({ flag, anchor, owner, ownerName, idPrefix, onResolve, onDi
 export function FlagList({ label, flags: given, onFlagsChange, text, onTextChange, owner = false, ownerName, viewer, say = plainSay, fail = plainFail, filter: initial = "open", primary = false }: FlagListProps) {
   const uid = useId();
   const [flags, setFlags] = useState(given);
-  useEffect(() => setFlags(given), [given]);
+  // A new list from the page replaces the one held here, in the same render.
+  const [prevGiven, setPrevGiven] = useState(given);
+  if (given !== prevGiven) {
+    setPrevGiven(given);
+    setFlags(given);
+  }
   const [filter, setFilter] = useState<FilterValue>(initial);
   const live = useRef<HTMLDivElement>(null);
   const root = useRef<HTMLElement>(null);
@@ -232,12 +237,15 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
     onFlagsChange?.(next);
   };
   const patch = (list: FlagData[], id: string, to: Partial<FlagData>): FlagData[] => list.map((f) => (f.id === id ? { ...f, ...to } : f));
+  // oxlint-disable-next-line react/purity -- called from the resolve handlers only, never while rendering
   const close = (f: FlagData, resolution: Resolution): Partial<FlagData> => ({ state: "resolved", resolution, resolvedBy: viewer, resolvedAt: new Date().toISOString() });
   const reopened: Partial<FlagData> = { state: "open", resolution: undefined, resolvedBy: undefined, resolvedAt: undefined };
 
   // The list as it will be, held in a ref, so an Undo that runs later acts on the current one.
   const latest = useRef(flags);
-  latest.current = flags;
+  useLayoutEffect(() => {
+    latest.current = flags;
+  });
   const set = (next: FlagData[]) => {
     latest.current = next;
     commit(next);
@@ -331,6 +339,7 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
             {open} open, {list.length - open} resolved
           </span>
         </div>
+        {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
         <ul className="cap-flag-group-rows" role="list" aria-labelledby={hid}>
           {list.map((f) => (
             <Flag
@@ -387,6 +396,7 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
           </p>
         </div>
       </header>
+      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul ref={rows} className="cap-rows cap-flags-list" data-cap="row-list" role="list" aria-labelledby={headingId} data-cap-primary={primary ? "" : undefined}>
         {group("blocking", "Blocking", groups.blocking)}
         {group("advisory", "Advisory", groups.advisory)}

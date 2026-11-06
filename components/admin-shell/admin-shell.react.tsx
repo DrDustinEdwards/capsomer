@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useId, useRef, type ComponentPropsWithRef, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useRef, type ComponentPropsWithRef, type ReactNode, useLayoutEffect } from "react";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 import { Time } from "../time/time.react.tsx";
 import { DEFAULT_PREF } from "../shell/shell.ts";
@@ -277,7 +277,9 @@ export function AdminShell(props: AdminShellProps) {
 
   // G then a number jumps between apps (Esc hiding a shown name is the tooltip's own).
   const appsRef = useRef(apps);
-  appsRef.current = apps;
+  useLayoutEffect(() => {
+    appsRef.current = apps;
+  });
   useEffect(() => {
     if (!owner) return;
     const armed = { at: 0 };

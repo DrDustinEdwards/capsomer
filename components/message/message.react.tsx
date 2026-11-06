@@ -22,7 +22,7 @@ interface Settle {
 
 interface Ctx extends MessageApi {
   messages: Message[];
-  runUndo: (id?: number) => void;
+  runUndo: (id?: number) => Promise<void>;
   dismissOne: (id: number) => void;
   regionRef: RefObject<HTMLDivElement | null>;
 }
@@ -67,6 +67,7 @@ export function MessageProvider({ children, region = true, undoKey = true }: Mes
         id,
         window.setTimeout(() => {
           timers.current.delete(id);
+          // oxlint-disable-next-line react/immutability -- the timer calls commit long after it is defined
           commit(
             live.current.filter((x) => x.id !== id),
             { origin: true },

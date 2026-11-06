@@ -70,6 +70,7 @@ export function AttentionList(props: AttentionListProps) {
       <Fragment key={`group-${g.key}`}>
         <Row status={<Status tone={g.tone}>{TONE_WORD[g.tone]}</Status>} title={g.label} onOpen={() => toggle(`group-${g.key}`)} expanded={isOpen} controls={rid} detail={g.detail} meta={whenOf(g.when)} />
         <li className="cap-attention-region" id={rid} hidden={!isOpen}>
+          {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
           <ul role="list" aria-label={g.label}>
             {g.items.map((item) => (
               <Row key={item.id} className="cap-attention-child" title={item.title} href={item.href} detail={item.detail} meta={whenOf(item.when)} renderLink={renderLink} />
@@ -118,6 +119,7 @@ export function AttentionList(props: AttentionListProps) {
                 </button>
               </li>
               <li className="cap-attention-region" id={regionId("more")} hidden={!moreOpen}>
+                {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
                 <ul role="list" aria-label="More warnings">
                   {arranged.more.map(entry)}
                 </ul>
@@ -136,6 +138,7 @@ export function AttentionList(props: AttentionListProps) {
                 detail={noticesDetail}
               />
               <li className="cap-attention-region" id={regionId("notices")} hidden={!noticesOpen}>
+                {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
                 <ul role="list" aria-label="Notices">
                   {arranged.notices.map((item) => (
                     <Row key={item.id} className="cap-attention-child" title={item.title} href={item.href} detail={[TONE_WORD[item.tone], item.detail].filter(Boolean).join(" · ")} meta={whenOf(item.when)} renderLink={renderLink} />

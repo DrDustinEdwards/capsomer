@@ -61,7 +61,7 @@ eachTheme((theme) => {
     await expect(page.getByRole("link", { name: "Pricing" })).toHaveAttribute("aria-current", "page");
     const row = await rowOrder(page);
     expect(row.map((r) => r.name)).toEqual(["Foxhound", "Products", "Pricing", "Demos", "Features", "Docs", "Blog", "Free audit", themeName, "Sign in"]);
-    expect(row.map((r) => r.x)).toEqual([...row.map((r) => r.x)].sort((a, b) => a - b));
+    expect(row.map((r) => r.x)).toEqual(row.map((r) => r.x).sort((a, b) => a - b));
   });
 
   test("accessibility: signed in, the extras then the theme, and the avatar last", { tag: "@markup" }, async ({ page }) => {
@@ -89,7 +89,7 @@ eachTheme((theme) => {
     `);
     const row = await rowOrder(page);
     expect(row.at(-1)?.name).toBe("Your account");
-    expect(row.map((r) => r.x)).toEqual([...row.map((r) => r.x)].sort((a, b) => a - b));
+    expect(row.map((r) => r.x)).toEqual(row.map((r) => r.x).sort((a, b) => a - b));
     await expect(page.getByRole("link", { name: "Notifications, 3 new" }).locator(".cap-site-header-badge")).toHaveText("3");
   });
 
@@ -341,7 +341,7 @@ eachTheme((theme) => {
     await visitStates(page, "site-header", theme, "fx-reader-phone");
     row = await rowOrder(page);
     expect(row.map((r) => r.name)).toEqual(["Foxing", "Search", "Notifications, 3 new", themeName, "Your account", "Menu"]);
-    expect(row.map((r) => r.x)).toEqual([...row.map((r) => r.x)].sort((a, b) => a - b));
+    expect(row.map((r) => r.x)).toEqual(row.map((r) => r.x).sort((a, b) => a - b));
     // Every control is in the one row, inside the window.
     const boxes = await page.locator(".cap-site-header-tools > *:visible").evaluateAll((els) => els.map((e) => e.getBoundingClientRect()).map((r) => ({ top: r.top, bottom: r.bottom, right: r.right })));
     for (const b of boxes) {

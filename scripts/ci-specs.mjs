@@ -117,8 +117,18 @@ function pick(changed) {
     // followed on, since it renders what that one renders. A writer's own writers are not.
     const { importers, writers } = users();
     const queue = [...touched];
-    for (const x of touched) for (const y of writers.get(x)) if (!all.has(y)) all.add(y), queue.push(y);
-    while (queue.length) for (const y of importers.get(queue.shift())) if (!all.has(y)) all.add(y), queue.push(y);
+    for (const x of touched)
+      for (const y of writers.get(x))
+        if (!all.has(y)) {
+          all.add(y);
+          queue.push(y);
+        }
+    while (queue.length)
+      for (const y of importers.get(queue.shift()))
+        if (!all.has(y)) {
+          all.add(y);
+          queue.push(y);
+        }
   }
   const names = [...all].sort();
   const specs = names.flatMap((n) => readdirSync(join("components", n)).filter((f) => f.endsWith(".spec.ts")).map((f) => `components/${n}/${f}`));

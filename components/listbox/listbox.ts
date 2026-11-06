@@ -114,7 +114,7 @@ export function nextTypeahead(
   const buffer = (now - state.at > timeout ? "" : state.buffer) + key.toLowerCase();
   const next = { buffer, at: now };
   const n = labels.length;
-  const cycle = buffer.length === 1 || [...buffer].every((c) => c === buffer[0]);
+  const cycle = buffer.length === 1 || buffer === (buffer[0] ?? "").repeat(buffer.length);
   const needle = cycle ? (buffer[0] ?? "") : buffer;
   const from = cycle ? current + 1 : Math.max(current, 0);
   for (let k = 0; k < n; k++) {

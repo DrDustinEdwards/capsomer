@@ -31,7 +31,7 @@ const GLYPHS: Record<string, string> = {
 };
 
 // The status component's glyph, the same drawing (components/status).
-export function glyph(name: keyof typeof GLYPHS | string): SVGSVGElement {
+export function glyph(name: keyof typeof GLYPHS | (string & {})): SVGSVGElement {
   const svg = document.createElementNS(SVG, "svg");
   svg.setAttribute("class", "cap-status-glyph");
   svg.setAttribute("viewBox", "0 0 16 16");
@@ -342,7 +342,10 @@ export function attachFlagList(root: HTMLElement, io?: FlagTextIO): FlagListHand
     const visible = (e: HTMLElement) => e.getClientRects().length > 0;
     const first = (row: HTMLElement) => [...row.querySelectorAll<HTMLElement>(".cap-row-actions button"), ...row.querySelectorAll<HTMLElement>(".cap-row-title a")].find(visible);
     const target = first(li) ?? (heir ? first(heir) : undefined);
-    if (target) return void target.focus();
+    if (target) {
+      target.focus();
+      return;
+    }
     (part(root, "filter")?.querySelector<HTMLElement>("input:checked") ?? root).focus();
   };
 

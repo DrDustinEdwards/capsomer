@@ -40,6 +40,7 @@ export function Segmented<V extends string>({ legend, hideLegend = false, option
       <div className="cap-seg-options" data-size={size === "default" ? undefined : size} data-orientation={orientation === "vertical" ? "vertical" : undefined} data-fill={fill ? "" : undefined} data-layout={layout === "cards" ? "cards" : undefined}>
         {options.map((o) => (
           <label key={o.value} data-tone={o.tone}>
+            {/* oxlint-disable-next-line jsx-a11y/role-supports-aria-props -- the group has no element of its own, so each radio carries the invalid state */}
             <input type="radio" name={name ?? own} value={o.value} checked={value === o.value} disabled={o.disabled} aria-invalid={invalid || undefined} onChange={() => onChange(o.value)} /> {o.label}
           </label>
         ))}

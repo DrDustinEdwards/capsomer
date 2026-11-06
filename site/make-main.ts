@@ -471,8 +471,12 @@ const clip = async (text: string, done: string) => {
     say("Copy failed. Select the text and copy it yourself.");
   }
 };
-part("copy")?.addEventListener("click", () => current && clip(fileTab() === "json" ? json(current) : css(current), fileTab() === "json" ? "Tokens copied" : "CSS copied"));
-part("share")?.addEventListener("click", () => current && clip(shareUrl(current.s), "Link copied"));
+part("copy")?.addEventListener("click", () => {
+  if (current) void clip(fileTab() === "json" ? json(current) : css(current), fileTab() === "json" ? "Tokens copied" : "CSS copied");
+});
+part("share")?.addEventListener("click", () => {
+  if (current) void clip(shareUrl(current.s), "Link copied");
+});
 const download = part("download");
 download?.addEventListener("click", () => {
   if (!current) return;

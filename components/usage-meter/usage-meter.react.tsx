@@ -1,5 +1,5 @@
 import { dataTableBlock } from "enarratio";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Meter } from "../meter/meter.react.tsx";
 import { Glyph } from "../status/status.react.tsx";
 import { assess, type UsageAssessment, usageTable } from "./usage-meter.ts";
@@ -59,7 +59,10 @@ function UsageRow({ item, a, stale }: { item: UsageItem; a: UsageAssessment; sta
   );
 }
 
-export function UsageMeter({ items, now = Date.now(), freshness, stale = false, legend = true, tableLabel = "Usage against free limits" }: UsageMeterProps) {
+export function UsageMeter({ items, now: nowProp, freshness, stale = false, legend = true, tableLabel = "Usage against free limits" }: UsageMeterProps) {
+  // The time the meter was drawn, when the page does not pass one.
+  const [drawnAt] = useState(() => Date.now());
+  const now = nowProp ?? drawnAt;
   return (
     <div className="cap-usage" data-cap="usage-meter" data-cap-ready="">
       {freshness != null && (

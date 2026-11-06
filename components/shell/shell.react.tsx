@@ -89,6 +89,7 @@ export function groups<E extends { group?: string }>(nav: E[]): Array<{ label?: 
 // The rail's collapsed state: the prop when the app controls it, else the stored preference.
 export function useCollapsedPref(prefKey: string, controlled: boolean | undefined, onChange: ((next: boolean) => void) | undefined): [boolean, (next: boolean) => void] {
   const [own, setOwn] = useState(false);
+  // oxlint-disable-next-line react/set-state-in-effect -- the stored preference is read after mount, so the server and the first client render agree
   useEffect(() => setOwn(readPref(prefKey) === "collapsed"), [prefKey]);
   const setCollapsed = useCallback(
     (next: boolean) => {
@@ -224,6 +225,7 @@ export function Shell(props: ShellProps) {
           <DialogBody>
             <nav aria-labelledby="cap-more-title">
               <ul className="cap-shell-more-list">
+                {/* oxlint-disable-next-line react/refs -- closeMore reads moreButton only when a link is clicked, never while rendering */}
                 {more.map((e) => (
                   <li key={e.id}>
                     {renderLink({

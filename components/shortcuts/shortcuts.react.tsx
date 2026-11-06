@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useId, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useId, useRef, useState, useLayoutEffect } from "react";
 import { Dialog, DialogBody, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
 import { SINGLE_KEYS_NOTE, capName, grouped, keyCaps, modifiedShortcutFor, register, setSheetOpener, setSingleKeys, singleKeysOn, type Shortcut } from "./shortcuts.ts";
 
@@ -6,9 +6,13 @@ import { SINGLE_KEYS_NOTE, capName, grouped, keyCaps, modifiedShortcutFor, regis
 // called, so passing a new function each render does not re-register.
 export function useShortcut(key: string | string[], run: (e: KeyboardEvent) => void, opts: { label?: string; about?: string; group?: string; when?: () => boolean } = {}): void {
   const latest = useRef(run);
-  latest.current = run;
+  useLayoutEffect(() => {
+    latest.current = run;
+  });
   const when = useRef(opts.when);
-  when.current = opts.when;
+  useLayoutEffect(() => {
+    when.current = opts.when;
+  });
   const keyId = Array.isArray(key) ? key.join("|") : key;
   useEffect(() => {
     const s: Shortcut = {
@@ -21,6 +25,7 @@ export function useShortcut(key: string | string[], run: (e: KeyboardEvent) => v
     };
     return register(s);
     // The key, label and group identify the registration; run and when are read live.
+    // oxlint-disable-next-line react/exhaustive-deps -- keyId stands for the key, so a new array with the same keys does not re-register
   }, [keyId, opts.label, opts.about, opts.group]);
 }
 
@@ -83,6 +88,7 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
   }, []);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- the registry is read when the sheet opens; shortcuts register in effects
     if (open) setGroups(grouped());
   }, [open]);
 
@@ -137,6 +143,7 @@ export function ShortcutSheet({ open, onOpenChange }: ShortcutSheetProps) {
       <DialogFooter align="start">
         <div className="cap-keys-foot">
           <label className="cap-switch">
+            {/* oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked */}
             <input type="checkbox" role="switch" data-cap-part="single-keys" aria-describedby={`${id}-note`} checked={single} onChange={(e) => setSingleKeys(e.target.checked)} />
             <span>Single-key shortcuts</span>
             <span className="cap-switch-state" aria-hidden="true">
