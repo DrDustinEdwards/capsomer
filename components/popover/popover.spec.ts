@@ -108,6 +108,26 @@ eachTheme((theme) => {
     await expect(tip).toBeHidden();
   });
 
+  test("keyboard: a tooltip removed while open does not swallow the next Esc", async ({ page }) => {
+    // Removal hides a popover without a toggle event, so the module used to keep the tip as open
+    // and eat the Esc a dialog around it needed.
+    await visitStates(page, "popover", theme);
+    const retry = page.getByRole("button", { name: "Retry job" });
+    await retry.focus();
+    await page.keyboard.press("Shift+Tab");
+    await page.keyboard.press("Tab");
+    await expect(page.locator("#tip-retry")).toBeVisible();
+    await page.evaluate(() => {
+      document.querySelector("#tip-retry")?.remove();
+      (window as unknown as { esc: boolean | null }).esc = null;
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") (window as unknown as { esc: boolean | null }).esc = e.defaultPrevented;
+      });
+    });
+    await page.keyboard.press("Escape");
+    expect(await page.evaluate(() => (window as unknown as { esc: boolean | null }).esc)).toBe(false);
+  });
+
   test("behavior: clicking outside closes the popover (light dismiss)", async ({ page }) => {
     await visitStates(page, "popover", theme);
     await page.getByRole("button", { name: "Dimensions" }).click();

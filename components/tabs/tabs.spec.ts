@@ -192,6 +192,14 @@ eachTheme((theme) => {
     await page.evaluate(() => (location.hash = "#thp-start"));
     await expect(page.locator("#th-start")).toHaveAttribute("aria-selected", "true");
     await expect(page.locator("#thp-start")).toBeVisible();
+    // A malformed fragment (#%) once threw during setup and left every later tab set dead.
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(`${page.url().split("#")[0]}#%`);
+    await page.reload();
+    await page.locator("#th-keys").click();
+    await expect(page.locator("#thp-keys")).toBeVisible();
+    expect(errors).toEqual([]);
   });
 
   test("behavior: the delivered HTML holds every panel, the inactive ones hidden", async ({ page }) => {
