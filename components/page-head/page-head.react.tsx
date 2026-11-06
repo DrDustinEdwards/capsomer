@@ -1,5 +1,9 @@
 import type { ReactNode } from "react";
-import { Breadcrumb, type BreadcrumbItem, type BreadcrumbProps } from "../breadcrumb/breadcrumb.react.tsx";
+import {
+  Breadcrumb,
+  type BreadcrumbItem,
+  type BreadcrumbProps,
+} from "../breadcrumb/breadcrumb.react.tsx";
 
 export interface PageHeadProps {
   // Levels above this page, first to current. Fewer than two levels draws no trail (a hub).
@@ -18,7 +22,14 @@ export interface PageHeadProps {
 }
 
 // The HTML contract in page-head.md.
-export function PageHead({ crumbs, renderLink, title, lead, actions, headingLevel: H = "h1" }: PageHeadProps) {
+export function PageHead({
+  crumbs,
+  renderLink,
+  title,
+  lead,
+  actions,
+  headingLevel: H = "h1",
+}: PageHeadProps) {
   return (
     <header className="cap-page-head">
       <div className="cap-page-head-text">

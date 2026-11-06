@@ -24,18 +24,28 @@ const examples = await generateStates(root);
 // site/component.html naming its component, filled from site/home.ts below.
 const data = readData(root, examples);
 const template = readFileSync(resolve(root, "site/component.html"), "utf8");
-for (const c of data.components) writeFileSync(resolve(root, "components", c.name, "index.html"), template.replace("<!--component-->", `<!--component:${c.name}-->`));
+for (const c of data.components)
+  writeFileSync(
+    resolve(root, "components", c.name, "index.html"),
+    template.replace("<!--component-->", `<!--component:${c.name}-->`),
+  );
 // The accessibility statement, /accessibility/, is written the same way: site/search.html's head
 // with the home page's script, its body filled from site/accessibility.ts below.
 writeFileSync(
   resolve(root, "site/accessibility.html"),
-  readFileSync(resolve(root, "site/search.html"), "utf8").replace("./search-main.ts", "./home-main.ts").replace("<!--search-->", "<!--accessibility-->"),
+  readFileSync(resolve(root, "site/search.html"), "utf8")
+    .replace("./search-main.ts", "./home-main.ts")
+    .replace("<!--search-->", "<!--accessibility-->"),
 );
-const pages = Object.fromEntries(data.components.map((c) => [`page-${c.name}`, resolve(root, "components", c.name, "index.html")]));
+const pages = Object.fromEntries(
+  data.components.map((c) => [`page-${c.name}`, resolve(root, "components", c.name, "index.html")]),
+);
 const outDir = resolve(root, "site-dist");
 const states = Object.fromEntries(
   readdirSync(resolve(root, "components"), { withFileTypes: true })
-    .filter((d) => d.isDirectory() && existsSync(resolve(root, "components", d.name, "states.html")))
+    .filter(
+      (d) => d.isDirectory() && existsSync(resolve(root, "components", d.name, "states.html")),
+    )
     .map((d) => [`states-${d.name}`, resolve(root, "components", d.name, "states.html")]),
 );
 
@@ -50,11 +60,16 @@ export default defineConfig({
     {
       name: "capsomer-site-pages",
       transformIndexHtml(html, ctx) {
-        if (ctx.path.endsWith("/site/home.html")) return html.replace("<!--home-->", renderHome(data));
+        if (ctx.path.endsWith("/site/home.html"))
+          return html.replace("<!--home-->", renderHome(data));
         if (ctx.path.endsWith("/site/make.html")) return html.replace("<!--make-->", renderMake());
-        if (ctx.path.endsWith("/site/search.html")) return html.replace("<!--search-->", renderSearch(data));
-        if (ctx.path.endsWith("/site/accessibility.html")) return html.replace("<!--accessibility-->", renderAccessibility(data.version));
-        return html.replace(/<!--component:([\w-]+)-->/, (_, name: string) => renderComponent(data, name));
+        if (ctx.path.endsWith("/site/search.html"))
+          return html.replace("<!--search-->", renderSearch(data));
+        if (ctx.path.endsWith("/site/accessibility.html"))
+          return html.replace("<!--accessibility-->", renderAccessibility(data.version));
+        return html.replace(/<!--component:([\w-]+)-->/, (_, name: string) =>
+          renderComponent(data, name),
+        );
       },
     },
     {
@@ -88,15 +103,21 @@ export default defineConfig({
               : ctx.path.endsWith("/site/search.html")
                 ? { ...SEARCH_PAGE, noindex: true }
                 : ctx.path.endsWith("/site/accessibility.html")
-                ? ACCESSIBILITY_PAGE
-                : c
-                ? { path: `/components/${c.name}/`, title: c.title, description: c.lead }
-                : "admin";
-          return html.replace("<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->", `${siteHead(page)}\n${ICON_TAGS}`);
+                  ? ACCESSIBILITY_PAGE
+                  : c
+                    ? { path: `/components/${c.name}/`, title: c.title, description: c.lead }
+                    : "admin";
+          return html.replace(
+            "<!-- The title, description, canonical, social tags and JSON-LD: site/seo.ts, at build. -->",
+            `${siteHead(page)}\n${ICON_TAGS}`,
+          );
         },
       },
       generateBundle() {
-        for (const [fileName, source] of Object.entries(discoveryFiles(data.components.map((c) => c.name)))) this.emitFile({ type: "asset", fileName, source });
+        for (const [fileName, source] of Object.entries(
+          discoveryFiles(data.components.map((c) => c.name)),
+        ))
+          this.emitFile({ type: "asset", fileName, source });
         this.emitFile({ type: "asset", fileName: "search.json", source: searchIndexJson(data) });
       },
     },
@@ -120,7 +141,17 @@ export default defineConfig({
     // its own origin only.
     assetsInlineLimit: 0,
     emptyOutDir: true,
-    rollupOptions: { input: { home: resolve(root, "site/home.html"), make: resolve(root, "site/make.html"), search: resolve(root, "site/search.html"), accessibility: resolve(root, "site/accessibility.html"), site: resolve(root, "site/index.html"), ...states, ...pages } },
+    rollupOptions: {
+      input: {
+        home: resolve(root, "site/home.html"),
+        make: resolve(root, "site/make.html"),
+        search: resolve(root, "site/search.html"),
+        accessibility: resolve(root, "site/accessibility.html"),
+        site: resolve(root, "site/index.html"),
+        ...states,
+        ...pages,
+      },
+    },
   },
   preview: { port: 4319, strictPort: true },
 });

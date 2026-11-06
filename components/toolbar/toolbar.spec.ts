@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -7,7 +12,9 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: a pressed toggle's word and edges reach their contrast", async ({ page }) => {
+  test("accessibility: a pressed toggle's word and edges reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "toolbar", theme);
     await expectContrast(page, [
       { sel: "#tb-wrap", what: "a pressed toggle's word" },
@@ -15,7 +22,9 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("keyboard: the bar is one tab stop; arrows skip a disabled button, wrap, and Home and End go to the ends", async ({ page }) => {
+  test("keyboard: the bar is one tab stop; arrows skip a disabled button, wrap, and Home and End go to the ends", async ({
+    page,
+  }) => {
     await visitStates(page, "toolbar", theme);
     const bar = page.getByRole("toolbar", { name: "Draft" });
     await page.locator("h1").click();

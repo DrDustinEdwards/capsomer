@@ -55,14 +55,14 @@ shadcn has no bulk bar. The nearest are its Data Table's selection footer ("3 of
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab, Shift Tab | Moves through Select all, the actions, any field, and Clear selection, in reading order |
-| Enter or Space on an action | A reversible action runs at once and the region says so, with Undo; a destructive one opens the preview with focus on Cancel |
-| Enter or Space on Clear selection | Clears the selection; focus returns to the list |
-| Esc, in the list or the bar | Clears the selection; focus returns to the item last touched |
-| Space, on an item's checkbox | Selects or clears it; the count follows |
-| z | Runs the last action's Undo (the message region's key; off with the shortcuts switch, which sets `data-cap-single-keys="off"` on `<html>`) |
+| Key                               | Does                                                                                                                                       |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Tab, Shift Tab                    | Moves through Select all, the actions, any field, and Clear selection, in reading order                                                    |
+| Enter or Space on an action       | A reversible action runs at once and the region says so, with Undo; a destructive one opens the preview with focus on Cancel               |
+| Enter or Space on Clear selection | Clears the selection; focus returns to the list                                                                                            |
+| Esc, in the list or the bar       | Clears the selection; focus returns to the item last touched                                                                               |
+| Space, on an item's checkbox      | Selects or clears it; the count follows                                                                                                    |
+| z                                 | Runs the last action's Undo (the message region's key; off with the shortcuts switch, which sets `data-cap-single-keys="off"` on `<html>`) |
 
 ## Accessibility
 
@@ -89,23 +89,65 @@ The contract, exactly:
 With the optional parts and the attributes that bind it to a list:
 
 ```html
-<div class="cap-bulk" data-cap="bulk-bar" data-cap-list="drafts" role="region" aria-label="Bulk actions" hidden>
+<div
+  class="cap-bulk"
+  data-cap="bulk-bar"
+  data-cap-list="drafts"
+  role="region"
+  aria-label="Bulk actions"
+  hidden
+>
   <p class="cap-bulk-count" role="status">3 selected <span class="cap-bulk-detail">2.4 MB</span></p>
-  <button type="button" class="cap-btn" data-variant="quiet" data-cap-part="select-all" data-cap-label="Select all {n} in view">Select all 24 in view</button>
+  <button
+    type="button"
+    class="cap-btn"
+    data-variant="quiet"
+    data-cap-part="select-all"
+    data-cap-label="Select all {n} in view"
+  >
+    Select all 24 in view
+  </button>
   <div class="cap-bulk-actions">
-    <button type="button" class="cap-btn" data-cap-bulk-action="archive" data-cap-said="Archived {n} draft{s}." data-cap-undone="Brought {n} draft{s} back.">Archive</button>
-    <span class="cap-bulk-field"><label for="tag">Tag</label><input class="cap-input" id="tag" /></span>
-    <button type="button" class="cap-btn" data-cap-bulk-action="add-tag" data-cap-value="#tag">Add tag</button>
-    <button type="button" class="cap-btn" data-variant="danger" data-cap-bulk-action="bin" data-destructive
-            data-cap-confirm-title="Bin {n} item{s}?" data-cap-confirm-lead="Binned drafts cannot be brought back."
-            data-cap-confirm-action="Bin {n} item{s}">Bin</button>
+    <button
+      type="button"
+      class="cap-btn"
+      data-cap-bulk-action="archive"
+      data-cap-said="Archived {n} draft{s}."
+      data-cap-undone="Brought {n} draft{s} back."
+    >
+      Archive
+    </button>
+    <span class="cap-bulk-field"
+      ><label for="tag">Tag</label><input class="cap-input" id="tag"
+    /></span>
+    <button type="button" class="cap-btn" data-cap-bulk-action="add-tag" data-cap-value="#tag">
+      Add tag
+    </button>
+    <button
+      type="button"
+      class="cap-btn"
+      data-variant="danger"
+      data-cap-bulk-action="bin"
+      data-destructive
+      data-cap-confirm-title="Bin {n} item{s}?"
+      data-cap-confirm-lead="Binned drafts cannot be brought back."
+      data-cap-confirm-action="Bin {n} item{s}"
+    >
+      Bin
+    </button>
   </div>
   <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
 </div>
 
-<label class="cap-check"><input type="checkbox" data-cap-select-all data-cap-list="drafts" /> Select all</label>
+<label class="cap-check"
+  ><input type="checkbox" data-cap-select-all data-cap-list="drafts" /> Select all</label
+>
 <ul id="drafts">
-  <li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" value="p1" data-cap-select /> Notes on the spring release</label></li>
+  <li data-label="Notes on the spring release">
+    <label class="cap-check"
+      ><input type="checkbox" value="p1" data-cap-select /> Notes on the spring release</label
+    >
+  </li>
 </ul>
 ```
 
@@ -113,14 +155,38 @@ Form mode, with no script needed:
 
 ```html
 <form id="drafts-form" method="post" action="/admin/posts/bulk">
-  <ul id="drafts-list"><li data-label="Notes on the spring release"><label class="cap-check"><input type="checkbox" name="ids" value="p1" data-cap-select /> Notes on the spring release</label></li></ul>
-  <div class="cap-bulk" data-cap="bulk-bar" data-cap-list="drafts-list" role="region" aria-label="Bulk actions">
+  <ul id="drafts-list">
+    <li data-label="Notes on the spring release">
+      <label class="cap-check"
+        ><input type="checkbox" name="ids" value="p1" data-cap-select /> Notes on the spring
+        release</label
+      >
+    </li>
+  </ul>
+  <div
+    class="cap-bulk"
+    data-cap="bulk-bar"
+    data-cap-list="drafts-list"
+    role="region"
+    aria-label="Bulk actions"
+  >
     <p class="cap-bulk-count" role="status">Tick the drafts to act on</p>
     <div class="cap-bulk-actions">
       <button type="submit" class="cap-btn" name="intent" value="archive">Archive</button>
-      <button type="submit" class="cap-btn" data-variant="danger" data-destructive name="intent" value="bin">Bin</button>
+      <button
+        type="submit"
+        class="cap-btn"
+        data-variant="danger"
+        data-destructive
+        name="intent"
+        value="bin"
+      >
+        Bin
+      </button>
     </div>
-    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">Clear selection</button>
+    <button type="button" class="cap-btn cap-bulk-clear" data-variant="quiet">
+      Clear selection
+    </button>
   </div>
 </form>
 ```
@@ -129,40 +195,79 @@ The bar is not `hidden` in the delivered HTML; the script hides it while nothing
 
 The outcome list, last in the bar (a server renders it after a form post; `showOutcomes(bar, outcomes)` writes it with script):
 
-```html
+````html
 <div class="cap-bulk-results" data-cap-part="results" role="group" aria-labelledby="bulk-results">
   <p class="cap-bulk-results-summary" id="bulk-results">2 done, 1 not done.</p>
   <ul class="cap-bulk-results-list">
-    <li data-ok="false"><span class="cap-status" data-tone="crit">[glyph]Not done</span> <span class="cap-bulk-result-label">What a mention queue is for</span> <span class="cap-bulk-result-message">Changed on the site since this page was loaded.</span>
-      <ul class="cap-bulk-result-uses"><li>Notes on the spring release (cover image)</li></ul></li>
-    <li data-ok="true"><span class="cap-status" data-tone="ok">[glyph]Done</span> <span class="cap-bulk-result-label">Notes on the spring release</span></li>
+    <li data-ok="false">
+      <span class="cap-status" data-tone="crit">[glyph]Not done</span>
+      <span class="cap-bulk-result-label">What a mention queue is for</span>
+      <span class="cap-bulk-result-message">Changed on the site since this page was loaded.</span>
+      <ul class="cap-bulk-result-uses">
+        <li>Notes on the spring release (cover image)</li>
+      </ul>
+    </li>
+    <li data-ok="true">
+      <span class="cap-status" data-tone="ok">[glyph]Done</span>
+      <span class="cap-bulk-result-label">Notes on the spring release</span>
+    </li>
   </ul>
-  <button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="dismiss-results" hidden>Dismiss results</button>
+  <button
+    type="button"
+    class="cap-btn"
+    data-variant="quiet"
+    data-size="sm"
+    data-cap-part="dismiss-results"
+    hidden
+  >
+    Dismiss results
+  </button>
 </div>
-``` A bar outside the form names it with `form="drafts-form"` on each submit button.
-
-`data-cap-list` is the id of the container whose `input[type=checkbox][data-cap-select]` are the items; an item's name for the preview is its `data-label`, or `data-label` on an ancestor, or its label text. `data-position="top"` sticks the bar to the top. `data-cap-return` is a selector for where focus goes when the bar goes away. `data-cap-value` on an action is a selector for a field whose value goes with it (an empty value moves focus to the field and does nothing). `{n}` and `{s}` in the templates are the count and the plural "s".
-
-```ts
-import { enhance, bindBulk, performBulk, selectedItems, clearSelection } from "capsomer/behavior/bulk-bar";
-enhance(); // every [data-cap="bulk-bar"]; needs a [data-cap="message"] region on the page for results
-bindBulk(bar, {
-  archive: { run: (items) => api.archive(items.map((i) => i.id)), undo: (items) => api.restore(items.map((i) => i.id)) },
-  bin: { run: (items) => api.bin(items.map((i) => i.id)) }, // destructive: runs only after the preview
-});
-bar.addEventListener("cap-bulk-action", (e) => refresh(e.detail)); // { action, items, value }, after it ran
-bar.addEventListener("cap-bulk-change", (e) => (e.detail.count)); // { items, count } on every change
-```
+``` A bar outside the form names it with `form="drafts-form"` on each submit button. `data-cap-list`
+is the id of the container whose `input[type=checkbox][data-cap-select]` are the items; an item's
+name for the preview is its `data-label`, or `data-label` on an ancestor, or its label text.
+`data-position="top"` sticks the bar to the top. `data-cap-return` is a selector for where focus
+goes when the bar goes away. `data-cap-value` on an action is a selector for a field whose value
+goes with it (an empty value moves focus to the field and does nothing). `{n}` and `{s}` in the
+templates are the count and the plural "s". ```ts import { enhance, bindBulk, performBulk,
+selectedItems, clearSelection } from "capsomer/behavior/bulk-bar"; enhance(); // every
+[data-cap="bulk-bar"]; needs a [data-cap="message"] region on the page for results bindBulk(bar, {
+archive: { run: (items) => api.archive(items.map((i) => i.id)), undo: (items) =>
+api.restore(items.map((i) => i.id)) }, bin: { run: (items) => api.bin(items.map((i) => i.id)) }, //
+destructive: runs only after the preview }); bar.addEventListener("cap-bulk-action", (e) =>
+refresh(e.detail)); // { action, items, value }, after it ran
+bar.addEventListener("cap-bulk-change", (e) => (e.detail.count)); // { items, count } on every
+change
+````
 
 `performBulk({ action, items, run, undo, destructive, confirmTitle, confirmLead, confirmAction, said, undone, returnTo })` is the whole flow for an app that keeps its own selection. Pure helpers: `countText`, `fillCount`, `plural`, `previewItems`, and for the outcome list `outcomeSummary` and `orderOutcomes` (a `BulkOutcome` is `{ id, label, ok, message?, usedBy? }`). A `run` rejects with an `Error` whose message says what happened.
 
 ```tsx
 import { BulkBar } from "capsomer/react/bulk-bar";
-<BulkBar items={selected} total={rows.length} onSelectAll={selectAll} onClear={clear} detail="2.4 MB"
+<BulkBar
+  items={selected}
+  total={rows.length}
+  onSelectAll={selectAll}
+  onClear={clear}
+  detail="2.4 MB"
   actions={[
-    { id: "archive", label: "Archive", said: "Archived {n} draft{s}.", run: archive, undo: restore },
-    { id: "bin", label: "Bin", destructive: true, confirmTitle: "Bin {n} item{s}?", confirmAction: "Bin {n} item{s}", run: bin },
-  ]} />
+    {
+      id: "archive",
+      label: "Archive",
+      said: "Archived {n} draft{s}.",
+      run: archive,
+      undo: restore,
+    },
+    {
+      id: "bin",
+      label: "Bin",
+      destructive: true,
+      confirmTitle: "Bin {n} item{s}?",
+      confirmAction: "Bin {n} item{s}",
+      run: bin,
+    },
+  ]}
+/>;
 ```
 
 In React, `outcomes` (and `onDismissOutcomes`, which shows Dismiss results) draws the outcome list. Form mode is `form="drafts-form"` on `BulkBar` (with `prompt`, the count's words before script runs) and `submit: true` on an action (a submit button named `intent`, valued with the action's id, `run` not used); the bar renders visible and hides only after the page has loaded with nothing selected.

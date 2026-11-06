@@ -583,7 +583,6 @@
   .cap-admin[data-standalone] > .cap-site-header[data-variant="letterhead"] {
     border-block-start-color: var(--header-bg);
   }
-
 }
 
 /* The pseudo-elements sit outside the layers. */

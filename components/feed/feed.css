@@ -58,7 +58,8 @@
   .cap-feed-row:not(:last-child)::after {
     content: "";
     position: absolute;
-    inset-block: calc(var(--pad-y) + 3px + 14px + var(--space-1)) calc(-1 * (var(--pad-y) + 3px - var(--space-1)));
+    inset-block: calc(var(--pad-y) + 3px + 14px + var(--space-1))
+      calc(-1 * (var(--pad-y) + 3px - var(--space-1)));
     inset-inline-start: calc(var(--pad-card) + 6.5px);
     inline-size: 1px;
     background: var(--line);
@@ -98,7 +99,6 @@
     & b {
       font-weight: 600;
     }
-
   }
 
   /* An identifier in a row (a sha, a namespace): its monospace face would otherwise stretch

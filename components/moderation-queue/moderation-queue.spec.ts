@@ -1,6 +1,26 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
-import { EMPTY_TEXT, STATE_LABEL, VIEWS, VIEW_LABEL, actionsFor, bulkActionsFor, countStates, decide, decidedText, inView, summaryText, sweepLines, undoAction, undoStack } from "./moderation-queue.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
+import {
+  EMPTY_TEXT,
+  STATE_LABEL,
+  VIEWS,
+  VIEW_LABEL,
+  actionsFor,
+  bulkActionsFor,
+  countStates,
+  decide,
+  decidedText,
+  inView,
+  summaryText,
+  sweepLines,
+  undoAction,
+  undoStack,
+} from "./moderation-queue.ts";
 
 // The pure helpers need no browser.
 test("behavior: decide is the contract's table: only waiting, approved and rejected can be decided", () => {
@@ -13,7 +33,8 @@ test("behavior: decide is the contract's table: only waiting, approved and rejec
   // Back to waiting only where the site offers it.
   expect(decide("approved", "reset")).toBeNull();
   expect(decide("approved", "reset", true)).toBe("pending");
-  for (const s of ["unverified", "failed"] as const) for (const a of ["approve", "reject", "reset"] as const) expect(decide(s, a, true)).toBeNull();
+  for (const s of ["unverified", "failed"] as const)
+    for (const a of ["approve", "reject", "reset"] as const) expect(decide(s, a, true)).toBeNull();
   expect(actionsFor("pending")).toEqual(["approve", "reject"]);
   expect(actionsFor("rejected")).toEqual(["approve"]);
   expect(actionsFor("rejected", true)).toEqual(["approve", "reset"]);
@@ -23,12 +44,30 @@ test("behavior: decide is the contract's table: only waiting, approved and rejec
 });
 
 test("behavior: the words are the contract's states as Dustin named them, and the views count from the whole queue", () => {
-  expect(Object.values(STATE_LABEL)).toEqual(["Not yet checked", "Waiting", "Approved", "Rejected", "Source not found"]);
-  expect(VIEWS.map((v) => VIEW_LABEL[v])).toEqual(["Waiting", "Source not found", "Approved", "Rejected", "All"]);
+  expect(Object.values(STATE_LABEL)).toEqual([
+    "Not yet checked",
+    "Waiting",
+    "Approved",
+    "Rejected",
+    "Source not found",
+  ]);
+  expect(VIEWS.map((v) => VIEW_LABEL[v])).toEqual([
+    "Waiting",
+    "Source not found",
+    "Approved",
+    "Rejected",
+    "All",
+  ]);
   expect(Object.keys(EMPTY_TEXT)).toEqual([...VIEWS]);
   expect(inView("unverified", "pending")).toBe(false);
   expect(inView("unverified", "all")).toBe(true);
-  const c = countStates([{ state: "pending" }, { state: "pending" }, { state: "unverified" }, { state: "failed" }, { state: "approved" }]);
+  const c = countStates([
+    { state: "pending" },
+    { state: "pending" },
+    { state: "unverified" },
+    { state: "failed" },
+    { state: "approved" },
+  ]);
   expect(c).toEqual({ unverified: 1, pending: 2, approved: 1, rejected: 0, failed: 1, all: 5 });
   expect(summaryText(c)).toBe("2 waiting, 1 not yet checked");
   expect(summaryText({ pending: 0, unverified: 0 })).toBe("Nothing waiting");
@@ -57,20 +96,29 @@ test("behavior: the undo stack keeps the newest last, is bounded, and removes on
 });
 
 test("behavior: the sweep names what the site will remove, by kind", () => {
-  expect(sweepLines({ failed: 2, rejected: 1 })).toEqual(["2 whose source was not found", "1 rejected"]);
+  expect(sweepLines({ failed: 2, rejected: 1 })).toEqual([
+    "2 whose source was not found",
+    "1 rejected",
+  ]);
   expect(sweepLines({ failed: 0, rejected: 3 })).toEqual(["3 rejected"]);
 });
 
 test("behavior: each decision says what it did, for one mention and for several", () => {
   expect(decidedText("reject", ["Rosa Park"])).toBe("Rejected the mention from Rosa Park.");
   expect(decidedText("approve", ["Rosa Park", "Sam Okafor"])).toBe("Approved 2 mentions.");
-  expect(decidedText("reset", ["Rosa Park"])).toBe("Put the mention from Rosa Park back to waiting.");
+  expect(decidedText("reset", ["Rosa Park"])).toBe(
+    "Put the mention from Rosa Park back to waiting.",
+  );
 });
 
-test("behavior: the page is delivered with every mention, its state in words, and a stranger's text escaped", async ({ page }) => {
+test("behavior: the page is delivered with every mention, its state in words, and a stranger's text escaped", async ({
+  page,
+}) => {
   const html = await (await page.request.get("components/moderation-queue/states.html")).text();
-  for (const word of ["Waiting", "Approved", "Rejected", "Not yet checked", "Source not found"]) expect(html).toContain(`</svg>${word}</span>`);
-  for (const gone of ["Spam", "Bin", "Source gone"]) expect(html).not.toContain(`</svg>${gone}</span>`);
+  for (const word of ["Waiting", "Approved", "Rejected", "Not yet checked", "Source not found"])
+    expect(html).toContain(`</svg>${word}</span>`);
+  for (const gone of ["Spam", "Bin", "Source gone"])
+    expect(html).not.toContain(`</svg>${gone}</span>`);
   expect(html).toContain("&lt;script&gt;alert(");
   expect(html).not.toContain("<script>alert(");
   // Every row of the main queue is there, whatever filter shows.
@@ -98,7 +146,9 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: each text tone and each control boundary reaches its contrast", async ({ page }) => {
+  test("accessibility: each text tone and each control boundary reaches its contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await expectContrast(page, [
@@ -108,23 +158,41 @@ eachTheme((theme) => {
       { sel: "#mq-main li[data-id='m-101'] .cap-time", what: "the time" },
       { sel: "#mq-main li[data-id='m-101'] .cap-status", what: "the Waiting status" },
       { sel: "#mq-main li[data-id='m-101'] [data-cap-action='approve']", what: "Approve" },
-      { sel: "#mq-main li[data-id='m-101'] [data-cap-action='delete']", what: "Delete", part: "color" },
+      {
+        sel: "#mq-main li[data-id='m-101'] [data-cap-action='delete']",
+        what: "Delete",
+        part: "color",
+      },
       { sel: "#mq-main li[data-id='m-101'] .cap-kbd", what: "the key hint" },
-      { sel: "#mq-main li[data-id='m-101'] [data-cap-part='select']", what: "a select box's edge", part: "border" },
+      {
+        sel: "#mq-main li[data-id='m-101'] [data-cap-part='select']",
+        what: "a select box's edge",
+        part: "border",
+      },
       { sel: "#mq-main .cap-mq-summary", what: "the live count" },
       { sel: "#mq-main .cap-mq-retention p", what: "the retention note" },
       { sel: "#mq-main [data-cap-part='sweep']", what: "the sweep button's edge", part: "border" },
     ]);
     // Each state's word, on the view that shows it.
-    for (const [label, id] of [["Approved", "m-120"], ["Rejected", "m-130"], ["Source not found", "m-150"], ["All", "m-160"]] as const) {
+    for (const [label, id] of [
+      ["Approved", "m-120"],
+      ["Rejected", "m-130"],
+      ["Source not found", "m-150"],
+      ["All", "m-160"],
+    ] as const) {
       await showView(q, label);
-      await expectContrast(page, [{ sel: `#mq-main li[data-id='${id}'] .cap-status`, what: `the status on ${label}` }]);
+      await expectContrast(page, [
+        { sel: `#mq-main li[data-id='${id}'] .cap-status`, what: `the status on ${label}` },
+      ]);
     }
   });
 
-  test("accessibility: the roles and names of the head, the bulk bar and a row", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "moderation-queue", theme);
-    await expect(queue(page).locator(".cap-mq-head")).toMatchAriaSnapshot(`
+  test(
+    "accessibility: the roles and names of the head, the bulk bar and a row",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "moderation-queue", theme);
+      await expect(queue(page).locator(".cap-mq-head")).toMatchAriaSnapshot(`
       - group "Show mentions that are":
         - radio "Waiting 4 mentions" [checked]
         - text: Waiting 4 mentions
@@ -139,11 +207,11 @@ eachTheme((theme) => {
       - status: 4 waiting, 1 not yet checked
       - button "Keyboard shortcuts"
     `);
-    await expect(queue(page).getByRole("region", { name: "Bulk actions" })).toMatchAriaSnapshot(`
+      await expect(queue(page).getByRole("region", { name: "Bulk actions" })).toMatchAriaSnapshot(`
       - region "Bulk actions":
         - status: No rows selected
     `);
-    await expect(row(queue(page), "m-101")).toMatchAriaSnapshot(`
+      await expect(row(queue(page), "m-101")).toMatchAriaSnapshot(`
       - listitem:
         - checkbox "Select the mention from Rosa Park"
         - text: Select the mention from Rosa Park Waiting
@@ -154,56 +222,91 @@ eachTheme((theme) => {
         - button "Reject the mention from Rosa Park"
         - button "Delete the mention from Rosa Park"
     `);
-  });
+    },
+  );
 
-  test("accessibility: each decision is a real button with its key announced and shown", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "moderation-queue", theme);
-    const r = row(queue(page), "m-101");
-    for (const [action, key] of [["approve", "a"], ["reject", "r"], ["delete", "d"]] as const) {
-      const b = r.locator(`[data-cap-action='${action}']`);
-      await expect(b).toHaveAttribute("aria-keyshortcuts", key);
-      await expect(b.locator("kbd.cap-kbd")).toHaveText(key);
-      expect(await b.evaluate((e) => e.tagName)).toBe("BUTTON");
-    }
-    // Names carry the sender, so a column of Approve buttons is not a column of the same name.
-    const names = await queue(page).locator("li.cap-mq-row:not([hidden]) [data-cap-action='approve']").evaluateAll((els) => els.map((e) => (e.textContent ?? "").trim()));
-    expect(new Set(names).size).toBe(names.length);
-  });
+  test(
+    "accessibility: each decision is a real button with its key announced and shown",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "moderation-queue", theme);
+      const r = row(queue(page), "m-101");
+      for (const [action, key] of [
+        ["approve", "a"],
+        ["reject", "r"],
+        ["delete", "d"],
+      ] as const) {
+        const b = r.locator(`[data-cap-action='${action}']`);
+        await expect(b).toHaveAttribute("aria-keyshortcuts", key);
+        await expect(b.locator("kbd.cap-kbd")).toHaveText(key);
+        expect(await b.evaluate((e) => e.tagName)).toBe("BUTTON");
+      }
+      // Names carry the sender, so a column of Approve buttons is not a column of the same name.
+      const names = await queue(page)
+        .locator("li.cap-mq-row:not([hidden]) [data-cap-action='approve']")
+        .evaluateAll((els) => els.map((e) => (e.textContent ?? "").trim()));
+      expect(new Set(names).size).toBe(names.length);
+    },
+  );
 
-  test("accessibility: a source is text, never a link, unless marked external with rel nofollow ugc noopener", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "moderation-queue", theme);
-    // Nothing in the main queue links to a stranger's page.
-    await expect(queue(page).locator("a[href^='http']")).toHaveCount(0);
-    const link = page.locator("#mq-approved a[data-external]");
-    await expect(link).toHaveAttribute("rel", "nofollow ugc noopener");
-    await expect(link).toHaveAttribute("href", "https://jonalvarez.example/notes/agents");
-    // The host is text in the title; the post is the one internal link.
-    await expect(row(queue(page), "m-101").locator(".cap-mq-host")).toHaveText("fieldnotes.example");
-  });
+  test(
+    "accessibility: a source is text, never a link, unless marked external with rel nofollow ugc noopener",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "moderation-queue", theme);
+      // Nothing in the main queue links to a stranger's page.
+      await expect(queue(page).locator("a[href^='http']")).toHaveCount(0);
+      const link = page.locator("#mq-approved a[data-external]");
+      await expect(link).toHaveAttribute("rel", "nofollow ugc noopener");
+      await expect(link).toHaveAttribute("href", "https://jonalvarez.example/notes/agents");
+      // The host is text in the title; the post is the one internal link.
+      await expect(row(queue(page), "m-101").locator(".cap-mq-host")).toHaveText(
+        "fieldnotes.example",
+      );
+    },
+  );
 
-  test("accessibility: a source not found says so in a word and a shape, and the open row gives the site's reason", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "moderation-queue", theme);
-    const failed = page.locator("#mq-failed li[data-id='m-150']");
-    await expect(failed.locator(".cap-row-status .cap-status")).toHaveText("Source not found");
-    await expect(failed.locator(".cap-row-status svg")).toHaveCount(1);
-    await expect(failed.locator(".cap-mq-why")).toContainText("answered 404");
-    await expect(failed.locator(".cap-mq-why")).toContainText("cannot be approved or rejected");
-    // Nothing to decide: only Delete.
-    await expect(failed.locator("[data-cap-action]")).toHaveCount(1);
-    await expect(failed.locator("[data-cap-action='delete']")).toHaveCount(1);
-  });
+  test(
+    "accessibility: a source not found says so in a word and a shape, and the open row gives the site's reason",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "moderation-queue", theme);
+      const failed = page.locator("#mq-failed li[data-id='m-150']");
+      await expect(failed.locator(".cap-row-status .cap-status")).toHaveText("Source not found");
+      await expect(failed.locator(".cap-row-status svg")).toHaveCount(1);
+      await expect(failed.locator(".cap-mq-why")).toContainText("answered 404");
+      await expect(failed.locator(".cap-mq-why")).toContainText("cannot be approved or rejected");
+      // Nothing to decide: only Delete.
+      await expect(failed.locator("[data-cap-action]")).toHaveCount(1);
+      await expect(failed.locator("[data-cap-action='delete']")).toHaveCount(1);
+    },
+  );
 
-  test("accessibility: the live count and the result are polite status regions", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "moderation-queue", theme);
-    await expect(queue(page).locator("[data-cap-part='summary']")).toHaveAttribute("role", "status");
-    await expect(page.locator("#mq-results")).toHaveAttribute("aria-atomic", "false");
-  });
+  test(
+    "accessibility: the live count and the result are polite status regions",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "moderation-queue", theme);
+      await expect(queue(page).locator("[data-cap-part='summary']")).toHaveAttribute(
+        "role",
+        "status",
+      );
+      await expect(page.locator("#mq-results")).toHaveAttribute("aria-atomic", "false");
+    },
+  );
 
-  test("keyboard: Tab goes from a row's select box to its title and its decisions, in order", async ({ page }) => {
+  test("keyboard: Tab goes from a row's select box to its title and its decisions, in order", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const r = row(queue(page), "m-102");
     await r.locator("[data-cap-part='select']").focus();
-    for (const next of [r.locator(".cap-row-title button"), r.locator("[data-cap-action='approve']"), r.locator("[data-cap-action='reject']"), r.locator("[data-cap-action='delete']")]) {
+    for (const next of [
+      r.locator(".cap-row-title button"),
+      r.locator("[data-cap-action='approve']"),
+      r.locator("[data-cap-action='reject']"),
+      r.locator("[data-cap-action='delete']"),
+    ]) {
       await page.keyboard.press("Tab");
       await expect(next).toBeFocused();
     }
@@ -224,7 +327,9 @@ eachTheme((theme) => {
     await expect(title(q, "m-103")).toBeFocused();
   });
 
-  test("keyboard: Enter on a title opens the row in place; aria-expanded follows", async ({ page }) => {
+  test("keyboard: Enter on a title opens the row in place; aria-expanded follows", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     const t = title(q, "m-101");
@@ -233,13 +338,17 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(t).toHaveAttribute("aria-expanded", "true");
     await expect(row(q, "m-101").locator(".cap-mq-quote")).toBeVisible();
-    await expect(row(q, "m-101").locator(".cap-mq-quote")).toContainText("Survey results are not a verdict");
+    await expect(row(q, "m-101").locator(".cap-mq-quote")).toContainText(
+      "Survey results are not a verdict",
+    );
     await page.keyboard.press("Space");
     await expect(t).toHaveAttribute("aria-expanded", "false");
     await expect(row(q, "m-101").locator(".cap-mq-quote")).toBeHidden();
   });
 
-  test("keyboard: a approves the row at once: it leaves Waiting, the counts follow, focus moves to the next row, a message offers Undo", async ({ page }) => {
+  test("keyboard: a approves the row at once: it leaves Waiting, the counts follow, focus moves to the next row, a message offers Undo", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await title(q, "m-101").focus();
@@ -266,7 +375,9 @@ eachTheme((theme) => {
     await expect(title(q, "m-102")).toBeFocused();
   });
 
-  test("keyboard: z undoes the last decision: the row comes back, focused, and the counts return", async ({ page }) => {
+  test("keyboard: z undoes the last decision: the row comes back, focused, and the counts return", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await title(q, "m-101").focus();
@@ -298,7 +409,9 @@ eachTheme((theme) => {
     await expect(region(page)).not.toContainText("Earlier:");
   });
 
-  test("keyboard: the Undo button does what z does, and focus returns to the mention", async ({ page }) => {
+  test("keyboard: the Undo button does what z does, and focus returns to the mention", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await row(q, "m-103").locator("[data-cap-action='reject']").click();
@@ -308,18 +421,24 @@ eachTheme((theme) => {
     await expect(title(q, "m-103")).toBeFocused();
   });
 
-  test("behavior: on a site with no Back to waiting, a decision on a waiting mention says it has no Undo", async ({ page }) => {
+  test("behavior: on a site with no Back to waiting, a decision on a waiting mention says it has no Undo", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = page.locator("#mq-comfy");
     await expect(q.locator("[data-cap-action='reset']")).toHaveCount(0);
     await title(q, "m-101").focus();
     await page.keyboard.press("a");
     await expect(row(q, "m-101")).toHaveAttribute("data-state", "approved");
-    await expect(region(page)).toContainText("Approved the mention from Rosa Park. This site cannot put a mention back to waiting, so there is no Undo");
+    await expect(region(page)).toContainText(
+      "Approved the mention from Rosa Park. This site cannot put a mention back to waiting, so there is no Undo",
+    );
     await expect(region(page).getByRole("button", { name: /^Undo/ })).toHaveCount(0);
   });
 
-  test("behavior: on the same site, approved to rejected is undone by the opposite decision", async ({ page }) => {
+  test("behavior: on the same site, approved to rejected is undone by the opposite decision", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = page.locator("#mq-approved");
     await title(q, "m-121").focus();
@@ -330,7 +449,9 @@ eachTheme((theme) => {
     await expect(row(q, "m-121")).toHaveAttribute("data-state", "approved");
   });
 
-  test("keyboard: Back to waiting puts a decided mention back, where the site offers it, and has no key", async ({ page }) => {
+  test("keyboard: Back to waiting puts a decided mention back, where the site offers it, and has no key", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await showView(q, "Rejected");
@@ -342,7 +463,9 @@ eachTheme((theme) => {
     await expect(row(q, "m-130").locator("[data-cap-action]")).toHaveCount(3);
   });
 
-  test("keyboard: x selects the row; the bulk bar counts; a second x unselects", async ({ page }) => {
+  test("keyboard: x selects the row; the bulk bar counts; a second x unselects", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     const bar = q.getByRole("region", { name: "Bulk actions" });
@@ -362,7 +485,9 @@ eachTheme((theme) => {
     await expect(bar.getByRole("button", { name: "Clear selection" })).toBeHidden();
   });
 
-  test("keyboard: a key acts on every selected row when the focused row is selected, else on the focused row only", async ({ page }) => {
+  test("keyboard: a key acts on every selected row when the focused row is selected, else on the focused row only", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await row(q, "m-101").locator("[data-cap-part='select']").check();
@@ -380,7 +505,9 @@ eachTheme((theme) => {
     await expect(region(page)).toContainText("Rejected 2 mentions.");
   });
 
-  test("keyboard: the bulk bar's buttons act on the selection, and Undo reverses all of it", async ({ page }) => {
+  test("keyboard: the bulk bar's buttons act on the selection, and Undo reverses all of it", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     const bar = q.getByRole("region", { name: "Bulk actions" });
@@ -397,19 +524,28 @@ eachTheme((theme) => {
     await expect(row(q, "m-102")).toHaveAttribute("data-state", "pending");
   });
 
-  test("behavior: in All, a bulk approve leaves what has nothing to decide, and says so", async ({ page }) => {
+  test("behavior: in All, a bulk approve leaves what has nothing to decide, and says so", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = page.locator("#mq-all");
     await q.getByRole("checkbox", { name: "Select all 5 shown" }).check();
-    await q.getByRole("region", { name: "Bulk actions" }).getByRole("button", { name: "Approve", exact: false }).click();
+    await q
+      .getByRole("region", { name: "Bulk actions" })
+      .getByRole("button", { name: "Approve", exact: false })
+      .click();
     await expect(row(q, "m-101")).toHaveAttribute("data-state", "approved");
     await expect(row(q, "m-140")).toHaveAttribute("data-state", "approved");
     await expect(row(q, "m-160")).toHaveAttribute("data-state", "unverified");
     await expect(row(q, "m-150")).toHaveAttribute("data-state", "failed");
-    await expect(region(page)).toContainText("Approved 2 mentions. 2 were left as they were: there is nothing to decide about a mention not yet checked or whose source was not found.");
+    await expect(region(page)).toContainText(
+      "Approved 2 mentions. 2 were left as they were: there is nothing to decide about a mention not yet checked or whose source was not found.",
+    );
   });
 
-  test("keyboard: select all ticks every row shown, and Clear selection unticks them and returns focus to a row", async ({ page }) => {
+  test("keyboard: select all ticks every row shown, and Clear selection unticks them and returns focus to a row", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     const bar = q.getByRole("region", { name: "Bulk actions" });
@@ -440,7 +576,9 @@ eachTheme((theme) => {
     await expect(row(q, "m-101")).toHaveAttribute("data-state", "pending");
   });
 
-  test("keyboard: single keys stay quiet when they are switched off, and the hints go", async ({ page }) => {
+  test("keyboard: single keys stay quiet when they are switched off, and the hints go", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await page.evaluate(() => (document.documentElement.dataset.capSingleKeys = "off"));
@@ -450,13 +588,18 @@ eachTheme((theme) => {
     await expect(page.getByRole("alertdialog")).toHaveCount(0);
     await expect(title(q, "m-101")).toBeFocused();
     await expect(row(q, "m-101").locator("kbd.cap-kbd").first()).toBeHidden();
-    await expect(row(q, "m-101").locator("[data-cap-action='approve']")).not.toHaveAttribute("aria-keyshortcuts", /./);
+    await expect(row(q, "m-101").locator("[data-cap-action='approve']")).not.toHaveAttribute(
+      "aria-keyshortcuts",
+      /./,
+    );
     // The buttons still work.
     await row(q, "m-101").locator("[data-cap-action='approve']").click();
     await expect(row(q, "m-101")).toHaveAttribute("data-state", "approved");
   });
 
-  test("keyboard: d asks first, in a confirm dialog with focus on Cancel and the count to type; Escape changes nothing", async ({ page }) => {
+  test("keyboard: d asks first, in a confirm dialog with focus on Cancel and the count to type; Escape changes nothing", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await title(q, "m-103").focus();
@@ -466,18 +609,27 @@ eachTheme((theme) => {
     await expect(dialog).toContainText("This cannot be undone.");
     await expect(dialog).toContainText("From An unnamed sender (reader.example)");
     await expect(dialog.getByRole("button", { name: "Cancel" })).toBeFocused();
-    await expect(dialog.getByRole("button", { name: "Delete the mention" })).toHaveAttribute("aria-disabled", "true");
+    await expect(dialog.getByRole("button", { name: "Delete the mention" })).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(row(q, "m-103")).toBeVisible();
   });
 
-  test("behavior: confirming a delete removes the row for good, says so without Undo, and tells the app", async ({ page }) => {
+  test("behavior: confirming a delete removes the row for good, says so without Undo, and tells the app", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await page.evaluate(() => {
       (window as unknown as { __deleted: string[] }).__deleted = [];
-      document.addEventListener("cap:mod-deleted", (e) => (window as unknown as { __deleted: string[] }).__deleted.push(...(e as CustomEvent).detail.ids));
+      document.addEventListener("cap:mod-deleted", (e) =>
+        (window as unknown as { __deleted: string[] }).__deleted.push(
+          ...(e as CustomEvent).detail.ids,
+        ),
+      );
     });
     await showView(q, "Rejected");
     await row(q, "m-140").locator("[data-cap-action='delete']").click();
@@ -488,10 +640,14 @@ eachTheme((theme) => {
     await expect(q.getByRole("radio", { name: "Rejected 1 mentions" })).toBeVisible();
     await expect(region(page)).toContainText("Deleted the mention from Dev Patel.");
     await expect(region(page).getByRole("button", { name: /^Undo/ })).toHaveCount(0);
-    expect(await page.evaluate(() => (window as unknown as { __deleted: string[] }).__deleted)).toEqual(["m-140"]);
+    expect(
+      await page.evaluate(() => (window as unknown as { __deleted: string[] }).__deleted),
+    ).toEqual(["m-140"]);
   });
 
-  test("behavior: the retention sweep names what the site will remove, and removes only that", async ({ page }) => {
+  test("behavior: the retention sweep names what the site will remove, and removes only that", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     const sweep = q.getByRole("button", { name: /^Remove \d+ expired/ });
@@ -505,11 +661,16 @@ eachTheme((theme) => {
     await expect(row(q, "m-151")).toHaveCount(0);
     await expect(row(q, "m-130")).toHaveCount(0);
     await expect(row(q, "m-140")).toHaveCount(1);
-    await expect(q.getByRole("button", { name: "Remove 0 expired" })).toHaveAttribute("aria-disabled", "true");
+    await expect(q.getByRole("button", { name: "Remove 0 expired" })).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
     await expect(q.getByRole("radio", { name: "Rejected 1 mentions" })).toBeVisible();
   });
 
-  test("keyboard: the filter is a radio group; the arrow keys change the view, and the selection is cleared", async ({ page }) => {
+  test("keyboard: the filter is a radio group; the arrow keys change the view, and the selection is cleared", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await row(q, "m-101").locator("[data-cap-part='select']").check();
@@ -518,14 +679,18 @@ eachTheme((theme) => {
     await expect(q.getByRole("radio", { name: /^Source not found/ })).toBeChecked();
     await expect(row(q, "m-150")).toBeVisible();
     await expect(row(q, "m-101")).toBeHidden();
-    await expect(q.getByRole("region", { name: "Bulk actions" }).getByRole("status")).toHaveText("No rows selected");
+    await expect(q.getByRole("region", { name: "Bulk actions" }).getByRole("status")).toHaveText(
+      "No rows selected",
+    );
     await expect(q.locator("li.cap-mq-row:not([hidden])")).toHaveCount(2);
     await page.keyboard.press("ArrowLeft");
     await expect(q.getByRole("radio", { name: /^Waiting/ })).toBeChecked();
     await expect(row(q, "m-101").locator("[data-cap-part='select']")).not.toBeChecked();
   });
 
-  test("behavior: the last row of a view decided leaves the empty state with focus, not a lost focus", async ({ page }) => {
+  test("behavior: the last row of a view decided leaves the empty state with focus, not a lost focus", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await showView(q, "Rejected");
@@ -537,21 +702,38 @@ eachTheme((theme) => {
     await expect(q.locator("[data-cap-part='empty']")).toBeFocused();
   });
 
-  test("behavior: a decision tells the app which ids moved, from where to where", async ({ page }) => {
+  test("behavior: a decision tells the app which ids moved, from where to where", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const q = queue(page);
     await page.evaluate(() => {
       (window as unknown as { __decided: unknown[] }).__decided = [];
-      document.addEventListener("cap:mod-decided", (e) => (window as unknown as { __decided: unknown[] }).__decided.push((e as CustomEvent).detail));
+      document.addEventListener("cap:mod-decided", (e) =>
+        (window as unknown as { __decided: unknown[] }).__decided.push((e as CustomEvent).detail),
+      );
     });
     await title(q, "m-101").focus();
     await page.keyboard.press("r");
-    expect(await page.evaluate(() => (window as unknown as { __decided: unknown[] }).__decided)).toEqual([{ ids: ["m-101"], action: "reject", from: { "m-101": "pending" }, to: { "m-101": "rejected" } }]);
+    expect(
+      await page.evaluate(() => (window as unknown as { __decided: unknown[] }).__decided),
+    ).toEqual([
+      {
+        ids: ["m-101"],
+        action: "reject",
+        from: { "m-101": "pending" },
+        to: { "m-101": "rejected" },
+      },
+    ]);
   });
 
-  test("keyboard: the ? button opens the shortcuts sheet, which lists the queue's keys", async ({ page }) => {
+  test("keyboard: the ? button opens the shortcuts sheet, which lists the queue's keys", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
-    await queue(page).getByRole("button", { name: /^Keyboard shortcuts/ }).click();
+    await queue(page)
+      .getByRole("button", { name: /^Keyboard shortcuts/ })
+      .click();
     const sheet = page.getByRole("dialog");
     await expect(sheet).toBeVisible();
     await expect(sheet).toContainText("Moderation queue");
@@ -560,7 +742,9 @@ eachTheme((theme) => {
     await expect(queue(page).getByRole("button", { name: /^Keyboard shortcuts/ })).toBeFocused();
   });
 
-  test("behavior: the empty state names what is empty and is reached by focus", async ({ page }) => {
+  test("behavior: the empty state names what is empty and is reached by focus", async ({
+    page,
+  }) => {
     await visitStates(page, "moderation-queue", theme);
     const empty = page.locator("#mq-empty [data-cap-part='empty']");
     await expect(empty).toBeVisible();

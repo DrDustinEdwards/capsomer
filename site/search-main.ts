@@ -3,7 +3,11 @@
 // query's words are marked in each result, as people scan results for them (NN/g), and the header's
 // box shows the query too, so the page never holds two boxes that disagree.
 import "./home-main.ts";
-import { searchWords, staticSearch, type StaticSearchIndex } from "@drdustinedwards/site-helpers/search";
+import {
+  searchWords,
+  staticSearch,
+  type StaticSearchIndex,
+} from "@drdustinedwards/site-helpers/search";
 
 const input = document.querySelector<HTMLInputElement>("#search-q");
 const status = document.querySelector<HTMLElement>("#search-status");
@@ -48,16 +52,25 @@ if (input && status && list) {
   } else {
     status.textContent = "Searching…";
     fetch("/search.json")
-      .then((r) => (r.ok ? (r.json() as Promise<StaticSearchIndex>) : Promise.reject(new Error(String(r.status)))))
+      .then((r) =>
+        r.ok
+          ? (r.json() as Promise<StaticSearchIndex>)
+          : Promise.reject(new Error(String(r.status))),
+      )
       .then((index) => {
         const results = staticSearch(index, query);
         list.replaceChildren(...results.map(item));
-        if (results.length) status.textContent = `${results.length} ${results.length === 1 ? "result" : "results"} for “${query}”`;
+        if (results.length)
+          status.textContent = `${results.length} ${results.length === 1 ? "result" : "results"} for “${query}”`;
         else {
           const all = document.createElement("a");
           all.href = "/#components";
           all.textContent = "every component";
-          status.replaceChildren(`Nothing matches “${query}”. Try fewer words, or browse `, all, ".");
+          status.replaceChildren(
+            `Nothing matches “${query}”. Try fewer words, or browse `,
+            all,
+            ".",
+          );
         }
       })
       .catch(() => {

@@ -1,5 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 const sheet = (page: Page) => page.getByRole("dialog", { name: "Keyboard shortcuts" });
 const said = (page: Page) => page.getByRole("status");
@@ -55,10 +60,14 @@ eachTheme((theme) => {
 
   test("behavior: the sheet says what a command is for, under its name", async ({ page }) => {
     await visitStates(page, "shortcuts", theme, "open");
-    await expect(sheet(page).getByText("Go to Overview")).toContainText("Problems first, worst first; then the sites.");
+    await expect(sheet(page).getByText("Go to Overview")).toContainText(
+      "Problems first, worst first; then the sites.",
+    );
   });
 
-  test("keyboard: Ctrl K (Cmd K on a Mac) in the open sheet closes it and runs its shortcut; keys that match nothing leave it open", async ({ page }) => {
+  test("keyboard: Ctrl K (Cmd K on a Mac) in the open sheet closes it and runs its shortcut; keys that match nothing leave it open", async ({
+    page,
+  }) => {
     await visitStates(page, "shortcuts", theme, "page");
     await page.keyboard.press("?");
     await expect(sheet(page)).toBeVisible();
@@ -69,7 +78,9 @@ eachTheme((theme) => {
     await expect(said(page)).toHaveText("The command menu opens here.");
   });
 
-  test("keyboard: Esc closes the sheet and focus returns to the button that opened it", async ({ page }) => {
+  test("keyboard: Esc closes the sheet and focus returns to the button that opened it", async ({
+    page,
+  }) => {
     await visitStates(page, "shortcuts", theme, "page");
     const open = page.getByRole("button", { name: "Keyboard shortcuts" });
     await open.focus();
@@ -101,7 +112,9 @@ eachTheme((theme) => {
     await expect(said(page)).toHaveText("");
   });
 
-  test("keyboard: with single-key shortcuts off, g o does nothing, and the choice is remembered", async ({ page }) => {
+  test("keyboard: with single-key shortcuts off, g o does nothing, and the choice is remembered", async ({
+    page,
+  }) => {
     await visitStates(page, "shortcuts", theme, "page");
     await page.keyboard.press("?");
     const sw = page.getByRole("switch", { name: "Single-key shortcuts" });
@@ -138,7 +151,9 @@ eachTheme((theme) => {
     await visitStates(page, "row-list", theme);
     await page.locator("h1").click();
     await page.keyboard.press("j");
-    await expect(page.getByRole("link", { name: "example.org is not answering" })).not.toBeFocused();
+    await expect(
+      page.getByRole("link", { name: "example.org is not answering" }),
+    ).not.toBeFocused();
   });
 
   test("behavior: the off specimen shows the switch off", async ({ page }) => {

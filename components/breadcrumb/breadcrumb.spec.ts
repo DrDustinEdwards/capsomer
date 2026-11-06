@@ -1,8 +1,15 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
-  test("accessibility: no axe violations, with the folded levels closed and open", async ({ page }) => {
+  test("accessibility: no axe violations, with the folded levels closed and open", async ({
+    page,
+  }) => {
     await visitStates(page, "breadcrumb", theme);
     await expectNoAxeViolations(page);
     await page.locator("#bc-folded").getByRole("button", { name: "Show 2 more levels" }).click();
@@ -16,16 +23,24 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: links, the current page and the folded button reach their contrast", async ({ page }) => {
+  test("accessibility: links, the current page and the folded button reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "breadcrumb", theme);
     await expectContrast(page, [
       { sel: "#bc-default .cap-breadcrumb-link", what: "a link up the trail" },
       { sel: "#bc-default .cap-breadcrumb-page", what: "the current page" },
       { sel: "#bc-two .cap-breadcrumb-link", what: "a link on hover" },
-      { sel: "#bc-folded .cap-breadcrumb-ellipsis", what: "the folded-levels button's dots", min: 3 },
+      {
+        sel: "#bc-folded .cap-breadcrumb-ellipsis",
+        what: "the folded-levels button's dots",
+        min: 3,
+      },
     ]);
     await page.locator("#bc-folded .cap-breadcrumb-ellipsis").click();
-    await expectContrast(page, [{ sel: "#bc-folded .cap-breadcrumb-more-link", what: "a folded level's link in the popover" }]);
+    await expectContrast(page, [
+      { sel: "#bc-folded .cap-breadcrumb-more-link", what: "a folded level's link in the popover" },
+    ]);
   });
 
   test("accessibility: roles and names", { tag: "@markup" }, async ({ page }) => {
@@ -39,29 +54,54 @@ eachTheme((theme) => {
             - link "Posts"
           - listitem: Why the spring update took so long
     `);
-    await expect(page.locator("#bc-default [aria-current='page']")).toHaveText("Why the spring update took so long");
-    await expect(page.locator("#bc-folded").getByRole("button", { name: "Show 2 more levels" })).toHaveAttribute("aria-expanded", "false");
+    await expect(page.locator("#bc-default [aria-current='page']")).toHaveText(
+      "Why the spring update took so long",
+    );
+    await expect(
+      page.locator("#bc-folded").getByRole("button", { name: "Show 2 more levels" }),
+    ).toHaveAttribute("aria-expanded", "false");
   });
 
-  test("accessibility: a separator is not in the page's text or accessibility tree", async ({ page }) => {
+  test("accessibility: a separator is not in the page's text or accessibility tree", async ({
+    page,
+  }) => {
     await visitStates(page, "breadcrumb", theme);
-    expect(await page.locator("#bc-default").evaluate((el) => (el as HTMLElement).innerText.replace(/\s+/g, " ").trim())).toBe("Admin Posts Why the spring update took so long");
+    expect(
+      await page
+        .locator("#bc-default")
+        .evaluate((el) => (el as HTMLElement).innerText.replace(/\s+/g, " ").trim()),
+    ).toBe("Admin Posts Why the spring update took so long");
     expect(await page.locator("#bc-default .cap-breadcrumb-item").count()).toBe(3);
-    const content = await page.locator("#bc-default .cap-breadcrumb-item:nth-child(2)").evaluate((el) => getComputedStyle(el, "::before").content);
+    const content = await page
+      .locator("#bc-default .cap-breadcrumb-item:nth-child(2)")
+      .evaluate((el) => getComputedStyle(el, "::before").content);
     expect(content).toBe('""');
   });
 
-  test("accessibility: links and the button are at least the target size", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "breadcrumb", theme);
-    const boxes = await page.locator(".cap-breadcrumb-link, .cap-breadcrumb-ellipsis").evaluateAll((els) => els.map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0).map((r) => [r.width, r.height]));
-    expect(boxes.length).toBeGreaterThan(8);
-    for (const [w, h] of boxes) {
-      expect(w).toBeGreaterThanOrEqual(24);
-      expect(h).toBeGreaterThanOrEqual(24);
-    }
-  });
+  test(
+    "accessibility: links and the button are at least the target size",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "breadcrumb", theme);
+      const boxes = await page
+        .locator(".cap-breadcrumb-link, .cap-breadcrumb-ellipsis")
+        .evaluateAll((els) =>
+          els
+            .map((el) => el.getBoundingClientRect())
+            .filter((r) => r.width > 0)
+            .map((r) => [r.width, r.height]),
+        );
+      expect(boxes.length).toBeGreaterThan(8);
+      for (const [w, h] of boxes) {
+        expect(w).toBeGreaterThanOrEqual(24);
+        expect(h).toBeGreaterThanOrEqual(24);
+      }
+    },
+  );
 
-  test("keyboard: Tab moves through the links in order and passes the current page", async ({ page }) => {
+  test("keyboard: Tab moves through the links in order and passes the current page", async ({
+    page,
+  }) => {
     await visitStates(page, "breadcrumb", theme);
     await page.locator("#bc-default").getByRole("link", { name: "Admin" }).focus();
     await page.keyboard.press("Tab");
@@ -78,14 +118,18 @@ eachTheme((theme) => {
     expect(new URL(page.url()).hash).toBe("#posts");
   });
 
-  test("keyboard: Enter on the folded-levels button opens the popover and focus moves to its first link", async ({ page }) => {
+  test("keyboard: Enter on the folded-levels button opens the popover and focus moves to its first link", async ({
+    page,
+  }) => {
     await visitStates(page, "breadcrumb", theme);
     const button = page.locator("#bc-folded").getByRole("button", { name: "Show 2 more levels" });
     await button.focus();
     await page.keyboard.press("Enter");
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await expect(page.getByRole("dialog", { name: "More levels" })).toBeVisible();
-    await expect(page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "Sites" })).toBeFocused();
+    await expect(
+      page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "Sites" }),
+    ).toBeFocused();
   });
 
   test("keyboard: Space on the folded-levels button opens the popover", async ({ page }) => {
@@ -95,12 +139,18 @@ eachTheme((theme) => {
     await expect(page.getByRole("dialog", { name: "More levels" })).toBeVisible();
   });
 
-  test("keyboard: Tab moves between the popover's links and past the last one closes it", async ({ page }) => {
+  test("keyboard: Tab moves between the popover's links and past the last one closes it", async ({
+    page,
+  }) => {
     await visitStates(page, "breadcrumb", theme);
     await page.locator("#bc-folded").getByRole("button", { name: "Show 2 more levels" }).click();
-    await expect(page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "Sites" })).toBeFocused();
+    await expect(
+      page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "Sites" }),
+    ).toBeFocused();
     await page.keyboard.press("Tab");
-    await expect(page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "example.com" })).toBeFocused();
+    await expect(
+      page.getByRole("dialog", { name: "More levels" }).getByRole("link", { name: "example.com" }),
+    ).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("dialog", { name: "More levels" })).toBeHidden();
   });
@@ -115,7 +165,9 @@ eachTheme((theme) => {
     await expect(button).toHaveAttribute("aria-expanded", "false");
   });
 
-  test("behavior: a long trail with data-max-items folds its middle levels into links in a popover", async ({ page }) => {
+  test("behavior: a long trail with data-max-items folds its middle levels into links in a popover", async ({
+    page,
+  }) => {
     await visitStates(page, "breadcrumb", theme);
     const nav = page.locator("#bc-auto");
     await expect(nav.locator(".cap-breadcrumb-item")).toHaveCount(5);
@@ -135,35 +187,59 @@ eachTheme((theme) => {
 
   test("behavior: the delivered HTML has the whole trail as links", async ({ page }) => {
     const html = await (await page.request.get("components/breadcrumb/states.html")).text();
-    for (const level of ["Media library", "2026", "September", "Field survey"]) expect(html).toContain(`>${level}</a>`);
+    for (const level of ["Media library", "2026", "September", "Field survey"])
+      expect(html).toContain(`>${level}</a>`);
     expect(html).toContain('<span class="cap-breadcrumb-page" aria-current="page">Photo 3</span>');
   });
 
   test("behavior: long names take two lines, then are cut", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
     for (const sel of ["#bc-long-link", "#bc-long-page"]) {
-      expect(await page.locator(sel).evaluate((el) => el.scrollHeight > el.clientHeight), sel).toBe(true);
+      expect(await page.locator(sel).evaluate((el) => el.scrollHeight > el.clientHeight), sel).toBe(
+        true,
+      );
       await expect(page.locator(sel)).toHaveCSS("-webkit-line-clamp", "2");
     }
   });
 
-  test("behavior: a narrow column wraps the trail; a phone keeps it on one line without the current page", async ({ page }) => {
+  test("behavior: a narrow column wraps the trail; a phone keeps it on one line without the current page", async ({
+    page,
+  }) => {
     await visitStates(page, "breadcrumb", theme);
-    const tops = await page.locator("#bc-narrow .cap-breadcrumb-item").evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+    const tops = await page
+      .locator("#bc-narrow .cap-breadcrumb-item")
+      .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
     expect(new Set(tops).size).toBeGreaterThan(1);
-    expect(await page.locator("#bc-narrow").evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    expect(
+      await page.locator("#bc-narrow").evaluate((el) => el.scrollWidth <= el.clientWidth),
+    ).toBe(true);
     await page.setViewportSize({ width: 320, height: 640 });
-    const phoneTops = await page.locator("#bc-narrow .cap-breadcrumb-item:not(:has([aria-current]))").evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+    const phoneTops = await page
+      .locator("#bc-narrow .cap-breadcrumb-item:not(:has([aria-current]))")
+      .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
     expect(new Set(phoneTops).size).toBe(1);
-    expect(await page.locator("#bc-narrow .cap-breadcrumb-item:has([aria-current])").evaluate((el) => el.getBoundingClientRect().width)).toBeLessThanOrEqual(1);
+    expect(
+      await page
+        .locator("#bc-narrow .cap-breadcrumb-item:has([aria-current])")
+        .evaluate((el) => el.getBoundingClientRect().width),
+    ).toBeLessThanOrEqual(1);
     await expect(page.locator("#bc-narrow ol")).toContainText("Getting started");
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+      ),
+    ).toBe(true);
   });
 
   test("behavior: comfortable density makes the links taller", async ({ page }) => {
     await visitStates(page, "breadcrumb", theme);
-    const compact = await page.locator("#bc-default .cap-breadcrumb-link").first().evaluate((el) => el.getBoundingClientRect().height);
-    const roomy = await page.locator("#bc-comfortable .cap-breadcrumb-link").evaluate((el) => el.getBoundingClientRect().height);
+    const compact = await page
+      .locator("#bc-default .cap-breadcrumb-link")
+      .first()
+      .evaluate((el) => el.getBoundingClientRect().height);
+    const roomy = await page
+      .locator("#bc-comfortable .cap-breadcrumb-link")
+      .evaluate((el) => el.getBoundingClientRect().height);
     expect(roomy).toBeGreaterThan(compact);
   });
 });

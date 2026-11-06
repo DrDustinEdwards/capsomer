@@ -55,7 +55,12 @@ export function Time({ at, format = "relative", now }: TimeProps) {
   const zone = hydrated ? undefined : "UTC";
   const p = format === "exact" ? exactParts(t, zone) : null;
   return (
-    <time className="cap-time" dateTime={iso} data-format={format === "exact" ? "exact" : undefined} suppressHydrationWarning>
+    <time
+      className="cap-time"
+      dateTime={iso}
+      data-format={format === "exact" ? "exact" : undefined}
+      suppressHydrationWarning
+    >
       {p ? (
         <>
           {p.utc ? `${p.local} ` : p.local}

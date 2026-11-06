@@ -16,9 +16,38 @@ import "@fontsource/fraunces/700.css";
 import { enhance as enhanceMeters } from "../components/meter/meter.ts";
 import { enhance as enhanceHeader } from "../components/site-header/site-header.ts";
 import { enhance as enhanceTabs } from "../components/tabs/tabs.ts";
-import { effectiveTheme, enhance as enhanceTheme } from "../components/theme-switch/theme-switch.ts";
-import { CHART_ORDER, ELEVATION_ORDER, FAMILY_ORDER, familyTheme, oklch, pairs, renderFamily, renderScoped, seedLch, type Pair, type Tokens } from "../tokens/palette-core.mjs";
-import { DEFAULT, DENSITY, DISPLAY_FACES, FACES, MONO_FACES, PRESETS, SIZES, TEXT_FACES, corners, sizes, type Density, type Label, type Settings } from "./make-presets.ts";
+import {
+  effectiveTheme,
+  enhance as enhanceTheme,
+} from "../components/theme-switch/theme-switch.ts";
+import {
+  CHART_ORDER,
+  ELEVATION_ORDER,
+  FAMILY_ORDER,
+  familyTheme,
+  oklch,
+  pairs,
+  renderFamily,
+  renderScoped,
+  seedLch,
+  type Pair,
+  type Tokens,
+} from "../tokens/palette-core.mjs";
+import {
+  DEFAULT,
+  DENSITY,
+  DISPLAY_FACES,
+  FACES,
+  MONO_FACES,
+  PRESETS,
+  SIZES,
+  TEXT_FACES,
+  corners,
+  sizes,
+  type Density,
+  type Label,
+  type Settings,
+} from "./make-presets.ts";
 
 enhanceHeader();
 enhanceTheme();
@@ -52,15 +81,26 @@ interface Built {
 }
 
 const failingFor = (seed: string, anchor: string | null, label: "light" | "dark") =>
-  SCHEMES.reduce((n, scheme) => n + pairs(familyTheme(seed, anchor, scheme, label)).filter((x) => !x.pass).length, 0);
+  SCHEMES.reduce(
+    (n, scheme) =>
+      n + pairs(familyTheme(seed, anchor, scheme, label)).filter((x) => !x.pass).length,
+    0,
+  );
 
 // "Best" takes whichever label leaves fewer failing pairs, light on a tie (Capsomer's default).
 const resolveLabel = (s: Settings): "light" | "dark" =>
-  s.label !== "auto" ? s.label : failingFor(s.seed, s.anchor, "dark") < failingFor(s.seed, s.anchor, "light") ? "dark" : "light";
+  s.label !== "auto"
+    ? s.label
+    : failingFor(s.seed, s.anchor, "dark") < failingFor(s.seed, s.anchor, "light")
+      ? "dark"
+      : "light";
 
 function build(s: Settings): Built {
   const label = resolveLabel(s);
-  const t = { light: familyTheme(s.seed, s.anchor, "light", label), dark: familyTheme(s.seed, s.anchor, "dark", label) };
+  const t = {
+    light: familyTheme(s.seed, s.anchor, "light", label),
+    dark: familyTheme(s.seed, s.anchor, "dark", label),
+  };
   const p = { light: pairs(t.light), dark: pairs(t.dark) };
   return { s, label, t, p, failing: [...p.light, ...p.dark].filter((x) => !x.pass).length };
 }
@@ -147,7 +187,16 @@ function write(s: Settings) {
 
 // The address keeps the settings after the #, short enough to paste.
 function toHash(s: Settings): string {
-  const q = new URLSearchParams({ c: s.seed.slice(1), l: s.label, ui: s.ui, h: s.display, m: s.mono, s: String(s.size), r: String(s.radius), d: s.density });
+  const q = new URLSearchParams({
+    c: s.seed.slice(1),
+    l: s.label,
+    ui: s.ui,
+    h: s.display,
+    m: s.mono,
+    s: String(s.size),
+    r: String(s.radius),
+    d: s.density,
+  });
   if (s.anchor) q.set("a", s.anchor.slice(1));
   return q.toString();
 }
@@ -155,7 +204,8 @@ function fromHash(h: string): Settings | null {
   const q = new URLSearchParams(h.replace(/^#/, ""));
   const seed = hex(q.get("c"));
   if (!seed) return null;
-  const pick = <T extends string>(v: string | null, allowed: readonly T[], fallback: T) => (allowed.includes(v as T) ? (v as T) : fallback);
+  const pick = <T extends string>(v: string | null, allowed: readonly T[], fallback: T) =>
+    allowed.includes(v as T) ? (v as T) : fallback;
   const n = (v: string | null, lo: number, hi: number, fallback: number) => {
     const x = Number(v);
     return Number.isInteger(x) && x >= lo && x <= hi ? x : fallback;
@@ -200,7 +250,17 @@ function paint(b: Built) {
 // The page itself wears the theme being made, in whichever theme it is showing: its tiles,
 // stripes, header, buttons and links, in your color and your faces and corners. Sizes and density
 // stay the page's own, so the settings do not jump about under your hand.
-const PAGE_LOOK = ["ui", "font-ui", "face", "display", "mono", "radius-s", "radius-m", "radius-l", "radius-xl"];
+const PAGE_LOOK = [
+  "ui",
+  "font-ui",
+  "face",
+  "display",
+  "mono",
+  "radius-s",
+  "radius-m",
+  "radius-l",
+  "radius-xl",
+];
 function paintPage(b: Built) {
   const root = document.documentElement;
   const t = b.t[effectiveTheme()];
@@ -208,17 +268,27 @@ function paintPage(b: Built) {
   const look = shape(b.s);
   for (const k of PAGE_LOOK) root.style.setProperty(`--${k}`, look[k] ?? "");
 }
-new MutationObserver(() => current && paintPage(current)).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => current && paintPage(current));
+new MutationObserver(() => current && paintPage(current)).observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ["data-theme"],
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener(
+  "change",
+  () => current && paintPage(current),
+);
 
 function fixFor(p: Pair, scheme: Scheme, b: Built): string {
   const other = b.label === "light" ? "dark" : "light";
   if (p.fg === "primary-fg") {
-    return failingFor(b.s.seed, b.s.anchor, other) < b.failing ? `Choose ${other === "dark" ? "Dark" : "Light"} for the label on buttons.` : "Move the brand color further from the middle, so a label stands out on it.";
+    return failingFor(b.s.seed, b.s.anchor, other) < b.failing
+      ? `Choose ${other === "dark" ? "Dark" : "Light"} for the label on buttons.`
+      : "Move the brand color further from the middle, so a label stands out on it.";
   }
-  if (b.s.anchor && scheme === "light" && (p.fg === "accent-text" || p.fg === "accent-hover")) return "Pick a darker text color, or turn your own text color off.";
+  if (b.s.anchor && scheme === "light" && (p.fg === "accent-text" || p.fg === "accent-hover"))
+    return "Pick a darker text color, or turn your own text color off.";
   const brand = ["ring", "accent", "primary", "primary-hover", "primary-line", "on", "on-hover"];
-  if (brand.includes(p.fg) || ["on", "on-hover"].includes(p.bg)) return scheme === "light" ? "Pick a darker brand color." : "Pick a lighter brand color.";
+  if (brand.includes(p.fg) || ["on", "on-hover"].includes(p.bg))
+    return scheme === "light" ? "Pick a darker brand color." : "Pick a lighter brand color.";
   return "Try the nearest color that passes, below.";
 }
 
@@ -248,7 +318,12 @@ function check(b: Built) {
           .map((p) => {
             const li = el("li");
             const what = el("p", "make-fail-what");
-            what.append(swatch(b.t[scheme][p.fg] ?? ""), swatch(b.t[scheme][p.bg] ?? ""), el("b", undefined, `${p.what[0]?.toUpperCase()}${p.what.slice(1)}`), ` in ${scheme}: ${p.ratio.toFixed(2)}:1 and Lc ${Math.abs(p.lc).toFixed(0)}, needs ${needs(p)}`);
+            what.append(
+              swatch(b.t[scheme][p.fg] ?? ""),
+              swatch(b.t[scheme][p.bg] ?? ""),
+              el("b", undefined, `${p.what[0]?.toUpperCase()}${p.what.slice(1)}`),
+              ` in ${scheme}: ${p.ratio.toFixed(2)}:1 and Lc ${Math.abs(p.lc).toFixed(0)}, needs ${needs(p)}`,
+            );
             li.append(what, el("p", "make-fail-fix", fixFor(p, scheme, b)));
             return li;
           }),
@@ -266,12 +341,26 @@ function check(b: Built) {
           const tr = el("tr");
           if (!p.pass) tr.dataset.fail = "";
           const colors = el("td");
-          colors.append(swatch(b.t[scheme][p.fg] ?? ""), swatch(b.t[scheme][p.bg] ?? ""), el("code", undefined, `--${p.fg} on --${p.bg}`));
-          const ratio = el("td", undefined, `${p.ratio.toFixed(2)}:1, Lc ${Math.abs(p.lc).toFixed(0)}${p.pass ? "" : " (fails)"}`);
+          colors.append(
+            swatch(b.t[scheme][p.fg] ?? ""),
+            swatch(b.t[scheme][p.bg] ?? ""),
+            el("code", undefined, `--${p.fg} on --${p.bg}`),
+          );
+          const ratio = el(
+            "td",
+            undefined,
+            `${p.ratio.toFixed(2)}:1, Lc ${Math.abs(p.lc).toFixed(0)}${p.pass ? "" : " (fails)"}`,
+          );
           ratio.dataset.num = "";
           const need = el("td", undefined, needs(p));
           need.dataset.num = "";
-          tr.append(el("td", undefined, scheme === "light" ? "Light" : "Dark"), el("td", undefined, p.what), colors, ratio, need);
+          tr.append(
+            el("td", undefined, scheme === "light" ? "Light" : "Dark"),
+            el("td", undefined, p.what),
+            colors,
+            ratio,
+            need,
+          );
           return tr;
         }),
       ),
@@ -284,12 +373,14 @@ function check(b: Built) {
 function nearest(s: Settings, done: (seed: string | null) => void) {
   const { L, C, H } = seedLch(s.seed);
   const tries: number[] = [];
-  for (let k = 1; k <= 60; k++) for (const l of [L + k * 0.01, L - k * 0.01]) if (l > 0.05 && l < 0.98) tries.push(l);
+  for (let k = 1; k <= 60; k++)
+    for (const l of [L + k * 0.01, L - k * 0.01]) if (l > 0.05 && l < 0.98) tries.push(l);
   let i = 0;
   const step = () => {
     for (const end = i + 4; i < end && i < tries.length; i++) {
       const seed = oklch(tries[i] as number, C, H);
-      if (failingFor(seed, s.anchor, "light") === 0 || failingFor(seed, s.anchor, "dark") === 0) return done(seed);
+      if (failingFor(seed, s.anchor, "light") === 0 || failingFor(seed, s.anchor, "dark") === 0)
+        return done(seed);
     }
     if (i < tries.length) setTimeout(step, 0);
     else done(null);
@@ -300,7 +391,11 @@ function nearest(s: Settings, done: (seed: string | null) => void) {
 // ---- the files -----------------------------------------------------------------------------
 
 const where = () => (radio("mk-where") === "family" ? "family" : "root");
-const familyName = () => (controls.name?.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, "") || "brand");
+const familyName = () =>
+  controls.name?.value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "") || "brand";
 const stackList = (stack: string) => stack.split(",").map((f) => f.trim().replace(/^"|"$/g, ""));
 
 function css(b: Built): string {
@@ -308,11 +403,18 @@ function css(b: Built): string {
   const total = b.p.light.length + b.p.dark.length;
   const scoped = where() === "family";
   const name = familyName();
-  const colors = (scoped ? renderScoped(name, { seed: s.seed, anchor: s.anchor, label }) : renderFamily(s.seed, s.anchor, label))
+  const colors = (
+    scoped
+      ? renderScoped(name, { seed: s.seed, anchor: s.anchor, label })
+      : renderFamily(s.seed, s.anchor, label)
+  )
     .replace(/^\/\*[\s\S]*?\*\/\n/, "")
     .replace(/^ {2}--(ui|mono): .*\n/gm, "");
   const look = shape(s);
-  const faces = [...new Set([s.ui, s.display, s.mono])].map((f) => FACES[f]?.name).filter((n) => n && !n.startsWith("The device")).join(", ");
+  const faces = [...new Set([s.ui, s.display, s.mono])]
+    .map((f) => FACES[f]?.name)
+    .filter((n) => n && !n.startsWith("The device"))
+    .join(", ");
   const selector = scoped ? `[data-family="${name}"]` : ":root";
   const indent = (text: string) => text.replace(/^(?=.)/gm, "  ");
   return `/* A theme from Capsomer's theme builder: ${shareUrl(s)}
@@ -321,7 +423,9 @@ function css(b: Built): string {
 @layer cap.tokens {
 ${indent(colors)}
   ${selector} {
-${Object.entries(look).map(([k, v]) => `    --${k}: ${v};`).join("\n")}
+${Object.entries(look)
+  .map(([k, v]) => `    --${k}: ${v};`)
+  .join("\n")}
     --text-size: var(--fs-body);
   }
 }
@@ -329,8 +433,14 @@ ${Object.entries(look).map(([k, v]) => `    --${k}: ${v};`).join("\n")}
 }
 
 function json(b: Built): string {
-  const color = (t: Tokens) => Object.fromEntries([...FAMILY_ORDER, ...CHART_ORDER].map((k) => [k, { $type: "color", $value: t[k] }]));
-  const dim = (v: string) => ({ $type: "dimension", $value: { value: Number.parseFloat(v), unit: "px" } });
+  const color = (t: Tokens) =>
+    Object.fromEntries(
+      [...FAMILY_ORDER, ...CHART_ORDER].map((k) => [k, { $type: "color", $value: t[k] }]),
+    );
+  const dim = (v: string) => ({
+    $type: "dimension",
+    $value: { value: Number.parseFloat(v), unit: "px" },
+  });
   const look = shape(b.s);
   const pick = (keys: string[]) => Object.fromEntries(keys.map((k) => [k, dim(look[k] ?? "0px")]));
   return `${JSON.stringify(
@@ -363,8 +473,10 @@ function files(b: Built) {
 
 // ---- wiring --------------------------------------------------------------------------------
 
-const same = (a: Settings, b: Settings) => (Object.keys(a) as Array<keyof Settings>).every((k) => a[k] === b[k]);
-const presetFor = (s: Settings) => PRESETS.flatMap((g) => g.items).find((p) => same(p.settings, s))?.id ?? "";
+const same = (a: Settings, b: Settings) =>
+  (Object.keys(a) as Array<keyof Settings>).every((k) => a[k] === b[k]);
+const presetFor = (s: Settings) =>
+  PRESETS.flatMap((g) => g.items).find((p) => same(p.settings, s))?.id ?? "";
 
 let queued = false;
 function update() {
@@ -399,15 +511,23 @@ form?.addEventListener("submit", (e) => e.preventDefault());
 let anchorOwn = false;
 form?.addEventListener("input", (e) => {
   const t = e.target as HTMLElement;
-  if (t === controls.anchor || t === controls.anchorPick || t === controls.anchorOn) anchorOwn = true;
-  if ((t === controls.seed || t === controls.seedPick) && !anchorOwn && controls.anchorOn?.checked) {
+  if (t === controls.anchor || t === controls.anchorPick || t === controls.anchorOn)
+    anchorOwn = true;
+  if (
+    (t === controls.seed || t === controls.seedPick) &&
+    !anchorOwn &&
+    controls.anchorOn?.checked
+  ) {
     controls.anchorOn.checked = false;
     controls.anchorBox?.setAttribute("hidden", "");
   }
   if (t === controls.seedPick && controls.seed) controls.seed.value = controls.seedPick.value;
-  if (t === controls.seed && controls.seedPick && hex(controls.seed.value)) controls.seedPick.value = hex(controls.seed.value) as string;
-  if (t === controls.anchorPick && controls.anchor) controls.anchor.value = controls.anchorPick.value;
-  if (t === controls.anchor && controls.anchorPick && hex(controls.anchor.value)) controls.anchorPick.value = hex(controls.anchor.value) as string;
+  if (t === controls.seed && controls.seedPick && hex(controls.seed.value))
+    controls.seedPick.value = hex(controls.seed.value) as string;
+  if (t === controls.anchorPick && controls.anchor)
+    controls.anchor.value = controls.anchorPick.value;
+  if (t === controls.anchor && controls.anchorPick && hex(controls.anchor.value))
+    controls.anchorPick.value = hex(controls.anchor.value) as string;
   if (t === controls.preset) {
     const p = PRESETS.flatMap((g) => g.items).find((x) => x.id === controls.preset?.value);
     if (p) {
@@ -440,7 +560,9 @@ part("find")?.addEventListener("click", () => {
   nearest(s, (seed) => {
     found.replaceChildren();
     if (!seed) {
-      found.textContent = s.anchor ? "No color of this hue passes with your own text color. Turn it off and try again." : "No color of this hue passes. Try another hue.";
+      found.textContent = s.anchor
+        ? "No color of this hue passes with your own text color. Turn it off and try again."
+        : "No color of this hue passes. Try another hue.";
       return;
     }
     const use = el("button", "cap-btn", `Use ${seed}`);
@@ -472,7 +594,11 @@ const clip = async (text: string, done: string) => {
   }
 };
 part("copy")?.addEventListener("click", () => {
-  if (current) void clip(fileTab() === "json" ? json(current) : css(current), fileTab() === "json" ? "Tokens copied" : "CSS copied");
+  if (current)
+    void clip(
+      fileTab() === "json" ? json(current) : css(current),
+      fileTab() === "json" ? "Tokens copied" : "CSS copied",
+    );
 });
 part("share")?.addEventListener("click", () => {
   if (current) void clip(shareUrl(current.s), "Link copied");
@@ -481,7 +607,9 @@ const download = part("download");
 download?.addEventListener("click", () => {
   if (!current) return;
   const kind = fileTab();
-  const blob = new Blob([kind === "json" ? json(current) : css(current)], { type: kind === "json" ? "application/json" : "text/css" });
+  const blob = new Blob([kind === "json" ? json(current) : css(current)], {
+    type: kind === "json" ? "application/json" : "text/css",
+  });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = kind === "json" ? "tokens.json" : "theme.css";
@@ -490,14 +618,17 @@ download?.addEventListener("click", () => {
 });
 // The download button names the file of the open tab.
 const tabWatch = new MutationObserver(() => {
-  if (download) download.textContent = fileTab() === "json" ? "Download tokens.json" : "Download theme.css";
+  if (download)
+    download.textContent = fileTab() === "json" ? "Download tokens.json" : "Download theme.css";
 });
 const jsonTab = $("#mk-t-json");
 if (jsonTab) tabWatch.observe(jsonTab, { attributes: true, attributeFilter: ["aria-selected"] });
 
 // The previews' chips and switches respond, as the components do in an app.
 for (const chip of document.querySelectorAll<HTMLButtonElement>(".make-pane .cap-chip")) {
-  chip.addEventListener("click", () => chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true")));
+  chip.addEventListener("click", () =>
+    chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true")),
+  );
 }
 for (const sw of document.querySelectorAll<HTMLInputElement>(".make-pane .cap-switch input")) {
   sw.addEventListener("change", () => {

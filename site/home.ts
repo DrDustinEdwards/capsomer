@@ -16,7 +16,15 @@ import { networkBoard } from "./network-board.ts";
 // Magenta is the public site's own family, on its root; the six are the ones it shows.
 type Family = "purple" | "fox" | "teal" | "amber" | "navy" | "forest" | "magenta";
 const FAMILIES: Family[] = ["purple", "fox", "teal", "amber", "navy", "forest"];
-const NAMES: Record<Family, string> = { purple: "Purple", fox: "Fox", teal: "Teal", amber: "Amber", navy: "Navy", forest: "Forest", magenta: "Magenta" };
+const NAMES: Record<Family, string> = {
+  purple: "Purple",
+  fox: "Fox",
+  teal: "Teal",
+  amber: "Amber",
+  navy: "Navy",
+  forest: "Forest",
+  magenta: "Magenta",
+};
 
 interface Component {
   name: string;
@@ -54,15 +62,28 @@ export interface Data {
   defaults: Array<{ lead: string; reason: string }>;
 }
 
-export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+export const esc = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 // Backticks in a summary become code, as on the admin's pages.
 const prose = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const fam = (f: Family) => ` data-family="${f}"`;
-const plain = (html: string) => html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').trim();
+const plain = (html: string) =>
+  html
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .trim();
 // The markup as an app writes it: no forced demo states, indented from the left edge.
 const tidy = (html: string) => {
-  const lines = html.replace(/\s+data-force="[^"]*"/g, "").replace(/^\s*\n|\n\s*$/g, "").split("\n");
-  const indent = Math.min(...lines.filter((l) => l.trim()).map((l) => /^ */.exec(l)?.[0].length ?? 0));
+  const lines = html
+    .replace(/\s+data-force="[^"]*"/g, "")
+    .replace(/^\s*\n|\n\s*$/g, "")
+    .split("\n");
+  const indent = Math.min(
+    ...lines.filter((l) => l.trim()).map((l) => /^ */.exec(l)?.[0].length ?? 0),
+  );
   return lines.map((l) => l.slice(indent)).join("\n");
 };
 
@@ -86,11 +107,25 @@ function examplesOf(html: string): Example[] {
     const body = html.slice(open.lastIndex, end);
     const id = m[1] ?? "";
     const h = new RegExp(`<h2 id="${id}">([\\s\\S]*?)</h2>`).exec(body);
-    out.push({ id, title: plain(h?.[1] ?? id), code: tidy(body.replace(h?.[0] ?? "", "")), kind: "example", height: 0 });
+    out.push({
+      id,
+      title: plain(h?.[1] ?? id),
+      code: tidy(body.replace(h?.[0] ?? "", "")),
+      kind: "example",
+      height: 0,
+    });
     open.lastIndex = end;
   }
-  for (const t of html.matchAll(/<template data-specimen="([^"]+)" data-title="([^"]*)"(?: data-height="(\d+)")?[^>]*>([\s\S]*?)<\/template>/g)) {
-    out.push({ id: t[1] ?? "", title: plain(t[2] ?? ""), code: tidy(t[4] ?? ""), kind: "only", height: Number(t[3] ?? 360) });
+  for (const t of html.matchAll(
+    /<template data-specimen="([^"]+)" data-title="([^"]*)"(?: data-height="(\d+)")?[^>]*>([\s\S]*?)<\/template>/g,
+  )) {
+    out.push({
+      id: t[1] ?? "",
+      title: plain(t[2] ?? ""),
+      code: tidy(t[4] ?? ""),
+      kind: "only",
+      height: Number(t[3] ?? 360),
+    });
   }
   return out;
 }
@@ -103,7 +138,9 @@ export function readData(root: string, examples: Map<string, string>): Data {
   const components = readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory() && existsSync(resolve(dir, d.name, `${d.name}.md`)))
     .map((d) => {
-      const { data, body } = frontmatter(readFileSync(resolve(dir, d.name, `${d.name}.md`), "utf8"));
+      const { data, body } = frontmatter(
+        readFileSync(resolve(dir, d.name, `${d.name}.md`), "utf8"),
+      );
       const str = (k: string) => (typeof data[k] === "string" ? (data[k] as string) : "");
       const list = (k: string) => (Array.isArray(data[k]) ? (data[k] as string[]) : []);
       return {
@@ -113,17 +150,27 @@ export function readData(root: string, examples: Map<string, string>): Data {
         summary: str("summary").replace(/^(.+?[.!?])\s.*$/s, "$1"),
         lead: str("summary"),
         // Without its title, and without an "Exceptions in production" that has none to list.
-        body: body.replace(/^\s*#\s+.*\n/, "").replace(/\n## Exceptions in production\n+None yet\.\n?/, "\n"),
+        body: body
+          .replace(/^\s*#\s+.*\n/, "")
+          .replace(/\n## Exceptions in production\n+None yet\.\n?/, "\n"),
         parts: list("parts"),
         added: str("added") || "0.1.0",
         states: list("states").length,
         examples: examplesOf(examples.get(d.name) ?? ""),
         behavior: existsSync(resolve(dir, d.name, `${d.name}.ts`))
-          ? [...readFileSync(resolve(dir, d.name, `${d.name}.ts`), "utf8").matchAll(/^export (?:async )?function (\w+)/gm)].map((x) => x[1] ?? "")
+          ? [
+              ...readFileSync(resolve(dir, d.name, `${d.name}.ts`), "utf8").matchAll(
+                /^export (?:async )?function (\w+)/gm,
+              ),
+            ].map((x) => x[1] ?? "")
           : [],
         md: frontmatter(readFileSync(resolve(dir, d.name, `${d.name}.md`), "utf8")).body,
         react: existsSync(resolve(dir, d.name, `${d.name}.react.tsx`))
-          ? [...readFileSync(resolve(dir, d.name, `${d.name}.react.tsx`), "utf8").matchAll(/^export (?:function|const) ([A-Z]\w*)/gm)].map((x) => x[1] ?? "")
+          ? [
+              ...readFileSync(resolve(dir, d.name, `${d.name}.react.tsx`), "utf8").matchAll(
+                /^export (?:function|const) ([A-Z]\w*)/gm,
+              ),
+            ].map((x) => x[1] ?? "")
           : [],
       };
     })
@@ -131,15 +178,22 @@ export function readData(root: string, examples: Map<string, string>): Data {
   const fams = json(resolve(root, "site/data/families.json"));
   const results = json(resolve(root, "site/data/results.json"));
   const tokens = json(resolve(root, "tokens/tokens.json"));
-  const type = Object.entries((tokens?.type ?? {}) as Record<string, { $value: unknown; $description?: string }>)
+  const type = Object.entries(
+    (tokens?.type ?? {}) as Record<string, { $value: unknown; $description?: string }>,
+  )
     .filter(([name]) => name.startsWith("fs-") && name !== "fs-input-coarse")
     .map(([name, t]) => [name, String(t.$value), t.$description ?? ""] as [string, string, string]);
   // Each default's bold lead and the rest of its line, which carries the reason.
-  const defaults = [...readFileSync(resolve(root, "DEFAULTS.md"), "utf8").matchAll(/^- \*\*(.+?)\*\*(.*)$/gm)].map((m) => {
+  const defaults = [
+    ...readFileSync(resolve(root, "DEFAULTS.md"), "utf8").matchAll(/^- \*\*(.+?)\*\*(.*)$/gm),
+  ].map((m) => {
     const lead = (m[1] ?? "").replace(/[.;]$/, "");
     const rest = (m[2] ?? "").trim();
     // A line whose lead runs on into its sentence ("..., in a dialog** with focus on Cancel") reads whole.
-    return { lead, reason: /^[A-Z`]/.test(rest) ? rest : `${m[1]} ${rest.replace(/^[,;]\s*/, "")}` };
+    return {
+      lead,
+      reason: /^[A-Z`]/.test(rest) ? rest : `${m[1]} ${rest.replace(/^[,;]\s*/, "")}`,
+    };
   });
   return {
     version: JSON.parse(readFileSync(resolve(root, "package.json"), "utf8")).version,
@@ -148,12 +202,22 @@ export function readData(root: string, examples: Map<string, string>): Data {
     accentText: Object.fromEntries(
       FAMILIES.map((f) => {
         const ratio = (scheme: string) =>
-          (fams?.pairs ?? []).find((p: { family: string; scheme: string; fg: string; bg: string }) => p.family === f && p.scheme === scheme && p.fg === "accent-text" && p.bg === "surface")?.ratio ?? 0;
+          (fams?.pairs ?? []).find(
+            (p: { family: string; scheme: string; fg: string; bg: string }) =>
+              p.family === f && p.scheme === scheme && p.fg === "accent-text" && p.bg === "surface",
+          )?.ratio ?? 0;
         return [f, [ratio("light"), ratio("dark")]];
       }),
     ),
-    pairs: fams ? { total: fams.pairs.length, failing: fams.pairs.filter((p: { pass: boolean }) => !p.pass).length } : null,
-    tests: results?.available ? { passed: results.totals.passed, failed: results.totals.failed } : null,
+    pairs: fams
+      ? {
+          total: fams.pairs.length,
+          failing: fams.pairs.filter((p: { pass: boolean }) => !p.pass).length,
+        }
+      : null,
+    tests: results?.available
+      ? { passed: results.totals.passed, failed: results.totals.failed }
+      : null,
     type,
     defaults,
   };
@@ -162,15 +226,30 @@ export function readData(root: string, examples: Map<string, string>): Data {
 /** A word in letter tiles over a stripe, hidden from assistive technology: the heading says it. */
 export function band(word: string, families: Family[], size: "cover" | "section") {
   const one = families.length === 1;
-  const tiles = Array.from(new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(word), (s) => s.segment).map((c, i) => `<span${one ? "" : fam(families[i % families.length] as Family)}>${esc(c)}</span>`).join("");
-  const stripe = (one ? ["ink", "solid", "pale"] : families).map((f) => `<i${one ? ` data-role="${f}"` : fam(f as Family)}></i>`).join("");
+  const tiles = Array.from(
+    new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(word),
+    (s) => s.segment,
+  )
+    .map(
+      (c, i) => `<span${one ? "" : fam(families[i % families.length] as Family)}>${esc(c)}</span>`,
+    )
+    .join("");
+  const stripe = (one ? ["ink", "solid", "pale"] : families)
+    .map((f) => `<i${one ? ` data-role="${f}"` : fam(f as Family)}></i>`)
+    .join("");
   return `<div class="home-band" data-size="${size}"${one ? fam(families[0] as Family) : " data-mix"} aria-hidden="true"><p class="home-band-word">${tiles}</p><p class="home-band-stripe">${stripe}</p></div>`;
 }
 
 /** The site header every public page shares: its section links go to the front page's sections, so `base` is "" there and "/" elsewhere; the last goes to the theme builder. */
 export function header(base: string, current = "Home"): string {
   const links: Array<[string, string]> = [
-    ...[["color", "Color"], ["type", "Type"], ["components", "Components"], ["defaults", "Defaults"], ["use", "Install"]].map(([h, t]) => [`${base}#${h}`, t] as [string, string]),
+    ...[
+      ["color", "Color"],
+      ["type", "Type"],
+      ["components", "Components"],
+      ["defaults", "Defaults"],
+      ["use", "Install"],
+    ].map(([h, t]) => [`${base}#${h}`, t] as [string, string]),
     ["/make/", "Make a theme"],
   ];
   return letterheadHtml({
@@ -191,11 +270,14 @@ export const runningHead = (no: string, name: string, folio: string) =>
   `<div class="cap-page home-running" aria-hidden="true"><div class="cap-running-head"><span class="cap-running-head-name">${no ? `<span class="cap-running-head-no">${esc(no)}</span>` : ""}${esc(name)}</span><span class="cap-running-head-folio">${esc(folio)}</span></div></div>`;
 
 /** A numbered section heading, as the manual numbers its parts. */
-const partTitle = (id: string, no: string, text: string) => `<h2 class="cap-part-title" id="${id}"><span class="cap-part-no">${no}</span>${text}</h2>`;
+const partTitle = (id: string, no: string, text: string) =>
+  `<h2 class="cap-part-title" id="${id}"><span class="cap-part-no">${no}</span>${text}</h2>`;
 
 // The foot of every public page: the family footer every dustinedwards.info site closes with, with
 // Capsomer's own part under its thin magenta stripe (Dustin, 2026-10-26).
-const VERSION: string = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).version;
+const VERSION: string = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+).version;
 const CENTER = `<div class="cap-family-footer-center">
   <div><p class="cap-family-footer-center-name">Capsomer</p><p class="cap-family-footer-about">The family design system. Plain CSS, MIT licensed.</p></div>
   <div class="cap-family-footer-columns">
@@ -220,10 +302,18 @@ import "capsomer/button.css";       // each component's CSS, as used`;
     ["purple", "Components", String(d.components.length), `in release ${d.version}`],
     ["fox", "Color families", String(FAMILIES.length), "each one 12 steps, in light and dark"],
   ];
-  if (d.pairs) figures.push(["teal", "Contrast pairs", String(d.pairs.total), d.pairs.failing ? `${d.pairs.failing} failing` : "every one passes WCAG 2.2"]);
+  if (d.pairs)
+    figures.push([
+      "teal",
+      "Contrast pairs",
+      String(d.pairs.total),
+      d.pairs.failing ? `${d.pairs.failing} failing` : "every one passes WCAG 2.2",
+    ]);
   // The test count: the build's own when it has one; otherwise the last run on main, read by
   // site/home-main.ts from the results branch, so the deployed page never claims a number it lacks.
-  const tests = d.tests ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>` : `<li data-family="forest" data-live="tests" data-pending><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
+  const tests = d.tests
+    ? `<li data-family="forest"><b>${d.tests.passed + d.tests.failed}</b><span class="home-figure-label">Tests</span><span>${d.tests.failed ? `${d.tests.failed} failing` : "all passed on the last run"}</span></li>`
+    : `<li data-family="forest" data-live="tests" data-pending><b></b><span class="home-figure-label">Tests</span><span></span></li>`;
   return `${header("")}
 <main id="main" tabindex="-1">
 ${runningHead("1", "Overview", `Release ${d.version}`)}
@@ -368,7 +458,6 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
 ${FOOTER}`;
 }
 
-
 /** One example: the live component in a frame of its own (the states page showing only it), with its markup under it. */
 function exampleBlock(c: Component, e: Example, heading: boolean): string {
   const src = `/components/${esc(c.name)}/states.html?${e.kind}=${encodeURIComponent(e.id)}`;
@@ -409,7 +498,13 @@ export function renderComponent(d: Data, name: string): string {
   const [hero, ...rest] = c.examples;
   const docHeads = [...c.body.matchAll(/^## (.+)$/gm)].map((m) => {
     const text = (m[1] ?? "").trim();
-    return [`doc-${text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`, text.replace(/`/g, "")] as [string, string];
+    return [
+      `doc-${text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")}`,
+      text.replace(/`/g, ""),
+    ] as [string, string];
   });
   const usesCss = c.parts.includes("css") || c.parts.length === 0;
   const enhance = c.behavior.includes("enhance");
@@ -418,10 +513,18 @@ export function renderComponent(d: Data, name: string): string {
     `import "capsomer/tokens.css";`,
     `import "capsomer/base.css";`,
     ...(usesCss ? [`import "capsomer/${c.name}.css";`] : []),
-    ...(enhance ? [`import { enhance } from "capsomer/behavior/${c.name}";`, "", "enhance();"] : c.behavior.length ? [`import { ${c.behavior.slice(0, 3).join(", ")} } from "capsomer/behavior/${c.name}";`] : []),
+    ...(enhance
+      ? [`import { enhance } from "capsomer/behavior/${c.name}";`, "", "enhance();"]
+      : c.behavior.length
+        ? [`import { ${c.behavior.slice(0, 3).join(", ")} } from "capsomer/behavior/${c.name}";`]
+        : []),
   ].join("\n");
   const react = c.react.length
-    ? [`import "capsomer/tokens.css";`, ...(usesCss ? [`import "capsomer/${c.name}.css";`] : []), `import { ${c.react.join(", ")} } from "capsomer/react/${c.name}";`].join("\n")
+    ? [
+        `import "capsomer/tokens.css";`,
+        ...(usesCss ? [`import "capsomer/${c.name}.css";`] : []),
+        `import { ${c.react.join(", ")} } from "capsomer/react/${c.name}";`,
+      ].join("\n")
     : "";
   const tab = (id: string, text: string, on: boolean) =>
     `<button type="button" class="cap-tab" role="tab" id="inst-t-${id}" aria-selected="${on}" aria-controls="inst-p-${id}" tabindex="${on ? 0 : -1}">${text}</button>`;
@@ -429,7 +532,12 @@ export function renderComponent(d: Data, name: string): string {
     `<div class="cap-tabs-panel" role="tabpanel" id="inst-p-${id}" aria-labelledby="inst-t-${id}"${on ? "" : " hidden"}><div class="comp-ex-code" data-open><pre ${codeRegion(`Install, ${id === "react" ? "React" : "HTML and CSS"}`)}><code>${esc(code)}</code></pre><div class="comp-ex-tools"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="copy-code" hidden>Copy</button></div></div></div>`;
   const toc: Array<[string, string, boolean]> = [
     ["install-h", "Installation", false],
-    ...(rest.length ? ([["examples-h", "Examples", false], ...rest.map((e) => [`ex-${e.id}`, e.title, true])] as Array<[string, string, boolean]>) : []),
+    ...(rest.length
+      ? ([
+          ["examples-h", "Examples", false],
+          ...rest.map((e) => [`ex-${e.id}`, e.title, true]),
+        ] as Array<[string, string, boolean]>)
+      : []),
     ...docHeads.map(([id, t]) => [id, t, false] as [string, string, boolean]),
     ["states-h", "Every state", false],
   ];
@@ -469,10 +577,14 @@ ${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
     </div>
   </section>
 
-  ${rest.length ? `<section aria-labelledby="examples-h">
+  ${
+    rest.length
+      ? `<section aria-labelledby="examples-h">
     <h2 id="examples-h">Examples</h2>
     ${rest.map((e) => exampleBlock(c, e, true)).join("\n    ")}
-  </section>` : ""}
+  </section>`
+      : ""
+  }
 
   <article class="home-doc comp-doc" aria-label="How to use ${esc(c.title)}">
   ${renderMarkdown(c.body, 0)}

@@ -2,7 +2,15 @@
 // which actions a person is offered here and why the others are withheld, and the forms the
 // script path posts. No DOM; the React component and a server render use the same functions.
 import { DAY } from "../time/time.ts";
-import { queryHref, type ContentLabels, type ContentStatus, type PostRow, type PostsData, type PostsQuery, type PostSort } from "../content/content.ts";
+import {
+  queryHref,
+  type ContentLabels,
+  type ContentStatus,
+  type PostRow,
+  type PostsData,
+  type PostsQuery,
+  type PostSort,
+} from "../content/content.ts";
 
 // ---------------------------------------------------------------------------------------
 // Status.
@@ -31,12 +39,18 @@ export function inDays(at: string, now: number): string {
 
 // The one mapping from a content status to its words, for every list and editor that shows one
 // (Carrel wrote it inline six times).
-export function contentStatus(status: ContentStatus, publishAt: string | null = null, now: number = Date.now()): ContentStatusWords {
+export function contentStatus(
+  status: ContentStatus,
+  publishAt: string | null = null,
+  now: number = Date.now(),
+): ContentStatusWords {
   switch (status) {
     case "published":
       return { tone: "ok", word: "Published" };
     case "scheduled":
-      return publishAt ? { tone: "info", word: "Scheduled", when: inDays(publishAt, now) } : { tone: "info", word: "Scheduled" };
+      return publishAt
+        ? { tone: "info", word: "Scheduled", when: inDays(publishAt, now) }
+        : { tone: "info", word: "Scheduled" };
     case "draft":
       return { tone: "nodata", word: "Draft" };
   }
@@ -44,9 +58,13 @@ export function contentStatus(status: ContentStatus, publishAt: string | null = 
 
 // A row's status on one line: the status word, then what is due, after a middle dot:
 // "Scheduled · in 3 days", "Published · update in 2 days".
-export function rowStatus(row: Pick<PostRow, "status" | "publishAt" | "scheduledUpdate">, now: number = Date.now()): ContentStatusWords & { note?: string } {
+export function rowStatus(
+  row: Pick<PostRow, "status" | "publishAt" | "scheduledUpdate">,
+  now: number = Date.now(),
+): ContentStatusWords & { note?: string } {
   const st = contentStatus(row.status, row.publishAt, now);
-  if (row.status === "published" && row.scheduledUpdate) return { ...st, note: `update ${inDays(row.scheduledUpdate.publishAt, now)}` };
+  if (row.status === "published" && row.scheduledUpdate)
+    return { ...st, note: `update ${inDays(row.scheduledUpdate.publishAt, now)}` };
   return st.when ? { ...st, note: st.when } : st;
 }
 
@@ -83,12 +101,16 @@ export function trashLine(labels?: ContentLabels): string {
 
 // "12 posts", "Showing 50 of 120 posts", "3 posts in Trash", and a note when the site could only
 // sort this page.
-export function countLine(data: Pick<PostsData, "rows" | "page"> & { query?: PostsQuery }, labels?: ContentLabels): string {
+export function countLine(
+  data: Pick<PostsData, "rows" | "page"> & { query?: PostsQuery },
+  labels?: ContentLabels,
+): string {
   const { noun, plural } = nounsOf(labels);
   const n = data.rows.length;
   const total = data.page.total;
   const word = (k: number) => (k === 1 ? noun : plural);
-  const counted = total != null && total > n ? `Showing ${n} of ${total} ${word(total)}` : `${n} ${word(n)}`;
+  const counted =
+    total != null && total > n ? `Showing ${n} of ${total} ${word(total)}` : `${n} ${word(n)}`;
   const base = data.query?.trashed ? `${counted} in Trash` : counted;
   return data.page.sortedOnPage ? `${base}, sorted on this page only` : base;
 }
@@ -107,33 +129,94 @@ export function filtered(q: PostsQuery): boolean {
   return !!(q.q || q.kind || q.tag || q.author || q.from || q.to);
 }
 
-export const NO_FILTERS: Partial<PostsQuery> = { q: undefined, kind: undefined, tag: undefined, author: undefined, from: undefined, to: undefined };
+export const NO_FILTERS: Partial<PostsQuery> = {
+  q: undefined,
+  kind: undefined,
+  tag: undefined,
+  author: undefined,
+  from: undefined,
+  to: undefined,
+};
 
 // The empty state's title and line, naming what is not there.
-export function emptyWords(q: PostsQuery, labels?: ContentLabels): { kind: "nothing-yet" | "no-match" | "all-clear"; title: string; text: string } {
+export function emptyWords(
+  q: PostsQuery,
+  labels?: ContentLabels,
+): { kind: "nothing-yet" | "no-match" | "all-clear"; title: string; text: string } {
   const { noun, plural } = nounsOf(labels);
   if (filtered(q)) {
-    const dates = q.from && q.to ? `published ${q.from} to ${q.to}` : q.from ? `published from ${q.from}` : q.to ? `published by ${q.to}` : null;
-    const what = [q.q ? `“${q.q}”` : null, q.kind ? `kind ${q.kind}` : null, q.tag ? `tag ${q.tag}` : null, q.author ? `author ${q.author}` : null, dates].filter(Boolean).join(", ");
-    return { kind: "no-match", title: `No ${plural}${q.trashed ? " in Trash" : ""} match ${what}`, text: "Clear the filters to see every one." };
+    const dates =
+      q.from && q.to
+        ? `published ${q.from} to ${q.to}`
+        : q.from
+          ? `published from ${q.from}`
+          : q.to
+            ? `published by ${q.to}`
+            : null;
+    const what = [
+      q.q ? `“${q.q}”` : null,
+      q.kind ? `kind ${q.kind}` : null,
+      q.tag ? `tag ${q.tag}` : null,
+      q.author ? `author ${q.author}` : null,
+      dates,
+    ]
+      .filter(Boolean)
+      .join(", ");
+    return {
+      kind: "no-match",
+      title: `No ${plural}${q.trashed ? " in Trash" : ""} match ${what}`,
+      text: "Clear the filters to see every one.",
+    };
   }
-  if (q.trashed) return { kind: "all-clear", title: "Trash is empty", text: `A ${noun} moved to Trash waits here until it is restored or deleted for good.` };
+  if (q.trashed)
+    return {
+      kind: "all-clear",
+      title: "Trash is empty",
+      text: `A ${noun} moved to Trash waits here until it is restored or deleted for good.`,
+    };
   switch (q.status) {
     case "draft":
-      return { kind: "nothing-yet", title: "No drafts", text: `Every ${nounsOf(labels).noun} here is scheduled or published.` };
+      return {
+        kind: "nothing-yet",
+        title: "No drafts",
+        text: `Every ${nounsOf(labels).noun} here is scheduled or published.`,
+      };
     case "scheduled":
-      return { kind: "nothing-yet", title: "Nothing scheduled", text: "A scheduled post shows here until it goes out." };
+      return {
+        kind: "nothing-yet",
+        title: "Nothing scheduled",
+        text: "A scheduled post shows here until it goes out.",
+      };
     case "published":
-      return { kind: "nothing-yet", title: "Nothing published yet", text: "Published posts show here." };
+      return {
+        kind: "nothing-yet",
+        title: "Nothing published yet",
+        text: "Published posts show here.",
+      };
     default:
-      return { kind: "nothing-yet", title: `No ${plural} yet`, text: `The first ${nounsOf(labels).noun} you start shows here.` };
+      return {
+        kind: "nothing-yet",
+        title: `No ${plural} yet`,
+        text: `The first ${nounsOf(labels).noun} you start shows here.`,
+      };
   }
 }
 
 // ---------------------------------------------------------------------------------------
 // Addresses.
 
-const QUERY_ORDER: ReadonlyArray<keyof PostsQuery> = ["q", "status", "trashed", "kind", "tag", "author", "from", "to", "sort", "cursor"];
+const QUERY_ORDER: ReadonlyArray<keyof PostsQuery> = [
+  "q",
+  "status",
+  "trashed",
+  "kind",
+  "tag",
+  "author",
+  "from",
+  "to",
+  "sort",
+  "cursor",
+];
 
 // The list's address with a query (content.ts, queryHref).
 export function postsHref(base: string, q: PostsQuery): string {
@@ -144,7 +227,8 @@ export function postsHref(base: string, q: PostsQuery): string {
 export function withFilter(q: PostsQuery, change: Partial<PostsQuery>): PostsQuery {
   const next: PostsQuery = { ...q, ...change };
   delete next.cursor;
-  for (const k of Object.keys(change) as Array<keyof PostsQuery>) if (change[k] === undefined) delete next[k];
+  for (const k of Object.keys(change) as Array<keyof PostsQuery>)
+    if (change[k] === undefined) delete next[k];
   return next;
 }
 
@@ -152,7 +236,18 @@ export function withFilter(q: PostsQuery, change: Partial<PostsQuery>): PostsQue
 // What is offered.
 
 // The content kit's names (site-api runPostsIntent), so a host passes the form straight on.
-export type PostIntent = "tag-add" | "tag-remove" | "duplicate" | "unpublish" | "trash" | "restore" | "delete" | "reschedule" | "cancel-schedule" | "rename" | "preview-link";
+export type PostIntent =
+  | "tag-add"
+  | "tag-remove"
+  | "duplicate"
+  | "unpublish"
+  | "trash"
+  | "restore"
+  | "delete"
+  | "reschedule"
+  | "cancel-schedule"
+  | "rename"
+  | "preview-link";
 
 export interface OfferedAction {
   intent: PostIntent;
@@ -165,28 +260,42 @@ export interface OfferedAction {
 // when the site offers it (data.offers) and the person may run it (data.can). Where the site has a
 // Trash (site-api v0.17.0), Move to Trash is the normal way out, an editor's since Restore undoes
 // it, and Delete for good is the delete role's, in the Trash only; elsewhere Delete stays as it was.
-export function postActions(data: Pick<PostsData, "offers" | "can"> & { query?: PostsQuery }, labels?: ContentLabels): { bulk: OfferedAction[]; withheld: string[] } {
+export function postActions(
+  data: Pick<PostsData, "offers" | "can"> & { query?: PostsQuery },
+  labels?: ContentLabels,
+): { bulk: OfferedAction[]; withheld: string[] } {
   const { plural } = nounsOf(labels);
   const { offers, can } = data;
   const bulk: OfferedAction[] = [];
   const withheld: string[] = [];
   if (offers.trash && data.query?.trashed) {
     if (can.edit) bulk.push({ intent: "restore", label: "Restore" });
-    if (can.deleteContent && offers.delete) bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
-    if (!can.edit) withheld.push(`You can read these ${plural}. Restoring them needs an editor's role.`);
-    if (can.deleteContent && !offers.delete) withheld.push(`Delete is not offered: this site cannot delete ${plural}.`);
+    if (can.deleteContent && offers.delete)
+      bulk.push({ intent: "delete", label: "Delete for good", destructive: true });
+    if (!can.edit)
+      withheld.push(`You can read these ${plural}. Restoring them needs an editor's role.`);
+    if (can.deleteContent && !offers.delete)
+      withheld.push(`Delete is not offered: this site cannot delete ${plural}.`);
     return { bulk, withheld };
   }
-  if (can.edit && offers.tags) bulk.push({ intent: "tag-add", label: "Add tag" }, { intent: "tag-remove", label: "Remove tag" });
+  if (can.edit && offers.tags)
+    bulk.push(
+      { intent: "tag-add", label: "Add tag" },
+      { intent: "tag-remove", label: "Remove tag" },
+    );
   if (can.edit && offers.duplicate) bulk.push({ intent: "duplicate", label: "Duplicate" });
   if (can.publish) bulk.push({ intent: "unpublish", label: "Unpublish" });
   if (can.edit && offers.trash) bulk.push({ intent: "trash", label: "Move to Trash" });
-  else if (can.deleteContent && offers.delete) bulk.push({ intent: "delete", label: "Delete", destructive: true });
-  if (!can.edit) withheld.push(`You can read these ${plural}. Changing them needs an editor's role.`);
-  else if (!offers.tags) withheld.push(`Tags are not offered: this site keeps no tags on its ${plural}.`);
+  else if (can.deleteContent && offers.delete)
+    bulk.push({ intent: "delete", label: "Delete", destructive: true });
+  if (!can.edit)
+    withheld.push(`You can read these ${plural}. Changing them needs an editor's role.`);
+  else if (!offers.tags)
+    withheld.push(`Tags are not offered: this site keeps no tags on its ${plural}.`);
   if (can.edit && !offers.duplicate) withheld.push(`Duplicate is not offered by this site.`);
   if (can.edit && !can.publish) withheld.push(`Unpublishing needs a publisher's role.`);
-  if (can.deleteContent && !offers.delete && !offers.trash) withheld.push(`Delete is not offered: this site cannot delete ${plural}.`);
+  if (can.deleteContent && !offers.delete && !offers.trash)
+    withheld.push(`Delete is not offered: this site cannot delete ${plural}.`);
   return { bulk, withheld };
 }
 
@@ -201,7 +310,9 @@ export interface RowAction {
 
 // The time a row's schedule goes out: its waiting update's on a live post, its own on a scheduled
 // one. null when nothing is scheduled.
-export function scheduledTime(row: Pick<PostRow, "status" | "publishAt" | "scheduledUpdate">): string | null {
+export function scheduledTime(
+  row: Pick<PostRow, "status" | "publishAt" | "scheduledUpdate">,
+): string | null {
   if (row.status === "published") return row.scheduledUpdate?.publishAt ?? null;
   return row.status === "scheduled" ? row.publishAt : null;
 }
@@ -218,25 +329,43 @@ export function rowActions(row: PostRow, data: Pick<PostsData, "offers" | "can">
   const items: RowAction[] = [];
   if (offers.trash && row.trashedAt) {
     if (can.edit) items.push({ label: "Restore", value: "restore" });
-    if (can.deleteContent && offers.delete) items.push({ label: "Delete for good", value: "delete", danger: true });
+    if (can.deleteContent && offers.delete)
+      items.push({ label: "Delete for good", value: "delete", danger: true });
     return items;
   }
   if (can.edit) items.push({ label: "Edit", value: "edit", href: row.href });
-  if (row.status === "published" && row.liveHref) items.push({ label: "View on the site", value: "view", href: row.liveHref });
+  if (row.status === "published" && row.liveHref)
+    items.push({ label: "View on the site", value: "view", href: row.liveHref });
   const at = scheduledTime(row);
   const update = row.status === "published" ? row.scheduledUpdate : undefined;
   const moves = can.publish && offers.scheduledUpdates === true;
-  if (update) items.push({ label: "View the scheduled update", value: "view-update", href: update.href });
+  if (update)
+    items.push({ label: "View the scheduled update", value: "view-update", href: update.href });
   // Reschedule… and Cancel the update act in place with script (a dialog, a confirmation);
   // with no script they go to the page that does it: the update's own, or the editor.
-  if (moves && at) items.push({ label: "Reschedule…", value: "reschedule", href: update?.href ?? row.href, publishAt: at });
+  if (moves && at)
+    items.push({
+      label: "Reschedule…",
+      value: "reschedule",
+      href: update?.href ?? row.href,
+      publishAt: at,
+    });
   if (can.publish && row.status !== "draft") items.push({ label: "Unpublish", value: "unpublish" });
   if (can.edit && offers.duplicate) items.push({ label: "Duplicate", value: "duplicate" });
-  if (can.edit && offers.rename && (row.status === "draft" || can.publish)) items.push({ label: "Rename…", value: "rename", href: row.href });
-  if (can.edit && offers.previewLinks) items.push({ label: "Get a preview link", value: "preview-link" });
+  if (can.edit && offers.rename && (row.status === "draft" || can.publish))
+    items.push({ label: "Rename…", value: "rename", href: row.href });
+  if (can.edit && offers.previewLinks)
+    items.push({ label: "Get a preview link", value: "preview-link" });
   if (can.edit && offers.trash) items.push({ label: "Move to Trash", value: "trash" });
-  if (moves && update) items.push({ label: "Cancel the update", value: "cancel-schedule", href: update.href, danger: true });
-  if (can.deleteContent && offers.delete && !offers.trash) items.push({ label: "Delete", value: "delete", danger: true });
+  if (moves && update)
+    items.push({
+      label: "Cancel the update",
+      value: "cancel-schedule",
+      href: update.href,
+      danger: true,
+    });
+  if (can.deleteContent && offers.delete && !offers.trash)
+    items.push({ label: "Delete", value: "delete", danger: true });
   return items;
 }
 

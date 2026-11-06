@@ -108,7 +108,12 @@
       text-decoration: none;
       opacity: 0;
     }
-    & :where(:hover > .heading-anchor, .heading-anchor:focus-visible, .heading-anchor[data-copied]) {
+    &
+      :where(
+        :hover > .heading-anchor,
+        .heading-anchor:focus-visible,
+        .heading-anchor[data-copied]
+      ) {
       opacity: 1;
     }
     @media (hover: none) {
@@ -350,7 +355,11 @@
        the click, and the service and title sit at its center rather than in a bar along an empty
        foot, the way click-to-load placeholders name what they will load (Embed Privacy's "content
        from" placeholder, which keeps the embed's aspect ratio). A song's strip keeps its row. */
-    & :where(.embed:not(.embed-spotify, .embed-soundcloud, .embed-apple-podcasts, .embed-amazon-music) > .embed-link:has(.embed-label):not(:has(img))) {
+    &
+      :where(
+        .embed:not(.embed-spotify, .embed-soundcloud, .embed-apple-podcasts, .embed-amazon-music)
+          > .embed-link:has(.embed-label):not(:has(img))
+      ) {
       grid-template: 1fr / 1fr;
       & > :where(.embed-play) {
         grid-area: 1 / 1;
@@ -450,7 +459,15 @@
     & :where(.embed-spotify, .embed-amazon-music) {
       --embed-block: 352px;
     }
-    & :where(.embed-spotify:has([data-embed-src*="/embed/track/"], [data-embed-src*="/embed/episode/"], iframe[src*="/embed/track/"], iframe[src*="/embed/episode/"])) {
+    &
+      :where(
+        .embed-spotify:has(
+          [data-embed-src*="/embed/track/"],
+          [data-embed-src*="/embed/episode/"],
+          iframe[src*="/embed/track/"],
+          iframe[src*="/embed/episode/"]
+        )
+      ) {
       --embed-block: 152px;
     }
     & :where(.embed-soundcloud) {

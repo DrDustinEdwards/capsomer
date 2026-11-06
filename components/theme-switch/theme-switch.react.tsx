@@ -1,7 +1,15 @@
 import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from "react";
 import { attach as attachTip } from "../tooltip/tooltip.ts";
 import { themeColorTags } from "./theme-server.ts";
-import { applyTheme, effectiveTheme, readTheme, themeButtonLabel, THEME_PREF, toggleTheme, type ThemeChoice } from "./theme-switch.ts";
+import {
+  applyTheme,
+  effectiveTheme,
+  readTheme,
+  themeButtonLabel,
+  THEME_PREF,
+  toggleTheme,
+  type ThemeChoice,
+} from "./theme-switch.ts";
 
 export interface ThemeSwitchProps {
   // The localStorage key; "cap-theme" by default.
@@ -87,21 +95,50 @@ export interface ThemeButtonProps {
 // for dark), a sun while it is dark. Both are in the markup; CSS shows the one for the theme that
 // is showing, so the picture is right before any script runs.
 const BUTTON_MOON = (
-  <svg className="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <svg
+    className="cap-theme-icon"
+    data-show="light"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    focusable="false"
+  >
     <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
   </svg>
 );
 const BUTTON_SUN = (
-  <svg className="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <svg
+    className="cap-theme-icon"
+    data-show="dark"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    focusable="false"
+  >
     <circle cx="12" cy="12" r="4" />
     <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
   </svg>
 );
 
 // The button's tip: its name again, and the key that does the same, shown on hover and keyboard focus.
-function ThemeTip({ ref, label, shortcut }: { ref?: Ref<HTMLSpanElement>; label: string; shortcut?: string }) {
+function ThemeTip({
+  ref,
+  label,
+  shortcut,
+}: {
+  ref?: Ref<HTMLSpanElement>;
+  label: string;
+  shortcut?: string;
+}) {
   return (
-    <span ref={ref} className="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true">
+    <span
+      ref={ref}
+      className="cap-theme-tip cap-popover"
+      data-variant="tooltip"
+      data-side="bottom"
+      data-offset="6"
+      popover="manual"
+      role="tooltip"
+      aria-hidden="true"
+    >
       <span className="cap-theme-tip-text">{label}</span>
       {shortcut ? (
         <span className="cap-keys">
@@ -115,7 +152,12 @@ function ThemeTip({ ref, label, shortcut }: { ref?: Ref<HTMLSpanElement>; label:
 // The theme as one icon button (the site header's theme control, Dustin's answer 2 of
 // 2026-10-13): Light and Dark only, no System; it says what it does, "Switch to dark theme", in
 // its name and its tip.
-export function ThemeButton({ prefKey = THEME_PREF, shortcut, className, initial }: ThemeButtonProps) {
+export function ThemeButton({
+  prefKey = THEME_PREF,
+  shortcut,
+  className,
+  initial,
+}: ThemeButtonProps) {
   const [showing, setShowing] = useState<ThemeChoice>(initial ?? "light");
   const button = useRef<HTMLButtonElement>(null);
   const tip = useRef<HTMLSpanElement>(null);
@@ -124,7 +166,8 @@ export function ThemeButton({ prefKey = THEME_PREF, shortcut, className, initial
     if (t) applyTheme(t, { key: prefKey, remember: false });
     // oxlint-disable-next-line react/set-state-in-effect -- the shown theme is read from the page after mount, so the server and the first client render agree
     setShowing(effectiveTheme());
-    const onTheme = (e: Event) => setShowing((e as CustomEvent<{ choice: ThemeChoice }>).detail?.choice ?? effectiveTheme());
+    const onTheme = (e: Event) =>
+      setShowing((e as CustomEvent<{ choice: ThemeChoice }>).detail?.choice ?? effectiveTheme());
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onSystem = () => setShowing(effectiveTheme());
     document.addEventListener("cap-theme", onTheme);
@@ -143,7 +186,16 @@ export function ThemeButton({ prefKey = THEME_PREF, shortcut, className, initial
   }, []);
   const label = themeButtonLabel(showing);
   return (
-    <button ref={button} type="button" className={className ? `cap-theme-button ${className}` : "cap-theme-button"} data-cap="theme-switch" data-variant="button" data-cap-ready="" aria-label={label} onClick={() => setShowing(toggleTheme(prefKey))}>
+    <button
+      ref={button}
+      type="button"
+      className={className ? `cap-theme-button ${className}` : "cap-theme-button"}
+      data-cap="theme-switch"
+      data-variant="button"
+      data-cap-ready=""
+      aria-label={label}
+      onClick={() => setShowing(toggleTheme(prefKey))}
+    >
       {BUTTON_MOON}
       {BUTTON_SUN}
       <ThemeTip ref={tip} label={label} shortcut={shortcut} />
@@ -164,9 +216,30 @@ export interface ThemeFormProps {
   prefKey?: string;
 }
 
-function FormButton({ value, show, label, icon, className, shortcut }: { value: ThemeChoice; show: ThemeChoice; label: string; icon: ReactNode; className?: string; shortcut?: string }) {
+function FormButton({
+  value,
+  show,
+  label,
+  icon,
+  className,
+  shortcut,
+}: {
+  value: ThemeChoice;
+  show: ThemeChoice;
+  label: string;
+  icon: ReactNode;
+  className?: string;
+  shortcut?: string;
+}) {
   return (
-    <button type="submit" name="theme" value={value} className={className ? `cap-theme-button ${className}` : "cap-theme-button"} data-show={show} aria-label={label}>
+    <button
+      type="submit"
+      name="theme"
+      value={value}
+      className={className ? `cap-theme-button ${className}` : "cap-theme-button"}
+      data-show={show}
+      aria-label={label}
+    >
       {icon}
       <ThemeTip label={label} shortcut={shortcut} />
     </button>
@@ -177,11 +250,39 @@ function FormButton({ value, show, label, icon, className, shortcut }: { value: 
 // (data-variant="form", 0.22.0): two real submit buttons, one shown by CSS, each saying what it
 // does. Pure markup, so a server render and the browser agree; capsomer/behavior/theme-switch's
 // enhance() makes a press switch at once and write the cookie.
-export function ThemeForm({ action = "/theme", cookie, className, shortcut, prefKey }: ThemeFormProps) {
+export function ThemeForm({
+  action = "/theme",
+  cookie,
+  className,
+  shortcut,
+  prefKey,
+}: ThemeFormProps) {
   return (
-    <form method="post" action={action} className="cap-theme-form" data-cap="theme-switch" data-variant="form" data-cap-cookie={cookie} data-cap-pref={prefKey}>
-      <FormButton value="dark" show="light" label={themeButtonLabel("light")} icon={BUTTON_MOON} className={className} shortcut={shortcut} />
-      <FormButton value="light" show="dark" label={themeButtonLabel("dark")} icon={BUTTON_SUN} className={className} shortcut={shortcut} />
+    <form
+      method="post"
+      action={action}
+      className="cap-theme-form"
+      data-cap="theme-switch"
+      data-variant="form"
+      data-cap-cookie={cookie}
+      data-cap-pref={prefKey}
+    >
+      <FormButton
+        value="dark"
+        show="light"
+        label={themeButtonLabel("light")}
+        icon={BUTTON_MOON}
+        className={className}
+        shortcut={shortcut}
+      />
+      <FormButton
+        value="light"
+        show="dark"
+        label={themeButtonLabel("dark")}
+        icon={BUTTON_SUN}
+        className={className}
+        shortcut={shortcut}
+      />
     </form>
   );
 }

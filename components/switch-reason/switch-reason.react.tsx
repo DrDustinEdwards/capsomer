@@ -1,4 +1,12 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
 import { Button } from "../button/button.react.tsx";
 import { stateWord } from "../switch/switch.ts";
 import { MISSING, failedMessage, reasonLabel, verbFor } from "./switch-reason.ts";
@@ -21,12 +29,22 @@ export interface ReasonFormProps {
   onPendingChange?: (pending: boolean) => void;
 }
 
-const ownMessage = (err: unknown) => (err instanceof Error && err.message ? err.message : String(err));
+const ownMessage = (err: unknown) =>
+  err instanceof Error && err.message ? err.message : String(err);
 
 // The one-line reason a change asks for, beside the control that changes it: a switch (as
 // SwitchWithReason), a radio group or any other control whose change is recorded with a reason.
 // Enter applies (a reason is required), Esc cancels.
-export function ReasonForm({ open, verb, onApply, onCancel, failed = ownMessage, id, placeholder, onPendingChange }: ReasonFormProps) {
+export function ReasonForm({
+  open,
+  verb,
+  onApply,
+  onCancel,
+  failed = ownMessage,
+  id,
+  placeholder,
+  onPendingChange,
+}: ReasonFormProps) {
   const base = useId();
   const reasonId = id ?? `${base}-why`;
   const errorId = `${reasonId}-err`;
@@ -94,7 +112,14 @@ export function ReasonForm({ open, verb, onApply, onCancel, failed = ownMessage,
 
   return (
     // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
-    <form className="cap-switch-reason-form" hidden={!open} noValidate aria-busy={pending || undefined} onSubmit={(e) => void submit(e)} onKeyDown={onKey}>
+    <form
+      className="cap-switch-reason-form"
+      hidden={!open}
+      noValidate
+      aria-busy={pending || undefined}
+      onSubmit={(e) => void submit(e)}
+      onKeyDown={onKey}
+    >
       <div className="cap-field">
         <label className="cap-switch-reason-label" htmlFor={reasonId}>
           {reasonLabel(verb)}
@@ -112,7 +137,12 @@ export function ReasonForm({ open, verb, onApply, onCancel, failed = ownMessage,
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${errorId} ${keysId}` : keysId}
         />
-        <p className="cap-field-error" id={errorId} role={error ? "alert" : undefined} hidden={!error}>
+        <p
+          className="cap-field-error"
+          id={errorId}
+          role={error ? "alert" : undefined}
+          hidden={!error}
+        >
           {error}
         </p>
       </div>
@@ -150,7 +180,16 @@ export interface SwitchWithReasonProps {
   id?: string;
 }
 
-export function SwitchWithReason({ label, name, verb, checked, onApply, placeholder, note, id }: SwitchWithReasonProps) {
+export function SwitchWithReason({
+  label,
+  name,
+  verb,
+  checked,
+  onApply,
+  placeholder,
+  note,
+  id,
+}: SwitchWithReasonProps) {
   const noun = name ?? label;
   const [on, setOn] = useState(checked);
   const [asking, setAsking] = useState(false);
@@ -185,8 +224,16 @@ export function SwitchWithReason({ label, name, verb, checked, onApply, placehol
     <div className="cap-switch-reason" ref={formRef}>
       <label className="cap-switch">
         {/* Controlled: a click or Space asks why, and React keeps the switch where it was. */}
-        {/* oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked */}
-        <input ref={switchRef} id={id} type="checkbox" role="switch" aria-busy={pending || undefined} checked={on} onChange={ask} />{" "}
+        <input
+          ref={switchRef}
+          id={id}
+          type="checkbox"
+          // oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a checkbox input supplies aria-checked through checked
+          role="switch"
+          aria-busy={pending || undefined}
+          checked={on}
+          onChange={ask}
+        />{" "}
         {label}{" "}
         <span className="cap-switch-state" aria-hidden="true">
           {stateWord(on)}

@@ -33,7 +33,9 @@ export function Breadcrumb({ items, maxItems, label = "Breadcrumb", renderLink }
   if (items.length < 2) return null;
   const folded = new Set(maxItems ? foldedLevels(items.length, maxItems) : []);
   const link = (item: BreadcrumbItem, className: string) =>
-    renderLink ? renderLink({ href: item.href ?? "#", className, children: item.label }) : (
+    renderLink ? (
+      renderLink({ href: item.href ?? "#", className, children: item.label })
+    ) : (
       <a className={className} href={item.href}>
         {item.label}
       </a>
@@ -48,10 +50,19 @@ export function Breadcrumb({ items, maxItems, label = "Breadcrumb", renderLink }
             return (
               <li className="cap-breadcrumb-item" data-collapsed="" key={`fold-${i}`}>
                 <Popover>
-                  <PopoverTrigger className="cap-breadcrumb-ellipsis" aria-label={`Show ${hidden.length} more levels`}>
+                  <PopoverTrigger
+                    className="cap-breadcrumb-ellipsis"
+                    aria-label={`Show ${hidden.length} more levels`}
+                  >
                     <Dots />
                   </PopoverTrigger>
-                  <PopoverContent aria-label="More levels" side="bottom" align="start" size="auto" data-flush="">
+                  <PopoverContent
+                    aria-label="More levels"
+                    side="bottom"
+                    align="start"
+                    size="auto"
+                    data-flush=""
+                  >
                     <ul className="cap-breadcrumb-more">
                       {hidden.map((h) => (
                         <li key={`${h.href}-${h.label}`}>{link(h, "cap-breadcrumb-more-link")}</li>

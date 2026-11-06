@@ -6,19 +6,39 @@
 // steppers, a search field's Clear and a date input's real-date check. No framework; the
 // React wrapper and switch-reason use the same functions.
 
-import { hideSummary, setTitleError, showSummary, summaryFor, type SummaryItem } from "../error-summary/error-summary.ts";
+import {
+  hideSummary,
+  setTitleError,
+  showSummary,
+  summaryFor,
+  type SummaryItem,
+} from "../error-summary/error-summary.ts";
 import { say } from "../message/message.ts";
 
 export type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 // The ValidityState flags, in the order a message is chosen. A control can override each
 // with a data attribute: data-error-value-missing, data-error-type-mismatch, and so on.
-const FLAGS = ["valueMissing", "typeMismatch", "patternMismatch", "tooShort", "tooLong", "rangeUnderflow", "rangeOverflow", "stepMismatch", "badInput"] as const;
+const FLAGS = [
+  "valueMissing",
+  "typeMismatch",
+  "patternMismatch",
+  "tooShort",
+  "tooLong",
+  "rangeUnderflow",
+  "rangeOverflow",
+  "stepMismatch",
+  "badInput",
+] as const;
 
 let serial = 0;
 
 export function isControl(el: unknown): el is Control {
-  return el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement;
+  return (
+    el instanceof HTMLInputElement ||
+    el instanceof HTMLSelectElement ||
+    el instanceof HTMLTextAreaElement
+  );
 }
 
 // What to say about a control, or "" when it is valid. The control's own words first,
@@ -37,8 +57,17 @@ export function messageFor(control: Control): string {
 
 // The controls that share one message: a radio group, or the control alone.
 export function groupOf(control: Control): Control[] {
-  if (control instanceof HTMLInputElement && control.type === "radio" && control.name && control.form) {
-    return [...control.form.querySelectorAll<HTMLInputElement>(`input[type="radio"][name="${CSS.escape(control.name)}"]`)];
+  if (
+    control instanceof HTMLInputElement &&
+    control.type === "radio" &&
+    control.name &&
+    control.form
+  ) {
+    return [
+      ...control.form.querySelectorAll<HTMLInputElement>(
+        `input[type="radio"][name="${CSS.escape(control.name)}"]`,
+      ),
+    ];
   }
   return [control];
 }
@@ -46,7 +75,10 @@ export function groupOf(control: Control): Control[] {
 // The control a check is about: the select behind an enhanced select's button.
 function controlOf(el: unknown): Control | null {
   if (isControl(el)) return el;
-  if (el instanceof HTMLElement && el.classList.contains("cap-select-trigger")) return el.closest(".cap-select-wrap")?.querySelector<HTMLSelectElement>("select.cap-select") ?? null;
+  if (el instanceof HTMLElement && el.classList.contains("cap-select-trigger"))
+    return (
+      el.closest(".cap-select-wrap")?.querySelector<HTMLSelectElement>("select.cap-select") ?? null
+    );
   return null;
 }
 
@@ -136,20 +168,24 @@ function announce(text: string): void {
 // The date a year, month and day make, or null when they make none (31 February).
 export function dateFrom(year: number, month: number, day: number): Date | null {
   const d = new Date(Date.UTC(year, month - 1, day));
-  return d.getUTCFullYear() === year && d.getUTCMonth() === month - 1 && d.getUTCDate() === day ? d : null;
+  return d.getUTCFullYear() === year && d.getUTCMonth() === month - 1 && d.getUTCDate() === day
+    ? d
+    : null;
 }
 
 // A date input whose three parts are each well formed but make no real date is wrong on its
 // day, in the group's data-error-date words. The parts are found by data-cap-part, so their
 // order can follow the site's language (month first in American English).
 export function checkDate(group: HTMLElement): void {
-  const part = (name: string) => group.querySelector<HTMLInputElement>(`input[data-cap-part='${name}']`);
+  const part = (name: string) =>
+    group.querySelector<HTMLInputElement>(`input[data-cap-part='${name}']`);
   const [day, month, year] = [part("day"), part("month"), part("year")];
   if (!day || !month || !year) return;
   day.setCustomValidity("");
   const parts = [day, month, year];
   if (parts.some((p) => !p.value || !p.validity.valid)) return;
-  if (!dateFrom(Number(year.value), Number(month.value), Number(day.value))) day.setCustomValidity(group.dataset.errorDate || "Enter a real date.");
+  if (!dateFrom(Number(year.value), Number(month.value), Number(day.value)))
+    day.setCustomValidity(group.dataset.errorDate || "Enter a real date.");
 }
 
 // Show and Hide on a password (GOV.UK Password input): the type, the words and the name change
@@ -160,14 +196,21 @@ export function setRevealed(input: HTMLInputElement, button: HTMLElement, shown:
   button.setAttribute("aria-label", shown ? "Hide password" : "Show password");
 }
 
-export const revealedText = (shown: boolean): string => (shown ? "Your password is shown." : "Your password is hidden.");
+export const revealedText = (shown: boolean): string =>
+  shown ? "Your password is shown." : "Your password is hidden.";
 
 // What a character count says: how many are left, or how many too many (GOV.UK's words).
-export function countText(value: string, limit: number, words = false): { text: string; over: boolean } {
+export function countText(
+  value: string,
+  limit: number,
+  words = false,
+): { text: string; over: boolean } {
   const used = words ? (value.match(/\S+/g)?.length ?? 0) : value.length;
   const n = Math.abs(limit - used);
   const unit = `${words ? "word" : "character"}${n === 1 ? "" : "s"}`;
-  return used > limit ? { text: `You have ${n} ${unit} too many`, over: true } : { text: `You have ${n} ${unit} remaining`, over: false };
+  return used > limit
+    ? { text: `You have ${n} ${unit} too many`, over: true }
+    : { text: `You have ${n} ${unit} remaining`, over: false };
 }
 
 // The limit a control counts against: data-maxlength (characters) or data-maxwords.
@@ -179,7 +222,13 @@ export function limitOf(control: HTMLElement): { limit: number; words: boolean }
 
 // The value a stepper or a key gives: `by` steps from the value, kept within min and max, to
 // the step's own decimals so 0.1 + 0.2 is 0.3.
-export function stepValue(value: number, step: number, by: number, min?: number, max?: number): number {
+export function stepValue(
+  value: number,
+  step: number,
+  by: number,
+  min?: number,
+  max?: number,
+): number {
   const places = (String(step).split(".")[1] ?? "").length;
   let v = Number(((Number.isFinite(value) ? value : (min ?? 0)) + by * step).toFixed(places));
   if (min !== undefined && v < min) v = min;
@@ -189,7 +238,13 @@ export function stepValue(value: number, step: number, by: number, min?: number,
 
 // The value Page Up, Page Down (ten steps), Home (min) or End (max) gives, as the APG
 // spinbutton has them; null for another key, or a bound that is not set.
-export function keyValue(key: string, value: number, step: number, min?: number, max?: number): number | null {
+export function keyValue(
+  key: string,
+  value: number,
+  step: number,
+  min?: number,
+  max?: number,
+): number | null {
   if (key === "Home") return min ?? null;
   if (key === "End") return max ?? null;
   if (key !== "PageUp" && key !== "PageDown") return null;
@@ -236,7 +291,10 @@ function wireReveal(button: HTMLElement): () => void {
 
 // A character count: the words beside the field change as it is typed in, the status region
 // says them once typing stops for a second, and a value over the limit is wrong on submit.
-function wireCount(control: HTMLInputElement | HTMLTextAreaElement, count: HTMLElement): () => void {
+function wireCount(
+  control: HTMLInputElement | HTMLTextAreaElement,
+  count: HTMLElement,
+): () => void {
   const lim = limitOf(control);
   if (!lim) return () => undefined;
   let timer = 0;
@@ -244,7 +302,12 @@ function wireCount(control: HTMLInputElement | HTMLTextAreaElement, count: HTMLE
     const { text, over } = countText(control.value, lim.limit, lim.words);
     count.textContent = text;
     count.dataset.over = String(over);
-    control.setCustomValidity(over ? control.dataset.errorTooLong || `Use ${lim.limit} ${lim.words ? "words" : "characters"} or fewer.` : "");
+    control.setCustomValidity(
+      over
+        ? control.dataset.errorTooLong ||
+            `Use ${lim.limit} ${lim.words ? "words" : "characters"} or fewer.`
+        : "",
+    );
     window.clearTimeout(timer);
     if (speak) timer = window.setTimeout(() => announce(text), 1000);
   };
@@ -260,7 +323,11 @@ function wireCount(control: HTMLInputElement | HTMLTextAreaElement, count: HTMLE
 // Number steppers (APG spinbutton keys on a native number input): the buttons, held `hidden`
 // for a page with no script, step the value; Page Up and Page Down step by ten, Home and End
 // go to min and max. A stepper keeps focus in the field and stops at its bound.
-function wireSteps(input: HTMLInputElement, down: HTMLButtonElement | null, up: HTMLButtonElement | null): () => void {
+function wireSteps(
+  input: HTMLInputElement,
+  down: HTMLButtonElement | null,
+  up: HTMLButtonElement | null,
+): () => void {
   const sync = () => {
     const v = input.valueAsNumber;
     if (down) down.disabled = input.min !== "" && v <= Number(input.min);
@@ -268,17 +335,27 @@ function wireSteps(input: HTMLInputElement, down: HTMLButtonElement | null, up: 
   };
   const step = () => Number(input.step) || 1;
   const onKey = (e: KeyboardEvent) => {
-    const to = input.readOnly ? null : keyValue(e.key, input.valueAsNumber, step(), bound(input.min), bound(input.max));
+    const to = input.readOnly
+      ? null
+      : keyValue(e.key, input.valueAsNumber, step(), bound(input.min), bound(input.max));
     if (to === null) return;
     e.preventDefault();
     setValue(input, String(to));
   };
   const hold = (e: Event) => e.preventDefault();
   const clicks = new Map<HTMLButtonElement, () => void>();
-  for (const [b, by] of [[down, -1], [up, 1]] as const) {
+  for (const [b, by] of [
+    [down, -1],
+    [up, 1],
+  ] as const) {
     if (!b) continue;
     b.hidden = false;
-    clicks.set(b, () => setValue(input, String(stepValue(input.valueAsNumber, step(), by, bound(input.min), bound(input.max)))));
+    clicks.set(b, () =>
+      setValue(
+        input,
+        String(stepValue(input.valueAsNumber, step(), by, bound(input.min), bound(input.max))),
+      ),
+    );
     b.addEventListener("click", clicks.get(b)!);
     b.addEventListener("mousedown", hold);
   }
@@ -342,11 +419,14 @@ function attach(el: HTMLElement, undo: Array<() => void>, wire: () => () => void
 // detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const group of root.querySelectorAll<HTMLElement>(".cap-input-group:not([data-cap-ready])")) {
+  for (const group of root.querySelectorAll<HTMLElement>(
+    ".cap-input-group:not([data-cap-ready])",
+  )) {
     attach(group, undo, () => {
       group.addEventListener("click", groupClick);
       const num = group.querySelector<HTMLInputElement>("input[type='number']");
-      const steps = (part: string) => group.querySelector<HTMLButtonElement>(`[data-cap-part='${part}']`);
+      const steps = (part: string) =>
+        group.querySelector<HTMLButtonElement>(`[data-cap-part='${part}']`);
       const off = num ? wireSteps(num, steps("step-down"), steps("step-up")) : () => undefined;
       return () => {
         off();
@@ -354,13 +434,23 @@ export function enhance(root: ParentNode = document): () => void {
       };
     });
   }
-  for (const b of root.querySelectorAll<HTMLElement>("[data-cap-part='reveal']:not([data-cap-ready])")) attach(b, undo, () => wireReveal(b));
-  for (const count of root.querySelectorAll<HTMLElement>(".cap-field-count:not([data-cap-ready])")) {
-    const control = count.closest(".cap-field")?.querySelector<HTMLTextAreaElement | HTMLInputElement>("[data-maxlength], [data-maxwords]");
+  for (const b of root.querySelectorAll<HTMLElement>(
+    "[data-cap-part='reveal']:not([data-cap-ready])",
+  ))
+    attach(b, undo, () => wireReveal(b));
+  for (const count of root.querySelectorAll<HTMLElement>(
+    ".cap-field-count:not([data-cap-ready])",
+  )) {
+    const control = count
+      .closest(".cap-field")
+      ?.querySelector<HTMLTextAreaElement | HTMLInputElement>("[data-maxlength], [data-maxwords]");
     if (control) attach(count, undo, () => wireCount(control, count));
   }
-  for (const search of root.querySelectorAll<HTMLElement>(".cap-search:not([data-cap-ready])")) attach(search, undo, () => wireSearch(search));
-  for (const form of root.querySelectorAll<HTMLFormElement>("form[data-cap='field']:not([data-cap-ready])")) {
+  for (const search of root.querySelectorAll<HTMLElement>(".cap-search:not([data-cap-ready])"))
+    attach(search, undo, () => wireSearch(search));
+  for (const form of root.querySelectorAll<HTMLFormElement>(
+    "form[data-cap='field']:not([data-cap-ready])",
+  )) {
     form.dataset.capReady = "";
     const hadNoValidate = form.noValidate;
     form.noValidate = true;

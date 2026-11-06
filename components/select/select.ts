@@ -9,7 +9,13 @@
 // Markup: <div class="cap-select-wrap" data-cap="select"><select class="cap-select">...</select></div>.
 // Add `data-native` to the wrapper to keep the browser's own select (a phone, say).
 
-import { createListbox, nextTypeahead, type Listbox, type TypeaheadState, TYPEAHEAD_MS } from "../listbox/listbox.ts";
+import {
+  createListbox,
+  nextTypeahead,
+  type Listbox,
+  type TypeaheadState,
+  TYPEAHEAD_MS,
+} from "../listbox/listbox.ts";
 import { attach, close } from "../popover/popover.ts";
 
 const SVG = "http://www.w3.org/2000/svg";
@@ -31,11 +37,24 @@ export interface SelectGroup {
 
 // The native select's options and groups as plain data (the popup is built from it).
 export function readOptions(select: HTMLSelectElement): Array<SelectItem | SelectGroup> {
-  const item = (o: HTMLOptionElement): SelectItem => ({ kind: "option", value: o.value, label: (o.label || o.textContent || "").trim(), disabled: o.matches(":disabled"), selected: o.selected });
+  const item = (o: HTMLOptionElement): SelectItem => ({
+    kind: "option",
+    value: o.value,
+    label: (o.label || o.textContent || "").trim(),
+    disabled: o.matches(":disabled"),
+    selected: o.selected,
+  });
   const out: Array<SelectItem | SelectGroup> = [];
   for (const child of Array.from(select.children)) {
     if (child instanceof HTMLOptGroupElement) {
-      out.push({ kind: "group", label: child.label, disabled: child.disabled, items: Array.from(child.querySelectorAll("option")).filter((o) => !o.hidden).map(item) });
+      out.push({
+        kind: "group",
+        label: child.label,
+        disabled: child.disabled,
+        items: Array.from(child.querySelectorAll("option"))
+          .filter((o) => !o.hidden)
+          .map(item),
+      });
     } else if (child instanceof HTMLOptionElement && !child.hidden) out.push(item(child));
   }
   return out;
@@ -108,7 +127,10 @@ export function selectControlFor(select: Element | null): SelectControl | undefi
 export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): SelectControl {
   const n = ++serial;
   const nativeId = select.id;
-  const label = (nativeId ? document.querySelector<HTMLElement>(`label[for="${CSS.escape(nativeId)}"]`) : null) ?? select.closest("label");
+  const label =
+    (nativeId
+      ? document.querySelector<HTMLElement>(`label[for="${CSS.escape(nativeId)}"]`)
+      : null) ?? select.closest("label");
   const triggerId = nativeId || `cap-select-${n}`;
   const popupId = `${triggerId}-popup`;
   const listId = `${triggerId}-list`;
@@ -128,8 +150,10 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
   if (label) {
     if (!label.id) label.id = `${triggerId}-label`;
     trigger.setAttribute("aria-labelledby", label.id);
-  } else if (select.getAttribute("aria-label")) trigger.setAttribute("aria-label", select.getAttribute("aria-label") as string);
-  else if (select.getAttribute("aria-labelledby")) trigger.setAttribute("aria-labelledby", select.getAttribute("aria-labelledby") as string);
+  } else if (select.getAttribute("aria-label"))
+    trigger.setAttribute("aria-label", select.getAttribute("aria-label") as string);
+  else if (select.getAttribute("aria-labelledby"))
+    trigger.setAttribute("aria-labelledby", select.getAttribute("aria-labelledby") as string);
   const value = document.createElement("span");
   value.className = "cap-select-value";
   trigger.append(value, chevron());
@@ -148,7 +172,8 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
   list.id = listId;
   list.setAttribute("role", "listbox");
   if (label) list.setAttribute("aria-labelledby", label.id);
-  else if (trigger.getAttribute("aria-label")) list.setAttribute("aria-label", trigger.getAttribute("aria-label") as string);
+  else if (trigger.getAttribute("aria-label"))
+    list.setAttribute("aria-label", trigger.getAttribute("aria-label") as string);
   popup.append(list);
 
   // The native select steps aside: out of the page, the tab order and the tree.
@@ -242,7 +267,11 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
   trigger.setAttribute("aria-haspopup", "listbox");
 
   // Open: the popup is as wide as the trigger at least, the chosen option is current and in view.
-  const fit = () => popup.style.setProperty("--cap-select-min", `${Math.ceil(trigger.getBoundingClientRect().width)}px`);
+  const fit = () =>
+    popup.style.setProperty(
+      "--cap-select-min",
+      `${Math.ceil(trigger.getBoundingClientRect().width)}px`,
+    );
   const onBefore = (e: Event) => {
     if ((e as ToggleEvent).newState === "open") fit();
   };
@@ -252,7 +281,9 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
   window.addEventListener("resize", onResize);
   const onToggle = (e: Event) => {
     if ((e as ToggleEvent).newState !== "open") return;
-    const selected = list.querySelector<HTMLElement>("[role='option'][aria-selected='true']:not([aria-disabled='true'])");
+    const selected = list.querySelector<HTMLElement>(
+      "[role='option'][aria-selected='true']:not([aria-disabled='true'])",
+    );
     const first = list.querySelector<HTMLElement>("[role='option']:not([aria-disabled='true'])");
     lb?.setActive(selected ?? first);
     list.focus({ preventScroll: true });
@@ -268,10 +299,19 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
       popup.showPopover();
-    } else if (e.key.length === 1 && (e.key !== " " || (typed.buffer !== "" && Date.now() - typed.at <= TYPEAHEAD_MS))) {
+    } else if (
+      e.key.length === 1 &&
+      (e.key !== " " || (typed.buffer !== "" && Date.now() - typed.at <= TYPEAHEAD_MS))
+    ) {
       const items = readOptions(select).flatMap((x) => (x.kind === "option" ? [x] : x.items));
       const current = items.findIndex((i) => i.selected);
-      const r = nextTypeahead(typed, e.key, Date.now(), items.map((i) => (i.disabled ? null : i.label)), current);
+      const r = nextTypeahead(
+        typed,
+        e.key,
+        Date.now(),
+        items.map((i) => (i.disabled ? null : i.label)),
+        current,
+      );
       typed = r.state;
       e.preventDefault();
       const hit = items[r.index];
@@ -292,7 +332,21 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
     if (records.every((r) => r.target === select && r.type === "attributes")) sync();
     else rebuild();
   });
-  mo.observe(select, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["disabled", "required", "aria-invalid", "aria-describedby", "label", "hidden", "selected"] });
+  mo.observe(select, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: [
+      "disabled",
+      "required",
+      "aria-invalid",
+      "aria-describedby",
+      "label",
+      "hidden",
+      "selected",
+    ],
+  });
 
   rebuild();
 
@@ -334,9 +388,16 @@ export function createSelect(wrap: HTMLElement, select: HTMLSelectElement): Sele
 // Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const wrap of root.querySelectorAll<HTMLElement>("[data-cap='select']:not([data-cap-ready])")) {
+  for (const wrap of root.querySelectorAll<HTMLElement>(
+    "[data-cap='select']:not([data-cap-ready])",
+  )) {
     const select = wrap.querySelector<HTMLSelectElement>("select.cap-select");
-    if (!select || wrap.dataset.native !== undefined || typeof HTMLElement.prototype.showPopover !== "function") continue;
+    if (
+      !select ||
+      wrap.dataset.native !== undefined ||
+      typeof HTMLElement.prototype.showPopover !== "function"
+    )
+      continue;
     wrap.dataset.capReady = "";
     undo.push(createSelect(wrap, select).detach);
   }

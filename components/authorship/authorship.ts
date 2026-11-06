@@ -53,13 +53,19 @@ export function summarize(runs: readonly RunInput[]): Summary {
   const raw = KINDS.map((kind) => ({ kind, exact: total === 0 ? 0 : (words[kind] / total) * 100 }));
   const floors = raw.map((r) => Math.floor(r.exact));
   let spare = total === 0 ? 0 : 100 - floors.reduce((a, b) => a + b, 0);
-  const order = raw.map((r, i) => ({ i, rem: r.exact - Math.floor(r.exact) })).sort((a, b) => b.rem - a.rem || a.i - b.i);
+  const order = raw
+    .map((r, i) => ({ i, rem: r.exact - Math.floor(r.exact) }))
+    .sort((a, b) => b.rem - a.rem || a.i - b.i);
   for (const o of order) {
     if (spare <= 0) break;
     floors[o.i] = (floors[o.i] ?? 0) + 1;
     spare--;
   }
-  const shares: Share[] = KINDS.map((kind, i) => ({ kind, words: words[kind], percent: floors[i] ?? 0 }));
+  const shares: Share[] = KINDS.map((kind, i) => ({
+    kind,
+    words: words[kind],
+    percent: floors[i] ?? 0,
+  }));
   return { total, shares, text: summaryText(shares) };
 }
 
@@ -69,15 +75,24 @@ export function summaryText(shares: Share[]): string {
   return `${shown.map((s) => `${s.percent}% ${KIND_WORD[s.kind]}`).join(", ")} by words`;
 }
 
-const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const esc = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 // The summary as html, for a server to write: the line, the bar (drawn by enhance, which sets
 // each segment's width), and the word counts in text.
 export function summaryHtml(summary: Summary, label = "Authorship"): string {
-  const segs = summary.shares.map((s) => `<span class="cap-authorship-seg" data-kind="${s.kind}" data-share="${s.percent}"></span>`).join("");
+  const segs = summary.shares
+    .map(
+      (s) =>
+        `<span class="cap-authorship-seg" data-kind="${s.kind}" data-share="${s.percent}"></span>`,
+    )
+    .join("");
   const notes = summary.shares
     .filter((s) => s.words > 0)
-    .map((s) => `<span>${KIND_LABEL[s.kind]}: ${s.words.toLocaleString("en")} ${s.words === 1 ? "word" : "words"}</span>`)
+    .map(
+      (s) =>
+        `<span>${KIND_LABEL[s.kind]}: ${s.words.toLocaleString("en")} ${s.words === 1 ? "word" : "words"}</span>`,
+    )
     .join("");
   return `<div class="cap-meter cap-authorship-summary" data-cap-part="summary"><span class="cap-meter-label">${esc(label)}</span><span class="cap-meter-value" data-cap-part="text">${esc(summary.text)}</span><span class="cap-meter-bar" aria-hidden="true">${segs}</span><span class="cap-meter-note" data-cap-part="notes">${notes}</span></div>`;
 }
@@ -166,7 +181,11 @@ export function isShown(root: Element): boolean {
 
 // Shows or hides the marks: data-authorship on the container, the switch to match. With
 // `persist` (the default, unless the container says data-remember="off") the choice is kept.
-export function setShown(root: HTMLElement, shown: boolean, persist = root.dataset.remember !== "off"): void {
+export function setShown(
+  root: HTMLElement,
+  shown: boolean,
+  persist = root.dataset.remember !== "off",
+): void {
   root.setAttribute("data-authorship", shown ? "on" : "off");
   const input = root.querySelector<HTMLInputElement>(".cap-authorship-bar input[role='switch']");
   if (input && input.checked !== shown) input.checked = shown;
@@ -191,8 +210,11 @@ function attach(root: HTMLElement): () => void {
 // applies the remembered choice, wires the switch, and counts the summary. Returns a function
 // that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
-  const found = [...root.querySelectorAll<HTMLElement>("[data-cap='authorship']:not([data-cap-ready])")];
-  if (root instanceof HTMLElement && root.matches("[data-cap='authorship']:not([data-cap-ready])")) found.unshift(root);
+  const found = [
+    ...root.querySelectorAll<HTMLElement>("[data-cap='authorship']:not([data-cap-ready])"),
+  ];
+  if (root instanceof HTMLElement && root.matches("[data-cap='authorship']:not([data-cap-ready])"))
+    found.unshift(root);
   const undo: Array<() => void> = [];
   for (const el of found) {
     el.setAttribute(READY, "");

@@ -60,7 +60,9 @@ export function checkState(c: Pick<GateCheck, "ok" | "required">): CheckState {
 }
 
 // Failing required checks first, then failing advisory ones, then the ones that pass. Stable.
-export function sortChecks<T extends Pick<GateCheck, "ok" | "required">>(checks: readonly T[]): T[] {
+export function sortChecks<T extends Pick<GateCheck, "ok" | "required">>(
+  checks: readonly T[],
+): T[] {
   const rank = (c: T) => (c.ok ? 2 : c.required ? 0 : 1);
   return checks
     .map((c, i) => [c, i] as const)
@@ -69,7 +71,10 @@ export function sortChecks<T extends Pick<GateCheck, "ok" | "required">>(checks:
 }
 
 // Blocked while a required check fails; else held while someone or something holds it; else ready.
-export function gateState(checks: readonly Pick<GateCheck, "ok" | "required">[], hold?: GateHold | null): Exclude<GateState, "published"> {
+export function gateState(
+  checks: readonly Pick<GateCheck, "ok" | "required">[],
+  hold?: GateHold | null,
+): Exclude<GateState, "published"> {
   if (checks.some((c) => c.required && !c.ok)) return "blocked";
   return hold ? "held" : "ready";
 }
@@ -79,9 +84,15 @@ export function appliesTo(check: Pick<GateCheck, "site">, siteId: string): boole
 }
 
 // A destination's own state: published once published, else what its checks and hold say.
-export function siteState(site: Pick<GateSite, "id" | "hold" | "published">, checks: readonly GateCheck[]): GateState {
+export function siteState(
+  site: Pick<GateSite, "id" | "hold" | "published">,
+  checks: readonly GateCheck[],
+): GateState {
   if (site.published) return "published";
-  return gateState(checks.filter((c) => appliesTo(c, site.id)), site.hold);
+  return gateState(
+    checks.filter((c) => appliesTo(c, site.id)),
+    site.hold,
+  );
 }
 
 const WORST: GateState[] = ["blocked", "held", "ready", "published"];
@@ -101,7 +112,12 @@ export interface GateCounts {
 export function countChecks(checks: readonly Pick<GateCheck, "ok" | "required">[]): GateCounts {
   const requiredFailing = checks.filter((c) => c.required && !c.ok).length;
   const advisoryFailing = checks.filter((c) => !c.required && !c.ok).length;
-  return { requiredFailing, advisoryFailing, passed: checks.length - requiredFailing - advisoryFailing, total: checks.length };
+  return {
+    requiredFailing,
+    advisoryFailing,
+    passed: checks.length - requiredFailing - advisoryFailing,
+    total: checks.length,
+  };
 }
 
 const plural = (n: number, one: string, many: string = `${one}s`) => `${n} ${n === 1 ? one : many}`;
@@ -124,7 +140,12 @@ export function nameList(names: readonly string[]): string {
   return `${names.length} sites`;
 }
 
-export const WORD: Record<GateState, string> = { blocked: "Blocked", held: "Held", ready: "Ready", published: "Published" };
+export const WORD: Record<GateState, string> = {
+  blocked: "Blocked",
+  held: "Held",
+  ready: "Ready",
+  published: "Published",
+};
 export const stateWord = (s: GateState) => WORD[s];
 
 export interface GateReading {
@@ -135,8 +156,15 @@ export interface GateReading {
 }
 
 // The one sentence for the whole region: "Blocked: 2 required checks failing on example.com".
-export function describeGate(sites: readonly GateSite[], checks: readonly GateCheck[]): GateReading {
-  const read = sites.map((site) => ({ site, state: siteState(site, checks), failing: checks.filter((c) => appliesTo(c, site.id) && !c.ok && c.required) }));
+export function describeGate(
+  sites: readonly GateSite[],
+  checks: readonly GateCheck[],
+): GateReading {
+  const read = sites.map((site) => ({
+    site,
+    state: siteState(site, checks),
+    failing: checks.filter((c) => appliesTo(c, site.id) && !c.ok && c.required),
+  }));
   const state = worstState(read.map((r) => r.state));
   const of = (s: GateState) => read.filter((r) => r.state === s);
   const where = nameList(of(state).map((r) => r.site.name));
@@ -148,7 +176,8 @@ export function describeGate(sites: readonly GateSite[], checks: readonly GateCh
   } else if (state === "held") {
     const held = of("held").map((r) => r.site);
     // "Held for review by Rosa until Fri 09:00": the word, then what the hold says.
-    const said = held.length === 1 && held[0]?.hold ? holdText(held[0].hold).replace(/^Held/, "") : "";
+    const said =
+      held.length === 1 && held[0]?.hold ? holdText(held[0].hold).replace(/^Held/, "") : "";
     rest = held.length === 1 ? `${said}${sites.length > 1 ? ` on ${where}` : ""}` : `: ${where}`;
   } else if (state === "ready") {
     const adv = new Set(checks.filter((c) => !c.required && !c.ok).map((c) => c.id)).size;
@@ -158,9 +187,17 @@ export function describeGate(sites: readonly GateSite[], checks: readonly GateCh
 }
 
 // The line under a destination's name.
-export function siteDetail(state: GateState, failing: readonly GateCheck[], advisory: number, site: Pick<GateSite, "hold">): string {
-  if (state === "blocked") return `${plural(failing.length, "required check")} failing: ${failing.map((c) => c.cause).join("; ")}`;
-  if (state === "held") return `${site.hold ? holdText(site.hold) : "Held"}.${site.hold?.note ? ` ${site.hold.note}` : ""}`;
-  if (state === "ready") return `Nothing required is failing.${advisory ? ` ${plural(advisory, "advisory check")} failing.` : ""}`;
+export function siteDetail(
+  state: GateState,
+  failing: readonly GateCheck[],
+  advisory: number,
+  site: Pick<GateSite, "hold">,
+): string {
+  if (state === "blocked")
+    return `${plural(failing.length, "required check")} failing: ${failing.map((c) => c.cause).join("; ")}`;
+  if (state === "held")
+    return `${site.hold ? holdText(site.hold) : "Held"}.${site.hold?.note ? ` ${site.hold.note}` : ""}`;
+  if (state === "ready")
+    return `Nothing required is failing.${advisory ? ` ${plural(advisory, "advisory check")} failing.` : ""}`;
   return "Live.";
 }

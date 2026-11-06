@@ -10,9 +10,9 @@ updated: 0.2.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx ("Needs attention") and styles.css ("attention strip"), dashboard/src/lib/derive.ts (attentionGroups)
 replaces:
   - 'class="attention"'
-  - "className=\"attention\""
-  - 'att-row'
-  - 'att-child'
+  - 'className="attention"'
+  - "att-row"
+  - "att-child"
 ---
 
 # Attention list
@@ -44,12 +44,12 @@ A list of one kind of thing (jobs, deploys, mentions) is a row-list, or a feed f
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | Each row's title link in order, each group's button, the "more warnings" button, then the notices button; the rows of an open group follow their button |
-| Enter or Space on a group, "more warnings" or notices button | Shows or hides what it controls; Tab then moves into it |
-| Enter on a row's title | Follows its link |
-| `j` and `k`, where the app turns them on | Move focus to the next or previous row's title, a group's button and the notices button included (row-list's) |
+| Key                                                          | Does                                                                                                                                                    |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tab                                                          | Each row's title link in order, each group's button, the "more warnings" button, then the notices button; the rows of an open group follow their button |
+| Enter or Space on a group, "more warnings" or notices button | Shows or hides what it controls; Tab then moves into it                                                                                                 |
+| Enter on a row's title                                       | Follows its link                                                                                                                                        |
+| `j` and `k`, where the app turns them on                     | Move focus to the next or previous row's title, a group's button and the notices button included (row-list's)                                           |
 
 ## Accessibility
 
@@ -72,22 +72,42 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   <header class="cap-attention-head">
     <h2 id="att-h" class="cap-attention-title">Needs attention</h2>
     <span class="cap-attention-count">5 problems</span>
-    <span class="cap-attention-src">Worst first. Read <time datetime="...">40 seconds ago</time></span>
+    <span class="cap-attention-src"
+      >Worst first. Read <time datetime="...">40 seconds ago</time></span
+    >
   </header>
   <ul class="cap-rows" data-cap="row-list" role="list" aria-labelledby="att-h" data-cap-primary>
     <li class="cap-row" data-tone="crit">
-      <span class="cap-row-status" id="r1-s"><span class="cap-status" data-tone="crit">[glyph]Critical</span></span>
-      <div class="cap-row-title"><a href="/sites/web" aria-describedby="r1-s r1-d">example.com is not answering</a></div>
+      <span class="cap-row-status" id="r1-s"
+        ><span class="cap-status" data-tone="crit">[glyph]Critical</span></span
+      >
+      <div class="cap-row-title">
+        <a href="/sites/web" aria-describedby="r1-s r1-d">example.com is not answering</a>
+      </div>
       <p class="cap-row-detail" id="r1-d">3 failed checks in a row</p>
       <span class="cap-row-meta"><time class="cap-time" datetime="...">11 minutes ago</time></span>
     </li>
 
     <!-- a group: a row whose button opens the rows it holds -->
     <li class="cap-row">
-      <span class="cap-row-status" id="r2-s"><span class="cap-status" data-tone="warn">[glyph]Warning</span></span>
-      <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="att-prs" aria-describedby="r2-s r2-d">3 pull requests await the seat</button></div>
+      <span class="cap-row-status" id="r2-s"
+        ><span class="cap-status" data-tone="warn">[glyph]Warning</span></span
+      >
+      <div class="cap-row-title">
+        <button
+          type="button"
+          aria-expanded="false"
+          aria-controls="att-prs"
+          aria-describedby="r2-s r2-d"
+        >
+          3 pull requests await the seat
+        </button>
+      </div>
       <p class="cap-row-detail" id="r2-d">api, docs, web</p>
-      <span class="cap-row-meta"><time datetime="...">32 minutes ago</time><span class="cap-row-chevron" aria-hidden="true"></span></span>
+      <span class="cap-row-meta"
+        ><time datetime="...">32 minutes ago</time
+        ><span class="cap-row-chevron" aria-hidden="true"></span
+      ></span>
     </li>
     <li class="cap-attention-region" id="att-prs" hidden>
       <ul role="list" aria-label="3 pull requests await the seat">
@@ -101,17 +121,45 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     </li>
 
     <!-- past the cap -->
-    <li class="cap-attention-link"><button type="button" aria-expanded="false" aria-controls="att-more" data-open-label="Fewer warnings">2 more warnings</button></li>
-    <li class="cap-attention-region" id="att-more" hidden><ul role="list" aria-label="More warnings">[rows]</ul></li>
+    <li class="cap-attention-link">
+      <button
+        type="button"
+        aria-expanded="false"
+        aria-controls="att-more"
+        data-open-label="Fewer warnings"
+      >
+        2 more warnings
+      </button>
+    </li>
+    <li class="cap-attention-region" id="att-more" hidden>
+      <ul role="list" aria-label="More warnings">
+        [rows]
+      </ul>
+    </li>
 
     <!-- the notices: one closed row at the foot -->
     <li class="cap-row cap-attention-notices">
-      <span class="cap-row-status" id="r3-s"><span class="cap-status" data-tone="info">[glyph]Notice</span></span>
-      <div class="cap-row-title"><button type="button" aria-expanded="false" aria-controls="att-notices" aria-describedby="r3-s r3-d">4 notices</button></div>
+      <span class="cap-row-status" id="r3-s"
+        ><span class="cap-status" data-tone="info">[glyph]Notice</span></span
+      >
+      <div class="cap-row-title">
+        <button
+          type="button"
+          aria-expanded="false"
+          aria-controls="att-notices"
+          aria-describedby="r3-s r3-d"
+        >
+          4 notices
+        </button>
+      </div>
       <p class="cap-row-detail" id="r3-d">Nothing to act on now</p>
       <span class="cap-row-meta"><span class="cap-row-chevron" aria-hidden="true"></span></span>
     </li>
-    <li class="cap-attention-region" id="att-notices" hidden><ul role="list" aria-label="Notices">[cap-attention-child rows]</ul></li>
+    <li class="cap-attention-region" id="att-notices" hidden>
+      <ul role="list" aria-label="Notices">
+        [cap-attention-child rows]
+      </ul>
+    </li>
   </ul>
 </section>
 ```
@@ -119,7 +167,10 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 All clear replaces the list of problems with:
 
 ```html
-<p class="cap-attention-clear"><span class="cap-status" data-tone="ok">[glyph]All clear</span><span class="cap-attention-clear-text">Nothing needs you.</span></p>
+<p class="cap-attention-clear">
+  <span class="cap-status" data-tone="ok">[glyph]All clear</span
+  ><span class="cap-attention-clear-text">Nothing needs you.</span>
+</p>
 ```
 
 `import { enhance, arrange } from "capsomer/behavior/attention-list"`: `enhance()` wires the buttons and row-list's `j` and `k`; `arrange(items, { rows, children, groups })` sorts, tiers, folds and caps, for a server or another framework writing the markup, and returns `{ problems, more, notices, noticeCount }`. `groups` maps a group key to `{ title(count), detail, when, view: { href, label } }`; without an entry a group is called "<key>, <count>". In React, `import { AttentionList } from "capsomer/react/attention-list"` with `items` of `{ id, tone, title, detail, when, href, group? }`, `read="Read 40 seconds ago"` and `groups`; it arranges for you and keeps what is open in React state (do not also call `enhance()` on it). `problemRows` and `groupRows` change the cap (8) and a group's rows (5); `primary={false}` takes `j` and `k` off it.

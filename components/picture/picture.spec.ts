@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -9,11 +14,15 @@ eachTheme((theme) => {
 
   test("accessibility: the pause control reaches its contrast", async ({ page }) => {
     await visitStates(page, "picture", theme);
-    await expectContrast(page, [{ sel: "#motion-playing .cap-motion-toggle", what: "the pause control" }]);
+    await expectContrast(page, [
+      { sel: "#motion-playing .cap-motion-toggle", what: "the pause control" },
+    ]);
   });
 
   // WCAG 2.2.2: anything moving for more than five seconds can be stopped, with no script.
-  test("keyboard: Space on Pause shows the still, and reduced motion shows it with no control", async ({ page }) => {
+  test("keyboard: Space on Pause shows the still, and reduced motion shows it with no control", async ({
+    page,
+  }) => {
     await visitStates(page, "picture", theme);
     const motion = page.locator("#motion-playing");
     const moving = motion.locator("picture img");

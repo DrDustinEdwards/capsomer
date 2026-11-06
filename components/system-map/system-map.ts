@@ -12,8 +12,41 @@ import { enhance as enhanceTabs, select } from "../tabs/tabs.ts";
 import { stepText } from "./system-map-data.ts";
 import { type Wires, wires } from "./system-map-wires.ts";
 
-export { modelMapData, networkLayout, tiePairs, tiesOf, flowsOver, ownerOf, placeOf, verbOf, count, stepText, VERB, STORE_KINDS, EXTERNAL } from "./system-map-data.ts";
-export type { ModelSystem, SystemModel, MapRing, MapSystem, MapLink, MapContainer, MapFlowStep, MapFlow, SystemMapData, SystemMapOptions, Lane, NetworkBlock, NetworkLane, Tie, Ties, ShownFlow, ShownStep, PartPlace } from "./system-map-data.ts";
+export {
+  modelMapData,
+  networkLayout,
+  tiePairs,
+  tiesOf,
+  flowsOver,
+  ownerOf,
+  placeOf,
+  verbOf,
+  count,
+  stepText,
+  VERB,
+  STORE_KINDS,
+  EXTERNAL,
+} from "./system-map-data.ts";
+export type {
+  ModelSystem,
+  SystemModel,
+  MapRing,
+  MapSystem,
+  MapLink,
+  MapContainer,
+  MapFlowStep,
+  MapFlow,
+  SystemMapData,
+  SystemMapOptions,
+  Lane,
+  NetworkBlock,
+  NetworkLane,
+  Tie,
+  Ties,
+  ShownFlow,
+  ShownStep,
+  PartPlace,
+} from "./system-map-data.ts";
 export { escapeHtml, systemMapHtml } from "./system-map-html.ts";
 export { hexLayout } from "./system-map-hex.ts";
 export type { HexCell, HexLayout } from "./system-map-hex.ts";
@@ -38,7 +71,9 @@ export interface SystemMapController {
  */
 function network(root: HTMLElement, signal: AbortSignal) {
   const graph = root.querySelector<HTMLElement>(".cap-system-map-graph");
-  const lines = graph ? wires(graph, () => [...graph.querySelectorAll<HTMLElement>(".cap-system-map-lane")], signal) : null;
+  const lines = graph
+    ? wires(graph, () => [...graph.querySelectorAll<HTMLElement>(".cap-system-map-lane")], signal)
+    : null;
   const cards = [...root.querySelectorAll<HTMLElement>(".cap-system-map-card[data-id]")];
   // The detail line: the lit system's words, which its small card keeps for screen readers alone.
   const detail = root.querySelector<HTMLElement>("[data-cap-part='detail']");
@@ -47,7 +82,8 @@ function network(root: HTMLElement, signal: AbortSignal) {
     detail.hidden = false;
     detail.textContent = rest;
   }
-  const shortName = (id: string) => byId.get(id)?.querySelector(".cap-system-map-card-name")?.textContent ?? id;
+  const shortName = (id: string) =>
+    byId.get(id)?.querySelector(".cap-system-map-card-name")?.textContent ?? id;
   const tell = (c: HTMLElement | undefined) => {
     if (!detail) return;
     const about = c?.querySelector(".cap-system-map-card-about");
@@ -57,16 +93,29 @@ function network(root: HTMLElement, signal: AbortSignal) {
     }
     // Which way each tie runs, in words: the lines' moving dashes show it too.
     const list = (v: string | undefined) => ids(v).map(shortName).join(", ");
-    const ways = [c.dataset.uses ? `Uses ${list(c.dataset.uses)}.` : "", c.dataset.usedBy ? `Used by ${list(c.dataset.usedBy)}.` : ""].filter(Boolean).join(" ");
+    const ways = [
+      c.dataset.uses ? `Uses ${list(c.dataset.uses)}.` : "",
+      c.dataset.usedBy ? `Used by ${list(c.dataset.usedBy)}.` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
     const span = document.createElement("span");
     span.className = "cap-system-map-detail-ways";
     span.textContent = ways;
-    detail.replaceChildren(...[...about.childNodes].map((n) => n.cloneNode(true)), ...(ways ? [". ", span] : []));
+    detail.replaceChildren(
+      ...[...about.childNodes].map((n) => n.cloneNode(true)),
+      ...(ways ? [". ", span] : []),
+    );
   };
   const byId = new Map(cards.map((c) => [c.dataset.id!, c]));
   // The hexagons: each system's cell, and the comb's lines, lit with the cards.
   const comb = root.querySelector<SVGElement>(".cap-system-map-comb");
-  const cells = new Map([...root.querySelectorAll<SVGElement>(".cap-system-map-cell[data-id]")].map((c) => [c.getAttribute("data-id")!, c]));
+  const cells = new Map(
+    [...root.querySelectorAll<SVGElement>(".cap-system-map-cell[data-id]")].map((c) => [
+      c.getAttribute("data-id")!,
+      c,
+    ]),
+  );
   const combLines = comb ? [...comb.querySelectorAll<SVGElement>(".cap-system-map-wire")] : [];
   const lightComb = (id: string | null, ties: Map<string, string>) => {
     comb?.toggleAttribute("data-lit", !!id);
@@ -80,7 +129,10 @@ function network(root: HTMLElement, signal: AbortSignal) {
     for (const l of combLines) {
       const on = !!id && (l.dataset.a === id || l.dataset.b === id);
       l.toggleAttribute("data-on", on);
-      l.toggleAttribute("data-both", on && ties.get(l.dataset.a === id ? l.dataset.b! : l.dataset.a!) === "both");
+      l.toggleAttribute(
+        "data-both",
+        on && ties.get(l.dataset.a === id ? l.dataset.b! : l.dataset.a!) === "both",
+      );
       if (on) l.parentNode?.append(l);
     }
   };
@@ -100,9 +152,13 @@ function network(root: HTMLElement, signal: AbortSignal) {
       narrow = root.getBoundingClientRect().width < 44 * rem;
       select(views, narrow ? tabs[tabs.length - 1]! : chosen, { silent: true });
     };
-    views.addEventListener("cap:tabs-change", (e) => {
-      if (!narrow) chosen = (e as CustomEvent<{ tab: HTMLElement }>).detail.tab;
-    }, { signal });
+    views.addEventListener(
+      "cap:tabs-change",
+      (e) => {
+        if (!narrow) chosen = (e as CustomEvent<{ tab: HTMLElement }>).detail.tab;
+      },
+      { signal },
+    );
     const ro = new ResizeObserver(fit);
     ro.observe(root);
     signal.addEventListener("abort", () => ro.disconnect());
@@ -110,7 +166,8 @@ function network(root: HTMLElement, signal: AbortSignal) {
     const undo = enhanceTabs(root);
     signal.addEventListener("abort", undo);
   }
-  const nameOf = (c: HTMLElement) => c.querySelector(".cap-system-map-card-name")?.textContent ?? c.dataset.id!;
+  const nameOf = (c: HTMLElement) =>
+    c.querySelector(".cap-system-map-card-name")?.textContent ?? c.dataset.id!;
   const light = (id: string | null) => {
     const from = id ? byId.get(id) : undefined;
     if ((root.dataset.lit ?? null) === (from ? id : null)) return;
@@ -140,21 +197,45 @@ function network(root: HTMLElement, signal: AbortSignal) {
       if (!c) continue;
       c.dataset.tie = ties.get(other)!;
       const tie = c.querySelector<HTMLElement>(".cap-system-map-card-tie");
-      if (tie) tie.textContent = both ? `Uses and used by ${name}` : uses.has(other) ? `Used by ${name}` : `Uses ${name}`;
+      if (tie)
+        tie.textContent = both
+          ? `Uses and used by ${name}`
+          : uses.has(other)
+            ? `Used by ${name}`
+            : `Uses ${name}`;
     }
     lightComb(id, ties);
   };
-  const cardOf = (t: EventTarget | null) => (t instanceof Element ? t.closest<HTMLElement>(".cap-system-map-card[data-id], .cap-system-map-cell[data-id]") : null);
-  root.addEventListener("pointerover", (ev) => {
-    if ((ev as PointerEvent).pointerType !== "mouse") return;
-    const c = cardOf(ev.target);
-    if (c) light(c.getAttribute("data-id")!);
-  }, { signal });
-  root.addEventListener("pointerleave", () => light(cardOf(document.activeElement)?.getAttribute("data-id") ?? null), { signal });
-  root.addEventListener("focusin", (ev) => light(cardOf(ev.target)?.getAttribute("data-id") ?? null), { signal });
-  root.addEventListener("focusout", (ev) => {
-    if (!root.contains((ev as FocusEvent).relatedTarget as Node | null)) light(null);
-  }, { signal });
+  const cardOf = (t: EventTarget | null) =>
+    t instanceof Element
+      ? t.closest<HTMLElement>(".cap-system-map-card[data-id], .cap-system-map-cell[data-id]")
+      : null;
+  root.addEventListener(
+    "pointerover",
+    (ev) => {
+      if ((ev as PointerEvent).pointerType !== "mouse") return;
+      const c = cardOf(ev.target);
+      if (c) light(c.getAttribute("data-id")!);
+    },
+    { signal },
+  );
+  root.addEventListener(
+    "pointerleave",
+    () => light(cardOf(document.activeElement)?.getAttribute("data-id") ?? null),
+    { signal },
+  );
+  root.addEventListener(
+    "focusin",
+    (ev) => light(cardOf(ev.target)?.getAttribute("data-id") ?? null),
+    { signal },
+  );
+  root.addEventListener(
+    "focusout",
+    (ev) => {
+      if (!root.contains((ev as FocusEvent).relatedTarget as Node | null)) light(null);
+    },
+    { signal },
+  );
   return { light, clear: () => light(null) };
 }
 
@@ -164,10 +245,20 @@ function network(root: HTMLElement, signal: AbortSignal) {
  * line says where it is. Escape stops.
  */
 function flows(root: HTMLElement, signal: AbortSignal, lines: Wires | null) {
-  const sections = new Map([...root.querySelectorAll<HTMLElement>(".cap-system-map-flow[data-flow]")].map((s) => [s.dataset.flow!, s]));
+  const sections = new Map(
+    [...root.querySelectorAll<HTMLElement>(".cap-system-map-flow[data-flow]")].map((s) => [
+      s.dataset.flow!,
+      s,
+    ]),
+  );
   const parts = [...root.querySelectorAll<HTMLElement>(".cap-system-map-part[data-id]")];
-  const send = (id: string | null, step: number) => root.dispatchEvent(new CustomEvent("cap:system-map-flow", { bubbles: true, detail: { id, step } }));
-  const stepsOf = (s: HTMLElement) => [...s.querySelectorAll<HTMLElement>(".cap-system-map-steps > li")];
+  const send = (id: string | null, step: number) =>
+    root.dispatchEvent(
+      new CustomEvent("cap:system-map-flow", { bubbles: true, detail: { id, step } }),
+    );
+  const stepsOf = (s: HTMLElement) => [
+    ...s.querySelectorAll<HTMLElement>(".cap-system-map-steps > li"),
+  ];
   const draw = (id: string | null, n: number) => {
     for (const p of parts) {
       p.removeAttribute("data-lit");
@@ -175,7 +266,11 @@ function flows(root: HTMLElement, signal: AbortSignal, lines: Wires | null) {
     }
     for (const [fid, s] of sections) {
       const steps = stepsOf(s);
-      steps.forEach((li, i) => (fid === id && i + 1 === n ? li.setAttribute("aria-current", "step") : li.removeAttribute("aria-current")));
+      steps.forEach((li, i) =>
+        fid === id && i + 1 === n
+          ? li.setAttribute("aria-current", "step")
+          : li.removeAttribute("aria-current"),
+      );
       const on = fid === id;
       const back = s.querySelector<HTMLButtonElement>("[data-cap-part='back']")!;
       const next = s.querySelector<HTMLButtonElement>("[data-cap-part='next']")!;
@@ -183,7 +278,9 @@ function flows(root: HTMLElement, signal: AbortSignal, lines: Wires | null) {
       next.disabled = on && n >= steps.length;
       next.textContent = on ? "Next" : "Start";
       const status = s.querySelector<HTMLElement>(".cap-system-map-flow-status")!;
-      status.textContent = on ? `${stepText(n, steps.length)}: ${steps[n - 1]?.textContent ?? ""}` : "";
+      status.textContent = on
+        ? `${stepText(n, steps.length)}: ${steps[n - 1]?.textContent ?? ""}`
+        : "";
       if (!on) continue;
       const li = steps[n - 1];
       const lights = new Set(ids(li?.dataset.lights));
@@ -225,17 +322,25 @@ function flows(root: HTMLElement, signal: AbortSignal, lines: Wires | null) {
     const next = s.querySelector<HTMLButtonElement>("[data-cap-part='next']")!;
     const current = () => (root.dataset.flow === id ? Number(root.dataset.step) : 0);
     back.addEventListener("click", () => playFlow(id, current() - 1), { signal });
-    next.addEventListener("click", () => {
-      playFlow(id, current() + 1);
-      // At the last step Next is disabled, so focus stays in the controls, on Back.
-      if (next.disabled) back.focus();
-    }, { signal });
-    s.addEventListener("keydown", (ev) => {
-      if (ev.key === "Escape" && root.dataset.flow === id) {
-        stopFlow();
-        next.focus();
-      }
-    }, { signal });
+    next.addEventListener(
+      "click",
+      () => {
+        playFlow(id, current() + 1);
+        // At the last step Next is disabled, so focus stays in the controls, on Back.
+        if (next.disabled) back.focus();
+      },
+      { signal },
+    );
+    s.addEventListener(
+      "keydown",
+      (ev) => {
+        if (ev.key === "Escape" && root.dataset.flow === id) {
+          stopFlow();
+          next.focus();
+        }
+      },
+      { signal },
+    );
   }
   // A page delivered at a step (systemMapHtml's `flow`) starts there.
   const given = root.dataset.flow;
@@ -252,9 +357,11 @@ function systemWires(root: HTMLElement, signal: AbortSignal): Wires | null {
   const host = root.querySelector<HTMLElement>(".cap-system-map-columns");
   if (!host) return null;
   const lanes = () =>
-    [...host.querySelectorAll<HTMLElement>(".cap-system-map-column[data-column='used-by'], .cap-system-map-place, .cap-system-map-column[data-column='uses']")].sort(
-      (x, y) => x.getBoundingClientRect().left - y.getBoundingClientRect().left,
-    );
+    [
+      ...host.querySelectorAll<HTMLElement>(
+        ".cap-system-map-column[data-column='used-by'], .cap-system-map-place, .cap-system-map-column[data-column='uses']",
+      ),
+    ].sort((x, y) => x.getBoundingClientRect().left - y.getBoundingClientRect().left);
   const lines = wires(host, lanes, signal);
   // The detail line: what a part held is for and its lines in words, which its small box keeps for
   // screen readers alone.
@@ -265,12 +372,15 @@ function systemWires(root: HTMLElement, signal: AbortSignal): Wires | null {
     detail.textContent = rest;
   }
   let held: string | null = null;
-  const nodeOf = (t: EventTarget | null) => (t instanceof Element ? t.closest<HTMLElement>("[data-wire]") : null);
+  const nodeOf = (t: EventTarget | null) =>
+    t instanceof Element ? t.closest<HTMLElement>("[data-wire]") : null;
   const hold = (key: string | null) => {
     if (key === held) return;
     held = key;
     root.toggleAttribute("data-held", !!key);
-    const about = key ? host.querySelector(`[data-wire="${CSS.escape(key)}"] .cap-system-map-part-about`) : null;
+    const about = key
+      ? host.querySelector(`[data-wire="${CSS.escape(key)}"] .cap-system-map-part-about`)
+      : null;
     if (detail) {
       if (about) detail.replaceChildren(...[...about.childNodes].map((n) => n.cloneNode(true)));
       else detail.textContent = rest;
@@ -278,18 +388,37 @@ function systemWires(root: HTMLElement, signal: AbortSignal): Wires | null {
     if (key) lines.light((a, b) => a === key || b === key);
     // Letting go returns to the flow's step, when one is shown.
     else {
-      const lit = new Set([...root.querySelectorAll<HTMLElement>(".cap-system-map-part[data-lit]")].map((p) => p.dataset.id!));
+      const lit = new Set(
+        [...root.querySelectorAll<HTMLElement>(".cap-system-map-part[data-lit]")].map(
+          (p) => p.dataset.id!,
+        ),
+      );
       lines.light(lit.size ? (a, b) => lit.has(a) && lit.has(b) : null);
     }
   };
-  host.addEventListener("pointerover", (ev) => {
-    if ((ev as PointerEvent).pointerType === "mouse") hold(nodeOf(ev.target)?.dataset.wire ?? null);
-  }, { signal });
-  host.addEventListener("pointerleave", () => hold(nodeOf(document.activeElement)?.dataset.wire ?? null), { signal });
-  host.addEventListener("focusin", (ev) => hold(nodeOf(ev.target)?.dataset.wire ?? null), { signal });
-  host.addEventListener("focusout", (ev) => {
-    if (!host.contains((ev as FocusEvent).relatedTarget as Node | null)) hold(null);
-  }, { signal });
+  host.addEventListener(
+    "pointerover",
+    (ev) => {
+      if ((ev as PointerEvent).pointerType === "mouse")
+        hold(nodeOf(ev.target)?.dataset.wire ?? null);
+    },
+    { signal },
+  );
+  host.addEventListener(
+    "pointerleave",
+    () => hold(nodeOf(document.activeElement)?.dataset.wire ?? null),
+    { signal },
+  );
+  host.addEventListener("focusin", (ev) => hold(nodeOf(ev.target)?.dataset.wire ?? null), {
+    signal,
+  });
+  host.addEventListener(
+    "focusout",
+    (ev) => {
+      if (!host.contains((ev as FocusEvent).relatedTarget as Node | null)) hold(null);
+    },
+    { signal },
+  );
   return lines;
 }
 
@@ -298,7 +427,8 @@ export function controller(root: HTMLElement): SystemMapController {
   const ac = new AbortController();
   root.setAttribute(READY, "");
   const net = root.dataset.level === "network" ? network(root, ac.signal) : null;
-  const fl = root.dataset.level === "system" ? flows(root, ac.signal, systemWires(root, ac.signal)) : null;
+  const fl =
+    root.dataset.level === "system" ? flows(root, ac.signal, systemWires(root, ac.signal)) : null;
   return {
     light: (id) => net?.light(id),
     playFlow: (id, n) => fl?.playFlow(id, n),
@@ -315,7 +445,9 @@ export function controller(root: HTMLElement): SystemMapController {
 
 /** Enhances every system map under `root` not yet enhanced; returns a function that detaches them. */
 export function enhance(root: ParentNode = document): () => void {
-  const made = [...root.querySelectorAll<HTMLElement>(`[data-cap="system-map"]:not([${READY}])`)].map((el) => controller(el));
+  const made = [
+    ...root.querySelectorAll<HTMLElement>(`[data-cap="system-map"]:not([${READY}])`),
+  ].map((el) => controller(el));
   return () => {
     for (const m of made) m.destroy();
   };

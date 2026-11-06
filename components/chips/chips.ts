@@ -93,7 +93,9 @@ function changed(group: HTMLElement): void {
       // A sandboxed frame may refuse; the filter still works, it is just not in the address.
     }
   }
-  group.dispatchEvent(new CustomEvent<FilterChangeDetail>(EVENT, { bubbles: true, detail: { param, values } }));
+  group.dispatchEvent(
+    new CustomEvent<FilterChangeDetail>(EVENT, { bubbles: true, detail: { param, values } }),
+  );
 }
 
 // Presses or releases one chip, as a click does.
@@ -115,7 +117,9 @@ export function clearAll(group: HTMLElement): void {
 // Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const group of root.querySelectorAll<HTMLElement>("[data-cap='chips']:not([data-cap-ready])")) {
+  for (const group of root.querySelectorAll<HTMLElement>(
+    "[data-cap='chips']:not([data-cap-ready])",
+  )) {
     group.dataset.capReady = "";
     const param = group.dataset.param;
     const fromAddress = param ? readParam(location.search, param) : null;
@@ -141,7 +145,16 @@ export function enhance(root: ParentNode = document): () => void {
       const all = chips(group).filter((c) => !c.matches(":disabled, [aria-disabled='true']"));
       const at = all.indexOf(document.activeElement as HTMLButtonElement);
       if (at < 0) return;
-      const next = e.key === "ArrowRight" || e.key === "ArrowDown" ? all[(at + 1) % all.length] : e.key === "ArrowLeft" || e.key === "ArrowUp" ? all[(at - 1 + all.length) % all.length] : e.key === "Home" ? all[0] : e.key === "End" ? all.at(-1) : undefined;
+      const next =
+        e.key === "ArrowRight" || e.key === "ArrowDown"
+          ? all[(at + 1) % all.length]
+          : e.key === "ArrowLeft" || e.key === "ArrowUp"
+            ? all[(at - 1 + all.length) % all.length]
+            : e.key === "Home"
+              ? all[0]
+              : e.key === "End"
+                ? all.at(-1)
+                : undefined;
       if (!next) return;
       e.preventDefault();
       next.focus();

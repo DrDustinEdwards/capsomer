@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -40,21 +45,32 @@ eachTheme((theme) => {
     `);
   });
 
-  test("accessibility: the icon tile is decorative and hidden from assistive technology", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "empty", theme);
-    await expect(page.locator("#sample-nothing .cap-empty-media")).toHaveAttribute("aria-hidden", "true");
-    await expect(page.locator("#sample-nothing")).toMatchAriaSnapshot(`
+  test(
+    "accessibility: the icon tile is decorative and hidden from assistive technology",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "empty", theme);
+      await expect(page.locator("#sample-nothing .cap-empty-media")).toHaveAttribute(
+        "aria-hidden",
+        "true",
+      );
+      await expect(page.locator("#sample-nothing")).toMatchAriaSnapshot(`
       - paragraph: No sites are watched yet
       - paragraph: Add the first one and its checks start on the next pass.
       - button "Add a site"
     `);
-  });
+    },
+  );
 
-  test("accessibility: a long wait is busy and names what it waits for", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "empty", theme);
-    await expect(page.locator("#sample-wait")).toHaveAttribute("aria-busy", "true");
-    await expect(page.locator("#sample-wait .cap-spinner-label")).toHaveText("Building the site");
-  });
+  test(
+    "accessibility: a long wait is busy and names what it waits for",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "empty", theme);
+      await expect(page.locator("#sample-wait")).toHaveAttribute("aria-busy", "true");
+      await expect(page.locator("#sample-wait .cap-spinner-label")).toHaveText("Building the site");
+    },
+  );
 
   test("keyboard: each kind's one action is reachable with Tab", async ({ page }) => {
     await visitStates(page, "empty", theme);
@@ -66,8 +82,12 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-clear").getByRole("button")).toHaveCount(0);
   });
 
-  test("behavior: the markup of 0.1, with the action as a direct child, still works", async ({ page }) => {
+  test("behavior: the markup of 0.1, with the action as a direct child, still works", async ({
+    page,
+  }) => {
     await visitStates(page, "empty", theme);
-    await expect(page.locator("#sample-direct").getByRole("button", { name: "New draft" })).toBeVisible();
+    await expect(
+      page.locator("#sample-direct").getByRole("button", { name: "New draft" }),
+    ).toBeVisible();
   });
 });

@@ -11,9 +11,20 @@ export interface DisclosureProps {
 }
 
 // A show/hide section: native <details>, so it works before JavaScript and with none.
-export function Disclosure({ summary, children, name, defaultOpen = false, variant }: DisclosureProps) {
+export function Disclosure({
+  summary,
+  children,
+  name,
+  defaultOpen = false,
+  variant,
+}: DisclosureProps) {
   return (
-    <details className="cap-disclosure" data-variant={variant} name={name} open={defaultOpen || undefined}>
+    <details
+      className="cap-disclosure"
+      data-variant={variant}
+      name={name}
+      open={defaultOpen || undefined}
+    >
       <summary>{summary}</summary>
       <div className="cap-disclosure-body">{children}</div>
     </details>
@@ -35,13 +46,26 @@ export interface GroupProps {
 }
 
 // A group row in a list: a button that shows or hides the rows it groups.
-export function Group({ label, count, children, defaultExpanded = false, holdsCritical = false, headingLevel }: GroupProps) {
+export function Group({
+  label,
+  count,
+  children,
+  defaultExpanded = false,
+  holdsCritical = false,
+  headingLevel,
+}: GroupProps) {
   const id = useId();
   const [open, setOpen] = useState(defaultExpanded || holdsCritical);
   const expanded = open || holdsCritical;
   const Heading = headingLevel === 2 ? "h2" : headingLevel === 3 ? "h3" : "h4";
   const toggle = (
-    <button type="button" className="cap-group-toggle" aria-expanded={expanded} aria-controls={id} onClick={() => setOpen(!expanded)}>
+    <button
+      type="button"
+      className="cap-group-toggle"
+      aria-expanded={expanded}
+      aria-controls={id}
+      onClick={() => setOpen(!expanded)}
+    >
       <span className="cap-group-label">{label}</span>
       <span className="cap-sr-only">, </span>
       <span className="cap-group-count">{count}</span>

@@ -40,19 +40,45 @@ export interface MeterProps {
 
 const WORDS = { warn: "Near the limit", crit: "Limit reached" };
 
-export function Meter({ label, value, max, min = 0, valueText, display, tone, warnAt, critAt, words, threshold, projected, size, measuring = false, note, className, as: Root = "div", after }: MeterProps) {
+export function Meter({
+  label,
+  value,
+  max,
+  min = 0,
+  valueText,
+  display,
+  tone,
+  warnAt,
+  critAt,
+  words,
+  threshold,
+  projected,
+  size,
+  measuring = false,
+  note,
+  className,
+  as: Root = "div",
+  after,
+}: MeterProps) {
   const bar = useRef<HTMLSpanElement>(null);
   const labelId = useId();
   const root = ["cap-meter", className].filter(Boolean).join(" ");
   // Positions go through the CSSOM, never a style prop (style-src 'self').
   useLayoutEffect(() => {
-    if (bar.current && value !== null && !measuring) setBar(bar.current, { value, max, min, projected, threshold });
+    if (bar.current && value !== null && !measuring)
+      setBar(bar.current, { value, max, min, projected, threshold });
   }, [value, max, min, projected, threshold, measuring]);
 
   if (value === null || measuring) {
     const what = measuring ? "Measuring" : "No data";
     return (
-      <Root className={root} data-size={size} data-tone={measuring ? undefined : "nodata"} data-state={measuring ? "indeterminate" : undefined} aria-busy={measuring || undefined}>
+      <Root
+        className={root}
+        data-size={size}
+        data-tone={measuring ? undefined : "nodata"}
+        data-state={measuring ? "indeterminate" : undefined}
+        aria-busy={measuring || undefined}
+      >
         <span className="cap-meter-label">{label}</span>
         <span className="cap-meter-value">
           <span className="cap-status" data-tone="nodata">
@@ -69,9 +95,12 @@ export function Meter({ label, value, max, min = 0, valueText, display, tone, wa
     );
   }
 
-  const earned: MeterTone | undefined = tone ?? (warnAt != null || critAt != null ? toneFor(value, max, { min, warnAt, critAt }) : undefined);
+  const earned: MeterTone | undefined =
+    tone ??
+    (warnAt != null || critAt != null ? toneFor(value, max, { min, warnAt, critAt }) : undefined);
   const shown = earned === "warn" || earned === "crit" ? earned : undefined;
-  const word = shown && (words !== undefined || tone === undefined) ? (words ?? WORDS)[shown] : null;
+  const word =
+    shown && (words !== undefined || tone === undefined) ? (words ?? WORDS)[shown] : null;
   return (
     <Root className={root} data-size={size} data-tone={earned}>
       <span className="cap-meter-label" id={labelId}>
@@ -83,7 +112,9 @@ export function Meter({ label, value, max, min = 0, valueText, display, tone, wa
           {word}
         </span>
       ) : null}
-      <span className="cap-meter-value">{display ?? `${value.toLocaleString("en-US")} of ${max.toLocaleString("en-US")}`}</span>
+      <span className="cap-meter-value">
+        {display ?? `${value.toLocaleString("en-US")} of ${max.toLocaleString("en-US")}`}
+      </span>
       <span
         className="cap-meter-bar"
         ref={bar}

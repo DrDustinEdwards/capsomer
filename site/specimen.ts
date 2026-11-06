@@ -28,14 +28,21 @@ if (example) {
   document.body.classList.add("cap-specimen-example");
   section?.classList.add("cap-specimen-shown");
 } else if (only) {
-  const tpl = document.querySelector<HTMLTemplateElement>(`template[data-specimen="${CSS.escape(only)}"]`);
+  const tpl = document.querySelector<HTMLTemplateElement>(
+    `template[data-specimen="${CSS.escape(only)}"]`,
+  );
   document.body.className = "cap-specimen-only";
-  document.body.replaceChildren(tpl ? tpl.content.cloneNode(true) : Object.assign(document.createElement("p"), { textContent: `No specimen named ${only}.` }));
+  document.body.replaceChildren(
+    tpl
+      ? tpl.content.cloneNode(true)
+      : Object.assign(document.createElement("p"), { textContent: `No specimen named ${only}.` }),
+  );
   document.title = `${tpl?.dataset.title ?? only}: ${document.title}`;
   // The frame says when its specimen is finished, so a test of the states page around it acts only
   // once no frame will take focus from it: at load, or, for a template marked data-ready="script"
   // (a demo that sets itself up after load), when the page's own script sets data-specimen-ready.
-  if (tpl?.dataset.ready !== "script") addEventListener("load", () => (document.documentElement.dataset.specimenReady = ""));
+  if (tpl?.dataset.ready !== "script")
+    addEventListener("load", () => (document.documentElement.dataset.specimenReady = ""));
 } else {
   for (const tpl of document.querySelectorAll<HTMLTemplateElement>("template[data-specimen]")) {
     const id = tpl.dataset.specimen ?? "";

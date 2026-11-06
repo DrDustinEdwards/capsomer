@@ -74,9 +74,16 @@ export interface Rendered {
 
 // ---- escaping and links ------------------------------------------------------------------
 
-const ENTITIES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+const ENTITIES: Record<string, string> = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;",
+};
 
-export const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (c) => ENTITIES[c] ?? c);
+export const escapeHtml = (value: string): string =>
+  value.replace(/[&<>"']/g, (c) => ENTITIES[c] ?? c);
 
 /** One line: line breaks and runs of space become one space, so a value cannot add a header or a line. */
 const oneLine = (value: string): string => value.replace(/\s+/g, " ").trim();
@@ -91,15 +98,20 @@ const crlf = (value: string): string => value.replace(/\r\n?/g, "\n");
  * a token in the address is never rewritten.
  */
 export function checkUrl(url: string): string {
-  if (/[\p{Cc} "<>\\^`{|}]/u.test(url)) throw new Error("email: a link may not hold a space, a control character or any of \" < > \\ ^ ` { | }");
+  if (/[\p{Cc} "<>\\^`{|}]/u.test(url))
+    throw new Error(
+      'email: a link may not hold a space, a control character or any of " < > \\ ^ ` { | }',
+    );
   let parsed: URL;
   try {
     parsed = new URL(url);
   } catch {
     throw new Error("email: a link must be an absolute https: or mailto: address");
   }
-  if (parsed.protocol !== "https:" && parsed.protocol !== "mailto:") throw new Error(`email: a link must be https: or mailto:, got ${parsed.protocol}`);
-  if (parsed.username || parsed.password) throw new Error("email: a link may not hold a user or password before the host");
+  if (parsed.protocol !== "https:" && parsed.protocol !== "mailto:")
+    throw new Error(`email: a link must be https: or mailto:, got ${parsed.protocol}`);
+  if (parsed.username || parsed.password)
+    throw new Error("email: a link may not hold a user or password before the host");
   return url;
 }
 
@@ -111,7 +123,11 @@ function colorsFor(family: EmailFamily): { light: EmailColors; dark: EmailColors
   return c;
 }
 
-const LEVEL_WORD: Record<AlertLevel, string> = { crit: "Critical", warn: "Warning", info: "Notice" };
+const LEVEL_WORD: Record<AlertLevel, string> = {
+  crit: "Critical",
+  warn: "Warning",
+  info: "Notice",
+};
 const FONT = "-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 
@@ -127,18 +143,23 @@ function darkRules(d: EmailColors): string {
     `.e-btn{background-color:${d.primary} !important;color:${d["primary-fg"]} !important}`,
     `.e-rule{border-color:${d.line} !important}`,
     `.e-pre{background-color:${d.ground} !important;border-color:${d.line} !important}`,
-    ...(["crit", "warn", "info"] as const).map((l) => `.e-${l}{background-color:${d[`${l}-soft`]} !important;color:${d[l]} !important}`),
+    ...(["crit", "warn", "info"] as const).map(
+      (l) => `.e-${l}{background-color:${d[`${l}-soft`]} !important;color:${d[l]} !important}`,
+    ),
   ].join("\n");
 }
 
 const runText = (r: Run): string => (typeof r === "string" ? r : r.bold);
 const lineText = (l: Line): string => (typeof l === "string" ? l : l.map(runText).join(""));
-const runHtml = (r: Run): string => (typeof r === "string" ? escapeHtml(r) : `<strong>${escapeHtml(r.bold)}</strong>`);
-const lineHtml = (l: Line): string => (typeof l === "string" ? escapeHtml(l) : l.map(runHtml).join(""));
+const runHtml = (r: Run): string =>
+  typeof r === "string" ? escapeHtml(r) : `<strong>${escapeHtml(r.bold)}</strong>`;
+const lineHtml = (l: Line): string =>
+  typeof l === "string" ? escapeHtml(l) : l.map(runHtml).join("");
 
 /** A paragraph's words for the text part: bold is only its words, lines end with a newline. */
 const textOf = (t: Text): string => (typeof t === "string" ? t : t.map(lineText).join("\n"));
-const htmlOf = (t: Text): string => (typeof t === "string" ? escapeHtml(t) : t.map(lineHtml).join("<br>"));
+const htmlOf = (t: Text): string =>
+  typeof t === "string" ? escapeHtml(t) : t.map(lineHtml).join("<br>");
 
 function blockHtml(b: Block, c: EmailColors): string {
   const text = `font-family:${FONT};font-size:16px;line-height:24px;color:${c.text};`;
@@ -156,7 +177,7 @@ function blockHtml(b: Block, c: EmailColors): string {
       const rows = b.rows
         .map(
           (r) =>
-            `<tr><td class="e-rule e-muted" style="${cell}color:${c.muted};padding-right:12px;">${escapeHtml(oneLine(r.label))}</td><td class="e-rule e-text" align="right" style="${cell}color:${c.text};text-align:right;">${escapeHtml(oneLine(r.value))}</td></tr>`
+            `<tr><td class="e-rule e-muted" style="${cell}color:${c.muted};padding-right:12px;">${escapeHtml(oneLine(r.label))}</td><td class="e-rule e-text" align="right" style="${cell}color:${c.text};text-align:right;">${escapeHtml(oneLine(r.value))}</td></tr>`,
         )
         .join("");
       return `<tr><td style="padding:0 0 16px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${rows}</table></td></tr>`;
@@ -169,7 +190,9 @@ function blockHtml(b: Block, c: EmailColors): string {
       return `<tr><td class="e-text" style="${text}font-family:${MONO};font-size:20px;line-height:28px;letter-spacing:2px;font-weight:700;padding:0 0 16px 0;">${escapeHtml(b.text)}</td></tr>`;
     case "note": {
       const level = b.level;
-      const style = level ? `background-color:${c[`${level}-soft`]};color:${c[level]};` : `color:${c.text};`;
+      const style = level
+        ? `background-color:${c[`${level}-soft`]};color:${c[level]};`
+        : `color:${c.text};`;
       const word = level ? `<strong>${LEVEL_WORD[level]}.</strong> ` : "";
       return `<tr><td style="padding:0 0 16px 0;"><div class="${level ? `e-${level}` : "e-text"}" style="${style}font-family:${FONT};font-size:16px;line-height:24px;padding:12px 16px;border-radius:6px;">${word}${escapeHtml(b.text)}</div></td></tr>`;
     }
@@ -182,7 +205,8 @@ function footerHtml(lines: FooterLine[], c: EmailColors): string {
   return lines
     .map((l) => {
       const style = `font-family:${FONT};font-size:14px;line-height:22px;color:${c.muted};padding:0 0 4px 0;`;
-      if (typeof l === "string") return `<tr><td class="e-muted" style="${style}">${escapeHtml(l)}</td></tr>`;
+      if (typeof l === "string")
+        return `<tr><td class="e-muted" style="${style}">${escapeHtml(l)}</td></tr>`;
       return `<tr><td class="e-muted" style="${style}"><a class="e-link" href="${escapeHtml(checkUrl(l.url))}" style="color:${c["accent-text"]};text-decoration:none;font-weight:600;">${escapeHtml(l.text)}</a></td></tr>`;
     })
     .join("\n");
@@ -269,7 +293,9 @@ ${footerHtml(footer, c)}
 </html>
 `;
 
-  const textFooter = footer.map((l) => (typeof l === "string" ? l : `${l.text}: ${checkUrl(l.url)}`));
+  const textFooter = footer.map((l) =>
+    typeof l === "string" ? l : `${l.text}: ${checkUrl(l.url)}`,
+  );
   const text = `${oneLine(brand.name)}\n\n${blocks.map(blockText).join("\n\n")}\n\n--\n${textFooter.join("\n")}\n`;
   return { subject, html, text };
 }
@@ -282,7 +308,10 @@ interface LinkData {
   expiresIn: string;
 }
 
-const linkBlocks = (d: LinkData & Common, defaults: { heading: string; intro: string; button: string; ignore: string }): Block[] => {
+const linkBlocks = (
+  d: LinkData & Common,
+  defaults: { heading: string; intro: string; button: string; ignore: string },
+): Block[] => {
   const k = d.copy ?? {};
   return [
     { type: "heading", text: k.heading ?? defaults.heading },
@@ -356,17 +385,29 @@ export const reset: Template<LinkData> = {
  * site-runtime's `./sign-in` emailConfirmURL page, which acts only on its button). The link works until it expires,
  * not once, so this says only when it expires. The mail goes `to` the address it asks.
  */
-export const emailChange: Template<{ step: "current" | "new"; newEmail?: string; url: string; expiresIn: string }> = {
+export const emailChange: Template<{
+  step: "current" | "new";
+  newEmail?: string;
+  url: string;
+  expiresIn: string;
+}> = {
   name: "email-change",
   subject: (d) =>
     d.copy?.subject ??
-    (d.step === "current" ? `Approve the change to your ${d.brand.name} email address` : `Confirm your new ${d.brand.name} email address`),
+    (d.step === "current"
+      ? `Approve the change to your ${d.brand.name} email address`
+      : `Confirm your new ${d.brand.name} email address`),
   blocks: (d) => {
     const k = d.copy ?? {};
     const current = d.step === "current";
     if (current && !d.newEmail) throw new Error("emailChange: step current needs newEmail");
     return [
-      { type: "heading", text: k.heading ?? (current ? "Approve the change to your email address" : "Confirm your new email address") },
+      {
+        type: "heading",
+        text:
+          k.heading ??
+          (current ? "Approve the change to your email address" : "Confirm your new email address"),
+      },
       {
         type: "paragraph",
         text:
@@ -375,7 +416,11 @@ export const emailChange: Template<{ step: "current" | "new"; newEmail?: string;
             ? `Someone signed in to your ${d.brand.name} account asked to change its email address to ${d.newEmail}. If it was you, approve it here, then confirm from the new address.`
             : `Confirm this address to finish moving your ${d.brand.name} account to it. Sign-in links will come here.`),
       },
-      { type: "button", label: k.button ?? (current ? "Approve the change" : "Confirm this address"), url: d.url },
+      {
+        type: "button",
+        label: k.button ?? (current ? "Approve the change" : "Confirm this address"),
+        url: d.url,
+      },
       { type: "fine", text: `The link expires in ${d.expiresIn}.` },
       {
         type: "fine",
@@ -390,7 +435,14 @@ export const emailChange: Template<{ step: "current" | "new"; newEmail?: string;
 };
 
 /** Something needs attention: a health check, a watchdog, a budget. The level is a word, never color alone. */
-export const alert: Template<{ level: AlertLevel; what: string; when: string; details?: Text[]; pre?: string; url?: string }> = {
+export const alert: Template<{
+  level: AlertLevel;
+  what: string;
+  when: string;
+  details?: Text[];
+  pre?: string;
+  url?: string;
+}> = {
   name: "alert",
   subject: (d) => d.copy?.subject ?? `${LEVEL_WORD[d.level]}: ${d.what}`,
   blocks: (d) => {
@@ -426,29 +478,44 @@ export const securityNotice: Template<{
     const k = d.copy ?? {};
     const out: Block[] = [
       { type: "heading", text: k.heading ?? d.title },
-      ...((k.intro ?? d.what) ? [{ type: "paragraph", text: (k.intro ?? d.what) as string } as const] : []),
+      ...((k.intro ?? d.what)
+        ? [{ type: "paragraph", text: (k.intro ?? d.what) as string } as const]
+        : []),
       { type: "fine", text: `When: ${d.when}` },
       ...(d.device ? [{ type: "fine", text: `Device: ${d.device}` } as const] : []),
       ...(d.location ? [{ type: "fine", text: `Near: ${d.location}` } as const] : []),
       { type: "note", text: d.secure },
     ];
     if (d.url) out.push({ type: "button", label: k.button ?? "Review your account", url: d.url });
-    out.push({ type: "fine", text: k.ignore ?? "You get this email whenever your sign-in settings change. It has no sign-in link." });
+    out.push({
+      type: "fine",
+      text:
+        k.ignore ??
+        "You get this email whenever your sign-in settings change. It has no sign-in link.",
+    });
     return out;
   },
 };
 
 /** A plain message: a decision, a digest line, a change of terms. */
-export const notice: Template<{ title: string; body: Text[]; action?: { label: string; url: string } }> = {
+export const notice: Template<{
+  title: string;
+  body: Text[];
+  action?: { label: string; url: string };
+}> = {
   name: "notice",
   subject: (d) => d.copy?.subject ?? d.title,
   blocks: (d) => {
     const k = d.copy ?? {};
     const out: Block[] = [
       { type: "heading", text: k.heading ?? d.title },
-      ...(k.intro === undefined ? d.body : [k.intro, ...d.body.slice(1)]).map((text): Block => ({ type: "paragraph", text })),
+      ...(k.intro === undefined ? d.body : [k.intro, ...d.body.slice(1)]).map((text): Block => ({
+        type: "paragraph",
+        text,
+      })),
     ];
-    if (d.action) out.push({ type: "button", label: k.button ?? d.action.label, url: d.action.url });
+    if (d.action)
+      out.push({ type: "button", label: k.button ?? d.action.label, url: d.action.url });
     return out;
   },
 };

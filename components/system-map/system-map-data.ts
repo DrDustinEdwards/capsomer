@@ -82,7 +82,12 @@ export interface ModelFlow {
   id: string;
   name: string;
   description?: string;
-  steps: readonly { relationship: string; toward: string; text: string; lights?: readonly string[] }[];
+  steps: readonly {
+    relationship: string;
+    toward: string;
+    text: string;
+    lights?: readonly string[];
+  }[];
 }
 
 export interface SystemModel {
@@ -94,7 +99,13 @@ export interface SystemModel {
 
 // The group a system people use stands in, in a stranger's words (Dustin, 2026-10-23: like goes
 // with like, and the map should explain itself). An admin MCP stands with its app.
-const FAMILY_GROUP: Record<string, string> = { system: "Tools", writing: "Writing", product: "Apps", plumbing: "Tools", site: "Websites" };
+const FAMILY_GROUP: Record<string, string> = {
+  system: "Tools",
+  writing: "Writing",
+  product: "Apps",
+  plumbing: "Tools",
+  site: "Websites",
+};
 
 /**
  * What the map shows from Capsid's public model, the same on every host: each system with, for
@@ -117,14 +128,23 @@ export function modelMapData(model: SystemModel, href?: (id: string) => string):
       href: href?.(s.id),
     })),
     relationships: model.relationships.map(({ from, to, kind }) => ({ from, to, kind })),
-    containers: model.containers.map(({ id, system, name, kind, technology, description }) => ({ id, system, name, kind, technology, description })),
+    containers: model.containers.map(({ id, system, name, kind, technology, description }) => ({
+      id,
+      system,
+      name,
+      kind,
+      technology,
+      description,
+    })),
     flows: (model.flows ?? []).map((f) => ({
       id: f.id,
       name: f.name,
       description: f.description,
       steps: f.steps.flatMap((st) => {
         const line = lines.get(st.relationship);
-        return line ? [{ from: line.from, to: line.to, toward: st.toward, text: st.text, lights: st.lights }] : [];
+        return line
+          ? [{ from: line.from, to: line.to, toward: st.toward, text: st.text, lights: st.lights }]
+          : [];
       }),
     })),
   };
@@ -167,7 +187,8 @@ export const STORE_KINDS: ReadonlySet<string> = new Set(["database", "bucket", "
 export const EXTERNAL = "external";
 export type PartPlace = "runs" | "stores" | "outside";
 /** Where a part stands inside its system: what runs, what stores, and what it works with outside. */
-export const placeOf = (kind: string): PartPlace => (kind === EXTERNAL ? "outside" : STORE_KINDS.has(kind) ? "stores" : "runs");
+export const placeOf = (kind: string): PartPlace =>
+  kind === EXTERNAL ? "outside" : STORE_KINDS.has(kind) ? "stores" : "runs";
 
 /** The system each system and part belongs to, by id. */
 export function ownerOf(data: SystemMapData): Map<string, string> {
@@ -195,7 +216,12 @@ export interface Ties {
 export function tiesOf(data: SystemMapData): Map<string, Ties> {
   const owner = ownerOf(data);
   const order = new Map(data.systems.map((s, i) => [s.id, i]));
-  const raw = new Map(data.systems.map((s) => [s.id, { uses: new Map<string, string[]>(), usedBy: new Map<string, string[]>() }]));
+  const raw = new Map(
+    data.systems.map((s) => [
+      s.id,
+      { uses: new Map<string, string[]>(), usedBy: new Map<string, string[]>() },
+    ]),
+  );
   const add = (m: Map<string, string[]>, id: string, verb: string) => {
     const verbs = m.get(id) ?? [];
     if (!verbs.includes(verb)) verbs.push(verb);
@@ -208,8 +234,13 @@ export function tiesOf(data: SystemMapData): Map<string, Ties> {
     add(raw.get(a)!.uses, b, verbOf(l.kind));
     add(raw.get(b)!.usedBy, a, verbOf(l.kind));
   }
-  const sorted = (m: Map<string, string[]>) => [...m].map(([id, verbs]) => ({ id, verbs })).sort((x, y) => order.get(x.id)! - order.get(y.id)!);
-  return new Map([...raw].map(([id, t]) => [id, { uses: sorted(t.uses), usedBy: sorted(t.usedBy) }]));
+  const sorted = (m: Map<string, string[]>) =>
+    [...m]
+      .map(([id, verbs]) => ({ id, verbs }))
+      .sort((x, y) => order.get(x.id)! - order.get(y.id)!);
+  return new Map(
+    [...raw].map(([id, t]) => [id, { uses: sorted(t.uses), usedBy: sorted(t.usedBy) }]),
+  );
 }
 
 export interface ShownStep {
@@ -237,13 +268,18 @@ export function flowsOver(data: SystemMapData, id: string): ShownFlow[] {
       id: f.id,
       name: f.name,
       description: f.description,
-      steps: f.steps.map((st) => ({ text: st.text, toward: st.toward, lights: [...new Set([st.from, st.to, ...(st.lights ?? [])])].filter((p) => mine.has(p)) })),
+      steps: f.steps.map((st) => ({
+        text: st.text,
+        toward: st.toward,
+        lights: [...new Set([st.from, st.to, ...(st.lights ?? [])])].filter((p) => mine.has(p)),
+      })),
     }))
     .filter((f) => f.steps.some((st) => st.lights.length > 0));
 }
 
 /** "1 part", "3 parts". */
-export const count = (n: number, one: string, many = `${one}s`): string => `${n} ${n === 1 ? one : many}`;
+export const count = (n: number, one: string, many = `${one}s`): string =>
+  `${n} ${n === 1 ? one : many}`;
 
 /** What a step's status line says. */
 export const stepText = (n: number, total: number): string => `Step ${n} of ${total}`;
@@ -296,7 +332,11 @@ export function tiePairs(data: SystemMapData): [string, string][] {
 export function networkLayout(data: SystemMapData, names: Record<MapRing, string>): NetworkLane[] {
   const pairs = tiePairs(data);
   const used = data.systems.filter((s) => s.ring === "used");
-  const blocks: NetworkBlock[] = [...new Set(used.map((s) => s.group ?? names.used))].map((g) => ({ name: g, ring: "used" as MapRing, systems: used.filter((s) => (s.group ?? names.used) === g) }));
+  const blocks: NetworkBlock[] = [...new Set(used.map((s) => s.group ?? names.used))].map((g) => ({
+    name: g,
+    ring: "used" as MapRing,
+    systems: used.filter((s) => (s.group ?? names.used) === g),
+  }));
   const core = data.systems.filter((s) => s.ring === "core");
   if (core.length) blocks.push({ name: names.core, ring: "core", systems: core });
   const shared = data.systems.filter((s) => s.ring === "shared");
@@ -317,16 +357,30 @@ export function networkLayout(data: SystemMapData, names: Record<MapRing, string
       const span = Math.abs(LANE_INDEX[laneOf(a)] - LANE_INDEX[laneOf(b)]);
       cost += span === 2 ? 3 : span === 0 ? 1 : 0;
     }
-    const count = (side: Lane) => blocks.reduce((k, b, i) => k + (sides[i] === side ? b.systems.length : 0), 0);
+    const count = (side: Lane) =>
+      blocks.reduce((k, b, i) => k + (sides[i] === side ? b.systems.length : 0), 0);
     cost += (count("left") - count("right")) ** 2;
     if (n > 1 && (count("left") === 0 || count("right") === 0)) cost += 1000;
     if (cost < best.cost) best = { cost, sides };
   }
 
   const lanes: NetworkLane[] = [
-    { lane: "left", blocks: blocks.filter((_, i) => best.sides[i] === "left").map((b) => ({ ...b, systems: [...b.systems] })) },
-    { lane: "middle", blocks: shared.length ? [{ name: names.shared, ring: "shared", systems: [...shared] }] : [] },
-    { lane: "right", blocks: blocks.filter((_, i) => best.sides[i] === "right").map((b) => ({ ...b, systems: [...b.systems] })) },
+    {
+      lane: "left",
+      blocks: blocks
+        .filter((_, i) => best.sides[i] === "left")
+        .map((b) => ({ ...b, systems: [...b.systems] })),
+    },
+    {
+      lane: "middle",
+      blocks: shared.length ? [{ name: names.shared, ring: "shared", systems: [...shared] }] : [],
+    },
+    {
+      lane: "right",
+      blocks: blocks
+        .filter((_, i) => best.sides[i] === "right")
+        .map((b) => ({ ...b, systems: [...b.systems] })),
+    },
   ];
 
   // Barycenter sweeps: a system's place is the mean place of its neighbors in the other lanes,
@@ -351,7 +405,9 @@ export function networkLayout(data: SystemMapData, names: Record<MapRing, string
   measure();
   const bary = (id: string) => {
     const others = (neighbors.get(id) ?? []).filter((o) => laneId.get(o) !== laneId.get(id));
-    return others.length ? others.reduce((k, o) => k + place.get(o)!, 0) / others.length : place.get(id)!;
+    return others.length
+      ? others.reduce((k, o) => k + place.get(o)!, 0) / others.length
+      : place.get(id)!;
   };
   for (let sweep = 0; sweep < 8; sweep++) {
     const order = sweep % 2 ? [...lanes].reverse() : lanes;
@@ -360,7 +416,9 @@ export function networkLayout(data: SystemMapData, names: Record<MapRing, string
         const at = new Map(b.systems.map((s) => [s.id, bary(s.id)]));
         b.systems.sort((x, y) => at.get(x.id)! - at.get(y.id)!);
       }
-      const at = new Map(l.blocks.map((b) => [b, b.systems.reduce((k, s) => k + bary(s.id), 0) / b.systems.length]));
+      const at = new Map(
+        l.blocks.map((b) => [b, b.systems.reduce((k, s) => k + bary(s.id), 0) / b.systems.length]),
+      );
       l.blocks.sort((x, y) => at.get(x)! - at.get(y)!);
       measure();
     }

@@ -26,8 +26,14 @@ test("report finds an app's own copy and not Capsomer's own markup", () => {
         "}",
       ].join("\n"),
     );
-    writeFileSync(join(app, "app", "tabs.html"), '<div class="cap-tabs-list" role="tablist"><button class="cap-tab" role="tab">One</button></div>\n');
-    writeFileSync(join(app, "app", "own.html"), '<p>Plain</p>\n<button class="btn primary">Save</button>\n');
+    writeFileSync(
+      join(app, "app", "tabs.html"),
+      '<div class="cap-tabs-list" role="tablist"><button class="cap-tab" role="tab">One</button></div>\n',
+    );
+    writeFileSync(
+      join(app, "app", "own.html"),
+      '<p>Plain</p>\n<button class="btn primary">Save</button>\n',
+    );
     const out = join(app, "report.json");
     execFileSync(process.execPath, [BIN, "report", "--out", out], { cwd: app, stdio: "ignore" });
     const r = JSON.parse(readFileSync(out, "utf8"));

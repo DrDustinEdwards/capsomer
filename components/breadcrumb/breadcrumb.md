@@ -47,13 +47,13 @@ Breadcrumb (`breadcrumb.tsx`: Breadcrumb, BreadcrumbList, BreadcrumbItem, Breadc
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab, Shift+Tab | Moves through the links and the folded-levels button in order; the current page is not a stop |
-| Enter | Follows the focused link |
-| Enter, Space on the folded-levels button | Opens the popover; focus moves to its first link |
-| Tab, Shift+Tab in the popover | Moves between its links; tabbing past the last closes it |
-| Esc | Closes the popover; focus returns to the button |
+| Key                                      | Does                                                                                          |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Tab, Shift+Tab                           | Moves through the links and the folded-levels button in order; the current page is not a stop |
+| Enter                                    | Follows the focused link                                                                      |
+| Enter, Space on the folded-levels button | Opens the popover; focus moves to its first link                                              |
+| Tab, Shift+Tab in the popover            | Moves between its links; tabbing past the last closes it                                      |
+| Esc                                      | Closes the popover; focus returns to the button                                               |
 
 ## Accessibility
 
@@ -70,8 +70,12 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <nav class="cap-breadcrumb" aria-label="Breadcrumb">
   <ol class="cap-breadcrumb-list">
     <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="/admin">Admin</a></li>
-    <li class="cap-breadcrumb-item"><a class="cap-breadcrumb-link" href="/admin/posts">Posts</a></li>
-    <li class="cap-breadcrumb-item"><span class="cap-breadcrumb-page" aria-current="page">Edit</span></li>
+    <li class="cap-breadcrumb-item">
+      <a class="cap-breadcrumb-link" href="/admin/posts">Posts</a>
+    </li>
+    <li class="cap-breadcrumb-item">
+      <span class="cap-breadcrumb-page" aria-current="page">Edit</span>
+    </li>
   </ol>
 </nav>
 ```
@@ -81,8 +85,27 @@ Folded in the HTML: the item that stands for the hidden levels.
 ```html
 <li class="cap-breadcrumb-item" data-collapsed>
   <span data-cap="popover">
-    <button type="button" class="cap-breadcrumb-ellipsis" popovertarget="bc-more" aria-haspopup="dialog" aria-expanded="false" aria-label="Show 2 more levels"><svg aria-hidden="true">...</svg></button>
-    <div class="cap-popover" id="bc-more" popover="auto" role="dialog" aria-label="More levels" data-side="bottom" data-align="start" data-size="auto" data-flush>
+    <button
+      type="button"
+      class="cap-breadcrumb-ellipsis"
+      popovertarget="bc-more"
+      aria-haspopup="dialog"
+      aria-expanded="false"
+      aria-label="Show 2 more levels"
+    >
+      <svg aria-hidden="true">...</svg>
+    </button>
+    <div
+      class="cap-popover"
+      id="bc-more"
+      popover="auto"
+      role="dialog"
+      aria-label="More levels"
+      data-side="bottom"
+      data-align="start"
+      data-size="auto"
+      data-flush
+    >
       <ul class="cap-breadcrumb-more">
         <li><a class="cap-breadcrumb-more-link" href="/sites">Sites</a></li>
       </ul>
@@ -97,9 +120,17 @@ In React, `import { Breadcrumb } from "capsomer/react/breadcrumb"`:
 
 ```tsx
 <Breadcrumb
-  items={[{ label: "Admin", href: "/admin" }, { label: "Posts", href: "/admin/posts" }, { label: "Edit" }]}
+  items={[
+    { label: "Admin", href: "/admin" },
+    { label: "Posts", href: "/admin/posts" },
+    { label: "Edit" },
+  ]}
   maxItems={4}
-  renderLink={({ href, className, children }) => <Link to={href} className={className}>{children}</Link>}
+  renderLink={({ href, className, children }) => (
+    <Link to={href} className={className}>
+      {children}
+    </Link>
+  )}
 />
 ```
 

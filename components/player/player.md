@@ -35,10 +35,10 @@ One way to show a video, an audio file or another service's player. A JSX page r
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | Reaches the embed, the player's own controls and the transcript link |
-| Enter on an embed | Puts the player in its place and moves focus into it |
+| Key               | Does                                                                 |
+| ----------------- | -------------------------------------------------------------------- |
+| Tab               | Reaches the embed, the player's own controls and the transcript link |
+| Enter on an embed | Puts the player in its place and moves focus into it                 |
 
 ## Accessibility
 
@@ -51,9 +51,23 @@ One way to show a video, an audio file or another service's player. A JSX page r
 
 ```html
 <figure class="cap-player" data-kind="embed" data-service="youtube">
-  <a class="cap-player-facade" href="https://www.youtube.com/watch?v=ID"
-     data-embed-src="https://www.youtube-nocookie.com/embed/ID?autoplay=1" data-embed-title="The title">
-    <img class="cap-player-poster" src="/media/poster.jpg?w=704" srcset="…" sizes="…" width="704" height="396" alt="" loading="lazy" decoding="async">
+  <a
+    class="cap-player-facade"
+    href="https://www.youtube.com/watch?v=ID"
+    data-embed-src="https://www.youtube-nocookie.com/embed/ID?autoplay=1"
+    data-embed-title="The title"
+  >
+    <img
+      class="cap-player-poster"
+      src="/media/poster.jpg?w=704"
+      srcset="…"
+      sizes="…"
+      width="704"
+      height="396"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
     <span class="cap-player-play" aria-hidden="true"></span>
     <span class="cap-player-label">Watch on YouTube: The title</span>
   </a>
@@ -61,8 +75,17 @@ One way to show a video, an audio file or another service's player. A JSX page r
 </figure>
 
 <figure class="cap-player" data-kind="video">
-  <video src="/media/demo.mp4" poster="/media/demo-poster.jpg?w=1408" width="1280" height="720" controls preload="none" playsinline aria-label="The title">
-    <track kind="captions" src="/media/demo.vtt" srclang="en" label="English" default>
+  <video
+    src="/media/demo.mp4"
+    poster="/media/demo-poster.jpg?w=1408"
+    width="1280"
+    height="720"
+    controls
+    preload="none"
+    playsinline
+    aria-label="The title"
+  >
+    <track kind="captions" src="/media/demo.vtt" srclang="en" label="English" default />
   </video>
   <p class="cap-player-transcript"><a href="/writing/demo-transcript">Transcript: The title</a></p>
   <figcaption>…</figcaption>
@@ -79,7 +102,14 @@ The poster is optional on an embed and on Spotify or SoundCloud is usually left 
 ```tsx
 import { Audio, Embed, Video } from "capsomer/react/player";
 
-<Embed service="youtube" href={url} player={noCookieUrl} title="The title" action="Watch on YouTube" poster={pictureProps(attrs, { alt: "" }).img} />
+<Embed
+  service="youtube"
+  href={url}
+  player={noCookieUrl}
+  title="The title"
+  action="Watch on YouTube"
+  poster={pictureProps(attrs, { alt: "" }).img}
+/>;
 ```
 
 ## Exceptions in production

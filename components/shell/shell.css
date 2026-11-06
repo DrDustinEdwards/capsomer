@@ -352,7 +352,13 @@
         background: var(--text);
       }
     }
-    & :is(a, .cap-shell-toggle, .cap-shell-railbtn):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) .cap-shell-label {
+    &
+      :is(a, .cap-shell-toggle, .cap-shell-railbtn):is(
+        :hover,
+        :focus-visible,
+        [data-force="hover"]
+      ):not([data-tip="hidden"])
+      .cap-shell-label {
       opacity: 1;
       clip-path: inset(-8px);
     }
@@ -559,7 +565,13 @@
         inset-inline-start var(--dur-fast) var(--ease-out),
         clip-path 0s linear var(--dur-fast);
     }
-    .cap-shell[data-rail="collapsed"] :is(a, .cap-shell-toggle, .cap-shell-railbtn):is(:hover, :focus-visible, [data-force="hover"]):not([data-tip="hidden"]) .cap-shell-label {
+    .cap-shell[data-rail="collapsed"]
+      :is(a, .cap-shell-toggle, .cap-shell-railbtn):is(
+        :hover,
+        :focus-visible,
+        [data-force="hover"]
+      ):not([data-tip="hidden"])
+      .cap-shell-label {
       inset-inline-start: calc(100% + var(--space-3));
       transition-delay: 0s;
     }

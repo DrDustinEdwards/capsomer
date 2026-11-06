@@ -117,7 +117,8 @@
       min-block-size: var(--target);
       padding: calc(var(--space-3) + 3px) var(--space-4) var(--space-3) calc(var(--space-4) + 14px);
       border: 1px solid var(--line);
-      background: linear-gradient(var(--mark), var(--mark)) var(--space-4) 50% / 6px calc(100% - 2 * var(--space-4)) no-repeat;
+      background: linear-gradient(var(--mark), var(--mark)) var(--space-4) 50% / 6px
+        calc(100% - 2 * var(--space-4)) no-repeat;
     }
 
     /* A site tile answers the pointer with its mark's outline only, no tint behind (Dustin,
@@ -134,12 +135,24 @@
     }
   }
 
-  [data-family-mark="purple"] { --mark: var(--family-purple); }
-  [data-family-mark="teal"] { --mark: var(--family-teal); }
-  [data-family-mark="magenta"] { --mark: var(--family-magenta); }
-  [data-family-mark="cerulean"] { --mark: var(--family-cerulean); }
-  [data-family-mark="olive"] { --mark: var(--family-olive); }
-  [data-family-mark="rose"] { --mark: var(--family-rose); }
+  [data-family-mark="purple"] {
+    --mark: var(--family-purple);
+  }
+  [data-family-mark="teal"] {
+    --mark: var(--family-teal);
+  }
+  [data-family-mark="magenta"] {
+    --mark: var(--family-magenta);
+  }
+  [data-family-mark="cerulean"] {
+    --mark: var(--family-cerulean);
+  }
+  [data-family-mark="olive"] {
+    --mark: var(--family-olive);
+  }
+  [data-family-mark="rose"] {
+    --mark: var(--family-rose);
+  }
 
   .cap-family-footer-site-name {
     font-weight: 600;

@@ -4,7 +4,21 @@ title: Segmented control
 summary: Choose one of two to five options, all in view, drawn as one control over real radio inputs.
 parts: [css, react]
 tool: native
-states: [default with nothing chosen, one selected, hover, keyboard focus, a disabled option, legend hidden, small and large, icons, vertical, filling the row, invalid, cards with tones]
+states:
+  [
+    default with nothing chosen,
+    one selected,
+    hover,
+    keyboard focus,
+    a disabled option,
+    legend hidden,
+    small and large,
+    icons,
+    vertical,
+    filling the row,
+    invalid,
+    cards with tones,
+  ]
 added: 0.1.0
 updated: 0.2.0
 source: The approved mockup (design/mockup.html, .seg); the Capsid Portal's .seg rules (0.1.1) agree with it
@@ -42,11 +56,11 @@ Choosing one of two to five short, mutually exclusive options that should all be
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | Enters the control at the chosen segment (or the first, if none is chosen), and leaves it in one step |
-| Arrow keys | Move to the next or previous segment and choose it, skipping a disabled one |
-| Space | Chooses the focused segment, when none is chosen yet |
+| Key        | Does                                                                                                  |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| Tab        | Enters the control at the chosen segment (or the first, if none is chosen), and leaves it in one step |
+| Arrow keys | Move to the next or previous segment and choose it, skipping a disabled one                           |
+| Space      | Chooses the focused segment, when none is chosen yet                                                  |
 
 ## Accessibility
 
@@ -72,9 +86,16 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 In React, `import { Segmented } from "capsomer/react/segmented"`:
 
 ```tsx
-<Segmented legend="Window" value={win} onChange={setWin} options={[
-  { value: "24h", label: "24 hours" }, { value: "7d", label: "7 days" }, { value: "30d", label: "30 days" },
-]} />
+<Segmented
+  legend="Window"
+  value={win}
+  onChange={setWin}
+  options={[
+    { value: "24h", label: "24 hours" },
+    { value: "7d", label: "7 days" },
+    { value: "30d", label: "30 days" },
+  ]}
+/>
 ```
 
 Sizes, stacking and the rest are attributes on `.cap-seg-options`: `data-size="sm|lg"`, `data-orientation="vertical"`, `data-fill`, `data-layout="cards"` (each option its own bordered card, two to a row and four from 640px, left aligned and wrapping, for a choice whose options carry a line of explanation; `data-tone="info|warn|crit|ok"` on a label tints it in that status color when chosen, the accent otherwise). An icon sits in the label before the word (`<svg aria-hidden="true">`). A wrong choice puts `aria-invalid="true"` on the radios and a `.cap-field-error` beside the control that the fieldset is described by.

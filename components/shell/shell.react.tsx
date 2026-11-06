@@ -61,7 +61,14 @@ export interface ShellProps {
 
 const RailIcon = () => (
   <svg className="cap-shell-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <path fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2" />
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M2.5 2.5h11v11h-11zM6 2.5v11M10.5 6 8.5 8l2 2"
+    />
   </svg>
 );
 
@@ -76,7 +83,9 @@ const MoreIcon = () => (
 export const plainLink = ({ children, ...props }: LinkProps) => <a {...props}>{children}</a>;
 
 // Consecutive entries with the same `group` are one group.
-export function groups<E extends { group?: string }>(nav: E[]): Array<{ label?: string; entries: E[] }> {
+export function groups<E extends { group?: string }>(
+  nav: E[],
+): Array<{ label?: string; entries: E[] }> {
   const out: Array<{ label?: string; entries: E[] }> = [];
   for (const e of nav) {
     const last = out[out.length - 1];
@@ -87,7 +96,11 @@ export function groups<E extends { group?: string }>(nav: E[]): Array<{ label?: 
 }
 
 // The rail's collapsed state: the prop when the app controls it, else the stored preference.
-export function useCollapsedPref(prefKey: string, controlled: boolean | undefined, onChange: ((next: boolean) => void) | undefined): [boolean, (next: boolean) => void] {
+export function useCollapsedPref(
+  prefKey: string,
+  controlled: boolean | undefined,
+  onChange: ((next: boolean) => void) | undefined,
+): [boolean, (next: boolean) => void] {
   const [own, setOwn] = useState(false);
   // oxlint-disable-next-line react/set-state-in-effect -- the stored preference is read after mount, so the server and the first client render agree
   useEffect(() => setOwn(readPref(prefKey) === "collapsed"), [prefKey]);
@@ -103,7 +116,24 @@ export function useCollapsedPref(prefKey: string, controlled: boolean | undefine
 }
 
 export function Shell(props: ShellProps) {
-  const { brand, brandHref = "./", logo, brandLabel, nav, tabs, more, moreLabel = "More", moreIcon, navLabel = "Sections", status, actions, railFoot, prefKey = DEFAULT_PREF, renderLink = plainLink, children } = props;
+  const {
+    brand,
+    brandHref = "./",
+    logo,
+    brandLabel,
+    nav,
+    tabs,
+    more,
+    moreLabel = "More",
+    moreIcon,
+    navLabel = "Sections",
+    status,
+    actions,
+    railFoot,
+    prefKey = DEFAULT_PREF,
+    renderLink = plainLink,
+    children,
+  } = props;
   const moreButton = useRef<HTMLButtonElement>(null);
   const groupId = useId();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -113,13 +143,19 @@ export function Shell(props: ShellProps) {
     setMoreOpen(false);
     requestAnimationFrame(() => moreButton.current?.focus());
   }, []);
-  const [collapsed, setCollapsed] = useCollapsedPref(prefKey, props.collapsed, props.onCollapsedChange);
+  const [collapsed, setCollapsed] = useCollapsedPref(
+    prefKey,
+    props.collapsed,
+    props.onCollapsedChange,
+  );
   // A phone tab bar holds at most five entries (rule 9): with a More sheet, four and More.
   const phoneTabs = tabs?.slice(0, more ? 4 : 5);
 
   const entry = (e: ShellEntry, phone: boolean) => {
     // The visible label and count, then what it counts: "Sites, 2 down or degraded" (WCAG 2.5.3).
-    const named = e.count ? `${e.label}, ${e.count}${e.countNote ? ` ${e.countNote}` : ""}` : undefined;
+    const named = e.count
+      ? `${e.label}, ${e.count}${e.countNote ? ` ${e.countNote}` : ""}`
+      : undefined;
     return (
       <Fragment key={e.id}>
         {renderLink({
@@ -175,7 +211,12 @@ export function Shell(props: ShellProps) {
       <nav className="cap-shell-rail" id="cap-rail" aria-label={navLabel}>
         {groups(nav).map((g, i) =>
           g.label ? (
-            <div key={`g${i}`} className="cap-shell-group" role="group" aria-labelledby={`${groupId}-${i}`}>
+            <div
+              key={`g${i}`}
+              className="cap-shell-group"
+              role="group"
+              aria-labelledby={`${groupId}-${i}`}
+            >
               <div className="cap-shell-group-label" id={`${groupId}-${i}`}>
                 {g.label}
               </div>
@@ -187,7 +228,14 @@ export function Shell(props: ShellProps) {
         )}
         <div className="cap-shell-foot">
           {railFoot}
-          <button type="button" className="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded={!collapsed} aria-controls="cap-rail" onClick={() => setCollapsed(!collapsed)}>
+          <button
+            type="button"
+            className="cap-shell-toggle"
+            data-cap-part="rail-toggle"
+            aria-expanded={!collapsed}
+            aria-controls="cap-rail"
+            onClick={() => setCollapsed(!collapsed)}
+          >
             <RailIcon />
             <span className="cap-shell-label">{collapsed ? "Expand menu" : "Collapse menu"}</span>
             <kbd aria-hidden="true">[</kbd>
@@ -218,7 +266,14 @@ export function Shell(props: ShellProps) {
         </nav>
       )}
       {more && (
-        <Dialog open={moreOpen} onOpenChange={(o) => !o && closeMore()} placement="bottom" id="cap-more" className="cap-shell-more" aria-labelledby="cap-more-title">
+        <Dialog
+          open={moreOpen}
+          onOpenChange={(o) => !o && closeMore()}
+          placement="bottom"
+          id="cap-more"
+          className="cap-shell-more"
+          aria-labelledby="cap-more-title"
+        >
           <DialogHeader>
             <DialogTitle id="cap-more-title">More views</DialogTitle>
           </DialogHeader>
@@ -237,7 +292,9 @@ export function Shell(props: ShellProps) {
                           {e.icon}
                           <span className="cap-shell-more-name">{e.label}</span>
                           {e.count ? " " : null}
-                          {e.count ? <span className="cap-shell-count">{`${e.count}${e.countNote ? ` ${e.countNote}` : ""}`}</span> : null}
+                          {e.count ? (
+                            <span className="cap-shell-count">{`${e.count}${e.countNote ? ` ${e.countNote}` : ""}`}</span>
+                          ) : null}
                         </>
                       ),
                     })}

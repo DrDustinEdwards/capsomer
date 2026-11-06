@@ -4,7 +4,18 @@ title: Message
 summary: The page's one status region; the result of an action, with Undo, and every warning or failure that must not be missed, never taking focus.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [empty, plain message, message with Undo, after Undo, warning that stays, warning through the next result, failure, Undo that could not run, clears itself]
+states:
+  [
+    empty,
+    plain message,
+    message with Undo,
+    after Undo,
+    warning that stays,
+    warning through the next result,
+    failure,
+    Undo that could not run,
+    clears itself,
+  ]
 added: 0.1.0
 updated: 0.2.0
 source: Capsomer mockup (design/mockup.html, the status region and its say function); the Capsid Portal's lib/messages.ts and App.tsx message region (0.1.1)
@@ -50,12 +61,12 @@ The result of an action, said in the page: "Moved the mention to Trash", with Un
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| `z` | Runs the newest Undo, once. Ignored in a text field, with Ctrl, Alt, Meta or Shift held, or when there is nothing to undo |
-| Enter or Space on Undo | Runs Undo; focus moves to the control that was undone, else to that message's Dismiss |
-| Enter or Space on Dismiss | Clears that message; focus returns to the control that caused the message |
-| (a message appears) | Focus does not move |
+| Key                       | Does                                                                                                                      |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `z`                       | Runs the newest Undo, once. Ignored in a text field, with Ctrl, Alt, Meta or Shift held, or when there is nothing to undo |
+| Enter or Space on Undo    | Runs Undo; focus moves to the control that was undone, else to that message's Dismiss                                     |
+| Enter or Space on Dismiss | Clears that message; focus returns to the control that caused the message                                                 |
+| (a message appears)       | Focus does not move                                                                                                       |
 
 ## Accessibility
 
@@ -71,20 +82,32 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 The region is empty; messages are added to it.
 
 ```html
-<div class="cap-message" data-cap="message" role="status" aria-label="Results and failures" aria-atomic="false"></div>
+<div
+  class="cap-message"
+  data-cap="message"
+  role="status"
+  aria-label="Results and failures"
+  aria-atomic="false"
+></div>
 ```
 
 Each message `say()` adds:
 
 ```html
 <div class="cap-message-item" data-cap-part="item" data-id="1" data-lasting data-kind="warning">
-  <svg class="cap-message-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false">[glyph]</svg>
+  <svg class="cap-message-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    [glyph]
+  </svg>
   <p class="cap-message-text" data-cap-part="text">
     <span data-cap-part="said">Seat start is on.</span>
-    <span class="cap-message-warning"> <b>Warning:</b> the audit row naming you was not written.</span>
+    <span class="cap-message-warning">
+      <b>Warning:</b> the audit row naming you was not written.</span
+    >
     <span class="cap-message-error" role="alert" hidden></span>
   </p>
-  <button type="button" class="cap-link-btn cap-message-undo" data-cap-part="undo"><span>Undo</span> <kbd aria-hidden="true">z</kbd></button>
+  <button type="button" class="cap-link-btn cap-message-undo" data-cap-part="undo">
+    <span>Undo</span> <kbd aria-hidden="true">z</kbd>
+  </button>
   <button type="button" class="cap-btn cap-message-dismiss" data-cap-part="dismiss">Dismiss</button>
 </div>
 ```

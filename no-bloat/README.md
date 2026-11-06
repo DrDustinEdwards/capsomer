@@ -2,12 +2,12 @@
 
 Capsomer's standing plan is to keep the repo small: nothing unused, nothing built twice, nothing heavy. These checks run on every pull request: Knip and jscpd through devkit's shared ratchet (`@dustinedwards/devkit`, baseline in `.no-bloat.json`) in the `checks / Repo checks` job (`.github/workflows/checks.yml`, devkit's pr.yml), and page weight and lines in a step of `ci.yml`'s check job. The ratchet fails a pull request that raises a count above `.no-bloat.json`; after a cleanup, lower it with `npx devkit-no-bloat --write-baseline` in the same pull request. The weight step only reports.
 
-| Check | Tool | Command | Reads |
-| --- | --- | --- | --- |
-| Unused files, exports, dependencies | Knip | `npm run knip` | `knip.json` |
-| Duplicated blocks | jscpd | `npm run jscpd` | `.jscpd.json` |
-| JavaScript and CSS weight per page, gzip | `capsomer weight` | `npm run weight` (after `npm run site`) | `site-dist/` |
-| Lines by language, dependency counts | `capsomer loc` | `npm run loc` | tracked files |
+| Check                                    | Tool              | Command                                 | Reads         |
+| ---------------------------------------- | ----------------- | --------------------------------------- | ------------- |
+| Unused files, exports, dependencies      | Knip              | `npm run knip`                          | `knip.json`   |
+| Duplicated blocks                        | jscpd             | `npm run jscpd`                         | `.jscpd.json` |
+| JavaScript and CSS weight per page, gzip | `capsomer weight` | `npm run weight` (after `npm run site`) | `site-dist/`  |
+| Lines by language, dependency counts     | `capsomer loc`    | `npm run loc`                           | tracked files |
 
 `npm run bloat` prints a Markdown summary of all of them against `baseline.json`, which is what the workflow puts in the job summary.
 

@@ -4,12 +4,40 @@ import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { FlagList, type FlagData } from "./flag-list.react.tsx";
 
-const TEXT = "The watcher checks 9 sites. Most failures last under a minute. Teh rest need a person.";
+const TEXT =
+  "The watcher checks 9 sites. Most failures last under a minute. Teh rest need a person.";
 
 const FLAGS: FlagData[] = [
-  { id: "r1", kind: "blocking", state: "open", message: "Most failures: no figure", cause: "A claim of degree needs a number.", raisedBy: "Sources check", anchor: { id: "react-draft", quote: "Most failures last under a minute" } },
-  { id: "r2", kind: "advisory", state: "open", message: "Spelling: Teh", cause: "Words are spelt as the dictionary spells them.", raisedBy: "Spelling check", anchor: { id: "react-draft", quote: "Teh rest" }, suggestion: { replacement: "The rest", by: "Spelling check" } },
-  { id: "r3", kind: "advisory", state: "resolved", resolution: "resolved", resolvedBy: "Rosa Park", resolvedAt: "2026-10-02T07:30:00Z", message: "Number of sites differs from the sites page", cause: "Numbers agree with the page they name.", anchor: { id: "react-draft", quote: "9 sites" } },
+  {
+    id: "r1",
+    kind: "blocking",
+    state: "open",
+    message: "Most failures: no figure",
+    cause: "A claim of degree needs a number.",
+    raisedBy: "Sources check",
+    anchor: { id: "react-draft", quote: "Most failures last under a minute" },
+  },
+  {
+    id: "r2",
+    kind: "advisory",
+    state: "open",
+    message: "Spelling: Teh",
+    cause: "Words are spelt as the dictionary spells them.",
+    raisedBy: "Spelling check",
+    anchor: { id: "react-draft", quote: "Teh rest" },
+    suggestion: { replacement: "The rest", by: "Spelling check" },
+  },
+  {
+    id: "r3",
+    kind: "advisory",
+    state: "resolved",
+    resolution: "resolved",
+    resolvedBy: "Rosa Park",
+    resolvedAt: "2026-10-02T07:30:00Z",
+    message: "Number of sites differs from the sites page",
+    cause: "Numbers agree with the page they name.",
+    anchor: { id: "react-draft", quote: "9 sites" },
+  },
 ];
 
 function Held() {
@@ -20,9 +48,23 @@ function Held() {
         <label className="cap-label" htmlFor="react-draft">
           Draft text
         </label>
-        <textarea className="cap-input" id="react-draft" rows={3} value={text} onChange={(e) => setText(e.target.value)} />
+        <textarea
+          className="cap-input"
+          id="react-draft"
+          rows={3}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
       </div>
-      <FlagList label="Flags on this draft (React)" flags={FLAGS} text={text} onTextChange={setText} owner ownerName="Alex Rivera" viewer="Alex Rivera" />
+      <FlagList
+        label="Flags on this draft (React)"
+        flags={FLAGS}
+        text={text}
+        onTextChange={setText}
+        owner
+        ownerName="Alex Rivera"
+        viewer="Alex Rivera"
+      />
     </>
   );
 }

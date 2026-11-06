@@ -151,7 +151,8 @@ export function stamp(iso: string, now: number = Date.now()): string {
   const t = parse(iso);
   if (!Number.isFinite(t)) return "an unreadable time";
   const d = new Date(t);
-  const year = d.getUTCFullYear() === new Date(now).getUTCFullYear() ? "" : `, ${d.getUTCFullYear()}`;
+  const year =
+    d.getUTCFullYear() === new Date(now).getUTCFullYear() ? "" : `, ${d.getUTCFullYear()}`;
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}${year}, ${clock12(d)} UTC`;
 }
 
@@ -170,7 +171,8 @@ export function dayOf(iso: string, now: number = Date.now()): string {
 export function rangeText(fromIso: string, toIso: string, now: number = Date.now()): string {
   const a = new Date(parse(fromIso));
   const b = new Date(parse(toIso));
-  if (a.toISOString().slice(0, 10) === b.toISOString().slice(0, 10)) return `${clock12(a)} to ${clock12(b)} UTC`;
+  if (a.toISOString().slice(0, 10) === b.toISOString().slice(0, 10))
+    return `${clock12(a)} to ${clock12(b)} UTC`;
   return `${stamp(fromIso, now)} to ${stamp(toIso, now)}`;
 }
 
@@ -194,7 +196,10 @@ export function pickTwo(picked: readonly string[], id: string): Picks {
 }
 
 // The pair in time order, older first, whichever was picked first. Ties keep the pick order.
-export function orderPair(picked: readonly string[], at: (id: string) => number): [string, string] | null {
+export function orderPair(
+  picked: readonly string[],
+  at: (id: string) => number,
+): [string, string] | null {
   const [a, b] = picked;
   if (a === undefined || b === undefined) return null;
   return at(b) < at(a) ? [b, a] : [a, b];
@@ -215,20 +220,32 @@ export function pickedText(count: number, older?: string, newer?: string): strin
 }
 
 // The line a restore adds on top: the restored text, as a new version.
-export function restoredEntry(source: HistoryEntry, current: HistoryEntry, who: string, id: string, atIso: string, now: number = parse(atIso)): HistoryEntry {
+export function restoredEntry(
+  source: HistoryEntry,
+  current: HistoryEntry,
+  who: string,
+  id: string,
+  atIso: string,
+  now: number = parse(atIso),
+): HistoryEntry {
   return {
     id,
     kind: "restore",
     who,
     at: atIso,
     ...(source.words !== undefined ? { words: source.words } : {}),
-    ...(source.words !== undefined && current.words !== undefined ? { delta: wordDelta(current.words, source.words) } : {}),
+    ...(source.words !== undefined && current.words !== undefined
+      ? { delta: wordDelta(current.words, source.words) }
+      : {}),
     summary: `Restored the version from ${stamp(source.at, now)}`,
     restoredFrom: { id: source.id, at: source.at },
   };
 }
 
-export function restoredMessage(source: Pick<HistoryEntry, "at">, now: number = Date.now()): string {
+export function restoredMessage(
+  source: Pick<HistoryEntry, "at">,
+  now: number = Date.now(),
+): string {
   return `Restored version from ${dayOf(source.at, now)} as a new version.`;
 }
 

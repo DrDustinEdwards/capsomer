@@ -1,9 +1,15 @@
 import { expect, test, type Page } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 import { wordMatches, wordPattern } from "./confirm-dialog.ts";
 
 const revoke = (page: Page) => page.getByRole("button", { name: "Revoke deploy-agent…" });
-const dialog = (page: Page, name = "Revoke deploy-agent?") => page.getByRole("alertdialog", { name });
+const dialog = (page: Page, name = "Revoke deploy-agent?") =>
+  page.getByRole("alertdialog", { name });
 
 async function openLive(page: Page, theme: "light" | "dark") {
   await visitStates(page, "confirm-dialog", theme, "live");
@@ -16,7 +22,8 @@ test("behavior: the typed word as an HTML pattern says what wordMatches says", (
   const re = (w: string) => new RegExp(`^(?:${wordPattern(w)})$`);
   expect(wordPattern("delete")).toBe("[Dd][Ee][Ll][Ee][Tt][Ee]");
   for (const typed of ["delete", "DELETE", "Delete"]) expect(re("delete").test(typed)).toBe(true);
-  for (const typed of ["delet", "deletee", "remove", " delete", ""]) expect(re("delete").test(typed)).toBe(false);
+  for (const typed of ["delet", "deletee", "remove", " delete", ""])
+    expect(re("delete").test(typed)).toBe(false);
   // Anything that is not a letter is escaped, so a word such as "a.b" or "x+y" matches only itself.
   expect(re("a.b").test("a.b")).toBe(true);
   expect(re("a.b").test("axb")).toBe(false);
@@ -31,7 +38,15 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["open", "comfortable", "busy", "error", "typed-empty", "typed-matched", "reason-missing"]) {
+  for (const id of [
+    "open",
+    "comfortable",
+    "busy",
+    "error",
+    "typed-empty",
+    "typed-matched",
+    "reason-missing",
+  ]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "confirm-dialog", theme, id);
       await expect(page.locator("dialog.cap-dialog")).toBeVisible();
@@ -39,7 +54,9 @@ eachTheme((theme) => {
     });
   }
 
-  test("accessibility: dialog text, the error and the guard reach their contrast", async ({ page }) => {
+  test("accessibility: dialog text, the error and the guard reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "confirm-dialog", theme, "error");
     await expectContrast(page, [
       { sel: ".cap-dialog-title", what: "the dialog title" },
@@ -56,12 +73,18 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: the reason's label, note and boundary reach their contrast", async ({ page }) => {
+  test("accessibility: the reason's label, note and boundary reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "confirm-dialog", theme, "reason-missing");
     await expectContrast(page, [
       { sel: ".cap-confirm-reason label", what: "the reason's label" },
       { sel: ".cap-confirm-note", what: "the note under the reason" },
-      { sel: ".cap-confirm-reason textarea", what: "the invalid reason field's boundary", part: "border" },
+      {
+        sel: ".cap-confirm-reason textarea",
+        what: "the invalid reason field's boundary",
+        part: "border",
+      },
     ]);
   });
 
@@ -78,7 +101,9 @@ eachTheme((theme) => {
         - button "Cancel"
         - button "Revoke agent"
     `);
-    await expect(page.locator("dialog.cap-dialog")).toHaveAccessibleDescription(/This cannot be undone\..*Its key stops being accepted\./);
+    await expect(page.locator("dialog.cap-dialog")).toHaveAccessibleDescription(
+      /This cannot be undone\..*Its key stops being accepted\./,
+    );
   });
 
   test("keyboard: focus starts on Cancel when the dialog opens", async ({ page }) => {
@@ -86,11 +111,15 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
   });
 
-  test("accessibility: it is an alert dialog with no corner Close button", { tag: "@markup" }, async ({ page }) => {
-    await openLive(page, theme);
-    await expect(dialog(page)).toHaveAttribute("role", "alertdialog");
-    await expect(dialog(page).getByRole("button", { name: "Close" })).toHaveCount(0);
-  });
+  test(
+    "accessibility: it is an alert dialog with no corner Close button",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await openLive(page, theme);
+      await expect(dialog(page)).toHaveAttribute("role", "alertdialog");
+      await expect(dialog(page).getByRole("button", { name: "Close" })).toHaveCount(0);
+    },
+  );
 
   test("keyboard: Tab moves from Cancel to the action and Shift Tab back", async ({ page }) => {
     await openLive(page, theme);
@@ -108,7 +137,9 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toHaveText("Nothing changed.");
   });
 
-  test("keyboard: Enter on Cancel closes the dialog and focus returns to the opener", async ({ page }) => {
+  test("keyboard: Enter on Cancel closes the dialog and focus returns to the opener", async ({
+    page,
+  }) => {
     await openLive(page, theme);
     await page.keyboard.press("Enter");
     await expect(dialog(page)).toBeHidden();
@@ -122,7 +153,9 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
   });
 
-  test("keyboard: Esc is held while the action runs, and focus goes to the page when the opener has gone", async ({ page }) => {
+  test("keyboard: Esc is held while the action runs, and focus goes to the page when the opener has gone", async ({
+    page,
+  }) => {
     await openLive(page, theme);
     await page.keyboard.press("Tab");
     const perform = page.getByRole("button", { name: "Revoke agent" });
@@ -130,7 +163,10 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(dialog(page)).toHaveAttribute("aria-busy", "true");
     await expect(perform).toHaveAttribute("aria-busy", "true");
-    await expect(page.getByRole("button", { name: "Cancel" })).toHaveAttribute("aria-disabled", "true");
+    await expect(page.getByRole("button", { name: "Cancel" })).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
     await page.keyboard.press("Escape");
     await page.keyboard.press("Escape");
     await expect(dialog(page)).toBeVisible();
@@ -151,7 +187,9 @@ eachTheme((theme) => {
     await expect(page.locator("dialog.cap-dialog")).toBeVisible();
   });
 
-  test("behavior: a failure stays inside the dialog with its reason and Try again", async ({ page }) => {
+  test("behavior: a failure stays inside the dialog with its reason and Try again", async ({
+    page,
+  }) => {
     await openLive(page, theme);
     await page.getByRole("button", { name: "Revoke agent" }).click();
     await page.evaluate(() => (window as unknown as { capFail: () => void }).capFail());
@@ -185,7 +223,9 @@ eachTheme((theme) => {
     await expect(d).toHaveAttribute("aria-busy", "true");
   });
 
-  test("keyboard: a required reason is asked for, pressing with it empty says so and sends nothing", async ({ page }) => {
+  test("keyboard: a required reason is asked for, pressing with it empty says so and sends nothing", async ({
+    page,
+  }) => {
     await visitStates(page, "confirm-dialog", theme, "live");
     await page.getByRole("button", { name: "Mark job_0cdf2803f0ba failed…" }).click();
     const d = dialog(page, "Mark job failed: Rotate the watcher's Cloudflare token");
@@ -213,19 +253,28 @@ eachTheme((theme) => {
     await expect(page.getByRole("status")).toContainText("Marked failed: rotated by hand");
   });
 
-  test("behavior: a reason the browser filled in without an input event still counts", async ({ page }) => {
+  test("behavior: a reason the browser filled in without an input event still counts", async ({
+    page,
+  }) => {
     await visitStates(page, "confirm-dialog", theme, "live");
     await page.getByRole("button", { name: "Mark job_0cdf2803f0ba failed…" }).click();
-    await page.getByRole("textbox", { name: "Reason (required)" }).evaluate((el: HTMLTextAreaElement) => {
-      el.value = "filled by the browser";
-    });
+    await page
+      .getByRole("textbox", { name: "Reason (required)" })
+      .evaluate((el: HTMLTextAreaElement) => {
+        el.value = "filled by the browser";
+      });
     await page.getByRole("button", { name: "Mark failed" }).click();
-    await expect(dialog(page, "Mark job failed: Rotate the watcher's Cloudflare token")).toHaveAttribute("aria-busy", "true");
+    await expect(
+      dialog(page, "Mark job failed: Rotate the watcher's Cloudflare token"),
+    ).toHaveAttribute("aria-busy", "true");
   });
 
   test("behavior: the matched specimen's action is on", async ({ page }) => {
     await visitStates(page, "confirm-dialog", theme, "typed-matched");
-    await expect(page.getByRole("button", { name: "Delete record" })).not.toHaveAttribute("aria-disabled", "true");
+    await expect(page.getByRole("button", { name: "Delete record" })).not.toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
   });
   for (const id of ["page", "page-error"]) {
     test(`accessibility: no axe violations, the confirm ${id}`, async ({ page }) => {
@@ -235,11 +284,15 @@ eachTheme((theme) => {
     });
   }
 
-  test("accessibility: the confirm page is a named group with its description, its fields and its error", async ({ page }) => {
+  test("accessibility: the confirm page is a named group with its description, its fields and its error", async ({
+    page,
+  }) => {
     await visitStates(page, "confirm-dialog", theme, "page-error");
     const form = page.getByRole("group", { name: "Delete example.com?" });
     await expect(form).toBeVisible();
-    await expect(form).toHaveAccessibleDescription(/This cannot be undone\..*Its 14 checks stop running\./);
+    await expect(form).toHaveAccessibleDescription(
+      /This cannot be undone\..*Its 14 checks stop running\./,
+    );
     await expect(form.getByRole("textbox", { name: "Reason (required)" })).toBeVisible();
     await expect(form.getByRole("textbox", { name: "Type delete to confirm" })).toBeVisible();
     await expect(form.getByRole("alert")).toContainText("The word did not match.");
@@ -250,7 +303,9 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("behavior: the confirm page's own checks hold the submit until a reason and the word are given", async ({ page }) => {
+  test("behavior: the confirm page's own checks hold the submit until a reason and the word are given", async ({
+    page,
+  }) => {
     await visitStates(page, "confirm-dialog", theme, "page");
     const posted = page.evaluate(
       () =>
@@ -274,17 +329,27 @@ eachTheme((theme) => {
     await word.fill("DELETE");
     expect(await word.evaluate((el: HTMLInputElement) => el.validity.valid)).toBe(true);
     await form.getByRole("button", { name: "Delete site" }).click();
-    expect(await posted).toEqual({ intent: "delete", site: "example", reason: "Retired in the September review.", confirm: "DELETE" });
+    expect(await posted).toEqual({
+      intent: "delete",
+      site: "example",
+      reason: "Retired in the September review.",
+      confirm: "DELETE",
+    });
   });
 
-  test("keyboard: on the confirm page Tab goes through the fields to the buttons, Cancel is a link and comes first", async ({ page }) => {
+  test("keyboard: on the confirm page Tab goes through the fields to the buttons, Cancel is a link and comes first", async ({
+    page,
+  }) => {
     await visitStates(page, "confirm-dialog", theme, "page");
     await page.getByRole("textbox", { name: "Reason (required)" }).focus();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("textbox", { name: "Type delete to confirm" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: "Cancel" })).toBeFocused();
-    await expect(page.getByRole("link", { name: "Cancel" })).toHaveAttribute("href", "/admin/sites/example");
+    await expect(page.getByRole("link", { name: "Cancel" })).toHaveAttribute(
+      "href",
+      "/admin/sites/example",
+    );
     await page.keyboard.press("Tab");
     await expect(page.getByRole("button", { name: "Delete site" })).toBeFocused();
   });

@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -45,17 +50,23 @@ eachTheme((theme) => {
       - button "View logs"
     `);
     await expect(page.locator("#b-icon")).toHaveAccessibleName("Refresh sites");
-    await expect(page.locator("#b-disabled")).toHaveAccessibleDescription("Fix the 2 problems above first.");
+    await expect(page.locator("#b-disabled")).toHaveAccessibleDescription(
+      "Fix the 2 problems above first.",
+    );
     await expect(page.locator("#b-pending")).toHaveAccessibleName("Refresh");
   });
 
-  test("keyboard: Tab reaches every button, including one disabled with its reason", async ({ page }) => {
+  test("keyboard: Tab reaches every button, including one disabled with its reason", async ({
+    page,
+  }) => {
     await visitStates(page, "button", theme);
     await page.locator("#b-expanded").focus();
     await page.keyboard.press("Tab");
     await expect(page.locator("#b-disabled")).toBeFocused();
     await expect(page.locator("#b-disabled")).toHaveCSS("outline-style", "solid");
-    await expectContrast(page, [{ sel: "#b-disabled", what: "the focus ring", part: "outline", min: 3 }]);
+    await expectContrast(page, [
+      { sel: "#b-disabled", what: "the focus ring", part: "outline", min: 3 },
+    ]);
   });
 
   test("keyboard: Enter or Space activates a button", async ({ page }) => {
@@ -99,16 +110,26 @@ eachTheme((theme) => {
     expect(link?.height).toBeGreaterThanOrEqual(24);
   });
 
-  test("accessibility: a button group is a named group and its buttons are reachable", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "button", theme);
-    await expect(page.getByRole("group", { name: "Page navigation" })).toBeVisible();
-    await page.getByRole("button", { name: "Previous" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(page.getByRole("group", { name: "Page navigation" }).getByRole("button", { name: "Next" })).toBeFocused();
-  });
+  test(
+    "accessibility: a button group is a named group and its buttons are reachable",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "button", theme);
+      await expect(page.getByRole("group", { name: "Page navigation" })).toBeVisible();
+      await page.getByRole("button", { name: "Previous" }).focus();
+      await page.keyboard.press("Tab");
+      await expect(
+        page.getByRole("group", { name: "Page navigation" }).getByRole("button", { name: "Next" }),
+      ).toBeFocused();
+    },
+  );
 
-  test("accessibility: an open popup button reports aria-expanded", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "button", theme);
-    await expect(page.locator("#b-expanded")).toHaveAttribute("aria-expanded", "true");
-  });
+  test(
+    "accessibility: an open popup button reports aria-expanded",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "button", theme);
+      await expect(page.locator("#b-expanded")).toHaveAttribute("aria-expanded", "true");
+    },
+  );
 });

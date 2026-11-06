@@ -1,10 +1,30 @@
-import { useEffect, useId, useMemo, useRef, useState, type ReactNode, useLayoutEffect } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  useLayoutEffect,
+} from "react";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { fail as plainFail, say as plainSay, type SayOptions } from "../message/message.ts";
 import { attachRowList } from "../row-list/row-list.ts";
 import { Glyph } from "../status/status.react.tsx";
 import { Time } from "../time/time.react.tsx";
-import { anchorStatus, appliable, applySuggestion, countFlags, groupFlags, revertSuggestion, summaryLine, type AnchorStatus, type Flag as FlagData, type FlagKind, type Resolution } from "./flag-list.ts";
+import {
+  anchorStatus,
+  appliable,
+  applySuggestion,
+  countFlags,
+  groupFlags,
+  revertSuggestion,
+  summaryLine,
+  type AnchorStatus,
+  type Flag as FlagData,
+  type FlagKind,
+  type Resolution,
+} from "./flag-list.ts";
 
 export type { AnchorStatus, Flag as FlagData, FlagKind, Resolution } from "./flag-list.ts";
 
@@ -34,7 +54,11 @@ export interface FlagListProps {
   primary?: boolean;
 }
 
-const WORDS: Record<Resolution, string> = { resolved: "Resolved", dismissed: "Dismissed", applied: "Applied" };
+const WORDS: Record<Resolution, string> = {
+  resolved: "Resolved",
+  dismissed: "Dismissed",
+  applied: "Applied",
+};
 
 export interface FlagProps {
   flag: FlagData;
@@ -52,7 +76,18 @@ export interface FlagProps {
 }
 
 // One flag as a row of the row list. Renders exactly the contract on the doc page.
-export function Flag({ flag, anchor, owner, ownerName, idPrefix, onResolve, onDismiss, onReopen, onApply, now }: FlagProps) {
+export function Flag({
+  flag,
+  anchor,
+  owner,
+  ownerName,
+  idPrefix,
+  onResolve,
+  onDismiss,
+  onReopen,
+  onApply,
+  now,
+}: FlagProps) {
   const id = `${idPrefix}-${flag.id}`;
   const open = flag.state === "open";
   const r: Resolution = flag.resolution ?? "resolved";
@@ -83,9 +118,7 @@ export function Flag({ flag, anchor, owner, ownerName, idPrefix, onResolve, onDi
       <div className="cap-row-title">
         {a && anchor === "found" ? (
           <a href={`#${a.id}`} aria-describedby={`${id}-s ${id}-d`}>
-            {message}
-            {" "}
-            <span className="cap-flag-goto">{a.label ?? "Go to passage"}</span>
+            {message} <span className="cap-flag-goto">{a.label ?? "Go to passage"}</span>
           </a>
         ) : (
           <span className="cap-flag-title">
@@ -103,7 +136,8 @@ export function Flag({ flag, anchor, owner, ownerName, idPrefix, onResolve, onDi
         )}
       </div>
       <p className="cap-row-detail" id={`${id}-d`}>
-        {flag.raisedBy ? `${flag.raisedBy}. ` : ""}Cause: <span data-cap-part="cause">{flag.cause}</span>
+        {flag.raisedBy ? `${flag.raisedBy}. ` : ""}Cause:{" "}
+        <span data-cap-part="cause">{flag.cause}</span>
       </p>
       <span className="cap-row-meta">
         {open ? null : (
@@ -116,15 +150,34 @@ export function Flag({ flag, anchor, owner, ownerName, idPrefix, onResolve, onDi
       <div className="cap-row-actions">
         {open ? (
           <>
-            <button type="button" className="cap-btn" data-size="sm" data-cap-part="resolve" onClick={onResolve}>
+            <button
+              type="button"
+              className="cap-btn"
+              data-size="sm"
+              data-cap-part="resolve"
+              onClick={onResolve}
+            >
               Resolve<span className="cap-sr-only"> flag: {flag.message}</span>
             </button>
-            <button type="button" className="cap-btn" data-size="sm" data-variant="quiet" data-cap-part="dismiss" onClick={onDismiss}>
+            <button
+              type="button"
+              className="cap-btn"
+              data-size="sm"
+              data-variant="quiet"
+              data-cap-part="dismiss"
+              onClick={onDismiss}
+            >
               Dismiss<span className="cap-sr-only"> flag: {flag.message}</span>
             </button>
           </>
         ) : (
-          <button type="button" className="cap-btn" data-size="sm" data-cap-part="reopen" onClick={onReopen}>
+          <button
+            type="button"
+            className="cap-btn"
+            data-size="sm"
+            data-cap-part="reopen"
+            onClick={onReopen}
+          >
             Reopen<span className="cap-sr-only"> flag: {flag.message}</span>
           </button>
         )}
@@ -132,8 +185,14 @@ export function Flag({ flag, anchor, owner, ownerName, idPrefix, onResolve, onDi
       <div className="cap-flag-body">
         {a ? (
           <blockquote className="cap-flag-quote">
-            <p className="cap-flag-anchor-note" data-cap-part="anchor-note" hidden={anchor === "none"}>
-              {anchor === "lost" ? "The text this flag was raised on changed or was removed. Last known text:" : "Raised on this passage:"}
+            <p
+              className="cap-flag-anchor-note"
+              data-cap-part="anchor-note"
+              hidden={anchor === "none"}
+            >
+              {anchor === "lost"
+                ? "The text this flag was raised on changed or was removed. Last known text:"
+                : "Raised on this passage:"}
             </p>
             <p>
               <span className="cap-sr-only">Quoted passage: </span>
@@ -166,16 +225,30 @@ export function Flag({ flag, anchor, owner, ownerName, idPrefix, onResolve, onDi
               ) : !open ? (
                 <p className="cap-flag-note">Not applied. Reopen the flag to apply it.</p>
               ) : anchor !== "found" ? (
-                <p className="cap-flag-note">Cannot be applied: the passage it replaces has changed or gone.</p>
+                <p className="cap-flag-note">
+                  Cannot be applied: the passage it replaces has changed or gone.
+                </p>
               ) : owner ? (
                 <>
-                  <button type="button" className="cap-btn" data-size="sm" data-variant="primary" data-cap-part="apply" onClick={onApply}>
+                  <button
+                    type="button"
+                    className="cap-btn"
+                    data-size="sm"
+                    data-variant="primary"
+                    data-cap-part="apply"
+                    onClick={onApply}
+                  >
                     Apply<span className="cap-sr-only"> suggestion: {flag.message}</span>
                   </button>
-                  <span className="cap-flag-note">Nothing changes in the draft until you apply it.</span>
+                  <span className="cap-flag-note">
+                    Nothing changes in the draft until you apply it.
+                  </span>
                 </>
               ) : (
-                <p className="cap-flag-note">Only the owner{ownerName ? `, ${ownerName},` : ""} can apply this. The draft stays as it is until they do.</p>
+                <p className="cap-flag-note">
+                  Only the owner{ownerName ? `, ${ownerName},` : ""} can apply this. The draft stays
+                  as it is until they do.
+                </p>
               )}
             </div>
           </div>
@@ -198,7 +271,20 @@ export function Flag({ flag, anchor, owner, ownerName, idPrefix, onResolve, onDi
   );
 }
 
-export function FlagList({ label, flags: given, onFlagsChange, text, onTextChange, owner = false, ownerName, viewer, say = plainSay, fail = plainFail, filter: initial = "open", primary = false }: FlagListProps) {
+export function FlagList({
+  label,
+  flags: given,
+  onFlagsChange,
+  text,
+  onTextChange,
+  owner = false,
+  ownerName,
+  viewer,
+  say = plainSay,
+  fail = plainFail,
+  filter: initial = "open",
+  primary = false,
+}: FlagListProps) {
   const uid = useId();
   const [flags, setFlags] = useState(given);
   // A new list from the page replaces the one held here, in the same render.
@@ -230,16 +316,28 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
       });
     }
   };
-  const problem = (words: string) => (document.querySelector("[data-cap='message']") ? fail(words) : announce(words));
+  const problem = (words: string) =>
+    document.querySelector("[data-cap='message']") ? fail(words) : announce(words);
 
   const commit = (next: FlagData[]) => {
     setFlags(next);
     onFlagsChange?.(next);
   };
-  const patch = (list: FlagData[], id: string, to: Partial<FlagData>): FlagData[] => list.map((f) => (f.id === id ? { ...f, ...to } : f));
-  // oxlint-disable-next-line react/purity -- called from the resolve handlers only, never while rendering
-  const close = (f: FlagData, resolution: Resolution): Partial<FlagData> => ({ state: "resolved", resolution, resolvedBy: viewer, resolvedAt: new Date().toISOString() });
-  const reopened: Partial<FlagData> = { state: "open", resolution: undefined, resolvedBy: undefined, resolvedAt: undefined };
+  const patch = (list: FlagData[], id: string, to: Partial<FlagData>): FlagData[] =>
+    list.map((f) => (f.id === id ? { ...f, ...to } : f));
+  const close = (f: FlagData, resolution: Resolution): Partial<FlagData> => ({
+    state: "resolved",
+    resolution,
+    resolvedBy: viewer,
+    // oxlint-disable-next-line react/purity -- called from the resolve handlers only, never while rendering
+    resolvedAt: new Date().toISOString(),
+  });
+  const reopened: Partial<FlagData> = {
+    state: "open",
+    resolution: undefined,
+    resolvedBy: undefined,
+    resolvedAt: undefined,
+  };
 
   // The list as it will be, held in a ref, so an Undo that runs later acts on the current one.
   const latest = useRef(flags);
@@ -251,18 +349,34 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
     commit(next);
   };
 
-  const focusFlag = (id: string) => () => root.current?.querySelector<HTMLElement>(`[data-flag='${CSS.escape(id)}'] .cap-row-actions button`) ?? null;
+  const focusFlag = (id: string) => () =>
+    root.current?.querySelector<HTMLElement>(
+      `[data-flag='${CSS.escape(id)}'] .cap-row-actions button`,
+    ) ?? null;
 
   const change = (f: FlagData, to: Partial<FlagData>, said: string, undone: string) => {
     const before = f;
     set(patch(latest.current, f.id, to));
-    announce(said, { undo: () => set(patch(latest.current, f.id, { state: before.state, resolution: before.resolution, resolvedBy: before.resolvedBy, resolvedAt: before.resolvedAt })), undone, returnFocus: focusFlag(f.id) });
+    announce(said, {
+      undo: () =>
+        set(
+          patch(latest.current, f.id, {
+            state: before.state,
+            resolution: before.resolution,
+            resolvedBy: before.resolvedBy,
+            resolvedAt: before.resolvedAt,
+          }),
+        ),
+      undone,
+      returnFocus: focusFlag(f.id),
+    });
   };
 
   const applyOne = (f: FlagData) => {
     if (!batchApplicable || text === undefined) return;
     const next = applySuggestion(text, f);
-    if (next === null) return problem("Could not apply the suggestion: the passage it replaces has changed.");
+    if (next === null)
+      return problem("Could not apply the suggestion: the passage it replaces has changed.");
     onTextChange?.(next);
     const current = next;
     const before = f;
@@ -270,9 +384,19 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
     announce("Suggestion applied to the draft.", {
       undo: () => {
         const back = revertSuggestion(current, f);
-        if (back === null) throw new Error("The draft has changed around that passage since. Undo the edit in the editor instead.");
+        if (back === null)
+          throw new Error(
+            "The draft has changed around that passage since. Undo the edit in the editor instead.",
+          );
         onTextChange?.(back);
-        set(patch(latest.current, f.id, { state: before.state, resolution: before.resolution, resolvedBy: before.resolvedBy, resolvedAt: before.resolvedAt }));
+        set(
+          patch(latest.current, f.id, {
+            state: before.state,
+            resolution: before.resolution,
+            resolvedBy: before.resolvedBy,
+            resolvedAt: before.resolvedAt,
+          }),
+        );
       },
       undone: "Suggestion taken back. The passage is as it was.",
       returnFocus: focusFlag(f.id),
@@ -288,7 +412,10 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
     await confirm({
       title: `Apply ${n} suggestion${n === 1 ? "" : "s"}?`,
       lead: "This rewrites the draft. Each replacement is listed; nothing else changes.",
-      body: todo.map((f) => `${quoted(f.anchor?.quote ?? "")} becomes ${quoted(f.suggestion?.replacement ?? "")}`),
+      body: todo.map(
+        (f) =>
+          `${quoted(f.anchor?.quote ?? "")} becomes ${quoted(f.suggestion?.replacement ?? "")}`,
+      ),
       action: `Apply ${n} suggestion${n === 1 ? "" : "s"}`,
       perform: async () => {
         let next = text;
@@ -306,21 +433,27 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
         for (const f of done) list = patch(list, f.id, close(f, "applied"));
         set(list);
         const skipped = todo.length - done.length;
-        announce(`Applied ${done.length} suggestion${done.length === 1 ? "" : "s"} to the draft.${skipped ? ` ${skipped} skipped: the passage changed.` : ""}`, {
-          undo: () => {
-            let back = next;
-            for (const f of [...done].reverse()) {
-              const out = revertSuggestion(back, f);
-              if (out === null) throw new Error("The draft has changed around those passages since. Undo the edits in the editor instead.");
-              back = out;
-            }
-            onTextChange?.(back);
-            let again = latest.current;
-            for (const f of done) again = patch(again, f.id, reopened);
-            set(again);
+        announce(
+          `Applied ${done.length} suggestion${done.length === 1 ? "" : "s"} to the draft.${skipped ? ` ${skipped} skipped: the passage changed.` : ""}`,
+          {
+            undo: () => {
+              let back = next;
+              for (const f of [...done].reverse()) {
+                const out = revertSuggestion(back, f);
+                if (out === null)
+                  throw new Error(
+                    "The draft has changed around those passages since. Undo the edits in the editor instead.",
+                  );
+                back = out;
+              }
+              onTextChange?.(back);
+              let again = latest.current;
+              for (const f of done) again = patch(again, f.id, reopened);
+              set(again);
+            },
+            undone: "Suggestions taken back. The passages are as they were.",
           },
-          undone: "Suggestions taken back. The passages are as they were.",
-        });
+        );
       },
     });
   };
@@ -350,7 +483,9 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
               ownerName={ownerName}
               idPrefix={uid}
               onResolve={() => change(f, close(f, "resolved"), "Flag resolved.", "Flag reopened.")}
-              onDismiss={() => change(f, close(f, "dismissed"), "Flag dismissed.", "Flag reopened.")}
+              onDismiss={() =>
+                change(f, close(f, "dismissed"), "Flag dismissed.", "Flag reopened.")
+              }
               onReopen={() => change(f, reopened, "Flag reopened.", "Flag closed again.")}
               onApply={() => applyOne(f)}
             />
@@ -363,7 +498,14 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
   const headingId = `${uid}-h`;
   const radio = (v: FilterValue, word: string, n: number) => (
     <label>
-      <input type="radio" name={`${uid}-filter`} value={v} checked={filter === v} onChange={() => setFilter(v)} /> {word}
+      <input
+        type="radio"
+        name={`${uid}-filter`}
+        value={v}
+        checked={filter === v}
+        onChange={() => setFilter(v)}
+      />{" "}
+      {word}
       <span className="cap-flags-count" data-count={v}>
         {n}
       </span>
@@ -371,7 +513,14 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
   );
   const n = waiting.length;
   return (
-    <section ref={root} className="cap-flags" aria-labelledby={headingId} data-owner={owner ? "" : undefined} data-owner-name={ownerName} data-viewer={viewer}>
+    <section
+      ref={root}
+      className="cap-flags"
+      aria-labelledby={headingId}
+      data-owner={owner ? "" : undefined}
+      data-owner-name={ownerName}
+      data-viewer={viewer}
+    >
       <header className="cap-flags-head">
         <h2 className="cap-flags-title" id={headingId}>
           {label}
@@ -388,16 +537,31 @@ export function FlagList({ label, flags: given, onFlagsChange, text, onTextChang
           </div>
         </fieldset>
         <div className="cap-flags-batch">
-          <button type="button" className="cap-btn" data-variant="primary" data-cap-part="apply-all" hidden={!batchApplicable || n === 0} onClick={() => void applyAll()}>
+          <button
+            type="button"
+            className="cap-btn"
+            data-variant="primary"
+            data-cap-part="apply-all"
+            hidden={!batchApplicable || n === 0}
+            onClick={() => void applyAll()}
+          >
             Apply {n} suggestion{n === 1 ? "" : "s"}
           </button>
           <p className="cap-flags-note" data-cap-part="owner-note" hidden={owner || n === 0}>
-            {n} suggestion{n === 1 ? " is" : "s are"} waiting for the owner{ownerName ? `, ${ownerName}` : ""}. Only they can apply them.
+            {n} suggestion{n === 1 ? " is" : "s are"} waiting for the owner
+            {ownerName ? `, ${ownerName}` : ""}. Only they can apply them.
           </p>
         </div>
       </header>
-      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
-      <ul ref={rows} className="cap-rows cap-flags-list" data-cap="row-list" role="list" aria-labelledby={headingId} data-cap-primary={primary ? "" : undefined}>
+      <ul
+        ref={rows}
+        className="cap-rows cap-flags-list"
+        data-cap="row-list"
+        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
+        role="list"
+        aria-labelledby={headingId}
+        data-cap-primary={primary ? "" : undefined}
+      >
         {group("blocking", "Blocking", groups.blocking)}
         {group("advisory", "Advisory", groups.advisory)}
         <li className="cap-flags-empty" data-for="open">

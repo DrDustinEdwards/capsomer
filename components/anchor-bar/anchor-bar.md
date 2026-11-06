@@ -4,7 +4,17 @@ title: Anchor bar
 summary: '"On this page": sticky links to a long view''s sections, the current one marked.'
 parts: [css, behavior, react]
 tool: own JavaScript
-states: [link states (rest, current, hover, pressed), top of page, scrolled into the third section, blocks marked data-section, short page with no bar]
+states:
+  [
+    link states (rest,
+    current,
+    hover,
+    pressed),
+    top of page,
+    scrolled into the third section,
+    blocks marked data-section,
+    short page with no bar,
+  ]
 added: 0.1.0
 updated: 0.2.0
 source: the approved mockup's .onpage bar; Capsid Portal, dashboard/src/ui/anchors.tsx and styles.css (".anchors")
@@ -43,9 +53,9 @@ Different on purpose: it is a `nav` of links with `aria-current="location"`, not
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | Reaches each link in turn |
+| Key             | Does                                                  |
+| --------------- | ----------------------------------------------------- |
+| Tab             | Reaches each link in turn                             |
 | Enter on a link | Scrolls to the section and moves focus to its heading |
 
 ## Accessibility

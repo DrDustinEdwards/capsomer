@@ -20,7 +20,9 @@ export function focusMain(banner: Element): void {
 // that detaches.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const banner of root.querySelectorAll<HTMLElement>("[data-cap='banner']:not([data-cap-ready])")) {
+  for (const banner of root.querySelectorAll<HTMLElement>(
+    "[data-cap='banner']:not([data-cap-ready])",
+  )) {
     banner.dataset.capReady = "";
     const onClick = (e: MouseEvent) => {
       if ((e.target as Element).closest("[data-cap-part='dismiss']")) dismissBanner(banner);

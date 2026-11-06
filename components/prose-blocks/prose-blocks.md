@@ -38,11 +38,11 @@ Any page whose body is rendered Markdown: a post, an essay, a doc page, a book c
 
 ## Keyboard
 
-| Key | Does |
-| --- | --- |
-| Tab | Reaches each link, a heading's own link (shown when focused), a scrolling table, a code block, a summary and an embed card |
-| Arrow keys on a focused table or code block | Scroll it |
-| Enter or Space on a summary | Opens or closes the details |
+| Key                                         | Does                                                                                                                       |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Tab                                         | Reaches each link, a heading's own link (shown when focused), a scrolling table, a code block, a summary and an embed card |
+| Arrow keys on a focused table or code block | Scroll it                                                                                                                  |
+| Enter or Space on a summary                 | Opens or closes the details                                                                                                |
 
 ## Accessibility
 

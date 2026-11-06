@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
 
 eachTheme((theme) => {
   test("accessibility: no axe violations", async ({ page }) => {
@@ -15,9 +20,12 @@ eachTheme((theme) => {
     ]);
   });
 
-  test("accessibility: roles and names: a trail, a heading, a lead and the actions, and no banner landmark", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "page-head", theme);
-    await expect(page.locator("#ph-full")).toMatchAriaSnapshot(`
+  test(
+    "accessibility: roles and names: a trail, a heading, a lead and the actions, and no banner landmark",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "page-head", theme);
+      await expect(page.locator("#ph-full")).toMatchAriaSnapshot(`
       - navigation "Breadcrumb":
         - list:
           - listitem:
@@ -29,9 +37,10 @@ eachTheme((theme) => {
       - button "Run checks now"
       - button "Publish"
     `);
-    // A header inside a section is not a banner: the page's one banner is the shell's.
-    await expect(page.locator("#ph-full").getByRole("banner")).toHaveCount(0);
-  });
+      // A header inside a section is not a banner: the page's one banner is the shell's.
+      await expect(page.locator("#ph-full").getByRole("banner")).toHaveCount(0);
+    },
+  );
 
   test("keyboard: Tab goes through the trail's link, then the actions", async ({ page }) => {
     await visitStates(page, "page-head", theme);
@@ -42,7 +51,9 @@ eachTheme((theme) => {
     await expect(page.locator("#ph-full").getByRole("button", { name: "Publish" })).toBeFocused();
   });
 
-  test("behavior: the actions sit at the right of the title, and drop below it in a narrow space", async ({ page }) => {
+  test("behavior: the actions sit at the right of the title, and drop below it in a narrow space", async ({
+    page,
+  }) => {
     await visitStates(page, "page-head", theme);
     const wide = await page.locator("#ph-full").evaluate((el) => {
       const t = el.querySelector(".cap-page-head-text")!.getBoundingClientRect();

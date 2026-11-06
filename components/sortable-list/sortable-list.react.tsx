@@ -1,5 +1,21 @@
-import { useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
-import { indexAtPoint, keyTarget, moveId, sortText, startPointerDrag, type Layout, type SortMove } from "./sortable-list.ts";
+import {
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
+} from "react";
+import {
+  indexAtPoint,
+  keyTarget,
+  moveId,
+  sortText,
+  startPointerDrag,
+  type Layout,
+  type SortMove,
+} from "./sortable-list.ts";
 
 export { indexAtPoint, keyTarget, moveId, sortText } from "./sortable-list.ts";
 export type { Layout, SortMove } from "./sortable-list.ts";
@@ -29,7 +45,14 @@ export interface SortableListProps<T> {
 }
 
 const Grip = () => (
-  <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">
+  <svg
+    viewBox="0 0 16 16"
+    width="16"
+    height="16"
+    fill="currentColor"
+    aria-hidden="true"
+    focusable="false"
+  >
     <circle cx="6" cy="3.5" r="1.25" />
     <circle cx="10" cy="3.5" r="1.25" />
     <circle cx="6" cy="8" r="1.25" />
@@ -39,12 +62,33 @@ const Grip = () => (
   </svg>
 );
 const Arrow = ({ up }: { up: boolean }) => (
-  <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+  <svg
+    viewBox="0 0 16 16"
+    width="16"
+    height="16"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
     <path d={up ? "M8 13V3M3.5 7.5 8 3l4.5 4.5" : "M8 3v10M3.5 8.5 8 13l4.5-4.5"} />
   </svg>
 );
 
-export function SortableList<T>({ items, getId, getLabel, renderItem, onReorder, layout = "rows", name, className, ...label }: SortableListProps<T>) {
+export function SortableList<T>({
+  items,
+  getId,
+  getLabel,
+  renderItem,
+  onReorder,
+  layout = "rows",
+  name,
+  className,
+  ...label
+}: SortableListProps<T>) {
   const ids = items.map(getId);
   const byId = new Map(items.map((it) => [getId(it), it]));
   const [draft, setDraft] = useState<string[] | null>(null);
@@ -145,7 +189,9 @@ export function SortableList<T>({ items, getId, getLabel, renderItem, onReorder,
         setDragging(id);
       },
       onMove(x, y) {
-        const others = current.filter((k) => k !== id).map((k) => itemEls.current.get(k)!.getBoundingClientRect());
+        const others = current
+          .filter((k) => k !== id)
+          .map((k) => itemEls.current.get(k)!.getBoundingClientRect());
         const to = indexAtPoint(others, x, y, layout);
         if (current.indexOf(id) === to) return;
         current = moveId(current, id, to);
