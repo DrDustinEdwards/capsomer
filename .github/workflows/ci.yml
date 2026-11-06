@@ -55,6 +55,9 @@ jobs:
       # Oxlint with devkit's shared config (oxlint.config.ts), type-aware.
       - name: Lint
         run: npm run lint
+      # Oxfmt with devkit's shared config (oxfmt.config.ts); the package's CSS and the specimens' HTML are left alone.
+      - name: Format check
+        run: npm run format:check
       - name: Every family's contrast pairs, both themes (blocking, rule 18)
         run: npm run palette-report -- --summary
       - name: Build the behavior modules and wrappers

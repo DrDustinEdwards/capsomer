@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Development: Oxfmt** (devkit v0.26.1's shared config, `oxfmt.config.ts`, `npm run format` and `npm run format:check`, a Format check step in CI; not in the package files). The source, tests and docs were reformatted in one formatting-only commit, listed in `.git-blame-ignore-revs`. The CSS the package ships and the specimens' HTML are excluded, so no shipped CSS and no states page changes.
 - **CI: one check job per pull request** (devkit v0.26.1's pr.yml in `checks.yml`): the trailer, shared-code, OSV-Scanner, workflow audit, no-bloat and reviewer checks run as `checks / Repo checks`; `review.yml`, `workflow-audit.yml` and `no-bloat.yml` are gone, the page weight report is a step of `ci.yml`, dependencies runs daily only, and the code map and Scorecard run nightly. Not in the package files.
 - **Development: Oxlint** (devkit's shared config, `oxlint.config.ts`, `npm run lint`, a Lint step in CI; not in the package files). Fixes from its first run: hydration flags read `useSyncExternalStore`, so a part drawn after hydration starts in its scripted form; state that follows a prop resets in the same render instead of an effect after paint; latest-value refs are written in layout effects; `Intents` gains `setRoot`, a callback ref for the list's root (additive); avatar initials take a word's first grapheme (`Intl.Segmenter`), so a flag or an accented capital stays whole. No class, token or HTML contract changes.
 
