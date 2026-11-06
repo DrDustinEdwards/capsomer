@@ -4,7 +4,7 @@
 # unit tests, the type check, the build, every component's keyboard and accessibility
 # tests in a real browser, and the sweep (test/sweep.spec.ts: reflow, right to left, text
 # spacing, touch targets, forced colors and React parity over every states page). Never
-# blocking: the token check and the size report (rule 1, decision 12). The sweep also
+# blocking: the token check, the size report and the page weight report (rule 1, decision 12). The sweep also
 # writes forced-colors screenshots to test-results/forced-colors/, kept with the run for review.
 #
 # A pull request runs the browser tests for the components it touches and for every component that
@@ -93,6 +93,14 @@ jobs:
       - name: Token check (warns only)
         if: always()
         run: npm run token-check
+      # The page weight and line counts against no-bloat/baseline.json (no-bloat/README.md), here beside the site build
+      # it reads; Knip and jscpd are pr.yml's ratchet (checks.yml).
+      - name: Page weight and lines (warns only)
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p test-results
+          npm run bloat >> "$GITHUB_STEP_SUMMARY"
       - name: Summarize the results for the site
         if: always()
         run: node bin/capsomer.mjs site-data --results-out test-results/summary.json
