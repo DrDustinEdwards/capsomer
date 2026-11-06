@@ -107,6 +107,7 @@ eachTheme((theme) => {
     await expect(plain.getByRole("tablist")).toBeHidden();
     await expect(page.locator("#map-step li[aria-current='step']")).toHaveText(/^Merged/);
     await page.setViewportSize({ width: 320, height: 800 });
+    // Read at once: the wires redraw a frame later, and must not widen the page meanwhile.
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
     await expect(page.locator("#map .cap-system-map-hex")).toBeHidden();
     const graph = page.locator("#map .cap-system-map-graph");

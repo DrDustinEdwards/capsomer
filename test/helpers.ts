@@ -44,7 +44,7 @@ function installRatio(): void {
   };
 }
 
-// Opens a component's states page in the given theme and waits for its fonts.
+// Opens a component's states page in the given theme and waits for its fonts and its frames.
 // With `only`, opens one page-level specimen (a <template data-specimen>) as the whole page.
 export async function visitStates(page: Page, name: string, theme: Theme, only?: string): Promise<void> {
   const q = new URLSearchParams({ theme });
@@ -52,7 +52,11 @@ export async function visitStates(page: Page, name: string, theme: Theme, only?:
   await page.goto(`components/${name}/states.html?${q}`);
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
   await page.evaluate(installRatio);
-  if (!only) await expect(page.locator("h1").first()).toBeVisible();
+  if (only) return;
+  await expect(page.locator("h1").first()).toBeVisible();
+  // A specimen frame whose demo sets itself up after load (the markdown editor's open palette) takes
+  // focus when it does, and focus in a frame leaves the page under test: wait for every frame to finish.
+  await page.waitForFunction(() => [...document.querySelectorAll<HTMLIFrameElement>("iframe.cap-specimen-frame")].every((f) => f.contentDocument?.documentElement.hasAttribute("data-specimen-ready")));
 }
 
 // The automated scan, against WCAG 2.2 A and AA. Any violation fails, with its rule, its
