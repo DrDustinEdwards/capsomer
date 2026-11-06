@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.75.1]
+
+No token, class or HTML change. The package depends on Prelum (`@drdustinedwards/site-helpers`) 0.33.0; the 0.75.0 tag still pinned 0.32.1, so an app that took it carried the old Prelum beside its own. An app on this tag resolves one Prelum.
+
 ## [0.75.0]
 
 Lighter Inter and Overpass files, so dustinedwards.info's /systems is back under its 2.5 s LCP limit (Dustin, 2026-11-05). On the check's simulated slow phone it went from a steady 2.17 s before 0.73.0 to about 2.5 s (2.6 s in CI), because the preloaded Inter was 22 KB heavier than the face it replaced and Overpass added 27 KB; with both cuts it measured 2.20 s.
