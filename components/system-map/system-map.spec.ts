@@ -107,10 +107,11 @@ eachTheme((theme) => {
     await expect(plain.getByRole("tablist")).toBeHidden();
     await expect(page.locator("#map-step li[aria-current='step']")).toHaveText(/^Merged/);
     await page.setViewportSize({ width: 320, height: 800 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+    // The wires are redrawn to the new width on the frame after the resize, so wait for it.
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
     await expect(page.locator("#map .cap-system-map-hex")).toBeHidden();
     const graph = page.locator("#map .cap-system-map-graph");
-    expect(await graph.evaluate((g) => g.scrollWidth <= g.clientWidth + 1)).toBe(true);
+    await expect.poll(() => graph.evaluate((g) => g.scrollWidth <= g.clientWidth + 1)).toBe(true);
     await expect(page.locator("#map .cap-system-map-wires")).not.toHaveAttribute("hidden");
   });
 });

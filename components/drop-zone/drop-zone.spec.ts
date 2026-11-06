@@ -140,16 +140,19 @@ eachTheme((theme) => {
 
   test("keyboard: Enter on the focused zone opens the file picker", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
-    await page.locator("#dz-idle input").focus();
+    // Listen before focusing: Playwright turns the picker's interception on without waiting, and
+    // a key sent straight after can reach the page first and open a real picker the test never sees.
+    // The focus round trip lands after the interception does.
     const chooser = page.waitForEvent("filechooser");
+    await page.locator("#dz-idle input").focus();
     await page.keyboard.press("Enter");
     expect((await chooser).isMultiple()).toBe(true);
   });
 
   test("keyboard: Space on the focused zone opens the file picker", async ({ page }) => {
     await visitStates(page, "drop-zone", theme);
-    await page.locator("#dz-single input").focus();
     const chooser = page.waitForEvent("filechooser");
+    await page.locator("#dz-single input").focus();
     await page.keyboard.press("Space");
     expect((await chooser).isMultiple()).toBe(false);
   });

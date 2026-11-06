@@ -412,11 +412,15 @@ eachTheme((theme) => {
   test("behavior: the inspector's preview keeps its height above the fields, in a pane shorter than its content", async ({ page }) => {
     await visitStates(page, "media-library", theme);
     const ins = page.locator("[data-mount='form'] .cap-media-inspector");
-    const preview = await ins.locator(".cap-media-preview").boundingBox();
-    const altForm = await ins.getByRole("form", { name: "Alt text" }).boundingBox();
-    expect(preview && altForm).toBeTruthy();
-    if (!preview || !altForm) return;
+    await expect(ins.getByRole("form", { name: "Alt text" })).toBeVisible();
+    // Both boxes from one layout: the mounts above are still rendering, and two reads apart can
+    // straddle a shift of the whole page.
+    const { preview, altTop } = await ins.evaluate((n) => {
+      const p = n.querySelector(".cap-media-preview")!.getBoundingClientRect();
+      const f = n.querySelector("form[aria-label='Alt text']")!.getBoundingClientRect();
+      return { preview: { height: p.height, bottom: p.bottom }, altTop: f.top };
+    });
     expect(preview.height).toBeGreaterThan(100);
-    expect(altForm.y).toBeGreaterThanOrEqual(preview.y + preview.height);
+    expect(altTop).toBeGreaterThanOrEqual(preview.bottom);
   });
 });
