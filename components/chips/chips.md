@@ -4,20 +4,7 @@ title: Filter chips
 summary: Filter a list by up to six values with toggle chips; the filter lives in the address and a live count says what is left.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states:
-  [
-    link chips with the current one,
-    none pressed,
-    some pressed with the count,
-    hover,
-    pressed and hovered,
-    keyboard focus,
-    disabled,
-    small and large,
-    with a count or an icon,
-    an empty result,
-    solid,
-  ]
+states: [link chips with the current one, none pressed, some pressed with the count, hover, pressed and hovered, keyboard focus, disabled, small and large, with a count or an icon, an empty result, solid]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.chip)
@@ -57,13 +44,13 @@ Filtering a list or table by up to six values of one property: a queue by status
 
 ## Keyboard
 
-| Key            | Does                                                                |
-| -------------- | ------------------------------------------------------------------- |
-| Tab            | Moves through the chips, then Clear while any is pressed            |
-| Enter or Space | Presses or releases a chip; the count and the address follow        |
-| Enter on Clear | Releases every chip and moves focus to the first                    |
-| Arrow keys     | Move focus to the next or previous chip without pressing it (wraps) |
-| Home or End    | Move focus to the first or last chip                                |
+| Key | Does |
+| --- | --- |
+| Tab | Moves through the chips, then Clear while any is pressed |
+| Enter or Space | Presses or releases a chip; the count and the address follow |
+| Enter on Clear | Releases every chip and moves focus to the first |
+| Arrow keys | Move focus to the next or previous chip without pressing it (wraps) |
+| Home or End | Move focus to the first or last chip |
 
 ## Accessibility
 
@@ -89,9 +76,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 import { enhance, pressedValues, setCount } from "capsomer/behavior/chips";
 enhance();
 group.addEventListener("cap:filter-change", (e) => {
-  const shown = jobs.filter(
-    (j) => e.detail.values.length === 0 || e.detail.values.includes(j.status),
-  );
+  const shown = jobs.filter((j) => e.detail.values.length === 0 || e.detail.values.includes(j.status));
   setCount(group, `${shown.length} of ${jobs.length} jobs`);
 });
 ```
@@ -103,13 +88,7 @@ A filter that is a link (a server's list whose filter is in the address, such as
 In React, `import { FilterChips } from "capsomer/react/chips"` (controlled):
 
 ```tsx
-<FilterChips
-  label="Status"
-  options={statuses}
-  value={status}
-  onChange={setStatus}
-  count={`${shown.length} of ${jobs.length} jobs`}
-/>
+<FilterChips label="Status" options={statuses} value={status} onChange={setStatus} count={`${shown.length} of ${jobs.length} jobs`} />
 ```
 
 ## Matches

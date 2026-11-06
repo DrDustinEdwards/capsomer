@@ -4,18 +4,7 @@ title: Stat tile
 summary: One figure, its label and a word for where it stands against its threshold on one line, a detail line beneath and a sparkline, in a row that wraps onto more rows instead of cutting a word.
 parts: [css, react]
 tool: native
-states:
-  [
-    ok,
-    warning,
-    critical,
-    no data,
-    hover,
-    pressed,
-    keyboard focus,
-    a row of every tone,
-    phone width wrapping onto more rows,
-  ]
+states: [ok, warning, critical, no data, hover, pressed, keyboard focus, a row of every tone, phone width wrapping onto more rows]
 added: 0.1.0
 updated: 0.56.0
 source: Capsid Portal, dashboard/src/views/Overview.tsx (tiles) and styles.css ("stat tiles")
@@ -50,11 +39,11 @@ A value against a hard limit with a projection is a usage meter. A list of what 
 
 ## Keyboard
 
-| Key                             | Does               |
-| ------------------------------- | ------------------ |
-| Tab                             | Each tile in order |
-| Enter on a link tile            | Follows it         |
-| Enter or Space on a button tile | Activates it       |
+| Key | Does |
+| --- | --- |
+| Tab | Each tile in order |
+| Enter on a link tile | Follows it |
+| Enter or Space on a button tile | Activates it |
 
 ## Accessibility
 
@@ -82,12 +71,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
           <span class="cap-tile-word">[crit glyph]Over limit</span>
         </span>
         <span class="cap-tile-detail">$4.10 of $10 model spend this month</span>
-        <span
-          class="cap-tile-chart"
-          role="img"
-          aria-label="Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340."
-          >[Enarratio sparkline({ inline: true }) SVG]</span
-        >
+        <span class="cap-tile-chart" role="img" aria-label="Actions minutes per day, last 7 days, rising: 260, 280, 310, 300, 330, 320, 340.">[Enarratio sparkline({ inline: true }) SVG]</span>
       </a>
     </li>
     <li>

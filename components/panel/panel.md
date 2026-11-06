@@ -4,26 +4,13 @@ title: Panel
 summary: A bordered surface with a header on the raised tone, an optional count, source line and link to the full view, and a padded body.
 parts: [css, react]
 tool: native
-states:
-  [
-    card parts (description,
-    action,
-    footer),
-    flush body with a padded block,
-    small size,
-    comfortable density,
-    with a header and a source,
-    with a count and a link to the full view,
-    body only,
-    holding a list with no body padding,
-    a panel that is a link,
-  ]
+states: [card parts (description, action, footer), flush body with a padded block, small size, comfortable density, with a header and a source, with a count and a link to the full view, body only, holding a list with no body padding, a panel that is a link]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css ("panels") and dashboard/src/views/shared.tsx (Panel)
 replaces:
   - 'class="panel"'
-  - 'className="panel'
+  - "className=\"panel"
   - "className=\\{`panel"
 ---
 
@@ -64,8 +51,8 @@ Different on purpose: the header sits on the raised tone (a band) rather than sh
 
 ## Keyboard
 
-| Key             | Does                                             |
-| --------------- | ------------------------------------------------ |
+| Key | Does |
+| --- | --- |
 | None of its own | A panel holds other components; their keys apply |
 
 ## Accessibility

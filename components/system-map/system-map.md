@@ -4,16 +4,7 @@ title: System map
 summary: A network of systems as a connections map, cards wired by their ties, and one system with what uses it, its parts and what it uses, wired the same way. Point at a card to light its wires; a tap opens it. Every tie is also words, and every flow a list.
 parts: [css, behavior]
 tool: own JavaScript
-states:
-  [
-    the network,
-    a card lit with its wires,
-    one system,
-    a flow at a step,
-    under the pointer,
-    keyboard focus,
-    as delivered with no script,
-  ]
+states: [the network, a card lit with its wires, one system, a flow at a step, under the pointer, keyboard focus, as delivered with no script]
 added: 0.7.0
 updated: 0.67.1
 source: capsid/rulings/system-explorer-2026-10-10.md (answer 9); Dustin, 2026-11-03, "i want the actual connections map", which put the wires back on the 0.65.0 cards in place of its no-lines rule
@@ -55,12 +46,12 @@ A network of systems at two levels, drawn as a connections map. Level 1 is the n
 
 ## Keyboard
 
-| Key                     | Does                                                                                                                                                                                          |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Tab                     | Moves between the systems' names (each a link: a hexagon, or a card on the plain map) and, on a system, the ties and the flows' buttons. Focusing a system or a tie lights its lines and ties |
-| Right arrow, Left arrow | On the view tabs, moves between Hexagons and Plain map and shows it                                                                                                                           |
-| Enter                   | Opens the system focused; on a flow's button, steps                                                                                                                                           |
-| Escape                  | Inside a flow, stops it                                                                                                                                                                       |
+| Key | Does |
+| --- | --- |
+| Tab | Moves between the systems' names (each a link: a hexagon, or a card on the plain map) and, on a system, the ties and the flows' buttons. Focusing a system or a tie lights its lines and ties |
+| Right arrow, Left arrow | On the view tabs, moves between Hexagons and Plain map and shows it |
+| Enter | Opens the system focused; on a flow's button, steps |
+| Escape | Inside a flow, stops it |
 
 ## Accessibility
 

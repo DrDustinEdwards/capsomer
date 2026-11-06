@@ -188,10 +188,7 @@
       }
     }
     /* A reader has no boxes: the title starts the card. */
-    .cap-posts-wrap.cap-table-wrap[data-reflow]
-      > .cap-posts-table:not(:has(.cap-posts-check))
-      > tbody
-      > tr {
+    .cap-posts-wrap.cap-table-wrap[data-reflow] > .cap-posts-table:not(:has(.cap-posts-check)) > tbody > tr {
       grid-template-columns: minmax(0, 1fr) auto;
 
       & > .cap-posts-title {

@@ -151,16 +151,11 @@
 
     &[data-kind="ai"] {
       --cap-run-color: var(--info);
-      background: repeating-linear-gradient(
-        135deg,
-        var(--cap-run-color) 0 2px,
-        var(--surface) 2px 5px
-      );
+      background: repeating-linear-gradient(135deg, var(--cap-run-color) 0 2px, var(--surface) 2px 5px);
     }
     &[data-kind="quoted"] {
       --cap-run-color: var(--muted);
-      background: radial-gradient(circle, var(--cap-run-color) 0 1px, transparent 1.5px) 0 0 / 4px
-        4px;
+      background: radial-gradient(circle, var(--cap-run-color) 0 1px, transparent 1.5px) 0 0 / 4px 4px;
     }
     &[data-share="0"] {
       display: none;

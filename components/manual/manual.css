@@ -181,8 +181,7 @@
 
   /* A reading: the figure large and bold under its label. The figures of a row share one line at
      the boxes' foot, so a label that wraps to two lines never pushes its figure below the rest. */
-  .cap-form-boxes:is([data-variant="readings"], [data-variant="tones"], [data-variant="panel"])
-    .cap-form-boxes-box {
+  .cap-form-boxes:is([data-variant="readings"], [data-variant="tones"], [data-variant="panel"]) .cap-form-boxes-box {
     display: flex;
     flex-direction: column;
 
@@ -693,14 +692,7 @@
       z-index: -1;
       background:
         repeating-linear-gradient(to bottom, transparent 0 23px, var(--grid-soft) 23px 24px),
-        linear-gradient(
-            to right,
-            var(--grid-line) 0 1px,
-            var(--grid-fill) 1px calc(100% - var(--gap) - 1px),
-            var(--grid-line) calc(100% - var(--gap) - 1px) calc(100% - var(--gap)),
-            transparent calc(100% - var(--gap))
-          )
-          0 0 / calc((100% + var(--gap)) / var(--cols)) 100% repeat-x;
+        linear-gradient(to right, var(--grid-line) 0 1px, var(--grid-fill) 1px calc(100% - var(--gap) - 1px), var(--grid-line) calc(100% - var(--gap) - 1px) calc(100% - var(--gap)), transparent calc(100% - var(--gap))) 0 0 / calc((100% + var(--gap)) / var(--cols)) 100% repeat-x;
     }
 
     &::after {
@@ -772,8 +764,7 @@
       background: currentColor;
       clip-path: var(--faa-arrow);
     }
-    li + li:dir(rtl)::before,
-    :where([dir="rtl"]) & li + li::before {
+    li + li:dir(rtl)::before, :where([dir="rtl"]) & li + li::before {
       rotate: 180deg;
     }
 
@@ -899,22 +890,12 @@
     }
 
     > [data-state="done"] {
-      background: conic-gradient(
-        var(--text) 0 25%,
-        transparent 0 50%,
-        var(--text) 0 75%,
-        transparent 0
-      );
+      background: conic-gradient(var(--text) 0 25%, transparent 0 50%, var(--text) 0 75%, transparent 0);
     }
 
     > [data-state="now"] {
       border-color: var(--on);
-      background: conic-gradient(
-        var(--on) 0 25%,
-        transparent 0 50%,
-        var(--on) 0 75%,
-        transparent 0
-      );
+      background: conic-gradient(var(--on) 0 25%, transparent 0 50%, var(--on) 0 75%, transparent 0);
     }
 
     > [data-state="ahead"] {
@@ -930,8 +911,7 @@
     margin: 0 0 0 1.25rem;
     padding: 0;
     border-inline-start: 1px solid var(--text);
-    background: repeating-linear-gradient(var(--line-strong) 0 1px, transparent 1px 10px) 0 0 / 6px
-      100% no-repeat;
+    background: repeating-linear-gradient(var(--line-strong) 0 1px, transparent 1px 10px) 0 0 / 6px 100% no-repeat;
     list-style: none;
     font-family: var(--ui);
 
@@ -1107,10 +1087,8 @@
     background:
       linear-gradient(var(--text), var(--text)) 0 0 / 100% 3px no-repeat,
       linear-gradient(var(--text), var(--text)) 0 7px / 100% 3px no-repeat,
-      repeating-linear-gradient(90deg, var(--text) 0 18px, transparent 18px 30px) 0 16px / 100% 3px
-        no-repeat,
-      repeating-linear-gradient(90deg, var(--text) 0 18px, transparent 18px 30px) 0 23px / 100% 3px
-        no-repeat;
+      repeating-linear-gradient(90deg, var(--text) 0 18px, transparent 18px 30px) 0 16px / 100% 3px no-repeat,
+      repeating-linear-gradient(90deg, var(--text) 0 18px, transparent 18px 30px) 0 23px / 100% 3px no-repeat;
   }
 
   @media (forced-colors: active) {

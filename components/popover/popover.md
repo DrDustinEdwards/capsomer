@@ -42,13 +42,13 @@ Reference: shadcn/ui `Popover`, `Tooltip` and `Hover Card`.
 
 ## Keyboard
 
-| Key                           | Does                                                                        |
-| ----------------------------- | --------------------------------------------------------------------------- |
-| Enter or Space on the trigger | Opens the popover; focus moves into it                                      |
-| Tab, Shift+Tab                | Moves through its controls; leaving it closes it                            |
-| Esc                           | Closes it; focus returns to the trigger                                     |
-| Tab onto a tooltip's trigger  | Shows the tooltip at once                                                   |
-| Esc with a tooltip shown      | Hides only the tooltip; it stays hidden until focus or the pointer moves on |
+| Key | Does |
+| --- | --- |
+| Enter or Space on the trigger | Opens the popover; focus moves into it |
+| Tab, Shift+Tab | Moves through its controls; leaving it closes it |
+| Esc | Closes it; focus returns to the trigger |
+| Tab onto a tooltip's trigger | Shows the tooltip at once |
+| Esc with a tooltip shown | Hides only the tooltip; it stays hidden until focus or the pointer moves on |
 
 ## Accessibility
 
@@ -64,24 +64,8 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```html
 <span data-cap="popover">
-  <button
-    type="button"
-    class="cap-btn"
-    popovertarget="pop-dims"
-    aria-haspopup="dialog"
-    aria-expanded="false"
-  >
-    Dimensions
-  </button>
-  <div
-    class="cap-popover"
-    id="pop-dims"
-    popover="auto"
-    role="dialog"
-    aria-labelledby="pop-dims-title"
-    data-side="bottom"
-    data-align="start"
-  >
+  <button type="button" class="cap-btn" popovertarget="pop-dims" aria-haspopup="dialog" aria-expanded="false">Dimensions</button>
+  <div class="cap-popover" id="pop-dims" popover="auto" role="dialog" aria-labelledby="pop-dims-title" data-side="bottom" data-align="start">
     <div class="cap-popover-header">
       <h2 class="cap-popover-title" id="pop-dims-title">Dimensions</h2>
       <p class="cap-popover-description">Set the size of the status badge.</p>
@@ -92,16 +76,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 <span data-cap="popover">
   <button type="button" class="cap-btn">Retry job</button>
-  <div
-    class="cap-popover"
-    id="tip-retry"
-    popover="manual"
-    role="tooltip"
-    data-variant="tooltip"
-    data-side="top"
-  >
-    Runs job_7c21 again. <kbd>R</kbd>
-  </div>
+  <div class="cap-popover" id="tip-retry" popover="manual" role="tooltip" data-variant="tooltip" data-side="top">Runs job_7c21 again. <kbd>R</kbd></div>
 </span>
 ```
 

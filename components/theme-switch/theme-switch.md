@@ -4,24 +4,13 @@ title: Theme switch
 summary: Light or Dark, following the system until the person chooses, then remembered in this browser.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states:
-  [
-    first visit follows the system,
-    light selected,
-    dark selected,
-    hover,
-    keyboard focus,
-    disabled,
-    comfortable density,
-    phone width,
-    the button form,
-  ]
+states: [first visit follows the system, light selected, dark selected, hover, keyboard focus, disabled, comfortable density, phone width, the button form]
 added: 0.1.0
 updated: 0.9.0
 source: Capsid Portal, dashboard/src/lib/prefs.ts (applySavedTheme, toggleTheme, setThemeChoice) and the top bar's theme button
 replaces:
-  - "wf-theme"
-  - "applySavedTheme"
+  - 'wf-theme'
+  - 'applySavedTheme'
   - 'name="theme"'
 ---
 
@@ -40,25 +29,10 @@ The switch on a settings page; the button form in the site header (components/si
 One icon button, `data-variant="button"`: a moon while the page is light, a sun while it is dark, and its name says what pressing it does, "Switch to dark theme" or "Switch to light theme", so nobody has to guess whether a sun means "is light" or "make it light". Light and Dark only, no System, the same remembering as the switch. Its tooltip (the shared tooltip, in the top layer) repeats the name and its key; it adds no description, because the name already says it. It follows the `t` key, other tabs and the system's setting like the switch does. 36px, an 18px glyph, as every header icon.
 
 ```html
-<button
-  type="button"
-  class="cap-theme-button"
-  data-cap="theme-switch"
-  data-variant="button"
-  aria-label="Switch to dark theme"
->
+<button type="button" class="cap-theme-button" data-cap="theme-switch" data-variant="button" aria-label="Switch to dark theme">
   <svg class="cap-theme-icon" data-show="light" viewBox="0 0 24 24" aria-hidden="true">[moon]</svg>
   <svg class="cap-theme-icon" data-show="dark" viewBox="0 0 24 24" aria-hidden="true">[sun]</svg>
-  <span
-    class="cap-theme-tip cap-popover"
-    data-variant="tooltip"
-    data-side="bottom"
-    data-offset="6"
-    popover="manual"
-    role="tooltip"
-    aria-hidden="true"
-    ><span class="cap-theme-tip-text">Switch to dark theme</span><kbd>T</kbd></span
-  >
+  <span class="cap-theme-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-theme-tip-text">Switch to dark theme</span><kbd>T</kbd></span>
 </button>
 ```
 
@@ -103,21 +77,16 @@ A site keeps its own cookie name (txasm's `txasm_theme`, Foxhound's `fh_theme`) 
 The inline script, for the default key:
 
 ```html
-<script>
-  try {
-    var t = localStorage.getItem("cap-theme");
-    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
-  } catch (e) {}
-</script>
+<script>try{var t=localStorage.getItem("cap-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 ```
 
 ## Keyboard
 
-| Key                                   | Does                                               |
-| ------------------------------------- | -------------------------------------------------- |
-| Tab                                   | Moves to the checked choice                        |
-| Left or Right arrow, Up or Down arrow | Checks the other choice and applies it             |
-| `t`                                   | Switches light and dark, when the app registers it |
+| Key | Does |
+| --- | --- |
+| Tab | Moves to the checked choice |
+| Left or Right arrow, Up or Down arrow | Checks the other choice and applies it |
+| `t` | Switches light and dark, when the app registers it |
 
 ## Accessibility
 
@@ -132,24 +101,8 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <fieldset class="cap-theme" data-cap="theme-switch">
   <legend class="cap-sr-only">Theme</legend>
   <div class="cap-theme-options">
-    <label
-      ><input type="radio" name="cap-theme" value="light" /><svg
-        class="cap-theme-icon"
-        viewBox="0 0 16 16"
-        aria-hidden="true"
-      >
-        [sun]</svg
-      ><span class="cap-theme-text">Light</span></label
-    >
-    <label
-      ><input type="radio" name="cap-theme" value="dark" /><svg
-        class="cap-theme-icon"
-        viewBox="0 0 16 16"
-        aria-hidden="true"
-      >
-        [moon]</svg
-      ><span class="cap-theme-text">Dark</span></label
-    >
+    <label><input type="radio" name="cap-theme" value="light"><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true">[sun]</svg><span class="cap-theme-text">Light</span></label>
+    <label><input type="radio" name="cap-theme" value="dark"><svg class="cap-theme-icon" viewBox="0 0 16 16" aria-hidden="true">[moon]</svg><span class="cap-theme-text">Dark</span></label>
   </div>
 </fieldset>
 ```

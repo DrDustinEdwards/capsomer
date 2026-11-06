@@ -4,29 +4,7 @@ title: Button
 summary: A button acts; a link styled as one goes somewhere. Default, primary, secondary, danger, quiet and link variants in five sizes, with pending, disabled-with-a-reason, and groups.
 parts: [css, behavior, react]
 tool: native
-states:
-  [
-    default,
-    hover,
-    keyboard focus,
-    pressed,
-    open,
-    disabled with its reason,
-    invalid,
-    pending,
-    a label that changes,
-    primary,
-    secondary,
-    danger,
-    quiet,
-    link,
-    xs sm lg sizes,
-    icon only,
-    button group,
-    link styled as a button,
-    button styled as a link,
-    a site's sweep,
-  ]
+states: [default, hover, keyboard focus, pressed, open, disabled with its reason, invalid, pending, a label that changes, primary, secondary, danger, quiet, link, xs sm lg sizes, icon only, button group, link styled as a button, button styled as a link, a site's sweep]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css (.btn, .iconbtn, .linkbtn)
@@ -70,11 +48,11 @@ A `<button class="cap-btn">` runs an action on this page. An `<a class="cap-btn"
 
 ## Keyboard
 
-| Key            | Does                                                                |
-| -------------- | ------------------------------------------------------------------- |
-| Tab            | Moves to the next button, including one disabled with its reason    |
-| Enter or Space | Activates a button                                                  |
-| Enter          | Follows a link styled as a button (Space does not, as for any link) |
+| Key | Does |
+| --- | --- |
+| Tab | Moves to the next button, including one disabled with its reason |
+| Enter or Space | Activates a button |
+| Enter | Follows a link styled as a button (Space does not, as for any link) |
 
 ## Accessibility
 
@@ -94,23 +72,18 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <button type="button" class="cap-btn" data-variant="quiet">Show more</button>
 <button type="button" class="cap-btn" data-variant="secondary" data-size="sm">Preview</button>
 <button type="button" class="cap-btn" data-variant="link">View logs</button>
-<button type="button" class="cap-btn">
-  <svg data-icon="start" aria-hidden="true">...</svg>Add a site
-</button>
+<button type="button" class="cap-btn"><svg data-icon="start" aria-hidden="true">...</svg>Add a site</button>
 <div class="cap-btn-group" role="group" aria-label="Page navigation">
   <button type="button" class="cap-btn">Previous</button>
   <button type="button" class="cap-btn">Next</button>
 </div>
-<button type="button" class="cap-btn" data-icon-only aria-label="Refresh sites">
-  <svg aria-hidden="true">...</svg>
-</button>
+<button type="button" class="cap-btn" data-icon-only aria-label="Refresh sites"><svg aria-hidden="true">...</svg></button>
 
 <button type="button" class="cap-btn" aria-disabled="true" aria-describedby="why">Publish</button>
 <span class="cap-btn-reason" id="why">Fix the 2 problems above first.</span>
 
 <button type="button" class="cap-btn" aria-busy="true">
-  <span class="cap-btn-spinner" aria-hidden="true"></span
-  ><span class="cap-btn-label">Save changes</span>
+  <span class="cap-btn-spinner" aria-hidden="true"></span><span class="cap-btn-label">Save changes</span>
 </button>
 
 <a class="cap-btn" href="/queue">Open the queue</a>

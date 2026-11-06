@@ -201,15 +201,9 @@
     font-family: var(--face);
     scroll-padding-block: var(--space-6);
   }
-  .cap-compare:has(.cap-compare-bar input[value="side"]:checked)
-    > .cap-compare-views
-    > .cap-compare-view:not([data-view="side"]),
-  .cap-compare:has(.cap-compare-bar input[value="inline"]:checked)
-    > .cap-compare-views
-    > .cap-compare-view:not([data-view="inline"]),
-  .cap-compare:has(.cap-compare-bar input[value="changes"]:checked)
-    > .cap-compare-views
-    > .cap-compare-view:not([data-view="changes"]) {
+  .cap-compare:has(.cap-compare-bar input[value="side"]:checked) > .cap-compare-views > .cap-compare-view:not([data-view="side"]),
+  .cap-compare:has(.cap-compare-bar input[value="inline"]:checked) > .cap-compare-views > .cap-compare-view:not([data-view="inline"]),
+  .cap-compare:has(.cap-compare-bar input[value="changes"]:checked) > .cap-compare-views > .cap-compare-view:not([data-view="changes"]) {
     display: none;
   }
   .cap-compare > .cap-compare-view {

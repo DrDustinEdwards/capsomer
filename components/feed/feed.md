@@ -4,15 +4,7 @@ title: Feed
 summary: What shipped. A timeline of deploys and merges, broken by day, with routine runs condensed and a marker where an incident began.
 parts: [css, react]
 tool: native
-states:
-  [
-    a day with deploys,
-    a failed deploy,
-    a condensed run,
-    the incident marker (critical),
-    the incident marker (warning),
-    phone width,
-  ]
+states: [a day with deploys, a failed deploy, a condensed run, the incident marker (critical), the incident marker (warning), phone width]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/styles.css ("feed") and views/Deploys.tsx; the approved mockup's "What shipped"
@@ -54,10 +46,10 @@ shadcn/ui `Item` (a title line, a muted description, the item rhythm) in an item
 
 ## Keyboard
 
-| Key             | Does                                                                                |
-| --------------- | ----------------------------------------------------------------------------------- |
-| Tab             | Moves through the feed's links in reading order (a marker, then its deploy's links) |
-| Enter on a link | Follows it: the marker opens the incident                                           |
+| Key | Does |
+| --- | --- |
+| Tab | Moves through the feed's links in reading order (a marker, then its deploy's links) |
+| Enter on a link | Follows it: the marker opens the incident |
 
 ## Accessibility
 
@@ -79,9 +71,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
       <li class="cap-feed-row" data-tone="crit" data-kind="marker">
         <svg class="cap-feed-glyph" aria-hidden="true">[critical glyph]</svg>
         <div class="cap-feed-what">
-          <a class="cap-feed-marker-link" href="/incidents/412" aria-describedby="feed-a91c4e0"
-            >Incident began 4 minutes after this deploy</a
-          >
+          <a class="cap-feed-marker-link" href="/incidents/412" aria-describedby="feed-a91c4e0">Incident began 4 minutes after this deploy</a>
           <div class="cap-feed-who">example.com is not answering: 3 failed checks in a row.</div>
         </div>
         <time class="cap-time cap-feed-when" datetime="2026-09-30T14:02Z">11 minutes ago</time>
@@ -90,22 +80,14 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
         <svg class="cap-feed-glyph" aria-hidden="true">[ok glyph]</svg>
         <div class="cap-feed-what">
           <span id="feed-a91c4e0"><b>web</b> deployed <span class="cap-mono">a91c4e0</span></span>
-          <div class="cap-feed-who">
-            Lazy-load the article list. Merged by seat. <a href="...">Roll back</a>
-          </div>
+          <div class="cap-feed-who">Lazy-load the article list. Merged by seat. <a href="...">Roll back</a></div>
         </div>
         <time class="cap-time cap-feed-when" datetime="2026-09-30T13:58Z">15 minutes ago</time>
       </li>
       <li class="cap-feed-row" data-tone="ok" data-kind="condensed">
         <svg class="cap-feed-glyph" aria-hidden="true">[dot]</svg>
-        <div class="cap-feed-what">
-          6 dependency updates merged by <span class="cap-mono">seat</span>, none failed.
-          <a href="...">Show all 6</a>
-        </div>
-        <span class="cap-feed-when"
-          ><time class="cap-time" datetime="2026-09-30T09:10Z">09:10</time> to
-          <time class="cap-time" datetime="2026-09-30T11:40Z">11:40</time></span
-        >
+        <div class="cap-feed-what">6 dependency updates merged by <span class="cap-mono">seat</span>, none failed. <a href="...">Show all 6</a></div>
+        <span class="cap-feed-when"><time class="cap-time" datetime="2026-09-30T09:10Z">09:10</time> to <time class="cap-time" datetime="2026-09-30T11:40Z">11:40</time></span>
       </li>
     </ol>
   </div>

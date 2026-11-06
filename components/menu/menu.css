@@ -110,8 +110,7 @@
     place-items: center;
     color: var(--muted);
 
-    &:dir(rtl),
-    :where([dir="rtl"]) & {
+    &:dir(rtl), :where([dir="rtl"]) & {
       transform: scaleX(-1);
     }
   }

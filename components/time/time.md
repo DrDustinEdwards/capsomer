@@ -4,25 +4,13 @@ title: Time
 summary: A time in words, relative in rows and exact (your zone and UTC) in the detail.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states:
-  [
-    less than a minute ago,
-    minutes ago,
-    hours ago,
-    yesterday,
-    a date,
-    in the future,
-    exact time shown,
-    unreadable time,
-    live refresh,
-    hydrated from a server,
-  ]
+states: [less than a minute ago, minutes ago, hours ago, yesterday, a date, in the future, exact time shown, unreadable time, live refresh, hydrated from a server]
 added: 0.1.0
 updated: 0.37.0
 source: Capsid Portal, dashboard/src/lib/format.ts (ms, portalNow, ago, utc, exactTime) and ui/When.tsx
 replaces:
   - "timeago|date-fns/formatDistance|dayjs\\(\\)\\.fromNow"
-  - "<time[^>]*title="
+  - '<time[^>]*title='
 ---
 
 # Time
@@ -56,8 +44,8 @@ Every time shown in an app: deploys, runs, mentions, edits, the freshness of a p
 
 ## Keyboard
 
-| Key  | Does                                                                                            |
-| ---- | ----------------------------------------------------------------------------------------------- |
+| Key | Does |
+| --- | --- |
 | None | A time is text. The exact time is reached by opening the row's detail, with the row's own keys. |
 
 ## Accessibility
@@ -74,9 +62,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <time class="cap-time" data-cap="time" datetime="2026-09-30T13:55:00Z">5 minutes ago</time>
 
 <!-- in the detail -->
-<time class="cap-time" data-cap="time" data-format="exact" datetime="2026-09-30T13:02:00Z"
-  >September 30, 2026, 1:02 PM UTC</time
->
+<time class="cap-time" data-cap="time" data-format="exact" datetime="2026-09-30T13:02:00Z">September 30, 2026, 1:02 PM UTC</time>
 ```
 
 Write sensible text in the markup (it shows before the script runs). `import { enhance, relative, exact, exactParts, utc, parse, serverNow, setClock } from "capsomer/behavior/time"`: `enhance()` writes and refreshes the text; `relative(ms, now)`, `exact(ms)` and `exactParts(ms)` are pure. In React, `import { Time } from "capsomer/react/time"`: `<Time at={row.updated_at} />`, `<Time at={row.updated_at} format="exact" />`.

@@ -4,29 +4,7 @@ title: Manual theme
 summary: The public pages of the dustinedwards.info sites set after the 1976 NASA Graphics Standards Manual, in the page's own family color. Opt-in, for public pages only.
 parts: [css, behavior]
 tool: native + own JavaScript
-states:
-  [
-    running head,
-    running head as a sign,
-    a numbered part with its lead,
-    form boxes as a title block,
-    form boxes as readings on a tone scale,
-    form boxes as an instrument panel,
-    leader index,
-    checklist card,
-    plate,
-    signs,
-    mission patch,
-    letterhead,
-    layout grid,
-    direction strip,
-    cheatline and stripe,
-    roll blocks,
-    time line,
-    cue card,
-    holding position marking,
-    annunciator panel,
-  ]
+states: [running head, running head as a sign, a numbered part with its lead, form boxes as a title block, form boxes as readings on a tone scale, form boxes as an instrument panel, leader index, checklist card, plate, signs, mission patch, letterhead, layout grid, direction strip, cheatline and stripe, roll blocks, time line, cue card, holding position marking, annunciator panel]
 added: 0.23.0
 source: capsid explorer/src/explorer.css (the NASA blocks, capsid #560, #562, #583) and pages.mjs (patch)
 replaces:
@@ -74,8 +52,8 @@ Running text stays in the page's reading face (`--prose` on dustinedwards.info),
 
 ## Keyboard
 
-| Key | Does                                                                                                           |
-| --- | -------------------------------------------------------------------------------------------------------------- |
+| Key | Does |
+| --- | --- |
 | Tab | Moves through the links in the index, the checklist and the signs, in reading order. Nothing else takes focus. |
 
 ## Accessibility
@@ -92,25 +70,16 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ## Markup
 
 ```html
-<div class="cap-running-head">
-  <span class="cap-running-head-name"><span class="cap-running-head-no">1</span>Programs</span
-  ><span class="cap-running-head-folio">Alex Rivera</span>
-</div>
+<div class="cap-running-head"><span class="cap-running-head-name"><span class="cap-running-head-no">1</span>Programs</span><span class="cap-running-head-folio">Alex Rivera</span></div>
 
 <section class="cap-part">
   <h2 class="cap-part-title"><span class="cap-part-no">1.3</span>Guides</h2>
   <p class="cap-part-lead">The team's field methods, each on its own page.</p>
   <section class="cap-checklist" aria-label="Field guides">
-    <p class="cap-checklist-strip" aria-hidden="true">
-      <span>Field · Guides</span><span>6 cards</span>
-    </p>
+    <p class="cap-checklist-strip" aria-hidden="true"><span>Field · Guides</span><span>6 cards</span></p>
     <ol class="cap-checklist-items">
       <li class="cap-checklist-item">
-        <div class="cap-checklist-line">
-          <a href="/guides/site-survey">Site survey</a
-          ><span class="cap-checklist-dots" aria-hidden="true"></span
-          ><span class="cap-checklist-kind">Guide</span>
-        </div>
+        <div class="cap-checklist-line"><a href="/guides/site-survey">Site survey</a><span class="cap-checklist-dots" aria-hidden="true"></span><span class="cap-checklist-kind">Guide</span></div>
         <p class="cap-checklist-note">Choosing sites, walking transects and logging each sample.</p>
       </li>
     </ol>
@@ -118,28 +87,13 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 </section>
 
 <dl class="cap-form-boxes">
-  <div class="cap-form-boxes-box">
-    <dt>First published</dt>
-    <dd>2026-10-04</dd>
-  </div>
-  <div class="cap-form-boxes-box" data-span="all">
-    <dt>Written for</dt>
-    <dd>Writers and developers.</dd>
-  </div>
+  <div class="cap-form-boxes-box"><dt>First published</dt><dd>2026-10-04</dd></div>
+  <div class="cap-form-boxes-box" data-span="all"><dt>Written for</dt><dd>Writers and developers.</dd></div>
 </dl>
 
-<nav class="cap-signs" aria-label="More">
-  <a class="cap-sign" rel="prev" href="/about">About</a
-  ><a class="cap-sign" rel="next" href="/contact">Contact</a>
-</nav>
+<nav class="cap-signs" aria-label="More"><a class="cap-sign" rel="prev" href="/about">About</a><a class="cap-sign" rel="next" href="/contact">Contact</a></nav>
 
-<footer>
-  <div class="cap-letterhead">
-    <p class="cap-letterhead-logo">Alex<br />Rivera</p>
-    <p class="cap-letterhead-address"><b>Research Office</b><br />Example Co</p>
-    <span class="cap-letterhead-folio">1</span>
-  </div>
-</footer>
+<footer><div class="cap-letterhead"><p class="cap-letterhead-logo">Alex<br>Rivera</p><p class="cap-letterhead-address"><b>Research Office</b><br>Example Co</p><span class="cap-letterhead-folio">1</span></div></footer>
 ```
 
 ```js

@@ -4,30 +4,13 @@ title: Chart frame
 summary: The layout every chart sits in, around Enarratio's own figure (its title, the sentence that says what it shows, the chart, its summary, source and CSV link, and the numbers behind "Show data"), redrawn to its width in React.
 parts: [css, react]
 tool: native
-states:
-  [
-    bar,
-    line,
-    area,
-    sparkline,
-    uptime strip,
-    heat strip with a gap,
-    progress ring,
-    timeline,
-    data open with notes and source,
-    no data,
-    redrawn to its width,
-    refused,
-    comfortable density,
-    narrow column,
-    every family,
-  ]
+states: [bar, line, area, sparkline, uptime strip, heat strip with a gap, progress ring, timeline, data open with notes and source, no data, redrawn to its width, refused, comfortable density, narrow column, every family]
 added: 0.3.0
 updated: 0.56.0
 source: Capsomer 0.2's uptime strip ("The numbers, by day") and stat tile (the sparkline's hidden summary), generalized; shadcn/ui Chart and Card for the head and the quiet frame
 replaces:
   - 'class="(chart-card|chart-wrap|chart-frame)'
-  - 'className="(chart-card|chart-wrap|chart-frame)'
+  - "className=\"(chart-card|chart-wrap|chart-frame)"
   - "function (EnarratioFigure|EnarFigure|EnarChart)\b"
 ---
 
@@ -62,11 +45,11 @@ Chart inside Card. Matched: the quiet head with a title and a muted description,
 
 ## Keyboard
 
-| Key                                                            | Does                                                                                                                            |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Tab                                                            | Reaches the chart (one tab stop, from the enhancement layer), the CSV link and "Show data"; once open, the table's sort buttons |
-| Enter or Space on "Show data"                                  | Opens or closes the table                                                                                                       |
-| Arrow keys, Home, End, Page Up, Page Down in an enhanced chart | Move between points (Enarratio's keys)                                                                                          |
+| Key | Does |
+| --- | --- |
+| Tab | Reaches the chart (one tab stop, from the enhancement layer), the CSV link and "Show data"; once open, the table's sort buttons |
+| Enter or Space on "Show data" | Opens or closes the table |
+| Arrow keys, Home, End, Page Up, Page Down in an enhanced chart | Move between points (Enarratio's keys) |
 
 ## Accessibility
 
@@ -80,18 +63,13 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 
 ```html
 <div class="cap-chart">
-  <div class="cap-chart-figure">
-    [barChart({ title, subtitle, alt, source, ... }) from Enarratio: a figure.enarratio]
-  </div>
+  <div class="cap-chart-figure">[barChart({ title, subtitle, alt, source, ... }) from Enarratio: a figure.enarratio]</div>
   [an optional legend]
 </div>
 
 <figure class="cap-chart" data-state="nodata">
   <figcaption class="cap-chart-title">Requests per hour</figcaption>
-  <p class="cap-chart-reason">
-    <span class="cap-status" data-tone="nodata">[glyph]No data</span> The health route has not
-    reported yet.
-  </p>
+  <p class="cap-chart-reason"><span class="cap-status" data-tone="nodata">[glyph]No data</span> The health route has not reported yet.</p>
 </figure>
 ```
 
