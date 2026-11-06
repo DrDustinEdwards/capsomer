@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- Tabs: a malformed link fragment (like `#%`) no longer throws during setup and leaves every later tab set on the page dead; the fragment falls back to its raw text, as the link component already does. No class, token or HTML contract changes.
+- Popover: a tooltip removed from the page while open no longer swallows the next Esc, so a dialog around it closes by keyboard again. The Popover API hides a removed popover without a toggle event, so Esc now forgets any recorded popup that is no longer open. No class, token or HTML contract changes.
 - Site: the front page's network board is drawn in CSS, seven columns of alternating squares per site, where it was an SVG of 168 rects. It looks the same and still lights and squeezes a site in trouble. The board is decoration, not a chart (it plots no quantity, and the bar under it says each name and state in words), so it stays aria-hidden and out of Enarratio; as an SVG it read to Prelum's chart audit as a chart drawn outside Enarratio (area 10, rule F). No class, token or HTML contract changes in the package.
 
 ## [0.76.0]

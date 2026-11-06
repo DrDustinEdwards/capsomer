@@ -96,7 +96,15 @@ function attach(root: HTMLElement): () => void {
   };
   const fromHash = () => {
     if (!hashed() || !location.hash) return;
-    const id = decodeURIComponent(location.hash.slice(1));
+    // A malformed escape (#%) throws URIError, which here ran inside init and stopped every later
+    // tab set on the page; fall back to the raw text as the link component does.
+    const raw = location.hash.slice(1);
+    let id = raw;
+    try {
+      id = decodeURIComponent(raw);
+    } catch {
+      /* keep raw */
+    }
     const tab = tabsOf(root).find((t) => t.getAttribute("aria-controls") === id);
     if (tab && tab.getAttribute("aria-selected") !== "true") select(root, tab);
   };

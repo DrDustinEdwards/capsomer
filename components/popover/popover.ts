@@ -171,6 +171,11 @@ function onGlobalKey(e: KeyboardEvent): void {
   if (e.key !== "Escape") return;
   // Esc closes the topmost thing this module opened, and only that: a dialog around it
   // stays open. A tooltip goes first (it is the most recent, smallest layer).
+  // A popup removed from the page is hidden without a toggle event (the Popover API's "hide
+  // popover" runs with events off), so a tip whose row disappeared would stay recorded as open
+  // and swallow the next Esc meant for a dialog. Forget any that are no longer open.
+  if (openTip && !isOpen(openTip.popup)) openTip = null;
+  for (const inst of openManual) if (!isOpen(inst.popup)) openManual.delete(inst);
   const target = openTip ?? [...openManual].pop();
   if (!target) return;
   e.preventDefault();
