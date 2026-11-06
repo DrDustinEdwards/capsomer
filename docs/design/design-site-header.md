@@ -6,13 +6,13 @@ The mockup is `docs/design/site-header-mockup.html` beside this file: Foxhound p
 
 **Sources read**, on these commits:
 
-| Repo | Commit | What |
-|---|---|---|
-| capsomer | `2c16bbf` (main, 0.7.1) | tokens, theme switch, shell |
-| capsomer | `6dabce8` (PR #65, AdminShell 0.8.0) | admin shell, `FAMILY_APPS` |
-| foxhound | `9a622d8` (main) | `app/components/header.tsx`, `nav/*`, `layouts/app-shell.tsx`, `app.css` |
-| foxhound | `930e2b9` (PR #40) | the admin on AdminShell 0.7.1 |
-| foxing | `c41f7d6` (main) | `apps/web/app/components/page-shell.tsx`, `nav/*`, `app.css` |
+| Repo     | Commit                               | What                                                                     |
+| -------- | ------------------------------------ | ------------------------------------------------------------------------ |
+| capsomer | `2c16bbf` (main, 0.7.1)              | tokens, theme switch, shell                                              |
+| capsomer | `6dabce8` (PR #65, AdminShell 0.8.0) | admin shell, `FAMILY_APPS`                                               |
+| foxhound | `9a622d8` (main)                     | `app/components/header.tsx`, `nav/*`, `layouts/app-shell.tsx`, `app.css` |
+| foxhound | `930e2b9` (PR #40)                   | the admin on AdminShell 0.7.1                                            |
+| foxing   | `c41f7d6` (main)                     | `apps/web/app/components/page-shell.tsx`, `nav/*`, `app.css`             |
 
 Also read: Dustin's design notes (family colors, theme defaults, icons over text buttons, no emoji, menus open at once on hover).
 
@@ -20,30 +20,30 @@ Also read: Dustin's design notes (family colors, theme defaults, icons over text
 
 AdminShell has no header across the top. The family app switcher and the avatar sit in a left strip, and the theme switch sits in a thin bar inside the content. Every public site and app in the family keeps those controls at the top right:
 
-| | Left | Middle | Right |
-|---|---|---|---|
-| Foxhound, signed out | wordmark | | Products, Pricing, Demos, Features, Docs, Blog, Sign in, divider, Free audit, theme, gear (inert) |
-| Foxhound, signed in (public and app) | wordmark, product switcher | | (public: the links), account switcher, theme, gear menu |
-| Foxing, signed out | wordmark | Books, Picks, Clubs, People, Journal | search, theme, Sign in, Join free |
-| Foxing, signed in | wordmark | the same | search, bell, theme, avatar menu |
-| Any admin (AdminShell 0.8.0) | strip: collapse, six app tiles, then search, inbox, help, avatar | | page bar inside the content: trail, freshness, Refresh, Light/Dark |
+|                                      | Left                                                             | Middle                               | Right                                                                                             |
+| ------------------------------------ | ---------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Foxhound, signed out                 | wordmark                                                         |                                      | Products, Pricing, Demos, Features, Docs, Blog, Sign in, divider, Free audit, theme, gear (inert) |
+| Foxhound, signed in (public and app) | wordmark, product switcher                                       |                                      | (public: the links), account switcher, theme, gear menu                                           |
+| Foxing, signed out                   | wordmark                                                         | Books, Picks, Clubs, People, Journal | search, theme, Sign in, Join free                                                                 |
+| Foxing, signed in                    | wordmark                                                         | the same                             | search, bell, theme, avatar menu                                                                  |
+| Any admin (AdminShell 0.8.0)         | strip: collapse, six app tiles, then search, inbox, help, avatar |                                      | page bar inside the content: trail, freshness, Refresh, Light/Dark                                |
 
 So going from a site into its admin moves every control the person just used, and the admin looks like another product.
 
 What differs between the two sites today, and has to become one rule:
 
-| | Foxhound | Foxing |
-|---|---|---|
-| Height | 56px | 64px |
-| Sticky | no (static row) | yes, translucent with blur |
-| Width | full bleed, 24px sides | centered column |
-| Band | dark in both themes (`#1a1c18`) | the page's ground at 85% |
-| Section links | right, before the controls | center |
-| Text size | 13px | 14px |
-| Last item | gear menu | avatar menu, or Join free |
-| Logo | DM Mono wordmark, amber x | Fraunces wordmark after a fox emoji |
-| Theme control | one icon button | one icon button |
-| Phone | wordmark; theme, (Sign in), account, menu | wordmark; search, theme, menu; links in a second scrolling row |
+|               | Foxhound                                  | Foxing                                                         |
+| ------------- | ----------------------------------------- | -------------------------------------------------------------- |
+| Height        | 56px                                      | 64px                                                           |
+| Sticky        | no (static row)                           | yes, translucent with blur                                     |
+| Width         | full bleed, 24px sides                    | centered column                                                |
+| Band          | dark in both themes (`#1a1c18`)           | the page's ground at 85%                                       |
+| Section links | right, before the controls                | center                                                         |
+| Text size     | 13px                                      | 14px                                                           |
+| Last item     | gear menu                                 | avatar menu, or Join free                                      |
+| Logo          | DM Mono wordmark, amber x                 | Fraunces wordmark after a fox emoji                            |
+| Theme control | one icon button                           | one icon button                                                |
+| Phone         | wordmark; theme, (Sign in), account, menu | wordmark; search, theme, menu; links in a second scrolling row |
 
 ## 2. The frame
 
@@ -67,25 +67,25 @@ One `header` across the top of every page, the same on public, app and admin pag
 
 **Owned by each site, from this list and nothing else:**
 
-| Slot | What the site gives | Foxhound | Foxing |
-|---|---|---|---|
-| Logo | an SVG or image, at most 24px tall and 160px wide, and its name | `fo`x`hound` in DM Mono, teal x | a fox mark and "Foxing" in Fraunces (question 8) |
-| Accent | its color family | teal (answered) | Capsomer's fox, `#cc4f0c` (answered) |
-| Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; optional `data-band="dark"` (dark in both themes) and `data-translucent` | dark in both themes | the page's ground, translucent |
-| UI face | `--font-ui` | DM Sans | DM Sans |
-| Extras | up to two icon controls and one button | Free audit (signed out) | Search, the bell (signed in), Join free (signed out) |
-| Section links' place | left (after the switcher), centered in the header, or right (before the extras, after a thin divider) | right | centered |
-| Panels | what each menu holds and its layout | its gear and account lists | Books, Celebrity Picks, the account panel, as today |
+| Slot                 | What the site gives                                                                                                                          | Foxhound                        | Foxing                                               |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | ---------------------------------------------------- |
+| Logo                 | an SVG or image, at most 24px tall and 160px wide, and its name                                                                              | `fo`x`hound` in DM Mono, teal x | a fox mark and "Foxing" in Fraunces (question 8)     |
+| Accent               | its color family                                                                                                                             | teal (answered)                 | Capsomer's fox, `#cc4f0c` (answered)                 |
+| Band                 | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; optional `data-band="dark"` (dark in both themes) and `data-translucent` | dark in both themes             | the page's ground, translucent                       |
+| UI face              | `--font-ui`                                                                                                                                  | DM Sans                         | DM Sans                                              |
+| Extras               | up to two icon controls and one button                                                                                                       | Free audit (signed out)         | Search, the bell (signed in), Join free (signed out) |
+| Section links' place | left (after the switcher), centered in the header, or right (before the extras, after a thin divider)                                        | right                           | centered                                             |
+| Panels               | what each menu holds and its layout                                                                                                          | its gear and account lists      | Books, Celebrity Picks, the account panel, as today  |
 
 A site that wants anything else in its header asks for a change to this design; it does not add it locally.
 
 ## 3. What each slot holds, by surface
 
-| | Switcher | Section links | Extras | Account |
-|---|---|---|---|---|
-| Public, signed out | none | the site's sections | the site's (Free audit; Join free, Search) | **Sign in**, as a text link |
-| Public and app, signed in | Foxhound: the business (square tile), then the products (Console, Audit, Recovery, Disputes, Intelligence) | public: the sections; a user's dashboard: none | the site's (Foxing: Search, bell) | the avatar menu |
-| Your admin | none: the strip holds the family's apps | none | Search, Inbox | the avatar menu |
+|                           | Switcher                                                                                                   | Section links                                  | Extras                                     | Account                     |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------ | --------------------------- |
+| Public, signed out        | none                                                                                                       | the site's sections                            | the site's (Free audit; Join free, Search) | **Sign in**, as a text link |
+| Public and app, signed in | Foxhound: the business (square tile), then the products (Console, Audit, Recovery, Disputes, Intelligence) | public: the sections; a user's dashboard: none | the site's (Foxing: Search, bell)          | the avatar menu             |
+| Your admin                | none: the strip holds the family's apps                                                                    | none                                           | Search, Inbox                              | the avatar menu             |
 
 - **The account menu** is the same shape everywhere: who you are; the site's own rows (Foxhound: the current business's Settings, Billing, Team, Audit settings, Audit history, Email settings, Alerts, API keys, Brand voice under its name, then Help; Foxing: reading stats, Library, Diary, Profile, Settings); **Admin** for an admin; in an admin, **View site** and **Help**; **Sign out** last.
 - **The switcher** is a button showing where you are (the product's name) and a chevron, opening the site's products. Your admin has none, because its strip already lists the family's apps.
@@ -130,15 +130,15 @@ The same on every site (Dustin, 2026-10-13):
 
 ## 6. Keyboard and screen reader
 
-| Key | Does |
-|---|---|
-| Tab | Skip link first, then the logo, the switcher, the section links, the extras, the theme, the account, then (in your admin) the strip, then the menu, then the page |
-| Enter or Space on the switcher, a section with children, or the account | Opens its panel; focus moves to its first item |
-| Up and Down in a panel | Move between items; Home and End go to the ends |
-| Esc | Closes the panel; focus returns to its button |
-| T | Switches the theme, where the site binds single keys |
-| G, then 1 to 9 (your admin) | Opens the app in that place |
-| `[` (dashboard or your admin) | Collapses or expands the menu |
+| Key                                                                     | Does                                                                                                                                                              |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tab                                                                     | Skip link first, then the logo, the switcher, the section links, the extras, the theme, the account, then (in your admin) the strip, then the menu, then the page |
+| Enter or Space on the switcher, a section with children, or the account | Opens its panel; focus moves to its first item                                                                                                                    |
+| Up and Down in a panel                                                  | Move between items; Home and End go to the ends                                                                                                                   |
+| Esc                                                                     | Closes the panel; focus returns to its button                                                                                                                     |
+| T                                                                       | Switches the theme, where the site binds single keys                                                                                                              |
+| G, then 1 to 9 (your admin)                                             | Opens the app in that place                                                                                                                                       |
+| `[` (dashboard or your admin)                                           | Collapses or expands the menu                                                                                                                                     |
 
 - The header is the page's `banner` landmark. Section links are a `nav` named "Site"; the admin menu stays a `nav` named "Sections".
 - The panels are lists of links (disclosure buttons with `aria-expanded` and `aria-controls`), not ARIA menus, because every item goes somewhere.
@@ -149,9 +149,9 @@ The same on every site (Dustin, 2026-10-13):
 
 ## 7. Color families
 
-*Answered: Foxhound stays teal on its dark band; Foxing moves to `#cc4f0c`. The rest of this section is the background to that question.*
+_Answered: Foxhound stays teal on its dark band; Foxing moves to `#cc4f0c`. The rest of this section is the background to that question._
 
-*Changed 2026-10-25: Dustin moved Foxhound back to Recova's amber, as Capsomer's amber family (`tokens/family-amber.css`, `#f0b429`, a deeper amber for step 9 in light), on the same dark band. Teal went to capsid.dustinedwards.info.*
+_Changed 2026-10-25: Dustin moved Foxhound back to Recova's amber, as Capsomer's amber family (`tokens/family-amber.css`, `#f0b429`, a deeper amber for step 9 in light), on the same dark band. Teal went to capsid.dustinedwards.info._
 
 Capsomer lists Foxhound as "teal" (`tokens/family-teal.css`, seed `#008489`, locked 2026-10-01 with amber rejected). Foxhound ships amber `#f0b429` on a dark band (`#1a1c18`) in both themes. Dustin's message of 2026-10-13 calls amber on a dark band Foxhound's real look, which reverses the earlier lock, so it is question 1 rather than a fix.
 

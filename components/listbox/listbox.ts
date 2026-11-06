@@ -21,7 +21,9 @@ export interface Searchable {
 export function matchesQuery(c: Searchable, query: string): boolean {
   const needle = query.trim().toLowerCase();
   if (!needle) return true;
-  return [c.group ?? "", c.label, ...(c.keywords ?? [])].some((t) => t.toLowerCase().includes(needle));
+  return [c.group ?? "", c.label, ...(c.keywords ?? [])].some((t) =>
+    t.toLowerCase().includes(needle),
+  );
 }
 
 // A ranking hook: a score (higher first) for an item against the lower-cased, trimmed query,
@@ -30,7 +32,11 @@ export type Rank<T> = (item: T, needle: string) => number | null;
 
 // The items that match, in their own order; or, with a `rank`, the items it scores, best first.
 // The rank replaces the substring test, so it may match more loosely (a subsequence, say).
-export function filterCommands<T extends Searchable>(items: readonly T[], query: string, rank?: Rank<T>): T[] {
+export function filterCommands<T extends Searchable>(
+  items: readonly T[],
+  query: string,
+  rank?: Rank<T>,
+): T[] {
   const needle = query.trim().toLowerCase();
   if (!rank || !needle) return items.filter((c) => matchesQuery(c, query));
   const scored: Array<{ item: T; at: number; score: number }> = [];
@@ -42,7 +48,10 @@ export function filterCommands<T extends Searchable>(items: readonly T[], query:
 }
 
 // Items by group, in the order each group first appears. An item with no group falls under "".
-export function groupBy<T>(items: readonly T[], by: (item: T) => string | undefined = (i) => (i as { group?: string }).group): Array<{ group: string; items: T[] }> {
+export function groupBy<T>(
+  items: readonly T[],
+  by: (item: T) => string | undefined = (i) => (i as { group?: string }).group,
+): Array<{ group: string; items: T[] }> {
   const out: Array<{ group: string; items: T[] }> = [];
   for (const item of items) {
     const key = by(item) ?? "";
@@ -70,7 +79,12 @@ export function step(index: number, by: number, count: number, wrap = false): nu
 // enabled entry in that direction (wrapping if asked); a longer step (a page) lands on the
 // enabled entry nearest its target. Returns the current index when there is nowhere to go,
 // and -1 when nothing is enabled.
-export function stepEnabled(disabled: readonly boolean[], index: number, by: number, wrap = false): number {
+export function stepEnabled(
+  disabled: readonly boolean[],
+  index: number,
+  by: number,
+  wrap = false,
+): number {
   const n = disabled.length;
   const first = disabled.indexOf(false);
   if (first < 0) return -1;
@@ -119,7 +133,8 @@ export function nextTypeahead(
   const from = cycle ? current + 1 : Math.max(current, 0);
   for (let k = 0; k < n; k++) {
     const label = labels[(from + k) % n];
-    if (label != null && label.trimStart().toLowerCase().startsWith(needle)) return { state: next, index: (from + k) % n };
+    if (label != null && label.trimStart().toLowerCase().startsWith(needle))
+      return { state: next, index: (from + k) % n };
   }
   return { state: next, index: -1 };
 }
@@ -224,12 +239,19 @@ export interface Listbox {
 let counter = 0;
 const uid = (p: string) => `${p}-${++counter}`;
 
-const isDisabled = (o: HTMLElement) => o.getAttribute("aria-disabled") === "true" || o.hasAttribute("data-disabled");
+const isDisabled = (o: HTMLElement) =>
+  o.getAttribute("aria-disabled") === "true" || o.hasAttribute("data-disabled");
 
 export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listbox {
   const input = opts.input ?? null;
-  const mode: ListboxMode = input ? "input" : (opts.mode ?? (el.dataset.mode as ListboxMode | undefined) ?? "descendant");
-  const selection: Selection = opts.selection ?? (el.getAttribute("aria-multiselectable") === "true" ? "multi" : ((el.dataset.selection as Selection | undefined) ?? "none"));
+  const mode: ListboxMode = input
+    ? "input"
+    : (opts.mode ?? (el.dataset.mode as ListboxMode | undefined) ?? "descendant");
+  const selection: Selection =
+    opts.selection ??
+    (el.getAttribute("aria-multiselectable") === "true"
+      ? "multi"
+      : ((el.dataset.selection as Selection | undefined) ?? "none"));
   const typeaheadOn = opts.typeahead ?? mode !== "input";
   const activateFirst = opts.activateFirst ?? mode === "input";
   const hideWhenEmpty = opts.hideWhenEmpty ?? true;
@@ -242,9 +264,11 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
   if (mode === "descendant" && !el.hasAttribute("tabindex")) el.tabIndex = 0;
 
   const parent = el.parentElement;
-  const empty = opts.empty ?? parent?.querySelector<HTMLElement>(":scope > .cap-listbox-empty") ?? null;
+  const empty =
+    opts.empty ?? parent?.querySelector<HTMLElement>(":scope > .cap-listbox-empty") ?? null;
   let madeStatus: HTMLElement | null = null;
-  let status = opts.status ?? parent?.querySelector<HTMLElement>(":scope > [data-cap-part='count']") ?? null;
+  let status =
+    opts.status ?? parent?.querySelector<HTMLElement>(":scope > [data-cap-part='count']") ?? null;
   if (!status) {
     status = document.createElement("div");
     status.className = "cap-sr-only";
@@ -254,16 +278,26 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
     el.after(status);
     madeStatus = status;
   }
-  const announce = opts.announce ?? ((n: number) => (n === 0 && empty ? "" : n === 0 ? "No results" : resultsText(n)));
+  const announce =
+    opts.announce ??
+    ((n: number) => (n === 0 && empty ? "" : n === 0 ? "No results" : resultsText(n)));
 
   const optionEls = () => Array.from(el.querySelectorAll<HTMLElement>("[role='option']"));
   const order = new WeakMap<HTMLElement, number>();
   const ensureId = (o: HTMLElement) => (o.id ||= uid("cap-opt"));
-  const labelOf = (o: HTMLElement) => (o.dataset.label ?? o.querySelector(".cap-option-label")?.textContent ?? o.textContent ?? "").trim();
+  const labelOf = (o: HTMLElement) =>
+    (
+      o.dataset.label ??
+      o.querySelector(".cap-option-label")?.textContent ??
+      o.textContent ??
+      ""
+    ).trim();
   const groupOf = (o: HTMLElement) => {
     if (o.dataset.group !== undefined) return o.dataset.group;
     const g = o.closest<HTMLElement>("[role='group']");
-    return g && el.contains(g) ? (g.querySelector(".cap-listbox-label")?.textContent ?? "").trim() : "";
+    return g && el.contains(g)
+      ? (g.querySelector(".cap-listbox-label")?.textContent ?? "").trim()
+      : "";
   };
   const info = (o: HTMLElement): ListboxItem => ({
     el: o,
@@ -271,7 +305,10 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
     value: o.dataset.value ?? o.id,
     label: labelOf(o),
     group: groupOf(o),
-    keywords: (o.dataset.keywords ?? "").split(",").map((k) => k.trim()).filter(Boolean),
+    keywords: (o.dataset.keywords ?? "")
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean),
     disabled: isDisabled(o),
     selected: o.getAttribute("aria-selected") === "true",
   });
@@ -282,7 +319,8 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
   optionEls().forEach((o, i) => {
     order.set(o, i);
     ensureId(o);
-    if (selection !== "none" && !o.hasAttribute("aria-selected")) o.setAttribute("aria-selected", "false");
+    if (selection !== "none" && !o.hasAttribute("aria-selected"))
+      o.setAttribute("aria-selected", "false");
   });
 
   // ---- the active option
@@ -291,7 +329,11 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
   const syncRoving = () => {
     if (mode !== "roving") return;
     const vis = enabledVisible();
-    const stop = (current && !current.hidden && !isDisabled(current) ? current : null) ?? vis.find((i) => i.selected)?.el ?? vis[0]?.el ?? null;
+    const stop =
+      (current && !current.hidden && !isDisabled(current) ? current : null) ??
+      vis.find((i) => i.selected)?.el ??
+      vis[0]?.el ??
+      null;
     for (const o of optionEls()) o.tabIndex = o === stop ? 0 : -1;
   };
 
@@ -326,7 +368,15 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
   const currentIndex = () => (current ? visible().findIndex((i) => i.el === current) : -1);
   const stepBy = (by: number) => {
     const vis = visible();
-    move(stepEnabled(vis.map((i) => i.disabled), currentIndex(), by, wrap), mode === "roving");
+    move(
+      stepEnabled(
+        vis.map((i) => i.disabled),
+        currentIndex(),
+        by,
+        wrap,
+      ),
+      mode === "roving",
+    );
   };
   const edge = (end: boolean) => {
     const vis = visible();
@@ -335,14 +385,27 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
   };
 
   // ---- selection
-  const getValue = () => (selection === "none" ? [] : items().filter((i) => i.selected).map((i) => i.value));
+  const getValue = () =>
+    selection === "none"
+      ? []
+      : items()
+          .filter((i) => i.selected)
+          .map((i) => i.value);
   const select = (target: HTMLElement | null = current) => {
     if (!target || isDisabled(target)) return;
-    if (selection === "single") for (const o of optionEls()) o.setAttribute("aria-selected", String(o === target));
-    else if (selection === "multi") target.setAttribute("aria-selected", String(target.getAttribute("aria-selected") !== "true"));
+    if (selection === "single")
+      for (const o of optionEls()) o.setAttribute("aria-selected", String(o === target));
+    else if (selection === "multi")
+      target.setAttribute("aria-selected", String(target.getAttribute("aria-selected") !== "true"));
     syncRoving();
     const it = info(target);
-    const detail: SelectDetail = { option: target, value: it.value, label: it.label, selected: selection === "none" || it.selected, values: getValue() };
+    const detail: SelectDetail = {
+      option: target,
+      value: it.value,
+      label: it.label,
+      selected: selection === "none" || it.selected,
+      values: getValue(),
+    };
     el.dispatchEvent(new CustomEvent("cap:option-select", { bubbles: true, detail }));
   };
   const setValue: Listbox["setValue"] = (value) => {
@@ -366,14 +429,20 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
       const ranked = filterCommands(all, query, rank);
       const pos = new Map(ranked.map((i, k) => [i.el, k]));
       const byParent = new Map<Element, HTMLElement[]>();
-      for (const o of all.map((i) => i.el)) byParent.set(o.parentElement ?? el, [...(byParent.get(o.parentElement ?? el) ?? []), o]);
+      for (const o of all.map((i) => i.el))
+        byParent.set(o.parentElement ?? el, [...(byParent.get(o.parentElement ?? el) ?? []), o]);
       for (const [p, list] of byParent) {
-        list.sort((a, b) => (query.trim() ? (pos.get(a) ?? 1e9) - (pos.get(b) ?? 1e9) : (order.get(a) ?? 0) - (order.get(b) ?? 0)));
+        list.sort((a, b) =>
+          query.trim()
+            ? (pos.get(a) ?? 1e9) - (pos.get(b) ?? 1e9)
+            : (order.get(a) ?? 0) - (order.get(b) ?? 0),
+        );
         for (const o of list) p.append(o);
       }
     }
     for (const i of all) i.el.hidden = !keep.has(i.el);
-    for (const g of el.querySelectorAll<HTMLElement>("[role='group']")) g.hidden = !g.querySelector("[role='option']:not([hidden])");
+    for (const g of el.querySelectorAll<HTMLElement>("[role='group']"))
+      g.hidden = !g.querySelector("[role='option']:not([hidden])");
     // A separator shows only between two things that show.
     let seen = false;
     let pending: HTMLElement | null = null;
@@ -381,7 +450,10 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
       if (c.classList.contains("cap-listbox-separator")) {
         c.hidden = true;
         if (seen) pending = c;
-      } else if (!c.hidden && (c.matches("[role='option']") || c.querySelector("[role='option']:not([hidden])"))) {
+      } else if (
+        !c.hidden &&
+        (c.matches("[role='option']") || c.querySelector("[role='option']:not([hidden])"))
+      ) {
         if (pending) pending.hidden = false;
         pending = null;
         seen = true;
@@ -414,8 +486,24 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
     let handled = true;
     if (k === "ArrowDown") stepBy(1);
     else if (k === "ArrowUp") stepBy(-1);
-    else if (k === "PageDown") move(stepEnabled(visible().map((i) => i.disabled), currentIndex(), pageBy()), roving);
-    else if (k === "PageUp") move(stepEnabled(visible().map((i) => i.disabled), currentIndex(), -pageBy()), roving);
+    else if (k === "PageDown")
+      move(
+        stepEnabled(
+          visible().map((i) => i.disabled),
+          currentIndex(),
+          pageBy(),
+        ),
+        roving,
+      );
+    else if (k === "PageUp")
+      move(
+        stepEnabled(
+          visible().map((i) => i.disabled),
+          currentIndex(),
+          -pageBy(),
+        ),
+        roving,
+      );
     else if ((k === "Home" || k === "End") && (mode !== "input" || opts.homeEnd)) edge(k === "End");
     else if (k === "Enter") {
       if (!current) return false;
@@ -425,7 +513,13 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
       select(current);
     } else if (typeaheadOn && k.length === 1 && (k !== " " || typing)) {
       const vis = visible();
-      const r = nextTypeahead(typed, k, Date.now(), vis.map((i) => (i.disabled ? null : i.label)), currentIndex());
+      const r = nextTypeahead(
+        typed,
+        k,
+        Date.now(),
+        vis.map((i) => (i.disabled ? null : i.label)),
+        currentIndex(),
+      );
       typed = r.state;
       if (r.index >= 0) move(r.index, roving);
     } else handled = false;
@@ -507,7 +601,8 @@ export function createListbox(el: HTMLElement, opts: ListboxOptions = {}): Listb
       optionEls().forEach((o, i) => {
         if (!order.has(o)) order.set(o, i);
         ensureId(o);
-        if (selection !== "none" && !o.hasAttribute("aria-selected")) o.setAttribute("aria-selected", "false");
+        if (selection !== "none" && !o.hasAttribute("aria-selected"))
+          o.setAttribute("aria-selected", "false");
       });
       if (current && !el.contains(current)) current = null;
       syncRoving();
@@ -543,10 +638,18 @@ export function listboxFor(el: Element | null): Listbox | undefined {
 // Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const el of root.querySelectorAll<HTMLElement>("[data-cap='listbox']:not([data-cap-ready])")) {
+  for (const el of root.querySelectorAll<HTMLElement>(
+    "[data-cap='listbox']:not([data-cap-ready])",
+  )) {
     el.dataset.capReady = "";
-    const input = el.id ? (document.querySelector<HTMLInputElement>(`input[aria-controls~="${CSS.escape(el.id)}"]`) ?? null) : null;
-    const lb = createListbox(el, { input, filterInput: input !== null && el.dataset.filter !== undefined });
+    const input = el.id
+      ? (document.querySelector<HTMLInputElement>(`input[aria-controls~="${CSS.escape(el.id)}"]`) ??
+        null)
+      : null;
+    const lb = createListbox(el, {
+      input,
+      filterInput: input !== null && el.dataset.filter !== undefined,
+    });
     listboxes.set(el, lb);
     undo.push(lb.detach);
   }

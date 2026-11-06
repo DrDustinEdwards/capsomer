@@ -20,10 +20,26 @@ export interface PaginationProps {
 }
 
 // The HTML contract in pagination.md. One page or none renders nothing: there is nowhere to go.
-export function Pagination({ page, pageCount, hrefFor, onPageChange, total, perPage, noun = "items", prevLabel = "Previous", nextLabel = "Next", label = "Pagination" }: PaginationProps): ReactElement | null {
+export function Pagination({
+  page,
+  pageCount,
+  hrefFor,
+  onPageChange,
+  total,
+  perPage,
+  noun = "items",
+  prevLabel = "Previous",
+  nextLabel = "Next",
+  label = "Pagination",
+}: PaginationProps): ReactElement | null {
   if (pageCount <= 1) return null;
   const links = typeof hrefFor === "function";
-  const control = (to: number, className: string, content: string, extra: { kind?: "prev" | "next"; current?: boolean; name?: string; rel?: string }) => {
+  const control = (
+    to: number,
+    className: string,
+    content: string,
+    extra: { kind?: "prev" | "next"; current?: boolean; name?: string; rel?: string },
+  ) => {
     const common = {
       className,
       "data-kind": extra.kind,
@@ -44,7 +60,12 @@ export function Pagination({ page, pageCount, hrefFor, onPageChange, total, perP
       );
     }
     return (
-      <button type="button" {...common} aria-disabled={off ? true : undefined} onClick={() => (!off && !extra.current ? onPageChange?.(to) : undefined)}>
+      <button
+        type="button"
+        {...common}
+        aria-disabled={off ? true : undefined}
+        onClick={() => (!off && !extra.current ? onPageChange?.(to) : undefined)}
+      >
         {content}
       </button>
     );
@@ -57,7 +78,9 @@ export function Pagination({ page, pageCount, hrefFor, onPageChange, total, perP
         </p>
       ) : null}
       <ul className="cap-pagination-list">
-        <li key="prev">{control(page - 1, "cap-page", prevLabel, { kind: "prev", rel: "prev" })}</li>
+        <li key="prev">
+          {control(page - 1, "cap-page", prevLabel, { kind: "prev", rel: "prev" })}
+        </li>
         {pageItems(page, pageCount).map((it) =>
           typeof it === "number" ? (
             <li className="cap-pagination-num" key={it}>
@@ -75,7 +98,9 @@ export function Pagination({ page, pageCount, hrefFor, onPageChange, total, perP
         <li className="cap-pagination-where" key="where">
           Page {page} of {pageCount}
         </li>
-        <li key="next">{control(page + 1, "cap-page", nextLabel, { kind: "next", rel: "next" })}</li>
+        <li key="next">
+          {control(page + 1, "cap-page", nextLabel, { kind: "next", rel: "next" })}
+        </li>
       </ul>
     </nav>
   );

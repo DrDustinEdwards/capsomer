@@ -6,7 +6,12 @@ import { TabLink, TabsNav, type RenderTabLink } from "./tabs.react.tsx";
 
 // A stand-in for a router's link: it keeps the tab's class and aria-current it is given, and
 // navigates without a page load (a click is handed to the router, which says where it went).
-function RouterLink({ to, onNavigate, children, ...rest }: ComponentProps<"a"> & { to: string; onNavigate: (to: string) => void }) {
+function RouterLink({
+  to,
+  onNavigate,
+  children,
+  ...rest
+}: ComponentProps<"a"> & { to: string; onNavigate: (to: string) => void }) {
   return (
     <a
       {...rest}
@@ -34,12 +39,20 @@ const STATUSES = [
 function RouterTabs({ perLink }: { perLink?: boolean }) {
   const [path, setPath] = useState("/mentions/waiting");
   const current = path.split("/").pop();
-  const render: RenderTabLink = ({ href, ...props }) => <RouterLink to={href} onNavigate={setPath} {...props} />;
+  const render: RenderTabLink = ({ href, ...props }) => (
+    <RouterLink to={href} onNavigate={setPath} {...props} />
+  );
   return (
     <>
       <TabsNav aria-label="Filter mentions by status" renderLink={perLink ? undefined : render}>
         {STATUSES.map((s) => (
-          <TabLink key={s.id} href={`/mentions/${s.id}`} current={current === s.id} count={s.count} renderLink={perLink ? render : undefined}>
+          <TabLink
+            key={s.id}
+            href={`/mentions/${s.id}`}
+            current={current === s.id}
+            count={s.count}
+            renderLink={perLink ? render : undefined}
+          >
             {s.label}
           </TabLink>
         ))}

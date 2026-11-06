@@ -17,7 +17,8 @@ export function toggleGroup(button: HTMLElement): void {
 // How deep a group sits: 1 for a group at the top, 2 for one inside another.
 export function groupDepth(group: Element): number {
   let depth = 0;
-  for (let n: Element | null = group; n; n = n.parentElement?.closest(".cap-group") ?? null) depth += 1;
+  for (let n: Element | null = group; n; n = n.parentElement?.closest(".cap-group") ?? null)
+    depth += 1;
   return depth;
 }
 
@@ -26,15 +27,23 @@ export function groupDepth(group: Element): number {
 // Returns a function that detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const group of root.querySelectorAll<HTMLElement>(".cap-group[data-cap='disclosure']:not([data-cap-ready])")) {
+  for (const group of root.querySelectorAll<HTMLElement>(
+    ".cap-group[data-cap='disclosure']:not([data-cap-ready])",
+  )) {
     group.dataset.capReady = "";
-    const button = group.querySelector<HTMLElement>(":scope > .cap-group-toggle, :scope > .cap-group-heading > .cap-group-toggle");
+    const button = group.querySelector<HTMLElement>(
+      ":scope > .cap-group-toggle, :scope > .cap-group-heading > .cap-group-toggle",
+    );
     if (!button) continue;
-    if (groupDepth(group) > 2) console.warn("Capsomer disclosure: groups go two levels deep at most.", group);
+    if (groupDepth(group) > 2)
+      console.warn("Capsomer disclosure: groups go two levels deep at most.", group);
     const rows = document.getElementById(button.getAttribute("aria-controls") ?? "");
     const holdsCritical = !!rows?.querySelector("[data-tone='crit']");
     if (holdsCritical && button.getAttribute("aria-expanded") !== "true") {
-      console.warn("Capsomer disclosure: a critical item was inside a collapsed group, so the group is open.", group);
+      console.warn(
+        "Capsomer disclosure: a critical item was inside a collapsed group, so the group is open.",
+        group,
+      );
       setGroup(button, true);
     } else setGroup(button, button.getAttribute("aria-expanded") === "true");
     const onClick = () => toggleGroup(button);

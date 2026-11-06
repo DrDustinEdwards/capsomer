@@ -31,7 +31,12 @@ export function ratioOf(shape: string, width: number, height: number): number | 
 }
 
 // A rectangle kept inside the picture, whole pixels, at least 1 by 1, and at the ratio when one is set.
-export function fitRect(r: CropRect, width: number, height: number, ratio: number | null): CropRect {
+export function fitRect(
+  r: CropRect,
+  width: number,
+  height: number,
+  ratio: number | null,
+): CropRect {
   let w = Math.max(1, Math.min(width, Math.round(r.w)));
   let h = Math.max(1, Math.min(height, Math.round(r.h)));
   if (ratio) {
@@ -65,5 +70,7 @@ export function cropName(name: string, type: string): string {
 // the center when there is none.
 export function focusPercents(focus: string | null | undefined): { x: number; y: number } {
   const m = focus ? /^([\d.]+)x([\d.]+)$/.exec(focus) : null;
-  return m ? { x: Math.round(Number(m[1]) * 1000) / 10, y: Math.round(Number(m[2]) * 1000) / 10 } : { x: 50, y: 50 };
+  return m
+    ? { x: Math.round(Number(m[1]) * 1000) / 10, y: Math.round(Number(m[2]) * 1000) / 10 }
+    : { x: 50, y: 50 };
 }

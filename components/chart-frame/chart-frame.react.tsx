@@ -42,7 +42,10 @@ export function shownHeight(first: string, width: number, rem = 16): number | un
   return Math.round(((h * Math.min(shown, w)) / w) * 100) / 100;
 }
 
-const rootRem = () => (typeof document === "undefined" ? 16 : Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
+const rootRem = () =>
+  typeof document === "undefined"
+    ? 16
+    : Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 
 export interface ChartFrameProps {
   // Draws Enarratio's figure at a width, as a string: `(width, fit) => barChart({ ...options, width,
@@ -78,7 +81,19 @@ export interface ChartFrameProps {
 let enhancer: Promise<typeof import("enarratio/enhance")> | undefined;
 const loadEnhance = () => (enhancer ??= import("enarratio/enhance"));
 
-export function ChartFrame({ draw, chart, width = DEFAULT_WIDTH, minWidth = MIN_WIDTH, noData, inline, enhance = true, gridlines, onDraw, className, children }: ChartFrameProps) {
+export function ChartFrame({
+  draw,
+  chart,
+  width = DEFAULT_WIDTH,
+  minWidth = MIN_WIDTH,
+  noData,
+  inline,
+  enhance = true,
+  gridlines,
+  onDraw,
+  className,
+  children,
+}: ChartFrameProps) {
   const ref = useRef<HTMLDivElement>(null);
   const dataOpen = useRef(false);
   const [drawn, setDrawn] = useState(width);
@@ -184,8 +199,19 @@ export function ChartFrame({ draw, chart, width = DEFAULT_WIDTH, minWidth = MIN_
     );
   }
   return (
-    <div ref={ref} className={cls} data-head={inline ? "inline" : undefined} data-gridlines={gridlines} data-enhance={enhance === false ? "off" : "self"} data-state={error ? "refused" : undefined}>
-      {error ? <p className="cap-chart-reason">{`This chart could not be drawn: ${error}`}</p> : <div className="cap-chart-figure" dangerouslySetInnerHTML={{ __html: html }} />}
+    <div
+      ref={ref}
+      className={cls}
+      data-head={inline ? "inline" : undefined}
+      data-gridlines={gridlines}
+      data-enhance={enhance === false ? "off" : "self"}
+      data-state={error ? "refused" : undefined}
+    >
+      {error ? (
+        <p className="cap-chart-reason">{`This chart could not be drawn: ${error}`}</p>
+      ) : (
+        <div className="cap-chart-figure" dangerouslySetInnerHTML={{ __html: html }} />
+      )}
       {children}
     </div>
   );

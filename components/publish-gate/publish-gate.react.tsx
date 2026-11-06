@@ -4,11 +4,32 @@ import { fail as plainFail, say as plainSay, type SayOptions } from "../message/
 import { attachRowList } from "../row-list/row-list.ts";
 import { Glyph } from "../status/status.react.tsx";
 import { Time } from "../time/time.react.tsx";
-import { FIRST_PUBLICATION_NOTE, appliesTo, checkState, countChecks, advisoryHeading, describeGate, holdText, passedHeading, requiredHeading, siteDetail, siteState, stateWord, type GateCheck, type GateSite, type GateState } from "./publish-gate.ts";
+import {
+  FIRST_PUBLICATION_NOTE,
+  appliesTo,
+  checkState,
+  countChecks,
+  advisoryHeading,
+  describeGate,
+  holdText,
+  passedHeading,
+  requiredHeading,
+  siteDetail,
+  siteState,
+  stateWord,
+  type GateCheck,
+  type GateSite,
+  type GateState,
+} from "./publish-gate.ts";
 
 export type { GateCheck, GateHold, GatePublished, GateSite, GateState } from "./publish-gate.ts";
 
-const TONE: Record<GateState, "crit" | "info" | "ok"> = { blocked: "crit", held: "info", ready: "ok", published: "ok" };
+const TONE: Record<GateState, "crit" | "info" | "ok"> = {
+  blocked: "crit",
+  held: "info",
+  ready: "ok",
+  published: "ok",
+};
 
 function StateStatus({ state }: { state: GateState }) {
   return (
@@ -37,25 +58,68 @@ export interface PublishButtonProps {
 
 // The paired publish control for one destination: Publish, Publishing..., Publish blocked,
 // Publish held, or, once published, View and Unpublish.
-export function PublishButton({ gateId, site, state, busy = false, summaryId, named = false, size = "sm", onPublish, onUnpublish }: PublishButtonProps) {
+export function PublishButton({
+  gateId,
+  site,
+  state,
+  busy = false,
+  summaryId,
+  named = false,
+  size = "sm",
+  onPublish,
+  onUnpublish,
+}: PublishButtonProps) {
   const suffix = named ? `, ${site.name}` : undefined;
   const sz = size === "sm" ? "sm" : undefined;
   if (state === "published" && site.published) {
     return (
-      <div data-cap-actions="" data-gate={gateId} data-site={site.id} data-site-label={named ? site.name : undefined} data-btn-size={size === "default" ? "default" : undefined}>
-        <a className="cap-btn" data-cap-part="view" data-size={sz} aria-label={suffix ? `View live page${suffix}` : undefined} href={site.published.url}>
+      <div
+        data-cap-actions=""
+        data-gate={gateId}
+        data-site={site.id}
+        data-site-label={named ? site.name : undefined}
+        data-btn-size={size === "default" ? "default" : undefined}
+      >
+        <a
+          className="cap-btn"
+          data-cap-part="view"
+          data-size={sz}
+          aria-label={suffix ? `View live page${suffix}` : undefined}
+          href={site.published.url}
+        >
           View
         </a>
-        <button type="button" className="cap-btn" data-cap-part="unpublish" data-size={sz} data-variant="quiet" data-site={site.id} aria-label={suffix ? `Unpublish${suffix}` : undefined} onClick={onUnpublish}>
+        <button
+          type="button"
+          className="cap-btn"
+          data-cap-part="unpublish"
+          data-size={sz}
+          data-variant="quiet"
+          data-site={site.id}
+          aria-label={suffix ? `Unpublish${suffix}` : undefined}
+          onClick={onUnpublish}
+        >
           Unpublish
         </button>
       </div>
     );
   }
   const ready = state === "ready" && !busy;
-  const label = busy ? "Publishing..." : state === "blocked" ? "Publish blocked" : state === "held" ? "Publish held" : "Publish";
+  const label = busy
+    ? "Publishing..."
+    : state === "blocked"
+      ? "Publish blocked"
+      : state === "held"
+        ? "Publish held"
+        : "Publish";
   return (
-    <div data-cap-actions="" data-gate={gateId} data-site={site.id} data-site-label={named ? site.name : undefined} data-btn-size={size === "default" ? "default" : undefined}>
+    <div
+      data-cap-actions=""
+      data-gate={gateId}
+      data-site={site.id}
+      data-site-label={named ? site.name : undefined}
+      data-btn-size={size === "default" ? "default" : undefined}
+    >
       <button
         type="submit"
         name="intent"
@@ -85,7 +149,10 @@ export function PublishButton({ gateId, site, state, busy = false, summaryId, na
 // A first publication is one-way, so it is previewed in the shared confirm dialog, the destination
 // listed and focus on Cancel; anything already public is published at once. For a page that
 // places its own <PublishButton>.
-export async function publishWithPreview(site: GateSite, perform: () => Promise<void>): Promise<void> {
+export async function publishWithPreview(
+  site: GateSite,
+  perform: () => Promise<void>,
+): Promise<void> {
   if (!site.first) return perform();
   await confirm({
     title: `Publish to ${site.name}?`,
@@ -122,7 +189,19 @@ export interface PublishGateProps {
 
 // The gate as the doc page's markup describes it. Rendered from the checks and the destinations,
 // so the summary cannot say Ready while a required check fails.
-export function PublishGate({ label, sites, checks, publish, unpublish, actions = "rows", say = plainSay, fail = plainFail, primary = false, id, summaryId }: PublishGateProps) {
+export function PublishGate({
+  label,
+  sites,
+  checks,
+  publish,
+  unpublish,
+  actions = "rows",
+  say = plainSay,
+  fail = plainFail,
+  primary = false,
+  id,
+  summaryId,
+}: PublishGateProps) {
   const own = useId();
   const gateId = id ?? `${own}-gate`;
   const sumId = summaryId ?? `${gateId}-sum`;
@@ -149,7 +228,9 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
       await publish?.([site.id]);
     } catch (err) {
       setBusy((b) => b.filter((x) => x !== site.id));
-      problem(`Could not publish to ${site.name}: ${err instanceof Error ? err.message : String(err)}`);
+      problem(
+        `Could not publish to ${site.name}: ${err instanceof Error ? err.message : String(err)}`,
+      );
       return;
     }
     setBusy((b) => b.filter((x) => x !== site.id));
@@ -165,7 +246,9 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
     try {
       await unpublish?.([site.id]);
     } catch (err) {
-      return problem(`Could not unpublish from ${site.name}: ${err instanceof Error ? err.message : String(err)}`);
+      return problem(
+        `Could not unpublish from ${site.name}: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
     announce(`Unpublished from ${site.name}.`, {
       undo: async () => {
@@ -199,7 +282,10 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
         data-tone={st === "failing" ? "crit" : undefined}
       >
         <span className="cap-row-status" id={`${rid}-s`}>
-          <span className="cap-status" data-tone={st === "failing" ? "crit" : st === "advisory" ? "warn" : "ok"}>
+          <span
+            className="cap-status"
+            data-tone={st === "failing" ? "crit" : st === "advisory" ? "warn" : "ok"}
+          >
             <Glyph name={st === "failing" ? "crit" : st === "advisory" ? "warn" : "ok"} />
             {st === "failing" ? "Failing" : st === "advisory" ? "Advisory" : "Passed"}
           </span>
@@ -226,7 +312,13 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
     );
   };
 
-  const section = (name: string, headId: string, heading: string, list: GateCheck[], shown: boolean) => (
+  const section = (
+    name: string,
+    headId: string,
+    heading: string,
+    list: GateCheck[],
+    shown: boolean,
+  ) => (
     <li className="cap-gate-section" data-section={name} hidden={!shown}>
       <h3 className="cap-gate-group-title" id={headId}>
         {heading}
@@ -240,18 +332,37 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
 
   const headingId = `${gateId}-h`;
   return (
-    <section className="cap-gate" id={gateId} data-state={reading.state} aria-labelledby={headingId}>
+    <section
+      className="cap-gate"
+      id={gateId}
+      data-state={reading.state}
+      aria-labelledby={headingId}
+    >
       <header className="cap-gate-head">
         <h2 className="cap-gate-title" id={headingId}>
           {label}
         </h2>
-        <p className="cap-gate-summary" id={sumId} role="status" aria-live="polite" aria-atomic="true" data-cap-part="summary">
+        <p
+          className="cap-gate-summary"
+          id={sumId}
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          data-cap-part="summary"
+        >
           <StateStatus state={reading.state} />
           {reading.rest}
         </p>
       </header>
-      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
-      <ul ref={rows} className="cap-rows cap-gate-all" data-cap="row-list" role="list" aria-labelledby={headingId} data-cap-primary={primary ? "" : undefined}>
+      <ul
+        ref={rows}
+        className="cap-rows cap-gate-all"
+        data-cap="row-list"
+        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
+        role="list"
+        aria-labelledby={headingId}
+        data-cap-primary={primary ? "" : undefined}
+      >
         <li className="cap-gate-section" data-section="sites">
           <h3 className="cap-gate-group-title" id={`${gateId}-g-sites`}>
             {sites.length === 1 ? "Destination" : "Destinations"}
@@ -259,10 +370,25 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
           {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
           <ul className="cap-gate-section-rows" role="list" aria-labelledby={`${gateId}-g-sites`}>
             {reading.sites.map(({ site, state, failing }) => {
-              const adv = checks.filter((c) => appliesTo(c, site.id) && !c.required && !c.ok).length;
+              const adv = checks.filter(
+                (c) => appliesTo(c, site.id) && !c.required && !c.ok,
+              ).length;
               const sid = `${gateId}-s-${site.id}`;
               return (
-                <li key={site.id} className="cap-row cap-gate-site" id={sid} data-site={site.id} data-name={site.name} data-state={state} data-first={site.first ? "" : undefined} data-hold-text={site.hold ? holdText(site.hold) : undefined} data-hold-note={site.hold?.note} data-published-at={site.published?.at} data-published-url={site.published?.url} data-tone={state === "blocked" ? "crit" : undefined}>
+                <li
+                  key={site.id}
+                  className="cap-row cap-gate-site"
+                  id={sid}
+                  data-site={site.id}
+                  data-name={site.name}
+                  data-state={state}
+                  data-first={site.first ? "" : undefined}
+                  data-hold-text={site.hold ? holdText(site.hold) : undefined}
+                  data-hold-note={site.hold?.note}
+                  data-published-at={site.published?.at}
+                  data-published-url={site.published?.url}
+                  data-tone={state === "blocked" ? "crit" : undefined}
+                >
                   <span className="cap-row-status" id={`${sid}-s`}>
                     <StateStatus state={state} />
                   </span>
@@ -272,15 +398,42 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
                   <p className="cap-row-detail" id={`${sid}-d`}>
                     {siteDetail(state, failing, adv, site)}
                   </p>
-                  <span className="cap-row-meta">{state === "published" && site.published ? <Time at={site.published.at} format="exact" /> : null}</span>
-                  {actions === "rows" ? <PublishButton gateId={gateId} site={site} state={state} busy={busy.includes(site.id)} summaryId={sumId} named={sites.length > 1} onPublish={() => void onPublish(site)} onUnpublish={() => void onUnpublish(site)} /> : null}
+                  <span className="cap-row-meta">
+                    {state === "published" && site.published ? (
+                      <Time at={site.published.at} format="exact" />
+                    ) : null}
+                  </span>
+                  {actions === "rows" ? (
+                    <PublishButton
+                      gateId={gateId}
+                      site={site}
+                      state={state}
+                      busy={busy.includes(site.id)}
+                      summaryId={sumId}
+                      named={sites.length > 1}
+                      onPublish={() => void onPublish(site)}
+                      onUnpublish={() => void onUnpublish(site)}
+                    />
+                  ) : null}
                 </li>
               );
             })}
           </ul>
         </li>
-        {section("required", `${gateId}-g-req`, requiredHeading(counts.requiredFailing), failingReq, failingReq.length > 0)}
-        {section("advisory", `${gateId}-g-adv`, advisoryHeading(counts.advisoryFailing), failingAdv, failingAdv.length > 0)}
+        {section(
+          "required",
+          `${gateId}-g-req`,
+          requiredHeading(counts.requiredFailing),
+          failingReq,
+          failingReq.length > 0,
+        )}
+        {section(
+          "advisory",
+          `${gateId}-g-adv`,
+          advisoryHeading(counts.advisoryFailing),
+          failingAdv,
+          failingAdv.length > 0,
+        )}
         <li className="cap-gate-section" data-section="passed" hidden={passed.length === 0}>
           <details className="cap-disclosure">
             <summary>{passedHeading(counts.passed)}</summary>
@@ -293,7 +446,11 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
           </details>
         </li>
       </ul>
-      <p className="cap-gate-clear" data-cap-part="clear" hidden={failingReq.length + failingAdv.length > 0}>
+      <p
+        className="cap-gate-clear"
+        data-cap-part="clear"
+        hidden={failingReq.length + failingAdv.length > 0}
+      >
         No checks are failing.
       </p>
     </section>
@@ -301,7 +458,10 @@ export function PublishGate({ label, sites, checks, publish, unpublish, actions 
 }
 
 // The overall and per-destination states, for a page that places its own <PublishButton>.
-export function gateStates(sites: GateSite[], checks: GateCheck[]): { overall: GateState; sites: Record<string, GateState> } {
+export function gateStates(
+  sites: GateSite[],
+  checks: GateCheck[],
+): { overall: GateState; sites: Record<string, GateState> } {
   const overall = describeGate(sites, checks).state;
   return { overall, sites: Object.fromEntries(sites.map((s) => [s.id, siteState(s, checks)])) };
 }

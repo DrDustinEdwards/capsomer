@@ -1,5 +1,12 @@
 import { createContext, useContext, type ComponentProps, type ReactNode } from "react";
-import { Link as RouterLink, NavLink as RouterNavLink, useHref, useLocation, type PrefetchBehavior, type To } from "react-router";
+import {
+  Link as RouterLink,
+  NavLink as RouterNavLink,
+  useHref,
+  useLocation,
+  type PrefetchBehavior,
+  type To,
+} from "react-router";
 import { ABSOLUTE, mayPrefetch } from "./link.ts";
 
 // React Router's Link and NavLink, the same props, prefetching on hover and focus by default
@@ -11,7 +18,13 @@ const Exclude = createContext<readonly string[]>([]);
 
 // The app's own paths that act on a GET, for every Link and NavLink under it, beyond the
 // family's NEVER_PREFETCH: `<LinkPrefetch exclude={["/demos/:product"]}>` at the root.
-export function LinkPrefetch({ exclude, children }: { exclude: readonly string[]; children?: ReactNode }) {
+export function LinkPrefetch({
+  exclude,
+  children,
+}: {
+  exclude: readonly string[];
+  children?: ReactNode;
+}) {
   return <Exclude value={exclude}>{children}</Exclude>;
 }
 
@@ -24,7 +37,14 @@ interface Asked {
   prefetch?: PrefetchBehavior;
 }
 
-function usePrefetch({ to, relative, reloadDocument, target, download, prefetch = "intent" }: Asked): PrefetchBehavior {
+function usePrefetch({
+  to,
+  relative,
+  reloadDocument,
+  target,
+  download,
+  prefetch = "intent",
+}: Asked): PrefetchBehavior {
   const exclude = useContext(Exclude);
   const resolved = useHref(to, { relative });
   const from = useHref(useLocation().pathname);

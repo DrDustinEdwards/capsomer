@@ -74,13 +74,17 @@ function partsOf(root: HTMLElement): Parts | null {
 // loop"); without it, the switch's label is used. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const el of root.querySelectorAll<HTMLElement>("[data-cap='switch-reason']:not([data-cap-ready])")) {
+  for (const el of root.querySelectorAll<HTMLElement>(
+    "[data-cap='switch-reason']:not([data-cap-ready])",
+  )) {
     const p = partsOf(el);
     if (!p) continue;
     el.dataset.capReady = "";
     const { sw, label, form, reason, ask, apply, cancel } = p;
-    const name = el.dataset.name ?? label.textContent?.replace(/\s+(On|Off)\s*$/, "").trim() ?? "this";
-    const verb = (next: boolean) => (next ? el.dataset.verbOn : el.dataset.verbOff) ?? verbFor(name, next);
+    const name =
+      el.dataset.name ?? label.textContent?.replace(/\s+(On|Off)\s*$/, "").trim() ?? "this";
+    const verb = (next: boolean) =>
+      (next ? el.dataset.verbOn : el.dataset.verbOff) ?? verbFor(name, next);
     form.noValidate = true;
     let busy = false;
     // The state the flip asks for, fixed when the field opens, so a poll that lands
@@ -148,7 +152,11 @@ export function enhance(root: ParentNode = document): () => void {
       }
       const next = target ?? !sw.checked;
       const held: Array<Promise<unknown>> = [];
-      const detail: SwitchAppliedDetail = { checked: next, reason: text, waitUntil: (promise) => void held.push(promise) };
+      const detail: SwitchAppliedDetail = {
+        checked: next,
+        reason: text,
+        waitUntil: (promise) => void held.push(promise),
+      };
       el.dispatchEvent(new CustomEvent<SwitchAppliedDetail>(EVENT, { bubbles: true, detail }));
       const done = () => {
         setSwitch(label, next);

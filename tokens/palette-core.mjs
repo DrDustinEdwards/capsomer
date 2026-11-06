@@ -7,39 +7,90 @@ import { companionColors, labelOn, rampColors } from "./chart.mjs";
 export const FAMILIES = {
   // defaultTheme is the theme checked first (rule 15). Purple follows the viewer's system
   // setting, so its light theme is checked first as the default with no preference.
-  purple: { seed: "#8c5fd2", anchor: "#4F2D7F", defaultTheme: "light", note: "Capsid Portal, Carrel, dustinedwards.info, Germomics (rule 14)" },
-  fox: { seed: "#cc4f0c", anchor: null, defaultTheme: "light", note: "Foxing, light by default (rules 14 and 15)" },
+  purple: {
+    seed: "#8c5fd2",
+    anchor: "#4F2D7F",
+    defaultTheme: "light",
+    note: "Capsid Portal, Carrel, dustinedwards.info, Germomics (rule 14)",
+  },
+  fox: {
+    seed: "#cc4f0c",
+    anchor: null,
+    defaultTheme: "light",
+    note: "Foxing, light by default (rules 14 and 15)",
+  },
   // Capsid's explorer (capsid.dustinedwards.info) since 2026-10-25; it was Foxhound's until amber came back.
-  teal: { seed: "#008489", anchor: null, defaultTheme: "dark", note: "capsid.dustinedwards.info, dark by default (rule 15)" },
+  teal: {
+    seed: "#008489",
+    anchor: null,
+    defaultTheme: "dark",
+    note: "capsid.dustinedwards.info, dark by default (rule 15)",
+  },
   // Foxhound's amber, Recova's #f0b429 (Dustin, 2026-10-25). Bright enough that white cannot sit
   // on it, so the primary button carries a dark label in both themes (label: "dark"), as Recova's
   // did. In the light theme the seed is under 3:1 on the light surfaces, so step 9 there is the
   // same hue and chroma darkened until it reaches 3:1 (lightStep9), and the button fills with it.
   // Accent text is Recova's: #8a5c06 in light (the step 11 anchor) and the seed itself in dark,
   // where it is 10:1 on the ground (a family with a dark label is light enough to be the text).
-  amber: { seed: "#f0b429", anchor: "#8a5c06", label: "dark", defaultTheme: "dark", note: "Foxhound, dark by default; Recova's amber, with a dark button label" },
+  amber: {
+    seed: "#f0b429",
+    anchor: "#8a5c06",
+    label: "dark",
+    defaultTheme: "dark",
+    note: "Foxhound, dark by default; Recova's amber, with a dark button label",
+  },
   // txasm's navy: the brand #002868 is too dark to be step 9 (it fails 3:1 as a focus ring on
   // the dark surface), so it is the light theme's step 11 anchor (links, headings, accent text)
   // and step 9 is the same hue at the lightness and strength of purple and fox (OKLCH L 0.587, C 0.172).
-  navy: { seed: "#3978e0", anchor: "#002868", defaultTheme: "light", note: "txasm, light by default; the brand navy #002868 is step 11 in light" },
+  navy: {
+    seed: "#3978e0",
+    anchor: "#002868",
+    defaultTheme: "light",
+    note: "txasm, light by default; the brand navy #002868 is step 11 in light",
+  },
   // julieedwards.info's forest: the Bluff Dale ISD green #15532E is step 11 in light, as navy's
   // #002868 is. Step 9 is its hue at purple and fox's lightness (OKLCH L 0.587); green runs out of
   // sRGB at chroma 0.15 there, so it takes that, the strongest this green can be.
-  forest: { seed: "#06954f", anchor: "#15532E", defaultTheme: "light", note: "julieedwards.info, light by default; the school green #15532E is step 11 in light" },
+  forest: {
+    seed: "#06954f",
+    anchor: "#15532E",
+    defaultTheme: "light",
+    note: "julieedwards.info, light by default; the school green #15532E is step 11 in light",
+  },
   // Two families for the public sites under dustinedwards.info, each its own color under the
   // shared manual theme (Dustin, 2026-10-26). Both are purple's lightness and strength (OKLCH L 0.587,
   // C 0.172) at a hue no family had: magenta at 334 between purple and fox, cerulean at 230
   // between teal and navy. A red was left out: it would read as the error color. Magenta was at
   // 330; at 334 it sits as far from purple (CIEDE2000 13.3) as from rose (13.2), the closest
   // pairs among the six public sites' colors.
-  magenta: { seed: "#b64da6", anchor: null, defaultTheme: "light", note: "Capsomer's public site, light by default" },
-  cerulean: { seed: "#0588b4", anchor: null, defaultTheme: "light", note: "Prelum's specimen site, light by default" },
+  magenta: {
+    seed: "#b64da6",
+    anchor: null,
+    defaultTheme: "light",
+    note: "Capsomer's public site, light by default",
+  },
+  cerulean: {
+    seed: "#0588b4",
+    anchor: null,
+    defaultTheme: "light",
+    note: "Prelum's specimen site, light by default",
+  },
   // Two more for Carrel's and Enarratio's public sites (2026-10-26), at the same lightness and
   // strength. Olive at 118, the green-gold of a library lamp, between amber and forest (sRGB holds
   // it to C 0.136 there). Rose at 2, between magenta and fox: jade (176) sat next to teal and indigo
   // (280) next to purple, and rose stays clear of the error color (CIEDE2000 14.8 from --crit).
-  olive: { seed: "#768602", anchor: null, defaultTheme: "light", note: "Carrel's public site, light by default" },
-  rose: { seed: "#c94574", anchor: null, defaultTheme: "light", note: "Enarratio's gallery, light by default" },
+  olive: {
+    seed: "#768602",
+    anchor: null,
+    defaultTheme: "light",
+    note: "Carrel's public site, light by default",
+  },
+  rose: {
+    seed: "#c94574",
+    anchor: null,
+    defaultTheme: "light",
+    note: "Enarratio's gallery, light by default",
+  },
 };
 // ---- color math ---------------------------------------------------------------------
 
@@ -79,8 +130,22 @@ const inGamut = (rgb) => rgb.every((c) => c >= -0.0005 && c <= 1.0005);
 export function oklch(lightness, C, H) {
   const L = Math.min(1, Math.max(0, lightness));
   for (let c = C; c >= 0; c -= 0.002) {
-    const rgb = oklabToRgb([L, c * Math.cos((H * Math.PI) / 180), c * Math.sin((H * Math.PI) / 180)]);
-    if (inGamut(rgb)) return "#" + rgb.map((v) => Math.round(Math.min(1, Math.max(0, v)) * 255).toString(16).padStart(2, "0")).join("");
+    const rgb = oklabToRgb([
+      L,
+      c * Math.cos((H * Math.PI) / 180),
+      c * Math.sin((H * Math.PI) / 180),
+    ]);
+    if (inGamut(rgb))
+      return (
+        "#" +
+        rgb
+          .map((v) =>
+            Math.round(Math.min(1, Math.max(0, v)) * 255)
+              .toString(16)
+              .padStart(2, "0"),
+          )
+          .join("")
+      );
   }
   throw new Error(`no sRGB color for oklch(${L} ${C} ${H})`);
 }
@@ -131,7 +196,12 @@ export const LEVELS = {
 const MARGIN = 0.5; // a little above the floor, so rounding to hex cannot fall under it
 
 // True when `fg` meets the WCAG ratio and the APCA floor on every background.
-const readsOn = (bgs, ratio, lc = 0) => (fg) => bgs.every((bg) => contrast(fg, bg) >= ratio && Math.abs(apca(fg, bg)) >= lc + (lc ? MARGIN : 0));
+const readsOn =
+  (bgs, ratio, lc = 0) =>
+  (fg) =>
+    bgs.every(
+      (bg) => contrast(fg, bg) >= ratio && Math.abs(apca(fg, bg)) >= lc + (lc ? MARGIN : 0),
+    );
 
 // The lightness closest to `from` at which oklch(L C H) passes `ok`. `to` is the high-contrast
 // end; the search keeps a lightness that passes.
@@ -171,12 +241,32 @@ const lightest = (...hexes) => hexes.reduce((a, b) => (luminance(b) > luminance(
 // the family's anchor.
 const ROLES = {
   light: [
-    [0.993, 0.02], [0.982, 0.06], [0.96, 0.14], [0.935, 0.22], [0.905, 0.3], [0.865, 0.36],
-    [0.81, 0.46], [0.735, 0.62], null, [-0.05, 1], [0.42, 0.75], [0.22, 0.25],
+    [0.993, 0.02],
+    [0.982, 0.06],
+    [0.96, 0.14],
+    [0.935, 0.22],
+    [0.905, 0.3],
+    [0.865, 0.36],
+    [0.81, 0.46],
+    [0.735, 0.62],
+    null,
+    [-0.05, 1],
+    [0.42, 0.75],
+    [0.22, 0.25],
   ],
   dark: [
-    [0.16, 0.06], [0.19, 0.08], [0.24, 0.18], [0.28, 0.26], [0.32, 0.32], [0.37, 0.36],
-    [0.44, 0.44], [0.53, 0.6], null, [0.05, 1], [0.8, 0.55], [0.94, 0.12],
+    [0.16, 0.06],
+    [0.19, 0.08],
+    [0.24, 0.18],
+    [0.28, 0.26],
+    [0.32, 0.32],
+    [0.37, 0.36],
+    [0.44, 0.44],
+    [0.53, 0.6],
+    null,
+    [0.05, 1],
+    [0.8, 0.55],
+    [0.94, 0.12],
   ],
 };
 
@@ -192,7 +282,9 @@ export function seedLch(hex) {
 export function lightStep9(seed) {
   const { L, C, H } = seedLch(seed);
   const raised = oklch(0.975, 0.008, H);
-  return contrast(seed, raised) >= CONTROL ? seed.toLowerCase() : tune(C, H, readsOn([raised], CONTROL + 0.05), L, 0.3);
+  return contrast(seed, raised) >= CONTROL
+    ? seed.toLowerCase()
+    : tune(C, H, readsOn([raised], CONTROL + 0.05), L, 0.3);
 }
 
 // Step 9 in the dark theme, the same rule turned over: the seed, unless it is under 3:1 on the dark
@@ -201,7 +293,9 @@ export function lightStep9(seed) {
 export function darkStep9(seed) {
   const { L, C, H } = seedLch(seed);
   const raised = oklch(0.245, NEUTRAL_CHROMA, H);
-  return contrast(seed, raised) >= CONTROL ? seed.toLowerCase() : tune(C, H, readsOn([raised], CONTROL + 0.05), L, 0.95);
+  return contrast(seed, raised) >= CONTROL
+    ? seed.toLowerCase()
+    : tune(C, H, readsOn([raised], CONTROL + 0.05), L, 0.95);
 }
 
 // The 12 steps of one family in one theme, as hex, index 0 being step 1.
@@ -219,7 +313,10 @@ export function scale(seed, anchor = null, scheme = "light") {
   });
 }
 
-const rgbList = (hex) => hexToRgb(hex).map((v) => Math.round(v * 255)).join(", ");
+const rgbList = (hex) =>
+  hexToRgb(hex)
+    .map((v) => Math.round(v * 255))
+    .join(", ");
 
 // Elevation in the theme's own ink: Tailwind's xs, sm, md and lg shadows (the shadow scale
 // shadcn uses), tinted from --text in light and heavier on a dark ground, where a shadow
@@ -252,7 +349,17 @@ export const CHART_ORDER = [
   ...Array.from({ length: 5 }, (_, i) => `ramp-text-${i + 1}`),
 ];
 
-export const ELEVATION_ORDER = ["shadow-xs", "shadow-s", "shadow-m", "shadow-l", "ring-soft", "shadow-ring", "shadow", "scrim", "img-filter"];
+export const ELEVATION_ORDER = [
+  "shadow-xs",
+  "shadow-s",
+  "shadow-m",
+  "shadow-l",
+  "ring-soft",
+  "shadow-ring",
+  "shadow",
+  "scrim",
+  "img-filter",
+];
 
 // The chart palette (tokens/chart.mjs): eight series colors, the family's five-step ramp, and
 // the label color that reads best on each. The three seeds are step 9 of the three families,
@@ -262,7 +369,12 @@ export const ELEVATION_ORDER = ["shadow-xs", "shadow-s", "shadow-m", "shadow-l",
 // written beside its mark (a direct label). A swatch keeps the series color; its words take the ink.
 function chartTokens(t, scheme, { C, H }, level = "standard") {
   const out = {};
-  const series = [FAMILIES.purple.seed, FAMILIES.fox.seed, FAMILIES.teal.seed, ...companionColors(scheme)].map((h) => h.toLowerCase());
+  const series = [
+    FAMILIES.purple.seed,
+    FAMILIES.fox.seed,
+    FAMILIES.teal.seed,
+    ...companionColors(scheme),
+  ].map((h) => h.toLowerCase());
   const ramp = rampColors(H, C, scheme);
   const inkReads = readsOn([t.surface, t.ground, t.raised], TEXT, LEVELS[level].read);
   series.forEach((hex, i) => {
@@ -286,7 +398,13 @@ export function fitNeutrals(t, scheme, level = "standard") {
   const to = scheme === "dark" ? 1 : 0;
   const grounds = [t.surface, t.ground, t.raised];
   const out = {};
-  out.text = strengthen(t.text, (c) => readsOn(grounds, 4.5, L.body)(c) && readsOn([t.sunken, t.sel].filter(Boolean), 4.5, L.read)(c), to);
+  out.text = strengthen(
+    t.text,
+    (c) =>
+      readsOn(grounds, 4.5, L.body)(c) &&
+      readsOn([t.sunken, t.sel].filter(Boolean), 4.5, L.read)(c),
+    to,
+  );
   out.muted = strengthen(t.muted, readsOn([...grounds, t.sel].filter(Boolean), 4.5, L.read), to);
   out.dim = strengthen(t.dim, readsOn([...grounds, t.sunken].filter(Boolean), 4.5, L.read), to);
   out["line-strong"] = strengthen(t["line-strong"], readsOn(grounds, CONTROL, L.border), to);
@@ -310,7 +428,11 @@ function visited(t, H, dark) {
     if (hueGap(hue, STATUS.crit) >= VISITED.clear) break;
   }
   const ok = readsOn([t.surface, t.ground, t.raised], 4.5, LEVELS.standard.link);
-  return strengthen(oklch(dark ? ROLES.dark[10][0] : ROLES.light[10][0], VISITED.C, hue), ok, dark ? 1 : 0);
+  return strengthen(
+    oklch(dark ? ROLES.dark[10][0] : ROLES.light[10][0], VISITED.C, hue),
+    ok,
+    dark ? 1 : 0,
+  );
 }
 
 // One family's tokens in one theme, at the standard contrast or under prefers-contrast: more.
@@ -327,17 +449,33 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   t.raised = oklch(dark ? 0.245 : 0.975, dark ? NEUTRAL_CHROMA : 0.008, H);
   t.sunken = oklch(dark ? 0.135 : 0.93, NEUTRAL_CHROMA, H);
   t.line = oklch(dark ? 0.32 : 0.9, NEUTRAL_CHROMA, H);
-  t["line-strong"] = tune(NEUTRAL_CHROMA, H, readsOn([t.raised], CONTROL), dark ? 0.2 : 0.9, dark ? 0.9 : 0.3);
+  t["line-strong"] = tune(
+    NEUTRAL_CHROMA,
+    H,
+    readsOn([t.raised], CONTROL),
+    dark ? 0.2 : 0.9,
+    dark ? 0.9 : 0.3,
+  );
   t.text = oklch(dark ? 0.95 : 0.22, dark ? 0.008 : 0.03, H);
-  t.muted = dark ? tune(0.015, H, readsOn([t.surface], 6.0), 0.2, 0.95) : tune(0.02, H, readsOn([t.ground], 5.5), 0.9, 0.2);
-  t.dim = dark ? tune(0.015, H, readsOn([t.raised], TEXT), 0.2, 0.95) : tune(0.02, H, readsOn([t.sunken], TEXT), 0.9, 0.2);
+  t.muted = dark
+    ? tune(0.015, H, readsOn([t.surface], 6.0), 0.2, 0.95)
+    : tune(0.02, H, readsOn([t.ground], 5.5), 0.9, 0.2);
+  t.dim = dark
+    ? tune(0.015, H, readsOn([t.raised], TEXT), 0.2, 0.95)
+    : tune(0.02, H, readsOn([t.sunken], TEXT), 0.9, 0.2);
   t.sel = s[2];
   Object.assign(t, fitNeutrals(t, scheme, level));
   // Step 11 is accent text: links, the active item, headings in the accent. It reads at the
   // link floor on the grounds and at the text floor on its tints. In light it is often an
   // anchor (purple's #4F2D7F), which already does; in dark the generated step is lifted until
   // it does (the dark mode plan, 2026-10-29), so a link reads as well in dark as in light.
-  s[10] = strengthen(s[10], (c) => readsOn([t.surface, t.ground, t.raised], 4.5, L.link)(c) && readsOn([s[3], s[2]], 4.5, L.read)(c), to);
+  s[10] = strengthen(
+    s[10],
+    (c) =>
+      readsOn([t.surface, t.ground, t.raised], 4.5, L.link)(c) &&
+      readsOn([s[3], s[2]], 4.5, L.read)(c),
+    to,
+  );
   // The accent family, from the scale's roles. Step 9 is the brand color (large fills and
   // shapes, held to 3:1); step 11 is accent text; the primary button fills with step 10, hovers
   // to step 11, and carries --primary-fg: the surface tone in light, the ground tone in dark (a
@@ -348,16 +486,28 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   const darkLabel = label === "dark";
   t.accent = s[8];
   t["accent-hover"] = s[11]; // accent text on hover: step 12
-  t["accent-text"] = darkLabel && dark && readsOn([t.surface, t.ground, t.raised], 4.5, L.read)(s[8]) && level === "standard" ? s[8] : s[10];
+  t["accent-text"] =
+    darkLabel &&
+    dark &&
+    readsOn([t.surface, t.ground, t.raised], 4.5, L.read)(s[8]) &&
+    level === "standard"
+      ? s[8]
+      : s[10];
   t["accent-visited"] = visited(t, H, dark);
   t["accent-soft"] = s[3];
-  t["accent-line"] = strengthen(tune(0.1, H, readsOn([t.sel], CONTROL), dark ? 0.2 : 0.9, dark ? 0.9 : 0.3), readsOn([t.sel], CONTROL, L.border), to);
+  t["accent-line"] = strengthen(
+    tune(0.1, H, readsOn([t.sel], CONTROL), dark ? 0.2 : 0.9, dark ? 0.9 : 0.3),
+    readsOn([t.sel], CONTROL, L.border),
+    to,
+  );
   t["primary-fg"] = dark || darkLabel ? oklch(0.16, NEUTRAL_CHROMA, H) : t.surface; // the dark ground, in either theme
   // The fill moves away from its label until the label reads at the text floor: lighter under a
   // dark label, darker under a light one. In dark that lifts step 10 (WCAG's 4.5:1 alone left
   // the label near Lc 40); in light it lifts amber's step 9, whose edge (--primary-line) stays
   // the 3:1 step 9 so the button still stands out from a light page.
-  const labelReads = (fill) => contrast(t["primary-fg"], fill) >= 4.5 && Math.abs(apca(t["primary-fg"], fill)) >= L.read + MARGIN;
+  const labelReads = (fill) =>
+    contrast(t["primary-fg"], fill) >= 4.5 &&
+    Math.abs(apca(t["primary-fg"], fill)) >= L.read + MARGIN;
   const labelTo = dark || darkLabel ? 1 : 0;
   const base = darkLabel ? s[8] : s[9];
   t.primary = strengthen(base, labelReads, labelTo);
@@ -368,8 +518,12 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   };
   const hover = darkLabel ? s[9] : s[10];
   // The hover fill keeps the label readable and steps further from it than the fill.
-  const further = (c) => labelReads(c) && (labelTo ? seedLch(c).L > seedLch(t.primary).L : seedLch(c).L < seedLch(t.primary).L);
-  t["primary-hover"] = further(hover) ? hover : strengthen(shift(t.primary, labelTo ? 0.05 : -0.05), labelReads, labelTo);
+  const further = (c) =>
+    labelReads(c) &&
+    (labelTo ? seedLch(c).L > seedLch(t.primary).L : seedLch(c).L < seedLch(t.primary).L);
+  t["primary-hover"] = further(hover)
+    ? hover
+    : strengthen(shift(t.primary, labelTo ? 0.05 : -0.05), labelReads, labelTo);
   t["primary-line"] = darkLabel && !dark ? s[8] : t.primary;
   // The on state: a checked box or radio, an on switch. The primary fill by default (amber's
   // 3:1 step 9 in light, since a box has no label to find it by); a site may set its own
@@ -384,12 +538,26 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   for (const [k, hue] of Object.entries(STATUS)) {
     t[`${k}-soft`] = oklch(dark ? 0.28 : 0.945, 0.05, hue);
     const base = dark
-      ? tune(0.13, hue, readsOn([lightest(t[`${k}-soft`], t["accent-soft"], t.sel)], TEXT), 0.3, 0.95)
-      : tune(0.14, hue, readsOn([darkest(t[`${k}-soft`], t["accent-soft"], t.sel)], TEXT), 0.9, 0.2);
+      ? tune(
+          0.13,
+          hue,
+          readsOn([lightest(t[`${k}-soft`], t["accent-soft"], t.sel)], TEXT),
+          0.3,
+          0.95,
+        )
+      : tune(
+          0.14,
+          hue,
+          readsOn([darkest(t[`${k}-soft`], t["accent-soft"], t.sel)], TEXT),
+          0.9,
+          0.2,
+        );
     // A status word reads at the text floor on every ground and tint it sits on; crit also
     // carries the badge's label.
     const on = [t.surface, t.ground, t.raised, t[`${k}-soft`], t["accent-soft"], t.sel];
-    const badge = (c) => k !== "crit" || (contrast(t.surface, c) >= 4.5 && Math.abs(apca(t.surface, c)) >= L.read + MARGIN);
+    const badge = (c) =>
+      k !== "crit" ||
+      (contrast(t.surface, c) >= 4.5 && Math.abs(apca(t.surface, c)) >= L.read + MARGIN);
     t[k] = strengthen(base, (c) => readsOn(on, 4.5, L.read)(c) && badge(c), to);
   }
   t.nodata = t.dim;
@@ -405,12 +573,16 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   // sign in both themes; the type is the family's hue at a light step, at AAA (7:1) on the box and on
   // the sign (AC 150/5345-44L: a location sign is outlined, not filled).
   t["sign-here"] = oklch(dark ? 0.3 : 0.29, 0.02, H);
-  const hereReads = (c) => [t["sign-here"], t.sign].every((bg) => contrast(c, bg) >= 7.05 && Math.abs(apca(c, bg)) >= L.read + MARGIN);
+  const hereReads = (c) =>
+    [t["sign-here"], t.sign].every(
+      (bg) => contrast(c, bg) >= 7.05 && Math.abs(apca(c, bg)) >= L.read + MARGIN,
+    );
   t["on-sign-here"] = strengthen(oklch(0.82, 0.1, H), hereReads, 1);
   // Lit numbers on the dark sign, the same in every family (Dustin approved the set 2026-11-04): the
   // Apollo DSKY's green electroluminescent readouts, and the KSC press-site countdown clock's warm
   // incandescent bulbs (NASA photo 05pd1528). Held to 7:1 on the sign.
-  const litReads = (c) => contrast(c, t.sign) >= 7.05 && Math.abs(apca(c, t.sign)) >= L.read + MARGIN;
+  const litReads = (c) =>
+    contrast(c, t.sign) >= 7.05 && Math.abs(apca(c, t.sign)) >= L.read + MARGIN;
   t["lit-bulb"] = strengthen(oklch(0.93, 0.07, 82), litReads, 1);
   s.forEach((hex, i) => (t[`accent-${i + 1}`] = hex));
   Object.assign(t, elevation(t, scheme));
@@ -419,11 +591,45 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
 }
 
 export const FAMILY_ORDER = [
-  "ground", "surface", "raised", "sunken", "line", "line-strong", "text", "muted", "dim",
-  "accent", "accent-hover", "accent-text", "accent-visited", "accent-soft", "accent-line", "sel",
-  "primary", "primary-hover", "primary-fg", "primary-line", "on", "on-hover", "ring",
-  "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft", "nodata", "nodata-soft",
-  "sign", "on-sign", "sign-edge", "sign-here", "on-sign-here", "lit-bulb",
+  "ground",
+  "surface",
+  "raised",
+  "sunken",
+  "line",
+  "line-strong",
+  "text",
+  "muted",
+  "dim",
+  "accent",
+  "accent-hover",
+  "accent-text",
+  "accent-visited",
+  "accent-soft",
+  "accent-line",
+  "sel",
+  "primary",
+  "primary-hover",
+  "primary-fg",
+  "primary-line",
+  "on",
+  "on-hover",
+  "ring",
+  "ok",
+  "ok-soft",
+  "warn",
+  "warn-soft",
+  "crit",
+  "crit-soft",
+  "info",
+  "info-soft",
+  "nodata",
+  "nodata-soft",
+  "sign",
+  "on-sign",
+  "sign-edge",
+  "sign-here",
+  "on-sign-here",
+  "lit-bulb",
   ...Array.from({ length: 12 }, (_, i) => `accent-${i + 1}`),
 ];
 
@@ -456,14 +662,16 @@ export function pairs(t, level = "standard") {
   need("muted", "sel", 4.5, "selected row detail", L.read);
   need("text", "sunken", 4.5, "command block", L.read);
   need("dim", "sunken", 4.5, "command block note", L.read);
-  for (const bg of ["surface", "ground", "raised"]) need("line-strong", bg, 3, "control border", L.border);
+  for (const bg of ["surface", "ground", "raised"])
+    need("line-strong", bg, 3, "control border", L.border);
   need("accent-line", "sel", 3, "selection ring", L.border);
   for (const bg of ["surface", "ground", "raised"]) {
     need("ring", bg, 3, "focus ring", L.ring);
     need("accent", bg, 3, "brand color as a large fill");
     need("primary-line", bg, 3, "primary button edge against its surroundings");
   }
-  for (const bg of ["surface", "ground", "raised"]) need("on", bg, 3, "checked box or on switch against its surroundings");
+  for (const bg of ["surface", "ground", "raised"])
+    need("on", bg, 3, "checked box or on switch against its surroundings");
   need("on-hover", "surface", 3, "on switch (hover) against its surroundings");
   // A tick is a bold glyph inside a filled box; the box's fill carries the state, so the tick is
   // held to the standard border floor at either level (amber's light step 9, the darkest amber
@@ -511,24 +719,35 @@ export function failures(t, level = "standard") {
   return [
     ...pairs(t, level)
       .filter((p) => !p.pass)
-      .map((p) => `${p.what}: --${p.fg} ${t[p.fg]} on --${p.bg} ${t[p.bg]} is ${p.ratio.toFixed(2)}:1 and Lc ${Math.abs(p.lc).toFixed(1)}, needs ${p.min}:1${p.lcMin ? ` and Lc ${p.lcMin}` : ""}`),
+      .map(
+        (p) =>
+          `${p.what}: --${p.fg} ${t[p.fg]} on --${p.bg} ${t[p.bg]} is ${p.ratio.toFixed(2)}:1 and Lc ${Math.abs(p.lc).toFixed(1)}, needs ${p.min}:1${p.lcMin ? ` and Lc ${p.lcMin}` : ""}`,
+      ),
     ...apart(t)
       .filter((x) => !x.pass)
-      .map((x) => `${x.what}: --${x.a} ${t[x.a]} and --${x.b} ${t[x.b]} are ${x.d.toFixed(1)} apart (OKLab x 100), need ${x.min}`),
+      .map(
+        (x) =>
+          `${x.what}: --${x.a} ${t[x.a]} and --${x.b} ${t[x.b]} are ${x.d.toFixed(1)} apart (OKLab x 100), need ${x.min}`,
+      ),
   ];
 }
 
 // ---- the files ---------------------------------------------------------------------------
 
 function lines(t, indent, scheme, withScheme) {
-  const out = [...FAMILY_ORDER, ...CHART_ORDER, ...ELEVATION_ORDER].map((k) => `${indent}--${k}: ${t[k]};`);
+  const out = [...FAMILY_ORDER, ...CHART_ORDER, ...ELEVATION_ORDER].map(
+    (k) => `${indent}--${k}: ${t[k]};`,
+  );
   if (withScheme) out.push(`${indent}color-scheme: ${scheme};`);
   return out.join("\n");
 }
 
 // Only the tokens prefers-contrast: more changes: `more`'s value where it differs from `base`.
 export function moreLines(base, more, indent) {
-  return [...FAMILY_ORDER, ...CHART_ORDER, ...ELEVATION_ORDER].filter((k) => more[k] !== base[k]).map((k) => `${indent}--${k}: ${more[k]};`).join("\n");
+  return [...FAMILY_ORDER, ...CHART_ORDER, ...ELEVATION_ORDER]
+    .filter((k) => more[k] !== base[k])
+    .map((k) => `${indent}--${k}: ${more[k]};`)
+    .join("\n");
 }
 
 // The prefers-contrast: more blocks, in the order that lets them win: light on the plain
@@ -572,8 +791,10 @@ const note = (seed, anchor) => {
 
 // The family's font stacks, the one place they are written. Each face's size-matched fallback
 // (tokens/fonts.mjs) comes second, so the swap to the face barely moves the text.
-export const UI_STACK = '"Inter", "Inter Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif';
-export const MONO_STACK = '"Martian Mono", "Martian Mono Fallback", ui-monospace, "Cascadia Mono", Consolas, monospace';
+export const UI_STACK =
+  '"Inter", "Inter Fallback", "Segoe UI", "Helvetica Neue", Arial, sans-serif';
+export const MONO_STACK =
+  '"Martian Mono", "Martian Mono Fallback", ui-monospace, "Cascadia Mono", Consolas, monospace';
 
 // The default family on the document root: color.css.
 export function renderFamily(seed, anchor = null, label = "light") {
@@ -676,7 +897,13 @@ export function enarratioTheme(family = FAMILIES.purple, level = "standard") {
   });
   const l = familyTheme(family.seed, family.anchor, "light", family.label, level);
   const d = familyTheme(family.seed, family.anchor, "dark", family.label, level);
-  return { name: level === "more" ? "capsomer-more" : "capsomer", fonts: { body: UI_STACK, numeric: UI_STACK }, gridlines: "y", light: scheme(l), dark: scheme(d) };
+  return {
+    name: level === "more" ? "capsomer-more" : "capsomer",
+    fonts: { body: UI_STACK, numeric: UI_STACK },
+    gridlines: "y",
+    light: scheme(l),
+    dark: scheme(d),
+  };
 }
 
 export function renderEnarratioTheme() {
@@ -715,15 +942,37 @@ export const CHART_PAIR_TOKENS = [
   ["nodata", "nodata"],
   ["accent", "accent-text"],
 ];
-const GRIDS = { none: ["none", "none"], x: ["inline", "none"], y: ["none", "inline"], both: ["inline", "inline"] };
+const GRIDS = {
+  none: ["none", "none"],
+  x: ["inline", "none"],
+  y: ["none", "inline"],
+  both: ["inline", "inline"],
+};
 
 export function renderEnarratioCss() {
   const slots = Array.from({ length: 8 }, (_, i) => i + 1);
   const theme = enarratioTheme();
   const [x, y] = GRIDS[theme.gridlines];
-  const ink = slots.map((n) => `    .enarratio :is(text, tspan)[fill="var(--enarratio-series-${n})"] { fill: var(--chart-ink-${n}, var(--series-ink-${n})); }`).join("\n");
-  const own = slots.map((n) => `  .enarratio[data-enarratio-colors*="series-${n}:"] { --chart-ink-${n}: var(--enarratio-series-${n}); }`).join("\n");
-  const pairs = slots.flatMap((n) => CHART_PAIR_TOKENS.map(([color, inkToken]) => `  .enarratio[data-enarratio-colors*="series-${n}: var(--${color})"] { --enarratio-series-${n}: var(--${color}); --chart-ink-${n}: var(--${inkToken}); }`)).join("\n");
+  const ink = slots
+    .map(
+      (n) =>
+        `    .enarratio :is(text, tspan)[fill="var(--enarratio-series-${n})"] { fill: var(--chart-ink-${n}, var(--series-ink-${n})); }`,
+    )
+    .join("\n");
+  const own = slots
+    .map(
+      (n) =>
+        `  .enarratio[data-enarratio-colors*="series-${n}:"] { --chart-ink-${n}: var(--enarratio-series-${n}); }`,
+    )
+    .join("\n");
+  const pairs = slots
+    .flatMap((n) =>
+      CHART_PAIR_TOKENS.map(
+        ([color, inkToken]) =>
+          `  .enarratio[data-enarratio-colors*="series-${n}: var(--${color})"] { --enarratio-series-${n}: var(--${color}); --chart-ink-${n}: var(--${inkToken}); }`,
+      ),
+    )
+    .join("\n");
   return `/* Generated by tokens/palette.mjs (renderEnarratioCss). Do not edit: change the script and run
    \`npm run tokens\`; \`npm run check\` refuses a file that differs.
 
@@ -748,7 +997,12 @@ export function renderEnarratioCss() {
 @layer cap.components {
   .enarratio [data-enarratio-mark="x-grid"] { display: var(--chart-grid-x, ${x}); }
   .enarratio [data-enarratio-mark="y-grid"] { display: var(--chart-grid-y, ${y}); }
-${Object.entries(GRIDS).map(([k, [gx, gy]]) => `  [data-gridlines="${k}"] { --chart-grid-x: ${gx}; --chart-grid-y: ${gy}; }`).join("\n")}
+${Object.entries(GRIDS)
+  .map(
+    ([k, [gx, gy]]) =>
+      `  [data-gridlines="${k}"] { --chart-grid-x: ${gx}; --chart-grid-y: ${gy}; }`,
+  )
+  .join("\n")}
 
   @media (forced-colors: none) {
 ${ink}
@@ -794,7 +1048,24 @@ ${pairs}
 // The colors an email uses, for every family in both themes, as literal hexes. Email clients
 // ignore custom properties, so components/email/colors.ts carries the values (the same ones
 // as the site, from the same generator) and the email code stays free of node:fs.
-const EMAIL_KEYS = ["ground", "surface", "line", "text", "muted", "accent-text", "primary", "primary-fg", "ok", "ok-soft", "warn", "warn-soft", "crit", "crit-soft", "info", "info-soft"];
+const EMAIL_KEYS = [
+  "ground",
+  "surface",
+  "line",
+  "text",
+  "muted",
+  "accent-text",
+  "primary",
+  "primary-fg",
+  "ok",
+  "ok-soft",
+  "warn",
+  "warn-soft",
+  "crit",
+  "crit-soft",
+  "info",
+  "info-soft",
+];
 
 /** @deprecated The British spelling, kept so existing imports work; use `renderEmailColors`. */
 export const renderEmailColours = () => renderEmailColors(); // codespell:ignore
@@ -810,7 +1081,9 @@ export function renderEmailColors() {
   }
   return `// Generated by tokens/palette.mjs from Capsomer's tokens (every family, both themes).
 // Do not edit: change the script and run \`npm run tokens\`. \`npm run check\` refuses a file that differs.
-export type EmailFamily = ${Object.keys(FAMILIES).map((n) => JSON.stringify(n)).join(" | ")};
+export type EmailFamily = ${Object.keys(FAMILIES)
+    .map((n) => JSON.stringify(n))
+    .join(" | ")};
 export type EmailColors = Record<${EMAIL_KEYS.map((n) => JSON.stringify(n)).join(" | ")}, string>;
 export const emailColors: Record<EmailFamily, { light: EmailColors; dark: EmailColors }> = ${JSON.stringify(out, null, 2)};
 `;

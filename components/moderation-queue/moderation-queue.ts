@@ -13,10 +13,71 @@ import { enhance as enhanceMessage, say } from "../message/message.ts";
 import { isTypingKey, listOwnsKeys, moveRowFocus, singleKeysOff } from "../row-list/row-list.ts";
 import { enhance as enhanceShortcuts, register } from "../shortcuts/shortcuts.ts";
 import { enhance as enhanceTime, parse } from "../time/time.ts";
-import { ACTION_KEY, DELETE_KEY, EMPTY_TEXT, type Mention, type ModAction, type ModState, type ModView, NO_UNDO_TEXT, type UndoEntry, type UndoStack, VIEWS, actionButton, actionsFor, bulkActionsFor, countStates, decide, decidedText, h, inView, mentionsWord, statusEl, summaryText, sweepLines, undoAction, undoStack, undoneText } from "./moderation-queue-model.ts";
+import {
+  ACTION_KEY,
+  DELETE_KEY,
+  EMPTY_TEXT,
+  type Mention,
+  type ModAction,
+  type ModState,
+  type ModView,
+  NO_UNDO_TEXT,
+  type UndoEntry,
+  type UndoStack,
+  VIEWS,
+  actionButton,
+  actionsFor,
+  bulkActionsFor,
+  countStates,
+  decide,
+  decidedText,
+  h,
+  inView,
+  mentionsWord,
+  statusEl,
+  summaryText,
+  sweepLines,
+  undoAction,
+  undoStack,
+  undoneText,
+} from "./moderation-queue-model.ts";
 
-export { VIEWS, VIEW_LABEL, STATE_LABEL, ACTIONS, ACTION_KEY, DELETE_KEY, decide, actionsFor, bulkActionsFor, inView, countStates, summaryText, statusOf, ACTION_LABEL, decidedText, undoneText, undoAction, NO_UNDO_TEXT, undoStack, sweepLines, mentionsWord, EMPTY_TEXT, statusEl, actionButton } from "./moderation-queue-model.ts";
-export type { ModState, ModView, ModAction, Mention, Counts, Status, UndoEntry, UndoStack } from "./moderation-queue-model.ts";
+export {
+  VIEWS,
+  VIEW_LABEL,
+  STATE_LABEL,
+  ACTIONS,
+  ACTION_KEY,
+  DELETE_KEY,
+  decide,
+  actionsFor,
+  bulkActionsFor,
+  inView,
+  countStates,
+  summaryText,
+  statusOf,
+  ACTION_LABEL,
+  decidedText,
+  undoneText,
+  undoAction,
+  NO_UNDO_TEXT,
+  undoStack,
+  sweepLines,
+  mentionsWord,
+  EMPTY_TEXT,
+  statusEl,
+  actionButton,
+} from "./moderation-queue-model.ts";
+export type {
+  ModState,
+  ModView,
+  ModAction,
+  Mention,
+  Counts,
+  Status,
+  UndoEntry,
+  UndoStack,
+} from "./moderation-queue-model.ts";
 
 export { isTypingKey };
 
@@ -25,16 +86,22 @@ export { isTypingKey };
 
 const READY = "data-cap-ready";
 
-const rowsOf = (root: HTMLElement) => Array.from(root.querySelectorAll<HTMLLIElement>(".cap-mq-row"));
+const rowsOf = (root: HTMLElement) =>
+  Array.from(root.querySelectorAll<HTMLLIElement>(".cap-mq-row"));
 const listOf = (root: HTMLElement) => root.querySelector<HTMLElement>(".cap-mq-list");
 const titleOf = (row: Element) => row.querySelector<HTMLElement>(".cap-row-title button");
 const visible = (row: HTMLElement) => !row.hidden;
-const currentView = (root: HTMLElement): ModView => ((VIEWS as readonly string[]).includes(root.dataset.view ?? "") ? (root.dataset.view as ModView) : "pending");
+const currentView = (root: HTMLElement): ModView =>
+  (VIEWS as readonly string[]).includes(root.dataset.view ?? "")
+    ? (root.dataset.view as ModView)
+    : "pending";
 // The site offers Back to waiting (site-api v0.6, decision "reset").
 const resetOn = (root: HTMLElement) => root.hasAttribute("data-cap-reset");
 const deleteOn = (root: HTMLElement) => !root.hasAttribute("data-cap-no-delete");
 
-export function mentionOf(row: HTMLElement): Pick<Mention, "id" | "state" | "at" | "decidedAt" | "author" | "host" | "expiring"> {
+export function mentionOf(
+  row: HTMLElement,
+): Pick<Mention, "id" | "state" | "at" | "decidedAt" | "author" | "host" | "expiring"> {
   return {
     id: row.dataset.id ?? "",
     state: (row.dataset.state ?? "pending") as ModState,
@@ -55,7 +122,13 @@ function nowOf(root: Element): number {
 // the queue.
 function ensureRegion(after: Element): void {
   if (document.querySelector("[data-cap='message']")) return;
-  const region = h("div", { class: "cap-message", "data-cap": "message", role: "status", "aria-label": "Results and failures", "aria-atomic": "false" });
+  const region = h("div", {
+    class: "cap-message",
+    "data-cap": "message",
+    role: "status",
+    "aria-label": "Results and failures",
+    "aria-atomic": "false",
+  });
   after.after(region);
   enhanceMessage(region.parentNode ?? document);
 }
@@ -66,7 +139,9 @@ function paintRow(root: HTMLElement, row: HTMLLIElement): void {
   row.querySelector<HTMLElement>(".cap-row-status")?.replaceChildren(statusEl(m.state));
   const actions = row.querySelector<HTMLElement>("[data-cap-part='actions']");
   if (actions) {
-    actions.replaceChildren(...actionsFor(m.state, resetOn(root)).map((a) => actionButton(a, m.author)));
+    actions.replaceChildren(
+      ...actionsFor(m.state, resetOn(root)).map((a) => actionButton(a, m.author)),
+    );
     if (deleteOn(root)) actions.append(actionButton("delete", m.author));
   }
 }
@@ -110,7 +185,9 @@ export function refresh(root: HTMLElement): void {
 }
 
 function selectedRows(root: HTMLElement): HTMLLIElement[] {
-  return rowsOf(root).filter((r) => !r.hidden && r.querySelector<HTMLInputElement>("[data-cap-part='select']")?.checked);
+  return rowsOf(root).filter(
+    (r) => !r.hidden && r.querySelector<HTMLInputElement>("[data-cap-part='select']")?.checked,
+  );
 }
 
 // The selection: each row's mark, the select-all box, the bulk bar (count, and the buttons
@@ -123,8 +200,11 @@ export function syncSelection(root: HTMLElement): HTMLLIElement[] {
   if (all) {
     all.checked = rows.length > 0 && picked.length === rows.length;
     all.indeterminate = picked.length > 0 && picked.length < rows.length;
-    const noun = all.closest("label")?.querySelector<HTMLElement>("[data-cap-part='select-all-text']");
-    if (noun) noun.textContent = rows.length === 0 ? "Select all" : `Select all ${rows.length} shown`;
+    const noun = all
+      .closest("label")
+      ?.querySelector<HTMLElement>("[data-cap-part='select-all-text']");
+    if (noun)
+      noun.textContent = rows.length === 0 ? "Select all" : `Select all ${rows.length} shown`;
   }
   const bar = root.querySelector<HTMLElement>("[data-cap='bulk-bar']");
   if (bar) {
@@ -137,7 +217,9 @@ export function syncSelection(root: HTMLElement): HTMLLIElement[] {
     const key = `${view}:${picked.length > 0}`;
     if (holder && holder.dataset.key !== key) {
       holder.dataset.key = key;
-      const acts: Array<ModAction | "delete"> = picked.length ? [...bulkActionsFor(view, resetOn(root)), ...(deleteOn(root) ? (["delete"] as const) : [])] : [];
+      const acts: Array<ModAction | "delete"> = picked.length
+        ? [...bulkActionsFor(view, resetOn(root)), ...(deleteOn(root) ? (["delete"] as const) : [])]
+        : [];
       holder.replaceChildren(...acts.map((a) => actionButton(a, "", { bar: true })));
     }
     const clear = bar.querySelector<HTMLElement>(".cap-bulk-clear");
@@ -168,13 +250,19 @@ function focusTargetAfter(root: HTMLElement, acted: HTMLElement[]): HTMLElement 
   const last = rows.reduce((at, r, i) => (acted.includes(r) ? i : at), -1);
   const first = rows.findIndex((r) => acted.includes(r));
   const after = rows.slice(last + 1).find((r) => !acted.includes(r));
-  const before = rows.slice(0, Math.max(first, 0)).reverse().find((r) => !acted.includes(r));
+  const before = rows
+    .slice(0, Math.max(first, 0))
+    .reverse()
+    .find((r) => !acted.includes(r));
   const row = after ?? before;
   return row ? titleOf(row) : null;
 }
 
 function focusAfter(root: HTMLElement, target: HTMLElement | null): void {
-  const el = target?.isConnected && !target.closest("[hidden]") ? target : root.querySelector<HTMLElement>("[data-cap-part='empty']:not([hidden])");
+  const el =
+    target?.isConnected && !target.closest("[hidden]")
+      ? target
+      : root.querySelector<HTMLElement>("[data-cap-part='empty']:not([hidden])");
   el?.focus({ preventScroll: false });
 }
 
@@ -192,7 +280,12 @@ interface Ctx {
 
 const contexts = new WeakMap<HTMLElement, Ctx>();
 
-function applyState(root: HTMLElement, row: HTMLLIElement, to: ModState, decidedAt: string | undefined): void {
+function applyState(
+  root: HTMLElement,
+  row: HTMLLIElement,
+  to: ModState,
+  decidedAt: string | undefined,
+): void {
   row.dataset.state = to;
   if (decidedAt) row.dataset.decided = decidedAt;
   else delete row.dataset.decided;
@@ -205,7 +298,10 @@ function undoThen(ctx: Ctx, entry: UndoEntry): () => void {
   return () => {
     undoEntry(ctx, entry);
     const prior = ctx.stack.peek();
-    if (prior) say(`${undoneText(entry.who)} Earlier: ${decidedText(prior.action, prior.who)}`, { undo: undoThen(ctx, prior) });
+    if (prior)
+      say(`${undoneText(entry.who)} Earlier: ${decidedText(prior.action, prior.who)}`, {
+        undo: undoThen(ctx, prior),
+      });
     else say(undoneText(entry.who));
   };
 }
@@ -228,13 +324,20 @@ function undoEntry(ctx: Ctx, entry: UndoEntry): void {
   // button is gone by now.
   const first = back.find(visible);
   if (first) titleOf(first)?.focus();
-  root.dispatchEvent(new CustomEvent("cap:mod-undone", { bubbles: true, detail: { ids: entry.ids, to } }));
+  root.dispatchEvent(
+    new CustomEvent("cap:mod-undone", { bubbles: true, detail: { ids: entry.ids, to } }),
+  );
 }
 
 // Decides these rows at once: each moves to its new state, the counts and the live line
 // follow, focus moves to the next row, and the message says so, with Undo where the site can
 // put each one back. A row the table does not allow is left alone. Returns the ids that moved.
-export function decideRows(root: HTMLElement, rows: HTMLLIElement[], action: ModAction, opts: { focus?: boolean; announce?: boolean; note?: string } = {}): string[] {
+export function decideRows(
+  root: HTMLElement,
+  rows: HTMLLIElement[],
+  action: ModAction,
+  opts: { focus?: boolean; announce?: boolean; note?: string } = {},
+): string[] {
   const ctx = contexts.get(root);
   const reset = resetOn(root);
   const moved: HTMLLIElement[] = [];
@@ -243,7 +346,9 @@ export function decideRows(root: HTMLElement, rows: HTMLLIElement[], action: Mod
   const decidedAt = new Date(nowOf(root)).toISOString();
   // Focus is on one of these rows, or on the bulk bar's button that was just pressed (which is
   // rebuilt): either way it moves to the next row.
-  const hadFocus = rows.some((r) => r.contains(document.activeElement)) || !!root.querySelector("[data-cap='bulk-bar']")?.contains(document.activeElement);
+  const hadFocus =
+    rows.some((r) => r.contains(document.activeElement)) ||
+    !!root.querySelector("[data-cap='bulk-bar']")?.contains(document.activeElement);
   const target = hadFocus && opts.focus !== false ? focusTargetAfter(root, rows) : null;
   for (const row of rows) {
     const m = mentionOf(row);
@@ -258,7 +363,17 @@ export function decideRows(root: HTMLElement, rows: HTMLLIElement[], action: Mod
   refresh(root);
   if (hadFocus && opts.focus !== false) focusAfter(root, target);
   const ids = moved.map((r) => r.dataset.id ?? "");
-  root.dispatchEvent(new CustomEvent<DecidedDetail>("cap:mod-decided", { bubbles: true, detail: { ids, action, from: Object.fromEntries(Object.entries(from).map(([k, v]) => [k, v.state])), to } }));
+  root.dispatchEvent(
+    new CustomEvent<DecidedDetail>("cap:mod-decided", {
+      bubbles: true,
+      detail: {
+        ids,
+        action,
+        from: Object.fromEntries(Object.entries(from).map(([k, v]) => [k, v.state])),
+        to,
+      },
+    }),
+  );
   if (ctx && opts.announce !== false) {
     const entry: UndoEntry = { ids, who: moved.map((r) => r.dataset.author ?? ""), action, from };
     const text = [decidedText(action, entry.who), opts.note].filter(Boolean).join(" ");
@@ -320,17 +435,25 @@ async function sweepExpired(root: HTMLElement): Promise<void> {
 
 // Runs one action for these rows. A decision leaves the rows it does not apply to (a mention not
 // yet checked, or whose source was not found) and says so.
-export async function run(root: HTMLElement, rows: HTMLLIElement[], action: ModAction | "delete"): Promise<void> {
+export async function run(
+  root: HTMLElement,
+  rows: HTMLLIElement[],
+  action: ModAction | "delete",
+): Promise<void> {
   if (action === "delete") return deleteOn(root) ? deleteRows(root, rows) : undefined;
   const n = rows.filter((r) => actionsFor(mentionOf(r).state, true).length === 0).length;
-  const note = n > 0 ? `${n} ${n === 1 ? "was" : "were"} left as ${n === 1 ? "it was" : "they were"}: there is nothing to decide about a mention not yet checked or whose source was not found.` : undefined;
+  const note =
+    n > 0
+      ? `${n} ${n === 1 ? "was" : "were"} left as ${n === 1 ? "it was" : "they were"}: there is nothing to decide about a mention not yet checked or whose source was not found.`
+      : undefined;
   const moved = decideRows(root, rows, action, { note });
   if (moved.length === 0 && note) say(note);
 }
 
 export function setView(root: HTMLElement, view: ModView): void {
   root.dataset.view = view;
-  for (const box of root.querySelectorAll<HTMLInputElement>("[data-cap-part='select']")) box.checked = false;
+  for (const box of root.querySelectorAll<HTMLInputElement>("[data-cap-part='select']"))
+    box.checked = false;
   const radio = root.querySelector<HTMLInputElement>(`[data-cap-part='view'][value='${view}']`);
   if (radio && !radio.checked) radio.checked = true;
   refresh(root);
@@ -359,7 +482,8 @@ export function enhance(root: ParentNode = document): () => void {
     enhanceTime(el);
     ensureRegion(el);
     undo.push(enhanceShortcuts(el));
-    for (const s of QUEUE_SHORTCUTS) undo.push(register({ ...s, group: "Moderation queue", when: () => false, run: () => {} }));
+    for (const s of QUEUE_SHORTCUTS)
+      undo.push(register({ ...s, group: "Moderation queue", when: () => false, run: () => {} }));
 
     const list = listOf(el);
     const rowOf = (n: Element | null) => n?.closest<HTMLLIElement>(".cap-mq-row") ?? null;
@@ -376,9 +500,13 @@ export function enhance(root: ParentNode = document): () => void {
         return;
       }
       if (t.closest(".cap-bulk-clear")) {
-        for (const box of el.querySelectorAll<HTMLInputElement>("[data-cap-part='select']")) box.checked = false;
+        for (const box of el.querySelectorAll<HTMLInputElement>("[data-cap-part='select']"))
+          box.checked = false;
         syncSelection(el);
-        (list?.querySelector<HTMLElement>(".cap-mq-row:not([hidden]) .cap-row-title button") ?? null)?.focus();
+        (
+          list?.querySelector<HTMLElement>(".cap-mq-row:not([hidden]) .cap-row-title button") ??
+          null
+        )?.focus();
         return;
       }
       const sweep = t.closest<HTMLElement>("[data-cap-part='sweep']");
@@ -403,7 +531,8 @@ export function enhance(root: ParentNode = document): () => void {
       const key = e.key;
       if (key === "j" || key === "k") {
         if (!listOwnsKeys(list)) return;
-        if (moveRowFocus(list, key === "j" ? 1 : -1) || list.contains(document.activeElement)) e.preventDefault();
+        if (moveRowFocus(list, key === "j" ? 1 : -1) || list.contains(document.activeElement))
+          e.preventDefault();
         return;
       }
       if (!["a", "r", "d", "x"].includes(key)) return;
@@ -440,7 +569,10 @@ export function enhance(root: ParentNode = document): () => void {
       }
     };
     const observer = new MutationObserver(syncKeys);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-cap-single-keys"] });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-cap-single-keys"],
+    });
     const reapply = new MutationObserver(() => singleKeysOff() && syncKeys());
     reapply.observe(el, { childList: true, subtree: true });
 

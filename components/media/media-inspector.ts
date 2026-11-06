@@ -1,7 +1,13 @@
 // The media inspector's fields: reading them, writing a record into them, the tags and the save status.
 // Plain functions of the inspector element; the controller in media.ts owns when they run.
 
-import { byteSize, copySnippets, parseTags, type MediaFields, type MediaRecord } from "./media-record.ts";
+import {
+  byteSize,
+  copySnippets,
+  parseTags,
+  type MediaFields,
+  type MediaRecord,
+} from "./media-record.ts";
 import type { SaveState } from "./media-autosave.ts";
 import { glyph, part } from "./media-tile.ts";
 
@@ -14,7 +20,8 @@ const SAVE_TEXT: Record<SaveState, string> = {
 };
 
 export function readFields(inspector: ParentNode | null): MediaFields {
-  const ins = <T extends HTMLElement = HTMLElement>(name: string) => (inspector ? part<T>(inspector, name) : null);
+  const ins = <T extends HTMLElement = HTMLElement>(name: string) =>
+    inspector ? part<T>(inspector, name) : null;
   const decorative = ins<HTMLInputElement>("decorative")?.checked ?? false;
   return {
     alt: decorative ? "" : (ins<HTMLTextAreaElement>("alt")?.value ?? "").trim(),
@@ -26,7 +33,8 @@ export function readFields(inspector: ParentNode | null): MediaFields {
 }
 
 export function renderSave(inspector: ParentNode | null, state: SaveState, error?: string): void {
-  const ins = <T extends HTMLElement = HTMLElement>(name: string) => (inspector ? part<T>(inspector, name) : null);
+  const ins = <T extends HTMLElement = HTMLElement>(name: string) =>
+    inspector ? part<T>(inspector, name) : null;
   const wrap = ins("save");
   const status = ins("save-status");
   const alert = ins("save-error");
@@ -49,7 +57,13 @@ export function renderSave(inspector: ParentNode | null, state: SaveState, error
     }
   }
   if (alert) {
-    if (state === "failed") alert.replaceChildren(glyph("crit"), document.createTextNode(`Could not save${error ? `: ${error.replace(/\.$/, "")}` : ""}. What you typed is still here.`));
+    if (state === "failed")
+      alert.replaceChildren(
+        glyph("crit"),
+        document.createTextNode(
+          `Could not save${error ? `: ${error.replace(/\.$/, "")}` : ""}. What you typed is still here.`,
+        ),
+      );
     else alert.replaceChildren();
   }
   if (retry) retry.hidden = state !== "failed";
@@ -57,14 +71,29 @@ export function renderSave(inspector: ParentNode | null, state: SaveState, error
 
 // Writes a record into the inspector's fields and lists. Idempotent: the server's own markup
 // for the first file is what this would write.
-export function fillInspector(inspector: ParentNode, r: MediaRecord, draft: MediaFields | undefined): void {
-  const ins = <T extends HTMLElement = HTMLElement>(name: string) => (inspector ? part<T>(inspector, name) : null);
+export function fillInspector(
+  inspector: ParentNode,
+  r: MediaRecord,
+  draft: MediaFields | undefined,
+): void {
+  const ins = <T extends HTMLElement = HTMLElement>(name: string) =>
+    inspector ? part<T>(inspector, name) : null;
   const set = <T extends HTMLElement>(name: string, fn: (el: T) => void) => {
     const el = ins<T>(name);
     if (el) fn(el);
   };
   set("title", (el) => (el.textContent = r.name));
-  set("subtitle", (el) => (el.textContent = [r.type.split("/").pop()?.toUpperCase(), byteSize(r.bytes), r.width && r.height ? `${r.width} by ${r.height}` : ""].filter(Boolean).join(" · ")));
+  set(
+    "subtitle",
+    (el) =>
+      (el.textContent = [
+        r.type.split("/").pop()?.toUpperCase(),
+        byteSize(r.bytes),
+        r.width && r.height ? `${r.width} by ${r.height}` : "",
+      ]
+        .filter(Boolean)
+        .join(" · ")),
+  );
   set<HTMLImageElement>("preview", (img) => {
     const frame = img.closest<HTMLElement>(".cap-media-preview");
     if (r.kind === "image" && r.thumb) {
@@ -83,7 +112,13 @@ export function fillInspector(inspector: ParentNode, r: MediaRecord, draft: Medi
     }
   });
   set<HTMLInputElement>("key", (el) => (el.value = r.key));
-  const values: MediaFields = draft ?? { alt: r.alt, decorative: r.altState === "decorative", title: r.title, caption: r.caption, tags: r.tags };
+  const values: MediaFields = draft ?? {
+    alt: r.alt,
+    decorative: r.altState === "decorative",
+    title: r.title,
+    caption: r.caption,
+    tags: r.tags,
+  };
   const alt = ins<HTMLTextAreaElement>("alt");
   const deco = ins<HTMLInputElement>("decorative");
   if (alt && deco) {
@@ -100,7 +135,13 @@ export function fillInspector(inspector: ParentNode, r: MediaRecord, draft: Medi
   renderTags(inspector, values.tags, r.suggestedTags ?? []);
   set<HTMLInputElement>("address", (el) => (el.value = r.url));
   for (const b of inspector.querySelectorAll<HTMLElement>("[data-cap-copy-kind]")) {
-    const snippet = copySnippets({ url: r.url, kind: r.kind, alt: values.alt, decorative: values.decorative, name: r.name }).find((s) => s.id === b.dataset.capCopyKind);
+    const snippet = copySnippets({
+      url: r.url,
+      kind: r.kind,
+      alt: values.alt,
+      decorative: values.decorative,
+      name: r.name,
+    }).find((s) => s.id === b.dataset.capCopyKind);
     if (snippet) {
       b.dataset.capCopy = snippet.value;
       b.setAttribute("aria-label", snippet.name);
@@ -153,7 +194,9 @@ export function fillInspector(inspector: ParentNode, r: MediaRecord, draft: Medi
       p.textContent = "Not used anywhere.";
       const note = document.createElement("p");
       note.className = "cap-media-note";
-      note.append("No post cites this file. That is not proof it is unused: a page built in code can still use it, so check before you delete it. The Unattached filter lists every file like this. ");
+      note.append(
+        "No post cites this file. That is not proof it is unused: a page built in code can still use it, so check before you delete it. The Unattached filter lists every file like this. ",
+      );
       const show = document.createElement("button");
       show.type = "button";
       show.className = "cap-btn";
@@ -167,11 +210,20 @@ export function fillInspector(inspector: ParentNode, r: MediaRecord, draft: Medi
   const binned = r.state === "binned";
   set("bin", (el) => (el.hidden = binned));
   set("restore", (el) => (el.hidden = !binned));
-  renderSave(inspector, draft ? "failed" : "idle", draft ? "the last save did not go through" : undefined);
+  renderSave(
+    inspector,
+    draft ? "failed" : "idle",
+    draft ? "the last save did not go through" : undefined,
+  );
 }
 
-export function renderTags(inspector: ParentNode | null, tags: string[], suggested: string[]): void {
-  const ins = <T extends HTMLElement = HTMLElement>(name: string) => (inspector ? part<T>(inspector, name) : null);
+export function renderTags(
+  inspector: ParentNode | null,
+  tags: string[],
+  suggested: string[],
+): void {
+  const ins = <T extends HTMLElement = HTMLElement>(name: string) =>
+    inspector ? part<T>(inspector, name) : null;
   const list = ins("tags");
   const hidden = ins<HTMLInputElement>("tags-value");
   if (hidden) hidden.value = tags.join(", ");

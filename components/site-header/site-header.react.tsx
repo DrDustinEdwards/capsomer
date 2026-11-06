@@ -4,16 +4,61 @@ import type { LinkProps } from "../shell/shell.react.tsx";
 import { ThemeButton } from "../theme-switch/theme-switch.react.tsx";
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { THEME_PREF, toggleTheme } from "../theme-switch/theme-switch.ts";
-import { CHEV, Disclosure, GroupList, type HeaderExtra, type HeaderLink, HeaderTip, MENU_ICON, PERSON_ICON, SEARCH_ICON, SheetGroup, type SiteHeaderProps, countName, part, plainLink } from "./site-header-parts.react.tsx";
+import {
+  CHEV,
+  Disclosure,
+  GroupList,
+  type HeaderExtra,
+  type HeaderLink,
+  HeaderTip,
+  MENU_ICON,
+  PERSON_ICON,
+  SEARCH_ICON,
+  SheetGroup,
+  type SiteHeaderProps,
+  countName,
+  part,
+  plainLink,
+} from "./site-header-parts.react.tsx";
 import { badgeText, wireSearch } from "./site-header.ts";
 
 export { countName, HeaderTip, SheetGroup } from "./site-header-parts.react.tsx";
-export type { HeaderLink, HeaderGroup, HeaderLogo, HeaderSwitcher, HeaderSection, HeaderExtra, HeaderAccountLink, HeaderAccount, SheetPart, SiteHeaderProps } from "./site-header-parts.react.tsx";
+export type {
+  HeaderLink,
+  HeaderGroup,
+  HeaderLogo,
+  HeaderSwitcher,
+  HeaderSection,
+  HeaderExtra,
+  HeaderAccountLink,
+  HeaderAccount,
+  SheetPart,
+  SiteHeaderProps,
+} from "./site-header-parts.react.tsx";
 
 export type { LinkProps };
 
 export function SiteHeader(props: SiteHeaderProps) {
-  const { logo, switchers = [], sections = [], links = "left", extras = [], theme = true, themePrefKey = THEME_PREF, themeKey, account, signIn, band, translucent, sticky = true, skipTo, renderLink = plainLink, variant, search, trail } = props;
+  const {
+    logo,
+    switchers = [],
+    sections = [],
+    links = "left",
+    extras = [],
+    theme = true,
+    themePrefKey = THEME_PREF,
+    themeKey,
+    account,
+    signIn,
+    band,
+    translucent,
+    sticky = true,
+    skipTo,
+    renderLink = plainLink,
+    variant,
+    search,
+    trail,
+  } = props;
   const letterhead = variant === "letterhead";
   const id = useId();
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -28,8 +73,12 @@ export function SiteHeader(props: SiteHeaderProps) {
     if (!theme || !themeKey) return;
     const want = themeKey.toLowerCase();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() !== want || e.ctrlKey || e.metaKey || e.altKey || singleKeysOff()) return;
-      if ((e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")) return;
+      if (e.key.toLowerCase() !== want || e.ctrlKey || e.metaKey || e.altKey || singleKeysOff())
+        return;
+      if (
+        (e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")
+      )
+        return;
       toggleTheme(themePrefKey);
     };
     document.addEventListener("keydown", onKey);
@@ -46,7 +95,10 @@ export function SiteHeader(props: SiteHeaderProps) {
 
   // In the letterhead an app's own search (an extra with id "search", say a command menu) takes the
   // search slot before the theme, where a site's search form sits, so it never moves between them.
-  const ownSearch = letterhead && !search ? extras.find((e) => e.id === "search" && e.kind !== "button") : undefined;
+  const ownSearch =
+    letterhead && !search
+      ? extras.find((e) => e.id === "search" && e.kind !== "button")
+      : undefined;
   const icons = extras.filter((e) => e.kind !== "button" && e !== ownSearch).slice(0, 2);
   const cta = extras.find((e) => e.kind === "button");
   const signOutLabel = account ? `Sign out (${account.name})` : "Sign out";
@@ -65,9 +117,22 @@ export function SiteHeader(props: SiteHeaderProps) {
       </>
     );
     return e.href ? (
-      <Fragment key={e.id}>{renderLink({ href: e.href, className: "cap-site-header-icon", "aria-label": name, children: inner })}</Fragment>
+      <Fragment key={e.id}>
+        {renderLink({
+          href: e.href,
+          className: "cap-site-header-icon",
+          "aria-label": name,
+          children: inner,
+        })}
+      </Fragment>
     ) : (
-      <button key={e.id} type="button" className="cap-site-header-icon" aria-label={name} onClick={e.onClick}>
+      <button
+        key={e.id}
+        type="button"
+        className="cap-site-header-icon"
+        aria-label={name}
+        onClick={e.onClick}
+      >
         {inner}
       </button>
     );
@@ -78,61 +143,84 @@ export function SiteHeader(props: SiteHeaderProps) {
   // it out rather than offering it twice.
   const shownView = letterhead && trail?.viewSite ? trail.viewSite : undefined;
   const panelGroups = (account?.groups ?? [])
-    .map((g) => ({ ...g, links: shownView ? g.links.filter((l) => l.href !== shownView) : g.links }))
+    .map((g) => ({
+      ...g,
+      links: shownView ? g.links.filter((l) => l.href !== shownView) : g.links,
+    }))
     .filter((g) => g.links.length > 0);
 
-  const accountPanel = account ? (
-    (account.panel ?? (
-      <>
-        <div className="cap-site-header-who">
-          <strong>{account.name}</strong>
-          {account.detail ? <small>{account.detail}</small> : null}
-        </div>
-        {panelGroups.map((g, i) => (
-          <Fragment key={g.label ?? i}>
-            <hr />
-            {g.label ? <div className="cap-site-header-panel-label">{g.label}</div> : null}
-            <ul className="cap-site-header-panel-list">
-              {g.links.map((l) => (
-                <li key={l.label}>
-                  {l.href ? (
-                    renderLink({ href: l.href, "aria-current": l.current ? "page" : undefined, children: l.label })
+  const accountPanel = account
+    ? (account.panel ?? (
+        <>
+          <div className="cap-site-header-who">
+            <strong>{account.name}</strong>
+            {account.detail ? <small>{account.detail}</small> : null}
+          </div>
+          {panelGroups.map((g, i) => (
+            <Fragment key={g.label ?? i}>
+              <hr />
+              {g.label ? <div className="cap-site-header-panel-label">{g.label}</div> : null}
+              <ul className="cap-site-header-panel-list">
+                {g.links.map((l) => (
+                  <li key={l.label}>
+                    {l.href ? (
+                      renderLink({
+                        href: l.href,
+                        "aria-current": l.current ? "page" : undefined,
+                        children: l.label,
+                      })
+                    ) : (
+                      <button type="button" data-panel-close="" onClick={l.onClick}>
+                        {l.label}
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </Fragment>
+          ))}
+          {account.onSignOut || account.signOutHref ? (
+            <>
+              <hr />
+              <ul className="cap-site-header-panel-list">
+                <li>
+                  {account.signOutHref ? (
+                    <a href={account.signOutHref}>Sign out</a>
                   ) : (
-                    <button type="button" data-panel-close="" onClick={l.onClick}>
-                      {l.label}
+                    <button
+                      type="button"
+                      data-panel-close=""
+                      disabled={account.signOutDisabled}
+                      onClick={account.onSignOut}
+                    >
+                      Sign out
                     </button>
                   )}
                 </li>
-              ))}
-            </ul>
-          </Fragment>
-        ))}
-        {account.onSignOut || account.signOutHref ? (
-          <>
-            <hr />
-            <ul className="cap-site-header-panel-list">
-              <li>
-                {account.signOutHref ? (
-                  <a href={account.signOutHref}>Sign out</a>
-                ) : (
-                  <button type="button" data-panel-close="" disabled={account.signOutDisabled} onClick={account.onSignOut}>
-                    Sign out
-                  </button>
-                )}
-              </li>
-            </ul>
-          </>
-        ) : null}
-      </>
-    ))
-  ) : null;
+              </ul>
+            </>
+          ) : null}
+        </>
+      ))
+    : null;
 
-  const sectionLinks = sections.filter((s) => !s.groups && !s.panel && s.href).map((s): HeaderLink => ({ id: s.id, label: s.label, href: s.href!, current: s.current }));
+  const sectionLinks = sections
+    .filter((s) => !s.groups && !s.panel && s.href)
+    .map((s): HeaderLink => ({ id: s.id, label: s.label, href: s.href!, current: s.current }));
   const sheetName = props.sheetTitle ?? `${logo.label} menu`;
 
   return (
     // data-cap-ready: React wires this header itself, so a page-wide enhance() leaves it alone.
-    <header className="cap-site-header" data-cap="site-header" data-cap-ready="" data-variant={variant} data-links={links} data-band={band} data-translucent={translucent ? "" : undefined} data-sticky={sticky ? undefined : "false"}>
+    <header
+      className="cap-site-header"
+      data-cap="site-header"
+      data-cap-ready=""
+      data-variant={variant}
+      data-links={links}
+      data-band={band}
+      data-translucent={translucent ? "" : undefined}
+      data-sticky={sticky ? undefined : "false"}
+    >
       {skipTo ? (
         <a className="cap-site-header-skip" href={skipTo}>
           Skip to content
@@ -141,7 +229,9 @@ export function SiteHeader(props: SiteHeaderProps) {
       {renderLink({
         href: logo.href,
         className: "cap-site-header-logo",
-        "aria-label": letterhead ? [logo.agency, logo.label, logo.app].filter(Boolean).join(" ") : logo.label,
+        "aria-label": letterhead
+          ? [logo.agency, logo.label, logo.app].filter(Boolean).join(" ")
+          : logo.label,
         children: (
           <>
             {logo.mark}
@@ -178,7 +268,11 @@ export function SiteHeader(props: SiteHeaderProps) {
                 button={
                   <>
                     {s.tile ? (
-                      <span className="cap-site-header-switch-tile" data-tile={s.tile} aria-hidden="true" />
+                      <span
+                        className="cap-site-header-switch-tile"
+                        data-tile={s.tile}
+                        aria-hidden="true"
+                      />
                     ) : (
                       s.mark
                     )}
@@ -214,7 +308,12 @@ export function SiteHeader(props: SiteHeaderProps) {
                     {s.panel ?? <GroupList groups={s.groups ?? []} renderLink={renderLink} />}
                   </Disclosure>
                 ) : (
-                  renderLink({ href: s.href ?? "#", className: "cap-site-header-link", "aria-current": s.current ? "page" : undefined, children: s.label })
+                  renderLink({
+                    href: s.href ?? "#",
+                    className: "cap-site-header-link",
+                    "aria-current": s.current ? "page" : undefined,
+                    children: s.label,
+                  })
                 )}
               </li>
             ))}
@@ -228,7 +327,11 @@ export function SiteHeader(props: SiteHeaderProps) {
             {icons.map(extra)}
             {cta ? (
               cta.href ? (
-                renderLink({ href: cta.href, className: "cap-site-header-cta", children: cta.label })
+                renderLink({
+                  href: cta.href,
+                  className: "cap-site-header-cta",
+                  children: cta.label,
+                })
               ) : (
                 <button type="button" className="cap-site-header-cta" onClick={cta.onClick}>
                   {cta.label}
@@ -239,19 +342,37 @@ export function SiteHeader(props: SiteHeaderProps) {
         ) : null}
         {search ? (
           <div ref={searchBox} className="cap-site-header-search" data-cap-part="search">
-            <a className="cap-site-header-icon cap-site-header-search-button" href={search.action} aria-label={search.label} data-cap-part="search-trigger">
+            <a
+              className="cap-site-header-icon cap-site-header-search-button"
+              href={search.action}
+              aria-label={search.label}
+              data-cap-part="search-trigger"
+            >
               {SEARCH_ICON}
               <HeaderTip text={search.label} keys="/" />
             </a>
             <div className="cap-site-header-search-panel" data-align="end">
               <form role="search" aria-label="Site" action={search.action} method="get">
                 {SEARCH_ICON}
-                <input type="search" name={search.name ?? "q"} placeholder={search.label} aria-label={search.label} autoComplete="off" enterKeyHint="search" />
+                <input
+                  type="search"
+                  name={search.name ?? "q"}
+                  placeholder={search.label}
+                  aria-label={search.label}
+                  autoComplete="off"
+                  enterKeyHint="search"
+                />
               </form>
             </div>
           </div>
         ) : null}
-        {theme ? <ThemeButton prefKey={themePrefKey} shortcut={themeKey} className="cap-site-header-icon cap-site-header-theme" /> : null}
+        {theme ? (
+          <ThemeButton
+            prefKey={themePrefKey}
+            shortcut={themeKey}
+            className="cap-site-header-icon cap-site-header-theme"
+          />
+        ) : null}
         <div className="cap-site-header-account">
           {account ? (
             <Disclosure
@@ -262,8 +383,19 @@ export function SiteHeader(props: SiteHeaderProps) {
               align="end"
               button={
                 <>
-                  <span className="cap-site-header-initials" data-initials={account.initials} aria-hidden="true">
-                    {account.avatar && account.avatar !== failedAvatar ? <img className="cap-site-header-avatar-image" src={account.avatar} alt="" onError={() => setFailedAvatar(account.avatar)} /> : null}
+                  <span
+                    className="cap-site-header-initials"
+                    data-initials={account.initials}
+                    aria-hidden="true"
+                  >
+                    {account.avatar && account.avatar !== failedAvatar ? (
+                      <img
+                        className="cap-site-header-avatar-image"
+                        src={account.avatar}
+                        alt=""
+                        onError={() => setFailedAvatar(account.avatar)}
+                      />
+                    ) : null}
                   </span>
                   <HeaderTip text={account.name} />
                 </>
@@ -284,7 +416,16 @@ export function SiteHeader(props: SiteHeaderProps) {
             })
           ) : null}
         </div>
-        <button ref={menuButton} type="button" className="cap-site-header-icon cap-site-header-menu" aria-label="Menu" aria-haspopup="dialog" aria-expanded={sheetOpen} aria-controls={`${id}-sheet`} onClick={() => setSheetOpen(true)}>
+        <button
+          ref={menuButton}
+          type="button"
+          className="cap-site-header-icon cap-site-header-menu"
+          aria-label="Menu"
+          aria-haspopup="dialog"
+          aria-expanded={sheetOpen}
+          aria-controls={`${id}-sheet`}
+          onClick={() => setSheetOpen(true)}
+        >
           {MENU_ICON}
         </button>
       </div>
@@ -293,16 +434,41 @@ export function SiteHeader(props: SiteHeaderProps) {
           <nav aria-label="You are here">
             <ol>
               {trail.crumbs.map((c) => (
-                <li key={c.label}>{c.href && !c.current ? renderLink({ href: c.href, children: c.label }) : <span aria-current={c.current ? "page" : undefined}>{c.label}</span>}</li>
+                <li key={c.label}>
+                  {c.href && !c.current ? (
+                    renderLink({ href: c.href, children: c.label })
+                  ) : (
+                    <span aria-current={c.current ? "page" : undefined}>{c.label}</span>
+                  )}
+                </li>
               ))}
             </ol>
           </nav>
-          {trail.viewSite ? renderLink({ href: trail.viewSite, className: "cap-site-header-view", children: "View site" }) : null}
+          {trail.viewSite
+            ? renderLink({
+                href: trail.viewSite,
+                className: "cap-site-header-view",
+                children: "View site",
+              })
+            : null}
         </div>
       ) : null}
-      <Dialog open={sheetOpen} onOpenChange={(o) => !o && closeSheet()} placement="bottom" id={`${id}-sheet`} className="cap-site-header-sheet" aria-labelledby={`${id}-sheet-title`} initialFocus={sheetTitle}>
+      <Dialog
+        open={sheetOpen}
+        onOpenChange={(o) => !o && closeSheet()}
+        placement="bottom"
+        id={`${id}-sheet`}
+        className="cap-site-header-sheet"
+        aria-labelledby={`${id}-sheet-title`}
+        initialFocus={sheetTitle}
+      >
         <DialogHeader>
-          <h2 id={`${id}-sheet-title`} className="cap-dialog-title cap-site-header-sheet-title" ref={sheetTitle} tabIndex={-1}>
+          <h2
+            id={`${id}-sheet-title`}
+            className="cap-dialog-title cap-site-header-sheet-title"
+            ref={sheetTitle}
+            tabIndex={-1}
+          >
             {sheetName}
           </h2>
         </DialogHeader>
@@ -310,16 +476,44 @@ export function SiteHeader(props: SiteHeaderProps) {
           <nav aria-labelledby={`${id}-sheet-title`}>
             {part(props.sheetStart, closeSheet)}
             {switchers.map((s) =>
-              s.groups.map((g, i) => <SheetGroup key={`${s.id}-${i}`} label={g.label ?? s.sheetLabel ?? s.label} links={g.links} renderLink={renderLink} onClose={closeSheet} />),
+              s.groups.map((g, i) => (
+                <SheetGroup
+                  key={`${s.id}-${i}`}
+                  label={g.label ?? s.sheetLabel ?? s.label}
+                  links={g.links}
+                  renderLink={renderLink}
+                  onClose={closeSheet}
+                />
+              )),
             )}
             {sections
               .filter((s) => s.groups)
               .map((s) => (
-                <SheetGroup key={s.id} label={s.label} links={(s.groups ?? []).flatMap((g) => g.links)} renderLink={renderLink} onClose={closeSheet} />
+                <SheetGroup
+                  key={s.id}
+                  label={s.label}
+                  links={(s.groups ?? []).flatMap((g) => g.links)}
+                  renderLink={renderLink}
+                  onClose={closeSheet}
+                />
               ))}
-            {sectionLinks.length > 0 ? <SheetGroup label={sections.some((s) => s.groups) ? "More" : "Pages"} links={sectionLinks} renderLink={renderLink} onClose={closeSheet} /> : null}
+            {sectionLinks.length > 0 ? (
+              <SheetGroup
+                label={sections.some((s) => s.groups) ? "More" : "Pages"}
+                links={sectionLinks}
+                renderLink={renderLink}
+                onClose={closeSheet}
+              />
+            ) : null}
             {part(props.sheetEnd, closeSheet)}
-            {cta?.href ? renderLink({ href: cta.href, className: "cap-site-header-sheet-cta", onClick: closeSheet, children: cta.label }) : null}
+            {cta?.href
+              ? renderLink({
+                  href: cta.href,
+                  className: "cap-site-header-sheet-cta",
+                  onClick: closeSheet,
+                  children: cta.label,
+                })
+              : null}
           </nav>
         </DialogBody>
         {account || signIn ? (
@@ -337,7 +531,12 @@ export function SiteHeader(props: SiteHeaderProps) {
                   return (
                     <li key={l.label}>
                       {l.href ? (
-                        renderLink({ href: l.href, "aria-current": l.current ? "page" : undefined, onClick: closeSheet, children: inner })
+                        renderLink({
+                          href: l.href,
+                          "aria-current": l.current ? "page" : undefined,
+                          onClick: closeSheet,
+                          children: inner,
+                        })
                       ) : (
                         <button type="button" onClick={() => (closeSheet(), l.onClick?.())}>
                           {inner}
@@ -354,7 +553,11 @@ export function SiteHeader(props: SiteHeaderProps) {
                       <span className="cap-site-header-sheet-name">{signOutLabel}</span>
                     </a>
                   ) : (
-                    <button type="button" disabled={account.signOutDisabled} onClick={() => (closeSheet(), account.onSignOut?.())}>
+                    <button
+                      type="button"
+                      disabled={account.signOutDisabled}
+                      onClick={() => (closeSheet(), account.onSignOut?.())}
+                    >
                       <span className="cap-site-header-sheet-icon" aria-hidden="true" />
                       <span className="cap-site-header-sheet-name">{signOutLabel}</span>
                     </button>
@@ -369,7 +572,9 @@ export function SiteHeader(props: SiteHeaderProps) {
                     children: (
                       <>
                         <span className="cap-site-header-sheet-icon" aria-hidden="true" />
-                        <span className="cap-site-header-sheet-name">{signIn.label ?? "Sign in"}</span>
+                        <span className="cap-site-header-sheet-name">
+                          {signIn.label ?? "Sign in"}
+                        </span>
                       </>
                     ),
                   })}
@@ -386,7 +591,15 @@ export function SiteHeader(props: SiteHeaderProps) {
 // The bottom bar of a signed-in area on a phone: up to five of its top pages, no More (the menu
 // button opens the full list). Shown under 768px only. Put it last in the page, so it sticks to the
 // window's bottom edge.
-export function SiteTabs({ tabs, label = "Sections", renderLink = plainLink }: { tabs: HeaderLink[]; label?: string; renderLink?: (p: LinkProps) => ReactNode }) {
+export function SiteTabs({
+  tabs,
+  label = "Sections",
+  renderLink = plainLink,
+}: {
+  tabs: HeaderLink[];
+  label?: string;
+  renderLink?: (p: LinkProps) => ReactNode;
+}) {
   return (
     <nav className="cap-site-tabs" aria-label={label}>
       {tabs.slice(0, 5).map((t) => (

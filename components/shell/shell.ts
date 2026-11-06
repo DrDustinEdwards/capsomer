@@ -32,7 +32,8 @@ export function setRail(shell: HTMLElement, collapsed: boolean, remember = true)
     const label = toggle.querySelector(".cap-shell-label");
     if (label) label.textContent = collapsed ? "Expand menu" : "Collapse menu";
   }
-  if (remember) writePref(shell.dataset.capPref ?? DEFAULT_PREF, collapsed ? "collapsed" : "expanded");
+  if (remember)
+    writePref(shell.dataset.capPref ?? DEFAULT_PREF, collapsed ? "collapsed" : "expanded");
 }
 
 export function toggleRail(shell: HTMLElement): void {
@@ -61,14 +62,18 @@ export function closeMore(shell: HTMLElement): void {
 // before first paint beside applyStoredTheme().
 export type Density = "compact" | "comfortable";
 export const DENSITY_PREF = "cap-density";
-const isDensity = (v: string | null | undefined): v is Density => v === "compact" || v === "comfortable";
+const isDensity = (v: string | null | undefined): v is Density =>
+  v === "compact" || v === "comfortable";
 
 export function readDensity(key = DENSITY_PREF): Density | null {
   const v = readPref(key);
   return isDensity(v) ? v : null;
 }
 
-export function applyDensity(choice: Density, opts: { key?: string; remember?: boolean } = {}): void {
+export function applyDensity(
+  choice: Density,
+  opts: { key?: string; remember?: boolean } = {},
+): void {
   document.documentElement.setAttribute("data-density", choice);
   if (opts.remember !== false) writePref(opts.key ?? DENSITY_PREF, choice);
   document.dispatchEvent(new CustomEvent("cap-density", { detail: { choice } }));
@@ -84,7 +89,9 @@ export function applyStoredDensity(key = DENSITY_PREF): Density | null {
 // function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const shell of root.querySelectorAll<HTMLElement>("[data-cap='shell']:not([data-cap-ready])")) {
+  for (const shell of root.querySelectorAll<HTMLElement>(
+    "[data-cap='shell']:not([data-cap-ready])",
+  )) {
     shell.dataset.capReady = "";
     const pref = readPref(shell.dataset.capPref ?? DEFAULT_PREF);
     if (pref) setRail(shell, pref === "collapsed", false);
@@ -105,8 +112,12 @@ export function enhance(root: ParentNode = document): () => void {
     // Esc hides the label a collapsed rail is showing, until the pointer or focus moves on.
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape" || shell.dataset.rail !== "collapsed") return;
-      const entry = (document.activeElement as Element | null)?.closest<HTMLElement>(".cap-shell-rail a, .cap-shell-toggle, .cap-shell-railbtn");
-      const hovered = shell.querySelector<HTMLElement>(".cap-shell-rail a:hover, .cap-shell-toggle:hover, .cap-shell-railbtn:hover");
+      const entry = (document.activeElement as Element | null)?.closest<HTMLElement>(
+        ".cap-shell-rail a, .cap-shell-toggle, .cap-shell-railbtn",
+      );
+      const hovered = shell.querySelector<HTMLElement>(
+        ".cap-shell-rail a:hover, .cap-shell-toggle:hover, .cap-shell-railbtn:hover",
+      );
       for (const el of [entry, hovered]) if (el && shell.contains(el)) el.dataset.tip = "hidden";
     };
     const reset = (e: Event) => {

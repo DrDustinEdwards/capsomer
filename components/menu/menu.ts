@@ -6,7 +6,8 @@
 const READY = "data-cap-ready";
 
 // The items the arrow keys move through: the submit buttons that are not disabled, and link items.
-const buttonsOf = (d: HTMLElement) => Array.from(d.querySelectorAll<HTMLElement>(".cap-menu > :is(button:not(:disabled), a[href])"));
+const buttonsOf = (d: HTMLElement) =>
+  Array.from(d.querySelectorAll<HTMLElement>(".cap-menu > :is(button:not(:disabled), a[href])"));
 
 // Moves to the next or previous button, wrapping; `from` is the focused one, or -1.
 export function stepIndex(count: number, from: number, dir: 1 | -1): number {
@@ -17,7 +18,11 @@ export function stepIndex(count: number, from: number, dir: 1 | -1): number {
 
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const d of Array.from(root.querySelectorAll<HTMLDetailsElement>("details[data-cap='menu-form']:not([data-cap-ready])"))) {
+  for (const d of Array.from(
+    root.querySelectorAll<HTMLDetailsElement>(
+      "details[data-cap='menu-form']:not([data-cap-ready])",
+    ),
+  )) {
     d.setAttribute(READY, "");
     const summary = d.querySelector<HTMLElement>(":scope > summary");
     const close = (focus: boolean) => {

@@ -4,7 +4,13 @@
 // focused keeps the stop. No framework; the markdown editor's toolbar uses it too.
 
 // Which item an arrow, Home or End moves to in a roving group (APG toolbar and menu). It wraps.
-export function rovingIndex(key: string, at: number, count: number, axis: "horizontal" | "vertical" = "horizontal", rtl = false): number | null {
+export function rovingIndex(
+  key: string,
+  at: number,
+  count: number,
+  axis: "horizontal" | "vertical" = "horizontal",
+  rtl = false,
+): number | null {
   if (count <= 0) return null;
   const next = axis === "vertical" ? "ArrowDown" : rtl ? "ArrowLeft" : "ArrowRight";
   const prev = axis === "vertical" ? "ArrowUp" : rtl ? "ArrowRight" : "ArrowLeft";
@@ -38,7 +44,13 @@ export function attachToolbar(bar: HTMLElement, items = TOOLBAR_ITEMS): () => vo
     const at = now.indexOf(e.target as HTMLElement);
     if (at < 0) return;
     const axis = bar.getAttribute("aria-orientation") === "vertical" ? "vertical" : "horizontal";
-    const next = rovingIndex(e.key, at, now.length, axis, getComputedStyle(bar).direction === "rtl");
+    const next = rovingIndex(
+      e.key,
+      at,
+      now.length,
+      axis,
+      getComputedStyle(bar).direction === "rtl",
+    );
     if (next === null) return;
     e.preventDefault();
     now[next]?.focus();
@@ -55,7 +67,9 @@ export function attachToolbar(bar: HTMLElement, items = TOOLBAR_ITEMS): () => vo
 // detaches them all.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
-  for (const bar of root.querySelectorAll<HTMLElement>("[data-cap='toolbar']:not([data-cap-ready])")) {
+  for (const bar of root.querySelectorAll<HTMLElement>(
+    "[data-cap='toolbar']:not([data-cap-ready])",
+  )) {
     bar.dataset.capReady = "";
     const detach = attachToolbar(bar);
     undo.push(() => {

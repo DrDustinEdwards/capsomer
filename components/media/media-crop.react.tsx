@@ -9,7 +9,15 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Alert } from "../banner/banner.react.tsx";
 import { Button } from "../button/button.react.tsx";
-import { Dialog, DialogBody, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
+import {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../dialog/dialog.react.tsx";
 import { Field } from "../field/field.react.tsx";
 import { Select } from "../select/select.react.tsx";
 import { CROP_SHAPES, centered, cropName, fitRect, ratioOf, type CropRect } from "./media-crop.ts";
@@ -34,14 +42,29 @@ export interface MediaCropProps {
   onClose: () => void;
 }
 
-export default function MediaCrop({ name, src, asNew, inPlace, keepsSize, onSave, open, opener, onClose }: MediaCropProps) {
+export default function MediaCrop({
+  name,
+  src,
+  asNew,
+  inPlace,
+  keepsSize,
+  onSave,
+  open,
+  opener,
+  onClose,
+}: MediaCropProps) {
   const [image, setImage] = useState<{ bitmap: ImageBitmap; type: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [shape, setShape] = useState("free");
   const [rect, setRect] = useState<CropRect>({ x: 0, y: 0, w: 1, h: 1 });
   const [saving, setSaving] = useState<"new" | "replace" | null>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const drag = useRef<{ mode: "draw" | "move"; startX: number; startY: number; from: CropRect } | null>(null);
+  const drag = useRef<{
+    mode: "draw" | "move";
+    startX: number;
+    startY: number;
+    from: CropRect;
+  } | null>(null);
 
   const width = image?.bitmap.width ?? 1;
   const height = image?.bitmap.height ?? 1;
@@ -99,7 +122,10 @@ export default function MediaCrop({ name, src, asNew, inPlace, keepsSize, onSave
 
   const at = (event: ReactPointerEvent<HTMLCanvasElement>) => {
     const box = event.currentTarget.getBoundingClientRect();
-    return { x: ((event.clientX - box.left) / box.width) * width, y: ((event.clientY - box.top) / box.height) * height };
+    return {
+      x: ((event.clientX - box.left) / box.width) * width,
+      y: ((event.clientY - box.top) / box.height) * height,
+    };
   };
 
   const cut = async (): Promise<File> => {
@@ -107,10 +133,14 @@ export default function MediaCrop({ name, src, asNew, inPlace, keepsSize, onSave
     const out = document.createElement("canvas");
     out.width = rect.w;
     out.height = rect.h;
-    out.getContext("2d")?.drawImage(image.bitmap, rect.x, rect.y, rect.w, rect.h, 0, 0, rect.w, rect.h);
+    out
+      .getContext("2d")
+      ?.drawImage(image.bitmap, rect.x, rect.y, rect.w, rect.h, 0, 0, rect.w, rect.h);
     const blob = await new Promise<Blob | null>((resolve) => out.toBlob(resolve, image.type, 0.92));
     if (!blob) throw new Error("The browser could not write the crop.");
-    return new File([blob], cropName(name, blob.type || image.type), { type: blob.type || image.type });
+    return new File([blob], cropName(name, blob.type || image.type), {
+      type: blob.type || image.type,
+    });
   };
 
   const save = async (how: "new" | "replace") => {
@@ -149,14 +179,30 @@ export default function MediaCrop({ name, src, asNew, inPlace, keepsSize, onSave
 
   const notReady = !image ? "The picture is not open yet." : undefined;
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && close()} placement="center" size="lg" returnTo={opener} aria-labelledby="cap-crop-title" className="cap-media-crop">
+    <Dialog
+      open={open}
+      onOpenChange={(o) => !o && close()}
+      placement="center"
+      size="lg"
+      returnTo={opener}
+      aria-labelledby="cap-crop-title"
+      className="cap-media-crop"
+    >
       <DialogHeader divider>
         <DialogTitle id="cap-crop-title">Crop {name}</DialogTitle>
-        <DialogDescription>Drag on the picture to choose what to keep, or set it in pixels below. The crop is cut from the full-size file.</DialogDescription>
+        <DialogDescription>
+          Drag on the picture to choose what to keep, or set it in pixels below. The crop is cut
+          from the full-size file.
+        </DialogDescription>
       </DialogHeader>
       <DialogBody>
         <div className="cap-media-crop-body">
-          {keepsSize ? <p className="cap-media-note">This site takes a replacement only at the original's size, so a crop is saved as a new file and this one stays as it is.</p> : null}
+          {keepsSize ? (
+            <p className="cap-media-note">
+              This site takes a replacement only at the original's size, so a crop is saved as a new
+              file and this one stays as it is.
+            </p>
+          ) : null}
           {error ? <Alert tone="crit">{error}</Alert> : null}
           {!image && !error ? <p className="cap-media-note">Opening the picture…</p> : null}
           {image ? (
@@ -169,15 +215,45 @@ export default function MediaCrop({ name, src, asNew, inPlace, keepsSize, onSave
                 onPointerDown={(event) => {
                   event.currentTarget.setPointerCapture(event.pointerId);
                   const p = at(event);
-                  const inside = p.x >= rect.x && p.x <= rect.x + rect.w && p.y >= rect.y && p.y <= rect.y + rect.h;
-                  drag.current = { mode: inside ? "move" : "draw", startX: p.x, startY: p.y, from: rect };
+                  const inside =
+                    p.x >= rect.x &&
+                    p.x <= rect.x + rect.w &&
+                    p.y >= rect.y &&
+                    p.y <= rect.y + rect.h;
+                  drag.current = {
+                    mode: inside ? "move" : "draw",
+                    startX: p.x,
+                    startY: p.y,
+                    from: rect,
+                  };
                 }}
                 onPointerMove={(event) => {
                   const d = drag.current;
                   if (!d) return;
                   const p = at(event);
-                  if (d.mode === "move") setRect(fitRect({ ...d.from, x: d.from.x + p.x - d.startX, y: d.from.y + p.y - d.startY }, width, height, null));
-                  else setRect(fitRect({ x: Math.min(d.startX, p.x), y: Math.min(d.startY, p.y), w: Math.abs(p.x - d.startX), h: Math.abs(p.y - d.startY) }, width, height, ratio));
+                  if (d.mode === "move")
+                    setRect(
+                      fitRect(
+                        { ...d.from, x: d.from.x + p.x - d.startX, y: d.from.y + p.y - d.startY },
+                        width,
+                        height,
+                        null,
+                      ),
+                    );
+                  else
+                    setRect(
+                      fitRect(
+                        {
+                          x: Math.min(d.startX, p.x),
+                          y: Math.min(d.startY, p.y),
+                          w: Math.abs(p.x - d.startX),
+                          h: Math.abs(p.y - d.startY),
+                        },
+                        width,
+                        height,
+                        ratio,
+                      ),
+                    );
                 }}
                 onPointerUp={() => {
                   drag.current = null;
@@ -200,7 +276,12 @@ export default function MediaCrop({ name, src, asNew, inPlace, keepsSize, onSave
                 {field("Width (px)", "w", width)}
                 {field("Height (px)", "h", height)}
               </div>
-              {inPlace ? <p className="cap-media-note">Replace this file keeps its address, so every page that shows it shows the crop, and the original is gone from the site.</p> : null}
+              {inPlace ? (
+                <p className="cap-media-note">
+                  Replace this file keeps its address, so every page that shows it shows the crop,
+                  and the original is gone from the site.
+                </p>
+              ) : null}
             </>
           ) : null}
         </div>
@@ -209,12 +290,22 @@ export default function MediaCrop({ name, src, asNew, inPlace, keepsSize, onSave
         <DialogClose part="cancel">Cancel</DialogClose>
         <span className="cap-media-crop-actions">
           {inPlace ? (
-            <Button variant="danger" pending={saving === "replace"} disabledReason={notReady} onClick={() => void save("replace")}>
+            <Button
+              variant="danger"
+              pending={saving === "replace"}
+              disabledReason={notReady}
+              onClick={() => void save("replace")}
+            >
               Replace this file
             </Button>
           ) : null}
           {asNew ? (
-            <Button variant="primary" pending={saving === "new"} disabledReason={notReady} onClick={() => void save("new")}>
+            <Button
+              variant="primary"
+              pending={saving === "new"}
+              disabledReason={notReady}
+              onClick={() => void save("new")}
+            >
               Save as a new file
             </Button>
           ) : null}

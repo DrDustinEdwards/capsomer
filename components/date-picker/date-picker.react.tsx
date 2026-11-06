@@ -4,8 +4,23 @@ import { enhance } from "./date-picker.ts";
 
 const CALENDAR = (
   <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-    <rect x="2.5" y="3.5" width="11" height="10" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <rect
+      x="2.5"
+      y="3.5"
+      width="11"
+      height="10"
+      rx="1.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M2.5 6.5h11M5.5 2v3M10.5 2v3"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
@@ -14,7 +29,10 @@ const CALENDAR = (
 // with no script the input takes the date as typed.
 export function DatePicker(
   props: Pick<FieldProps, "label" | "help" | "error" | "announce" | "required"> &
-    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "min" | "max"> & { min?: string; max?: string },
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "style" | "min" | "max"> & {
+      min?: string;
+      max?: string;
+    },
 ) {
   const { label, help, error, announce, required, min, max, className: _c, ...rest } = props;
   const ref = useRef<HTMLDivElement>(null);
@@ -24,9 +42,26 @@ export function DatePicker(
       {(p) => (
         <div className="cap-date-picker" data-cap="date-picker" ref={ref}>
           <div className="cap-input-group">
-            <input {...rest} {...p} className="cap-input" pattern="\d{4}-\d{1,2}-\d{1,2}" autoComplete="off" data-min={min} data-max={max} />
+            <input
+              {...rest}
+              {...p}
+              className="cap-input"
+              pattern="\d{4}-\d{1,2}-\d{1,2}"
+              autoComplete="off"
+              data-min={min}
+              data-max={max}
+            />
             <InputGroupAddon align="inline-end">
-              <button type="button" className="cap-btn" data-size="xs" data-variant="quiet" data-icon-only data-cap-part="open" aria-label="Choose date" hidden>
+              <button
+                type="button"
+                className="cap-btn"
+                data-size="xs"
+                data-variant="quiet"
+                data-icon-only
+                data-cap-part="open"
+                aria-label="Choose date"
+                hidden
+              >
                 {CALENDAR}
               </button>
             </InputGroupAddon>

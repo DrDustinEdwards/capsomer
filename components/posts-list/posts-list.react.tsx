@@ -1,16 +1,66 @@
-import { useEffect, useId, useMemo, useRef, useState, type FocusEvent, type FormEvent, type KeyboardEvent, useSyncExternalStore } from "react";
-import type { ContentLabels, IntentResult, PostRow, PostsData, ScheduledUpdateView, SubmitIntent } from "../content/content.ts";
-import { ContentBulkBar, PlainForm, useIntents, type FormComponent } from "../content/content.react.tsx";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type FocusEvent,
+  type FormEvent,
+  type KeyboardEvent,
+  useSyncExternalStore,
+} from "react";
+import type {
+  ContentLabels,
+  IntentResult,
+  PostRow,
+  PostsData,
+  ScheduledUpdateView,
+  SubmitIntent,
+} from "../content/content.ts";
+import {
+  ContentBulkBar,
+  PlainForm,
+  useIntents,
+  type FormComponent,
+} from "../content/content.react.tsx";
 import { Empty } from "../empty/empty.react.tsx";
 import { FormMenu } from "../menu/menu.react.tsx";
 import { Pill, Status } from "../status/status.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
 import { Time } from "../time/time.react.tsx";
-import { Dialog, DialogBody, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../dialog/dialog.react.tsx";
+import {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../dialog/dialog.react.tsx";
 import { DraftCompare, DraftPatch } from "../draft-compare/draft-compare.react.tsx";
 import { PageHead } from "../page-head/page-head.react.tsx";
 import { copyText } from "../media/media-actions.ts";
-import { NO_FILTERS, SORTS, STATUS_TABS, authorLine, contentStatus, countLine, emptyWords, filtered, inDays, isoFromLocal, localInputValue, nounsOf, postActions, postsHref, rowActions, rowStatus, trashLine, withFilter, type RowAction } from "./posts-list.ts";
+import {
+  NO_FILTERS,
+  SORTS,
+  STATUS_TABS,
+  authorLine,
+  contentStatus,
+  countLine,
+  emptyWords,
+  filtered,
+  inDays,
+  isoFromLocal,
+  localInputValue,
+  nounsOf,
+  postActions,
+  postsHref,
+  rowActions,
+  rowStatus,
+  trashLine,
+  withFilter,
+  type RowAction,
+} from "./posts-list.ts";
 import type { ConfirmRequest } from "../content/content.ts";
 
 // For useSyncExternalStore's hydration flag: nothing to subscribe to.
@@ -39,14 +89,29 @@ export interface PostsListProps {
   now?: number;
 }
 
-function HeadCheck({ checked, mixed, label, onChange }: { checked: boolean; mixed: boolean; label: string; onChange: (on: boolean) => void }) {
+function HeadCheck({
+  checked,
+  mixed,
+  label,
+  onChange,
+}: {
+  checked: boolean;
+  mixed: boolean;
+  label: string;
+  onChange: (on: boolean) => void;
+}) {
   const ref = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (ref.current) ref.current.indeterminate = mixed;
   }, [mixed]);
   return (
     <label className="cap-check">
-      <input type="checkbox" ref={ref} checked={checked} onChange={(e) => onChange(e.target.checked)} />
+      <input
+        type="checkbox"
+        ref={ref}
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+      />
       <span className="cap-sr-only">{label}</span>
     </label>
   );
@@ -65,7 +130,15 @@ function RescheduleField({ id, at }: { id: string; at: string }) {
         <label className="cap-field-label" htmlFor={id}>
           New time, UTC
         </label>
-        <input className="cap-input" id={id} name="publishAt" defaultValue={at.replace(/\.\d{3}Z$/, "Z")} autoComplete="off" spellCheck={false} aria-describedby={`${id}-help`} />
+        <input
+          className="cap-input"
+          id={id}
+          name="publishAt"
+          defaultValue={at.replace(/\.\d{3}Z$/, "Z")}
+          autoComplete="off"
+          spellCheck={false}
+          aria-describedby={`${id}-help`}
+        />
         <p className="cap-field-description" id={`${id}-help`}>
           As 2030-01-01T15:00:00Z
         </p>
@@ -77,7 +150,15 @@ function RescheduleField({ id, at }: { id: string; at: string }) {
       <label className="cap-field-label" htmlFor={id}>
         New time
       </label>
-      <input className="cap-input" type="datetime-local" id={id} value={local} onChange={(e) => setLocal(e.target.value)} aria-describedby={`${id}-help`} required />
+      <input
+        className="cap-input"
+        type="datetime-local"
+        id={id}
+        value={local}
+        onChange={(e) => setLocal(e.target.value)}
+        aria-describedby={`${id}-help`}
+        required
+      />
       <input type="hidden" name="publishAt" value={isoFromLocal(local)} />
       <p className="cap-field-description" id={`${id}-help`}>
         In your time zone, {Intl.DateTimeFormat().resolvedOptions().timeZone}.
@@ -96,10 +177,25 @@ interface Moving {
 
 // The small dialog Reschedule… opens: the time field and Reschedule. Its form posts inside the
 // list (or the update page), so the script path runs it like any other intent.
-function RescheduleDialog({ moving, action, Form, onClose }: { moving: Moving | null; action: string; Form: FormComponent; onClose: () => void }) {
+function RescheduleDialog({
+  moving,
+  action,
+  Form,
+  onClose,
+}: {
+  moving: Moving | null;
+  action: string;
+  Form: FormComponent;
+  onClose: () => void;
+}) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   return (
-    <Dialog open={!!moving} onOpenChange={(open) => (open ? undefined : onClose())} size="sm" described>
+    <Dialog
+      open={!!moving}
+      onOpenChange={(open) => (open ? undefined : onClose())}
+      size="sm"
+      described
+    >
       {moving ? (
         <>
           <DialogHeader>
@@ -108,7 +204,12 @@ function RescheduleDialog({ moving, action, Form, onClose }: { moving: Moving | 
               It goes out <Time at={moving.at} format="exact" />. Choose the new time.
             </DialogDescription>
           </DialogHeader>
-          <Form method="post" action={action} className="cap-posts-reschedule" onSubmit={() => onClose()}>
+          <Form
+            method="post"
+            action={action}
+            className="cap-posts-reschedule"
+            onSubmit={() => onClose()}
+          >
             <input type="hidden" name="intent" value="reschedule" />
             <input type="hidden" name="ids" value={moving.id} />
             {moving.version ? <input type="hidden" name="versions" value={moving.version} /> : null}
@@ -125,7 +226,7 @@ function RescheduleDialog({ moving, action, Form, onClose }: { moving: Moving | 
         </>
       ) : null}
     </Dialog>
-  )
+  );
 }
 
 // What Rename… is moving: one post, its name, its id and the address it has now (null for a post
@@ -142,26 +243,63 @@ const SLUG = "[A-Za-z0-9][A-Za-z0-9._\\-]{0,199}";
 
 // The small dialog Rename… opens (site-api v0.17.0): the new slug, starting at the old one, and
 // what happens to the old address. It posts `rename` with `newId` inside the list, as Reschedule does.
-function RenameDialog({ renaming, action, Form, onClose }: { renaming: Renaming | null; action: string; Form: FormComponent; onClose: () => void }) {
+function RenameDialog({
+  renaming,
+  action,
+  Form,
+  onClose,
+}: {
+  renaming: Renaming | null;
+  action: string;
+  Form: FormComponent;
+  onClose: () => void;
+}) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   return (
-    <Dialog open={!!renaming} onOpenChange={(open) => (open ? undefined : onClose())} size="sm" described>
+    <Dialog
+      open={!!renaming}
+      onOpenChange={(open) => (open ? undefined : onClose())}
+      size="sm"
+      described
+    >
       {renaming ? (
         <>
           <DialogHeader>
             <DialogTitle>Rename {renaming.name}</DialogTitle>
-            <DialogDescription>{renaming.path ? `Its address is ${renaming.path} now. The old address will redirect to the new one, so links to it keep working.` : "It has never been published, so no address changes."}</DialogDescription>
+            <DialogDescription>
+              {renaming.path
+                ? `Its address is ${renaming.path} now. The old address will redirect to the new one, so links to it keep working.`
+                : "It has never been published, so no address changes."}
+            </DialogDescription>
           </DialogHeader>
-          <Form method="post" action={action} className="cap-posts-rename" onSubmit={() => onClose()}>
+          <Form
+            method="post"
+            action={action}
+            className="cap-posts-rename"
+            onSubmit={() => onClose()}
+          >
             <input type="hidden" name="intent" value="rename" />
             <input type="hidden" name="ids" value={renaming.id} />
-            {renaming.version ? <input type="hidden" name="versions" value={renaming.version} /> : null}
+            {renaming.version ? (
+              <input type="hidden" name="versions" value={renaming.version} />
+            ) : null}
             <DialogBody>
               <div className="cap-field">
                 <label className="cap-field-label" htmlFor={`${uid}-slug`}>
                   New slug
                 </label>
-                <input className="cap-input" id={`${uid}-slug`} name="newId" defaultValue={renaming.id} pattern={SLUG} maxLength={200} required autoComplete="off" spellCheck={false} aria-describedby={`${uid}-slug-help`} />
+                <input
+                  className="cap-input"
+                  id={`${uid}-slug`}
+                  name="newId"
+                  defaultValue={renaming.id}
+                  pattern={SLUG}
+                  maxLength={200}
+                  required
+                  autoComplete="off"
+                  spellCheck={false}
+                  aria-describedby={`${uid}-slug-help`}
+                />
                 <p className="cap-field-description" id={`${uid}-slug-help`}>
                   Letters, digits, dots, dashes and underscores, starting with a letter or a digit.
                 </p>
@@ -183,7 +321,17 @@ function RenameDialog({ renaming, action, Form, onClose }: { renaming: Renaming 
 // The preview link the last post made (`preview-link`, site-api v0.17.0): its address in a field
 // that selects whole, Copy with script, and when it stops working in the reader's own zone. A status
 // region, so the new link and a copy are said where the person is looking.
-function PreviewLinkBox({ link, name, noun, scripted }: { link: { url: string; expiresAt: string } | undefined; name?: string; noun: string; scripted: boolean }) {
+function PreviewLinkBox({
+  link,
+  name,
+  noun,
+  scripted,
+}: {
+  link: { url: string; expiresAt: string } | undefined;
+  name?: string;
+  noun: string;
+  scripted: boolean;
+}) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const [copied, setCopied] = useState("");
   const [copiedFor, setCopiedFor] = useState(link?.url);
@@ -199,15 +347,31 @@ function PreviewLinkBox({ link, name, noun, scripted }: { link: { url: string; e
             {name ? `Preview link for ${name}` : "Preview link"}
           </label>
           <div className="cap-posts-preview-row">
-            <input className="cap-input" id={`${uid}-url`} value={link.url} readOnly onFocus={(e) => e.currentTarget.select()} aria-describedby={`${uid}-until`} />
+            <input
+              className="cap-input"
+              id={`${uid}-url`}
+              value={link.url}
+              readOnly
+              onFocus={(e) => e.currentTarget.select()}
+              aria-describedby={`${uid}-until`}
+            />
             {scripted ? (
-              <button type="button" className="cap-btn" onClick={() => void copyText(link.url).then((ok) => setCopied(ok ? "Copied." : "Could not copy. Select the address and copy it."))}>
+              <button
+                type="button"
+                className="cap-btn"
+                onClick={() =>
+                  void copyText(link.url).then((ok) =>
+                    setCopied(ok ? "Copied." : "Could not copy. Select the address and copy it."),
+                  )
+                }
+              >
                 Copy
               </button>
             ) : null}
           </div>
           <p className="cap-field-description" id={`${uid}-until`}>
-            Anyone with the link can read the {noun} until <Time at={link.expiresAt} format="exact" />. {copied}
+            Anyone with the link can read the {noun} until{" "}
+            <Time at={link.expiresAt} format="exact" />. {copied}
           </p>
         </>
       ) : null}
@@ -216,7 +380,12 @@ function PreviewLinkBox({ link, name, noun, scripted }: { link: { url: string; e
 }
 
 // Asks before canceling an update: it has no Undo.
-const cancelRequest = (id: string, name: string, noun: string, version?: string): ConfirmRequest => ({
+const cancelRequest = (
+  id: string,
+  name: string,
+  noun: string,
+  version?: string,
+): ConfirmRequest => ({
   intent: "cancel-schedule",
   title: `Cancel the scheduled update to ${name}?`,
   lead: `The live ${noun} stays as it is and the update's changes are dropped. This cannot be undone.`,
@@ -230,13 +399,25 @@ const cancelRequest = (id: string, name: string, noun: string, version?: string)
 // row menus, the bulk bar with each item's outcome, Undo, and the confirmation for what cannot be
 // undone. Every action is a form post, so it all works with no script; `submit` adds the in-place
 // path. The site and the person decide what is offered (data.offers, data.can).
-export function PostsList({ data, action, Form = PlainForm, submit, result = null, labels, now }: PostsListProps) {
+export function PostsList({
+  data,
+  action,
+  Form = PlainForm,
+  submit,
+  result = null,
+  labels,
+  now,
+}: PostsListProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const formId = `${uid}-bulk`;
   const { noun, plural } = nounsOf(labels);
   const title = plural.charAt(0).toUpperCase() + plural.slice(1);
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    noSubscribe,
+    () => true,
+    () => false,
+  );
   // The time the list was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
   const clock = now ?? drawnAt;
@@ -244,7 +425,9 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const { rows, query, page, offers, can } = data;
   const { bulk, withheld } = postActions(data, labels);
   const inTrash = !!(offers.trash && query.trashed);
-  const authors = offers.filters?.includes("author") ? Array.from(new Set([...(offers.authors ?? []), ...(query.author ? [query.author] : [])])) : [];
+  const authors = offers.filters?.includes("author")
+    ? Array.from(new Set([...(offers.authors ?? []), ...(query.author ? [query.author] : [])]))
+    : [];
   const dates = !!offers.filters?.includes("published");
   const selectable = bulk.length > 0;
   const names = useMemo(() => new Map(rows.map((r) => [r.id, r.title || "Untitled"])), [rows]);
@@ -259,7 +442,15 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
     setSelected((s) => s.filter((id) => names.has(id)));
   }
   const href = (q: typeof query) => postsHref(action, q);
-  const intents = useIntents({ action, Form, submit, result, names, cancelHref: href(query), onDone: () => setSelected([]) });
+  const intents = useIntents({
+    action,
+    Form,
+    submit,
+    result,
+    names,
+    cancelHref: href(query),
+    onDone: () => setSelected([]),
+  });
   const [moving, setMoving] = useState<Moving | null>(null);
   const [renaming, setRenaming] = useState<Renaming | null>(null);
   // Where focus goes when a post leaves the list under it (Move to Trash, Restore, Delete for good,
@@ -269,10 +460,13 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const placeFocus = useRef<number | null>(null);
   const onFocus = (e: FocusEvent<HTMLElement>) => {
     const tr = e.target.closest("tbody tr");
-    lastRow.current = tr?.parentElement ? Array.prototype.indexOf.call(tr.parentElement.children, tr) : -1;
+    lastRow.current = tr?.parentElement
+      ? Array.prototype.indexOf.call(tr.parentElement.children, tr)
+      : -1;
   };
   const onSubmit = (e: FormEvent<HTMLElement>) => {
-    if (submit && e.target instanceof HTMLFormElement && e.target.method.toLowerCase() === "post") placeFocus.current = lastRow.current;
+    if (submit && e.target instanceof HTMLFormElement && e.target.method.toLowerCase() === "post")
+      placeFocus.current = lastRow.current;
     intents.onSubmit(e);
   };
   useEffect(() => {
@@ -283,7 +477,12 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
     const active = document.activeElement;
     if (active && active !== document.body && active.isConnected) return;
     const titles = root.querySelectorAll<HTMLElement>("tbody .cap-table-open");
-    const target = at >= 0 && titles.length ? titles[Math.min(at, titles.length - 1)] : root.querySelector<HTMLElement>(titles.length ? ".cap-posts-wrap" : ".cap-posts-tabs [aria-current='page']");
+    const target =
+      at >= 0 && titles.length
+        ? titles[Math.min(at, titles.length - 1)]
+        : root.querySelector<HTMLElement>(
+            titles.length ? ".cap-posts-wrap" : ".cap-posts-tabs [aria-current='page']",
+          );
     target?.focus();
   }, [rows, intents.rootRef]);
   // With script, Reschedule… opens the dialog and Cancel the update asks first; with no script
@@ -292,9 +491,21 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
     list.map(({ publishAt, ...item }) => {
       if (!mounted || !submit) return item;
       const name = row.title || "Untitled";
-      if (item.value === "reschedule" && publishAt) return { ...item, onSelect: () => setMoving({ id: row.id, name, at: publishAt, version: row.version }) };
-      if (item.value === "cancel-schedule") return { ...item, onSelect: () => intents.ask(cancelRequest(row.id, name, noun, row.version)) };
-      if (item.value === "rename") return { ...item, onSelect: () => setRenaming({ id: row.id, name, path: row.path, version: row.version }) };
+      if (item.value === "reschedule" && publishAt)
+        return {
+          ...item,
+          onSelect: () => setMoving({ id: row.id, name, at: publishAt, version: row.version }),
+        };
+      if (item.value === "cancel-schedule")
+        return {
+          ...item,
+          onSelect: () => intents.ask(cancelRequest(row.id, name, noun, row.version)),
+        };
+      if (item.value === "rename")
+        return {
+          ...item,
+          onSelect: () => setRenaming({ id: row.id, name, path: row.path, version: row.version }),
+        };
       return item;
     });
   if (intents.confirmPage) {
@@ -305,8 +516,11 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
     );
   }
 
-  const selectedItems = rows.filter((r) => selected.includes(r.id)).map((r) => ({ id: r.id, label: r.title || "Untitled" }));
-  const setOne = (id: string, on: boolean) => setSelected((s) => (on ? (s.includes(id) ? s : [...s, id]) : s.filter((x) => x !== id)));
+  const selectedItems = rows
+    .filter((r) => selected.includes(r.id))
+    .map((r) => ({ id: r.id, label: r.title || "Untitled" }));
+  const setOne = (id: string, on: boolean) =>
+    setSelected((s) => (on ? (s.includes(id) ? s : [...s, id]) : s.filter((x) => x !== id)));
   const setAll = (on: boolean) => setSelected(on ? rows.map((r) => r.id) : []);
   const onTableKey = (e: KeyboardEvent<HTMLElement>) => {
     if (e.key === "Escape" && selected.length > 0 && !e.defaultPrevented) {
@@ -318,33 +532,64 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
   const words = emptyWords(query, labels);
   const linked = intents.latest?.previewLink;
   const linkedId = linked ? intents.latest?.outcomes?.[0]?.id : undefined;
-  const count = (s: string | undefined) => data.counts?.[(s ?? "all") as keyof NonNullable<PostsData["counts"]>];
+  const count = (s: string | undefined) =>
+    data.counts?.[(s ?? "all") as keyof NonNullable<PostsData["counts"]>];
   const extraColumns = data.extra?.columns ?? [];
 
   return (
     // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
-    <section className="cap-posts" data-cap="posts-list" aria-label={title} ref={intents.setRoot} onSubmit={onSubmit} onFocus={onFocus}>
+    <section
+      className="cap-posts"
+      data-cap="posts-list"
+      aria-label={title}
+      ref={intents.setRoot}
+      onSubmit={onSubmit}
+      onFocus={onFocus}
+    >
       <TabsNav aria-label={`${title} by status`} className="cap-posts-tabs">
         {STATUS_TABS.map((t) => (
-          <TabLink key={t.label} href={href(withFilter(query, { status: t.status, trashed: undefined }))} current={!query.trashed && query.status === t.status} count={count(t.status)}>
+          <TabLink
+            key={t.label}
+            href={href(withFilter(query, { status: t.status, trashed: undefined }))}
+            current={!query.trashed && query.status === t.status}
+            count={count(t.status)}
+          >
             {t.label}
           </TabLink>
         ))}
         {offers.trash ? (
-          <TabLink href={href(withFilter(query, { status: undefined, trashed: "1" }))} current={!!query.trashed} count={data.counts?.trash}>
+          <TabLink
+            href={href(withFilter(query, { status: undefined, trashed: "1" }))}
+            current={!!query.trashed}
+            count={data.counts?.trash}
+          >
             Trash
           </TabLink>
         ) : null}
       </TabsNav>
 
-      <Form method="get" action={action.split("?")[0]} className="cap-posts-filters" role="search" aria-label={`Find ${plural}`}>
-        {query.status && !query.trashed ? <input type="hidden" name="status" value={query.status} /> : null}
+      <Form
+        method="get"
+        action={action.split("?")[0]}
+        className="cap-posts-filters"
+        role="search"
+        aria-label={`Find ${plural}`}
+      >
+        {query.status && !query.trashed ? (
+          <input type="hidden" name="status" value={query.status} />
+        ) : null}
         {query.trashed ? <input type="hidden" name="trashed" value="1" /> : null}
         <div className="cap-field cap-posts-search">
           <label className="cap-field-label" htmlFor={`${uid}-q`}>
             Search
           </label>
-          <input className="cap-input" type="search" id={`${uid}-q`} name="q" defaultValue={query.q ?? ""} />
+          <input
+            className="cap-input"
+            type="search"
+            id={`${uid}-q`}
+            name="q"
+            defaultValue={query.q ?? ""}
+          />
         </div>
         {data.kinds.length > 1 ? (
           <div className="cap-field">
@@ -352,7 +597,12 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
               Kind
             </label>
             <div className="cap-select-wrap" data-native="">
-              <select className="cap-select" id={`${uid}-kind`} name="kind" defaultValue={query.kind ?? ""}>
+              <select
+                className="cap-select"
+                id={`${uid}-kind`}
+                name="kind"
+                defaultValue={query.kind ?? ""}
+              >
                 <option value="">Any kind</option>
                 {data.kinds.map((k) => (
                   <option key={k} value={k}>
@@ -369,7 +619,12 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
               Tag
             </label>
             <div className="cap-select-wrap" data-native="">
-              <select className="cap-select" id={`${uid}-tag`} name="tag" defaultValue={query.tag ?? ""}>
+              <select
+                className="cap-select"
+                id={`${uid}-tag`}
+                name="tag"
+                defaultValue={query.tag ?? ""}
+              >
                 <option value="">Any tag</option>
                 {Array.from(new Set([...tags, ...(query.tag ? [query.tag] : [])])).map((t) => (
                   <option key={t} value={t}>
@@ -386,7 +641,12 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
               Author
             </label>
             <div className="cap-select-wrap" data-native="">
-              <select className="cap-select" id={`${uid}-author`} name="author" defaultValue={query.author ?? ""}>
+              <select
+                className="cap-select"
+                id={`${uid}-author`}
+                name="author"
+                defaultValue={query.author ?? ""}
+              >
                 <option value="">Any author</option>
                 {authors.map((a) => (
                   <option key={a} value={a}>
@@ -403,13 +663,25 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
               <label className="cap-field-label" htmlFor={`${uid}-from`}>
                 Published from
               </label>
-              <input className="cap-input" type="date" id={`${uid}-from`} name="from" defaultValue={query.from ?? ""} />
+              <input
+                className="cap-input"
+                type="date"
+                id={`${uid}-from`}
+                name="from"
+                defaultValue={query.from ?? ""}
+              />
             </div>
             <div className="cap-field">
               <label className="cap-field-label" htmlFor={`${uid}-to`}>
                 Published to
               </label>
-              <input className="cap-input" type="date" id={`${uid}-to`} name="to" defaultValue={query.to ?? ""} />
+              <input
+                className="cap-input"
+                type="date"
+                id={`${uid}-to`}
+                name="to"
+                defaultValue={query.to ?? ""}
+              />
             </div>
           </>
         ) : null}
@@ -418,7 +690,12 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
             Sort by
           </label>
           <div className="cap-select-wrap" data-native="">
-            <select className="cap-select" id={`${uid}-sort`} name="sort" defaultValue={query.sort ?? "updated"}>
+            <select
+              className="cap-select"
+              id={`${uid}-sort`}
+              name="sort"
+              defaultValue={query.sort ?? "updated"}
+            >
               {SORTS.map((s) => (
                 <option key={s.value} value={s.value}>
                   {s.label}
@@ -443,7 +720,13 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
           {data.extra?.toolbar?.length ? (
             <Form method="post" action={action} className="cap-posts-extra">
               {data.extra.toolbar.map((a) => (
-                <button key={a.intent} type="submit" className="cap-btn" name="intent" value={a.intent}>
+                <button
+                  key={a.intent}
+                  type="submit"
+                  className="cap-btn"
+                  name="intent"
+                  value={a.intent}
+                >
                   {a.label}
                 </button>
               ))}
@@ -469,10 +752,30 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
 
       {/* oxlint-disable-next-line react/refs -- intents holds the root ref for its handlers; rendering reads none of it */}
       {intents.resultBox}
-      {offers.previewLinks ? <PreviewLinkBox link={linked} name={linkedId ? names.get(linkedId) : undefined} noun={noun} scripted={mounted} /> : null}
+      {offers.previewLinks ? (
+        <PreviewLinkBox
+          link={linked}
+          name={linkedId ? names.get(linkedId) : undefined}
+          noun={noun}
+          scripted={mounted}
+        />
+      ) : null}
 
       {selectable ? (
-        <ContentBulkBar formId={formId} action={action} Form={Form} formClass="cap-posts-bulk-form" items={selectedItems} total={rows.length} onSelectAll={mounted ? () => setAll(true) : undefined} onClear={() => setSelected([])} plural={plural} actions={bulk} tag={offers.tags && can.edit && !inTrash} intents={intents} />
+        <ContentBulkBar
+          formId={formId}
+          action={action}
+          Form={Form}
+          formClass="cap-posts-bulk-form"
+          items={selectedItems}
+          total={rows.length}
+          onSelectAll={mounted ? () => setAll(true) : undefined}
+          onClear={() => setSelected([])}
+          plural={plural}
+          actions={bulk}
+          tag={offers.tags && can.edit && !inTrash}
+          intents={intents}
+        />
       ) : null}
 
       {empty ? (
@@ -494,8 +797,16 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
           {words.text}
         </Empty>
       ) : (
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex -- delegates the events of the controls inside it
-        <div className="cap-table-wrap cap-posts-wrap" data-reflow="" role="region" aria-labelledby={`${uid}-cap`} tabIndex={0} onKeyDown={onTableKey}>
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- delegates the events of the controls inside it
+        <div
+          className="cap-table-wrap cap-posts-wrap"
+          data-reflow=""
+          role="region"
+          aria-labelledby={`${uid}-cap`}
+          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- delegates the events of the controls inside it
+          tabIndex={0}
+          onKeyDown={onTableKey}
+        >
           <table className="cap-table cap-posts-table">
             <caption id={`${uid}-cap`} className="cap-sr-only">
               {inTrash ? `${title} in Trash` : title} on {data.site.name}
@@ -504,7 +815,16 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
               <tr>
                 {selectable ? (
                   <th scope="col" className="cap-posts-check">
-                    {mounted ? <HeadCheck checked={selected.length > 0 && selected.length === rows.length} mixed={selected.length > 0 && selected.length < rows.length} label={`Select all ${rows.length} ${rows.length === 1 ? noun : plural}`} onChange={setAll} /> : <span className="cap-sr-only">Select</span>}
+                    {mounted ? (
+                      <HeadCheck
+                        checked={selected.length > 0 && selected.length === rows.length}
+                        mixed={selected.length > 0 && selected.length < rows.length}
+                        label={`Select all ${rows.length} ${rows.length === 1 ? noun : plural}`}
+                        onChange={setAll}
+                      />
+                    ) : (
+                      <span className="cap-sr-only">Select</span>
+                    )}
                   </th>
                 ) : null}
                 <th scope="col">Title</th>
@@ -528,11 +848,22 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
                 const name = row.title || "Untitled";
                 const items = rowActions(row, data);
                 return (
-                  <tr key={row.id} data-status={row.status} data-selected={selected.includes(row.id) ? "" : undefined}>
+                  <tr
+                    key={row.id}
+                    data-status={row.status}
+                    data-selected={selected.includes(row.id) ? "" : undefined}
+                  >
                     {selectable ? (
                       <td className="cap-posts-check">
                         <label className="cap-check">
-                          <input type="checkbox" name="ids" value={row.id} form={formId} checked={selected.includes(row.id)} onChange={(e) => setOne(row.id, e.target.checked)} />
+                          <input
+                            type="checkbox"
+                            name="ids"
+                            value={row.id}
+                            form={formId}
+                            checked={selected.includes(row.id)}
+                            onChange={(e) => setOne(row.id, e.target.checked)}
+                          />
                           <span className="cap-sr-only">Select {name}</span>
                         </label>
                       </td>
@@ -543,10 +874,16 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
                       </a>
                       <span className="cap-posts-meta">
                         <span className="cap-posts-path">{row.path ?? "Not on the site yet"}</span>
-                        {data.kinds.length > 1 ? <span className="cap-posts-kind">{row.kind}</span> : null}
-                        {row.authors?.length ? <span className="cap-posts-authors">{authorLine(row.authors)}</span> : null}
+                        {data.kinds.length > 1 ? (
+                          <span className="cap-posts-kind">{row.kind}</span>
+                        ) : null}
+                        {row.authors?.length ? (
+                          <span className="cap-posts-authors">{authorLine(row.authors)}</span>
+                        ) : null}
                       </span>
-                      {row.excerpt ? <span className="cap-posts-excerpt">{row.excerpt}</span> : null}
+                      {row.excerpt ? (
+                        <span className="cap-posts-excerpt">{row.excerpt}</span>
+                      ) : null}
                       {row.notes?.length ? (
                         <span className="cap-posts-notes">
                           {row.notes.map((n) =>
@@ -567,7 +904,13 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
                       <Status tone={st.tone}>{st.word}</Status>
                       {st.note ? <span className="cap-posts-when"> · {st.note}</span> : null}
                     </td>
-                    <td className="cap-posts-updated" data-label="Updated">{row.updatedAt ? <Time at={row.updatedAt} now={now} /> : <span className="cap-posts-none">No date</span>}</td>
+                    <td className="cap-posts-updated" data-label="Updated">
+                      {row.updatedAt ? (
+                        <Time at={row.updatedAt} now={now} />
+                      ) : (
+                        <span className="cap-posts-none">No date</span>
+                      )}
+                    </td>
                     {extraColumns.map((c) => (
                       <td key={c.id} className="cap-posts-extra-cell" data-label={c.label}>
                         {c.cells[row.id] ?? ""}
@@ -575,7 +918,15 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
                     ))}
                     {withMenus ? (
                       <td className="cap-posts-actions">
-                        {items.length ? <FormMenu label="Actions" aria-label={`Actions for ${name}`} action={action} hidden={{ ids: row.id }} items={menuItems(row, items)} /> : null}
+                        {items.length ? (
+                          <FormMenu
+                            label="Actions"
+                            aria-label={`Actions for ${name}`}
+                            action={action}
+                            hidden={{ ids: row.id }}
+                            items={menuItems(row, items)}
+                          />
+                        ) : null}
                       </td>
                     ) : null}
                   </tr>
@@ -601,8 +952,18 @@ export function PostsList({ data, action, Form = PlainForm, submit, result = nul
         </nav>
       ) : null}
 
-      <RescheduleDialog moving={moving} action={action} Form={Form} onClose={() => setMoving(null)} />
-      <RenameDialog renaming={renaming} action={action} Form={Form} onClose={() => setRenaming(null)} />
+      <RescheduleDialog
+        moving={moving}
+        action={action}
+        Form={Form}
+        onClose={() => setMoving(null)}
+      />
+      <RenameDialog
+        renaming={renaming}
+        action={action}
+        Form={Form}
+        onClose={() => setRenaming(null)}
+      />
       {intents.confirmDialog}
     </section>
   );
@@ -632,14 +993,29 @@ export interface PostScheduledUpdateProps {
 // with the unified patch under it. Reschedule… opens the dialog and Cancel the update asks
 // first, posting the posts list's own intents; with no script both are plain forms under the
 // head.
-export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, result = null, liveSince, crumbs, headingLevel, labels, now }: PostScheduledUpdateProps) {
+export function PostScheduledUpdate({
+  data,
+  action,
+  Form = PlainForm,
+  submit,
+  result = null,
+  liveSince,
+  crumbs,
+  headingLevel,
+  labels,
+  now,
+}: PostScheduledUpdateProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const { noun } = nounsOf(labels);
   const name = data.title || "Untitled";
   const names = useMemo(() => new Map([[data.id, name]]), [data.id, name]);
   const intents = useIntents({ action, Form, submit, result, names, cancelHref: action });
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    noSubscribe,
+    () => true,
+    () => false,
+  );
   const [moving, setMoving] = useState<Moving | null>(null);
   // The time the list was drawn, when the page does not pass one.
   const [drawnAt] = useState(() => Date.now());
@@ -650,7 +1026,14 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
   const actions = (
     <>
       {may && scripted ? (
-        <button type="button" className="cap-btn" data-variant="primary" onClick={() => setMoving({ id: data.id, name, at: data.publishAt, version: data.live.version })}>
+        <button
+          type="button"
+          className="cap-btn"
+          data-variant="primary"
+          onClick={() =>
+            setMoving({ id: data.id, name, at: data.publishAt, version: data.live.version })
+          }
+        >
           Reschedule…
         </button>
       ) : null}
@@ -665,14 +1048,23 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
         </a>
       ) : null}
       {may && scripted ? (
-        <button type="button" className="cap-btn" data-variant="danger" data-cap-part="cancel-update" onClick={() => intents.ask(cancelRequest(data.id, name, noun, data.live.version))}>
+        <button
+          type="button"
+          className="cap-btn"
+          data-variant="danger"
+          data-cap-part="cancel-update"
+          onClick={() => intents.ask(cancelRequest(data.id, name, noun, data.live.version))}
+        >
           Cancel the update
         </button>
       ) : null}
     </>
   );
   return (
-    <section className="cap-posts-update-view" data-cap="posts-list" aria-labelledby={`${uid}-h`}
+    <section
+      className="cap-posts-update-view"
+      data-cap="posts-list"
+      aria-labelledby={`${uid}-h`}
       ref={intents.setRoot}
       // oxlint-disable-next-line react/refs -- intents holds the root ref for its handlers; rendering reads none of it
       onSubmit={intents.onSubmit}
@@ -683,7 +1075,9 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
         title={<span id={`${uid}-h`}>{name}</span>}
         lead={
           <>
-            The update goes live <Time at={data.publishAt} format="exact" />, {inDays(data.publishAt, clock)}. Until then the site serves the live {noun}; then the update replaces it whole.
+            The update goes live <Time at={data.publishAt} format="exact" />,{" "}
+            {inDays(data.publishAt, clock)}. Until then the site serves the live {noun}; then the
+            update replaces it whole.
           </>
         }
         actions={actions}
@@ -696,10 +1090,22 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
           <input type="hidden" name="ids" value={data.id} />
           <input type="hidden" name="versions" value={data.live.version} />
           <RescheduleField id={`${uid}-at`} at={data.publishAt} />
-          <button type="submit" className="cap-btn" data-variant="primary" name="intent" value="reschedule">
+          <button
+            type="submit"
+            className="cap-btn"
+            data-variant="primary"
+            name="intent"
+            value="reschedule"
+          >
             Reschedule
           </button>
-          <button type="submit" className="cap-btn" data-variant="danger" name="intent" value="cancel-schedule">
+          <button
+            type="submit"
+            className="cap-btn"
+            data-variant="danger"
+            name="intent"
+            value="cancel-schedule"
+          >
             Cancel the update
           </button>
         </Form>
@@ -728,13 +1134,28 @@ export function PostScheduledUpdate({ data, action, Form = PlainForm, submit, re
           </span>
         </Side>
       </div>
-      <DraftCompare before={{ title: `Live ${noun}`, text: data.live.source }} after={{ title: "Scheduled update", text: data.source }} labels={{ before: "Live", after: "Scheduled" }} id={`${uid}-cmp`} heads={false} />
+      <DraftCompare
+        before={{ title: `Live ${noun}`, text: data.live.source }}
+        after={{ title: "Scheduled update", text: data.source }}
+        labels={{ before: "Live", after: "Scheduled" }}
+        id={`${uid}-cmp`}
+        heads={false}
+      />
       <details className="cap-disclosure cap-posts-update-patch">
         <summary>The change as a patch</summary>
-        <DraftPatch patch={data.patch} title={`The scheduled update to ${name}`} id={`${uid}-patch`} />
+        <DraftPatch
+          patch={data.patch}
+          title={`The scheduled update to ${name}`}
+          id={`${uid}-patch`}
+        />
       </details>
 
-      <RescheduleDialog moving={moving} action={action} Form={Form} onClose={() => setMoving(null)} />
+      <RescheduleDialog
+        moving={moving}
+        action={action}
+        Form={Form}
+        onClose={() => setMoving(null)}
+      />
       {intents.confirmDialog}
     </section>
   );

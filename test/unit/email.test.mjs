@@ -3,7 +3,17 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { FAMILIES, contrast } from "../../tokens/palette.mjs";
 import { emailColors } from "../../components/email/colors.ts";
-import { alert, checkUrl, escapeHtml, magicLink, notice, renderEmail, reset, securityNotice, verification } from "../../components/email/email.ts";
+import {
+  alert,
+  checkUrl,
+  escapeHtml,
+  magicLink,
+  notice,
+  renderEmail,
+  reset,
+  securityNotice,
+  verification,
+} from "../../components/email/email.ts";
 
 const FAKE = "https://app.example.com/auth/verify?t=EXAMPLE-NOT-A-TOKEN&x=1";
 const common = { brand: { name: "Example Co", family: "purple" }, to: "reader@example.com" };
@@ -12,9 +22,32 @@ const all = [
   [magicLink, link],
   [verification, link],
   [reset, link],
-  [alert, { level: "warn", what: "Disk is 91% full", when: "08:15 UTC", details: ["Free space: 9 GB."], url: FAKE }],
-  [notice, { title: "Terms changed", body: ["First.", "Second."], action: { label: "Read", url: FAKE } }],
-  [securityNotice, { title: "A passkey was added to your account", what: "A passkey was added.", when: "October 31, 2026 at 1:52 AM UTC", device: "Safari on iPhone", location: "Portland, Oregon, United States", secure: "If this was not you, sign in now.", url: FAKE }],
+  [
+    alert,
+    {
+      level: "warn",
+      what: "Disk is 91% full",
+      when: "08:15 UTC",
+      details: ["Free space: 9 GB."],
+      url: FAKE,
+    },
+  ],
+  [
+    notice,
+    { title: "Terms changed", body: ["First.", "Second."], action: { label: "Read", url: FAKE } },
+  ],
+  [
+    securityNotice,
+    {
+      title: "A passkey was added to your account",
+      what: "A passkey was added.",
+      when: "October 31, 2026 at 1:52 AM UTC",
+      device: "Safari on iPhone",
+      location: "Portland, Oregon, United States",
+      secure: "If this was not you, sign in now.",
+      url: FAKE,
+    },
+  ],
 ];
 
 test("every template renders a subject, HTML and text from the same data", () => {
@@ -78,7 +111,12 @@ test("every value is escaped in the HTML", () => {
     lang: evil,
   };
   for (const [t, data] of all) {
-    const r = renderEmail(t, { ...data, ...fields, url: data.url, action: data.action && { label: evil, url: FAKE } });
+    const r = renderEmail(t, {
+      ...data,
+      ...fields,
+      url: data.url,
+      action: data.action && { label: evil, url: FAKE },
+    });
     assert.ok(!r.html.includes("<script>"), `${t.name} html`);
     assert.ok(!r.html.includes('lang="<'), t.name);
     assert.ok(r.html.includes("&lt;script&gt;"), t.name);
@@ -87,16 +125,41 @@ test("every value is escaped in the HTML", () => {
 
 test("a paragraph takes bold runs and lines: escaped, clean in the text part, and a plain string is unchanged", () => {
   const evil = `<b>x</b> & "q"`;
-  const r = renderEmail(notice, { ...common, title: "Paid", body: [[["Paid ", { bold: evil }, " today."], "Thanks,", "Example Co"], "Plain & simple."] });
-  assert.ok(r.html.includes(`Paid <strong>&lt;b&gt;x&lt;/b&gt; &amp; &quot;q&quot;</strong> today.<br>Thanks,<br>Example Co`));
-  assert.ok(r.html.includes(`padding:0 0 16px 0;">Plain &amp; simple.</td>`), "a string paragraph keeps its markup");
-  assert.ok(r.text.includes(`Paid ${evil} today.\nThanks,\nExample Co\n\nPlain & simple.`), "no asterisks, no markup");
+  const r = renderEmail(notice, {
+    ...common,
+    title: "Paid",
+    body: [[["Paid ", { bold: evil }, " today."], "Thanks,", "Example Co"], "Plain & simple."],
+  });
+  assert.ok(
+    r.html.includes(
+      `Paid <strong>&lt;b&gt;x&lt;/b&gt; &amp; &quot;q&quot;</strong> today.<br>Thanks,<br>Example Co`,
+    ),
+  );
+  assert.ok(
+    r.html.includes(`padding:0 0 16px 0;">Plain &amp; simple.</td>`),
+    "a string paragraph keeps its markup",
+  );
+  assert.ok(
+    r.text.includes(`Paid ${evil} today.\nThanks,\nExample Co\n\nPlain & simple.`),
+    "no asterisks, no markup",
+  );
   assert.ok(!r.html.includes("<b>x"));
 });
 
 test("a mail with no heading block takes its one h1 from the brand line, and the text part is the same", () => {
-  const bare = { name: "bare", subject: () => "s", blocks: () => [{ type: "paragraph", text: "Hello." }] };
-  const withH = { name: "with", subject: () => "s", blocks: () => [{ type: "heading", text: "Hi" }, { type: "paragraph", text: "Hello." }] };
+  const bare = {
+    name: "bare",
+    subject: () => "s",
+    blocks: () => [{ type: "paragraph", text: "Hello." }],
+  };
+  const withH = {
+    name: "with",
+    subject: () => "s",
+    blocks: () => [
+      { type: "heading", text: "Hi" },
+      { type: "paragraph", text: "Hello." },
+    ],
+  };
   const a = renderEmail(bare, common);
   assert.equal((a.html.match(/<h1\b/g) ?? []).length, 1);
   assert.match(a.html, /<h1 [^>]*>Example Co<\/h1>/);
@@ -114,17 +177,40 @@ test("a section heading, label and value rows and a preformatted block: one h1, 
     blocks: () => [
       { type: "heading", text: "Summary" },
       { type: "subheading", text: "Disputes <1>" },
-      { type: "rows", rows: [{ label: "Failed <b>", value: "12\n& more" }, { label: "At risk", value: "$1,188.00" }] },
+      {
+        type: "rows",
+        rows: [
+          { label: "Failed <b>", value: "12\n& more" },
+          { label: "At risk", value: "$1,188.00" },
+        ],
+      },
       { type: "pre", text: "Error: <x>\n    at run (a.js:1)\r\n    at main" },
     ],
   };
   const r = renderEmail(t, common);
   assert.equal((r.html.match(/<h1\b/g) ?? []).length, 1);
   assert.match(r.html, /<h2 [^>]*>Disputes &lt;1&gt;<\/h2>/);
-  assert.ok(r.html.includes("Failed &lt;b&gt;") && r.html.includes("12 &amp; more") && !r.html.includes("<b>"));
-  assert.ok(r.html.includes("Error: &lt;x&gt;\n    at run (a.js:1)\n    at main"), "the pre keeps its line breaks and indent");
-  assert.ok(r.text.includes("Disputes <1>\n\nFailed <b>: 12 & more\nAt risk: $1,188.00\n\n    Error: <x>\n        at run (a.js:1)\n        at main"));
-  const a = renderEmail(alert, { ...common, level: "crit", what: "Cron failed", when: "now", pre: "stack line" });
+  assert.ok(
+    r.html.includes("Failed &lt;b&gt;") &&
+      r.html.includes("12 &amp; more") &&
+      !r.html.includes("<b>"),
+  );
+  assert.ok(
+    r.html.includes("Error: &lt;x&gt;\n    at run (a.js:1)\n    at main"),
+    "the pre keeps its line breaks and indent",
+  );
+  assert.ok(
+    r.text.includes(
+      "Disputes <1>\n\nFailed <b>: 12 & more\nAt risk: $1,188.00\n\n    Error: <x>\n        at run (a.js:1)\n        at main",
+    ),
+  );
+  const a = renderEmail(alert, {
+    ...common,
+    level: "crit",
+    what: "Cron failed",
+    when: "now",
+    pre: "stack line",
+  });
   assert.ok(a.html.includes(">stack line</pre>"));
 });
 
@@ -132,11 +218,26 @@ test("a security notice says what, when, the device, the place and what to do, a
   const data = all.find(([t]) => t === securityNotice)[1];
   const r = renderEmail(securityNotice, { ...common, ...data });
   assert.equal(r.subject, "Example Co: A passkey was added to your account");
-  for (const line of ["When: October 31, 2026 at 1:52 AM UTC", "Device: Safari on iPhone", "Near: Portland, Oregon, United States", "If this was not you, sign in now."]) {
+  for (const line of [
+    "When: October 31, 2026 at 1:52 AM UTC",
+    "Device: Safari on iPhone",
+    "Near: Portland, Oregon, United States",
+    "If this was not you, sign in now.",
+  ]) {
     assert.ok(r.text.includes(line), line);
   }
-  const bare = renderEmail(securityNotice, { ...common, ...data, device: null, location: null, url: undefined });
-  assert.ok(!bare.text.includes("Device:") && !bare.text.includes("Near:") && !bare.html.includes("<a class=\"e-btn\""));
+  const bare = renderEmail(securityNotice, {
+    ...common,
+    ...data,
+    device: null,
+    location: null,
+    url: undefined,
+  });
+  assert.ok(
+    !bare.text.includes("Device:") &&
+      !bare.text.includes("Near:") &&
+      !bare.html.includes('<a class="e-btn"'),
+  );
 });
 
 test("a line break in a single-line value cannot add a line to the subject", () => {
@@ -147,15 +248,43 @@ test("a line break in a single-line value cannot add a line to the subject", () 
 test("links: only https and mailto, and a bad one throws", () => {
   assert.equal(checkUrl("https://a.example/p?q=1"), "https://a.example/p?q=1");
   assert.equal(checkUrl("mailto:help@a.example"), "mailto:help@a.example");
-  for (const bad of ["javascript:alert(1)", "http://a.example", "data:text/html,x", "https://a.example/ x", 'https://a.example/"onclick="x', "/relative", "", "JaVaScRiPt:alert(1)", "https://a.example/\u0000", "https://example.com@evil.example/login", "https://user:pass@ok.example/x"]) {
+  for (const bad of [
+    "javascript:alert(1)",
+    "http://a.example",
+    "data:text/html,x",
+    "https://a.example/ x",
+    'https://a.example/"onclick="x',
+    "/relative",
+    "",
+    "JaVaScRiPt:alert(1)",
+    "https://a.example/\u0000",
+    "https://example.com@evil.example/login",
+    "https://user:pass@ok.example/x",
+  ]) {
     assert.throws(() => checkUrl(bad), /email:/, bad);
   }
-  assert.throws(() => renderEmail(magicLink, { ...common, ...link, url: "javascript:alert(1)" }), /email:/);
-  assert.throws(() => renderEmail(notice, { ...common, title: "t", body: [], footer: [{ text: "x", url: "http://a.example" }] }), /email:/);
+  assert.throws(
+    () => renderEmail(magicLink, { ...common, ...link, url: "javascript:alert(1)" }),
+    /email:/,
+  );
+  assert.throws(
+    () =>
+      renderEmail(notice, {
+        ...common,
+        title: "t",
+        body: [],
+        footer: [{ text: "x", url: "http://a.example" }],
+      }),
+    /email:/,
+  );
 });
 
 test("an alert carries its level as a word in the subject, the HTML and the text", () => {
-  for (const [level, word] of [["crit", "Critical"], ["warn", "Warning"], ["info", "Notice"]]) {
+  for (const [level, word] of [
+    ["crit", "Critical"],
+    ["warn", "Warning"],
+    ["info", "Notice"],
+  ]) {
     const r = renderEmail(alert, { ...common, level, what: "Something", when: "now" });
     assert.ok(r.subject.startsWith(`${word}:`));
     assert.ok(r.html.includes(`<strong>${word}.</strong>`));
@@ -164,7 +293,15 @@ test("an alert carries its level as a word in the subject, the HTML and the text
 });
 
 test("copy overrides the wording and nothing else; the footer slot is filled", () => {
-  const r = renderEmail(magicLink, { ...common, ...link, copy: { subject: "Hi", heading: "Welcome", button: "Go" }, footer: ["Unsubscribe: reply STOP", { text: "Preferences", url: "https://app.example.com/prefs" }] });
+  const r = renderEmail(magicLink, {
+    ...common,
+    ...link,
+    copy: { subject: "Hi", heading: "Welcome", button: "Go" },
+    footer: [
+      "Unsubscribe: reply STOP",
+      { text: "Preferences", url: "https://app.example.com/prefs" },
+    ],
+  });
   assert.equal(r.subject, "Hi");
   assert.ok(r.html.includes(">Go</a>") && r.html.includes(">Welcome</h1>"));
   assert.ok(r.text.includes("Preferences: https://app.example.com/prefs"));
@@ -172,7 +309,10 @@ test("copy overrides the wording and nothing else; the footer slot is filled", (
 });
 
 test("an unknown family throws", () => {
-  assert.throws(() => renderEmail(magicLink, { ...common, brand: { name: "X", family: "mauve" }, ...link }), /unknown family/);
+  assert.throws(
+    () => renderEmail(magicLink, { ...common, brand: { name: "X", family: "mauve" }, ...link }),
+    /unknown family/,
+  );
 });
 
 test("the dark rules are present and the document asks for both schemes", () => {
@@ -196,11 +336,15 @@ const emailPairs = (c) => [
   ["button label", c["primary-fg"], c.primary, 4.5],
   ...["crit", "warn", "info"].map((l) => [`${l} note`, c[l], c[`${l}-soft`], 4.5]),
 ];
-const failing = (c) => emailPairs(c).filter(([, fg, bg, min]) => contrast(fg, bg) < min).map(([what]) => what);
+const failing = (c) =>
+  emailPairs(c)
+    .filter(([, fg, bg, min]) => contrast(fg, bg) < min)
+    .map(([what]) => what);
 
 test("contrast: every family, both schemes, every pair an email paints is 4.5:1", () => {
   for (const name of Object.keys(FAMILIES)) {
-    for (const scheme of ["light", "dark"]) assert.deepEqual(failing(emailColors[name][scheme]), [], `${name} ${scheme}`);
+    for (const scheme of ["light", "dark"])
+      assert.deepEqual(failing(emailColors[name][scheme]), [], `${name} ${scheme}`);
   }
 });
 

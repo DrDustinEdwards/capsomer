@@ -10,7 +10,8 @@ import { ARTICLES, articleCatalog, type Article } from "./fixture.ts";
 const wide = (page: Page) => page.locator('form[data-catalog="wide"]');
 const narrow = (page: Page) => page.locator('form[data-catalog="narrow"]');
 const count = (form: ReturnType<typeof wide>) => form.locator("[data-catalog-region='count']");
-const firstTitle = (form: ReturnType<typeof wide>) => form.locator("tbody tr").first().locator("th a");
+const firstTitle = (form: ReturnType<typeof wide>) =>
+  form.locator("tbody tr").first().locator("th a");
 
 // The specimen has no server, so a no-script test needs one: a route that renders the catalog the way a site's
 // loader and page would, with the same stylesheet the states page uses.
@@ -23,13 +24,18 @@ async function serveCatalog(page: Page): Promise<void> {
     const url = new URL(route.request().url());
     // A site's loader would also redirect an address that carries defaults to its clean one (catalogRedirect,
     // unit-tested); Playwright does not route a redirected request, so this server answers the address it is given.
-    const result = queryCatalog(ssrCatalog, ARTICLES, parseCatalogParams(ssrCatalog, url.searchParams));
+    const result = queryCatalog(
+      ssrCatalog,
+      ARTICLES,
+      parseCatalogParams(ssrCatalog, url.searchParams),
+    );
     const body = renderToStaticMarkup(
       createElement(Catalog<Article>, {
         definition: ssrCatalog,
         result,
         labelledBy: "h",
-        title: (p: Article) => createElement("a", { className: "cap-table-open", href: `#${p.id}` }, p.title),
+        title: (p: Article) =>
+          createElement("a", { className: "cap-table-open", href: `#${p.id}` }, p.title),
       }),
     );
     await route.fulfill({
@@ -43,7 +49,9 @@ test.describe("no script", () => {
   // Reduced motion turns off the page-to-page view transition (base.css), whose overlay takes the clicks
   // made in its first 200 ms after each load; Playwright's click kept landing on it.
   test.use({ javaScriptEnabled: false, reducedMotion: "reduce" });
-  test("behavior: the form, the chips, the sort headers and the pages all work as plain links and a GET form", async ({ page }) => {
+  test("behavior: the form, the chips, the sort headers and the pages all work as plain links and a GET form", async ({
+    page,
+  }) => {
     await serveCatalog(page);
     await page.goto(SSR);
     await expect(page.locator("form.cap-catalog")).toHaveAttribute("method", "get");
@@ -68,7 +76,9 @@ test.describe("no script", () => {
     await expect(page.locator("th[aria-sort='ascending']")).toContainText("Name");
   });
 
-  test("behavior: the filter tray opens by its address and closes by one, with no script", async ({ page }) => {
+  test("behavior: the filter tray opens by its address and closes by one, with no script", async ({
+    page,
+  }) => {
     await serveCatalog(page);
     await page.setViewportSize({ width: 390, height: 800 });
     await page.goto(SSR);
@@ -79,11 +89,17 @@ test.describe("no script", () => {
     await page.getByRole("link", { name: /^Show \d+ articles$/ }).click();
     await expect(filters).toBeHidden();
     // The link lands on the results, not on an id the page lacks.
-    expect(await page.evaluate(() => document.querySelector(location.hash)?.getAttribute("data-catalog-region"))).toBe("results");
+    expect(
+      await page.evaluate(() =>
+        document.querySelector(location.hash)?.getAttribute("data-catalog-region"),
+      ),
+    ).toBe("results");
   });
 });
 
-test("behavior: typing in the search updates the results, the count, the chips and the address, with no navigation", async ({ page }) => {
+test("behavior: typing in the search updates the results, the count, the chips and the address, with no navigation", async ({
+  page,
+}) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   const before = await count(form).textContent();
@@ -95,7 +111,9 @@ test("behavior: typing in the search updates the results, the count, the chips a
   await expect(form.locator(".cap-catalog-apply")).toBeHidden();
 });
 
-test("behavior: ticking a facet narrows the results and its chip removes just that filter", async ({ page }) => {
+test("behavior: ticking a facet narrows the results and its chip removes just that filter", async ({
+  page,
+}) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   await form.getByRole("radio", { name: /^report/ }).check();
@@ -113,7 +131,9 @@ test("behavior: ticking a facet narrows the results and its chip removes just th
   await expect(count(form)).toBeFocused();
 });
 
-test("behavior: the sort menu reorders the rows and a sort header toggles direction", async ({ page }) => {
+test("behavior: the sort menu reorders the rows and a sort header toggles direction", async ({
+  page,
+}) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   await form.getByLabel("Sort").selectOption({ label: "Name, A to Z" });
@@ -124,7 +144,9 @@ test("behavior: the sort menu reorders the rows and a sort header toggles direct
   expect(await firstTitle(form).textContent()).not.toBe(a);
 });
 
-test("behavior: a page link shows the next page in place and the count says so", async ({ page }) => {
+test("behavior: a page link shows the next page in place and the count says so", async ({
+  page,
+}) => {
   await visitStates(page, "catalog", "light");
   const form = wide(page);
   await expect(form.locator("tbody tr")).toHaveCount(10);
@@ -145,7 +167,9 @@ test("behavior: a search nothing matches shows 'no match' with a way back", asyn
   await expect(count(form)).toHaveText("27 articles");
 });
 
-test("behavior: a failed fetch navigates to the address instead of leaving a stale page", async ({ page }) => {
+test("behavior: a failed fetch navigates to the address instead of leaving a stale page", async ({
+  page,
+}) => {
   await visitStates(page, "catalog", "light");
   await page.evaluate(() => {
     window.fetch = () => Promise.reject(new Error("offline"));
@@ -155,7 +179,9 @@ test("behavior: a failed fetch navigates to the address instead of leaving a sta
   await nav;
 });
 
-test("behavior: in a phone's width the table is cards and the filters are a tray over the results", async ({ page }) => {
+test("behavior: in a phone's width the table is cards and the filters are a tray over the results", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await visitStates(page, "catalog", "light");
   const form = narrow(page);
@@ -163,7 +189,10 @@ test("behavior: in a phone's width the table is cards and the filters are a tray
   await expect(filters).toBeHidden();
   const thead = form.locator("thead");
   const box = await thead.boundingBox();
-  expect(box === null || box.width <= 2, "the header row is visually hidden when rows are cards").toBe(true);
+  expect(
+    box === null || box.width <= 2,
+    "the header row is visually hidden when rows are cards",
+  ).toBe(true);
   await expect(form.locator("tbody tr").first().locator("td[data-label]").first()).toBeVisible();
   const open = form.getByRole("link", { name: /^Filters/ });
   await open.click();
@@ -180,7 +209,9 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: no axe violations with filters chosen and the tray open", async ({ page }) => {
+  test("accessibility: no axe violations with filters chosen and the tray open", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 390, height: 900 });
     await visitStates(page, "catalog", theme);
     const form = narrow(page);

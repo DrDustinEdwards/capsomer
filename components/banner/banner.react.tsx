@@ -6,7 +6,13 @@ export type NoticeTone = "neutral" | "info" | "ok" | "warn" | "crit";
 
 // The glyph is a shape per tone, so the tone is never color alone. Neutral takes the
 // notice square in the muted ink.
-const glyphFor: Record<NoticeTone, GlyphName> = { neutral: "info", info: "info", ok: "ok", warn: "warn", crit: "crit" };
+const glyphFor: Record<NoticeTone, GlyphName> = {
+  neutral: "info",
+  info: "info",
+  ok: "ok",
+  warn: "warn",
+  crit: "crit",
+};
 
 export interface BannerProps {
   // A banner with no tone is a warning.
@@ -35,7 +41,12 @@ export function Banner({ tone = "warn", title, children, body, actions, onDismis
     onDismiss?.();
   };
   return (
-    <div className="cap-banner" data-tone={tone} role={tone === "crit" ? "alert" : "status"} ref={root}>
+    <div
+      className="cap-banner"
+      data-tone={tone}
+      role={tone === "crit" ? "alert" : "status"}
+      ref={root}
+    >
       <Glyph name={glyphFor[tone]} />
       {title || body ? (
         <div className="cap-banner-body">

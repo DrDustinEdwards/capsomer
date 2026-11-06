@@ -1,5 +1,15 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { enhance, renderCompare, renderPatch, setView, VIEWS, type CompareLabels, type CompareSide, type CompareView, type RunSpan } from "./draft-compare.ts";
+import {
+  enhance,
+  renderCompare,
+  renderPatch,
+  setView,
+  VIEWS,
+  type CompareLabels,
+  type CompareSide,
+  type CompareView,
+  type RunSpan,
+} from "./draft-compare.ts";
 
 export interface DraftCompareProps {
   before: CompareSide;
@@ -24,16 +34,51 @@ export interface DraftCompareProps {
 
 // Renders exactly the markup renderCompare writes, so a server render (renderToString) and the
 // browser agree, and the same behavior module wires it.
-export function DraftCompare({ before, after, labels, view, onViewChange, context, runs, similarity, id, heads }: DraftCompareProps) {
+export function DraftCompare({
+  before,
+  after,
+  labels,
+  view,
+  onViewChange,
+  context,
+  runs,
+  similarity,
+  id,
+  heads,
+}: DraftCompareProps) {
   const own = useId().replace(/[^a-zA-Z0-9]/g, "");
   const host = useRef<HTMLDivElement>(null);
   const [first] = useState<CompareView>(view ?? "side");
   const controlled = view !== undefined;
-  const key = JSON.stringify([before, after, labels, runs, context, similarity, id, controlled, heads]);
+  const key = JSON.stringify([
+    before,
+    after,
+    labels,
+    runs,
+    context,
+    similarity,
+    id,
+    controlled,
+    heads,
+  ]);
   // The view is not part of the html's identity: the radios hold it, in CSS, so choosing one
   // does not rebuild the page's folds and focus.
-  // oxlint-disable-next-line react/exhaustive-deps -- key holds every input that changes the html; the view is held by the radios
-  const html = useMemo(() => renderCompare(before, after, { id: id ?? `compare-${own}`, view: first, context, labels, runs, similarity, remember: !controlled, heads }), [key, own]);
+  // oxlint-disable react/exhaustive-deps -- key holds every input that changes the html; the view is held by the radios
+  const html = useMemo(
+    () =>
+      renderCompare(before, after, {
+        id: id ?? `compare-${own}`,
+        view: first,
+        context,
+        labels,
+        runs,
+        similarity,
+        remember: !controlled,
+        heads,
+      }),
+    [key, own],
+  );
+  // oxlint-enable react/exhaustive-deps
 
   useEffect(() => {
     const el = host.current;
@@ -50,7 +95,11 @@ export function DraftCompare({ before, after, labels, view, onViewChange, contex
     if (!el || !onViewChange) return undefined;
     const onChange = (e: Event) => {
       const t = e.target as HTMLInputElement;
-      if (t.matches(".cap-compare-bar input[type='radio']") && (VIEWS as readonly string[]).includes(t.value)) onViewChange(t.value as CompareView);
+      if (
+        t.matches(".cap-compare-bar input[type='radio']") &&
+        (VIEWS as readonly string[]).includes(t.value)
+      )
+        onViewChange(t.value as CompareView);
     };
     el.addEventListener("change", onChange);
     return () => el.removeEventListener("change", onChange);
@@ -72,6 +121,9 @@ export interface DraftPatchProps {
 // Pure markup, so a server render and the browser agree; there is no behavior to attach.
 export function DraftPatch({ patch, title, id }: DraftPatchProps) {
   const own = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const html = useMemo(() => renderPatch(patch, { id: id ?? `patch-${own}`, title }), [patch, title, id, own]);
+  const html = useMemo(
+    () => renderPatch(patch, { id: id ?? `patch-${own}`, title }),
+    [patch, title, id, own],
+  );
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

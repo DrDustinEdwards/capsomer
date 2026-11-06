@@ -11,7 +11,13 @@ import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { Compartment, EditorState } from "@codemirror/state";
-import { EditorView, ViewPlugin, keymap, lineNumbers, placeholder as cmPlaceholder } from "@codemirror/view";
+import {
+  EditorView,
+  ViewPlugin,
+  keymap,
+  lineNumbers,
+  placeholder as cmPlaceholder,
+} from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 
 import type { Edit } from "./markdown-editor.ts";
@@ -31,13 +37,15 @@ const scrollerStop = ViewPlugin.fromClass(
   class {
     private readonly observer: ResizeObserver | null;
     constructor(readonly view: EditorView) {
-      this.observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(() => syncScroller(view));
+      this.observer =
+        typeof ResizeObserver === "undefined" ? null : new ResizeObserver(() => syncScroller(view));
       this.observer?.observe(view.scrollDOM);
       this.observer?.observe(view.contentDOM);
       queueMicrotask(() => syncScroller(view));
     }
     update(u: { docChanged: boolean; geometryChanged: boolean; viewportChanged: boolean }) {
-      if (u.docChanged || u.geometryChanged || u.viewportChanged) queueMicrotask(() => syncScroller(this.view));
+      if (u.docChanged || u.geometryChanged || u.viewportChanged)
+        queueMicrotask(() => syncScroller(this.view));
     }
     destroy() {
       this.observer?.disconnect();
@@ -82,7 +90,12 @@ export interface Surface {
   coords(pos: number): { top: number; bottom: number; left: number } | null;
   select(from: number, to: number): void;
   apply(edit: Edit): void;
-  configure(c: { placeholder: string; readOnly: boolean; disabled: boolean; attrs: Record<string, string> }): void;
+  configure(c: {
+    placeholder: string;
+    readOnly: boolean;
+    disabled: boolean;
+    attrs: Record<string, string>;
+  }): void;
   destroy(): void;
 }
 
@@ -151,7 +164,12 @@ export function createSurface(cfg: SurfaceConfig): Surface {
   const placeholderSlot = new Compartment();
 
   const attrExt = (attrs: Record<string, string>) =>
-    EditorView.contentAttributes.of({ role: "textbox", "aria-multiline": "true", spellcheck: "true", ...attrs });
+    EditorView.contentAttributes.of({
+      role: "textbox",
+      "aria-multiline": "true",
+      spellcheck: "true",
+      ...attrs,
+    });
   const editableExt = (readOnly: boolean, disabled: boolean) => [
     EditorView.editable.of(!disabled),
     EditorState.readOnly.of(readOnly || disabled),
@@ -180,14 +198,18 @@ export function createSurface(cfg: SurfaceConfig): Surface {
         }),
         EditorView.domEventHandlers({
           paste(event) {
-            const item = [...(event.clipboardData?.items ?? [])].find((i) => i.type.startsWith("image/"));
+            const item = [...(event.clipboardData?.items ?? [])].find((i) =>
+              i.type.startsWith("image/"),
+            );
             const file = item?.getAsFile();
             if (!file || !cfg.onFile(file)) return false;
             event.preventDefault();
             return true;
           },
           drop(event) {
-            const file = [...(event.dataTransfer?.files ?? [])].find((f) => f.type.startsWith("image/"));
+            const file = [...(event.dataTransfer?.files ?? [])].find((f) =>
+              f.type.startsWith("image/"),
+            );
             if (!file || !cfg.onFile(file)) return false;
             event.preventDefault();
             return true;

@@ -4,7 +4,14 @@
 // system's page draws, the honeycomb's lines, and every text is escaped.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { flowsOver, hexLayout, modelMapData, networkLayout, systemMapHtml, tiesOf } from "../../components/system-map/system-map.ts";
+import {
+  flowsOver,
+  hexLayout,
+  modelMapData,
+  networkLayout,
+  systemMapHtml,
+  tiesOf,
+} from "../../components/system-map/system-map.ts";
 
 const data = {
   systems: [
@@ -30,34 +37,80 @@ const data = {
     { id: "app-w", system: "app", name: "App worker", kind: "worker", technology: "Worker" },
   ],
   flows: [
-    { id: "f", name: "A flow", steps: [{ from: "w", to: "db", toward: "db", text: "Writes." }, { from: "app-w", to: "w", toward: "w", lights: ["gh", "app-w"], text: "Reads." }] },
-    { id: "elsewhere", name: "Not here", steps: [{ from: "site", to: "kit", toward: "kit", text: "Installs." }] },
+    {
+      id: "f",
+      name: "A flow",
+      steps: [
+        { from: "w", to: "db", toward: "db", text: "Writes." },
+        { from: "app-w", to: "w", toward: "w", lights: ["gh", "app-w"], text: "Reads." },
+      ],
+    },
+    {
+      id: "elsewhere",
+      name: "Not here",
+      steps: [{ from: "site", to: "kit", toward: "kit", text: "Installs." }],
+    },
   ],
 };
 
 test("ties are read between the systems that own each line's ends, each other system once", () => {
   const ties = tiesOf(data);
-  assert.deepEqual(ties.get("core"), { uses: [{ id: "site", verbs: ["coordinates", "publishes to", "watches"] }], usedBy: [{ id: "app", verbs: ["reads"] }] });
-  assert.deepEqual(ties.get("kit")?.usedBy.map((t) => t.id), ["site", "app"]);
-  assert.deepEqual(ties.get("app")?.uses.map((t) => t.id), ["kit", "core"]);
+  assert.deepEqual(ties.get("core"), {
+    uses: [{ id: "site", verbs: ["coordinates", "publishes to", "watches"] }],
+    usedBy: [{ id: "app", verbs: ["reads"] }],
+  });
+  assert.deepEqual(
+    ties.get("kit")?.usedBy.map((t) => t.id),
+    ["site", "app"],
+  );
+  assert.deepEqual(
+    ties.get("app")?.uses.map((t) => t.id),
+    ["kit", "core"],
+  );
 });
 
 test("a flow is shown on a system it touches, each step lighting only that system's parts", () => {
-  assert.deepEqual(flowsOver(data, "core").map((f) => [f.id, f.steps.map((s) => s.lights)]), [["f", [["w", "db"], ["w", "gh"]]]]);
-  assert.deepEqual(flowsOver(data, "app")[0]?.steps.map((s) => s.lights), [[], ["app-w"]]);
+  assert.deepEqual(
+    flowsOver(data, "core").map((f) => [f.id, f.steps.map((s) => s.lights)]),
+    [
+      [
+        "f",
+        [
+          ["w", "db"],
+          ["w", "gh"],
+        ],
+      ],
+    ],
+  );
+  assert.deepEqual(
+    flowsOver(data, "app")[0]?.steps.map((s) => s.lights),
+    [[], ["app-w"]],
+  );
   assert.deepEqual(flowsOver(data, "kit"), []);
 });
 
 test("the network and a system are whole HTML, escaped, with a step lit as the script leaves it", () => {
   const net = systemMapHtml(data, { id: "n" });
-  assert.match(net, /<li class="cap-system-map-card" data-id="site" data-wire="site" data-wires="kit core" data-uses="kit" data-used-by="core" data-link><h4 class="cap-system-map-card-name"><a class="cap-system-map-link" href="\/s\/site">Site &lt;one&gt;<\/a><\/h4>/);
+  assert.match(
+    net,
+    /<li class="cap-system-map-card" data-id="site" data-wire="site" data-wires="kit core" data-uses="kit" data-used-by="core" data-link><h4 class="cap-system-map-card-name"><a class="cap-system-map-link" href="\/s\/site">Site &lt;one&gt;<\/a><\/h4>/,
+  );
   assert.match(net, /data-id="app"[^>]* data-private>.*private<\/span>/);
   // A card shows its short name; its full name and words stay for screen readers and the detail line.
-  assert.match(systemMapHtml({ systems: [{ id: "x", name: "The long name", short: "Long", ring: "used" }] }), /<h4 class="cap-system-map-card-name">Long<\/h4><span class="cap-system-map-card-about"><span class="cap-system-map-card-full">The long name<\/span>/);
+  assert.match(
+    systemMapHtml({ systems: [{ id: "x", name: "The long name", short: "Long", ring: "used" }] }),
+    /<h4 class="cap-system-map-card-name">Long<\/h4><span class="cap-system-map-card-about"><span class="cap-system-map-card-full">The long name<\/span>/,
+  );
   assert.equal([...net.matchAll(/class="cap-system-map-card"/g)].length, 4);
   const one = systemMapHtml(data, { id: "s", system: "core", flow: { id: "f", step: 2 } });
-  assert.match(one, /data-level="system" data-system="core" id="s" aria-labelledby="s-title" data-flow="f" data-step="2">/);
-  assert.match(one, /data-id="w" data-place="runs" tabindex="0" data-wire="w" data-wires="uses:site db used-by:app" data-lit data-at>.*writes to store/);
+  assert.match(
+    one,
+    /data-level="system" data-system="core" id="s" aria-labelledby="s-title" data-flow="f" data-step="2">/,
+  );
+  assert.match(
+    one,
+    /data-id="w" data-place="runs" tabindex="0" data-wire="w" data-wires="uses:site db used-by:app" data-lit data-at>.*writes to store/,
+  );
   assert.match(one, /data-id="gh" data-place="outside" tabindex="0" data-lit>/);
   // A line from the system as a whole starts at its Inside heading; a part's line to another
   // system ends on that system in Uses (or Used by, read from the other end).
@@ -73,14 +126,44 @@ test("the public model keeps each part's words, gives what people use its group,
     {
       systems: [{ id: "a", name: "A", ring: "used", family: "product", domain: "" }],
       relationships: [{ id: "a-c", from: "c", to: "a", kind: "serves" }],
-      containers: [{ id: "c", system: "a", name: "C", kind: "worker", technology: "Worker", description: "Does it." }],
-      flows: [{ id: "f", name: "F", steps: [{ relationship: "a-c", toward: "a", text: "Serves." }, { relationship: "gone", toward: "a", text: "Lost." }] }],
+      containers: [
+        {
+          id: "c",
+          system: "a",
+          name: "C",
+          kind: "worker",
+          technology: "Worker",
+          description: "Does it.",
+        },
+      ],
+      flows: [
+        {
+          id: "f",
+          name: "F",
+          steps: [
+            { relationship: "a-c", toward: "a", text: "Serves." },
+            { relationship: "gone", toward: "a", text: "Lost." },
+          ],
+        },
+      ],
     },
-    (id) => `/s/${id}/`
+    (id) => `/s/${id}/`,
   );
-  assert.deepEqual(out.systems[0], { id: "a", name: "A", short: undefined, ring: "used", private: undefined, group: "Apps", description: undefined, domain: undefined, href: "/s/a/" });
+  assert.deepEqual(out.systems[0], {
+    id: "a",
+    name: "A",
+    short: undefined,
+    ring: "used",
+    private: undefined,
+    group: "Apps",
+    description: undefined,
+    domain: undefined,
+    href: "/s/a/",
+  });
   assert.equal(out.containers?.[0]?.description, "Does it.");
-  assert.deepEqual(out.flows?.[0]?.steps, [{ from: "c", to: "a", toward: "a", text: "Serves.", lights: undefined }]);
+  assert.deepEqual(out.flows?.[0]?.steps, [
+    { from: "c", to: "a", toward: "a", text: "Serves.", lights: undefined },
+  ]);
 });
 
 test("the network's lanes: the shared packages in the middle, each block on the side that crosses least, balanced", () => {
@@ -107,29 +190,51 @@ test("the network's lanes: the shared packages in the middle, each block on the 
     ],
   };
   const lanes = networkLayout(big, { used: "Used", shared: "Shared", core: "Core" });
-  const at = (lane) => lanes.find((l) => l.lane === lane).blocks.map((b) => [b.name, b.systems.map((s) => s.id)]);
+  const at = (lane) =>
+    lanes.find((l) => l.lane === lane).blocks.map((b) => [b.name, b.systems.map((s) => s.id)]);
   assert.deepEqual(at("middle"), [["Shared", ["k2", "k1"]]]);
   const side = (name) => lanes.find((l) => l.blocks.some((b) => b.name === name)).lane;
   assert.equal(side("Writing"), side("Websites"));
   assert.equal(side("Core"), side("Apps"));
   assert.notEqual(side("Websites"), side("Apps"));
   // Within the websites, s1 stands by k2 and s2 by k1: no two ties cross.
-  assert.deepEqual(lanes.find((l) => l.lane === side("Websites")).blocks.find((b) => b.name === "Websites").systems.map((s) => s.id), ["s1", "s2"]);
+  assert.deepEqual(
+    lanes
+      .find((l) => l.lane === side("Websites"))
+      .blocks.find((b) => b.name === "Websites")
+      .systems.map((s) => s.id),
+    ["s1", "s2"],
+  );
 });
 
 test("the honeycomb's lines never pass under another system's cell", () => {
   // Every used system ties to every shared package and the core: the straight line between most
   // pairs crosses another cell, so each has to find its way through the empty ones.
-  const used = Array.from({ length: 10 }, (_, i) => ({ id: `u${i}`, name: `U${i}`, ring: "used", group: i < 5 ? "One" : "Two" }));
-  const shared = Array.from({ length: 4 }, (_, i) => ({ id: `k${i}`, name: `K${i}`, ring: "shared" }));
+  const used = Array.from({ length: 10 }, (_, i) => ({
+    id: `u${i}`,
+    name: `U${i}`,
+    ring: "used",
+    group: i < 5 ? "One" : "Two",
+  }));
+  const shared = Array.from({ length: 4 }, (_, i) => ({
+    id: `k${i}`,
+    name: `K${i}`,
+    ring: "shared",
+  }));
   const net = {
     systems: [{ id: "c", name: "C", ring: "core" }, ...shared, ...used],
-    relationships: used.flatMap((u) => [...shared.map((k) => ({ from: u.id, to: k.id, kind: "installs" })), { from: "c", to: u.id, kind: "coordinates" }]),
+    relationships: used.flatMap((u) => [
+      ...shared.map((k) => ({ from: u.id, to: k.id, kind: "installs" })),
+      { from: "c", to: u.id, kind: "coordinates" },
+    ]),
   };
   const layout = hexLayout(net, (s) => s.group);
   assert.equal(layout.lines.length, 10 * 5);
   for (const l of layout.lines) {
-    const pts = [...l.d.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]);
+    const pts = [...l.d.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m) => [
+      Number(m[1]),
+      Number(m[2]),
+    ]);
     for (const [x, y] of pts.slice(1, -1)) {
       for (const c of layout.cells) {
         if (c.id === l.a || c.id === l.b) continue;
@@ -140,5 +245,9 @@ test("the honeycomb's lines never pass under another system's cell", () => {
 });
 
 test("the map's markup carries no style attribute, so a policy that forbids inline styles draws it whole", () => {
-  for (const html of [systemMapHtml(data, { id: "n", label: "N" }), systemMapHtml(data, { id: "s", label: "S", system: "core" })]) assert.doesNotMatch(html, /\sstyle=/);
+  for (const html of [
+    systemMapHtml(data, { id: "n", label: "N" }),
+    systemMapHtml(data, { id: "s", label: "S", system: "core" }),
+  ])
+    assert.doesNotMatch(html, /\sstyle=/);
 });

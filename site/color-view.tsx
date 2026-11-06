@@ -22,7 +22,8 @@ const ratio = (a: string, b: string) => {
 function ThemeColumn({ scheme }: { scheme: "light" | "dark" }) {
   if (!PALETTE) return null;
   const t = PALETTE[scheme];
-  const asserted = (fg: string, bg: string) => t.pairs.find((p: Pair) => p.fg === fg && p.bg === bg);
+  const asserted = (fg: string, bg: string) =>
+    t.pairs.find((p: Pair) => p.fg === fg && p.bg === bg);
   return (
     <div className="site-theme" data-cap-theme={scheme}>
       <h3>{scheme === "light" ? "Light" : "Dark"}</h3>
@@ -35,8 +36,13 @@ function ThemeColumn({ scheme }: { scheme: "light" | "dark" }) {
           </li>
         ))}
       </ul>
-      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
-      <div className="cap-table-wrap" role="region" tabIndex={0} aria-label={`${scheme === "light" ? "Light" : "Dark"} theme contrast grid`}>
+      <div
+        className="cap-table-wrap"
+        role="region"
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
+        tabIndex={0}
+        aria-label={`${scheme === "light" ? "Light" : "Dark"} theme contrast grid`}
+      >
         <table className="cap-table site-grid">
           <thead>
             <tr>
@@ -60,13 +66,15 @@ function ThemeColumn({ scheme }: { scheme: "light" | "dark" }) {
                   if (!a)
                     return (
                       <td key={b} className="site-unused">
-                        <span className="cap-num">{r.toFixed(1)}</span> <span className="cap-muted">not used</span>
+                        <span className="cap-num">{r.toFixed(1)}</span>{" "}
+                        <span className="cap-muted">not used</span>
                       </td>
                     );
                   return (
                     <td key={b}>
                       <span className="cap-status" data-tone={a.pass ? "ok" : "crit"}>
-                        {a.pass ? "Pass" : "Fail"} <span className="cap-num">{a.ratio.toFixed(1)}</span>
+                        {a.pass ? "Pass" : "Fail"}{" "}
+                        <span className="cap-num">{a.ratio.toFixed(1)}</span>
                       </span>
                     </td>
                   );
@@ -89,7 +97,13 @@ function FamilyScales() {
   return (
     <Panel title="The color families" id="families" src="Rules 14 and 15, locked 2026-10-01">
       <p className="cap-muted">
-        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the solid accent; step 11 is the deep accent for text. Each family is checked in both themes, its own default theme first, and every pair passes (rulings.md, rule 18): the brand color is step 9 for focus rings and large fills, accent text and links use step 11, and the primary button fills with step 10 (amber, too light for a white label, fills with step 9 in light and carries a dark label in both themes). Purple is the default; fox, teal, amber, navy and forest switch on with data-family on the root or on any element (capsomer/families.css).
+        Each family is one 12-step scale with the same lightness roles: step 9 is the seed, the
+        solid accent; step 11 is the deep accent for text. Each family is checked in both themes,
+        its own default theme first, and every pair passes (rulings.md, rule 18): the brand color is
+        step 9 for focus rings and large fills, accent text and links use step 11, and the primary
+        button fills with step 10 (amber, too light for a white label, fills with step 9 in light
+        and carries a dark label in both themes). Purple is the default; fox, teal, amber, navy and
+        forest switch on with data-family on the root or on any element (capsomer/families.css).
       </p>
       {names.map((n) => {
         const f = fams.families[n];
@@ -97,18 +111,23 @@ function FamilyScales() {
         if (!f || !s) return null;
         const mine = fams.pairs.filter((p) => p.family === n);
         const failing = mine.filter((p) => !p.pass);
-        const order: Array<"light" | "dark"> = f.defaultTheme === "dark" ? ["dark", "light"] : ["light", "dark"];
+        const order: Array<"light" | "dark"> =
+          f.defaultTheme === "dark" ? ["dark", "light"] : ["light", "dark"];
         return (
           <section key={n} className="site-family" aria-labelledby={`fam-${n}`}>
             <h3 id={`fam-${n}`}>
-              {n.charAt(0).toUpperCase() + n.slice(1)} <span className="cap-mono cap-muted">{f.seed}</span>
+              {n.charAt(0).toUpperCase() + n.slice(1)}{" "}
+              <span className="cap-mono cap-muted">{f.seed}</span>
             </h3>
             <p className="cap-muted">
               {f.note}. Default theme: {f.defaultTheme}.
             </p>
             {order.map((scheme) => (
               <div key={scheme} className="site-steps-row" data-cap-theme={scheme}>
-                <span className="cap-label">{scheme === "light" ? "Light" : "Dark"}{scheme === f.defaultTheme ? ", default" : ""}</span>
+                <span className="cap-label">
+                  {scheme === "light" ? "Light" : "Dark"}
+                  {scheme === f.defaultTheme ? ", default" : ""}
+                </span>
                 <ol className="site-steps">
                   {s[scheme].map((hex, i) => (
                     <li key={i}>
@@ -132,8 +151,13 @@ function FamilyScales() {
               )}
             </p>
             {failing.length > 0 && (
-              // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
-              <div className="cap-table-wrap" role="region" tabIndex={0} aria-label={`${n} failing pairs`}>
+              <div
+                className="cap-table-wrap"
+                role="region"
+                // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
+                tabIndex={0}
+                aria-label={`${n} failing pairs`}
+              >
                 <table className="cap-table">
                   <thead>
                     <tr>
@@ -180,13 +204,19 @@ export function ColorView() {
         </div>
       </div>
     );
-  const all = [...PALETTE.light.pairs.map((p) => ({ ...p, scheme: "Light" })), ...PALETTE.dark.pairs.map((p) => ({ ...p, scheme: "Dark" }))];
+  const all = [
+    ...PALETTE.light.pairs.map((p) => ({ ...p, scheme: "Light" })),
+    ...PALETTE.dark.pairs.map((p) => ({ ...p, scheme: "Dark" })),
+  ];
   return (
     <div className="site-page">
       <div className="site-head">
         <h1>Color and contrast</h1>
         <p>
-          One seed, <span className="cap-mono">{PALETTE.seed}</span>, makes every color in both themes. Status colors keep their own hues and are tuned for contrast. A pair the generator asserts shows Pass or Fail against WCAG 2.2 (4.5:1 for text, 3:1 for a boundary); a pair no component puts together says “not used”.
+          One seed, <span className="cap-mono">{PALETTE.seed}</span>, makes every color in both
+          themes. Status colors keep their own hues and are tuned for contrast. A pair the generator
+          asserts shows Pass or Fail against WCAG 2.2 (4.5:1 for text, 3:1 for a boundary); a pair
+          no component puts together says “not used”.
         </p>
       </div>
       <FamilyScales />
@@ -194,7 +224,12 @@ export function ColorView() {
         <ThemeColumn scheme="light" />
         <ThemeColumn scheme="dark" />
       </div>
-      <Panel title="Every asserted pair of the committed palette" id="pairs" src={`${all.length} pairs, both themes. The families above have ${FAMILIES?.pairs.length ?? 0} in all`} flush>
+      <Panel
+        title="Every asserted pair of the committed palette"
+        id="pairs"
+        src={`${all.length} pairs, both themes. The families above have ${FAMILIES?.pairs.length ?? 0} in all`}
+        flush
+      >
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
         <div className="cap-table-wrap" role="region" tabIndex={0} aria-labelledby="pairs-h">
           <table className="cap-table">
@@ -232,4 +267,3 @@ export function ColorView() {
     </div>
   );
 }
-

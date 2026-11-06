@@ -1,6 +1,18 @@
 import { expect, test } from "@playwright/test";
-import { eachTheme, expectContrast, expectNoAxeViolations, visitStates } from "../../test/helpers.ts";
-import { arrange, GROUP_CHILDREN, PROBLEM_ROWS, problemCount, type AttentionEntry, type AttentionItem } from "./attention-list.ts";
+import {
+  eachTheme,
+  expectContrast,
+  expectNoAxeViolations,
+  visitStates,
+} from "../../test/helpers.ts";
+import {
+  arrange,
+  GROUP_CHILDREN,
+  PROBLEM_ROWS,
+  problemCount,
+  type AttentionEntry,
+  type AttentionItem,
+} from "./attention-list.ts";
 
 const mixed = "section[aria-labelledby='s-mixed']";
 const expanded = "section[aria-labelledby='s-expanded']";
@@ -12,9 +24,14 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: no axe violations with the group, the warnings and the notices open", async ({ page }) => {
+  test("accessibility: no axe violations with the group, the warnings and the notices open", async ({
+    page,
+  }) => {
     await visitStates(page, "attention-list", theme);
-    await page.locator(mixed).getByRole("button", { name: "3 pull requests await the seat" }).click();
+    await page
+      .locator(mixed)
+      .getByRole("button", { name: "3 pull requests await the seat" })
+      .click();
     await page.locator(mixed).getByRole("button", { name: "4 notices" }).click();
     await page.locator(more).getByRole("button", { name: "2 more warnings" }).click();
     await expectNoAxeViolations(page);
@@ -26,18 +43,29 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  test("accessibility: the header, the rows under a group, the links and the all-clear text reach their contrast", async ({ page }) => {
+  test("accessibility: the header, the rows under a group, the links and the all-clear text reach their contrast", async ({
+    page,
+  }) => {
     await visitStates(page, "attention-list", theme);
     await expectContrast(page, [
       { sel: `${mixed} .cap-attention-title`, what: "the list's title" },
       { sel: `${mixed} .cap-attention-count`, what: "the problem count" },
       { sel: `${mixed} .cap-attention-src`, what: "the order and freshness line" },
-      { sel: `${expanded} .cap-attention-child .cap-row-title a`, what: "a row under a group, on the raised tone" },
+      {
+        sel: `${expanded} .cap-attention-child .cap-row-title a`,
+        what: "a row under a group, on the raised tone",
+      },
       { sel: `${expanded} .cap-attention-child .cap-row-detail`, what: "its detail line" },
       { sel: `${expanded} .cap-attention-child .cap-row-meta`, what: "its time" },
-      { sel: `${expanded} .cap-attention-link a`, what: "the link to the group's view, on the raised tone" },
+      {
+        sel: `${expanded} .cap-attention-link a`,
+        what: "the link to the group's view, on the raised tone",
+      },
       { sel: `${more} .cap-attention-link button`, what: "the button that shows more warnings" },
-      { sel: "section[aria-labelledby='s-clear'] .cap-attention-clear-text", what: "the all-clear text" },
+      {
+        sel: "section[aria-labelledby='s-clear'] .cap-attention-clear-text",
+        what: "the all-clear text",
+      },
     ]);
   });
 
@@ -68,39 +96,61 @@ eachTheme((theme) => {
     await expect(page.locator("#att-mixed-notices")).toBeHidden();
   });
 
-  test("accessibility: a link's description carries its status and detail", { tag: "@markup" }, async ({ page }) => {
-    await visitStates(page, "attention-list", theme);
-    await expect(page.locator(mixed).getByRole("link", { name: "example.com is not answering" })).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
-  });
+  test(
+    "accessibility: a link's description carries its status and detail",
+    { tag: "@markup" },
+    async ({ page }) => {
+      await visitStates(page, "attention-list", theme);
+      await expect(
+        page.locator(mixed).getByRole("link", { name: "example.com is not answering" }),
+      ).toHaveAccessibleDescription("Critical 3 failed checks in a row, first at 14:02");
+    },
+  );
 
-  test("keyboard: Tab reaches each row's title, then the group button, then the notices button", async ({ page }) => {
+  test("keyboard: Tab reaches each row's title, then the group button, then the notices button", async ({
+    page,
+  }) => {
     await visitStates(page, "attention-list", theme);
     const root = page.locator(mixed);
     await root.getByRole("link", { name: "example.com is not answering" }).focus();
-    for (const name of ["Nightly backup for api failed", "D1 rows read will run out before the reset", "2 jobs are waiting for approval"]) {
+    for (const name of [
+      "Nightly backup for api failed",
+      "D1 rows read will run out before the reset",
+      "2 jobs are waiting for approval",
+    ]) {
       await page.keyboard.press("Tab");
       await expect(root.getByRole("link", { name })).toBeFocused();
     }
     await page.keyboard.press("Tab");
-    await expect(root.getByRole("button", { name: "3 pull requests await the seat" })).toBeFocused();
+    await expect(
+      root.getByRole("button", { name: "3 pull requests await the seat" }),
+    ).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(root.getByRole("button", { name: "4 notices" })).toBeFocused();
   });
 
-  test("keyboard: Enter on a group's button shows its rows, and Tab moves into them", async ({ page }) => {
+  test("keyboard: Enter on a group's button shows its rows, and Tab moves into them", async ({
+    page,
+  }) => {
     await visitStates(page, "attention-list", theme);
-    const button = page.locator(mixed).getByRole("button", { name: "3 pull requests await the seat" });
+    const button = page
+      .locator(mixed)
+      .getByRole("button", { name: "3 pull requests await the seat" });
     await button.focus();
     await page.keyboard.press("Enter");
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await expect(page.locator("#att-mixed-prs")).toBeVisible();
     await page.keyboard.press("Tab");
-    await expect(page.locator("#att-mixed-prs").getByRole("link", { name: "api #212 awaits the seat" })).toBeFocused();
+    await expect(
+      page.locator("#att-mixed-prs").getByRole("link", { name: "api #212 awaits the seat" }),
+    ).toBeFocused();
   });
 
   test("keyboard: Space on a group's button hides its rows again", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
-    const button = page.locator(expanded).getByRole("button", { name: "7 jobs are waiting on you" });
+    const button = page
+      .locator(expanded)
+      .getByRole("button", { name: "7 jobs are waiting on you" });
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await button.focus();
     await page.keyboard.press("Space");
@@ -115,10 +165,14 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await page.keyboard.press("Tab");
-    await expect(page.locator("#att-mixed-notices").getByRole("link", { name: "blog: no backup reported" })).toBeFocused();
+    await expect(
+      page.locator("#att-mixed-notices").getByRole("link", { name: "blog: no backup reported" }),
+    ).toBeFocused();
   });
 
-  test("keyboard: Enter on the more-warnings button shows the warnings past the cap", async ({ page }) => {
+  test("keyboard: Enter on the more-warnings button shows the warnings past the cap", async ({
+    page,
+  }) => {
     await visitStates(page, "attention-list", theme);
     // Found by what it controls: its name changes when it opens.
     const button = page.locator(more).locator("button[aria-controls='att-more-rows']");
@@ -128,7 +182,9 @@ eachTheme((theme) => {
     await page.keyboard.press("Enter");
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await expect(button).toHaveText("Fewer warnings");
-    await expect(page.locator("#att-more-rows").getByRole("link", { name: "API reports degraded health" })).toBeVisible();
+    await expect(
+      page.locator("#att-more-rows").getByRole("link", { name: "API reports degraded health" }),
+    ).toBeVisible();
   });
 
   test("keyboard: Enter on a row's title follows its link", async ({ page }) => {
@@ -138,18 +194,24 @@ eachTheme((theme) => {
     await expect(page).toHaveURL(/#att-web$/);
   });
 
-  test("keyboard: j and k move focus among the rows, the group's button and the notices button included", async ({ page }) => {
+  test("keyboard: j and k move focus among the rows, the group's button and the notices button included", async ({
+    page,
+  }) => {
     await visitStates(page, "attention-list", theme);
     const root = page.locator(mixed);
     await page.locator("h1").click();
     await page.keyboard.press("j");
     await expect(root.getByRole("link", { name: "example.com is not answering" })).toBeFocused();
     for (let i = 0; i < 4; i++) await page.keyboard.press("j");
-    await expect(root.getByRole("button", { name: "3 pull requests await the seat" })).toBeFocused();
+    await expect(
+      root.getByRole("button", { name: "3 pull requests await the seat" }),
+    ).toBeFocused();
     await page.keyboard.press("j");
     await expect(root.getByRole("button", { name: "4 notices" })).toBeFocused();
     await page.keyboard.press("k");
-    await expect(root.getByRole("button", { name: "3 pull requests await the seat" })).toBeFocused();
+    await expect(
+      root.getByRole("button", { name: "3 pull requests await the seat" }),
+    ).toBeFocused();
   });
 
   test("keyboard: j goes from a group's button into its rows once it is open", async ({ page }) => {
@@ -167,7 +229,9 @@ eachTheme((theme) => {
   test("behavior: critical rows are never inside what a button controls", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
     await expect(page.locator(".cap-attention-region .cap-row[data-tone='crit']")).toHaveCount(0);
-    await expect(page.locator(".cap-attention-region .cap-status[data-tone='crit']")).toHaveCount(0);
+    await expect(page.locator(".cap-attention-region .cap-status[data-tone='crit']")).toHaveCount(
+      0,
+    );
   });
 
   test("keyboard: the link under a group shows a focus ring", async ({ page }) => {
@@ -181,7 +245,11 @@ eachTheme((theme) => {
 
   test("behavior: a click anywhere on a group's row opens it", async ({ page }) => {
     await visitStates(page, "attention-list", theme);
-    const row = page.locator(mixed).locator(".cap-row", { has: page.getByRole("button", { name: "3 pull requests await the seat" }) });
+    const row = page
+      .locator(mixed)
+      .locator(".cap-row", {
+        has: page.getByRole("button", { name: "3 pull requests await the seat" }),
+      });
     await row.click({ position: { x: 4, y: 4 } });
     await expect(page.locator("#att-mixed-prs")).toBeVisible();
   });
@@ -197,11 +265,23 @@ eachTheme((theme) => {
 });
 
 test.describe("arrange()", () => {
-  const item = (id: string, tone: AttentionItem["tone"], group?: string): AttentionItem => ({ id, tone, title: id, href: `#${id}`, group });
+  const item = (id: string, tone: AttentionItem["tone"], group?: string): AttentionItem => ({
+    id,
+    tone,
+    title: id,
+    href: `#${id}`,
+    group,
+  });
   const ids = (list: AttentionEntry[]) => list.map((e) => (e.kind === "row" ? e.item.id : e.key));
 
   test("behavior: arrange puts the worst first and keeps the given order within a tone", () => {
-    const out = arrange([item("a", "info"), item("b", "warn"), item("c", "crit"), item("d", "nodata"), item("e", "warn")]);
+    const out = arrange([
+      item("a", "info"),
+      item("b", "warn"),
+      item("c", "crit"),
+      item("d", "nodata"),
+      item("e", "warn"),
+    ]);
     expect(ids(out.problems)).toEqual(["c", "b", "e"]);
     expect(out.notices.map((n) => n.id)).toEqual(["d", "a"]);
   });
@@ -214,7 +294,12 @@ test.describe("arrange()", () => {
   });
 
   test("behavior: arrange folds rows that share a key, named with their count, where the worst row sits", () => {
-    const out = arrange([item("w", "warn"), item("g1", "warn", "PRs"), item("g2", "warn", "PRs"), item("g3", "warn", "PRs")]);
+    const out = arrange([
+      item("w", "warn"),
+      item("g1", "warn", "PRs"),
+      item("g2", "warn", "PRs"),
+      item("g3", "warn", "PRs"),
+    ]);
     expect(ids(out.problems)).toEqual(["w", "PRs"]);
     const g = out.problems[1];
     expect(g?.kind).toBe("group");
@@ -228,7 +313,15 @@ test.describe("arrange()", () => {
 
   test("behavior: a group takes its title, detail and view from the caller, and shows at most five rows", () => {
     const rows = Array.from({ length: 7 }, (_, i) => item(`p${i}`, "warn", "pr"));
-    const out = arrange(rows, { groups: { pr: { title: (n) => `${n} pull requests await the seat`, detail: "api, docs", view: { href: "#ci", label: "CI" } } } });
+    const out = arrange(rows, {
+      groups: {
+        pr: {
+          title: (n) => `${n} pull requests await the seat`,
+          detail: "api, docs",
+          view: { href: "#ci", label: "CI" },
+        },
+      },
+    });
     const g = out.problems[0];
     expect(g?.kind).toBe("group");
     if (g?.kind === "group") {
@@ -241,7 +334,11 @@ test.describe("arrange()", () => {
   });
 
   test("behavior: arrange never folds a critical row, and a group of one is a row", () => {
-    const out = arrange([item("c1", "crit", "Sites"), item("c2", "crit", "Sites"), item("w1", "warn", "Sites")]);
+    const out = arrange([
+      item("c1", "crit", "Sites"),
+      item("c2", "crit", "Sites"),
+      item("w1", "warn", "Sites"),
+    ]);
     expect(out.problems.map((e) => e.kind)).toEqual(["row", "row", "row"]);
   });
 
@@ -252,14 +349,29 @@ test.describe("arrange()", () => {
     expect(out.problems).toHaveLength(PROBLEM_ROWS);
     expect(ids(out.problems).slice(0, 3)).toEqual(["c0", "c1", "c2"]);
     expect(out.more).toHaveLength(12 - PROBLEM_ROWS);
-    const flood = arrange(Array.from({ length: PROBLEM_ROWS + 4 }, (_, i) => item(`c${i}`, "crit")));
+    const flood = arrange(
+      Array.from({ length: PROBLEM_ROWS + 4 }, (_, i) => item(`c${i}`, "crit")),
+    );
     expect(flood.problems).toHaveLength(PROBLEM_ROWS + 4);
     expect(flood.more).toEqual([]);
   });
 
   test("behavior: a group of notices is one row that opens its view", () => {
-    const out = arrange([item("s1", "nodata", "silent"), item("s2", "nodata", "silent"), item("i", "info")], { groups: { silent: { title: (n) => `${n} drivers have been silent for over 7 days`, view: { href: "#agents", label: "Agents" } } } });
-    expect(out.notices.map((n) => n.title)).toEqual(["2 drivers have been silent for over 7 days", "i"]);
+    const out = arrange(
+      [item("s1", "nodata", "silent"), item("s2", "nodata", "silent"), item("i", "info")],
+      {
+        groups: {
+          silent: {
+            title: (n) => `${n} drivers have been silent for over 7 days`,
+            view: { href: "#agents", label: "Agents" },
+          },
+        },
+      },
+    );
+    expect(out.notices.map((n) => n.title)).toEqual([
+      "2 drivers have been silent for over 7 days",
+      "i",
+    ]);
     expect(out.notices[0]?.href).toBe("#agents");
     expect(out.noticeCount).toBe(3);
   });
