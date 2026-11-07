@@ -88,33 +88,54 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   },
   {
     to: LAB_BENCH_PATH,
-    label: "Lab bench",
-    name: `Lab bench, the members' workspace ${SIGN_IN_NOTE}`,
+    label: "Lab Bench",
+    name: `Lab Bench, the members' workspace ${SIGN_IN_NOTE}`,
     icon: "flask",
   },
 ];
 
 export const SITE_HEADING = "Site";
+export const LEGAL_HEADING = "Legal";
 
 const ACCESSIBILITY = "/accessibility";
 
 const SITE_LINKS_ALL: FamilyLink[] = [
   { to: "/contact", label: "Contact" },
   { to: "/site-map", label: "Site map" },
+  { to: "/features", label: "Features" },
   { to: "/colophon", label: "Colophon" },
+];
+
+/** The policies and statements a reader looks for under one heading, as GOV.UK's footer groups them: Legal, not Site. */
+const LEGAL_LINKS_ALL: FamilyLink[] = [
   { to: "/privacy", label: "Privacy" },
   { to: "/terms", label: "Terms" },
   { to: ACCESSIBILITY, label: "Accessibility", page: true },
 ];
 
-/** The Site group: a `page` link only while `published` names its path, every one when it is left out. */
+/** `page` links only while `published` names their path, every one when it is left out. */
+const listed = (links: FamilyLink[], published?: readonly string[]) =>
+  links.filter((link) => !link.page || !published || published.includes(link.to));
+
+/** The Site group: Contact, Site map, Features and Colophon. A `page` link waits for its page; none here does. */
 export function siteLinks(published?: readonly string[]): FamilyLink[] {
-  return SITE_LINKS_ALL.filter((link) => !link.page || !published || published.includes(link.to));
+  return listed(SITE_LINKS_ALL, published);
+}
+
+/** The Legal group: Privacy, Terms and Accessibility (only while its page is published). */
+export function legalLinks(published?: readonly string[]): FamilyLink[] {
+  return listed(LEGAL_LINKS_ALL, published);
 }
 
 /** Every link the footer draws, in page order. */
 export function familyLinks(published?: readonly string[]): FamilyLink[] {
-  return [...SOCIAL_LINKS, ...PROFILE_LINKS, ...WORKSPACE_LINKS, ...siteLinks(published)];
+  return [
+    ...SOCIAL_LINKS,
+    ...PROFILE_LINKS,
+    ...WORKSPACE_LINKS,
+    ...siteLinks(published),
+    ...legalLinks(published),
+  ];
 }
 
 /** The family's public sites, each in its own family's color, in the order the strip lists them. */
@@ -281,8 +302,9 @@ export function familyFooterHtml({
   const own = (link: FamilyLink) => statement !== undefined && link.to === ACCESSIBILITY;
   const href = (link: FamilyLink) =>
     escapeHtml(own(link) ? (statement ?? "") : link.external ? link.to : `${origin}${link.to}`);
-  const siteGroup = SITE_LINKS_ALL.filter(
-    (link) => own(link) || siteLinks(published).includes(link),
+  const siteGroup = siteLinks(published);
+  const legalGroup = LEGAL_LINKS_ALL.filter(
+    (link) => own(link) || legalLinks(published).includes(link),
   );
   // A profile off the family (Google Scholar, PubMed, ORCID) takes the family arrow, turned out (css/base.css).
   const anchor = (link: FamilyLink) =>
@@ -301,5 +323,5 @@ export function familyFooterHtml({
     (s) =>
       `<li data-family-mark="${s.family}"><a href="${escapeHtml(s.id === "dustinedwards" ? `${origin}/` : s.href)}"${s.id === site ? ' aria-current="page"' : ""}><span class="cap-family-footer-site-name">${escapeHtml(s.name)}</span><span class="cap-family-footer-site-role">${escapeHtml(s.role)}</span></a></li>`,
   ).join("");
-  return `<div class="cap-family-footer"><div class="cap-family-footer-local">${center}<nav class="cap-family-footer-sites" aria-labelledby="cap-family-footer-network"><h2 class="cap-family-footer-heading" id="cap-family-footer-network">Network</h2><ul>${sites}</ul></nav></div><div class="cap-livery" aria-hidden="true"></div><div class="cap-letterhead cap-family-footer-head"><div><a href="${escapeHtml(`${origin}/`)}" class="cap-letterhead-logo cap-family-footer-logo"><span>Dustin</span><span>Edwards</span></a><p class="cap-family-footer-note">&copy; 2006&ndash;${year}</p></div><div class="cap-family-footer-columns"><div><ul class="cap-family-footer-social" aria-label="Social media">${social}</ul>${list(PROFILE_LINKS)}</div><nav aria-labelledby="cap-family-footer-workspace"><h2 class="cap-family-footer-heading" id="cap-family-footer-workspace">${WORKSPACE_HEADING}</h2><ul class="cap-family-footer-links">${workspace}</ul></nav><nav aria-labelledby="cap-family-footer-site"><h2 class="cap-family-footer-heading" id="cap-family-footer-site">${SITE_HEADING}</h2>${list(siteGroup)}</nav></div></div></div>`;
+  return `<div class="cap-family-footer"><div class="cap-family-footer-local">${center}<nav class="cap-family-footer-sites" aria-labelledby="cap-family-footer-network"><h2 class="cap-family-footer-heading" id="cap-family-footer-network">Network</h2><ul>${sites}</ul></nav></div><div class="cap-livery" aria-hidden="true"></div><div class="cap-letterhead cap-family-footer-head"><div><a href="${escapeHtml(`${origin}/`)}" class="cap-letterhead-logo cap-family-footer-logo"><span>Dustin</span><span>Edwards</span></a><p class="cap-family-footer-note">&copy; 2006&ndash;${year}</p></div><div class="cap-family-footer-columns"><div><ul class="cap-family-footer-social" aria-label="Social media">${social}</ul>${list(PROFILE_LINKS)}</div><nav aria-labelledby="cap-family-footer-workspace"><h2 class="cap-family-footer-heading" id="cap-family-footer-workspace">${WORKSPACE_HEADING}</h2><ul class="cap-family-footer-links">${workspace}</ul></nav><nav aria-labelledby="cap-family-footer-site"><h2 class="cap-family-footer-heading" id="cap-family-footer-site">${SITE_HEADING}</h2>${list(siteGroup)}</nav><nav aria-labelledby="cap-family-footer-legal"><h2 class="cap-family-footer-heading" id="cap-family-footer-legal">${LEGAL_HEADING}</h2>${list(legalGroup)}</nav></div></div></div>`;
 }

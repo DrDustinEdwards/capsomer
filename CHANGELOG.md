@@ -4,6 +4,12 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.82.0]
+
+- **Family footer: the Workspace link reads "Lab Bench"**, capital B, as its accessible name does ("Lab Bench, the members' workspace (requires sign-in)"). Text only; no class, token or HTML structure changes.
+
+- **Family footer: a Legal column, and a Features link.** Privacy, Terms and Accessibility move out of the Site group into a new Legal group (`<nav aria-labelledby="cap-family-footer-legal">`, heading "Legal"), as GOV.UK's footer groups its policy links (privacy, accessibility statement, terms). The Site group is now Contact, Site map, Features and Colophon. Features links dustinedwards.info's `/features`, a page in code that is always published, so it is always listed. The footer's columns go from three to four at 48rem and wider. New export `legalLinks()` and `LEGAL_HEADING`; `familyLinks()` lists the Legal links after the Site links; `siteLinks()` no longer returns Privacy, Terms or Accessibility, so a site that read them from it reads `legalLinks()`.
+
 ## [0.81.0]
 
 - **Lightbox: `capsomer/behavior/lightbox` and `capsomer/lightbox.css`.** A link to a full-size image (`a.image-link`) or a diagram image (`img.diagram-image`) inside `data-cap="lightbox"` opens in the shared dialog and shrinks back into place. It moves here from Prelum's `enhance()` so every site has one viewer. Additive; no class, token or HTML contract changes to existing components.
