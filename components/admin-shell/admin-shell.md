@@ -30,14 +30,14 @@ An app, an admin area or a dashboard a person moves around in. A public page use
 
 ## What goes where
 
-| Place         | Your admin (`owner`)                                                                                          | A customer's dashboard (`user`)                 | A reader's area (`user`)                             |
-| ------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------- |
-| Header, left  | The app's logo                                                                                                | The site's logo, the business tile, the product | The site's logo                                      |
-| Header, right | Search, Inbox, the theme, the avatar                                                                          | The site's extras, the theme, the avatar        | The theme, the avatar                                |
-| Strip         | The family's apps (`FAMILY_APPS`), each its own mark, this one marked, others with a badge when they need you | none                                            | none                                                 |
-| Menu          | The collapse control, then the app's sections, grouped (232px)                                                | The dashboard's sections (288px)                | The site's sections (288px)                          |
-| Top bar       | How fresh the page is, Refresh                                                                                | The same                                        | The page                                             |
-| Content       | The page                                                                                                      | The page                                        | A centered reading column (`data-measure="reading"`) |
+| Place | Your admin (`owner`) | A customer's dashboard (`user`) | A reader's area (`user`) |
+| --- | --- | --- | --- |
+| Header, left | The app's logo | The site's logo, the business tile, the product | The site's logo |
+| Header, right | Search, Inbox, the theme, the avatar | The site's extras, the theme, the avatar | The theme, the avatar |
+| Strip | The family's apps (`FAMILY_APPS`), each its own mark, this one marked, others with a badge when they need you | none | none |
+| Menu | The collapse control, then the app's sections, grouped (232px) | The dashboard's sections (288px) | The site's sections (288px) |
+| Top bar | How fresh the page is, Refresh | The same | The page |
+| Content | The page | The page | A centered reading column (`data-measure="reading"`) |
 
 The theme is the header's one icon button, not a switch in the top bar (0.9.0).
 
@@ -76,39 +76,39 @@ An option: `transition` in React, `data-transition="page"` on the shell in marku
 
 ## Props
 
-| Prop                                                                         | Is                                                                                                                                                                    |
-| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `variant`                                                                    | `"owner"` (default: the strip and the 232px menu) or `"user"` (no strip, the 288px menu)                                                                              |
-| `app`                                                                        | Which family app this is (`portal`, `carrel`, `info`, `germomics`, `foxhound`, `foxing`, `capsomer`): the strip marks it, the header's logo and the tab title are its |
-| `badges`                                                                     | Other apps' badges, by app: `count`, `countNote`                                                                                                                      |
-| `page`, `trail`                                                              | The page's name (the tab title, and the trail's last step) and the levels above it (the trail, shown only when given)                                                 |
-| `documentTitle`                                                              | `true` (default): the shell writes the tab title "<page> · <app>". `false`: it leaves `document.title` to the app's routes                                            |
-| `nav`                                                                        | The menu: entries with `group`, `icon`, `count`, `countNote`, `tone`, `current`                                                                                       |
-| `tabs`                                                                       | The phone's bottom bar, up to five; default the first five of `nav`                                                                                                   |
-| `logo`, `band`, `translucent`, `switchers`, `extras`                         | The header's slots (site-header): a logo other than the app's, the band, the business and product switchers (`user`), the site's own extras                           |
-| `onSearch`, `inbox`                                                          | Search and the inbox, at the header's right; each shows only when given                                                                                               |
-| `onHelp`, `viewSite`                                                         | Help and shortcuts, and View site, in the avatar's menu                                                                                                               |
-| `account`                                                                    | The avatar's menu: `role`, `email`, `appLinks`, `appLabel`, `onSignOut`; `name` and `initials` default to the owner's                                                 |
-| `themePrefKey`, `themeKey`                                                   | The header's theme button: where the choice is remembered, and its single key                                                                                         |
-| `updated`, `status`, `actions`, `onRefresh`, `refreshing`, `refreshShortcut` | The top bar                                                                                                                                                           |
-| `renderLink`                                                                 | A router's link; other apps' links stay plain anchors where the router cannot reach them                                                                              |
-| `collapsed`, `onCollapsedChange`, `prefKey`, `jumpKeys`, `collapseKey`       | Collapse state and keys                                                                                                                                               |
-| `transition`                                                                 | Page transitions (above); off by default                                                                                                                              |
-| `title`, `apps`                                                              | Only outside the family: the app's own name, and a strip of other apps                                                                                                |
+| Prop | Is |
+| --- | --- |
+| `variant` | `"owner"` (default: the strip and the 232px menu) or `"user"` (no strip, the 288px menu) |
+| `app` | Which family app this is (`portal`, `carrel`, `info`, `germomics`, `foxhound`, `foxing`, `capsomer`): the strip marks it, the header's logo and the tab title are its |
+| `badges` | Other apps' badges, by app: `count`, `countNote` |
+| `page`, `trail` | The page's name (the tab title, and the trail's last step) and the levels above it (the trail, shown only when given) |
+| `documentTitle` | `true` (default): the shell writes the tab title "<page> · <app>". `false`: it leaves `document.title` to the app's routes |
+| `nav` | The menu: entries with `group`, `icon`, `count`, `countNote`, `tone`, `current` |
+| `tabs` | The phone's bottom bar, up to five; default the first five of `nav` |
+| `logo`, `band`, `translucent`, `switchers`, `extras` | The header's slots (site-header): a logo other than the app's, the band, the business and product switchers (`user`), the site's own extras |
+| `onSearch`, `inbox` | Search and the inbox, at the header's right; each shows only when given |
+| `onHelp`, `viewSite` | Help and shortcuts, and View site, in the avatar's menu |
+| `account` | The avatar's menu: `role`, `email`, `appLinks`, `appLabel`, `onSignOut`; `name` and `initials` default to the owner's |
+| `themePrefKey`, `themeKey` | The header's theme button: where the choice is remembered, and its single key |
+| `updated`, `status`, `actions`, `onRefresh`, `refreshing`, `refreshShortcut` | The top bar |
+| `renderLink` | A router's link; other apps' links stay plain anchors where the router cannot reach them |
+| `collapsed`, `onCollapsedChange`, `prefKey`, `jumpKeys`, `collapseKey` | Collapse state and keys |
+| `transition` | Page transitions (above); off by default |
+| `title`, `apps` | Only outside the family: the app's own name, and a strip of other apps |
 
 Badge data is a prop: Capsid supplies it, one question per app ("what needs Dustin"), not each app querying the others.
 
 ## Keyboard
 
-| Key                                    | Does                                                                                                                                                        |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Tab                                    | The skip link, the header (logo, switchers, Search, Inbox, the theme, the avatar), the strip's apps, the menu (the collapse control first), the main region |
-| Enter or Space on the collapse control | Collapses or expands the menu                                                                                                                               |
-| Esc                                    | Hides a shown name; closes the account menu and returns focus to the avatar; closes the sheet and returns focus to the menu button                          |
-| G, then 1 to 9                         | Opens the app in that place                                                                                                                                 |
-| Enter or Space on the avatar           | Opens the account menu; focus moves to its first item, Up and Down move between items                                                                       |
-| Any link, with transitions on          | Moves to the page as without them; the transition does not move focus                                                                                       |
-| `[`                                    | Collapses or expands the menu, when the app binds it                                                                                                        |
+| Key | Does |
+| --- | --- |
+| Tab | The skip link, the header (logo, switchers, Search, Inbox, the theme, the avatar), the strip's apps, the menu (the collapse control first), the main region |
+| Enter or Space on the collapse control | Collapses or expands the menu |
+| Esc | Hides a shown name; closes the account menu and returns focus to the avatar; closes the sheet and returns focus to the menu button |
+| G, then 1 to 9 | Opens the app in that place |
+| Enter or Space on the avatar | Opens the account menu; focus moves to its first item, Up and Down move between items |
+| Any link, with transitions on | Moves to the page as without them; the transition does not move focus |
+| `[` | Collapses or expands the menu, when the app binds it |
 
 ## Accessibility
 
@@ -121,94 +121,26 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
 
 ```html
 <div class="cap-admin" data-cap="admin-shell" data-variant="owner">
-  [the site header: components/site-header's markup, with Search, Inbox, the theme button and the
-  avatar]
+  [the site header: components/site-header's markup, with Search, Inbox, the theme button and the avatar]
   <nav class="cap-admin-strip" aria-label="Apps">
     <ul class="cap-admin-strip-group">
-      <li>
-        <a class="cap-admin-tile" href="https://portal.dustinedwards.info/" aria-current="true"
-          ><svg class="cap-admin-logo">[the app's mark]</svg>[tip]</a
-        >
-      </li>
-      <li>
-        <a
-          class="cap-admin-tile"
-          href="https://desk.dustinedwards.info/"
-          aria-label="Carrel Desk, 2 need you"
-          ><svg class="cap-admin-logo">…</svg
-          ><span class="cap-admin-badge" aria-hidden="true">2</span>[tip]</a
-        >
-      </li>
+      <li><a class="cap-admin-tile" href="https://portal.dustinedwards.info/" aria-current="true"><svg class="cap-admin-logo">[the app's mark]</svg>[tip]</a></li>
+      <li><a class="cap-admin-tile" href="https://desk.dustinedwards.info/" aria-label="Carrel Desk, 2 need you"><svg class="cap-admin-logo">…</svg><span class="cap-admin-badge" aria-hidden="true">2</span>[tip]</a></li>
       [dustinedwards.info, germomics, Foxhound, Foxing, Capsomer, in that order]
     </ul>
   </nav>
   <nav class="cap-admin-menu" id="cap-admin-menu" aria-label="Sections">
-    <button
-      type="button"
-      class="cap-admin-collapse"
-      data-cap-part="menu-toggle"
-      aria-label="Collapse menu"
-      aria-expanded="true"
-      aria-controls="cap-admin-menu"
-    >
-      [icon]<span class="cap-admin-label">Collapse menu</span
-      ><span class="cap-keys"><kbd>[</kbd></span
-      ><span
-        class="cap-admin-tip cap-popover"
-        data-variant="tooltip"
-        data-side="right"
-        data-offset="12"
-        popover="manual"
-        role="tooltip"
-        aria-hidden="true"
-        ><span class="cap-admin-tip-text">Collapse menu</span></span
-      >
-    </button>
+    <button type="button" class="cap-admin-collapse" data-cap-part="menu-toggle" aria-label="Collapse menu" aria-expanded="true" aria-controls="cap-admin-menu">[icon]<span class="cap-admin-label">Collapse menu</span><span class="cap-keys"><kbd>[</kbd></span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Collapse menu</span></span></button>
     <div class="cap-admin-group" role="group" aria-labelledby="g-watch">
       <div class="cap-admin-group-label" id="g-watch">Watch</div>
-      <a href="/" aria-current="page"
-        >[icon]<span>Overview</span> <span class="cap-admin-count"></span
-      ></a>
-      <a href="/queue" aria-label="Queue, 5 blocked"
-        >[icon]<span class="cap-admin-label">Queue</span
-        ><span
-          class="cap-admin-tip cap-popover"
-          data-variant="tooltip"
-          data-side="right"
-          data-offset="12"
-          popover="manual"
-          role="tooltip"
-          aria-hidden="true"
-          ><span class="cap-admin-tip-text">Queue</span></span
-        >
-        <span class="cap-admin-count" data-tone="need">5</span></a
-      >
+      <a href="/" aria-current="page">[icon]<span>Overview</span> <span class="cap-admin-count"></span></a>
+      <a href="/queue" aria-label="Queue, 5 blocked">[icon]<span class="cap-admin-label">Queue</span><span class="cap-admin-tip cap-popover" data-variant="tooltip" data-side="right" data-offset="12" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-admin-tip-text">Queue</span></span> <span class="cap-admin-count" data-tone="need">5</span></a>
     </div>
   </nav>
   <main class="cap-admin-main" id="cap-main" tabindex="-1">
     <div class="cap-admin-bar">
-      <div class="cap-admin-bar-text">
-        <nav class="cap-admin-trail" aria-label="Breadcrumb">
-          <ol>
-            <li><a href="/components">Components</a></li>
-            <li><span aria-current="page">Shell</span></li>
-          </ol>
-        </nav>
-        [below the top level only]<span class="cap-admin-fresh"
-          >Updated <time datetime="…">6 minutes ago</time> · refreshes itself</span
-        >
-        <div class="cap-admin-bar-status">[status]</div>
-      </div>
-      <div class="cap-admin-actions">
-        [actions]<button
-          type="button"
-          class="cap-admin-btn"
-          data-cap-part="refresh"
-          aria-label="Refresh"
-        >
-          [icon][tip]
-        </button>
-      </div>
+      <div class="cap-admin-bar-text"><nav class="cap-admin-trail" aria-label="Breadcrumb"><ol><li><a href="/components">Components</a></li><li><span aria-current="page">Shell</span></li></ol></nav>[below the top level only]<span class="cap-admin-fresh">Updated <time datetime="…">6 minutes ago</time> · refreshes itself</span><div class="cap-admin-bar-status">[status]</div></div>
+      <div class="cap-admin-actions">[actions]<button type="button" class="cap-admin-btn" data-cap-part="refresh" aria-label="Refresh">[icon][tip]</button></div>
     </div>
     <div class="cap-admin-page">[the view]</div>
   </main>

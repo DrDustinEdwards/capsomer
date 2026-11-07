@@ -664,8 +664,7 @@
     .cap-site-header {
       --header-side: var(--space-5);
     }
-    .cap-site-header
-      :is(.cap-site-header-switcher, .cap-site-header-sections, .cap-site-header-cta) {
+    .cap-site-header :is(.cap-site-header-switcher, .cap-site-header-sections, .cap-site-header-cta) {
       display: none;
     }
     .cap-site-header .cap-site-header-tools {
@@ -959,9 +958,7 @@
       }
     }
     .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-trail) {
-      padding-inline: calc(
-        (100% - min(100%, var(--page-max))) / 2 + var(--page-gutter) + var(--header-side)
-      );
+      padding-inline: calc((100% - min(100%, var(--page-max))) / 2 + var(--page-gutter) + var(--header-side));
       margin-block-start: var(--space-5);
       inset-block-start: var(--space-5);
 
@@ -987,9 +984,7 @@
      2026-10-28): --header-names clears the longest name, "Dustin Edwards Lab bench"
      (it ends at x462 at 1536 wide), by 34px. */
   @media (min-width: 1080px) {
-    .cap-site-header[data-variant="letterhead"]:has(
-        > :is(.cap-site-header-sections, .cap-site-header-trail)
-      ) {
+    .cap-site-header[data-variant="letterhead"]:has(> :is(.cap-site-header-sections, .cap-site-header-trail)) {
       --header-names: 19.75rem;
       grid-template-columns: minmax(var(--header-names), max-content) minmax(0, 1fr) auto;
       grid-template-rows: var(--header-row);
@@ -1021,12 +1016,7 @@
         inset: 100% 0 auto;
         block-size: 56px;
         pointer-events: none;
-        border-image: linear-gradient(
-            var(--ground) 20%,
-            color-mix(in srgb, var(--ground) 60%, transparent) 55%,
-            transparent
-          )
-          fill 0 / 0 / 0 100vmax;
+        border-image: linear-gradient(var(--ground) 20%, color-mix(in srgb, var(--ground) 60%, transparent) 55%, transparent) fill 0 / 0 / 0 100vmax;
         animation: cap-header-fade linear both;
         animation-timeline: scroll(root);
         animation-range: 0 48px;
@@ -1057,10 +1047,7 @@
       --header-h: calc(var(--space-5) + var(--space-3) + 4rem + 3rem);
     }
     @media (min-width: 1080px) {
-      &:has(
-        .cap-site-header[data-variant="letterhead"]
-          > :is(.cap-site-header-sections, .cap-site-header-trail)
-      ) {
+      &:has(.cap-site-header[data-variant="letterhead"] > :is(.cap-site-header-sections, .cap-site-header-trail)) {
         --header-h: calc(var(--space-5) + var(--space-3) + 4rem);
       }
     }
@@ -1325,9 +1312,7 @@
       & .cap-site-header-app {
         white-space: normal;
       }
-      &:not(:has(> .cap-site-header-sections))
-        .cap-site-header-tools:has(> .cap-site-header-menu)
-        > .cap-site-header-account {
+      &:not(:has(> .cap-site-header-sections)) .cap-site-header-tools:has(> .cap-site-header-menu) > .cap-site-header-account {
         display: none;
       }
       & > .cap-site-header-sections {
@@ -1341,21 +1326,13 @@
         gap: var(--space-2);
       }
     }
-    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections)
-      .cap-site-header-menu {
+    .cap-site-header[data-variant="letterhead"]:has(> .cap-site-header-sections) .cap-site-header-menu {
       display: none;
     }
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .cap-site-header
-      :is(
-        .cap-site-header-icon,
-        .cap-site-header-link,
-        .cap-site-header-switch,
-        .cap-site-header-cta,
-        .cap-site-header-signin
-      ),
+    .cap-site-header :is(.cap-site-header-icon, .cap-site-header-link, .cap-site-header-switch, .cap-site-header-cta, .cap-site-header-signin),
     .cap-site-header-panel-list :is(a, button),
     .cap-site-header-sheet-list :is(a, button) {
       transition:

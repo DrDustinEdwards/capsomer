@@ -4,23 +4,7 @@ title: Draft compare
 summary: Two versions of a text compared by sentence and by word, side by side, inline or as changes only, with marks that never rely on color, a legend, jump keys and folded unchanged passages.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states:
-  [
-    patch of two revisions,
-    patch by line,
-    patch with nothing to show,
-    side by side,
-    inline,
-    changes only,
-    unchanged passages folded,
-    one change,
-    no differences,
-    with authorship runs,
-    narrow container stacked,
-    remembered view,
-    comfortable density,
-    React with the view held by the app,
-  ]
+states: [patch of two revisions, patch by line, patch with nothing to show, side by side, inline, changes only, unchanged passages folded, one change, no differences, with authorship runs, narrow container stacked, remembered view, comfortable density, React with the view held by the app]
 added: 0.3.0
 source: the site admin's revision-list.tsx (DiffBlock, RevisionMeta), admin.posts.$slug.history.tsx and admin-history.css
 replaces:
@@ -59,41 +43,24 @@ Where the line is the unit (code, a configuration file, a commit), give `renderP
 ```ts
 import { renderPatch } from "capsomer/behavior/draft-compare";
 
-const html = renderPatch(patchText, {
-  id: "commit-4f2a9c1",
-  title: "Show the newest mention first",
-});
+const html = renderPatch(patchText, { id: "commit-4f2a9c1", title: "Show the newest mention first" });
 ```
 
 ```tsx
 import { DraftPatch } from "capsomer/react/draft-compare";
 
-<DraftPatch patch={patchText} title="Show the newest mention first" />;
+<DraftPatch patch={patchText} title="Show the newest mention first" />
 ```
 
 ```html
 <section class="cap-compare cap-patch" data-mode="patch" id="commit-4f2a9c1" aria-label="Patch: …">
   <div class="cap-compare-bar">…the key and the counts…</div>
   <section class="cap-patch-file" aria-labelledby="…-file-1">
-    <h3 class="cap-patch-path" id="…-file-1">
-      <code>app/queue.ts</code><span class="cap-patch-file-counts">2 added, 1 removed</span>
-    </h3>
+    <h3 class="cap-patch-path" id="…-file-1"><code>app/queue.ts</code><span class="cap-patch-file-counts">2 added, 1 removed</span></h3>
     <div class="cap-patch-scroll" role="region" aria-labelledby="…-file-1" tabindex="0">
-      <table class="cap-patch-table">
-        <caption class="cap-sr-only">
-          …
-        </caption>
-        <tbody class="cap-patch-hunk">
-          <tr class="cap-patch-hunk-head">
-            <th scope="rowgroup" colspan="4"><code>@@ -10,3 +10,4 @@</code></th>
-          </tr>
-          <tr class="cap-patch-line" data-op="ins">
-            <td class="cap-patch-no"></td>
-            <td class="cap-patch-no">11</td>
-            <td class="cap-patch-sign">…</td>
-            <td class="cap-patch-code"><code>…</code></td>
-          </tr>
-        </tbody>
+      <table class="cap-patch-table"><caption class="cap-sr-only">…</caption>
+        <tbody class="cap-patch-hunk"><tr class="cap-patch-hunk-head"><th scope="rowgroup" colspan="4"><code>@@ -10,3 +10,4 @@</code></th></tr>
+          <tr class="cap-patch-line" data-op="ins"><td class="cap-patch-no"></td><td class="cap-patch-no">11</td><td class="cap-patch-sign">…</td><td class="cap-patch-code"><code>…</code></td></tr></tbody>
       </table>
     </div>
   </section>
@@ -126,16 +93,16 @@ None: shadcn has no diff or compare. Its nearest parts are matched through the c
 
 ## Keyboard
 
-| Key                                                  | Does                                                                                                                       |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Tab                                                  | Moves through the view switch, Previous and Next, the jump links, Expand all, each fold's summary and the scrolling region |
-| Arrow keys on the view switch                        | Choose the view (Side by side, Inline, Changes only)                                                                       |
-| n                                                    | Moves focus to the next change; after the last, the first                                                                  |
-| p                                                    | Moves focus to the previous change; before the first, the last                                                             |
-| Enter on a jump link, Next change or Previous change | Moves focus to that change in the view that is shown                                                                       |
-| Enter or Space on a fold's summary                   | Opens or closes the unchanged passage                                                                                      |
-| Enter or Space on Expand all unchanged               | Opens every fold; pressed again, closes them                                                                               |
-| Arrow keys, Page Up, Page Down in the focused region | Scroll the compared text                                                                                                   |
+| Key | Does |
+| --- | --- |
+| Tab | Moves through the view switch, Previous and Next, the jump links, Expand all, each fold's summary and the scrolling region |
+| Arrow keys on the view switch | Choose the view (Side by side, Inline, Changes only) |
+| n | Moves focus to the next change; after the last, the first |
+| p | Moves focus to the previous change; before the first, the last |
+| Enter on a jump link, Next change or Previous change | Moves focus to that change in the view that is shown |
+| Enter or Space on a fold's summary | Opens or closes the unchanged passage |
+| Enter or Space on Expand all unchanged | Opens every fold; pressed again, closes them |
+| Arrow keys, Page Up, Page Down in the focused region | Scroll the compared text |
 
 `n` and `p` act when focus is inside the compare (or it carries `data-cap-primary`), never while typing in a field, and not when single-key shortcuts are off (`data-cap-single-keys="off"` on the page, as for the row list).
 
@@ -182,13 +149,7 @@ enhance(); // the jump keys, the remembered view, Expand all
 In React, `import { DraftCompare } from "capsomer/react/draft-compare"`:
 
 ```tsx
-<DraftCompare
-  before={draft3}
-  after={draft4}
-  labels={{ before: "Saved", after: "Open" }}
-  view={view}
-  onViewChange={setView}
-/>
+<DraftCompare before={draft3} after={draft4} labels={{ before: "Saved", after: "Open" }} view={view} onViewChange={setView} />
 ```
 
 It renders the same string (so `renderToString` on a server and the browser agree) and attaches the same behavior. Without `view` it remembers the person's choice; with it, the choice is yours.

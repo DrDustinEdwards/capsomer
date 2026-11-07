@@ -4,27 +4,12 @@ title: Disclosure
 summary: Show and hide, a section that opens in place and a group row in a list.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states:
-  [
-    summary hover,
-    summary pressed,
-    accordion variant,
-    accordion titles in headings,
-    card variant,
-    group row pressed and disabled,
-    section closed,
-    section open,
-    sections that open one at a time,
-    group row collapsed with its count,
-    group row expanded,
-    two levels,
-    group row in a heading,
-  ]
+states: [summary hover, summary pressed, accordion variant, accordion titles in headings, card variant, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
 added: 0.1.0
 updated: 0.2.0
 source: the approved mockup ("4 notices", collapsed); patterns.md "Show or hide"
 replaces:
-  - "<details(?![^>]*cap-disclosure)"
+  - '<details(?![^>]*cap-disclosure)'
   - 'aria-expanded=\{?"?(true|false|\w+)'
 ---
 
@@ -63,10 +48,10 @@ Different on purpose: the default is a boxed section with the chevron at the sta
 
 ## Keyboard
 
-| Key                              | Does                                             |
-| -------------------------------- | ------------------------------------------------ |
-| Tab                              | Reaches each summary and each group button       |
-| Enter or Space on a summary      | Opens or closes the section                      |
+| Key | Does |
+| --- | --- |
+| Tab | Reaches each summary and each group button |
+| Enter or Space on a summary | Opens or closes the section |
 | Enter or Space on a group button | Shows or hides its rows; `aria-expanded` follows |
 
 ## Accessibility
@@ -82,15 +67,12 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ```html
 <details class="cap-disclosure" name="limits">
   <summary>Why is example.com marked degraded?</summary>
-  <div class="cap-disclosure-body">
-    <p>Its median response over the last hour is 2.4 seconds.</p>
-  </div>
+  <div class="cap-disclosure-body"><p>Its median response over the last hour is 2.4 seconds.</p></div>
 </details>
 
 <div class="cap-group" data-cap="disclosure">
   <button type="button" class="cap-group-toggle" aria-expanded="false" aria-controls="notices-rows">
-    <span class="cap-group-label">Notices</span><span class="cap-sr-only">, </span
-    ><span class="cap-group-count">4</span>
+    <span class="cap-group-label">Notices</span><span class="cap-sr-only">, </span><span class="cap-group-count">4</span>
   </button>
   <ul class="cap-group-rows" id="notices-rows" hidden>
     <li>api: 3 dependency updates waiting</li>

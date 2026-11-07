@@ -4,15 +4,7 @@ title: Summary list
 summary: Labels and their values in a description list, each row with an optional Change link that says what it changes; the detail panel's record is its form without rows.
 parts: [css]
 tool: native
-states:
-  [
-    rows with Change links,
-    a missing value,
-    a row without actions,
-    two actions on a row,
-    narrow column stacked,
-    the record form without rows,
-  ]
+states: [rows with Change links, a missing value, a row without actions, two actions on a row, narrow column stacked, the record form without rows]
 added: 0.56.0
 updated: 0.56.0
 source: GOV.UK Summary list; detail-panel's dl.cap-detail-record, which it generalizes
@@ -45,10 +37,10 @@ A short record of facts about one thing, read as pairs: the answers on a "check 
 
 ## Keyboard
 
-| Key   | Does                                 |
-| ----- | ------------------------------------ |
-| Tab   | Reaches each Change link, row by row |
-| Enter | Follows it                           |
+| Key | Does |
+| --- | --- |
+| Tab | Reaches each Change link, row by row |
+| Enter | Follows it |
 
 ## Accessibility
 
@@ -64,23 +56,16 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
   <div>
     <dt>Address</dt>
     <dd>https://fieldnotes.example</dd>
-    <dd class="cap-summary-actions">
-      <a href="/sites/new/address">Change<span class="cap-sr-only"> address</span></a>
-    </dd>
+    <dd class="cap-summary-actions"><a href="/sites/new/address">Change<span class="cap-sr-only"> address</span></a></dd>
   </div>
   <div>
     <dt>Quiet hours</dt>
     <dd class="cap-summary-missing">Not set</dd>
-    <dd class="cap-summary-actions">
-      <a href="/sites/new/quiet">Add<span class="cap-sr-only"> quiet hours</span></a>
-    </dd>
+    <dd class="cap-summary-actions"><a href="/sites/new/quiet">Add<span class="cap-sr-only"> quiet hours</span></a></dd>
   </div>
 </dl>
 
-<dl class="cap-detail-record">
-  <dt>Status</dt>
-  <dd>Blocked</dd>
-</dl>
+<dl class="cap-detail-record"><dt>Status</dt><dd>Blocked</dd></dl>
 ```
 
 ## Exceptions in production

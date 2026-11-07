@@ -47,8 +47,7 @@
     inline-size: 100%;
     max-inline-size: var(--page-max);
     margin-inline: auto;
-    padding-inline: max(var(--page-gutter), env(safe-area-inset-left, 0px))
-      max(var(--page-gutter), env(safe-area-inset-right, 0px));
+    padding-inline: max(var(--page-gutter), env(safe-area-inset-left, 0px)) max(var(--page-gutter), env(safe-area-inset-right, 0px));
   }
   .cap-label {
     font-size: var(--fs-label);
@@ -86,11 +85,7 @@
   .cap-go[data-go="out"]::after {
     rotate: -45deg;
   }
-  :is(a[data-link="title"], :is(h1, h2, h3, h4) > a:not([class*="cap-"])):not(
-      :hover,
-      :focus-visible,
-      [data-force="hover"]
-    )::after {
+  :is(a[data-link="title"], :is(h1, h2, h3, h4) > a:not([class*="cap-"])):not(:hover, :focus-visible, [data-force="hover"])::after {
     opacity: 0;
   }
   /* "Back" and "next" are wayfinding: the airport sign face (Overpass, --wayfinding), bold. */
@@ -120,10 +115,7 @@
     .cap-site-header-view::after {
       transition: translate var(--dur-base) var(--ease-out);
     }
-    :is(.cap-go, .cap-sign[rel~="next"], .cap-sign[data-variant="forward"], a[data-link="next"]):is(
-        :hover,
-        :focus-visible
-      )::after {
+    :is(.cap-go, .cap-sign[rel~="next"], .cap-sign[data-variant="forward"], a[data-link="next"]):is(:hover, :focus-visible)::after {
       translate: 3px 0;
     }
     :is(.cap-go[data-go="out"], .cap-site-header-view):is(:hover, :focus-visible)::after {

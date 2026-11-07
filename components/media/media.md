@@ -4,33 +4,12 @@ title: Media library
 summary: A grid of file tiles with roving focus, and an inspector, a pane or a side sheet, that saves alt text, caption and tags by itself.
 parts: [css, behavior, react]
 tool: native + own JavaScript (the shared dialog, meter, chips, bulk bar, drop zone and message region)
-states:
-  [
-    alt text written,
-    selected,
-    list layout and sort,
-    no alt text,
-    decorative,
-    unattached,
-    document,
-    uploading,
-    failed with Retry,
-    in Trash with Restore,
-    inspector as a pane,
-    inspector as a sheet,
-    saving,
-    saved,
-    could not save with Retry,
-    not used anywhere,
-    empty library,
-    nothing matches,
-    empty bin,
-  ]
+states: [alt text written, selected, list layout and sort, no alt text, decorative, unattached, document, uploading, failed with Retry, in Trash with Restore, inspector as a pane, inspector as a sheet, saving, saved, could not save with Retry, not used anywhere, empty library, nothing matches, empty bin]
 added: 0.3.0
 source: dustinedwards.info, app/components/admin/media-grid.tsx, media-tile.tsx, media-inspector.tsx, media-inspector-sections.tsx, media-drawer.tsx, media-keyboard.tsx, media-facets.tsx, media-trash-controls.tsx, media-empty-state.tsx, copy-button.tsx, use-media-search.ts, lib/media/tile-nav.mjs, lib/media/usage.mjs, app/styles/admin-media*.css; shadcn/ui Card, Checkbox, Badge, Sheet, Input, Textarea (Base UI flavor, nova style, commit d75a96ab787f)
 replaces:
   - 'class="(media-grid|media-card|media-tile|media-detail|media-inspector)[ "]'
-  - 'className="(media-grid|media-card|media-tile|media-detail)[ "]'
+  - "className=\"(media-grid|media-card|media-tile|media-detail)[ \"]"
 ---
 
 # Media library
@@ -82,20 +61,20 @@ Card for the tile (a bordered, rounded surface with a media area and a text area
 
 ## Keyboard
 
-| Key                                     | Does                                                                                                                                   |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Tab, Shift Tab                          | Into the grid at the active tile, through that tile's controls (its checkbox, Retry or Restore), and out; then on to the inspector     |
-| Arrow keys, on a tile                   | Move focus to the neighboring tile, in two dimensions; Left and Right wrap to the next row; Up and Down stop at the first and last row |
-| Home, End, on a tile                    | First, last file                                                                                                                       |
-| Enter, on a tile                        | Opens the inspector on it and moves focus to its alt text; a sheet opens modal; an uploading or failed tile opens nothing              |
-| Space, x, on a tile                     | Selects or clears it (x is off while single keys are off)                                                                              |
-| Esc, in the grid                        | Clears the selection (the bulk bar's rule)                                                                                             |
-| Alt and an arrow, in an inspector field | Previous or next file; the inspector follows and focus stays in the field                                                              |
-| Esc, in an inspector field              | Focus returns to the active tile; in a sheet, closes it and returns focus to the tile                                                  |
-| Enter, in the tag field                 | Adds the tag; it saves                                                                                                                 |
-| Enter on a tag chip                     | Removes the tag; it saves                                                                                                              |
-| Enter or Space on Copy                  | Copies the address (or the Markdown, the HTML) and says so                                                                             |
-| Enter or Space on Retry, Restore        | Retries the upload; restores the file, with Undo                                                                                       |
+| Key | Does |
+| --- | --- |
+| Tab, Shift Tab | Into the grid at the active tile, through that tile's controls (its checkbox, Retry or Restore), and out; then on to the inspector |
+| Arrow keys, on a tile | Move focus to the neighboring tile, in two dimensions; Left and Right wrap to the next row; Up and Down stop at the first and last row |
+| Home, End, on a tile | First, last file |
+| Enter, on a tile | Opens the inspector on it and moves focus to its alt text; a sheet opens modal; an uploading or failed tile opens nothing |
+| Space, x, on a tile | Selects or clears it (x is off while single keys are off) |
+| Esc, in the grid | Clears the selection (the bulk bar's rule) |
+| Alt and an arrow, in an inspector field | Previous or next file; the inspector follows and focus stays in the field |
+| Esc, in an inspector field | Focus returns to the active tile; in a sheet, closes it and returns focus to the tile |
+| Enter, in the tag field | Adds the tag; it saves |
+| Enter on a tag chip | Removes the tag; it saves |
+| Enter or Space on Copy | Copies the address (or the Markdown, the HTML) and says so |
+| Enter or Space on Retry, Restore | Retries the upload; restores the file, with Undo |
 
 ## Accessibility
 
@@ -114,51 +93,20 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 A tile, as the server renders it. Every fact the filters and the inspector read is a data attribute.
 
 ```html
-<li
-  class="cap-media-tile"
-  id="tile-launch-hero"
-  data-key="media/launch-hero.jpg"
-  data-label="launch-hero.jpg"
-  data-state="ready"
-  data-kind="image"
-  data-type="image/jpeg"
-  data-bytes="421888"
-  data-width="1600"
-  data-height="900"
-  data-uploaded="2026-09-18"
-  data-url="https://example.com/media/launch-hero.jpg"
-  data-alt="set"
-  data-alt-text="The status dashboard with three sites reporting healthy"
-  data-title=""
-  data-caption=""
-  data-tags="release, dashboard"
-  data-used="2"
-  data-used-in='[{"title":"Notes on the spring release","href":"/admin/posts/spring-release/edit","how":"image in the body"}]'
-  data-suggested-tags='["2026"]'
-  data-active
->
-  <a
-    class="cap-media-open"
-    href="?key=media%2Flaunch-hero.jpg"
-    aria-describedby="tile-launch-hero-flags"
-    aria-current="true"
-  >
-    <span class="cap-media-thumb"
-      ><img src="…" alt="" loading="lazy" decoding="async" width="320" height="320"
-    /></span>
+<li class="cap-media-tile" id="tile-launch-hero" data-key="media/launch-hero.jpg" data-label="launch-hero.jpg"
+    data-state="ready" data-kind="image" data-type="image/jpeg" data-bytes="421888" data-width="1600" data-height="900"
+    data-uploaded="2026-09-18" data-url="https://example.com/media/launch-hero.jpg"
+    data-alt="set" data-alt-text="The status dashboard with three sites reporting healthy" data-title="" data-caption=""
+    data-tags="release, dashboard" data-used="2" data-used-in='[{"title":"Notes on the spring release","href":"/admin/posts/spring-release/edit","how":"image in the body"}]'
+    data-suggested-tags='["2026"]' data-active>
+  <a class="cap-media-open" href="?key=media%2Flaunch-hero.jpg" aria-describedby="tile-launch-hero-flags" aria-current="true">
+    <span class="cap-media-thumb"><img src="…" alt="" loading="lazy" decoding="async" width="320" height="320" /></span>
     <span class="cap-media-name" title="media/launch-hero.jpg">launch-hero.jpg</span>
     <span class="cap-media-meta">JPEG · 412 kB</span>
   </a>
-  <span class="cap-media-flags" id="tile-launch-hero-flags"
-    ><span class="cap-status" data-tone="warn">[warning glyph]No alt text</span></span
-  >
+  <span class="cap-media-flags" id="tile-launch-hero-flags"><span class="cap-status" data-tone="warn">[warning glyph]No alt text</span></span>
   <label class="cap-media-check">
-    <input
-      type="checkbox"
-      data-cap-select
-      value="media/launch-hero.jpg"
-      aria-label="Select launch-hero.jpg"
-    />
+    <input type="checkbox" data-cap-select value="media/launch-hero.jpg" aria-label="Select launch-hero.jpg" />
     <span class="cap-media-check-box" aria-hidden="true"><svg viewBox="0 0 16 16">…</svg></span>
     <span class="cap-media-check-word" aria-hidden="true">Selected</span>
   </label>
@@ -218,30 +166,11 @@ The whole inspector is in the HTML for the active file; the others fill from the
 import { attachMedia, enhance } from "capsomer/behavior/media";
 const media = attachMedia(el, {
   save: (key, fields) => api.saveMedia(key, fields), // { alt, decorative, title, caption, tags }; reject with an Error that says why
-  bin: (keys) => api.bin(keys),
-  restore: (keys) => api.restore(keys),
-  retry: (key) => api.retryUpload(key),
+  bin: (keys) => api.bin(keys), restore: (keys) => api.restore(keys), retry: (key) => api.retryUpload(key),
 });
 bindBulk(bulkBar, media.bulkHandlers()); // bin, restore, copy, add-tag, remove-tag
-media.add({
-  key,
-  name,
-  url,
-  kind: "image",
-  type: file.type,
-  bytes: file.size,
-  alt: "",
-  altState: "missing",
-  title: "",
-  caption: "",
-  tags: [],
-  used: [],
-  state: "uploading",
-  progress: 0,
-});
-media.update(key, { progress: 60 });
-media.update(key, { state: "ready" });
-media.update(key, { state: "failed", error: "The file is 6 MB and the limit is 5 MB." });
+media.add({ key, name, url, kind: "image", type: file.type, bytes: file.size, alt: "", altState: "missing", title: "", caption: "", tags: [], used: [], state: "uploading", progress: 0 });
+media.update(key, { progress: 60 }); media.update(key, { state: "ready" }); media.update(key, { state: "failed", error: "The file is 6 MB and the limit is 5 MB." });
 ```
 
 `enhance()` attaches every `[data-cap="media"]` with the default save, a POST of the inspector's form to its `action`. The module also exports the pure parts: `bands`, `nextTile`, `createAutosave` (`AUTOSAVE_MS` is 800), `applyBulkTag`, `altStateOf`, `flagsFor`, `copySnippets`, `copyText`, `byteSize`, `parseTags`, `buildTile`, `recordOf`, `syncTile`. The filters are the chips behavior (`enhance` from `capsomer/behavior/chips`) and the uploads are the drop zone's `cap-drop-accepted`, wired by the app as above.

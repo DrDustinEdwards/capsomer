@@ -4,26 +4,7 @@ title: Markdown editor
 summary: A labeled textarea, in the page's HTML, upgraded in place to a markdown editor with a toolbar, a link palette, a slash menu, an image step that insists on alt text, and a word count.
 parts: [css, behavior, react]
 tool: own JavaScript (CodeMirror)
-states:
-  [
-    a long text whose scroller is a keyboard stop,
-    a long disabled text,
-    default,
-    empty with a placeholder,
-    line numbers,
-    link palette open,
-    block menu open,
-    image uploading,
-    image waiting for alt text,
-    image upload failed,
-    read-only,
-    disabled with its reason,
-    invalid with its message,
-    over a character limit,
-    without script,
-    in a form,
-    in React,
-  ]
+states: [a long text whose scroller is a keyboard stop, a long disabled text, default, empty with a placeholder, line numbers, link palette open, block menu open, image uploading, image waiting for alt text, image upload failed, read-only, disabled with its reason, invalid with its message, over a character limit, without script, in a form, in React]
 added: 0.3.0
 source: dustinedwards.info site admin, app/components/admin/markdown-editor.tsx, md-editor-commands.ts, md-editor-toolbar.tsx, use-link-palette.ts, use-image-upload.ts, roving-focus.ts, app/styles/admin-editor.css (.md-*) and app/lib/content/reading-time.mjs
 replaces:
@@ -79,22 +60,22 @@ shadcn/ui (Base UI flavor, nova style, shadcn-ui/ui main at d75a96ab787f) has no
 
 ## Keyboard
 
-| Key                                          | Does                                                                                                   |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Tab                                          | Enters the toolbar at its one stop; the next Tab enters the surface; Tab in the surface leaves it      |
-| Left arrow, Right arrow, Home, End           | Moves between the toolbar's buttons, wrapping                                                          |
-| Ctrl or Cmd B, I, E                          | Bold, italic or code around the selection; with none, the cursor lands between the marks               |
-| Ctrl or Cmd K                                | Opens the link palette, the selection as its query                                                     |
-| Down arrow, Up arrow (palette)               | Moves the active option, wrapping                                                                      |
-| Enter (palette)                              | Links the active option, or the typed address; the cursor lands after the link                         |
-| `/` alone on a line                          | Opens the block menu (when the app supplies blocks)                                                    |
-| Down arrow (surface, menu open)              | Enters the block menu                                                                                  |
-| Up arrow, Down arrow, Home, End (block menu) | Moves between blocks, wrapping                                                                         |
-| Enter (block menu)                           | Replaces the `/` with the block, the cursor where the block says                                       |
-| Esc                                          | Closes the link palette or the block menu and returns to the text; with neither open it is not claimed |
-| Ctrl or Cmd S                                | Calls `onSave` and fires `cap-md-save`; focus stays in the editor                                      |
-| Ctrl or Cmd Z, Ctrl or Cmd Y                 | Undo, redo                                                                                             |
-| Enter (alt field), Esc                       | Inserts the image once it has alt text; Esc discards it and returns to the text                        |
+| Key | Does |
+| --- | --- |
+| Tab | Enters the toolbar at its one stop; the next Tab enters the surface; Tab in the surface leaves it |
+| Left arrow, Right arrow, Home, End | Moves between the toolbar's buttons, wrapping |
+| Ctrl or Cmd B, I, E | Bold, italic or code around the selection; with none, the cursor lands between the marks |
+| Ctrl or Cmd K | Opens the link palette, the selection as its query |
+| Down arrow, Up arrow (palette) | Moves the active option, wrapping |
+| Enter (palette) | Links the active option, or the typed address; the cursor lands after the link |
+| `/` alone on a line | Opens the block menu (when the app supplies blocks) |
+| Down arrow (surface, menu open) | Enters the block menu |
+| Up arrow, Down arrow, Home, End (block menu) | Moves between blocks, wrapping |
+| Enter (block menu) | Replaces the `/` with the block, the cursor where the block says |
+| Esc | Closes the link palette or the block menu and returns to the text; with neither open it is not claimed |
+| Ctrl or Cmd S | Calls `onSave` and fires `cap-md-save`; focus stays in the editor |
+| Ctrl or Cmd Z, Ctrl or Cmd Y | Undo, redo |
+| Enter (alt field), Esc | Inserts the image once it has alt text; Esc discards it and returns to the text |
 
 ## Accessibility
 
@@ -114,14 +95,7 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 <div class="cap-md cap-field" data-cap="markdown-editor">
   <label class="cap-field-label" for="body">Body</label>
   <p class="cap-field-help" id="body-h">Markdown. Ctrl or Cmd + K links to a page.</p>
-  <textarea
-    class="cap-input cap-md-source"
-    id="body"
-    name="body"
-    aria-describedby="body-h"
-    spellcheck="true"
-  >
-## Why the checks moved to the edge
+  <textarea class="cap-input cap-md-source" id="body" name="body" aria-describedby="body-h" spellcheck="true">## Why the checks moved to the edge
 
 The monitors now run from three regions.</textarea>
 </div>
@@ -135,14 +109,8 @@ import { enhance, getMarkdownEditor } from "capsomer/behavior/markdown-editor";
 enhance(document, {
   linkTargets: [{ href: "/writing/first-incident", title: "The first incident write-up" }],
   scaffolds: [
-    {
-      id: "figure",
-      label: "Figure",
-      hint: "An image with a caption",
-      icon: "M3 4h18v13H3zM3 14l4-4 5 5M6 21h12",
-      text: ':::figure{src="" alt=""}\nA caption.\n:::',
-      cursorAfter: 'src="',
-    },
+    { id: "figure", label: "Figure", hint: "An image with a caption", icon: "M3 4h18v13H3zM3 14l4-4 5 5M6 21h12",
+      text: ':::figure{src="" alt=""}\nA caption.\n:::', cursorAfter: 'src="' },
   ],
   // image is { alt, decorative }: send both, so the file is stored described.
   onUpload: async (file, image, signal) => ({ url: await sendToBucket(file, image, signal) }),
@@ -164,11 +132,7 @@ In React, `import { MarkdownEditor } from "capsomer/react/markdown-editor"`. It 
   onSave={save}
   help="Markdown. Ctrl or Cmd + K links to a page."
   error={errors.body}
-  linkTargets={posts.map((p) => ({
-    href: `/writing/${p.slug}`,
-    title: p.title,
-    note: p.live ? undefined : "not live yet (draft)",
-  }))}
+  linkTargets={posts.map((p) => ({ href: `/writing/${p.slug}`, title: p.title, note: p.live ? undefined : "not live yet (draft)" }))}
   scaffolds={scaffolds}
   onUpload={async (file, image, signal) => ({ url: await sendToBucket(file, image, signal) })}
 />

@@ -4,18 +4,7 @@ title: Pagination
 summary: Move between pages of a long list, with a "Showing 21 to 40 of 312" line, as links or as buttons.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states:
-  [
-    links in the middle,
-    a gap on both sides,
-    first page,
-    last page,
-    few pages,
-    other words for the ends,
-    buttons client-side,
-    narrow space compact form,
-    comfortable density,
-  ]
+states: [links in the middle, a gap on both sides, first page, last page, few pages, other words for the ends, buttons client-side, narrow space compact form, comfortable density]
 added: 0.3.0
 source: The site's Pager (app/components/post-row.tsx, .pager in app/styles/listing.css) and the admin's "Showing N of M posts" line (app/components/admin/posts-table.tsx); shadcn/ui Pagination
 replaces:
@@ -57,11 +46,11 @@ Pagination (`pagination.tsx`: Pagination, PaginationContent, PaginationItem, Pag
 
 ## Keyboard
 
-| Key            | Does                                                                                                   |
-| -------------- | ------------------------------------------------------------------------------------------------------ |
+| Key | Does |
+| --- | --- |
 | Tab, Shift+Tab | Moves through Previous, the page numbers and Next. A disabled link is not a stop; a disabled button is |
-| Enter          | Follows the focused link, or chooses the focused page (buttons)                                        |
-| Space          | Chooses the focused page (buttons)                                                                     |
+| Enter | Follows the focused link, or chooses the focused page (buttons) |
+| Space | Chooses the focused page (buttons) |
 
 In the buttons form, focus stays on the control that was used: after Next it is on Next while there are more pages, otherwise on the current page.
 
@@ -85,14 +74,8 @@ Links, as a server renders them (the page's own URLs):
   <ul class="cap-pagination-list">
     <li><a class="cap-page" data-kind="prev" href="?page=2" rel="prev">Previous</a></li>
     <li class="cap-pagination-num"><a class="cap-page" aria-label="Page 1" href="?page=1">1</a></li>
-    <li class="cap-pagination-num">
-      <a class="cap-page" aria-label="Page 3" aria-current="page" href="?page=3">3</a>
-    </li>
-    <li class="cap-pagination-num">
-      <span class="cap-page-gap"
-        ><span aria-hidden="true">&hellip;</span><span class="cap-sr-only">More pages</span></span
-      >
-    </li>
+    <li class="cap-pagination-num"><a class="cap-page" aria-label="Page 3" aria-current="page" href="?page=3">3</a></li>
+    <li class="cap-pagination-num"><span class="cap-page-gap"><span aria-hidden="true">&hellip;</span><span class="cap-sr-only">More pages</span></span></li>
     <li class="cap-pagination-where">Page 3 of 16</li>
     <li><a class="cap-page" data-kind="next" href="?page=4" rel="next">Next</a></li>
   </ul>
@@ -102,16 +85,8 @@ Links, as a server renders them (the page's own URLs):
 A disabled end in the links form: `<a class="cap-page" data-kind="prev" role="link" aria-disabled="true">Previous</a>`. In the buttons form every `a` is `<button type="button" class="cap-page" data-page="n">` and a disabled end is a button with `aria-disabled="true"` and no `data-page`; the `nav` carries its state:
 
 ```html
-<nav
-  class="cap-pagination"
-  aria-label="Posts pages"
-  data-cap="pagination"
-  data-page="1"
-  data-page-count="16"
-  data-total="312"
-  data-per-page="20"
-  data-noun="posts"
->
+<nav class="cap-pagination" aria-label="Posts pages" data-cap="pagination"
+     data-page="1" data-page-count="16" data-total="312" data-per-page="20" data-noun="posts">
 ```
 
 `data-prev-label` and `data-next-label` change the words. `import { enhance, setPage, render, pageItems, statusText } from "capsomer/behavior/pagination"`: `enhance()` makes a click choose a page, draw the list again (the count line is updated in place) and fire `cap:page-change` (bubbles; `detail.page`), which the app answers by loading that page. `setPage(nav, 5)` does the same from script. The links form needs no script.

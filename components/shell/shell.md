@@ -4,26 +4,7 @@ title: Shell
 summary: The top bar, the left menu and the phone tab bar every app shares.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states:
-  [
-    the site's logo,
-    the logo alone,
-    expanded,
-    group label,
-    current entry,
-    entry with a count,
-    hover,
-    pressed,
-    keyboard focus,
-    collapsed,
-    collapsed with a shown name,
-    Settings current,
-    comfortable density,
-    phone width,
-    More tab,
-    More sheet open,
-    More tab current,
-  ]
+states: [the site's logo, the logo alone, expanded, group label, current entry, entry with a count, hover, pressed, keyboard focus, collapsed, collapsed with a shown name, Settings current, comfortable density, phone width, More tab, More sheet open, More tab current]
 added: 0.1.0
 updated: 0.2.0
 source: Capsid Portal, dashboard/src/app/App.tsx, MoreSheet.tsx and styles.css
@@ -64,18 +45,18 @@ A public reading page (a post, a CV) has no rail; it uses the site's own header 
 
 ## Keyboard
 
-| Key                                                                   | Does                                                                               |
-| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Tab                                                                   | The skip link first, then the top bar, the rail, the main region                   |
-| Enter on the skip link                                                | Moves focus to the main region                                                     |
-| Enter or Space on the collapse button                                 | Collapses or expands the rail                                                      |
-| Esc                                                                   | Hides a collapsed entry's shown name until the pointer or focus moves on           |
-| Enter or Space on More (phone)                                        | Opens the More sheet; focus moves into it                                          |
-| Tab, Shift Tab in the More sheet                                      | Moves among its links and Close; focus stays in the sheet                          |
-| Enter or Space on Close in the More sheet, or a press on the backdrop | Closes it; focus returns to More                                                   |
-| Esc in the More sheet                                                 | Closes it; focus returns to More                                                   |
-| Enter on a link in the More sheet                                     | Goes to that view and closes the sheet                                             |
-| `[`                                                                   | Collapses or expands the rail, when the app binds it through the shortcut registry |
+| Key | Does |
+| --- | --- |
+| Tab | The skip link first, then the top bar, the rail, the main region |
+| Enter on the skip link | Moves focus to the main region |
+| Enter or Space on the collapse button | Collapses or expands the rail |
+| Esc | Hides a collapsed entry's shown name until the pointer or focus moves on |
+| Enter or Space on More (phone) | Opens the More sheet; focus moves into it |
+| Tab, Shift Tab in the More sheet | Moves among its links and Close; focus stays in the sheet |
+| Enter or Space on Close in the More sheet, or a press on the backdrop | Closes it; focus returns to More |
+| Esc in the More sheet | Closes it; focus returns to More |
+| Enter on a link in the More sheet | Goes to that view and closes the sheet |
+| `[` | Collapses or expands the rail, when the app binds it through the shortcut registry |
 
 ## Accessibility
 
@@ -98,95 +79,35 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
     <a class="cap-shell-brand" href="/">[mark] Name</a>
     <div class="cap-shell-spacer"></div>
     [status]
-    <div class="cap-shell-actions">
-      [actions] [theme switch]
-      <a
-        class="cap-btn cap-shell-settings"
-        data-icon-only
-        data-hide="phone"
-        href="/settings"
-        aria-label="Settings"
-        >[icon]</a
-      >
-      [Sign out]
-    </div>
+    <div class="cap-shell-actions">[actions] [theme switch]
+      <a class="cap-btn cap-shell-settings" data-icon-only data-hide="phone" href="/settings" aria-label="Settings">[icon]</a> [Sign out]</div>
   </header>
   <nav class="cap-shell-rail" id="cap-rail" aria-label="Sections">
-    <div class="cap-shell-group" role="group" aria-labelledby="g-watch">
-      <!-- optional -->
+    <div class="cap-shell-group" role="group" aria-labelledby="g-watch"> <!-- optional -->
       <div class="cap-shell-group-label" id="g-watch">Watch</div>
-      <a href="/" aria-current="page"
-        >[icon]<span class="cap-shell-label">Overview</span> <span class="cap-shell-count"></span
-      ></a>
-      <a href="/queue" aria-label="Queue, 3 blocked"
-        >[icon]<span class="cap-shell-label">Queue</span>
-        <span class="cap-shell-count" data-tone="warn">3</span></a
-      >
+      <a href="/" aria-current="page">[icon]<span class="cap-shell-label">Overview</span> <span class="cap-shell-count"></span></a>
+      <a href="/queue" aria-label="Queue, 3 blocked">[icon]<span class="cap-shell-label">Queue</span> <span class="cap-shell-count" data-tone="warn">3</span></a>
     </div>
     <div class="cap-shell-foot">
       <div class="cap-shell-hint">
-        <button type="button" class="cap-shell-linkish">
-          <span>Command menu</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span>
-        </button>
+        <button type="button" class="cap-shell-linkish"><span>Command menu</span><span><kbd>Ctrl</kbd> <kbd>K</kbd></span></button>
       </div>
-      <button
-        type="button"
-        class="cap-shell-toggle"
-        data-cap-part="rail-toggle"
-        aria-expanded="true"
-        aria-controls="cap-rail"
-      >
-        [icon]<span class="cap-shell-label">Collapse menu</span><kbd aria-hidden="true">[</kbd>
-      </button>
+      <button type="button" class="cap-shell-toggle" data-cap-part="rail-toggle" aria-expanded="true" aria-controls="cap-rail">[icon]<span class="cap-shell-label">Collapse menu</span><kbd aria-hidden="true">[</kbd></button>
     </div>
   </nav>
-  <main class="cap-shell-main" id="cap-main" tabindex="-1">
-    <div class="cap-shell-page">[the view]</div>
-  </main>
+  <main class="cap-shell-main" id="cap-main" tabindex="-1"><div class="cap-shell-page">[the view]</div></main>
   <nav class="cap-shell-tabs" aria-label="Sections">
     <a href="/" aria-current="page">[icon]Overview</a> [... up to four links]
-    <button
-      type="button"
-      data-cap-part="more"
-      aria-haspopup="dialog"
-      aria-expanded="false"
-      aria-controls="cap-more"
-    >
-      [icon]More
-    </button>
+    <button type="button" data-cap-part="more" aria-haspopup="dialog" aria-expanded="false" aria-controls="cap-more">[icon]More</button>
   </nav>
-  <dialog
-    class="cap-dialog cap-shell-more"
-    data-cap="dialog"
-    data-placement="bottom"
-    id="cap-more"
-    aria-labelledby="cap-more-title"
-  >
-    <div class="cap-dialog-header">
-      <h2 class="cap-dialog-title" id="cap-more-title">More views</h2>
-    </div>
+  <dialog class="cap-dialog cap-shell-more" data-cap="dialog" data-placement="bottom" id="cap-more" aria-labelledby="cap-more-title">
+    <div class="cap-dialog-header"><h2 class="cap-dialog-title" id="cap-more-title">More views</h2></div>
     <div class="cap-dialog-body">
-      <nav aria-labelledby="cap-more-title">
-        <ul class="cap-shell-more-list">
-          <li>
-            <a href="/namespaces"
-              >[icon]<span class="cap-shell-more-name">Namespaces</span>
-              <span class="cap-shell-count">1 paused</span></a
-            >
-          </li>
-        </ul>
-      </nav>
+      <nav aria-labelledby="cap-more-title"><ul class="cap-shell-more-list">
+        <li><a href="/namespaces">[icon]<span class="cap-shell-more-name">Namespaces</span> <span class="cap-shell-count">1 paused</span></a></li>
+      </ul></nav>
     </div>
-    <button
-      type="button"
-      class="cap-btn cap-dialog-close"
-      data-variant="quiet"
-      data-icon-only
-      data-cap-part="close"
-      aria-label="Close"
-    >
-      [icon]
-    </button>
+    <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only data-cap-part="close" aria-label="Close">[icon]</button>
   </dialog>
 </div>
 ```

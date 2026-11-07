@@ -36,14 +36,9 @@ A statement speaks for one site, so a site with its own `/accessibility` (Prelum
 
 ```html
 <div class="cap-family-footer-center">
-  <div>
-    <p class="cap-family-footer-center-name">Capsid</p>
-    <p class="cap-family-footer-about">What it is.</p>
-  </div>
+  <div><p class="cap-family-footer-center-name">Capsid</p><p class="cap-family-footer-about">What it is.</p></div>
   <div class="cap-family-footer-columns">
-    <ul class="cap-family-footer-links">
-      <li><a href="/tools">Tools</a></li>
-    </ul>
+    <ul class="cap-family-footer-links"><li><a href="/tools">Tools</a></li></ul>
     <!-- up to three groups, on the letterhead's columns -->
   </div>
   <p class="cap-family-footer-stamp"><span>Data as of 2026-10-26</span></p>

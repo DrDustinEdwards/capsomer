@@ -18,6 +18,14 @@ export default defineConfig({
     "css/fonts.css",
     "css/fallback-fonts.css",
     "components/email/colors.ts",
+    // Shipped as written: the stylesheets are the package's files, and the showcase prints each component's Markdown
+    // (its HTML examples in code fences) and DEFAULTS.md as they are. Formatting them rewrapped selectors and the
+    // examples' markup.
+    "css/",
+    "tokens/*.css",
+    "components/*/*.css",
+    "components/*/*.md",
+    "DEFAULTS.md",
     // The components' hand-written example markup: the browser specs assert on the delivered HTML byte for byte.
     "components/*/examples.html",
   ],

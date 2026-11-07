@@ -4,22 +4,7 @@ title: Media library (for a site)
 summary: One page of one site's files, the same in Carrel and in every site admin. Search, tag chips, the site's lenses, the library and Trash, a sort and its direction, groups by folder or month, a grid or a list at three tile sizes, quick search, upload checked against the site's limits, the bulk bar with each file's outcome, an inspector in form or autosave mode, Undo, and a picker mode that asks for the alt text each use needs. Every action is a form post, so it all works with no script.
 parts: [css, behavior, react]
 tool: native + React (composes media, drop zone, chips, tabs, field, disclosure, bulk bar, message, empty, confirm dialog, shortcuts and command menu)
-states:
-  [
-    editor with every action,
-    inspector in form mode,
-    Trash as a list,
-    grouped by folder at the small size,
-    a list grouped by month sorted on the page only,
-    reader on a limited site,
-    picker,
-    picker alt step with no script,
-    empty trash,
-    no match,
-    delivered HTML,
-    a site with every media idea,
-    the media ideas as delivered HTML,
-  ]
+states: [editor with every action, inspector in form mode, Trash as a list, grouped by folder at the small size, a list grouped by month sorted on the page only, reader on a limited site, picker, picker alt step with no script, empty trash, no match, delivered HTML, a site with every media idea, the media ideas as delivered HTML]
 added: 0.6.0
 source: Carrel, app/routes/media.tsx, media.bulk.ts, lib/media.server.ts, components/media/library-insert.tsx (server forms on purpose, the capability gates, the refused-because-used list, cursor paging, the picker that asks for alt text); dustinedwards.info, app/routes/admin.media._index.tsx and components/admin/media-* (the library experience, already in Capsomer's media); docs/design/design-content-components.md section 2.4.2
 replaces:
@@ -76,10 +61,10 @@ Any screen where a person manages one site's files, and any editor that inserts 
 
 The grid's and the inspector's keys are `media`'s (arrow keys, Home, End, Enter to open, Space or x to select, Alt and an arrow from a field). The bulk bar's are the bulk bar's (Esc clears). z is Undo. In the picker, Enter on a tile opens the alt step. The library adds these, and lists them under Keyboard shortcuts:
 
-| Key                | Does                                                                                                    |
-| ------------------ | ------------------------------------------------------------------------------------------------------- |
-| Ctrl K, Cmd K, `/` | Find a file: the command menu over the host's matches, or focus in the search field                     |
-| Esc, on a tile     | Clears the selection; with nothing selected, closes the open file's details and keeps focus on the tile |
+| Key | Does |
+| --- | --- |
+| Ctrl K, Cmd K, `/` | Find a file: the command menu over the host's matches, or focus in the search field |
+| Esc, on a tile | Clears the selection; with nothing selected, closes the open file's details and keeps focus on the tile |
 
 ## Accessibility
 
@@ -97,62 +82,21 @@ React renders it; a server renders the same HTML. The parts, in order:
 
 ```html
 <section class="cap-media-lib" data-cap="media-library" aria-label="Files">
-  <nav class="cap-tabs-list cap-media-lib-tabs" aria-label="Files: library or Trash">
-    ...Library, Trash, with counts...
-  </nav>
-  <form
-    class="cap-media-lib-filters"
-    role="search"
-    aria-label="Find files"
-    method="get"
-    action="/media"
-  >
-    ...Search, Show...
-  </form>
+  <nav class="cap-tabs-list cap-media-lib-tabs" aria-label="Files: library or Trash">...Library, Trash, with counts...</nav>
+  <form class="cap-media-lib-filters" role="search" aria-label="Find files" method="get" action="/media">...Search, Show...</form>
   <nav class="cap-media-lib-chips" aria-label="Narrow the files">
-    <ul class="cap-chips" aria-label="Tags">
-      <li>
-        <a class="cap-chip" href="/media?tag=release" aria-current="true"
-          >release <span class="cap-chip-count">4</span></a
-        >
-      </li>
-    </ul>
-    <ul class="cap-chips" aria-label="Lenses">
-      ...
-    </ul>
+    <ul class="cap-chips" aria-label="Tags"><li><a class="cap-chip" href="/media?tag=release" aria-current="true">release <span class="cap-chip-count">4</span></a></li></ul>
+    <ul class="cap-chips" aria-label="Lenses">...</ul>
   </nav>
-  <div class="cap-media-lib-bar">
-    <p class="cap-media-lib-count">5 files</p>
-    <div class="cap-media-lib-tools">
-      <nav class="cap-media-lib-layout" aria-label="Show as">...Grid, List...</nav>
-    </div>
-  </div>
-  <ul class="cap-media-lib-withheld">
-    ...
-  </ul>
-  <form class="cap-media-lib-upload" method="post" enctype="multipart/form-data" action="/media">
-    <input type="hidden" name="intent" value="upload" /> ...the drop zone (name="file"), Alt text
-    (required), Upload, Upload as decorative (name="decorative" value="on", formnovalidate)...
-  </form>
+  <div class="cap-media-lib-bar"><p class="cap-media-lib-count">5 files</p><div class="cap-media-lib-tools"><nav class="cap-media-lib-layout" aria-label="Show as">...Grid, List...</nav></div></div>
+  <ul class="cap-media-lib-withheld">...</ul>
+  <form class="cap-media-lib-upload" method="post" enctype="multipart/form-data" action="/media"><input type="hidden" name="intent" value="upload"> ...the drop zone (name="file"), Alt text (required), Upload, Upload as decorative (name="decorative" value="on", formnovalidate)...</form>
   <div class="cap-message cap-content-result" role="status">...</div>
   <form id="bulk" class="cap-media-lib-bulk-form" method="post" action="/media"></form>
-  <div class="cap-bulk" data-cap="bulk-bar" ...>
-    ...submit buttons with form="bulk", the tag field, the outcome list...
-  </div>
-  <div class="cap-media" data-size="m" data-view="list">
-    <div class="cap-media-layout">
-      <div class="cap-media-main">
-        ...media's grid; each tile's link is ?inspect=, its box name="ids" form="bulk"...
-      </div>
-      <dialog class="cap-dialog cap-media-inspector" open>
-        ...media's inspector; in form mode form.cap-media-field-form per group of fields, and
-        form.cap-media-act for each of Move to Trash, Restore, Delete for good; Close is a link...
-      </dialog>
-    </div>
-  </div>
-  <form class="cap-media-pick" data-cap-part="pick" method="post" action="/media">
-    ...picker mode: the alt step...
-  </form>
+  <div class="cap-bulk" data-cap="bulk-bar" ...>...submit buttons with form="bulk", the tag field, the outcome list...</div>
+  <div class="cap-media" data-size="m" data-view="list"><div class="cap-media-layout"><div class="cap-media-main">...media's grid; each tile's link is ?inspect=, its box name="ids" form="bulk"...</div>
+    <dialog class="cap-dialog cap-media-inspector" open>...media's inspector; in form mode form.cap-media-field-form per group of fields, and form.cap-media-act for each of Move to Trash, Restore, Delete for good; Close is a link...</dialog></div></div>
+  <form class="cap-media-pick" data-cap-part="pick" method="post" action="/media">...picker mode: the alt step...</form>
   <nav class="cap-media-lib-pages" aria-label="Files pages">...First page, Next page...</nav>
 </section>
 ```

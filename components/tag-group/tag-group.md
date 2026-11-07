@@ -38,13 +38,13 @@ Values a person has added and may take away one at a time: a draft's tags, the s
 
 ## Keyboard
 
-| Key                             | Does                                                             |
-| ------------------------------- | ---------------------------------------------------------------- |
-| Tab                             | Enters the group at one tag's remove button; the next Tab leaves |
-| Right arrow, Left arrow         | Next or previous tag, wrapping (swapped right to left)           |
-| Home, End                       | The first or the last tag                                        |
-| Delete, Backspace, Enter, Space | Removes the focused tag; focus moves to the next                 |
-| z                               | Undo, from the message region, while single-key shortcuts are on |
+| Key | Does |
+| --- | --- |
+| Tab | Enters the group at one tag's remove button; the next Tab leaves |
+| Right arrow, Left arrow | Next or previous tag, wrapping (swapped right to left) |
+| Home, End | The first or the last tag |
+| Delete, Backspace, Enter, Space | Removes the focused tag; focus moves to the next |
+| z | Undo, from the message region, while single-key shortcuts are on |
 
 ## Accessibility
 
@@ -58,27 +58,12 @@ Last checked by hand: not yet. Automated: see the site's Tests page.
 ## Markup
 
 ```html
-<form
-  class="cap-tags"
-  data-cap="tag-group"
-  role="group"
-  aria-labelledby="tags-l"
-  data-cap-then="#tags-add"
-  method="post"
->
+<form class="cap-tags" data-cap="tag-group" role="group" aria-labelledby="tags-l" data-cap-then="#tags-add" method="post">
   <span class="cap-tags-label" id="tags-l">Tags</span>
   <ul class="cap-tags-list">
     <li class="cap-tag" data-value="monitoring">
       <span class="cap-tag-name">monitoring</span>
-      <button
-        type="submit"
-        name="remove-tag"
-        value="monitoring"
-        class="cap-tag-remove"
-        aria-label="Remove monitoring"
-      >
-        <svg aria-hidden="true">...</svg>
-      </button>
+      <button type="submit" name="remove-tag" value="monitoring" class="cap-tag-remove" aria-label="Remove monitoring"><svg aria-hidden="true">...</svg></button>
     </li>
   </ul>
   <span class="cap-tags-empty">No tags yet.</span>
