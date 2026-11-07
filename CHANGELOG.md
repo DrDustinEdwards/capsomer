@@ -4,10 +4,21 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.81.1]
+## [0.83.1]
 
 - **Confirm page: the form no longer carries `role="group"`.** `group` is not an allowed role for `form` (ARIA in HTML; axe `aria-allowed-role`), and it replaced the form landmark's role. The `form.cap-confirm-page` keeps its `aria-labelledby` and `aria-describedby`, so it is a named `form` landmark. HTML contract change: remove `role="group"` from `form.cap-confirm-page`. React: `ConfirmPage` and `ConfirmModal` no longer pass `role`, and `ConfirmFormProps` loses its `role` field (a `renderForm` that spreads the props needs no change; one that reads `props.role` should stop).
 - **History list: the phone specimen's hidden heading is an `h2`, not an `h3`,** so the specimen page no longer skips a level (axe `heading-order`). Specimen only; no component change.
+
+## [0.83.0]
+
+- **Install contract: `@drdustinedwards/site-helpers` is an optional peer dependency, no longer a dependency.** Only the `capsomer` command (`states`, `site-data`) and this repository's own site import it. A git dependency inside a git dependency is refused by npm 12 (`allow-git`, EALLOWGIT) and left the lockfiles of apps stale. An app that runs the `capsomer` command declares `@drdustinedwards/site-helpers` itself (>=0.40.0), as it does `@dustinedwards/site-runtime`. No token, class or HTML changes.
+- **Lightbox doc: the Close button's size is stated as the dialog block's.** The page said 44 px; it is the icon button's own size. Docs only.
+
+## [0.82.0]
+
+- **Family footer: the Workspace link reads "Lab Bench"**, capital B, as its accessible name does ("Lab Bench, the members' workspace (requires sign-in)"). Text only; no class, token or HTML structure changes.
+
+- **Family footer: a Legal column, and a Features link.** Privacy, Terms and Accessibility move out of the Site group into a new Legal group (`<nav aria-labelledby="cap-family-footer-legal">`, heading "Legal"), as GOV.UK's footer groups its policy links (privacy, accessibility statement, terms). The Site group is now Contact, Site map, Features and Colophon. Features links dustinedwards.info's `/features`, a page in code that is always published, so it is always listed. The footer's columns go from three to four at 48rem and wider. New export `legalLinks()` and `LEGAL_HEADING`; `familyLinks()` lists the Legal links after the Site links; `siteLinks()` no longer returns Privacy, Terms or Accessibility, so a site that read them from it reads `legalLinks()`.
 
 ## [0.81.0]
 

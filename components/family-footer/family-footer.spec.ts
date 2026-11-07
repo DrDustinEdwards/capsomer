@@ -13,6 +13,12 @@ test("behavior: another site's footer points the family's paths at dustinedwards
   const own = familyFooterHtml({ statement: "/accessibility", published: [], year: 2026 });
   expect(own).toContain('href="/accessibility"');
   expect(own).not.toContain("dustinedwards.info/accessibility");
+  // Privacy and Terms sit under Legal, not Site; Features is a Site link that waits for its page.
+  const legal = away.slice(away.indexOf('id="cap-family-footer-legal"'));
+  expect(legal).toContain("/privacy");
+  expect(away.slice(0, away.indexOf('id="cap-family-footer-legal"'))).not.toContain("/privacy");
+  expect(familyFooterHtml({ origin: "", published: [], year: 2026 })).toContain("/features");
+  expect(away).toContain("Lab Bench");
   expect(familyFooterHtml({ site: "capsid" }).match(/aria-current="page"/g)).toHaveLength(1);
 });
 
