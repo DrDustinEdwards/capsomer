@@ -24,6 +24,7 @@ import preload from "./preload.generated.json";
 
 const site = staticSite({
   site: capsomer,
+  siteName: "Capsomer",
   headers: TDM_RESERVATION_HEADERS,
   preload: preload.header,
   canonical: false,
