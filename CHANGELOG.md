@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.80.0]
+
+- **Family footer: a Legal column, and a Features link.** Privacy, Terms and Accessibility move out of the Site group into a new Legal group (`<nav aria-labelledby="cap-family-footer-legal">`, heading "Legal"), as GOV.UK's footer groups its policy links (privacy, accessibility statement, terms). The Site group is now Contact, Site map, Features and Colophon. Features links dustinedwards.info's `/features` and, like Accessibility, is listed on dustinedwards.info only while its page is published. The footer's columns go from three to four at 48rem and wider. New export `legalLinks()` and `LEGAL_HEADING`; `familyLinks()` lists the Legal links after the Site links; `siteLinks()` no longer returns Privacy, Terms or Accessibility, so a site that read them from it reads `legalLinks()`.
+
 - **Chart enhance uses Enarratio's page code.** `capsomer/behavior/chart-enhance` was a copy of Enarratio 0.9's `enhanceCharts` and `watchCharts`; it now calls them with the frame selector. Same exports and behavior. `enarratio` is 0.9.1 for development. No class, token or HTML contract changes.
 
 - **Site header (React): the section links' `nav` is named "Main", not "Site"**, so it no longer shares a name with the footer's "Site" `nav` (axe `landmark-unique`; a screen reader's landmark list showed two navigations called Site). The `aria-label` changes from `Site` to `Main`. No class or token changes.
