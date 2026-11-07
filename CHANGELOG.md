@@ -4,10 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.79.2]
+
 - **Chip: a label longer than its row wraps inside the chip.** `.cap-chip` loses `white-space: nowrap` and gains `max-width: 100%`, `overflow-wrap: anywhere` and 2px block padding, so a long subject chip (Foxing /books) no longer forces sideways scroll at 320px. Short chips look the same. No class or token changes.
-
 - **Tabs: choosing a tab no longer calls `scrollIntoView`.** It scrolled the page and set the browser's Tab starting point to the tab, so on a page with an initial tab set the first Tab press skipped the skip link and header. Only the tab list now scrolls, to show the chosen tab. No class, token or HTML contract changes.
-
 - **Site header: the search form's landmark name is the search label, not "Site"**, so it no longer shares a name with the sections `nav` (axe `landmark-unique`; screen readers listed two landmarks called Site). The form's `aria-label` changes from `Site` to the search label. No class or token changes.
 
 ## [0.79.1]
