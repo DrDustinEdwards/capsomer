@@ -22,6 +22,13 @@ const docs = import.meta.glob("../components/*/*.md", {
   eager: true,
 }) as Record<string, string>;
 
+// The components with a states page: bin/states.mjs writes one from each examples.html, so the site links only those.
+export const STATES_PAGES = new Set(
+  Object.keys(
+    import.meta.glob("../components/*/examples.html", { query: "?url", import: "default" }),
+  ).map((path) => /components\/([\w-]+)\//.exec(path)?.[1] ?? path),
+);
+
 export const COMPONENTS: ComponentDoc[] = Object.entries(docs)
   .filter(([path]) => {
     const m = /components\/([\w-]+)\/([\w-]+)\.md$/.exec(path);
