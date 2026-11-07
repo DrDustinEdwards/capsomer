@@ -1,5 +1,5 @@
 // Email templates: one definition makes the HTML and the text, so the two cannot disagree.
-// Pure functions with no dependency, no filesystem and no fetch: they run in a Worker, in
+// Pure functions with no dependency beyond site-runtime's HTML escape, no filesystem and no fetch: they run in a Worker, in
 // Node and in a test. Every value that reaches the HTML is escaped here, and a template
 // author never writes markup. Colors are literal hexes from the family generator
 // (colors.ts), because mail clients ignore custom properties.
@@ -74,16 +74,10 @@ export interface Rendered {
 
 // ---- escaping and links ------------------------------------------------------------------
 
-const ENTITIES: Record<string, string> = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-};
+// The one HTML escape (site-runtime ./html), re-exported so the components that import it from here keep their import.
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
-export const escapeHtml = (value: string): string =>
-  value.replace(/[&<>"']/g, (c) => ENTITIES[c] ?? c);
+export { escapeHtml };
 
 /** One line: line breaks and runs of space become one space, so a value cannot add a header or a line. */
 const oneLine = (value: string): string => value.replace(/\s+/g, " ").trim();
