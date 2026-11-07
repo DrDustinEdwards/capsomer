@@ -78,7 +78,7 @@ eachTheme((theme) => {
       - banner:
         - link "Skip to content"
         - link "Foxhound"
-        - navigation "Site":
+        - navigation "Main":
           - list:
             - listitem:
               - link "Products"
@@ -126,7 +126,7 @@ eachTheme((theme) => {
       - banner:
         - link "Skip to content"
         - link "Foxing"
-        - navigation "Site":
+        - navigation "Main":
           - list:
             - listitem:
               - button "Books"
