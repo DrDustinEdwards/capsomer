@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Chip: a label longer than its row wraps inside the chip.** `.cap-chip` loses `white-space: nowrap` and gains `max-width: 100%`, `overflow-wrap: anywhere` and 2px block padding, so a long subject chip (Foxing /books) no longer forces sideways scroll at 320px. Short chips look the same. No class or token changes.
+
 ## [0.79.1]
 
 - **`confirmSubmit` accepts a React mouse event** (its `nativeEvent` was typed too narrowly, so passing a button's `onClick` event failed to typecheck). Types only; no class, token or HTML contract changes.
