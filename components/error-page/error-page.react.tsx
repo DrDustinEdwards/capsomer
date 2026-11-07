@@ -42,6 +42,12 @@ export function errorWords(error: unknown): ErrorWords {
       title: "This page is gone",
       text: "It was taken down on purpose and is not coming back.",
     };
+  if (status === 403)
+    return {
+      status,
+      title: "You cannot open this page",
+      text: "Your account does not have access to it. If you think it should, ask whoever manages this site.",
+    };
   if (status !== null && status < 500)
     return {
       status,
