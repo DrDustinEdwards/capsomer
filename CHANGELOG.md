@@ -4,6 +4,9 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.83.0]
+
+- **Install contract: `@drdustinedwards/site-helpers` is an optional peer dependency, no longer a dependency.** Only the `capsomer` command (`states`, `site-data`) and this repository's own site import it. A git dependency inside a git dependency is refused by npm 12 (`allow-git`, EALLOWGIT) and left the lockfiles of apps stale. An app that runs the `capsomer` command declares `@drdustinedwards/site-helpers` itself (>=0.40.0), as it does `@dustinedwards/site-runtime`. No token, class or HTML changes.
 - **Lightbox doc: the Close button's size is stated as the dialog block's.** The page said 44 px; it is the icon button's own size. Docs only.
 
 ## [0.82.0]
