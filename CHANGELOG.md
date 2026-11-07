@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.83.1]
+
+- **Breadcrumb: long names wrap in full instead of being cut after two lines.** The two-line clamp still lost the end of a long name under a reader's own text spacing (WCAG 1.4.12). `.cap-breadcrumb-link` and `.cap-breadcrumb-page` are `display: block` with no `overflow: hidden` or line clamp. No token or class changes.
+
 ## [0.83.0]
 
 - **Install contract: `@drdustinedwards/site-helpers` is an optional peer dependency, no longer a dependency.** Only the `capsomer` command (`states`, `site-data`) and this repository's own site import it. A git dependency inside a git dependency is refused by npm 12 (`allow-git`, EALLOWGIT) and left the lockfiles of apps stale. An app that runs the `capsomer` command declares `@drdustinedwards/site-helpers` itself (>=0.40.0), as it does `@dustinedwards/site-runtime`. No token, class or HTML changes.
