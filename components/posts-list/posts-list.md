@@ -74,7 +74,7 @@ Any list of a site's posts that a person manages: Carrel's Posts tab for a site,
 - After Move to Trash, Restore or Delete for good takes a post out of the list, focus goes to a defined place (above), never to the top of the page.
 - Status is never color alone. Text reaches 4.5:1 and edges 3:1 in both themes.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

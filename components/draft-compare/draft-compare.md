@@ -113,7 +113,7 @@ None: shadcn has no diff or compare. Its nearest parts are matched through the c
 - Views that are not shown are not in the accessibility tree.
 - The jump links read "Change 2 of 4"; the current one has `aria-current="true"`.
 - Times are `<time datetime>`; with the time component's `enhance()` they show in the viewer's zone.
-- Last checked by hand: not yet. Automated: see the site's Tests page.
+- Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

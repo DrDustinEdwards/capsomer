@@ -58,7 +58,7 @@ Filtering a list or table by up to six values of one property: a queue by status
 - Each chip is at least `var(--target)` tall; 44 px on a touch screen.
 - Forced colors: a pressed chip is drawn in Highlight.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

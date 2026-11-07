@@ -60,7 +60,7 @@ Different on purpose: the header sits on the raised tone (a band) rather than sh
 - The heading is a real `h2` or `h3`, so screen reader users move between panels by heading.
 - Forced colors: the header's tint is removed, so a rule under the header keeps it apart.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

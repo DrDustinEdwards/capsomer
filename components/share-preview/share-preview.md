@@ -70,4 +70,4 @@ Nothing in a preview takes focus. The page's order is the reading order.
 
 dustinedwards-info's `SerpPreview` and `OgPreview` (and `.serp-*`, `.og-*`) take it.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

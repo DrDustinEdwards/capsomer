@@ -74,7 +74,7 @@ The grid's and the inspector's keys are `media`'s (arrow keys, Home, End, Enter 
 - The alt step's text field is required, so the browser says so; Insert as decorative skips the check on purpose.
 - Text reaches 4.5:1 and edges 3:1 in both themes.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

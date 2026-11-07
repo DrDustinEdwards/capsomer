@@ -52,7 +52,7 @@ Three or more commands that act on one thing and sit together: a draft's Save, P
 - A toggle button's state is `aria-pressed`, read out as pressed or not pressed; its name does not change.
 - Forced colors: a pressed toggle is drawn in Highlight, and the separator in CanvasText.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

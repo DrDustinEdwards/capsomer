@@ -58,7 +58,7 @@ One or two actions: show them as buttons (`.cap-btn`). Moving between pages: lin
 - Forced colors: the highlighted item gets a Highlight outline, the separator a CanvasText rule.
 - Inside a modal `dialog`, pass the dialog as `container`, or the popup renders under the top layer, out of sight.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Base UI and the content security policy
 

@@ -58,7 +58,7 @@ One list whose order is the point: the scenes of a chapter, a corkboard of cards
 - Moves are said in a `role="status"` region that exists before it changes.
 - The grip takes touch for dragging (`touch-action: none`) only on itself, so the page still scrolls under a finger anywhere else.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

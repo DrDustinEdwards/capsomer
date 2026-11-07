@@ -63,7 +63,7 @@ A list of one kind of thing (jobs, deploys, mentions) is a row-list, or a feed f
 
 shadcn/ui `Card` (the frame, header and muted footer) over `Item` (each row, from row-list). Deliberately different: shadcn's Item has no ordering, grouping, cap or tiers (those are the Portal's rules); the row's whole-row link and critical edge are Capsomer's.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

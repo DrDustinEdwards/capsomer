@@ -52,7 +52,7 @@ What a React Router site shows when a page is missing, gone or broke: the failed
 - One `h1`, the title; one `main`. The header's skip link and landmarks come from the site's own header.
 - The development stack is a named, focusable region, so it scrolls by keyboard on a phone.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

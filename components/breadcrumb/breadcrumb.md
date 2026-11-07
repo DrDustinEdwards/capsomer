@@ -62,7 +62,7 @@ Breadcrumb (`breadcrumb.tsx`: Breadcrumb, BreadcrumbList, BreadcrumbItem, Breadc
 - Link text 4.5:1 on the page; the current page 4.5:1; the separator is decorative.
 - Each link and the button are at least `var(--target)` tall and wide. Forced colors draw the separator in CanvasText.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

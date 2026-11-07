@@ -65,7 +65,7 @@ Running text stays in the page's reading face (`--prose` on dustinedwards.info),
 - The annunciator's tiles set `--on-sign` on the sign panel, mixed with the status color when lit; the state is a word on every tile, so the color is never alone. The holding marking is drawn; on an `hr` it is a separator, elsewhere it is hidden.
 - The direction strip's page you are on sets `--on-sign-here` on `--sign-here`, checked at 7:1 (AAA) by palette.mjs. The roll blocks, the livery and the layout grid are drawn and say nothing the page does not say in words.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

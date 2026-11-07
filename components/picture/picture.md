@@ -44,7 +44,7 @@ Every image a site serves from its library, on any page: a cover, a body image, 
 - Pause is a native checkbox named by its visible word; checked means stopped. The focus ring goes round the whole control.
 - The moving picture and its still carry the same alt text, and only one is ever displayed, so a screen reader reads it once.
 - The control is a surface pill with a strong border, so it reads on any picture and in forced colors.
-- Last checked by hand: not yet. Automated: see the site's Tests page.
+- Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

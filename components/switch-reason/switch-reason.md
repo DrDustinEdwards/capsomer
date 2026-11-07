@@ -58,7 +58,7 @@ Anything that starts or stops work no one is watching: the improve loop, a sched
 - Pending, the switch and the form are `aria-busy`, Apply keeps its name and width and shows the spinner, and the switch is not disabled.
 - Forced colors: the switch's own rules apply; the form has no edge of its own.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

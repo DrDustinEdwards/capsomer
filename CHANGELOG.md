@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Docs: the screen-reader line.** Every component doc says no manual NVDA or VoiceOver run is planned (decision of 2026-11-07) and that the automated browser checks and a front-end review stand in, instead of "Last checked by hand: not yet". No token, class or markup changed.
+
 ## [0.83.1]
 
 - **Confirm page: the form no longer carries `role="group"`.** `group` is not an allowed role for `form` (ARIA in HTML; axe `aria-allowed-role`), and it replaced the form landmark's role. The `form.cap-confirm-page` keeps its `aria-labelledby` and `aria-describedby`, so it is a named `form` landmark. HTML contract change: remove `role="group"` from `form.cap-confirm-page`. React: `ConfirmPage` and `ConfirmModal` no longer pass `role`, and `ConfirmFormProps` loses its `role` field (a `renderForm` that spreads the props needs no change; one that reads `props.role` should stop).

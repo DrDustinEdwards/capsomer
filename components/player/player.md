@@ -45,7 +45,7 @@ One way to show a video, an audio file or another service's player. A JSX page r
 - The embed is a link named by the service and the title; the play button and the poster are decoration (`aria-hidden`, `alt=""`). The player's iframe is named by the title.
 - The video and audio are named by their title (`aria-label`); captions and transcripts are WCAG 1.2.1 to 1.2.3.
 - Nothing plays by itself; the service's autoplay starts only after the reader's own click.
-- Last checked by hand: not yet. Automated: see the site's Tests page.
+- Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

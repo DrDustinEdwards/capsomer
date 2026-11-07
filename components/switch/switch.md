@@ -53,7 +53,7 @@ A reversible on or off preference that applies immediately: single-key shortcuts
 - The whole label is the hit area, at least `var(--target)` tall.
 - Forced colors: the track and thumb are drawn in CanvasText, and in Highlight when on.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

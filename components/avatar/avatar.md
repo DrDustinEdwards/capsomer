@@ -49,7 +49,7 @@ An avatar is not a control and takes no keys. One that opens a profile is wrappe
 - A group is `role="group"` named by `aria-label`; the count is an image named "and 3 more".
 - The fallback reaches 4.5:1; the badge's glyph reaches 3:1 on its fill.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

@@ -49,7 +49,7 @@ A value against a limit with no rate or reset (a disk that is 40% full, a score)
 - The why line sits beside the meter, not inside its role, so a screen reader reads it as text.
 - Forced colors: the bar, its fill and its hatching are drawn in CanvasText on Canvas (by the meter).
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

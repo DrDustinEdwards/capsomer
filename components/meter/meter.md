@@ -53,7 +53,7 @@ A value with a known minimum and maximum that is a measurement, not progress thr
 - Reduced motion: the fill does not ease and the measuring segment does not slide.
 - Forced colors: the bar gains an edge, the fill and the tick are painted in CanvasText and the hatching in CanvasText on Canvas.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 
