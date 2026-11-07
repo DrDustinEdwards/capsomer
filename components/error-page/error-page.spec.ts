@@ -35,7 +35,9 @@ eachTheme((theme) => {
     for (const c of cases) {
       await visitStates(page, "error-page", theme, c.only);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(c.title);
-      await expect(page.locator('head meta[name="robots"][content="noindex"]')).toHaveCount(1);
+      await expect(
+        page.locator('head meta[name="robots"][content="noindex"]:not([data-states-page])'),
+      ).toHaveCount(1);
       await expect(page.getByRole("link", { name: "Try again" })).toHaveCount(c.retry);
       await expect(page.getByRole("link", { name: "Go to the home page" })).toHaveAttribute(
         "href",

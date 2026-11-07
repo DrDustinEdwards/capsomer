@@ -53,15 +53,7 @@ function liftStyles(body) {
   return { body: out, css: rules.join("\n") };
 }
 
-export function renderStates({
-  template,
-  title,
-  summary,
-  examples,
-  hasTsx,
-  css = "",
-  setsRobots = false,
-}) {
+export function renderStates({ template, title, summary, examples, hasTsx, css = "" }) {
   const split = splitExamples(examples);
   const { body } = split;
   const head = css ? [...split.head, '<link rel="stylesheet" href="./states.css" />'] : split.head;
@@ -73,11 +65,6 @@ export function renderStates({
   const fill = {
     title: escapeHtml(title),
     summary: escapeHtml(summary),
-    // A states page is never indexed; an example that sets its own robots tag keeps it, not a second.
-    robots:
-      setsRobots || head.some((h) => /name="robots"/.test(h))
-        ? ""
-        : '    <meta name="robots" content="noindex" />\n',
     head: head.map((h) => `    ${h}\n`).join(""),
     examples: body,
     scripts: after.map((s) => `    ${s}\n`).join(""),
@@ -127,10 +114,6 @@ export async function generateStates(root = PKG) {
         examples: lifted.body,
         hasTsx: existsSync(tsx),
         css: lifted.css,
-        // A component that renders its own robots tag (the error page) gets no second one.
-        setsRobots: readdirSync(base).some(
-          (f) => f.endsWith(".tsx") && /name="robots"/.test(readFileSync(join(base, f), "utf8")),
-        ),
       }),
     );
     written.set(d.name, examples);
