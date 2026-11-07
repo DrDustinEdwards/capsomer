@@ -17,8 +17,8 @@ test("behavior: another site's footer points the family's paths at dustinedwards
   const legal = away.slice(away.indexOf('id="cap-family-footer-legal"'));
   expect(legal).toContain("/privacy");
   expect(away.slice(0, away.indexOf('id="cap-family-footer-legal"'))).not.toContain("/privacy");
-  expect(familyFooterHtml({ origin: "", published: [], year: 2026 })).not.toContain("/features");
-  expect(away).toContain("/features");
+  expect(familyFooterHtml({ origin: "", published: [], year: 2026 })).toContain("/features");
+  expect(away).toContain("Lab Bench");
   expect(familyFooterHtml({ site: "capsid" }).match(/aria-current="page"/g)).toHaveLength(1);
 });
 

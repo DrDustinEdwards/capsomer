@@ -88,8 +88,8 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   },
   {
     to: LAB_BENCH_PATH,
-    label: "Lab bench",
-    name: `Lab bench, the members' workspace ${SIGN_IN_NOTE}`,
+    label: "Lab Bench",
+    name: `Lab Bench, the members' workspace ${SIGN_IN_NOTE}`,
     icon: "flask",
   },
 ];
@@ -102,7 +102,7 @@ const ACCESSIBILITY = "/accessibility";
 const SITE_LINKS_ALL: FamilyLink[] = [
   { to: "/contact", label: "Contact" },
   { to: "/site-map", label: "Site map" },
-  { to: "/features", label: "Features", page: true },
+  { to: "/features", label: "Features" },
   { to: "/colophon", label: "Colophon" },
 ];
 
@@ -117,7 +117,7 @@ const LEGAL_LINKS_ALL: FamilyLink[] = [
 const listed = (links: FamilyLink[], published?: readonly string[]) =>
   links.filter((link) => !link.page || !published || published.includes(link.to));
 
-/** The Site group: Contact, Site map, Features and Colophon. */
+/** The Site group: Contact, Site map, Features and Colophon. A `page` link waits for its page; none here does. */
 export function siteLinks(published?: readonly string[]): FamilyLink[] {
   return listed(SITE_LINKS_ALL, published);
 }
