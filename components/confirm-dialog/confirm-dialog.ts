@@ -482,7 +482,10 @@ export function confirmSubmit(
   const form = target instanceof HTMLFormElement ? target : (target as HTMLButtonElement).form;
   if (!form) return;
   e.preventDefault();
-  const submitter = e.submitter ?? (e.nativeEvent as { submitter?: HTMLElement | null } | undefined)?.submitter ?? null;
+  const submitter =
+    e.submitter ??
+    (e.nativeEvent as { submitter?: HTMLElement | null } | undefined)?.submitter ??
+    null;
   void confirm({ body: [], ...o, perform: () => Promise.resolve() }).then((yes) => {
     if (!yes) return;
     if (target === form) approved.add(form);
