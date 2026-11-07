@@ -50,7 +50,7 @@ A picture in a post, a page or a roster that a reader may want to see larger: a 
 - The picture keeps its alt text.
 - Forced colors: the Close button gains an edge.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 
