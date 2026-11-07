@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.81.1]
+
+- **Confirm page: the form no longer carries `role="group"`.** `group` is not an allowed role for `form` (ARIA in HTML; axe `aria-allowed-role`), and it replaced the form landmark's role. The `form.cap-confirm-page` keeps its `aria-labelledby` and `aria-describedby`, so it is a named `form` landmark. HTML contract change: remove `role="group"` from `form.cap-confirm-page`. React: `ConfirmPage` and `ConfirmModal` no longer pass `role`, and `ConfirmFormProps` loses its `role` field (a `renderForm` that spreads the props needs no change; one that reads `props.role` should stop).
+- **History list: the phone specimen's hidden heading is an `h2`, not an `h3`,** so the specimen page no longer skips a level (axe `heading-order`). Specimen only; no component change.
+
 ## [0.81.0]
 
 - **Lightbox: `capsomer/behavior/lightbox` and `capsomer/lightbox.css`.** A link to a full-size image (`a.image-link`) or a diagram image (`img.diagram-image`) inside `data-cap="lightbox"` opens in the shared dialog and shrinks back into place. It moves here from Prelum's `enhance()` so every site has one viewer. Additive; no class, token or HTML contract changes to existing components.
