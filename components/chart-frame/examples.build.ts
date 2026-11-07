@@ -3,7 +3,7 @@
 // every state: each kind of chart and primitive, the data open, a source, no data, a refusal,
 // and the same chart in every family. Invented, plausible data.
 import { heatStrip, progressRing, sparkline, timeline, uptimeStrip } from "enarratio";
-import { escapeHtml } from "../email/email.ts";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { areaChart, type BarChartOptions, barChart, lineChart } from "enarratio/lite";
 import { frameHtml, noDataHtml } from "./chart-frame.ts";
 import { builds, refused } from "./specimen/react-charts.ts";

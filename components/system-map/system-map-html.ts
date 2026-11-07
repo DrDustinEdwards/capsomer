@@ -1,6 +1,6 @@
 // The system map's markup: the whole contract as a string, for a server or a static build (system-map.ts).
 
-import { escapeHtml } from "../email/email.ts";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { hexLayout, hexSvg } from "./system-map-hex.ts";
 import {
   type MapContainer,
@@ -19,8 +19,6 @@ import {
   tiesOf,
   verbOf,
 } from "./system-map-data.ts";
-
-export { escapeHtml };
 
 const RING_NAMES: Record<MapRing, string> = {
   core: "Core",

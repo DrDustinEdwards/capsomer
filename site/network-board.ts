@@ -6,15 +6,13 @@
 // chart: it plots no quantity, and the bar says each site's name and any state in words. So it is drawn in CSS
 // (site/home.css), seven columns of alternating squares per stretch, and hidden from assistive technology; the state
 // only sets data-state, and the CSS colors and squeezes the columns.
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { FAMILY_SITES, type FamilySite } from "../components/family-footer/family-footer.ts";
 
 export type NetworkState = "normal" | "caution" | "warning";
 export type NetworkStates = Partial<Record<string, NetworkState>>;
 
 const COLUMNS = 7;
-
-const esc = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /** A /health body's status as a lamp: pass is normal, warn caution, and fail, or no answer, warning. */
 export function lampOf(status: unknown): NetworkState {

@@ -1,4 +1,4 @@
-import { escapeHtml } from "../email/email.ts";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 export interface PatchOptions {
   /** A unique id on the page, for the patch's text paths. */

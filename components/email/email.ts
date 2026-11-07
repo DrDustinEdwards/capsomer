@@ -74,10 +74,7 @@ export interface Rendered {
 
 // ---- escaping and links ------------------------------------------------------------------
 
-// The one HTML escape (site-runtime ./html), re-exported so the components that import it from here keep their import.
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
-
-export { escapeHtml };
 
 /** One line: line breaks and runs of space become one space, so a value cannot add a header or a line. */
 const oneLine = (value: string): string => value.replace(/\s+/g, " ").trim();

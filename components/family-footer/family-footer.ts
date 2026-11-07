@@ -1,4 +1,4 @@
-import { escapeHtml } from "../email/email.ts";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 
 /*
  * The one footer every dustinedwards.info site closes with (Dustin, 2026-10-26), as NASA's agency and

@@ -4,7 +4,7 @@
 // cells it would otherwise cross. Pure: the whole drawing is an SVG string a server delivers, so
 // the lines are there with no script; the script only lights a cell's lines.
 
-import { escapeHtml as e } from "../email/email.ts";
+import { escapeHtml as e } from "@dustinedwards/site-runtime/html";
 import type { MapSystem, SystemMapData } from "./system-map-data.ts";
 import { tiePairs } from "./system-map-data.ts";
 

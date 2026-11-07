@@ -5,6 +5,8 @@
 // and the live test count, and site/redirect.ts sends old admin links on. Its look is Supergraphics (Barbara Stauffacher Solomon, The Sea Ranch, 1966):
 // flat letter tiles too big for the page, cut by its edge, painted in Capsomer's own families.
 // The dashboard of tests, pairs and changes is the admin at /admin/ (site/main.tsx).
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+export { esc };
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { familyFooterHtml } from "../components/family-footer/family-footer.ts";
@@ -62,8 +64,6 @@ export interface Data {
   defaults: Array<{ lead: string; reason: string }>;
 }
 
-export const esc = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 // Backticks in a summary become code, as on the admin's pages.
 const prose = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const fam = (f: Family) => ` data-family="${f}"`;
