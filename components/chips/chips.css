@@ -36,7 +36,10 @@
     font-family: var(--ui);
     font-size: var(--fs-detail);
     font-weight: 500;
-    white-space: nowrap;
+    /* A label longer than its row wraps inside the chip, not past the edge (WCAG 1.4.10 reflow). */
+    max-width: 100%;
+    padding-block: 2px;
+    overflow-wrap: anywhere;
     text-decoration: none;
     cursor: pointer;
 
