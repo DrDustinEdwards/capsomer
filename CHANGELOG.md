@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.81.0]
+
+- **Lightbox: `capsomer/behavior/lightbox` and `capsomer/lightbox.css`.** A link to a full-size image (`a.image-link`) or a diagram image (`img.diagram-image`) inside `data-cap="lightbox"` opens in the shared dialog and shrinks back into place. It moves here from Prelum's `enhance()` so every site has one viewer. Additive; no class, token or HTML contract changes to existing components.
+
 ## [0.80.0]
 
 - **Family footer: no hover tint behind the wordmark or the social icons.** `.cap-family-footer a:hover` no longer sets `background-color: var(--accent-soft)`; the word links and site tiles already reset it, so only the wordmark and the social icons changed. Their hover color stays. No class, token or HTML contract changes.

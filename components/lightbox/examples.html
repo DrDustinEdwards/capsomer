@@ -1,0 +1,21 @@
+<!-- The lightbox's specimens. Sample data: drawn pictures, no photos. -->
+<section class="cap-specimen" aria-labelledby="s-photo">
+  <h2 id="s-photo">A photo linked to its full size</h2>
+  <div data-cap="lightbox">
+    <a class="image-link" style="display:inline-block;max-width:100%" id="sample-photo" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='800' viewBox='0 0 1200 800'%3E%3Crect width='1200' height='800' fill='%23dbe4ee'/%3E%3Ccircle cx='600' cy='400' r='220' fill='%236b8cae'/%3E%3C/svg%3E">
+      <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 1200 800'%3E%3Crect width='1200' height='800' fill='%23dbe4ee'/%3E%3Ccircle cx='600' cy='400' r='220' fill='%236b8cae'/%3E%3C/svg%3E" style="max-width:100%;height:auto" width="300" height="200" alt="A blue disc on a pale ground" />
+    </a>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-diagram">
+  <h2 id="s-diagram">A diagram image</h2>
+  <div data-cap="lightbox">
+    <img class="diagram-image" id="sample-diagram" style="max-width:100%;height:auto" width="300" height="150" alt="Reads go to assembly, then annotation." src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'%3E%3Crect width='600' height='300' fill='white'/%3E%3Crect x='40' y='110' width='200' height='80' fill='%23dbe4ee' stroke='%23333'/%3E%3Crect x='360' y='110' width='200' height='80' fill='%23dbe4ee' stroke='%23333'/%3E%3Cpath d='M240 150h120' stroke='%23333'/%3E%3C/svg%3E" />
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./lightbox.ts";
+  enhance();
+</script>
