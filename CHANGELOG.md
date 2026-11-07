@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Site header: the search form's landmark name is the search label, not "Site"**, so it no longer shares a name with the sections `nav` (axe `landmark-unique`; screen readers listed two landmarks called Site). The form's `aria-label` changes from `Site` to the search label. No class or token changes.
+
 ## [0.79.1]
 
 - **`confirmSubmit` accepts a React mouse event** (its `nativeEvent` was typed too narrowly, so passing a button's `onClick` event failed to typecheck). Types only; no class, token or HTML contract changes.
