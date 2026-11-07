@@ -4,7 +4,7 @@
 /* Breadcrumb: where this page sits, as links back up the trail and the current page as text.
    Matches shadcn/ui Breadcrumb (list, item, link, page, separator, ellipsis) in Capsomer's
    tokens. The separator is CSS, not an element, so it is not in the accessibility tree; long
-   names are cut with an ellipsis; the trail wraps on a phone; and a long trail folds its
+   names wrap in full; the trail wraps on a phone; and a long trail folds its
    middle levels into a popover that holds real links. The site's `.page-breadcrumb` (a wrapped
    ordered list, links in the brand color, " / " between) is the shape this keeps. */
 @layer cap.components {
@@ -51,25 +51,21 @@
     }
   }
 
-  /* A link up the trail. The hit area is the target height; past 24 characters the name takes a
-     second line and is then cut (the full name is in the page and in a reader's list), so a
-     name that fits still fits with a reader's own text spacing (WCAG 1.4.12). */
+  /* A link up the trail. The hit area is the target height; a name past 24 characters
+     wraps onto more lines and is never cut, so nothing is lost under a reader's own text
+     spacing (WCAG 1.4.12). */
   .cap-breadcrumb-link {
-    display: -webkit-box;
+    display: block;
     box-sizing: border-box;
     min-inline-size: var(--target);
     max-inline-size: min(24ch, 100%);
     min-block-size: var(--target);
     padding: max(0px, (var(--target) - 1lh) / 2) var(--space-2);
-    overflow: hidden;
     border-radius: var(--radius-s);
     color: var(--accent-text);
     overflow-wrap: anywhere;
     text-align: center;
     text-decoration: none;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
 
     &:visited {
       color: var(--accent-text);
@@ -85,21 +81,17 @@
     }
   }
 
-  /* The current page: text, not a link, heavier and in the full text color; two lines past 36
-     characters, then cut. */
+  /* The current page: text, not a link, heavier and in the full text color; it wraps in full
+     past 36 characters. */
   .cap-breadcrumb-page {
-    display: -webkit-box;
+    display: block;
     box-sizing: border-box;
     max-inline-size: min(36ch, 100%);
     min-block-size: var(--target);
     padding: max(0px, (var(--target) - 1lh) / 2) var(--space-2);
-    overflow: hidden;
     color: var(--text);
     font-weight: 600;
     overflow-wrap: anywhere;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
   }
 
   /* The folded levels: a button of three dots that opens a popover holding the links. */

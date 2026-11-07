@@ -4,7 +4,7 @@ title: Breadcrumb
 summary: Where this page sits: links back up the trail, the current page as text, a long trail folded into a popover of links.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [default, two levels, long names cut, folded in the HTML, folded by script, short trail stays whole, wraps in a narrow space, folded levels open, comfortable density]
+states: [default, two levels, long names wrap, folded in the HTML, folded by script, short trail stays whole, wraps in a narrow space, folded levels open, comfortable density]
 added: 0.3.0
 source: The site's breadcrumb (app/components/breadcrumb.tsx, .page-breadcrumb in app/styles/shell.css); shadcn/ui Breadcrumb
 replaces:
@@ -17,7 +17,7 @@ replaces:
 
 A `nav` named "Breadcrumb" holding an ordered list: a link for each level above this page, then the current page as plain text with `aria-current="page"`. The separators are drawn by CSS, so a screen reader hears the levels and not the slashes.
 
-**Provenance.** EXTRACTED and REWROTE, from the site's `Breadcrumb` (`app/components/breadcrumb.tsx` and `.page-breadcrumb`). Kept as it is: the `nav`/`ol` structure, the last step as `aria-current="page"` text rather than a link, a trail of one level rendering nothing, wrapping when it is long. Changed: the separator was a `" / "` span with `aria-hidden` in each item and is now generated content with no text; the links were 13 px text with no height and are now at least `var(--target)` tall; links use the accent text color (the site used the brand color, which is not text-safe on every ground); long names are cut; and a long trail folds. The data-driven `trail` of `[name, path]` pairs became `items` of `{ label, href }`.
+**Provenance.** EXTRACTED and REWROTE, from the site's `Breadcrumb` (`app/components/breadcrumb.tsx` and `.page-breadcrumb`). Kept as it is: the `nav`/`ol` structure, the last step as `aria-current="page"` text rather than a link, a trail of one level rendering nothing, wrapping when it is long. Changed: the separator was a `" / "` span with `aria-hidden` in each item and is now generated content with no text; the links were 13 px text with no height and are now at least `var(--target)` tall; links use the accent text color (the site used the brand color, which is not text-safe on every ground); long names wrap; and a long trail folds. The data-driven `trail` of `[name, path]` pairs became `items` of `{ label, href }`.
 
 ## When to use it
 
@@ -38,12 +38,12 @@ On a page two or more levels below a hub: a post under Posts under Admin; a job 
 - **The current page is text,** heavier and in the full text color: it is not a link to itself, and it is told apart from the links by more than color.
 - **A folded trail keeps the first level and the last `max - 1`.** The first level is where the trail starts; the last ones are nearest the current page. Fewer than two levels would fold is not worth a button, so the trail stays whole.
 - **The folded levels are links in a click popover,** not a menu: they are navigation, so they are links (they open in a new tab, they show their address), and the popover is the shared one (Esc, focus return, light dismiss). shadcn uses a dropdown menu of items.
-- **Long names take a second line, then are cut** with an ellipsis: past 24 characters for a link and 36 for the current page. Two lines, not one, so a name that fits still fits with a reader's own text spacing (WCAG 1.4.12). The full name is in the page and in a reader's list; the page's own heading says the current page in full.
+- **Long names wrap in full**: past 24 characters for a link and 36 for the current page the name takes more lines and is never cut, so nothing is lost under a reader's own text spacing (WCAG 1.4.12).
 - **On a phone it is one line** (up to 40rem wide): the current page leaves the line, since the page's heading names it and it is usually the longest step, and stays in the list for a screen reader; a trail still too long scrolls sideways inside itself, cut at the edge so more is plainly there. Wrapping onto more lines invites mis-taps and clutters the top of the page (Baymard, "Mobile hierarchy breadcrumbs"; GOV.UK Design System, Breadcrumbs; NN/g, "Breadcrumbs: 11 design guidelines"). Replaces 0.3.0's default, which wrapped. In a narrow column on a wider screen the trail still wraps.
 
 ## The shadcn component it matches
 
-Breadcrumb (`breadcrumb.tsx`: Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis). Matched: the list, the link that darkens on hover, the page, the separator, the ellipsis that opens a list of the folded levels. Different on purpose: CSS separators; links in the accent text color rather than muted; cut names; a popover of links instead of a dropdown menu; the hit area is the target height.
+Breadcrumb (`breadcrumb.tsx`: Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis). Matched: the list, the link that darkens on hover, the page, the separator, the ellipsis that opens a list of the folded levels. Different on purpose: CSS separators; links in the accent text color rather than muted; wrapped names; a popover of links instead of a dropdown menu; the hit area is the target height.
 
 ## Keyboard
 
@@ -116,7 +116,6 @@ A page that is one step from a single parent (a form, a step in a flow, a detail
 - Separators are generated content, not elements.
 - The folded levels are links in a popover, not a dropdown menu.
 - Link and button hit areas are never under the target size.
-- Names are cut, with the full name still in the HTML.
 
 ## Exceptions in production
 
