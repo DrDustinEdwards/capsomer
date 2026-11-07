@@ -31,10 +31,8 @@
     & a:focus-visible {
       color: var(--accent-text);
     }
-    /* The family's hover tint, as every menu keeps (link.md); a site tile keeps its mark bar. */
-    & a:hover {
-      background-color: var(--accent-soft);
-    }
+    /* No tint behind any footer link on hover (Dustin, 2026-11-07): the wordmark and the social icons
+       carried one while the word links and site tiles already had none. The color change is the cue. */
   }
 
   /* The site's own part: under the thin stripe, on the same columns as the letterhead below. */
@@ -173,7 +171,7 @@
 
   @media (min-width: 48rem) {
     .cap-family-footer-columns {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       column-gap: var(--space-6);
     }
   }

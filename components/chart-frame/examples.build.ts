@@ -2,7 +2,8 @@
 // fills each <!-- build:name --> in examples.html), so they are the package's live output in
 // every state: each kind of chart and primitive, the data open, a source, no data, a refusal,
 // and the same chart in every family. Invented, plausible data.
-import { escapeHtml, heatStrip, progressRing, sparkline, timeline, uptimeStrip } from "enarratio";
+import { heatStrip, progressRing, sparkline, timeline, uptimeStrip } from "enarratio";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { areaChart, type BarChartOptions, barChart, lineChart } from "enarratio/lite";
 import { frameHtml, noDataHtml } from "./chart-frame.ts";
 import { builds, refused } from "./specimen/react-charts.ts";

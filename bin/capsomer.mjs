@@ -29,7 +29,7 @@ const flag = (name, fallback) => {
 const KB = 1024;
 const kb = (n) => `${(n / KB).toFixed(1)} KB`;
 const gz = (buf) => gzipSync(buf, { level: 9 }).length;
-const readJson = (p) => JSON.parse(readFileSync(p, "utf8").replace(/^\uFEFF/, ""));
+const readJsonFile = (p) => JSON.parse(readFileSync(p, "utf8").replace(/^\uFEFF/, ""));
 
 // ---- shared ------------------------------------------------------------------------------
 
@@ -167,7 +167,7 @@ export function tokenCheck(root, paths) {
 function installedVersion(root) {
   const lock = join(root, "package-lock.json");
   if (existsSync(lock)) {
-    const pkgs = readJson(lock).packages ?? {};
+    const pkgs = readJsonFile(lock).packages ?? {};
     const entry = pkgs["node_modules/capsomer"];
     if (entry) return { version: entry.version ?? null, resolved: entry.resolved ?? null };
   }
@@ -177,7 +177,7 @@ function installedVersion(root) {
     if (m) return { version: m[1].replace(/^v/, ""), resolved: "pnpm-lock.yaml" };
   }
   const pj = join(root, "node_modules", "capsomer", "package.json");
-  if (existsSync(pj)) return { version: readJson(pj).version, resolved: null };
+  if (existsSync(pj)) return { version: readJsonFile(pj).version, resolved: null };
   return { version: null, resolved: null };
 }
 
@@ -189,7 +189,7 @@ function a11yFrom(reportPath) {
       source: null,
       note: "No Playwright report given (--a11y <path>).",
     };
-  const r = readJson(reportPath);
+  const r = readJsonFile(reportPath);
   let passed = 0;
   let failed = 0;
   const visit = (s) => {
@@ -484,7 +484,7 @@ async function siteData() {
     totals: { passed: 0, failed: 0, skipped: 0 },
   };
   if (existsSync(src)) {
-    const r = readJson(src);
+    const r = readJsonFile(src);
     results.available = true;
     results.ran = r.stats?.startTime ?? null;
     // The sweep (test/sweep.spec.ts) groups its tests in a describe block named for the component.
@@ -629,9 +629,9 @@ function loc(root) {
 }
 
 function deps(root) {
-  const p = readJson(join(root, "package.json"));
+  const p = readJsonFile(join(root, "package.json"));
   const lock = existsSync(join(root, "package-lock.json"))
-    ? readJson(join(root, "package-lock.json"))
+    ? readJsonFile(join(root, "package-lock.json"))
     : null;
   return {
     dependencies: Object.keys(p.dependencies ?? {}).length,
@@ -647,7 +647,7 @@ function deps(root) {
 // summary. Warn-only: it reports and always exits 0 (defaults, not laws).
 function bloat(root) {
   const base = existsSync(resolve(root, "no-bloat/baseline.json"))
-    ? readJson(resolve(root, "no-bloat/baseline.json"))
+    ? readJsonFile(resolve(root, "no-bloat/baseline.json"))
     : null;
   const out = ["## No-bloat report (warn only)", ""];
   const delta = (now, then, unit = "") =>
@@ -656,7 +656,7 @@ function bloat(root) {
       : `${now}${unit} (baseline ${then}${unit}, ${now - then >= 0 ? "+" : ""}${Math.round((now - then) * 100) / 100}${unit})`;
   const knipFile = flag("knip");
   if (knipFile && existsSync(knipFile)) {
-    const j = readJson(knipFile);
+    const j = readJsonFile(knipFile);
     const c = {};
     for (const i of j.issues ?? [])
       for (const [k, v] of Object.entries(i))
@@ -674,7 +674,7 @@ function bloat(root) {
   } else out.push("**Knip:** no report found.", "");
   const jf = flag("jscpd");
   if (jf && existsSync(jf)) {
-    const t = readJson(jf).statistics.total;
+    const t = readJsonFile(jf).statistics.total;
     out.push(
       `**jscpd:** ${delta(Math.round(t.percentage * 100) / 100, base?.jscpd?.percentage, "%")} duplicated lines, ${delta(t.clones, base?.jscpd?.clones)} clones over ${t.sources} files`,
       "",

@@ -1,4 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "The network's shared preset (devkit default.json): own packages open at once, third-party updates on Mondays.",
   "extends": ["local>DrDustinEdwards/devkit"]
 }

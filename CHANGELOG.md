@@ -5,6 +5,54 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [Unreleased]
 
 - **Docs: the screen-reader line.** Every component doc says no manual NVDA or VoiceOver run is planned (decision of 2026-11-07) and that the automated browser checks and a front-end review stand in, instead of "Last checked by hand: not yet". No token, class or markup changed.
+
+## [0.83.0]
+
+- **Install contract: `@drdustinedwards/site-helpers` is an optional peer dependency, no longer a dependency.** Only the `capsomer` command (`states`, `site-data`) and this repository's own site import it. A git dependency inside a git dependency is refused by npm 12 (`allow-git`, EALLOWGIT) and left the lockfiles of apps stale. An app that runs the `capsomer` command declares `@drdustinedwards/site-helpers` itself (>=0.40.0), as it does `@dustinedwards/site-runtime`. No token, class or HTML changes.
+- **Lightbox doc: the Close button's size is stated as the dialog block's.** The page said 44 px; it is the icon button's own size. Docs only.
+
+## [0.82.0]
+
+- **Family footer: the Workspace link reads "Lab Bench"**, capital B, as its accessible name does ("Lab Bench, the members' workspace (requires sign-in)"). Text only; no class, token or HTML structure changes.
+
+- **Family footer: a Legal column, and a Features link.** Privacy, Terms and Accessibility move out of the Site group into a new Legal group (`<nav aria-labelledby="cap-family-footer-legal">`, heading "Legal"), as GOV.UK's footer groups its policy links (privacy, accessibility statement, terms). The Site group is now Contact, Site map, Features and Colophon. Features links dustinedwards.info's `/features`, a page in code that is always published, so it is always listed. The footer's columns go from three to four at 48rem and wider. New export `legalLinks()` and `LEGAL_HEADING`; `familyLinks()` lists the Legal links after the Site links; `siteLinks()` no longer returns Privacy, Terms or Accessibility, so a site that read them from it reads `legalLinks()`.
+
+## [0.81.0]
+
+- **Lightbox: `capsomer/behavior/lightbox` and `capsomer/lightbox.css`.** A link to a full-size image (`a.image-link`) or a diagram image (`img.diagram-image`) inside `data-cap="lightbox"` opens in the shared dialog and shrinks back into place. It moves here from Prelum's `enhance()` so every site has one viewer. Additive; no class, token or HTML contract changes to existing components.
+
+## [0.80.0]
+
+- **Family footer: no hover tint behind the wordmark or the social icons.** `.cap-family-footer a:hover` no longer sets `background-color: var(--accent-soft)`; the word links and site tiles already reset it, so only the wordmark and the social icons changed. Their hover color stays. No class, token or HTML contract changes.
+
+- **Chart enhance uses Enarratio's page code.** `capsomer/behavior/chart-enhance` was a copy of Enarratio 0.9's `enhanceCharts` and `watchCharts`; it now calls them with the frame selector. Same exports and behavior. `enarratio` is 0.9.1 for development. No class, token or HTML contract changes.
+
+- **Site header (React): the section links' `nav` is named "Main", not "Site"**, so it no longer shares a name with the footer's "Site" `nav` (axe `landmark-unique`; a screen reader's landmark list showed two navigations called Site). The `aria-label` changes from `Site` to `Main`. No class or token changes.
+
+- **Removed export: `escapeHtml` from `capsomer/email` and `capsomer/system-map`.** It is site-runtime's (`@dustinedwards/site-runtime/html`), which a site already has; import it from there. Same five entities, same output. No class, token or HTML contract changes.
+
+## [0.79.3]
+
+- **No script hands a string to an injection sink.** A page that enforces Trusted Types (`require-trusted-types-for 'script'`) refuses `innerHTML`, `srcdoc` and `DOMParser` given a plain string, and Chrome logs each as a CSP issue in DevTools. Capsomer's scripts now build DOM (`createElement`, `textContent`, `replaceChildren`) wherever they can: the site header's search results, the catalog's swap of regions, filters and sort options. The remaining markup, which a visitor cannot write (icon SVG children, the catalog's own server HTML, a chart's or a comparison's SVG), goes through one policy named `capsomer` in the new `components/trusted-html/trusted-html.ts` (`trustedHtml`, `setStaticHtml`, `markup`, `copyChildren`); a page whose `trusted-types` list omits the name gets plain strings, as before. No HTML contract, class or token changes.
+
+## [0.79.2]
+
+- **Chip: a label longer than its row wraps inside the chip.** `.cap-chip` loses `white-space: nowrap` and gains `max-width: 100%`, `overflow-wrap: anywhere` and 2px block padding, so a long subject chip (Foxing /books) no longer forces sideways scroll at 320px. Short chips look the same. No class or token changes.
+- **Tabs: choosing a tab no longer calls `scrollIntoView`.** It scrolled the page and set the browser's Tab starting point to the tab, so on a page with an initial tab set the first Tab press skipped the skip link and header. Only the tab list now scrolls, to show the chosen tab. No class, token or HTML contract changes.
+- **Site header: the search form's landmark name is the search label, not "Site"**, so it no longer shares a name with the sections `nav` (axe `landmark-unique`; screen readers listed two landmarks called Site). The form's `aria-label` changes from `Site` to the search label. No class or token changes.
+
+## [0.79.1]
+
+- **`confirmSubmit` accepts a React mouse event** (its `nativeEvent` was typed too narrowly, so passing a button's `onClick` event failed to typecheck). Types only; no class, token or HTML contract changes.
+
+## [0.79.0]
+
+- **Renamed export: `kindOf` in `capsomer/behavior/message` is now `messageKind`**, so devkit's overlap check no longer finds the name defined twice. Same arguments and result.
+- **Chart frame no longer imports `escapeHtml` from Enarratio** (it uses Capsomer's own, the one family-footer and site-header use), so Enarratio can stop exporting it. Same output.
+
+- **Prelum 0.35.1** (was 0.33.0), so sites can take Prelum 0.35.1 without an npm ERESOLVE over Mermaid CLI. No code change.
+- **Peer range: `enarratio` now accepts `^0.8.0` and `^0.9.0`** as well as `^0.5.0` to `^0.7.0`. No code change.
+- **Confirm dialog: `confirmSubmit`** (`capsomer/behavior/confirm-dialog`), the dialog in place of `window.confirm` on a form that posts: it holds a form's submit, asks, and sends the form again with the same button once the action is chosen. Additive; no class, token or HTML contract changes.
 - **Email: `escapeHtml` is site-runtime's.** `capsomer/email` re-exports `escapeHtml` from `@dustinedwards/site-runtime/html` instead of keeping a copy; same five entities, same output. site-runtime is already a peer of every site that uses Capsomer's email and footer. No class, token or HTML contract changes.
 
 ## [0.78.0]

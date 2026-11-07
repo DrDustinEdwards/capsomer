@@ -22,6 +22,7 @@ import {
   type IntentResult,
   type SubmitIntent,
 } from "./content.ts";
+import { markup } from "../trusted-html/trusted-html.ts";
 
 // For useSyncExternalStore's hydration flag: nothing to subscribe to.
 const noSubscribe = () => () => {};
@@ -73,7 +74,7 @@ export function ResultBox({
             viewBox="0 0 16 16"
             aria-hidden="true"
             focusable="false"
-            dangerouslySetInnerHTML={{ __html: GLYPHS[kind] }}
+            dangerouslySetInnerHTML={markup(GLYPHS[kind])}
           />
           <p className="cap-message-text" data-cap-part="text">
             <span data-cap-part="said" role={result.ok ? undefined : "alert"}>

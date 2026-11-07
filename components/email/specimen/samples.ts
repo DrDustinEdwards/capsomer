@@ -13,6 +13,7 @@ import {
   type Common,
   type Template,
 } from "../email.ts";
+import { trustedHtml } from "../../trusted-html/trusted-html.ts";
 
 const common: Common = {
   brand: { name: "Example Co", family: "purple" },
@@ -113,9 +114,10 @@ export function renderSamples(root: ParentNode = document): void {
     const html = SAMPLES[frame.dataset.email ?? ""]?.();
     if (html === undefined) throw new Error(`no sample for ${frame.dataset.email}`);
     frame.style.setProperty("inline-size", `${frame.dataset.width ?? "600"}px`);
-    frame.srcdoc =
+    frame.srcdoc = trustedHtml(
       frame.dataset.scheme === "light"
         ? html.replace(DARK_RULES, "")
-        : html.replace("@media (prefers-color-scheme: dark)", "@media all");
+        : html.replace("@media (prefers-color-scheme: dark)", "@media all"),
+    );
   }
 }

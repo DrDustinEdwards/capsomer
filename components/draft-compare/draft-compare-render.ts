@@ -64,7 +64,7 @@ export const STORAGE_KEY = "cap-compare-view";
 
 const RUN_LABEL: Record<RunKind, string> = { you: "You", ai: "AI", quoted: "Quoted" };
 
-import { escapeHtml as esc } from "../email/email.ts";
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 
 export { esc };
 

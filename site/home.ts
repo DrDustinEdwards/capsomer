@@ -5,6 +5,8 @@
 // and the live test count, and site/redirect.ts sends old admin links on. Its look is Supergraphics (Barbara Stauffacher Solomon, The Sea Ranch, 1966):
 // flat letter tiles too big for the page, cut by its edge, painted in Capsomer's own families.
 // The dashboard of tests, pairs and changes is the admin at /admin/ (site/main.tsx).
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
+export { esc };
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { familyFooterHtml } from "../components/family-footer/family-footer.ts";
@@ -62,8 +64,6 @@ export interface Data {
   defaults: Array<{ lead: string; reason: string }>;
 }
 
-export const esc = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 // Backticks in a summary become code, as on the admin's pages.
 const prose = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const fam = (f: Family) => ` data-family="${f}"`;
@@ -460,7 +460,7 @@ ${FOOTER}`;
 
 /** One example: the live component in a frame of its own (the states page showing only it), with its markup under it. */
 function exampleBlock(c: Component, e: Example, heading: boolean): string {
-  const src = `/components/${esc(c.name)}/states.html?${e.kind}=${encodeURIComponent(e.id)}`;
+  const src = `/components/${esc(c.name)}/states?${e.kind}=${encodeURIComponent(e.id)}`;
   const label = heading ? `ex-${esc(e.id)}` : `comp-h`;
   // Long code starts closed under its View code button, written here rather than by the page's script, so the box is
   // its final height from the first paint (D5). Without scripts the closed rules do not apply (home.css).
@@ -494,7 +494,9 @@ export function renderComponent(d: Data, name: string): string {
   if (!c) throw new Error(`no component ${name}`);
   const prev = d.components[i - 1];
   const next = d.components[i + 1];
-  const states = `/components/${esc(c.name)}/states.html`;
+  const states = `/components/${esc(c.name)}/states`;
+  // Only a component with an examples.html has a states page (bin/states.mjs writes one from it).
+  const hasStates = c.examples.length > 0;
   const [hero, ...rest] = c.examples;
   const docHeads = [...c.body.matchAll(/^## (.+)$/gm)].map((m) => {
     const text = (m[1] ?? "").trim();
@@ -539,7 +541,7 @@ export function renderComponent(d: Data, name: string): string {
         ] as Array<[string, string, boolean]>)
       : []),
     ...docHeads.map(([id, t]) => [id, t, false] as [string, string, boolean]),
-    ["states-h", "Every state", false],
+    ...(hasStates ? [["states-h", "Every state", false] as [string, string, boolean]] : []),
   ];
   return `${header("/", "Components")}
 ${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
@@ -590,10 +592,14 @@ ${runningHead("3", `Components · ${c.title}`, `${c.states} states`)}
   ${renderMarkdown(c.body, 0)}
   </article>
 
-  <section aria-labelledby="states-h">
+  ${
+    hasStates
+      ? `<section aria-labelledby="states-h">
     <h2 id="states-h">Every state</h2>
     <p>Every example on one page, as the tests see it: <a href="${states}?theme=light">light</a> or <a href="${states}?theme=dark">dark</a>.</p>
-  </section>
+  </section>`
+      : ""
+  }
 
   <nav class="comp-pager" aria-label="More components">
     ${prev ? `<a class="cap-sign" href="/components/${esc(prev.name)}/" rel="prev">${esc(prev.title)}</a>` : "<span></span>"}

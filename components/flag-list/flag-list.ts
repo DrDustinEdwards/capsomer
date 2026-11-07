@@ -23,6 +23,7 @@ import {
   revertSuggestion,
   summaryLine,
 } from "./flag-list-model.ts";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 export {
   groupFlags,
@@ -66,7 +67,7 @@ export function glyph(name: keyof typeof GLYPHS | (string & {})): SVGSVGElement 
   svg.setAttribute("viewBox", "0 0 16 16");
   svg.setAttribute("aria-hidden", "true");
   svg.setAttribute("focusable", "false");
-  svg.innerHTML = GLYPHS[name] ?? "";
+  setStaticHtml(svg, GLYPHS[name] ?? "");
   return svg;
 }
 

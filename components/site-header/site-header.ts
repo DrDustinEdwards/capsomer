@@ -10,7 +10,7 @@
 // moves to its first item; Up and Down move between items, Home and End go to the ends, Esc closes
 // it and focus goes back to its button.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
-import { escapeHtml } from "../email/email.ts";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { place } from "../popover/popover.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
@@ -319,7 +319,17 @@ export function wireSearch(
   const results = document.createElement("div");
   results.className = "cap-site-header-results";
   results.hidden = true;
-  results.innerHTML = `<div role="listbox" id="${id}-list" aria-label="${escapeHtml(input.getAttribute("aria-label") ?? "Search")}"></div><p class="cap-site-header-results-empty" hidden></p><span class="cap-sr-only" role="status"></span>`;
+  const listbox = document.createElement("div");
+  listbox.setAttribute("role", "listbox");
+  listbox.id = `${id}-list`;
+  listbox.setAttribute("aria-label", input.getAttribute("aria-label") ?? "Search");
+  const emptyNote = document.createElement("p");
+  emptyNote.className = "cap-site-header-results-empty";
+  emptyNote.hidden = true;
+  const liveStatus = document.createElement("span");
+  liveStatus.className = "cap-sr-only";
+  liveStatus.setAttribute("role", "status");
+  results.append(listbox, emptyNote, liveStatus);
   form.after(results);
   const list = results.children[0] as HTMLElement;
   const empty = results.children[1] as HTMLElement;
@@ -371,10 +381,32 @@ export function wireSearch(
     return url.pathname + url.search;
   };
   const show = (query: string, hits: SearchHit[]) => {
-    const row = (h: SearchHit, i: number) =>
-      `<a role="option" id="${id}-${i}" href="${escapeHtml(h.url)}" tabindex="-1">${h.kind ? `<span class="cap-site-header-result-kind">${escapeHtml(h.kind)}</span>` : ""}<span class="cap-site-header-result-title">${escapeHtml(h.title)}</span>${h.detail ? `<span class="cap-site-header-result-detail">${escapeHtml(h.detail)}</span>` : ""}</a>`;
+    const option = (optionId: string, href: string, className?: string) => {
+      const a = document.createElement("a");
+      a.setAttribute("role", "option");
+      a.id = optionId;
+      a.setAttribute("href", href);
+      a.tabIndex = -1;
+      if (className) a.className = className;
+      return a;
+    };
+    const part = (className: string, text: string) => {
+      const span = document.createElement("span");
+      span.className = className;
+      span.textContent = text;
+      return span;
+    };
+    const row = (h: SearchHit, i: number) => {
+      const a = option(`${id}-${i}`, h.url);
+      if (h.kind) a.append(part("cap-site-header-result-kind", h.kind));
+      a.append(part("cap-site-header-result-title", h.title));
+      if (h.detail) a.append(part("cap-site-header-result-detail", h.detail));
+      return a;
+    };
     const top = hits.slice(0, limit);
-    list.innerHTML = `${top.map(row).join("")}<a role="option" id="${id}-all" href="${escapeHtml(fullUrl(query))}" tabindex="-1" class="cap-site-header-result-all">All results for “${escapeHtml(query)}”</a>`;
+    const all = option(`${id}-all`, fullUrl(query), "cap-site-header-result-all");
+    all.textContent = `All results for \u201c${query}\u201d`;
+    list.replaceChildren(...top.map(row), all);
     empty.hidden = top.length > 0;
     empty.textContent = top.length
       ? ""
@@ -528,7 +560,7 @@ export function searchHtml({
   label: string;
   name?: string;
 }): string {
-  return `<div class="cap-site-header-search" data-cap-part="search"><a class="cap-site-header-icon cap-site-header-search-button" href="${escapeHtml(action)}" aria-label="${escapeHtml(label)}" data-cap-part="search-trigger">${SEARCH_GLYPH}<span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">${escapeHtml(label)}</span><kbd>/</kbd></span></a><div class="cap-site-header-search-panel" data-align="end"><form role="search" aria-label="Site" action="${escapeHtml(action)}" method="get">${SEARCH_GLYPH}<input type="search" name="${escapeHtml(name)}" placeholder="${escapeHtml(label)}" aria-label="${escapeHtml(label)}" autocomplete="off" enterkeyhint="search" /></form></div></div>`;
+  return `<div class="cap-site-header-search" data-cap-part="search"><a class="cap-site-header-icon cap-site-header-search-button" href="${escapeHtml(action)}" aria-label="${escapeHtml(label)}" data-cap-part="search-trigger">${SEARCH_GLYPH}<span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">${escapeHtml(label)}</span><kbd>/</kbd></span></a><div class="cap-site-header-search-panel" data-align="end"><form role="search" aria-label="${escapeHtml(label)}" action="${escapeHtml(action)}" method="get">${SEARCH_GLYPH}<input type="search" name="${escapeHtml(name)}" placeholder="${escapeHtml(label)}" aria-label="${escapeHtml(label)}" autocomplete="off" enterkeyhint="search" /></form></div></div>`;
 }
 
 /**

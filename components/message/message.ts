@@ -10,6 +10,7 @@
 // it, whatever happens after it: the missing audit row is the one fact that cannot be
 // found later by looking.
 import { singleKeysOff } from "../shortcuts/shortcuts.ts";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 export type ReturnFocus = HTMLElement | (() => HTMLElement | null);
 
@@ -151,13 +152,13 @@ export function glyphSvg(inner: string, size = 14): SVGSVGElement {
   s.setAttribute("height", String(size));
   s.setAttribute("aria-hidden", "true");
   s.setAttribute("focusable", "false");
-  s.innerHTML = inner;
+  setStaticHtml(s, inner);
   return s;
 }
 
 // What a message is, for its glyph and its edge: a failure; a warning or an Undo that
 // failed; otherwise a plain result.
-export function kindOf(m: Pick<Message, "warning" | "error" | "failure">): MessageKind {
+export function messageKind(m: Pick<Message, "warning" | "error" | "failure">): MessageKind {
   return m.failure ? "failure" : m.warning !== null || m.error !== null ? "warning" : "ok";
 }
 
@@ -243,10 +244,10 @@ function paint(it: Item, m: Message): void {
   it.el.dataset.id = String(m.id);
   if (lasting(m)) it.el.dataset.lasting = "";
   else delete it.el.dataset.lasting;
-  const kind = kindOf(m);
+  const kind = messageKind(m);
   if (it.el.dataset.kind !== kind) {
     it.el.dataset.kind = kind;
-    it.glyph.innerHTML = GLYPHS[kind];
+    setStaticHtml(it.glyph, GLYPHS[kind]);
   }
   if (it.said.textContent !== m.text) it.said.textContent = m.text;
   if (m.failure) it.said.setAttribute("role", "alert");

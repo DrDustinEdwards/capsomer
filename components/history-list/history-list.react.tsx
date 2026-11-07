@@ -27,6 +27,7 @@ import {
   type HistoryEntry,
   type Run,
 } from "./history-list.ts";
+import { markup } from "../trusted-html/trusted-html.ts";
 
 export type { HistoryEntry, Destination, HistoryKind } from "./history-list.ts";
 
@@ -81,7 +82,7 @@ const Glyph = ({ d, size = 14 }: { d: string; size?: number }) => (
     height={size}
     aria-hidden="true"
     focusable="false"
-    dangerouslySetInnerHTML={{ __html: d }}
+    dangerouslySetInnerHTML={markup(d)}
   />
 );
 

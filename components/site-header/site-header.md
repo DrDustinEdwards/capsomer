@@ -81,7 +81,7 @@ The account menu is the same shape everywhere: who you are; the site's own rows 
 
 ## Accessibility
 
-- The header is the page's `banner` landmark. The section links are a `nav` named "Site"; the sheet's list is a `nav` named by its heading and its pinned rows a `nav` named "Account"; the bottom bar a `nav` named by the site ("Sections").
+- The header is the page's `banner` landmark. The section links are a `nav` named "Main"; the sheet's list is a `nav` named by its heading and its pinned rows a `nav` named "Account"; the bottom bar a `nav` named by the site ("Sections").
 - The current page is `aria-current="page"`; a section with children that holds the current page shows its underline too.
 - The theme button says what it does: "Switch to dark theme" while the page is light. A count is in its control's name: "Inbox, 4 need you"; the bubble shows 99+ past 99, and the name starts with what is seen: "Inbox 99+, 120 need you". The visible label and count are words of the name in order, a space between them in the HTML (WCAG 2.5.3, as axe-core 4.14 reads it, aria-hidden text included). The business tile's letter and the avatar's initials are drawn from `data-tile` and `data-initials`, not text, so they do not count as part of the visible label.
 - Forced colors: the current link keeps its underline, the band keeps its edge, a bubble is drawn in system colors.
@@ -115,14 +115,14 @@ The family sites (dustinedwards.info, Capsid, Capsomer, Prelum, Carrel, Enarrati
     <span class="cap-site-header-sep" aria-hidden="true">/</span>
     [the product's button and panel]
   </div>
-  <nav class="cap-site-header-sections" aria-label="Site">
+  <nav class="cap-site-header-sections" aria-label="Main">
     <ul>
       <li><a class="cap-site-header-link" href="/pricing" aria-current="page">Pricing</a></li>
       <li><button type="button" class="cap-site-header-link" data-cap-part="panel-trigger" aria-expanded="false" aria-controls="books">Books[chevron]</button><div class="cap-site-header-panel" id="books" popover="manual" role="group" aria-label="Books">…</div></li>
     </ul>
   </nav>
   <div class="cap-site-header-tools">
-    <div class="cap-site-header-search" data-cap-part="search"><a class="cap-site-header-icon cap-site-header-search-button" href="/search" aria-label="Search" data-cap-part="search-trigger">[glyph][tip]</a><div class="cap-site-header-search-panel" data-align="end"><form role="search" aria-label="Site" action="/search" method="get">[glyph]<input type="search" name="q" placeholder="Search" aria-label="Search" autocomplete="off" enterkeyhint="search"></form></div></div>
+    <div class="cap-site-header-search" data-cap-part="search"><a class="cap-site-header-icon cap-site-header-search-button" href="/search" aria-label="Search" data-cap-part="search-trigger">[glyph][tip]</a><div class="cap-site-header-search-panel" data-align="end"><form role="search" aria-label="Search" action="/search" method="get">[glyph]<input type="search" name="q" placeholder="Search" aria-label="Search" autocomplete="off" enterkeyhint="search"></form></div></div>
     <div class="cap-site-header-extras">
       <button type="button" class="cap-site-header-icon" aria-label="Inbox, 4 need you">[18px glyph] <span class="cap-site-header-badge" aria-hidden="true">4</span><span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">Inbox</span></span></button>
       <a class="cap-site-header-cta" href="/audit">Free audit</a>

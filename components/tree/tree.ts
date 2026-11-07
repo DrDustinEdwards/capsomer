@@ -19,6 +19,7 @@ import {
   visibleRows,
   zoneAt,
 } from "./tree-model.ts";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 export {
   visibleRows,
@@ -156,7 +157,7 @@ export function createTree(el: HTMLElement): Tree {
             const t = document.createElement("span");
             t.className = "cap-tree-toggle";
             t.setAttribute("aria-hidden", "true");
-            t.innerHTML = TOGGLE;
+            setStaticHtml(t, TOGGLE);
             r.prepend(t);
           }
           if (p.group) {

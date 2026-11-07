@@ -6,6 +6,7 @@
 
 import { openDialog, uid, wireDialog } from "../dialog/dialog.ts";
 import { dateFrom, setValue } from "../field/field.ts";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 const DAY = 86_400_000;
 
@@ -89,7 +90,10 @@ function navButton(part: keyof typeof ICONS): HTMLButtonElement {
       "aria-label": NAMES[part],
     },
   );
-  b.innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${ICONS[part]}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  setStaticHtml(
+    b,
+    `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${ICONS[part]}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  );
   return b;
 }
 

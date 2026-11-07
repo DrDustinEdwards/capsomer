@@ -1,3 +1,4 @@
+import { copyChildren, trustedHtml } from "../trusted-html/trusted-html.ts";
 // The catalog's behavior: it makes a form that already works (a GET to the page's own address) update in place.
 // Typing in the search box, ticking a filter, choosing a sort, removing a chip, following a sort header or a page
 // link fetches the same address a person would have navigated to and swaps the regions of the page that changed.
@@ -34,7 +35,7 @@ function region(root: ParentNode, name: string): HTMLElement | null {
 // would drop their place), and replaces them otherwise. Counts follow either way.
 function swapFilters(current: HTMLElement, next: HTMLElement): void {
   if (!current.contains(document.activeElement)) {
-    current.innerHTML = next.innerHTML;
+    copyChildren(current, next);
     return;
   }
   for (const input of Array.from(next.querySelectorAll<HTMLInputElement>("input[name]"))) {
@@ -76,7 +77,7 @@ export function attachCatalog(form: HTMLFormElement): () => void {
         credentials: "same-origin",
       });
       if (!res.ok) throw new Error(`catalog: ${href} answered ${res.status}`);
-      const doc = new DOMParser().parseFromString(await res.text(), "text/html");
+      const doc = new DOMParser().parseFromString(trustedHtml(await res.text()), "text/html");
       const next = doc.querySelector<HTMLFormElement>(
         `form[data-catalog="${CSS.escape(form.dataset.catalog ?? "")}"]`,
       );
@@ -84,7 +85,7 @@ export function attachCatalog(form: HTMLFormElement): () => void {
       for (const name of REGIONS) {
         const mineRegion = region(form, name);
         const nextRegion = region(next, name);
-        if (mineRegion && nextRegion) mineRegion.innerHTML = nextRegion.innerHTML;
+        if (mineRegion && nextRegion) copyChildren(mineRegion, nextRegion);
       }
       const filters = region(form, "filters");
       const nextFilters = region(next, "filters");
@@ -99,7 +100,7 @@ export function attachCatalog(form: HTMLFormElement): () => void {
       const sort = form.querySelector<HTMLSelectElement>('select[name="sort"]');
       const nextSort = next.querySelector<HTMLSelectElement>('select[name="sort"]');
       if (sort && nextSort) {
-        sort.innerHTML = nextSort.innerHTML;
+        copyChildren(sort, nextSort);
         sort.value = Array.from(nextSort.options).find((o) => o.defaultSelected)?.value ?? "";
       }
       // The address the server says this state has (the form can send defaults a link would not).

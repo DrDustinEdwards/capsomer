@@ -816,7 +816,10 @@ function install(): void {
     return getComputedStyle(document.body).backgroundColor;
   };
   const textLink = (el: Element) =>
-    el.matches(':is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a)');
+    // A link that is only a picture has no text to underline: its cue is the picture and the cursor.
+    el.matches(
+      ':is(:not([class*="cap-"]), [data-link], .cap-footnote-ref):not(nav a, :has(> img:only-child))',
+    );
   const drawn = (el: Element, pseudo: "::before" | "::after") => {
     const cs = getComputedStyle(el, pseudo);
     if (cs.content === "none" || cs.content === "normal" || cs.display === "none") return false;

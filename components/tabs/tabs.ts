@@ -85,8 +85,19 @@ export function select(
     if (panel) panel.hidden = !on;
   }
   if (options.focus) tab.focus();
-  // A long list scrolls the chosen tab into view, the least distance that shows it.
-  tab.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+  // A long list scrolls the chosen tab into view, the least distance that shows it. Only the list
+  // scrolls, by hand: scrollIntoView also scrolls the page and moves the browser's Tab starting
+  // point to the tab, so the first Tab press on load skipped the skip link and header.
+  const list = listOf(root);
+  if (list) {
+    const box = list.getBoundingClientRect();
+    const at = tab.getBoundingClientRect();
+    if (list.scrollWidth > list.clientWidth)
+      list.scrollLeft +=
+        at.left < box.left ? at.left - box.left : Math.max(0, at.right - box.right);
+    if (list.scrollHeight > list.clientHeight)
+      list.scrollTop += at.top < box.top ? at.top - box.top : Math.max(0, at.bottom - box.bottom);
+  }
   if (changed && !options.silent)
     tab.dispatchEvent(
       new CustomEvent("cap:tabs-change", {

@@ -37,6 +37,7 @@
 <script type="module">
   import { select } from "../tabs/tabs.ts";
   import { controller, enhance, systemMapHtml } from "./system-map.ts";
+  import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
   // Sample data in the network's own words. A private system shows in full, only marked private.
   const data = {
@@ -114,7 +115,7 @@
   };
   const mount = (name, options) => {
     const el = document.querySelector(`[data-mount='${name}']`);
-    el.innerHTML = systemMapHtml(data, { headingLevel: 3, ...options });
+    setStaticHtml(el, systemMapHtml(data, { headingLevel: 3, ...options }));
     return el.firstElementChild;
   };
 

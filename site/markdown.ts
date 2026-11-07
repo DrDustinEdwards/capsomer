@@ -26,7 +26,12 @@ function inline(s: string): string {
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>")
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text: string, href: string) => {
-      const safe = /^(https?:|#|\.{0,2}\/)/.test(href) ? href : "#";
+      // A doc's link to a sibling component's doc (`../empty/empty.md`) is that component's page on the site.
+      const sibling = /^\.\.\/([\w-]+)\/\1\.md(#[\w-]+)?$/.exec(href);
+      const resolved = sibling
+        ? `${import.meta.env?.BASE_URL ?? "/"}components/${sibling[1]}/${sibling[2] ?? ""}`
+        : href;
+      const safe = /^(https?:|#|\.{0,2}\/)/.test(resolved) ? resolved : "#";
       // Another site takes the link system's away contract (components/link/link.md).
       if (/^https?:/.test(safe))
         return `<a href="${safe}" data-link="away" rel="external">${text}<span class="cap-sr-only"> (opens another site)</span></a>`;

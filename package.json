@@ -1,6 +1,6 @@
 {
   "name": "capsomer",
-  "version": "0.78.0",
+  "version": "0.83.0",
   "description": "Capsomer: the shared design system for Dustin Edwards's apps. Tokens, components and patterns, in plain CSS with optional behavior modules and React wrappers.",
   "license": "MIT",
   "repository": {
@@ -121,7 +121,7 @@
     "build": "tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "states": "node bin/capsomer.mjs states",
-    "site": "node bin/capsomer.mjs states && node bin/capsomer.mjs site-data && vite build --config site/vite.config.ts && site-runtime-headers --site capsomer --out site-dist/_headers --header \"tdm-reservation: 1\"",
+    "site": "node bin/capsomer.mjs states && node bin/capsomer.mjs site-data && vite build --config site/vite.config.ts && prelum-markdown --dir site-dist --origin https://capsomer.dustinedwards.info && prelum-lastmod --dir site-dist --origin https://capsomer.dustinedwards.info && site-runtime-headers --site capsomer --out site-dist/_headers --header \"tdm-reservation: 1\"",
     "deploy": "wrangler deploy",
     "e2e": "node bin/capsomer.mjs states && playwright test",
     "palette-report": "node tokens/palette.mjs --report",
@@ -134,9 +134,6 @@
     "bloat": "node bin/capsomer.mjs bloat --knip test-results/knip.json --jscpd test-results/jscpd/jscpd-report.json",
     "token-check": "node bin/capsomer.mjs token-check"
   },
-  "dependencies": {
-    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.33.0"
-  },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@base-ui/react": "^1.8.0",
@@ -146,8 +143,9 @@
     "@codemirror/language": "^6.12.4",
     "@codemirror/state": "^6.7.1",
     "@codemirror/view": "^6.43.7",
+    "@drdustinedwards/site-helpers": "github:DrDustinEdwards/prelum#v0.40.0",
     "@dustinedwards/devkit": "github:DrDustinEdwards/devkit#v0.27.0",
-    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.87.0",
+    "@dustinedwards/site-runtime": "github:DrDustinEdwards/site-runtime#v0.97.0",
     "@fontsource-variable/source-serif-4": "^5.3.0",
     "@fontsource/dm-mono": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",
@@ -160,9 +158,13 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "enarratio": "0.7.3",
+    "enarratio": "0.9.1",
+    "hast-util-from-html": "2.0.3",
+    "hast-util-to-mdast": "10.1.2",
     "jscpd": "^5.3.2",
     "knip": "^6.38.0",
+    "mdast-util-gfm": "3.1.0",
+    "mdast-util-to-markdown": "2.2.0",
     "oxfmt": "0.77.0",
     "oxlint": "1.92.0",
     "oxlint-tsgolint": "7.0.2006",
@@ -182,10 +184,11 @@
     "@codemirror/language": "^6.12.4",
     "@codemirror/state": "^6.7.1",
     "@codemirror/view": "^6.43.7",
+    "@drdustinedwards/site-helpers": ">=0.40.0",
     "@dustinedwards/site-runtime": ">=0.29.0",
     "@lezer/highlight": "^1.2.3",
     "@playwright/test": "^1.50.0",
-    "enarratio": "^0.5.0 || ^0.6.0 || ^0.7.0",
+    "enarratio": "^0.5.0 || ^0.6.0 || ^0.7.0 || ^0.8.0 || ^0.9.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^8.0.0"
@@ -213,6 +216,9 @@
       "optional": true
     },
     "@codemirror/view": {
+      "optional": true
+    },
+    "@drdustinedwards/site-helpers": {
       "optional": true
     },
     "@dustinedwards/site-runtime": {

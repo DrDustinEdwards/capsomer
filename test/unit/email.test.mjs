@@ -2,11 +2,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { FAMILIES, contrast } from "../../tokens/palette.mjs";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { emailColors } from "../../components/email/colors.ts";
 import {
   alert,
   checkUrl,
-  escapeHtml,
   magicLink,
   notice,
   renderEmail,

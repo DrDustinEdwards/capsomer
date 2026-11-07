@@ -3,6 +3,7 @@ import { useState, type ReactNode } from "react";
 import { Meter } from "../meter/meter.react.tsx";
 import { Glyph } from "../status/status.react.tsx";
 import { assess, type UsageAssessment, usageTable } from "./usage-meter.ts";
+import { markup } from "../trusted-html/trusted-html.ts";
 
 export interface UsageItem {
   id: string;
@@ -115,9 +116,9 @@ export function UsageMeter({
       )}
       <div
         className="cap-data"
-        dangerouslySetInnerHTML={{
-          __html: dataTableBlock(usageTable(items.map((item) => ({ ...item, now }))), tableLabel),
-        }}
+        dangerouslySetInnerHTML={markup(
+          dataTableBlock(usageTable(items.map((item) => ({ ...item, now }))), tableLabel),
+        )}
       />
     </div>
   );

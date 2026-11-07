@@ -14,7 +14,7 @@ import {
   GLYPHS,
   currentUndo,
   isUndoKey,
-  kindOf,
+  messageKind,
   lasting,
   newMessage,
   resolveFocus,
@@ -24,6 +24,7 @@ import {
   type Message,
   type SayOptions,
 } from "./message.ts";
+import { markup } from "../trusted-html/trusted-html.ts";
 
 export type { Message, SayOptions };
 
@@ -256,14 +257,14 @@ export function MessageRegion() {
           data-cap-part="item"
           data-id={m.id}
           data-lasting={lasting(m) ? "" : undefined}
-          data-kind={kindOf(m)}
+          data-kind={messageKind(m)}
         >
           <svg
             className="cap-message-glyph"
             viewBox="0 0 16 16"
             aria-hidden="true"
             focusable="false"
-            dangerouslySetInnerHTML={{ __html: GLYPHS[kindOf(m)] }}
+            dangerouslySetInnerHTML={markup(GLYPHS[messageKind(m)])}
           />
           <p className="cap-message-text" data-cap-part="text">
             <span data-cap-part="said" role={m.failure ? "alert" : undefined}>

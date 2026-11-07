@@ -4,6 +4,7 @@
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { Time } from "./time.react.tsx";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 function Demo() {
   return (
@@ -20,7 +21,7 @@ if (host) {
     errors,
     server: "",
   };
-  host.innerHTML = renderToString(<Demo />);
+  setStaticHtml(host, renderToString(<Demo />));
   (window as unknown as { timeHydration: { server: string } }).timeHydration.server =
     host.textContent ?? "";
   hydrateRoot(host, <Demo />, {

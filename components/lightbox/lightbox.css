@@ -1,0 +1,57 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The lightbox: the shared dialog with the picture as its only content. The surface is the
+   picture itself, so the dialog has no fill, edge or shadow of its own; the backdrop and the
+   focus ring are the dialog's. */
+@layer cap.components {
+  .cap-lightbox {
+    --cap-dialog-w: auto;
+    width: fit-content;
+    max-width: calc(100% - 2 * var(--cap-dialog-gap));
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    /* The grow from the picture is the motion; the dialog's own rise would fight it. */
+    transition: none;
+    @starting-style {
+      opacity: 1;
+      transform: none;
+    }
+
+    & > img {
+      display: block;
+      max-width: 100%;
+      max-height: calc(100dvh - 2 * var(--cap-dialog-gap));
+      object-fit: contain;
+      border-radius: var(--radius-m);
+      background: var(--raised);
+    }
+    &::backdrop {
+      cursor: zoom-out;
+    }
+    /* On the picture's corner it would sit on the picture: give it a surface. */
+    & > .cap-dialog-close {
+      background: var(--raised);
+      box-shadow: var(--shadow-m);
+    }
+  }
+
+  /* A picture that opens in the viewer. */
+  :where([data-cap="lightbox"]) :is(a.image-link, img.diagram-image) {
+    cursor: zoom-in;
+  }
+
+  /* The figure growing into the viewer and back. The script never starts it under reduced motion. */
+  ::view-transition-group(cap-lightbox-figure) {
+    animation-duration: var(--dur-base);
+    animation-timing-function: var(--ease-out);
+  }
+
+  @media (forced-colors: active) {
+    .cap-lightbox > .cap-dialog-close {
+      border: 1px solid CanvasText;
+    }
+  }
+}

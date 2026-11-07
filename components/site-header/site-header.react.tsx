@@ -288,7 +288,7 @@ export function SiteHeader(props: SiteHeaderProps) {
         </div>
       ) : null}
       {sections.length > 0 ? (
-        <nav className="cap-site-header-sections" aria-label="Site">
+        <nav className="cap-site-header-sections" aria-label="Main">
           <ul>
             {sections.map((s) => (
               <li key={s.id}>
@@ -352,7 +352,7 @@ export function SiteHeader(props: SiteHeaderProps) {
               <HeaderTip text={search.label} keys="/" />
             </a>
             <div className="cap-site-header-search-panel" data-align="end">
-              <form role="search" aria-label="Site" action={search.action} method="get">
+              <form role="search" aria-label={search.label} action={search.action} method="get">
                 {SEARCH_ICON}
                 <input
                   type="search"

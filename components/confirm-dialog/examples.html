@@ -11,6 +11,17 @@
   </main>
 </template>
 
+<template data-specimen="submit" data-title="Working: a form's own delete button" data-height="320">
+  <main class="specimen-page" id="main" tabindex="-1">
+    <h1>Awards</h1>
+    <form data-specimen-part="form" method="post" action="#">
+      <span class="cap-mono">Spring award</span>
+      <button type="submit" name="intent" value="delete" class="cap-btn" data-variant="danger" data-specimen-part="delete">Remove the Spring award</button>
+    </form>
+    <p role="status" data-specimen-part="sent"></p>
+  </main>
+</template>
+
 <template data-specimen="open" data-title="Open, focus on Cancel" data-height="460">
   <main class="specimen-page" tabindex="-1">
     <h1>Agents</h1>
@@ -276,7 +287,7 @@
 </template>
 
 <script type="module">
-  import { confirm, enhance, openConfirm } from "./confirm-dialog.ts";
+  import { confirm, confirmSubmit, enhance, openConfirm } from "./confirm-dialog.ts";
   enhance();
   for (const d of document.querySelectorAll("dialog[data-specimen-open]")) openConfirm(d, null);
 
@@ -324,5 +335,18 @@
       perform: () => wait(() => undefined),
     });
     if (said) said.textContent = done ? "Deleted the example.org record." : "Nothing changed.";
+  });
+
+  // A form guarded by confirmSubmit. The second listener stands for the app's own submit: it runs
+  // only for a send nobody held, and records the button that sent it.
+  const form = document.querySelector("[data-specimen-part='form']");
+  const sent = document.querySelector("[data-specimen-part='sent']");
+  form?.addEventListener("submit", (e) =>
+    confirmSubmit(e, { title: "Remove the Spring award?", lead: "This removes it and its recipients.", action: "Remove award" }),
+  );
+  form?.addEventListener("submit", (e) => {
+    const held = e.defaultPrevented;
+    e.preventDefault();
+    if (!held && sent) sent.textContent = `Sent: ${e.submitter?.value}`;
   });
 </script>

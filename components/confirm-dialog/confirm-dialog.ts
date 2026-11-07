@@ -459,6 +459,42 @@ export function confirm(o: ConfirmOptions): Promise<boolean> {
   });
 }
 
+// Forms whose submit the person has just approved: the second pass of confirmSubmit lets it through.
+const approved = new WeakSet<Element>();
+
+export type ConfirmSubmitOptions = Omit<ConfirmOptions, "perform" | "body"> & { body?: string[] };
+
+// The dialog in place of window.confirm on a form. Give it to a form's onSubmit or to a submit
+// button's onClick: it holds the submit, asks, and sends the form again (with the same button) only
+// once the action is chosen. Works with a router's Form, whose own submit runs after this handler.
+export function confirmSubmit(
+  e: {
+    preventDefault(): void;
+    currentTarget: Element;
+    submitter?: HTMLElement | null;
+    // A React synthetic event keeps the native one here.
+    nativeEvent?: object;
+  },
+  o: ConfirmSubmitOptions,
+): void {
+  const target = e.currentTarget;
+  if (approved.delete(target)) return;
+  const form = target instanceof HTMLFormElement ? target : (target as HTMLButtonElement).form;
+  if (!form) return;
+  e.preventDefault();
+  const submitter =
+    e.submitter ??
+    (e.nativeEvent as { submitter?: HTMLElement | null } | undefined)?.submitter ??
+    null;
+  void confirm({ body: [], ...o, perform: () => Promise.resolve() }).then((yes) => {
+    if (!yes) return;
+    if (target === form) approved.add(form);
+    form.requestSubmit(
+      target === form ? (submitter as HTMLButtonElement | null) : (target as HTMLButtonElement),
+    );
+  });
+}
+
 // Attaches to every confirm dialog written in markup under root, and to every trigger
 // [data-cap-confirm-open="<dialog id>"]. Returns a function that detaches them all.
 export function enhance(root: ParentNode = document): () => void {

@@ -28,6 +28,7 @@ import {
 } from "../moderation-queue/moderation-queue.ts";
 import { currentView } from "./mentions-list.ts";
 import { MentionsList } from "./mentions-list.react.tsx";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 const NOW = Date.parse("2026-10-10T12:00:00Z");
 const ALL: ContentCan = {
@@ -488,7 +489,10 @@ for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
 
 const staticHost = document.getElementById("mentions-static");
 if (staticHost)
-  staticHost.innerHTML = renderToStaticMarkup(
-    <MentionsList data={load(MENTIONS.slice(0, 4), {})} action="/mentions" now={NOW} />,
-    { identifierPrefix: "static" },
+  setStaticHtml(
+    staticHost,
+    renderToStaticMarkup(
+      <MentionsList data={load(MENTIONS.slice(0, 4), {})} action="/mentions" now={NOW} />,
+      { identifierPrefix: "static" },
+    ),
   );
