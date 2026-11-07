@@ -4,7 +4,7 @@
 # unit tests, the type check, the build, every component's keyboard and accessibility
 # tests in a real browser, and the sweep (test/sweep.spec.ts: reflow, right to left, text
 # spacing, touch targets, forced colors and React parity over every states page). Never
-# blocking: the token check and the size report (rule 1, decision 12). The sweep also
+# blocking: the token check, the size report and the `weight` job's page weight report (rule 1, decision 12). The sweep also
 # writes forced-colors screenshots to test-results/forced-colors/, kept with the run for review.
 #
 # A pull request runs the browser tests for the components it touches and for every component that
@@ -105,6 +105,30 @@ jobs:
           name: test-results
           path: test-results/
           retention-days: 30
+
+  # Capsomer's own page weight and line counts against no-bloat/baseline.json (no-bloat/README.md), a report that never
+  # fails. Its own job because the ruleset requires a check named `weight`; Knip and jscpd are pr.yml's ratchet
+  # (checks.yml).
+  weight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install
+        run: npm ci --ignore-scripts
+      - name: Build the site, for the page-weight report
+        run: npm run site
+      - name: Page weight and lines, against the baseline
+        run: |
+          mkdir -p test-results
+          npm run bloat >> "$GITHUB_STEP_SUMMARY"
 
   # The site reads https://raw.githubusercontent.com/DrDustinEdwards/capsomer/results/results.json.
   # One file on an orphan branch, replaced on every run on main.
