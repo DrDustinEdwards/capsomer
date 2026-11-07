@@ -21,7 +21,6 @@ export function RowList({ labelledBy, label, primary = false, gap, children }: R
       ref={ref}
       className="cap-rows"
       data-cap="row-list"
-      // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
       role="list"
       aria-labelledby={labelledBy}
       aria-label={labelledBy ? undefined : label}

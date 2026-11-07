@@ -424,7 +424,6 @@ export function MediaGrid({
           </GroupSection>
         ))
       ) : (
-        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         <ul className="cap-media-grid" role="list" aria-label={label}>
           {tiles(items ?? [])}
         </ul>
@@ -450,7 +449,6 @@ function GroupSection({
       <h2 className="cap-media-group-title" id={id}>
         {label} <span className="cap-media-group-count">{count} on this page</span>
       </h2>
-      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul className="cap-media-grid" role="list" aria-label={listLabel}>
         {children}
       </ul>

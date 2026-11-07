@@ -158,7 +158,6 @@ export function PeopleRoles({
         <Review id={id} Sub={Sub} review={data.review} action={action} />
       ) : null}
 
-      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
       <div className="cap-table-wrap" role="region" aria-labelledby={`${id}-h`} tabIndex={0}>
         <table className="cap-table cap-people-table">
           <thead>

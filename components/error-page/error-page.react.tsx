@@ -159,7 +159,6 @@ export function ErrorPage({
         {children}
         {thrown?.stack ? (
           // Focusable and named: a region that scrolls must be reachable by keyboard.
-          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
           <pre className="cap-error-page-stack" tabIndex={0} role="region" aria-label="Stack trace">
             <code>{thrown.stack}</code>
           </pre>

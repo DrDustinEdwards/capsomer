@@ -803,7 +803,6 @@ export function PostsList({
           data-reflow=""
           role="region"
           aria-labelledby={`${uid}-cap`}
-          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- delegates the events of the controls inside it
           tabIndex={0}
           onKeyDown={onTableKey}
         >

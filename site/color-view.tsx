@@ -39,7 +39,6 @@ function ThemeColumn({ scheme }: { scheme: "light" | "dark" }) {
       <div
         className="cap-table-wrap"
         role="region"
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
         tabIndex={0}
         aria-label={`${scheme === "light" ? "Light" : "Dark"} theme contrast grid`}
       >
@@ -154,7 +153,6 @@ function FamilyScales() {
               <div
                 className="cap-table-wrap"
                 role="region"
-                // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
                 tabIndex={0}
                 aria-label={`${n} failing pairs`}
               >
@@ -230,7 +228,6 @@ export function ColorView() {
         src={`${all.length} pairs, both themes. The families above have ${FAMILIES?.pairs.length ?? 0} in all`}
         flush
       >
-        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
         <div className="cap-table-wrap" role="region" tabIndex={0} aria-labelledby="pairs-h">
           <table className="cap-table">
             <thead>
