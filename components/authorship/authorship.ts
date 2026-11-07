@@ -4,6 +4,7 @@
 // pure counting (countWords, summarize, summaryText, summaryHtml: safe on a server and in node's
 // test runner) and the behavior (enhance: the switch, the remembered choice, the summary).
 
+import { escapeHtml as esc } from "@dustinedwards/site-runtime/html";
 import { countWords } from "../draft-compare/draft-compare.ts";
 import { syncWord } from "../switch/switch.ts";
 
@@ -74,9 +75,6 @@ export function summaryText(shares: Share[]): string {
   if (shown.length === 0) return "No marked passages";
   return `${shown.map((s) => `${s.percent}% ${KIND_WORD[s.kind]}`).join(", ")} by words`;
 }
-
-const esc = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 // The summary as html, for a server to write: the line, the bar (drawn by enhance, which sets
 // each segment's width), and the word counts in text.
