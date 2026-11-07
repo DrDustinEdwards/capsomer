@@ -46,7 +46,7 @@ A picture in a post, a page or a roster that a reader may want to see larger: a 
 ## Accessibility
 
 - The viewer is a modal dialog with an accessible name; the page behind is inert.
-- The Close button is a 44 px target with the name "Close".
+- The Close button is the dialog block's icon button (a target at least 24 px, larger on a coarse pointer) with the name "Close".
 - The picture keeps its alt text.
 - Forced colors: the Close button gains an edge.
 
