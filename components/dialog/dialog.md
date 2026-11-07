@@ -70,7 +70,7 @@ Anything that must be dealt with before the page is used again: a short form, a 
 - Busy is `aria-busy` on the dialog and `aria-disabled` (not `disabled`) on Close and Cancel, so focus stays where it was.
 - Forced colors: the dialog, the footer and the divider keep their borders.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

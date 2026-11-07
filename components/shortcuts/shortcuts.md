@@ -56,7 +56,7 @@ A shortcut is never the only way: every one is also a control on screen or a com
 - The switch is a checkbox with `role="switch"` and a fixed label, "Single-key shortcuts"; the On or Off word beside it is `aria-hidden` because the switch states it. A note says why someone would turn it off.
 - Shortcuts are listed as a description list per group: the keys, then what they do.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

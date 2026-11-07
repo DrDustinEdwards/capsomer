@@ -75,7 +75,7 @@ Item (`item.tsx`) for the rows, Accordion for the folded passes, Badge for the s
 - Each check row's link is described by its status and detail (`aria-describedby`), so moving by link still says "Failing" and the fix.
 - Forced colors: the region keeps its border; the critical edge turns CanvasText.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

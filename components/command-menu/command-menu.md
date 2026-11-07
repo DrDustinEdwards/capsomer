@@ -60,7 +60,7 @@ It is never the only way to reach something: every command is also a control on 
 - The result count ("3 results") is said politely in a visually hidden `role="status"` the listbox adds; "No commands match ..." is in the visible `role="status"` under the list.
 - The key hints under the list are `aria-hidden`; this page's keyboard table and the option names carry them.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

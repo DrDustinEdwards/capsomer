@@ -57,7 +57,7 @@ One question from one agent is answered in place in its session row (`session-ro
 - Esc is held while pending by stopping the keydown as well as the cancel event, because Chrome skips the cancel event when the page has had no user activation since the last close request.
 - Forced colors: the dialog's edge (shared) and the command box keep a border.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Matches
 

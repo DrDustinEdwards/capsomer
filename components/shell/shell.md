@@ -68,7 +68,7 @@ A public reading page (a post, a CV) has no rail; it uses the site's own header 
 - The top bar is sticky and the document scrolls, with `scroll-padding-top` for the bar, so a focused control is never hidden under it (WCAG 2.4.11).
 - Forced colors: the current entry gains an outline, because its tinted background is removed.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

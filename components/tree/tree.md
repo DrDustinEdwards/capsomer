@@ -65,7 +65,7 @@ A hierarchy a person moves through and works in: a book's chapters and scenes, a
 - A move, a refused move ("Low water is already first here.") and a canceled drag are said in a `role="status"` region that exists before it changes.
 - Dragging is never the only way: every drag has a keyboard move. A host whose people move rows by touch adds a one-pointer command (a "Move to" menu) that calls the same move, as WCAG 2.5.7 asks.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

@@ -62,7 +62,7 @@ Choosing one value from a fixed list of about 6 to 15: a platform, a region, an 
 - Forced colors: the chosen option keeps its check in Highlight, the current option an outline.
 - Without script, the native select is operable by every keyboard and screen reader.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

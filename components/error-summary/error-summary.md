@@ -51,7 +51,7 @@ Any form whose submit finds two or more fields in error, and any page the server
 - Forced colors: the edge is CanvasText and the links LinkText.
 - No motion.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

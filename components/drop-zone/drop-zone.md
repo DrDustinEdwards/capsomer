@@ -72,7 +72,7 @@ Dropping is a pointer gesture; the picker is its keyboard equivalent and goes th
 - Forced colors: the edge is CanvasText, over is Highlight, the refusal box keeps its border.
 - Reduced motion: the edge and tint change without easing.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

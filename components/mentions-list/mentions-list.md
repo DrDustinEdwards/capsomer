@@ -64,7 +64,7 @@ The keys do nothing in a text field, with Ctrl, Alt or Meta held, in an open dia
 - The live line is a polite status; the result box and the bar's outcome list are the content components' own.
 - A status is a shape, a word and a color. Text reaches 4.5:1 and edges 3:1 in both themes.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

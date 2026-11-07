@@ -59,7 +59,7 @@ shadcn/ui `Item` (a title line, a muted description, the item rhythm) in an item
 - Glyphs reach 3:1 as graphics; every word reaches 4.5:1 in both themes.
 - Forced colors: the critical edge and the marker's edge become borders in CanvasText; day headings gain a rule, because their tinted background is removed.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

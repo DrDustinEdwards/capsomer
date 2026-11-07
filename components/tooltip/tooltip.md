@@ -55,7 +55,7 @@ Extra detail a person may want and can do without: what a button will do in this
 - Touch: there is no hover, so a tip's detail must never be needed.
 - Forced colors: the tip gains an edge.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

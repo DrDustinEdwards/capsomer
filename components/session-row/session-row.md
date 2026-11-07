@@ -59,7 +59,7 @@ shadcn/ui `Item` (each row: a title line, a description, actions) with `Alert` f
 - The ask block's warning edge is a border, so it survives forced colors; the pill keeps its glyph and word when its tint is removed. A failed row's red edge is drawn in CanvasText there, and is never the only sign: the pill's octagon and the word Failed say it.
 - The list is named by its panel heading.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

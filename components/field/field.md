@@ -103,7 +103,7 @@ A sign-in form is `username` then `current-password`, each with a visible label,
 - Every part's button is at least `--target` (44 px on a touch screen); the steppers and Clear are icon buttons with a name.
 - Show and Hide, and the character count, are said through the page's one status region (Message) without moving focus, when the page has one; without one, the count is still read as the field's description when it is focused.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 
