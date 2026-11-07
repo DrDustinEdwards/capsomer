@@ -156,6 +156,14 @@ The confirm page, with no script (HTML, or React `ConfirmPage`, which renders ex
 
 The typed word posts as `confirm`. A `lead` that is not a string is drawn in a `div`, so it can hold paragraphs.
 
+### Replacing `window.confirm` on a form (0.79.0)
+
+`confirmSubmit(event, options)` from `capsomer/behavior/confirm-dialog` is the dialog in place of `window.confirm` on a form that posts. Give it to the form's `onSubmit` or to a submit button's `onClick`; it holds the submit, asks, and sends the form again, with the same button, only once the action is chosen. It works with a router's `Form`, whose own submit runs after it. `options` are `confirm`'s without `perform`; `body` may be left out.
+
+```tsx
+<Form method="post" onSubmit={(e) => confirmSubmit(e, { title: `Remove ${sponsor.name}?`, action: "Remove sponsor" })}>
+```
+
 ## Matches shadcn
 
 Alert Dialog (Base UI flavor, nova): the centered alert dialog with the blurred backdrop, the header with an optional media tile, title and description, the footer on a muted band with Cancel and the action, zoom-in-95 at 100 ms, no closing by the backdrop. Everything that is the surface comes from the shared dialog; the reason, the typed word and the error are this component's.

@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.79.0]
+
+- **Confirm dialog: `confirmSubmit`** (`capsomer/behavior/confirm-dialog`), the dialog in place of `window.confirm` on a form that posts: it holds a form's submit, asks, and sends the form again with the same button once the action is chosen. Additive; no class, token or HTML contract changes.
+
 ## [0.78.0]
 
 - **Kit form: `KitForm` and `useKitSubmit`** (`capsomer/react/kit-form`). The form and the submit a React Router app hands the posts, media and mentions lists. Carrel and dustinedwards.info each had their own copy; they use these. Additive (`react-router`, already an optional peer, is needed to import it); no class, token or HTML contract changes.
