@@ -6,6 +6,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **Removed export: `escapeHtml` from `capsomer/email` and `capsomer/system-map`.** It is site-runtime's (`@dustinedwards/site-runtime/html`), which a site already has; import it from there. Same five entities, same output. No class, token or HTML contract changes.
 
+## [0.79.3]
+
+- **No script hands a string to an injection sink.** A page that enforces Trusted Types (`require-trusted-types-for 'script'`) refuses `innerHTML`, `srcdoc` and `DOMParser` given a plain string, and Chrome logs each as a CSP issue in DevTools. Capsomer's scripts now build DOM (`createElement`, `textContent`, `replaceChildren`) wherever they can: the site header's search results, the catalog's swap of regions, filters and sort options. The remaining markup, which a visitor cannot write (icon SVG children, the catalog's own server HTML, a chart's or a comparison's SVG), goes through one policy named `capsomer` in the new `components/trusted-html/trusted-html.ts` (`trustedHtml`, `setStaticHtml`, `markup`, `copyChildren`); a page whose `trusted-types` list omits the name gets plain strings, as before. No HTML contract, class or token changes.
+
 ## [0.79.2]
 
 - **Chip: a label longer than its row wraps inside the chip.** `.cap-chip` loses `white-space: nowrap` and gains `max-width: 100%`, `overflow-wrap: anywhere` and 2px block padding, so a long subject chip (Foxing /books) no longer forces sideways scroll at 320px. Short chips look the same. No class or token changes.

@@ -14,6 +14,7 @@ import type {
 } from "../content/content.ts";
 import { MessageProvider } from "../message/message.react.tsx";
 import { PostScheduledUpdate, PostsList } from "./posts-list.react.tsx";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 const NOW = Date.parse("2026-10-10T12:00:00Z");
 const ALL: ContentCan = {
@@ -733,7 +734,9 @@ for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
 
 const staticHost = document.getElementById("posts-static");
 if (staticHost)
-  staticHost.innerHTML = renderToStaticMarkup(
-    <PostsList data={dataOf(ROWS.slice(0, 4))} action="/posts" now={NOW} />,
-    { identifierPrefix: "static" },
+  setStaticHtml(
+    staticHost,
+    renderToStaticMarkup(<PostsList data={dataOf(ROWS.slice(0, 4))} action="/posts" now={NOW} />, {
+      identifierPrefix: "static",
+    }),
   );

@@ -6,6 +6,7 @@
 // breadcrumb needs script.
 
 import { enhance as enhancePopover } from "../popover/popover.ts";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 const READY = "data-cap-ready";
 let uid = 0;
@@ -39,7 +40,7 @@ function foldedItem(links: HTMLAnchorElement[]): HTMLLIElement {
   button.setAttribute("aria-haspopup", "dialog");
   button.setAttribute("aria-expanded", "false");
   button.setAttribute("aria-label", `Show ${links.length} more levels`);
-  button.innerHTML = DOTS;
+  setStaticHtml(button, DOTS);
   const pop = document.createElement("div");
   pop.className = "cap-popover";
   pop.id = id;

@@ -2,6 +2,7 @@ import type { EnhanceOptions } from "enarratio/enhance";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Gridlines } from "./chart-frame.ts";
 import { Glyph } from "../status/status.react.tsx";
+import { markup } from "../trusted-html/trusted-html.ts";
 
 // The width a chart is drawn at on the server and before the first measurement: Enarratio's own
 // default drawing width.
@@ -210,7 +211,7 @@ export function ChartFrame({
       {error ? (
         <p className="cap-chart-reason">{`This chart could not be drawn: ${error}`}</p>
       ) : (
-        <div className="cap-chart-figure" dangerouslySetInnerHTML={{ __html: html }} />
+        <div className="cap-chart-figure" dangerouslySetInnerHTML={markup(html)} />
       )}
       {children}
     </div>

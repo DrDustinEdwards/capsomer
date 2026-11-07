@@ -6,6 +6,7 @@
 import { StrictMode, useEffect, useMemo, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
+import { markup } from "../components/trusted-html/trusted-html.ts";
 import "../css/fonts.css";
 import "@fontsource-variable/source-serif-4/index.css";
 import "../css/tokens.css";
@@ -408,7 +409,7 @@ function ComponentPage({ name }: { name: string }) {
       </Panel>
       <article
         className="site-doc"
-        dangerouslySetInnerHTML={{ __html: renderMarkdown(c.body.replace(/^#\s+.*\n/, ""), 1) }}
+        dangerouslySetInnerHTML={markup(renderMarkdown(c.body.replace(/^#\s+.*\n/, ""), 1))}
       />
     </div>
   );

@@ -43,6 +43,7 @@ import {
   sweepLabel,
   withMentions,
 } from "./mentions-list.ts";
+import { markup } from "../trusted-html/trusted-html.ts";
 
 // For useSyncExternalStore's hydration flag: nothing to subscribe to.
 const noSubscribe = () => () => {};
@@ -75,7 +76,7 @@ function StatusWord({ state }: { state: ModState }) {
         height="14"
         aria-hidden="true"
         focusable="false"
-        dangerouslySetInnerHTML={{ __html: s.glyph }}
+        dangerouslySetInnerHTML={markup(s.glyph)}
       />
       {s.word}
     </span>

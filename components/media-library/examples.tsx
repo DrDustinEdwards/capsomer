@@ -24,6 +24,7 @@ import type { MediaRecord } from "../media/media.ts";
 import { MessageProvider } from "../message/message.react.tsx";
 import { MediaLibrary } from "./media-library.react.tsx";
 import { type KitMediaChanges, type KitMediaRow } from "./media-library.ts";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 const ALL: ContentCan = {
   edit: true,
@@ -982,22 +983,28 @@ for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
 
 const staticHost = document.getElementById("media-static");
 if (staticHost)
-  staticHost.innerHTML = renderToStaticMarkup(
-    <MediaLibrary
-      data={load(FILES, { inspect: "2026/09/launch-hero.png" })}
-      action="/media"
-      shortcuts={false}
-    />,
-    { identifierPrefix: "static" },
+  setStaticHtml(
+    staticHost,
+    renderToStaticMarkup(
+      <MediaLibrary
+        data={load(FILES, { inspect: "2026/09/launch-hero.png" })}
+        action="/media"
+        shortcuts={false}
+      />,
+      { identifierPrefix: "static" },
+    ),
   );
 
 const ideasHost = document.getElementById("media-ideas-static");
 if (ideasHost)
-  ideasHost.innerHTML = renderToStaticMarkup(
-    <MediaLibrary
-      data={loadIdeas(IDEAS, { inspect: "2026/10/bay-dusk.png", lens: "oversized" })}
-      action="/media"
-      shortcuts={false}
-    />,
-    { identifierPrefix: "ideas" },
+  setStaticHtml(
+    ideasHost,
+    renderToStaticMarkup(
+      <MediaLibrary
+        data={loadIdeas(IDEAS, { inspect: "2026/10/bay-dusk.png", lens: "oversized" })}
+        action="/media"
+        shortcuts={false}
+      />,
+      { identifierPrefix: "ideas" },
+    ),
   );
