@@ -72,7 +72,7 @@ shadcn has no bulk bar. The nearest are its Data Table's selection footer ("3 of
 - The count and the detail reach 4.5:1; the bar's edge reaches 3:1; forced colors keep the edge.
 - Hit areas are the buttons' own, at least `var(--target)`; density moves the bar's padding.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

@@ -94,4 +94,4 @@ eachTheme((theme) => {
 
 Frontmatter: `name`, `title`, `summary`, `parts`, `tool` (native, own JavaScript, Base UI), `states`, `added`, `updated` (the release that last rebuilt it), `source` (where it was extracted from, if anywhere), `replaces` (regular expressions that find an app's own copy of this component, for `capsomer report`).
 
-Then, in this order: what it is for; when to use it; when not to (name the alternative); the default and its reason; keyboard (a table); accessibility, with "Last checked by hand"; markup; exceptions in production. Short. No em dashes.
+Then, in this order: what it is for; when to use it; when not to (name the alternative); the default and its reason; keyboard (a table); accessibility, with its screen-reader line (the standard one: no manual run by decision, automated checks and a front-end review stand in); markup; exceptions in production. Short. No em dashes.

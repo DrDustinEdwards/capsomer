@@ -64,7 +64,7 @@ The result of an action, said in the page: "Moved the mention to Trash", with Un
 - The `z` hint is `aria-hidden`, so the button's name is "Undo".
 - Text 4.5:1 on its raised background; each message's edge 3:1 (`--dim`, or `--warn` when it stays); buttons at least `var(--target)`.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

@@ -87,7 +87,7 @@ shadcn/ui (Base UI flavor, nova style, shadcn-ui/ui main at d75a96ab787f) has no
 - Forced colors: the focus ring, the active option and the focused block keep an outline; an invalid frame gets a thicker edge.
 - Under a strict `style-src`, pass the CSP nonce (`nonce`), or the page's first `<script nonce>` is read; without it CodeMirror's injected styles are dropped.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

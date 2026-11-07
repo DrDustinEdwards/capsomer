@@ -94,7 +94,7 @@ The single keys do nothing in a text field, with Ctrl, Alt or Meta held, in an o
 - Forced colors: a selected row gets a Highlight outline (the box shows it too), and the open row's rule is CanvasText.
 - A confirm dialog is an alert dialog: focus starts on Cancel, a click outside does nothing, Esc closes it, and focus returns to the next row.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

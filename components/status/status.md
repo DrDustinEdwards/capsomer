@@ -60,7 +60,7 @@ How a thing is: critical, warning, notice, ok, running, or no data. Always a gly
 - A count says what it counts: put the noun in a `.cap-sr-only` span after the number (`3<span class="cap-sr-only"> waiting</span>`).
 - A link or button badge's name is its word.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

@@ -53,7 +53,7 @@ The strip itself is an image, not a control, and takes no tab stop.
 - The legend is a list named "Key"; the numbers are a table with row and column headers.
 - Forced colors: Enarratio repaints the strip in system colors; the legend's keys are redrawn in CanvasText, keeping their shapes.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

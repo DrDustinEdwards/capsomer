@@ -47,7 +47,7 @@ A short record of facts about one thing, read as pairs: the answers on a "check 
 - Labels are `dt` and values `dd`; the actions are a `dd` too, as GOV.UK's are, so they are read with their row.
 - Labels in rows take the text color and weight (GOV.UK); the record form keeps its muted labels, 4.5:1 in both themes.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

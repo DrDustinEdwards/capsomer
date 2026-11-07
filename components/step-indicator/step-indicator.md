@@ -44,7 +44,7 @@ Nothing to operate: it is text. Tab passes it by.
 - `ol` with `aria-label="Steps"`; each step's state in words as well as in the bar.
 - Forced colors: the done and current bars are drawn in Highlight, and the tick in CanvasText.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

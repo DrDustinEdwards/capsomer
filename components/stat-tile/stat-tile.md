@@ -56,7 +56,7 @@ A value against a hard limit with a projection is a usage meter. A list of what 
 
 shadcn/ui `Item` (outline variant rendered as a link) and `Card`. Deliberately different: shadcn has no stat tile; the figure-first single line, the status word and glyph, the no-data state and the sparkline slot are Capsomer's. The sparkline stays Enarratio's SVG, not a meter bar, because it shows a trend, not a value against a maximum (the shared meter is not used).
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

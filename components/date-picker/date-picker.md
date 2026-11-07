@@ -61,7 +61,7 @@ A date near today that is easier to find on a calendar: when to publish a post, 
 - Forced colors: the chosen day is drawn in Highlight, a day that cannot be chosen in GrayText; today keeps its underline.
 - Right to left: the grid follows `dir`; the arrows keep APG's meaning (Right arrow is the next day).
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 
