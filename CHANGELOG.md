@@ -4,6 +4,9 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.78.0]
+
+- **Kit form: `KitForm` and `useKitSubmit`** (`capsomer/react/kit-form`). The form and the submit a React Router app hands the posts, media and mentions lists. Carrel and dustinedwards.info each had their own copy; they use these. Additive (`react-router`, already an optional peer, is needed to import it); no class, token or HTML contract changes.
 - **Error page: a 403 has its own words.** `errorWords` gives a 403 "You cannot open this page" and says the account lacks access, instead of the generic "This page cannot be shown (403)". Every other status keeps its words. No class, token or HTML contract changes.
 - **Development: two browser-test races fixed** (no package change). The tabs, breadcrumb and pagination specs read `page.url()` straight after Enter on a hash link, before Playwright had heard of the navigation; they wait with `toHaveURL`. The dialog's drag-to-close test read the sheet header's box during the sheet's 200 ms slide in, so under load its press landed below the header and started no drag; each drag now waits for the sheet's animations to finish and measures the header then.
 - **Showcase site: shared maintenance page and a real 404.** The showcase site's Worker (site-runtime 0.87.0) answers the shared 503 maintenance page while its `MAINTENANCE` var is on, and its `/404` answers 404, not 200. Not in the package files.
