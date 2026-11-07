@@ -36,17 +36,10 @@ eachTheme((theme) => {
     await expect(link).toBeFocused();
     await link.click();
     await expect(page.getByRole("dialog")).toBeVisible();
-    // The grow covers the page for 200 ms; wait it out before pressing on the backdrop.
-    await page.waitForFunction(
-      () =>
-        !document
-          .getAnimations()
-          .some((a) =>
-            String((a.effect as KeyframeEffect | null)?.pseudoElement).startsWith(
-              "::view-transition",
-            ),
-          ),
-    );
+    // The grow covers the page until its view transition ends; wait it out before pressing on
+    // the backdrop. :active-view-transition is set the moment the transition starts, so this
+    // cannot pass before the animations exist, as a check on getAnimations() could.
+    await page.waitForFunction(() => !document.documentElement.matches(":active-view-transition"));
     await page.mouse.click(5, 5);
     await expect(page.getByRole("dialog")).toHaveCount(0);
   });
