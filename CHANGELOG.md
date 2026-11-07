@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Site header (React): the section links' `nav` is named "Main", not "Site"**, so it no longer shares a name with the footer's "Site" `nav` (axe `landmark-unique`; a screen reader's landmark list showed two navigations called Site). The `aria-label` changes from `Site` to `Main`. No class or token changes.
+
 - **Removed export: `escapeHtml` from `capsomer/email` and `capsomer/system-map`.** It is site-runtime's (`@dustinedwards/site-runtime/html`), which a site already has; import it from there. Same five entities, same output. No class, token or HTML contract changes.
 
 ## [0.79.3]

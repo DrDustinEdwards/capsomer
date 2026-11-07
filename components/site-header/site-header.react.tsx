@@ -288,7 +288,7 @@ export function SiteHeader(props: SiteHeaderProps) {
         </div>
       ) : null}
       {sections.length > 0 ? (
-        <nav className="cap-site-header-sections" aria-label="Site">
+        <nav className="cap-site-header-sections" aria-label="Main">
           <ul>
             {sections.map((s) => (
               <li key={s.id}>
