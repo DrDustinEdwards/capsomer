@@ -14,6 +14,7 @@
  * answer is held at the edge for a minute, so readers never fan out to the six sites.
  */
 
+import { serveMarkdownCopies } from "@drdustinedwards/site-helpers/llms";
 import { TDM_RESERVATION_HEADERS } from "@drdustinedwards/site-helpers/robots";
 import { capsomer } from "@dustinedwards/site-runtime/sites";
 import { staticSite, type StaticSiteEnv } from "@dustinedwards/site-runtime/static-site";
@@ -77,6 +78,15 @@ async function network(
   return response;
 }
 
+// Each page's Markdown copy (/make.md, or Accept: text/markdown) and llms-full.txt are files `npm run site` writes with
+// prelum-markdown; serveMarkdownCopies answers them.
+const pages = serveMarkdownCopies(
+  (request: Request, env: StaticSiteEnv) => site.fetch(request, env),
+  {
+    origin: capsomer.origin,
+  },
+);
+
 export default {
   fetch(
     request: Request,
@@ -85,6 +95,6 @@ export default {
   ): Promise<Response> {
     if (new URL(request.url).pathname === NETWORK_PATH && request.method === "GET")
       return network(request, env, ctx);
-    return site.fetch(request, env);
+    return pages(request, env);
   },
 };

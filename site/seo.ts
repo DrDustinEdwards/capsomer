@@ -2,7 +2,7 @@
  * The site's search and AI surface, from Prelum (`@drdustinedwards/site-helpers`), the family's one
  * SEO module: the front page's head tags and JSON-LD, and the sitemap, robots.txt (the family bot
  * policy; Cloudflare puts its own lines first), ai.txt (citation welcome, training reserved, as the
- * tdm-reservation header in _headers says), llms.txt (https://llmstxt.org), security.txt and the
+ * tdm-reservation header in _headers says), llms.txt (https://llmstxt.org; llms-full.txt and each page's Markdown copy come from prelum-markdown after the build), security.txt and the
  * IndexNow key file. site/vite.config.ts writes them into the build. The public pages are the front page
  * at /, the theme builder at /make/ and each component's page at /components/<name>/; the admin at /admin/ keeps its sections at hash
  * addresses and stays out of search.
@@ -185,6 +185,11 @@ export function discoveryFiles(components: string[]): Record<string, string> {
               title: "Defaults",
               url: `${REPO}/blob/main/DEFAULTS.md`,
               description: "the design defaults and their reasons",
+            },
+            {
+              title: "Every component page in full",
+              url: `${ORIGIN}/llms-full.txt`,
+              description: "one file, for a reader that takes a single document",
             },
             {
               title: "Changelog",
