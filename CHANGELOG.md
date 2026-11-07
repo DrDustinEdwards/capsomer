@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Lightbox doc: the Close button's size is stated as the dialog block's.** The page said 44 px; it is the icon button's own size. Docs only.
+
 ## [0.82.0]
 
 - **Family footer: the Workspace link reads "Lab Bench"**, capital B, as its accessible name does ("Lab Bench, the members' workspace (requires sign-in)"). Text only; no class, token or HTML structure changes.
