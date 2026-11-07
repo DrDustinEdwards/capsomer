@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.79.1]
+
+- **`confirmSubmit` accepts a React mouse event** (its `nativeEvent` was typed too narrowly, so passing a button's `onClick` event failed to typecheck). Types only; no class, token or HTML contract changes.
+
 ## [0.79.0]
 
 - **Renamed export: `kindOf` in `capsomer/behavior/message` is now `messageKind`**, so devkit's overlap check no longer finds the name defined twice. Same arguments and result.
