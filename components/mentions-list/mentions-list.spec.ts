@@ -265,7 +265,7 @@ eachTheme((theme) => {
     page,
   }) => {
     await visitStates(page, "mentions-list", theme);
-    const del = mount(page, "confirm-delete").getByRole("group", { name: "Delete 2 mentions?" });
+    const del = mount(page, "confirm-delete").getByRole("form", { name: "Delete 2 mentions?" });
     await expect(del.getByRole("listitem")).toHaveText([
       "From Cheap Pills (pills.example)",
       "From Dev Patel (devpatel.example)",
@@ -280,7 +280,7 @@ eachTheme((theme) => {
     });
     await expect(
       mount(page, "confirm-sweep")
-        .getByRole("group", { name: "Remove 2 expired mentions?" })
+        .getByRole("form", { name: "Remove 2 expired mentions?" })
         .getByRole("listitem"),
     ).toHaveText(["1 whose source was not found", "1 rejected"]);
   });
