@@ -323,7 +323,6 @@ export function PublishGate({
       <h3 className="cap-gate-group-title" id={headId}>
         {heading}
       </h3>
-      {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
       <ul className="cap-gate-section-rows" role="list" aria-labelledby={headId}>
         {list.map(checkRow)}
       </ul>
@@ -358,7 +357,6 @@ export function PublishGate({
         ref={rows}
         className="cap-rows cap-gate-all"
         data-cap="row-list"
-        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         role="list"
         aria-labelledby={headingId}
         data-cap-primary={primary ? "" : undefined}
@@ -367,7 +365,6 @@ export function PublishGate({
           <h3 className="cap-gate-group-title" id={`${gateId}-g-sites`}>
             {sites.length === 1 ? "Destination" : "Destinations"}
           </h3>
-          {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
           <ul className="cap-gate-section-rows" role="list" aria-labelledby={`${gateId}-g-sites`}>
             {reading.sites.map(({ site, state, failing }) => {
               const adv = checks.filter(
@@ -438,7 +435,6 @@ export function PublishGate({
           <details className="cap-disclosure">
             <summary>{passedHeading(counts.passed)}</summary>
             <div className="cap-disclosure-body">
-              {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
               <ul className="cap-gate-section-rows" role="list" aria-label="Passing checks">
                 {passed.map(checkRow)}
               </ul>

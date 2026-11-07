@@ -335,7 +335,6 @@ function RunLines({
         <div className="cap-row-actions" />
       </li>
       <li className="cap-hist-region" id={`${p}-rows`} hidden={!open}>
-        {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
         <ul role="list" aria-label={title}>
           {children}
         </ul>
@@ -469,7 +468,6 @@ export function HistoryList({
       <ul
         ref={listRef}
         className="cap-rows cap-hist-list"
-        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         role="list"
         aria-labelledby={labelledBy}
         aria-label={labelledBy ? undefined : label}

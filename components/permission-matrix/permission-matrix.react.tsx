@@ -79,7 +79,6 @@ export function PermissionMatrix(props: PermissionMatrixProps) {
 
       <div className="cap-perms-view" data-view="agent" hidden={view !== "agent"}>
         <div className="cap-perms-wide">
-          {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable) */}
           <div className="cap-table-wrap" role="region" aria-label={label} tabIndex={0}>
             <table className="cap-table">
               <thead>

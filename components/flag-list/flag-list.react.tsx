@@ -472,7 +472,6 @@ export function FlagList({
             {open} open, {list.length - open} resolved
           </span>
         </div>
-        {/* oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver) */}
         <ul className="cap-flag-group-rows" role="list" aria-labelledby={hid}>
           {list.map((f) => (
             <Flag
@@ -557,7 +556,6 @@ export function FlagList({
         ref={rows}
         className="cap-rows cap-flags-list"
         data-cap="row-list"
-        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" keeps list semantics that list-style: none drops (Safari, VoiceOver)
         role="list"
         aria-labelledby={headingId}
         data-cap-primary={primary ? "" : undefined}

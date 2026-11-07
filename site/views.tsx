@@ -20,7 +20,6 @@ function ScaleTable({
         ? `cubic-bezier(${v.join(", ")})`
         : String(v);
   return (
-    // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region takes focus so the keyboard can scroll it (axe scrollable-region-focusable)
     <div className="cap-table-wrap" role="region" tabIndex={0} aria-label={`${group} tokens`}>
       <table className="cap-table">
         <thead>
