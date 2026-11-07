@@ -65,6 +65,10 @@ export function renderStates({ template, title, summary, examples, hasTsx, css =
   const fill = {
     title: escapeHtml(title),
     summary: escapeHtml(summary),
+    // A states page is never indexed; an example that sets its own robots tag keeps it, not a second.
+    robots: head.some((h) => /name="robots"/.test(h))
+      ? ""
+      : '    <meta name="robots" content="noindex" />\n',
     head: head.map((h) => `    ${h}\n`).join(""),
     examples: body,
     scripts: after.map((s) => `    ${s}\n`).join(""),
