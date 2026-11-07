@@ -528,7 +528,7 @@ export function searchHtml({
   label: string;
   name?: string;
 }): string {
-  return `<div class="cap-site-header-search" data-cap-part="search"><a class="cap-site-header-icon cap-site-header-search-button" href="${escapeHtml(action)}" aria-label="${escapeHtml(label)}" data-cap-part="search-trigger">${SEARCH_GLYPH}<span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">${escapeHtml(label)}</span><kbd>/</kbd></span></a><div class="cap-site-header-search-panel" data-align="end"><form role="search" aria-label="Site" action="${escapeHtml(action)}" method="get">${SEARCH_GLYPH}<input type="search" name="${escapeHtml(name)}" placeholder="${escapeHtml(label)}" aria-label="${escapeHtml(label)}" autocomplete="off" enterkeyhint="search" /></form></div></div>`;
+  return `<div class="cap-site-header-search" data-cap-part="search"><a class="cap-site-header-icon cap-site-header-search-button" href="${escapeHtml(action)}" aria-label="${escapeHtml(label)}" data-cap-part="search-trigger">${SEARCH_GLYPH}<span class="cap-site-header-tip cap-popover" data-variant="tooltip" data-side="bottom" data-offset="6" popover="manual" role="tooltip" aria-hidden="true"><span class="cap-site-header-tip-text">${escapeHtml(label)}</span><kbd>/</kbd></span></a><div class="cap-site-header-search-panel" data-align="end"><form role="search" aria-label="${escapeHtml(label)}" action="${escapeHtml(action)}" method="get">${SEARCH_GLYPH}<input type="search" name="${escapeHtml(name)}" placeholder="${escapeHtml(label)}" aria-label="${escapeHtml(label)}" autocomplete="off" enterkeyhint="search" /></form></div></div>`;
 }
 
 /**

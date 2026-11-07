@@ -6,6 +6,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 - **Tabs: choosing a tab no longer calls `scrollIntoView`.** It scrolled the page and set the browser's Tab starting point to the tab, so on a page with an initial tab set the first Tab press skipped the skip link and header. Only the tab list now scrolls, to show the chosen tab. No class, token or HTML contract changes.
 
+- **Site header: the search form's landmark name is the search label, not "Site"**, so it no longer shares a name with the sections `nav` (axe `landmark-unique`; screen readers listed two landmarks called Site). The form's `aria-label` changes from `Site` to the search label. No class or token changes.
+
 ## [0.79.1]
 
 - **`confirmSubmit` accepts a React mouse event** (its `nativeEvent` was typed too narrowly, so passing a button's `onClick` event failed to typecheck). Types only; no class, token or HTML contract changes.
