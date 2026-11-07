@@ -12,6 +12,7 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Prelum 0.35.1** (was 0.33.0), so sites can take Prelum 0.35.1 without an npm ERESOLVE over Mermaid CLI. No code change.
 - **Peer range: `enarratio` now accepts `^0.8.0` and `^0.9.0`** as well as `^0.5.0` to `^0.7.0`. No code change.
 - **Confirm dialog: `confirmSubmit`** (`capsomer/behavior/confirm-dialog`), the dialog in place of `window.confirm` on a form that posts: it holds a form's submit, asks, and sends the form again with the same button once the action is chosen. Additive; no class, token or HTML contract changes.
+- **Email: `escapeHtml` is site-runtime's.** `capsomer/email` re-exports `escapeHtml` from `@dustinedwards/site-runtime/html` instead of keeping a copy; same five entities, same output. site-runtime is already a peer of every site that uses Capsomer's email and footer. No class, token or HTML contract changes.
 
 ## [0.78.0]
 
