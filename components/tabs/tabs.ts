@@ -93,7 +93,8 @@ export function select(
     const box = list.getBoundingClientRect();
     const at = tab.getBoundingClientRect();
     if (list.scrollWidth > list.clientWidth)
-      list.scrollLeft += at.left < box.left ? at.left - box.left : Math.max(0, at.right - box.right);
+      list.scrollLeft +=
+        at.left < box.left ? at.left - box.left : Math.max(0, at.right - box.right);
     if (list.scrollHeight > list.clientHeight)
       list.scrollTop += at.top < box.top ? at.top - box.top : Math.max(0, at.bottom - box.bottom);
   }
