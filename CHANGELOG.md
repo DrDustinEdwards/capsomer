@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Chart enhance uses Enarratio's page code.** `capsomer/behavior/chart-enhance` was a copy of Enarratio 0.9's `enhanceCharts` and `watchCharts`; it now calls them with the frame selector. Same exports and behavior. `enarratio` is 0.9.1 for development. No class, token or HTML contract changes.
+
 - **Site header (React): the section links' `nav` is named "Main", not "Site"**, so it no longer shares a name with the footer's "Site" `nav` (axe `landmark-unique`; a screen reader's landmark list showed two navigations called Site). The `aria-label` changes from `Site` to `Main`. No class or token changes.
 
 - **Removed export: `escapeHtml` from `capsomer/email` and `capsomer/system-map`.** It is site-runtime's (`@dustinedwards/site-runtime/html`), which a site already has; import it from there. Same five entities, same output. No class, token or HTML contract changes.
