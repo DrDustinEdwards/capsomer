@@ -10,7 +10,7 @@
 // moves to its first item; Up and Down move between items, Home and End go to the ends, Esc closes
 // it and focus goes back to its button.
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
-import { escapeHtml } from "../email/email.ts";
+import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { place } from "../popover/popover.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 

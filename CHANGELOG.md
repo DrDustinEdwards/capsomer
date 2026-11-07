@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Removed export: `escapeHtml` from `capsomer/email` and `capsomer/system-map`.** It is site-runtime's (`@dustinedwards/site-runtime/html`), which a site already has; import it from there. Same five entities, same output. No class, token or HTML contract changes.
+
 ## [0.79.2]
 
 - **Chip: a label longer than its row wraps inside the chip.** `.cap-chip` loses `white-space: nowrap` and gains `max-width: 100%`, `overflow-wrap: anywhere` and 2px block padding, so a long subject chip (Foxing /books) no longer forces sideways scroll at 320px. Short chips look the same. No class or token changes.

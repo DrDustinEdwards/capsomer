@@ -47,7 +47,7 @@ export type {
   ShownStep,
   PartPlace,
 } from "./system-map-data.ts";
-export { escapeHtml, systemMapHtml } from "./system-map-html.ts";
+export { systemMapHtml } from "./system-map-html.ts";
 export { hexLayout } from "./system-map-hex.ts";
 export type { HexCell, HexLayout } from "./system-map-hex.ts";
 
