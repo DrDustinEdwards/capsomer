@@ -2,7 +2,7 @@
 // whole figure (title, finding, chart, summary, source, CSV link and the table behind "Show
 // data"); the frame is only the layout around it, so nothing here builds a second table or a
 // second head. No behavior of its own: the disclosure is Enarratio's native `details`.
-import { escapeHtml } from "enarratio";
+import { escapeHtml } from "../email/email.ts";
 import { type RedrawSpec, redrawAttribute } from "enarratio/redraw";
 
 export type Gridlines = "none" | "x" | "y" | "both";

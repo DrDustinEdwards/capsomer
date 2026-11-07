@@ -6,6 +6,9 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [0.79.0]
 
+- **Renamed export: `kindOf` in `capsomer/behavior/message` is now `messageKind`**, so devkit's overlap check no longer finds the name defined twice. Same arguments and result.
+- **Chart frame no longer imports `escapeHtml` from Enarratio** (it uses Capsomer's own, the one family-footer and site-header use), so Enarratio can stop exporting it. Same output.
+
 - **Confirm dialog: `confirmSubmit`** (`capsomer/behavior/confirm-dialog`), the dialog in place of `window.confirm` on a form that posts: it holds a form's submit, asks, and sends the form again with the same button once the action is chosen. Additive; no class, token or HTML contract changes.
 
 ## [0.78.0]
