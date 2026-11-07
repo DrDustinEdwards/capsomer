@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Email: `escapeHtml` is site-runtime's.** `capsomer/email` re-exports `escapeHtml` from `@dustinedwards/site-runtime/html` instead of keeping a copy; same five entities, same output. site-runtime is already a peer of every site that uses Capsomer's email and footer. No class, token or HTML contract changes.
 - **Error page: a 403 has its own words.** `errorWords` gives a 403 "You cannot open this page" and says the account lacks access, instead of the generic "This page cannot be shown (403)". Every other status keeps its words. No class, token or HTML contract changes.
 - **Development: two browser-test races fixed** (no package change). The tabs, breadcrumb and pagination specs read `page.url()` straight after Enter on a hash link, before Playwright had heard of the navigation; they wait with `toHaveURL`. The dialog's drag-to-close test read the sheet header's box during the sheet's 200 ms slide in, so under load its press landed below the header and started no drag; each drag now waits for the sheet's animations to finish and measures the header then.
 - **Showcase site: shared maintenance page and a real 404.** The showcase site's Worker (site-runtime 0.87.0) answers the shared 503 maintenance page while its `MAINTENANCE` var is on, and its `/404` answers 404, not 200. Not in the package files.
