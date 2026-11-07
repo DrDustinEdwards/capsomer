@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.80.0]
+
+- **Family footer: no hover tint behind the wordmark or the social icons.** `.cap-family-footer a:hover` no longer sets `background-color: var(--accent-soft)`; the word links and site tiles already reset it, so only the wordmark and the social icons changed. Their hover color stays. No class, token or HTML contract changes.
+
 - **Chart enhance uses Enarratio's page code.** `capsomer/behavior/chart-enhance` was a copy of Enarratio 0.9's `enhanceCharts` and `watchCharts`; it now calls them with the frame selector. Same exports and behavior. `enarratio` is 0.9.1 for development. No class, token or HTML contract changes.
 
 - **Site header (React): the section links' `nav` is named "Main", not "Site"**, so it no longer shares a name with the footer's "Site" `nav` (axe `landmark-unique`; a screen reader's landmark list showed two navigations called Site). The `aria-label` changes from `Site` to `Main`. No class or token changes.
