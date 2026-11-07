@@ -468,7 +468,13 @@ export type ConfirmSubmitOptions = Omit<ConfirmOptions, "perform" | "body"> & { 
 // button's onClick: it holds the submit, asks, and sends the form again (with the same button) only
 // once the action is chosen. Works with a router's Form, whose own submit runs after this handler.
 export function confirmSubmit(
-  e: { preventDefault(): void; currentTarget: Element; submitter?: HTMLElement | null },
+  e: {
+    preventDefault(): void;
+    currentTarget: Element;
+    submitter?: HTMLElement | null;
+    // A React synthetic event keeps the native one here.
+    nativeEvent?: { submitter?: HTMLElement | null };
+  },
   o: ConfirmSubmitOptions,
 ): void {
   const target = e.currentTarget;
@@ -476,7 +482,7 @@ export function confirmSubmit(
   const form = target instanceof HTMLFormElement ? target : (target as HTMLButtonElement).form;
   if (!form) return;
   e.preventDefault();
-  const submitter = e.submitter ?? null;
+  const submitter = e.submitter ?? e.nativeEvent?.submitter ?? null;
   void confirm({ body: [], ...o, perform: () => Promise.resolve() }).then((yes) => {
     if (!yes) return;
     if (target === form) approved.add(form);
