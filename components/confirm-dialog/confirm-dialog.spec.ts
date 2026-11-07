@@ -354,3 +354,17 @@ eachTheme((theme) => {
     await expect(page.getByRole("button", { name: "Delete site" })).toBeFocused();
   });
 });
+
+test("behavior: confirmSubmit holds a form's submit until the action is chosen, and sends it with its button", async ({
+  page,
+}) => {
+  await visitStates(page, "confirm-dialog", "light", "submit");
+  const sent = page.locator("[data-specimen-part='sent']");
+  await page.getByRole("button", { name: "Remove the Spring award" }).click();
+  await page.getByRole("alertdialog", { name: "Remove the Spring award?" }).waitFor();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(sent).toHaveText("");
+  await page.getByRole("button", { name: "Remove the Spring award" }).click();
+  await page.getByRole("button", { name: "Remove award" }).click();
+  await expect(sent).toHaveText("Sent: delete");
+});
