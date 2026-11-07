@@ -107,7 +107,7 @@ test("behavior: typing in the search updates the results, the count, the chips a
   await expect(count(form)).not.toHaveText(before ?? "");
   await expect(count(form)).toContainText("of 27 articles");
   await expect(form.locator(".cap-catalog-chip")).toHaveText(/"billing"/);
-  expect(new URL(page.url()).searchParams.get("q")).toBe("billing");
+  await expect.poll(() => new URL(page.url()).searchParams.get("q")).toBe("billing");
   await expect(form.locator(".cap-catalog-apply")).toBeHidden();
 });
 
@@ -152,7 +152,7 @@ test("behavior: a page link shows the next page in place and the count says so",
   await expect(form.locator("tbody tr")).toHaveCount(10);
   await form.getByRole("link", { name: "Page 3", exact: true }).click();
   await expect(form.locator("tbody tr")).toHaveCount(7);
-  expect(new URL(page.url()).searchParams.get("page")).toBe("3");
+  await expect.poll(() => new URL(page.url()).searchParams.get("page")).toBe("3");
   await expect(form.locator(".cap-pagination-status")).toContainText("21 to 27 of 27");
 });
 

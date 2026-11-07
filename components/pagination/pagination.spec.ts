@@ -158,7 +158,7 @@ eachTheme((theme) => {
     await visitStates(page, "pagination", theme);
     await page.locator("#pg-middle").getByRole("link", { name: "Page 4" }).focus();
     await page.keyboard.press("Enter");
-    expect(new URL(page.url()).hash).toBe("#page-4");
+    await expect(page).toHaveURL(/#page-4$/);
   });
 
   test("keyboard: a disabled link is not a tab stop", async ({ page }) => {

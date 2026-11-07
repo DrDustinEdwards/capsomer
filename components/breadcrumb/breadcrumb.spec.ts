@@ -115,7 +115,7 @@ eachTheme((theme) => {
     await visitStates(page, "breadcrumb", theme);
     await page.locator("#bc-default").getByRole("link", { name: "Posts" }).focus();
     await page.keyboard.press("Enter");
-    expect(new URL(page.url()).hash).toBe("#posts");
+    await expect(page).toHaveURL(/#posts$/);
   });
 
   test("keyboard: Enter on the folded-levels button opens the popover and focus moves to its first link", async ({

@@ -193,7 +193,9 @@ eachTheme((theme) => {
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: "Resolved 48" })).toBeFocused();
     await page.keyboard.press("Enter");
-    expect(new URL(page.url()).hash).toBe("#resolved");
+    // page.url() is Playwright's copy of the address, updated by an event that can arrive after
+    // the key press returns; toHaveURL waits for it.
+    await expect(page).toHaveURL(/#resolved$/);
   });
 
   test("behavior: a click chooses a tab and shows only its panel", async ({ page }) => {
@@ -235,7 +237,7 @@ eachTheme((theme) => {
   }) => {
     await visitStates(page, "tabs", theme);
     await page.locator("#th-keys").click();
-    expect(new URL(page.url()).hash).toBe("#thp-keys");
+    await expect(page).toHaveURL(/#thp-keys$/);
     await expect(page.locator("#thp-keys")).toBeVisible();
     await page.evaluate(() => (location.hash = "#thp-start"));
     await expect(page.locator("#th-start")).toHaveAttribute("aria-selected", "true");

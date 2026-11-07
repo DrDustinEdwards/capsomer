@@ -49,9 +49,13 @@ test("behavior: a sheet dragged down by its header closes past a third and hands
   await openFrom(page, "open-bottom");
   const sheet = dlg(page, "More views");
   await expect(sheet).toBeVisible();
-  const head = await sheet.locator(".cap-dialog-header").boundingBox();
-  if (!head) throw new Error("no header");
+  // Each drag waits for the sheet to stop moving (its 200 ms slide in, then the spring back) and
+  // only then finds the header: a box read mid-slide is up to 2.5rem below where the header ends
+  // up, and a press there lands on the body and starts no drag.
   const drag = async (dy: number) => {
+    await sheet.evaluate((d) => Promise.all(d.getAnimations().map((a) => a.finished)));
+    const head = await sheet.locator(".cap-dialog-header").boundingBox();
+    if (!head) throw new Error("no header");
     await page.mouse.move(head.x + head.width / 2, head.y + 10);
     await page.mouse.down();
     await page.mouse.move(head.x + head.width / 2, head.y + 10 + dy, { steps: 8 });

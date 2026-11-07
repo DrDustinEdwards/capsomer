@@ -193,8 +193,8 @@ eachTheme((theme) => {
         .locator("#mention-41")
         .evaluate((el) => (el as HTMLDialogElement).matches(":modal")),
     ).toBe(true);
+    await expect.poll(() => new URL(page.url()).searchParams.get("inspect")).toBe("mention-41");
     const url = new URL(page.url());
-    expect(url.searchParams.get("inspect")).toBe("mention-41");
     expect(url.searchParams.get("theme")).toBe(theme);
     expect(url.searchParams.get("only")).toBe("url");
   });
@@ -224,10 +224,10 @@ eachTheme((theme) => {
     await expect(mention(page)).toBeVisible();
     await page.goBack();
     await expect(mention(page)).toBeHidden();
-    expect(new URL(page.url()).searchParams.has("inspect")).toBe(false);
+    await expect.poll(() => new URL(page.url()).searchParams.has("inspect")).toBe(false);
     await page.goForward();
     await expect(mention(page)).toBeVisible();
-    expect(new URL(page.url()).searchParams.get("inspect")).toBe("mention-41");
+    await expect.poll(() => new URL(page.url()).searchParams.get("inspect")).toBe("mention-41");
   });
 
   test("behavior: a page loaded with ?inspect= has the panel open, and closing it rewrites the address without a new entry", async ({
