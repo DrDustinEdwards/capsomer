@@ -7,6 +7,7 @@
 
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { GLYPHS, fail, say } from "../message/message.ts";
+import { setStaticHtml } from "../trusted-html/trusted-html.ts";
 
 const READY = "data-cap-ready";
 const SELECT = "input[type='checkbox'][data-cap-select]";
@@ -220,7 +221,7 @@ function svg(glyph: string): SVGSVGElement {
   el.setAttribute("viewBox", "0 0 16 16");
   el.setAttribute("aria-hidden", "true");
   el.setAttribute("focusable", "false");
-  el.innerHTML = glyph;
+  setStaticHtml(el, glyph);
   return el;
 }
 

@@ -10,6 +10,7 @@ import {
   type CompareView,
   type RunSpan,
 } from "./draft-compare.ts";
+import { markup } from "../trusted-html/trusted-html.ts";
 
 export interface DraftCompareProps {
   before: CompareSide;
@@ -104,7 +105,7 @@ export function DraftCompare({
     return () => el.removeEventListener("change", onChange);
   }, [onViewChange, html]);
 
-  return <div ref={host} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <div ref={host} dangerouslySetInnerHTML={markup(html)} />;
 }
 
 export interface DraftPatchProps {
@@ -124,5 +125,5 @@ export function DraftPatch({ patch, title, id }: DraftPatchProps) {
     () => renderPatch(patch, { id: id ?? `patch-${own}`, title }),
     [patch, title, id, own],
   );
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  return <div dangerouslySetInnerHTML={markup(html)} />;
 }

@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import { COMPONENTS, SCALES } from "./data.ts";
 import { renderMarkdown } from "./markdown.ts";
 import { Panel, TestList, Verdict, paint, useResults } from "./parts.tsx";
+import { markup } from "../components/trusted-html/trusted-html.ts";
 
 function ScaleTable({
   group,
@@ -213,7 +214,7 @@ export function MarkdownView({ title, md }: { title: string; md: string }) {
     <div className="site-page">
       <article
         className="site-doc"
-        dangerouslySetInnerHTML={{ __html: renderMarkdown(md || `# ${title}\n\nNothing yet.`, 0) }}
+        dangerouslySetInnerHTML={markup(renderMarkdown(md || `# ${title}\n\nNothing yet.`, 0))}
       />
     </div>
   );

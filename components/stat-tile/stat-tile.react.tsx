@@ -1,5 +1,6 @@
 import { dataTableBlock, type DataTable } from "enarratio";
 import { Children, type ReactNode } from "react";
+import { markup } from "../trusted-html/trusted-html.ts";
 
 export type StatTone = "ok" | "warn" | "crit" | "nodata";
 
@@ -128,7 +129,7 @@ export function StatTile(props: StatTileProps) {
           <span
             className="cap-tile-chart"
             {...(chartSummary ? { role: "img", "aria-label": chartSummary } : {})}
-            dangerouslySetInnerHTML={{ __html: chart }}
+            dangerouslySetInnerHTML={markup(chart)}
           />
         ) : null}
       </>
@@ -149,9 +150,9 @@ export function StatTile(props: StatTileProps) {
       <div className="cap-data">
         {tile}
         <div
-          dangerouslySetInnerHTML={{
-            __html: dataTableBlock(chartTable, chartTableLabel ?? `${label}, by period`),
-          }}
+          dangerouslySetInnerHTML={markup(
+            dataTableBlock(chartTable, chartTableLabel ?? `${label}, by period`),
+          )}
         />
       </div>
     );

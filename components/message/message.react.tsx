@@ -24,6 +24,7 @@ import {
   type Message,
   type SayOptions,
 } from "./message.ts";
+import { markup } from "../trusted-html/trusted-html.ts";
 
 export type { Message, SayOptions };
 
@@ -263,7 +264,7 @@ export function MessageRegion() {
             viewBox="0 0 16 16"
             aria-hidden="true"
             focusable="false"
-            dangerouslySetInnerHTML={{ __html: GLYPHS[messageKind(m)] }}
+            dangerouslySetInnerHTML={markup(GLYPHS[messageKind(m)])}
           />
           <p className="cap-message-text" data-cap-part="text">
             <span data-cap-part="said" role={m.failure ? "alert" : undefined}>
