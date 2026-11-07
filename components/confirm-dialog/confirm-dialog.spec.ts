@@ -284,11 +284,11 @@ eachTheme((theme) => {
     });
   }
 
-  test("accessibility: the confirm page is a named group with its description, its fields and its error", async ({
+  test("accessibility: the confirm page is a named form with its description, its fields and its error", async ({
     page,
   }) => {
     await visitStates(page, "confirm-dialog", theme, "page-error");
-    const form = page.getByRole("group", { name: "Delete example.com?" });
+    const form = page.getByRole("form", { name: "Delete example.com?" });
     await expect(form).toBeVisible();
     await expect(form).toHaveAccessibleDescription(
       /This cannot be undone\..*Its 14 checks stop running\./,
@@ -317,7 +317,7 @@ eachTheme((theme) => {
           });
         }),
     );
-    const form = page.getByRole("group", { name: "Delete example.com?" });
+    const form = page.getByRole("form", { name: "Delete example.com?" });
     const reason = form.getByRole("textbox", { name: "Reason (required)" });
     const word = form.getByRole("textbox", { name: "Type delete to confirm" });
     // Nothing given: the browser refuses, with no script of ours.

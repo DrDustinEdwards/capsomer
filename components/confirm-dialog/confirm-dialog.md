@@ -58,6 +58,7 @@ A reversible action happens at once and offers Undo through the message region (
 ## Accessibility
 
 - A native `dialog` opened with `showModal()` with `role="alertdialog"`: the page behind is inert, and the dialog is named by its title (`aria-labelledby`) and described by its lead and its list of changes (`aria-describedby`).
+- The confirm page is a `form` named by its title and described by its lead and its list of changes, so it is a named `form` landmark. It carries no `role`: `group` is not an allowed role for `form` (ARIA in HTML; axe `aria-allowed-role`).
 - The error is `role="alert"`, present and empty until it is needed, so it is announced when filled.
 - The guard's reason is the perform button's description, so a screen reader hears why it is off.
 - An empty reason is `aria-invalid="true"` and described by the error box; the border also turns critical, never alone.
@@ -121,7 +122,7 @@ For a dialog written in markup, `enhance()` wires it and its `[data-cap-confirm-
 The confirm page, with no script (HTML, or React `ConfirmPage`, which renders exactly this):
 
 ```html
-<form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/example" method="post" role="group"
+<form class="cap-confirm-page" data-cap="confirm-page" action="/admin/sites/example" method="post"
       aria-labelledby="del-title" aria-describedby="del-desc del-list">
   <input type="hidden" name="intent" value="delete" /><input type="hidden" name="site" value="example" />
   <div class="cap-dialog-header">

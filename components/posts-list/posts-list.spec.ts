@@ -338,7 +338,7 @@ eachTheme((theme) => {
     await visitStates(page, "posts-list", theme);
     const confirm = page
       .locator("[data-mount='confirm']")
-      .getByRole("group", { name: "Delete 2 posts?" });
+      .getByRole("form", { name: "Delete 2 posts?" });
     await expect(confirm.getByRole("listitem")).toHaveText([
       "What a mention queue is for",
       "Field notes: the spring survey",

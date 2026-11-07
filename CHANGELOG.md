@@ -9,6 +9,11 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Breadcrumb: long names wrap in full instead of being cut after two lines.** The two-line clamp still lost the end of a long name under a reader's own text spacing (WCAG 1.4.12). `.cap-breadcrumb-link` and `.cap-breadcrumb-page` are `display: block` with no `overflow: hidden` or line clamp. No token or class changes.
 - **Docs: the screen-reader line.** Every component doc says no manual NVDA or VoiceOver run is planned (decision of 2026-11-07) and that the automated browser checks and a front-end review stand in, instead of "Last checked by hand: not yet". No token, class or markup changed.
 
+## [0.83.1]
+
+- **Confirm page: the form no longer carries `role="group"`.** `group` is not an allowed role for `form` (ARIA in HTML; axe `aria-allowed-role`), and it replaced the form landmark's role. The `form.cap-confirm-page` keeps its `aria-labelledby` and `aria-describedby`, so it is a named `form` landmark. HTML contract change: remove `role="group"` from `form.cap-confirm-page`. React: `ConfirmPage` and `ConfirmModal` no longer pass `role`, and `ConfirmFormProps` loses its `role` field (a `renderForm` that spreads the props needs no change; one that reads `props.role` should stop).
+- **History list: the phone specimen's hidden heading is an `h2`, not an `h3`,** so the specimen page no longer skips a level (axe `heading-order`). Specimen only; no component change.
+
 ## [0.83.0]
 
 - **Install contract: `@drdustinedwards/site-helpers` is an optional peer dependency, no longer a dependency.** Only the `capsomer` command (`states`, `site-data`) and this repository's own site import it. A git dependency inside a git dependency is refused by npm 12 (`allow-git`, EALLOWGIT) and left the lockfiles of apps stale. An app that runs the `capsomer` command declares `@drdustinedwards/site-helpers` itself (>=0.40.0), as it does `@dustinedwards/site-runtime`. No token, class or HTML changes.

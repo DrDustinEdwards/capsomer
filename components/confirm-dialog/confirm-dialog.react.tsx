@@ -274,7 +274,6 @@ export interface ConfirmFormProps {
   "data-cap": string;
   action?: string;
   method: "post" | "get";
-  role: string;
   "aria-labelledby": string;
   "aria-describedby"?: string;
   children: ReactNode;
@@ -452,7 +451,6 @@ export function ConfirmPage({
     "data-cap": "confirm-page",
     action,
     method,
-    role: "group",
     "aria-labelledby": `${id}-title`,
     "aria-describedby": described,
     children: parts,
