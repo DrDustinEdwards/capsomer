@@ -2,14 +2,14 @@
  * The site's search and AI surface, from Prelum (`@drdustinedwards/site-helpers`), the family's one
  * SEO module: the front page's head tags and JSON-LD, and the sitemap, robots.txt (the family bot
  * policy; Cloudflare puts its own lines first), ai.txt (citation welcome, training reserved, as the
- * tdm-reservation header in _headers says), llms.txt and llms-full.txt (https://llmstxt.org), security.txt and the
+ * tdm-reservation header in _headers says), llms.txt (https://llmstxt.org; llms-full.txt and each page's Markdown copy come from prelum-markdown after the build), security.txt and the
  * IndexNow key file. site/vite.config.ts writes them into the build. The public pages are the front page
  * at /, the theme builder at /make/ and each component's page at /components/<name>/; the admin at /admin/ keeps its sections at hash
  * addresses and stays out of search.
  */
 import { defineHead, headHtml } from "@drdustinedwards/site-helpers/head";
 import { iconLinks, webManifest } from "@drdustinedwards/site-helpers/icons";
-import { llmsDocument, llmsFullDocument } from "@drdustinedwards/site-helpers/llms";
+import { llmsDocument } from "@drdustinedwards/site-helpers/llms";
 import { aiTxt, robotsDocument } from "@drdustinedwards/site-helpers/robots";
 import { graph, jsonLd, thing, website } from "@drdustinedwards/site-helpers/schema";
 import { sitemapDocument } from "@drdustinedwards/site-helpers/sitemap";
@@ -126,15 +126,13 @@ export const ICON_TAGS = iconLinks()
   .join("\n");
 
 /** The discovery files, by their path in the built site. */
-export function discoveryFiles(
-  components: Array<{ name: string; title: string; lead: string; body: string }>,
-): Record<string, string> {
+export function discoveryFiles(components: string[]): Record<string, string> {
   return {
     "sitemap.xml": sitemapDocument([
       { loc: `${ORIGIN}/` },
       { loc: `${ORIGIN}/make/` },
       { loc: `${ORIGIN}/accessibility/` },
-      ...components.map((c) => ({ loc: `${ORIGIN}/components/${c.name}/` })),
+      ...components.map((name) => ({ loc: `${ORIGIN}/components/${name}/` })),
     ]),
     ".well-known/security.txt": securityTxt({
       origin: ORIGIN,
@@ -156,17 +154,6 @@ export function discoveryFiles(
       }),
     ),
     "ai.txt": aiTxt({ origin: ORIGIN, name: "Capsomer", contact: "contact@dustinedwards.info" }),
-    // Every component's doc page in full (llmstxt.org), for an answer engine that reads one file.
-    "llms-full.txt": llmsFullDocument({
-      title: "Capsomer",
-      summary: DESCRIPTION,
-      pages: components.map((c) => ({
-        title: c.title,
-        url: `${ORIGIN}/components/${c.name}/`,
-        description: c.lead,
-        markdown: c.body,
-      })),
-    }),
     "llms.txt": llmsDocument({
       title: "Capsomer",
       summary:

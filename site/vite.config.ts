@@ -115,7 +115,7 @@ export default defineConfig({
       },
       generateBundle() {
         for (const [fileName, source] of Object.entries(
-          discoveryFiles(data.components),
+          discoveryFiles(data.components.map((c) => c.name)),
         ))
           this.emitFile({ type: "asset", fileName, source });
         this.emitFile({ type: "asset", fileName: "search.json", source: searchIndexJson(data) });
