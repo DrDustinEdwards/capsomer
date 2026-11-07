@@ -87,7 +87,7 @@ The account menu is the same shape everywhere: who you are; the site's own rows 
 - Forced colors: the current link keeps its underline, the band keeps its edge, a bubble is drawn in system colors.
 - The tests measure the painted contrast of the links, the current link's underline, the icon controls, Sign in and the button extra on both bands in both themes.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## The letterhead (`variant="letterhead"`)
 

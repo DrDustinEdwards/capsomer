@@ -57,7 +57,7 @@ Chart inside Card. Matched: the quiet head with a title and a muted description,
 - The table has row and column headers and a caption; the CSV link is built from the same rows.
 - The no-data state is a `figure` named by its title, with the reason as text.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

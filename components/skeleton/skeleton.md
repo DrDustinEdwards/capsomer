@@ -51,7 +51,7 @@ What loading looks like, by how long it takes. In 0.1 these lived in the Empty c
 - The word is the accessible text; the arc is `aria-hidden`.
 - The spinner's word is `--muted` (4.5:1); the arc is 3:1 against its background.
 - A skeleton's gray shapes carry no information; forced colors paint them in GrayText so they do not vanish.
-- Last checked by hand: not yet. Automated: see the site's Tests page.
+- Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

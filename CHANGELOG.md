@@ -4,6 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **Docs: the screen-reader line.** Every component doc says no manual NVDA or VoiceOver run is planned (decision of 2026-11-07) and that the automated browser checks and a front-end review stand in, instead of "Last checked by hand: not yet". No token, class or markup changed.
 - **Email: `escapeHtml` is site-runtime's.** `capsomer/email` re-exports `escapeHtml` from `@dustinedwards/site-runtime/html` instead of keeping a copy; same five entities, same output. site-runtime is already a peer of every site that uses Capsomer's email and footer. No class, token or HTML contract changes.
 
 ## [0.78.0]

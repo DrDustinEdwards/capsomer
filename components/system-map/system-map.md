@@ -63,7 +63,7 @@ A network of systems at two levels, drawn as a connections map. Level 1 is the n
 - A flow's status line is a polite live region; focus stays on the button pressed, or moves to Back when Next ends the flow.
 - Text 4.5:1 on its card in both themes, lit and muted; edges, lit wires and the focus ring 3:1. In forced colors wires are CanvasText and a lit card's edge and wires are Highlight.
 
-Last checked by hand: not yet (screen readers before release).
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in.
 
 ## Markup
 

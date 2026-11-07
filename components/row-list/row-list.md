@@ -66,7 +66,7 @@ Different on purpose: the default is flush with a `--raised` hover and no border
 - One focus indicator, on the row, as an outline, so it survives forced colors; the critical edge turns CanvasText there.
 - The stretched hit area makes the whole row at least `--target` high.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

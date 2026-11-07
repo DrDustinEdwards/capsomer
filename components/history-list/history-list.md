@@ -85,7 +85,7 @@ Item (rows with media, content, actions) through the row list it is built on, an
 - Text 4.5:1 on the surface, the raised group tone and the focused row tone; the pick box's edge 3:1 (the field component's).
 - Forced colors: the marks and the bar's edge use CanvasText.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

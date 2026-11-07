@@ -54,7 +54,7 @@ Every time shown in an app: deploys, runs, mentions, edits, the freshness of a p
 - A relative time is `--muted` (4.5:1 on every surface, the selected row included); an exact time is `--text` and its UTC part `--muted`. `data-tone="text"` gives a relative time the text color.
 - The exact form names the zone ("CST") and gives UTC, so a time read aloud or copied is not ambiguous.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

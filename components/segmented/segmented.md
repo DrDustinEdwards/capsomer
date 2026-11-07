@@ -54,7 +54,7 @@ Choosing one of two to five short, mutually exclusive options that should all be
 - Each segment is at least `var(--target)` tall and the whole segment is the hit area.
 - Forced colors: the chosen segment is drawn in Highlight; a disabled one in GrayText.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

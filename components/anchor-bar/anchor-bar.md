@@ -54,7 +54,7 @@ Different on purpose: it is a `nav` of links with `aria-current="location"`, not
 - `aria-current="location"` tells a screen reader which link is the section being read.
 - Smooth scrolling only under `prefers-reduced-motion: no-preference`.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

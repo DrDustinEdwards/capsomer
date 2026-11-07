@@ -62,7 +62,7 @@ In the buttons form, focus stays on the control that was used: after Next it is 
 - Contrast: link text 4.5:1; the current page's edge, Previous's and Next's edges 3:1.
 - Hit areas at least `var(--control)` square; forced colors draw the current page in Highlight.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

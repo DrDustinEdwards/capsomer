@@ -86,7 +86,7 @@ Card for the tile (a bordered, rounded surface with a media area and a text area
 - Forced colors: the active tile is outlined in Highlight, the checkbox box keeps its edge, the failure block keeps its border.
 - Reduced motion: nothing eases.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

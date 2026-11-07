@@ -61,7 +61,7 @@ A `<button class="cap-btn">` runs an action on this page. An `<a class="cap-btn"
 - In plain HTML, `aria-disabled` and `aria-busy` do not stop a click: the handler returns early when either is `"true"`, and the button is `type="button"` unless it submits. The React `Button` does this for you.
 - Forced colors: a disabled button and link button turn GrayText; a quiet button gains its border.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

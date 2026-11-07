@@ -59,7 +59,7 @@ When the record is a place someone links to or works in for a while (a draft, a 
 - The Copy result is a `role="status"` line beside the button.
 - Forced colors: the panel keeps its edge.
 
-Last checked by hand: not yet. Automated: see the site's Tests page.
+Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 

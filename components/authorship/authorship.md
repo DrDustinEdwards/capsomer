@@ -62,7 +62,7 @@ None: shadcn has no authorship or attribution component. The label is its Badge 
 - The summary's bar is `aria-hidden`; its numbers are text. Label text, the summary and the notes reach 4.5:1.
 - An avatar in a label is `aria-hidden`, so the kind is not said twice.
 - Forced colors: the rules and bar segments are drawn in `CanvasText`, keeping their patterns; labels get a border.
-- Last checked by hand: not yet. Automated: see the site's Tests page.
+- Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.
 
 ## Markup
 
