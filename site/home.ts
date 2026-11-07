@@ -458,9 +458,20 @@ ${runningHead("1", "Overview", `Release ${d.version}`)}
 ${FOOTER}`;
 }
 
+// The frame's measured height at four page widths (scripts/frame-heights.mjs writes site/frame-heights.json and
+// site/frame-heights.css). Reserving the final height in CSS keeps the page from shifting when the frame loads
+// (web.dev/articles/cls, "set size attributes" / reserve space).
+const FRAME_HEIGHTS: Record<string, number[]> = (() => {
+  const file = new URL("./frame-heights.json", import.meta.url);
+  return existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {};
+})();
+const frameSizes = (key: string): string =>
+  (FRAME_HEIGHTS[key] ?? []).map((h, i) => ` data-h${i + 1}="${h}"`).join("");
+
 /** One example: the live component in a frame of its own (the states page showing only it), with its markup under it. */
 function exampleBlock(c: Component, e: Example, heading: boolean): string {
   const src = `/components/${esc(c.name)}/states?${e.kind}=${encodeURIComponent(e.id)}`;
+  const frameKey = `${c.name}/${e.kind}/${e.id}`;
   const label = heading ? `ex-${esc(e.id)}` : `comp-h`;
   // Long code starts closed under its View code button, written here rather than by the page's script, so the box is
   // its final height from the first paint (D5). Without scripts the closed rules do not apply (home.css).
@@ -468,7 +479,7 @@ function exampleBlock(c: Component, e: Example, heading: boolean): string {
   return `<section class="comp-ex"${heading ? ` aria-labelledby="${label}"` : ` aria-label="${esc(c.title)}, ${esc(e.title)}"`}>
   ${heading ? `<h3 id="${label}">${esc(e.title)}</h3>` : ""}
   <div class="comp-ex-box">
-    <iframe class="comp-ex-frame" src="${src}" title="${esc(c.title)}: ${esc(e.title)}" loading="lazy" data-kind="${e.kind}" data-height="${e.height}"></iframe>
+    <iframe class="comp-ex-frame" src="${src}" title="${esc(c.title)}: ${esc(e.title)}" loading="lazy" data-kind="${e.kind}" data-height="${e.height}" data-fk="${esc(frameKey)}"${frameSizes(frameKey)}></iframe>
     <div class="comp-ex-code" data-cap-part="code"${closed ? " data-closed" : ""}>
       <pre ${codeRegion(`HTML for ${e.title}`)}><code>${esc(e.code)}</code></pre>
       <div class="comp-ex-tools"><button type="button" class="cap-btn" data-size="xs" data-variant="quiet" data-cap-part="copy-code" hidden>Copy</button></div>

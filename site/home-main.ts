@@ -143,14 +143,28 @@ const syncFrame = (frame: HTMLIFrameElement) => {
     frame.dataset.kind === "only" || !shown
       ? Number(frame.dataset.height) || 360
       : Math.max(140, Math.ceil(shown.getBoundingClientRect().height) + 48);
-  frame.style.setProperty("block-size", `${tall}px`);
+  // The CSS reserves the height measured for this page width (site/frame-heights.css), so the script only grows a
+  // frame past it: shrinking and growing again as the example settles would shift the page (CLS).
+  frame.style.removeProperty("block-size");
+  const reserved = parseFloat(getComputedStyle(frame).blockSize) || 0;
+  frame.style.setProperty("block-size", `${Math.max(tall, reserved)}px`);
+};
+// An example can paint taller than it settles (a dialog before its script closes it), so a size is read once the
+// example has been still for a moment, and a frame never grows for a state that is gone.
+const timers = new WeakMap<HTMLIFrameElement, number>();
+const settled = (frame: HTMLIFrameElement) => {
+  clearTimeout(timers.get(frame));
+  timers.set(
+    frame,
+    window.setTimeout(() => syncFrame(frame), 250),
+  );
 };
 for (const frame of frames) {
   frame.addEventListener("load", () => {
-    syncFrame(frame);
+    settled(frame);
     const shown = frame.contentDocument?.querySelector(".cap-specimen-shown");
     if (shown && frame.dataset.kind !== "only")
-      new ResizeObserver(() => syncFrame(frame)).observe(shown);
+      new ResizeObserver(() => settled(frame)).observe(shown);
   });
   syncFrame(frame);
 }

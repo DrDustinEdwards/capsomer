@@ -844,9 +844,21 @@ h2:not(.cap-family-footer-heading) {
   display: block;
   box-sizing: border-box;
   inline-size: 100%;
-  block-size: 220px;
+  /* The measured height for the page's width (site/frame-heights.css sets --fh1 to --fh4 from data-h1 to data-h4),
+     so the frame does not resize when it loads. 220px for a frame not yet measured. */
+  block-size: var(--fh1, 220px);
   border: 0;
   background: var(--ground);
+
+  @media (min-width: 640px) {
+    block-size: var(--fh2, 220px);
+  }
+  @media (min-width: 900px) {
+    block-size: var(--fh3, 220px);
+  }
+  @media (min-width: 1280px) {
+    block-size: var(--fh4, 220px);
+  }
 }
 .comp-ex-code {
   position: relative;
