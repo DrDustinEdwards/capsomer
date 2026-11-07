@@ -80,9 +80,12 @@ async function network(
 
 // Each page's Markdown copy (/make.md, or Accept: text/markdown) and llms-full.txt are files `npm run site` writes with
 // prelum-markdown; serveMarkdownCopies answers them.
-const pages = serveMarkdownCopies((request: Request, env: StaticSiteEnv) => site.fetch(request, env), {
-  origin: capsomer.origin,
-});
+const pages = serveMarkdownCopies(
+  (request: Request, env: StaticSiteEnv) => site.fetch(request, env),
+  {
+    origin: capsomer.origin,
+  },
+);
 
 export default {
   fetch(
