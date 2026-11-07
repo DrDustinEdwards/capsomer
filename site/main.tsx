@@ -26,6 +26,7 @@ import {
   DEFAULTS_MD,
   FAMILIES,
   META,
+  STATES_PAGES,
   RESULTS_BUILD,
   fetchResults,
   type Results,
@@ -335,7 +336,8 @@ function ComponentPage({ name }: { name: string }) {
       </div>
     );
   const r = RESULTS.components[c.name];
-  const states = `${BASE}components/${c.name}/states.html`;
+  const states = `${BASE}components/${c.name}/states`;
+  const hasStates = STATES_PAGES.has(c.name);
   return (
     <div className="site-page">
       <div className="site-head">
@@ -362,24 +364,26 @@ function ComponentPage({ name }: { name: string }) {
           ) : null}
         </dl>
       </div>
-      <Panel title="Every state, both themes" id="states" src={`${c.states.length} states`}>
-        <div className="site-pair">
-          {(["light", "dark"] as const).map((t) => (
-            <figure key={t}>
-              <figcaption className="cap-label">{t === "light" ? "Light" : "Dark"}</figcaption>
-              <iframe
-                className="site-frame"
-                src={`${states}?theme=${t}`}
-                title={`${c.title} states, ${t} theme`}
-                loading="lazy"
-              />
-            </figure>
-          ))}
-        </div>
-        <p className="cap-muted">
-          <a href={states}>Open the states page on its own</a>.
-        </p>
-      </Panel>
+      {hasStates ? (
+        <Panel title="Every state, both themes" id="states" src={`${c.states.length} states`}>
+          <div className="site-pair">
+            {(["light", "dark"] as const).map((t) => (
+              <figure key={t}>
+                <figcaption className="cap-label">{t === "light" ? "Light" : "Dark"}</figcaption>
+                <iframe
+                  className="site-frame"
+                  src={`${states}?theme=${t}`}
+                  title={`${c.title} states, ${t} theme`}
+                  loading="lazy"
+                />
+              </figure>
+            ))}
+          </div>
+          <p className="cap-muted">
+            <a href={states}>Open the states page on its own</a>.
+          </p>
+        </Panel>
+      ) : null}
       <Panel
         title="Tests"
         id="tests"
