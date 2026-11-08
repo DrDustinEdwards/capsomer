@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.86.0]
+
+- **The family page is 1440px wide** (Dustin, 2026-11-08: "extend out the width of the header"). `--page-max` goes from 1280px to 1440px (a 1408px column), so the letterhead, content and footer use more of a wide window. At 1280px and narrower nothing changes. Running text keeps `--measure`.
+- **The letterhead sits 8px below the top of the window, not 16px,** on a public page and an admin from 768px, so the band moves up and the cover under it has more of the first screen. `--header-h` is 80px (one row, from 1080px) or 128px (two rows), 8px less. No token or class was removed or renamed.
+
 ## [0.85.0]
 
 - **Layout grid: the label is opt-in.** `.cap-layout-grid` no longer draws "12 columns, 24 px baseline" ("4 columns" on a phone) at its foot; it is words beside a decoration. HTML contract change: add `data-labeled` to a `.cap-layout-grid` that should keep the label (a colophon or a page about the grid). No token or class was removed or renamed. Apps that want the old look everywhere add the attribute.
