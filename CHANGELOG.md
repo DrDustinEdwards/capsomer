@@ -4,6 +4,9 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.84.1]
+
+- The `enarratio` peer range adds `^0.10.0`, so a site on Enarratio 0.10.0 installs Capsomer without a peer conflict (npm ERESOLVE). No token, class or HTML change.
 - The component pages' script no longer sizes an example frame before the example has marked itself shown. On a slow load the frame jumped to a 360 px fallback and back, shifting the page (CLS 0.3 live).
 
 ## [0.84.0]
