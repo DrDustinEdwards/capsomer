@@ -139,6 +139,9 @@ const syncFrame = (frame: HTMLIFrameElement) => {
   doc.documentElement.dataset.theme = effectiveTheme();
   // An example's own height: its section plus the page's padding (scrollHeight never drops below the frame).
   const shown = doc.querySelector(".cap-specimen-shown");
+  // Before the example has marked itself shown there is nothing to measure, so the reserved height stands (a 360 px
+  // fallback here made the frame jump open and back on a slow load).
+  if (frame.dataset.kind !== "only" && !shown) return;
   const tall =
     frame.dataset.kind === "only" || !shown
       ? Number(frame.dataset.height) || 360
