@@ -1089,21 +1089,18 @@
   .cap-site-header-app {
     font-weight: 400;
   }
-  /* The headquarters site (dustinedwards.info) has no site name: "Dustin Edwards" takes the site
-     name's size, weight and place, under an empty agency line, so it sits where "Capsid" or
-     "Prelum" sits on the other sites (Dustin, 2026-10-28). Its admin, "Dustin Edwards Admin", has a name
-     and no agency, under the same empty line. */
+  /* The headquarters site (dustinedwards.info) has no site name: "Dustin Edwards" is the only line. It is
+     centered on the row beside the mark, at 22px (Dustin, 2026-11-08: alone it read small and low). Before it
+     took the second line's place under an empty agency line, so it sat where "Capsid" or "Prelum" sits on the
+     other sites. Its admin, "Dustin Edwards Admin", has a name and no agency and is centered the same way; 22px
+     is the most the longest admin name ("Dustin Edwards Lab bench") takes without crowding the links. */
   .cap-site-header-names:not(:has(.cap-site-header-name)),
   .cap-site-header-names:not(:has(.cap-site-header-agency)) {
-    &::before {
-      content: "\00a0";
-      font-size: 12.5px;
-      line-height: 1;
-      text-box: trim-both cap alphabetic;
-    }
-    & > .cap-site-header-agency {
+    justify-content: center;
+
+    & > :is(.cap-site-header-agency, .cap-site-header-name) {
       color: var(--header-fg);
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
       letter-spacing: -0.01em;
     }
