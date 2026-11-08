@@ -148,8 +148,8 @@ export const SCALE = {
     ],
     [
       "page-max",
-      "1280px",
-      'the family page width, gutters included (a 1248px column): every site\'s letterhead, content and footer line up on it (.cap-page). Running text keeps --measure inside it; grids, maps and tables use the rest (Dustin, 2026-10-28: "it can be wider")',
+      "1440px",
+      'the family page width, gutters included (a 1408px column): every site\'s letterhead, content and footer line up on it (.cap-page). Running text keeps --measure inside it; grids, maps and tables use the rest (Dustin, 2026-10-28: "it can be wider")',
     ],
     [
       "fs-page",
