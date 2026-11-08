@@ -673,9 +673,11 @@
 /* The head of a page drawn on the manual's layout grid (5.1), as it prints its grids in fine red
    lines: twelve columns with their gutters and a baseline every 24 pixels, four columns on a
    phone, and, where `data-labeled` is set, the grid's own label at its foot on the right. Red is the
-   manual's, not the family's: the grid is the printer's, under the page, never a mark on it. */
+   manual's, not the family's: the grid is the printer's, under the page, never a mark on it. An error
+   page's message is drawn on the same sheet, blank, as the manual's drawing sheets are. */
 @layer cap.components {
-  .cap-layout-grid {
+  .cap-layout-grid,
+  .cap-error-page > .cap-empty {
     --cols: 12;
     --gap: 24px;
     --grid-line: color-mix(in oklab, var(--crit) 45%, transparent);
@@ -683,7 +685,6 @@
     --grid-fill: color-mix(in oklab, var(--crit) 4%, transparent);
     position: relative;
     isolation: isolate;
-    padding-block: var(--space-3) var(--space-6);
 
     &::before {
       content: "";
@@ -694,6 +695,10 @@
         repeating-linear-gradient(to bottom, transparent 0 23px, var(--grid-soft) 23px 24px),
         linear-gradient(to right, var(--grid-line) 0 1px, var(--grid-fill) 1px calc(100% - var(--gap) - 1px), var(--grid-line) calc(100% - var(--gap) - 1px) calc(100% - var(--gap)), transparent calc(100% - var(--gap))) 0 0 / calc((100% + var(--gap)) / var(--cols)) 100% repeat-x;
     }
+  }
+
+  .cap-layout-grid {
+    padding-block: var(--space-3) var(--space-6);
 
     &[data-labeled]::after {
       content: "12 columns, 24 px baseline" / "";
@@ -708,18 +713,19 @@
   }
 
   @media (max-width: 40rem) {
-    .cap-layout-grid {
+    .cap-layout-grid,
+    .cap-error-page > .cap-empty {
       --cols: 4;
       --gap: 16px;
+    }
 
-      &[data-labeled]::after {
-        content: "4 columns, 24 px baseline" / "";
-      }
+    .cap-layout-grid[data-labeled]::after {
+      content: "4 columns, 24 px baseline" / "";
     }
   }
 
   @media (forced-colors: active) {
-    .cap-layout-grid::before {
+    :is(.cap-layout-grid, .cap-error-page > .cap-empty)::before {
       display: none;
     }
   }
