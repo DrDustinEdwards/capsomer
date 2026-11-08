@@ -2,7 +2,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* The manual theme: the public pages of the dustinedwards.info sites set after the NASA Graphics
-   Standards Manual (Danne & Blackburn, 1976). Opt-in: an app imports capsomer/manual.css only on
+   Standards Manual (Danne & Blackburn, 1975). Opt-in: an app imports capsomer/manual.css only on
    its public pages; nothing else in Capsomer reads it. Every color comes from the page's family, so
    dustinedwards.info is purple and Capsid teal. Lifted from Capsid's explorer (capsid #560, #562,
    #583). Its parts, in the order a page uses them: */
@@ -67,7 +67,7 @@
   }
 }
 
-/* A numbered part of a page, set as the NASA Graphics Standards Manual sets its pages (1976,
+/* A numbered part of a page, set as the NASA Graphics Standards Manual sets its pages (1975,
    5.1): the number and title on the left over a rule across the whole width, what the part says
    beside it, and its figures and lists full width below. */
 @layer cap.components {
@@ -672,8 +672,8 @@
 
 /* The head of a page drawn on the manual's layout grid (5.1), as it prints its grids in fine red
    lines: twelve columns with their gutters and a baseline every 24 pixels, four columns on a
-   phone, the grid's own label at its foot on the right. Red is the manual's, not the family's: the
-   grid is the printer's, under the page, never a mark on it. */
+   phone, and, where `data-labeled` is set, the grid's own label at its foot on the right. Red is the
+   manual's, not the family's: the grid is the printer's, under the page, never a mark on it. */
 @layer cap.components {
   .cap-layout-grid {
     --cols: 12;
@@ -695,7 +695,7 @@
         linear-gradient(to right, var(--grid-line) 0 1px, var(--grid-fill) 1px calc(100% - var(--gap) - 1px), var(--grid-line) calc(100% - var(--gap) - 1px) calc(100% - var(--gap)), transparent calc(100% - var(--gap))) 0 0 / calc((100% + var(--gap)) / var(--cols)) 100% repeat-x;
     }
 
-    &::after {
+    &[data-labeled]::after {
       content: "12 columns, 24 px baseline" / "";
       position: absolute;
       inset-block-end: 4px;
@@ -712,7 +712,7 @@
       --cols: 4;
       --gap: 16px;
 
-      &::after {
+      &[data-labeled]::after {
         content: "4 columns, 24 px baseline" / "";
       }
     }

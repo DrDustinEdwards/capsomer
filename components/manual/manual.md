@@ -1,7 +1,7 @@
 ---
 name: manual
 title: Manual theme
-summary: The public pages of the dustinedwards.info sites set after the 1976 NASA Graphics Standards Manual, in the page's own family color. Opt-in, for public pages only.
+summary: The public pages of the dustinedwards.info sites set after the 1975 NASA Graphics Standards Manual, in the page's own family color. Opt-in, for public pages only.
 parts: [css, behavior]
 tool: native + own JavaScript
 states: [running head, running head as a sign, a numbered part with its lead, form boxes as a title block, form boxes as readings on a tone scale, form boxes as an instrument panel, leader index, checklist card, plate, signs, mission patch, letterhead, layout grid, direction strip, cheatline and stripe, roll blocks, time line, cue card, holding position marking, annunciator panel]
@@ -13,7 +13,7 @@ replaces:
 
 # Manual theme
 
-The look the public pages of dustinedwards.info, capsid.dustinedwards.info, Capsomer's public site and Prelum's specimen share: the NASA Graphics Standards Manual (Danne & Blackburn, 1976) and the Apollo papers around it. Hairline rules, numbered parts with the title on the left, ruled form boxes, an index with dotted leaders, dark sign panels for the way on, checklist cards, boxed plates, round patches and a letterhead at the foot. Each site keeps its family: the one color, in the strips and on the patch's disc, is the family's `--on`, as the manual kept NASA Red for one job.
+The look the public pages of dustinedwards.info, capsid.dustinedwards.info, Capsomer's public site and Prelum's specimen share: the NASA Graphics Standards Manual (Danne & Blackburn, 1975) and the Apollo papers around it. Hairline rules, numbered parts with the title on the left, ruled form boxes, an index with dotted leaders, dark sign panels for the way on, checklist cards, boxed plates, round patches and a letterhead at the foot. Each site keeps its family: the one color, in the strips and on the patch's disc, is the family's `--on`, as the manual kept NASA Red for one job.
 
 Capsomer's components, its admin board and every product (Foxhound, Foxing, txasm, Germomics) do not use it (Dustin, 2026-10-26: "capsomer stays the modern board it is now. we are just theming our public pages"). An app imports `capsomer/manual.css` only on its public pages.
 
@@ -39,7 +39,7 @@ On a public page of a dustinedwards.info site: a home page, an index of papers o
 - **Signs** (`nav.cap-signs` of `a.cap-sign`): the ways on as dark panels with light type. `rel="prev"` adds a left arrow and `rel="next"` a right arrow and the family color along the top, as does `data-variant="forward"`. The arrow is the family arrow (`--cap-arrow`); under the pointer or focus it steps 3px the way it points, so a sign has no underline. With reduced motion the panel lightens instead. 48px tall. Signs are for the way on; an action is a button (`.cap-btn`).
 - **Mission patch** (`patchSvg()` from `capsomer/behavior/manual`, drawn by `.cap-patch`): a project's round patch, the name round the top, a line round the foot, the count on a disc of the family color with a dot round it for each. `data-size="s"` makes it 96px.
 - **Letterhead** (`.cap-letterhead`): the foot of a page, the site's name as the logotype, the address beside it and the folio at the right. Put it in the page's `footer`.
-- **Layout grid** (`.cap-layout-grid`): the head of a page drawn on the manual's layout grid in fine red lines, as the manual prints its grids: twelve columns and a 24px baseline, four columns on a phone, labeled at its foot on the right. The red is the family's `--crit`, faint. Put it on the block that holds the page's `h1`. Forced colors drop it.
+- **Layout grid** (`.cap-layout-grid`): the head of a page drawn on the manual's layout grid in fine red lines, as the manual prints its grids: twelve columns and a 24px baseline, four columns on a phone. It carries no label by default (the label is words beside a decoration); add `data-labeled` where the grid is the subject, as on a colophon, and the label sits at its foot on the right. The red is the family's `--crit`, faint. Put it on the block that holds the page's `h1`. Forced colors drop it.
 - **Direction strip** (`nav.cap-direction > ol > li`): the trail to a page as an airport's direction signs. A dark band of Overpass Bold (`--wayfinding`, the FAA sign face), a white FAA arrow (`--faa-arrow`) between the ways, and the page you are on (`aria-current="page"`) as a location sign: `--on-sign-here` type and a 2px outline of it on the `--sign-here` box, 3px corners, at AAA. Links hover as every link does, here a white 18% tint on the dark band.
 - **Livery** (`.cap-livery`, `[data-livery]`): an airliner's cheatline, three stripes from wide to thin in the family's chart ramp (steps 3, 2 and 1), so the foot of a page shares its tones with the site's sequential charts. It goes across the foot of a page, before the letterhead; `data-livery` on a card gives it a 6px length of the family color along its top.
 - **Holding position marking** (`hr.cap-hold`): the FAA's runway hold-short marking, two solid lines over two dashed ones, in the page's ink. A divider at the end of a post, before what other sites said. It carries no words; on an element other than `hr`, mark it `aria-hidden="true"`.

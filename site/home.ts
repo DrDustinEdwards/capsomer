@@ -262,7 +262,7 @@ export function header(base: string, current = "Home"): string {
 }
 
 /**
- * The running head over a public page, as the NASA Graphics Standards Manual heads its pages (1976,
+ * The running head over a public page, as the NASA Graphics Standards Manual heads its pages (1975,
  * page i): the section's number and name (a page outside the parts, such as search, has none), and the folio at the right (capsomer/manual.css). It repeats
  * what the header and the title say, so it is hidden from screen readers.
  */
