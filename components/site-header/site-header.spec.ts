@@ -200,8 +200,8 @@ eachTheme((theme) => {
     );
     await page.mouse.wheel(0, 600);
     await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(300);
-    // Pinned 16px down, the letterhead's margin, with its 8px stripe inside the box.
-    expect((await header.boundingBox())!.y).toBe(16);
+    // Pinned 8px down, the letterhead's margin, with its 8px stripe inside the box.
+    expect((await header.boundingBox())!.y).toBe(8);
     await page.setViewportSize({ width: 1440, height: 400 });
     expect((await header.boundingBox())!.y).toBeLessThan(0);
   });
