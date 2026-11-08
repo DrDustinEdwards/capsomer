@@ -563,7 +563,7 @@ export function familyTheme(seed, anchor, scheme, label = "light", level = "stan
   t.nodata = t.dim;
   t["nodata-soft"] = oklch(dark ? 0.27 : 0.94, 0.006, H);
   // The manual theme's signs (components/manual): a dark panel of light type in light, as the
-  // 1976 manual's building signs; in dark the panel stays dark, on the raised surface with an
+  // 1975 manual's building signs; in dark the panel stays dark, on the raised surface with an
   // edge, rather than turning into a white slab (the letterhead's ruling, 2026-10-27).
   t.sign = dark ? t.raised : t.text;
   t["on-sign"] = dark ? t.text : t.ground;

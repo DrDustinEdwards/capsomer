@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.85.0]
+
+- **Layout grid: the label is opt-in.** `.cap-layout-grid` no longer draws "12 columns, 24 px baseline" ("4 columns" on a phone) at its foot; it is words beside a decoration. HTML contract change: add `data-labeled` to a `.cap-layout-grid` that should keep the label (a colophon or a page about the grid). No token or class was removed or renamed. Apps that want the old look everywhere add the attribute.
+- **Docs and comments: the NASA Graphics Standards Manual is dated 1975,** the year of the manual (the Standards Manual reissue is titled "1975 NASA Graphics Standards Manual"), not 1976. No token, class or markup changed.
+
 ## [0.84.1]
 
 - The `enarratio` peer range adds `^0.10.0`, so a site on Enarratio 0.10.0 installs Capsomer without a peer conflict (npm ERESOLVE). No token, class or HTML change.
