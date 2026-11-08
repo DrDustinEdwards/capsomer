@@ -25,6 +25,15 @@
 }
 
 @layer cap.base {
+  /* An image with width and height attributes reserves its box before it loads. The browser's own ratio from them is
+     `auto w / h`, and Chrome flags a lazy image whose height is auto and whose ratio is only that (DevTools
+     LazyLoadImageIssue; the fix it asks for is an explicit aspect-ratio, web.dev/articles/cls). Naming the ratio from the
+     same attributes settles it. A browser without typed attr() keeps the `auto w / h` it already had. */
+  @supports (aspect-ratio: attr(width type(<number>)) / attr(height type(<number>))) {
+    :where(img[width][height]) {
+      aspect-ratio: attr(width type(<number>)) / attr(height type(<number>));
+    }
+  }
   body {
     margin: 0;
     background: var(--ground);

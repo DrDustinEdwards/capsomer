@@ -232,6 +232,35 @@ test("behavior: the public page's preview takes the chosen family and the filter
   await expect(page.locator("#home-find-n")).toHaveText(/^1 of \d+ components$/);
 });
 
+// A component page does not shift as its example frames load: each frame's height is reserved (CLS). The bar is web.dev's
+// "good" 0.1; the page measured 0.1 to 0.4 before the heights were reserved.
+for (const width of [390, 1440]) {
+  test(`layout: a component page's example frames do not shift the page (${width}px)`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.addInitScript(() => {
+      (window as unknown as { cls: number }).cls = 0;
+      new PerformanceObserver((list) => {
+        for (const e of list.getEntries() as unknown as {
+          value: number;
+          hadRecentInput: boolean;
+        }[])
+          if (!e.hadRecentInput) (window as unknown as { cls: number }).cls += e.value;
+      }).observe({ type: "layout-shift", buffered: true });
+    });
+    await page.goto("./components/combobox/");
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 400) {
+        scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 60));
+      }
+    });
+    await page.waitForTimeout(1000);
+    expect(await page.evaluate(() => (window as unknown as { cls: number }).cls)).toBeLessThan(0.1);
+  });
+}
+
 // The theme builder: a brand color rebuilds the previews and the CSS, and the address carries the
 // theme, so a shared link opens it again.
 test("behavior: the theme builder makes a theme from a brand color and a link reopens it", async ({

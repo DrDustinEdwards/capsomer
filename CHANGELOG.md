@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.84.0]
+
+- **Component pages reserve each example frame's height.** The frames resized as they loaded, so a page shifted (CLS 0.1 to 0.4 on Anchor bar, Combobox and Catalog; web.dev/articles/cls says to reserve the space). `scripts/frame-heights.mjs` measures every frame at four page widths and writes `site/frame-heights.json` and `site/frame-heights.css`; each frame carries `data-h1` to `data-h4` and the page's CSS sets its height from them. The page's script only grows a frame past the reserved height. No token, class or component markup changed.
+- **`img[width][height]` takes `aspect-ratio` from its attributes in `base.css`.** Chrome's DevTools flags a lazy image whose height is `auto` and whose ratio is only the attribute-derived `auto w / h` (`LazyLoadImageIssue`); an explicit ratio clears it. The rule is `:where(...)`, so any host `aspect-ratio` wins, and it sits in `@supports` for typed `attr()`. No token or class changes.
+
 ## [0.83.1]
 
 - **Breadcrumb: long names wrap in full instead of being cut after two lines.** The two-line clamp still lost the end of a long name under a reader's own text spacing (WCAG 1.4.12). `.cap-breadcrumb-link` and `.cap-breadcrumb-page` are `display: block` with no `overflow: hidden` or line clamp. No token or class changes.
