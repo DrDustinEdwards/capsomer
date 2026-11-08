@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.87.0]
+
+- **Letterhead: a site with one name centers it and sets it at 22px.** On the headquarters site (dustinedwards.info) and its admin, the name was the second line of a two-line block under an empty spacer line, so it sat low and at 20px. The spacer is gone, the name is centered on the row beside the mark, and it is 22px (the longest admin name, "Dustin Edwards Lab bench", still clears the links). Sites with an agency line over a site name are unchanged. No token or class was removed or renamed.
+
 ## [0.86.0]
 
 - **The family page is 1440px wide** (Dustin, 2026-11-08: "extend out the width of the header"). `--page-max` goes from 1280px to 1440px (a 1408px column), so the letterhead, content and footer use more of a wide window. At 1280px and narrower nothing changes. Running text keeps `--measure`.
