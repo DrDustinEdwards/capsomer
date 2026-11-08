@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- The component pages' script no longer sizes an example frame before the example has marked itself shown. On a slow load the frame jumped to a 360 px fallback and back, shifting the page (CLS 0.3 live).
+
 ## [0.84.0]
 
 - **Component pages reserve each example frame's height.** The frames resized as they loaded, so a page shifted (CLS 0.1 to 0.4 on Anchor bar, Combobox and Catalog; web.dev/articles/cls says to reserve the space). `scripts/frame-heights.mjs` measures every frame at four page widths and writes `site/frame-heights.json` and `site/frame-heights.css`; each frame carries `data-h1` to `data-h4` and the page's CSS sets its height from them. The page's script only grows a frame past the reserved height. No token, class or component markup changed.
