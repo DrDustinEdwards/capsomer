@@ -702,6 +702,10 @@
     :root:has(.cap-site-tabs) {
       scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
     }
+    /* A result sits above the bar, not under it: the region is sticky at the foot of the page, as the bar is. */
+    :root:has(.cap-site-tabs) .cap-message {
+      inset-block-end: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    }
     .cap-site-tabs {
       position: sticky;
       inset-block-end: 0;

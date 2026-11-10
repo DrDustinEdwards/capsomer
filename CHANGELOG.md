@@ -4,6 +4,8 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+- **A status message sits above the phone's tab bar.** On a phone with the app's tab bar, the sticky status region (`.cap-message`) lay over the bar and covered its links (axe target-size, WCAG 2.5.8). Its bottom offset now clears the bar. No token or class was removed or renamed.
+
 ## [0.87.0]
 
 - **Letterhead: a site with one name centers it and sets it at 22px.** On the headquarters site (dustinedwards.info) and its admin, the name was the second line of a two-line block under an empty spacer line, so it sat low and at 20px. The spacer is gone, the name is centered on the row beside the mark, and it is 22px (the longest admin name, "Dustin Edwards Lab bench", still clears the links). Sites with an agency line over a site name are unchanged. No token or class was removed or renamed.
