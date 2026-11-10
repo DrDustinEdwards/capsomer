@@ -1,6 +1,7 @@
 import type { EnhanceOptions } from "enarratio/enhance";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Gridlines } from "./chart-frame.ts";
+import { groupDownloads } from "./chart-downloads.ts";
 import { Glyph } from "../status/status.react.tsx";
 import { markup } from "../trusted-html/trusted-html.ts";
 
@@ -170,15 +171,20 @@ export function ChartFrame({
     if (!el || !html || enhance === false) return;
     let live = true;
     let charts: { destroy(): void }[] = [];
+    let ungroup: (() => void) | null = null;
     loadEnhance()
       .then((m) => {
-        if (live && el.isConnected) charts = m.enhance(el, enhanceOptions.current);
+        if (!live || !el.isConnected) return;
+        charts = m.enhance(el, enhanceOptions.current);
+        // The CSV link and the layer's download buttons, in one Download menu.
+        ungroup = groupDownloads(el);
       })
       .catch(() => {
         // The chart is complete without the layer: its words and table are in the HTML.
       });
     return () => {
       live = false;
+      ungroup?.();
       for (const c of charts) c.destroy();
     };
     // oxlint-disable-next-line react/exhaustive-deps -- optionsKey stands for enhance, so a new options object with the same values does not re-enhance

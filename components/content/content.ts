@@ -278,6 +278,8 @@ export interface MediaQuery {
   inspect?: string;
   // Picker mode: the file chosen, waiting for its alt text.
   pick?: string;
+  // The upload dialog, open (`upload=1`): with no script the server renders it open in the page.
+  upload?: boolean;
   // site-api v0.13.0, with `offers.filters`: which way a picture lies, and what a file is.
   orientation?: "landscape" | "portrait" | "square";
   kind?: "image" | "document" | "video" | "audio";

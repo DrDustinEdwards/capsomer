@@ -151,6 +151,9 @@ export interface Intents {
   // Posts a form built in script (a crop's new file, a tool with no form of its own) the way a
   // post from inside the list goes, and answers what the kit said; null with no `submit`.
   run: (form: FormData) => Promise<IntentResult | null>;
+  // Says a result the list made itself from several posts (the media library's upload dialog, one
+  // post per file): the sentence, the outcome per item and onDone, as a post's own result.
+  show: (result: IntentResult) => void;
 }
 
 export function useIntents({
@@ -329,6 +332,7 @@ export function useIntents({
       ) : null,
     confirmPage,
     confirmDialog,
+    show: (r: IntentResult) => handle(r, new Map(namesRef.current)),
     latest: settled ?? result,
     ask: setAsking,
     run,

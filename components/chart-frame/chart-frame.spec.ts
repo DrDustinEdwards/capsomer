@@ -80,6 +80,39 @@ eachTheme((theme) => {
     ).toBe("rgb(255, 0, 0)");
   });
 
+  test("behavior: once enhanced, the CSV link and the drawing's downloads are one Download menu, on a server drawing and in React", async ({
+    page,
+  }) => {
+    await visitStates(page, "chart-frame", theme);
+    for (const frame of [
+      page.locator(".cap-chart", { has: page.locator("#cf-bar") }),
+      page.locator("[data-mount='redraw'] .cap-chart"),
+    ]) {
+      const menu = frame.locator(".cap-chart-downloads");
+      const trigger = menu.locator("summary");
+      await expect(trigger).toHaveText("Download");
+      // No row of links and buttons is left in the source line.
+      expect(
+        (await frame.locator(".enarratio-source").innerText()).replace(/\s+/g, " ").trim(),
+      ).toBe("Source: The job log · Download");
+      await trigger.focus();
+      await page.keyboard.press("ArrowDown");
+      const items = menu.locator(".cap-menu-item");
+      await expect(items).toHaveText([
+        "Download CSV",
+        "Download SVG",
+        "Download PNG",
+        "Download tactile SVG",
+        "Copy embed",
+      ]);
+      await expect(items.first()).toBeFocused();
+      await expect(items.first()).toHaveAttribute("download", /\.csv$/);
+      await page.keyboard.press("Escape");
+      await expect(menu.locator("details")).not.toHaveAttribute("open");
+      await expect(trigger).toBeFocused();
+    }
+  });
+
   test("behavior: the React frame redraws to its column's width at the height it showed, and shows a refusal in the chart's place", async ({
     page,
   }) => {

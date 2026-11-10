@@ -104,7 +104,8 @@
     list-style: none;
   }
 
-  /* Upload: the drop zone, the alt text for it, Upload and Upload as decorative. */
+  /* Upload of one file (the picker, and the upload dialog as delivered with no script): the drop zone,
+     the alt text for it, Upload and Upload as decorative. */
   .cap-media-lib-upload {
     display: grid;
     gap: var(--space-3);
@@ -120,6 +121,99 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
+  }
+
+  /* The upload dialog: the drop zone, then one row per chosen file (its preview, name and size, its
+     alt text or Decorative, Remove), Keep it at full size once for all, and Import under them. */
+  .cap-media-upload .cap-dialog-body {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .cap-media-upload-form {
+    display: grid;
+    gap: var(--space-4);
+    min-inline-size: 0;
+
+    & > .cap-field {
+      margin: 0;
+    }
+  }
+  .cap-media-upload-list {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-media-upload-row {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    align-items: start;
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+
+    & .cap-field {
+      margin: 0;
+    }
+  }
+  .cap-media-upload-thumb {
+    display: grid;
+    place-items: center;
+    inline-size: 64px;
+    block-size: 64px;
+    overflow: hidden;
+    border-radius: var(--radius-s);
+    background: var(--sunken);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    text-transform: uppercase;
+
+    & img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+  }
+  .cap-media-upload-fields {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+  }
+  .cap-media-upload-name {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    margin: 0;
+    overflow-wrap: anywhere;
+
+    & > span:first-child {
+      font-weight: 600;
+    }
+    & > span:last-child {
+      color: var(--muted);
+      font-size: var(--fs-detail);
+    }
+  }
+  .cap-media-upload-progress:empty {
+    display: none;
+  }
+  /* On a phone the row's Remove goes under the fields, beside the preview's column. */
+  @media (width < 480px) {
+    .cap-media-upload-row {
+      grid-template-columns: 48px minmax(0, 1fr);
+
+      & > .cap-btn {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+    .cap-media-upload-thumb {
+      inline-size: 48px;
+      block-size: 48px;
+    }
   }
 
   /* The picker's alt step: the image, the alt text it needs here, Insert. */
