@@ -205,7 +205,7 @@
     .cap-media-upload-row {
       grid-template-columns: 48px minmax(0, 1fr);
 
-      & > .cap-btn {
+      & > .cap-media-upload-remove {
         grid-column: 2;
         justify-self: start;
       }

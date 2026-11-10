@@ -299,7 +299,7 @@ function ScriptedUpload({
                     </div>
                     <button
                       type="button"
-                      className="cap-btn"
+                      className="cap-btn cap-media-upload-remove"
                       data-variant="quiet"
                       disabled={!!busy}
                       onClick={() => drop(new Set([f.key]))}
