@@ -398,13 +398,23 @@ eachTheme((theme) => {
       ids: ["2026/09/launch-hero.png"],
       file: ["file:hero.png"],
     });
-    // Upload is checked against the site's limits before any byte is sent, and posts the file with its alt text.
-    const upload = lib.getByRole("form", { name: "Upload a file" });
+    // Upload is an action in the toolbar: with no script, a link to the dialog in the page.
+    await expect(lib.getByRole("link", { name: "Upload", exact: true })).toHaveAttribute(
+      "href",
+      "/media?upload=1",
+    );
+    await expect(lib.getByRole("form", { name: "Upload a file" })).toHaveCount(0);
+    // As delivered (?upload=1): checked against the site's limits before any byte is sent, and the
+    // file posts with its alt text.
+    const delivered = page.locator("#media-upload-static");
+    const box = delivered.getByRole("dialog", { name: "Upload a file" });
+    await expect(box.getByRole("link", { name: "Close" })).toHaveAttribute("href", "/media");
+    const upload = box.getByRole("form", { name: "Upload a file" });
     await expect(upload.locator("input[type=file]")).toHaveAttribute(
       "accept",
       "image/png,image/jpeg,image/webp,application/pdf",
     );
-    posted = nextPost(page, "#media-static");
+    posted = nextPost(page, "#media-upload-static");
     await upload
       .locator("input[type=file]")
       .setInputFiles({ name: "survey.png", mimeType: "image/png", buffer: Buffer.from("png") });
@@ -416,6 +426,20 @@ eachTheme((theme) => {
       intent: ["upload"],
       file: ["file:survey.png"],
       alt: ["Survey sketches"],
+    });
+    // Import from a web address is in the same dialog. Neither is sent undescribed: alt text is
+    // required, and decorative is its own answer.
+    posted = nextPost(page, "#media-upload-static");
+    await box.locator("summary", { hasText: "Import from a web address" }).click();
+    await box.getByRole("textbox", { name: "Web address" }).fill("https://photos.example.com/r/2");
+    await box.getByRole("checkbox", { name: "Keep it at full size" }).last().check();
+    await box.getByRole("button", { name: "Import as decorative" }).click();
+    expect((await posted).fields).toEqual({
+      intent: ["import"],
+      url: ["https://photos.example.com/r/2"],
+      alt: [""],
+      resize: ["no"],
+      decorative: ["on"],
     });
   });
 
@@ -685,19 +709,6 @@ eachTheme((theme) => {
       ids: ["2026/10/bay-copy.png", "2026/10/bay-dusk.png"],
       versions: ["v1", "v1"],
     });
-    posted = nextPost(page, "#media-ideas-static");
-    await lib.locator("summary", { hasText: "Import from a web address" }).click();
-    await lib.getByRole("textbox", { name: "Web address" }).fill("https://photos.example.com/r/2");
-    await lib.getByRole("checkbox", { name: "Keep it at full size" }).last().check();
-    // Neither is sent undescribed: alt text is required, and decorative is its own answer.
-    await lib.getByRole("button", { name: "Import as decorative" }).click();
-    expect((await posted).fields).toEqual({
-      intent: ["import"],
-      url: ["https://photos.example.com/r/2"],
-      alt: [""],
-      resize: ["no"],
-      decorative: ["on"],
-    });
   });
 
   test("behavior: with script, suggestions load when asked and each is applied only when accepted", async ({
@@ -721,21 +732,32 @@ eachTheme((theme) => {
     });
   });
 
-  test("behavior: with script, an upload the site already holds links the stored file", async ({
+  test("behavior: with script, Upload opens a dialog that asks each file's alt text, posts one upload per file, and an upload the site already holds links the stored file", async ({
     page,
   }) => {
     await visitStates(page, "media-library", theme);
     const lib = page.locator("[data-mount='ideas']");
-    const upload = lib.getByRole("form", { name: "Upload a file" });
-    await upload
-      .locator("input[type=file]")
-      .setInputFiles({ name: "bay-again.png", mimeType: "image/png", buffer: Buffer.from("png") });
-    await upload.getByRole("textbox", { name: "Alt text" }).fill("The bay at dusk");
-    await upload.getByRole("button", { name: "Upload", exact: true }).click();
+    await lib.getByRole("link", { name: "Upload", exact: true }).click();
+    const box = page.getByRole("dialog", { name: "Upload files" });
+    await box.locator("input[type=file]").setInputFiles([
+      { name: "bay-again.png", mimeType: "image/png", buffer: Buffer.from("png") },
+      { name: "rule.png", mimeType: "image/png", buffer: Buffer.from("png") },
+    ]);
+    await expect(
+      box.getByRole("list", { name: "Files to upload" }).getByRole("listitem"),
+    ).toHaveCount(2);
+    // Each file needs its own answer: words, or Decorative.
+    await box.getByRole("textbox", { name: "Alt text for bay-again.png" }).fill("The bay at dusk");
+    await box.getByRole("button", { name: "Upload 2 files" }).click();
+    await expect(box.getByRole("textbox", { name: "Alt text for rule.png" })).toBeFocused();
+    await box.getByRole("checkbox", { name: "Decorative: rule.png" }).check();
+    await expect(box.getByRole("textbox", { name: "Alt text for rule.png" })).toBeDisabled();
+    await box.getByRole("button", { name: "Upload 2 files" }).click();
+    await expect(box).toBeHidden();
     await expect(
       lib.getByRole("link", { name: "Open bay-dusk.png, the file already stored" }),
     ).toHaveAttribute("href", "/media?inspect=2026%2F10%2Fbay-dusk.png");
-    await expect(lib.locator(".cap-media-tile")).toHaveCount(4);
+    await expect(lib.locator(".cap-media-tile[data-key='2026/10/rule.png']")).toHaveCount(1);
   });
 
   test("behavior: with script, files others changed are put in place and deleted ones leave", async ({

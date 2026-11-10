@@ -1008,3 +1008,13 @@ if (ideasHost)
       { identifierPrefix: "ideas" },
     ),
   );
+
+const uploadHost = document.getElementById("media-upload-static");
+if (uploadHost)
+  setStaticHtml(
+    uploadHost,
+    renderToStaticMarkup(
+      <MediaLibrary data={loadIdeas(IDEAS, { upload: true })} action="/media" shortcuts={false} />,
+      { identifierPrefix: "upload" },
+    ),
+  );

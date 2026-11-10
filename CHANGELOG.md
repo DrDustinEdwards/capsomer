@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.88.0]
+
+- **Chart frame: the downloads are one Download menu** (Carrel Desk redesign, approved 2026-11-10). Once Enarratio's enhancement layer has added Download SVG, Download PNG, Download tactile SVG and Copy embed beside a figure's Download CSV link, the frame moves all five into a Download menu (Capsomer's form menu, `details.cap-menu-form` in the new `span.cap-chart-downloads`) where the link was, in React's `ChartFrame` and in `capsomer/behavior/chart-enhance`. With no script the CSV link is unchanged. A page with charts now also loads `capsomer/menu.css` for the menu's look (without it the menu is a plain disclosure). No token or class was removed or renamed.
+- **Media library: Upload is a dialog that asks each file's alt text** (Carrel Desk redesign, approved 2026-11-10). The upload form no longer sits open above the grid: Upload ends the toolbar and opens a dialog. With script and `submit` it takes several files, and each has its own Alt text field and Decorative box; it posts one `upload` per file and says the whole as one result, keeping a refused file in the dialog with the site's reason. Import from a web address moved into the same dialog. With no script, Upload links to `?upload=1` and the dialog is rendered open in the page with the one-file form. HTML contract change: `.cap-media-lib-upload` and the import disclosure are rendered only inside `dialog.cap-media-upload` (and the picker keeps its form in place); the query gains `upload` (`readMediaView` reads `upload=1`, `withMedia` closes it on any other change). New: `.cap-media-lib-upload-open`, `.cap-media-upload` and its parts, and `useIntents().show(result)` for a result a list made from several posts. No token or class was removed or renamed.
 - **A status message sits above the phone's tab bar.** On a phone with the app's tab bar, the sticky status region (`.cap-message`) lay over the bar and covered its links (axe target-size, WCAG 2.5.8). Its bottom offset now clears the bar. No token or class was removed or renamed.
 
 ## [0.87.0]

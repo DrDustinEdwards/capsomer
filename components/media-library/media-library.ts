@@ -39,6 +39,7 @@ const QUERY_ORDER: ReadonlyArray<keyof MediaQuery> = [
   "inspect",
   "suggest",
   "pick",
+  "upload",
 ];
 
 export type MediaSort = NonNullable<MediaQuery["sort"]>;
@@ -90,11 +91,16 @@ export function withMedia(q: MediaQuery, change: Partial<MediaQuery>): MediaQuer
   const next: MediaQuery = { ...q, ...change };
   if ("sort" in change && !("dir" in change)) delete next.dir;
   if (!("suggest" in change)) delete next.suggest;
+  // The upload dialog is open only on the address that opened it: any other change closes it,
+  // and opening it closes the inspector.
+  if (!("upload" in change)) delete next.upload;
+  else if (change.upload) delete next.inspect;
   const keys = Object.keys(change) as Array<keyof MediaQuery>;
   const keeps =
     "inspect" in change ||
     "pick" in change ||
     "suggest" in change ||
+    "upload" in change ||
     (keys.length > 0 && keys.every((k) => DISPLAY.includes(k)));
   if (!keeps) {
     delete next.cursor;
@@ -371,10 +377,10 @@ export function groupRows(
 }
 
 // What the address says about drawing the page, which the content kit's readMediaQuery leaves to the
-// component: the layout, the tile size and the grouping. A host merges it into the kit's query.
+// component: the layout, the tile size, the grouping and the open upload dialog (`upload=1`). A host merges it into the kit's query.
 export function readMediaView(
   search: URLSearchParams,
-): Pick<MediaQuery, "layout" | "size" | "group"> {
+): Pick<MediaQuery, "layout" | "size" | "group" | "upload"> {
   const layout = search.get("layout");
   const size = search.get("size");
   const group = search.get("group");
@@ -382,6 +388,7 @@ export function readMediaView(
     ...(layout === "grid" || layout === "list" ? { layout } : {}),
     ...(size === "s" || size === "m" || size === "l" ? { size } : {}),
     ...(group === "folder" || group === "month" ? { group } : {}),
+    ...(search.get("upload") === "1" ? { upload: true } : {}),
   };
 }
 
@@ -419,7 +426,7 @@ export interface KitMediaRow {
 // The content kit's loadMedia answer (site-api v0.13.0 MediaData), by shape.
 export interface KitMediaData {
   site: { name: string };
-  query: Omit<MediaQuery, "layout" | "size" | "group" | "pick">;
+  query: Omit<MediaQuery, "layout" | "size" | "group" | "pick" | "upload">;
   rows: KitMediaRow[];
   page: MediaData["page"];
   detail?:
@@ -488,7 +495,7 @@ export function mediaDataOfKit(
   kit: KitMediaData,
   options: {
     usedHref?: (use: MediaUse) => string;
-    view?: Pick<MediaQuery, "layout" | "size" | "group" | "pick">;
+    view?: Pick<MediaQuery, "layout" | "size" | "group" | "pick" | "upload">;
   } = {},
 ): MediaData {
   const counts = new Map<string, number>();

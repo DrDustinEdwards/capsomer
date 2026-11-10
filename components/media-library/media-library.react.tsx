@@ -39,6 +39,7 @@ import { readPref, writePref } from "../shell/shell.ts";
 import { Keys, useShortcut } from "../shortcuts/shortcuts.react.tsx";
 import { TabLink, TabsNav } from "../tabs/tabs.react.tsx";
 import { MediaMore } from "./media-library-more.react.tsx";
+import { UploadDialog } from "./media-library-upload.react.tsx";
 import {
   applyChanges,
   countLine,
@@ -256,6 +257,9 @@ export function MediaLibrary({
   // The last result the script path got, for the links to what an upload, an import or a turn left
   // to open; the page's own result otherwise.
   const [last, setLast] = useState<IntentResult | null>(null);
+  // The upload dialog, with script; the address opens it too (`upload=1`, the toolbar's link with
+  // no script).
+  const [uploadOpen, setUploadOpen] = useState(!!query.upload);
   const [pageResult, setPageResult] = useState(result);
   if (result !== pageResult) {
     setPageResult(result);
@@ -524,6 +528,110 @@ export function MediaLibrary({
         </p>
       </div>
     ) : null;
+  // Upload, one file with its alt text: inline in the picker, and in the library the upload dialog's
+  // form as delivered with no script (?upload=1).
+  const uploadForm =
+    canUpload && rules ? (
+      <Form
+        method="post"
+        action={action}
+        encType="multipart/form-data"
+        className="cap-media-lib-upload"
+        aria-label={`Upload a ${nounsOf(labels).noun}`}
+        onSubmit={dropAltIfDecorative}
+      >
+        <input type="hidden" name="intent" value="upload" />
+        <DropZone
+          name="file"
+          accept={rules.accept}
+          maxBytes={offers.upload?.maxBytes}
+          hint={rules.hint}
+        />
+        <div className="cap-field">
+          <label className="cap-field-label" htmlFor={`${uid}-upalt`}>
+            Alt text
+          </label>
+          <input
+            className="cap-input"
+            id={`${uid}-upalt`}
+            name="alt"
+            type="text"
+            autoComplete="off"
+            required
+            aria-describedby={`${uid}-upalt-help`}
+          />
+          <p className="cap-field-help" id={`${uid}-upalt-help`}>
+            What the picture shows, for a person who cannot see it, or Upload as decorative if it
+            adds nothing a reader would miss. The site stores nothing undescribed.
+          </p>
+        </div>
+        {keepSize("up")}
+        <div className="cap-media-lib-upload-actions">
+          <button type="submit" className="cap-btn" data-variant="primary">
+            Upload
+          </button>
+          <button type="submit" className="cap-btn" name="decorative" value="on" formNoValidate>
+            Upload as decorative
+          </button>
+        </div>
+      </Form>
+    ) : null;
+  const importForm = canImport ? (
+    <Disclosure summary="Import from a web address">
+      <Form
+        method="post"
+        action={action}
+        className="cap-media-lib-upload"
+        aria-label={`Import a ${nounsOf(labels).noun} from the web`}
+        onSubmit={dropAltIfDecorative}
+      >
+        <input type="hidden" name="intent" value="import" />
+        <div className="cap-field">
+          <label className="cap-field-label" htmlFor={`${uid}-import`}>
+            Web address
+          </label>
+          <input
+            className="cap-input"
+            id={`${uid}-import`}
+            name="url"
+            type="url"
+            inputMode="url"
+            autoComplete="off"
+            required
+            placeholder="https://"
+            aria-describedby={`${uid}-import-help`}
+          />
+          <p className="cap-field-help" id={`${uid}-import-help`}>
+            The site fetches its own copy and serves that, never the other site's. An https address
+            only. {rules ? rules.hint : ""}
+          </p>
+        </div>
+        <div className="cap-field">
+          <label className="cap-field-label" htmlFor={`${uid}-imalt`}>
+            Alt text
+          </label>
+          <input
+            className="cap-input"
+            id={`${uid}-imalt`}
+            name="alt"
+            type="text"
+            autoComplete="off"
+            required
+            aria-describedby={`${uid}-upalt-help`}
+          />
+        </div>
+        {keepSize("im")}
+        <div className="cap-media-lib-upload-actions">
+          <button type="submit" className="cap-btn">
+            Import
+          </button>
+          <button type="submit" className="cap-btn" name="decorative" value="on" formNoValidate>
+            Import as decorative
+          </button>
+        </div>
+      </Form>
+    </Disclosure>
+  ) : null;
   const filters = !picker && !trash && !!offers.filters;
   const filterWords =
     [
@@ -895,6 +1003,23 @@ export function MediaLibrary({
               ))}
             </Form>
           ) : null}
+          {!picker && (uploadForm || importForm) ? (
+            // A link, so with no script the server renders the dialog open (?upload=1); with
+            // `submit` it opens the dialog in place.
+            <a
+              className="cap-btn cap-media-lib-upload-open"
+              data-variant="primary"
+              href={href(withMedia(query, { upload: true }))}
+              aria-haspopup={mounted && submit ? "dialog" : undefined}
+              onClick={(e) => {
+                if (!submit) return;
+                e.preventDefault();
+                setUploadOpen(true);
+              }}
+            >
+              Upload
+            </a>
+          ) : null}
         </div>
       </div>
 
@@ -944,107 +1069,25 @@ export function MediaLibrary({
         </ul>
       ) : null}
 
-      {canUpload && rules ? (
-        <Form
-          method="post"
-          action={action}
-          encType="multipart/form-data"
-          className="cap-media-lib-upload"
-          aria-label={`Upload a ${nounsOf(labels).noun}`}
-          onSubmit={dropAltIfDecorative}
-        >
-          <input type="hidden" name="intent" value="upload" />
-          <DropZone
-            name="file"
-            accept={rules.accept}
-            maxBytes={offers.upload?.maxBytes}
-            hint={rules.hint}
-          />
-          <div className="cap-field">
-            <label className="cap-field-label" htmlFor={`${uid}-upalt`}>
-              Alt text
-            </label>
-            <input
-              className="cap-input"
-              id={`${uid}-upalt`}
-              name="alt"
-              type="text"
-              autoComplete="off"
-              required
-              aria-describedby={`${uid}-upalt-help`}
-            />
-            <p className="cap-field-help" id={`${uid}-upalt-help`}>
-              What the picture shows, for a person who cannot see it, or Upload as decorative if it
-              adds nothing a reader would miss. The site stores nothing undescribed.
-            </p>
-          </div>
-          {keepSize("up")}
-          <div className="cap-media-lib-upload-actions">
-            <button type="submit" className="cap-btn" data-variant="primary">
-              Upload
-            </button>
-            <button type="submit" className="cap-btn" name="decorative" value="on" formNoValidate>
-              Upload as decorative
-            </button>
-          </div>
-        </Form>
-      ) : null}
-
-      {canImport ? (
-        <Disclosure summary="Import from a web address">
-          <Form
-            method="post"
-            action={action}
-            className="cap-media-lib-upload"
-            aria-label={`Import a ${nounsOf(labels).noun} from the web`}
-            onSubmit={dropAltIfDecorative}
-          >
-            <input type="hidden" name="intent" value="import" />
-            <div className="cap-field">
-              <label className="cap-field-label" htmlFor={`${uid}-import`}>
-                Web address
-              </label>
-              <input
-                className="cap-input"
-                id={`${uid}-import`}
-                name="url"
-                type="url"
-                inputMode="url"
-                autoComplete="off"
-                required
-                placeholder="https://"
-                aria-describedby={`${uid}-import-help`}
-              />
-              <p className="cap-field-help" id={`${uid}-import-help`}>
-                The site fetches its own copy and serves that, never the other site's. An https
-                address only. {rules ? rules.hint : ""}
-              </p>
-            </div>
-            <div className="cap-field">
-              <label className="cap-field-label" htmlFor={`${uid}-imalt`}>
-                Alt text
-              </label>
-              <input
-                className="cap-input"
-                id={`${uid}-imalt`}
-                name="alt"
-                type="text"
-                autoComplete="off"
-                required
-                aria-describedby={`${uid}-upalt-help`}
-              />
-            </div>
-            {keepSize("im")}
-            <div className="cap-media-lib-upload-actions">
-              <button type="submit" className="cap-btn">
-                Import
-              </button>
-              <button type="submit" className="cap-btn" name="decorative" value="on" formNoValidate>
-                Import as decorative
-              </button>
-            </div>
-          </Form>
-        </Disclosure>
+      {picker ? uploadForm : null}
+      {!picker && (uploadForm || importForm) ? (
+        <UploadDialog
+          open={uploadOpen}
+          onOpenChange={setUploadOpen}
+          scripted={mounted && !!submit}
+          inPage={!!query.upload}
+          closeHref={href(withMedia(query, { upload: undefined }))}
+          rules={canUpload && rules ? { ...rules, maxBytes: offers.upload?.maxBytes } : null}
+          resize={offers.resize ? keepSize("dlg") : null}
+          noScript={uploadForm}
+          importForm={importForm}
+          submit={submit}
+          onDone={(r) => {
+            setLast(r);
+            intents.show(r);
+          }}
+          labels={labels}
+        />
       ) : null}
 
       {/* oxlint-disable-next-line react/refs -- intents holds the root ref for its handlers; rendering reads none of it */}
