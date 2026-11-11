@@ -4,9 +4,28 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.99.2]
+## [0.100.1]
 
 - **Enarratio 0.13 is supported.** The `enarratio` peer range is `^0.12.0 || ^0.13.0`, and the showcase site and the browser suite run on 0.13.1 (live on npm), whose charts fit a phone's drawing. No token, class or HTML contract changes.
+
+## [0.100.0]
+
+Batch 4 of the shared-components audit (C24 to C38, without C37): the parts the sites and the Portal built for themselves, now in Capsomer. Nothing is removed or renamed; every HTML contract change below is an addition.
+
+- **Admin shell** (C24): `isCollapseKey`, `currentEntryId` (the longest match; an entry's `match` takes prefixes or RegExps), `ACCESS_LOGOUT`. The shell binds `[` itself (`collapseKey`), and `pathname` sets the current entry and the page. New `AdminErrorView`; `data-width="narrow|page"` on the page.
+- **Error page** (C30): `actions`, `gone` (a 410 is an Empty with one way out) and `hero`. New `SignedOutPage`.
+- **Panel and read state** (C25, C26): a panel with no title is a bare surface; new `meta`, `moreHref`, `reading` (Reading again, `aria-busy`) and `href`; new `TablePanel`. New read-state component (`ReadState`, `ReadAgain`, `SourceState`) and `Missing`. Bulk bar: selection helpers and `useBulkSelection`.
+- **New components** (C27, C28, C29): delta, source line, status mark with `ResultPage`, mode banner (demo, view as), consent (`PermissionList`, `ConsentScreen`, `ConsentRefusal`), setup checklist. The row list gets a static row, read and not opened.
+- **Sortable groups** (C31): covered by 0.92.0's lists that share a `data-group` (`SortableBoard`, `moveBetween`, `keyMove`), so this release adds no second groups component.
+- **Menus, popover, toolbar** (C32): FormMenu takes an outer `form` and `size="sm"`. New `openAt(popup, anchor)` opens a popover at a virtual anchor (a text selection), and `place` takes any box. `attachToolbar(bar, items, { keepFocus })` keeps an editor's caret and selection; it also works where native `focusgroup` runs the bar.
+- **Command menu** (C33): `useCommandHost` (an idle host and `runWhenReady`), `navCommands`, recents, snippets with their matches marked, Ask, and full screen on a phone.
+- **Uptime strip** (C34): `fromRing`, `padRing`, `uptimeOf` and a React `UptimeLegend`.
+- **Disclosure** (C35): `data-variant="inline"` (no box, a rule above and below, the title in the link color: a post's "Show the data", a step's calculator) and `data-marker="sign"` (a mono plus and minus that do not move the title). Every section, group and expand region is open on paper; `data-print="hide"` leaves a screen-only section off. New expand toggle (`.cap-expand-toggle`, `data-cap="expand"`, `data-open-label`/`data-closed-label`; React `useExpand`, `ExpandToggle`) and table detail row (`.cap-expand-row`, `tr.cap-expand-detail`; React `ExpandRows`). `enhance()` also wires the toggles (`enhanceExpand`).
+- **Pagination** (C36): `parsePage` (whole digits from 1, else page 1), `pageEnvelope(page, perPage, total)` (the page kept in range, offset, range, `hasPrev`/`hasNext`; `"all"` for one page), `pageHref(path, params, page)` (empty parameters and page 1 left out), `pageRelLinks` for the head's prev and next, and `countText` ("Showing 20 of 312 mentions"). React: `renderLink` for a router link (`PageLinkProps`), and `form="steps"` (Previous, "Page 3 of 16", Next at every width; with `pageCount={0}` and `hasNext`, "Page 3" for a total that moves). The pure functions are re-exported from `capsomer/react/pagination`.
+- **From the Portal** (C38): new verdict (`Verdict`: "All good" with what it covers, or the problems by name and "and 2 more"; `unknown` is never all good), log view (`LogView`: raw lines in mono that wrap, counts in tabular figures, a note when the source cut the list, a stated None), status matrix (`StatusMatrix` and `MatrixKey`: rows against columns, each cell a glyph named with its row, column, status and why; the row headers stick) and config form (`ConfigForm`, `useConfigForm`, `useEditor`: focus in the first field, a hint rather than a disabled submit, Preview and Cancel, Esc cancels, a Danger area; one editor per list with a fresh draft per row). The row list gets a `reply` slot and `RowReply` (focus in the box, an announced hint, Ctrl or Cmd+Enter sends outside an IME composition, Esc cancels).
+- Fixes found on the way: the popover specimens' open states no longer stop when the virtual-anchor script cannot find its button.
+
+Not in this release: HTML-only forms of the command menu's new extras, and pairing site-runtime's mcp-login consent style with the consent component.
 
 ## [0.99.1]
 

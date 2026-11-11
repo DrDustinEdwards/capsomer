@@ -69,6 +69,46 @@ export function outcomeSummary(outcomes: readonly BulkOutcome[]): string {
   return `${done} done, ${not} not done.`;
 }
 
+// The selection model a React list keeps (a server-rendered list keeps it in its checkboxes). The
+// one idea: the selection that counts is always the stored ids that are still in view, in the
+// rows' order, so a filter that hides a row can never leave it counted, gated or submitted.
+export function visibleSelection(
+  selected: ReadonlySet<string>,
+  rows: ReadonlyArray<{ id: string }>,
+): string[] {
+  return rows.filter((r) => selected.has(r.id)).map((r) => r.id);
+}
+
+// Every row in view is selected, and there is at least one (an empty page is not "all").
+export function allVisibleSelected(
+  selected: ReadonlySet<string>,
+  rows: ReadonlyArray<{ id: string }>,
+): boolean {
+  return rows.length > 0 && rows.every((r) => selected.has(r.id));
+}
+
+// Select all: the selection becomes exactly the rows in view; when they all are, it clears.
+// Replacing, not merging, so no id out of view stays selected unseen.
+export function toggleAllVisible(
+  selected: ReadonlySet<string>,
+  rows: ReadonlyArray<{ id: string }>,
+): Set<string> {
+  return allVisibleSelected(selected, rows) ? new Set() : new Set(rows.map((r) => r.id));
+}
+
+export function toggleOne(selected: ReadonlySet<string>, id: string): Set<string> {
+  const next = new Set(selected);
+  if (next.has(id)) next.delete(id);
+  else next.add(id);
+  return next;
+}
+
+// After an action: exactly the items that were not done stay selected, so the next press retries
+// those and nothing else.
+export function failedIds(outcomes: readonly BulkOutcome[]): Set<string> {
+  return new Set(outcomes.filter((o) => !o.ok).map((o) => o.id));
+}
+
 export interface BulkActionSpec {
   // The action's name: "bin", "archive".
   action: string;

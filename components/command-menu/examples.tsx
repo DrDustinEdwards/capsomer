@@ -2,7 +2,7 @@
 // types, through a fake source that answers after 300 ms. Titles are samples.
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { CommandMenu, type Command } from "./command-menu.react.tsx";
+import { CommandMenu, navCommands, useCommandHost, type Command } from "./command-menu.react.tsx";
 
 const CATALOG = [
   "Getting started with the editor",
@@ -63,7 +63,61 @@ function Live() {
   );
 }
 
+// The extras: mounted when the page is idle, the menu's pages as Go to commands, recents, a
+// search result's snippet with the typed words marked, and Ask as the way past the commands.
+const NAV = [
+  { id: "overview", label: "Overview", href: "#overview" },
+  { id: "media", label: "Media", href: "#media", group: "Content" },
+];
+function Extras() {
+  const [said, setSaid] = useState("");
+  const commands: Command[] = [
+    ...navCommands(NAV, (href) => setSaid(`Went to ${href}`)),
+    {
+      id: "note-field",
+      label: "Field notes",
+      group: "Articles",
+      snippet: "Notes from the spring survey of the north field.",
+      keywords: ["spring", "survey"],
+      run: () => setSaid("Opened Field notes"),
+    },
+  ];
+  const host = useCommandHost(commands);
+  return (
+    <>
+      <main className="specimen-page" tabIndex={-1}>
+        <h1>Home</h1>
+        <p>
+          <button type="button" className="cap-btn" onClick={() => host.setOpen(true)}>
+            Search
+          </button>
+        </p>
+        <p role="status" data-specimen-part="said">
+          {said}
+        </p>
+        <p data-specimen-part="ready">{host.ready ? "Menu ready" : "Menu not mounted"}</p>
+      </main>
+      {host.ready ? (
+        <CommandMenu
+          open={host.open}
+          onOpenChange={host.setOpen}
+          commands={commands}
+          recentKey="cap-cmd-specimen-recent"
+          ask={{ run: (q) => setSaid(`Asked: ${q}`) }}
+          bindKeys={false}
+        />
+      ) : null}
+    </>
+  );
+}
+
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {
+  if (el.dataset.mount === "extras")
+    createRoot(el).render(
+      <StrictMode>
+        <Extras />
+      </StrictMode>,
+    );
   if (el.dataset.mount === "live")
     createRoot(el).render(
       <StrictMode>

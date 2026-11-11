@@ -108,6 +108,15 @@ export interface ErrorPageProps {
   // Render the region as a div when the site's Layout already wraps every page in its main, so the
   // page keeps one main. Default "main".
   as?: "main" | "div";
+  // More ways out, after the home link: "Go to dashboard", "View demo".
+  actions?: ReactNode;
+  // A 410 is a page taken down on purpose: nothing went wrong, so it is no alert and offers no
+  // retry. `gone` names its one way out ("Read the blog", "/blog") in place of the home link.
+  gone?: { href: string; label: string };
+  // The site's own title band in place of the message's heading (a site that keeps a client's
+  // brand lays its error page out as an interior page): it gets the words and draws the h1; the
+  // sentence and the ways out follow it in the page's column.
+  hero?: (words: ErrorWords) => ReactNode;
 }
 
 export function ErrorPage({
@@ -123,12 +132,23 @@ export function ErrorPage({
   text,
   homeLabel = "Go to the home page",
   as: Region = "main",
+  actions,
+  gone,
+  hero,
 }: ErrorPageProps) {
   const found = errorWords(error);
   const words = { status: found.status, title: title ?? found.title, text: text ?? found.text };
   const thrown = dev && error instanceof Error ? error : null;
   const server = words.status >= 500;
-  const action = (
+  const withdrawn = words.status === 410;
+  const action = withdrawn ? (
+    <>
+      <a className="cap-btn" data-variant="primary" href={gone?.href ?? home}>
+        {gone?.label ?? homeLabel}
+      </a>
+      {actions}
+    </>
+  ) : (
     <>
       {server ? (
         // An empty href is this address: a reload that works before the page hydrates, and with no script.
@@ -140,7 +160,26 @@ export function ErrorPage({
       <a className="cap-btn" data-variant={server ? undefined : "primary"} href={home}>
         {homeLabel}
       </a>
+      {actions}
     </>
+  );
+  const message = hero ? (
+    <>
+      {hero(words)}
+      <div className="cap-error-page-body">
+        <p className="cap-empty-text">{thrown ? thrown.message : words.text}</p>
+        <div className="cap-empty-content">{action}</div>
+      </div>
+    </>
+  ) : (
+    <Empty
+      kind={withdrawn ? "nothing-yet" : "failed"}
+      titleAs="h1"
+      title={words.title}
+      action={action}
+    >
+      {thrown ? thrown.message : words.text}
+    </Empty>
   );
   return (
     <>
@@ -153,9 +192,7 @@ export function ErrorPage({
         className={className ? `cap-error-page ${className}` : "cap-error-page"}
         data-status={words.status}
       >
-        <Empty kind="failed" titleAs="h1" title={words.title} action={action}>
-          {thrown ? thrown.message : words.text}
-        </Empty>
+        {message}
         {children}
         {thrown?.stack ? (
           // Focusable and named: a region that scrolls must be reachable by keyboard.
@@ -166,5 +203,47 @@ export function ErrorPage({
       </Region>
       {siteFooter}
     </>
+  );
+}
+
+export interface SignedOutPageProps {
+  // The app's name: "Capsid Portal".
+  app: string;
+  // Where signing in starts again: the app's own address.
+  signIn: string;
+  // The person signed out here (true), or the session ended on its own (false).
+  byChoice: boolean;
+  // Under Access, an open Access session may sign the person straight back in: say so.
+  access?: boolean;
+  mainId?: string;
+}
+
+// The page an app shows once its session is gone: a polite status, one heading and one way back.
+// It is not an error (nothing failed), so it is a status, not an alert.
+export function SignedOutPage({
+  app,
+  signIn,
+  byChoice,
+  access,
+  mainId = "main",
+}: SignedOutPageProps) {
+  const text = byChoice
+    ? `You signed out of ${app} in this browser.${access ? " Signing in again may not ask for your email while your Access session is still open." : ""}`
+    : `Your ${app} session ended, so the page stopped updating.`;
+  return (
+    <main id={mainId} tabIndex={-1} className="cap-error-page" data-status="signed-out">
+      <meta name="robots" content="noindex" />
+      <div className="cap-empty" data-kind="nothing-yet" role="status">
+        <div className="cap-empty-header">
+          <h1 className="cap-empty-title">Signed out</h1>
+          <p className="cap-empty-text">{text}</p>
+        </div>
+        <div className="cap-empty-content">
+          <a className="cap-btn" data-variant="primary" href={signIn}>
+            {byChoice ? "Sign in again" : "Reload to sign in"}
+          </a>
+        </div>
+      </div>
+    </main>
   );
 }

@@ -81,7 +81,16 @@ function setArrow(popup: HTMLElement, side: Placement["side"], along: number): v
 // The fallback placement. The popup must already be showing (it is measured). Writes
 // --cap-popover-x / --cap-popover-y (and the arrow's --cap-arrow-x / --cap-arrow-y) on the
 // popup, sets data-placed to the side it landed on, and returns where it went.
-export function place(anchor: Element, popup: HTMLElement, options: PlaceOptions = {}): Placement {
+// Anything with a box: an element, or a virtual anchor such as a text selection's range.
+export interface VirtualAnchor {
+  getBoundingClientRect(): DOMRect;
+}
+
+export function place(
+  anchor: Element | VirtualAnchor,
+  popup: HTMLElement,
+  options: PlaceOptions = {},
+): Placement {
   const rtl = getComputedStyle(popup).direction === "rtl";
   const want = physical(options.side ?? sideOf(popup), rtl);
   const align = options.align ?? alignOf(popup);
@@ -448,6 +457,40 @@ export function attach(trigger: HTMLElement, popup: HTMLElement): () => void {
     me.hide();
     undo.forEach((f) => f());
     instances.delete(popup);
+  };
+}
+
+// Opens a popup at a virtual anchor (a text selection, a point in a canvas): shown, placed by
+// script beside the anchor's box, kept beside it as the page scrolls or resizes. Esc and a press
+// outside close it (a popover="auto" popup's own light dismiss), and focus goes back to
+// `returnFocus` (the editor the selection is in). Returns a function that closes it.
+export function openAt(
+  popup: HTMLElement,
+  anchor: VirtualAnchor,
+  options: PlaceOptions & { returnFocus?: HTMLElement | null } = {},
+): () => void {
+  const { returnFocus, ...placing } = options;
+  if (!isOpen(popup)) popup.showPopover();
+  const again = () => {
+    if (isOpen(popup)) place(anchor, popup, placing);
+  };
+  again();
+  const onToggle = (e: Event) => {
+    if ((e as ToggleEvent).newState !== "closed") return;
+    done();
+    returnFocus?.focus({ preventScroll: true });
+  };
+  const done = () => {
+    popup.removeEventListener("toggle", onToggle);
+    window.removeEventListener("scroll", again, true);
+    window.removeEventListener("resize", again);
+  };
+  popup.addEventListener("toggle", onToggle);
+  window.addEventListener("scroll", again, true);
+  window.addEventListener("resize", again);
+  return () => {
+    if (isOpen(popup)) popup.hidePopover();
+    else done();
   };
 }
 

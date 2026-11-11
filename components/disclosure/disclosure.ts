@@ -22,11 +22,40 @@ export function groupDepth(group: Element): number {
   return depth;
 }
 
+// Attaches to every expand toggle ([data-cap="expand"], a button with aria-expanded and
+// aria-controls) under root: a press shows or hides the region it names (a step's email, a table
+// row's detail row). Returns a function that detaches them.
+export function enhanceExpand(root: ParentNode = document): () => void {
+  const undo: Array<() => void> = [];
+  for (const button of root.querySelectorAll<HTMLElement>(
+    "[data-cap='expand']:not([data-cap-ready])",
+  )) {
+    button.dataset.capReady = "";
+    setGroup(button, button.getAttribute("aria-expanded") === "true");
+    const onClick = () => {
+      toggleGroup(button);
+      const swap =
+        button.dataset[
+          button.getAttribute("aria-expanded") === "true" ? "openLabel" : "closedLabel"
+        ];
+      const label = button.querySelector<HTMLElement>(".cap-expand-label");
+      if (swap && label) label.textContent = swap;
+    };
+    button.addEventListener("click", onClick);
+    undo.push(() => {
+      button.removeEventListener("click", onClick);
+      delete button.dataset.capReady;
+    });
+  }
+  return () => undo.forEach((f) => f());
+}
+
 // Attaches to every [data-cap="disclosure"] group under root. A collapsed group that holds
 // a critical item ([data-tone="crit"]) is opened, because critical items are never hidden.
 // Returns a function that detaches them.
 export function enhance(root: ParentNode = document): () => void {
   const undo: Array<() => void> = [];
+  undo.push(enhanceExpand(root));
   for (const group of root.querySelectorAll<HTMLElement>(
     ".cap-group[data-cap='disclosure']:not([data-cap-ready])",
   )) {

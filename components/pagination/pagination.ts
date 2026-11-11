@@ -46,6 +46,96 @@ export function pageCountOf(total: number, perPage: number): number {
   return perPage > 0 ? Math.max(1, Math.ceil(total / perPage)) : 1;
 }
 
+// The page an address asks for: `?page=` read strictly. Only whole digits count ("2", not "2.5",
+// "-1", "1e3" or "2abc"), and only a safe integer from 1; anything else is page 1. A loader then
+// keeps it inside the list with pageEnvelope (a page past the end shows the last page).
+export function parsePage(raw: string | null | undefined): number {
+  if (raw == null || !/^\d+$/.test(raw)) return 1;
+  const n = Number(raw);
+  return Number.isSafeInteger(n) && n >= 1 ? n : 1;
+}
+
+export interface PageEnvelope {
+  // The page shown, kept inside 1 to pageCount.
+  page: number;
+  perPage: number;
+  total: number;
+  // At least 1: an empty list still has its one page (an empty state, not a 404).
+  pageCount: number;
+  // Rows to skip for this page (SQL OFFSET).
+  offset: number;
+  // The first and last item on the page, counted from 1 (0 and 0 when the list is empty).
+  from: number;
+  to: number;
+  hasPrev: boolean;
+  hasNext: boolean;
+}
+
+// Everything a list page needs from its total: the page kept in range, the offset to query, the
+// range shown and whether there is a way back or on. `perPage` "all" shows the whole list on one page.
+export function pageEnvelope(page: number, perPage: number | "all", total: number): PageEnvelope {
+  const count = Math.max(0, Math.floor(total));
+  const size = perPage === "all" ? Math.max(1, count) : Math.max(1, Math.floor(perPage));
+  const pageCount = pageCountOf(count, size);
+  const at = Math.min(Math.max(1, Math.floor(page) || 1), pageCount);
+  const { from, to } = showingRange(at, size, count);
+  return {
+    page: at,
+    perPage: size,
+    total: count,
+    pageCount,
+    offset: (at - 1) * size,
+    from,
+    to,
+    hasPrev: at > 1,
+    hasNext: at < pageCount,
+  };
+}
+
+// The address of one page of a list: the path, the list's other parameters with their empty or
+// default values left out, and `page` only past the first (page 1 is the bare address, so one
+// page has one address). Parameter order is kept, so the same list always has the same address.
+export function pageHref(
+  path: string,
+  params: URLSearchParams | Record<string, string | number | boolean | null | undefined>,
+  page: number,
+  options: { param?: string } = {},
+): string {
+  const key = options.param ?? "page";
+  const out = new URLSearchParams();
+  const entries =
+    params instanceof URLSearchParams ? [...params.entries()] : Object.entries(params);
+  for (const [name, value] of entries) {
+    if (name === key || value == null || value === "" || value === false) continue;
+    out.append(name, value === true ? "1" : String(value));
+  }
+  if (page > 1) out.set(key, String(Math.floor(page)));
+  const query = out.toString();
+  return query ? `${path}?${query}` : path;
+}
+
+// The pages before and after this one, for `<link rel="prev">` and `<link rel="next">` in the
+// head (a route's links export), so crawlers and readers that follow them find the series.
+export function pageRelLinks(
+  page: number,
+  pageCount: number,
+  hrefFor: (page: number) => string,
+): Array<{ rel: "prev" | "next"; href: string }> {
+  const links: Array<{ rel: "prev" | "next"; href: string }> = [];
+  if (page > 1) links.push({ rel: "prev", href: hrefFor(page - 1) });
+  if (page < pageCount) links.push({ rel: "next", href: hrefFor(page + 1) });
+  return links;
+}
+
+// A count line for a list that shows some of a total without a page range (the first rows of a
+// queue, a filtered view): "Showing 20 of 312 mentions", or "12 mentions" when every one is shown.
+// `one` is the singular ("mention") for a count of 1.
+export function countText(shown: number, total: number, noun = "items", one?: string): string {
+  const word = (n: number) => (n === 1 && one ? one : noun);
+  if (total <= 0) return `No ${noun}`;
+  return total > shown ? `Showing ${shown} of ${total} ${word(total)}` : `${total} ${word(total)}`;
+}
+
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   className?: string,
