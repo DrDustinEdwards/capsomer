@@ -18,3 +18,8 @@
   padding: 0;
   list-style: none;
 }
+
+/* A narrow column, so a long phrase has to wrap. */
+.status-sample-narrow {
+  max-inline-size: 16rem;
+}

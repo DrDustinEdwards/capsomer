@@ -3,9 +3,10 @@
 
 /* The sortable list: rows or cards a person puts in order. Each item is a handle (the grip
    a pointer drags and the keyboard picks up), the host's own content, and Move up and Move
-   down, the one-pointer way and the way with no script. An item that is up (by keyboard)
-   or under the pointer is raised and edged in the accent, so the cue is a shape and an
-   edge as well as a color. */
+   down, the one-pointer way and the way with no script; and where the list allows, Remove and
+   a Move to select. An item that is up (by keyboard) or under the pointer is raised and edged
+   in the accent, so the cue is a shape and an edge as well as a color. The "stack" layout is a
+   card per line with a head line over its content, for an item whose body is fields. */
 @layer cap.components {
   .cap-sortable {
     box-sizing: border-box;
@@ -21,6 +22,9 @@
     &[data-layout="cards"] {
       grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
       gap: var(--gap);
+    }
+    &[data-layout="stack"] {
+      gap: var(--space-3);
     }
 
     &[data-sorting] {
@@ -52,12 +56,12 @@
     }
   }
 
-  /* A card: the handle and the buttons on a top line, the content below. */
-  .cap-sortable[data-layout="cards"] > .cap-sortable-item {
+  /* A card: the handle, the head and the buttons on a top line, the content below. */
+  .cap-sortable:is([data-layout="cards"], [data-layout="stack"]) > .cap-sortable-item {
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-template-areas:
-      "handle . steps"
+      "handle head steps"
       "body body body";
     align-items: start;
     padding: var(--space-2) var(--space-2) var(--pad-card);
@@ -66,6 +70,9 @@
     & > .cap-sortable-handle {
       grid-area: handle;
     }
+    & > .cap-sortable-head {
+      grid-area: head;
+    }
     & > .cap-sortable-steps {
       grid-area: steps;
     }
@@ -73,6 +80,29 @@
       grid-area: body;
       padding-inline: calc(var(--pad-card) - var(--space-2));
     }
+  }
+  /* With no handle (a read-only list) the head starts the line. */
+  .cap-sortable:is([data-layout="cards"], [data-layout="stack"])[data-readonly] > .cap-sortable-item {
+    grid-template-areas:
+      "head steps"
+      "body body";
+    grid-template-columns: 1fr auto;
+    padding-inline: var(--pad-card);
+
+    & > .cap-sortable-body {
+      padding-inline: 0;
+    }
+  }
+  .cap-sortable[data-readonly] > .cap-sortable-item:not([data-has-head]) {
+    padding-inline: var(--space-3);
+  }
+
+  /* A line in the item's head: "Step 3", a title. */
+  .cap-sortable-head {
+    flex: none;
+    min-width: 0;
+    align-self: center;
+    font-weight: 600;
   }
 
   .cap-sortable-handle {
@@ -120,6 +150,9 @@
   .cap-sortable-steps {
     flex: none;
     display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: end;
     gap: var(--space-1);
 
     /* Quiet until wanted; a button at an end keeps the button's own disabled look. */
@@ -147,6 +180,34 @@
   }
   .cap-sortable[data-layout="cards"] .cap-sortable-label {
     white-space: normal;
+  }
+
+  /* An empty list says so in a dashed place the pointer can drop into; it goes once the list has
+     an item. */
+  .cap-sortable-empty {
+    padding: var(--space-4);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-m);
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    list-style: none;
+  }
+  .cap-sortable:has(> .cap-sortable-item) > .cap-sortable-empty {
+    display: none;
+  }
+
+  /* The Add button under a list; and a board of lists whose items move between them. */
+  .cap-sortable + [data-cap-part="add"] {
+    margin-block-start: var(--space-3);
+  }
+  .cap-sortable-board {
+    display: grid;
+    gap: var(--gap);
+  }
+  .cap-sortable-lane {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
   }
 
   @media (prefers-reduced-motion: no-preference) {
