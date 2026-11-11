@@ -7,7 +7,10 @@ export interface DisclosureProps {
   name?: string;
   defaultOpen?: boolean;
   // "accordion": shadcn's flat look, a rule between items and the chevron at the end.
-  variant?: "accordion";
+  // "card": each section its own rounded card, with a plus that turns to a cross.
+  variant?: "accordion" | "card";
+  // "sm" on the card: the compact card for a form or a list behind its title.
+  size?: "sm";
 }
 
 // A show/hide section: native <details>, so it works before JavaScript and with none.
@@ -17,11 +20,13 @@ export function Disclosure({
   name,
   defaultOpen = false,
   variant,
+  size,
 }: DisclosureProps) {
   return (
     <details
       className="cap-disclosure"
       data-variant={variant}
+      data-size={size}
       name={name}
       open={defaultOpen || undefined}
     >

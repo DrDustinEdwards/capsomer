@@ -187,4 +187,28 @@ eachTheme((theme) => {
     await expect(frame.getByRole("table")).toHaveCount(1);
     await expect(frame.getByRole("row", { name: /Tue, Sep 29/ })).toHaveCount(1);
   });
+  test("behavior: a static tile is text: no link, no button, no tab stop, and every tone reaches its contrast", async ({
+    page,
+  }) => {
+    await visitStates(page, "stat-tile", theme);
+    const sec = "section[aria-labelledby='s-static']";
+    await expect(page.locator(`${sec} .cap-tile`)).toHaveCount(6);
+    await expect(page.locator(`${sec} a, ${sec} button`)).toHaveCount(0);
+    await expect(page.locator(`${sec} .cap-tile`).first()).toHaveCSS("cursor", "default");
+    // The label comes before the figure, so it reads "Open rate 41% +3 points".
+    await expect(page.locator(`${sec} .cap-tile`).nth(1)).toHaveText(
+      /^Open rate\s*41%\s*\+3 points\s*Against/,
+    );
+    await expectContrast(page, [
+      { sel: `${sec} .cap-tile-label`, what: "a static tile's label" },
+      { sel: `${sec} .cap-tile-detail`, what: "a static tile's note" },
+      { sel: `${sec} .cap-tile-delta[data-tone='ok']`, what: "a good delta" },
+      { sel: `${sec} .cap-tile-delta[data-tone='crit']`, what: "a bad delta" },
+      { sel: `${sec} [data-tone='crit'] .cap-tile-figure`, what: "a critical static figure" },
+      {
+        sel: "section[aria-labelledby='s-static-lg'] [data-tone='accent'] .cap-tile-figure",
+        what: "an accent figure",
+      },
+    ]);
+  });
 });

@@ -4,13 +4,17 @@ title: Tabs
 summary: A list of tabs that show one panel at a time, or the same list as links to other pages.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [default tray, line variant, vertical, count, disabled tab, manual activation, address follows the tab, links with the current page, narrow list scrolls, comfortable density]
+states: [default tray, line variant, pill variant dragged, vertical, count, disabled tab, manual activation, address follows the tab, progressive and remembered, links with the current page, page tabs, narrow list scrolls, comfortable density]
 added: 0.3.0
-source: The site admin's status tabs (app/components/admin/posts-filters.tsx, .posts-tab) and mention filters (app/routes/admin.mentions.tsx, .admin-chip); shadcn/ui Tabs for the panel form
+updated: 0.92.0
+source: The site admin's status tabs (app/components/admin/posts-filters.tsx, .posts-tab) and mention filters (app/routes/admin.mentions.tsx, .admin-chip); shadcn/ui Tabs for the panel form; dustinedwards.info's remembered platform tabs (app/enhance/platforms.ts); bsw's draggable pill switcher (app/islands/editing-demo.ts); the Capsid Portal's ?tab= page tabs (dashboard/src/ui/pagetabs.tsx)
 replaces:
   - 'role="tablist"'
   - 'class="(?:[^"]*\s)?(posts-tab|tabs?-(list|trigger)|tab-list)[\s"]'
   - 'className="(?:[^"]*\s)?(posts-tab|tab-list)[\s"]'
+  - 'data-platforms|procedure-platform-tabs'
+  - 'psms-(glass-track|pill|track-label)'
+  - 'export function (PageTabs|TabLink)\b'
 ---
 
 # Tabs
@@ -43,6 +47,10 @@ Two ways to the same look. **Panels**: a `tablist` of buttons and the `tabpanel`
 - **The list scrolls, never clips,** on a narrow space; the chosen tab is scrolled into view. shadcn's list does not scroll.
 - **A disabled tab is struck through,** passed over by arrow keys, and not chosen by a click.
 - **A count is text.** The accessible name reads "Runs 24". Do not hide it from the name: it is part of what the tab is.
+- **Progressive tabs work with no script** (`data-progressive`). The server sends the list as links to the panels (`href="#id"`) and every panel showing, each under its own name (`.cap-tabs-panel-label`): the whole page with script off, on paper and for a machine. `enhance()` turns the links into tabs; the label goes, since the tab names the panel. A print shows every panel again.
+- **A remembered choice** (`data-remember="<key>"`): the reader's choice is kept on the device and chosen in every set, on every page, that names the same key, and in other open windows. With nothing kept, `data-remember-guess="platform"` starts on the reader's system (a tab whose `data-value` is `windows`, `macos` or `linux`), else the first tab. A tab's value is its `data-value`, else its panel's id. Storage that is refused leaves the choice to the page. An address with the panel's hash still wins.
+- **The pill can be dragged** (`data-variant="pill"`, horizontal). A press that moves slides the pill with the pointer, held between the first and last tab, the tab under it drawn as it will be; letting go chooses the tab nearest the pill, which settles on it with a little spring. A press that does not move is a click. Arrow keys, Home and End are the keyboard's way, the same as every tab list, so the drag is never the only way (WCAG 2.5.7, Dragging Movements). A sideways drag is the pill's; an up or down swipe still scrolls the page. Each tab's `data-tone` (`accent`, `info`, `ok`, `warn`, `crit`) colors the pill while it is chosen; the label stays in the text color, so its contrast holds. For two to four short tabs: a list that has to scroll is the tray's.
+- **Page tabs are links to the page itself with `?tab=`** (`PageTabs`): the first tab is the bare address, every other query parameter is kept, so Back, a bookmark, a reload and an alert's link all reach a tab. The line variant by default.
 - **The address can follow the tab** (`data-sync="hash"`): the panel's id goes after the `#` (replacing the entry, so Back does not step through every click), and a link with that hash opens the tab.
 
 - **A link slot, so a tab link can be an app's router link.** `TabsNav` takes `renderLink` (and a `TabLink` takes its own, which wins): a function given a plain `<a>`'s props with `href` always set, the tab's class (`cap-tab`) and `aria-current="page"` already on it, and the count inside; the app returns its router's `<Link to={props.href} {...props} />`. The tab keeps its look, its count and its current state, and a click navigates in the app with no page load, the router's way. Without `renderLink` a `TabLink` is a plain `<a>`, as before. Same shape as the shell's `renderLink`.
@@ -62,9 +70,9 @@ Panels:
 | Home, End | First or last tab |
 | Enter, Space | Chooses the focused tab (manual activation) |
 
-A disabled tab is skipped by every key above.
+A disabled tab is skipped by every key above. Progressive tabs and the pill take the same keys. The pill's drag is for a pointer only and is never the only way to choose.
 
-Links:
+Links (and page tabs):
 
 | Key | Does |
 | --- | --- |
@@ -75,6 +83,8 @@ Links:
 
 - Panels: `role="tablist"` named by `aria-label`, `role="tab"` with `aria-selected` and `aria-controls`, `role="tabpanel"` with `aria-labelledby`. A roving `tabindex`: the chosen tab is 0, the rest -1. A vertical list also has `aria-orientation="vertical"`. A panel has `tabindex="0"`, so a person who tabs past the list lands on its content even when it holds nothing focusable.
 - Links: a `nav` named by `aria-label`, the current link `aria-current="page"`. No tab roles: they are links.
+- Progressive: before script, links to the panels (in-page links, each panel under its own visible name); after, the full tab roles above, the list named by its `data-label` (or `aria-label`). The links keep their `href`; a click chooses the tab and does not jump the page.
+- Pill: the drag is a pointer's extra (WCAG 2.5.7): a click and the arrow keys choose every tab. The chosen tab is still marked by its edge and weight, not by the tone alone.
 - A disabled tab has `aria-disabled="true"`. It is not removed from the page.
 - Contrast: tab text 4.5:1 on the tray and on the raised tab; the chosen tab's edge and the line variant's rule 3:1.
 - Hit areas are at least `var(--target)`; forced colors draw the chosen tab in Highlight.
@@ -99,9 +109,26 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </nav>
 ```
 
-Attributes: on `.cap-tabs` `data-orientation="vertical"`, `data-activation="manual"`, `data-sync="hash"`; on `.cap-tabs-list` `data-variant="line"`, `data-size="sm|lg"`, `data-fill`. `import { enhance, select, nextTab } from "capsomer/behavior/tabs"`: `enhance()` attaches every `[data-cap="tabs"]`; `select(root, tab)` chooses one from script. A choice fires `cap:tabs-change` (bubbles; `detail.tab`, `detail.panel`).
+A panel is usually a child of `.cap-tabs`; a layout may wrap the panels (a column of notes beside them), so long as no tab set nested inside holds them.
 
-In React, `import { Tabs, TabsList, TabsTrigger, TabsContent, TabsNav, TabLink } from "capsomer/react/tabs"`:
+Progressive and remembered (the server's HTML; `enhance()` adds the roles, `tabindex`, `aria-selected` and `hidden`):
+
+```html
+<div class="cap-tabs" data-cap="tabs" data-progressive data-remember="platform" data-remember-guess="platform">
+  <div class="cap-tabs-list" data-variant="line" data-label="Platform">
+    <a class="cap-tab" href="#install-macos" data-value="macos">macOS</a>
+    <a class="cap-tab" href="#install-windows" data-value="windows">Windows</a>
+  </div>
+  <div class="cap-tabs-panel" id="install-macos"><p class="cap-tabs-panel-label">macOS</p>...</div>
+  <div class="cap-tabs-panel" id="install-windows"><p class="cap-tabs-panel-label">Windows</p>...</div>
+</div>
+```
+
+The pill: `data-variant="pill"` on the list, `data-tone` on a tab. A site's look: `--cap-tabs-tray` (the tray's background, a gradient is fine), `--cap-tab-mark` (the pill's fill, a color: a tone is mixed into it), `--cap-tab-mark-edge`, `--cap-tab-mark-shadow`, set on the list or above it.
+
+Attributes: on `.cap-tabs` `data-orientation="vertical"`, `data-activation="manual"`, `data-sync="hash"`, `data-progressive`, `data-remember="<key>"`, `data-remember-guess="platform"`; on `.cap-tabs-list` `data-variant="line|pill"`, `data-size="sm|lg"`, `data-fill`, `data-label`; on `.cap-tab` `data-value`, `data-tone`. `import { enhance, select, nextTab, upgrade, attachPillDrag, readRemembered, writeRemembered, onRemembered, guessPlatform, tabParam, pageTabHref } from "capsomer/behavior/tabs"`: `enhance()` attaches every `[data-cap="tabs"]`; `select(root, tab)` chooses one from script. A choice fires `cap:tabs-change` (bubbles; `detail.tab`, `detail.panel`); a remembered one also `cap:tabs-remember` on window (`detail.key`, `detail.value`). The storage is `localStorage["capsomer.tabs.<key>"]`, in try/catch; it moves to 0.91.0's `useRemembered` when that lands.
+
+In React, `import { Tabs, TabsList, TabsTrigger, TabsContent, TabsNav, TabLink, PageTabs } from "capsomer/react/tabs"`:
 
 ```tsx
 <Tabs defaultValue="overview">
@@ -121,6 +148,27 @@ In React, `import { Tabs, TabsList, TabsTrigger, TabsContent, TabsNav, TabLink }
 ```
 
 `value` and `onValueChange` control the chosen tab. With a router's link component, give it `className="cap-tab"` and `aria-current`, and wrap the links in `TabsNav`.
+
+Remembered, a pill, and page tabs in React:
+
+```tsx
+<Tabs defaultValue="macos" remember="platform" rememberGuess="platform">...</Tabs>
+
+<Tabs defaultValue="simple">
+  <TabsList aria-label="Markup view" variant="pill">
+    <TabsTrigger value="original" tone="info">Original</TabsTrigger>
+    <TabsTrigger value="simple" tone="ok">Simple markup</TabsTrigger>
+  </TabsList>
+  ...
+</Tabs>
+
+const search = useLocation().search;
+<PageTabs aria-label="Agents" path="/agents" search={search} current={tabParam(search) ?? "active"}
+  tabs={[{ id: "active", label: "Active", count: 3 }, { id: "history", label: "History" }]}
+  renderLink={({ href, ...props }) => <Link to={href} {...props} />} />
+```
+
+`Tabs` reads a remembered choice after hydration, so the server's tab paints first and the reader's follows.
 
 A router link in React:
 

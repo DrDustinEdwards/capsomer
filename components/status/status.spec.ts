@@ -70,6 +70,49 @@ eachTheme((theme) => {
     expect(hidden).toBe(true);
   });
 
+  test("behavior: every state mark has its own shape, and a long phrase wraps with its glyph on the first line", async ({
+    page,
+  }) => {
+    await visitStates(page, "status", theme);
+    const shapes = await page
+      .locator("#sample-marks .cap-status-glyph")
+      .evaluateAll((svgs) => svgs.map((s) => s.innerHTML));
+    expect(shapes).toHaveLength(8);
+    expect(new Set(shapes).size).toBe(8);
+    await expectContrast(page, [
+      { sel: "#sample-marks li:nth-child(1) .cap-status", what: "a queued word" },
+      { sel: "#sample-marks li:nth-child(3) .cap-status", what: "a blocked word" },
+      { sel: "#sample-marks li:nth-child(8) .cap-status", what: "a site-down word" },
+      { sel: "#sample-mark-pills li:nth-child(1) .cap-pill", what: "a queued pill" },
+      { sel: "#sample-wrap", what: "a wrapped hold reason" },
+      { sel: "#sample-accent [data-variant='accent']:first-child", what: "an accent badge" },
+      {
+        sel: "#sample-accent [data-family='purple']",
+        what: "an accent badge in another family",
+      },
+      { sel: "#sample-series .cap-pill", what: "a series badge" },
+      { sel: "#sample-glyph li:nth-child(1)", what: "a name beside a glyph" },
+    ]);
+    const wrap = page.locator("#sample-wrap");
+    const lines = await wrap.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const line = parseFloat(getComputedStyle(el).lineHeight);
+      return { height: r.height, line };
+    });
+    expect(lines.height, "wrapped onto more than one line").toBeGreaterThan(lines.line * 1.5);
+    const glyphTop = await wrap
+      .locator(".cap-status-glyph")
+      .evaluate((g) => g.getBoundingClientRect().top);
+    const wrapTop = await wrap.evaluate((el) => el.getBoundingClientRect().top);
+    expect(glyphTop - wrapTop, "the glyph sits by the first line").toBeLessThan(8);
+    // A series dot is a dot, never the only carrier: the word is beside it.
+    await expect(page.locator("#sample-series .cap-pill-dot")).toHaveCount(4);
+    await expect(page.locator("#sample-series .cap-pill-dot").first()).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+  });
+
   test("accessibility: a brief no data says two words to the eye and its reason to a screen reader", async ({
     page,
   }) => {

@@ -281,6 +281,132 @@ eachTheme((theme) => {
     await expect(said(l)).toHaveText("Moved What the river keeps to position 3 of 3.");
   });
 
+  test("behavior: repeatable rows add, remove and put in order, and what is typed in a row goes with it", async ({
+    page,
+  }) => {
+    const hosts = page.locator("[data-mount='hosts']");
+    const l = hosts.getByRole("list", { name: "Hosts" });
+    const add = hosts.getByRole("button", { name: "Add host" });
+    await hosts.getByRole("textbox", { name: "Host 1 name" }).fill("Alex R.");
+    await hosts.getByRole("button", { name: "Move Alex R. down" }).click();
+    // The row's field moved with it: the first row is now Sam Lee, the second holds what was typed.
+    await expect(hosts.getByRole("textbox", { name: "Host 1 name" })).toHaveValue("Sam Lee");
+    await expect(hosts.getByRole("textbox", { name: "Host 2 name" })).toHaveValue("Alex R.");
+    // Add puts focus in the new row's first field, says so, and is off at three rows.
+    await add.click();
+    await expect(hosts.getByRole("textbox", { name: "Host 3 name" })).toBeFocused();
+    await expect(said(l)).toHaveText("Added Host 3. 3 in the list.");
+    await expect(add).toBeDisabled();
+    // Remove puts focus on the row that took its place, and says how many are left.
+    await hosts.getByRole("button", { name: "Remove Sam Lee" }).click();
+    await expect(said(l)).toHaveText("Removed Sam Lee. 2 left.");
+    expect(await focusedName(page)).toBe("Move Alex R.");
+    await expect(add).toBeEnabled();
+    // At none the list says so, and focus goes to Add.
+    await hosts
+      .getByRole("button", { name: /^Remove/ })
+      .first()
+      .click();
+    await hosts
+      .getByRole("button", { name: /^Remove/ })
+      .first()
+      .click();
+    await expect(l).toContainText("No hosts yet.");
+    await expect(add).toBeFocused();
+  });
+
+  test("keyboard: Alt and an arrow anywhere in a step moves it, in the host's words, and the head follows", async ({
+    page,
+  }) => {
+    const steps = page.locator("[data-mount='steps']");
+    const l = steps.getByRole("list", { name: "Steps" });
+    const first = l.getByRole("textbox").first();
+    await first.focus();
+    await page.keyboard.press("Alt+ArrowDown");
+    expect(await order(l)).toEqual(["s2", "s1", "s3"]);
+    await expect(first, "focus stays in the field that was typed in").toBeFocused();
+    await expect(said(l)).toHaveText("Moved to step 2 of 3.");
+    await expect(l.locator(".cap-sortable-head")).toHaveText(["Step 1", "Step 2", "Step 3"]);
+    await expect(l.getByRole("button", { name: /Move .* down/ }).first()).toHaveAttribute(
+      "aria-keyshortcuts",
+      "Alt+ArrowDown",
+    );
+  });
+
+  test("behavior: items move between lists by the select, by the arrows past an end, and by dragging", async ({
+    page,
+  }) => {
+    const b = page.locator("[data-mount='sections']");
+    const out = page.locator("#sections-out");
+    const lane = (name: string) => b.getByRole("list", { name });
+    const announce = b.locator("xpath=following-sibling::*[@data-cap-part='announce'][1]");
+    // The select in each item is the one-pointer way across lists.
+    await b
+      .getByRole("combobox", { name: "Move Release notes for the new protocol to" })
+      .selectOption("posters");
+    expect(await order(lane("Posters"))).toEqual(["a3", "a2"]);
+    await expect(out).toHaveText("talks: a1; posters: a3, a2; late: none");
+    await expect(announce).toHaveText(
+      "Moved Release notes for the new protocol to Posters: position 2 of 2.",
+    );
+    // The arrow past the end of a list goes on into the next one, and the grip keeps focus.
+    const grip = b.getByRole("button", {
+      name: "Move Getting started with field samples",
+      exact: true,
+    });
+    await grip.focus();
+    await page.keyboard.press("Space");
+    await page.keyboard.press("ArrowDown");
+    expect(await order(lane("Posters"))).toEqual(["a1", "a3", "a2"]);
+    expect(await focusedName(page)).toBe("Move Getting started with field samples");
+    await page.keyboard.press("Space");
+    await expect(out).toHaveText("talks: none; posters: a1, a3, a2; late: none");
+    // A drag into another list lands where the pointer is.
+    await drag(
+      page,
+      b.getByRole("button", { name: "Move Field notes on slow growth", exact: true }),
+      lane("Late additions"),
+      "top",
+    );
+    await page.mouse.up();
+    await expect(out).toHaveText("talks: none; posters: a1, a2; late: a3");
+    // Locked, the order is shown with no grip and no buttons.
+    await b.getByRole("checkbox", { name: "Published (locked)" }).check();
+    await expect(b.getByRole("button")).toHaveCount(0);
+    await expect(b.getByRole("combobox")).toHaveCount(0);
+    await expect(lane("Posters").getByRole("listitem")).toHaveCount(2);
+  });
+
+  test("behavior: lists in one data-group move items between them, by the select, Alt and the arrows, and Remove asks the page", async ({
+    page,
+  }) => {
+    const out = page.locator("#group-out");
+    const talks = page.locator("#talks");
+    const posters = page.locator("#posters");
+    await page.getByRole("combobox", { name: "Move Release notes to" }).selectOption("posters");
+    await expect(out).toHaveText("t2: talks to posters, now posters: p1, t2.");
+    expect(await order(posters)).toEqual(["p1", "t2"]);
+    await expect(page.getByRole("combobox", { name: "Move Release notes to" })).toHaveValue(
+      "posters",
+    );
+    // Alt and an arrow on a grip moves one place.
+    await page.getByRole("button", { name: "Move Getting started", exact: true }).focus();
+    await page.keyboard.press("Alt+ArrowDown");
+    await expect(out).toHaveText("t1: talks to talks, now talks: t1.");
+    // An arrow past the end of the list goes on into the next one.
+    await page.keyboard.press("Space");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Space");
+    expect(await order(posters)).toEqual(["t1", "p1", "t2"]);
+    expect(await order(talks)).toEqual([]);
+    // Remove: the page hears it, and the item goes.
+    await page.getByRole("button", { name: "Remove Field notes" }).click();
+    await expect(out).toHaveText("Remove p1 from posters.");
+    expect(await order(posters)).toEqual(["t1", "t2"]);
+    // The empty list says so.
+    await expect(talks.locator(".cap-sortable-empty")).toBeVisible();
+  });
+
   test("behavior: with no script the buttons post the move and the list posts its order", async ({
     page,
   }) => {

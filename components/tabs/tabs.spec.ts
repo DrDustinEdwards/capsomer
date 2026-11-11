@@ -366,4 +366,134 @@ eachTheme((theme) => {
       { sel: "[data-mount='router'] a.cap-tab:not([aria-current])", what: "another router tab" },
     ]);
   });
+  test("behavior: progressive tabs arrive as links to every panel and become tabs, the panel labels going", async ({
+    page,
+  }) => {
+    const html = await (await page.request.get("components/tabs/states.html")).text();
+    expect(html).toContain('<a class="cap-tab" href="#tg-install-windows" data-value="windows">');
+    expect(html).not.toContain('id="tg-install-windows" hidden');
+    await page.addInitScript(() =>
+      localStorage.setItem("capsomer.tabs.specimen-platform", "linux"),
+    );
+    await visitStates(page, "tabs", theme);
+    const set = page.locator("#tabs-progressive");
+    await expect(set.getByRole("tablist", { name: "Platform" })).toBeVisible();
+    await expect(set.getByRole("tab", { name: "Linux" })).toHaveAttribute("aria-selected", "true");
+    await expect(set.getByRole("tabpanel", { name: "Linux" })).toBeVisible();
+    await expect(page.locator("#tg-install-macos")).toBeHidden();
+    await expect(set.locator(".cap-tabs-panel-label")).toHaveCount(3);
+    for (const label of await set.locator(".cap-tabs-panel-label").all())
+      await expect(label).toBeHidden();
+  });
+
+  test("keyboard: progressive tabs move with the arrows and a click does not jump the page", async ({
+    page,
+  }) => {
+    await page.addInitScript(() =>
+      localStorage.setItem("capsomer.tabs.specimen-platform", "macos"),
+    );
+    await visitStates(page, "tabs", theme);
+    const set = page.locator("#tabs-progressive");
+    await set.getByRole("tab", { name: "macOS" }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(set.getByRole("tab", { name: "Windows" })).toBeFocused();
+    await expect(set.getByRole("tabpanel", { name: "Windows" })).toBeVisible();
+    await set.getByRole("tab", { name: "Linux" }).click();
+    expect(new URL(page.url()).hash).toBe("");
+    await expect(set.getByRole("tabpanel", { name: "Linux" })).toBeVisible();
+  });
+
+  test("behavior: a remembered choice is kept on the device and followed by every set with the same key", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      if (!sessionStorage.getItem("seeded")) {
+        localStorage.setItem("capsomer.tabs.specimen-platform", "macos");
+        sessionStorage.setItem("seeded", "1");
+      }
+    });
+    await visitStates(page, "tabs", theme);
+    const first = page.locator("#tabs-progressive");
+    const second = page.locator("#tabs-progressive-2");
+    await expect(second.getByRole("tab", { name: "macOS" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await first.getByRole("tab", { name: "Windows" }).click();
+    await expect(second.getByRole("tab", { name: "Windows" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await expect(page.locator("#tg-run-windows")).toBeVisible();
+    expect(await page.evaluate(() => localStorage.getItem("capsomer.tabs.specimen-platform"))).toBe(
+      "windows",
+    );
+    await page.reload();
+    await expect(first.getByRole("tab", { name: "Windows" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+  });
+
+  test("behavior: with nothing remembered the reader's system is chosen", async ({ browser }) => {
+    const context = await browser.newContext({
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)",
+    });
+    const page = await context.newPage();
+    await visitStates(page, "tabs", theme);
+    await expect(
+      page.locator("#tabs-progressive").getByRole("tab", { name: "Windows" }),
+    ).toHaveAttribute("aria-selected", "true");
+    await context.close();
+  });
+
+  test("behavior: dragging the pill moves it to the tab it is let go nearest, and a click still chooses", async ({
+    page,
+  }) => {
+    await visitStates(page, "tabs", theme);
+    const set = page.locator("#tabs-pill");
+    const box = async (sel: string) => {
+      const b = await page.locator(sel).boundingBox();
+      if (!b) throw new Error(`no box for ${sel}`);
+      return b;
+    };
+    const from = await box("#tp-simple");
+    const to = await box("#tp-all");
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x + from.width / 2 + 20, from.y + from.height / 2, { steps: 4 });
+    await expect(set.getByRole("tablist")).toHaveAttribute("data-dragging", "");
+    await page.mouse.move(to.x + to.width / 2 + 200, to.y + to.height / 2, { steps: 8 });
+    await expect(page.locator("#tp-all")).toHaveAttribute("data-near", "");
+    await page.mouse.up();
+    await expect(page.locator("#tp-all")).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator("#tpp-all")).toBeVisible();
+    await expect(set.getByRole("tablist")).not.toHaveAttribute("data-dragging", "");
+    await page.locator("#tp-original").click();
+    await expect(page.locator("#tp-original")).toHaveAttribute("aria-selected", "true");
+  });
+
+  test("behavior: page tabs keep the page's other parameters, the first tab the bare address", async ({
+    page,
+  }) => {
+    await visitStates(page, "tabs", theme);
+    const nav = page.locator("[data-mount='page-tabs']");
+    await expect(nav.getByRole("link", { name: "Active 3" })).toHaveAttribute(
+      "href",
+      "/agents?q=draft",
+    );
+    await expect(nav.getByRole("link", { name: "Paused 1" })).toHaveAttribute(
+      "href",
+      "/agents?q=draft&tab=paused",
+    );
+    await nav.getByRole("link", { name: "History" }).click();
+    await expect(nav.locator("[data-router-path]")).toHaveAttribute(
+      "data-router-path",
+      "/agents?q=draft&tab=history",
+    );
+    await expect(nav.getByRole("link", { name: "History" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
 });
