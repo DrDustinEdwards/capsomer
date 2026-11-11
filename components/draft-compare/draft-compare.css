@@ -502,4 +502,100 @@
       border-width: 3px;
     }
   }
+
+  /* The merge mode: each difference as two columns, mine and theirs, with the pick under them. The side
+     left out is set back on the sunken ground with a dashed edge, and its heading says so, so the merged
+     text reads down the kept sides without relying on the tint. */
+  .cap-merge {
+    container: cap-merge / inline-size;
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+    color: var(--text);
+  }
+  .cap-merge-intro {
+    margin: 0;
+    max-inline-size: var(--measure);
+  }
+  .cap-merge-list {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap-merge-same {
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    text-align: center;
+  }
+  .cap-merge-choice {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+  }
+  .cap-merge-sides {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+
+    & > section {
+      min-width: 0;
+      padding: var(--space-2);
+      border: 1px solid transparent;
+      border-radius: var(--radius-s);
+    }
+    & > section:not([data-kept]) {
+      border-style: dashed;
+      border-color: var(--line-strong);
+      background: var(--sunken);
+    }
+  }
+  @container cap-merge (width < 40rem) {
+    .cap-merge-sides {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .cap-merge-side {
+    margin: 0 0 var(--space-2);
+    font-size: var(--fs-detail);
+    font-weight: 600;
+  }
+  .cap-merge-text {
+    margin: 0;
+    font-size: var(--fs-detail);
+
+    & pre,
+    &:is(pre) {
+      margin: 0 0 var(--space-2);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: var(--mono);
+    }
+  }
+  .cap-merge-empty {
+    font-style: italic;
+  }
+  .cap-merge-mark {
+    padding-inline: 0.1em;
+    border-radius: var(--radius-s);
+    background: var(--warn-soft);
+    color: var(--text);
+    box-decoration-break: clone;
+  }
+  .cap-merge-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  @media (forced-colors: active) {
+    .cap-merge-sides > section:not([data-kept]) {
+      border-color: GrayText;
+    }
+    .cap-merge-mark {
+      outline: 1px solid CanvasText;
+    }
+  }
 }

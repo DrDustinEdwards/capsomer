@@ -4,9 +4,14 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.90.1]
+## [0.91.1]
 
 - **A chart no longer redraws 16 px tall.** With Enarratio 0.12 the figure holds the toolbar's 16 by 16 icons before the chart, and `ChartFrame` took its redraw height from the first `viewBox` it found, so every redrawn chart collapsed (seen in the Capsid Portal on 0.90.0). It now skips `enarratio-icon` drawings (`chartViewBox` in `components/chart-frame/chart-frame.ts`).
+
+## [0.91.0]
+
+- **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
+- **New: rich text field** (`capsomer/react/rich-text-field`, `capsomer/behavior/rich-text-field`, `capsomer/rich-text-field.css`; from txasm's abstract editor). A short text with a few inline tags and nothing else, a formatting toolbar (one tab stop) whose buttons toggle and show where the caret is, and `sanitizeRichText`, which the server runs on every save. The box is built from DOM nodes, never from a markup string, so it needs no Trusted Types policy. New classes: `.cap-rich-text`, `.cap-rich-text-bar`, `.cap-rich-text-box`, `.cap-rich-text-count`. No token or class was removed or renamed.
 
 ## [0.90.0]
 
