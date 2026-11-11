@@ -54,6 +54,7 @@ eachTheme((theme) => {
       "fx-reader",
       "fx-admin",
       "markup",
+      "static",
     ]) {
       await visitStates(page, "site-header", theme, only);
       await expectNoAxeViolations(page);
@@ -68,6 +69,9 @@ eachTheme((theme) => {
       "fh-dashboard-account",
       "fx-books",
       "fx-reader-account",
+      "static-topics",
+      "static-switcher",
+      "static-account",
     ]) {
       await visitStates(page, "site-header", theme, only);
       await expect(page.locator(".cap-site-header-panel:popover-open")).toHaveCount(1);
@@ -695,5 +699,89 @@ eachTheme((theme) => {
     await expect(page.locator("#markup-sheet-title")).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(menu).toBeFocused();
+  });
+  test("behavior: a header that does not hydrate works through the behavior module: Down opens a panel, its rows post, Sign out posts, the theme key keeps the cookie", async ({
+    page,
+  }) => {
+    await visitStates(page, "site-header", theme, "static");
+    // Down on a section's button opens its panel on the first item (the APG menu button's key).
+    const guides = page.getByRole("button", { name: "Guides" });
+    await guides.focus();
+    await page.keyboard.press("ArrowDown");
+    const guidesPanel = page.locator("#" + (await guides.getAttribute("aria-controls")));
+    await expect(guidesPanel).toBeVisible();
+    await expect(guidesPanel.getByRole("link", { name: "Install" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(guides).toBeFocused();
+    // The workspace switcher: each other workspace is a form that posts; the current one posts nothing.
+    await page.getByRole("button", { name: "Switch workspace: Example Press" }).click();
+    const field = page.locator(".cap-site-header-switcher .cap-site-header-panel");
+    await expect(
+      field.locator("form[method='post'][action='#switch'] button[type='submit']"),
+    ).toContainText("Field Office");
+    await expect(field.locator("button[aria-current='true']")).toHaveAttribute("type", "button");
+    await expect(field.locator("input[type='hidden'][name='workspace'][value='w2']")).toHaveCount(
+      1,
+    );
+    await page.keyboard.press("Escape");
+    // Sign out is a form post carrying the site's fields.
+    await page.getByRole("button", { name: "Your account" }).click();
+    const signOut = page.locator(
+      ".cap-site-header-account form[method='post'][action='#sign-out']",
+    );
+    await expect(signOut.getByRole("button", { name: "Sign out" })).toBeVisible();
+    await expect(signOut.locator("input[name='token']")).toHaveValue("sample-token");
+    await page.keyboard.press("Escape");
+    // The theme key presses the header's theme button: the page switches and the cookie keeps it.
+    const other = theme === "dark" ? "light" : "dark";
+    await page.locator("main").click();
+    await page.keyboard.press("t");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", other);
+    expect(await page.evaluate(() => document.cookie)).toContain(`sample_theme=${other}`);
+  });
+
+  test("behavior: a panel opened by hover closes as the pointer leaves without putting focus on its button", async ({
+    page,
+  }) => {
+    await visitStates(page, "site-header", theme, "fx-public");
+    const books = page.getByRole("button", { name: "Books" });
+    const panel = page.locator("#" + (await books.getAttribute("aria-controls")));
+    await books.hover();
+    await expect(panel).toBeVisible();
+    await page.mouse.move(5, 600);
+    await expect(panel).toBeHidden();
+    await expect(books).not.toBeFocused();
+  });
+
+  test("behavior: a wide panel (a mega-menu) is 40rem, under the header, inside the window", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await visitStates(page, "site-header", theme, "static-topics");
+    const panel = page.locator(".cap-site-header-panel[data-size='wide']");
+    await expect(panel).toBeVisible();
+    const p = (await panel.boundingBox())!;
+    const h = (await page.locator(".cap-site-header").boundingBox())!;
+    expect(Math.round(p.width)).toBe(640);
+    expect(p.y).toBeGreaterThanOrEqual(h.y + h.height);
+    expect(p.x + p.width).toBeLessThanOrEqual(1280);
+  });
+
+  test("behavior: on a phone a button extra the site keeps in the bar stays in the top row and is not repeated in the sheet", async ({
+    page,
+  }) => {
+    await page.setViewportSize(PHONE);
+    await visitStates(page, "site-header", theme, "static-phone");
+    const cta = page.locator(".cap-site-header-tools .cap-site-header-cta");
+    await expect(cta).toBeVisible();
+    const box = (await cta.boundingBox())!;
+    expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);
+    await page.getByRole("button", { name: "Menu" }).click();
+    await expect(page.getByRole("dialog", { name: "Example Press menu" })).toBeVisible();
+    await expect(page.locator(".cap-site-header-sheet-cta")).toHaveCount(0);
+    await expect(
+      page.locator(".cap-site-header-sheet-account form[action='#sign-out'] button"),
+    ).toBeVisible();
+    await expectNoAxeViolations(page);
   });
 });

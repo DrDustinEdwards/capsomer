@@ -60,6 +60,62 @@
   </div>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-group">
+  <h2 id="s-group">Lists that share a group: items move between them</h2>
+  <p>Two lists with the same <code>data-group</code>. Drag a grip into the other list, press Space on a grip and an arrow past the end of its list, or choose the list in the item's select. Remove asks the page first (<code>cap:sortable-remove</code>); with <code>data-alt-keys</code>, Alt and an arrow anywhere in an item moves it too.</p>
+  <div class="sortable-sample">
+    <h3 class="sortable-sample-lane">Talks</h3>
+    <ol class="cap-sortable" data-cap="sortable-list" data-group="program" data-alt-keys data-list="talks" aria-label="Talks" id="talks">
+      <li class="cap-sortable-item" data-value="t1">
+        <button type="button" class="cap-sortable-handle" aria-describedby="group-help"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><circle cx="6" cy="3.5" r="1.25"/><circle cx="10" cy="3.5" r="1.25"/><circle cx="6" cy="8" r="1.25"/><circle cx="10" cy="8" r="1.25"/><circle cx="6" cy="12.5" r="1.25"/><circle cx="10" cy="12.5" r="1.25"/></svg><span class="cap-sr-only">Move Getting started</span></button>
+        <div class="cap-sortable-body"><span class="cap-sortable-label"><span>Getting started</span></span></div>
+        <span class="cap-sortable-steps"><button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-icon-only data-cap-part="up"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg><span class="cap-sr-only">Move Getting started up</span></button><button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-icon-only data-cap-part="down"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5"/></svg><span class="cap-sr-only">Move Getting started down</span></button><label class="cap-sr-only" for="to-t1">Move Getting started to</label><select id="to-t1" class="cap-select" data-size="sm" data-cap-part="move-to"><option value="talks" selected>Talks</option><option value="posters">Posters</option></select><button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="remove">Remove<span class="cap-sr-only"> Getting started</span></button></span>
+      </li>
+      <li class="cap-sortable-item" data-value="t2">
+        <button type="button" class="cap-sortable-handle" aria-describedby="group-help"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><circle cx="6" cy="3.5" r="1.25"/><circle cx="10" cy="3.5" r="1.25"/><circle cx="6" cy="8" r="1.25"/><circle cx="10" cy="8" r="1.25"/><circle cx="6" cy="12.5" r="1.25"/><circle cx="10" cy="12.5" r="1.25"/></svg><span class="cap-sr-only">Move Release notes</span></button>
+        <div class="cap-sortable-body"><span class="cap-sortable-label"><span>Release notes</span></span></div>
+        <span class="cap-sortable-steps"><button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-icon-only data-cap-part="up"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg><span class="cap-sr-only">Move Release notes up</span></button><button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-icon-only data-cap-part="down"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5"/></svg><span class="cap-sr-only">Move Release notes down</span></button><label class="cap-sr-only" for="to-t2">Move Release notes to</label><select id="to-t2" class="cap-select" data-size="sm" data-cap-part="move-to"><option value="talks" selected>Talks</option><option value="posters">Posters</option></select><button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="remove">Remove<span class="cap-sr-only"> Release notes</span></button></span>
+      </li>
+      <li class="cap-sortable-empty">Empty. Drag an abstract here.</li>
+    </ol>
+    <h3 class="sortable-sample-lane">Posters</h3>
+    <ol class="cap-sortable" data-cap="sortable-list" data-group="program" data-alt-keys data-list="posters" aria-label="Posters" id="posters">
+      <li class="cap-sortable-item" data-value="p1">
+        <button type="button" class="cap-sortable-handle" aria-describedby="group-help"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><circle cx="6" cy="3.5" r="1.25"/><circle cx="10" cy="3.5" r="1.25"/><circle cx="6" cy="8" r="1.25"/><circle cx="10" cy="8" r="1.25"/><circle cx="6" cy="12.5" r="1.25"/><circle cx="10" cy="12.5" r="1.25"/></svg><span class="cap-sr-only">Move Field notes</span></button>
+        <div class="cap-sortable-body"><span class="cap-sortable-label"><span>Field notes</span></span></div>
+        <span class="cap-sortable-steps"><button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-icon-only data-cap-part="up"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg><span class="cap-sr-only">Move Field notes up</span></button><button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-icon-only data-cap-part="down"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5"/></svg><span class="cap-sr-only">Move Field notes down</span></button><label class="cap-sr-only" for="to-p1">Move Field notes to</label><select id="to-p1" class="cap-select" data-size="sm" data-cap-part="move-to"><option value="talks">Talks</option><option value="posters" selected>Posters</option></select><button type="button" class="cap-btn" data-variant="quiet" data-size="sm" data-cap-part="remove">Remove<span class="cap-sr-only"> Field notes</span></button></span>
+      </li>
+      <li class="cap-sortable-empty">Empty. Drag an abstract here.</li>
+    </ol>
+    <p class="cap-sr-only" id="group-help">To move an item with the keyboard, press Space or Enter on its handle, move it with the arrow keys, and press Space or Enter to drop it. Escape puts it back.</p>
+    <output class="sortable-sample-out" id="group-out">No move yet.</output>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-repeat">
+  <h2 id="s-repeat">Repeatable rows in React: add, remove, put in order</h2>
+  <p>Rows with fields of their own, kept by the page as a plain array; <code>useRows</code> gives each row an id that follows it, so what is typed in a row moves with it. Add puts focus in the new row's first field; Remove puts it on the next row; at three rows Add is off; at none the list says so.</p>
+  <div class="sortable-sample">
+    <div data-mount="hosts"></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-steps">
+  <h2 id="s-steps">Steps as cards: a head line, Alt and an arrow, the list's own words</h2>
+  <p>The stack layout puts the grip, the head and the buttons over the content. Alt and Up or Down anywhere in a step moves it, and the list says "Moved to step 2 of 3." in its host's words.</p>
+  <div class="sortable-sample">
+    <div data-mount="steps"></div>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-board">
+  <h2 id="s-board">Sections in React: items between lists, and locked</h2>
+  <p>A board of three lists. Locking it (a published book) leaves the order with no grip and no buttons.</p>
+  <div class="sortable-sample" data-wide>
+    <div data-mount="sections"></div>
+  </div>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-form">
   <h2 id="s-form">As delivered with no script: a form the server reorders</h2>
   <p>Move up and Move down are submit buttons (<code>up=&lt;id&gt;</code>, <code>down=&lt;id&gt;</code>), and every item posts its id as <code>order</code>, so Save order sends the whole list. The ends' buttons are disabled.</p>
@@ -95,4 +151,13 @@
   document.getElementById("scenes").addEventListener("cap:sortable-change", (e) => {
     out.textContent = `Order: ${e.detail.order.join(", ")}.`;
   });
+  const groupOut = document.getElementById("group-out");
+  for (const id of ["talks", "posters"]) {
+    document.getElementById(id).addEventListener("cap:sortable-change", (e) => {
+      groupOut.textContent = `${e.detail.id}: ${e.detail.fromList} to ${e.detail.list}, now ${e.detail.list}: ${e.detail.order.join(", ")}.`;
+    });
+    document.getElementById(id).addEventListener("cap:sortable-remove", (e) => {
+      groupOut.textContent = `Remove ${e.detail.id} from ${e.detail.list}.`;
+    });
+  }
 </script>

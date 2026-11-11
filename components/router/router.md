@@ -5,7 +5,7 @@ summary: The router glue every Capsomer React part needs, in one place: Form for
 parts: [behavior, react]
 tool: react-router
 states: []
-added: 0.92.0
+added: 0.93.0
 source: dustinedwards.info app/components/admin/confirm-dialog.tsx (the router glue), app/lib/media/view.mjs (onlyDisplayChanged); Carrel app/routes/home.tsx (a row's fetcher form)
 replaces:
   - 'renderForm=\{\(props\) => <Form \{\.\.\.props\} />\}'
