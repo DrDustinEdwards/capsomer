@@ -22,25 +22,6 @@
     white-space: nowrap;
     color: var(--muted);
 
-    &[data-tone="crit"] {
-      color: var(--crit);
-    }
-    &[data-tone="warn"] {
-      color: var(--warn);
-    }
-    &[data-tone="ok"] {
-      color: var(--ok);
-    }
-    &[data-tone="info"] {
-      color: var(--info);
-    }
-    &[data-tone="nodata"] {
-      color: var(--nodata);
-    }
-    /* The quiet gray, for a state that is neither good nor bad (queued, unknown). */
-    &[data-tone="muted"] {
-      color: var(--muted);
-    }
     /* A phrase that wraps in its own column (a hold reason): the glyph stays by the first line. */
     &[data-wrap] {
       align-items: flex-start;
@@ -60,8 +41,9 @@
     block-size: 1.15em;
   }
 
-  /* A glyph on its own, with no word (a status icon beside a name): its tone's color. */
-  .cap-status-glyph {
+  /* A status's color, and a glyph's on its own with no word (a status icon beside a name). Muted
+     is the quiet gray for a state that is neither good nor bad (queued, unknown). */
+  :is(.cap-status, .cap-status-glyph) {
     &[data-tone="crit"] {
       color: var(--crit);
     }
