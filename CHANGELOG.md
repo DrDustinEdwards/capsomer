@@ -12,6 +12,11 @@ Options so a site keeps its own look on the shared parts (Foxhound, moving its s
 
 No token or class was removed or renamed.
 
+## [0.97.0]
+
+- **The page helpers need no test runner: `capsomer/testing/page`.** `countCssRules`, `settled`, `paintedContrast` (and its `Reading`), `focused`, `nextPost`, `ringContrast` and `rowOverflow` each run one function in the page, so they move to their own module, typed for any page with `evaluate` (`PageLike`: Playwright's or Puppeteer's). A site whose browser checks run on Puppeteer imports them without installing Playwright or axe; `capsomer/testing` still exports every one.
+- **Catalog: the search waits while an IME composes a word.** The search box fetched results on every `input` event, and an IME (Japanese, Chinese and Korean input, and many phone keyboards) sends those while a word is still being composed, so the catalog fetched half-typed syllables. It now skips an input event whose `isComposing` is true and searches on `compositionend` (UI Events, Composition Events). Found in the second shared-code audit, 2026-11-11. No token or class was removed or renamed.
+
 ## [0.95.1]
 
 - **Rich editor:** an image inserted from the editor uses the markdown editor's `defaultImageMarkdown`. The editor had its own copy, which kept a line break in the alt text and so broke the Markdown image (as Carrel fixed in its copy after 0.95.0 was cut). No token, class or HTML contract changed.
