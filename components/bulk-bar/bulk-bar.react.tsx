@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type ReactNode, useSyncExternalStore } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import { Glyph } from "../status/status.react.tsx";
 import {
   allVisibleSelected,
@@ -14,9 +14,7 @@ import {
   type BulkItem,
   type BulkOutcome,
 } from "./bulk-bar.ts";
-
-// For useSyncExternalStore's hydration flag: nothing to subscribe to.
-const noSubscribe = () => () => {};
+import { useHydrated } from "../hooks/hooks.react.tsx";
 
 export type { BulkOutcome };
 
@@ -90,11 +88,7 @@ export function BulkBar({
   onDismissOutcomes,
 }: BulkBarProps) {
   // False on the server and while hydrating, true once hydrated.
-  const mounted = useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useHydrated();
   const resultsId = `${useId().replace(/[^a-zA-Z0-9]/g, "")}-results`;
   const showing = outcomes.length > 0;
   const n = items.length;

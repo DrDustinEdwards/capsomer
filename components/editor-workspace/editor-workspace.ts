@@ -1,3 +1,4 @@
+import { readStored, writeStored } from "../hooks/hooks.ts";
 // Editor workspace: the page around a writing surface. The Write, Split and Preview layout,
 // remembered in this browser; the site's own render beside the text in a sandboxed frame,
 // refreshed once the typing pauses; Ctrl or Cmd+S as a save in place; and the chrome that steps
@@ -14,20 +15,14 @@ export function readLayout(stored: string | null | undefined): Layout {
 
 // The layout stored under `key`, or null when none is (or storage is refused).
 export function storedLayout(key = LAYOUT_KEY): Layout | null {
-  try {
-    const v = localStorage.getItem(key);
-    return v === null ? null : readLayout(v);
-  } catch {
-    return null;
-  }
+  const v = readStored(key);
+  return v === null ? null : readLayout(v);
 }
 
+// Kept through hooks.ts' storage, which tells every reader of the key; where storage is refused
+// it lasts the page.
 export function storeLayout(layout: Layout, key = LAYOUT_KEY): void {
-  try {
-    localStorage.setItem(key, layout);
-  } catch {
-    // Not remembered; still switched.
-  }
+  writeStored(key, layout);
 }
 
 // The preview's address with the refresh stamp in it, so a new stamp loads the frame again.
