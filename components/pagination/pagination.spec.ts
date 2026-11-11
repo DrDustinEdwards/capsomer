@@ -5,7 +5,16 @@ import {
   expectNoAxeViolations,
   visitStates,
 } from "../../test/helpers.ts";
-import { pageCountOf, pageItems, showingRange, statusText } from "./pagination.ts";
+import {
+  countText,
+  pageCountOf,
+  pageEnvelope,
+  pageHref,
+  pageItems,
+  parsePage,
+  showingRange,
+  statusText,
+} from "./pagination.ts";
 
 const nav = (page: Page) => page.locator("#pg-buttons");
 const status = (page: Page) => nav(page).locator(".cap-pagination-status");
@@ -35,6 +44,38 @@ test("behavior: the count line says which items are on the page", () => {
   expect(showingRange(2, 25, 61)).toEqual({ from: 26, to: 50 });
   expect(pageCountOf(312, 20)).toBe(16);
   expect(pageCountOf(0, 20)).toBe(1);
+});
+
+test("behavior: an address's page is read strictly, kept in range, and each page has one address", () => {
+  for (const bad of [null, "", "0", "-1", "2.5", "1e3", "2abc", " 2", "99999999999999999999"])
+    expect(parsePage(bad), String(bad)).toBe(1);
+  expect(parsePage("12")).toBe(12);
+  expect(pageEnvelope(99, 25, 60)).toMatchObject({
+    page: 3,
+    pageCount: 3,
+    offset: 50,
+    from: 51,
+    to: 60,
+    hasNext: false,
+  });
+  expect(pageEnvelope(1, 25, 0)).toMatchObject({
+    page: 1,
+    pageCount: 1,
+    from: 0,
+    to: 0,
+    hasPrev: false,
+    hasNext: false,
+  });
+  expect(pageEnvelope(2, "all", 60)).toMatchObject({ page: 1, perPage: 60, to: 60 });
+  expect(
+    pageHref("/admin/webhooks", { type: "invoice.paid", errors: true, pending: false, q: "" }, 1),
+  ).toBe("/admin/webhooks?type=invoice.paid&errors=1");
+  expect(pageHref("/books", new URLSearchParams("sort=year-desc&page=4"), 2)).toBe(
+    "/books?sort=year-desc&page=2",
+  );
+  expect(pageHref("/books", {}, 1)).toBe("/books");
+  expect(countText(20, 312, "mentions")).toBe("Showing 20 of 312 mentions");
+  expect(countText(1, 1, "mentions", "mention")).toBe("1 mention");
 });
 
 eachTheme((theme) => {
