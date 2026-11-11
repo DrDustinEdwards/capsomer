@@ -281,6 +281,31 @@ eachTheme((theme) => {
     await expect(said(l)).toHaveText("Moved What the river keeps to position 3 of 3.");
   });
 
+  test("keyboard: in groups an item steps past a section's end into the next, an empty one included, by keys, buttons and Move to", async ({
+    page,
+  }) => {
+    const out = page.locator("#groups-out");
+    const groupsSaid = page.locator("#groups [data-cap-part='announce']");
+    const handle = page.getByRole("button", { name: "Move A spring survey", exact: true });
+    await handle.focus();
+    await page.keyboard.press("Space");
+    await page.keyboard.press("ArrowDown");
+    await expect(groupsSaid).toHaveText("A spring survey: Posters, position 1 of 1.");
+    await page.keyboard.press("Space");
+    await expect(out).toHaveText("talks: a1; posters: a2; late: a3.");
+    await expect(
+      page.getByRole("button", { name: "Move A spring survey", exact: true }),
+    ).toBeFocused();
+    await page.getByRole("button", { name: "Move A spring survey down" }).click();
+    await expect(out).toHaveText("talks: a1; posters: none; late: a2 a3.");
+    await expect(page.locator("#groups")).toContainText("No abstracts in this section yet.");
+    await page
+      .getByRole("combobox", { name: "Move Field notes on soil to section" })
+      .selectOption({ label: "Posters" });
+    await expect(out).toHaveText("talks: none; posters: a1; late: a2 a3.");
+    await expect(groupsSaid).toHaveText("Moved Field notes on soil to Posters, position 1 of 1.");
+  });
+
   test("behavior: with no script the buttons post the move and the list posts its order", async ({
     page,
   }) => {

@@ -62,3 +62,30 @@ test("sortText: what the live region says, positions counted from one", () => {
   );
   assert.equal(sortText.cancel("Low water", 1, 4), "Put Low water back at position 1 of 4.");
 });
+
+import {
+  keyTargetAcross,
+  locate,
+  moveAcross,
+} from "../../components/sortable-list/sortable-list.ts";
+
+test("groups: an item steps past a list's end into the next, an empty list included", () => {
+  const groups = [
+    { id: "s1", items: ["a", "b"] },
+    { id: "s2", items: [] },
+    { id: "s3", items: ["c"] },
+  ];
+  assert.deepEqual(keyTargetAcross("ArrowDown", groups, "b"), { group: 1, index: 0 });
+  assert.deepEqual(keyTargetAcross("ArrowUp", groups, "c"), { group: 1, index: 0 });
+  assert.equal(keyTargetAcross("ArrowUp", groups, "a"), null);
+  assert.equal(keyTargetAcross("ArrowDown", groups, "c"), null);
+  assert.deepEqual(keyTargetAcross("End", groups, "a"), { group: 0, index: 1 });
+  const moved = moveAcross(groups, "b", "s2", 0);
+  assert.deepEqual(
+    moved.map((g) => g.items),
+    [["a"], ["b"], ["c"]],
+  );
+  assert.deepEqual(locate(moved, "b"), { group: 1, index: 0 });
+  assert.deepEqual(moveAcross(groups, "a", "s3", 9)[2].items, ["c", "a"]);
+  assert.deepEqual(groups[0].items, ["a", "b"]);
+});

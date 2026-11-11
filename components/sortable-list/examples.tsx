@@ -2,7 +2,7 @@
 // The page holds the items and saves each new order, as an app would.
 import { StrictMode, useState, type JSX } from "react";
 import { createRoot } from "react-dom/client";
-import { SortableList } from "./sortable-list.react.tsx";
+import { SortableGroups, SortableList } from "./sortable-list.react.tsx";
 
 interface Card {
   id: string;
@@ -90,7 +90,52 @@ function Rows() {
   );
 }
 
-const mounts: Record<string, () => JSX.Element> = { cards: Corkboard, rows: Rows };
+const SECTIONS = [
+  {
+    id: "talks",
+    label: "Talks",
+    items: [
+      { id: "a1", title: "Field notes on soil" },
+      { id: "a2", title: "A spring survey" },
+    ],
+  },
+  { id: "posters", label: "Posters", items: [] as { id: string; title: string }[] },
+  { id: "late", label: "Late additions", items: [{ id: "a3", title: "Annual report figures" }] },
+];
+
+function Sections() {
+  const [sections, setSections] = useState(SECTIONS);
+  const all = new Map(SECTIONS.flatMap((s) => s.items.map((i) => [i.id, i] as const)));
+  return (
+    <>
+      <SortableGroups
+        groups={sections}
+        getId={(i) => i.id}
+        getLabel={(i) => i.title}
+        emptyText="No abstracts in this section yet."
+        onChange={(next) =>
+          setSections(
+            next.map((g) => ({
+              ...sections.find((s) => s.id === g.id)!,
+              items: g.items.map((id) => all.get(id)!),
+            })),
+          )
+        }
+        renderItem={(i) => <span className="cap-sortable-label">{i.title}</span>}
+      />
+      <output className="sortable-sample-out" id="groups-out">
+        {sections.map((s) => `${s.id}: ${s.items.map((i) => i.id).join(" ") || "none"}`).join("; ")}
+        .
+      </output>
+    </>
+  );
+}
+
+const mounts: Record<string, () => JSX.Element> = {
+  cards: Corkboard,
+  rows: Rows,
+  groups: Sections,
+};
 for (const el of document.querySelectorAll<HTMLElement>("[data-mount]")) {
   const C = mounts[el.dataset.mount ?? ""];
   if (C)

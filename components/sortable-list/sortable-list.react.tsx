@@ -17,8 +17,11 @@ import {
   type SortMove,
 } from "./sortable-list.ts";
 
+import { Arrow, Grip } from "./sortable-icons.react.tsx";
+
 export { indexAtPoint, keyTarget, moveId, sortText } from "./sortable-list.ts";
-export type { Layout, SortMove } from "./sortable-list.ts";
+export type { Layout, SortMove, Group, GroupMove } from "./sortable-list.ts";
+export { SortableGroups, type SortableGroupsProps } from "./sortable-groups.react.tsx";
 
 // The sortable list's HTML contract, rendered from props. The items are the caller's: a
 // finished move calls `onReorder` with the new order, and the list shows the caller's
@@ -42,41 +45,10 @@ export interface SortableListProps<T> {
   // The form field name for the order; turns the buttons into submit buttons.
   name?: string;
   className?: string;
+  // Say each move in the page's own live region (one region for a page of lists and forms)
+  // instead of the list's own.
+  announce?: (text: string) => void;
 }
-
-const Grip = () => (
-  <svg
-    viewBox="0 0 16 16"
-    width="16"
-    height="16"
-    fill="currentColor"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <circle cx="6" cy="3.5" r="1.25" />
-    <circle cx="10" cy="3.5" r="1.25" />
-    <circle cx="6" cy="8" r="1.25" />
-    <circle cx="10" cy="8" r="1.25" />
-    <circle cx="6" cy="12.5" r="1.25" />
-    <circle cx="10" cy="12.5" r="1.25" />
-  </svg>
-);
-const Arrow = ({ up }: { up: boolean }) => (
-  <svg
-    viewBox="0 0 16 16"
-    width="16"
-    height="16"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <path d={up ? "M8 13V3M3.5 7.5 8 3l4.5 4.5" : "M8 3v10M3.5 8.5 8 13l4.5-4.5"} />
-  </svg>
-);
 
 export function SortableList<T>({
   items,
@@ -87,6 +59,7 @@ export function SortableList<T>({
   layout = "rows",
   name,
   className,
+  announce,
   ...label
 }: SortableListProps<T>) {
   const ids = items.map(getId);
@@ -119,7 +92,8 @@ export function SortableList<T>({
     if (el && document.activeElement !== el) el.focus({ preventScroll: true });
   });
 
-  const say = (text: string) => setSaid((prev) => (prev === text ? `${text} ` : text));
+  const say = (text: string) =>
+    announce ? announce(text) : setSaid((prev) => (prev === text ? `${text} ` : text));
   const labelOf = (id: string) => {
     const it = byId.get(id);
     return it === undefined ? id : getLabel(it);
@@ -294,9 +268,11 @@ export function SortableList<T>({
       <p className="cap-sr-only" id={helpId}>
         {sortText.help}
       </p>
-      <div className="cap-sr-only" role="status" aria-atomic="true" data-cap-part="announce">
-        {said}
-      </div>
+      {announce ? null : (
+        <div className="cap-sr-only" role="status" aria-atomic="true" data-cap-part="announce">
+          {said}
+        </div>
+      )}
     </>
   );
 }
