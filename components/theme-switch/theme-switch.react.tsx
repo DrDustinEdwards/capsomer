@@ -152,10 +152,13 @@ function ThemeTip({
   ref,
   label,
   shortcut,
+  enhanced,
 }: {
   ref?: Ref<HTMLSpanElement>;
   label: string;
   shortcut?: string;
+  // Written for enhance(), which renames it to the theme showing before React may hydrate the page.
+  enhanced?: boolean;
 }) {
   return (
     <span
@@ -168,7 +171,9 @@ function ThemeTip({
       role="tooltip"
       aria-hidden="true"
     >
-      <span className="cap-theme-tip-text">{label}</span>
+      <span className="cap-theme-tip-text" suppressHydrationWarning={enhanced}>
+        {label}
+      </span>
       {shortcut ? (
         <span className="cap-keys">
           <kbd>{shortcut}</kbd>
@@ -231,11 +236,14 @@ export function ThemeButton({
       data-cap-pref={prefKey}
       data-cap-cookie={cookie}
       aria-label={label}
+      // enhance() names the button for the theme showing, so a page that hydrates later (germomics'
+      // hydrate on intent) finds a dark visitor's name and tip changed from the server's.
+      suppressHydrationWarning={!hydrate}
       onClick={hydrate ? () => setShowing(toggleTheme(prefKey, { cookie, onSave })) : undefined}
     >
       {BUTTON_MOON}
       {BUTTON_SUN}
-      <ThemeTip ref={tip} label={label} shortcut={shortcut} />
+      <ThemeTip ref={tip} label={label} shortcut={shortcut} enhanced={!hydrate} />
     </button>
   );
 }

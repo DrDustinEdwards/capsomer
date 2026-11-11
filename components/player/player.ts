@@ -438,7 +438,7 @@ export function syntheticPeaks(bars = WAVEFORM_BARS): number[] {
 }
 
 // ---------------------------------------------------------------------------------------
-// Transcript. The cues come parsed (Prelum's WebVTT parser); these group and follow them.
+// Transcript. The cues come parsed and grouped into paragraphs by Prelum (./vtt); these follow them.
 
 export interface TranscriptCue {
   start: number;
@@ -448,29 +448,6 @@ export interface TranscriptCue {
   speaker?: string | null;
   // A sound, not speech: "[music]", "(laughs)".
   nonVerbal?: boolean;
-}
-
-// Caption-sized cues grouped into paragraphs that read well: a paragraph ends at a sentence's end
-// once it has 45 words, or at a pause of more than 2.5 seconds. Each cue keeps its own time.
-export function toParagraphs<C extends TranscriptCue>(cues: readonly C[]): C[][] {
-  const paras: C[][] = [];
-  let cur: C[] = [];
-  let words = 0;
-  for (let i = 0; i < cues.length; i++) {
-    const c = cues[i] as C;
-    cur.push(c);
-    words += c.text.split(/\s+/).length;
-    const endsSentence = /[.!?]["'”’)\]]?$/.test(c.text);
-    const nextCue = cues[i + 1];
-    const gapAfter = nextCue ? nextCue.start - c.end : 0;
-    if ((endsSentence && words >= 45) || gapAfter > 2.5) {
-      paras.push(cur);
-      cur = [];
-      words = 0;
-    }
-  }
-  if (cur.length) paras.push(cur);
-  return paras;
 }
 
 // The start of the last cue at or before `t`, or null: the active cue where the browser has no
