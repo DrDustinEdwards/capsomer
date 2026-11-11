@@ -4,6 +4,7 @@ import {
   expectContrast,
   expectNoAxeViolations,
   visitStates,
+  settled,
 } from "../../test/helpers.ts";
 
 const PHONE = { width: 390, height: 760 };
@@ -24,14 +25,6 @@ const rowOrder = (page: Page) =>
         name: el.getAttribute("aria-label") ?? el.textContent!.trim(),
         x: Math.round(el.getBoundingClientRect().left),
       })),
-  );
-
-// Lets any color transition finish before a color is read.
-const settle = (page: Page) =>
-  page.evaluate(() =>
-    Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-      () => undefined,
-    ),
   );
 
 eachTheme((theme) => {
@@ -401,7 +394,7 @@ eachTheme((theme) => {
   }) => {
     for (const only of ["fh-public", "fx-public"]) {
       await visitStates(page, "site-header", theme, only);
-      await settle(page);
+      await settled(page);
       await expectContrast(page, [
         { sel: ".cap-site-header-link:not([aria-current])", what: `${only}: a section link` },
         {
@@ -414,7 +407,7 @@ eachTheme((theme) => {
       ]);
     }
     await visitStates(page, "site-header", theme, "fx-reader");
-    await settle(page);
+    await settled(page);
     await expectContrast(page, [
       { sel: ".cap-site-header-extras .cap-site-header-icon", what: "an icon extra" },
       { sel: ".cap-site-header-badge", what: "a count's bubble" },
@@ -427,7 +420,7 @@ eachTheme((theme) => {
   }) => {
     for (const only of ["fh-public", "fx-public"]) {
       await visitStates(page, "site-header", theme, only);
-      await settle(page);
+      await settled(page);
       const got = await page
         .locator(".cap-site-header-link:is([aria-current], [data-current])")
         .evaluate((el) => {
@@ -551,11 +544,7 @@ eachTheme((theme) => {
       .getByRole("navigation", { name: "Account" })
       .getByRole("button", { name: "Sign out (Sam Rivera)" });
     await expect(signOut).toBeVisible();
-    await page.evaluate(() =>
-      Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-        () => undefined,
-      ),
-    );
+    await settled(page);
     const box = await signOut.boundingBox();
     expect(box!.y + box!.height).toBeLessThanOrEqual(PHONE.height);
     await expectNoAxeViolations(page);

@@ -124,6 +124,16 @@ const NOT_TYPING = new Set([
   "file",
   "image",
 ]);
+/**
+ * True for an Enter that confirms an IME conversion (Japanese, Chinese, Korean input) and must not submit or act.
+ * `isComposing` covers Chrome and Firefox; `keyCode` 229 covers Safari, which fires `compositionend` before the
+ * confirming keydown and so reports `isComposing` false (WebKit bug 165004). Only meaningful behind an Enter check:
+ * a phone keyboard reports 229 for ordinary keys too. (Modern Web Guidance, ime-safe-enter-submit.)
+ */
+export function isImeEnter(e: Pick<KeyboardEvent, "key" | "isComposing" | "keyCode">): boolean {
+  return e.key === "Enter" && (e.isComposing || e.keyCode === 229);
+}
+
 export function isTyping(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) return false;
   if (target instanceof HTMLInputElement) return !NOT_TYPING.has(target.type);
@@ -147,7 +157,7 @@ function fire(s: Shortcut, e: KeyboardEvent): boolean {
 }
 
 function onKeyDown(e: KeyboardEvent): void {
-  if (e.defaultPrevented || e.isComposing) return;
+  if (e.defaultPrevented || e.isComposing || isImeEnter(e)) return;
   if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") return;
   // A modal dialog owns the keyboard while it is open.
   if (modalOpen()) {
@@ -461,7 +471,7 @@ export function wireSheet(sheet: HTMLDialogElement): () => void {
   const onSingle = () => syncSwitch(sheet);
   // A shortcut with Ctrl or Cmd still works over the sheet: the sheet closes, then it runs.
   const onKey = (e: KeyboardEvent) => {
-    if (e.defaultPrevented || e.isComposing) return;
+    if (e.defaultPrevented || e.isComposing || isImeEnter(e)) return;
     const hit = modifiedShortcutFor(e);
     if (!hit) return;
     sheet.close();

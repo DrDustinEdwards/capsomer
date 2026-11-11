@@ -23,7 +23,16 @@ export interface VideoProps {
   // A transcript, or a text alternative with what the picture shows (WCAG 1.2.3).
   transcript?: string;
   caption?: ReactNode;
+  // "lazy" (the default): the poster and the video wait until the player nears the screen (loading="lazy", Chromium;
+  // other browsers fetch the poster at once, as before). "eager" for a video at the top of a page, so its poster is
+  // not held back (Modern Web Guidance, lazy-load-video-and-audio).
+  loading?: "lazy" | "eager";
 }
+
+// The loading attribute on a media element, which React's types do not list yet. Eager is the browser's default, so
+// it is left out.
+const mediaLoading = (loading: "lazy" | "eager") =>
+  (loading === "lazy" ? { loading: "lazy" } : {}) as Record<string, string>;
 
 // A self-hosted video: the native player, its poster, captions, and nothing downloaded before play.
 export function Video({
@@ -35,6 +44,7 @@ export function Video({
   captions,
   transcript,
   caption,
+  loading = "lazy",
 }: VideoProps): ReactElement {
   return (
     <figure className="cap-player" data-kind="video">
@@ -45,6 +55,7 @@ export function Video({
         height={height}
         controls
         preload="none"
+        {...mediaLoading(loading)}
         playsInline
         aria-label={title}
       >
@@ -74,13 +85,21 @@ export interface AudioProps {
   // Required: a recording of speech needs its words in text (WCAG 1.2.1).
   transcript: string;
   caption?: ReactNode;
+  // As for Video: "lazy" (the default) waits until the player nears the screen.
+  loading?: "lazy" | "eager";
 }
 
 // An audio file: the native player, nothing downloaded before play, and its transcript one link away.
-export function Audio({ src, title, transcript, caption }: AudioProps): ReactElement {
+export function Audio({
+  src,
+  title,
+  transcript,
+  caption,
+  loading = "lazy",
+}: AudioProps): ReactElement {
   return (
     <figure className="cap-player" data-kind="audio">
-      <audio src={src} controls preload="none" aria-label={title} />
+      <audio src={src} controls preload="none" {...mediaLoading(loading)} aria-label={title} />
       <p className="cap-player-transcript">
         <a href={transcript}>Transcript: {title}</a>
       </p>

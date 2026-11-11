@@ -1,13 +1,21 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useId,
+  useRef,
   useState,
   type ComponentProps,
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { nextTab, type Activation, type Orientation } from "./tabs.ts";
+import {
+  FINDS_HIDDEN,
+  nextTab,
+  setPanelHidden,
+  type Activation,
+  type Orientation,
+} from "./tabs.ts";
 
 // Renders the HTML contract in tabs.md. The chosen tab, the roving tabindex and the hidden
 // panels are React state, so the markup a server renders is the markup a client hydrates.
@@ -190,13 +198,29 @@ export function TabsContent({
   ...props
 }: ComponentProps<"div"> & { value: string }) {
   const c = useTabs();
+  const ref = useRef<HTMLDivElement>(null);
+  const hide = c.value !== value;
+  const { choose } = c;
+  // The server renders a plain `hidden`; once hydrated, an inactive panel becomes `hidden="until-found"` where the
+  // browser has it, and a find-in-page match inside it chooses this tab (tabs.ts, FINDS_HIDDEN).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !FINDS_HIDDEN) return;
+    setPanelHidden(el, hide);
+    const onMatch = (e: Event) => {
+      if (e.target === el) choose(value);
+    };
+    el.addEventListener("beforematch", onMatch);
+    return () => el.removeEventListener("beforematch", onMatch);
+  }, [hide, choose, value]);
   return (
     <div
+      ref={ref}
       role="tabpanel"
       id={`${c.base}-panel-${value}`}
       aria-labelledby={`${c.base}-tab-${value}`}
       tabIndex={0}
-      hidden={c.value !== value}
+      hidden={hide}
       className={className ? `cap-tabs-panel ${className}` : "cap-tabs-panel"}
       {...props}
     >

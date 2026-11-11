@@ -89,8 +89,12 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
   <button type="button" class="cap-btn cap-dialog-close" data-variant="quiet" data-icon-only
           data-cap-part="close" aria-label="Close">…</button>
 </dialog>
-<button type="button" class="cap-btn" data-cap-dialog-open="rename">Rename…</button>
+<button type="button" class="cap-btn" commandfor="rename" command="show-modal" data-cap-dialog-open="rename">Rename…</button>
 ```
+
+A button opener also carries `commandfor` (the dialog's id) and `command="show-modal"`: the browser's invoker commands (Baseline since December 2025) open the dialog before script has run, or if it never does. Once `enhance()` has run, the opener's own click handler takes over (and prevents the native command), adding focus placement, the return of focus and the history entry. A Close or Cancel part may carry `commandfor` and `command="close"` the same way. A link opener stays a link. (Modern Web Guidance, declarative-dialog-popover-control.)
+
+Where the browser has `closedby` (Chrome 134, Firefox 141), the dialog's light dismiss is the browser's: `enhance()` sets `closedby="any"`, `"closerequest"` on a locked or alert dialog (Esc, not the backdrop), and `"none"` while busy. An author's own `closedby` is kept. Safari keeps the scripted backdrop click.
 
 Parts: `cap-dialog-header` (`data-divider` adds a line under it), `-title`, `-description`, `-media` (an icon tile, `data-tone="crit|warn"`), `-body` (`data-flush` removes its padding), `-footer` (`data-align="between|start"`), `-close`. Attributes on the dialog: `data-cap-modal-lock`, `data-cap-destructive`, `data-cap-history` (its value is the prefix of the address, default `dialog`; `data-cap-history-id` the id, default the dialog's `id`), `data-cap-return` (selector), `data-cap-open` (opens when enhanced).
 
