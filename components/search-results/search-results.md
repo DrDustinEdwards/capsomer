@@ -5,7 +5,7 @@ summary: A site search's results page, with the count in a live region, the kind
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [results with a facet and the sort, nothing matched]
-added: 0.91.0
+added: 0.92.0
 source: dustinedwards.info's search page (app/routes/search.tsx, styles/search-page.css, search-facets.css), the Capsid Portal's library snippet (views/Library.tsx) and the Capsid explorer's search (explorer/src/explorer.js, search.mjs), generalized
 replaces:
   - 'class="(?:[^"]*\s)?search-(result|results|snippet|type|why|facets|count)[\s"]'

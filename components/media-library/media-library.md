@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + React (composes media, drop zone, chips, tabs, field, disclosure, bulk bar, message, empty, confirm dialog, shortcuts and command menu)
 states: [editor with every action, the upload dialog as delivered, inspector in form mode, Trash as a list, grouped by folder at the small size, a list grouped by month sorted on the page only, reader on a limited site, picker, picker alt step with no script, empty trash, no match, delivered HTML, a site with every media idea, the media ideas as delivered HTML]
 added: 0.6.0
-updated: 0.91.0
+updated: 0.92.0
 source: Carrel, app/routes/media.tsx, media.bulk.ts, lib/media.server.ts, components/media/library-insert.tsx (server forms on purpose, the capability gates, the refused-because-used list, cursor paging, the picker that asks for alt text); dustinedwards.info, app/routes/admin.media._index.tsx and components/admin/media-* (the library experience, already in Capsomer's media); docs/design/design-content-components.md section 2.4.2
 replaces:
   - "LibraryInsert|MediaPicker|ImageField"

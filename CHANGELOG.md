@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.91.0]
+## [0.92.0]
 
 Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the sites wrote by hand for numbers, money, statuses, steps, charts, search results, graphs, the system map's model, catalogs and media picking, moved into components. New peers: `@dagrejs/dagre ^3.1.3` and `zod ^4.6.7`, both optional (only `capsomer/behavior/graph` and `capsomer/behavior/system-model` import them).
 
@@ -21,6 +21,11 @@ Batch 6 of the shared-code audit, pass 2 (C54 to C63, data display): what the si
 - **Media library:** `MediaPicker` ("Insert from library" in a dialog) and `ImageField` (one chosen image with its preview, Choose another and Remove) in `capsomer/react/media-picker`, and `uploadImage`, `loadMediaView` and `libraryOf` in `capsomer/behavior/media-picker`. New classes: `.cap-image-field` and its parts.
 
 No token was removed or renamed.
+
+## [0.91.0]
+
+- **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
+- **New: rich text field** (`capsomer/react/rich-text-field`, `capsomer/behavior/rich-text-field`, `capsomer/rich-text-field.css`; from txasm's abstract editor). A short text with a few inline tags and nothing else, a formatting toolbar (one tab stop) whose buttons toggle and show where the caret is, and `sanitizeRichText`, which the server runs on every save. The box is built from DOM nodes, never from a markup string, so it needs no Trusted Types policy. New classes: `.cap-rich-text`, `.cap-rich-text-bar`, `.cap-rich-text-box`, `.cap-rich-text-count`. No token or class was removed or renamed.
 
 ## [0.90.0]
 
