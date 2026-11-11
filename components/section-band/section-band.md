@@ -1,7 +1,7 @@
 ---
 name: section-band
 title: Section band
-summary: A full-width band of its own colour that sets one section apart, straight or with slanted edges over its neighbours.
+summary: A full-width band of its own color that sets one section apart, straight or with slanted edges over its neighbours.
 parts: [css, react]
 tool: native
 states: [straight, slanted, slanted over its neighbours, phone]
@@ -15,7 +15,7 @@ replaces:
 
 # Section band
 
-A `section` in a band of its own colour (`--cap-band-bg`, text `--cap-band-text`). `data-cut="slant"` cuts its top and bottom on a diagonal and lays a translucent wedge along each edge (`--cap-band-ghost`, the band at half strength by default), so the hero above and the section below show faintly through. `data-overlap` pulls the band over its neighbours by the slant's depth.
+A `section` in a band of its own color (`--cap-band-bg`, text `--cap-band-text`). `data-cut="slant"` cuts its top and bottom on a diagonal and lays a translucent wedge along each edge (`--cap-band-ghost`, the band at half strength by default), so the hero above and the section below show faintly through. `data-overlap` pulls the band over its neighbours by the slant's depth.
 
 ## When to use it
 
@@ -50,7 +50,7 @@ Nothing to operate; its content is in reading order.
 
 ## Accessibility
 
-- The band's text colour must reach 4.5:1 on `--cap-band-bg`; the default pair (`--accent-1` on `--accent-12`) is in the contrast report, and a site that sets its own band checks its pair.
-- Forced colors: the band draws a rule at its top and bottom, since its colour is gone.
+- The band's text color must reach 4.5:1 on `--cap-band-bg`; the default pair (`--accent-1` on `--accent-12`) is in the contrast report, and a site that sets its own band checks its pair.
+- Forced colors: the band draws a rule at its top and bottom, since its color is gone.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

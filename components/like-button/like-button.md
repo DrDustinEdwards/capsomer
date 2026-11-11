@@ -27,7 +27,7 @@ A reader's like of a list, a post or a review.
 ## The default and its reason
 
 - **The name stays the same, pressed or not** ("Like, 12"); the pressed state says whether it is on (WAI-ARIA APG, toggle button: a name that flips with the state reads as two different buttons). Foxing's name flipped between "Like" and "Remove like" and hid the count.
-- **The state is shape as well as colour**: the heart fills.
+- **The state is shape as well as color**: the heart fills.
 - **The page does the write** and passes `liked` and `count` back; while it runs the button is busy and cannot be pressed twice.
 - **Signed out it is disabled** and still shows the count.
 

@@ -1,7 +1,7 @@
 ---
 name: ask-panel
 title: Ask panel
-summary: An AI answer streamed into the page, labelled as AI and as possibly wrong, with its sources, a follow-up and a note when it was cut off.
+summary: An AI answer streamed into the page, labeled as AI and as possibly wrong, with its sources, a follow-up and a note when it was cut off.
 parts: [css, behavior]
 tool: own JavaScript
 states: [answered, cut off, unavailable, before asking]
@@ -68,8 +68,8 @@ enhance(document, {
 
 ## Accessibility
 
-- The panel is a labelled region ("AI answer"), focusable but not a Tab stop.
-- The badge's colours are the primary pair; the note and the status are muted text that reaches 4.5:1 on the accent tint.
+- The panel is a labeled region ("AI answer"), focusable but not a Tab stop.
+- The badge's colors are the primary pair; the note and the status are muted text that reaches 4.5:1 on the accent tint.
 - Failure is said in words ("Ask is unavailable.", "Ask stopped early.", "No answer for that one.") and announced.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

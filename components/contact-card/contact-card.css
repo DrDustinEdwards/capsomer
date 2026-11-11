@@ -1,7 +1,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Contact cards: how to reach someone, by kind. Each card has a heading and either a list of ways
-   (an email, a profile, a map link, each a link) or labelled numbers (a description list: what the
+   (an email, a profile, a map link, each a link) or labeled numbers (a description list: what the
    line is for, then its numbers). Cards sit in `.cap-contact-grid`; `data-variant="plain"` drops
    the card's border and ground and draws a rule between cards instead, for a contact section on a
    page's own ground. Extracted from BioScience Writers' contact page and julieedwards.info's

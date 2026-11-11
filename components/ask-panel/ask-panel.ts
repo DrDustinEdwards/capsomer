@@ -1,4 +1,4 @@
-// The AI answer panel's behaviour: start a stream, show the answer as it arrives, then the sources, a follow-up and a
+// The AI answer panel's behavior: start a stream, show the answer as it arrives, then the sources, a follow-up and a
 // note when the model was cut off, and announce the start and the whole answer once each. Every write is textContent
 // or a DOM node: generated text is never markup, so the panel needs no Trusted Types policy at all.
 // Extracted from dei's Ask (enhance/ask.ts) in 0.92.0. What the site's stream means (which event carries the sources,

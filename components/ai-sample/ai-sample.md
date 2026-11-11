@@ -1,7 +1,7 @@
 ---
 name: ai-sample
 title: AI sample
-summary: A live AI call the reader runs on a marketing page, the output shown as labelled fields and marked as AI-written for a fictional person.
+summary: A live AI call the reader runs on a marketing page, the output shown as labeled fields and marked as AI-written for a fictional person.
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [a sample, generating, failed]
@@ -13,7 +13,7 @@ replaces:
 
 # AI sample
 
-A panel where the reader picks an input, presses a button and sees what the product's model writes for it. The output is labelled fields (a subject, a body) and a note that says it was written by AI for a fictional person.
+A panel where the reader picks an input, presses a button and sees what the product's model writes for it. The output is labeled fields (a subject, a body) and a note that says it was written by AI for a fictional person.
 
 ## When to use it
 
@@ -67,6 +67,6 @@ Showing a product's AI on its own marketing page, on a real call, with nothing s
 ## Accessibility
 
 - The live badge is text ("Calls real AI"), its dot decoration.
-- The failure line is `--crit` text with its words, not colour alone.
+- The failure line is `--crit` text with its words, not color alone.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

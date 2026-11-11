@@ -55,6 +55,6 @@ A vote among a few options inside a page: a club choosing its next book.
 
 ## Accessibility
 
-- Pressed: an accent edge, bold and a stronger fill, not colour alone; forced colors: a Highlight outline.
+- Pressed: an accent edge, bold and a stronger fill, not color alone; forced colors: a Highlight outline.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

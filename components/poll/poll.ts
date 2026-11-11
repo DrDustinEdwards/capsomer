@@ -1,4 +1,4 @@
-// The poll's one piece of behaviour: each option's share of the votes as `--share`, through the CSSOM, so the
+// The poll's one piece of behavior: each option's share of the votes as `--share`, through the CSSOM, so the
 // page keeps `style-src 'self'`. Server-rendered options carry `data-votes`; the module reads them and sets the
 // shares from the total.
 

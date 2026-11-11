@@ -1,7 +1,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A live AI sample: the reader picks an input, presses Generate, and sees what the model writes,
-   labelled as AI and as made for a fictional person. The output is labelled fields (a subject, a
+   labeled as AI and as made for a fictional person. The output is labeled fields (a subject, a
    body) so a sample email reads as one. Extracted from Foxhound's home page email generator
    (components/email-samples.tsx, islands/email-generator.ts). */
 @layer cap.components {

@@ -1,6 +1,6 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* The AI answer panel: an answer a model writes while the reader watches, labelled as AI and as
+/* The AI answer panel: an answer a model writes while the reader watches, labeled as AI and as
    possibly wrong, with the sources it drew on, an optional follow-up question, and a note when the
    model stopped before finishing. The body keeps four lines of room from the start, so the stream
    never pushes the page down under the reader. Extracted from dei's Ask (styles/ask.css,

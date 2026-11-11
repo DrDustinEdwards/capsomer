@@ -9,9 +9,9 @@ export interface FeatureBlockProps {
   media?: ReactNode;
   // A tall preview scrolls in a window; this names that window for a screen reader.
   scrollLabel?: string;
-  // "stacked": the text centred over the picture. "beside": text and picture side by side when wide.
+  // "stacked": the text centered over the picture. "beside": text and picture side by side when wide.
   layout?: "stacked" | "beside";
-  // Text aligned to the start instead of centred (stacked only).
+  // Text aligned to the start instead of centered (stacked only).
   alignStart?: boolean;
   lifted?: boolean;
   headingLevel?: "h2" | "h3" | "h4";

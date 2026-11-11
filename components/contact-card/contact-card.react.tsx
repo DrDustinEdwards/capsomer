@@ -28,7 +28,7 @@ export interface ContactCardProps {
   text?: ReactNode;
   // Links: an email, a profile, a booking page.
   ways?: ContactWay[];
-  // Labelled phone numbers.
+  // Labeled phone numbers.
   lines?: ContactLine[];
   // Address lines, linked to a map when `mapHref` is given.
   address?: string[];

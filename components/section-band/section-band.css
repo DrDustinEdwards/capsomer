@@ -1,6 +1,6 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* A section band: a full-width band of its own colour that sets one section apart. `data-cut="slant"`
+/* A section band: a full-width band of its own color that sets one section apart. `data-cut="slant"`
    cuts its top and bottom edges on a diagonal, with a translucent wedge along each edge, so the
    sections before and after show faintly through and each edge reads as two parallel slants.
    `data-overlap` pulls the band up and down over its neighbours by the slant's depth, so no straight

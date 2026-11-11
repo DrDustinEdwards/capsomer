@@ -1,7 +1,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* A like: a toggle button with a heart and its count, pressed when the reader has liked it. The
-   heart fills when pressed, so the state is told by shape as well as colour. Extracted from Foxing's
+   heart fills when pressed, so the state is told by shape as well as color. Extracted from Foxing's
    LikeButton (components/social/like-button.tsx, .fx-like-button-* in styles/social.css). */
 @layer cap.components {
   .cap-like {

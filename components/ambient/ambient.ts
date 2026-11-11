@@ -1,4 +1,4 @@
-// The ambient layer's behaviour: draws the hex field's hexagons once per view, and pauses every
+// The ambient layer's behavior: draws the hex field's hexagons once per view, and pauses every
 // ambient layer while it is off screen. Every value goes through the CSSOM (style.setProperty), never a
 // style attribute, so a page keeps `style-src 'self'`. The blobs and the equalizer need no drawing;
 // they only take the pause.

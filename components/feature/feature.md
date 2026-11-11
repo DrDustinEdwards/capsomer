@@ -15,7 +15,7 @@ replaces:
 
 # Feature blocks and cards
 
-**A block** (`.cap-feature`) tells one feature at length: an [eyebrow](../eyebrow/eyebrow.md), a title, a paragraph, and a bordered picture of the feature working. Stacked, the text is centred over the picture; `beside`, they sit side by side once the `.cap-features` stack around them is 48rem wide (a container query: a beside block always sits in a stack, even alone). Blocks in `.cap-features[data-alternate]` swap sides each time. `lifted` raises one block on its own card.
+**A block** (`.cap-feature`) tells one feature at length: an [eyebrow](../eyebrow/eyebrow.md), a title, a paragraph, and a bordered picture of the feature working. Stacked, the text is centered over the picture; `beside`, they sit side by side once the `.cap-features` stack around them is 48rem wide (a container query: a beside block always sits in a stack, even alone). Blocks in `.cap-features[data-alternate]` swap sides each time. `lifted` raises one block on its own card.
 
 **A card** (`.cap-feature-card`) is one feature in a grid (`.cap-feature-grid`): an icon, a title and a line, as many columns as fit at 16rem each.
 

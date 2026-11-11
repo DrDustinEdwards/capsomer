@@ -1,7 +1,7 @@
 ---
 name: ambient
 title: Ambient layer
-summary: Decoration behind a hero that carries no information: drifting hexagons, blurred colour fields, or a row of rising bars.
+summary: Decoration behind a hero that carries no information: drifting hexagons, blurred color fields, or a row of rising bars.
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [hex field, blobs, equalizer, reduced motion, paused off screen]
@@ -22,11 +22,11 @@ A layer of moving decoration behind a hero's words. Three kinds:
 
 | Variant | What it draws | Drawn by |
 | --- | --- | --- |
-| `hex-field` | 24 hexagons (12 on a phone) that drift, placed at random once per view | the behaviour module |
-| `blobs` | four large blurred colour fields that drift, full-bleed to the window | CSS |
-| `equalizer` | a shelf of 28 bars that rise and fall around a centre line | CSS |
+| `hex-field` | 24 hexagons (12 on a phone) that drift, placed at random once per view | the behavior module |
+| `blobs` | four large blurred color fields that drift, full-bleed to the window | CSS |
+| `equalizer` | a shelf of 28 bars that rise and fall around a center line | CSS |
 
-Colours are the site's: `--cap-ambient-1` to `--cap-ambient-4` (defaults: primary, accent, info, surface).
+Colors are the site's: `--cap-ambient-1` to `--cap-ambient-4` (defaults: primary, accent, info, surface).
 
 ## When to use it
 
@@ -44,7 +44,7 @@ One hero per site, to give the first screen movement that says something about t
 - **Still under `prefers-reduced-motion`**, every animation off (WCAG 2.3.3); **paused off screen** (`data-paused`, an IntersectionObserver), so it costs nothing unseen; **gone in forced colors**.
 - **No `style` attribute and no `<style>` element.** germomics set each blob's place inline and its keyframes in a `<style>` tag, both refused under `style-src 'self'` and Trusted Types. The presets are CSS here; the hexagons' random values go through the CSSOM.
 - **Random once per view, in the browser only**, so the server and the browser never disagree (no hydration mismatch).
-- **The blobs are full-bleed without `100vw`** (insets from the centred column out to the window), clipped on the inline axis only, so they never make the page scroll sideways and never show a straight edge.
+- **The blobs are full-bleed without `100vw`** (insets from the centered column out to the window), clipped on the inline axis only, so they never make the page scroll sideways and never show a straight edge.
 
 ## HTML contract
 

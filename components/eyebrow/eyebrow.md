@@ -15,7 +15,7 @@ replaces:
 
 # Eyebrow
 
-A short uppercase label over the thing it names: a feature's topic, a section of a page, a field group in a preview. `data-variant="mono"` sets it in the mono face; `data-tone="accent"` in the accent's text colour.
+A short uppercase label over the thing it names: a feature's topic, a section of a page, a field group in a preview. `data-variant="mono"` sets it in the mono face; `data-tone="accent"` in the accent's text color.
 
 ## When to use it
 

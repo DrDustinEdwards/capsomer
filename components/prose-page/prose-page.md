@@ -55,6 +55,6 @@ Nothing to operate; links in the body are in reading order.
 ## Accessibility
 
 - The title is the page's one `h1`.
-- The band's text pair is the site's to check when it sets its own band colours; the default (`--text` on `--sunken`) is in the contrast report.
+- The band's text pair is the site's to check when it sets its own band colors; the default (`--text` on `--sunken`) is in the contrast report.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

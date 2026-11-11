@@ -2,12 +2,12 @@
 
 /* Ambient layers: decoration behind a hero that carries no information. Each is aria-hidden, takes
    no pointer events, holds still under prefers-reduced-motion and pauses off screen.
-   - `hex-field`: hexagons that drift, drawn by the behaviour module at random once per view (so the
+   - `hex-field`: hexagons that drift, drawn by the behavior module at random once per view (so the
      server and the browser never have to agree on the layout). BioScience Writers' hero.
-   - `blobs`: four large blurred colour fields that drift, full-bleed to the window's width.
+   - `blobs`: four large blurred color fields that drift, full-bleed to the window's width.
      germomics' home hero.
-   - `equalizer`: a row of bars that rise and fall around a centre line. germomics' hero shelf.
-   Colours are the site's tokens: `--cap-ambient-1` to `-4`. Positions, sizes and timings are the
+   - `equalizer`: a row of bars that rise and fall around a center line. germomics' hero shelf.
+   Colors are the site's tokens: `--cap-ambient-1` to `-4`. Positions, sizes and timings are the
    sources' own, set here as presets so no `style` attribute is needed. */
 @layer cap.components {
   .cap-ambient {
@@ -22,7 +22,7 @@
     pointer-events: none;
   }
 
-  /* Hexagons: the module sets each one's place, size, colour and timing through the CSSOM. */
+  /* Hexagons: the module sets each one's place, size, color and timing through the CSSOM. */
   .cap-ambient[data-variant="hex-field"] > span {
     position: absolute;
     inset-block-start: var(--y);

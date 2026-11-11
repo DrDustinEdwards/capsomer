@@ -1,7 +1,7 @@
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
 /* Marketing feature blocks and cards. A block is one feature told at length: an eyebrow, a title,
-   a paragraph and a picture of it working (a preview panel), centred over the preview or beside
+   a paragraph and a picture of it working (a preview panel), centered over the preview or beside
    it. Blocks in a `.cap-features` stack alternate sides when `data-alternate` is set. A card is one
    feature in a grid: an icon, a title and a line. Extracted from Foxhound's product sections and
    its guide's scope cards. */
