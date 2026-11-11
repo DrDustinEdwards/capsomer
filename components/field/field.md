@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default, keyboard focus, hover, filled, help text, required, invalid with its message, disabled, read-only, file input, input group, checkbox checked, unchecked, mixed and invalid, radio checked and unchecked, choice card, slider, password shown and hidden, one-time code, character count under and over, number with steppers, search with Clear, date input with a part in error, two or more errors in the error summary]
 added: 0.1.0
-updated: 0.98.0
+updated: 0.104.0
 source: Capsid Portal, dashboard/src/styles.css (.field, .siteform .f, .siteform .check, .err)
 replaces:
   - 'class="(?:[^"]*\s)?field[\s"]'
@@ -200,6 +200,8 @@ The parts in React render the markup above, with their state in React (the butto
 ```
 
 `Field` also takes a function as its child, given the control's props, for a control inside a group, and `after` for what goes between the control and its error. `NumberField` takes `step` as a number or `"any"`: any value passes the browser's step check, and the steppers and Page Up and Page Down step by 1. `size="short"` writes `data-size="short"` on the `.cap-field`, for a field that needs only its control's room beside a long one; a layout that sets field widths reads it (the inline add form).
+
+Fields side by side: `<div class="cap-fields">` around `.cap-field`s (and `.cap-check`s) puts as many in a row as fit at `--fields-min` (16rem) each, one column on a phone, lined up on their controls whatever help one carries. `labelHidden` on `Field` or `SearchField` reads the label and does not show it, for a site's search box only.
 
 Fields in an input group, a choice card and horizontal fields:
 

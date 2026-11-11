@@ -6,7 +6,7 @@ parts: [css]
 tool: native
 states: [content, one destination, hover, stretched link with actions, focus, lead, side layout, aligned grid, choice, choice checked, choice disabled, book cover ratio]
 added: 0.99.0
-updated: 0.104.0
+updated: 0.106.0
 source: Chrome's Modern Web Guidance card guide; replaces Foxing's book and entity cards (book-card.tsx, ui.tsx EntityCard), txasm's awardee cards (awardees.tsx), bsw's service, team and quote cards (cards.tsx) and Carrel's corkboard cards
 replaces:
   - 'className="[^"]*\b(fx-book-card|entity-card|awardee-card|service-card|team-card|corkboard-card)\b'
@@ -39,6 +39,8 @@ Up to four, as direct children, in this order; any may be left out. No wrapper c
 | Footer | `footer` with the card's own links and buttons | A "Read more" that shares the heading's address names its card: `Read more<span class="cap-sr-only"> about Field notes</span>` |
 
 A **lead** (`.cap-card-lead`, first child) is one icon or one action that stands at the card's start in a column of its own, beside the header: a podcast episode's play button, a file type's icon. The other regions keep to the second column. It takes the first row only, so it never stretches the card. A lead that is a button sits above a stretched link like any other control.
+
+Inside a sortable list's card item (`.cap-sortable-body > .cap-card`, a corkboard's scene) the card drops its own edge, padding, surface and lift: the item is already the box. Its regions and stretched link stay.
 
 `data-layout="side"` puts the media in a side column once the card itself is at least 34rem wide (a container query on the card, not the viewport); a card with no media stays one column.
 

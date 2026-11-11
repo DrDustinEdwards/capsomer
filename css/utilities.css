@@ -241,9 +241,13 @@
           var(--cap-fade-start) 100% no-repeat no-clip,
         linear-gradient(to var(--cap-fade-dir), transparent, #000) var(--cap-fade-end-at) 0 /
           var(--cap-fade-end) 100% no-repeat no-clip;
-      animation:
-        cap-fade-start-in linear both,
-        cap-fade-end-out linear both;
+      /* Longhands, with duration auto: a minifier (Lightning CSS, Vite's) folds the animation
+         shorthand and the timeline into one and writes a 0s duration, which Chromium runs as
+         finished, so both fades show at rest. */
+      animation-name: cap-fade-start-in, cap-fade-end-out;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(self inline);
       animation-range:
         0 var(--cap-fade),
@@ -280,7 +284,11 @@
 @layer cap.utilities {
   @supports (animation-timeline: scroll()) {
     :where(.cap-sortable-label, .cap-hist-name) {
-      animation: cap-truncated linear both;
+      /* Longhands, with duration auto (see the scroll fades above). */
+      animation-name: cap-truncated;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(self inline);
     }
     @media (prefers-reduced-motion: no-preference) {

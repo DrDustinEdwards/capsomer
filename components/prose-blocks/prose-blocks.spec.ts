@@ -46,6 +46,18 @@ eachTheme((theme) => {
     );
     expect(overflow, "the page does not scroll sideways").toBeLessThanOrEqual(0);
   });
+  test("behavior: a row header keeps the rows' hairline; only the head has the heavy rule", async ({
+    page,
+  }) => {
+    await visitStates(page, "prose-blocks", theme);
+    const width = (sel: string) =>
+      page
+        .locator(sel)
+        .first()
+        .evaluate((el) => getComputedStyle(el).borderBottomWidth);
+    expect(await width("#pb-manual tbody th")).toBe(await width("#pb-manual tbody td"));
+    expect(await width("#pb-manual tbody th")).toBe("1px");
+  });
   test("behavior: a site's tokens set its reading look", async ({ page }) => {
     await visitStates(page, "prose-blocks", theme);
     const look = page.locator("#pb-site-look");

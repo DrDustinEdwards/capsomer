@@ -71,6 +71,9 @@ export function SiteHeader(props: SiteHeaderProps) {
     variant,
     search,
     trail,
+    attributes,
+    toolsEnd,
+    end,
     collapse,
     sheetIcons,
     menuIcon = MENU_ICON,
@@ -245,6 +248,7 @@ export function SiteHeader(props: SiteHeaderProps) {
       {/* data-cap-ready: React wires this header itself, so a page-wide enhance() leaves it alone.
         Without hydration it is left off, and enhance() wires the same markup (with the theme key). */}
       <header
+        {...attributes}
         ref={headerRef}
         className="cap-site-header"
         data-cap="site-header"
@@ -480,6 +484,7 @@ export function SiteHeader(props: SiteHeaderProps) {
               })
             ) : null}
           </AccountSlot>
+          {toolsEnd}
           <button
             ref={menuButton}
             type="button"
@@ -636,6 +641,7 @@ export function SiteHeader(props: SiteHeaderProps) {
             </nav>
           ) : null}
         </Dialog>
+        {end}
       </header>
     </HeaderHydrates.Provider>
   );
