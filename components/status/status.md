@@ -4,9 +4,9 @@ title: Status
 summary: A status as a shape, a word and a color together, as a word or as a badge; the marks of states and kinds that have a shape of their own; and the badge's variants.
 parts: [css, react]
 tool: native
-states: [critical, warning, notice, ok, running, no data, as a word, as a badge, default, secondary, outline, destructive, ghost, link, link or button badge, hover, disabled, count, comfortable, on a selected row, no data with its reason, no data in a table cell, state marks, a phrase that wraps, a glyph on its own, accent badge, series badge]
+states: [critical, warning, notice, ok, running, no data, as a word, as a badge, default, secondary, outline, destructive, ghost, link, link or button badge, hover, disabled, count, comfortable, on a selected row, no data with its reason, no data in a table cell, state marks, a phrase that wraps, a glyph on its own, accent badge, series badge, tag badge]
 added: 0.1.0
-updated: 0.92.0
+updated: 0.96.0
 source: Capsomer mockup (design/mockup.html, the status symbols); the Capsid Portal's state chips
 replaces:
   - 'class="(st|pill|badge|chip-state|state)[ "]'
@@ -46,6 +46,8 @@ How a thing is: critical, warning, notice, ok, running, or no data. Always a gly
 - **No data is a state with a reason, never a zero.** Put the reason after the word, as `.cap-status-reason`.
 - **In a table cell, no data says two words** (`.cap-status` with the reason in a `.cap-sr-only` span after a colon, and the same text in `title` for the pointer): a sentence does not fit a 34 px row, and the full reason is in the row's detail (Portal design D18). The word and the glyph are still there, so the cell is never a blank or a zero.
 - **A tone always draws its glyph.** A badge with `data-tone` and a glyph is a status; a badge with only a `data-variant` is a label, and has no glyph. So a variant never turns into color alone.
+- **Unless the site's badges are words alone.** `glyph={false}` leaves the glyph out of a toned badge, for a site whose badges have always been words on their tint (Foxhound): the word must then say the state on its own ("Retries automatically", "Failed"), so the color still never carries it alone (WCAG 1.4.1).
+- **A tag** (`data-variant="tag"`) is a badge set in the site's tag face: the tone's tint with an edge in the word's own color, or a quiet hairline label with no tone, or a family's accent with `data-family`. `--tag-face`, `--tag-size`, `--tag-weight`, `--tag-case`, `--tag-tracking` and `--tag-edge` (how much of the word's color the edge takes) set it; each defaults to the badge's look.
 - **Tone and variant together.** `outline` and `ghost` keep the tone's color for the word and drop the tint; `default`, `secondary`, `destructive` and `link` use their own fill. `destructive` is the critical tone's tint, with the critical glyph.
 - **A link or button badge** gets a focus ring (`--ring`, 3 px), a hover color change, a dashed edge when disabled, and a hit area grown to `--target` by a pseudo-element, so the badge keeps its 20 px look.
 - **Size follows density**: 20 px high and 12 px text at the compact default, 22.5 px and 13 px with `data-density="comfortable"`.
@@ -118,7 +120,7 @@ A phrase that wraps, a glyph on its own, an accent badge and a series badge:
 <span class="cap-pill" data-variant="outline" data-series="2"><span class="cap-pill-dot" aria-hidden="true"></span>In review</span>
 ```
 
-In React, `import { Status, Pill, Glyph } from "capsomer/react/status"`: `<Status tone="nodata" reason="The uptime checker has not reported since 09:00.">No data</Status>`, `<Status tone="nodata" reason="No Cloudflare token for this site" brief>No data</Status>` for a table cell, `<Pill tone="info" running>Working</Pill>`, `<Pill variant="secondary">Draft</Pill>`, `<Pill variant="outline" href="/mentions">Mentions</Pill>`, `<Status tone="warn" glyph="blocked" wrap>Held until a person approves</Status>`, `<Glyph name="ok" tone="ok" />`, `<Pill variant="accent" family="purple">Win-back</Pill>`, `<Pill variant="outline" series={2}>In review</Pill>`. The Portal's `done` is the `ok` tone, `run` is `info` with `running`, `queued` is `muted` with `glyph="queued"`, `blocked` is `warn` with `glyph="blocked"`.
+In React, `import { Status, Pill, Glyph } from "capsomer/react/status"`: `<Status tone="nodata" reason="The uptime checker has not reported since 09:00.">No data</Status>`, `<Status tone="nodata" reason="No Cloudflare token for this site" brief>No data</Status>` for a table cell, `<Pill tone="info" running>Working</Pill>`, `<Pill variant="secondary">Draft</Pill>`, `<Pill variant="outline" href="/mentions">Mentions</Pill>`, `<Status tone="warn" glyph="blocked" wrap>Held until a person approves</Status>`, `<Glyph name="ok" tone="ok" />`, `<Pill variant="accent" family="purple">Win-back</Pill>`, `<Pill variant="outline" series={2}>In review</Pill>`, `<Pill variant="tag" tone="ok" glyph={false}>Retries automatically</Pill>`. The Portal's `done` is the `ok` tone, `run` is `info` with `running`, `queued` is `muted` with `glyph="queued"`, `blocked` is `warn` with `glyph="blocked"`.
 
 **The shadcn component it matches:** Badge (`badge.tsx`, nova style): 20 px pill, 12 px text, `default`, `secondary`, `outline`, `destructive`, `ghost`, `link`, link badges with hover, focus ring.
 
