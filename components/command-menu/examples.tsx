@@ -2,7 +2,8 @@
 // types, through a fake source that answers after 300 ms. Titles are samples.
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { CommandMenu, navCommands, useCommandHost, type Command } from "./command-menu.react.tsx";
+import { LazyCommandMenu, useCommandHost } from "./command-host.react.tsx";
+import { CommandMenu, navCommands, type Command } from "./command-menu.react.tsx";
 
 const CATALOG = [
   "Getting started with the editor",
@@ -97,16 +98,13 @@ function Extras() {
         </p>
         <p data-specimen-part="ready">{host.ready ? "Menu ready" : "Menu not mounted"}</p>
       </main>
-      {host.ready ? (
-        <CommandMenu
-          open={host.open}
-          onOpenChange={host.setOpen}
-          commands={commands}
-          recentKey="cap-cmd-specimen-recent"
-          ask={{ run: (q) => setSaid(`Asked: ${q}`) }}
-          bindKeys={false}
-        />
-      ) : null}
+      <LazyCommandMenu
+        host={host}
+        commands={commands}
+        recentKey="cap-cmd-specimen-recent"
+        ask={{ run: (q) => setSaid(`Asked: ${q}`) }}
+        bindKeys={false}
+      />
     </>
   );
 }

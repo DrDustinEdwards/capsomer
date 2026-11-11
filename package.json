@@ -115,6 +115,10 @@
     },
     "./push-sw.js": "./components/web-push/push-sw.js",
     "./offline-sw.js": "./components/offline-keep/offline-sw.js",
+    "./behavior/command-host": {
+      "types": "./dist/components/command-menu/command-host.d.ts",
+      "default": "./dist/components/command-menu/command-host.js"
+    },
     "./behavior/*": {
       "types": "./dist/components/*/*.d.ts",
       "default": "./dist/components/*/*.js"
@@ -122,6 +126,10 @@
     "./react/player-context": {
       "types": "./dist/components/player/player-context.react.d.ts",
       "default": "./dist/components/player/player-context.react.js"
+    },
+    "./react/command-host": {
+      "types": "./dist/components/command-menu/command-host.react.d.ts",
+      "default": "./dist/components/command-menu/command-host.react.js"
     },
     "./react/*": {
       "types": "./dist/components/*/*.react.d.ts",
