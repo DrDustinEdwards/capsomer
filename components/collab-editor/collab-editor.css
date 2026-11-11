@@ -1,0 +1,219 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* components/collab-editor: a shared room around the rich editor (carets, suggestions, comments). */
+@layer cap.components {
+  /* A file's room: each person takes one of Capsomer's eight series
+     colors, the same on every screen, with its own text color for a name set on it. The carets, the
+     avatars in the room bar and the selection share it. */
+  :is(.cap-collab-caret, .cap-collab-caret-selection, .cap-collab-person)[data-who="0"] {
+    --who: var(--series-1);
+    --who-text: var(--series-text-1);
+  }
+  :is(.cap-collab-caret, .cap-collab-caret-selection, .cap-collab-person)[data-who="1"] {
+    --who: var(--series-2);
+    --who-text: var(--series-text-2);
+  }
+  :is(.cap-collab-caret, .cap-collab-caret-selection, .cap-collab-person)[data-who="2"] {
+    --who: var(--series-3);
+    --who-text: var(--series-text-3);
+  }
+  :is(.cap-collab-caret, .cap-collab-caret-selection, .cap-collab-person)[data-who="3"] {
+    --who: var(--series-4);
+    --who-text: var(--series-text-4);
+  }
+  :is(.cap-collab-caret, .cap-collab-caret-selection, .cap-collab-person)[data-who="4"] {
+    --who: var(--series-5);
+    --who-text: var(--series-text-5);
+  }
+  :is(.cap-collab-caret, .cap-collab-caret-selection, .cap-collab-person)[data-who="5"] {
+    --who: var(--series-6);
+    --who-text: var(--series-text-6);
+  }
+  :is(.cap-collab-caret, .cap-collab-caret-selection, .cap-collab-person)[data-who="6"] {
+    --who: var(--series-7);
+    --who-text: var(--series-text-7);
+  }
+  :is(.cap-collab-caret, .cap-collab-caret-selection, .cap-collab-person)[data-who="7"] {
+    --who: var(--series-8);
+    --who-text: var(--series-text-8);
+  }
+
+  .cap-collab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    margin-block-end: var(--space-3);
+  }
+
+  .cap-collab-people {
+    display: flex;
+    flex-wrap: wrap;
+    min-inline-size: 0;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .cap-collab-line {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  /* The ring in the person's color is the link to their caret; the name is in the text beside it. */
+  .cap-collab-person {
+    display: inline-flex;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--who);
+  }
+  .cap-collab-person + .cap-collab-person {
+    margin-inline-start: -4px;
+  }
+
+  .cap-collab-caret {
+    position: relative;
+    margin-inline: -1px;
+    border-inline-start: 2px solid var(--who);
+    pointer-events: none;
+    word-break: normal;
+  }
+
+  .cap-collab-caret-name {
+    position: absolute;
+    inset-block-end: 100%;
+    inset-inline-start: -2px;
+    padding: 0 0.35em;
+    border-radius: var(--radius-s) var(--radius-s) var(--radius-s) 0;
+    background: var(--who);
+    color: var(--who-text);
+    font-family: var(--ui, inherit);
+    font-size: var(--fs-label);
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .cap-collab-caret-selection {
+    background: color-mix(in srgb, var(--who) 24%, transparent);
+  }
+
+  /* Suggestions: an insertion underlined, a deletion struck through, in the text color so they read in
+     both themes; the line's own color, not hue alone, says which is which. */
+  .cap-rich-editor-surface ins,
+  .cap-collab-suggestion-text ins {
+    text-decoration: underline 2px;
+    text-decoration-color: var(--ok);
+    background: var(--ok-soft);
+  }
+
+  .cap-rich-editor-surface del,
+  .cap-collab-suggestion-text del {
+    text-decoration: line-through 2px;
+    text-decoration-color: var(--crit);
+    background: var(--crit-soft);
+  }
+
+  .cap-rich-editor-surface [data-suggestion="modification"] {
+    outline: 1px dashed var(--info);
+    outline-offset: 2px;
+  }
+
+  .cap-collab-mark {
+    background: color-mix(in srgb, var(--warn) 22%, transparent);
+    border-block-end: 2px solid var(--warn);
+    cursor: pointer;
+
+    &[data-active] {
+      background: color-mix(in srgb, var(--warn) 40%, transparent);
+    }
+  }
+
+  .cap-collab-thread {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+
+    &[data-active] {
+      border-color: var(--warn);
+      box-shadow: 0 0 0 1px var(--warn);
+    }
+    &:focus-visible {
+      outline: var(--ring-width, 2px) solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+
+  .cap-collab-thread-quote {
+    margin: 0;
+    padding-inline-start: var(--space-3);
+    border-inline-start: 3px solid var(--warn);
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .cap-collab-thread-comments,
+  .cap-collab-suggestions {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-collab-comment,
+  .cap-collab-suggestion {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .cap-collab-comment-meta,
+  .cap-collab-comment-body,
+  .cap-collab-suggestion-text {
+    margin: 0;
+  }
+
+  .cap-collab-comment-body {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-collab-comment-form {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+
+    & textarea {
+      width: 100%;
+    }
+  }
+
+  .cap-collab-resolved > summary {
+    cursor: pointer;
+    color: var(--muted);
+  }
+
+  /* The panels' own spacing: a column of blocks, a row of buttons, and a line of text with no margin. */
+  .cap-collab-stack {
+    display: grid;
+    gap: var(--space-6);
+    min-width: 0;
+  }
+
+  .cap-collab-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .cap-collab-note {
+    margin: 0;
+  }
+}
