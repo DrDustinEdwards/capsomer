@@ -7,6 +7,7 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [0.88.1]
 
 - **Buttons change under the pointer in every variant.** The hover, pressed and open states sat above the variants in `button.css`, and each variant sets `--cap-btn-bg` with the same specificity, so a primary, secondary or danger button kept its resting fill on hover and press (Foxhound's amber calls to action never moved; found in the Recova parity audit, 2026-11-10). The states now come after the variants, so each variant's own `--cap-btn-hover` and `--cap-btn-press` apply. The default button and the disabled look are unchanged. No token or class was removed or renamed.
+- **Foxhound's 404 title is set in DM Sans.** The 404 title reads `--poster` (Jost), and Foxhound loads no Jost, so its title fell back to Futura or Century Gothic. The foxhound site tokens now set `--poster` to DM Sans, like its headings. No token or class was removed or renamed.
 
 ## [0.88.0]
 
