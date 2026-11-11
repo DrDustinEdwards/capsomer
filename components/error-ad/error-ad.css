@@ -1,0 +1,76 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The error page's ad slot: one vintage-style ad as decoration at the foot of a utility page, in
+   its own fonts. Link it from the page that shows an ad (never import it in a root boundary), so
+   only that page pays for it. Extracted from dustinedwards.info's utility ads
+   (app/utility-ads/utility-ads.css). The fonts are Bangers and Alfa Slab One, OFL 1.1
+   (fonts/OFL-bangers-alfa-slab-one.txt). */
+@layer cap.components {
+  @font-face {
+    font-family: "Cap Ad Display";
+    font-style: normal;
+    font-weight: 400;
+    font-display: optional;
+    src: url("../../fonts/bangers-latin-400-normal.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Cap Ad Slab";
+    font-style: normal;
+    font-weight: 400;
+    font-display: optional;
+    src: url("../../fonts/alfa-slab-one-latin-400-normal.woff2") format("woff2");
+  }
+  .cap-ad {
+    /* The ad's own ink: dark on a light page and light on a dark one. */
+    --cap-ad-ink: #1b1f3b;
+    align-self: flex-end;
+    inline-size: min(100%, 32rem);
+    margin-block-start: var(--space-8);
+    pointer-events: none;
+    user-select: none;
+    &[data-size="large"] {
+      align-self: center;
+      inline-size: min(100%, 46rem);
+    }
+  }
+  .cap-ad-art {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    overflow: visible;
+  }
+  .cap-ad-defs {
+    position: absolute;
+    inline-size: 0;
+    block-size: 0;
+  }
+  .cap-ad-f-display {
+    font-family: "Cap Ad Display", Impact, "Arial Narrow", sans-serif;
+    letter-spacing: 0.02em;
+  }
+  .cap-ad-f-slab {
+    font-family: "Cap Ad Slab", Rockwell, "Arial Black", serif;
+  }
+  .cap-ad-f-serif {
+    font-family: var(--prose), Georgia, serif;
+    font-weight: 700;
+  }
+  .cap-ad-ink {
+    fill: var(--cap-ad-ink);
+  }
+  :root[data-theme="dark"] .cap-ad {
+    --cap-ad-ink: #f4ecd0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .cap-ad {
+      --cap-ad-ink: #f4ecd0;
+    }
+  }
+  /* Decoration: not printed, and not drawn when the reader has asked for system colors. */
+  @media print, (forced-colors: active) {
+    .cap-ad {
+      display: none;
+    }
+  }
+}

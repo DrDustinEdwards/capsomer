@@ -1,0 +1,42 @@
+<section class="cap-specimen" aria-labelledby="s-live">
+  <h2 id="s-live">Live: amounts in cents, an open top</h2>
+  <div class="cap-specimen-row" style="max-inline-size: 18rem">
+    <div class="cap-range-slider" id="rs-live" data-cap="range-slider" data-currency="USD" data-cents data-open-top role="group" aria-labelledby="rs-live-l">
+      <div class="cap-range-slider-head">
+        <span class="cap-range-slider-label" id="rs-live-l">Amount</span>
+        <output class="cap-range-slider-value" aria-hidden="true">$0 – $500+</output>
+      </div>
+      <div class="cap-range-slider-track">
+        <input type="range" class="cap-range-slider-input" name="amountMin" min="0" max="50000" step="1000" value="0" aria-label="Minimum amount" />
+        <input type="range" class="cap-range-slider-input" name="amountMax" min="0" max="50000" step="1000" value="50000" aria-label="Maximum amount" />
+      </div>
+      <div class="cap-range-slider-ends" aria-hidden="true"><span>$0</span><span>$500+</span></div>
+    </div>
+  </div>
+  <p id="rs-said" aria-live="polite"></p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-span">
+  <h2 id="s-span">A chosen span, the high handle under the pointer</h2>
+  <div class="cap-specimen-row" style="max-inline-size: 18rem">
+    <div class="cap-range-slider" data-cap="range-slider" role="group" aria-labelledby="rs-span-l">
+      <div class="cap-range-slider-head">
+        <span class="cap-range-slider-label" id="rs-span-l">Retries</span>
+        <output class="cap-range-slider-value" aria-hidden="true">2 – 6</output>
+      </div>
+      <div class="cap-range-slider-track">
+        <input type="range" class="cap-range-slider-input" min="0" max="10" step="1" value="2" aria-label="Fewest retries" />
+        <input type="range" class="cap-range-slider-input" min="0" max="10" step="1" value="6" aria-label="Most retries" data-force="hover" />
+      </div>
+      <div class="cap-range-slider-ends" aria-hidden="true"><span>0</span><span>10</span></div>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./range-slider.ts";
+  enhance();
+  document.querySelector("#rs-live").addEventListener("cap:range-commit", (e) => {
+    document.querySelector("#rs-said").textContent = `Filtered: ${e.detail.low} to ${e.detail.high}`;
+  });
+</script>

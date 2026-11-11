@@ -1,0 +1,52 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The share row: "Share" and a link to each service's own share intent, plain links with no
+   script or tracker, ruled off under a post's lead. Extracted from Foxhound's ShareRow
+   (app/components/blog/share-row.tsx, from Recova's ShareBar). Copy link is the copy button. */
+@layer cap.components {
+  .cap-share {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    margin-block-end: var(--space-6);
+    padding-block: var(--space-3);
+    border-block-end: 1px solid var(--line);
+  }
+  .cap-share-label {
+    font-family: var(--readout);
+    font-size: var(--fs-detail);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cap-share-link,
+  .cap-share > :is(button, a):not(.cap-share-link) {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--target);
+    padding: 0 var(--space-1);
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-family: var(--readout);
+    font-size: var(--fs-label);
+    font-weight: var(--link-weight);
+    text-decoration: none;
+    cursor: pointer;
+    &:is(:hover, [data-force="hover"]) {
+      color: var(--text);
+    }
+    & svg {
+      flex: none;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-share-link,
+    .cap-share > :is(button, a):not(.cap-share-link) {
+      transition: color var(--dur-fast) var(--ease-out);
+    }
+  }
+}

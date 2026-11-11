@@ -1,0 +1,154 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The two-handle range: a label with the chosen span over a track filled between the handles,
+   the track's ends under it. Two native range inputs share the track; the inputs' own tracks
+   are transparent and let pointer events through, so only the thumbs take them and each handle
+   drags on its own. Extracted from Foxhound's DualRangeSlider (app/components/dual-range-slider.tsx,
+   Recova's AmountRangeSlider). The thumb is the single slider's (field.css .cap-range). */
+@layer cap.components {
+  .cap-range-slider {
+    --cap-range-lo: 0%;
+    --cap-range-hi: 100%;
+    min-inline-size: 0;
+    font-size: var(--fs-detail);
+  }
+  .cap-range-slider-head,
+  .cap-range-slider-ends {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+  .cap-range-slider-head {
+    margin-block-end: var(--space-1);
+  }
+  .cap-range-slider-label,
+  .cap-range-slider-ends {
+    color: var(--muted);
+  }
+  .cap-range-slider-value {
+    font-family: var(--readout);
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-text);
+  }
+  .cap-range-slider-ends {
+    margin-block-start: var(--space-1);
+  }
+  .cap-range-slider-track {
+    position: relative;
+    block-size: max(var(--target), 24px);
+    /* The rail, and the fill between the two handles. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 50%;
+      block-size: 4px;
+      translate: 0 -50%;
+      border-radius: var(--radius-full);
+      background: linear-gradient(
+        to right,
+        var(--line-strong) var(--cap-range-lo),
+        var(--primary) var(--cap-range-lo) var(--cap-range-hi),
+        var(--line-strong) var(--cap-range-hi)
+      );
+    }
+  }
+  .cap-range-slider-input {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    background: transparent;
+    appearance: none;
+    pointer-events: none;
+    &::-webkit-slider-runnable-track {
+      block-size: 4px;
+      background: transparent;
+    }
+    &::-moz-range-track {
+      background: transparent;
+    }
+    &::-webkit-slider-thumb {
+      appearance: none;
+      pointer-events: auto;
+      inline-size: 20px;
+      block-size: 20px;
+      margin-block-start: -8px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 2px var(--ground);
+      cursor: pointer;
+    }
+    &::-moz-range-thumb {
+      pointer-events: auto;
+      inline-size: 20px;
+      block-size: 20px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 2px var(--ground);
+      cursor: pointer;
+    }
+    &:is(:hover, [data-force="hover"])::-webkit-slider-thumb {
+      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+    }
+    &:is(:hover, [data-force="hover"])::-moz-range-thumb {
+      box-shadow: 0 0 0 2px var(--ground), 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent);
+    }
+    &:focus-visible {
+      outline: none;
+    }
+    &:focus-visible::-webkit-slider-thumb {
+      box-shadow: 0 0 0 2px var(--ground), 0 0 0 calc(2px + var(--focus-width)) var(--ring);
+    }
+    &:focus-visible::-moz-range-thumb {
+      box-shadow: 0 0 0 2px var(--ground), 0 0 0 calc(2px + var(--focus-width)) var(--ring);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-range-slider-input::-webkit-slider-thumb {
+      transition: box-shadow var(--dur-fast) var(--ease-out);
+    }
+    .cap-range-slider-input::-moz-range-thumb {
+      transition: box-shadow var(--dur-fast) var(--ease-out);
+    }
+  }
+  /* On touch each thumb takes a --target (44px) square; the drawn dot stays 20px inside a
+     transparent border, so a finger can take a handle without the look changing (WCAG 2.5.8). */
+  @media (pointer: coarse) {
+    .cap-range-slider-input::-webkit-slider-thumb {
+      box-sizing: border-box;
+      inline-size: var(--target);
+      block-size: var(--target);
+      margin-block-start: calc(2px - var(--target) / 2);
+      border: calc((var(--target) - 20px) / 2) solid transparent;
+      background-clip: padding-box;
+      box-shadow: none;
+    }
+    .cap-range-slider-input::-moz-range-thumb {
+      box-sizing: border-box;
+      inline-size: var(--target);
+      block-size: var(--target);
+      border: calc((var(--target) - 20px) / 2) solid transparent;
+      background-clip: padding-box;
+      box-shadow: none;
+    }
+  }
+  /* Forced colors drop the drawn rail and the ring: the thumbs are drawn in the system's colors,
+     and focus is an outline. */
+  @media (forced-colors: active) {
+    .cap-range-slider-track::before {
+      background: CanvasText;
+    }
+    .cap-range-slider-input::-webkit-slider-thumb {
+      background: ButtonText;
+    }
+    .cap-range-slider-input:focus-visible {
+      outline: var(--focus-width) solid Highlight;
+    }
+  }
+}
