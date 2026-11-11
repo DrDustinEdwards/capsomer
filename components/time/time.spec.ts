@@ -9,14 +9,24 @@ import {
   DAY,
   HOUR,
   MIN,
+  SEC,
   UNREADABLE,
+  dateRange,
+  duration,
   exact,
   exactParts,
+  formatDate,
+  fromUtcInputValue,
   parse,
   relative,
   serverNow,
+  span,
   text,
+  timecode,
+  toMs,
+  until,
   utc,
+  utcInputValue,
 } from "./time.ts";
 
 // Times depend on the viewer's zone: check them in one, with summer time in force.
@@ -109,6 +119,62 @@ test.describe("React, rendered on a server", () => {
   });
 });
 
+test("behavior: dates are long and in UTC, whatever the viewer's zone, and an unreadable one is null", () => {
+  // 11:30 PM on the 12th in UTC is the 13th in Tokyo: the date stays the 12th.
+  expect(formatDate("2026-09-12T23:30:00Z")).toBe("September 12, 2026");
+  expect(formatDate("2026-09-12T23:30:00Z", { zone: "Asia/Tokyo" })).toBe("September 13, 2026");
+  expect(formatDate("2026-09-12T15:04:00Z", { style: "medium", time: true, zoneName: true })).toBe(
+    "Sep 12, 2026, 3:04 PM UTC",
+  );
+  expect(formatDate(NOW, { style: "monthDay" })).toBe("Sep 30");
+  expect(formatDate(null)).toBeNull();
+  expect(formatDate("not a date")).toBeNull();
+  expect(text(NOW, "date")).toBe("September 30, 2026");
+  expect(dateRange("2026-05-01", "2026-05-02")).toBe("May 1, 2026 to May 2, 2026");
+  expect(dateRange("2026-05-01", "2026-05-01")).toBe("May 1, 2026");
+  expect(dateRange(null, "2026-05-02")).toBe("May 2, 2026");
+  expect(dateRange(null, null)).toBeNull();
+  expect(toMs(null)).toBeNaN();
+  expect(utcInputValue(NOW)).toBe("2026-09-30T14:00");
+  expect(fromUtcInputValue("2026-09-30T14:00")).toBe(NOW);
+  expect(fromUtcInputValue("tomorrow")).toBeNaN();
+});
+
+test("behavior: durations are a timecode, or words a screen reader can say", () => {
+  expect(timecode(245 * SEC)).toBe("4:05");
+  expect(timecode(3723 * SEC)).toBe("1:02:03");
+  expect(timecode(245 * SEC, { hours: "always" })).toBe("00:04:05");
+  expect(timecode(-5)).toBe("0:00");
+  expect(timecode(Number.NaN)).toBe("0:00");
+  expect(duration(192 * SEC)).toBe("3 minutes, 12 seconds");
+  expect(duration(3723 * SEC)).toBe("1 hour, 2 minutes, 3 seconds");
+  expect(duration(HOUR)).toBe("1 hour");
+  expect(duration(0)).toBe("0 seconds");
+  expect(duration(90 * SEC, { style: "short" })).toBe("1 min, 30 sec");
+  expect(duration(3723 * SEC, { style: "narrow" })).toBe("1h 2m 3s");
+  expect(duration(2 * DAY + 3 * HOUR, { largest: "days" })).toBe("2 days, 3 hours");
+  // A rough span, rounded down, spelled out: the words of "waiting 3.2h".
+  expect(span(30 * SEC)).toBe("less than a minute");
+  expect(span(5 * MIN + 4 * SEC)).toBe("5 minutes");
+  expect(span(3.2 * HOUR)).toBe("3 hours");
+  expect(span(2.1 * DAY)).toBe("2 days");
+});
+
+test("behavior: relative times ahead, by day, and how soon a scheduled step fires", () => {
+  expect(relative(NOW + 3 * HOUR, NOW, LONDON)).toBe("in 3 hours");
+  expect(relative(NOW + 20 * SEC, NOW, LONDON)).toBe("in less than a minute");
+  expect(relative(NOW, NOW, LONDON, { granularity: "day" })).toBe("today");
+  expect(relative(NOW - DAY, NOW, LONDON, { granularity: "day" })).toBe("yesterday");
+  expect(relative(NOW - 12 * DAY, NOW, LONDON, { granularity: "day" })).toBe("12 days ago");
+  expect(relative(NOW - 70 * DAY, NOW, LONDON, { granularity: "day" })).toBe("2 months ago");
+  expect(until(NOW - 1, NOW)).toBe("due now");
+  expect(until(NOW + 5 * MIN, NOW)).toBe("in 5 minutes");
+  expect(until(NOW + 3 * HOUR + 20 * MIN, NOW)).toBe("in 3 hours, 20 minutes");
+  // Rounding the minutes up to 60 carries into the hour.
+  expect(until(NOW + 3 * HOUR + 59 * MIN + 40 * SEC, NOW)).toBe("in 4 hours");
+  expect(until(NOW + 2 * DAY + 5 * HOUR, NOW)).toBe("in 2 days");
+});
+
 test("behavior: the server's now is the browser's moved by the skew, and never before the newest server read", () => {
   expect(serverNow(1_000_000, 5_000, 0)).toBe(1_005_000);
   // A row written after the page's last tick, on a server clock ahead of the browser's.
@@ -156,7 +222,7 @@ eachTheme((theme) => {
     await expect(page.locator(".cap-time[title]")).toHaveCount(0);
     // Every real time carries its machine value; the unreadable one is a plain span.
     for (const el of await page.locator("time.cap-time").all())
-      await expect(el).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}T/);
+      await expect(el).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}(T|$)/);
   });
 
   test("behavior: the UTC part of an exact time stays whole on a line, and an unreadable time is words", async ({
@@ -167,6 +233,41 @@ eachTheme((theme) => {
     await expect(page.locator("#sample-exact .cap-time-utc")).toHaveCSS("white-space", "nowrap");
     await expect(page.locator("#sample-unreadable")).toHaveText("an unreadable time");
     await expect(page.locator("#sample-unreadable")).not.toHaveAttribute("datetime", /.*/);
+  });
+
+  test("behavior: a time with its tip shows the exact time on focus, and a missing time says its words", async ({
+    page,
+  }) => {
+    await visitStates(page, "time", theme);
+    const tip = page.locator("#sample-tip");
+    await expect(tip.locator("time.cap-time")).toHaveText("5 minutes ago");
+    await tip.locator(".cap-time-tip").focus();
+    const exactTip = tip.getByRole("tooltip");
+    await expect(exactTip).toBeVisible();
+    await expect(exactTip).toHaveText("September 30, 2026, 2:55 PM BST (1:55 PM UTC)");
+    // Spans only, so the tip is valid inside a paragraph.
+    await expect(tip.locator("div")).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await expect(exactTip).toBeHidden();
+    await expect(page.locator("#sample-empty .cap-time")).toHaveText("never");
+    await expect(page.locator("#sample-empty time")).toHaveCount(0);
+  });
+
+  test("behavior: durations and long dates are written in words, and a date is a <time> with its day", async ({
+    page,
+  }) => {
+    await visitStates(page, "time", theme);
+    await expect(page.locator("#sample-durations")).toContainText(
+      "1:02:03, 1 hour, 2 minutes, 3 seconds",
+    );
+    await expect(page.locator("#sample-durations")).toContainText("00:04:05");
+    await expect(page.locator("#sample-durations")).toContainText("in 3 hours, 20 minutes");
+    await expect(page.locator("#sample-date time").first()).toHaveText("September 12, 2026");
+    await expect(page.locator("#sample-date time").first()).toHaveAttribute(
+      "datetime",
+      "2026-09-12",
+    );
+    await expectContrast(page, [{ sel: "#sample-date .cap-time", what: "a long date" }]);
   });
 
   test("behavior: relative times redraw every 30 seconds", async ({ page }) => {

@@ -150,6 +150,26 @@
   </div>
 </template>
 
+<template data-specimen="static" data-title="Written by the server, no hydration: the React header sent as HTML and wired by the behavior module, a workspace switcher whose rows post, Guides in groups, Topics as a wide panel, Sign out a form post" data-height="420">
+  <div data-static=""></div>
+</template>
+
+<template data-specimen="static-topics" data-title="No hydration, the wide panel open: the site's own layout in a mega-menu's room" data-height="460">
+  <div data-static=".cap-site-header-sections [aria-controls$='topics']"></div>
+</template>
+
+<template data-specimen="static-switcher" data-title="No hydration, the switcher open: each workspace is a form that posts, the current one posts nothing" data-height="420">
+  <div data-static=".cap-site-header-switch"></div>
+</template>
+
+<template data-specimen="static-account" data-title="No hydration, the account menu open: the initials, the rows, Sign out a form post" data-height="460">
+  <div data-static=".cap-site-header-avatar"></div>
+</template>
+
+<template data-specimen="static-phone" data-title="Phone, no hydration: the button extra kept in the top row (data-phone=bar), the sheet holding the rest" data-height="560" data-width="390">
+  <div data-static=""></div>
+</template>
+
 <script type="module">
   import { enhance } from "./site-header.ts";
   import { enhance as enhanceTheme } from "../theme-switch/theme-switch.ts";

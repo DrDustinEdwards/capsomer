@@ -23,6 +23,24 @@
   </dl>
 </section>
 
+<section class="cap-specimen" aria-labelledby="s-date">
+  <h2 id="s-date">A date, long, in UTC</h2>
+  <p>A publication date or a deadline: no time of day, and the same words on a server and in a browser.</p>
+  <p id="sample-date">Published <time class="cap-time" data-cap="time" data-format="date" datetime="2026-09-12">September 12, 2026</time>. Abstracts due <time class="cap-time" data-cap="time" data-format="date" datetime="2026-11-03">November 3, 2026</time>.</p>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-duration">
+  <h2 id="s-duration">Durations, as a timecode and in words</h2>
+  <p>How long, not when: an episode's length as a player writes it and as a screen reader should hear it, a wait, a countdown. Drawn by React from the same functions the page imports.</p>
+  <div data-mount="durations"></div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-tip">
+  <h2 id="s-tip">Relative with its exact time in a tooltip, and no time at all</h2>
+  <p>For a table that has no detail to show the exact time in. The time takes a tab stop. Drawn by React, inside a paragraph.</p>
+  <div data-mount="tip"></div>
+</section>
+
 <section class="cap-specimen" aria-labelledby="s-live">
   <h2 id="s-live">Live: redrawn every 30 seconds</h2>
   <p id="sample-live">The improve loop last ran <time class="cap-time" data-cap="time" datetime="2026-09-30T13:59:00Z">at 1:59 PM UTC on September 30, 2026</time>.</p>

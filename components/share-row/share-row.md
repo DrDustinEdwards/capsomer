@@ -5,7 +5,7 @@ summary: A "Share" label and a plain link to each service's own share intent, ru
 parts: [css, behavior, react]
 tool: native
 states: [X and LinkedIn, every service, with a copy button, hover]
-added: 0.92.0
+added: 0.93.0
 source: Foxhound's ShareRow (app/components/blog/share-row.tsx, ported from Recova's ShareBar)
 replaces:
   - 'function ShareRow'

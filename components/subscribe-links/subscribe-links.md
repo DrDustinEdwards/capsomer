@@ -5,7 +5,7 @@ summary: Where to follow a show or a site, as a titled card of pill links to eac
 parts: [css, react]
 tool: native
 states: [apps, feed and more, hover]
-added: 0.92.0
+added: 0.93.0
 source: germomics' SubscribeRow (app/components/content/PostDetail.tsx, lib/subscribe.ts)
 replaces:
   - 'Listen and subscribe'

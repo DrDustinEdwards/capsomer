@@ -12,7 +12,7 @@
 import { closeDialog, openDialog, wireDialog } from "../dialog/dialog.ts";
 import { escapeHtml } from "@dustinedwards/site-runtime/html";
 import { place } from "../popover/popover.ts";
-import { isImeEnter } from "../shortcuts/shortcuts.ts";
+import { isImeEnter, singleKeysOff } from "../shortcuts/shortcuts.ts";
 import { attach as attachTip, hideTip } from "../tooltip/tooltip.ts";
 
 // A count is a glance, not a figure: past 99 it says 99+, in the header, the sheet, the bottom bar
@@ -70,6 +70,24 @@ export function placePanel(trigger: HTMLElement, panel: HTMLElement): void {
     align: panel.dataset.align === "end" ? "end" : "start",
     offset,
   });
+}
+
+// The two letters on the avatar: the first and last word's first letters ("Alex Rivera": AR),
+// the first two letters of a one-word name, else the email's first letter (Foxhound's and txasm's
+// personInitials and initials). Whole letters (graphemes), not code units, so an accented or
+// non-Latin name never shows half a letter.
+const letters = (w: string): string[] =>
+  Array.from(
+    new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(w),
+    (g) => g.segment,
+  );
+export function initialsOf(name?: string | null, email?: string | null): string {
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  const first = (w: string) => letters(w)[0] ?? "";
+  if (words.length >= 2)
+    return `${first(words[0]!)}${first(words[words.length - 1]!)}`.toUpperCase();
+  if (words.length === 1) return letters(words[0]!).slice(0, 2).join("").toUpperCase();
+  return (first((email ?? "").trim()) || "?").toUpperCase();
 }
 
 let escBound = false;
@@ -144,15 +162,25 @@ export function wirePanel(trigger: HTMLElement, panel: HTMLElement): () => void 
   if (!escBound) {
     escBound = true;
     document.addEventListener("keydown", onEsc);
+    // Back and Forward change the page with no click, as a route change in an app that hydrates
+    // does: every panel closes, as it would on following a link (germomics' menus.ts).
+    window.addEventListener("popstate", () => closePanels());
   }
 
+  // Whether focus was in the panel as it began to close: only then does it go back to the button.
+  // A panel opened by hover that closes as the pointer leaves leaves focus where it was, so no
+  // ring appears on a button the mouse never pressed (dustinedwards.info's header.ts undid this).
+  let focusWasInside = false;
+  on(panel, "beforetoggle", (e: ToggleEvent) => {
+    if (e.newState === "closed") focusWasInside = panel.contains(document.activeElement);
+  });
   on(panel, "toggle", (e: ToggleEvent) => {
     const opened = e.newState === "open";
     trigger.setAttribute("aria-expanded", String(opened));
     window[opened ? "addEventListener" : "removeEventListener"]("scroll", follow, true);
     window[opened ? "addEventListener" : "removeEventListener"]("resize", follow);
-    if (!opened) {
-      // Focus left inside a closed panel (or lost to the page) goes back to its button.
+    if (!opened && focusWasInside) {
+      // Focus left inside a closed panel (or dropped to the page by it) goes back to its button.
       const active = document.activeElement;
       if (!active || active === document.body || panel.contains(active))
         trigger.focus({ preventScroll: true });
@@ -167,6 +195,15 @@ export function wirePanel(trigger: HTMLElement, panel: HTMLElement): () => void 
     const byKey = e.detail === 0;
     if (isOpen(panel) && (mode === "held" || byKey)) close();
     else open("held", byKey);
+  });
+  // Down on the button opens the panel on its first item, Up on its last, as a menu button's do
+  // (WAI-ARIA APG, menu button; germomics' Episodes menu).
+  on(trigger, "keydown", (e: KeyboardEvent) => {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+    e.preventDefault();
+    open("held");
+    const items = panelItems(panel);
+    items[e.key === "ArrowDown" ? 0 : items.length - 1]?.focus({ preventScroll: true });
   });
   const hovered = () => trigger.matches(":hover") || panel.matches(":hover");
   const leave = () => {
@@ -208,6 +245,51 @@ export function wirePanel(trigger: HTMLElement, panel: HTMLElement): () => void 
     undo.forEach((f) => f());
     panels.delete(panel);
   };
+}
+
+// A form in a panel or the sheet (Sign out, an account switch, any item that posts) sends once:
+// a second press before the next page arrives is dropped, so two posts never race (Foxhound's
+// account switch). A page restored from the back-forward cache can send again.
+export function guardForms(root: HTMLElement): () => void {
+  const onSubmit = (e: SubmitEvent) => {
+    const form = e.target as HTMLFormElement;
+    if (!form.matches?.(".cap-site-header-form")) return;
+    if (form.hasAttribute("data-sent")) e.preventDefault();
+    else if (!e.defaultPrevented) form.setAttribute("data-sent", "");
+  };
+  const onShow = (e: PageTransitionEvent) => {
+    if (e.persisted)
+      for (const f of root.querySelectorAll(".cap-site-header-form[data-sent]"))
+        f.removeAttribute("data-sent");
+  };
+  // The panels are in the header's DOM (popovers move only in the top layer), so one listener on
+  // the header hears every form; the bubbling phase, so a site's own handler can cancel first.
+  root.addEventListener("submit", onSubmit);
+  window.addEventListener("pageshow", onShow);
+  return () => {
+    root.removeEventListener("submit", onSubmit);
+    window.removeEventListener("pageshow", onShow);
+  };
+}
+
+// The theme key (data-cap-theme-key on the header, "T"), where the site binds single keys: not
+// while a person types, and off with the shortcuts switch. It presses the header's theme button
+// (whichever form it takes), so the key keeps the choice exactly as the button does.
+export function wireThemeKey(header: HTMLElement, key: string): () => void {
+  const want = key.toLowerCase();
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key.toLowerCase() !== want || e.ctrlKey || e.metaKey || e.altKey || singleKeysOff())
+      return;
+    if (
+      (e.target as Element | null)?.closest?.("input, textarea, select, [contenteditable='true']")
+    )
+      return;
+    [...header.querySelectorAll<HTMLElement>(".cap-site-header-theme")]
+      .find((b) => b.getClientRects().length > 0)
+      ?.click();
+  };
+  document.addEventListener("keydown", onKey);
+  return () => document.removeEventListener("keydown", onKey);
 }
 
 // Opens the phone's sheet (the shared dialog, from the bottom) from the menu button.
@@ -257,6 +339,11 @@ export function enhance(
     if (sheet) parts.push(wireDialog(sheet));
     const onClose = () => menu?.setAttribute("aria-expanded", "false");
     sheet?.addEventListener("close", onClose);
+    const onBack = () => closeSheet(header);
+    window.addEventListener("popstate", onBack);
+    parts.push(() => window.removeEventListener("popstate", onBack));
+    parts.push(guardForms(header));
+    if (header.dataset.capThemeKey) parts.push(wireThemeKey(header, header.dataset.capThemeKey));
     const onClick = (e: MouseEvent) => {
       const t = e.target as Element;
       if (menu && t.closest(".cap-site-header-menu") === menu) openSheet(header);

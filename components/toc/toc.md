@@ -5,7 +5,7 @@ summary: A post's headings as links, a sticky column on a wide screen or a close
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [sidebar, sidebar with the current section, inline closed, inline open, an h3 under an h2, fewer than three headings (none)]
-added: 0.92.0
+added: 0.93.0
 source: Foxhound's TableOfContents (app/components/blog/table-of-contents.tsx, ported from Recova's)
 replaces:
   - 'function TableOfContents'

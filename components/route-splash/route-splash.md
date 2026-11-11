@@ -5,7 +5,7 @@ summary: The app's mark over "Loading...", in place of a page while a navigation
 parts: [css, behavior, react]
 tool: native
 states: [loading]
-added: 0.92.0
+added: 0.93.0
 source: Foxhound's RouteSplash and shouldShowRouteSplash (app/components/route-splash.tsx, app/lib/navigation/route-splash.ts, from Recova's loading.tsx)
 replaces:
   - 'function RouteSplash'
