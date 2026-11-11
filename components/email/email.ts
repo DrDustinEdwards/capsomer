@@ -141,14 +141,14 @@ function darkRules(d: EmailColors): string {
 }
 
 const runText = (r: Run): string => (typeof r === "string" ? r : r.bold);
-const lineText = (l: Line): string => (typeof l === "string" ? l : l.map(runText).join(""));
+const plainLine = (l: Line): string => (typeof l === "string" ? l : l.map(runText).join(""));
 const runHtml = (r: Run): string =>
   typeof r === "string" ? escapeHtml(r) : `<strong>${escapeHtml(r.bold)}</strong>`;
 const lineHtml = (l: Line): string =>
   typeof l === "string" ? escapeHtml(l) : l.map(runHtml).join("");
 
 /** A paragraph's words for the text part: bold is only its words, lines end with a newline. */
-const textOf = (t: Text): string => (typeof t === "string" ? t : t.map(lineText).join("\n"));
+const textOf = (t: Text): string => (typeof t === "string" ? t : t.map(plainLine).join("\n"));
 const htmlOf = (t: Text): string =>
   typeof t === "string" ? escapeHtml(t) : t.map(lineHtml).join("<br>");
 

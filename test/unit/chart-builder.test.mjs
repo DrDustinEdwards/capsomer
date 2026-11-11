@@ -1,30 +1,14 @@
-// Chart builder's pure core: CSV columns with RFC 4180 quoting, the default column choice, the file
+// Chart builder's pure core: the default column choice, the file
 // check and the block in Prelum's syntax. Sample data only.
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { csvColumns } from "@drdustinedwards/site-helpers/source";
 import {
   chartDirective,
   chartReady,
   chooseColumns,
-  csvColumns,
   csvFileProblem,
 } from "../../components/chart-builder/chart-builder.ts";
-
-const CSV = '﻿month,"Visits, all",note\r\nJan,1204,"a ""quiet"" month"\r\nFeb,1530,busy\r\n';
-
-test("csvColumns: names from the first line, quotes read, numeric only when every row is a number", () => {
-  assert.deepEqual(csvColumns(CSV), [
-    { name: "month", numeric: false },
-    { name: "Visits, all", numeric: true },
-    { name: "note", numeric: false },
-  ]);
-  assert.deepEqual(csvColumns("only,a,header"), [
-    { name: "only", numeric: false },
-    { name: "a", numeric: false },
-    { name: "header", numeric: false },
-  ]);
-  assert.deepEqual(csvColumns("  \n"), []);
-});
 
 test("chooseColumns: keeps a choice that is still a column, else x first and every numeric after it", () => {
   const cols = csvColumns("year,visits,signups,label\n2025,1,2,a");
