@@ -5,6 +5,7 @@ Each release names every removed or renamed token or class, and every changed HT
 ## [Unreleased]
 
 - **New: copy** (`components/copy`, `capsomer/behavior/copy`, `capsomer/react/copy`). A button that copies another element's text, or shares a link, with one `role="status"` bubble beside it for Copied and Copy failed. Invoker Commands (`command="--copy"` or `"--share"`, `commandfor`) with a click fallback, never disabled while its message shows, a no-break space so VoiceOver reads a repeat, and a cancelled share says nothing. `.cap-copyable` reveals the button over repeated blocks without hiding it from the keyboard. React: `CopyButton`, `useCopy`. Built to Modern Web Guidance `copy-button`; it replaces the copy code in germomics, Foxhound, dustinedwards.info and the Capsid Portal as they adopt it.
+- **New utility `.cap-tap-target`** (`css/utilities.css`): a hit area at least `--target` in each direction that can still grow. It replaces germomics' own `tap-target`.
 - **The media library, the detail panel and the posts list copy through it.** Removed from `capsomer/behavior/media`: `copyText`, `COPIED_MS` and `COPY_FAILED_MS` (import them from `capsomer/behavior/copy`). The `execCommand("copy")` fallback is gone: sites are served over HTTPS, and a refused write now says it failed and selects the text, as before. A repeated detail-panel status is announced again.
 
 ## [0.90.0]

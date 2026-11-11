@@ -26,6 +26,12 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
+  /* A hit area at least the target size (24 px, WCAG 2.2 2.5.8; 44 px on coarse pointers through
+     --target), allowed to grow with its content. For a small control that is not a Capsomer button. */
+  .cap-tap-target {
+    min-inline-size: var(--target);
+    min-block-size: var(--target);
+  }
   /* Identifiers only: ids, shas, commands, paths. Times and counts are .cap-num. */
   .cap-mono {
     font-family: var(--mono);
