@@ -4,6 +4,11 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.103.0]
+
+- **New light entries for the command menu's host: `capsomer/react/command-host`** (`useCommandHost`, `LazyCommandMenu`) **and `capsomer/behavior/command-host`** (`createCommandHost`). Importing `useCommandHost` from `capsomer/react/command-menu` put the whole menu (about 6.4 KB gzip) into every route of an app that meant to load it when idle; these import nothing of the menu until the page is idle or the menu is asked for (Ctrl K, Cmd K, a button), then load it with `lazy()` or `import()`. `capsomer/react/command-menu` still exports `useCommandHost`.
+- **Command menu**: the extras 0.100.0 gave the React menu, without React. `createCommandHost(commands, opts)` (above: the menu loaded and built when the page is idle; `open`, `load`, `runWhenReady`, `menu`). `createCommandMenu` and `attach` take `recentKey` and `ask`; a command's `snippet` is built as `.cap-cmd-snippet` in its label, the typed words marked by `markSnippet` (nodes, never HTML). A menu in markup takes `data-recent-key`, `data-ask` and `data-ask-href` on the dialog. HTML contract additions only: the Recent group (`data-recent`), the Ask group (`data-ask-group`, its option `data-cap-ask`), and `data-label` on an option with a snippet. Nothing is removed or renamed.
+
 ## [0.102.0]
 
 Options for sites with their own design (bsw, julieedwards-info, txasm) on the shared site header, prose, tabs, sortable list, disclosure and time, with no change to how they look. Shared code is behavior; each site's look is its tokens and slots. Every new token defaults to today's value.
@@ -29,11 +34,6 @@ Options for sites with their own design (bsw, julieedwards-info, txasm) on the s
 - **`enhance(root)` of tabs and the site header takes `Document | Element`** (was `ParentNode`), so an element passes under the Workers types.
 
 No token or class was removed or renamed. HTML contract additions only: `data-scrolled` and `data-collapse` on the header, `data-sheet-icons` on the header, `commandfor` and `command` on a no-hydration menu button, `data-marker="triangle"` on a disclosure; the account slot is left out when it would be empty, and a sortable item has no grip with `grip={false}`.
-
-## [0.102.0]
-
-- **New light entries for the command menu's host: `capsomer/react/command-host`** (`useCommandHost`, `LazyCommandMenu`) **and `capsomer/behavior/command-host`** (`createCommandHost`). Importing `useCommandHost` from `capsomer/react/command-menu` put the whole menu (about 6.4 KB gzip) into every route of an app that meant to load it when idle; these import nothing of the menu until the page is idle or the menu is asked for (Ctrl K, Cmd K, a button), then load it with `lazy()` or `import()`. `capsomer/react/command-menu` still exports `useCommandHost`.
-- **Command menu**: the extras 0.100.0 gave the React menu, without React. `createCommandHost(commands, opts)` (above: the menu loaded and built when the page is idle; `open`, `load`, `runWhenReady`, `menu`). `createCommandMenu` and `attach` take `recentKey` and `ask`; a command's `snippet` is built as `.cap-cmd-snippet` in its label, the typed words marked by `markSnippet` (nodes, never HTML). A menu in markup takes `data-recent-key`, `data-ask` and `data-ask-href` on the dialog. HTML contract additions only: the Recent group (`data-recent`), the Ask group (`data-ask-group`, its option `data-cap-ask`), and `data-label` on an option with a snippet. Nothing is removed or renamed.
 
 ## [0.101.0]
 
