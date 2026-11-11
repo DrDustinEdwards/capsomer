@@ -28,6 +28,10 @@ Each release names every removed or renamed token or class, and every changed HT
 - **The single slider's thumb takes a 44px touch target** on a coarse pointer (the dot stays 20px inside it), and its hover ring shows only where a pointer hovers.
 - No token or class was removed or renamed, and no existing HTML contract changed.
 
+## [0.91.1]
+
+- **A chart no longer redraws 16 px tall.** With Enarratio 0.12 the figure holds the toolbar's 16 by 16 icons before the chart, and `ChartFrame` took its redraw height from the first `viewBox` it found, so every redrawn chart collapsed (seen in the Capsid Portal on 0.90.0). It now skips `enarratio-icon` drawings (`chartViewBox` in `components/chart-frame/chart-frame.ts`).
+
 ## [0.91.0]
 
 - **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
