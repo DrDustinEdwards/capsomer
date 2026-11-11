@@ -5,7 +5,7 @@ summary: A two-handle range on one track, the span filled between the handles, f
 parts: [css, behavior, react]
 tool: own JavaScript
 states: [full range, a chosen span, a handle under the pointer, open top (and more)]
-added: 0.93.0
+added: 0.91.0
 source: Foxhound's DualRangeSlider (app/components/dual-range-slider.tsx, .dual-range-input in app.css; Recova's AmountRangeSlider)
 replaces:
   - 'dual-range-input'

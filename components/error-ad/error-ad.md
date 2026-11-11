@@ -5,7 +5,7 @@ summary: The ad slot of an error page, one vintage-style ad as decoration at the
 parts: [css, react]
 tool: native
 states: [corner, large]
-added: 0.93.0
+added: 0.91.0
 source: dustinedwards.info's utility ads (app/utility-ads/, components/utility-ad.tsx)
 replaces:
   - 'class="ad"'

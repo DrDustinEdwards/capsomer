@@ -51,7 +51,9 @@ function Corkboard() {
         onReorder={(order) => setCards(order.map((id) => cards.find((c) => c.id === id)!))}
         renderItem={(c) => (
           <>
-            <span className="cap-sortable-label">{c.title}</span>
+            <span className="cap-sortable-label">
+              <span>{c.title}</span>
+            </span>
             <span className="cap-sortable-detail">{c.pov}</span>
             <p className="cap-sortable-detail">{c.summary}</p>
           </>
@@ -81,7 +83,11 @@ function Rows() {
         getId={(p) => p.id}
         getLabel={(p) => p.title}
         onReorder={(order) => setPosts(order.map((id) => posts.find((p) => p.id === id)!))}
-        renderItem={(p) => <span className="cap-sortable-label">{p.title}</span>}
+        renderItem={(p) => (
+          <span className="cap-sortable-label">
+            <span>{p.title}</span>
+          </span>
+        )}
       />
       <output className="sortable-sample-out" id="rows-out">
         Order: {posts.map((p) => p.id).join(", ")}.

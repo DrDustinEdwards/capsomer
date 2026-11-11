@@ -8,6 +8,7 @@
 
 // The generic overlay helpers moved to the shared dialog (components/dialog/dialog.ts). They
 // are re-exported here, so what imported them from this module keeps working.
+import { isImeEnter } from "../shortcuts/shortcuts.ts";
 import { errorText, isBusy, openDialog, setDialogBusy, uid, wireDialog } from "../dialog/dialog.ts";
 export {
   errorText,
@@ -238,7 +239,7 @@ export function wire(dialog: HTMLDialogElement, fallback?: HTMLElement | null): 
   const onPerform = (e: Event) => void run(e);
   const onKey = (e: KeyboardEvent) => {
     // Enter in the guard field performs once the word matches, and never submits a form.
-    if (e.key === "Enter" && e.target === input) {
+    if (e.key === "Enter" && e.target === input && !isImeEnter(e)) {
       e.preventDefault();
       if (input && wordMatches(input.value, input.dataset.capWord)) perform?.click();
     }

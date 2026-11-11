@@ -138,7 +138,7 @@ import { Link } from "react-router";
 
 - The chosen tab has an accent edge and a heavier weight as well as its fill (shadcn: fill only).
 - The list scrolls on a narrow space and keeps the chosen tab in view.
-- Every panel is in the HTML, the inactive ones `hidden`.
+- Every panel is in the HTML, the inactive ones `hidden`. Once enhanced, where the browser has it (Chrome, Edge, Firefox 148; not Safari), an inactive panel becomes `hidden="until-found"`: find-in-page and text-fragment links reach its text, and a match chooses its tab. It leaves the Tab order while hidden. A disabled tab's panel stays plainly `hidden`.
 - A links form with `aria-current="page"` shares the look, because a status filter is a URL.
 - A disabled tab is struck through, not dimmed.
 

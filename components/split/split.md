@@ -5,7 +5,7 @@ summary: A heading and a text column beside one picture, the sides flipping from
 parts: [css, react]
 tool: native
 states: [picture on the right, picture on the left (flip), a list of names in two columns, phone stack]
-added: 0.93.0
+added: 0.91.0
 source: dustinedwards.info's media split (app/styles/media-split.css, the cohorts on /teaching/phage-discovery)
 replaces:
   - 'class="(?:[^"]*\s)?media-split[\s"]'
