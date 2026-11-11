@@ -1,4 +1,4 @@
-// The writing progress maths, imported straight from the TypeScript source: the local day, the
+// The writing progress math, imported straight from the TypeScript source: the local day, the
 // pace a deadline asks for, streaks across days off, and the untyped tally. Moved from Carrel's
 // test/writing.test.ts with the code.
 import assert from "node:assert/strict";

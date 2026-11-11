@@ -1,4 +1,4 @@
-// The writing progress panel's maths: daily words, a goal, its streak and a deadline's pace (after
+// The writing progress panel's math: daily words, a goal, its streak and a deadline's pace (after
 // Dabble, Ulysses and Scrivener). A day is the local calendar day in the device's time zone, so it
 // resets at local midnight wherever the writer is; the browser passes its zone in and nothing here
 // reads the server's clock zone. Only typed words count: each save's `typed` already leaves out

@@ -17,7 +17,7 @@ export interface RecordFactsProps {
 
 const present = (f: RecordFact) => f.value !== null && f.value !== undefined && f.value !== "";
 
-// A record's labelled facts as a description list. Which facts a record has, and their words, are
+// A record's labeled facts as a description list. Which facts a record has, and their words, are
 // the site's: a paper's year, stage, journal and DOI; a release's version and date.
 export function RecordFacts({ facts }: RecordFactsProps) {
   const shown = facts.filter(present);

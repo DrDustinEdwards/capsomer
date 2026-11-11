@@ -46,7 +46,7 @@ This is its own component, not part of Record facts: the count and the list are 
 
 ## Accessibility
 
-- The list is a labelled `section` (its heading) and an ordered list.
+- The list is a labeled `section` (its heading) and an ordered list.
 - Titles are text links; the provenance, venue and year are `--muted` at 4.5:1.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

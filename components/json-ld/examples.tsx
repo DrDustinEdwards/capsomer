@@ -4,28 +4,18 @@
 import { hydrateRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { setStaticHtml } from "../trusted-html/trusted-html.ts";
+import { thing } from "@drdustinedwards/site-helpers/schema";
 import { JsonLd } from "./json-ld.react.tsx";
 
-const NODE = {
-  "@context": "https://schema.org",
-  "@type": "Article",
+const NODE = thing("Article", {
   headline: "Spring update",
   author: { "@type": "Person", name: "Alex Rivera", url: "https://example.com/about" },
   datePublished: "2026-04-02",
-};
+});
 
 const HOSTILE = [
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: "Release notes</script><script>alert(1)</script>",
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Example Co & Sons <b>",
-    slogan: "Field\u2028notes\u2029",
-  },
+  thing("WebPage", { name: "Release notes</script><script>alert(1)</script>" }),
+  thing("Organization", { name: "Example Co & Sons <b>", slogan: "Field\u2028notes\u2029" }),
 ];
 
 const values = { node: NODE, hostile: HOSTILE } as const;

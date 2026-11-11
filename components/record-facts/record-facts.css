@@ -1,7 +1,7 @@
 /* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
 @layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
 
-/* Record facts: a record's labelled facts (year, venue, identifier, kind) as a narrow rail beside
+/* Record facts: a record's labeled facts (year, venue, identifier, kind) as a narrow rail beside
    its page. A description list, read label then value; drawn value first in the text color with its
    label under it in the muted ink, so the eye runs down the values. Text alignment is the page's: a
    rail on the start side of the text can set `text-align: end` on its column. */

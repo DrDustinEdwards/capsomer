@@ -1,7 +1,7 @@
 ---
 name: record-facts
 title: Record facts
-summary: A record's labelled facts (year, venue, identifier, kind) as a narrow rail beside its page, each value over its label.
+summary: A record's labeled facts (year, venue, identifier, kind) as a narrow rail beside its page, each value over its label.
 parts: [css, react]
 tool: native
 states: [a record's facts, a linked identifier in mono, a missing fact left out, in a rail aligned to the text]

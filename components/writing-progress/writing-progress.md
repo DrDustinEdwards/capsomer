@@ -1,7 +1,7 @@
 ---
 name: writing-progress
 title: Writing progress
-summary: Today's writing in one panel. Words typed today against today's target, the streak of days at the target, the pace a deadline asks for, the last seven days as a bar chart, and the writer's own goal form. The goal and streak maths are pure functions beside it.
+summary: Today's writing in one panel. Words typed today against today's target, the streak of days at the target, the pace a deadline asks for, the last seven days as a bar chart, and the writer's own goal form. The goal and streak math are pure functions beside it.
 parts: [css, behavior, react]
 tool: native + React (composes panel, meter, status, chart frame, disclosure and field)
 states: [daily target part way, target met with a deadline's pace, no target and read only, goal refused]
@@ -18,7 +18,7 @@ replaces:
 
 How today's writing is going, for a person writing a long piece: the words typed today against today's target, how many days in a row the target was met, what a deadline asks for each day, the last seven days, and the goal they set for themselves.
 
-**Provenance.** EXTRACTED from Carrel's book page. The maths moved whole (`progress.ts`, now `writing-progress.ts`): a day is the local calendar day in the device's zone; only typed words count; deletions come off a day but not below zero unless the goal allows it; a deadline's pace spreads what was left when today began over the writing days left, so it holds still while you write; a day off has no target and neither breaks nor adds to a streak. Also moved: the target check from `saveGoal` (`parseDailyTarget`, `goalFromForm`), `untypedField` (`untypedCount`) and the paste and drop counter that `book.file.tsx` kept in two refs (`untypedTally`). The panel is Carrel's, with the words that named Carrel's own files ("Add target: to the title page (book.md)") moved out to the `goalNote` prop, and the pace's sentences made general. The server side (the saves, the goal's table) stays with the app.
+**Provenance.** EXTRACTED from Carrel's book page. The math moved whole (`progress.ts`, now `writing-progress.ts`): a day is the local calendar day in the device's zone; only typed words count; deletions come off a day but not below zero unless the goal allows it; a deadline's pace spreads what was left when today began over the writing days left, so it holds still while you write; a day off has no target and neither breaks nor adds to a streak. Also moved: the target check from `saveGoal` (`parseDailyTarget`, `goalFromForm`), `untypedField` (`untypedCount`) and the paste and drop counter that `book.file.tsx` kept in two refs (`untypedTally`). The panel is Carrel's, with the words that named Carrel's own files ("Add target: to the title page (book.md)") moved out to the `goalNote` prop, and the pace's sentences made general. The server side (the saves, the goal's table) stays with the app.
 
 ## When to use it
 
