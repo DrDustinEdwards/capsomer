@@ -8,9 +8,13 @@ export interface DisclosureProps {
   defaultOpen?: boolean;
   // "accordion": shadcn's flat look, a rule between items and the chevron at the end.
   // "card": each section its own rounded card, with a plus that turns to a cross.
-  variant?: "accordion" | "card";
+  // "inline": no box, the title and body in the page's flow.
+  variant?: "accordion" | "card" | "inline";
   // "sm" on the card: the compact card for a form or a list behind its title.
   size?: "sm";
+  // "triangle": a small triangle at the start, as the browser's own, in place of the variant's
+  // chevron or plus.
+  marker?: "triangle";
 }
 
 // A show/hide section: native <details>, so it works before JavaScript and with none.
@@ -21,12 +25,14 @@ export function Disclosure({
   defaultOpen = false,
   variant,
   size,
+  marker,
 }: DisclosureProps) {
   return (
     <details
       className="cap-disclosure"
       data-variant={variant}
       data-size={size}
+      data-marker={marker}
       name={name}
       open={defaultOpen || undefined}
     >

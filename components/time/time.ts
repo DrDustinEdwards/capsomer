@@ -111,13 +111,15 @@ export function utc(t: number): string {
 // ---------------------------------------------------------------------------------------
 // Dates with no "ago": a long date, a medium one, a month and day, with or without the time.
 
-export type DateStyle = "long" | "medium" | "monthDay";
+export type DateStyle = "long" | "medium" | "monthDay" | "weekday" | "time";
 
 export interface FormatDateOptions {
   // "long": "September 12, 2026". "medium": "Sep 12, 2026". "monthDay": "Sep 12", for a chart's
-  // axis or a window short enough that the year is noise. Default "long".
+  // axis or a window short enough that the year is noise. "weekday": "Saturday, September 12", a
+  // meeting's day heading. "time": the time of day alone, "3:04 PM" (with `zoneName`, "3:04 PM UTC").
+  // Default "long".
   style?: DateStyle;
-  // Add the time of day: "Sep 12, 2026, 3:04 PM". Ignored for "monthDay".
+  // Add the time of day: "Sep 12, 2026, 3:04 PM". Ignored for "monthDay" and "weekday".
   time?: boolean;
   // Name the zone after a time: "Sep 12, 2026, 3:04 PM UTC". Only with `time`.
   zoneName?: boolean;
@@ -146,18 +148,29 @@ export function formatDate(
   if (!Number.isFinite(t)) return null;
   const { style = "long", time = false, zoneName: named = false, zone: z = "UTC" } = options;
   const zone = z === "viewer" ? undefined : z;
-  const key = `${style}|${time && style !== "monthDay"}|${zone ?? ""}`;
+  const dayOnly = style === "monthDay" || style === "weekday";
+  const timed = style === "time" || (time && !dayOnly);
+  const key = `${style}|${timed}|${zone ?? ""}`;
   const f = cachedFormat(key, () =>
     style === "monthDay"
       ? new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" })
-      : new Intl.DateTimeFormat("en-US", {
-          timeZone: zone,
-          dateStyle: style,
-          timeStyle: time ? "short" : undefined,
-        }),
+      : style === "weekday"
+        ? new Intl.DateTimeFormat("en-US", {
+            timeZone: zone,
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          })
+        : style === "time"
+          ? new Intl.DateTimeFormat("en-US", { timeZone: zone, hour: "numeric", minute: "2-digit" })
+          : new Intl.DateTimeFormat("en-US", {
+              timeZone: zone,
+              dateStyle: style,
+              timeStyle: time ? "short" : undefined,
+            }),
   );
   const text = f.format(t);
-  return time && named && style !== "monthDay" ? `${text} ${zoneName(t, zone)}` : text;
+  return timed && named ? `${text} ${zoneName(t, zone)}` : text;
 }
 
 // A meeting's dates: "May 1, 2026", "May 1, 2026 to May 2, 2026", or null with no dates. One date

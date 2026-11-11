@@ -68,6 +68,14 @@ function Durations() {
           {formatDate("2026-09-12T15:04:00Z", { style: "medium", time: true, zoneName: true })}
         </dd>
       </div>
+      <div>
+        <dt>Day</dt>
+        <dd>{formatDate("2026-09-12T15:04:00Z", { style: "weekday" })}</dd>
+      </div>
+      <div>
+        <dt>Starts</dt>
+        <dd>{formatDate("2026-09-12T15:04:00Z", { style: "time", zoneName: true })}</dd>
+      </div>
     </dl>
   );
 }
