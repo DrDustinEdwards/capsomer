@@ -5,8 +5,8 @@ summary: A panel for a file the server makes, saying whether it is made, running
 parts: [css, behavior, react]
 tool: native
 states: [never made, generating on a first run, regenerating with the earlier file kept, ready with its size and date, stale since the data changed, failed with the reason, a run that stopped without finishing, the form being sent, made by another step with no Generate button]
-added: 0.93.0
-updated: 0.93.0
+added: 0.96.0
+updated: 0.96.0
 source: txasm app/components/program-builder/document-panel.tsx (ProgramDocumentPanel), app/routes/admin.editions.$editionId.book.tsx (the Book PDF panel), app/lib/data-access/documents.ts (recordGenerating, recordReady, recordFailed, the 5 minute stale lock)
 replaces:
   - 'genStatus === "(generating|ready|failed)"'

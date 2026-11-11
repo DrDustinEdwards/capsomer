@@ -1,0 +1,29 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The inspector (inspector.md): a column of what is about the text, beside it on a wide screen; on a
+   phone the head stays in the page and the tabs open as a sheet from a row of buttons. Where the column
+   sits (its grid area, sticky top) is the page's layout, not the inspector's. */
+@layer cap.components {
+  .cap-inspector {
+    display: grid;
+    gap: var(--space-5);
+    min-width: 0;
+    align-content: start;
+  }
+  .cap-inspector-tabs,
+  .cap-inspector-panel {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+  /* A tab's panel takes focus (the tabs' rule), so it is never smaller than a target. */
+  .cap-inspector-panel {
+    min-block-size: var(--target);
+  }
+  .cap-inspector-open {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+}

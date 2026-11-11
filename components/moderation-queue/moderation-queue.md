@@ -6,7 +6,7 @@ parts: [css, behavior]
 tool: native + own JavaScript
 states: [waiting, approved, rejected, not yet checked, source not found, selected rows, bulk bar, open row, open row with an external source, empty, decided with Undo, decided with no Undo on a site without Back to waiting, undone, delete asks first, retention sweep, single keys off, comfortable density, phone width]
 added: 0.3.0
-updated: 0.93.0
+updated: 0.96.0
 source: Dustin Edwards's site admin, app/routes/admin.mentions.tsx (the queue, its filters and counts, the retention sweep), app/lib/webmention/ (retention.mjs, decide.server.ts, urls.mjs), app/components/admin/row-menu.tsx, toast.tsx and posts-table.tsx for the row actions and the status region; app/components/post-mentions.tsx for what readers see. shadcn/ui Item, Checkbox, Kbd and AlertDialog for the craft.
 replaces:
   - 'class="(mention-row|mention-queue|mention-filters|mention-actions)"'
@@ -154,7 +154,7 @@ A row carries its state in `data-state` (`unverified`, `pending`, `approved`, `r
 
 `import { enhance, decide, actionsFor, undoAction, undoStack } from "capsomer/behavior/moderation-queue"`. `enhance()` attaches the keys, the filter, the selection, the decisions and the confirms, wires the key button through the shortcuts component, and adds a message region after the queue if the page has none. The pure helpers: `decide(state, action, reset)` is the contract's table (`null` where a decision does nothing), `actionsFor(state, reset)`, `bulkActionsFor(view, reset)`, `inView(state, view)`, `countStates(mentions)`, `summaryText(counts)`, `undoAction(from, reset)` (the decision that puts a mention back, or `null`), `sweepLines(expiring)`, `undoStack()`, and the words `STATE_LABEL`, `VIEW_LABEL`, `ACTION_LABEL`. Events on the root: `cap:mod-decided` (detail `{ ids, action, from, to }`, fired after the move so the app can save it), `cap:mod-undone` (`{ ids, to }`) and `cap:mod-deleted` (`{ ids }`).
 
-In React, the mentions list draws this markup from the contract's data: `capsomer/react/mentions-list`. The approval queue (`capsomer/react/approval-queue`, 0.93.0) draws it for things your own side drafted: its rows have no select box, and their open row holds `.cap-mq-findings` (what a check held the item for), `.cap-mq-edit` (a form with the item's text, editable, and its decisions) and `.cap-mq-decide` (the decisions under the text). Those three parts are in this stylesheet; nothing here was renamed or removed.
+In React, the mentions list draws this markup from the contract's data: `capsomer/react/mentions-list`. The approval queue (`capsomer/react/approval-queue`, 0.96.0) draws it for things your own side drafted: its rows have no select box, and their open row holds `.cap-mq-findings` (what a check held the item for), `.cap-mq-edit` (a form with the item's text, editable, and its decisions) and `.cap-mq-decide` (the decisions under the text). Those three parts are in this stylesheet; nothing here was renamed or removed.
 
 **Dependencies.** The bulk bar is the bulk-bar component's markup. This component draws that markup with a layout of its own at zero specificity, so the bulk-bar stylesheet overrides it where both are loaded. The tabs and pagination components are not used.
 

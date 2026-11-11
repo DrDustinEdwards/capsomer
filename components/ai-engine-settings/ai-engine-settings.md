@@ -5,8 +5,8 @@ summary: Which engine does each AI job, a person's subscription or the API. What
 parts: [css, behavior, react]
 tool: native + React (composes table, select, panel, field, row list, status and empty)
 states: [both engines ready with spend, the API for a few days with the subscription not connected and nothing spent]
-added: 0.93.0
-updated: 0.93.0
+added: 0.96.0
+updated: 0.96.0
 source: Carrel, app/routes/ai.tsx (the status line, the engine table, the spend panel and the action that reads the form) and app/lib/ai-engine.server.ts (FEATURES, the settings' shape); site-runtime ai-engine.mjs (EngineSettings, the engines and the prices).
 replaces:
   - 'className="app-engine-(status|table)[ "]'

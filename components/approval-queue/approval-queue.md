@@ -5,8 +5,8 @@ summary: Things your own side drafted, waiting for a person to approve them one 
 parts: [css, react]
 tool: native + React (composes the moderation queue, status, empty, time and confirm dialog)
 states: [awaiting approval, held by a check with findings, several decisions, read only text, closed item, decision in flight, reject asks first, empty, delivered HTML]
-added: 0.93.0
-updated: 0.93.0
+added: 0.96.0
+updated: 0.96.0
 source: Carrel, app/routes/social.tsx (the "Waiting on you" queue, lines 194 to 275, and its reject confirm) and app/app.css (.app-posts, .app-post, .app-post-meta, .app-lint); Capsomer's moderation queue for the rows, the open row and the keys.
 replaces:
   - 'className="app-posts?(-meta)?[ "]'

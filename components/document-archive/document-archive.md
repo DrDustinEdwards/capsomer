@@ -5,8 +5,8 @@ summary: Past documents by category as lists of links, and a document's page wit
 parts: [css, behavior, react]
 tool: native
 states: [every category with one cut short and one empty, one category's list, a document's page with Previous and Next, the first in its category, the last in its category, phone width]
-added: 0.93.0
-updated: 0.93.0
+added: 0.96.0
+updated: 0.96.0
 source: txasm app/routes/archive.$category.tsx, app/routes/archive.$category.$slug.tsx, app/components/document-list.tsx (DocumentList), app/components/document-detail.tsx (DocumentDetail), app/lib/document-nav.ts (adjacentSlugs)
 replaces:
   - 'className="(?:[^"]*\s)?doc-pager[\s"]'

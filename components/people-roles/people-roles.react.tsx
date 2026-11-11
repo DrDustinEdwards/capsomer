@@ -1,4 +1,16 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+  type ReactNode,
+} from "react";
+import { Button } from "../button/button.react.tsx";
+import { useOptionalMessage } from "../message/message.react.tsx";
+import { Select } from "../select/select.react.tsx";
+import { Pill } from "../status/status.react.tsx";
 import { enhance as enhanceFields } from "../field/field.ts";
 import { confirm } from "../confirm-dialog/confirm-dialog.ts";
 import { FormMenu } from "../menu/menu.react.tsx";
@@ -18,12 +30,17 @@ import {
   syncText,
   tallyText,
   timeText,
+  personName,
+  roleSavedText,
   type HistoryEntry,
   type PersonRow,
+  type RoleGridPerson,
+  type RoleOption,
+  type RoleScope,
   type TitleOption,
 } from "./people-roles.ts";
 
-export type { HistoryEntry, PersonRow, TitleOption };
+export type { HistoryEntry, PersonRow, RoleGridPerson, RoleOption, RoleScope, TitleOption };
 
 export interface PeopleData {
   // The app's name as the heading reads it: "Lab members".
@@ -639,6 +656,191 @@ function Field({
       ) : null}
       {children}
       <p className="cap-field-error" id={`${id}-e`} hidden></p>
+    </div>
+  );
+}
+
+// ---- RoleGrid: people by scopes, a role in each cell --------------------------------------
+
+const noSubscribe = () => () => {};
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    noSubscribe,
+    () => true,
+    () => false,
+  );
+}
+
+export interface RoleGridProps {
+  people: RoleGridPerson[];
+  scopes: RoleScope[];
+  // The table's caption, for screen readers: "People, and their role on each project".
+  caption: string;
+  // The first column's heading. Default "Person".
+  personHeading?: string;
+  // The roles this person may have on this scope (a reviewer is offered no Editor). "" is no
+  // access and is always offered first.
+  options: (person: RoleGridPerson, scope: RoleScope) => RoleOption[];
+  // With the script: a cell saves as soon as it changes. The grid says "Saved: ..." when it
+  // resolves. Without the script, each row's Save posts every scope's role at once (intent
+  // "roles", person, and role-<scope id> per scope).
+  onRoleChange?: (person: RoleGridPerson, scope: RoleScope, role: string) => void | Promise<void>;
+  // Disable and Enable. With the script it is called and Disable offers Undo; without it, the
+  // row's form posts intent "disable" or "enable" and person.
+  onAccess?: (person: RoleGridPerson, intent: "disable" | "enable") => void | Promise<void>;
+  // Where the no-script forms post. Default: the page itself.
+  action?: string;
+  // The words for no access. Default "No access".
+  noAccess?: string;
+}
+
+function GridRow({
+  person,
+  scopes,
+  options,
+  onRoleChange,
+  onAccess,
+  action,
+  noAccess,
+  hydrated,
+}: Omit<RoleGridProps, "people" | "caption" | "personHeading"> & {
+  person: RoleGridPerson;
+  hydrated: boolean;
+  noAccess: string;
+}) {
+  const message = useOptionalMessage();
+  const formId = `cap-roles-${useId()}`;
+  const name = personName(person);
+  const disabled = Boolean(person.disabledAt);
+  const access = async (e: FormEvent<HTMLFormElement>) => {
+    if (!onAccess) return;
+    e.preventDefault();
+    const intent = disabled ? "enable" : "disable";
+    await onAccess(person, intent);
+    if (intent === "disable")
+      message?.say(`${name} is disabled. They are refused on their next request.`, {
+        undo: () => onAccess(person, "enable"),
+        undone: `${name} is enabled again.`,
+      });
+    else message?.say(`${name} is enabled again.`);
+  };
+  return (
+    <tr>
+      <th scope="row">
+        <span className="cap-role-person">{name}</span>
+        {person.name ? <span className="cap-role-email">{person.email}</span> : null}
+        <span className="cap-role-pills">
+          {(person.badges ?? []).map((b) => (
+            <Pill key={b} variant="outline">
+              {b}
+            </Pill>
+          ))}
+          {person.disabledAt ? (
+            <Pill variant="secondary">Disabled {person.disabledAt.slice(0, 10)}</Pill>
+          ) : null}
+        </span>
+        {person.everyScope ? null : (
+          <span className="cap-role-actions">
+            {hydrated && onRoleChange ? null : (
+              <Button type="submit" form={formId} size="sm">
+                Save<span className="cap-sr-only"> roles for {name}</span>
+              </Button>
+            )}
+            <form method="post" action={action} onSubmit={(e) => void access(e)}>
+              <input type="hidden" name="person" value={person.id} />
+              <Button type="submit" name="intent" value={disabled ? "enable" : "disable"} size="sm">
+                {disabled ? "Enable" : "Disable"}
+                <span className="cap-sr-only"> {name}</span>
+              </Button>
+            </form>
+          </span>
+        )}
+        {person.everyScope ? null : (
+          <form id={formId} method="post" action={action} hidden>
+            <input type="hidden" name="intent" value="roles" />
+            <input type="hidden" name="person" value={person.id} />
+          </form>
+        )}
+      </th>
+      {person.everyScope ? (
+        <td colSpan={scopes.length} className="cap-muted">
+          {person.everyScope}
+        </td>
+      ) : (
+        scopes.map((scope) => {
+          const choices = [{ value: "", label: noAccess }, ...options(person, scope)];
+          return (
+            <td key={scope.id}>
+              <Select
+                form={formId}
+                name={`role-${scope.id}`}
+                size="sm"
+                aria-label={`${name} on ${scope.name}`}
+                defaultValue={person.roles[scope.id] ?? ""}
+                onChange={(event) => {
+                  const value = event.currentTarget.value;
+                  const label = choices.find((c) => c.value === value)?.label ?? value;
+                  void Promise.resolve(onRoleChange?.(person, scope, value)).then(() =>
+                    message?.say(roleSavedText(name, scope.name, label)),
+                  );
+                }}
+                options={choices}
+              />
+            </td>
+          );
+        })
+      )}
+    </tr>
+  );
+}
+
+// People as rows, scopes (projects, sites) as columns, a role select in each cell that saves on
+// change; each row has Disable (with Undo) and, before the script runs, Save. The person stays in
+// view while the scopes scroll sideways. From Carrel's People page (routes/people.tsx).
+export function RoleGrid({
+  people,
+  scopes,
+  caption,
+  personHeading = "Person",
+  noAccess = "No access",
+  ...rest
+}: RoleGridProps) {
+  const id = useId();
+  const hydrated = useHydrated();
+  return (
+    <div
+      className="cap-table-wrap cap-role-grid-wrap"
+      role="region"
+      aria-labelledby={id}
+      tabIndex={0}
+    >
+      <table className="cap-table cap-role-grid">
+        <caption id={id} className="cap-sr-only">
+          {caption}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{personHeading}</th>
+            {scopes.map((s) => (
+              <th scope="col" key={s.id}>
+                {s.name}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {people.map((p) => (
+            <GridRow
+              key={p.id}
+              person={p}
+              scopes={scopes}
+              hydrated={hydrated}
+              noAccess={noAccess}
+              {...rest}
+            />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

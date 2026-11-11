@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.93.0]
+## [0.96.0]
 
 - **Batch 8 of the shared-components audit: specialized components** (clusters C73 to C85). Each was extracted from a site that had its own copy; the sites move onto this release and delete theirs. Every new component has a doc page, a states page and its specs.
 - **Dictionary entry** (from dustinedwards.info's named software pages). New `.cap-dictionary-entry`: a headword with its syllables, IPA and respelling, part of speech and plural, numbered senses with subject labels, and the etymology between two rules. The speaker is a link to the clip with no script and a button with it (`aria-pressed` while playing), and a clip that cannot load or play brings the link back. `capsomer/behavior/dictionary-entry` (`enhance`, `wireListen`, `listenLabel`) and `DictionaryEntry` in React. No token or class was removed or renamed.
@@ -48,6 +48,55 @@ Each release names every removed or renamed token or class, and every changed HT
 - **Schedule dialog** (new): a `datetime-local` field in the Dialog named by the browser's time zone, the chosen time said back with the Time component, a past time refused beside the field, and an ISO time sent on confirm; pure `localValue(at, zone)` and `checkSchedule` (from Carrel's ScheduleDialog). No token or class was removed or renamed.
 - **Share preview: `SerpWidthMeter`**, a Meter of a search title's or description's pixel width against the cut, on Prelum's `serpWidth`, so the editor and `prelum-audit` agree and a server render shows the number; `measure` takes an app's own (from Carrel's WidthMeter). No token or class was removed or renamed.
 - **Draft compare: `unifiedPatch(name, before, after)` and `hasChanges(patch)`**, a unified patch in jsdiff's `createTwoFilesPatch` shape from the component's own line diff, so an app no longer needs the `diff` library for DraftPatch (from Carrel's lib/patch.ts). No token or class was removed or renamed.
+
+## [0.95.0]
+
+- **Rich editor (new, `components/rich-editor`)**, from Carrel's formatted editor: Tiptap 3 (MIT) over Markdown that stays byte for byte. Unchanged blocks are written as the bytes they were read from; only a changed or new block is spelled again, and checked by parsing it. Front matter, code, tables, directives, math, footnotes and images sit in labeled source blocks. It keeps the markdown editor's toolbar, keys, link palette, block menu and image step. `capsomer/react/rich-editor` (`RichEditor`), `capsomer/behavior/rich-editor` (the round trip and schema, for a server), `capsomer/rich-editor.css`. A pasted or dropped HTML fragment is parsed in an inert document under the `capsomer` Trusted Types policy and read by the schema; ProseMirror's own paste handed it to the page's default policy, which escapes markup, so formatted pastes arrived as tags. New command `capsomer-roundtrip <folder> [--plain]` checks a site's content round trips.
+- **Collab editor (new, `components/collab-editor`)**, from Carrel's file rooms: a shared Yjs copy over y-partyserver, each person's caret in their series color, Editing or Suggesting with tracked changes (who, round, when), comment threads anchored to passages, the room bar, and the suggestions and comments panels. `capsomer/react/collab-editor` (`useRoomEditing`, `useRichRoom`, `useRoom`, `RoomBar`, `SuggestionsPanel`, `CommentsPanel`), `capsomer/behavior/collab-editor` (load, patch, save and settle the copy, for the room's server), `capsomer/collab-editor.css`. The room's server, who may enter and storage stay in the app.
+- The rich editor's link palette and image alt field ignore the Enter that confirms an IME conversion (`isImeEnter`, from 0.90.0).
+- **Markdown editor:** `GLYPH` (its toolbar icons) is exported for the rich editor. **Trusted HTML:** new `inertDocument(html)`.
+- New optional peers, at Carrel's versions: `@tiptap/core`, `@tiptap/extension-collaboration`, `@tiptap/extension-list`, `@tiptap/extensions`, `@tiptap/pm`, `@tiptap/starter-kit` (^3.31.4), `@tiptap/y-tiptap` (^3.3.0; 3.0.x is deprecated upstream because its position migrations grow shared documents, so every client in a room needs 3.1.0 or later), `@handlewithcare/prosemirror-suggest-changes` (^0.1.8), `yjs`, `y-protocols`, `y-partyserver`, and the micromark and mdast packages the round trip reads with. `micromark-extension-math` gets katex 0.19.1 by override (its own range, ^0.16, has GHSA-238p-pmpm-9mq7; the round trip reads math syntax only and never renders it). Dev: site-runtime v0.114.0 (`startPage` in the specimens). No token or class was removed or renamed.
+
+## [0.94.0]
+
+- **Seventeen page and app widgets move into Capsomer** (the shared-code audit's item 31; Dustin, 2026-11-11: a piece of UI that is a component belongs in Capsomer, even when only one site uses it so far). Each is a component with its CSS, notes, specimen and tests, extracted from the site that had it; the sites switch to them and delete their copies next.
+  - `range-slider` (two-handle range, from Foxhound's payments filter): `.cap-range-slider` and its parts, each handle a field's `input.cap-range`, `capsomer/behavior/range-slider` (`rangeFill`, `clampPair`, `formatValue`, the `cap:range-commit` event), React `RangeSlider`.
+  - `toc` (a post's contents, sidebar from 64rem and inline below, from Foxhound's blog): `.cap-toc`, React `Toc`.
+  - `share-row` (share links plus a copy button, from Foxhound's blog): `.cap-share`, `shareHref`, React `ShareRow`.
+  - `route-splash` (a slow navigation's loading screen, from Foxhound's app shell): `.cap-route-splash`, `shouldShowRouteSplash`, React `RouteSplash`, now `role="status"`.
+  - `count-up` (a number that counts up once in view, from Foxhound's audit): `capsomer/behavior/count-up`, `.cap-count-up`, React `useCountUp`.
+  - `timeline` (numbered steps whose line fills as they scroll in, from BioScience Writers): `ol.cap-timeline` and its parts, React `Timeline`; the fill is a transform, with no measuring.
+  - `pdf-viewer` (PDF.js pages with keyboard paging and zoom, from txasm): `.cap-pdf` and its parts, React `PdfViewer`.
+  - `checklist-run` (a page of steps worked through once, with timers, notes, one step at a time and a record, from dustinedwards.info's run mode): `.cap-run-*`, `capsomer/behavior/checklist-run` and the pure `capsomer/behavior/checklist-run-model`. The scale swap now copies every `[data-run-swap]` region by name and place, through `trusted-html`.
+  - `offline-keep` (keep a page for offline reading, from dustinedwards.info): `.cap-keep`, `capsomer/behavior/offline-keep`, and the worker `capsomer/offline-sw.js` (store `kept-v1` unless `?cache=` names another).
+  - `error-ad` (the error page's vintage ad slot, from dustinedwards.info's utility ads): `.cap-ad` and its parts, the model (`adProblems`, `burstPoints`, `scopeArt`, `chooseAd`), React `ErrorAd`, and the fonts Bangers and Alfa Slab One (OFL 1.1) in `fonts/`.
+  - `web-push` (a device list that turns phone alerts on and off, from the Capsid Portal): `.cap-push` and its parts, `subscribePush`, React `PushDevices`, and the worker `capsomer/push-sw.js`.
+  - `scope-chip` (a one-select filter form that submits on change, from Carrel): `form.cap-scope`, React `ScopeChip`.
+  - `danger-zone` (the risky controls set apart, from the Capsid Portal): `.cap-danger`, React `DangerZone`.
+  - `freshness` (when data was updated, with a ring for the next refresh, from the Capsid Portal): `.cap-fresh`, `shareLeft`, React `Freshness` and `FreshRing`.
+  - `save-toggle` (save a post in this browser, from germomics): `button.cap-chip.cap-save` (a toggle chip with a bookmark), React `SaveToggle`.
+  - `subscribe-links` (listen and subscribe links, from germomics): `.cap-subscribe`, each link a `cap-chip`, React `SubscribeLinks`.
+  - `split` (text beside a picture, flipping sides, from dustinedwards.info's media split): `.cap-split`, React `Split`.
+  - The package ships `components/*/*-sw.js`.
+- **The single slider's thumb takes a 44px touch target** on a coarse pointer (the dot stays 20px inside it), and its hover ring shows only where a pointer hovers.
+- No token or class was removed or renamed, and no existing HTML contract changed.
+
+## [0.93.0]
+
+From the sites, batch 9: an inspector, React Router bindings, a work queue with Later, a role grid and a Compare that works before the script runs.
+
+- **Inspector: a new component** (`capsomer/react/inspector`, `capsomer/inspector.css`), from Carrel's editor. Everything about a text that is not the text, in tabs beside the writing on a wide screen and in a sheet from the bottom on a phone; the head (saving, publishing) stays in the page; a tab with nothing to show is left out; `initialTab` opens a tab (and the sheet) from the address; `wideQuery` matches the page's own grid. New classes: `.cap-inspector`, `.cap-inspector-tabs`, `.cap-inspector-panel`, `.cap-inspector-open`, `.cap-inspector-sheet`.
+- **React Router bindings in one place** (`capsomer/react/router`, `capsomer/behavior/router`): `routerRenderForm` for any part's `renderForm`, `RouterConfirmModal` (the router's Form, and Cancel that keeps the scroll position), `useRouterRowForm` (each row its own fetcher), `revalidateUnlessOnly` and `onlyParamsChanged` (skip a loader when only a display parameter changed; from dustinedwards.info's media library). `routerRenderLink` stays in `capsomer/react/link`.
+- **Attention list: a person's work queue with Later** (`NeedsList`, from Carrel's Home). Blocking, then Waiting for you, in one row list; each row's main action and Later, which sets it aside until 8 am tomorrow in the person's zone, moves focus to the next row and offers Undo; the Later view with Bring back; `l` on a row, obeying `data-cap-single-keys`; the keys line. New types and helpers in `capsomer/behavior/attention-list`: `Need`, `NeedUrgency`, `needsShown`, `needCount`, `focusNeighbor`, and the inbox feed's `Inbox`, `InboxApp`, `InboxItem`, `InboxSeverity`, `severityOf`, `worstSeverity`, `severityTone` (from Capsid's inbox). New classes: `.cap-need-row`, `.cap-need-group`, `.cap-need-head`, `.cap-need-count`, `.cap-need-keys`, `.cap-need-key`. A need's title is a full target on a touch screen.
+- **Row list: `RowForm` and `usePlainRowForm`**, the shape a row action's form takes (React Router's is `useRouterRowForm`).
+- **Time: `knownZone(zone)` and `laterUntil(now, zone, hour)`** (8 am the next day in the person's zone, right across a summer-time change; from Carrel).
+- **History list: Compare works before the script runs.** The pick boxes belong to a GET form in the bar (`form` attribute), and a submit button stands in for the Compare link until the script is live, posting `?compare=<id>&compare=<id>`. HTML contract change: the bar gains `form` and `button[data-cap-part="compare-submit"]`, the boxes gain `form`, and the link may be delivered `hidden` (the module shows it). New: `comparePicks(params, at)` reads either address older first, `defaultPicked` keeps a compare view's pair ticked, `messageSummary(message, path)` turns a commit message into a line's summary (Carrel's `revisionLabel`), and `changeText(before, after)` says an audit row's change in words (dustinedwards.info's lab, which called a removal "Changed" and missed a dropped field).
+- **People and roles: the role grid** (`RoleGrid`, from Carrel's People page): people by scopes, a role select in each cell that saves on change, Disable with Undo, a per-row Save before the script runs, the Owner's row spanning the scopes. New helpers: `personFromParam`, `manageLead`, `listText`, `pluralTitle`, `roleSavedText`, `personName` (from dustinedwards.info's lab). New classes: `.cap-role-grid`, `.cap-role-grid-wrap`, `.cap-role-person`, `.cap-role-email`, `.cap-role-pills`, `.cap-role-actions`.
+- **The lightbox and site header specs take over dustinedwards.info's browser cases** for Capsomer's own behavior (a modal viewer, focus on open, the original image; a panel's toggle and `aria-current`), and the test helpers gain `countCssRules(page)`, which counts nested rules, so a states page missing its stylesheet fails.
+
+No token or class was removed or renamed.
+
+- **The showcase deploy's live gate runs again.** Every devkit workflow call moves from v0.27.0 to v0.33.0, whose worker-deploy sets `DEVKIT_DIR` for the verify command; v0.27.0 never set it, so `verify:live` failed with "DEVKIT_DIR: unbound variable". No change to the package.
 
 ## [0.92.0]
 

@@ -340,6 +340,27 @@ export function ringContrast(
   }, sel);
 }
 
+// How many CSS rules the page's stylesheets hold, nested ones (@layer, @media, native nesting)
+// included. A stylesheet that failed to load leaves the page unstyled, and every layout check
+// after it then measures browser defaults: assert a floor, set well under a measured run, first.
+// A cross-origin sheet cannot be read and counts zero.
+export function countCssRules(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    const count = (rules: CSSRuleList): number =>
+      [...rules].reduce(
+        (n, r) => n + 1 + ("cssRules" in r ? count((r as CSSGroupingRule).cssRules) : 0),
+        0,
+      );
+    return [...document.styleSheets].reduce((n, sheet) => {
+      try {
+        return n + count(sheet.cssRules);
+      } catch {
+        return n;
+      }
+    }, 0);
+  });
+}
+
 // What sticks out of a list row, or leaves its title under 100px to be read: an empty list is a fit.
 export function rowOverflow(page: Page): Promise<string[]> {
   return page.evaluate(() => {
