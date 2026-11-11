@@ -566,16 +566,8 @@ function ensureShortcut(): void {
   });
 }
 
-// The menu a host has not mounted yet: a shortcut or a button pressed before the page is idle
-// mounts it at once.
-let mountPending: (() => void) | null = null;
-function menuNow(): Attached | null {
-  if (!current) mountPending?.();
-  return current;
-}
-
 export function openCommandMenu(query = ""): void {
-  menuNow()?.open(query);
+  current?.open(query);
 }
 
 export interface CommandMenu extends Attached {
@@ -603,52 +595,6 @@ export function createCommandMenu(commands: Command[], opts: MenuOptions = {}): 
       a.detach();
       dialog.remove();
       if (current === a) current = null;
-    },
-  };
-}
-
-// The command menu's host without React, as useCommandHost: the menu is built once the page is
-// idle (requestIdleCallback, two seconds at most), so it costs the first load nothing. Ctrl K, a
-// [data-cap-command-open] button, `open` or `runWhenReady` before then builds it at once.
-export interface CommandHost {
-  readonly menu: CommandMenu | null;
-  open: (query?: string) => void;
-  // Runs the command with this id, building the menu first if it is not there yet.
-  runWhenReady: (id: string) => void;
-  detach: () => void;
-}
-
-export function createCommandHost(commands: Command[], opts: MenuOptions = {}): CommandHost {
-  let menu: CommandMenu | null = null;
-  const mount = () => {
-    menu ??= createCommandMenu(commands, opts);
-    if (mountPending === mount) mountPending = null;
-  };
-  mountPending = mount;
-  const idle =
-    typeof requestIdleCallback === "function"
-      ? requestIdleCallback(mount, { timeout: 2000 })
-      : undefined;
-  const timer = idle === undefined ? setTimeout(mount, 200) : undefined;
-  ensureShortcut();
-  return {
-    get menu() {
-      return menu;
-    },
-    open(query = "") {
-      mount();
-      menu?.open(query);
-    },
-    runWhenReady(id) {
-      mount();
-      commands.find((c) => c.id === id)?.run();
-    },
-    detach() {
-      if (idle !== undefined) cancelIdleCallback(idle);
-      clearTimeout(timer);
-      if (mountPending === mount) mountPending = null;
-      menu?.detach();
-      menu = null;
     },
   };
 }
@@ -702,7 +648,7 @@ export function enhance(root: ParentNode = document): () => void {
     "[data-cap-command-open]:not([data-cap-ready])",
   )) {
     btn.dataset.capReady = "";
-    const onClick = () => menuNow()?.open("", btn);
+    const onClick = () => current?.open("", btn);
     btn.addEventListener("click", onClick);
     undo.push(() => {
       btn.removeEventListener("click", onClick);

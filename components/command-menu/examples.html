@@ -56,7 +56,7 @@
   <div data-mount="extras"></div>
 </template>
 
-<template data-specimen="extras-dom" data-title="The same extras without React: createCommandHost, navCommands, recentKey, a snippet and ask" data-height="520">
+<template data-specimen="extras-dom" data-title="The same extras without React: the light createCommandHost, navCommands, recentKey, a snippet and ask" data-height="520">
   <main class="specimen-page" tabindex="-1">
     <h1>Home</h1>
     <p><button type="button" class="cap-btn" data-cap-command-open>Search</button></p>
@@ -72,7 +72,8 @@
 </template>
 
 <script type="module">
-  import { createCommandHost, createCommandMenu, enhance, navCommands, openCommandMenu, stopCommand } from "./command-menu.ts";
+  import { createCommandHost } from "./command-host.ts";
+  import { createCommandMenu, enhance, navCommands, openCommandMenu, stopCommand } from "./command-menu.ts";
   const only = new URLSearchParams(location.search).get("only");
   if (only === "extras-dom") {
     const said = document.querySelector("[data-specimen-part='said']");
@@ -95,7 +96,6 @@
       ],
       { recentKey: "cap-cmd-specimen-recent-dom", ask: { run: (q) => say(`Asked: ${q}`) } },
     );
-    enhance();
   }
   // The live specimen is the React menu's (examples.tsx).
   if (only && only !== "live" && only !== "extras" && only !== "extras-dom") {
