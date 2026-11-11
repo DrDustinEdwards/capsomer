@@ -60,7 +60,9 @@ function textOf(value: CsvValue): string {
     return whole.test(value.verbatim) ? value.verbatim : guardFormula(value.verbatim);
   }
   if (typeof value === "string") return guardFormula(value);
-  return guardFormula(value.join("; "));
+  if (Array.isArray(value)) return guardFormula(value.join("; "));
+  // A value outside the type (a record read from JSON) is written as String() writes it.
+  return guardFormula(String(value));
 }
 
 /** One field: guarded, then quoted when it needs to be. */

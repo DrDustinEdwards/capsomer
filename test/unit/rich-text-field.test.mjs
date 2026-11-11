@@ -10,6 +10,8 @@ import {
 } from "../../components/rich-text-field/rich-text-field.ts";
 
 const BODY = ["em", "sup", "sub"];
+const body = (s) => sanitizeRichText(s, BODY);
+const title = (s) => sanitizeRichText(s, ["em"]);
 
 test("only the allowed tags stay, bare, and the text of the rest is kept", () => {
   assert.equal(
@@ -50,4 +52,47 @@ test("plain text, words and empty read through the tags", () => {
   assert.equal(richTextPlain("<em>a</em>&nbsp;b &amp; c"), "a b & c");
   assert.equal(richTextWords("<em>one</em> two<sup>3</sup>"), 2);
   assert.equal(isEmptyRichText("<em> </em>&nbsp;"), true);
+});
+
+// From txasm, where every abstract title and body is stored through this and shown as HTML on about 20 pages.
+test("stored abstract HTML keeps em, sup and sub and nothing that can run", () => {
+  const hostile = [
+    "<script>alert(1)</script>",
+    "<SCRIPT SRC=//example.com/x.js></SCRIPT>",
+    "<img src=x onerror=alert(1)>",
+    '<img src="a>b" onerror=alert(1)>',
+    "<em onclick=alert(1)>hi</em>",
+    "<em/onmouseover=alert(1)>hi</em>",
+    '<a href="javascript:alert(1)">x</a>',
+    '<a href="&#106;avascript:alert(1)">x</a>',
+    "<svg><script>alert(1)</script></svg>",
+    "<svg/onload=alert(1)>",
+    "<math><mtext><table><mglyph><style><img src=x onerror=alert(1)>",
+    "<style>body{background:url(javascript:alert(1))}</style>",
+    '<sup style="background:url(javascript:alert(1))">2</sup>',
+    "<iframe srcdoc='<script>alert(1)</script>'></iframe>",
+    "<scr<script>ipt>alert(1)</script>",
+    "<!--><img src=x onerror=alert(1)>-->",
+    "<img src=x onerror=alert(1)",
+    "\u0000<script>alert(1)</script>",
+  ];
+  for (const input of hostile) {
+    for (const out of [body(input), title(input)]) {
+      const tags = out.match(/<[^>]*>/g) ?? [];
+      assert.ok(
+        tags.every((t) => /^<\/?(em|sup|sub)>$/.test(t)),
+        `${input} -> ${out}`,
+      );
+      assert.ok(!/<[a-z!/]/i.test(out.replace(/<\/?(em|sup|sub)>/g, "")), `${input} -> ${out}`);
+    }
+  }
+
+  assert.equal(
+    body(
+      "<p>E. coli<em>  K-12</em> grew 10<sup>6</sup> CFU in H<sub>2</sub>O &amp; <b>LB</b> &lt;5 h</p>",
+    ),
+    "E. coli<em>  K-12</em> grew 10<sup>6</sup> CFU in H<sub>2</sub>O &amp; LB &lt;5 h",
+  );
+  assert.equal(title("<EM>Bacillus</EM> <sup>1</sup>"), "<em>Bacillus</em> 1");
+  assert.equal(body("<em>open <sup>x</em> y"), "<em>open <sup>x</sup></em><sup> y</sup>");
 });
