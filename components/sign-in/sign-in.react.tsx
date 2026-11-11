@@ -385,6 +385,7 @@ export function EmailConfirm({
   done,
   problem,
   email,
+  displayName,
   limited,
   brand,
   layout,
@@ -399,6 +400,8 @@ export function EmailConfirm({
   > | null;
   /** The new address, when the change is made and this browser is signed in to it. */
   email?: string | null;
+  /** The person's name, for the password manager's display name; the new address when there is none. */
+  displayName?: string | null;
   limited?: boolean;
   brand?: ReactNode;
   layout?: "inline" | "screen";
@@ -410,9 +413,10 @@ export function EmailConfirm({
   // The change is made: the password manager shows the new address on this account's passkeys
   // (site-runtime signalCurrentUserDetails, the WebAuthn Signal API; a browser without it does nothing).
   const changedTo = done === "changed" ? (email ?? null) : null;
+  const shownName = displayName || undefined;
   useEffect(() => {
-    if (changedTo) void signalCurrentUserDetails({ name: changedTo });
-  }, [changedTo]);
+    if (changedTo) void signalCurrentUserDetails({ name: changedTo, displayName: shownName });
+  }, [changedTo, shownName]);
   return (
     <AuthCard title={shown.title} lede={text} brand={brand} layout={layout}>
       {problem || done ? (

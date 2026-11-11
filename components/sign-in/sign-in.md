@@ -47,7 +47,7 @@ Admin pages are behind Cloudflare Access, which draws its own sign-in. An app's 
 - `AuthCard({ title, lede, brand, footer, layout })`: the frame. `layout="screen"` centers it in the window, for a page with no site navigation (Foxhound's).
 - `SignIn({ title, lede, client, methods, state, error, passkeyLanding, next, pending, notice, Form, socialAction })`: the screen. `client` is the site's Better Auth client; `state` is `signInFormAction`'s; `Form` is the router's form (React Router's `Form`), so `pending` follows the post.
 - `SignInConfirm({ siteName, problem, limited, signInPath, continuePath })`: the emailed sign-in link's page; `problem` is `signInLinkProblem`'s.
-- `EmailConfirm({ siteName, settings, settingsPath, done, problem, email, limited })`: the email-change page; `done` and `problem` are `emailLinkResult`'s.
+- `EmailConfirm({ siteName, settings, settingsPath, done, problem, email, displayName, limited })`: the email-change page; `done` and `problem` are `emailLinkResult`'s.
 
 ## Matches
 
