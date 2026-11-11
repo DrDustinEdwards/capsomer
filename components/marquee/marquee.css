@@ -8,9 +8,10 @@
    too. With less motion asked for nothing moves: the marks wrap into rows and the copy is hidden. */
 
 @layer cap.components {
+  /* Toward the start side, by one copy: left in a left-to-right page, right in a right-to-left one. */
   @keyframes cap-marquee-drift {
     to {
-      translate: -50% 0;
+      translate: var(--marquee-to) 0;
     }
   }
 
@@ -23,8 +24,12 @@
   }
 
   .cap-marquee-track {
+    --marquee-to: -50%;
     display: flex;
     inline-size: max-content;
+    &:dir(rtl), :where([dir="rtl"]) & {
+      --marquee-to: 50%;
+    }
   }
   .cap-marquee-list {
     display: flex;

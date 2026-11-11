@@ -172,6 +172,12 @@ export function attach(parts: CarouselParts): () => void {
   });
 
   settle(false);
+  // Start on the first slide's own snap position (centered, with a peek on each side), at once:
+  // parking leaves it where it was, and the browser's own re-snap would land a frame or more later.
+  {
+    const delta = middle(slides[settled]!, block) - viewMiddle(track, block);
+    if (Math.abs(delta) >= 1) track.scrollBy({ [block ? "top" : "left"]: delta, behavior: "instant" });
+  }
 
   return () => {
     track.removeEventListener("scroll", onScroll);

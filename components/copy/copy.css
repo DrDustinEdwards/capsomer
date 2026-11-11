@@ -38,8 +38,12 @@
   .cap-copy-tip {
     position: absolute;
     inset-block-end: calc(100% + 6px);
+    /* Centered over the button in either direction: the shift back runs toward the start side. */
     inset-inline-start: 50%;
     translate: -50% 0;
+    &:dir(rtl), :where([dir="rtl"]) & {
+      translate: 50% 0;
+    }
     padding: 2px 8px;
     border-radius: var(--radius-s);
     background: var(--text);
@@ -87,6 +91,13 @@
     & > .cap-copy {
       flex: none;
       order: 1;
+    }
+    /* The block beside the button: as tall as a target, so a scrollable block that takes focus is
+       one on touch too (WCAG 2.5.8). */
+    & > :not(.cap-copy) {
+      flex: 1;
+      min-inline-size: 0;
+      min-block-size: var(--target);
     }
   }
 

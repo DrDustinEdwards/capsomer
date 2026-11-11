@@ -80,6 +80,16 @@
       gap: var(--space-3);
       margin-block-start: auto;
       padding-block-start: var(--space-2);
+
+      /* A footer link is a target of its own on touch (WCAG 2.5.8, at --target). */
+      @media (pointer: coarse) {
+        & > a {
+          display: inline-flex;
+          align-items: center;
+          min-block-size: var(--target);
+          min-inline-size: var(--target);
+        }
+      }
     }
 
     /* Wide enough, a card with media puts it in a side column beside the rest; a card without
