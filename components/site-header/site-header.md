@@ -57,6 +57,8 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 | Column | `--header-max-inline-size` (default `100%`): the bar's contents keep to a centered column of that width |
 | Edge and scrolled look | `--header-edge`; after a scroll (`data-scrolled`) `--header-scrolled-edge`, `--header-scrolled-shadow`, `--header-scrolled-mix` |
 | Section links' weight | `--header-link-weight` (400) and the current link's `--header-link-current-weight` (500) |
+| Section links' spacing | `--header-link-pad` (0), `--header-links-gap` between them (20px), `--header-link-gap` before the chevron (`--space-2`), `--header-chev-size` (12px) |
+| Icon controls | `--header-icon-size` (36px), `--header-glyph-size` (18px), `--header-glyph-stroke` (1.6); `--header-tools-gap` between the right side's tools (`--space-3`) and `--header-row-tools-gap` in the phone's row (`--space-2`); `menuIcon` for the site's own menu glyph |
 | The logo's name | `logo.name`, where the link should say more than `label` ("BioScience Writers home"); it starts with the visible words |
 | A control's look | `className` on an extra: the site's own class on an icon control, or on the button extra in the bar and in the sheet |
 | Where the phone's row starts | Under 768px; `collapse="lg"` (`data-collapse="lg"`) under 1024px |

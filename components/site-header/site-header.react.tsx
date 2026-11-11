@@ -73,6 +73,7 @@ export function SiteHeader(props: SiteHeaderProps) {
     trail,
     collapse,
     sheetIcons,
+    menuIcon = MENU_ICON,
   } = props;
   const letterhead = variant === "letterhead";
   const id = useId();
@@ -492,7 +493,7 @@ export function SiteHeader(props: SiteHeaderProps) {
             {...(hydrate ? {} : { commandfor: `${id}-sheet`, command: "show-modal" })}
             onClick={() => setSheetOpen(true)}
           >
-            {MENU_ICON}
+            {menuIcon}
           </button>
         </div>
         {letterhead && trail ? (

@@ -190,6 +190,9 @@ export interface SiteHeaderProps {
   // "auto": the sheet drops its 24px icon column when no row has an icon (data-sheet-icons="auto").
   // By default every row keeps the column.
   sheetIcons?: "auto";
+  // The menu button's glyph, for a site whose own differs (bsw's three lines 6px apart); by
+  // default the family's.
+  menuIcon?: ReactNode;
   // The band: dark in both themes, and translucent over the page.
   band?: "dark";
   translucent?: boolean;

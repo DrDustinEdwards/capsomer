@@ -29,14 +29,16 @@
       max-inline-size: var(--measure);
       margin-block: 0 1em;
     }
+    /* A site with its own reading look (bsw) can keep plain wrapping and lining figures:
+       --prose-wrap, --prose-numerals. */
     & :where(p, li) {
-      text-wrap: pretty;
-      font-variant-numeric: oldstyle-nums;
+      text-wrap: var(--prose-wrap, pretty);
+      font-variant-numeric: var(--prose-numerals, oldstyle-nums);
     }
     & :where(h1, h2, h3) {
       font-family: var(--prose);
       line-height: 1.15;
-      letter-spacing: -0.015em;
+      letter-spacing: var(--prose-heading-tracking, -0.015em);
       margin-block: 1.4em var(--prose-heading-gap, 0.5em);
       max-inline-size: var(--prose-heading-measure, 30ch);
     }
@@ -57,9 +59,10 @@
       font-family: var(--mono);
       font-size: 0.85em;
     }
+    /* --prose-size-adjust: none keeps a site's text at its own size. */
     @supports (font-size-adjust: from-font) {
       & :where(p, li, td, th, dd, blockquote, figcaption, h2, h3, h4) {
-        font-size-adjust: from-font;
+        font-size-adjust: var(--prose-size-adjust, from-font);
       }
       & :where(code, kbd, samp) {
         font-size: 1em;
