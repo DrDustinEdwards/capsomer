@@ -4,6 +4,15 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.107.0]
+
+- **Sortable list: `renderFoot` and `removeStyle`.** `renderFoot(item, state)` adds a part of the host's own after the buttons, on its own full-width line (`.cap-sortable-foot`, the space above it `--sortable-foot-gap`, the item's gap by default): an "Edit item" disclosure that sits under an item's title and its buttons rather than beside them. `removeStyle="bordered"` draws Remove as a boxed button; `"quiet"` (bare words) stays the default. `--sortable-remove-pad-inline` sets Remove's inset (a small button's by default; `0` leaves the bare word). A card or stack item with no grip (`grip={false}`) no longer keeps an empty handle column, which set its head and fields one gap in from the content's edge. HTML contract addition only: `.cap-sortable-foot`. Nothing is removed or renamed.
+- **Empty: the sentence is balanced again**, as the title is. base.css's `text-wrap: pretty` on every `p` (0.90.0) had overridden the state's balance, so a centered sentence (an error page's, an empty list's) wrapped ragged.
+- **Arrow: an Icon drawn as `.cap-arrow` keeps the arrow's 1.1em** (the Icon's 1.25em had won, from its later layer).
+- **Page: `--page-leading`**, the line height of `.cap-page` (default 1.55, as before), for a site whose body reads looser.
+- **Disclosure: `--disclosure-marker-gap`**, the space between the marker and the title on every variant (default 8px, the card's 12px, as before).
+- **Error page: the space under a `hero` band and above the ways out.** The tokens `--error-page-hero-gap` (under the band) and `--error-page-body-gap` (between the sentence and the ways out), each defaulting to `--gap`. Nothing is removed or renamed.
+
 ## [0.106.0]
 
 - **Components that lay out their own rows of fields use `.cap-fields`.** The config form (`.cap-config-form`), the people add form (`.cap-people-add-fields`) and the front matter grid (`.cap-fm-grid`) no longer carry their own `grid-template-columns`; their markup now also has `cap-fields` (React and `examples.html` updated; a hand-written copy of these three needs the class added) and sets `--fields-min` and the new `--fields-gap` (default `--space-5`) to the sizes it had. Their fields now line up on their controls (`align-items: end`), as every `.cap-fields` row does. Nothing is removed or renamed.
