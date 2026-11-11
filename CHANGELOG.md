@@ -29,6 +29,10 @@ Shared components from the network audit: parts each site wrote for itself, now 
 - **React picture** names the ratio from the file's width and height in the image's style, as the sites' own copies did (no LazyLoadImage issue in Chrome).
 - **Command menu: live results without React.** `createCommandMenu(commands, { search, searchDelay })` and `attach(dialog, run, { search })` take the React menu's `search(query, signal)`: asked 180 ms after the last key, the one before aborted (and on close), results after the matching commands, the list `aria-busy` and "Searching…" until they come. `run(option, found)` gets a live result's command. It replaces the live search Foxing wrote around `attach` (search-palette.ts) and is what dustinedwards.info's palette moves onto.
 
+## [0.91.1]
+
+- **A chart no longer redraws 16 px tall.** With Enarratio 0.12 the figure holds the toolbar's 16 by 16 icons before the chart, and `ChartFrame` took its redraw height from the first `viewBox` it found, so every redrawn chart collapsed (seen in the Capsid Portal on 0.90.0). It now skips `enarratio-icon` drawings (`chartViewBox` in `components/chart-frame/chart-frame.ts`).
+
 ## [0.91.0]
 
 - **New: the draft compare's merge mode** (`DraftMerge`, `mergePlan`, `merged`; from Carrel's merge view). Two texts that both moved on from one version, block by block, each difference kept from either side or both, starting on the side that changed it when the base is known. Its diff is the compare's own, so it needs no diff library. New classes: `.cap-merge` and its parts (`-intro`, `-list`, `-same`, `-choice`, `-sides`, `-side`, `-text`, `-empty`, `-mark`, `-actions`). No token or class was removed or renamed.
