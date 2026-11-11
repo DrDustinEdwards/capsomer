@@ -31,6 +31,9 @@ test("no component stylesheet puts rules outside a cap layer", () => {
     const css = readFileSync(f, "utf8")
       .replace(/\/\*[\s\S]*?\*\//g, "")
       .replace(ORDER, "")
+      // A sibling component's stylesheet it builds on (link.css takes link-file.css), checked
+      // here on its own.
+      .replace(/^\s*@import "\.\.\/([\w-]+)\/\1\.css";/gm, "")
       .trim();
     if (!/^@layer cap\.(components|base|utilities) \{/.test(css)) bad.push(f);
   }

@@ -3,9 +3,7 @@ import {
   useEffect,
   useRef,
   useState,
-  type ComponentType,
   type FormEvent,
-  type FormHTMLAttributes,
   type ReactNode,
   useLayoutEffect,
   useSyncExternalStore,
@@ -22,6 +20,7 @@ import {
   type IntentResult,
   type SubmitIntent,
 } from "./content.ts";
+import type { FormComponent } from "../plain-form/plain-form.react.tsx";
 import { markup } from "../trusted-html/trusted-html.ts";
 
 // For useSyncExternalStore's hydration flag: nothing to subscribe to.
@@ -32,14 +31,6 @@ const noSubscribe = () => () => {};
 // there is not; the result is said in the message region (or the list's own box), Undo posts the
 // inverse the kit named, each item's outcome goes to the bulk bar, and a one-way intent the kit
 // answers with `confirm` is the confirm dialog with script and the confirm page without.
-
-// The host router's form (React Router's <Form>), so a filter or a post stays in the app. Given
-// the props a plain <form> takes.
-export type FormComponent = ComponentType<
-  FormHTMLAttributes<HTMLFormElement> & { method?: "get" | "post" }
->;
-
-export const PlainForm: FormComponent = (props) => <form {...props} />;
 
 // The result of the last action, in the page: the sentence, and Undo as a form that posts the
 // inverse, so it works with no script. With script the list's submit handler catches that post.

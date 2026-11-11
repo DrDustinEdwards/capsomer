@@ -46,6 +46,9 @@ export interface FieldProps {
     | ((props: FieldControlProps & { id: string }) => ReactNode);
   // Shown after the control, before the error: a character count.
   after?: ReactNode;
+  // "short": a field that needs only its control's room (a kind, a color) beside a long one, as
+  // data-size="short", which a layout reads (inline-add-form.css).
+  size?: "short";
 }
 
 export function Field({
@@ -57,6 +60,7 @@ export function Field({
   orientation = "vertical",
   children,
   after,
+  size,
 }: FieldProps) {
   const base = useId();
   const own = typeof children === "function" ? {} : children.props;
@@ -82,6 +86,7 @@ export function Field({
       className="cap-field"
       data-orientation={orientation === "vertical" ? undefined : orientation}
       data-invalid={hasError ? "true" : undefined}
+      data-size={size}
     >
       <label className="cap-field-label" htmlFor={controlId}>
         {label}
@@ -341,7 +346,9 @@ export function NumberField(
       onChange: (value: number | null) => void;
       min?: number;
       max?: number;
-      step?: number;
+      // "any" takes any value (1.5 servings passes the browser's step check); the steppers and
+      // Page Up and Page Down then step by 1.
+      step?: number | "any";
       // The steppers' names. Default: "Decrease" and "Increase" with the label, when it is text.
       decrease?: string;
       increase?: string;
@@ -366,8 +373,9 @@ export function NumberField(
   const ready = useMounted();
   const named = typeof label === "string" ? ` ${label.toLowerCase()}` : "";
   const v = value ?? Number.NaN;
+  const unit = step === "any" ? 1 : step;
   const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    const to = keyValue(e.key, v, step, min, max);
+    const to = keyValue(e.key, v, unit, min, max);
     if (to === null) return;
     e.preventDefault();
     onChange(to);
@@ -392,7 +400,7 @@ export function NumberField(
         hidden={!ready}
         disabled={off}
         onMouseDown={(e) => e.preventDefault()}
-        onClick={() => onChange(stepValue(v, step, by, min, max))}
+        onClick={() => onChange(stepValue(v, unit, by, min, max))}
       >
         {glyph}
       </button>

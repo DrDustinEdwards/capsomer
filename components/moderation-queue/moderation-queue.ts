@@ -472,7 +472,9 @@ export const QUEUE_SHORTCUTS = [
 
 // Attaches to every [data-cap="moderation-queue"] under root not yet attached. Returns a
 // function that detaches them.
-export function enhance(root: ParentNode = document): () => void {
+// The root is Element | Document | DocumentFragment, not ParentNode: under @cloudflare/workers-types
+// an HTMLFormElement does not type as a ParentNode, so a site could not pass its form.
+export function enhance(root: Element | Document | DocumentFragment = document): () => void {
   const undo: Array<() => void> = [];
   for (const el of root.querySelectorAll<HTMLElement>("[data-cap='moderation-queue']")) {
     if (el.hasAttribute(READY)) continue;

@@ -1,0 +1,23 @@
+/* The specimen drawing's own fills: a site's drawing brings its own. */
+.sample-window {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+.sample-part {
+  fill: var(--sunken);
+  stroke: var(--text);
+  stroke-width: 1;
+}
+.sample-key-icon {
+  fill: var(--surface);
+  stroke: var(--muted);
+  stroke-width: 1.5;
+}
+.sample-key-icon[data-on] {
+  fill: var(--sunken);
+  stroke: var(--text);
+}
+.sample-narrow {
+  max-inline-size: 24rem;
+}
