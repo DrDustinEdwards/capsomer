@@ -176,7 +176,8 @@ export function attach(parts: CarouselParts): () => void {
   // parking leaves it where it was, and the browser's own re-snap would land a frame or more later.
   {
     const delta = middle(slides[settled]!, block) - viewMiddle(track, block);
-    if (Math.abs(delta) >= 1) track.scrollBy({ [block ? "top" : "left"]: delta, behavior: "instant" });
+    if (Math.abs(delta) >= 1)
+      track.scrollBy({ [block ? "top" : "left"]: delta, behavior: "instant" });
   }
 
   return () => {
