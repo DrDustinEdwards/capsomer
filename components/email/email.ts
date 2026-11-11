@@ -510,3 +510,6 @@ export const notice: Template<{
     return out;
   },
 };
+
+// A body written as HTML, read into Blocks (html-to-blocks.ts).
+export { htmlToBlocks } from "./html-to-blocks.ts";

@@ -103,6 +103,8 @@ In React, `import { Breadcrumb } from "capsomer/react/breadcrumb"`:
 />
 ```
 
+`minItems` (default 2) is the fewest levels that draw a trail. germomics leaves the home page out (its header's wordmark links it) and shows a trail only when the page's BreadcrumbList has Prelum's `BREADCRUMB_MIN_ITEMS`: it passes that less one. Added in 0.101.0.
+
 ## The back link
 
 A page that is one step from a single parent (a form, a step in a flow, a detail opened from one list) gets one link back instead of a trail: `.cap-go[data-go="back"]` (css/utilities.css), the family arrow turned to point back, before the text. Like GOV.UK's back link, it sits at the top of the page, before the `h1` and outside `main`'s heading, and it is a real link to a real address, never `history.back()`: it works with no script, in a new tab, and when the person arrived from somewhere else. It names where it goes ("Sites", not "Back"), so it reads on its own in a list of links. It is a link, so Tab reaches it and Enter follows it; the arrow is drawn, not text, so nothing extra is announced.

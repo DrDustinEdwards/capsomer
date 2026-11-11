@@ -115,11 +115,13 @@ export function goToSection(heading: HTMLElement, opts: { push?: boolean } = {})
   }
 }
 
-// Tells the page how tall the bar is, so a section scrolled to sits below it.
+// Tells the page how tall the bar is, so a section scrolled to sits below it. A vertical bar sits
+// beside the sections, not over them, so it takes no room at their top.
 export function measureBar(nav: HTMLElement, scroller: HTMLElement | null): void {
+  const vertical = nav.dataset.orientation === "vertical";
   (scroller ?? document.documentElement).style.setProperty(
     "--cap-anchors-h",
-    `${Math.ceil(nav.getBoundingClientRect().height)}px`,
+    vertical ? "0px" : `${Math.ceil(nav.getBoundingClientRect().height)}px`,
   );
 }
 

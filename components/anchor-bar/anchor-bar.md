@@ -4,13 +4,14 @@ title: Anchor bar
 summary: '"On this page": sticky links to a long view''s sections, the current one marked.'
 parts: [css, behavior, react]
 tool: own JavaScript
-states: [link states (rest, current, hover, pressed), top of page, scrolled into the third section, blocks marked data-section, short page with no bar]
+states: [link states (rest, current, hover, pressed), top of page, scrolled into the third section, blocks marked data-section, short page with no bar, vertical]
 added: 0.1.0
-updated: 0.2.0
+updated: 0.101.0
 source: the approved mockup's .onpage bar; Capsid Portal, dashboard/src/ui/anchors.tsx and styles.css (".anchors")
 replaces:
   - 'class="onpage"'
   - 'aria-label="On this page"'
+  - 'aria-label="Sections" className="sticky'
 ---
 
 # Anchor bar
@@ -74,6 +75,17 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 `enhance()` applies the rule, watches the sections and handles the links; `watchSections(headings, onChange)`, `currentSection()`, `meetsRule(headings, scroller, barHeight)`, `sectionsIn(scope)` and `goToSection(section)` are exported. In React, `<AnchorBar sections={[{ id, label }]} />`; each id is the id of an `h2` or of a block.
 
 **Provenance.** MIXED, against capsid `master` as of 2026-10-01 (`dashboard/src/ui/anchors.tsx`, `dashboard/src/styles.css` `.anchors`, `.anchors-label`, `main:has(.anchors)`). At 0.1.0 the Portal had no anchor bar (`.anchors` is not in `366b902`), so the component was REWROTE from the mockup's `.onpage` bar and patterns.md "In-page anchors". It still is, in its markup (a `nav` with a `ul`, not the Portal's `nav` of bare links), its spy (an IntersectionObserver and a line 35% down the view; the Portal's is a scroll listener that takes the last section whose top has passed the bar) and its focus handling (`scroll-margin-top` on each linked section from a measured `--cap-anchors-h`; the Portal sets `scroll-padding-top: 48px` on `main`). EXTRACTED in v0.1.1: the rule's measuring, again whenever the window or the content changes size (`ResizeObserver` and `MutationObserver`), with the bar's own height left out; sections as `data-section` blocks with ids; `replaceState` for the hash; the quiet look (ground tone, no frame, 12 px muted links, current link in `--text` with an accent mark, 11 px upper-case label). Adapted: the current link is marked by an underline where the Portal uses a 2 px bottom border, because a transparent border turns visible in forced colors. Not ported: the Portal's spy line (see above; the 35% line is kept because the bar here is not tied to a fixed 48 px).
+
+## Vertical
+
+`data-orientation="vertical"` (React `orientation="vertical"`) sets the links down a side column, sticky below the site header (`--header-h`), each with a rule at its start that turns accent beside the current section. It sits beside the sections, so it takes no room at their top (`--cap-anchors-h` is 0). The rule, the spy, focus and the hash work as for the bar. The page lays out the column (a grid of a 14rem side and the content) and hides it on a narrow screen, where the horizontal bar or nothing serves. Added in 0.101.0 from Foxhound's features page, which drew the column by hand ("a vertical anchor bar is a Capsomer gap").
+
+```html
+<nav class="cap-anchors" aria-label="Sections" data-cap="anchor-bar" data-orientation="vertical" data-always>
+  <span class="cap-anchors-label" aria-hidden="true">Sections</span>
+  <ul class="cap-anchors-list">...</ul>
+</nav>
+```
 
 ## Exceptions in production
 

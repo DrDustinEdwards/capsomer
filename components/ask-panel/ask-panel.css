@@ -1,0 +1,107 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* The AI answer panel: an answer a model writes while the reader watches, labelled as AI and as
+   possibly wrong, with the sources it drew on, an optional follow-up question, and a note when the
+   model stopped before finishing. The body keeps four lines of room from the start, so the stream
+   never pushes the page down under the reader. Extracted from dei's Ask (styles/ask.css,
+   enhance/ask.ts). */
+@layer cap.components {
+  .cap-ask-trigger {
+    margin-block-start: var(--space-3);
+  }
+
+  .cap-ask {
+    margin-block-start: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line);
+    border-inline-start: 3px solid var(--accent);
+    border-radius: var(--cap-ask-radius, var(--radius-s));
+    background: var(--accent-soft);
+    color: var(--text);
+
+    &:focus-visible {
+      outline: var(--ring-width) solid var(--ring);
+      outline-offset: var(--focus-offset);
+    }
+  }
+
+  .cap-ask-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin-block-end: var(--space-2);
+  }
+
+  .cap-ask-badge {
+    padding: 2px var(--space-2);
+    border-radius: var(--cap-ask-radius, var(--radius-s));
+    background: var(--primary);
+    color: var(--primary-fg);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .cap-ask-note,
+  .cap-ask-status,
+  .cap-ask-cut {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+  }
+
+  .cap-ask-cut {
+    margin-block-start: var(--space-2);
+    font-style: italic;
+  }
+
+  /* A reserved well of four lines: the answer is two or three sentences, and the panel sits above
+     the results, so its height is held from the first frame. */
+  .cap-ask-body {
+    margin: 0;
+    min-block-size: 4lh;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .cap-ask-sources {
+    display: grid;
+    gap: var(--space-1);
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-detail);
+  }
+
+  .cap-ask-sources-heading {
+    color: var(--muted);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .cap-ask-source-index,
+  .cap-ask-source-kind {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cap-ask-followup {
+    margin: var(--space-3) 0 0;
+    font-size: var(--fs-detail);
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-ask {
+    border-inline-start-color: Highlight;
+  }
+
+  .cap-ask-badge {
+    border: 1px solid CanvasText;
+  }
+}

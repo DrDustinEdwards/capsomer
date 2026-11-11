@@ -1,0 +1,102 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A window around a preview of the product: three dots and an address bar (`browser`, the default)
+   or a title bar (`app`), the preview below, and an optional foot line ("Sample data"). It says
+   "this is a picture of the app", so a reader does not mistake the preview for a control on the page.
+   Extracted from Foxhound's recovery queue demo and its four product previews. */
+@layer cap.components {
+  .cap-app-frame {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    box-shadow: var(--cap-app-frame-shadow, var(--shadow-m));
+  }
+
+  .cap-app-frame-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-block-end: 1px solid var(--line);
+    background: var(--ground);
+  }
+
+  /* Three dots: the element's two pseudo-elements and one span inside it. */
+  .cap-app-frame-dots {
+    display: flex;
+    gap: 6px;
+    flex: none;
+
+    &::before,
+    &::after {
+      content: "";
+    }
+
+    &::before,
+    &::after,
+    & > span {
+      inline-size: 10px;
+      block-size: 10px;
+      border-radius: var(--radius-full);
+      background: var(--line-strong);
+    }
+
+    &::after {
+      order: 2;
+    }
+  }
+
+  .cap-app-frame-address {
+    flex: 1;
+    min-inline-size: 0;
+    margin-inline: var(--space-2);
+    padding: 2px var(--space-2);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cap-app-frame[data-variant="app"] .cap-app-frame-address {
+    border: 0;
+    background: none;
+    font-family: var(--ui);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .cap-app-frame-body {
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  .cap-app-frame-foot {
+    padding: var(--space-2) var(--space-4);
+    border-block-start: 1px solid var(--line);
+    background: var(--ground);
+  }
+}
+
+@media (forced-colors: active) {
+  .cap-app-frame,
+  .cap-app-frame-bar,
+  .cap-app-frame-address {
+    border-color: CanvasText;
+  }
+
+  .cap-app-frame-dots::before,
+  .cap-app-frame-dots::after,
+  .cap-app-frame-dots > span {
+    background: CanvasText;
+  }
+}

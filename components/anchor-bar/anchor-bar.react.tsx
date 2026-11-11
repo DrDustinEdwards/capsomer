@@ -14,9 +14,16 @@ export interface AnchorBarProps {
   // Show the bar even when the view is short or has fewer than three sections.
   always?: boolean;
   label?: string;
+  // "vertical": a list down a side column, sticky beside the sections (a long page's section nav).
+  orientation?: "horizontal" | "vertical";
 }
 
-export function AnchorBar({ sections, always = false, label = "On this page" }: AnchorBarProps) {
+export function AnchorBar({
+  sections,
+  always = false,
+  label = "On this page",
+  orientation = "horizontal",
+}: AnchorBarProps) {
   const nav = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(always);
   const [current, setCurrent] = useState<string | null>(null);
@@ -74,7 +81,14 @@ export function AnchorBar({ sections, always = false, label = "On this page" }: 
   }, [ids, shown]);
 
   return (
-    <nav ref={nav} className="cap-anchors" aria-label={label} data-cap="anchor-bar" hidden={!shown}>
+    <nav
+      ref={nav}
+      className="cap-anchors"
+      aria-label={label}
+      data-cap="anchor-bar"
+      data-orientation={orientation === "vertical" ? "vertical" : undefined}
+      hidden={!shown}
+    >
       <span className="cap-anchors-label" aria-hidden="true">
         {label}
       </span>

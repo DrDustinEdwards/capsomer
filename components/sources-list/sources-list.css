@@ -1,0 +1,57 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Sources and credits: the works a page draws on and the credits it owes, each with its kind
+   (article, book, music, image), its title (linked when it has an address), its authors and
+   publisher, its licence and a note. Often closed in a disclosure under an episode or a post, but
+   always in the HTML, because a licence's attribution must be on the page. Extracted from germomics'
+   episode Sources (app/components/content/EpisodeExtras.tsx). */
+@layer cap.components {
+  .cap-sources {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--muted);
+    font-size: var(--fs-detail);
+    line-height: 1.5;
+  }
+
+  .cap-source {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-2);
+    min-inline-size: 0;
+  }
+
+  .cap-source-kind {
+    padding: 1px var(--space-2);
+    border-radius: var(--radius-s);
+    background: var(--sunken);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .cap-source-title {
+    color: var(--text);
+    overflow-wrap: anywhere;
+
+    &:is(a) {
+      color: var(--accent-text);
+      font-weight: 500;
+    }
+  }
+
+  .cap-source-license {
+    font-family: var(--mono);
+    font-size: var(--fs-label);
+  }
+
+  .cap-source-note {
+    font-style: italic;
+  }
+}

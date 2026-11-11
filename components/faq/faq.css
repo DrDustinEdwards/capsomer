@@ -1,0 +1,73 @@
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* Questions and answers. Shown as an accordion, each question a native disclosure sharing one
+   `name` so the browser keeps one answer open with no script; or as a list, every answer visible
+   (a pricing page's questions, which a reader scans). Every answer is in the HTML either way, so the
+   page's FAQPage data says exactly what the page says. Builds on the disclosure. Extracted from
+   BioScience Writers' Faq, Foxhound's ProductFAQ and its pricing questions. */
+@layer cap.components {
+  .cap-faq {
+    display: grid;
+    gap: var(--cap-faq-gap, 0);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-inline-size: var(--cap-faq-measure, 48rem);
+
+    &[data-variant="cards"] {
+      --cap-faq-gap: var(--space-3);
+    }
+  }
+
+  .cap-faq-question {
+    margin: 0;
+    color: var(--text);
+    font-family: var(--cap-faq-face, var(--ui));
+    font-size: var(--cap-faq-size, var(--fs-body));
+    font-weight: 600;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  .cap-faq-answer {
+    color: var(--muted);
+    font-size: var(--text-size);
+    line-height: var(--leading);
+
+    & > :first-child {
+      margin-block-start: 0;
+    }
+
+    & > :last-child {
+      margin-block-end: 0;
+    }
+  }
+
+  /* Accordion: the summary holds the question as a heading, so the questions are in the page outline. */
+  .cap-faq .cap-disclosure > summary > .cap-faq-question {
+    font: inherit;
+    font-family: var(--cap-faq-face, inherit);
+    font-size: var(--cap-faq-size, inherit);
+  }
+
+  /* List: every answer shown, a card per question. */
+  .cap-faq[data-variant="list"] > li {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--pad-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--surface);
+
+    & + li {
+      margin-block-start: var(--space-3);
+    }
+  }
+}
+
+@media print {
+  /* Printed, every answer shows. */
+  .cap-faq details:not([open]) > .cap-disclosure-body {
+    display: block;
+  }
+}

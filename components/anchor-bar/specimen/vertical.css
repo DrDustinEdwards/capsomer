@@ -1,0 +1,2 @@
+/* Layout for the states page only. */
+.anchor-vertical-demo { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: 2rem; align-items: start; }

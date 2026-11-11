@@ -15,7 +15,7 @@ eachTheme((theme) => {
     await expectNoAxeViolations(page);
   });
 
-  for (const id of ["top", "third", "short", "blocks"]) {
+  for (const id of ["top", "third", "short", "blocks", "vertical"]) {
     test(`accessibility: no axe violations, ${id}`, async ({ page }) => {
       await visitStates(page, "anchor-bar", theme, id);
       await expectNoAxeViolations(page);
@@ -138,5 +138,23 @@ eachTheme((theme) => {
     await expect(list).toHaveCSS("overflow-x", "auto");
     const wide = await list.evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(wide).toBe(true);
+  });
+});
+
+eachTheme((theme) => {
+  test("behavior: a vertical bar lists its links down the side, marks the section being read, and takes no room at the sections' top", async ({
+    page,
+  }) => {
+    await visitStates(page, "anchor-bar", theme, "vertical");
+    const nav = page.getByRole("navigation", { name: "Sections" });
+    const lefts = await nav
+      .getByRole("link")
+      .evaluateAll((els) => [...new Set(els.map((e) => Math.round(e.getBoundingClientRect().left)))]);
+    expect(lefts).toHaveLength(1);
+    await page.locator("#vx-alerts").scrollIntoView();
+    await page.evaluate(() => window.scrollBy(0, 1));
+    await expect(nav.getByRole("link", { name: "When it alerts" })).toHaveAttribute("aria-current", "location");
+    const h = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--cap-anchors-h"));
+    expect(h.trim()).toBe("0px");
   });
 });
