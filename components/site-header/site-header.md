@@ -45,7 +45,7 @@ An email, a printed page or an embedded widget has no header. A page inside anot
 | --- | --- |
 | Logo | An SVG or image at most 24px tall and 160px wide, and its name (`logo`) |
 | Accent | Its color family (`data-family` on the page) |
-| Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at 85%, blurred) |
+| Band | `--header-bg`, `--header-fg`, `--header-fg-muted`, `--header-line`; or `data-band="dark"` (dark in both themes), and `data-translucent` (the band at 85%, blurred); `data-rest="clear"` (React `rest="clear"`) with `<span class="cap-site-header-ground" aria-hidden="true"></span>` as the header's first child: no ground or line while the page is at its top, the band once the header is stuck (a scroll-state query; where that is missing the band always shows) |
 | UI face | `--font-ui` |
 | Extras | Up to two icon controls and one button (`extras`) |
 | Section links' place | `data-links="left"`, `"center"` or `"right"` (before the extras, after a thin divider) |

@@ -1,0 +1,250 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A card: one piece of content or one choice, its regions (media, header, content, footer) as direct
+   children in source order, placed by element selector with no wrapper classes. Built to Chrome's
+   Modern Web Guidance card guide: <a><article> for one destination, a stretched heading link
+   (.cap-card-link) when the card also holds its own actions, <label> around a radio or checkbox for a
+   choice. The look reads the panel's card tokens (--card-shadow, --card-lift, --card-edge), so a
+   site's cards and panels agree. */
+@layer cap.components {
+  .cap-card {
+    container: cap-card / inline-size;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: var(--space-3);
+    min-inline-size: 0;
+    padding: var(--pad-card);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    box-shadow: var(--card-shadow);
+
+    /* Media first runs to the card's edges and keeps its own ratio unless the card sets one. */
+    & > :is(img, picture, video, svg, .cap-card-media):first-child {
+      display: block;
+      inline-size: calc(100% + 2 * var(--pad-card));
+      max-inline-size: none;
+      margin: calc(-1 * var(--pad-card)) calc(-1 * var(--pad-card)) 0;
+      border-start-start-radius: inherit;
+      border-start-end-radius: inherit;
+      overflow: clip;
+    }
+    & > picture:first-child > img {
+      display: block;
+      inline-size: 100%;
+    }
+    /* A fixed ratio (data-ratio="16/9", "4/3", "1", "2/3" for a book cover) crops with cover. */
+    &[data-ratio] > :is(img, video):first-child,
+    &[data-ratio] > picture:first-child > img {
+      aspect-ratio: var(--card-ratio, 16 / 9);
+      object-fit: cover;
+      block-size: auto;
+    }
+    &[data-ratio="4/3"] {
+      --card-ratio: 4 / 3;
+    }
+    &[data-ratio="1"] {
+      --card-ratio: 1;
+    }
+    &[data-ratio="2/3"] {
+      --card-ratio: 2 / 3;
+    }
+
+    & > :is(h2, h3, h4, hgroup, header) {
+      margin: 0;
+    }
+    & > :is(h2, h3, h4),
+    & > :is(hgroup, header) > :is(h2, h3, h4) {
+      margin: 0;
+      font-size: var(--fs-card-title, var(--fs-h3));
+      line-height: 1.3;
+      text-wrap: balance;
+    }
+    & > :is(hgroup, header) > :not(h2, h3, h4) {
+      margin: var(--space-1) 0 0;
+      color: var(--muted);
+      font-size: var(--fs-detail);
+    }
+    & > :is(p, ul, ol, dl, div:not(.cap-card-media)) {
+      margin: 0;
+      color: var(--muted);
+      text-wrap: pretty;
+    }
+    & > footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-3);
+      margin-block-start: auto;
+      padding-block-start: var(--space-2);
+    }
+
+    /* Wide enough, a card with media puts it in a side column beside the rest; a card without
+       media never reserves one. */
+    @container cap-card (inline-size >= 34rem) {
+      &[data-layout="side"]:has(> :is(img, picture, video, svg, .cap-card-media):first-child) {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        column-gap: var(--space-6);
+        & > :first-child {
+          grid-row: 1 / span 4;
+          inline-size: calc(100% + var(--pad-card));
+          block-size: calc(100% + 2 * var(--pad-card));
+          margin: calc(-1 * var(--pad-card)) 0 calc(-1 * var(--pad-card)) calc(-1 * var(--pad-card));
+          border-start-end-radius: 0;
+          border-end-start-radius: inherit;
+          object-fit: cover;
+        }
+        & > :not(:first-child) {
+          grid-column: 2;
+        }
+      }
+    }
+  }
+
+  /* A grid of cards whose regions line up across a row: each card spans four shared rows (media,
+     header, content, footer) through subgrid. */
+  .cap-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min, 16rem)), 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & > li {
+      display: grid;
+    }
+    &[data-align="rows"] {
+      & > :is(.cap-card, li, a) {
+        display: grid;
+        grid-row: span 4;
+        grid-template-rows: subgrid;
+      }
+      & > :is(li, a) > .cap-card {
+        grid-row: span 4;
+        grid-template-rows: subgrid;
+      }
+    }
+  }
+
+  /* One destination: the link wraps the article. Its edge firms under the pointer and a site may
+     lift it, as a linked panel does; the focus ring is the link's own, drawn round the card. */
+  a:has(> .cap-card) {
+    display: grid;
+    border-radius: var(--radius-l);
+    color: inherit;
+    font-weight: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:active {
+      color: inherit;
+      background: none;
+      box-shadow: none;
+    }
+    &:is(:hover, [data-force="hover"]) > .cap-card {
+      border-color: color-mix(in srgb, var(--primary) calc(var(--card-edge) * 100%), var(--line-strong));
+      translate: 0 var(--card-lift);
+    }
+    &:active > .cap-card {
+      border-color: var(--line-strong);
+    }
+  }
+
+  /* A card with its own actions: only the heading link (.cap-card-link) is the destination, and its
+     hit area stretches over the card; the other controls sit above it. */
+  .cap-card:has(a.cap-card-link) {
+    position: relative;
+
+    & a.cap-card-link {
+      color: inherit;
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius-l);
+      }
+      &:focus-visible {
+        outline: none;
+      }
+      &:hover {
+        background: none;
+        box-shadow: none;
+      }
+    }
+    & :is(a:not(.cap-card-link), button, input, select, textarea, summary, label) {
+      position: relative;
+      z-index: 1;
+    }
+    &:has(a.cap-card-link:is(:hover, [data-force="hover"])) {
+      border-color: color-mix(in srgb, var(--primary) calc(var(--card-edge) * 100%), var(--line-strong));
+      translate: 0 var(--card-lift);
+    }
+    &:has(a.cap-card-link:focus-visible) {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+
+  /* A choice: <label class="cap-card"> with a radio or checkbox as a direct child. Selection changes
+     only the edge's color and an outline, never the box, so nothing moves. */
+  label.cap-card {
+    cursor: pointer;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--space-4);
+    border-width: 1px;
+
+    & > :is(input[type="radio"], input[type="checkbox"]) {
+      grid-row: 1 / span 3;
+      margin: 0.2em 0 0;
+      accent-color: var(--primary);
+      inline-size: 1.1rem;
+      block-size: 1.1rem;
+    }
+    & > :not(input) {
+      grid-column: 2;
+    }
+    &:hover,
+    &[data-force="hover"] {
+      border-color: var(--line-strong);
+    }
+    &:has(> :checked) {
+      border-color: var(--primary);
+      outline: 1px solid var(--primary);
+      outline-offset: -2px;
+    }
+    &:has(> :focus-visible) {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+    &:has(> :disabled) {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cap-card,
+    a:has(> .cap-card) > .cap-card {
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        translate var(--dur-fast) var(--ease-out);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .cap-card {
+      border-color: CanvasText;
+    }
+    label.cap-card:has(> :checked) {
+      outline: 3px solid Highlight;
+    }
+    a:has(> .cap-card):is(:hover, :focus-visible) > .cap-card,
+    .cap-card:has(a.cap-card-link:hover) {
+      border-color: LinkText;
+    }
+  }
+}
