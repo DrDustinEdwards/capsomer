@@ -77,6 +77,9 @@ const SITES = {
       "font-ui": '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
       mono: '"DM Mono", "DM Mono Fallback", monospace',
       display: '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
+      // The 404 title's poster face: Foxhound loads no Jost, so it is DM Sans like every heading
+      // (without it the 404 fell back to Futura or Century Gothic; parity audit, 2026-11-10).
+      poster: '"DM Sans", "DM Sans Fallback", Arial, sans-serif',
       "fs-detail": "0.8125rem",
       "fs-body": "0.875rem",
       control: "38px",
