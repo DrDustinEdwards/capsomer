@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [not saved, saved, hover, storage blocked]
 added: 0.94.0
-updated: 0.95.0
+updated: 0.96.0
 source: germomics' SaveButton (app/components/content/PostDetail.tsx)
 replaces:
   - 'germomics-saved'

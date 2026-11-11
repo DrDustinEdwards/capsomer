@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [default tray, line variant, pill variant dragged, vertical, count, disabled tab, manual activation, address follows the tab, progressive and remembered, links with the current page, page tabs, narrow list scrolls, comfortable density]
 added: 0.3.0
-updated: 0.95.0
+updated: 0.96.0
 source: The site admin's status tabs (app/components/admin/posts-filters.tsx, .posts-tab) and mention filters (app/routes/admin.mentions.tsx, .admin-chip); shadcn/ui Tabs for the panel form; dustinedwards.info's remembered platform tabs (app/enhance/platforms.ts); bsw's draggable pill switcher (app/islands/editing-demo.ts); the Capsid Portal's ?tab= page tabs (dashboard/src/ui/pagetabs.tsx)
 replaces:
   - 'role="tablist"'

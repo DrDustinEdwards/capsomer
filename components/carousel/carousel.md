@@ -5,8 +5,8 @@ summary: A finite set of related slides on a native scroll-snap track, with Prev
 parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [first slide, middle slide, last slide, looping, finite (two slides), two per view, peek, vertical, keyboard focus on the track, no script]
-added: 0.95.0
-updated: 0.95.0
+added: 0.96.0
+updated: 0.96.0
 source: Chrome's Modern Web Guidance carousel guide; replaces bsw's testimonials carousel (Testimonials.tsx, islands/carousel.ts, components/carousel.ts)
 replaces:
   - 'aria-roledescription="carousel"'

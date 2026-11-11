@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.95.0]
+## [0.96.0]
 
 Shared components from the network audit: parts each site wrote for itself, now in Capsomer so every site behaves the same.
 
@@ -30,6 +30,14 @@ Shared components from the network audit: parts each site wrote for itself, now 
 - **Player transcript: Copy with link copies through the copy part,** so a refused clipboard now says Copy failed.
 - **Save toggle keeps its list through `capsomer/behavior/hooks`** (`readStored`, `writeStored`, `subscribeStored`): where storage is blocked the button still toggles and the list lasts the page. The key and the stored JSON are unchanged.
 - **Tabs remember through `capsomer/behavior/hooks`.** The remembered tab sets keep their choice with the hooks' `readStored`, `writeStored` and `subscribeStored` instead of their own copies; the storage key and behavior are unchanged.
+
+## [0.95.0]
+
+- **Rich editor (new, `components/rich-editor`)**, from Carrel's formatted editor: Tiptap 3 (MIT) over Markdown that stays byte for byte. Unchanged blocks are written as the bytes they were read from; only a changed or new block is spelled again, and checked by parsing it. Front matter, code, tables, directives, math, footnotes and images sit in labeled source blocks. It keeps the markdown editor's toolbar, keys, link palette, block menu and image step. `capsomer/react/rich-editor` (`RichEditor`), `capsomer/behavior/rich-editor` (the round trip and schema, for a server), `capsomer/rich-editor.css`. A pasted or dropped HTML fragment is parsed in an inert document under the `capsomer` Trusted Types policy and read by the schema; ProseMirror's own paste handed it to the page's default policy, which escapes markup, so formatted pastes arrived as tags. New command `capsomer-roundtrip <folder> [--plain]` checks a site's content round trips.
+- **Collab editor (new, `components/collab-editor`)**, from Carrel's file rooms: a shared Yjs copy over y-partyserver, each person's caret in their series color, Editing or Suggesting with tracked changes (who, round, when), comment threads anchored to passages, the room bar, and the suggestions and comments panels. `capsomer/react/collab-editor` (`useRoomEditing`, `useRichRoom`, `useRoom`, `RoomBar`, `SuggestionsPanel`, `CommentsPanel`), `capsomer/behavior/collab-editor` (load, patch, save and settle the copy, for the room's server), `capsomer/collab-editor.css`. The room's server, who may enter and storage stay in the app.
+- The rich editor's link palette and image alt field ignore the Enter that confirms an IME conversion (`isImeEnter`, from 0.90.0).
+- **Markdown editor:** `GLYPH` (its toolbar icons) is exported for the rich editor. **Trusted HTML:** new `inertDocument(html)`.
+- New optional peers, at Carrel's versions: `@tiptap/core`, `@tiptap/extension-collaboration`, `@tiptap/extension-list`, `@tiptap/extensions`, `@tiptap/pm`, `@tiptap/starter-kit` (^3.31.4), `@tiptap/y-tiptap` (^3.3.0; 3.0.x is deprecated upstream because its position migrations grow shared documents, so every client in a room needs 3.1.0 or later), `@handlewithcare/prosemirror-suggest-changes` (^0.1.8), `yjs`, `y-protocols`, `y-partyserver`, and the micromark and mdast packages the round trip reads with. `micromark-extension-math` gets katex 0.19.1 by override (its own range, ^0.16, has GHSA-238p-pmpm-9mq7; the round trip reads math syntax only and never renders it). Dev: site-runtime v0.114.0 (`startPage` in the specimens). No token or class was removed or renamed.
 
 ## [0.94.0]
 
