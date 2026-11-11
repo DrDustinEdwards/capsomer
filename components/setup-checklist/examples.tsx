@@ -8,12 +8,12 @@ const go = (label: string) => (
     {label}
   </a>
 );
-const steps = (done: boolean[]): SetupStep[] => [
+const steps = ([a, b, c]: [boolean, boolean, boolean]): SetupStep[] => [
   {
     id: "connect",
     title: "Connect your payment account",
     detail: "So failed payments are found as they happen",
-    done: done[0],
+    done: a,
     action: (
       <a className="cap-btn" data-variant="primary" data-size="sm" href="#connect">
         Connect
@@ -24,14 +24,14 @@ const steps = (done: boolean[]): SetupStep[] => [
     id: "sender",
     title: "Set your sender name",
     detail: "Customers see this name in your emails",
-    done: done[1],
+    done: b,
     action: go("Go to settings"),
   },
   {
     id: "alerts",
     title: "Set your notification email",
     detail: "You get an email when a payment is recovered",
-    done: done[2],
+    done: c,
     action: go("Go to settings"),
   },
 ];
