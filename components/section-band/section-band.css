@@ -3,7 +3,7 @@
 /* A section band: a full-width band of its own color that sets one section apart. `data-cut="slant"`
    cuts its top and bottom edges on a diagonal, with a translucent wedge along each edge, so the
    sections before and after show faintly through and each edge reads as two parallel slants.
-   `data-overlap` pulls the band up and down over its neighbours by the slant's depth, so no straight
+   `data-overlap` pulls the band up and down over its neighbors by the slant's depth, so no straight
    edge shows behind it. One pseudo-element draws the solid slab; the band's own ground, clipped to the
    outer outline, is the wedges. Extracted from BioScience Writers' impact band (.band-cut). */
 @layer cap.components {

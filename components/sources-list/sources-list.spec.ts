@@ -15,7 +15,7 @@ eachTheme((theme) => {
     await expectContrast(page, [
       { sel: "#sl-mixed .cap-source-kind", what: "a kind tag" },
       { sel: "#sl-mixed a.cap-source-title", what: "a linked title" },
-      { sel: "#sl-mixed .cap-source-license", what: "a licence" },
+      { sel: "#sl-mixed .cap-source-license", what: "a license" },
     ]);
   });
 

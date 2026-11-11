@@ -1,10 +1,10 @@
 ---
 name: section-band
 title: Section band
-summary: A full-width band of its own color that sets one section apart, straight or with slanted edges over its neighbours.
+summary: A full-width band of its own color that sets one section apart, straight or with slanted edges over its neighbors.
 parts: [css, react]
 tool: native
-states: [straight, slanted, slanted over its neighbours, phone]
+states: [straight, slanted, slanted over its neighbors, phone]
 added: 0.92.0
 source: BioScience Writers' impact band (.band-cut, .band-slab, .band-ghost in app/app.css; app/routes/home.tsx)
 replaces:
@@ -15,7 +15,7 @@ replaces:
 
 # Section band
 
-A `section` in a band of its own color (`--cap-band-bg`, text `--cap-band-text`). `data-cut="slant"` cuts its top and bottom on a diagonal and lays a translucent wedge along each edge (`--cap-band-ghost`, the band at half strength by default), so the hero above and the section below show faintly through. `data-overlap` pulls the band over its neighbours by the slant's depth.
+A `section` in a band of its own color (`--cap-band-bg`, text `--cap-band-text`). `data-cut="slant"` cuts its top and bottom on a diagonal and lays a translucent wedge along each edge (`--cap-band-ghost`, the band at half strength by default), so the hero above and the section below show faintly through. `data-overlap` pulls the band over its neighbors by the slant's depth.
 
 ## When to use it
 

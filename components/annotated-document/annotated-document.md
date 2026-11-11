@@ -75,6 +75,6 @@ Showing what an edit does to a real text: an editing service's sample, a changel
 ## Accessibility
 
 - Passages are a tinted ground with a tone underline, and a ring when lit, not color alone; forced colors: Mark and Highlight.
-- Insertions in the marked view are underlined and deletions struck through, as well as coloured.
+- Insertions in the marked view are underlined and deletions struck through, as well as colored.
 
 Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the automated browser checks and a front-end review stand in. Automated: see the site's Tests page.

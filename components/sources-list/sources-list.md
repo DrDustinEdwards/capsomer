@@ -1,7 +1,7 @@
 ---
 name: sources-list
 title: Sources list
-summary: The works a page draws on and the credits it owes, each with its kind, title, authors, publisher, licence and note.
+summary: The works a page draws on and the credits it owes, each with its kind, title, authors, publisher, license and note.
 parts: [css, react]
 tool: native
 states: [mixed kinds, linked and not, in a closed disclosure]
@@ -13,11 +13,11 @@ replaces:
 
 # Sources list
 
-An ordered list of sources and credits. Each entry: a small kind tag (Article, Book, Music, Image, Credit, Web, or the site's own word), the title (a link when it has an address), then its authors, publisher, licence and a note, wrapping as one line.
+An ordered list of sources and credits. Each entry: a small kind tag (Article, Book, Music, Image, Credit, Web, or the site's own word), the title (a link when it has an address), then its authors, publisher, license and a note, wrapping as one line.
 
 ## When to use it
 
-Under an episode, a post or a data page: what it cites and the credits its licences require.
+Under an episode, a post or a data page: what it cites and the credits its licenses require.
 
 ## When not to
 

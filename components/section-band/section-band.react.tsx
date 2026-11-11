@@ -4,7 +4,7 @@ export interface SectionBandProps {
   children: ReactNode;
   // "slant": diagonal top and bottom edges with a translucent wedge along each.
   cut?: "slant";
-  // Pull the band over its neighbours by the slant's depth.
+  // Pull the band over its neighbors by the slant's depth.
   overlap?: boolean;
   id?: string;
   label?: string;

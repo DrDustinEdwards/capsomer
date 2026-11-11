@@ -2,8 +2,8 @@
 
 /* Sources and credits: the works a page draws on and the credits it owes, each with its kind
    (article, book, music, image), its title (linked when it has an address), its authors and
-   publisher, its licence and a note. Often closed in a disclosure under an episode or a post, but
-   always in the HTML, because a licence's attribution must be on the page. Extracted from germomics'
+   publisher, its license and a note. Often closed in a disclosure under an episode or a post, but
+   always in the HTML, because a license's attribution must be on the page. Extracted from germomics'
    episode Sources (app/components/content/EpisodeExtras.tsx). */
 @layer cap.components {
   .cap-sources {
