@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [summary hover, summary pressed, accordion variant, card variant, compact card, triangle marker, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading, inline variant, sign marker, screen-only section, expand toggle, table detail row]
 added: 0.1.0
-updated: 0.101.0
+updated: 0.102.0
 source: the approved mockup ("4 notices", collapsed); patterns.md "Show or hide"
 replaces:
   - '<details(?![^>]*cap-disclosure)'

@@ -4,7 +4,7 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
-## [0.101.0]
+## [0.102.0]
 
 Options for sites with their own design (bsw, julieedwards-info, txasm) on the shared site header, prose, tabs, sortable list, disclosure and time, with no change to how they look. Shared code is behavior; each site's look is its tokens and slots. Every new token defaults to today's value.
 
@@ -27,6 +27,10 @@ Options for sites with their own design (bsw, julieedwards-info, txasm) on the s
 - **`enhance(root)` of tabs and the site header takes `Document | Element`** (was `ParentNode`), so an element passes under the Workers types.
 
 No token or class was removed or renamed. HTML contract additions only: `data-scrolled` and `data-collapse` on the header, `data-sheet-icons` on the header, `commandfor` and `command` on a no-hydration menu button, `data-marker="triangle"` on a disclosure; the account slot is left out when it would be empty, and a sortable item has no grip with `grip={false}`.
+
+## [0.101.0]
+
+- **Series nav and related links: the furniture under a post is Capsomer's** (moved from dustinedwards.info, 2026-11-11). New `components/series-nav/` (`nav.cap-series` with `.cap-series-title`, `ol.cap-series-parts` and the manual's signs as `.cap-series-steps`; React `SeriesNav`, and `seriesPlace()` in `capsomer/behavior/series-nav`): where a post sits in its series, every part with this one marked `aria-current="page"`, and the parts either side as signs. New `components/related-links/` (`.cap-related` with `data-kind="internal|external|mentions"`, `.cap-related-title`, `ul.cap-related-list`, `.cap-related-name`, `.cap-related-excerpt`, `time.cap-related-date`; React `RelatedLinks`, and `httpHref()`, `sitePath()` and `longDate()` in `capsomer/behavior/related-links`): Further reading, Linked from and Mentions in one look; a path on this site is a router link. A mention's address is re-parsed and only http and https become a link, with `rel="nofollow ugc noopener noreferrer"`. The manual's signs get a React wrapper, `Signs` in `capsomer/react/manual`. No token or class was removed or renamed.
 
 ## [0.100.0]
 
