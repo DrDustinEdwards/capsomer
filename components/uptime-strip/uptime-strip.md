@@ -2,11 +2,11 @@
 name: uptime-strip
 title: Uptime strip
 summary: Enarratio's uptime strip in a chart frame: the title with the uptime and its window, the finding, the strip, a legend of the slots, and the numbers as a table for screen readers.
-parts: [css]
+parts: [css, behavior, react]
 tool: native
 states: [all up, an outage, slots with no data, inline in a table cell, comfortable density]
 added: 0.1.0
-updated: 0.56.0
+updated: 0.100.0
 source: Capsid Portal, dashboard/src/ui/charts.tsx (UptimeTicks, UptimeFoot) and styles.css (ticks, upct)
 replaces:
   - 'class="(ticks|upct)"'
@@ -33,6 +33,10 @@ A single current state is a `.cap-status`. A trend in a number (requests, errors
 - **No data is a state**, a dashed outline, never counted as up or as zero.
 - **Each kind of slot differs in shape as well as color**, in the strip and in the legend: up a full tick, degraded two thirds, down one third, no data a dashed outline.
 - **In a table row the strip and its percent share one line** (`.cap-uptime-line`): `uptimeStrip({ inline: true, alt, height: 18 })`, a strip that takes the room it is given and never less than 84 px, then the percent. It is an inline primitive, needing no frame: `role="img"` named by `alt`, a sentence whose numbers match the percent beside it ("Uptime of example.org, 7 days: 96.1% up; down on Tuesday, September 29, from 11:50 to 18:20 UTC."). Without `alt`, Enarratio counts slots, which can disagree with a percent measured in minutes. A site with no probe in the window says "No data" with its reason (a status, brief) instead of a percent; never a blank and never 0%.
+
+## From a probe ring
+
+A watcher that keeps one character per probe period ("1" up, "0" down, "-" no probe, oldest first) turns it into slots with `fromRing(ring, { slots, label })`: each run is up when every probe it saw was up, down when every one failed, degraded between, and no data when it saw none. `padRing(ring, length)` pads a short ring on the left with no data, so a new site's strip starts empty rather than stretched. `uptimeOf(ring)` is the share of seen probes that were up, null when none was seen, so the percent and the strip count the same probes. In React, `<UptimeLegend />` (`capsomer/react/uptime-strip`) is the key after the strip.
 
 ## Matches
 

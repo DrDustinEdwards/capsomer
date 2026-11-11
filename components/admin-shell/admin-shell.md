@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [expanded, current app tile, badge on another app, menu collapsed to icons, collapsed name shown, name shown, account menu open, user variant, user variant collapsed, reading column, comfortable density, page transitions, phone tab bar, phone sheet, phone count past 99]
 added: 0.4.0
-updated: 0.9.0
+updated: 0.100.0
 source: Dustin's pick of 2026-10-06 (capsomer/research/admin-shell-findings.md); the flagship design canvas "Flagship Shell: Capsid Portal"; the Portal's own App.tsx
 replaces:
   - 'class="(app|rail|tabbar)"'
@@ -47,7 +47,7 @@ The theme is the header's one icon button, not a switch in the top bar (0.9.0).
 - **One strip, the same on every app, configured once here.** `FAMILY_APPS` (`apps.tsx`) lists Capsid Portal, Carrel Desk, dustinedwards.info, germomics, Foxhound, Foxing and Capsomer, in that order (Foxing's tile is a placeholder fox until its mark is drawn), each with its product's own mark redrawn in `currentColor` (never a letter). An app passes `app="carrel"`; the shell marks it and takes the header's logo and the tab title from it; Capsomer's own site passes `app="capsomer"`, so every site marks the app you are in. Other apps' badges come in `badges`, keyed by app. A site outside the family (a public site's one-app strip) passes `apps` and `title` instead. Foxhound keeps the x from its favicon, which reads as close or delete, until Dustin picks; `FOXHOUND_MARKS` offers two alternatives (a paw print, a fox's head), shown beside the x on the states page, and none is shipped.
 - **Tiles are neutral and carry the product's mark.** A mark drawn in `currentColor` takes the tile's color (accent text on a neutral tile, the pill's text on the current one).
 - **The menu has no title.** The header's logo names the app, so the menu starts with its collapse control and then its groups (0.9.0).
-- **The menu is 232px wide open (`--admin-menu-open`, the shared `--rail-w` plus as much as the collapsed column adds to the strip, so its labels keep one line) and collapsible; collapsed it is an icon column (`--admin-menu-collapsed`, 80px, a step wider than the strip, so each icon has room for its count) beside the strip.** Nothing moves: every icon keeps its x and y, and the current row its height and left edge, open and collapsed (one row inset, `--admin-row-pad`, puts each 16px icon in the middle of the collapsed column). Labels and group headings hide but keep their boxes (and their names for a screen reader); a group heading is a short band open and the same band holding a thin divider collapsed, so the groups are one even step apart in both states. Each icon names itself in a tooltip on hover and keyboard focus and keeps its accessible name; the current page keeps its dark fill. A hovered item has a fill a clear step off the menu and an edge at 3:1, in both themes. The collapsed column does not scroll. The collapse control is the menu's first row, "Collapse menu" with its key `[` as a key cap, the same place in both variants and both states; collapsed its words and key hide and its tooltip names it. The choice is remembered per site (`localStorage`, key `cap-rail` or `data-cap-pref`). The app binds `[` itself, because single-key shortcuts are the app's setting.
+- **The menu is 232px wide open (`--admin-menu-open`, the shared `--rail-w` plus as much as the collapsed column adds to the strip, so its labels keep one line) and collapsible; collapsed it is an icon column (`--admin-menu-collapsed`, 80px, a step wider than the strip, so each icon has room for its count) beside the strip.** Nothing moves: every icon keeps its x and y, and the current row its height and left edge, open and collapsed (one row inset, `--admin-row-pad`, puts each 16px icon in the middle of the collapsed column). Labels and group headings hide but keep their boxes (and their names for a screen reader); a group heading is a short band open and the same band holding a thin divider collapsed, so the groups are one even step apart in both states. Each icon names itself in a tooltip on hover and keyboard focus and keeps its accessible name; the current page keeps its dark fill. A hovered item has a fill a clear step off the menu and an edge at 3:1, in both themes. The collapsed column does not scroll. The collapse control is the menu's first row, "Collapse menu" with its key `[` as a key cap, the same place in both variants and both states; collapsed its words and key hide and its tooltip names it. The choice is remembered per site (`localStorage`, key `cap-rail` or `data-cap-pref`). The shell binds `[` itself (0.100.0), so every app behaves the same: never with a modifier, while a person types in a field or editor, or while single-key shortcuts are off (the shortcuts switch); `collapseKey={false}` shows no key and binds none.
 - **The strip and the menu are two rails.** The strip is a shade apart from the menu in both themes (`--admin-strip-bg`, darker in light, lighter in dark), so collapsed they never read as one column.
 - **One tooltip, everywhere.** Every shown name, a strip control's with the menu open or collapsed, a collapsed menu icon's, Refresh's, is Capsomer's tooltip (the shared popover's tooltip variant): in the top layer, so it is above every panel, tile and badge and fully opaque; a raised surface with a visible edge, unlike the selected item's fill in either theme; keys as key caps (`G` `2`). It waits 300 ms on hover, shows at once on keyboard focus, and Esc, a press or using the control hides it. A strip tooltip starts past the strip's edge, so it never covers its control, the control's badge or the controls above and below it. The tests check every corner of every name, its opacity and one look for all of them.
 - **No badge on the app you are in.** Strip badges are for other apps. Each "needs you" fact appears on a page once as a number and once as an action, not five times.
@@ -57,7 +57,7 @@ The theme is the header's one icon button, not a switch in the top bar (0.9.0).
 - **One top bar, the same places on every app.** Left: the trail, only on a page below the top level ("Components / Shell"; `trail` and `page`), so it never repeats a page's heading; then the one freshness line every app shows, "Updated 6 minutes ago" (`updated: { at, auto }`, "· refreshes itself" when `auto`); then anything else true of the page (`status`). Right: the page-wide controls (`actions`), then Refresh where the page refreshes (`onRefresh`, `refreshing`). The theme is no longer here: since 0.9.0 it is the header's one icon button (theme-switch's button form), whose name says what it does ("Switch to dark theme"), Light and Dark only (Dustin's answer 2 of 2026-10-13, replacing the switch ruled in PR #13).
 - **The tab title is "<page> · <app>"**, set by the shell from `page` and the app's name. An app whose routes set their own titles passes `documentTitle={false}` and the shell never writes `document.title`; the app's name still heads the logo and the phone sheet.
 - **The first page is called "Overview"** (`FIRST_PAGE`) in every app: it says what the page is, a summary of the app, and holds whether or not anything needs you. "Needs you" is the Inbox's job across apps; "Home" says where, not what; "Dashboard" is a kind of screen, not its content.
-- **The content fills the space to the menu's right**, from the same left edge, open and collapsed, up to 1480px; an app does not center its own narrower column inside it. A reading page opts into the centered column with `data-measure="reading"`.
+- **The content fills the space to the menu's right**, from the same left edge, open and collapsed, up to 1480px; an app does not center its own narrower column inside it. A reading page opts into the centered column with `data-measure="reading"`. A page picks one of three widths on `.cap-admin-page`, with the one padding rule: `data-width="narrow"` (768px, centered: a form or one record), `data-width="page"` (1280px, centered: a page of panels, Foxhound's Recova width) or the default full 1480px.
 - **Icons carry the controls**, one family (24 box, 1.6 stroke), every icon button one size with an accessible name and a tooltip. A tooltip is a child of its control, shows on hover and keyboard focus, and Esc hides it (WCAG 1.4.13).
 - **The account menu is the header's** (site-header's disclosure panel), opened from the avatar. Sections: who you are; this app's rows under its name (`appLinks`, `appLabel`); View site (`viewSite`) and Help and shortcuts (`onHelp`); Sign out last. The other apps are the strip's, so the menu no longer lists them.
 - **G then a number opens the app in that place** (Slack's lesson; the sequence GitHub and Linear use, because Ctrl and a digit belong to the browser's tabs). It does nothing while a person types in a field, never opens the app already open, and an app that lets single keys be switched off passes that setting as `jumpKeys`.
@@ -83,12 +83,13 @@ An option: `transition` in React, `data-transition="page"` on the shell in marku
 | `badges` | Other apps' badges, by app: `count`, `countNote` |
 | `page`, `trail` | The page's name (the tab title, and the trail's last step) and the levels above it (the trail, shown only when given) |
 | `documentTitle` | `true` (default): the shell writes the tab title "<page> · <app>". `false`: it leaves `document.title` to the app's routes |
-| `nav` | The menu: entries with `group`, `icon`, `count`, `countNote`, `tone`, `current` |
+| `nav` | The menu: entries with `group`, `icon`, `count`, `countNote`, `tone`, `current`, `match` |
+| `pathname` | The address you are on (`useLocation().pathname`): every entry without its own `current` is marked from it, the longest match winning (`currentEntryId`: the entry's `href`, or its `match` prefixes and patterns; `/` matches only itself), and `page` defaults to that entry's label |
 | `tabs` | The phone's bottom bar, up to five; default the first five of `nav` |
 | `logo`, `band`, `translucent`, `switchers`, `extras` | The header's slots (site-header): a logo other than the app's, the band, the business and product switchers (`user`), the site's own extras |
 | `onSearch`, `inbox` | Search and the inbox, at the header's right; each shows only when given |
 | `onHelp`, `viewSite` | Help and shortcuts, and View site, in the avatar's menu |
-| `account` | The avatar's menu: `role`, `email`, `appLinks`, `appLabel`, `onSignOut`; `name` and `initials` default to the owner's |
+| `account` | The avatar's menu: `role`, `email`, `appLinks`, `appLabel`, `onSignOut`, `accessLogout` (behind Cloudflare Access, Sign out goes to `ACCESS_LOGOUT`, `/cdn-cgi/access/logout`); `name` and `initials` default to the owner's |
 | `themePrefKey`, `themeKey` | The header's theme button: where the choice is remembered, and its single key |
 | `updated`, `status`, `actions`, `onRefresh`, `refreshing`, `refreshShortcut` | The top bar |
 | `renderLink` | A router's link; other apps' links stay plain anchors where the router cannot reach them |
@@ -108,7 +109,18 @@ Badge data is a prop: Capsid supplies it, one question per app ("what needs Dust
 | G, then 1 to 9 | Opens the app in that place |
 | Enter or Space on the avatar | Opens the account menu; focus moves to its first item, Up and Down move between items |
 | Any link, with transitions on | Moves to the page as without them; the transition does not move focus |
-| `[` | Collapses or expands the menu, when the app binds it |
+| `[` | Collapses or expands the menu (not while typing, or with single-key shortcuts off) |
+
+## The layout's error page
+
+An admin area's layout route exports `AdminErrorView` as its ErrorBoundary: the shared error page (components/error-page; load `empty.css` and `error-page.css`), its way out the admin's first page ("Go to the Overview"), a 403 titled "No access", and a refusal's own words (a string thrown with `data()`) as its sentence.
+
+```tsx
+import { AdminErrorView } from "capsomer/react/admin-shell";
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  return <AdminErrorView error={error} home="/admin" dev={import.meta.env.DEV} />;
+}
+```
 
 ## Accessibility
 

@@ -137,4 +137,10 @@
       border: 1px solid CanvasText;
     }
   }
+
+  /* No value in a cell or a fact line: a muted word. */
+  .cap-missing {
+    color: var(--muted);
+    font-style: normal;
+  }
 }

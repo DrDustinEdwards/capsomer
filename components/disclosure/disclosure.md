@@ -4,9 +4,9 @@ title: Disclosure
 summary: Show and hide, a section that opens in place and a group row in a list.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [summary hover, summary pressed, accordion variant, card variant, compact card, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading]
+states: [summary hover, summary pressed, accordion variant, card variant, compact card, group row pressed and disabled, section closed, section open, sections that open one at a time, group row collapsed with its count, group row expanded, two levels, group row in a heading, inline variant, sign marker, screen-only section, expand toggle, table detail row]
 added: 0.1.0
-updated: 0.92.0
+updated: 0.100.0
 source: the approved mockup ("4 notices", collapsed); patterns.md "Show or hide"
 replaces:
   - '<details(?![^>]*cap-disclosure)'
@@ -34,6 +34,10 @@ Two ways to show and hide. A section that opens in place is a native `<details c
 - **No heading inside a `summary`.** JAWS and TalkBack expose a `summary` as a button and drop a heading inside it, so their users could not move between sections by heading (Modern Web Guidance, accordion). A section that needs its own heading in the page outline is a group row in a heading instead (`<h3 class="cap-group-heading"><button class="cap-group-toggle">`, below; React `headingLevel`), which keeps the heading and puts the button inside it. (This replaces the earlier "an accordion's titles may be headings" rule.)
 - **Card variant** (`data-variant="card"`): Recova's questions list. Each section its own rounded card (`--radius-l`), set apart by the list's gap, a roomy title at the lead size with a plus at the end that turns to a cross when open, and the answer under it with no rule between. Same `details`, same keyboard.
 - **Compact card** (`data-variant="card" data-size="sm"`): the same card for a form or a list behind its title, beside other cards on an admin page ("Edit sponsor", "Add an item", "Chair (3)"; txasm's nine `<details class="card">`). The radius of a control group (`--radius-m`), a body-size title at weight 600, the plus and cross at the end, and the body in the text color, where the questions list's body is muted, because a form's labels and fields are not an answer to read quietly. The list the cards sit in sets the gap.
+- **Inline variant** (`data-variant="inline"`): a disclosure inside running text or under a procedure step (dei's "Show the data" in a post, a step's calculator). No box, a rule above and below that stacked sections share, and the title in the link color at body weight.
+- **Sign marker** (`data-marker="sign"`, with any variant): a mono plus that becomes a minus in place of the chevron. Both are one mono cell wide, so the title does not move when the section opens, and it reads the same in every engine, where the native triangle differs (dei's post disclosures).
+- **Open on paper.** In print every section, group and expand region is open and the markers are gone, since nobody can press a summary on paper; `::details-content` serves current engines and a sibling rule older ones. A section that only works on screen (a calculator) takes `data-print="hide"` and is left off the page.
+- **Expand toggle** (`.cap-expand-toggle`, `data-cap="expand"`): a link-like button with a chevron that shows or hides one region beside it, with `aria-expanded` and `aria-controls`, and its words can change with the state (`data-open-label="Hide email"`, `data-closed-label="View email"`). For a step's email preview or a log line's body. In a table, the button sits in the row's first cell (`.cap-expand-row`, with a hidden word saying what opens: "invoice.payment_failed payload") and opens a detail row under it (`tr.cap-expand-detail`, one cell across every column). A reflowed table draws its rows as grids, which would beat `hidden`, so a closed detail row is put away with `display: none`; React renders it only while open.
 - **Pressed and disabled**: a summary or group row has a pressed tint; a group button that is `disabled` or `aria-disabled="true"` dims and takes no clicks (disabled controls are exempt from contrast).
 - **Spacing follows the density tokens** (`--pad-x`, `--gap`, `--fs-body`).
 - **Group rows do not animate their height**: their rows use `hidden`, which removes them from the accessibility tree at once, so only the chevron turns.
@@ -85,9 +89,21 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 
 In a heading: `<h3 class="cap-group-heading"><button type="button" class="cap-group-toggle" ...>...</button></h3>` in place of the bare button.
 
-`enhance()` wires every group; `setGroup(button, expanded)` and `toggleGroup(button)` are exported. A compact card: `<details class="cap-disclosure" data-variant="card" data-size="sm"><summary>Edit sponsor</summary><div class="cap-disclosure-body"><form>...</form></div></details>`.
+A compact card: `<details class="cap-disclosure" data-variant="card" data-size="sm"><summary>Edit sponsor</summary><div class="cap-disclosure-body"><form>...</form></div></details>`.
 
-In React, `<Disclosure summary name defaultOpen variant size>` (`variant="accordion"` or `"card"`, `size="sm"` on the card) and `<Group label count defaultExpanded holdsCritical headingLevel>` with `<li>` children.
+Inline with the sign marker, left off paper: `<details class="cap-disclosure" data-variant="inline" data-marker="sign" data-print="hide">`.
+
+```html
+<button type="button" class="cap-link-btn cap-expand-toggle" data-cap="expand" aria-expanded="false" aria-controls="email-preview"
+  data-open-label="Hide email" data-closed-label="View email"><span class="cap-expand-label">View email</span></button>
+<div class="cap-expand-region" id="email-preview" hidden>...</div>
+
+<tr><th scope="row"><button type="button" class="cap-link-btn cap-expand-toggle cap-expand-row" data-cap="expand" aria-expanded="false"
+  aria-controls="evt-1-payload"><span class="cap-expand-label">invoice.payment_failed</span><span class="cap-sr-only"> payload</span></button></th>...</tr>
+<tr class="cap-expand-detail" id="evt-1-payload" hidden><td colspan="3">...</td></tr>
+```
+
+`enhance()` wires every group and every expand toggle (`enhanceExpand()` alone wires the toggles); `setGroup(button, expanded)` and `toggleGroup(button)` are exported. In React, `<Disclosure summary name defaultOpen variant size marker print>` (`variant="accordion"`, `"card"` or `"inline"`, `size="sm"` on the card), `<Group label count defaultExpanded holdsCritical headingLevel>` with `<li>` children, `useExpand()` (the state and the props for a button and its region), `<ExpandToggle label openLabel open onToggle controls>` and, for a table, `<ExpandRows row={(toggle) => cells} name toggleSuffix detail columns>`. Rows that open one at a time (a timeline where one email shows at once) keep the open id in the parent and pass `open` and `onToggle` to each `ExpandToggle`.
 
 **Provenance.** REWROTE, against capsid `master` as of 2026-10-01 (`dashboard/src/styles.css` `.chev`, `.rowlink`, `.disclose`, `.qgroup`; `dashboard/src/views/Overview.tsx` `GroupRow`, `Notices`). The Portal has no disclosure component: its group and notice rows are one-off `button.rowlink` and `button.disclose` with a `.chev` (`useState` per row, no `details`, no group count, no two levels). Capsomer's `details` section, `.cap-group` button with count, nesting rule and the open-a-group-that-holds-a-critical-row guard are written from the pattern (patterns.md, "Show or hide") and the approved mockup. Evidence: no rule or identifier of the Portal's carries over by rename. The chevron's geometry (7 px square, 1.5 px borders, rotated -45 degrees closed and 45 open, `margin: 0 3px 2px 6px`) is identical to the Portal's `.chev`, and the Portal's `.chev` was added after the extraction base (it is not in `366b902`), so the match is the same drawing reached twice, not a copy in either direction. Ported in v0.1.1: the button-in-a-heading form (`.qgroup > h3 .disclose`). Not ported: the Portal's group-row layouts, which are the attention list's and the row list's (see those pages).
 
