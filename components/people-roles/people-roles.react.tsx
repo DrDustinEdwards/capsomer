@@ -536,7 +536,7 @@ function AddForm({
     >
       <Hidden fields={{ intent: "add" }} />
       <Sub id={`${id}-add`}>Add a person</Sub>
-      <div className="cap-people-add-fields">
+      <div className="cap-fields cap-people-add-fields">
         <Field
           id={`${id}-email`}
           label="Email"

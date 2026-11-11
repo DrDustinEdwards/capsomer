@@ -5,9 +5,7 @@
    two columns where there is room, one on a phone; the hint, actions and Danger area across. */
 @layer cap.components {
   .cap-config-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
-    gap: var(--gap) var(--space-6);
+    --fields-gap: var(--gap) var(--space-6);
     padding: var(--gap) var(--pad-x);
   }
   .cap-config-full {

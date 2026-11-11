@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [typed from the values, with the app's labels and help, a flag with its own word, a list and its hint, one item per line, read-only with empty boxes hidden, keys left to the raw text, raw text open when no box shows, no frontmatter]
 added: 0.98.0
-updated: 0.98.0
+updated: 0.106.0
 source: Carrel, app/components/editor/frontmatter-fields.tsx, header-fields.tsx (rawOf, labelOf, ListInput, the "Edit as text" disclosure), typed-box.ts (useTyped), app/lib/frontmatter.ts (FIELDS, readFields, writeBlock, setField) and app.css (.app-fm, .app-fm-field, .app-fm-raw, .app-header-raw)
 replaces:
   - 'className="app-fm[" -]'
@@ -64,7 +64,7 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 ```html
 <fieldset class="cap-fm">
   <legend class="cap-fm-legend">Post details</legend>
-  <div class="cap-fm-grid">
+  <div class="cap-fields cap-fm-grid">
     <div class="cap-fm-field">
       <div class="cap-field">
         <label class="cap-field-label" for="fm-title">Title</label>

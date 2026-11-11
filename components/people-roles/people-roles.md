@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: native + own JavaScript
 states: [a lead's page, review open, changing a title, one person's history, an Owner's page after adding someone, a change Cloudflare refused, nobody added yet, role grid]
 added: 0.7.0
-updated: 0.93.0
+updated: 0.106.0
 source: capsid docs/design/design-identity-roles.md, "The members page"; Dustin's rulings of 2026-10-09
 replaces:
   - 'href="/people"'

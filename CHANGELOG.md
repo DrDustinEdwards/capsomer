@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.106.0]
+
+- **Components that lay out their own rows of fields use `.cap-fields`.** The config form (`.cap-config-form`), the people add form (`.cap-people-add-fields`) and the front matter grid (`.cap-fm-grid`) no longer carry their own `grid-template-columns`; their markup now also has `cap-fields` (React and `examples.html` updated; a hand-written copy of these three needs the class added) and sets `--fields-min` and the new `--fields-gap` (default `--space-5`) to the sizes it had. Their fields now line up on their controls (`align-items: end`), as every `.cap-fields` row does. Nothing is removed or renamed.
+
 ## [0.105.0]
 
 - **Error page: a site's title band (`hero`) runs the page's width.** The band shrank to its content (about 480px on a 1280px page) because the page centers its children; with `hero` the page now stretches them and the body keeps its 48rem column, centered. New token `--error-page-body-pad-block` (default 0): the space above and below the sentence and the ways out under a `hero` band. No other token, class or HTML contract changes.
