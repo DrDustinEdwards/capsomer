@@ -96,7 +96,14 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
           </ul>
         </div>
       </li>
-      <li class="cap-schedule-slot">[one session: a div.cap-schedule-track, no list]</li>
+      <li class="cap-schedule-slot">
+        <div class="cap-schedule-when">
+          <h3 class="cap-schedule-time"><time datetime="2027-03-05T16:30:00.000Z">4:30 PM</time> to <time datetime="2027-03-05T17:15:00.000Z">5:15 PM</time></h3>
+        </div>
+        <div class="cap-schedule-body">
+          <div class="cap-schedule-track">[one session: its article, with no list around it]</div>
+        </div>
+      </li>
     </ol>
   </section>
 </div>
@@ -120,7 +127,7 @@ In React, `import { Schedule, ScheduleDayNav, ScheduleSession } from "capsomer/r
   renderItem={(s, level) => <ScheduleSession title={s.title} level={level} meta={<p>Chaired by {s.moderator}</p>}>[talks]</ScheduleSession>} />
 ```
 
-`Schedule` also takes `level` (2 or 3), `dayHeadings` (off for a builder that names the day above), `zoneNote`, `idPrefix` (ids for a nav's in-page links), `noDate`, `empty` and `slotFooter` (a builder's form after a slot's tracks).
+`Schedule` also takes `level` (2 or 3), `dayHeadings` (off for a builder that names the day above), `zoneNote`, `idPrefix` (ids for a nav's in-page links), `noDate`, `year` (each day's heading says its year, "Saturday, March 6, 2027", for a past meeting's program), `empty` and `slotFooter` (a builder's form after a slot's tracks). `ScheduleDayNav` takes `year` too, for its day links.
 
 ## Exceptions in production
 

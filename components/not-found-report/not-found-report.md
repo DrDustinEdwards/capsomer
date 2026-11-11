@@ -55,6 +55,8 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 
 ## Markup
 
+The page loads the stylesheets of the parts it is built from: `capsomer/panel.css`, `row-list.css`, `segmented.css`, `skeleton.css`, `status.css`, `empty.css`, `time.css` and `not-found-report.css`. A `src` names the source; the count of probes not listed always follows it.
+
 ```tsx
 import { NotFoundReport } from "capsomer/react/not-found-report";
 

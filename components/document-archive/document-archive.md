@@ -91,6 +91,8 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 </article>
 ```
 
+Load `capsomer/document-archive.css` with `capsomer/row-list.css`, `capsomer/button.css` and, for the download's format and size (`.cap-link-meta`), `capsomer/link-file.css` (or the whole `capsomer/link.css`, which imports it).
+
 The helpers, with no DOM: `import { adjacent, groupByCategory } from "capsomer/behavior/document-archive"`. `adjacent(list, slug, (d) => d.slug)` gives `{ prev, next }`; `groupByCategory(docs, (d) => d.category, ["newsletter", "program", "abstract_book"])` gives the categories in that order, empty ones kept.
 
 In React, `import { DocumentArchive, DocumentList, DocumentViewer, DocumentPager } from "capsomer/react/document-archive"`:

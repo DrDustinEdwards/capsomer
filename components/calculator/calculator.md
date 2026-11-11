@@ -89,7 +89,7 @@ import { initialValues } from "capsomer/behavior/calculator";
 <Calculator id="transfer" action="/tools/transfer" fields={FIELDS} values={initialValues(FIELDS, params)} run={runTransfer} />
 ```
 
-On a hydrated page the React state does the live part and no call is needed. On a server-rendered page that is not hydrated, call `enhance(document, { transfer: runTransfer })` once; a calculator whose `data-calculator` has no run throws, so a form is never silently dead. `attach(root, run)` wires one calculator on its own.
+On a hydrated page the React state does the live part and no call is needed. On a server-rendered page that is not hydrated, call `enhance(document, { transfer: runTransfer })` once; a calculator whose `data-calculator` has no run throws, so a form is never silently dead. `attach(root, run)` wires one calculator on its own. An `embedded` calculator's children follow the result: a link to its own page stands alone on its line, so it is `<a data-link="next">`, a whole target on a touch screen (link.md).
 
 ## Exceptions in production
 

@@ -6,7 +6,7 @@ parts: [css, ts, react]
 tool: own JavaScript
 states: [rest, hover, pressed, visited, focus, away, family, file, jump, email, phone, lang, footnote, xref, address, next, title, tag]
 added: 0.45.0
-updated: 0.56.0
+updated: 0.91.0
 source: site-runtime's ./prefetch (NEVER_PREFETCH, FILE_EXTENSIONS), which this rule follows for client navigation
 replaces:
   - '\{[^}]*\b(Nav)?Link\b[^}]*\} from "react-router(-dom)?"'
@@ -90,7 +90,7 @@ What a site or Prelum writes. A meta is a sibling after the link, a space betwee
 
 ```
 
-Load `capsomer/link.css` after `capsomer/base.css`. `data-force="hover|pressed|visited|focus"` shows a state on a states page (`:visited` cannot be read by script).
+Load `capsomer/link.css` after `capsomer/base.css`. It imports `capsomer/link-file.css` (`components/link-file/link-file.css`): the `file` kind's mark, the rule that draws an after mark and `.cap-link-meta`. A site that wants only those, for a component's own file link (generated file, document archive), loads `capsomer/link-file.css` alone, and no other link gets a mark. `data-force="hover|pressed|visited|focus"` shows a state on a states page (`:visited` cannot be read by script).
 
 ## Keyboard
 

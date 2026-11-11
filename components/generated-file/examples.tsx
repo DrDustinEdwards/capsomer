@@ -11,10 +11,12 @@ const BYTES = 2_516_582;
 function Panel({
   record,
   busy,
+  generate,
   children,
 }: {
   record: GeneratedRecord | null;
   busy?: boolean;
+  generate?: boolean;
   children?: ReactNode;
 }) {
   return (
@@ -28,6 +30,7 @@ function Panel({
       fields={{ intent: "generate" }}
       action="#generate"
       busy={busy}
+      generate={generate}
     >
       {children}
     </GeneratedFile>
@@ -70,6 +73,17 @@ const SPECIMENS: Record<string, () => ReactNode> = {
   ),
   stalled: () => <Panel record={{ status: "generating", startedAt: NOW - 600_000 }} />,
   busy: () => <Panel record={{ status: "ready", generatedAt: MADE, bytes: BYTES }} busy />,
+  "made-elsewhere": () => (
+    <Panel
+      record={{
+        status: "ready",
+        generatedAt: MADE,
+        bytes: BYTES,
+        changedAt: "2027-02-20T10:30:00Z",
+      }}
+      generate={false}
+    />
+  ),
 };
 
 for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-mount]"))) {

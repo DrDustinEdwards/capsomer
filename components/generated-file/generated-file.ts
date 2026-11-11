@@ -11,8 +11,9 @@ export const LOCK_MS = 5 * 60 * 1000;
 
 // What the store records.
 export interface GeneratedRecord {
-  // The last run's outcome, or that one is running; null or missing when none has run.
-  status?: "generating" | "ready" | "failed" | null;
+  // The last run's outcome, or that one is running; null, missing or "pending" (a store's word
+  // for a row made before its first run) when none has run.
+  status?: "pending" | "generating" | "ready" | "failed" | null;
   // When the current or last run started (the lock's age is measured from it).
   startedAt?: number | Date | string | null;
   // When the file now stored was made. A regenerate keeps the old file until the new one is in.

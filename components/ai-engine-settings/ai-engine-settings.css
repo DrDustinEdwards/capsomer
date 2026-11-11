@@ -6,8 +6,12 @@
    status line, the job's note under its name, the selects' least width and the stacking. Extracted
    from Carrel (app/routes/ai.tsx and its app-engine-status and app-engine-table rules). */
 @layer cap.components {
+  /* One column that never grows past the page: an auto column would take the jobs table's
+     least width (a select per cell), and every part would run past a phone's edge with it. The
+     table scrolls in its own region there instead (table.md, the default on a phone). */
   .cap-ai-engine {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-5);
     min-width: 0;
   }

@@ -34,5 +34,14 @@
     &[data-mono] {
       font-family: var(--mono);
     }
+
+    /* A value that is a link alone (a DOI) is a target of its own, not a word in a sentence: its
+       hit area is the target's height (44px on a touch screen), reaching into the gap between
+       facts so the rail keeps its rhythm (WCAG 2.5.8). */
+    & > a:only-child {
+      display: inline-block;
+      padding-block: max(0px, (var(--target) - 1lh) / 2);
+      margin-block: min(0px, (1lh - var(--target)) / 2);
+    }
   }
 }

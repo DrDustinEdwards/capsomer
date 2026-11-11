@@ -14,7 +14,7 @@ const NOW = Date.parse("2027-02-20T15:00:00Z");
 const MADE = "2027-02-19T21:04:00Z";
 
 test("fileState: nothing run is none, and may start", () => {
-  for (const rec of [null, undefined, {}, { status: null }]) {
+  for (const rec of [null, undefined, {}, { status: null }, { status: "pending" }]) {
     const v = fileState(rec, NOW);
     assert.equal(v.state, "none");
     assert.equal(v.canStart, true);

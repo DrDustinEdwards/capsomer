@@ -46,6 +46,9 @@ export interface GeneratedFileProps {
   action?: string;
   fields?: Record<string, string>;
   renderForm?: (props: GeneratedFileFormProps) => ReactNode;
+  // false: no Generate form, for a file another step makes (a book PDF made on publish); the
+  // panel then only says the state and offers the file.
+  generate?: boolean;
   // The form is being sent: the button says so and takes no second press.
   busy?: boolean;
   // The sentence after a state's word, in the app's own words, in place of the default.
@@ -59,6 +62,7 @@ function sentence(
   state: GeneratedState,
   view: ReturnType<typeof fileState>,
   messages: GeneratedFileProps["messages"],
+  generate: boolean,
 ): ReactNode {
   const own = messages?.[state];
   if (own != null) return own;
@@ -72,14 +76,19 @@ function sentence(
         : "This can take a minute; refresh to see the result.";
     case "ready":
       return made ? <>Made {made}.</> : "Made and stored.";
-    case "stale":
+    case "stale": {
+      // With no Generate button there is nothing to press, so the sentence asks for nothing.
+      const then = generate ? " Regenerate it to include them." : "";
       return made ? (
-        <>Made {made}, before the latest changes. Regenerate it to include them.</>
+        <>
+          Made {made}, before the latest changes.{then}
+        </>
       ) : (
-        "Made before the latest changes. Regenerate it to include them."
+        `Made before the latest changes.${then}`
       );
+    }
     case "failed":
-      return `${view.reason ?? "The last run failed."} Try again.`;
+      return `${view.reason ?? "The last run failed."}${generate ? " Try again." : ""}`;
   }
 }
 
@@ -107,6 +116,7 @@ export function GeneratedFile({
   action,
   fields,
   renderForm,
+  generate = true,
   busy = false,
   messages,
   level = 2,
@@ -124,28 +134,31 @@ export function GeneratedFile({
       description={description}
       className="cap-generated"
       footer={
-        <div className="cap-generated-actions">
-          {form({
-            className: "cap-generated-form",
-            children: (
-              <>
-                {Object.entries(fields ?? {}).map(([name, value]) => (
-                  <input key={name} type="hidden" name={name} value={value} />
-                ))}
-                <button
-                  type="submit"
-                  className="cap-btn"
-                  data-variant={state === "ready" ? undefined : "primary"}
-                  disabled={running}
-                  aria-busy={running ? true : undefined}
-                >
-                  {running ? "Generating" : label}
-                </button>
-              </>
-            ),
-          })}
-          {children}
-        </div>
+        generate || children != null ? (
+          <div className="cap-generated-actions">
+            {generate &&
+              form({
+                className: "cap-generated-form",
+                children: (
+                  <>
+                    {Object.entries(fields ?? {}).map(([name, value]) => (
+                      <input key={name} type="hidden" name={name} value={value} />
+                    ))}
+                    <button
+                      type="submit"
+                      className="cap-btn"
+                      data-variant={state === "ready" ? undefined : "primary"}
+                      disabled={running}
+                      aria-busy={running ? true : undefined}
+                    >
+                      {running ? "Generating" : label}
+                    </button>
+                  </>
+                ),
+              })}
+            {children}
+          </div>
+        ) : undefined
       }
     >
       <div className="cap-generated-body" data-state={state}>
@@ -153,7 +166,7 @@ export function GeneratedFile({
           <Status tone={TONES[state]} running={state === "generating"}>
             {STATE_WORDS[state]}
           </Status>{" "}
-          <span className="cap-generated-says">{sentence(state, view, messages)}</span>
+          <span className="cap-generated-says">{sentence(state, view, messages, generate)}</span>
         </p>
         {view.hasFile && (
           <p className="cap-generated-file">

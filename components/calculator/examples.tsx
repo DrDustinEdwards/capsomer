@@ -15,7 +15,7 @@ if (host) {
       embedded
     >
       <p>
-        <a href="https://example.com/tools/transfer">
+        <a href="https://example.com/tools/transfer" data-link="next">
           Open the transfer calculator on its own page
         </a>
       </p>

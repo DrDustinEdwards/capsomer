@@ -44,6 +44,14 @@ export type {
   CompareLabels,
   CompareOptions,
 } from "./draft-compare-render.ts";
+export { choicesOf, merged, mergePlan, startPicks } from "./draft-compare-merge.ts";
+export type {
+  MergeBlock,
+  MergeChoice,
+  MergePick,
+  MergePlan,
+  MergeSegment,
+} from "./draft-compare-merge.ts";
 export {
   parsePatch,
   patchCounts,

@@ -4,7 +4,7 @@ title: Generated file
 summary: A panel for a file the server makes, saying whether it is made, running, ready, out of date or failed, with its download and the Generate button.
 parts: [css, behavior, react]
 tool: native
-states: [never made, generating on a first run, regenerating with the earlier file kept, ready with its size and date, stale since the data changed, failed with the reason, a run that stopped without finishing, the form being sent]
+states: [never made, generating on a first run, regenerating with the earlier file kept, ready with its size and date, stale since the data changed, failed with the reason, a run that stopped without finishing, the form being sent, made by another step with no Generate button]
 added: 0.91.0
 updated: 0.91.0
 source: txasm app/components/program-builder/document-panel.tsx (ProgramDocumentPanel), app/routes/admin.editions.$editionId.book.tsx (the Book PDF panel), app/lib/data-access/documents.ts (recordGenerating, recordReady, recordFailed, the 5 minute stale lock)
@@ -88,6 +88,8 @@ Screen readers: no manual NVDA or VoiceOver run, by decision (2026-11-07); the a
 
 `data-state` on `.cap-generated-body` is `none`, `generating`, `ready`, `stale` or `failed`. While a run holds the lock the button is `disabled aria-busy="true"` and reads "Generating".
 
+Load `capsomer/generated-file.css` with `capsomer/panel.css`, `capsomer/status.css`, `capsomer/button.css` and, for the file link's mark and meta, `capsomer/link-file.css` (or the whole `capsomer/link.css`, which imports it).
+
 The model: `import { fileState, mayStart, fileMeta, LOCK_MS, STATE_WORDS, STALLED_REASON } from "capsomer/behavior/generated-file"`. A record is `{ status, startedAt, generatedAt, bytes, reason, changedAt }`, the times as milliseconds, Dates or ISO strings.
 
 ```ts
@@ -106,6 +108,8 @@ In React, `import { GeneratedFile } from "capsomer/react/generated-file"`:
   [Publish to the archive]
 </GeneratedFile>
 ```
+
+`generate={false}` leaves out the Generate form, for a file another step makes (a book PDF made when the book is published): the panel says the state and offers the file, and the stale and failed sentences ask for nothing. A record's `status` may be `"pending"`, a store's word for a row before its first run; it reads as not made.
 
 `format` (default "PDF") names the file in the link and button words; `downloadLabel`, `generateLabel` and `regenerateLabel` replace them; `messages` replaces a state's sentence; `lockMs` changes the lock; `now` fixes the clock.
 

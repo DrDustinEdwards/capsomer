@@ -18,7 +18,7 @@ export interface NotFoundReportProps {
   windows?: readonly number[];
   onWindow?: (days: number) => void;
   title?: ReactNode;
-  // The source line; "Last 30 days" by default, with the probes not listed after it.
+  // The source line; "Last 30 days" by default. The probes not listed always follow it.
   src?: ReactNode;
   // Scanner probes the site counted and does not list.
   probes?: number | null;
@@ -47,7 +47,12 @@ export function NotFoundReport({
   now,
 }: NotFoundReportProps) {
   const probeText = probesLine(probes);
-  const source = src ?? `Last ${days} days${probeText ? `; ${probeText}` : ""}`;
+  const source = (
+    <>
+      {src ?? `Last ${days} days`}
+      {probeText ? `; ${probeText}` : null}
+    </>
+  );
   const control =
     windows && windows.length > 1 && onWindow ? (
       <Segmented

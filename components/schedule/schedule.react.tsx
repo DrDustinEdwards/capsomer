@@ -30,6 +30,8 @@ export interface ScheduleDayNavProps {
   label?: string;
   // The word for NO_DATE.
   noDate?: string;
+  // Say each day's year: "Saturday, March 6, 2027", for a meeting that is not this year's.
+  year?: boolean;
   // Controls beside the days (an "Add a day" date field).
   children?: ReactNode;
   renderLink?: (props: ScheduleLinkProps) => ReactNode;
@@ -43,6 +45,7 @@ export function ScheduleDayNav({
   hrefFor,
   label = "Days",
   noDate,
+  year = false,
   children,
   renderLink = plainLink,
 }: ScheduleDayNavProps) {
@@ -61,7 +64,7 @@ export function ScheduleDayNav({
                   key === NO_DATE ? (
                     dayLabel(key, { noDate })
                   ) : (
-                    <time dateTime={key}>{dayLabel(key)}</time>
+                    <time dateTime={key}>{dayLabel(key, { year })}</time>
                   ),
               })}
             </li>
@@ -94,6 +97,8 @@ export interface ScheduleProps<T> {
   // The day key's id prefix, for a day nav's in-page links: "day-" gives id="day-2027-03-06".
   idPrefix?: string;
   noDate?: string;
+  // Say each day's year in its heading: "Saturday, March 6, 2027".
+  year?: boolean;
   // What a day with nothing on it says.
   empty?: ReactNode;
   // Something after a slot's tracks (a builder's "Add to this slot" form).
@@ -136,6 +141,7 @@ export function Schedule<T>({
   zoneNote = true,
   idPrefix,
   noDate = "To be scheduled",
+  year = false,
   empty = "Nothing is scheduled on this day yet.",
   slotFooter,
 }: ScheduleProps<T>) {
@@ -158,7 +164,7 @@ export function Schedule<T>({
               {day.key === NO_DATE ? (
                 dayLabel(day.key, { noDate })
               ) : (
-                <time dateTime={day.key}>{dayLabel(day.key)}</time>
+                <time dateTime={day.key}>{dayLabel(day.key, { year })}</time>
               )}
             </DayH>
           )}

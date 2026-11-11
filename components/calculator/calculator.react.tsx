@@ -55,7 +55,8 @@ export interface CalculatorProps {
   // write the address.
   embedded?: boolean;
   submitLabel?: string;
-  // Shown after the result: a link to the calculator's own page, a note.
+  // Shown after the result: a note, or a link to the calculator's own page (alone on its line,
+  // so a whole target: data-link="next", components/link).
   children?: ReactNode;
 }
 
