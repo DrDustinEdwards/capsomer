@@ -38,7 +38,14 @@ eachTheme((theme) => {
     );
     expect(new Set(tops).size, "one row").toBe(1);
     await bar.locator(".enarratio-download > summary").click();
-    await expectNoAxeViolations(page, "section[aria-labelledby='s-narrow']");
+    // Enarratio's points (.enarratio-points) are the keyboard's and screen reader's controls, one
+    // over each mark, with pointer-events: none: a pointer uses the marks and their 24px hit
+    // areas. axe's target-size reads them as pointer targets, and at 320px whether it flags one
+    // depends on how much of it the open menu covers, so they are left out of this scan. The
+    // page-wide scan above still checks them.
+    await expectNoAxeViolations(page, "section[aria-labelledby='s-narrow']", {
+      exclude: "section[aria-labelledby='s-narrow'] .enarratio-points",
+    });
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
