@@ -114,6 +114,25 @@
     }
   }
 
+  /* A lead: one icon or one action (a podcast's play button) in a column of its own at the card's
+     start, beside the header; the other regions keep to the second column. It takes the first row
+     only, so a lead shorter than the header leaves no gap under it. */
+  .cap-card:has(> .cap-card-lead) {
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--space-4);
+
+    & > .cap-card-lead {
+      grid-row: 1;
+      grid-column: 1;
+      align-self: start;
+      display: grid;
+      place-items: center;
+    }
+    & > :not(.cap-card-lead) {
+      grid-column: 2;
+    }
+  }
+
   /* A grid of cards whose regions line up across a row: each card spans four shared rows (media,
      header, content, footer) through subgrid. */
   .cap-card-grid {

@@ -4,6 +4,10 @@ Each release names every removed or renamed token or class, and every changed HT
 
 ## [Unreleased]
 
+## [0.108.0]
+
+- **Card: a lead.** `.cap-card-lead` as a card's first child puts one icon or one action (a podcast episode's play button) in a column of its own at the card's start, beside the header; the other regions keep to the second column. HTML contract addition only; no token or class is removed or renamed.
+
 ## [0.107.0]
 
 - **Sortable list: `renderFoot` and `removeStyle`.** `renderFoot(item, state)` adds a part of the host's own after the buttons, on its own full-width line (`.cap-sortable-foot`, the space above it `--sortable-foot-gap`, the item's gap by default): an "Edit item" disclosure that sits under an item's title and its buttons rather than beside them. `removeStyle="bordered"` draws Remove as a boxed button; `"quiet"` (bare words) stays the default. `--sortable-remove-pad-inline` sets Remove's inset (a small button's by default; `0` leaves the bare word). A card or stack item with no grip (`grip={false}`) no longer keeps an empty handle column, which set its head and fields one gap in from the content's edge. HTML contract addition only: `.cap-sortable-foot`. Nothing is removed or renamed.
