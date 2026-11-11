@@ -2,7 +2,9 @@
 
 Each release names every removed or renamed token or class, and every changed HTML contract.
 
-## [0.95.0]
+## [Unreleased]
+
+## [0.96.0]
 
 Options for sites with their own design (bsw, julieedwards-info, txasm) on the shared site header, prose, tabs, sortable list, disclosure and time, with no change to how they look. Shared code is behavior; each site's look is its tokens and slots. Every new token defaults to today's value.
 
@@ -21,6 +23,38 @@ Options for sites with their own design (bsw, julieedwards-info, txasm) on the s
 - **`enhance(root)` of tabs and the site header takes `Document | Element`** (was `ParentNode`), so an element passes under the Workers types.
 
 No token or class was removed or renamed. HTML contract additions only: `data-scrolled` and `data-collapse` on the header, `commandfor` and `command` on a no-hydration menu button, `data-marker` and `data-variant="inline"` on a disclosure; the account slot is left out when it would be empty, and a sortable item has no grip with `grip={false}`.
+
+## [0.95.0]
+
+- **Rich editor (new, `components/rich-editor`)**, from Carrel's formatted editor: Tiptap 3 (MIT) over Markdown that stays byte for byte. Unchanged blocks are written as the bytes they were read from; only a changed or new block is spelled again, and checked by parsing it. Front matter, code, tables, directives, math, footnotes and images sit in labeled source blocks. It keeps the markdown editor's toolbar, keys, link palette, block menu and image step. `capsomer/react/rich-editor` (`RichEditor`), `capsomer/behavior/rich-editor` (the round trip and schema, for a server), `capsomer/rich-editor.css`. A pasted or dropped HTML fragment is parsed in an inert document under the `capsomer` Trusted Types policy and read by the schema; ProseMirror's own paste handed it to the page's default policy, which escapes markup, so formatted pastes arrived as tags. New command `capsomer-roundtrip <folder> [--plain]` checks a site's content round trips.
+- **Collab editor (new, `components/collab-editor`)**, from Carrel's file rooms: a shared Yjs copy over y-partyserver, each person's caret in their series color, Editing or Suggesting with tracked changes (who, round, when), comment threads anchored to passages, the room bar, and the suggestions and comments panels. `capsomer/react/collab-editor` (`useRoomEditing`, `useRichRoom`, `useRoom`, `RoomBar`, `SuggestionsPanel`, `CommentsPanel`), `capsomer/behavior/collab-editor` (load, patch, save and settle the copy, for the room's server), `capsomer/collab-editor.css`. The room's server, who may enter and storage stay in the app.
+- The rich editor's link palette and image alt field ignore the Enter that confirms an IME conversion (`isImeEnter`, from 0.90.0).
+- **Markdown editor:** `GLYPH` (its toolbar icons) is exported for the rich editor. **Trusted HTML:** new `inertDocument(html)`.
+- New optional peers, at Carrel's versions: `@tiptap/core`, `@tiptap/extension-collaboration`, `@tiptap/extension-list`, `@tiptap/extensions`, `@tiptap/pm`, `@tiptap/starter-kit` (^3.31.4), `@tiptap/y-tiptap` (^3.3.0; 3.0.x is deprecated upstream because its position migrations grow shared documents, so every client in a room needs 3.1.0 or later), `@handlewithcare/prosemirror-suggest-changes` (^0.1.8), `yjs`, `y-protocols`, `y-partyserver`, and the micromark and mdast packages the round trip reads with. `micromark-extension-math` gets katex 0.19.1 by override (its own range, ^0.16, has GHSA-238p-pmpm-9mq7; the round trip reads math syntax only and never renders it). Dev: site-runtime v0.114.0 (`startPage` in the specimens). No token or class was removed or renamed.
+
+## [0.94.0]
+
+- **Seventeen page and app widgets move into Capsomer** (the shared-code audit's item 31; Dustin, 2026-11-11: a piece of UI that is a component belongs in Capsomer, even when only one site uses it so far). Each is a component with its CSS, notes, specimen and tests, extracted from the site that had it; the sites switch to them and delete their copies next.
+  - `range-slider` (two-handle range, from Foxhound's payments filter): `.cap-range-slider` and its parts, each handle a field's `input.cap-range`, `capsomer/behavior/range-slider` (`rangeFill`, `clampPair`, `formatValue`, the `cap:range-commit` event), React `RangeSlider`.
+  - `toc` (a post's contents, sidebar from 64rem and inline below, from Foxhound's blog): `.cap-toc`, React `Toc`.
+  - `share-row` (share links plus a copy button, from Foxhound's blog): `.cap-share`, `shareHref`, React `ShareRow`.
+  - `route-splash` (a slow navigation's loading screen, from Foxhound's app shell): `.cap-route-splash`, `shouldShowRouteSplash`, React `RouteSplash`, now `role="status"`.
+  - `count-up` (a number that counts up once in view, from Foxhound's audit): `capsomer/behavior/count-up`, `.cap-count-up`, React `useCountUp`.
+  - `timeline` (numbered steps whose line fills as they scroll in, from BioScience Writers): `ol.cap-timeline` and its parts, React `Timeline`; the fill is a transform, with no measuring.
+  - `pdf-viewer` (PDF.js pages with keyboard paging and zoom, from txasm): `.cap-pdf` and its parts, React `PdfViewer`.
+  - `checklist-run` (a page of steps worked through once, with timers, notes, one step at a time and a record, from dustinedwards.info's run mode): `.cap-run-*`, `capsomer/behavior/checklist-run` and the pure `capsomer/behavior/checklist-run-model`. The scale swap now copies every `[data-run-swap]` region by name and place, through `trusted-html`.
+  - `offline-keep` (keep a page for offline reading, from dustinedwards.info): `.cap-keep`, `capsomer/behavior/offline-keep`, and the worker `capsomer/offline-sw.js` (store `kept-v1` unless `?cache=` names another).
+  - `error-ad` (the error page's vintage ad slot, from dustinedwards.info's utility ads): `.cap-ad` and its parts, the model (`adProblems`, `burstPoints`, `scopeArt`, `chooseAd`), React `ErrorAd`, and the fonts Bangers and Alfa Slab One (OFL 1.1) in `fonts/`.
+  - `web-push` (a device list that turns phone alerts on and off, from the Capsid Portal): `.cap-push` and its parts, `subscribePush`, React `PushDevices`, and the worker `capsomer/push-sw.js`.
+  - `scope-chip` (a one-select filter form that submits on change, from Carrel): `form.cap-scope`, React `ScopeChip`.
+  - `danger-zone` (the risky controls set apart, from the Capsid Portal): `.cap-danger`, React `DangerZone`.
+  - `freshness` (when data was updated, with a ring for the next refresh, from the Capsid Portal): `.cap-fresh`, `shareLeft`, React `Freshness` and `FreshRing`.
+  - `save-toggle` (save a post in this browser, from germomics): `button.cap-chip.cap-save` (a toggle chip with a bookmark), React `SaveToggle`.
+  - `subscribe-links` (listen and subscribe links, from germomics): `.cap-subscribe`, each link a `cap-chip`, React `SubscribeLinks`.
+  - `split` (text beside a picture, flipping sides, from dustinedwards.info's media split): `.cap-split`, React `Split`.
+  - The package ships `components/*/*-sw.js`.
+- **The single slider's thumb takes a 44px touch target** on a coarse pointer (the dot stays 20px inside it), and its hover ring shows only where a pointer hovers.
+- No token or class was removed or renamed, and no existing HTML contract changed.
 
 ## [0.93.0]
 

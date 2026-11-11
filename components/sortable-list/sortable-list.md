@@ -6,7 +6,7 @@ parts: [css, behavior, react]
 tool: own JavaScript
 states: [rows, cards, groups of lists, repeatable rows, stack, board of lanes, read-only, Alt keys, an item up by keyboard, an item under the pointer, a grip under the pointer, the ends' buttons disabled, as delivered with no script inside a form, in React inside a form]
 added: 0.7.0
-updated: 0.95.0
+updated: 0.96.0
 source: carrel/research/design-writing-tools.md (4.2, the corkboard) and carrel/rulings/writing-tools-2026-10-10.md (point 7)
 replaces:
   - "@dnd-kit/sortable"

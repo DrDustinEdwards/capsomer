@@ -1,0 +1,12 @@
+/* The specimen's own layout: the two people side by side where there is room. */
+.cap-collab-specimen-pair {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr));
+}
+
+.cap-collab-specimen {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}

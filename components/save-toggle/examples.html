@@ -1,0 +1,23 @@
+<section class="cap-specimen" aria-labelledby="s-live">
+  <h2 id="s-live">Live: two buttons for the same post stay in step</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-chip cap-save" data-size="sm" id="save-a" data-cap="save-toggle" data-key="cap-specimen-saved" data-id="spring-update" aria-pressed="false"><svg class="cap-save-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 2.5h8v11L8 10.5l-4 3z"/></svg><span class="cap-save-label">Save</span></button>
+    <button type="button" class="cap-chip cap-save" data-size="sm" id="save-b" data-cap="save-toggle" data-key="cap-specimen-saved" data-id="spring-update" aria-pressed="false"><svg class="cap-save-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 2.5h8v11L8 10.5l-4 3z"/></svg><span class="cap-save-label">Save</span></button>
+  </div>
+</section>
+
+<section class="cap-specimen" aria-labelledby="s-states">
+  <h2 id="s-states">Saved, and under the pointer</h2>
+  <div class="cap-specimen-row">
+    <button type="button" class="cap-chip cap-save" data-size="sm" aria-pressed="true"><svg class="cap-save-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 2.5h8v11L8 10.5l-4 3z"/></svg><span class="cap-save-label">Saved</span></button>
+    <button type="button" class="cap-chip cap-save" data-size="sm" aria-pressed="false" data-force="hover"><svg class="cap-save-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 2.5h8v11L8 10.5l-4 3z"/></svg><span class="cap-save-label">Save</span></button>
+  </div>
+</section>
+
+<script type="module">
+  import { enhance } from "./save-toggle.ts";
+  try {
+    localStorage.removeItem("cap-specimen-saved");
+  } catch {}
+  enhance();
+</script>
