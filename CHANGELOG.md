@@ -14,6 +14,9 @@ Each release names every removed or renamed token or class, and every changed HT
 - **New: scroll area** (`components/scroll-area`). A fixed-height box that scrolls, its thin scrollbar at 3:1 (WCAG 1.4.11), full contrast under `prefers-contrast: more`, legacy pseudo-elements only under `@supports not (scrollbar-color: auto)`. Built to Modern Web Guidance `adapt-scrollbar-to-contrast-preferences`.
 - **New: reveal** (`components/reveal`). `.cap-reveal` and `.cap-reveal-stack` fade sections in as they enter, CSS only (a view timeline). Content is never hidden without it, and never moves under reduced motion.
 - **Site header: clear at rest.** `data-rest="clear"` (React `rest="clear"`) with a first child `<span class="cap-site-header-ground" aria-hidden="true">`: no ground or line at the top of the page, the band once stuck, by a `scroll-state(stuck: top)` query with no scroll listener. Where that query is missing the band always shows. Built to Modern Web Guidance `state-aware-sticky-headers`.
+- **New: hooks** (`capsomer/react/hooks`, `capsomer/behavior/hooks`). `useHydrated`, `ClientOnly`, `useMedia`, `usePrefersReducedMotion`, `useBrowserZone`, `useRemembered` (localStorage with a page-long fallback, every reader follows, `null` forgets) and `useNow`, all through `useSyncExternalStore` with a server snapshot so hydration matches; `cn` for class names. They replace the copies in Foxing, Carrel, germomics and the Capsid Portal.
+- **New: React picture** (`capsomer/react/picture`). site-runtime's `pictureProps` as a `<picture class="cap-picture">` (display: contents) with its sources, or the `<img>` alone; `priority`, `eager`. Replaces the local `Picture` in six sites.
+- **New: `routerRenderLink`** (`capsomer/react/link`). The `renderLink` every Capsomer part takes, as React Router's `Link` with Capsomer's prefetch, so no site writes its own adapter.
 
 ## [0.90.0]
 

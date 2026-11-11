@@ -9,6 +9,11 @@
      main color in the img's own style attribute, under the image until its pixels paint over them.
      The tiny picture is drawn at the box's size, which the browser smooths into a blur. A file with
      transparency should carry no placeholder: it would show through. */
+  /* The <picture> around a stored image leaves the box to its <img> (React Picture, pictureHtml). */
+  :where(picture.cap-picture) {
+    display: contents;
+  }
+
   :where(img.has-lqip) {
     background-position: center;
     background-repeat: no-repeat;

@@ -2,10 +2,11 @@
 name: picture
 title: Picture
 summary: What a stored image shows while it loads (its placeholder and main color), and the pause control an animated image needs, for site-runtime's pictureProps and Prelum's images alike.
-parts: [css]
+parts: [css, react]
 tool: native
 states: [placeholder while loading, loaded, main color only, animated and playing, animated and paused, reduced motion]
 added: 0.56.0
+updated: 0.91.0
 source: dustinedwards.info's prose.css (img.has-lqip, the placeholder Prelum writes); WCAG 2.2.2 Pause, Stop, Hide
 replaces:
   - 'img\.has-lqip\s*\{'
@@ -15,6 +16,19 @@ replaces:
 # Picture
 
 The look of one stored image around its pixels. A site uploads through site-api, which keeps a tiny placeholder and the main color for each picture; site-runtime's `pictureProps` (a JSX page) and Prelum's renderer (a post) write them onto the `<img>`, and this file shows them until the image paints. An animated image gets a Pause control beside its still. Import `capsomer/picture.css`.
+
+## React
+
+`capsomer/react/picture` writes site-runtime's `pictureProps` out as a `<picture class="cap-picture">` (display: contents, so the `<img>` is the box) with its AVIF and WebP sources, or the `<img>` alone when there are none:
+
+```tsx
+import { Picture } from "capsomer/react/picture";
+
+<Picture attrs={image} alt="Alex Rivera at the spring survey" className="cover" priority />
+<Picture picture={pictureProps(image, { alt: "" })} eager />
+```
+
+`priority` is the page's one LCP image (eager, `fetchpriority="high"`); `eager` loads at once at normal priority (the rest of a first row); every other picture is lazy. It replaces the local `Picture` in dustinedwards.info, Foxhound (cover-picture.tsx), Foxing, bsw, germomics and julieedwards.info.
 
 ## When to use it
 
