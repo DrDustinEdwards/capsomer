@@ -1,0 +1,59 @@
+/* The layer order, repeated so this file is safe whatever order an app imports it in: the first statement a browser reads fixes it (css/layers.css has the full note). */
+@layer cap.reset, cap.tokens, cap.base, cap.components, cap.utilities;
+
+/* A status matrix (needs table.css and status.css): rows against columns, each cell a status
+   glyph. The row headers stick at the inline start as the table scrolls sideways; the column
+   headers wrap so many narrow columns fit. */
+@layer cap.components {
+  .cap-matrix {
+    & th[scope="row"] {
+      position: sticky;
+      inset-inline-start: 0;
+      z-index: 1;
+      background: var(--surface);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    & thead th {
+      min-inline-size: 4rem;
+      text-align: center;
+      vertical-align: bottom;
+      white-space: normal;
+      line-height: 1.2;
+    }
+    & td {
+      text-align: center;
+    }
+  }
+  .cap-matrix-mark {
+    gap: 0;
+    justify-content: center;
+  }
+  .cap-matrix-none {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .cap-matrix-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-detail);
+  }
+  @media (max-width: 52rem) {
+    .cap-matrix {
+      & th[scope="row"] {
+        min-inline-size: 7.5rem;
+        max-inline-size: 9rem;
+        white-space: normal;
+        line-height: 1.25;
+      }
+      & thead th {
+        min-inline-size: 2.75rem;
+        font-size: var(--fs-label);
+      }
+    }
+  }
+}

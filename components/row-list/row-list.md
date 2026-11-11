@@ -4,7 +4,7 @@ title: Row list
 summary: Rows that each open a detail, the title stretched over the row as its one link, with j and k to move between rows.
 parts: [css, behavior, react]
 tool: native + own JavaScript
-states: [mixed worst first, outline and muted variants, sizes, media, comfortable density, critical row, hover, keyboard focus, row with actions, long title cut with an ellipsis, a row that opens in place, phone width with a wrapping title, a row that is read, not opened]
+states: [mixed worst first, outline and muted variants, sizes, media, comfortable density, critical row, hover, keyboard focus, row with actions, long title cut with an ellipsis, a row that opens in place, phone width with a wrapping title, a row that is read, not opened, a reply opened in a row]
 added: 0.1.0
 updated: 0.100.0
 source: Capsid Portal, dashboard/src/styles.css (.att-row, .qrow, .frow) and dashboard/src/views/shared.tsx (QueueRows, IncidentFeed)
@@ -60,6 +60,8 @@ Different on purpose: the default is flush with a `--raised` hover and no border
 | `k` | Moves focus to the previous row's title (from outside the primary list, to its last row) |
 | Enter | Follows the focused row's link, or presses its button |
 | Enter or Space on a group row's button | Shows or hides the rows it holds |
+
+- **A reply opens in its row** (`reply`, with `RowReply`): answering a question or saying what unblocked a job happens where the row is, not on another page. The box is labelled for what the words are for ("Your answer, sent to its driver"), takes focus when it opens, says why an empty or refused reply was not sent (announced), sends on Ctrl or Cmd+Enter (not during an IME composition) and cancels on Esc. It sits under the row's text, across the row and above the stretched link.
 
 ## Accessibility
 
